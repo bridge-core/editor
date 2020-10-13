@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"core-js": "^3.6.5",
+		"monaco-editor": "^0.21.2",
 		"register-service-worker": "^1.7.1",
 		"uuid": "^8.3.1",
 		"vue": "^2.6.11",
@@ -24,6 +25,7 @@
 		"@vue/cli-plugin-typescript": "^4.5.0",
 		"@vue/cli-service": "^4.5.0",
 		"@vue/test-utils": "^1.0.3",
+		"monaco-editor-webpack-plugin": "^2.0.0",
 		"sass": "^1.19.0",
 		"sass-loader": "^8.0.0",
 		"typescript": "~3.9.3",

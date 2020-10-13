@@ -1,4 +1,5 @@
 import { createNotification } from '@/components/Footer/create'
+import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
 import type { Disposable } from '@/types/disposable'
 
 /**
@@ -18,7 +19,7 @@ export function createErrorNotification(error: Error): Disposable {
 		color: 'error',
 		disposeOnMiddleClick: true,
 		onClick: () => {
-			// createInformationWindow(`ERROR: ${short}`, message)
+			createInformationWindow(`ERROR: ${short}`, message)
 			notification.dispose()
 		},
 	})

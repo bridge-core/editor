@@ -5,6 +5,7 @@
 		<Sidebar />
 
 		<v-main>
+			<WindowRenderer />
 			<!--  -->
 		</v-main>
 
@@ -17,7 +18,7 @@ import Vue from 'vue'
 import Sidebar from './components/Sidebar/Common/Main.vue'
 import Footer from './components/Footer/Main.vue'
 import Toolbar from './components/Toolbar/Main.vue'
-
+import WindowRenderer from './components/Windows/Collect.vue'
 import { startUp } from './appCycle/startUp'
 
 export default Vue.extend({
@@ -27,6 +28,7 @@ export default Vue.extend({
 		Sidebar,
 		Footer,
 		Toolbar,
+		WindowRenderer,
 	},
 	async mounted() {
 		await startUp()
