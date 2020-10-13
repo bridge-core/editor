@@ -1,5 +1,5 @@
 import { createNotification } from '@/components/Footer/create'
-import { Disposable } from '@/types/disposable'
+import type { Disposable } from '@/types/disposable'
 
 /**
  * Creates a new error notification

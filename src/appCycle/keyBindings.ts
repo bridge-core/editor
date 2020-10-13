@@ -1,4 +1,4 @@
-import { Disposable } from '@/types/disposable'
+import type { Disposable } from '@/types/disposable'
 import { platform } from '@/utils/os'
 
 const IGNORE_KEYS = ['Control', 'Alt', 'Meta']

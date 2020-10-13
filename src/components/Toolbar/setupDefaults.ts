@@ -5,7 +5,7 @@ import { HelpMenu } from './Category/help'
 import { ToolMenu } from './Category/tools'
 import { EditMenu } from './Category/edit'
 import { setupKeyBindings } from '@/appCycle/keyBindings'
-import { Disposable } from '@/types/disposable'
+import type { Disposable } from '@/types/disposable'
 
 let CATEGORIES = [FileMenu, EditMenu, ToolMenu, HelpMenu]
 let DISPOSABLES: Disposable[] = []

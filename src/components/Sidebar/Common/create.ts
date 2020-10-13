@@ -1,7 +1,7 @@
 import { SidebarState, getSelected } from './state'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
-import { Disposable } from '../../../types/disposable'
+import type { Disposable } from '@/types/disposable'
 // import { trigger } from '../../AppCycle/EventSystem'
 import { getDefaultSidebar } from '../setup'
 
