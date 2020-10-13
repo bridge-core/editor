@@ -21,7 +21,7 @@ export function on(
 	event: string,
 	cb: (...data: unknown[]) => void
 ): Disposable {
-	let eventUUID = uuid()
+	const eventUUID = uuid()
 	if (EventState[event] === undefined) EventState[event] = {}
 	EventState[event][eventUUID] = cb
 
@@ -33,7 +33,7 @@ export function on(
 }
 
 export function once(event: string, cb: (...data: unknown[]) => void) {
-	let disposable = on(event, (...data: unknown[]) => {
+	const disposable = on(event, (...data: unknown[]) => {
 		disposable.dispose()
 		return cb(...data)
 	})

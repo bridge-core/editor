@@ -1,4 +1,5 @@
 module.exports = {
+	publicPath: '/editor/',
 	transpileDependencies: ['vuetify'],
 	pwa: {
 		name: 'bridge',
