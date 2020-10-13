@@ -14,10 +14,10 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/editor/precache-manifest.e17ea06a4e577642a288f58f319db7fc.js"
+  "/editor/precache-manifest.29bd0b5fa9bee378f56b69b0ad3153bf.js"
 );
 
-workbox.core.setCacheNameDetails({prefix: "editor"});
+workbox.core.setCacheNameDetails({prefix: "bridge-lite"});
 
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
