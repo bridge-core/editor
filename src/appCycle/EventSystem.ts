@@ -2,12 +2,10 @@
  * Trigger and react to events
  */
 import { v4 as uuid } from 'uuid'
-import type { Disposable } from '../Types/disposable'
+import type { Disposable } from '@/types/disposable'
 
 interface IEventState {
-	[event: string]: {
-		[uuid: string]: (...data: unknown[]) => void | Promise<unknown>
-	}
+	[event: string]: Record<string, (...data: unknown[]) => void | Promise<unknown>>
 }
 
 const EventState: IEventState = {}
