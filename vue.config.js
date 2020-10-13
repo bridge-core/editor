@@ -1,5 +1,8 @@
 module.exports = {
-  "transpileDependencies": [
-    "vuetify"
-  ]
+	transpileDependencies: ['vuetify'],
+	pwa: {
+		name: 'bridge',
+		appleMobileWebAppCapable: true,
+		themeColor: '#1778D2',
+	},
 }
