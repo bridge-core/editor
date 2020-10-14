@@ -40,6 +40,9 @@ export class TabSystem {
 		this._selectedTab = tab
 		Vue.nextTick(() => this._selectedTab?.onActivate())
 	}
+	save() {
+		this.selectedTab?.save()
+	}
 
 	get currentComponent() {
 		return this._selectedTab?.component ?? WelcomeScreen

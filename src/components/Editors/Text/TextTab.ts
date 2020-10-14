@@ -52,4 +52,10 @@ export class TextTab extends Tab {
 			this.isUnsaved = true
 		})
 	}
+
+	save() {
+		this.isUnsaved = false
+		if (this.editorModel)
+			this.directoryEntry.saveFileContent(this.editorModel.getValue())
+	}
 }

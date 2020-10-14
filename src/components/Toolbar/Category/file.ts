@@ -1,3 +1,4 @@
+import { mainTabSystem } from '@/components/TabSystem/Main'
 import { AppMenu } from '../create'
 // import CreateFileWindow from '../../../../windows/CreateFile'
 // import Store from '../../../../store/index'
@@ -74,7 +75,7 @@ export const FileMenu: AppMenu = {
 				ctrlKey: true,
 			},
 			onClick: () => {
-				// TabSystem.saveCurrent()
+				mainTabSystem.save()
 			},
 		},
 		{

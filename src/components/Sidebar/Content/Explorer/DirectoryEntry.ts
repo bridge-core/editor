@@ -50,14 +50,17 @@ export class DirectoryEntry {
 	getPath() {
 		return this.path
 	}
+	open() {
+		if (this.isFile) mainTabSystem.open(this)
+		else this.isFolderOpen = !this.isFolderOpen
+	}
 	getFileContent() {
 		if (!this.isFile) throw new Error(`Called getFileContent on directory`)
 
 		return this.fileSystem.readFile(this.path)
 	}
-	open() {
-		if (this.isFile) mainTabSystem.open(this)
-		else this.isFolderOpen = !this.isFolderOpen
+	saveFileContent(data: FileSystemWriteChunkType) {
+		this.fileSystem.writeFile(this.path, data)
 	}
 
 	protected sortChildren() {

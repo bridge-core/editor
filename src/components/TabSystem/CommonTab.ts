@@ -35,4 +35,6 @@ export abstract class Tab {
 	onActivate() {}
 	onDeactivate() {}
 	onDestroy() {}
+
+	abstract save(): void
 }
