@@ -20,7 +20,9 @@
 			v-if="isVisible"
 			style="padding-left: 72px; height: calc(100% - 48px); overflow: auto;"
 		>
-			<component :is="currentSidebarContent" />
+			<keep-alive>
+				<component :is="currentSidebarContent" />
+			</keep-alive>
 		</v-container>
 	</v-navigation-drawer>
 </template>

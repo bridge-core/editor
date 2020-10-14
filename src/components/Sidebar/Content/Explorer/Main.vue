@@ -41,7 +41,6 @@ export default {
 
 	async mounted() {
 		this.directoryEntry = await DirectoryEntry.create()
-		console.log(this.directoryEntry, await DirectoryEntry.create())
 	},
 	data: () => ({
 		directoryEntry: null,
@@ -52,10 +51,10 @@ export default {
 
 <style>
 .v-treeview--dense .v-treeview-node__root {
-	min-height: 20px;
+	min-height: 20px !important;
 	padding: 0;
 }
 .v-treeview-node__level {
-	width: 1em;
+	width: 0.75em !important;
 }
 </style>

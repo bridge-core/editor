@@ -38,7 +38,6 @@ export class FileSystem {
 
 			getRequest.onerror = () => this.requestFolderSelection()
 			getRequest.onsuccess = () => {
-				console.log(getRequest.result)
 				if (!getRequest.result || !getRequest.result.fileHandle)
 					this.requestFolderSelection()
 				else
@@ -58,7 +57,6 @@ export class FileSystem {
 		fileHandle: FileSystemDirectoryHandle,
 		saveFileHandle = true
 	) {
-		console.log(fileHandle, this.database)
 		if (saveFileHandle && this.database && fileHandle) {
 			const transaction = this.database.transaction(
 				['fileHandles'],
