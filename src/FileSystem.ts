@@ -122,6 +122,7 @@ export class FileSystem {
 	protected async getFileHandle(path: string[], create = false) {
 		if (path.length === 0) throw new Error(`Error: filePath is empty`)
 
+		path = [...path]
 		// This has to be a string because path.length > 0
 		const file = path.pop() as string
 		const folder = await this.getDirectoryHandle(path, { create })
@@ -165,6 +166,7 @@ export class FileSystem {
 
 	async unlink(path: string[]) {
 		if (path.length === 0) throw new Error(`Error: filePath is empty`)
+		path = [...path]
 
 		// This has to be a string because path.length > 0
 		const file = path.pop() as string

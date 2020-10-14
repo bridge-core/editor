@@ -1,4 +1,5 @@
 import './Errors'
+import './ResizeWatcher'
 import { createNotification } from '@/components/Footer/create'
 import { setupSidebar } from '@/components/Sidebar/setup'
 import { setupDefaultMenus } from '@/components/Toolbar/setupDefaults'

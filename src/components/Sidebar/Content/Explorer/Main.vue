@@ -3,7 +3,6 @@
 		v-if="directoryEntry"
 		v-model="tree"
 		:items="directoryEntry.children"
-		activatable
 		item-key="uuid"
 		expand-icon="mdi-chevron-down"
 		open-on-click
@@ -22,13 +21,25 @@
 </template>
 
 <script>
+import { mainTabSystem } from '@/components/TabSystem/Common'
 import { DirectoryEntry } from './DirectoryEntry'
+import { TextTab } from '@/components/Editors/Text/TextTab'
 
 export default {
 	name: 'FileExplorer',
 
 	async mounted() {
 		this.directoryEntry = await DirectoryEntry.create()
+		setTimeout(
+			() =>
+				mainTabSystem.add(
+					new TextTab(
+						mainTabSystem,
+						this.directoryEntry.children[4]
+					).select()
+				),
+			1000
+		)
 	},
 	data: () => ({
 		directoryEntry: null,

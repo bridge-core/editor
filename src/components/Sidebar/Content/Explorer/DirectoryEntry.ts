@@ -45,6 +45,14 @@ export class DirectoryEntry {
 	get isFile() {
 		return this._isFile
 	}
+	getPath() {
+		return this.path
+	}
+	getFileContent() {
+		if (!this.isFile) throw new Error(`Called getFileContent on directory`)
+
+		return this.fileSystem.readFile(this.path)
+	}
 
 	protected sortChildren() {
 		this.children = this.children.sort((a, b) => {

@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"core-js": "^3.6.5",
+		"lodash.debounce": "^4.0.8",
 		"monaco-editor": "^0.21.2",
 		"register-service-worker": "^1.7.1",
 		"uuid": "^8.3.1",
@@ -17,6 +18,7 @@
 		"vuetify": "^2.2.11"
 	},
 	"devDependencies": {
+		"@types/lodash.debounce": "^4.0.6",
 		"@types/node": "^14.11.8",
 		"@types/uuid": "^8.3.0",
 		"@types/wicg-file-system-access": "^2020.9.1",
