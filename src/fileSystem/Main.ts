@@ -1,7 +1,8 @@
 import { createSelectProjectFolderWindow } from '@/components/Windows/Project/SelectFolder/definition'
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
+import { IFileSystem, IGetHandleConfig, IMkdirConfig } from './Common'
 
-let fileSystem: FileSystem
+let fileSystem: IFileSystem
 export class FileSystem {
 	static database: IDBDatabase
 	static fsReadyPromiseResolves: ((fileSystem: FileSystem) => void)[] = []
@@ -95,14 +96,17 @@ export class FileSystem {
 	static get() {
 		if (fileSystem !== undefined) return fileSystem
 
-		return new Promise((resolve: (fileSystem: FileSystem) => void) => {
+		return new Promise((resolve: (fileSystem: IFileSystem) => void) => {
 			this.fsReadyPromiseResolves.push(resolve)
 		})
+	}
+	static set(fs: IFileSystem) {
+		fileSystem = fs
 	}
 
 	protected async getDirectoryHandle(
 		path: string[],
-		{ create, createOnce }: Partial<GetHandleConfig> = {}
+		{ create, createOnce }: Partial<IGetHandleConfig> = {}
 	) {
 		let current = this.baseDirectory
 
@@ -130,9 +134,9 @@ export class FileSystem {
 		return await folder.getFileHandle(file, { create })
 	}
 
-	mkdir(path: string[], { recursive }: Partial<MkdirConfig> = {}) {
-		if (recursive) return this.getDirectoryHandle(path, { create: true })
-		else return this.getDirectoryHandle(path, { createOnce: true })
+	async mkdir(path: string[], { recursive }: Partial<IMkdirConfig> = {}) {
+		if (recursive) await this.getDirectoryHandle(path, { create: true })
+		else await this.getDirectoryHandle(path, { createOnce: true })
 	}
 
 	readdir(
@@ -159,9 +163,7 @@ export class FileSystem {
 	}
 
 	readFile(path: string[]) {
-		return this.getFileHandle(path)
-			.then(fileHandle => fileHandle.getFile())
-			.then(file => file.text())
+		return this.getFileHandle(path).then(fileHandle => fileHandle.getFile())
 	}
 
 	async unlink(path: string[]) {
@@ -181,13 +183,4 @@ export class FileSystem {
 		await writable.write(data)
 		writable.close()
 	}
-}
-
-interface MkdirConfig {
-	recursive: boolean
-}
-
-interface GetHandleConfig {
-	create: boolean
-	createOnce: boolean
 }

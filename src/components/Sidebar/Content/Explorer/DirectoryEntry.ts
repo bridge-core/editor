@@ -1,5 +1,6 @@
 import { mainTabSystem } from '@/components/TabSystem/Main'
-import { FileSystem } from '@/FileSystem'
+import { IFileSystem } from '@/fileSystem/Common'
+import { FileSystem } from '@/fileSystem/Main'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 
@@ -17,7 +18,7 @@ export class DirectoryEntry {
 		)
 	}
 	constructor(
-		protected fileSystem: FileSystem,
+		protected fileSystem: IFileSystem,
 		protected parent: DirectoryEntry | null,
 		protected path: string[],
 		protected _isFile = false
@@ -57,7 +58,7 @@ export class DirectoryEntry {
 	getFileContent() {
 		if (!this.isFile) throw new Error(`Called getFileContent on directory`)
 
-		return this.fileSystem.readFile(this.path)
+		return this.fileSystem.readFile(this.path).then(file => file.text())
 	}
 	saveFileContent(data: FileSystemWriteChunkType) {
 		this.fileSystem.writeFile(this.path, data)

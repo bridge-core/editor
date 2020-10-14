@@ -5,7 +5,7 @@ import { setupSidebar } from '@/components/Sidebar/setup'
 import { setupDefaultMenus } from '@/components/Toolbar/setupDefaults'
 import { Discord as DiscordWindow } from '@/components/Windows/Discord/definition'
 import { setupKeyBindings } from './keyBindings'
-import { FileSystem } from '@/FileSystem'
+import { FileSystem } from '@/fileSystem/Main'
 
 export async function startUp() {
 	setupKeyBindings()
