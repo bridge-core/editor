@@ -6,6 +6,7 @@ import type { TabSystem } from './Main'
 
 export abstract class Tab {
 	abstract component: Vue.Component
+	isUnsaved = false
 	uuid = uuid()
 
 	constructor(

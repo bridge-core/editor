@@ -47,5 +47,9 @@ export class TextTab extends Tab {
 		if (this.editorModel) this.editorInstance?.setModel(this.editorModel)
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
+
+		this.editorModel?.onDidChangeContent(() => {
+			this.isUnsaved = true
+		})
 	}
 }

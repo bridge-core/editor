@@ -17,7 +17,7 @@
 			@click.middle.native="tab.close()"
 			@contextmenu.native="onContextMenu($event, i)"
 		>
-			<span>
+			<span :style="{ 'font-style': tab.isUnsaved ? 'italic' : null }">
 				{{ tab.name }}
 			</span>
 
