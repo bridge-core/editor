@@ -7,6 +7,7 @@ import * as monaco from 'monaco-editor'
 import { on } from '@/appCycle/EventSystem'
 import { v4 as uuid } from 'uuid'
 
+let editorInstance
 export default {
 	name: 'Monaco',
 	props: {
@@ -30,17 +31,20 @@ export default {
 			noLib: true,
 		})
 
-		this.tab.receiveEditorInstance(
-			monaco.editor.create(this.$refs.monacoContainer, {
-				theme: this.isDarkMode ? 'vs-dark' : 'vs',
-				roundedSelection: false,
-				autoIndent: 'full',
-				fontSize: this.fontSize,
-				fontFamily: this.fontFamily,
-			})
-		)
+		editorInstance = monaco.editor.create(this.$refs.monacoContainer, {
+			theme: this.isDarkMode ? 'vs-dark' : 'vs',
+			roundedSelection: false,
+			autoIndent: 'full',
+			fontSize: this.fontSize,
+			// fontFamily: this.fontFamily,
+			tabSize: 4,
+		})
+		this.tab.receiveEditorInstance(editorInstance)
 	},
 	watch: {
+		tab() {
+			this.tab.receiveEditorInstance(editorInstance)
+		},
 		isDarkMode(val) {
 			monaco.editor.setTheme(val ? 'vs-dark' : 'vs')
 		},

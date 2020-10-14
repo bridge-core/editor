@@ -1,4 +1,4 @@
-import { Tab } from '@/components/TabSystem/Common'
+import { Tab } from '@/components/TabSystem/CommonTab'
 import MonacoEditor from './Main.vue'
 import * as monaco from 'monaco-editor'
 import { Disposable } from '@/types/disposable'

@@ -9,7 +9,7 @@
 			<TabBar />
 
 			<component
-				:is="mainTabSystem.getCurrentComponent()"
+				:is="mainTabSystem.currentComponent"
 				:tab="mainTabSystem.selectedTab"
 			/>
 			<!--  -->
@@ -27,7 +27,7 @@ import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import TabBar from './components/TabSystem/TabBar.vue'
 import { startUp } from './appCycle/startUp'
-import { mainTabSystem } from '@/components/TabSystem/Common'
+import { mainTabSystem } from '@/components/TabSystem/Main'
 
 export default Vue.extend({
 	name: 'App',

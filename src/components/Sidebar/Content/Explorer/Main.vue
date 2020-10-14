@@ -1,5 +1,35 @@
 <template>
-	<v-treeview
+	<div v-if="directoryEntry">
+		<template v-for="entry in directoryEntry.children">
+			<details
+				v-if="!entry.isFile"
+				:key="entry.uuid"
+				:open="entry.isFolderOpen"
+			>
+				<summary @click.prevent="entry.open()" v-ripple>
+					<v-icon class="open pr-1" small>mdi-folder-open</v-icon>
+					<v-icon class="closed pr-1" small>mdi-folder</v-icon>
+					<span class="folder">{{ entry.name }}</span>
+				</summary>
+
+				<FileExplorer :entry="entry" />
+			</details>
+			<!--FILE-->
+			<div
+				v-else
+				:key="entry.uuid"
+				class="file"
+				@click.stop="entry.open()"
+				v-ripple
+			>
+				<v-icon small>mdi-file</v-icon>
+				{{ entry.name }}
+			</div>
+		</template>
+	</div>
+
+	<v-progress-linear v-else indeterminate />
+	<!-- <v-treeview
 		v-if="directoryEntry"
 		v-model="tree"
 		:items="directoryEntry.children"
@@ -17,29 +47,23 @@
 				mdi-file
 			</v-icon>
 		</template>
-	</v-treeview>
+	</v-treeview> -->
 </template>
 
 <script>
-import { mainTabSystem } from '@/components/TabSystem/Common'
+import { mainTabSystem } from '@/components/TabSystem/Main'
 import { DirectoryEntry } from './DirectoryEntry'
 import { TextTab } from '@/components/Editors/Text/TextTab'
 
 export default {
 	name: 'FileExplorer',
+	props: {
+		entry: Object,
+	},
 
 	async mounted() {
-		this.directoryEntry = await DirectoryEntry.create()
-		setTimeout(
-			() =>
-				mainTabSystem.add(
-					new TextTab(
-						mainTabSystem,
-						this.directoryEntry.children[4]
-					).select()
-				),
-			1000
-		)
+		if (!this.entry) this.directoryEntry = await DirectoryEntry.create()
+		else this.directoryEntry = this.entry
 	},
 	data: () => ({
 		directoryEntry: null,
@@ -48,12 +72,47 @@ export default {
 }
 </script>
 
-<style>
-.v-treeview--dense .v-treeview-node__root {
-	min-height: 20px !important;
-	padding: 0;
+<style scoped>
+div {
+	padding-left: 0.5em;
 }
-.v-treeview-node__level {
-	width: 0.75em !important;
+div.file {
+	cursor: pointer;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+}
+div.file::-webkit-scrollbar,
+span.folder::-webkit-scrollbar {
+	width: 2px;
+	height: 2px;
+}
+span.folder {
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+summary {
+	outline: none;
+	cursor: pointer;
+}
+summary::-webkit-details-marker {
+	display: none;
+}
+details[open] > summary > .open {
+	display: inline;
+}
+details > summary > .open {
+	display: none;
+}
+details[open] > summary > .closed {
+	display: none;
+}
+details > summary > .closed {
+	display: inline;
+}
+
+.file-displayer {
+	overflow-y: auto;
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
 	<div
+		v-if="mainTabSystem.tabs.length > 0"
 		:style="
 			`display: inline-block; overflow-x: scroll; white-space: nowrap; width: 100%; height: 48px;`
 		"
@@ -13,16 +14,22 @@
 				selected: tab.isSelected,
 			}"
 			@click.native="tab.select()"
-			@click.middle.native="closeTab(i)"
+			@click.middle.native="tab.close()"
 			@contextmenu.native="onContextMenu($event, i)"
 		>
-			{{ tab.name }}
+			<span>
+				{{ tab.name }}
+			</span>
+
+			<v-btn @click.stop="tab.close()" text icon small>
+				<v-icon small>mdi-close</v-icon>
+			</v-btn>
 		</v-tab>
 	</div>
 </template>
 
 <script>
-import { mainTabSystem } from './Common'
+import { mainTabSystem } from './Main'
 
 export default {
 	data: () => ({

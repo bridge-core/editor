@@ -1,3 +1,4 @@
+import { mainTabSystem } from '@/components/TabSystem/Main'
 import { FileSystem } from '@/FileSystem'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
@@ -5,6 +6,7 @@ import Vue from 'vue'
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
 	public uuid = uuid()
+	public isFolderOpen = false
 
 	static async create() {
 		return Vue.observable(
@@ -52,6 +54,10 @@ export class DirectoryEntry {
 		if (!this.isFile) throw new Error(`Called getFileContent on directory`)
 
 		return this.fileSystem.readFile(this.path)
+	}
+	open() {
+		if (this.isFile) mainTabSystem.open(this)
+		else this.isFolderOpen = !this.isFolderOpen
 	}
 
 	protected sortChildren() {
