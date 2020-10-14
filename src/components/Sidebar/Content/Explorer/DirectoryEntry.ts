@@ -2,19 +2,17 @@ import { FileSystem } from '@/FileSystem'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 
-let directoryEntry: DirectoryEntry
-
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
 	public uuid = uuid()
 
 	static async create() {
-		if (directoryEntry === undefined)
-			directoryEntry = Vue.observable(
-				new DirectoryEntry(await FileSystem.get(), null, [])
-			)
-
-		return directoryEntry
+		return Vue.observable(
+			new DirectoryEntry(await FileSystem.get(), null, [
+				'projects',
+				'test',
+			])
+		)
 	}
 	constructor(
 		protected fileSystem: FileSystem,
@@ -36,7 +34,7 @@ export class DirectoryEntry {
 						)
 					)
 				)
-				this.updateUUID()
+				this.sortChildren()
 			})
 		}
 	}
@@ -48,6 +46,15 @@ export class DirectoryEntry {
 		return this._isFile
 	}
 
+	protected sortChildren() {
+		this.children = this.children.sort((a, b) => {
+			if (a.isFile && !b.isFile) return 1
+			if (!a.isFile && b.isFile) return -1
+			if (a.name > b.name) return 1
+			if (a.name < b.name) return -1
+			return 0
+		})
+	}
 	updateUUID() {
 		this.uuid = uuid()
 	}

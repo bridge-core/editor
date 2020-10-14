@@ -7,8 +7,13 @@ export class FileSystem {
 	static fsReadyPromiseResolves: ((fileSystem: FileSystem) => void)[] = []
 
 	constructor(protected baseDirectory: FileSystemDirectoryHandle) {
-		this.mkdir(['projects'])
-		this.mkdir(['plugins'])
+		Promise.all([
+			this.mkdir(['projects']),
+			this.mkdir(['plugins']),
+			this.mkdir(['data']),
+		]).then(() =>
+			FileSystem.fsReadyPromiseResolves.forEach(resolve => resolve(this))
+		)
 	}
 
 	static create() {
@@ -81,9 +86,6 @@ export class FileSystem {
 					(await fileHandle.requestPermission(opts)) === 'granted'
 				) {
 					fileSystem = new FileSystem(fileHandle)
-					this.fsReadyPromiseResolves.forEach(resolve =>
-						resolve(fileSystem)
-					)
 				} else {
 					this.verifyPermissions(fileHandle)
 				}

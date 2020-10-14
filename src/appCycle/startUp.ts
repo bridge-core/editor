@@ -11,7 +11,7 @@ export async function startUp() {
 	setupDefaultMenus()
 	setupSidebar()
 
-	if (process.env.NODE_ENV === 'development') {
+	if (process.env.NODE_ENV !== 'development') {
 		const discordMsg = createNotification({
 			icon: 'mdi-discord',
 			message: 'Discord Server',
@@ -24,7 +24,7 @@ export async function startUp() {
 		})
 	}
 
-	if (process.env.NODE_ENV === 'development') {
+	if (process.env.NODE_ENV !== 'development') {
 		const gettingStarted = createNotification({
 			icon: 'mdi-help-circle-outline',
 			message: 'Getting Started',

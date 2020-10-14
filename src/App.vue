@@ -41,6 +41,7 @@ export default Vue.extend({
 </script>
 
 <style>
+/** Reset vuetify's scrolling */
 html {
 	overflow: hidden;
 	overscroll-behavior: contain;
@@ -49,6 +50,7 @@ body {
 	overflow: unset;
 }
 
+/** Scrollbar */
 *::-webkit-scrollbar {
 	width: 6px;
 	height: 6px;
@@ -59,5 +61,14 @@ body {
 *::-webkit-scrollbar-thumb {
 	background-color: rgba(0, 0, 0, 0.35);
 	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+/* No text selection */
+:root {
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 </style>
