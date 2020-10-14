@@ -1,5 +1,6 @@
 import { createSidebar, SidebarInstance } from './Common/create'
 import Documentation from './Content/Documentation.vue'
+import FileExplorer from './Content/Explorer/Main.vue'
 
 let defaultSidebar: SidebarInstance
 export function getDefaultSidebar() {
@@ -11,7 +12,7 @@ export function setupSidebar() {
 		id: 'bpExplorer',
 		displayName: 'Explorer',
 		icon: 'mdi-folder',
-		component: 'BehaviorPack',
+		component: FileExplorer,
 	}).select()
 
 	createSidebar({

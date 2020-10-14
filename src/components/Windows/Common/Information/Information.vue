@@ -8,14 +8,17 @@
 		:width="440"
 		:height="120"
 		:hasCloseButton="false"
-		:isPersistent="callback === undefined"
+		:isPersistent="typeof this.callback === 'function'"
 	>
 		<template #default>
 			<p class="mt-2">{{ content }}</p>
 		</template>
 		<template #actions>
 			<v-spacer />
-			<v-btn color="primary" @click="close"><span>Okay</span></v-btn>
+			<v-btn color="primary" @click="close">
+				<v-icon>mdi-check</v-icon>
+				<span>Okay</span>
+			</v-btn>
 		</template>
 	</BaseWindow>
 </template>

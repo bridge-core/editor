@@ -13,7 +13,8 @@
 	>
 		<template #default>
 			<p>
-				Select your bridge. save folder in order to use the application.
+				Select where to save projects or choose an existing projects
+				directory.
 			</p>
 		</template>
 
@@ -46,7 +47,9 @@ export default {
 		},
 		async selectFolder() {
 			try {
-				this.callback(await window.showDirectoryPicker())
+				this.callback(
+					await window.showDirectoryPicker({ mode: 'readwrite' })
+				)
 				this.close()
 			} catch (e) {
 				console.error(e)

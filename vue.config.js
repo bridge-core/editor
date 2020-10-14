@@ -7,6 +7,9 @@ module.exports = {
 		name: 'bridge-lite',
 		appleMobileWebAppCapable: true,
 		themeColor: '#1778D2',
+		manifestOptions: {
+			// display_modifiers: ['window-controls-overlay'],
+		},
 	},
 	configureWebpack: {
 		plugins: [new MonacoWebpackPlugin()],

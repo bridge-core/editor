@@ -4,7 +4,12 @@ import { createInformationWindow } from '@/components/Windows/Common/CommonDefin
 let fileSystem: FileSystem
 export class FileSystem {
 	static database: IDBDatabase
-	constructor(protected baseDirectory: FileSystemDirectoryHandle) {}
+	static fsReadyPromiseResolves: ((fileSystem: FileSystem) => void)[] = []
+
+	constructor(protected baseDirectory: FileSystemDirectoryHandle) {
+		this.mkdir(['projects'])
+		this.mkdir(['plugins'])
+	}
 
 	static create() {
 		const request = indexedDB.open('bridgeFSData', 1)
@@ -69,8 +74,8 @@ export class FileSystem {
 		const opts = { writable: true, mode: 'readwrite' } as const
 
 		createInformationWindow(
-			'FS Access',
-			'bridge. needs access to your file system in order to work correctly.',
+			'Project Folder',
+			'bridge. needs access to its project folder in order to work correctly.',
 			async () => {
 				// Check if we already have permission && request permission if not
 				if (
@@ -78,6 +83,9 @@ export class FileSystem {
 					(await fileHandle.requestPermission(opts)) === 'granted'
 				) {
 					fileSystem = new FileSystem(fileHandle)
+					this.fsReadyPromiseResolves.forEach(resolve =>
+						resolve(fileSystem)
+					)
 				} else {
 					this.verifyPermissions(fileHandle)
 				}
@@ -85,7 +93,11 @@ export class FileSystem {
 		)
 	}
 	static get() {
-		return fileSystem
+		if (fileSystem !== undefined) return fileSystem
+
+		return new Promise((resolve: (fileSystem: FileSystem) => void) => {
+			this.fsReadyPromiseResolves.push(resolve)
+		})
 	}
 
 	protected async getDirectoryHandle(
@@ -122,8 +134,27 @@ export class FileSystem {
 		else return this.getDirectoryHandle(path, { createOnce: true })
 	}
 
-	readdir() {
-		//
+	readdir(
+		path: string[],
+		{ withFileTypes }: { withFileTypes: true }
+	): Promise<FileSystemHandle[]>
+	readdir(
+		path: string[],
+		{ withFileTypes }: { withFileTypes?: false }
+	): Promise<string[]>
+	async readdir(
+		path: string[],
+		{ withFileTypes }: { withFileTypes?: true | false } = {}
+	) {
+		const dirHandle = await this.getDirectoryHandle(path)
+		const files: (string | FileSystemHandle)[] = []
+
+		for await (const handle of dirHandle.values()) {
+			if (withFileTypes) files.push(handle)
+			else files.push(handle.name)
+		}
+
+		return files
 	}
 
 	readFile(path: string[]) {
