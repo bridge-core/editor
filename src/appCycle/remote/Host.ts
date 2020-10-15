@@ -36,7 +36,7 @@ export async function handleTabSystemRequest(
 			response: mainTabSystem.tabs.map(tab => tab.getPath()),
 		})
 	} else if (action === 'openFile') {
-		mainTabSystem.open(args[0], false)
+		mainTabSystem.open(args[0], mainTabSystem.tabs.length === 0, false)
 	} else if (action === 'closeTab') {
 		mainTabSystem.closeByPath(args[0], false)
 	}
