@@ -9,8 +9,13 @@ import { IFileSystem } from '@/fileSystem/Common'
 export abstract class Tab {
 	protected fileSystem: IFileSystem | Promise<IFileSystem>
 	abstract component: Vue.Component
-	isUnsaved = false
 	uuid = uuid()
+	hasRemoteChange = false
+	isUnsaved = false
+
+	setIsUnsaved(val: boolean, changedData?: unknown) {
+		this.isUnsaved = val
+	}
 
 	constructor(
 		protected parent: TabSystem,

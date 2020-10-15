@@ -67,8 +67,12 @@ export class TabSystem {
 		this._selectedTab = tab
 		Vue.nextTick(() => this._selectedTab?.onActivate())
 	}
-	save() {
-		this.selectedTab?.save()
+	save(tab = this.selectedTab) {
+		tab?.save()
+	}
+
+	getTab(path: string[]) {
+		return this.tabs.find(tab => tab.isFor(path))
 	}
 
 	get currentComponent() {

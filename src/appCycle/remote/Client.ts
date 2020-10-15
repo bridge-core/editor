@@ -9,11 +9,19 @@ on('bridge:remoteAction', (data: any) => {
 	}
 })
 
+const ownBroadcasts = new Set<string>()
 export function onReceiveData(data: any) {
+	if (data.isBroadcast && ownBroadcasts.has(data.id)) {
+		ownBroadcasts.delete(data.id)
+		return
+	}
+
 	if (data.response) {
 		trigger(`bridge:remoteResponse(${data.id})`, data)
 	} else if (data.module === 'tabSystem') {
 		handleTabSystemRequest(data.action, data.id, data.args)
+	} else if (data.module === 'textEditorTab') {
+		trigger(`bridge:remote.textEditorTab.${data.action}`, ...data.args)
 	}
 }
 
@@ -43,10 +51,14 @@ export function dispatchEvent(
 	event: string,
 	...args: unknown[]
 ) {
+	const id = uuid()
+	ownBroadcasts.add(id)
+
 	sendMessage({
+		isBroadcast: true,
 		module,
 		action: event,
 		args,
-		id: uuid(),
+		id: id,
 	})
 }
