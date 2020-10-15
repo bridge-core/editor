@@ -11,7 +11,7 @@ import { AppMenu } from '../create'
 // import FileSystem from '../../../FileSystem'
 // import { ImportFileMap } from '../../../plugins/scripts/modules/importFiles'
 // import { createInformationWindow } from '../../Windows/Common/CommonDefinitions'
-// import { clearAllNotifications } from '../../Footer/create'
+import { clearAllNotifications } from '../../Footer/create'
 
 export const FileMenu: AppMenu = {
 	displayName: 'File',
@@ -121,7 +121,7 @@ export const FileMenu: AppMenu = {
 				ctrlKey: true,
 			},
 			onClick: () => {
-				// clearAllNotifications()
+				clearAllNotifications()
 			},
 		},
 		{

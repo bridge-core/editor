@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h2 class="text-md-body-1">Minecraft</h2>
+		<h2 class="text-md-body-1 ml-3">Minecraft</h2>
 
 		<template v-for="(doc, i) in docList">
 			<v-btn
@@ -18,7 +18,7 @@
 			<v-divider v-if="i + 1 < docList.length" :key="`mc.divider.${i}`" />
 		</template>
 
-		<h2 class="text-md-body-1 mt-6">bridge.</h2>
+		<h2 class="text-md-body-1 mt-6 ml-3">bridge.</h2>
 		<template v-for="([name, link], i) in bridgeDocs">
 			<v-btn
 				:key="`bridge.btn.${i}`"
