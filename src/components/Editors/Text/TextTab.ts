@@ -17,13 +17,17 @@ export class TextTab extends Tab {
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
 	disposables: Disposable[] = []
 	editorContentManager: EditorContentManager | undefined
+	remoteEdits: monaco.editor.IModelContentChange[] = []
 
-	setIsUnsaved(val: boolean, changedData?: string) {
+	setIsUnsaved(
+		val: boolean,
+		changedData?: monaco.editor.IModelContentChange[]
+	) {
 		super.setIsUnsaved(val)
 
 		if (this.hasRemoteChange && !this.isSelected && changedData) {
-			this.editorModel?.setValue(changedData)
-			this.hasRemoteChange = false
+			this.remoteEdits.push(...changedData)
+			this.hasRemoteChange = true
 		}
 	}
 
@@ -126,27 +130,42 @@ export class TextTab extends Tab {
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
 
-		this.editorModel?.onDidChangeContent(() => {
-			this.isUnsaved = true
-			dispatchEvent(
-				'tabSystem',
-				'setUnsaved',
-				this.path,
-				true,
-				this.editorModel?.getValue()
-			)
+		this.remoteEdits.forEach(edit => {
+			const { rangeOffset, rangeLength, text } = edit
+			if (text.length > 0 && rangeLength === 0) {
+				this.editorContentManager?.insert(rangeOffset, text)
+			} else if (text.length > 0 && rangeLength > 0) {
+				this.editorContentManager?.replace(
+					rangeOffset,
+					rangeLength,
+					text
+				)
+			} else if (text.length === 0 && rangeLength > 0) {
+				this.editorContentManager?.delete(rangeOffset, rangeLength)
+			} else {
+				throw new Error('Unexpected change: ' + JSON.stringify(edit))
+			}
 		})
+		this.remoteEdits = []
+
+		this.disposables.push(
+			this.editorModel?.onDidChangeContent(event => {
+				this.isUnsaved = true
+
+				dispatchEvent(
+					'tabSystem',
+					'setUnsaved',
+					this.path,
+					true,
+					event.changes
+				)
+			}) ?? { dispose() {} }
+		)
 	}
 
 	async save() {
 		this.isUnsaved = false
-		dispatchEvent(
-			'tabSystem',
-			'setUnsaved',
-			this.path,
-			false,
-			this.editorModel?.getValue()
-		)
+		dispatchEvent('tabSystem', 'setUnsaved', this.path, false)
 		if (this.editorModel) {
 			await (await this.fileSystem).writeFile(
 				this.path,
