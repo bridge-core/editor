@@ -2,20 +2,29 @@ import type Vue from 'vue'
 import { DirectoryEntry } from '@/components/Sidebar/Content/Explorer/DirectoryEntry'
 import { v4 as uuid } from 'uuid'
 import type { TabSystem } from './Main'
+import { FileSystem } from '@/fileSystem/Main'
+import { IFileSystem } from '@/fileSystem/Common'
 
 
 export abstract class Tab {
+	protected fileSystem: IFileSystem | Promise<IFileSystem>
 	abstract component: Vue.Component
 	isUnsaved = false
 	uuid = uuid()
 
 	constructor(
 		protected parent: TabSystem,
-		protected directoryEntry: DirectoryEntry
-	) {}
+		protected path: string[]
+	) {
+		this.fileSystem = FileSystem.get()
+		if(this.fileSystem instanceof Promise) this.fileSystem.then(fileSystem => this.fileSystem = fileSystem)
+	}
 
 	get name() {
-		return this.directoryEntry.name
+		return this.path[this.path.length - 1]
+	}
+	getPath() {
+		return [...this.path]
 	}
 
 	get isSelected() {
@@ -28,8 +37,14 @@ export abstract class Tab {
 	close() {
 		this.parent.close(this)
 	}
-	isFor(directoryEntry: DirectoryEntry) {
-		return directoryEntry === this.directoryEntry
+	isFor(path: string[]) {
+		if(path.length !== this.path.length) return false
+		let i = 0
+		while(i < this.path.length) {
+			if(path[i] !== this.path[i]) return false
+			i++
+		}
+		return true
 	}
 
 	onActivate() {}

@@ -6,10 +6,17 @@ import { setupDefaultMenus } from '@/components/Toolbar/setupDefaults'
 import { Discord as DiscordWindow } from '@/components/Windows/Discord/definition'
 import { setupKeyBindings } from './keyBindings'
 import { FileSystem } from '@/fileSystem/Main'
-import { connectToPeer, peerState, sendMessage, startHosting } from './Peer'
+import {
+	connectToPeer,
+	peerState,
+	sendMessage,
+	startHosting,
+} from './remote/Peer'
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
 import { RemoteFileSystem } from '@/fileSystem/Remote'
-import { trigger } from './EventSystem'
+import { onReceiveData } from './remote/Client'
+import { handleRequest } from './remote/Host'
+import { mainTabSystem } from '@/components/TabSystem/Main'
 
 export async function startUp() {
 	setupKeyBindings()
@@ -51,31 +58,13 @@ export async function startUp() {
 	console.log(joinPeer)
 	if (joinPeer) {
 		peerState.onPeerReady = async () => {
-			await connectToPeer(joinPeer, data => {
-				trigger(`bridge:remoteResponse(${data.id})`, data)
-			})
+			await connectToPeer(joinPeer, onReceiveData)
 			RemoteFileSystem.create()
+			mainTabSystem.onJoinHost()
 		}
 	} else {
 		peerState.onPeerReady = () => {
-			startHosting(async ({ action, args, id }: any) => {
-				if (action.startsWith('fs.')) {
-					let response = await ((await FileSystem.get()) as any)[
-						action.replace('fs.', '')
-					]?.(...args)
-
-					if (action === 'fs.readdir' && args[1].withFileTypes)
-						response = response.map((handle: any) => ({
-							name: handle.name,
-							kind: handle.kind,
-						}))
-
-					sendMessage({
-						id,
-						response,
-					})
-				}
-			})
+			startHosting(handleRequest)
 		}
 		FileSystem.create()
 	}

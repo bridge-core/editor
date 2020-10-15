@@ -52,7 +52,7 @@ export class DirectoryEntry {
 		return this.path
 	}
 	open() {
-		if (this.isFile) mainTabSystem.open(this)
+		if (this.isFile) mainTabSystem.open(this.path)
 		else this.isFolderOpen = !this.isFolderOpen
 	}
 	getFileContent() {

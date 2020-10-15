@@ -43,8 +43,6 @@ export default {
 	},
 
 	async mounted() {
-		if (!this.entry)
-			console.log(this.directoryEntry, await DirectoryEntry.create())
 		if (!this.entry) this.directoryEntry = await DirectoryEntry.create()
 		else this.directoryEntry = this.entry
 	},

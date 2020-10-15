@@ -1,6 +1,6 @@
 import Peer, { DataConnection } from 'peerjs'
 import Vue from 'vue'
-import { on } from './EventSystem'
+import './Host.ts'
 
 interface IPeerState {
 	isHost: boolean
@@ -28,7 +28,6 @@ export async function connectToPeer(id: string, callback: (data: any) => void) {
 	console.log('Connecting to peer: ' + id)
 	peerState.isHost = false
 	const connection = peer.connect(id)
-	console.log(connection)
 	await setupConnection(connection, callback)
 	console.log('Connection established.')
 	connections.add(connection)
@@ -48,7 +47,6 @@ export function setupConnection(
 	connections.add(connection)
 
 	const promise = new Promise<void>((resolve, reject) => {
-		console.log('PROMISE')
 		connection.on('error', reject)
 		connection.on('close', () => closeConnection(connection))
 		connection.on('open', () => {
@@ -79,9 +77,3 @@ export function sendMessage(data: any) {
 		else updateBuffer.set(connection, [data])
 	})
 }
-
-on('bridge:remoteAction', (data: any) => {
-	if (!peerState.isHost) {
-		sendMessage(data)
-	}
-})

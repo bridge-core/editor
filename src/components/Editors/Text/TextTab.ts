@@ -21,16 +21,17 @@ export class TextTab extends Tab {
 		this.editorInstance.layout()
 	}
 
-	onActivate() {
+	async onActivate() {
 		if (this.editorModel === undefined) {
-			this.directoryEntry.getFileContent().then(fileContent => {
-				this.editorModel = monaco.editor.createModel(
-					fileContent,
-					undefined,
-					monaco.Uri.file(this.directoryEntry.getPath().join('/'))
-				)
-				this.loadEditor()
-			})
+			const file = await (await this.fileSystem).readFile(this.path)
+			const fileContent = await file.text()
+
+			this.editorModel = monaco.editor.createModel(
+				fileContent,
+				undefined,
+				monaco.Uri.file(this.path.join('/'))
+			)
+			this.loadEditor()
 		} else {
 			this.loadEditor()
 		}
@@ -53,9 +54,13 @@ export class TextTab extends Tab {
 		})
 	}
 
-	save() {
+	async save() {
 		this.isUnsaved = false
-		if (this.editorModel)
-			this.directoryEntry.saveFileContent(this.editorModel.getValue())
+		if (this.editorModel) {
+			await (await this.fileSystem).writeFile(
+				this.path,
+				this.editorModel.getValue()
+			)
+		}
 	}
 }
