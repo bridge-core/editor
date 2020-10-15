@@ -29,25 +29,6 @@
 	</div>
 
 	<v-progress-linear v-else indeterminate />
-	<!-- <v-treeview
-		v-if="directoryEntry"
-		v-model="tree"
-		:items="directoryEntry.children"
-		item-key="uuid"
-		expand-icon="mdi-chevron-down"
-		open-on-click
-		transition
-		dense
-	>
-		<template v-slot:prepend="{ item, open }">
-			<v-icon small v-if="!item.isFile">
-				{{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-			</v-icon>
-			<v-icon small v-else>
-				mdi-file
-			</v-icon>
-		</template>
-	</v-treeview> -->
 </template>
 
 <script>
@@ -62,6 +43,8 @@ export default {
 	},
 
 	async mounted() {
+		if (!this.entry)
+			console.log(this.directoryEntry, await DirectoryEntry.create())
 		if (!this.entry) this.directoryEntry = await DirectoryEntry.create()
 		else this.directoryEntry = this.entry
 	},

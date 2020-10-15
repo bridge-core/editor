@@ -58,7 +58,13 @@ export class DirectoryEntry {
 	getFileContent() {
 		if (!this.isFile) throw new Error(`Called getFileContent on directory`)
 
-		return this.fileSystem.readFile(this.path).then(file => file.text())
+		return this.fileSystem.readFile(this.path).then(file => {
+			if (file instanceof ArrayBuffer) {
+				const dec = new TextDecoder('utf-8')
+				return dec.decode(file)
+			}
+			return file.text()
+		})
 	}
 	saveFileContent(data: FileSystemWriteChunkType) {
 		this.fileSystem.writeFile(this.path, data)

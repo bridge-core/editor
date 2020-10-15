@@ -16,14 +16,14 @@
 			{{ currentSidebar.displayName }}
 		</h1>
 		<v-divider />
-		<v-container
+		<div
 			v-if="isVisible"
-			style="padding-left: 72px; height: calc(100% - 48px); overflow: auto;"
+			style="padding: 4px; padding-left: 64px; height: calc(100% - 48px); overflow: auto;"
 		>
 			<keep-alive>
 				<component :is="currentSidebarContent" />
 			</keep-alive>
-		</v-container>
+		</div>
 	</v-navigation-drawer>
 </template>
 

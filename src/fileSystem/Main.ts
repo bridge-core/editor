@@ -5,16 +5,17 @@ import { IFileSystem, IGetHandleConfig, IMkdirConfig } from './Common'
 let fileSystem: IFileSystem
 export class FileSystem {
 	static database: IDBDatabase
-	static fsReadyPromiseResolves: ((fileSystem: FileSystem) => void)[] = []
+	static fsReadyPromiseResolves: ((fileSystem: IFileSystem) => void)[] = []
 
 	constructor(protected baseDirectory: FileSystemDirectoryHandle) {
 		Promise.all([
 			this.mkdir(['projects']),
 			this.mkdir(['plugins']),
 			this.mkdir(['data']),
-		]).then(() =>
+		]).then(() => {
 			FileSystem.fsReadyPromiseResolves.forEach(resolve => resolve(this))
-		)
+			FileSystem.database.close()
+		})
 	}
 
 	static create() {
