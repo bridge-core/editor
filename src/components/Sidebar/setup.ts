@@ -1,6 +1,7 @@
 import { createSidebar, SidebarInstance } from './Common/create'
 import Documentation from './Content/Documentation.vue'
 import FileExplorer from './Content/Explorer/Main.vue'
+import Extensions from './Content/Extensions/Main.vue'
 
 let defaultSidebar: SidebarInstance
 export function getDefaultSidebar() {
@@ -37,6 +38,6 @@ export function setupSidebar() {
 		id: 'extensions',
 		displayName: 'Extensions',
 		icon: 'mdi-puzzle',
-		component: 'Extensions',
+		component: Extensions,
 	})
 }
