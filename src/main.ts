@@ -3,6 +3,7 @@ import App from './App.vue'
 //@ts-expect-error
 import Vuetify from 'vuetify/lib'
 import './registerServiceWorker'
+import en from './lang/en'
 
 Vue.config.productionTip = false
 
@@ -46,3 +47,10 @@ new Vue({
 	}),
 	render: h => h(App),
 }).$mount('#app')
+
+export default new Vuetify({
+	lang: {
+		locales: { en },
+		current: 'en'
+	}
+})
