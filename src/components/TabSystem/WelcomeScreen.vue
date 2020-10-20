@@ -4,40 +4,40 @@
 		@dblclick="createFile"
 		column
 	>
-		<h1>Welcome to bridge.</h1>
+		<h1>{{ $vuetify.lang.t('$vuetify.welcome.title') }}</h1>
 		<div>
 			<br />
-			<p>Creating Minecraft addons has never been more convenient!</p>
+			<p>{{ $vuetify.lang.t('$vuetify.welcome.subtitle') }}</p>
 			<ul>
 				<li>
 					<v-icon color="accent" small>mdi-auto-fix</v-icon>
-					<span>Syntax highlighting</span>
+					<span>{{ $vuetify.lang.t('$vuetify.welcome.syntaxHighlighting') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small
 						>mdi-format-list-bulleted</v-icon
 					>
-					<span>Rich auto-completions</span>
+					<span>{{ $vuetify.lang.t('$vuetify.welcome.richAutoCompletions') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small>mdi-folder-multiple</v-icon>
-					<span>Easy project management</span>
+					<span>{{ $vuetify.lang.t('$vuetify.welcome.projectManagement') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small>mdi-code-json</v-icon>
-					<span>Custom addon syntax</span>
+					<span>{{ $vuetify.lang.t('$vuetify.welcome.customSyntax') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small>mdi-package-variant</v-icon>
-					<span>Custom components</span>
+					<span>{{ $vuetify.lang.t('$vuetify.welcome.customComponents') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small>mdi-console-line</v-icon>
-					<span>Custom commands</span>
+					<span>{{ $vuetify.lang.t('$vuetify.welcome.customCommands') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small>mdi-nodejs</v-icon>
-					<span>Customizable through plugins</span>
+					<span>{{ $vuetify.lang.t('$vuetify.welcome.plugins') }}</span>
 				</li>
 			</ul>
 		</div>

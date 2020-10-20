@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		windowTitle="Confirmation"
+		:windowTitle="$vuetify.lang.t('$vuetify.windows.common.confirm.title')"
 		:isVisible="isVisible"
 		:isPersistent="true"
 		:hasMaximizeButton="false"

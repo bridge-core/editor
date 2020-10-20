@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		windowTitle="Select Folder"
+		:windowTitle="$vuetify.lang.t('$vuetify.windows.selectFolder.title')"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:hasCloseButton="false"
@@ -13,8 +13,7 @@
 	>
 		<template #default>
 			<p>
-				Select where to save projects or choose an existing projects
-				directory.
+				{{ $vuetify.lang.t('$vuetify.windows.selectFolder.content') }}
 			</p>
 		</template>
 
@@ -22,7 +21,7 @@
 			<v-spacer />
 			<v-btn color="primary" @click="selectFolder">
 				<v-icon class="pr-2">mdi-folder-outline</v-icon>
-				<span>Select!</span>
+				<span>{{ $vuetify.lang.t('$vuetify.windows.selectFolder.select') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>

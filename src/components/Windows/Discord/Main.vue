@@ -10,17 +10,17 @@
 		@closeWindow="close"
 	>
 		<template #default>
-			<p>Join the official bridge. Discord server!</p>
+			<p>{{ $vuetify.lang.t('$vuetify.windows.discord.content') }}</p>
 		</template>
 
 		<template #actions>
 			<v-spacer />
 			<v-btn @click="close">
-				<span>Later</span>
+				<span>{{ $vuetify.lang.t('$vuetify.windows.discord.later') }}</span>
 			</v-btn>
 			<v-btn color="#7289DA" @click="openDiscord">
 				<v-icon color="white">mdi-discord</v-icon>
-				<span class="white--text">Join</span>
+				<span class="white--text">{{ $vuetify.lang.t('$vuetify.windows.discord.join') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>

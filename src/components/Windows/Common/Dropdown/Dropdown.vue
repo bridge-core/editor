@@ -26,7 +26,7 @@
 				@click="onConfirm"
 				:disabled="selectedValue === ''"
 			>
-				<span>Confirm</span>
+				<span>{{ $vuetify.lang.t('$vuetify.windows.common.dropdown.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>

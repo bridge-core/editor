@@ -3,7 +3,7 @@ import App from './App.vue'
 //@ts-expect-error
 import Vuetify from 'vuetify/lib'
 import './registerServiceWorker'
-import en from './lang/en'
+import en from '@/Locales/en'
 
 Vue.config.productionTip = false
 
