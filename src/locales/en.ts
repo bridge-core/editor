@@ -45,6 +45,7 @@ export default {
 			undo: 'Undo',
 			redo: 'Redo',
 			copy: 'Copy',
+			cut: 'Cut',
 			paste: 'Paste',
 			alternativePaste: 'Alternative Paste',
 		},
@@ -136,5 +137,9 @@ export default {
 				'Select where to save projects or choose an existing projects directory.',
 			select: 'Select!',
 		},
+		projectFolder: {
+			title: 'Project Folder',
+			content: 'bridge. needs access to its project folder in order to work correctly.'
+		}
 	},
 }

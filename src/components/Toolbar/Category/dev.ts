@@ -9,11 +9,11 @@ import { AppMenu } from '../create'
 // import { loadDependency } from '../../../AppCycle/fetchDeps'
 
 export const DevMenu: AppMenu = {
-	displayName: 'Development',
+	displayName: 'toolbar.dev.name',
 	displayIcon: 'mdi-console-line',
 	elements: [
 		{
-			displayName: 'Reload Browser Window',
+			displayName: 'toolbar.dev.reloadBrowserWindow',
 			displayIcon: 'mdi-reload',
 			keyBinding: {
 				key: 'r',
@@ -24,7 +24,7 @@ export const DevMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Reload Editor Data',
+			displayName: 'toolbar.dev.reloadEditorData',
 			displayIcon: 'mdi-reload',
 			keyBinding: {
 				key: 'r',
@@ -44,7 +44,7 @@ export const DevMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Developer Tools',
+			displayName: 'toolbar.dev.developerTools',
 			displayIcon: 'mdi-console',
 			keyBinding: {
 				key: 'i',

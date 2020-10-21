@@ -1,6 +1,7 @@
 import { createSelectProjectFolderWindow } from '@/components/Windows/Project/SelectFolder/definition'
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
 import { IFileSystem, IGetHandleConfig, IMkdirConfig } from './Common'
+import { translate } from '@/utils/locales'
 
 let fileSystem: IFileSystem
 export class FileSystem {
@@ -79,8 +80,8 @@ export class FileSystem {
 		const opts = { writable: true, mode: 'readwrite' } as const
 
 		createInformationWindow(
-			'Project Folder',
-			'bridge. needs access to its project folder in order to work correctly.',
+			translate('windows.projectFolder.title'),
+			translate('windows.projectFolder.content'),
 			async () => {
 				// Check if we already have permission && request permission if not
 				if (

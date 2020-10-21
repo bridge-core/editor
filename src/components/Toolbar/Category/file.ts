@@ -14,11 +14,11 @@ import { AppMenu } from '../create'
 import { clearAllNotifications } from '../../Footer/create'
 
 export const FileMenu: AppMenu = {
-	displayName: 'File',
+	displayName: 'toolbar.file.name',
 	displayIcon: 'mdi-file-outline',
 	elements: [
 		{
-			displayName: 'New File',
+			displayName: 'toolbar.file.newFile',
 			displayIcon: 'mdi-file-plus',
 			keyBinding: {
 				key: 'n',
@@ -35,11 +35,11 @@ export const FileMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Import',
+			displayName: 'toolbar.file.import.name',
 			displayIcon: 'mdi-import',
 			elements: () => [
 				{
-					displayName: 'Open File',
+					displayName: 'toolbar.file.import.openFile',
 					displayIcon: 'mdi-file-upload-outline',
 					keyBinding: {
 						key: 'o',
@@ -58,7 +58,7 @@ export const FileMenu: AppMenu = {
 					},
 				},
 				{
-					displayName: 'Import OBJ Model',
+					displayName: 'toolbar.file.import.importOBJ',
 					displayIcon: 'mdi-video-3d',
 					onClick: () => {
 						// ImportOBJ.open()
@@ -68,7 +68,7 @@ export const FileMenu: AppMenu = {
 			],
 		},
 		{
-			displayName: 'Save File',
+			displayName: 'toolbar.file.saveFile',
 			displayIcon: 'mdi-file-download-outline',
 			keyBinding: {
 				key: 's',
@@ -79,7 +79,7 @@ export const FileMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Save As...',
+			displayName: 'toolbar.file.saveAs',
 			displayIcon: 'mdi-file-export-outline',
 			keyBinding: {
 				key: 's',
@@ -91,7 +91,7 @@ export const FileMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Save All',
+			displayName: 'toolbar.file.saveAll',
 			displayIcon: 'mdi-file-sync-outline',
 			keyBinding: {
 				key: 's',
@@ -103,7 +103,7 @@ export const FileMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Close Editor',
+			displayName: 'toolbar.file.closeEditor',
 			displayIcon: 'mdi-close',
 			keyBinding: {
 				key: 'w',
@@ -114,7 +114,7 @@ export const FileMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Clear all notifications',
+			displayName: 'toolbar.file.clearAllNotifications',
 			displayIcon: 'mdi-cancel',
 			keyBinding: {
 				key: 'b',
@@ -125,18 +125,18 @@ export const FileMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Preferences',
+			displayName: 'toolbar.file.preferences.name',
 			displayIcon: 'mdi-tune',
 			elements: [
 				{
-					displayName: 'Settings',
+					displayName: 'toolbar.file.preferences.settings',
 					displayIcon: 'mdi-cog',
 					onClick: () => {
 						// new SettingsWindow()
 					},
 				},
 				{
-					displayName: 'Extensions',
+					displayName: 'toolbar.file.preferences.extensions',
 					displayIcon: 'mdi-puzzle',
 					onClick: () => {
 						// new ExtensionBrowser()

@@ -137,5 +137,9 @@ export default {
 				'Erstelle einen neuen Ordner, indem wir Projekte speichern sollen oder wähle einen existierenden Projekte-Ordner.',
 			select: 'Auswählen!',
 		},
+		projectFolder: {
+			title: '',
+			content: ''
+		}
 	},
 }

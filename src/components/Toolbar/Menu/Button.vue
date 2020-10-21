@@ -8,13 +8,16 @@
 			{{ displayIcon }}
 		</v-icon>
 
-		<span> {{ displayName }} </span>
+		<span> {{ t(displayName) }} </span>
 	</v-btn>
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
+
 export default {
 	name: 'MenuButton',
+	mixins: [TranslationMixin],
 	props: {
 		displayName: String,
 		displayIcon: String,

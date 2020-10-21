@@ -34,7 +34,7 @@
 					</v-list-item-icon>
 
 					<v-list-item-content>
-						<v-list-item-title>{{ displayName }}</v-list-item-title>
+						<v-list-item-title>{{ t(displayName) }}</v-list-item-title>
 					</v-list-item-content>
 
 					<v-list-item-action>
@@ -69,9 +69,11 @@
 
 <script>
 import { getStrKeyCode } from '@/appCycle/keyBindings'
+import { TranslationMixin } from '@/utils/locales'
 
 export default {
 	name: 'MenuList',
+	mixins: [TranslationMixin],
 	props: {
 		elements: Array,
 	},
