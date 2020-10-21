@@ -17,7 +17,7 @@
 			<v-spacer />
 			<v-btn color="primary" @click="close">
 				<v-icon>mdi-check</v-icon>
-				<span>Okay</span>
+				<span>{{ $vuetify.lang.t('$vuetify.windows.common.information.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>
