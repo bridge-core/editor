@@ -14,7 +14,7 @@ import {
 } from './remote/Peer'
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
 import { RemoteFileSystem } from '@/fileSystem/Remote'
-import { onReceiveData } from './remote/Client'
+import { dispatchEvent, onReceiveData } from './remote/Client'
 import { handleRequest } from './remote/Host'
 import { mainTabSystem } from '@/components/TabSystem/Main'
 
@@ -61,6 +61,12 @@ export async function startUp() {
 			await connectToPeer(joinPeer, onReceiveData)
 			RemoteFileSystem.create()
 			mainTabSystem.onJoinHost()
+			dispatchEvent(
+				'bridgeApp',
+				'userJoin',
+				peerState.userId,
+				'solvedDev'
+			)
 		}
 	} else {
 		peerState.onPeerReady = () => {

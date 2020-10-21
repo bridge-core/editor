@@ -19,6 +19,10 @@ export function broadcast(
 	})
 }
 
+export const currentActiveUsers = new Map<
+	string,
+	{ name: string; id: string }
+>()
 export async function handleRequest({
 	module,
 	action,
@@ -33,6 +37,12 @@ export async function handleRequest({
 		await handleTabSystemRequest(action, id, args)
 	else if (module === 'textEditorTab')
 		trigger(`bridge:remote.textEditorTab.${action}`, ...args)
+	else if (module === 'bridgeApp') {
+		if (action === 'userJoin')
+			currentActiveUsers.set(args[0], { name: args[1], id: args[0] })
+		else if (action === 'getActiveUsers')
+			sendMessage({ id, response: [...currentActiveUsers.values()] })
+	}
 }
 
 async function handleFSRequest(action: string, id: string, args: any[]) {

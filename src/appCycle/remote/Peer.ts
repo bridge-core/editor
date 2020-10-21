@@ -1,16 +1,19 @@
 import Peer, { DataConnection } from 'peerjs'
 import Vue from 'vue'
+import { v4 as uuid } from 'uuid'
 import './Host.ts'
 
 interface IPeerState {
 	isHost: boolean
 	peerId: string | null
+	userId: string
 	onPeerReady?: () => void
 }
 
 export const peerState = Vue.observable<IPeerState>({
 	isHost: true,
 	peerId: null,
+	userId: uuid(),
 })
 const peer = new Peer({})
 

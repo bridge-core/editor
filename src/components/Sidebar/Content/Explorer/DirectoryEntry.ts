@@ -26,19 +26,21 @@ export class DirectoryEntry {
 		if (_isFile) {
 			// this.parent?.updateUUID()
 		} else {
-			fileSystem.readdir(path, { withFileTypes: true }).then(handles => {
-				handles.forEach(handle =>
-					this.children.push(
-						new DirectoryEntry(
-							fileSystem,
-							this,
-							path.concat([handle.name]),
-							handle.kind === 'file'
+			fileSystem
+				.readdir(path.join('/'), { withFileTypes: true })
+				.then(handles => {
+					handles.forEach(handle =>
+						this.children.push(
+							new DirectoryEntry(
+								fileSystem,
+								this,
+								path.concat([handle.name]),
+								handle.kind === 'file'
+							)
 						)
 					)
-				)
-				this.sortChildren()
-			})
+					this.sortChildren()
+				})
 		}
 	}
 
@@ -49,16 +51,16 @@ export class DirectoryEntry {
 		return this._isFile
 	}
 	getPath() {
-		return this.path
+		return this.path.join('/')
 	}
 	open() {
-		if (this.isFile) mainTabSystem.open(this.path)
+		if (this.isFile) mainTabSystem.open(this.getPath())
 		else this.isFolderOpen = !this.isFolderOpen
 	}
 	getFileContent() {
 		if (!this.isFile) throw new Error(`Called getFileContent on directory`)
 
-		return this.fileSystem.readFile(this.path).then(file => {
+		return this.fileSystem.readFile(this.getPath()).then(file => {
 			if (file instanceof ArrayBuffer) {
 				const dec = new TextDecoder('utf-8')
 				return dec.decode(file)
@@ -67,7 +69,7 @@ export class DirectoryEntry {
 		})
 	}
 	saveFileContent(data: FileSystemWriteChunkType) {
-		this.fileSystem.writeFile(this.path, data)
+		this.fileSystem.writeFile(this.getPath(), data)
 	}
 
 	protected sortChildren() {

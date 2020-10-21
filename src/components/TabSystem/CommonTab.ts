@@ -19,17 +19,18 @@ export abstract class Tab {
 
 	constructor(
 		protected parent: TabSystem,
-		protected path: string[]
+		protected path: string
 	) {
 		this.fileSystem = FileSystem.get()
 		if(this.fileSystem instanceof Promise) this.fileSystem.then(fileSystem => this.fileSystem = fileSystem)
 	}
 
 	get name() {
-		return this.path[this.path.length - 1]
+		const pathArr = this.path.split(/\\|\//g)
+		return pathArr.pop()
 	}
 	getPath() {
-		return [...this.path]
+		return this.path
 	}
 
 	get isSelected() {
@@ -42,14 +43,8 @@ export abstract class Tab {
 	close() {
 		this.parent.close(this)
 	}
-	isFor(path: string[]) {
-		if(path.length !== this.path.length) return false
-		let i = 0
-		while(i < this.path.length) {
-			if(path[i] !== this.path[i]) return false
-			i++
-		}
-		return true
+	isFor(path: string) {
+		return path === this.path
 	}
 
 	onActivate() {}

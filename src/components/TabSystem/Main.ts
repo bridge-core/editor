@@ -14,7 +14,7 @@ export class TabSystem {
 	onJoinHost() {
 		if (!peerState.isHost) {
 			;(dispatchRemoteAction('tabSystem', 'getCurrentTabs') as Promise<
-				string[][]
+				string[]
 			>).then(async filesToOpen => {
 				filesToOpen.forEach(filePath =>
 					this.open(filePath, false, false)
@@ -28,7 +28,7 @@ export class TabSystem {
 		return this._selectedTab
 	}
 
-	open(path: string[], selectTab = true, dispatchRemoteEvent = true) {
+	open(path: string, selectTab = true, dispatchRemoteEvent = true) {
 		for (const tab of this.tabs) {
 			if (tab.isFor(path)) return selectTab ? tab.select() : tab
 		}
@@ -58,7 +58,7 @@ export class TabSystem {
 			this.select(this.tabs[0])
 		}
 	}
-	closeByPath(path: string[], dispatchRemoteEvent = true) {
+	closeByPath(path: string, dispatchRemoteEvent = true) {
 		const tab = this.tabs.find(tab => tab.isFor(path))
 		if (tab) this.close(tab, dispatchRemoteEvent)
 	}
@@ -71,7 +71,7 @@ export class TabSystem {
 		tab?.save()
 	}
 
-	getTab(path: string[]) {
+	getTab(path: string) {
 		return this.tabs.find(tab => tab.isFor(path))
 	}
 

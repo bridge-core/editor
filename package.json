@@ -9,6 +9,7 @@
 		"test:unit": "vue-cli-service test:unit"
 	},
 	"dependencies": {
+		"bridge-compiler": "^0.3.0",
 		"core-js": "^3.6.5",
 		"lodash.debounce": "^4.0.8",
 		"monaco-editor": "^0.21.2",

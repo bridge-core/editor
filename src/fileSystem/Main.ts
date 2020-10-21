@@ -9,9 +9,9 @@ export class FileSystem {
 
 	constructor(protected baseDirectory: FileSystemDirectoryHandle) {
 		Promise.all([
-			this.mkdir(['projects']),
-			this.mkdir(['plugins']),
-			this.mkdir(['data']),
+			this.mkdir('projects'),
+			this.mkdir('plugins'),
+			this.mkdir('data'),
 		]).then(() => {
 			FileSystem.fsReadyPromiseResolves.forEach(resolve => resolve(this))
 			FileSystem.database.close()
@@ -106,12 +106,13 @@ export class FileSystem {
 	}
 
 	protected async getDirectoryHandle(
-		path: string[],
+		path: string,
 		{ create, createOnce }: Partial<IGetHandleConfig> = {}
 	) {
 		let current = this.baseDirectory
+		const pathArr = path.split(/\\|\//g)
 
-		for (const folder of path) {
+		for (const folder of pathArr) {
 			current = await current.getDirectoryHandle(folder, {
 				create: createOnce || create,
 			})
@@ -124,32 +125,34 @@ export class FileSystem {
 
 		return current
 	}
-	protected async getFileHandle(path: string[], create = false) {
+	protected async getFileHandle(path: string, create = false) {
 		if (path.length === 0) throw new Error(`Error: filePath is empty`)
 
-		path = [...path]
+		const pathArr = path.split(/\\|\//g)
 		// This has to be a string because path.length > 0
-		const file = path.pop() as string
-		const folder = await this.getDirectoryHandle(path, { create })
+		const file = pathArr.pop() as string
+		const folder = await this.getDirectoryHandle(pathArr.join('/'), {
+			create,
+		})
 
 		return await folder.getFileHandle(file, { create })
 	}
 
-	async mkdir(path: string[], { recursive }: Partial<IMkdirConfig> = {}) {
+	async mkdir(path: string, { recursive }: Partial<IMkdirConfig> = {}) {
 		if (recursive) await this.getDirectoryHandle(path, { create: true })
 		else await this.getDirectoryHandle(path, { createOnce: true })
 	}
 
 	readdir(
-		path: string[],
+		path: string,
 		{ withFileTypes }: { withFileTypes: true }
 	): Promise<FileSystemHandle[]>
 	readdir(
-		path: string[],
+		path: string,
 		{ withFileTypes }: { withFileTypes?: false }
 	): Promise<string[]>
 	async readdir(
-		path: string[],
+		path: string,
 		{ withFileTypes }: { withFileTypes?: true | false } = {}
 	) {
 		const dirHandle = await this.getDirectoryHandle(path)
@@ -163,22 +166,22 @@ export class FileSystem {
 		return files
 	}
 
-	readFile(path: string[]) {
+	readFile(path: string) {
 		return this.getFileHandle(path).then(fileHandle => fileHandle.getFile())
 	}
 
-	async unlink(path: string[]) {
+	async unlink(path: string) {
 		if (path.length === 0) throw new Error(`Error: filePath is empty`)
-		path = [...path]
+		const pathArr = path.split(/\\|\//g)
 
 		// This has to be a string because path.length > 0
-		const file = path.pop() as string
-		const parentDir = await this.getDirectoryHandle(path)
+		const file = pathArr.pop() as string
+		const parentDir = await this.getDirectoryHandle(pathArr.join('/'))
 
 		await parentDir.removeEntry(file, { recursive: true })
 	}
 
-	async writeFile(path: string[], data: FileSystemWriteChunkType) {
+	async writeFile(path: string, data: FileSystemWriteChunkType) {
 		const fileHandle = await this.getFileHandle(path, true)
 		const writable = await fileHandle.createWritable()
 		await writable.write(data)

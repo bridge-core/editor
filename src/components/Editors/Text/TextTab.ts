@@ -8,15 +8,18 @@ import {
 	RemoteSelectionManager,
 	EditorContentManager,
 } from '@convergencelabs/monaco-collab-ext'
-import { dispatchEvent } from '@/appCycle/remote/Client'
+import { dispatchEvent, dispatchRemoteAction } from '@/appCycle/remote/Client'
+import { peerState } from '@/appCycle/remote/Peer'
+import { currentActiveUsers } from '@/appCycle/remote/Host'
 
 export class TextTab extends Tab {
 	component = MonacoEditor
 	editorInstance: monaco.editor.ICodeEditor | undefined
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
-	disposables: Disposable[] = []
+	disposables: (Disposable | undefined)[] = []
 	editorContentManager: EditorContentManager | undefined
+	remoteCursors: RemoteCursorManager | undefined
 	remoteEdits: monaco.editor.IModelContentChange[] = []
 
 	setIsUnsaved(
@@ -46,7 +49,7 @@ export class TextTab extends Tab {
 			this.editorModel = monaco.editor.createModel(
 				fileContent,
 				undefined,
-				monaco.Uri.file(this.path.join('/'))
+				monaco.Uri.file(this.path)
 			)
 			this.loadEditor()
 		} else {
@@ -56,7 +59,37 @@ export class TextTab extends Tab {
 		this.disposables.push(
 			on('bridge:onResize', () => this.editorInstance?.layout())
 		)
-		const strPath = this.path.join('/')
+		this.remoteCursors = new RemoteCursorManager({
+			// @ts-ignore
+			editor: this.editorInstance,
+			tooltips: true,
+			tooltipDuration: 2,
+		})
+
+		const users = [...currentActiveUsers.values()]
+		if (!peerState.isHost)
+			users.push(
+				...((await dispatchRemoteAction(
+					'bridgeApp',
+					'getActiveUsers'
+				)) as { name: string; id: string }[])
+			)
+		users.forEach(user =>
+			this.remoteCursors?.addCursor(user.id, 'blue', user.name)
+		)
+
+		dispatchEvent('textEditorTab', 'addCursor', peerState.userId, 'solved')
+		this.disposables.push(
+			this.editorInstance?.onDidChangeCursorPosition(event => {
+				dispatchEvent(
+					'textEditorTab',
+					'cursorChange',
+					peerState.userId,
+					this.editorModel?.getOffsetAt(event.position)
+				)
+			})
+		)
+		const strPath = this.path
 		this.editorContentManager = new EditorContentManager({
 			// @ts-ignore
 			editor: this.editorInstance,
@@ -88,6 +121,21 @@ export class TextTab extends Tab {
 		})
 		this.disposables.push(
 			...[
+				on(`bridge:remote.textEditorTab.addCursor`, (id, name) =>
+					this.disposables.push(
+						this.remoteCursors?.addCursor(
+							id as string,
+							'blue',
+							name as string
+						)
+					)
+				),
+				on(`bridge:remote.textEditorTab.cursorChange`, (id, offset) =>
+					this.remoteCursors?.setCursorOffset(
+						id as string,
+						offset as number
+					)
+				),
 				on(
 					`bridge:remote.textEditorTab.insert(${strPath})`,
 					(index, text) =>
@@ -118,7 +166,7 @@ export class TextTab extends Tab {
 	}
 	onDeactivate() {
 		this.editorViewState = this.editorInstance?.saveViewState() ?? undefined
-		this.disposables.forEach(disposable => disposable.dispose())
+		this.disposables.forEach(disposable => disposable?.dispose())
 		this.editorContentManager?.dispose()
 	}
 	onDestroy() {
@@ -130,8 +178,8 @@ export class TextTab extends Tab {
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
 
-		this.remoteEdits.forEach(edit => {
-			const { rangeOffset, rangeLength, text } = edit
+		this.remoteEdits.forEach(change => {
+			const { rangeOffset, rangeLength, text } = change
 			if (text.length > 0 && rangeLength === 0) {
 				this.editorContentManager?.insert(rangeOffset, text)
 			} else if (text.length > 0 && rangeLength > 0) {
@@ -143,7 +191,7 @@ export class TextTab extends Tab {
 			} else if (text.length === 0 && rangeLength > 0) {
 				this.editorContentManager?.delete(rangeOffset, rangeLength)
 			} else {
-				throw new Error('Unexpected change: ' + JSON.stringify(edit))
+				throw new Error('Unexpected change: ' + JSON.stringify(change))
 			}
 		})
 		this.remoteEdits = []
@@ -159,7 +207,7 @@ export class TextTab extends Tab {
 					true,
 					event.changes
 				)
-			}) ?? { dispose() {} }
+			})
 		)
 	}
 

@@ -3,6 +3,7 @@ import App from './App.vue'
 //@ts-expect-error
 import Vuetify from 'vuetify/lib'
 import './registerServiceWorker'
+import '@convergencelabs/monaco-collab-ext/css/monaco-collab-ext.css'
 
 Vue.config.productionTip = false
 
