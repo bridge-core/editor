@@ -32,10 +32,10 @@ export default {
 	}),
 
 	mounted() {
-		this.$root.$on('anvil:closeAllAppMenus', this.closeMenu)
+		this.$root.$on('bridge:closeAllAppMenus', this.closeMenu)
 	},
 	destroyed() {
-		this.$root.$off('anvil:closeAllAppMenus', this.closeMenu)
+		this.$root.$off('bridge:closeAllAppMenus', this.closeMenu)
 	},
 
 	methods: {

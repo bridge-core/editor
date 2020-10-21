@@ -82,7 +82,7 @@ export default {
 	methods: {
 		clickHandler(onClick) {
 			if (onClick) onClick()
-			this.$root.$emit('anvil:closeAllAppMenus')
+			this.$root.$emit('bridge:closeAllAppMenus')
 		},
 	},
 }
