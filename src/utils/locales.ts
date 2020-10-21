@@ -1,8 +1,30 @@
 import { vue } from '@/main'
 import Vue from 'vue'
 
-export function translate(translationKey: string) {
-	return (vue as any).$vuetify.lang.t(translationKey)
+export function translate(translationKey?: string) {
+	if (translationKey && !translationKey.startsWith('$vuetify.'))
+		translationKey = `$vuetify.${translationKey}`
+
+	try {
+		return (vue as any).$vuetify.lang.t(translationKey)
+	} catch {
+		return translationKey
+	}
+}
+
+export const TranslationMixin = {
+	methods: {
+		t(translationKey?: string) {
+			if (translationKey && !translationKey.startsWith('$vuetify.'))
+				translationKey = `$vuetify.${translationKey}`
+
+			try {
+				return (this as any).$vuetify.lang.t(translationKey)
+			} catch {
+				return translationKey
+			}
+		},
+	},
 }
 
 export function addLanguage(key: string, obj: unknown, force = false) {

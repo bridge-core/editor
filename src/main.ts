@@ -5,6 +5,7 @@ import Vuetify from 'vuetify/lib'
 import './registerServiceWorker'
 import '@convergencelabs/monaco-collab-ext/css/monaco-collab-ext.css'
 import en from '@/locales/en'
+import de from '@/locales/de'
 
 Vue.config.productionTip = false
 
@@ -12,7 +13,7 @@ Vue.use(Vuetify)
 
 export const vuetify = new Vuetify({
 	lang: {
-		locales: { en },
+		locales: { de, en },
 		current: 'en',
 	},
 	theme: {
@@ -54,3 +55,4 @@ export const vue = new Vue({
 	vuetify,
 	render: h => h(App),
 }).$mount('#app')
+console.log(vue)

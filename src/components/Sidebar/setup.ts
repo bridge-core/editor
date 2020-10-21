@@ -11,32 +11,32 @@ export function getDefaultSidebar() {
 export function setupSidebar() {
 	defaultSidebar = createSidebar({
 		id: 'bpExplorer',
-		displayName: 'Explorer',
+		displayName: 'sidebar.explorer.name',
 		icon: 'mdi-folder',
 		component: FileExplorer,
 	}).select()
 
 	createSidebar({
 		id: 'vanillaPacks',
-		displayName: 'Vanilla Packs',
+		displayName: 'sidebar.vanillaPacks.name',
 		icon: 'mdi-minecraft',
 		component: 'VanillaPacks',
 	})
 	createSidebar({
 		id: 'documentation',
-		displayName: 'Documentation',
+		displayName: 'sidebar.documentation.name',
 		icon: 'mdi-book-open-page-variant',
 		component: Documentation,
 	})
 	createSidebar({
 		id: 'debugLog',
-		displayName: 'Debug Log',
+		displayName: 'sidebar.debugLog.name',
 		icon: 'mdi-console',
 		component: 'DebugLog',
 	})
 	createSidebar({
 		id: 'extensions',
-		displayName: 'Extensions',
+		displayName: 'sidebar.extensions.name',
 		icon: 'mdi-puzzle',
 		component: Extensions,
 	})

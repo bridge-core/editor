@@ -13,7 +13,7 @@
 
 		<!-- 60px sidebar nav + 12px default padding -->
 		<h1 style="padding: 12px; padding-left: 72px;">
-			{{ currentSidebar.displayName }}
+			{{ t(currentSidebar.displayName) }}
 		</h1>
 		<v-divider />
 		<div
@@ -31,8 +31,10 @@
 import Navigation from './Navigation'
 import { setupSidebar } from '../setup'
 import { SidebarState } from './state'
+import { TranslationMixin } from '@/utils/locales'
 
 export default {
+	mixins: [TranslationMixin],
 	components: {
 		Navigation,
 	},
