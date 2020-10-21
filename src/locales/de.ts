@@ -138,8 +138,9 @@ export default {
 			select: 'Auswählen!',
 		},
 		projectFolder: {
-			title: '',
-			content: ''
-		}
+			title: 'Projekte-Ordner',
+			content:
+				'bridge. benötigt für die Editorfunktionalität Zugriff auf seinen Projekte-Ordner.',
+		},
 	},
 }
