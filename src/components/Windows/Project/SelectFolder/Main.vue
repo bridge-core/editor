@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="$vuetify.lang.t('$vuetify.windows.selectFolder.title')"
+		:windowTitle="t('windows.selectFolder.title')"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:hasCloseButton="false"
@@ -13,7 +13,7 @@
 	>
 		<template #default>
 			<p>
-				{{ $vuetify.lang.t('$vuetify.windows.selectFolder.content') }}
+				{{ t('windows.selectFolder.content') }}
 			</p>
 		</template>
 
@@ -21,17 +21,19 @@
 			<v-spacer />
 			<v-btn color="primary" @click="selectFolder">
 				<v-icon class="pr-2">mdi-folder-outline</v-icon>
-				<span>{{ $vuetify.lang.t('$vuetify.windows.selectFolder.select') }}</span>
+				<span>{{ t('windows.selectFolder.select') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
 import BaseWindow from '../../Layout/Base'
 
 export default {
 	name: 'SelectProjectFolderWindow',
+	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
 	},

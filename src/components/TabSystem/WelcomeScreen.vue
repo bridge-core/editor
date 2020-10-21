@@ -4,40 +4,40 @@
 		@dblclick="createFile"
 		column
 	>
-		<h1>{{ $vuetify.lang.t('$vuetify.welcome.title') }}</h1>
+		<h1>{{ t('welcome.title') }}</h1>
 		<div>
 			<br />
-			<p>{{ $vuetify.lang.t('$vuetify.welcome.subtitle') }}</p>
+			<p>{{ t('welcome.subtitle') }}</p>
 			<ul>
 				<li>
 					<v-icon color="accent" small>mdi-auto-fix</v-icon>
-					<span>{{ $vuetify.lang.t('$vuetify.welcome.syntaxHighlighting') }}</span>
+					<span>{{ t('welcome.syntaxHighlighting') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small
 						>mdi-format-list-bulleted</v-icon
 					>
-					<span>{{ $vuetify.lang.t('$vuetify.welcome.richAutoCompletions') }}</span>
+					<span>{{ t('welcome.richAutoCompletions') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small>mdi-folder-multiple</v-icon>
-					<span>{{ $vuetify.lang.t('$vuetify.welcome.projectManagement') }}</span>
+					<span>{{ t('welcome.projectManagement') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small>mdi-code-json</v-icon>
-					<span>{{ $vuetify.lang.t('$vuetify.welcome.customSyntax') }}</span>
+					<span>{{ t('welcome.customSyntax') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small>mdi-package-variant</v-icon>
-					<span>{{ $vuetify.lang.t('$vuetify.welcome.customComponents') }}</span>
+					<span>{{ t('welcome.customComponents') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small>mdi-console-line</v-icon>
-					<span>{{ $vuetify.lang.t('$vuetify.welcome.customCommands') }}</span>
+					<span>{{ t('welcome.customCommands') }}</span>
 				</li>
 				<li>
 					<v-icon color="accent" small>mdi-nodejs</v-icon>
-					<span>{{ $vuetify.lang.t('$vuetify.welcome.plugins') }}</span>
+					<span>{{ t('welcome.plugins') }}</span>
 				</li>
 			</ul>
 		</div>
@@ -45,8 +45,11 @@
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
+
 export default {
 	name: 'welcome-screen',
+	mixins: [TranslationMixin],
 	props: {
 		available_height: Number,
 	},

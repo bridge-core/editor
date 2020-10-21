@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="$vuetify.lang.t('$vuetify.windows.common.confirm.title')"
+		:windowTitle="t('windows.common.confirm.title')"
 		:isVisible="isVisible"
 		:isPersistent="true"
 		:hasMaximizeButton="false"
@@ -26,10 +26,12 @@
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
 import BaseWindow from '../../Layout/Base'
 
 export default {
 	name: 'Confirm',
+	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
 	},

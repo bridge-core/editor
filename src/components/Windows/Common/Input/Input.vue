@@ -28,17 +28,19 @@
 				@click="onConfirm"
 				:disabled="inputValue === ''"
 			>
-				<span>{{ $vuetify.lang.t('$vuetify.windows.common.input.confirm') }}</span>
+				<span>{{ t('windows.common.input.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
 import BaseWindow from '../../Layout/Base'
 
 export default {
 	name: 'Input',
+	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
 	},

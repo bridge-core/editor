@@ -10,17 +10,17 @@
 		@closeWindow="close"
 	>
 		<template #default>
-			<p>{{ $vuetify.lang.t('$vuetify.windows.discord.content') }}</p>
+			<p>{{ t('windows.discord.content') }}</p>
 		</template>
 
 		<template #actions>
 			<v-spacer />
 			<v-btn @click="close">
-				<span>{{ $vuetify.lang.t('$vuetify.windows.discord.later') }}</span>
+				<span>{{ t('windows.discord.later') }}</span>
 			</v-btn>
 			<v-btn color="#7289DA" @click="openDiscord">
 				<v-icon color="white">mdi-discord</v-icon>
-				<span class="white--text">{{ $vuetify.lang.t('$vuetify.windows.discord.join') }}</span>
+				<span class="white--text">{{ t('windows.discord.join') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>
@@ -29,9 +29,11 @@
 <script>
 import { Discord } from './definition'
 import BaseWindow from '../Layout/Base.vue'
+import { TranslationMixin } from '@/utils/locales'
 
 export default {
 	name: 'Discord',
+	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
 	},
