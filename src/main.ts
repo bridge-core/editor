@@ -55,4 +55,3 @@ export const vue = new Vue({
 	vuetify,
 	render: h => h(App),
 }).$mount('#app')
-console.log(vue)
