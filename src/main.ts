@@ -4,7 +4,7 @@ import App from './App.vue'
 import Vuetify from 'vuetify/lib'
 import './registerServiceWorker'
 import '@convergencelabs/monaco-collab-ext/css/monaco-collab-ext.css'
-import en from '@/locale/en'
+import en from '@/locales/en'
 
 Vue.config.productionTip = false
 
