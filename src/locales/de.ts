@@ -47,7 +47,7 @@ export default {
 			copy: 'Kopieren',
 			cut: 'Auschneiden',
 			paste: 'Einfügen',
-			alternativePaste: 'Kopieren (alternativ)',
+			alternativePaste: 'Einfügen (alternativ)',
 		},
 		tools: {
 			name: 'Werkzeuge',
