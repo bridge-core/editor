@@ -27,7 +27,7 @@
 				block
 				text
 			>
-				<span>{{ name }}</span>
+				<span>{{ t(name) }}</span>
 				<v-spacer />
 				<v-icon>mdi-chevron-right</v-icon>
 			</v-btn>
@@ -111,11 +111,11 @@ export default {
 			],
 			bridgeDocs: [
 				[
-					'Commands',
+					'sidebar.documentation.commands',
 					'https://bridge-core.github.io/plugin-docs/custom-commands/',
 				],
 				[
-					'Components',
+					'sidebar.documentation.components',
 					'https://bridge-core.github.io/plugin-docs/custom-components/',
 				],
 			],
