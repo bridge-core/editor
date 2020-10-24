@@ -81,6 +81,7 @@ export default {
 		},
 		documentation: {
 			name: 'Documentation',
+
 			addons: 'Addons',
 			animations: 'Animations',
 			biomes: 'Biomes',
@@ -89,13 +90,13 @@ export default {
 			entityEvents: 'Entity Events',
 			features: 'Features',
 			item: 'Item',
-			molang: 'Molang',
+			molang: 'MoLang',
 			particles: 'Particles',
 			recipes: 'Recipes',
 			scripting: 'Scripting',
 			ui: 'UI',
 			commands: 'Commands',
-			components: 'Components'
+			components: 'Components',
 		},
 		debugLog: {
 			name: 'Debug Log',
@@ -154,7 +155,8 @@ export default {
 		},
 		projectFolder: {
 			title: 'Project Folder',
-			content: 'bridge. needs access to its project folder in order to work correctly.'
-		}
+			content:
+				'bridge. needs access to its project folder in order to work correctly.',
+		},
 	},
 }
