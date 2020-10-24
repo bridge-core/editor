@@ -6,6 +6,7 @@ import './registerServiceWorker'
 import '@convergencelabs/monaco-collab-ext/css/monaco-collab-ext.css'
 import en from '@/locales/en'
 import de from '@/locales/de'
+import nl from '@/locales/nl'
 
 Vue.config.productionTip = false
 
@@ -13,7 +14,7 @@ Vue.use(Vuetify)
 
 export const vuetify = new Vuetify({
 	lang: {
-		locales: { de, en },
+		locales: { nl, de, en },
 		current: 'en',
 	},
 	theme: {
