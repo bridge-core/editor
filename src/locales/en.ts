@@ -81,6 +81,21 @@ export default {
 		},
 		documentation: {
 			name: 'Documentation',
+			addons: 'Addons',
+			animations: 'Animations',
+			biomes: 'Biomes',
+			blocks: 'Blocks',
+			entities: 'Entities',
+			entityEvents: 'Entity Events',
+			features: 'Features',
+			item: 'Item',
+			molang: 'Molang',
+			particles: 'Particles',
+			recipes: 'Recipes',
+			scripting: 'Scripting',
+			ui: 'UI',
+			commands: 'Commands',
+			components: 'Components'
 		},
 		debugLog: {
 			name: 'Debug Log',
