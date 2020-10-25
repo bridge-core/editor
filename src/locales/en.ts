@@ -158,5 +158,9 @@ export default {
 			content:
 				'bridge. needs access to its project folder in order to work correctly.',
 		},
+		managePlugin: {
+			name: 'Manage Plugin',
+			done: 'Done'
+		},
 	},
 }
