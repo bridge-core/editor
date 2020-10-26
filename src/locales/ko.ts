@@ -156,6 +156,10 @@ export default {
 		projectFolder: {
 			title: '프로젝트 폴더',
 			content: 'bridge.가 제대로 작동하기 위해서는 프로젝트 폴더에 대한 접근 권한이 필요합니다.'
-		}
+		},
+		managePlugin: {
+			name: '플러그인 관리',
+			done: '완료'
+		},
 	},
 }
