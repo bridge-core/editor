@@ -6,6 +6,19 @@ import { on } from '@/appCycle/EventSystem'
 import { EditorContentManager } from '@convergencelabs/monaco-collab-ext'
 import { dispatchEvent } from '@/appCycle/remote/Client'
 
+fetch(
+	'https://raw.githubusercontent.com/bridge-core/data/dev/packages/schema/schemas.json'
+)
+	.then(raw => raw.json())
+	.then(schemas =>
+		monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+			enableSchemaRequest: true,
+			allowComments: true,
+			validate: true,
+			schemas,
+		})
+	)
+
 export class TextTab extends Tab {
 	component = MonacoEditor
 	editorInstance: monaco.editor.ICodeEditor | undefined
