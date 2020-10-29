@@ -2,6 +2,7 @@ import Peer, { DataConnection } from 'peerjs'
 import Vue from 'vue'
 import { v4 as uuid } from 'uuid'
 import './Host.ts'
+import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
 
 interface IPeerState {
 	isHost: boolean
@@ -22,7 +23,13 @@ peer.on('open', (id: string) => {
 	peerState.peerId = id
 	peerState.onPeerReady?.()
 })
-peer.on('error', console.error)
+peer.on('error', () => {
+	createInformationWindow(
+		`ERROR`,
+		`Unable to connect to workspace!`,
+		() => (location.href = 'https://bridge-core.github.io/editor')
+	)
+})
 
 let connections = new Set<DataConnection>()
 const updateBuffer = new Map<DataConnection, any[]>()
@@ -30,6 +37,7 @@ const updateBuffer = new Map<DataConnection, any[]>()
 export async function connectToPeer(id: string, callback: (data: any) => void) {
 	console.log('Connecting to peer: ' + id)
 	peerState.isHost = false
+
 	const connection = peer.connect(id)
 	await setupConnection(connection, callback)
 	console.log('Connection established.')
@@ -68,8 +76,13 @@ export function setupConnection(
 }
 
 export function closeConnection(connection: DataConnection) {
+	console.log('closed connection')
 	connections.delete(connection)
 	updateBuffer.delete(connection)
+}
+
+export function closeAllConnections() {
+	connections.forEach(conn => conn.close())
 }
 
 export function sendMessage(data: any) {
@@ -80,3 +93,5 @@ export function sendMessage(data: any) {
 		else updateBuffer.set(connection, [data])
 	})
 }
+
+window.onbeforeunload = () => closeAllConnections()

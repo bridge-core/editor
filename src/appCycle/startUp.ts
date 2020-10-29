@@ -55,10 +55,19 @@ export async function startUp() {
 
 	const urlParams = new URLSearchParams(window.location.search)
 	const joinPeer = urlParams.get('join')
-	console.log(joinPeer)
 	if (joinPeer) {
 		peerState.onPeerReady = async () => {
-			await connectToPeer(joinPeer, onReceiveData)
+			try {
+				await connectToPeer(joinPeer, onReceiveData)
+			} catch {
+				createInformationWindow(
+					`ERROR`,
+					`Unable to connect to workspace with id "${joinPeer}"!`,
+					() =>
+						(location.href = 'https://bridge-core.github.io/editor')
+				)
+			}
+
 			RemoteFileSystem.create()
 			mainTabSystem.onJoinHost()
 			dispatchEvent(

@@ -3,6 +3,7 @@ import { FileSystem } from '@/fileSystem/Main'
 import { trigger } from '../EventSystem'
 import { dispatchEvent } from './Client'
 import { peerState, sendMessage } from './Peer'
+import { v4 as uuid } from 'uuid'
 
 export function broadcast(
 	id: string,
@@ -19,10 +20,10 @@ export function broadcast(
 	})
 }
 
-export const currentActiveUsers = new Map<
-	string,
-	{ name: string; id: string }
->()
+const hostId = uuid()
+export const currentActiveUsers = new Map<string, { name: string; id: string }>(
+	[[hostId, { id: hostId, name: 'solvedDev' }]]
+)
 export async function handleRequest({
 	module,
 	action,
@@ -38,10 +39,11 @@ export async function handleRequest({
 	else if (module === 'textEditorTab')
 		trigger(`bridge:remote.textEditorTab.${action}`, ...args)
 	else if (module === 'bridgeApp') {
-		if (action === 'userJoin')
+		if (action === 'userJoin') {
 			currentActiveUsers.set(args[0], { name: args[1], id: args[0] })
-		else if (action === 'getActiveUsers')
+		} else if (action === 'getActiveUsers') {
 			sendMessage({ id, response: [...currentActiveUsers.values()] })
+		}
 	}
 }
 

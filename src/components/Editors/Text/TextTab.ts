@@ -66,29 +66,6 @@ export class TextTab extends Tab {
 			tooltipDuration: 2,
 		})
 
-		const users = [...currentActiveUsers.values()]
-		if (!peerState.isHost)
-			users.push(
-				...((await dispatchRemoteAction(
-					'bridgeApp',
-					'getActiveUsers'
-				)) as { name: string; id: string }[])
-			)
-		users.forEach(user =>
-			this.remoteCursors?.addCursor(user.id, 'blue', user.name)
-		)
-
-		dispatchEvent('textEditorTab', 'addCursor', peerState.userId, 'solved')
-		this.disposables.push(
-			this.editorInstance?.onDidChangeCursorPosition(event => {
-				dispatchEvent(
-					'textEditorTab',
-					'cursorChange',
-					peerState.userId,
-					this.editorModel?.getOffsetAt(event.position)
-				)
-			})
-		)
 		const strPath = this.path
 		this.editorContentManager = new EditorContentManager({
 			// @ts-ignore
