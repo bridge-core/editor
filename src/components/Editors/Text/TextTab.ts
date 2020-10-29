@@ -3,14 +3,8 @@ import MonacoEditor from './Main.vue'
 import * as monaco from 'monaco-editor'
 import { Disposable } from '@/types/disposable'
 import { on } from '@/appCycle/EventSystem'
-import {
-	RemoteCursorManager,
-	RemoteSelectionManager,
-	EditorContentManager,
-} from '@convergencelabs/monaco-collab-ext'
-import { dispatchEvent, dispatchRemoteAction } from '@/appCycle/remote/Client'
-import { peerState } from '@/appCycle/remote/Peer'
-import { currentActiveUsers } from '@/appCycle/remote/Host'
+import { EditorContentManager } from '@convergencelabs/monaco-collab-ext'
+import { dispatchEvent } from '@/appCycle/remote/Client'
 
 export class TextTab extends Tab {
 	component = MonacoEditor
@@ -19,7 +13,6 @@ export class TextTab extends Tab {
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
 	disposables: (Disposable | undefined)[] = []
 	editorContentManager: EditorContentManager | undefined
-	remoteCursors: RemoteCursorManager | undefined
 	remoteEdits: monaco.editor.IModelContentChange[] = []
 
 	setIsUnsaved(
@@ -59,12 +52,6 @@ export class TextTab extends Tab {
 		this.disposables.push(
 			on('bridge:onResize', () => this.editorInstance?.layout())
 		)
-		this.remoteCursors = new RemoteCursorManager({
-			// @ts-ignore
-			editor: this.editorInstance,
-			tooltips: true,
-			tooltipDuration: 2,
-		})
 
 		const strPath = this.path
 		this.editorContentManager = new EditorContentManager({
@@ -98,21 +85,6 @@ export class TextTab extends Tab {
 		})
 		this.disposables.push(
 			...[
-				on(`bridge:remote.textEditorTab.addCursor`, (id, name) =>
-					this.disposables.push(
-						this.remoteCursors?.addCursor(
-							id as string,
-							'blue',
-							name as string
-						)
-					)
-				),
-				on(`bridge:remote.textEditorTab.cursorChange`, (id, offset) =>
-					this.remoteCursors?.setCursorOffset(
-						id as string,
-						offset as number
-					)
-				),
 				on(
 					`bridge:remote.textEditorTab.insert(${strPath})`,
 					(index, text) =>
