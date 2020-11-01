@@ -7,7 +7,7 @@ import { EditorContentManager } from '@convergencelabs/monaco-collab-ext'
 import { dispatchEvent } from '@/appCycle/remote/Client'
 
 fetch(
-	'https://raw.githubusercontent.com/bridge-core/data/dev/packages/schema/schemas.json'
+	'https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/schemas.json'
 )
 	.then(raw => raw.json())
 	.then(schemas =>
