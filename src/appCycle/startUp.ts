@@ -19,6 +19,7 @@ import { handleRequest } from './remote/Host'
 import { mainTabSystem } from '@/components/TabSystem/Main'
 import { FileType } from './FileType'
 import { setupMonacoEditor } from '@/components/Editors/Text/setup'
+import { translate } from '@/utils/locales'
 
 export async function startUp() {
 	setupKeyBindings()
@@ -66,7 +67,7 @@ export async function startUp() {
 			} catch {
 				createInformationWindow(
 					`ERROR`,
-					`Unable to connect to workspace with id "${joinPeer}"!`,
+					`${translate('windows.peerConnectError.error1')} "${joinPeer}"!`,
 					() =>
 						(location.href = 'https://bridge-core.github.io/editor')
 				)
@@ -96,7 +97,7 @@ function peerNotification() {
 		textColor: 'white',
 		onClick: () => {
 			createInformationWindow(
-				'Project Sharing',
+				translate('windows.projectSharing.title'),
 				peerState.peerId as string,
 				() => {
 					navigator.clipboard.writeText(peerState.peerId as string)

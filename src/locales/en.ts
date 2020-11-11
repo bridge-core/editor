@@ -163,5 +163,12 @@ export default {
 			name: 'Manage Plugin',
 			done: 'Done'
 		},
+		projectSharing: {
+			title: 'Project Sharing'
+		},
+		peerError: {
+			error1: 'Unable to connect to workspace with id',
+			error2: 'Unable to connect to workspace!'
+		}
 	},
 }
