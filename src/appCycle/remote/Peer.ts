@@ -23,12 +23,15 @@ peer.on('open', (id: string) => {
 	peerState.peerId = id
 	peerState.onPeerReady?.()
 })
-peer.on('error', () => {
-	createInformationWindow(
-		`ERROR`,
-		`Unable to connect to workspace!`,
-		() => (location.href = 'https://bridge-core.github.io/editor')
-	)
+peer.on('error', err => {
+	if (!err.message.includes('Server has reached its concurrent user limit'))
+		createInformationWindow(
+			`ERROR`,
+			`Unable to connect to workspace!`,
+			() => {
+				location.href = 'https://bridge-core.github.io/editor'
+			}
+		)
 })
 
 let connections = new Set<DataConnection>()

@@ -17,11 +17,15 @@ import { RemoteFileSystem } from '@/fileSystem/Remote'
 import { dispatchEvent, onReceiveData } from './remote/Client'
 import { handleRequest } from './remote/Host'
 import { mainTabSystem } from '@/components/TabSystem/Main'
+import { FileType } from './FileType'
+import { setupMonacoEditor } from '@/components/Editors/Text/setup'
 
 export async function startUp() {
 	setupKeyBindings()
 	setupDefaultMenus()
 	setupSidebar()
+	await FileType.setup()
+	setupMonacoEditor()
 
 	if (process.env.NODE_ENV !== 'development') {
 		const discordMsg = createNotification({
