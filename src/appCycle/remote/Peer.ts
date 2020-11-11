@@ -3,6 +3,7 @@ import Vue from 'vue'
 import { v4 as uuid } from 'uuid'
 import './Host.ts'
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
+import { translate } from '@/utils/locales'
 
 interface IPeerState {
 	isHost: boolean
@@ -27,7 +28,7 @@ peer.on('error', err => {
 	if (!err.message.includes('Server has reached its concurrent user limit'))
 		createInformationWindow(
 			`ERROR`,
-			`Unable to connect to workspace!`,
+			translate('windows.peerError.error2'),
 			() => {
 				location.href = 'https://bridge-core.github.io/editor'
 			}
