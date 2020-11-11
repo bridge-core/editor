@@ -75,18 +75,18 @@ export const EditMenu: AppMenu = {
 						// TabSystem.toggleCurrentNode()
 					},
 				},
-				{
-					displayName: 'toolbar.edit.jsonNodes.toggleOpenChildren',
-					displayIcon: 'mdi-lock-open-variant',
-					keyBinding: {
-						key: 'p',
-						shiftKey: true,
-						ctrlKey: true,
-					},
-					onClick: () => {
-						// TabSystem.getCurrentNavObj().toggleOpenDeep()
-					},
-				},
+				// {
+				// 	displayName: 'toolbar.edit.jsonNodes.toggleOpenChildren',
+				// 	displayIcon: 'mdi-lock-open-variant',
+				// 	keyBinding: {
+				// 		key: 'p',
+				// 		shiftKey: true,
+				// 		ctrlKey: true,
+				// 	},
+				// 	onClick: () => {
+				//		TabSystem.getCurrentNavObj().toggleOpenDeep()
+				// 	},
+				// },
 				{
 					displayName: 'toolbar.edit.jsonNodes.moveDown',
 					displayIcon: 'mdi-chevron-down',

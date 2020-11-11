@@ -1,6 +1,4 @@
-export const terminalCommands = new Set<
-	ReturnType<typeof createTerminalCommand>
->()
+export const terminalCommands = new Set<TerminalCommand>()
 
 export function getAutoCompletions(commandParts: string[]) {
 	const autoCompletions: string[] = []
@@ -19,32 +17,42 @@ export function getAutoCompletions(commandParts: string[]) {
 	return autoCompletions
 }
 
-export function createTerminalCommand(
-	commandDef: (string | string[])[],
-	callback: (command: string[]) => void
-) {
-	return {
-		is: (commandParts: string[]) => {
-			for (let i = 0; i < commandParts.length; i++) {
-				if (
-					Array.isArray(commandDef[i]) &&
-					!commandDef[i].includes(commandParts[i])
-				)
-					return false
-				else if (commandDef[i] !== commandParts[i]) return false
-			}
-			return true
-		},
-		isReady(commandParts: string[]) {
-			return commandDef.length === commandParts.length
-		},
-		getValidAt(index: number) {
-			const atIndex = commandDef[index] ?? []
-			return Array.isArray(atIndex) ? atIndex : [atIndex]
-		},
+// @ts-ignore
+window.getAutoCompletions = getAutoCompletions
+// @ts-ignore
+window.terminalCommands = terminalCommands
 
-		execute(commandParts: string[]) {
-			callback(commandParts)
-		},
+export class TerminalCommand {
+	constructor(
+		protected commandDef: (string | string[])[],
+		protected callback: (command: string[]) => void
+	) {
+		terminalCommands.add(this)
+	}
+
+	is(commandParts: string[]) {
+		for (let i = 0; i < commandParts.length; i++) {
+			const isArray = Array.isArray(this.commandDef[i])
+			if (isArray && !this.commandDef[i].includes(commandParts[i]))
+				return false
+			else if (!isArray && this.commandDef[i] !== commandParts[i])
+				return false
+		}
+		return true
+	}
+	isReady(commandParts: string[]) {
+		return this.commandDef.length === commandParts.length
+	}
+	getValidAt(index: number) {
+		const atIndex = this.commandDef[index] ?? []
+		return Array.isArray(atIndex) ? atIndex : [atIndex]
+	}
+
+	execute(commandParts: string[]) {
+		this.callback(commandParts)
+	}
+
+	dispose() {
+		terminalCommands.delete(this)
 	}
 }

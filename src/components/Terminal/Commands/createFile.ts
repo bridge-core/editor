@@ -1,6 +1,11 @@
-import { createTerminalCommand } from '../createCommand'
+import { TerminalCommand } from '../createCommand'
 
-createTerminalCommand(['create', ['entity', 'item']], commandParts => {
+new TerminalCommand(['create', ['entity', 'item']], commandParts => {
+	const createType = commandParts[1]
+	console.log(createType)
+})
+
+new TerminalCommand(['create', ['project']], commandParts => {
 	const createType = commandParts[1]
 	console.log(createType)
 })

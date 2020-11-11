@@ -51,6 +51,7 @@ export default {
 		},
 		tools: {
 			name: 'Tools',
+			terminal: 'Terminal',
 			presets: 'Presets',
 			snippets: 'Snippets',
 			goToFile: 'Go to File',
