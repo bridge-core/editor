@@ -1,11 +1,20 @@
-import { TerminalCommand } from '../createCommand'
+import { Command } from '../Command'
 
-new TerminalCommand(['create', ['entity', 'item']], commandParts => {
-	const createType = commandParts[1]
-	console.log(createType)
-})
+new (class extends Command {
+	description = 'Create a new game feature'
+	args = {
+		'file-type': {
+			type: 'string' as const,
+			required: true,
+		},
+		'feature-name': {
+			type: 'string' as const,
+			required: true,
+		},
+	}
+	command = ['create']
 
-new TerminalCommand(['create', ['project']], commandParts => {
-	const createType = commandParts[1]
-	console.log(createType)
-})
+	execute(args: Record<string, unknown>) {
+		console.log(args)
+	}
+})()

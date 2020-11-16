@@ -17,8 +17,10 @@
 </template>
 
 <script>
-import { getAutoCompletions } from './createCommand'
-
+// import { getAutoCompletions } from './createCommand'
+function getAutoCompletions() {
+	return []
+}
 export default {
 	name: 'TerminalWindow',
 	props: ['currentWindow'],
