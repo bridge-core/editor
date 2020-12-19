@@ -1,6 +1,7 @@
 import { mainTabSystem } from '@/components/TabSystem/Main'
 import { IFileSystem } from '@/fileSystem/Common'
 import { FileSystem } from '@/fileSystem/Main'
+import { platform } from '@/utils/os'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 
@@ -29,7 +30,14 @@ export class DirectoryEntry {
 			fileSystem
 				.readdir(path.join('/'), { withFileTypes: true })
 				.then(handles => {
-					handles.forEach(handle =>
+					handles.forEach(handle => {
+						if (
+							platform() === 'darwin' &&
+							handle.name === '.DS_Store' &&
+							handle.kind === 'file'
+						)
+							return
+
 						this.children.push(
 							new DirectoryEntry(
 								fileSystem,
@@ -38,7 +46,7 @@ export class DirectoryEntry {
 								handle.kind === 'file'
 							)
 						)
-					)
+					})
 					this.sortChildren()
 				})
 		}
