@@ -19,7 +19,7 @@ import { handleRequest } from './remote/Host'
 import { mainTabSystem } from '@/components/TabSystem/Main'
 import { FileType } from './FileType'
 import { setupMonacoEditor } from '@/components/Editors/Text/setup'
-import { translate } from '@/utils/locales'
+import { translate, selectLanguage, getLanguages } from '@/utils/locales'
 
 export async function startUp() {
 	setupKeyBindings()
@@ -27,6 +27,17 @@ export async function startUp() {
 	setupSidebar()
 	await FileType.setup()
 	setupMonacoEditor()
+
+	// Set language based off of browser language
+	if (!navigator.language.includes('en')) {
+		for (const [lang] of getLanguages()) {
+			if (navigator.language.includes(lang)) {
+				selectLanguage(lang)
+			}
+		}
+	} else {
+		selectLanguage('en')
+	}
 
 	if (process.env.NODE_ENV !== 'development') {
 		const discordMsg = createNotification({

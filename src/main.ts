@@ -16,7 +16,6 @@ Vue.use(Vuetify)
 export const vuetify = new Vuetify({
 	lang: {
 		locales: { nl, de, en, ko },
-		current: 'en',
 	},
 	theme: {
 		dark: true,
