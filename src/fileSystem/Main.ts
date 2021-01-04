@@ -2,10 +2,10 @@ import { createSelectProjectFolderWindow } from '@/components/Windows/Project/Se
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
 import { IFileSystem, IGetHandleConfig, IMkdirConfig } from './Common'
 import { translate } from '@/utils/locales'
+import { get, set } from 'idb-keyval'
 
 let fileSystem: IFileSystem
 export class FileSystem {
-	static database: IDBDatabase
 	static fsReadyPromiseResolves: ((fileSystem: IFileSystem) => void)[] = []
 
 	constructor(protected baseDirectory: FileSystemDirectoryHandle) {
@@ -15,85 +15,39 @@ export class FileSystem {
 			this.mkdir('data'),
 		]).then(() => {
 			FileSystem.fsReadyPromiseResolves.forEach(resolve => resolve(this))
-			FileSystem.database.close()
 		})
 	}
 
-	static create() {
-		const request = indexedDB.open('bridgeFSData', 1)
-		request.onerror = () => this.requestFolderSelection()
-		request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
-			const upgradeDb = (event.target as IDBOpenDBRequest).result
+	static async create() {
+		const fileHandle = await get<FileSystemDirectoryHandle>('bridgeBaseDir')
+		if (!fileHandle)
+			createSelectProjectFolderWindow(fileHandle => {
+				if (fileHandle) {
+					set('bridgeBaseDir', fileHandle)
+				}
 
-			if (!upgradeDb.objectStoreNames.contains('fileHandles')) {
-				const store = upgradeDb.createObjectStore('fileHandles', {
-					keyPath: 'fileHandleName',
-				})
-				store.createIndex('fileHandleName', 'fileHandleName', {
-					unique: true,
-				})
-			}
-		}
-		request.onsuccess = () => {
-			this.database = request.result
-			this.database.onerror = () => this.requestFolderSelection()
-			const transaction = this.database.transaction(
-				['fileHandles'],
-				'readonly'
-			)
-			const store = transaction.objectStore('fileHandles')
-			const getRequest = store.get('bridgeBaseDir')
-
-			getRequest.onerror = () => this.requestFolderSelection()
-			getRequest.onsuccess = () => {
-				if (!getRequest.result || !getRequest.result.fileHandle)
-					this.requestFolderSelection()
-				else
-					this.onReceivedFileHandle(
-						getRequest.result.fileHandle,
-						false
-					)
-			}
-		}
+				this.verifyPermissions(fileHandle)
+			})
+		else await this.verifyPermissions(fileHandle)
 	}
-	protected static requestFolderSelection() {
-		createSelectProjectFolderWindow(fileHandle =>
-			this.onReceivedFileHandle(fileHandle)
-		)
-	}
-	static onReceivedFileHandle(
-		fileHandle: FileSystemDirectoryHandle,
-		saveFileHandle = true
-	) {
-		if (saveFileHandle && this.database && fileHandle) {
-			const transaction = this.database.transaction(
-				['fileHandles'],
-				'readwrite'
-			)
-			const store = transaction.objectStore('fileHandles')
-			store.add({ fileHandleName: 'bridgeBaseDir', fileHandle })
-		}
-
-		this.verifyPermissions(fileHandle)
-	}
-	static verifyPermissions(fileHandle: FileSystemDirectoryHandle) {
+	static async verifyPermissions(fileHandle: FileSystemDirectoryHandle) {
 		const opts = { writable: true, mode: 'readwrite' } as const
 
-		createInformationWindow(
-			translate('windows.projectFolder.title'),
-			translate('windows.projectFolder.content'),
-			async () => {
-				// Check if we already have permission && request permission if not
-				if (
-					(await fileHandle.queryPermission(opts)) === 'granted' ||
-					(await fileHandle.requestPermission(opts)) === 'granted'
-				) {
-					fileSystem = new FileSystem(fileHandle)
-				} else {
-					this.verifyPermissions(fileHandle)
+		if ((await fileHandle.queryPermission(opts)) !== 'granted')
+			createInformationWindow(
+				translate('windows.projectFolder.title'),
+				translate('windows.projectFolder.content'),
+				async () => {
+					// Check if we already have permission && request permission if not
+					if (
+						(await fileHandle.requestPermission(opts)) === 'granted'
+					) {
+						fileSystem = new FileSystem(fileHandle)
+					} else {
+						this.verifyPermissions(fileHandle)
+					}
 				}
-			}
-		)
+			)
 	}
 	static get() {
 		if (fileSystem !== undefined) return fileSystem
