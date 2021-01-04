@@ -1,5 +1,7 @@
 <template>
 	<v-app>
+		<!-- We need access to native menus in order to hide the custom one on MacOS -->
+		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar />
 
 		<Sidebar />
@@ -29,6 +31,7 @@ import TabBar from './components/TabSystem/TabBar.vue'
 import { startUp } from './appCycle/startUp'
 import { mainTabSystem } from '@/components/TabSystem/Main'
 import { App } from './App'
+import { platform } from './utils/os'
 
 export default Vue.extend({
 	name: 'App',
@@ -47,6 +50,7 @@ export default Vue.extend({
 
 	data: () => ({
 		mainTabSystem,
+		isMacOs: platform() === 'darwin',
 	}),
 })
 </script>

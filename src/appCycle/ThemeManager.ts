@@ -21,7 +21,9 @@ const colorNames = [
 export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	public readonly mode: 'light' | 'dark'
 	protected themeMap = new Set<Theme>()
-	protected themeColorTag = document.createElement('meta')
+	protected themeColorTag =
+		document.getElementById('theme-color-tag') ??
+		document.createElement('meta')
 
 	constructor() {
 		super()
@@ -48,7 +50,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 			new Theme({
 				id: 'bridge.default.dark',
 				colors: {
-					toolbar: '#1e1e1e',
+					toolbar: '#000',
 				},
 			})
 		)

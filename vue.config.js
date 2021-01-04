@@ -4,9 +4,9 @@ module.exports = {
 	publicPath: process.env.NODE_ENV === 'production' ? '/editor/' : undefined,
 	transpileDependencies: ['vuetify'],
 	pwa: {
-		name: 'bridge-lite',
+		name: 'bridge',
 		appleMobileWebAppCapable: true,
-		themeColor: '#1778D2',
+		themeColor: null, // Vue automatically inserts the meta.themeColor tag. That clashes with our themeManager so we have to disable it...
 		manifestOptions: {
 			// display_modifiers: ['window-controls-overlay'],
 		},
