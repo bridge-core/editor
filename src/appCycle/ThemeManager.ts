@@ -33,7 +33,11 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 			this.dispatch(mediaQuery.matches ? 'light' : 'dark')
 		})
 
-		// Setup
+		/**
+		 * Setup theme meta tag
+		 * @see ThemeManager.setThemeColor
+		 */
+
 		this.themeColorTag.setAttribute('name', 'theme-color')
 		document.head.appendChild(this.themeColorTag)
 	}
@@ -42,6 +46,10 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		theme.apply(this)
 	}
 
+	/**
+	 * Updates the top browser toolbar to match the main app's toolbar color
+	 * @param color Color to set the toolbar to
+	 */
 	setThemeColor(color: string) {
 		this.themeColorTag.setAttribute('content', color)
 	}
