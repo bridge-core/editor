@@ -6,6 +6,12 @@
 
 		<v-main>
 			<WindowRenderer />
+			<TabBar />
+
+			<component
+				:is="mainTabSystem.currentComponent"
+				:tab="mainTabSystem.selectedTab"
+			/>
 			<!--  -->
 		</v-main>
 
@@ -19,7 +25,10 @@ import Sidebar from './components/Sidebar/Common/Main.vue'
 import Footer from './components/Footer/Main.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
+import TabBar from './components/TabSystem/TabBar.vue'
 import { startUp } from './appCycle/startUp'
+import { mainTabSystem } from '@/components/TabSystem/Main'
+import { App } from './App'
 
 export default Vue.extend({
 	name: 'App',
@@ -29,13 +38,15 @@ export default Vue.extend({
 		Footer,
 		Toolbar,
 		WindowRenderer,
+		TabBar,
 	},
 	async mounted() {
 		await startUp()
+		App.main()
 	},
 
 	data: () => ({
-		drawer: true,
+		mainTabSystem,
 	}),
 })
 </script>

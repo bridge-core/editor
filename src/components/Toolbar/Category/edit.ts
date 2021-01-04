@@ -4,15 +4,15 @@ import { AppMenu } from '../create'
 // import NodeShortcuts from '../../../editor/NodeShortcuts'
 
 export const EditMenu: AppMenu = {
-	displayName: 'Edit',
+	displayName: 'toolbar.edit.name',
 	displayIcon: 'mdi-pen',
 	elements: [
 		{
-			displayName: 'Selection',
+			displayName: 'toolbar.edit.selection.name',
 			displayIcon: 'mdi-select',
 			elements: [
 				{
-					displayName: 'Unselect',
+					displayName: 'toolbar.edit.selection.unselect',
 					displayIcon: 'mdi-cancel',
 					keyBinding: {
 						key: 'escape',
@@ -22,7 +22,7 @@ export const EditMenu: AppMenu = {
 					},
 				},
 				{
-					displayName: 'Select Parent',
+					displayName: 'toolbar.edit.selection.selectParent',
 					displayIcon: 'mdi-chevron-double-up',
 					keyBinding: {
 						key: 'p',
@@ -37,7 +37,7 @@ export const EditMenu: AppMenu = {
 					},
 				},
 				{
-					displayName: 'Select Next',
+					displayName: 'toolbar.edit.selection.selectNext',
 					displayIcon: 'mdi-chevron-down',
 					keyBinding: {
 						key: 'd',
@@ -48,7 +48,7 @@ export const EditMenu: AppMenu = {
 					},
 				},
 				{
-					displayName: 'Select Previous',
+					displayName: 'toolbar.edit.selection.selectPrevious',
 					displayIcon: 'mdi-chevron-up',
 					keyBinding: {
 						key: 'e',
@@ -61,11 +61,11 @@ export const EditMenu: AppMenu = {
 			],
 		},
 		{
-			displayName: 'JSON Nodes',
+			displayName: 'toolbar.edit.jsonNodes.name',
 			displayIcon: 'mdi-file-tree',
 			elements: [
 				{
-					displayName: 'Toggle Open',
+					displayName: 'toolbar.edit.jsonNodes.toggleOpen',
 					displayIcon: 'mdi-lock-open',
 					keyBinding: {
 						key: 'enter',
@@ -75,20 +75,20 @@ export const EditMenu: AppMenu = {
 						// TabSystem.toggleCurrentNode()
 					},
 				},
+				// {
+				// 	displayName: 'toolbar.edit.jsonNodes.toggleOpenChildren',
+				// 	displayIcon: 'mdi-lock-open-variant',
+				// 	keyBinding: {
+				// 		key: 'p',
+				// 		shiftKey: true,
+				// 		ctrlKey: true,
+				// 	},
+				// 	onClick: () => {
+				//		TabSystem.getCurrentNavObj().toggleOpenDeep()
+				// 	},
+				// },
 				{
-					displayName: 'Toggle Open Children',
-					displayIcon: 'mdi-lock-open-variant',
-					keyBinding: {
-						key: 'p',
-						shiftKey: true,
-						ctrlKey: true,
-					},
-					onClick: () => {
-						// TabSystem.getCurrentNavObj().toggleOpenDeep()
-					},
-				},
-				{
-					displayName: 'Move Down',
+					displayName: 'toolbar.edit.jsonNodes.moveDown',
 					displayIcon: 'mdi-chevron-down',
 					keyBinding: {
 						key: 'e',
@@ -100,7 +100,7 @@ export const EditMenu: AppMenu = {
 					},
 				},
 				{
-					displayName: 'Move Up',
+					displayName: 'toolbar.edit.jsonNodes.moveUp',
 					displayIcon: 'mdi-chevron-up',
 					keyBinding: {
 						key: 'd',
@@ -112,7 +112,7 @@ export const EditMenu: AppMenu = {
 					},
 				},
 				{
-					displayName: 'Comment/Uncomment',
+					displayName: 'toolbar.edit.jsonNodes.commentUncomment',
 					displayIcon: 'mdi-cancel',
 					keyBinding: {
 						key: 'i',
@@ -128,7 +128,7 @@ export const EditMenu: AppMenu = {
 			],
 		},
 		{
-			displayName: 'Delete',
+			displayName: 'toolbar.edit.delete',
 			displayIcon: 'mdi-delete',
 			keyBinding: {
 				key: 'backspace',
@@ -156,7 +156,7 @@ export const EditMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Undo',
+			displayName: 'toolbar.edit.undo',
 			displayIcon: 'mdi-undo',
 			keyBinding: {
 				key: 'z',
@@ -167,7 +167,7 @@ export const EditMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Redo',
+			displayName: 'toolbar.edit.redo',
 			displayIcon: 'mdi-redo',
 			keyBinding: {
 				key: 'y',
@@ -179,7 +179,7 @@ export const EditMenu: AppMenu = {
 		},
 
 		{
-			displayName: 'Copy',
+			displayName: 'toolbar.edit.copy',
 			displayIcon: 'mdi-content-copy',
 			keyBinding: {
 				key: 'c',
@@ -197,7 +197,7 @@ export const EditMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Cut',
+			displayName: 'toolbar.edit.cut',
 			displayIcon: 'mdi-content-cut',
 			keyBinding: {
 				key: 'x',
@@ -215,7 +215,7 @@ export const EditMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Paste',
+			displayName: 'toolbar.edit.paste',
 			displayIcon: 'mdi-content-paste',
 			keyBinding: {
 				key: 'v',
@@ -228,7 +228,7 @@ export const EditMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Alternative Paste',
+			displayName: 'toolbar.edit.alternativePaste',
 			displayIcon: 'mdi-content-paste',
 			keyBinding: {
 				key: 'v',

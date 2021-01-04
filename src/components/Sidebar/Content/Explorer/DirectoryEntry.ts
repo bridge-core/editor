@@ -1,10 +1,14 @@
-import { FileSystem } from '@/FileSystem'
+import { mainTabSystem } from '@/components/TabSystem/Main'
+import { IFileSystem } from '@/fileSystem/Common'
+import { FileSystem } from '@/fileSystem/Main'
+import { platform } from '@/utils/os'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
 	public uuid = uuid()
+	public isFolderOpen = false
 
 	static async create() {
 		return Vue.observable(
@@ -15,7 +19,7 @@ export class DirectoryEntry {
 		)
 	}
 	constructor(
-		protected fileSystem: FileSystem,
+		protected fileSystem: IFileSystem,
 		protected parent: DirectoryEntry | null,
 		protected path: string[],
 		protected _isFile = false
@@ -23,19 +27,28 @@ export class DirectoryEntry {
 		if (_isFile) {
 			// this.parent?.updateUUID()
 		} else {
-			fileSystem.readdir(path, { withFileTypes: true }).then(handles => {
-				handles.forEach(handle =>
-					this.children.push(
-						new DirectoryEntry(
-							fileSystem,
-							this,
-							path.concat([handle.name]),
+			fileSystem
+				.readdir(path.join('/'), { withFileTypes: true })
+				.then(handles => {
+					handles.forEach(handle => {
+						if (
+							platform() === 'darwin' &&
+							handle.name === '.DS_Store' &&
 							handle.kind === 'file'
 						)
-					)
-				)
-				this.sortChildren()
-			})
+							return
+
+						this.children.push(
+							new DirectoryEntry(
+								fileSystem,
+								this,
+								path.concat([handle.name]),
+								handle.kind === 'file'
+							)
+						)
+					})
+					this.sortChildren()
+				})
 		}
 	}
 
@@ -44,6 +57,27 @@ export class DirectoryEntry {
 	}
 	get isFile() {
 		return this._isFile
+	}
+	getPath() {
+		return this.path.join('/')
+	}
+	open() {
+		if (this.isFile) mainTabSystem.open(this.getPath())
+		else this.isFolderOpen = !this.isFolderOpen
+	}
+	getFileContent() {
+		if (!this.isFile) throw new Error(`Called getFileContent on directory`)
+
+		return this.fileSystem.readFile(this.getPath()).then(file => {
+			if (file instanceof ArrayBuffer) {
+				const dec = new TextDecoder('utf-8')
+				return dec.decode(file)
+			}
+			return file.text()
+		})
+	}
+	saveFileContent(data: FileSystemWriteChunkType) {
+		this.fileSystem.writeFile(this.getPath(), data)
 	}
 
 	protected sortChildren() {

@@ -26,17 +26,19 @@
 				@click="onConfirm"
 				:disabled="selectedValue === ''"
 			>
-				<span>Confirm</span>
+				<span>{{ t('windows.common.dropdown.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
 import BaseWindow from '../../Layout/Base'
 
 export default {
 	name: 'Dropdown',
+	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
 	},

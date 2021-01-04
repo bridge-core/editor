@@ -5,10 +5,10 @@ import { HelpMenu } from './Category/help'
 import { ToolMenu } from './Category/tools'
 import { EditMenu } from './Category/edit'
 import { setupKeyBindings } from '@/appCycle/keyBindings'
-import type { Disposable } from '@/types/disposable'
+import type { IDisposable } from '@/types/disposable'
 
 let CATEGORIES = [FileMenu, EditMenu, ToolMenu, HelpMenu]
-let DISPOSABLES: Disposable[] = []
+let DISPOSABLES: IDisposable[] = []
 export const DEV_MENU = createAppMenu(DevMenu, false)
 
 export function setupDefaultMenus() {

@@ -3,18 +3,18 @@ import { AppMenu } from '../create'
 // import { shell } from 'electron'
 
 export const HelpMenu: AppMenu = {
-	displayName: 'Help',
+	displayName: 'toolbar.help.name',
 	displayIcon: 'mdi-help',
 	elements: [
 		{
-			displayName: 'About',
+			displayName: 'toolbar.help.about',
 			displayIcon: 'mdi-information-outline',
 			onClick: () => {
 				// new AboutWindow()
 			},
 		},
 		{
-			displayName: 'Releases',
+			displayName: 'toolbar.help.releases',
 			displayIcon: 'mdi-alert-decagram',
 			onClick: () =>
 				window.open(
@@ -23,7 +23,7 @@ export const HelpMenu: AppMenu = {
 				),
 		},
 		{
-			displayName: 'Bug Reports',
+			displayName: 'toolbar.help.bugReports',
 			displayIcon: 'mdi-bug-outline',
 			onClick: () =>
 				window.open(
@@ -32,7 +32,7 @@ export const HelpMenu: AppMenu = {
 				),
 		},
 		{
-			displayName: 'Plugin API',
+			displayName: 'toolbar.help.pluginAPI',
 			displayIcon: 'mdi-puzzle',
 			onClick: () =>
 				window.open(
@@ -41,7 +41,7 @@ export const HelpMenu: AppMenu = {
 				),
 		},
 		{
-			displayName: 'Getting Started',
+			displayName: 'toolbar.help.gettingStarted',
 			displayIcon: 'mdi-help-circle-outline',
 			onClick: () =>
 				window.open(
@@ -50,7 +50,7 @@ export const HelpMenu: AppMenu = {
 				),
 		},
 		{
-			displayName: 'FAQ',
+			displayName: 'toolbar.help.faq',
 			displayIcon: 'mdi-frequently-asked-questions',
 			onClick: () =>
 				window.open(

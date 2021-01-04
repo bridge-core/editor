@@ -1,21 +1,32 @@
+import { terminalWindow } from '@/components/Terminal/definition'
 import { AppMenu } from '../create'
 // import { GoToFile } from '../../Windows/Tools/GoToFile/definition'
 // import SnippetWindow from '../../../../windows/Snippets'
 // import PresetWindow from '../../../../windows/PresetWindow'
 
 export const ToolMenu: AppMenu = {
-	displayName: 'Tools',
+	displayName: 'toolbar.tools.name',
 	displayIcon: 'mdi-wrench',
 	elements: [
 		{
-			displayName: 'Presets',
+			displayName: 'toolbar.tools.terminal',
+			displayIcon: 'mdi-console',
+			keyBinding: {
+				key: 'p',
+				ctrlKey: true,
+				shiftKey: true,
+			},
+			onClick: () => terminalWindow.open(),
+		},
+		{
+			displayName: 'toolbar.tools.presets',
 			displayIcon: 'mdi-text-box-multiple-outline',
 			onClick: () => {
 				// new PresetWindow()
 			},
 		},
 		{
-			displayName: 'Snippets',
+			displayName: 'toolbar.tools.snippets',
 			displayIcon: 'mdi-attachment',
 			keyBinding: {
 				key: 'q',
@@ -26,7 +37,7 @@ export const ToolMenu: AppMenu = {
 			},
 		},
 		{
-			displayName: 'Go to File',
+			displayName: 'toolbar.tools.goToFile',
 			displayIcon: 'mdi-magnify',
 			keyBinding: {
 				key: 'o',

@@ -1,12 +1,12 @@
 import { createNotification } from '@/components/Footer/create'
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
-import type { Disposable } from '@/types/disposable'
+import type { IDisposable } from '@/types/disposable'
 
 /**
  * Creates a new error notification
  * @param config
  */
-export function createErrorNotification(error: Error): Disposable {
+export function createErrorNotification(error: Error): IDisposable {
 	const message = error.message
 	let short = message
 	if (message.includes(': ')) short = message.split(': ').shift() as string

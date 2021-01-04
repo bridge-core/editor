@@ -7,25 +7,11 @@ import * as monaco from 'monaco-editor'
 import { on } from '@/appCycle/EventSystem'
 import { v4 as uuid } from 'uuid'
 
+let editorInstance
 export default {
 	name: 'Monaco',
 	props: {
-		value: String,
-		extension: String,
-		language: String,
-		filePath: String,
-		disposeOnUnmount: {
-			default: false,
-			type: Boolean,
-		},
-		readonly: Boolean,
-	},
-	data() {
-		return {
-			monacoEditor: null,
-			disposables: [],
-			URI: null,
-		}
+		tab: Object,
 	},
 	computed: {
 		isDarkMode() {
@@ -45,43 +31,22 @@ export default {
 			noLib: true,
 		})
 
-		if (this.filePath) this.URI = monaco.Uri.file(this.filePath)
-		else this.URI = monaco.Uri.parse(uuid())
-
-		const currentModel =
-			monaco.editor.getModel(this.URI) ||
-			monaco.editor.createModel(this.value, this.language, this.URI)
-		this.monacoEditor = monaco.editor.create(this.$refs.monacoContainer, {
-			theme: this.isDarkMode ? 'bridge-dark' : 'bridge-light',
-			value: this.value,
+		editorInstance = monaco.editor.create(this.$refs.monacoContainer, {
+			theme: this.isDarkMode ? 'vs-dark' : 'vs',
 			roundedSelection: false,
 			autoIndent: 'full',
 			fontSize: this.fontSize,
-			fontFamily: this.fontFamily,
-			model: currentModel,
-			readOnly: this.readonly,
+			// fontFamily: this.fontFamily,
+			tabSize: 4,
 		})
-
-		currentModel.onDidChangeContent(() => {
-			this.$emit('input', currentModel.getValue())
-		})
-
-		this.disposables.push(on('bridge:onResize', () => this.onResize()))
-
-		setTimeout(this.onResize, 100)
-	},
-	destroyed() {
-		this.disposables.forEach(dis => dis.dispose())
-		if (this.disposeOnUnmount) monaco.editor.getModel(this.URI).dispose()
-	},
-	methods: {
-		onResize() {
-			if (this.monacoEditor) this.monacoEditor.layout()
-		},
+		this.tab.receiveEditorInstance(editorInstance)
 	},
 	watch: {
+		tab() {
+			this.tab.receiveEditorInstance(editorInstance)
+		},
 		isDarkMode(val) {
-			monaco.editor.setTheme(val ? 'bridge-dark' : 'bridge-light')
+			monaco.editor.setTheme(val ? 'vs-dark' : 'vs')
 		},
 		fontSize(val) {
 			this.monacoEditor.updateOptions({

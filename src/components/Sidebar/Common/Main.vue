@@ -13,17 +13,17 @@
 
 		<!-- 60px sidebar nav + 12px default padding -->
 		<h1 style="padding: 12px; padding-left: 72px;">
-			{{ currentSidebar.displayName }}
+			{{ t(currentSidebar.displayName) }}
 		</h1>
 		<v-divider />
-		<v-container
+		<div
 			v-if="isVisible"
-			style="padding-left: 72px; height: calc(100% - 48px); overflow: auto;"
+			style="padding: 4px; padding-left: 64px; height: calc(100% - 48px); overflow: auto;"
 		>
 			<keep-alive>
 				<component :is="currentSidebarContent" />
 			</keep-alive>
-		</v-container>
+		</div>
 	</v-navigation-drawer>
 </template>
 
@@ -31,8 +31,10 @@
 import Navigation from './Navigation'
 import { setupSidebar } from '../setup'
 import { SidebarState } from './state'
+import { TranslationMixin } from '@/utils/locales'
 
 export default {
+	mixins: [TranslationMixin],
 	components: {
 		Navigation,
 	},

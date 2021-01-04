@@ -17,17 +17,19 @@
 			<v-spacer />
 			<v-btn color="primary" @click="close">
 				<v-icon>mdi-check</v-icon>
-				<span>Okay</span>
+				<span>{{ t('windows.common.information.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
 import BaseWindow from '../../Layout/Base'
 
 export default {
 	name: 'Information',
+	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
 	},

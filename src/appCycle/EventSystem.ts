@@ -2,7 +2,7 @@
  * Trigger and react to events
  */
 import { v4 as uuid } from 'uuid'
-import type { Disposable } from '@/types/disposable'
+import type { IDisposable } from '@/types/disposable'
 
 interface IEventState {
 	[event: string]: Record<string, (...data: unknown[]) => void | Promise<unknown>>
@@ -20,7 +20,7 @@ export async function trigger(event: string, ...data: unknown[]) {
 export function on(
 	event: string,
 	cb: (...data: unknown[]) => void
-): Disposable {
+): IDisposable {
 	const eventUUID = uuid()
 	if (EventState[event] === undefined) EventState[event] = {}
 	EventState[event][eventUUID] = cb
@@ -37,4 +37,71 @@ export function once(event: string, cb: (...data: unknown[]) => void) {
 		disposable.dispose()
 		return cb(...data)
 	})
+}
+
+
+export class EventManager<T> {
+	protected events = new Map<string, EventDispatcher<T>>()
+	
+	create(name: string) {
+		this.events.set(name, new EventDispatcher<T>())
+		return {
+			dispose: () => {
+				this.events.delete(name)
+			}
+		}
+	}
+
+	protected getDispatcher(name: string) {
+		const dispatcher = this.events.get(name)
+		if(dispatcher === undefined) throw new Error(`No dispatcher defined for event "${name}".`)
+
+		return dispatcher
+	}
+
+	dispatch(name: string, data: T) {
+		return this.getDispatcher(name).dispatch(data)
+	}
+	on(name: string, listener: (data: T) => void) {
+		return this.getDispatcher(name).on(listener)
+	}
+	off(name: string, listener: (data: T) => void) {
+		return this.getDispatcher(name).off(listener)
+	}
+	once(name: string, listener: (data: T) => void) {
+		return this.getDispatcher(name).once(listener)
+	}
+}
+
+export class EventDispatcher<T> {
+	protected listeners = new Set<(data: T) => void>()
+
+	constructor() {
+		
+	}
+
+	dispatch(data: T) {
+		this.listeners.forEach(listener => listener(data))
+	}
+
+	on(listener: (data: T) => void) {
+		this.listeners.add(listener)
+
+		return {
+			dispose: () => {
+				this.off(listener)
+			}
+		}
+	}
+
+	off(listener: (data: T) => void) {
+		this.listeners.delete(listener)
+	}
+
+	once(listener: (data: T) => void) {
+		const disposable = this.on((data) => {
+			listener(data)
+			disposable.dispose()
+		})
+	}
 }

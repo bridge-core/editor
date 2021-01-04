@@ -15,6 +15,7 @@
 					:label="label"
 					v-model="inputValue"
 					@keydown.enter.native="onConfirm"
+					autofocus
 				/>
 				<p class="expand_text" v-if="expandText !== ''">
 					{{ expandText }}
@@ -28,17 +29,19 @@
 				@click="onConfirm"
 				:disabled="inputValue === ''"
 			>
-				<span>Confirm</span>
+				<span>{{ t('windows.common.input.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
 import BaseWindow from '../../Layout/Base'
 
 export default {
 	name: 'Input',
+	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
 	},

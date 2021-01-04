@@ -1,7 +1,7 @@
 import { NotificationStore } from './state'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
-import type { Disposable } from '@/types/disposable'
+import type { IDisposable } from '@/types/disposable'
 
 export interface Notification {
 	icon?: string
@@ -24,7 +24,7 @@ export interface TimedNotification extends Notification {
  * Creates a new notification
  * @param config
  */
-export function createNotification(config: Notification): Disposable {
+export function createNotification(config: Notification): IDisposable {
 	if (!config.onClick)
 		config.onClick = () => {
 			//
@@ -50,7 +50,7 @@ export function createNotification(config: Notification): Disposable {
  * Creates a new timed notification
  * @param config
  */
-export function createTimedNotification(config: TimedNotification): Disposable {
+export function createTimedNotification(config: TimedNotification): IDisposable {
 	const notification = createNotification(config)
 
 	setTimeout(() => {

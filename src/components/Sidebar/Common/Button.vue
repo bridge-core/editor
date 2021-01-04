@@ -24,13 +24,16 @@
 			</v-list-item>
 		</template>
 
-		<span>{{ displayName }}</span>
+		<span>{{ t(displayName) }}</span>
 	</v-tooltip>
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
+
 export default {
 	name: 'SidebarButton',
+	mixins: [TranslationMixin],
 	props: {
 		displayName: String,
 		icon: String,
