@@ -21,20 +21,29 @@ const colorNames = [
 export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	public readonly mode: 'light' | 'dark'
 	protected themeMap = new Set<Theme>()
+	protected themeColorTag = document.createElement('meta')
 
 	constructor() {
 		super()
 
+		// Listen for dark/light mode changes
 		const media = window.matchMedia('(prefers-color-scheme: light)')
 		this.mode = media.matches ? 'light' : 'dark'
-
 		media.addEventListener('change', mediaQuery => {
 			this.dispatch(mediaQuery.matches ? 'light' : 'dark')
 		})
+
+		// Setup
+		this.themeColorTag.setAttribute('name', 'theme-color')
+		document.head.appendChild(this.themeColorTag)
 	}
 
 	apply(theme: Theme) {
-		theme.apply()
+		theme.apply(this)
+	}
+
+	setThemeColor(color: string) {
+		this.themeColorTag.setAttribute('content', color)
 	}
 }
 
@@ -50,8 +59,10 @@ export class Theme {
 		this.colorMap = new Map(Object.entries(themeDefinition.colors))
 	}
 
-	apply() {
+	apply(themeManager: ThemeManager) {
 		colorNames.forEach(color => this.applyColor(color))
+
+		themeManager.setThemeColor(this.colorMap.get('toolbar') ?? 'red')
 	}
 
 	applyColor(colorName: string) {
