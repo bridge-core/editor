@@ -1,7 +1,7 @@
 import { Tab } from '@/components/TabSystem/CommonTab'
 import MonacoEditor from './Main.vue'
 import * as monaco from 'monaco-editor'
-import { Disposable } from '@/types/disposable'
+import { IDisposable } from '@/types/disposable'
 import { on } from '@/appCycle/EventSystem'
 import { EditorContentManager } from '@convergencelabs/monaco-collab-ext'
 import { dispatchEvent } from '@/appCycle/remote/Client'
@@ -11,7 +11,7 @@ export class TextTab extends Tab {
 	editorInstance: monaco.editor.ICodeEditor | undefined
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
-	disposables: (Disposable | undefined)[] = []
+	disposables: (IDisposable | undefined)[] = []
 	editorContentManager: EditorContentManager | undefined
 	remoteEdits: monaco.editor.IModelContentChange[] = []
 

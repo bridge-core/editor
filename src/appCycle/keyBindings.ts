@@ -1,4 +1,4 @@
-import type { Disposable } from '@/types/disposable'
+import type { IDisposable } from '@/types/disposable'
 import { platform } from '@/utils/os'
 
 const IGNORE_KEYS = ['Control', 'Alt', 'Meta']
@@ -69,7 +69,7 @@ export function getStrKeyCode({
 export function addKeyBinding(
 	keyBinding: KeyBinding,
 	action: () => void
-): Disposable {
+): IDisposable {
 	const keyCode = getStrKeyCode(keyBinding)
 
 	if (KEYMAP.has(keyCode)) {

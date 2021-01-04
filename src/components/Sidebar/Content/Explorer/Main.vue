@@ -77,8 +77,9 @@ summary {
 	outline: none;
 	cursor: pointer;
 }
-summary::-webkit-details-marker {
+summary::marker {
 	display: none;
+	font-size: 0;
 }
 details[open] > summary > .open {
 	display: inline;

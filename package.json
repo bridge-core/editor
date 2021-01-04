@@ -4,9 +4,9 @@
 	"private": true,
 	"scripts": {
 		"build": "vue-cli-service build",
+		"test:unit": "vue-cli-service test:unit",
 		"lint": "vue-cli-service lint",
-		"dev": "vue-cli-service serve",
-		"test:unit": "vue-cli-service test:unit"
+		"dev": "vue-cli-service serve"
 	},
 	"dependencies": {
 		"bridge-compiler": "^0.3.0",

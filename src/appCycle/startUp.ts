@@ -20,8 +20,11 @@ import { mainTabSystem } from '@/components/TabSystem/Main'
 import { FileType } from './FileType'
 import { setupMonacoEditor } from '@/components/Editors/Text/setup'
 import { translate, selectLanguage, getLanguages } from '@/utils/locales'
+import { App } from '@/App'
 
 export async function startUp() {
+	App.main()
+
 	setupKeyBindings()
 	setupDefaultMenus()
 	setupSidebar()
@@ -78,7 +81,9 @@ export async function startUp() {
 			} catch {
 				createInformationWindow(
 					`ERROR`,
-					`${translate('windows.peerConnectError.error1')} "${joinPeer}"!`,
+					`${translate(
+						'windows.peerConnectError.error1'
+					)} "${joinPeer}"!`,
 					() =>
 						(location.href = 'https://bridge-core.github.io/editor')
 				)

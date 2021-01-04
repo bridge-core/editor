@@ -1,7 +1,7 @@
 import { SidebarState, getSelected } from './state'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
-import type { Disposable } from '@/types/disposable'
+import type { IDisposable } from '@/types/disposable'
 import { trigger } from '@/appCycle/EventSystem'
 import { getDefaultSidebar } from '../setup'
 
@@ -14,7 +14,7 @@ export interface Sidebar {
 	onClick?: () => void
 }
 
-export interface SidebarInstance extends Disposable, Sidebar {
+export interface SidebarInstance extends IDisposable, Sidebar {
 	readonly uuid: string
 	readonly isSelected: boolean
 	readonly opacity: number

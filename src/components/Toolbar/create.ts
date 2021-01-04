@@ -1,7 +1,7 @@
 import { AppMenu } from './state'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
-import type { Disposable } from '@/types/disposable'
+import type { IDisposable } from '@/types/disposable'
 import { addKeyBinding, KeyBinding } from '@/appCycle/keyBindings'
 
 export interface AppMenu {
@@ -25,7 +25,7 @@ export interface AppMenuElement {
  */
 export function createAppMenu(config: AppMenu, addMenu = true) {
 	const appMenuUUID = uuid()
-	let disposables: Disposable[] = []
+	let disposables: IDisposable[] = []
 
 	if (addMenu) {
 		Vue.set(AppMenu, appMenuUUID, config)
@@ -46,7 +46,7 @@ export function createAppMenu(config: AppMenu, addMenu = true) {
 }
 
 function registerKeyBindings(elements: AppMenuElement[]) {
-	let disposables: Disposable[] = []
+	let disposables: IDisposable[] = []
 
 	elements.forEach(({ keyBinding, onClick, elements }) => {
 		if (keyBinding && onClick)

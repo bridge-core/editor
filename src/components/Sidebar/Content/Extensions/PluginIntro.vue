@@ -1,5 +1,5 @@
 <template>
-	<v-card color="expanded_sidebar">
+	<v-card color="expandedSidebar">
 		<v-card-text>
 			<p>
 				{{
@@ -63,7 +63,7 @@
 		</v-card-text>
 
 		<v-card-actions style="display: grid; place-items: center;">
-			<v-btn rounded dark color="primary" @click="openExtensionBrowser">
+			<v-btn dark color="primary" @click="openExtensionBrowser">
 				<v-icon>mdi-puzzle</v-icon>
 				<span>{{
 					$vuetify.lang.t(
