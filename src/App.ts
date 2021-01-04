@@ -2,7 +2,7 @@ import { EventManager } from './appCycle/EventSystem'
 import { ThemeManager } from './appCycle/ThemeManager'
 
 export class App {
-	protected themeManager
+	protected themeManager: ThemeManager
 	protected eventSystem = new EventManager<any>()
 
 	static main(appComponent: Vue) {
