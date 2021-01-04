@@ -134,7 +134,7 @@ const bridgeLight = new Theme({
 		background: '#fafafa',
 		sidebarNavigation: '#FFFFFF',
 		expandedSidebar: '#FFFFFF',
-		menu: '',
+		menu: '#fff',
 		tooltip: '#424242',
 		toolbar: '#e0e0e0',
 		footer: '#f5f5f5',
