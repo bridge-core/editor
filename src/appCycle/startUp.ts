@@ -23,8 +23,6 @@ import { translate, selectLanguage, getLanguages } from '@/utils/locales'
 import { App } from '@/App'
 
 export async function startUp() {
-	App.main()
-
 	setupKeyBindings()
 	setupDefaultMenus()
 	setupSidebar()

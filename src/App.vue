@@ -45,7 +45,8 @@ export default Vue.extend({
 	},
 	async mounted() {
 		await startUp()
-		App.main()
+
+		App.main(this)
 	},
 
 	data: () => ({
@@ -85,5 +86,9 @@ body {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+.v-application {
+	background: var(--v-background-base) !important;
 }
 </style>

@@ -1,9 +1,10 @@
 import { EventDispatcher } from './EventSystem'
+import Vue from 'vue'
 
 const colorNames = [
 	'text',
 	'toolbar',
-	'sidebar',
+	'expandedSidebar',
 	'sidebarNavigation',
 	'primary',
 	'secondary',
@@ -16,7 +17,8 @@ const colorNames = [
 	'menu',
 	'footer',
 	'tooltip',
-]
+] as const
+type TColorName = typeof colorNames[number]
 
 export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	public readonly mode: 'light' | 'dark'
@@ -25,7 +27,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		document.getElementById('theme-color-tag') ??
 		document.createElement('meta')
 
-	constructor() {
+	constructor(protected vuetify: any) {
 		super()
 
 		// Listen for dark/light mode changes
@@ -46,18 +48,11 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		if (!document.getElementById('theme-color-tag'))
 			document.head.appendChild(this.themeColorTag)
 
-		this.apply(
-			new Theme({
-				id: 'bridge.default.dark',
-				colors: {
-					toolbar: '#000',
-				},
-			})
-		)
+		this.apply(bridgeDark)
 	}
 
 	apply(theme: Theme) {
-		theme.apply(this)
+		theme.apply(this, this.vuetify)
 	}
 
 	/**
@@ -71,26 +66,77 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 
 export interface IThemeDefinition {
 	id: string
-	colors: Record<string, string>
+	colorScheme?: 'dark' | 'light'
+	colors: Record<TColorName, string>
 }
 
 export class Theme {
-	protected colorMap: Map<string, string>
+	protected colorMap: Map<TColorName, string>
+	protected colorScheme: 'dark' | 'light'
 
 	constructor(themeDefinition: IThemeDefinition) {
-		this.colorMap = new Map(Object.entries(themeDefinition.colors))
+		this.colorMap = new Map(
+			<[TColorName, string][]>Object.entries(themeDefinition.colors)
+		)
+		this.colorScheme = themeDefinition.colorScheme ?? 'dark'
 	}
 
-	apply(themeManager: ThemeManager) {
-		colorNames.forEach(color => this.applyColor(color))
+	apply(themeManager: ThemeManager, vuetify: any) {
+		Vue.set(
+			vuetify.theme.themes,
+			this.colorScheme,
+			Object.fromEntries(this.colorMap.entries())
+		)
+		Vue.set(vuetify.theme, 'dark', this.colorScheme === 'dark')
 
 		themeManager.setThemeColor(this.colorMap.get('toolbar') ?? 'red')
 	}
-
-	applyColor(colorName: string) {
-		document.documentElement.style.setProperty(
-			`--${colorName}`,
-			this.colorMap.get(colorName) ?? 'red'
-		)
-	}
 }
+
+const bridgeDark = new Theme({
+	id: 'bridge.default.dark',
+	colorScheme: 'dark',
+	colors: {
+		text: '#fff',
+
+		primary: '#1778D2',
+		secondary: '#1778D2',
+		accent: '#1778D2',
+		error: '#ff5252',
+		info: '#2196f3',
+		warning: '#fb8c00',
+		success: '#4caf50',
+
+		background: '#121212',
+		sidebarNavigation: '#1F1F1F',
+		expandedSidebar: '#1F1F1F',
+		menu: '#424242',
+		footer: '#111111',
+		tooltip: '#1F1F1F',
+		toolbar: '#000',
+	},
+})
+
+const bridgeLight = new Theme({
+	id: 'bridge.default.light',
+	colorScheme: 'light',
+	colors: {
+		text: '#000',
+
+		primary: '#1778D2',
+		secondary: '#1778D2',
+		accent: '#1778D2',
+		error: '#ff5252',
+		info: '#2196f3',
+		warning: '#fb8c00',
+		success: '#4caf50',
+
+		background: '#fafafa',
+		sidebarNavigation: '#FFFFFF',
+		expandedSidebar: '#FFFFFF',
+		menu: '',
+		tooltip: '#424242',
+		toolbar: '#e0e0e0',
+		footer: '#f5f5f5',
+	},
+})
