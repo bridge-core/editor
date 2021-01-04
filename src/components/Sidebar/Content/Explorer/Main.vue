@@ -76,10 +76,7 @@ span.folder {
 summary {
 	outline: none;
 	cursor: pointer;
-}
-summary::marker {
-	display: none;
-	font-size: 0;
+	display: block;
 }
 details[open] > summary > .open {
 	display: inline;
