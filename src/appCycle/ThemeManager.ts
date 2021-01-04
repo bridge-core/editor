@@ -39,7 +39,19 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		 */
 
 		this.themeColorTag.setAttribute('name', 'theme-color')
-		document.head.appendChild(this.themeColorTag)
+		this.themeColorTag.id = 'theme-color-tag'
+		//Only add one theme-color in dev environment with hot reloading
+		if (!document.getElementById('theme-color-tag'))
+			document.head.appendChild(this.themeColorTag)
+
+		this.apply(
+			new Theme({
+				id: 'bridge.default.dark',
+				colors: {
+					toolbar: '#1e1e1e',
+				},
+			})
+		)
 	}
 
 	apply(theme: Theme) {
