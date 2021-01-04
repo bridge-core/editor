@@ -6,7 +6,6 @@ export class App {
 	protected eventSystem = new EventManager<any>()
 
 	static main(appComponent: Vue) {
-		console.log(appComponent)
 		const app = new App(appComponent)
 		app.startUp()
 	}

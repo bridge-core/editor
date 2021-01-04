@@ -7,6 +7,7 @@ import { get, set } from 'idb-keyval'
 let fileSystem: IFileSystem
 export class FileSystem {
 	static fsReadyPromiseResolves: ((fileSystem: IFileSystem) => void)[] = []
+	static confirmPermissionWindow: any = null
 
 	constructor(protected baseDirectory: FileSystemDirectoryHandle) {
 		Promise.all([
@@ -33,11 +34,15 @@ export class FileSystem {
 	static async verifyPermissions(fileHandle: FileSystemDirectoryHandle) {
 		const opts = { writable: true, mode: 'readwrite' } as const
 
-		if ((await fileHandle.queryPermission(opts)) !== 'granted')
-			createInformationWindow(
+		if (
+			(await fileHandle.queryPermission(opts)) !== 'granted' &&
+			this.confirmPermissionWindow === null
+		)
+			this.confirmPermissionWindow = createInformationWindow(
 				translate('windows.projectFolder.title'),
 				translate('windows.projectFolder.content'),
 				async () => {
+					this.confirmPermissionWindow = null
 					// Check if we already have permission && request permission if not
 					if (
 						(await fileHandle.requestPermission(opts)) === 'granted'
