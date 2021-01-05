@@ -1,0 +1,18 @@
+{
+    "id": "bridge.orange.theme",
+    "colorScheme": "dark",
+    "colors": {
+        "text": "#fff",
+        "toolbar": "#DD7230",
+        "expandedSidebar": "#2E1F27",
+        "sidebarNavigation": "#2E1F27",
+        "primary": "#DD7230",
+        "secondary": "#DD7230",
+        "accent": "white",
+        "warning": "#DD7230",
+        "background": "#402b36",
+        "menu": "#24181e",
+        "footer": "#24181e",
+        "tooltip": "#24181e"
+    }
+}

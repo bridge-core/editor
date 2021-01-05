@@ -1,0 +1,12 @@
+{
+    "id": "solved.custom_theme.coral",
+    "colorScheme": "light",
+    "colors": {
+        "text": "#000",
+        "toolbar": "#EF6F6C",
+        "primary": "#EF6F6C",
+        "secondary": "#EF6F6C",
+        "accent": "#7d0000",
+        "tooltip": "#EF6F6C"
+    }
+}

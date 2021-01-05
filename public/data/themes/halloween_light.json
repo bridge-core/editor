@@ -1,0 +1,21 @@
+{
+    "id": "bridge.easterEgg.halloween",
+    "colorScheme": "light",
+    "colors": {
+        "text": "#000",
+        "toolbar": "#e0e0e0",
+        "expandedSidebar": "#FFFFFF",
+        "sidebarNavigation": "#FFFFFF",
+        "primary": "#dc2f02",
+        "secondary": "#dc2f02",
+        "accent": "#dc2f02",
+        "error": "#d00000",
+        "info": "#e85d04",
+        "warning": "#FB8C00",
+        "success": "#40916c",
+        "background": "#fafafa",
+        "menu": "#FFFFFF",
+        "footer": "#f5f5f5",
+        "tooltip": "#424242"
+    }
+}

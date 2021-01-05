@@ -1,0 +1,12 @@
+{
+    "id": "bridge.blue.theme",
+    "colorScheme": "dark",
+    "colors": {
+        "text": "#fff",
+        "toolbar": "#587291",
+        "primary": "#587291",
+        "secondary": "#587291",
+        "accent": "white",
+        "tooltip": "#587291"
+    }
+}
