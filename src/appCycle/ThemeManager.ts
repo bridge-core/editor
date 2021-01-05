@@ -1,5 +1,7 @@
 import { EventDispatcher } from './EventSystem'
 import Vue from 'vue'
+import { editor as Editor } from 'monaco-editor'
+import { keyword } from 'color-convert'
 
 const colorNames = [
 	'text',
@@ -48,7 +50,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		if (!document.getElementById('theme-color-tag'))
 			document.head.appendChild(this.themeColorTag)
 
-		this.apply(bridgeDark)
+		this.apply(AquaTheme)
 	}
 
 	apply(theme: Theme) {
@@ -68,17 +70,34 @@ export interface IThemeDefinition {
 	id: string
 	colorScheme?: 'dark' | 'light'
 	colors: Record<TColorName, string>
+	highlighter?: Record<
+		string,
+		{ color: string; textDecoration?: string; isItalic?: boolean }
+	>
+	monaco?: Record<string, string>
 }
 
 export class Theme {
+	public readonly id: string
+	public readonly colorScheme: 'dark' | 'light'
+
 	protected colorMap: Map<TColorName, string>
-	protected colorScheme: 'dark' | 'light'
+	protected highlighterDef: IThemeDefinition['highlighter']
+	protected monacoDef: IThemeDefinition['monaco']
+
+	protected monacoSubTheme: MonacoSubTheme
 
 	constructor(themeDefinition: IThemeDefinition) {
+		this.id = themeDefinition.id
+		this.colorScheme = themeDefinition.colorScheme ?? 'dark'
+
 		this.colorMap = new Map(
 			<[TColorName, string][]>Object.entries(themeDefinition.colors)
 		)
-		this.colorScheme = themeDefinition.colorScheme ?? 'dark'
+		this.monacoDef = themeDefinition.monaco
+		this.highlighterDef = themeDefinition.highlighter
+
+		this.monacoSubTheme = new MonacoSubTheme(this)
 	}
 
 	apply(themeManager: ThemeManager, vuetify: any) {
@@ -90,6 +109,119 @@ export class Theme {
 		Vue.set(vuetify.theme, 'dark', this.colorScheme === 'dark')
 
 		themeManager.setThemeColor(this.colorMap.get('toolbar') ?? 'red')
+		this.monacoSubTheme.apply()
+	}
+
+	getColor(colorName: TColorName) {
+		return this.colorMap.get(colorName) ?? 'red'
+	}
+	getMonacoDefinition() {
+		return this.monacoDef ?? {}
+	}
+	getHighlighterDefinition() {
+		return this.highlighterDef ?? {}
+	}
+}
+
+export class MonacoSubTheme {
+	constructor(protected theme: Theme) {}
+
+	apply() {
+		Editor.defineTheme('bridge-monaco-default', {
+			base: this.theme.colorScheme === 'light' ? 'vs' : 'vs-dark',
+			inherit: false,
+			colors: {
+				'editor.background': this.convertColor(
+					this.theme.getColor('background')
+				),
+				'editor.lineHighlightBackground': this.convertColor(
+					this.theme.getColor('tooltip')
+				),
+				'editorWidget.background': this.convertColor(
+					this.theme.getColor('background')
+				),
+				'editorWidget.border': this.convertColor(
+					this.theme.getColor('sidebarNavigation')
+				),
+				'pickerGroup.background': this.convertColor(
+					this.theme.getColor('background')
+				),
+				'pickerGroup.border': this.convertColor(
+					this.theme.getColor('sidebarNavigation')
+				),
+				'badge.background': this.convertColor(
+					this.theme.getColor('background')
+				),
+
+				'input.background': this.convertColor(
+					this.theme.getColor('sidebarNavigation')
+				),
+				'input.border': this.convertColor(this.theme.getColor('menu')),
+				'inputOption.activeBorder': this.convertColor(
+					this.theme.getColor('primary')
+				),
+				focusBorder: this.convertColor(this.theme.getColor('primary')),
+				'list.focusBackground': this.convertColor(
+					this.theme.getColor('menu')
+				),
+				'list.hoverBackground': this.convertColor(
+					this.theme.getColor('sidebarNavigation')
+				),
+				contrastBorder: this.convertColor(
+					this.theme.getColor('sidebarNavigation')
+				),
+
+				'peekViewTitle.background': this.convertColor(
+					this.theme.getColor('background')
+				),
+				'peekView.border': this.convertColor(
+					this.theme.getColor('primary')
+				),
+				'peekViewResult.background': this.convertColor(
+					this.theme.getColor('sidebarNavigation')
+				),
+				'peekViewResult.selectionBackground': this.convertColor(
+					this.theme.getColor('menu')
+				),
+				'peekViewEditor.background': this.convertColor(
+					this.theme.getColor('background')
+				),
+				'peekViewEditor.matchHighlightBackground': this.convertColor(
+					this.theme.getColor('menu')
+				),
+				...this.theme.getMonacoDefinition(),
+			},
+			rules: [
+				//@ts-ignore Token is not required
+				{
+					background: this.convertColor(
+						this.theme.getColor('background')
+					),
+					foreground: this.convertColor(this.theme.getColor('text')),
+				},
+				...Object.entries(this.theme.getHighlighterDefinition())
+					.map(([token, { color, textDecoration, isItalic }]) => ({
+						token: token,
+						foreground: this.convertColor(color),
+						fontStyle: `${
+							isItalic ? 'italic ' : ''
+						}${textDecoration}`,
+					}))
+					.filter(({ foreground }) => foreground !== undefined),
+			],
+		})
+	}
+
+	convertColor(color: string) {
+		if (!color) return color
+		if (color.startsWith('#')) {
+			if (color.length === 4) {
+				return `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`
+			}
+			return color
+		}
+
+		return keyword.hex(color as any)
 	}
 }
 
@@ -113,8 +245,9 @@ const bridgeDark = new Theme({
 		menu: '#424242',
 		footer: '#111111',
 		tooltip: '#1F1F1F',
-		toolbar: '#000',
+		toolbar: '#000000',
 	},
+	highlighter: {},
 })
 
 const bridgeLight = new Theme({
@@ -138,5 +271,60 @@ const bridgeLight = new Theme({
 		tooltip: '#424242',
 		toolbar: '#e0e0e0',
 		footer: '#f5f5f5',
+	},
+	highlighter: {},
+})
+
+const AquaTheme = new Theme({
+	id: 'bridge.red.theme',
+	colorScheme: 'dark',
+	colors: {
+		text: '#fff',
+		primary: '#FF2323',
+		secondary: '#D19903',
+		accent: '#FF5D00',
+		error: '#FF0000',
+		info: '#613030',
+		success: '#006304',
+		warning: '#FB7100',
+		background: '#131313',
+		sidebarNavigation: '#242424',
+		expandedSidebar: '#191919',
+		menu: '#242424',
+		toolbar: '#252222',
+		footer: '#332E2E',
+		tooltip: '#303030',
+	},
+	highlighter: {
+		'type.identifier': {
+			color: '#CC9C38',
+		},
+		keyword: {
+			color: '#CA663F',
+		},
+		definition: {
+			color: '#fd971f',
+		},
+		atom: {
+			color: '#ae81ff',
+		},
+		number: {
+			color: '#FFCE34',
+		},
+		string: {
+			color: '#FF9F25',
+		},
+		variable: {
+			color: '#9effff',
+		},
+		variable_strong: {
+			color: '#66d9ef',
+		},
+		meta: {
+			color: 'white',
+		},
+		comment: {
+			color: '#635100',
+		},
 	},
 })

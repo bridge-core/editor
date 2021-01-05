@@ -32,7 +32,7 @@ export default {
 		})
 
 		editorInstance = monaco.editor.create(this.$refs.monacoContainer, {
-			theme: this.isDarkMode ? 'vs-dark' : 'vs',
+			theme: 'bridge-monaco-default',
 			roundedSelection: false,
 			autoIndent: 'full',
 			fontSize: this.fontSize,
