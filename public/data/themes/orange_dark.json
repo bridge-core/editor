@@ -14,5 +14,17 @@
         "menu": "#24181e",
         "footer": "#24181e",
         "tooltip": "#24181e"
+    },
+    "highlighter": {
+        "property": { "color": "#91bb5b" },
+        "keyword": { "color": "#d24358" },
+        "definition": { "text_decoration": "underline" },
+        "atom": { "color": "#c68cd4" },
+        "number": { "color": "#57e4ac" },
+        "string": { "color": "#e4c15b" },
+        "variable": { "color": "#91bb5b" },
+        "variable_strong": { "color": "white" },
+        "meta": { "color": "yellow" },
+        "comment": { "color": "#cc77ff" }
     }
 }
