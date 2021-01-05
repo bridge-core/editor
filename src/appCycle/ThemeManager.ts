@@ -50,7 +50,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		if (!document.getElementById('theme-color-tag'))
 			document.head.appendChild(this.themeColorTag)
 
-		this.apply(AquaTheme)
+		this.apply(bridgeDark)
 	}
 
 	apply(theme: Theme) {
@@ -72,7 +72,7 @@ export interface IThemeDefinition {
 	colors: Record<TColorName, string>
 	highlighter?: Record<
 		string,
-		{ color: string; textDecoration?: string; isItalic?: boolean }
+		{ color?: string; textDecoration?: string; isItalic?: boolean }
 	>
 	monaco?: Record<string, string>
 }
@@ -202,7 +202,7 @@ export class MonacoSubTheme {
 				...Object.entries(this.theme.getHighlighterDefinition())
 					.map(([token, { color, textDecoration, isItalic }]) => ({
 						token: token,
-						foreground: this.convertColor(color),
+						foreground: this.convertColor(color as string),
 						fontStyle: `${
 							isItalic ? 'italic ' : ''
 						}${textDecoration}`,
@@ -247,7 +247,38 @@ const bridgeDark = new Theme({
 		tooltip: '#1F1F1F',
 		toolbar: '#000000',
 	},
-	highlighter: {},
+	highlighter: {
+		type: {
+			color: '#a6e22e',
+		},
+		keyword: {
+			color: '#f92672',
+		},
+		definition: {
+			color: '#fd971f',
+		},
+		atom: {
+			color: '#ae81ff',
+		},
+		number: {
+			color: '#ae81ff',
+		},
+		string: {
+			color: '#e6db74',
+		},
+		variable: {
+			color: '#9effff',
+		},
+		variable_strong: {
+			color: '#9effff',
+		},
+		meta: {
+			color: 'white',
+		},
+		comment: {
+			color: '#75715e',
+		},
+	},
 })
 
 const bridgeLight = new Theme({
@@ -272,59 +303,36 @@ const bridgeLight = new Theme({
 		toolbar: '#e0e0e0',
 		footer: '#f5f5f5',
 	},
-	highlighter: {},
-})
-
-const AquaTheme = new Theme({
-	id: 'bridge.red.theme',
-	colorScheme: 'dark',
-	colors: {
-		text: '#fff',
-		primary: '#FF2323',
-		secondary: '#D19903',
-		accent: '#FF5D00',
-		error: '#FF0000',
-		info: '#613030',
-		success: '#006304',
-		warning: '#FB7100',
-		background: '#131313',
-		sidebarNavigation: '#242424',
-		expandedSidebar: '#191919',
-		menu: '#242424',
-		toolbar: '#252222',
-		footer: '#332E2E',
-		tooltip: '#303030',
-	},
 	highlighter: {
-		'type.identifier': {
-			color: '#CC9C38',
+		property: {
+			color: 'black',
 		},
 		keyword: {
-			color: '#CA663F',
+			color: '#5A5CAD',
 		},
 		definition: {
-			color: '#fd971f',
+			textDecoration: 'underline',
 		},
 		atom: {
-			color: '#ae81ff',
+			color: '#6C8CD5',
 		},
 		number: {
-			color: '#FFCE34',
+			color: '#164',
 		},
 		string: {
-			color: '#FF9F25',
+			color: 'red',
 		},
 		variable: {
-			color: '#9effff',
+			color: 'black',
 		},
 		variable_strong: {
-			color: '#66d9ef',
+			color: 'black',
 		},
 		meta: {
-			color: 'white',
+			color: 'yellow',
 		},
 		comment: {
-			color: '#635100',
+			color: '#0080FF',
 		},
 	},
 })
