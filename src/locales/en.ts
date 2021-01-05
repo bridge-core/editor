@@ -5,6 +5,7 @@ export default {
 	languageName: 'English',
 	// Toolbar Categories
 	toolbar: {
+		installApp: 'Install app',
 		file: {
 			name: 'File',
 			newFile: 'New File',

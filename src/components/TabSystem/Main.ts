@@ -78,6 +78,10 @@ export class TabSystem {
 	get currentComponent() {
 		return this._selectedTab?.component ?? WelcomeScreen
 	}
+
+	get hasUnsavedTabs() {
+		return this.tabs.some(tab => tab.isUnsaved)
+	}
 }
 
 export const mainTabSystem = Vue.observable(new TabSystem())
