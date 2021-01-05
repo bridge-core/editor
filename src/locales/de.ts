@@ -51,6 +51,7 @@ export default {
 		},
 		tools: {
 			name: 'Werkzeuge',
+			docs: 'Dokumentation',
 			presets: 'Dateibündel',
 			snippets: 'Codeschnipsel',
 			goToFile: 'Gehe zu Datei...',
@@ -78,25 +79,6 @@ export default {
 		},
 		vanillaPacks: {
 			name: 'Vanilla Pakete',
-		},
-		documentation: {
-			name: 'Dokumentation',
-
-			addons: 'Add-Ons',
-			animations: 'Animationen',
-			biomes: 'Biome',
-			blocks: 'Blöcke',
-			entities: 'Lebewesen',
-			entityEvents: 'Lebewesen Ereignisse',
-			features: 'Weltfeatures',
-			item: 'Gegenstände',
-			molang: 'MoLang',
-			particles: 'Partikel',
-			recipes: 'Rezepte',
-			scripting: 'Scripting',
-			ui: 'UI',
-			commands: 'Kommandos',
-			components: 'Komponenten',
 		},
 		debugLog: {
 			name: 'Debug Log',

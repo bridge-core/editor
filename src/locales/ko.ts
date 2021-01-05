@@ -51,6 +51,7 @@ export default {
 		},
 		tools: {
 			name: '도구',
+			docs: '정보 기록문',
 			presets: '프리셋',
 			snippets: '부분적 인용',
 			goToFile: '파일로 이동',
@@ -79,32 +80,14 @@ export default {
 		vanillaPacks: {
 			name: '바닐라 팩',
 		},
-		documentation: {
-			name: '정보 기록문',
-			addons: '애드온',
-			animations: '애니메이션',
-			biomes: '바이옴',
-			blocks: '블럭',
-			entities: '엔티티',
-			entityEvents: '엔티티 이벤트',
-			features: '요소',
-			item: '아이템',
-			molang: 'MoLang',
-			particles: '파티클',
-			recipes: '레시피',
-			scripting: '스크립트 입력 관련',
-			ui: 'UI',
-			commands: '커맨드',
-			components: '구성 요소',
-
-		},
 		debugLog: {
 			name: '디버그 로그',
 		},
 		extensions: {
 			name: '프로그램 확장',
 			intro: {
-				description: 'bridge.를 플러그인을 통해 커스터마이즈 해보세요!!',
+				description:
+					'bridge.를 플러그인을 통해 커스터마이즈 해보세요!!',
 				themes: '테마',
 				snippets: '부분적 인용',
 				presets: '프리셋',
@@ -155,11 +138,12 @@ export default {
 		},
 		projectFolder: {
 			title: '프로젝트 폴더',
-			content: 'bridge.가 제대로 작동하기 위해서는 프로젝트 폴더에 대한 접근 권한이 필요합니다.'
+			content:
+				'bridge.가 제대로 작동하기 위해서는 프로젝트 폴더에 대한 접근 권한이 필요합니다.',
 		},
 		managePlugin: {
 			name: '플러그인 관리',
-			done: '완료'
+			done: '완료',
 		},
 	},
 }

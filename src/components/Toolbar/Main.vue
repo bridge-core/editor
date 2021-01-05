@@ -11,7 +11,8 @@
 		<v-toolbar-items class="px14-font">
 			<template
 				v-for="({ displayName, displayIcon, elements, onClick },
-				key) in AppMenu"
+				key,
+				i) in AppMenu"
 			>
 				<MenuButton
 					v-if="typeof onClick === 'function'"
@@ -29,7 +30,11 @@
 						typeof elements === 'function' ? elements() : elements
 					"
 				/>
-				<v-divider :key="`divider.${key}`" vertical />
+				<v-divider
+					:key="`divider.${key}`"
+					v-if="i + 1 < Object.keys(AppMenu).length"
+					vertical
+				/>
 			</template>
 		</v-toolbar-items>
 

@@ -1,3 +1,4 @@
+import { App } from '@/App'
 import { terminalWindow } from '@/components/Terminal/definition'
 import { AppMenu } from '../create'
 // import { GoToFile } from '../../Windows/Tools/GoToFile/definition'
@@ -8,6 +9,12 @@ export const ToolMenu: AppMenu = {
 	displayName: 'toolbar.tools.name',
 	displayIcon: 'mdi-wrench',
 	elements: [
+		{
+			displayName: 'toolbar.tools.docs',
+			displayIcon: 'mdi-book-open-page-variant',
+			onClick: () =>
+				App.createNativeWindow('https://bedrock.dev', 'DocWindow'),
+		},
 		{
 			displayName: 'toolbar.tools.terminal',
 			displayIcon: 'mdi-console',

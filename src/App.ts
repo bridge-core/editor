@@ -2,12 +2,20 @@ import { EventManager } from './appCycle/EventSystem'
 import { ThemeManager } from './appCycle/ThemeManager'
 
 export class App {
-	protected themeManager = new ThemeManager()
+	protected themeManager: ThemeManager
 	protected eventSystem = new EventManager<any>()
 
-	static main() {
-		const app = new App()
+	static main(appComponent: Vue) {
+		const app = new App(appComponent)
 		app.startUp()
+	}
+	constructor(appComponent: Vue) {
+		// @ts-expect-error Typescript doesn't know about vuetify
+		this.themeManager = new ThemeManager(appComponent.$vuetify)
+	}
+
+	static createNativeWindow(url: string, id?: string) {
+		window.open(url, id, 'toolbar=no,menubar=no,status=no')
 	}
 
 	startUp() {}
