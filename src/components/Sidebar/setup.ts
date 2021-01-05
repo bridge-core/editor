@@ -23,12 +23,6 @@ export function setupSidebar() {
 		component: 'VanillaPacks',
 	})
 	createSidebar({
-		id: 'documentation',
-		displayName: 'sidebar.documentation.name',
-		icon: 'mdi-book-open-page-variant',
-		component: Documentation,
-	})
-	createSidebar({
 		id: 'debugLog',
 		displayName: 'sidebar.debugLog.name',
 		icon: 'mdi-console',

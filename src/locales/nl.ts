@@ -51,6 +51,7 @@ export default {
 		},
 		tools: {
 			name: 'Hulpmiddelen',
+			docs: 'Documentatie',
 			presets: 'Voorinstellingen',
 			snippets: 'Fragmenten',
 			goToFile: 'Ga naar Bestand',
@@ -79,25 +80,6 @@ export default {
 		vanillaPacks: {
 			name: 'Vanilla Pakketten',
 		},
-		documentation: {
-			name: 'Documentatie',
-
-			addons: 'Addons',
-			animations: 'Animaties',
-			biomes: 'Biomen',
-			blocks: 'Blokken',
-			entities: 'Entiteiten',
-			entityEvents: 'Entiteitsgebeurtenissen',
-			features: 'Kenmerken',
-			item: 'Item',
-			molang: 'MoLang',
-			particles: 'Deeltjes',
-			recipes: 'Recepten',
-			scripting: 'Scripting',
-			ui: 'UI',
-			commands: 'Commando\'s',
-			components: 'Componenten',
-		},
 		debugLog: {
 			name: 'Foutopsporingslogboek',
 		},
@@ -105,7 +87,7 @@ export default {
 			name: 'Extensies',
 			intro: {
 				description: 'Pas uw bridge. ervaring aan met Plugins!',
-				themes: 'Thema\'s',
+				themes: "Thema's",
 				snippets: 'Fragmenten',
 				presets: 'Voorinstellingen',
 				uiElements: 'UI Elementen',
@@ -117,13 +99,14 @@ export default {
 	// Welcome Screen
 	welcome: {
 		title: 'Welkom bij bridge.',
-		subtitle: 'Het maken van Minecraft addons is nog nooit zo gemakkelijk geweest!',
+		subtitle:
+			'Het maken van Minecraft addons is nog nooit zo gemakkelijk geweest!',
 		syntaxHighlighting: 'Syntaxis accentuering',
 		richAutoCompletions: 'Uitgebreide automatische aanvullingen',
 		projectManagement: 'Eenvoudig projectbeheer',
 		customSyntax: 'Aangepaste syntaxis voor add-ons',
 		customComponents: 'Aangepaste componenten',
-		customCommands: 'Aangepaste commando\'s',
+		customCommands: "Aangepaste commando's",
 		plugins: 'Aanpasbaar via plugins',
 	},
 	// Windows

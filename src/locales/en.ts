@@ -51,6 +51,7 @@ export default {
 		},
 		tools: {
 			name: 'Tools',
+			docs: 'Documentation',
 			terminal: 'Terminal',
 			presets: 'Presets',
 			snippets: 'Snippets',
@@ -79,25 +80,6 @@ export default {
 		},
 		vanillaPacks: {
 			name: 'Vanilla Packs',
-		},
-		documentation: {
-			name: 'Documentation',
-
-			addons: 'Addons',
-			animations: 'Animations',
-			biomes: 'Biomes',
-			blocks: 'Blocks',
-			entities: 'Entities',
-			entityEvents: 'Entity Events',
-			features: 'Features',
-			item: 'Item',
-			molang: 'MoLang',
-			particles: 'Particles',
-			recipes: 'Recipes',
-			scripting: 'Scripting',
-			ui: 'UI',
-			commands: 'Commands',
-			components: 'Components',
 		},
 		debugLog: {
 			name: 'Debug Log',
@@ -161,14 +143,14 @@ export default {
 		},
 		managePlugin: {
 			name: 'Manage Plugin',
-			done: 'Done'
+			done: 'Done',
 		},
 		projectSharing: {
-			title: 'Project Sharing'
+			title: 'Project Sharing',
 		},
 		peerError: {
 			error1: 'Unable to connect to workspace with id',
-			error2: 'Unable to connect to workspace!'
-		}
+			error2: 'Unable to connect to workspace!',
+		},
 	},
 }

@@ -14,5 +14,9 @@ export class App {
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
 	}
 
+	static createNativeWindow(url: string, id?: string) {
+		window.open(url, id, 'toolbar=no,menubar=no,status=no')
+	}
+
 	startUp() {}
 }
