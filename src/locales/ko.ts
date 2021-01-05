@@ -5,6 +5,7 @@ export default {
 	languageName: '한국어',
 	// Toolbar Categories
 	toolbar: {
+		installApp: 'Install app',
 		file: {
 			name: '파일',
 			newFile: '새로운 파일',

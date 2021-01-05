@@ -46,6 +46,7 @@
 
 		<!-- Main buttons to interact with the app window -->
 		<v-divider vertical />
+		<InstallButton />
 		<v-toolbar-items class="px14-font">
 			<template v-for="({ icon, action, color }, i) in windowActions">
 				<WindowAction
@@ -68,7 +69,9 @@
 import WindowAction from './WindowAction'
 import MenuActivator from './Menu/Activator'
 import MenuButton from './Menu/Button'
+import InstallButton from './InstallButton'
 import { AppMenu } from './state'
+
 // import { remote } from 'electron'
 // import { join } from 'path'
 
@@ -78,6 +81,7 @@ export default {
 		WindowAction,
 		MenuActivator,
 		MenuButton,
+		InstallButton,
 	},
 	data: () => ({
 		AppMenu,
