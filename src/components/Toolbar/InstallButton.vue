@@ -19,17 +19,24 @@ export default {
 		installEvent: null,
 	}),
 	mounted() {
-		window.addEventListener('beforeinstallprompt', event => {
+		window.addEventListener('beforeinstallprompt', this.onInstallPrompt)
+	},
+	destroyed() {
+		window.removeEventListener('beforeinstallprompt', this.onInstallPrompt)
+	},
+	methods: {
+		onInstallPrompt() {
 			event.preventDefault()
 			this.installEvent = event
 			this.shouldShow = true
-		})
-	},
-	methods: {
+		},
 		prompt() {
 			if (this.installEvent) {
 				this.installEvent.prompt()
-				this.shouldShow = false
+
+				this.installEvent.userChoice.then(choice => {
+					if (choice.outcome === 'accepted') this.shouldShow = false
+				})
 			}
 		},
 	},
