@@ -4,12 +4,52 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/editor/css.worker.js"
   },
   {
-    "revision": "72c9111138331f8286ac",
-    "url": "/editor/css/app.14337993.css"
+    "revision": "49c5796ba14986f9881f",
+    "url": "/editor/css/app.407634e6.css"
   },
   {
     "revision": "bdddba0de4cad9a37f95",
     "url": "/editor/css/chunk-vendors.70b22ab7.css"
+  },
+  {
+    "revision": "b1363a5d4af4df4cd8e3ee3fe42f302c",
+    "url": "/editor/data/themes/classic_dark.json"
+  },
+  {
+    "revision": "cd5682cf0d41e2addf2d8ba4b222f096",
+    "url": "/editor/data/themes/classic_light.json"
+  },
+  {
+    "revision": "1b4576c22c228a54c162dd49c0782233",
+    "url": "/editor/data/themes/coral_dark.json"
+  },
+  {
+    "revision": "71ba52ba8df5671fdf29c2658adfbe19",
+    "url": "/editor/data/themes/coral_light.json"
+  },
+  {
+    "revision": "1bc2772450201b67411c94de1c01f0bb",
+    "url": "/editor/data/themes/halloween_dark.json"
+  },
+  {
+    "revision": "f7b02045b93a286f5475f120c08ebf29",
+    "url": "/editor/data/themes/halloween_light.json"
+  },
+  {
+    "revision": "1971a868b04d7b554a46aa9e035f8059",
+    "url": "/editor/data/themes/orange_dark.json"
+  },
+  {
+    "revision": "1af8b5ec6c081d7596feba674045b6f8",
+    "url": "/editor/data/themes/orange_light.json"
+  },
+  {
+    "revision": "5c9aa1d82ae9d9c140e75df8517149df",
+    "url": "/editor/data/themes/soft_blue_dark.json"
+  },
+  {
+    "revision": "af7391cf3acb9e0aeb43a13bb0f44a6e",
+    "url": "/editor/data/themes/soft_blue_light.json"
   },
   {
     "revision": "5f97f74b944a4fe61a38d0550caf85e0",
@@ -32,12 +72,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/editor/img/logo.3d03c8d6.png"
   },
   {
-    "revision": "0b36e806a1dff62010bab7636fcaf1ed",
+    "revision": "26169d0c7d3cfbbf719373795d47dc23",
     "url": "/editor/index.html"
   },
   {
-    "revision": "72c9111138331f8286ac",
-    "url": "/editor/js/app.f9f5fc60.js"
+    "revision": "49c5796ba14986f9881f",
+    "url": "/editor/js/app.2f138c3b.js"
   },
   {
     "revision": "0253bcaaa029c0a84cc2",
