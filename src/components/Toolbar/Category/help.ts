@@ -1,4 +1,5 @@
 import { AppMenu } from '../create'
+import { App } from '@/App'
 // import AboutWindow from '../../../../windows/About'
 // import { shell } from 'electron'
 
@@ -35,28 +36,19 @@ export const HelpMenu: AppMenu = {
 			displayName: 'toolbar.help.pluginAPI',
 			displayIcon: 'mdi-puzzle',
 			onClick: () =>
-				window.open(
-					'https://bridge-core.github.io/plugin-docs/',
-					'_blank'
-				),
+				App.createNativeWindow('https://bridge-core.github.io/plugin-docs/', '_blank')
 		},
 		{
 			displayName: 'toolbar.help.gettingStarted',
 			displayIcon: 'mdi-help-circle-outline',
 			onClick: () =>
-				window.open(
-					'https://bridge-core.github.io/editor-docs/getting-started/',
-					'_blank'
-				),
+				App.createNativeWindow('https://bridge-core.github.io/editor-docs/getting-started/', '_blank')
 		},
 		{
 			displayName: 'toolbar.help.faq',
 			displayIcon: 'mdi-frequently-asked-questions',
 			onClick: () =>
-				window.open(
-					'https://bridge-core.github.io/editor-docs/faq/',
-					'_blank'
-				),
+				App.createNativeWindow('https://bridge-core.github.io/editor-docs/faq/', '_blank')
 		},
 	],
 }

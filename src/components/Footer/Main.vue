@@ -41,6 +41,7 @@
 <script>
 import Notification from './Notification'
 import { NotificationStore } from './state'
+import { App } from '@/App'
 // import { APP_VERSION } from '../../constants'
 const APP_VERSION = 'v0.1.0'
 
@@ -55,7 +56,7 @@ export default {
 	}),
 	methods: {
 		openGitHub() {
-			window.open('https://bridge-core.github.io/', '_blank')
+			App.createNativeWindow('https://bridge-core.github.io/', '_blank')
 		},
 	},
 }
