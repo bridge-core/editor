@@ -8,7 +8,12 @@
 		content-class="no-overflow"
 	>
 		<v-card height="100%" width="100%" color="background">
-			<v-system-bar v-if="!hideToolbar" height="30px" color="toolbar">
+			<v-system-bar
+				v-if="!hideToolbar"
+				height="30px"
+				color="toolbar"
+				style="padding-right: 0px;"
+			>
 				<span>{{ windowTitle }}</span>
 				<v-spacer></v-spacer>
 				<v-toolbar-items class="px14-font">

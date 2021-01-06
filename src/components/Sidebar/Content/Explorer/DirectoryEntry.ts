@@ -1,6 +1,6 @@
 import { mainTabSystem } from '@/components/TabSystem/Main'
-import { IFileSystem } from '@/fileSystem/Common'
-import { FileSystem } from '@/fileSystem/Main'
+import { IFileSystem } from '@/components/FileSystem/Common'
+import { FileSystem } from '@/components/FileSystem/Main'
 import { platform } from '@/utils/os'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'

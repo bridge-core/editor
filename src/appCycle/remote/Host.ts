@@ -1,5 +1,5 @@
 import { mainTabSystem } from '@/components/TabSystem/Main'
-import { FileSystem } from '@/fileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/Main'
 import { trigger } from '../EventSystem'
 import { dispatchEvent } from './Client'
 import { peerState, sendMessage } from './Peer'

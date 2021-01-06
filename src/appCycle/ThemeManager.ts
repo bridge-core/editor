@@ -25,9 +25,7 @@ type TColorName = typeof colorNames[number]
 export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	public readonly mode: 'light' | 'dark'
 	protected themeMap = new Set<Theme>()
-	protected themeColorTag =
-		document.getElementById('theme-color-tag') ??
-		document.createElement('meta')
+	protected themeColorTag = document.querySelector("meta[name='theme-color']")
 
 	constructor(protected vuetify: any) {
 		super()
@@ -43,12 +41,12 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		 * Setup theme meta tag
 		 * @see ThemeManager.setThemeColor
 		 */
-
+		if (!this.themeColorTag) {
+			this.themeColorTag = document.createElement('meta')
+			document.head.appendChild(this.themeColorTag)
+		}
 		this.themeColorTag.setAttribute('name', 'theme-color')
 		this.themeColorTag.id = 'theme-color-tag'
-		//Only add one theme-color in dev environment with hot reloading
-		if (!document.getElementById('theme-color-tag'))
-			document.head.appendChild(this.themeColorTag)
 
 		this.apply(bridgeDark)
 	}
@@ -62,7 +60,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	 * @param color Color to set the toolbar to
 	 */
 	setThemeColor(color: string) {
-		this.themeColorTag.setAttribute('content', color)
+		this.themeColorTag!.setAttribute('content', color)
 	}
 }
 

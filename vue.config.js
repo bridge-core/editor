@@ -6,7 +6,7 @@ module.exports = {
 	pwa: {
 		name: 'bridge',
 		appleMobileWebAppCapable: true,
-		themeColor: null, // Vue automatically inserts the meta.themeColor tag. That clashes with our themeManager so we have to disable it...
+		themeColor: '#1778D2',
 		manifestOptions: {
 			// display_modifiers: ['window-controls-overlay'],
 		},

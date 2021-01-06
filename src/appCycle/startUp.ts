@@ -5,7 +5,7 @@ import { setupSidebar } from '@/components/Sidebar/setup'
 import { setupDefaultMenus } from '@/components/Toolbar/setupDefaults'
 import { Discord as DiscordWindow } from '@/components/Windows/Discord/definition'
 import { setupKeyBindings } from './keyBindings'
-import { FileSystem } from '@/fileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/Main'
 import {
 	connectToPeer,
 	peerState,
@@ -13,7 +13,7 @@ import {
 	startHosting,
 } from './remote/Peer'
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
-import { RemoteFileSystem } from '@/fileSystem/Remote'
+import { RemoteFileSystem } from '@/components/FileSystem/Remote'
 import { dispatchEvent, onReceiveData } from './remote/Client'
 import { handleRequest } from './remote/Host'
 import { mainTabSystem } from '@/components/TabSystem/Main'

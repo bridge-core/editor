@@ -43,10 +43,10 @@ export default Vue.extend({
 		WindowRenderer,
 		TabBar,
 	},
-	async mounted() {
+	async created() {
 		await startUp()
 
-		App.main(this)
+		await App.main(this)
 	},
 
 	data: () => ({

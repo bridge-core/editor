@@ -1,14 +1,22 @@
-import { EventManager } from './appCycle/EventSystem'
+import { EventDispatcher, EventManager } from './appCycle/EventSystem'
 import { ThemeManager } from './appCycle/ThemeManager'
 import { mainTabSystem } from './components/TabSystem/Main'
+import { TaskManager } from './components/TaskManager/TaskManager'
 
 export class App {
+	public static readonly ready = new EventDispatcher<void>()
+	protected static _instance: App
+
 	protected themeManager: ThemeManager
 	protected eventSystem = new EventManager<any>()
+	public readonly taskManager = new TaskManager()
 
-	static main(appComponent: Vue) {
-		const app = new App(appComponent)
-		app.startUp()
+	static async main(appComponent: Vue) {
+		this._instance = new App(appComponent)
+		await this._instance.startUp()
+	}
+	static get instance() {
+		return this._instance
 	}
 	constructor(appComponent: Vue) {
 		// @ts-expect-error Typescript doesn't know about vuetify
@@ -30,5 +38,5 @@ export class App {
 		window.open(url, id, 'toolbar=no,menubar=no,status=no')
 	}
 
-	startUp() {}
+	async startUp() {}
 }

@@ -137,6 +137,9 @@ export default {
 				'Select where to save projects or choose an existing projects directory.',
 			select: 'Select!',
 		},
+		taskManager: {
+			title: 'Task Manager',
+		},
 		projectFolder: {
 			title: 'Project Folder',
 			content:

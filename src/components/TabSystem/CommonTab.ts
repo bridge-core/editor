@@ -2,8 +2,8 @@ import type Vue from 'vue'
 import { DirectoryEntry } from '@/components/Sidebar/Content/Explorer/DirectoryEntry'
 import { v4 as uuid } from 'uuid'
 import type { TabSystem } from './Main'
-import { FileSystem } from '@/fileSystem/Main'
-import { IFileSystem } from '@/fileSystem/Common'
+import { FileSystem } from '@/components/FileSystem/Main'
+import { IFileSystem } from '@/components/FileSystem/Common'
 
 
 export abstract class Tab {

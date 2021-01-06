@@ -5,7 +5,7 @@ import Vue from 'vue'
 import { DirectoryEntry } from '../Sidebar/Content/Explorer/DirectoryEntry'
 import { peerState } from '@/appCycle/remote/Peer'
 import { dispatchEvent, dispatchRemoteAction } from '@/appCycle/remote/Client'
-import { FileSystem } from '@/fileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/Main'
 
 export class TabSystem {
 	tabs: Tab[] = []
