@@ -1,30 +1,9 @@
-import { IFileSystem, IGetHandleConfig, IMkdirConfig } from './Common'
+import { IGetHandleConfig, IMkdirConfig } from './Common'
 
-let fileSystem: IFileSystem
 export class FileSystem {
-	static fsReadyPromiseResolves: ((fileSystem: IFileSystem) => void)[] = []
 	static confirmPermissionWindow: any = null
 
-	constructor(public readonly baseDirectory: FileSystemDirectoryHandle) {
-		Promise.all([
-			this.mkdir('projects'),
-			this.mkdir('plugins'),
-			this.mkdir('data'),
-		]).then(() => {
-			FileSystem.fsReadyPromiseResolves.forEach(resolve => resolve(this))
-		})
-	}
-
-	static get() {
-		if (fileSystem !== undefined) return fileSystem
-
-		return new Promise((resolve: (fileSystem: IFileSystem) => void) => {
-			this.fsReadyPromiseResolves.push(resolve)
-		})
-	}
-	static set(fs: IFileSystem) {
-		fileSystem = fs
-	}
+	constructor(public readonly baseDirectory: FileSystemDirectoryHandle) {}
 
 	protected async getDirectoryHandle(
 		path: string,

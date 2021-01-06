@@ -1,10 +1,21 @@
-import { EventDispatcher, EventManager, Signal } from './appCycle/EventSystem'
+import { EventManager, Signal } from './appCycle/EventSystem'
+import { FileType } from './appCycle/FileType'
+import { setupKeyBindings } from './appCycle/keyBindings'
 import { ThemeManager } from './appCycle/ThemeManager'
+import { setupMonacoEditor } from './components/Editors/Text/setup'
 import { FileSystem } from './components/FileSystem/Main'
 import { setupFileSystem } from './components/FileSystem/setup'
 import { PackIndexer } from './components/PackIndexer/PackIndexer'
+import { setupSidebar } from './components/Sidebar/setup'
 import { mainTabSystem } from './components/TabSystem/Main'
 import { TaskManager } from './components/TaskManager/TaskManager'
+import { setupDefaultMenus } from './components/Toolbar/setupDefaults'
+import { getLanguages, selectLanguage } from './utils/locales'
+import { Discord as DiscordWindow } from '@/components/Windows/Discord/definition'
+import { createNotification } from './components/Footer/create'
+
+import '@/appCycle/Errors'
+import '@/appCycle/ResizeWatcher'
 
 export class App {
 	public static readonly ready = new Signal<App>()
@@ -46,6 +57,57 @@ export class App {
 	}
 
 	async startUp() {
+		setupKeyBindings()
+		setupDefaultMenus()
+		setupSidebar()
+		await FileType.setup()
+		setupMonacoEditor()
+
+		// Set language based off of browser language
+		if (!navigator.language.includes('en')) {
+			for (const [lang] of getLanguages()) {
+				if (navigator.language.includes(lang)) {
+					selectLanguage(lang)
+				}
+			}
+		} else {
+			selectLanguage('en')
+		}
+
+		// FileSystem setup
 		this.fileSystem = await setupFileSystem()
+		// Create default folders
+		await Promise.all([
+			this.fileSystem.mkdir('projects'),
+			this.fileSystem.mkdir('plugins'),
+			this.fileSystem.mkdir('data'),
+		])
+
+		if (process.env.NODE_ENV !== 'development') {
+			const discordMsg = createNotification({
+				icon: 'mdi-discord',
+				message: 'Discord Server',
+				color: '#7289DA',
+				textColor: 'white',
+				onClick: () => {
+					DiscordWindow.open()
+					discordMsg.dispose()
+				},
+			})
+		}
+
+		if (process.env.NODE_ENV !== 'development') {
+			const gettingStarted = createNotification({
+				icon: 'mdi-help-circle-outline',
+				message: 'Getting Started',
+				textColor: 'white',
+				onClick: () => {
+					window.open(
+						'https://bridge-core.github.io/editor-docs/getting-started/'
+					)
+					gettingStarted.dispose()
+				},
+			})
+		}
 	}
 }

@@ -28,7 +28,6 @@ import Footer from './components/Footer/Main.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import TabBar from './components/TabSystem/TabBar.vue'
-import { startUp } from './appCycle/startUp'
 import { mainTabSystem } from '@/components/TabSystem/Main'
 import { App } from './App'
 import { platform } from './utils/os'
@@ -43,10 +42,8 @@ export default Vue.extend({
 		WindowRenderer,
 		TabBar,
 	},
-	async created() {
-		await startUp()
-
-		await App.main(this)
+	mounted() {
+		App.main(this)
 	},
 
 	data: () => ({

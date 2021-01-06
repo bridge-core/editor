@@ -1,5 +1,6 @@
 import { FileType } from '@/appCycle/FileType'
 import { get, set } from 'idb-keyval'
+import json5 from 'json5'
 
 const progress = { current: 0, total: 0, currentTotal: 0 }
 self.addEventListener('message', async event => {
@@ -77,4 +78,17 @@ function updateProgress(addCurrent?: number, addTotal?: number) {
 		progress.total = progress.currentTotal
 
 	self.postMessage({ progress })
+}
+
+async function processFile(file: FileSystemFileHandle) {
+	if (file.name.endsWith('.json')) return await processJSON(file)
+}
+async function processJSON(fileHandle: FileSystemFileHandle) {
+	const file = await fileHandle.getFile()
+	let fileContent: any
+	try {
+		fileContent = json5.parse(await file.text())
+	} catch {
+		return
+	}
 }
