@@ -1,15 +1,11 @@
-import { createSelectProjectFolderWindow } from '@/components/Windows/Project/SelectFolder/definition'
-import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
 import { IFileSystem, IGetHandleConfig, IMkdirConfig } from './Common'
-import { translate } from '@/utils/locales'
-import { get, set } from 'idb-keyval'
 
 let fileSystem: IFileSystem
 export class FileSystem {
 	static fsReadyPromiseResolves: ((fileSystem: IFileSystem) => void)[] = []
 	static confirmPermissionWindow: any = null
 
-	constructor(protected baseDirectory: FileSystemDirectoryHandle) {
+	constructor(public readonly baseDirectory: FileSystemDirectoryHandle) {
 		Promise.all([
 			this.mkdir('projects'),
 			this.mkdir('plugins'),
@@ -19,41 +15,6 @@ export class FileSystem {
 		})
 	}
 
-	static async create() {
-		const fileHandle = await get<FileSystemDirectoryHandle>('bridgeBaseDir')
-		if (!fileHandle)
-			createSelectProjectFolderWindow(fileHandle => {
-				if (fileHandle) {
-					set('bridgeBaseDir', fileHandle)
-				}
-
-				this.verifyPermissions(fileHandle)
-			})
-		else await this.verifyPermissions(fileHandle)
-	}
-	static async verifyPermissions(fileHandle: FileSystemDirectoryHandle) {
-		const opts = { writable: true, mode: 'readwrite' } as const
-
-		if (
-			(await fileHandle.queryPermission(opts)) !== 'granted' &&
-			this.confirmPermissionWindow === null
-		)
-			this.confirmPermissionWindow = createInformationWindow(
-				translate('windows.projectFolder.title'),
-				translate('windows.projectFolder.content'),
-				async () => {
-					this.confirmPermissionWindow = null
-					// Check if we already have permission && request permission if not
-					if (
-						(await fileHandle.requestPermission(opts)) === 'granted'
-					) {
-						fileSystem = new FileSystem(fileHandle)
-					} else {
-						this.verifyPermissions(fileHandle)
-					}
-				}
-			)
-	}
 	static get() {
 		if (fileSystem !== undefined) return fileSystem
 

@@ -4,6 +4,7 @@ import { FileSystem } from '@/components/FileSystem/Main'
 import { platform } from '@/utils/os'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
+import { App } from '@/App'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
@@ -12,7 +13,7 @@ export class DirectoryEntry {
 
 	static async create() {
 		return Vue.observable(
-			new DirectoryEntry(await FileSystem.get(), null, [
+			new DirectoryEntry(App.instance.fileSystem, null, [
 				'projects',
 				'test',
 			])

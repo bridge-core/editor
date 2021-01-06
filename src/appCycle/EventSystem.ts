@@ -105,3 +105,25 @@ export class EventDispatcher<T> {
 		})
 	}
 }
+
+export class Signal<T> extends EventDispatcher<T> {
+	protected hasFired = false
+	protected data?: T
+
+	constructor() {
+		super()
+	}
+
+	dispatch(data: T) {
+		this.hasFired = true
+		this.data = data
+		super.dispatch(data)
+	}
+
+	on(listener: (data: T) => void) {
+		// Needs to be on a timeout because otherwise Signal.once doesn't work
+		if(this.hasFired) setTimeout(() => listener(this.data!))
+
+		return super.on(listener)
+	}
+}

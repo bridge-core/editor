@@ -4,7 +4,7 @@ export interface ITaskDetails {
 	icon: string
 	name: string
 	description: string
-	totalTaskSteps: number
+	totalTaskSteps?: number
 }
 
 export class Task {
@@ -31,7 +31,7 @@ export class Task {
         return this.taskDetails.description
     }
     get totalStepCount() {
-        return this.taskDetails.totalTaskSteps
+        return this.taskDetails.totalTaskSteps ?? 100
     }
     get icon() {
         return this.taskDetails.icon

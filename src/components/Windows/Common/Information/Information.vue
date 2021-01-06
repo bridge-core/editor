@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="windowTitle"
+		:windowTitle="t(windowTitle)"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -11,7 +11,7 @@
 		:isPersistent="typeof this.callback === 'function'"
 	>
 		<template #default>
-			<p class="mt-2">{{ content }}</p>
+			<p class="mt-2">{{ t(content) }}</p>
 		</template>
 		<template #actions>
 			<v-spacer />

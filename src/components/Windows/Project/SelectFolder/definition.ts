@@ -1,14 +1,18 @@
-import { createWindow } from '../../create'
+import { createWindow, TWindow } from '../../create'
 import SelectProjectFolder from './Main.vue'
 
-let isOpen = false
+let window: TWindow
 export function createSelectProjectFolderWindow(
 	callback: (fileHandle: FileSystemDirectoryHandle) => void
 ) {
-	if (isOpen) return
+	if (window) return window
 
-	isOpen = true
-	const window = createWindow(SelectProjectFolder, { callback })
+	window = createWindow(SelectProjectFolder, {
+		callback: async (fileHandle: FileSystemDirectoryHandle) => {
+			await callback(fileHandle)
+			window.status.setDone?.()
+		},
+	})
 	window.open()
 	return window
 }

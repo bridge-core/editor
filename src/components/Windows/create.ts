@@ -7,6 +7,12 @@ export function createWindow(
 	vueComponent: VueComponent,
 	state: Record<string, unknown> = {}
 ) {
+	// It might make sense for some windows to be "await"-able. This is a helper for that
+	const status: { setDone?: () => void; done?: Promise<void> } = {}
+	status.done = new Promise<void>(resolve => {
+		status.setDone = resolve
+	})
+
 	const windowUUID = uuid()
 	const windowState: typeof state = Vue.observable({
 		isVisible: false,
@@ -27,9 +33,12 @@ export function createWindow(
 			windowState.isVisible = true
 		},
 		dispose: () => Vue.delete(WINDOWS, windowUUID),
+		status,
 	}
 
 	Vue.set(WINDOWS, windowUUID, [vueComponent, windowApi])
 
 	return windowApi
 }
+
+export type TWindow = ReturnType<typeof createWindow>

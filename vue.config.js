@@ -1,4 +1,5 @@
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+const WorkerPlugin = require('worker-plugin')
 
 module.exports = {
 	publicPath: process.env.NODE_ENV === 'production' ? '/editor/' : undefined,
@@ -12,6 +13,6 @@ module.exports = {
 		},
 	},
 	configureWebpack: {
-		plugins: [new MonacoWebpackPlugin()],
+		plugins: [new MonacoWebpackPlugin(), new WorkerPlugin()],
 	},
 }

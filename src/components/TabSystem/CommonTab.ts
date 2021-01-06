@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid'
 import type { TabSystem } from './Main'
 import { FileSystem } from '@/components/FileSystem/Main'
 import { IFileSystem } from '@/components/FileSystem/Common'
+import { App } from '@/App'
 
 
 export abstract class Tab {
@@ -13,7 +14,7 @@ export abstract class Tab {
 	hasRemoteChange = false
 	isUnsaved = false
 
-	setIsUnsaved(val: boolean, changedData?: unknown) {
+	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val
 	}
 
@@ -21,8 +22,12 @@ export abstract class Tab {
 		protected parent: TabSystem,
 		protected path: string
 	) {
-		this.fileSystem = FileSystem.get()
-		if(this.fileSystem instanceof Promise) this.fileSystem.then(fileSystem => this.fileSystem = fileSystem)
+		this.fileSystem = new Promise((resolve) => {
+			App.ready.once((app) => {
+				resolve(app.fileSystem)
+			})
+		})
+		this.fileSystem.then(fileSystem => this.fileSystem = fileSystem)
 	}
 
 	get name() {

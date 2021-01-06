@@ -5,22 +5,9 @@ import { setupSidebar } from '@/components/Sidebar/setup'
 import { setupDefaultMenus } from '@/components/Toolbar/setupDefaults'
 import { Discord as DiscordWindow } from '@/components/Windows/Discord/definition'
 import { setupKeyBindings } from './keyBindings'
-import { FileSystem } from '@/components/FileSystem/Main'
-import {
-	connectToPeer,
-	peerState,
-	sendMessage,
-	startHosting,
-} from './remote/Peer'
-import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
-import { RemoteFileSystem } from '@/components/FileSystem/Remote'
-import { dispatchEvent, onReceiveData } from './remote/Client'
-import { handleRequest } from './remote/Host'
-import { mainTabSystem } from '@/components/TabSystem/Main'
 import { FileType } from './FileType'
 import { setupMonacoEditor } from '@/components/Editors/Text/setup'
 import { translate, selectLanguage, getLanguages } from '@/utils/locales'
-import { App } from '@/App'
 
 export async function startUp() {
 	setupKeyBindings()
@@ -66,58 +53,4 @@ export async function startUp() {
 			},
 		})
 	}
-
-	// if (!peerState.peerId) peerState.onPeerReady = () => peerNotification()
-	// else peerNotification()
-
-	const urlParams = new URLSearchParams(window.location.search)
-	const joinPeer = urlParams.get('join')
-	if (joinPeer) {
-		peerState.onPeerReady = async () => {
-			try {
-				await connectToPeer(joinPeer, onReceiveData)
-			} catch {
-				createInformationWindow(
-					`ERROR`,
-					`${translate(
-						'windows.peerConnectError.error1'
-					)} "${joinPeer}"!`,
-					() =>
-						(location.href = 'https://bridge-core.github.io/editor')
-				)
-			}
-
-			RemoteFileSystem.create()
-			mainTabSystem.onJoinHost()
-			dispatchEvent(
-				'bridgeApp',
-				'userJoin',
-				peerState.userId,
-				'solvedDev'
-			)
-		}
-	} else {
-		peerState.onPeerReady = () => {
-			startHosting(handleRequest)
-		}
-		FileSystem.create()
-	}
-}
-
-function peerNotification() {
-	createNotification({
-		icon: 'mdi-share',
-		message: 'Project Share Ready',
-		textColor: 'white',
-		onClick: () => {
-			createInformationWindow(
-				translate('windows.projectSharing.title'),
-				peerState.peerId as string,
-				() => {
-					navigator.clipboard.writeText(peerState.peerId as string)
-					startHosting(console.log)
-				}
-			)
-		},
-	})
 }

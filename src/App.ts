@@ -1,19 +1,26 @@
-import { EventDispatcher, EventManager } from './appCycle/EventSystem'
+import { EventDispatcher, EventManager, Signal } from './appCycle/EventSystem'
 import { ThemeManager } from './appCycle/ThemeManager'
+import { FileSystem } from './components/FileSystem/Main'
+import { setupFileSystem } from './components/FileSystem/setup'
+import { PackIndexer } from './components/PackIndexer/PackIndexer'
 import { mainTabSystem } from './components/TabSystem/Main'
 import { TaskManager } from './components/TaskManager/TaskManager'
 
 export class App {
-	public static readonly ready = new EventDispatcher<void>()
+	public static readonly ready = new Signal<App>()
 	protected static _instance: App
 
 	protected themeManager: ThemeManager
 	protected eventSystem = new EventManager<any>()
+	public fileSystem!: FileSystem
 	public readonly taskManager = new TaskManager()
+	protected packIndexer = new PackIndexer()
 
 	static async main(appComponent: Vue) {
 		this._instance = new App(appComponent)
 		await this._instance.startUp()
+		this.ready.dispatch(this._instance)
+		this._instance.packIndexer.start()
 	}
 	static get instance() {
 		return this._instance
@@ -38,5 +45,7 @@ export class App {
 		window.open(url, id, 'toolbar=no,menubar=no,status=no')
 	}
 
-	async startUp() {}
+	async startUp() {
+		this.fileSystem = await setupFileSystem()
+	}
 }

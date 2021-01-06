@@ -12,9 +12,13 @@ export function createInformationWindow(
 	const Information = createWindow(InformationComponent, {
 		windowTitle: displayName,
 		content: displayContent,
-		callback,
+		callback: async () => {
+			await callback?.()
+			Information.status.setDone?.()
+		},
 	})
 	Information.open()
+	return Information
 }
 
 export function createInputWindow(

@@ -30,7 +30,7 @@ export function createErrorNotification(error: Error): IDisposable {
 }
 
 window.addEventListener('error', event => {
-	createErrorNotification(event.error)
+	createErrorNotification(event.error ?? event)
 })
 
 window.onunhandledrejection = (event: PromiseRejectionEvent) => {

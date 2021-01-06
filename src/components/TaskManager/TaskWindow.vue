@@ -23,8 +23,7 @@
 			</v-card-text>
 			<v-card-actions>
 				<v-progress-linear
-					:value="task.currentStepCount"
-					:buffer-value="task.totalStepCount"
+					:value="(task.currentStepCount / task.totalStepCount) * 100"
 				/>
 			</v-card-actions>
 		</v-card>
@@ -49,6 +48,11 @@ export default {
 	methods: {
 		close() {
 			this.currentWindow.close()
+		},
+	},
+	watch: {
+		tasks(tasks) {
+			if (tasks.length === 0) this.close()
 		},
 	},
 }

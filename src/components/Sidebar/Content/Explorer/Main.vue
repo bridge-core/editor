@@ -35,6 +35,7 @@
 import { mainTabSystem } from '@/components/TabSystem/Main'
 import { DirectoryEntry } from './DirectoryEntry'
 import { TextTab } from '@/components/Editors/Text/TextTab'
+import { App } from '@/App.ts'
 
 export default {
 	name: 'FileExplorer',
@@ -42,9 +43,14 @@ export default {
 		entry: Object,
 	},
 
-	async mounted() {
-		if (!this.entry) this.directoryEntry = await DirectoryEntry.create()
-		else this.directoryEntry = this.entry
+	mounted() {
+		if (!this.entry) {
+			App.ready.once(async () => {
+				this.directoryEntry = await DirectoryEntry.create()
+			})
+		} else {
+			this.directoryEntry = this.entry
+		}
 	},
 	data: () => ({
 		directoryEntry: null,

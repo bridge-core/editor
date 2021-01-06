@@ -3,7 +3,6 @@ import App from './App.vue'
 //@ts-expect-error
 import Vuetify from 'vuetify/lib'
 import './registerServiceWorker'
-import '@convergencelabs/monaco-collab-ext/css/monaco-collab-ext.css'
 import en from '@/locales/en'
 import de from '@/locales/de'
 import nl from '@/locales/nl'
