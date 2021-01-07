@@ -1,4 +1,4 @@
-import minimatch from 'minimatch'
+import { isMatch } from 'micromatch'
 import json5 from 'json5'
 import type { ILightningInstruction } from '@/components/LightningCache/Worker/Main'
 
@@ -47,12 +47,12 @@ export namespace FileType {
 		for (const fileType of fileTypes) {
 			if (
 				typeof fileType.matcher === 'string' &&
-				minimatch(filePath, fileType.matcher)
+				isMatch(filePath, fileType.matcher)
 			)
 				return fileType
 
 			for (const matcher of fileType.matcher)
-				if (minimatch(filePath, matcher)) return fileType
+				if (isMatch(filePath, matcher)) return fileType
 		}
 	}
 
