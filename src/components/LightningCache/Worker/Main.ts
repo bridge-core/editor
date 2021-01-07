@@ -2,9 +2,9 @@ import { FileType } from '@/appCycle/FileType'
 import json5 from 'json5'
 import * as Comlink from 'comlink'
 import { TaskService } from '@/components/TaskManager/WorkerTask'
-import { FileSystem } from '@/components/FileSystem/Main'
 import { hashString } from '@/utils/hash'
 import { walkObject } from '@/utils/walkObject'
+import { LightningStore } from './LightningStore'
 
 const fileIgnoreList = ['.DS_Store']
 const folderIgnoreList = [
@@ -19,6 +19,11 @@ const folderIgnoreList = [
 	'RP/sounds/block',
 	'RP/sounds/mob',
 ]
+
+export interface ILightningInstruction {
+	'@filter'?: string[]
+	[str: string]: undefined | string | string[]
+}
 
 export class PackIndexerService extends TaskService {
 	protected lightningStore: LightningStore
@@ -39,6 +44,15 @@ export class PackIndexerService extends TaskService {
 			}
 		)
 
+		await this.lightningStore.saveStore()
+	}
+
+	async updateFile(filePath: string) {
+		await FileType.setup()
+		await this.processFile(
+			filePath,
+			await this.fileSystem.getFileHandle(filePath)
+		)
 		await this.lightningStore.saveStore()
 	}
 
@@ -92,11 +106,15 @@ export class PackIndexerService extends TaskService {
 
 		// console.log(instructions)
 		const collectedData: Record<string, string[]> = {}
-		const onReceiveData = (key: string) => (data: any) => {
+		const onReceiveData = (key: string, filter?: string[]) => (
+			data: any
+		) => {
 			let readyData: string[]
 			if (Array.isArray(data)) readyData = data
 			else if (typeof data === 'object') readyData = Object.keys(data)
 			else readyData = [data]
+
+			if (filter) readyData = readyData.filter(d => !filter.includes(d))
 
 			if (!collectedData[key]) collectedData[key] = readyData
 			else
@@ -107,16 +125,28 @@ export class PackIndexerService extends TaskService {
 
 		await Promise.all(
 			instructions.map(async instruction => {
-				const key = Object.keys(instruction)[0]
-				const paths = instruction[key]
+				const key = Object.keys(instruction).find(
+					key => key !== '@filter'
+				)
+				if (!key) return
+				const paths = instruction[key] as string[]
 
 				if (Array.isArray(paths))
 					await Promise.all(
 						paths.map(path =>
-							walkObject(path, data, onReceiveData(key))
+							walkObject(
+								path,
+								data,
+								onReceiveData(key, instruction['@filter'])
+							)
 						)
 					)
-				else await walkObject(paths, data, onReceiveData(key))
+				else
+					await walkObject(
+						paths,
+						data,
+						onReceiveData(key, instruction['@filter'])
+					)
 			})
 		)
 
@@ -129,54 +159,3 @@ export class PackIndexerService extends TaskService {
 }
 
 Comlink.expose(PackIndexerService, self)
-
-interface IStoreEntry {
-	hash: string
-	data?: Record<string, string[]>
-}
-
-class LightningStore {
-	protected store: Record<string, Record<string, IStoreEntry>> | undefined
-	protected fs: FileSystem
-	constructor(service: PackIndexerService) {
-		this.fs = service.fileSystem
-	}
-
-	protected async loadStore() {
-		if (!this.store) {
-			try {
-				this.store = await this.fs.readJSON(
-					'bridge/lightningCache.json'
-				)
-			} catch {
-				this.store = {}
-			}
-		}
-	}
-	async saveStore() {
-		await this.fs.mkdir('bridge')
-		await this.fs.writeJSON('bridge/lightningCache.json', this.store)
-	}
-
-	async save(
-		filePath: string,
-		fileContent: string,
-		fileData?: Record<string, string[]>
-	) {
-		await this.loadStore()
-		const fileType = FileType.getId(filePath)
-		if (!this.store![fileType]) this.store![fileType] = {}
-
-		this.store![fileType][filePath] = {
-			hash: await hashString(fileContent),
-			data: fileData,
-		}
-	}
-
-	async getHash(filePath: string) {
-		await this.loadStore()
-		const fileType = FileType.getId(filePath)
-
-		return this.store![fileType]?.[filePath]?.hash ?? ''
-	}
-}

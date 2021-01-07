@@ -26,7 +26,7 @@ export class FileSystem {
 
 		return current
 	}
-	protected async getFileHandle(path: string, create = false) {
+	async getFileHandle(path: string, create = false) {
 		if (path.length === 0) throw new Error(`Error: filePath is empty`)
 
 		const pathArr = path.split(/\\|\//g)

@@ -1,8 +1,8 @@
 import { App } from '@/App'
 import * as Comlink from "comlink"
-import type { PackIndexerService } from "./Worker"
+import type { PackIndexerService } from "./Worker/Main"
 
-const TaskService = Comlink.wrap<typeof PackIndexerService>(new Worker('./Worker.ts', {
+const TaskService = Comlink.wrap<typeof PackIndexerService>(new Worker('./Worker/Main.ts', {
 	type: 'module',
 }))
 

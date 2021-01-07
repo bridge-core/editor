@@ -1,5 +1,6 @@
 import minimatch from 'minimatch'
 import json5 from 'json5'
+import type { ILightningInstruction } from '@/components/LightningCache/Worker/Main'
 
 /**
  * Describes the structure of a file definition
@@ -30,6 +31,8 @@ export namespace FileType {
 	let fileTypes: IFileType[] = []
 
 	export async function setup() {
+		if (fileTypes.length > 0) return
+
 		const jsonString = await fetch(
 			`${baseUrl}data/fileDefinitions.json`
 		).then(rawData => rawData.text())
@@ -81,10 +84,6 @@ export namespace FileType {
 			`${baseUrl}lightningCache/${lightningCache}`
 		)
 
-		return json5.parse(await response.text()) as Record<
-			string,
-			string | string[]
-		>[]
+		return json5.parse(await response.text()) as ILightningInstruction[]
 	}
 }
-console.log(FileType)
