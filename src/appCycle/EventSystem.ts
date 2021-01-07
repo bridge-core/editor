@@ -84,14 +84,15 @@ export class EventDispatcher<T> {
 		this.listeners.forEach(listener => listener(data))
 	}
 
-	on(listener: (data: T) => void) {
+	on(listener: (data: T) => void, getDisposable=true) {
 		this.listeners.add(listener)
 
-		return {
-			dispose: () => {
-				this.off(listener)
+		if(getDisposable)
+			return {
+				dispose: () => {
+					this.off(listener)
+				}
 			}
-		}
 	}
 
 	off(listener: (data: T) => void) {
@@ -101,7 +102,7 @@ export class EventDispatcher<T> {
 	once(listener: (data: T) => void) {
 		const disposable = this.on((data) => {
 			listener(data)
-			disposable.dispose()
+			disposable!.dispose()
 		})
 	}
 }

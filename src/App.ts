@@ -44,7 +44,10 @@ export class App {
 		const saveWarning =
 			'Are you sure that you want to close bridge.? Unsaved progress will be lost.'
 		window.addEventListener('beforeunload', event => {
-			if (mainTabSystem.hasUnsavedTabs) {
+			if (
+				mainTabSystem.hasUnsavedTabs ||
+				this.taskManager.hasRunningTasks
+			) {
 				event.preventDefault()
 				event.returnValue = saveWarning
 				return saveWarning

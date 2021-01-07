@@ -20,4 +20,7 @@ export class TaskManager {
 		window.open()
 		return window
 	}
+	get hasRunningTasks() {
+		return tasks.length > 0
+	}
 }

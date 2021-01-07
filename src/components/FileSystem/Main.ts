@@ -5,7 +5,7 @@ export class FileSystem {
 
 	constructor(public readonly baseDirectory: FileSystemDirectoryHandle) {}
 
-	protected async getDirectoryHandle(
+	async getDirectoryHandle(
 		path: string,
 		{ create, createOnce }: Partial<IGetHandleConfig> = {}
 	) {
