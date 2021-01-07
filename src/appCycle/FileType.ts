@@ -9,6 +9,7 @@ interface IFileType {
 	matcher: string | string[]
 	schema: string
 	packSpider: string
+	lightningCache: string
 }
 
 /**
@@ -24,11 +25,13 @@ interface IMonacoSchemaArrayEntry {
  * Utilities around bridge.'s file definitions
  */
 export namespace FileType {
+	const baseUrl =
+		'https://raw.githubusercontent.com/bridge-core/data/next/packages/'
 	let fileTypes: IFileType[] = []
 
 	export async function setup() {
 		const jsonString = await fetch(
-			'https://raw.githubusercontent.com/bridge-core/data/next/packages/data/fileDefinitions.json'
+			`${baseUrl}data/fileDefinitions.json`
 		).then(rawData => rawData.text())
 		fileTypes = json5.parse(jsonString) as IFileType[]
 	}
@@ -69,4 +72,19 @@ export namespace FileType {
 			}))
 			.flat()
 	}
+
+	export async function getLightningCache(filePath: string) {
+		const { lightningCache } = get(filePath) ?? {}
+		if (!lightningCache) return []
+
+		const response = await fetch(
+			`${baseUrl}lightningCache/${lightningCache}`
+		)
+
+		return json5.parse(await response.text()) as Record<
+			string,
+			string | string[]
+		>[]
+	}
 }
+console.log(FileType)

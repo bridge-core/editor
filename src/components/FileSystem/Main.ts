@@ -1,3 +1,4 @@
+import json5 from 'json5'
 import { IGetHandleConfig, IMkdirConfig } from './Common'
 
 export class FileSystem {
@@ -86,5 +87,13 @@ export class FileSystem {
 		const writable = await fileHandle.createWritable()
 		await writable.write(data)
 		writable.close()
+	}
+
+	async readJSON(path: string) {
+		const file = await this.readFile(path)
+		return await json5.parse(await file.text())
+	}
+	writeJSON(path: string, data: any) {
+		return this.writeFile(path, JSON.stringify(data))
 	}
 }

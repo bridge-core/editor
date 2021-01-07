@@ -1,8 +1,10 @@
 import { FileType } from '@/appCycle/FileType'
-import { get, set } from 'idb-keyval'
 import json5 from 'json5'
 import * as Comlink from 'comlink'
-import { TaskService } from '../TaskManager/WorkerTask'
+import { TaskService } from '@/components/TaskManager/WorkerTask'
+import { FileSystem } from '@/components/FileSystem/Main'
+import { hashString } from '@/utils/hash'
+import { walkObject } from '@/utils/walkObject'
 
 const fileIgnoreList = ['.DS_Store']
 const folderIgnoreList = [
@@ -19,29 +21,25 @@ const folderIgnoreList = [
 ]
 
 export class PackIndexerService extends TaskService {
+	protected lightningStore: LightningStore
 	constructor(baseDirectory: FileSystemDirectoryHandle) {
 		super('packIndexer', baseDirectory)
+		this.lightningStore = new LightningStore(this)
 	}
 
 	async onStart() {
 		await FileType.setup()
 
-		const count: Record<string, number> = {}
-
 		await this.iterateDir(
 			this.fileSystem.baseDirectory,
-			async (file, filePath) => {
-				const fileType = FileType.getId(
-					filePath.replace('projects/test/', '')
-				)
+			async (fileHandle, filePath) => {
+				await this.processFile(filePath, fileHandle)
 
-				if (!count[fileType]) count[fileType] = 1
-				else count[fileType]++
-
-				this.progress.addToTotal()
+				this.progress.addToCurrent()
 			}
 		)
-		console.log(count)
+
+		await this.lightningStore.saveStore()
 	}
 
 	protected async iterateDir(
@@ -59,13 +57,11 @@ export class PackIndexerService extends TaskService {
 				fullPath.length === 0 ? fileName : `${fullPath}/${fileName}`
 			if (
 				entry.kind === 'directory' &&
-				!folderIgnoreList.includes(
-					currentFullPath.replace('projects/test/', '')
-				)
+				!folderIgnoreList.includes(currentFullPath)
 			) {
 				await this.iterateDir(entry, callback, currentFullPath)
 			} else if (!fileIgnoreList.includes(fileName)) {
-				this.progress.addToCurrent()
+				this.progress.addToTotal()
 				promises.push(
 					callback(entry as FileSystemFileHandle, currentFullPath)
 				)
@@ -74,19 +70,113 @@ export class PackIndexerService extends TaskService {
 
 		await Promise.all(promises)
 	}
+
+	async processFile(filePath: string, fileHandle: FileSystemFileHandle) {
+		if (filePath.endsWith('.json'))
+			return await this.processJSON(filePath, fileHandle)
+	}
+	async processJSON(filePath: string, fileHandle: FileSystemFileHandle) {
+		const file = await fileHandle.getFile()
+		const fileContent = await file.text()
+
+		// Check for file changes
+		const newHash = await hashString(fileContent)
+		const oldHash = await this.lightningStore.getHash(filePath)
+		// File did not change, no work to do
+		if (newHash === oldHash) return
+
+		const data = json5.parse(fileContent)
+		const instructions = await FileType.getLightningCache(filePath)
+		// No instructions = no work
+		if (instructions.length === 0) return
+
+		// console.log(instructions)
+		const collectedData: Record<string, string[]> = {}
+		const onReceiveData = (key: string) => (data: any) => {
+			let readyData: string[]
+			if (Array.isArray(data)) readyData = data
+			else if (typeof data === 'object') readyData = Object.keys(data)
+			else readyData = [data]
+
+			if (!collectedData[key]) collectedData[key] = readyData
+			else
+				collectedData[key] = [
+					...new Set(collectedData[key].concat(readyData)),
+				]
+		}
+
+		await Promise.all(
+			instructions.map(async instruction => {
+				const key = Object.keys(instruction)[0]
+				const paths = instruction[key]
+
+				if (Array.isArray(paths))
+					await Promise.all(
+						paths.map(path =>
+							walkObject(path, data, onReceiveData(key))
+						)
+					)
+				else await walkObject(paths, data, onReceiveData(key))
+			})
+		)
+
+		await this.lightningStore.save(
+			filePath,
+			fileContent,
+			Object.keys(collectedData).length > 0 ? collectedData : undefined
+		)
+	}
 }
 
 Comlink.expose(PackIndexerService, self)
 
-async function processFile(file: FileSystemFileHandle) {
-	if (file.name.endsWith('.json')) return await processJSON(file)
+interface IStoreEntry {
+	hash: string
+	data?: Record<string, string[]>
 }
-async function processJSON(fileHandle: FileSystemFileHandle) {
-	const file = await fileHandle.getFile()
-	let fileContent: any
-	try {
-		fileContent = json5.parse(await file.text())
-	} catch {
-		return
+
+class LightningStore {
+	protected store: Record<string, Record<string, IStoreEntry>> | undefined
+	protected fs: FileSystem
+	constructor(service: PackIndexerService) {
+		this.fs = service.fileSystem
+	}
+
+	protected async loadStore() {
+		if (!this.store) {
+			try {
+				this.store = await this.fs.readJSON(
+					'bridge/lightningCache.json'
+				)
+			} catch {
+				this.store = {}
+			}
+		}
+	}
+	async saveStore() {
+		await this.fs.mkdir('bridge')
+		await this.fs.writeJSON('bridge/lightningCache.json', this.store)
+	}
+
+	async save(
+		filePath: string,
+		fileContent: string,
+		fileData?: Record<string, string[]>
+	) {
+		await this.loadStore()
+		const fileType = FileType.getId(filePath)
+		if (!this.store![fileType]) this.store![fileType] = {}
+
+		this.store![fileType][filePath] = {
+			hash: await hashString(fileContent),
+			data: fileData,
+		}
+	}
+
+	async getHash(filePath: string) {
+		await this.loadStore()
+		const fileType = FileType.getId(filePath)
+
+		return this.store![fileType]?.[filePath]?.hash ?? ''
 	}
 }
