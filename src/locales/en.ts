@@ -139,6 +139,14 @@ export default {
 		},
 		taskManager: {
 			title: 'Task Manager',
+
+			tasks: {
+				packIndexing: {
+					title: 'Indexing Packs',
+					description:
+						'bridge. is collecting data about your pack that is needed for its intelligent features.',
+				},
+			},
 		},
 		projectFolder: {
 			title: 'Project Folder',

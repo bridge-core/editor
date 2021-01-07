@@ -12,16 +12,20 @@ export class PackIndexer {
 		App.ready.once(async app => {
 			const task = app.taskManager.create({
 				icon: 'mdi-flash-outline',
-				name: 'Indexing Packs',
+				name: 'windows.taskManager.tasks.packIndexing.title',
 				description:
-					'bridge. is collecting data about your pack that is needed for its intelligent features.',
+					'windows.taskManager.tasks.packIndexing.description',
 			})
+
+			// Instaniate the worker TaskService
 			this.service = await new TaskService(await app.fileSystem.getDirectoryHandle("projects/test"))
+			// Listen to task progress and update UI
 			this.service.on(Comlink.proxy(([current, total]) => {
 				if(current === total) task.complete()
 				task.update(current, total)
 			}), false)
 
+			// Start service
 			await this.service.start()
 		})
 	}
