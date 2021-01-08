@@ -1,7 +1,7 @@
 import { FileType } from '@/appCycle/FileType'
 import { FileSystem } from '@/components/FileSystem/Main'
 import { hashString } from '@/utils/hash'
-import type { PackIndexerService } from './Main'
+import { PackIndexerService } from './Main'
 
 type TStore = Record<string, Record<string, IStoreEntry>>
 interface IStoreEntry {
@@ -35,7 +35,7 @@ export class LightningStore {
 		await this.fs.writeJSON('bridge/lightningCache.json', this.store)
 	}
 
-	async save(
+	async add(
 		filePath: string,
 		fileContent: string,
 		fileData?: Record<string, string[]>
@@ -55,5 +55,65 @@ export class LightningStore {
 		const fileType = FileType.getId(filePath)
 
 		return this.store![fileType]?.[filePath]?.hash ?? ''
+	}
+
+	async find(
+		findFileType: string,
+		whereCacheKey: string,
+		matchesOneOf: string[],
+		fetchAll = false
+	) {
+		if (matchesOneOf.length === 0) return []
+		await this.loadStore()
+		const relevantStore = this.store![findFileType]
+
+		const resultingFiles: string[] = []
+
+		// Iterating over files
+		for (const filePath in relevantStore) {
+			const cacheEntries =
+				relevantStore[filePath].data?.[whereCacheKey] ?? []
+
+			if (cacheEntries.find(entry => matchesOneOf.includes(entry))) {
+				if (!fetchAll) return [filePath]
+				else resultingFiles.push(filePath)
+			}
+		}
+
+		return resultingFiles
+	}
+	async findMultiple(
+		findFileTypes: string[],
+		whereCacheKey: string,
+		matchesOneOf: string[]
+	) {
+		return (
+			await Promise.all(
+				findFileTypes.map(findFileType =>
+					this.find(findFileType, whereCacheKey, matchesOneOf, true)
+				)
+			)
+		).flat()
+	}
+
+	async forEach(
+		fileType: string,
+		cb: (filePath: string, storeEntry: IStoreEntry) => Promise<void> | void
+	) {
+		await this.loadStore()
+		const relevantStore = this.store![fileType]
+
+		const promises: (void | Promise<void>)[] = []
+		for (const filePath in relevantStore) {
+			promises.push(cb(filePath, relevantStore[filePath]))
+		}
+
+		await Promise.all(promises)
+	}
+
+	async get(filePath: string, fileType = FileType.getId(filePath)) {
+		await this.loadStore()
+
+		return this.store![fileType]?.[filePath] ?? {}
 	}
 }

@@ -1,6 +1,7 @@
 import { isMatch } from 'micromatch'
 import json5 from 'json5'
-import type { ILightningInstruction } from '@/components/LightningCache/Worker/Main'
+import { ILightningInstruction } from '@/components/LightningCache/Worker/Main'
+import { IPackSpiderFile } from '@/components/LightningCache/Worker/PackSpider/PackSpider'
 
 /**
  * Describes the structure of a file definition
@@ -76,14 +77,35 @@ export namespace FileType {
 			.flat()
 	}
 
+	const lCacheFiles: Record<string, ILightningInstruction[]> = {}
 	export async function getLightningCache(filePath: string) {
 		const { lightningCache } = get(filePath) ?? {}
 		if (!lightningCache) return []
 
+		if (lCacheFiles[lightningCache]) return lCacheFiles[lightningCache]
 		const response = await fetch(
 			`${baseUrl}lightningCache/${lightningCache}`
 		)
 
-		return json5.parse(await response.text()) as ILightningInstruction[]
+		lCacheFiles[lightningCache] = json5.parse(
+			await response.text()
+		) as ILightningInstruction[]
+		return lCacheFiles[lightningCache]
+	}
+
+	export async function getPackSpiderData() {
+		return <{ id: string; packSpider: IPackSpiderFile }[]>await Promise.all(
+			fileTypes
+				.map(({ id, packSpider }) => {
+					if (!packSpider) return
+					return fetch(`${baseUrl}packSpider/${packSpider}`)
+						.then(response => response.text())
+						.then(jsonStr => ({
+							id,
+							packSpider: json5.parse(jsonStr),
+						}))
+				})
+				.filter(data => data !== undefined)
+		)
 	}
 }
