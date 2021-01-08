@@ -3,7 +3,7 @@ export async function walkObject(
 	obj: any,
 	onReach: (data: any) => void | Promise<void>
 ) {
-	const keys = path.split('/')
+	const keys = path.length === 0 || path === '/' ? [] : path.split('/')
 	return await _walkObject(keys, obj, onReach)
 }
 
