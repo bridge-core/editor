@@ -25,7 +25,7 @@ export class App {
 	protected eventSystem = new EventManager<any>()
 	public fileSystem!: FileSystem
 	public readonly taskManager = new TaskManager()
-	protected packIndexer = new PackIndexer()
+	public readonly packIndexer = new PackIndexer()
 
 	static async main(appComponent: Vue) {
 		this._instance = new App(appComponent)

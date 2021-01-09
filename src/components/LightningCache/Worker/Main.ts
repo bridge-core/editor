@@ -5,7 +5,12 @@ import { TaskService } from '@/components/TaskManager/WorkerTask'
 import { hashString } from '@/utils/hash'
 import { walkObject } from '@/utils/walkObject'
 import { LightningStore } from './LightningStore'
-import { fileStore, PackSpider } from './PackSpider/PackSpider'
+import {
+	fileStore,
+	getCategoryDirectory,
+	getFileStoreDirectory,
+	PackSpider,
+} from './PackSpider/PackSpider'
 
 const fileIgnoreList = ['.DS_Store']
 const folderIgnoreList = [
@@ -92,6 +97,12 @@ export class PackIndexerService extends TaskService {
 				await callback(entry as FileSystemFileHandle, currentFullPath)
 			}
 		}
+	}
+
+	async readdir(path: string[]) {
+		if (path.length === 0) return getFileStoreDirectory()
+		if (path.length === 1) return getCategoryDirectory(path[0])
+		return fileStore[path[0]][path[1]].toDirectory()
 	}
 
 	/**

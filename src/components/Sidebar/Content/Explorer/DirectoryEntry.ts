@@ -1,6 +1,5 @@
 import { mainTabSystem } from '@/components/TabSystem/Main'
 import { IFileSystem } from '@/components/FileSystem/Common'
-import { FileSystem } from '@/components/FileSystem/Main'
 import { platform } from '@/utils/os'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
@@ -8,15 +7,13 @@ import { App } from '@/App'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
+	protected displayName?: string
 	public uuid = uuid()
 	public isFolderOpen = false
 
 	static async create() {
 		return Vue.observable(
-			new DirectoryEntry(App.instance.fileSystem, null, [
-				'projects',
-				'test',
-			])
+			new DirectoryEntry(App.instance.fileSystem, null, [])
 		)
 	}
 	constructor(
@@ -28,39 +25,48 @@ export class DirectoryEntry {
 		if (_isFile) {
 			// this.parent?.updateUUID()
 		} else {
-			fileSystem
-				.readdir(path.join('/'), { withFileTypes: true })
-				.then(handles => {
-					handles.forEach(handle => {
-						if (
-							platform() === 'darwin' &&
-							handle.name === '.DS_Store' &&
-							handle.kind === 'file'
-						)
-							return
+			const dirents = <Promise<any>>App.instance.packIndexer.readdir(
+				path,
+				{
+					withFileTypes: true,
+				}
+			)
 
-						this.children.push(
-							new DirectoryEntry(
-								fileSystem,
-								this,
-								path.concat([handle.name]),
-								handle.kind === 'file'
-							)
-						)
-					})
-					this.sortChildren()
+			dirents.then(handles => {
+				handles.forEach((handle: any) => {
+					if (
+						platform() === 'darwin' &&
+						handle.name === '.DS_Store' &&
+						handle.kind === 'file'
+					)
+						return
+
+					const dirent = new DirectoryEntry(
+						fileSystem,
+						this,
+						handle.path ?? path.concat([handle.name]),
+						handle.kind === 'file'
+					)
+					dirent.setDisplayName(handle.displayName)
+					if (handle.filePath) dirent.setPath(handle.filePath)
+					this.children.push(dirent)
 				})
+				this.sortChildren()
+			})
 		}
 	}
 
 	get name() {
-		return this.path[this.path.length - 1]
+		return this.displayName ?? this.path[this.path.length - 1]
 	}
 	get isFile() {
 		return this._isFile
 	}
 	getPath() {
-		return this.path.join('/')
+		return ['projects', 'test'].concat(this.path).join('/')
+	}
+	setPath(path: string) {
+		return (this.path = path.split('/'))
 	}
 	open() {
 		if (this.isFile) mainTabSystem.open(this.getPath())
@@ -79,6 +85,9 @@ export class DirectoryEntry {
 	}
 	saveFileContent(data: FileSystemWriteChunkType) {
 		this.fileSystem.writeFile(this.getPath(), data)
+	}
+	setDisplayName(name: string) {
+		this.displayName = name
 	}
 
 	protected sortChildren() {

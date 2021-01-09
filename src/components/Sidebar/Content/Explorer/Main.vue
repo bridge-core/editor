@@ -1,5 +1,5 @@
 <template>
-	<div v-if="directoryEntry">
+	<div v-if="directoryEntry && packIndexerReady.isReady">
 		<template v-for="entry in directoryEntry.children">
 			<details
 				v-if="!entry.isFile"
@@ -36,6 +36,7 @@ import { mainTabSystem } from '@/components/TabSystem/Main'
 import { DirectoryEntry } from './DirectoryEntry'
 import { TextTab } from '@/components/Editors/Text/TextTab'
 import { App } from '@/App.ts'
+import { packIndexerReady } from '@/components/LightningCache/PackIndexer'
 
 export default {
 	name: 'FileExplorer',
@@ -45,8 +46,9 @@ export default {
 
 	mounted() {
 		if (!this.entry) {
-			App.ready.once(async () => {
+			App.instance.packIndexer.once(async () => {
 				this.directoryEntry = await DirectoryEntry.create()
+				console.log(this.directoryEntry)
 			})
 		} else {
 			this.directoryEntry = this.entry
@@ -55,6 +57,7 @@ export default {
 	data: () => ({
 		directoryEntry: null,
 		tree: [],
+		packIndexerReady,
 	}),
 }
 </script>
