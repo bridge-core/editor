@@ -81,15 +81,18 @@ export function getCategoryDirectory(fileType: string) {
 	return folders
 }
 export class File {
-	protected parents = new Set<File>()
 	protected identifier: string = 'unknown'
+	protected parents = new Set<File>()
+	protected connectedFiles: Set<File>
+
 	constructor(
 		public readonly filePath: string,
-		protected connectedFiles: File[],
+		connectedFiles: File[],
 		parents: File[] = []
 	) {
 		parents.forEach(parent => this.addParent(parent))
-		this.connectedFiles.forEach(file => file.addParent(this))
+		this.connectedFiles = new Set(connectedFiles)
+		connectedFiles.forEach(file => file.addParent(this))
 	}
 
 	static async create(
@@ -119,6 +122,7 @@ export class File {
 			fileType
 		)
 
+		const connectedFiles: File[] = []
 		// Directly referenced files
 		const cacheKeysToInclude =
 			<string[]>(
@@ -126,40 +130,31 @@ export class File {
 					?.map(cacheKey => cacheData[cacheKey] ?? [])
 					.flat()
 			) ?? []
-		const connectedFiles = await Promise.all(
-			cacheKeysToInclude.map(filePath =>
-				File.create(`${pathStart}/${filePath}`, packSpider)
+		for (const filePath of cacheKeysToInclude) {
+			connectedFiles.push(
+				await File.create(`${pathStart}/${filePath}`, packSpider)
 			)
-		)
+		}
 
 		// Dynamically referenced files
-		const promises =
-			packSpiderFile.connect?.map(({ find, where, matches }) => {
-				if (!Array.isArray(find)) find = [find]
-				const matchesOneOf = cacheData[matches] ?? []
+		for (let { find, where, matches } of packSpiderFile.connect ?? []) {
+			if (!Array.isArray(find)) find = [find]
+			const matchesOneOf = cacheData[matches] ?? []
 
-				return packSpider.lightningStore.findMultiple(
-					find,
-					where,
-					matchesOneOf
-				)
-			}) ?? []
-		connectedFiles.push(
-			...(await Promise.all(
-				(await Promise.all(promises))
-					.flat()
-					.map(filePath => File.create(filePath, packSpider))
-			))
-		)
+			const filePaths = await packSpider.lightningStore.findMultiple(
+				find,
+				where,
+				matchesOneOf
+			)
+			for (const filePath of filePaths) {
+				connectedFiles.push(await File.create(filePath, packSpider))
+			}
+		}
 
 		// Shared files
-		connectedFiles.push(
-			...(await Promise.all(
-				packSpiderFile.sharedFiles?.map(filePath =>
-					File.create(filePath, packSpider)
-				) ?? []
-			))
-		)
+		for (const filePath of packSpiderFile.sharedFiles ?? []) {
+			connectedFiles.push(await File.create(filePath, packSpider))
+		}
 
 		const file = new File(
 			filePath,
@@ -173,18 +168,31 @@ export class File {
 	}
 
 	toDirectory() {
-		return [...new Set(this.deepConnectedFiles.concat([this]))].map(
-			file => ({
+		const dirFiles: IFile[] = []
+		const deepFiles = this.deepConnectedFiles
+		deepFiles.add(this)
+		if (this.filePath === 'BP/entities/armor_stand.json')
+			console.log(deepFiles)
+
+		deepFiles.forEach(file =>
+			dirFiles.push({
 				kind: 'file',
 				name: file.fileName,
 				filePath: file.filePath,
 			})
 		)
+
+		return dirFiles
 	}
-	get deepConnectedFiles(): File[] {
-		return this.connectedFiles.concat(
-			this.connectedFiles.map(file => file.deepConnectedFiles).flat()
-		)
+	get deepConnectedFiles() {
+		const deepFiles = new Set<File>()
+
+		this.connectedFiles.forEach(file => {
+			deepFiles.add(file)
+			file.deepConnectedFiles.forEach(deepFile => deepFiles.add(deepFile))
+		})
+
+		return deepFiles
 	}
 	get identifierName() {
 		return this.identifier

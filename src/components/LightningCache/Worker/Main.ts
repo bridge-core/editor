@@ -142,7 +142,8 @@ export class PackIndexerService extends TaskService {
 		) => {
 			let readyData: string[]
 			if (Array.isArray(data)) readyData = data
-			else if (typeof data === 'object') readyData = Object.keys(data)
+			else if (typeof data === 'object')
+				readyData = Object.keys(data ?? {})
 			else readyData = [data]
 
 			if (filter) readyData = readyData.filter(d => !filter.includes(d))
