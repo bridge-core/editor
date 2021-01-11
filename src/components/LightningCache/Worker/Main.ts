@@ -114,8 +114,32 @@ export class PackIndexerService extends TaskService {
 	async processFile(filePath: string, fileHandle: FileSystemFileHandle) {
 		if (filePath.endsWith('.json'))
 			return await this.processJSON(filePath, fileHandle)
+		if (filePath.endsWith('.mcfunction'))
+			return await this.processFunction(filePath, fileHandle)
 		return false
 	}
+
+	async processFunction(filePath: string, fileHandle: FileSystemFileHandle) {
+		const file = await fileHandle.getFile()
+		const fileContent = await file.text()
+
+		// Check for file changes
+		const newHash = await hashString(fileContent)
+		const oldHash = await this.lightningStore.getHash(filePath)
+		// File did not change, no work to do
+		if (newHash === oldHash) return false
+
+		const functionPath: string[] = []
+		for (const line of fileContent.split('\n')) {
+			let funcName = /function\s+([aA-zZ0-9\/]+)/g.exec(line)
+			if (funcName)
+				functionPath.push(`functions/${funcName[1]}.mcfunction`)
+		}
+
+		await this.lightningStore.add(filePath, fileContent, { functionPath })
+		return true
+	}
+
 	/**
 	 * Process a JSON file
 	 * @returns Whether this json file did change

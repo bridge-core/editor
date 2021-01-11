@@ -89,20 +89,7 @@ export class DirectoryEntry {
 		if (this.isFile) mainTabSystem.open(this.getFullPath())
 		else this.isFolderOpen = !this.isFolderOpen
 	}
-	getFileContent() {
-		if (!this.isFile) throw new Error(`Called getFileContent on directory`)
 
-		return this.fileSystem.readFile(this.getFullPath()).then(file => {
-			if (file instanceof ArrayBuffer) {
-				const dec = new TextDecoder('utf-8')
-				return dec.decode(file)
-			}
-			return file.text()
-		})
-	}
-	saveFileContent(data: FileSystemWriteChunkType) {
-		this.fileSystem.writeFile(this.getFullPath(), data)
-	}
 	setDisplayName(name: string) {
 		this.displayName = name
 	}

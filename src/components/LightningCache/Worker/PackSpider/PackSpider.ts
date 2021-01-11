@@ -143,10 +143,14 @@ export class File {
 					?.map(cacheKey => cacheData[cacheKey] ?? [])
 					.flat()
 			) ?? []
-		for (const filePath of cacheKeysToInclude) {
-			connectedFiles.push(
-				await File.create(`${pathStart}/${filePath}`, packSpider)
-			)
+		for (const foundFilePath of cacheKeysToInclude) {
+			if (`${pathStart}/${foundFilePath}` !== filePath)
+				connectedFiles.push(
+					await File.create(
+						`${pathStart}/${foundFilePath}`,
+						packSpider
+					)
+				)
 		}
 
 		// Dynamically referenced files
@@ -154,25 +158,31 @@ export class File {
 			if (!Array.isArray(find)) find = [find]
 			const matchesOneOf = cacheData[matches] ?? []
 
-			const filePaths = await packSpider.lightningStore.findMultiple(
+			const foundFilePaths = await packSpider.lightningStore.findMultiple(
 				find,
 				where,
 				matchesOneOf
 			)
-			for (const filePath of filePaths) {
-				connectedFiles.push(await File.create(filePath, packSpider))
+			for (const foundFilePath of foundFilePaths) {
+				if (foundFilePath !== filePath)
+					connectedFiles.push(
+						await File.create(foundFilePath, packSpider)
+					)
 			}
 		}
 
 		// Shared files
-		for (const filePath of packSpiderFile.sharedFiles ?? []) {
-			connectedFiles.push(await File.create(filePath, packSpider))
+		for (const foundFilePath of packSpiderFile.sharedFiles ?? []) {
+			if (foundFilePath !== filePath)
+				connectedFiles.push(
+					await File.create(foundFilePath, packSpider)
+				)
 		}
 
 		const file = new File(
 			filePath,
 			connectedFiles,
-			forceUpdate ? [...storedFile?.parents] : undefined
+			forceUpdate ? [...(storedFile?.parents ?? [])] : undefined
 		)
 		file.setIdentifier(cacheData.identifier)
 		if (!fileStore[fileType]) fileStore[fileType] = {}
@@ -191,6 +201,7 @@ export class File {
 				name: file.fileName,
 				filePath: file.filePath,
 				identifierName: file.identifierName,
+				displayName: file.identifierName,
 			})
 		)
 
@@ -225,8 +236,18 @@ export class File {
 	}
 
 	setIdentifier(id?: string[]) {
-		if (!id) this.identifier = undefined
-		else if (id.length === 1) this.identifier = id[0]
-		else this.identifier = this.fileName
+		if (id?.length === 1) this.identifier = id[0]
+
+		const path = this.filePath.split('/')
+
+		// Top level files should still be handled correctly
+		if (path.length <= 2) {
+			this.identifier = this.fileName
+		} else {
+			path.shift()
+			path.shift()
+			this.identifier = path.join('/')
+			if (this.filePath.includes('reset')) console.log(this.identifier)
+		}
 	}
 }
