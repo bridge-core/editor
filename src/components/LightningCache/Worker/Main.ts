@@ -11,6 +11,7 @@ import {
 	getFileStoreDirectory,
 	PackSpider,
 } from './PackSpider/PackSpider'
+import { execute } from '@/components/Plugins/Scripts/execute'
 
 const fileIgnoreList = ['.DS_Store']
 const folderIgnoreList = [
@@ -29,6 +30,7 @@ const folderIgnoreList = [
 
 export interface ILightningInstruction {
 	'@filter'?: string[]
+	'@map'?: string
 	[str: string]: undefined | string | string[]
 }
 
@@ -42,6 +44,7 @@ export class PackIndexerService extends TaskService {
 	}
 
 	async onStart() {
+		this.lightningStore.reset()
 		await FileType.setup()
 
 		const filePaths: string[] = []
@@ -87,10 +90,10 @@ export class PackIndexerService extends TaskService {
 		for await (const [fileName, entry] of baseDir.entries()) {
 			const currentFullPath =
 				fullPath.length === 0 ? fileName : `${fullPath}/${fileName}`
-			if (
-				entry.kind === 'directory' &&
-				!folderIgnoreList.includes(currentFullPath)
-			) {
+
+			if (entry.kind === 'directory') {
+				if (folderIgnoreList.includes(currentFullPath)) continue
+
 				await this.iterateDir(entry, callback, currentFullPath)
 			} else if (!fileIgnoreList.includes(fileName)) {
 				this.progress.addToTotal(2)
@@ -126,8 +129,13 @@ export class PackIndexerService extends TaskService {
 		const oldHash = await this.lightningStore.getHash(filePath)
 		// File did not change, no work to do
 		if (newHash === oldHash) return false
+		let data: any
+		try {
+			data = json5.parse(fileContent)
+		} catch {
+			return true
+		}
 
-		const data = json5.parse(fileContent)
 		const instructions = await FileType.getLightningCache(filePath)
 		// No instructions = no work
 		if (instructions.length === 0) {
@@ -137,9 +145,11 @@ export class PackIndexerService extends TaskService {
 
 		// console.log(instructions)
 		const collectedData: Record<string, string[]> = {}
-		const onReceiveData = (key: string, filter?: string[]) => (
-			data: any
-		) => {
+		const onReceiveData = (
+			key: string,
+			filter?: string[],
+			mapFunc?: string
+		) => (data: any) => {
 			let readyData: string[]
 			if (Array.isArray(data)) readyData = data
 			else if (typeof data === 'object')
@@ -147,6 +157,10 @@ export class PackIndexerService extends TaskService {
 			else readyData = [data]
 
 			if (filter) readyData = readyData.filter(d => !filter.includes(d))
+			if (mapFunc)
+				readyData = readyData
+					.map(value => execute(mapFunc, { value }))
+					.filter(value => value !== undefined)
 
 			if (!collectedData[key]) collectedData[key] = readyData
 			else
@@ -158,7 +172,7 @@ export class PackIndexerService extends TaskService {
 		await Promise.all(
 			instructions.map(async instruction => {
 				const key = Object.keys(instruction).find(
-					key => key !== '@filter'
+					key => key !== '@filter' && key !== '@map'
 				)
 				if (!key) return
 				const paths = instruction[key] as string[]
@@ -169,7 +183,11 @@ export class PackIndexerService extends TaskService {
 							walkObject(
 								path,
 								data,
-								onReceiveData(key, instruction['@filter'])
+								onReceiveData(
+									key,
+									instruction['@filter'],
+									instruction['@map']
+								)
 							)
 						)
 					)
@@ -177,7 +195,11 @@ export class PackIndexerService extends TaskService {
 					await walkObject(
 						paths,
 						data,
-						onReceiveData(key, instruction['@filter'])
+						onReceiveData(
+							key,
+							instruction['@filter'],
+							instruction['@map']
+						)
 					)
 			})
 		)

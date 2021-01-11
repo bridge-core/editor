@@ -9,6 +9,7 @@
 		"dev": "vue-cli-service serve"
 	},
 	"dependencies": {
+		"@mdi/font": "^5.8.55",
 		"bridge-compiler": "^0.3.0",
 		"color-convert": "^2.0.1",
 		"comlink": "^4.3.0",

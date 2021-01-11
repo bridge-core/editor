@@ -8,6 +8,7 @@ import { IPackSpiderFile } from '@/components/LightningCache/Worker/PackSpider/P
  */
 interface IFileType {
 	id: string
+	icon?: string
 	matcher: string | string[]
 	schema: string
 	packSpider: string

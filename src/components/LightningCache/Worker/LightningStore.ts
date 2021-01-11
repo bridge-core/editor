@@ -19,6 +19,9 @@ export class LightningStore {
 		this.fs = service.fileSystem
 	}
 
+	reset() {
+		this.store = undefined
+	}
 	protected async loadStore() {
 		if (!this.store) {
 			try {

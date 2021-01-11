@@ -7,8 +7,13 @@
 				:open="entry.isFolderOpen"
 			>
 				<summary @click.prevent="entry.open()" v-ripple>
-					<v-icon class="open pr-1" small>mdi-folder-open</v-icon>
-					<v-icon class="closed pr-1" small>mdi-folder</v-icon>
+					<v-icon class="pr-1" :color="entry.color" small>
+						{{
+							entry.isFolderOpen
+								? 'mdi-folder-open'
+								: 'mdi-folder'
+						}}
+					</v-icon>
 					<span class="folder">{{ entry.name }}</span>
 				</summary>
 
@@ -22,7 +27,9 @@
 				@click.stop="entry.open()"
 				v-ripple
 			>
-				<v-icon small>mdi-file</v-icon>
+				<v-icon :color="entry.color" small>
+					{{ entry.icon || 'mdi-file-outline' }}
+				</v-icon>
 				{{ entry.name }}
 			</div>
 		</template>
@@ -48,7 +55,6 @@ export default {
 		if (!this.entry) {
 			App.instance.packIndexer.once(async () => {
 				this.directoryEntry = await DirectoryEntry.create()
-				console.log(this.directoryEntry)
 			})
 		} else {
 			this.directoryEntry = this.entry

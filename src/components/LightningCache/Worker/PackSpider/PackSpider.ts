@@ -47,17 +47,18 @@ export interface IDirectory {
 export interface IFile {
 	kind: 'file'
 	name: string
+	displayName?: string
+	identifierName?: string
 	filePath: string
 }
 export const fileStore: Record<string, Record<string, File>> = {}
 export function getFileStoreDirectory() {
-	const folders: IDirectory[] = []
+	const folders: (IDirectory | IFile)[] = []
 
 	for (const fileType in fileStore) {
 		const cFolders = getCategoryDirectory(fileType)
 
-		if (fileType === 'unknown' && cFolders.length === 1)
-			folders.push(...cFolders)
+		if (cFolders.length === 1) folders.push(...cFolders)
 		else if (cFolders.length > 0)
 			folders.push({ kind: 'directory', name: fileType })
 	}
@@ -65,23 +66,35 @@ export function getFileStoreDirectory() {
 	return folders
 }
 export function getCategoryDirectory(fileType: string) {
-	const folders: IDirectory[] = []
+	const folders: (IDirectory | IFile)[] = []
 
 	for (const filePath in fileStore[fileType] ?? {}) {
 		const file = fileStore[fileType][filePath]
-		if (file?.isFeatureFolder)
+		if (!file?.isFeatureFolder) continue
+
+		const files = file.toDirectory()
+
+		if (files.length === 1) {
+			folders.push(
+				...files.map(file => ({
+					...file,
+					displayName: file.identifierName,
+				}))
+			)
+		} else {
 			folders.push({
 				kind: 'directory',
 				displayName: file.identifierName,
 				name: file.filePath,
 				path: [fileType, file.filePath],
 			})
+		}
 	}
 
 	return folders
 }
 export class File {
-	protected identifier: string = 'unknown'
+	protected identifier?: string
 	protected parents = new Set<File>()
 	protected connectedFiles: Set<File>
 
@@ -161,7 +174,7 @@ export class File {
 			connectedFiles,
 			forceUpdate ? [...storedFile?.parents] : undefined
 		)
-		file.setIdentifier(cacheData.identifier?.[0] ?? 'unknown')
+		file.setIdentifier(cacheData.identifier)
 		if (!fileStore[fileType]) fileStore[fileType] = {}
 		fileStore[fileType][filePath] = file
 		return fileStore[fileType][filePath]
@@ -171,14 +184,13 @@ export class File {
 		const dirFiles: IFile[] = []
 		const deepFiles = this.deepConnectedFiles
 		deepFiles.add(this)
-		if (this.filePath === 'BP/entities/armor_stand.json')
-			console.log(deepFiles)
 
 		deepFiles.forEach(file =>
 			dirFiles.push({
 				kind: 'file',
 				name: file.fileName,
 				filePath: file.filePath,
+				identifierName: file.identifierName,
 			})
 		)
 
@@ -212,7 +224,9 @@ export class File {
 		this.parents.delete(parent)
 	}
 
-	setIdentifier(id: string) {
-		this.identifier = id
+	setIdentifier(id?: string[]) {
+		if (!id) this.identifier = undefined
+		else if (id.length === 1) this.identifier = id[0]
+		else this.identifier = this.fileName
 	}
 }

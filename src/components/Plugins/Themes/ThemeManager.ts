@@ -1,4 +1,4 @@
-import { EventDispatcher } from './EventSystem'
+import { EventDispatcher } from '@/appCycle/EventSystem'
 import Vue from 'vue'
 import { editor as Editor } from 'monaco-editor'
 import { keyword } from 'color-convert'

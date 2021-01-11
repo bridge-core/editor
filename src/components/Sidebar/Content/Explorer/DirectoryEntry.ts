@@ -4,6 +4,8 @@ import { platform } from '@/utils/os'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 import { App } from '@/App'
+import { PackType } from '@/appCycle/PackType'
+import { FileType } from '@/appCycle/FileType'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
@@ -62,20 +64,35 @@ export class DirectoryEntry {
 	get isFile() {
 		return this._isFile
 	}
-	getPath() {
+	get color() {
+		return PackType.get(this.getFullPath())?.color
+	}
+	get icon() {
+		return FileType.get(this.getPath())?.icon
+	}
+	getFullPath() {
 		return ['projects', 'test'].concat(this.path).join('/')
+	}
+	getPath() {
+		return this.path.join('/')
+	}
+	getPathWithoutPack() {
+		const path = [...this.path]
+		path.shift()
+		return path.join('/')
 	}
 	setPath(path: string) {
 		return (this.path = path.split('/'))
 	}
 	open() {
-		if (this.isFile) mainTabSystem.open(this.getPath())
+		console.log(this.getFullPath())
+		if (this.isFile) mainTabSystem.open(this.getFullPath())
 		else this.isFolderOpen = !this.isFolderOpen
 	}
 	getFileContent() {
 		if (!this.isFile) throw new Error(`Called getFileContent on directory`)
 
-		return this.fileSystem.readFile(this.getPath()).then(file => {
+		return this.fileSystem.readFile(this.getFullPath()).then(file => {
 			if (file instanceof ArrayBuffer) {
 				const dec = new TextDecoder('utf-8')
 				return dec.decode(file)
@@ -84,7 +101,7 @@ export class DirectoryEntry {
 		})
 	}
 	saveFileContent(data: FileSystemWriteChunkType) {
-		this.fileSystem.writeFile(this.getPath(), data)
+		this.fileSystem.writeFile(this.getFullPath(), data)
 	}
 	setDisplayName(name: string) {
 		this.displayName = name
@@ -94,8 +111,14 @@ export class DirectoryEntry {
 		this.children = this.children.sort((a, b) => {
 			if (a.isFile && !b.isFile) return 1
 			if (!a.isFile && b.isFile) return -1
-			if (a.name > b.name) return 1
-			if (a.name < b.name) return -1
+			if (a.isFile) {
+				if (a.getPathWithoutPack() > b.getPathWithoutPack()) return 1
+				if (a.getPathWithoutPack() < b.getPathWithoutPack()) return -1
+			} else {
+				if (a.name > b.name) return 1
+				if (a.name < b.name) return -1
+			}
+
 			return 0
 		})
 	}

@@ -7,6 +7,7 @@ import en from '@/locales/en'
 import de from '@/locales/de'
 import nl from '@/locales/nl'
 import ko from '@/locales/ko'
+import '@mdi/font/css/materialdesignicons.min.css'
 
 Vue.config.productionTip = false
 
