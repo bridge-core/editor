@@ -236,7 +236,10 @@ export class File {
 	}
 
 	setIdentifier(id?: string[]) {
-		if (id?.length === 1) this.identifier = id[0]
+		if (id?.length === 1) {
+			this.identifier = id[0]
+			return
+		}
 
 		const path = this.filePath.split('/')
 
