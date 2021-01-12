@@ -17,6 +17,7 @@ import { createNotification } from './components/Footer/create'
 import '@/appCycle/Errors'
 import '@/appCycle/ResizeWatcher'
 import { PackType } from './appCycle/PackType'
+import { selectLastProject } from './components/Project/Loader'
 
 export class App {
 	public static readonly ready = new Signal<App>()
@@ -32,7 +33,6 @@ export class App {
 		this._instance = new App(appComponent)
 		await this._instance.startUp()
 		this.ready.dispatch(this._instance)
-		this._instance.packIndexer.start()
 	}
 	static get instance() {
 		return this._instance
@@ -88,6 +88,8 @@ export class App {
 			this.fileSystem.mkdir('data'),
 		])
 
+		selectLastProject(this)
+
 		if (process.env.NODE_ENV !== 'development') {
 			const discordMsg = createNotification({
 				icon: 'mdi-discord',
@@ -114,5 +116,12 @@ export class App {
 				},
 			})
 		}
+	}
+
+	switchProject(projectName: string) {
+		return new Promise<void>(resolve => {
+			this.packIndexer.start(projectName)
+			this.packIndexer.once(() => resolve())
+		})
 	}
 }
