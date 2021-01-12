@@ -132,6 +132,7 @@ export default {
 			join: 'Join',
 			later: 'Later',
 		},
+		chooseProject: 'Choose Project',
 		selectFolder: {
 			title: 'Select Folder',
 			content:

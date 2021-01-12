@@ -22,6 +22,7 @@ export class PackSpider {
 	) {}
 
 	async setup(filePaths: string[]) {
+		fileStore = {}
 		const response = await FileType.getPackSpiderData()
 		response.forEach(
 			({ id, packSpider }) => (this.packSpiderFiles[id] = packSpider)
@@ -51,7 +52,7 @@ export interface IFile {
 	identifierName?: string
 	filePath: string
 }
-export const fileStore: Record<string, Record<string, File>> = {}
+export let fileStore: Record<string, Record<string, File>> = {}
 export function getFileStoreDirectory() {
 	const folders: (IDirectory | IFile)[] = []
 
