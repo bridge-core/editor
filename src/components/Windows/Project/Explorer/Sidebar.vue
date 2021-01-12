@@ -17,7 +17,7 @@
 			>
 				{{ category.icon }}
 			</v-icon>
-			<span>{{ category.displayName || category.name }}</span>
+			<span> {{ t(`fileTypes.${category.name}`) }}</span>
 		</div>
 	</div>
 </template>
@@ -26,6 +26,7 @@
 import { App } from '@/App'
 import { FileType } from '@/appCycle/FileType'
 import { PackType } from '@/appCycle/PackType'
+import { TranslationMixin } from '@/utils/locales'
 
 export default {
 	props: {
@@ -35,6 +36,7 @@ export default {
 		selected: 0,
 		categories: [],
 	}),
+	mixins: [TranslationMixin],
 	mounted() {
 		App.instance.packIndexer.readdir([]).then(dirents => {
 			dirents.forEach(({ name, kind }) => {
