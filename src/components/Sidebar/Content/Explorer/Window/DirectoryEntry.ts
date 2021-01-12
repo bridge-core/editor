@@ -88,7 +88,6 @@ export class DirectoryEntry {
 	 * @returns Whether to close the window
 	 */
 	open() {
-		console.log(this.getFullPath())
 		if (this.isFile) {
 			mainTabSystem.open(this.getFullPath())
 			return true

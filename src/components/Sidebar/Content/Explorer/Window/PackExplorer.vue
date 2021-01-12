@@ -9,11 +9,14 @@
 		@closeWindow="onClose"
 	>
 		<template #sidebar>
-			<Sidebar @sidebarChanged="onSidebarChanged" />
+			<Sidebar
+				:sidebarSelection="sidebar.selection"
+				@sidebarChanged="onSidebarChanged"
+			/>
 		</template>
 		<template #default>
 			<FileExplorer
-				:startPath="sidebarSelection"
+				:startPath="sidebar.selection"
 				@closeWindow="onClose"
 			/>
 		</template>
@@ -51,7 +54,7 @@ export default {
 			this.currentWindow.close()
 		},
 		onSidebarChanged(fileType) {
-			this.sidebarSelection = fileType
+			this.sidebar.selection = fileType
 		},
 	},
 	computed: {

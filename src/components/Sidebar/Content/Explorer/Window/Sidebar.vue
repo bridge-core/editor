@@ -28,6 +28,9 @@ import { FileType } from '@/appCycle/FileType'
 import { PackType } from '@/appCycle/PackType'
 
 export default {
+	props: {
+		sidebarSelection: String,
+	},
 	data: () => ({
 		selected: 0,
 		categories: [],
@@ -56,12 +59,19 @@ export default {
 					name,
 				})
 			})
-			this.$nextTick(() =>
-				this.$emit(
-					'sidebarChanged',
-					this.categories[this.selected].name
-				)
-			)
+			this.$nextTick(() => {
+				if (this.sidebarSelection) {
+					this.selected = this.categories.findIndex(
+						({ name }) => name === this.sidebarSelection
+					)
+					if (this.selected === -1) this.selected = 0
+				} else {
+					this.$emit(
+						'sidebarChanged',
+						this.categories[this.selected].name
+					)
+				}
+			})
 		})
 	},
 
