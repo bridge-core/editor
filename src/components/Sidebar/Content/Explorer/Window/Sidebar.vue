@@ -59,19 +59,18 @@ export default {
 					name,
 				})
 			})
-			this.$nextTick(() => {
-				if (this.sidebarSelection) {
-					this.selected = this.categories.findIndex(
-						({ name }) => name === this.sidebarSelection
-					)
-					if (this.selected === -1) this.selected = 0
-				} else {
-					this.$emit(
-						'sidebarChanged',
-						this.categories[this.selected].name
-					)
-				}
-			})
+
+			if (this.sidebarSelection) {
+				this.selected = this.sortedCategories.findIndex(
+					({ name }) => name === this.sidebarSelection
+				)
+				if (this.selected === -1) this.selected = 0
+			} else {
+				this.$emit(
+					'sidebarChanged',
+					this.sortedCategories[this.selected].name
+				)
+			}
 		})
 	},
 
@@ -86,7 +85,10 @@ export default {
 	},
 	watch: {
 		selected() {
-			this.$emit('sidebarChanged', this.categories[this.selected].name)
+			this.$emit(
+				'sidebarChanged',
+				this.sortedCategories[this.selected].name
+			)
 		},
 	},
 }
