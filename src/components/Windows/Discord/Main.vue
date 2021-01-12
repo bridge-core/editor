@@ -28,7 +28,7 @@
 
 <script>
 import { Discord } from './definition'
-import BaseWindow from '../Layout/Base.vue'
+import BaseWindow from '../Layout/BaseWindow.vue'
 import { TranslationMixin } from '@/utils/locales'
 
 export default {

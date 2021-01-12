@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import BaseWindow from '@/components/Windows/Layout/Base'
+import BaseWindow from '@/components/Windows/Layout/BaseWindow'
 import { TranslationMixin } from '@/utils/locales'
 
 export default {

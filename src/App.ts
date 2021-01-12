@@ -1,7 +1,7 @@
 import { EventManager, Signal } from './appCycle/EventSystem'
 import { FileType } from './appCycle/FileType'
 import { setupKeyBindings } from './appCycle/keyBindings'
-import { ThemeManager } from './appCycle/ThemeManager'
+import { ThemeManager } from './components/Plugins/Themes/ThemeManager'
 import { setupMonacoEditor } from './components/Editors/Text/setup'
 import { FileSystem } from './components/FileSystem/Main'
 import { setupFileSystem } from './components/FileSystem/setup'
@@ -16,6 +16,7 @@ import { createNotification } from './components/Footer/create'
 
 import '@/appCycle/Errors'
 import '@/appCycle/ResizeWatcher'
+import { PackType } from './appCycle/PackType'
 
 export class App {
 	public static readonly ready = new Signal<App>()
@@ -64,6 +65,7 @@ export class App {
 		setupDefaultMenus()
 		setupSidebar()
 		await FileType.setup()
+		await PackType.setup()
 		setupMonacoEditor()
 
 		// Set language based off of browser language

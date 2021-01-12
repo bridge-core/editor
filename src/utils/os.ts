@@ -1,4 +1,4 @@
-import { createErrorNotification } from '@/appCycle/Errors'
+// import { createErrorNotification } from '@/appCycle/Errors'
 
 export function platform() {
 	const platform = navigator.platform.toLowerCase()
@@ -6,5 +6,6 @@ export function platform() {
 	else if (platform.includes('linux')) return 'linux'
 	else if (platform.includes('mac')) return 'darwin'
 
-	createErrorNotification(new Error(`Unknown platform: ${platform}`))
+	// Breaks vue components \_o_/
+	// createErrorNotification(new Error(`Unknown platform: ${platform}`))
 }

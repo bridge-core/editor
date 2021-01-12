@@ -37,7 +37,7 @@
 
 <script>
 import { TranslationMixin } from '@/utils/locales'
-import BaseWindow from '../../Layout/Base'
+import BaseWindow from '../../Layout/BaseWindow'
 
 export default {
 	name: 'Input',

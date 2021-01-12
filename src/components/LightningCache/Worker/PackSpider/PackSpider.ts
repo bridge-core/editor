@@ -250,7 +250,6 @@ export class File {
 			path.shift()
 			path.shift()
 			this.identifier = path.join('/')
-			if (this.filePath.includes('reset')) console.log(this.identifier)
 		}
 	}
 }
