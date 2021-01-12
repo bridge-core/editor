@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="t('windows.managePlugin.name')"
+		windowTitle="windows.managePlugin.name"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"

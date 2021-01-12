@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="t(windowTitle)"
+		:windowTitle="windowTitle"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"

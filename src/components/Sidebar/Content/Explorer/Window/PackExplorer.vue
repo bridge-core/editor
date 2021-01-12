@@ -1,6 +1,6 @@
 <template>
 	<BaseWindow
-		windowTitle="windows.packExplorer"
+		windowTitle="windows.packExplorer.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"

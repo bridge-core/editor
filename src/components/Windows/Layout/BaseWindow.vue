@@ -16,7 +16,7 @@
 			<component
 				v-if="!hideToolbar"
 				:is="platform === 'darwin' ? 'MacToolbar' : 'WindowsToolbar'"
-				:windowTitle="windowTitle"
+				:windowTitle="t(windowTitle)"
 				:hasMaximizeButton="hasMaximizeButton"
 				:hasCloseButton="hasCloseButton"
 				:hasSidebar="!!$slots.sidebar"
@@ -74,12 +74,14 @@
 
 <script>
 import { platform } from '@/utils/os'
+import { TranslationMixin } from '@/utils/locales'
 import WindowsToolbar from './Toolbar/Windows.vue'
 import MacToolbar from './Toolbar/Mac.vue'
 import MacWindowControls from './Toolbar/Mac/WindowControls.vue'
 
 export default {
 	name: 'BaseWindow',
+	mixins: [TranslationMixin],
 	components: {
 		WindowsToolbar,
 		MacToolbar,

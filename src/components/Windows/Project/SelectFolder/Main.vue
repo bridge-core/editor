@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="t('windows.selectFolder.title')"
+		windowTitle="windows.selectFolder.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:hasCloseButton="false"

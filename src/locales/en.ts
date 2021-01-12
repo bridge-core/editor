@@ -127,6 +127,7 @@ export default {
 			},
 		},
 		discord: {
+			title: 'Discord',
 			content: 'Join the official bridge. Discord server!',
 			join: 'Join',
 			later: 'Later',
@@ -136,6 +137,9 @@ export default {
 			content:
 				'Select where to save projects or choose an existing projects directory.',
 			select: 'Select!',
+		},
+		packExplorer: {
+			title: 'Pack Explorer',
 		},
 		taskManager: {
 			title: 'Task Manager',
