@@ -69,15 +69,15 @@ export class App {
 		setupMonacoEditor()
 
 		// Set language based off of browser language
-		if (!navigator.language.includes('en')) {
-			for (const [lang] of getLanguages()) {
-				if (navigator.language.includes(lang)) {
-					selectLanguage(lang)
-				}
-			}
-		} else {
-			selectLanguage('en')
-		}
+		// if (!navigator.language.includes('en')) {
+		// 	for (const [lang] of getLanguages()) {
+		// 		if (navigator.language.includes(lang)) {
+		// 			selectLanguage(lang)
+		// 		}
+		// 	}
+		// } else {
+		// 	selectLanguage('en')
+		// }
 
 		// FileSystem setup
 		this.fileSystem = await setupFileSystem()

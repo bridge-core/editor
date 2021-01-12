@@ -15,11 +15,12 @@ export function createWindow(
 	})
 
 	const windowUUID = uuid()
-	const windowState: typeof state = Vue.observable({
-		isVisible: false,
-		shouldRender: false,
-		...state,
-	})
+	const windowState: typeof state = Vue.observable(
+		Object.assign(state, {
+			isVisible: false,
+			shouldRender: false,
+		})
+	)
 
 	const windowApi = {
 		getState: () => windowState,

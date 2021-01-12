@@ -42,6 +42,10 @@ export function once(event: string, cb: (...data: unknown[]) => void) {
 
 export class EventManager<T> {
 	protected events = new Map<string, EventDispatcher<T>>()
+
+	constructor(events: string[] = []) {
+		events.forEach(event => this.create(event))
+	}
 	
 	create(name: string) {
 		this.events.set(name, new EventDispatcher<T>())

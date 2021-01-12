@@ -1,5 +1,5 @@
 <template>
-	<BaseWindow
+	<SidebarWindow
 		windowTitle="windows.packExplorer.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
@@ -7,18 +7,12 @@
 		:percentageWidth="80"
 		:percentageHeight="80"
 		@closeWindow="onClose"
+		:sidebarItems="sidebar.categories"
+		:selectedValue="sidebar.selected"
+		@sidebarChanged="index => (sidebar.selected = index)"
 	>
-		<template #sidebar>
-			<Sidebar
-				:sidebarSelection="sidebar.selection"
-				@sidebarChanged="onSidebarChanged"
-			/>
-		</template>
-		<template #default>
-			<FileExplorer
-				:startPath="sidebar.selection"
-				@closeWindow="onClose"
-			/>
+		<template #default="{ selectedSidebar }">
+			<FileExplorer :startPath="selectedSidebar" @closeWindow="onClose" />
 		</template>
 
 		<template #toolbar>
@@ -28,20 +22,24 @@
 				</v-icon>
 			</v-btn>
 		</template>
-	</BaseWindow>
+	</SidebarWindow>
 </template>
 
 <script>
-import BaseWindow from '@/components/Windows/Layout/BaseWindow.vue'
+import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
 import Sidebar from './Sidebar.vue'
 import FileExplorer from './FileExplorer.vue'
+
+import { App } from '@/App'
+import { FileType } from '@/appCycle/FileType'
+import { PackType } from '@/appCycle/PackType'
 import { TranslationMixin } from '@/utils/locales'
 
 export default {
 	name: 'PackExplorerWindow',
 	mixins: [TranslationMixin],
 	components: {
-		BaseWindow,
+		SidebarWindow,
 		Sidebar,
 		FileExplorer,
 	},
@@ -52,9 +50,6 @@ export default {
 	methods: {
 		onClose() {
 			this.currentWindow.close()
-		},
-		onSidebarChanged(fileType) {
-			this.sidebar.selection = fileType
 		},
 	},
 	computed: {
