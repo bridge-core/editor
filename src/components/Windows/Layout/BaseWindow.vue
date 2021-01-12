@@ -23,7 +23,10 @@
 				:sidebarWidth="sidebarWidth"
 				@toggleFullscreen="$emit('toggleFullscreen')"
 				@closeWindow="$emit('closeWindow')"
-			/>
+			>
+				<slot name="toolbar" />
+			</component>
+
 			<v-navigation-drawer
 				v-if="$slots.sidebar"
 				absolute

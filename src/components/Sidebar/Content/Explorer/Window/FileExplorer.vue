@@ -1,12 +1,13 @@
 <template>
-	<div v-if="directoryEntry && packIndexerReady.isReady">
+	<!-- body-1 class sets the font-size -->
+	<div class="body-1" v-if="directoryEntry && packIndexerReady.isReady">
 		<template v-for="entry in directoryEntry.children">
 			<details
 				v-if="!entry.isFile"
 				:key="entry.uuid"
 				:open="entry.isFolderOpen"
 			>
-				<summary @click.prevent="entry.open()" v-ripple>
+				<summary @click.prevent="onClick(entry)" v-ripple>
 					<v-icon class="pr-1" :color="entry.color" small>
 						{{
 							entry.isFolderOpen
@@ -17,14 +18,17 @@
 					<span class="folder">{{ entry.name }}</span>
 				</summary>
 
-				<FileExplorer :entry="entry" />
+				<FileExplorer
+					@closeWindow="$emit('closeWindow')"
+					:entry="entry"
+				/>
 			</details>
 			<!--FILE-->
 			<div
 				v-else
 				:key="entry.uuid"
 				class="file"
-				@click.stop="entry.open()"
+				@click.stop="onClick(entry)"
 				v-ripple
 			>
 				<v-icon :color="entry.color" small>
@@ -71,6 +75,10 @@ export default {
 			} else {
 				this.directoryEntry = this.entry
 			}
+		},
+		onClick(entry) {
+			const shouldCloseWindow = entry.open()
+			if (shouldCloseWindow) this.$emit('closeWindow')
 		},
 	},
 	watch: {

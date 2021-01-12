@@ -18,10 +18,9 @@
 				:hasMinimizeButton="hasMinimizeButton"
 				v-on="$listeners"
 			/>
-
-			<v-spacer />
-			<slot name="toolbar" />
 		</div>
+		<v-spacer />
+		<slot />
 	</v-system-bar>
 </template>
 

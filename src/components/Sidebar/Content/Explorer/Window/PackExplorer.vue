@@ -12,7 +12,18 @@
 			<Sidebar @sidebarChanged="onSidebarChanged" />
 		</template>
 		<template #default>
-			<FileExplorer :startPath="sidebarSelection" />
+			<FileExplorer
+				:startPath="sidebarSelection"
+				@closeWindow="onClose"
+			/>
+		</template>
+
+		<template #toolbar>
+			<v-btn icon small>
+				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
+					mdi-file-plus-outline
+				</v-icon>
+			</v-btn>
 		</template>
 	</BaseWindow>
 </template>
@@ -39,14 +50,13 @@ export default {
 		onClose() {
 			this.currentWindow.close()
 		},
-		openLink() {
-			window.open(this.plugin.link, '_blank')
-		},
-		done() {
-			this.currentWindow.close()
-		},
 		onSidebarChanged(fileType) {
 			this.sidebarSelection = fileType
+		},
+	},
+	computed: {
+		isDarkMode() {
+			return this.$vuetify.theme.dark
 		},
 	},
 }

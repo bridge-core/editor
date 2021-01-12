@@ -84,10 +84,18 @@ export class DirectoryEntry {
 	setPath(path: string) {
 		return (this.path = path.split('/'))
 	}
+	/**
+	 * @returns Whether to close the window
+	 */
 	open() {
 		console.log(this.getFullPath())
-		if (this.isFile) mainTabSystem.open(this.getFullPath())
-		else this.isFolderOpen = !this.isFolderOpen
+		if (this.isFile) {
+			mainTabSystem.open(this.getFullPath())
+			return true
+		} else {
+			this.isFolderOpen = !this.isFolderOpen
+			return false
+		}
 	}
 
 	setDisplayName(name: string) {

@@ -88,4 +88,8 @@ body {
 .v-application {
 	background: var(--v-background-base) !important;
 }
+
+.v-system-bar .v-icon {
+	margin-right: 0;
+}
 </style>

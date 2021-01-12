@@ -12,7 +12,7 @@
 		<span>{{ windowTitle }}</span>
 		<v-spacer></v-spacer>
 		<v-toolbar-items class="px14-font">
-			<slot name="toolbar" />
+			<slot />
 
 			<v-btn
 				small
