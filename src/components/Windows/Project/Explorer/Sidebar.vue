@@ -41,8 +41,8 @@ export default {
 				const fileType = FileType.get(undefined, name)
 				const packType = fileType
 					? PackType.get(
-							`projects/*/${
-								fileType.matcher === 'string'
+							`projects/test/${
+								typeof fileType.matcher === 'string'
 									? fileType.matcher
 									: fileType.matcher[0]
 							}`

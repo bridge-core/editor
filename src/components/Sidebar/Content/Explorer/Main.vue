@@ -16,15 +16,19 @@
 		>
 			<v-icon class="pr-2">mdi-folder-open</v-icon> View All
 		</v-btn>
+
+		<ChooseProject />
 	</div>
 </template>
 
 <script>
-import { packIndexerReady } from '@/components/LightningCache/PackIndexer'
-import { createPackExplorer } from './Window/PackExplorer'
+import ChooseProject from './ChooseProject.vue'
+import { packIndexerReady } from '@/components/LightningCache/PackIndexer.ts'
+import { createProjectExplorer } from '@/components/Windows/Project/Explorer/ProjectExplorer.ts'
 
 export default {
 	name: 'PackExplorer',
+	components: { ChooseProject },
 	data: () => ({
 		packIndexerReady,
 		recentlyViewed: null,
@@ -32,8 +36,9 @@ export default {
 	}),
 	methods: {
 		openPackExplorer() {
-			createPackExplorer()
+			createProjectExplorer()
 		},
+		chooseProject() {},
 	},
 }
 </script>

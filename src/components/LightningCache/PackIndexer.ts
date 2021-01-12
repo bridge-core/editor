@@ -14,7 +14,7 @@ export const packIndexerReady = Vue.observable({ isReady: false })
 
 export class PackIndexer extends Signal<void> {
 	protected service!: Comlink.Remote<PackIndexerService>
-	start() {
+	start(projectName: string) {
 		packIndexerReady.isReady = false
 		App.ready.once(async app => {
 			const task = app.taskManager.create({
@@ -26,7 +26,9 @@ export class PackIndexer extends Signal<void> {
 
 			// Instaniate the worker TaskService
 			this.service = await new TaskService(
-				await app.fileSystem.getDirectoryHandle('projects/test')
+				await app.fileSystem.getDirectoryHandle(
+					`projects/${projectName}`
+				)
 			)
 			// Listen to task progress and update UI
 			this.service.on(
