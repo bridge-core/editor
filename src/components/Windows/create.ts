@@ -5,7 +5,8 @@ import { v4 as uuid } from 'uuid'
 export const WINDOWS = Vue.observable({})
 export function createWindow(
 	vueComponent: VueComponent,
-	state: Record<string, unknown> = {}
+	state: Record<string, unknown> = {},
+	disposeOnClose = true
 ) {
 	// It might make sense for some windows to be "await"-able. This is a helper for that
 	const status: { setDone?: () => void; done?: Promise<void> } = {}
@@ -26,6 +27,7 @@ export function createWindow(
 			windowState.isVisible = false
 			setTimeout(() => {
 				windowState.shouldRender = false
+				if (disposeOnClose) windowApi.dispose()
 			}, 600)
 		},
 		open: () => {
