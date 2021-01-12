@@ -2,8 +2,6 @@ import { Tab } from './CommonTab'
 import WelcomeScreen from './WelcomeScreen.vue'
 import { TextTab } from '../Editors/Text/TextTab'
 import Vue from 'vue'
-import { DirectoryEntry } from '../Sidebar/Content/Explorer/DirectoryEntry'
-import { FileSystem } from '@/components/FileSystem/Main'
 
 export class TabSystem {
 	tabs: Tab[] = []

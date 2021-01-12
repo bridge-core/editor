@@ -1,29 +1,23 @@
 <template>
 	<v-system-bar height="30px" color="toolbar">
-		<span class="px14-font window-title">{{ windowTitle }}</span>
+		<span
+			:class="{ 'window-title': !hasSidebar }"
+			:style="{
+				'padding-left': hasSidebar
+					? `calc(${sidebarWidth} + 12px)`
+					: undefined,
+			}"
+			>{{ windowTitle }}</span
+		>
 
 		<div style="position: absolute; top: 3px;">
-			<div>
-				<MacButton
-					v-if="hasCloseButton"
-					color="error"
-					@click="$emit('closeWindow')"
-				/>
-
-				<MacButton
-					v-if="hasCloseButton"
-					color="warning"
-					:disabled="!hasMinimizeButton"
-					@click="$emit('minimizeWindow')"
-				/>
-
-				<MacButton
-					v-if="hasCloseButton"
-					color="success"
-					:disabled="!hasMaximizeButton"
-					@click="$emit('toggleFullscreen')"
-				/>
-			</div>
+			<MacWindowControls
+				v-if="!hasSidebar"
+				:hasCloseButton="hasCloseButton"
+				:hasMaximizeButton="hasMaximizeButton"
+				:hasMinimizeButton="hasMinimizeButton"
+				v-on="$listeners"
+			/>
 
 			<v-spacer />
 			<slot name="toolbar" />
@@ -32,15 +26,21 @@
 </template>
 
 <script>
-import MacButton from './Mac/Button'
+import MacWindowControls from './Mac/WindowControls.vue'
 
 export default {
 	name: 'MacToolbar',
+
 	components: {
-		MacButton,
+		MacWindowControls,
 	},
 	props: {
 		windowTitle: String,
+		hasSidebar: Boolean,
+		sidebarWidth: {
+			type: String,
+			default: '25%',
+		},
 		hasCloseButton: {
 			type: Boolean,
 			default: true,
@@ -52,11 +52,6 @@ export default {
 		hasMaximizeButton: {
 			type: Boolean,
 			default: true,
-		},
-	},
-	computed: {
-		isDarkMode() {
-			return this.$vuetify.theme.dark
 		},
 	},
 }

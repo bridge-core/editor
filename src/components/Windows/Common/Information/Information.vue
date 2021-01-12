@@ -26,7 +26,6 @@
 <script>
 import { TranslationMixin } from '@/utils/locales'
 import BaseWindow from '@/components/Windows/Layout/BaseWindow'
-console.log(BaseWindow)
 
 export default {
 	name: 'Information',

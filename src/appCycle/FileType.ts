@@ -45,8 +45,11 @@ export namespace FileType {
 	 * Get the file definition data for the given file path
 	 * @param filePath file path to fetch file definition for
 	 */
-	export function get(filePath: string) {
+	export function get(filePath?: string, searchFileType?: string) {
 		for (const fileType of fileTypes) {
+			if (searchFileType === fileType.id) return fileType
+			else if (!filePath) continue
+
 			if (
 				typeof fileType.matcher === 'string' &&
 				isMatch(filePath, fileType.matcher)

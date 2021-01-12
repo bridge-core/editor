@@ -16,20 +16,48 @@
 			<component
 				v-if="!hideToolbar"
 				:is="platform === 'darwin' ? 'MacToolbar' : 'WindowsToolbar'"
-				:hideToolbar="hideToolbar"
 				:windowTitle="windowTitle"
 				:hasMaximizeButton="hasMaximizeButton"
 				:hasCloseButton="hasCloseButton"
+				:hasSidebar="!!$slots.sidebar"
+				:sidebarWidth="sidebarWidth"
 				@toggleFullscreen="$emit('toggleFullscreen')"
 				@closeWindow="$emit('closeWindow')"
 			/>
+			<v-navigation-drawer
+				v-if="$slots.sidebar"
+				absolute
+				:width="sidebarWidth"
+				permanent
+				clipped
+				stateless
+				color="expandedSidebar"
+			>
+				<MacWindowControls
+					v-if="platform === 'darwin'"
+					class="pl-3 pt-1"
+					style="width: 100%; background-color: var(--v-expandedSidebar-base);"
+					:hasMaximizeButton="hasMaximizeButton"
+					:hasCloseButton="hasCloseButton"
+					@toggleFullscreen="$emit('toggleFullscreen')"
+					@closeWindow="$emit('closeWindow')"
+				/>
+				<v-container :class="{ 'pt-8': platform === 'darwin' }">
+					<slot name="sidebar" />
+				</v-container>
+			</v-navigation-drawer>
 
 			<v-card-text
-				:style="
-					`padding-top: 12px; max-height: ${maxWindowHeight}px; height: ${
+				style="padding-top: 12px;  overflow-y: auto;"
+				:style="{
+					height: `${
 						isFullscreen ? maxWindowHeight : windowHeight
-					}px; overflow-y: auto;`
-				"
+					}px`,
+					'max-height': `${maxWindowHeight}px`,
+					'padding-left': !!$slots.sidebar
+						? `calc(${sidebarWidth} + 12px)`
+						: undefined,
+				}"
 			>
 				<slot name="default" />
 			</v-card-text>
@@ -45,17 +73,23 @@
 import { platform } from '@/utils/os'
 import WindowsToolbar from './Toolbar/Windows.vue'
 import MacToolbar from './Toolbar/Mac.vue'
+import MacWindowControls from './Toolbar/Mac/WindowControls.vue'
 
 export default {
 	name: 'BaseWindow',
 	components: {
 		WindowsToolbar,
 		MacToolbar,
+		MacWindowControls,
 	},
 	props: {
 		isFullscreen: Boolean,
 		isVisible: Boolean,
 		isPersistent: Boolean,
+		sidebarWidth: {
+			type: String,
+			default: '25%',
+		},
 		blurBackground: {
 			type: Boolean,
 			default: true,

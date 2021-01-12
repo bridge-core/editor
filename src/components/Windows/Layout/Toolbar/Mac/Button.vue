@@ -11,6 +11,7 @@
 		@click.native.stop="$emit('click')"
 		v-ripple="!disabled"
 		style="font-size: 15px;"
+		class="mr-1"
 	>
 		mdi-checkbox-blank-circle
 	</v-icon>

@@ -1,9 +1,13 @@
 <template>
 	<v-system-bar
-		v-if="!hideToolbar"
 		height="30px"
 		color="toolbar"
-		style="padding-right: 0px;"
+		:style="{
+			'padding-right': '0px',
+			'padding-left': hasSidebar
+				? `calc(${sidebarWidth} + 12px)`
+				: undefined,
+		}"
 	>
 		<span>{{ windowTitle }}</span>
 		<v-spacer></v-spacer>
@@ -39,7 +43,10 @@ export default {
 	name: 'WindowsToolbar',
 	props: {
 		windowTitle: String,
-		hideToolbar: Boolean,
+		sidebarWidth: {
+			type: String,
+			default: '25%',
+		},
 		hasCloseButton: {
 			type: Boolean,
 			default: true,
@@ -48,6 +55,7 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+		hasSidebar: Boolean,
 	},
 	computed: {
 		isDarkMode() {

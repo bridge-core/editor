@@ -58,8 +58,7 @@ export function getFileStoreDirectory() {
 	for (const fileType in fileStore) {
 		const cFolders = getCategoryDirectory(fileType)
 
-		if (cFolders.length === 1) folders.push(...cFolders)
-		else if (cFolders.length > 0)
+		if (cFolders.length > 0)
 			folders.push({ kind: 'directory', name: fileType })
 	}
 

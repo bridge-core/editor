@@ -19,6 +19,7 @@ const colorNames = [
 	'menu',
 	'footer',
 	'tooltip',
+	'sidebarSelection',
 ] as const
 type TColorName = typeof colorNames[number]
 
@@ -240,6 +241,7 @@ const bridgeDark = new Theme({
 		background: '#121212',
 		sidebarNavigation: '#1F1F1F',
 		expandedSidebar: '#1F1F1F',
+		sidebarSelection: '#151515',
 		menu: '#424242',
 		footer: '#111111',
 		tooltip: '#1F1F1F',
@@ -296,6 +298,7 @@ const bridgeLight = new Theme({
 		background: '#fafafa',
 		sidebarNavigation: '#FFFFFF',
 		expandedSidebar: '#FFFFFF',
+		sidebarSelection: '#ececec',
 		menu: '#fff',
 		tooltip: '#424242',
 		toolbar: '#e0e0e0',
