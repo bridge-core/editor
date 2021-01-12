@@ -1,6 +1,7 @@
 import { App } from '@/App'
 import { get, set } from 'idb-keyval'
 
+export let selectedProject: string
 export function getProjects() {
 	return new Promise<string[]>(resolve => {
 		App.ready.once(async app => {
@@ -18,6 +19,7 @@ export function getProjects() {
 }
 
 export async function selectProject(projectName: string) {
+	selectedProject = projectName
 	await set('selectedProject', projectName)
 	await App.instance.switchProject(projectName)
 }
@@ -35,6 +37,7 @@ export async function selectLastProject(app: App) {
 		projectName = await loadFallback()
 	}
 
+	selectedProject = <string>projectName
 	await App.instance.switchProject(<string>projectName)
 }
 

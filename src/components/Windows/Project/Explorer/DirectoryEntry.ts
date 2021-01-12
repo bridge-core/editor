@@ -6,6 +6,7 @@ import Vue from 'vue'
 import { App } from '@/App'
 import { PackType } from '@/appCycle/PackType'
 import { FileType } from '@/appCycle/FileType'
+import { selectedProject } from '@/components/Project/Loader'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
@@ -71,7 +72,7 @@ export class DirectoryEntry {
 		return FileType.get(this.getPath())?.icon
 	}
 	getFullPath() {
-		return ['projects', 'test'].concat(this.path).join('/')
+		return ['projects', selectedProject].concat(this.path).join('/')
 	}
 	getPath() {
 		return this.path.join('/')
