@@ -133,7 +133,7 @@ export const FileMenu: AppMenu = {
 					displayName: 'toolbar.file.preferences.settings',
 					displayIcon: 'mdi-cog',
 					onClick: () => {
-						App.instance.windows.settingsWindow.open()
+						App.instance.windows.settings.open()
 					},
 				},
 				{

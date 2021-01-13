@@ -17,7 +17,7 @@ export default {
 	}),
 	methods: {
 		chooseProject() {
-			App.instance.windows.projectChooserWindow.open()
+			App.instance.windows.projectChooser.open()
 		},
 	},
 }

@@ -1,7 +1,9 @@
-import { ProjectChooserWindow } from './Project/Chooser/ProjectChooser'
+import { PackExplorerWindow } from './Project/PackExplorer/PackExplorer'
+import { ProjectChooserWindow } from './Project/ProjectChooser/ProjectChooser'
 import { SettingsWindow } from './Settings/SettingsWindow'
 
 export class Windows {
-	settingsWindow = new SettingsWindow()
-	projectChooserWindow = new ProjectChooserWindow()
+	settings = new SettingsWindow()
+	projectChooser = new ProjectChooserWindow()
+	packExplorer = new PackExplorerWindow()
 }
