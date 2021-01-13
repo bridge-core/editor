@@ -39,7 +39,7 @@
 				<MacWindowControls
 					v-if="platform === 'darwin'"
 					class="pl-3 pt-1"
-					style="width: 100%; background-color: var(--v-expandedSidebar-base);"
+					style="width: calc(100% - 1px); background-color: var(--v-expandedSidebar-base);"
 					:hasMaximizeButton="hasMaximizeButton"
 					:hasCloseButton="hasCloseButton"
 					@toggleFullscreen="$emit('toggleFullscreen')"
