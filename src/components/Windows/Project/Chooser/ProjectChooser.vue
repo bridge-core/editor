@@ -20,13 +20,41 @@
 				dense
 			/>
 		</template>
-		<template #default="{ selectedSidebar }">
-			{{ selectedSidebar }}
+		<template #default>
+			<div class="d-flex mb-4">
+				<img
+					class="pr-4"
+					height="64"
+					:src="sidebar.currentState.imgSrc"
+				/>
+				<div>
+					<h1>{{ sidebar.currentState.projectName }}</h1>
+					<h3>by Minecraft</h3>
+				</div>
+			</div>
+			<div>
+				<h4>Contains:</h4>
+				<v-chip
+					v-for="pack in sidebar.currentState.contains"
+					:key="pack.id"
+					:color="pack.color"
+					small
+					class="mr-2"
+				>
+					{{ pack.id }}
+				</v-chip>
+			</div>
 		</template>
 
-		<template #actions>
+		<template #actions="{ selectedSidebar }">
 			<v-spacer />
-			<v-btn color="primary" @click="onSelectProject">Select</v-btn>
+			<v-btn
+				color="primary"
+				:disabled="currentProject === selectedSidebar"
+				@click="onSelectProject"
+			>
+				Select
+			</v-btn>
 		</template>
 	</SidebarWindow>
 </template>
@@ -62,4 +90,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+img {
+	image-rendering: pixelated;
+}
+</style>

@@ -37,6 +37,7 @@ export class App {
 		this._instance = new App(appComponent)
 		await this._instance.startUp()
 		this.ready.dispatch(this._instance)
+		await selectLastProject(this._instance)
 	}
 	static get instance() {
 		return this._instance
@@ -91,8 +92,6 @@ export class App {
 			this.fileSystem.mkdir('plugins'),
 			this.fileSystem.mkdir('data'),
 		])
-
-		selectLastProject(this)
 
 		if (process.env.NODE_ENV !== 'development') {
 			const discordMsg = createNotification({

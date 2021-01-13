@@ -1,5 +1,5 @@
 <template>
-	<details :key="text + isOpen" :open="isOpen">
+	<details :open="isOpen">
 		<summary
 			class="d-flex rounded-lg"
 			@click.prevent="$emit('toggleOpen')"

@@ -1,5 +1,6 @@
-export type TSidebarElement = SidebarCategory | SidebarItem
+import Vue from 'vue'
 
+export type TSidebarElement = SidebarCategory | SidebarItem
 export interface ISidebarCategoryConfig {
 	text: string
 	items: SidebarItem[]
@@ -17,6 +18,9 @@ export class SidebarCategory {
 		this.isOpen = isOpen ?? true
 	}
 
+	getText() {
+		return this.text
+	}
 	getItems() {
 		return this.items
 	}
@@ -28,11 +32,16 @@ export class SidebarCategory {
 		)
 	}
 	getFiltered(filter: string) {
-		return new SidebarCategory({
-			items: this.items.filter(item => item.getText().includes(filter)),
-			text: this.text,
-			isOpen: this.isOpen,
-		})
+		if (filter.length === 0) return this
+		return Vue.observable(
+			new SidebarCategory({
+				items: this.items.filter(item =>
+					item.getText().includes(filter)
+				),
+				text: this.text,
+				isOpen: this.isOpen,
+			})
+		)
 	}
 }
 
@@ -64,12 +73,16 @@ export class SidebarItem {
 export class Sidebar {
 	protected selected?: string
 	protected filter: string = ''
+	protected state: Record<string, unknown> = {}
 
 	constructor(protected _elements: TSidebarElement[]) {
 		this.selected = this.findDefaultSelected()
 	}
 
-	addElement(element: TSidebarElement) {
+	addElement(element: TSidebarElement, additionalData?: unknown) {
+		if (element.type === 'item' && additionalData)
+			this.state[element.id] = additionalData
+
 		this._elements.push(element)
 		if (this._elements.length === 1) this.setDefaultSelected()
 	}
@@ -83,6 +96,18 @@ export class Sidebar {
 				else return e.hasFilterMatches(this.filter)
 			})
 			.map(e => (e.type === 'item' ? e : e.getFiltered(this.filter)))
+			.sort((a, b) => {
+				if (a.type !== b.type) return a.type.localeCompare(b.type)
+				return a
+					.getText()
+					.toLowerCase()
+					.localeCompare(b.getText().toLowerCase())
+			})
+	}
+
+	get currentState() {
+		if (!this.selected) return {}
+		return this.state[this.selected] ?? {}
 	}
 
 	protected findDefaultSelected() {

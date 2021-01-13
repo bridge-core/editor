@@ -7,27 +7,24 @@
 		<template #sidebar>
 			<slot name="sidebar" v-bind:selectedSidebar="selected" />
 
-			<template
-				v-for="({ id, text, icon, color, items, isOpen },
-				i) in sidebarItems"
-			>
+			<template v-for="(element, i) in sidebarItems">
 				<SidebarItem
-					v-if="!items || items.length === 0"
-					:key="`${text}.${i}`"
-					:icon="icon"
-					:color="color"
-					:text="text"
-					:isSelected="selected === id"
-					@click="onSidebarChanged(id)"
+					v-if="element.type === 'item'"
+					:key="`${element.text}.${i}`"
+					:icon="element.icon"
+					:color="element.color"
+					:text="element.text"
+					:isSelected="selected === element.id"
+					@click="onSidebarChanged(element.id)"
 				/>
 				<SidebarGroup
 					v-else
-					:key="`${text}.${i}`"
-					:isOpen="isOpen"
-					:items="items"
-					:text="text"
+					:key="`${element.text}.${i}.${element.isOpen}`"
+					:isOpen="element.isOpen"
+					:items="element.items"
+					:text="element.text"
 					:selected="selected"
-					@toggleOpen="toggleOpenCategory(i)"
+					@toggleOpen="toggleOpenCategory(element)"
 					@click="onSidebarChanged"
 				/>
 			</template>
@@ -71,8 +68,8 @@ export default {
 		onSidebarChanged(id) {
 			this.$emit('input', id)
 		},
-		toggleOpenCategory(index) {
-			this.sidebarItems[index].isOpen = !this.sidebarItems[index].isOpen
+		toggleOpenCategory(element) {
+			element.isOpen = !element.isOpen
 		},
 	},
 }

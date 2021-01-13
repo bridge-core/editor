@@ -4,7 +4,7 @@ import { isMatch } from 'micromatch'
 /**
  * Describes the structure of a pack definition
  */
-interface IPackType {
+export interface IPackType {
 	id: string
 	matcher: string | string[]
 	color: string

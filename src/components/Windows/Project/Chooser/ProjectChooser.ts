@@ -1,22 +1,25 @@
-import { App } from '@/App'
-import { getProjects } from '@/components/Project/Loader'
+import {
+	getProjects,
+	IProjectData,
+	selectedProject,
+} from '@/components/Project/Loader'
 import { createWindow } from '@/components/Windows/create'
 import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
-import { get } from 'idb-keyval'
 import ProjectChooserComponent from './ProjectChooser.vue'
 
 export class ProjectChooserWindow {
 	protected sidebar = new Sidebar([])
 	protected window?: any
 
-	addProject(id: string, name: string, icon: string) {
+	addProject(id: string, name: string, project: IProjectData) {
 		this.sidebar.addElement(
 			new SidebarItem({
 				color: 'primary',
 				text: name,
-				icon,
+				icon: `mdi-alpha-${name[0].toLowerCase()}-box-outline`,
 				id,
-			})
+			}),
+			project
 		)
 		this.sidebar.setDefaultSelected()
 	}
@@ -25,20 +28,22 @@ export class ProjectChooserWindow {
 		this.sidebar.removeElements()
 
 		const projects = await getProjects()
-		const selectedProject: string = await get('selectedProject')
+
 		projects.forEach(project =>
-			this.addProject(project, project, 'mdi-circle-outline')
+			this.addProject(project.path, project.projectName, project)
 		)
-		console.log(selectedProject)
-		this.sidebar.setDefaultSelected(selectedProject ?? projects[0])
+		this.sidebar.setDefaultSelected(selectedProject)
+		return selectedProject
 	}
 
-	open() {
+	async open() {
+		const currentProject = await this.loadProjects()
+
 		this.window = createWindow(ProjectChooserComponent, {
 			sidebar: this.sidebar,
+			currentProject,
 		})
 		this.window.open()
-		this.loadProjects()
 	}
 	close() {
 		this.window.close()

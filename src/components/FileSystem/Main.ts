@@ -46,12 +46,9 @@ export class FileSystem {
 
 	readdir(
 		path: string,
-		{ withFileTypes }: { withFileTypes: true }
+		config: { withFileTypes: true }
 	): Promise<FileSystemHandle[]>
-	readdir(
-		path: string,
-		{ withFileTypes }: { withFileTypes?: false }
-	): Promise<string[]>
+	readdir(path: string, config?: { withFileTypes?: false }): Promise<string[]>
 	async readdir(
 		path: string,
 		{ withFileTypes }: { withFileTypes?: true | false } = {}
