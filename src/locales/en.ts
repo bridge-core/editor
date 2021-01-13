@@ -175,7 +175,10 @@ export default {
 			join: 'Join',
 			later: 'Later',
 		},
-		chooseProject: 'Choose Project',
+		projectChooser: {
+			title: 'Choose Project',
+			searchProjects: 'Search projects...',
+		},
 		selectFolder: {
 			title: 'Select Folder',
 			content:

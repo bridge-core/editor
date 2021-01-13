@@ -20,6 +20,20 @@ export class SidebarCategory {
 	getItems() {
 		return this.items
 	}
+
+	hasFilterMatches(filter: string) {
+		return (
+			this.items.find(item => item.getText().includes(filter)) !==
+			undefined
+		)
+	}
+	getFiltered(filter: string) {
+		return new SidebarCategory({
+			items: this.items.filter(item => item.getText().includes(filter)),
+			text: this.text,
+			isOpen: this.isOpen,
+		})
+	}
 }
 
 export interface ISidebarItemConfig {
@@ -41,21 +55,34 @@ export class SidebarItem {
 		this.icon = icon
 		this.color = color
 	}
+
+	getText() {
+		return this.text
+	}
 }
 
 export class Sidebar {
 	protected selected?: string
+	protected filter: string = ''
 
-	constructor(protected elements: TSidebarElement[]) {
+	constructor(protected _elements: TSidebarElement[]) {
 		this.selected = this.findDefaultSelected()
 	}
 
 	addElement(element: TSidebarElement) {
-		this.elements.push(element)
-		if (this.elements.length === 1) this.setDefaultSelected()
+		this._elements.push(element)
+		if (this._elements.length === 1) this.setDefaultSelected()
 	}
 	removeElements() {
-		this.elements = []
+		this._elements = []
+	}
+	get elements() {
+		return this._elements
+			.filter(e => {
+				if (e.type === 'item') return e.getText().includes(this.filter)
+				else return e.hasFilterMatches(this.filter)
+			})
+			.map(e => (e.type === 'item' ? e : e.getFiltered(this.filter)))
 	}
 
 	protected findDefaultSelected() {
@@ -65,8 +92,9 @@ export class Sidebar {
 			else if (element.type === 'item') return element.id
 		}
 	}
-	setDefaultSelected() {
-		if (!this.selected) this.selected = this.findDefaultSelected()
+	setDefaultSelected(value?: string) {
+		if (value) this.selected = value
+		else if (!this.selected) this.selected = this.findDefaultSelected()
 	}
 	resetSelected() {
 		this.selected = undefined

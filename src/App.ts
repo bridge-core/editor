@@ -27,9 +27,8 @@ export class App {
 	public static readonly ready = new Signal<App>()
 	protected static _instance: App
 
-	protected themeManager: ThemeManager
-
 	public fileSystem!: FileSystem
+	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
 	public readonly packIndexer = new PackIndexer()
 	public readonly windows = new Windows()

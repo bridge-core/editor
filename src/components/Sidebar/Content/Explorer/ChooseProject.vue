@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { App } from '@/App.ts'
 import { getProjects, selectProject } from '@/components/Project/Loader.ts'
 import { createDropdownWindow } from '@/components/Windows/Common/CommonDefinitions.ts'
 import { get } from 'idb-keyval'
@@ -15,19 +16,8 @@ export default {
 		packIndexerReady,
 	}),
 	methods: {
-		async chooseProject() {
-			const projects = await getProjects()
-			const selectedProject = await get('selectedProject')
-
-			const chooseWindow = createDropdownWindow(
-				'windows.chooseProject',
-				'Project...',
-				projects,
-				selectedProject ?? projects[0],
-				async selectedProject => {
-					await selectProject(selectedProject)
-				}
-			)
+		chooseProject() {
+			App.instance.windows.projectChooserWindow.open()
 		},
 	},
 }

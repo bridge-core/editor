@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="pa-1 rounded-lg category"
+		class="pa-1 rounded-lg category d-flex"
 		:class="{ selected: isSelected }"
 		v-ripple="!isSelected"
 		@click="$emit('click')"

@@ -1,6 +1,6 @@
 <template>
 	<SidebarWindow
-		windowTitle="windows.settings.title"
+		windowTitle="windows.projectChooser.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -14,22 +14,19 @@
 			<v-text-field
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
-				:label="t('windows.settings.searchSettings')"
+				:label="t('windows.projectChooser.searchProjects')"
+				v-model="sidebar.filter"
 				outlined
 				dense
 			/>
 		</template>
 		<template #default="{ selectedSidebar }">
-			<component
-				v-for="({ component, title, description, key, onChange },
-				i) in controls[selectedSidebar]"
-				:key="i"
-				:is="component"
-				:title="title"
-				:description="description"
-				v-model="settingsState[key]"
-				@onChange="onChange"
-			/>
+			{{ selectedSidebar }}
+		</template>
+
+		<template #actions>
+			<v-spacer />
+			<v-btn color="primary" @click="onSelectProject">Select</v-btn>
 		</template>
 	</SidebarWindow>
 </template>
@@ -41,6 +38,7 @@ import { App } from '@/App'
 import { FileType } from '@/appCycle/FileType'
 import { PackType } from '@/appCycle/PackType'
 import { TranslationMixin } from '@/utils/locales'
+import { selectProject } from '@/components/Project/Loader'
 
 export default {
 	name: 'PackExplorerWindow',
@@ -54,6 +52,10 @@ export default {
 	},
 	methods: {
 		onClose() {
+			this.currentWindow.close()
+		},
+		onSelectProject() {
+			selectProject(this.sidebar.selected)
 			this.currentWindow.close()
 		},
 	},

@@ -7,7 +7,11 @@
 				:key="entry.uuid"
 				:open="entry.isFolderOpen"
 			>
-				<summary @click.prevent="onClick(entry)" v-ripple>
+				<summary
+					class="d-flex"
+					@click.prevent="onClick(entry)"
+					v-ripple
+				>
 					<v-icon class="pr-1" :color="entry.color" small>
 						{{
 							entry.isFolderOpen

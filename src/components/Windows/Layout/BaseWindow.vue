@@ -51,7 +51,7 @@
 			</v-navigation-drawer>
 
 			<v-card-text
-				style="padding-top: 12px;  overflow-y: auto;"
+				style="padding-top: 12px; overflow-y: auto;"
 				:style="{
 					height: `${
 						isFullscreen ? maxWindowHeight : windowHeight
@@ -65,7 +65,14 @@
 				<slot name="default" />
 			</v-card-text>
 
-			<v-card-actions background-color="footer">
+			<v-card-actions
+				:style="{
+					'padding-left': !!$slots.sidebar
+						? `calc(${sidebarWidth} + 12px)`
+						: undefined,
+				}"
+				background-color="footer"
+			>
 				<slot name="actions" />
 			</v-card-actions>
 		</v-card>

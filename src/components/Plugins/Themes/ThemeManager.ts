@@ -63,6 +63,13 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	setThemeColor(color: string) {
 		this.themeColorTag!.setAttribute('content', color)
 	}
+
+	getThemes() {
+		return [...this.themeMap]
+	}
+	addTheme(themeConfig: IThemeDefinition) {
+		this.themeMap.add(new Theme(themeConfig))
+	}
 }
 
 export interface IThemeDefinition {

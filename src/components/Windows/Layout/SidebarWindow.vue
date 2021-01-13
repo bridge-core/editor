@@ -57,20 +57,19 @@ export default {
 	},
 	props: {
 		sidebarItems: Array,
-		selectedValue: {
+		value: {
 			type: String,
 			default: undefined,
 		},
 	},
-	data() {
-		return {
-			selected: this.selectedValue,
-		}
+	computed: {
+		selected() {
+			return this.value
+		},
 	},
 	methods: {
 		onSidebarChanged(id) {
-			this.$emit('sidebarChanged', id)
-			this.selected = id
+			this.$emit('input', id)
 		},
 		toggleOpenCategory(index) {
 			this.sidebarItems[index].isOpen = !this.sidebarItems[index].isOpen
