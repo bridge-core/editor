@@ -20,13 +20,18 @@
 			/>
 		</template>
 		<template #default="{ selectedSidebar }">
+			<!-- <v-btn absolute bottom right color="primary" elevation="4" fab>
+				<v-icon small>
+					mdi-file-plus-outline
+				</v-icon>
+			</v-btn> -->
 			<FileExplorer :startPath="selectedSidebar" @closeWindow="onClose" />
 		</template>
 
 		<template #toolbar>
 			<v-btn icon small>
 				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
-					mdi-file-plus-outline
+					mdi-plus
 				</v-icon>
 			</v-btn>
 		</template>

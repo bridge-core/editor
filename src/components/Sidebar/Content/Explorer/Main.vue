@@ -22,9 +22,10 @@
 </template>
 
 <script>
+import { App } from '@/App.ts'
 import ChooseProject from './ChooseProject.vue'
 import { packIndexerReady } from '@/components/LightningCache/PackIndexer.ts'
-import { createProjectExplorer } from '@/components/Windows/Project/Explorer/ProjectExplorer.ts'
+import { createPackExplorer } from '@/components/Windows/Project/PackExplorer/PackExplorer.ts'
 
 export default {
 	name: 'PackExplorer',
@@ -36,7 +37,7 @@ export default {
 	}),
 	methods: {
 		openPackExplorer() {
-			createProjectExplorer()
+			App.instance.windows.packExplorer.open()
 		},
 		chooseProject() {},
 	},
