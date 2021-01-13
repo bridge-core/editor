@@ -18,16 +18,21 @@ import '@/appCycle/Errors'
 import '@/appCycle/ResizeWatcher'
 import { PackType } from './appCycle/PackType'
 import { selectLastProject } from './components/Project/Loader'
+import { Windows } from './components/Windows/Windows'
 
 export class App {
+	public static readonly eventSystem = new EventManager<any>([
+		'projectChanged',
+	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: App
 
 	protected themeManager: ThemeManager
-	protected eventSystem = new EventManager<any>()
+
 	public fileSystem!: FileSystem
 	public readonly taskManager = new TaskManager()
 	public readonly packIndexer = new PackIndexer()
+	public readonly windows = new Windows()
 
 	static async main(appComponent: Vue) {
 		this._instance = new App(appComponent)
@@ -121,6 +126,7 @@ export class App {
 	switchProject(projectName: string) {
 		return new Promise<void>(resolve => {
 			this.packIndexer.start(projectName)
+			App.eventSystem.dispatch('projectChanged', undefined)
 			this.packIndexer.once(() => resolve())
 		})
 	}

@@ -3,21 +3,34 @@ import { FileType } from '@/appCycle/FileType'
 import { PackType } from '@/appCycle/PackType'
 import { createWindow } from '@/components/Windows/create'
 import { translate } from '@/utils/locales'
+import {
+	ISidebarItemConfig,
+	Sidebar,
+	SidebarCategory,
+	SidebarItem,
+} from '../../Layout/Sidebar'
 import ProjectExplorerComponent from './ProjectExplorer.vue'
 
-const windowState: any = {
-	sidebar: {
-		selected: null,
-		categories: [],
-	},
+const windowState = {
+	sidebar: new Sidebar([]),
 }
 
 App.eventSystem.on('projectChanged', () => {
-	windowState.sidebar.selected = null
+	windowState.sidebar.resetSelected()
 })
 
+class PackSidebarItem extends SidebarItem {
+	protected packType: string
+	constructor(config: ISidebarItemConfig & { packType: string }) {
+		super(config)
+		this.packType = config.packType
+	}
+}
+
 export function createProjectExplorer() {
-	windowState.sidebar.categories = []
+	windowState.sidebar.removeElements()
+	let items: SidebarItem[] = []
+
 	App.instance.packIndexer.readdir([]).then(dirents => {
 		dirents.forEach(({ name }) => {
 			const fileType = FileType.get(undefined, name)
@@ -31,25 +44,38 @@ export function createProjectExplorer() {
 				  )
 				: undefined
 
-			windowState.sidebar.categories.push({
-				packType: packType ? packType.id : 'unknown',
-				icon: fileType && fileType.icon ? fileType.icon : 'mdi-folder',
-				color: packType ? packType.color : undefined,
-				text: translate(`fileType.${name}`),
-				id: name,
-			})
+			items.push(
+				new PackSidebarItem({
+					packType: packType ? packType.id : 'unknown',
+					id: name,
+					text: translate(`fileType.${name}`),
+
+					icon:
+						fileType && fileType.icon
+							? fileType.icon
+							: 'mdi-folder',
+					color: packType ? packType.color : undefined,
+				})
+			)
 		})
 
-		windowState.sidebar.categories = windowState.sidebar.categories.sort(
-			(a: any, b: any) => {
-				if (a.packType !== b.packType)
-					return a.packType.localeCompare(b.packType)
-				return a.text.localeCompare(b.text)
-			}
-		)
-	})
+		items = items.sort((a: any, b: any) => {
+			if (a.packType !== b.packType)
+				return a.packType.localeCompare(b.packType)
+			return a.text.localeCompare(b.text)
+		})
 
-	const projectExplorer = createWindow(ProjectExplorerComponent, windowState)
-	projectExplorer.open()
-	return projectExplorer
+		windowState.sidebar.addElement(
+			new SidebarCategory({
+				text: 'windows.packExplorer.categories',
+				items,
+			})
+		)
+
+		const projectExplorer = createWindow(
+			ProjectExplorerComponent,
+			windowState
+		)
+		projectExplorer.open()
+	})
 }

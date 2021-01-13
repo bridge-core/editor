@@ -1,6 +1,6 @@
 <template>
 	<SidebarWindow
-		windowTitle="windows.packExplorer.title"
+		windowTitle="windows.settings.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -15,28 +15,19 @@
 			<v-text-field
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
-				:label="t('windows.packExplorer.searchFiles')"
+				:label="t('windows.settings.searchSettings')"
 				outlined
 				dense
 			/>
 		</template>
 		<template #default="{ selectedSidebar }">
-			<FileExplorer :startPath="selectedSidebar" @closeWindow="onClose" />
-		</template>
-
-		<template #toolbar>
-			<v-btn icon small>
-				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
-					mdi-file-plus-outline
-				</v-icon>
-			</v-btn>
+			{{ selectedSidebar }}
 		</template>
 	</SidebarWindow>
 </template>
 
 <script>
 import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
-import FileExplorer from './FileExplorer.vue'
 
 import { App } from '@/App'
 import { FileType } from '@/appCycle/FileType'
@@ -48,7 +39,6 @@ export default {
 	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,
-		FileExplorer,
 	},
 	props: ['currentWindow'],
 	data() {

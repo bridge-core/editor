@@ -12,6 +12,7 @@ import { AppMenu } from '../create'
 // import { ImportFileMap } from '../../../plugins/scripts/modules/importFiles'
 // import { createInformationWindow } from '../../Windows/Common/CommonDefinitions'
 import { clearAllNotifications } from '../../Footer/create'
+import { App } from '@/App'
 
 export const FileMenu: AppMenu = {
 	displayName: 'toolbar.file.name',
@@ -132,7 +133,7 @@ export const FileMenu: AppMenu = {
 					displayName: 'toolbar.file.preferences.settings',
 					displayIcon: 'mdi-cog',
 					onClick: () => {
-						// new SettingsWindow()
+						App.instance.windows.settingsWindow.open()
 					},
 				},
 				{

@@ -184,6 +184,12 @@ export default {
 		},
 		packExplorer: {
 			title: 'Pack Explorer',
+			searchFiles: 'Search files...',
+			categories: 'Categories',
+		},
+		settings: {
+			title: 'Settings',
+			searchSettings: 'Search settings...',
 		},
 		taskManager: {
 			title: 'Task Manager',
