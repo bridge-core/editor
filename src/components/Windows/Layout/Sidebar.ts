@@ -66,7 +66,7 @@ export class SidebarItem {
 	}
 
 	getText() {
-		return this.text
+		return this.text.toLowerCase()
 	}
 }
 
