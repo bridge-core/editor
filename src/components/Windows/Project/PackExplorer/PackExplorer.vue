@@ -34,6 +34,11 @@
 					mdi-plus
 				</v-icon>
 			</v-btn>
+			<v-btn @click="refreshPackExplorer" icon small>
+				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
+					mdi-refresh
+				</v-icon>
+			</v-btn>
 		</template>
 	</SidebarWindow>
 </template>
@@ -46,6 +51,7 @@ import { App } from '@/App'
 import { FileType } from '@/appCycle/FileType'
 import { PackType } from '@/appCycle/PackType'
 import { TranslationMixin } from '@/utils/locales'
+import { selectedProject } from '@/components/Project/Loader'
 
 export default {
 	name: 'PackExplorerWindow',
@@ -61,6 +67,10 @@ export default {
 	methods: {
 		onClose() {
 			this.currentWindow.close()
+		},
+		refreshPackExplorer() {
+			this.currentWindow.close()
+			App.instance.switchProject(selectedProject)
 		},
 	},
 	computed: {
