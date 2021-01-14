@@ -21,12 +21,10 @@
 			/>
 		</template>
 		<template #default="{ selectedSidebar }">
-			<!-- <v-btn absolute bottom right color="primary" elevation="4" fab>
-				<v-icon small>
-					mdi-file-plus-outline
-				</v-icon>
-			</v-btn> -->
-			<FileExplorer :startPath="selectedSidebar" @closeWindow="onClose" />
+			<FileDisplayer
+				:startPath="selectedSidebar"
+				@closeWindow="onClose"
+			/>
 		</template>
 
 		<template #toolbar>
@@ -46,7 +44,7 @@
 
 <script>
 import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
-import FileExplorer from './FileExplorer.vue'
+import FileDisplayer from './FileDisplayer.vue'
 
 import { App } from '@/App'
 import { FileType } from '@/appCycle/FileType'
@@ -59,7 +57,7 @@ export default {
 	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,
-		FileExplorer,
+		FileDisplayer,
 	},
 	props: ['currentWindow'],
 	data() {

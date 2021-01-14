@@ -67,7 +67,7 @@ export abstract class TaskService extends EventDispatcher<[number, number]> {
 
 		await this.onStart()
 
-		await this.saveCurrentTaskRun()
+		this.saveCurrentTaskRun()
 		this.dispatch([this.progress.getCurrent(), this.progress.getCurrent()])
 	}
 }

@@ -1,7 +1,7 @@
 import { isMatch } from 'micromatch'
 import json5 from 'json5'
-import { ILightningInstruction } from '@/components/LightningCache/Worker/Main'
-import { IPackSpiderFile } from '@/components/LightningCache/Worker/PackSpider/PackSpider'
+import { ILightningInstruction } from '@/components/PackIndexer/Worker/Main'
+import { IPackSpiderFile } from '@/components/PackIndexer/Worker/PackSpider/PackSpider'
 
 /**
  * Describes the structure of a file definition

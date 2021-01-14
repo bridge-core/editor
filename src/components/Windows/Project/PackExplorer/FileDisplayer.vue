@@ -22,7 +22,7 @@
 					<span class="folder">{{ entry.name }}</span>
 				</summary>
 
-				<FileExplorer
+				<FileDisplayer
 					@closeWindow="$emit('closeWindow')"
 					:entry="entry"
 				/>
@@ -51,10 +51,10 @@ import { mainTabSystem } from '@/components/TabSystem/Main'
 import { DirectoryEntry } from './DirectoryEntry'
 import { TextTab } from '@/components/Editors/Text/TextTab'
 import { App } from '@/App.ts'
-import { packIndexerReady } from '@/components/LightningCache/PackIndexer'
+import { packIndexerReady } from '@/components/PackIndexer/PackIndexer'
 
 export default {
-	name: 'FileExplorer',
+	name: 'FileDisplayer',
 	props: {
 		entry: Object,
 		startPath: String,

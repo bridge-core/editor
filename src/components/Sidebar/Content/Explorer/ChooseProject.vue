@@ -9,7 +9,7 @@ import { App } from '@/App.ts'
 import { getProjects, selectProject } from '@/components/Project/Loader.ts'
 import { createDropdownWindow } from '@/components/Windows/Common/CommonDefinitions.ts'
 import { get } from 'idb-keyval'
-import { packIndexerReady } from '@/components/LightningCache/PackIndexer'
+import { packIndexerReady } from '@/components/PackIndexer/PackIndexer'
 
 export default {
 	data: () => ({

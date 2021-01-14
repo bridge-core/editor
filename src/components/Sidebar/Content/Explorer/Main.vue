@@ -10,7 +10,7 @@
 
 		<v-btn
 			@click="openPackExplorer"
-			:loading="!packIndexerReady.isReady"
+			:loading="!packIndexerReady.isReady || loadingPackExplorer"
 			color="primary"
 			block
 		>
@@ -24,7 +24,7 @@
 <script>
 import { App } from '@/App.ts'
 import ChooseProject from './ChooseProject.vue'
-import { packIndexerReady } from '@/components/LightningCache/PackIndexer.ts'
+import { packIndexerReady } from '@/components/PackIndexer/PackIndexer.ts'
 import { createPackExplorer } from '@/components/Windows/Project/PackExplorer/PackExplorer.ts'
 
 export default {
@@ -34,10 +34,13 @@ export default {
 		packIndexerReady,
 		recentlyViewed: null,
 		recentlyEdited: null,
+		loadingPackExplorer: false,
 	}),
 	methods: {
-		openPackExplorer() {
-			App.instance.windows.packExplorer.open()
+		async openPackExplorer() {
+			this.loadingPackExplorer = true
+			await App.instance.windows.packExplorer.open()
+			this.loadingPackExplorer = false
 		},
 		chooseProject() {},
 	},

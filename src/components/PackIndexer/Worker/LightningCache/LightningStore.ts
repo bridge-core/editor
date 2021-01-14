@@ -1,7 +1,6 @@
 import { FileType } from '@/appCycle/FileType'
 import { FileSystem } from '@/components/FileSystem/Main'
-import { hashString } from '@/utils/hash'
-import { PackIndexerService } from './Main'
+import { PackIndexerService } from '../Main'
 
 type TStore = Record<string, Record<string, IStoreEntry>>
 interface IStoreEntry {
@@ -88,15 +87,24 @@ export class LightningStore {
 	async findMultiple(
 		findFileTypes: string[],
 		whereCacheKey: string,
-		matchesOneOf: string[]
+		matchesOneOf: string[],
+		fetchAll = false
 	) {
-		return (
-			await Promise.all(
-				findFileTypes.map(findFileType =>
-					this.find(findFileType, whereCacheKey, matchesOneOf, true)
-				)
+		const resultingFiles: string[] = []
+
+		for (const findFileType of findFileTypes) {
+			const foundFiles = await this.find(
+				findFileType,
+				whereCacheKey,
+				matchesOneOf,
+				fetchAll
 			)
-		).flat()
+			if (foundFiles.length > 0 && !fetchAll) return foundFiles
+
+			resultingFiles.push(...foundFiles)
+		}
+
+		return resultingFiles
 	}
 
 	async forEach(

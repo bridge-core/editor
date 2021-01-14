@@ -1,17 +1,10 @@
 import { FileType } from '@/appCycle/FileType'
-import json5 from 'json5'
-import * as Comlink from 'comlink'
-import { TaskService } from '@/components/TaskManager/WorkerTask'
+import { execute } from '@/components/Plugins/Scripts/execute'
 import { hashString } from '@/utils/hash'
 import { walkObject } from '@/utils/walkObject'
+import json5 from 'json5'
+import { PackIndexerService } from '../Main'
 import { LightningStore } from './LightningStore'
-import {
-	fileStore,
-	getCategoryDirectory,
-	getFileStoreDirectory,
-	PackSpider,
-} from './PackSpider/PackSpider'
-import { execute } from '@/components/Plugins/Scripts/execute'
 
 const fileIgnoreList = ['.DS_Store']
 const folderIgnoreList = [
@@ -34,59 +27,32 @@ export interface ILightningInstruction {
 	[str: string]: undefined | string | string[]
 }
 
-// let firstPass = true
-export class PackIndexerService extends TaskService {
-	protected lightningStore: LightningStore
-	protected packSpider: PackSpider
+export class LightningCache {
+	constructor(
+		protected service: PackIndexerService,
+		protected lightningStore: LightningStore
+	) {}
 
-	constructor(baseDirectory: FileSystemDirectoryHandle) {
-		super('packIndexer', baseDirectory)
-		this.lightningStore = new LightningStore(this)
-		this.packSpider = new PackSpider(this, this.lightningStore)
-	}
-
-	async onStart() {
-		console.time('[WORKER] SETUP')
-		this.lightningStore.reset()
-		await FileType.setup()
-
+	async start() {
+		let anyFileChanged = false
 		const filePaths: string[] = []
-		console.timeEnd('[WORKER] SETUP')
-
-		console.time('[WORKER] LightningCache')
 		await this.iterateDir(
-			this.fileSystem.baseDirectory,
+			this.service.fileSystem.baseDirectory,
 			async (fileHandle, filePath) => {
 				const fileDidChange = await this.processFile(
 					filePath,
 					fileHandle
 				)
-				// if (firstPass || fileDidChange)
+				if (fileDidChange && !anyFileChanged) anyFileChanged = true
 				filePaths.push(filePath)
 
-				this.progress.addToCurrent()
+				this.service.progress.addToCurrent()
 			}
 		)
 
-		await this.lightningStore.saveStore()
-		console.timeEnd('[WORKER] LightningCache')
+		if (anyFileChanged) await this.lightningStore.saveStore()
 
-		console.time('[WORKER] PackSpider')
-		await this.packSpider.setup(filePaths)
-		console.timeEnd('[WORKER] PackSpider')
-
-		console.log(fileStore)
-		// firstPass = false
-	}
-
-	async updateFile(filePath: string) {
-		await FileType.setup()
-		await this.processFile(
-			filePath,
-			await this.fileSystem.getFileHandle(filePath)
-		)
-		await this.lightningStore.saveStore()
-		await this.packSpider.updateFile(filePath)
+		return filePaths
 	}
 
 	protected async iterateDir(
@@ -106,16 +72,10 @@ export class PackIndexerService extends TaskService {
 
 				await this.iterateDir(entry, callback, currentFullPath)
 			} else if (!fileIgnoreList.includes(fileName)) {
-				this.progress.addToTotal(2)
+				this.service.progress.addToTotal(2)
 				await callback(entry as FileSystemFileHandle, currentFullPath)
 			}
 		}
-	}
-
-	async readdir(path: string[]) {
-		if (path.length === 0) return getFileStoreDirectory()
-		if (path.length === 1) return getCategoryDirectory(path[0])
-		return fileStore[path[0]][path[1]].toDirectory()
 	}
 
 	/**
@@ -245,5 +205,3 @@ export class PackIndexerService extends TaskService {
 		return true
 	}
 }
-
-Comlink.expose(PackIndexerService, self)

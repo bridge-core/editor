@@ -15,6 +15,7 @@ export const packIndexerReady = Vue.observable({ isReady: false })
 export class PackIndexer extends Signal<void> {
 	protected service!: Comlink.Remote<PackIndexerService>
 	start(projectName: string) {
+		console.time('[TASK] Indexing Packs (Total)')
 		packIndexerReady.isReady = false
 		App.ready.once(async app => {
 			const task = app.taskManager.create({
@@ -43,6 +44,7 @@ export class PackIndexer extends Signal<void> {
 			await this.service.start()
 			packIndexerReady.isReady = true
 			this.dispatch()
+			console.timeEnd('[TASK] Indexing Packs (Total)')
 		})
 	}
 

@@ -1,5 +1,5 @@
 import { FileType } from '@/appCycle/FileType'
-import { LightningStore } from '../LightningStore'
+import { LightningStore } from '../LightningCache/LightningStore'
 import { PackIndexerService } from '../Main'
 
 export interface IPackSpiderFile {
@@ -11,13 +11,14 @@ export interface IFileDescription {
 	find: string | string[]
 	where: string
 	matches: string
+	shouldFindMultiple?: boolean
 }
 
 export class PackSpider {
 	public readonly packSpiderFiles: Record<string, IPackSpiderFile> = {}
 
 	constructor(
-		protected packIndexer: PackIndexerService,
+		public readonly packIndexer: PackIndexerService,
 		public readonly lightningStore: LightningStore
 	) {}
 
@@ -98,14 +99,10 @@ export class File {
 	protected parents = new Set<File>()
 	protected connectedFiles: Set<File>
 
-	constructor(
-		public readonly filePath: string,
-		connectedFiles: File[],
-		parents: File[] = []
-	) {
+	constructor(public readonly filePath: string, parents: File[] = []) {
 		parents.forEach(parent => this.addParent(parent))
-		this.connectedFiles = new Set(connectedFiles)
-		connectedFiles.forEach(file => file.addParent(this))
+
+		this.connectedFiles = new Set()
 	}
 
 	static async create(
@@ -135,7 +132,7 @@ export class File {
 			fileType
 		)
 
-		const connectedFiles: File[] = []
+		const connectedFiles: string[] = []
 		// Directly referenced files
 		const cacheKeysToInclude =
 			<string[]>(
@@ -145,49 +142,53 @@ export class File {
 			) ?? []
 		for (const foundFilePath of cacheKeysToInclude) {
 			if (`${pathStart}/${foundFilePath}` !== filePath)
-				connectedFiles.push(
-					await File.create(
-						`${pathStart}/${foundFilePath}`,
-						packSpider
-					)
-				)
+				connectedFiles.push(`${pathStart}/${foundFilePath}`)
 		}
 
 		// Dynamically referenced files
-		for (let { find, where, matches } of packSpiderFile.connect ?? []) {
+		for (let {
+			find,
+			where,
+			matches,
+			shouldFindMultiple,
+		} of packSpiderFile.connect ?? []) {
 			if (!Array.isArray(find)) find = [find]
 			const matchesOneOf = cacheData[matches] ?? []
 
 			const foundFilePaths = await packSpider.lightningStore.findMultiple(
 				find,
 				where,
-				matchesOneOf
+				matchesOneOf,
+				shouldFindMultiple ?? true
 			)
 			for (const foundFilePath of foundFilePaths) {
 				if (foundFilePath !== filePath)
-					connectedFiles.push(
-						await File.create(foundFilePath, packSpider)
-					)
+					connectedFiles.push(foundFilePath)
 			}
 		}
 
 		// Shared files
 		for (const foundFilePath of packSpiderFile.sharedFiles ?? []) {
-			if (foundFilePath !== filePath)
-				connectedFiles.push(
-					await File.create(foundFilePath, packSpider)
-				)
+			if (foundFilePath !== filePath) connectedFiles.push(foundFilePath)
 		}
 
 		const file = new File(
 			filePath,
-			connectedFiles,
 			forceUpdate ? [...(storedFile?.parents ?? [])] : undefined
 		)
+		await file.addConnectedFiles(connectedFiles, packSpider)
 		file.setIdentifier(cacheData.identifier)
+
 		if (!fileStore[fileType]) fileStore[fileType] = {}
 		fileStore[fileType][filePath] = file
 		return fileStore[fileType][filePath]
+	}
+	async addConnectedFiles(filePaths: string[], packSpider: PackSpider) {
+		for (const filePath of filePaths) {
+			const file = await File.create(filePath, packSpider)
+			this.connectedFiles.add(file)
+			file.addParent(this)
+		}
 	}
 
 	toDirectory() {
@@ -235,7 +236,8 @@ export class File {
 		this.parents.delete(parent)
 	}
 
-	setIdentifier(id?: string[]) {
+	setIdentifier(id?: string[] | string) {
+		if (typeof id === 'string') this.identifier = id
 		if (id?.length === 1) {
 			this.identifier = id[0]
 			return

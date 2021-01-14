@@ -31,53 +31,53 @@ export class PackExplorerWindow {
 		})
 	}
 
-	loadPack() {
+	async loadPack() {
 		this.sidebar.removeElements()
 		let items: SidebarItem[] = []
 
-		App.instance.packIndexer.readdir([]).then(dirents => {
-			dirents.forEach(({ name }) => {
-				const fileType = FileType.get(undefined, name)
-				const packType = fileType
-					? PackType.get(
-							`projects/test/${
-								typeof fileType.matcher === 'string'
-									? fileType.matcher
-									: fileType.matcher[0]
-							}`
-					  )
-					: undefined
+		const dirents = await App.instance.packIndexer.readdir([])
 
-				items.push(
-					new PackSidebarItem({
-						packType: packType ? packType.id : 'unknown',
-						id: name,
-						text: translate(`fileType.${name}`),
+		dirents.forEach(({ name }) => {
+			const fileType = FileType.get(undefined, name)
+			const packType = fileType
+				? PackType.get(
+						`projects/test/${
+							typeof fileType.matcher === 'string'
+								? fileType.matcher
+								: fileType.matcher[0]
+						}`
+				  )
+				: undefined
 
-						icon:
-							fileType && fileType.icon
-								? fileType.icon
-								: 'mdi-folder',
-						color: packType ? packType.color : undefined,
-					})
-				)
-			})
+			items.push(
+				new PackSidebarItem({
+					packType: packType ? packType.id : 'unknown',
+					id: name,
+					text: translate(`fileType.${name}`),
 
-			items = items.sort((a: any, b: any) => {
-				if (a.packType !== b.packType)
-					return a.packType.localeCompare(b.packType)
-				return a.text.localeCompare(b.text)
-			})
-
-			this.sidebar.addElement(
-				new SidebarCategory({
-					text: 'windows.packExplorer.categories',
-					items,
+					icon:
+						fileType && fileType.icon
+							? fileType.icon
+							: 'mdi-folder',
+					color: packType ? packType.color : undefined,
 				})
 			)
-
-			this.window.open()
 		})
+
+		items = items.sort((a: any, b: any) => {
+			if (a.packType !== b.packType)
+				return a.packType.localeCompare(b.packType)
+			return a.text.localeCompare(b.text)
+		})
+
+		this.sidebar.addElement(
+			new SidebarCategory({
+				text: 'windows.packExplorer.categories',
+				items,
+			})
+		)
+
+		this.window.open()
 	}
 
 	async open() {
@@ -86,7 +86,7 @@ export class PackExplorerWindow {
 		})
 
 		if (this.loadedPack) this.window.open()
-		else this.loadPack()
+		else await this.loadPack()
 	}
 	close() {
 		this.window.close()
