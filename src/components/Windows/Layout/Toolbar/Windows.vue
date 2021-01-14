@@ -22,7 +22,7 @@
 			>
 				<v-icon small>mdi-plus</v-icon>
 			</v-btn>
-			<v-divider v-if="hasCloseButton" vertical />
+
 			<v-btn
 				small
 				icon
