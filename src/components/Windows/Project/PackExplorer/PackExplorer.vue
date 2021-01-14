@@ -15,6 +15,7 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.packExplorer.searchFiles')"
+				v-model="sidebar._filter"
 				outlined
 				dense
 			/>
