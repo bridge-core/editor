@@ -1,8 +1,9 @@
-import { Sidebar } from '@/components/Windows/Layout/Sidebar'
+import { Sidebar, TSidebarElement } from '@/components/Windows/Layout/Sidebar'
 import { Control } from './Controls/Control'
 
 export class SettingsSidebar extends Sidebar {
 	protected lastFilter!: string
+
 	get elements() {
 		let selectSidebar: string | undefined = undefined
 
@@ -10,14 +11,18 @@ export class SettingsSidebar extends Sidebar {
 			if (element.type === 'category') return true
 
 			const controls = <Control<any>[]>this.getState(element.id)
-			const control = controls.find(control =>
+			const hasControl = controls.some(control =>
 				control.matches(this.filter)
 			)
-			if (!selectSidebar && control) selectSidebar = element.id
-			return control !== undefined
+			if (!selectSidebar && hasControl) selectSidebar = element.id
+			return hasControl
 		})
 
-		if (selectSidebar && this.lastFilter !== this.filter)
+		if (
+			selectSidebar &&
+			this.lastFilter !== this.filter &&
+			this.currentState.length === 0
+		)
 			this.setDefaultSelected(selectSidebar)
 		this.lastFilter = this.filter
 		return this.sortSidebar(elements)
