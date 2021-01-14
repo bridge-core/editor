@@ -44,11 +44,14 @@ export class PackIndexerService extends TaskService {
 	}
 
 	async onStart() {
+		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
 		await FileType.setup()
 
 		const filePaths: string[] = []
+		console.timeEnd('[WORKER] SETUP')
 
+		console.time('[WORKER] LightningCache')
 		await this.iterateDir(
 			this.fileSystem.baseDirectory,
 			async (fileHandle, filePath) => {
@@ -63,8 +66,11 @@ export class PackIndexerService extends TaskService {
 		)
 
 		await this.lightningStore.saveStore()
+		console.timeEnd('[WORKER] LightningCache')
 
+		console.time('[WORKER] PackSpider')
 		await this.packSpider.setup(filePaths)
+		console.timeEnd('[WORKER] PackSpider')
 
 		console.log(fileStore)
 	}
