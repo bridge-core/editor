@@ -21,13 +21,16 @@ export class SidebarCategory {
 	getText() {
 		return this.text
 	}
+	getSearchText() {
+		return this.text.toLowerCase()
+	}
 	getItems() {
 		return this.items
 	}
 
 	hasFilterMatches(filter: string) {
 		return (
-			this.items.find(item => item.getText().includes(filter)) !==
+			this.items.find(item => item.getSearchText().includes(filter)) !==
 			undefined
 		)
 	}
@@ -36,7 +39,7 @@ export class SidebarCategory {
 		return Vue.observable(
 			new SidebarCategory({
 				items: this.items.filter(item =>
-					item.getText().includes(filter)
+					item.getSearchText().includes(filter)
 				),
 				text: this.text,
 				isOpen: this.isOpen,
@@ -66,6 +69,9 @@ export class SidebarItem {
 	}
 
 	getText() {
+		return this.text
+	}
+	getSearchText() {
 		return this.text.toLowerCase()
 	}
 }
@@ -92,16 +98,14 @@ export class Sidebar {
 	get elements() {
 		return this._elements
 			.filter(e => {
-				if (e.type === 'item') return e.getText().includes(this.filter)
+				if (e.type === 'item')
+					return e.getSearchText().includes(this.filter)
 				else return e.hasFilterMatches(this.filter)
 			})
 			.map(e => (e.type === 'item' ? e : e.getFiltered(this.filter)))
 			.sort((a, b) => {
 				if (a.type !== b.type) return a.type.localeCompare(b.type)
-				return a
-					.getText()
-					.toLowerCase()
-					.localeCompare(b.getText().toLowerCase())
+				return a.getSearchText().localeCompare(b.getSearchText())
 			})
 	}
 
