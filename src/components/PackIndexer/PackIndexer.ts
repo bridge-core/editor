@@ -2,6 +2,7 @@ import { App } from '@/App'
 import { Signal } from '@/appCycle/EventSystem'
 import * as Comlink from 'comlink'
 import Vue from 'vue'
+import { settingsState } from '../Windows/Settings/SettingsWindow'
 import { PackIndexerService } from './Worker/Main'
 
 const TaskService = Comlink.wrap<typeof PackIndexerService>(
@@ -29,7 +30,13 @@ export class PackIndexer extends Signal<void> {
 			this.service = await new TaskService(
 				await app.fileSystem.getDirectoryHandle(
 					`projects/${projectName}`
-				)
+				),
+				{
+					disablePackSpider: !settingsState?.general
+						?.enablePackSpider,
+					noFullLightningCacheRefresh: !settingsState?.general
+						?.fullLightningCacheRefresh,
+				}
 			)
 			// Listen to task progress and update UI
 			this.service.on(

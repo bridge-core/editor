@@ -1,4 +1,3 @@
-import { translate } from '@/utils/locales'
 import { get, set } from 'idb-keyval'
 import { createInformationWindow } from '../Windows/Common/CommonDefinitions'
 import { TWindow } from '../Windows/create'
@@ -6,16 +5,22 @@ import { createSelectProjectFolderWindow } from '../Windows/Project/SelectFolder
 import { FileSystem } from './Main'
 
 export async function setupFileSystem() {
-	const fileHandle = await get<FileSystemDirectoryHandle>('bridgeBaseDir')
-	if (!fileHandle)
-		await createSelectProjectFolderWindow(async fileHandle => {
-			if (fileHandle) await set('bridgeBaseDir', fileHandle)
+	let fileHandle = await get<FileSystemDirectoryHandle>('bridgeBaseDir')
 
-			await verifyPermissions(fileHandle)
+	if (!fileHandle) {
+		await createSelectProjectFolderWindow(async chosenFileHandle => {
+			if (chosenFileHandle) {
+				await set('bridgeBaseDir', chosenFileHandle)
+				fileHandle = chosenFileHandle
+			}
+
+			await verifyPermissions(chosenFileHandle)
 		}).status.done
-	else await verifyPermissions(fileHandle)
+	} else {
+		await verifyPermissions(fileHandle)
+	}
 
-	return new FileSystem(await get<FileSystemDirectoryHandle>('bridgeBaseDir'))
+	return new FileSystem(fileHandle)
 }
 
 let confirmPermissionWindow: TWindow | null = null

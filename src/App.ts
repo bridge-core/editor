@@ -19,6 +19,7 @@ import '@/appCycle/ResizeWatcher'
 import { PackType } from './appCycle/PackType'
 import { selectLastProject } from './components/Project/Loader'
 import { Windows } from './components/Windows/Windows'
+import { SettingsWindow } from './components/Windows/Settings/SettingsWindow'
 
 export class App {
 	public static readonly eventSystem = new EventManager<any>([
@@ -37,6 +38,7 @@ export class App {
 		this._instance = new App(appComponent)
 		await this._instance.startUp()
 		this.ready.dispatch(this._instance)
+		await SettingsWindow.loadSettings()
 		await selectLastProject(this._instance)
 	}
 	static get instance() {

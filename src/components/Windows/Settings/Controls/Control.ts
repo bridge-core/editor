@@ -13,7 +13,6 @@ export interface IControl<T> {
 export abstract class Control<T> {
 	readonly component: Vue.Component
 	readonly config: IControl<T>
-	protected parent!: SettingsWindow
 
 	abstract matches(filter: string): void
 
@@ -21,33 +20,21 @@ export abstract class Control<T> {
 		this.config = control
 		this.component = component
 
-		if (settingsState[control.category][control.key] === undefined)
-			Vue.set(
-				settingsState[control.category],
-				control.key,
-				control.default
-			)
+		if (this.value === undefined && control.default !== undefined)
+			this.value = control.default
 	}
 	set value(value: T) {
-		if (!settingsState[this.config.category])
+		if (settingsState[this.config.category] === undefined)
 			Vue.set(settingsState, this.config.category, {})
 		Vue.set(settingsState[this.config.category], this.config.key, value)
 	}
 	get value() {
-		return <T>(
-			(settingsState[this.config.category]?.[this.config.key] ??
-				this.config.default)
-		)
-	}
-
-	setParent(parent: SettingsWindow) {
-		this.parent = parent
+		return <T>settingsState[this.config.category]?.[this.config.key]
 	}
 
 	onChange = async (value: T) => {
 		if (typeof this.config.onChange === 'function')
 			this.config.onChange(value)
 		this.value = value
-		await this.parent.saveSettings()
 	}
 }

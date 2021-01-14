@@ -4,7 +4,7 @@ import { settingsState } from '@/components/Windows/Settings/SettingsWindow'
 
 export function platform() {
 	if (
-		settingsState.developers?.simulateOS &&
+		settingsState?.developers?.simulateOS &&
 		settingsState.developers.simulateOS !== 'auto'
 	)
 		return settingsState.developers.simulateOS

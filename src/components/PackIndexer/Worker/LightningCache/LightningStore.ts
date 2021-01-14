@@ -127,4 +127,16 @@ export class LightningStore {
 
 		return this.store![fileType]?.[filePath] ?? {}
 	}
+
+	async allFiles() {
+		await this.loadStore()
+		const filePaths = []
+
+		for (const fileType in this.store) {
+			for (const filePath in this.store[fileType])
+				filePaths.push(filePath)
+		}
+
+		return filePaths
+	}
 }

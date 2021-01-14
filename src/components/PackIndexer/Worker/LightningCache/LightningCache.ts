@@ -34,6 +34,9 @@ export class LightningCache {
 	) {}
 
 	async start() {
+		if (this.service.settings.noFullLightningCacheRefresh)
+			return await this.lightningStore.allFiles()
+
 		let anyFileChanged = false
 		const filePaths: string[] = []
 		await this.iterateDir(

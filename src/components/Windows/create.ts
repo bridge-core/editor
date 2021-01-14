@@ -6,7 +6,8 @@ export const WINDOWS = Vue.observable({})
 export function createWindow(
 	vueComponent: VueComponent,
 	state: Record<string, unknown> = {},
-	disposeOnClose = true
+	disposeOnClose = true,
+	onClose = () => {}
 ) {
 	// It might make sense for some windows to be "await"-able. This is a helper for that
 	const status: { setDone?: () => void; done?: Promise<void> } = {}
@@ -25,6 +26,8 @@ export function createWindow(
 	const windowApi = {
 		getState: () => windowState,
 		close: () => {
+			onClose()
+
 			windowState.isVisible = false
 			setTimeout(() => {
 				windowState.shouldRender = false

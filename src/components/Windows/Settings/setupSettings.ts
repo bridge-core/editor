@@ -31,7 +31,7 @@ export function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'developers',
-			title: 'Dev Mode',
+			title: 'Developer Mode',
 			description: 'Enable the developer mode for this app.',
 			key: 'isDevMode',
 		})
@@ -40,9 +40,21 @@ export function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'general',
-			title: 'Dev Mode',
-			description: 'Enable the developer mode for this app.',
-			key: 'isDevMode',
+			title: 'Collaborative Mode',
+			description:
+				'Forces full refresh of the cache upon switching projects. Disable when you work alone and you only use bridge. to edit your pack.',
+			key: 'fullLightningCacheRefresh',
+			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'general',
+			title: 'Pack Spider',
+			description:
+				'Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system.',
+			key: 'enablePackSpider',
+			default: true,
 		})
 	)
 }

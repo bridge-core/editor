@@ -7,15 +7,12 @@ import Vue from 'vue'
 import { App } from '@/App'
 import { SettingsSidebar } from './SettingsSidebar'
 
-export let settingsState: Record<
-	string,
-	Record<string, unknown>
-> = Vue.observable({})
+export let settingsState: Record<string, Record<string, unknown>>
 export class SettingsWindow {
 	protected sidebar = new SettingsSidebar([])
 	protected window?: any
 
-	constructor() {
+	setup() {
 		this.addCategory('general', 'General', 'mdi-circle-outline')
 		this.addCategory('appearance', 'Appearance', 'mdi-palette-outline')
 		this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
@@ -27,7 +24,7 @@ export class SettingsWindow {
 	}
 
 	addCategory(id: string, name: string, icon: string) {
-		settingsState[id] = {}
+		if (settingsState[id] === undefined) settingsState[id] = {}
 		this.sidebar.addElement(
 			new SidebarItem({
 				color: 'primary',
@@ -49,10 +46,9 @@ export class SettingsWindow {
 			)
 
 		category.push(control)
-		control.setParent(this)
 	}
 
-	saveSettings() {
+	static saveSettings() {
 		return new Promise<void>(resolve => {
 			App.ready.once(async app => {
 				await app.fileSystem.writeJSON(
@@ -63,7 +59,9 @@ export class SettingsWindow {
 			})
 		})
 	}
-	loadSettings() {
+	static loadSettings() {
+		if (settingsState !== undefined) return
+
 		return new Promise<void>(resolve => {
 			App.ready.once(async app => {
 				try {
@@ -80,11 +78,20 @@ export class SettingsWindow {
 	}
 
 	async open() {
-		await this.loadSettings()
-		this.window = createWindow(SettingsWindowComponent, {
-			sidebar: this.sidebar,
-			settingsState,
-		})
+		this.sidebar.removeElements()
+		this.setup()
+
+		this.window = createWindow(
+			SettingsWindowComponent,
+			{
+				sidebar: this.sidebar,
+				settingsState,
+			},
+			undefined,
+			() => {
+				SettingsWindow.saveSettings()
+			}
+		)
 		this.window.open()
 	}
 	close() {

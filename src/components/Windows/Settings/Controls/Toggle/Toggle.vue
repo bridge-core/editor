@@ -15,7 +15,7 @@
 <script>
 export default {
 	props: {
-		title: String,
+		value: Boolean,
 		config: Object,
 	},
 	data: () => ({

@@ -8,20 +8,28 @@ import {
 	getFileStoreDirectory,
 	PackSpider,
 } from './PackSpider/PackSpider'
-import { execute } from '@/components/Plugins/Scripts/execute'
 import { LightningCache } from './LightningCache/LightningCache'
 export { ILightningInstruction } from './LightningCache/LightningCache'
+
+export interface IWorkerSettings {
+	disablePackSpider: boolean
+	noFullLightningCacheRefresh: boolean
+}
 
 export class PackIndexerService extends TaskService {
 	protected lightningStore: LightningStore
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
 
-	constructor(baseDirectory: FileSystemDirectoryHandle) {
+	constructor(
+		baseDirectory: FileSystemDirectoryHandle,
+		readonly settings: IWorkerSettings
+	) {
 		super('packIndexer', baseDirectory)
 		this.lightningStore = new LightningStore(this)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
+		console.log(settings)
 	}
 
 	async onStart() {
