@@ -15,7 +15,7 @@ export async function setupFileSystem() {
 		}).status.done
 	else await verifyPermissions(fileHandle)
 
-	return new FileSystem(fileHandle)
+	return new FileSystem(await get<FileSystemDirectoryHandle>('bridgeBaseDir'))
 }
 
 let confirmPermissionWindow: TWindow | null = null
