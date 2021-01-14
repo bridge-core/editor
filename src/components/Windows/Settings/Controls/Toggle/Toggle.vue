@@ -1,11 +1,11 @@
 <template>
 	<div>
-		<h3>{{ title }}</h3>
+		<h3>{{ config.title }}</h3>
 		<v-switch
 			inset
 			dense
-			:label="description"
-			:value="value"
+			:label="config.description"
+			:value="value_"
 			@change="onChange"
 		/>
 	</div>
@@ -15,16 +15,18 @@
 export default {
 	props: {
 		title: String,
-		value: String,
-		description: String,
+		config: Object,
+	},
+	data: () => ({
+		value_: undefined,
+	}),
+	mounted() {
+		this.value_ = this.value
 	},
 	methods: {
 		onChange(val) {
 			this.$emit('change', val)
-			this.$emit('onChange', val)
 		},
 	},
 }
 </script>
-
-<style></style>

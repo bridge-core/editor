@@ -1,11 +1,15 @@
 import { createWindow } from '../create'
 import { Sidebar, SidebarItem } from '../Layout/Sidebar'
-import { IControl } from './Control'
+import { Control } from './Controls/Control'
 import SettingsWindowComponent from './SettingsWindow.vue'
 import { setupSettings } from './setupSettings'
+import Vue from 'vue'
+import { App } from '@/App'
 
-export const settingsState: Record<string, string | number | boolean> = {}
-export const settingsControls: Record<string, IControl[]> = {}
+export let settingsState: Record<
+	string,
+	Record<string, unknown>
+> = Vue.observable({})
 export class SettingsWindow {
 	protected sidebar = new Sidebar([])
 	protected window?: any
@@ -22,29 +26,62 @@ export class SettingsWindow {
 	}
 
 	addCategory(id: string, name: string, icon: string) {
-		settingsControls[id] = []
+		settingsState[id] = {}
 		this.sidebar.addElement(
 			new SidebarItem({
 				color: 'primary',
 				text: name,
 				icon,
 				id,
-			})
+			}),
+			[]
 		)
 	}
 
-	addControl(categoryId: string, control: IControl) {
-		const category = settingsControls[categoryId]
+	addControl(control: Control<any>) {
+		const category = <Control<any>[]>(
+			this.sidebar.state[control.config.category]
+		)
 		if (!category)
-			throw new Error(`Undefined settings category: ${categoryId}`)
+			throw new Error(
+				`Undefined settings category: ${control.config.category}`
+			)
 
 		category.push(control)
+		control.setParent(this)
 	}
 
-	open() {
+	saveSettings() {
+		return new Promise<void>(resolve => {
+			App.ready.once(async app => {
+				await app.fileSystem.writeJSON(
+					'data/settings.json',
+					settingsState
+				)
+				resolve()
+			})
+		})
+	}
+	loadSettings() {
+		return new Promise<void>(resolve => {
+			App.ready.once(async app => {
+				try {
+					settingsState = Vue.observable(
+						await app.fileSystem.readJSON('data/settings.json')
+					)
+				} catch {
+					settingsState = Vue.observable({})
+				}
+
+				resolve()
+			})
+		})
+	}
+
+	async open() {
+		await this.loadSettings()
 		this.window = createWindow(SettingsWindowComponent, {
 			sidebar: this.sidebar,
-			controls: settingsControls,
 			settingsState,
 		})
 		this.window.open()

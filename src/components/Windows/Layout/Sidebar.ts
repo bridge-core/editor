@@ -79,7 +79,7 @@ export class SidebarItem {
 export class Sidebar {
 	protected selected?: string
 	protected filter: string = ''
-	protected state: Record<string, unknown> = {}
+	public readonly state: Record<string, unknown> = {}
 
 	constructor(protected _elements: TSidebarElement[]) {
 		this.selected = this.findDefaultSelected()

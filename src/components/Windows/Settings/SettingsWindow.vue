@@ -21,14 +21,12 @@
 		</template>
 		<template #default="{ selectedSidebar }">
 			<component
-				v-for="({ component, title, description, key, onChange },
-				i) in controls[selectedSidebar]"
-				:key="i"
-				:is="component"
-				:title="title"
-				:description="description"
-				v-model="settingsState[key]"
-				@onChange="onChange"
+				v-for="(control, i) in sidebar.currentState"
+				:key="`${selectedSidebar}.${i}`"
+				:is="control.component"
+				:config="control.config"
+				:value="control.value"
+				@change="control.onChange"
 			/>
 		</template>
 	</SidebarWindow>
