@@ -1,17 +1,18 @@
 import { createWindow } from '../create'
-import { Sidebar, SidebarItem } from '../Layout/Sidebar'
+import { SidebarItem } from '../Layout/Sidebar'
 import { Control } from './Controls/Control'
 import SettingsWindowComponent from './SettingsWindow.vue'
 import { setupSettings } from './setupSettings'
 import Vue from 'vue'
 import { App } from '@/App'
+import { SettingsSidebar } from './SettingsSidebar'
 
 export let settingsState: Record<
 	string,
 	Record<string, unknown>
 > = Vue.observable({})
 export class SettingsWindow {
-	protected sidebar = new Sidebar([])
+	protected sidebar = new SettingsSidebar([])
 	protected window?: any
 
 	constructor() {

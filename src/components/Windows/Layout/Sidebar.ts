@@ -34,7 +34,7 @@ export class SidebarCategory {
 			undefined
 		)
 	}
-	getFiltered(filter: string) {
+	filtered(filter: string) {
 		if (filter.length === 0) return this
 		return Vue.observable(
 			new SidebarCategory({
@@ -78,7 +78,7 @@ export class SidebarItem {
 
 export class Sidebar {
 	protected selected?: string
-	protected filter: string = ''
+	protected _filter: string = ''
 	public readonly state: Record<string, unknown> = {}
 
 	constructor(protected _elements: TSidebarElement[]) {
@@ -95,25 +95,36 @@ export class Sidebar {
 	removeElements() {
 		this._elements = []
 	}
+
+	get filter() {
+		return this._filter.toLowerCase()
+	}
 	get elements() {
-		return this._elements
-			.filter(e => {
-				if (e.type === 'item')
-					return e.getSearchText().includes(this.filter)
-				else return e.hasFilterMatches(this.filter)
-			})
-			.map(e => (e.type === 'item' ? e : e.getFiltered(this.filter)))
-			.sort((a, b) => {
-				if (a.type !== b.type) return a.type.localeCompare(b.type)
-				return a.getSearchText().localeCompare(b.getSearchText())
-			})
+		return this.sortSidebar(
+			this._elements
+				.filter(e => {
+					if (e.type === 'item')
+						return e.getSearchText().includes(this.filter)
+					else return e.hasFilterMatches(this.filter)
+				})
+				.map(e => (e.type === 'item' ? e : e.filtered(this.filter)))
+		)
 	}
 
 	get currentState() {
 		if (!this.selected) return {}
 		return this.state[this.selected] ?? {}
 	}
+	getState(id: string) {
+		return this.state[id] ?? {}
+	}
 
+	protected sortSidebar(elements: TSidebarElement[]) {
+		return elements.sort((a, b) => {
+			if (a.type !== b.type) return a.type.localeCompare(b.type)
+			return a.getSearchText().localeCompare(b.getSearchText())
+		})
+	}
 	protected findDefaultSelected() {
 		for (const element of this.elements) {
 			if (element.type === 'category' && element.getItems().length > 0)

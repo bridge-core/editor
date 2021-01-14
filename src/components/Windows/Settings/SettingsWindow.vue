@@ -15,12 +15,22 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.settings.searchSettings')"
+				v-model.trim="sidebar._filter"
 				outlined
 				dense
 			/>
 		</template>
 		<template #default="{ selectedSidebar }">
+			<span
+				v-if="
+					sidebar.currentState.length === 0 && sidebar.filter !== ''
+				"
+			>
+				No setting matches your search for "{{ sidebar.filter }}".
+			</span>
+
 			<component
+				class="mb-6"
 				v-for="(control, i) in sidebar.currentState"
 				:key="`${selectedSidebar}.${i}`"
 				:is="control.component"

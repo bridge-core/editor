@@ -10,10 +10,12 @@ export interface IControl<T> {
 	onChange?: (value: T) => void
 }
 
-export class Control<T> {
+export abstract class Control<T> {
 	readonly component: Vue.Component
 	readonly config: IControl<T>
 	protected parent!: SettingsWindow
+
+	abstract matches(filter: string): void
 
 	constructor(component: Vue.Component, control: IControl<T>) {
 		this.config = control

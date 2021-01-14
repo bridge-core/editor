@@ -22,10 +22,27 @@ export function setupSettings(settings: SettingsWindow) {
 			category: 'developers',
 			title: 'Simulate OS',
 			description:
-				'Simulate a different OS for testing OS specific behavior.',
+				'Simulate a different OS for testing platform specific behavior.',
 			key: 'simulateOS',
 			options: ['auto', 'win32', 'darwin', 'linux'],
 			default: 'auto',
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'developers',
+			title: 'Dev Mode',
+			description: 'Enable the developer mode for this app.',
+			key: 'isDevMode',
+		})
+	)
+
+	settings.addControl(
+		new Toggle({
+			category: 'general',
+			title: 'Dev Mode',
+			description: 'Enable the developer mode for this app.',
+			key: 'isDevMode',
 		})
 	)
 }

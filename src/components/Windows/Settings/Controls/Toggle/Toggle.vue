@@ -2,6 +2,7 @@
 	<div>
 		<h3>{{ config.title }}</h3>
 		<v-switch
+			style="margin-top: 0;"
 			inset
 			dense
 			:label="config.description"
