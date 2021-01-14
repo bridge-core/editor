@@ -40,7 +40,7 @@ export class LightningStore {
 
 	async add(
 		filePath: string,
-		fileContent: string,
+		hash: string,
 		fileData?: Record<string, string[]>
 	) {
 		await this.loadStore()
@@ -48,7 +48,7 @@ export class LightningStore {
 		if (!this.store![fileType]) this.store![fileType] = {}
 
 		this.store![fileType][filePath] = {
-			hash: await hashString(fileContent),
+			hash,
 			data: fileData,
 		}
 	}

@@ -34,9 +34,11 @@ export interface ILightningInstruction {
 	[str: string]: undefined | string | string[]
 }
 
+// let firstPass = true
 export class PackIndexerService extends TaskService {
 	protected lightningStore: LightningStore
 	protected packSpider: PackSpider
+
 	constructor(baseDirectory: FileSystemDirectoryHandle) {
 		super('packIndexer', baseDirectory)
 		this.lightningStore = new LightningStore(this)
@@ -59,6 +61,7 @@ export class PackIndexerService extends TaskService {
 					filePath,
 					fileHandle
 				)
+				// if (firstPass || fileDidChange)
 				filePaths.push(filePath)
 
 				this.progress.addToCurrent()
@@ -73,6 +76,7 @@ export class PackIndexerService extends TaskService {
 		console.timeEnd('[WORKER] PackSpider')
 
 		console.log(fileStore)
+		// firstPass = false
 	}
 
 	async updateFile(filePath: string) {
@@ -142,7 +146,7 @@ export class PackIndexerService extends TaskService {
 				functionPath.push(`functions/${funcName[1]}.mcfunction`)
 		}
 
-		await this.lightningStore.add(filePath, fileContent, { functionPath })
+		await this.lightningStore.add(filePath, newHash, { functionPath })
 		return true
 	}
 
@@ -163,13 +167,14 @@ export class PackIndexerService extends TaskService {
 		try {
 			data = json5.parse(fileContent)
 		} catch {
+			await this.lightningStore.add(filePath, newHash)
 			return true
 		}
 
 		const instructions = await FileType.getLightningCache(filePath)
 		// No instructions = no work
 		if (instructions.length === 0) {
-			await this.lightningStore.add(filePath, fileContent)
+			await this.lightningStore.add(filePath, newHash)
 			return true
 		}
 
@@ -199,31 +204,17 @@ export class PackIndexerService extends TaskService {
 				]
 		}
 
-		await Promise.all(
-			instructions.map(async instruction => {
-				const key = Object.keys(instruction).find(
-					key => key !== '@filter' && key !== '@map'
-				)
-				if (!key) return
-				const paths = instruction[key] as string[]
+		for (const instruction of instructions) {
+			const key = Object.keys(instruction).find(
+				key => key !== '@filter' && key !== '@map'
+			)
+			if (!key) continue
+			const paths = instruction[key] as string[]
 
-				if (Array.isArray(paths))
-					await Promise.all(
-						paths.map(path =>
-							walkObject(
-								path,
-								data,
-								onReceiveData(
-									key,
-									instruction['@filter'],
-									instruction['@map']
-								)
-							)
-						)
-					)
-				else
-					await walkObject(
-						paths,
+			if (Array.isArray(paths)) {
+				for (const path of paths) {
+					walkObject(
+						path,
 						data,
 						onReceiveData(
 							key,
@@ -231,12 +222,23 @@ export class PackIndexerService extends TaskService {
 							instruction['@map']
 						)
 					)
-			})
-		)
+				}
+			} else {
+				walkObject(
+					paths,
+					data,
+					onReceiveData(
+						key,
+						instruction['@filter'],
+						instruction['@map']
+					)
+				)
+			}
+		}
 
 		await this.lightningStore.add(
 			filePath,
-			fileContent,
+			newHash,
 			Object.keys(collectedData).length > 0 ? collectedData : undefined
 		)
 
