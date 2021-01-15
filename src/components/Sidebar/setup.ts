@@ -7,14 +7,14 @@ import Extensions from './Content/Extensions/Main.vue'
 export function setupSidebar() {
 	createSidebar({
 		id: 'projects',
-		displayName: 'sidebar.projects.name',
+		displayName: 'windows.projectChooser.title',
 		icon: 'mdi-view-dashboard-outline',
 		onClick: () => App.instance.windows.projectChooser.open(),
 	})
 
 	createSidebar({
 		id: 'bpExplorer',
-		displayName: 'sidebar.explorer.name',
+		displayName: 'windows.packExplorer.title',
 		icon: 'mdi-folder-outline',
 		onClick: () => App.instance.windows.packExplorer.open(),
 	})
@@ -34,7 +34,7 @@ export function setupSidebar() {
 	createSidebar({
 		id: 'extensions',
 		displayName: 'sidebar.extensions.name',
-		icon: 'mdi-puzzle',
+		icon: 'mdi-puzzle-outline',
 		component: Extensions,
 	})
 }

@@ -119,9 +119,6 @@ export default {
 	},
 	// Sidebar tabs
 	sidebar: {
-		explorer: {
-			name: 'Explorer',
-		},
 		vanillaPacks: {
 			name: 'Vanilla Packs',
 		},
@@ -176,7 +173,7 @@ export default {
 			later: 'Later',
 		},
 		projectChooser: {
-			title: 'Choose Project',
+			title: 'Projects',
 			searchProjects: 'Search projects...',
 		},
 		selectFolder: {
