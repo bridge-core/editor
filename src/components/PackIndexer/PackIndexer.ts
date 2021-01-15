@@ -15,7 +15,7 @@ export const packIndexerReady = Vue.observable({ isReady: false })
 
 export class PackIndexer extends Signal<void> {
 	protected service!: Comlink.Remote<PackIndexerService>
-	start(projectName: string) {
+	start(projectName: string, forceRefreshCache = false) {
 		console.time('[TASK] Indexing Packs (Total)')
 		packIndexerReady.isReady = false
 		App.ready.once(async app => {
@@ -34,8 +34,9 @@ export class PackIndexer extends Signal<void> {
 				{
 					disablePackSpider: !settingsState?.general
 						?.enablePackSpider,
-					noFullLightningCacheRefresh: !settingsState?.general
-						?.fullLightningCacheRefresh,
+					noFullLightningCacheRefresh:
+						!forceRefreshCache &&
+						!settingsState?.general?.fullLightningCacheRefresh,
 				}
 			)
 			// Listen to task progress and update UI

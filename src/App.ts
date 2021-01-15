@@ -123,9 +123,9 @@ export class App {
 		}
 	}
 
-	switchProject(projectName: string) {
+	switchProject(projectName: string, forceRefreshCache = false) {
 		return new Promise<void>(resolve => {
-			this.packIndexer.start(projectName)
+			this.packIndexer.start(projectName, forceRefreshCache)
 			App.eventSystem.dispatch('projectChanged', undefined)
 			this.packIndexer.once(() => resolve())
 		})

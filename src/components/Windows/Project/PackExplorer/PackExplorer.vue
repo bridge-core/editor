@@ -69,7 +69,7 @@ export default {
 		},
 		refreshPackExplorer() {
 			this.currentWindow.close()
-			App.instance.switchProject(selectedProject)
+			App.instance.switchProject(selectedProject, true)
 		},
 	},
 	computed: {
