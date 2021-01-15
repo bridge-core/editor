@@ -1,11 +1,10 @@
-import { SidebarState, getSelected } from './state'
+import { SidebarState } from './state'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 import type { IDisposable } from '@/types/disposable'
-import { trigger } from '@/appCycle/EventSystem'
-import { getDefaultSidebar } from '../setup'
+import { createOldSidebarCompatWindow } from '@/components/Windows/OldSidebarCompat/OldSidebarCompat'
 
-export interface Sidebar {
+export interface ISidebar {
 	id?: string
 	icon?: string
 	displayName?: string
@@ -14,20 +13,19 @@ export interface Sidebar {
 	onClick?: () => void
 }
 
-export interface SidebarInstance extends IDisposable, Sidebar {
+export interface SidebarInstance extends IDisposable, ISidebar {
 	readonly uuid: string
 	readonly isSelected: boolean
 	readonly opacity: number
 
-	select: () => SidebarInstance
-	toggle: () => void
+	click: () => void
 }
 
 /**
  * Creates a new sidebar
  * @param config
  */
-export function createSidebar(config: Sidebar): SidebarInstance {
+export function createSidebar(config: ISidebar): SidebarInstance {
 	const sidebarUUID = uuid()
 
 	const sidebar = {
@@ -42,31 +40,14 @@ export function createSidebar(config: Sidebar): SidebarInstance {
 			return this.isSelected ? 1 : 0.25
 		},
 		dispose() {
-			if (this.isSelected) getDefaultSidebar().select()
 			Vue.delete(SidebarState.sidebarElements, sidebarUUID)
 		},
 
-		select() {
-			const prevSelected = getSelected()
-			SidebarState.currentState = sidebarUUID
-
-			if (prevSelected !== this)
-				trigger('bridge:toggledSidebar', prevSelected, this)
-			return this
+		click() {
+			if(typeof config.onClick === "function") config.onClick()
+			else if(config.component) createOldSidebarCompatWindow(sidebar)
 		},
-		toggle() {
-			if (this.isSelected) {
-				trigger('bridge:onSidebarVisibilityChange', false)
-				SidebarState.currentState = null
 
-				trigger('bridge:toggledSidebar', this, null)
-			} else {
-				if (SidebarState.currentState === null)
-					trigger('bridge:onSidebarVisibilityChange', true)
-				this.select()
-			}
-			return this
-		},
 	}
 
 	Vue.set(SidebarState.sidebarElements, sidebarUUID, sidebar)

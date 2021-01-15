@@ -20,6 +20,7 @@ import { PackType } from './appCycle/PackType'
 import { selectLastProject } from './components/Project/Loader'
 import { Windows } from './components/Windows/Windows'
 import { SettingsWindow } from './components/Windows/Settings/SettingsWindow'
+import Vue from 'vue'
 
 export class App {
 	public static readonly eventSystem = new EventManager<any>([
@@ -39,6 +40,7 @@ export class App {
 		await this._instance.startUp()
 		this.ready.dispatch(this._instance)
 		await SettingsWindow.loadSettings()
+
 		await selectLastProject(this._instance)
 	}
 	static get instance() {
@@ -68,12 +70,22 @@ export class App {
 	}
 
 	async startUp() {
+		setupSidebar()
 		setupKeyBindings()
 		setupDefaultMenus()
-		setupSidebar()
+
 		await FileType.setup()
 		await PackType.setup()
 		setupMonacoEditor()
+
+		// FileSystem setup
+		this.fileSystem = await setupFileSystem()
+		// Create default folders
+		await Promise.all([
+			this.fileSystem.mkdir('projects'),
+			this.fileSystem.mkdir('plugins'),
+			this.fileSystem.mkdir('data'),
+		])
 
 		// Set language based off of browser language
 		// if (!navigator.language.includes('en')) {
@@ -85,15 +97,6 @@ export class App {
 		// } else {
 		// 	selectLanguage('en')
 		// }
-
-		// FileSystem setup
-		this.fileSystem = await setupFileSystem()
-		// Create default folders
-		await Promise.all([
-			this.fileSystem.mkdir('projects'),
-			this.fileSystem.mkdir('plugins'),
-			this.fileSystem.mkdir('data'),
-		])
 
 		if (process.env.NODE_ENV !== 'development') {
 			const discordMsg = createNotification({

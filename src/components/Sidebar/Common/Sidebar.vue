@@ -16,7 +16,7 @@
 				:icon="sidebar.icon"
 				:opacity="sidebar.opacity"
 				:isSelected="sidebar.isSelected"
-				@click="sidebar.toggle()"
+				@click="sidebar.click()"
 			/>
 		</v-list>
 	</v-navigation-drawer>
@@ -27,7 +27,7 @@ import SidebarButton from './Button'
 import { SidebarState, getSelected } from './state'
 
 export default {
-	name: 'SidebarNavigation',
+	name: 'Sidebar',
 	props: {
 		app: Boolean,
 	},

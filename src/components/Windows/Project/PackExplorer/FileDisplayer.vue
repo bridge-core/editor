@@ -123,6 +123,7 @@ span.folder {
 
 .file,
 .folder {
+	/** New web thingy: https://web.dev/content-visibility/ */
 	content-visibility: auto;
 	contain-intrinsic-size: 24px;
 }

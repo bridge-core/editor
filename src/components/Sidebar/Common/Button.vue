@@ -1,27 +1,19 @@
 <template>
 	<v-tooltip color="tooltip" :disabled="isSelected" right>
 		<template v-slot:activator="{ on }">
-			<v-list-item
+			<div
+				class="rounded-lg pa-2 ma-2 d-flex justify-center"
+				:style="{
+					'background-color': isSelected
+						? 'var(--v-primary-base)'
+						: 'var(--v-sidebarSelection-base)',
+				}"
 				v-on="on"
-				:style="
-					`border-left: 2px solid ${
-						isSelected
-							? 'var(--v-primary-base)'
-							: 'rgab(0, 0, 0, 0)'
-					};`
-				"
-				@click.stop="$emit('click')"
+				@click="$emit('click')"
+				v-ripple
 			>
-				<v-list-item-action style="margin: 0;">
-					<v-icon
-						medium
-						:style="`opacity: ${opacity};`"
-						:color="color"
-					>
-						{{ icon }}
-					</v-icon>
-				</v-list-item-action>
-			</v-list-item>
+				<v-icon>{{ icon }}</v-icon>
+			</div>
 		</template>
 
 		<span>{{ t(displayName) }}</span>

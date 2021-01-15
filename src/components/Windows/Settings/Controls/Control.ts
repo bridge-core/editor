@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { settingsState, SettingsWindow } from '../SettingsWindow'
+import { settingsState } from '../SettingsState'
 
 export interface IControl<T> {
 	category: string

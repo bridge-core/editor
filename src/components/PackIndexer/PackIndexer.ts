@@ -2,7 +2,7 @@ import { App } from '@/App'
 import { Signal } from '@/appCycle/EventSystem'
 import * as Comlink from 'comlink'
 import Vue from 'vue'
-import { settingsState } from '../Windows/Settings/SettingsWindow'
+import { settingsState } from '../Windows/Settings/SettingsState'
 import { PackIndexerService } from './Worker/Main'
 
 const TaskService = Comlink.wrap<typeof PackIndexerService>(

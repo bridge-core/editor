@@ -1,7 +1,8 @@
 import { App } from '@/App'
 import { ButtonToggle } from './Controls/ButtonToggle/ButtonToggle'
 import { Toggle } from './Controls/Toggle/Toggle'
-import { settingsState, SettingsWindow } from './SettingsWindow'
+import { SettingsWindow } from './SettingsWindow'
+import { settingsState } from './SettingsState'
 
 export function setupSettings(settings: SettingsWindow) {
 	settings.addControl(

@@ -4,7 +4,7 @@
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar />
 
-		<Sidebar />
+		<Sidebar app />
 
 		<v-main>
 			<WindowRenderer />
@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Sidebar from './components/Sidebar/Common/Main.vue'
+import Sidebar from './components/Sidebar/Common/Sidebar.vue'
 import Footer from './components/Footer/Main.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
@@ -41,9 +41,6 @@ export default Vue.extend({
 		Toolbar,
 		WindowRenderer,
 		TabBar,
-	},
-	mounted() {
-		App.main(this)
 	},
 
 	data: () => ({

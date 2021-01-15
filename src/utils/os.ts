@@ -1,6 +1,6 @@
 // import { createErrorNotification } from '@/appCycle/Errors'
 
-import { settingsState } from '@/components/Windows/Settings/SettingsWindow'
+import { settingsState } from '@/components/Windows/Settings/SettingsState'
 
 export function platform() {
 	if (

@@ -6,8 +6,8 @@ import { setupSettings } from './setupSettings'
 import Vue from 'vue'
 import { App } from '@/App'
 import { SettingsSidebar } from './SettingsSidebar'
+import { setSettingsState, settingsState } from './SettingsState'
 
-export let settingsState: Record<string, Record<string, unknown>>
 export class SettingsWindow {
 	protected sidebar = new SettingsSidebar([])
 	protected window?: any
@@ -65,11 +65,13 @@ export class SettingsWindow {
 		return new Promise<void>(resolve => {
 			App.ready.once(async app => {
 				try {
-					settingsState = Vue.observable(
-						await app.fileSystem.readJSON('data/settings.json')
+					setSettingsState(
+						Vue.observable(
+							await app.fileSystem.readJSON('data/settings.json')
+						)
 					)
 				} catch {
-					settingsState = Vue.observable({})
+					setSettingsState(Vue.observable({}))
 				}
 
 				resolve()

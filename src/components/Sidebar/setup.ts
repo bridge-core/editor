@@ -1,20 +1,23 @@
-import { createSidebar, SidebarInstance } from './Common/create'
+import { App } from '@/App'
+import { createSidebar } from './Common/create'
 import Documentation from './Content/Documentation.vue'
 import FileExplorer from './Content/Explorer/Main.vue'
 import Extensions from './Content/Extensions/Main.vue'
 
-let defaultSidebar: SidebarInstance
-export function getDefaultSidebar() {
-	return defaultSidebar
-}
-
 export function setupSidebar() {
-	defaultSidebar = createSidebar({
+	createSidebar({
+		id: 'projects',
+		displayName: 'sidebar.projects.name',
+		icon: 'mdi-view-dashboard-outline',
+		onClick: () => App.instance.windows.projectChooser.open(),
+	})
+
+	createSidebar({
 		id: 'bpExplorer',
 		displayName: 'sidebar.explorer.name',
-		icon: 'mdi-folder',
-		component: FileExplorer,
-	}).select()
+		icon: 'mdi-folder-outline',
+		onClick: () => App.instance.windows.packExplorer.open(),
+	})
 
 	createSidebar({
 		id: 'vanillaPacks',
