@@ -42,7 +42,7 @@ export function setupSettings(settings: SettingsWindow) {
 			category: 'general',
 			title: 'Collaborative Mode',
 			description:
-				'Forces full refresh of the cache upon switching projects. Disable when you work alone and you only use bridge. to edit your pack.',
+				'Forces full refresh of the cache upon switching projects. Disable when you work alone and you only use bridge. to edit your project.',
 			key: 'fullLightningCacheRefresh',
 			default: true,
 		})

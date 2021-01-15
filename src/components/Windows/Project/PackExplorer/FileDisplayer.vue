@@ -1,8 +1,16 @@
 <template>
 	<!-- body-1 class sets the font-size -->
-	<div class="body-1" v-if="directoryEntry && packIndexerReady.isReady">
+	<div
+		class="body-1"
+		v-if="
+			directoryEntry &&
+				!directoryEntry.isLoading &&
+				packIndexerReady.isReady
+		"
+	>
 		<template v-for="entry in directoryEntry.children">
 			<details
+				class="folder"
 				v-if="!entry.isFile"
 				:key="entry.uuid"
 				:open="entry.isFolderOpen"
@@ -111,6 +119,12 @@ span.folder::-webkit-scrollbar {
 span.folder {
 	overflow-x: auto;
 	white-space: nowrap;
+}
+
+.file,
+.folder {
+	content-visibility: auto;
+	contain-intrinsic-size: 24px;
 }
 
 summary {

@@ -23,11 +23,13 @@
 		<template #default="{ selectedSidebar }">
 			<FileDisplayer
 				v-if="sidebar.currentElement.kind === 'directory'"
+				:key="selectedSidebar"
 				:startPath="
 					selectedSidebar ? selectedSidebar.split('/') : undefined
 				"
 				@closeWindow="onClose"
 			/>
+
 			<div class="body-1" v-else>
 				<strong>File:</strong> {{ selectedSidebar }}
 				<div class="mt-8 d-flex">

@@ -30,7 +30,6 @@ export class PackIndexerService extends TaskService {
 		this.lightningStore = new LightningStore(this)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
-		console.log(settings)
 	}
 
 	async onStart() {
