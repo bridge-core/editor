@@ -2,17 +2,20 @@
 	<v-tooltip color="tooltip" :disabled="isSelected" right>
 		<template v-slot:activator="{ on }">
 			<div
-				class="rounded-lg pa-2 ma-2 d-flex justify-center"
-				:style="{
-					'background-color': isSelected
-						? 'var(--v-primary-base)'
-						: 'var(--v-sidebarSelection-base)',
-				}"
+				class="rounded-lg pa-2 ma-2 d-flex justify-center sidebar-button"
+				:class="{ loading: isLoading }"
 				v-on="on"
-				@click="$emit('click')"
+				@click="!isLoading ? $emit('click') : undefined"
 				v-ripple
 			>
-				<v-icon>{{ icon }}</v-icon>
+				<v-icon v-if="!isLoading">{{ icon }}</v-icon>
+				<v-progress-circular
+					v-else
+					size="24"
+					width="2"
+					color="white"
+					indeterminate
+				/>
 			</div>
 		</template>
 
@@ -31,6 +34,10 @@ export default {
 		icon: String,
 		color: String,
 		isSelected: Boolean,
+		isLoading: {
+			type: Boolean,
+			default: false,
+		},
 		opacity: {
 			type: Number,
 			default: 1,
@@ -40,7 +47,12 @@ export default {
 </script>
 
 <style scoped>
-span {
+.sidebar-button {
 	cursor: pointer;
+	background-color: var(--v-sidebarSelection-base);
+	transition: all 0.1s ease-in-out;
+}
+.sidebar-button.loading {
+	background-color: var(--v-primary-base);
 }
 </style>

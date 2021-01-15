@@ -16,7 +16,12 @@ export function setupSidebar() {
 		id: 'bpExplorer',
 		displayName: 'windows.packExplorer.title',
 		icon: 'mdi-folder-outline',
-		onClick: () => App.instance.windows.packExplorer.open(),
+		onClick: async () => {
+			await new Promise<void>(resolve => {
+				App.ready.once(app => app.packIndexer.once(() => resolve()))
+			})
+			await App.instance.windows.packExplorer.open()
+		},
 	})
 
 	createSidebar({

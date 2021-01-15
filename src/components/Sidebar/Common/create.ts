@@ -15,8 +15,7 @@ export interface ISidebar {
 
 export interface SidebarInstance extends IDisposable, ISidebar {
 	readonly uuid: string
-	readonly isSelected: boolean
-	readonly opacity: number
+	readonly isLoading: boolean
 
 	click: () => void
 }
@@ -26,30 +25,36 @@ export interface SidebarInstance extends IDisposable, ISidebar {
  * @param config
  */
 export function createSidebar(config: ISidebar): SidebarInstance {
-	const sidebarUUID = uuid()
+	return new SidebarElement(config)
+}
 
-	const sidebar = {
-		...config,
-		get uuid() {
-			return sidebarUUID
-		},
-		get isSelected() {
-			return SidebarState.currentState === sidebarUUID
-		},
-		get opacity(): number {
-			return this.isSelected ? 1 : 0.25
-		},
-		dispose() {
-			Vue.delete(SidebarState.sidebarElements, sidebarUUID)
-		},
+export class SidebarElement {
+	protected sidebarUUID = uuid()
+	isLoading = false
 
-		click() {
-			if(typeof config.onClick === "function") config.onClick()
-			else if(config.component) createOldSidebarCompatWindow(sidebar)
-		},
-
+	constructor(protected config: ISidebar) {
+		Vue.set(SidebarState.sidebarElements, this.sidebarUUID, this)
 	}
 
-	Vue.set(SidebarState.sidebarElements, sidebarUUID, sidebar)
-	return sidebar
+	get icon() {
+		return this.config.icon
+	}
+	get uuid() {
+		return this.sidebarUUID
+	}
+	get displayName() {
+		return this.config.displayName
+	}
+	get component() {
+		return this.config.component
+	}
+	dispose() {
+		Vue.delete(SidebarState.sidebarElements, this.sidebarUUID)
+	}
+	async click() {
+		this.isLoading = true
+		if(typeof this.config.onClick === "function") await this.config.onClick()
+		else if(this.config.component) createOldSidebarCompatWindow(this)
+		this.isLoading = false
+	}
 }

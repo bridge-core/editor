@@ -11,11 +11,12 @@
 		<v-list>
 			<SidebarButton
 				v-for="(sidebar, uuid) in SidebarState.sidebarElements"
-				:key="`${SidebarState.currentState}.${uuid}`"
+				:key="`${uuid}`"
 				:displayName="sidebar.displayName"
 				:icon="sidebar.icon"
 				:opacity="sidebar.opacity"
 				:isSelected="sidebar.isSelected"
+				:isLoading="sidebar.isLoading"
 				@click="sidebar.click()"
 			/>
 		</v-list>
