@@ -57,6 +57,8 @@ export class FileSystem {
 		const files: (string | FileSystemHandle)[] = []
 
 		for await (const handle of dirHandle.values()) {
+			if (handle.kind === 'file' && handle.name === '.DS_Store') continue
+
 			if (withFileTypes) files.push(handle)
 			else files.push(handle.name)
 		}

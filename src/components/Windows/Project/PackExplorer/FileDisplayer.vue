@@ -57,7 +57,7 @@ export default {
 	name: 'FileDisplayer',
 	props: {
 		entry: Object,
-		startPath: String,
+		startPath: Array,
 	},
 
 	mounted() {
@@ -72,9 +72,9 @@ export default {
 		loadDirectory() {
 			if (!this.entry) {
 				App.instance.packIndexer.once(async () => {
-					this.directoryEntry = await DirectoryEntry.create([
-						this.startPath,
-					])
+					this.directoryEntry = await DirectoryEntry.create(
+						this.startPath
+					)
 				})
 			} else {
 				this.directoryEntry = this.entry

@@ -28,6 +28,10 @@ export class SidebarCategory {
 		return this.items
 	}
 
+	getCurrentElement(selected: string) {
+		return this.items.find(({ id }) => id === selected)
+	}
+
 	hasFilterMatches(filter: string) {
 		return (
 			this.items.find(item => item.getSearchText().includes(filter)) !==
@@ -111,6 +115,21 @@ export class Sidebar {
 		)
 	}
 
+	get currentElement() {
+		if (!this.selected) return {}
+
+		for (const element of this._elements) {
+			if (element.type === 'item') {
+				if (element.id === this.selected) return element
+				else continue
+			}
+
+			const item = element.getCurrentElement(this.selected)
+			if (item) return item
+		}
+
+		return {}
+	}
 	get currentState() {
 		if (!this.selected) return {}
 		return this.state[this.selected] ?? {}

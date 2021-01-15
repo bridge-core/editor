@@ -13,9 +13,16 @@ import PackExplorerComponent from './PackExplorer.vue'
 
 class PackSidebarItem extends SidebarItem {
 	protected packType: string
-	constructor(config: ISidebarItemConfig & { packType: string }) {
+	protected kind: 'file' | 'directory'
+	constructor(
+		config: ISidebarItemConfig & {
+			packType: string
+			kind: 'file' | 'directory'
+		}
+	) {
 		super(config)
 		this.packType = config.packType
+		this.kind = config.kind
 	}
 }
 
@@ -37,7 +44,7 @@ export class PackExplorerWindow {
 
 		const dirents = await App.instance.packIndexer.readdir([])
 
-		dirents.forEach(({ name }) => {
+		dirents.forEach(({ kind, displayName, name, path }: any) => {
 			const fileType = FileType.get(undefined, name)
 			const packType = fileType
 				? PackType.get(
@@ -51,14 +58,17 @@ export class PackExplorerWindow {
 
 			items.push(
 				new PackSidebarItem({
+					kind,
 					packType: packType ? packType.id : 'unknown',
-					id: name,
-					text: translate(`fileType.${name}`),
+					id: path ?? name,
+					text: displayName ?? translate(`fileType.${name}`),
 
 					icon:
 						fileType && fileType.icon
 							? fileType.icon
-							: 'mdi-folder',
+							: `mdi-${
+									kind === 'directory' ? 'folder' : 'file'
+							  }-outline`,
 					color: packType ? packType.color : undefined,
 				})
 			)

@@ -22,9 +22,21 @@
 		</template>
 		<template #default="{ selectedSidebar }">
 			<FileDisplayer
-				:startPath="selectedSidebar"
+				v-if="sidebar.currentElement.kind === 'directory'"
+				:startPath="
+					selectedSidebar ? selectedSidebar.split('/') : undefined
+				"
 				@closeWindow="onClose"
 			/>
+			<div class="body-1" v-else>
+				<strong>File:</strong> {{ selectedSidebar }}
+				<div class="mt-8 d-flex">
+					<v-spacer />
+					<v-btn color="primary" @click="openFile(selectedSidebar)"
+						>Open</v-btn
+					>
+				</div>
+			</div>
 		</template>
 
 		<template #toolbar>
@@ -51,6 +63,7 @@ import { FileType } from '@/appCycle/FileType'
 import { PackType } from '@/appCycle/PackType'
 import { TranslationMixin } from '@/utils/locales'
 import { selectedProject } from '@/components/Project/Loader'
+import { mainTabSystem } from '@/components/TabSystem/Main'
 
 export default {
 	name: 'PackExplorerWindow',
@@ -70,6 +83,10 @@ export default {
 		refreshPackExplorer() {
 			this.currentWindow.close()
 			App.instance.switchProject(selectedProject, true)
+		},
+		openFile(filePath) {
+			this.currentWindow.close()
+			mainTabSystem.open(`projects/${selectedProject}/${filePath}`)
 		},
 	},
 	computed: {

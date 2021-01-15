@@ -9,6 +9,7 @@ import {
 	PackSpider,
 } from './PackSpider/PackSpider'
 import { LightningCache } from './LightningCache/LightningCache'
+import { FileSystem } from '@/components/FileSystem/Main'
 export { ILightningInstruction } from './LightningCache/LightningCache'
 
 export interface IWorkerSettings {
@@ -59,10 +60,58 @@ export class PackIndexerService extends TaskService {
 	}
 
 	async readdir(path: string[]) {
+		if (this.settings.disablePackSpider) {
+			if (path.length > 0)
+				return (
+					await this.fileSystem.readdir(path.join('/'), {
+						withFileTypes: true,
+					})
+				).map(dirent => ({
+					kind: dirent.kind,
+					name: dirent.name,
+					path: path.concat([dirent.name]),
+				}))
+
+			return (
+				await Promise.all([
+					loadPack('BP', this.fileSystem),
+					loadPack('RP', this.fileSystem),
+					loadPack('SP', this.fileSystem),
+				])
+			).flat()
+		}
+
 		if (path.length === 0) return getFileStoreDirectory()
 		if (path.length === 1) return getCategoryDirectory(path[0])
 		return fileStore[path[0]][path[1]].toDirectory()
 	}
+}
+
+async function loadPack(pack: string, fileSystem: FileSystem) {
+	let projects
+	try {
+		projects = await fileSystem.readdir(pack, {
+			withFileTypes: true,
+		})
+	} catch {
+		return []
+	}
+
+	return projects.map(dirent => {
+		const fileType = FileType.getId(`${pack}/${dirent.name}${'/test.json'}`)
+		return {
+			kind: dirent.kind,
+			displayName:
+				dirent.kind === 'file' || fileType === 'unknown'
+					? dirent.name
+					: undefined,
+			name:
+				dirent.kind === 'directory' && fileType !== 'unknown'
+					? fileType
+					: dirent.name,
+			path: `${pack}/${dirent.name}`,
+		}
+	})
 }
 
 Comlink.expose(PackIndexerService, self)

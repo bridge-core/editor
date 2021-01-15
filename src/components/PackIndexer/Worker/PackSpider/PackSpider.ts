@@ -23,6 +23,8 @@ export class PackSpider {
 	) {}
 
 	async setup(filePaths: string[]) {
+		if (this.packIndexer.settings.disablePackSpider) return
+
 		fileStore = {}
 		const response = await FileType.getPackSpiderData()
 		response.forEach(

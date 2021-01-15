@@ -14,9 +14,9 @@ export class DirectoryEntry {
 	public uuid = uuid()
 	public isFolderOpen = false
 
-	static async create(startPath: string[] = []) {
+	static async create(startPath: string[] = [], isFile = false) {
 		return Vue.observable(
-			new DirectoryEntry(App.instance.fileSystem, null, startPath)
+			new DirectoryEntry(App.instance.fileSystem, null, startPath, isFile)
 		)
 	}
 	constructor(
