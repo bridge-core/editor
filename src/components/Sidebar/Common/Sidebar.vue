@@ -6,6 +6,7 @@
 		:value="true"
 		:app="app"
 		absolute
+		:right="isSidebarRight"
 		color="sidebarNavigation"
 	>
 		<v-list>
@@ -24,6 +25,7 @@
 </template>
 
 <script>
+import { settingsState } from '@/components/Windows/Settings/SettingsState'
 import SidebarButton from './Button'
 import { SidebarState, getSelected } from './state'
 
@@ -38,7 +40,18 @@ export default {
 	data() {
 		return {
 			SidebarState,
+			settingsState,
 		}
+	},
+	computed: {
+		isSidebarRight() {
+			console.log(this.settingsState)
+			return (
+				this.settingsState &&
+				this.settingsState.general &&
+				this.settingsState.general.isSidebarRight
+			)
+		},
 	},
 }
 </script>

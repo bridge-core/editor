@@ -1,7 +1,15 @@
-export let settingsState: Record<string, Record<string, unknown>>
+import Vue from 'vue'
+
+export let settingsState: Record<
+	string,
+	Record<string, unknown>
+> = Vue.observable({})
 
 export function setSettingsState(
 	state: Record<string, Record<string, unknown>>
 ) {
-	settingsState = state
+	console.log(state)
+	for (const key in state) {
+		Vue.set(settingsState, key, state[key])
+	}
 }

@@ -58,4 +58,13 @@ export function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'general',
+			title: 'Sidebar Right',
+			description: 'Moves the sidebar to the right side of the screen.',
+			key: 'isSidebarRight',
+			default: false,
+		})
+	)
 }

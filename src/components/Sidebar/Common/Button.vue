@@ -1,5 +1,10 @@
 <template>
-	<v-tooltip color="tooltip" :disabled="isSelected" right>
+	<v-tooltip
+		color="tooltip"
+		:disabled="isLoading"
+		:right="!isSidebarRight"
+		:left="isSidebarRight"
+	>
 		<template v-slot:activator="{ on }">
 			<div
 				class="rounded-lg pa-2 ma-2 d-flex justify-center sidebar-button"
@@ -24,6 +29,7 @@
 </template>
 
 <script>
+import { settingsState } from '@/components/Windows/Settings/SettingsState'
 import { TranslationMixin } from '@/utils/locales'
 
 export default {
@@ -41,6 +47,18 @@ export default {
 		opacity: {
 			type: Number,
 			default: 1,
+		},
+	},
+	data: () => ({
+		settingsState,
+	}),
+	computed: {
+		isSidebarRight() {
+			return (
+				this.settingsState &&
+				this.settingsState.general &&
+				this.settingsState.general.isSidebarRight
+			)
 		},
 	},
 }

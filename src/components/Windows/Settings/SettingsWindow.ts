@@ -60,19 +60,13 @@ export class SettingsWindow {
 		})
 	}
 	static loadSettings() {
-		if (settingsState !== undefined) return
-
 		return new Promise<void>(resolve => {
 			App.ready.once(async app => {
 				try {
 					setSettingsState(
-						Vue.observable(
-							await app.fileSystem.readJSON('data/settings.json')
-						)
+						await app.fileSystem.readJSON('data/settings.json')
 					)
-				} catch {
-					setSettingsState(Vue.observable({}))
-				}
+				} catch {}
 
 				resolve()
 			})
