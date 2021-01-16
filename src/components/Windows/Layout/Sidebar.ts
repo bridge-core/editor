@@ -18,6 +18,13 @@ export class SidebarCategory {
 		this.isOpen = isOpen ?? true
 	}
 
+	addItem(item: SidebarItem) {
+		this.items.push(item)
+	}
+	removeItems() {
+		this.items = []
+	}
+
 	getText() {
 		return this.text
 	}

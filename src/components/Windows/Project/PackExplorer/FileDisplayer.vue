@@ -16,7 +16,7 @@
 				:open="entry.isFolderOpen"
 			>
 				<summary
-					class="d-flex"
+					class="d-flex rounded-lg"
 					@click.prevent="onClick(entry)"
 					v-ripple
 				>
@@ -39,7 +39,7 @@
 			<div
 				v-else
 				:key="entry.uuid"
-				class="file"
+				class="file rounded-lg"
 				@click.stop="onClick(entry)"
 				v-ripple
 			>

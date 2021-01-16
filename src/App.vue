@@ -69,6 +69,10 @@ body {
 	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.4);
 }
 
+summary::-webkit-details-marker {
+	display: none;
+}
+
 /* No text selection */
 :root {
 	-moz-user-select: none;

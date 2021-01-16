@@ -1,8 +1,8 @@
 import { App } from '@/App'
 import { FileType } from '@/appCycle/FileType'
 import { PackType } from '@/appCycle/PackType'
-import { createWindow } from '@/components/Windows/create'
 import { translate } from '@/utils/locales'
+import { BaseWindow } from '../../BaseWindow'
 import {
 	ISidebarItemConfig,
 	Sidebar,
@@ -10,6 +10,7 @@ import {
 	SidebarItem,
 } from '../../Layout/Sidebar'
 import PackExplorerComponent from './PackExplorer.vue'
+import Vue from 'vue'
 
 class PackSidebarItem extends SidebarItem {
 	protected packType: string
@@ -26,20 +27,25 @@ class PackSidebarItem extends SidebarItem {
 	}
 }
 
-export class PackExplorerWindow {
+export class PackExplorerWindow extends BaseWindow {
 	protected loadedPack = false
-	protected sidebar = new Sidebar([])
-	protected window?: any
+	protected sidebarCategory = new SidebarCategory({
+		text: 'windows.packExplorer.categories',
+		items: [],
+	})
+	protected sidebar = new Sidebar([this.sidebarCategory])
 
 	constructor() {
+		super(PackExplorerComponent, false, true)
 		App.eventSystem.on('projectChanged', () => {
 			this.sidebar.resetSelected()
 			this.loadedPack = false
 		})
+		this.defineWindow()
 	}
 
 	async loadPack() {
-		this.sidebar.removeElements()
+		this.sidebarCategory.removeItems()
 		let items: SidebarItem[] = []
 
 		const dirents = await App.instance.packIndexer.readdir([])
@@ -80,22 +86,13 @@ export class PackExplorerWindow {
 			return a.text.localeCompare(b.text)
 		})
 
-		this.sidebar.addElement(
-			new SidebarCategory({
-				text: 'windows.packExplorer.categories',
-				items,
-			})
-		)
-
-		this.window.open()
+		items.forEach(item => this.sidebarCategory.addItem(item))
+		this.sidebar.setDefaultSelected()
+		super.open()
 	}
 
 	open() {
-		this.window = createWindow(PackExplorerComponent, {
-			sidebar: this.sidebar,
-		})
-
-		if (this.loadedPack) this.window.open()
+		if (this.loadedPack) super.open()
 		else
 			new Promise<void>(resolve =>
 				App.ready.once(app =>
@@ -105,8 +102,5 @@ export class PackExplorerWindow {
 					})
 				)
 			)
-	}
-	close() {
-		this.window.close()
 	}
 }

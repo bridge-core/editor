@@ -35,6 +35,7 @@
 				clipped
 				stateless
 				color="expandedSidebar"
+				style="visibility: visible; transform: translateX(0);"
 			>
 				<MacWindowControls
 					v-if="platform === 'darwin'"
@@ -97,6 +98,7 @@ export default {
 	props: {
 		isFullscreen: Boolean,
 		isVisible: Boolean,
+		shouldRender: Boolean,
 		isPersistent: Boolean,
 		sidebarWidth: {
 			type: String,

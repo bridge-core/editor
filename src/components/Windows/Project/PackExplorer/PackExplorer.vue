@@ -79,7 +79,7 @@ export default {
 	},
 	props: ['currentWindow'],
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	methods: {
 		onClose() {
