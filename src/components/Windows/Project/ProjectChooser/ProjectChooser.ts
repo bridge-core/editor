@@ -6,6 +6,7 @@ import {
 import { createWindow } from '@/components/Windows/create'
 import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
 import ProjectChooserComponent from './ProjectChooser.vue'
+import { packIndexerReady } from '@/components/PackIndexer/PackIndexer'
 
 export class ProjectChooserWindow {
 	protected sidebar = new Sidebar([])
@@ -42,6 +43,7 @@ export class ProjectChooserWindow {
 		this.window = createWindow(ProjectChooserComponent, {
 			sidebar: this.sidebar,
 			currentProject,
+			packIndexerReady,
 		})
 		this.window.open()
 	}

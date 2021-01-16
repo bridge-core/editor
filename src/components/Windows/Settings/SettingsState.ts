@@ -8,7 +8,6 @@ export let settingsState: Record<
 export function setSettingsState(
 	state: Record<string, Record<string, unknown>>
 ) {
-	console.log(state)
 	for (const key in state) {
 		Vue.set(settingsState, key, state[key])
 	}

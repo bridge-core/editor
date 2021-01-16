@@ -15,11 +15,30 @@
 				:key="`${uuid}`"
 				:displayName="sidebar.displayName"
 				:icon="sidebar.icon"
-				:opacity="sidebar.opacity"
-				:isSelected="sidebar.isSelected"
 				:isLoading="sidebar.isLoading"
 				@click="sidebar.click()"
 			/>
+		</v-list>
+
+		<v-list v-if="tasks.length > 0">
+			<v-divider class="mx-3 mb-6" />
+			<SidebarButton
+				v-for="(task, i) in tasks"
+				:key="`${i}`"
+				:displayName="task.name"
+				:icon="task.icon"
+				isLoading
+				alwaysAllowClick
+				@click="task.createWindow()"
+			>
+				<v-progress-circular
+					rotate="-90"
+					size="24"
+					width="2"
+					color="white"
+					:value="(task.currentStepCount / task.totalStepCount) * 100"
+				/>
+			</SidebarButton>
 		</v-list>
 	</v-navigation-drawer>
 </template>
@@ -28,6 +47,8 @@
 import { settingsState } from '@/components/Windows/Settings/SettingsState'
 import SidebarButton from './Button'
 import { SidebarState, getSelected } from './state'
+import { tasks } from '@/components/TaskManager/TaskManager'
+import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
 
 export default {
 	name: 'Sidebar',
@@ -41,11 +62,11 @@ export default {
 		return {
 			SidebarState,
 			settingsState,
+			tasks,
 		}
 	},
 	computed: {
 		isSidebarRight() {
-			console.log(this.settingsState)
 			return (
 				this.settingsState &&
 				this.settingsState.general &&

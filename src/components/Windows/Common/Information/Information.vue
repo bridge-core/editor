@@ -8,7 +8,7 @@
 		:width="440"
 		:height="120"
 		:hasCloseButton="false"
-		:isPersistent="typeof this.callback === 'function'"
+		:isPersistent="isPersistent"
 	>
 		<template #default>
 			<p class="mt-2">{{ t(content) }}</p>

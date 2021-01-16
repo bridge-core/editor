@@ -1,3 +1,4 @@
+import { createInformationWindow } from "../Windows/Common/CommonDefinitions"
 import type { TaskManager } from "./TaskManager"
 
 export interface ITaskDetails {
@@ -9,6 +10,7 @@ export interface ITaskDetails {
 
 export class Task {
 	public currentStepCount: number = 0
+    protected window: any
 	constructor(protected taskManager: TaskManager, protected taskDetails: ITaskDetails) {}
 
 	update(newStepCount: number, newTotalSteps?: number) {
@@ -16,7 +18,12 @@ export class Task {
 		if (newTotalSteps) this.taskDetails.totalTaskSteps = newTotalSteps
 	}
 
+    createWindow() {
+        this.window = createInformationWindow(this.name, this.description)
+    }
+
     complete() {
+        if(this.window) this.window.dispose()
         this.dispose()
     }
 

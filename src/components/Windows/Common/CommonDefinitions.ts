@@ -12,6 +12,7 @@ export function createInformationWindow(
 	const Information = createWindow(InformationComponent, {
 		windowTitle: displayName,
 		content: displayContent,
+		isPersistent: typeof callback === 'function',
 		callback: async () => {
 			await callback?.()
 			Information.status.setDone?.()

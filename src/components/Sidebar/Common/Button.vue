@@ -1,26 +1,39 @@
 <template>
 	<v-tooltip
-		color="tooltip"
-		:disabled="isLoading"
+		:color="isLoading ? 'primary' : 'tooltip'"
+		:disabled="hasClicked"
 		:right="!isSidebarRight"
 		:left="isSidebarRight"
 	>
 		<template v-slot:activator="{ on }">
 			<div
-				class="rounded-lg pa-2 ma-2 d-flex justify-center sidebar-button"
-				:class="{ loading: isLoading }"
+				class="rounded-lg ma-2 d-flex justify-center sidebar-button"
+				:class="{
+					loading: isLoading,
+					'pa-1': smallerSidebarElements,
+					'pa-2': !smallerSidebarElements,
+				}"
 				v-on="on"
-				@click="!isLoading ? $emit('click') : undefined"
-				v-ripple
+				@click="onClick"
+				v-ripple="alwaysAllowClick || !isLoading"
 			>
-				<v-icon v-if="!isLoading">{{ icon }}</v-icon>
-				<v-progress-circular
-					v-else
-					size="24"
-					width="2"
-					color="white"
-					indeterminate
-				/>
+				<v-icon
+					:style="{
+						position: isLoading ? 'absolute' : 'relative',
+						margin: isLoading ? '4px' : 0,
+					}"
+					:small="isLoading"
+				>
+					{{ icon }}
+				</v-icon>
+				<slot v-if="isLoading">
+					<v-progress-circular
+						size="24"
+						width="2"
+						color="white"
+						indeterminate
+					/>
+				</slot>
 			</div>
 		</template>
 
@@ -39,8 +52,12 @@ export default {
 		displayName: String,
 		icon: String,
 		color: String,
-		isSelected: Boolean,
+
 		isLoading: {
+			type: Boolean,
+			default: false,
+		},
+		alwaysAllowClick: {
 			type: Boolean,
 			default: false,
 		},
@@ -51,6 +68,7 @@ export default {
 	},
 	data: () => ({
 		settingsState,
+		hasClicked: false,
 	}),
 	computed: {
 		isSidebarRight() {
@@ -59,6 +77,24 @@ export default {
 				this.settingsState.general &&
 				this.settingsState.general.isSidebarRight
 			)
+		},
+		smallerSidebarElements() {
+			return (
+				this.settingsState &&
+				this.settingsState.general &&
+				this.settingsState.general.smallerSidebarElements
+			)
+		},
+	},
+	methods: {
+		onClick() {
+			if (this.alwaysAllowClick || !this.isLoading) {
+				this.$emit('click')
+
+				// Otherwise the tooltip can get stuck until the user hovers over the button again
+				this.hasClicked = true
+				this.$nextTick(() => (this.hasClicked = false))
+			}
 		},
 	},
 }

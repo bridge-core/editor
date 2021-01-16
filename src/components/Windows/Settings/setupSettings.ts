@@ -67,4 +67,13 @@ export function setupSettings(settings: SettingsWindow) {
 			default: false,
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'general',
+			title: 'Shrink Sidebar Elements',
+			description: "Shrink the size of bridge.'s sidebar elements.",
+			key: 'smallerSidebarElements',
+			default: false,
+		})
+	)
 }

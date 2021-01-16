@@ -51,6 +51,10 @@
 			<v-btn
 				color="primary"
 				:disabled="currentProject === selectedSidebar"
+				:loading="
+					currentProject !== selectedSidebar &&
+						!packIndexerReady.isReady
+				"
 				@click="onSelectProject"
 			>
 				Select
