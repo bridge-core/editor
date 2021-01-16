@@ -16,15 +16,12 @@
 			/>
 			<!--  -->
 		</v-main>
-
-		<!-- <Footer /> -->
 	</v-app>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import Sidebar from './components/Sidebar/Common/Sidebar.vue'
-import Footer from './components/Footer/Main.vue'
+import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import TabBar from './components/TabSystem/TabBar.vue'
@@ -37,7 +34,6 @@ export default Vue.extend({
 
 	components: {
 		Sidebar,
-		Footer,
 		Toolbar,
 		WindowRenderer,
 		TabBar,

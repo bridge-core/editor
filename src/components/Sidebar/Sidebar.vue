@@ -20,6 +20,18 @@
 			/>
 		</v-list>
 
+		<v-list v-if="Object.keys(NotificationStore).length > 0">
+			<v-divider class="mx-3 mb-6" />
+			<SidebarButton
+				v-for="(notification, i) in NotificationStore"
+				:key="`${i}`"
+				:displayName="notification.message"
+				:icon="notification.icon"
+				:color="notification.color"
+				@click="notification.onClick()"
+			/>
+		</v-list>
+
 		<v-list v-if="tasks.length > 0">
 			<v-divider class="mx-3 mb-6" />
 			<SidebarButton
@@ -27,6 +39,7 @@
 				:key="`${i}`"
 				:displayName="task.name"
 				:icon="task.icon"
+				color="primary"
 				isLoading
 				alwaysAllowClick
 				@click="task.createWindow()"
@@ -49,6 +62,7 @@ import SidebarButton from './Button'
 import { SidebarState, getSelected } from './state'
 import { tasks } from '@/components/TaskManager/TaskManager'
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
+import { NotificationStore } from '@/components/Notifications/state'
 
 export default {
 	name: 'Sidebar',
@@ -63,6 +77,7 @@ export default {
 			SidebarState,
 			settingsState,
 			tasks,
+			NotificationStore,
 		}
 	},
 	computed: {

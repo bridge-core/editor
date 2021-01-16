@@ -1,4 +1,4 @@
-import { createNotification } from '@/components/Footer/create'
+import { createNotification } from '@/components/Notifications/create'
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
 import type { IDisposable } from '@/types/disposable'
 

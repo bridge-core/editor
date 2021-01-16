@@ -1,6 +1,6 @@
 <template>
 	<v-tooltip
-		:color="isLoading ? 'primary' : 'tooltip'"
+		:color="color ? color : 'tooltip'"
 		:disabled="hasClicked"
 		:right="!isSidebarRight"
 		:left="isSidebarRight"
@@ -8,6 +8,9 @@
 		<template v-slot:activator="{ on }">
 			<div
 				class="rounded-lg ma-2 d-flex justify-center sidebar-button"
+				:style="{
+					'background-color': computedColor,
+				}"
 				:class="{
 					loading: isLoading,
 					'pa-1': smallerSidebarElements,
@@ -85,6 +88,15 @@ export default {
 				this.settingsState.general.smallerSidebarElements
 			)
 		},
+		computedColor() {
+			if (this.color)
+				return this.color.startsWith('#')
+					? this.color
+					: `var(--v-${this.color}-base)`
+			return this.isLoading
+				? `var(--v-primary-base)`
+				: `var(--v-sidebarSelection-base)`
+		},
 	},
 	methods: {
 		onClick() {
@@ -103,10 +115,6 @@ export default {
 <style scoped>
 .sidebar-button {
 	cursor: pointer;
-	background-color: var(--v-sidebarSelection-base);
 	transition: all 0.1s ease-in-out;
-}
-.sidebar-button.loading {
-	background-color: var(--v-primary-base);
 }
 </style>

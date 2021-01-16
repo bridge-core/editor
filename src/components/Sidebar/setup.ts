@@ -1,7 +1,5 @@
 import { App } from '@/App'
-import { createSidebar } from './Common/create'
-import Documentation from './Content/Documentation.vue'
-import FileExplorer from './Content/Explorer/Main.vue'
+import { createSidebar } from './create'
 import Extensions from './Content/Extensions/Main.vue'
 
 export function setupSidebar() {
