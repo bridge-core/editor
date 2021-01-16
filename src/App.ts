@@ -117,9 +117,7 @@ export class App {
 				message: 'Getting Started',
 				textColor: 'white',
 				onClick: () => {
-					window.open(
-						'https://bridge-core.github.io/editor-docs/getting-started/'
-					)
+					App.createNativeWindow('https://bridge-core.github.io/editor-docs/getting-started/')
 					gettingStarted.dispose()
 				},
 			})
