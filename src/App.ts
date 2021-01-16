@@ -111,13 +111,15 @@ export class App {
 			})
 		}
 
-		if (process.env.NODE_ENV !== 'development') {
+		if (process.env.NODE_ENV === 'development') {
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
 				message: 'Getting Started',
 				textColor: 'white',
 				onClick: () => {
-					App.createNativeWindow('https://bridge-core.github.io/editor-docs/getting-started/')
+					App.createNativeWindow(
+						'https://bridge-core.github.io/editor-docs/getting-started/'
+					)
 					gettingStarted.dispose()
 				},
 			})

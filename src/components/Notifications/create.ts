@@ -1,7 +1,7 @@
 import { NotificationStore } from './state'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
-import type { IDisposable } from '@/types/disposable'
+import { IDisposable } from '@/types/disposable'
 
 export interface Notification {
 	icon?: string
@@ -38,10 +38,18 @@ export function createNotification(config: Notification): IDisposable {
 				Vue.delete(NotificationStore, notificationUUID)
 		},
 	})
+	// @ts-expect-error
+	if (typeof navigator.setAppBadge === 'function')
+		// @ts-expect-error
+		navigator.setAppBadge(Object.keys(NotificationStore).length)
 
 	return {
 		dispose: () => {
 			Vue.delete(NotificationStore, notificationUUID)
+			// @ts-expect-error
+			if (typeof navigator.setAppBadge === 'function')
+				// @ts-expect-error
+				navigator.setAppBadge(Object.keys(NotificationStore).length)
 		},
 	}
 }
@@ -50,7 +58,9 @@ export function createNotification(config: Notification): IDisposable {
  * Creates a new timed notification
  * @param config
  */
-export function createTimedNotification(config: TimedNotification): IDisposable {
+export function createTimedNotification(
+	config: TimedNotification
+): IDisposable {
 	const notification = createNotification(config)
 
 	setTimeout(() => {
@@ -64,6 +74,9 @@ export function createTimedNotification(config: TimedNotification): IDisposable 
 }
 
 export function clearAllNotifications() {
+	// @ts-expect-error
+	if (typeof navigator.clearAppBadge === 'function') navigator.clearAppBadge()
+
 	for (const [key] of Object.entries(NotificationStore)) {
 		Vue.delete(NotificationStore, key)
 	}
