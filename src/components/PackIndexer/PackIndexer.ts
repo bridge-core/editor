@@ -17,6 +17,7 @@ export class PackIndexer extends Signal<void> {
 	protected service!: Comlink.Remote<PackIndexerService>
 	start(projectName: string, forceRefreshCache = false) {
 		console.time('[TASK] Indexing Packs (Total)')
+		this.resetSignal()
 		packIndexerReady.isReady = false
 		App.ready.once(async app => {
 			const task = app.taskManager.create({

@@ -90,13 +90,21 @@ export class PackExplorerWindow {
 		this.window.open()
 	}
 
-	async open() {
+	open() {
 		this.window = createWindow(PackExplorerComponent, {
 			sidebar: this.sidebar,
 		})
 
 		if (this.loadedPack) this.window.open()
-		else await this.loadPack()
+		else
+			new Promise<void>(resolve =>
+				App.ready.once(app =>
+					app.packIndexer.on(async () => {
+						await this.loadPack()
+						resolve()
+					})
+				)
+			)
 	}
 	close() {
 		this.window.close()

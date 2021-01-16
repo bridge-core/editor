@@ -30,7 +30,10 @@
 				@closeWindow="onClose"
 			/>
 
-			<div class="body-1" v-else>
+			<div
+				class="body-1"
+				v-else-if="sidebar.currentElement.kind === 'file'"
+			>
 				<strong>File:</strong> {{ selectedSidebar }}
 				<div class="mt-8 d-flex">
 					<v-spacer />

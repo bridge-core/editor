@@ -22,18 +22,18 @@ export function setupSidebar() {
 		},
 	})
 
-	createSidebar({
-		id: 'vanillaPacks',
-		displayName: 'sidebar.vanillaPacks.name',
-		icon: 'mdi-minecraft',
-		component: 'VanillaPacks',
-	})
-	createSidebar({
-		id: 'debugLog',
-		displayName: 'sidebar.debugLog.name',
-		icon: 'mdi-console',
-		component: 'DebugLog',
-	})
+	// createSidebar({
+	// 	id: 'vanillaPacks',
+	// 	displayName: 'sidebar.vanillaPacks.name',
+	// 	icon: 'mdi-minecraft',
+	// 	component: 'VanillaPacks',
+	// })
+	// createSidebar({
+	// 	id: 'debugLog',
+	// 	displayName: 'sidebar.debugLog.name',
+	// 	icon: 'mdi-console',
+	// 	component: 'DebugLog',
+	// })
 	createSidebar({
 		id: 'extensions',
 		displayName: 'sidebar.extensions.name',

@@ -12,7 +12,7 @@ import { TaskManager } from './components/TaskManager/TaskManager'
 import { setupDefaultMenus } from './components/Toolbar/setupDefaults'
 import { getLanguages, selectLanguage } from './utils/locales'
 import { Discord as DiscordWindow } from '@/components/Windows/Discord/definition'
-import { createNotification } from './components/Footer/create'
+import { createNotification } from './components/Notifications/create'
 
 import '@/appCycle/Errors'
 import '@/appCycle/ResizeWatcher'
