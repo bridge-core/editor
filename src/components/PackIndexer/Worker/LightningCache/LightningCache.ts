@@ -1,5 +1,5 @@
 import { FileType } from '@/appCycle/FileType'
-import { execute } from '@/components/Plugins/Scripts/execute'
+import { run } from '@/components/Plugins/Scripts/run'
 import { hashString } from '@/utils/hash'
 import { walkObject } from '@/utils/walkObject'
 import json5 from 'json5'
@@ -159,7 +159,7 @@ export class LightningCache {
 			if (filter) readyData = readyData.filter(d => !filter.includes(d))
 			if (mapFunc)
 				readyData = readyData
-					.map(value => execute(mapFunc, { value }))
+					.map(value => run(mapFunc, { value }))
 					.filter(value => value !== undefined)
 
 			if (!collectedData[key]) collectedData[key] = readyData

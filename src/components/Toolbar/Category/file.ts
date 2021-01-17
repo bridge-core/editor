@@ -1,5 +1,5 @@
 import { mainTabSystem } from '@/components/TabSystem/Main'
-import { AppMenu } from '../create'
+import { IAppMenu } from '../create'
 // import CreateFileWindow from '../../../../windows/CreateFile'
 // import Store from '../../../../store/index'
 // import { ipcRenderer } from 'electron'
@@ -14,7 +14,7 @@ import { AppMenu } from '../create'
 import { clearAllNotifications } from '../../Notifications/create'
 import { App } from '@/App'
 
-export const FileMenu: AppMenu = {
+export const FileMenu: IAppMenu = {
 	displayName: 'toolbar.file.name',
 	displayIcon: 'mdi-file-outline',
 	elements: [

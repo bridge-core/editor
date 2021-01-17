@@ -111,7 +111,7 @@ export class App {
 			})
 		}
 
-		if (process.env.NODE_ENV === 'development') {
+		if (process.env.NODE_ENV !== 'development') {
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
 				message: 'Getting Started',

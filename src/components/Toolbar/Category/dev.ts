@@ -1,4 +1,4 @@
-import { AppMenu } from '../create'
+import { IAppMenu } from '../create'
 // import { ipcRenderer } from 'electron'
 // import Provider from '../../../autoCompletions/Provider'
 // import { trigger } from '../../../AppCycle/EventSystem'
@@ -8,7 +8,7 @@ import { AppMenu } from '../create'
 // import LoadingWindow from '../../../../windows/LoadingWindow'
 // import { loadDependency } from '../../../AppCycle/fetchDeps'
 
-export const DevMenu: AppMenu = {
+export const DevMenu: IAppMenu = {
 	displayName: 'toolbar.dev.name',
 	displayIcon: 'mdi-console-line',
 	elements: [

@@ -14,7 +14,7 @@ const TaskService = Comlink.wrap<typeof PackIndexerService>(
 export const packIndexerReady = Vue.observable({ isReady: false })
 
 export class PackIndexer extends Signal<void> {
-	protected service!: Comlink.Remote<PackIndexerService>
+	protected _service!: Comlink.Remote<PackIndexerService>
 	start(projectName: string, forceRefreshCache = false) {
 		console.time('[TASK] Indexing Packs (Total)')
 		this.resetSignal()
@@ -28,7 +28,7 @@ export class PackIndexer extends Signal<void> {
 			})
 
 			// Instaniate the worker TaskService
-			this.service = await new TaskService(
+			this._service = await new TaskService(
 				await app.fileSystem.getDirectoryHandle(
 					`projects/${projectName}`
 				),
@@ -41,7 +41,7 @@ export class PackIndexer extends Signal<void> {
 				}
 			)
 			// Listen to task progress and update UI
-			this.service.on(
+			this._service.on(
 				Comlink.proxy(([current, total]) => {
 					if (current === total) task.complete()
 					task.update(current, total)
@@ -59,5 +59,9 @@ export class PackIndexer extends Signal<void> {
 
 	readdir(path: string[], ...args: any[]) {
 		return this.service.readdir(path)
+	}
+
+	get service() {
+		return this._service
 	}
 }

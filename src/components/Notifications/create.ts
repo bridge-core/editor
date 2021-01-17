@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 import { IDisposable } from '@/types/disposable'
 
-export interface Notification {
+export interface INotification {
 	icon?: string
 	message?: string
 	color?: string
@@ -14,17 +14,11 @@ export interface Notification {
 	onMiddleClick?: () => void
 }
 
-export interface TimedNotification extends Notification {
-	expiration: number
-
-	onExpired?: () => void
-}
-
 /**
  * Creates a new notification
  * @param config
  */
-export function createNotification(config: Notification): IDisposable {
+export function createNotification(config: INotification): IDisposable {
 	if (!config.onClick)
 		config.onClick = () => {
 			//
@@ -51,25 +45,6 @@ export function createNotification(config: Notification): IDisposable {
 				// @ts-expect-error
 				navigator.setAppBadge(Object.keys(NotificationStore).length)
 		},
-	}
-}
-
-/**
- * Creates a new timed notification
- * @param config
- */
-export function createTimedNotification(
-	config: TimedNotification
-): IDisposable {
-	const notification = createNotification(config)
-
-	setTimeout(() => {
-		notification.dispose()
-		if (config.onExpired) config.onExpired()
-	}, config.expiration - Date.now())
-
-	return {
-		...notification,
 	}
 }
 

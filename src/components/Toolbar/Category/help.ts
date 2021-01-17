@@ -1,9 +1,9 @@
-import { AppMenu } from '../create'
+import { IAppMenu } from '../create'
 import { App } from '@/App'
 // import AboutWindow from '../../../../windows/About'
 // import { shell } from 'electron'
 
-export const HelpMenu: AppMenu = {
+export const HelpMenu: IAppMenu = {
 	displayName: 'toolbar.help.name',
 	displayIcon: 'mdi-help',
 	elements: [
@@ -36,19 +36,28 @@ export const HelpMenu: AppMenu = {
 			displayName: 'toolbar.help.pluginAPI',
 			displayIcon: 'mdi-puzzle',
 			onClick: () =>
-				App.createNativeWindow('https://bridge-core.github.io/plugin-docs/', '_blank')
+				App.createNativeWindow(
+					'https://bridge-core.github.io/plugin-docs/',
+					'_blank'
+				),
 		},
 		{
 			displayName: 'toolbar.help.gettingStarted',
 			displayIcon: 'mdi-help-circle-outline',
 			onClick: () =>
-				App.createNativeWindow('https://bridge-core.github.io/editor-docs/getting-started/', '_blank')
+				App.createNativeWindow(
+					'https://bridge-core.github.io/editor-docs/getting-started/',
+					'_blank'
+				),
 		},
 		{
 			displayName: 'toolbar.help.faq',
 			displayIcon: 'mdi-frequently-asked-questions',
 			onClick: () =>
-				App.createNativeWindow('https://bridge-core.github.io/editor-docs/faq/', '_blank')
+				App.createNativeWindow(
+					'https://bridge-core.github.io/editor-docs/faq/',
+					'_blank'
+				),
 		},
 	],
 }

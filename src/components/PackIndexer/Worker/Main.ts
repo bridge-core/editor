@@ -84,6 +84,34 @@ export class PackIndexerService extends TaskService {
 		if (path.length === 1) return getCategoryDirectory(path[0])
 		return fileStore[path[0]][path[1]].toDirectory()
 	}
+
+	find(
+		findFileType: string,
+		whereCacheKey: string,
+		matchesOneOf: string[],
+		fetchAll = false
+	) {
+		return this.lightningStore.find(
+			findFileType,
+			whereCacheKey,
+			matchesOneOf,
+			fetchAll
+		)
+	}
+
+	findMultiple(
+		findFileTypes: string[],
+		whereCacheKey: string,
+		matchesOneOf: string[],
+		fetchAll = false
+	) {
+		return this.lightningStore.findMultiple(
+			findFileTypes,
+			whereCacheKey,
+			matchesOneOf,
+			fetchAll
+		)
+	}
 }
 
 async function loadPack(pack: string, fileSystem: FileSystem) {

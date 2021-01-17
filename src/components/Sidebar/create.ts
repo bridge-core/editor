@@ -24,7 +24,7 @@ export interface SidebarInstance extends IDisposable, ISidebar {
  * Creates a new sidebar
  * @param config
  */
-export function createSidebar(config: ISidebar): SidebarInstance {
+export function createSidebar(config: ISidebar) {
 	return new SidebarElement(config)
 }
 

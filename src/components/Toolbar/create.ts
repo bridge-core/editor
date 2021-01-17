@@ -4,17 +4,17 @@ import Vue from 'vue'
 import type { IDisposable } from '@/types/disposable'
 import { addKeyBinding, KeyBinding } from '@/appCycle/keyBindings'
 
-export interface AppMenu {
+export interface IAppMenu {
 	displayName: string
 	displayIcon?: string
 	onClick?: () => void
-	elements?: AppMenuElement[]
+	elements?: IAppMenuElement[]
 }
-export interface AppMenuElement {
+export interface IAppMenuElement {
 	isHidden?: boolean
 	displayName: string
 	displayIcon?: string
-	elements?: (() => AppMenuElement[]) | AppMenuElement[]
+	elements?: (() => IAppMenuElement[]) | IAppMenuElement[]
 	keyBinding?: KeyBinding
 	onClick?: () => void
 }
@@ -23,7 +23,7 @@ export interface AppMenuElement {
  * Adds new entry to the app menu
  * @param config
  */
-export function createAppMenu(config: AppMenu, addMenu = true) {
+export function createAppMenu(config: IAppMenu, addMenu = true) {
 	const appMenuUUID = uuid()
 	let disposables: IDisposable[] = []
 
@@ -45,7 +45,7 @@ export function createAppMenu(config: AppMenu, addMenu = true) {
 	}
 }
 
-function registerKeyBindings(elements: AppMenuElement[]) {
+function registerKeyBindings(elements: IAppMenuElement[]) {
 	let disposables: IDisposable[] = []
 
 	elements.forEach(({ keyBinding, onClick, elements }) => {

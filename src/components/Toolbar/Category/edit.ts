@@ -1,9 +1,9 @@
-import { AppMenu } from '../create'
+import { IAppMenu } from '../create'
 // import TabSystem from '../../../TabSystem'
 // import EventBus from '../../../EventBus'
 // import NodeShortcuts from '../../../editor/NodeShortcuts'
 
-export const EditMenu: AppMenu = {
+export const EditMenu: IAppMenu = {
 	displayName: 'toolbar.edit.name',
 	displayIcon: 'mdi-pen',
 	elements: [

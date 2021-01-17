@@ -1,9 +1,12 @@
-const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor
+import { runAsync } from './run'
+import { createEnv } from './require'
+import { TUIStore } from '../UI/store'
+import { IDisposable } from '@/types/disposable'
 
-export async function asyncExecute(script: string, env: Record<string, any>) {
-	return await new AsyncFunction('Bridge', script)(env)
-}
-
-export function execute(script: string, env: Record<string, any>) {
-	return new Function('Bridge', script)(env)
+export async function executeScript(
+	code: string,
+	uiStore: TUIStore,
+	disposables: IDisposable[]
+) {
+	return await runAsync(code, { require: createEnv(disposables, uiStore) })
 }

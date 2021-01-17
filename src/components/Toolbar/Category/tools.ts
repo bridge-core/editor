@@ -1,10 +1,10 @@
 import { App } from '@/App'
-import { AppMenu } from '../create'
+import { IAppMenu } from '../create'
 // import { GoToFile } from '../../Windows/Tools/GoToFile/definition'
 // import SnippetWindow from '../../../../windows/Snippets'
 // import PresetWindow from '../../../../windows/PresetWindow'
 
-export const ToolMenu: AppMenu = {
+export const ToolMenu: IAppMenu = {
 	displayName: 'toolbar.tools.name',
 	displayIcon: 'mdi-wrench',
 	elements: [
