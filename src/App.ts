@@ -21,6 +21,7 @@ import { selectLastProject } from './components/Project/Loader'
 import { Windows } from './components/Windows/Windows'
 import { SettingsWindow } from './components/Windows/Settings/SettingsWindow'
 import Vue from 'vue'
+import { settingsState } from './components/Windows/Settings/SettingsState'
 
 export class App {
 	public static readonly eventSystem = new EventManager<any>([
@@ -66,7 +67,9 @@ export class App {
 	}
 
 	static createNativeWindow(url: string, id?: string) {
-		window.open(url, id, 'toolbar=no,menubar=no,status=no')
+		if (settingsState?.general?.openLinksInBrowser)
+			return window.open(url, '_blank')
+		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
 	}
 
 	async startUp() {

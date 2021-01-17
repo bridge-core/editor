@@ -76,4 +76,14 @@ export function setupSettings(settings: SettingsWindow) {
 			default: false,
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'general',
+			title: 'Open Links in Default Browser',
+			description:
+				'Open links inside of your default browser instead of a native app window.',
+			key: 'openLinksInBrowser',
+			default: true,
+		})
+	)
 }
