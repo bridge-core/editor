@@ -1,10 +1,10 @@
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 import { basename, extname } from 'path'
 
 export type TUIStore = ReturnType<typeof createUIStore>
 export function createUIStore() {
 	let UI: any = {}
-	let storeUUID = uuid()
+	let storeUUID: string | null = uuid()
 
 	return {
 		get UI() {
@@ -14,13 +14,13 @@ export function createUIStore() {
 			let current = UI
 
 			while (path.length > 1) {
-				const key = path.shift()
+				const key = <string>path.shift()
 				if (current[key] === undefined) current[key] = {}
 
 				current = current[key]
 			}
 
-			const key = path.shift()
+			const key = <string>path.shift()
 			current[basename(key, extname(key))] = component
 		},
 		dispose() {

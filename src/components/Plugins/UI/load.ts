@@ -1,5 +1,4 @@
-import { promises as fs, Dirent } from 'fs'
-import { join, extname, basename, relative } from 'path'
+import { extname, basename, relative } from 'path'
 import { createErrorNotification } from '@/AppCycle/Errors'
 import { TUIStore } from './store'
 import { IDisposable } from '@/types/disposable'
@@ -7,30 +6,34 @@ import { executeScript } from '../Scripts/execute'
 import { createStyleSheet } from '../Styles/createStyle'
 import { parseComponent } from 'vue-template-compiler'
 import Vue from 'vue'
+import { FileSystem } from '@/components/FileSystem/Main'
 
 export async function loadUIComponents(
+	fileSystem: FileSystem,
 	pluginPath: string,
 	uiStore: TUIStore,
 	disposables: IDisposable[],
 	basePath = pluginPath
 ) {
-	let dirents: Dirent[] = []
+	let dirents: (FileSystemDirectoryHandle | FileSystemFileHandle)[] = []
 	try {
-		dirents = await fs.readdir(pluginPath, { withFileTypes: true })
+		dirents = await fileSystem.readdir(pluginPath, { withFileTypes: true })
 	} catch {}
 
 	await Promise.all(
 		dirents.map(dirent => {
-			if (dirent.isFile())
+			if (dirent.kind === 'directory')
 				return loadUIComponent(
-					join(pluginPath, dirent.name),
+					fileSystem,
+					`${pluginPath}/${dirent.name}`,
 					basePath,
 					uiStore,
 					disposables
 				)
 			else
 				return loadUIComponents(
-					join(pluginPath, dirent.name),
+					fileSystem,
+					`${pluginPath}/${dirent.name}`,
 					uiStore,
 					disposables,
 					pluginPath
@@ -40,6 +43,7 @@ export async function loadUIComponents(
 }
 
 export async function loadUIComponent(
+	fileSystem: FileSystem,
 	componentPath: string,
 	basePath: string,
 	uiStore: TUIStore,
@@ -59,7 +63,7 @@ export async function loadUIComponent(
 	const promise = new Promise(async (resolve, reject) => {
 		//@ts-expect-error "errors" is not defined in .d.ts file
 		const { template, script, styles, errors } = parseComponent(
-			(await fs.readFile(componentPath)).toString('utf-8')
+			await (await fileSystem.readFile(componentPath)).text()
 		)
 
 		if (errors.length > 0) {
