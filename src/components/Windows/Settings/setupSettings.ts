@@ -83,7 +83,7 @@ export function setupSettings(settings: SettingsWindow) {
 			description:
 				'Open links inside of your default browser instead of a native app window.',
 			key: 'openLinksInBrowser',
-			default: true,
+			default: false,
 		})
 	)
 }
