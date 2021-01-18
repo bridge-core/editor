@@ -26,7 +26,7 @@ export function getProjects() {
 					path: projectName,
 					projectName,
 					imgSrc: await loadAsDataURL(
-						`projects/${projectName}/BP/pack_icon.png`
+						`projects/${projectName}/bridge/packIcon.png`
 					),
 					contains: <IPackType[]>(
 						(

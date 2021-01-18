@@ -3,14 +3,23 @@
 		v-if="shouldRender"
 		windowTitle="windows.createProject.title"
 		:isVisible="isVisible"
+		:hasMaximizeButton="false"
 		:isFullscreen="false"
-		:isPersistent="false"
+		:isPersistent="isCreatingProject"
 		:percentageWidth="80"
 		:percentageHeight="80"
 		@closeWindow="close"
 	>
 		<template #default>
-			<v-file-input accept="image/png" v-model="projectIcon" />
+			<v-file-input
+				accept="image/png"
+				outlined
+				dense
+				:prepend-icon="null"
+				prepend-inner-icon="mdi-image-outline"
+				v-model="projectIcon"
+				:label="t('windows.createProject.packIcon')"
+			/>
 			<v-text-field
 				v-model="projectName"
 				:label="t('windows.createProject.projectName')"
@@ -21,7 +30,8 @@
 			<v-spacer />
 			<v-btn
 				color="primary"
-				:disabled="!hasRequiredData"
+				:disabled="!currentWindow.hasRequiredData"
+				:loading="isCreatingProject"
 				@click="createProject"
 			>
 				<v-icon class="pr-2">mdi-plus</v-icon>
@@ -50,11 +60,12 @@ export default {
 		close() {
 			this.currentWindow.close()
 		},
-		createProject() {
-			console.log(this.projectIcon)
+		async createProject() {
+			this.isCreatingProject = true
+			await this.currentWindow.createProject()
+			this.isCreatingProject = false
+			this.currentWindow.close()
 		},
 	},
 }
 </script>
-
-<style></style>
