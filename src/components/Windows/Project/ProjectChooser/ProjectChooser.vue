@@ -10,6 +10,10 @@
 		:sidebarItems="sidebar.elements"
 		v-model="sidebar.selected"
 	>
+		<template #toolbar>
+			<ToolbarButton @click="createProject" icon="mdi-plus" />
+		</template>
+
 		<template #sidebar>
 			<v-text-field
 				class="pt-2"
@@ -65,6 +69,7 @@
 
 <script>
 import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
+import ToolbarButton from '@/components/Windows/Layout/Toolbar/Button.vue'
 
 import { App } from '@/App'
 import { FileType } from '@/appCycle/FileType'
@@ -77,6 +82,7 @@ export default {
 	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,
+		ToolbarButton,
 	},
 	props: ['currentWindow'],
 	data() {
@@ -89,6 +95,10 @@ export default {
 		onSelectProject() {
 			selectProject(this.sidebar.selected)
 			this.currentWindow.close()
+		},
+		createProject() {
+			this.currentWindow.close()
+			App.instance.windows.createProject.open()
 		},
 	},
 }
