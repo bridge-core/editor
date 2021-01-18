@@ -141,7 +141,23 @@ export default {
 	},
 	data: () => ({
 		platform: platform(),
+		globalWindowWidth: window.innerWidth,
+		globalWindowHeight: window.innerHeight,
 	}),
+	mounted() {
+		window.addEventListener('resize', this.updateWindowSize)
+	},
+	destroyed() {
+		window.removeEventListener('resize', this.updateWindowSize)
+	},
+
+	methods: {
+		updateWindowSize() {
+			this.globalWindowWidth = window.innerWidth
+			this.globalWindowHeight = window.innerHeight
+		},
+	},
+
 	computed: {
 		isDarkMode() {
 			return this.$vuetify.theme.dark
@@ -150,22 +166,16 @@ export default {
 			if (this.percentageWidth == undefined) {
 				return this.width
 			} else {
-				return (window.innerWidth / 100) * this.percentageWidth
+				return (this.globalWindowWidth / 100) * this.percentageWidth
 			}
 		},
 		windowHeight() {
 			if (this.percentageHeight == undefined) {
 				return this.height
 			} else {
-				return (window.innerHeight / 100) * this.percentageHeight - 150
-			}
-		},
-		maxWindowHeight() {
-			if (this.maxPercentageHeight == undefined) {
-				return this.maxHeight
-			} else {
 				return (
-					(window.innerHeight / 100) * this.maxPercentageHeight - 150
+					(this.globalWindowHeight / 100) * this.percentageHeight -
+					150
 				)
 			}
 		},
@@ -173,7 +183,17 @@ export default {
 			if (this.maxPercentageWidth == undefined) {
 				return this.maxWidth
 			} else {
-				return (window.innerWidth / 100) * this.maxPercentageWidth
+				return (this.globalWindowWidth / 100) * this.maxPercentageWidth
+			}
+		},
+		maxWindowHeight() {
+			if (this.maxPercentageHeight == undefined) {
+				return this.maxHeight
+			} else {
+				return (
+					(this.globalWindowHeight / 100) * this.maxPercentageHeight -
+					150
+				)
 			}
 		},
 	},
