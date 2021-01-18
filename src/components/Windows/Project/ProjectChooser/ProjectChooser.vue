@@ -53,6 +53,13 @@
 		<template #actions="{ selectedSidebar }">
 			<v-spacer />
 			<v-btn
+				color="error"
+				:disabled="currentProject === selectedSidebar"
+				@click="onDeleteProject(selectedSidebar)"
+			>
+				Delete
+			</v-btn>
+			<v-btn
 				color="primary"
 				:disabled="currentProject === selectedSidebar"
 				:loading="
@@ -76,6 +83,7 @@ import { FileType } from '@/appCycle/FileType'
 import { PackType } from '@/appCycle/PackType'
 import { TranslationMixin } from '@/utils/locales'
 import { selectProject } from '@/components/Project/Loader'
+import { createConfirmWindow } from '../../Common/CommonDefinitions'
 
 export default {
 	name: 'PackExplorerWindow',
@@ -99,6 +107,19 @@ export default {
 		createProject() {
 			this.currentWindow.close()
 			App.instance.windows.createProject.open()
+		},
+		onDeleteProject(projectName) {
+			createConfirmWindow(
+				'windows.deleteProject.description',
+				'windows.deleteProject.confirm',
+				'windows.deleteProject.cancel',
+				() => {
+					App.ready.once(async app => {
+						await app.fileSystem.unlink(`projects/${projectName}`)
+						await this.window.loadProjects()
+					})
+				}
+			)
 		},
 	},
 }

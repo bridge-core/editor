@@ -44,6 +44,7 @@ export class ProjectChooserWindow {
 			sidebar: this.sidebar,
 			currentProject,
 			packIndexerReady,
+			window: this,
 		})
 		this.window.open()
 	}

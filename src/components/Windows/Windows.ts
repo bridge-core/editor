@@ -1,4 +1,4 @@
-import { CreateProjectWindow } from './Project/Create/CreateProject'
+import { CreateProjectWindow } from './Project/CreateProject/CreateProject'
 import { PackExplorerWindow } from './Project/PackExplorer/PackExplorer'
 import { ProjectChooserWindow } from './Project/ProjectChooser/ProjectChooser'
 import { SettingsWindow } from './Settings/SettingsWindow'
