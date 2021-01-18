@@ -1,5 +1,5 @@
 import { extname, basename, relative } from 'path'
-import { createErrorNotification } from '@/AppCycle/Errors'
+import { createErrorNotification } from '@/components/Notifications/Errors'
 import { TUIStore } from './store'
 import { IDisposable } from '@/types/disposable'
 import { executeScript } from '../Scripts/execute'

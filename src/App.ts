@@ -14,7 +14,7 @@ import { getLanguages, selectLanguage } from './utils/locales'
 import { Discord as DiscordWindow } from '@/components/Windows/Discord/definition'
 import { createNotification } from './components/Notifications/create'
 
-import '@/appCycle/Errors'
+import '@/components/Notifications/Errors'
 import '@/appCycle/ResizeWatcher'
 import { PackType } from './appCycle/PackType'
 import { selectLastProject } from './components/Project/Loader'
@@ -73,6 +73,11 @@ export class App {
 	}
 
 	async startUp() {
+		// @ts-expect-error
+		if (navigator.clearAppBadge)
+			// @ts-expect-error
+			navigator.clearAppBadge()
+
 		setupSidebar()
 		setupKeyBindings()
 		setupDefaultMenus()
@@ -101,7 +106,7 @@ export class App {
 		// 	selectLanguage('en')
 		// }
 
-		if (process.env.NODE_ENV !== 'development') {
+		if (process.env.NODE_ENV === 'development') {
 			const discordMsg = createNotification({
 				icon: 'mdi-discord',
 				message: 'Discord Server',
@@ -114,7 +119,7 @@ export class App {
 			})
 		}
 
-		if (process.env.NODE_ENV !== 'development') {
+		if (process.env.NODE_ENV === 'development') {
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
 				message: 'Getting Started',

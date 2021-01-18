@@ -3,7 +3,7 @@ import {
 	createNotification,
 	INotification,
 } from '@/components/Notifications/create'
-import { createErrorNotification } from '@/AppCycle/Errors'
+import { createErrorNotification } from '@/components/Notifications/Errors'
 
 export const NotificationModule = ({ disposables }: IModuleConfig) => ({
 	create(config: INotification) {
