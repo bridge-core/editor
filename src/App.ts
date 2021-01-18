@@ -34,13 +34,17 @@ export class App {
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
 	public readonly packIndexer = new PackIndexer()
-	public readonly windows = new Windows()
+	protected _windows!: Windows
+	get windows() {
+		return this._windows
+	}
 
 	static async main(appComponent: Vue) {
 		this._instance = new App(appComponent)
 		await this._instance.startUp()
 		this.ready.dispatch(this._instance)
 		await SettingsWindow.loadSettings()
+		this._instance._windows = new Windows()
 
 		await selectLastProject(this._instance)
 	}
