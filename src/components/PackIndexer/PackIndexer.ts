@@ -15,6 +15,7 @@ export const packIndexerReady = Vue.observable({ isReady: false })
 
 export class PackIndexer extends Signal<void> {
 	protected _service!: Comlink.Remote<PackIndexerService>
+
 	start(projectName: string, forceRefreshCache = false) {
 		console.time('[TASK] Indexing Packs (Total)')
 		this.resetSignal()

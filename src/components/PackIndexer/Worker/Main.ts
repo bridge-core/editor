@@ -112,6 +112,10 @@ export class PackIndexerService extends TaskService {
 			fetchAll
 		)
 	}
+
+	getAllFiles() {
+		return this.lightningStore.allFiles()
+	}
 }
 
 async function loadPack(pack: string, fileSystem: FileSystem) {

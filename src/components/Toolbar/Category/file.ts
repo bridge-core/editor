@@ -36,16 +36,27 @@ export const FileMenu: IAppMenu = {
 			},
 		},
 		{
+			displayName: 'toolbar.file.newFile',
+			displayIcon: 'mdi-download',
+			keyBinding: {
+				key: 'o',
+				ctrlKey: true,
+			},
+			onClick: () => {
+				App.ready.once(app => app.windows.filePicker.open())
+			},
+		},
+		{
 			displayName: 'toolbar.file.import.name',
 			displayIcon: 'mdi-import',
 			elements: () => [
 				{
 					displayName: 'toolbar.file.import.openFile',
 					displayIcon: 'mdi-file-upload-outline',
-					keyBinding: {
-						key: 'o',
-						ctrlKey: true,
-					},
+					// keyBinding: {
+					// 	key: 'o',
+					// 	ctrlKey: true,
+					// },
 					onClick: async () => {
 						// const lw = new LoadingWindow()
 						// ;(

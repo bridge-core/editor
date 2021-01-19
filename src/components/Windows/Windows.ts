@@ -1,4 +1,6 @@
+import { LoadingWindow } from './LoadingWindow/LoadingWindow'
 import { CreateProjectWindow } from './Project/CreateProject/CreateProject'
+import { FilePickerWindow } from './Project/FilePicker/FilePicker'
 import { PackExplorerWindow } from './Project/PackExplorer/PackExplorer'
 import { ProjectChooserWindow } from './Project/ProjectChooser/ProjectChooser'
 import { SettingsWindow } from './Settings/SettingsWindow'
@@ -8,4 +10,6 @@ export class Windows {
 	projectChooser = new ProjectChooserWindow()
 	packExplorer = new PackExplorerWindow()
 	createProject = new CreateProjectWindow()
+	loadingWindow = new LoadingWindow()
+	filePicker = new FilePickerWindow()
 }
