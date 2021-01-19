@@ -7,6 +7,7 @@ import FilePickerComponent from './FilePicker.vue'
 export class FilePickerWindow extends BaseWindow {
 	protected packFiles: string[] = []
 	protected selectedFile = ''
+	protected isCurrentlyOpening = false
 
 	constructor() {
 		super(FilePickerComponent, false, true)
@@ -14,6 +15,9 @@ export class FilePickerWindow extends BaseWindow {
 	}
 
 	open() {
+		if (this.isCurrentlyOpening) return
+
+		this.isCurrentlyOpening = true
 		this.selectedFile = ''
 
 		App.ready.once(async app => {
@@ -32,6 +36,7 @@ export class FilePickerWindow extends BaseWindow {
 
 			app.windows.loadingWindow.close()
 			super.open()
+			this.isCurrentlyOpening = false
 		})
 	}
 
