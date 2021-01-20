@@ -3,7 +3,7 @@
 	"type": "object",
 	"properties": {
 		"trigger": {
-			"$ref": "../dynamic/entity/currentContext/eventEnum.json",
+			"type": "string",
 			"description": "Trigger an event"
 		}
 	}

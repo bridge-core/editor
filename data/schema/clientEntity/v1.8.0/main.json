@@ -117,7 +117,7 @@
 							"description": "References all render controllers used to render the entity.",
 							"type": "array",
 							"items": {
-								"type": "string"
+								"$ref": "../../general/reference/renderController.json"
 							}
 						},
 						"particle_effects": {
