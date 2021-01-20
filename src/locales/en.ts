@@ -166,6 +166,19 @@ export default {
 				confirm: 'Confirm',
 			},
 		},
+		loadingWindow: {
+			title: 'Loading...',
+		},
+		openFile: {
+			title: 'Open',
+			search: 'Search file...',
+		},
+		createProject: {
+			title: 'Create Project',
+			packIcon: 'Project Icon (optional)',
+			projectName: 'Project Name',
+			create: 'Create!',
+		},
 		discord: {
 			title: 'Discord',
 			content: 'Join the official bridge. Discord server!',
