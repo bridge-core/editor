@@ -99,7 +99,7 @@
 								"additionalProperties": false,
 								"properties": {
 									"effect": {
-										"type": "string"
+										"$ref": "../dynamic/clientEntity/particleReferenceEnum.json"
 									},
 									"locator": {
 										"type": "string"
@@ -112,7 +112,7 @@
 							"items": {
 								"patternProperties": {
 									"effect": {
-										"type": "string"
+										"$ref": "../dynamic/clientEntity/soundEffectReferenceEnum.json"
 									}
 								}
 							}

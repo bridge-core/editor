@@ -1,5 +1,6 @@
 [
 	{ "identifier": "animation_controllers" },
+	{ "state": "animation_controllers/*/states" },
 	{
 		"functionPath": [
 			"animation_controllers/*/states/*/on_exit",

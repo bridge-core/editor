@@ -36,46 +36,46 @@
 			}
 		},
 		{
-			"$ref": "../../event/damage.json"
+			"$ref": "../../event/v1.16.100/damage.json"
 		},
 		{
-			"$ref": "../../event/decrementStack.json"
+			"$ref": "../../event/v1.16.100/decrementStack.json"
 		},
 		{
-			"$ref": "../../event/die.json"
+			"$ref": "../../event/v1.16.100/die.json"
 		},
 		{
-			"$ref": "../../event/mobEffect.json"
+			"$ref": "../../event/v1.16.100/mobEffect.json"
 		},
 		{
-			"$ref": "../../event/playEffect.json"
+			"$ref": "../../event/v1.16.100/playEffect.json"
 		},
 		{
-			"$ref": "../../event/playSound.json"
+			"$ref": "../../event/v1.16.100/playSound.json"
 		},
 		{
-			"$ref": "../../event/runCommand.json"
+			"$ref": "../../event/v1.16.100/runCommand.json"
 		},
 		{
-			"$ref": "../../event/setBlock.json"
+			"$ref": "../../event/v1.16.100/setBlock.json"
 		},
 		{
-			"$ref": "../../event/setBlockProperty.json"
+			"$ref": "../../event/v1.16.100/setBlockProperty.json"
 		},
 		{
-			"$ref": "../../event/spawnLoot.json"
+			"$ref": "../../event/v1.16.100/spawnLoot.json"
 		},
 		{
-			"$ref": "../../event/swing.json"
+			"$ref": "../../event/v1.16.100/swing.json"
 		},
 		{
-			"$ref": "../../event/teleport.json"
+			"$ref": "../../event/v1.16.100/teleport.json"
 		},
 		{
-			"$ref": "../../event/transformItem.json"
+			"$ref": "../../event/v1.16.100/transformItem.json"
 		},
 		{
-			"$ref": "../../event/trigger.json"
+			"$ref": "../../event/v1.16.100/triggerBlock.json"
 		}
 	]
 }

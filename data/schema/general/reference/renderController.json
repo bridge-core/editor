@@ -7,6 +7,9 @@
         },
         {
             "$ref": "../../dynamic/clientEntity/renderControllerIdentifierEnum.json"
+        },
+        {
+            "$ref": "../../dynamic/attachable/renderControllerIdentifierEnum.json"
         }
     ]
 }

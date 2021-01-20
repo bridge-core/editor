@@ -18,9 +18,14 @@
 											"type": "array",
 											"items": {
 												"anyOf": [
-													{ "type": "string" },
+													{
+														"$ref": "../dynamic/entity/animationEnum.json"
+													},
 													{
 														"type": "object",
+														"propertyNames": {
+															"$ref": "../dynamic/entity/animationEnum.json"
+														},
 														"patternProperties": {
 															".+": {
 																"type": "string"
@@ -33,17 +38,15 @@
 										"transitions": {
 											"type": "array",
 											"items": {
-												"anyOf": [
-													{ "type": "string" },
-													{
-														"type": "object",
-														"patternProperties": {
-															".+": {
-																"type": "string"
-															}
-														}
+												"type": "object",
+												"propertyNames": {
+													"$ref": "../dynamic/animationController/currentContext/stateEnum.json"
+												},
+												"patternProperties": {
+													".+": {
+														"type": "string"
 													}
-												]
+												}
 											}
 										},
 										"on_entry": {

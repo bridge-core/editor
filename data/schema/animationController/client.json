@@ -18,12 +18,17 @@
 											"type": "array",
 											"items": {
 												"anyOf": [
-													{ "type": "string" },
+													{
+														"$ref": "../dynamic/clientEntity/animationReferenceEnum.json"
+													},
 													{
 														"type": "object",
+														"propertyNames": {
+															"$ref": "../dynamic/clientEntity/animationReferenceEnum.json"
+														},
 														"patternProperties": {
 															".+": {
-																"type": "string"
+																"$ref": "../molang/embeddedBeta.json"
 															}
 														}
 													}
@@ -33,17 +38,15 @@
 										"transitions": {
 											"type": "array",
 											"items": {
-												"anyOf": [
-													{ "type": "string" },
-													{
-														"type": "object",
-														"patternProperties": {
-															".+": {
-																"type": "string"
-															}
-														}
+												"type": "object",
+												"propertyNames": {
+													"$ref": "../dynamic/clientAnimationController/currentContext/stateEnum.json"
+												},
+												"patternProperties": {
+													".+": {
+														"$ref": "../molang/embeddedBeta.json"
 													}
-												]
+												}
 											}
 										},
 										"blend_transition": {
@@ -90,7 +93,7 @@
 												"additionalProperties": false,
 												"properties": {
 													"effect": {
-														"type": "string"
+														"$ref": "../dynamic/clientEntity/particleReferenceEnum.json"
 													},
 													"locator": {
 														"type": "string"
@@ -103,7 +106,7 @@
 											"items": {
 												"patternProperties": {
 													"effect": {
-														"type": "string"
+														"$ref": "../dynamic/clientEntity/soundEffectReferenceEnum.json"
 													}
 												}
 											}

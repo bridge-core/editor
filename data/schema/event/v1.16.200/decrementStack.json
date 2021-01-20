@@ -1,0 +1,14 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"decrement_stack": {
+			"description": "Decrement item stack.",
+			"additionalProperties": false
+        },
+        "ignore_game_mode": {
+            "description": "Whether the item stack can be decremented in creative mode.",
+            "type": "boolean"
+        }
+	}
+}

@@ -13,6 +13,9 @@
 					"$ref": "../../dynamic/entity/identifierEnum.json"
 				},
 				{
+					"$ref": "../../dynamic/clientEntity/identifierEnum.json"
+				},
+				{
 					"type": "string",
 					"pattern": "^minecraft:[a-z_]*<[a-z_:]*>$"
 				}
@@ -47,6 +50,15 @@
 					"$ref": "../../dynamic/item/identifierEnum.json"
 				},
 				{
+					"$ref": "../../dynamic/clientItem/identifierEnum.json"
+				},
+				{
+					"$ref": "../../dynamic/attachable/itemIdentifierEnum.json"
+				},
+				{
+					"$ref": "../../dynamic/recipe/itemIdentifierEnum.json"
+				},
+				{
 					"type": "string",
 					"pattern": "^minecraft:[a-z_]*:[0-9]$"
 				}
@@ -59,6 +71,12 @@
 				},
 				{
 					"$ref": "../../dynamic/particle/identifierEnum.json"
+				},
+				{
+					"$ref": "../../dynamic/attachable/particleIdentifierEnum.json"
+				},
+				{
+					"$ref": "../../dynamic/clientEntity/particleIdentifierEnum.json"
 				}
 			]
 		},
@@ -69,6 +87,9 @@
 				},
 				{
 					"$ref": "../../dynamic/fog/identifierEnum.json"
+				},
+				{
+					"$ref": "../../dynamic/clientBiome/fogIdentifierEnum.json"
 				}
 			]
 		}
