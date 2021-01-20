@@ -5,7 +5,7 @@
 			"$ref": "../general/hexColor.json"
 		},
 		{
-			"type": "string",
+			"$ref": "../general/reference/terrainTexture.json",
 			"description": "Reference to a texture"
 		},
 		{

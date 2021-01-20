@@ -82,7 +82,18 @@
 		"minecraft:on_fall_on": {
 			"type": "object",
 			"description": "Trigger an event when a player falls onto this block",
-			"$ref": "../general/eventDefinition.json"
+			"anyOf": [
+				{
+					"$ref": "../general/eventDefinition.json"
+				},
+				{
+					"properties": {
+						"min_fall_distance": {
+							"type": "number"
+						}
+					}
+				}
+			]
 		},
 		"minecraft:on_placed": {
 			"type": "object",

@@ -21,13 +21,13 @@
 		"sound_object": {
 			"anyOf": [
 				{
-					"type": "string"
+					"$ref": "../general/reference/soundDefinition.json"
 				},
 				{
 					"additionalProperties": false,
 					"properties": {
 						"sound": {
-							"type": "string"
+							"$ref": "../general/reference/soundDefinition.json"
 						},
 						"volume": {
 							"$ref": "#/definitions/number_range"
@@ -97,6 +97,9 @@
 					}
 				},
 				"entities": {
+					"propertyNames": {
+						"$ref": "../general/reference/identifiers.json#/definitions/entity_identifiers"
+					},
 					"patternProperties": {
 						".*": {
 							"$ref": "#/properties/entity_sounds/properties/defaults"
@@ -163,10 +166,15 @@
 							}
 						}
 					},
-					"entities": {
-						"patternProperties": {
-							".*": {
-								"$ref": "#/properties/entity_sounds/properties/defaults"
+					"properties": {
+						"entities": {
+							"propertyNames": {
+								"$ref": "../general/reference/identifiers.json#/definitions/entity_identifiers"
+							},
+							"patternProperties": {
+								".*": {
+									"$ref": "#/properties/entity_sounds/properties/defaults"
+								}
 							}
 						}
 					}

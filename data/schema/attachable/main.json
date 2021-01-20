@@ -75,7 +75,7 @@
 							"description": "References all render controllers used to render the attachable.",
 							"type": "array",
 							"items": {
-								"type": "string"
+								"$ref": "../general/reference/renderController.json"
 							}
 						}
 					}

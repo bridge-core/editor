@@ -2,6 +2,7 @@
 	{ "identifier": "minecraft:entity/description/identifier" },
 	{ "event": "minecraft:entity/events" },
 	{ "componentGroup": "minecraft:entity/component_groups" },
+	{ "animation": "minecraft:entity/description/animations" },
 	{
 		"family": [
 			"minecraft:entity/components/minecraft:type_family/family",

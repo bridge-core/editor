@@ -32,9 +32,12 @@
 					"items": {
 						"anyOf": [
 							{
-								"type": "string"
+								"$ref": "../dynamic/entity/currentContext/animationEnum.json"
 							},
 							{
+								"propertyNames": {
+									"$ref": "../dynamic/entity/currentContext/animationEnum.json"
+								},
 								"patternProperties": {
 									".*": {
 										"$ref": "../molang/embeddedBeta.json"
