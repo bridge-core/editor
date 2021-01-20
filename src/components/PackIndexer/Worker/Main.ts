@@ -1,4 +1,4 @@
-import { FileType } from '@/appCycle/FileType'
+import { FileType } from '@/components/Data/FileType'
 import * as Comlink from 'comlink'
 import { TaskService } from '@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
@@ -23,10 +23,11 @@ export class PackIndexerService extends TaskService {
 	protected lightningCache: LightningCache
 
 	constructor(
-		baseDirectory: FileSystemDirectoryHandle,
+		projectDirectory: FileSystemDirectoryHandle,
+		protected baseDirectory: FileSystemDirectoryHandle,
 		readonly settings: IWorkerSettings
 	) {
-		super('packIndexer', baseDirectory)
+		super('packIndexer', projectDirectory)
 		this.lightningStore = new LightningStore(this)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
@@ -35,7 +36,7 @@ export class PackIndexerService extends TaskService {
 	async onStart() {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
-		await FileType.setup()
+		await FileType.setup(new FileSystem(this.baseDirectory))
 
 		console.timeEnd('[WORKER] SETUP')
 
@@ -49,7 +50,6 @@ export class PackIndexerService extends TaskService {
 	}
 
 	async updateFile(filePath: string) {
-		await FileType.setup()
 		await this.lightningCache.processFile(
 			filePath,
 			await this.fileSystem.getFileHandle(filePath)

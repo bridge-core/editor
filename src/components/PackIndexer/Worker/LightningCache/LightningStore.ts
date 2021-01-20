@@ -1,4 +1,4 @@
-import { FileType } from '@/appCycle/FileType'
+import { FileType } from '@/components/Data/FileType'
 import { FileSystem } from '@/components/FileSystem/Main'
 import { PackIndexerService } from '../Main'
 

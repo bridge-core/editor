@@ -1,4 +1,4 @@
-import { FileType } from '@/appCycle/FileType'
+import { FileType } from '@/components/Data/FileType'
 import { run } from '@/components/Plugins/Scripts/run'
 import { hashString } from '@/utils/hash'
 import { walkObject } from '@/utils/walkObject'

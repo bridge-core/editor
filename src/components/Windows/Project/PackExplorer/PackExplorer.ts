@@ -1,6 +1,6 @@
 import { App } from '@/App'
-import { FileType } from '@/appCycle/FileType'
-import { PackType } from '@/appCycle/PackType'
+import { FileType } from '@/components/Data/FileType'
+import { PackType } from '@/components/Data/PackType'
 import { translate } from '@/utils/locales'
 import { BaseWindow } from '../../BaseWindow'
 import {

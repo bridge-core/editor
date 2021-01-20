@@ -1,4 +1,4 @@
-import { FileType } from '@/appCycle/FileType'
+import { FileType } from '@/components/Data/FileType'
 import { LightningStore } from '../LightningCache/LightningStore'
 import { PackIndexerService } from '../Main'
 

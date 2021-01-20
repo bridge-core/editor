@@ -1,7 +1,8 @@
 import { isMatch } from 'micromatch'
-import json5 from 'json5'
 import { ILightningInstruction } from '@/components/PackIndexer/Worker/Main'
 import { IPackSpiderFile } from '@/components/PackIndexer/Worker/PackSpider/PackSpider'
+import { FileSystem } from '@/components/FileSystem/Main'
+import json5 from 'json5'
 
 /**
  * Describes the structure of a file definition
@@ -32,13 +33,12 @@ export namespace FileType {
 		'https://raw.githubusercontent.com/bridge-core/data/next/packages/'
 	let fileTypes: IFileType[] = []
 
-	export async function setup() {
+	export async function setup(fileSystem: FileSystem) {
 		if (fileTypes.length > 0) return
 
-		const jsonString = await fetch(
-			`${baseUrl}data/fileDefinitions.json`
-		).then(rawData => rawData.text())
-		fileTypes = json5.parse(jsonString) as IFileType[]
+		fileTypes = <IFileType[]>(
+			await fileSystem.readJSON('data/packages/fileDefinitions.json')
+		)
 	}
 
 	/**
