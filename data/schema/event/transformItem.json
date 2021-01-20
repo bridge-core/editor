@@ -6,7 +6,7 @@
 			"description": "Transforms item into another item",
 			"additionalProperties": false,
 			"properties": {
-				"transform": { "type": "string" }
+				"transform": { "$ref": "../general/reference/identifiers.json#/definitions/item_identifiers" }
 			}
 		}
 	}
