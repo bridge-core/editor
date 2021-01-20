@@ -44,10 +44,6 @@
 
 <script>
 import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
-
-import { App } from '@/App'
-import { FileType } from '@/appCycle/FileType'
-import { PackType } from '@/appCycle/PackType'
 import { TranslationMixin } from '@/utils/locales'
 
 export default {

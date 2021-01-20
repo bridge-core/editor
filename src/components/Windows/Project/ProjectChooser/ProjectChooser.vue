@@ -79,8 +79,6 @@ import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
 import ToolbarButton from '@/components/Windows/Layout/Toolbar/Button.vue'
 
 import { App } from '@/App'
-import { FileType } from '@/appCycle/FileType'
-import { PackType } from '@/appCycle/PackType'
 import { TranslationMixin } from '@/utils/locales'
 import { selectProject } from '@/components/Project/Loader'
 import { createConfirmWindow } from '../../Common/CommonDefinitions'

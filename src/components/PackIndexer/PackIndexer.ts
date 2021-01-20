@@ -33,6 +33,7 @@ export class PackIndexer extends Signal<void> {
 				await app.fileSystem.getDirectoryHandle(
 					`projects/${projectName}`
 				),
+				app.fileSystem.baseDirectory,
 				{
 					disablePackSpider: !settingsState?.general
 						?.enablePackSpider,

@@ -4,8 +4,8 @@ import { platform } from '@/utils/os'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 import { App } from '@/App'
-import { PackType } from '@/appCycle/PackType'
-import { FileType } from '@/appCycle/FileType'
+import { PackType } from '@/components/Data/PackType'
+import { FileType } from '@/components/Data/FileType'
 import { selectedProject } from '@/components/Project/Loader'
 
 export class DirectoryEntry {

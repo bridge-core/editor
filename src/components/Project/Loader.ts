@@ -1,5 +1,5 @@
 import { App } from '@/App'
-import { PackType, IPackType } from '@/appCycle/PackType'
+import { PackType, IPackType } from '@/components/Data/PackType'
 import { loadAsDataURL } from '@/utils/loadAsDataUrl'
 import { get, set } from 'idb-keyval'
 

@@ -1,5 +1,5 @@
-import json5 from 'json5'
 import { isMatch } from 'micromatch'
+import { FileSystem } from '@/components/FileSystem/Main'
 
 /**
  * Describes the structure of a pack definition
@@ -14,17 +14,14 @@ export interface IPackType {
  * Utilities around bridge.'s pack definitions
  */
 export namespace PackType {
-	const baseUrl =
-		'https://raw.githubusercontent.com/bridge-core/data/next/packages/'
 	let packTypes: IPackType[] = []
 
-	export async function setup() {
+	export async function setup(fileSystem: FileSystem) {
 		if (packTypes.length > 0) return
 
-		const jsonString = await fetch(
-			`${baseUrl}data/packDefinitions.json`
-		).then(rawData => rawData.text())
-		packTypes = json5.parse(jsonString) as IPackType[]
+		packTypes = <IPackType[]>(
+			await fileSystem.readJSON('data/packages/packDefinitions.json')
+		)
 	}
 
 	/**

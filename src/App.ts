@@ -1,5 +1,5 @@
 import { EventManager, Signal } from './appCycle/EventSystem'
-import { FileType } from './appCycle/FileType'
+import { FileType } from './components/Data/FileType'
 import { setupKeyBindings } from './appCycle/keyBindings'
 import { ThemeManager } from './components/Plugins/Themes/ThemeManager'
 import { setupMonacoEditor } from './components/Editors/Text/setup'
@@ -16,13 +16,16 @@ import { createNotification } from './components/Notifications/create'
 
 import '@/components/Notifications/Errors'
 import '@/appCycle/ResizeWatcher'
-import { PackType } from './appCycle/PackType'
+import { PackType } from './components/Data/PackType'
 import { selectLastProject } from './components/Project/Loader'
 import { Windows } from './components/Windows/Windows'
 import { SettingsWindow } from './components/Windows/Settings/SettingsWindow'
 import Vue from 'vue'
 import { settingsState } from './components/Windows/Settings/SettingsState'
-
+import JSZip from 'jszip'
+import { dirname } from 'path'
+import { LoadingWindow } from './components/Windows/LoadingWindow/LoadingWindow'
+import { DataLoader } from './components/Data/DataLoader'
 export class App {
 	public static readonly eventSystem = new EventManager<any>([
 		'projectChanged',
@@ -40,11 +43,16 @@ export class App {
 	}
 
 	static async main(appComponent: Vue) {
+		const lw = new LoadingWindow()
+		lw.open()
+
 		this._instance = new App(appComponent)
 		await this._instance.startUp()
 		this.ready.dispatch(this._instance)
 		await SettingsWindow.loadSettings()
 		this._instance._windows = new Windows()
+
+		lw.close()
 
 		await selectLastProject(this._instance)
 	}
@@ -86,10 +94,6 @@ export class App {
 		setupKeyBindings()
 		setupDefaultMenus()
 
-		await FileType.setup()
-		await PackType.setup()
-		setupMonacoEditor()
-
 		// FileSystem setup
 		this.fileSystem = await setupFileSystem()
 		// Create default folders
@@ -98,6 +102,7 @@ export class App {
 			this.fileSystem.mkdir('plugins'),
 			this.fileSystem.mkdir('data'),
 		])
+		await DataLoader.setup(this.fileSystem)
 
 		// Set language based off of browser language
 		// if (!navigator.language.includes('en')) {
@@ -109,6 +114,10 @@ export class App {
 		// } else {
 		// 	selectLanguage('en')
 		// }
+
+		await FileType.setup(this.fileSystem)
+		await PackType.setup(this.fileSystem)
+		setupMonacoEditor()
 
 		if (process.env.NODE_ENV === 'development') {
 			const discordMsg = createNotification({
