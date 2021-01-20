@@ -2,7 +2,6 @@ import { isMatch } from 'micromatch'
 import { ILightningInstruction } from '@/components/PackIndexer/Worker/Main'
 import { IPackSpiderFile } from '@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import { FileSystem } from '@/components/FileSystem/Main'
-import json5 from 'json5'
 
 /**
  * Describes the structure of a file definition
@@ -29,12 +28,12 @@ interface IMonacoSchemaArrayEntry {
  * Utilities around bridge.'s file definitions
  */
 export namespace FileType {
-	const baseUrl =
-		'https://raw.githubusercontent.com/bridge-core/data/next/packages/'
 	let fileTypes: IFileType[] = []
+	let fileSystem: FileSystem
 
-	export async function setup(fileSystem: FileSystem) {
+	export async function setup(fs: FileSystem) {
 		if (fileTypes.length > 0) return
+		fileSystem = fs
 
 		fileTypes = <IFileType[]>(
 			await fileSystem.readJSON('data/packages/fileDefinitions.json')
@@ -87,13 +86,13 @@ export namespace FileType {
 		if (!lightningCache) return []
 
 		if (lCacheFiles[lightningCache]) return lCacheFiles[lightningCache]
-		const response = await fetch(
-			`${baseUrl}lightningCache/${lightningCache}`
+
+		lCacheFiles[lightningCache] = <ILightningInstruction[]>(
+			await fileSystem.readJSON(
+				`data/packages/lightningCache/${lightningCache}`
+			)
 		)
 
-		lCacheFiles[lightningCache] = json5.parse(
-			await response.text()
-		) as ILightningInstruction[]
 		return lCacheFiles[lightningCache]
 	}
 
@@ -102,11 +101,11 @@ export namespace FileType {
 			fileTypes
 				.map(({ id, packSpider }) => {
 					if (!packSpider) return
-					return fetch(`${baseUrl}packSpider/${packSpider}`)
-						.then(response => response.text())
-						.then(jsonStr => ({
+					return fileSystem
+						.readJSON(`data/packages/packSpider/${packSpider}`)
+						.then(json => ({
 							id,
-							packSpider: json5.parse(jsonStr),
+							packSpider: json,
 						}))
 				})
 				.filter(data => data !== undefined)
