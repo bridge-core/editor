@@ -1,0 +1,166 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Recipe",
+	"required": ["format_version"],
+	"allOf": [
+		{
+			"anyOf": [
+				{
+					"properties": {
+						"minecraft:recipe_furnace": {
+							"type": "object",
+							"properties": {
+								"description": {
+									"$ref": "./general.json#/definitions/description"
+								},
+								"tags": {
+									"$ref": "./general.json#/definitions/tags"
+								},
+								"group": {
+									"$ref": "./general.json#/definitions/group"
+								},
+								"input": {
+									"$ref": "./general.json#/definitions/input"
+								},
+								"output": {
+									"$ref": "./general.json#/definitions/output"
+								}
+							}
+						}
+					}
+				},
+				{
+					"properties": {
+						"minecraft:recipe_shaped": {
+							"type": "object",
+							"properties": {
+								"description": {
+									"$ref": "./general.json#/definitions/description"
+								},
+								"tags": {
+									"$ref": "./general.json#/definitions/tags"
+								},
+								"group": {
+									"$ref": "./general.json#/definitions/group"
+								},
+								"pattern": {
+									"type": "array",
+									"description": "Characters that represent a pattern to be defined by keys",
+									"maxItems": 3,
+									"items": {
+										"type": "string"
+									}
+								},
+								"key": {
+									"type": "object",
+									"description": "Keys to map characters to item names to be used in 'pattern'",
+									"patternProperties": {
+										".*": {
+											"type": "string"
+										}
+									}
+								},
+								"result": {
+									"$ref": "./general.json#/definitions/result"
+								}
+							}
+						}
+					}
+				},
+				{
+					"properties": {
+						"minecraft:recipe_shapeless": {
+							"type": "object",
+							"properties": {
+								"description": {
+									"$ref": "./general.json#/definitions/description"
+								},
+								"tags": {
+									"$ref": "./general.json#/definitions/tags"
+								},
+								"group": {
+									"$ref": "./general.json#/definitions/group"
+								},
+								"ingredients": {
+									"type": "array",
+									"items": {
+										"properties": {
+											"item": {
+												"description": "Provides the identifier for the result item",
+												"type": "string"
+											},
+											"data": {
+												"description": "Sets the result item's data value",
+												"type": "integer"
+											},
+											"count": {
+												"type": "integer",
+												"description": "Sets how many of the result item should be output"
+											}
+										}
+									}
+								},
+								"result": {
+									"$ref": "./general.json#/definitions/result"
+								}
+							}
+						}
+					}
+				},
+				{
+					"properties": {
+						"minecraft:recipe_brewing_mix": {
+							"properties": {
+								"description": {
+									"$ref": "./general.json#/definitions/description"
+								},
+								"tags": {
+									"$ref": "./general.json#/definitions/tags"
+								},
+								"input": {
+									"$ref": "./general.json#/definitions/input"
+								},
+								"output": {
+									"$ref": "./general.json#/definitions/output"
+								},
+								"reagent": {
+									"$ref": "./general.json#/definitions/reagent"
+								}
+							}
+						}
+					}
+				},
+				{
+					"properties": {
+						"minecraft:recipe_brewing_container": {
+							"properties": {
+								"description": {
+									"$ref": "./general.json#/definitions/description"
+								},
+								"tags": {
+									"$ref": "./general.json#/definitions/tags"
+								},
+								"input": {
+									"$ref": "./general.json#/definitions/input"
+								},
+								"output": {
+									"$ref": "./general.json#/definitions/output"
+								},
+								"reagent": {
+									"$ref": "./general.json#/definitions/reagent"
+								}
+							}
+						}
+					}
+				}
+			]
+		},
+		{
+			"properties": {
+				"format_version": {
+					"$ref": "../general/formatVersion.json"
+				}
+			}
+		}
+	]
+}

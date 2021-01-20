@@ -1,0 +1,125 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.clientAnimation",
+	"title": "Client Animation",
+	"required": ["format_version"],
+	"properties": {
+		"format_version": { "enum": ["1.10.0"] },
+		"animations": {
+			"patternProperties": {
+				"^animation\\..+$": {
+					"properties": {
+						"animation_length": { "type": "number" },
+						"loop": {
+							"enum": [true, false, "hold_on_last_frame"]
+						},
+						"anim_time_update": {
+							"$ref": "../molang/embeddedBeta.json"
+						},
+						"blend_weight": {
+							"type": "number"
+						},
+						"override_previous_animation": {
+							"type": "boolean"
+						},
+						"bones": {
+							"patternProperties": {
+								".*": {
+									"properties": {
+										"rotation": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"anyOf": [
+													{
+														"examples": [
+															0,
+															90,
+															180,
+															270,
+															360
+														]
+													},
+													{
+														"$ref": "../molang/embeddedBeta.json"
+													}
+												]
+											}
+										},
+										"scale": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"anyOf": [
+													{
+														"examples": [
+															0,
+															90,
+															180,
+															270,
+															360
+														]
+													},
+													{
+														"$ref": "../molang/embeddedBeta.json"
+													}
+												]
+											}
+										},
+										"position": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"anyOf": [
+													{
+														"examples": [
+															0,
+															90,
+															180,
+															270,
+															360
+														]
+													},
+													{
+														"$ref": "../molang/embeddedBeta.json"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						},
+						"particle_effects": {
+							"type": "array",
+							"items": {
+								"additionalProperties": false,
+								"properties": {
+									"effect": {
+										"type": "string"
+									},
+									"locator": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"sound_effects": {
+							"type": "array",
+							"items": {
+								"patternProperties": {
+									"effect": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

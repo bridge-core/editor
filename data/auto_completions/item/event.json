@@ -1,0 +1,58 @@
+{
+	"@meta": {
+		"expand_path_exceptions": ["swing", "decrement_stack"]
+	},
+	"randomize": {
+		"$dynamic.list.next_index": {
+			"weight": "$general.number",
+			"$load": "$item.event"
+		}
+	},
+	"shoot": {
+		"projectile": "$general.entity_identifier",
+		"launch_power": "$general.number",
+		"angle_offset": "$general.number and $molang.embedded"
+	},
+	"swing": {},
+	"decrement_stack": {},
+	"damage": {
+		"type": "$general.damage_type",
+		"amount": "$general.number",
+		"target": ["self", "holder"]
+	},
+	"add_mob_effect": {
+		"effect": "$general.effect_name",
+		"target": ["holder"],
+		"duration": "$general.number",
+		"amplifier": "$general.number"
+	},
+	"remove_mob_effect": {
+		"effect": "$general.effect_name",
+		"target": ["holder"]
+	},
+	"transform_item": {
+		"transform": "$general.item_identifier"
+	},
+	"sequence": {
+		"$dynamic.list.next_index": {
+			"$load": "$item.event"
+		}
+	},
+	"teleport": {
+		"target": ["holder"],
+		"avoid_water": "$general.boolean",
+		"destination": {
+			"$dynamic.list.index_triple": "$general.number"
+		},
+		"land_on_block": "$general.boolean",
+		"max_range": {
+			"$dynamic.list.index_triple": "$general.number"
+		}
+	},
+	"run_command": {
+		"command": {
+			"$dynamic.list.next_index": "$function.embedded_no_slash"
+		},
+		"target": ["other", "holder"]
+	}
+}

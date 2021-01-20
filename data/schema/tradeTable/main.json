@@ -1,0 +1,34 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.tradeTable",
+	"title": "Trade Table",
+	"additionalProperties": false,
+	"properties": {
+		"tiers": {
+			"type": "array",
+			"items": {
+				"properties": {
+					"total_exp_required": {
+						"type": "number"
+					},
+					"trades": {
+						"$ref": "./trades.json"
+					},
+					"groups": {
+						"type": "array",
+						"items": {
+							"properties": {
+								"trades": {
+									"$ref": "./trades.json"
+								},
+								"num_to_select": {
+									"type": "number"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

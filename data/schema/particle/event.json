@@ -1,0 +1,52 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"additionalProperties": false,
+	"properties": {
+		"sequence": {
+			"type": "array",
+			"items": {
+				"$ref": "#"
+			}
+		},
+		"randomize": {
+			"type": "array",
+			"items": {
+				"allOf": [
+					{
+						"properties": {
+							"weight": {
+								"type": "integer"
+							}
+						}
+					},
+					{
+						"$ref": "#"
+					}
+				]
+			}
+		},
+		"particle_effect": {
+			"additionalProperties": false,
+			"properties": {
+				"effect": {
+					"type": "string"
+				},
+				"type": {
+					"type": "string",
+					"enum": [
+						"emitter",
+						"emitter_bound",
+						"particle",
+						"particle_with_velocity"
+					]
+				},
+				"pre_effect_expression": {
+					"type": "string"
+				}
+			}
+		},
+		"components": {
+			"$ref": "./components.json"
+		}
+	}
+}

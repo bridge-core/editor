@@ -1,0 +1,72 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Terrain Textures",
+	"additionalProperties": false,
+	"required": [
+		"resource_pack_name",
+		"texture_name",
+		"num_mip_levels",
+		"padding"
+	],
+	"properties": {
+		"resource_pack_name": {
+			"type": "string"
+		},
+		"texture_name": {
+			"const": "atlas.terrain"
+		},
+		"padding": {
+			"type": "integer"
+		},
+		"num_mip_levels": {
+			"type": "integer"
+		},
+		"texture_data": {
+			"patternProperties": {
+				".*": {
+					"properties": {
+						"textures": {
+							"type": "array",
+							"items": {
+								"anyOf": [
+									{
+										"type": "string"
+									},
+									{
+										"properties": {
+											"path": {
+												"type": "string"
+											},
+											"overlay_color": {
+												"$ref": "../general/hexColor.json"
+											},
+											"variations": {
+												"type": "array",
+												"items": {
+													"properties": {
+														"weight": {
+															"type": "integer"
+														},
+														"path": {
+															"type": "string"
+														},
+														"overlay_color": {
+															"$ref": "../general/hexColor.json"
+														}
+													}
+												}
+											},
+											"pbr_emissive": {
+												"type": "number"
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

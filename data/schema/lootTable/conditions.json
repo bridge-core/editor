@@ -1,0 +1,136 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"anyOf": [
+			{
+				"properties": {
+					"condition": {
+						"$ref": "./general.json#/definitions/conditions"
+					}
+				},
+				"required": ["condition"]
+			},
+			{
+				"if": {
+					"properties": {
+						"condition": {
+							"const": "has_mark_variant"
+						}
+					},
+					"required": ["condition"]
+				},
+				"then": {
+					"properties": {
+						"value": {
+							"type": "integer"
+						}
+					}
+				}
+			},
+			{
+				"if": {
+					"properties": {
+						"condition": {
+							"const": "entity_properties"
+						}
+					},
+					"required": ["condition"]
+				},
+				"then": {
+					"properties": {
+						"entity": {
+							"type": "string",
+							"enum": ["this"]
+						},
+						"properties": {
+							"properties": {
+								"on_fire": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				"if": {
+					"properties": {
+						"condition": {
+							"const": "random_chance"
+						}
+					},
+					"required": ["condition"]
+				},
+				"then": {
+					"properties": {
+						"chance": {
+							"type": "number"
+						}
+					}
+				}
+			},
+			{
+				"if": {
+					"properties": {
+						"condition": {
+							"const": "random_chance_with_looting"
+						}
+					},
+					"required": ["condition"]
+				},
+				"then": {
+					"properties": {
+						"chance": {
+							"type": "number"
+						},
+						"looting_multiplier": {
+							"type": "number"
+						}
+					}
+				}
+			},
+			{
+				"if": {
+					"properties": {
+						"condition": {
+							"const": "random_difficulty_chance"
+						}
+					},
+					"required": ["condition"]
+				},
+				"then": {
+					"properties": {
+						"default_chance": {
+							"type": "number"
+						},
+						"peaceful": {
+							"type": "number"
+						},
+						"hard": {
+							"type": "number"
+						}
+					}
+				}
+			},
+			{
+				"if": {
+					"properties": {
+						"condition": {
+							"const": "random_regional_difficulty_chance"
+						}
+					},
+					"required": ["condition"]
+				},
+				"then": {
+					"properties": {
+						"max_chance": {
+							"type": "number"
+						}
+					}
+				}
+			}
+		]
+	}
+}

@@ -1,0 +1,70 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"definitions": {
+		"vanilla_tags": {
+			"type": "string",
+			"additionalItems": true,
+			"examples": [
+				"blast_furnace",
+				"brewing_stand",
+				"campfire",
+				"cartography_table",
+				"crafting_table",
+				"furnace",
+				"smoker",
+				"stonecutter",
+				"soul_campfire"
+			]
+		},
+		"description": {
+			"type": "object",
+			"maxProperties": 1,
+			"properties": {
+				"identifier": {
+					"type": "string"
+				}
+			}
+		},
+		"tags": {
+			"description": "Defines where this recipe can be made",
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/vanilla_tags"
+			}
+		},
+		"group": {
+			"type": "string"
+		},
+		"result": {
+			"type": "array",
+			"description": "Defines the result item of this recipe.",
+			"items": {
+				"properties": {
+					"item": {
+						"description": "Provides the identifier for the result item",
+						"type": "string"
+					},
+					"data": {
+						"description": "Sets the result item's data value",
+						"type": "integer"
+					},
+					"count": {
+						"type": "integer",
+						"description": "Sets how many of the result item should be output"
+					}
+				}
+			}
+		},
+		"input": {
+			"type": "string",
+			"description": "Defines the input item for the recipe"
+		},
+		"reagent": {
+			"type": "string"
+		},
+		"output": {
+			"description": "Defines the result item of this recipe",
+			"type": "string"
+		}
+	}
+}

@@ -1,0 +1,50 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"description": "Components allow for block functionality.",
+	"properties": {
+		"minecraft:destroy_time": {
+			"type": "number",
+			"description": "Sets the destroy time property for the block. Greater numbers result in greater mining times"
+		},
+		"minecraft:block_light_emission": {
+			"type": "number",
+			"description": "The amount of light this block will emit",
+			"minimum": 0,
+			"maximum": 1.0
+		},
+		"minecraft:block_light_absorption": {
+			"type": "integer",
+			"description": "The amount of light this block will absorb"
+		},
+		"minecraft:map_color": {
+			"description": "A color represented as a hex value. This will be the color rendered to a map",
+			"$ref": "../../general/hexColor.json"
+		},
+		"minecraft:flammable": {
+			"type": "object",
+			"description": "Makes this block flammable",
+			"properties": {
+				"burn_odds": {
+					"description": "How likely the block will be destroyed by flames when on fire",
+					"type": "integer"
+				},
+				"flame_odds": {
+					"description": "How likely the block will catch flame when next to a fire",
+					"type": "integer"
+				}
+			}
+		},
+		"minecraft:friction": {
+			"type": "number",
+			"description": "Property describing the friction for this block. Friction effects an entities movements when it walks on the block"
+		},
+		"minecraft:explosion_resistance": {
+			"type": "number",
+			"description": "Sets the explosion resistance for this block"
+		},
+		"minecraft:loot": {
+			"type": "string",
+			"description": "Sets the loot of this block"
+		}
+	}
+}

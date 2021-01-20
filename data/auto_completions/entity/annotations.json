@@ -1,0 +1,10 @@
+{
+    "@meta": {
+        "expand_path_exceptions": [ "minecraft:annotation.open_door" ]
+    },
+    "minecraft:annotation.open_door": {},
+    "minecraft:annotation.break_door": {
+        "break_time": "$general.number",
+        "min_difficulty": "$general.game_difficulty"
+    }
+}

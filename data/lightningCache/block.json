@@ -1,0 +1,29 @@
+[
+	{ "identifier": "minecraft:block/description/identifier" },
+	{ "event": "minecraft:block/events" },
+	{ "property": "minecraft:block/description/properties" },
+	{
+		"recipeTag": [
+			"minecraft:block/components/minecraft:crafting_table/crafting_tags",
+			"minecraft:block/permutations/*/components/minecraft:crafting_table/crafting_tags"
+		]
+	},
+	{
+		"lootTablePath": [
+			"minecraft:block/components/minecraft:loot",
+			"minecraft:block/permutations/*/components/minecraft:loot"
+		]
+	},
+	{
+		"geometryIdentifier": [
+			"minecraft:block/components/minecraft:geometry",
+			"minecraft:block/permutations/*/components/minecraft:geometry"
+		]
+	},
+	{
+		"texturePath": [
+			"minecraft:block/components/minecraft:material_instances/*/texture",
+			"minecraft:block/permutations/*/components/minecraft:material_instances/*/texture"
+		]
+	}
+]

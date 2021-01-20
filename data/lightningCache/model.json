@@ -1,0 +1,7 @@
+[
+	{ "identifier": "minecraft:geometry/*/description/identifier" },
+	{
+		"identifier": "/",
+		"@filter": ["format_version", "minecraft:geometry"]
+	}
+]

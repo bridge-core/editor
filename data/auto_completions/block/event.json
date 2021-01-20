@@ -1,0 +1,92 @@
+{
+	"@meta": {
+		"expand_path_exceptions": ["decrement_stack"]
+	},
+	"randomize": {
+		"$dynamic.list.next_index": {
+			"weight": "$general.number",
+			"$load": "$block.event"
+		}
+	},
+	"sequence": {
+		"$dynamic.list.next_index": {
+			"$load": "$block.event"
+		}
+	},
+	"transform_item": {
+		"transform": "$general.item_identifier"
+	},
+	"run_command": {
+		"command": {
+			"$dynamic.list.next_index": "$function.embedded_no_slash"
+		},
+		"target": ["self", "other"]
+	},
+	"add_mob_effect": {
+		"effect": "$general.effect_name",
+		"target": ["other", "self"],
+		"duration": "$general.number",
+		"amplifier": "$general.number"
+	},
+	"remove_mob_effect": {
+		"effect": "$general.effect_name",
+		"target": ["self", "other"]
+	},
+	"set_block_property": {
+		"$dynamic.block.property": {
+			"$dynamic_template": {
+				"$key": "$dynamic.currentNodeKey",
+				"$load": "$dynamic.block.property_obj"
+			}
+		}
+	},
+	"teleport": {
+		"target": ["self", "other"],
+		"avoid_water": "$general.boolean",
+		"destintion": {
+			"$dynamic.list.index_triple": "$general.number"
+		},
+		"land_on_block": "$general.boolean",
+		"max_range": {
+			"$dynamic.list.index_triple": "$general.number"
+		}
+	},
+	"damage": {
+		"amount": "$general.number",
+		"target": ["other", "self"],
+		"type": "$general.damage_type"
+	},
+	"decrement_stack": {},
+	"die": {
+		"target": ["self", "other"]
+	},
+	"play_effect": {
+		"data": "$general.number",
+		"target": ["self", "other"],
+		"effect": {
+			"@import.value.particle": "$dynamic.cache.particle.ids",
+			"@import.value": "$vanilla.particle_identifier"
+		}
+	},
+	"play_sound": {
+		"target": ["self", "other"],
+		"sound": "$function.general.sound_definitions"
+	},
+	"set_block": {
+		"block_type": "$general.block_identifier"
+	},
+	"set_block_at_pos": {
+		"block_type": "$general.block_identifier",
+		"block_offset": {
+			"$dynamic.list.index_triple": "$general.number"
+		}
+	},
+	"spawn_loot": {
+		"table": "$dynamic.loot_table_files"
+	},
+	"trigger": {
+		"event": "asValue($dynamic.block.events)",
+		"target": ["self", "other"],
+		"condition": "$molang.embedded"
+	}
+}

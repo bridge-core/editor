@@ -1,0 +1,25 @@
+{
+	"format_version": "$general.format_version",
+	"minecraft:item": {
+		"description": {
+			"identifier": "$general.file_identifier and $general.item_identifier",
+			"$versioned_template.category": [
+				{
+					"$if": "$format_version >= 1.16.100",
+					"$data": "$general.item_category"
+				}
+			],
+			"is_experimental": "$general.boolean"
+		},
+
+		"components": "$item.components",
+		"$versioned_template.events": [
+			{
+				"$if": "$format_version >= 1.16.100",
+				"$data": {
+					"$placeholder": "$item.event"
+				}
+			}
+		]
+	}
+}

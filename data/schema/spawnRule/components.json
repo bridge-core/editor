@@ -1,0 +1,220 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"properties": {
+		"minecraft:spawns_on_surface": {
+			"additionalProperties": false
+		},
+		"minecraft:spawns_underground": {
+			"additionalProperties": false
+		},
+		"minecraft:spawns_underwater": {
+			"additionalProperties": false
+		},
+		"minecraft:spawns_on_block_filter": {
+			"anyOf": [
+				{
+					"type": "array",
+					"items": {
+						"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					}
+				},
+				{
+					"type": "string",
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				}
+			]
+		},
+		"minecraft:spawns_on_block_prevented_filter": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"minecraft:brightness_filter": {
+			"additionalProperties": false,
+			"properties": {
+				"min": {
+					"type": "number"
+				},
+				"max": {
+					"type": "number"
+				},
+				"adjust_for_weather": {
+					"type": "boolean"
+				}
+			}
+		},
+		"minecraft:difficulty_filter": {
+			"additionalProperties": false,
+			"properties": {
+				"min": {
+					"type": "string",
+					"enum": [
+						"easy",
+						"e",
+						"hard",
+						"h",
+						"normal",
+						"n",
+						"peaceful",
+						"p"
+					]
+				},
+				"max": {
+					"type": "string",
+					"enum": [
+						"easy",
+						"e",
+						"hard",
+						"h",
+						"normal",
+						"n",
+						"peaceful",
+						"p"
+					]
+				}
+			}
+		},
+		"minecraft:weight": {
+			"additionalProperties": false,
+			"properties": {
+				"default": {
+					"type": "integer"
+				}
+			}
+		},
+		"minecraft:herd": {
+			"additionalProperties": false,
+			"properties": {
+				"min_size": {
+					"type": "integer"
+				},
+				"max_size": {
+					"type": "integer"
+				},
+				"event_skip_count": {
+					"type": "number"
+				},
+				"event": {
+					"type": "string"
+				},
+				"initial_event_count": {
+					"type": "number"
+				},
+				"initial_event": {
+					"type": "string"
+				}
+			}
+		},
+		"minecraft:density_limit": {
+			"additionalProperties": false,
+			"properties": {
+				"surface": {
+					"type": "integer"
+				},
+				"underground": {
+					"type": "integer"
+				}
+			}
+		},
+		"minecraft:biome_filter": {
+			"additionalProperties": false,
+			"properties": {
+				"all_of": {
+					"type": "array",
+					"items": {
+						"$ref": "#/properties/minecraft:biome_filter"
+					}
+				},
+				"any_of": {
+					"type": "array",
+					"items": {
+						"$ref": "#/properties/minecraft:biome_filter"
+					}
+				},
+				"test": {
+					"type": "string",
+					"const": "has_biome_tag"
+				},
+				"operator": {
+					"$ref": "../general/filter/operator.json"
+				},
+				"value": {
+					"$ref": "../general/vanilla/biomeTagEnum.json"
+				}
+			}
+		},
+		"minecraft:player_in_village_filter": {
+			"additionalProperties": false,
+			"properties": {
+				"distance": {
+					"type": "number"
+				},
+				"village_border_tolerance": {
+					"type": "number"
+				}
+			}
+		},
+		"minecraft:delay_filter": {
+			"additionalProperties": false,
+			"properties": {
+				"min": {
+					"type": "number"
+				},
+				"max": {
+					"type": "number"
+				},
+				"identifier": {
+					"type": "string"
+				},
+				"spawn_chance": {
+					"type": "number"
+				}
+			}
+		},
+		"minecraft:distance_filter": {
+			"properties": {
+				"min": {
+					"type": "number"
+				},
+				"max": {
+					"type": "number"
+				}
+			}
+		},
+		"minecraft:height_filter": {
+			"properties": {
+				"min": {
+					"type": "number"
+				},
+				"max": {
+					"type": "number"
+				}
+			}
+		},
+		"minecraft:permute_type": {
+			"type": "array",
+			"items": {
+				"properties": {
+					"weight": {
+						"type": "integer"
+					},
+					"entity_type": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"minecraft:world_age_filter": {
+			"additionalProperties": false,
+			"properties": {
+				"min": {
+					"type": "number"
+				},
+				"max": {
+					"type": "number"
+				}
+			}
+		}
+	}
+}

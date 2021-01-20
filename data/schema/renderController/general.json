@@ -1,0 +1,17 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"definitions": {
+		"texture_ref": {
+			"type": "string",
+			"default": "Texture.default"
+		},
+		"material_ref": {
+			"type": "string",
+			"default": "Material.default"
+		},
+		"geometry_ref": {
+			"type": "string",
+			"default": "Geometry.default"
+		}
+	}
+}

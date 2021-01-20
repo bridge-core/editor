@@ -1,0 +1,38 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.flipbookTextures",
+	"title": "Flipbook Textures",
+	"type": "array",
+	"items": {
+		"additionalProperties": false,
+		"properties": {
+			"flipbook_texture": {
+				"type": "string"
+			},
+			"atlas_tile": {
+				"type": "string"
+			},
+			"atlas_tile_variant": {
+				"type": "number"
+			},
+			"atlas_index": {
+				"type": "number"
+			},
+			"frames": {
+				"type": "array",
+				"items": {
+					"type": "number"
+				}
+			},
+			"replicate": {
+				"type": "number"
+			},
+			"ticks_per_frame": {
+				"type": "number"
+			},
+			"blend_frames": {
+				"type": "boolean"
+			}
+		}
+	}
+}

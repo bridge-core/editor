@@ -1,0 +1,53 @@
+{
+	"format_version": "$general.format_version",
+	"minecraft:texture_set": {
+		"color": {
+			"@meta": {
+				"is_color": true
+			},
+			"@import.value.texture": "$dynamic.rp.terrain_texture"
+		},
+		"color_unlit": {
+			"@meta": {
+				"is_color": true
+			},
+			"@import.value.texture": "$dynamic.rp.terrain_texture"
+		},
+		"normal": {
+			"@meta": {
+				"is_color": true
+			},
+			"@import.value.texture": "$dynamic.rp.terrain_texture"
+		},
+		"heightmap": {
+			"@meta": {
+				"is_color": true
+			},
+			"@import.value.texture": "$dynamic.rp.terrain_texture"
+		},
+		"metalness_emissive_roughness": {
+			"@meta": {
+				"is_color": true
+			},
+			"@import.value.texture": "$dynamic.rp.terrain_texture"
+		},
+		"metalness": {
+			"@meta": {
+				"is_color": true
+			},
+			"@import.value.texture": "$dynamic.rp.terrain_texture"
+		},
+		"emissive": {
+			"@meta": {
+				"is_color": true
+			},
+			"@import.value.texture": "$dynamic.rp.terrain_texture"
+		},
+		"roughness": {
+			"@meta": {
+				"is_color": true
+			},
+			"@import.value.texture": "$dynamic.rp.terrain_texture"
+		}
+	}
+}

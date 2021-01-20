@@ -1,0 +1,22 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"properties": {
+		"minecraft.annotation.open_door": {
+			"description": "Allows the actor to open doors assuming that that flags set up for the component to use in navigation."
+		},
+		"minecraft.annotation.break_door": {
+			"description": "Allows the actor to break doors assuming that that flags set up for the component to use in navigation.",
+			"additionalProperties": false,
+			"properties": {
+				"break_time": {
+					"description": "The time in seconds required to break through doors.",
+					"type": "number"
+				},
+				"min_difficulty": {
+					"description": "The minimum difficulty that the world must be on for this entity to break doors.",
+					"$ref": "../../general/gameDifficulty.json"
+				}
+			}
+		}
+	}
+}

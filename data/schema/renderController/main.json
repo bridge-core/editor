@@ -1,0 +1,178 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.renderController",
+	"title": "Render Controller",
+	"required": ["format_version", "render_controllers"],
+	"additionalProperties": false,
+	"properties": {
+		"format_version": {
+			"$ref": "../general/formatVersion.json"
+		},
+		"render_controllers": {
+			"patternProperties": {
+				"^controller.render\\..+$": {
+					"properties": {
+						"rebuild_animation_matrices": {
+							"type": "boolean"
+						},
+						"light_color_multiplier": {
+							"type": "number"
+						},
+						"ignore_lighting": {
+							"type": "boolean"
+						},
+						"color": {
+							"$ref": "../general/rgbaColor.json"
+						},
+						"overlay_color": {
+							"$ref": "../general/rgbaColor.json"
+						},
+						"is_hurt_color": {
+							"$ref": "../general/rgbaColor.json"
+						},
+						"on_fire_color": {
+							"$ref": "../general/rgbaColor.json"
+						},
+						"uv_anim": {
+							"additionalProperties": false,
+							"properties": {
+								"offset": {
+									"type": "array",
+									"minItems": 2,
+									"maxItems": 2,
+									"items": {
+										"anyOf": [
+											{
+												"type": "number"
+											},
+											{
+												"$ref": "../molang/embeddedBeta.json"
+											}
+										]
+									}
+								},
+								"scale": {
+									"type": "array",
+									"minItems": 2,
+									"maxItems": 2,
+									"items": {
+										"anyOf": [
+											{
+												"type": "number"
+											},
+											{
+												"$ref": "../molang/embeddedBeta.json"
+											}
+										]
+									}
+								}
+							}
+						},
+						"arrays": {
+							"additionalProperties": false,
+							"properties": {
+								"textures": {
+									"patternProperties": {
+										".*": {
+											"type": "array",
+											"items": {
+												"$ref": "./general.json#/definitions/texture_ref"
+											}
+										}
+									}
+								},
+								"geometries": {
+									"patternProperties": {
+										".*": {
+											"type": "array",
+											"items": {
+												"$ref": "./general.json#/definitions/geometry_ref"
+											}
+										}
+									}
+								},
+								"materials": {
+									"patternProperties": {
+										".*": {
+											"type": "array",
+											"items": {
+												"$ref": "./general.json#/definitions/material_ref"
+											}
+										}
+									}
+								}
+							}
+						},
+						"geometry": {
+							"anyOf": [
+								{
+									"$ref": "../molang/embeddedBeta.json"
+								},
+								{
+									"$ref": "./general.json#/definitions/geometry_ref"
+								}
+							]
+						},
+						"part_visibility": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"*": {
+										"$ref": "../molang/embeddedBeta.json"
+									}
+								},
+								"patternProperties": {
+									".*": {
+										"$ref": "../molang/embeddedBeta.json"
+									}
+								}
+							}
+						},
+						"materials": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"*": {
+										"anyOf": [
+											{
+												"$ref": "../molang/embeddedBeta.json"
+											},
+											{
+												"$ref": "./general.json#/definitions/material_ref"
+											}
+										]
+									}
+								},
+								"patternProperties": {
+									".*": {
+										"anyOf": [
+											{
+												"$ref": "../molang/embeddedBeta.json"
+											},
+											{
+												"$ref": "./general.json#/definitions/material_ref"
+											}
+										]
+									}
+								}
+							}
+						},
+						"textures": {
+							"type": "array",
+							"items": {
+								"anyOf": [
+									{
+										"$ref": "../molang/embeddedBeta.json"
+									},
+									{
+										"$ref": "./general.json#/definitions/texture_ref"
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

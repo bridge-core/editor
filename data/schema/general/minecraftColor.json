@@ -1,0 +1,25 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.general.minecraftColor",
+	"type": "string",
+	"description": "One of Minecraft's built-in colors",
+	"enum": [
+		"dark_red",
+		"red",
+		"gold",
+		"yellow",
+		"dark_green",
+		"green",
+		"aqua",
+		"dark_aqua",
+		"dark_blue",
+		"blue",
+		"light_purple",
+		"dark_purple",
+		"white",
+		"gray",
+		"dark_gray",
+		"black",
+		"minecoin_gold"
+	]
+}
