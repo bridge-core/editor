@@ -4,12 +4,12 @@ import { promises as fs } from 'fs'
 
 export async function buildDynamicSchemas() {
 	const fileDefs = JSON5.parse(
-		await Deno.readTextFile('./data/fileDefinitions.json'),
+		(await fs.readFile('./data/fileDefinitions.json')).toString('utf-8'),
 		null
 	)
 
 	try {
-		await fs.rmdir(join('./schema/dynamic/currentContext'), {
+		await fs.rmdir(join('./data/schema/dynamic/currentContext'), {
 			recursive: true,
 		})
 	} catch {}
@@ -19,17 +19,17 @@ export async function buildDynamicSchemas() {
 
 		const json = JSON5.parse(
 			(
-				await fs.readFile(join('./lightningCache', lightningCache))
+				await fs.readFile(join('./data/lightningCache', lightningCache))
 			).toString('utf-8'),
 			null
 		)
 
 		try {
-			await Deno.remove(join('./schema/dynamic', id), {
+			await Deno.remove(join('./data/schema/dynamic', id), {
 				recursive: true,
 			})
 		} catch {}
-		await fs.mkdir(join('./schema/dynamic', id, 'currentContext'), {
+		await fs.mkdir(join('./data/schema/dynamic', id, 'currentContext'), {
 			recursive: true,
 		})
 
@@ -38,7 +38,7 @@ export async function buildDynamicSchemas() {
 			if (!key) continue
 
 			await fs.writeFile(
-				join('./schema/dynamic', id, `${key}Enum.json`),
+				join('./data/schema/dynamic', id, `${key}Enum.json`),
 				JSON.stringify({
 					$schema: 'http://json-schema.org/draft-07/schema',
 					type: 'string',
@@ -46,7 +46,7 @@ export async function buildDynamicSchemas() {
 				})
 			)
 			await fs.writeFile(
-				join('./schema/dynamic', id, `${key}Property.json`),
+				join('./data/schema/dynamic', id, `${key}Property.json`),
 				JSON.stringify({
 					$schema: 'http://json-schema.org/draft-07/schema',
 					type: 'object',
@@ -55,7 +55,11 @@ export async function buildDynamicSchemas() {
 			)
 
 			await fs.writeFile(
-				join('./schema/dynamic', id, `currentContext/${key}Enum.json`),
+				join(
+					'./data/schema/dynamic',
+					id,
+					`currentContext/${key}Enum.json`
+				),
 				JSON.stringify({
 					$schema: 'http://json-schema.org/draft-07/schema',
 					type: 'string',
@@ -64,7 +68,7 @@ export async function buildDynamicSchemas() {
 			)
 			await fs.writeFile(
 				join(
-					'./schema/dynamic',
+					'./data/schema/dynamic',
 					id,
 					`currentContext/${key}Property.json`
 				),
