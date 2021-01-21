@@ -1,0 +1,1 @@
+{"id":"theme","matcher":"BP/bridge/plugins/*/themes/*.json","schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/plugins/theme/main.json"}

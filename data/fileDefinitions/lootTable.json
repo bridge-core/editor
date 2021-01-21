@@ -1,0 +1,1 @@
+{"id":"lootTable","icon":"mdi-skull-outline","scope":"BP/loot_tables","matcher":["BP/loot_tables/**/*.json","BP/loot_tables/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/lootTable/main.json"}

@@ -1,0 +1,1 @@
+{"id":"animationController","icon":"mdi-movie-search-outline","scope":"BP/animation_controllers","matcher":["BP/animation_controllers/**/*.json","BP/animation_controllers/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/animation_controller/server.json","lightningCache":"animationController.json","packSpider":"animationController.json"}

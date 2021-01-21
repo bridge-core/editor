@@ -1,0 +1,1 @@
+{"id":"tradeTable","icon":"mdi-store-outline","scope":"BP/trading","matcher":["BP/trading/**/*.json","BP/trading/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/tradeTable/main.json"}

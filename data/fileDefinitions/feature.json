@@ -1,0 +1,1 @@
+{"id":"feature","icon":"mdi-flower","scope":"BP/features","matcher":"BP/features/*.json","schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/feature/main.json","lightningCache":"feature.json"}

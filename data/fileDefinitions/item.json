@@ -1,0 +1,1 @@
+{"id":"item","icon":"mdi-sword","scope":"BP/items","matcher":["BP/items/**/*.json","BP/items/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/item/main.json","lightningCache":"item.json","packSpider":"item.json"}

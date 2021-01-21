@@ -1,0 +1,1 @@
+{"id":"plugin_manifest","matcher":"BP/bridge/plugins/*/manifest.json","schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/plugins/manifest/main.json"}
