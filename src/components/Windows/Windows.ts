@@ -1,4 +1,5 @@
 import { LoadingWindow } from './LoadingWindow/LoadingWindow'
+import { CreatePresetWindow } from './Project/CreatePreset/CreatePreset'
 import { CreateProjectWindow } from './Project/CreateProject/CreateProject'
 import { FilePickerWindow } from './Project/FilePicker/FilePicker'
 import { PackExplorerWindow } from './Project/PackExplorer/PackExplorer'
@@ -12,4 +13,5 @@ export class Windows {
 	createProject = new CreateProjectWindow()
 	loadingWindow = new LoadingWindow()
 	filePicker = new FilePickerWindow()
+	createPreset = new CreatePresetWindow()
 }

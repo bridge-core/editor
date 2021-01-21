@@ -10,6 +10,19 @@
 		:sidebarItems="sidebar.elements"
 		v-model="sidebar.selected"
 	>
+		<template #toolbar>
+			<v-btn @click="createPreset" icon small>
+				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
+					mdi-plus
+				</v-icon>
+			</v-btn>
+			<v-btn @click="refreshPackExplorer" icon small>
+				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
+					mdi-refresh
+				</v-icon>
+			</v-btn>
+		</template>
+
 		<template #sidebar>
 			<v-text-field
 				class="pt-2"
@@ -42,19 +55,6 @@
 					>
 				</div>
 			</div>
-		</template>
-
-		<template #toolbar>
-			<v-btn icon small>
-				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
-					mdi-plus
-				</v-icon>
-			</v-btn>
-			<v-btn @click="refreshPackExplorer" icon small>
-				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
-					mdi-refresh
-				</v-icon>
-			</v-btn>
 		</template>
 	</SidebarWindow>
 </template>
@@ -90,6 +90,10 @@ export default {
 		openFile(filePath) {
 			this.currentWindow.close()
 			mainTabSystem.open(`projects/${selectedProject}/${filePath}`)
+		},
+		createPreset() {
+			this.currentWindow.close()
+			App.ready.once(app => app.windows.createPreset.open())
 		},
 	},
 	computed: {

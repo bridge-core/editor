@@ -84,7 +84,7 @@ import { selectProject } from '@/components/Project/Loader'
 import { createConfirmWindow } from '../../Common/CommonDefinitions'
 
 export default {
-	name: 'PackExplorerWindow',
+	name: 'ProjectChooserWindow',
 	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,

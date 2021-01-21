@@ -46,7 +46,7 @@ import { TranslationMixin } from '@/utils/locales'
 import BaseWindow from '../../Layout/BaseWindow'
 
 export default {
-	name: 'SelectProjectFolderWindow',
+	name: 'CreateProjectWindow',
 	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
