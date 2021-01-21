@@ -97,8 +97,12 @@ export class PackExplorerWindow extends BaseWindow {
 			new Promise<void>(resolve =>
 				App.ready.once(app =>
 					app.packIndexer.once(async () => {
+						app.windows.loadingWindow.open()
+
 						await this.loadPack()
 						resolve()
+
+						app.windows.loadingWindow.close()
 					})
 				)
 			)

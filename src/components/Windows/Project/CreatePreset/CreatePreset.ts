@@ -1,6 +1,9 @@
 import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
 import CreatePresetComponent from './CreatePreset.vue'
 import { BaseWindow } from '../../BaseWindow'
+import { getFileSystem } from '@/utils/fs'
+import { FileSystem } from '@/components/FileSystem/Main'
+import { App } from '@/App'
 
 export class CreatePresetWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
@@ -10,30 +13,30 @@ export class CreatePresetWindow extends BaseWindow {
 		this.defineWindow()
 	}
 
-	addProject(id: string, name: string) {
-		// this.sidebar.addElement(
-		// 	new SidebarItem({
-		// 		color: 'primary',
-		// 		text: name,
-		// 		icon: `mdi-alpha-${name[0].toLowerCase()}-box-outline`,
-		// 		id,
-		// 	})
-		// )
-		// this.sidebar.setDefaultSelected()
+	async addPreset(fs: FileSystem, manifestPath: string) {
+		const manifest = await fs.readJSON(manifestPath)
 	}
 
-	async loadPresets() {
-		// this.sidebar.removeElements()
-		// const projects = await getProjects()
-		// projects.forEach(project =>
-		// 	this.addProject(project.path, project.projectName, project)
-		// )
-		// this.sidebar.setDefaultSelected(selectedProject)
-		// return selectedProject
+	async loadPresets(fs: FileSystem, dirPath = 'data/packages/preset') {
+		const dirents = await fs.readdir(dirPath, { withFileTypes: true })
+
+		for (const dirent of dirents) {
+			if (dirent.kind === 'directory')
+				this.loadPresets(fs, `${dirPath}/${dirent.name}`)
+			else if (dirent.name === 'manifest.json')
+				this.addPreset(fs, `${dirPath}/${dirent.name}`)
+		}
 	}
 
 	async open() {
-		const currentProject = await this.loadPresets()
+		const app = await App.getApp()
+		app.windows.loadingWindow.open()
+		this.sidebar.removeElements()
+
+		const fs = await getFileSystem()
+		const currentProject = await this.loadPresets(fs)
+
+		app.windows.loadingWindow.close()
 		super.open()
 	}
 }

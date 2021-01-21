@@ -59,6 +59,10 @@ export class App {
 	static get instance() {
 		return this._instance
 	}
+	static getApp() {
+		return new Promise<App>(resolve => App.ready.once(app => resolve(app)))
+	}
+
 	constructor(appComponent: Vue) {
 		// @ts-expect-error Typescript doesn't know about vuetify
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
