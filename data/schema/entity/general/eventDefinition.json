@@ -1,7 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"type": "object",
-	"additionalProperties": false,
 	"properties": {
 		"filters": {
 			"description": "A filter allows you to set a condition for the event to trigger.",
@@ -20,10 +19,65 @@
 		},
 		"target": {
 			"$ref": "../../general/filter/subject.json"
-		},
-		"event": {
-			"$ref": "../../dynamic/entity/currentContext/eventEnum.json",
-			"description": "Identifier of the event to trigger."
 		}
-	}
+	},
+	"allOf": [
+		{
+			"if": {
+				"properties": {
+					"target": {
+						"const": "self"
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../../dynamic/entity/currentContext/eventEnum.json",
+						"description": "Identifier of the event to trigger."
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"target": {
+						"enum": [
+							"other",
+							"target",
+							"baby",
+							"parent",
+							"holder"
+						]
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../../dynamic/entity/eventEnum.json",
+						"description": "Identifier of the event to trigger."
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"target": {
+						"const": "block"
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../../dynamic/block/eventEnum.json",
+						"description": "Identifier of the event to trigger."
+					}
+				}
+			}
+		}
+	]
 }

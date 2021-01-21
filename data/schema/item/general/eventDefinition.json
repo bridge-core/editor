@@ -1,7 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"type": "object",
-	"additionalProperties": false,
 	"properties": {
 		"condition": {
 			"type": "string",
@@ -9,10 +8,65 @@
 		},
 		"target": {
 			"$ref": "../../general/filter/subject.json"
-		},
-		"event": {
-			"$ref": "../../dynamic/item/currentContext/eventEnum.json",
-			"description": "Identifier of the event to trigger"
 		}
-	}
+	},
+	"allOf": [
+		{
+			"if": {
+				"properties": {
+					"target": {
+						"const": "self"
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../../dynamic/item/currentContext/eventEnum.json",
+						"description": "Identifier of the event to trigger"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"target": {
+						"enum": [
+							"other",
+							"holder",
+							"target",
+							"baby",
+							"parent"
+						]
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../../dynamic/entity/eventEnum.json",
+						"description": "Identifier of the event to trigger"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"target": {
+						"const": "block"
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../../dynamic/block/eventEnum.json",
+						"description": "Identifier of the event to trigger"
+					}
+				}
+			}
+		}
+	]
 }
