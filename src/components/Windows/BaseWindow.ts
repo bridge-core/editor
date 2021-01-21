@@ -10,7 +10,7 @@ export abstract class BaseWindow {
 
 	constructor(
 		protected component: VueComponent,
-		protected disposeOnClose = true,
+		protected disposeOnClose = false,
 		protected keepAlive = false
 	) {}
 

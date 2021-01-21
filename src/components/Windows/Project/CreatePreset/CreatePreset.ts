@@ -1,10 +1,14 @@
-import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
+import {
+	Sidebar,
+	SidebarCategory,
+	SidebarItem,
+} from '@/components/Windows/Layout/Sidebar'
 import CreatePresetComponent from './CreatePreset.vue'
 import { BaseWindow } from '../../BaseWindow'
 import { getFileSystem } from '@/utils/fs'
 import { FileSystem } from '@/components/FileSystem/Main'
 import { App } from '@/App'
-
+import { v4 as uuid } from 'uuid'
 export class CreatePresetWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
 
@@ -15,6 +19,26 @@ export class CreatePresetWindow extends BaseWindow {
 
 	async addPreset(fs: FileSystem, manifestPath: string) {
 		const manifest = await fs.readJSON(manifestPath)
+		let category = <SidebarCategory | undefined>(
+			this.sidebar.elements.find(
+				element => element.getText() === manifest.category
+			)
+		)
+		if (!category) {
+			category = new SidebarCategory({
+				text: manifest.category,
+				items: [],
+			})
+			this.sidebar.addElement(category)
+		}
+
+		category.addItem(
+			new SidebarItem({
+				id: uuid(),
+				text: manifest.name,
+				icon: manifest.icon,
+			})
+		)
 	}
 
 	async loadPresets(fs: FileSystem, dirPath = 'data/packages/preset') {
@@ -34,7 +58,7 @@ export class CreatePresetWindow extends BaseWindow {
 		this.sidebar.removeElements()
 
 		const fs = await getFileSystem()
-		const currentProject = await this.loadPresets(fs)
+		await this.loadPresets(fs)
 
 		app.windows.loadingWindow.close()
 		super.open()

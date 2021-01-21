@@ -1,7 +1,7 @@
 {
 	"name": "Food",
-	"icon": "mdi-apple-outline",
-	"category": "item",
+	"icon": "mdi-food-apple-outline",
+	"category": "fileType.item",
 	"targetVersion": [">=", "1.16.200"],
 	"fields": [["Identifier", "IDENTIFIER"]],
 

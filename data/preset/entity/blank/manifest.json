@@ -1,7 +1,7 @@
 {
 	"name": "Blank Entity",
 	"icon": "mdi-minecraft",
-	"category": "entity",
+	"category": "fileType.entity",
 	"targetVersion": [">=", "1.8.0"],
 	"fields": [["Identifier", "IDENTIFIER"]],
 

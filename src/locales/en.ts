@@ -179,6 +179,10 @@ export default {
 			projectName: 'Project Name',
 			create: 'Create!',
 		},
+		createPreset: {
+			title: 'Create Preset',
+			searchPresets: 'Search presets...',
+		},
 		discord: {
 			title: 'Discord',
 			content: 'Join the official bridge. Discord server!',
