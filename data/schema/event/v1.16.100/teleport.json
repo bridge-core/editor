@@ -6,7 +6,7 @@
 			"description": "Teleport target randomly around destination point",
 			"additionalProperties": false,
 			"properties": {
-				"target": { "$ref": "../general/filter/subject.json" },
+				"target": { "$ref": "../../general/filter/subject.json" },
 				"avoid_water": { "type": "boolean" },
 				"destination": {
 					"type": "array",

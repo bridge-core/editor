@@ -8,12 +8,12 @@
 				{
 					"properties": {
 						"target": {
-							"$ref": "../general/filter/subject.json"
+							"$ref": "../../general/filter/subject.json"
 						}
 					}
 				},
 				{
-					"$ref": "../general/effectDefinition.json"
+					"$ref": "../../general/effectDefinition.json"
 				}
 			]
 		},
@@ -21,8 +21,8 @@
 			"description": "Removes mob effect from target",
 			"additionalProperties": false,
 			"properties": {
-				"effect": { "$ref": "../general/vanilla/effectName.json" },
-				"target": { "$ref": "../general/filter/subject.json" }
+				"effect": { "$ref": "../../general/vanilla/effectName.json" },
+				"target": { "$ref": "../../general/filter/subject.json" }
 			}
 		}
 	}

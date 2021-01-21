@@ -6,9 +6,9 @@
 			"description": "Spawns a particle effect relative to target position",
 			"additionalProperties": false,
 			"properties": {
-				"target": { "$ref": "../general/filter/subject.json" },
+				"target": { "$ref": "../../general/filter/subject.json" },
 				"data": { "type": "integer" },
-				"effect": { "$ref": "../general/reference/identifiers.json#/definitions/particle_identifiers" }
+				"effect": { "$ref": "../../general/reference/identifiers.json#/definitions/particle_identifiers" }
 			}
 		}
 	}

@@ -10,7 +10,7 @@
 					"type": "array",
 					"items": { "type": "string" }
 				},
-				"target": { "$ref": "../general/filter/subject.json" }
+				"target": { "$ref": "../../general/filter/subject.json" }
 			}
 		}
 	}

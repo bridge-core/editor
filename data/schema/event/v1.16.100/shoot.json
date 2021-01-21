@@ -6,7 +6,7 @@
 			"description": "Shoot a projectile",
 			"additionalProperties": false,
 			"properties": {
-				"target": { "$ref": "../general/filter/subject.json" },
+				"target": { "$ref": "../../general/filter/subject.json" },
 				"projectile": { "type": "string" },
 				"launch_power": { "type": "number" },
 				"angle_offset": { "type": ["string", "number"] }

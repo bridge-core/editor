@@ -6,8 +6,8 @@
 			"description": "Play a sound relative to target position",
 			"additionalProperties": false,
 			"properties": {
-				"target": { "$ref": "../general/filter/subject.json" },
-				"sound": { "$ref": "../general/reference/soundDefinition.json" }
+				"target": { "$ref": "../../general/filter/subject.json" },
+				"sound": { "$ref": "../../general/reference/soundDefinition.json" }
 			}
 		}
 	}

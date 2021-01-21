@@ -7,7 +7,7 @@
 			"additionalProperties": false,
 			"properties": {
 				"block_type": {
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				}
 			}
 		},
@@ -24,7 +24,7 @@
 					}
 				},
 				"block_type": {
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				}
 			}
 		}

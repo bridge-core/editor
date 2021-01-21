@@ -6,9 +6,9 @@
 			"description": "Deals damage to the target",
 			"additionalProperties": false,
 			"properties": {
-				"type": { "$ref": "../general/vanilla/damageType.json" },
+				"type": { "$ref": "../../general/vanilla/damageType.json" },
 				"amount": { "type": "integer" },
-				"target": { "$ref": "../general/filter/subject.json" }
+				"target": { "$ref": "../../general/filter/subject.json" }
 			}
 		}
 	}

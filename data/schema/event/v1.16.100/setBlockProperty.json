@@ -5,11 +5,11 @@
 		"set_block_property": {
 			"description": "Sets a block property on this block",
 			"propertyNames": {
-				"$ref": "../dynamic/block/currentContext/propertyEnum.json"
+				"$ref": "../../dynamic/block/currentContext/propertyEnum.json"
 			},
 			"patternProperties": {
 				".+": {
-					"$ref": "../molang/embeddedBeta.json"
+					"$ref": "../../molang/embeddedBeta.json"
 				}
 			}
 		}
