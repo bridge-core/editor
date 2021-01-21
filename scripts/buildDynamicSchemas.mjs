@@ -1,12 +1,10 @@
 import JSON5 from 'json5'
 import { join, basename } from 'path'
 import { promises as fs } from 'fs'
+import { loadFileDefs } from './loadFileDefs.mjs'
 
 export async function buildDynamicSchemas() {
-	const fileDefs = JSON5.parse(
-		(await fs.readFile('./data/fileDefinitions.json')).toString('utf-8'),
-		null
-	)
+	const fileDefs = await loadFileDefs()
 
 	try {
 		await fs.rmdir(join('./data/schema/dynamic/currentContext'), {

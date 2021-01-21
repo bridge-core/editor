@@ -22,8 +22,6 @@ import { Windows } from './components/Windows/Windows'
 import { SettingsWindow } from './components/Windows/Settings/SettingsWindow'
 import Vue from 'vue'
 import { settingsState } from './components/Windows/Settings/SettingsState'
-import JSZip from 'jszip'
-import { dirname } from 'path'
 import { LoadingWindow } from './components/Windows/LoadingWindow/LoadingWindow'
 import { DataLoader } from './components/Data/DataLoader'
 export class App {
@@ -118,7 +116,6 @@ export class App {
 		// } else {
 		// 	selectLanguage('en')
 		// }
-
 		await FileType.setup(this.fileSystem)
 		await PackType.setup(this.fileSystem)
 		setupMonacoEditor()

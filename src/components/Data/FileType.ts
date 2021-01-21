@@ -35,9 +35,12 @@ export namespace FileType {
 		if (fileTypes.length > 0) return
 		fileSystem = fs
 
-		fileTypes = <IFileType[]>(
-			await fileSystem.readJSON('data/packages/fileDefinitions.json')
-		)
+		const basePath = 'data/packages/fileDefinition'
+		const dirents = await fs.readdir(basePath, { withFileTypes: true })
+		for (const dirent of dirents) {
+			if (dirent.kind === 'file')
+				fileTypes.push(await fs.readJSON(`${basePath}/${dirent.name}`))
+		}
 	}
 
 	/**
