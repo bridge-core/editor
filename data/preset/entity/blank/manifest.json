@@ -1,0 +1,15 @@
+{
+	"name": "Blank Entity",
+	"icon": "mdi-minecraft",
+	"category": "entity",
+	"targetVersion": [">=", "1.8.0"],
+	"fields": [["Identifier", "IDENTIFIER"]],
+
+	"files": [
+		[
+			"entity.json",
+			"BP/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		]
+	]
+}

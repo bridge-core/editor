@@ -1,0 +1,28 @@
+{
+	"name": "Weapon",
+	"icon": "mdi-sword",
+	"category": "item",
+	"targetVersion": [">=", "1.16.200"],
+	"fields": [["Identifier", "IDENTIFIER"]],
+
+	"createFiles": [
+		[
+			"item.json",
+			"BP/items/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"icon.png",
+			"RP/textures/items/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		]
+	],
+	"expandFiles": [
+		[
+			"itemTexture.json",
+			"RP/textures/item_texture.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER"] }]
+	]
+}
