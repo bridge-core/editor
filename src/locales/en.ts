@@ -52,9 +52,9 @@ export default {
 		file: {
 			name: 'File',
 			newFile: 'New File',
+			openFile: 'Open File',
 			import: {
 				name: 'Import',
-				openFile: 'Open File',
 				importOBJ: 'Import OBJ Model',
 			},
 			saveFile: 'Save File',

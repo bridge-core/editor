@@ -111,7 +111,7 @@ export class Sidebar {
 		return this._filter.toLowerCase()
 	}
 	get elements() {
-		return this.sortSidebar(
+		const elements = this.sortSidebar(
 			this._elements
 				.filter(e => {
 					if (e.type === 'item')
@@ -120,6 +120,14 @@ export class Sidebar {
 				})
 				.map(e => (e.type === 'item' ? e : e.filtered(this.filter)))
 		)
+
+		if (elements.length === 1) {
+			const e = elements[0]
+			if (e.type === 'category' && e.getItems().length === 1)
+				this.setDefaultSelected(e.getItems()[0].id)
+		}
+
+		return elements
 	}
 
 	get currentElement() {
@@ -143,6 +151,9 @@ export class Sidebar {
 	}
 	getState(id: string) {
 		return this.state[id] ?? {}
+	}
+	setState(id: string, data: any) {
+		Vue.set(this.state, id, data)
 	}
 
 	protected sortSidebar(elements: TSidebarElement[]) {

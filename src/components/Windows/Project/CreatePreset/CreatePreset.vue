@@ -21,12 +21,25 @@
 			/>
 		</template>
 		<template #default>
-			Test
+			<h1 class="mt-2 mb-6 d-flex align-center">
+				<v-icon class="mr-1" large>{{ content.icon }}</v-icon>
+				{{ content.name }}
+			</h1>
+
+			<v-text-field
+				v-for="([name, id], i) in content.fields"
+				:key="i"
+				:label="name"
+				outlined
+				dense
+				v-model="content.models[id]"
+			></v-text-field>
+			{{ content }}
 		</template>
 
 		<template #actions>
 			<v-spacer />
-			<v-btn color="primary" :loading="false">
+			<v-btn color="primary" :disabled="!fieldsReady" :loading="false">
 				Create
 			</v-btn>
 		</template>
@@ -47,6 +60,14 @@ export default {
 	props: ['currentWindow'],
 	data() {
 		return this.currentWindow
+	},
+	computed: {
+		content() {
+			return this.sidebar.currentState
+		},
+		fieldsReady() {
+			return Object.values(this.content.models || {}).every(val => !!val)
+		},
 	},
 	methods: {
 		onClose() {

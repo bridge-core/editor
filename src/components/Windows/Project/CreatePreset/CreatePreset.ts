@@ -32,13 +32,23 @@ export class CreatePresetWindow extends BaseWindow {
 			this.sidebar.addElement(category)
 		}
 
+		const id = uuid()
 		category.addItem(
 			new SidebarItem({
-				id: uuid(),
+				id,
 				text: manifest.name,
 				icon: manifest.icon,
 			})
 		)
+		this.sidebar.setState(id, {
+			...manifest,
+			models: Object.fromEntries(
+				manifest.fields.map(([_, id, opts = {}]: any) => [
+					id,
+					opts.default ?? '',
+				])
+			),
+		})
 	}
 
 	async loadPresets(fs: FileSystem, dirPath = 'data/packages/preset') {

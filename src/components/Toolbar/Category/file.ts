@@ -20,24 +20,18 @@ export const FileMenu: IAppMenu = {
 	elements: [
 		{
 			displayName: 'toolbar.file.newFile',
-			displayIcon: 'mdi-file-plus',
+			displayIcon: 'mdi-file-plus-outline',
 			keyBinding: {
 				key: 'n',
 				ctrlKey: true,
 			},
 			onClick: () => {
-				// if (Store.state.Explorer.project.explorer)
-				// 	new CreateFileWindow(undefined, false)
-				// else
-				// 	createInformationWindow(
-				// 		'Information',
-				// 		'You need to create a project before you can create files.'
-				// 	)
+				App.ready.once(app => app.windows.createPreset.open())
 			},
 		},
 		{
-			displayName: 'toolbar.file.newFile',
-			displayIcon: 'mdi-download',
+			displayName: 'toolbar.file.openFile',
+			displayIcon: 'mdi-file-upload-outline',
 			keyBinding: {
 				key: 'o',
 				ctrlKey: true,
@@ -50,25 +44,6 @@ export const FileMenu: IAppMenu = {
 			displayName: 'toolbar.file.import.name',
 			displayIcon: 'mdi-import',
 			elements: () => [
-				{
-					displayName: 'toolbar.file.import.openFile',
-					displayIcon: 'mdi-file-upload-outline',
-					// keyBinding: {
-					// 	key: 'o',
-					// 	ctrlKey: true,
-					// },
-					onClick: async () => {
-						// const lw = new LoadingWindow()
-						// ;(
-						// 	await ipcRenderer.invoke('openFileDialog', {
-						// 		properties: ['multiSelections'],
-						// 	})
-						// ).forEach((filePath: string) =>
-						// 	FileSystem.open(filePath)
-						// )
-						// lw.close()
-					},
-				},
 				{
 					displayName: 'toolbar.file.import.importOBJ',
 					displayIcon: 'mdi-video-3d',
