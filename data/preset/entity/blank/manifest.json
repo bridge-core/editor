@@ -1,9 +1,17 @@
 {
 	"name": "Blank Entity",
 	"icon": "mdi-minecraft",
+	"description": "Creates a new, basic entity.",
 	"category": "fileType.entity",
 	"targetVersion": [">=", "1.8.0"],
-	"fields": [["Identifier", "IDENTIFIER"]],
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Identifier", "IDENTIFIER1"],
+		["Identifier", "IDENTIFIER2"],
+		["Identifier", "IDENTIFIER3"],
+		["Identifier", "IDENTIFIER4"],
+		["Identifier", "IDENTIFIER5"]
+	],
 
 	"files": [
 		[

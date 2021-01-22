@@ -21,20 +21,26 @@
 			/>
 		</template>
 		<template #default>
-			<h1 class="mt-2 mb-6 d-flex align-center">
+			<h1
+				class="mt-2 d-flex align-center"
+				:class="{ 'mb-6': !content.description }"
+			>
 				<v-icon class="mr-1" large>{{ content.icon }}</v-icon>
 				{{ content.name }}
 			</h1>
+			<p v-if="content.description" class="mt-2 mb-6">
+				{{ content.description }}
+			</p>
 
 			<v-text-field
+				class="mb-1"
 				v-for="([name, id], i) in content.fields"
 				:key="i"
 				:label="name"
 				outlined
 				dense
 				v-model="content.models[id]"
-			></v-text-field>
-			{{ content }}
+			/>
 		</template>
 
 		<template #actions>

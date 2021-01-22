@@ -35,6 +35,10 @@ export class SidebarCategory {
 		return this.items
 	}
 
+	setOpen(val: boolean) {
+		this.isOpen = val
+	}
+
 	getCurrentElement(selected: string) {
 		return this.items.find(({ id }) => id === selected)
 	}
@@ -123,11 +127,16 @@ export class Sidebar {
 
 		if (elements.length === 1) {
 			const e = elements[0]
-			if (e.type === 'category' && e.getItems().length === 1)
+			if (e.type === 'category' && e.getItems().length === 1) {
+				e.setOpen(true)
 				this.setDefaultSelected(e.getItems()[0].id)
+			}
 		}
 
 		return elements
+	}
+	get rawElements() {
+		return this._elements
 	}
 
 	get currentElement() {

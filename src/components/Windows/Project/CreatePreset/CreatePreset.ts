@@ -20,7 +20,7 @@ export class CreatePresetWindow extends BaseWindow {
 	async addPreset(fs: FileSystem, manifestPath: string) {
 		const manifest = await fs.readJSON(manifestPath)
 		let category = <SidebarCategory | undefined>(
-			this.sidebar.elements.find(
+			this.sidebar.rawElements.find(
 				element => element.getText() === manifest.category
 			)
 		)
