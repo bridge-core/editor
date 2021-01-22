@@ -7,6 +7,7 @@
 		"build": "npm run build:data && vue-cli-service build",
 		"test:unit": "vue-cli-service test:unit",
 		"lint": "vue-cli-service lint",
+		"dev:data": "node ./scripts/dev.mjs",
 		"dev": "vue-cli-service serve"
 	},
 	"dependencies": {
@@ -43,6 +44,8 @@
 		"@vue/cli-service": "^4.5.0",
 		"@vue/test-utils": "^1.0.3",
 		"archiver": "^5.2.0",
+		"chokidar": "^3.5.1",
+		"dotenv": "^8.2.0",
 		"monaco-editor-webpack-plugin": "^2.0.0",
 		"sass": "^1.19.0",
 		"sass-loader": "^8.0.0",
