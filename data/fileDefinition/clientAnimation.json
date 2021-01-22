@@ -1,1 +1,1 @@
-{"id":"clientAnimation","icon":"mdi-movie-open-outline","scope":"RP/animations","matcher":["RP/animations/**/*.json","RP/animations/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/animation/client.json","lightningCache":"clientAnimation.json"}
+{"id":"clientAnimation","icon":"mdi-movie-open-outline","scope":"RP/animations","matcher":["RP/animations/**/*.json","RP/animations/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/animation/client.json","lightningCache":"clientAnimation.json"}

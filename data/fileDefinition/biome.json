@@ -1,1 +1,1 @@
-{"id":"biome","icon":"mdi-earth-box","scope":"BP/biomes","matcher":["BP/biomes/**/*.json","BP/biomes/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/biome/main.json","lightningCache":"biome.json"}
+{"id":"biome","icon":"mdi-earth-box","scope":"BP/biomes","matcher":["BP/biomes/**/*.json","BP/biomes/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/biome/main.json","lightningCache":"biome.json"}

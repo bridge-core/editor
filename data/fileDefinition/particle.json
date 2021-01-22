@@ -1,1 +1,1 @@
-{"id":"particle","icon":"mdi-snowflake","scope":"RP/particles","matcher":["RP/particles/**/*.json","RP/particles/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/particle/main.json","lightningCache":"particle.json"}
+{"id":"particle","icon":"mdi-snowflake","scope":"RP/particles","matcher":["RP/particles/**/*.json","RP/particles/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/particle/main.json","lightningCache":"particle.json"}

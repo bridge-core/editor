@@ -1,1 +1,1 @@
-{"id":"langDef","matcher":"*/texts/languages.json","schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/simple/langDef.json"}
+{"id":"langDef","matcher":"*/texts/languages.json","schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/langDef.json"}

@@ -1,1 +1,1 @@
-{"id":"fog","icon":"mdi-weather-fog","scope":"RP/fogs","target_version":"$project_target_version >= 1.16.100","matcher":["RP/fogs/**/*.json","RP/fogs/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/fog/main.json","lightningCache":"fog.json"}
+{"id":"fog","icon":"mdi-weather-fog","scope":"RP/fogs","target_version":"$project_target_version >= 1.16.100","matcher":["RP/fogs/**/*.json","RP/fogs/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/fog/main.json","lightningCache":"fog.json"}

@@ -1,1 +1,1 @@
-{"id":"featureRule","icon":"mdi-map-plus","scope":"BP/feature_rules","matcher":"BP/feature_rules/*.json","schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/feature_rule/main.json"}
+{"id":"featureRule","icon":"mdi-map-plus","scope":"BP/feature_rules","matcher":"BP/feature_rules/*.json","schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/feature_rule/main.json"}

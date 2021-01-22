@@ -1,1 +1,1 @@
-{"id":"clientBiome","matcher":"RP/biomes_client.json","schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/simple/clientBiome.json","lightningCache":"clientBiome.json"}
+{"id":"clientBiome","matcher":"RP/biomes_client.json","schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/clientBiome.json","lightningCache":"clientBiome.json"}

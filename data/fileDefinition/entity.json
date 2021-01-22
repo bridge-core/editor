@@ -1,1 +1,1 @@
-{"id":"entity","icon":"mdi-minecraft","scope":"BP/entities","matcher":["BP/entities/**/*.json","BP/entities/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/entity/main.json","packSpider":"entity.json","lightningCache":"entity.json"}
+{"id":"entity","icon":"mdi-minecraft","scope":"BP/entities","matcher":["BP/entities/**/*.json","BP/entities/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/entity/main.json","packSpider":"entity.json","lightningCache":"entity.json"}

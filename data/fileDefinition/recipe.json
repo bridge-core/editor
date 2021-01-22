@@ -1,1 +1,1 @@
-{"id":"recipe","icon":"mdi-book-outline","scope":"BP/recipes","matcher":["BP/recipes/**/*.json","BP/recipes/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/data/next/packages/schema/recipe/main.json","lightningCache":"recipe.json"}
+{"id":"recipe","icon":"mdi-book-outline","scope":"BP/recipes","matcher":["BP/recipes/**/*.json","BP/recipes/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/recipe/main.json","lightningCache":"recipe.json"}
