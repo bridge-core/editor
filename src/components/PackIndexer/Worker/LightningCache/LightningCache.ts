@@ -171,7 +171,7 @@ export class LightningCache {
 
 		for (const instruction of instructions) {
 			const key = Object.keys(instruction).find(
-				key => key !== '@filter' && key !== '@map'
+				key => !key.startsWith('@')
 			)
 			if (!key) continue
 			const paths = instruction[key] as string[]

@@ -1,10 +1,17 @@
 import { FileType } from '@/components/Data/FileType'
+import { walkObject } from '@/utils/walkObject'
 import { LightningStore } from '../LightningCache/LightningStore'
 import { PackIndexerService } from '../Main'
 
 export interface IPackSpiderFile {
 	connect?: IFileDescription[]
 	includeFiles?: string[]
+	includeFromFiles?: {
+		from: string // filePath
+		take: string[] // ['texture_data', '@texture', 'textures']
+		prefix?: string
+		suffix?: string
+	}[]
 	sharedFiles?: string[]
 }
 export interface IFileDescription {
@@ -99,12 +106,15 @@ export function getCategoryDirectory(fileType: string) {
 export class File {
 	protected identifier?: string
 	protected parents = new Set<File>()
-	protected connectedFiles: Set<File>
+	protected _connectedFiles: Set<File>
 
 	constructor(public readonly filePath: string, parents: File[] = []) {
 		parents.forEach(parent => this.addParent(parent))
 
-		this.connectedFiles = new Set()
+		this._connectedFiles = new Set()
+	}
+	get connectedFiles() {
+		return this._connectedFiles
 	}
 
 	static async create(
@@ -135,19 +145,18 @@ export class File {
 		)
 
 		const connectedFiles: string[] = []
-		// Directly referenced files
-		const cacheKeysToInclude =
-			<string[]>(
-				packSpiderFile.includeFiles
-					?.map(cacheKey => cacheData[cacheKey] ?? [])
-					.flat()
-			) ?? []
+		// Directly referenced files (includeFiles)
+		const cacheKeysToInclude = <string[]>packSpiderFile.includeFiles
+				?.map(cacheKey => {
+					if (cacheKey) return cacheData[cacheKey] ?? []
+				})
+				.flat() ?? []
 		for (const foundFilePath of cacheKeysToInclude) {
 			if (`${pathStart}/${foundFilePath}` !== filePath)
 				connectedFiles.push(`${pathStart}/${foundFilePath}`)
 		}
 
-		// Dynamically referenced files
+		// Dynamically referenced files (connect)
 		for (let {
 			find,
 			where,
@@ -169,9 +178,39 @@ export class File {
 			}
 		}
 
-		// Shared files
+		// Shared files (sharedFiles)
 		for (const foundFilePath of packSpiderFile.sharedFiles ?? []) {
 			if (foundFilePath !== filePath) connectedFiles.push(foundFilePath)
+		}
+
+		// include from files (includeFromFiles)
+		for (const {
+			from,
+			take,
+			prefix = '',
+			suffix = '',
+		} of packSpiderFile.includeFromFiles ?? []) {
+			const transformedTake = take
+				.map(t => {
+					if (!t.startsWith('@')) return t
+
+					const data = cacheData[t.slice(1)]
+					if (!data) return 'undefined'
+					else if (data.length === 1) return data[0]
+
+					return `*{${data.join('|')}}`
+				})
+				.join('/')
+			const json = await packSpider.packIndexer.fileSystem.readJSON(from)
+
+			walkObject(transformedTake, json, data => {
+				if (Array.isArray(data))
+					connectedFiles.push(
+						...data.map(d => `${prefix}${d}${suffix}`)
+					)
+				else if (typeof data === 'string')
+					connectedFiles.push(`${prefix}${data}${suffix}`)
+			})
 		}
 
 		const file = new File(
@@ -185,6 +224,7 @@ export class File {
 		fileStore[fileType][filePath] = file
 		return fileStore[fileType][filePath]
 	}
+
 	async addConnectedFiles(filePaths: string[], packSpider: PackSpider) {
 		for (const filePath of filePaths) {
 			const file = await File.create(filePath, packSpider)

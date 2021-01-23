@@ -1,1 +1,1 @@
-[{ "texture": "texture_data" }]
+[{ "texture": "texture_data" }, { "texturePath": "texture_data/*/textures" }]

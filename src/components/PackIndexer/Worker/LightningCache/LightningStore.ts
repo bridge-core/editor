@@ -133,8 +133,9 @@ export class LightningStore {
 		const filePaths = []
 
 		for (const fileType in this.store) {
-			for (const filePath in this.store[fileType])
+			for (const filePath in this.store[fileType]) {
 				filePaths.push(filePath)
+			}
 		}
 
 		return filePaths

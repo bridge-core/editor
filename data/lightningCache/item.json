@@ -1,4 +1,5 @@
 [
 	{ "identifier": "minecraft:item/description/identifier" },
-	{ "event": "minecraft:item/events" }
+	{ "event": "minecraft:item/events" },
+	{ "itemTexture": "minecraft:item/components/minecraft:icon/texture" }
 ]

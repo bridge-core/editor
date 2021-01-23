@@ -17,6 +17,14 @@
 			"matches": "identifier"
 		}
 	],
-	"includeFiles": ["lootTablePath", "texturePath"],
+	"includeFromFiles": [
+		{
+			"from": "RP/textures/item_texture.json",
+			"take": ["texture_data", "@itemTexture", "textures"],
+			"prefix": "RP/",
+			"suffix": ".png"
+		}
+	],
+	"includeFiles": ["lootTablePath"],
 	"sharedFiles": ["RP/textures/item_texture.json"]
 }
