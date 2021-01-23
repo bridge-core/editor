@@ -21,6 +21,11 @@ export class ProjectConfig {
 		}
 	}
 
+	async getConfig() {
+		if (!this.data) await this.loadData()
+		return this.data
+	}
+
 	async get(key: string) {
 		if (!this.data) await this.loadData()
 		return this.data![key]

@@ -178,6 +178,7 @@ export default {
 			packIcon: 'Project Icon (optional)',
 			projectName: 'Project Name',
 			projectPrefix: 'Project Prefix',
+			projectAuthor: 'Project Author',
 			create: 'Create!',
 		},
 		createPreset: {

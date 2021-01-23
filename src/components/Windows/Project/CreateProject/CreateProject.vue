@@ -32,6 +32,12 @@
 				outlined
 				dense
 			/>
+			<v-text-field
+				v-model="projectAuthor"
+				:label="t('windows.createProject.projectAuthor')"
+				outlined
+				dense
+			/>
 		</template>
 
 		<template #actions>

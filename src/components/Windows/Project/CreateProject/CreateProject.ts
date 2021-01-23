@@ -6,6 +6,7 @@ import CreateProjectComponent from './CreateProject.vue'
 export class CreateProjectWindow extends BaseWindow {
 	protected projectName: string = ''
 	protected projectPrefix: string = 'bridge'
+	protected projectAuthor: string = ''
 	protected projectIcon: File | null = null
 	protected isCreatingProject = false
 
@@ -15,7 +16,11 @@ export class CreateProjectWindow extends BaseWindow {
 	}
 
 	get hasRequiredData() {
-		return this.projectName.length > 0 && this.projectPrefix.length > 0
+		return (
+			this.projectName.length > 0 &&
+			this.projectPrefix.length > 0 &&
+			this.projectAuthor.length > 0
+		)
 	}
 
 	createProject() {
@@ -46,6 +51,7 @@ export class CreateProjectWindow extends BaseWindow {
 					`projects/${this.projectName}/bridge/config.json`,
 					{
 						projectPrefix: this.projectPrefix,
+						projectAuthor: this.projectAuthor,
 					}
 				)
 
