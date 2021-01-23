@@ -27,6 +27,6 @@
 			"RP/textures/item_texture.json",
 			{ "inject": ["IDENTIFIER"] }
 		],
-		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJ_PREFIX"] }]
+		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }]
 	]
 }

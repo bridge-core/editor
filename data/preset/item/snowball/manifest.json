@@ -13,7 +13,7 @@
 		[
 			"item.json",
 			"BP/items/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
 		],
 		[
 			"icon.png",
@@ -23,24 +23,24 @@
 		[
 			"clientEntity.json",
 			"RP/entity/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
 		],
 		[
 			"entity.json",
 			"BP/entities/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
 		]
 	],
 	"expandFiles": [
 		[
 			"itemTexture.json",
 			"RP/textures/item_texture.json",
-			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
 		],
 		[
 			"en_US.lang",
 			"RP/texts/en_US.lang",
-			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJ_PREFIX"] }
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
 		]
 	]
 }
