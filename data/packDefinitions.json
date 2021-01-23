@@ -13,5 +13,10 @@
 		"id": "skinPack",
 		"matcher": "projects/*/SP/**",
 		"color": "warning"
+	},
+	{
+		"id": "worldTemplate",
+		"matcher": "projects/*/WT/**",
+		"color": "success"
 	}
 ]
