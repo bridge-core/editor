@@ -23,4 +23,8 @@ export class LoadingWindow extends BaseWindow {
 			throw new Error(`Trying to close loadingWindow that doesn't exist`)
 		}
 	}
+	closeAll() {
+		this.virtualWindows = 0
+		super.close()
+	}
 }

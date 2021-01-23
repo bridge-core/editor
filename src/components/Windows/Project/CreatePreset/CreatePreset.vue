@@ -41,11 +41,18 @@
 				dense
 				v-model="content.models[id]"
 			/>
+
+			{{ content.models }}
 		</template>
 
 		<template #actions>
 			<v-spacer />
-			<v-btn color="primary" :disabled="!fieldsReady" :loading="false">
+			<v-btn
+				@click="onCreatePreset"
+				color="primary"
+				:disabled="!fieldsReady"
+				:loading="false"
+			>
 				Create
 			</v-btn>
 		</template>
@@ -78,6 +85,10 @@ export default {
 	methods: {
 		onClose() {
 			this.currentWindow.close()
+		},
+		onCreatePreset() {
+			this.currentWindow.close()
+			this.currentWindow.createPreset(this.content)
 		},
 	},
 }

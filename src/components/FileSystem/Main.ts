@@ -95,4 +95,13 @@ export class FileSystem {
 	writeJSON(path: string, data: any) {
 		return this.writeFile(path, JSON.stringify(data))
 	}
+
+	async copyFile(originPath: string, destPath: string) {
+		const fileHandle = await this.getFileHandle(originPath, false)
+		const copiedFileHandle = await this.getFileHandle(destPath, true)
+
+		const writable = await copiedFileHandle.createWritable()
+		await writable.write(await fileHandle.getFile())
+		await writable.close()
+	}
 }
