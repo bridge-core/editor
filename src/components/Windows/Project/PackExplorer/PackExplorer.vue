@@ -34,14 +34,25 @@
 			/>
 		</template>
 		<template #default="{ selectedSidebar }">
-			<FileDisplayer
-				v-if="sidebar.currentElement.kind === 'directory'"
-				:key="selectedSidebar"
-				:startPath="
-					selectedSidebar ? selectedSidebar.split('/') : undefined
-				"
-				@closeWindow="onClose"
-			/>
+			<div v-if="sidebar.currentElement.kind === 'directory'">
+				<h1 class="mt-2 mb-6 d-flex align-center">
+					<v-icon
+						class="mr-1"
+						large
+						:color="sidebar.currentState.color"
+					>
+						{{ sidebar.currentState.icon }}
+					</v-icon>
+					{{ sidebar.currentState.text }}
+				</h1>
+				<FileDisplayer
+					:key="selectedSidebar"
+					:startPath="
+						selectedSidebar ? selectedSidebar.split('/') : undefined
+					"
+					@closeWindow="onClose"
+				/>
+			</div>
 
 			<div
 				class="body-1"
@@ -50,9 +61,9 @@
 				<strong>File:</strong> {{ selectedSidebar }}
 				<div class="mt-8 d-flex">
 					<v-spacer />
-					<v-btn color="primary" @click="openFile(selectedSidebar)"
-						>Open</v-btn
-					>
+					<v-btn color="primary" @click="openFile(selectedSidebar)">
+						Open
+					</v-btn>
 				</div>
 			</div>
 		</template>
