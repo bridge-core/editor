@@ -13,7 +13,7 @@
 		[
 			"item.json",
 			"BP/items/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
 		],
 		[
 			"icon.png",
@@ -25,7 +25,7 @@
 		[
 			"itemTexture.json",
 			"RP/textures/item_texture.json",
-			{ "inject": ["IDENTIFIER"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
 		],
 		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }]
 	]

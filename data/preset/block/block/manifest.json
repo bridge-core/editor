@@ -1,0 +1,37 @@
+{
+	"name": "Block",
+	"icon": "mdi-wall",
+	"description": "Creates a new generic block.",
+	"category": "fileType.block",
+	"targetVersion": [">=", "1.16.0"],
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"block.json",
+			"BP/blocks/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"icon.png",
+			"RP/textures/blocks/{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER"] }
+		]
+	],
+	"expandFiles": [
+		[
+			"terrainTexture.json",
+			"RP/textures/terrain_textures.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+        ],
+        [
+            "clientBlock.json",
+            "RP/blocks.json",
+            { "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+        ],
+		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }]
+	]
+}

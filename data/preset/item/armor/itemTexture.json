@@ -1,0 +1,16 @@
+{
+  "texture_data": {
+    "{{PROJECT_PREFIX}}_{{IDENTIFIER}}_helmet": {
+      "textures": ["textures/items/{{IDENTIFIER}}_helmet"]
+    },
+    "{{PROJECT_PREFIX}}_{{IDENTIFIER}}_chestplate": {
+      "textures": ["textures/items/{{IDENTIFIER}}_chestplate"]
+    },
+    "{{PROJECT_PREFIX}}_{{IDENTIFIER}}_leggings": {
+      "textures": ["textures/items/{{IDENTIFIER}}_leggings"]
+    },
+    "{{PROJECT_PREFIX}}_{{IDENTIFIER}}_boots": {
+      "textures": ["textures/items/{{IDENTIFIER}}_boots"]
+    }
+  }
+}
