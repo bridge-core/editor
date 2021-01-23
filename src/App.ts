@@ -24,6 +24,7 @@ import Vue from 'vue'
 import { settingsState } from './components/Windows/Settings/SettingsState'
 import { LoadingWindow } from './components/Windows/LoadingWindow/LoadingWindow'
 import { DataLoader } from './components/Data/DataLoader'
+import { ProjectConfig } from './components/Project/ProjectConfig'
 export class App {
 	public static readonly eventSystem = new EventManager<any>([
 		'projectChanged',
@@ -32,9 +33,11 @@ export class App {
 	protected static _instance: App
 
 	public fileSystem!: FileSystem
+	public projectConfig!: ProjectConfig
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
 	public readonly packIndexer = new PackIndexer()
+
 	protected _windows!: Windows
 	get windows() {
 		return this._windows
@@ -105,6 +108,7 @@ export class App {
 			this.fileSystem.mkdir('data'),
 		])
 		await DataLoader.setup(this.fileSystem)
+		this.projectConfig = new ProjectConfig(this.fileSystem)
 
 		// Set language based off of browser language
 		// if (!navigator.language.includes('en')) {

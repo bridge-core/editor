@@ -4,7 +4,8 @@ import { BaseWindow } from '@/components/Windows/BaseWindow'
 import CreateProjectComponent from './CreateProject.vue'
 
 export class CreateProjectWindow extends BaseWindow {
-	protected projectName: string | null = null
+	protected projectName: string = ''
+	protected projectPrefix: string = 'bridge'
 	protected projectIcon: File | null = null
 	protected isCreatingProject = false
 
@@ -14,7 +15,7 @@ export class CreateProjectWindow extends BaseWindow {
 	}
 
 	get hasRequiredData() {
-		return this.projectName !== undefined
+		return this.projectName.length > 0 && this.projectPrefix.length > 0
 	}
 
 	createProject() {
@@ -27,6 +28,9 @@ export class CreateProjectWindow extends BaseWindow {
 				})
 
 				await Promise.all([
+					fs.mkdir(`projects/${this.projectName}/bridge`, {
+						recursive: true,
+					}),
 					fs.mkdir(`projects/${this.projectName}/BP`, {
 						recursive: true,
 					}),
@@ -37,6 +41,13 @@ export class CreateProjectWindow extends BaseWindow {
 						recursive: true,
 					}),
 				])
+
+				await fs.writeJSON(
+					`projects/${this.projectName}/bridge/config.json`,
+					{
+						projectPrefix: this.projectPrefix,
+					}
+				)
 
 				if (this.projectIcon)
 					await fs.writeFile(

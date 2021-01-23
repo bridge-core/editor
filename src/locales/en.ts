@@ -177,6 +177,7 @@ export default {
 			title: 'Create Project',
 			packIcon: 'Project Icon (optional)',
 			projectName: 'Project Name',
+			projectPrefix: 'Project Prefix',
 			create: 'Create!',
 		},
 		createPreset: {

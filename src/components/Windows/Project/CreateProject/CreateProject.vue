@@ -23,6 +23,14 @@
 			<v-text-field
 				v-model="projectName"
 				:label="t('windows.createProject.projectName')"
+				outlined
+				dense
+			/>
+			<v-text-field
+				v-model="projectPrefix"
+				:label="t('windows.createProject.projectPrefix')"
+				outlined
+				dense
 			/>
 		</template>
 

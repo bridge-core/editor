@@ -49,6 +49,7 @@ export class CreatePresetWindow extends BaseWindow {
 	}
 
 	protected async addPreset(fs: FileSystem, manifestPath: string) {
+		const app = await App.getApp()
 		const manifest = <IPresetManifest>await fs.readJSON(manifestPath)
 		let category = <SidebarCategory | undefined>(
 			this.sidebar.rawElements.find(
@@ -74,12 +75,16 @@ export class CreatePresetWindow extends BaseWindow {
 		this.sidebar.setState(id, {
 			...manifest,
 			presetPath: dirname(manifestPath),
-			models: Object.fromEntries(
-				manifest.fields.map(([_, id, opts = {}]: any) => [
-					id,
-					opts.default ?? '',
-				])
-			),
+			models: {
+				PROJECT_PREFIX:
+					(await app.projectConfig.get('projectPrefix')) ?? 'bridge',
+				...Object.fromEntries(
+					manifest.fields.map(([_, id, opts = {}]: any) => [
+						id,
+						opts.default ?? '',
+					])
+				),
+			},
 		})
 	}
 
