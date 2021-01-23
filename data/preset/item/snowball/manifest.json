@@ -1,7 +1,7 @@
 {
-	"name": "Food",
-	"icon": "mdi-food-apple-outline",
-	"description": "Creates a new food item.",
+	"name": "Snowball",
+	"icon": "mdi-tennis-ball",
+	"description": "Creates a snowball item with a projectile entity.",
 	"category": "fileType.item",
 	"targetVersion": [">=", "1.16.100"],
 	"fields": [
@@ -13,19 +13,29 @@
 		[
 			"item.json",
 			"BP/items/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
+			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
 		],
 		[
 			"icon.png",
 			"RP/textures/items/{{IDENTIFIER}}.png",
 			{ "inject": ["IDENTIFIER"] }
+        ],
+        [
+            "clientEntity.json",
+            "RP/entity/{{IDENTIFIER}}.json",
+            { "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
+		],
+		[
+			"entity.json",
+			"BP/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
 		]
 	],
 	"expandFiles": [
 		[
 			"itemTexture.json",
 			"RP/textures/item_texture.json",
-			{ "inject": ["IDENTIFIER"] }
+			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
 		],
 		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJ_PREFIX"] }]
 	]

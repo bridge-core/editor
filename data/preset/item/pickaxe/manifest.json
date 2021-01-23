@@ -1,7 +1,7 @@
 {
-	"name": "Food",
-	"icon": "mdi-food-apple-outline",
-	"description": "Creates a new food item.",
+	"name": "Pickaxe",
+	"icon": "mdi-pickaxe",
+	"description": "Creates a new pickaxe item.",
 	"category": "fileType.item",
 	"targetVersion": [">=", "1.16.100"],
 	"fields": [
@@ -13,7 +13,7 @@
 		[
 			"item.json",
 			"BP/items/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
+			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
 		],
 		[
 			"icon.png",
@@ -25,7 +25,7 @@
 		[
 			"itemTexture.json",
 			"RP/textures/item_texture.json",
-			{ "inject": ["IDENTIFIER"] }
+			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
 		],
 		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJ_PREFIX"] }]
 	]

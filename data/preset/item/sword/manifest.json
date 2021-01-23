@@ -1,15 +1,19 @@
 {
-	"name": "Weapon",
+	"name": "Sword",
 	"icon": "mdi-sword",
+	"description": "Creates a sword item.",
 	"category": "fileType.item",
-	"targetVersion": [">=", "1.16.200"],
-	"fields": [["Identifier", "IDENTIFIER"]],
+	"targetVersion": [">=", "1.16.100"],
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
 
 	"createFiles": [
 		[
 			"item.json",
 			"BP/items/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
+			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
 		],
 		[
 			"icon.png",
@@ -21,8 +25,8 @@
 		[
 			"itemTexture.json",
 			"RP/textures/item_texture.json",
-			{ "inject": ["IDENTIFIER"] }
+			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
 		],
-		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER"] }]
+		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJ_PREFIX"] }]
 	]
 }

@@ -1,7 +1,7 @@
 {
-	"name": "Food",
-	"icon": "mdi-food-apple-outline",
-	"description": "Creates a new food item.",
+	"name": "Axe",
+    "icon": "mdi-axe",
+    "description": "Creates a new axe item.",
 	"category": "fileType.item",
 	"targetVersion": [">=", "1.16.100"],
 	"fields": [
