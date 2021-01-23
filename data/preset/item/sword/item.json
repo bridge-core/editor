@@ -2,7 +2,7 @@
 	"format_version": "1.16.100",
 	"minecraft:item": {
 		"description": {
-			"identifier": "{{PROJ_PREFIX}}:{{IDENTIFIER}}",
+			"identifier": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}",
 			"category": "equipment"
 		},
 		"components": {
@@ -16,7 +16,7 @@
 			},
 			"minecraft:damage": 5,
 			"minecraft:icon": {
-				"texture": "{{PROJ_PREFIX}}_{{IDENTIFIER}}"
+				"texture": "{{PROJECT_PREFIX}}_{{IDENTIFIER}}"
 			},
 			"minecraft:enchantable": {
 				"value": 14,

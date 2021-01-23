@@ -2,7 +2,7 @@
     "format_version": "1.16.0",
     "minecraft:entity": {
       "description": {
-        "identifier": "{{PROJ_PREFIX}}:{{IDENTIFIER}}_projectile",
+        "identifier": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}_projectile",
         "is_spawnable": false,
         "is_summonable": true,
         "is_experimental": false

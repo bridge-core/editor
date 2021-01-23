@@ -3,7 +3,7 @@
 	"minecraft:item": {
 		"description": {
 			"category": "equipment",
-			"identifier": "{{PROJ_PREFIX}}:{{IDENTIFIER}}"
+			"identifier": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}"
 		},
 		"components": {
 			"minecraft:creative_category": {
@@ -15,12 +15,12 @@
 				"max_durability": 150
 			},
 			"minecraft:icon": {
-				"texture": "{{PROJ_PREFIX}}_{{IDENTIFIER}}"
+				"texture": "{{PROJECT_PREFIX}}_{{IDENTIFIER}}"
 			},
 			"minecraft:repairable": {
 				"repair_items": [
 					{
-						"items": ["{{PROJ_PREFIX}}:{{IDENTIFIER}}"],
+						"items": ["{{PROJECT_PREFIX}}:{{IDENTIFIER}}"],
 						"repair_amount": 20
 					}
 				]
