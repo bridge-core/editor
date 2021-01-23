@@ -13,7 +13,7 @@
 		],
 		[
 			"icon.png",
-			"RP/textures/items/{{IDENTIFIER}}.json",
+			"RP/textures/items/{{IDENTIFIER}}.png",
 			{ "inject": ["IDENTIFIER"] }
 		]
 	],

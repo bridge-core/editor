@@ -6,7 +6,7 @@
 	"targetVersion": [">=", "1.8.0"],
 	"fields": [["Identifier", "IDENTIFIER"]],
 
-	"files": [
+	"createFiles": [
 		[
 			"entity.json",
 			"BP/entities/{{IDENTIFIER}}.json",
