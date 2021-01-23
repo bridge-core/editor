@@ -1,0 +1,76 @@
+{
+	"name": "Bat",
+	"icon": "mdi-bat",
+	"description": "Creates a new bat entity.",
+	"category": "fileType.entity",
+	"targetVersion": [">=", "1.8.0"],
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"entity.json",
+			"BP/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"clientEntity.json",
+			"RP/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"animation.json",
+			"RP/animations/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"animationController.json",
+			"RP/animation_controllers/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"geometry.json",
+			"RP/models/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"lootTable.json",
+			"BP/loot_tables/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"renderController.json",
+			"RP/render_controllers/{{IDENTFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"spawnRule.json",
+			"BP/spawn_rules/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"texture.png",
+			"RP/textures/entity/{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER"] }
+		]
+	],
+	"expandFiles": [
+		[
+			"en_US.lang",
+			"RP/texts/en_US.lang",
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
+		],
+		[
+			"soundDefinitions.json",
+			"RP/sounds/sound_definitions.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"sounds.json",
+			"RP/sounds.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		]
+	]
+}
