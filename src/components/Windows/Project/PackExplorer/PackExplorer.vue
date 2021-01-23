@@ -58,7 +58,18 @@
 				class="body-1"
 				v-else-if="sidebar.currentElement.kind === 'file'"
 			>
-				<strong>File:</strong> {{ selectedSidebar }}
+				<h1 class="mt-2 mb-6 d-flex align-center">
+					<v-icon
+						class="mr-1"
+						large
+						:color="sidebar.currentState.color"
+					>
+						{{ sidebar.currentState.icon }}
+					</v-icon>
+					{{ sidebar.currentState.text }}
+				</h1>
+				<p><strong>Path:</strong> {{ selectedSidebar }}</p>
+
 				<div class="mt-8 d-flex">
 					<v-spacer />
 					<v-btn color="primary" @click="openFile(selectedSidebar)">
