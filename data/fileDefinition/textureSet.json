@@ -1,1 +1,6 @@
-{"id":"textureSet","icon":"mdi-format-list-bulleted","matcher":["RP/textures/blocks/**/*.json","RP/textures/blocks/*.json"],"schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/textureSet/main.json"}
+{
+	"id": "textureSet",
+	"icon": "mdi-format-list-bulleted",
+	"matcher": ["RP/textures/blocks/**/*.json", "RP/textures/blocks/*.json"],
+	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/textureSet/main.json"
+}

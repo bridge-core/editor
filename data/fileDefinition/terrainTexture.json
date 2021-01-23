@@ -1,1 +1,6 @@
-{"id":"terrainTexture","matcher":"RP/textures/terrain_texture.json","schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/terrainTexture.json","lightningCache":"terrainTexture.json"}
+{
+	"id": "terrainTexture",
+	"matcher": "RP/textures/terrain_texture.json",
+	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/terrainTexture.json",
+	"lightningCache": "terrainTexture.json"
+}

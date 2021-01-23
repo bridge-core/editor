@@ -1,1 +1,1 @@
-{"id":"lang","icon":"mdi-web","matcher":"*/texts/**/*.lang"}
+{ "id": "lang", "icon": "mdi-web", "matcher": "*/texts/**/*.lang" }

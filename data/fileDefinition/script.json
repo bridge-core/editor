@@ -1,1 +1,5 @@
-{"id":"script","icon":"mdi-language-javascript","matcher":"BP/scripts/**/*.js"}
+{
+	"id": "script",
+	"icon": "mdi-language-javascript",
+	"matcher": "BP/scripts/**/*.js"
+}

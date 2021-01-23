@@ -1,1 +1,6 @@
-{"id":"soundDefinition","matcher":"RP/sounds/sound_definitions.json","schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/soundDefinitions.json","lightningCache":"soundDefinition.json"}
+{
+	"id": "soundDefinition",
+	"matcher": "RP/sounds/sound_definitions.json",
+	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/soundDefinitions.json",
+	"lightningCache": "soundDefinition.json"
+}

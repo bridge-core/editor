@@ -1,1 +1,5 @@
-{"id":"clientSound","matcher":"RP/sounds.json","schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/sounds.json"}
+{
+	"id": "clientSound",
+	"matcher": "RP/sounds.json",
+	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/sounds.json"
+}

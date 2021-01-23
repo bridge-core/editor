@@ -1,1 +1,6 @@
-{"id":"flipbookTexture","matcher":"RP/textures/flipbook_textures.json","schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/flipbookTexture.json","lightningCache":"flipbookTexture.json"}
+{
+	"id": "flipbookTexture",
+	"matcher": "RP/textures/flipbook_textures.json",
+	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/flipbookTexture.json",
+	"lightningCache": "flipbookTexture.json"
+}

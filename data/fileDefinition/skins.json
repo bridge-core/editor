@@ -1,1 +1,5 @@
-{"id":"skins","matcher":"SP/skins.json","schema":"https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/skins.json"}
+{
+	"id": "skins",
+	"matcher": "SP/skins.json",
+	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/skins.json"
+}
