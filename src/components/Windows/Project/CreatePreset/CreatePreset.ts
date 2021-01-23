@@ -121,6 +121,7 @@ export class CreatePresetWindow extends BaseWindow {
 		const fs = app.fileSystem
 
 		const promises: Promise<unknown>[] = []
+		const createdFiles: string[] = []
 		promises.push(
 			...createFiles.map(async ([originPath, destPath, opts]) => {
 				const inject = opts?.inject ?? []
@@ -131,7 +132,8 @@ export class CreatePresetWindow extends BaseWindow {
 				)
 				const ext = extname(fullDestPath)
 				await fs.mkdir(dirname(fullDestPath), { recursive: true })
-				console.log(fullOriginPath, fullDestPath)
+				createdFiles.push(this.transformString(destPath, inject))
+
 				if (inject.length === 0 || !textTransformFiles.includes(ext)) {
 					await fs.copyFile(fullOriginPath, fullDestPath)
 				} else {
@@ -153,7 +155,8 @@ export class CreatePresetWindow extends BaseWindow {
 				)
 				const ext = extname(fullDestPath)
 				await fs.mkdir(dirname(fullDestPath), { recursive: true })
-				console.log(fullOriginPath, fullDestPath)
+				createdFiles.push(this.transformString(destPath, inject))
+
 				if (ext === '.json') {
 					const json = await fs.readJSON(fullOriginPath)
 
@@ -200,6 +203,16 @@ export class CreatePresetWindow extends BaseWindow {
 		)
 
 		await Promise.all(promises)
+
+		await new Promise<void>(resolve =>
+			app.packIndexer.once(async () => {
+				for (const filePath of createdFiles)
+					await app.packIndexer.service.updateFile(filePath)
+
+				resolve()
+			})
+		)
+
 		app.windows.loadingWindow.close()
 	}
 
