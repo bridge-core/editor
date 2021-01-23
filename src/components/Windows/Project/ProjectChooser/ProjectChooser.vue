@@ -33,7 +33,9 @@
 				/>
 				<div>
 					<h1>{{ sidebar.currentState.projectName }}</h1>
-					<h3>by Minecraft</h3>
+					<h3>
+						by {{ sidebar.currentState.projectAuthor || 'Unknown' }}
+					</h3>
 				</div>
 			</div>
 			<div>
