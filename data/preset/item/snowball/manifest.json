@@ -1,6 +1,6 @@
 {
 	"name": "Snowball",
-	"icon": "mdi-tennis-ball",
+	"icon": "mdi-circle",
 	"description": "Creates a snowball item with a projectile entity.",
 	"category": "fileType.item",
 	"targetVersion": [">=", "1.16.100"],
@@ -19,11 +19,11 @@
 			"icon.png",
 			"RP/textures/items/{{IDENTIFIER}}.png",
 			{ "inject": ["IDENTIFIER"] }
-        ],
-        [
-            "clientEntity.json",
-            "RP/entity/{{IDENTIFIER}}.json",
-            { "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
+		],
+		[
+			"clientEntity.json",
+			"RP/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
 		],
 		[
 			"entity.json",
@@ -37,6 +37,10 @@
 			"RP/textures/item_texture.json",
 			{ "inject": ["IDENTIFIER", "PROJ_PREFIX"] }
 		],
-		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJ_PREFIX"] }]
+		[
+			"en_US.lang",
+			"RP/texts/en_US.lang",
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJ_PREFIX"] }
+		]
 	]
 }
