@@ -163,7 +163,7 @@
         }
       }
     },
-    "animation.{{IDENTIFIER}}.fly.bobbing": { //This animation is mainly for pollination, but we thought it looked good even when flying around, so we just left it on always!
+    "animation.{{IDENTIFIER}}.fly.bobbing": {
       "loop": true,
       "bones": {
         "body": {

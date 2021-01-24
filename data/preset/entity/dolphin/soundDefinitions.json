@@ -1,0 +1,95 @@
+{
+  "sound_definitions": {
+    "mob.{{IDENTIFIER}}.idle_water": {
+      "sounds": [
+        {
+          "name": "sounds/mob/dolphin/water/w_idle1",
+          "load_on_low_memory": true
+        },
+        "sounds/mob/dolphin/water/w_idle2",
+        "sounds/mob/dolphin/water/w_idle3",
+        "sounds/mob/dolphin/water/w_idle4",
+        "sounds/mob/dolphin/water/w_idle5",
+        "sounds/mob/dolphin/water/w_idle6",
+        "sounds/mob/dolphin/water/w_idle7",
+        "sounds/mob/dolphin/water/w_idle8",
+        "sounds/mob/dolphin/water/w_idle9",
+        "sounds/mob/dolphin/water/w_idle10"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.attack": {
+      "sounds": [
+        "sounds/mob/dolphin/attack1",
+        "sounds/mob/dolphin/attack2",
+        "sounds/mob/dolphin/attack3"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.blowhole": {
+      "sounds": [
+        "sounds/mob/dolphin/blowhole1",
+        "sounds/mob/dolphin/blowhole2"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.death": {
+      "sounds": [
+        "sounds/mob/dolphin/death1",
+        "sounds/mob/dolphin/death2"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.eat": {
+      "sounds": [
+        "sounds/mob/dolphin/eat1",
+        "sounds/mob/dolphin/eat2",
+        "sounds/mob/dolphin/eat3"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.hurt": {
+      "sounds": [
+        "sounds/mob/dolphin/hurt1",
+        "sounds/mob/dolphin/hurt2",
+        "sounds/mob/dolphin/hurt3"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.idle": {
+      "sounds": [
+        {
+          "name": "sounds/mob/dolphin/water/w_idle1",
+          "load_on_low_memory": true
+        },
+        "sounds/mob/dolphin/idle2",
+        "sounds/mob/dolphin/idle3",
+        "sounds/mob/dolphin/idle4",
+        "sounds/mob/dolphin/idle5",
+        "sounds/mob/dolphin/idle6"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.jump": {
+      "sounds": [
+        "sounds/mob/dolphin/jump1",
+        "sounds/mob/dolphin/jump2",
+        "sounds/mob/dolphin/jump3"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.play": {
+      "sounds": [
+        "sounds/mob/dolphin/play1",
+        "sounds/mob/dolphin/play2"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.splash": {
+      "sounds": [
+        "sounds/mob/dolphin/splash1",
+        "sounds/mob/dolphin/splash2",
+        "sounds/mob/dolphin/splash3"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.swim": {
+      "sounds": [
+        "sounds/mob/dolphin/swim1",
+        "sounds/mob/dolphin/swim2",
+        "sounds/mob/dolphin/swim3",
+        "sounds/mob/dolphin/swim4"
+      ]
+    }
+  }
+}

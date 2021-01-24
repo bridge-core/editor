@@ -4,7 +4,7 @@
 		"description": {
 			"identifier": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}",
 			"materials": {
-				"default": "bat"
+				"default": "villager"
 			},
 			"textures": {
 				"default": "textures/entity/{{IDENTIFIER}}"
@@ -13,13 +13,21 @@
 				"default": "geometry.{{IDENTIFIER}}"
 			},
 			"scripts": {
-				"scale": 0.35
+				"scale": 1
 			},
 			"animations": {
-				"resting": "animation.{{IDENTIFIER}}.resting",
-				"flying": "animation.{{IDENTIFIER}}.flying"
+				"general": "animation.{{IDENTIFIER}}.general",
+				"look_at_target": "animation.common.look_at_target",
+				"raise_arms": "animation.{{IDENTIFIER}}.raise_arms",
+				"move": "animation.{{IDENTIFIER}}.move"
 			},
 			"animation_controllers": [
+				{
+					"general": "controller.animation.{{IDENTIFIER}}.general"
+				},
+				{
+					"raise_arms": "controller.animation.{{IDENTIFIER}}_v2.raise_arms"
+				},
 				{
 					"move": "controller.animation.{{IDENTIFIER}}.move"
 				}
@@ -28,8 +36,8 @@
 				"controller.render.{{IDENTIFIER}}"
 			],
 			"spawn_egg": {
-				"base_color": "#000000",
-				"overlay_color": "#FFFFFF"
+				"base_color": "#53443E",
+				"overlay_color": "#2E6854"
 			}
 		}
 	}

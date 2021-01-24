@@ -1,0 +1,41 @@
+{
+  "sound_definitions": {
+    "mob.{{IDENTIFIER}}.death": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/pig/death"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.boost": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/pig/boost1",
+        "sounds/mob/pig/boost2",
+        "sounds/mob/pig/boost3",
+        "sounds/mob/pig/boost4long",
+        "sounds/mob/pig/boost5long"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.say": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/mob/pig/say1",
+          "load_on_low_memory": true
+        },
+        "sounds/mob/pig/say2",
+        "sounds/mob/pig/say3"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.step": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/pig/step1",
+        "sounds/mob/pig/step2",
+        "sounds/mob/pig/step3",
+        "sounds/mob/pig/step4",
+        "sounds/mob/pig/step5"
+      ]
+    }
+  }
+}
