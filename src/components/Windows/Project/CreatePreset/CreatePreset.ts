@@ -51,6 +51,11 @@ export class CreatePresetWindow extends BaseWindow {
 	protected async addPreset(fs: FileSystem, manifestPath: string) {
 		const app = await App.getApp()
 		const manifest = <IPresetManifest>await fs.readJSON(manifestPath)
+		if (!manifest.category)
+			throw new Error(
+				`Error loading ${manifestPath}: Missing preset category`
+			)
+
 		let category = <SidebarCategory | undefined>(
 			this.sidebar.rawElements.find(
 				element => element.getText() === manifest.category
