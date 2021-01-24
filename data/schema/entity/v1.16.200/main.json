@@ -19,6 +19,9 @@
 					}
 				},
 				"events": {
+					"propertyNames": {
+						"$ref": "../general/builtInEvent.json"
+					},
 					"patternProperties": {
 						".*": {
 							"$ref": "./event.json"
