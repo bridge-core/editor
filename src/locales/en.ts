@@ -137,6 +137,14 @@ export default {
 				viewExtensions: 'View Extensions',
 			},
 		},
+		notifications: {
+			discord: {
+				message: 'Discord Server'
+			},
+			gettingStarted: {
+				message: 'Getting Started'
+			},
+		},
 	},
 	// Welcome Screen
 	welcome: {
@@ -172,6 +180,7 @@ export default {
 		openFile: {
 			title: 'Open',
 			search: 'Search file...',
+			noData: 'No results...',
 		},
 		createProject: {
 			title: 'Create Project',

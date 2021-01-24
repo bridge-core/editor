@@ -15,6 +15,7 @@
 				v-model="selectedFile"
 				:items="packFiles"
 				dense
+				:no-data-text="t('windows.openFile.noData')"
 				outlined
 				autofocus
 				@change="onChange"

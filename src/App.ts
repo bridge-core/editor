@@ -127,7 +127,7 @@ export class App {
 		if (process.env.NODE_ENV === 'development') {
 			const discordMsg = createNotification({
 				icon: 'mdi-discord',
-				message: 'Discord Server',
+				message: 'sidebar.notifications.discord.message',
 				color: '#7289DA',
 				textColor: 'white',
 				onClick: () => {
@@ -140,7 +140,7 @@ export class App {
 		if (process.env.NODE_ENV === 'development') {
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
-				message: 'Getting Started',
+				message: 'sidebar.notifications.gettingStarted.message',
 				textColor: 'white',
 				onClick: () => {
 					App.createNativeWindow(
