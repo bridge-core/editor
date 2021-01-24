@@ -39,7 +39,7 @@
 			"$ref": "../../event/componentGroup.json"
 		},
 		{
-			"$ref": "../../event/v1.16.100/trigger.json"
+			"$ref": "../../event/v1.16.100/triggerEntity.json"
 		}
 	]
 }
