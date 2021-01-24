@@ -1,36 +1,75 @@
 {
-	"display_name": "Zombie Pigman",
+	"name": "Zombie Pigman",
 	"description": "Creates a new zombie pigman entity.",
 	"icon": "mdi-human",
-	"bp_map": {
-		"entity.json": "entities/",
-		"loot_table.json": "loot_tables/entities/",
-		"loot_table_gear.json": "loot_tables/entities/{{IDENTIFIER}}_gear.json",
-		"spawn_rule.json": "spawn_rules/"
-	},
-	"rp_map": {
-		"client_entity.json": "entity/",
-		"geometry.json": "models/entity/",
-		"geometry_baby.json": "models/entity/{{IDENTIFIER}}_baby.json",
-		"render_controller.json": "render_controllers/"
-	},
-	"expand_rp_files": {
-		"en_US.lang": "texts/en_US.lang",
-		"sounds.json": "sounds.json",
-		"sound_definitions.json": "sounds/sound_definitions.json"
-	},
-	"copy_rp_files": {
-		"texture.png": "textures/entity/",
-		"zpig1.fsb": "sounds/mob/{{IDENTIFIER}}/zpig1.fsb",
-		"zpig2.fsb": "sounds/mob/{{IDENTIFIER}}/zpig2.fsb",
-		"zpig3.fsb": "sounds/mob/{{IDENTIFIER}}/zpig3.fsb",
-		"zpig4.fsb": "sounds/mob/{{IDENTIFIER}}/zpig4.fsb",
-		"zpigangry1.fsb": "sounds/mob/{{IDENTIFIER}}/zpigangry1.fsb",
-		"zpigangry2.fsb": "sounds/mob/{{IDENTIFIER}}/zpigangry2.fsb",
-		"zpigangry3.fsb": "sounds/mob/{{IDENTIFIER}}/zpigangry3.fsb",
-		"zpigangry4.fsb": "sounds/mob/{{IDENTIFIER}}/zpigangry4.fsb",
-		"zpigdeath.fsb": "sounds/mob/{{IDENTIFIER}}/zpigdeath.fsb",
-		"zpighurt1.fsb": "sounds/mob/{{IDENTIFIER}}/zpighurt1.fsb",
-		"zpighurt2.fsb": "sounds/mob/{{IDENTIFIER}}/zpighurt2.fsb"
-	}
+	"category": "fileType.entity",
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"entity.json",
+			"BP/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"clientEntity.json",
+			"RP/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"geometry.json",
+			"RP/models/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"geometryBaby.json",
+			"RP/models/entity/{{IDENTIFIER}}_baby.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"lootTable.json",
+			"BP/loot_tables/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"lootTableGear.json",
+			"BP/loot_tables/entities/{{IDENTIFIER}}_gear.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"renderController.json",
+			"RP/render_controllers/{{IDENTFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"spawnRule.json",
+			"BP/spawn_rules/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"texture.png",
+			"RP/textures/entity/{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER"] }
+		]
+	],
+	"expandFiles": [
+		[
+			"en_US.lang",
+			"RP/texts/en_US.lang",
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
+		],
+		[
+			"soundDefinitions.json",
+			"RP/sounds/sound_definitions.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"sounds.json",
+			"RP/sounds.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		]
+	]
 }
