@@ -1,7 +1,7 @@
 {
-	"name": "Block",
+	"name": "Blank Block",
 	"icon": "mdi-wall",
-	"description": "Creates a new generic block.",
+	"description": "Creates a new, basic block.",
 	"category": "fileType.block",
 	"targetVersion": [">=", "1.16.0"],
 	"fields": [
