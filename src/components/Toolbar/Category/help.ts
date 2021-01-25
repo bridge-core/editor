@@ -7,7 +7,7 @@ export function setupHelpCategory(app: App) {
 		app.actionManager.create({
 			name: 'toolbar.help.releases',
 			icon: 'mdi-alert-decagram',
-			description: 'View the latest bridge. releases.',
+			description: 'View the latest bridge. releases',
 			onTrigger: () =>
 				window.open(
 					'https://github.com/solvedDev/bridge./releases',
@@ -19,7 +19,7 @@ export function setupHelpCategory(app: App) {
 		app.actionManager.create({
 			name: 'toolbar.help.bugReports',
 			icon: 'mdi-bug-outline',
-			description: 'View the latest bridge. releases.',
+			description: 'Report an issue with bridge.',
 			onTrigger: () =>
 				window.open(
 					'https://github.com/solvedDev/bridge./issues/new/choose',
@@ -31,7 +31,7 @@ export function setupHelpCategory(app: App) {
 		app.actionManager.create({
 			name: 'toolbar.help.pluginAPI',
 			icon: 'mdi-puzzle',
-			description: 'View the latest bridge. releases.',
+			description: "Read more about bridge.'s plugin API",
 			onTrigger: () =>
 				App.createNativeWindow(
 					'https://bridge-core.github.io/plugin-docs/',
@@ -43,7 +43,7 @@ export function setupHelpCategory(app: App) {
 		app.actionManager.create({
 			name: 'toolbar.help.gettingStarted',
 			icon: 'mdi-help-circle-outline',
-			description: 'View the latest bridge. releases.',
+			description: 'Read our guide on how to get started with bridge.',
 			onTrigger: () =>
 				App.createNativeWindow(
 					'https://bridge-core.github.io/editor-docs/getting-started/',
@@ -55,7 +55,8 @@ export function setupHelpCategory(app: App) {
 		app.actionManager.create({
 			name: 'toolbar.help.faq',
 			icon: 'mdi-frequently-asked-questions',
-			description: 'View the latest bridge. releases.',
+			description:
+				'Read through frequently asked questions about developing Add-Ons with bridge.',
 			onTrigger: () =>
 				App.createNativeWindow(
 					'https://bridge-core.github.io/editor-docs/faq/',

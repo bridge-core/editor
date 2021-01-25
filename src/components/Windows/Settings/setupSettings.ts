@@ -3,8 +3,9 @@ import { ButtonToggle } from './Controls/ButtonToggle/ButtonToggle'
 import { Toggle } from './Controls/Toggle/Toggle'
 import { SettingsWindow } from './SettingsWindow'
 import { settingsState } from './SettingsState'
+import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 
-export function setupSettings(settings: SettingsWindow) {
+export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'appearance',
@@ -86,4 +87,10 @@ export function setupSettings(settings: SettingsWindow) {
 			default: false,
 		})
 	)
+
+	const app = await App.getApp()
+	console.log(Object.values(app.actionManager.state))
+	Object.values(app.actionManager.state).forEach(action => {
+		settings.addControl(new ActionViewer(action))
+	})
 }

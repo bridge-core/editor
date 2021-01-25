@@ -16,6 +16,7 @@
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.settings.searchSettings')"
 				v-model.trim="sidebar._filter"
+				autofocus
 				outlined
 				dense
 			/>
@@ -37,6 +38,7 @@
 				:config="control.config"
 				:value="control.value"
 				@change="control.onChange"
+				@closeWindow="onClose"
 			/>
 		</template>
 	</SidebarWindow>
@@ -54,7 +56,7 @@ export default {
 	},
 	props: ['currentWindow'],
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	methods: {
 		onClose() {

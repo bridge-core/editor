@@ -13,16 +13,16 @@
 				<v-list-item
 					dense
 					v-on="item.type === 'category' ? on : undefined"
-					@click="() => item.trigger()"
+					@click="onClick(item)"
 				>
 					<v-list-item-icon v-if="item.icon">
 						<v-icon color="accent" small>{{ item.icon }}</v-icon>
 					</v-list-item-icon>
 
 					<v-list-item-content>
-						<v-list-item-title>{{
-							t(item.name)
-						}}</v-list-item-title>
+						<v-list-item-title>
+							{{ t(item.name) }}
+						</v-list-item-title>
 					</v-list-item-content>
 
 					<v-list-item-action>
@@ -58,9 +58,8 @@ export default {
 	},
 
 	methods: {
-		clickHandler(onClick) {
-			if (onClick) onClick()
-			this.$root.$emit('bridge:closeAllAppMenus')
+		onClick(item) {
+			item.trigger()
 		},
 	},
 }

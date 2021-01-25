@@ -6,6 +6,7 @@ import Vue from 'vue'
 export class ToolbarCategory {
 	type = 'category'
 	id = uuid()
+	isVisible = false
 	protected state: Record<string, Action | ToolbarCategory> = Vue.observable(
 		{}
 	)

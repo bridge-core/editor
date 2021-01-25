@@ -9,7 +9,7 @@ export function setupFileCategory(app: App) {
 		app.actionManager.create({
 			icon: 'mdi-file-plus-outline',
 			name: 'toolbar.file.newFile',
-			description: 'Create a new Add-On feature.',
+			description: 'Create a new Add-On feature',
 			keyBinding: 'Ctrl + N',
 			onTrigger: () => app.windows.createPreset.open(),
 		})
@@ -18,7 +18,7 @@ export function setupFileCategory(app: App) {
 		app.actionManager.create({
 			icon: 'mdi-file-upload-outline',
 			name: 'toolbar.file.openFile',
-			description: 'Search and open a file from the current project.',
+			description: 'Search and open a file from the current project',
 			keyBinding: 'Ctrl + O',
 			onTrigger: () => app.windows.filePicker.open(),
 		})
@@ -27,7 +27,7 @@ export function setupFileCategory(app: App) {
 		app.actionManager.create({
 			icon: 'mdi-file-download-outline',
 			name: 'toolbar.file.saveFile',
-			description: 'Save the currently opened file.',
+			description: 'Save the currently opened file',
 			keyBinding: 'Ctrl + S',
 			onTrigger: () => mainTabSystem.save(),
 		})
@@ -41,7 +41,7 @@ export function setupFileCategory(app: App) {
 				app.actionManager.create({
 					icon: 'mdi-cog-outline',
 					name: 'toolbar.file.preferences.settings',
-					description: "Open bridge.'s app settings.",
+					description: "Open bridge.'s app settings",
 					keyBinding: 'Ctrl + ,',
 					onTrigger: () => app.windows.settings.open(),
 				})
@@ -50,7 +50,7 @@ export function setupFileCategory(app: App) {
 				app.actionManager.create({
 					icon: 'mdi-puzzle',
 					name: 'toolbar.file.preferences.extensions',
-					description: 'Manage your installed plugins.',
+					description: 'Manage your installed extensions',
 					onTrigger: () => {},
 				})
 			)

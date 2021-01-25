@@ -1,4 +1,3 @@
-import { createWindow } from '../create'
 import { SidebarItem } from '../Layout/Sidebar'
 import { Control } from './Controls/Control'
 import SettingsWindowComponent from './SettingsWindow.vue'
@@ -7,20 +6,25 @@ import Vue from 'vue'
 import { App } from '@/App'
 import { SettingsSidebar } from './SettingsSidebar'
 import { setSettingsState, settingsState } from './SettingsState'
+import { BaseWindow } from '../BaseWindow'
 
-export class SettingsWindow {
+export class SettingsWindow extends BaseWindow {
 	protected sidebar = new SettingsSidebar([])
-	protected window?: any
 
-	setup() {
+	constructor() {
+		super(SettingsWindowComponent, false, true)
+		this.defineWindow()
+	}
+
+	async setup() {
 		this.addCategory('general', 'General', 'mdi-circle-outline')
 		this.addCategory('appearance', 'Appearance', 'mdi-palette-outline')
 		this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
-		this.addCategory('keybindings', 'Keybindings', 'mdi-keyboard-outline')
+		this.addCategory('actions', 'Actions', 'mdi-keyboard-outline')
 		this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
 		this.addCategory('developers', 'Developers', 'mdi-wrench-outline')
 
-		setupSettings(this)
+		await setupSettings(this)
 	}
 
 	addCategory(id: string, name: string, icon: string) {
@@ -74,23 +78,21 @@ export class SettingsWindow {
 	}
 
 	async open() {
-		this.sidebar.removeElements()
-		this.setup()
+		if (this.isVisible) return
 
-		this.window = createWindow(
-			SettingsWindowComponent,
-			{
-				sidebar: this.sidebar,
-				settingsState,
-			},
-			undefined,
-			() => {
-				SettingsWindow.saveSettings()
-			}
-		)
-		this.window.open()
+		this.sidebar.removeElements()
+		await this.setup()
+
+		super.open()
 	}
-	close() {
-		this.window.close()
+
+	async close() {
+		super.close()
+
+		const app = await App.getApp()
+
+		app.windows.loadingWindow.open()
+		await SettingsWindow.saveSettings()
+		app.windows.loadingWindow.close()
 	}
 }
