@@ -1,8 +1,9 @@
 import { AppMenu } from './state'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
-import type { IDisposable } from '@/types/disposable'
-import { addKeyBinding, KeyBinding } from '@/appCycle/keyBindings'
+import { IDisposable } from '@/types/disposable'
+import { KeyBindingManager } from '../Actions/KeyBindingManager'
+import { IKeyBindingConfig } from '../Actions/KeyBinding'
 
 export interface IAppMenu {
 	displayName: string
@@ -15,7 +16,7 @@ export interface IAppMenuElement {
 	displayName: string
 	displayIcon?: string
 	elements?: (() => IAppMenuElement[]) | IAppMenuElement[]
-	keyBinding?: KeyBinding
+	keyBinding?: IKeyBindingConfig
 	onClick?: () => void
 }
 
@@ -23,14 +24,21 @@ export interface IAppMenuElement {
  * Adds new entry to the app menu
  * @param config
  */
-export function createAppMenu(config: IAppMenu, addMenu = true) {
+export function createAppMenu(
+	keyBindingManager: KeyBindingManager,
+	config: IAppMenu,
+	addMenu = true
+) {
 	const appMenuUUID = uuid()
 	let disposables: IDisposable[] = []
 
 	if (addMenu) {
 		Vue.set(AppMenu, appMenuUUID, config)
 		//Configure keyBindings
-		disposables = registerKeyBindings(config.elements ?? [])
+		disposables = registerKeyBindings(
+			keyBindingManager,
+			config.elements ?? []
+		)
 	}
 
 	return {
@@ -40,20 +48,32 @@ export function createAppMenu(config: IAppMenu, addMenu = true) {
 		},
 		add: () => {
 			Vue.set(AppMenu, appMenuUUID, config)
-			disposables = registerKeyBindings(config.elements ?? [])
+			disposables = registerKeyBindings(
+				keyBindingManager,
+				config.elements ?? []
+			)
 		},
 	}
 }
 
-function registerKeyBindings(elements: IAppMenuElement[]) {
+function registerKeyBindings(
+	keyBindingManager: KeyBindingManager,
+	elements: IAppMenuElement[]
+) {
 	let disposables: IDisposable[] = []
 
 	elements.forEach(({ keyBinding, onClick, elements }) => {
 		if (keyBinding && onClick)
-			disposables.push(addKeyBinding(keyBinding, onClick))
+			disposables.push(
+				keyBindingManager.addKeyBinding({
+					...keyBinding,
+					onTrigger: onClick,
+				})
+			)
 		else if (elements)
 			disposables.push(
 				...registerKeyBindings(
+					keyBindingManager,
 					typeof elements === 'function' ? elements() : elements
 				)
 			)

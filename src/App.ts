@@ -1,6 +1,5 @@
 import { EventManager, Signal } from './appCycle/EventSystem'
 import { FileType } from './components/Data/FileType'
-import { setupKeyBindings } from './appCycle/keyBindings'
 import { ThemeManager } from './components/Plugins/Themes/ThemeManager'
 import { setupMonacoEditor } from './components/Editors/Text/setup'
 import { FileSystem } from './components/FileSystem/Main'
@@ -25,6 +24,7 @@ import { settingsState } from './components/Windows/Settings/SettingsState'
 import { LoadingWindow } from './components/Windows/LoadingWindow/LoadingWindow'
 import { DataLoader } from './components/Data/DataLoader'
 import { ProjectConfig } from './components/Project/ProjectConfig'
+import { KeyBindingManager } from './components/Actions/KeyBindingManager'
 export class App {
 	public static readonly eventSystem = new EventManager<any>([
 		'projectChanged',
@@ -34,6 +34,7 @@ export class App {
 
 	public fileSystem!: FileSystem
 	public projectConfig!: ProjectConfig
+	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
 	public readonly packIndexer = new PackIndexer()
@@ -96,7 +97,6 @@ export class App {
 			navigator.clearAppBadge()
 
 		setupSidebar()
-		setupKeyBindings()
 		setupDefaultMenus()
 
 		// FileSystem setup
