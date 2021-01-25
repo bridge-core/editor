@@ -12,6 +12,8 @@ import { v4 as uuid } from 'uuid'
 import { dirname, extname } from 'path'
 import { selectedProject } from '@/components/Project/Loader'
 import { deepmerge } from '@/utils/deepmerge'
+import { compare, CompareOperator } from 'compare-versions'
+import { ProjectConfig } from '@/components/Project/ProjectConfig'
 
 export interface IPresetManifest {
 	name: string
@@ -19,7 +21,7 @@ export interface IPresetManifest {
 	category: string
 	description?: string
 	presetPath?: string
-	targetVersion: [string, string]
+	targetVersion: [CompareOperator, string]
 	fields: [string, string, IPresetFieldOpts][]
 	createFiles?: [string, string, IPresetFileOpts?][]
 	expandFiles?: [string, string, IPresetFileOpts?][]
@@ -51,10 +53,31 @@ export class CreatePresetWindow extends BaseWindow {
 	protected async addPreset(fs: FileSystem, manifestPath: string) {
 		const app = await App.getApp()
 		const manifest = <IPresetManifest>await fs.readJSON(manifestPath)
+		// Presets need a category, presets without category are most likely incompatible v1 presets
 		if (!manifest.category)
 			throw new Error(
 				`Error loading ${manifestPath}: Missing preset category`
 			)
+
+		// Load current project target version
+		const projectTargetVersion =
+			<string | undefined>(
+				await app.projectConfig.get('projectTargetVersion')
+			) ??
+			(
+				await app.fileSystem.readJSON(
+					'data/packages/formatVersions.json'
+				)
+			).pop()
+		if (
+			manifest.targetVersion &&
+			!compare(
+				projectTargetVersion,
+				manifest.targetVersion[1],
+				manifest.targetVersion[0]
+			)
+		)
+			return
 
 		let category = <SidebarCategory | undefined>(
 			this.sidebar.rawElements.find(

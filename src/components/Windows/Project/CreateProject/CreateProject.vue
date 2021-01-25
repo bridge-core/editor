@@ -38,6 +38,14 @@
 				outlined
 				dense
 			/>
+			<v-autocomplete
+				v-model="projectTargetVersion"
+				:label="t('windows.createProject.projectTargetVersion')"
+				:items="availableTargetVersions"
+				:loading="availableTargetVersionsLoading"
+				outlined
+				dense
+			/>
 		</template>
 
 		<template #actions>

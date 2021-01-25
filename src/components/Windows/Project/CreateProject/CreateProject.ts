@@ -7,12 +7,22 @@ export class CreateProjectWindow extends BaseWindow {
 	protected projectName: string = ''
 	protected projectPrefix: string = 'bridge'
 	protected projectAuthor: string = ''
+	protected projectTargetVersion: string = '1.16.100'
 	protected projectIcon: File | null = null
 	protected isCreatingProject = false
+	protected availableTargetVersions: string[] = []
+	protected availableTargetVersionsLoading = true
 
 	constructor() {
 		super(CreateProjectComponent, false)
 		this.defineWindow()
+
+		App.ready.once(async app => {
+			this.availableTargetVersions = await app.fileSystem.readJSON(
+				'data/packages/formatVersions.json'
+			)
+			this.availableTargetVersionsLoading = false
+		})
 	}
 
 	get hasRequiredData() {
@@ -52,6 +62,7 @@ export class CreateProjectWindow extends BaseWindow {
 					{
 						projectPrefix: this.projectPrefix,
 						projectAuthor: this.projectAuthor,
+						projectTargetVersion: this.projectTargetVersion,
 					}
 				)
 
