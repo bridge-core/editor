@@ -1,0 +1,33 @@
+{
+	"entity_sounds": {
+		"entities": {
+			"{{PROJECT_PREFIX}}:{{IDENTIFIER}}": {
+				"events" : {
+					"ambient" : "mob.{{IDENTIFIER}}.idle",
+					"ambient.aggressive" : "mob.{{IDENTIFIER}}.idle.aggressive",
+					"ambient.baby" : "mob.{{IDENTIFIER}}_baby.idle",
+					"ambient.worried" : "mob.{{IDENTIFIER}}.idle.worried",
+					"attack" : "mob.{{IDENTIFIER}}.bite",
+					"cant_breed" : "mob.{{IDENTIFIER}}.cant_breed",
+					"death" : {
+					   "sound" : "mob.{{IDENTIFIER}}.death",
+					   "volume" : 0.820
+					},
+					"eat" : "mob.{{IDENTIFIER}}.eat",
+					"hurt" : {
+					   "sound" : "mob.{{IDENTIFIER}}.hurt",
+					   "volume" : 0.820
+					},
+					"presneeze" : "mob.{{IDENTIFIER}}.presneeze",
+					"sneeze" : "mob.{{IDENTIFIER}}.sneeze",
+					"step" : {
+					   "sound" : "mob.{{IDENTIFIER}}.step",
+					   "volume" : 0.40
+					}
+				 },
+				 "pitch" : [ 0.80, 1.20 ],
+				 "volume" : 1.0
+			}
+		}
+	}
+}

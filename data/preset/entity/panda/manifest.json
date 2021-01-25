@@ -1,0 +1,111 @@
+{
+	"name": "Panda",
+	"icon": "mdi-panda",
+	"description": "Creates a new panda entity.",
+	"category": "fileType.entity",
+	"targetVersion": [">=", "1.10.0"],
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"entity.json",
+			"BP/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"clientEntity.json",
+			"RP/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"animation.json",
+			"RP/animations/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"animationController.json",
+			"RP/animation_controllers/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"geometry.json",
+			"RP/models/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"lootTable.json",
+			"BP/loot_tables/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+        ],
+        [
+			"lootTableSneeze.json",
+			"BP/loot_tables/entities/{{IDENTIFIER}}_sneeze.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"renderController.json",
+			"RP/render_controllers/{{IDENTFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"spawnRule.json",
+			"BP/spawn_rules/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"texture.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureAgressive.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_aggressive.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureBrown.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_brown.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureLazy.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_lazy.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"texturePlayful.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_playful.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureSneezy.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_sneezy.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureWorried.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_worried.png",
+			{ "inject": ["IDENTIFIER"] }
+		]
+	],
+	"expandFiles": [
+		[
+			"en_US.lang",
+			"RP/texts/en_US.lang",
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
+		],
+		[
+			"soundDefinitions.json",
+			"RP/sounds/sound_definitions.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"sounds.json",
+			"RP/sounds.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		]
+	]
+}
