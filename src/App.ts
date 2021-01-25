@@ -25,7 +25,10 @@ import { LoadingWindow } from './components/Windows/LoadingWindow/LoadingWindow'
 import { DataLoader } from './components/Data/DataLoader'
 import { ProjectConfig } from './components/Project/ProjectConfig'
 import { KeyBindingManager } from './components/Actions/KeyBindingManager'
+import { ActionManager } from './components/Actions/ActionManager'
+import { Toolbar } from './components/Toolbar/Toolbar'
 export class App {
+	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventManager<any>([
 		'projectChanged',
 	])
@@ -35,6 +38,7 @@ export class App {
 	public fileSystem!: FileSystem
 	public projectConfig!: ProjectConfig
 	public readonly keyBindingManager = new KeyBindingManager()
+	public readonly actionManager = new ActionManager(this)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
 	public readonly packIndexer = new PackIndexer()
@@ -97,7 +101,7 @@ export class App {
 			navigator.clearAppBadge()
 
 		setupSidebar()
-		setupDefaultMenus()
+		setupDefaultMenus(this)
 
 		// FileSystem setup
 		this.fileSystem = await setupFileSystem()

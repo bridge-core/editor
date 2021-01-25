@@ -25,7 +25,7 @@ export default {
 	props: {
 		displayName: String,
 		displayIcon: String,
-		elements: Array,
+		elements: Object,
 	},
 	data: () => ({
 		isVisible: false,

@@ -1,27 +1,24 @@
 import { platform } from '@/utils/os'
 import { IKeyBindingConfig } from './Keybinding'
 
-export function fromStrKeyCode(keyCode: string) {
-	const parts = keyCode.split(' + ')
-	const keyBinding: IKeyBindingConfig = { key: '', onTrigger: () => {} }
+export function fromStrKeyCode(keyCode: string, forceWindowsCtrl = false) {
+	const parts = keyCode.toLowerCase().split(' + ')
+	const keyBinding: IKeyBindingConfig = { key: '' }
 
 	parts.forEach(p => {
-		switch (p.toLowerCase()) {
-			case 'ctrl':
-			case 'cmd':
-				keyBinding.ctrlKey = true
-				break
-			case 'alt':
-				keyBinding.altKey = true
-				break
-			case 'shift':
-				keyBinding.shiftKey = true
-				break
-			case 'meta':
-				keyBinding.metaKey = true
-				break
-			default:
-				keyBinding.key = p.toLowerCase()
+		if (
+			p === '⌘' ||
+			((platform() !== 'darwin' || forceWindowsCtrl) && p === 'ctrl')
+		) {
+			keyBinding.ctrlKey = true
+		} else if (p === 'alt') {
+			keyBinding.altKey = true
+		} else if (p === 'shift') {
+			keyBinding.shiftKey = true
+		} else if (p === 'meta') {
+			keyBinding.metaKey = true
+		} else {
+			keyBinding.key = p
 		}
 	})
 

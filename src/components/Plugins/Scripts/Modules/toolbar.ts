@@ -1,17 +1,12 @@
 import { App } from '@/App'
-import { createAppMenu, IAppMenuElement } from '@/components/Toolbar/create'
+import { ToolbarCategory } from '@/components/Toolbar/ToolbarCategory'
 import { IModuleConfig } from '../types'
 
-export const ToolbarModule = ({ disposables }: IModuleConfig) => ({
-	async createCategory(config: {
-		displayName: string
-		displayIcon?: string
-		onClick?: () => void
-		elements?: IAppMenuElement[]
-	}) {
-		const app = await App.getApp()
-		const toolbar = createAppMenu(app.keyBindingManager, config)
-		disposables.push(toolbar)
-		return toolbar
+export const ToolbarModule = async ({ disposables }: IModuleConfig) => ({
+	ToolbarCategory,
+	actionManager: (await App.getApp()).actionManager,
+	addCategory(category: ToolbarCategory) {
+		App.toolbar.addCategory(category)
+		disposables.push(category)
 	},
 })

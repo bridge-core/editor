@@ -35,7 +35,7 @@ export class KeyBindingManager {
 		})
 	}
 
-	addKeyBinding(keyBindingConfig: IKeyBindingConfig) {
+	create(keyBindingConfig: IKeyBindingConfig) {
 		const keyBinding = new KeyBinding(this, keyBindingConfig)
 		const keyCode = keyBinding.toStrKeyCode()
 

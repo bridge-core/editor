@@ -1,3 +1,4 @@
+import { EventDispatcher } from '@/appCycle/EventSystem'
 import { KeyBindingManager } from './KeyBindingManager'
 import { fromStrKeyCode, toStrKeyCode } from './Utils'
 
@@ -8,32 +9,31 @@ export interface IKeyBindingConfig {
 	altKey?: boolean
 	metaKey?: boolean
 	prevent?: (element: HTMLElement) => boolean
-	onTrigger?: () => Promise<void> | void
 }
 
-export class KeyBinding {
+export class KeyBinding extends EventDispatcher<void> {
 	constructor(
 		protected keyBindingManager: KeyBindingManager,
 		protected config: IKeyBindingConfig
-	) {}
+	) {
+		super()
+	}
 
 	static fromStrKeyCode(
 		keyBindingManager: KeyBindingManager,
 		keyCode: string,
-		onTrigger: () => Promise<void> | void
+		forceWindowsCtrl = false
 	) {
-		return new KeyBinding(keyBindingManager, {
-			...fromStrKeyCode(keyCode),
-			onTrigger,
-		})
+		return keyBindingManager.create(
+			fromStrKeyCode(keyCode, forceWindowsCtrl)
+		)
 	}
 	toStrKeyCode() {
 		return toStrKeyCode(this.config)
 	}
 
 	async trigger() {
-		if (typeof this.config.onTrigger === 'function')
-			await this.config.onTrigger()
+		this.dispatch()
 	}
 	prevent(element: HTMLElement) {
 		if (typeof this.config.prevent === 'function')
