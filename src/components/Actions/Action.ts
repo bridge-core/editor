@@ -52,7 +52,7 @@ export class Action {
 	}
 
 	async trigger() {
-		await this.config.onTrigger()
+		return await this.config.onTrigger()
 	}
 
 	dispose() {

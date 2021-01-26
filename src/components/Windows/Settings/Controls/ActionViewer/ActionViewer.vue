@@ -42,7 +42,6 @@ export default {
 			this.$emit('change', val)
 		},
 		onTrigger() {
-			this.$emit('closeWindow')
 			this.action.trigger()
 		},
 	},
