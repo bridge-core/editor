@@ -149,7 +149,6 @@ export class App {
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
 				message: 'sidebar.notifications.gettingStarted.message',
-				textColor: 'white',
 				onClick: () => {
 					App.createNativeWindow(
 						'https://bridge-core.github.io/editor-docs/getting-started/'

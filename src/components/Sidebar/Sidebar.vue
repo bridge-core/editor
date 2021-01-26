@@ -28,6 +28,7 @@
 				:displayName="notification.message"
 				:icon="notification.icon"
 				:color="notification.color"
+				:iconColor="notification.textColor"
 				@click="notification.onClick()"
 			/>
 		</v-list>

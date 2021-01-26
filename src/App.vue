@@ -61,15 +61,17 @@ body {
 
 /** Scrollbar */
 *::-webkit-scrollbar {
+	border-radius: 24px;
 	width: 6px;
 	height: 6px;
 }
 *::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+	border-radius: 24px;
+	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.6);
 }
 *::-webkit-scrollbar-thumb {
-	background-color: rgba(0, 0, 0, 0.35);
-	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.4);
+	border-radius: 24px;
+	background-color: rgba(0, 0, 0, 0.4);
 }
 
 summary::-webkit-details-marker {
