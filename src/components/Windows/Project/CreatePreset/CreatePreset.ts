@@ -242,7 +242,7 @@ export class CreatePresetWindow extends BaseWindow {
 		await new Promise<void>(resolve =>
 			app.packIndexer.once(async () => {
 				for (const filePath of createdFiles)
-					await app.packIndexer.service.updateFile(filePath)
+					await app.packIndexer.updateFile(filePath)
 
 				resolve()
 			})

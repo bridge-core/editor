@@ -7,24 +7,16 @@ export namespace JSONDefaults {
 
 	async function getDynamicSchemas() {
 		return (
-			await Promise.all(
-				FileType.getIds().map(
-					id =>
-						new Promise<IMonacoSchemaArrayEntry[]>(
-							async resolve => {
-								const app = await App.getApp()
-								app.packIndexer.once(async () => {
-									resolve(
-										await app.packIndexer.service.getSchemasFor(
-											id
-										)
-									)
-								})
-							}
-						)
-				)
-			)
+			await Promise.all(FileType.getIds().map(id => requestSchemaFor(id)))
 		).flat()
+	}
+	function requestSchemaFor(fileType: string) {
+		return new Promise<IMonacoSchemaArrayEntry[]>(async resolve => {
+			const app = await App.getApp()
+			app.packIndexer.once(async () => {
+				resolve(await app.packIndexer.service.getSchemasFor(fileType))
+			})
+		})
 	}
 
 	async function loadAllSchemas() {
@@ -65,8 +57,11 @@ export namespace JSONDefaults {
 			})
 		})
 
-		App.eventSystem.on('fileUpdated', filePath => {
-			// TODO: Request new schemas for file and add them
+		App.eventSystem.on('fileUpdated', async filePath => {
+			const fileType = FileType.getId(filePath)
+			addSchemas(await requestSchemaFor(fileType))
+
+			// TODO: Update currentFile/ references
 		})
 		App.eventSystem.on('currentTabSwitched', filePath => {
 			// TODO: Update currentFile/ references
