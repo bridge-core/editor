@@ -117,15 +117,20 @@ export class PackIndexerService extends TaskService {
 		return this.lightningStore.allFiles()
 	}
 
-	async getSchemasFor(fileType: string) {
-		const collectedData = await this.lightningStore.getAllFrom(fileType)
+	async getSchemasFor(fileType: string, fromFilePath?: string) {
+		const collectedData = await this.lightningStore.getAllFrom(
+			fileType,
+			fromFilePath
+		)
 		const baseUrl =
 			'https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/dynamic'
 		const schemas: IMonacoSchemaArrayEntry[] = []
 
 		for (const key in collectedData) {
 			schemas.push({
-				uri: `${baseUrl}/${fileType}/${key}Enum.json`,
+				uri: `${baseUrl}/${fileType}/${
+					fromFilePath ? 'currentContext/' : ''
+				}${key}Enum.json`,
 				schema: {
 					type: 'string',
 					enum: collectedData[key],

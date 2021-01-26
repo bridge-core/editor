@@ -2,6 +2,8 @@ import { Tab } from './CommonTab'
 import WelcomeScreen from './WelcomeScreen.vue'
 import { TextTab } from '../Editors/Text/TextTab'
 import Vue from 'vue'
+import { App } from '@/App'
+import { selectedProject } from '../Project/Loader'
 
 export class TabSystem {
 	tabs: Tab[] = []
@@ -42,6 +44,12 @@ export class TabSystem {
 	select(tab?: Tab) {
 		this._selectedTab?.onDeactivate()
 		this._selectedTab = tab
+		if (tab)
+			App.eventSystem.dispatch(
+				'currentTabSwitched',
+				tab.getPath().replace(`projects/${selectedProject}/`, '')
+			)
+
 		Vue.nextTick(() => this._selectedTab?.onActivate())
 	}
 	save(tab = this.selectedTab) {

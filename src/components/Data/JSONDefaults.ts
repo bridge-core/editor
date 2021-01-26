@@ -10,11 +10,16 @@ export namespace JSONDefaults {
 			await Promise.all(FileType.getIds().map(id => requestSchemaFor(id)))
 		).flat()
 	}
-	function requestSchemaFor(fileType: string) {
+	function requestSchemaFor(fileType: string, fromFilePath?: string) {
 		return new Promise<IMonacoSchemaArrayEntry[]>(async resolve => {
 			const app = await App.getApp()
 			app.packIndexer.once(async () => {
-				resolve(await app.packIndexer.service.getSchemasFor(fileType))
+				resolve(
+					await app.packIndexer.service.getSchemasFor(
+						fileType,
+						fromFilePath
+					)
+				)
 			})
 		})
 	}
@@ -35,6 +40,7 @@ export namespace JSONDefaults {
 	}
 
 	export function addSchemas(addSchemas: IMonacoSchemaArrayEntry[]) {
+		console.log(addSchemas)
 		addSchemas.forEach(addSchema => {
 			const findSchema = schemas.find(
 				schema => schema.uri === addSchema.uri
@@ -52,6 +58,7 @@ export namespace JSONDefaults {
 			app.packIndexer.on(async () => {
 				console.log('SETTING UP MONACO')
 				await loadAllSchemas()
+				console.log(schemas)
 				setJSONDefaults()
 				console.log('DONE')
 			})
@@ -60,11 +67,13 @@ export namespace JSONDefaults {
 		App.eventSystem.on('fileUpdated', async filePath => {
 			const fileType = FileType.getId(filePath)
 			addSchemas(await requestSchemaFor(fileType))
-
-			// TODO: Update currentFile/ references
 		})
-		App.eventSystem.on('currentTabSwitched', filePath => {
-			// TODO: Update currentFile/ references
+
+		// Updating currentContext/ references
+		App.eventSystem.on('currentTabSwitched', async filePath => {
+			console.log(filePath)
+			const fileType = FileType.getId(filePath)
+			addSchemas(await requestSchemaFor(fileType, filePath))
 		})
 	}
 }

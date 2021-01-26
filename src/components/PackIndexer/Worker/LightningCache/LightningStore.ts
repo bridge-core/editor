@@ -141,11 +141,13 @@ export class LightningStore {
 		return filePaths
 	}
 
-	async getAllFrom(fileType: string) {
+	async getAllFrom(fileType: string, fromFilePath?: string) {
 		await this.loadStore()
 		const collectedData: Record<string, string[]> = {}
 
 		for (const filePath in this.store![fileType] ?? {}) {
+			if (fromFilePath && fromFilePath !== filePath) continue
+
 			const cachedData =
 				(this.store![fileType][filePath] ?? {}).data ?? {}
 
