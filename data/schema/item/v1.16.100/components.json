@@ -263,7 +263,7 @@
 							"items": {
 								"type": "array",
 								"items": {
-									"type": "string"
+									"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
 								}
 							},
 							"repair_amount": {
