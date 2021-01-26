@@ -4,8 +4,6 @@
 
 <script>
 import * as monaco from 'monaco-editor'
-import { on } from '@/appCycle/EventSystem'
-import { v4 as uuid } from 'uuid'
 
 let editorInstance
 export default {

@@ -88,7 +88,6 @@ import FileDisplayer from './FileDisplayer.vue'
 import { App } from '@/App'
 import { TranslationMixin } from '@/utils/locales'
 import { selectedProject } from '@/components/Project/Loader'
-import { mainTabSystem } from '@/components/TabSystem/Main'
 
 export default {
 	name: 'PackExplorerWindow',
@@ -111,7 +110,9 @@ export default {
 		},
 		openFile(filePath) {
 			this.currentWindow.close()
-			mainTabSystem.open(`projects/${selectedProject}/${filePath}`)
+			App.ready.once(app => {
+				app.tabSystem.open(`projects/${selectedProject}/${filePath}`)
+			})
 		},
 		createPreset() {
 			this.currentWindow.close()

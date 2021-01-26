@@ -6,7 +6,7 @@ import { FileSystem } from './components/FileSystem/Main'
 import { setupFileSystem } from './components/FileSystem/setup'
 import { PackIndexer } from './components/PackIndexer/PackIndexer'
 import { setupSidebar } from './components/Sidebar/setup'
-import { mainTabSystem } from './components/TabSystem/Main'
+import { TabSystem } from './components/TabSystem/Main'
 import { TaskManager } from './components/TaskManager/TaskManager'
 import { setupDefaultMenus } from './components/Toolbar/setupDefaults'
 import { getLanguages, selectLanguage } from './utils/locales'
@@ -33,6 +33,7 @@ export class App {
 		'projectChanged',
 		'fileUpdated',
 		'currentTabSwitched',
+		'refreshCurrentContext',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: App
@@ -44,6 +45,7 @@ export class App {
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
 	public readonly packIndexer = new PackIndexer()
+	public readonly tabSystem = Vue.observable(new TabSystem())
 
 	protected _windows!: Windows
 	get windows() {
@@ -80,7 +82,7 @@ export class App {
 			'Are you sure that you want to close bridge.? Unsaved progress will be lost.'
 		window.addEventListener('beforeunload', event => {
 			if (
-				mainTabSystem.hasUnsavedTabs ||
+				this.tabSystem.hasUnsavedTabs ||
 				this.taskManager.hasRunningTasks
 			) {
 				event.preventDefault()

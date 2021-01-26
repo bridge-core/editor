@@ -40,7 +40,7 @@ export namespace JSONDefaults {
 	}
 
 	export function addSchemas(addSchemas: IMonacoSchemaArrayEntry[]) {
-		console.log(addSchemas)
+		// console.log(addSchemas)
 		addSchemas.forEach(addSchema => {
 			const findSchema = schemas.find(
 				schema => schema.uri === addSchema.uri
@@ -56,11 +56,10 @@ export namespace JSONDefaults {
 	export function setup() {
 		App.ready.once(app => {
 			app.packIndexer.on(async () => {
-				console.log('SETTING UP MONACO')
+				console.time('[EDITOR] Setting up JSON defaults')
 				await loadAllSchemas()
-				console.log(schemas)
 				setJSONDefaults()
-				console.log('DONE')
+				console.timeEnd('[EDITOR] Setting up JSON defaults')
 			})
 		})
 
@@ -71,7 +70,12 @@ export namespace JSONDefaults {
 
 		// Updating currentContext/ references
 		App.eventSystem.on('currentTabSwitched', async filePath => {
-			console.log(filePath)
+			// console.log(filePath)
+			const fileType = FileType.getId(filePath)
+			addSchemas(await requestSchemaFor(fileType, filePath))
+		})
+		App.eventSystem.on('refreshCurrentContext', async filePath => {
+			// console.log(filePath)
 			const fileType = FileType.getId(filePath)
 			addSchemas(await requestSchemaFor(fileType, filePath))
 		})

@@ -1,12 +1,12 @@
 <template>
 	<div
-		v-if="mainTabSystem.tabs.length > 0"
+		v-if="tabSystem && tabSystem.tabs.length > 0"
 		:style="
 			`display: inline-block; overflow-x: scroll; white-space: nowrap; width: 100%; height: 48px;`
 		"
 	>
 		<v-tab
-			v-for="(tab, i) in mainTabSystem.tabs"
+			v-for="(tab, i) in tabSystem.tabs"
 			:key="tab.uuid"
 			:ripple="!tab.isSelected"
 			:class="{
@@ -29,12 +29,10 @@
 </template>
 
 <script>
-import { mainTabSystem } from './Main'
+import { TabSystemMixin } from '../Mixins/TabSystem'
 
 export default {
-	data: () => ({
-		mainTabSystem,
-	}),
+	mixins: [TabSystemMixin],
 }
 </script>
 

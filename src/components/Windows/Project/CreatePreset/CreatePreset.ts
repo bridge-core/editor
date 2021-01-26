@@ -13,7 +13,6 @@ import { dirname, extname } from 'path'
 import { selectedProject } from '@/components/Project/Loader'
 import { deepmerge } from '@/utils/deepmerge'
 import { compare, CompareOperator } from 'compare-versions'
-import { ProjectConfig } from '@/components/Project/ProjectConfig'
 import { packIndexerReady } from '@/components/PackIndexer/PackIndexer'
 
 export interface IPresetManifest {
@@ -241,8 +240,12 @@ export class CreatePresetWindow extends BaseWindow {
 
 		await new Promise<void>(resolve =>
 			app.packIndexer.once(async () => {
-				for (const filePath of createdFiles)
+				for (const filePath of createdFiles) {
 					await app.packIndexer.updateFile(filePath)
+					app.tabSystem.open(
+						`projects/${selectedProject}/${filePath}`
+					)
+				}
 
 				resolve()
 			})

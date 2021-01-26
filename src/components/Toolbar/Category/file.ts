@@ -1,5 +1,4 @@
 import { App } from '@/App'
-import { mainTabSystem } from '@/components/TabSystem/Main'
 import { ToolbarCategory } from '../ToolbarCategory'
 
 export function setupFileCategory(app: App) {
@@ -29,7 +28,7 @@ export function setupFileCategory(app: App) {
 			name: 'toolbar.file.saveFile',
 			description: 'Save the currently opened file',
 			keyBinding: 'Ctrl + S',
-			onTrigger: () => mainTabSystem.save(),
+			onTrigger: () => App.ready.once(app => app.tabSystem.save()),
 		})
 	)
 	file.addItem(

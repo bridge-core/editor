@@ -48,7 +48,7 @@ export class LightningStore {
 
 		this.store![fileType][filePath] = {
 			hash,
-			data: fileData,
+			data: fileData ?? this.store![fileType][filePath].data,
 		}
 	}
 

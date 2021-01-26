@@ -1,4 +1,3 @@
-import { mainTabSystem } from '@/components/TabSystem/Main'
 import { IFileSystem } from '@/components/FileSystem/Common'
 import { platform } from '@/utils/os'
 import { v4 as uuid } from 'uuid'
@@ -101,7 +100,7 @@ export class DirectoryEntry {
 	 */
 	open() {
 		if (this.isFile) {
-			mainTabSystem.open(this.getFullPath())
+			App.ready.once(app => app.tabSystem.open(this.getFullPath()))
 			return true
 		} else {
 			this.isFolderOpen = !this.isFolderOpen

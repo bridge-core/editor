@@ -11,36 +11,39 @@
 			<TabBar />
 
 			<component
-				:is="mainTabSystem.currentComponent"
-				:tab="mainTabSystem.selectedTab"
+				v-if="tabSystem"
+				:is="tabSystem.currentComponent"
+				:tab="tabSystem.selectedTab"
 			/>
+			<WelcomeScreen v-else />
 			<!--  -->
 		</v-main>
 	</v-app>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import TabBar from './components/TabSystem/TabBar.vue'
-import { mainTabSystem } from '@/components/TabSystem/Main'
-import { App } from './App'
 import { platform } from './utils/os'
+import { TabSystemMixin } from '@/components/Mixins/TabSystem'
+import WelcomeScreen from '@/components/TabSystem/WelcomeScreen'
 
 export default Vue.extend({
 	name: 'App',
+	mixins: [TabSystemMixin],
 
 	components: {
 		Sidebar,
 		Toolbar,
 		WindowRenderer,
 		TabBar,
+		WelcomeScreen,
 	},
 
 	data: () => ({
-		mainTabSystem,
 		isMacOs: platform() === 'darwin',
 	}),
 })

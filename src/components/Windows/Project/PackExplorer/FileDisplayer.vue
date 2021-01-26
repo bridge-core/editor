@@ -55,9 +55,7 @@
 </template>
 
 <script>
-import { mainTabSystem } from '@/components/TabSystem/Main'
 import { DirectoryEntry } from './DirectoryEntry'
-import { TextTab } from '@/components/Editors/Text/TextTab'
 import { App } from '@/App.ts'
 import { packIndexerReady } from '@/components/PackIndexer/PackIndexer'
 

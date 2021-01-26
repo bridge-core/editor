@@ -52,8 +52,23 @@ export class TabSystem {
 
 		Vue.nextTick(() => this._selectedTab?.onActivate())
 	}
-	save(tab = this.selectedTab) {
-		tab?.save()
+	async save(tab = this.selectedTab) {
+		if (!tab) return
+
+		const app = await App.getApp()
+		app.windows.loadingWindow.open()
+
+		await tab.save()
+
+		await app.packIndexer.updateFile(
+			tab.getPath().replace(`projects/${selectedProject}/`, '')
+		)
+		App.eventSystem.dispatch(
+			'refreshCurrentContext',
+			tab.getPath().replace(`projects/${selectedProject}/`, '')
+		)
+
+		app.windows.loadingWindow.close()
 	}
 
 	getTab(path: string) {
@@ -68,5 +83,3 @@ export class TabSystem {
 		return this.tabs.some(tab => tab.isUnsaved)
 	}
 }
-
-export const mainTabSystem = Vue.observable(new TabSystem())
