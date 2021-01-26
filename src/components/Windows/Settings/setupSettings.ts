@@ -89,7 +89,6 @@ export async function setupSettings(settings: SettingsWindow) {
 	)
 
 	const app = await App.getApp()
-	console.log(Object.values(app.actionManager.state))
 	Object.values(app.actionManager.state).forEach(action => {
 		settings.addControl(new ActionViewer(action))
 	})
