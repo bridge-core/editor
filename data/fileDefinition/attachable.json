@@ -3,6 +3,6 @@
 	"icon": "mdi-hat-fedora",
 	"scope": "RP/attachables",
 	"matcher": ["RP/attachables/**/*.json", "RP/attachables/*.json"],
-	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/attachable/main.json",
+	"schema": "file:///data/packages/schema/attachable/main.json",
 	"lightningCache": "attachable.json"
 }

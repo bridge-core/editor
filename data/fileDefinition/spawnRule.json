@@ -3,6 +3,6 @@
 	"icon": "mdi-egg-outline",
 	"scope": "BP/spawn_rules",
 	"matcher": ["BP/spawn_rules/**/*.json", "BP/spawn_rules/*.json"],
-	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/spawnRule/main.json",
+	"schema": "file:///data/packages/schema/spawnRule/main.json",
 	"lightningCache": "spawnRule.json"
 }

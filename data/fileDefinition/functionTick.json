@@ -1,5 +1,5 @@
 {
 	"id": "functionTick",
 	"matcher": "BP/functions/tick.json",
-	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/tick.json"
+	"schema": "file:///data/packages/schema/simple/tick.json"
 }

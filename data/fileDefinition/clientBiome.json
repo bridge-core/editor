@@ -1,6 +1,6 @@
 {
 	"id": "clientBiome",
 	"matcher": "RP/biomes_client.json",
-	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/clientBiome.json",
+	"schema": "file:///data/packages/schema/simple/clientBiome.json",
 	"lightningCache": "clientBiome.json"
 }

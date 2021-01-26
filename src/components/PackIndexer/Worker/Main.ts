@@ -122,8 +122,7 @@ export class PackIndexerService extends TaskService {
 			fileType,
 			fromFilePath
 		)
-		const baseUrl =
-			'https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/dynamic'
+		const baseUrl = 'file:///data/packages/schema/dynamic'
 		const schemas: IMonacoSchemaArrayEntry[] = []
 
 		for (const key in collectedData) {

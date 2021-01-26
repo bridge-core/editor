@@ -1,5 +1,5 @@
 {
 	"id": "langDef",
 	"matcher": "*/texts/languages.json",
-	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/langDef.json"
+	"schema": "file:///data/packages/schema/simple/langDef.json"
 }

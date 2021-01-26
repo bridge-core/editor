@@ -3,7 +3,7 @@
 	"icon": "mdi-sword",
 	"scope": "BP/items",
 	"matcher": ["BP/items/**/*.json", "BP/items/*.json"],
-	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/item/main.json",
+	"schema": "file:///data/packages/schema/item/main.json",
 	"lightningCache": "item.json",
 	"packSpider": "item.json"
 }

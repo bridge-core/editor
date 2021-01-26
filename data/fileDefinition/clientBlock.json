@@ -1,5 +1,5 @@
 {
 	"id": "clientBlock",
 	"matcher": "RP/blocks.json",
-	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/simple/blocks.json"
+	"schema": "file:///data/packages/schema/simple/blocks.json"
 }

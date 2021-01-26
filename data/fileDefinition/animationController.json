@@ -6,7 +6,7 @@
 		"BP/animation_controllers/**/*.json",
 		"BP/animation_controllers/*.json"
 	],
-	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/animationController/server.json",
+	"schema": "file:///data/packages/schema/animationController/server.json",
 	"lightningCache": "animationController.json",
 	"packSpider": "animationController.json"
 }

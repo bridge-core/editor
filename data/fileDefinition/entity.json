@@ -3,7 +3,7 @@
 	"icon": "mdi-minecraft",
 	"scope": "BP/entities",
 	"matcher": ["BP/entities/**/*.json", "BP/entities/*.json"],
-	"schema": "https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/entity/main.json",
+	"schema": "file:///data/packages/schema/entity/main.json",
 	"packSpider": "entity.json",
 	"lightningCache": "entity.json"
 }
