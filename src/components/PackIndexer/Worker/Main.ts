@@ -136,6 +136,17 @@ export class PackIndexerService extends TaskService {
 					enum: collectedData[key],
 				},
 			})
+
+			schemas.push({
+				uri: `${baseUrl}/${fileType}/${
+					fromFilePath ? 'currentContext/' : ''
+				}${key}Property.json`,
+				schema: {
+					properties: Object.fromEntries(
+						collectedData[key].map(d => [d, {}])
+					),
+				},
+			})
 		}
 
 		return schemas
