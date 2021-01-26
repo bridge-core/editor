@@ -3,5 +3,8 @@
 	{
 		"identifier": "/",
 		"@filter": ["format_version", "minecraft:geometry"]
+	},
+	{
+		"materialInstance": "minecraft:geometry/*/bones/*/cubes/*/uv/*/material_instance"
 	}
 ]

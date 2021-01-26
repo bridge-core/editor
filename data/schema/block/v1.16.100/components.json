@@ -32,7 +32,14 @@
 			"type": "object",
 			"description": "Maps face or material_instance names in a geometry file to an actual material instance. Material instance can either be a full material instance or a name to another already defined instance",
 			"propertyNames": {
-				"examples": ["*"]
+				"anyOf": [
+					{
+						"enum": ["*"]
+					},
+					{
+						"$ref": "../../dynamic/geometry/materialInstanceEnum.json"
+					}
+				]
 			},
 			"patternProperties": {
 				".*": {
