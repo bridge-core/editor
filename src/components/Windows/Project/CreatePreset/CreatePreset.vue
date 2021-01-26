@@ -16,6 +16,7 @@
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.createPreset.searchPresets')"
 				v-model="sidebar._filter"
+				autofocus
 				outlined
 				dense
 			/>
