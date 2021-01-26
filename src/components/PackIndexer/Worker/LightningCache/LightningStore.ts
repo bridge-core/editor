@@ -140,4 +140,22 @@ export class LightningStore {
 
 		return filePaths
 	}
+
+	async getAllFrom(fileType: string) {
+		await this.loadStore()
+		const collectedData: Record<string, string[]> = {}
+
+		for (const filePath in this.store![fileType] ?? {}) {
+			const cachedData =
+				(this.store![fileType][filePath] ?? {}).data ?? {}
+
+			for (const cacheKey in cachedData) {
+				if (collectedData[cacheKey])
+					collectedData[cacheKey].push(...cachedData[cacheKey])
+				else collectedData[cacheKey] = [...cachedData[cacheKey]]
+			}
+		}
+
+		return collectedData
+	}
 }

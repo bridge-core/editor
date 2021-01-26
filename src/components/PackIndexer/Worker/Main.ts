@@ -1,4 +1,4 @@
-import { FileType } from '@/components/Data/FileType'
+import { FileType, IMonacoSchemaArrayEntry } from '@/components/Data/FileType'
 import * as Comlink from 'comlink'
 import { TaskService } from '@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
@@ -115,6 +115,25 @@ export class PackIndexerService extends TaskService {
 
 	getAllFiles() {
 		return this.lightningStore.allFiles()
+	}
+
+	async getSchemasFor(fileType: string) {
+		const collectedData = await this.lightningStore.getAllFrom(fileType)
+		const baseUrl =
+			'https://raw.githubusercontent.com/bridge-core/editor/dev/data/schema/dynamic'
+		const schemas: IMonacoSchemaArrayEntry[] = []
+
+		for (const key in collectedData) {
+			schemas.push({
+				uri: `${baseUrl}/${fileType}/${key}Enum.json`,
+				schema: {
+					type: 'string',
+					enum: collectedData[key],
+				},
+			})
+		}
+
+		return schemas
 	}
 }
 

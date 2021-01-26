@@ -2,6 +2,7 @@ import { isMatch } from 'micromatch'
 import { ILightningInstruction } from '@/components/PackIndexer/Worker/Main'
 import { IPackSpiderFile } from '@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import { FileSystem } from '@/components/FileSystem/Main'
+import { App } from '@/App'
 
 /**
  * Describes the structure of a file definition
@@ -18,7 +19,7 @@ interface IFileType {
 /**
  * Used for return type of FileType.getMonacoSchemaArray() function
  */
-interface IMonacoSchemaArrayEntry {
+export interface IMonacoSchemaArrayEntry {
 	fileMatch?: string[]
 	uri: string
 	schema?: any
@@ -62,6 +63,15 @@ export namespace FileType {
 				if (isMatch(filePath, matcher)) return fileType
 		}
 	}
+	export function getIds() {
+		const ids = []
+
+		for (const fileType of fileTypes) {
+			ids.push(fileType.id)
+		}
+
+		return ids
+	}
 
 	/**
 	 * Get the file type/file definition id for the provided file path
@@ -74,12 +84,17 @@ export namespace FileType {
 	/**
 	 * Get a JSON schema array that can be used to set Monaco's JSON defaults
 	 */
-	export function getMonacoSchemaArray(): IMonacoSchemaArrayEntry[] {
+	export function getMonacoSchemaArray() {
 		return fileTypes
-			.map(({ matcher, schema }) => ({
-				fileMatch: Array.isArray(matcher) ? [...matcher] : [matcher],
-				uri: schema,
-			}))
+			.map(
+				({ matcher, schema }) =>
+					<IMonacoSchemaArrayEntry>{
+						fileMatch: Array.isArray(matcher)
+							? [...matcher]
+							: [matcher],
+						uri: schema,
+					}
+			)
 			.flat()
 	}
 
