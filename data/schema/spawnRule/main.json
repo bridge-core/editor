@@ -14,7 +14,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"type": "string"
+							"$ref": "../general/reference/identifiers.json#/definitions/entity_identifiers"
 						},
 						"population_control": {
 							"type": "string",
