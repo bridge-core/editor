@@ -51,7 +51,7 @@
 				@click="onCreatePreset"
 				color="primary"
 				:disabled="!fieldsReady"
-				:loading="false"
+				:loading="!packIndexerReady.isReady"
 			>
 				Create
 			</v-btn>

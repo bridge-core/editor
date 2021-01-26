@@ -14,6 +14,7 @@ import { selectedProject } from '@/components/Project/Loader'
 import { deepmerge } from '@/utils/deepmerge'
 import { compare, CompareOperator } from 'compare-versions'
 import { ProjectConfig } from '@/components/Project/ProjectConfig'
+import { packIndexerReady } from '@/components/PackIndexer/PackIndexer'
 
 export interface IPresetManifest {
 	name: string
@@ -44,6 +45,7 @@ const textTransformFiles = [
 ]
 export class CreatePresetWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
+	protected packIndexerReady = packIndexerReady
 
 	constructor() {
 		super(CreatePresetComponent)
@@ -124,9 +126,9 @@ export class CreatePresetWindow extends BaseWindow {
 
 		for (const dirent of dirents) {
 			if (dirent.kind === 'directory')
-				this.loadPresets(fs, `${dirPath}/${dirent.name}`)
+				await this.loadPresets(fs, `${dirPath}/${dirent.name}`)
 			else if (dirent.name === 'manifest.json')
-				this.addPreset(fs, `${dirPath}/${dirent.name}`)
+				return await this.addPreset(fs, `${dirPath}/${dirent.name}`)
 		}
 	}
 
