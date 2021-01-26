@@ -1,7 +1,7 @@
 import { EventManager, Signal } from './appCycle/EventSystem'
 import { FileType } from './components/Data/FileType'
 import { ThemeManager } from './components/Plugins/Themes/ThemeManager'
-import { setupMonacoEditor } from './components/Editors/Text/setup'
+import { JSONDefaults } from './components/Data/JSONDefaults'
 import { FileSystem } from './components/FileSystem/Main'
 import { setupFileSystem } from './components/FileSystem/setup'
 import { PackIndexer } from './components/PackIndexer/PackIndexer'
@@ -31,6 +31,8 @@ export class App {
 	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventManager<any>([
 		'projectChanged',
+		'fileUpdated',
+		'currentTabSwitched',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: App
@@ -126,7 +128,7 @@ export class App {
 		// }
 		await FileType.setup(this.fileSystem)
 		await PackType.setup(this.fileSystem)
-		setupMonacoEditor()
+		JSONDefaults.setup()
 
 		if (process.env.NODE_ENV === 'development') {
 			const discordMsg = createNotification({

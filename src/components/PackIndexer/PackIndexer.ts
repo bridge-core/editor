@@ -59,6 +59,11 @@ export class PackIndexer extends Signal<void> {
 		})
 	}
 
+	async updateFile(filePath: string) {
+		await this.service.updateFile(filePath)
+		App.eventSystem.dispatch('fileUpdated', filePath)
+	}
+
 	readdir(path: string[], ...args: any[]) {
 		return this.service.readdir(path)
 	}
