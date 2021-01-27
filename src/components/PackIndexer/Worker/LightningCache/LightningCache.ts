@@ -74,7 +74,6 @@ export class LightningCache {
 
 			if (entry.kind === 'directory') {
 				if (folderIgnoreList.includes(currentFullPath)) continue
-
 				await this.iterateDir(entry, callback, currentFullPath)
 			} else if (!fileIgnoreList.includes(fileName)) {
 				this.service.progress.addToTotal(2)
@@ -87,22 +86,32 @@ export class LightningCache {
 	 * @returns Whether this file did change
 	 */
 	async processFile(filePath: string, fileHandle: FileSystemFileHandle) {
+		const file = await fileHandle.getFile()
+		const fileType = FileType.getId(filePath)
+
+		// First step: Check lastModified time. If the file was not modified, we can skip all processing
+		if (
+			file.lastModified ===
+			(await this.lightningStore.getLastModified(filePath, fileType))
+		)
+			return false
+
+		// Second step: Process file
 		if (filePath.endsWith('.json'))
-			return await this.processJSON(filePath, fileHandle)
-		if (filePath.endsWith('.mcfunction'))
-			return await this.processFunction(filePath, fileHandle)
-		return false
+			await this.processJSON(filePath, fileType, file)
+		else if (filePath.endsWith('.mcfunction'))
+			await this.processFunction(filePath, fileType, file)
+		else
+			await this.lightningStore.add(
+				filePath,
+				{ lastModified: file.lastModified },
+				fileType
+			)
+		return true
 	}
 
-	async processFunction(filePath: string, fileHandle: FileSystemFileHandle) {
-		const file = await fileHandle.getFile()
+	async processFunction(filePath: string, fileType: string, file: File) {
 		const fileContent = await file.text()
-
-		// Check for file changes
-		const newHash = await hashString(fileContent)
-		const oldHash = await this.lightningStore.getHash(filePath)
-		// File did not change, no work to do
-		if (newHash === oldHash) return false
 
 		const functionPath: string[] = []
 		for (const line of fileContent.split('\n')) {
@@ -111,7 +120,14 @@ export class LightningCache {
 				functionPath.push(`functions/${funcName[1]}.mcfunction`)
 		}
 
-		await this.lightningStore.add(filePath, newHash, { functionPath })
+		await this.lightningStore.add(
+			filePath,
+			{
+				lastModified: file.lastModified,
+				data: { functionPath },
+			},
+			fileType
+		)
 		return true
 	}
 
@@ -119,27 +135,33 @@ export class LightningCache {
 	 * Process a JSON file
 	 * @returns Whether this json file did change
 	 */
-	async processJSON(filePath: string, fileHandle: FileSystemFileHandle) {
-		const file = await fileHandle.getFile()
+	async processJSON(filePath: string, fileType: string, file: File) {
 		const fileContent = await file.text()
 
-		// Check for file changes
-		const newHash = await hashString(fileContent)
-		const oldHash = await this.lightningStore.getHash(filePath)
-		// File did not change, no work to do
-		if (newHash === oldHash) return false
 		let data: any
 		try {
 			data = json5.parse(fileContent)
 		} catch {
-			await this.lightningStore.add(filePath, newHash)
+			await this.lightningStore.add(
+				filePath,
+				{
+					lastModified: file.lastModified,
+				},
+				fileType
+			)
 			return true
 		}
 
 		const instructions = await FileType.getLightningCache(filePath)
 		// No instructions = no work
 		if (instructions.length === 0) {
-			await this.lightningStore.add(filePath, newHash)
+			await this.lightningStore.add(
+				filePath,
+				{
+					lastModified: file.lastModified,
+				},
+				fileType
+			)
 			return true
 		}
 
@@ -203,8 +225,14 @@ export class LightningCache {
 
 		await this.lightningStore.add(
 			filePath,
-			newHash,
-			Object.keys(collectedData).length > 0 ? collectedData : undefined
+			{
+				lastModified: file.lastModified,
+				data:
+					Object.keys(collectedData).length > 0
+						? collectedData
+						: undefined,
+			},
+			fileType
 		)
 
 		return true

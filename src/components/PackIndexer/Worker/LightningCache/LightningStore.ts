@@ -4,7 +4,7 @@ import { PackIndexerService } from '../Main'
 
 type TStore = Record<string, Record<string, IStoreEntry>>
 interface IStoreEntry {
-	hash: string
+	lastModified: number
 	data?: Record<string, string[]>
 }
 
@@ -39,24 +39,28 @@ export class LightningStore {
 
 	async add(
 		filePath: string,
-		hash: string,
-		fileData?: Record<string, string[]>
+		{
+			lastModified,
+			data,
+		}: IStoreEntry & { data?: Record<string, string[]> },
+		fileType = FileType.getId(filePath)
 	) {
 		await this.loadStore()
-		const fileType = FileType.getId(filePath)
 		if (!this.store![fileType]) this.store![fileType] = {}
 
 		this.store![fileType][filePath] = {
-			hash,
-			data: fileData ?? this.store![fileType][filePath].data,
+			lastModified,
+			data: data ?? this.store![fileType]?.[filePath]?.data,
 		}
 	}
 
-	async getHash(filePath: string) {
+	async getLastModified(
+		filePath: string,
+		fileType = FileType.getId(filePath)
+	) {
 		await this.loadStore()
-		const fileType = FileType.getId(filePath)
 
-		return this.store![fileType]?.[filePath]?.hash ?? ''
+		return this.store![fileType]?.[filePath]?.lastModified
 	}
 
 	async find(
