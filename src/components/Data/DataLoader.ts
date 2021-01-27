@@ -18,7 +18,7 @@ export class DataLoader extends Signal<void> {
 			await this.load(app.fileSystem)
 			console.log('Data updated!')
 		}
-		console.log('DONE')
+
 		this.dispatch()
 		app.windows.loadingWindow.close()
 	}

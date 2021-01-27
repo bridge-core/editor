@@ -47,6 +47,7 @@ export namespace JSONDefaults {
 		directoryHandle: FileSystemDirectoryHandle,
 		fromPath = 'data/packages/schema'
 	) {
+		const promises: Promise<void>[] = []
 		for await (const [name, entry] of directoryHandle.entries()) {
 			const currentPath = `${fromPath}/${name}`
 
@@ -58,8 +59,10 @@ export namespace JSONDefaults {
 						.then(file => file.text())
 						.then(json5.parse),
 				}
-			else await loadStaticSchemas(entry, currentPath)
+			else promises.push(loadStaticSchemas(entry, currentPath))
 		}
+
+		await Promise.all(promises)
 	}
 
 	async function loadAllSchemas() {
