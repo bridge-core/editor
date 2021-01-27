@@ -1,6 +1,6 @@
 {
 	"id": "animation",
-	"scope": "BP/animations",
+	"scope": "BP/animations/",
 	"icon": "mdi-movie-open-outline",
 	"matcher": ["BP/animations/**/*.json", "BP/animations/*.json"],
 	"schema": "file:///data/packages/schema/animation/server.json",

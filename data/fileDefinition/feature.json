@@ -1,7 +1,7 @@
 {
 	"id": "feature",
 	"icon": "mdi-flower",
-	"scope": "BP/features",
+	"scope": "BP/features/",
 	"matcher": "BP/features/*.json",
 	"schema": "file:///data/packages/schema/feature/main.json",
 	"lightningCache": "feature.json"

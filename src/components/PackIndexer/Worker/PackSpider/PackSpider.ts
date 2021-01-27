@@ -122,7 +122,7 @@ export class File {
 		packSpider: PackSpider,
 		forceUpdate = false
 	) {
-		const fileType = await FileType.getId(filePath)
+		const fileType = FileType.getId(filePath)
 		const storedFile = fileStore[fileType]?.[filePath]
 		if (storedFile !== undefined) {
 			if (!forceUpdate) return storedFile
@@ -139,7 +139,7 @@ export class File {
 		const packSpiderFile = packSpider.packSpiderFiles[fileType] ?? {}
 
 		// Load cache data of current file
-		const { data: cacheData = {} } = await packSpider.lightningStore.get(
+		const { data: cacheData = {} } = packSpider.lightningStore.get(
 			filePath,
 			fileType
 		)
@@ -166,7 +166,7 @@ export class File {
 			if (!Array.isArray(find)) find = [find]
 			const matchesOneOf = cacheData[matches] ?? []
 
-			const foundFilePaths = await packSpider.lightningStore.findMultiple(
+			const foundFilePaths = packSpider.lightningStore.findMultiple(
 				find,
 				where,
 				matchesOneOf,

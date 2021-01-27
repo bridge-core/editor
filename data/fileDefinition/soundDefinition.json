@@ -1,5 +1,6 @@
 {
 	"id": "soundDefinition",
+	"scope": "RP/sounds/sound_definitions.json",
 	"matcher": "RP/sounds/sound_definitions.json",
 	"schema": "file:///data/packages/schema/simple/soundDefinitions.json",
 	"lightningCache": "soundDefinition.json"

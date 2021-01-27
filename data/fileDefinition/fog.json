@@ -1,7 +1,7 @@
 {
 	"id": "fog",
 	"icon": "mdi-weather-fog",
-	"scope": "RP/fogs",
+	"scope": "RP/fogs/",
 	"target_version": "$project_target_version >= 1.16.100",
 	"matcher": ["RP/fogs/**/*.json", "RP/fogs/*.json"],
 	"schema": "file:///data/packages/schema/fog/main.json",

@@ -4,7 +4,7 @@ import * as monaco from 'monaco-editor'
 import { FileSystem } from '../FileSystem/Main'
 
 export namespace JSONDefaults {
-	let schemas: IMonacoSchemaArrayEntry[] = []
+	let schemas: Record<string, IMonacoSchemaArrayEntry> = {}
 
 	export function addSchemas(
 		addSchemas: IMonacoSchemaArrayEntry[],
@@ -12,15 +12,12 @@ export namespace JSONDefaults {
 	) {
 		// console.log(addSchemas)
 		addSchemas.forEach(addSchema => {
-			const findSchema = schemas.find(
-				schema => schema.uri === addSchema.uri
-			)
-
-			if (findSchema) {
-				if (addSchema.schema) findSchema.schema = addSchema.schema
+			if (schemas[addSchema.uri]) {
+				if (addSchema.schema)
+					schemas[addSchema.uri].schema = addSchema.schema
 				if (addSchema.fileMatch)
-					findSchema.fileMatch = addSchema.fileMatch
-			} else schemas.push(addSchema)
+					schemas[addSchema.uri].fileMatch = addSchema.fileMatch
+			} else schemas[addSchema.uri] = addSchema
 		})
 
 		if (updateMonaco) setJSONDefaults()
@@ -56,16 +53,16 @@ export namespace JSONDefaults {
 			const currentPath = `${fromPath}/${dirent.name}`
 
 			if (dirent.kind === 'file')
-				schemas.push({
+				schemas[`file:///${currentPath}`] = {
 					uri: `file:///${currentPath}`,
 					schema: await fileSystem.readJSON(currentPath),
-				})
+				}
 			else await loadStaticSchemas(fileSystem, currentPath)
 		}
 	}
 
 	async function loadAllSchemas() {
-		schemas = []
+		schemas = {}
 		const app = await App.getApp()
 		await loadStaticSchemas(app.fileSystem)
 
@@ -79,7 +76,7 @@ export namespace JSONDefaults {
 			enableSchemaRequest: false,
 			allowComments: true,
 			validate: true,
-			schemas,
+			schemas: Object.values(schemas),
 		})
 	}
 
@@ -87,6 +84,7 @@ export namespace JSONDefaults {
 		App.ready.once(app => {
 			app.packIndexer.on(async () => {
 				console.time('[EDITOR] Setting up JSON defaults')
+
 				await loadAllSchemas()
 
 				console.timeEnd('[EDITOR] Setting up JSON defaults')

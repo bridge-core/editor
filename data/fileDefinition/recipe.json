@@ -1,7 +1,7 @@
 {
 	"id": "recipe",
 	"icon": "mdi-book-outline",
-	"scope": "BP/recipes",
+	"scope": "BP/recipes/",
 	"matcher": ["BP/recipes/**/*.json", "BP/recipes/*.json"],
 	"schema": "file:///data/packages/schema/recipe/main.json",
 	"lightningCache": "recipe.json"

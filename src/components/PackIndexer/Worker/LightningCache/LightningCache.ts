@@ -6,21 +6,6 @@ import json5 from 'json5'
 import { PackIndexerService } from '../Main'
 import { LightningStore } from './LightningStore'
 
-const fileIgnoreList = ['.DS_Store']
-const folderIgnoreList = [
-	'RP/textures/items',
-	'RP/textures/blocks',
-	'RP/textures/entity',
-	'RP/textures/ui',
-	'RP/textures/gui',
-	'RP/ui',
-	'RP/sounds/step',
-	'RP/sounds/dig',
-	'RP/sounds/block',
-	'RP/sounds/mob',
-	'bridge',
-]
-
 export interface ILightningInstruction {
 	'@filter'?: string[]
 	'@map'?: string
@@ -28,12 +13,34 @@ export interface ILightningInstruction {
 }
 
 export class LightningCache {
+	protected folderIgnoreList = new Set<string>()
+	protected fileIgnoreList = new Set<string>(['.DS_Store'])
 	constructor(
 		protected service: PackIndexerService,
 		protected lightningStore: LightningStore
 	) {}
 
+	async loadIgnoreFolders() {
+		try {
+			const file = await this.service.fileSystem.readFile(
+				'bridge/.ignore-folders'
+			)
+			;(await file.text())
+				.split('\n')
+				.concat(['bridge', 'builds', 'dev'])
+				.forEach(folder => this.folderIgnoreList.add(folder))
+		} catch {
+			;['bridge', 'builds', 'dev'].forEach(folder =>
+				this.folderIgnoreList.add(folder)
+			)
+		}
+	}
+
 	async start() {
+		await this.lightningStore.setup()
+
+		if (this.folderIgnoreList.size === 0) await this.loadIgnoreFolders()
+
 		if (this.service.settings.noFullLightningCacheRefresh) {
 			const filePaths = await this.lightningStore.allFiles()
 			if (filePaths.length > 0) return filePaths
@@ -56,7 +63,6 @@ export class LightningCache {
 		)
 
 		if (anyFileChanged) await this.lightningStore.saveStore()
-
 		return filePaths
 	}
 
@@ -73,9 +79,9 @@ export class LightningCache {
 				fullPath.length === 0 ? fileName : `${fullPath}/${fileName}`
 
 			if (entry.kind === 'directory') {
-				if (folderIgnoreList.includes(currentFullPath)) continue
+				if (this.folderIgnoreList.has(currentFullPath)) continue
 				await this.iterateDir(entry, callback, currentFullPath)
-			} else if (!fileIgnoreList.includes(fileName)) {
+			} else if (!this.fileIgnoreList.has(fileName)) {
 				this.service.progress.addToTotal(2)
 				await callback(entry as FileSystemFileHandle, currentFullPath)
 			}
@@ -93,8 +99,9 @@ export class LightningCache {
 		if (
 			file.lastModified ===
 			(await this.lightningStore.getLastModified(filePath, fileType))
-		)
+		) {
 			return false
+		}
 
 		// Second step: Process file
 		if (filePath.endsWith('.json'))

@@ -1,7 +1,7 @@
 {
 	"id": "animationController",
 	"icon": "mdi-movie-search-outline",
-	"scope": "BP/animation_controllers",
+	"scope": "BP/animation_controllers/",
 	"matcher": [
 		"BP/animation_controllers/**/*.json",
 		"BP/animation_controllers/*.json"

@@ -28,7 +28,7 @@ export class PackIndexerService extends TaskService {
 		readonly settings: IWorkerSettings
 	) {
 		super('packIndexer', projectDirectory)
-		this.lightningStore = new LightningStore(this)
+		this.lightningStore = new LightningStore(this.fileSystem)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
 	}
@@ -117,38 +117,8 @@ export class PackIndexerService extends TaskService {
 		return this.lightningStore.allFiles()
 	}
 
-	async getSchemasFor(fileType: string, fromFilePath?: string) {
-		const collectedData = await this.lightningStore.getAllFrom(
-			fileType,
-			fromFilePath
-		)
-		const baseUrl = 'file:///data/packages/schema/dynamic'
-		const schemas: IMonacoSchemaArrayEntry[] = []
-
-		for (const key in collectedData) {
-			schemas.push({
-				uri: `${baseUrl}/${fileType}/${
-					fromFilePath ? 'currentContext/' : ''
-				}${key}Enum.json`,
-				schema: {
-					type: 'string',
-					enum: collectedData[key],
-				},
-			})
-
-			schemas.push({
-				uri: `${baseUrl}/${fileType}/${
-					fromFilePath ? 'currentContext/' : ''
-				}${key}Property.json`,
-				schema: {
-					properties: Object.fromEntries(
-						collectedData[key].map(d => [d, {}])
-					),
-				},
-			})
-		}
-
-		return schemas
+	getSchemasFor(fileType: string, fromFilePath?: string) {
+		return this.lightningStore.getSchemasFor(fileType, fromFilePath)
 	}
 }
 

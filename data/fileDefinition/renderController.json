@@ -1,7 +1,7 @@
 {
 	"id": "renderController",
 	"icon": "mdi-pentagon-outline",
-	"scope": "RP/render_controllers",
+	"scope": "RP/render_controllers/",
 	"matcher": [
 		"RP/render_controllers/**/*.json",
 		"RP/render_controllers/*.json"

@@ -10,6 +10,7 @@ import { App } from '@/App'
 interface IFileType {
 	id: string
 	icon?: string
+	scope: string | string[]
 	matcher: string | string[]
 	schema: string
 	packSpider: string
@@ -53,14 +54,24 @@ export namespace FileType {
 			if (searchFileType === fileType.id) return fileType
 			else if (!filePath) continue
 
-			if (
+			if (fileType.scope) {
+				if (typeof fileType.scope === 'string') {
+					if (filePath.startsWith(fileType.scope)) return fileType
+				} else {
+					if (
+						fileType.scope.some(scope => filePath.startsWith(scope))
+					)
+						return fileType
+				}
+			} else if (
 				typeof fileType.matcher === 'string' &&
 				isMatch(filePath, fileType.matcher)
-			)
+			) {
 				return fileType
-
-			for (const matcher of fileType.matcher)
-				if (isMatch(filePath, matcher)) return fileType
+			} else {
+				for (const matcher of fileType.matcher)
+					if (isMatch(filePath, matcher)) return fileType
+			}
 		}
 	}
 	export function getIds() {

@@ -1,7 +1,7 @@
 {
 	"id": "item",
 	"icon": "mdi-sword",
-	"scope": "BP/items",
+	"scope": "BP/items/",
 	"matcher": ["BP/items/**/*.json", "BP/items/*.json"],
 	"schema": "file:///data/packages/schema/item/main.json",
 	"lightningCache": "item.json",

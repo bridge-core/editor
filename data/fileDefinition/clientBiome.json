@@ -1,5 +1,6 @@
 {
 	"id": "clientBiome",
+	"scope": "RP/biomes_client.json",
 	"matcher": "RP/biomes_client.json",
 	"schema": "file:///data/packages/schema/simple/clientBiome.json",
 	"lightningCache": "clientBiome.json"

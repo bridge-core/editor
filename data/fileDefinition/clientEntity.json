@@ -1,7 +1,7 @@
 {
 	"id": "clientEntity",
 	"icon": "mdi-minecraft",
-	"scope": "RP/entity",
+	"scope": "RP/entity/",
 	"matcher": ["RP/entity/**/*.json", "RP/entity/*.json"],
 	"schema": "file:///data/packages/schema/clientEntity/main.json",
 	"packSpider": "clientEntity.json",
