@@ -1,10 +1,25 @@
+import { Signal } from '@/appCycle/EventSystem'
 import json5 from 'json5'
 import { IGetHandleConfig, IMkdirConfig } from './Common'
 
-export class FileSystem {
-	static confirmPermissionWindow: any = null
+export class FileSystem extends Signal<void> {
+	public _baseDirectory!: FileSystemDirectoryHandle
+	get baseDirectory() {
+		return this._baseDirectory
+	}
+	get ready() {
+		return new Promise<void>(resolve => this.once(resolve))
+	}
 
-	constructor(public readonly baseDirectory: FileSystemDirectoryHandle) {}
+	constructor(baseDirectory?: FileSystemDirectoryHandle) {
+		super()
+		if (baseDirectory) this.setup(baseDirectory)
+	}
+
+	setup(baseDirectory: FileSystemDirectoryHandle) {
+		this._baseDirectory = baseDirectory
+		this.dispatch()
+	}
 
 	async getDirectoryHandle(
 		path: string,

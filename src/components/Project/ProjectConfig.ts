@@ -4,8 +4,10 @@ import { selectedProject } from './Loader'
 
 export class ProjectConfig {
 	protected data: Record<string, unknown> | undefined
+	protected fileSystem!: FileSystem
 
-	constructor(protected fileSystem: FileSystem) {
+	constructor() {
+		App.ready.once(app => (this.fileSystem = app.fileSystem))
 		App.eventSystem.on('projectChanged', () => {
 			this.data = undefined
 		})

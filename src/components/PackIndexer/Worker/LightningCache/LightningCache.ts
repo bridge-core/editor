@@ -14,6 +14,8 @@ export interface ILightningInstruction {
 export class LightningCache {
 	protected folderIgnoreList = new Set<string>()
 	protected fileIgnoreList = new Set<string>(['.DS_Store'])
+	protected totalTime = 0
+
 	constructor(
 		protected service: PackIndexerService,
 		protected lightningStore: LightningStore
@@ -97,7 +99,7 @@ export class LightningCache {
 		// First step: Check lastModified time. If the file was not modified, we can skip all processing
 		if (
 			file.lastModified ===
-			(await this.lightningStore.getLastModified(filePath, fileType))
+			this.lightningStore.getLastModified(filePath, fileType)
 		) {
 			return false
 		}

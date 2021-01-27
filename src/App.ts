@@ -38,7 +38,6 @@ export class App {
 	public static readonly ready = new Signal<App>()
 	protected static _instance: App
 
-	public fileSystem!: FileSystem
 	public projectConfig!: ProjectConfig
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this)
@@ -46,26 +45,14 @@ export class App {
 	public readonly taskManager = new TaskManager()
 	public readonly packIndexer = new PackIndexer()
 	public readonly tabSystem = Vue.observable(new TabSystem())
+	public readonly dataLoader = new DataLoader()
+	public readonly fileSystem = new FileSystem()
 
-	protected _windows!: Windows
+	protected _windows = new Windows()
 	get windows() {
 		return this._windows
 	}
 
-	static async main(appComponent: Vue) {
-		const lw = new LoadingWindow()
-		lw.open()
-
-		this._instance = new App(appComponent)
-		await this._instance.startUp()
-		this.ready.dispatch(this._instance)
-		await SettingsWindow.loadSettings()
-		this._instance._windows = new Windows()
-
-		lw.close()
-
-		await selectLastProject(this._instance)
-	}
 	static get instance() {
 		return this._instance
 	}
@@ -98,7 +85,40 @@ export class App {
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
 	}
 
-	async startUp() {
+	switchProject(projectName: string, forceRefreshCache = false) {
+		return new Promise<void>(resolve => {
+			this.packIndexer.start(projectName, forceRefreshCache)
+			App.eventSystem.dispatch('projectChanged', undefined)
+			console.timeEnd('[APP] Select Project')
+			this.packIndexer.once(() => resolve())
+		})
+	}
+
+	/**
+	 * Starts the app
+	 */
+	static async main(appComponent: Vue) {
+		const lw = new LoadingWindow()
+		lw.open()
+
+		this._instance = new App(appComponent)
+		await this.instance.beforeStartUp()
+		this.instance.fileSystem.setup(await setupFileSystem())
+		await this.instance.startUp()
+		this.ready.dispatch(this._instance)
+
+		await SettingsWindow.loadSettings()
+
+		lw.close()
+		console.time('[APP] Select Project')
+		await selectLastProject(this._instance)
+	}
+
+	/**
+	 * Everything that doesn't need access to the fileSystem should be there immediately
+	 */
+	async beforeStartUp() {
+		console.time('[APP] beforeStartUp()')
 		// @ts-expect-error
 		if (navigator.clearAppBadge)
 			// @ts-expect-error
@@ -106,31 +126,9 @@ export class App {
 
 		setupSidebar()
 		setupDefaultMenus(this)
-
-		// FileSystem setup
-		this.fileSystem = await setupFileSystem()
-		// Create default folders
-		await Promise.all([
-			this.fileSystem.mkdir('projects'),
-			this.fileSystem.mkdir('plugins'),
-			this.fileSystem.mkdir('data'),
-		])
-		await DataLoader.setup(this.fileSystem)
-		this.projectConfig = new ProjectConfig(this.fileSystem)
-
-		// Set language based off of browser language
-		// if (!navigator.language.includes('en')) {
-		// 	for (const [lang] of getLanguages()) {
-		// 		if (navigator.language.includes(lang)) {
-		// 			selectLanguage(lang)
-		// 		}
-		// 	}
-		// } else {
-		// 	selectLanguage('en')
-		// }
-		await FileType.setup(this.fileSystem)
-		await PackType.setup(this.fileSystem)
+		this.dataLoader.setup(this)
 		JSONDefaults.setup()
+		this.projectConfig = new ProjectConfig()
 
 		if (process.env.NODE_ENV === 'development') {
 			const discordMsg = createNotification({
@@ -143,9 +141,7 @@ export class App {
 					discordMsg.dispose()
 				},
 			})
-		}
 
-		if (process.env.NODE_ENV === 'development') {
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
 				message: 'sidebar.notifications.gettingStarted.message',
@@ -157,13 +153,36 @@ export class App {
 				},
 			})
 		}
+
+		console.timeEnd('[APP] beforeStartUp()')
 	}
 
-	switchProject(projectName: string, forceRefreshCache = false) {
-		return new Promise<void>(resolve => {
-			this.packIndexer.start(projectName, forceRefreshCache)
-			App.eventSystem.dispatch('projectChanged', undefined)
-			this.packIndexer.once(() => resolve())
-		})
+	/**
+	 * Setup systems that need to access the fileSystem
+	 */
+	async startUp() {
+		console.time('[APP] startUp()')
+
+		await Promise.all([
+			// Create default folders
+			this.fileSystem.mkdir('projects'),
+			this.fileSystem.mkdir('plugins'),
+			this.fileSystem.mkdir('data'),
+			// Setup data helpers
+			this.dataLoader.ready.then(() => FileType.setup(this.fileSystem)),
+			PackType.setup(this.fileSystem),
+		])
+
+		// Set language based off of browser language
+		// if (!navigator.language.includes('en')) {
+		// 	for (const [lang] of getLanguages()) {
+		// 		if (navigator.language.includes(lang)) {
+		// 			selectLanguage(lang)
+		// 		}
+		// 	}
+		// } else {
+		// 	selectLanguage('en')
+		// }
+		console.timeEnd('[APP] startUp()')
 	}
 }

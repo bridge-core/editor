@@ -1,5 +1,7 @@
 import { App } from '@/App'
 import { FileType, IMonacoSchemaArrayEntry } from '@/components/Data/FileType'
+import { whenIdle } from '@/utils/whenIdle'
+import json5 from 'json5'
 import * as monaco from 'monaco-editor'
 import { FileSystem } from '../FileSystem/Main'
 
@@ -42,32 +44,43 @@ export namespace JSONDefaults {
 		).flat()
 	}
 	async function loadStaticSchemas(
-		fileSystem: FileSystem,
+		directoryHandle: FileSystemDirectoryHandle,
 		fromPath = 'data/packages/schema'
 	) {
-		const dirents = await fileSystem.readdir(fromPath, {
-			withFileTypes: true,
-		})
+		for await (const [name, entry] of directoryHandle.entries()) {
+			const currentPath = `${fromPath}/${name}`
 
-		for (const dirent of dirents) {
-			const currentPath = `${fromPath}/${dirent.name}`
-
-			if (dirent.kind === 'file')
+			if (entry.kind === 'file')
 				schemas[`file:///${currentPath}`] = {
 					uri: `file:///${currentPath}`,
-					schema: await fileSystem.readJSON(currentPath),
+					schema: await entry
+						.getFile()
+						.then(file => file.text())
+						.then(json5.parse),
 				}
-			else await loadStaticSchemas(fileSystem, currentPath)
+			else await loadStaticSchemas(entry, currentPath)
 		}
 	}
 
 	async function loadAllSchemas() {
 		schemas = {}
 		const app = await App.getApp()
-		await loadStaticSchemas(app.fileSystem)
+		console.time('[JSON DEFAULTS] Static schemas')
+		try {
+			await loadStaticSchemas(
+				await app.fileSystem.getDirectoryHandle('data/packages/schema')
+			)
+		} catch {
+			return
+		}
+		console.timeEnd('[JSON DEFAULTS] Static schemas')
 
+		console.time('[JSON DEFAULTS] Adding matchers to schemas')
 		addSchemas(FileType.getMonacoSchemaArray(), false)
+		console.timeEnd('[JSON DEFAULTS] Adding matchers to schemas')
+		console.time('[JSON DEFAULTS] Dynamic schemas')
 		addSchemas(await getDynamicSchemas(), false)
+		console.timeEnd('[JSON DEFAULTS] Dynamic schemas')
 		setJSONDefaults()
 	}
 
@@ -82,13 +95,15 @@ export namespace JSONDefaults {
 
 	export function setup() {
 		App.ready.once(app => {
-			app.packIndexer.on(async () => {
-				console.time('[EDITOR] Setting up JSON defaults')
+			app.packIndexer.on(() =>
+				whenIdle(async () => {
+					console.time('[EDITOR] Setting up JSON defaults')
 
-				await loadAllSchemas()
+					await loadAllSchemas()
 
-				console.timeEnd('[EDITOR] Setting up JSON defaults')
-			})
+					console.timeEnd('[EDITOR] Setting up JSON defaults')
+				})
+			)
 
 			app.actionManager.create({
 				icon: 'mdi-reload',

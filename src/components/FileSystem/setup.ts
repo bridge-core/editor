@@ -2,7 +2,6 @@ import { get, set } from 'idb-keyval'
 import { createInformationWindow } from '../Windows/Common/CommonDefinitions'
 import { TWindow } from '../Windows/create'
 import { createSelectProjectFolderWindow } from '../Windows/Project/SelectFolder/definition'
-import { FileSystem } from './Main'
 
 export async function setupFileSystem() {
 	let fileHandle = await get<FileSystemDirectoryHandle>('bridgeBaseDir')
@@ -20,7 +19,7 @@ export async function setupFileSystem() {
 		await verifyPermissions(fileHandle)
 	}
 
-	return new FileSystem(fileHandle)
+	return fileHandle
 }
 
 let confirmPermissionWindow: TWindow | null = null

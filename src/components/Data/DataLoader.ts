@@ -1,18 +1,29 @@
+import { App } from '@/App'
+import { Signal } from '@/appCycle/EventSystem'
 import { compare } from 'compare-versions'
 import JSZip from 'jszip'
 import { dirname } from 'path'
 import { FileSystem } from '../FileSystem/Main'
 
-export class DataLoader {
-	static async setup(fileSystem: FileSystem) {
-		if (await this.isUpdateAvailable(fileSystem)) {
+export class DataLoader extends Signal<void> {
+	get ready() {
+		return new Promise<void>(resolve => this.once(resolve))
+	}
+	async setup(app: App) {
+		app.windows.loadingWindow.open()
+		await app.fileSystem.ready
+
+		if (await this.isUpdateAvailable(app.fileSystem)) {
 			console.log('Downloading new data...')
-			await this.load(fileSystem)
+			await this.load(app.fileSystem)
 			console.log('Data updated!')
 		}
+		console.log('DONE')
+		this.dispatch()
+		app.windows.loadingWindow.close()
 	}
 
-	static async isUpdateAvailable(fileSystem: FileSystem) {
+	protected async isUpdateAvailable(fileSystem: FileSystem) {
 		let remoteVersion: string
 		try {
 			remoteVersion = await fetch(
@@ -36,8 +47,10 @@ export class DataLoader {
 		return compare(remoteVersion, localVersion, '>')
 	}
 
-	protected static async load(fileSystem: FileSystem) {
-		await fileSystem.unlink('data/packages')
+	protected async load(fileSystem: FileSystem) {
+		try {
+			await fileSystem.unlink('data/packages')
+		} catch {}
 
 		const zip = await fetch(
 			process.env.NODE_ENV === 'production'
