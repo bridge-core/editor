@@ -1,6 +1,5 @@
 import { FileType } from '@/components/Data/FileType'
 import { run } from '@/components/Plugins/Scripts/run'
-import { hashString } from '@/utils/hash'
 import { walkObject } from '@/utils/walkObject'
 import json5 from 'json5'
 import { PackIndexerService } from '../Main'
@@ -149,7 +148,7 @@ export class LightningCache {
 		try {
 			data = json5.parse(fileContent)
 		} catch {
-			await this.lightningStore.add(
+			this.lightningStore.add(
 				filePath,
 				{
 					lastModified: file.lastModified,
@@ -162,7 +161,7 @@ export class LightningCache {
 		const instructions = await FileType.getLightningCache(filePath)
 		// No instructions = no work
 		if (instructions.length === 0) {
-			await this.lightningStore.add(
+			this.lightningStore.add(
 				filePath,
 				{
 					lastModified: file.lastModified,
@@ -230,7 +229,7 @@ export class LightningCache {
 			}
 		}
 
-		await this.lightningStore.add(
+		this.lightningStore.add(
 			filePath,
 			{
 				lastModified: file.lastModified,
