@@ -92,7 +92,6 @@ export class App {
 			this.packIndexer.start(projectName, forceRefreshCache)
 			this.compiler.start(projectName)
 			App.eventSystem.dispatch('projectChanged', undefined)
-			console.timeEnd('[APP] Select Project')
 			this.packIndexer.once(() => resolve())
 		})
 	}
@@ -113,7 +112,6 @@ export class App {
 		await SettingsWindow.loadSettings()
 
 		lw.close()
-		console.time('[APP] Select Project')
 		await selectLastProject(this._instance)
 	}
 

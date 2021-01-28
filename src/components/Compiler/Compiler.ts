@@ -44,7 +44,8 @@ export class Compiler extends Signal<void> {
 			)
 
 			// Start service
-			await this.service.start()
+			const errors = await this.service.start([])
+			errors.forEach(e => console.error(e))
 			this.dispatch()
 			this.ready.dispatch(true)
 			console.timeEnd('[TASK] Compiling project (total)')
