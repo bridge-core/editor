@@ -43,7 +43,7 @@ export default {
 			this.currentWindow.close()
 		},
 		onChange(filePath) {
-			this.currentWindow.openFile(filePath)
+			if (filePath) this.currentWindow.openFile(filePath)
 		},
 	},
 }
