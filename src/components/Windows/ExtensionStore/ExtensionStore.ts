@@ -1,11 +1,17 @@
-import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
+import {
+	ISidebarItemConfig,
+	Sidebar,
+	SidebarItem,
+} from '@/components/Windows/Layout/Sidebar'
 import ExtensionStoreComponent from './ExtensionStore.vue'
 import { BaseWindow } from '@/components/Windows/BaseWindow'
 import { App } from '@/App'
 import { compare, CompareOperator } from 'compare-versions'
 import { getFileSystem } from '@/utils/fs'
+import { PluginTag } from './PluginTag'
+import { Plugin } from './Plugin'
 
-interface ILoadedPlugin {
+export interface ILoadedPlugin {
 	icon: string
 	author: string
 	name: string
@@ -37,7 +43,9 @@ export class ExtensionStoreWindow extends BaseWindow {
 	protected baseUrl =
 		'https://raw.githubusercontent.com/bridge-core/plugins/master'
 	protected sidebar = new Sidebar([])
-	protected plugins: IPlugin[] = []
+	protected plugins: Plugin[] = []
+	protected extensionTags!: Record<string, { icon: string; color?: string }>
+	public readonly tags: Record<string, PluginTag> = {}
 
 	constructor() {
 		super(ExtensionStoreComponent)
@@ -50,7 +58,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 		this.sidebar.removeElements()
 
 		const fs = await getFileSystem()
-		const extensionTags = await fs.readJSON(
+		this.extensionTags = await fs.readJSON(
 			'data/packages/extensionTags.json'
 		)
 
@@ -59,14 +67,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 				resp.json()
 			)
 		)
-		this.plugins = plugins.map(plugin => ({
-			...plugin,
-			tags: plugin.tags.map(tag =>
-				extensionTags[tag]
-					? { ...extensionTags[tag], text: tag }
-					: { text: tag, icon: 'mdi-circle' }
-			),
-		}))
+		this.plugins = plugins.map(plugin => new Plugin(this, plugin))
 
 		this.setupSidebar()
 		console.log(this.plugins)
@@ -94,33 +95,22 @@ export class ExtensionStoreWindow extends BaseWindow {
 			}),
 			this.plugins
 		)
-		this.tags.forEach(tag =>
+		Object.values(this.tags).forEach(tag =>
 			this.sidebar.addElement(
-				new SidebarItem({
-					id: tag.text.toLowerCase(),
-					...tag,
-				}),
+				tag.asSidebarElement(),
 				this.getPluginsByTag(tag)
 			)
 		)
 	}
 
-	get tags() {
-		const tags: ITag[] = []
-
-		this.plugins.forEach(plugin =>
-			plugin.tags.forEach(addTag => {
-				if (!tags.some(findTag => findTag.text === addTag.text))
-					tags.push(addTag)
-			})
-		)
-
-		return tags
+	getPluginsByTag(findTag: PluginTag) {
+		return this.plugins.filter(plugin => plugin.hasTag(findTag))
 	}
-	getPluginsByTag(findTag: ITag) {
-		return this.plugins.filter(plugin =>
-			plugin.tags.some(tag => tag.text === findTag.text)
-		)
+	getTagIcon(tagName: string) {
+		return this.extensionTags[tagName].icon
+	}
+	getTagColor(tagName: string) {
+		return this.extensionTags[tagName].color
 	}
 
 	get selectedSidebar() {
