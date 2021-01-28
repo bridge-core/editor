@@ -33,7 +33,8 @@ export class LightningStore {
 		this.store = {}
 		let currentFileType = 'unknown'
 		for (const definition of loadStore) {
-			if (definition[0] === '#') {
+			if (definition === '') continue
+			else if (definition[0] === '#') {
 				currentFileType = definition.slice(1)
 				this.store[currentFileType] = {}
 				continue
