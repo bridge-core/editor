@@ -1,5 +1,9 @@
 [
 	{ "identifier": "minecraft:item/description/identifier" },
 	{ "event": "minecraft:item/events" },
-	{ "itemTexture": "minecraft:item/components/minecraft:icon/texture" }
+	{ "itemTexture": "minecraft:item/components/minecraft:icon/texture" },
+	{ 
+		"tag": "minecraft:block/components",
+		"@map": "const tag = /^tag:[a-zA-Z:_]+/g.exec(Bridge.value); if(tag) return tag"
+	}
 ]

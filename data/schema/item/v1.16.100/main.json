@@ -15,6 +15,9 @@
 						},
 						{
 							"$ref": "./components.json"
+						},
+						{
+							"$ref": "../../dynamic/item/tagProperty.json"
 						}
 					]
 				},

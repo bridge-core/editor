@@ -62,6 +62,9 @@
 						},
 						{
 							"$ref": "./components.json"
+						},
+						{
+							"$ref": "../../dynamic/block/tagProperty.json"
 						}
 					]
 				},
