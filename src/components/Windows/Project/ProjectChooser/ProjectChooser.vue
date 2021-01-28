@@ -65,8 +65,7 @@
 				color="primary"
 				:disabled="currentProject === selectedSidebar"
 				:loading="
-					currentProject !== selectedSidebar &&
-						!packIndexerReady.isReady
+					currentProject !== selectedSidebar && !isPackIndexerReady
 				"
 				@click="onSelectProject"
 			>
@@ -84,10 +83,11 @@ import { App } from '@/App'
 import { TranslationMixin } from '@/utils/locales'
 import { selectProject } from '@/components/Project/Loader'
 import { createConfirmWindow } from '../../Common/CommonDefinitions'
+import { PackIndexerMixin } from '@/components/Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'ProjectChooserWindow',
-	mixins: [TranslationMixin],
+	mixins: [TranslationMixin, PackIndexerMixin],
 	components: {
 		SidebarWindow,
 		ToolbarButton,

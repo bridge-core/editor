@@ -84,7 +84,7 @@ export class LightningCache {
 				await this.iterateDir(entry, callback, currentFullPath)
 			} else if (!this.fileIgnoreList.has(fileName)) {
 				this.service.progress.addToTotal(2)
-				await callback(entry as FileSystemFileHandle, currentFullPath)
+				await callback(<FileSystemFileHandle>entry, currentFullPath)
 			}
 		}
 	}

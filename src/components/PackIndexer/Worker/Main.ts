@@ -17,7 +17,7 @@ export interface IWorkerSettings {
 	noFullLightningCacheRefresh: boolean
 }
 
-export class PackIndexerService extends TaskService {
+export class PackIndexerService extends TaskService<string[]> {
 	protected lightningStore: LightningStore
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
@@ -47,6 +47,8 @@ export class PackIndexerService extends TaskService {
 		console.time('[WORKER] PackSpider')
 		await this.packSpider.setup(filePaths)
 		console.timeEnd('[WORKER] PackSpider')
+
+		return filePaths
 	}
 
 	async updateFile(filePath: string) {

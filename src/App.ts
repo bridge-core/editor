@@ -27,6 +27,7 @@ import { ProjectConfig } from './components/Project/ProjectConfig'
 import { KeyBindingManager } from './components/Actions/KeyBindingManager'
 import { ActionManager } from './components/Actions/ActionManager'
 import { Toolbar } from './components/Toolbar/Toolbar'
+import { Compiler } from './components/Compiler/Compiler'
 export class App {
 	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventManager<any>([
@@ -38,12 +39,13 @@ export class App {
 	public static readonly ready = new Signal<App>()
 	protected static _instance: App
 
-	public projectConfig!: ProjectConfig
+	public readonly projectConfig = new ProjectConfig()
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
 	public readonly packIndexer = new PackIndexer()
+	public readonly compiler = new Compiler()
 	public readonly tabSystem = Vue.observable(new TabSystem())
 	public readonly dataLoader = new DataLoader()
 	public readonly fileSystem = new FileSystem()
@@ -88,6 +90,7 @@ export class App {
 	switchProject(projectName: string, forceRefreshCache = false) {
 		return new Promise<void>(resolve => {
 			this.packIndexer.start(projectName, forceRefreshCache)
+			this.compiler.start(projectName)
 			App.eventSystem.dispatch('projectChanged', undefined)
 			console.timeEnd('[APP] Select Project')
 			this.packIndexer.once(() => resolve())
@@ -128,7 +131,6 @@ export class App {
 		setupDefaultMenus(this)
 		this.dataLoader.setup(this)
 		JSONDefaults.setup()
-		this.projectConfig = new ProjectConfig()
 
 		if (process.env.NODE_ENV === 'development') {
 			const discordMsg = createNotification({

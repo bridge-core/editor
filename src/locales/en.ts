@@ -139,10 +139,10 @@ export default {
 		},
 		notifications: {
 			discord: {
-				message: 'Discord Server'
+				message: 'Discord Server',
 			},
 			gettingStarted: {
-				message: 'Getting Started'
+				message: 'Getting Started',
 			},
 		},
 	},
@@ -219,17 +219,6 @@ export default {
 			title: 'Settings',
 			searchSettings: 'Search settings...',
 		},
-		taskManager: {
-			title: 'Task Manager',
-
-			tasks: {
-				packIndexing: {
-					title: 'Indexing Packs',
-					description:
-						'bridge. is collecting data about your pack that is needed for its intelligent features.',
-				},
-			},
-		},
 		projectFolder: {
 			title: 'Project Folder',
 			content:
@@ -245,6 +234,20 @@ export default {
 		peerError: {
 			error1: 'Unable to connect to workspace with id',
 			error2: 'Unable to connect to workspace!',
+		},
+	},
+	taskManager: {
+		tasks: {
+			packIndexing: {
+				title: 'Indexing Packs',
+				description:
+					'bridge. is collecting data about your pack that is needed for its intelligent features.',
+			},
+			compiler: {
+				title: 'Compiling Project',
+				description:
+					'bridge. is compiling your project to make it ready for import into Minecraft.',
+			},
 		},
 	},
 }

@@ -50,7 +50,7 @@
 					size="24"
 					width="2"
 					color="white"
-					:value="(task.currentStepCount / task.totalStepCount) * 100"
+					:value="task.progress"
 				/>
 			</SidebarButton>
 		</v-list>

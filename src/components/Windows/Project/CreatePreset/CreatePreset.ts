@@ -13,7 +13,6 @@ import { dirname, extname } from 'path'
 import { selectedProject } from '@/components/Project/Loader'
 import { deepmerge } from '@/utils/deepmerge'
 import { compare, CompareOperator } from 'compare-versions'
-import { packIndexerReady } from '@/components/PackIndexer/PackIndexer'
 
 export interface IPresetManifest {
 	name: string
@@ -44,7 +43,6 @@ const textTransformFiles = [
 ]
 export class CreatePresetWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
-	protected packIndexerReady = packIndexerReady
 
 	constructor() {
 		super(CreatePresetComponent)

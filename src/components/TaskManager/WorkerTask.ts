@@ -3,7 +3,7 @@ import { EventDispatcher } from '@/appCycle/EventSystem'
 
 class Progress {
 	constructor(
-		protected taskService: TaskService,
+		protected taskService: TaskService<unknown>,
 		protected current: number,
 		protected total: number,
 		protected prevTotal: number
@@ -26,7 +26,7 @@ class Progress {
 	}
 }
 
-export abstract class TaskService extends EventDispatcher<[number, number]> {
+export abstract class TaskService<T> extends EventDispatcher<[number, number]> {
 	public fileSystem: FileSystem
 	public progress!: Progress
 	constructor(
@@ -55,7 +55,7 @@ export abstract class TaskService extends EventDispatcher<[number, number]> {
 		)
 	}
 
-	protected abstract onStart(): Promise<void> | void
+	protected abstract onStart(): Promise<T> | T
 
 	async start() {
 		this.progress = new Progress(
@@ -65,9 +65,11 @@ export abstract class TaskService extends EventDispatcher<[number, number]> {
 			await this.loadPreviousTaskRun()
 		)
 
-		await this.onStart()
+		const result = await this.onStart()
 
 		this.saveCurrentTaskRun()
 		this.dispatch([this.progress.getCurrent(), this.progress.getCurrent()])
+
+		return result
 	}
 }
