@@ -1,3 +1,4 @@
+import { ExtensionStoreWindow } from './ExtensionStore/ExtensionStore'
 import { LoadingWindow } from './LoadingWindow/LoadingWindow'
 import { CreatePresetWindow } from './Project/CreatePreset/CreatePreset'
 import { CreateProjectWindow } from './Project/CreateProject/CreateProject'
@@ -14,4 +15,5 @@ export class Windows {
 	loadingWindow = new LoadingWindow()
 	filePicker = new FilePickerWindow()
 	createPreset = new CreatePresetWindow()
+	extensionStore = new ExtensionStoreWindow()
 }

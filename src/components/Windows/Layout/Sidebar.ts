@@ -92,7 +92,7 @@ export class SidebarItem {
 }
 
 export class Sidebar {
-	protected selected?: string
+	protected _selected?: string
 	protected _filter: string = ''
 	public readonly state: Record<string, any> = {}
 
@@ -184,5 +184,15 @@ export class Sidebar {
 	}
 	resetSelected() {
 		this.selected = undefined
+	}
+
+	clearFilter() {
+		this._filter = ''
+	}
+	get selected() {
+		return this._selected
+	}
+	set selected(val) {
+		this._selected = val
 	}
 }

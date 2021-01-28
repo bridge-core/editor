@@ -39,6 +39,9 @@ export function setupSidebar() {
 		id: 'extensions',
 		displayName: 'sidebar.extensions.name',
 		icon: 'mdi-puzzle-outline',
-		component: Extensions,
+		onClick: async () => {
+			const app = await App.getApp()
+			await app.windows.extensionStore.open()
+		},
 	})
 }

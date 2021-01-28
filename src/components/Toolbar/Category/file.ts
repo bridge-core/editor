@@ -50,7 +50,7 @@ export function setupFileCategory(app: App) {
 					icon: 'mdi-puzzle',
 					name: 'toolbar.file.preferences.extensions',
 					description: 'Manage your installed extensions',
-					onTrigger: () => {},
+					onTrigger: () => app.windows.extensionStore.open(),
 				})
 			)
 	)
