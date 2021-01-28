@@ -15,7 +15,8 @@
 	{
 		"lootTablePath": [
 			"minecraft:block/components/minecraft:loot",
-			"minecraft:block/permutations/*/components/minecraft:loot"
+			"minecraft:block/permutations/*/components/minecraft:loot",
+			"minecraft:block/events/*/spawn_loot/table"
 		]
 	},
 	{
