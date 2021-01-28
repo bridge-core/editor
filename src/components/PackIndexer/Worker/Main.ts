@@ -115,7 +115,11 @@ export class PackIndexerService extends TaskService<string[]> {
 		)
 	}
 
-	getAllFiles() {
+	getAllFiles(sorted = false) {
+		if (sorted)
+			return this.lightningStore
+				.allFiles()
+				.sort((a, b) => a.localeCompare(b))
 		return this.lightningStore.allFiles()
 	}
 

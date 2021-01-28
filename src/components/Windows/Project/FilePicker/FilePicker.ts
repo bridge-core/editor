@@ -26,7 +26,7 @@ export class FilePickerWindow extends BaseWindow {
 				app.packIndexer.once(async () => {
 					this.packFiles = []
 					this.packFiles.push(
-						...(await app.packIndexer.service.getAllFiles())
+						...(await app.packIndexer.service.getAllFiles(true))
 					)
 
 					resolve()
