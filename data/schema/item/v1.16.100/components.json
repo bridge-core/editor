@@ -326,7 +326,7 @@
 								"description": "Blocks/block tags that are broken at the set speed.",
 								"anyOf": [
 									{
-										"type": "string"
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identififers"
 									},
 									{
 										"type": "string",
