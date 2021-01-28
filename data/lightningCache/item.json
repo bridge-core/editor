@@ -3,10 +3,7 @@
 	{ "event": "minecraft:item/events" },
 	{ "itemTexture": "minecraft:item/components/minecraft:icon/texture" },
 	{ 
-		"tag": "minecraft:item/components",
+		"tag": "minecraft:block/components",
 		"@map": "const tag = /^tag:[a-zA-Z:_]+/g.exec(Bridge.value); if(tag) return tag"
-	},
-	{
-		"lootTablePath": "minecraft:item/events/*/spawn_loot/table"
 	}
 ]

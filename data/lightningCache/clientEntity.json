@@ -23,7 +23,8 @@
 		"animationIdentifier": "minecraft:client_entity/description/animations/*"
 	},
 	{
-		"texturePath": "minecraft:client_entity/description/textures/*"
+		"texturePath": "minecraft:client_entity/description/textures/*",
+		"@map": "return Bridge.value + '.png'"
 	},
 	{ "materialIdentifier": "minecraft:client_entity/description/materials/*" },
 	{ "geometryIdentifier": "minecraft:client_entity/description/geometry/*" },

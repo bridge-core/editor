@@ -15,8 +15,7 @@
 	{
 		"lootTablePath": [
 			"minecraft:block/components/minecraft:loot",
-			"minecraft:block/permutations/*/components/minecraft:loot",
-			"minecraft:block/events/*/spawn_loot/table"
+			"minecraft:block/permutations/*/components/minecraft:loot"
 		]
 	},
 	{
@@ -26,7 +25,7 @@
 		]
 	},
 	{
-		"texture": [
+		"texturePath": [
 			"minecraft:block/components/minecraft:material_instances/*/texture",
 			"minecraft:block/permutations/*/components/minecraft:material_instances/*/texture"
 		]
