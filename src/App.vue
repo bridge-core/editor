@@ -94,4 +94,7 @@ summary::-webkit-details-marker {
 .v-system-bar .v-icon {
 	margin-right: 0;
 }
+.v-system-bar {
+	width: calc(100% + 1px);
+}
 </style>
