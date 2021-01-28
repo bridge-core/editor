@@ -15,11 +15,23 @@
 	"allOf": [
 		{
 			"if": {
-				"properties": {
-					"target": {
-						"const": "self"
+				"anyOf": [
+					{
+						"properties": {
+							"target": {
+								"const": "self",
+								"required": ["target"]
+							}
+						}
+					},
+					{
+						"properties": {
+							"target": {
+								"type": "null"
+							}
+						}
 					}
-				}
+				]
 			},
 			"then": {
 				"properties": {
