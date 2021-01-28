@@ -24,11 +24,23 @@
 	"allOf": [
 		{
 			"if": {
-				"properties": {
-					"target": {
-						"const": "self"
+				"anyOf": [
+					{
+						"properties": {
+							"target": {
+								"const": "self",
+								"required": ["target"]
+							}
+						}
+					},
+					{
+						"properties": {
+							"target": {
+								"type": "null"
+							}
+						}
 					}
-				}
+				]
 			},
 			"then": {
 				"properties": {
@@ -43,15 +55,10 @@
 			"if": {
 				"properties": {
 					"target": {
-						"enum": [
-							"other",
-							"target",
-							"baby",
-							"parent",
-							"holder"
-						]
+						"enum": ["other", "target", "baby", "parent", "holder"]
 					}
-				}
+				},
+				"required": ["target"]
 			},
 			"then": {
 				"properties": {
@@ -68,7 +75,8 @@
 					"target": {
 						"const": "block"
 					}
-				}
+				},
+				"required": ["target"]
 			},
 			"then": {
 				"properties": {
