@@ -46,11 +46,10 @@
 			"if": {
 				"properties": {
 					"target": {
-						"enum": [
-							"other", "target", "parent", "baby"
-						]
+						"enum": ["other", "target", "parent", "baby"]
 					}
-				}
+				},
+				"required": ["target"]
 			},
 			"then": {
 				"properties": {

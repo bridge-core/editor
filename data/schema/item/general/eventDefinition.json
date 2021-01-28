@@ -44,15 +44,10 @@
 			"if": {
 				"properties": {
 					"target": {
-						"enum": [
-							"other",
-							"holder",
-							"target",
-							"baby",
-							"parent"
-						]
+						"enum": ["other", "holder", "target", "baby", "parent"]
 					}
-				}
+				},
+				"required": ["target"]
 			},
 			"then": {
 				"properties": {
@@ -69,7 +64,8 @@
 					"target": {
 						"const": "block"
 					}
-				}
+				},
+				"required": ["target"]
 			},
 			"then": {
 				"properties": {
