@@ -1,0 +1,30 @@
+{
+	"connect": [
+		{
+			"find": ["clientAnimation", "clientAnimationController"],
+			"where": "identifier",
+			"matches": "animationIdentifier"
+		},
+		{
+			"find": "geometry",
+			"where": "identifier",
+			"matches": "geometryIdentifier"
+		},
+		{
+			"find": "renderController",
+			"where": "identifier",
+			"matches": "renderControllerIdentifier"
+		},
+		{
+			"find": "soundDefinition",
+			"where": "identifier",
+			"matches": "soundEffectIdentifier"
+		},
+		{
+			"find": "particle",
+			"where": "identifier",
+			"matches": "particleIdentifier"
+		}
+	],
+	"includeFiles": ["texturePath"]
+}

@@ -1,0 +1,8 @@
+{
+	"id": "particle",
+	"icon": "mdi-snowflake",
+	"scope": "RP/particles/",
+	"matcher": ["RP/particles/**/*.json", "RP/particles/*.json"],
+	"schema": "file:///data/packages/schema/particle/main.json",
+	"lightningCache": "particle.json"
+}

@@ -1,0 +1,35 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"properties": {
+		"minecraft:entity": {
+			"required": ["description"],
+			"type": "object",
+			"properties": {
+				"description": {
+					"$ref": "../description.json"
+				},
+				"components": {
+					"$ref": "./components.json"
+				},
+				"component_groups": {
+					"patternProperties": {
+						".*": {
+							"$ref": "./components.json"
+						}
+					}
+				},
+				"events": {
+					"propertyNames": {
+						"$ref": "../general/builtInEvent.json"
+					},
+					"patternProperties": {
+						".*": {
+							"$ref": "./event.json"
+						}
+					}
+				},
+				"do_not_upgrade": {}
+			}
+		}
+	}
+}

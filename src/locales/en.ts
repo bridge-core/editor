@@ -52,9 +52,9 @@ export default {
 		file: {
 			name: 'File',
 			newFile: 'New File',
+			openFile: 'Open File',
 			import: {
 				name: 'Import',
-				openFile: 'Open File',
 				importOBJ: 'Import OBJ Model',
 			},
 			saveFile: 'Save File',
@@ -137,6 +137,14 @@ export default {
 				viewExtensions: 'View Extensions',
 			},
 		},
+		notifications: {
+			discord: {
+				message: 'Discord Server',
+			},
+			gettingStarted: {
+				message: 'Getting Started',
+			},
+		},
 	},
 	// Welcome Screen
 	welcome: {
@@ -166,6 +174,26 @@ export default {
 				confirm: 'Confirm',
 			},
 		},
+		loadingWindow: {
+			title: 'Loading...',
+		},
+		openFile: {
+			title: 'Open',
+			search: 'Search file...',
+			noData: 'No results...',
+		},
+		createProject: {
+			title: 'Create Project',
+			packIcon: 'Project Icon (optional)',
+			projectName: 'Project Name',
+			projectPrefix: 'Project Prefix',
+			projectAuthor: 'Project Author',
+			create: 'Create!',
+		},
+		createPreset: {
+			title: 'Create Preset',
+			searchPresets: 'Search presets...',
+		},
 		discord: {
 			title: 'Discord',
 			content: 'Join the official bridge. Discord server!',
@@ -191,17 +219,6 @@ export default {
 			title: 'Settings',
 			searchSettings: 'Search settings...',
 		},
-		taskManager: {
-			title: 'Task Manager',
-
-			tasks: {
-				packIndexing: {
-					title: 'Indexing Packs',
-					description:
-						'bridge. is collecting data about your pack that is needed for its intelligent features.',
-				},
-			},
-		},
 		projectFolder: {
 			title: 'Project Folder',
 			content:
@@ -217,6 +234,20 @@ export default {
 		peerError: {
 			error1: 'Unable to connect to workspace with id',
 			error2: 'Unable to connect to workspace!',
+		},
+	},
+	taskManager: {
+		tasks: {
+			packIndexing: {
+				title: 'Indexing Packs',
+				description:
+					'bridge. is collecting data about your pack that is needed for its intelligent features.',
+			},
+			compiler: {
+				title: 'Compiling Project',
+				description:
+					'bridge. is compiling your project to make it ready for import into Minecraft.',
+			},
 		},
 	},
 }

@@ -1,0 +1,33 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"description": "Defines an effect to add to the entity",
+	"additionalProperties": false,
+	"properties": {
+		"name": {
+			"$ref": "../../general/vanilla/effectName.json"
+		},
+		"chance": {
+			"type": "number",
+			"description": "The chance of the effect being applied"
+		},
+		"duration": {
+			"type": "integer",
+			"description": "The time duration in seconds of the effect"
+		},
+		"amplifier": {
+			"type": "integer",
+			"description": "The amplifier for the effect"
+		},
+		"visible": {
+			"description": "Whether or not the effect particles are visible",
+			"type": "integer",
+			"enum": [0, 1]
+		},
+		"ambient": {
+			"description": "Whether or not the effect is ambient",
+			"type": "integer",
+			"enum": [0, 1]
+		}
+	}
+}

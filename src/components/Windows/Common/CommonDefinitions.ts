@@ -62,15 +62,15 @@ export function createConfirmWindow(
 	displayContent: string,
 	confirmText: string,
 	cancelText: string,
-	onConfirm: () => void,
-	onCancel: () => void
+	onConfirm?: () => void,
+	onCancel?: () => void
 ) {
 	const Confirm = createWindow(ConfirmComponent, {
 		content: displayContent,
 		confirmText,
 		cancelText,
-		onConfirmCb: onConfirm,
-		onCancelCb: onCancel,
+		onConfirmCb: onConfirm ?? (() => {}),
+		onCancelCb: onCancel ?? (() => {}),
 	})
 	Confirm.open()
 	return Confirm

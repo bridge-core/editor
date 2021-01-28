@@ -1,0 +1,51 @@
+{
+  "sound_definitions": {
+    "mob.{{IDENTIFIER}}.death": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/villager/death"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.haggle": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/villager/haggle1",
+        "sounds/mob/villager/haggle2",
+        "sounds/mob/villager/haggle3"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.hit": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/villager/hit1",
+        "sounds/mob/villager/hit2",
+        "sounds/mob/villager/hit3",
+        "sounds/mob/villager/hit4"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.idle": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/villager/idle1",
+        "sounds/mob/villager/idle2",
+        "sounds/mob/villager/idle3"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.no": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/villager/no1",
+        "sounds/mob/villager/no2",
+        "sounds/mob/villager/no3"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.yes": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/villager/yes1",
+        "sounds/mob/villager/yes2",
+        "sounds/mob/villager/yes3"
+      ]
+    }
+  }
+}

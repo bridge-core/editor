@@ -1,0 +1,12 @@
+{
+	"id": "geometry",
+	"matcher": [
+		"RP/models/entity/**/*.json",
+		"RP/models/block/**/*.json",
+		"RP/models/entity/*.json",
+		"RP/models/block/*.json",
+		"RP/models/mobs.json"
+	],
+	"scope": "RP/models/",
+	"lightningCache": "model.json"
+}

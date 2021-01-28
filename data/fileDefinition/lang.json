@@ -1,0 +1,6 @@
+{
+	"id": "lang",
+	"icon": "mdi-web",
+	"scope": ["RP/texts/", "BP/texts/"],
+	"matcher": "*/texts/**/*.lang"
+}

@@ -1,7 +1,6 @@
 import { App } from '@/App'
 import { Signal } from '@/appCycle/EventSystem'
 import * as Comlink from 'comlink'
-import Vue from 'vue'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { PackIndexerService } from './Worker/Main'
 
@@ -11,20 +10,20 @@ const TaskService = Comlink.wrap<typeof PackIndexerService>(
 	})
 )
 
-export const packIndexerReady = Vue.observable({ isReady: false })
-
 export class PackIndexer extends Signal<void> {
 	protected _service!: Comlink.Remote<PackIndexerService>
+	public readonly ready = new Signal<boolean>()
+
 	start(projectName: string, forceRefreshCache = false) {
 		console.time('[TASK] Indexing Packs (Total)')
 		this.resetSignal()
-		packIndexerReady.isReady = false
+
+		this.ready.dispatch(false)
 		App.ready.once(async app => {
 			const task = app.taskManager.create({
 				icon: 'mdi-flash-outline',
-				name: 'windows.taskManager.tasks.packIndexing.title',
-				description:
-					'windows.taskManager.tasks.packIndexing.description',
+				name: 'taskManager.tasks.packIndexing.title',
+				description: 'taskManager.tasks.packIndexing.description',
 			})
 
 			// Instaniate the worker TaskService
@@ -32,6 +31,7 @@ export class PackIndexer extends Signal<void> {
 				await app.fileSystem.getDirectoryHandle(
 					`projects/${projectName}`
 				),
+				app.fileSystem.baseDirectory,
 				{
 					disablePackSpider: !settingsState?.general
 						?.enablePackSpider,
@@ -51,10 +51,15 @@ export class PackIndexer extends Signal<void> {
 
 			// Start service
 			await this.service.start()
-			packIndexerReady.isReady = true
+			this.ready.dispatch(true)
 			this.dispatch()
 			console.timeEnd('[TASK] Indexing Packs (Total)')
 		})
+	}
+
+	async updateFile(filePath: string) {
+		await this.service.updateFile(filePath)
+		App.eventSystem.dispatch('fileUpdated', filePath)
 	}
 
 	readdir(path: string[], ...args: any[]) {

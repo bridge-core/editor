@@ -1,0 +1,30 @@
+{
+	"sound_definitions": {
+		"mob.{{IDENTIFIER}}.death": {
+			"category": "neutral",
+			"sounds": ["sounds/mob/bat/death"]
+		},
+		"mob.{{IDENTIFIER}}.hurt": {
+			"category": "neutral",
+			"sounds": [
+				"sounds/mob/bat/hurt1",
+				"sounds/mob/bat/hurt2",
+				"sounds/mob/bat/hurt3",
+				"sounds/mob/bat/hurt4"
+			]
+		},
+		"mob.{{IDENTIFIER}}.idle": {
+			"category": "neutral",
+			"sounds": [
+				"sounds/mob/bat/idle1",
+				"sounds/mob/bat/idle2",
+				"sounds/mob/bat/idle3",
+				"sounds/mob/bat/idle4"
+			]
+		},
+		"mob.{{IDENTIFIER}}.takeoff": {
+			"category": "neutral",
+			"sounds": ["sounds/mob/bat/takeoff"]
+		}
+	}
+}

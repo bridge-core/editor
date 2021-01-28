@@ -10,6 +10,19 @@
 		:sidebarItems="sidebar.elements"
 		v-model="sidebar.selected"
 	>
+		<template #toolbar>
+			<v-btn @click="createPreset" icon small>
+				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
+					mdi-plus
+				</v-icon>
+			</v-btn>
+			<v-btn @click="refreshPackExplorer" icon small>
+				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
+					mdi-refresh
+				</v-icon>
+			</v-btn>
+		</template>
+
 		<template #sidebar>
 			<v-text-field
 				class="pt-2"
@@ -21,40 +34,49 @@
 			/>
 		</template>
 		<template #default="{ selectedSidebar }">
-			<FileDisplayer
-				v-if="sidebar.currentElement.kind === 'directory'"
-				:key="selectedSidebar"
-				:startPath="
-					selectedSidebar ? selectedSidebar.split('/') : undefined
-				"
-				@closeWindow="onClose"
-			/>
+			<div v-if="sidebar.currentElement.kind === 'directory'">
+				<h1 class="mt-2 mb-6 d-flex align-center">
+					<v-icon
+						class="mr-1"
+						large
+						:color="sidebar.currentState.color"
+					>
+						{{ sidebar.currentState.icon }}
+					</v-icon>
+					{{ sidebar.currentState.text }}
+				</h1>
+				<FileDisplayer
+					:key="selectedSidebar"
+					:startPath="
+						selectedSidebar ? selectedSidebar.split('/') : undefined
+					"
+					@closeWindow="onClose"
+				/>
+			</div>
 
 			<div
 				class="body-1"
 				v-else-if="sidebar.currentElement.kind === 'file'"
 			>
-				<strong>File:</strong> {{ selectedSidebar }}
+				<h1 class="mt-2 mb-6 d-flex align-center">
+					<v-icon
+						class="mr-1"
+						large
+						:color="sidebar.currentState.color"
+					>
+						{{ sidebar.currentState.icon }}
+					</v-icon>
+					{{ sidebar.currentState.text }}
+				</h1>
+				<p><strong>Path:</strong> {{ selectedSidebar }}</p>
+
 				<div class="mt-8 d-flex">
 					<v-spacer />
-					<v-btn color="primary" @click="openFile(selectedSidebar)"
-						>Open</v-btn
-					>
+					<v-btn color="primary" @click="openFile(selectedSidebar)">
+						Open
+					</v-btn>
 				</div>
 			</div>
-		</template>
-
-		<template #toolbar>
-			<v-btn icon small>
-				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
-					mdi-plus
-				</v-icon>
-			</v-btn>
-			<v-btn @click="refreshPackExplorer" icon small>
-				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
-					mdi-refresh
-				</v-icon>
-			</v-btn>
 		</template>
 	</SidebarWindow>
 </template>
@@ -64,11 +86,8 @@ import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
 import FileDisplayer from './FileDisplayer.vue'
 
 import { App } from '@/App'
-import { FileType } from '@/appCycle/FileType'
-import { PackType } from '@/appCycle/PackType'
 import { TranslationMixin } from '@/utils/locales'
 import { selectedProject } from '@/components/Project/Loader'
-import { mainTabSystem } from '@/components/TabSystem/Main'
 
 export default {
 	name: 'PackExplorerWindow',
@@ -91,7 +110,13 @@ export default {
 		},
 		openFile(filePath) {
 			this.currentWindow.close()
-			mainTabSystem.open(`projects/${selectedProject}/${filePath}`)
+			App.ready.once(app => {
+				app.tabSystem.open(`projects/${selectedProject}/${filePath}`)
+			})
+		},
+		createPreset() {
+			this.currentWindow.close()
+			App.ready.once(app => app.windows.createPreset.open())
 		},
 	},
 	computed: {
@@ -101,5 +126,3 @@ export default {
 	},
 }
 </script>
-
-<style></style>

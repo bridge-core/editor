@@ -1,0 +1,21 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"anyOf": [
+		{
+			"$ref": "../general/hexColor.json"
+		},
+		{
+			"$ref": "../general/reference/terrainTexture.json",
+			"description": "Reference to a texture"
+		},
+		{
+			"description": "RGBA color value",
+			"type": "array",
+			"minItems": 3,
+			"maxItems": 4,
+			"items": {
+				"type": "number"
+			}
+		}
+	]
+}

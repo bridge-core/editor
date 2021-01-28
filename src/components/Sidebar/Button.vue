@@ -25,6 +25,7 @@
 						position: isLoading ? 'absolute' : 'relative',
 						margin: isLoading ? '4px' : 0,
 					}"
+					:color="isLoading ? 'white' : iconColor"
 					:small="isLoading"
 				>
 					{{ icon }}
@@ -54,6 +55,7 @@ export default {
 	props: {
 		displayName: String,
 		icon: String,
+		iconColor: String,
 		color: String,
 
 		isLoading: {

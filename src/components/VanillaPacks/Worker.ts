@@ -1,7 +1,7 @@
 import * as Comlink from 'comlink'
 import { TaskService } from '@/components/TaskManager/WorkerTask'
 
-export class VanillaDownloaderService extends TaskService {
+export class VanillaDownloaderService extends TaskService<void> {
 	constructor(baseDirectory: FileSystemDirectoryHandle) {
 		super('vanillaDownloader', baseDirectory)
 	}

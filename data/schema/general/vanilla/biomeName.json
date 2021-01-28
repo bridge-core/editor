@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "string",
+	"enum": [
+		"ice",
+		"forest",
+		"extreme_hills",
+		"beach",
+		"jungle",
+		"desert",
+		"flat",
+		"the_nether",
+		"mesa",
+		"plain",
+		"mushroom_island",
+		"ocean",
+		"river",
+		"savanna",
+		"stone_beach",
+		"swamp",
+		"taiga",
+		"the_end"
+	]
+}

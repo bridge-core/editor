@@ -1,0 +1,147 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.loot_tables",
+	"title": "Loot Table",
+	"type": "object",
+	"properties": {
+		"pools": {
+			"description": "Lists the loot pools for this loot table.",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"conditions": {
+						"$ref": "./conditions.json"
+					},
+					"tiers": {
+						"type": "object",
+						"properties": {
+							"initial_range": {
+								"type": "number"
+							},
+							"bonus_rolls": {
+								"type": "integer"
+							},
+							"bonus_chance": {
+								"type": "number"
+							}
+						}
+					},
+					"rolls": {
+						"description": "How many times this pool will roll.",
+						"anyOf": [
+							{
+								"type": "number"
+							},
+							{
+								"type": "object",
+								"additionalProperties": false,
+								"properties": {
+									"min": {
+										"type": "number"
+									},
+									"max": {
+										"type": "number"
+									}
+								}
+							}
+						]
+					},
+					"entries": {
+						"type": "array",
+						"description": "Lists the entries of the loot table to be chosen from.",
+						"items": {
+							"type": "object",
+							"anyOf": [
+								{
+									"properties": {
+										"type": {
+											"type": "string",
+											"enum": [
+												"item",
+												"loot_table",
+												"empty"
+											]
+										}
+									},
+									"required": ["type"]
+								},
+								{
+									"if": {
+										"properties": {
+											"type": {
+												"const": "item"
+											}
+										},
+										"required": ["type"]
+									},
+									"then": {
+										"properties": {
+											"weight": {
+												"type": "integer"
+											},
+											"name": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"$ref": "../general/reference/identifiers.json#/definitions/item_identifiers"
+													}
+												]
+											},
+											"pools": {
+												"$ref": "#/properties/pools"
+											},
+											"functions": {
+												"$ref": "./functions.json"
+											}
+										}
+									}
+								},
+								{
+									"if": {
+										"properties": {
+											"type": {
+												"const": "loot_table"
+											}
+										},
+										"required": ["type"]
+									},
+									"then": {
+										"properties": {
+											"weight": {
+												"type": "integer"
+											},
+											"name": {
+												"description": "Path to a loot table file",
+												"type": "string"
+											}
+										}
+									}
+								},
+								{
+									"if": {
+										"properties": {
+											"type": {
+												"const": "empty"
+											}
+										},
+										"required": ["type"]
+									},
+									"then": {
+										"properties": {
+											"weight": {
+												"type": "integer"
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				}
+			}
+		}
+	}
+}

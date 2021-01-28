@@ -1,0 +1,31 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"teleport": {
+			"description": "Teleport target randomly around destination point",
+			"additionalProperties": false,
+			"properties": {
+				"target": { "$ref": "../../general/filter/subject.json" },
+				"avoid_water": { "type": "boolean" },
+				"destination": {
+					"type": "array",
+					"maxItems": 3,
+					"minItems": 3,
+					"items": {
+						"type": "number"
+					}
+				},
+				"land_on_block": { "type": "boolean" },
+				"max_range": {
+					"type": "array",
+					"maxItems": 3,
+					"minItems": 3,
+					"items": {
+						"type": "number"
+					}
+				}
+			}
+		}
+	}
+}

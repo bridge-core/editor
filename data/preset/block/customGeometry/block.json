@@ -1,0 +1,26 @@
+{
+  "format_version": "1.16.100",
+  "minecraft:block": {
+    "description": {
+      "identifier": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}",
+      "is_experimental": false
+    },
+    "components": {
+      "minecraft:geometry": "geometry.{{IDENTIFIER}}",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "{{PROJECT_PREFIX}}_{{IDENTIFIER}}",
+          "render_method": "alpha_test"
+        }
+      },
+      "minecraft:pick_collision": {
+        "origin": [-1, 0, -1],
+        "size": [2, 2, 2]
+      },
+      "minecraft:entity_collision": {
+        "origin": [-1, 0, -1],
+        "size": [2, 2, 2]
+      }
+    }
+  }
+}

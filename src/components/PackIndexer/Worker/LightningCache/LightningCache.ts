@@ -1,25 +1,9 @@
-import { FileType } from '@/appCycle/FileType'
+import { FileType } from '@/components/Data/FileType'
 import { run } from '@/components/Plugins/Scripts/run'
-import { hashString } from '@/utils/hash'
 import { walkObject } from '@/utils/walkObject'
 import json5 from 'json5'
 import { PackIndexerService } from '../Main'
 import { LightningStore } from './LightningStore'
-
-const fileIgnoreList = ['.DS_Store']
-const folderIgnoreList = [
-	'RP/textures/items',
-	'RP/textures/blocks',
-	'RP/textures/entity',
-	'RP/textures/ui',
-	'RP/textures/gui',
-	'RP/ui',
-	'RP/sounds/step',
-	'RP/sounds/dig',
-	'RP/sounds/block',
-	'RP/sounds/mob',
-	'bridge',
-]
 
 export interface ILightningInstruction {
 	'@filter'?: string[]
@@ -28,12 +12,36 @@ export interface ILightningInstruction {
 }
 
 export class LightningCache {
+	protected folderIgnoreList = new Set<string>()
+	protected fileIgnoreList = new Set<string>(['.DS_Store'])
+	protected totalTime = 0
+
 	constructor(
 		protected service: PackIndexerService,
 		protected lightningStore: LightningStore
 	) {}
 
+	async loadIgnoreFolders() {
+		try {
+			const file = await this.service.fileSystem.readFile(
+				'bridge/.ignore-folders'
+			)
+			;(await file.text())
+				.split('\n')
+				.concat(['bridge', 'builds', 'dev'])
+				.forEach(folder => this.folderIgnoreList.add(folder))
+		} catch {
+			;['bridge', 'builds', 'dev'].forEach(folder =>
+				this.folderIgnoreList.add(folder)
+			)
+		}
+	}
+
 	async start() {
+		await this.lightningStore.setup()
+
+		if (this.folderIgnoreList.size === 0) await this.loadIgnoreFolders()
+
 		if (this.service.settings.noFullLightningCacheRefresh) {
 			const filePaths = await this.lightningStore.allFiles()
 			if (filePaths.length > 0) return filePaths
@@ -56,7 +64,6 @@ export class LightningCache {
 		)
 
 		if (anyFileChanged) await this.lightningStore.saveStore()
-
 		return filePaths
 	}
 
@@ -73,12 +80,11 @@ export class LightningCache {
 				fullPath.length === 0 ? fileName : `${fullPath}/${fileName}`
 
 			if (entry.kind === 'directory') {
-				if (folderIgnoreList.includes(currentFullPath)) continue
-
+				if (this.folderIgnoreList.has(currentFullPath)) continue
 				await this.iterateDir(entry, callback, currentFullPath)
-			} else if (!fileIgnoreList.includes(fileName)) {
+			} else if (!this.fileIgnoreList.has(fileName)) {
 				this.service.progress.addToTotal(2)
-				await callback(entry as FileSystemFileHandle, currentFullPath)
+				await callback(<FileSystemFileHandle>entry, currentFullPath)
 			}
 		}
 	}
@@ -87,22 +93,33 @@ export class LightningCache {
 	 * @returns Whether this file did change
 	 */
 	async processFile(filePath: string, fileHandle: FileSystemFileHandle) {
+		const file = await fileHandle.getFile()
+		const fileType = FileType.getId(filePath)
+
+		// First step: Check lastModified time. If the file was not modified, we can skip all processing
+		if (
+			file.lastModified ===
+			this.lightningStore.getLastModified(filePath, fileType)
+		) {
+			return false
+		}
+
+		// Second step: Process file
 		if (filePath.endsWith('.json'))
-			return await this.processJSON(filePath, fileHandle)
-		if (filePath.endsWith('.mcfunction'))
-			return await this.processFunction(filePath, fileHandle)
-		return false
+			await this.processJSON(filePath, fileType, file)
+		else if (filePath.endsWith('.mcfunction'))
+			await this.processFunction(filePath, fileType, file)
+		else
+			await this.lightningStore.add(
+				filePath,
+				{ lastModified: file.lastModified },
+				fileType
+			)
+		return true
 	}
 
-	async processFunction(filePath: string, fileHandle: FileSystemFileHandle) {
-		const file = await fileHandle.getFile()
+	async processFunction(filePath: string, fileType: string, file: File) {
 		const fileContent = await file.text()
-
-		// Check for file changes
-		const newHash = await hashString(fileContent)
-		const oldHash = await this.lightningStore.getHash(filePath)
-		// File did not change, no work to do
-		if (newHash === oldHash) return false
 
 		const functionPath: string[] = []
 		for (const line of fileContent.split('\n')) {
@@ -111,7 +128,14 @@ export class LightningCache {
 				functionPath.push(`functions/${funcName[1]}.mcfunction`)
 		}
 
-		await this.lightningStore.add(filePath, newHash, { functionPath })
+		await this.lightningStore.add(
+			filePath,
+			{
+				lastModified: file.lastModified,
+				data: { functionPath },
+			},
+			fileType
+		)
 		return true
 	}
 
@@ -119,27 +143,33 @@ export class LightningCache {
 	 * Process a JSON file
 	 * @returns Whether this json file did change
 	 */
-	async processJSON(filePath: string, fileHandle: FileSystemFileHandle) {
-		const file = await fileHandle.getFile()
+	async processJSON(filePath: string, fileType: string, file: File) {
 		const fileContent = await file.text()
 
-		// Check for file changes
-		const newHash = await hashString(fileContent)
-		const oldHash = await this.lightningStore.getHash(filePath)
-		// File did not change, no work to do
-		if (newHash === oldHash) return false
 		let data: any
 		try {
 			data = json5.parse(fileContent)
 		} catch {
-			await this.lightningStore.add(filePath, newHash)
+			this.lightningStore.add(
+				filePath,
+				{
+					lastModified: file.lastModified,
+				},
+				fileType
+			)
 			return true
 		}
 
 		const instructions = await FileType.getLightningCache(filePath)
 		// No instructions = no work
 		if (instructions.length === 0) {
-			await this.lightningStore.add(filePath, newHash)
+			this.lightningStore.add(
+				filePath,
+				{
+					lastModified: file.lastModified,
+				},
+				fileType
+			)
 			return true
 		}
 
@@ -171,7 +201,7 @@ export class LightningCache {
 
 		for (const instruction of instructions) {
 			const key = Object.keys(instruction).find(
-				key => key !== '@filter' && key !== '@map'
+				key => !key.startsWith('@')
 			)
 			if (!key) continue
 			const paths = instruction[key] as string[]
@@ -201,10 +231,16 @@ export class LightningCache {
 			}
 		}
 
-		await this.lightningStore.add(
+		this.lightningStore.add(
 			filePath,
-			newHash,
-			Object.keys(collectedData).length > 0 ? collectedData : undefined
+			{
+				lastModified: file.lastModified,
+				data:
+					Object.keys(collectedData).length > 0
+						? collectedData
+						: undefined,
+			},
+			fileType
 		)
 
 		return true

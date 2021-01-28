@@ -5,7 +5,7 @@ import { selectedProject } from '@/components/Project/Loader'
 
 let cachedGlobals: Record<string, unknown> | undefined = undefined
 
-App.eventSystem.on('bridge:onProjectChanged', () => {
+App.eventSystem.on('projectChanged', () => {
 	cachedGlobals = undefined
 })
 

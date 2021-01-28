@@ -1,0 +1,50 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Client Entity",
+	"$id": "bridge.clientEntity",
+	"type": "object",
+	"required": ["format_version", "minecraft:client_entity"],
+	"additionalProperties": false,
+
+	"allOf": [
+		{
+			"properties": {
+				"format_version": {
+					"$ref": "../general/formatVersion.json"
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"format_version": {
+						"enum": ["1.8.0", "1.9.0"]
+					}
+				}
+			},
+			"then": {
+				"$ref": "./v1.8.0/main.json"
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"format_version": {
+						"enum": [
+							"1.10.0",
+							"1.11.0",
+							"1.12.0",
+							"1.13.0",
+							"1.14.0",
+							"1.16.0",
+							"1.16.100"
+						]
+					}
+				}
+			},
+			"then": {
+				"$ref": "./v1.10.0/main.json"
+			}
+		}
+	]
+}

@@ -1,9 +1,9 @@
 import { FileSystem } from '@/components/FileSystem/Main'
 import { EventDispatcher } from '@/appCycle/EventSystem'
 
-class Progress {
+class Progress<T, K> {
 	constructor(
-		protected taskService: TaskService,
+		protected taskService: TaskService<T, K>,
 		protected current: number,
 		protected total: number,
 		protected prevTotal: number
@@ -26,9 +26,11 @@ class Progress {
 	}
 }
 
-export abstract class TaskService extends EventDispatcher<[number, number]> {
+export abstract class TaskService<T, K = void> extends EventDispatcher<
+	[number, number]
+> {
 	public fileSystem: FileSystem
-	public progress!: Progress
+	public progress!: Progress<T, K>
 	constructor(
 		protected taskId: string,
 		baseDirectory: FileSystemDirectoryHandle
@@ -55,9 +57,9 @@ export abstract class TaskService extends EventDispatcher<[number, number]> {
 		)
 	}
 
-	protected abstract onStart(): Promise<void> | void
+	protected abstract onStart(data: K): Promise<T> | T
 
-	async start() {
+	async start(data: K) {
 		this.progress = new Progress(
 			this,
 			0,
@@ -65,9 +67,11 @@ export abstract class TaskService extends EventDispatcher<[number, number]> {
 			await this.loadPreviousTaskRun()
 		)
 
-		await this.onStart()
+		const result = await this.onStart(data)
 
 		this.saveCurrentTaskRun()
 		this.dispatch([this.progress.getCurrent(), this.progress.getCurrent()])
+
+		return result
 	}
 }

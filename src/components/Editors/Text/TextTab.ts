@@ -3,6 +3,7 @@ import MonacoEditor from './Main.vue'
 import * as monaco from 'monaco-editor'
 import { IDisposable } from '@/types/disposable'
 import { on } from '@/appCycle/EventSystem'
+import debounce from 'lodash.debounce'
 
 export class TextTab extends Tab {
 	component = MonacoEditor
@@ -41,9 +42,11 @@ export class TextTab extends Tab {
 			on('bridge:onResize', () => this.editorInstance?.layout())
 		)
 		this.disposables.push(
-			this.editorModel?.onDidChangeContent(event => {
-				this.isUnsaved = true
-			})
+			this.editorModel?.onDidChangeContent(
+				debounce(event => {
+					this.isUnsaved = true
+				}, 500)
+			)
 		)
 	}
 	onDeactivate() {

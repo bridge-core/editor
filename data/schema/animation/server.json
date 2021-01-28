@@ -1,0 +1,31 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Server Animation",
+	"$id": "bridge.serverAnimation",
+	"required": ["format_version"],
+	"properties": {
+		"format_version": { "enum": ["1.10.0"] },
+		"animations": {
+			"patternProperties": {
+				"^animation\\..+$": {
+					"properties": {
+						"animation_length": { "type": "number" },
+						"loop": {
+							"enum": [true, false, "hold_on_last_frame"]
+						},
+						"timeline": {
+							"patternProperties": {
+								"^\\d+(\\.\\d+)?$": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

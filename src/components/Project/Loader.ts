@@ -1,5 +1,5 @@
 import { App } from '@/App'
-import { PackType, IPackType } from '@/appCycle/PackType'
+import { PackType, IPackType } from '@/components/Data/PackType'
 import { loadAsDataURL } from '@/utils/loadAsDataUrl'
 import { get, set } from 'idb-keyval'
 
@@ -11,40 +11,45 @@ export interface IProjectData {
 }
 
 export let selectedProject: string
-export function getProjects() {
-	return new Promise<IProjectData[]>(resolve => {
-		App.ready.once(async app => {
-			const potentialProjects = await app.fileSystem.readdir('projects', {
-				withFileTypes: true,
-			})
+export async function getProjects() {
+	const app = await App.getApp()
 
-			const projects: IProjectData[] = []
-			for (const projectName of potentialProjects
-				.filter(({ kind }) => kind === 'directory')
-				.map(({ name }) => name)) {
-				projects.push({
-					path: projectName,
-					projectName,
-					imgSrc: await loadAsDataURL(
-						`projects/${projectName}/BP/pack_icon.png`
-					),
-					contains: <IPackType[]>(
-						(
-							await app.fileSystem.readdir(
-								`projects/${projectName}`
-							)
-						)
-							.map(path =>
-								PackType.get(`projects/${projectName}/${path}`)
-							)
-							.filter(pack => pack !== undefined)
-					),
-				})
-			}
-
-			resolve(projects)
-		})
+	const potentialProjects = await app.fileSystem.readdir('projects', {
+		withFileTypes: true,
 	})
+	const loadProjects = potentialProjects
+		.filter(({ kind }) => kind === 'directory')
+		.map(({ name }) => name)
+
+	const projects: IProjectData[] = []
+	for (const projectName of loadProjects) {
+		let config: any
+		try {
+			config = await app.fileSystem.readJSON(
+				`projects/${projectName}/bridge/config.json`
+			)
+		} catch {
+			config = {}
+		}
+
+		projects.push({
+			...config,
+			path: projectName,
+			projectName,
+			imgSrc: await loadAsDataURL(
+				`projects/${projectName}/bridge/packIcon.png`
+			),
+			contains: <IPackType[]>(
+				(await app.fileSystem.readdir(`projects/${projectName}`))
+					.map(path =>
+						PackType.get(`projects/${projectName}/${path}`)
+					)
+					.filter(pack => pack !== undefined)
+			),
+		})
+	}
+
+	return projects
 }
 
 export async function selectProject(projectName: string) {

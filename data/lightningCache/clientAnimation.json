@@ -1,0 +1,5 @@
+[
+	{ "identifier": "animations" },
+	{ "particleEffect": "animations/*/particle_effects/*/effect" },
+	{ "soundEffect": "animations/*/sound_effects/*/effect" }
+]

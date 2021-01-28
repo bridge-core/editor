@@ -1,0 +1,22 @@
+[
+	{
+		"id": "behaviorPack",
+		"matcher": "projects/*/BP/**",
+		"color": "error"
+	},
+	{
+		"id": "resourcePack",
+		"matcher": "projects/*/RP/**",
+		"color": "info"
+	},
+	{
+		"id": "skinPack",
+		"matcher": "projects/*/SP/**",
+		"color": "warning"
+	},
+	{
+		"id": "worldTemplate",
+		"matcher": "projects/*/WT/**",
+		"color": "success"
+	}
+]

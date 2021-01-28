@@ -1,0 +1,185 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Sounds",
+	"additionalProperties": false,
+	"definitions": {
+		"number_range": {
+			"anyOf": [
+				{
+					"type": "array",
+					"minItems": 2,
+					"maxItems": 2,
+					"items": {
+						"type": "number"
+					}
+				},
+				{
+					"type": "number"
+				}
+			]
+		},
+		"sound_object": {
+			"anyOf": [
+				{
+					"$ref": "../general/reference/soundDefinition.json"
+				},
+				{
+					"additionalProperties": false,
+					"properties": {
+						"sound": {
+							"$ref": "../general/reference/soundDefinition.json"
+						},
+						"volume": {
+							"$ref": "#/definitions/number_range"
+						},
+						"pitch": {
+							"$ref": "#/definitions/number_range"
+						}
+					}
+				}
+			]
+		}
+	},
+	"properties": {
+		"individual_event_sounds": {
+			"additionalProperties": false,
+			"properties": {
+				"events": {
+					"patternProperties": {
+						".*": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		},
+		"block_sounds": {
+			"additionalProperties": false,
+			"patternProperties": {
+				".*": {
+					"additionalProperties": false,
+					"properties": {
+						"volume": {
+							"$ref": "#/definitions/number_range"
+						},
+						"pitch": {
+							"$ref": "#/definitions/number_range"
+						},
+						"events": {
+							"patternProperties": {
+								"^default|item.use.on|break|hit|place|power.on|power.off$": {
+									"$ref": "#/definitions/sound_object"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"entity_sounds": {
+			"properties": {
+				"defaults": {
+					"additionalProperties": false,
+					"properties": {
+						"volume": {
+							"$ref": "#/definitions/number_range"
+						},
+						"pitch": {
+							"$ref": "#/definitions/number_range"
+						},
+						"events": {
+							"patternProperties": {
+								"^fall.big|fall.small|splash|swin|fizz|drink|eat|ambient|ambient.tame|flop|hurt|death|ambient.in.water|hurt.in.water|death.in.water|ambient.in.raid|takeoff|shoot|step|attack|breathe|jump|mad|stare|sniff|sleep|spit|warn|scream|charge$": {
+									"$ref": "#/definitions/sound_object"
+								}
+							}
+						}
+					}
+				},
+				"entities": {
+					"propertyNames": {
+						"$ref": "../general/reference/identifiers.json#/definitions/entity_identifiers"
+					},
+					"patternProperties": {
+						".*": {
+							"$ref": "#/properties/entity_sounds/properties/defaults"
+						}
+					}
+				}
+			}
+		},
+		"interactive_sounds": {
+			"additionalProperties": false,
+			"properties": {
+				"block_sounds": {
+					"patternProperties": {
+						".*": {
+							"additionalProperties": false,
+							"properties": {
+								"volume": {
+									"$ref": "#/definitions/number_range"
+								},
+								"pitch": {
+									"$ref": "#/definitions/number_range"
+								},
+								"events": {
+									"properties": {
+										"default": {
+											"$ref": "#/definitions/sound_object"
+										},
+										"fall": {
+											"$ref": "#/definitions/sound_object"
+										},
+										"step": {
+											"$ref": "#/definitions/sound_object"
+										},
+										"jump": {
+											"$ref": "#/definitions/sound_object"
+										},
+										"land": {
+											"$ref": "#/definitions/sound_object"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"entity_sounds": {
+					"patternProperties": {
+						".*": {
+							"additionalProperties": false,
+							"properties": {
+								"volume": {
+									"$ref": "#/definitions/number_range"
+								},
+								"pitch": {
+									"$ref": "#/definitions/number_range"
+								},
+								"events": {
+									"patternProperties": {
+										".*": {
+											"$ref": "#/definitions/sound_object"
+										}
+									}
+								}
+							}
+						}
+					},
+					"properties": {
+						"entities": {
+							"propertyNames": {
+								"$ref": "../general/reference/identifiers.json#/definitions/entity_identifiers"
+							},
+							"patternProperties": {
+								".*": {
+									"$ref": "#/properties/entity_sounds/properties/defaults"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -2,11 +2,7 @@
 	<!-- body-1 class sets the font-size -->
 	<div
 		class="body-1"
-		v-if="
-			directoryEntry &&
-				!directoryEntry.isLoading &&
-				packIndexerReady.isReady
-		"
+		v-if="directoryEntry && !directoryEntry.isLoading && isPackIndexerReady"
 	>
 		<template v-for="entry in directoryEntry.children">
 			<details
@@ -55,14 +51,13 @@
 </template>
 
 <script>
-import { mainTabSystem } from '@/components/TabSystem/Main'
 import { DirectoryEntry } from './DirectoryEntry'
-import { TextTab } from '@/components/Editors/Text/TextTab'
 import { App } from '@/App.ts'
-import { packIndexerReady } from '@/components/PackIndexer/PackIndexer'
+import { PackIndexerMixin } from '@/components/Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'FileDisplayer',
+	mixins: [PackIndexerMixin],
 	props: {
 		entry: Object,
 		startPath: Array,
@@ -74,7 +69,6 @@ export default {
 	data: () => ({
 		directoryEntry: null,
 		tree: [],
-		packIndexerReady,
 	}),
 	methods: {
 		loadDirectory() {

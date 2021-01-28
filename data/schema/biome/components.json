@@ -1,0 +1,374 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"additionalProperties": true,
+	"properties": {
+		"minecraft:ignore_automatic_features": {
+			"type": "boolean",
+			"description": "No features will be automatically attached to this Biome, only features specified in the minecraft:forced_features component will appear."
+		},
+		"minecraft:climate": {
+			"description": "Describes temperature, humidity, precipitation, etc.  Biomes without this component will have default values.",
+			"additionalProperties": false,
+			"properties": {
+				"downfall": {
+					"type": "number"
+				},
+				"snow_accumulation": {
+					"type": "array",
+					"items": {
+						"type": "number"
+					}
+				},
+				"temperature": {
+					"type": "number"
+				},
+				"red_spores": {
+					"type": "number"
+				},
+				"blue_spores": {
+					"type": "number"
+				},
+				"ash": {
+					"type": "number"
+				},
+				"white_ash": {
+					"type": "number"
+				}
+			}
+		},
+		"minecraft:nether_generation_rules": {
+			"description": "Controls how this biome is instantiated (and then potentially modified) during world generation of the nether.",
+			"additionalProperties": false,
+			"properties": {
+				"target_temperature": {
+					"description": "Temperature with which this biome should selected, relative to other biomes.",
+					"type": "number"
+				},
+				"target_humidity": {
+					"description": "Humidity with which this biome should selected, relative to other biomes.",
+					"type": "number"
+				},
+				"target_altitude": {
+					"description": "Altitude with which this biome should selected, relative to other biomes.",
+					"type": "number"
+				},
+				"target_weirdness": {
+					"description": "Weirdness with which this biome should selected, relative to other biomes.",
+					"type": "number"
+				},
+				"weight": {
+					"description": "Weight with which this biome should selected, relative to other biomes.",
+					"type": "number"
+				}
+			}
+		},
+		"minecraft:overworld_height": {
+			"description": "Noise parameters used to drive terrain height in the Overworld.",
+			"additionalProperties": false,
+			"properties": {
+				"noise_type": {
+					"$ref": "./general.json#/definitions/noise_type"
+				},
+				"noise_params": {
+					"type": "array",
+					"items": {
+						"type": "number"
+					}
+				}
+			}
+		},
+		"minecraft:surface_parameters": {
+			"description": "Control the blocks used for the default Minecraft Overworld terrain generation.",
+			"additionalProperties": false,
+			"properties": {
+				"sea_floor_depth": {
+					"description": "Controls how deep below the world water level the floor should occur.",
+					"type": "number"
+				},
+				"sea_floor_material": {
+					"description": "Controls the block type used as a floor for bodies of water in this biome.",
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				},
+				"sea_material": {
+					"description": "Controls the block type used for the bodies of water in this biome.",
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				},
+				"floor_depth": {
+					"type": "number"
+				},
+				"floor_material": {
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				},
+				"foundation_material": {
+					"description": "Controls the block type used deep underground in this biome.",
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				},
+				"mid_material": {
+					"description": "Controls the block type used in a layer below the surface of this biome.",
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				},
+				"top_material": {
+					"description": " Controls the block type used for the surface of this biome.",
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				}
+			}
+		},
+		"minecraft:swamp_surface": {
+			"description": "Similar to overworld_surface.  Adds swamp surface details.",
+			"$ref": "#/properties/minecraft:surface_parameters"
+		},
+		"minecraft:frozen_ocean_surface": {
+			"description": "Similar to overworld_surface. Adds icebergs.",
+			"$ref": "#/properties/minecraft:surface_parameters"
+		},
+		"minecraft:capped_surface": {
+			"description": "Generates surface on blocks with non-solid blocks above or below.",
+			"additionalProperties": false,
+			"properties": {
+				"floor_materials": {
+					"description": "Materials used for the surface floor.",
+					"type": "array",
+					"items": {
+						"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					}
+				},
+				"ceiling_materials": {
+					"description": "Materials used for the surface ceiling.",
+					"type": "array",
+					"items": {
+						"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					}
+				},
+				"sea_material": {
+					"description": "Material used to replace air blocks below sea level.",
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				},
+				"foundation_material": {
+					"description": "Material used to repalce solid blocks that are not surface blocks.",
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				},
+				"beach_material": {
+					"description": "Material used to decorate surface near sea level.",
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				}
+			}
+		},
+		"minecraft:mesa_surface": {
+			"description": "Similar to overworld_surface. Adds colored strata and optional pillars.",
+			"allOf": [
+				{
+					"$ref": "#/properties/minecraft:surface_parameters"
+				},
+				{
+					"properties": {
+						"clay_material": {
+							"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+						},
+						"hard_clay_material": {
+							"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+						},
+						"bryce_pillars": {
+							"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+						},
+						"has_forest": {
+							"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+						}
+					}
+				}
+			]
+		},
+		"minecraft:nether_surface": {
+			"description": "Use default Minecraft Nether terrain generation.",
+			"additionalProperties": false
+		},
+		"minecraft:the_end_surface": {
+			"description": "Use default Minecraft End terrain generation.",
+			"additionalProperties": false
+		},
+		"minecraft:overworld_generation_rules": {
+			"description": "Control how this biome is instantiated (and then potentially modified) during world generation of the overworld.",
+			"additionalProperties": false,
+			"properties": {
+				"hills_transformation": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/vanilla_biomes"
+					}
+				},
+				"mutate_transformation": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/vanilla_biomes"
+					}
+				},
+				"shore_transformation": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/vanilla_biomes"
+					}
+				},
+				"river_transformation": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/vanilla_biomes"
+					}
+				},
+				"generate_for_climates": {
+					"description": "Controls the world generation climate categories that this biome can spawn for.  A single biome can be associated with multiple categories with different weightings.",
+					"type": "array",
+					"items": {
+						"maxItems": 2,
+						"minItems": 2,
+						"type": "array",
+						"items": [
+							{
+								"description": "Name of a climate category.",
+								"$ref": "./general.json#/definitions/temperature"
+							},
+							{
+								"description": "Weight with which this biome should be selected, relative to other biomes in the same category.",
+								"type": "number"
+							}
+						]
+					}
+				}
+			}
+		},
+		"minecraft:surface_material_adjustments": {
+			"description": "Specify fine-detail changes to blocks used in terrain generation (based on a noise function).",
+			"additionalProperties": false,
+			"properties": {
+				"adjustments": {
+					"description": "All adjustments that match the column's noise values will be applied in the order listed.",
+					"type": "array",
+					"items": {
+						"properties": {
+							"materials": {
+								"additionalProperties": false,
+								"properties": {
+									"floor_material": {
+										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+									},
+									"foundation_material": {
+										"description": "Controls the block type used deep underground in this biome when this adjustment is active.",
+										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+									},
+									"mid_material": {
+										"description": "Controls the block type used in a layer below the surface of this biome when this adjustment is active.",
+										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+									},
+									"top_material": {
+										"description": "Controls the block type used for the surface of this biome when this adjustment is active.",
+										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+									},
+									"sea_floor_material": {
+										"description": "Controls the block type used as a floor for bodies of water in this biome when this adjustment is active.",
+										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+									},
+									"sea_material": {
+										"description": "Controls the block type used in the bodies of water in this biome when this adjustment is active.",
+										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+									}
+								}
+							},
+							"noise_range": {
+								"description": "Defines a range of noise values [min, max) for which this adjustment should be applied.",
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"items": {
+									"type": "number"
+								}
+							},
+							"height_range": {
+								"description": "Defines a range of noise values [min, max] for which this adjustment should be applied.",
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"items": {
+									"type": "number"
+								}
+							},
+							"noise_frequency_scale": {
+								"description": "The scale to multiply by the position when accessing the noise value for the material adjustments.",
+								"type": "number"
+							}
+						}
+					}
+				}
+			}
+		},
+		"minecraft:forced_features": {
+			"description": "Force specific decorative features (trees, plants, etc.) to appear in this Biome, regardless of normal decoration rules.",
+			"additionalProperties": false,
+			"properties": {
+				"first_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				},
+				"before_underground_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				},
+				"underground_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				},
+				"after_underground_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				},
+				"before_surface_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				},
+				"surface_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				},
+				"after_surface_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				},
+				"before_sky_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				},
+				"sky_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				},
+				"after_sky_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				},
+				"final_pass": {
+					"type": "array",
+					"items": {
+						"$ref": "./general.json#/definitions/forced_features"
+					}
+				}
+			}
+		}
+	}
+}

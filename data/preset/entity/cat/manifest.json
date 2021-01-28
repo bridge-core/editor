@@ -1,0 +1,186 @@
+{
+	"name": "Cat",
+	"icon": "mdi-cat",
+	"description": "Creates a new cat entity.",
+	"category": "fileType.entity",
+	"targetVersion": [">=", "1.8.0"],
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"entity.json",
+			"BP/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"clientEntity.json",
+			"RP/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"animation.json",
+			"RP/animations/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"animationController.json",
+			"RP/animation_controllers/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"geometry.json",
+			"RP/models/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"lootTable.json",
+			"BP/loot_tables/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"lootTableGift.json",
+			"BP/loot_tables/entities/{{IDENTIFIER}}_gift.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"renderController.json",
+			"RP/render_controllers/{{IDENTFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"spawnRule.json",
+			"BP/spawn_rules/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"textureAllBlack.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_allblackcat.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureAllBlackTame.tga",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_allblackcat_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureBritish.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_britishshorthair.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureBritishTame.tga",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_britishshorthair_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureCalico.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_calico.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureCalicoTame.tga",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_calico_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureJellie.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_jellie.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureJellieTame.tga",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_jellie_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"texturePersian.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_persian.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"texturePersianTame.tga",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_persian_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureRagdoll.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_ragdoll.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureRagdollTame.tga",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_ragdoll_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureRedTabby.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_redtabby.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureRedTabbyTame.tga",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_redtabby_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureSiamese.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_siamesecat.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureSiameseTame.tga",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_siamesecat_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureTabby.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_tabby.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureTabbyTame.tga",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_tabby_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureTuxedo.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_tuxedo.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureTuxedoTame.tga",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_tuxedo_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureWhite.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_white.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureWhiteTame.tag",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_white_tame.tga",
+			{ "inject": ["IDENTIFIER"] }
+		]
+	],
+	"expandFiles": [
+		[
+			"en_US.lang",
+			"RP/texts/en_US.lang",
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
+		],
+		[
+			"soundDefinitions.json",
+			"RP/sounds/sound_definitions.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"sounds.json",
+			"RP/sounds.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		]
+	]
+}

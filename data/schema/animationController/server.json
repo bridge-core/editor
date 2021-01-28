@@ -1,0 +1,69 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.serverAnimationController",
+	"title": "Server Animation Controller",
+	"required": ["format_version"],
+	"properties": {
+		"format_version": { "enum": ["1.10.0"] },
+		"animation_controllers": {
+			"patternProperties": {
+				"^controller.animation\\..+$": {
+					"properties": {
+						"initial_state": { "type": "string" },
+						"states": {
+							"patternProperties": {
+								".+": {
+									"properties": {
+										"animations": {
+											"type": "array",
+											"items": {
+												"anyOf": [
+													{
+														"$ref": "../dynamic/entity/animationEnum.json"
+													},
+													{
+														"type": "object",
+														"propertyNames": {
+															"$ref": "../dynamic/entity/animationEnum.json"
+														},
+														"patternProperties": {
+															".+": {
+																"type": "string"
+															}
+														}
+													}
+												]
+											}
+										},
+										"transitions": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"propertyNames": {
+													"$ref": "../dynamic/animationController/currentContext/stateEnum.json"
+												},
+												"patternProperties": {
+													".+": {
+														"type": "string"
+													}
+												}
+											}
+										},
+										"on_entry": {
+											"type": "array",
+											"items": { "type": "string" }
+										},
+										"on_exit": {
+											"type": "array",
+											"items": { "type": "string" }
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

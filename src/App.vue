@@ -11,36 +11,39 @@
 			<TabBar />
 
 			<component
-				:is="mainTabSystem.currentComponent"
-				:tab="mainTabSystem.selectedTab"
+				v-if="tabSystem"
+				:is="tabSystem.currentComponent"
+				:tab="tabSystem.selectedTab"
 			/>
+			<WelcomeScreen v-else />
 			<!--  -->
 		</v-main>
 	</v-app>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import TabBar from './components/TabSystem/TabBar.vue'
-import { mainTabSystem } from '@/components/TabSystem/Main'
-import { App } from './App'
 import { platform } from './utils/os'
+import { TabSystemMixin } from '@/components/Mixins/TabSystem'
+import WelcomeScreen from '@/components/TabSystem/WelcomeScreen'
 
 export default Vue.extend({
 	name: 'App',
+	mixins: [TabSystemMixin],
 
 	components: {
 		Sidebar,
 		Toolbar,
 		WindowRenderer,
 		TabBar,
+		WelcomeScreen,
 	},
 
 	data: () => ({
-		mainTabSystem,
 		isMacOs: platform() === 'darwin',
 	}),
 })
@@ -58,15 +61,17 @@ body {
 
 /** Scrollbar */
 *::-webkit-scrollbar {
+	border-radius: 24px;
 	width: 6px;
 	height: 6px;
 }
 *::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+	border-radius: 24px;
+	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.6);
 }
 *::-webkit-scrollbar-thumb {
-	background-color: rgba(0, 0, 0, 0.35);
-	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.4);
+	border-radius: 24px;
+	background-color: rgba(0, 0, 0, 0.4);
 }
 
 summary::-webkit-details-marker {
@@ -88,5 +93,8 @@ summary::-webkit-details-marker {
 
 .v-system-bar .v-icon {
 	margin-right: 0;
+}
+.v-system-bar {
+	width: calc(100% + 1px);
 }
 </style>

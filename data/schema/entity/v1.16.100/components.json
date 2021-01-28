@@ -1,0 +1,276 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"allOf": [
+		{
+			"$ref": "../v1.16.0/components.json"
+		},
+		{
+			"$ref": "./behaviors.json"
+		},
+		{
+			"properties": {
+				"minecraft:ageable": {
+					"properties": {
+						"feed_items": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"properties": {
+											"item": {
+												"properties": {
+													"any_tag": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				"minecraft:breedable": {
+					"properties": {
+						"breed_items": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"anyOf": [
+											{
+												"type": "object",
+												"properties": {
+													"any_tag": {
+														"type": "string"
+													}
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				},
+				"minecraft:bribeable": {
+					"properties": {
+						"bribe_items": {
+							"items": {
+								"anyOf": [
+									{
+										"properties": {
+											"any_tag": {
+												"type": "string"
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				},
+				"minecraft:inside_block_notifier": {
+					"description": "Verifies whether the entity is inside any of the listed blocks.",
+					"additionalProperties": false,
+					"properties": {
+						"block_list": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"block": {
+										"properties": {
+											"name": {
+												"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+											},
+											"states": {
+												"$ref": "../../general/vanilla/blockState.json"
+											}
+										}
+									},
+									"entered_block_event": {
+										"type": "string"
+									},
+									"exited_block_event": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:conditional_bandwidth_optimization": {
+					"description": "Defines the Conditional Spatial Update Bandwidth Optimizations of this entity.",
+					"additionalProperties": false,
+					"properties": {
+						"conditional_values": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"max_dropped_ticks": {
+										"type": "number"
+									},
+									"max_optimized_distance": {
+										"type": "number"
+									},
+									"use_motion_prediction_hints": {
+										"type": "boolean"
+									},
+									"conditional_values": {
+										"type": "array",
+										"items": {
+											"$ref": "../general/filter.json"
+										}
+									}
+								}
+							}
+						},
+						"default_values": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"max_dropped_ticks": {
+										"type": "number"
+									},
+									"max_optimized_distance": {
+										"type": "number"
+									},
+									"use_motion_prediction_hints": {
+										"type": "boolean"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:equippable": {
+					"properties": {
+						"slots": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"accepted_items": {
+										"type": "array",
+										"items": {
+											"anyOf": [
+												{
+													"properties": {
+														"any_tag": {
+															"type": "string"
+														}
+													}
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:giveable": {
+					"properties": {
+						"triggers": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"properties": {
+											"items": {
+												"type": "array",
+												"items": {
+													"anyOf": [
+														{
+															"properties": {
+																"any_tag": {
+																	"type": "string"
+																}
+															}
+														}
+													]
+												}
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				"minecraft:healable": {
+					"properties": {
+						"items": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"item": {
+										"anyOf": [
+											{
+												"properties": {
+													"any_tag": {
+														"type": "string"
+													}
+												}
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:home": {
+					"properties": {
+						"restriction_radius": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:out_of_control": {
+					"description": "Defines the entity's 'out of control' state.",
+					"additionalProperties": false
+				},
+				"minecraft:tamemount": {
+					"properties": {
+						"auto_reject_items": {
+							"type": "array",
+							"properties": {
+								"item": {
+									"anyOf": [
+										{
+											"properties": {
+												"any_tag": {
+													"type": "string"
+												}
+											}
+										}
+									]
+								}
+							}
+						},
+						"feed_items": {
+							"type": "array",
+							"properties": {
+								"item": {
+									"anyOf": [
+										{
+											"properties": {
+												"any_tag": {
+													"type": "string"
+												}
+											}
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	]
+}

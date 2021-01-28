@@ -1,0 +1,37 @@
+[
+	{ "identifier": "minecraft:client_entity/description/identifier" },
+	{
+		"particleReference": [
+			"minecraft:client_entity/description/particle_effects",
+			"minecraft:client_entity/description/particle_emitters"
+		]
+	},
+	{ "animationReference": "minecraft:client_entity/description/animations" },
+	{ "textureReference": "minecraft:client_entity/description/textures" },
+	{ "materialReference": "minecraft:client_entity/description/materials" },
+	{ "geometryReference": "minecraft:client_entity/description/geometry" },
+	{
+		"soundEffectReference": "minecraft:client_entity/description/sound_effect"
+	},
+	{
+		"particleIdentifier": [
+			"minecraft:client_entity/description/particle_effects/*",
+			"minecraft:client_entity/description/particle_emitters/*"
+		]
+	},
+	{
+		"animationIdentifier": "minecraft:client_entity/description/animations/*"
+	},
+	{
+		"texturePath": "minecraft:client_entity/description/textures/*",
+		"@map": "return Bridge.value + '.png'"
+	},
+	{ "materialIdentifier": "minecraft:client_entity/description/materials/*" },
+	{ "geometryIdentifier": "minecraft:client_entity/description/geometry/*" },
+	{
+		"soundEffectIdentifier": "minecraft:client_entity/description/sound_effect/*"
+	},
+	{
+		"renderControllerIdentifier": "minecraft:client_entity/description/render_controllers/*"
+	}
+]

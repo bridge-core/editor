@@ -1,0 +1,14 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.tick",
+	"title": "Ticking Functions",
+	"additionalProperties": false,
+	"properties": {
+		"value": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		}
+	}
+}

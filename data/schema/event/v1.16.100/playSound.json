@@ -1,0 +1,14 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"play_sound": {
+			"description": "Play a sound relative to target position",
+			"additionalProperties": false,
+			"properties": {
+				"target": { "$ref": "../../general/filter/subject.json" },
+				"sound": { "$ref": "../../general/reference/soundDefinition.json" }
+			}
+		}
+	}
+}

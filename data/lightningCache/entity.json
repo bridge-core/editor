@@ -1,0 +1,44 @@
+[
+	{ "identifier": "minecraft:entity/description/identifier" },
+	{ "event": "minecraft:entity/events" },
+	{ "componentGroup": "minecraft:entity/component_groups" },
+	{ "animation": "minecraft:entity/description/animations" },
+	{
+		"family": [
+			"minecraft:entity/components/minecraft:type_family/family",
+			"minecraft:entity/component_groups/*/minecraft:type_family/family"
+		]
+	},
+	{
+		"lootTablePath": [
+			"minecraft:entity/components/minecraft:loot/table",
+			"minecraft:entity/component_groups/*/minecraft:loot/table",
+			"minecraft:entity/components/minecraft:behavior.sneeze/loot_table",
+			"minecraft:entity/component_groups/*/minecraft:behavior.sneeze/loot_table",
+			"minecraft:entity/components/minecraft:barter/barter_table",
+			"minecraft:entity/component_groups/*/minecraft:barter/barter_table",
+
+			"minecraft:entity/components/minecraft:interact/interactions/add_items/table",
+			"minecraft:entity/component_groups/*/minecraft:interact/interactions/add_items/table",
+			"minecraft:entity/components/minecraft:interact/interactions/*/add_items/table",
+			"minecraft:entity/component_groups/*/minecraft:interact/interactions/*/add_items/table",
+
+			"minecraft:entity/components/minecraft:interact/interactions/spawn_items/table",
+			"minecraft:entity/component_groups/*/minecraft:interact/interactions/spawn_items/table",
+			"minecraft:entity/components/minecraft:interact/interactions/*/spawn_items/table",
+			"minecraft:entity/component_groups/*/minecraft:interact/interactions/*/spawn_items/table"
+		]
+	},
+	{
+		"tradeTablePath": [
+			"minecraft:entity/components/minecraft:trade_table/table",
+			"minecraft:entity/component_groups/*/minecraft:trade_table/table",
+			"minecraft:entity/components/minecraft:economy_trade_table/table",
+			"minecraft:entity/component_groups/*/minecraft:economy_trade_table/table"
+		]
+	},
+	{
+		"functionPath": ["minecraft:entity/events/*/run_command"],
+		"@map": "const func = /\\/function\\s+([aA-zZ0-9\\/]+)/g.exec(Bridge.value); if(func) return `functions/${func[1]}.mcfunction`"
+	}
+]

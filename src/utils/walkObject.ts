@@ -16,10 +16,15 @@ function _walkObject(
 	if (keys.length === 0) return onReach(current)
 	if (typeof current !== 'object') return // Needs to be last because we want to make sure onReach gets called if possible
 
-	const key = keys.shift()
-	if (key === '*') {
+	const key = keys.shift()!
+	if (key.startsWith('*')) {
+		let filterRegExp: RegExp | undefined = undefined
+		if (key.length >= 1)
+			filterRegExp = new RegExp(key.match(/(\*{)(.+)(})/)?.[2] ?? '.*')
+
 		for (const key in current) {
-			_walkObject([...keys], current[key], onReach)
+			if (filterRegExp && key.match(filterRegExp) !== null)
+				_walkObject([...keys], current[key], onReach)
 		}
-	} else _walkObject(keys, current[key!], onReach)
+	} else _walkObject(keys, current[key], onReach)
 }

@@ -1,0 +1,150 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Theme",
+	"definitions": {
+		"style_object": {
+			"properties": {
+				"color": {
+					"$ref": "../../general/hexColor.json"
+				},
+				"text_decoration": {
+					"type": "string",
+					"enum": ["underline", "overline", "line-through", "blink"]
+				},
+				"is_italic": {
+					"type": "boolean"
+				}
+			}
+		}
+	},
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"description": "UUID for your theme.",
+			"type": "string"
+		},
+		"colorScheme": {
+			"enum": ["dark", "light"],
+			"description": "The color scheme of this theme.",
+			"type": "string"
+		},
+		"colors": {
+			"description": "Colors of this theme.",
+			"properties": {
+				"text": {
+					"description": "Text color.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"primary": {
+					"description": "Color; affects menu icons, active tabs, MoLang edit icons, and more.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"secondary": {
+					"description": "Color.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"accent": {
+					"description": "Color; affects toolbar icons.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"error": {
+					"description": "Color; affects hovered errors, ! error marks, close button on close prompt, and more.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"info": {
+					"description": "Color.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"success": {
+					"description": "Color; affects save button on close prompt.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"warning": {
+					"description": "Color.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"background": {
+					"description": "Color; affects background of editor.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"sidebarNavigation": {
+					"description": "Color; affects navigation sidebar.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"expandedSidebar": {
+					"description": "Color; affects sidebar containing folders and files.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"menu": {
+					"description": "Color; affects menus.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"toolbar": {
+					"description": "Color; affects toolbar.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"footer": {
+					"description": "Color; affects footer containing notifications.",
+					"$ref": "../../general/hexColor.json"
+				},
+				"tooltip": {
+					"description": "Color; affects the tooltip that shows when you hover over buttons.",
+					"$ref": "../../general/hexColor.json"
+				}
+			}
+		},
+		"highlighter": {
+			"description": "Syntax highlighter colors of your bridge. theme.",
+			"properties": {
+				"property": {
+					"description": "Custom style for syntax highlighter; affects format_version.",
+					"$ref": "#/definitions/style_object"
+				},
+				"keyword": {
+					"description": "Custom style for syntax highlighter; affects namespaces.",
+					"$ref": "#/definitions/style_object"
+				},
+				"definition": {
+					"description": "Custom style for syntax highlighter; affects special objects.",
+					"$ref": "#/definitions/style_object"
+				},
+				"atom": {
+					"description": "Custom style for syntax highlighter; affects booleans.",
+					"$ref": "#/definitions/style_object"
+				},
+				"number": {
+					"description": "Custom style for syntax highlighter; affects numbers.",
+					"$ref": "#/definitions/style_object"
+				},
+				"string": {
+					"description": "Custom style for syntax highlighter; affects all other values.",
+					"$ref": "#/definitions/style_object"
+				},
+				"variable": {
+					"description": "Custom style for syntax highlighter.",
+					"$ref": "#/definitions/style_object"
+				},
+				"variable_strong": {
+					"description": "Custom style for syntax highlighter.",
+					"$ref": "#/definitions/style_object"
+				},
+				"meta": {
+					"description": "Custom style for syntax highlighter.",
+					"$ref": "#/definitions/style_object"
+				},
+				"comment": {
+					"description": "Custom style for syntax highlighter.",
+					"$ref": "#/definitions/style_object"
+				}
+			}
+		},
+		"monaco": {
+			"description": "Colors for the monaco editor.",
+			"patternProperties": {
+				".*": {
+					"$ref": "../../general/hexColor.json"
+				}
+			}
+		}
+	}
+}

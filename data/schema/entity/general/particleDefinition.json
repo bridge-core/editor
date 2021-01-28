@@ -1,0 +1,15 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"particle_type": {
+			"$ref": "../../general/vanilla/identifiers.json#/definitions/particle_identifiers"
+		},
+		"particle_y_offset": {
+			"type": "number"
+		},
+		"particle_offset_towards_indicator": {
+			"type": "boolean"
+		}
+	}
+}

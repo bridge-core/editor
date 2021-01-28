@@ -10,6 +10,10 @@
 		:sidebarItems="sidebar.elements"
 		v-model="sidebar.selected"
 	>
+		<template #toolbar>
+			<ToolbarButton @click="createProject" icon="mdi-plus" />
+		</template>
+
 		<template #sidebar>
 			<v-text-field
 				class="pt-2"
@@ -29,7 +33,9 @@
 				/>
 				<div>
 					<h1>{{ sidebar.currentState.projectName }}</h1>
-					<h3>by Minecraft</h3>
+					<h3>
+						by {{ sidebar.currentState.projectAuthor || 'Unknown' }}
+					</h3>
 				</div>
 			</div>
 			<div>
@@ -49,11 +55,17 @@
 		<template #actions="{ selectedSidebar }">
 			<v-spacer />
 			<v-btn
+				color="error"
+				:disabled="currentProject === selectedSidebar"
+				@click="onDeleteProject(selectedSidebar)"
+			>
+				Delete
+			</v-btn>
+			<v-btn
 				color="primary"
 				:disabled="currentProject === selectedSidebar"
 				:loading="
-					currentProject !== selectedSidebar &&
-						!packIndexerReady.isReady
+					currentProject !== selectedSidebar && !isPackIndexerReady
 				"
 				@click="onSelectProject"
 			>
@@ -65,18 +77,20 @@
 
 <script>
 import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
+import ToolbarButton from '@/components/Windows/Layout/Toolbar/Button.vue'
 
 import { App } from '@/App'
-import { FileType } from '@/appCycle/FileType'
-import { PackType } from '@/appCycle/PackType'
 import { TranslationMixin } from '@/utils/locales'
 import { selectProject } from '@/components/Project/Loader'
+import { createConfirmWindow } from '../../Common/CommonDefinitions'
+import { PackIndexerMixin } from '@/components/Mixins/Tasks/PackIndexer'
 
 export default {
-	name: 'PackExplorerWindow',
-	mixins: [TranslationMixin],
+	name: 'ProjectChooserWindow',
+	mixins: [TranslationMixin, PackIndexerMixin],
 	components: {
 		SidebarWindow,
+		ToolbarButton,
 	},
 	props: ['currentWindow'],
 	data() {
@@ -89,6 +103,23 @@ export default {
 		onSelectProject() {
 			selectProject(this.sidebar.selected)
 			this.currentWindow.close()
+		},
+		createProject() {
+			this.currentWindow.close()
+			App.instance.windows.createProject.open()
+		},
+		onDeleteProject(projectName) {
+			createConfirmWindow(
+				'windows.deleteProject.description',
+				'windows.deleteProject.confirm',
+				'windows.deleteProject.cancel',
+				() => {
+					App.ready.once(async app => {
+						await app.fileSystem.unlink(`projects/${projectName}`)
+						await this.window.loadProjects()
+					})
+				}
+			)
 		},
 	},
 }

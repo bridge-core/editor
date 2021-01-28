@@ -1,0 +1,8 @@
+{
+	"includeFiles": ["lootTablePath", "texturePath"],
+	"sharedFiles": [
+		"RP/blocks.json",
+		"RP/textures/terrain_texture.json",
+		"RP/textures/flipbook_textures.json"
+	]
+}

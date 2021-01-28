@@ -28,6 +28,7 @@
 				:displayName="notification.message"
 				:icon="notification.icon"
 				:color="notification.color"
+				:iconColor="notification.textColor"
 				@click="notification.onClick()"
 			/>
 		</v-list>
@@ -49,7 +50,7 @@
 					size="24"
 					width="2"
 					color="white"
-					:value="(task.currentStepCount / task.totalStepCount) * 100"
+					:value="task.progress"
 				/>
 			</SidebarButton>
 		</v-list>

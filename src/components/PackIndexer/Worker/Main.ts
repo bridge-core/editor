@@ -1,4 +1,4 @@
-import { FileType } from '@/appCycle/FileType'
+import { FileType, IMonacoSchemaArrayEntry } from '@/components/Data/FileType'
 import * as Comlink from 'comlink'
 import { TaskService } from '@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
@@ -17,17 +17,18 @@ export interface IWorkerSettings {
 	noFullLightningCacheRefresh: boolean
 }
 
-export class PackIndexerService extends TaskService {
+export class PackIndexerService extends TaskService<string[]> {
 	protected lightningStore: LightningStore
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
 
 	constructor(
-		baseDirectory: FileSystemDirectoryHandle,
+		projectDirectory: FileSystemDirectoryHandle,
+		protected baseDirectory: FileSystemDirectoryHandle,
 		readonly settings: IWorkerSettings
 	) {
-		super('packIndexer', baseDirectory)
-		this.lightningStore = new LightningStore(this)
+		super('packIndexer', projectDirectory)
+		this.lightningStore = new LightningStore(this.fileSystem)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
 	}
@@ -35,7 +36,7 @@ export class PackIndexerService extends TaskService {
 	async onStart() {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
-		await FileType.setup()
+		await FileType.setup(new FileSystem(this.baseDirectory))
 
 		console.timeEnd('[WORKER] SETUP')
 
@@ -46,10 +47,11 @@ export class PackIndexerService extends TaskService {
 		console.time('[WORKER] PackSpider')
 		await this.packSpider.setup(filePaths)
 		console.timeEnd('[WORKER] PackSpider')
+
+		return filePaths
 	}
 
 	async updateFile(filePath: string) {
-		await FileType.setup()
 		await this.lightningCache.processFile(
 			filePath,
 			await this.fileSystem.getFileHandle(filePath)
@@ -111,6 +113,18 @@ export class PackIndexerService extends TaskService {
 			matchesOneOf,
 			fetchAll
 		)
+	}
+
+	getAllFiles(sorted = false) {
+		if (sorted)
+			return this.lightningStore
+				.allFiles()
+				.sort((a, b) => a.localeCompare(b))
+		return this.lightningStore.allFiles()
+	}
+
+	getSchemasFor(fileType: string, fromFilePath?: string) {
+		return this.lightningStore.getSchemasFor(fileType, fromFilePath)
 	}
 }
 

@@ -1,63 +1,69 @@
-import { IAppMenu } from '../create'
 import { App } from '@/App'
-// import AboutWindow from '../../../../windows/About'
-// import { shell } from 'electron'
+import { ToolbarCategory } from '../ToolbarCategory'
 
-export const HelpMenu: IAppMenu = {
-	displayName: 'toolbar.help.name',
-	displayIcon: 'mdi-help',
-	elements: [
-		{
-			displayName: 'toolbar.help.about',
-			displayIcon: 'mdi-information-outline',
-			onClick: () => {
-				// new AboutWindow()
-			},
-		},
-		{
-			displayName: 'toolbar.help.releases',
-			displayIcon: 'mdi-alert-decagram',
-			onClick: () =>
+export function setupHelpCategory(app: App) {
+	const help = new ToolbarCategory('mdi-help', 'toolbar.help.name')
+	help.addItem(
+		app.actionManager.create({
+			name: 'toolbar.help.releases',
+			icon: 'mdi-alert-decagram',
+			description: 'View the latest bridge. releases',
+			onTrigger: () =>
 				window.open(
 					'https://github.com/solvedDev/bridge./releases',
 					'_blank'
 				),
-		},
-		{
-			displayName: 'toolbar.help.bugReports',
-			displayIcon: 'mdi-bug-outline',
-			onClick: () =>
+		})
+	)
+	help.addItem(
+		app.actionManager.create({
+			name: 'toolbar.help.bugReports',
+			icon: 'mdi-bug-outline',
+			description: 'Report an issue with bridge.',
+			onTrigger: () =>
 				window.open(
 					'https://github.com/solvedDev/bridge./issues/new/choose',
 					'_blank'
 				),
-		},
-		{
-			displayName: 'toolbar.help.pluginAPI',
-			displayIcon: 'mdi-puzzle',
-			onClick: () =>
+		})
+	)
+	help.addItem(
+		app.actionManager.create({
+			name: 'toolbar.help.pluginAPI',
+			icon: 'mdi-puzzle',
+			description: "Read more about bridge.'s plugin API",
+			onTrigger: () =>
 				App.createNativeWindow(
 					'https://bridge-core.github.io/plugin-docs/',
 					'_blank'
 				),
-		},
-		{
-			displayName: 'toolbar.help.gettingStarted',
-			displayIcon: 'mdi-help-circle-outline',
-			onClick: () =>
+		})
+	)
+	help.addItem(
+		app.actionManager.create({
+			name: 'toolbar.help.gettingStarted',
+			icon: 'mdi-help-circle-outline',
+			description: 'Read our guide on how to get started with bridge.',
+			onTrigger: () =>
 				App.createNativeWindow(
 					'https://bridge-core.github.io/editor-docs/getting-started/',
 					'_blank'
 				),
-		},
-		{
-			displayName: 'toolbar.help.faq',
-			displayIcon: 'mdi-frequently-asked-questions',
-			onClick: () =>
+		})
+	)
+	help.addItem(
+		app.actionManager.create({
+			name: 'toolbar.help.faq',
+			icon: 'mdi-frequently-asked-questions',
+			description:
+				'Read through frequently asked questions about developing Add-Ons with bridge.',
+			onTrigger: () =>
 				App.createNativeWindow(
 					'https://bridge-core.github.io/editor-docs/faq/',
 					'_blank'
 				),
-		},
-	],
+		})
+	)
+
+	App.toolbar.addCategory(help)
 }

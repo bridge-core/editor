@@ -1,0 +1,56 @@
+{
+	"format_version": "1.16.100",
+	"minecraft:item": {
+		"description": {
+			"category": "equipment",
+			"identifier": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}"
+		},
+		"components": {
+			"minecraft:creative_category": {
+				"parent": "itemGroup.name.pickaxe"
+			},
+			"minecraft:max_stack_size": 1,
+			"minecraft:hand_equipped": true,
+			"minecraft:durability": {
+				"max_durability": 150
+			},
+			"minecraft:icon": {
+				"texture": "{{PROJECT_PREFIX}}_{{IDENTIFIER}}"
+			},
+			"minecraft:repairable": {
+				"repair_items": [
+					{
+						"items": ["{{PROJECT_PREFIX}}:{{IDENTIFIER}}"],
+						"repair_amount": 20
+					}
+				]
+			},
+			"minecraft:mining_speed": 1,
+			"minecraft:damage": 3,
+			"minecraft:enchantable": {
+				"value": 14,
+				"slot": "pickaxe"
+			},
+			"minecraft:digger": {
+				"use_efficiency": true,
+				"destroy_speeds": [
+					{
+						"block": {
+							"tags": "query.any_tag('stone', 'metal', 'iron_pick_diggable')"
+						},
+						"speed": 5
+					},
+					{
+						"block": "minecraft:ice",
+						"speed": 5
+					},
+					{
+						"block": "minecraft:sandstone",
+						"speed": 5
+					}
+				]
+			},
+			"tag:minecraft:is_pickaxe": {}
+		}
+	}
+}

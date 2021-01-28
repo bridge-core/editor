@@ -1,0 +1,4194 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"allOf": [
+		{
+			"properties": {
+				"minecraft:addrider": {
+					"additionalProperties": false,
+					"description": "Adds a rider to the entity. Requires minecraft:rideable.",
+					"properties": {
+						"entity_type": {
+							"description": "The entity type that will be riding this entity.",
+							"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+						},
+						"spawn_event": {
+							"description": "The spawn event that will be used when the riding entity is created.",
+							"type": "string"
+						}
+					}
+				},
+				"minecraft:admire_item": {
+					"additionalProperties": false,
+					"description": "Causes the mob to ignore attackable targets for a given duration.",
+					"properties": {
+						"duration": {
+							"description": "Duration, in seconds, that the mob is pacified.",
+							"type": "number"
+						},
+						"cooldown_after_being_attacked": {
+							"description": "Duration, in seconds, for which mob won't admire items if it was hurt."
+						},
+						"spawn_event": {
+							"type": "string"
+						}
+					}
+				},
+				"minecraft:ageable": {
+					"description": "Adds a timer for the entity to grow up. It can be accelerated by giving the entity the items it likes as defined by feedItems.",
+					"properties": {
+						"duration": {
+							"description": "Amount of time before the entity grows up, -1 for always a baby.",
+							"type": "number"
+						},
+						"feed_items": {
+							"description": "List of items that can be fed to the entity. Includes 'item' for the item name and 'growth' to define how much time it grows up by.",
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"anyOf": [
+											{
+												"properties": {
+													"item": {
+														"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+													},
+													"growth": {
+														"type": "number"
+													}
+												}
+											},
+											{
+												"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+											}
+										]
+									}
+								},
+								{
+									"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+								}
+							]
+						},
+						"drop_items": {
+							"description": "List of items that the entity drops when it grows up.",
+							"type": "array",
+							"items": {
+								"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+							}
+						},
+						"grow_up": {
+							"description": "Event to run when this entity grows up.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:ambient_sound_interval": {
+					"additionalProperties": false,
+					"description": "Sets the entity's delay between playing its ambient sound.",
+					"properties": {
+						"range": {
+							"description": "Maximum time in seconds to randomly add to the ambient sound delay time.",
+							"type": "number"
+						},
+						"value": {
+							"description": "Minimum time in seconds before the entity plays its ambient sound again.",
+							"type": "number"
+						},
+						"event_name": {
+							"description": "Level sound event to be played as the ambient sound.",
+							"type": "string"
+						}
+					}
+				},
+				"minecraft:angry": {
+					"additionalProperties": false,
+					"description": "Defines the entity's 'angry' state using a timer.",
+					"properties": {
+						"broadcast_anger": {
+							"description": "f true, other entities of the same entity definition within the broadcastRange will also become angry.",
+							"type": "boolean"
+						},
+						"broadcastAnger": {
+							"description": "f true, other entities of the same entity definition within the broadcastRange will also become angry.",
+							"type": "boolean"
+						},
+						"broadcast_anger_on_attack": {
+							"description": "If true, other entities of the same entity definition within the broadcastRange will also become angry whenever this mob attacks.",
+							"type": "boolean"
+						},
+						"broadcast_anger_on_being_attacked": {
+							"description": "If true, other entities of the same entity definition within the broadcastRange will also become angry whenever this mob is attacked.",
+							"type": "boolean"
+						},
+						"broadcast_range": {
+							"description": "Distance in blocks within which other entities of the same entity definition will become angry.",
+							"type": "number"
+						},
+						"broadcastRange": {
+							"description": "Distance in blocks within which other entities of the same entity definition will become angry.",
+							"type": "number"
+						},
+						"broadcast_filters": {
+							"description": "Conditions that make this entry in the list valid.",
+							"$ref": "../general/filter.json"
+						},
+						"filters": {
+							"description": "Filter out mob types that it should not attack while angry (other Piglins).",
+							"$ref": "../general/filter.json"
+						},
+						"broadcast_targets": {
+							"description": "A list of entity families to broadcast anger to.",
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"calm_event": {
+							"description": "Event to run after the number of seconds specified in duration expires (when the entity stops being 'angry').",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"duration": {
+							"description": "The amount of time in seconds that the entity will be angry.",
+							"type": "number"
+						},
+						"duration_delta": {
+							"description": "Variance in seconds added to the duration [-delta, delta].",
+							"type": "number"
+						},
+						"angry_sound": {
+							"description": "The sound event to play when the mob is angry.",
+							"type": "string"
+						},
+						"sound_interval": {
+							"description": "The range of time in seconds to randomly wait before playing the sound again.",
+							"additionalProperties": false,
+							"properties": {
+								"range_min": {
+									"type": "number"
+								},
+								"range_max": {
+									"type": "number"
+								}
+							}
+						}
+					}
+				},
+				"minecraft:area_attack": {
+					"description": "A component that does damage to entities that get within range.",
+					"additionalProperties": false,
+					"properties": {
+						"damage_range": {
+							"description": "How close a hostile entity must be to have the damage applied.",
+							"type": "number"
+						},
+						"damage_per_tick": {
+							"description": "How much damage per tick is applied to entities that enter the damage range.",
+							"type": "number"
+						},
+						"cause": {
+							"$ref": "../../general/vanilla/damageType.json"
+						},
+						"entity_filter": {
+							"$ref": "../general/filter.json"
+						}
+					}
+				},
+				"minecraft:attack": {
+					"description": "Defines an entity's melee attack and any additional effects on it.",
+					"additionalProperties": false,
+					"properties": {
+						"damage": {
+							"description": "Range of the random amount of damage the melee attack deals. A negative value can heal the entity instead of hurting it.",
+							"anyOf": [
+								{
+									"type": "number"
+								},
+								{
+									"properties": {
+										"range_min": {
+											"type": "number"
+										},
+										"range_max": {
+											"type": "number"
+										}
+									}
+								}
+							]
+						},
+						"effect_name": {
+							"description": "Identifier of the status ailment to apply to an entity attacked by this entity's melee attack.",
+							"$ref": "../../general/vanilla/effectName.json"
+						},
+						"effect_duration": {
+							"description": "Duration in seconds of the status ailment applied to the damaged entity.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:attack_cooldown": {
+					"description": "Adds a cooldown to a mob. The intention of this cooldown is to be used to prevent the mob from attempting to aquire new attack targets.",
+					"additionalProperties": false,
+					"properties": {
+						"attack_cooldown_time": {
+							"description": "Amount of time in seconds for the cooldown. Can be specified as a number or a pair of numbers (min and max).",
+							"anyOf": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "array",
+									"minItems": 2,
+									"maxItems": 2,
+									"items": {
+										"type": "number"
+									}
+								}
+							]
+						},
+						"attack_cooldown_complete_event": {
+							"description": "Event to be runned when the cooldown is complete.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:attack_damage": {
+					"description": "Defines an entity's melee attack damage.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:balloonable": {
+					"description": "Whether or not this entity can be attatched to a balloon.",
+					"properties": {
+						"mass": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:barter": {
+					"description": "Enables the component to drop an item as a barter exchange.",
+					"additionalProperties": false,
+					"properties": {
+						"barter_table": {
+							"description": "Loot table that's used to drop a random item.",
+							"type": "string"
+						},
+						"cooldown_after_being_attacked": {
+							"description": "Duration, in seconds, for which mob won't barter items if it was hurt.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:block_sensor": {
+					"description": "Fires off a specified event when a block in the block list is broken within the sensor range.",
+					"additionalProperties": false,
+					"properties": {
+						"sensor_radius": {
+							"type": "number"
+						},
+						"on_break": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"block_list": {
+										"type": "array",
+										"items": {
+											"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+										}
+									},
+									"on_block_broken": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:boostable": {
+					"description": "Defines the conditions and behavior of a rideable entity's boost.",
+					"additionalProperties": false,
+					"properties": {
+						"speed_multiplier": {
+							"description": "Factor by which the entity's normal speed increases. E.g. 2.0 means go twice as fast.",
+							"type": "number"
+						},
+						"duration": {
+							"description": "Time in seconds for the boost.",
+							"type": "number"
+						},
+						"boost_items": {
+							"description": "List of items that can be used to boost while riding this entity.",
+							"type": "array",
+							"items": {
+								"properties": {
+									"item": {
+										"description": "Name of the item that can be used to boost.",
+										"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+									},
+									"damage": {
+										"description": "This is the damage that the item will take each time it is used.",
+										"type": "number"
+									},
+									"replace_item": {
+										"description": "The item used to boost will become this item once it is used up.",
+										"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:boss": {
+					"description": "The current state of the boss for updating the boss HUD.",
+					"additionalProperties": false,
+					"properties": {
+						"should_darken_sky": {
+							"description": "Whether the sky should darken in the presence of the boss.",
+							"type": "boolean"
+						},
+						"hud_range": {
+							"description": "The max distance from the boss at which the boss's health bar is present on the players screen.",
+							"type": "number"
+						},
+						"name": {
+							"description": "The name that will be displayed above the boss's health bar.",
+							"type": "string"
+						}
+					}
+				},
+				"minecraft:break_blocks": {
+					"description": "Specifies the blocks that this entity can break as it moves around.",
+					"additionalProperties": false,
+					"properties": {
+						"breakable_blocks": {
+							"description": "A list of the blocks that can be broken as this entity moves around.",
+							"type": "array",
+							"items": {
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+							}
+						}
+					}
+				},
+				"minecraft:breathable": {
+					"description": "Defines what blocks this entity can breathe in and gives them the ability to suffocate.",
+					"additionalProperties": false,
+					"properties": {
+						"breathe_blocks": {
+							"description": "List of blocks this entity can breathe in, in addition to the above.",
+							"type": "array",
+							"items": {
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+							}
+						},
+						"breathes_water": {
+							"description": "If true, this entity can breathe in water.",
+							"type": "boolean"
+						},
+						"breathes_lava": {
+							"description": "If true, this entity can breathe in lava.",
+							"type": "boolean"
+						},
+						"breathes_air": {
+							"description": "If true, this entity can breathe in air.",
+							"type": "boolean"
+						},
+						"breathes_solids": {
+							"description": "If true, this entity can breathe in solid blocks.",
+							"type": "boolean"
+						},
+						"generates_bubbles": {
+							"description": "If true, this entity will have visible bubbles while in water.",
+							"type": "boolean"
+						},
+						"inhale_time": {
+							"description": "Time in seconds to recover breath to maximum.",
+							"type": "number"
+						},
+						"suffocate_time": {
+							"description": "Time in seconds between suffocation damage.",
+							"type": "number"
+						},
+						"suffocateTime": {
+							"description": "Time in seconds between suffocation damage.",
+							"type": "number"
+						},
+						"total_supply": {
+							"description": "Time in seconds the entity can hold its breath.",
+							"type": "number"
+						},
+						"totalSupply": {
+							"description": "Time in seconds the entity can hold its breath.",
+							"type": "number"
+						},
+						"non_breathe_blocks": {
+							"description": "List of blocks this entity can't breathe in, in addition to the above.",
+							"type": "array",
+							"items": {
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+							}
+						}
+					}
+				},
+				"minecraft:buoyant": {
+					"description": "Enables an entity to float on the specified liquid blocks.",
+					"additionalProperties": false,
+					"properties": {
+						"apply_gravity": {
+							"description": "Applies gravity each tick. Causes more of a wave simulation, but will cause more gravity to be applied outside liquids.",
+							"type": "boolean"
+						},
+						"base_buoyancy": {
+							"description": "Base buoyancy used to calculate how much will a mob float.",
+							"type": "number"
+						},
+						"big_wave_probablity": {
+							"description": "Probability for a big wave hitting the entity. Only used if `simulate_waves` is true.",
+							"type": "number"
+						},
+						"big_wave_speed": {
+							"description": "Multiplier for the speed to make a big wave. Triggered depending on 'big_wave_probability'.",
+							"type": "number"
+						},
+						"drag_down_on_buoyancy_removed": {
+							"description": "How much an actor will be dragged down when the Buoyancy Component is removed.",
+							"type": "number"
+						},
+						"liquid_blocks": {
+							"description": "List of blocks this entity can float on. Must be a liquid block.",
+							"type": "array",
+							"items": {
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+							}
+						},
+						"simulate_waves": {
+							"description": "Should the movement simulate waves going through.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:breedable": {
+					"description": "Defines the way an entity can get into the 'love' state.",
+					"properties": {
+						"allow_sitting": {
+							"description": "If true, entities can breed while sitting.",
+							"type": "boolean"
+						},
+						"blend_attributes": {
+							"description": "If true, the entities will blend their attributes in the offspring after they breed. For example, horses blend their health, movement, and jump_strength in their offspring.",
+							"type": "boolean"
+						},
+						"breed_cooldown": {
+							"description": "Time in seconds before the Entity can breed again.",
+							"type": "number"
+						},
+						"love_filters": {
+							"description": "The filters to run when attempting to fall in love.",
+							"$ref": "../general/filter.json"
+						},
+						"breed_items": {
+							"description": "The list of items that can be used to get the entity into the 'love' state.",
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"anyOf": [
+											{
+												"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+											}
+										]
+									}
+								},
+								{
+									"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+								}
+							]
+						},
+						"breeds_with": {
+							"description": "The list of entity definitions that this entity can breed with.",
+							"properties": {
+								"mate_type": {
+									"description": "The entity definition of this entity's mate.",
+									"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+								},
+								"baby_type": {
+									"description": "The entity definition of this entity's babies.",
+									"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+								},
+								"breed_event": {
+									"description": "Event to run when this entity breeds.",
+									"$ref": "../general/eventDefinition.json"
+								}
+							}
+						},
+						"causes_pregnancy": {
+							"description": "If true, the entity will become pregnant instead of spawning a baby.",
+							"type": "boolean"
+						},
+						"environment_requirements": {
+							"description": "The list of nearby block requirements to get the entity into the 'love' state.",
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"properties": {
+											"blocks": {
+												"description": "The block types required nearby for the entity to breed.",
+												"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+											},
+											"count": {
+												"description": "The number of the required block types nearby for the entity to breed.",
+												"type": "number"
+											},
+											"radius": {
+												"description": "How many blocks radius from the mob's center to search in for the required blocks. Bounded between 0 and 16.",
+												"type": "number"
+											}
+										}
+									}
+								},
+								{
+									"properties": {
+										"blocks": {
+											"description": "The block types required nearby for the entity to breed.",
+											"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+										},
+										"count": {
+											"description": "The number of the required block types nearby for the entity to breed.",
+											"type": "number"
+										},
+										"radius": {
+											"description": "How many blocks radius from the mob's center to search in for the required blocks. Bounded between 0 and 16.",
+											"type": "number"
+										}
+									}
+								}
+							]
+						},
+						"extra_baby_chance": {
+							"description": "Chance that up to 16 babies will spawn between 0.0 and 1.0, where 1.0 is 100%.",
+							"type": "number"
+						},
+						"inherit_tamed": {
+							"description": "If true, the babies will be automatically tamed if its parents are.",
+							"type": "boolean"
+						},
+						"max_number_of_children": {
+							"description": "The maximum number of children the mob will breed.",
+							"type": "integer"
+						},
+						"min_number_of_children": {
+							"description": "The minimum number of children the mob will breed.",
+							"type": "integer"
+						},
+						"mutation_factor": {
+							"description": "Determines how likely the babies are to NOT inherit one of their parent's variances. Values are between 0.0 and 1.0, with a higher number meaning more likely to mutate.",
+							"properties": {
+								"color": {
+									"description": "The percentage chance of a mutation on the entity's color.",
+									"type": "number"
+								},
+								"extra_variant": {
+									"description": "The percentage chance of a mutation on the entity's extra variant type.",
+									"type": "number"
+								},
+								"variant": {
+									"description": "The percentage chance of a mutation on the entity's variant type.",
+									"type": "number"
+								}
+							}
+						},
+						"deny_parents_variant": {
+							"description": "Determines how likely the baby of parents with the same variant will deny that variant and take a random variant within the given range instead.",
+							"properties": {
+								"chance": {
+									"description": "The percentage chance of denying the parents' variant.",
+									"type": "number"
+								},
+								"min_variant": {
+									"description": "The inclusive minimum of the variant range.",
+									"type": "number"
+								},
+								"max_variant": {
+									"description": "The inclusive maximum of the variant range.",
+									"type": "number"
+								}
+							}
+						},
+						"require_tame": {
+							"description": "If true, the entities need to be tamed first before they can breed.",
+							"type": "boolean"
+						},
+						"require_full_health": {
+							"description": "If true, the entity needs to be at full health before it can breed.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:bribeable": {
+					"description": "Defines the way an entity can get into the 'bribed' state.",
+					"properties": {
+						"bribe_cooldown": {
+							"description": "Time in seconds before the Entity can be bribed again.",
+							"type": "number"
+						},
+						"bribe_items": {
+							"description": "The list of items that can be used to bribe the entity.",
+							"type": "array",
+							"items": {
+								"anyOf": [
+									{
+										"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+									}
+								]
+							}
+						}
+					}
+				},
+				"minecraft:burns_in_daylight": {
+					"description": "Specifies if/how a mob burns in daylight.",
+					"additionalProperties": false
+				},
+				"minecraft:can_climb": {
+					"description": "Allows this entity to climb up ladders.",
+					"additionalProperties": false
+				},
+				"minecraft:can_fly": {
+					"description": "Marks the entity as being able to fly, the pathfinder won't be restricted to paths where a solid block is required underneath it.",
+					"additionalProperties": false,
+					"anyOf": [
+						{
+							"type": "boolean"
+						},
+						{}
+					]
+				},
+				"minecraft:celebrate_hunt": {
+					"description": "Specifies hunt celebration behaviour.",
+					"additionalProperties": false,
+					"properties": {
+						"celebration_targets": {
+							"description": "The list of conditions that target of hunt must satisfy to initiate celebration.",
+							"$ref": "../general/filter.json"
+						},
+						"broadcast": {
+							"description": "If true, celebration will be broadcasted to other entities in the radius.",
+							"type": "boolean"
+						},
+						"duration": {
+							"description": "Duration, in seconds, of celebration.",
+							"type": "number"
+						},
+						"radius": {
+							"description": "If broadcast is enabled, specifies the radius in which it will notify other entities for celebration.",
+							"type": "number"
+						},
+						"celebrate_sound": {
+							"description": "The sound event to play when the mob is celebrating.",
+							"type": "string"
+						},
+						"sound_interval": {
+							"description": "The range of time in seconds to randomly wait before playing the sound again.",
+							"properties": {
+								"range_min": {
+									"type": "number"
+								},
+								"range_max": {
+									"type": "number"
+								}
+							}
+						}
+					}
+				},
+				"minecraft:collision_box": {
+					"description": "Sets the width and height of the Entity's collision box.",
+					"additionalProperties": false,
+					"properties": {
+						"width": {
+							"description": "Width and Depth of the collision box in blocks. A negative value will be assumed to be 0.",
+							"type": "number"
+						},
+						"height": {
+							"description": "Height of the collision box in blocks. A negative value will be assumed to be 0.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:color": {
+					"description": "Defines the entity's color. Only works on vanilla entities that have predefined color values (sheep, llama, shulker).",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The Palette Color value of the entity.",
+							"type": "integer"
+						}
+					}
+				},
+				"minecraft:color2": {
+					"description": "Defines the entity's second texture color. Only works on vanilla entities that have a second predefined color values (tropical fish).",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The second Palette Color value of the entity.",
+							"type": "integer"
+						}
+					}
+				},
+				"minecraft:custom_hit_test": {
+					"description": "List of hitboxes for melee and ranged hits against the entity.",
+					"additionalProperties": false,
+					"properties": {
+						"hitboxes": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"width": {
+										"type": "number"
+									},
+									"height": {
+										"type": "number"
+									},
+									"pivot": {
+										"type": "array",
+										"minItems": 3,
+										"maxItems": 3,
+										"items": {
+											"type": "number"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:damage_over_time": {
+					"description": "Applies defined amount of damage to the entity at specified intervals.",
+					"additionalProperties": false,
+					"properties": {
+						"damage_per_hurt": {
+							"description": "Amount of damage caused each hurt.",
+							"type": "number"
+						},
+						"time_between_hurt": {
+							"description": "Time in seconds between damage.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:damage_sensor": {
+					"description": "Defines what events to call when this entity is damaged by specific entities or items.",
+					"additionalProperties": false,
+					"properties": {
+						"triggers": {
+							"anyOf": [
+								{
+									"description": "List of triggers with the events to call when taking specific kinds of damage.",
+									"type": "array",
+									"items": {
+										"properties": {
+											"on_damage": {
+												"description": "Specifies filters for entity definitions and events.",
+												"$ref": "../general/eventDefinition.json"
+											},
+											"cause": {
+												"description": "Type of damage that triggers the events.",
+												"$ref": "../../general/vanilla/damageType.json"
+											},
+											"deals_damage": {
+												"description": "If true, the damage dealt to the entity will take away health from it, set to false to make the entity ignore that damage.",
+												"type": "boolean"
+											},
+											"damage_multiplier": {
+												"description": "A multiplier that modifies the base damage from the damage cause. If deals_damage is true the multiplier can only reduce the damage the entity will take to a minimum of 1.",
+												"type": "number"
+											},
+											"on_damage_sound_event": {
+												"description": "Defines what sound to play, if any, when the on_damage filters are met.",
+												"type": "string"
+											}
+										}
+									}
+								},
+								{
+									"type": "object",
+									"properties": {
+										"on_damage": {
+											"description": "Specifies filters for entity definitions and events.",
+											"$ref": "../general/eventDefinition.json"
+										},
+										"cause": {
+											"description": "Type of damage that triggers the events.",
+											"$ref": "../../general/vanilla/damageType.json"
+										},
+										"deals_damage": {
+											"description": "If true, the damage dealt to the entity will take away health from it, set to false to make the entity ignore that damage.",
+											"type": "boolean"
+										},
+										"damage_multiplier": {
+											"description": "A multiplier that modifies the base damage from the damage cause. If deals_damage is true the multiplier can only reduce the damage the entity will take to a minimum of 1.",
+											"type": "number"
+										},
+										"on_damage_sound_event": {
+											"description": "Defines what sound to play, if any, when the on_damage filters are met.",
+											"type": "string"
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				"minecraft:default_look_angle": {
+					"description": "Sets this entity's default head rotation angle.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "Angle in degrees.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:despawn": {
+					"description": "Despawns the Actor when the despawn rules or optional filters evaluate to true.",
+					"additionalProperties": false,
+					"properties": {
+						"remove_child_entities": {
+							"description": "If true, all entities linked to this entity in a child relationship (eg. leashed) will also be despawned.",
+							"type": "boolean"
+						},
+						"filters": {
+							"description": "The list of conditions that must be satisfied before the Actor is despawned. If a filter is defined then standard despawn rules are ignored.",
+							"$ref": "../general/filter.json"
+						},
+						"despawn_from_distance": {
+							"additionalProperties": false,
+							"properties": {
+								"max_distance": {
+									"description": "Maximum distance for standard despawn rules to instantly despawn the mob.",
+									"type": "number"
+								},
+								"min_distance": {
+									"description": "Minimum distance for standard despawn rules to try to despawn the mob.",
+									"type": "number"
+								}
+							}
+						},
+						"despawn_from_chance": {
+							"description": "Determines if 'min_range_random_chance' is used in the standard despawn rules.",
+							"type": "boolean"
+						},
+						"despawn_from_inactivity": {
+							"description": "Determines if the 'min_range_inactivity_timer' is used in the standard despawn rules.",
+							"type": "boolean"
+						},
+						"despawn_from_simulation_edge": {
+							"description": "Determines if the mob is instantly despawned at the edge of simulation distance in the standard despawn rules.",
+							"type": "boolean"
+						},
+						"min_range_inactivity_timer": {
+							"description": "The amount of time in seconds that the mob must be inactive.",
+							"type": "number"
+						},
+						"min_range_random_chance": {
+							"description": "A random chance between 1 and the given value.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:dweller": {
+					"description": "Defines the entity as a dweller in a village.",
+					"additionalProperties": false,
+					"properties": {
+						"dwelling_type": {
+							"const": "village",
+							"type": "string"
+						},
+						"dweller_role": {
+							"type": "string",
+							"enum": [
+								"hostile",
+								"inhabitant",
+								"defender",
+								"passive"
+							]
+						},
+						"update_interval_base": {
+							"type": "number"
+						},
+						"update_interval_variant": {
+							"type": "number"
+						},
+						"can_find_poi": {
+							"type": "boolean"
+						},
+						"can_migrate": {
+							"type": "boolean"
+						},
+						"first_founding_reward": {
+							"type": "number"
+						},
+						"preferred_profession": {
+							"type": "string",
+							"enum": [
+								"farmer",
+								"fisherman",
+								"shepard",
+								"fletcher",
+								"librarian",
+								"cartographer",
+								"cleric",
+								"armorer",
+								"weaponsmith",
+								"toolsmith",
+								"butcher",
+								"leatherworker",
+								"mason"
+							]
+						}
+					}
+				},
+				"minecraft:economy_trade_table": {
+					"description": "Defines this entity's ability to trade with players.",
+					"additionalProperties": false,
+					"properties": {
+						"display_name": {
+							"description": "Name to be displayed while trading with this entity.",
+							"type": "string"
+						},
+						"table": {
+							"description": "File path relative to the behavior pack root for this entity's trades.",
+							"type": "string"
+						},
+						"new_screen": {
+							"description": "Used to determine if trading with entity opens the new trade screen.",
+							"type": "boolean"
+						},
+						"hero_demand_discount": {
+							"description": "Used in legacy prices to determine how much should Demand be modified by when the player has the Hero of the Village mob effect.",
+							"type": "number"
+						},
+						"persist_trades": {
+							"description": "Determines if the trades should persist when the mob transforms. This makes it so that the next time the mob is transformed to something with a trade_table or economy_trade_table, then it keeps their trades.",
+							"type": "boolean"
+						},
+						"convert_trades_economy": {
+							"description": "Determines when the mob transforms, if the trades should be converted when the new mob has a economy_trade_table. When the trades are converted, the mob will generate a new trade list with their new trade table, but then it will try to convert any of the same trades over to have the same enchantments and user data. For example, if the original has a Emerald to Enchanted Iron Sword (Sharpness 1), and the new trade also has an Emerald for Enchanted Iron Sword, then the enchantment will be Sharpness 1.",
+							"type": "boolean"
+						},
+						"cured_discount": {
+							"description": "How much should the discount be modified by when the player has cured the Zombie Villager. Can be specified as a pair of numbers (low-tier trade discount and high-tier trade discount).",
+							"type": "array",
+							"minItems": 2,
+							"maxItems": 2,
+							"items": {
+								"type": "number"
+							}
+						},
+						"max_cured_discount": {
+							"description": "The max the discount can be modified by when the player has cured the Zombie Villager. Can be specified as a pair of numbers (low-tier trade discount and high-tier trade discount).",
+							"type": "array",
+							"minItems": 2,
+							"maxItems": 2,
+							"items": {
+								"type": "number"
+							}
+						},
+						"nearby_cured_discount": {
+							"description": "How much should the discount be modified by when the player has cured a nearby Zombie Villager.",
+							"type": "number"
+						},
+						"max_nearby_cured_discount": {
+							"description": "The max the discount can be modified by when the player has cured a nearby Zombie Villager.",
+							"type": "number"
+						},
+						"show_trade_screen": {
+							"description": "Show an in game trade screen when interacting with the mob.",
+							"type": "boolean"
+						},
+						"use_legacy_price_formula": {
+							"description": "Determines whether the legacy formula is used to determines the trade prices.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:environment_sensor": {
+					"description": "Creates a trigger based on environment conditions.",
+					"additionalProperties": false,
+					"properties": {
+						"triggers": {
+							"anyOf": [
+								{
+									"description": "The list of triggers that fire when the environment conditions match the given filter criteria.",
+									"type": "array",
+									"items": {
+										"$ref": "../general/eventDefinition.json"
+									}
+								},
+								{
+									"$ref": "../general/eventDefinition.json"
+								}
+							]
+						}
+					}
+				},
+				"minecraft:entity_sensor": {
+					"description": "A component that fires an event when a set of conditions are met by other entities within the defined range.",
+					"additionalProperties": false,
+					"properties": {
+						"sensor_range": {
+							"description": "The maximum distance another entity can be from this and have the filters checked against it.",
+							"type": "number"
+						},
+						"minimum_count": {
+							"description": "The minimum number of entities that must pass the filter conditions for the event to send.",
+							"type": "number"
+						},
+						"maximum_count": {
+							"description": "The maximum number of entities that must pass the filter conditions for the event to send.",
+							"type": "number"
+						},
+						"relative_range": {
+							"description": "If true the sensor range is additive on top of the entity's size.",
+							"type": "boolean"
+						},
+						"require_all": {
+							"description": "If true requires all nearby entities to pass the filter conditions for the event to send.",
+							"type": "boolean"
+						},
+						"event_filters": {
+							"$ref": "../general/filter.json"
+						},
+						"event": {
+							"type": "string"
+						}
+					}
+				},
+				"minecraft:equipment": {
+					"description": "Sets the Equipment table to use for this Entity.",
+					"additionalProperties": false,
+					"properties": {
+						"table": {
+							"description": "The file path to the equipment table, relative to the behavior pack's root.",
+							"type": "string"
+						},
+						"slot_drop_chance": {
+							"description": "A list of slots with the chance to drop an equipped item from that slot.",
+							"type": "array",
+							"items": {
+								"properties": {
+									"slot": {
+										"$ref": "../../general/slotType.json"
+									},
+									"drop_chance": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:equip_item": {
+					"description": "The entity puts on the desired equipment."
+				},
+				"minecraft:equippable": {
+					"description": "Defines an entity's behavior for having items equipped to it.",
+					"properties": {
+						"slots": {
+							"description": "List of slots and the item that can be equipped.",
+							"type": "array",
+							"items": {
+								"properties": {
+									"accepted_items": {
+										"description": "The list of items that can go in this slot.",
+										"type": "array",
+										"items": {
+											"anyOf": [
+												{
+													"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+												}
+											]
+										}
+									},
+									"interact_text": {
+										"description": "Text to be displayed when the entity can be equipped with this item when playing with Touch-screen controls.",
+										"type": "string"
+									},
+									"item": {
+										"description": "Identifier of the item that can be equipped for this slot.",
+										"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+									},
+									"on_equip": {
+										"description": "Event to trigger when this entity is equipped with this item.",
+										"$ref": "../general/eventDefinition.json"
+									},
+									"on_unequip": {
+										"description": "Event to trigger when this item is removed from this entity.",
+										"$ref": "../general/eventDefinition.json"
+									},
+									"slot": {
+										"description": "The slot number of this slot.",
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:experience_reward": {
+					"description": "Defines the experience dropped by the entity.",
+					"additionalProperties": false,
+					"properties": {
+						"on_bred": {
+							"description": "A molang expression defining the amount of experience rewarded when this entity is successfully bred. An array of expressions adds each expression's result together for a final total.",
+							"$ref": "../../molang/embeddedBeta.json"
+						},
+						"on_death": {
+							"description": "A molang expression defining the amount of experience rewarded when this entity dies. An array of expressions adds each expression's result together for a final total.",
+							"$ref": "../../molang/embeddedBeta.json"
+						}
+					}
+				},
+				"minecraft:explode": {
+					"description": "Defines how the entity explodes.",
+					"additionalProperties": false,
+					"properties": {
+						"fuse_length": {
+							"description": "The range for the random amount of time the fuse will be lit before exploding, a negative value means the explosion will be immediate.",
+							"anyOf": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "array",
+									"minItems": 2,
+									"maxItems": 2,
+									"items": {
+										"type": "number"
+									}
+								},
+								{
+									"type": "object",
+									"properties": {
+										"range_min": {
+											"type": "number"
+										},
+										"range_max": {
+											"type": "number"
+										}
+									}
+								}
+							]
+						},
+						"power": {
+							"description": "The radius of the explosion in blocks and the amount of damage the explosion deals.",
+							"type": "number"
+						},
+						"max_resistance": {
+							"description": "A blocks explosion resistance will be capped at this value when an explosion occurs.",
+							"type": "number"
+						},
+						"fuse_lit": {
+							"description": "If true, the fuse is already lit when this component is added to the entity.",
+							"type": "boolean"
+						},
+						"causes_fire": {
+							"description": "If true, blocks in the explosion radius will be set on fire.",
+							"type": "boolean"
+						},
+						"breaks_blocks": {
+							"description": "If true, the explosion will destroy blocks in the explosion radius.",
+							"type": "boolean"
+						},
+						"fire_affected_by_griefing": {
+							"description": "If true, whether the explosion causes fire is affected by the mob griefing game rule.",
+							"type": "boolean"
+						},
+						"destroy_affected_by_griefing": {
+							"description": "If true, whether the explosion breaks blocks is affected by the mob griefing game rule.",
+							"type": "boolean"
+						},
+						"allow_damage_underwater": {
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:fire_immune": {
+					"description": "Sets that this entity doesn't take damage from fire.",
+					"additionalProperties": false,
+					"anyOf": [
+						{
+							"type": "boolean"
+						},
+						{}
+					]
+				},
+				"minecraft:floats_in_liquid": {
+					"additionalProperties": false,
+					"description": "Sets that this entity can float in liquid blocks."
+				},
+				"minecraft:flocking": {
+					"description": "Allows entities to flock in groups in water or not.",
+					"additionalProperties": false,
+					"properties": {
+						"in_water": {
+							"description": "Tells the Flocking Component if the entity exists in water.",
+							"type": "boolean"
+						},
+						"match_variants": {
+							"description": "Tells the flockers that they can only match similar entities that also match the variant, mark variants, and color data of the other potential flockers.",
+							"type": "boolean"
+						},
+						"use_center_of_mass": {
+							"description": "Tells the flockers that they will follow flocks based on the center of mass.",
+							"type": "boolean"
+						},
+						"low_flock_limit": {
+							"description": "Determines the low bound amount of entities that can be allowed in the flock.",
+							"type": "number"
+						},
+						"high_flock_limit": {
+							"description": "Determines the high bound amount of entities that can be allowed in the flock.",
+							"type": "number"
+						},
+						"goal_weight": {
+							"description": "The weight on which to apply on the goal output.",
+							"type": "number"
+						},
+						"loner_chance": {
+							"description": "The percentage chance between 0-1 that a fish will spawn and not want to join flocks. Invalid values will be capped at the end points.",
+							"type": "number"
+						},
+						"influence_radius": {
+							"description": "The area around the entity that allows others to be added to the flock.",
+							"type": "number"
+						},
+						"breach_influence": {
+							"description": "The amount of push back given to a flocker that breaches out of the water.",
+							"type": "number"
+						},
+						"separation_weight": {
+							"description": "The weight applied to the separation of the flock.",
+							"type": "number"
+						},
+						"separation_threshold": {
+							"description": "The distance that is determined to be to close to another flocking and to start applying separation.",
+							"type": "number"
+						},
+						"cohesion_weight": {
+							"description": "The weight applied for the cohesion steering of the flock.",
+							"type": "number"
+						},
+						"cohesion_threshold": {
+							"description": "The threshold in which to start applying cohesion.",
+							"type": "number"
+						},
+						"inner_cohesion_threshold": {
+							"description": "The distance in which the flocker will stop applying cohesion.",
+							"type": "number"
+						},
+						"min_height": {
+							"description": "The min height allowable in the air or water.",
+							"type": "number"
+						},
+						"max_height": {
+							"description": "The max height allowable in the air or water.",
+							"type": "number"
+						},
+						"block_distance": {
+							"description": "The amount of blocks away the entity will look at to push away from.",
+							"type": "number"
+						},
+						"block_weight": {
+							"description": "The weight of the push back away from blocks.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:flying_speed": {
+					"description": "Speed in Blocks that this entity flies at.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "Flying speed in blocks per tick.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:follow_range": {
+					"description": "The follow range for the entity.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						},
+						"max": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:foot_size": {
+					"doNotSuggest": true,
+					"despricationMessage": "Deprecated - Sets the number of blocks the entity can step without jumping.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:friction_modifier": {
+					"description": "Defines how much friction affects this entity.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The higher the number, the more the friction affects this entity. A value of 1.0 means regular friction, while 2.0 means twice as much.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:genetics": {
+					"description": "Defines the way a mob's genes and alleles are passed on to it's offspring, and how those traits manifest in the child. Compatible parent genes are crossed together, the alleles are handed down from the parents to the child, and any matching genetic variants fire off JSON events to modify the child and express the traits.",
+					"additionalProperties": false,
+					"properties": {
+						"mutation_rate": {
+							"description": "Chance that an allele will be replaced with a random one instead of the parent's allele during birth.",
+							"type": "number"
+						},
+						"genes": {
+							"description": "The list of genes that this entity has and will cross with a partner during breeding.",
+							"type": "array",
+							"items": {
+								"properties": {
+									"name": {
+										"description": "The name of the gene.",
+										"type": "string"
+									},
+									"allele_range": {
+										"description": "The range of positive integer allele values for this gene. Spawned mobs will have a random number in this range assigned to them.",
+										"anyOf": [
+											{
+												"type": "integer"
+											},
+											{
+												"properties": {
+													"range_min": {
+														"description": "Lower bound of the allele values for this gene.",
+														"type": "integer"
+													},
+													"range_max": {
+														"description": "Upper bound of the allele values for this gene.",
+														"type": "integer"
+													}
+												}
+											}
+										]
+									},
+									"genetic_variants": {
+										"description": "The list of genetic variants for this gene. These check for particular allele combinations and fire events when all of them are satisfied.",
+										"type": "array",
+										"items": {
+											"properties": {
+												"main_allele": {
+													"description": "If this value is non-negative, compare the mob's main allele with this value for a match. Can also be a range of integers.",
+													"anyOf": [
+														{
+															"type": "number"
+														},
+														{
+															"properties": {
+																"range_min": {
+																	"type": "number"
+																},
+																"range_max": {
+																	"type": "number"
+																}
+															}
+														}
+													]
+												},
+												"both_allele": {
+													"description": "If this value is non-negative, compare both the mob's main and hidden alleles with this value for a match with both. Can also be a range of integers.",
+													"anyOf": [
+														{
+															"type": "number"
+														},
+														{
+															"properties": {
+																"range_min": {
+																	"type": "number"
+																},
+																"range_max": {
+																	"type": "number"
+																}
+															}
+														}
+													]
+												},
+												"hidden_allele": {
+													"description": "If this value is non-negative, compare the mob's hidden allele with this value for a match. Can also be a range of integers.",
+													"anyOf": [
+														{
+															"type": "number"
+														},
+														{
+															"properties": {
+																"range_min": {
+																	"type": "number"
+																},
+																"range_max": {
+																	"type": "number"
+																}
+															}
+														}
+													]
+												},
+												"either_allele": {
+													"description": "If this value is non-negative, compare both the mob's main and hidden alleles with this value for a match with either. Can also be a range of integers.",
+													"anyOf": [
+														{
+															"type": "number"
+														},
+														{
+															"properties": {
+																"range_min": {
+																	"type": "number"
+																},
+																"range_max": {
+																	"type": "number"
+																}
+															}
+														}
+													]
+												},
+												"birth_event": {
+													"description": "Event to run when this mob is created and matches the above allele conditions.",
+													"$ref": "../general/eventDefinition.json"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:giveable": {
+					"description": "Defines sets of items that can be used to trigger events when used on this entity. The item will also be taken and placed in the entity's inventory.",
+					"properties": {
+						"triggers": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"properties": {
+											"cooldown": {
+												"description": "An optional cool down in seconds to prevent spamming interactions.",
+												"type": "number"
+											},
+											"items": {
+												"description": "The list of items that can be given to the entity to place in their inventory.",
+												"type": "array",
+												"items": {
+													"anyOf": [
+														{
+															"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+														}
+													]
+												}
+											},
+											"on_give": {
+												"description": "Event to fire when the correct item is given.",
+												"$ref": "../general/eventDefinition.json"
+											}
+										}
+									}
+								},
+								{
+									"properties": {
+										"cooldown": {
+											"description": "An optional cool down in seconds to prevent spamming interactions.",
+											"type": "number"
+										},
+										"items": {
+											"description": "The list of items that can be given to the entity to place in their inventory.",
+											"type": "array",
+											"items": {
+												"anyOf": [
+													{
+														"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+													}
+												]
+											}
+										},
+										"on_give": {
+											"description": "Event to fire when the correct item is given.",
+											"$ref": "../general/eventDefinition.json"
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				"minecraft:ground_offset": {
+					"description": "Sets the offset from the ground that the entity is actually at.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The value of the entity's offset from the terrain, in blocks.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:group_size": {
+					"description": "Keeps track of entity group size in the given radius.",
+					"additionalProperties": false,
+					"properties": {
+						"radius": {
+							"description": "Radius from center of entity.",
+							"type": "number"
+						},
+						"filters": {
+							"description": "The list of conditions that must be satisfied for other entities to be counted towards group size.",
+							"$ref": "../general/filter.json"
+						}
+					}
+				},
+				"minecraft:grows_crop": {
+					"description": "Could increase crop growth when entity walks over crop",
+					"additionalProperties": false,
+					"properties": {
+						"charges": {
+							"description": "Number of charges.",
+							"type": "number"
+						},
+						"chance": {
+							"description": "Value between 0-1. Chance of success per tick.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:healable": {
+					"description": "Defines the interactions with this entity for healing it.",
+					"properties": {
+						"force_use": {
+							"description": "Determines if item can be used regardless of entity being at full health.",
+							"type": "boolean"
+						},
+						"filters": {
+							"description": "The filter group that defines the conditions for using this item to heal the entity.",
+							"$ref": "../general/filter.json"
+						},
+						"items": {
+							"description": "The array of items that can be used to heal this entity.",
+							"type": "array",
+							"items": {
+								"properties": {
+									"item": {
+										"description": "Item identifier that can be used to heal this entity.",
+										"anyOf": [
+											{
+												"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+											}
+										]
+									},
+									"heal_amount": {
+										"description": "The amount of health this entity gains when fed this item.",
+										"type": "number"
+									},
+									"filters": {
+										"$ref": "../general/filter.json"
+									},
+									"effects": {
+										"type": "array",
+										"items": {
+											"properties": {
+												"name": {
+													"$ref": "../../general/vanilla/effectName.json"
+												},
+												"chance": {
+													"type": "number"
+												},
+												"duration": {
+													"type": "number"
+												},
+												"amplifier": {
+													"type": "number"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:health": {
+					"description": "Sets the health for the entity.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"anyOf": [
+								{
+									"type": "number"
+								},
+								{
+									"properties": {
+										"range_min": {
+											"type": "number"
+										},
+										"range_max": {
+											"type": "number"
+										}
+									}
+								}
+							]
+						},
+						"max": {
+							"type": "number"
+						},
+						"min": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:hide": {
+					"additionalProperties": false
+				},
+				"minecraft:home": {
+					"description": "Saves a home pos for when the the entity is spawned."
+				},
+				"minecraft:horse.jump_strength": {
+					"description": "Sets the strength of the entity's jump.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"anyOf": [
+								{
+									"type": "number"
+								},
+								{
+									"properties": {
+										"range_min": {
+											"type": "number"
+										},
+										"range_max": {
+											"type": "number"
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				"minecraft:hurt_on_condition": {
+					"description": "Defines a set of conditions under which an entity should take damage.",
+					"additionalProperties": false,
+					"properties": {
+						"damage_conditions": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"filters": {
+										"$ref": "../general/filter.json"
+									},
+									"cause": {
+										"$ref": "../../general/vanilla/damageType.json"
+									},
+									"damage_per_tick": {
+										"description": "The amount of damage done each tick that the conditions are met.",
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:input_ground_controlled": {
+					"description": "When configured as a rideable entity, the entity will be controlled using WASD controls.",
+					"additionalProperties": false
+				},
+				"minecraft:insomnia": {
+					"description": "Adds a timer since last rested to see if phantoms should spawn.",
+					"additionalProperties": false,
+					"properties": {
+						"days_until_insomnia": {
+							"description": "Number of days the mob has to stay up until the insomnia effect begins.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:instant_despawn": {
+					"description": "Despawns the Actor immediately.",
+					"additionalProperties": false,
+					"properties": {
+						"remove_child_entities": {
+							"description": "If true, all entities linked to this entity in a child relationship (eg. leashed) will also be despawned.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:interact": {
+					"description": "Defines interactions with this entity.",
+					"additionalProperties": false,
+					"properties": {
+						"interactions": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"add_items": {
+										"description": "Loot table with items to add to the player's inventory upon successful interaction.",
+										"properties": {
+											"table": {
+												"description": "File path, relative to the Behavior Pack's path, to the loot table file.",
+												"type": "string"
+											}
+										}
+									},
+									"cooldown": {
+										"description": "Time in seconds before this entity can be interacted with again.",
+										"type": "number"
+									},
+									"cooldown_after_being_attacked": {
+										"description": "Time in seconds before this entity can be interacted with after being attacked.",
+										"type": "number"
+									},
+									"hurt_item": {
+										"description": "The amount of damage the item will take when used to interact with this entity. A value of 0 means the item won't lose durability.",
+										"type": "number"
+									},
+									"interact_text": {
+										"description": "Text to show when the player is able to interact in this way with this entity when playing with Touch-screen controls.",
+										"type": "string"
+									},
+									"on_interact": {
+										"description": "Event to fire when the interaction occurs.",
+										"$ref": "../general/eventDefinition.json"
+									},
+									"particle_on_start": {
+										"description": "Particle effect that will be triggered at the start of the interaction.",
+										"$ref": "../general/particleDefinition.json"
+									},
+									"play_sounds": {
+										"description": "List of sounds to play when the interaction occurs.",
+										"type": "string"
+									},
+									"spawn_entities": {
+										"description": "List of entities to spawn when the interaction occurs.",
+										"type": "array",
+										"items": {
+											"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+										}
+									},
+									"spawn_items": {
+										"description": "Loot table with items to drop on the ground upon successful interaction.",
+										"properties": {
+											"table": {
+												"type": "string"
+											}
+										}
+									},
+									"swing": {
+										"description": "If true, the player will do the 'swing' animation when interacting with this entity.",
+										"type": "boolean"
+									},
+									"transform_to_item": {
+										"description": "The item used will transform to this item upon successful interaction.",
+										"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+									},
+									"barter": {
+										"type": "boolean"
+									},
+									"admire": {
+										"type": "boolean"
+									},
+									"use_item": {
+										"description": "If true, the interaction will use an item.",
+										"type": "boolean"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:inventory": {
+					"description": "Defines this entity's inventory properties.",
+					"additionalProperties": false,
+					"properties": {
+						"additional_slots_per_strength": {
+							"description": "Number of slots that this entity can gain per extra strength.",
+							"type": "number"
+						},
+						"can_be_siphoned_from": {
+							"description": "If true, the contents of this inventory can be removed by a hopper.",
+							"type": "boolean"
+						},
+						"container_type": {
+							"description": "Type of container this entity has. Can be horse, minecart_chest, minecart_hopper, inventory, container or hopper.",
+							"$ref": "../../general/inventoryType.json"
+						},
+						"inventory_size": {
+							"description": "Number of slots the container has.",
+							"type": "number"
+						},
+						"private": {
+							"description": "If true, the entity will not drop it's inventory on death.",
+							"type": "boolean"
+						},
+						"restrict_to_owner": {
+							"description": "If true, the entity's inventory can only be accessed by its owner or itself.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:is_baby": {
+					"description": "Sets that this entity is a baby.",
+					"additionalProperties": false
+				},
+				"minecraft:is_charged": {
+					"description": "Sets that this entity is charged.",
+					"additionalProperties": false
+				},
+				"minecraft:is_chested": {
+					"description": "Sets that this entity is currently carrying a chest.",
+					"additionalProperties": false
+				},
+				"minecraft:is_dyeable": {
+					"description": "Allows dyes to be used on this entity to change its color.",
+					"additionalProperties": false,
+					"properties": {
+						"interact_text": {
+							"type": "string"
+						}
+					}
+				},
+				"minecraft:is_hidden_when_invisible": {
+					"description": "Sets that this entity can hide from hostile mobs while invisible.",
+					"additionalProperties": false
+				},
+				"minecraft:is_ignited": {
+					"description": "Sets that this entity is currently on fire.",
+					"additionalProperties": false
+				},
+				"minecraft:is_illager_captain": {
+					"description": "Sets that this entity is an illager captain.",
+					"additionalProperties": false
+				},
+				"minecraft:is_saddled": {
+					"description": "Sets that this entity is currently saddled.",
+					"additionalProperties": false
+				},
+				"minecraft:is_shaking": {
+					"description": "Sets that this entity is currently shaking.",
+					"additionalProperties": false
+				},
+				"minecraft:is_sheared": {
+					"description": "Sets that this entity is currently sheared.",
+					"additionalProperties": false
+				},
+				"minecraft:is_stackable": {
+					"description": "Sets that this entity can be stacked.",
+					"additionalProperties": false
+				},
+				"minecraft:is_stunned": {
+					"description": "Sets that this entity is currently stunned.",
+					"additionalProperties": false
+				},
+				"minecraft:is_tamed": {
+					"description": "Sets that this entity is currently tamed.",
+					"additionalProperties": false
+				},
+				"minecraft:item_controllable": {
+					"description": "Defines what items can be used to control this entity while ridden.",
+					"additionalProperties": false,
+					"properties": {
+						"control_items": {
+							"anyOf": [
+								{
+									"description": "List of items that can be used to control this entity.",
+									"type": "array",
+									"items": {
+										"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+									}
+								},
+								{
+									"description": "Item that can be used to control this entity.",
+									"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+								}
+							]
+						}
+					}
+				},
+				"minecraft:item_hopper": {
+					"description": "Determines that this entity is an item hopper.",
+					"additionalProperties": false
+				},
+				"minecraft:jump.static": {
+					"description": "Gives the entity the ability to jump.",
+					"additionalProperties": false,
+					"properties": {
+						"jump_power": {
+							"description": "The initial vertical velocity for the jump.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:jump.dynamic": {
+					"description": "Defines a dynamic type jump control that will change jump properties based on the speed modifier of the mob.",
+					"additionalProperties": false
+				},
+				"minecraft:knockback_resistance": {
+					"description": "Gives the entity resistance to knockback.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						},
+						"max": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:lava_movement": {
+					"description": "Sets the movement speed of the entity in lava.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:leashable": {
+					"description": "Allows this entity to be leashed and defines the conditions and events for this entity when is leashed.",
+					"additionalProperties": false,
+					"properties": {
+						"soft_distance": {
+							"description": "Distance in blocks at which the 'spring' effect starts acting to keep this entity close to the entity that leashed it.",
+							"type": "number"
+						},
+						"hard_distance": {
+							"description": "Distance in blocks at which the leash stiffens, restricting movement.",
+							"type": "number"
+						},
+						"max_distance": {
+							"description": "Distance in blocks at which the leash breaks.",
+							"type": "number"
+						},
+						"on_leash": {
+							"description": "Event to call when this entity is leashed.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"on_unleash": {
+							"description": "Event to call when this entity is unleashed.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"can_be_stolen": {
+							"description": "Event to call when this entity is unleashed.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:lookat": {
+					"description": "Defines the behavior when another entity looks at this entity.",
+					"additionalProperties": false,
+					"properties": {
+						"search_radius": {
+							"description": "Maximum distance this entity will look for another entity looking at it.",
+							"type": "number"
+						},
+						"set_target": {
+							"description": "If true, this entity will set the attack target as the entity that looked at it.",
+							"type": "boolean"
+						},
+						"look_cooldown": {
+							"description": "The range for the random amount of time during which the entity is 'cooling down' and won't get angered or look for a target.",
+							"type": "number"
+						},
+						"filters": {
+							"description": "Defines the entities that can trigger this component.",
+							"$ref": "../general/filter.json"
+						},
+						"look_event": {
+							"description": "The event identifier to run when the entities specified in filters look at this entity.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"allow_invulnerable": {
+							"description": "If true, invulnerable entities (e.g. Players in creative mode) are considered valid targets.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:loot": {
+					"description": "Sets the loot table for what items this entity drops upon death.",
+					"additionalProperties": false,
+					"properties": {
+						"table": {
+							"description": "The path to the loot table, relative to the Behavior Pack's root.",
+							"type": "string"
+						}
+					}
+				},
+				"minecraft:managed_wandering_trader": {
+					"description": "This component is used to implement part of the Wandering Trader behavior.",
+					"additionalProperties": false
+				},
+				"minecraft:mark_variant": {
+					"description": "Additional variant value. Can be used to further differentiate variants.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The ID of the variant. By convention, 0 is the ID of the base entity.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:mob_effect": {
+					"description": "A component that applies a mob effect to entities that get within range.",
+					"additionalProperties": false,
+					"properties": {
+						"effect_range": {
+							"description": "How close a hostile entity must be to have the mob effect applied.",
+							"type": "number"
+						},
+						"mob_effect": {
+							"description": "The mob effect that is applied to entities that enter this entities effect range.",
+							"$ref": "../../general/vanilla/effectName.json"
+						},
+						"effect_time": {
+							"description": "How long the applied mob effect lasts in seconds.",
+							"type": "number"
+						},
+						"entity_filter": {
+							"$ref": "../general/filter.json"
+						}
+					}
+				},
+				"minecraft:movement": {
+					"description": "Defines the movement speed for the entity.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						},
+						"max": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:movement.amphibious": {
+					"description": "This move control allows the mob to swim in water and walk on land.",
+					"additionalProperties": false,
+					"properties": {
+						"max_turn": {
+							"description": "The maximum number in degrees the mob can turn per tick.",
+							"$ref": "../../general/degree.json"
+						}
+					}
+				},
+				"minecraft:movement.basic": {
+					"description": "This component accents the movement of an entity.",
+					"additionalProperties": false,
+					"properties": {
+						"max_turn": {
+							"description": "The maximum number in degrees the mob can turn per tick.",
+							"$ref": "../../general/degree.json"
+						}
+					}
+				},
+				"minecraft:movement.fly": {
+					"description": "This move control causes the mob to fly.",
+					"additionalProperties": false,
+					"properties": {
+						"max_turn": {
+							"description": "The maximum number in degrees the mob can turn per tick.",
+							"$ref": "../../general/degree.json"
+						}
+					}
+				},
+				"minecraft:movement.generic": {
+					"description": "This move control allows a mob to fly, swim, climb, etc.",
+					"additionalProperties": false,
+					"properties": {
+						"max_turn": {
+							"description": "The maximum number in degrees the mob can turn per tick.",
+							"$ref": "../../general/degree.json"
+						}
+					}
+				},
+				"minecraft:movement.hover": {
+					"description": "This move control causes the mob to hover.",
+					"additionalProperties": false,
+					"properties": {
+						"max_turn": {
+							"description": "The maximum number in degrees the mob can turn per tick.",
+							"$ref": "../../general/degree.json"
+						}
+					}
+				},
+				"minecraft:movement.jump": {
+					"description": "Move control that causes the mob to jump as it moves with a specified delay between jumps.",
+					"additionalProperties": false,
+					"properties": {
+						"max_turn": {
+							"description": "The maximum number in degrees the mob can turn per tick.",
+							"$ref": "../../general/degree.json"
+						},
+						"jump_delay": {
+							"description": "Delay after landing when using the slime move control.",
+							"type": "array",
+							"minItems": 2,
+							"maxItems": 2,
+							"items": {
+								"type": "number"
+							}
+						}
+					}
+				},
+				"minecraft:movement.glide": {
+					"description": "This move causes the mob to glide.",
+					"additionalProperties": false,
+					"properties": {
+						"max_turn": {
+							"$ref": "../../general/degree.json"
+						},
+						"start_speed": {
+							"type": "number"
+						},
+						"speed_when_turning": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:skin_id": {
+					"description": "Skin ID value. Can be used to differentiate skins, such as base skins for villagers.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The ID of the skin. By convention, 0 is the ID of the base skin.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:movement.skip": {
+					"description": "This move control causes the mob to hop as it moves.",
+					"additionalProperties": false,
+					"properties": {
+						"max_turn": {
+							"description": "The maximum number in degrees the mob can turn per tick.",
+							"$ref": "../../general/degree.json"
+						}
+					}
+				},
+				"minecraft:movement.sway": {
+					"description": "This move control causes the mob to sway side to side giving the impression it is swimming.",
+					"additionalProperties": false,
+					"properties": {
+						"max_turn": {
+							"description": "The maximum number in degrees the mob can turn per tick.",
+							"$ref": "../../general/degree.json"
+						},
+						"sway_amplitude": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:nameable": {
+					"description": "Allows this entity to be named (e.g. using a name tag).",
+					"additionalProperties": false,
+					"properties": {
+						"allow_name_tag_renaming": {
+							"description": "If true, this entity can be renamed with name tags.",
+							"type": "boolean"
+						},
+						"always_show": {
+							"description": "If true, the name will always be shown.",
+							"type": "boolean"
+						},
+						"default_trigger": {
+							"description": "Trigger to run when the entity gets named.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"name_actions": {
+							"description": "Describes the special names for this entity and the events to call when the entity acquires those names.",
+							"type": "array",
+							"items": {
+								"properties": {
+									"name_filter": {
+										"description": "List of special names that will cause the events defined in 'on_named' to fire.",
+										"type": "string"
+									},
+									"on_named": {
+										"description": "Event to be called when this entity acquires the name specified in 'name_filter'.",
+										"$ref": "../general/eventDefinition.json"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:navigation.climb": {
+					"description": "Allows this entity to generate paths that include vertical walls like the vanilla Spiders do.",
+					"properties": {
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"description": "Tells the pathfinder to avoid portals (like nether portals) when finding a path.",
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"description": "Whether or not the pathfinder should avoid tiles that are exposed to the sun when creating paths.",
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"description": "Tells the pathfinder to avoid water when creating a path.",
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door and break it.",
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"description": "Whether a path can be created through a door.",
+							"type": "boolean"
+						},
+						"can_open_iron_doors": {
+							"description": "Tells the pathfinder that it can path through a closed iron door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the water.",
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the lava.",
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"description": "Tells the pathfinder whether or not it will be pulled down by gravity while in water.",
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"description": "Tells the pathfinder whether or not it can travel in lava like walking on ground.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.float": {
+					"description": "Allows this entity to generate paths that include vertical walls like the vanilla Spiders do.",
+					"properties": {
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"description": "Tells the pathfinder to avoid portals (like nether portals) when finding a path.",
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"description": "Whether or not the pathfinder should avoid tiles that are exposed to the sun when creating paths.",
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"description": "Tells the pathfinder to avoid water when creating a path.",
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door and break it.",
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"description": "Whether a path can be created through a door.",
+							"type": "boolean"
+						},
+						"can_open_iron_doors": {
+							"description": "Tells the pathfinder that it can path through a closed iron door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the water.",
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the lava.",
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"description": "Tells the pathfinder whether or not it will be pulled down by gravity while in water.",
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"description": "Tells the pathfinder whether or not it can travel in lava like walking on ground.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.fly": {
+					"description": "Allows this entity to generate paths that include vertical walls like the vanilla Spiders do.",
+					"properties": {
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"description": "Tells the pathfinder to avoid portals (like nether portals) when finding a path.",
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"description": "Whether or not the pathfinder should avoid tiles that are exposed to the sun when creating paths.",
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"description": "Tells the pathfinder to avoid water when creating a path.",
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door and break it.",
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"description": "Whether a path can be created through a door.",
+							"type": "boolean"
+						},
+						"can_open_iron_doors": {
+							"description": "Tells the pathfinder that it can path through a closed iron door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the water.",
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the lava.",
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"description": "Tells the pathfinder whether or not it will be pulled down by gravity while in water.",
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"description": "Tells the pathfinder whether or not it can travel in lava like walking on ground.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.generic": {
+					"description": "Allows this entity to generate paths that include vertical walls like the vanilla Spiders do.",
+					"properties": {
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"description": "Tells the pathfinder to avoid portals (like nether portals) when finding a path.",
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"description": "Whether or not the pathfinder should avoid tiles that are exposed to the sun when creating paths.",
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"description": "Tells the pathfinder to avoid water when creating a path.",
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door and break it.",
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"description": "Whether a path can be created through a door.",
+							"type": "boolean"
+						},
+						"can_open_iron_doors": {
+							"description": "Tells the pathfinder that it can path through a closed iron door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the water.",
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the lava.",
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"description": "Tells the pathfinder whether or not it will be pulled down by gravity while in water.",
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"description": "Tells the pathfinder whether or not it can travel in lava like walking on ground.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.hover": {
+					"description": "Allows this entity to generate paths that include vertical walls like the vanilla Spiders do.",
+					"properties": {
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"description": "Tells the pathfinder to avoid portals (like nether portals) when finding a path.",
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"description": "Whether or not the pathfinder should avoid tiles that are exposed to the sun when creating paths.",
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"description": "Tells the pathfinder to avoid water when creating a path.",
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door and break it.",
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"description": "Whether a path can be created through a door.",
+							"type": "boolean"
+						},
+						"can_open_iron_doors": {
+							"description": "Tells the pathfinder that it can path through a closed iron door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the water.",
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the lava.",
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"description": "Tells the pathfinder whether or not it will be pulled down by gravity while in water.",
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"description": "Tells the pathfinder whether or not it can travel in lava like walking on ground.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.swim": {
+					"description": "Allows this entity to generate paths that include vertical walls like the vanilla Spiders do.",
+					"properties": {
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"description": "Tells the pathfinder to avoid portals (like nether portals) when finding a path.",
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"description": "Whether or not the pathfinder should avoid tiles that are exposed to the sun when creating paths.",
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"description": "Tells the pathfinder to avoid water when creating a path.",
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door and break it.",
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"description": "Whether a path can be created through a door.",
+							"type": "boolean"
+						},
+						"can_open_iron_doors": {
+							"description": "Tells the pathfinder that it can path through a closed iron door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the water.",
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the lava.",
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"description": "Tells the pathfinder whether or not it will be pulled down by gravity while in water.",
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"description": "Tells the pathfinder whether or not it can travel in lava like walking on ground.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.walk": {
+					"description": "Allows this entity to generate paths that include vertical walls like the vanilla Spiders do.",
+					"properties": {
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"description": "Tells the pathfinder to avoid portals (like nether portals) when finding a path.",
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"description": "Whether or not the pathfinder should avoid tiles that are exposed to the sun when creating paths.",
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"description": "Tells the pathfinder to avoid water when creating a path.",
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door and break it.",
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"description": "Tells the pathfinder that it can path through a closed door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"description": "Whether a path can be created through a door.",
+							"type": "boolean"
+						},
+						"can_open_iron_doors": {
+							"description": "Tells the pathfinder that it can path through a closed iron door assuming the AI will open the door.",
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the water.",
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"description": "Tells the pathfinder whether or not it can travel on the surface of the lava.",
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"description": "Tells the pathfinder whether or not it will be pulled down by gravity while in water.",
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"description": "Tells the pathfinder whether or not it can travel in lava like walking on ground.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:npc": {
+					"description": "Gives the entity the npc menu when interacted with.",
+					"additionalProperties": false,
+					"properties": {
+						"npc_data": {
+							"properties": {
+								"portrait_offsets": {
+									"properties": {
+										"translate": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"type": "number"
+											}
+										},
+										"scale": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"type": "number"
+											}
+										}
+									}
+								},
+								"picker_offsets": {
+									"properties": {
+										"translate": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"type": "number"
+											}
+										},
+										"scale": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"type": "number"
+											}
+										}
+									}
+								},
+								"skin_list": {
+									"type": "array",
+									"items": {
+										"properties": {
+											"variant": {
+												"type": "number"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:on_death": {
+					"description": "Triggers an event upon the entity's death.",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_friendly_anger": {
+					"description": "Adds a trigger that will run when a nearby entity of the same type as this entity becomes angry.",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_hurt": {
+					"description": "Adds a trigger to call when this entity takes damage.",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_hurt_by_player": {
+					"description": "Adds a trigger to call when this entity is attacked by the player.",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_ignite": {
+					"description": "Adds a trigger to call when this entity is set on fire.",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_start_landing": {
+					"description": "Only usable by the Ender Dragon. Adds a trigger to call when this entity lands.",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_start_takeoff": {
+					"description": "Only usable by the Ender Dragon. Adds a trigger to call when this entity starts flying.",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_target_acquired": {
+					"description": "Adds a trigger to call when this entity finds a target.",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_target_escape": {
+					"description": "Adds a trigger to call when this entity loses the target it currently has.",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_wake_with_owner": {
+					"description": "Adds a trigger to call when this pet's owner awakes after sleeping with the pet.",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:peek": {
+					"description": "Defines the entity's 'peek' behavior, defining the events that should be called during it.",
+					"additionalProperties": false,
+					"properties": {
+						"on_open": {
+							"description": "Event to call when the entity starts peeking.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"on_close": {
+							"description": "Event to call when the entity is done peeking.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"on_target_open": {
+							"description": "Event to call when the entity's target entity starts peeking.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:persistent": {
+					"description": "Defines whether an entity should be persistent in the game world.",
+					"additionalProperties": false
+				},
+				"minecraft:physics": {
+					"description": "Defines physics properties of an actor, including if it is affected by gravity or if it collides with objects.",
+					"additionalProperties": false,
+					"properties": {
+						"has_collision": {
+							"description": "Whether or not the object collides with things.",
+							"type": "boolean"
+						},
+						"has_gravity": {
+							"description": "Whether or not the entity is affected by gravity.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft.player:saturation": {
+					"description": "Defines the player's saturation.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						},
+						"min": {
+							"type": "number"
+						},
+						"max": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft.player:exhaustion": {
+					"description": "Defines the player's exhaustion.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						},
+						"min": {
+							"type": "number"
+						},
+						"max": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft.player:level": {
+					"description": "Defines the player's level.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						},
+						"min": {
+							"type": "number"
+						},
+						"max": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft.player:experience": {
+					"description": "Defines the player's experience.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						},
+						"min": {
+							"type": "number"
+						},
+						"max": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:pushable": {
+					"description": "Defines what can push an entity between other entities and pistons.",
+					"additionalProperties": false,
+					"properties": {
+						"is_pushable": {
+							"description": "Whether the entity can be pushed by other entities.",
+							"type": "boolean"
+						},
+						"is_pushable_by_piston": {
+							"description": "Whether the entity can be pushed by pistons safely.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:push_through": {
+					"description": "Sets the distance through which the entity can push through.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The value of the entity's push-through, in blocks.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:preferred_path": {
+					"description": "Specifies costing information for mobs that prefer to walk on preferred paths.",
+					"additionalProperties": false,
+					"properties": {
+						"max_fall_blocks": {
+							"description": "Distance mob can fall without taking damage.",
+							"type": "number"
+						},
+						"jump_cost": {
+							"description": "Added cost for jumping up a node.",
+							"type": "number"
+						},
+						"default_block_cost": {
+							"description": "Cost for non-preferred blocks.",
+							"type": "number"
+						},
+						"preferred_path_blocks": {
+							"description": "A list of blocks with their associated cost.",
+							"type": "array",
+							"items": {
+								"properties": {
+									"cost": {
+										"type": "number"
+									},
+									"blocks": {
+										"type": "array",
+										"items": {
+											"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:projectile": {
+					"description": "Allows the entity to be a thrown entity.",
+					"additionalProperties": false,
+					"properties": {
+						"on_hit": {
+							"properties": {
+								"definition_event": {
+									"properties": {
+										"affect_projectile": {
+											"type": "boolean"
+										},
+										"affect_shooter": {
+											"type": "boolean"
+										},
+										"affect_target": {
+											"type": "boolean"
+										},
+										"affect_splash_area": {
+											"type": "boolean"
+										},
+										"splash_area": {
+											"type": "number"
+										},
+										"event_trigger": {
+											"$ref": "../general/eventDefinition.json"
+										}
+									}
+								},
+								"grant_xp": {
+									"properties": {
+										"minXP": {
+											"type": "number"
+										},
+										"maxXP": {
+											"type": "number"
+										},
+										"xp": {
+											"type": "number"
+										}
+									}
+								},
+								"spawn_aoe_cloud": {
+									"properties": {
+										"radius": {
+											"type": "number"
+										},
+										"radius_on_use": {
+											"type": "number"
+										},
+										"potion": {
+											"$ref": "../../general/vanilla/potionIds.json"
+										},
+										"particle": {
+											"$ref": "../../general/particleName.json"
+										},
+										"duration": {
+											"type": "number"
+										},
+										"color": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"type": "number"
+											}
+										},
+										"affect_owner": {
+											"type": "boolean"
+										},
+										"reapplication_delay": {
+											"type": "number"
+										}
+									}
+								},
+								"impact_damage": {
+									"properties": {
+										"filter": {
+											"$ref": "../../molang/embeddedBeta.json"
+										},
+										"damage": {
+											"anyOf": [
+												{
+													"type": "array",
+													"minItems": 2,
+													"maxItems": 2,
+													"items": {
+														"type": "integer"
+													}
+												},
+												{
+													"type": "integer"
+												}
+											]
+										},
+										"knockback": {
+											"description": "If true, the projectile will knock back the entity it hits.",
+											"type": "boolean"
+										},
+										"semi_random_diff_damage": {
+											"type": "boolean"
+										},
+										"destroy_on_hit": {
+											"description": "If true, this entity will be destroyed when hit.",
+											"type": "boolean"
+										},
+										"max_critical_damage": {
+											"type": "number"
+										},
+										"min_critical_damage": {
+											"type": "number"
+										},
+										"power_multiplier": {
+											"type": "number"
+										},
+										"should_bounce": {
+											"type": "boolean"
+										},
+										"channeling": {
+											"type": "boolean"
+										},
+										"set_last_hurt_requires_damage": {
+											"type": "boolean"
+										},
+										"destroy_on_hit_requres_damage": {
+											"type": "boolean"
+										}
+									}
+								},
+								"spawn_chance": {
+									"properties": {
+										"first_spawn_percent_chance": {
+											"type": "number"
+										},
+										"first_spawn_chance": {
+											"type": "number"
+										},
+										"second_spawn_percent_chance": {
+											"type": "number"
+										},
+										"second_spawn_chance": {
+											"type": "number"
+										},
+										"first_spawn_count": {
+											"type": "number"
+										},
+										"second_spawn_count": {
+											"type": "number"
+										},
+										"spawn_mob": {
+											"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+										},
+										"spawn_definition": {
+											"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+										},
+										"spawn_baby": {
+											"type": "boolean"
+										}
+									}
+								},
+								"mob_effect": {
+									"properties": {
+										"effect": {
+											"$ref": "../../general/vanilla/effectName.json"
+										},
+										"duration": {
+											"type": "number"
+										},
+										"duration_easy": {
+											"type": "number"
+										},
+										"duration_normal": {
+											"type": "number"
+										},
+										"duration_hard": {
+											"type": "number"
+										},
+										"amplifier": {
+											"type": "number"
+										}
+									}
+								},
+								"stick_in_ground": {
+									"properties": {
+										"shake_time": {
+											"type": "number"
+										}
+									}
+								},
+								"thrown_potion_effect": {
+									"additionalProperties": false
+								},
+								"douse_fire": {
+									"additionalProperties": false
+								},
+								"arrow_effect": {
+									"additionalProperties": false
+								},
+								"remove_on_hit": {
+									"additionalProperties": false
+								},
+								"teleport_owner": {
+									"additionalProperties": false
+								},
+								"particle_on_hit": {
+									"properties": {
+										"particle_type": {
+											"$ref": "../../general/particleName.json"
+										},
+										"num_particles": {
+											"type": "number"
+										},
+										"on_entity_hit": {
+											"type": "boolean"
+										},
+										"on_other_hit": {
+											"type": "boolean"
+										}
+									}
+								},
+								"catch_fire": {
+									"properties": {
+										"fire_affected_by_griefing": {
+											"description": "If true, whether the projectile causes fire is affected by the mob griefing game rule.",
+											"type": "boolean"
+										},
+										"on_fire_time": {
+											"description": "Time in seconds that the entity hit will be on fire for.",
+											"type": "number"
+										}
+									}
+								}
+							}
+						},
+						"shoot_sound": {
+							"type": "string"
+						},
+						"hit_sound": {
+							"description": "The sound that plays when the projectile hits something.",
+							"type": "string"
+						},
+						"hit_ground_sound": {
+							"type": "string"
+						},
+						"is_dangerous": {
+							"description": "If true, the projectile will be treated as dangerous to the players.",
+							"type": "boolean"
+						},
+						"inertia": {
+							"description": "The fraction of the projectile's speed maintained every frame while traveling in air.",
+							"type": "number"
+						},
+						"liquid_inertia": {
+							"description": "The fraction of the projectile's speed maintained every frame while traveling in water.",
+							"type": "number"
+						},
+						"power": {
+							"description": "Determines the velocity of the projectile.",
+							"type": "number"
+						},
+						"gravity": {
+							"description": "The gravity applied to this entity when thrown. The higher the value, the faster the entity falls.",
+							"type": "number"
+						},
+						"uncertainty_base": {
+							"description": "The base accuracy. Accuracy is determined by the formula uncertaintyBase - difficultyLevel * uncertaintyMultiplier.",
+							"type": "number"
+						},
+						"uncertainty_multiplier": {
+							"description": "Determines how much difficulty affects accuracy. Accuracy is determined by the formula uncertaintyBase - difficultyLevel * uncertaintyMultiplier.",
+							"type": "number"
+						},
+						"anchor": {
+							"type": "number"
+						},
+						"lightning": {
+							"description": "If true, the entity hit will be struck by lightning.",
+							"type": "boolean"
+						},
+						"angle_offset": {
+							"description": "Determines the angle at which the projectile is thrown.",
+							"type": "number"
+						},
+						"semi_random_diff_damage": {
+							"description": "If true, damage will be randomized based on damage and speed.",
+							"type": "boolean"
+						},
+						"shoot_target": {
+							"description": "If true, the projectile will be shot towards the target of the entity firing it.",
+							"type": "boolean"
+						},
+						"stop_on_hurt": {
+							"type": "boolean"
+						},
+						"multiple_targets": {
+							"description": "If true, the projectile can hit multiple entities per flight.",
+							"type": "boolean"
+						},
+						"should_bounce": {
+							"description": "If true, the projectile will bounce upon hit.",
+							"type": "boolean"
+						},
+						"reflect_on_hurt": {
+							"description": "If true, this entity will be reflected back when hit.",
+							"type": "boolean"
+						},
+						"catch_fire": {
+							"description": "If true, the entity hit will be set on fire.",
+							"type": "boolean"
+						},
+						"offset": {
+							"description": "The offset from the entity's anchor where the projectile will spawn.",
+							"type": "array",
+							"minItems": 3,
+							"maxItems": 3,
+							"items": {
+								"type": "number"
+							}
+						},
+						"crit_particle_on_hurt": {
+							"description": "If true, the projectile will produce additional particles when a critical hit happens.",
+							"type": "boolean"
+						},
+						"homing": {
+							"description": "If true, the projectile homes in to the nearest entity.",
+							"type": "boolean"
+						},
+						"destroyOnHurt": {
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:raid_trigger": {
+					"description": "Attempts to trigger a raid at the entity's location.",
+					"additionalProperties": false,
+					"properties": {
+						"triggered_event": {
+							"description": "Event to run we attempt to trigger a raid on the village.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:rail_movement": {
+					"description": "Defines the entity's movement on the rails. An entity with this component is only allowed to move on the rail.",
+					"additionalProperties": false,
+					"properties": {
+						"max_speed": {
+							"description": "Maximum speed that this entity will move at when on the rail.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:rail_sensor": {
+					"description": "Triggers based on rail conditions",
+					"additionalProperties": false,
+					"properties": {
+						"check_block_types": {
+							"description": "If true, on tick this entity will trigger its on_deactivate behavior.",
+							"type": "boolean"
+						},
+						"eject_on_activate": {
+							"description": "If true, this entity will eject all of its riders when it passes over an activated rail.",
+							"type": "boolean"
+						},
+						"eject_on_deactivate": {
+							"description": "If true, this entity will eject all of its riders when it passes over a deactivated rail.",
+							"type": "boolean"
+						},
+						"on_activate": {
+							"description": "Event to call when the rail is activated.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"on_deactivate": {
+							"description": "Event to call when the rail is deactivated.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"tick_command_block_on_activate": {
+							"description": "If true, command blocks will start ticking when passing over an activated rail.",
+							"type": "boolean"
+						},
+						"tick_command_block_on_deactivate": {
+							"description": "If true, command blocks will start ticking when passing over an activated rail.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:ravager_blocked": {
+					"description": "Defines the ravager's response to their melee attack being blocked.",
+					"additionalProperties": false,
+					"properties": {
+						"knockback_strength": {
+							"description": "The strength with which blocking entities should be knocked back.",
+							"type": "number"
+						},
+						"reaction_choices": {
+							"description": "A list of weighted responses to the melee attack being blocked.",
+							"type": "array",
+							"items": {
+								"properties": {
+									"weight": {
+										"type": "number"
+									},
+									"value": {
+										"$ref": "../general/eventDefinition.json"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:rideable": {
+					"description": "Determines whether this entity can be ridden. Allows specifying the different seat positions and quantity.",
+					"additionalProperties": false,
+					"properties": {
+						"controlling_seat": {
+							"description": "The seat that designates the driver of the entity.",
+							"type": "number"
+						},
+						"crouching_skip_interact": {
+							"description": "If true, this entity can't be interacted with if the entity interacting with it is crouching.",
+							"type": "boolean"
+						},
+						"family_types": {
+							"description": "List of entities that can ride this entity.",
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"interact_text": {
+							"description": "The text to display when the player can interact with the entity when playing with Touch-screen controlsThe text to display when the player can interact with the entity when playing with Touch-screen controls.",
+							"type": "string"
+						},
+						"pull_in_entities": {
+							"description": "If true, this entity will pull in entities that are in the correct family_types into any available seats.",
+							"type": "boolean"
+						},
+						"rider_can_interact": {
+							"description": "If true, this entity will be picked when looked at by the rider.",
+							"type": "boolean"
+						},
+						"seat_count": {
+							"description": "The number of entities that can ride this entity at the same time.",
+							"type": "number"
+						},
+						"seats": {
+							"anyOf": [
+								{
+									"description": "The list of positions and number of riders for each position for entities riding this entity.",
+									"type": "array",
+									"items": {
+										"properties": {
+											"lock_rider_rotation": {
+												"description": "Angle in degrees that a rider is allowed to rotate while riding this entity. Omit this property for no limit.",
+												"$ref": "../../general/degree.json"
+											},
+											"max_rider_count": {
+												"description": "Defines the maximum number of riders that can be riding this entity for this seat to be valid.",
+												"type": "number"
+											},
+											"min_rider_count": {
+												"description": "Defines the minimum number of riders that need to be riding this entity before this seat can be used.",
+												"type": "number"
+											},
+											"position": {
+												"description": "Position of this seat relative to this entity's position.",
+												"type": "array",
+												"minItems": 3,
+												"maxItems": 3,
+												"items": {
+													"type": "number"
+												}
+											},
+											"rotate_rider_by": {
+												"description": "Offset to rotate riders by.",
+												"anyOf": [
+													{
+														"$ref": "../../general/degree.json"
+													},
+													{
+														"$ref": "../../molang/embeddedBeta.json"
+													}
+												]
+											}
+										}
+									}
+								},
+								{
+									"type": "object",
+									"properties": {
+										"lock_rider_rotation": {
+											"description": "Angle in degrees that a rider is allowed to rotate while riding this entity. Omit this property for no limit.",
+											"$ref": "../../general/degree.json"
+										},
+										"max_rider_count": {
+											"description": "Defines the maximum number of riders that can be riding this entity for this seat to be valid.",
+											"type": "number"
+										},
+										"min_rider_count": {
+											"description": "Defines the minimum number of riders that need to be riding this entity before this seat can be used.",
+											"type": "number"
+										},
+										"position": {
+											"description": "Position of this seat relative to this entity's position.",
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"type": "number"
+											}
+										},
+										"rotate_rider_by": {
+											"description": "Offset to rotate riders by.",
+											"anyOf": [
+												{
+													"$ref": "../../general/degree.json"
+												},
+												{
+													"$ref": "../../molang/embeddedBeta.json"
+												}
+											]
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				"minecraft:scaffolding_climber": {
+					"description": "Allows the player to detect and manuever on the scaffolding block.",
+					"additionalProperties": false
+				},
+				"minecraft:scale": {
+					"description": "Sets the entity's visual size.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The value of the scale. 1.0 means the entity will appear at the scale they are defined in their model. Higher numbers make the entity bigger.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:scale_by_age": {
+					"description": "Defines the entity's size interpolation based on the entity's age.",
+					"additionalProperties": false,
+					"properties": {
+						"start_scale": {
+							"description": "Initial scale of the newborn entity.",
+							"type": "number"
+						},
+						"end_scale": {
+							"description": "Ending scale of the entity when it's fully grown.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:scheduler": {
+					"description": "Fires off scheduled mob events at time of day events.",
+					"additionalProperties": false,
+					"properties": {
+						"min_delay_secs": {
+							"type": "number"
+						},
+						"max_delay_secs": {
+							"type": "number"
+						},
+						"scheduled_events": {
+							"description": "The list of triggers that fire when the conditions match the given filter criteria. If any filter criteria overlap the first defined event will be picked.",
+							"type": "array",
+							"items": {
+								"$ref": "../general/eventDefinition.json"
+							}
+						}
+					}
+				},
+				"minecraft:shareables": {
+					"description": "Defines a list of items the mob wants to share or pick up.",
+					"additionalProperties": false,
+					"properties": {
+						"all_items": {
+							"description": "A bucket for all other items in the game. Note this category is always least priority items.",
+							"type": "boolean"
+						},
+						"all_items_max_amount": {
+							"description": "Maximum number of this item the mob will hold.",
+							"type": "number"
+						},
+						"all_items_surplus_amount": {
+							"description": "Number of this item considered extra that the entity wants to share.",
+							"type": "number"
+						},
+						"all_items_want_amount": {
+							"description": "Number of this item this entity wants to share.",
+							"type": "number"
+						},
+						"items": {
+							"description": "List of items that the entity wants to share.",
+							"type": "array",
+							"items": {
+								"properties": {
+									"priority": {
+										"description": "Prioritizes which items the entity prefers. 0 is the highest priority.",
+										"type": "number"
+									},
+									"item": {
+										"description": "The name of the item. Aux value can be specified, for instance 'minecraft:skull:1'.",
+										"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+									},
+									"item_aux": {
+										"type": "number"
+									},
+									"craft_into": {
+										"description": "Defines the item this entity wants to craft with the item defined above. Should be an item name.",
+										"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+									},
+									"max_amount": {
+										"description": "Maximum number of this item the mob will hold.",
+										"type": "number"
+									},
+									"want_amount": {
+										"description": "Number of this item this entity wants to have.",
+										"type": "number"
+									},
+									"surplus_amount": {
+										"description": "Number of this item considered extra that the entity wants to share.",
+										"type": "number"
+									},
+									"pickup_limit": {
+										"description": "Maximum number of this item the mob will pick up during a single goal tick.",
+										"type": "number"
+									},
+									"admire": {
+										"description": "Mob will admire the item after picking up by looking at it. For this to happen the mob needs to have an Admire component and an Admire goal.",
+										"type": "boolean"
+									},
+									"barter": {
+										"description": "Mob will barter for the item after picking it up. For this to work the mob needs to have a Barter component and a Barter goal.",
+										"type": "boolean"
+									},
+									"consume_item": {
+										"description": "Determines whether the mob will consume the item or not.",
+										"type": "boolean"
+									},
+									"stored_in_inventory": {
+										"description": "Determines whether the mob will try to put the item in its inventory if it has the inventory component and if it can't be equipped.",
+										"type": "boolean"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:shooter": {
+					"description": "Defines the entity's ranged attack behavior.",
+					"additionalProperties": false,
+					"properties": {
+						"def": {
+							"description": "Actor definition to use as projectile for the ranged attack. The actor definition must have the projectile component to be able to be shot as a projectile.",
+							"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+						},
+						"aux_val": {
+							"description": "ID of the Potion effect to be applied on hit.",
+							"$ref": "../../general/vanilla/potionIds.json"
+						}
+					}
+				},
+				"minecraft:sittable": {
+					"description": "Defines the entity's 'sit' state.",
+					"additionalProperties": false,
+					"properties": {
+						"sit_event": {
+							"description": "Event to run when the entity enters the 'sit' state.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"stand_event": {
+							"description": "Event to run when the entity exits the 'sit' state.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:sound_volume": {
+					"description": "Sets the entity's base volume for sound effects.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:spawn_entity": {
+					"description": "Adds a timer after which this entity will spawn another entity or item (similar to vanilla's chicken's egg-laying behavior).",
+					"additionalProperties": false,
+					"properties": {
+						"entities": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"properties": {
+											"should_leash": {
+												"description": "If true, this the spawned entity will be leashed to the parent.",
+												"type": "boolean"
+											},
+											"num_to_spawn": {
+												"description": "The number of entities of this type to spawn each time that this triggers.",
+												"type": "number"
+											},
+											"min_wait_time": {
+												"description": "Minimum amount of time to randomly wait in seconds before another entity is spawned.",
+												"type": "number"
+											},
+											"max_wait_time": {
+												"description": "Maximum amount of time to randomly wait in seconds before another entity is spawned.",
+												"type": "number"
+											},
+											"spawn_entity": {
+												"description": "Identifier of the entity to spawn, leave empty to spawn the item defined above instead.",
+												"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+											},
+											"spawn_event": {
+												"description": "Event to call when the entity is spawned.",
+												"type": "string"
+											},
+											"spawn_item": {
+												"description": "Item identifier of the item to spawn.",
+												"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+											},
+											"spawn_method": {
+												"description": "Method to use to spawn the entity.",
+												"type": "string",
+												"const": "born"
+											},
+											"spawn_sound": {
+												"description": "Identifier of the sound effect to play when the entity is spawned.",
+												"type": "string"
+											},
+											"filters": {
+												"description": "If present, the specified entity will only spawn if the filter evaluates to true.",
+												"$ref": "../general/filter.json"
+											},
+											"single_use": {
+												"description": "If true, this component will only ever spawn the specified entity once.",
+												"type": "boolean"
+											}
+										}
+									}
+								},
+								{
+									"properties": {
+										"should_leash": {
+											"description": "If true, this the spawned entity will be leashed to the parent.",
+											"type": "boolean"
+										},
+										"num_to_spawn": {
+											"description": "The number of entities of this type to spawn each time that this triggers.",
+											"type": "number"
+										},
+										"min_wait_time": {
+											"description": "Minimum amount of time to randomly wait in seconds before another entity is spawned.",
+											"type": "number"
+										},
+										"max_wait_time": {
+											"description": "Maximum amount of time to randomly wait in seconds before another entity is spawned.",
+											"type": "number"
+										},
+										"spawn_entity": {
+											"description": "Identifier of the entity to spawn, leave empty to spawn the item defined above instead.",
+											"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+										},
+										"spawn_event": {
+											"description": "Event to call when the entity is spawned.",
+											"type": "string"
+										},
+										"spawn_item": {
+											"description": "Item identifier of the item to spawn.",
+											"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+										},
+										"spawn_method": {
+											"description": "Method to use to spawn the entity.",
+											"type": "string",
+											"const": "born"
+										},
+										"spawn_sound": {
+											"description": "Identifier of the sound effect to play when the entity is spawned.",
+											"type": "string"
+										},
+										"filters": {
+											"description": "If present, the specified entity will only spawn if the filter evaluates to true.",
+											"$ref": "../general/filter.json"
+										},
+										"single_use": {
+											"description": "If true, this component will only ever spawn the specified entity once.",
+											"type": "boolean"
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				"minecraft:spell_effects": {
+					"description": "Defines what mob effects to add and remove to the entity when adding this component.",
+					"additionalProperties": false,
+					"properties": {
+						"add_effects": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"$ref": "../../general/effectDefinition.json"
+									}
+								},
+								{
+									"$ref": "../../general/effectDefinition.json"
+								}
+							]
+						},
+						"remove_effects": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"$ref": "../../general/vanilla/effectName.json"
+									}
+								},
+								{
+									"$ref": "../../general/vanilla/effectName.json"
+								}
+							]
+						}
+					}
+				},
+				"minecraft:strength": {
+					"description": "Defines the entity's strength to carry items.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The initial value of the strength.",
+							"type": "number"
+						},
+						"max": {
+							"description": "The maximum strength of this entity.",
+							"type": "number"
+						},
+						"min": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:tameable": {
+					"description": "Defines the rules for a mob to be tamed by the player.",
+					"additionalProperties": false,
+					"properties": {
+						"probability": {
+							"description": "The chance of taming the entity with each item use between 0.0 and 1.0, where 1.0 is 100%.",
+							"type": "number"
+						},
+						"tame_items": {
+							"description": "The list of items that can be used to tame this entity.",
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+									}
+								},
+								{
+									"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+								}
+							]
+						},
+						"tame_event": {
+							"description": "Event to run when this entity becomes tamed.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:tamemount": {
+					"description": "Allows the Entity to be tamed by mounting it.",
+					"properties": {
+						"attempt_temper_mod": {
+							"description": "The amount the entity's temper will increase when mounted.",
+							"type": "number"
+						},
+						"auto_reject_items": {
+							"description": "The list of items that, if carried while interacting with the entity, will anger it.",
+							"type": "array",
+							"properties": {
+								"item": {
+									"description": "Name of the item this entity dislikes and will cause it to get angry if used while untamed.",
+									"anyOf": [
+										{
+											"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+										}
+									]
+								}
+							}
+						},
+						"feed_items": {
+							"description": "The list of items that can be used to increase the entity's temper and speed up the taming process.",
+							"type": "array",
+							"properties": {
+								"item": {
+									"description": "Name of the item this entity likes and can be used to increase this entity's temper.",
+									"anyOf": [
+										{
+											"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+										}
+									]
+								},
+								"temper_mod": {
+									"description": "The amount of temper this entity gains when fed this item.",
+									"type": "number"
+								}
+							}
+						},
+						"feed_text": {
+							"description": "The text that shows in the feeding interact button.",
+							"type": "string"
+						},
+						"min_temper": {
+							"description": "The minimum value for the entity's random starting temper.",
+							"type": "number"
+						},
+						"max_temper": {
+							"description": "The maximum value for the entity's random starting temper.",
+							"type": "number"
+						},
+						"ride_text": {
+							"description": "The text that shows in the riding interact button.",
+							"type": "string"
+						},
+						"tame_event": {
+							"description": "Event that triggers when the entity becomes tamed.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:target_nearby_sensor": {
+					"description": "Defines the entity's range within which it can see or sense other entities to target them.",
+					"additionalProperties": false,
+					"properties": {
+						"inside_range": {
+							"description": "Maximum distance in blocks that another entity will be considered in the 'inside' range.",
+							"type": "number"
+						},
+						"outside_range": {
+							"description": "Maximum distance in blocks that another entity will be considered in the 'outside' range.",
+							"type": "number"
+						},
+						"on_inside_range": {
+							"description": "Event to call when an entity gets in the inside range. Can specify 'event' for the name of the event and 'target' for the target of the event.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"on_outside_range": {
+							"description": "Event to call when an entity gets in the outside range. Can specify 'event' for the name of the event and 'target' for the target of the event.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"on_vision_lost_inside_range": {
+							"description": "Event to call when an entity exits visual range. Can specify 'event' for the name of the event and 'target' for the target of the event.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"must_see": {
+							"description": "Whether the other entity needs to be visible to trigger 'inside' events.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:teleport": {
+					"description": "Defines an entity's teleporting behavior.",
+					"additionalProperties": false,
+					"properties": {
+						"random_teleports": {
+							"description": "If true, the entity will teleport randomly.",
+							"type": "boolean"
+						},
+						"max_random_teleport_time": {
+							"description": "Maximum amount of time in seconds between random teleports.",
+							"type": "number"
+						},
+						"min_random_teleport_time": {
+							"description": "Minimum amount of time in seconds between random teleports.",
+							"type": "number"
+						},
+						"random_teleport_cube": {
+							"description": "Entity will teleport to a random position within the area defined by this cube.",
+							"type": "array",
+							"minItems": 3,
+							"maxItems": 3,
+							"items": {
+								"type": "number"
+							}
+						},
+						"target_distance": {
+							"description": "Maximum distance the entity will teleport when chasing a target.",
+							"type": "number"
+						},
+						"target_teleport_chance": {
+							"description": "The chance that the entity will teleport between 0.0 and 1.0. 1.0 means 100%.",
+							"type": "number"
+						},
+						"light_teleport_chance": {
+							"description": "Modifies the chance that the entity will teleport if the entity is in daylight.",
+							"type": "number"
+						},
+						"dark_teleport_chance": {
+							"description": "Modifies the chance that the entity will teleport if the entity is in darkness.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:tick_world": {
+					"description": "Defines if the entity ticks the world and the radius around it to tick.",
+					"additionalProperties": false,
+					"properties": {
+						"radius": {
+							"description": "The area around the entity to tick. Default: 2. Allowed range: 2-6.",
+							"type": "number"
+						},
+						"distance_to_players": {
+							"description": "The distance at which the closest player has to be before this entity despawns. This option will be ignored if never_despawn is true. Min: 128 blocks.",
+							"type": "number"
+						},
+						"never_despawn": {
+							"description": "If true, this entity will not despawn even if players are far away. If false, distance_to_players will be used to determine when to despawn.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:timer": {
+					"description": "Adds a timer after which an event will fire.",
+					"additionalProperties": false,
+					"properties": {
+						"looping": {
+							"description": "If true, the timer will restart every time after it fires.",
+							"type": "boolean"
+						},
+						"randomInterval": {
+							"description": "If true, the amount of time on the timer will be random between the min and max values specified in time.",
+							"type": "boolean"
+						},
+						"time": {
+							"description": "Amount of time in seconds for the timer. Can be specified as a number or a pair of numbers (min and max). Incompatible with random_time_choices.",
+							"anyOf": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "array",
+									"minItems": 2,
+									"maxItems": 2,
+									"items": {
+										"type": "number"
+									}
+								}
+							]
+						},
+						"random_time_choices": {
+							"description": "This is a list of objects, representing one value in seconds that can be picked before firing the event and an optional weight. Incompatible with time.",
+							"type": "array",
+							"items": {
+								"properties": {
+									"weight": {
+										"type": "number"
+									},
+									"value": {
+										"type": "number"
+									}
+								}
+							}
+						},
+						"time_down_event": {
+							"description": "Event to fire when the time on the timer runs out.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:trade_resupply": {
+					"additionalProperties": false
+				},
+				"minecraft:trade_table": {
+					"description": "Defines this entity's ability to trade with players.",
+					"additionalProperties": false,
+					"properties": {
+						"display_name": {
+							"description": "Name to be displayed while trading with this entity.",
+							"type": "string"
+						},
+						"table": {
+							"description": "File path relative to the behavior pack root for this entity's trades.",
+							"type": "string"
+						},
+						"new_screen": {
+							"description": "Used to determine if trading with entity opens the new trade screen.",
+							"type": "boolean"
+						},
+						"hero_demand_discount": {
+							"type": "number"
+						},
+						"persist_trades": {
+							"description": "Determines if the trades should persist when the mob transforms. This makes it so that the next time the mob is transformed to something with a trade_table or economy_trade_table, then it keeps their trades.",
+							"type": "boolean"
+						},
+						"convert_trades_economy": {
+							"description": "Determines when the mob transforms, if the trades should be converted when the new mob has a economy_trade_table. When the trades are converted, the mob will generate a new trade list with their new trade table, but then it will try to convert any of the same trades over to have the same enchantments and user data. For example, if the original has a Emerald to Enchanted Iron Sword (Sharpness 1), and the new trade also has an Emerald for Enchanted Iron Sword, then the enchantment will be Sharpness 1.",
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:trail": {
+					"description": "Causes an entity to leave a trail of blocks as it moves about the world.",
+					"additionalProperties": false,
+					"properties": {
+						"block_type": {
+							"description": "The type of block you wish to be spawned by the entity as it move about the world. Solid blocks may not be spawned at an offset of (0,0,0).",
+							"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+						},
+						"spawn_filter": {
+							"description": "One or more conditions that must be met in order to cause the chosen block type to spawn.",
+							"$ref": "../general/filter.json"
+						},
+						"spawn_offset": {
+							"description": "The distance from the entities current position to spawn the block. Capped at up to 16 blocks away. The X value is left/right(-/+), the Z value is backward/forward(-/+), the Y value is below/above(-/+).",
+							"type": "array",
+							"minItems": 3,
+							"maxItems": 3,
+							"items": {
+								"type": "number"
+							}
+						}
+					}
+				},
+				"minecraft:transformation": {
+					"description": "Defines an entity's transformation from the current definition into another",
+					"additionalProperties": false,
+					"properties": {
+						"into": {
+							"description": "Entity Definition that this entity will transform into.",
+							"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+						},
+						"add": {
+							"description": "List of components to add to the entity after the transformation.",
+							"properties": {
+								"component_groups": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"begin_transformation_sound": {
+							"description": "Sound to play when the transformation starts.",
+							"type": "string"
+						},
+						"transformation_sound": {
+							"description": "Sound to play when the entity is done transforming.",
+							"type": "string"
+						},
+						"drop_equipment": {
+							"description": "Cause the entity to drop all equipment upon transformation.",
+							"type": "boolean"
+						},
+						"preserve_equipment": {
+							"description": "Cause the entity to keep equipment after going through transformation.",
+							"type": "boolean"
+						},
+						"drop_inventory": {
+							"description": "Cause the entity to drop all items in inventory upon transformation.",
+							"type": "boolean"
+						},
+						"keep_owner": {
+							"description": "If this entity is owned by another entity, it should remain owned after transformation.",
+							"type": "boolean"
+						},
+						"keep_level": {
+							"description": "If this entity has trades and has leveled up, it should maintain that level after transformation.",
+							"type": "boolean"
+						},
+						"delay": {
+							"description": "Defines the properties of the delay for the transformation.",
+							"properties": {
+								"value": {
+									"description": "Time in seconds before the entity transforms.",
+									"type": "number"
+								},
+								"block_assist_chance": {
+									"description": "Chance that the entity will look for nearby blocks that can speed up the transformation. Value must be between 0.0 and 1.0.",
+									"type": "number"
+								},
+								"block_chance": {
+									"description": "Chance that, once a block is found, will help speed up the transformation.",
+									"type": "number"
+								},
+								"block_max": {
+									"description": "Maximum number of blocks the entity will look for to aid in the transformation. If not defined or set to 0, it will be set to the block radius.",
+									"type": "number"
+								},
+								"block_radius": {
+									"description": "Distance in Blocks that the entity will search for blocks that can help the transformation.",
+									"type": "number"
+								},
+								"keep_owner": {
+									"type": "boolean"
+								},
+								"block_types": {
+									"description": "List of blocks that can help the transformation of this entity.",
+									"type": "array",
+									"items": {
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:trusting": {
+					"description": "Defines the rules for a mob to trust players.",
+					"additionalProperties": false,
+					"properties": {
+						"probability": {
+							"description": "The chance of the entity trusting with each item use between 0.0 and 1.0, where 1.0 is 100%.",
+							"type": "number"
+						},
+						"trust_items": {
+							"description": "The list of items that can be used to get the entity to trust players.",
+							"type": "array",
+							"items": {
+								"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+							}
+						},
+						"trust_event": {
+							"description": "Event to run when this entity becomes trusting.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:trust": {
+					"additionalProperties": false
+				},
+				"minecraft:type_family": {
+					"description": "Defines the families this entity belongs to.",
+					"additionalProperties": false,
+					"properties": {
+						"family": {
+							"description": "List of family names.",
+							"type": "array",
+							"items": {
+								"$ref": "../general/family.json"
+							}
+						}
+					}
+				},
+				"minecraft:underwater_movement": {
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:variant": {
+					"description": "Used to differentiate the component group of a variant of an entity from others. (e.g. ocelot, villager)",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The ID of the variant. By convention, 0 is the ID of the base entity.",
+							"type": "integer"
+						}
+					}
+				},
+				"minecraft:walk_animation_speed": {
+					"description": "Sets the speed multiplier for this entity's walk animation speed.",
+					"additionalProperties": false,
+					"properties": {
+						"value": {
+							"description": "The higher the number, the faster the animation for walking plays. A value of 1.0 means normal speed, while 2.0 means twice as fast.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:wants_jockey": {
+					"description": "Sets that this entity wants to become a jockey.",
+					"additionalProperties": false
+				},
+				"minecraft:water_movement": {
+					"description": "Sets the entity's movement speed in water.",
+					"additionalProperties": false,
+					"properties": {
+						"drag_factor": {
+							"description": "Drag factor to determine movement speed when in water.",
+							"type": "number"
+						}
+					}
+				}
+			}
+		},
+		{
+			"$ref": "./annotations.json"
+		},
+		{
+			"$ref": "./behaviors.json"
+		}
+	]
+}

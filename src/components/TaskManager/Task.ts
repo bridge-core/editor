@@ -43,4 +43,7 @@ export class Task {
     get icon() {
         return this.taskDetails.icon
     }
+    get progress() {
+        return Math.round((this.currentStepCount / this.totalStepCount) * 100)
+    }
 }

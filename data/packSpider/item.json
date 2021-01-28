@@ -1,0 +1,30 @@
+{
+	"connect": [
+		{
+			"find": "attachable",
+			"where": "itemIdentifier",
+			"matches": "identifier"
+		},
+		{
+			"find": "clientItem",
+			"where": "identifier",
+			"matches": "identifier",
+			"shouldFindMultiple": false
+		},
+		{
+			"find": "recipe",
+			"where": "itemIdentifier",
+			"matches": "identifier"
+		}
+	],
+	"includeFromFiles": [
+		{
+			"from": "RP/textures/item_texture.json",
+			"take": ["texture_data", "@itemTexture", "textures"],
+			"prefix": "RP/",
+			"suffix": ".png"
+		}
+	],
+	"includeFiles": ["lootTablePath"],
+	"sharedFiles": ["RP/textures/item_texture.json"]
+}

@@ -1,0 +1,61 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Preset Manifest",
+	"additionalProperties": false,
+	"properties": {
+		"display_name": {
+			"description": "Name to display inside the preset window.",
+			"type": "string"
+		},
+		"description": {
+			"description": "Preset description.",
+			"type": "string"
+		},
+		"icon": {
+			"title": "http://materialdesignicons.com/",
+			"description": "Icon to show inside of the preset window",
+			"pattern": "^mdi-",
+			"type": "string"
+		},
+		"bp_map": {
+			"description": "JSON files to create.",
+			"patternProperties": {
+				".*": {
+					"type": "string"
+				}
+			}
+		},
+		"rp_map": {
+			"description": "JSON files to create.",
+			"patternProperties": {
+				".*": {
+					"type": "string"
+				}
+			}
+		},
+		"expand_rp_files": {
+			"description": "Files to add data to.",
+			"patternProperties": {
+				".*": {
+					"type": "string"
+				}
+			}
+		},
+		"expand_bp_files": {
+			"description": "Files to add data to.",
+			"patternProperties": {
+				".*": {
+					"type": "string"
+				}
+			}
+		},
+		"copy_rp_files": {
+			"description": "Files to just copy over.",
+			"patternProperties": {
+				".*": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}

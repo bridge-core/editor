@@ -9,6 +9,7 @@ import nl from '@/locales/nl'
 import ko from '@/locales/ko'
 import '@mdi/font/css/materialdesignicons.min.css'
 import { App } from './App'
+import { setupFileSystem } from './components/FileSystem/setup'
 
 Vue.config.productionTip = false
 
@@ -57,4 +58,5 @@ export const vue = new Vue({
 	vuetify,
 	render: h => h(AppComponent),
 }).$mount('#app')
+
 App.main(vue)

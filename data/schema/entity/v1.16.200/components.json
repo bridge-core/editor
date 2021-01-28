@@ -1,0 +1,337 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"allOf": [
+		{
+			"$ref": "../v1.16.100/components.json"
+		},
+		{
+			"$ref": "./behavior.json"
+		},
+		{
+			"properties": {
+				"minecraft:navigation.climb": {
+					"properties": {
+						"avoid_powder_snow": {
+							"type": "boolean"
+						},
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.float": {
+					"properties": {
+						"avoid_powder_snow": {
+							"type": "boolean"
+						},
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.fly": {
+					"properties": {
+						"avoid_powder_snow": {
+							"type": "boolean"
+						},
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.generic": {
+					"properties": {
+						"avoid_powder_snow": {
+							"type": "boolean"
+						},
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.hover": {
+					"properties": {
+						"avoid_powder_snow": {
+							"type": "boolean"
+						},
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.swim": {
+					"properties": {
+						"avoid_powder_snow": {
+							"type": "boolean"
+						},
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:navigation.walk": {
+					"properties": {
+						"avoid_powder_snow": {
+							"type": "boolean"
+						},
+						"is_amphibious": {
+							"type": "boolean"
+						},
+						"avoid_portals": {
+							"type": "boolean"
+						},
+						"avoid_sun": {
+							"type": "boolean"
+						},
+						"avoid_water": {
+							"type": "boolean"
+						},
+						"avoid_damage_blocks": {
+							"type": "boolean"
+						},
+						"can_break_doors": {
+							"type": "boolean"
+						},
+						"can_open_doors": {
+							"type": "boolean"
+						},
+						"can_pass_doors": {
+							"type": "boolean"
+						},
+						"can_pass_over_water": {
+							"type": "boolean"
+						},
+						"can_pass_over_lava": {
+							"type": "boolean"
+						},
+						"can_path_from_air": {
+							"type": "boolean"
+						},
+						"can_sink": {
+							"type": "boolean"
+						},
+						"can_walk_in_lava": {
+							"type": "boolean"
+						}
+					}
+				}
+			}
+		}
+	]
+}

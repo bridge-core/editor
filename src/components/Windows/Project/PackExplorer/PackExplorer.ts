@@ -1,6 +1,6 @@
 import { App } from '@/App'
-import { FileType } from '@/appCycle/FileType'
-import { PackType } from '@/appCycle/PackType'
+import { FileType } from '@/components/Data/FileType'
+import { PackType } from '@/components/Data/PackType'
 import { translate } from '@/utils/locales'
 import { BaseWindow } from '../../BaseWindow'
 import {
@@ -61,23 +61,30 @@ export class PackExplorerWindow extends BaseWindow {
 						}`
 				  )
 				: undefined
+			const icon =
+				fileType && fileType.icon
+					? fileType.icon
+					: `mdi-${kind === 'directory' ? 'folder' : 'file'}-outline`
+			const text = displayName ?? translate(`fileType.${name}`)
+			const color = packType ? packType.color : undefined
 
 			items.push(
 				new PackSidebarItem({
 					kind,
 					packType: packType ? packType.id : 'unknown',
 					id: path ?? name,
-					text: displayName ?? translate(`fileType.${name}`),
+					text,
 
-					icon:
-						fileType && fileType.icon
-							? fileType.icon
-							: `mdi-${
-									kind === 'directory' ? 'folder' : 'file'
-							  }-outline`,
-					color: packType ? packType.color : undefined,
+					icon,
+					color,
 				})
 			)
+
+			this.sidebar.setState(path ?? name, {
+				text,
+				icon,
+				color,
+			})
 		})
 
 		items = items.sort((a: any, b: any) => {
@@ -88,6 +95,7 @@ export class PackExplorerWindow extends BaseWindow {
 
 		items.forEach(item => this.sidebarCategory.addItem(item))
 		this.sidebar.setDefaultSelected()
+
 		super.open()
 	}
 
@@ -97,8 +105,12 @@ export class PackExplorerWindow extends BaseWindow {
 			new Promise<void>(resolve =>
 				App.ready.once(app =>
 					app.packIndexer.once(async () => {
+						app.windows.loadingWindow.open()
+
 						await this.loadPack()
 						resolve()
+
+						app.windows.loadingWindow.close()
 					})
 				)
 			)

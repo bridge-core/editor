@@ -15,10 +15,11 @@ export function setupSidebar() {
 		displayName: 'windows.packExplorer.title',
 		icon: 'mdi-folder-outline',
 		onClick: async () => {
+			// PackIndexer needs to be done before we can open the PackExplorer
 			await new Promise<void>(resolve => {
 				App.ready.once(app => app.packIndexer.once(() => resolve()))
 			})
-			await App.instance.windows.packExplorer.open()
+			App.instance.windows.packExplorer.open()
 		},
 	})
 

@@ -1,0 +1,26 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Biomes Client",
+	"$id": "bridge.biomesClient",
+	"additionalProperties": false,
+	"properties": {
+		"biomes": {
+			"patternProperties": {
+				".*": {
+					"additionalProperties": false,
+					"properties": {
+						"water_surface_color": {
+							"$ref": "../general/hexColor.json"
+						},
+						"water_surface_transparency": {
+							"type": "number"
+						},
+						"fog_identifier": {
+							"$ref": "../general/reference/identifiers.json#/definitions/fog_identifiers"
+						}
+					}
+				}
+			}
+		}
+	}
+}
