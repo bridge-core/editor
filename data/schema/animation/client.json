@@ -102,7 +102,7 @@
 										"$ref": "../dynamic/clientEntity/particleReferenceEnum.json"
 									},
 									"locator": {
-										"type": "string"
+										"$ref": "../dynamic/geometry/locatorEnum.json"
 									}
 								}
 							}

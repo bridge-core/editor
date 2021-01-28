@@ -6,5 +6,6 @@
 	},
 	{
 		"materialInstance": "minecraft:geometry/*/bones/*/cubes/*/uv/*/material_instance"
-	}
+	},
+	{ "locator": "minecraft:geometry/*/bones/locators" }
 ]
