@@ -1,8 +1,10 @@
+import { App } from '@/App'
 import { ExtensionStoreWindow, ILoadedPlugin } from './ExtensionStore'
 import { PluginTag } from './PluginTag'
 
 export class Plugin {
 	protected tags: PluginTag[]
+	protected isLoading = false
 
 	constructor(
 		protected parent: ExtensionStoreWindow,
@@ -38,5 +40,20 @@ export class Plugin {
 
 	hasTag(tag: PluginTag) {
 		return this.tags.includes(tag)
+	}
+
+	async download() {
+		this.isLoading = true
+		const app = await App.getApp()
+		const zip = await fetch(
+			this.parent.getBaseUrl() + this.config.link
+		).then(response => response.arrayBuffer())
+
+		await app.fileSystem.writeFile(
+			`plugins/${this.name.replace(/\s+/g, '')}.zip`,
+			zip
+		)
+
+		this.isLoading = false
 	}
 }

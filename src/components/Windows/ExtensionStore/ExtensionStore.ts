@@ -120,4 +120,8 @@ export class ExtensionStoreWindow extends BaseWindow {
 		this.sidebar.clearFilter()
 		this.sidebar.selected = val
 	}
+
+	getBaseUrl() {
+		return this.baseUrl
+	}
 }

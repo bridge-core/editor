@@ -9,8 +9,15 @@
 			<v-spacer />
 			<v-tooltip color="primary" left>
 				<template v-slot:activator="{ on }">
-					<v-btn v-on="on" color="primary" small icon>
-						<v-icon>mdi-download</v-icon>
+					<v-btn
+						v-on="on"
+						@click="plugin.download()"
+						:loading="plugin.isLoading"
+						color="primary"
+						small
+						icon
+					>
+						<v-icon>mdi-download-circle-outline</v-icon>
 					</v-btn>
 				</template>
 
