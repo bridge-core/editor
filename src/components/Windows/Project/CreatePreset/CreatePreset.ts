@@ -97,6 +97,7 @@ export class CreatePresetWindow extends BaseWindow {
 				id,
 				text: manifest.name,
 				icon: manifest.icon,
+				color: 'primary',
 			})
 		)
 		this.sidebar.setState(id, {
