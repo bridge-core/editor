@@ -1,0 +1,29 @@
+{
+  "format_version": "1.8.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}",
+      "materials": { "default": "ghast" },
+      "textures": {
+        "default": "textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}",
+        "shooting": "textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_shooting"
+      },
+      "geometry": {
+        "default": "geometry.{{IDENTIFIER}}"
+      },
+      "spawn_egg": {
+        "base_color": "#000000",
+				"overlay_color": "#FFFFFF"
+      },
+      "animations": {
+        "move": "animation.{{IDENTIFIER}}.move",
+        "scale": "animation.{{IDENTIFIER}}.scale"
+      },
+      "animation_controllers": [
+        { "move": "controller.animation.{{IDENTIFIER}}.move" },
+        { "scale": "controller.animation.{{IDENTIFIER}}.scale" }
+      ],
+      "render_controllers": [ "controller.render.{{IDENTIFIER}}" ]
+    }
+  }
+}
