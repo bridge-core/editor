@@ -19,11 +19,11 @@
 								{
 									"type": "array",
 									"items": {
-										"type": "string"
+										"$ref": "../dynamic/project/texturePath.json"
 									}
 								},
 								{
-									"type": "string"
+									"$ref": "../dynamic/project/texturePath.json"
 								}
 							]
 						}

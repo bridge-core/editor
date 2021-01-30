@@ -61,7 +61,7 @@
 							"description": "Defines the textures used in this entity.",
 							"patternProperties": {
 								".*": {
-									"type": "string"
+									"$ref": "../../dynamic/project/texturePath.json"
 								}
 							}
 						},

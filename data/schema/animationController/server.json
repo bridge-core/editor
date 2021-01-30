@@ -51,11 +51,11 @@
 										},
 										"on_entry": {
 											"type": "array",
-											"items": { "type": "string" }
+											"items": { "$ref": "../dynamic/project/functionPath.json" }
 										},
 										"on_exit": {
 											"type": "array",
-											"items": { "type": "string" }
+											"items": { "$ref": "../dynamic/project/functionPath.json" }
 										}
 									}
 								}

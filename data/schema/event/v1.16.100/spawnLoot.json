@@ -6,7 +6,7 @@
 			"description": "Spawn loot from block",
 			"additionalProperties": false,
 			"properties": {
-				"table": { "type": "string" }
+				"table": { "$ref": "../dynamic/project/lootTablePath.json" }
 			}
 		}
 	}

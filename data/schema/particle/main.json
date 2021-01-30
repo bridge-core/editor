@@ -19,7 +19,7 @@
 							"additionalProperties": false,
 							"properties": {
 								"texture": {
-									"type": "string"
+									"$ref": "../dynamic/project/texturePath.json"
 								},
 								"material": {
 									"$ref": "./general.json#/definitions/materials"

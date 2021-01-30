@@ -43,7 +43,7 @@
 			"description": "Sets the explosion resistance for this block"
 		},
 		"minecraft:loot": {
-			"type": "string",
+			"$ref": "../../dynamic/project/lootTablePath.json",
 			"description": "Sets the loot of this block"
 		}
 	}

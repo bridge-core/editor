@@ -39,7 +39,7 @@
 									{
 										"properties": {
 											"name": {
-												"type": "string"
+												"$ref": "../dynamic/project/soundPath.json"
 											},
 											"stream": {
 												"type": "boolean"
@@ -53,7 +53,7 @@
 										}
 									},
 									{
-										"type": "string"
+										"$ref": "../dynamic/project/soundPath.json"
 									}
 								]
 							}

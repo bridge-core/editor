@@ -7,7 +7,7 @@
 		"value": {
 			"type": "array",
 			"items": {
-				"type": "string"
+				"$ref": "../dynamic/project/functionPath.json"
 			}
 		}
 	}

@@ -30,7 +30,7 @@
 							"items": {
 								"anyOf": [
 									{
-										"type": "string"
+										"$ref": "../dynamic/project/texturePath.json"
 									},
 									{
 										"properties": {
@@ -48,7 +48,7 @@
 															"type": "integer"
 														},
 														"path": {
-															"type": "string"
+															"$ref": "../dynamic/project/texturePath.json"
 														},
 														"overlay_color": {
 															"$ref": "../general/hexColor.json"

@@ -8,7 +8,7 @@
 			"properties": {
 				"command": {
 					"type": "array",
-					"items": { "type": "string" }
+					"items": { "$ref": "../../dynamic/project/functionPath.json" }
 				},
 				"target": { "$ref": "../../general/filter/subject.json" }
 			}
