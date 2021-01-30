@@ -53,7 +53,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 		)
 
 		const plugins = <IPlugin[]>(
-			await fetch(`${this.baseUrl}/plugins.json`).then(resp =>
+			await fetch(`${this.baseUrl}/v2Plugins.json`).then(resp =>
 				resp.json()
 			)
 		)
