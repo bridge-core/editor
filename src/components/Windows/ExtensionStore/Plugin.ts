@@ -1,14 +1,16 @@
 import { App } from '@/App'
-import { ExtensionStoreWindow, ILoadedPlugin } from './ExtensionStore'
+import { ExtensionStoreWindow, IPlugin } from './ExtensionStore'
 import { PluginTag } from './PluginTag'
 
 export class Plugin {
 	protected tags: PluginTag[]
 	protected isLoading = false
+	protected isInstalled = false
+	protected isActive = false
 
 	constructor(
 		protected parent: ExtensionStoreWindow,
-		protected config: ILoadedPlugin
+		protected config: IPlugin
 	) {
 		this.tags = this.config.tags.map(tag => {
 			if (!this.parent.tags[tag])

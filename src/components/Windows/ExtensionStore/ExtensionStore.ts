@@ -11,26 +11,16 @@ import { getFileSystem } from '@/utils/fs'
 import { PluginTag } from './PluginTag'
 import { Plugin } from './Plugin'
 
-export interface ILoadedPlugin {
+export interface IPlugin {
 	icon: string
 	author: string
 	name: string
+	releaseTimestamp: number
 	version: string
 	id: string
 	description: string
 	link: string
 	tags: string[]
-}
-
-interface IPlugin {
-	icon: string
-	author: string
-	name: string
-	version: string
-	id: string
-	description: string
-	link: string
-	tags: ITag[]
 }
 
 interface ITag {
@@ -62,12 +52,19 @@ export class ExtensionStoreWindow extends BaseWindow {
 			'data/packages/extensionTags.json'
 		)
 
-		const plugins = <ILoadedPlugin[]>(
+		const plugins = <IPlugin[]>(
 			await fetch(`${this.baseUrl}/plugins.json`).then(resp =>
 				resp.json()
 			)
 		)
-		this.plugins = plugins.map(plugin => new Plugin(this, plugin))
+		this.plugins = plugins
+			.sort(
+				(
+					{ name: a, releaseTimestamp: tA },
+					{ name: b, releaseTimestamp: tB }
+				) => (tA === tB ? a.localeCompare(b) : tA - tB)
+			)
+			.map(plugin => new Plugin(this, plugin))
 
 		this.setupSidebar()
 		console.log(this.plugins)
