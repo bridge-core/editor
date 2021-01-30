@@ -47,7 +47,7 @@ export function setupFileCategory(app: App) {
 			)
 			.addItem(
 				app.actionManager.create({
-					icon: 'mdi-puzzle',
+					icon: 'mdi-puzzle-outline',
 					name: 'toolbar.file.preferences.extensions',
 					description: 'Manage your installed extensions',
 					onTrigger: () => app.windows.extensionStore.open(),

@@ -30,7 +30,7 @@ export function setupHelpCategory(app: App) {
 	help.addItem(
 		app.actionManager.create({
 			name: 'toolbar.help.pluginAPI',
-			icon: 'mdi-puzzle',
+			icon: 'mdi-puzzle-outline',
 			description: "Read more about bridge.'s plugin API",
 			onTrigger: () =>
 				App.createNativeWindow(
