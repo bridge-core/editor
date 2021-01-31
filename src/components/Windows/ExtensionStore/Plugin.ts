@@ -52,7 +52,7 @@ export class Plugin {
 		)
 		const actionManager = await installLocationChoiceWindow.actionManager
 		actionManager.create({
-			icon: 'mdi-web',
+			icon: 'mdi-folder-multiple-outline',
 			name: 'actions.pluginInstallLocation.global.name',
 			description: 'actions.pluginInstallLocation.global.description',
 			onTrigger: () => {
