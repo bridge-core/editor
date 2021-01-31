@@ -41,6 +41,7 @@ const textTransformFiles = [
 	'.txt',
 	'.molang',
 ]
+
 export class CreatePresetWindow extends BaseWindow {
 	protected loadPresetPaths = new Map<string, string>()
 	protected sidebar = new Sidebar([])
@@ -137,15 +138,13 @@ export class CreatePresetWindow extends BaseWindow {
 
 	async open() {
 		const app = await App.getApp()
+		const fs = app.fileSystem
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
 
-		const fs = await getFileSystem()
 		await this.loadPresets(fs)
-		for (const [_, loadPresetPath] of this.loadPresetPaths) {
-			console.log(loadPresetPath)
+		for (const [_, loadPresetPath] of this.loadPresetPaths)
 			await this.loadPresets(fs, loadPresetPath)
-		}
 
 		app.windows.loadingWindow.close()
 		super.open()

@@ -97,7 +97,7 @@ export class App {
 			this.extensionLoader
 				.loadExtensions(
 					await this.fileSystem.getDirectoryHandle(
-						`projects/${selectedProject}/bridge/plugins`
+						`projects/${projectName}/bridge/plugins`
 					)
 				)
 				.then(() => {

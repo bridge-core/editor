@@ -1,3 +1,4 @@
+import { App } from '@/App'
 import JSZip from 'jszip'
 import { dirname } from 'path'
 import { FileSystem } from '../FileSystem/Main'
@@ -123,6 +124,9 @@ export class ExtensionLoader {
 	}
 
 	deactivateAll() {
-		this.extensions.forEach(ext => ext.deactivate())
+		for (const [key, ext] of this.extensions) {
+			ext.deactivate()
+			this.extensions.delete(key)
+		}
 	}
 }

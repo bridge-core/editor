@@ -42,7 +42,6 @@ export class Extension {
 				return
 			}
 		}
-		console.log(pluginPath)
 
 		this.disposables.push(
 			app.windows.createPreset.addPresets(`${pluginPath}/presets`)
