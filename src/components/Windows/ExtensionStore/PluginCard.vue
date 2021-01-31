@@ -7,7 +7,7 @@
 			<h3>{{ plugin.name }}</h3>
 
 			<v-spacer />
-			<v-tooltip color="primary" left>
+			<v-tooltip color="primary" right>
 				<template v-slot:activator="{ on }">
 					<v-btn
 						v-on="on"
@@ -22,6 +22,22 @@
 				</template>
 
 				<span>Download Extension</span>
+			</v-tooltip>
+
+			<v-tooltip color="tooltip" right>
+				<template v-slot:activator="{ on }">
+					<v-btn
+						v-on="on"
+						:loading="plugin.isLoading"
+						:disabled="!plugin.isInstalled"
+						small
+						icon
+					>
+						<v-icon>mdi-dots-vertical</v-icon>
+					</v-btn>
+				</template>
+
+				<span>More...</span>
 			</v-tooltip>
 		</div>
 		<div class="d-flex mb-4">

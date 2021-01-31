@@ -1,8 +1,4 @@
-import {
-	ISidebarItemConfig,
-	Sidebar,
-	SidebarItem,
-} from '@/components/Windows/Layout/Sidebar'
+import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
 import ExtensionStoreComponent from './ExtensionStore.vue'
 import { BaseWindow } from '@/components/Windows/BaseWindow'
 import { App } from '@/App'

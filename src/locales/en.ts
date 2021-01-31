@@ -232,6 +232,9 @@ export default {
 			title: 'Extension Store',
 			searchExtensions: 'Search extension...',
 		},
+		pluginInstallLocation: {
+			title: 'Choose Install Location',
+		},
 	},
 	taskManager: {
 		tasks: {
@@ -244,6 +247,20 @@ export default {
 				title: 'Compiling Project',
 				description:
 					'bridge. is compiling your project to make it ready for import into Minecraft.',
+			},
+		},
+	},
+	actions: {
+		pluginInstallLocation: {
+			global: {
+				name: 'Install Globally',
+				description:
+					'Global extensions are accessible in all of your projects',
+			},
+			local: {
+				name: 'Install Locally',
+				description:
+					'Local extensions are only accessible inside of the projects you add them to',
 			},
 		},
 	},

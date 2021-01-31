@@ -1,4 +1,5 @@
 import { App } from '@/App'
+import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoice'
 import { ExtensionStoreWindow, IPlugin } from './ExtensionStore'
 import { PluginTag } from './PluginTag'
 
@@ -45,7 +46,33 @@ export class Plugin {
 	}
 
 	async download() {
+		const installLocationChoiceWindow = new InformedChoiceWindow(
+			'windows.pluginInstallLocation.title'
+		)
+		const actionManager = await installLocationChoiceWindow.actionManager
+		actionManager.create({
+			icon: 'mdi-web',
+			name: 'actions.pluginInstallLocation.global.name',
+			description: 'actions.pluginInstallLocation.global.description',
+			onTrigger: () => {
+				this.downloadPlugin(true)
+				installLocationChoiceWindow.dispose()
+			},
+		})
+		actionManager.create({
+			icon: 'mdi-folder-outline',
+			name: 'actions.pluginInstallLocation.local.name',
+			description: 'actions.pluginInstallLocation.local.description',
+			onTrigger: () => {
+				this.downloadPlugin(false)
+				installLocationChoiceWindow.dispose()
+			},
+		})
+	}
+
+	protected async downloadPlugin(isGlobalInstall: boolean) {
 		this.isLoading = true
+
 		const app = await App.getApp()
 		const zip = await fetch(
 			this.parent.getBaseUrl() + this.config.link

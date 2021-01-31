@@ -54,10 +54,11 @@
 			<v-card-text
 				style="padding-top: 12px; overflow-y: auto;"
 				:style="{
-					height: `${
-						isFullscreen ? maxWindowHeight : windowHeight
-					}px`,
+					height: heightUnset
+						? undefined
+						: `${isFullscreen ? maxWindowHeight : windowHeight}px`,
 					'max-height': `${maxWindowHeight}px`,
+					'padding-top': hideToolbar ? '24px' : '12px',
 					'padding-left': !!$slots.sidebar
 						? `calc(${sidebarWidth} + 12px)`
 						: undefined,
@@ -67,6 +68,7 @@
 			</v-card-text>
 
 			<v-card-actions
+				v-if="$slots.actions"
 				:style="{
 					'padding-left': !!$slots.sidebar
 						? `calc(${sidebarWidth} + 12px)`
@@ -134,6 +136,7 @@ export default {
 			type: Number,
 			default: 800,
 		},
+		heightUnset: Boolean,
 		percentageHeight: Number,
 		percentageWidth: Number,
 		maxPercentageHeight: Number,

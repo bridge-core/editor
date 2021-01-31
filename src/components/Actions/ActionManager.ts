@@ -15,6 +15,9 @@ export class ActionManager {
 	disposeAction(actionId: string) {
 		Vue.delete(this.state, actionId)
 	}
+	dispose() {
+		Object.values(this.state).forEach(action => action.dispose())
+	}
 
 	async trigger(actionId: string) {
 		if (!this.state[actionId])
