@@ -6,24 +6,7 @@ import { compare, CompareOperator } from 'compare-versions'
 import { getFileSystem } from '@/utils/fs'
 import { PluginTag } from './PluginTag'
 import { Plugin } from './Plugin'
-
-export interface IPlugin {
-	icon: string
-	author: string
-	name: string
-	releaseTimestamp: number
-	version: string
-	id: string
-	description: string
-	link: string
-	tags: string[]
-}
-
-interface ITag {
-	text: string
-	icon: string
-	color: string
-}
+import { IExtensionManifest } from '@/components/Extensions/ExtensionLoader'
 
 export class ExtensionStoreWindow extends BaseWindow {
 	protected baseUrl =
@@ -48,7 +31,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 			'data/packages/extensionTags.json'
 		)
 
-		const plugins = <IPlugin[]>(
+		const plugins = <IExtensionManifest[]>(
 			await fetch(`${this.baseUrl}/v2Plugins.json`).then(resp =>
 				resp.json()
 			)

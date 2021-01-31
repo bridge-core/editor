@@ -5,9 +5,9 @@ import { selectedProject } from '@/components/Project/Loader'
 
 let cachedGlobals: Record<string, unknown> | undefined = undefined
 
-App.eventSystem.on('projectChanged', () => {
-	cachedGlobals = undefined
-})
+// App.eventSystem.on('projectChanged', () => {
+// 	cachedGlobals = undefined
+// })
 
 export const GlobalsModule = async ({}: IModuleConfig) => {
 	try {

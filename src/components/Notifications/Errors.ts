@@ -1,7 +1,7 @@
 import { App } from '@/App'
 import { createNotification } from '@/components/Notifications/create'
 import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
-import type { IDisposable } from '@/types/disposable'
+import { IDisposable } from '@/types/disposable'
 
 /**
  * Creates a new error notification
@@ -32,10 +32,14 @@ export function createErrorNotification(error: Error): IDisposable {
 
 window.addEventListener('error', event => {
 	createErrorNotification(event.error ?? event)
-	App.ready.once(app => app.windows.loadingWindow.closeAll())
+
+	if (process.env.NODE_ENV === 'production')
+		App.ready.once(app => app.windows.loadingWindow.closeAll())
 })
 
 window.onunhandledrejection = (event: PromiseRejectionEvent) => {
 	createErrorNotification(new Error(event.reason))
-	App.ready.once(app => app.windows.loadingWindow.closeAll())
+
+	if (process.env.NODE_ENV === 'production')
+		App.ready.once(app => app.windows.loadingWindow.closeAll())
 }

@@ -1,7 +1,8 @@
 import { App } from '@/App'
+import { IExtensionManifest } from '@/components/Extensions/ExtensionLoader'
 import { selectedProject } from '@/components/Project/Loader'
 import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoice'
-import { ExtensionStoreWindow, IPlugin } from './ExtensionStore'
+import { ExtensionStoreWindow } from './ExtensionStore'
 import { PluginTag } from './PluginTag'
 
 export class Plugin {
@@ -12,7 +13,7 @@ export class Plugin {
 
 	constructor(
 		protected parent: ExtensionStoreWindow,
-		protected config: IPlugin
+		protected config: IExtensionManifest
 	) {
 		this.tags = this.config.tags.map(tag => {
 			if (!this.parent.tags[tag])

@@ -25,6 +25,8 @@ export class FileSystem extends Signal<void> {
 		path: string,
 		{ create, createOnce }: Partial<IGetHandleConfig> = {}
 	) {
+		if (path === '') return this.baseDirectory
+
 		let current = this.baseDirectory
 		const pathArr = path.split(/\\|\//g)
 
@@ -90,7 +92,7 @@ export class FileSystem extends Signal<void> {
 		const pathArr = path.split(/\\|\//g)
 
 		// This has to be a string because path.length > 0
-		const file = pathArr.pop() as string
+		const file = <string>pathArr.pop()
 		const parentDir = await this.getDirectoryHandle(pathArr.join('/'))
 
 		await parentDir.removeEntry(file, { recursive: true })

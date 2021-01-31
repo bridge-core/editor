@@ -1,6 +1,6 @@
 import { EventManager, Signal } from './appCycle/EventSystem'
 import { FileType } from './components/Data/FileType'
-import { ThemeManager } from './components/Plugins/Themes/ThemeManager'
+import { ThemeManager } from './components/Extensions/Themes/ThemeManager'
 import { JSONDefaults } from './components/Data/JSONDefaults'
 import { FileSystem } from './components/FileSystem/Main'
 import { setupFileSystem } from './components/FileSystem/setup'
@@ -16,7 +16,7 @@ import { createNotification } from './components/Notifications/create'
 import '@/components/Notifications/Errors'
 import '@/appCycle/ResizeWatcher'
 import { PackType } from './components/Data/PackType'
-import { selectLastProject } from './components/Project/Loader'
+import { selectedProject, selectLastProject } from './components/Project/Loader'
 import { Windows } from './components/Windows/Windows'
 import { SettingsWindow } from './components/Windows/Settings/SettingsWindow'
 import Vue from 'vue'
@@ -28,6 +28,7 @@ import { KeyBindingManager } from './components/Actions/KeyBindingManager'
 import { ActionManager } from './components/Actions/ActionManager'
 import { Toolbar } from './components/Toolbar/Toolbar'
 import { Compiler } from './components/Compiler/Compiler'
+import { ExtensionLoader } from './components/Extensions/ExtensionLoader'
 export class App {
 	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventManager<any>([
@@ -49,6 +50,7 @@ export class App {
 	public readonly tabSystem = Vue.observable(new TabSystem())
 	public readonly dataLoader = new DataLoader()
 	public readonly fileSystem = new FileSystem()
+	public readonly extensionLoader = new ExtensionLoader()
 
 	protected _windows = new Windows()
 	get windows() {
@@ -88,9 +90,20 @@ export class App {
 	}
 
 	switchProject(projectName: string, forceRefreshCache = false) {
-		return new Promise<void>(resolve => {
+		return new Promise<void>(async resolve => {
 			this.packIndexer.start(projectName, forceRefreshCache)
-			this.compiler.start(projectName)
+
+			this.extensionLoader.deactivateAll()
+			this.extensionLoader
+				.loadExtensions(
+					await this.fileSystem.getDirectoryHandle(
+						`projects/${selectedProject}/bridge/plugins`
+					)
+				)
+				.then(() => {
+					this.compiler.start(projectName)
+				})
+
 			App.eventSystem.dispatch('projectChanged', undefined)
 			this.packIndexer.once(() => resolve())
 		})

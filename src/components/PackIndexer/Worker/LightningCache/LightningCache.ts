@@ -1,5 +1,5 @@
 import { FileType } from '@/components/Data/FileType'
-import { run } from '@/components/Plugins/Scripts/run'
+import { run } from '@/components/Extensions/Scripts/run'
 import { walkObject } from '@/utils/walkObject'
 import json5 from 'json5'
 import { PackIndexerService } from '../Main'

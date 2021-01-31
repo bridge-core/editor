@@ -10,14 +10,13 @@ import { FileSystem } from '@/components/FileSystem/Main'
 
 export async function loadUIComponents(
 	fileSystem: FileSystem,
-	pluginPath: string,
 	uiStore: TUIStore,
 	disposables: IDisposable[],
-	basePath = pluginPath
+	basePath = 'UI'
 ) {
 	let dirents: (FileSystemDirectoryHandle | FileSystemFileHandle)[] = []
 	try {
-		dirents = await fileSystem.readdir(pluginPath, { withFileTypes: true })
+		dirents = await fileSystem.readdir(basePath, { withFileTypes: true })
 	} catch {}
 
 	await Promise.all(
@@ -25,18 +24,16 @@ export async function loadUIComponents(
 			if (dirent.kind === 'directory')
 				return loadUIComponent(
 					fileSystem,
-					`${pluginPath}/${dirent.name}`,
-					basePath,
+					`${basePath}/${dirent.name}`,
 					uiStore,
 					disposables
 				)
 			else
 				return loadUIComponents(
 					fileSystem,
-					`${pluginPath}/${dirent.name}`,
 					uiStore,
 					disposables,
-					pluginPath
+					`${basePath}/${dirent.name}`
 				)
 		})
 	)
@@ -45,7 +42,6 @@ export async function loadUIComponents(
 export async function loadUIComponent(
 	fileSystem: FileSystem,
 	componentPath: string,
-	basePath: string,
 	uiStore: TUIStore,
 	disposables: IDisposable[]
 ) {
@@ -94,8 +90,5 @@ export async function loadUIComponent(
 		resolve(component)
 	})
 
-	uiStore.set(
-		relative(basePath, componentPath).split(/\\|\//g),
-		() => promise
-	)
+	uiStore.set(relative('UI', componentPath).split(/\\|\//g), () => promise)
 }
