@@ -1,4 +1,5 @@
 import { App } from '@/App'
+import { selectedProject } from '@/components/Project/Loader'
 import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoice'
 import { ExtensionStoreWindow, IPlugin } from './ExtensionStore'
 import { PluginTag } from './PluginTag'
@@ -56,7 +57,6 @@ export class Plugin {
 			description: 'actions.pluginInstallLocation.global.description',
 			onTrigger: () => {
 				this.downloadPlugin(true)
-				installLocationChoiceWindow.dispose()
 			},
 		})
 		actionManager.create({
@@ -65,7 +65,6 @@ export class Plugin {
 			description: 'actions.pluginInstallLocation.local.description',
 			onTrigger: () => {
 				this.downloadPlugin(false)
-				installLocationChoiceWindow.dispose()
 			},
 		})
 	}
@@ -78,8 +77,11 @@ export class Plugin {
 			this.parent.getBaseUrl() + this.config.link
 		).then(response => response.arrayBuffer())
 
+		const basePath = !isGlobalInstall
+			? `projects/${selectedProject}/bridge/`
+			: ''
 		await app.fileSystem.writeFile(
-			`plugins/${this.name.replace(/\s+/g, '')}.zip`,
+			basePath + `plugins/${this.name.replace(/\s+/g, '')}.zip`,
 			zip
 		)
 
