@@ -38,10 +38,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 		)
 		this.plugins = plugins
 			.sort(
-				(
-					{ name: a, releaseTimestamp: tA },
-					{ name: b, releaseTimestamp: tB }
-				) => (tA === tB ? a.localeCompare(b) : tA - tB)
+				({ releaseTimestamp: tA }, { releaseTimestamp: tB }) => tB - tA
 			)
 			.map(plugin => new Plugin(this, plugin))
 
