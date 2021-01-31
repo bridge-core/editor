@@ -88,6 +88,7 @@ import { TranslationMixin } from '@/utils/locales'
 import WindowsToolbar from './Toolbar/Windows.vue'
 import MacToolbar from './Toolbar/Mac.vue'
 import MacWindowControls from './Toolbar/Mac/WindowControls.vue'
+import debounce from 'lodash.debounce'
 
 export default {
 	name: 'BaseWindow',
@@ -142,23 +143,22 @@ export default {
 		maxPercentageHeight: Number,
 		maxPercentageWidth: Number,
 	},
-	data: () => ({
-		platform: platform(),
-		globalWindowWidth: window.innerWidth,
-		globalWindowHeight: window.innerHeight,
-	}),
+	data() {
+		return {
+			platform: platform(),
+			globalWindowWidth: window.innerWidth,
+			globalWindowHeight: window.innerHeight,
+			updateWindowSize: debounce(function() {
+				this.globalWindowWidth = window.innerWidth
+				this.globalWindowHeight = window.innerHeight
+			}, 200).bind(this),
+		}
+	},
 	mounted() {
 		window.addEventListener('resize', this.updateWindowSize)
 	},
 	destroyed() {
 		window.removeEventListener('resize', this.updateWindowSize)
-	},
-
-	methods: {
-		updateWindowSize() {
-			this.globalWindowWidth = window.innerWidth
-			this.globalWindowHeight = window.innerHeight
-		},
 	},
 
 	computed: {
