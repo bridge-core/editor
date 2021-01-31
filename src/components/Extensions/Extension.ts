@@ -4,6 +4,7 @@ import { createErrorNotification } from '@/components/Notifications/Errors'
 import { ExtensionLoader, IExtensionManifest } from './ExtensionLoader'
 import { loadUIComponents } from './UI/load'
 import { createUIStore } from './UI/store'
+import { App } from '@/App'
 
 export class Extension {
 	protected _isActive = false
@@ -24,6 +25,11 @@ export class Extension {
 
 	async activate() {
 		this._isActive = true
+		const app = await App.getApp()
+		const pluginPath = (
+			(await app.fileSystem.baseDirectory.resolve(this.baseDirectory)) ??
+			[]
+		).join('/')
 
 		// Activate all dependencies before
 		for (const dep of this.manifest.dependencies ?? []) {
@@ -36,8 +42,15 @@ export class Extension {
 				return
 			}
 		}
+		console.log(pluginPath)
 
-		await loadUIComponents(this.fileSystem, this.uiStore, this.disposables)
+		this.disposables.push(
+			app.windows.createPreset.addPresets(`${pluginPath}/presets`)
+		)
+
+		await Promise.all([
+			loadUIComponents(this.fileSystem, this.uiStore, this.disposables),
+		])
 	}
 
 	deactivate() {

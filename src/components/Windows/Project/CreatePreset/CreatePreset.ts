@@ -42,6 +42,7 @@ const textTransformFiles = [
 	'.molang',
 ]
 export class CreatePresetWindow extends BaseWindow {
+	protected loadPresetPaths = new Map<string, string>()
 	protected sidebar = new Sidebar([])
 
 	constructor() {
@@ -52,6 +53,7 @@ export class CreatePresetWindow extends BaseWindow {
 	protected async addPreset(fs: FileSystem, manifestPath: string) {
 		const app = await App.getApp()
 		const manifest = <IPresetManifest>await fs.readJSON(manifestPath)
+
 		// Presets need a category, presets without category are most likely incompatible v1 presets
 		if (!manifest.category)
 			throw new Error(
@@ -120,7 +122,10 @@ export class CreatePresetWindow extends BaseWindow {
 		fs: FileSystem,
 		dirPath = 'data/packages/preset'
 	) {
-		const dirents = await fs.readdir(dirPath, { withFileTypes: true })
+		let dirents: FileSystemHandle[] = []
+		try {
+			dirents = await fs.readdir(dirPath, { withFileTypes: true })
+		} catch {}
 
 		for (const dirent of dirents) {
 			if (dirent.kind === 'directory')
@@ -137,9 +142,21 @@ export class CreatePresetWindow extends BaseWindow {
 
 		const fs = await getFileSystem()
 		await this.loadPresets(fs)
+		for (const [_, loadPresetPath] of this.loadPresetPaths) {
+			console.log(loadPresetPath)
+			await this.loadPresets(fs, loadPresetPath)
+		}
 
 		app.windows.loadingWindow.close()
 		super.open()
+	}
+	addPresets(folderPath: string) {
+		const id = uuid()
+		this.loadPresetPaths.set(id, folderPath)
+
+		return {
+			dispose: () => this.loadPresetPaths.delete(id),
+		}
 	}
 
 	async createPreset({
