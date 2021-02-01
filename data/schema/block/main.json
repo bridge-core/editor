@@ -36,7 +36,7 @@
 		},
 		{
 			"if": {
-				"properties": { "format_version": { "const": "1.16.100" } }
+				"properties": { "format_version": { "enum": ["1.16.100", "1.16.200"] } }
 			},
 			"then": {
 				"$ref": "./v1.16.100/main.json"

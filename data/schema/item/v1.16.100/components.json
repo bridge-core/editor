@@ -73,14 +73,14 @@
 					"type": "array",
 					"description": "List of block descriptors that contain blocks that this item can be used on. If left empty, all blocks will be allowed.",
 					"items": {
-						"type": "string"
+						"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 					}
 				},
 				"dispense_on": {
 					"type": "array",
 					"description": "List of block descriptors that contain blocks that this item can be dispensed on. If left empty, all blocks will be allowed.",
 					"items": {
-						"type": "string"
+						"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 					}
 				}
 			}
@@ -326,7 +326,7 @@
 								"description": "Blocks/block tags that are broken at the set speed.",
 								"anyOf": [
 									{
-										"$ref": "../../general/reference/identifiers.json#/definitions/block_identififers"
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 									},
 									{
 										"type": "string",

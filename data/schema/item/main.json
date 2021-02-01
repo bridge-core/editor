@@ -9,7 +9,14 @@
 		{
 			"properties": {
 				"format_version": {
-					"$ref": "../general/formatVersion.json"
+					"anyOf": [
+						{
+							"$ref": "../general/formatVersion.json"
+						},
+						{
+							"const": "1.10"
+						}
+					]
 				}
 			}
 		},
@@ -21,6 +28,7 @@
 							"1.8.0",
 							"1.9.0",
 							"1.10.0",
+							"1.10",
 							"1.11.0",
 							"1.12.0",
 							"1.13.0",
@@ -36,7 +44,7 @@
 		},
 		{
 			"if": {
-				"properties": { "format_version": { "const": "1.16.100" } }
+				"properties": { "format_version": { "enum": ["1.16.100", "1.16.200"] } }
 			},
 			"then": {
 				"$ref": "./v1.16.100/main.json"

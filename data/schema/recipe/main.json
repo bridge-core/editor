@@ -2,7 +2,6 @@
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"title": "Recipe",
 	"required": ["format_version"],
-	// TODO - cache recipe keys + use them
 	"allOf": [
 		{
 			"anyOf": [
@@ -159,7 +158,14 @@
 		{
 			"properties": {
 				"format_version": {
-					"$ref": "../general/formatVersion.json"
+					"anyOf": [
+						{
+							"$ref": "../general/formatVersion.json"
+						},
+						{
+							"const": "1.12"
+						}
+					]
 				}
 			}
 		}
