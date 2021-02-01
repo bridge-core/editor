@@ -3,7 +3,6 @@ export function runAsync(
 	env: unknown,
 	envName = 'Bridge'
 ): Promise<any> {
-	console.log(`return (async () => {\n${script}\n})()`)
 	return new Function(envName, `return (async () => {\n${script}\n})()`)(env)
 }
 
