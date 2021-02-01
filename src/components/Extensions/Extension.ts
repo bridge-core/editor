@@ -45,7 +45,9 @@ export class Extension {
 		}
 
 		this.manifest.compilerPlugins?.forEach(compilerPlugin =>
-			app.compiler.addCompilerPlugin(compilerPlugin)
+			this.disposables.push(
+				app.compiler.addCompilerPlugin(compilerPlugin)
+			)
 		)
 
 		this.disposables.push(
