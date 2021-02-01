@@ -73,7 +73,8 @@ export class ExtensionLoader extends Signal<void> {
 			extension = await this.loadManifest(handle)
 		}
 
-		if (activate && extension) extension.activate()
+		if (activate && extension) await extension.activate()
+		return extension
 	}
 
 	protected async unzipExtension(

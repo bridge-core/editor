@@ -12,8 +12,8 @@
 				@click="extension.download()"
 				:loading="extension.isLoading"
 				color="primary"
+				class="rounded-lg"
 				small
-				rounded
 			>
 				<v-icon small class="mr-1">mdi-download</v-icon>
 				Download
@@ -24,10 +24,10 @@
 				@click="extension.update()"
 				:loading="extension.isLoading"
 				color="primary"
+				class="rounded-lg"
 				small
-				rounded
 			>
-				<v-icon small class="mr-1">mdi-download</v-icon>
+				<v-icon small class="mr-1">mdi-sync</v-icon>
 				Update
 			</v-btn>
 
@@ -89,7 +89,7 @@ export default {
 				},
 				{
 					icon: 'mdi-code-braces',
-					text: this.extension.version,
+					text: this.extension.displayVersion,
 					type: 'search',
 				},
 			].concat(this.extension.tags)

@@ -100,11 +100,12 @@ export class ExtensionViewer {
 		} catch {}
 
 		// Unzip & activate extension
-		await app.extensionLoader.loadExtension(
+		const extension = await app.extensionLoader.loadExtension(
 			await app.fileSystem.getDirectoryHandle(basePath),
 			await app.fileSystem.getFileHandle(zipPath),
 			true
 		)
+		if (extension) this.setConnected(extension)
 
 		this.setInstalled()
 		this.isUpdateAvailable = false
@@ -127,5 +128,9 @@ export class ExtensionViewer {
 	}
 	setConnected(ext: Extension) {
 		this.connected = ext
+	}
+
+	get displayVersion() {
+		return this.connected?.version ?? this.config.version
 	}
 }

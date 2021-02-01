@@ -2,6 +2,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const WorkerPlugin = require('worker-plugin')
 
 module.exports = {
+	runtimeCompiler: true,
 	publicPath: process.env.NODE_ENV === 'production' ? '/editor/' : undefined,
 	transpileDependencies: ['vuetify'],
 	pwa: {

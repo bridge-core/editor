@@ -2,17 +2,19 @@ import { extname, basename, relative } from 'path'
 import { createErrorNotification } from '@/components/Notifications/Errors'
 import { TUIStore } from './store'
 import { IDisposable } from '@/types/disposable'
-import { executeScript } from '../Scripts/execute'
+import { executeScript } from '../Scripts/loadScripts'
 import { createStyleSheet } from '../Styles/createStyle'
 import { parseComponent } from 'vue-template-compiler'
 import Vue from 'vue'
 import { FileSystem } from '@/components/FileSystem/Main'
+// @ts-ignore
+import * as VuetifyComponents from 'vuetify/lib/components'
 
 export async function loadUIComponents(
 	fileSystem: FileSystem,
 	uiStore: TUIStore,
 	disposables: IDisposable[],
-	basePath = 'UI'
+	basePath = 'ui'
 ) {
 	let dirents: (FileSystemDirectoryHandle | FileSystemFileHandle)[] = []
 	try {
@@ -21,7 +23,7 @@ export async function loadUIComponents(
 
 	await Promise.all(
 		dirents.map(dirent => {
-			if (dirent.kind === 'directory')
+			if (dirent.kind === 'file')
 				return loadUIComponent(
 					fileSystem,
 					`${basePath}/${dirent.name}`,
@@ -82,6 +84,11 @@ export async function loadUIComponent(
 				template?.content ?? `<p color="red">NO TEMPLATE DEFINED</p>`
 			),
 		}
+		// Add vuetify components in
+		component.components = Object.assign(
+			component.components ?? {},
+			VuetifyComponents
+		)
 
 		styles.forEach(style =>
 			disposables.push(createStyleSheet(style.content))
@@ -90,5 +97,5 @@ export async function loadUIComponent(
 		resolve(component)
 	})
 
-	uiStore.set(relative('UI', componentPath).split(/\\|\//g), () => promise)
+	uiStore.set(relative('ui', componentPath).split(/\\|\//g), () => promise)
 }

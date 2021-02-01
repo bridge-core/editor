@@ -5,6 +5,7 @@ import { ExtensionLoader, IExtensionManifest } from './ExtensionLoader'
 import { loadUIComponents } from './UI/load'
 import { createUIStore } from './UI/store'
 import { App } from '@/App'
+import { loadScripts } from './Scripts/loadScripts'
 
 export class Extension {
 	protected _isActive = false
@@ -55,7 +56,20 @@ export class Extension {
 		)
 
 		await Promise.all([
-			loadUIComponents(this.fileSystem, this.uiStore, this.disposables),
+			loadUIComponents(
+				this.fileSystem,
+				this.uiStore,
+				this.disposables
+			).then(
+				async () =>
+					await loadScripts(
+						await this.baseDirectory.getDirectoryHandle('scripts', {
+							create: true,
+						}),
+						this.uiStore,
+						this.disposables
+					)
+			),
 		])
 	}
 
