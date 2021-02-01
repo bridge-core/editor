@@ -17,6 +17,15 @@
 						},
 						"fog_identifier": {
 							"$ref": "../general/reference/identifiers.json#/definitions/fog_identifiers"
+						},
+						"water_fog_color": {
+							"$ref": "../general/hexColor.json"
+						},
+						"fog_color": {
+							"$ref": "../general/hexColor.json"
+						},
+						"water_fog_distance": {
+							"type": "number"
 						}
 					}
 				}

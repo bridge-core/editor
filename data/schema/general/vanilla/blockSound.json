@@ -4,6 +4,7 @@
 	"enum": [
 		"wood",
 		"metal",
+		"sand",
 		"stone",
 		"ancient_debris",
 		"anvil",
@@ -27,11 +28,19 @@
 		"nether_brick",
 		"nether_gold_ore",
 		"netherite",
+		"nether_sprouts",
 		"netherrack",
 		"scaffolding",
 		"slime",
+		"soul_soil",
+		"soul_sand",
+		"snow",
 		"shroomlight",
 		"lantern",
+		"fungus",
+		"itemframe",
+		"ladder",
+		"lodestone",
 		"sweet_berry_bush",
 		"vines"
 	]
