@@ -4,17 +4,18 @@ import { BaseWindow } from '@/components/Windows/BaseWindow'
 import { App } from '@/App'
 import { compare, CompareOperator } from 'compare-versions'
 import { getFileSystem } from '@/utils/fs'
-import { PluginTag } from './PluginTag'
-import { Plugin } from './Plugin'
+import { ExtensionTag } from './ExtensionTag'
+import { ExtensionViewer } from './Extension'
 import { IExtensionManifest } from '@/components/Extensions/ExtensionLoader'
 
 export class ExtensionStoreWindow extends BaseWindow {
 	protected baseUrl =
 		'https://raw.githubusercontent.com/bridge-core/plugins/master'
 	protected sidebar = new Sidebar([])
-	protected plugins: Plugin[] = []
+	protected extensions: ExtensionViewer[] = []
 	protected extensionTags!: Record<string, { icon: string; color?: string }>
-	public readonly tags: Record<string, PluginTag> = {}
+	protected installedExtensions = new Set<ExtensionViewer>()
+	public readonly tags: Record<string, ExtensionTag> = {}
 
 	constructor() {
 		super(ExtensionStoreComponent)
@@ -25,25 +26,37 @@ export class ExtensionStoreWindow extends BaseWindow {
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
+		this.installedExtensions.clear()
 
 		const fs = await getFileSystem()
 		this.extensionTags = await fs.readJSON(
 			'data/packages/extensionTags.json'
 		)
 
-		const plugins = <IExtensionManifest[]>(
-			await fetch(`${this.baseUrl}/v2Plugins.json`).then(resp =>
+		const installedExtensions = await app.extensionLoader.getInstalledExtensions()
+
+		const extensions = <IExtensionManifest[]>(
+			await fetch(`${this.baseUrl}/extensions.json`).then(resp =>
 				resp.json()
 			)
 		)
-		this.plugins = plugins
+		this.extensions = extensions
 			.sort(
 				({ releaseTimestamp: tA }, { releaseTimestamp: tB }) => tB - tA
 			)
-			.map(plugin => new Plugin(this, plugin))
+			.map(plugin => new ExtensionViewer(this, plugin))
+		this.extensions.forEach(extension => {
+			const installedExtension = installedExtensions.get(extension.id)
+			if (!installedExtension) return
+
+			extension.setInstalled()
+			extension.setConnected(installedExtension)
+			if (compare(installedExtension.version, extension.version, '<'))
+				extension.setIsUpdateAvailable()
+		})
 
 		this.setupSidebar()
-		console.log(this.plugins)
+		console.log(this.extensions)
 
 		app.windows.loadingWindow.close()
 		super.open()
@@ -57,7 +70,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 				icon: 'mdi-format-list-bulleted-square',
 				color: 'primary',
 			}),
-			this.plugins
+			this.extensions
 		)
 		this.sidebar.addElement(
 			new SidebarItem({
@@ -66,18 +79,18 @@ export class ExtensionStoreWindow extends BaseWindow {
 				icon: 'mdi-download-circle-outline',
 				color: 'primary',
 			}),
-			this.plugins
+			this.installedExtensions
 		)
 		Object.values(this.tags).forEach(tag =>
 			this.sidebar.addElement(
 				tag.asSidebarElement(),
-				this.getPluginsByTag(tag)
+				this.getExtensionsByTag(tag)
 			)
 		)
 	}
 
-	getPluginsByTag(findTag: PluginTag) {
-		return this.plugins.filter(plugin => plugin.hasTag(findTag))
+	protected getExtensionsByTag(findTag: ExtensionTag) {
+		return this.extensions.filter(plugin => plugin.hasTag(findTag))
 	}
 	getTagIcon(tagName: string) {
 		return this.extensionTags[tagName].icon
@@ -96,5 +109,8 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 	getBaseUrl() {
 		return this.baseUrl
+	}
+	addInstalledExtension(extension: ExtensionViewer) {
+		this.installedExtensions.add(extension)
 	}
 }

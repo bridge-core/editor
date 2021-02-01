@@ -3,6 +3,7 @@ import { TaskService } from '@/components/TaskManager/WorkerTask'
 
 export interface IWorkerSettings {
 	config: string
+	plugins: string[]
 }
 export interface IBuildConfig {
 	mode: 'dev' | 'build'

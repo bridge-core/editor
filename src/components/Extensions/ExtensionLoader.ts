@@ -1,4 +1,5 @@
 import { App } from '@/App'
+import { Signal } from '@/appCycle/EventSystem'
 import JSZip from 'jszip'
 import { dirname } from 'path'
 import { FileSystem } from '../FileSystem/Main'
@@ -16,38 +17,66 @@ export interface IExtensionManifest {
 	link: string
 	tags: string[]
 	dependencies: string[]
+	compilerPlugins: string[]
 }
 
-export class ExtensionLoader {
+export class ExtensionLoader extends Signal<void> {
 	protected extensions = new Map<string, Extension>()
+	protected _loadedInstalledExtensions = new Signal<void>()
 
-	constructor() {}
+	get loadedInstalledExtensions() {
+		return new Promise<void>(resolve =>
+			this._loadedInstalledExtensions.once(resolve)
+		)
+	}
+	get ready() {
+		return new Promise<void>(resolve => this.once(resolve))
+	}
+	async getInstalledExtensions() {
+		await this.loadedInstalledExtensions
+		return new Map(this.extensions.entries())
+	}
 
 	async loadExtensions(baseDirectory: FileSystemDirectoryHandle) {
 		const promises: Promise<unknown>[] = []
 
 		for await (const entry of baseDirectory.values()) {
-			if (entry.kind === 'file' && entry.name.endsWith('.zip'))
-				promises.push(
-					this.unzipExtensions(
-						entry,
-						await baseDirectory.getDirectoryHandle(
-							entry.name.replace('.zip', ''),
-							{ create: true }
-						)
-					).then(() => baseDirectory.removeEntry(entry.name))
-				)
-			else if (entry.kind === 'directory')
-				promises.push(this.loadManifest(entry))
+			promises.push(this.loadExtension(baseDirectory, entry))
 		}
 
 		await Promise.all(promises)
+		this._loadedInstalledExtensions.dispatch()
 
 		for (const [_, extension] of this.extensions) {
 			if (!extension.isActive) await extension.activate()
 		}
+
+		this.dispatch()
 	}
-	protected async unzipExtensions(
+
+	async loadExtension(
+		baseDirectory: FileSystemDirectoryHandle,
+		handle: FileSystemHandle,
+		activate = false
+	) {
+		let extension: Extension | undefined
+		if (handle.kind === 'file' && handle.name.endsWith('.zip')) {
+			extension = await this.unzipExtension(
+				handle,
+				await baseDirectory.getDirectoryHandle(
+					handle.name.replace('.zip', ''),
+					{ create: true }
+				)
+			)
+			await baseDirectory.removeEntry(handle.name)
+		} else if (handle.kind === 'directory') {
+			extension = await this.loadManifest(handle)
+		}
+
+		if (activate && extension) extension.activate()
+	}
+
+	protected async unzipExtension(
 		fileHandle: FileSystemFileHandle,
 		baseDirectory: FileSystemDirectoryHandle
 	) {
@@ -76,10 +105,13 @@ export class ExtensionLoader {
 		})
 		await Promise.all(promises)
 
-		await this.loadManifest(baseDirectory)
+		return await this.loadManifest(baseDirectory)
 	}
 
-	protected async loadManifest(baseDirectory: FileSystemDirectoryHandle) {
+	protected async loadManifest(
+		baseDirectory: FileSystemDirectoryHandle,
+		isGlobal = false
+	) {
 		let manifestHandle: FileSystemFileHandle
 		try {
 			manifestHandle = await baseDirectory.getFileHandle('manifest.json')
@@ -93,10 +125,14 @@ export class ExtensionLoader {
 			.then(str => JSON.parse(str))
 
 		if (manifest.id) {
-			this.extensions.set(
-				manifest.id,
-				new Extension(this, <IExtensionManifest>manifest, baseDirectory)
+			const extension = new Extension(
+				this,
+				<IExtensionManifest>manifest,
+				baseDirectory
 			)
+			extension.setIsGlobal(isGlobal)
+			this.extensions.set(manifest.id, extension)
+			return extension
 		} else {
 			createErrorNotification(
 				new Error(
@@ -111,7 +147,7 @@ export class ExtensionLoader {
 		const extension = await this.extensions.get(id)
 
 		if (extension) {
-			await extension.activate()
+			if (!extension.isActive) await extension.activate()
 			return true
 		} else {
 			createErrorNotification(

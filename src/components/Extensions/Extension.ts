@@ -8,6 +8,7 @@ import { App } from '@/App'
 
 export class Extension {
 	protected _isActive = false
+	protected _isGlobal = false
 	protected disposables: IDisposable[] = []
 	protected uiStore = createUIStore()
 	protected fileSystem: FileSystem
@@ -43,6 +44,10 @@ export class Extension {
 			}
 		}
 
+		this.manifest.compilerPlugins?.forEach(compilerPlugin =>
+			app.compiler.addCompilerPlugin(compilerPlugin)
+		)
+
 		this.disposables.push(
 			app.windows.createPreset.addPresets(`${pluginPath}/presets`)
 		)
@@ -55,5 +60,16 @@ export class Extension {
 	deactivate() {
 		this.disposables.forEach(disposable => disposable.dispose())
 		this._isActive = false
+	}
+
+	setIsGlobal(val: boolean) {
+		this._isGlobal = val
+	}
+
+	get version() {
+		return this.manifest.version
+	}
+	get isGlobal() {
+		return this._isGlobal
 	}
 }

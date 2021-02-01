@@ -22,14 +22,16 @@
 			/>
 		</template>
 		<template #default>
-			<div v-if="currentPlugins.length === 0">
+			<div v-if="currentExtensions.length === 0">
 				No plugins match your search...
 			</div>
 			<template v-else>
-				<PluginCard
-					v-for="plugin in currentPlugins"
-					:key="plugin.id"
-					:plugin="plugin"
+				<ExtensionCard
+					v-for="extension in currentExtensions"
+					:key="
+						`${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`
+					"
+					:extension="extension"
 					@search="search => (sidebar._filter = search)"
 					@select="id => ($data.selectedSidebar = id)"
 				/>
@@ -40,7 +42,7 @@
 
 <script>
 import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
-import PluginCard from './PluginCard.vue'
+import ExtensionCard from './ExtensionCard.vue'
 import { TranslationMixin } from '@/utils/locales'
 
 export default {
@@ -48,26 +50,24 @@ export default {
 	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,
-		PluginCard,
+		ExtensionCard,
 	},
 	props: ['currentWindow'],
 	data() {
 		return this.currentWindow
 	},
 	computed: {
-		currentPlugins() {
+		currentExtensions() {
 			if (this.sidebar._filter !== '') {
 				const f = this.sidebar._filter.toLowerCase()
 
-				return this.plugins.filter(
-					plugin =>
-						plugin.name.toLowerCase().includes(f) ||
-						plugin.description.toLowerCase().includes(f) ||
-						plugin.author.toLowerCase().includes(f) ||
-						plugin.version.includes(f) ||
-						plugin.tags.some(tag =>
-							tag.text.toLowerCase().includes(f)
-						)
+				return this.extensions.filter(
+					e =>
+						e.name.toLowerCase().includes(f) ||
+						e.description.toLowerCase().includes(f) ||
+						e.author.toLowerCase().includes(f) ||
+						e.version.includes(f) ||
+						e.tags.some(tag => tag.text.toLowerCase().includes(f))
 				)
 			}
 

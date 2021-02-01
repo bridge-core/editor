@@ -12,6 +12,7 @@ const TaskService = Comlink.wrap<typeof CompilerService>(
 export class Compiler extends Signal<void> {
 	protected _service!: Comlink.Remote<CompilerService>
 	public readonly ready = new Signal<boolean>()
+	protected compilerPlugins = new Set<string>()
 
 	start(projectName: string) {
 		console.time('[TASK] Compiling project (total)')
@@ -32,6 +33,7 @@ export class Compiler extends Signal<void> {
 				app.fileSystem.baseDirectory,
 				{
 					config: 'dev.json',
+					plugins: [...this.compilerPlugins],
 				}
 			)
 			// Listen to task progress and update UI
@@ -50,6 +52,14 @@ export class Compiler extends Signal<void> {
 			this.ready.dispatch(true)
 			console.timeEnd('[TASK] Compiling project (total)')
 		})
+	}
+
+	addCompilerPlugin(srcPath: string) {
+		this.compilerPlugins.add(srcPath)
+
+		return {
+			dispose: () => this.compilerPlugins.delete(srcPath),
+		}
 	}
 
 	get service() {

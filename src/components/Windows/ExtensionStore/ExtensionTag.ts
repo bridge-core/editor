@@ -1,7 +1,7 @@
 import { SidebarItem } from '@/components/Windows/Layout/Sidebar'
 import { ExtensionStoreWindow } from './ExtensionStore'
 
-export class PluginTag {
+export class ExtensionTag {
 	protected icon: string
 	protected text: string
 	protected color?: string

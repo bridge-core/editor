@@ -1,38 +1,47 @@
 <template>
 	<div class="body-1 pa-4 mb-2 rounded-lg card">
 		<div class="d-flex align-center">
-			<v-icon v-if="plugin.icon" color="accent" class="mr-1">
-				{{ plugin.icon }}
+			<v-icon v-if="extension.icon" color="accent" class="mr-1">
+				{{ extension.icon }}
 			</v-icon>
-			<h3>{{ plugin.name }}</h3>
+			<h3>{{ extension.name }}</h3>
 
 			<v-spacer />
-			<v-tooltip color="primary" right>
+			<v-btn
+				v-if="!extension.isInstalled"
+				@click="extension.download()"
+				:loading="extension.isLoading"
+				color="primary"
+				small
+				rounded
+			>
+				<v-icon small class="mr-1">mdi-download</v-icon>
+				Download
+			</v-btn>
+
+			<v-btn
+				v-else-if="extension.isUpdateAvailable"
+				@click="extension.update()"
+				:loading="extension.isLoading"
+				color="primary"
+				small
+				rounded
+			>
+				<v-icon small class="mr-1">mdi-download</v-icon>
+				Update
+			</v-btn>
+
+			<v-tooltip v-else color="success" right>
 				<template v-slot:activator="{ on }">
-					<v-btn
-						v-on="on"
-						@click="plugin.download()"
-						:loading="plugin.isLoading"
-						color="primary"
-						small
-						icon
-					>
-						<v-icon>mdi-download-circle-outline</v-icon>
-					</v-btn>
+					<v-icon color="success" v-on="on">mdi-check</v-icon>
 				</template>
 
-				<span>Download Extension</span>
+				<span>Extension Active</span>
 			</v-tooltip>
 
-			<v-tooltip color="tooltip" right>
+			<v-tooltip v-if="extension.isInstalled" color="tooltip" right>
 				<template v-slot:activator="{ on }">
-					<v-btn
-						v-on="on"
-						:loading="plugin.isLoading"
-						:disabled="!plugin.isInstalled"
-						small
-						icon
-					>
+					<v-btn v-on="on" small icon>
 						<v-icon>mdi-dots-vertical</v-icon>
 					</v-btn>
 				</template>
@@ -59,15 +68,15 @@
 			</v-chip>
 		</div>
 
-		<span>{{ plugin.description }}</span>
+		<span>{{ extension.description }}</span>
 	</div>
 </template>
 
 <script>
 export default {
-	name: 'PluginCard',
+	name: 'ExtensionCard',
 	props: {
-		plugin: Object,
+		extension: Object,
 	},
 	computed: {
 		tags() {
@@ -75,15 +84,15 @@ export default {
 				{
 					icon: 'mdi-account-outline',
 					color: 'primary',
-					text: this.plugin.author,
+					text: this.extension.author,
 					type: 'search',
 				},
 				{
 					icon: 'mdi-code-braces',
-					text: this.plugin.version,
+					text: this.extension.version,
 					type: 'search',
 				},
-			].concat(this.plugin.tags)
+			].concat(this.extension.tags)
 		},
 	},
 }
