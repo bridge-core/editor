@@ -2,7 +2,7 @@ import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
 import ExtensionStoreComponent from './ExtensionStore.vue'
 import { BaseWindow } from '@/components/Windows/BaseWindow'
 import { App } from '@/App'
-import { compare, CompareOperator } from 'compare-versions'
+import { compare } from 'compare-versions'
 import { getFileSystem } from '@/utils/fs'
 import { ExtensionTag } from './ExtensionTag'
 import { ExtensionViewer } from './Extension'
@@ -106,6 +106,9 @@ export class ExtensionStoreWindow extends BaseWindow {
 	}
 	getTagColor(tagName: string) {
 		return this.extensionTags[tagName].color
+	}
+	getExtensionById(id: string) {
+		return this.getExtensions().find(extension => extension.id === id)
 	}
 
 	get selectedSidebar() {

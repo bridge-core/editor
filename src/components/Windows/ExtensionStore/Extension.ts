@@ -59,7 +59,7 @@ export class ExtensionViewer {
 
 	async download(isGlobalInstall?: boolean) {
 		if (isGlobalInstall !== undefined)
-			return this.downloadPlugin(isGlobalInstall)
+			return this.downloadExtension(isGlobalInstall)
 
 		const installLocationChoiceWindow = new InformedChoiceWindow(
 			'windows.pluginInstallLocation.title'
@@ -70,7 +70,7 @@ export class ExtensionViewer {
 			name: 'actions.pluginInstallLocation.global.name',
 			description: 'actions.pluginInstallLocation.global.description',
 			onTrigger: () => {
-				this.downloadPlugin(true)
+				this.downloadExtension(true)
 			},
 		})
 		actionManager.create({
@@ -78,12 +78,12 @@ export class ExtensionViewer {
 			name: 'actions.pluginInstallLocation.local.name',
 			description: 'actions.pluginInstallLocation.local.description',
 			onTrigger: () => {
-				this.downloadPlugin(false)
+				this.downloadExtension(false)
 			},
 		})
 	}
 
-	protected async downloadPlugin(isGlobalInstall: boolean) {
+	protected async downloadExtension(isGlobalInstall: boolean) {
 		this.isLoading = true
 
 		const app = await App.getApp()
@@ -102,6 +102,17 @@ export class ExtensionViewer {
 			await app.fileSystem.unlink(zipPath.replace('.zip', ''))
 		} catch {}
 
+		// Install dependencies
+		for (const dependency of this.config.dependencies ?? []) {
+			const extension = this.parent.getExtensionById(dependency)
+			if (extension) {
+				if (!extension.isInstalled)
+					await extension.downloadExtension(isGlobalInstall)
+				// TODO: Activate inactive extension
+				// else if(!extension.isActive)
+			}
+		}
+
 		// Unzip & activate extension
 		const extension = await app.extensionLoader.loadExtension(
 			await app.fileSystem.getDirectoryHandle(basePath),
@@ -119,7 +130,7 @@ export class ExtensionViewer {
 		if (!this.connected) return
 
 		this.connected.deactivate()
-		await this.downloadPlugin(this.connected.isGlobal)
+		await this.downloadExtension(this.connected.isGlobal)
 	}
 
 	setInstalled() {
