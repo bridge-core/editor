@@ -40,19 +40,21 @@ export class ExtensionStoreWindow extends BaseWindow {
 				resp.json()
 			)
 		)
-		this.extensions = extensions
-			.sort(
-				({ releaseTimestamp: tA }, { releaseTimestamp: tB }) => tB - tA
-			)
-			.map(plugin => new ExtensionViewer(this, plugin))
-		this.extensions.forEach(extension => {
-			const installedExtension = installedExtensions.get(extension.id)
-			if (!installedExtension) return
+		this.extensions = extensions.map(
+			plugin => new ExtensionViewer(this, plugin)
+		)
 
-			extension.setInstalled()
-			extension.setConnected(installedExtension)
-			if (compare(installedExtension.version, extension.version, '<'))
-				extension.setIsUpdateAvailable()
+		installedExtensions.forEach((installedExtension, id) => {
+			const extension = this.extensions.find(ext => ext.id === id)
+
+			if (extension) {
+				extension.setInstalled()
+				extension.setConnected(installedExtension)
+				if (compare(installedExtension.version, extension.version, '<'))
+					extension.setIsUpdateAvailable()
+			} else {
+				installedExtension.forStore(this)
+			}
 		})
 
 		this.setupSidebar()
@@ -70,7 +72,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 				icon: 'mdi-format-list-bulleted-square',
 				color: 'primary',
 			}),
-			this.extensions
+			this.getExtensions()
 		)
 		this.sidebar.addElement(
 			new SidebarItem({
@@ -89,8 +91,15 @@ export class ExtensionStoreWindow extends BaseWindow {
 		)
 	}
 
+	protected getExtensions(findTag?: ExtensionTag) {
+		return [...new Set([...this.extensions, ...this.installedExtensions])]
+			.filter(plugin => !findTag || plugin.hasTag(findTag))
+			.sort(
+				({ releaseTimestamp: tA }, { releaseTimestamp: tB }) => tB - tA
+			)
+	}
 	protected getExtensionsByTag(findTag: ExtensionTag) {
-		return this.extensions.filter(plugin => plugin.hasTag(findTag))
+		return this.getExtensions(findTag)
 	}
 	getTagIcon(tagName: string) {
 		return this.extensionTags[tagName].icon

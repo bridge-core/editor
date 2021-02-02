@@ -12,7 +12,7 @@
 				@click="extension.download()"
 				:loading="extension.isLoading"
 				color="primary"
-				class="rounded-lg"
+				class="rounded-lg elevation-0"
 				small
 			>
 				<v-icon small class="mr-1">mdi-download</v-icon>
@@ -24,7 +24,7 @@
 				@click="extension.update()"
 				:loading="extension.isLoading"
 				color="primary"
-				class="rounded-lg"
+				class="rounded-lg elevation-0"
 				small
 			>
 				<v-icon small class="mr-1">mdi-sync</v-icon>

@@ -44,6 +44,9 @@ export class ExtensionViewer {
 	get id() {
 		return this.config.id
 	}
+	get releaseTimestamp() {
+		return this.config.releaseTimestamp ?? Date.now()
+	}
 	//#endregion
 
 	get isInstalled() {

@@ -6,6 +6,8 @@ import { loadUIComponents } from './UI/load'
 import { createUIStore } from './UI/store'
 import { App } from '@/App'
 import { loadScripts } from './Scripts/loadScripts'
+import { ExtensionViewer } from '../Windows/ExtensionStore/Extension'
+import { ExtensionStoreWindow } from '../Windows/ExtensionStore/ExtensionStore'
 
 export class Extension {
 	protected _isActive = false
@@ -47,7 +49,9 @@ export class Extension {
 
 		this.manifest.compilerPlugins?.forEach(compilerPlugin =>
 			this.disposables.push(
-				app.compiler.addCompilerPlugin(compilerPlugin)
+				app.compiler.addCompilerPlugin(
+					`${pluginPath}/${compilerPlugin}`
+				)
 			)
 		)
 
@@ -55,20 +59,26 @@ export class Extension {
 			app.windows.createPreset.addPresets(`${pluginPath}/presets`)
 		)
 
+		let scriptHandle: FileSystemDirectoryHandle
+		try {
+			scriptHandle = await this.baseDirectory.getDirectoryHandle(
+				'scripts'
+			)
+		} catch {}
+
 		await Promise.all([
 			loadUIComponents(
 				this.fileSystem,
 				this.uiStore,
 				this.disposables
-			).then(
-				async () =>
-					await loadScripts(
-						await this.baseDirectory.getDirectoryHandle('scripts', {
-							create: true,
-						}),
-						this.uiStore,
-						this.disposables
-					)
+			).then(async () =>
+				scriptHandle
+					? await loadScripts(
+							scriptHandle,
+							this.uiStore,
+							this.disposables
+					  )
+					: undefined
 			),
 		])
 	}
@@ -87,5 +97,11 @@ export class Extension {
 	}
 	get isGlobal() {
 		return this._isGlobal
+	}
+
+	forStore(extensionStore: ExtensionStoreWindow) {
+		const viewer = new ExtensionViewer(extensionStore, this.manifest)
+		viewer.setInstalled()
+		return viewer
 	}
 }
