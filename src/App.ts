@@ -186,6 +186,12 @@ export class App {
 			PackType.setup(this.fileSystem),
 		])
 
+		// Load global extensions
+		await this.extensionLoader.loadExtensions(
+			await this.fileSystem.getDirectoryHandle(`plugins`),
+			true
+		)
+
 		// Set language based off of browser language
 		// if (!navigator.language.includes('en')) {
 		// 	for (const [lang] of getLanguages()) {

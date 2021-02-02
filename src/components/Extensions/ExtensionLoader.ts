@@ -21,8 +21,15 @@ export interface IExtensionManifest {
 }
 
 export class ExtensionLoader extends Signal<void> {
-	protected extensions = new Map<string, Extension>()
+	protected globalExtensions = new Map<string, Extension>()
+	protected localExtensions = new Map<string, Extension>()
 	protected _loadedInstalledExtensions = new Signal<void>()
+	get extensions() {
+		return new Map([
+			...this.globalExtensions.entries(),
+			...this.localExtensions.entries(),
+		])
+	}
 
 	get loadedInstalledExtensions() {
 		return new Promise<void>(resolve =>
@@ -30,21 +37,28 @@ export class ExtensionLoader extends Signal<void> {
 		)
 	}
 	async getInstalledExtensions() {
-		await this.loadedInstalledExtensions
+		await this.fired
 		return new Map(this.extensions.entries())
 	}
 
-	async loadExtensions(baseDirectory: FileSystemDirectoryHandle) {
+	async loadExtensions(
+		baseDirectory: FileSystemDirectoryHandle,
+		isGlobal = false
+	) {
 		const promises: Promise<unknown>[] = []
 
 		for await (const entry of baseDirectory.values()) {
-			promises.push(this.loadExtension(baseDirectory, entry))
+			promises.push(
+				this.loadExtension(baseDirectory, entry, false, isGlobal)
+			)
 		}
 
 		await Promise.all(promises)
 		this._loadedInstalledExtensions.dispatch()
 
-		for (const [_, extension] of this.extensions) {
+		for (const [_, extension] of isGlobal
+			? this.globalExtensions
+			: this.localExtensions) {
 			if (!extension.isActive) await extension.activate()
 		}
 
@@ -54,7 +68,8 @@ export class ExtensionLoader extends Signal<void> {
 	async loadExtension(
 		baseDirectory: FileSystemDirectoryHandle,
 		handle: FileSystemHandle,
-		activate = false
+		activate = false,
+		isGlobal = false
 	) {
 		let extension: Extension | undefined
 		if (handle.kind === 'file' && handle.name.endsWith('.zip')) {
@@ -67,7 +82,7 @@ export class ExtensionLoader extends Signal<void> {
 			)
 			await baseDirectory.removeEntry(handle.name)
 		} else if (handle.kind === 'directory') {
-			extension = await this.loadManifest(handle)
+			extension = await this.loadManifest(handle, isGlobal)
 		}
 
 		if (activate && extension) await extension.activate()
@@ -129,7 +144,10 @@ export class ExtensionLoader extends Signal<void> {
 				baseDirectory
 			)
 			extension.setIsGlobal(isGlobal)
-			this.extensions.set(manifest.id, extension)
+			;(isGlobal ? this.globalExtensions : this.localExtensions).set(
+				manifest.id,
+				extension
+			)
 			return extension
 		} else {
 			createErrorNotification(
@@ -158,9 +176,9 @@ export class ExtensionLoader extends Signal<void> {
 	}
 
 	deactivateAll() {
-		for (const [key, ext] of this.extensions) {
+		for (const [key, ext] of this.localExtensions) {
 			ext.deactivate()
-			this.extensions.delete(key)
+			this.localExtensions.delete(key)
 		}
 	}
 }

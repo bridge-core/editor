@@ -117,7 +117,8 @@ export class ExtensionViewer {
 		const extension = await app.extensionLoader.loadExtension(
 			await app.fileSystem.getDirectoryHandle(basePath),
 			await app.fileSystem.getFileHandle(zipPath),
-			true
+			true,
+			isGlobalInstall
 		)
 		if (extension) this.setConnected(extension)
 
