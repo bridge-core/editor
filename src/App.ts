@@ -182,7 +182,7 @@ export class App {
 			this.fileSystem.mkdir('plugins'),
 			this.fileSystem.mkdir('data'),
 			// Setup data helpers
-			this.dataLoader.ready.then(() => FileType.setup(this.fileSystem)),
+			this.dataLoader.fired.then(() => FileType.setup(this.fileSystem)),
 			PackType.setup(this.fileSystem),
 		])
 

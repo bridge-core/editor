@@ -29,9 +29,6 @@ export class ExtensionLoader extends Signal<void> {
 			this._loadedInstalledExtensions.once(resolve)
 		)
 	}
-	get ready() {
-		return new Promise<void>(resolve => this.once(resolve))
-	}
 	async getInstalledExtensions() {
 		await this.loadedInstalledExtensions
 		return new Map(this.extensions.entries())

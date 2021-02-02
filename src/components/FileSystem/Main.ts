@@ -7,9 +7,6 @@ export class FileSystem extends Signal<void> {
 	get baseDirectory() {
 		return this._baseDirectory
 	}
-	get ready() {
-		return new Promise<void>(resolve => this.once(resolve))
-	}
 
 	constructor(baseDirectory?: FileSystemDirectoryHandle) {
 		super()

@@ -6,12 +6,9 @@ import { dirname } from 'path'
 import { FileSystem } from '../FileSystem/Main'
 
 export class DataLoader extends Signal<void> {
-	get ready() {
-		return new Promise<void>(resolve => this.once(resolve))
-	}
 	async setup(app: App) {
 		app.windows.loadingWindow.open()
-		await app.fileSystem.ready
+		await app.fileSystem.fired
 
 		if (await this.isUpdateAvailable(app.fileSystem)) {
 			console.log('Downloading new data...')
