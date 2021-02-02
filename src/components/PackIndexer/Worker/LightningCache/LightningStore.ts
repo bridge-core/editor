@@ -40,7 +40,7 @@ export class LightningStore {
 				continue
 			}
 
-			const [filePath, lastModified, data] = definition.split(' ')
+			const [filePath, lastModified, data] = definition.split('|')
 			this.store[currentFileType][filePath] = {
 				lastModified: Number(lastModified),
 				data: data ? JSON.parse(data) : undefined,
@@ -55,8 +55,8 @@ export class LightningStore {
 			for (const filePath in this.store[fileType]) {
 				const entry = this.store[fileType][filePath]
 
-				saveStore += `${filePath} ${entry.lastModified}`
-				if (entry.data) saveStore += ` ${JSON.stringify(entry.data)}\n`
+				saveStore += `${filePath}|${entry.lastModified}`
+				if (entry.data) saveStore += `|${JSON.stringify(entry.data)}\n`
 				else saveStore += '\n'
 			}
 		}

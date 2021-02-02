@@ -1,11 +1,19 @@
 export function runAsync(
 	script: string,
-	env: unknown,
-	envName = 'Bridge'
+	env: unknown | unknown[],
+	envNames = ['Bridge']
 ): Promise<any> {
-	return new Function(envName, `return (async () => {\n${script}\n})()`)(env)
+	return new Function(...envNames, `return (async () => {\n${script}\n})()`)(
+		...(Array.isArray(env) ? env : [env])
+	)
 }
 
-export function run(script: string, env: unknown, envName = 'Bridge') {
-	return new Function(envName, script)(env)
+export function run(
+	script: string,
+	env: unknown | unknown[],
+	envName = ['Bridge']
+) {
+	return new Function(...envName, script)(
+		...(Array.isArray(env) ? env : [env])
+	)
 }

@@ -12,7 +12,7 @@ const TaskService = Comlink.wrap<typeof CompilerService>(
 export class Compiler extends Signal<void> {
 	protected _service!: Comlink.Remote<CompilerService>
 	public readonly ready = new Signal<boolean>()
-	protected compilerPlugins = new Set<string>()
+	protected compilerPlugins = new Map<string, string>()
 
 	start(projectName: string) {
 		console.time('[TASK] Compiling project (total)')
@@ -33,7 +33,7 @@ export class Compiler extends Signal<void> {
 				app.fileSystem.baseDirectory,
 				{
 					config: 'dev.json',
-					plugins: [...this.compilerPlugins],
+					plugins: Object.fromEntries(this.compilerPlugins.entries()),
 				}
 			)
 			// Listen to task progress and update UI
@@ -54,11 +54,15 @@ export class Compiler extends Signal<void> {
 		})
 	}
 
-	addCompilerPlugin(srcPath: string) {
-		this.compilerPlugins.add(srcPath)
+	addCompilerPlugin(pluginId: string, srcPath: string) {
+		if (this.compilerPlugins.has(pluginId))
+			throw new Error(
+				`Compiler plugin with id "${pluginId}" is already registered`
+			)
+		this.compilerPlugins.set(pluginId, srcPath)
 
 		return {
-			dispose: () => this.compilerPlugins.delete(srcPath),
+			dispose: () => this.compilerPlugins.delete(pluginId),
 		}
 	}
 

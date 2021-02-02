@@ -23,5 +23,5 @@ export function executeScript(
 	uiStore: TUIStore,
 	disposables: IDisposable[]
 ) {
-	return runAsync(code, createEnv(disposables, uiStore), 'require')
+	return runAsync(code, createEnv(disposables, uiStore), ['require'])
 }
