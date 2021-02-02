@@ -28,5 +28,8 @@
 	"Presets": {
 		"icon": "mdi-text-box-multiple-outline",
 		"color": "purple"
+	},
+	"Compiler": {
+		"icon": "mdi-cogs"
 	}
 }
