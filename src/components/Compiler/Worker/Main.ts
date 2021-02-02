@@ -53,12 +53,14 @@ export class CompilerService extends TaskService<string[], string[]> {
 			updatedFiles.map(
 				async updatedFile =>
 					new CompilerFile(
+						this.fileSystem,
 						updatedFile,
-						await globalFs.getFileHandle(updatedFile)
+						await this.fileSystem.getFileHandle(updatedFile)
 					)
 			)
 		)
 
+		this.progress.setTotal(hooks.length * files.length)
 		for (const hook of hooks) {
 			await this.runHook(files, hook)
 		}
@@ -68,9 +70,10 @@ export class CompilerService extends TaskService<string[], string[]> {
 
 	async runHook(files: CompilerFile<unknown>[], hook: TCompilerHook) {
 		await Promise.all(
-			files.map(file =>
-				file.runHook(this.buildConfig.plugins, this.plugins, hook)
-			)
+			files.map(async file => {
+				await file.runHook(this.buildConfig.plugins, this.plugins, hook)
+				this.progress.addToCurrent()
+			})
 		)
 	}
 }

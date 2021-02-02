@@ -14,44 +14,44 @@ export class Compiler extends Signal<void> {
 	public readonly ready = new Signal<boolean>()
 	protected compilerPlugins = new Map<string, string>()
 
-	start(projectName: string) {
-		console.time('[TASK] Compiling project (total)')
+	async start(projectName: string) {
 		this.resetSignal()
 		this.ready.dispatch(false)
-		App.ready.once(async app => {
-			const task = app.taskManager.create({
-				icon: 'mdi-cogs',
-				name: 'taskManager.tasks.compiler.title',
-				description: 'taskManager.tasks.compiler.description',
-			})
+		const app = await App.getApp()
+		await app.packIndexer.fired
+		console.time('[TASK] Compiling project (total)')
 
-			// Instaniate the worker TaskService
-			this._service = await new TaskService(
-				await app.fileSystem.getDirectoryHandle(
-					`projects/${projectName}`
-				),
-				app.fileSystem.baseDirectory,
-				{
-					config: 'dev.json',
-					plugins: Object.fromEntries(this.compilerPlugins.entries()),
-				}
-			)
-			// Listen to task progress and update UI
-			this._service.on(
-				Comlink.proxy(([current, total]) => {
-					if (current === total) task.complete()
-					task.update(current, total)
-				}),
-				false
-			)
-
-			// Start service
-			const errors = await this.service.start([])
-			errors.forEach(e => console.error(e))
-			this.dispatch()
-			this.ready.dispatch(true)
-			console.timeEnd('[TASK] Compiling project (total)')
+		const task = app.taskManager.create({
+			icon: 'mdi-cogs',
+			name: 'taskManager.tasks.compiler.title',
+			description: 'taskManager.tasks.compiler.description',
 		})
+
+		// Instaniate the worker TaskService
+		this._service = await new TaskService(
+			await app.fileSystem.getDirectoryHandle(`projects/${projectName}`),
+			app.fileSystem.baseDirectory,
+			{
+				config: 'dev.json',
+				plugins: Object.fromEntries(this.compilerPlugins.entries()),
+			}
+		)
+		// Listen to task progress and update UI
+		this._service.on(
+			Comlink.proxy(([current, total]) => {
+				if (current === total) task.complete()
+				task.update(current, total)
+			}),
+			false
+		)
+
+		// Start service
+		const files = await app.packIndexer.service.getAllFiles()
+		const errors = await this.service.start(files)
+		errors.forEach(e => console.error(e))
+		this.dispatch()
+		this.ready.dispatch(true)
+		console.timeEnd('[TASK] Compiling project (total)')
 	}
 
 	addCompilerPlugin(pluginId: string, srcPath: string) {

@@ -119,6 +119,10 @@ export class Signal<T> extends EventDispatcher<T> {
 		super()
 	}
 
+	get fired() {
+		return new Promise<T>(resolve => this.once(resolve))
+	}
+
 	resetSignal() {
 		this.data = undefined
 		this.hasFired = false

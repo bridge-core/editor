@@ -1,4 +1,5 @@
 import { FileType } from '@/components/Data/FileType'
+import { FileSystem } from '@/components/FileSystem/Main'
 import { IBuildConfigPlugins } from './Main'
 import { TCompilerHook, TCompilerPlugin } from './Plugins'
 
@@ -6,6 +7,7 @@ export class CompilerFile<T> {
 	protected fileType: string
 
 	constructor(
+		protected fs: FileSystem,
 		protected filePath: string,
 		protected fileHandle: FileSystemFileHandle
 	) {

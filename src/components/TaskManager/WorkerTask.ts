@@ -24,6 +24,10 @@ class Progress<T, K> {
 	getCurrent() {
 		return this.current
 	}
+
+	setTotal(val: number) {
+		this.total = val
+	}
 }
 
 export abstract class TaskService<T, K = void> extends EventDispatcher<
