@@ -23,7 +23,7 @@ export interface IExtensionManifest {
 export class ExtensionLoader extends Signal<void> {
 	protected globalExtensions = new Map<string, Extension>()
 	protected localExtensions = new Map<string, Extension>()
-	protected _loadedInstalledExtensions = new Signal<void>()
+	protected _loadedInstalledExtensions = new Signal<void>(2)
 	get extensions() {
 		return new Map([
 			...this.globalExtensions.entries(),
@@ -36,8 +36,13 @@ export class ExtensionLoader extends Signal<void> {
 			this._loadedInstalledExtensions.once(resolve)
 		)
 	}
+
+	constructor() {
+		super(2)
+	}
+
 	async getInstalledExtensions() {
-		await this.fired
+		await this.loadedInstalledExtensions
 		return new Map(this.extensions.entries())
 	}
 

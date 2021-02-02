@@ -187,7 +187,7 @@ export class App {
 		])
 
 		// Load global extensions
-		await this.extensionLoader.loadExtensions(
+		this.extensionLoader.loadExtensions(
 			await this.fileSystem.getDirectoryHandle(`plugins`),
 			true
 		)

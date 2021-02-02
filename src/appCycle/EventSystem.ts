@@ -2,10 +2,13 @@
  * Trigger and react to events
  */
 import { v4 as uuid } from 'uuid'
-import type { IDisposable } from '@/types/disposable'
+import { IDisposable } from '@/types/disposable'
 
 interface IEventState {
-	[event: string]: Record<string, (...data: unknown[]) => void | Promise<unknown>>
+	[event: string]: Record<
+		string,
+		(...data: unknown[]) => void | Promise<unknown>
+	>
 }
 
 const EventState: IEventState = {}
@@ -39,26 +42,26 @@ export function once(event: string, cb: (...data: unknown[]) => void) {
 	})
 }
 
-
 export class EventManager<T> {
 	protected events = new Map<string, EventDispatcher<T>>()
 
 	constructor(events: string[] = []) {
 		events.forEach(event => this.create(event))
 	}
-	
+
 	create(name: string) {
 		this.events.set(name, new EventDispatcher<T>())
 		return {
 			dispose: () => {
 				this.events.delete(name)
-			}
+			},
 		}
 	}
 
 	protected getDispatcher(name: string) {
 		const dispatcher = this.events.get(name)
-		if(dispatcher === undefined) throw new Error(`No dispatcher defined for event "${name}".`)
+		if (dispatcher === undefined)
+			throw new Error(`No dispatcher defined for event "${name}".`)
 
 		return dispatcher
 	}
@@ -80,22 +83,20 @@ export class EventManager<T> {
 export class EventDispatcher<T> {
 	protected listeners = new Set<(data: T) => void>()
 
-	constructor() {
-		
-	}
+	constructor() {}
 
 	dispatch(data: T) {
 		this.listeners.forEach(listener => listener(data))
 	}
 
-	on(listener: (data: T) => void, getDisposable=true) {
+	on(listener: (data: T) => void, getDisposable = true) {
 		this.listeners.add(listener)
 
-		if(getDisposable)
+		if (getDisposable)
 			return {
 				dispose: () => {
 					this.off(listener)
-				}
+				},
 			}
 	}
 
@@ -104,39 +105,44 @@ export class EventDispatcher<T> {
 	}
 
 	once(listener: (data: T) => void) {
-		const disposable = this.on((data) => {
+		const callback = (data: T) => {
 			listener(data)
-			disposable!.dispose()
-		})
+			this.off(callback)
+		}
+		this.on(callback)
 	}
 }
 
 export class Signal<T> extends EventDispatcher<T> {
-	protected hasFired = false
-	protected data?: T
+	protected firedTimes = 0
+	protected data: T | undefined
 
-	constructor() {
+	constructor(protected needsToFireAmount = 1) {
 		super()
 	}
 
 	get fired() {
 		return new Promise<T>(resolve => this.once(resolve))
 	}
+	get hasFired() {
+		return this.firedTimes >= this.needsToFireAmount
+	}
 
 	resetSignal() {
 		this.data = undefined
-		this.hasFired = false
+		this.firedTimes = 0
 	}
 
 	dispatch(data: T) {
-		this.hasFired = true
+		if (this.firedTimes < this.needsToFireAmount) this.firedTimes++
 		this.data = data
-		super.dispatch(data)
+
+		if (this.hasFired) super.dispatch(data)
 	}
 
 	on(listener: (data: T) => void) {
 		// Needs to be on a timeout because otherwise Signal.once doesn't work
-		if(this.hasFired) setTimeout(() => listener(this.data!))
+		if (this.hasFired) listener(this.data!)
 
 		return super.on(listener)
 	}
