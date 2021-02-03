@@ -48,7 +48,7 @@ export class Extension {
 		}
 
 		Object.entries(
-			this.manifest.compilerPlugins ?? {}
+			this.manifest.compiler?.plugins ?? {}
 		)?.forEach(([pluginId, compilerPlugin]) =>
 			this.disposables.push(
 				app.compiler.addCompilerPlugin(

@@ -101,7 +101,7 @@ export class App {
 					)
 				)
 				.then(() => {
-					// this.compiler.start(projectName)
+					this.compiler.start(projectName)
 				})
 
 			App.eventSystem.dispatch('projectChanged', undefined)

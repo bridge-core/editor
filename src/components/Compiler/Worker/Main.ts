@@ -12,6 +12,7 @@ export interface IWorkerSettings {
 export interface IBuildConfig {
 	mode: 'dev' | 'build'
 
+	createFiles: string[]
 	plugins: IBuildConfigPlugins
 }
 export interface IBuildConfigPlugins {
@@ -23,7 +24,7 @@ export type TPluginDef = string | [string, any]
 
 export class CompilerService extends TaskService<string[], string[]> {
 	protected buildConfig!: IBuildConfig
-	protected plugins!: Map<string, { exports?: TCompilerPlugin }>
+	protected plugins!: Map<string, TCompilerPlugin>
 
 	constructor(
 		projectDirectory: FileSystemDirectoryHandle,
@@ -68,7 +69,7 @@ export class CompilerService extends TaskService<string[], string[]> {
 		return []
 	}
 
-	async runHook(files: CompilerFile<unknown>[], hook: TCompilerHook) {
+	async runHook(files: CompilerFile[], hook: TCompilerHook) {
 		await Promise.all(
 			files.map(async file => {
 				await file.runHook(this.buildConfig.plugins, this.plugins, hook)

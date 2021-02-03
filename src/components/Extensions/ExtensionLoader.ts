@@ -17,7 +17,9 @@ export interface IExtensionManifest {
 	link: string
 	tags: string[]
 	dependencies: string[]
-	compilerPlugins: Record<string, string>
+	compiler: {
+		plugins: Record<string, string>
+	}
 }
 
 export class ExtensionLoader extends Signal<void> {

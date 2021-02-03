@@ -43,12 +43,13 @@ export class LightningCache {
 		if (this.folderIgnoreList.size === 0) await this.loadIgnoreFolders()
 
 		if (this.service.settings.noFullLightningCacheRefresh) {
-			const filePaths = await this.lightningStore.allFiles()
-			if (filePaths.length > 0) return filePaths
+			const filePaths = this.lightningStore.allFiles()
+			if (filePaths.length > 0) return [filePaths, []]
 		}
 
 		let anyFileChanged = false
 		const filePaths: string[] = []
+		const changedFiles: string[] = []
 		await this.iterateDir(
 			this.service.fileSystem.baseDirectory,
 			async (fileHandle, filePath) => {
@@ -56,7 +57,11 @@ export class LightningCache {
 					filePath,
 					fileHandle
 				)
-				if (fileDidChange && !anyFileChanged) anyFileChanged = true
+
+				if (fileDidChange) {
+					if (!anyFileChanged) anyFileChanged = true
+					changedFiles.push(filePath)
+				}
 				filePaths.push(filePath)
 
 				this.service.progress.addToCurrent()
@@ -64,7 +69,7 @@ export class LightningCache {
 		)
 
 		if (anyFileChanged) await this.lightningStore.saveStore()
-		return filePaths
+		return [filePaths, changedFiles]
 	}
 
 	protected async iterateDir(

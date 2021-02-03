@@ -10,7 +10,7 @@ const TaskService = Comlink.wrap<typeof PackIndexerService>(
 	})
 )
 
-export class PackIndexer extends Signal<void> {
+export class PackIndexer extends Signal<string[]> {
 	protected _service!: Comlink.Remote<PackIndexerService>
 	public readonly ready = new Signal<boolean>()
 
@@ -50,9 +50,9 @@ export class PackIndexer extends Signal<void> {
 			)
 
 			// Start service
-			await this.service.start()
+			const changedFiles = await this.service.start()
 			this.ready.dispatch(true)
-			this.dispatch()
+			this.dispatch(changedFiles)
 			console.timeEnd('[TASK] Indexing Packs (Total)')
 		})
 	}

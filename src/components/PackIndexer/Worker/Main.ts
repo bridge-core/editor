@@ -41,14 +41,14 @@ export class PackIndexerService extends TaskService<string[]> {
 		console.timeEnd('[WORKER] SETUP')
 
 		console.time('[WORKER] LightningCache')
-		const filePaths = await this.lightningCache.start()
+		const [filePaths, changedFiles] = await this.lightningCache.start()
 		console.timeEnd('[WORKER] LightningCache')
 
 		console.time('[WORKER] PackSpider')
 		await this.packSpider.setup(filePaths)
 		console.timeEnd('[WORKER] PackSpider')
 
-		return filePaths
+		return changedFiles
 	}
 
 	async updateFile(filePath: string) {

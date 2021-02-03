@@ -46,7 +46,7 @@ export class Compiler extends Signal<void> {
 		)
 
 		// Start service
-		const files = await app.packIndexer.service.getAllFiles()
+		const files = await app.packIndexer.fired
 		const errors = await this.service.start(files)
 		errors.forEach(e => console.error(e))
 		this.dispatch()

@@ -45,7 +45,7 @@ export function once(event: string, cb: (...data: unknown[]) => void) {
 export class EventManager<T> {
 	protected events = new Map<string, EventDispatcher<T>>()
 
-	constructor(events: string[] = []) {
+	constructor(events: string[] | readonly string[] = []) {
 		events.forEach(event => this.create(event))
 	}
 
@@ -137,7 +137,7 @@ export class Signal<T> extends EventDispatcher<T> {
 		if (this.firedTimes < this.needsToFireAmount) this.firedTimes++
 		this.data = data
 
-		if (this.hasFired) super.dispatch(data)
+		if (this.hasFired) return super.dispatch(data)
 	}
 
 	on(listener: (data: T) => void) {
