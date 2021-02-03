@@ -62,7 +62,7 @@ export class DataLoader extends Signal<void> {
 		zip.forEach((relativePath, zipEntry) => {
 			promises.push(
 				new Promise<void>(async resolve => {
-					if (zipEntry.dir) return
+					if (zipEntry.dir) return resolve()
 
 					await fileSystem.mkdir(
 						dirname(`data/packages/${relativePath}`),
