@@ -183,12 +183,12 @@ export class LightningStore {
 
 	async getSchemasFor(fileType: string, fromFilePath?: string) {
 		const collectedData = await this.getAllFrom(fileType, fromFilePath)
-		const baseUrl = 'file:///data/packages/schema/dynamic'
+		const baseUrl = `file:///data/packages/schema/${fileType}/dynamic`
 		const schemas: IMonacoSchemaArrayEntry[] = []
 
 		for (const key in collectedData) {
 			schemas.push({
-				uri: `${baseUrl}/${fileType}/${
+				uri: `${baseUrl}/${
 					fromFilePath ? 'currentContext/' : ''
 				}${key}Enum.json`,
 				schema: {
@@ -198,7 +198,7 @@ export class LightningStore {
 			})
 
 			schemas.push({
-				uri: `${baseUrl}/${fileType}/${
+				uri: `${baseUrl}/${
 					fromFilePath ? 'currentContext/' : ''
 				}${key}Property.json`,
 				schema: {

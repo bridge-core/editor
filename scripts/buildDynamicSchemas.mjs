@@ -6,12 +6,6 @@ import { loadFileDefs } from './loadFileDefs.mjs'
 export async function buildDynamicSchemas() {
 	const fileDefs = await loadFileDefs()
 
-	try {
-		await fs.rmdir(join('./data/schema/dynamic/currentContext'), {
-			recursive: true,
-		})
-	} catch {}
-
 	for (const { lightningCache, id } of fileDefs) {
 		if (!lightningCache) continue
 
@@ -23,11 +17,11 @@ export async function buildDynamicSchemas() {
 		)
 
 		try {
-			await Deno.remove(join('./data/schema/dynamic', id), {
+			await Deno.remove(join('./data/schema', id, 'dynamic'), {
 				recursive: true,
 			})
 		} catch {}
-		await fs.mkdir(join('./data/schema/dynamic', id, 'currentContext'), {
+		await fs.mkdir(join('./data/schema', id, 'dynamic/currentContext'), {
 			recursive: true,
 		})
 
@@ -36,7 +30,7 @@ export async function buildDynamicSchemas() {
 			if (!key) continue
 
 			await fs.writeFile(
-				join('./data/schema/dynamic', id, `${key}Enum.json`),
+				join('./data/schema', id, `dynamic/${key}Enum.json`),
 				JSON.stringify({
 					$schema: 'http://json-schema.org/draft-07/schema',
 					type: 'string',
@@ -44,7 +38,7 @@ export async function buildDynamicSchemas() {
 				})
 			)
 			await fs.writeFile(
-				join('./data/schema/dynamic', id, `${key}Property.json`),
+				join('./data/schema', id, `dynamic/${key}Property.json`),
 				JSON.stringify({
 					$schema: 'http://json-schema.org/draft-07/schema',
 					type: 'object',
@@ -54,9 +48,9 @@ export async function buildDynamicSchemas() {
 
 			await fs.writeFile(
 				join(
-					'./data/schema/dynamic',
+					'./data/schema',
 					id,
-					`currentContext/${key}Enum.json`
+					`dynamic/currentContext/${key}Enum.json`
 				),
 				JSON.stringify({
 					$schema: 'http://json-schema.org/draft-07/schema',
@@ -66,9 +60,9 @@ export async function buildDynamicSchemas() {
 			)
 			await fs.writeFile(
 				join(
-					'./data/schema/dynamic',
+					'./data/schema',
 					id,
-					`currentContext/${key}Property.json`
+					`dynamic/currentContext/${key}Property.json`
 				),
 				JSON.stringify({
 					$schema: 'http://json-schema.org/draft-07/schema',
