@@ -101,7 +101,7 @@ export class App {
 					)
 				)
 				.then(() => {
-					this.compiler.start(projectName)
+					// this.compiler.start(projectName)
 				})
 
 			App.eventSystem.dispatch('projectChanged', undefined)
@@ -180,10 +180,10 @@ export class App {
 			// Create default folders
 			this.fileSystem.mkdir('projects'),
 			this.fileSystem.mkdir('plugins'),
-			this.fileSystem.mkdir('data'),
+			this.fileSystem.mkdir('data/packages'),
 			// Setup data helpers
 			this.dataLoader.fired.then(() => FileType.setup(this.fileSystem)),
-			PackType.setup(this.fileSystem),
+			this.dataLoader.fired.then(() => PackType.setup(this.fileSystem)),
 		])
 
 		// Load global extensions
