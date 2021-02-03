@@ -63,7 +63,9 @@ export class CompilerService extends TaskService<string[], string[]> {
 
 		this.progress.setTotal(hooks.length * files.length)
 		for (const hook of hooks) {
+			console.time(`[COMPILER] Running hook "${hook}"`)
 			await this.runHook(files, hook)
+			console.timeEnd(`[COMPILER] Running hook "${hook}"`)
 		}
 
 		return []

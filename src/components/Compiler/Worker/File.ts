@@ -36,9 +36,6 @@ export class CompilerFile {
 		plugins: Map<string, TCompilerPlugin>,
 		hook: TCompilerHook
 	) {
-		// Before calling the cleanup hook, save the file
-		if (hook === 'cleanup') await this.save()
-
 		this.hooks.dispatch(hook)
 
 		await this.runHookFrom('*', pluginDefs, plugins, hook)
@@ -46,6 +43,9 @@ export class CompilerFile {
 
 		for (const file of this.files)
 			await file.runHook(pluginDefs, plugins, hook)
+
+		// After calling the finalizeBuild hook, save the files
+		if (hook === 'finalizeBuild') await this.save()
 	}
 
 	protected async runHookFrom(
