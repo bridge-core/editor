@@ -79,6 +79,36 @@ export class FileSystem extends Signal<void> {
 
 		return files
 	}
+	async readFilesFromDir(
+		path: string,
+		dirHandle:
+			| FileSystemDirectoryHandle
+			| Promise<FileSystemDirectoryHandle> = this.getDirectoryHandle(path)
+	) {
+		dirHandle = await dirHandle
+
+		const files: { name: string; path: string; kind: string }[] = []
+
+		for await (const handle of dirHandle.values()) {
+			if (handle.kind === 'file' && handle.name === '.DS_Store') continue
+
+			if (handle.kind === 'file')
+				files.push({
+					name: handle.name,
+					kind: handle.kind,
+					path: `${path}/${handle.name}`,
+				})
+			else if (handle.kind === 'directory')
+				files.push(
+					...(await this.readFilesFromDir(
+						`${path}/${handle.name}`,
+						handle
+					))
+				)
+		}
+
+		return files
+	}
 
 	readFile(path: string) {
 		return this.getFileHandle(path).then(fileHandle => fileHandle.getFile())

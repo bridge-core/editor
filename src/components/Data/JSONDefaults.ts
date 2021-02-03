@@ -3,7 +3,9 @@ import { FileType, IMonacoSchemaArrayEntry } from '@/components/Data/FileType'
 import { whenIdle } from '@/utils/whenIdle'
 import json5 from 'json5'
 import * as monaco from 'monaco-editor'
+import { runAsync } from '../Extensions/Scripts/run'
 import { FileSystem } from '../FileSystem/Main'
+import { selectedProject } from '../Project/Loader'
 
 export namespace JSONDefaults {
 	let schemas: Record<string, IMonacoSchemaArrayEntry> = {}
@@ -50,8 +52,9 @@ export namespace JSONDefaults {
 		const promises: Promise<void>[] = []
 		for await (const [name, entry] of directoryHandle.entries()) {
 			const currentPath = `${fromPath}/${name}`
+			if (entry.name === '.DS_Store') continue
 
-			if (entry.kind === 'file')
+			if (entry.kind === 'file') {
 				schemas[`file:///${currentPath}`] = {
 					uri: `file:///${currentPath}`,
 					schema: await entry
@@ -59,10 +62,55 @@ export namespace JSONDefaults {
 						.then(file => file.text())
 						.then(json5.parse),
 				}
-			else promises.push(loadStaticSchemas(entry, currentPath))
+			} else {
+				promises.push(loadStaticSchemas(entry, currentPath))
+			}
 		}
 
 		await Promise.all(promises)
+	}
+	async function runSchemaScripts(fileSystem: FileSystem) {
+		const baseDirectory = await fileSystem.getDirectoryHandle(
+			'data/packages/schemaScript'
+		)
+		const scopedFs = new FileSystem(
+			await fileSystem.getDirectoryHandle(`projects/${selectedProject}`)
+		)
+
+		for await (const dirent of baseDirectory.values()) {
+			if (dirent.kind !== 'file' || dirent.name === '.DS_Store') continue
+
+			const file = await dirent.getFile()
+			const schemaScript = json5.parse(await file.text())
+
+			let scriptResult: string[] = []
+			try {
+				scriptResult = await runAsync(
+					schemaScript.script,
+					[scopedFs.readFilesFromDir.bind(scopedFs)],
+					['readdir']
+				)
+			} catch {}
+
+			console.log(scriptResult)
+
+			schemas[
+				`file:///data/packages/schema/${schemaScript.generateFile}`
+			] = {
+				uri: `file:///data/packages/schema/${schemaScript.generateFile}`,
+				schema: {
+					type: schemaScript.type === 'enum' ? 'string' : 'object',
+					enum:
+						schemaScript.type === 'enum' ? scriptResult : undefined,
+					object:
+						schemaScript.type === 'properties'
+							? Object.fromEntries(
+									scriptResult.map(res => [res, {}])
+							  )
+							: undefined,
+				},
+			}
+		}
 	}
 
 	async function loadAllSchemas() {
@@ -83,6 +131,7 @@ export namespace JSONDefaults {
 		console.timeEnd('[JSON DEFAULTS] Adding matchers to schemas')
 		console.time('[JSON DEFAULTS] Dynamic schemas')
 		addSchemas(await getDynamicSchemas(), false)
+		await runSchemaScripts(app.fileSystem)
 		console.timeEnd('[JSON DEFAULTS] Dynamic schemas')
 		setJSONDefaults()
 	}
@@ -119,7 +168,9 @@ export namespace JSONDefaults {
 
 		App.eventSystem.on('fileUpdated', async filePath => {
 			const fileType = FileType.getId(filePath)
+			const app = await App.getApp()
 			addSchemas(await requestSchemaFor(fileType))
+			await runSchemaScripts(app.fileSystem)
 		})
 
 		// Updating currentContext/ references

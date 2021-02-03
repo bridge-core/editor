@@ -1,5 +1,6 @@
 import { isMatch } from 'micromatch'
 import { FileSystem } from '@/components/FileSystem/Main'
+import { v4 as uuid } from 'uuid'
 
 /**
  * Describes the structure of a pack definition
@@ -15,6 +16,11 @@ export interface IPackType {
  */
 export namespace PackType {
 	let packTypes: IPackType[] = []
+	let extensionPackTypes = new Map<string, IPackType>()
+
+	function all() {
+		return packTypes.concat([...extensionPackTypes.values()])
+	}
 
 	export async function setup(fileSystem: FileSystem) {
 		if (packTypes.length > 0) return
@@ -29,7 +35,7 @@ export namespace PackType {
 	 * @param filePath file path to fetch pack definition for
 	 */
 	export function get(filePath: string) {
-		for (const packType of packTypes) {
+		for (const packType of all()) {
 			if (
 				typeof packType.matcher === 'string' &&
 				isMatch(filePath, packType.matcher)
@@ -47,5 +53,14 @@ export namespace PackType {
 	 */
 	export function getId(filePath: string) {
 		return get(filePath)?.id ?? 'unknown'
+	}
+
+	export function addExtensionPackType(packType: IPackType) {
+		const id = uuid()
+		extensionPackTypes.set(id, packType)
+
+		return {
+			dispose: () => extensionPackTypes.delete(id),
+		}
 	}
 }
