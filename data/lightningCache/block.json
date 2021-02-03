@@ -2,9 +2,9 @@
 	{ "identifier": "minecraft:block/description/identifier" },
 	{ "event": "minecraft:block/events" },
 	{ "property": "minecraft:block/description/properties" },
-	{ 
+	{
 		"tag": "minecraft:block/components",
-		"@map": "const tag = /^tag:[a-zA-Z:_]+/g.exec(Bridge.value); if(tag) return tag"
+		"@map": "if(Bridge.value.startsWith('tag:')) return Bridge.value.replace('tag:', '')"
 	},
 	{
 		"recipeTag": [
