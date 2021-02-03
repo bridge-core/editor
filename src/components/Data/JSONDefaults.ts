@@ -6,6 +6,8 @@ import * as monaco from 'monaco-editor'
 import { runAsync } from '../Extensions/Scripts/run'
 import { FileSystem } from '../FileSystem/Main'
 import { selectedProject } from '../Project/Loader'
+import { v4 as uuid } from 'uuid'
+import { getFilteredFormatVersions } from './FormatVersions'
 
 export namespace JSONDefaults {
 	let schemas: Record<string, IMonacoSchemaArrayEntry> = {}
@@ -87,12 +89,14 @@ export namespace JSONDefaults {
 			try {
 				scriptResult = await runAsync(
 					schemaScript.script,
-					[scopedFs.readFilesFromDir.bind(scopedFs)],
-					['readdir']
+					[
+						scopedFs.readFilesFromDir.bind(scopedFs),
+						uuid,
+						getFilteredFormatVersions,
+					],
+					['readdir', 'uuid', 'getFormatVersions']
 				)
 			} catch {}
-
-			console.log(scriptResult)
 
 			schemas[
 				`file:///data/packages/schema/${schemaScript.generateFile}`
