@@ -1,6 +1,7 @@
 import { EventManager } from '@/appCycle/EventSystem'
 import { FileType } from '@/components/Data/FileType'
 import { FileSystem } from '@/components/FileSystem/Main'
+import { dirname } from 'path'
 import { IBuildConfigPlugins } from './Main'
 import { hooks, TCompilerHook, TCompilerPlugin } from './Plugins'
 
@@ -69,7 +70,11 @@ export class CompilerFile {
 		// Plugin wants to omit file from output
 		if (this.data === null) return
 
-		if (this.data) return this.fs.writeFile(this.filePath, this.data)
+		if (this.data)
+			return this.fs
+				.mkdir(dirname(this.filePath), { recursive: true })
+				.then(() => this.fs.writeFile(this.filePath, this.data))
+
 		if (this._originalFilePath !== this.filePath)
 			return this.fs.copyFile(this._originalFilePath, this.filePath)
 	}
