@@ -442,7 +442,46 @@
 		"minecraft:render_offsets": {
 			"type": "string",
 			"description": "The offset of the item rendered in an entity's hand.",
-			"$ref": "../general/renderOffsets.json"
+			"propertyNames": {
+				"enum": ["main_hand", "off_hand"]
+			},
+			"patternProperties": {
+				".*": {
+					"propertyNames": {
+						"enum": ["first_person", "third_person"]
+					},
+					"patternProperties": {
+						".*": {
+							"properties": {
+								"position": {
+									"type": "array",
+									"minItems": 3,
+									"maxItems": 3,
+									"items": {
+										"type": "number"
+									}
+								},
+								"rotation": {
+									"type": "array",
+									"minItems": 3,
+									"maxItems": 3,
+									"items": {
+										"type": "number"
+									}
+								},
+								"scale": {
+									"type": "array",
+									"minItems": 3,
+									"maxItems": 3,
+									"items": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 		"minecraft:hover_text_color": {
 			"type": "string",
