@@ -1,7 +1,9 @@
 <template>
 	<div class="body-1 pa-4 mb-2 rounded-lg control-bg">
 		<div class="d-flex align-center">
-			<v-icon color="accent" class="mr-1">{{ action.icon }}</v-icon>
+			<v-icon v-if="action.icon" color="accent" class="mr-1">
+				{{ action.icon }}
+			</v-icon>
 			<h3>{{ t(action.name) }}</h3>
 
 			<v-spacer />
