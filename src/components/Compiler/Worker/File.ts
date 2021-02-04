@@ -73,20 +73,28 @@ export class CompilerFile {
 		}
 	}
 
-	save() {
+	async save() {
 		// Plugin wants to omit file from output or file location didn't change
 		if (this.data === null || this._originalFilePath === this.filePath)
 			return
 
-		if (this.data)
-			return this.fs
+		if (this.data) {
+			await this.fs
 				.mkdir(dirname(this.filePath), { recursive: true })
 				.then(() => this.fs.writeFile(this.filePath, this.data))
+		} else {
+			const copiedFileHandle = await this.fs.getFileHandle(
+				this.filePath,
+				true
+			)
 
-		return this.fs.copyFile(this._originalFilePath, this.filePath)
+			const writable = await copiedFileHandle.createWritable()
+			await writable.write(await this.fileHandle.getFile())
+			await writable.close()
+		}
 	}
 
 	rmdir(path: string) {
-		return this.parent.fileSystem.unlink(path)
+		return this.fs.unlink(path)
 	}
 }
