@@ -2,7 +2,7 @@ import { EventManager } from '@/appCycle/EventSystem'
 import { FileType } from '@/components/Data/FileType'
 import { FileSystem } from '@/components/FileSystem/Main'
 import { dirname } from 'path'
-import { IBuildConfigPlugins } from './Main'
+import { CompilerService, IBuildConfigPlugins } from './Main'
 import { hooks, TCompilerHook, TCompilerPlugin } from './Plugins'
 
 export class CompilerFile {
@@ -13,6 +13,7 @@ export class CompilerFile {
 	protected data?: any
 
 	constructor(
+		protected parent: CompilerService,
 		protected fs: FileSystem,
 		protected filePath: string,
 		protected fileHandle: FileSystemFileHandle
@@ -23,6 +24,7 @@ export class CompilerFile {
 
 	async create(filePath: string) {
 		const file = new CompilerFile(
+			this.parent,
 			this.fs,
 			filePath,
 			await this.fs.getFileHandle(filePath, true)
@@ -53,10 +55,15 @@ export class CompilerFile {
 		pluginDefs: IBuildConfigPlugins,
 		plugins: Map<string, TCompilerPlugin>,
 		hook: TCompilerHook
-	): Promise<any> {
-		for (let plugin of pluginDefs[fromPluginEntry] ?? []) {
-			let pluginOpts = {}
+	) {
+		// TODO: Move logic into Main.ts file so we only need to lookup inside of the plugins map once per hook
+		// The compiler currently duplicates a lot of work
+		if (!pluginDefs[fromPluginEntry]) return
+
+		for (let plugin of pluginDefs[fromPluginEntry]!) {
+			let pluginOpts: any = {}
 			if (Array.isArray(plugin)) [plugin, pluginOpts] = plugin
+			pluginOpts.mode = this.parent.settings.mode
 
 			let pluginObj = plugins.get(plugin)
 			if (!pluginObj && fromPluginEntry !== '*')
@@ -67,15 +74,19 @@ export class CompilerFile {
 	}
 
 	save() {
-		// Plugin wants to omit file from output
-		if (this.data === null) return
+		// Plugin wants to omit file from output or file location didn't change
+		if (this.data === null || this._originalFilePath === this.filePath)
+			return
 
 		if (this.data)
 			return this.fs
 				.mkdir(dirname(this.filePath), { recursive: true })
 				.then(() => this.fs.writeFile(this.filePath, this.data))
 
-		if (this._originalFilePath !== this.filePath)
-			return this.fs.copyFile(this._originalFilePath, this.filePath)
+		return this.fs.copyFile(this._originalFilePath, this.filePath)
+	}
+
+	rmdir(path: string) {
+		return this.parent.fileSystem.unlink(path)
 	}
 }

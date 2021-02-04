@@ -22,19 +22,15 @@ export function setupSidebar() {
 			App.instance.windows.packExplorer.open()
 		},
 	})
-
-	// createSidebar({
-	// 	id: 'vanillaPacks',
-	// 	displayName: 'sidebar.vanillaPacks.name',
-	// 	icon: 'mdi-minecraft',
-	// 	component: 'VanillaPacks',
-	// })
-	// createSidebar({
-	// 	id: 'debugLog',
-	// 	displayName: 'sidebar.debugLog.name',
-	// 	icon: 'mdi-console',
-	// 	component: 'DebugLog',
-	// })
+	createSidebar({
+		id: 'compiler',
+		displayName: 'sidebar.compiler.name',
+		icon: 'mdi-cogs',
+		onClick: async () => {
+			const app = await App.getApp()
+			await app.compiler.openWindow()
+		},
+	})
 	createSidebar({
 		id: 'extensions',
 		displayName: 'sidebar.extensions.name',

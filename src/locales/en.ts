@@ -119,11 +119,8 @@ export default {
 	},
 	// Sidebar tabs
 	sidebar: {
-		vanillaPacks: {
-			name: 'Vanilla Packs',
-		},
-		debugLog: {
-			name: 'Debug Log',
+		compiler: {
+			name: 'Compiler',
 		},
 		extensions: {
 			name: 'Extensions',

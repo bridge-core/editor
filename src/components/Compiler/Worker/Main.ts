@@ -7,6 +7,7 @@ import { CompilerFile } from './File'
 
 export interface IWorkerSettings {
 	config: string
+	mode: 'dev' | 'build'
 	plugins: Record<string, string>
 }
 export interface IBuildConfig {
@@ -22,7 +23,7 @@ export interface IBuildConfigPlugins {
 }
 export type TPluginDef = string | [string, any]
 
-export class CompilerService extends TaskService<string[], string[]> {
+export class CompilerService extends TaskService<void, string[]> {
 	protected buildConfig!: IBuildConfig
 	protected plugins!: Map<string, TCompilerPlugin>
 
@@ -42,24 +43,20 @@ export class CompilerService extends TaskService<string[], string[]> {
 			this.buildConfig = await this.fileSystem.readJSON(
 				`bridge/compiler/${this.settings.config}`
 			)
-		} catch (err) {
-			return [
-				`Unable to find specified build config "bridge/compiler/${this.settings.config}"`,
-			]
-		}
+		} catch {}
 
 		this.plugins = await loadPlugins(globalFs, this.settings.plugins)
 
-		const files = await Promise.all(
-			updatedFiles.map(
-				async updatedFile =>
-					new CompilerFile(
-						this.fileSystem,
-						updatedFile,
-						await this.fileSystem.getFileHandle(updatedFile)
-					)
+		const files: CompilerFile[] = []
+		for (const updatedFile of updatedFiles)
+			files.push(
+				new CompilerFile(
+					this,
+					this.fileSystem,
+					updatedFile,
+					await this.fileSystem.getFileHandle(updatedFile)
+				)
 			)
-		)
 
 		this.progress.setTotal(hooks.length * files.length)
 		for (const hook of hooks) {
@@ -67,17 +64,13 @@ export class CompilerService extends TaskService<string[], string[]> {
 			await this.runHook(files, hook)
 			console.timeEnd(`[COMPILER] Running hook "${hook}"`)
 		}
-
-		return []
 	}
 
 	async runHook(files: CompilerFile[], hook: TCompilerHook) {
-		await Promise.all(
-			files.map(async file => {
-				await file.runHook(this.buildConfig.plugins, this.plugins, hook)
-				this.progress.addToCurrent()
-			})
-		)
+		for (const file of files) {
+			await file.runHook(this.buildConfig.plugins, this.plugins, hook)
+			this.progress.addToCurrent()
+		}
 	}
 }
 

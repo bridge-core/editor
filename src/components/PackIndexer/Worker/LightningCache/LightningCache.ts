@@ -28,10 +28,10 @@ export class LightningCache {
 			)
 			;(await file.text())
 				.split('\n')
-				.concat(['bridge', 'builds', 'dev'])
+				.concat(['bridge', 'builds'])
 				.forEach(folder => this.folderIgnoreList.add(folder))
 		} catch {
-			;['bridge', 'builds', 'dev'].forEach(folder =>
+			;['bridge', 'builds'].forEach(folder =>
 				this.folderIgnoreList.add(folder)
 			)
 		}

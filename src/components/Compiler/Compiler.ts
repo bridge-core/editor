@@ -1,7 +1,10 @@
 import { App } from '@/App'
 import { Signal } from '@/appCycle/EventSystem'
 import * as Comlink from 'comlink'
+import { selectedProject } from '../Project/Loader'
+import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'
 import { CompilerService } from './Worker/Main'
+import JSON5 from 'json5'
 
 const TaskService = Comlink.wrap<typeof CompilerService>(
 	new Worker('./Worker/Main.ts', {
@@ -14,7 +17,7 @@ export class Compiler extends Signal<void> {
 	public readonly ready = new Signal<boolean>()
 	protected compilerPlugins = new Map<string, string>()
 
-	async start(projectName: string) {
+	async start(projectName: string, mode: 'dev' | 'build', config: string) {
 		this.resetSignal()
 		this.ready.dispatch(false)
 		const app = await App.getApp()
@@ -32,7 +35,8 @@ export class Compiler extends Signal<void> {
 			await app.fileSystem.getDirectoryHandle(`projects/${projectName}`),
 			app.fileSystem.baseDirectory,
 			{
-				config: 'dev.json',
+				config,
+				mode,
 				plugins: Object.fromEntries(this.compilerPlugins.entries()),
 			}
 		)
@@ -46,9 +50,11 @@ export class Compiler extends Signal<void> {
 		)
 
 		// Start service
-		const files = await app.packIndexer.fired
-		const errors = await this.service.start(files)
-		errors.forEach(e => console.error(e))
+		let files = await app.packIndexer.fired
+		if (mode === 'build')
+			files = await app.packIndexer.service.getAllFiles()
+
+		await this.service.start(files)
 		this.dispatch()
 		this.ready.dispatch(true)
 		console.timeEnd('[TASK] Compiling project (total)')
@@ -68,5 +74,32 @@ export class Compiler extends Signal<void> {
 
 	get service() {
 		return this._service
+	}
+
+	async openWindow() {
+		const app = await App.getApp()
+
+		const configDir = await app.fileSystem.getDirectoryHandle(
+			`projects/${selectedProject}/bridge/compiler`,
+			{ create: true }
+		)
+
+		const informedChoice = new InformedChoiceWindow('sidebar.compiler.name')
+		const actionManager = await informedChoice.actionManager
+
+		for await (const entry of configDir.values()) {
+			if (entry.kind !== 'file' || entry.name === '.DS_Store') continue
+
+			const file = await entry.getFile()
+			const config = JSON5.parse(await file.text())
+
+			actionManager.create({
+				icon: config.icon,
+				name: config.name,
+				description: config.description,
+				onTrigger: () =>
+					this.start(selectedProject, 'build', entry.name),
+			})
+		}
 	}
 }
