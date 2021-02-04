@@ -13,7 +13,7 @@ const TaskService = Comlink.wrap<typeof CompilerService>(
 )
 
 export class Compiler extends Signal<void> {
-	protected _service!: Comlink.Remote<CompilerService>
+	protected _services = new Map<string, Comlink.Remote<CompilerService>>()
 	public readonly ready = new Signal<boolean>()
 	protected compilerPlugins = new Map<string, string>()
 
@@ -31,17 +31,28 @@ export class Compiler extends Signal<void> {
 		})
 
 		// Instaniate the worker TaskService
-		this._service = await new TaskService(
-			await app.fileSystem.getDirectoryHandle(`projects/${projectName}`),
-			app.fileSystem.baseDirectory,
-			{
-				config,
-				mode,
-				plugins: Object.fromEntries(this.compilerPlugins.entries()),
-			}
-		)
+		let service = this._services.get(`${mode}#${config}`)
+		if (!service) {
+			service = await new TaskService(
+				await app.fileSystem.getDirectoryHandle(
+					`projects/${projectName}`
+				),
+				app.fileSystem.baseDirectory,
+				{
+					config,
+					mode,
+					plugins: Object.fromEntries(this.compilerPlugins.entries()),
+				}
+			)
+			this._services.set(`${mode}#${config}`, service)
+		} else {
+			await service.updatePlugins(
+				Object.fromEntries(this.compilerPlugins.entries())
+			)
+		}
+
 		// Listen to task progress and update UI
-		this._service.on(
+		service.on(
 			Comlink.proxy(([current, total]) => {
 				if (current === total) task.complete()
 				task.update(current, total)
@@ -54,7 +65,7 @@ export class Compiler extends Signal<void> {
 		if (mode === 'build')
 			files = await app.packIndexer.service.getAllFiles()
 
-		await this.service.start(files)
+		await service.start(files)
 		this.dispatch()
 		this.ready.dispatch(true)
 		console.timeEnd('[TASK] Compiling project (total)')
@@ -72,8 +83,8 @@ export class Compiler extends Signal<void> {
 		}
 	}
 
-	get service() {
-		return this._service
+	getService(mode: 'dev' | 'build', config: string) {
+		return this._services.get(`${mode}#${config}`)
 	}
 
 	async openWindow() {
@@ -101,5 +112,14 @@ export class Compiler extends Signal<void> {
 					this.start(selectedProject, 'build', entry.name),
 			})
 		}
+	}
+
+	async updateFile(mode: 'dev' | 'build', config: string, filePath: string) {
+		const service = this.getService(mode, config)
+		if (!service) throw new Error(`Undefined service: "${mode}#${config}"`)
+		await service.updatePlugins(
+			Object.fromEntries(this.compilerPlugins.entries())
+		)
+		await service.updateFile(filePath)
 	}
 }

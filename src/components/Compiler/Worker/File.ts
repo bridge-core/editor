@@ -1,6 +1,7 @@
 import { EventManager } from '@/appCycle/EventSystem'
 import { FileType } from '@/components/Data/FileType'
 import { FileSystem } from '@/components/FileSystem/Main'
+import { file } from 'jszip'
 import { dirname } from 'path'
 import { CompilerService, IBuildConfigPlugins } from './Main'
 import { hooks, TCompilerHook, TCompilerPlugin } from './Plugins'
@@ -48,6 +49,8 @@ export class CompilerFile {
 
 		// After calling the finalizeBuild hook, save the files
 		if (hook === 'finalizeBuild') await this.save()
+		// After calling the cleanup hook, cleanup the file obj
+		if (hook === 'finalizeBuild') this.cleanup()
 	}
 
 	protected async runHookFrom(
@@ -92,6 +95,10 @@ export class CompilerFile {
 			await writable.write(await this.fileHandle.getFile())
 			await writable.close()
 		}
+	}
+	cleanup() {
+		this.data = undefined
+		this.filePath = this._originalFilePath
 	}
 
 	rmdir(path: string) {

@@ -25,7 +25,7 @@ export async function loadPlugins(
 ) {
 	const plugins = new Map<string, TCompilerPlugin>()
 
-	for await (const [pluginId, pluginPath] of Object.entries(pluginPaths)) {
+	for (const [pluginId, pluginPath] of Object.entries(pluginPaths ?? {})) {
 		let file: File
 		try {
 			file = await fileSystem.readFile(pluginPath)

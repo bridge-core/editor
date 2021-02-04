@@ -63,6 +63,11 @@ export class TabSystem {
 		await app.packIndexer.updateFile(
 			tab.getPath().replace(`projects/${selectedProject}/`, '')
 		)
+		await app.compiler.updateFile(
+			'dev',
+			'default.json',
+			tab.getPath().replace(`projects/${selectedProject}/`, '')
+		)
 		App.eventSystem.dispatch(
 			'refreshCurrentContext',
 			tab.getPath().replace(`projects/${selectedProject}/`, '')

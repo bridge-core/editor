@@ -257,6 +257,11 @@ export class CreatePresetWindow extends BaseWindow {
 			app.packIndexer.once(async () => {
 				for (const filePath of createdFiles) {
 					await app.packIndexer.updateFile(filePath)
+					await app.compiler.updateFile(
+						'dev',
+						'default.json',
+						filePath
+					)
 					app.tabSystem.open(
 						`projects/${selectedProject}/${filePath}`
 					)

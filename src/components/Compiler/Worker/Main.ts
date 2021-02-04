@@ -26,6 +26,7 @@ export type TPluginDef = string | [string, any]
 export class CompilerService extends TaskService<void, string[]> {
 	protected buildConfig!: IBuildConfig
 	protected plugins!: Map<string, TCompilerPlugin>
+	protected files = new Map<string, CompilerFile>()
 
 	constructor(
 		projectDirectory: FileSystemDirectoryHandle,
@@ -47,9 +48,9 @@ export class CompilerService extends TaskService<void, string[]> {
 
 		this.plugins = await loadPlugins(globalFs, this.settings.plugins)
 
-		const files: CompilerFile[] = []
 		for (const updatedFile of updatedFiles)
-			files.push(
+			this.files.set(
+				updatedFile,
 				new CompilerFile(
 					this,
 					this.fileSystem,
@@ -58,18 +59,43 @@ export class CompilerService extends TaskService<void, string[]> {
 				)
 			)
 
-		this.progress.setTotal(hooks.length * files.length)
+		this.progress.setTotal(hooks.length * this.files.size)
 		for (const hook of hooks) {
 			console.time(`[COMPILER] Running hook "${hook}"`)
-			await this.runHook(files, hook)
+			await this.runHook(this.files, hook)
 			console.timeEnd(`[COMPILER] Running hook "${hook}"`)
 		}
 	}
 
-	async runHook(files: CompilerFile[], hook: TCompilerHook) {
-		for (const file of files) {
+	async updatePlugins(plugins: Record<string, string>) {
+		const globalFs = new FileSystem(this.baseDirectory)
+		this.plugins = await loadPlugins(globalFs, plugins)
+	}
+
+	protected async runHook(
+		files: Map<string, CompilerFile>,
+		hook: TCompilerHook
+	) {
+		for (const [_, file] of files) {
 			await file.runHook(this.buildConfig.plugins, this.plugins, hook)
 			this.progress.addToCurrent()
+		}
+	}
+
+	async updateFile(filePath: string) {
+		let file = this.files.get(filePath)
+		if (!file) {
+			file = new CompilerFile(
+				this,
+				this.fileSystem,
+				filePath,
+				await this.fileSystem.getFileHandle(filePath)
+			)
+			this.files.set(filePath, file)
+		}
+
+		for (const hook of hooks) {
+			await file.runHook(this.buildConfig.plugins, this.plugins, hook)
 		}
 	}
 }
