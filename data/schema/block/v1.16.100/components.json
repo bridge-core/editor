@@ -37,7 +37,7 @@
 						"enum": ["*"]
 					},
 					{
-						"$ref": "../../dynamic/geometry/materialInstanceEnum.json"
+						"$ref": "../../geometry/dynamic/materialInstanceEnum.json"
 					}
 				]
 			},

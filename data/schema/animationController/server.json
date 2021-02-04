@@ -19,12 +19,12 @@
 											"items": {
 												"anyOf": [
 													{
-														"$ref": "../dynamic/entity/animationEnum.json"
+														"$ref": "../entity/dynamic/animationEnum.json"
 													},
 													{
 														"type": "object",
 														"propertyNames": {
-															"$ref": "../dynamic/entity/animationEnum.json"
+															"$ref": "../entity/dynamic/animationEnum.json"
 														},
 														"patternProperties": {
 															".+": {
@@ -40,7 +40,7 @@
 											"items": {
 												"type": "object",
 												"propertyNames": {
-													"$ref": "../dynamic/animationController/currentContext/stateEnum.json"
+													"$ref": "./dynamic/currentContext/stateEnum.json"
 												},
 												"patternProperties": {
 													".+": {

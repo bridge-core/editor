@@ -32,11 +32,11 @@
 					"items": {
 						"anyOf": [
 							{
-								"$ref": "../dynamic/entity/currentContext/animationEnum.json"
+								"$ref": "./dynamic/currentContext/animationEnum.json"
 							},
 							{
 								"propertyNames": {
-									"$ref": "../dynamic/entity/currentContext/animationEnum.json"
+									"$ref": "./dynamic/currentContext/animationEnum.json"
 								},
 								"patternProperties": {
 									".*": {

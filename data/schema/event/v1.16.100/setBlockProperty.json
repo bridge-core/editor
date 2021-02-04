@@ -5,7 +5,7 @@
 		"set_block_property": {
 			"description": "Sets a block property on this block",
 			"propertyNames": {
-				"$ref": "../../dynamic/block/currentContext/propertyEnum.json"
+				"$ref": "../../block/dynamic/currentContext/propertyEnum.json"
 			},
 			"patternProperties": {
 				".+": {

@@ -96,13 +96,13 @@
 					"type": "number"
 				},
 				"event": {
-					"$ref": "../dynamic/entity/eventEnum.json"
+					"$ref": "../entity/dynamic/eventEnum.json"
 				},
 				"initial_event_count": {
 					"type": "number"
 				},
 				"initial_event": {
-					"$ref": "../dynamic/entity/eventEnum.json"
+					"$ref": "../entity/dynamic/eventEnum.json"
 				}
 			}
 		},

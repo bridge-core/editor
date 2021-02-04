@@ -14,7 +14,7 @@
                     "type": "integer"
                 },
                 "event_name": {
-                    "$ref": "../dynamic/soundDefinition/identifierEnum.json"
+                    "$ref": "../soundDefinition/dynamic/identifierEnum.json"
                 }
             }
         }

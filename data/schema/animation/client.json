@@ -99,10 +99,10 @@
 								"additionalProperties": false,
 								"properties": {
 									"effect": {
-										"$ref": "../dynamic/clientEntity/particleReferenceEnum.json"
+										"$ref": "../clientEntity/dynamic/particleReferenceEnum.json"
 									},
 									"locator": {
-										"$ref": "../dynamic/geometry/locatorEnum.json"
+										"$ref": "../geometry/dynamic/locatorEnum.json"
 									}
 								}
 							}
@@ -112,7 +112,7 @@
 							"items": {
 								"patternProperties": {
 									"effect": {
-										"$ref": "../dynamic/clientEntity/soundEffectReferenceEnum.json"
+										"$ref": "../clientEntity/dynamic/soundEffectReferenceEnum.json"
 									}
 								}
 							}

@@ -19,12 +19,12 @@
 											"items": {
 												"anyOf": [
 													{
-														"$ref": "../dynamic/clientEntity/animationReferenceEnum.json"
+														"$ref": "../clientEntity/dynamic/animationReferenceEnum.json"
 													},
 													{
 														"type": "object",
 														"propertyNames": {
-															"$ref": "../dynamic/clientEntity/animationReferenceEnum.json"
+															"$ref": "../clientEntity/dynamic/animationReferenceEnum.json"
 														},
 														"patternProperties": {
 															".+": {
@@ -40,7 +40,7 @@
 											"items": {
 												"type": "object",
 												"propertyNames": {
-													"$ref": "../dynamic/clientAnimationController/currentContext/stateEnum.json"
+													"$ref": "../clientAnimationController/dynamic/currentContext/stateEnum.json"
 												},
 												"patternProperties": {
 													".+": {
@@ -93,10 +93,10 @@
 												"additionalProperties": false,
 												"properties": {
 													"effect": {
-														"$ref": "../dynamic/clientEntity/particleReferenceEnum.json"
+														"$ref": "../clientEntity/dynamic/particleReferenceEnum.json"
 													},
 													"locator": {
-														"$ref": "../dynamic/geometry/locatorEnum.json"
+														"$ref": "../geometry/dynamic/locatorEnum.json"
 													}
 												}
 											}
@@ -106,7 +106,7 @@
 											"items": {
 												"patternProperties": {
 													"effect": {
-														"$ref": "../dynamic/clientEntity/soundEffectReferenceEnum.json"
+														"$ref": "../clientEntity/dynamic/soundEffectReferenceEnum.json"
 													}
 												}
 											}

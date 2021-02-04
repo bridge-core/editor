@@ -19,10 +19,10 @@
 					]
 				},
 				{
-					"$ref": "../dynamic/recipe/recipeTagEnum.json"
+					"$ref": "./dynamic/recipeTagEnum.json"
 				},
 				{
-					"$ref": "../dynamic/block/recipeTagEnum.json"
+					"$ref": "../block/dynamic/recipeTagEnum.json"
 				}
 			]
 		},

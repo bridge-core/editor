@@ -8,7 +8,7 @@
 				"component_groups": {
 					"type": "array",
 					"items": {
-						"$ref": "../dynamic/entity/currentContext/componentGroupEnum.json"
+						"$ref": "../entity/dynamic/currentContext/componentGroupEnum.json"
 					}
 				}
 			}
@@ -19,7 +19,7 @@
 				"component_groups": {
 					"type": "array",
 					"items": {
-						"$ref": "../dynamic/entity/currentContext/componentGroupEnum.json"
+						"$ref": "../entity/dynamic/currentContext/componentGroupEnum.json"
 					}
 				}
 			}

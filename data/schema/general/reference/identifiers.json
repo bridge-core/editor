@@ -10,10 +10,10 @@
 					"$ref": "../vanilla/identifiers.json#/definitions/unprefixed_entity_identifiers"
 				},
 				{
-					"$ref": "../../dynamic/entity/identifierEnum.json"
+					"$ref": "../../entity/dynamic/identifierEnum.json"
 				},
 				{
-					"$ref": "../../dynamic/clientEntity/identifierEnum.json"
+					"$ref": "../../clientEntity/dynamic/identifierEnum.json"
 				},
 				{
 					"type": "string",
@@ -30,7 +30,7 @@
 					"$ref": "../vanilla/identifiers.json#/definitions/unprefixed_block_identifiers"
 				},
 				{
-					"$ref": "../../dynamic/block/identifierEnum.json"
+					"$ref": "../../block/dynamic/identifierEnum.json"
 				},
 				{
 					"type": "string",
@@ -47,16 +47,16 @@
 					"$ref": "../vanilla/identifiers.json#/definitions/unprefixed_item_identifiers"
 				},
 				{
-					"$ref": "../../dynamic/item/identifierEnum.json"
+					"$ref": "../../item/dynamic/identifierEnum.json"
 				},
 				{
-					"$ref": "../../dynamic/clientItem/identifierEnum.json"
+					"$ref": "../../clientItem/dynamic/identifierEnum.json"
 				},
 				{
-					"$ref": "../../dynamic/attachable/itemIdentifierEnum.json"
+					"$ref": "../../attachable/dynamic/itemIdentifierEnum.json"
 				},
 				{
-					"$ref": "../../dynamic/recipe/itemIdentifierEnum.json"
+					"$ref": "../../recipe/dynamic/itemIdentifierEnum.json"
 				},
 				{
 					"type": "string",
@@ -70,13 +70,13 @@
 					"$ref": "../vanilla/identifiers.json#/definitions/particle_identifiers"
 				},
 				{
-					"$ref": "../../dynamic/particle/identifierEnum.json"
+					"$ref": "../../particle/dynamic/identifierEnum.json"
 				},
 				{
-					"$ref": "../../dynamic/attachable/particleIdentifierEnum.json"
+					"$ref": "../../attachable/dynamic/particleIdentifierEnum.json"
 				},
 				{
-					"$ref": "../../dynamic/clientEntity/particleIdentifierEnum.json"
+					"$ref": "../../clientEntity/dynamic/particleIdentifierEnum.json"
 				}
 			]
 		},
@@ -86,10 +86,10 @@
 					"$ref": "../vanilla/identifiers.json#/definitions/fog_identifiers"
 				},
 				{
-					"$ref": "../../dynamic/fog/identifierEnum.json"
+					"$ref": "../../fog/dynamic/identifierEnum.json"
 				},
 				{
-					"$ref": "../../dynamic/clientBiome/fogIdentifierEnum.json"
+					"$ref": "../../clientBiome/dynamic/fogIdentifierEnum.json"
 				}
 			]
 		}

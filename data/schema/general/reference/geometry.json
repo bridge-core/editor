@@ -6,7 +6,7 @@
 			"$ref": "../vanilla/geometry.json"
 		},
 		{
-			"$ref": "../../dynamic/geometry/identifierEnum.json"
+			"$ref": "../../geometry/dynamic/identifierEnum.json"
 		}
 	]
 }

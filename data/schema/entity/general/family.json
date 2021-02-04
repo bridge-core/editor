@@ -6,7 +6,7 @@
 			"$ref": "../../general/vanilla/family.json"
 		},
 		{
-			"$ref": "../../dynamic/entity/familyEnum.json"
+			"$ref": "../dynamic/familyEnum.json"
 		}
 	]
 }

@@ -6,7 +6,7 @@
 			"$ref": "../vanilla/itemTexture.json"
 		},
 		{
-			"$ref": "../../dynamic/itemTexture/textureEnum.json"
+			"$ref": "../../itemTexture/dynamic/textureEnum.json"
 		}
 	]
 }

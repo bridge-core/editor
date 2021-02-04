@@ -6,7 +6,7 @@
             "$ref": "../vanilla/biomeTagEnum.json"
         },
         {
-            "$ref": "../../dynamic/biome/tagsEnum.json"
+            "$ref": "../../biome/dynamic/tagsEnum.json"
         }
     ]
 }

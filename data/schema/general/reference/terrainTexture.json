@@ -3,7 +3,7 @@
 	"type": "string",
 	"anyOf": [
 		{
-			"$ref": "../../dynamic/terrainTexture/textureEnum.json"
+			"$ref": "../../terrainTexture/dynamic/textureEnum.json"
 		},
 		{
 			"$ref": "../vanilla/terrainTexture.json"

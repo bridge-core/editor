@@ -6,10 +6,10 @@
             "$ref": "../vanilla/renderController.json"
         },
         {
-            "$ref": "../../dynamic/clientEntity/renderControllerIdentifierEnum.json"
+            "$ref": "../../clientEntity/dynamic/renderControllerIdentifierEnum.json"
         },
         {
-            "$ref": "../../dynamic/attachable/renderControllerIdentifierEnum.json"
+            "$ref": "../../attachable/dynamic/renderControllerIdentifierEnum.json"
         }
     ]
 }

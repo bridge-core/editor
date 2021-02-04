@@ -64,7 +64,7 @@
 							"$ref": "./components.json"
 						},
 						{
-							"$ref": "../../dynamic/block/tagProperty.json"
+							"$ref": "../dynamic/tagProperty.json"
 						}
 					]
 				},

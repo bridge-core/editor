@@ -3,7 +3,7 @@
 	"type": "object",
 	"properties": {
 		"trigger": {
-			"$ref": "../../dynamic/block/currentContext/eventEnum.json",
+			"$ref": "../../block/dynamic/currentContext/eventEnum.json",
 			"type": "string",
 			"description": "Trigger an event"
 		}

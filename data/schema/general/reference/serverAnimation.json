@@ -3,10 +3,10 @@
 	"type": "string",
 	"anyOf": [
 		{
-			"$ref": "../../dynamic/animation/identifierEnum.json"
+			"$ref": "../../animation/dynamic/identifierEnum.json"
 		},
 		{
-			"$ref": "../../dynamic/animationController/identifierEnum.json"
+			"$ref": "../../animationController/dynamic/identifierEnum.json"
 		}
 	]
 }
