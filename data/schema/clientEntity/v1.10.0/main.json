@@ -1,7 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"required": ["format_version", "minecraft:client_entity"],
-	"additionalProperties": false,
 	"properties": {
 		"minecraft:client_entity": {
 			"description": "The resource description of the entity.",
@@ -43,11 +42,11 @@
 								},
 								"base_color": {
 									"description": "The base color of the spawn egg.",
-									"$ref": "../general/hexColor.json"
+									"$ref": "../../general/hexColor.json"
 								},
 								"overlay_color": {
 									"description": "The overlay color of the spawn egg.",
-									"$ref": "../general/hexColor.json"
+									"$ref": "../../general/hexColor.json"
 								}
 							}
 						},
@@ -55,7 +54,7 @@
 							"description": "Defines the materials used in the entity.",
 							"patternProperties": {
 								".*": {
-									"$ref": "./general.json#/materials"
+									"$ref": "../general.json#/definitions/materials"
 								}
 							}
 						},
@@ -63,7 +62,7 @@
 							"description": "Defines the textures used in the entity.",
 							"patternProperties": {
 								".*": {
-									"$ref": "../../dynamic/project/texturePath.json"
+									"$ref": "../../texture/dynamic/texturePathEnum.json"
 								}
 							}
 						},
@@ -89,7 +88,14 @@
 							"properties": {
 								"scale": {
 									"description": "Sets the scale of the mobs geometry.",
-									"type": "number"
+									"anyOf": [
+										{
+											"type": "number"
+										},
+										{
+											"type": "string"
+										}
+									]
 								},
 								"initialize": {
 									"description": "Initializes variables.",

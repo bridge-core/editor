@@ -3,8 +3,6 @@
 	"title": "Client Entity",
 	"$id": "bridge.clientEntity",
 	"type": "object",
-	"required": ["format_version", "minecraft:client_entity"],
-	"additionalProperties": false,
 
 	"allOf": [
 		{
