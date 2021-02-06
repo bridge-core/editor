@@ -6,7 +6,7 @@
 	"$id": "bridge.attachable",
 	"properties": {
 		"format_version": {
-			"$ref": "../general/formatVersion.json"
+			"$ref": "../project/formatVersionEnum.json"
 		},
 		"minecraft:attachable": {
 			"additionalProperties": false,

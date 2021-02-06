@@ -6,7 +6,7 @@
 	"required": ["format_version", "minecraft:feature_rules"],
 	"properties": {
 		"format_version": {
-			"$ref": "../general/formatVersion.json"
+			"$ref": "../project/formatVersionEnum.json"
 		},
 		"minecraft:feature_rules": {
 			"additionalProperties": false,

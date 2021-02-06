@@ -5,7 +5,7 @@
 	"required": ["format_version"],
 	"properties": {
 		"format_version": {
-			"$ref": "../general/formatVersion.json"
+			"$ref": "../project/formatVersionEnum.json"
 		},
 		"sound_definitions": {
 			"patternProperties": {

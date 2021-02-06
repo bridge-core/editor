@@ -6,7 +6,7 @@
 	"additionalProperties": false,
 	"properties": {
 		"format_version": {
-			"$ref": "../general/formatVersion.json"
+			"$ref": "../project/formatVersionEnum.json"
 		},
 		"render_controllers": {
 			"patternProperties": {

@@ -22,7 +22,7 @@
 						},
 						"min_engine_version": {
 							"description": "Engine version for which the top resource pack was built. If a definition's min_engine_version is newer than that pack's engine version then the definition is not parsed. Multiple definition files may use the same identifier, in which case only one of those definitions will be loaded. The definition with the same or closest and not greater min_engine_version, as compared to the top resource pack's engine version, will be parsed; all other definitions with the same identifier will not be parsed.",
-							"$ref": "../../general/formatVersion.json"
+							"$ref": "../../project/formatVersionEnum.json"
 						},
 						"enable_attatchables": {
 							"type": "boolean",
