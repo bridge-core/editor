@@ -4,7 +4,7 @@
 	"title": "Client Animation",
 	"required": ["format_version"],
 	"properties": {
-		"format_version": { "enum": ["1.10.0"] },
+		"format_version": { "enum": ["1.8.0", "1.10.0"] },
 		"animations": {
 			"patternProperties": {
 				"^animation\\..+$": {

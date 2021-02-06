@@ -6,7 +6,7 @@
 			"$ref": "../general/vanilla/biomeTagProperty.json"
 		},
 		{
-			"$ref": "./dynamic/biome/tagsProperty.json"
+			"$ref": "./dynamic/tagsProperty.json"
 		}
 	]
 }
