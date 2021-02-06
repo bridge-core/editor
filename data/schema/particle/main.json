@@ -19,7 +19,7 @@
 							"additionalProperties": false,
 							"properties": {
 								"texture": {
-									"$ref": "../texture/dynamic/texturePathEnum.json"
+									"$ref": "./dynamic/texturePathEnum.json"
 								},
 								"material": {
 									"$ref": "./general.json#/definitions/materials"

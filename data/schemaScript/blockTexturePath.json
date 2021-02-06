@@ -1,0 +1,5 @@
+{
+	"type": "enum",
+	"generateFile": "block/dynamic/texturePathEnum.json",
+	"script": "return readdir('RP/textures/blocks').then(dirents => dirents.map(dirent => dirent.path.replace('RP/', '').replace(/\\.png|\\.jpeg|\\.jpg|\\.tga/g, '')))"
+}

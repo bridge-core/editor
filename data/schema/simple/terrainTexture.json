@@ -26,43 +26,50 @@
 				".*": {
 					"properties": {
 						"textures": {
-							"type": "array",
-							"items": {
-								"anyOf": [
-									{
-										"$ref": "../texture/dynamic/texturePathEnum.json"
-									},
-									{
-										"properties": {
-											"path": {
-												"type": "string"
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"anyOf": [
+											{
+												"$ref": "../block/dynamic/texturePathEnum.json"
 											},
-											"overlay_color": {
-												"$ref": "../general/hexColor.json"
-											},
-											"variations": {
-												"type": "array",
-												"items": {
-													"properties": {
-														"weight": {
-															"type": "integer"
-														},
-														"path": {
-															"$ref": "../texture/dynamic/texturePathEnum.json"
-														},
-														"overlay_color": {
-															"$ref": "../general/hexColor.json"
+											{
+												"properties": {
+													"path": {
+														"type": "string"
+													},
+													"overlay_color": {
+														"$ref": "../general/hexColor.json"
+													},
+													"variations": {
+														"type": "array",
+														"items": {
+															"properties": {
+																"weight": {
+																	"type": "integer"
+																},
+																"path": {
+																	"$ref": "../block/dynamic/texturePathEnum.json"
+																},
+																"overlay_color": {
+																	"$ref": "../general/hexColor.json"
+																}
+															}
 														}
+													},
+													"pbr_emissive": {
+														"type": "number"
 													}
 												}
-											},
-											"pbr_emissive": {
-												"type": "number"
 											}
-										}
+										]
 									}
-								]
-							}
+								},
+								{
+									"$ref": "../block/dynamic/texturePathEnum.json"
+								}
+							]
 						}
 					}
 				}

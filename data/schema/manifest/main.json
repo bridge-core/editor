@@ -14,9 +14,6 @@
 			"items": {
 				"type": "integer"
 			}
-		},
-		"uuid": {
-			"$ref": "../general/uuid.json"
 		}
 	},
 	"properties": {
@@ -41,7 +38,7 @@
 					"description": "This is a short description of the pack. It will appear in the game below the name of the pack."
 				},
 				"uuid": {
-					"$ref": "#/definitions/uuid",
+					"$ref": "../general/uuid.json",
 					"description": "This is a special type of identifier that uniquely identifies this pack from any other pack."
 				},
 				"version": {
@@ -87,7 +84,7 @@
 						},
 						"uuid": {
 							"type": "string",
-							"format": "uuid"
+							"$ref": "../general/uuid.json"
 						},
 						"verison": {
 							"$ref": "#/definitions/triple_integer"
@@ -99,23 +96,21 @@
 		"dependencies": {
 			"type": "array",
 			"description": "Defines the dependencies of the pack",
-			"items": [
-				{
-					"type": "object",
-					"required": ["uuid", "version"],
-					"properties": {
-						"uuid": {
-							"type": "string",
-							"format": "uuid",
-							"description": "This is the unique identifier of the pack that this pack depends on. It needs to be the exact same UUID that the pack has defined in the header section of it's manifest file."
-						},
-						"version": {
-							"$ref": "#/definitions/triple_integer",
-							"description": "This is the specific version of the pack that your pack depends on. Should match the version the other pack has in its manifest file."
-						}
+			"items": {
+				"type": "object",
+				"required": ["uuid", "version"],
+				"properties": {
+					"uuid": {
+						"type": "string",
+						"$ref": "../general/uuid.json",
+						"description": "This is the unique identifier of the pack that this pack depends on. It needs to be the exact same UUID that the pack has defined in the header section of it's manifest file."
+					},
+					"version": {
+						"$ref": "#/definitions/triple_integer",
+						"description": "This is the specific version of the pack that your pack depends on. Should match the version the other pack has in its manifest file."
 					}
 				}
-			]
+			}
 		},
 		"metadata": {
 			"type": "object",

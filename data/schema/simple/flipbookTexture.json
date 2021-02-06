@@ -7,7 +7,7 @@
 		"additionalProperties": false,
 		"properties": {
 			"flipbook_texture": {
-				"$ref": "../texture/dynamic/texturePathEnum.json"
+				"$ref": "../block/dynamic/texturePathEnum.json"
 			},
 			"atlas_tile": {
 				"type": "string"
