@@ -1,5 +1,5 @@
 {
     "type": "enum",
     "generateFile": "language/dynamic/langPathEnum.json",
-	"script": "return readdir('RP/texts').then(dirents => dirents.map(dirent => dirent.path.replace('RP/', '')))"
+	"script": "return readdir('RP/texts').then(dirents => dirents.filter(dirent => dirent.name.endsWith('.lang')).map(dirent => dirent.name.replace('.lang', '')))"
 }
