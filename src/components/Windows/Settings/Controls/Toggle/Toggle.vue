@@ -21,7 +21,7 @@ export default {
 	data: () => ({
 		value_: undefined,
 	}),
-	created() {
+	mounted() {
 		this.value_ = this.value
 	},
 	methods: {
