@@ -2,7 +2,6 @@ import { SidebarItem } from '../Layout/Sidebar'
 import { Control } from './Controls/Control'
 import SettingsWindowComponent from './SettingsWindow.vue'
 import { setupSettings } from './setupSettings'
-import Vue from 'vue'
 import { App } from '@/App'
 import { SettingsSidebar } from './SettingsSidebar'
 import { setSettingsState, settingsState } from './SettingsState'
@@ -11,7 +10,7 @@ import { BaseWindow } from '../BaseWindow'
 export class SettingsWindow extends BaseWindow {
 	protected sidebar = new SettingsSidebar([])
 
-	constructor() {
+	constructor(public parent: App) {
 		super(SettingsWindowComponent, false, true)
 		this.defineWindow()
 	}
@@ -63,18 +62,12 @@ export class SettingsWindow extends BaseWindow {
 			})
 		})
 	}
-	static loadSettings() {
-		return new Promise<void>(resolve => {
-			App.ready.once(async app => {
-				try {
-					setSettingsState(
-						await app.fileSystem.readJSON('data/settings.json')
-					)
-				} catch {}
-
-				resolve()
-			})
-		})
+	static async loadSettings(app: App) {
+		try {
+			setSettingsState(
+				await app.fileSystem.readJSON('data/settings.json')
+			)
+		} catch {}
 	}
 
 	async open() {

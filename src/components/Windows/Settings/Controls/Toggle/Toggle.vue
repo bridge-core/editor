@@ -21,12 +21,12 @@ export default {
 	data: () => ({
 		value_: undefined,
 	}),
-	mounted() {
+	created() {
 		this.value_ = this.value
 	},
 	methods: {
 		onChange(val) {
-			this.$emit('change', val)
+			this.$nextTick(() => this.$emit('change', val))
 		},
 	},
 }

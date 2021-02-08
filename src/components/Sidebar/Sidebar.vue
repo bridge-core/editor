@@ -85,8 +85,8 @@ export default {
 		isSidebarRight() {
 			return (
 				this.settingsState &&
-				this.settingsState.general &&
-				this.settingsState.general.isSidebarRight
+				this.settingsState.appearance &&
+				this.settingsState.appearance.isSidebarRight
 			)
 		},
 	},

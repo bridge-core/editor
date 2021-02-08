@@ -1,24 +1,18 @@
 <template>
 	<div>
 		<h3>{{ config.title }}</h3>
-		<div class="d-flex">
+		<div class="d-flex align-center">
 			<div>
-				<v-btn-toggle
+				<v-autocomplete
 					inset
 					dense
 					mandatory
-					:label="config.description"
+					outlined
 					:value="value_"
 					@change="onChange"
-				>
-					<v-btn
-						color="sidebarSelection"
-						v-for="option in config.options"
-						:key="option"
-					>
-						{{ option }}
-					</v-btn>
-				</v-btn-toggle>
+					:items="config.options"
+					hide-details
+				/>
 			</div>
 
 			<span class="ml-4 body-1">{{ config.description }}</span>
@@ -36,12 +30,11 @@ export default {
 		value_: undefined,
 	}),
 	created() {
-		this.value_ =
-			this.config.options.findIndex(val => val === this.value) || 0
+		this.value_ = this.value || this.config.default
 	},
 	methods: {
 		onChange(val) {
-			this.$nextTick(() => this.$emit('change', this.config.options[val]))
+			this.$nextTick(() => this.$emit('change', val))
 		},
 	},
 }

@@ -52,7 +52,7 @@ export class App {
 	public readonly fileSystem = new FileSystem()
 	public readonly extensionLoader = new ExtensionLoader()
 
-	protected _windows = new Windows()
+	protected _windows: Windows
 	get windows() {
 		return this._windows
 	}
@@ -67,6 +67,7 @@ export class App {
 	constructor(appComponent: Vue) {
 		// @ts-expect-error Typescript doesn't know about vuetify
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
+		this._windows = new Windows(this)
 
 		// Prompt the user whether they really want to close bridge. when unsaved tabs are open
 		const saveWarning =
@@ -119,10 +120,11 @@ export class App {
 		this._instance = new App(appComponent)
 		await this.instance.beforeStartUp()
 		this.instance.fileSystem.setup(await setupFileSystem())
+		await SettingsWindow.loadSettings(this.instance).then(() =>
+			this.instance.themeManager.loadDefaultThemes(this.instance)
+		)
 		await this.instance.startUp()
 		this.ready.dispatch(this._instance)
-
-		await SettingsWindow.loadSettings()
 
 		lw.close()
 		await selectLastProject(this._instance)

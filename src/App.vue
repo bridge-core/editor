@@ -97,4 +97,8 @@ summary::-webkit-details-marker {
 .v-system-bar {
 	width: calc(100% + 1px);
 }
+
+.v-select-list {
+	background-color: var(--v-menu-base) !important;
+}
 </style>

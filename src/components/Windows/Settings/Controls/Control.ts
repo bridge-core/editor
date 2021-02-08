@@ -7,7 +7,7 @@ export interface IControl<T> {
 	description: string
 	key: string
 	default?: T
-	onChange?: (value: T) => void
+	onChange?: (value: T) => void | Promise<void>
 }
 
 export abstract class Control<T> {
@@ -33,8 +33,9 @@ export abstract class Control<T> {
 	}
 
 	onChange = async (value: T) => {
-		if (typeof this.config.onChange === 'function')
-			this.config.onChange(value)
 		this.value = value
+
+		if (typeof this.config.onChange === 'function')
+			await this.config.onChange(value)
 	}
 }

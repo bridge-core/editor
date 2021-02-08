@@ -1,3 +1,4 @@
+import { App } from '@/App'
 import { ExtensionStoreWindow } from './ExtensionStore/ExtensionStore'
 import { LoadingWindow } from './LoadingWindow/LoadingWindow'
 import { CreatePresetWindow } from './Project/CreatePreset/CreatePreset'
@@ -8,7 +9,7 @@ import { ProjectChooserWindow } from './Project/ProjectChooser/ProjectChooser'
 import { SettingsWindow } from './Settings/SettingsWindow'
 
 export class Windows {
-	settings = new SettingsWindow()
+	settings: SettingsWindow
 	projectChooser = new ProjectChooserWindow()
 	packExplorer = new PackExplorerWindow()
 	createProject = new CreateProjectWindow()
@@ -16,4 +17,8 @@ export class Windows {
 	filePicker = new FilePickerWindow()
 	createPreset = new CreatePresetWindow()
 	extensionStore = new ExtensionStoreWindow()
+
+	constructor(protected app: App) {
+		this.settings = new SettingsWindow(app)
+	}
 }

@@ -2,6 +2,13 @@ import { EventDispatcher } from '@/appCycle/EventSystem'
 import Vue from 'vue'
 import { editor as Editor } from 'monaco-editor'
 import { keyword } from 'color-convert'
+import { App } from '@/App'
+import { settingsState } from '@/components/Windows/Settings/SettingsState'
+import { iterateDir } from '@/utils/iterateDir'
+import { IDisposable } from '@/types/disposable'
+import json5 from 'json5'
+import { deepmerge } from '@/utils/deepmerge'
+import { bridgeDark, bridgeLight } from './Default'
 
 const colorNames = [
 	'text',
@@ -24,8 +31,8 @@ const colorNames = [
 type TColorName = typeof colorNames[number]
 
 export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
-	public readonly mode: 'light' | 'dark'
-	protected themeMap = new Set<Theme>()
+	protected mode: 'light' | 'dark'
+	protected themeMap = new Map<string, Theme>()
 	protected themeColorTag = document.querySelector("meta[name='theme-color']")
 
 	constructor(protected vuetify: any) {
@@ -36,6 +43,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		this.mode = media.matches ? 'light' : 'dark'
 		media.addEventListener('change', mediaQuery => {
 			this.dispatch(mediaQuery.matches ? 'light' : 'dark')
+			this.mode = mediaQuery.matches ? 'light' : 'dark'
 		})
 
 		/**
@@ -49,11 +57,61 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		this.themeColorTag.setAttribute('name', 'theme-color')
 		this.themeColorTag.id = 'theme-color-tag'
 
-		this.apply(bridgeDark)
+		this.addTheme(bridgeDark, true)
+		this.addTheme(bridgeLight, true)
 	}
 
-	apply(theme: Theme) {
-		theme.apply(this, this.vuetify)
+	protected applyTheme(theme?: Theme) {
+		theme?.apply(this, this.vuetify)
+	}
+	updateTheme() {
+		let colorScheme = settingsState?.appearance?.colorScheme
+		if (!colorScheme || colorScheme === 'auto') colorScheme = this.mode
+
+		const themeId =
+			<string>settingsState?.appearance?.[`${colorScheme}Theme`] ??
+			`bridge.default.${colorScheme}`
+		const theme = this.themeMap.get(themeId)
+		const baseTheme = this.themeMap.get(`bridge.default.${colorScheme}`)
+
+		this.applyTheme(theme ?? baseTheme)
+	}
+	async loadDefaultThemes(app: App) {
+		this.updateTheme()
+
+		try {
+			await iterateDir(
+				await app.fileSystem.getDirectoryHandle('data/packages/themes'),
+				fileHandle => this.loadTheme(fileHandle)
+			)
+		} catch {}
+
+		this.updateTheme()
+	}
+	async loadTheme(
+		fileHandle: FileSystemFileHandle,
+		isGlobal = true,
+		disposables?: IDisposable[]
+	) {
+		const file = await fileHandle.getFile()
+		const themeDefinition = json5.parse(await file.text())
+
+		const disposable = this.addTheme(themeDefinition, isGlobal)
+		if (disposables) disposables.push(disposable)
+	}
+
+	getThemes(colorScheme?: 'dark' | 'light', global?: boolean) {
+		const themes: Theme[] = []
+
+		for (const [_, theme] of this.themeMap) {
+			if (
+				(!colorScheme || theme.colorScheme === colorScheme) &&
+				(!global || global === theme.isGlobal)
+			)
+				themes.push(theme)
+		}
+
+		return themes
 	}
 
 	/**
@@ -64,16 +122,29 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		this.themeColorTag!.setAttribute('content', color)
 	}
 
-	getThemes() {
-		return [...this.themeMap]
-	}
-	addTheme(themeConfig: IThemeDefinition) {
-		this.themeMap.add(new Theme(themeConfig))
+	addTheme(themeConfig: IThemeDefinition, isGlobal: boolean) {
+		const baseTheme = this.themeMap.get(
+			`bridge.default.${themeConfig.colorScheme ?? 'dark'}`
+		)
+
+		this.themeMap.set(
+			themeConfig.id,
+			new Theme(
+				deepmerge(baseTheme?.getThemeDefinition() ?? {}, themeConfig),
+				isGlobal
+			)
+		)
+		this.updateTheme()
+
+		return {
+			dispose: () => this.themeMap.delete(themeConfig.id),
+		}
 	}
 }
 
 export interface IThemeDefinition {
 	id: string
+	name: string
 	colorScheme?: 'dark' | 'light'
 	colors: Record<TColorName, string>
 	highlighter?: Record<
@@ -86,6 +157,7 @@ export interface IThemeDefinition {
 export class Theme {
 	public readonly id: string
 	public readonly colorScheme: 'dark' | 'light'
+	public readonly name: string
 
 	protected colorMap: Map<TColorName, string>
 	protected highlighterDef: IThemeDefinition['highlighter']
@@ -93,8 +165,12 @@ export class Theme {
 
 	protected monacoSubTheme: MonacoSubTheme
 
-	constructor(themeDefinition: IThemeDefinition) {
+	constructor(
+		protected themeDefinition: IThemeDefinition,
+		public readonly isGlobal: boolean
+	) {
 		this.id = themeDefinition.id
+		this.name = themeDefinition.name
 		this.colorScheme = themeDefinition.colorScheme ?? 'dark'
 
 		this.colorMap = new Map(
@@ -126,6 +202,9 @@ export class Theme {
 	}
 	getHighlighterDefinition() {
 		return this.highlighterDef ?? {}
+	}
+	getThemeDefinition() {
+		return this.themeDefinition
 	}
 }
 
@@ -230,117 +309,3 @@ export class MonacoSubTheme {
 		return keyword.hex(color as any)
 	}
 }
-
-const bridgeDark = new Theme({
-	id: 'bridge.default.dark',
-	colorScheme: 'dark',
-	colors: {
-		text: '#fff',
-
-		primary: '#1778D2',
-		secondary: '#1778D2',
-		accent: '#1778D2',
-		error: '#ff5252',
-		info: '#2196f3',
-		warning: '#fb8c00',
-		success: '#4caf50',
-
-		background: '#121212',
-		sidebarNavigation: '#1F1F1F',
-		expandedSidebar: '#1F1F1F',
-		sidebarSelection: '#151515',
-		menu: '#424242',
-		footer: '#111111',
-		tooltip: '#1F1F1F',
-		toolbar: '#000000',
-	},
-	highlighter: {
-		type: {
-			color: '#a6e22e',
-		},
-		keyword: {
-			color: '#f92672',
-		},
-		definition: {
-			color: '#fd971f',
-		},
-		atom: {
-			color: '#ae81ff',
-		},
-		number: {
-			color: '#ae81ff',
-		},
-		string: {
-			color: '#e6db74',
-		},
-		variable: {
-			color: '#9effff',
-		},
-		variable_strong: {
-			color: '#9effff',
-		},
-		meta: {
-			color: 'white',
-		},
-		comment: {
-			color: '#75715e',
-		},
-	},
-})
-
-const bridgeLight = new Theme({
-	id: 'bridge.default.light',
-	colorScheme: 'light',
-	colors: {
-		text: '#000',
-
-		primary: '#1778D2',
-		secondary: '#1778D2',
-		accent: '#1778D2',
-		error: '#ff5252',
-		info: '#2196f3',
-		warning: '#fb8c00',
-		success: '#4caf50',
-
-		background: '#fafafa',
-		sidebarNavigation: '#FFFFFF',
-		expandedSidebar: '#FFFFFF',
-		sidebarSelection: '#ececec',
-		menu: '#fff',
-		tooltip: '#424242',
-		toolbar: '#e0e0e0',
-		footer: '#f5f5f5',
-	},
-	highlighter: {
-		property: {
-			color: 'black',
-		},
-		keyword: {
-			color: '#5A5CAD',
-		},
-		definition: {
-			textDecoration: 'underline',
-		},
-		atom: {
-			color: '#6C8CD5',
-		},
-		number: {
-			color: '#164',
-		},
-		string: {
-			color: 'red',
-		},
-		variable: {
-			color: 'black',
-		},
-		variable_strong: {
-			color: 'black',
-		},
-		meta: {
-			color: 'yellow',
-		},
-		comment: {
-			color: '#0080FF',
-		},
-	},
-})

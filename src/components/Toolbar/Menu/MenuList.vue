@@ -1,6 +1,6 @@
 <template>
 	<!-- "tile" prop doesn't work on nested lists -> set border radius directly -->
-	<v-list class="app-menu" style="border-radius: 0;">
+	<v-list class="app-menu" color="menu" style="border-radius: 0;">
 		<v-menu
 			v-for="(item, key, i) in elements"
 			:key="`menu.${i}.${Math.random()}`"
