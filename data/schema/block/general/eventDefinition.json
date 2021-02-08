@@ -36,7 +36,7 @@
 			"then": {
 				"properties": {
 					"event": {
-						"$ref": "..//currentContext/eventEnum.json",
+						"$ref": "../dynamic/currentContext/eventEnum.json",
 						"description": "Identifier of the event to trigger"
 					}
 				}
@@ -54,7 +54,7 @@
 			"then": {
 				"properties": {
 					"event": {
-						"$ref": "../../entity//eventEnum.json",
+						"$ref": "../../entity/dynamic/eventEnum.json",
 						"description": "Identifier of the event to trigger"
 					}
 				}
