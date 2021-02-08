@@ -12,6 +12,7 @@
 					@change="onChange"
 					:items="config.options"
 					hide-details
+					:menu-props="{ maxHeight: 220 }"
 				/>
 			</div>
 
