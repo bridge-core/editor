@@ -6,6 +6,7 @@ import { settingsState } from './SettingsState'
 import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
 import { ProjectSelection } from './Controls/Selection/ProjectSelection'
+import { getLanguages, selectLanguage } from '@/utils/locales'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -90,6 +91,22 @@ export async function setupSettings(settings: SettingsWindow) {
 			onChange: () => {
 				App.getApp().then(app => app.themeManager.updateTheme())
 			},
+		})
+	)
+	settings.addControl(
+		new Selection({
+			category: 'appearance',
+			name: 'Language',
+			description: 'Choose a language for bridge. to use',
+			key: 'locale',
+			get options() {
+				return getLanguages()
+					.map(lang => ({ text: lang[1], value: lang[0] }))
+			},
+			default: 'en',
+			onChange: () => {
+				selectLanguage(settingsState?.appearance?.locale as string)
+			}
 		})
 	)
 	settings.addControl(

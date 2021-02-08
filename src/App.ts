@@ -104,6 +104,7 @@ export class App {
 				.then(() => {
 					this.compiler.start(projectName, 'dev', 'default.json')
 					this.themeManager.updateTheme()
+					selectLanguage(settingsState?.appearance?.locale as string)
 				})
 
 			App.eventSystem.dispatch('projectChanged', undefined)
