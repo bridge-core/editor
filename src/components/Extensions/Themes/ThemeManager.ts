@@ -59,6 +59,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 
 		this.addTheme(bridgeDark, true)
 		this.addTheme(bridgeLight, true)
+		this.applyTheme(this.themeMap.get('bridge.default.dark'))
 	}
 
 	protected applyTheme(theme?: Theme) {
@@ -77,8 +78,6 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		this.applyTheme(theme ?? baseTheme)
 	}
 	async loadDefaultThemes(app: App) {
-		this.updateTheme()
-
 		try {
 			await iterateDir(
 				await app.fileSystem.getDirectoryHandle('data/packages/themes'),

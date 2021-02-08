@@ -4,12 +4,21 @@ import ActionViewerComponent from './ActionViewer.vue'
 import Vue from 'vue'
 import { Action } from '@/components/Actions/Action'
 
-export class ActionViewer {
-	public readonly component = ActionViewerComponent
+export class ActionViewer extends Control<any> {
 	config: any = Vue.observable({ category: 'actions', action: {} })
-	value = undefined
 
 	constructor(action: Action) {
+		super(
+			ActionViewerComponent,
+			{
+				category: 'actions',
+				action: {},
+				description: action.description,
+				key: action.id,
+				name: action.name,
+			},
+			undefined
+		)
 		this.config.action = action
 	}
 
@@ -19,5 +28,5 @@ export class ActionViewer {
 			this.config.action.description.includes(filter)
 		)
 	}
-	async onChange() {}
+	onChange = async () => {}
 }

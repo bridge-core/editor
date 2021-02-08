@@ -17,7 +17,7 @@ export const bridgeDark = <const>{
 		sidebarNavigation: '#1F1F1F',
 		expandedSidebar: '#1F1F1F',
 		sidebarSelection: '#151515',
-		menu: '#424242',
+		menu: '#252525',
 		footer: '#111111',
 		tooltip: '#1F1F1F',
 		toolbar: '#000000',

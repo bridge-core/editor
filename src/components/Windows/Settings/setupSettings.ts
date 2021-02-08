@@ -10,7 +10,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new ButtonToggle({
 			category: 'appearance',
-			title: 'Color Scheme',
+			name: 'Color Scheme',
 			description: "Choose the color scheme of bridge.'s UI.",
 			key: 'colorScheme',
 			options: ['auto', 'dark', 'light'],
@@ -23,7 +23,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Selection({
 			category: 'appearance',
-			title: 'Dark Theme',
+			name: 'Dark Theme',
 			description: 'Select the default dark theme bridge. uses.',
 			key: 'darkTheme',
 			get options() {
@@ -40,7 +40,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Selection({
 			category: 'appearance',
-			title: 'Light Theme',
+			name: 'Light Theme',
 			description: 'Select the default light theme bridge. uses.',
 			key: 'lightTheme',
 			get options() {
@@ -57,7 +57,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'appearance',
-			title: 'Sidebar Right',
+			name: 'Sidebar Right',
 			description: 'Moves the sidebar to the right side of the screen.',
 			key: 'isSidebarRight',
 			default: false,
@@ -66,7 +66,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'appearance',
-			title: 'Shrink Sidebar Elements',
+			name: 'Shrink Sidebar Elements',
 			description: "Shrink the size of bridge.'s sidebar elements.",
 			key: 'smallerSidebarElements',
 			default: false,
@@ -76,7 +76,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new ButtonToggle({
 			category: 'developers',
-			title: 'Simulate OS',
+			name: 'Simulate OS',
 			description:
 				'Simulate a different OS for testing platform specific behavior.',
 			key: 'simulateOS',
@@ -87,7 +87,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'developers',
-			title: 'Developer Mode',
+			name: 'Developer Mode',
 			description: 'Enable the developer mode for this app.',
 			key: 'isDevMode',
 		})
@@ -96,7 +96,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'general',
-			title: 'Collaborative Mode',
+			name: 'Collaborative Mode',
 			description:
 				'Forces full refresh of the cache upon switching projects. Disable when you work alone and you only use bridge. to edit your project.',
 			key: 'fullLightningCacheRefresh',
@@ -106,7 +106,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'general',
-			title: 'Pack Spider',
+			name: 'Pack Spider',
 			description:
 				'Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system.',
 			key: 'enablePackSpider',
@@ -117,7 +117,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'general',
-			title: 'Open Links in Default Browser',
+			name: 'Open Links in Default Browser',
 			description:
 				'Open links inside of your default browser instead of a native app window.',
 			key: 'openLinksInBrowser',

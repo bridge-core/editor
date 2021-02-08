@@ -16,7 +16,7 @@ export class Selection extends Control<string> {
 
 	matches(filter: string) {
 		return (
-			this.config.title.toLowerCase().includes(filter) ||
+			this.config.name.toLowerCase().includes(filter) ||
 			this.config.description.toLowerCase().includes(filter) ||
 			this.config.options.some(option =>
 				typeof option === 'string'

@@ -8,7 +8,7 @@ export class Toggle extends Control<boolean> {
 
 	matches(filter: string) {
 		return (
-			this.config.title.toLowerCase().includes(filter) ||
+			this.config.name.toLowerCase().includes(filter) ||
 			this.config.description.toLowerCase().includes(filter)
 		)
 	}

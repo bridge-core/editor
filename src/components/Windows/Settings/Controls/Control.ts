@@ -3,11 +3,13 @@ import { settingsState } from '../SettingsState'
 
 export interface IControl<T> {
 	category: string
-	title: string
+	name: string
 	description: string
 	key: string
 	default?: T
 	onChange?: (value: T) => void | Promise<void>
+
+	[key: string]: any
 }
 
 export abstract class Control<T> {
@@ -16,7 +18,11 @@ export abstract class Control<T> {
 
 	abstract matches(filter: string): void
 
-	constructor(component: Vue.Component, control: IControl<T>) {
+	constructor(
+		component: Vue.Component,
+		control: IControl<T>,
+		protected state = settingsState
+	) {
 		this.config = control
 		this.component = component
 
@@ -24,12 +30,12 @@ export abstract class Control<T> {
 			this.value = control.default
 	}
 	set value(value: T) {
-		if (settingsState[this.config.category] === undefined)
-			Vue.set(settingsState, this.config.category, {})
-		Vue.set(settingsState[this.config.category], this.config.key, value)
+		if (this.state[this.config.category] === undefined)
+			Vue.set(this.state, this.config.category, {})
+		Vue.set(this.state[this.config.category], this.config.key, value)
 	}
 	get value() {
-		return <T>settingsState[this.config.category]?.[this.config.key]
+		return <T>this.state[this.config.category]?.[this.config.key]
 	}
 
 	onChange = async (value: T) => {
