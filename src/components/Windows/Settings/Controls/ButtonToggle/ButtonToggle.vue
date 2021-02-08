@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h3>{{ config.title }}</h3>
+		<h3>{{ config.name }}</h3>
 		<div class="d-flex">
 			<div>
 				<v-btn-toggle

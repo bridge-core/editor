@@ -33,7 +33,7 @@
 			<component
 				class="mb-6"
 				v-for="(control, i) in sidebar.currentState"
-				:key="`${selectedSidebar}.${i}`"
+				:key="`${selectedSidebar}.${i}.${Math.random()}`"
 				:is="control.component"
 				:config="control.config"
 				:value="control.value"

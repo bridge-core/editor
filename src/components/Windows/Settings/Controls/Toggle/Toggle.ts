@@ -1,8 +1,8 @@
 import { Control, IControl } from '../Control'
 import ToggleComponent from './Toggle.vue'
 
-export class Toggle extends Control<boolean> {
-	constructor(config: IControl<boolean>) {
+export class Toggle<T = boolean> extends Control<T> {
+	constructor(config: IControl<T>) {
 		super(ToggleComponent, config)
 	}
 

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h3>{{ config.title }}</h3>
+		<h3>{{ config.name }}</h3>
 		<div class="d-flex align-center">
 			<div>
 				<v-autocomplete
@@ -24,16 +24,17 @@
 export default {
 	props: {
 		config: Object,
-		value: String,
+		value: [String, Promise],
 	},
 	data: () => ({
 		value_: undefined,
 	}),
-	created() {
-		this.value_ = this.value || this.config.default
+	async created() {
+		this.value_ = (await this.value) || this.config.default
 	},
 	methods: {
 		onChange(val) {
+			console.log(val)
 			this.$nextTick(() => this.$emit('change', val))
 		},
 	},

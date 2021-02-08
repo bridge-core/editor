@@ -2,10 +2,12 @@ import { App } from '@/App'
 import { FileSystem } from '../FileSystem/Main'
 import { selectedProject } from './Loader'
 
-type TProjectConfigKey =
+export type TProjectConfigKey =
 	| 'projectPrefix'
 	| 'projectTargetVersion'
 	| 'projectAuthor'
+	| 'darkTheme'
+	| 'lightTheme'
 export class ProjectConfig {
 	protected data: any
 	protected fileSystem!: FileSystem

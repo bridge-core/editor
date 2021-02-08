@@ -65,14 +65,24 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	protected applyTheme(theme?: Theme) {
 		theme?.apply(this, this.vuetify)
 	}
-	updateTheme() {
+	async updateTheme() {
+		const app = await App.getApp()
 		let colorScheme = settingsState?.appearance?.colorScheme
 		if (!colorScheme || colorScheme === 'auto') colorScheme = this.mode
 
+		const localThemeId =
+			(await app.projectConfig.get(
+				<'lightTheme' | 'darkTheme'>`${colorScheme}Theme`
+			)) ?? 'bridge.noSelection'
 		const themeId =
 			<string>settingsState?.appearance?.[`${colorScheme}Theme`] ??
 			`bridge.default.${colorScheme}`
-		const theme = this.themeMap.get(themeId)
+
+		console.log(localThemeId)
+		const theme = this.themeMap.get(
+			localThemeId !== 'bridge.noSelection' ? localThemeId : themeId
+		)
+
 		const baseTheme = this.themeMap.get(`bridge.default.${colorScheme}`)
 
 		this.applyTheme(theme ?? baseTheme)
@@ -105,7 +115,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		for (const [_, theme] of this.themeMap) {
 			if (
 				(!colorScheme || theme.colorScheme === colorScheme) &&
-				(!global || global === theme.isGlobal)
+				(theme.isGlobal || global === theme.isGlobal)
 			)
 				themes.push(theme)
 		}

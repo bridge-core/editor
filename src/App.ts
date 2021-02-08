@@ -103,6 +103,7 @@ export class App {
 				)
 				.then(() => {
 					this.compiler.start(projectName, 'dev', 'default.json')
+					this.themeManager.updateTheme()
 				})
 
 			App.eventSystem.dispatch('projectChanged', undefined)

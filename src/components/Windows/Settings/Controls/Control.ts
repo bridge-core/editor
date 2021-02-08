@@ -39,7 +39,7 @@ export abstract class Control<T> {
 	}
 
 	onChange = async (value: T) => {
-		this.value = value
+		await (this.value = value)
 
 		if (typeof this.config.onChange === 'function')
 			await this.config.onChange(value)

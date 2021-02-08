@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h3>{{ config.title }}</h3>
+		<h3>{{ config.name }}</h3>
 		<v-switch
 			style="margin-top: 0;"
 			inset
@@ -15,14 +15,14 @@
 <script>
 export default {
 	props: {
-		value: Boolean,
+		value: [Boolean, Promise],
 		config: Object,
 	},
 	data: () => ({
 		value_: undefined,
 	}),
-	mounted() {
-		this.value_ = this.value
+	async mounted() {
+		this.value_ = await this.value
 	},
 	methods: {
 		onChange(val) {

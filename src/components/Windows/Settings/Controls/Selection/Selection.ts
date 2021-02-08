@@ -1,13 +1,13 @@
 import { Control, IControl } from '../Control'
 import SelectionComponent from './Selection.vue'
 
-export class Selection extends Control<string> {
-	config!: IControl<string> & {
+export class Selection<T = string> extends Control<T> {
+	config!: IControl<T> & {
 		options: (string | { text: string; value: string })[]
 	}
 
 	constructor(
-		config: IControl<string> & {
+		config: IControl<T> & {
 			options: (string | { text: string; value: string })[]
 		}
 	) {

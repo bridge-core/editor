@@ -5,13 +5,14 @@ import { SettingsWindow } from './SettingsWindow'
 import { settingsState } from './SettingsState'
 import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
+import { ProjectSelection } from './Controls/Selection/ProjectSelection'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new ButtonToggle({
 			category: 'appearance',
 			name: 'Color Scheme',
-			description: "Choose the color scheme of bridge.'s UI.",
+			description: "Choose the color scheme of bridge.'s UI",
 			key: 'colorScheme',
 			options: ['auto', 'dark', 'light'],
 			default: 'auto',
@@ -24,7 +25,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		new Selection({
 			category: 'appearance',
 			name: 'Dark Theme',
-			description: 'Select the default dark theme bridge. uses.',
+			description: 'Select the default dark theme bridge. uses',
 			key: 'darkTheme',
 			get options() {
 				return settings.parent.themeManager
@@ -41,7 +42,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		new Selection({
 			category: 'appearance',
 			name: 'Light Theme',
-			description: 'Select the default light theme bridge. uses.',
+			description: 'Select the default light theme bridge. uses',
 			key: 'lightTheme',
 			get options() {
 				return settings.parent.themeManager
@@ -55,10 +56,47 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
+		new ProjectSelection({
+			category: 'appearance',
+			name: 'Local Dark Theme',
+			description: 'Choose a dark theme for the currently active project',
+			key: 'darkTheme',
+			get options() {
+				return settings.parent.themeManager
+					.getThemes('dark', false)
+					.map(theme => ({ text: theme.name, value: theme.id }))
+					.concat([{ text: 'None', value: 'bridge.noSelection' }])
+			},
+			default: 'bridge.noSelection',
+			onChange: () => {
+				App.getApp().then(app => app.themeManager.updateTheme())
+			},
+		})
+	)
+	settings.addControl(
+		new ProjectSelection({
+			category: 'appearance',
+			name: 'Local Light Theme',
+			description:
+				'Choose a light theme for the currently active project',
+			key: 'lightTheme',
+			get options() {
+				return settings.parent.themeManager
+					.getThemes('light', false)
+					.map(theme => ({ text: theme.name, value: theme.id }))
+					.concat([{ text: 'None', value: 'bridge.noSelection' }])
+			},
+			default: 'bridge.noSelection',
+			onChange: () => {
+				App.getApp().then(app => app.themeManager.updateTheme())
+			},
+		})
+	)
+	settings.addControl(
 		new Toggle({
 			category: 'appearance',
 			name: 'Sidebar Right',
-			description: 'Moves the sidebar to the right side of the screen.',
+			description: 'Moves the sidebar to the right side of the screen',
 			key: 'isSidebarRight',
 			default: false,
 		})
@@ -67,7 +105,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		new Toggle({
 			category: 'appearance',
 			name: 'Shrink Sidebar Elements',
-			description: "Shrink the size of bridge.'s sidebar elements.",
+			description: "Shrink the size of bridge.'s sidebar elements",
 			key: 'smallerSidebarElements',
 			default: false,
 		})
@@ -78,7 +116,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			category: 'developers',
 			name: 'Simulate OS',
 			description:
-				'Simulate a different OS for testing platform specific behavior.',
+				'Simulate a different OS for testing platform specific behavior',
 			key: 'simulateOS',
 			options: ['auto', 'win32', 'darwin', 'linux'],
 			default: 'auto',
@@ -88,7 +126,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		new Toggle({
 			category: 'developers',
 			name: 'Developer Mode',
-			description: 'Enable the developer mode for this app.',
+			description: 'Enable the developer mode for this app',
 			key: 'isDevMode',
 		})
 	)
@@ -98,7 +136,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			category: 'general',
 			name: 'Collaborative Mode',
 			description:
-				'Forces full refresh of the cache upon switching projects. Disable when you work alone and you only use bridge. to edit your project.',
+				'Forces full refresh of the cache upon switching projects. Disable when you work alone and you only use bridge. to edit your project',
 			key: 'fullLightningCacheRefresh',
 			default: true,
 		})
@@ -108,7 +146,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			category: 'general',
 			name: 'Pack Spider',
 			description:
-				'Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system.',
+				'Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system',
 			key: 'enablePackSpider',
 			default: true,
 		})
@@ -119,7 +157,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			category: 'general',
 			name: 'Open Links in Default Browser',
 			description:
-				'Open links inside of your default browser instead of a native app window.',
+				'Open links inside of your default browser instead of a native app window',
 			key: 'openLinksInBrowser',
 			default: false,
 		})
