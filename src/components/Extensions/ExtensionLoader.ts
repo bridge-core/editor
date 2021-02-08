@@ -55,6 +55,8 @@ export class ExtensionLoader extends Signal<void> {
 		const promises: Promise<unknown>[] = []
 
 		for await (const entry of baseDirectory.values()) {
+			if (entry.name === '.DS_Store') continue
+
 			promises.push(
 				this.loadExtension(baseDirectory, entry, false, isGlobal)
 			)
@@ -85,7 +87,8 @@ export class ExtensionLoader extends Signal<void> {
 				await baseDirectory.getDirectoryHandle(
 					handle.name.replace('.zip', ''),
 					{ create: true }
-				)
+				),
+				isGlobal
 			)
 			await baseDirectory.removeEntry(handle.name)
 		} else if (handle.kind === 'directory') {
@@ -98,7 +101,8 @@ export class ExtensionLoader extends Signal<void> {
 
 	protected async unzipExtension(
 		fileHandle: FileSystemFileHandle,
-		baseDirectory: FileSystemDirectoryHandle
+		baseDirectory: FileSystemDirectoryHandle,
+		isGlobal: boolean
 	) {
 		const fs = new FileSystem(baseDirectory)
 		const file = await fileHandle.getFile()
@@ -125,12 +129,12 @@ export class ExtensionLoader extends Signal<void> {
 		})
 		await Promise.all(promises)
 
-		return await this.loadManifest(baseDirectory)
+		return await this.loadManifest(baseDirectory, isGlobal)
 	}
 
 	protected async loadManifest(
 		baseDirectory: FileSystemDirectoryHandle,
-		isGlobal = false
+		isGlobal: boolean
 	) {
 		let manifestHandle: FileSystemFileHandle
 		try {
@@ -148,9 +152,9 @@ export class ExtensionLoader extends Signal<void> {
 			const extension = new Extension(
 				this,
 				<IExtensionManifest>manifest,
-				baseDirectory
+				baseDirectory,
+				isGlobal
 			)
-			extension.setIsGlobal(isGlobal)
 			;(isGlobal ? this.globalExtensions : this.localExtensions).set(
 				manifest.id,
 				extension

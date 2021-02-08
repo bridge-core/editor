@@ -58,7 +58,6 @@ export class ExtensionStoreWindow extends BaseWindow {
 		})
 
 		this.setupSidebar()
-		console.log(this.extensions)
 
 		app.windows.loadingWindow.close()
 		super.open()

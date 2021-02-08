@@ -13,7 +13,7 @@ import { iterateDir } from '@/utils/iterateDir'
 
 export class Extension {
 	protected _isActive = false
-	protected _isGlobal = false
+
 	protected disposables: IDisposable[] = []
 	protected uiStore = createUIStore()
 	protected fileSystem: FileSystem
@@ -24,7 +24,8 @@ export class Extension {
 	constructor(
 		protected parent: ExtensionLoader,
 		protected manifest: IExtensionManifest,
-		protected baseDirectory: FileSystemDirectoryHandle
+		protected baseDirectory: FileSystemDirectoryHandle,
+		protected _isGlobal = false
 	) {
 		this.fileSystem = new FileSystem(this.baseDirectory)
 	}
@@ -65,7 +66,7 @@ export class Extension {
 		)
 
 		try {
-			iterateDir(
+			await iterateDir(
 				await this.baseDirectory.getDirectoryHandle('themes'),
 				fileHandle =>
 					app.themeManager.loadTheme(
@@ -103,10 +104,6 @@ export class Extension {
 	deactivate() {
 		this.disposables.forEach(disposable => disposable.dispose())
 		this._isActive = false
-	}
-
-	setIsGlobal(val: boolean) {
-		this._isGlobal = val
 	}
 
 	get version() {

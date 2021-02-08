@@ -78,7 +78,6 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 			<string>settingsState?.appearance?.[`${colorScheme}Theme`] ??
 			`bridge.default.${colorScheme}`
 
-		console.log(localThemeId)
 		const theme = this.themeMap.get(
 			localThemeId !== 'bridge.noSelection' ? localThemeId : themeId
 		)
