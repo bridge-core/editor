@@ -30,7 +30,7 @@ export default {
 		})
 
 		editorInstance = monaco.editor.create(this.$refs.monacoContainer, {
-			theme: 'bridge-monaco-default',
+			theme: `bridgeMonacoDefault`,
 			roundedSelection: false,
 			autoIndent: 'full',
 			fontSize: this.fontSize,
@@ -42,9 +42,6 @@ export default {
 	watch: {
 		tab() {
 			this.tab.receiveEditorInstance(editorInstance)
-		},
-		isDarkMode(val) {
-			monaco.editor.setTheme(val ? 'vs-dark' : 'vs')
 		},
 		fontSize(val) {
 			this.monacoEditor.updateOptions({

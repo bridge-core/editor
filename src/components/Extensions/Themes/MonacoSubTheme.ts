@@ -6,7 +6,7 @@ export class MonacoSubTheme {
 	constructor(protected theme: Theme) {}
 
 	apply() {
-		Editor.defineTheme('bridge-monaco-default', {
+		Editor.defineTheme(`bridgeMonacoDefault`, {
 			base: this.theme.colorScheme === 'light' ? 'vs' : 'vs-dark',
 			inherit: false,
 			colors: {
