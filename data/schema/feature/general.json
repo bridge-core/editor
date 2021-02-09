@@ -40,7 +40,7 @@
 						"name": {
 							"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
 						},
-						"state": {
+						"states": {
 							"$ref": "../general/vanilla/blockState.json"
 						}
 					}
