@@ -15,7 +15,9 @@
 		"background": "#402b36",
 		"menu": "#24181e",
 		"footer": "#24181e",
-		"tooltip": "#24181e"
+		"tooltip": "#24181e",
+		"tabInactive": "#2E1F27",
+		"tabActive": "#402b36"
 	},
 	"highlighter": {
 		"property": { "color": "#91bb5b" },
