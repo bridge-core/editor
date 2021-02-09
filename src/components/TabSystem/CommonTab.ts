@@ -36,7 +36,7 @@ export abstract class Tab {
 		return FileType.get(this.getPackPath())?.icon ?? 'mdi-file-outline'
 	}
 	get iconColor() {
-		return PackType.get(this.getPath())?.color ?? 'primary'
+		return PackType.get(this.getPath())?.color
 	}
 
 	get isSelected() {
