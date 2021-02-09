@@ -232,9 +232,11 @@ export default {
 		pluginInstallLocation: {
 			title: 'Choose Install Location',
 		},
-		unsavedContents: {
+		unsavedFile: {
+			title: 'Confirm',
 			description:
 				'Do you want to save your changes to this file before closing it?',
+			cancel: 'Cancel',
 			noSave: 'Close',
 			save: 'Save & Close',
 		},

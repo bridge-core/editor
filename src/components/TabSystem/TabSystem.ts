@@ -6,6 +6,7 @@ import { App } from '@/App'
 import { selectedProject } from '../Project/Loader'
 import { ImageTab } from '../Editors/Image/ImageTab'
 import { createConfirmWindow } from '../Windows/Common/CommonDefinitions'
+import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
 
 export class TabSystem {
 	tabs: Tab[] = []
@@ -42,20 +43,7 @@ export class TabSystem {
 		if (!tab) return
 
 		if (checkUnsaved && tab.isUnsaved) {
-			createConfirmWindow(
-				'windows.unsavedContents.description',
-				'windows.unsavedContents.save',
-				'windows.unsavedContents.noSave',
-				async () => {
-					// Confirm
-					await this.save(tab)
-					this.close(tab, false)
-				},
-				() => {
-					// Cancel
-					this.close(tab, false)
-				}
-			)
+			new UnsavedFileWindow(tab)
 		} else {
 			tab.onDeactivate()
 			this.tabs = this.tabs.filter(current => current !== tab)

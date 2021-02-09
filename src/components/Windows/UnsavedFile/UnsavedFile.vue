@@ -1,0 +1,59 @@
+<template>
+	<BaseWindow
+		v-if="shouldRender"
+		windowTitle="windows.unsavedFile.title"
+		:isVisible="isVisible"
+		:isPersistent="false"
+		:hasMaximizeButton="false"
+		:isFullscreen="false"
+		:width="440"
+		:height="130"
+		:hasCloseButton="false"
+	>
+		<template #default>
+			<p class="mt-2">{{ t('windows.unsavedFile.description') }}</p>
+		</template>
+		<template #actions>
+			<v-spacer />
+			<v-btn @click="onCancel">
+				<span>{{ t('windows.unsavedFile.cancel') }}</span>
+			</v-btn>
+			<v-btn color="error" @click="onNoSave">
+				<span>{{ t('windows.unsavedFile.noSave') }}</span>
+			</v-btn>
+			<v-btn color="primary" @click="onSave">
+				<span>{{ t('windows.unsavedFile.save') }}</span>
+			</v-btn>
+		</template>
+	</BaseWindow>
+</template>
+
+<script>
+import { TranslationMixin } from '@/utils/locales'
+import BaseWindow from '../Layout/BaseWindow'
+
+export default {
+	name: 'Confirm',
+	mixins: [TranslationMixin],
+	components: {
+		BaseWindow,
+	},
+	props: ['currentWindow'],
+	data() {
+		return this.currentWindow
+	},
+	methods: {
+		onCancel() {
+			this.currentWindow.cancel()
+		},
+		onNoSave() {
+			this.currentWindow.noSave()
+		},
+		onSave() {
+			this.currentWindow.save()
+		},
+	},
+}
+</script>
+
+<style></style>
