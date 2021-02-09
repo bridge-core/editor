@@ -78,13 +78,24 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 			<string>settingsState?.appearance?.[`${colorScheme}Theme`] ??
 			`bridge.default.${colorScheme}`
 
+		const themeToSelect =
+			localThemeId !== 'bridge.noSelection' ? localThemeId : themeId
 		const theme = this.themeMap.get(
 			localThemeId !== 'bridge.noSelection' ? localThemeId : themeId
 		)
 
 		const baseTheme = this.themeMap.get(`bridge.default.${colorScheme}`)
 
-		this.applyTheme(theme ?? baseTheme)
+		if (
+			this.currentTheme !==
+			(theme ? themeToSelect : `bridge.default.${colorScheme}`)
+		) {
+			this.currentTheme = theme
+				? themeToSelect
+				: `bridge.default.${colorScheme}`
+			this.applyTheme(theme ?? baseTheme)
+			this.dispatch(theme?.colorScheme ?? 'dark')
+		}
 	}
 	async loadDefaultThemes(app: App) {
 		try {
