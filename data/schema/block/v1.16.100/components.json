@@ -89,7 +89,7 @@
 		"minecraft:on_fall_on": {
 			"type": "object",
 			"description": "Trigger an event when a player falls onto this block",
-			"anyOf": [
+			"allOf": [
 				{
 					"$ref": "../general/eventDefinition.json"
 				},
