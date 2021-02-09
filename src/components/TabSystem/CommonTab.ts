@@ -37,7 +37,6 @@ export abstract class Tab {
 	}
 	get icon() {
 		const fileType = FileType.get(this.getPackPath())
-		console.log(fileType, this.getPackPath())
 		if (fileType?.icon) return fileType.icon
 
 		if (
