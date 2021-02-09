@@ -10,11 +10,13 @@
 			<WindowRenderer />
 			<TabBar />
 
-			<component
-				v-if="tabSystem"
-				:is="tabSystem.currentComponent"
-				:tab="tabSystem.selectedTab"
-			/>
+			<keep-alive v-if="tabSystem">
+				<component
+					:is="tabSystem.currentComponent"
+					:tab="tabSystem.selectedTab"
+				/>
+			</keep-alive>
+
 			<WelcomeScreen v-else />
 			<!--  -->
 		</v-main>

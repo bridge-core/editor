@@ -4,10 +4,12 @@ import { TextTab } from '../Editors/Text/TextTab'
 import Vue from 'vue'
 import { App } from '@/App'
 import { selectedProject } from '../Project/Loader'
+import { ImageTab } from '../Editors/Image/ImageTab'
 
 export class TabSystem {
 	tabs: Tab[] = []
 	protected _selectedTab: Tab | undefined = undefined
+	protected tabTypes = [ImageTab, TextTab]
 
 	get selectedTab() {
 		return this._selectedTab
@@ -18,9 +20,16 @@ export class TabSystem {
 			if (tab.isFor(path)) return selectTab ? tab.select() : tab
 		}
 
-		const tab = new TextTab(this, path)
+		const tab = this.getTabFor(path)
 		this.add(tab)
 		return selectTab ? tab.select() : tab
+	}
+
+	protected getTabFor(filePath: string) {
+		for (const CurrentTab of this.tabTypes) {
+			if (CurrentTab.is(filePath)) return new CurrentTab(this, filePath)
+		}
+		return new TextTab(this, filePath)
 	}
 
 	add(tab: Tab) {

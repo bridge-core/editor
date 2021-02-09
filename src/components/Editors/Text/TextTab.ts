@@ -1,12 +1,12 @@
 import { Tab } from '@/components/TabSystem/CommonTab'
-import MonacoEditor from './Main.vue'
+import TextTabComponent from './TextTab.vue'
 import * as monaco from 'monaco-editor'
 import { IDisposable } from '@/types/disposable'
 import debounce from 'lodash.debounce'
 import { App } from '@/App'
 
 export class TextTab extends Tab {
-	component = MonacoEditor
+	component = TextTabComponent
 	editorInstance: monaco.editor.ICodeEditor | undefined
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
@@ -27,7 +27,7 @@ export class TextTab extends Tab {
 		const app = await App.getApp()
 
 		if (this.editorModel === undefined) {
-			const file = await (await this.fileSystem).readFile(this.path)
+			const file = await app.fileSystem.readFile(this.path)
 			const fileContent = await file.text()
 
 			this.editorModel = monaco.editor.createModel(
@@ -66,9 +66,11 @@ export class TextTab extends Tab {
 	}
 
 	async save() {
+		const app = await App.getApp()
+
 		this.isUnsaved = false
 		if (this.editorModel) {
-			await (await this.fileSystem).writeFile(
+			await app.fileSystem.writeFile(
 				this.path,
 				this.editorModel.getValue()
 			)

@@ -7,7 +7,7 @@ import * as monaco from 'monaco-editor'
 
 let editorInstance
 export default {
-	name: 'Monaco',
+	name: 'TextTab',
 	props: {
 		tab: Object,
 	},
@@ -23,6 +23,8 @@ export default {
 		},
 	},
 	mounted() {
+		if (editorInstance) return
+
 		monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
 			target: monaco.languages.typescript.ScriptTarget.ESNext,
 			allowNonTsExtensions: true,

@@ -6,7 +6,6 @@ import { FileType } from '../Data/FileType'
 import { selectedProject } from '../Project/Loader'
 
 export abstract class Tab {
-	protected fileSystem: IFileSystem | Promise<IFileSystem>
 	abstract component: Vue.Component
 	uuid = uuid()
 	hasRemoteChange = false
@@ -16,14 +15,11 @@ export abstract class Tab {
 		this.isUnsaved = val
 	}
 
-	constructor(protected parent: TabSystem, protected path: string) {
-		this.fileSystem = new Promise(resolve => {
-			App.ready.once(app => {
-				resolve(app.fileSystem)
-			})
-		})
-		this.fileSystem.then(fileSystem => (this.fileSystem = fileSystem))
+	static is(filePath: string) {
+		return false
 	}
+
+	constructor(protected parent: TabSystem, protected path: string) {}
 
 	get name() {
 		const pathArr = this.path.split(/\\|\//g)
