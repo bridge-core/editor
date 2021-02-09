@@ -1,5 +1,5 @@
 import { FileSystem } from '@/components/FileSystem/Main'
-import { EventDispatcher } from '@/appCycle/EventSystem'
+import { EventDispatcher } from '@/components/Common/Event/EventDispatcher'
 
 class Progress<T, K> {
 	constructor(

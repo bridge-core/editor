@@ -1,5 +1,5 @@
 import { App } from '@/App'
-import { Signal } from '@/appCycle/EventSystem'
+import { Signal } from '@/components/Common/Event/Signal'
 import * as Comlink from 'comlink'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { PackIndexerService } from './Worker/Main'

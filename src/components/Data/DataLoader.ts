@@ -1,5 +1,5 @@
 import { App } from '@/App'
-import { Signal } from '@/appCycle/EventSystem'
+import { Signal } from '@/components/Common/Event/Signal'
 import { compare } from 'compare-versions'
 import JSZip from 'jszip'
 import { dirname } from 'path'

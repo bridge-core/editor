@@ -1,4 +1,4 @@
-import { EventDispatcher } from '@/appCycle/EventSystem'
+import { EventDispatcher } from '@/components/Common/Event/EventDispatcher'
 import { KeyBindingManager } from './KeyBindingManager'
 import { fromStrKeyCode, toStrKeyCode } from './Utils'
 

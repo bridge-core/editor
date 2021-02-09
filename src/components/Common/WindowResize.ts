@@ -1,4 +1,4 @@
-import { EventDispatcher } from '@/appCycle/EventSystem'
+import { EventDispatcher } from '@/components/Common/Event/EventDispatcher'
 import debounce from 'lodash.debounce'
 
 export class WindowResize extends EventDispatcher<[number, number]> {

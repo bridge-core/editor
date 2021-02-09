@@ -1,4 +1,4 @@
-import { EventManager } from '@/appCycle/EventSystem'
+import { EventSystem } from '@/components/Common/Event/EventSystem'
 import { FileType } from '@/components/Data/FileType'
 import { FileSystem } from '@/components/FileSystem/Main'
 import { file } from 'jszip'
@@ -9,7 +9,7 @@ import { hooks, TCompilerHook, TCompilerPlugin } from './Plugins'
 export class CompilerFile {
 	protected fileType: string
 	protected files: CompilerFile[] = []
-	protected hooks = new EventManager<void>(hooks)
+	protected hooks = new EventSystem<void>(hooks)
 	protected _originalFilePath: string
 	protected data?: any
 

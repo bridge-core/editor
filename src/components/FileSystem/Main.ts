@@ -1,4 +1,4 @@
-import { Signal } from '@/appCycle/EventSystem'
+import { Signal } from '@/components/Common/Event/Signal'
 import json5 from 'json5'
 import { IGetHandleConfig, IMkdirConfig } from './Common'
 

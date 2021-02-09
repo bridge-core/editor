@@ -1,4 +1,5 @@
-import { EventManager, Signal } from './appCycle/EventSystem'
+import { EventSystem } from './components/Common/Event/EventSystem'
+import { Signal } from './components/Common/Event/Signal'
 import { FileType } from './components/Data/FileType'
 import { ThemeManager } from './components/Extensions/Themes/ThemeManager'
 import { JSONDefaults } from './components/Data/JSONDefaults'
@@ -32,7 +33,7 @@ import { Title } from './components/Project/Title'
 import { WindowResize } from './components/Common/WindowResize'
 export class App {
 	public static toolbar = new Toolbar()
-	public static readonly eventSystem = new EventManager<any>([
+	public static readonly eventSystem = new EventSystem<any>([
 		'projectChanged',
 		'fileUpdated',
 		'currentTabSwitched',

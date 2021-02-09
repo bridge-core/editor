@@ -2,7 +2,6 @@ import { Tab } from '@/components/TabSystem/CommonTab'
 import MonacoEditor from './Main.vue'
 import * as monaco from 'monaco-editor'
 import { IDisposable } from '@/types/disposable'
-import { on } from '@/appCycle/EventSystem'
 import debounce from 'lodash.debounce'
 import { App } from '@/App'
 

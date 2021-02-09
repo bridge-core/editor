@@ -1,5 +1,5 @@
 import { App } from '@/App'
-import { Signal } from '@/appCycle/EventSystem'
+import { Signal } from '@/components/Common/Event/Signal'
 import * as Comlink from 'comlink'
 import { selectedProject } from '../Project/Loader'
 import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'

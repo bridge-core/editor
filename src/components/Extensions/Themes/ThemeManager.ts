@@ -1,4 +1,5 @@
-import { EventDispatcher, Signal } from '@/appCycle/EventSystem'
+import { EventDispatcher } from '@/components/Common/Event/EventDispatcher'
+import { Signal } from '@/components/Common/Event/Signal'
 import { App } from '@/App'
 import { settingsState } from '@/components/Windows/Settings/SettingsState'
 import { iterateDir } from '@/utils/iterateDir'
