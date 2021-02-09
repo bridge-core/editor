@@ -10,9 +10,7 @@ export function setupEditCategory(app: App) {
 			name: 'toolbar.edit.copy',
 			description: 'Copy selected text to the clipboard',
 			keyBinding: 'Ctrl + C',
-			onTrigger: () => {
-				document.execCommand('copy')
-			},
+			onTrigger: () => app.tabSystem.selectedTab?.copy(),
 		})
 	)
 	edit.addItem(
@@ -22,9 +20,7 @@ export function setupEditCategory(app: App) {
 			description:
 				'Copy selected text to the clipboard and remove it from the original context',
 			keyBinding: 'Ctrl + X',
-			onTrigger: () => {
-				document.execCommand('cut')
-			},
+			onTrigger: () => app.tabSystem.selectedTab?.cut(),
 		})
 	)
 	edit.addItem(
@@ -33,9 +29,7 @@ export function setupEditCategory(app: App) {
 			name: 'toolbar.edit.paste',
 			description: 'Paste clipboard content',
 			keyBinding: 'Ctrl + V',
-			onTrigger: () => {
-				document.execCommand('paste')
-			},
+			onTrigger: () => app.tabSystem.selectedTab?.paste(),
 		})
 	)
 

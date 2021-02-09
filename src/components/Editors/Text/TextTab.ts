@@ -76,4 +76,10 @@ export class TextTab extends Tab {
 			)
 		}
 	}
+
+	async paste() {
+		this.editorInstance?.trigger('keyboard', 'type', {
+			text: await navigator.clipboard.readText(),
+		})
+	}
 }

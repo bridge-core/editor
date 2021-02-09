@@ -58,4 +58,12 @@ export abstract class Tab {
 	onDestroy() {}
 
 	abstract save(): void | Promise<void>
+
+	copy() {
+		document.execCommand('copy')
+	}
+	cut() {
+		document.execCommand('cut')
+	}
+	paste() {}
 }
