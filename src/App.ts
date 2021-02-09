@@ -14,7 +14,6 @@ import { Discord as DiscordWindow } from '@/components/Windows/Discord/definitio
 import { createNotification } from './components/Notifications/create'
 
 import '@/components/Notifications/Errors'
-import '@/appCycle/ResizeWatcher'
 import { PackType } from './components/Data/PackType'
 import { selectedProject, selectLastProject } from './components/Project/Loader'
 import { Windows } from './components/Windows/Windows'
