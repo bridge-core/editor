@@ -18,12 +18,13 @@ export class SettingsWindow extends BaseWindow {
 	async setup() {
 		this.addCategory('general', 'General', 'mdi-circle-outline')
 		this.addCategory('appearance', 'Appearance', 'mdi-palette-outline')
-		this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
+		// this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
 		this.addCategory('actions', 'Actions', 'mdi-keyboard-outline')
-		this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
+		// this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
 		this.addCategory('developers', 'Developers', 'mdi-wrench-outline')
 
 		await setupSettings(this)
+		this.sidebar.setDefaultSelected()
 	}
 
 	addCategory(id: string, name: string, icon: string) {
