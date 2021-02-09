@@ -14,6 +14,9 @@ module.exports = {
 		},
 	},
 	configureWebpack: {
-		plugins: [new MonacoWebpackPlugin(), new WorkerPlugin()],
+		plugins: [
+			new MonacoWebpackPlugin({ features: ['!toggleHighContrast'] }),
+			new WorkerPlugin(),
+		],
 	},
 }
