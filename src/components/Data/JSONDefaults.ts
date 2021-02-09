@@ -101,13 +101,6 @@ export namespace JSONDefaults {
 							const app = await App.getApp()
 							await app.packIndexer.fired
 
-							console.log(
-								await app.packIndexer.service.getCacheDataFor(
-									fileType,
-									filePath,
-									cacheKey
-								)
-							)
 							return app.packIndexer.service.getCacheDataFor(
 								fileType,
 								filePath,
