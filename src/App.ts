@@ -104,7 +104,18 @@ export class App {
 				.then(() => {
 					this.compiler.start(projectName, 'dev', 'default.json')
 					this.themeManager.updateTheme()
-					selectLanguage(settingsState?.appearance?.locale as string)
+
+					// Set language
+					if (typeof settingsState.general.locale === 'string')
+						selectLanguage(settingsState?.general?.locale)
+					else {
+						// Set language based off of browser language
+						for (const [lang] of getLanguages()) {
+							if (navigator.language.includes(lang)) {
+								selectLanguage(lang)
+							}
+						}
+					}
 				})
 
 			App.eventSystem.dispatch('projectChanged', undefined)
@@ -196,16 +207,6 @@ export class App {
 			true
 		)
 
-		// Set language based off of browser language
-		// if (!navigator.language.includes('en')) {
-		// 	for (const [lang] of getLanguages()) {
-		// 		if (navigator.language.includes(lang)) {
-		// 			selectLanguage(lang)
-		// 		}
-		// 	}
-		// } else {
-		// 	selectLanguage('en')
-		// }
 		console.timeEnd('[APP] startUp()')
 	}
 }

@@ -6,7 +6,11 @@ import { settingsState } from './SettingsState'
 import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
 import { ProjectSelection } from './Controls/Selection/ProjectSelection'
-import { getLanguages, selectLanguage } from '@/utils/locales'
+import {
+	getCurrentLanguage,
+	getLanguages,
+	selectLanguage,
+} from '@/utils/locales'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -93,22 +97,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 		})
 	)
-	settings.addControl(
-		new Selection({
-			category: 'appearance',
-			name: 'Language',
-			description: 'Choose a language for bridge. to use',
-			key: 'locale',
-			get options() {
-				return getLanguages()
-					.map(lang => ({ text: lang[1], value: lang[0] }))
-			},
-			default: 'en',
-			onChange: () => {
-				selectLanguage(settingsState?.appearance?.locale as string)
-			}
-		})
-	)
+
 	settings.addControl(
 		new Toggle({
 			category: 'appearance',
@@ -145,6 +134,25 @@ export async function setupSettings(settings: SettingsWindow) {
 			name: 'Developer Mode',
 			description: 'Enable the developer mode for this app',
 			key: 'isDevMode',
+		})
+	)
+
+	settings.addControl(
+		new Selection({
+			category: 'general',
+			name: 'Language',
+			description: 'Choose a language for bridge. to use',
+			key: 'locale',
+			get options() {
+				return getLanguages().map(lang => ({
+					text: lang[1],
+					value: lang[0],
+				}))
+			},
+			default: getCurrentLanguage(),
+			onChange: val => {
+				selectLanguage(val)
+			},
 		})
 	)
 

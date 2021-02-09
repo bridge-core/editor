@@ -51,3 +51,7 @@ export function getLanguages() {
 		.filter(([_, locale]) => (locale as any).languageName !== undefined)
 		.map(([key, locale]) => [key, (locale as any).languageName])
 }
+
+export function getCurrentLanguage() {
+	return (vue as any).$vuetify.lang.current
+}
