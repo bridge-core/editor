@@ -232,6 +232,12 @@ export default {
 		pluginInstallLocation: {
 			title: 'Choose Install Location',
 		},
+		unsavedContents: {
+			description:
+				'Do you want to save your changes to this file before closing it?',
+			noSave: 'Close',
+			save: 'Save & Close',
+		},
 	},
 	taskManager: {
 		tasks: {

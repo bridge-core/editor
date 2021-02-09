@@ -2,7 +2,7 @@
 	<Draggable
 		v-if="tabSystem && tabSystem.tabs.length > 0"
 		v-model="tabSystem.tabs"
-		:group="{ name: 'tabSystemTabs' }"
+		:group="{ name: 'tabSystemTabRow' }"
 		:style="
 			`display: flex; overflow-x: scroll; white-space: nowrap; width: 100%; height: 48px;`
 		"

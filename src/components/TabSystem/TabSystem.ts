@@ -5,6 +5,7 @@ import Vue from 'vue'
 import { App } from '@/App'
 import { selectedProject } from '../Project/Loader'
 import { ImageTab } from '../Editors/Image/ImageTab'
+import { createConfirmWindow } from '../Windows/Common/CommonDefinitions'
 
 export class TabSystem {
 	tabs: Tab[] = []
@@ -37,13 +38,30 @@ export class TabSystem {
 
 		return tab
 	}
-	close(tab: Tab) {
-		tab.onDeactivate()
-		this.tabs = this.tabs.filter(current => current !== tab)
-		tab.onDestroy()
+	close(tab: Tab, checkUnsaved = true) {
+		if (checkUnsaved && tab.isUnsaved) {
+			createConfirmWindow(
+				'windows.unsavedContents.description',
+				'windows.unsavedContents.save',
+				'windows.unsavedContents.noSave',
+				async () => {
+					// Confirm
+					await this.save(tab)
+					this.close(tab, false)
+				},
+				() => {
+					// Cancel
+					this.close(tab, false)
+				}
+			)
+		} else {
+			tab.onDeactivate()
+			this.tabs = this.tabs.filter(current => current !== tab)
+			tab.onDestroy()
 
-		if (this._selectedTab === tab) {
-			this.select(this.tabs[0])
+			if (this._selectedTab === tab) {
+				this.select(this.tabs[0])
+			}
 		}
 	}
 	closeByPath(path: string) {
@@ -77,10 +95,13 @@ export class TabSystem {
 			'default.json',
 			tab.getPath().replace(`projects/${selectedProject}/`, '')
 		)
-		App.eventSystem.dispatch(
-			'refreshCurrentContext',
-			tab.getPath().replace(`projects/${selectedProject}/`, '')
-		)
+
+		// Only refresh auto-completion content if tab is active
+		if (tab === this.selectedTab)
+			App.eventSystem.dispatch(
+				'refreshCurrentContext',
+				tab.getPath().replace(`projects/${selectedProject}/`, '')
+			)
 
 		app.windows.loadingWindow.close()
 	}

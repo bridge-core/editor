@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import { TabSystem } from './Main'
+import { TabSystem } from './TabSystem'
 import { IFileSystem } from '@/components/FileSystem/Common'
 import { App } from '@/App'
 import { FileType } from '../Data/FileType'
@@ -57,5 +57,5 @@ export abstract class Tab {
 	onDeactivate() {}
 	onDestroy() {}
 
-	abstract save(): void
+	abstract save(): void | Promise<void>
 }
