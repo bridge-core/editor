@@ -30,6 +30,7 @@ import { Toolbar } from './components/Toolbar/Toolbar'
 import { Compiler } from './components/Compiler/Compiler'
 import { ExtensionLoader } from './components/Extensions/ExtensionLoader'
 import { Title } from './components/Project/Title'
+import { WindowResize } from './components/Common/WindowResize'
 export class App {
 	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventManager<any>([
@@ -52,6 +53,7 @@ export class App {
 	public readonly dataLoader = new DataLoader()
 	public readonly fileSystem = new FileSystem()
 	public readonly extensionLoader = new ExtensionLoader()
+	public readonly windowResize = new WindowResize()
 
 	protected title = new Title()
 	protected _windows: Windows

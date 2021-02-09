@@ -4,6 +4,7 @@ import * as monaco from 'monaco-editor'
 import { IDisposable } from '@/types/disposable'
 import { on } from '@/appCycle/EventSystem'
 import debounce from 'lodash.debounce'
+import { App } from '@/App'
 
 export class TextTab extends Tab {
 	component = MonacoEditor
@@ -24,6 +25,8 @@ export class TextTab extends Tab {
 	}
 
 	async onActivate() {
+		const app = await App.getApp()
+
 		if (this.editorModel === undefined) {
 			const file = await (await this.fileSystem).readFile(this.path)
 			const fileContent = await file.text()
@@ -39,7 +42,7 @@ export class TextTab extends Tab {
 		}
 
 		this.disposables.push(
-			on('bridge:onResize', () => this.editorInstance?.layout())
+			app.windowResize.on(() => this.editorInstance?.layout())
 		)
 		this.disposables.push(
 			this.editorModel?.onDidChangeContent(

@@ -1,5 +1,5 @@
 <template>
-	<div ref="monacoContainer" style="height:100%; width: 100%;" />
+	<div ref="monacoContainer" style="height:calc(100% - 48px); width: 100%;" />
 </template>
 
 <script>
@@ -38,6 +38,7 @@ export default {
 			tabSize: 4,
 		})
 		this.tab.receiveEditorInstance(editorInstance)
+		editorInstance.layout()
 	},
 	watch: {
 		tab() {
