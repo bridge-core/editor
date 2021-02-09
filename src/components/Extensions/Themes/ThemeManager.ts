@@ -47,6 +47,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		media.addEventListener('change', mediaQuery => {
 			this.colorScheme.dispatch(mediaQuery.matches ? 'light' : 'dark')
 			this.mode = mediaQuery.matches ? 'light' : 'dark'
+			this.updateTheme()
 		})
 
 		/**
