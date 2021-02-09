@@ -29,6 +29,7 @@ import { ActionManager } from './components/Actions/ActionManager'
 import { Toolbar } from './components/Toolbar/Toolbar'
 import { Compiler } from './components/Compiler/Compiler'
 import { ExtensionLoader } from './components/Extensions/ExtensionLoader'
+import { Title } from './components/Project/Title'
 export class App {
 	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventManager<any>([
@@ -52,6 +53,7 @@ export class App {
 	public readonly fileSystem = new FileSystem()
 	public readonly extensionLoader = new ExtensionLoader()
 
+	protected title = new Title()
 	protected _windows: Windows
 	get windows() {
 		return this._windows
@@ -92,6 +94,7 @@ export class App {
 
 	switchProject(projectName: string, forceRefreshCache = false) {
 		return new Promise<void>(async resolve => {
+			this.title.setProject(projectName)
 			this.packIndexer.start(projectName, forceRefreshCache)
 
 			this.extensionLoader.deactivateAll()
