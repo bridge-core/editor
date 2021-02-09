@@ -1,7 +1,4 @@
 import { EventDispatcher } from '@/appCycle/EventSystem'
-import Vue from 'vue'
-import { editor as Editor } from 'monaco-editor'
-import { keyword } from 'color-convert'
 import { App } from '@/App'
 import { settingsState } from '@/components/Windows/Settings/SettingsState'
 import { iterateDir } from '@/utils/iterateDir'
@@ -9,6 +6,7 @@ import { IDisposable } from '@/types/disposable'
 import json5 from 'json5'
 import { deepmerge } from '@/utils/deepmerge'
 import { bridgeDark, bridgeLight } from './Default'
+import { Theme } from './Theme'
 
 const colorNames = [
 	'text',
@@ -28,7 +26,7 @@ const colorNames = [
 	'tooltip',
 	'sidebarSelection',
 ] as const
-type TColorName = typeof colorNames[number]
+export type TColorName = typeof colorNames[number]
 
 export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	protected mode: 'light' | 'dark'
@@ -160,160 +158,4 @@ export interface IThemeDefinition {
 		{ color?: string; textDecoration?: string; isItalic?: boolean }
 	>
 	monaco?: Record<string, string>
-}
-
-export class Theme {
-	public readonly id: string
-	public readonly colorScheme: 'dark' | 'light'
-	public readonly name: string
-
-	protected colorMap: Map<TColorName, string>
-	protected highlighterDef: IThemeDefinition['highlighter']
-	protected monacoDef: IThemeDefinition['monaco']
-
-	protected monacoSubTheme: MonacoSubTheme
-
-	constructor(
-		protected themeDefinition: IThemeDefinition,
-		public readonly isGlobal: boolean
-	) {
-		this.id = themeDefinition.id
-		this.name = themeDefinition.name
-		this.colorScheme = themeDefinition.colorScheme ?? 'dark'
-
-		this.colorMap = new Map(
-			<[TColorName, string][]>Object.entries(themeDefinition.colors)
-		)
-		this.monacoDef = themeDefinition.monaco
-		this.highlighterDef = themeDefinition.highlighter
-
-		this.monacoSubTheme = new MonacoSubTheme(this)
-	}
-
-	apply(themeManager: ThemeManager, vuetify: any) {
-		Vue.set(
-			vuetify.theme.themes,
-			this.colorScheme,
-			Object.fromEntries(this.colorMap.entries())
-		)
-		Vue.set(vuetify.theme, 'dark', this.colorScheme === 'dark')
-
-		themeManager.setThemeColor(this.colorMap.get('toolbar') ?? 'red')
-		this.monacoSubTheme.apply()
-	}
-
-	getColor(colorName: TColorName) {
-		return this.colorMap.get(colorName) ?? 'red'
-	}
-	getMonacoDefinition() {
-		return this.monacoDef ?? {}
-	}
-	getHighlighterDefinition() {
-		return this.highlighterDef ?? {}
-	}
-	getThemeDefinition() {
-		return this.themeDefinition
-	}
-}
-
-export class MonacoSubTheme {
-	constructor(protected theme: Theme) {}
-
-	apply() {
-		Editor.defineTheme('bridge-monaco-default', {
-			base: this.theme.colorScheme === 'light' ? 'vs' : 'vs-dark',
-			inherit: false,
-			colors: {
-				'editor.background': this.convertColor(
-					this.theme.getColor('background')
-				),
-				'editor.lineHighlightBackground': this.convertColor(
-					this.theme.getColor('tooltip')
-				),
-				'editorWidget.background': this.convertColor(
-					this.theme.getColor('background')
-				),
-				'editorWidget.border': this.convertColor(
-					this.theme.getColor('sidebarNavigation')
-				),
-				'pickerGroup.background': this.convertColor(
-					this.theme.getColor('background')
-				),
-				'pickerGroup.border': this.convertColor(
-					this.theme.getColor('sidebarNavigation')
-				),
-				'badge.background': this.convertColor(
-					this.theme.getColor('background')
-				),
-
-				'input.background': this.convertColor(
-					this.theme.getColor('sidebarNavigation')
-				),
-				'input.border': this.convertColor(this.theme.getColor('menu')),
-				'inputOption.activeBorder': this.convertColor(
-					this.theme.getColor('primary')
-				),
-				focusBorder: this.convertColor(this.theme.getColor('primary')),
-				'list.focusBackground': this.convertColor(
-					this.theme.getColor('menu')
-				),
-				'list.hoverBackground': this.convertColor(
-					this.theme.getColor('sidebarNavigation')
-				),
-				contrastBorder: this.convertColor(
-					this.theme.getColor('sidebarNavigation')
-				),
-
-				'peekViewTitle.background': this.convertColor(
-					this.theme.getColor('background')
-				),
-				'peekView.border': this.convertColor(
-					this.theme.getColor('primary')
-				),
-				'peekViewResult.background': this.convertColor(
-					this.theme.getColor('sidebarNavigation')
-				),
-				'peekViewResult.selectionBackground': this.convertColor(
-					this.theme.getColor('menu')
-				),
-				'peekViewEditor.background': this.convertColor(
-					this.theme.getColor('background')
-				),
-				'peekViewEditor.matchHighlightBackground': this.convertColor(
-					this.theme.getColor('menu')
-				),
-				...this.theme.getMonacoDefinition(),
-			},
-			rules: [
-				//@ts-ignore Token is not required
-				{
-					background: this.convertColor(
-						this.theme.getColor('background')
-					),
-					foreground: this.convertColor(this.theme.getColor('text')),
-				},
-				...Object.entries(this.theme.getHighlighterDefinition())
-					.map(([token, { color, textDecoration, isItalic }]) => ({
-						token: token,
-						foreground: this.convertColor(color as string),
-						fontStyle: `${
-							isItalic ? 'italic ' : ''
-						}${textDecoration}`,
-					}))
-					.filter(({ foreground }) => foreground !== undefined),
-			],
-		})
-	}
-
-	convertColor(color: string) {
-		if (!color) return color
-		if (color.startsWith('#')) {
-			if (color.length === 4) {
-				return `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`
-			}
-			return color
-		}
-
-		return keyword.hex(color as any)
-	}
 }
