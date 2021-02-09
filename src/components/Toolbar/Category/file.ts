@@ -32,6 +32,15 @@ export function setupFileCategory(app: App) {
 		})
 	)
 	file.addItem(
+		app.actionManager.create({
+			icon: 'mdi-file-cancel-outline',
+			name: 'toolbar.file.closeFile',
+			description: 'Close the currently opened file',
+			keyBinding: 'Ctrl + W',
+			onTrigger: () => App.ready.once(app => app.tabSystem.close()),
+		})
+	)
+	file.addItem(
 		new ToolbarCategory(
 			'mdi-palette-outline',
 			'toolbar.file.preferences.name'

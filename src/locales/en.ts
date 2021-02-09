@@ -60,7 +60,7 @@ export default {
 			saveFile: 'Save File',
 			saveAs: 'Save As',
 			saveAll: 'Save All',
-			closeEditor: 'Close Editor',
+			closeFile: 'Close File',
 			clearAllNotifications: 'Clear all notifications',
 			preferences: {
 				name: 'Preferences',

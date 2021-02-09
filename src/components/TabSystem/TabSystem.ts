@@ -38,7 +38,9 @@ export class TabSystem {
 
 		return tab
 	}
-	close(tab: Tab, checkUnsaved = true) {
+	close(tab = this.selectedTab, checkUnsaved = true) {
+		if (!tab) return
+
 		if (checkUnsaved && tab.isUnsaved) {
 			createConfirmWindow(
 				'windows.unsavedContents.description',
