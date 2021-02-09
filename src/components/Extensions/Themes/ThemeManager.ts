@@ -1,4 +1,4 @@
-import { EventDispatcher } from '@/appCycle/EventSystem'
+import { EventDispatcher, Signal } from '@/appCycle/EventSystem'
 import { App } from '@/App'
 import { settingsState } from '@/components/Windows/Settings/SettingsState'
 import { iterateDir } from '@/utils/iterateDir'
@@ -32,6 +32,8 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	protected mode: 'light' | 'dark'
 	protected themeMap = new Map<string, Theme>()
 	protected themeColorTag = document.querySelector("meta[name='theme-color']")
+	protected currentTheme = 'bridge.default.dark'
+	public readonly colorScheme = new Signal<'light' | 'dark'>()
 
 	constructor(protected vuetify: any) {
 		super()
@@ -40,7 +42,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		const media = window.matchMedia('(prefers-color-scheme: light)')
 		this.mode = media.matches ? 'light' : 'dark'
 		media.addEventListener('change', mediaQuery => {
-			this.dispatch(mediaQuery.matches ? 'light' : 'dark')
+			this.colorScheme.dispatch(mediaQuery.matches ? 'light' : 'dark')
 			this.mode = mediaQuery.matches ? 'light' : 'dark'
 		})
 
