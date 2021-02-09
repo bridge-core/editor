@@ -6,6 +6,9 @@
 	"properties": {
 		"format_version": { "enum": ["1.10.0"] },
 		"animation_controllers": {
+			"propertyNames": {
+				"pattern": "^controller.animation\\..+$"
+			},
 			"patternProperties": {
 				"^controller.animation\\..+$": {
 					"properties": {

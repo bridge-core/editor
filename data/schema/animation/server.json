@@ -6,6 +6,9 @@
 	"properties": {
 		"format_version": { "enum": ["1.10.0"] },
 		"animations": {
+			"propertyNames": {
+				"pattern": "^animation\\..+$"
+			},
 			"patternProperties": {
 				"^animation\\..+$": {
 					"properties": {
@@ -14,11 +17,21 @@
 							"enum": [true, false, "hold_on_last_frame"]
 						},
 						"timeline": {
+							"propertyNames": {
+								"pattern": "^\\d+(\\.\\d+)?$"
+							},
 							"patternProperties": {
 								"^\\d+(\\.\\d+)?$": {
 									"type": "array",
 									"items": {
-										"type": "string"
+										"anyOf": [
+											{
+												"$ref": "../function/dynamic/functionPathEnum.json"
+											},
+											{
+												"$ref": "../entity/dynamic/prefixedEntityEventEnum.json"
+											}
+										]
 									}
 								}
 							}
