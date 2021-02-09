@@ -6,6 +6,6 @@ export class Title {
 	}
 
 	setProject(projectName: string) {
-		this.titleTag.innerText = `${projectName} Project - bridge.`
+		this.titleTag.innerText = `${projectName} - bridge.`
 	}
 }
