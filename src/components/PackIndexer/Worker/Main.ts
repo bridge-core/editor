@@ -126,6 +126,9 @@ export class PackIndexerService extends TaskService<string[]> {
 	getSchemasFor(fileType: string, fromFilePath?: string) {
 		return this.lightningStore.getSchemasFor(fileType, fromFilePath)
 	}
+	getCacheDataFor(fileType: string, filePath?: string, cacheKey?: string) {
+		return this.lightningStore.getCacheDataFor(fileType, filePath, cacheKey)
+	}
 }
 
 async function loadPack(pack: string, fileSystem: FileSystem) {

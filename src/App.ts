@@ -1,3 +1,5 @@
+import '@/components/Notifications/Errors'
+import Vue from 'vue'
 import { EventSystem } from './components/Common/Event/EventSystem'
 import { Signal } from './components/Common/Event/Signal'
 import { FileType } from './components/Data/FileType'
@@ -13,13 +15,10 @@ import { setupDefaultMenus } from './components/Toolbar/setupDefaults'
 import { getLanguages, selectLanguage } from './utils/locales'
 import { Discord as DiscordWindow } from '@/components/Windows/Discord/definition'
 import { createNotification } from './components/Notifications/create'
-
-import '@/components/Notifications/Errors'
 import { PackType } from './components/Data/PackType'
-import { selectedProject, selectLastProject } from './components/Project/Loader'
+import { selectLastProject } from './components/Project/Loader'
 import { Windows } from './components/Windows/Windows'
 import { SettingsWindow } from './components/Windows/Settings/SettingsWindow'
-import Vue from 'vue'
 import { settingsState } from './components/Windows/Settings/SettingsState'
 import { LoadingWindow } from './components/Windows/LoadingWindow/LoadingWindow'
 import { DataLoader } from './components/Data/DataLoader'
@@ -31,6 +30,7 @@ import { Compiler } from './components/Compiler/Compiler'
 import { ExtensionLoader } from './components/Extensions/ExtensionLoader'
 import { Title } from './components/Project/Title'
 import { WindowResize } from './components/Common/WindowResize'
+
 export class App {
 	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventSystem<any>([
