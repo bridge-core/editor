@@ -4,6 +4,7 @@ import { IFileSystem } from '@/components/FileSystem/Common'
 import { App } from '@/App'
 import { FileType } from '../Data/FileType'
 import { selectedProject } from '../Project/Loader'
+import { PackType } from '../Data/PackType'
 
 export abstract class Tab {
 	abstract component: Vue.Component
@@ -32,18 +33,10 @@ export abstract class Tab {
 		return this.path.replace(`projects/${selectedProject}/`, '')
 	}
 	get icon() {
-		const fileType = FileType.get(this.getPackPath())
-		if (fileType?.icon) return fileType.icon
-
-		if (
-			this.path.endsWith('.png') ||
-			this.path.endsWith('.tga') ||
-			this.path.endsWith('.jpg') ||
-			this.path.endsWith('.jpeg')
-		)
-			return 'mdi-file-image-outline'
-
-		return 'mdi-file-outline'
+		return FileType.get(this.getPackPath())?.icon ?? 'mdi-file-outline'
+	}
+	get iconColor() {
+		return PackType.get(this.getPath())?.color ?? 'primary'
 	}
 
 	get isSelected() {

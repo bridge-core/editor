@@ -18,5 +18,12 @@ export class ImageTab extends Tab {
 		this.dataUrl = await loadAsDataURL(this.path)
 	}
 
+	get icon() {
+		return 'mdi-file-image-outline'
+	}
+	get iconColor() {
+		return 'primary'
+	}
+
 	save() {}
 }

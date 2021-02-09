@@ -10,7 +10,9 @@
 		}"
 		ref="tabElement"
 	>
-		<v-icon class="mr-1" color="primary" small>{{ tab.icon }}</v-icon>
+		<v-icon class="mr-1" :color="tab.iconColor" small>
+			{{ tab.icon }}
+		</v-icon>
 
 		<span :style="{ 'font-style': tab.isUnsaved ? 'italic' : null }">
 			{{ tab.name }}
