@@ -78,7 +78,7 @@ export class TextTab extends Tab {
 	}
 
 	async paste() {
-		this.editorInstance?.trigger('keyboard', 'type', {
+		this.editorInstance?.trigger('keyboard', 'paste', {
 			text: await navigator.clipboard.readText(),
 		})
 	}
