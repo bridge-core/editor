@@ -4,7 +4,7 @@ import { IModuleConfig } from './types'
 
 import { SidebarModule } from './Modules/sidebar'
 import { UIModule } from './Modules/ui'
-import { NotificationModule } from './Modules/footer'
+import { NotificationModule } from './Modules/notifications'
 import { FSModule } from './Modules/fs'
 import { ENVModule } from './Modules/env'
 import { UtilsModule } from './Modules/utils'
