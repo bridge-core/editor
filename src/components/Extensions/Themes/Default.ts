@@ -21,6 +21,8 @@ export const bridgeDark = <const>{
 		footer: '#111111',
 		tooltip: '#1F1F1F',
 		toolbar: '#000000',
+		tabActive: '#121212',
+		tabInactive: '#1F1F1F',
 	},
 	highlighter: {
 		type: {
@@ -79,6 +81,8 @@ export const bridgeLight = <const>{
 		tooltip: '#424242',
 		toolbar: '#e0e0e0',
 		footer: '#f5f5f5',
+		tabActive: '#fafafa',
+		tabInactive: '#ececec',
 	},
 	highlighter: {
 		property: {

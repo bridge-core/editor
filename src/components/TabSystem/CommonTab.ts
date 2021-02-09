@@ -1,8 +1,9 @@
 import { v4 as uuid } from 'uuid'
-import type { TabSystem } from './Main'
+import { TabSystem } from './Main'
 import { IFileSystem } from '@/components/FileSystem/Common'
 import { App } from '@/App'
-
+import { FileType } from '../Data/FileType'
+import { selectedProject } from '../Project/Loader'
 
 export abstract class Tab {
 	protected fileSystem: IFileSystem | Promise<IFileSystem>
@@ -15,16 +16,13 @@ export abstract class Tab {
 		this.isUnsaved = val
 	}
 
-	constructor(
-		protected parent: TabSystem,
-		protected path: string
-	) {
-		this.fileSystem = new Promise((resolve) => {
-			App.ready.once((app) => {
+	constructor(protected parent: TabSystem, protected path: string) {
+		this.fileSystem = new Promise(resolve => {
+			App.ready.once(app => {
 				resolve(app.fileSystem)
 			})
 		})
-		this.fileSystem.then(fileSystem => this.fileSystem = fileSystem)
+		this.fileSystem.then(fileSystem => (this.fileSystem = fileSystem))
 	}
 
 	get name() {
@@ -33,6 +31,24 @@ export abstract class Tab {
 	}
 	getPath() {
 		return this.path
+	}
+	getPackPath() {
+		return this.path.replace(`projects/${selectedProject}/`, '')
+	}
+	get icon() {
+		const fileType = FileType.get(this.getPackPath())
+		console.log(fileType, this.getPackPath())
+		if (fileType?.icon) return fileType.icon
+
+		if (
+			this.path.endsWith('.png') ||
+			this.path.endsWith('.tga') ||
+			this.path.endsWith('.jpg') ||
+			this.path.endsWith('.jpeg')
+		)
+			return 'mdi-file-image-outline'
+
+		return 'mdi-file-outline'
 	}
 
 	get isSelected() {
