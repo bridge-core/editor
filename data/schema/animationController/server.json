@@ -51,11 +51,29 @@
 										},
 										"on_entry": {
 											"type": "array",
-											"items": { "$ref": "../function/dynamic/functionPathEnum.json" }
+											"items": {
+												"anyOf": [
+													{
+														"$ref": "../function/dynamic/functionPathEnum.json"
+													},
+													{
+														"$ref": "../entity/dynamic/prefixedEntityEventEnum.json"
+													}
+												]
+											}
 										},
 										"on_exit": {
 											"type": "array",
-											"items": { "$ref": "../function/dynamic/functionPathEnum.json" }
+											"items": {
+												"anyOf": [
+													{
+														"$ref": "../function/dynamic/functionPathEnum.json"
+													},
+													{
+														"$ref": "../entity/dynamic/prefixedEntityEventEnum.json"
+													}
+												]
+											}
 										}
 									}
 								}

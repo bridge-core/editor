@@ -93,10 +93,33 @@ export namespace JSONDefaults {
 						scopedFs.readFilesFromDir.bind(scopedFs),
 						uuid,
 						getFilteredFormatVersions,
+						async (
+							fileType: string,
+							filePath?: string,
+							cacheKey?: string
+						) => {
+							const app = await App.getApp()
+							await app.packIndexer.fired
+
+							console.log(
+								await app.packIndexer.service.getCacheDataFor(
+									fileType,
+									filePath,
+									cacheKey
+								)
+							)
+							return app.packIndexer.service.getCacheDataFor(
+								fileType,
+								filePath,
+								cacheKey
+							)
+						},
 					],
-					['readdir', 'uuid', 'getFormatVersions']
+					['readdir', 'uuid', 'getFormatVersions', 'getCacheDataFor']
 				)
-			} catch {}
+			} catch (err) {
+				// console.error(`Error evaluating schemaScript: ${err.message}`)
+			}
 
 			schemas[
 				`file:///data/packages/schema/${schemaScript.generateFile}`
@@ -179,12 +202,10 @@ export namespace JSONDefaults {
 
 		// Updating currentContext/ references
 		App.eventSystem.on('currentTabSwitched', async filePath => {
-			// console.log(filePath)
 			const fileType = FileType.getId(filePath)
 			addSchemas(await requestSchemaFor(fileType, filePath))
 		})
 		App.eventSystem.on('refreshCurrentContext', async filePath => {
-			// console.log(filePath)
 			const fileType = FileType.getId(filePath)
 			addSchemas(await requestSchemaFor(fileType, filePath))
 		})
