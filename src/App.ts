@@ -30,6 +30,7 @@ import { Compiler } from './components/Compiler/Compiler'
 import { ExtensionLoader } from './components/Extensions/ExtensionLoader'
 import { Title } from './components/Project/Title'
 import { WindowResize } from './components/Common/WindowResize'
+import { InstallApp } from './components/App/Install'
 
 export class App {
 	public static toolbar = new Toolbar()
@@ -55,6 +56,7 @@ export class App {
 	public readonly extensionLoader = new ExtensionLoader()
 	public readonly windowResize = new WindowResize()
 
+	protected installApp = new InstallApp()
 	protected title = new Title()
 	protected _windows: Windows
 	get windows() {

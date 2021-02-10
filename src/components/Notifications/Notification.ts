@@ -15,13 +15,13 @@ export interface INotificationConfig {
 }
 
 export class Notification {
-	protected notificationUUID = uuid()
+	protected id = uuid()
 	protected isVisible: boolean
 
 	constructor(protected config: INotificationConfig) {
 		this.isVisible = this.config.isVisible ?? true
 
-		Vue.set(NotificationStore, this.notificationUUID, this)
+		Vue.set(NotificationStore, this.id, this)
 
 		// @ts-expect-error
 		if (typeof navigator.setAppBadge === 'function')
@@ -50,7 +50,7 @@ export class Notification {
 	onMiddleClick() {
 		this.config.onMiddleClick?.()
 		if (this.config.disposeOnMiddleClick)
-			Vue.delete(NotificationStore, this.notificationUUID)
+			Vue.delete(NotificationStore, this.id)
 	}
 
 	addClickHandler(cb: () => void) {
@@ -62,7 +62,7 @@ export class Notification {
 	}
 
 	dispose() {
-		Vue.delete(NotificationStore, this.notificationUUID)
+		Vue.delete(NotificationStore, this.id)
 
 		// @ts-expect-error
 		if (typeof navigator.setAppBadge === 'function')

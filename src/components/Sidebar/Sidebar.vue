@@ -22,15 +22,17 @@
 
 		<v-list v-if="Object.keys(NotificationStore).length > 0">
 			<v-divider class="mx-3 mb-6" />
-			<SidebarButton
-				v-for="(notification, i) in NotificationStore"
-				:key="`${i}`"
-				:displayName="notification.message"
-				:icon="notification.icon"
-				:color="notification.color"
-				:iconColor="notification.textColor"
-				@click="notification.onClick()"
-			/>
+			<template v-for="notification in NotificationStore">
+				<SidebarButton
+					v-if="notification.isVisible"
+					:key="notification.id"
+					:displayName="notification.message"
+					:icon="notification.icon"
+					:color="notification.color"
+					:iconColor="notification.textColor"
+					@click="notification.onClick()"
+				/>
+			</template>
 		</v-list>
 
 		<v-list v-if="tasks.length > 0">

@@ -31,27 +31,6 @@
 				/>
 			</template>
 		</v-toolbar-items>
-
-		<v-spacer />
-
-		<!-- Main buttons to interact with the app window -->
-		<v-divider vertical />
-		<InstallButton />
-		<v-toolbar-items class="px14-font">
-			<template v-for="({ icon, action, color }, i) in windowActions">
-				<WindowAction
-					:icon="icon"
-					:action="action"
-					:color="color"
-					:key="`windowAction.${icon}`"
-				/>
-				<v-divider
-					v-if="i + 1 < windowActions.length"
-					:key="`divider.${icon}`"
-					vertical
-				/>
-			</template>
-		</v-toolbar-items>
 	</v-system-bar>
 </template>
 
@@ -59,7 +38,6 @@
 import WindowAction from './WindowAction'
 import MenuActivator from './Menu/Activator'
 import MenuButton from './Menu/Button'
-import InstallButton from './InstallButton'
 import { App } from '@/App'
 
 export default {
@@ -68,7 +46,6 @@ export default {
 		WindowAction,
 		MenuActivator,
 		MenuButton,
-		InstallButton,
 	},
 	data: () => ({
 		toolbar: App.toolbar.state,
