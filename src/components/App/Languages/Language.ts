@@ -9,17 +9,6 @@ export interface IAddLanguageOptions {
 	tokenProvider: any
 }
 
-export function addLanguage({
-	id,
-	extensions,
-	config,
-	tokenProvider,
-}: IAddLanguageOptions) {
-	languages.register({ id, extensions })
-	languages.setLanguageConfiguration(id, config)
-	languages.setMonarchTokensProvider(id, tokenProvider)
-}
-
 export abstract class Language {
 	protected id: string
 	protected disposables: IDisposable[] = []

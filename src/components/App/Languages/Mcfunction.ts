@@ -1,5 +1,5 @@
 import { languages } from 'monaco-editor'
-import { addLanguage } from './addLanguage'
+import { Language } from './Language'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {
@@ -122,9 +122,15 @@ export const tokenProvider = {
 	},
 }
 
-addLanguage({
-	id: 'mcfunction',
-	extensions: ['mcfunction'],
-	config,
-	tokenProvider,
-})
+export class McfunctionLanguage extends Language {
+	constructor() {
+		super({
+			id: 'mcfunction',
+			extensions: ['mcfunction'],
+			config,
+			tokenProvider,
+		})
+	}
+
+	validate() {}
+}

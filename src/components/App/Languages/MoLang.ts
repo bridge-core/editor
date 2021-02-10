@@ -1,5 +1,5 @@
 import { editor, languages, MarkerSeverity } from 'monaco-editor'
-import { Language } from './addLanguage'
+import { Language } from './Language'
 import { MoLang } from 'molang'
 
 export const config: languages.LanguageConfiguration = {

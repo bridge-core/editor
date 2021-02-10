@@ -1,5 +1,5 @@
 import '@/components/Notifications/Errors'
-import '@/components/Languages/main'
+import '@/components/Languages/LanguageManager'
 
 import Vue from 'vue'
 import { EventSystem } from './components/Common/Event/EventSystem'
@@ -33,7 +33,7 @@ import { ExtensionLoader } from './components/Extensions/ExtensionLoader'
 import { Title } from './components/Project/Title'
 import { WindowResize } from './components/Common/WindowResize'
 import { InstallApp } from './components/App/Install'
-import { LanguageManager } from '@/components/Languages/main'
+import { LanguageManager } from '@/components/Languages/LanguageManager'
 
 export class App {
 	public static toolbar = new Toolbar()
