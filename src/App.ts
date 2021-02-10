@@ -1,4 +1,6 @@
 import '@/components/Notifications/Errors'
+import '@/components/Languages/index'
+
 import Vue from 'vue'
 import { EventSystem } from './components/Common/Event/EventSystem'
 import { Signal } from './components/Common/Event/Signal'
