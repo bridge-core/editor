@@ -42,8 +42,6 @@
 				dense
 				v-model="content.models[id]"
 			/>
-
-			{{ content.models }}
 		</template>
 
 		<template #actions>
