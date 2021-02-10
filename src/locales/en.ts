@@ -186,6 +186,7 @@ export default {
 			projectName: 'Project Name',
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',
+			projectTargetVersion: 'Project Target Version',
 			create: 'Create!',
 		},
 		createPreset: {
