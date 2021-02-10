@@ -1,5 +1,5 @@
 import { runAsync } from '@/components/Extensions/Scripts/run'
-import { FileSystem } from '@/components/FileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { CompilerFile } from './File'
 
 export const hooks = <const>[

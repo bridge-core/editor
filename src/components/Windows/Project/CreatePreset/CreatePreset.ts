@@ -5,7 +5,7 @@ import {
 } from '@/components/Windows/Layout/Sidebar'
 import CreatePresetComponent from './CreatePreset.vue'
 import { BaseWindow } from '../../BaseWindow'
-import { FileSystem } from '@/components/FileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { App } from '@/App'
 import { v4 as uuid } from 'uuid'
 import { dirname, extname } from 'path'

@@ -1,5 +1,5 @@
 import { IDisposable } from '@/types/disposable'
-import { FileSystem } from '../FileSystem/Main'
+import { FileSystem } from '../FileSystem/FileSystem'
 import { createErrorNotification } from '@/components/Notifications/Errors'
 import { ExtensionLoader, IExtensionManifest } from './ExtensionLoader'
 import { loadUIComponents } from './UI/load'

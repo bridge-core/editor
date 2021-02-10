@@ -1,6 +1,6 @@
 import { EventSystem } from '@/components/Common/Event/EventSystem'
 import { FileType } from '@/components/Data/FileType'
-import { FileSystem } from '@/components/FileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { file } from 'jszip'
 import { dirname } from 'path'
 import { CompilerService, IBuildConfigPlugins } from './Main'

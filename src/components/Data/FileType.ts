@@ -1,7 +1,7 @@
 import { isMatch } from 'micromatch'
 import { ILightningInstruction } from '@/components/PackIndexer/Worker/Main'
 import { IPackSpiderFile } from '@/components/PackIndexer/Worker/PackSpider/PackSpider'
-import { FileSystem } from '@/components/FileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 
 /**
  * Describes the structure of a file definition

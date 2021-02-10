@@ -1,5 +1,5 @@
 import { FileType, IMonacoSchemaArrayEntry } from '@/components/Data/FileType'
-import { FileSystem } from '@/components/FileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 
 type TStore = Record<string, Record<string, IStoreEntry>>
 interface IStoreEntry {

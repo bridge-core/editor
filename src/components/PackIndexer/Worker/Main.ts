@@ -9,7 +9,7 @@ import {
 	PackSpider,
 } from './PackSpider/PackSpider'
 import { LightningCache } from './LightningCache/LightningCache'
-import { FileSystem } from '@/components/FileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 export { ILightningInstruction } from './LightningCache/LightningCache'
 
 export interface IWorkerSettings {
