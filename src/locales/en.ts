@@ -45,6 +45,7 @@ export default {
 		lang: 'Language',
 		molang: 'Molang',
 		unknown: 'Other',
+		simpleFile: 'Simple Files'
 	},
 	// Toolbar Categories
 	toolbar: {

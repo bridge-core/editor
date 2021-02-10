@@ -1,0 +1,11 @@
+{
+    "format_version": "1.10.0",
+    "animation_controllers": {
+        "controller.animation.blank": {
+            "initial_state": "default",
+            "states": {
+                "default": {}
+            }
+        }
+    }
+}

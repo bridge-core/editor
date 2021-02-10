@@ -1,0 +1,17 @@
+{
+	"name": "Biome",
+	"icon": "mdi-earth",
+	"description": "Creates a blank biome.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"biome.json",
+			"BP/biomes/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

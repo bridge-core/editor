@@ -1,0 +1,17 @@
+{
+	"name": "Trade Table",
+	"icon": "mdi-store",
+	"description": "Creates a blank trade table.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"tradeTable.json",
+			"BP/trading/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

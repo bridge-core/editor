@@ -1,0 +1,19 @@
+{
+    "format_version": "",
+    "minecraft:feature_rules": {
+        "description": {
+            "identififer": "",
+            "places_feature": ""
+        },
+        "conditions": {
+            "placement_pass": "",
+            "minecraft:biome_filter": {}
+        },
+        "distribution": {
+            "iterations": 1,
+            "x": {},
+            "y": {},
+            "z": {}
+        }
+    }
+}

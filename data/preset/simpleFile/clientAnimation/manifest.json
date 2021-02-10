@@ -1,0 +1,17 @@
+{
+	"name": "Client Animation",
+	"icon": "mdi-movie",
+	"description": "Creates a blank client animation.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"animation.json",
+			"RP/animations/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

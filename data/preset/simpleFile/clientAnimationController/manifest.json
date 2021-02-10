@@ -1,0 +1,17 @@
+{
+	"name": "Client Animation Conroller",
+	"icon": "mdi-google-controller",
+	"description": "Creates a blank client animation controller.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"animationController.json",
+			"RP/animation_controllers/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

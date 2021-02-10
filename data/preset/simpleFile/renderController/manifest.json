@@ -1,0 +1,17 @@
+{
+	"name": "Render Conroller",
+	"icon": "mdi-crop",
+	"description": "Creates a blank render controller.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"renderController.json",
+			"RP/render_controllers/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}
