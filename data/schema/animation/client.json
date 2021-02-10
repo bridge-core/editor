@@ -116,6 +116,16 @@
 									}
 								}
 							}
+						},
+						"timeline": {
+							"propertyNames": {
+								"pattern": "^\\d+(\\.\\d+)?$"
+							},
+							"patternProperties": {
+								"^\\d+(\\.\\d+)?$": {
+									"$ref": "../molang/embeddedBeta.json"
+								}
+							}
 						}
 					}
 				}
