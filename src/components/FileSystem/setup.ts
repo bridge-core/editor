@@ -1,9 +1,16 @@
+import { App } from '@/App'
 import { get, set } from 'idb-keyval'
 import { createInformationWindow } from '../Windows/Common/CommonDefinitions'
 import { TWindow } from '../Windows/create'
 import { createSelectProjectFolderWindow } from '../Windows/Project/SelectFolder/definition'
 
-export async function setupFileSystem() {
+export async function setupFileSystem(app: App) {
+	if (typeof window.showDirectoryPicker !== 'function') {
+		// The user's browser doesn't support the native file system API
+		app.windows.browserUnsupported.open()
+		return false
+	}
+
 	let fileHandle = await get<FileSystemDirectoryHandle>('bridgeBaseDir')
 
 	if (!fileHandle) {

@@ -138,19 +138,24 @@ export class App {
 	 * Starts the app
 	 */
 	static async main(appComponent: Vue) {
-		const lw = new LoadingWindow()
-		lw.open()
-
 		this._instance = new App(appComponent)
+		this.instance.windows.loadingWindow.open()
+
 		await this.instance.beforeStartUp()
-		this.instance.fileSystem.setup(await setupFileSystem())
+
+		// Try setting up the file system
+		const fileHandle = await setupFileSystem(this.instance)
+		if (!fileHandle) return this.instance.windows.loadingWindow.close()
+		this.instance.fileSystem.setup(fileHandle)
+
+		// Load settings
 		await SettingsWindow.loadSettings(this.instance).then(() =>
 			this.instance.themeManager.loadDefaultThemes(this.instance)
 		)
 		await this.instance.startUp()
 		this.ready.dispatch(this._instance)
 
-		lw.close()
+		this.instance.windows.loadingWindow.close()
 		await selectLastProject(this._instance)
 	}
 
