@@ -45,7 +45,7 @@ export default {
 		lang: 'Language',
 		molang: 'Molang',
 		unknown: 'Other',
-		simpleFile: 'Simple Files'
+		simpleFile: 'Simple Files',
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -241,6 +241,11 @@ export default {
 			cancel: 'Cancel',
 			noSave: 'Close',
 			save: 'Save & Close',
+		},
+		browserUnsupported: {
+			title: 'Unsupported Browser',
+			description:
+				'Your browser is currently not supported. Please use Chrome or Edge (Chromium) in order to get started with bridge.!',
 		},
 	},
 	taskManager: {
