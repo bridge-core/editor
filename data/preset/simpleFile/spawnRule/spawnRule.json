@@ -1,0 +1,10 @@
+{
+    "format_version": "",
+    "minecraft:spawn_rules": {
+        "description": {
+            "identifier": "",
+            "population_control": ""
+        },
+        "conditions": [{}]
+    }
+}

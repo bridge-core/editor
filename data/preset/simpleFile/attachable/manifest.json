@@ -1,0 +1,17 @@
+{
+	"name": "Attachable",
+	"icon": "mdi-hat-fedora",
+	"description": "Creates a blank attachable.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"attachable.json",
+			"RP/attachables/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

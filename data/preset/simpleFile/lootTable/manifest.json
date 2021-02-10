@@ -1,6 +1,6 @@
 {
 	"name": "Loot Table",
-	"icon": "mdi-skull",
+	"icon": "mdi-skull-outline",
 	"description": "Creates a blank loot table.",
 	"category": "fileType.simpleFile",
 	"fields": [

@@ -1,0 +1,12 @@
+{
+    "format_version": "",
+    "minecraft:item": {
+        "description": {
+            "identifier": "",
+            "category": ""
+        },
+        "components": {
+            "minecraft:icon": {}
+        }
+    }
+}

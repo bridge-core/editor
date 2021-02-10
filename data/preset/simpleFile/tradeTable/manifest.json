@@ -1,6 +1,6 @@
 {
 	"name": "Trade Table",
-	"icon": "mdi-store",
+	"icon": "mdi-store-outline",
 	"description": "Creates a blank trade table.",
 	"category": "fileType.simpleFile",
 	"fields": [

@@ -1,7 +1,7 @@
 {
-	"name": "Biome",
-	"icon": "mdi-earth-box",
-	"description": "Creates a blank biome.",
+	"name": "Language",
+	"icon": "mdi-web",
+	"description": "Creates a blank language file.",
 	"category": "fileType.simpleFile",
 	"fields": [
 		["File Name", "FILE_NAME"]
@@ -9,8 +9,8 @@
 
 	"createFiles": [
 		[
-			"biome.json",
-			"BP/biomes/{{FILE_NAME}}.json",
+			"language.lang",
+			"RP/texts/{{FILE_NAME}}.lang",
 			{ "inject": ["FILE_NAME"] }
 		]
 	]

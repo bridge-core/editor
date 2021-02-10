@@ -1,0 +1,17 @@
+{
+	"name": "Client Entity",
+	"icon": "mdi-minecraft",
+	"description": "Creates a blank client entity.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"clientEntity.json",
+			"RP/entity/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

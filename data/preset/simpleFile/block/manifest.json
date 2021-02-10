@@ -1,7 +1,7 @@
 {
-	"name": "Biome",
-	"icon": "mdi-earth-box",
-	"description": "Creates a blank biome.",
+	"name": "Block",
+	"icon": "mdi-cube-outline",
+	"description": "Creates a blank block.",
 	"category": "fileType.simpleFile",
 	"fields": [
 		["File Name", "FILE_NAME"]
@@ -9,8 +9,8 @@
 
 	"createFiles": [
 		[
-			"biome.json",
-			"BP/biomes/{{FILE_NAME}}.json",
+			"block.json",
+			"BP/blocks/{{FILE_NAME}}.json",
 			{ "inject": ["FILE_NAME"] }
 		]
 	]

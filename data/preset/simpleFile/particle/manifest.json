@@ -1,0 +1,17 @@
+{
+	"name": "Particle",
+	"icon": "mdi-snowflake",
+	"description": "Creates a blank particle.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"particle.json",
+			"RP/particles/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

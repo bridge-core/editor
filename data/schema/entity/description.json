@@ -16,6 +16,7 @@
 			"type": "boolean"
 		},
 		"is_experimental": {
+			"description": "Whether the entity requires experimental gameplay.",
 			"type": "boolean"
 		},
 		"animations": {

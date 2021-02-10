@@ -1,6 +1,6 @@
 {
 	"name": "Client Animation",
-	"icon": "mdi-movie",
+	"icon": "mdi-movie-open-outline",
 	"description": "Creates a blank client animation.",
 	"category": "fileType.simpleFile",
 	"fields": [

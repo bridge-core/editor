@@ -1,0 +1,18 @@
+{
+	"name": "Texture Set",
+	"icon": "mdi-texture",
+	"description": "Creates a blank texture set.",
+	"category": "fileType.simpleFile",
+	"targetVersion": [">=", "1.16.100"],
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"textureSet.json",
+			"RP/textures/blocks/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

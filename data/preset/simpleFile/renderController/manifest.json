@@ -1,6 +1,6 @@
 {
-	"name": "Render Conroller",
-	"icon": "mdi-crop",
+	"name": "Render Controller",
+	"icon": "mdi-pentagon-outline",
 	"description": "Creates a blank render controller.",
 	"category": "fileType.simpleFile",
 	"fields": [
