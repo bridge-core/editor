@@ -1,6 +1,7 @@
 import { ActionManager } from './ActionManager'
 import { KeyBinding } from './KeyBinding'
 import { v4 as uuid } from 'uuid'
+import { EventDispatcher } from '../Common/Event/EventDispatcher'
 export interface IActionConfig {
 	icon: string
 	name: string
@@ -9,7 +10,7 @@ export interface IActionConfig {
 	onTrigger: () => Promise<unknown> | unknown
 }
 
-export class Action {
+export class Action extends EventDispatcher<void> {
 	id = uuid()
 	protected _keyBinding: KeyBinding | undefined
 
@@ -17,6 +18,8 @@ export class Action {
 		protected actionManager: ActionManager,
 		protected config: IActionConfig
 	) {
+		super()
+
 		if (config.keyBinding)
 			this.addKeyBinding(
 				KeyBinding.fromStrKeyCode(
@@ -52,6 +55,7 @@ export class Action {
 	}
 
 	async trigger() {
+		this.dispatch()
 		return await this.config.onTrigger()
 	}
 

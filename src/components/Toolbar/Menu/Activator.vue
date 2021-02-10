@@ -1,14 +1,20 @@
 <template>
-	<v-menu v-model="isVisible" min-width="260px" offset-y tile z-index="11">
+	<v-menu
+		v-model="item.isVisible"
+		min-width="260px"
+		offset-y
+		tile
+		z-index="11"
+	>
 		<template v-slot:activator="{ on }">
 			<MenuButton
 				v-on="on"
-				:displayIcon="displayIcon"
-				:displayName="displayName"
+				:displayIcon="item.icon"
+				:displayName="item.name"
 			/>
 		</template>
 
-		<MenuList v-if="isVisible" :elements="elements" />
+		<MenuList v-if="item.isVisible" :elements="item.state" />
 	</v-menu>
 </template>
 
@@ -23,25 +29,7 @@ export default {
 		MenuButton,
 	},
 	props: {
-		displayName: String,
-		displayIcon: String,
-		elements: Object,
-	},
-	data: () => ({
-		isVisible: false,
-	}),
-
-	mounted() {
-		this.$root.$on('bridge:closeAllAppMenus', this.closeMenu)
-	},
-	destroyed() {
-		this.$root.$off('bridge:closeAllAppMenus', this.closeMenu)
-	},
-
-	methods: {
-		closeMenu() {
-			this.isVisible = false
-		},
+		item: Object,
 	},
 }
 </script>

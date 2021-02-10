@@ -17,13 +17,7 @@
 					:displayIcon="item.icon"
 					@click="() => item.trigger()"
 				/>
-				<MenuActivator
-					v-else
-					:key="`activator.${key}`"
-					:displayName="item.name"
-					:displayIcon="item.icon"
-					:elements="item.state"
-				/>
+				<MenuActivator v-else :key="`activator.${key}`" :item="item" />
 				<v-divider
 					:key="`divider.${key}`"
 					v-if="i + 1 < Object.keys(toolbar).length"
