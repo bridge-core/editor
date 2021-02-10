@@ -25,9 +25,7 @@ export function createErrorNotification(error: Error): IDisposable {
 		},
 	})
 
-	return {
-		...notification,
-	}
+	return notification
 }
 
 window.addEventListener('error', event => {
