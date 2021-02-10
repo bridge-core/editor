@@ -4,7 +4,7 @@ export interface IAddLanguageOptions {
 	id: string
 	extensions: string[]
 	config: languages.LanguageConfiguration
-	tokenProvider: languages.IMonarchLanguage
+	tokenProvider: any
 }
 
 export function addLanguage({

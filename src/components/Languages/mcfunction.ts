@@ -126,5 +126,5 @@ addLanguage({
 	id: 'mcfunction',
 	extensions: ['mcfunction'],
 	config,
-	tokenProvider: <any>tokenProvider,
+	tokenProvider,
 })

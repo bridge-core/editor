@@ -1,1 +1,2 @@
 import './mcfunction'
+import './molang'
