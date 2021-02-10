@@ -25,6 +25,7 @@ export class TextTab extends Tab {
 
 	async onActivate() {
 		const app = await App.getApp()
+		this.editorInstance?.focus()
 
 		if (this.editorModel === undefined) {
 			const file = await app.fileSystem.readFile(this.path)
