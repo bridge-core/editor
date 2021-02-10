@@ -53,6 +53,7 @@
 											}
 										},
 										"on_entry": {
+											"description": "Events and commands to run when entering this state.",
 											"type": "array",
 											"items": {
 												"anyOf": [
@@ -66,6 +67,7 @@
 											}
 										},
 										"on_exit": {
+											"description": "Events and commands to run when exiting this state.",
 											"type": "array",
 											"items": {
 												"anyOf": [

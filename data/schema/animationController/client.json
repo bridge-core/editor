@@ -49,6 +49,20 @@
 												}
 											}
 										},
+										"on_entry": {
+											"description": "Molang scripts to execute when entering this state.",
+											"type": "array",
+											"items": {
+												"$ref": "../molang/embeddedBeta.json"
+											}
+										},
+										"on_exit": {
+											"description": "Molang scripts to execute when exiting this state.",
+											"type": "array",
+											"items": {
+												"$ref": "../molang/embeddedBeta.json"
+											}
+										},
 										"blend_transition": {
 											"anyOf": [
 												{
