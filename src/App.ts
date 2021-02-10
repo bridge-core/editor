@@ -1,5 +1,5 @@
 import '@/components/Notifications/Errors'
-import '@/components/Languages/index'
+import '@/components/Languages/main'
 
 import Vue from 'vue'
 import { EventSystem } from './components/Common/Event/EventSystem'
@@ -33,6 +33,7 @@ import { ExtensionLoader } from './components/Extensions/ExtensionLoader'
 import { Title } from './components/Project/Title'
 import { WindowResize } from './components/Common/WindowResize'
 import { InstallApp } from './components/App/Install'
+import { LanguageManager } from '@/components/Languages/main'
 
 export class App {
 	public static toolbar = new Toolbar()
@@ -58,6 +59,7 @@ export class App {
 	public readonly extensionLoader = new ExtensionLoader()
 	public readonly windowResize = new WindowResize()
 
+	protected languageManager = new LanguageManager()
 	protected installApp = new InstallApp()
 	protected title = new Title()
 	protected _windows: Windows

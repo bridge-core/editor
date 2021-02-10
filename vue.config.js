@@ -4,9 +4,9 @@ const WorkerPlugin = require('worker-plugin')
 module.exports = {
 	runtimeCompiler: true,
 	publicPath: process.env.NODE_ENV === 'production' ? '/editor/' : undefined,
-	transpileDependencies: ['vuetify'],
+	transpileDependencies: ['vuetify', 'molang'],
 	pwa: {
-		name: 'bridge',
+		name: 'bridge v2',
 		appleMobileWebAppCapable: true,
 		themeColor: '#1778D2',
 		manifestOptions: {
