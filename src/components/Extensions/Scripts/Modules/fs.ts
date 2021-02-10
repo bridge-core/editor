@@ -1,5 +1,5 @@
 import { App } from '@/App'
-import { FileSystem } from '@/components/FileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { IModuleConfig } from '../types'
 
 export const FSModule = ({}: IModuleConfig) => {

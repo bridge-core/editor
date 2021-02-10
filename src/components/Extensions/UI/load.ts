@@ -6,7 +6,7 @@ import { executeScript } from '../Scripts/loadScripts'
 import { createStyleSheet } from '../Styles/createStyle'
 import { parseComponent } from 'vue-template-compiler'
 import Vue from 'vue'
-import { FileSystem } from '@/components/FileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 // @ts-ignore
 import * as VuetifyComponents from 'vuetify/lib/components'
 

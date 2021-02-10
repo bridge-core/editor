@@ -3,7 +3,7 @@ import { Signal } from '@/components/Common/Event/Signal'
 import { compare } from 'compare-versions'
 import JSZip from 'jszip'
 import { dirname } from 'path'
-import { FileSystem } from '../FileSystem/Main'
+import { FileSystem } from '../FileSystem/FileSystem'
 
 export class DataLoader extends Signal<void> {
 	async setup(app: App) {

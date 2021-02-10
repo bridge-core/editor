@@ -2,7 +2,7 @@ import { App } from '@/App'
 import { Signal } from '@/components/Common/Event/Signal'
 import JSZip from 'jszip'
 import { dirname } from 'path'
-import { FileSystem } from '../FileSystem/Main'
+import { FileSystem } from '../FileSystem/FileSystem'
 import { createErrorNotification } from '../Notifications/Errors'
 import { Extension } from './Extension'
 

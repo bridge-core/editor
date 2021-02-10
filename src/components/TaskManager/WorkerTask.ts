@@ -1,4 +1,4 @@
-import { FileSystem } from '@/components/FileSystem/Main'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { EventDispatcher } from '@/components/Common/Event/EventDispatcher'
 
 class Progress<T, K> {

@@ -1,5 +1,5 @@
 import { App } from '@/App'
-import { FileSystem } from '../FileSystem/Main'
+import { FileSystem } from '../FileSystem/FileSystem'
 import { selectedProject } from './Loader'
 
 export type TProjectConfigKey =
