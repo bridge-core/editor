@@ -30,7 +30,7 @@ export class Compiler extends Signal<void> {
 		})
 
 		// Instaniate the worker TaskService
-		let service = this._services.get(`${mode}#${config}`)
+		let service = this._services.get(`${projectName}#${mode}.${config}`)
 		if (!service) {
 			service = await new TaskService(
 				await app.fileSystem.getDirectoryHandle(
@@ -43,7 +43,7 @@ export class Compiler extends Signal<void> {
 					plugins: Object.fromEntries(this.compilerPlugins.entries()),
 				}
 			)
-			this._services.set(`${mode}#${config}`, service)
+			this._services.set(`${projectName}#${mode}.${config}`, service)
 		} else {
 			await service.updatePlugins(
 				Object.fromEntries(this.compilerPlugins.entries())
@@ -82,8 +82,9 @@ export class Compiler extends Signal<void> {
 		}
 	}
 
-	getService(mode: 'dev' | 'build', config: string) {
-		return this._services.get(`${mode}#${config}`)
+	async getService(mode: 'dev' | 'build', config: string) {
+		const app = await App.getApp()
+		return this._services.get(`${app.selectedProject}#${mode}.${config}`)
 	}
 
 	async openWindow() {
@@ -114,7 +115,7 @@ export class Compiler extends Signal<void> {
 	}
 
 	async updateFile(mode: 'dev' | 'build', config: string, filePath: string) {
-		const service = this.getService(mode, config)
+		const service = await this.getService(mode, config)
 		if (!service) throw new Error(`Undefined service: "${mode}#${config}"`)
 		await service.updatePlugins(
 			Object.fromEntries(this.compilerPlugins.entries())

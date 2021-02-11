@@ -18,9 +18,11 @@ export class PersistentQueue<T> extends Signal<Queue<T>> {
 
 	async setup() {
 		await this.app.fileSystem.fired
-		const data = await this.app.fileSystem
-			.readJSON(this.savePath)
-			.catch(() => [])
+
+		let data = []
+		try {
+			data = await this.app.fileSystem.readJSON(this.savePath)
+		} catch {}
 
 		data.forEach((e: T) => this.queue.add(e))
 		this.dispatch(this.queue)
@@ -34,6 +36,7 @@ export class PersistentQueue<T> extends Signal<Queue<T>> {
 		await this.fired
 
 		this.queue.add(e, this.isEquals.bind(this))
+
 		await this.app.fileSystem.mkdir(dirname(this.savePath), {
 			recursive: true,
 		})
