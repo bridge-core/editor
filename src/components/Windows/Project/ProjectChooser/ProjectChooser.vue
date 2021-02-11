@@ -27,7 +27,7 @@
 		<template #default>
 			<div class="d-flex mb-4">
 				<img
-					class="pr-4"
+					class="pr-4 project-logo"
 					height="64"
 					:src="sidebar.currentState.imgSrc"
 				/>
@@ -127,8 +127,8 @@ export default {
 }
 </script>
 
-<style>
-img {
+<style scoped>
+.project-logo {
 	image-rendering: pixelated;
 }
 </style>

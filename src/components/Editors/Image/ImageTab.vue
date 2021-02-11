@@ -3,11 +3,7 @@
 		class="d-flex align-center justify-center"
 		style="height:calc(100% - 48px); width: 100%;"
 	>
-		<img
-			:src="tab.dataUrl"
-			:alt="tab.path"
-			style="height:calc(80% - 48px);"
-		/>
+		<img :src="tab.dataUrl" :alt="tab.path" class="img-preview" />
 	</div>
 </template>
 
@@ -20,4 +16,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.img-preview {
+	height: calc(80% - 48px);
+	image-rendering: pixelated;
+}
+</style>
