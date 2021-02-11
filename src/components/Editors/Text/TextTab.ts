@@ -45,11 +45,9 @@ export class TextTab extends Tab {
 			app.windowResize.on(() => this.editorInstance?.layout())
 		)
 		this.disposables.push(
-			this.editorModel?.onDidChangeContent(
-				debounce(event => {
-					this.isUnsaved = true
-				}, 500)
-			)
+			this.editorModel?.onDidChangeContent(event => {
+				this.isUnsaved = true
+			})
 		)
 	}
 	onDeactivate() {
