@@ -13,8 +13,8 @@ export interface IControl<T> {
 }
 
 export abstract class Control<T> {
-	readonly component: Vue.Component
-	readonly config: IControl<T>
+	readonly component!: Vue.Component
+	readonly config!: IControl<T>
 
 	abstract matches(filter: string): void
 
@@ -23,8 +23,8 @@ export abstract class Control<T> {
 		control: IControl<T>,
 		protected state = settingsState
 	) {
-		this.config = control
-		this.component = component
+		Vue.set(this, 'config', control)
+		Vue.set(this, 'component', component)
 
 		if (this.value === undefined && control.default !== undefined)
 			this.value = control.default
