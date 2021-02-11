@@ -23,13 +23,12 @@
 					v-ripple
 					@click="() => action.trigger()"
 				>
-					<a>
-						<v-icon color="accent" medium>{{ action.icon }}</v-icon>
-						{{ t(action.name) }}
-					</a>
+					<v-icon color="accent" medium>{{ action.icon }}</v-icon>
+					<span color="text--primary">{{ t(action.name) }}</span>
+
 					<v-spacer></v-spacer>
 
-					<span v-if="action.keyBinding">
+					<span class="text--secondary" v-if="action.keyBinding">
 						{{ action.keyBinding.toStrKeyCode() }}
 					</span>
 				</li>
@@ -48,37 +47,48 @@
 					v-ripple
 					@click="openFile(file.path)"
 				>
-					<a>
-						<v-icon :color="file.color || 'error'" medium>
-							{{ file.icon }}
-						</v-icon>
-						{{ file.name }}
-					</a>
+					<v-icon :color="file.color || 'error'" medium>
+						{{ file.icon }}
+					</v-icon>
+					<span class="primary-text">{{ file.name }}</span>
 				</li>
 			</v-col>
 
 			<v-col
 				v-if="$vuetify.breakpoint.mdAndUp && projects.length > 0"
 				tag="ul"
+				:class="{
+					disabled: !maySwitchProjects,
+				}"
 			>
 				<p>{{ t('welcome.recentProjects') }}</p>
-				<v-divider class="mb-2" />
+
+				<v-divider v-if="maySwitchProjects" class="mb-2" />
+				<v-progress-linear v-else class="mb-1" rounded indeterminate />
+
 				<li
 					v-for="project in projects"
 					:key="project.name"
-					class="d-flex rounded-lg pa-1 clickable"
-					v-ripple
-					@click="selectProject(project.path)"
+					:class="{
+						'd-flex rounded-lg pa-1': true,
+						clickable: maySwitchProjects,
+					}"
+					v-ripple="maySwitchProjects"
+					@click="
+						maySwitchProjects
+							? selectProject(project.path)
+							: undefined
+					"
 				>
-					<a class="d-flex align-center">
+					<div class="d-flex align-center">
 						<img
 							v-if="project.imgSrc"
 							:src="project.imgSrc"
 							:alt="`${project.name} Logo`"
 							class="mr-1 pack-icon"
 						/>
-						{{ project.path }}
-					</a>
+						<span class="primary-text">{{ project.path }}</span>
+					</div>
 				</li>
 			</v-col>
 		</v-row>
@@ -90,10 +100,12 @@ import { TranslationMixin } from '@/utils/locales'
 import ActionViewer from '@/components/Actions/ActionViewer'
 import { App } from '@/App'
 import { ProjectMixin } from '@/components/Mixins/Project'
+import { CompilerMixin } from '../Mixins/Tasks/Compiler'
+import { PackIndexerMixin } from '../Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'welcome-screen',
-	mixins: [TranslationMixin, ProjectMixin],
+	mixins: [TranslationMixin, ProjectMixin, CompilerMixin, PackIndexerMixin],
 	components: {
 		ActionViewer,
 	},
@@ -125,6 +137,9 @@ export default {
 			return this.projectManager.recentProjects.elements.filter(
 				({ path }) => path !== this.projectManager.selectedProject
 			)
+		},
+		maySwitchProjects() {
+			return this.isPackIndexerReady && this.isCompilerReady
 		},
 	},
 	methods: {
@@ -160,5 +175,11 @@ p {
 .pack-icon {
 	height: 24px;
 	image-rendering: pixelated;
+}
+.primary-text {
+	/* color: var(--v-primary-base); */
+}
+.disabled {
+	opacity: 0.2;
 }
 </style>
