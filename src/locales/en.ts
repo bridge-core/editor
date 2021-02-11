@@ -47,75 +47,102 @@ export default {
 		unknown: 'Other',
 		simpleFile: 'Simple Files',
 	},
+	// Actions
+	actions: {
+		newFile: {
+			name: 'New File',
+			description: 'Create a new Add-On feature',
+		},
+		openFile: {
+			name: 'Open File',
+			description: 'Search and open a file from the current project',
+		},
+		saveFile: {
+			name: 'Save File',
+			description: 'Save the currently opened file',
+		},
+		closeFile: {
+			name: 'Close File',
+			description: 'Close the currently opened file',
+		},
+		settings: {
+			name: 'Settings',
+			description: "Open bridge.'s app settings",
+		},
+		extensions: {
+			name: 'Extensions',
+			description: 'Manage your installed extensions',
+		},
+		copy: {
+			name: 'Copy',
+			description: 'Copy selected text to the clipboard',
+		},
+		cut: {
+			name: 'Cut',
+			description: 
+				'Copy selected text to the clipboard and remove it from the original context',
+		},
+		paste: {
+			name: 'Paste',
+			description: 'Paste clipboard content',
+		},
+		docs: {
+			name: 'Documentation',
+			description: 'Opens the Minecraft Add-On documentation'
+		},
+		releases: {
+			name: 'Releases',
+			description: 'View the latest bridge. releases',
+		},
+		bugReports: {
+			name: 'Bug Reports',
+			description: 'Report an issue with bridge.',
+		},
+		pluginAPI: {
+			name: 'Plugin API',
+			description: "Read more about bridge.'s plugin API",
+		},
+		gettingStarted: {
+			name: 'Getting Started',
+			description: 'Read our guide on how to get started with bridge.',
+		},
+		faq: {
+			name: 'FAQ',
+			description: 'Read through frequently asked questions about developing Add-Ons with bridge.',
+		},
+		reloadAutoCompletions: {
+			name: 'Reload Auto-Completions',
+			description: 'Reloads all auto-completion data',
+		},
+		pluginInstallLocation: {
+			global: {
+				name: 'Install Globally',
+				description:
+					'Global extensions are accessible in all of your projects',
+			},
+			local: {
+				name: 'Install Locally',
+				description:
+					'Local extensions are only accessible inside of the projects you add them to',
+			},
+		},
+	},
 	// Toolbar Categories
 	toolbar: {
-		installApp: 'Install app',
 		file: {
 			name: 'File',
-			newFile: 'New File',
-			openFile: 'Open File',
-			import: {
-				name: 'Import',
-				importOBJ: 'Import OBJ Model',
-			},
-			saveFile: 'Save File',
-			saveAs: 'Save As',
-			saveAll: 'Save All',
-			closeFile: 'Close File',
-			clearAllNotifications: 'Clear all notifications',
 			preferences: {
 				name: 'Preferences',
-				settings: 'Settings',
-				extensions: 'Extensions',
 			},
 		},
 		edit: {
 			name: 'Edit',
-			selection: {
-				name: 'Selection',
-				unselect: 'Unselect',
-				selectParent: 'Select Parent',
-				selectNext: 'Select Next',
-				selectPrevious: 'Select Previous',
-			},
-			jsonNodes: {
-				name: 'JSON Nodes',
-				toggleOpen: 'Toggle Open',
-				toggleOpenChildren: 'Toggle Open Children',
-				moveDown: 'Move Down',
-				moveUp: 'Move Up',
-				commentUncomment: 'Comment/Uncomment',
-			},
-			delete: 'Delete',
-			undo: 'Undo',
-			redo: 'Redo',
-			copy: 'Copy',
-			cut: 'Cut',
-			paste: 'Paste',
-			alternativePaste: 'Alternative Paste',
 		},
 		tools: {
 			name: 'Tools',
-			docs: 'Documentation',
-			terminal: 'Terminal',
-			presets: 'Presets',
-			snippets: 'Snippets',
-			goToFile: 'Go to File',
 		},
 		help: {
 			name: 'Help',
-			about: 'About',
-			releases: 'Releases',
-			bugReports: 'Bug Reports',
-			pluginAPI: 'Plugin API',
-			gettingStarted: 'Getting Started',
-			faq: 'FAQ',
-		},
-		dev: {
-			name: 'Development',
-			reloadBrowserWindow: 'Reload Browser Window',
-			reloadEditorData: 'Reload Editor Data',
-			developerTools: 'Developer Tools',
 		},
 	},
 	// Sidebar tabs
@@ -141,6 +168,9 @@ export default {
 			},
 			gettingStarted: {
 				message: 'Getting Started',
+			},
+			installApp: {
+				name: 'Install app',
 			},
 		},
 	},
@@ -189,6 +219,11 @@ export default {
 			title: 'Create Preset',
 			searchPresets: 'Search presets...',
 		},
+		deleteProject: {
+			confirm: 'Delete',
+			cancel: 'Cancel',
+			description: 'Are you sure you want to delete this project?'
+		},
 		discord: {
 			title: 'Discord',
 			content: 'Join the official bridge. Discord server!',
@@ -218,10 +253,6 @@ export default {
 			title: 'Project Folder',
 			content:
 				'bridge. needs access to its project folder in order to work correctly.',
-		},
-		managePlugin: {
-			name: 'Manage Plugin',
-			done: 'Done',
 		},
 		extensionStore: {
 			title: 'Extension Store',
@@ -255,20 +286,6 @@ export default {
 				title: 'Compiling Project',
 				description:
 					'bridge. is compiling your project to make it ready for import into Minecraft.',
-			},
-		},
-	},
-	actions: {
-		pluginInstallLocation: {
-			global: {
-				name: 'Install Globally',
-				description:
-					'Global extensions are accessible in all of your projects',
-			},
-			local: {
-				name: 'Install Locally',
-				description:
-					'Local extensions are only accessible inside of the projects you add them to',
 			},
 		},
 	},

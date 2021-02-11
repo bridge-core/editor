@@ -5,7 +5,7 @@ export class InstallApp extends Notification {
 
 	constructor() {
 		super({
-			message: 'Install App',
+			message: 'sidebar.notifications.installApp.message',
 			color: 'primary',
 			icon: 'mdi-download',
 			textColor: 'white',

@@ -7,8 +7,8 @@ export function setupEditCategory(app: App) {
 	edit.addItem(
 		app.actionManager.create({
 			icon: 'mdi-content-copy',
-			name: 'toolbar.edit.copy',
-			description: 'Copy selected text to the clipboard',
+			name: 'actions.copy.name',
+			description: 'actions.copy.description',
 			keyBinding: 'Ctrl + C',
 			onTrigger: () => app.tabSystem?.selectedTab?.copy(),
 		})
@@ -16,9 +16,8 @@ export function setupEditCategory(app: App) {
 	edit.addItem(
 		app.actionManager.create({
 			icon: 'mdi-content-cut',
-			name: 'toolbar.edit.cut',
-			description:
-				'Copy selected text to the clipboard and remove it from the original context',
+			name: 'actions.cut.name',
+			description: 'actions.cut.description',
 			keyBinding: 'Ctrl + X',
 			onTrigger: () => app.tabSystem?.selectedTab?.cut(),
 		})
@@ -26,8 +25,8 @@ export function setupEditCategory(app: App) {
 	edit.addItem(
 		app.actionManager.create({
 			icon: 'mdi-content-paste',
-			name: 'toolbar.edit.paste',
-			description: 'Paste clipboard content',
+			name: 'actions.paste.name',
+			description: 'actions.paste.description',
 			keyBinding: 'Ctrl + V',
 			onTrigger: () => app.tabSystem?.selectedTab?.paste(),
 		})

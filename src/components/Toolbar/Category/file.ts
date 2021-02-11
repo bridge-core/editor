@@ -8,8 +8,8 @@ export function setupFileCategory(app: App) {
 		app.actionManager.create({
 			id: 'bridge.action.newFile',
 			icon: 'mdi-file-plus-outline',
-			name: 'toolbar.file.newFile',
-			description: 'Create a new Add-On feature',
+			name: 'actions.newFile.name',
+			description: 'actions.newFile.description',
 			keyBinding: 'Ctrl + N',
 			onTrigger: () => app.windows.createPreset.open(),
 		})
@@ -18,8 +18,8 @@ export function setupFileCategory(app: App) {
 		app.actionManager.create({
 			id: 'bridge.action.openFile',
 			icon: 'mdi-file-upload-outline',
-			name: 'toolbar.file.openFile',
-			description: 'Search and open a file from the current project',
+			name: 'actions.openFile.name',
+			description: 'actions.openFile.description',
 			keyBinding: 'Ctrl + O',
 			onTrigger: () => app.windows.filePicker.open(),
 		})
@@ -27,8 +27,8 @@ export function setupFileCategory(app: App) {
 	file.addItem(
 		app.actionManager.create({
 			icon: 'mdi-file-download-outline',
-			name: 'toolbar.file.saveFile',
-			description: 'Save the currently opened file',
+			name: 'actions.saveFile.name',
+			description: 'actions.saveFile.description',
 			keyBinding: 'Ctrl + S',
 			onTrigger: () => App.ready.once(app => app.tabSystem?.save()),
 		})
@@ -36,8 +36,8 @@ export function setupFileCategory(app: App) {
 	file.addItem(
 		app.actionManager.create({
 			icon: 'mdi-file-cancel-outline',
-			name: 'toolbar.file.closeFile',
-			description: 'Close the currently opened file',
+			name: 'actions.closeFile.name',
+			description: 'actions.closeFile.description',
 			keyBinding: 'Ctrl + W',
 			onTrigger: () => App.ready.once(app => app.tabSystem?.close()),
 		})
@@ -51,8 +51,8 @@ export function setupFileCategory(app: App) {
 				app.actionManager.create({
 					id: 'bridge.action.openSettings',
 					icon: 'mdi-cog-outline',
-					name: 'toolbar.file.preferences.settings',
-					description: "Open bridge.'s app settings",
+					name: 'actions.settings.name',
+					description: "actions.settings.description",
 					keyBinding: 'Ctrl + ,',
 					onTrigger: () => app.windows.settings.open(),
 				})
@@ -60,8 +60,8 @@ export function setupFileCategory(app: App) {
 			.addItem(
 				app.actionManager.create({
 					icon: 'mdi-puzzle-outline',
-					name: 'toolbar.file.preferences.extensions',
-					description: 'Manage your installed extensions',
+					name: 'actions.extensions.name',
+					description: 'actions.extensions.description',
 					onTrigger: () => app.windows.extensionStore.open(),
 				})
 			)

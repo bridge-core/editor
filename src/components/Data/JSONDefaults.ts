@@ -181,8 +181,8 @@ export namespace JSONDefaults {
 
 			app.actionManager.create({
 				icon: 'mdi-reload',
-				name: 'Reload Auto-Completions',
-				description: 'Reloads all auto-completion data',
+				name: 'actions.reloadAutoCompletions.name',
+				description: 'actions.reloadAutoCompletions.description',
 				keyBinding: 'Ctrl + Shift + R',
 				onTrigger: () => reload(),
 			})

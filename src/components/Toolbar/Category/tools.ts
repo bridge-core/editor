@@ -10,8 +10,8 @@ export function setupToolsCategory(app: App) {
 	tools.addItem(
 		app.actionManager.create({
 			icon: 'mdi-book-open-page-variant',
-			name: 'toolbar.tools.docs',
-			description: 'Opens the Minecraft Add-On documentation',
+			name: 'actions.docs.name',
+			description: 'actions.docs.description',
 			onTrigger: () =>
 				App.createNativeWindow('https://bedrock.dev', 'DocWindow'),
 		})

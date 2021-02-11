@@ -5,9 +5,9 @@ export function setupHelpCategory(app: App) {
 	const help = new ToolbarCategory('mdi-help', 'toolbar.help.name')
 	help.addItem(
 		app.actionManager.create({
-			name: 'toolbar.help.releases',
+			name: 'actions.releases.name',
 			icon: 'mdi-alert-decagram',
-			description: 'View the latest bridge. releases',
+			description: 'actions.releases.description',
 			onTrigger: () =>
 				window.open(
 					'https://github.com/solvedDev/bridge./releases',
@@ -17,9 +17,9 @@ export function setupHelpCategory(app: App) {
 	)
 	help.addItem(
 		app.actionManager.create({
-			name: 'toolbar.help.bugReports',
+			name: 'actions.bugReports.name',
 			icon: 'mdi-bug-outline',
-			description: 'Report an issue with bridge.',
+			description: 'actions.bugReports.description',
 			onTrigger: () =>
 				window.open(
 					'https://github.com/solvedDev/bridge./issues/new/choose',
@@ -29,9 +29,9 @@ export function setupHelpCategory(app: App) {
 	)
 	help.addItem(
 		app.actionManager.create({
-			name: 'toolbar.help.pluginAPI',
+			name: 'actions.pluginAPI.name',
 			icon: 'mdi-puzzle-outline',
-			description: "Read more about bridge.'s plugin API",
+			description: 'actions.pluginAPI.description',
 			onTrigger: () =>
 				App.createNativeWindow(
 					'https://bridge-core.github.io/plugin-docs/',
@@ -41,9 +41,9 @@ export function setupHelpCategory(app: App) {
 	)
 	help.addItem(
 		app.actionManager.create({
-			name: 'toolbar.help.gettingStarted',
+			name: 'actions.gettingStarted.name',
 			icon: 'mdi-help-circle-outline',
-			description: 'Read our guide on how to get started with bridge.',
+			description: 'actions.gettingStarted.description',
 			onTrigger: () =>
 				App.createNativeWindow(
 					'https://bridge-core.github.io/editor-docs/getting-started/',
@@ -53,10 +53,10 @@ export function setupHelpCategory(app: App) {
 	)
 	help.addItem(
 		app.actionManager.create({
-			name: 'toolbar.help.faq',
+			name: 'actions.faq.name',
 			icon: 'mdi-frequently-asked-questions',
 			description:
-				'Read through frequently asked questions about developing Add-Ons with bridge.',
+				'actions.faq.description',
 			onTrigger: () =>
 				App.createNativeWindow(
 					'https://bridge-core.github.io/editor-docs/faq/',
