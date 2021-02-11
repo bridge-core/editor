@@ -47,7 +47,7 @@
 		],
 		[
 			"renderController.json",
-			"RP/render_controllers/{{IDENTFIER}}.json",
+			"RP/render_controllers/{{IDENTIFIER}}.json",
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
