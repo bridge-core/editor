@@ -146,15 +146,11 @@ export default {
 	},
 	// Welcome Screen
 	welcome: {
-		title: 'bridge.',
+		title: 'Welcome to bridge.',
 		subtitle: 'Creating Minecraft addons has never been more convenient!',
-		syntaxHighlighting: 'Syntax Highlighting',
-		richAutoCompletions: 'Rich auto-completions',
-		projectManagement: 'Easy project management',
-		customSyntax: 'Custom addon syntax',
-		customComponents: 'Custom components',
-		customCommands: 'Custom commands',
-		plugins: 'Customizable through plugins',
+		quickActions: 'Quick Actions',
+		recentFiles: 'Recent Files',
+		recentProjects: 'Recent Projects',
 	},
 	// Windows
 	windows: {

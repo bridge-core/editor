@@ -1,10 +1,10 @@
 import { App } from '@/App'
-import { PersistentQueue } from '../Common/PersistentQueue'
 import { TabSystem } from '../TabSystem/TabSystem'
 import Vue from 'vue'
 import { IPackType, PackType } from '../Data/PackType'
 import { TProjectConfig } from './ProjectConfig'
 import { loadAsDataURL } from '@/utils/loadAsDataUrl'
+import { RecentFiles } from './RecentFiles'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -14,8 +14,8 @@ export interface IProjectData extends TProjectConfig {
 }
 
 export class Project {
-	public readonly recentFiles: PersistentQueue
-	public readonly tabSystem = Vue.observable(new TabSystem(this))
+	public readonly recentFiles!: RecentFiles
+	public readonly tabSystem = new TabSystem(this)
 	protected _projectData!: IProjectData
 
 	get projectData() {
@@ -26,9 +26,13 @@ export class Project {
 	}
 
 	constructor(protected app: App, protected _name: string) {
-		this.recentFiles = new PersistentQueue(
-			app,
-			`projects/${this.name}/bridge/recentFiles.json`
+		Vue.set(
+			this,
+			'recentFiles',
+			new RecentFiles(
+				app,
+				`projects/${this.name}/bridge/recentFiles.json`
+			)
 		)
 	}
 

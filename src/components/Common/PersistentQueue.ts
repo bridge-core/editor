@@ -2,26 +2,45 @@ import { App } from '@/App'
 import { Signal } from './Event/Signal'
 import { Queue } from './Queue'
 import Vue from 'vue'
+import { dirname } from 'path'
 
-export class PersistentQueue extends Signal<Queue<string>> {
-	protected queue = Vue.observable(new Queue<string>(3))
-	constructor(protected app: App, protected savePath: string) {
+export class PersistentQueue<T> extends Signal<Queue<T>> {
+	protected queue!: Queue<T>
+	constructor(
+		protected app: App,
+		maxSize: number,
+		protected savePath: string
+	) {
 		super()
+		Vue.set(this, 'queue', new Queue<T>(maxSize))
 		this.setup()
 	}
 
 	async setup() {
-		const recentFiles: string[] = await this.app.fileSystem
+		await this.app.fileSystem.fired
+		const data = await this.app.fileSystem
 			.readJSON(this.savePath)
 			.catch(() => [])
-		recentFiles.forEach(recentFile => this.queue.add(recentFile))
+
+		data.forEach((e: T) => this.queue.add(e))
 		this.dispatch(this.queue)
 	}
 
-	async add(filePath: string) {
+	protected isEquals(e1: T, e2: T) {
+		return e1 === e2
+	}
+
+	async add(e: T) {
 		await this.fired
 
-		this.queue.add(filePath)
-		await this.app.fileSystem.writeJSON(this.savePath, this.queue.toJSON())
+		this.queue.add(e, this.isEquals.bind(this))
+		await this.app.fileSystem.mkdir(dirname(this.savePath), {
+			recursive: true,
+		})
+		await this.app.fileSystem.writeFile(this.savePath, this.queue.toJSON())
+	}
+
+	get elements() {
+		return this.queue.elements
 	}
 }

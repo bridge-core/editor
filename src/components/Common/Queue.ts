@@ -7,11 +7,24 @@ export class Queue<T> {
 		for (const e of iterable ?? []) this.add(e)
 	}
 
-	add(element: T) {
-		if (this.array.length >= this.maxSize) this.array.unshift()
-		this.array.push(element)
+	add(
+		element: T,
+		isEquals: (e1: T, e2: T) => boolean = this.isEquals.bind(this)
+	) {
+		const index = this.array.findIndex(e => isEquals(e, element))
+		if (index > -1) {
+			this.array.splice(index, 1)
+			this.array.unshift(element)
+			return this
+		}
+
+		if (this.array.length >= this.maxSize) this.array.pop()
+		this.array.unshift(element)
 
 		return this
+	}
+	protected isEquals(e1: T, e2: T) {
+		return e1 === e2
 	}
 
 	toJSON() {
@@ -26,5 +39,8 @@ export class Queue<T> {
 	}
 	get elementCount() {
 		return this.array.length
+	}
+	get elements() {
+		return [...this.array]
 	}
 }

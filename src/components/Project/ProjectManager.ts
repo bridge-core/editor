@@ -1,16 +1,24 @@
 import { App } from '@/App'
 import { get, set } from 'idb-keyval'
 import Vue from 'vue'
-import { Signal } from '../Common/Event/Signal'
+import { Signal } from '@/components/Common/Event/Signal'
 import { Project } from './Project'
+import { RecentProjects } from './RecentProjects'
 
 export class ProjectManager extends Signal<void> {
+	public readonly recentProjects!: RecentProjects
 	public readonly state: Record<string, Project> = {}
 	protected _selectedProject?: string = undefined
 
 	constructor(protected app: App) {
 		super()
 		this.loadProjects()
+
+		Vue.set(
+			this,
+			'recentProjects',
+			new RecentProjects(this.app, `data/recentProjects.json`)
+		)
 	}
 
 	get currentProject() {
@@ -28,6 +36,7 @@ export class ProjectManager extends Signal<void> {
 	async addProject(projectName: string, select = true) {
 		const project = new Project(this.app, projectName)
 		await project.loadProject()
+
 		Vue.set(this.state, projectName, project)
 
 		if (select) await this.selectProject(projectName)
@@ -57,6 +66,8 @@ export class ProjectManager extends Signal<void> {
 		this._selectedProject = projectName
 		App.eventSystem.dispatch('disableValidation', null)
 
+		if (this.currentProject)
+			await this.recentProjects.add(this.currentProject.projectData)
 		await set('selectedProject', projectName)
 		await this.app.switchProject(projectName)
 		this.currentProject?.tabSystem.activate()

@@ -86,7 +86,12 @@ export class TabSystem {
 			'default.json',
 			tab.getPath().replace(`projects/${this.project.name}/`, '')
 		)
-		await this.project.recentFiles.add(tab.getPath())
+		await this.project.recentFiles.add({
+			path: tab.getPath(),
+			name: tab.name,
+			color: tab.iconColor,
+			icon: tab.icon,
+		})
 
 		// Only refresh auto-completion content if tab is active
 		if (tab === this.selectedTab)

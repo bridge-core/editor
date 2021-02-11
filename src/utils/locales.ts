@@ -3,7 +3,7 @@ import Vue from 'vue'
 
 export function translate(translationKey?: string) {
 	const orginalKey = translationKey
-	if (translationKey && !translationKey.startsWith('$vuetify.'))
+	if (!translationKey?.startsWith('$vuetify.'))
 		translationKey = `$vuetify.${translationKey}`
 
 	const translated = (vue as any).$vuetify.lang.t(translationKey)
@@ -15,7 +15,7 @@ export const TranslationMixin = {
 	methods: {
 		t(translationKey?: string) {
 			const orginalKey = translationKey
-			if (translationKey && !translationKey.startsWith('$vuetify.'))
+			if (!translationKey?.startsWith('$vuetify.'))
 				translationKey = `$vuetify.${translationKey}`
 
 			const translated = (this as any).$vuetify.lang.t(translationKey)

@@ -23,7 +23,7 @@ export abstract class Tab {
 
 	get name() {
 		const pathArr = this.path.split(/\\|\//g)
-		return pathArr.pop()
+		return pathArr.pop()!
 	}
 	getPath() {
 		return this.path
