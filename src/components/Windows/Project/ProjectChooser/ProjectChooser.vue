@@ -82,7 +82,6 @@ import ToolbarButton from '@/components/Windows/Layout/Toolbar/Button.vue'
 
 import { App } from '@/App'
 import { TranslationMixin } from '@/utils/locales'
-import { selectProject } from '@/components/Project/Loader'
 import { createConfirmWindow } from '../../Common/CommonDefinitions'
 import { PackIndexerMixin } from '@/components/Mixins/Tasks/PackIndexer'
 import { CompilerMixin } from '@/components/Mixins/Tasks/Compiler'
@@ -102,8 +101,9 @@ export default {
 		onClose() {
 			this.currentWindow.close()
 		},
-		onSelectProject() {
-			selectProject(this.sidebar.selected)
+		async onSelectProject() {
+			const app = await App.getApp()
+			app.projectManager.selectProject(this.sidebar.selected)
 			this.currentWindow.close()
 		},
 		createProject() {

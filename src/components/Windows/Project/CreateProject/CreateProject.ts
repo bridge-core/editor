@@ -1,5 +1,4 @@
 import { App } from '@/App'
-import { selectProject } from '@/components/Project/Loader'
 import { BaseWindow } from '@/components/Windows/BaseWindow'
 import CreateProjectComponent from './CreateProject.vue'
 
@@ -72,7 +71,7 @@ export class CreateProjectWindow extends BaseWindow {
 						this.projectIcon
 					)
 
-				selectProject(this.projectName!)
+				await app.projectManager.addProject(this.projectName)
 				resolve()
 			})
 		)

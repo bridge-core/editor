@@ -14,14 +14,14 @@ export class UnsavedFileWindow extends BaseWindow {
 		this.close()
 
 		const app = await App.getApp()
-		await app.tabSystem.close(this.tab, false)
+		await app.tabSystem?.close(this.tab, false)
 	}
 	async save() {
 		this.close()
 
 		const app = await App.getApp()
-		await app.tabSystem.save(this.tab)
-		await app.tabSystem.close(this.tab, false)
+		await app.tabSystem?.save(this.tab)
+		await app.tabSystem?.close(this.tab, false)
 	}
 	async cancel() {
 		this.close()

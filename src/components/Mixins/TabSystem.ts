@@ -1,10 +1,21 @@
+// @ts-nocheck
 import { App } from '@/App'
 
 export const TabSystemMixin = {
-	data: () => ({
-		tabSystem: null,
-	}),
-	mounted() {
-		App.ready.once(app => ((this as any).tabSystem = app.tabSystem))
+	data: () => ({ app: null }),
+	async mounted() {
+		const app = await App.getApp()
+		await app.projectManager.fired
+		this.app = app
+	},
+	computed: {
+		project() {},
+		tabSystem() {
+			if (!this.app) return
+			const projectManager = this.app.projectManager
+
+			return projectManager.state[projectManager._selectedProject]
+				.tabSystem
+		},
 	},
 }

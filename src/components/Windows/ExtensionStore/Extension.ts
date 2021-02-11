@@ -1,7 +1,6 @@
 import { App } from '@/App'
 import { Extension } from '@/components/Extensions/Extension'
 import { IExtensionManifest } from '@/components/Extensions/ExtensionLoader'
-import { selectedProject } from '@/components/Project/Loader'
 import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoice'
 import { ExtensionStoreWindow } from './ExtensionStore'
 import { ExtensionTag } from './ExtensionTag'
@@ -92,7 +91,7 @@ export class ExtensionViewer {
 		).then(response => response.arrayBuffer())
 
 		const basePath = !isGlobalInstall
-			? `projects/${selectedProject}/bridge/plugins`
+			? `projects/${app.selectedProject}/bridge/plugins`
 			: 'plugins'
 		const zipPath = basePath + `/${this.name.replace(/\s+/g, '')}.zip`
 		await app.fileSystem.writeFile(zipPath, zip)

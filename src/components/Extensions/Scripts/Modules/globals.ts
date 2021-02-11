@@ -1,7 +1,6 @@
 import { IModuleConfig } from '../types'
 import { join } from 'path'
 import { App } from '@/App'
-import { selectedProject } from '@/components/Project/Loader'
 
 let cachedGlobals: Record<string, unknown> | undefined = undefined
 
@@ -15,7 +14,7 @@ export const GlobalsModule = async ({}: IModuleConfig) => {
 			return new Promise<Record<string, unknown>>(resolve => {
 				App.ready.once(async app => {
 					cachedGlobals = await app.fileSystem.readJSON(
-						`projects/${selectedProject}/globals.json`
+						`projects/${app.selectedProject}/globals.json`
 					)
 					resolve(cachedGlobals!)
 				})

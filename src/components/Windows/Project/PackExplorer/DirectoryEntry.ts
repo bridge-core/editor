@@ -5,7 +5,6 @@ import Vue from 'vue'
 import { App } from '@/App'
 import { PackType } from '@/components/Data/PackType'
 import { FileType } from '@/components/Data/FileType'
-import { selectedProject } from '@/components/Project/Loader'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
@@ -82,7 +81,9 @@ export class DirectoryEntry {
 		return FileType.get(this.getPath())?.icon
 	}
 	getFullPath() {
-		return ['projects', selectedProject].concat(this.path).join('/')
+		return ['projects', App.instance.selectedProject]
+			.concat(this.path)
+			.join('/')
 	}
 	getPath() {
 		return this.path.join('/')
@@ -100,7 +101,7 @@ export class DirectoryEntry {
 	 */
 	open() {
 		if (this.isFile) {
-			App.ready.once(app => app.tabSystem.open(this.getFullPath()))
+			App.ready.once(app => app.tabSystem?.open(this.getFullPath()))
 			return true
 		} else {
 			this.isFolderOpen = !this.isFolderOpen

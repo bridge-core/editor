@@ -30,7 +30,7 @@ export function setupFileCategory(app: App) {
 			name: 'toolbar.file.saveFile',
 			description: 'Save the currently opened file',
 			keyBinding: 'Ctrl + S',
-			onTrigger: () => App.ready.once(app => app.tabSystem.save()),
+			onTrigger: () => App.ready.once(app => app.tabSystem?.save()),
 		})
 	)
 	file.addItem(
@@ -39,7 +39,7 @@ export function setupFileCategory(app: App) {
 			name: 'toolbar.file.closeFile',
 			description: 'Close the currently opened file',
 			keyBinding: 'Ctrl + W',
-			onTrigger: () => App.ready.once(app => app.tabSystem.close()),
+			onTrigger: () => App.ready.once(app => app.tabSystem?.close()),
 		})
 	)
 	file.addItem(

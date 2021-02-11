@@ -3,7 +3,6 @@ import { TabSystem } from './TabSystem'
 import { IFileSystem } from '@/components/FileSystem/Common'
 import { App } from '@/App'
 import { FileType } from '../Data/FileType'
-import { selectedProject } from '../Project/Loader'
 import { PackType } from '../Data/PackType'
 
 export abstract class Tab {
@@ -30,7 +29,10 @@ export abstract class Tab {
 		return this.path
 	}
 	getPackPath() {
-		return this.path.replace(`projects/${selectedProject}/`, '')
+		return this.path.replace(
+			`projects/${App.instance.selectedProject}/`,
+			''
+		)
 	}
 	get icon() {
 		return FileType.get(this.getPackPath())?.icon ?? 'mdi-file-outline'

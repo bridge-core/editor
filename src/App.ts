@@ -2,38 +2,36 @@ import '@/components/Notifications/Errors'
 import '@/components/Languages/LanguageManager'
 
 import Vue from 'vue'
-import { EventSystem } from './components/Common/Event/EventSystem'
-import { Signal } from './components/Common/Event/Signal'
-import { FileType } from './components/Data/FileType'
-import { ThemeManager } from './components/Extensions/Themes/ThemeManager'
-import { JSONDefaults } from './components/Data/JSONDefaults'
-import { FileSystem } from './components/FileSystem/FileSystem'
-import { setupFileSystem } from './components/FileSystem/setup'
-import { PackIndexer } from './components/PackIndexer/PackIndexer'
-import { setupSidebar } from './components/Sidebar/setup'
-import { TabSystem } from './components/TabSystem/TabSystem'
-import { TaskManager } from './components/TaskManager/TaskManager'
-import { setupDefaultMenus } from './components/Toolbar/setupDefaults'
-import { getLanguages, selectLanguage } from './utils/locales'
+import { EventSystem } from '@/components/Common/Event/EventSystem'
+import { Signal } from '@/components/Common/Event/Signal'
+import { FileType } from '@/components/Data/FileType'
+import { ThemeManager } from '@/components/Extensions/Themes/ThemeManager'
+import { JSONDefaults } from '@/components/Data/JSONDefaults'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
+import { setupFileSystem } from '@/components/FileSystem/setup'
+import { PackIndexer } from '@/components/PackIndexer/PackIndexer'
+import { setupSidebar } from '@/components/Sidebar/setup'
+import { TaskManager } from '@/components/TaskManager/TaskManager'
+import { setupDefaultMenus } from '@/components/Toolbar/setupDefaults'
+import { getLanguages, selectLanguage } from '@/utils/locales'
 import { Discord as DiscordWindow } from '@/components/Windows/Discord/definition'
-import { createNotification } from './components/Notifications/create'
-import { PackType } from './components/Data/PackType'
-import { selectLastProject } from './components/Project/Loader'
-import { Windows } from './components/Windows/Windows'
-import { SettingsWindow } from './components/Windows/Settings/SettingsWindow'
-import { settingsState } from './components/Windows/Settings/SettingsState'
-import { LoadingWindow } from './components/Windows/LoadingWindow/LoadingWindow'
-import { DataLoader } from './components/Data/DataLoader'
-import { ProjectConfig } from './components/Project/ProjectConfig'
-import { KeyBindingManager } from './components/Actions/KeyBindingManager'
-import { ActionManager } from './components/Actions/ActionManager'
-import { Toolbar } from './components/Toolbar/Toolbar'
-import { Compiler } from './components/Compiler/Compiler'
-import { ExtensionLoader } from './components/Extensions/ExtensionLoader'
-import { Title } from './components/Project/Title'
-import { WindowResize } from './components/Common/WindowResize'
-import { InstallApp } from './components/App/Install'
+import { createNotification } from '@/components/Notifications/create'
+import { PackType } from '@/components/Data/PackType'
+import { Windows } from '@/components/Windows/Windows'
+import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
+import { settingsState } from '@/components/Windows/Settings/SettingsState'
+import { DataLoader } from '@/components/Data/DataLoader'
+import { ProjectConfig } from '@/components/Project/ProjectConfig'
+import { KeyBindingManager } from '@/components/Actions/KeyBindingManager'
+import { ActionManager } from '@/components/Actions/ActionManager'
+import { Toolbar } from '@/components/Toolbar/Toolbar'
+import { Compiler } from '@/components/Compiler/Compiler'
+import { ExtensionLoader } from '@/components/Extensions/ExtensionLoader'
+import { Title } from '@/components/Project/Title'
+import { WindowResize } from '@/components/Common/WindowResize'
+import { InstallApp } from '@/components/App/Install'
 import { LanguageManager } from '@/components/Languages/LanguageManager'
+import { ProjectManager } from './components/Project/ProjectManager'
 
 export class App {
 	public static toolbar = new Toolbar()
@@ -42,6 +40,7 @@ export class App {
 		'fileUpdated',
 		'currentTabSwitched',
 		'refreshCurrentContext',
+		'disableValidation',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: App
@@ -53,9 +52,9 @@ export class App {
 	public readonly taskManager = new TaskManager()
 	public readonly packIndexer = new PackIndexer()
 	public readonly compiler = new Compiler()
-	public readonly tabSystem = Vue.observable(new TabSystem())
 	public readonly dataLoader = new DataLoader()
 	public readonly fileSystem = new FileSystem()
+	public readonly projectManager = Vue.observable(new ProjectManager(this))
 	public readonly extensionLoader = new ExtensionLoader()
 	public readonly windowResize = new WindowResize()
 
@@ -65,6 +64,13 @@ export class App {
 	protected _windows: Windows
 	get windows() {
 		return this._windows
+	}
+
+	get tabSystem() {
+		return this.projectManager.currentProject?.tabSystem
+	}
+	get selectedProject() {
+		return this.projectManager.selectedProject
 	}
 
 	static get instance() {
@@ -84,7 +90,7 @@ export class App {
 			'Are you sure that you want to close bridge.? Unsaved progress will be lost.'
 		window.addEventListener('beforeunload', event => {
 			if (
-				this.tabSystem.hasUnsavedTabs ||
+				this.tabSystem?.hasUnsavedTabs ||
 				this.taskManager.hasRunningTasks
 			) {
 				event.preventDefault()
@@ -156,7 +162,7 @@ export class App {
 		this.ready.dispatch(this._instance)
 
 		this.instance.windows.loadingWindow.close()
-		await selectLastProject(this._instance)
+		await this.instance.projectManager.selectLastProject(this._instance)
 	}
 
 	/**

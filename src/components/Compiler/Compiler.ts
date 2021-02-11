@@ -1,7 +1,6 @@
 import { App } from '@/App'
 import { Signal } from '@/components/Common/Event/Signal'
 import * as Comlink from 'comlink'
-import { selectedProject } from '../Project/Loader'
 import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'
 import { CompilerService } from './Worker/Main'
 import JSON5 from 'json5'
@@ -91,7 +90,7 @@ export class Compiler extends Signal<void> {
 		const app = await App.getApp()
 
 		const configDir = await app.fileSystem.getDirectoryHandle(
-			`projects/${selectedProject}/bridge/compiler`,
+			`projects/${app.selectedProject}/bridge/compiler`,
 			{ create: true }
 		)
 
@@ -109,7 +108,7 @@ export class Compiler extends Signal<void> {
 				name: config.name,
 				description: config.description,
 				onTrigger: () =>
-					this.start(selectedProject, 'build', entry.name),
+					this.start(app.selectedProject!, 'build', entry.name),
 			})
 		}
 	}

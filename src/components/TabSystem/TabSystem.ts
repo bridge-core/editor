@@ -3,15 +3,16 @@ import WelcomeScreen from './WelcomeScreen.vue'
 import { TextTab } from '../Editors/Text/TextTab'
 import Vue from 'vue'
 import { App } from '@/App'
-import { selectedProject } from '../Project/Loader'
 import { ImageTab } from '../Editors/Image/ImageTab'
-import { createConfirmWindow } from '../Windows/Common/CommonDefinitions'
 import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
+import { Project } from '../Project/Project'
 
 export class TabSystem {
 	tabs: Tab[] = []
 	protected _selectedTab: Tab | undefined = undefined
 	protected tabTypes = [ImageTab, TextTab]
+
+	constructor(protected project: Project) {}
 
 	get selectedTab() {
 		return this._selectedTab
@@ -64,7 +65,7 @@ export class TabSystem {
 		if (tab)
 			App.eventSystem.dispatch(
 				'currentTabSwitched',
-				tab.getPath().replace(`projects/${selectedProject}/`, '')
+				tab.getPath().replace(`projects/${this.project.name}/`, '')
 			)
 
 		Vue.nextTick(() => this._selectedTab?.onActivate())
@@ -78,22 +79,30 @@ export class TabSystem {
 		await tab.save()
 
 		await app.packIndexer.updateFile(
-			tab.getPath().replace(`projects/${selectedProject}/`, '')
+			tab.getPath().replace(`projects/${this.project.name}/`, '')
 		)
 		await app.compiler.updateFile(
 			'dev',
 			'default.json',
-			tab.getPath().replace(`projects/${selectedProject}/`, '')
+			tab.getPath().replace(`projects/${this.project.name}/`, '')
 		)
+		await this.project.recentFiles.add(tab.getPath())
 
 		// Only refresh auto-completion content if tab is active
 		if (tab === this.selectedTab)
 			App.eventSystem.dispatch(
 				'refreshCurrentContext',
-				tab.getPath().replace(`projects/${selectedProject}/`, '')
+				tab.getPath().replace(`projects/${this.project.name}/`, '')
 			)
 
 		app.windows.loadingWindow.close()
+	}
+
+	deactivate() {
+		this.selectedTab?.onDeactivate()
+	}
+	activate() {
+		this.selectedTab?.onActivate()
 	}
 
 	getTab(path: string) {

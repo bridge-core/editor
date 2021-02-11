@@ -1,5 +1,4 @@
 import { App } from '@/App'
-import { selectedProject } from '@/components/Project/Loader'
 import { BaseWindow } from '@/components/Windows/BaseWindow'
 import FilePickerComponent from './FilePicker.vue'
 
@@ -39,9 +38,9 @@ export class FilePickerWindow extends BaseWindow {
 		})
 	}
 
-	openFile(filePath: string) {
+	protected openFile(filePath: string) {
 		App.ready.once(app =>
-			app.tabSystem.open(`projects/${selectedProject}/${filePath}`)
+			app.tabSystem?.open(`projects/${app.selectedProject}/${filePath}`)
 		)
 		this.close()
 	}

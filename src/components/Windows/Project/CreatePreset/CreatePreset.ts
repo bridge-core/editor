@@ -9,7 +9,6 @@ import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { App } from '@/App'
 import { v4 as uuid } from 'uuid'
 import { dirname, extname } from 'path'
-import { selectedProject } from '@/components/Project/Loader'
 import { deepmerge } from '@/utils/deepmerge'
 import { compare, CompareOperator } from 'compare-versions'
 
@@ -175,7 +174,7 @@ export class CreatePresetWindow extends BaseWindow {
 				const inject = opts?.inject ?? []
 				const fullOriginPath = `${presetPath}/${originPath}`
 				const fullDestPath = this.transformString(
-					`projects/${selectedProject}/${destPath}`,
+					`projects/${app.selectedProject}/${destPath}`,
 					inject
 				)
 				const ext = extname(fullDestPath)
@@ -198,7 +197,7 @@ export class CreatePresetWindow extends BaseWindow {
 				const inject = opts?.inject ?? []
 				const fullOriginPath = `${presetPath}/${originPath}`
 				const fullDestPath = this.transformString(
-					`projects/${selectedProject}/${destPath}`,
+					`projects/${app.selectedProject}/${destPath}`,
 					inject
 				)
 				const ext = extname(fullDestPath)
@@ -261,8 +260,8 @@ export class CreatePresetWindow extends BaseWindow {
 						'default.json',
 						filePath
 					)
-					app.tabSystem.open(
-						`projects/${selectedProject}/${filePath}`
+					app.tabSystem?.open(
+						`projects/${app.selectedProject}/${filePath}`
 					)
 				}
 

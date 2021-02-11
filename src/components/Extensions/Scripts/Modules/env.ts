@@ -1,6 +1,5 @@
 import { IModuleConfig } from '../types'
 import { version } from '@/appVersion.json'
-import { selectedProject } from '@/components/Project/Loader'
 import { App } from '@/App'
 
 export const ContextEnv: { value: any } = { value: {} }
@@ -8,13 +7,13 @@ export const ContextEnv: { value: any } = { value: {} }
 export const ENVModule = ({}: IModuleConfig) => ({
 	APP_VERSION: version,
 	getCurrentBP() {
-		return `projects/${selectedProject}/BP`
+		return `projects/${App.instance.selectedProject}/BP`
 	},
 	getCurrentRP() {
-		return `projects/${selectedProject}/RP`
+		return `projects/${App.instance.selectedProject}/RP`
 	},
 	getCurrentProject() {
-		return `projects/${selectedProject}`
+		return `projects/${App.instance.selectedProject}`
 	},
 	getProjectPrefix() {
 		return App.getApp().then(app => app.projectConfig.get('projectPrefix'))

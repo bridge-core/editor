@@ -5,7 +5,6 @@ import json5 from 'json5'
 import * as monaco from 'monaco-editor'
 import { runAsync } from '../Extensions/Scripts/run'
 import { FileSystem } from '../FileSystem/FileSystem'
-import { selectedProject } from '../Project/Loader'
 import { v4 as uuid } from 'uuid'
 import { getFilteredFormatVersions } from './FormatVersions'
 
@@ -71,12 +70,14 @@ export namespace JSONDefaults {
 
 		await Promise.all(promises)
 	}
-	async function runSchemaScripts(fileSystem: FileSystem) {
-		const baseDirectory = await fileSystem.getDirectoryHandle(
+	async function runSchemaScripts(app: App) {
+		const baseDirectory = await app.fileSystem.getDirectoryHandle(
 			'data/packages/schemaScript'
 		)
 		const scopedFs = new FileSystem(
-			await fileSystem.getDirectoryHandle(`projects/${selectedProject}`)
+			await app.fileSystem.getDirectoryHandle(
+				`projects/${app.selectedProject}`
+			)
 		)
 
 		for await (const dirent of baseDirectory.values()) {
@@ -136,7 +137,7 @@ export namespace JSONDefaults {
 	async function loadAllSchemas() {
 		schemas = {}
 		const app = await App.getApp()
-		console.time('[JSON DEFAULTS] Static schemas')
+
 		try {
 			await loadStaticSchemas(
 				await app.fileSystem.getDirectoryHandle('data/packages/schema')
@@ -144,23 +145,24 @@ export namespace JSONDefaults {
 		} catch {
 			return
 		}
-		console.timeEnd('[JSON DEFAULTS] Static schemas')
 
-		console.time('[JSON DEFAULTS] Adding matchers to schemas')
 		addSchemas(FileType.getMonacoSchemaArray(), false)
-		console.timeEnd('[JSON DEFAULTS] Adding matchers to schemas')
-		console.time('[JSON DEFAULTS] Dynamic schemas')
 		addSchemas(await getDynamicSchemas(), false)
-		await runSchemaScripts(app.fileSystem)
-		console.timeEnd('[JSON DEFAULTS] Dynamic schemas')
+
+		await runSchemaScripts(app)
+		const tab = app.tabSystem?.selectedTab
+		if (tab) {
+			const fileType = FileType.getId(tab.getPackPath())
+			addSchemas(await requestSchemaFor(fileType, tab.getPackPath()))
+		}
 		setJSONDefaults()
 	}
 
-	function setJSONDefaults() {
+	function setJSONDefaults(validate = true) {
 		monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
 			enableSchemaRequest: false,
 			allowComments: true,
-			validate: true,
+			validate,
 			schemas: Object.values(schemas),
 		})
 	}
@@ -190,7 +192,7 @@ export namespace JSONDefaults {
 			const fileType = FileType.getId(filePath)
 			const app = await App.getApp()
 			addSchemas(await requestSchemaFor(fileType))
-			await runSchemaScripts(app.fileSystem)
+			await runSchemaScripts(app)
 		})
 
 		// Updating currentContext/ references
@@ -201,6 +203,9 @@ export namespace JSONDefaults {
 		App.eventSystem.on('refreshCurrentContext', async filePath => {
 			const fileType = FileType.getId(filePath)
 			addSchemas(await requestSchemaFor(fileType, filePath))
+		})
+		App.eventSystem.on('disableValidation', () => {
+			setJSONDefaults(false)
 		})
 	}
 

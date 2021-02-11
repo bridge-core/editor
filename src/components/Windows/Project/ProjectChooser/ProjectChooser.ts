@@ -1,8 +1,5 @@
-import {
-	getProjects,
-	IProjectData,
-	selectedProject,
-} from '@/components/Project/Loader'
+import { App } from '@/App'
+import { IProjectData } from '@/components/Project/Project'
 import { createWindow } from '@/components/Windows/create'
 import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
 import ProjectChooserComponent from './ProjectChooser.vue'
@@ -26,14 +23,15 @@ export class ProjectChooserWindow {
 
 	async loadProjects() {
 		this.sidebar.removeElements()
+		const app = await App.getApp()
 
-		const projects = await getProjects()
+		const projects = await app.projectManager.getProjects()
 
 		projects.forEach(project =>
 			this.addProject(project.path, project.projectName, project)
 		)
-		this.sidebar.setDefaultSelected(selectedProject)
-		return selectedProject
+		this.sidebar.setDefaultSelected(app.projectManager.selectedProject)
+		return app.projectManager.selectedProject
 	}
 
 	async open() {
