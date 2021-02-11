@@ -1,309 +1,106 @@
 <template>
-	<v-layout
-		:style="`padding: 10em; height: ${available_height}px;`"
-		@dblclick="createFile"
-		column
+	<div
+		class="d-flex flex-column justify-center align-center"
+		:style="`padding-top: 14vh;`"
 	>
-		<h1>{{ t('welcome.title') }}</h1>
-		<div>
-			<br />
-			<p>{{ t('welcome.subtitle') }}</p>
-			<ul>
-				<li>
-					<v-icon color="accent" small>mdi-auto-fix</v-icon>
-					<span>{{ t('welcome.syntaxHighlighting') }}</span>
-				</li>
-				<li>
-					<v-icon color="accent" small
-						>mdi-format-list-bulleted</v-icon
-					>
-					<span>{{ t('welcome.richAutoCompletions') }}</span>
-				</li>
-				<li>
-					<v-icon color="accent" small>mdi-folder-multiple</v-icon>
-					<span>{{ t('welcome.projectManagement') }}</span>
-				</li>
-				<li>
-					<v-icon color="accent" small>mdi-code-json</v-icon>
-					<span>{{ t('welcome.customSyntax') }}</span>
-				</li>
-				<li>
-					<v-icon color="accent" small>mdi-package-variant</v-icon>
-					<span>{{ t('welcome.customComponents') }}</span>
-				</li>
-				<li>
-					<v-icon color="accent" small>mdi-console-line</v-icon>
-					<span>{{ t('welcome.customCommands') }}</span>
-				</li>
-				<li>
-					<v-icon color="accent" small>mdi-nodejs</v-icon>
-					<span>{{ t('welcome.plugins') }}</span>
-				</li>
-			</ul>
+		<div
+			class="d-flex flex-grow align-center mb-2 pa-4 rounded-lg content-area justify-center"
+			style="width: 384px;"
+		>
+			<img
+				style="height: 48px; width: 48px; "
+				class="mr-1"
+				alt="bridge. Logo"
+				src="@/_assets/logo_high_res.png"
+			/>
+			<h1 class="text-h3">{{ t('welcome.title') }}</h1>
 		</div>
-	</v-layout>
+		<!-- <h2>{{ t('welcome.subtitle') }}</h2> -->
+
+		<ul class="rounded-lg content-area pa-4 mb-4" style="width: 384px;">
+			<li>
+				<v-icon color="accent" small>mdi-auto-fix</v-icon>
+				<span>{{ t('welcome.syntaxHighlighting') }}</span>
+			</li>
+			<li>
+				<v-icon color="accent" small>mdi-format-list-bulleted</v-icon>
+				<span>{{ t('welcome.richAutoCompletions') }}</span>
+			</li>
+			<li>
+				<v-icon color="accent" small>mdi-folder-multiple</v-icon>
+				<span>{{ t('welcome.projectManagement') }}</span>
+			</li>
+			<li>
+				<v-icon color="accent" small>mdi-code-json</v-icon>
+				<span>{{ t('welcome.customSyntax') }}</span>
+			</li>
+			<li>
+				<v-icon color="accent" small>mdi-package-variant</v-icon>
+				<span>{{ t('welcome.customComponents') }}</span>
+			</li>
+			<li>
+				<v-icon color="accent" small>mdi-console-line</v-icon>
+				<span>{{ t('welcome.customCommands') }}</span>
+			</li>
+			<li>
+				<v-icon color="accent" small>mdi-nodejs</v-icon>
+				<span>{{ t('welcome.plugins') }}</span>
+			</li>
+		</ul>
+
+		<div>
+			<ActionViewer
+				v-ripple
+				v-for="action in actions"
+				:key="action.id"
+				:action="action"
+				hideTriggerButton
+				dense
+				style="width: 384px;"
+				@click.native="action.trigger"
+			/>
+		</div>
+	</div>
 </template>
 
 <script>
 import { TranslationMixin } from '@/utils/locales'
+import ActionViewer from '@/components/Actions/ActionViewer'
+import { App } from '@/App'
 
 export default {
 	name: 'welcome-screen',
 	mixins: [TranslationMixin],
-	props: {
-		available_height: Number,
+	components: {
+		ActionViewer,
 	},
-	methods: {
-		createFile(event) {
-			// new CreateFileWindow(undefined, false)
-		},
-		openDiscord(event) {
-			// new DiscordWindow(() => {
-			// 	shell.openExternal('https://discord.gg/jj2PmqU')
-			// })
-		},
-		openBedrockGuide(event) {
-			shell.openExternal('https://guide.bedrock.dev')
-		},
-		openBedrockWiki(event) {
-			shell.openExternal('https://wiki.bedrock.dev')
-		},
-	},
-	computed: {
-		is_dark_mode() {
-			return this.$store.state.Appearance.is_dark_mode
-		},
-	},
-}
 
-/**
- * <v-layout>
-		<v-layout
-			column
-			:style="`padding: 2em; height: ${available_height}px;`"
-		>
-			<v-layout @dblclick="createFile" justify-center class="pt-1">
-				<h1>Welcome to bridge.</h1>
-				<br />
-				<br />
-			</v-layout>
-			<v-container>
-				<v-row>
-					<v-carousel
-						continuous
-						class="mx-16 my-auto"
-						hide-delimiter-background
-						height="600"
-						:light="!is_dark_mode"
-					>
-						<!---Features Card-->
-						<v-carousel-item>
-							<v-card
-								class="mx-auto mt-2"
-								min-width="270"
-								max-width="300"
-								height="410"
-								color="background"
-							>
-								<v-card-title class="ml-16 pl-9"
-									>Features</v-card-title
-								>
-								<v-expansion-panels accordion flat>
-									<v-expansion-panel>
-										<v-expansion-panel-header
-											color="background"
-										>
-											<v-icon small>mdi-auto-fix</v-icon>
-											<span>Syntax highlighting</span>
-										</v-expansion-panel-header>
-										<v-expansion-panel-content
-											color="background"
-										>
-											Beautiful syntax highlighting for
-											all files
-										</v-expansion-panel-content>
-									</v-expansion-panel>
-									<v-expansion-panel>
-										<v-expansion-panel-header
-											color="background"
-										>
-											<v-icon small
-												>mdi-format-list-bulleted</v-icon
-											>
-											<span>Rich auto-completions</span>
-										</v-expansion-panel-header>
-										<v-expansion-panel-content
-											color="background"
-										>
-											We provide hand-written
-											auto-completions for every JSON,
-											lang and mcfunction file!
-										</v-expansion-panel-content>
-									</v-expansion-panel>
-									<v-expansion-panel>
-										<v-expansion-panel-header
-											color="background"
-										>
-											<v-icon small
-												>mdi-folder-multiple</v-icon
-											>
-											<span>Easy project mangement</span>
-										</v-expansion-panel-header>
-										<v-expansion-panel-content
-											color="background"
-										>
-											Creating addons is easy with
-											bridge.. You can create new
-											behaviour and resource packs with an
-											automatically generated manifest and
-											when your done you can package your
-											project with just one click!
-										</v-expansion-panel-content>
-									</v-expansion-panel>
-									<v-expansion-panel>
-										<v-expansion-panel-header
-											color="background"
-										>
-											<v-icon small
-												>mdi-package-variant</v-icon
-											>
-											<span>Custom components</span>
-										</v-expansion-panel-header>
-										<v-expansion-panel-content
-											color="background"
-										>
-											With custom entity components you
-											can write Javascript to make your
-											own components with custom
-											arguments.
-										</v-expansion-panel-content>
-									</v-expansion-panel>
-									<v-expansion-panel>
-										<v-expansion-panel-header
-											color="background"
-										>
-											<v-icon small
-												>mdi-console-line</v-icon
-											>
-											<span>Custom commands</span>
-										</v-expansion-panel-header>
-										<v-expansion-panel-content
-											color="background"
-										>
-											With custom commands you can write
-											Javascript to make custom commands
-											and target selctors that can be used
-											in .mcfunction files.
-										</v-expansion-panel-content>
-									</v-expansion-panel>
-									<v-expansion-panel>
-										<v-expansion-panel-header
-											color="background"
-										>
-											<v-icon small>mdi-cog</v-icon>
-											<span>Collection of settings</span>
-										</v-expansion-panel-header>
-										<v-expansion-panel-content
-											color="background"
-										>
-											With bridge., you get to choose from
-											a collection of settings that can
-											affect the look of bridge., the
-											format of JSON files, and much more!
-										</v-expansion-panel-content>
-									</v-expansion-panel>
-									<v-expansion-panel>
-										<v-expansion-panel-header
-											color="background"
-										>
-											<v-icon small
-												>mdi-cube-outline</v-icon
-											>
-											<span>OBJ model converter</span>
-										</v-expansion-panel-header>
-										<v-expansion-panel-content
-											color="background"
-										>
-											The OBJ to JSON model converter can
-											be used to easily convert OBJ models
-											to be used in Minecraft.
-										</v-expansion-panel-content>
-									</v-expansion-panel>
-								</v-expansion-panels>
-							</v-card>
-						</v-carousel-item>
-						<v-carousel-item>
-							<!---Need Help? Card-->
-							<v-card
-								class="mx-auto mt-16 pt-5"
-								min-width="300"
-								max-width="360"
-								height="360"
-								color="background"
-							>
-								<v-card-title class="ml-16 pl-14">
-									Need Help?
-								</v-card-title>
-								<div class="text-center">
-									<v-btn
-										class="ma-5"
-										rounded
-										dark
-										large
-										color="#7289DA"
-										@click="openDiscord"
-									>
-										<v-icon dark>
-											mdi-discord
-										</v-icon>
-										<span>Join Our Discord Server!</span>
-									</v-btn>
-									<v-btn
-										class="ma-5"
-										rounded
-										dark
-										large
-										color="primary"
-										@click="openBedrockGuide"
-									>
-										<v-icon dark>
-											mdi-book-open-variant
-										</v-icon>
-										<span
-											>Check Out guide.bedrock.dev!</span
-										>
-									</v-btn>
-									<v-btn
-										class="ma-5"
-										rounded
-										dark
-										large
-										color="primary"
-										@click="openBedrockWiki"
-									>
-										<v-icon dark>
-											mdi-earth
-										</v-icon>
-										<span>Check Out wiki.bedrock.dev!</span>
-									</v-btn>
-								</div>
-							</v-card>
-						</v-carousel-item>
-					</v-carousel>
-				</v-row>
-			</v-container>
-		</v-layout>
-	</v-layout>
- */
+	async mounted() {
+		const app = await App.getApp()
+		const toLoad = [
+			'bridge.action.newFile',
+			'bridge.action.openFile',
+			'bridge.action.openSettings',
+		]
+		this.actions = toLoad.map(l => app.actionManager.state[l])
+	},
+
+	data: () => ({
+		actions: [],
+	}),
+}
 </script>
 
 <style scoped>
 div,
 li {
 	list-style-type: none;
-	text-align: center;
 }
 span {
 	margin-left: 4px;
+}
+
+.content-area {
+	background-color: var(--v-welcomeTile-base);
 }
 </style>

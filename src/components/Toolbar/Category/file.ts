@@ -49,6 +49,7 @@ export function setupFileCategory(app: App) {
 		)
 			.addItem(
 				app.actionManager.create({
+					id: 'bridge.action.openSettings',
 					icon: 'mdi-cog-outline',
 					name: 'toolbar.file.preferences.settings',
 					description: "Open bridge.'s app settings",

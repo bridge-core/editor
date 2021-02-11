@@ -100,7 +100,7 @@ export default {
 	},
 	// Welcome Screen
 	welcome: {
-		title: 'bridge.에 어서오세요',
+		title: 'bridge.',
 		subtitle: '마인크래프트 애드온을 만들기 더욱 쉽게!!',
 		syntaxHighlighting: 'Syntax 하이라이트 기능',
 		richAutoCompletions: '다양한 자동완성 기능',

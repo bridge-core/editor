@@ -146,7 +146,7 @@ export default {
 	},
 	// Welcome Screen
 	welcome: {
-		title: 'Welcome To bridge.',
+		title: 'bridge.',
 		subtitle: 'Creating Minecraft addons has never been more convenient!',
 		syntaxHighlighting: 'Syntax Highlighting',
 		richAutoCompletions: 'Rich auto-completions',

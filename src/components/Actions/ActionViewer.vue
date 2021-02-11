@@ -15,7 +15,7 @@
 			</v-btn>
 		</div>
 
-		<span>{{ t(action.description) }}</span>
+		<span v-if="!dense">{{ t(action.description) }}</span>
 	</div>
 </template>
 
@@ -26,6 +26,7 @@ export default {
 	props: {
 		action: Object,
 		hideTriggerButton: Boolean,
+		dense: Boolean,
 	},
 	mixins: [TranslationMixin],
 	methods: {

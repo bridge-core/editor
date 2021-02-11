@@ -28,6 +28,7 @@ const colorNames = [
 	'sidebarSelection',
 	'tabActive',
 	'tabInactive',
+	'welcomeTile',
 ] as const
 export type TColorName = typeof colorNames[number]
 
