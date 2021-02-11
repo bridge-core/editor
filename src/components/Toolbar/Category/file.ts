@@ -6,6 +6,7 @@ export function setupFileCategory(app: App) {
 
 	file.addItem(
 		app.actionManager.create({
+			id: 'bridge.action.newFile',
 			icon: 'mdi-file-plus-outline',
 			name: 'toolbar.file.newFile',
 			description: 'Create a new Add-On feature',
@@ -15,6 +16,7 @@ export function setupFileCategory(app: App) {
 	)
 	file.addItem(
 		app.actionManager.create({
+			id: 'bridge.action.openFile',
 			icon: 'mdi-file-upload-outline',
 			name: 'toolbar.file.openFile',
 			description: 'Search and open a file from the current project',

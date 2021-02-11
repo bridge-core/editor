@@ -3,6 +3,7 @@ import { KeyBinding } from './KeyBinding'
 import { v4 as uuid } from 'uuid'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 export interface IActionConfig {
+	id?: string
 	icon: string
 	name: string
 	description: string
@@ -11,7 +12,7 @@ export interface IActionConfig {
 }
 
 export class Action extends EventDispatcher<void> {
-	id = uuid()
+	id: string
 	protected _keyBinding: KeyBinding | undefined
 
 	constructor(
@@ -19,6 +20,7 @@ export class Action extends EventDispatcher<void> {
 		protected config: IActionConfig
 	) {
 		super()
+		this.id = config.id ?? uuid()
 
 		if (config.keyBinding)
 			this.addKeyBinding(
