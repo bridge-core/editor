@@ -70,7 +70,7 @@ export namespace JSONDefaults {
 
 		await Promise.all(promises)
 	}
-	async function runSchemaScripts(app: App) {
+	async function runSchemaScripts(app: App, filePath?: string) {
 		const baseDirectory = await app.fileSystem.getDirectoryHandle(
 			'data/packages/schemaScript'
 		)
@@ -109,6 +109,10 @@ export namespace JSONDefaults {
 							)
 						},
 						() => app.projectConfig.get('prefix'),
+						() =>
+							!filePath
+								? undefined
+								: filePath.split(/\/|\\/g).pop(),
 					],
 					[
 						'readdir',
@@ -116,6 +120,7 @@ export namespace JSONDefaults {
 						'getFormatVersions',
 						'getCacheDataFor',
 						'getProjectPrefix',
+						'getFileName',
 					]
 				)
 			} catch (err) {
@@ -199,17 +204,21 @@ export namespace JSONDefaults {
 			const fileType = FileType.getId(filePath)
 			const app = await App.getApp()
 			addSchemas(await requestSchemaFor(fileType))
-			await runSchemaScripts(app)
+			await runSchemaScripts(app, filePath)
 		})
 
 		// Updating currentContext/ references
 		App.eventSystem.on('currentTabSwitched', async filePath => {
+			const app = await App.getApp()
 			const fileType = FileType.getId(filePath)
 			addSchemas(await requestSchemaFor(fileType, filePath))
+			await runSchemaScripts(app, filePath)
 		})
 		App.eventSystem.on('refreshCurrentContext', async filePath => {
+			const app = await App.getApp()
 			const fileType = FileType.getId(filePath)
 			addSchemas(await requestSchemaFor(fileType, filePath))
+			await runSchemaScripts(app, filePath)
 		})
 		App.eventSystem.on('disableValidation', () => {
 			setJSONDefaults(false)
