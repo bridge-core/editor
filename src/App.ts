@@ -111,11 +111,12 @@ export class App {
 			this.title.setProject(projectName)
 			this.packIndexer.start(projectName, forceRefreshCache)
 
-			this.extensionLoader.deactivateAll()
+			this.extensionLoader.deactivateAllLocal()
 			this.extensionLoader
 				.loadExtensions(
 					await this.fileSystem.getDirectoryHandle(
-						`projects/${projectName}/bridge/plugins`
+						`projects/${projectName}/bridge/plugins`,
+						{ create: true }
 					)
 				)
 				.then(() => {

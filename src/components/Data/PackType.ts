@@ -1,6 +1,7 @@
 import { isMatch } from 'micromatch'
 import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { v4 as uuid } from 'uuid'
+import { Signal } from '../Common/Event/Signal'
 
 /**
  * Describes the structure of a pack definition
@@ -17,8 +18,9 @@ export interface IPackType {
 export namespace PackType {
 	let packTypes: IPackType[] = []
 	let extensionPackTypes = new Map<string, IPackType>()
+	export const ready = new Signal<void>()
 
-	function all() {
+	export function all() {
 		return packTypes.concat([...extensionPackTypes.values()])
 	}
 
@@ -28,6 +30,7 @@ export namespace PackType {
 		packTypes = <IPackType[]>(
 			await fileSystem.readJSON('data/packages/packDefinitions.json')
 		)
+		ready.dispatch()
 	}
 
 	/**

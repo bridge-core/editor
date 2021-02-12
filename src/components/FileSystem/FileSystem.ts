@@ -54,8 +54,11 @@ export class FileSystem extends Signal<void> {
 	}
 
 	async mkdir(path: string, { recursive }: Partial<IMkdirConfig> = {}) {
-		if (recursive) await this.getDirectoryHandle(path, { create: true })
-		else await this.getDirectoryHandle(path, { createOnce: true })
+		await this.getDirectoryHandle(path, { create: true })
+
+		// TODO: Fix non recursive mode
+		// if (recursive) await this.getDirectoryHandle(path, { create: true })
+		// else await this.getDirectoryHandle(path, { createOnce: true })
 	}
 
 	readdir(

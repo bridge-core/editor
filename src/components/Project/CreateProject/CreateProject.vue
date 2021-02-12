@@ -15,7 +15,7 @@
 			<!-- Welcome text for users getting started with bridge. -->
 
 			<div
-				class="rounded-lg pa-3 content-area mb-6"
+				class="rounded-lg pa-3 content-area mb-2"
 				v-if="isFirstProject"
 			>
 				<h1 class="text-h4">
@@ -26,9 +26,62 @@
 				</span>
 			</div>
 
+			<v-row class="mb-6" no-gutters>
+				<v-col
+					v-for="(packType, i) in availablePackTypes"
+					:key="packType.id"
+					:class="{
+						'rounded-lg pa-3 content-area': true,
+						selected: createOptions.packs.includes(
+							packType.packPath
+						),
+						'mr-1': i === 0,
+						'ml-1': i + 1 === availablePackTypes.length,
+						'mx-1': i > 0 && i + 1 < availablePackTypes.length,
+					}"
+					v-ripple
+					@click="togglePack(packType.packPath)"
+				>
+					<div class="d-flex">
+						<v-icon :color="packType.color" class="mr-2">
+							{{ packType.icon }}
+						</v-icon>
+
+						<span class="text-h6">
+							{{ t(`packType.${packType.id}.name`) }}
+						</span>
+					</div>
+
+					<div class="d-flex align-center mb-2">
+						<template
+							v-if="
+								createOptions.packs.includes(packType.packPath)
+							"
+						>
+							<v-icon color="success" class="mr-1" small>
+								mdi-checkbox-marked-circle-outline
+							</v-icon>
+							<span>
+								{{ t('windows.createProject.selectedPack') }}
+							</span>
+						</template>
+						<template v-else>
+							<v-icon class="mr-1" small>
+								mdi-checkbox-blank-circle-outline
+							</v-icon>
+							<span>
+								{{ t('windows.createProject.omitPack') }}
+							</span>
+						</template>
+					</div>
+
+					<span>{{ t(`packType.${packType.id}.description`) }}</span>
+				</v-col>
+			</v-row>
+
 			<div class="d-flex">
 				<v-file-input
-					v-model="projectIcon"
+					v-model="createOptions.icon"
 					:label="t('windows.createProject.packIcon')"
 					:prepend-icon="null"
 					prepend-inner-icon="mdi-image-outline"
@@ -38,7 +91,7 @@
 					dense
 				/>
 				<v-text-field
-					v-model="projectName"
+					v-model="createOptions.name"
 					:label="t('windows.createProject.projectName')"
 					class="ml-2"
 					outlined
@@ -47,7 +100,7 @@
 			</div>
 
 			<v-text-field
-				v-model="projectDescription"
+				v-model="createOptions.description"
 				:label="t('windows.createProject.projectDescription')"
 				outlined
 				dense
@@ -55,14 +108,14 @@
 
 			<div class="d-flex">
 				<v-text-field
-					v-model="projectPrefix"
+					v-model="createOptions.prefix"
 					:label="t('windows.createProject.projectPrefix')"
 					class="mr-2"
 					outlined
 					dense
 				/>
 				<v-text-field
-					v-model="projectAuthor"
+					v-model="createOptions.author"
 					:label="t('windows.createProject.projectAuthor')"
 					class="mx-2"
 					outlined
@@ -70,7 +123,7 @@
 				/>
 
 				<v-autocomplete
-					v-model="projectTargetVersion"
+					v-model="createOptions.targetVersion"
 					:label="t('windows.createProject.projectTargetVersion')"
 					:items="availableTargetVersions"
 					:loading="availableTargetVersionsLoading"
@@ -122,6 +175,12 @@ export default {
 			this.isCreatingProject = false
 			this.currentWindow.close()
 		},
+		togglePack(packPath) {
+			const packs = this.createOptions.packs
+			const index = packs.indexOf(packPath)
+			if (index > -1) packs.splice(index, 1)
+			else packs.push(packPath)
+		},
 	},
 }
 </script>
@@ -129,5 +188,9 @@ export default {
 <style scoped>
 .content-area {
 	background-color: var(--v-sidebarNavigation-base);
+	border: solid 2px transparent;
+}
+.content-area.selected {
+	border: 2px solid var(--v-primary-base);
 }
 </style>

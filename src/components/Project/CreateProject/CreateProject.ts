@@ -1,18 +1,44 @@
 import { App } from '@/App'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { BaseWindow } from '@/components/Windows/BaseWindow'
 import CreateProjectComponent from './CreateProject.vue'
+import { CreatePack, TPackType } from './Packs/Pack'
+import { CreateBP } from './Packs/BP'
+import { CreateRP } from './Packs/RP'
+import { CreateSP } from './Packs/SP'
+import { CreateBridge } from './Packs/Bridge'
+import { IPackType, PackType } from '@/components/Data/PackType'
 
+export interface ICreateProjectOptions {
+	author: string
+	description: string
+	icon: File | null
+	name: string
+	prefix: string
+	targetVersion: string
+	packs: TPackType[]
+}
 export class CreateProjectWindow extends BaseWindow {
 	protected isFirstProject = false
-	protected projectName: string = ''
-	protected projectDescription: string = ''
-	protected projectPrefix: string = 'bridge'
-	protected projectAuthor: string = ''
-	protected projectTargetVersion: string = ''
-	protected projectIcon: File | null = null
+	protected createOptions: ICreateProjectOptions = {
+		author: '',
+		description: '',
+		icon: null,
+		name: '',
+		prefix: 'bridge',
+		targetVersion: '',
+		packs: ['bridge', 'BP', 'RP'],
+	}
 	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []
 	protected availableTargetVersionsLoading = true
+	protected packs: Record<TPackType, CreatePack> = {
+		BP: new CreateBP(),
+		RP: new CreateRP(),
+		SP: new CreateSP(),
+		bridge: new CreateBridge(),
+	}
+	protected availablePackTypes: IPackType[] = []
 
 	constructor() {
 		super(CreateProjectComponent, false)
@@ -23,19 +49,26 @@ export class CreateProjectWindow extends BaseWindow {
 				'data/packages/formatVersions.json'
 			)
 			// Set default version
-			this.projectTargetVersion = this.availableTargetVersions[
+			this.createOptions.targetVersion = this.availableTargetVersions[
 				this.availableTargetVersions.length - 1
 			]
 			this.availableTargetVersionsLoading = false
+		})
+
+		PackType.ready.once(() => {
+			// TODO: Remove filter for world templates as soon as we support creating them
+			this.availablePackTypes = PackType.all().filter(
+				({ id }) => id !== 'worldTemplate'
+			)
 		})
 	}
 
 	get hasRequiredData() {
 		return (
-			this.projectName.length > 0 &&
-			this.projectPrefix.length > 0 &&
-			this.projectAuthor.length > 0 &&
-			this.projectTargetVersion.length > 0
+			this.createOptions.name.length > 0 &&
+			this.createOptions.prefix.length > 0 &&
+			this.createOptions.author.length > 0 &&
+			this.createOptions.targetVersion.length > 0
 		)
 	}
 
@@ -48,42 +81,18 @@ export class CreateProjectWindow extends BaseWindow {
 		return new Promise<void>(resolve =>
 			App.ready.once(async app => {
 				const fs = app.fileSystem
-
-				await fs.mkdir(`projects/${this.projectName}`, {
-					recursive: true,
-				})
-
-				await Promise.all([
-					fs.mkdir(`projects/${this.projectName}/bridge`, {
-						recursive: true,
-					}),
-					fs.mkdir(`projects/${this.projectName}/BP`, {
-						recursive: true,
-					}),
-					fs.mkdir(`projects/${this.projectName}/RP`, {
-						recursive: true,
-					}),
-					fs.mkdir(`projects/${this.projectName}/SP`, {
-						recursive: true,
-					}),
-				])
-
-				await fs.writeJSON(
-					`projects/${this.projectName}/bridge/config.json`,
-					{
-						projectPrefix: this.projectPrefix,
-						projectAuthor: this.projectAuthor,
-						projectTargetVersion: this.projectTargetVersion,
-					}
+				const scopedFs = new FileSystem(
+					await fs.getDirectoryHandle(
+						`projects/${this.createOptions.name}`,
+						{ create: true }
+					)
 				)
 
-				if (this.projectIcon)
-					await fs.writeFile(
-						`projects/${this.projectName}/bridge/packIcon.png`,
-						this.projectIcon
-					)
+				for (const pack of this.createOptions.packs) {
+					await this.packs[pack].create(scopedFs, this.createOptions)
+				}
 
-				await app.projectManager.addProject(this.projectName)
+				await app.projectManager.addProject(this.createOptions.name)
 				resolve()
 			})
 		)

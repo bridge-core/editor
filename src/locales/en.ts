@@ -3,6 +3,26 @@ import { en } from 'vuetify/src/locale'
 export default {
 	...en,
 	languageName: 'English',
+	packType: {
+		behaviorPack: {
+			name: 'Behavior Pack',
+			description:
+				'Create new game mechanics and change how Minecraft behaves',
+		},
+		resourcePack: {
+			name: 'Resource Pack',
+			description: "Used for changing Minecraft's look and sound",
+		},
+		skinPack: {
+			name: 'Skin Pack',
+			description:
+				'Provide new appearances a player can select for their character',
+		},
+		worldTemplate: {
+			name: 'World Template',
+			description: 'Give players a world to explore',
+		},
+	},
 	// File Type display names
 	fileType: {
 		manifest: 'Manifest',
@@ -211,6 +231,8 @@ export default {
 			welcome: 'Welcome to bridge.!',
 			welcomeDescription:
 				'Please create your first project in order to get started.',
+			omitPack: 'Omit',
+			selectedPack: 'Selected',
 			title: 'Create Project',
 			packIcon: 'Project Icon (optional)',
 			projectName: 'Project Name',

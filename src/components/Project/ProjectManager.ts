@@ -44,6 +44,7 @@ export class ProjectManager extends Signal<void> {
 
 	protected async loadProjects() {
 		await this.app.fileSystem.fired
+		await this.app.dataLoader.fired
 
 		let potentialProjects: FileSystemHandle[] = []
 		try {
@@ -72,6 +73,11 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async selectProject(projectName: string) {
+		if (this.state[projectName] === undefined)
+			throw new Error(
+				`Cannot select project "${projectName}" because it no longer exists`
+			)
+
 		this.currentProject?.tabSystem.deactivate()
 		this._selectedProject = projectName
 		App.eventSystem.dispatch('disableValidation', null)

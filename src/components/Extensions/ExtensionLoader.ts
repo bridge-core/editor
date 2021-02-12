@@ -186,7 +186,7 @@ export class ExtensionLoader extends Signal<void> {
 		}
 	}
 
-	deactivateAll() {
+	deactivateAllLocal() {
 		for (const [key, ext] of this.localExtensions) {
 			ext.deactivate()
 			this.localExtensions.delete(key)
