@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid'
 import { WINDOWS } from './create'
 import { Signal } from '@/components/Common/Event/Signal'
 
-export abstract class BaseWindow extends Signal<void> {
+export abstract class BaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()
 	protected isVisible = false
 	protected shouldRender = false
@@ -27,11 +27,11 @@ export abstract class BaseWindow extends Signal<void> {
 	 */
 	onClose() {}
 
-	close() {
+	close(data: T) {
 		this.onClose()
 
 		this.isVisible = false
-		this.dispatch()
+		this.dispatch(data)
 		if (!this.keepAlive) {
 			setTimeout(() => {
 				this.shouldRender = false
