@@ -1,6 +1,7 @@
 import { runAsync } from '@/components/Extensions/Scripts/run'
 import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { CompilerFile } from './File'
+import { ComMojangRewrite } from './Plugins/ComMojangRewrite'
 
 export const hooks = <const>[
 	'createFiles',
@@ -24,6 +25,8 @@ export async function loadPlugins(
 	pluginPaths: Record<string, string>
 ) {
 	const plugins = new Map<string, TCompilerPlugin>()
+
+	plugins.set('comMojangRewrite', ComMojangRewrite)
 
 	for (const [pluginId, pluginPath] of Object.entries(pluginPaths ?? {})) {
 		let file: File

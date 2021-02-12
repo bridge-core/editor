@@ -15,8 +15,6 @@ export class CreateCompilerConfig extends CreateFile {
 				plugins: {
 					'*': [
 						['comMojangRewrite', { packName: createOptions.name }],
-						'loadJSON',
-						'textureList',
 					],
 				},
 			},

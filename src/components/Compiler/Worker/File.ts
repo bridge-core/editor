@@ -16,7 +16,7 @@ export class CompilerFile {
 	constructor(
 		protected parent: CompilerService,
 		protected fs: FileSystem,
-		protected filePath: string,
+		public filePath: string,
 		protected fileHandle: FileSystemFileHandle
 	) {
 		this.fileType = filePath ? FileType.getId(filePath) : 'unknown'
