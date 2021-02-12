@@ -8,6 +8,7 @@ import { CreateRP } from './Packs/RP'
 import { CreateSP } from './Packs/SP'
 import { CreateBridge } from './Packs/Bridge'
 import { IPackType, PackType } from '@/components/Data/PackType'
+import { CreateGitIgnore } from './Files/GitIgnore'
 
 export interface ICreateProjectOptions {
 	author: string
@@ -39,6 +40,7 @@ export class CreateProjectWindow extends BaseWindow {
 		bridge: new CreateBridge(),
 	}
 	protected availablePackTypes: IPackType[] = []
+	protected createFiles = [new CreateGitIgnore()]
 
 	constructor() {
 		super(CreateProjectComponent, false)
@@ -88,6 +90,9 @@ export class CreateProjectWindow extends BaseWindow {
 					)
 				)
 
+				for (const createFile of this.createFiles) {
+					createFile.create(scopedFs, this.createOptions)
+				}
 				for (const pack of this.createOptions.packs) {
 					await this.packs[pack].create(scopedFs, this.createOptions)
 				}
