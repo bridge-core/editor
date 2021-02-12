@@ -41,6 +41,15 @@ export class ProjectManager extends Signal<void> {
 
 		if (select) await this.selectProject(projectName)
 	}
+	async removeProject(projectName: string) {
+		const project = this.state[projectName]
+		if (!project) return
+
+		Vue.delete(this.state, projectName)
+		await this.app.fileSystem.unlink(`projects/${projectName}`)
+
+		this.recentProjects.remove(project.projectData)
+	}
 
 	protected async loadProjects() {
 		await this.app.fileSystem.fired

@@ -1,12 +1,16 @@
 import { App } from '@/App'
 import { IProjectData } from '@/components/Projects/Project/Project'
-import { createWindow } from '@/components/Windows/create'
+import { BaseWindow } from '@/components/Windows/BaseWindow'
 import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
 import ProjectChooserComponent from './ProjectChooser.vue'
 
-export class ProjectChooserWindow {
+export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
-	protected window?: any
+	protected currentProject?: string = undefined
+	constructor() {
+		super(ProjectChooserComponent, false, true)
+		this.defineWindow()
+	}
 
 	addProject(id: string, name: string, project: IProjectData) {
 		this.sidebar.addElement(
@@ -35,16 +39,7 @@ export class ProjectChooserWindow {
 	}
 
 	async open() {
-		const currentProject = await this.loadProjects()
-
-		this.window = createWindow(ProjectChooserComponent, {
-			sidebar: this.sidebar,
-			currentProject,
-			window: this,
-		})
-		this.window.open()
-	}
-	close() {
-		this.window.close()
+		this.currentProject = await this.loadProjects()
+		super.open()
 	}
 }

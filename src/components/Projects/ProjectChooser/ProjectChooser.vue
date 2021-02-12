@@ -93,7 +93,7 @@ export default {
 	},
 	props: ['currentWindow'],
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	methods: {
 		onClose() {
@@ -104,20 +104,20 @@ export default {
 			app.projectManager.selectProject(this.sidebar.selected)
 			this.currentWindow.close()
 		},
-		createProject() {
+		async createProject() {
+			const app = await App.getApp()
 			this.currentWindow.close()
-			App.instance.windows.createProject.open()
+			app.windows.createProject.open()
 		},
 		onDeleteProject(projectName) {
 			createConfirmWindow(
 				'windows.deleteProject.description',
 				'windows.deleteProject.confirm',
 				'windows.deleteProject.cancel',
-				() => {
-					App.ready.once(async app => {
-						await app.fileSystem.unlink(`projects/${projectName}`)
-						await this.window.loadProjects()
-					})
+				async () => {
+					const app = await App.getApp()
+					await app.projectManager.removeProject(projectName)
+					await this.currentWindow.loadProjects()
 				}
 			)
 		},
