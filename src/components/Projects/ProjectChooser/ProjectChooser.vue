@@ -25,28 +25,36 @@
 			/>
 		</template>
 		<template #default>
-			<div class="d-flex mb-4">
+			<div class="d-flex align-center mb-4 rounded-lg content-area pa-4">
 				<img
-					class="pr-4 project-logo"
+					class="mr-2 project-logo rounded-lg"
 					height="64"
 					:src="sidebar.currentState.imgSrc"
 				/>
 				<div>
-					<h1>{{ sidebar.currentState.name }}</h1>
-					<h3>by {{ sidebar.currentState.author || 'Unknown' }}</h3>
+					<h1 class="text-h4">{{ sidebar.currentState.name }}</h1>
+					<h2 class="text-h6">
+						by {{ sidebar.currentState.author || 'Unknown' }}
+					</h2>
 				</div>
 			</div>
-			<div>
-				<h4>Contains:</h4>
-				<v-chip
-					v-for="pack in sidebar.currentState.contains"
-					:key="pack.id"
-					:color="pack.color"
-					small
-					class="mr-2"
-				>
-					{{ pack.id }}
-				</v-chip>
+			<div class="d-flex">
+				<PackTypeViewer
+					v-for="(packType, i) in sidebar.currentState.contains"
+					:key="packType.id"
+					:packType="packType"
+					:class="{
+						'mr-1': i === 0,
+						'ml-1': i + 1 === sidebar.currentState.contains.length,
+						'mx-1':
+							i > 0 &&
+							i + 1 < sidebar.currentState.contains.length,
+					}"
+				/>
+			</div>
+
+			<div class="content-area rounded-lg">
+				{{ sidebar.currentState.version }}
 			</div>
 		</template>
 
@@ -57,6 +65,7 @@
 				:disabled="currentProject === selectedSidebar"
 				@click="onDeleteProject(selectedSidebar)"
 			>
+				<v-icon>mdi-delete</v-icon>
 				Delete
 			</v-btn>
 			<v-btn
@@ -68,6 +77,7 @@
 				"
 				@click="onSelectProject"
 			>
+				<v-icon>mdi-check</v-icon>
 				Select
 			</v-btn>
 		</template>
@@ -77,6 +87,7 @@
 <script>
 import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
 import ToolbarButton from '@/components/Windows/Layout/Toolbar/Button.vue'
+import PackTypeViewer from '@/components/Data/PackTypeViewer.vue'
 
 import { App } from '@/App'
 import { TranslationMixin } from '@/utils/locales'
@@ -90,6 +101,7 @@ export default {
 	components: {
 		SidebarWindow,
 		ToolbarButton,
+		PackTypeViewer,
 	},
 	props: ['currentWindow'],
 	data() {
@@ -128,5 +140,8 @@ export default {
 <style scoped>
 .project-logo {
 	image-rendering: pixelated;
+}
+.content-area {
+	background-color: var(--v-sidebarNavigation-base);
 }
 </style>

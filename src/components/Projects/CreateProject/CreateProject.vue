@@ -27,56 +27,19 @@
 			</div>
 
 			<v-row class="mb-6" no-gutters>
-				<v-col
+				<PackTypeViewer
 					v-for="(packType, i) in availablePackTypes"
-					:key="packType.id"
 					:class="{
-						'rounded-lg pa-3 content-area': true,
-						selected: createOptions.packs.includes(
-							packType.packPath
-						),
 						'mr-1': i === 0,
 						'ml-1': i + 1 === availablePackTypes.length,
 						'mx-1': i > 0 && i + 1 < availablePackTypes.length,
 					}"
-					v-ripple
+					:key="packType.id"
+					:packType="packType"
+					isSelectable
+					:selected="createOptions.packs.includes(packType.packPath)"
 					@click="togglePack(packType.packPath)"
-				>
-					<div class="d-flex">
-						<v-icon :color="packType.color" class="mr-2">
-							{{ packType.icon }}
-						</v-icon>
-
-						<span class="text-h6">
-							{{ t(`packType.${packType.id}.name`) }}
-						</span>
-					</div>
-
-					<div class="d-flex align-center mb-2">
-						<template
-							v-if="
-								createOptions.packs.includes(packType.packPath)
-							"
-						>
-							<v-icon color="success" class="mr-1" small>
-								mdi-checkbox-marked-circle-outline
-							</v-icon>
-							<span>
-								{{ t('windows.createProject.selectedPack') }}
-							</span>
-						</template>
-						<template v-else>
-							<v-icon class="mr-1" small>
-								mdi-checkbox-blank-circle-outline
-							</v-icon>
-							<span>
-								{{ t('windows.createProject.omitPack') }}
-							</span>
-						</template>
-					</div>
-
-					<span>{{ t(`packType.${packType.id}.description`) }}</span>
-				</v-col>
+				/>
 			</v-row>
 
 			<div class="d-flex">
@@ -156,14 +119,16 @@
 </template>
 
 <script>
-import { TranslationMixin } from '@/utils/locales'
-import BaseWindow from '@/components/Windows/Layout/BaseWindow'
+import { TranslationMixin } from '@/utils/locales.ts'
+import BaseWindow from '@/components/Windows/Layout/BaseWindow.vue'
+import PackTypeViewer from '@/components/Data/PackTypeViewer.vue'
 
 export default {
 	name: 'CreateProjectWindow',
 	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
+		PackTypeViewer,
 	},
 	props: ['currentWindow'],
 

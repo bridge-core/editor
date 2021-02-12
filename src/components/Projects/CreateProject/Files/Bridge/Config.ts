@@ -10,6 +10,7 @@ export class CreateConfig extends CreateFile {
 				prefix: createOptions.prefix,
 				author: createOptions.author,
 				targetVersion: createOptions.targetVersion,
+				description: createOptions.description,
 			},
 			true
 		)

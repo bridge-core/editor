@@ -5,6 +5,7 @@ import { IPackType, PackType } from '../../Data/PackType'
 import { TProjectConfig } from '../ProjectConfig'
 import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
+import { loadPacks } from './loadPacks'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -45,17 +46,14 @@ export class Project {
 		} catch {
 			config = {}
 		}
+		console.log(this.name, await loadPacks(this.app, this.name))
 
 		this._projectData = {
 			...config,
 			path: this.name,
 			name: this.name,
 			imgSrc: await loadIcon(`projects/${this.name}`),
-			contains: <IPackType[]>(
-				(await this.app.fileSystem.readdir(`projects/${this.name}`))
-					.map(path => PackType.get(`projects/${this.name}/${path}`))
-					.filter(pack => pack !== undefined)
-			),
+			contains: await loadPacks(this.app, this.name),
 		}
 	}
 }
