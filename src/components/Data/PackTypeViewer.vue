@@ -36,7 +36,7 @@
 			</template>
 		</div>
 
-		<div v-if="packType.version">
+		<div v-if="packType.version" class="mb-2">
 			Pack Version: v{{ packType.version.join('.') }}
 		</div>
 
