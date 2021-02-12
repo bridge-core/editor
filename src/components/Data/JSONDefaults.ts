@@ -200,26 +200,11 @@ export namespace JSONDefaults {
 			})
 		})
 
-		App.eventSystem.on('fileUpdated', async filePath => {
-			const fileType = FileType.getId(filePath)
-			const app = await App.getApp()
-			addSchemas(await requestSchemaFor(fileType))
-			await runSchemaScripts(app, filePath)
-		})
+		App.eventSystem.on('fileUpdated', updateDynamicSchemas)
 
 		// Updating currentContext/ references
-		App.eventSystem.on('currentTabSwitched', async filePath => {
-			const app = await App.getApp()
-			const fileType = FileType.getId(filePath)
-			addSchemas(await requestSchemaFor(fileType, filePath))
-			await runSchemaScripts(app, filePath)
-		})
-		App.eventSystem.on('refreshCurrentContext', async filePath => {
-			const app = await App.getApp()
-			const fileType = FileType.getId(filePath)
-			addSchemas(await requestSchemaFor(fileType, filePath))
-			await runSchemaScripts(app, filePath)
-		})
+		App.eventSystem.on('currentTabSwitched', updateDynamicSchemas)
+		App.eventSystem.on('refreshCurrentContext', updateDynamicSchemas)
 		App.eventSystem.on('disableValidation', () => {
 			setJSONDefaults(false)
 		})
@@ -231,5 +216,13 @@ export namespace JSONDefaults {
 		app.windows.loadingWindow.open()
 		await loadAllSchemas()
 		app.windows.loadingWindow.close()
+	}
+
+	async function updateDynamicSchemas(filePath: string) {
+		const app = await App.getApp()
+		const fileType = FileType.getId(filePath)
+		addSchemas(await requestSchemaFor(fileType, filePath), false)
+		await runSchemaScripts(app, filePath)
+		setJSONDefaults()
 	}
 }
