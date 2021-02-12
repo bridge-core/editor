@@ -108,8 +108,15 @@ export namespace JSONDefaults {
 								cacheKey
 							)
 						},
+						app.projectConfig.get.bind(app.projectConfig),
 					],
-					['readdir', 'uuid', 'getFormatVersions', 'getCacheDataFor']
+					[
+						'readdir',
+						'uuid',
+						'getFormatVersions',
+						'getCacheDataFor',
+						'getFromConfig',
+					]
 				)
 			} catch (err) {
 				// console.error(`Error evaluating schemaScript: ${err.message}`)
