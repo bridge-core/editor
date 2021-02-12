@@ -16,7 +16,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"type": "string"
+							"$ref": "../project/fileIdentifierEnum.json"
 						},
 						"is_experimental": {
 							"type": "boolean",

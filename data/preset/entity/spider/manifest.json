@@ -26,6 +26,11 @@
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
+			"animationController.json",
+			"RP/animation_controllers/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
 			"geometry.json",
 			"RP/models/entity/{{IDENTIFIER}}.json",
 			{ "inject": ["IDENTIFIER"] }

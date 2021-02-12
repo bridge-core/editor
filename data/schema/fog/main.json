@@ -20,7 +20,14 @@
 					"type": "object",
 					"properties": {
 						"identifier": {
-							"$ref": "../general/vanilla/identifiers.json#/definitions/fog_identifiers"
+							"anyOf": [
+								{
+									"$ref": "../project/fileIdentifierEnum.json"
+								},
+								{
+									"$ref": "../general/vanilla/identifiers.json#/definitions/fog_identifiers"
+								}
+							]
 						}
 					}
 				},
