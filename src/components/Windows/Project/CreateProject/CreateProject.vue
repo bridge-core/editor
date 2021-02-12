@@ -60,6 +60,7 @@
 				:loading="availableTargetVersionsLoading"
 				outlined
 				dense
+				:menu-props="{ maxHeight: 220 }"
 			/>
 		</template>
 
