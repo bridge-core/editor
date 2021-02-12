@@ -214,6 +214,7 @@ export default {
 			title: 'Create Project',
 			packIcon: 'Project Icon (optional)',
 			projectName: 'Project Name',
+			projectDescription: 'Project Description (optional)',
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',
 			projectTargetVersion: 'Project Target Version',

@@ -5,9 +5,10 @@ import CreateProjectComponent from './CreateProject.vue'
 export class CreateProjectWindow extends BaseWindow {
 	protected isFirstProject = false
 	protected projectName: string = ''
+	protected projectDescription: string = ''
 	protected projectPrefix: string = 'bridge'
 	protected projectAuthor: string = ''
-	protected projectTargetVersion: string = '1.16.100'
+	protected projectTargetVersion: string = ''
 	protected projectIcon: File | null = null
 	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []
@@ -21,6 +22,10 @@ export class CreateProjectWindow extends BaseWindow {
 			this.availableTargetVersions = await app.fileSystem.readJSON(
 				'data/packages/formatVersions.json'
 			)
+			// Set default version
+			this.projectTargetVersion = this.availableTargetVersions[
+				this.availableTargetVersions.length - 1
+			]
 			this.availableTargetVersionsLoading = false
 		})
 	}
@@ -29,7 +34,8 @@ export class CreateProjectWindow extends BaseWindow {
 		return (
 			this.projectName.length > 0 &&
 			this.projectPrefix.length > 0 &&
-			this.projectAuthor.length > 0
+			this.projectAuthor.length > 0 &&
+			this.projectTargetVersion.length > 0
 		)
 	}
 

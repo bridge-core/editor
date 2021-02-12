@@ -26,42 +26,60 @@
 				</span>
 			</div>
 
-			<v-file-input
-				accept="image/png"
-				outlined
-				dense
-				:prepend-icon="null"
-				prepend-inner-icon="mdi-image-outline"
-				v-model="projectIcon"
-				:label="t('windows.createProject.packIcon')"
-			/>
+			<div class="d-flex">
+				<v-file-input
+					v-model="projectIcon"
+					:label="t('windows.createProject.packIcon')"
+					:prepend-icon="null"
+					prepend-inner-icon="mdi-image-outline"
+					accept="image/png"
+					class="mr-2"
+					outlined
+					dense
+				/>
+				<v-text-field
+					v-model="projectName"
+					:label="t('windows.createProject.projectName')"
+					class="ml-2"
+					outlined
+					dense
+				/>
+			</div>
+
 			<v-text-field
-				v-model="projectName"
-				:label="t('windows.createProject.projectName')"
+				v-model="projectDescription"
+				:label="t('windows.createProject.projectDescription')"
 				outlined
 				dense
 			/>
-			<v-text-field
-				v-model="projectPrefix"
-				:label="t('windows.createProject.projectPrefix')"
-				outlined
-				dense
-			/>
-			<v-text-field
-				v-model="projectAuthor"
-				:label="t('windows.createProject.projectAuthor')"
-				outlined
-				dense
-			/>
-			<v-autocomplete
-				v-model="projectTargetVersion"
-				:label="t('windows.createProject.projectTargetVersion')"
-				:items="availableTargetVersions"
-				:loading="availableTargetVersionsLoading"
-				outlined
-				dense
-				:menu-props="{ maxHeight: 220 }"
-			/>
+
+			<div class="d-flex">
+				<v-text-field
+					v-model="projectPrefix"
+					:label="t('windows.createProject.projectPrefix')"
+					class="mr-2"
+					outlined
+					dense
+				/>
+				<v-text-field
+					v-model="projectAuthor"
+					:label="t('windows.createProject.projectAuthor')"
+					class="mx-2"
+					outlined
+					dense
+				/>
+
+				<v-autocomplete
+					v-model="projectTargetVersion"
+					:label="t('windows.createProject.projectTargetVersion')"
+					:items="availableTargetVersions"
+					:loading="availableTargetVersionsLoading"
+					class="ml-2"
+					outlined
+					dense
+					:menu-props="{ maxHeight: 220 }"
+				/>
+			</div>
 		</template>
 
 		<template #actions>
@@ -81,7 +99,7 @@
 
 <script>
 import { TranslationMixin } from '@/utils/locales'
-import BaseWindow from '../../Layout/BaseWindow'
+import BaseWindow from '@/components/Windows/Layout/BaseWindow'
 
 export default {
 	name: 'CreateProjectWindow',

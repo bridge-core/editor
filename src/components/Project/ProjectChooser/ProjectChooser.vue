@@ -82,7 +82,7 @@ import ToolbarButton from '@/components/Windows/Layout/Toolbar/Button.vue'
 
 import { App } from '@/App'
 import { TranslationMixin } from '@/utils/locales'
-import { createConfirmWindow } from '../../Common/CommonDefinitions'
+import { createConfirmWindow } from '@/components/Windows/Common/CommonDefinitions'
 import { PackIndexerMixin } from '@/components/Mixins/Tasks/PackIndexer'
 import { CompilerMixin } from '@/components/Mixins/Tasks/Compiler'
 
