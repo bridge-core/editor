@@ -136,8 +136,11 @@ export class FileSystem extends Signal<void> {
 		const file = await this.readFile(path)
 		return await json5.parse(await file.text())
 	}
-	writeJSON(path: string, data: any) {
-		return this.writeFile(path, JSON.stringify(data))
+	writeJSON(path: string, data: any, beautify = false) {
+		return this.writeFile(
+			path,
+			JSON.stringify(data, null, beautify ? '\t' : undefined)
+		)
 	}
 
 	async copyFile(originPath: string, destPath: string) {

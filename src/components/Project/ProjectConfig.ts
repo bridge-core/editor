@@ -49,7 +49,8 @@ export class ProjectConfig {
 
 		await this.fileSystem.writeJSON(
 			`projects/${app.selectedProject}/bridge/config.json`,
-			this.data
+			this.data,
+			true
 		)
 	}
 }
