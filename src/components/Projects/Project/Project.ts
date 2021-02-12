@@ -46,7 +46,6 @@ export class Project {
 		} catch {
 			config = {}
 		}
-		console.log(this.name, await loadPacks(this.app, this.name))
 
 		this._projectData = {
 			...config,
