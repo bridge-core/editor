@@ -16,8 +16,8 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new ButtonToggle({
 			category: 'appearance',
-			name: 'Color Scheme',
-			description: "Choose the color scheme of bridge.'s UI",
+			name: 'windows.settings.appearance.colorScheme.name',
+			description: 'windows.settings.appearance.colorScheme.description',
 			key: 'colorScheme',
 			options: ['auto', 'dark', 'light'],
 			default: 'auto',
@@ -29,8 +29,8 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Selection({
 			category: 'appearance',
-			name: 'Dark Theme',
-			description: 'Select the default dark theme bridge. uses',
+			name: 'windows.settings.appearance.darkTheme.name',
+			description: 'windows.settings.appearance.darkTheme.description',
 			key: 'darkTheme',
 			get options() {
 				return settings.parent.themeManager
@@ -46,8 +46,8 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Selection({
 			category: 'appearance',
-			name: 'Light Theme',
-			description: 'Select the default light theme bridge. uses',
+			name: 'windows.settings.appearance.lightTheme.name',
+			description: 'windows.settings.appearance.lightTheme.description',
 			key: 'lightTheme',
 			get options() {
 				return settings.parent.themeManager
@@ -63,8 +63,9 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new ProjectSelection({
 			category: 'appearance',
-			name: 'Local Dark Theme',
-			description: 'Choose a dark theme for the currently active project',
+			name: 'windows.settings.appearance.localDarkTheme.name',
+			description:
+				'windows.settings.appearance.localDarkTheme.description',
 			key: 'darkTheme',
 			get options() {
 				return settings.parent.themeManager
@@ -81,9 +82,9 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new ProjectSelection({
 			category: 'appearance',
-			name: 'Local Light Theme',
+			name: 'windows.settings.appearance.localLightTheme.name',
 			description:
-				'Choose a light theme for the currently active project',
+				'windows.settings.appearance.localLightTheme.description',
 			key: 'lightTheme',
 			get options() {
 				return settings.parent.themeManager
@@ -101,8 +102,8 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'appearance',
-			name: 'Sidebar Right',
-			description: 'Moves the sidebar to the right side of the screen',
+			name: 'windows.settings.appearance.sidebarRight.name',
+			description: 'windows.settings.appearance.sidebarRight.description',
 			key: 'isSidebarRight',
 			default: false,
 		})
@@ -110,8 +111,9 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'appearance',
-			name: 'Shrink Sidebar Elements',
-			description: "Shrink the size of bridge.'s sidebar elements",
+			name: 'windows.settings.appearance.shrinkSidebarElements.name',
+			description:
+				'windows.settings.appearance.shrinkSidebarElements.description',
 			key: 'smallerSidebarElements',
 			default: false,
 		})
@@ -120,9 +122,8 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new ButtonToggle({
 			category: 'developers',
-			name: 'Simulate OS',
-			description:
-				'Simulate a different OS for testing platform specific behavior',
+			name: 'windows.settings.developer.simulateOS.name',
+			description: 'windows.settings.developer.simulateOS.description',
 			key: 'simulateOS',
 			options: ['auto', 'win32', 'darwin', 'linux'],
 			default: 'auto',
@@ -131,8 +132,8 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'developers',
-			name: 'Developer Mode',
-			description: 'Enable the developer mode for this app',
+			name: 'windows.settings.developer.devMode.name',
+			description: 'windows.settings.developer.devMode.description',
 			key: 'isDevMode',
 		})
 	)
@@ -140,8 +141,8 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Selection({
 			category: 'general',
-			name: 'Language',
-			description: 'Choose a language for bridge. to use',
+			name: 'windows.settings.general.language.name',
+			description: 'windows.settings.general.language.description',
 			key: 'locale',
 			get options() {
 				return getLanguages().map(lang => ({
@@ -159,9 +160,9 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'general',
-			name: 'Collaborative Mode',
+			name: 'windows.settings.general.collaborativeMode.name',
 			description:
-				'Forces full refresh of the cache upon switching projects. Disable when you work alone and you only use bridge. to edit your project',
+				'windows.settings.general.collaborativeMode.description',
 			key: 'fullLightningCacheRefresh',
 			default: true,
 		})
@@ -169,9 +170,9 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'general',
-			name: 'Pack Spider',
+			name: 'windows.settings.general.packSpider.name',
 			description:
-				'Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system',
+				'windows.settings.general.packSpider.description',
 			key: 'enablePackSpider',
 			default: true,
 		})
@@ -180,9 +181,9 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'general',
-			name: 'Open Links in Default Browser',
+			name: 'windows.settings.general.openLinksInBrowser.name',
 			description:
-				'Open links inside of your default browser instead of a native app window',
+				'windows.settings.general.openLinksInBrowser.description',
 			key: 'openLinksInBrowser',
 			default: false,
 		})

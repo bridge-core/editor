@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h3>{{ config.name }}</h3>
+		<h3>{{ t(config.name) }}</h3>
 		<div class="d-flex align-center">
 			<div>
 				<v-autocomplete
@@ -16,17 +16,20 @@
 				/>
 			</div>
 
-			<span class="ml-4 body-1">{{ config.description }}</span>
+			<span class="ml-4 body-1">{{ t(config.description) }}</span>
 		</div>
 	</div>
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
+
 export default {
 	props: {
 		config: Object,
 		value: [String, Promise],
 	},
+	mixins: [TranslationMixin],
 	data: () => ({
 		value_: undefined,
 	}),

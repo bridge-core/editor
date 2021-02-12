@@ -275,6 +275,73 @@ export default {
 		settings: {
 			title: 'Settings',
 			searchSettings: 'Search settings...',
+			appearance: {
+				name: 'Appearance',
+				colorScheme: {
+					name: 'Color Scheme',
+					description: "Choose the color scheme of bridge.'s UI",
+				},
+				darkTheme: {
+					name: 'Dark Theme',
+					description: 'Select the default dark theme bridge. uses',
+				},
+				lightTheme: {
+					name: 'Light Theme',
+					description: 'Select the default light theme bridge. uses',
+				},
+				localDarkTheme: {
+					name: 'Local Dark Theme',
+					description: 'Choose a dark theme for the currently active project',
+				},
+				localLightTheme: {
+					name: 'Local Light Theme',
+					description: 'Choose a light theme for the currently active project',
+				},
+				sidebarRight: {
+					name: 'Sidebar Right',
+					description: 'Moves the sidebar to the right side of the screen',
+				},
+				shrinkSidebarElements: {
+					name: 'Shrink Sidebar Elements',
+					description: "Shrink the size of bridge.'s sidebar elements",
+				},
+			},
+			general: {
+				name: 'General',
+				language: {
+					name: 'Language',
+					description: 'Choose a language for bridge. to use',
+				},
+				collaborativeMode: {
+					name: 'Collaborative Mode',
+					description: 
+						'Forces full refresh of the cache upon switching projects. Disable when you work alone and you only use bridge. to edit your project',
+				},
+				packSpider: {
+					name: 'Pack Spider',
+					description: 
+						'Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system',
+				},
+				openLinksInBrowser: {
+					name: 'Open Links in Default Browser',
+					description: 
+						'Open links inside of your default browser instead of a native app window',
+				},
+			},
+			developer: {
+				name: 'Developer',
+				simulateOS: {
+					name: 'Simulate OS',
+					description: 'Simulate a different OS for testing platform specific behavior',
+				},
+				devMode: {
+					name: 'Developer Mode',
+					description: 'Enable the developer mode for this app',
+				},
+			},
+			actions: {
+				name: 'Actions',
+			},
 		},
 		projectFolder: {
 			title: 'Project Folder',

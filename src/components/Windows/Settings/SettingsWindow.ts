@@ -6,6 +6,7 @@ import { App } from '@/App'
 import { SettingsSidebar } from './SettingsSidebar'
 import { setSettingsState, settingsState } from './SettingsState'
 import { BaseWindow } from '../BaseWindow'
+import { translate } from '@/utils/locales'
 
 export class SettingsWindow extends BaseWindow {
 	protected sidebar = new SettingsSidebar([])
@@ -16,12 +17,12 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async setup() {
-		this.addCategory('general', 'General', 'mdi-circle-outline')
-		this.addCategory('appearance', 'Appearance', 'mdi-palette-outline')
+		this.addCategory('general', translate('windows.settings.general.name'), 'mdi-circle-outline')
+		this.addCategory('appearance', translate('windows.settings.appearance.name'), 'mdi-palette-outline')
 		// this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
-		this.addCategory('actions', 'Actions', 'mdi-keyboard-outline')
+		this.addCategory('actions', translate('windows.settings.actions.name'), 'mdi-keyboard-outline')
 		// this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
-		this.addCategory('developers', 'Developers', 'mdi-wrench-outline')
+		this.addCategory('developers', translate('windows.settings.developer.name'), 'mdi-wrench-outline')
 
 		await setupSettings(this)
 		this.sidebar.setDefaultSelected()

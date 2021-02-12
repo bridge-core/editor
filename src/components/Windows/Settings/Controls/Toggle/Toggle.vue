@@ -1,11 +1,11 @@
 <template>
 	<div>
-		<h3>{{ config.name }}</h3>
+		<h3>{{ t(config.name) }}</h3>
 		<v-switch
 			style="margin-top: 0;"
 			inset
 			dense
-			:label="config.description"
+			:label="t(config.description)"
 			:value="value_"
 			@change="onChange"
 		/>
@@ -13,11 +13,14 @@
 </template>
 
 <script>
+import { TranslationMixin } from '@/utils/locales'
+
 export default {
 	props: {
 		value: [Boolean, Promise],
 		config: Object,
 	},
+	mixins: [TranslationMixin],
 	data: () => ({
 		value_: undefined,
 	}),
