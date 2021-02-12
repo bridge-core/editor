@@ -15,7 +15,7 @@ export function loadAsDataURL(filePath: string) {
 				reader.addEventListener('error', reject)
 				reader.readAsDataURL(file)
 			} catch {
-				resolve('')
+				reject(`File does not exist: "${filePath}"`)
 			}
 		})
 	})
