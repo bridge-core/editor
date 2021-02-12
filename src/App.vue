@@ -70,6 +70,7 @@ body {
 *::-webkit-scrollbar-track {
 	border-radius: 24px;
 	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.6);
+	background-color: var(--v-background-base);
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 24px;
