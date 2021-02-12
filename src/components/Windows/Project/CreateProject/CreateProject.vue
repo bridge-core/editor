@@ -4,6 +4,7 @@
 		windowTitle="windows.createProject.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
+		:hasCloseButton="!isFirstProject"
 		:isFullscreen="false"
 		:isPersistent="isCreatingProject || isFirstProject"
 		:percentageWidth="80"
