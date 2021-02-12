@@ -1,5 +1,5 @@
 import { App } from '@/App'
-import { TProjectConfigKey } from '@/components/Project/ProjectConfig'
+import { TProjectConfigKey } from '@/components/Projects/ProjectConfig'
 import { Toggle } from './Toggle'
 
 export class ProjectToggle extends Toggle<Promise<boolean>> {

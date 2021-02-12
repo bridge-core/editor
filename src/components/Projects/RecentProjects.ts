@@ -1,6 +1,6 @@
 import { App } from '@/App'
 import { PersistentQueue } from '../Common/PersistentQueue'
-import { IProjectData } from './Project'
+import { IProjectData } from './Project/Project'
 
 export class RecentProjects extends PersistentQueue<IProjectData> {
 	constructor(app: App, savePath: string) {

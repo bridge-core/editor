@@ -2,7 +2,7 @@ import { App } from '@/App'
 import { get, set } from 'idb-keyval'
 import Vue from 'vue'
 import { Signal } from '@/components/Common/Event/Signal'
-import { Project } from './Project'
+import { Project } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
 
 export class ProjectManager extends Signal<void> {

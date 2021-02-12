@@ -1,5 +1,5 @@
 import { App } from '@/App'
-import { IProjectData } from '@/components/Project/Project'
+import { IProjectData } from '@/components/Projects/Project/Project'
 import { createWindow } from '@/components/Windows/create'
 import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
 import ProjectChooserComponent from './ProjectChooser.vue'

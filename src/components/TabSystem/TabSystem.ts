@@ -5,7 +5,7 @@ import Vue from 'vue'
 import { App } from '@/App'
 import { ImageTab } from '../Editors/Image/ImageTab'
 import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
-import { Project } from '../Project/Project'
+import { Project } from '../Projects/Project/Project'
 
 export class TabSystem {
 	tabs: Tab[] = []

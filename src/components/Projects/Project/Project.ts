@@ -1,10 +1,10 @@
 import { App } from '@/App'
-import { TabSystem } from '../TabSystem/TabSystem'
+import { TabSystem } from '../../TabSystem/TabSystem'
 import Vue from 'vue'
-import { IPackType, PackType } from '../Data/PackType'
-import { TProjectConfig } from './ProjectConfig'
-import { loadAsDataURL } from '@/utils/loadAsDataUrl'
-import { RecentFiles } from './RecentFiles'
+import { IPackType, PackType } from '../../Data/PackType'
+import { TProjectConfig } from '../ProjectConfig'
+import { RecentFiles } from '../RecentFiles'
+import { loadIcon } from './loadIcon'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -50,9 +50,7 @@ export class Project {
 			...config,
 			path: this.name,
 			projectName: this.name,
-			imgSrc: await loadAsDataURL(
-				`projects/${this.name}/bridge/packIcon.png`
-			),
+			imgSrc: await loadIcon(`projects/${this.name}`),
 			contains: <IPackType[]>(
 				(await this.app.fileSystem.readdir(`projects/${this.name}`))
 					.map(path => PackType.get(`projects/${this.name}/${path}`))
