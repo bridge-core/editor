@@ -2,7 +2,14 @@
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"properties": {
 		"identifier": {
-			"$ref": "../project/fileIdentifierEnum.json"
+			"anyOf": [
+				{
+					"$ref": "../project/fileIdentifierEnum.json"
+				},
+				{
+					"type": "string"
+				}
+			]
 		},
 		"runtime_identifier": {
 			"$ref": "../general/reference/identifiers.json#/definitions/entity_identifiers"

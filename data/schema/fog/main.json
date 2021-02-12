@@ -25,6 +25,9 @@
 									"$ref": "../project/fileIdentifierEnum.json"
 								},
 								{
+									"type": "string"
+								},
+								{
 									"$ref": "../general/vanilla/identifiers.json#/definitions/fog_identifiers"
 								}
 							]

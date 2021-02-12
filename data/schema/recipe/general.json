@@ -31,7 +31,14 @@
 			"maxProperties": 1,
 			"properties": {
 				"identifier": {
-					"$ref": "../project/fileIdentifierEnum.json"
+					"anyOf": [
+						{
+							"$ref": "../project/fileIdentifierEnum.json"
+						},
+						{
+							"type": "string"
+						}
+					]
 				}
 			}
 		},

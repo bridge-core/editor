@@ -23,7 +23,14 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../project/fileIdentifierEnum.json"
+							"anyOf": [
+								{
+									"$ref": "../project/fileIdentifierEnum.json"
+								},
+								{
+									"type": "string"
+								}
+							]
 						},
 						"item": {
 							"description": "Sets an item identifier with a Molang script to decide when to render the attachable.",

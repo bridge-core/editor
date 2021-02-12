@@ -13,7 +13,14 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../project/fileIdentifierEnum.json"
+							"anyOf": [
+								{
+									"$ref": "../project/fileIdentifierEnum.json"
+								},
+								{
+									"type": "string"
+								}
+							]
 						},
 						"basic_render_parameters": {
 							"additionalProperties": false,

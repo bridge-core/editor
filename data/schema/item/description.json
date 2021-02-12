@@ -4,7 +4,14 @@
 	"type": "object",
 	"properties": {
 		"identifier": {
-			"$ref": "../project/fileIdentifierEnum.json",
+			"anyOf": [
+				{
+					"$ref": "../project/fileIdentifierEnum.json"
+				},
+				{
+					"type": "string"
+				}
+			],
 			"description": "The identifier for this item. The name must include a namespace and must not use the Minecraft namespace unless overriding a Vanilla item."
 		},
 		"category": {
