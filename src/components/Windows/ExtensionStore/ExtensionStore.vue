@@ -16,6 +16,7 @@
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.extensionStore.searchExtensions')"
 				v-model="sidebar._filter"
+				autocomplete="off"
 				autofocus
 				outlined
 				dense

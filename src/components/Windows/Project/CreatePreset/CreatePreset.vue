@@ -16,6 +16,7 @@
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.createPreset.searchPresets')"
 				v-model="sidebar._filter"
+				autocomplete="off"
 				autofocus
 				outlined
 				dense
@@ -37,10 +38,11 @@
 				class="mb-1"
 				v-for="([name, id], i) in content.fields"
 				:key="i"
+				v-model="content.models[id]"
 				:label="name"
+				autocomplete="off"
 				outlined
 				dense
-				v-model="content.models[id]"
 			/>
 		</template>
 

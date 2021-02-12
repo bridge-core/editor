@@ -93,6 +93,7 @@
 				<v-text-field
 					v-model="createOptions.name"
 					:label="t('windows.createProject.projectName')"
+					autocomplete="off"
 					class="ml-2"
 					outlined
 					dense
@@ -102,6 +103,7 @@
 			<v-text-field
 				v-model="createOptions.description"
 				:label="t('windows.createProject.projectDescription')"
+				autocomplete="off"
 				outlined
 				dense
 			/>
@@ -110,6 +112,7 @@
 				<v-text-field
 					v-model="createOptions.prefix"
 					:label="t('windows.createProject.projectPrefix')"
+					autocomplete="off"
 					class="mr-2"
 					outlined
 					dense
@@ -117,6 +120,7 @@
 				<v-text-field
 					v-model="createOptions.author"
 					:label="t('windows.createProject.projectAuthor')"
+					autocomplete="off"
 					class="mx-2"
 					outlined
 					dense
@@ -125,6 +129,7 @@
 				<v-autocomplete
 					v-model="createOptions.targetVersion"
 					:label="t('windows.createProject.projectTargetVersion')"
+					autocomplete="off"
 					:items="availableTargetVersions"
 					:loading="availableTargetVersionsLoading"
 					class="ml-2"

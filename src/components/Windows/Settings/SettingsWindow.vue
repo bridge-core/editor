@@ -16,6 +16,7 @@
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.settings.searchSettings')"
 				v-model.trim="sidebar._filter"
+				autocomplete="off"
 				autofocus
 				outlined
 				dense
