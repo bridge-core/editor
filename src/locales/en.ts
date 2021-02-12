@@ -208,7 +208,7 @@ export default {
 			noData: 'No results...',
 		},
 		createProject: {
-			welcome: 'Welcome to bridge. v2!',
+			welcome: 'Welcome to bridge.!',
 			welcomeDescription:
 				'Please create your first project in order to get started.',
 			title: 'Create Project',
