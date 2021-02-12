@@ -79,7 +79,7 @@ export default {
 		},
 		cut: {
 			name: 'Cut',
-			description: 
+			description:
 				'Copy selected text to the clipboard and remove it from the original context',
 		},
 		paste: {
@@ -88,7 +88,7 @@ export default {
 		},
 		docs: {
 			name: 'Documentation',
-			description: 'Opens the Minecraft Add-On documentation'
+			description: 'Opens the Minecraft Add-On documentation',
 		},
 		releases: {
 			name: 'Releases',
@@ -108,7 +108,8 @@ export default {
 		},
 		faq: {
 			name: 'FAQ',
-			description: 'Read through frequently asked questions about developing Add-Ons with bridge.',
+			description:
+				'Read through frequently asked questions about developing Add-Ons with bridge.',
 		},
 		reloadAutoCompletions: {
 			name: 'Reload Auto-Completions',
@@ -207,6 +208,9 @@ export default {
 			noData: 'No results...',
 		},
 		createProject: {
+			welcome: 'Welcome to bridge. v2!',
+			welcomeDescription:
+				'Please create your first project in order to get started.',
 			title: 'Create Project',
 			packIcon: 'Project Icon (optional)',
 			projectName: 'Project Name',
@@ -222,7 +226,7 @@ export default {
 		deleteProject: {
 			confirm: 'Delete',
 			cancel: 'Cancel',
-			description: 'Are you sure you want to delete this project?'
+			description: 'Are you sure you want to delete this project?',
 		},
 		discord: {
 			title: 'Discord',

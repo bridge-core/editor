@@ -176,9 +176,6 @@ p {
 	height: 24px;
 	image-rendering: pixelated;
 }
-.primary-text {
-	/* color: var(--v-primary-base); */
-}
 .disabled {
 	opacity: 0.2;
 }

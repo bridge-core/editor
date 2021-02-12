@@ -5,12 +5,26 @@
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
-		:isPersistent="isCreatingProject || isPersistent"
+		:isPersistent="isCreatingProject || isFirstProject"
 		:percentageWidth="80"
 		:percentageHeight="80"
 		@closeWindow="close"
 	>
 		<template #default>
+			<!-- Welcome text for users getting started with bridge. -->
+
+			<div
+				class="rounded-lg pa-3 content-area mb-6"
+				v-if="isFirstProject"
+			>
+				<h1 class="text-h4">
+					{{ t('windows.createProject.welcome') }}
+				</h1>
+				<span>
+					{{ t('windows.createProject.welcomeDescription') }}
+				</span>
+			</div>
+
 			<v-file-input
 				accept="image/png"
 				outlined
@@ -91,3 +105,9 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+.content-area {
+	background-color: var(--v-sidebarNavigation-base);
+}
+</style>
