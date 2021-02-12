@@ -108,14 +108,14 @@ export namespace JSONDefaults {
 								cacheKey
 							)
 						},
-						app.projectConfig.get.bind(app.projectConfig),
+						() => app.projectConfig.get('prefix'),
 					],
 					[
 						'readdir',
 						'uuid',
 						'getFormatVersions',
 						'getCacheDataFor',
-						'getFromConfig',
+						'getProjectPrefix',
 					]
 				)
 			} catch (err) {

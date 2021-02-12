@@ -6,7 +6,7 @@ export async function getFilteredFormatVersions(useVersions?: string[]) {
 	await app.dataLoader.fired
 
 	const targetVersion: string | undefined =
-		useVersions ?? (await app.projectConfig.get('projectTargetVersion'))
+		useVersions ?? (await app.projectConfig.get('targetVersion'))
 	const formatVersions: string[] = await app.fileSystem.readJSON(
 		'data/packages/formatVersions.json'
 	)

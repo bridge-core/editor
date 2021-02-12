@@ -28,7 +28,7 @@ export class ProjectChooserWindow {
 		const projects = await app.projectManager.getProjects()
 
 		projects.forEach(project =>
-			this.addProject(project.path, project.projectName, project)
+			this.addProject(project.path, project.name, project)
 		)
 		this.sidebar.setDefaultSelected(app.projectManager.selectedProject)
 		return app.projectManager.selectedProject

@@ -16,15 +16,13 @@ export const ENVModule = ({}: IModuleConfig) => ({
 		return `projects/${App.instance.selectedProject}`
 	},
 	getProjectPrefix() {
-		return App.getApp().then(app => app.projectConfig.get('projectPrefix'))
+		return App.getApp().then(app => app.projectConfig.get('prefix'))
 	},
 	getProjectTargetVersion() {
-		return App.getApp().then(app =>
-			app.projectConfig.get('projectTargetVersion')
-		)
+		return App.getApp().then(app => app.projectConfig.get('targetVersion'))
 	},
 	getProjectAuthor() {
-		return App.getApp().then(app => app.projectConfig.get('projectAuthor'))
+		return App.getApp().then(app => app.projectConfig.get('author'))
 	},
 	getContext() {
 		// TODO

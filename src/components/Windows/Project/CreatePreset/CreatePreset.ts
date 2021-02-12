@@ -61,9 +61,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 		// Load current project target version
 		const projectTargetVersion =
-			<string | undefined>(
-				await app.projectConfig.get('projectTargetVersion')
-			) ??
+			<string | undefined>await app.projectConfig.get('targetVersion') ??
 			(
 				await app.fileSystem.readJSON(
 					'data/packages/formatVersions.json'
@@ -106,7 +104,7 @@ export class CreatePresetWindow extends BaseWindow {
 			presetPath: dirname(manifestPath),
 			models: {
 				PROJECT_PREFIX:
-					(await app.projectConfig.get('projectPrefix')) ?? 'bridge',
+					(await app.projectConfig.get('prefix')) ?? 'bridge',
 				...Object.fromEntries(
 					manifest.fields.map(([_, id, opts = {}]: any) => [
 						id,

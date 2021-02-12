@@ -32,10 +32,8 @@
 					:src="sidebar.currentState.imgSrc"
 				/>
 				<div>
-					<h1>{{ sidebar.currentState.projectName }}</h1>
-					<h3>
-						by {{ sidebar.currentState.projectAuthor || 'Unknown' }}
-					</h3>
+					<h1>{{ sidebar.currentState.name }}</h1>
+					<h3>by {{ sidebar.currentState.author || 'Unknown' }}</h3>
 				</div>
 			</div>
 			<div>

@@ -7,9 +7,9 @@ export class CreateConfig extends CreateFile {
 		await fs.writeJSON(
 			`bridge/config.json`,
 			{
-				projectPrefix: createOptions.prefix,
-				projectAuthor: createOptions.author,
-				projectTargetVersion: createOptions.targetVersion,
+				prefix: createOptions.prefix,
+				author: createOptions.author,
+				targetVersion: createOptions.targetVersion,
 			},
 			true
 		)

@@ -2,9 +2,9 @@ import { App } from '@/App'
 import { FileSystem } from '../FileSystem/FileSystem'
 
 export type TProjectConfigKey =
-	| 'projectPrefix'
-	| 'projectTargetVersion'
-	| 'projectAuthor'
+	| 'prefix'
+	| 'targetVersion'
+	| 'author'
 	| 'darkTheme'
 	| 'lightTheme'
 export type TProjectConfig = {

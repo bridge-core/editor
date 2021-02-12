@@ -8,7 +8,7 @@ import { loadIcon } from './loadIcon'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
-	projectName: string
+	name: string
 	imgSrc: string
 	contains: IPackType[]
 }
@@ -49,7 +49,7 @@ export class Project {
 		this._projectData = {
 			...config,
 			path: this.name,
-			projectName: this.name,
+			name: this.name,
 			imgSrc: await loadIcon(`projects/${this.name}`),
 			contains: <IPackType[]>(
 				(await this.app.fileSystem.readdir(`projects/${this.name}`))
