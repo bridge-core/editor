@@ -3,6 +3,7 @@ import { BaseWindow } from '@/components/Windows/BaseWindow'
 import CreateProjectComponent from './CreateProject.vue'
 
 export class CreateProjectWindow extends BaseWindow {
+	protected isPersistent = false
 	protected projectName: string = ''
 	protected projectPrefix: string = 'bridge'
 	protected projectAuthor: string = ''
@@ -32,7 +33,13 @@ export class CreateProjectWindow extends BaseWindow {
 		)
 	}
 
+	open(isPersistent = false) {
+		this.isPersistent = isPersistent
+		super.open()
+	}
+
 	createProject() {
+		this.isCreatingProject = true
 		return new Promise<void>(resolve =>
 			App.ready.once(async app => {
 				const fs = app.fileSystem
@@ -72,6 +79,7 @@ export class CreateProjectWindow extends BaseWindow {
 					)
 
 				await app.projectManager.addProject(this.projectName)
+				this.isCreatingProject = false
 				resolve()
 			})
 		)

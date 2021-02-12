@@ -45,19 +45,29 @@ export class ProjectManager extends Signal<void> {
 	protected async loadProjects() {
 		await this.app.fileSystem.fired
 
-		const potentialProjects = await this.app.fileSystem.readdir(
-			'projects',
-			{
+		let potentialProjects: FileSystemHandle[] = []
+		try {
+			potentialProjects = await this.app.fileSystem.readdir('projects', {
 				withFileTypes: true,
-			}
-		)
+			})
+		} catch {}
+
 		const loadProjects = potentialProjects
 			.filter(({ kind }) => kind === 'directory')
 			.map(({ name }) => name)
 
-		for (const projectName of loadProjects) {
-			await this.addProject(projectName, false)
+		if (loadProjects.length === 0) {
+			// Force creation of new project
+			const createProject = this.app.windows.createProject
+			createProject.open(true)
+			await createProject.fired
+		} else {
+			// Load existing projects
+			for (const projectName of loadProjects) {
+				await this.addProject(projectName, false)
+			}
 		}
+
 		this.dispatch()
 	}
 

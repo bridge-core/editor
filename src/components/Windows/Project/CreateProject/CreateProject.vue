@@ -5,7 +5,7 @@
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
-		:isPersistent="isCreatingProject"
+		:isPersistent="isCreatingProject || isPersistent"
 		:percentageWidth="80"
 		:percentageHeight="80"
 		@closeWindow="close"
