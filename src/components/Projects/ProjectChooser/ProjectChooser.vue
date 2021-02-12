@@ -52,10 +52,6 @@
 					}"
 				/>
 			</div>
-
-			<div class="content-area rounded-lg">
-				{{ sidebar.currentState.version }}
-			</div>
 		</template>
 
 		<template #actions="{ selectedSidebar }">
