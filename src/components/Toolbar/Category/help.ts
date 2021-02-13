@@ -22,7 +22,7 @@ export function setupHelpCategory(app: App) {
 			description: 'actions.bugReports.description',
 			onTrigger: () =>
 				window.open(
-					'https://github.com/solvedDev/bridge./issues/new/choose',
+					'https://github.com/bridge-core/editor/issues/new/choose',
 					'_blank'
 				),
 		})
