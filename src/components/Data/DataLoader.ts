@@ -50,9 +50,8 @@ export class DataLoader extends Signal<void> {
 		} catch {}
 
 		const zip = await fetch(
-			process.env.NODE_ENV === 'production'
-				? '/editor/'
-				: '' + 'data/package.zip'
+			(process.env.NODE_ENV === 'production' ? '/editor/' : '') +
+				'data/package.zip'
 		)
 			.then(response => response.arrayBuffer())
 			.then(data => JSZip.loadAsync(data))
