@@ -96,7 +96,7 @@ export default {
 		},
 		extensions: {
 			name: 'Extensions',
-			description: 'Manage your installed extensions',
+			description: 'Install and manage your installed extensions',
 		},
 		copy: {
 			name: 'Copy',
@@ -178,15 +178,6 @@ export default {
 		},
 		extensions: {
 			name: 'Extensions',
-			intro: {
-				description: 'Customize Your bridge. Experience With Plugins!',
-				themes: 'Themes',
-				snippets: 'Snippets',
-				presets: 'Presets',
-				uiElements: 'UI Elements',
-				andMore: 'And Much More!',
-				viewExtensions: 'View Extensions',
-			},
 		},
 		notifications: {
 			discord: {
@@ -391,12 +382,12 @@ export default {
 			packIndexing: {
 				title: 'Indexing Packs',
 				description:
-					'bridge. is collecting data about your pack that is needed for its intelligent features.',
+					'bridge. is collecting data about your pack that is needed for its intelligent features',
 			},
 			compiler: {
 				title: 'Compiling Project',
 				description:
-					'bridge. is compiling your project to make it ready for import into Minecraft.',
+					'bridge. is compiling your project to make it ready for import into Minecraft',
 			},
 		},
 	},
