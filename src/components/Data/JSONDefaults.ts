@@ -61,7 +61,12 @@ export namespace JSONDefaults {
 					schema: await entry
 						.getFile()
 						.then(file => file.text())
-						.then(json5.parse),
+						.then(json5.parse)
+						.catch(() => {
+							throw new Error(
+								`Failed to load schema "${currentPath}"`
+							)
+						}),
 				}
 			} else {
 				promises.push(loadStaticSchemas(entry, currentPath))
