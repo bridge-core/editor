@@ -191,7 +191,7 @@ export default {
 				message: 'Getting Started',
 			},
 			installApp: {
-				name: 'Install app',
+				message: 'Install app',
 			},
 		},
 	},
@@ -291,19 +291,23 @@ export default {
 				},
 				localDarkTheme: {
 					name: 'Local Dark Theme',
-					description: 'Choose a dark theme for the currently active project',
+					description:
+						'Choose a dark theme for the currently active project',
 				},
 				localLightTheme: {
 					name: 'Local Light Theme',
-					description: 'Choose a light theme for the currently active project',
+					description:
+						'Choose a light theme for the currently active project',
 				},
 				sidebarRight: {
 					name: 'Sidebar Right',
-					description: 'Moves the sidebar to the right side of the screen',
+					description:
+						'Moves the sidebar to the right side of the screen',
 				},
 				shrinkSidebarElements: {
 					name: 'Shrink Sidebar Elements',
-					description: "Shrink the size of bridge.'s sidebar elements",
+					description:
+						"Shrink the size of bridge.'s sidebar elements",
 				},
 			},
 			general: {
@@ -314,17 +318,17 @@ export default {
 				},
 				collaborativeMode: {
 					name: 'Collaborative Mode',
-					description: 
+					description:
 						'Forces full refresh of the cache upon switching projects. Disable when you work alone and you only use bridge. to edit your project',
 				},
 				packSpider: {
 					name: 'Pack Spider',
-					description: 
+					description:
 						'Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system',
 				},
 				openLinksInBrowser: {
 					name: 'Open Links in Default Browser',
-					description: 
+					description:
 						'Open links inside of your default browser instead of a native app window',
 				},
 			},
@@ -332,7 +336,8 @@ export default {
 				name: 'Developer',
 				simulateOS: {
 					name: 'Simulate OS',
-					description: 'Simulate a different OS for testing platform specific behavior',
+					description:
+						'Simulate a different OS for testing platform specific behavior',
 				},
 				devMode: {
 					name: 'Developer Mode',
