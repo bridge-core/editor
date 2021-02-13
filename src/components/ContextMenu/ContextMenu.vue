@@ -1,23 +1,27 @@
 <template>
 	<v-menu
-		v-if="shouldRender"
+		v-if="isVisible"
 		v-model="isVisible"
 		:position-x="contextMenu.position.x"
 		:position-y="contextMenu.position.y"
+		rounded="lg"
 		absolute
 		offset-y
 	>
-		<v-list>
+		<v-list dense>
 			<v-list-item
 				v-for="action in contextMenu.actionManager.state"
 				:key="action.id"
-				rounded="lg"
 				origin="center center"
 				transition="scale-transition"
 				@click="action.trigger()"
 			>
-				<v-icon color="primary">{{ action.icon }}</v-icon>
-				<v-list-item-title>{{ t(action.name) }}</v-list-item-title>
+				<v-list-item-icon class="mr-2">
+					<v-icon color="primary">{{ action.icon }}</v-icon>
+				</v-list-item-icon>
+				<v-list-item-action class="ma-0">{{
+					t(action.name)
+				}}</v-list-item-action>
 			</v-list-item>
 		</v-list>
 	</v-menu>

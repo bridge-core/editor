@@ -117,7 +117,7 @@ export class TabSystem {
 		return this.tabs.find(tab => tab.isFor(path))
 	}
 	closeTabs(ifMatches: (tab: Tab) => boolean) {
-		const tabs = this.tabs.reverse()
+		const tabs = [...this.tabs].reverse()
 
 		for (const tab of tabs) {
 			if (ifMatches(tab)) tab.close()
