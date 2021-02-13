@@ -126,7 +126,7 @@ export class App {
 					this.themeManager.updateTheme()
 
 					// Set language
-					if (typeof settingsState.general.locale === 'string')
+					if (typeof settingsState?.general?.locale === 'string')
 						selectLanguage(settingsState?.general?.locale)
 					else {
 						// Set language based off of browser language
