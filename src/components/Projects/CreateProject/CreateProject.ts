@@ -91,7 +91,7 @@ export class CreateProjectWindow extends BaseWindow {
 				)
 
 				for (const createFile of this.createFiles) {
-					createFile.create(scopedFs, this.createOptions)
+					await createFile.create(scopedFs, this.createOptions)
 				}
 				for (const pack of this.createOptions.packs) {
 					await this.packs[pack].create(scopedFs, this.createOptions)
