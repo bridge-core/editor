@@ -113,6 +113,7 @@ export default {
 	async mounted() {
 		const app = await App.getApp()
 		const toLoad = [
+			'bridge.action.newProject',
 			'bridge.action.newFile',
 			'bridge.action.openFile',
 			'bridge.action.openSettings',

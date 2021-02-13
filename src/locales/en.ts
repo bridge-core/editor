@@ -70,6 +70,10 @@ export default {
 	},
 	// Actions
 	actions: {
+		newProject: {
+			name: 'New Project',
+			description: 'Create a new bridge. project',
+		},
 		newFile: {
 			name: 'New File',
 			description: 'Create a new Add-On feature',
