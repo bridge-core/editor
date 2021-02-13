@@ -38,7 +38,6 @@ export default {
 	},
 	methods: {
 		onChange(val) {
-			console.log(val)
 			this.$nextTick(() => this.$emit('change', val))
 		},
 	},
