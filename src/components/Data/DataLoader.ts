@@ -24,9 +24,8 @@ export class DataLoader extends Signal<void> {
 		let remoteVersion: string
 		try {
 			remoteVersion = await fetch(
-				process.env.NODE_ENV === 'production'
-					? '/editor/'
-					: '' + 'data/version.txt'
+				(process.env.NODE_ENV === 'production' ? '/editor/' : '') +
+					'data/version.txt'
 			).then(response => response.text())
 		} catch (err) {
 			return false
