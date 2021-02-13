@@ -59,6 +59,7 @@ export default {
 		flipbookTexture: 'Flipbook Texture',
 		clientBiome: 'Client Biome',
 		soundDefinition: 'Sound Definition',
+		musicDefinition: 'Music Definition',
 		clientSound: 'Client Sound',
 		skins: 'Skins',
 		langDef: 'Language Definitions',
