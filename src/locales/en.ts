@@ -334,6 +334,10 @@ export default {
 					description:
 						'Open links inside of your default browser instead of a native app window',
 				},
+				resetBridgeFolder: {
+					name: 'Select Root Folder',
+					description: 'Choose the main folder bridge. operates on',
+				},
 			},
 			developer: {
 				name: 'Developer',
