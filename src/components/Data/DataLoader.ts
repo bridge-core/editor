@@ -24,9 +24,8 @@ export class DataLoader extends Signal<void> {
 		let remoteVersion: string
 		try {
 			remoteVersion = await fetch(
-				process.env.NODE_ENV === 'production'
-					? '/editor/'
-					: '' + 'data/version.txt'
+				(process.env.NODE_ENV === 'production' ? '/editor/' : '') +
+					'data/version.txt'
 			).then(response => response.text())
 		} catch (err) {
 			return false
@@ -50,9 +49,8 @@ export class DataLoader extends Signal<void> {
 		} catch {}
 
 		const zip = await fetch(
-			process.env.NODE_ENV === 'production'
-				? '/editor/'
-				: '' + 'data/package.zip'
+			(process.env.NODE_ENV === 'production' ? '/editor/' : '') +
+				'data/package.zip'
 		)
 			.then(response => response.arrayBuffer())
 			.then(data => JSZip.loadAsync(data))

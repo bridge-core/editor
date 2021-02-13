@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { register } from 'register-service-worker'
+import { createNotification } from './components/Notifications/create'
 
 if (process.env.NODE_ENV === 'production') {
 	register(`${process.env.BASE_URL}service-worker.js`, {
@@ -19,8 +20,28 @@ if (process.env.NODE_ENV === 'production') {
 		updatefound() {
 			console.log('New content is downloading.')
 		},
-		updated() {
+		updated(serviceWorker) {
 			console.log('New content is available; please refresh.')
+
+			createNotification({
+				icon: 'mdi-update',
+				color: 'primary',
+				message: 'sidebar.notifications.updateAvailable.message',
+				textColor: 'white',
+				onClick: () => {
+					if (serviceWorker.waiting)
+						serviceWorker.waiting.postMessage({
+							type: 'SKIP_WAITING',
+						})
+
+					navigator.serviceWorker.addEventListener(
+						'controllerchange',
+						() => {
+							window.location.reload()
+						}
+					)
+				},
+			})
 		},
 		offline() {
 			console.log(
