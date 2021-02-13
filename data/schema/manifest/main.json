@@ -38,7 +38,14 @@
 					"description": "This is a short description of the pack. It will appear in the game below the name of the pack."
 				},
 				"uuid": {
-					"$ref": "../general/uuid.json",
+					"anyOf": [
+						{
+							"$ref": "../general/uuid.json"
+						},
+						{
+							"type": "string"
+						}
+					],
 					"description": "This is a special type of identifier that uniquely identifies this pack from any other pack."
 				},
 				"version": {
@@ -83,8 +90,14 @@
 							"type": "string"
 						},
 						"uuid": {
-							"type": "string",
-							"$ref": "../general/uuid.json"
+							"anyOf": [
+								{
+									"$ref": "../general/uuid.json"
+								},
+								{
+									"type": "string"
+								}
+							],
 						},
 						"verison": {
 							"$ref": "#/definitions/triple_integer"
@@ -101,8 +114,14 @@
 				"required": ["uuid", "version"],
 				"properties": {
 					"uuid": {
-						"type": "string",
-						"$ref": "../general/uuid.json",
+						"anyOf": [
+							{
+								"$ref": "../general/uuid.json"
+							},
+							{
+								"type": "string"
+							}
+						],
 						"description": "This is the unique identifier of the pack that this pack depends on. It needs to be the exact same UUID that the pack has defined in the header section of it's manifest file."
 					},
 					"version": {
