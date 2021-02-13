@@ -32,6 +32,7 @@ import { WindowResize } from '@/components/Common/WindowResize'
 import { InstallApp } from '@/components/App/Install'
 import { LanguageManager } from '@/components/Languages/LanguageManager'
 import { ProjectManager } from './components/Projects/ProjectManager'
+import { ContextMenu } from './components/ContextMenu/ContextMenu'
 
 export class App {
 	public static toolbar = new Toolbar()
@@ -57,6 +58,7 @@ export class App {
 	public readonly projectManager = Vue.observable(new ProjectManager(this))
 	public readonly extensionLoader = new ExtensionLoader()
 	public readonly windowResize = new WindowResize()
+	public readonly contextMenu = new ContextMenu()
 
 	protected languageManager = new LanguageManager()
 	protected installApp = new InstallApp()

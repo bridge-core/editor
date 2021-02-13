@@ -9,6 +9,9 @@
 			'align-center': true,
 		}"
 		ref="tabElement"
+		@mousedown="tab.select()"
+		@click.middle="tab.close()"
+		@click.right="tab.onContextMenu($event)"
 	>
 		<v-icon class="mr-1" :color="tab.iconColor" small>
 			{{ tab.icon }}
