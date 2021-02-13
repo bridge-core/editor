@@ -8,7 +8,6 @@ import { App } from '@/App'
 import { loadScripts } from './Scripts/loadScripts'
 import { ExtensionViewer } from '../Windows/ExtensionStore/Extension'
 import { ExtensionStoreWindow } from '../Windows/ExtensionStore/ExtensionStore'
-import json5 from 'json5'
 import { iterateDir } from '@/utils/iterateDir'
 
 export class Extension {

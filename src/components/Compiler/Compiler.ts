@@ -102,7 +102,12 @@ export class Compiler extends Signal<void> {
 			if (entry.kind !== 'file' || entry.name === '.DS_Store') continue
 
 			const file = await entry.getFile()
-			const config = JSON5.parse(await file.text())
+			let config
+			try {
+				config = JSON5.parse(await file.text())
+			} catch {
+				continue
+			}
 
 			actionManager.create({
 				icon: config.icon,
