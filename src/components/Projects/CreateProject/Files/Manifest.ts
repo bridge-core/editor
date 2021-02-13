@@ -28,7 +28,9 @@ export class CreateManifest extends CreateFile {
 				header: {
 					name: 'pack.name',
 					description: 'pack.description',
-					min_engine_version: createOptions.targetVersion.split('.'),
+					min_engine_version: createOptions.targetVersion
+						.split('.')
+						.map(str => Number(str)),
 					uuid: uuid(),
 					version: [1, 0, 0],
 				},
