@@ -374,7 +374,7 @@ export default {
 		browserUnsupported: {
 			title: 'Unsupported Browser',
 			description:
-				'Your browser is currently not supported. Please use Chrome or Edge (Chromium) in order to get started with bridge.!',
+				'Your browser is currently not supported. Please use Chrome (Desktop) or Edge (Chromium) in order to get started with bridge.!',
 		},
 	},
 	taskManager: {
