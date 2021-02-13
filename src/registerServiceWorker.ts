@@ -26,7 +26,7 @@ if (process.env.NODE_ENV === 'production') {
 			createNotification({
 				icon: 'mdi-update',
 				color: 'primary',
-				message: 'Update Available',
+				message: 'sidebar.notifications.updateAvailable.message',
 				textColor: 'white',
 				onClick: () => {
 					if (serviceWorker.waiting)

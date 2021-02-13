@@ -191,7 +191,10 @@ export default {
 				message: 'Getting Started',
 			},
 			installApp: {
-				message: 'Install app',
+				message: 'Install App',
+			},
+			updateAvailable: {
+				message: 'Update Available',
 			},
 		},
 	},
