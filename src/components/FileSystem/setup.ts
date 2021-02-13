@@ -11,7 +11,15 @@ export async function setupFileSystem(app: App) {
 		return false
 	}
 
-	let fileHandle = await get<FileSystemDirectoryHandle>('bridgeBaseDir')
+	let fileHandle = await get<FileSystemDirectoryHandle | undefined>(
+		'bridgeBaseDir'
+	)
+
+	try {
+		await fileHandle?.getDirectoryHandle('data')
+	} catch {
+		fileHandle = undefined
+	}
 
 	if (!fileHandle) {
 		await createSelectProjectFolderWindow(async chosenFileHandle => {

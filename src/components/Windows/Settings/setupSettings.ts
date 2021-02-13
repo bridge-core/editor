@@ -2,7 +2,6 @@ import { App } from '@/App'
 import { ButtonToggle } from './Controls/ButtonToggle/ButtonToggle'
 import { Toggle } from './Controls/Toggle/Toggle'
 import { SettingsWindow } from './SettingsWindow'
-import { settingsState } from './SettingsState'
 import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
 import { ProjectSelection } from './Controls/Selection/ProjectSelection'
@@ -11,6 +10,8 @@ import {
 	getLanguages,
 	selectLanguage,
 } from '@/utils/locales'
+import { Button } from './Controls/Button/Button'
+import { del } from 'idb-keyval'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -171,8 +172,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		new Toggle({
 			category: 'general',
 			name: 'windows.settings.general.packSpider.name',
-			description:
-				'windows.settings.general.packSpider.description',
+			description: 'windows.settings.general.packSpider.description',
 			key: 'enablePackSpider',
 			default: true,
 		})
@@ -186,6 +186,18 @@ export async function setupSettings(settings: SettingsWindow) {
 				'windows.settings.general.openLinksInBrowser.description',
 			key: 'openLinksInBrowser',
 			default: false,
+		})
+	)
+	settings.addControl(
+		new Button({
+			category: 'general',
+			name: 'windows.settings.general.resetBridgeFolder.name',
+			description:
+				'windows.settings.general.resetBridgeFolder.description',
+			onClick: async () => {
+				await del('bridgeBaseDir')
+				location.reload()
+			},
 		})
 	)
 

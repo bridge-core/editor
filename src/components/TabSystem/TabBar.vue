@@ -8,12 +8,9 @@
 		"
 	>
 		<TabSystemTab
-			v-for="(tab, i) in tabSystem.tabs"
+			v-for="tab in tabSystem.tabs"
 			:key="tab.uuid"
 			:tab="tab"
-			@click.native="tab.select()"
-			@click.middle.native="tab.close()"
-			@contextmenu.native="onContextMenu($event, i)"
 		/>
 	</Draggable>
 </template>

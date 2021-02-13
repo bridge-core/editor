@@ -26,7 +26,7 @@ export function setupFileCategory(app: App) {
 	)
 	file.addItem(
 		app.actionManager.create({
-			icon: 'mdi-file-download-outline',
+			icon: 'mdi-content-save-outline',
 			name: 'actions.saveFile.name',
 			description: 'actions.saveFile.description',
 			keyBinding: 'Ctrl + S',
@@ -52,7 +52,7 @@ export function setupFileCategory(app: App) {
 					id: 'bridge.action.openSettings',
 					icon: 'mdi-cog-outline',
 					name: 'actions.settings.name',
-					description: "actions.settings.description",
+					description: 'actions.settings.description',
 					keyBinding: 'Ctrl + ,',
 					onTrigger: () => app.windows.settings.open(),
 				})

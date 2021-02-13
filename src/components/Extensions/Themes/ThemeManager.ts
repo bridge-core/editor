@@ -117,7 +117,12 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		disposables?: IDisposable[]
 	) {
 		const file = await fileHandle.getFile()
-		const themeDefinition = json5.parse(await file.text())
+		let themeDefinition
+		try {
+			themeDefinition = json5.parse(await file.text())
+		} catch {
+			throw new Error(`Failed to load theme "${file.name}"`)
+		}
 
 		const disposable = this.addTheme(themeDefinition, isGlobal)
 		if (disposables) disposables.push(disposable)

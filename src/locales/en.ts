@@ -59,6 +59,7 @@ export default {
 		flipbookTexture: 'Flipbook Texture',
 		clientBiome: 'Client Biome',
 		soundDefinition: 'Sound Definition',
+		musicDefinition: 'Music Definition',
 		clientSound: 'Client Sound',
 		skins: 'Skins',
 		langDef: 'Language Definitions',
@@ -333,6 +334,10 @@ export default {
 					name: 'Open Links in Default Browser',
 					description:
 						'Open links inside of your default browser instead of a native app window',
+				},
+				resetBridgeFolder: {
+					name: 'Select Root Folder',
+					description: 'Choose the main folder bridge. operates on',
 				},
 			},
 			developer: {

@@ -137,7 +137,11 @@ export class FileSystem extends Signal<void> {
 
 	async readJSON(path: string) {
 		const file = await this.readFile(path)
-		return await json5.parse(await file.text())
+		try {
+			return await json5.parse(await file.text())
+		} catch {
+			throw new Error(`Invalid JSON: ${path}`)
+		}
 	}
 	writeJSON(path: string, data: any, beautify = false) {
 		return this.writeFile(

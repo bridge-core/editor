@@ -20,6 +20,8 @@
 			<WelcomeScreen v-else />
 			<!--  -->
 		</v-main>
+
+		<ContextMenu v-if="contextMenu" :contextMenu="contextMenu" />
 	</v-app>
 </template>
 
@@ -32,10 +34,18 @@ import TabBar from './components/TabSystem/TabBar.vue'
 import { platform } from './utils/os'
 import { TabSystemMixin } from '@/components/Mixins/TabSystem'
 import WelcomeScreen from '@/components/TabSystem/WelcomeScreen'
+import ContextMenu from '@/components/ContextMenu/ContextMenu.vue'
+import { App } from '@/App'
 
 export default Vue.extend({
 	name: 'App',
 	mixins: [TabSystemMixin],
+
+	mounted() {
+		App.getApp().then(app => {
+			this.contextMenu = app.contextMenu
+		})
+	},
 
 	components: {
 		Sidebar,
@@ -43,10 +53,12 @@ export default Vue.extend({
 		WindowRenderer,
 		TabBar,
 		WelcomeScreen,
+		ContextMenu,
 	},
 
 	data: () => ({
 		isMacOs: platform() === 'darwin',
+		contextMenu: null,
 	}),
 })
 </script>

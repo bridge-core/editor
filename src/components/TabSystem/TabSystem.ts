@@ -6,6 +6,7 @@ import { App } from '@/App'
 import { ImageTab } from '../Editors/Image/ImageTab'
 import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
 import { Project } from '../Projects/Project/Project'
+import { ActionManager } from '../Actions/ActionManager'
 
 export class TabSystem {
 	tabs: Tab[] = []
@@ -114,6 +115,13 @@ export class TabSystem {
 
 	getTab(path: string) {
 		return this.tabs.find(tab => tab.isFor(path))
+	}
+	closeTabs(ifMatches: (tab: Tab) => boolean) {
+		const tabs = [...this.tabs].reverse()
+
+		for (const tab of tabs) {
+			if (ifMatches(tab)) tab.close()
+		}
 	}
 
 	get currentComponent() {

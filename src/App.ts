@@ -32,6 +32,7 @@ import { WindowResize } from '@/components/Common/WindowResize'
 import { InstallApp } from '@/components/App/Install'
 import { LanguageManager } from '@/components/Languages/LanguageManager'
 import { ProjectManager } from './components/Projects/ProjectManager'
+import { ContextMenu } from './components/ContextMenu/ContextMenu'
 
 export class App {
 	public static toolbar = new Toolbar()
@@ -57,6 +58,7 @@ export class App {
 	public readonly projectManager = Vue.observable(new ProjectManager(this))
 	public readonly extensionLoader = new ExtensionLoader()
 	public readonly windowResize = new WindowResize()
+	public readonly contextMenu = new ContextMenu()
 
 	protected languageManager = new LanguageManager()
 	protected installApp = new InstallApp()
@@ -124,7 +126,7 @@ export class App {
 					this.themeManager.updateTheme()
 
 					// Set language
-					if (typeof settingsState.general.locale === 'string')
+					if (typeof settingsState?.general?.locale === 'string')
 						selectLanguage(settingsState?.general?.locale)
 					else {
 						// Set language based off of browser language
@@ -153,6 +155,7 @@ export class App {
 		// Try setting up the file system
 		const fileHandle = await setupFileSystem(this.instance)
 		if (!fileHandle) return this.instance.windows.loadingWindow.close()
+
 		this.instance.fileSystem.setup(fileHandle)
 
 		// Load settings
