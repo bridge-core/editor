@@ -12,6 +12,11 @@ jobs:
               with:
                   persist-credentials: false
 
+            - name: Install Node 🧰
+              uses: actions/setup-node@v2
+              with:
+                  node-version: '14'
+
             - name: Cache node modules 📖
               uses: actions/cache@v2
               env:
