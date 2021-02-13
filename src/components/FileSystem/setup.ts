@@ -14,13 +14,10 @@ export async function setupFileSystem(app: App) {
 	let fileHandle = await get<FileSystemDirectoryHandle | undefined>(
 		'bridgeBaseDir'
 	)
+	// Request permissions to current bridge folder
+	if (fileHandle) fileHandle = await verifyPermissions(fileHandle)
 
-	try {
-		await fileHandle?.getDirectoryHandle('data')
-	} catch {
-		fileHandle = undefined
-	}
-
+	// There's currently no bridge folder yet/the bridge folder has been deleted
 	if (!fileHandle) {
 		await createSelectProjectFolderWindow(async chosenFileHandle => {
 			if (chosenFileHandle) {
@@ -30,8 +27,6 @@ export async function setupFileSystem(app: App) {
 
 			await verifyPermissions(chosenFileHandle)
 		}).status.done
-	} else {
-		await verifyPermissions(fileHandle)
 	}
 
 	return fileHandle
@@ -59,4 +54,13 @@ async function verifyPermissions(fileHandle: FileSystemDirectoryHandle) {
 
 		await confirmPermissionWindow.status.done
 	}
+
+	// This checks whether the bridge directory still exists.
+	// Might get a more elegant API in the future but that's all we can do for now
+	try {
+		await fileHandle.getDirectoryHandle('data', { create: true })
+	} catch {
+		return undefined
+	}
+	return fileHandle
 }
