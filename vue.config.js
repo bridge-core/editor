@@ -1,17 +1,22 @@
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+const WorkerPlugin = require('worker-plugin')
 
 module.exports = {
+	runtimeCompiler: true,
 	publicPath: process.env.NODE_ENV === 'production' ? '/editor/' : undefined,
-	transpileDependencies: ['vuetify'],
+	transpileDependencies: ['vuetify', 'molang'],
 	pwa: {
-		name: 'bridge',
+		name: 'bridge v2',
 		appleMobileWebAppCapable: true,
-		themeColor: null, // Vue automatically inserts the meta.themeColor tag. That clashes with our themeManager so we have to disable it...
+		themeColor: '#1778D2',
 		manifestOptions: {
 			// display_modifiers: ['window-controls-overlay'],
 		},
 	},
 	configureWebpack: {
-		plugins: [new MonacoWebpackPlugin()],
+		plugins: [
+			new MonacoWebpackPlugin({ features: ['!toggleHighContrast'] }),
+			new WorkerPlugin(),
+		],
 	},
 }

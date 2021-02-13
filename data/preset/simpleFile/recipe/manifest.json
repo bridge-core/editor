@@ -1,0 +1,17 @@
+{
+	"name": "Recipe",
+	"icon": "mdi-book-outline",
+	"description": "Creates a blank recipe.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"recipe.json",
+			"BP/recipes/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

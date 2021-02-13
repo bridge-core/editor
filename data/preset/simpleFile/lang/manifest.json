@@ -1,0 +1,17 @@
+{
+	"name": "Language",
+	"icon": "mdi-web",
+	"description": "Creates a blank language file.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"language.lang",
+			"RP/texts/{{FILE_NAME}}.lang",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

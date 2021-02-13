@@ -1,0 +1,6 @@
+{
+	"id": "mcstructure",
+	"icon": "mdi-castle",
+	"scope": "BP/structures/",
+	"matcher": ["BP/structures/**/*.mcstructure", "BP/structures/*.mcstructure"]
+}

@@ -1,0 +1,17 @@
+{
+	"name": "Feature Rule",
+	"icon": "mdi-map-plus",
+	"description": "Creates a blank feature rule.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"featureRule.json",
+			"BP/feature_rules/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

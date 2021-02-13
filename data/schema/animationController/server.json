@@ -1,0 +1,92 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.serverAnimationController",
+	"title": "Server Animation Controller",
+	"required": ["format_version"],
+	"properties": {
+		"format_version": { "enum": ["1.10.0"] },
+		"animation_controllers": {
+			"propertyNames": {
+				"pattern": "^controller.animation\\..+$"
+			},
+			"patternProperties": {
+				"^controller.animation\\..+$": {
+					"properties": {
+						"initial_state": { "type": "string" },
+						"states": {
+							"patternProperties": {
+								".+": {
+									"properties": {
+										"animations": {
+											"type": "array",
+											"items": {
+												"anyOf": [
+													{
+														"$ref": "../entity/dynamic/animationEnum.json"
+													},
+													{
+														"type": "object",
+														"propertyNames": {
+															"$ref": "../entity/dynamic/animationEnum.json"
+														},
+														"patternProperties": {
+															".+": {
+																"type": "string"
+															}
+														}
+													}
+												]
+											}
+										},
+										"transitions": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"propertyNames": {
+													"$ref": "./dynamic/currentContext/stateEnum.json"
+												},
+												"patternProperties": {
+													".+": {
+														"type": "string"
+													}
+												}
+											}
+										},
+										"on_entry": {
+											"description": "Events and commands to run when entering this state.",
+											"type": "array",
+											"items": {
+												"anyOf": [
+													{
+														"$ref": "../function/dynamic/functionPathEnum.json"
+													},
+													{
+														"$ref": "../entity/dynamic/prefixedEntityEventEnum.json"
+													}
+												]
+											}
+										},
+										"on_exit": {
+											"description": "Events and commands to run when exiting this state.",
+											"type": "array",
+											"items": {
+												"anyOf": [
+													{
+														"$ref": "../function/dynamic/functionPathEnum.json"
+													},
+													{
+														"$ref": "../entity/dynamic/prefixedEntityEventEnum.json"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

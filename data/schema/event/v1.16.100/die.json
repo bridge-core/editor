@@ -1,0 +1,13 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"die": {
+			"description": "Kill target. If target is self and this is run from a block then destroy the block",
+			"additionalProperties": false,
+			"properties": {
+				"target": { "$ref": "../../general/filter/subject.json" }
+			}
+		}
+	}
+}

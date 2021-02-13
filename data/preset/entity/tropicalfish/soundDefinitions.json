@@ -1,0 +1,34 @@
+{
+  "sound_definitions": {
+    "mob.{{IDENTIFIER}}.flop": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/fish/flop1",
+        "sounds/mob/fish/flop2",
+        "sounds/mob/fish/flop3",
+        "sounds/mob/fish/flop4"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.hurt": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/fish/hurt1",
+        "sounds/mob/fish/hurt2",
+        "sounds/mob/fish/hurt3",
+        "sounds/mob/fish/hurt4"
+      ]
+    },
+    "mob.{{IDENTIFIER}}.step": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/fish/swim1",
+        "sounds/mob/fish/swim2",
+        "sounds/mob/fish/swim3",
+        "sounds/mob/fish/swim4",
+        "sounds/mob/fish/swim5",
+        "sounds/mob/fish/swim6",
+        "sounds/mob/fish/swim7"
+      ]
+    }
+  }
+}

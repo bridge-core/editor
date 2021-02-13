@@ -1,0 +1,17 @@
+{
+	"name": "Server Animation",
+	"icon": "mdi-movie-search-outline",
+	"description": "Creates a blank server animation.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"animation.json",
+			"BP/animations/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

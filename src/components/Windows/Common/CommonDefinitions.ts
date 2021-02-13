@@ -5,23 +5,28 @@ import DropdownComponent from './Dropdown/Dropdown.vue'
 import ConfirmComponent from './Confirm/Confirm.vue'
 
 export function createInformationWindow(
-	displayName: String,
-	displayContent: String,
+	displayName: string,
+	displayContent: string,
 	callback?: () => void
 ) {
 	const Information = createWindow(InformationComponent, {
 		windowTitle: displayName,
 		content: displayContent,
-		callback,
+		isPersistent: typeof callback === 'function',
+		callback: async () => {
+			await callback?.()
+			Information.status.setDone?.()
+		},
 	})
 	Information.open()
+	return Information
 }
 
 export function createInputWindow(
-	displayName: String,
-	inputLabel: String,
-	defaultValue: String,
-	expandText: String,
+	displayName: string,
+	inputLabel: string,
+	defaultValue: string,
+	expandText: string,
 	onConfirm: (input: string) => void
 ) {
 	const Input = createWindow(InputComponent, {
@@ -36,8 +41,8 @@ export function createInputWindow(
 }
 
 export function createDropdownWindow(
-	displayName: String,
-	placeholder: String,
+	displayName: string,
+	placeholder: string,
 	options: Array<string>,
 	defaultSelected: string,
 	onConfirm: (input: string) => void
@@ -54,18 +59,18 @@ export function createDropdownWindow(
 }
 
 export function createConfirmWindow(
-	displayContent: String,
-	confirmText: String,
-	cancelText: String,
-	onConfirm: () => void,
-	onCancel: () => void
+	displayContent: string,
+	confirmText: string,
+	cancelText: string,
+	onConfirm?: () => void,
+	onCancel?: () => void
 ) {
 	const Confirm = createWindow(ConfirmComponent, {
 		content: displayContent,
 		confirmText,
 		cancelText,
-		onConfirmCb: onConfirm,
-		onCancelCb: onCancel,
+		onConfirmCb: onConfirm ?? (() => {}),
+		onCancelCb: onCancel ?? (() => {}),
 	})
 	Confirm.open()
 	return Confirm

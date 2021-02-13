@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		windowTitle="Discord"
+		windowTitle="windows.discord.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -28,7 +28,7 @@
 
 <script>
 import { Discord } from './definition'
-import BaseWindow from '../Layout/Base.vue'
+import BaseWindow from '../Layout/BaseWindow.vue'
 import { TranslationMixin } from '@/utils/locales'
 
 export default {

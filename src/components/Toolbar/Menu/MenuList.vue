@@ -1,90 +1,65 @@
 <template>
 	<!-- "tile" prop doesn't work on nested lists -> set border radius directly -->
-	<v-list class="app-menu" style="border-radius: 0;">
+	<v-list class="app-menu" color="menu" style="border-radius: 0;">
 		<v-menu
-			v-for="({
-				displayName,
-				displayIcon,
-				keyBinding,
-				elements = [],
-				onClick,
-				isHidden,
-			},
-			i) in elements"
+			v-for="(item, key, i) in elements"
 			:key="`menu.${i}.${Math.random()}`"
 			open-on-hover
 			offset-x
 			tile
 			z-index="11"
 		>
-			<template v-if="!isHidden" v-slot:activator="{ on }">
+			<template v-slot:activator="{ on }">
 				<v-list-item
 					dense
-					v-on="
-						!onClick &&
-						(typeof elements === 'function' ? elements() : elements)
-							.length > 0
-							? on
-							: undefined
-					"
-					@click="clickHandler(onClick)"
+					v-on="item.type === 'category' ? on : undefined"
+					@click="onClick(item)"
 				>
-					<v-list-item-icon v-if="displayIcon">
-						<v-icon color="primary" small>{{ displayIcon }}</v-icon>
+					<v-list-item-icon v-if="item.icon">
+						<v-icon color="accent" small>{{ item.icon }}</v-icon>
 					</v-list-item-icon>
 
 					<v-list-item-content>
-						<v-list-item-title>{{ t(displayName) }}</v-list-item-title>
+						<v-list-item-title>
+							{{ t(item.name) }}
+						</v-list-item-title>
 					</v-list-item-content>
 
 					<v-list-item-action>
 						<v-list-item-action-text>
-							<span v-if="keyBinding">
-								{{ getStrKeyCode(keyBinding) }}
-							</span>
-							<v-icon
+							<span
 								v-if="
-									elements &&
-										(typeof elements === 'function'
-											? elements()
-											: elements
-										).length > 0
+									item.type !== 'category' && item.keyBinding
 								"
-								small
-								>mdi-chevron-right</v-icon
 							>
+								{{ item.keyBinding.toStrKeyCode() }}
+							</span>
+							<v-icon v-if="item.type === 'category'" small>
+								mdi-chevron-right
+							</v-icon>
 						</v-list-item-action-text>
 					</v-list-item-action>
 				</v-list-item>
 			</template>
 
-			<MenuList
-				:elements="
-					typeof elements === 'function' ? elements() : elements
-				"
-			/>
+			<MenuList :elements="item.state" />
 		</v-menu>
 	</v-list>
 </template>
 
 <script>
-import { getStrKeyCode } from '@/appCycle/keyBindings'
 import { TranslationMixin } from '@/utils/locales'
 
 export default {
 	name: 'MenuList',
 	mixins: [TranslationMixin],
 	props: {
-		elements: Array,
+		elements: Object,
 	},
-	data: () => ({
-		getStrKeyCode,
-	}),
 
 	methods: {
-		clickHandler(onClick) {
-			if (onClick) onClick()
-			this.$root.$emit('bridge:closeAllAppMenus')
+		onClick(item) {
+			item.trigger()
 		},
 	},
 }

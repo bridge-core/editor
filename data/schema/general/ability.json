@@ -1,0 +1,16 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "string",
+	"enum": [
+		"worldbuilder",
+		"invulnerable",
+		"flying",
+		"instabuild",
+		"flySpeed",
+		"lightning",
+		"walkSpeed",
+		"noclip",
+		"mayfly",
+		"mute"
+	]
+}

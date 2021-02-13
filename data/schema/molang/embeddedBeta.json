@@ -1,0 +1,15 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"description": "MoLang expression",
+	"anyOf": [
+		{
+			"type": ["string", "number", "boolean"]
+		},
+		{
+			"$ref": "./query.json"
+		},
+		{
+			"$ref": "./queryBeta.json"
+		}
+	]
+}

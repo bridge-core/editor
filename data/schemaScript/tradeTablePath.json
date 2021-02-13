@@ -1,0 +1,5 @@
+{
+	"type": "enum",
+	"generateFile": "tradeTable/dynamic/tradeTablePathEnum.json",
+	"script": "return readdir('BP/trading').then(dirents => dirents.map(dirent => dirent.path.replace('BP/', '')))"
+}

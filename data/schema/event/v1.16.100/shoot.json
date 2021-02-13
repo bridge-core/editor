@@ -1,0 +1,16 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"shoot": {
+			"description": "Shoot a projectile",
+			"additionalProperties": false,
+			"properties": {
+				"target": { "$ref": "../../general/filter/subject.json" },
+				"projectile": { "type": "string" },
+				"launch_power": { "type": "number" },
+				"angle_offset": { "type": ["string", "number"] }
+			}
+		}
+	}
+}

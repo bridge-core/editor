@@ -8,10 +8,10 @@
 		:width="440"
 		:height="120"
 		:hasCloseButton="false"
-		:isPersistent="typeof this.callback === 'function'"
+		:isPersistent="isPersistent"
 	>
 		<template #default>
-			<p class="mt-2">{{ content }}</p>
+			<p class="mt-2">{{ t(content) }}</p>
 		</template>
 		<template #actions>
 			<v-spacer />
@@ -25,7 +25,7 @@
 
 <script>
 import { TranslationMixin } from '@/utils/locales'
-import BaseWindow from '../../Layout/Base'
+import BaseWindow from '@/components/Windows/Layout/BaseWindow'
 
 export default {
 	name: 'Information',

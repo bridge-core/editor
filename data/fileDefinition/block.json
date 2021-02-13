@@ -1,0 +1,9 @@
+{
+	"id": "block",
+	"icon": "mdi-cube-outline",
+	"scope": "BP/blocks/",
+	"matcher": ["BP/blocks/**/*.json", "BP/blocks/*.json"],
+	"schema": "file:///data/packages/schema/block/main.json",
+	"lightningCache": "block.json",
+	"packSpider": "block.json"
+}

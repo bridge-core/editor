@@ -9,55 +9,18 @@
 
 		<!-- App menu buttons -->
 		<v-toolbar-items class="px14-font">
-			<template
-				v-for="({ displayName, displayIcon, elements, onClick },
-				key,
-				i) in AppMenu"
-			>
+			<template v-for="(item, key, i) in toolbar">
 				<MenuButton
-					v-if="typeof onClick === 'function'"
+					v-if="item.type !== 'category'"
 					:key="`button.${key}`"
-					:displayIcon="displayIcon"
-					:displayName="displayName"
-					@click="onClick"
+					:displayName="item.name"
+					:displayIcon="item.icon"
+					@click="() => item.trigger()"
 				/>
-				<MenuActivator
-					v-else
-					:key="`activator.${key}`"
-					:displayName="displayName"
-					:displayIcon="displayIcon"
-					:elements="
-						typeof elements === 'function' ? elements() : elements
-					"
-				/>
+				<MenuActivator v-else :key="`activator.${key}`" :item="item" />
 				<v-divider
 					:key="`divider.${key}`"
-					v-if="i + 1 < Object.keys(AppMenu).length"
-					vertical
-				/>
-			</template>
-		</v-toolbar-items>
-
-		<v-spacer />
-		<span v-if="projectName" style="font-size: 12px;">
-			{{ projectName.split(/\\|\//g).pop() }}
-		</span>
-		<v-spacer />
-
-		<!-- Main buttons to interact with the app window -->
-		<v-divider vertical />
-		<InstallButton />
-		<v-toolbar-items class="px14-font">
-			<template v-for="({ icon, action, color }, i) in windowActions">
-				<WindowAction
-					:icon="icon"
-					:action="action"
-					:color="color"
-					:key="`windowAction.${icon}`"
-				/>
-				<v-divider
-					v-if="i + 1 < windowActions.length"
-					:key="`divider.${icon}`"
+					v-if="i + 1 < Object.keys(toolbar).length"
 					vertical
 				/>
 			</template>
@@ -69,11 +32,7 @@
 import WindowAction from './WindowAction'
 import MenuActivator from './Menu/Activator'
 import MenuButton from './Menu/Button'
-import InstallButton from './InstallButton'
-import { AppMenu } from './state'
-
-// import { remote } from 'electron'
-// import { join } from 'path'
+import { App } from '@/App'
 
 export default {
 	name: 'Toolbar',
@@ -81,33 +40,12 @@ export default {
 		WindowAction,
 		MenuActivator,
 		MenuButton,
-		InstallButton,
 	},
 	data: () => ({
-		AppMenu,
+		toolbar: App.toolbar.state,
 
-		imgSrc: null,
-		windowActions: [
-			// {
-			// 	icon: 'mdi-minus',
-			// 	action: () => remote.getCurrentWindow().minimize(),
-			// },
-			// {
-			// 	icon: 'mdi-plus',
-			// 	action: () => remote.getCurrentWindow().maximize(),
-			// },
-			// {
-			// 	icon: 'mdi-close',
-			// 	color: 'error',
-			// 	action: () => remote.getCurrentWindow().close(),
-			// },
-		],
+		windowActions: [],
 	}),
-	computed: {
-		projectName() {
-			// return this.$store.state.Explorer.project.explorer
-		},
-	},
 }
 </script>
 

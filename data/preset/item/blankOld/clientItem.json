@@ -1,0 +1,13 @@
+{
+    "format_version": "1.10.0",
+    "minecraft:item": {
+        "description": {
+            "identifier": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}",
+            "category": "nature",
+            "is_experimental": false
+        },
+        "components": {
+            "minecraft:icon": "{{PROJECT_PREFIX}}_{{IDENTIFIER}}"
+        }
+    }
+}

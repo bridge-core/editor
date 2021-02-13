@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="t('windows.common.confirm.title')"
+		windowTitle="windows.common.confirm.title"
 		:isVisible="isVisible"
 		:isPersistent="true"
 		:hasMaximizeButton="false"
@@ -11,23 +11,23 @@
 		:hasCloseButton="false"
 	>
 		<template #default>
-			<p class="mt-2">{{ content }}</p>
+			<p class="mt-2">{{ t(content) }}</p>
 		</template>
 		<template #actions>
 			<v-spacer />
-			<v-btn @click="onCancel"
-				><span>{{ cancelText }}</span></v-btn
-			>
-			<v-btn color="primary" @click="onConfirm"
-				><span>{{ confirmText }}</span></v-btn
-			>
+			<v-btn @click="onCancel">
+				<span>{{ t(cancelText) }}</span>
+			</v-btn>
+			<v-btn color="primary" @click="onConfirm">
+				<span>{{ t(confirmText) }}</span>
+			</v-btn>
 		</template>
 	</BaseWindow>
 </template>
 
 <script>
 import { TranslationMixin } from '@/utils/locales'
-import BaseWindow from '../../Layout/Base'
+import BaseWindow from '../../Layout/BaseWindow'
 
 export default {
 	name: 'Confirm',

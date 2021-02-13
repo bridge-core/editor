@@ -1,30 +1,19 @@
 import { Tab } from '@/components/TabSystem/CommonTab'
-import MonacoEditor from './Main.vue'
+import TextTabComponent from './TextTab.vue'
 import * as monaco from 'monaco-editor'
 import { IDisposable } from '@/types/disposable'
-import { on } from '@/appCycle/EventSystem'
-import { EditorContentManager } from '@convergencelabs/monaco-collab-ext'
-import { dispatchEvent } from '@/appCycle/remote/Client'
+import debounce from 'lodash.debounce'
+import { App } from '@/App'
 
 export class TextTab extends Tab {
-	component = MonacoEditor
+	component = TextTabComponent
 	editorInstance: monaco.editor.ICodeEditor | undefined
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
 	disposables: (IDisposable | undefined)[] = []
-	editorContentManager: EditorContentManager | undefined
-	remoteEdits: monaco.editor.IModelContentChange[] = []
 
-	setIsUnsaved(
-		val: boolean,
-		changedData?: monaco.editor.IModelContentChange[]
-	) {
+	setIsUnsaved(val: boolean) {
 		super.setIsUnsaved(val)
-
-		if (this.hasRemoteChange && !this.isSelected && changedData) {
-			this.remoteEdits.push(...changedData)
-			this.hasRemoteChange = true
-		}
 	}
 
 	receiveEditorInstance(editorInstance: monaco.editor.IStandaloneCodeEditor) {
@@ -35,8 +24,11 @@ export class TextTab extends Tab {
 	}
 
 	async onActivate() {
+		const app = await App.getApp()
+		this.editorInstance?.focus()
+
 		if (this.editorModel === undefined) {
-			const file = await (await this.fileSystem).readFile(this.path)
+			const file = await app.fileSystem.readFile(this.path)
 			const fileContent = await file.text()
 
 			this.editorModel = monaco.editor.createModel(
@@ -50,73 +42,17 @@ export class TextTab extends Tab {
 		}
 
 		this.disposables.push(
-			on('bridge:onResize', () => this.editorInstance?.layout())
+			app.windowResize.on(() => this.editorInstance?.layout())
 		)
-
-		const strPath = this.path
-		this.editorContentManager = new EditorContentManager({
-			// @ts-ignore
-			editor: this.editorInstance,
-			onInsert(index, text) {
-				dispatchEvent(
-					'textEditorTab',
-					`insert(${strPath})`,
-					index,
-					text
-				)
-			},
-			onReplace(index, length, text) {
-				dispatchEvent(
-					'textEditorTab',
-					`replace(${strPath})`,
-					index,
-					length,
-					text
-				)
-			},
-			onDelete(index, length) {
-				dispatchEvent(
-					'textEditorTab',
-					`delete(${strPath})`,
-					index,
-					length
-				)
-			},
-		})
 		this.disposables.push(
-			...[
-				on(
-					`bridge:remote.textEditorTab.insert(${strPath})`,
-					(index, text) =>
-						this.editorContentManager?.insert(
-							index as number,
-							text as string
-						)
-				),
-				on(
-					`bridge:remote.textEditorTab.replace(${strPath})`,
-					(index, length, text) =>
-						this.editorContentManager?.replace(
-							index as number,
-							length as number,
-							text as string
-						)
-				),
-				on(
-					`bridge:remote.textEditorTab.delete(${strPath})`,
-					(index, length) =>
-						this.editorContentManager?.delete(
-							index as number,
-							length as number
-						)
-				),
-			]
+			this.editorModel?.onDidChangeContent(event => {
+				this.isUnsaved = true
+			})
 		)
 	}
 	onDeactivate() {
 		this.editorViewState = this.editorInstance?.saveViewState() ?? undefined
 		this.disposables.forEach(disposable => disposable?.dispose())
-		this.editorContentManager?.dispose()
 	}
 	onDestroy() {
 		this.editorModel?.dispose()
@@ -126,48 +62,23 @@ export class TextTab extends Tab {
 		if (this.editorModel) this.editorInstance?.setModel(this.editorModel)
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
-
-		this.remoteEdits.forEach(change => {
-			const { rangeOffset, rangeLength, text } = change
-			if (text.length > 0 && rangeLength === 0) {
-				this.editorContentManager?.insert(rangeOffset, text)
-			} else if (text.length > 0 && rangeLength > 0) {
-				this.editorContentManager?.replace(
-					rangeOffset,
-					rangeLength,
-					text
-				)
-			} else if (text.length === 0 && rangeLength > 0) {
-				this.editorContentManager?.delete(rangeOffset, rangeLength)
-			} else {
-				throw new Error('Unexpected change: ' + JSON.stringify(change))
-			}
-		})
-		this.remoteEdits = []
-
-		this.disposables.push(
-			this.editorModel?.onDidChangeContent(event => {
-				this.isUnsaved = true
-
-				dispatchEvent(
-					'tabSystem',
-					'setUnsaved',
-					this.path,
-					true,
-					event.changes
-				)
-			})
-		)
 	}
 
 	async save() {
+		const app = await App.getApp()
+
 		this.isUnsaved = false
-		dispatchEvent('tabSystem', 'setUnsaved', this.path, false)
 		if (this.editorModel) {
-			await (await this.fileSystem).writeFile(
+			await app.fileSystem.writeFile(
 				this.path,
 				this.editorModel.getValue()
 			)
 		}
+	}
+
+	async paste() {
+		this.editorInstance?.trigger('keyboard', 'paste', {
+			text: await navigator.clipboard.readText(),
+		})
 	}
 }

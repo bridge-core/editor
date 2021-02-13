@@ -4,53 +4,48 @@
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar />
 
-		<Sidebar />
+		<Sidebar app />
 
 		<v-main>
 			<WindowRenderer />
 			<TabBar />
 
-			<component
-				:is="mainTabSystem.currentComponent"
-				:tab="mainTabSystem.selectedTab"
-			/>
+			<keep-alive v-if="tabSystem">
+				<component
+					:is="tabSystem.currentComponent"
+					:tab="tabSystem.selectedTab"
+				/>
+			</keep-alive>
+
+			<WelcomeScreen v-else />
 			<!--  -->
 		</v-main>
-
-		<Footer />
 	</v-app>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
-import Sidebar from './components/Sidebar/Common/Main.vue'
-import Footer from './components/Footer/Main.vue'
+import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import TabBar from './components/TabSystem/TabBar.vue'
-import { startUp } from './appCycle/startUp'
-import { mainTabSystem } from '@/components/TabSystem/Main'
-import { App } from './App'
 import { platform } from './utils/os'
+import { TabSystemMixin } from '@/components/Mixins/TabSystem'
+import WelcomeScreen from '@/components/TabSystem/WelcomeScreen'
 
 export default Vue.extend({
 	name: 'App',
+	mixins: [TabSystemMixin],
 
 	components: {
 		Sidebar,
-		Footer,
 		Toolbar,
 		WindowRenderer,
 		TabBar,
-	},
-	async mounted() {
-		await startUp()
-
-		App.main(this)
+		WelcomeScreen,
 	},
 
 	data: () => ({
-		mainTabSystem,
 		isMacOs: platform() === 'darwin',
 	}),
 })
@@ -68,15 +63,22 @@ body {
 
 /** Scrollbar */
 *::-webkit-scrollbar {
+	border-radius: 24px;
 	width: 6px;
 	height: 6px;
 }
 *::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+	border-radius: 24px;
+	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.6);
+	background-color: var(--v-background-base);
 }
 *::-webkit-scrollbar-thumb {
-	background-color: rgba(0, 0, 0, 0.35);
-	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.4);
+	border-radius: 24px;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+summary::-webkit-details-marker {
+	display: none;
 }
 
 /* No text selection */
@@ -90,5 +92,16 @@ body {
 
 .v-application {
 	background: var(--v-background-base) !important;
+}
+
+.v-system-bar .v-icon {
+	margin-right: 0;
+}
+.v-system-bar {
+	width: calc(100% + 1px);
+}
+
+.v-select-list {
+	background-color: var(--v-menu-base) !important;
 }
 </style>

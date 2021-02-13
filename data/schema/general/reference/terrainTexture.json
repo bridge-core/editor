@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "string",
+	"anyOf": [
+		{
+			"$ref": "../../terrainTexture/dynamic/textureEnum.json"
+		},
+		{
+			"$ref": "../vanilla/terrainTexture.json"
+		}
+	]
+}

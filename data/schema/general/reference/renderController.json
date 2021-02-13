@@ -1,0 +1,15 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "string",
+    "anyOf": [
+        {
+            "$ref": "../vanilla/renderController.json"
+        },
+        {
+            "$ref": "../../clientEntity/dynamic/renderControllerIdentifierEnum.json"
+        },
+        {
+            "$ref": "../../attachable/dynamic/renderControllerIdentifierEnum.json"
+        }
+    ]
+}

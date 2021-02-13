@@ -1,0 +1,6 @@
+{
+	"id": "skins",
+	"scope": "SP/skins.json",
+	"matcher": "SP/skins.json",
+	"schema": "file:///data/packages/schema/simple/skins.json"
+}

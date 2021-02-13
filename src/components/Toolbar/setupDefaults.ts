@@ -1,22 +1,12 @@
-import { createAppMenu } from './create'
-import { DevMenu } from './Category/dev'
-import { FileMenu } from './Category/file'
-import { HelpMenu } from './Category/help'
-import { ToolMenu } from './Category/tools'
-import { EditMenu } from './Category/edit'
-import { setupKeyBindings } from '@/appCycle/keyBindings'
-import type { IDisposable } from '@/types/disposable'
+import { App } from '@/App'
+import { setupEditCategory } from './Category/edit'
+import { setupFileCategory } from './Category/file'
+import { setupHelpCategory } from './Category/help'
+import { setupToolsCategory } from './Category/tools'
 
-let CATEGORIES = [FileMenu, EditMenu, ToolMenu, HelpMenu]
-let DISPOSABLES: IDisposable[] = []
-export const DEV_MENU = createAppMenu(DevMenu, false)
-
-export function setupDefaultMenus() {
-	DISPOSABLES.forEach(dis => dis.dispose())
-	setupKeyBindings()
-	DISPOSABLES = CATEGORIES.map(c => createAppMenu(c))
-
-	// if (Store.state.Settings.is_dev_mode) {
-	// 	DEV_MENU.add()
-	// }
+export async function setupDefaultMenus(app: App) {
+	setupFileCategory(app)
+	setupEditCategory(app)
+	setupToolsCategory(app)
+	setupHelpCategory(app)
 }

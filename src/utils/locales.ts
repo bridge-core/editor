@@ -2,27 +2,25 @@ import { vue } from '@/main'
 import Vue from 'vue'
 
 export function translate(translationKey?: string) {
-	if (translationKey && !translationKey.startsWith('$vuetify.'))
+	const orginalKey = translationKey
+	if (!translationKey?.startsWith('$vuetify.'))
 		translationKey = `$vuetify.${translationKey}`
 
-	try {
-		return (vue as any).$vuetify.lang.t(translationKey)
-	} catch {
-		return translationKey
-	}
+	const translated = (vue as any).$vuetify.lang.t(translationKey)
+	if (translated === translationKey) return orginalKey
+	return translated
 }
 
 export const TranslationMixin = {
 	methods: {
 		t(translationKey?: string) {
-			if (translationKey && !translationKey.startsWith('$vuetify.'))
+			const orginalKey = translationKey
+			if (!translationKey?.startsWith('$vuetify.'))
 				translationKey = `$vuetify.${translationKey}`
 
-			try {
-				return (this as any).$vuetify.lang.t(translationKey)
-			} catch {
-				return translationKey
-			}
+			const translated = (this as any).$vuetify.lang.t(translationKey)
+			if (translated === translationKey) return orginalKey
+			return translated
 		},
 	},
 }
@@ -52,4 +50,8 @@ export function getLanguages() {
 	return Object.entries(locales)
 		.filter(([_, locale]) => (locale as any).languageName !== undefined)
 		.map(([key, locale]) => [key, (locale as any).languageName])
+}
+
+export function getCurrentLanguage() {
+	return (vue as any).$vuetify.lang.current
 }

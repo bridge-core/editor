@@ -1,0 +1,17 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"set_block_property": {
+			"description": "Sets a block property on this block",
+			"propertyNames": {
+				"$ref": "../../block/dynamic/currentContext/propertyEnum.json"
+			},
+			"patternProperties": {
+				".+": {
+					"$ref": "../../molang/embeddedBeta.json"
+				}
+			}
+		}
+	}
+}

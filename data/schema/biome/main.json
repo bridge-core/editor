@@ -1,0 +1,44 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.biome",
+	"title": "Biome",
+	"additionalProperties": false,
+	"required": ["format_version", "minecraft:biome"],
+	"properties": {
+		"format_version": {
+			"$ref": "../project/formatVersionEnum.json"
+		},
+		"minecraft:biome": {
+			"required": ["description"],
+			"additionalProperties": false,
+			"properties": {
+				"description": {
+					"required": ["identifier"],
+					"additionalProperties": false,
+					"properties": {
+						"identifier": {
+							"anyOf": [
+								{
+									"$ref": "../project/fileIdentifierEnum.json"
+								},
+								{
+									"type": "string"
+								}
+							]
+						}
+					}
+				},
+				"components": {
+					"anyOf": [
+						{
+							"$ref": "./components.json"
+						},
+						{
+							"$ref": "./tag.json"
+						}
+					]
+				}
+			}
+		}
+	}
+}

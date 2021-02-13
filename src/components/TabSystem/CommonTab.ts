@@ -1,36 +1,44 @@
-import type Vue from 'vue'
-import { DirectoryEntry } from '@/components/Sidebar/Content/Explorer/DirectoryEntry'
 import { v4 as uuid } from 'uuid'
-import type { TabSystem } from './Main'
-import { FileSystem } from '@/fileSystem/Main'
-import { IFileSystem } from '@/fileSystem/Common'
-
+import { TabSystem } from './TabSystem'
+import { IFileSystem } from '@/components/FileSystem/Common'
+import { App } from '@/App'
+import { FileType } from '../Data/FileType'
+import { PackType } from '../Data/PackType'
 
 export abstract class Tab {
-	protected fileSystem: IFileSystem | Promise<IFileSystem>
 	abstract component: Vue.Component
 	uuid = uuid()
 	hasRemoteChange = false
 	isUnsaved = false
 
-	setIsUnsaved(val: boolean, changedData?: unknown) {
+	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val
 	}
 
-	constructor(
-		protected parent: TabSystem,
-		protected path: string
-	) {
-		this.fileSystem = FileSystem.get()
-		if(this.fileSystem instanceof Promise) this.fileSystem.then(fileSystem => this.fileSystem = fileSystem)
+	static is(filePath: string) {
+		return false
 	}
+
+	constructor(protected parent: TabSystem, protected path: string) {}
 
 	get name() {
 		const pathArr = this.path.split(/\\|\//g)
-		return pathArr.pop()
+		return pathArr.pop()!
 	}
 	getPath() {
 		return this.path
+	}
+	getPackPath() {
+		return this.path.replace(
+			`projects/${App.instance.selectedProject}/`,
+			''
+		)
+	}
+	get icon() {
+		return FileType.get(this.getPackPath())?.icon ?? 'mdi-file-outline'
+	}
+	get iconColor() {
+		return PackType.get(this.getPath())?.color
 	}
 
 	get isSelected() {
@@ -51,5 +59,13 @@ export abstract class Tab {
 	onDeactivate() {}
 	onDestroy() {}
 
-	abstract save(): void
+	abstract save(): void | Promise<void>
+
+	copy() {
+		document.execCommand('copy')
+	}
+	cut() {
+		document.execCommand('cut')
+	}
+	paste() {}
 }

@@ -1,0 +1,17 @@
+{
+	"name": "Loot Table",
+	"icon": "mdi-skull-outline",
+	"description": "Creates a blank loot table.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"lootTable.json",
+			"BP/loot_tables/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

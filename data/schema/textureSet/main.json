@@ -1,0 +1,94 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.textureMap",
+	"required": ["format_version", "minecraft:texture_set"],
+	"title": "Texture Map",
+	"additionalProperties": false,
+	"properties": {
+		"format_version": {
+			"$ref": "../project/formatVersionEnum.json"
+		},
+		"minecraft:texture_set": {
+			"additionalProperties": false,
+			"required": ["color"],
+			"properties": {
+				"color": {
+					"$ref": "./color.json"
+				},
+				"color_unlit": {
+					"$ref": "./color.json"
+				},
+				"normal": {
+					"$ref": "./color.json"
+				},
+				"metalness": {
+					"anyOf": [
+						{
+							"$ref": "../general/hexColor.json"
+						},
+						{
+							"type": "string",
+							"description": "Reference to a texture"
+						},
+						{
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 256
+						}
+					]
+				},
+				"emissive": {
+					"anyOf": [
+						{
+							"$ref": "../general/hexColor.json"
+						},
+						{
+							"type": "string",
+							"description": "Reference to a texture"
+						},
+						{
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 256
+						}
+					]
+				},
+				"roughness": {
+					"anyOf": [
+						{
+							"$ref": "../general/hexColor.json"
+						},
+						{
+							"type": "string",
+							"description": "Reference to a texture"
+						},
+						{
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 256
+						}
+					]
+				},
+				"metalness_emissive_roughness": {
+					"$ref": "./color.json"
+				},
+				"heightmap": {
+					"anyOf": [
+						{
+							"$ref": "../general/hexColor.json"
+						},
+						{
+							"type": "string",
+							"description": "Reference to a texture"
+						},
+						{
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 256
+						}
+					]
+				}
+			}
+		}
+	}
+}

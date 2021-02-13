@@ -1,0 +1,28 @@
+{
+	"id": "solved.custom_theme.dark_coral",
+	"name": "Coral",
+	"colorScheme": "dark",
+	"colors": {
+		"text": "#fff",
+		"toolbar": "#EF6F6C",
+		"primary": "#EF6F6C",
+		"secondary": "#EF6F6C",
+		"accent": "white",
+		"tooltip": "#EF6F6C"
+	},
+	"highlighter": {
+		"property": { "color": "#90be6d" },
+		"keyword": { "color": "#e85d04" },
+		"definition": { "color": "#fd971f" },
+		"atom": { "color": "#43aa8b" },
+		"number": { "color": "#43aa8b" },
+		"string": { "color": "#faa307" },
+		"variable": { "color": "#577590" },
+		"variable_strong": { "color": "#577590" },
+		"meta": { "color": "white" },
+		"comment": { "color": "#ffba08" }
+	},
+	"monaco": {
+		"editor.lineHighlightBackground": "#242424"
+	}
+}

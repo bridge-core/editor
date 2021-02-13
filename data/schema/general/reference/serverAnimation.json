@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "string",
+	"anyOf": [
+		{
+			"$ref": "../../animation/dynamic/identifierEnum.json"
+		},
+		{
+			"$ref": "../../animationController/dynamic/identifierEnum.json"
+		}
+	]
+}

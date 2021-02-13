@@ -1,0 +1,64 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"condition": {
+			"type": "string",
+			"description": "This MoLang expression has to evaluate to '1' (true) in order for the event to run"
+		},
+		"target": {
+			"type": "string",
+			"description": "Target to trigger the event on",
+			"enum": ["self", "other", "target", "parent", "baby"]
+		}
+	},
+	"allOf": [
+		{
+			"if": {
+				"anyOf": [
+					{
+						"properties": {
+							"target": {
+								"const": "self",
+								"required": ["target"]
+							}
+						}
+					},
+					{
+						"properties": {
+							"target": {
+								"type": "null"
+							}
+						}
+					}
+				]
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../dynamic/currentContext/eventEnum.json",
+						"description": "Identifier of the event to trigger"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"target": {
+						"enum": ["other", "target", "parent", "baby"]
+					}
+				},
+				"required": ["target"]
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../../entity/dynamic/eventEnum.json",
+						"description": "Identifier of the event to trigger"
+					}
+				}
+			}
+		}
+	]
+}

@@ -1,0 +1,12 @@
+[
+	{ "identifier": "minecraft:item/description/identifier" },
+	{ "event": "minecraft:item/events" },
+	{ "itemTexture": "minecraft:item/components/minecraft:icon/texture" },
+	{
+		"tag": "minecraft:item/components",
+		"@map": "if(Bridge.value.startsWith('tag:')) return Bridge.value.replace('tag:', '')"
+	},
+	{
+		"lootTablePath": "minecraft:item/events/*/spawn_loot/table"
+	}
+]

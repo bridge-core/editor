@@ -1,0 +1,39 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Plugin Manifest",
+	"additionalProperties": false,
+	"required": ["name", "author", "id", "description"],
+	"properties": {
+		"author": {
+			"description": "The name of the author of the plugin.",
+			"type": "string"
+		},
+		"name": {
+			"description": "The name of the plugin.",
+			"type": "string"
+		},
+		"version": {
+			"description": "The version of the plugin. This should be incremented when updating the plugin.",
+			"type": "string",
+			"default": "1.0.0"
+		},
+		"id": {
+			"description": "The uuid of the pack. This should be unique to the plugin.",
+			"$ref": "../../general/uuid.json"
+		},
+		"description": {
+			"description": "The description of the plugin.",
+			"type": "string"
+		},
+		"api_version": {
+			"description": "You can omit this attribute to always use the latest API version (currently: 2). We recommend to always specifically set it though.",
+			"type": "integer",
+			"default": 2
+		},
+		"link": {
+			"description": "The link attribute is optional and allows you to provide a link to an external webpage which appears in bridge.'s UI.",
+			"type": "string",
+			"format": "uri"
+		}
+	}
+}

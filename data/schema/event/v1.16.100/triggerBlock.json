@@ -1,0 +1,11 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"trigger": {
+			"$ref": "../../block/dynamic/currentContext/eventEnum.json",
+			"type": "string",
+			"description": "Trigger an event"
+		}
+	}
+}

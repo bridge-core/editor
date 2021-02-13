@@ -1,0 +1,80 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"condition": {
+			"type": "string",
+			"description": "This MoLang expression has to evaluate to 'true' in order for the event to run"
+		},
+		"target": {
+			"$ref": "../../general/filter/subject.json"
+		}
+	},
+	"allOf": [
+		{
+			"if": {
+				"anyOf": [
+					{
+						"properties": {
+							"target": {
+								"const": "self",
+								"required": ["target"]
+							}
+						}
+					},
+					{
+						"properties": {
+							"target": {
+								"type": "null"
+							}
+						}
+					}
+				]
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../dynamic/currentContext/eventEnum.json",
+						"description": "Identifier of the event to trigger"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"target": {
+						"enum": ["other", "holder", "target", "baby", "parent"]
+					}
+				},
+				"required": ["target"]
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../../entity/dynamic/eventEnum.json",
+						"description": "Identifier of the event to trigger"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"target": {
+						"const": "block"
+					}
+				},
+				"required": ["target"]
+			},
+			"then": {
+				"properties": {
+					"event": {
+						"$ref": "../../block/dynamic/eventEnum.json",
+						"description": "Identifier of the event to trigger"
+					}
+				}
+			}
+		}
+	]
+}

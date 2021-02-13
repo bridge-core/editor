@@ -1,0 +1,11 @@
+{
+    "format_version": "1.10.0",
+    "animations": {
+        "animation.blank": {
+            "timeline": {
+                "0.0": []
+            },
+            "animation_length": 0
+        }
+    }
+}

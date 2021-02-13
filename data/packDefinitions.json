@@ -1,0 +1,30 @@
+[
+	{
+		"id": "behaviorPack",
+		"packPath": "BP",
+		"icon": "mdi-wrench",
+		"matcher": "projects/*/BP/**",
+		"color": "error"
+	},
+	{
+		"id": "resourcePack",
+		"packPath": "RP",
+		"icon": "mdi-image",
+		"matcher": "projects/*/RP/**",
+		"color": "info"
+	},
+	{
+		"id": "skinPack",
+		"packPath": "SP",
+		"icon": "mdi-human",
+		"matcher": "projects/*/SP/**",
+		"color": "warning"
+	},
+	{
+		"id": "worldTemplate",
+		"packPath": "WT",
+		"icon": "mdi-earth",
+		"matcher": "projects/*/WT/**",
+		"color": "success"
+	}
+]

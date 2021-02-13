@@ -1,67 +1,38 @@
 <template>
-	<div
-		v-if="mainTabSystem.tabs.length > 0"
+	<Draggable
+		v-if="tabSystem && tabSystem.tabs.length > 0"
+		v-model="tabSystem.tabs"
+		:group="{ name: 'tabSystemTabRow' }"
 		:style="
-			`display: inline-block; overflow-x: scroll; white-space: nowrap; width: 100%; height: 48px;`
+			`display: flex; overflow-x: scroll; white-space: nowrap; width: 100%; height: 48px;`
 		"
 	>
-		<v-tab
-			v-for="(tab, i) in mainTabSystem.tabs"
+		<TabSystemTab
+			v-for="(tab, i) in tabSystem.tabs"
 			:key="tab.uuid"
-			:ripple="!tab.isSelected"
-			:class="{
-				tab: true,
-				selected: tab.isSelected,
-			}"
+			:tab="tab"
 			@click.native="tab.select()"
 			@click.middle.native="tab.close()"
 			@contextmenu.native="onContextMenu($event, i)"
-		>
-			<span :style="{ 'font-style': tab.isUnsaved ? 'italic' : null }">
-				{{ tab.name }}
-			</span>
-
-			<v-btn @click.stop="tab.close()" text icon small>
-				<v-icon small>mdi-close</v-icon>
-			</v-btn>
-		</v-tab>
-	</div>
+		/>
+	</Draggable>
 </template>
 
 <script>
-import { mainTabSystem } from './Main'
+import { TabSystemMixin } from '../Mixins/TabSystem'
+import TabSystemTab from './Tab.vue'
+import Draggable from 'vuedraggable'
 
 export default {
-	data: () => ({
-		mainTabSystem,
-	}),
+	mixins: [TabSystemMixin],
+	components: {
+		TabSystemTab,
+		Draggable,
+	},
 }
 </script>
 
 <style scoped>
-div.flex {
-	padding-bottom: 0 !important;
-}
-
-.tab {
-	padding: 8px 16px;
-	text-transform: none;
-	opacity: 0.5;
-	display: inline-block;
-	border-bottom: 2px solid var(--v-background-darken2);
-	background: var(--v-background-darken1);
-	max-width: unset;
-	height: 100%;
-}
-.tab:hover {
-	opacity: 1;
-}
-.tab.selected {
-	opacity: 1;
-	background: var(--v-background-darken1);
-	border-bottom: 2px solid var(--v-primary-base);
-	color: var(--v-primary-base);
-}
 *::-webkit-scrollbar-track {
 	border-bottom-left-radius: 2px;
 	border-bottom-right-radius: 2px;

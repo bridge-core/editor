@@ -1,0 +1,32 @@
+{
+	"name": "Axe",
+    "icon": "mdi-axe",
+    "description": "Creates a new axe item.",
+	"category": "fileType.item",
+	"targetVersion": [">=", "1.16.100"],
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"item.json",
+			"BP/items/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"icon.png",
+			"RP/textures/items/{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER"] }
+		]
+	],
+	"expandFiles": [
+		[
+			"itemTexture.json",
+			"RP/textures/item_texture.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }]
+	]
+}

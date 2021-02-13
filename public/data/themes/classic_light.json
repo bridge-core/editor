@@ -1,9 +1,0 @@
-{
-    "id": "bridge.old_default.theme",
-    "colorScheme": "light",
-    "colors": {
-        "text": "#000",
-        "primary": "#4caf50",
-        "accent": "#4caf50"
-    }
-}

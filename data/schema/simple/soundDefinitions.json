@@ -1,0 +1,66 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Sound Definitions",
+	"additionalProperties": false,
+	"required": ["format_version"],
+	"properties": {
+		"format_version": {
+			"$ref": "../project/formatVersionEnum.json"
+		},
+		"sound_definitions": {
+			"patternProperties": {
+				".*": {
+					"additionalProperties": false,
+					"properties": {
+						"__use_legacy_max_distance": {
+							"type": "boolean"
+						},
+						"category": {
+							"type": "string",
+							"enum": [
+								"ambient",
+								"weather",
+								"block",
+								"hostile",
+								"player",
+								"neutral",
+								"bucket",
+								"record",
+								"ui"
+							]
+						},
+						"min_distance": {
+							"type": "number"
+						},
+						"sounds": {
+							"type": "array",
+							"items": {
+								"anyOf": [
+									{
+										"properties": {
+											"name": {
+												"$ref": "../sound/dynamic/soundPathEnum.json"
+											},
+											"stream": {
+												"type": "boolean"
+											},
+											"load_on_low_memory": {
+												"type": "boolean"
+											},
+											"volume": {
+												"type": "number"
+											}
+										}
+									},
+									{
+										"$ref": "../sound/dynamic/soundPathEnum.json"
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

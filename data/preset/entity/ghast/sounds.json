@@ -1,0 +1,21 @@
+{
+	"entity_sounds": {
+		"entities": {
+			"{{PROJECT_PREFIX}}:{{IDENTIFIER}}" : {
+                "events" : {
+                   "ambient" : "mob.{{IDENTIFIER}}.moan",
+                   "death" : "mob.{{IDENTIFIER}}.death",
+                   "hurt" : "mob.{{IDENTIFIER}}.scream",
+                   "scream" : "mob.{{IDENTIFIER}}.affectionate_scream",
+                   "shoot" : {
+                      "sound" : "mob.{{IDENTIFIER}}.fireball",
+                      "volume" : 0.70
+                   },
+                   "warn" : "mob.{{IDENTIFIER}}.charge"
+                },
+                "pitch" : [ 0.80, 1.20 ],
+                "volume" : 600.0
+             },
+		}
+	}
+}

@@ -1,0 +1,232 @@
+{
+	"sound_definitions": {
+		"mob.{{IDENTIFIER}}.aggro" : {
+            "__use_legacy_max_distance" : "true",
+            "category" : "hostile",
+            "sounds" : [
+               {
+                  "name" : "sounds/mob/fox/aggro1",
+                  "volume" : 0.650
+               },
+               {
+                  "name" : "sounds/mob/fox/aggro2",
+                  "volume" : 0.650
+               },
+               {
+                  "name" : "sounds/mob/fox/aggro3",
+                  "volume" : 0.650
+               },
+               {
+                  "name" : "sounds/mob/fox/aggro4",
+                  "volume" : 0.650
+               },
+               {
+                  "name" : "sounds/mob/fox/aggro5",
+                  "volume" : 0.650
+               },
+               {
+                  "name" : "sounds/mob/fox/aggro6",
+                  "volume" : 0.650
+               },
+               {
+                  "name" : "sounds/mob/fox/aggro7",
+                  "volume" : 0.650
+               }
+            ]
+         },
+         "mob.{{IDENTIFIER}}.ambient" : {
+            "__use_legacy_max_distance" : "true",
+            "category" : "neutral",
+            "sounds" : [
+               {
+                  "load_on_low_memory" : true,
+                  "name" : "sounds/mob/fox/idle1",
+                  "volume" : 0.80
+               },
+               {
+                  "name" : "sounds/mob/fox/idle2",
+                  "volume" : 1
+               },
+               {
+                  "name" : "sounds/mob/fox/idle3",
+                  "volume" : 1
+               },
+               {
+                  "name" : "sounds/mob/fox/idle4",
+                  "volume" : 1
+               },
+               {
+                  "name" : "sounds/mob/fox/idle5",
+                  "volume" : 1
+               },
+               {
+                  "name" : "sounds/mob/fox/idle6",
+                  "volume" : 1
+               }
+            ]
+         },
+         "mob.{{IDENTIFIER}}.bite" : {
+            "__use_legacy_max_distance" : "true",
+            "category" : "hostile",
+            "sounds" : [
+               {
+                  "name" : "sounds/mob/fox/bite1",
+                  "pitch" : 1.10,
+                  "volume" : 0.60
+               },
+               {
+                  "name" : "sounds/mob/fox/bite2",
+                  "pitch" : 1.10,
+                  "volume" : 0.60
+               },
+               {
+                  "name" : "sounds/mob/fox/bite3",
+                  "pitch" : 1.10,
+                  "volume" : 0.60
+               }
+            ]
+         },
+         "mob.{{IDENTIFIER}}.death" : {
+            "__use_legacy_max_distance" : "true",
+            "category" : "neutral",
+            "sounds" : [
+               {
+                  "name" : "sounds/mob/fox/death1",
+                  "volume" : 0.90
+               },
+               {
+                  "name" : "sounds/mob/fox/death2",
+                  "volume" : 0.90
+               }
+            ]
+         },
+         "mob.{{IDENTIFIER}}.eat" : {
+            "__use_legacy_max_distance" : "true",
+            "category" : "neutral",
+            "sounds" : [
+               {
+                  "name" : "sounds/mob/fox/eat1",
+                  "volume" : 0.650
+               },
+               {
+                  "name" : "sounds/mob/fox/eat2",
+                  "volume" : 0.650
+               },
+               {
+                  "name" : "sounds/mob/fox/eat3",
+                  "volume" : 0.650
+               }
+            ]
+         },
+         "mob.{{IDENTIFIER}}.hurt" : {
+            "__use_legacy_max_distance" : "true",
+            "category" : "neutral",
+            "sounds" : [
+               {
+                  "name" : "sounds/mob/fox/hurt1",
+                  "volume" : 0.750
+               },
+               {
+                  "name" : "sounds/mob/fox/hurt2",
+                  "volume" : 0.750
+               },
+               {
+                  "name" : "sounds/mob/fox/hurt3",
+                  "volume" : 0.750
+               },
+               {
+                  "name" : "sounds/mob/fox/hurt4",
+                  "volume" : 0.750
+               }
+            ]
+         },
+         "mob.{{IDENTIFIER}}.screech" : {
+            "__use_legacy_max_distance" : "true",
+            "category" : "neutral",
+            "sounds" : [
+               {
+                  "name" : "sounds/mob/fox/screech1",
+                  "volume" : 0.90
+               },
+               {
+                  "name" : "sounds/mob/fox/screech2",
+                  "volume" : 0.90
+               },
+               {
+                  "name" : "sounds/mob/fox/screech3",
+                  "volume" : 0.90
+               },
+               {
+                  "name" : "sounds/mob/fox/screech4",
+                  "volume" : 0.80
+               }
+            ]
+         },
+         "mob.{{IDENTIFIER}}.sleep" : {
+            "__use_legacy_max_distance" : "true",
+            "category" : "neutral",
+            "sounds" : [
+               {
+                  "name" : "sounds/mob/fox/sleep1",
+                  "volume" : 0.80
+               },
+               {
+                  "name" : "sounds/mob/fox/sleep2",
+                  "volume" : 0.80
+               },
+               {
+                  "name" : "sounds/mob/fox/sleep3",
+                  "volume" : 0.80
+               },
+               {
+                  "name" : "sounds/mob/fox/sleep4",
+                  "volume" : 0.80
+               },
+               {
+                  "name" : "sounds/mob/fox/sleep5",
+                  "volume" : 0.80
+               }
+            ]
+         },
+         "mob.{{IDENTIFIER}}.sniff" : {
+            "__use_legacy_max_distance" : "true",
+            "category" : "neutral",
+            "sounds" : [
+               {
+                  "name" : "sounds/mob/fox/sniff1",
+                  "volume" : 0.60
+               },
+               {
+                  "name" : "sounds/mob/fox/sniff2",
+                  "volume" : 0.60
+               },
+               {
+                  "name" : "sounds/mob/fox/sniff3",
+                  "volume" : 0.60
+               },
+               {
+                  "name" : "sounds/mob/fox/sniff4",
+                  "volume" : 0.60
+               }
+            ]
+         },
+         "mob.{{IDENTIFIER}}.spit" : {
+            "__use_legacy_max_distance" : "true",
+            "category" : "neutral",
+            "sounds" : [
+               {
+                  "name" : "sounds/mob/fox/spit1",
+                  "volume" : 0.70
+               },
+               {
+                  "name" : "sounds/mob/fox/spit2",
+                  "volume" : 0.70
+               },
+               {
+                  "name" : "sounds/mob/fox/spit3",
+                  "volume" : 0.70
+               }
+            ]
+         }
+	}
+}

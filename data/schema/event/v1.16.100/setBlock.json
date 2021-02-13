@@ -1,0 +1,32 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"set_block": {
+			"description": "Sets this block to another block type",
+			"additionalProperties": false,
+			"properties": {
+				"block_type": {
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+				}
+			}
+		},
+		"set_block_at_pos": {
+			"description": "Sets a block relative to this block to another block type",
+			"additionalProperties": false,
+			"properties": {
+				"block_offset": {
+					"type": "array",
+					"maxItems": 3,
+					"minItems": 3,
+					"items": {
+						"type": "number"
+					}
+				},
+				"block_type": {
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+				}
+			}
+		}
+	}
+}

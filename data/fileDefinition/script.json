@@ -1,0 +1,6 @@
+{
+	"id": "script",
+	"icon": "mdi-language-javascript",
+	"scope": "BP/scripts/",
+	"matcher": "BP/scripts/**/*.js"
+}

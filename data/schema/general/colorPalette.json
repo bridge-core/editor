@@ -1,0 +1,22 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "string",
+	"enum": [
+		"white",
+		"light_green",
+		"orange",
+		"silver",
+		"magenta",
+		"light_blue",
+		"yellow",
+		"pink",
+		"blue",
+		"gray",
+		"cyan",
+		"purple",
+		"brown",
+		"green",
+		"red",
+		"black"
+	]
+}

@@ -99,7 +99,7 @@ export default {
 	},
 	// Welcome Screen
 	welcome: {
-		title: 'Welkom bij bridge.',
+		title: 'bridge.',
 		subtitle:
 			'Het maken van Minecraft addons is nog nooit zo gemakkelijk geweest!',
 		syntaxHighlighting: 'Syntaxis accentuering',

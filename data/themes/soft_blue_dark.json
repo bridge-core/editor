@@ -1,0 +1,30 @@
+{
+	"id": "bridge.blue.dark_theme",
+	"name": "Soft Blue",
+	"colorScheme": "dark",
+	"colors": {
+		"text": "#fff",
+		"toolbar": "#587291",
+		"primary": "#587291",
+		"secondary": "#587291",
+		"accent": "white",
+		"tooltip": "#587291"
+	},
+	"highlighter": {
+		"keyword": {
+			"color": "#2F97C1"
+		},
+		"atom": {
+			"color": "#1CCAD8"
+		},
+		"number": {
+			"color": "#1CCAD8"
+		},
+		"string": {
+			"color": "#1CCAD8"
+		},
+		"comment": {
+			"color": "#0CF574"
+		}
+	}
+}

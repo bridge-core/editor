@@ -1,0 +1,17 @@
+{
+	"name": "Function",
+	"icon": "mdi-function",
+	"description": "Creates a blank function.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"function.mcfunction",
+			"BP/functions/{{FILE_NAME}}.mcfunction",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

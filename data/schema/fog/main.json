@@ -1,0 +1,119 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.fogs",
+	"additionalProperties": false,
+	"title": "Fog",
+	"required": ["format_version", "minecraft:fog_settings"],
+	"definitions": {
+		"hex_color": {
+			"$ref": "../general/hexColor.json"
+		}
+	},
+	"properties": {
+		"format_version": {
+			"$ref": "../project/formatVersionEnum.json"
+		},
+		"minecraft:fog_settings": {
+			"type": "object",
+			"properties": {
+				"description": {
+					"type": "object",
+					"properties": {
+						"identifier": {
+							"anyOf": [
+								{
+									"$ref": "../project/fileIdentifierEnum.json"
+								},
+								{
+									"type": "string"
+								},
+								{
+									"$ref": "../general/vanilla/identifiers.json#/definitions/fog_identifiers"
+								}
+							]
+						}
+					}
+				},
+				"distance": {
+					"additionalProperties": false,
+					"type": "object",
+					"propertyNames": {
+						"enum": [
+							"water",
+							"air",
+							"weather",
+							"lava",
+							"lava_resistance",
+							"powder_snow"
+						]
+					},
+					"description": "Valid properties: 'water', 'air', 'weather', 'lava', 'lava_resistance', 'powder_snow'",
+					"patternProperties": {
+						"^water|air|weather|lava|lava_resistance|powder_snow$": {
+							"properties": {
+								"fog_start": {
+									"type": "number"
+								},
+								"fog_end": {
+									"type": "number"
+								},
+								"fog_color": {
+									"$ref": "#/definitions/hex_color",
+									"description": "A hex color value that defines the color of the fog."
+								},
+								"render_distance_types": {
+									"type": "string",
+									"enum": ["fixed", "render"]
+								}
+							}
+						}
+					}
+				},
+				"volumetric": {
+					"type": "object",
+					"description": "RTX is required for volumetric fogs.",
+					"properties": {
+						"media_coefficients": {
+							"type": "object",
+							"description": "Valid properties: 'air', 'water', 'cloud'",
+							"patternProperties": {
+								"^air|water|cloud$": {
+									"properties": {
+										"scattering": {
+											"$ref": "#/definitions/hex_color"
+										},
+										"absorption": {
+											"$ref": "#/definitions/hex_color"
+										}
+									}
+								}
+							}
+						},
+						"density": {
+							"type": "object",
+							"properties": {
+								"air": {
+									"type": "object",
+									"properties": {
+										"max_density": {
+											"type": "number"
+										},
+										"max_density_height": {
+											"type": "number"
+										},
+										"zero_density_height": {
+											"type": "number"
+										},
+										"uniform": {
+											"type": "boolean"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

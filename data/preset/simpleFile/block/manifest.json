@@ -1,0 +1,17 @@
+{
+	"name": "Block",
+	"icon": "mdi-cube-outline",
+	"description": "Creates a blank block.",
+	"category": "fileType.simpleFile",
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"block.json",
+			"BP/blocks/{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

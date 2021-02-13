@@ -99,7 +99,7 @@ export default {
 	},
 	// Welcome Screen
 	welcome: {
-		title: 'Willkomen zu bridge.',
+		title: 'bridge.',
 		subtitle: 'Die Minecraft Add-On Entwicklung war niemals einfacher!',
 		syntaxHighlighting: 'Syntax Farbhervorhebung',
 		richAutoCompletions: 'Intelligente Autovervollständigung',

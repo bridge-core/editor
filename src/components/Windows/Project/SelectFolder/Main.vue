@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="t('windows.selectFolder.title')"
+		windowTitle="windows.selectFolder.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:hasCloseButton="false"
@@ -29,7 +29,7 @@
 
 <script>
 import { TranslationMixin } from '@/utils/locales'
-import BaseWindow from '../../Layout/Base'
+import BaseWindow from '../../Layout/BaseWindow'
 
 export default {
 	name: 'SelectProjectFolderWindow',

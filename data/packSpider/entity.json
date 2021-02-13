@@ -1,0 +1,22 @@
+{
+	"connect": [
+		{
+			"find": "clientEntity",
+			"where": "identifier",
+			"matches": "identifier",
+			"shouldFindMultiple": false
+		},
+		{
+			"find": "spawnRule",
+			"where": "identifier",
+			"matches": "identifier",
+			"shouldFindMultiple": false
+		},
+		{
+			"find": ["animation", "animationController"],
+			"where": "identifier",
+			"matches": "animationIdentifier"
+		}
+	],
+	"includeFiles": ["lootTablePath", "tradeTablePath", "functionPath"]
+}

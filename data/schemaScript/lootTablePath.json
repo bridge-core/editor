@@ -1,0 +1,5 @@
+{
+	"type": "enum",
+	"generateFile": "lootTable/dynamic/lootTablePathEnum.json",
+	"script": "return readdir('BP/loot_tables').then(dirents => dirents.map(dirent => dirent.path.replace('BP/', '')))"
+}

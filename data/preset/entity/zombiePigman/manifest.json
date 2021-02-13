@@ -1,0 +1,75 @@
+{
+	"name": "Zombie Pigman",
+	"description": "Creates a new zombie pigman entity.",
+	"icon": "mdi-human",
+	"category": "fileType.entity",
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"entity.json",
+			"BP/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"clientEntity.json",
+			"RP/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"geometry.json",
+			"RP/models/entity/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"geometryBaby.json",
+			"RP/models/entity/{{IDENTIFIER}}_baby.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"lootTable.json",
+			"BP/loot_tables/entities/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"lootTableGear.json",
+			"BP/loot_tables/entities/{{IDENTIFIER}}_gear.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"renderController.json",
+			"RP/render_controllers/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"spawnRule.json",
+			"BP/spawn_rules/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"texture.png",
+			"RP/textures/entity/{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER"] }
+		]
+	],
+	"expandFiles": [
+		[
+			"en_US.lang",
+			"RP/texts/en_US.lang",
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
+		],
+		[
+			"soundDefinitions.json",
+			"RP/sounds/sound_definitions.json",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"sounds.json",
+			"RP/sounds.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		]
+	]
+}

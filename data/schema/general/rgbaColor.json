@@ -1,0 +1,48 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"description": "An RGBA color",
+	"additionalProperties": false,
+	"properties": {
+		"r": {
+			"anyOf": [
+				{
+					"type": "integer"
+				},
+				{
+					"$ref": "../molang/embeddedBeta.json"
+				}
+			]
+		},
+		"g": {
+			"anyOf": [
+				{
+					"type": "integer"
+				},
+				{
+					"$ref": "../molang/embeddedBeta.json"
+				}
+			]
+		},
+		"b": {
+			"anyOf": [
+				{
+					"type": "integer"
+				},
+				{
+					"$ref": "../molang/embeddedBeta.json"
+				}
+			]
+		},
+		"a": {
+			"anyOf": [
+				{
+					"type": "integer"
+				},
+				{
+					"$ref": "../molang/embeddedBeta.json"
+				}
+			]
+		}
+	}
+}

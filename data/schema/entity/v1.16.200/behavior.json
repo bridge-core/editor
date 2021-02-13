@@ -1,0 +1,53 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"properties": {
+		"minecraft:behavior.jump_to_block": {
+			"additionalProperties": false,
+			"properties": {
+				"priority": {
+					"type": "number"
+				},
+				"search_width": {
+					"type": "number"
+				},
+				"search_height": {
+					"type": "number"
+				},
+				"minimum_path_length": {
+					"type": "number"
+				},
+				"scale_factor": {
+					"type": "number"
+				},
+				"cooldown_range": {
+					"type": "array",
+					"maxItems": 2,
+					"minItems": 2,
+					"items": {
+						"type": "number"
+					}
+				}
+			}
+		},
+		"minecraft:behavior.ram_attack": {
+			"additionalProperties": false,
+			"properties": {
+				"priority": {
+					"type": "number"
+				},
+				"run_speed": {
+					"type": "number"
+				},
+				"ram_speed": {
+					"type": "number"
+				},
+				"ram_distance": {
+					"type": "number"
+				},
+				"on_start": {
+					"$ref": "../general/eventDefinition.json"
+				}
+			}
+		}
+	}
+}

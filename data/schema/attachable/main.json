@@ -1,0 +1,93 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Attachable",
+	"required": ["format_version", "minecraft:attachable"],
+	"additionalProperties": false,
+	"$id": "bridge.attachable",
+	"properties": {
+		"format_version": {
+			"$ref": "../project/formatVersionEnum.json"
+		},
+		"minecraft:attachable": {
+			"additionalProperties": false,
+			"required": ["description"],
+			"properties": {
+				"description": {
+					"required": [
+						"textures",
+						"geometry",
+						"render_controllers",
+						"identifier",
+						"materials"
+					],
+					"additionalProperties": false,
+					"properties": {
+						"identifier": {
+							"anyOf": [
+								{
+									"$ref": "../project/fileIdentifierEnum.json"
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"item": {
+							"description": "Sets an item identifier with a Molang script to decide when to render the attachable.",
+							"propertyNames": {
+								"$ref": "../general/reference/identifiers.json#/definitions/item_identifiers"
+							}
+						},
+						"materials": {
+							"description": "Defines the materials used in the attachable.",
+							"patternProperties": {
+								".*": {
+									"$ref": "../clientEntity/general.json#/definitions/materials"
+								}
+							}
+						},
+						"textures": {
+							"description": "Defines the textures used in the attachable.",
+							"patternProperties": {
+								".*": {
+									"$ref": "../clientEntity/dynamic/texturePathEnum.json"
+								}
+							}
+						},
+						"geometry": {
+							"description": "Defines the geometries used in the attachable.",
+							"patternProperties": {
+								".*": {
+									"$ref": "../general/reference/geometry.json"
+								}
+							}
+						},
+						"scripts": {
+							"additionalProperties": false,
+							"properties": {
+								"parent_setup": {
+									"description": "Sets up the parent bone for the attachable.",
+									"type": "string"
+								},
+								"pre_animation": {
+									"description": "Pre-computes any expensive and complex values you may want to reuse in your scripts, long-living index variable updates, or generally any one-off computation per render tick.",
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"render_controllers": {
+							"description": "References all render controllers used to render the attachable.",
+							"type": "array",
+							"items": {
+								"$ref": "../general/reference/renderController.json"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

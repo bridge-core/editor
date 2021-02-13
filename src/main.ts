@@ -1,13 +1,14 @@
 import Vue from 'vue'
-import App from './App.vue'
+import { default as AppComponent } from './App.vue'
 //@ts-expect-error
 import Vuetify from 'vuetify/lib'
 import './registerServiceWorker'
-import '@convergencelabs/monaco-collab-ext/css/monaco-collab-ext.css'
 import en from '@/locales/en'
 import de from '@/locales/de'
 import nl from '@/locales/nl'
 import ko from '@/locales/ko'
+import '@mdi/font/css/materialdesignicons.min.css'
+import { App } from './App'
 
 Vue.config.productionTip = false
 
@@ -54,5 +55,7 @@ export const vuetify = new Vuetify({
 export const vue = new Vue({
 	// @ts-expect-error
 	vuetify,
-	render: h => h(App),
+	render: h => h(AppComponent),
 }).$mount('#app')
+
+App.main(vue)

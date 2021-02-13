@@ -1,0 +1,82 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "bridge.clientItem",
+	"title": "Client Item",
+	"type": "object",
+	"required": ["format_version", "minecraft:item"],
+	"additionalProperties": false,
+	"properties": {
+		"format_version": {
+			"$ref": "../project/formatVersionEnum.json"
+		},
+		"minecraft:item": {
+			"additionalProperties": false,
+			"properties": {
+				"description": {
+					"additionalProperties": false,
+					"properties": {
+						"identifier": {
+							"anyOf": [
+								{
+									"$ref": "../project/fileIdentifierEnum.json"
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"is_experimental": {
+							"type": "boolean",
+							"description": "If this item is experimental, it will only be registered if the world is marked as experimental."
+						},
+						"category": {
+							"description": "The category for this item. Categories are used to control high level properties of how the item is integrated into the bedrock engine, such as whether it can be used in slash commands.",
+							"type": "string",
+							"enum": [
+								"nature",
+								"construction",
+								"items",
+								"equipment"
+							]
+						}
+					}
+				},
+				"components": {
+					"additionalProperties": false,
+					"properties": {
+						"minecraft:icon": {
+							"description": "The icon item componenent determines the icon to represent the item in the UI and elsewhere.",
+							"additionalProperties": false,
+							"properties": {
+								"texture": {
+									"$ref": "../general/reference/itemTexture.json"
+								},
+								"frame_index": {
+									"type": "integer"
+								}
+							}
+						},
+						"minecraft:use_animation": {
+							"type": "string",
+							"description": "The animation to use when this item is being used, e.g when the item is being eaten",
+							"enum": [
+								"bow",
+								"eat",
+								"drink",
+								"crossbow",
+								"camera"
+							]
+						},
+						"minecraft:hover_text_color": {
+							"description": "The color of the item's name",
+							"$ref": "../general/minecraftColor.json"
+						},
+						"minecraft:render_offsets": {
+							"$ref": "../item/general/renderOffsets.json"
+						}
+					}
+				}
+			}
+		}
+	}
+}
