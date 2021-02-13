@@ -155,6 +155,7 @@ export class App {
 		// Try setting up the file system
 		const fileHandle = await setupFileSystem(this.instance)
 		if (!fileHandle) return this.instance.windows.loadingWindow.close()
+
 		this.instance.fileSystem.setup(fileHandle)
 
 		// Load settings
