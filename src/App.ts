@@ -159,9 +159,10 @@ export class App {
 		this.instance.fileSystem.setup(fileHandle)
 
 		// Load settings
-		await SettingsWindow.loadSettings(this.instance).then(() =>
+		SettingsWindow.loadSettings(this.instance).then(async () => {
+			await this.instance.dataLoader.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
-		)
+		})
 		await this.instance.startUp()
 		this.ready.dispatch(this._instance)
 
