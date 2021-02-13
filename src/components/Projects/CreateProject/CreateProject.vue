@@ -108,7 +108,9 @@
 			<v-btn
 				color="primary"
 				:disabled="!currentWindow.hasRequiredData"
-				:loading="isCreatingProject"
+				:loading="
+					isCreatingProject || !isCompilerReady || !isPackIndexerReady
+				"
 				@click="createProject"
 			>
 				<v-icon class="pr-2">mdi-plus</v-icon>
@@ -122,10 +124,12 @@
 import { TranslationMixin } from '@/utils/locales.ts'
 import BaseWindow from '@/components/Windows/Layout/BaseWindow.vue'
 import PackTypeViewer from '@/components/Data/PackTypeViewer.vue'
+import { CompilerMixin } from '@/components/Mixins/Tasks/Compiler'
+import { PackIndexerMixin } from '@/components/Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'CreateProjectWindow',
-	mixins: [TranslationMixin],
+	mixins: [TranslationMixin, CompilerMixin, PackIndexerMixin],
 	components: {
 		BaseWindow,
 		PackTypeViewer,
