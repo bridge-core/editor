@@ -185,7 +185,7 @@ export class App {
 		this.dataLoader.setup(this)
 		JSONDefaults.setup()
 
-		if (process.env.NODE_ENV === 'development') {
+		if (process.env.NODE_ENV !== 'development') {
 			const discordMsg = createNotification({
 				icon: 'mdi-discord',
 				message: 'sidebar.notifications.discord.message',
@@ -196,7 +196,7 @@ export class App {
 					discordMsg.dispose()
 				},
 			})
-
+			/* Removed until getting started updated to v2
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
 				message: 'sidebar.notifications.gettingStarted.message',
@@ -207,6 +207,7 @@ export class App {
 					gettingStarted.dispose()
 				},
 			})
+			*/
 		}
 
 		console.timeEnd('[APP] beforeStartUp()')
