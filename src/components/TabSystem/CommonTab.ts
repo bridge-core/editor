@@ -62,25 +62,24 @@ export abstract class Tab {
 	onContextMenu(event: MouseEvent) {
 		showContextMenu(event, [
 			{
-				name: 'Close Tab',
-				description: 'Close this tab',
+				name: 'actions.closeTab.name',
+				description: 'actions.closeTab.description',
 				icon: 'mdi-close',
 				onTrigger: () => {
 					this.close()
 				},
 			},
 			{
-				name: 'Close All',
-				description: 'Close all tabs',
+				name: 'actions.closeAll.name',
+				description: 'actions.closeAll.description',
 				icon: 'mdi-table-row',
 				onTrigger: () => {
 					this.parent.closeTabs(() => true)
 				},
 			},
 			{
-				name: 'Close Tabs to the Right',
-				description:
-					'Close all tabs on the right-hand side of this tab',
+				name: 'actions.closeTabsToRight.name',
+				description: 'actions.closeTabsToRight.description',
 				icon: 'mdi-chevron-right',
 				onTrigger: () => {
 					let closeTabs = true
@@ -91,16 +90,16 @@ export abstract class Tab {
 				},
 			},
 			{
-				name: 'Close All Saved',
-				description: 'Close all saved tabs',
+				name: 'actions.closeAllSaved.name',
+				description: 'actions.closeAllSaved.description',
 				icon: 'mdi-content-save-outline',
 				onTrigger: () => {
 					this.parent.closeTabs(tab => !tab.isUnsaved)
 				},
 			},
 			{
-				name: 'Close Other Tabs',
-				description: 'Close all tabs except this tab',
+				name: 'actions.closeOtherTabs.name',
+				description: 'actions.closeOtherTabs.description',
 				icon: 'mdi-unfold-more-vertical',
 				onTrigger: () => {
 					this.parent.closeTabs(tab => tab !== this)

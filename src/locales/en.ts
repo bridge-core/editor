@@ -140,6 +140,26 @@ export default {
 			name: 'Reload Auto-Completions',
 			description: 'Reloads all auto-completion data',
 		},
+		closeTab: {
+			name: 'Close Tab',
+			description: 'Close this tab',
+		},
+		closeAll: {
+			name: 'Close All',
+			description: 'Close all tabs',
+		},
+		closeTabsToRight: {
+			name: 'Close Tabs to the Right',
+			description: 'Close all tabs to the right-hand side of this tab',
+		},
+		closeAllSaved: {
+			name: 'Closed All Saved',
+			description: 'Close all saved tabs',
+		},
+		closeOtherTabs: {
+			name: 'Close other Tabs',
+			description: 'Close all tabs except this tab',
+		},
 		pluginInstallLocation: {
 			global: {
 				name: 'Install Globally',
