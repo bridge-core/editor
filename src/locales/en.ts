@@ -153,7 +153,7 @@ export default {
 			description: 'Close all tabs to the right-hand side of this tab',
 		},
 		closeAllSaved: {
-			name: 'Closed All Saved',
+			name: 'Close All Saved',
 			description: 'Close all saved tabs',
 		},
 		closeOtherTabs: {

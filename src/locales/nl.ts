@@ -70,6 +70,10 @@ export default {
 	},
 	// Actions
 	actions: {
+		newProject: {
+			name: 'Nieuw Project',
+			description: 'Maak een nieuw bridge. project',
+		},
 		newFile: {
 			name: 'Nieuw Bestand',
 			description: 'Maak een nieuwe Add-On functie',
@@ -136,6 +140,26 @@ export default {
 			name: 'Herlaad automatische aanvullingen',
 			description: 'Herlaadt alle gegevens voor automatisch aanvullen opnieuw',
 		},
+		closeTab: {
+			name: 'Sluit Tab',
+			description: 'Sluit dit tabblad',
+		},
+		closeAll: {
+			name: 'Sluit Alles',
+			description: 'Sluit alle tabbladen',
+		},
+		closeTabsToRight: {
+			name: 'Sluit tabbladen aan de rechterkant',
+			description: 'Sluit alle tabbladen aan de rechterkant van dit tabblad',
+		},
+		closeAllSaved: {
+			name: 'Sluit alle opgeslagen',
+			description: 'Sluit alle opgeslagen tabbladen',
+		},
+		closeOtherTabs: {
+			name: 'Sluit andere tabbladen',
+			description: 'Sluit alle tabbladen behalve dit tabblad',
+		},
 		pluginInstallLocation: {
 			global: {
 				name: 'Globaal Installeren',
@@ -174,15 +198,6 @@ export default {
 		},
 		extensions: {
 			name: 'Extensies',
-			intro: {
-				description: 'Pas uw bridge. ervaring aan met Plugins!',
-				themes: "Thema's",
-				snippets: 'Fragmenten',
-				presets: 'Voorinstellingen',
-				uiElements: 'UI Elementen',
-				andMore: 'En nog veel meer!',
-				viewExtensions: 'Bekijk extensies',
-			},
 		},
 		notifications: {
 			discord: {
