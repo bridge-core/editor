@@ -14,5 +14,10 @@ export class CreateLang extends CreateFile {
 			`${this.packPath}/texts/en_US.lang`,
 			`pack.name=${createOptions.name} ${this.packPath}\npack.description=${createOptions.description}`
 		)
+		await fs.writeJSON(
+			`${this.packPath}/texts/languages.json`,
+			['en_US'],
+			true
+		)
 	}
 }
