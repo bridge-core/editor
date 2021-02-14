@@ -30,9 +30,7 @@ export class CreateManifest extends CreateFile {
 					description: 'pack.description',
 					min_engine_version:
 						this.type === 'data'
-							? createOptions.targetVersion
-									.split('.')
-									.map(str => Number(str))
+							? [1, 13, 0]
 							: undefined,
 					uuid: uuid(),
 					version: [1, 0, 0],
