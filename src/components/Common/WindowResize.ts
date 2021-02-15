@@ -7,10 +7,11 @@ export class WindowResize extends EventDispatcher<[number, number]> {
 
 		window.addEventListener(
 			'resize',
-			debounce(
-				() => this.dispatch([window.innerWidth, window.innerHeight]),
-				100
-			)
+			debounce(() => this.dispatch(), 100)
 		)
+	}
+
+	dispatch() {
+		super.dispatch([window.innerWidth, window.innerHeight])
 	}
 }

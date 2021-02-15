@@ -4,6 +4,7 @@ import * as monaco from 'monaco-editor'
 import { IDisposable } from '@/types/disposable'
 import debounce from 'lodash.debounce'
 import { App } from '@/App'
+import { TabSystem } from '@/components/TabSystem/TabSystem'
 
 export class TextTab extends Tab {
 	component = TextTabComponent
@@ -17,8 +18,6 @@ export class TextTab extends Tab {
 	}
 
 	receiveEditorInstance(editorInstance: monaco.editor.IStandaloneCodeEditor) {
-		if (this.editorInstance) return
-
 		this.editorInstance = editorInstance
 		this.editorInstance.layout()
 	}
@@ -26,6 +25,7 @@ export class TextTab extends Tab {
 	async onActivate() {
 		const app = await App.getApp()
 		this.editorInstance?.focus()
+		this.editorInstance?.layout()
 
 		if (this.editorModel === undefined) {
 			const file = await app.fileSystem.readFile(this.path)
@@ -49,6 +49,11 @@ export class TextTab extends Tab {
 				this.isUnsaved = true
 			})
 		)
+		this.disposables.push(
+			this.editorInstance?.onDidFocusEditorText(() => {
+				this.parent.setActive(true)
+			})
+		)
 	}
 	onDeactivate() {
 		this.editorViewState = this.editorInstance?.saveViewState() ?? undefined
@@ -56,6 +61,10 @@ export class TextTab extends Tab {
 	}
 	onDestroy() {
 		this.editorModel?.dispose()
+	}
+	updateParent(parent: TabSystem) {
+		super.updateParent(parent)
+		this.editorInstance = undefined
 	}
 
 	loadEditor() {

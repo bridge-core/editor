@@ -5,11 +5,15 @@
 <script>
 import * as monaco from 'monaco-editor'
 
-let editorInstance
+const editorInstances = []
 export default {
 	name: 'TextTab',
 	props: {
 		tab: Object,
+		id: {
+			type: Number,
+			default: 0,
+		},
 	},
 	computed: {
 		isDarkMode() {
@@ -23,28 +27,34 @@ export default {
 		},
 	},
 	mounted() {
-		if (editorInstance) return
-
 		monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
 			target: monaco.languages.typescript.ScriptTarget.ESNext,
 			allowNonTsExtensions: true,
 			noLib: true,
 		})
 
-		editorInstance = monaco.editor.create(this.$refs.monacoContainer, {
-			theme: `bridgeMonacoDefault`,
-			roundedSelection: false,
-			autoIndent: 'full',
-			fontSize: this.fontSize,
-			// fontFamily: this.fontFamily,
-			tabSize: 4,
-		})
-		this.tab.receiveEditorInstance(editorInstance)
-		editorInstance.layout()
+		if (!this.tab.editorInstance) {
+			editorInstances[this.id]?.dispose()
+			editorInstances[this.id] = monaco.editor.create(
+				this.$refs.monacoContainer,
+				{
+					theme: `bridgeMonacoDefault`,
+					roundedSelection: false,
+					autoIndent: 'full',
+					fontSize: this.fontSize,
+					// fontFamily: this.fontFamily,
+					tabSize: 4,
+				}
+			)
+
+			this.tab.receiveEditorInstance(editorInstances[this.id])
+		}
+
+		editorInstances[this.id]?.layout()
 	},
 	watch: {
 		tab() {
-			this.tab.receiveEditorInstance(editorInstance)
+			this.tab.receiveEditorInstance(editorInstances[this.id])
 		},
 		fontSize(val) {
 			this.monacoEditor.updateOptions({

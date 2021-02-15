@@ -110,7 +110,7 @@ export default {
 		openFile(filePath) {
 			this.currentWindow.close()
 			App.ready.once(app => {
-				app.tabSystem.open(
+				app.project.openFile(
 					`projects/${app.selectedProject}/${filePath}`
 				)
 			})

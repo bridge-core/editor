@@ -6,12 +6,19 @@ import { App } from '@/App'
 import { ImageTab } from '../Editors/Image/ImageTab'
 import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
 import { Project } from '../Projects/Project/Project'
-import { ActionManager } from '../Actions/ActionManager'
 
 export class TabSystem {
 	tabs: Tab[] = []
 	protected _selectedTab: Tab | undefined = undefined
 	protected tabTypes = [ImageTab, TextTab]
+	protected _isActive = true
+
+	get isActive() {
+		return this._isActive
+	}
+	get shouldRender() {
+		return this.tabs.length > 0
+	}
 
 	constructor(protected project: Project) {}
 
@@ -25,8 +32,8 @@ export class TabSystem {
 		}
 
 		const tab = this.getTabFor(path)
-		this.add(tab)
-		return selectTab ? tab.select() : tab
+		this.add(tab, selectTab)
+		return tab
 	}
 
 	protected getTabFor(filePath: string) {
@@ -36,8 +43,16 @@ export class TabSystem {
 		return new TextTab(this, filePath)
 	}
 
-	add(tab: Tab) {
+	add(tab: Tab, selectTab = true) {
 		this.tabs = [...this.tabs, tab]
+
+		if (selectTab) tab.select()
+
+		return tab
+	}
+	remove(tab: Tab) {
+		this.tabs = this.tabs.filter(t => t !== tab)
+		if (tab === this._selectedTab) this.select(this.tabs[0])
 
 		return tab
 	}
@@ -63,11 +78,11 @@ export class TabSystem {
 	select(tab?: Tab) {
 		this._selectedTab?.onDeactivate()
 		this._selectedTab = tab
-		if (tab)
-			App.eventSystem.dispatch(
-				'currentTabSwitched',
-				tab.getPath().replace(`projects/${this.project.name}/`, '')
-			)
+
+		this.setActive(!!tab)
+
+		// Next step doesn't need to be done if we simply unselect tab
+		if (!tab) return
 
 		Vue.nextTick(() => this._selectedTab?.onActivate())
 	}
@@ -112,16 +127,35 @@ export class TabSystem {
 	activate() {
 		this.selectedTab?.onActivate()
 	}
+	setActive(isActive: boolean, updateProject = true) {
+		if (updateProject) this.project.setActiveTabSystem(this, !isActive)
+		this._isActive = isActive
+
+		if (isActive) {
+			App.eventSystem.dispatch(
+				'currentTabSwitched',
+				this._selectedTab
+					?.getPath()
+					?.replace(`projects/${this.project.name}/`, '')
+			)
+		}
+	}
 
 	getTab(path: string) {
 		return this.tabs.find(tab => tab.isFor(path))
 	}
-	closeTabs(ifMatches: (tab: Tab) => boolean) {
+	closeTabs(predicate: (tab: Tab) => boolean) {
 		const tabs = [...this.tabs].reverse()
 
 		for (const tab of tabs) {
-			if (ifMatches(tab)) tab.close()
+			if (predicate(tab)) tab.close()
 		}
+	}
+	has(predicate: (tab: Tab) => boolean) {
+		for (const tab of this.tabs) {
+			if (predicate(tab)) return true
+		}
+		return true
 	}
 
 	get currentComponent() {

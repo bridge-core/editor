@@ -74,6 +74,9 @@ export class App {
 	get selectedProject() {
 		return this.projectManager.selectedProject
 	}
+	get project() {
+		return this.projectManager.currentProject
+	}
 
 	static get instance() {
 		return this._instance

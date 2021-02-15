@@ -1,8 +1,9 @@
 <template>
 	<Draggable
-		v-if="tabSystem && tabSystem.tabs.length > 0"
+		v-if="tabSystem.shouldRender"
 		v-model="tabSystem.tabs"
 		:group="{ name: 'tabSystemTabRow' }"
+		@change="updateTab"
 		:style="
 			`display: flex; overflow-x: scroll; white-space: nowrap; width: 100%; height: 48px;`
 		"
@@ -11,20 +12,28 @@
 			v-for="tab in tabSystem.tabs"
 			:key="tab.uuid"
 			:tab="tab"
+			:isActive="tabSystem.isActive"
 		/>
 	</Draggable>
 </template>
 
 <script>
-import { TabSystemMixin } from '../Mixins/TabSystem'
 import TabSystemTab from './Tab.vue'
 import Draggable from 'vuedraggable'
 
 export default {
-	mixins: [TabSystemMixin],
 	components: {
 		TabSystemTab,
 		Draggable,
+	},
+	props: {
+		tabSystem: Object,
+	},
+	methods: {
+		updateTab({ added }) {
+			if (!added) return
+			added.element.toOtherTabSystem(false)
+		},
 	},
 }
 </script>

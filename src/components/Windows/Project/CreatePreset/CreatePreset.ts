@@ -258,7 +258,7 @@ export class CreatePresetWindow extends BaseWindow {
 						'default.json',
 						filePath
 					)
-					app.tabSystem?.open(
+					app.project?.openFile(
 						`projects/${app.selectedProject}/${filePath}`
 					)
 				}
