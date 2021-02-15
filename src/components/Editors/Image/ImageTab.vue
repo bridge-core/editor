@@ -2,6 +2,7 @@
 	<div
 		class="d-flex align-center justify-center"
 		style="height:calc(100% - 48px);"
+		@click="tab.parent.setActive(true)"
 	>
 		<img :src="tab.dataUrl" :alt="tab.path" class="img-preview" />
 	</div>
