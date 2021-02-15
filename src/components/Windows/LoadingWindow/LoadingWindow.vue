@@ -1,6 +1,6 @@
 <template>
 	<BaseWindow
-		windowTitle="windows.loadingWindow.title"
+		:windowTitle="$data.message || 'windows.loadingWindow.title'"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:hasCloseButton="false"

@@ -7,6 +7,7 @@
 			'default-tab-style': true,
 			'd-flex': true,
 			'align-center': true,
+			inactive: !isActive,
 		}"
 		ref="tabElement"
 		@mousedown="tab.select()"
@@ -34,6 +35,7 @@ export default {
 	name: 'TabSystemTab',
 	props: {
 		tab: Tab,
+		isActive: Boolean,
 	},
 	mounted() {
 		if (this.isSelected) {
@@ -79,5 +81,8 @@ export default {
 }
 .selected {
 	background-color: var(--v-tabActive-base);
+}
+.inactive {
+	opacity: 0.3;
 }
 </style>

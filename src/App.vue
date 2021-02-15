@@ -8,16 +8,27 @@
 
 		<v-main>
 			<WindowRenderer />
-			<TabBar />
 
-			<keep-alive v-if="tabSystem">
-				<component
-					:is="tabSystem.currentComponent"
-					:tab="tabSystem.selectedTab"
+			<div v-if="shouldRenderWelcomeScreen" class="fill-area d-flex">
+				<TabSystem
+					class="flex-grow-1"
+					:tabSystem="tabSystems[0]"
+					showWelcomeScreen
 				/>
-			</keep-alive>
-
+				<v-divider
+					v-if="
+						tabSystems[0].shouldRender && tabSystems[1].shouldRender
+					"
+					vertical
+				/>
+				<TabSystem
+					class="flex-grow-1"
+					:tabSystem="tabSystems[1]"
+					:id="1"
+				/>
+			</div>
 			<WelcomeScreen v-else />
+
 			<!--  -->
 		</v-main>
 
@@ -30,12 +41,12 @@ import Vue from 'vue'
 import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
-import TabBar from './components/TabSystem/TabBar.vue'
 import { platform } from './utils/os'
 import { TabSystemMixin } from '@/components/Mixins/TabSystem'
-import WelcomeScreen from '@/components/TabSystem/WelcomeScreen'
 import ContextMenu from '@/components/ContextMenu/ContextMenu.vue'
 import { App } from '@/App'
+import TabSystem from '@/components/TabSystem/TabSystem.vue'
+import WelcomeScreen from '@/components/TabSystem/WelcomeScreen.vue'
 
 export default Vue.extend({
 	name: 'App',
@@ -51,9 +62,9 @@ export default Vue.extend({
 		Sidebar,
 		Toolbar,
 		WindowRenderer,
-		TabBar,
-		WelcomeScreen,
 		ContextMenu,
+		TabSystem,
+		WelcomeScreen,
 	},
 
 	data: () => ({
@@ -115,5 +126,9 @@ summary::-webkit-details-marker {
 
 .v-select-list {
 	background-color: var(--v-menu-base) !important;
+}
+.fill-area {
+	width: 100%;
+	height: 100%;
 }
 </style>

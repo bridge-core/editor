@@ -101,7 +101,7 @@ export class DirectoryEntry {
 	 */
 	open() {
 		if (this.isFile) {
-			App.ready.once(app => app.tabSystem?.open(this.getFullPath()))
+			App.ready.once(app => app.project?.openFile(this.getFullPath()))
 			return true
 		} else {
 			this.isFolderOpen = !this.isFolderOpen

@@ -40,7 +40,7 @@ export class FilePickerWindow extends BaseWindow {
 
 	protected openFile(filePath: string) {
 		App.ready.once(app =>
-			app.tabSystem?.open(`projects/${app.selectedProject}/${filePath}`)
+			app.project?.openFile(`projects/${app.selectedProject}/${filePath}`)
 		)
 		this.close()
 	}

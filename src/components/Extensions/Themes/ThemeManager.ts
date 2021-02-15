@@ -28,6 +28,7 @@ const colorNames = [
 	'sidebarSelection',
 	'tabActive',
 	'tabInactive',
+	'lineHighlightBackground',
 ] as const
 export type TColorName = typeof colorNames[number]
 
@@ -178,6 +179,6 @@ export interface IThemeDefinition {
 	highlighter?: Record<
 		string,
 		{ color?: string; textDecoration?: string; isItalic?: boolean }
-	>
+		>
 	monaco?: Record<string, string>
 }

@@ -74,6 +74,9 @@ export class App {
 	get selectedProject() {
 		return this.projectManager.selectedProject
 	}
+	get project() {
+		return this.projectManager.currentProject
+	}
 
 	static get instance() {
 		return this._instance
@@ -159,9 +162,10 @@ export class App {
 		this.instance.fileSystem.setup(fileHandle)
 
 		// Load settings
-		await SettingsWindow.loadSettings(this.instance).then(() =>
+		SettingsWindow.loadSettings(this.instance).then(async () => {
+			await this.instance.dataLoader.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
-		)
+		})
 		await this.instance.startUp()
 		this.ready.dispatch(this._instance)
 
@@ -184,7 +188,7 @@ export class App {
 		this.dataLoader.setup(this)
 		JSONDefaults.setup()
 
-		if (process.env.NODE_ENV === 'development') {
+		if (process.env.NODE_ENV !== 'development') {
 			const discordMsg = createNotification({
 				icon: 'mdi-discord',
 				message: 'sidebar.notifications.discord.message',
@@ -195,7 +199,7 @@ export class App {
 					discordMsg.dispose()
 				},
 			})
-
+			/* Removed until getting started updated to v2
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
 				message: 'sidebar.notifications.gettingStarted.message',
@@ -206,6 +210,7 @@ export class App {
 					gettingStarted.dispose()
 				},
 			})
+			*/
 		}
 
 		console.timeEnd('[APP] beforeStartUp()')

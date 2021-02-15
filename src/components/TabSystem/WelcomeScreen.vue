@@ -42,7 +42,7 @@
 				<v-divider class="mb-2" />
 				<li
 					v-for="file in files"
-					:key="file.name"
+					:key="file.path"
 					class="d-flex rounded-lg pa-1 clickable"
 					v-ripple
 					@click="openFile(file.path)"
@@ -113,6 +113,7 @@ export default {
 	async mounted() {
 		const app = await App.getApp()
 		const toLoad = [
+			'bridge.action.newProject',
 			'bridge.action.newFile',
 			'bridge.action.openFile',
 			'bridge.action.openSettings',
@@ -144,7 +145,7 @@ export default {
 	},
 	methods: {
 		openFile(filePath) {
-			App.getApp().then(app => app.tabSystem.open(filePath))
+			App.getApp().then(app => app.project.openFile(filePath))
 		},
 		selectProject(projectName) {
 			App.getApp().then(app =>

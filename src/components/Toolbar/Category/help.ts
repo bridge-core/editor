@@ -10,7 +10,7 @@ export function setupHelpCategory(app: App) {
 			description: 'actions.releases.description',
 			onTrigger: () =>
 				window.open(
-					'https://github.com/solvedDev/bridge./releases',
+					'https://github.com/bridge-core/editor/releases',
 					'_blank'
 				),
 		})

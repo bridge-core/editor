@@ -87,7 +87,7 @@ export class ProjectManager extends Signal<void> {
 				`Cannot select project "${projectName}" because it no longer exists`
 			)
 
-		this.currentProject?.tabSystem.deactivate()
+		this.currentProject?.deactivate()
 		this._selectedProject = projectName
 		App.eventSystem.dispatch('disableValidation', null)
 
@@ -95,7 +95,7 @@ export class ProjectManager extends Signal<void> {
 			await this.recentProjects.add(this.currentProject.projectData)
 		await set('selectedProject', projectName)
 		await this.app.switchProject(projectName)
-		this.currentProject?.tabSystem.activate()
+		this.currentProject?.activate()
 	}
 	async selectLastProject(app: App) {
 		let projectName = await get('selectedProject')

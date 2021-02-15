@@ -119,7 +119,7 @@ export default {
 		},
 		hasMaximizeButton: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 		width: {
 			type: Number,

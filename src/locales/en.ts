@@ -70,6 +70,10 @@ export default {
 	},
 	// Actions
 	actions: {
+		newProject: {
+			name: 'New Project',
+			description: 'Create a new bridge. project',
+		},
 		newFile: {
 			name: 'New File',
 			description: 'Create a new Add-On feature',
@@ -92,7 +96,7 @@ export default {
 		},
 		extensions: {
 			name: 'Extensions',
-			description: 'Manage your installed extensions',
+			description: 'Install and manage your installed extensions',
 		},
 		copy: {
 			name: 'Copy',
@@ -136,6 +140,30 @@ export default {
 			name: 'Reload Auto-Completions',
 			description: 'Reloads all auto-completion data',
 		},
+		moveToSplitScreen: {
+			name: 'Move to Split Screen',
+			description: 'Opens a split screen view and moves this tab to it',
+		},
+		closeTab: {
+			name: 'Close Tab',
+			description: 'Close this tab',
+		},
+		closeAll: {
+			name: 'Close All',
+			description: 'Close all tabs',
+		},
+		closeTabsToRight: {
+			name: 'Close Tabs to the Right',
+			description: 'Close all tabs to the right-hand side of this tab',
+		},
+		closeAllSaved: {
+			name: 'Close All Saved',
+			description: 'Close all saved tabs',
+		},
+		closeOtherTabs: {
+			name: 'Close other Tabs',
+			description: 'Close all tabs except this tab',
+		},
 		pluginInstallLocation: {
 			global: {
 				name: 'Install Globally',
@@ -174,15 +202,6 @@ export default {
 		},
 		extensions: {
 			name: 'Extensions',
-			intro: {
-				description: 'Customize Your bridge. Experience With Plugins!',
-				themes: 'Themes',
-				snippets: 'Snippets',
-				presets: 'Presets',
-				uiElements: 'UI Elements',
-				andMore: 'And Much More!',
-				viewExtensions: 'View Extensions',
-			},
 		},
 		notifications: {
 			discord: {
@@ -387,12 +406,12 @@ export default {
 			packIndexing: {
 				title: 'Indexing Packs',
 				description:
-					'bridge. is collecting data about your pack that is needed for its intelligent features.',
+					'bridge. is collecting data about your pack that is needed for its intelligent features',
 			},
 			compiler: {
 				title: 'Compiling Project',
 				description:
-					'bridge. is compiling your project to make it ready for import into Minecraft.',
+					'bridge. is compiling your project to make it ready for import into Minecraft',
 			},
 		},
 	},
