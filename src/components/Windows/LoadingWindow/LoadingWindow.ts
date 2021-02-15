@@ -3,18 +3,25 @@ import LoadingWindowComponent from './LoadingWindow.vue'
 
 export class LoadingWindow extends BaseWindow {
 	protected virtualWindows = 0
+	protected loadingMessages: (string | undefined)[] = []
 
 	constructor() {
 		super(LoadingWindowComponent)
 		this.defineWindow()
 	}
 
-	open() {
+	get message() {
+		return this.loadingMessages[this.loadingMessages.length - 1]
+	}
+
+	open(message?: string) {
 		this.virtualWindows++
+		this.loadingMessages.push(message)
 		if (!this.isVisible) super.open()
 	}
 	close() {
 		this.virtualWindows--
+		this.loadingMessages.pop()
 
 		if (this.virtualWindows === 0) {
 			super.close()
@@ -25,6 +32,7 @@ export class LoadingWindow extends BaseWindow {
 	}
 	closeAll() {
 		this.virtualWindows = 0
+		this.loadingMessages = []
 		super.close()
 	}
 }
