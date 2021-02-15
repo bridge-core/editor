@@ -229,19 +229,18 @@ export class CreatePresetWindow extends BaseWindow {
 
 					let destFileText: string
 					try {
-						destFileText = this.transformString(
-							await (await fs.readFile(fullDestPath)).text(),
-							inject
-						)
+						destFileText = await (await fs.readFile(fullDestPath)).text()
 					} catch {
 						destFileText = ''
 					}
+
+					const outputFileText = this.transformString(fileText, inject)
 
 					await fs.writeFile(
 						fullDestPath,
 						`${destFileText}${
 							destFileText !== '' ? '\n' : ''
-						}${fileText}`
+						}${outputFileText}`
 					)
 				}
 			})

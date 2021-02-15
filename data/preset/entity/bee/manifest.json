@@ -67,7 +67,7 @@
 		],
 		[
 			"textureNectar.png",
-			"RP/textures/entity/{{IDENTIFIER}}.png",
+			"RP/textures/entity/{{IDENTIFIER}}_nectar.png",
 			{ "inject": ["IDENTIFIER"] }
 		]
 	],
