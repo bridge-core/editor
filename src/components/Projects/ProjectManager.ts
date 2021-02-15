@@ -118,13 +118,6 @@ export class ProjectManager extends Signal<void> {
 		} else {
 			throw new Error(`Expected string, found ${typeof projectName}`)
 		}
-
-		this.currentProject?.tabSystems[0]?.open(
-			'projects/BridgeTests/BP/entities/marker.json'
-		)
-		this.currentProject?.tabSystems[1]?.open(
-			'projects/BridgeTests/RP/entity/marker.json'
-		)
 	}
 	protected async loadFallback() {
 		await this.fired
