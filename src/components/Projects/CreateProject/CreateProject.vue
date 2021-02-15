@@ -108,9 +108,7 @@
 			<v-btn
 				color="primary"
 				:disabled="!currentWindow.hasRequiredData"
-				:loading="
-					isCreatingProject || !isCompilerReady || !isPackIndexerReady
-				"
+				:loading="shouldLoad"
 				@click="createProject"
 			>
 				<v-icon class="pr-2">mdi-plus</v-icon>
@@ -138,6 +136,18 @@ export default {
 
 	data() {
 		return this.currentWindow
+	},
+	computed: {
+		shouldLoad() {
+			// If this is the first project, only show a spinner while creating the spinner
+			if (this.isFirstProject) return this.isCreatingProject
+			// Otherwise check that the compiler & pack indexer are done too
+			return (
+				this.isCreatingProject ||
+				!this.isCompilerReady ||
+				!this.isPackIndexerReady
+			)
+		},
 	},
 	methods: {
 		close() {
