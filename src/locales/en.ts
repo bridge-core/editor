@@ -140,6 +140,10 @@ export default {
 			name: 'Reload Auto-Completions',
 			description: 'Reloads all auto-completion data',
 		},
+		moveToSplitScreen: {
+			name: 'Move to Split Screen',
+			description: 'Opens a split screen view and moves this tab to it',
+		},
 		closeTab: {
 			name: 'Close Tab',
 			description: 'Close this tab',
