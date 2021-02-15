@@ -14,7 +14,7 @@ export class MonacoSubTheme {
 					this.theme.getColor('background')
 				),
 				'editor.lineHighlightBackground': this.convertColor(
-					this.theme.getColor('tooltip')
+					this.theme.getColor('lineHighlightBackground')
 				),
 				'editorWidget.background': this.convertColor(
 					this.theme.getColor('background')
