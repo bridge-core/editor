@@ -36,11 +36,6 @@
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
-			"lootTable.json",
-			"BP/loot_tables/entities/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
-		],
-		[
 			"renderController.json",
 			"RP/render_controllers/{{IDENTIFIER}}.json",
 			{ "inject": ["IDENTIFIER"] }
@@ -52,17 +47,17 @@
 		],
 		[
 			"texture.png",
-			"RP/textures/entity/{{IDENTIFIER}}.json",
+			"RP/textures/entity/{{IDENTIFIER}}.png",
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
 			"textureAngry.png",
-			"RP/textures/entity/{{IDENTIFIER}}_angry.json",
+			"RP/textures/entity/{{IDENTIFIER}}_angry.png",
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
 			"textureAngryNectar.png",
-			"RP/textures/entity/{{IDENTIFIER}}_angry_nectar.json",
+			"RP/textures/entity/{{IDENTIFIER}}_angry_nectar.png",
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
