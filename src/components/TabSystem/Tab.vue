@@ -9,7 +9,7 @@
 			inactive: !isActive,
 		}"
 		ref="tabElement"
-		@mousedown="tab.select()"
+		@mousedown="hoverClose ? null : tab.select()"
 		@click.middle="tab.close()"
 		@click.right="tab.onContextMenu($event)"
 	>
@@ -21,7 +21,14 @@
 			{{ tab.name }}
 		</span>
 
-		<v-btn @click.stop="tab.close()" text icon small>
+		<v-btn 
+			@click.stop="tab.close()" 
+			text 
+			icon 
+			small 
+			@mouseenter="hoverClose = true" 
+			@mouseleave="hoverClose = false"
+		>
 			<v-icon small>mdi-close</v-icon>
 		</v-btn>
 	</div>
@@ -36,6 +43,9 @@ export default {
 		tab: Tab,
 		isActive: Boolean,
 	},
+	data: () => ({
+		hoverClose: false
+	}),
 	mounted() {
 		if (this.isSelected) {
 			this.$refs.tabElement.scrollIntoView({
