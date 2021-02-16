@@ -243,7 +243,10 @@ export default {
 			},
 		},
 		loadingWindow: {
-			title: 'Loading...',
+			titles: {
+				loading: 'Loading...',
+				downloadingData: 'Downloading new data...',
+			},
 		},
 		openFile: {
 			title: 'Open',
