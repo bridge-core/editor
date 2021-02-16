@@ -1,7 +1,6 @@
 <template>
 	<div
 		class="px-3 py-2"
-		v-ripple="!tab.isSelected"
 		:class="{
 			selected: tab.isSelected,
 			'default-tab-style': true,
