@@ -30,6 +30,7 @@
 <script>
 import { TranslationMixin } from '@/utils/locales'
 import BaseWindow from '../../Layout/BaseWindow'
+import { App } from '@/App'
 
 export default {
 	name: 'SelectProjectFolderWindow',
@@ -47,6 +48,7 @@ export default {
 			this.currentWindow.close()
 		},
 		async selectFolder() {
+			App.fileSystemSetup.setStatus('userInteracted')
 			try {
 				this.callback(
 					await window.showDirectoryPicker({ mode: 'readwrite' })

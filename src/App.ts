@@ -1,5 +1,6 @@
 import '@/components/Notifications/Errors'
 import '@/components/Languages/LanguageManager'
+import '@/components/App/ServiceWorker'
 
 import Vue from 'vue'
 import { EventSystem } from '@/components/Common/Event/EventSystem'
@@ -8,7 +9,7 @@ import { FileType } from '@/components/Data/FileType'
 import { ThemeManager } from '@/components/Extensions/Themes/ThemeManager'
 import { JSONDefaults } from '@/components/Data/JSONDefaults'
 import { FileSystem } from '@/components/FileSystem/FileSystem'
-import { setupFileSystem } from '@/components/FileSystem/setup'
+import { FileSystemSetup } from '@/components/FileSystem/FileSystemSetup'
 import { PackIndexer } from '@/components/PackIndexer/PackIndexer'
 import { setupSidebar } from '@/components/Sidebar/setup'
 import { TaskManager } from '@/components/TaskManager/TaskManager'
@@ -35,6 +36,7 @@ import { ProjectManager } from './components/Projects/ProjectManager'
 import { ContextMenu } from './components/ContextMenu/ContextMenu'
 
 export class App {
+	public static fileSystemSetup = new FileSystemSetup()
 	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventSystem<any>([
 		'projectChanged',
@@ -156,7 +158,9 @@ export class App {
 		await this.instance.beforeStartUp()
 
 		// Try setting up the file system
-		const fileHandle = await setupFileSystem(this.instance)
+		const fileHandle = await this.fileSystemSetup.setupFileSystem(
+			this.instance
+		)
 		if (!fileHandle) return this.instance.windows.loadingWindow.close()
 
 		this.instance.fileSystem.setup(fileHandle)
