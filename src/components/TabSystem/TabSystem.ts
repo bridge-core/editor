@@ -93,10 +93,8 @@ export class TabSystem {
 		app.windows.loadingWindow.open()
 
 		await tab.save()
-		await app.packIndexer.fired
-		await app.compiler.fired
 
-		await app.packIndexer.updateFile(
+		await this.project.updateFile(
 			tab.getPath().replace(`projects/${this.project.name}/`, '')
 		)
 		await app.compiler.updateFile(

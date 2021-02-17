@@ -6,6 +6,9 @@ import { TProjectConfig } from '../ProjectConfig'
 import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
 import { loadPacks } from './loadPacks'
+import { PackIndexer } from '@/components/PackIndexer/PackIndexer'
+import { ProjectManager } from '../ProjectManager'
+import { FileSystem } from '@/components/FileSystem/FileSystem'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -18,19 +21,28 @@ export class Project {
 	public readonly recentFiles!: RecentFiles
 	public readonly tabSystems = [new TabSystem(this), new TabSystem(this)]
 	protected _projectData!: IProjectData
+	// Not directly assigned so they're not responsive
+	public readonly packIndexer: PackIndexer
+	protected fileSystem: FileSystem
 
 	get projectData() {
 		return this._projectData
 	}
 	get name() {
-		return this._name
+		return this.baseDirectory.name
 	}
 	get tabSystem() {
 		if (this.tabSystems[0].isActive) return this.tabSystems[0]
 		if (this.tabSystems[1].isActive) return this.tabSystems[1]
 	}
 
-	constructor(protected app: App, protected _name: string) {
+	constructor(
+		protected parent: ProjectManager,
+		protected app: App,
+		protected baseDirectory: FileSystemDirectoryHandle
+	) {
+		this.fileSystem = new FileSystem(baseDirectory)
+		this.packIndexer = new PackIndexer(app, baseDirectory)
 		Vue.set(
 			this,
 			'recentFiles',
@@ -41,11 +53,19 @@ export class Project {
 		)
 	}
 
-	activate() {
+	async activate(forceRefresh = false) {
+		this.parent.title.setProject(this.name)
 		this.tabSystems.forEach(tabSystem => tabSystem.activate())
+		this.packIndexer.activate(forceRefresh)
 	}
 	deactivate() {
 		this.tabSystems.forEach(tabSystem => tabSystem.deactivate())
+		this.packIndexer.deactivate()
+	}
+
+	async refresh() {
+		await this.deactivate()
+		await this.activate(true)
 	}
 
 	openFile(filePath: string) {
@@ -55,6 +75,11 @@ export class Project {
 		}
 
 		this.tabSystem?.open(filePath)
+	}
+	async updateFile(filePath: string) {
+		await this.updateFile(filePath)
+		await this.app.compiler.updateFile('dev', 'default.json', filePath)
+		this.app.project?.openFile(`projects/${this.name}/${filePath}`)
 	}
 	setActiveTabSystem(tabSystem: TabSystem, value: boolean) {
 		this.tabSystems.forEach(tS =>

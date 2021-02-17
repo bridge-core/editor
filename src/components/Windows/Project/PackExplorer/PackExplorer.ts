@@ -10,7 +10,6 @@ import {
 	SidebarItem,
 } from '../../Layout/Sidebar'
 import PackExplorerComponent from './PackExplorer.vue'
-import Vue from 'vue'
 
 class PackSidebarItem extends SidebarItem {
 	protected packType: string
@@ -48,7 +47,8 @@ export class PackExplorerWindow extends BaseWindow {
 		this.sidebarCategory.removeItems()
 		let items: SidebarItem[] = []
 
-		const dirents = await App.instance.packIndexer.readdir([])
+		const app = await App.getApp()
+		const dirents = (await app.project?.packIndexer.readdir([])) ?? []
 
 		dirents.forEach(({ kind, displayName, name, path }: any) => {
 			const fileType = FileType.get(undefined, name)
@@ -99,20 +99,17 @@ export class PackExplorerWindow extends BaseWindow {
 		super.open()
 	}
 
-	open() {
+	async open() {
 		if (this.loadedPack) super.open()
-		else
-			new Promise<void>(resolve =>
-				App.ready.once(app =>
-					app.packIndexer.once(async () => {
-						app.windows.loadingWindow.open()
+		else {
+			const app = await App.getApp()
+			app.project?.packIndexer.once(async () => {
+				app.windows.loadingWindow.open()
 
-						await this.loadPack()
-						resolve()
+				await this.loadPack()
 
-						app.windows.loadingWindow.close()
-					})
-				)
-			)
+				app.windows.loadingWindow.close()
+			})
+		}
 	}
 }

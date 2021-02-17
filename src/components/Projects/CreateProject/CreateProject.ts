@@ -83,12 +83,11 @@ export class CreateProjectWindow extends BaseWindow {
 		return new Promise<void>(resolve =>
 			App.ready.once(async app => {
 				const fs = app.fileSystem
-				const scopedFs = new FileSystem(
-					await fs.getDirectoryHandle(
-						`projects/${this.createOptions.name}`,
-						{ create: true }
-					)
+				const projectDir = await fs.getDirectoryHandle(
+					`projects/${this.createOptions.name}`,
+					{ create: true }
 				)
+				const scopedFs = new FileSystem(projectDir)
 
 				for (const createFile of this.createFiles) {
 					await createFile.create(scopedFs, this.createOptions)
@@ -97,7 +96,7 @@ export class CreateProjectWindow extends BaseWindow {
 					await this.packs[pack].create(scopedFs, this.createOptions)
 				}
 
-				await app.projectManager.addProject(this.createOptions.name)
+				await app.projectManager.addProject(projectDir)
 				resolve()
 			})
 		)

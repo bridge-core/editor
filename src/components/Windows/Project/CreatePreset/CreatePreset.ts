@@ -229,12 +229,17 @@ export class CreatePresetWindow extends BaseWindow {
 
 					let destFileText: string
 					try {
-						destFileText = await (await fs.readFile(fullDestPath)).text()
+						destFileText = await (
+							await fs.readFile(fullDestPath)
+						).text()
 					} catch {
 						destFileText = ''
 					}
 
-					const outputFileText = this.transformString(fileText, inject)
+					const outputFileText = this.transformString(
+						fileText,
+						inject
+					)
 
 					await fs.writeFile(
 						fullDestPath,
@@ -248,23 +253,9 @@ export class CreatePresetWindow extends BaseWindow {
 
 		await Promise.all(promises)
 
-		await new Promise<void>(resolve =>
-			app.packIndexer.once(async () => {
-				for (const filePath of createdFiles) {
-					await app.packIndexer.updateFile(filePath)
-					await app.compiler.updateFile(
-						'dev',
-						'default.json',
-						filePath
-					)
-					app.project?.openFile(
-						`projects/${app.selectedProject}/${filePath}`
-					)
-				}
-
-				resolve()
-			})
-		)
+		for (const filePath of createdFiles) {
+			app.project?.updateFile(filePath)
+		}
 
 		app.windows.loadingWindow.close()
 	}

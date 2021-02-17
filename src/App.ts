@@ -9,8 +9,7 @@ import { FileType } from '@/components/Data/FileType'
 import { ThemeManager } from '@/components/Extensions/Themes/ThemeManager'
 import { JSONDefaults } from '@/components/Data/JSONDefaults'
 import { FileSystem } from '@/components/FileSystem/FileSystem'
-import { FileSystemSetup } from '@/components/FileSystem/FileSystemSetup'
-import { PackIndexer } from '@/components/PackIndexer/PackIndexer'
+import { FileSystemSetup } from '@/components/FileSystem/Setup'
 import { setupSidebar } from '@/components/Sidebar/setup'
 import { TaskManager } from '@/components/TaskManager/TaskManager'
 import { setupDefaultMenus } from '@/components/Toolbar/setupDefaults'
@@ -28,7 +27,6 @@ import { ActionManager } from '@/components/Actions/ActionManager'
 import { Toolbar } from '@/components/Toolbar/Toolbar'
 import { Compiler } from '@/components/Compiler/Compiler'
 import { ExtensionLoader } from '@/components/Extensions/ExtensionLoader'
-import { Title } from '@/components/Projects/Title'
 import { WindowResize } from '@/components/Common/WindowResize'
 import { InstallApp } from '@/components/App/Install'
 import { LanguageManager } from '@/components/Languages/LanguageManager'
@@ -53,7 +51,6 @@ export class App {
 	public readonly actionManager = new ActionManager(this)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
-	public readonly packIndexer = new PackIndexer()
 	public readonly compiler = new Compiler()
 	public readonly dataLoader = new DataLoader()
 	public readonly fileSystem = new FileSystem()
@@ -64,7 +61,6 @@ export class App {
 
 	protected languageManager = new LanguageManager()
 	protected installApp = new InstallApp()
-	protected title = new Title()
 	protected _windows: Windows
 	get windows() {
 		return this._windows
@@ -113,11 +109,8 @@ export class App {
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
 	}
 
-	switchProject(projectName: string, forceRefreshCache = false) {
-		return new Promise<void>(async resolve => {
-			this.title.setProject(projectName)
-			this.packIndexer.start(projectName, forceRefreshCache)
-
+	switchProject(projectName: string) {
+		return new Promise<void>(async () => {
 			this.extensionLoader.deactivateAllLocal()
 			this.extensionLoader
 				.loadExtensions(
@@ -144,7 +137,6 @@ export class App {
 				})
 
 			App.eventSystem.dispatch('projectChanged', undefined)
-			this.packIndexer.once(() => resolve())
 		})
 	}
 

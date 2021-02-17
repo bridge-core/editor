@@ -28,18 +28,14 @@ export namespace JSONDefaults {
 		if (updateMonaco) setJSONDefaults()
 	}
 
-	function requestSchemaFor(fileType: string, fromFilePath?: string) {
-		return new Promise<IMonacoSchemaArrayEntry[]>(async resolve => {
-			const app = await App.getApp()
-			app.packIndexer.once(async () => {
-				resolve(
-					await app.packIndexer.service.getSchemasFor(
-						fileType,
-						fromFilePath
-					)
-				)
-			})
-		})
+	async function requestSchemaFor(fileType: string, fromFilePath?: string) {
+		const app = await App.getApp()
+		const packIndexer = app.project?.packIndexer
+		if (!packIndexer) return []
+
+		await packIndexer.fired
+
+		return await packIndexer.service.getSchemasFor(fileType, fromFilePath)
 	}
 	async function getDynamicSchemas() {
 		return (
@@ -105,9 +101,12 @@ export namespace JSONDefaults {
 							cacheKey?: string
 						) => {
 							const app = await App.getApp()
-							await app.packIndexer.fired
+							const packIndexer = app.project?.packIndexer
+							if (!packIndexer) return []
 
-							return app.packIndexer.service.getCacheDataFor(
+							await packIndexer.fired
+
+							return packIndexer.service.getCacheDataFor(
 								fileType,
 								filePath,
 								cacheKey
@@ -184,17 +183,18 @@ export namespace JSONDefaults {
 		})
 	}
 
-	export function setup() {
-		App.ready.once(app => {
-			app.packIndexer.on(() =>
-				whenIdle(async () => {
-					console.time('[EDITOR] Setting up JSON defaults')
+	export async function setup() {
+		const app = await App.getApp()
+		const packIndexer = app.project?.packIndexer
 
-					await loadAllSchemas()
+		if (packIndexer) {
+			whenIdle(async () => {
+				console.time('[EDITOR] Setting up JSON defaults')
 
-					console.timeEnd('[EDITOR] Setting up JSON defaults')
-				})
-			)
+				await loadAllSchemas()
+
+				console.timeEnd('[EDITOR] Setting up JSON defaults')
+			})
 
 			app.actionManager.create({
 				icon: 'mdi-reload',
@@ -203,7 +203,7 @@ export namespace JSONDefaults {
 				keyBinding: 'Ctrl + Shift + R',
 				onTrigger: () => reload(),
 			})
-		})
+		}
 
 		App.eventSystem.on('fileUpdated', updateDynamicSchemas)
 

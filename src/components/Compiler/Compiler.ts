@@ -20,7 +20,6 @@ export class Compiler extends Signal<void> {
 		this.resetSignal()
 		this.ready.dispatch(false)
 		const app = await App.getApp()
-		await app.packIndexer.fired
 		console.time('[TASK] Compiling project (total)')
 
 		const task = app.taskManager.create({
@@ -46,7 +45,7 @@ export class Compiler extends Signal<void> {
 			this._services.set(`${projectName}#${mode}.${config}`, service)
 		} else {
 			await service.updatePlugins(
-				Object.fromEntries(this.compilerPlugins.entries())
+				Object.fromEntries(this.compilerPlugins.entries() ?? {})
 			)
 		}
 
@@ -60,9 +59,9 @@ export class Compiler extends Signal<void> {
 		)
 
 		// Start service
-		let files = await app.packIndexer.fired
+		let files = (await app.project?.packIndexer.fired) ?? []
 		if (mode === 'build')
-			files = await app.packIndexer.service.getAllFiles()
+			files = (await app.project?.packIndexer.service.getAllFiles()) ?? []
 
 		await service.start(files)
 		this.dispatch()

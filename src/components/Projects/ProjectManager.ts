@@ -4,10 +4,12 @@ import Vue from 'vue'
 import { Signal } from '@/components/Common/Event/Signal'
 import { Project } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
+import { Title } from '@/components/Projects/Title'
 
 export class ProjectManager extends Signal<void> {
 	public readonly recentProjects!: RecentProjects
 	public readonly state: Record<string, Project> = {}
+	public readonly title = new Title()
 	protected _selectedProject?: string = undefined
 
 	constructor(protected app: App) {
@@ -33,13 +35,13 @@ export class ProjectManager extends Signal<void> {
 		await this.fired
 		return Object.values(this.state).map(project => project.projectData)
 	}
-	async addProject(projectName: string, select = true) {
-		const project = new Project(this.app, projectName)
+	async addProject(projectDir: FileSystemDirectoryHandle, select = true) {
+		const project = new Project(this, this.app, projectDir)
 		await project.loadProject()
 
-		Vue.set(this.state, projectName, project)
+		Vue.set(this.state, project.name, project)
 
-		if (select) await this.selectProject(projectName)
+		if (select) await this.selectProject(project.name)
 	}
 	async removeProject(projectName: string) {
 		const project = this.state[projectName]
@@ -62,9 +64,9 @@ export class ProjectManager extends Signal<void> {
 			})
 		} catch {}
 
-		const loadProjects = potentialProjects
-			.filter(({ kind }) => kind === 'directory')
-			.map(({ name }) => name)
+		const loadProjects = <FileSystemDirectoryHandle[]>(
+			potentialProjects.filter(({ kind }) => kind === 'directory')
+		)
 
 		if (loadProjects.length === 0) {
 			// Force creation of new project
@@ -73,8 +75,8 @@ export class ProjectManager extends Signal<void> {
 			await createProject.fired
 		} else {
 			// Load existing projects
-			for (const projectName of loadProjects) {
-				await this.addProject(projectName, false)
+			for (const projectDir of loadProjects) {
+				await this.addProject(projectDir, false)
 			}
 		}
 
@@ -90,14 +92,15 @@ export class ProjectManager extends Signal<void> {
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName
 		App.eventSystem.dispatch('disableValidation', null)
+		this.currentProject?.activate()
 
 		if (this.currentProject)
 			await this.recentProjects.add(this.currentProject.projectData)
 		await set('selectedProject', projectName)
 		await this.app.switchProject(projectName)
-		this.currentProject?.activate()
 	}
 	async selectLastProject(app: App) {
+		await this.fired
 		let projectName = await get('selectedProject')
 
 		if (typeof projectName === 'string') {
@@ -113,8 +116,7 @@ export class ProjectManager extends Signal<void> {
 		}
 
 		if (typeof projectName === 'string') {
-			this._selectedProject = projectName
-			await app.switchProject(projectName)
+			await this.selectProject(projectName)
 		} else {
 			throw new Error(`Expected string, found ${typeof projectName}`)
 		}

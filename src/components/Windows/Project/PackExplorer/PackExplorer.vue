@@ -103,9 +103,10 @@ export default {
 		onClose() {
 			this.currentWindow.close()
 		},
-		refreshPackExplorer() {
+		async refreshPackExplorer() {
 			this.currentWindow.close()
-			App.instance.switchProject(selectedProject, true)
+			const app = await App.getApp()
+			await app.project.refresh()
 		},
 		openFile(filePath) {
 			this.currentWindow.close()

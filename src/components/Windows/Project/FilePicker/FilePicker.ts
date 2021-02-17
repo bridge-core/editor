@@ -12,30 +12,26 @@ export class FilePickerWindow extends BaseWindow {
 		this.defineWindow()
 	}
 
-	open() {
+	async open() {
 		if (this.isCurrentlyOpening) return
 
 		this.isCurrentlyOpening = true
 		this.selectedFile = ''
 
-		App.ready.once(async app => {
-			app.windows.loadingWindow.open()
+		const app = await App.getApp()
+		app.windows.loadingWindow.open()
 
-			await new Promise<void>(async resolve => {
-				app.packIndexer.once(async () => {
-					this.packFiles = []
-					this.packFiles.push(
-						...(await app.packIndexer.service.getAllFiles(true))
-					)
+		const packIndexer = app.project?.packIndexer
+		if (packIndexer) {
+			this.packFiles = []
+			this.packFiles.push(
+				...(await packIndexer.service.getAllFiles(true))
+			)
+		}
 
-					resolve()
-				})
-			})
-
-			app.windows.loadingWindow.close()
-			super.open()
-			this.isCurrentlyOpening = false
-		})
+		app.windows.loadingWindow.close()
+		super.open()
+		this.isCurrentlyOpening = false
 	}
 
 	protected openFile(filePath: string) {
