@@ -7,7 +7,7 @@ import { FileSystem } from '../FileSystem/FileSystem'
 
 export class DataLoader extends Signal<void> {
 	async setup(app: App) {
-		app.windows.loadingWindow.open('Downloading new data...')
+		app.windows.loadingWindow.open('windows.loadingWindow.titles.downloadingData')
 		await app.fileSystem.fired
 
 		if (await this.isUpdateAvailable(app.fileSystem)) {

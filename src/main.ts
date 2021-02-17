@@ -2,7 +2,6 @@ import Vue from 'vue'
 import { default as AppComponent } from './App.vue'
 //@ts-expect-error
 import Vuetify from 'vuetify/lib'
-import './registerServiceWorker'
 import en from '@/locales/en'
 import de from '@/locales/de'
 import nl from '@/locales/nl'

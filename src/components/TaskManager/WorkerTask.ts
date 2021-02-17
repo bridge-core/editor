@@ -33,6 +33,7 @@ class Progress<T, K> {
 export abstract class TaskService<T, K = void> extends EventDispatcher<
 	[number, number]
 > {
+	protected lastDispatch = 0
 	public fileSystem: FileSystem
 	public progress!: Progress<T, K>
 	constructor(
@@ -77,5 +78,15 @@ export abstract class TaskService<T, K = void> extends EventDispatcher<
 		this.dispatch([this.progress.getCurrent(), this.progress.getCurrent()])
 
 		return result
+	}
+
+	dispatch(data: [number, number]) {
+		// Always send last data batch
+		if (data[0] === data[1]) super.dispatch(data)
+		// Otherwise, first check that we don't send too many messages to the main thread
+		if (this.lastDispatch + 200 > Date.now()) return
+
+		super.dispatch(data)
+		this.lastDispatch = Date.now()
 	}
 }

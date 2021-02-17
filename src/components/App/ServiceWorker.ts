@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 
 import { register } from 'register-service-worker'
-import { createNotification } from './components/Notifications/create'
+import { createNotification } from '@/components/Notifications/create'
+import { App } from '@/App'
 
 if (process.env.NODE_ENV === 'production') {
 	register(`${process.env.BASE_URL}service-worker.js`, {
@@ -23,25 +24,17 @@ if (process.env.NODE_ENV === 'production') {
 		updated(serviceWorker) {
 			console.log('New content is available; please refresh.')
 
-			createNotification({
-				icon: 'mdi-update',
-				color: 'primary',
-				message: 'sidebar.notifications.updateAvailable.message',
-				textColor: 'white',
-				onClick: () => {
-					if (serviceWorker.waiting)
-						serviceWorker.waiting.postMessage({
-							type: 'SKIP_WAITING',
-						})
-
-					navigator.serviceWorker.addEventListener(
-						'controllerchange',
-						() => {
-							window.location.reload()
-						}
-					)
-				},
-			})
+			if (App.fileSystemSetup.status === 'waiting') {
+				updateApp(serviceWorker)
+			} else {
+				createNotification({
+					icon: 'mdi-update',
+					color: 'primary',
+					message: 'sidebar.notifications.updateAvailable.message',
+					textColor: 'white',
+					onClick: () => updateApp(serviceWorker),
+				})
+			}
 		},
 		offline() {
 			console.log(
@@ -51,5 +44,16 @@ if (process.env.NODE_ENV === 'production') {
 		error(error) {
 			console.error('Error during service worker registration:', error)
 		},
+	})
+}
+
+export function updateApp(serviceWorker: ServiceWorkerRegistration) {
+	if (serviceWorker.waiting)
+		serviceWorker.waiting.postMessage({
+			type: 'SKIP_WAITING',
+		})
+
+	navigator.serviceWorker.addEventListener('controllerchange', () => {
+		window.location.reload()
 	})
 }
