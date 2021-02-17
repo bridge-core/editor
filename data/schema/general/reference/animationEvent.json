@@ -1,0 +1,15 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "string",
+    "anyOf": [
+        {
+            "$ref": "../../entity/dynamic/prefixedEntityEventEnum.json"
+        },
+        {
+            "$ref": "../vanilla/command.json"
+        },
+        {
+            "type": "string"
+        }
+    ]
+}

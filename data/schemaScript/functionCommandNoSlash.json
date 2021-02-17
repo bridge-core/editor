@@ -1,0 +1,5 @@
+{
+    "type": "enum",
+    "generateFile": "function/dynamic/commandNoSlashEnum.json",
+	"script": "return readdir('BP/functions').then(dirents => dirents.map(dirent => `function ${dirent.path.replace('BP/functions/', '').replace('.mcfunction', '')}`))"
+}

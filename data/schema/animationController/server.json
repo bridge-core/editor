@@ -56,28 +56,14 @@
 											"description": "Events and commands to run when entering this state.",
 											"type": "array",
 											"items": {
-												"anyOf": [
-													{
-														"$ref": "../function/dynamic/functionPathEnum.json"
-													},
-													{
-														"$ref": "../entity/dynamic/prefixedEntityEventEnum.json"
-													}
-												]
+												"$ref": "../general/reference/animationEvent.json"
 											}
 										},
 										"on_exit": {
 											"description": "Events and commands to run when exiting this state.",
 											"type": "array",
 											"items": {
-												"anyOf": [
-													{
-														"$ref": "../function/dynamic/functionPathEnum.json"
-													},
-													{
-														"$ref": "../entity/dynamic/prefixedEntityEventEnum.json"
-													}
-												]
+												"$ref": "../general/reference/animationEvent.json"
 											}
 										}
 									}

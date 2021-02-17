@@ -8,7 +8,7 @@ const targetPath = join(process.env.USER_PATH, 'data/packages')
 console.log(targetPath)
 
 function getPath(path) {
-	return join(targetPath, path.replace('data/', ''))
+	return join(targetPath, path.replace('data\\', ''))
 }
 async function copyFile(path) {
 	console.log(`Updating file ${getPath(path)}`)
