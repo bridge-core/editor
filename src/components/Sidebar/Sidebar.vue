@@ -20,7 +20,7 @@
 			/>
 		</v-list>
 
-		<v-list v-if="Object.keys(NotificationStore).length > 0">
+		<v-list v-if="hasVisibleNotifications">
 			<v-divider class="mx-3 mb-6" />
 			<template v-for="notification in NotificationStore">
 				<SidebarButton
@@ -64,7 +64,6 @@ import { settingsState } from '@/components/Windows/Settings/SettingsState'
 import SidebarButton from './Button'
 import { SidebarState, getSelected } from './state'
 import { tasks } from '@/components/TaskManager/TaskManager'
-import { createInformationWindow } from '@/components/Windows/Common/CommonDefinitions'
 import { NotificationStore } from '@/components/Notifications/state'
 
 export default {
@@ -84,6 +83,11 @@ export default {
 		}
 	},
 	computed: {
+		hasVisibleNotifications() {
+			return Object.values(NotificationStore).some(
+				({ isVisible }) => isVisible
+			)
+		},
 		isSidebarRight() {
 			return (
 				this.settingsState &&
