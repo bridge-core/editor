@@ -185,7 +185,10 @@ export namespace JSONDefaults {
 
 	export async function setup() {
 		const app = await App.getApp()
+		await app.projectManager.onSelectedProject.fired
 		const packIndexer = app.project?.packIndexer
+
+		await packIndexer?.fired
 
 		if (packIndexer) {
 			whenIdle(async () => {
