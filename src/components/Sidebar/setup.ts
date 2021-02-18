@@ -1,6 +1,5 @@
 import { App } from '@/App'
 import { createSidebar } from './create'
-import Extensions from './Content/Extensions/Main.vue'
 
 export function setupSidebar() {
 	createSidebar({
@@ -27,7 +26,7 @@ export function setupSidebar() {
 		icon: 'mdi-cogs',
 		onClick: async () => {
 			const app = await App.getApp()
-			await app.compiler.openWindow()
+			await app.project?.compilerManager.openWindow()
 		},
 	})
 	createSidebar({

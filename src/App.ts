@@ -51,7 +51,6 @@ export class App {
 	public readonly actionManager = new ActionManager(this)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
-	public readonly compiler = new Compiler()
 	public readonly dataLoader = new DataLoader()
 	public readonly fileSystem = new FileSystem()
 	public readonly projectManager = Vue.observable(new ProjectManager(this))
@@ -120,7 +119,7 @@ export class App {
 					)
 				)
 				.then(() => {
-					this.compiler.start(projectName, 'dev', 'default.json')
+					// this.compiler.start(projectName, 'dev', 'default.json')
 					this.themeManager.updateTheme()
 
 					// Set language

@@ -49,15 +49,14 @@ export class Extension {
 			}
 		}
 
-		Object.entries(
-			this.manifest.compiler?.plugins ?? {}
-		)?.forEach(([pluginId, compilerPlugin]) =>
-			this.disposables.push(
-				app.compiler.addCompilerPlugin(
+		Object.entries(this.manifest.compiler?.plugins ?? {})?.forEach(
+			([pluginId, compilerPlugin]) => {
+				const disposable = app.project?.compilerManager?.addCompilerPlugin(
 					pluginId,
 					`${pluginPath}/${compilerPlugin}`
 				)
-			)
+				if (disposable) this.disposables.push(disposable)
+			}
 		)
 
 		this.disposables.push(

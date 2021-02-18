@@ -97,11 +97,6 @@ export class TabSystem {
 		await this.project.updateFile(
 			tab.getPath().replace(`projects/${this.project.name}/`, '')
 		)
-		await app.compiler.updateFile(
-			'dev',
-			'default.json',
-			tab.getPath().replace(`projects/${this.project.name}/`, '')
-		)
 		await this.project.recentFiles.add({
 			path: tab.getPath(),
 			name: tab.name,

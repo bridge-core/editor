@@ -35,7 +35,7 @@ export namespace JSONDefaults {
 
 		await packIndexer.fired
 
-		return await packIndexer.service.getSchemasFor(fileType, fromFilePath)
+		return await packIndexer.service!.getSchemasFor(fileType, fromFilePath)
 	}
 	async function getDynamicSchemas() {
 		return (
@@ -106,7 +106,7 @@ export namespace JSONDefaults {
 
 							await packIndexer.fired
 
-							return packIndexer.service.getCacheDataFor(
+							return packIndexer.service!.getCacheDataFor(
 								fileType,
 								filePath,
 								cacheKey

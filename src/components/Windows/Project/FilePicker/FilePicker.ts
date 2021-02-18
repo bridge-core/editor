@@ -23,10 +23,8 @@ export class FilePickerWindow extends BaseWindow {
 
 		const packIndexer = app.project?.packIndexer
 		if (packIndexer) {
-			this.packFiles = []
-			this.packFiles.push(
-				...(await packIndexer.service.getAllFiles(true))
-			)
+			this.packFiles =
+				(await packIndexer.service?.getAllFiles(true)) ?? []
 		}
 
 		app.windows.loadingWindow.close()

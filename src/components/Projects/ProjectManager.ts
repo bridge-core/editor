@@ -48,6 +48,7 @@ export class ProjectManager extends Signal<void> {
 		const project = this.state[projectName]
 		if (!project) return
 
+		await project.deactivate()
 		Vue.delete(this.state, projectName)
 		await this.app.fileSystem.unlink(`projects/${projectName}`)
 

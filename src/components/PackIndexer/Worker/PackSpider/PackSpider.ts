@@ -30,7 +30,7 @@ export class PackSpider {
 	) {}
 
 	async setup(filePaths: string[]) {
-		if (this.packIndexer.settings.disablePackSpider) return
+		if (this.packIndexer.getOptions().disablePackSpider) return
 
 		fileStore = {}
 		const response = await FileType.getPackSpiderData()

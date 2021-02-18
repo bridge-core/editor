@@ -5,7 +5,9 @@ import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { FileType } from '@/components/Data/FileType'
 import { CompilerFile } from './File'
 
-export interface IWorkerSettings {
+export interface ICompilerOptions {
+	projectDirectory: FileSystemDirectoryHandle
+	baseDirectory: FileSystemDirectoryHandle
 	config: string
 	mode: 'dev' | 'build'
 	plugins: Record<string, string>
@@ -28,25 +30,25 @@ export class CompilerService extends TaskService<void, string[]> {
 	protected plugins!: Map<string, TCompilerPlugin>
 	protected files = new Map<string, CompilerFile>()
 
-	constructor(
-		projectDirectory: FileSystemDirectoryHandle,
-		protected baseDirectory: FileSystemDirectoryHandle,
-		readonly settings: IWorkerSettings
-	) {
-		super('compiler', projectDirectory)
+	constructor(protected readonly options: ICompilerOptions) {
+		super('compiler', options.projectDirectory)
+	}
+
+	getOptions() {
+		return this.options
 	}
 
 	async onStart(updatedFiles: string[]) {
-		const globalFs = new FileSystem(this.baseDirectory)
+		const globalFs = new FileSystem(this.options.baseDirectory)
 		await FileType.setup(globalFs)
 
 		try {
 			this.buildConfig = await this.fileSystem.readJSON(
-				`bridge/compiler/${this.settings.config}`
+				`bridge/compiler/${this.options.config}`
 			)
 		} catch {}
 
-		this.plugins = await loadPlugins(globalFs, this.settings.plugins)
+		this.plugins = await loadPlugins(globalFs, this.options.plugins)
 
 		for (const updatedFile of updatedFiles)
 			this.files.set(
@@ -68,7 +70,7 @@ export class CompilerService extends TaskService<void, string[]> {
 	}
 
 	async updatePlugins(plugins: Record<string, string>) {
-		const globalFs = new FileSystem(this.baseDirectory)
+		const globalFs = new FileSystem(this.options.baseDirectory)
 		this.plugins = await loadPlugins(globalFs, plugins)
 	}
 
@@ -97,6 +99,9 @@ export class CompilerService extends TaskService<void, string[]> {
 		for (const hook of hooks) {
 			await file.runHook(this.buildConfig.plugins, this.plugins, hook)
 		}
+	}
+	updateMode(mode: 'dev' | 'build') {
+		this.options.mode = mode
 	}
 }
 

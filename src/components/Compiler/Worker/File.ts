@@ -66,7 +66,7 @@ export class CompilerFile {
 		for (let plugin of pluginDefs[fromPluginEntry]!) {
 			let pluginOpts: any = {}
 			if (Array.isArray(plugin)) [plugin, pluginOpts] = plugin
-			pluginOpts.mode = this.parent.settings.mode
+			pluginOpts.mode = this.parent.getOptions().mode
 
 			let pluginObj = plugins.get(plugin)
 			if (!pluginObj && fromPluginEntry !== '*')

@@ -13,13 +13,14 @@ export const FetchDefinitionModule = ({}: IModuleConfig) => ({
 		if (!packIndexer) return []
 
 		const files = await Promise.all(
-			fetchDefs.map(fetchDef =>
-				packIndexer.service.find(
-					fileType,
-					fetchDef,
-					[fetchSearch],
-					fetchAll
-				)
+			fetchDefs.map(
+				fetchDef =>
+					packIndexer.service?.find(
+						fileType,
+						fetchDef,
+						[fetchSearch],
+						fetchAll
+					) ?? []
 			)
 		)
 

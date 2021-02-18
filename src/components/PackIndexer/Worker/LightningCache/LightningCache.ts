@@ -42,7 +42,7 @@ export class LightningCache {
 
 		if (this.folderIgnoreList.size === 0) await this.loadIgnoreFolders()
 
-		if (this.service.settings.noFullLightningCacheRefresh) {
+		if (this.service.getOptions().noFullLightningCacheRefresh) {
 			const filePaths = this.lightningStore.allFiles()
 			if (filePaths.length > 0) return [filePaths, []]
 		}

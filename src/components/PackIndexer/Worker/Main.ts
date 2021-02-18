@@ -1,4 +1,4 @@
-import { FileType, IMonacoSchemaArrayEntry } from '@/components/Data/FileType'
+import { FileType } from '@/components/Data/FileType'
 import * as Comlink from 'comlink'
 import { TaskService } from '@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
@@ -12,7 +12,9 @@ import { LightningCache } from './LightningCache/LightningCache'
 import { FileSystem } from '@/components/FileSystem/FileSystem'
 export { ILightningInstruction } from './LightningCache/LightningCache'
 
-export interface IWorkerSettings {
+export interface IPackIndexerOptions {
+	projectDirectory: FileSystemDirectoryHandle
+	baseDirectory: FileSystemDirectoryHandle
 	disablePackSpider: boolean
 	noFullLightningCacheRefresh: boolean
 }
@@ -22,21 +24,21 @@ export class PackIndexerService extends TaskService<string[]> {
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
 
-	constructor(
-		projectDirectory: FileSystemDirectoryHandle,
-		protected baseDirectory: FileSystemDirectoryHandle,
-		readonly settings: IWorkerSettings
-	) {
-		super('packIndexer', projectDirectory)
+	constructor(protected readonly options: IPackIndexerOptions) {
+		super('packIndexer', options.projectDirectory)
 		this.lightningStore = new LightningStore(this.fileSystem)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
 	}
 
+	getOptions() {
+		return this.options
+	}
+
 	async onStart() {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
-		await FileType.setup(new FileSystem(this.baseDirectory))
+		await FileType.setup(new FileSystem(this.options.baseDirectory))
 
 		console.timeEnd('[WORKER] SETUP')
 
@@ -61,7 +63,7 @@ export class PackIndexerService extends TaskService<string[]> {
 	}
 
 	async readdir(path: string[]) {
-		if (this.settings.disablePackSpider) {
+		if (this.options.disablePackSpider) {
 			if (path.length > 0)
 				return (
 					await this.fileSystem.readdir(path.join('/'), {

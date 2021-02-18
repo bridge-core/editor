@@ -255,6 +255,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 		for (const filePath of createdFiles) {
 			app.project?.updateFile(filePath)
+			app.project?.openFile(`projects/${app.project.name}/${filePath}`)
 		}
 
 		app.windows.loadingWindow.close()
