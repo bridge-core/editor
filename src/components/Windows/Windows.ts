@@ -8,6 +8,7 @@ import { FilePickerWindow } from './Project/FilePicker/FilePicker'
 import { PackExplorerWindow } from './Project/PackExplorer/PackExplorer'
 import { ProjectChooserWindow } from '@/components/Projects/ProjectChooser/ProjectChooser'
 import { SettingsWindow } from './Settings/SettingsWindow'
+import { ChangelogWindow } from '@/components/Windows/Changelog/Changelog'
 
 export class Windows {
 	settings: SettingsWindow
@@ -19,6 +20,7 @@ export class Windows {
 	createPreset = new CreatePresetWindow()
 	extensionStore = new ExtensionStoreWindow()
 	browserUnsupported = new BrowserUnsupportedWindow()
+	changelogWindow = new ChangelogWindow()
 
 	constructor(protected app: App) {
 		this.settings = new SettingsWindow(app)

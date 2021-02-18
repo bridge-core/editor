@@ -248,6 +248,9 @@ export default {
 				downloadingData: 'Downloading new data...',
 			},
 		},
+		changelogWindow:{
+			title: "What's new?"
+		},
 		openFile: {
 			title: 'Open',
 			search: 'Search file...',

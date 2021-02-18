@@ -27,7 +27,7 @@
 		</v-toolbar-items>
 
 		<v-spacer />
-		<div class="pa-2" style="font-size: 12px;">v{{ appVersion }}</div>
+		<div class="pa-2" style="font-size: 12px;" @click="openChangelogWindow">v{{ appVersion }}</div>
 	</v-system-bar>
 </template>
 
@@ -50,6 +50,12 @@ export default {
 
 		appVersion,
 	}),
+  methods: {
+	  async openChangelogWindow() {
+      const app = await App.getApp()
+      await app.windows.changelogWindow.open()
+    }
+  }
 }
 </script>
 

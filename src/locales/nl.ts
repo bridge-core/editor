@@ -241,6 +241,9 @@ export default {
 		loadingWindow: {
 			title: 'Laden...',
 		},
+		changelogWindow:{
+			title: "Wat is er nieuw?"
+		},
 		openFile: {
 			title: 'Openen',
 			search: 'Zoek bestand...',
