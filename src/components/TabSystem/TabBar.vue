@@ -4,6 +4,7 @@
 		v-model="tabSystem.tabs"
 		:group="{ name: 'tabSystemTabRow' }"
 		@change="updateTab"
+		@mousedown.native.self="tabSystem.setActive(true)"
 		:style="
 			`display: flex; overflow-x: scroll; white-space: nowrap; width: 100%; height: 48px;`
 		"
