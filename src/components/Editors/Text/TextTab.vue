@@ -26,31 +26,43 @@ export default {
 			return /** this.$store.state.Settings.file_font_family || */ '14px'
 		},
 	},
+	activated() {
+		this.updateEditor()
+	},
+	deactivated() {
+		this.tab.editorInstance?.dispose()
+		this.tab.editorInstance = undefined
+	},
 	mounted() {
-		monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-			target: monaco.languages.typescript.ScriptTarget.ESNext,
-			allowNonTsExtensions: true,
-			noLib: true,
-		})
+		this.updateEditor()
+	},
+	methods: {
+		updateEditor() {
+			monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+				target: monaco.languages.typescript.ScriptTarget.ESNext,
+				allowNonTsExtensions: true,
+				noLib: true,
+			})
 
-		if (!this.tab.editorInstance) {
-			editorInstances[this.id]?.dispose()
-			editorInstances[this.id] = monaco.editor.create(
-				this.$refs.monacoContainer,
-				{
-					theme: `bridgeMonacoDefault`,
-					roundedSelection: false,
-					autoIndent: 'full',
-					fontSize: this.fontSize,
-					// fontFamily: this.fontFamily,
-					tabSize: 4,
-				}
-			)
+			if (!this.tab.editorInstance) {
+				editorInstances[this.id]?.dispose()
+				editorInstances[this.id] = monaco.editor.create(
+					this.$refs.monacoContainer,
+					{
+						theme: `bridgeMonacoDefault`,
+						roundedSelection: false,
+						autoIndent: 'full',
+						fontSize: this.fontSize,
+						// fontFamily: this.fontFamily,
+						tabSize: 4,
+					}
+				)
 
-			this.tab.receiveEditorInstance(editorInstances[this.id])
-		}
+				this.tab.receiveEditorInstance(editorInstances[this.id])
+			}
 
-		editorInstances[this.id]?.layout()
+			editorInstances[this.id]?.layout()
+		},
 	},
 	watch: {
 		tab() {

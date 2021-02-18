@@ -2,9 +2,10 @@
 	<div v-if="tabSystem.shouldRender" class="tab-system">
 		<TabBar :tabSystem="tabSystem" />
 
-		<keep-alive v-if="tabSystem.shouldRender">
+		<keep-alive>
 			<component
 				:is="tabSystem.currentComponent"
+				:key="tabSystem.uuid"
 				:tab="tabSystem.selectedTab"
 				:id="id"
 			/>

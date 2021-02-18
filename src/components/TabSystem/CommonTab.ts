@@ -74,8 +74,11 @@ export abstract class Tab {
 		this.updateParent(to)
 		if (updateParentTabs) {
 			to.add(this, true)
-			from.remove(this)
+			from.remove(this, false)
 		} else {
+			await to.openedFiles.add(this.getPath())
+			await from.openedFiles.remove(this.getPath())
+
 			to.select(this)
 			if (this.isSelected) from.select(from.tabs[0])
 		}

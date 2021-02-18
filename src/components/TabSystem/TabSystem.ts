@@ -6,12 +6,15 @@ import { App } from '@/App'
 import { ImageTab } from '../Editors/Image/ImageTab'
 import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
 import { Project } from '../Projects/Project/Project'
-
+import { OpenedFiles } from './OpenedFiles'
+import { v4 as uuid } from 'uuid'
 export class TabSystem {
-	tabs: Tab[] = []
+	protected uuid = uuid()
+	public tabs: Tab[] = []
 	protected _selectedTab: Tab | undefined = undefined
 	protected tabTypes = [ImageTab, TextTab]
 	protected _isActive = true
+	public readonly openedFiles: OpenedFiles
 
 	get isActive() {
 		return this._isActive
@@ -20,7 +23,13 @@ export class TabSystem {
 		return this.tabs.length > 0
 	}
 
-	constructor(protected project: Project) {}
+	constructor(protected project: Project, id = 0) {
+		this.openedFiles = new OpenedFiles(
+			this,
+			project.app,
+			`projects/${project.name}/bridge/openedFiles_${id}.json`
+		)
+	}
 
 	get selectedTab() {
 		return this._selectedTab
@@ -45,14 +54,19 @@ export class TabSystem {
 
 	add(tab: Tab, selectTab = true) {
 		this.tabs = [...this.tabs, tab]
+		this.openedFiles.add(tab.getPath())
 
 		if (selectTab) tab.select()
 
 		return tab
 	}
-	remove(tab: Tab) {
-		this.tabs = this.tabs.filter(t => t !== tab)
+	remove(tab: Tab, destroyEditor = true) {
+		tab.onDeactivate()
+		this.tabs = this.tabs.filter(current => current !== tab)
+		if (destroyEditor) tab.onDestroy()
+
 		if (tab === this._selectedTab) this.select(this.tabs[0])
+		this.openedFiles.remove(tab.getPath())
 
 		return tab
 	}
@@ -62,13 +76,7 @@ export class TabSystem {
 		if (checkUnsaved && tab.isUnsaved) {
 			new UnsavedFileWindow(tab)
 		} else {
-			tab.onDeactivate()
-			this.tabs = this.tabs.filter(current => current !== tab)
-			tab.onDestroy()
-
-			if (this._selectedTab === tab) {
-				this.select(this.tabs[0])
-			}
+			this.remove(tab)
 		}
 	}
 	closeByPath(path: string) {
@@ -114,12 +122,14 @@ export class TabSystem {
 		app.windows.loadingWindow.close()
 	}
 
+	activate() {
+		console.log(this.selectedTab)
+		this.selectedTab?.onActivate()
+	}
 	deactivate() {
 		this.selectedTab?.onDeactivate()
 	}
-	activate() {
-		this.selectedTab?.onActivate()
-	}
+
 	setActive(isActive: boolean, updateProject = true) {
 		if (updateProject) this.project.setActiveTabSystem(this, !isActive)
 		this._isActive = isActive

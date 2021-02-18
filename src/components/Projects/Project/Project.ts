@@ -21,7 +21,7 @@ export interface IProjectData extends TProjectConfig {
 
 export class Project {
 	public readonly recentFiles!: RecentFiles
-	public readonly tabSystems = [new TabSystem(this), new TabSystem(this)]
+	public readonly tabSystems = [new TabSystem(this), new TabSystem(this, 1)]
 	protected _projectData!: IProjectData
 	// Not directly assigned so they're not responsive
 	public readonly packIndexer: PackIndexer
@@ -50,7 +50,7 @@ export class Project {
 
 	constructor(
 		protected parent: ProjectManager,
-		protected app: App,
+		public readonly app: App,
 		protected _baseDirectory: FileSystemDirectoryHandle
 	) {
 		this._fileSystem = new FileSystem(_baseDirectory)
