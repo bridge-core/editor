@@ -25,6 +25,9 @@
 				/>
 			</template>
 		</v-toolbar-items>
+
+		<v-spacer />
+		<div class="pa-2" style="font-size: 12px;">v{{ appVersion }}</div>
 	</v-system-bar>
 </template>
 
@@ -33,6 +36,7 @@ import WindowAction from './WindowAction'
 import MenuActivator from './Menu/Activator'
 import MenuButton from './Menu/Button'
 import { App } from '@/App'
+import { version as appVersion } from '@/appVersion.json'
 
 export default {
 	name: 'Toolbar',
@@ -44,7 +48,7 @@ export default {
 	data: () => ({
 		toolbar: App.toolbar.state,
 
-		windowActions: [],
+		appVersion,
 	}),
 }
 </script>
