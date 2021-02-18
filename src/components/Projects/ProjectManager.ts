@@ -10,7 +10,6 @@ export class ProjectManager extends Signal<void> {
 	public readonly recentProjects!: RecentProjects
 	public readonly state: Record<string, Project> = {}
 	public readonly title = new Title()
-	public readonly onSelectedProject = new Signal<void>()
 	protected _selectedProject?: string = undefined
 
 	constructor(protected app: App) {
@@ -95,8 +94,6 @@ export class ProjectManager extends Signal<void> {
 		this._selectedProject = projectName
 		App.eventSystem.dispatch('disableValidation', null)
 		this.currentProject?.activate()
-
-		this.onSelectedProject.dispatch()
 
 		if (this.currentProject)
 			await this.recentProjects.add(this.currentProject.projectData)
