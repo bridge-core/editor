@@ -10,6 +10,7 @@ import { PackIndexer } from '@/components/PackIndexer/PackIndexer'
 import { ProjectManager } from '../ProjectManager'
 import { FileSystem } from '@/components/FileSystem/FileSystem'
 import { CompilerManager } from '@/components/Compiler/CompilerManager'
+import { JsonDefaults } from '@/components/Data/JSONDefaults'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -26,6 +27,7 @@ export class Project {
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
 	public readonly compilerManager = new CompilerManager(this)
+	protected jsonDefaults = new JsonDefaults(this)
 
 	//#region Getters
 	get projectData() {
@@ -67,12 +69,14 @@ export class Project {
 		this.parent.title.setProject(this.name)
 		this.tabSystems.forEach(tabSystem => tabSystem.activate())
 		await this.packIndexer.activate(forceRefresh).then(() => {
+			this.jsonDefaults.activate()
 			this.compilerManager.start('default.json', 'dev')
 		})
 	}
 	deactivate() {
 		this.tabSystems.forEach(tabSystem => tabSystem.deactivate())
 		this.packIndexer.deactivate()
+		this.jsonDefaults.deactivate()
 	}
 
 	async refresh() {

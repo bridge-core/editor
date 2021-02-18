@@ -127,9 +127,7 @@ export class TabSystem {
 		if (isActive) {
 			App.eventSystem.dispatch(
 				'currentTabSwitched',
-				this._selectedTab
-					?.getPath()
-					?.replace(`projects/${this.project.name}/`, '')
+				this._selectedTab?.getPackPath()
 			)
 		}
 	}
