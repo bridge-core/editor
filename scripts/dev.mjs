@@ -14,7 +14,7 @@ async function copyFile(path) {
 	console.log(`Updating file ${getPath(path)}`)
 
 	try {
-		await fs.mkdir(dirname(getPath(path)))
+		await fs.mkdir(dirname(getPath(path)), { recursive: true })
 	} catch {}
 
 	await fs.copyFile(path, getPath(path))
