@@ -1,0 +1,6 @@
+{
+	"id": "gameTest",
+    "icon": "mdi-test-tube",
+	"scope": "BP/gametests/",
+	"matcher": "BP/gametests/*.js"
+}
