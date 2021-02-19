@@ -42,6 +42,7 @@ export class DataLoader extends Signal<void> {
 			return true
 		}
 
+		// See: https://discord.com/channels/602097536404160523/603989805763788800/812075892158890034
 		if (
 			remoteVersion[0] === "'" &&
 			remoteVersion[remoteVersion.length - 1] === "'"
