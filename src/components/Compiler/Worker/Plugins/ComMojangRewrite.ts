@@ -3,7 +3,7 @@ import { TCompilerPlugin } from '../Plugins'
 const folders: any = {
 	BP: 'development_behavior_packs',
 	RP: 'development_resource_packs',
-	SP: 'development_skin_packs',
+	SP: 'skin_packs',
 }
 let clearedDir = false
 
