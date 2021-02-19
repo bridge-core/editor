@@ -42,6 +42,17 @@ export class DataLoader extends Signal<void> {
 			return true
 		}
 
+		if (
+			remoteVersion[0] === "'" &&
+			remoteVersion[remoteVersion.length - 1] === "'"
+		)
+			remoteVersion = remoteVersion.slice(1, -1)
+		if (
+			localVersion[0] === "'" &&
+			localVersion[localVersion.length - 1] === "'"
+		)
+			localVersion = localVersion.slice(1, -1)
+
 		return compare(remoteVersion, localVersion, '>')
 	}
 
