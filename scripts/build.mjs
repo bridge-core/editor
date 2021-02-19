@@ -2,6 +2,7 @@ import { buildDynamicSchemas } from './buildDynamicSchemas.mjs'
 import fs from 'fs'
 import archiver from 'archiver'
 import { runSchemaScripts } from './buildSchemaScripts.mjs'
+import { buildChangelog } from './buildChangelog.mjs'
 
 /**
  * Taken from https://stackoverflow.com/a/51518100
@@ -29,4 +30,5 @@ function zipDirectory(source, out) {
 		'./data/version.txt',
 		'./public/data/version.txt'
 	)
+	await buildChangelog()
 })()

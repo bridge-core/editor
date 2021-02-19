@@ -27,7 +27,13 @@
 		</v-toolbar-items>
 
 		<v-spacer />
-		<div class="pa-2" style="font-size: 12px;" @click="openChangelogWindow">v{{ appVersion }}</div>
+		<div
+			class="px-1 mx-1 rounded-lg app-version-display"
+			v-ripple
+			@click="openChangelogWindow"
+		>
+			v{{ appVersion }}
+		</div>
 	</v-system-bar>
 </template>
 
@@ -50,12 +56,12 @@ export default {
 
 		appVersion,
 	}),
-  methods: {
-	  async openChangelogWindow() {
-      const app = await App.getApp()
-      await app.windows.changelogWindow.open()
-    }
-  }
+	methods: {
+		async openChangelogWindow() {
+			const app = await App.getApp()
+			await app.windows.changelogWindow.open()
+		},
+	},
 }
 </script>
 
@@ -68,5 +74,9 @@ export default {
 .toolbar-btn {
 	-webkit-app-region: no-drag;
 	min-width: 0;
+}
+.app-version-display {
+	cursor: pointer;
+	font-size: 12px;
 }
 </style>

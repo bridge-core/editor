@@ -123,7 +123,6 @@ export class TabSystem {
 	}
 
 	activate() {
-		console.log(this.selectedTab)
 		this.selectedTab?.onActivate()
 	}
 	deactivate() {
