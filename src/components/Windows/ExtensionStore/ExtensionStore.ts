@@ -1,12 +1,12 @@
-import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
+import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import ExtensionStoreComponent from './ExtensionStore.vue'
-import { BaseWindow } from '@/components/Windows/BaseWindow'
-import { App } from '@/App'
+import { BaseWindow } from '/@/components/Windows/BaseWindow'
+import { App } from '/@/App'
 import { compare } from 'compare-versions'
-import { getFileSystem } from '@/utils/fs'
+import { getFileSystem } from '/@/utils/fs'
 import { ExtensionTag } from './ExtensionTag'
 import { ExtensionViewer } from './Extension'
-import { IExtensionManifest } from '@/components/Extensions/ExtensionLoader'
+import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
 
 export class ExtensionStoreWindow extends BaseWindow {
 	protected baseUrl =

@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import { settingsState } from '@/components/Windows/Settings/SettingsState'
-import { TranslationMixin } from '@/utils/locales'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
 	name: 'SidebarButton',

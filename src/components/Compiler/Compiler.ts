@@ -1,9 +1,9 @@
-import { App } from '@/App'
-import { Signal } from '@/components/Common/Event/Signal'
+import { App } from '/@/App'
+import { Signal } from '/@/components/Common/Event/Signal'
 import * as Comlink from 'comlink'
-import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'
 import { CompilerService, ICompilerOptions } from './Worker/Main'
-import { WorkerManager } from '@/components/Worker/Manager'
+import CompilerWorker from './Worker/Main?worker'
+import { WorkerManager } from '/@/components/Worker/Manager'
 import { Project } from '../Projects/Project/Project'
 import { CompilerManager } from './CompilerManager'
 
@@ -28,9 +28,7 @@ export class Compiler extends WorkerManager<
 	}
 
 	createWorker() {
-		this.worker = new Worker('./Worker/Main.ts', {
-			type: 'module',
-		})
+		this.worker = new CompilerWorker()
 	}
 
 	async deactivate() {

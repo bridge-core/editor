@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { compare } from 'compare-versions'
 
 export async function getFilteredFormatVersions(useVersions?: string[]) {

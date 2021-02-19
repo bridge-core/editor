@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import BaseWindow from '@/components/Windows/Layout/BaseWindow.vue'
+import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 
 export default {
 	name: 'LoadingWindow',

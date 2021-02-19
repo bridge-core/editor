@@ -1,15 +1,10 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { ButtonToggle } from './Controls/ButtonToggle/ButtonToggle'
 import { Toggle } from './Controls/Toggle/Toggle'
 import { SettingsWindow } from './SettingsWindow'
 import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
 import { ProjectSelection } from './Controls/Selection/ProjectSelection'
-import {
-	getCurrentLanguage,
-	getLanguages,
-	selectLanguage,
-} from '@/utils/locales'
 import { Button } from './Controls/Button/Button'
 import { del } from 'idb-keyval'
 
@@ -139,6 +134,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 
+	const locales = await App.getApp().then(app => app.locales)
 	settings.addControl(
 		new Selection({
 			category: 'general',
@@ -146,14 +142,14 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.general.language.description',
 			key: 'locale',
 			get options() {
-				return getLanguages().map(lang => ({
+				return locales.getLanguages().map(lang => ({
 					text: lang[1],
 					value: lang[0],
 				}))
 			},
-			default: getCurrentLanguage(),
+			default: locales.getCurrentLanguage(),
 			onChange: val => {
-				selectLanguage(val)
+				locales.selectLanguage(val)
 			},
 		})
 	)

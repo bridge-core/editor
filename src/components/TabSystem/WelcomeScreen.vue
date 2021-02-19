@@ -7,7 +7,7 @@
 			style="height: 128px; width: 128px;"
 			class="mb-4"
 			alt="bridge. Logo"
-			src="@/_assets/logo_high_res.png"
+			src="/@/_assets/logo_high_res.png"
 		/>
 		<h1 class="text-h3 text-center">{{ t('welcome.title') }}</h1>
 		<h2 class="text-h6 mb-12 text-center">{{ t('welcome.subtitle') }}</h2>
@@ -96,12 +96,12 @@
 </template>
 
 <script>
-import { TranslationMixin } from '@/utils/locales'
-import ActionViewer from '@/components/Actions/ActionViewer'
-import { App } from '@/App'
-import { ProjectMixin } from '@/components/Mixins/Project'
-import { CompilerMixin } from '../Mixins/Tasks/Compiler'
-import { PackIndexerMixin } from '../Mixins/Tasks/PackIndexer'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import ActionViewer from '/@/components/Actions/ActionViewer.vue'
+import { App } from '/@/App.ts'
+import { ProjectMixin } from '/@/components/Mixins/Project.ts'
+import { CompilerMixin } from '../Mixins/Tasks/Compiler.ts'
+import { PackIndexerMixin } from '../Mixins/Tasks/PackIndexer.ts'
 
 export default {
 	name: 'welcome-screen',

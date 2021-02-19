@@ -1,5 +1,5 @@
-import { Tab } from '@/components/TabSystem/CommonTab'
-import { loadAsDataURL } from '@/utils/loadAsDataUrl'
+import { Tab } from '/@/components/TabSystem/CommonTab'
+import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import ImageTabComponent from './ImageTab.vue'
 
 export class ImageTab extends Tab {

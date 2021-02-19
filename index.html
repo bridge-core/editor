@@ -8,12 +8,13 @@
 			name="description"
 			content="bridge. is a powerful add-on editor designed to speed up your development process. It provides a rich editing experience for all files inside behavior and resource packs (JavaScript, JSON and functions) and provides a powerful work environment. Unleash the full power of add-ons with bridge. plugins and make use of rich auto-completions provided as you navigate through a file. Creating Minecraft add-ons was never more convenient!"
 		/>
-		<link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+		<link rel="icon" href="/favicon.ico" />
 		<title>bridge.</title>
 		<link
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
 		/>
+		<link rel="manifest" href="/manifest.json" />
 	</head>
 	<body>
 		<noscript>
@@ -23,6 +24,7 @@
 			</strong>
 		</noscript>
 		<div id="app"></div>
-		<!-- built files will be auto injected -->
+
+		<script type="module" src="/src/main.ts"></script>
 	</body>
 </html>

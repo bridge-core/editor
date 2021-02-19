@@ -14,9 +14,9 @@
 </template>
 
 <script>
-import WelcomeScreen from '@/components/TabSystem/WelcomeScreen.vue'
-import TabBar from '@/components/TabSystem/TabBar.vue'
-import { App } from '@/App'
+import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
+import TabBar from '/@/components/TabSystem/TabBar.vue'
+import { App } from '/@/App'
 
 export default {
 	name: 'TabSystem',

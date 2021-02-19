@@ -1,9 +1,10 @@
-import { App } from '@/App'
-import { WorkerManager } from '@/components/Worker/Manager'
+import { App } from '/@/App'
+import { WorkerManager } from '/@/components/Worker/Manager'
 import * as Comlink from 'comlink'
-import { Task } from '../TaskManager/Task'
-import { settingsState } from '../Windows/Settings/SettingsState'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
+import PackIndexerWorker from './Worker/Main?worker'
+import TestWorker from '/@/utils/locales?worker'
 
 export class PackIndexer extends WorkerManager<
 	PackIndexerService,
@@ -23,9 +24,7 @@ export class PackIndexer extends WorkerManager<
 	}
 
 	createWorker() {
-		this.worker = new Worker('./Worker/Main.ts', {
-			type: 'module',
-		})
+		this.worker = new PackIndexerWorker()
 	}
 
 	deactivate() {
@@ -44,6 +43,7 @@ export class PackIndexer extends WorkerManager<
 				!forceRefreshCache &&
 				!settingsState?.general?.fullLightningCacheRefresh,
 		})
+
 		// Listen to task progress and update UI
 		this._service.on(
 			Comlink.proxy(([current, total]) => {

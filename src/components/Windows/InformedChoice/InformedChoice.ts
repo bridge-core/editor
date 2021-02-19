@@ -1,8 +1,8 @@
 import InformedChoiceComponent from './InformedChoice.vue'
-import { BaseWindow } from '@/components/Windows/BaseWindow'
-import { App } from '@/App'
-import { ActionManager } from '@/components/Actions/ActionManager'
-import { Signal } from '@/components/Common/Event/Signal'
+import { BaseWindow } from '/@/components/Windows/BaseWindow'
+import { App } from '/@/App'
+import { ActionManager } from '/@/components/Actions/ActionManager'
+import { Signal } from '/@/components/Common/Event/Signal'
 
 interface IInformedChoiceWindowOpts {
 	isPersistent?: boolean

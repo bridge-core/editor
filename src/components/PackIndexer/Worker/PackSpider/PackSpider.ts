@@ -1,5 +1,5 @@
-import { FileType } from '@/components/Data/FileType'
-import { walkObject } from '@/utils/walkObject'
+import { FileType } from '/@/components/Data/FileType'
+import { walkObject } from '/@/utils/walkObject'
 import { LightningStore } from '../LightningCache/LightningStore'
 import { PackIndexerService } from '../Main'
 

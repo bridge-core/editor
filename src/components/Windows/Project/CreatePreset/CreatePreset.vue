@@ -61,10 +61,10 @@
 </template>
 
 <script>
-import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
+import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 
-import { TranslationMixin } from '@/utils/locales'
-import { PackIndexerMixin } from '@/components/Mixins/Tasks/PackIndexer'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'CreatePresetWindow',

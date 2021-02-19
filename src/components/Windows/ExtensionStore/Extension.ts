@@ -1,7 +1,7 @@
-import { App } from '@/App'
-import { Extension } from '@/components/Extensions/Extension'
-import { IExtensionManifest } from '@/components/Extensions/ExtensionLoader'
-import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoice'
+import { App } from '/@/App'
+import { Extension } from '/@/components/Extensions/Extension'
+import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
+import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/InformedChoice'
 import { ExtensionStoreWindow } from './ExtensionStore'
 import { ExtensionTag } from './ExtensionTag'
 

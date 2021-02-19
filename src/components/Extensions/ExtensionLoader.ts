@@ -1,7 +1,6 @@
-import { App } from '@/App'
-import { Signal } from '@/components/Common/Event/Signal'
+import { Signal } from '/@/components/Common/Event/Signal'
 import JSZip from 'jszip'
-import { dirname } from 'path'
+import { dirname } from '/@/utils/path'
 import { FileSystem } from '../FileSystem/FileSystem'
 import { createErrorNotification } from '../Notifications/Errors'
 import { Extension } from './Extension'
@@ -34,7 +33,7 @@ export class ExtensionLoader extends Signal<void> {
 	}
 
 	get loadedInstalledExtensions() {
-		return new Promise<void>(resolve =>
+		return new Promise<void>((resolve) =>
 			this._loadedInstalledExtensions.once(resolve)
 		)
 	}
@@ -111,7 +110,7 @@ export class ExtensionLoader extends Signal<void> {
 		const promises: Promise<unknown>[] = []
 		zip.forEach((relativePath, zipEntry) => {
 			promises.push(
-				new Promise<void>(async resolve => {
+				new Promise<void>(async (resolve) => {
 					if (zipEntry.dir) return resolve()
 
 					if (dirname(relativePath) !== '.')
@@ -146,7 +145,7 @@ export class ExtensionLoader extends Signal<void> {
 		const manifestFile = await manifestHandle.getFile()
 		const manifest: Partial<IExtensionManifest> = await manifestFile
 			.text()
-			.then(str => JSON.parse(str))
+			.then((str) => JSON.parse(str))
 
 		if (manifest.id) {
 			const extension = new Extension(
@@ -163,8 +162,9 @@ export class ExtensionLoader extends Signal<void> {
 		} else {
 			createErrorNotification(
 				new Error(
-					`Failed to load extension "${manifest.name ??
-						baseDirectory.name}": Invalid extension ID`
+					`Failed to load extension "${
+						manifest.name ?? baseDirectory.name
+					}": Invalid extension ID`
 				)
 			)
 		}

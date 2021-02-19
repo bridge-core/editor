@@ -1,12 +1,12 @@
-import { extname, basename, relative } from 'path'
-import { createErrorNotification } from '@/components/Notifications/Errors'
+import { extname, basename, relative } from '/@/utils/path'
+import { createErrorNotification } from '/@/components/Notifications/Errors'
 import { TUIStore } from './store'
-import { IDisposable } from '@/types/disposable'
+import { IDisposable } from '/@/types/disposable'
 import { executeScript } from '../Scripts/loadScripts'
 import { createStyleSheet } from '../Styles/createStyle'
 import { parseComponent } from 'vue-template-compiler'
 import Vue from 'vue'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
 // @ts-ignore
 import * as VuetifyComponents from 'vuetify/lib/components'
 

@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import MenuList from './MenuList'
-import MenuButton from './Button'
+import MenuList from './MenuList.vue'
+import MenuButton from './Button.vue'
 
 export default {
 	name: 'MenuActivator',

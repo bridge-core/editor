@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { IModuleConfig } from '../types'
 
 export const FetchDefinitionModule = ({}: IModuleConfig) => ({

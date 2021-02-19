@@ -1,7 +1,7 @@
-import { App } from '@/App'
-import { FileType } from '@/components/Data/FileType'
-import { PackType } from '@/components/Data/PackType'
-import { translate } from '@/utils/locales'
+import { App } from '/@/App'
+import { FileType } from '/@/components/Data/FileType'
+import { PackType } from '/@/components/Data/PackType'
+import { translate } from '/@/utils/locales'
 import { BaseWindow } from '../../BaseWindow'
 import {
 	ISidebarItemConfig,
@@ -65,7 +65,8 @@ export class PackExplorerWindow extends BaseWindow {
 				fileType && fileType.icon
 					? fileType.icon
 					: `mdi-${kind === 'directory' ? 'folder' : 'file'}-outline`
-			const text = displayName ?? translate(`fileType.${name}`)
+			const text =
+				displayName ?? app.locales.translate(`fileType.${name}`)
 			const color = packType ? packType.color : undefined
 
 			items.push(

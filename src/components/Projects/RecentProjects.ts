@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { PersistentQueue } from '../Common/PersistentQueue'
 import { IProjectData } from './Project/Project'
 

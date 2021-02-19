@@ -1,4 +1,4 @@
-import { BaseWindow } from '@/components/Windows/BaseWindow'
+import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import LoadingWindowComponent from './LoadingWindow.vue'
 
 export class LoadingWindow extends BaseWindow {

@@ -1,1 +1,1 @@
-export const baseUrl = process.env.NODE_ENV === 'production' ? '/editor/' : ''
+export const baseUrl = import.meta.env.BASE_URL

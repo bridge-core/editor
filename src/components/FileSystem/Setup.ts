@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { get, set } from 'idb-keyval'
 import { createInformationWindow } from '../Windows/Common/CommonDefinitions'
 import { TWindow } from '../Windows/create'

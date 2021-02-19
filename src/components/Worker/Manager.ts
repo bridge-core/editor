@@ -1,5 +1,5 @@
-import { App } from '@/App'
-import { Signal } from '@/components/Common/Event/Signal'
+import { App } from '/@/App'
+import { Signal } from '/@/components/Common/Event/Signal'
 import { Remote, wrap } from 'comlink'
 import { ITaskDetails, Task } from '../TaskManager/Task'
 
@@ -18,11 +18,11 @@ export abstract class WorkerManager<T, O, A, R> extends Signal<R> {
 	async activate(arg: A) {
 		if (!this.worker) {
 			this.createWorker()
+
 			if (!this.worker)
 				throw new Error(
 					`Method WorkerManager.createWorker() doesn't create worker`
 				)
-
 			this.workerClass = wrap<{ new (): T }>(this.worker)
 		}
 
@@ -30,7 +30,7 @@ export abstract class WorkerManager<T, O, A, R> extends Signal<R> {
 
 		this.task = app.taskManager.create(this.taskOptions)
 		this.resetSignal()
-		await this.start(arg).then(returnData => this.dispatch(returnData))
+		await this.start(arg).then((returnData) => this.dispatch(returnData))
 	}
 
 	deactivate() {

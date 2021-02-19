@@ -1,5 +1,5 @@
-import { Project } from '@/components/Projects/Project/Project'
-import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoice'
+import { Project } from '/@/components/Projects/Project/Project'
+import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/InformedChoice'
 import { Compiler } from './Compiler'
 import JSON5 from 'json5'
 

@@ -1,7 +1,7 @@
 import { IModuleConfig } from '../types'
-import { INotificationConfig } from '@/components/Notifications/Notification'
-import { createNotification } from '@/components/Notifications/create'
-import { createErrorNotification } from '@/components/Notifications/Errors'
+import { INotificationConfig } from '/@/components/Notifications/Notification'
+import { createNotification } from '/@/components/Notifications/create'
+import { createErrorNotification } from '/@/components/Notifications/Errors'
 
 export const NotificationModule = ({ disposables }: IModuleConfig) => ({
 	create(config: INotificationConfig) {

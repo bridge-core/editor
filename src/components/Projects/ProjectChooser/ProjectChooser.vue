@@ -81,15 +81,15 @@
 </template>
 
 <script>
-import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
-import ToolbarButton from '@/components/Windows/Layout/Toolbar/Button.vue'
-import PackTypeViewer from '@/components/Data/PackTypeViewer.vue'
+import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
+import ToolbarButton from '/@/components/Windows/Layout/Toolbar/Button.vue'
+import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 
-import { App } from '@/App'
-import { TranslationMixin } from '@/utils/locales'
-import { createConfirmWindow } from '@/components/Windows/Common/CommonDefinitions'
-import { PackIndexerMixin } from '@/components/Mixins/Tasks/PackIndexer'
-import { CompilerMixin } from '@/components/Mixins/Tasks/Compiler'
+import { App } from '/@/App'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { createConfirmWindow } from '/@/components/Windows/Common/CommonDefinitions'
+import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
+import { CompilerMixin } from '/@/components/Mixins/Tasks/Compiler'
 
 export default {
 	name: 'ProjectChooserWindow',

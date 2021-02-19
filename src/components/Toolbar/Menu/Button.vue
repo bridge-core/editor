@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { TranslationMixin } from '@/utils/locales'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
 	name: 'MenuButton',

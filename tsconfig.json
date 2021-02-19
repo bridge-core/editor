@@ -12,9 +12,9 @@
 		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
 		"baseUrl": ".",
-		"types": ["webpack-env", "@types/wicg-file-system-access", "node"],
+		"types": ["@types/wicg-file-system-access", "node", "vite/client"],
 		"paths": {
-			"@/*": ["src/*"]
+			"/@/*": ["src/*"]
 		},
 		"lib": ["esnext", "dom", "dom.iterable", "scripthost", "WebWorker"]
 	},

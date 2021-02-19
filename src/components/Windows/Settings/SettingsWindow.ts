@@ -2,11 +2,10 @@ import { SidebarItem } from '../Layout/Sidebar'
 import { Control } from './Controls/Control'
 import SettingsWindowComponent from './SettingsWindow.vue'
 import { setupSettings } from './setupSettings'
-import { App } from '@/App'
+import { App } from '/@/App'
 import { SettingsSidebar } from './SettingsSidebar'
 import { setSettingsState, settingsState } from './SettingsState'
 import { BaseWindow } from '../BaseWindow'
-import { translate } from '@/utils/locales'
 
 export class SettingsWindow extends BaseWindow {
 	protected sidebar = new SettingsSidebar([])
@@ -17,12 +16,30 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async setup() {
-		this.addCategory('general', translate('windows.settings.general.name'), 'mdi-circle-outline')
-		this.addCategory('appearance', translate('windows.settings.appearance.name'), 'mdi-palette-outline')
+		const locales = await App.getApp().then(app => app.locales)
+
+		this.addCategory(
+			'general',
+			locales.translate('windows.settings.general.name'),
+			'mdi-circle-outline'
+		)
+		this.addCategory(
+			'appearance',
+			locales.translate('windows.settings.appearance.name'),
+			'mdi-palette-outline'
+		)
 		// this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
-		this.addCategory('actions', translate('windows.settings.actions.name'), 'mdi-keyboard-outline')
+		this.addCategory(
+			'actions',
+			locales.translate('windows.settings.actions.name'),
+			'mdi-keyboard-outline'
+		)
 		// this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
-		this.addCategory('developers', translate('windows.settings.developer.name'), 'mdi-wrench-outline')
+		this.addCategory(
+			'developers',
+			locales.translate('windows.settings.developer.name'),
+			'mdi-wrench-outline'
+		)
 
 		await setupSettings(this)
 		this.sidebar.setDefaultSelected()

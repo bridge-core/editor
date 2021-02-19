@@ -1,5 +1,5 @@
-import { isMatch } from 'micromatch'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
+import isMatch from 'minimatch'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { v4 as uuid } from 'uuid'
 import { Signal } from '../Common/Event/Signal'
 

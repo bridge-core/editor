@@ -2,7 +2,7 @@ import { Component as VueComponent } from 'vue'
 import Vue from 'vue'
 import { v4 as uuid } from 'uuid'
 import { WINDOWS } from './create'
-import { Signal } from '@/components/Common/Event/Signal'
+import { Signal } from '/@/components/Common/Event/Signal'
 
 export abstract class BaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()

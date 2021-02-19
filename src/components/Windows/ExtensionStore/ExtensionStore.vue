@@ -42,9 +42,9 @@
 </template>
 
 <script>
-import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
+import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import ExtensionCard from './ExtensionCard.vue'
-import { TranslationMixin } from '@/utils/locales'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
 	name: 'CreatePresetWindow',

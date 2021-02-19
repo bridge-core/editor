@@ -1,6 +1,6 @@
-import { App } from '@/App'
-import { PersistentQueue } from '@/components/Common/PersistentQueue'
-import { TabSystem } from '@/components/TabSystem/TabSystem'
+import { App } from '/@/App'
+import { PersistentQueue } from '/@/components/Common/PersistentQueue'
+import { TabSystem } from '/@/components/TabSystem/TabSystem'
 
 export class OpenedFiles extends PersistentQueue<string> {
 	constructor(tabSystem: TabSystem, app: App, savePath: string) {

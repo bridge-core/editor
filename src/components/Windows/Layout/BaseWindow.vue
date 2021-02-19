@@ -35,12 +35,15 @@
 				clipped
 				stateless
 				color="expandedSidebar"
-				style="visibility: visible; transform: translateX(0);"
+				style="visibility: visible; transform: translateX(0)"
 			>
 				<MacWindowControls
 					v-if="platform === 'darwin'"
 					class="pl-3 pt-1"
-					style="width: calc(100% - 1px); background-color: var(--v-expandedSidebar-base);"
+					style="
+						width: calc(100% - 1px);
+						background-color: var(--v-expandedSidebar-base);
+					"
 					:hasMaximizeButton="hasMaximizeButton"
 					:hasCloseButton="hasCloseButton"
 					@toggleFullscreen="$emit('toggleFullscreen')"
@@ -52,7 +55,7 @@
 			</v-navigation-drawer>
 
 			<v-card-text
-				style="padding-top: 12px; overflow-y: auto;"
+				style="padding-top: 12px; overflow-y: auto"
 				:style="{
 					height: heightUnset
 						? undefined
@@ -83,12 +86,12 @@
 </template>
 
 <script>
-import { platform } from '@/utils/os'
-import { TranslationMixin } from '@/utils/locales'
+import { platform } from '/@/utils/os.ts'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import WindowsToolbar from './Toolbar/Windows.vue'
 import MacToolbar from './Toolbar/Mac.vue'
 import MacWindowControls from './Toolbar/Mac/WindowControls.vue'
-import debounce from 'lodash.debounce'
+import { debounce } from 'lodash-es'
 
 export default {
 	name: 'BaseWindow',
@@ -148,7 +151,7 @@ export default {
 			platform: platform(),
 			globalWindowWidth: window.innerWidth,
 			globalWindowHeight: window.innerHeight,
-			updateWindowSize: debounce(function() {
+			updateWindowSize: debounce(function () {
 				this.globalWindowWidth = window.innerWidth
 				this.globalWindowHeight = window.innerHeight
 			}, 200).bind(this),

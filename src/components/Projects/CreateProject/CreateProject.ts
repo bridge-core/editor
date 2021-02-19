@@ -1,13 +1,13 @@
-import { App } from '@/App'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
-import { BaseWindow } from '@/components/Windows/BaseWindow'
+import { App } from '/@/App'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import CreateProjectComponent from './CreateProject.vue'
 import { CreatePack, TPackType } from './Packs/Pack'
 import { CreateBP } from './Packs/BP'
 import { CreateRP } from './Packs/RP'
 import { CreateSP } from './Packs/SP'
 import { CreateBridge } from './Packs/Bridge'
-import { IPackType, PackType } from '@/components/Data/PackType'
+import { IPackType, PackType } from '/@/components/Data/PackType'
 import { CreateGitIgnore } from './Files/GitIgnore'
 
 export interface ICreateProjectOptions {

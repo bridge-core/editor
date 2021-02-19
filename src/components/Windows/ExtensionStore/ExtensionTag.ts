@@ -1,4 +1,4 @@
-import { SidebarItem } from '@/components/Windows/Layout/Sidebar'
+import { SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import { ExtensionStoreWindow } from './ExtensionStore'
 
 export class ExtensionTag {

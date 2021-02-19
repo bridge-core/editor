@@ -29,7 +29,7 @@
 <script>
 import { Discord } from './definition'
 import BaseWindow from '../Layout/BaseWindow.vue'
-import { TranslationMixin } from '@/utils/locales'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
 	name: 'Discord',

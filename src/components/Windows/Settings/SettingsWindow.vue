@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
-import { TranslationMixin } from '@/utils/locales'
+import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
 	name: 'PackExplorerWindow',

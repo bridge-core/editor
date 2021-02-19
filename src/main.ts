@@ -1,13 +1,14 @@
 import Vue from 'vue'
-import { default as AppComponent } from './App.vue'
-//@ts-expect-error
-import Vuetify from 'vuetify/lib'
-import en from '@/locales/en'
-import de from '@/locales/de'
-import nl from '@/locales/nl'
-import ko from '@/locales/ko'
+import AppComponent from './App.vue'
+
+import Vuetify from 'vuetify'
+import en from '/@/locales/en'
+import de from '/@/locales/de'
+import nl from '/@/locales/nl'
+import ko from '/@/locales/ko'
 import '@mdi/font/css/materialdesignicons.min.css'
 import { App } from './App'
+import '/@/utils/locales'
 
 Vue.config.productionTip = false
 
@@ -51,10 +52,35 @@ export const vuetify = new Vuetify({
 	},
 })
 
-export const vue = new Vue({
-	// @ts-expect-error
+const vue = new Vue({
 	vuetify,
 	render: h => h(AppComponent),
-}).$mount('#app')
+})
+vue.$mount('#app')
+
+import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
+import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
+import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
+import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
+import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+
+// @ts-ignore
+self.MonacoEnvironment = {
+	getWorker(_: unknown, label: string) {
+		if (label === 'json') {
+			return new jsonWorker()
+		}
+		if (label === 'css' || label === 'scss' || label === 'less') {
+			return new cssWorker()
+		}
+		if (label === 'html' || label === 'handlebars' || label === 'razor') {
+			return new htmlWorker()
+		}
+		if (label === 'typescript' || label === 'javascript') {
+			return new tsWorker()
+		}
+		return new editorWorker()
+	},
+}
 
 App.main(vue)

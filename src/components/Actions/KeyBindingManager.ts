@@ -1,4 +1,4 @@
-import { platform } from '@/utils/os'
+import { platform } from '/@/utils/os'
 import Vue from 'vue'
 import { IKeyBindingConfig, KeyBinding } from './KeyBinding'
 import { toStrKeyCode } from './Utils'

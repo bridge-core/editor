@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import BaseWindow from '@/components/Windows/Layout/BaseWindow'
+import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 
 export default {
 	name: 'ChangelogComponent',

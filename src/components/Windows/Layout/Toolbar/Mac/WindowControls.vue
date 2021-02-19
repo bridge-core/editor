@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import MacButton from './Button'
+import MacButton from './Button.vue'
 
 export default {
 	components: {

@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 
 export function loadManifest(app: App, projectName: string, packPath: string) {
 	return app.fileSystem.readJSON(

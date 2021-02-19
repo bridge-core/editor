@@ -1,4 +1,4 @@
-import { platform } from '@/utils/os'
+import { platform } from '/@/utils/os'
 import { IKeyBindingConfig } from './Keybinding'
 
 export function fromStrKeyCode(keyCode: string, forceWindowsCtrl = false) {

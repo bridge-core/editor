@@ -1,5 +1,5 @@
-import { App } from '@/App'
-import { IPackType, PackType } from '@/components/Data/PackType'
+import { App } from '/@/App'
+import { IPackType, PackType } from '/@/components/Data/PackType'
 import { loadManifest } from './loadManifest'
 
 export interface IPackData extends IPackType {

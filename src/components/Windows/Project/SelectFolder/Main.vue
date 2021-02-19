@@ -28,9 +28,9 @@
 </template>
 
 <script>
-import { TranslationMixin } from '@/utils/locales'
-import BaseWindow from '../../Layout/BaseWindow'
-import { App } from '@/App'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import BaseWindow from '../../Layout/BaseWindow.vue'
+import { App } from '/@/App.ts'
 
 export default {
 	name: 'SelectProjectFolderWindow',

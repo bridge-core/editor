@@ -1,5 +1,5 @@
-import { App } from '@/App'
-import { BaseWindow } from '@/components/Windows/BaseWindow'
+import { App } from '/@/App'
+import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import FilePickerComponent from './FilePicker.vue'
 
 export class FilePickerWindow extends BaseWindow {

@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 
 import { register } from 'register-service-worker'
-import { createNotification } from '@/components/Notifications/create'
-import { App } from '@/App'
+import { createNotification } from '/@/components/Notifications/create'
+import { App } from '/@/App'
 
-if (process.env.NODE_ENV === 'production') {
-	register(`${process.env.BASE_URL}service-worker.js`, {
+if (import.meta.env.PROD) {
+	register(`${import.meta.env.BASE_URL}service-worker.js`, {
 		ready() {
 			console.log(
 				'App is being served from cache by a service worker.\n' +

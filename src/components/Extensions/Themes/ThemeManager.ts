@@ -1,11 +1,11 @@
-import { EventDispatcher } from '@/components/Common/Event/EventDispatcher'
-import { Signal } from '@/components/Common/Event/Signal'
-import { App } from '@/App'
-import { settingsState } from '@/components/Windows/Settings/SettingsState'
-import { iterateDir } from '@/utils/iterateDir'
-import { IDisposable } from '@/types/disposable'
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { Signal } from '/@/components/Common/Event/Signal'
+import { App } from '/@/App'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { iterateDir } from '/@/utils/iterateDir'
+import { IDisposable } from '/@/types/disposable'
 import json5 from 'json5'
-import { deepmerge } from '@/utils/deepmerge'
+import { deepmerge } from '/@/utils/deepmerge'
 import { bridgeDark, bridgeLight } from './Default'
 import { Theme } from './Theme'
 
@@ -179,6 +179,6 @@ export interface IThemeDefinition {
 	highlighter?: Record<
 		string,
 		{ color?: string; textDecoration?: string; isItalic?: boolean }
-		>
+	>
 	monaco?: Record<string, string>
 }

@@ -3,7 +3,7 @@
 		<img
 			style="height: 16px; padding-right: 8px;"
 			alt="bridge. Logo"
-			src="@/_assets/logo.png"
+			src="/@/_assets/logo.png"
 		/>
 		<v-divider vertical />
 
@@ -38,11 +38,11 @@
 </template>
 
 <script>
-import WindowAction from './WindowAction'
-import MenuActivator from './Menu/Activator'
-import MenuButton from './Menu/Button'
-import { App } from '@/App'
-import { version as appVersion } from '@/appVersion.json'
+import WindowAction from './WindowAction.vue'
+import MenuActivator from './Menu/Activator.vue'
+import MenuButton from './Menu/Button.vue'
+import { App } from '/@/App.ts'
+import { version as appVersion } from '/@/appVersion.json'
 
 export default {
 	name: 'Toolbar',

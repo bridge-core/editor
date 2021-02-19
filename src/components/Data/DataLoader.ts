@@ -1,9 +1,9 @@
-import { App } from '@/App'
-import { Signal } from '@/components/Common/Event/Signal'
-import { baseUrl } from '@/utils/baseUrl'
+import { App } from '/@/App'
+import { Signal } from '/@/components/Common/Event/Signal'
+import { baseUrl } from '/@/utils/baseUrl'
 import { compare } from 'compare-versions'
 import JSZip from 'jszip'
-import { dirname } from 'path'
+import { dirname } from '/@/utils/path'
 import { FileSystem } from '../FileSystem/FileSystem'
 
 export class DataLoader extends Signal<void> {
@@ -28,7 +28,7 @@ export class DataLoader extends Signal<void> {
 		try {
 			remoteVersion = await fetch(
 				baseUrl + 'data/version.txt'
-			).then(response => response.text())
+			).then((response) => response.text())
 		} catch (err) {
 			return false
 		}
@@ -37,7 +37,7 @@ export class DataLoader extends Signal<void> {
 		try {
 			localVersion = await fileSystem
 				.readFile('data/packages/version.txt')
-				.then(data => data.text())
+				.then((data) => data.text())
 		} catch {
 			return true
 		}
@@ -51,14 +51,14 @@ export class DataLoader extends Signal<void> {
 		} catch {}
 
 		const zip = await fetch(baseUrl + 'data/package.zip')
-			.then(response => response.arrayBuffer())
-			.then(data => JSZip.loadAsync(data))
+			.then((response) => response.arrayBuffer())
+			.then((data) => JSZip.loadAsync(data))
 
 		const promises: Promise<void>[] = []
 
 		zip.forEach((relativePath, zipEntry) => {
 			promises.push(
-				new Promise<void>(async resolve => {
+				new Promise<void>(async (resolve) => {
 					if (zipEntry.dir) return resolve()
 
 					await fileSystem.mkdir(

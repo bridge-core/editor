@@ -2,14 +2,14 @@ import {
 	Sidebar,
 	SidebarCategory,
 	SidebarItem,
-} from '@/components/Windows/Layout/Sidebar'
+} from '/@/components/Windows/Layout/Sidebar'
 import CreatePresetComponent from './CreatePreset.vue'
 import { BaseWindow } from '../../BaseWindow'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
-import { App } from '@/App'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { App } from '/@/App'
 import { v4 as uuid } from 'uuid'
-import { dirname, extname } from 'path'
-import { deepmerge } from '@/utils/deepmerge'
+import { dirname, extname } from '/@/utils/path'
+import { deepmerge } from '/@/utils/deepmerge'
 import { compare, CompareOperator } from 'compare-versions'
 
 export interface IPresetManifest {

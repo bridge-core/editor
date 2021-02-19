@@ -1,8 +1,8 @@
 import * as Comlink from 'comlink'
-import { TaskService } from '@/components/TaskManager/WorkerTask'
+import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { hooks, loadPlugins, TCompilerHook, TCompilerPlugin } from './Plugins'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
-import { FileType } from '@/components/Data/FileType'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { FileType } from '/@/components/Data/FileType'
 import { CompilerFile } from './File'
 
 export interface ICompilerOptions {

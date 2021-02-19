@@ -1,4 +1,4 @@
-import { loadAsDataURL } from '@/utils/loadAsDataUrl'
+import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 
 export async function loadIcon(projectPath: string) {
 	try {

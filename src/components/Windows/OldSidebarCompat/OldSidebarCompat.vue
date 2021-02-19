@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import BaseWindow from '@/components/Windows/Layout/BaseWindow.vue'
+import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 // console.log(BaseWindow)
 export default {
 	name: 'OldSidebarCompatWindow',

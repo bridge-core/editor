@@ -1,8 +1,8 @@
 import { SidebarState } from './state'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
-import type { IDisposable } from '@/types/disposable'
-import { createOldSidebarCompatWindow } from '@/components/Windows/OldSidebarCompat/OldSidebarCompat'
+import type { IDisposable } from '/@/types/disposable'
+import { createOldSidebarCompatWindow } from '/@/components/Windows/OldSidebarCompat/OldSidebarCompat'
 
 export interface ISidebar {
 	id?: string

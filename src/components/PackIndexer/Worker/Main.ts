@@ -1,6 +1,6 @@
-import { FileType } from '@/components/Data/FileType'
+import { FileType } from '/@/components/Data/FileType'
 import * as Comlink from 'comlink'
-import { TaskService } from '@/components/TaskManager/WorkerTask'
+import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
 import {
 	fileStore,
@@ -9,8 +9,8 @@ import {
 	PackSpider,
 } from './PackSpider/PackSpider'
 import { LightningCache } from './LightningCache/LightningCache'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
-export { ILightningInstruction } from './LightningCache/LightningCache'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+export type { ILightningInstruction } from './LightningCache/LightningCache'
 
 export interface IPackIndexerOptions {
 	projectDirectory: FileSystemDirectoryHandle
@@ -69,7 +69,7 @@ export class PackIndexerService extends TaskService<string[]> {
 					await this.fileSystem.readdir(path.join('/'), {
 						withFileTypes: true,
 					})
-				).map(dirent => ({
+				).map((dirent) => ({
 					kind: dirent.kind,
 					name: dirent.name,
 					path: path.concat([dirent.name]),
@@ -143,7 +143,7 @@ async function loadPack(pack: string, fileSystem: FileSystem) {
 		return []
 	}
 
-	return projects.map(dirent => {
+	return projects.map((dirent) => {
 		const fileType = FileType.getId(`${pack}/${dirent.name}${'/test.json'}`)
 		return {
 			kind: dirent.kind,

@@ -1,8 +1,7 @@
-import { EventSystem } from '@/components/Common/Event/EventSystem'
-import { FileType } from '@/components/Data/FileType'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
-import { file } from 'jszip'
-import { dirname } from 'path'
+import { EventSystem } from '/@/components/Common/Event/EventSystem'
+import { FileType } from '/@/components/Data/FileType'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { dirname } from '/@/utils/path'
 import { CompilerService, IBuildConfigPlugins } from './Main'
 import { hooks, TCompilerHook, TCompilerPlugin } from './Plugins'
 

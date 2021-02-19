@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { createSidebar } from './create'
 
 export function setupSidebar() {

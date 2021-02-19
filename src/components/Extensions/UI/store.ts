@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import { basename, extname } from 'path'
+import { basename, extname } from '/@/utils/path'
 
 export type TUIStore = ReturnType<typeof createUIStore>
 export function createUIStore() {

@@ -1,4 +1,3 @@
-import { App } from '@/App'
 import { IModuleConfig } from '../types'
 
 export const UtilsModule = ({}: IModuleConfig) => ({

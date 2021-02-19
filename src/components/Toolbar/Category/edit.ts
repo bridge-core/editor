@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 
 export function setupEditCategory(app: App) {

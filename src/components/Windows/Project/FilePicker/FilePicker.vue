@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import BaseWindow from '@/components/Windows/Layout/BaseWindow.vue'
-import { TranslationMixin } from '@/utils/locales'
+import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
 	name: 'OpenFileWindow',

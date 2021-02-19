@@ -1,14 +1,14 @@
-import { IDisposable } from '@/types/disposable'
+import { IDisposable } from '/@/types/disposable'
 import { FileSystem } from '../FileSystem/FileSystem'
-import { createErrorNotification } from '@/components/Notifications/Errors'
+import { createErrorNotification } from '/@/components/Notifications/Errors'
 import { ExtensionLoader, IExtensionManifest } from './ExtensionLoader'
 import { loadUIComponents } from './UI/load'
 import { createUIStore } from './UI/store'
-import { App } from '@/App'
+import { App } from '/@/App'
 import { loadScripts } from './Scripts/loadScripts'
 import { ExtensionViewer } from '../Windows/ExtensionStore/Extension'
 import { ExtensionStoreWindow } from '../Windows/ExtensionStore/ExtensionStore'
-import { iterateDir } from '@/utils/iterateDir'
+import { iterateDir } from '/@/utils/iterateDir'
 
 export class Extension {
 	protected _isActive = false

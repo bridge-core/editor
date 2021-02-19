@@ -1,10 +1,10 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { get, set } from 'idb-keyval'
 import Vue from 'vue'
-import { Signal } from '@/components/Common/Event/Signal'
+import { Signal } from '/@/components/Common/Event/Signal'
 import { Project } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
-import { Title } from '@/components/Projects/Title'
+import { Title } from '/@/components/Projects/Title'
 
 export class ProjectManager extends Signal<void> {
 	public readonly recentProjects!: RecentProjects

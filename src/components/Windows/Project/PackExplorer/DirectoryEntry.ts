@@ -1,10 +1,10 @@
-import { IFileSystem } from '@/components/FileSystem/Common'
-import { platform } from '@/utils/os'
+import { IFileSystem } from '/@/components/FileSystem/Common'
+import { platform } from '/@/utils/os'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
-import { App } from '@/App'
-import { PackType } from '@/components/Data/PackType'
-import { FileType } from '@/components/Data/FileType'
+import { App } from '/@/App'
+import { PackType } from '/@/components/Data/PackType'
+import { FileType } from '/@/components/Data/FileType'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []

@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { TabSystem } from '../../TabSystem/TabSystem'
 import Vue from 'vue'
 import { IPackType, PackType } from '../../Data/PackType'
@@ -6,11 +6,11 @@ import { TProjectConfig } from '../ProjectConfig'
 import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
 import { loadPacks } from './loadPacks'
-import { PackIndexer } from '@/components/PackIndexer/PackIndexer'
+import { PackIndexer } from '/@/components/PackIndexer/PackIndexer'
 import { ProjectManager } from '../ProjectManager'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
-import { CompilerManager } from '@/components/Compiler/CompilerManager'
-import { JsonDefaults } from '@/components/Data/JSONDefaults'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { CompilerManager } from '/@/components/Compiler/CompilerManager'
+import { JsonDefaults } from '/@/components/Data/JSONDefaults'
 
 export interface IProjectData extends TProjectConfig {
 	path: string

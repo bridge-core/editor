@@ -1,12 +1,12 @@
-import { App } from '@/App'
-import { FileType, IMonacoSchemaArrayEntry } from '@/components/Data/FileType'
+import { App } from '/@/App'
+import { FileType, IMonacoSchemaArrayEntry } from '/@/components/Data/FileType'
 import json5 from 'json5'
 import * as monaco from 'monaco-editor'
 import { runAsync } from '../Extensions/Scripts/run'
 import { v4 as uuid } from 'uuid'
 import { getFilteredFormatVersions } from './FormatVersions'
 import { Project } from '../Projects/Project/Project'
-import { IDisposable } from '@/types/disposable'
+import { IDisposable } from '/@/types/disposable'
 
 const globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false

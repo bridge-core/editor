@@ -1,7 +1,7 @@
-import { isMatch } from 'micromatch'
-import { ILightningInstruction } from '@/components/PackIndexer/Worker/Main'
-import { IPackSpiderFile } from '@/components/PackIndexer/Worker/PackSpider/PackSpider'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
+import isMatch from 'minimatch'
+import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
+import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
+import type { FileSystem } from '/@/components/FileSystem/FileSystem'
 
 /**
  * Describes the structure of a file definition
@@ -58,7 +58,9 @@ export namespace FileType {
 					if (filePath.startsWith(fileType.scope)) return fileType
 				} else {
 					if (
-						fileType.scope.some(scope => filePath.startsWith(scope))
+						fileType.scope.some((scope) =>
+							filePath.startsWith(scope)
+						)
 					)
 						return fileType
 				}
@@ -131,12 +133,12 @@ export namespace FileType {
 					if (!packSpider) return
 					return fileSystem
 						.readJSON(`data/packages/packSpider/${packSpider}`)
-						.then(json => ({
+						.then((json) => ({
 							id,
 							packSpider: json,
 						}))
 				})
-				.filter(data => data !== undefined)
+				.filter((data) => data !== undefined)
 		)
 	}
 }

@@ -4,10 +4,10 @@ import {
 	createInputWindow,
 	createDropdownWindow,
 	createConfirmWindow,
-} from '@/components/Windows/Common/CommonDefinitions'
-import { createWindow } from '@/components/Windows/create'
+} from '/@/components/Windows/Common/CommonDefinitions'
+import { createWindow } from '/@/components/Windows/create'
 import { Component as VueComponent } from 'vue'
-import { BaseWindow } from '@/components/Windows/BaseWindow'
+import { BaseWindow } from '/@/components/Windows/BaseWindow'
 
 export const WindowModule = ({}: IModuleConfig) => ({
 	BaseWindow,

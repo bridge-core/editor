@@ -1,57 +1,47 @@
-import { vue } from '@/main'
 import Vue from 'vue'
 
-export function translate(translationKey?: string) {
-	const orginalKey = translationKey
-	if (!translationKey?.startsWith('$vuetify.'))
-		translationKey = `$vuetify.${translationKey}`
+export class Locales {
+	constructor(protected vuetify: any) {}
 
-	const translated = (vue as any).$vuetify.lang.t(translationKey)
-	if (translated === translationKey) return orginalKey
-	return translated
-}
+	translate(translationKey?: string) {
+		const orginalKey = translationKey
+		if (!translationKey?.startsWith('$vuetify.'))
+			translationKey = `$vuetify.${translationKey}`
 
-export const TranslationMixin = {
-	methods: {
-		t(translationKey?: string) {
-			const orginalKey = translationKey
-			if (!translationKey?.startsWith('$vuetify.'))
-				translationKey = `$vuetify.${translationKey}`
-
-			const translated = (this as any).$vuetify.lang.t(translationKey)
-			if (translated === translationKey) return orginalKey
-			return translated
-		},
-	},
-}
-
-export function addLanguage(key: string, obj: unknown, force = false) {
-	const lang = (vue as any).$vuetify.lang
-	if (key in lang.locales && !force)
-		throw new Error(`Language key "${key}" already exists!`)
-	Vue.set(lang.locales, key, obj)
-
-	return {
-		dispose: () => {
-			if (lang.current === key) lang.current = lang.defaultLocale
-			Vue.delete(lang.locales, key)
-		},
+		const translated = this.vuetify.lang.t(translationKey)
+		if (translated === translationKey) return orginalKey
+		return translated
 	}
-}
 
-export function selectLanguage(key: string) {
-	const lang = (vue as any).$vuetify.lang
-	if (!(key in lang.locales)) throw new Error(`Undefined language: "${key}"`)
-	lang.current = key
-}
+	addLanguage(key: string, obj: unknown, force = false) {
+		const lang = this.vuetify.lang
+		if (key in lang.locales && !force)
+			throw new Error(`Language key "${key}" already exists!`)
+		Vue.set(lang.locales, key, obj)
 
-export function getLanguages() {
-	const locales = (vue as any).$vuetify.lang.locales
-	return Object.entries(locales)
-		.filter(([_, locale]) => (locale as any).languageName !== undefined)
-		.map(([key, locale]) => [key, (locale as any).languageName])
-}
+		return {
+			dispose: () => {
+				if (lang.current === key) lang.current = lang.defaultLocale
+				Vue.delete(lang.locales, key)
+			},
+		}
+	}
 
-export function getCurrentLanguage() {
-	return (vue as any).$vuetify.lang.current
+	selectLanguage(key: string) {
+		const lang = this.vuetify.lang
+		if (!(key in lang.locales))
+			throw new Error(`Undefined language: "${key}"`)
+		lang.current = key
+	}
+
+	getLanguages() {
+		const locales = this.vuetify.lang.locales
+		return Object.entries(locales)
+			.filter(([_, locale]) => (locale as any).languageName !== undefined)
+			.map(([key, locale]) => [key, (locale as any).languageName])
+	}
+
+	getCurrentLanguage() {
+		return this.vuetify.lang.current
+	}
 }
