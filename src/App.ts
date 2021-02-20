@@ -78,7 +78,9 @@ export class App {
 		return this._instance
 	}
 	static getApp() {
-		return new Promise<App>(resolve => App.ready.once(app => resolve(app)))
+		return new Promise<App>((resolve) =>
+			App.ready.once((app) => resolve(app))
+		)
 	}
 
 	constructor(appComponent: Vue) {
@@ -91,7 +93,7 @@ export class App {
 			'Are you sure that you want to close bridge.? Unsaved progress will be lost.'
 		// Only prompt in prod mode so we can use HMR in dev mode
 		if (import.meta.env.PROD) {
-			window.addEventListener('beforeunload', event => {
+			window.addEventListener('beforeunload', (event) => {
 				if (
 					this.tabSystem?.hasUnsavedTabs ||
 					this.taskManager.hasRunningTasks
@@ -110,37 +112,33 @@ export class App {
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
 	}
 
-	switchProject(projectName: string) {
-		return new Promise<void>(async () => {
-			this.extensionLoader.deactivateAllLocal()
-			this.extensionLoader
-				.loadExtensions(
-					await this.fileSystem.getDirectoryHandle(
-						`projects/${projectName}/bridge/plugins`,
-						{ create: true }
-					)
+	async switchProject(projectName: string) {
+		this.extensionLoader.deactivateAllLocal()
+		this.extensionLoader
+			.loadExtensions(
+				await this.fileSystem.getDirectoryHandle(
+					`projects/${projectName}/bridge/plugins`,
+					{ create: true }
 				)
-				.then(() => {
-					// this.compiler.start(projectName, 'dev', 'default.json')
-					this.themeManager.updateTheme()
+			)
+			.then(() => {
+				// this.compiler.start(projectName, 'dev', 'default.json')
+				this.themeManager.updateTheme()
 
-					// Set language
-					if (typeof settingsState?.general?.locale === 'string')
-						this.locales.selectLanguage(
-							settingsState?.general?.locale
-						)
-					else {
-						// Set language based off of browser language
-						for (const [lang] of this.locales.getLanguages()) {
-							if (navigator.language.includes(lang)) {
-								this.locales.selectLanguage(lang)
-							}
+				// Set language
+				if (typeof settingsState?.general?.locale === 'string')
+					this.locales.selectLanguage(settingsState?.general?.locale)
+				else {
+					// Set language based off of browser language
+					for (const [lang] of this.locales.getLanguages()) {
+						if (navigator.language.includes(lang)) {
+							this.locales.selectLanguage(lang)
 						}
 					}
-				})
+				}
+			})
 
-			App.eventSystem.dispatch('projectChanged', undefined)
-		})
+		App.eventSystem.dispatch('projectChanged', undefined)
 	}
 
 	/**
