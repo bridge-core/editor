@@ -43,16 +43,14 @@ export class TypeLoader {
 		if (filePath === this.currentTypeEnv) return
 
 		this.currentTypeEnv = filePath
+		this.typeDisposables.forEach((disposable) => disposable.dispose())
+		this.typeDisposables = []
 
-		const { types } = FileType.get(filePath) ?? {}
-		if (!types) return
+		const { types = [] } = FileType.get(filePath) ?? {}
 
 		const libs = await Promise.all(
 			types.map(async (type) => <const>[type, await this.load(type)])
 		)
-
-		this.typeDisposables.forEach((disposable) => disposable.dispose())
-		this.typeDisposables = []
 
 		for (const [typePath, lib] of libs) {
 			const uri = Uri.file(typePath)
