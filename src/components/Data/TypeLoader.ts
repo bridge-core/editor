@@ -17,9 +17,6 @@ export class TypeLoader {
 			App.eventSystem.on('currentTabSwitched', (filePath: string) =>
 				this.setTypeEnv(filePath)
 			),
-			App.eventSystem.on('refreshCurrentContext', (filePath: string) =>
-				this.setTypeEnv(filePath)
-			),
 		]
 	}
 	deactivate() {
@@ -55,6 +52,7 @@ export class TypeLoader {
 		)
 
 		this.typeDisposables.forEach((disposable) => disposable.dispose())
+		this.typeDisposables = []
 
 		for (const [typePath, lib] of libs) {
 			const uri = Uri.file(typePath)
