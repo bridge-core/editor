@@ -59,7 +59,9 @@ export class TextTab extends Tab {
 		this.disposables.forEach((disposable) => disposable?.dispose())
 	}
 	onDestroy() {
+		this.disposables.forEach((disposable) => disposable?.dispose())
 		this.editorModel?.dispose()
+		this.editorViewState = undefined
 	}
 	updateParent(parent: TabSystem) {
 		super.updateParent(parent)

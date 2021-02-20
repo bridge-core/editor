@@ -55,13 +55,10 @@ export class TypeLoader {
 		for (const [typePath, lib] of libs) {
 			const uri = Uri.file(typePath)
 			this.typeDisposables.push(
-				...[
-					languages.typescript.javascriptDefaults.addExtraLib(
-						lib,
-						uri.toString()
-					),
-					editor.createModel(lib, 'typescript', uri),
-				]
+				languages.typescript.javascriptDefaults.addExtraLib(
+					lib,
+					uri.toString()
+				)
 			)
 		}
 	}
