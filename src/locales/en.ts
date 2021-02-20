@@ -43,6 +43,7 @@ export default {
 		mcstructure: 'Structure',
 		tradeTable: 'Trade Table',
 		clientManifest: 'Client Manifest',
+		skinManifest: 'Skin Manifest',
 		geometry: 'Geometry',
 		clientAnimation: 'Client Animation',
 		clientAnimationController: 'Client Animation Controller',
