@@ -32,5 +32,7 @@ function zipDirectory(source, out) {
 		'./public/data/version.txt'
 	)
 	await buildChangelog()
-	await build()
+	await build({
+		base: process.argv[2] === '--nightly' ? '/nightly/' : undefined,
+	})
 })()
