@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "vite",
 		"serve": "vite serve",
-		"build": "npm run build:data && vite build",
+		"build": "node --max_old_space_size=8192 ./scripts/build.mjs",
 		"dev:data": "node ./scripts/dev.mjs",
 		"build:data": "node ./scripts/build.mjs"
 	},
