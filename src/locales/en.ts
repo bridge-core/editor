@@ -65,6 +65,7 @@ export default {
 		langDef: 'Language Definitions',
 		lang: 'Language',
 		molang: 'Molang',
+		gameTest: 'Game Test',
 		unknown: 'Other',
 		simpleFile: 'Simple Files',
 	},
