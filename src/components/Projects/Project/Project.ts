@@ -11,6 +11,7 @@ import { ProjectManager } from '../ProjectManager'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { CompilerManager } from '/@/components/Compiler/CompilerManager'
 import { JsonDefaults } from '/@/components/Data/JSONDefaults'
+import { TypeLoader } from '../../Data/TypeLoader'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -28,6 +29,7 @@ export class Project {
 	protected _fileSystem: FileSystem
 	public readonly compilerManager = new CompilerManager(this)
 	protected jsonDefaults = new JsonDefaults(this)
+	protected typeLoader = new TypeLoader(this.app.fileSystem)
 
 	//#region Getters
 	get projectData() {
@@ -67,14 +69,16 @@ export class Project {
 
 	async activate(forceRefresh = false) {
 		this.parent.title.setProject(this.name)
-		this.tabSystems.forEach(tabSystem => tabSystem.activate())
+		this.tabSystems.forEach((tabSystem) => tabSystem.activate())
+		this.typeLoader.activate()
 		await this.packIndexer.activate(forceRefresh).then(() => {
 			this.jsonDefaults.activate()
 			this.compilerManager.start('default.json', 'dev')
 		})
 	}
 	deactivate() {
-		this.tabSystems.forEach(tabSystem => tabSystem.deactivate())
+		this.tabSystems.forEach((tabSystem) => tabSystem.deactivate())
+		this.typeLoader.deactivate()
 		this.packIndexer.deactivate()
 		this.jsonDefaults.deactivate()
 	}
@@ -99,7 +103,7 @@ export class Project {
 		App.eventSystem.dispatch('fileUpdated', filePath)
 	}
 	setActiveTabSystem(tabSystem: TabSystem, value: boolean) {
-		this.tabSystems.forEach(tS =>
+		this.tabSystems.forEach((tS) =>
 			tabSystem !== tS ? tS.setActive(value, false) : undefined
 		)
 	}

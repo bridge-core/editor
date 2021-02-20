@@ -44,7 +44,7 @@ export class JsonDefaults {
 				keyBinding: 'Ctrl + Shift + R',
 				onTrigger: () => this.reload(),
 			}),
-		].filter(disposable => disposable !== undefined)
+		].filter((disposable) => disposable !== undefined)
 
 		if (!this.loadedSchemas) await this.loadAllSchemas()
 		this.setJSONDefaults()
@@ -52,7 +52,8 @@ export class JsonDefaults {
 	}
 
 	deactivate() {
-		this.disposables.forEach(disposable => disposable.dispose())
+		this.disposables.forEach((disposable) => disposable.dispose())
+		this.disposables = []
 	}
 
 	async loadAllSchemas() {
@@ -111,7 +112,7 @@ export class JsonDefaults {
 	}
 
 	addSchemas(addSchemas: IMonacoSchemaArrayEntry[], updateMonaco = true) {
-		addSchemas.forEach(addSchema => {
+		addSchemas.forEach((addSchema) => {
 			if (this.localSchemas[addSchema.uri]) {
 				if (addSchema.schema)
 					this.localSchemas[addSchema.uri].schema = addSchema.schema
@@ -132,7 +133,7 @@ export class JsonDefaults {
 	async getDynamicSchemas() {
 		return (
 			await Promise.all(
-				FileType.getIds().map(id => this.requestSchemaFor(id))
+				FileType.getIds().map((id) => this.requestSchemaFor(id))
 			)
 		).flat()
 	}
@@ -152,7 +153,7 @@ export class JsonDefaults {
 					uri: `file:///${currentPath}`,
 					schema: await entry
 						.getFile()
-						.then(file => file.text())
+						.then((file) => file.text())
 						.then(json5.parse)
 						.catch(() => {
 							throw new Error(
@@ -171,7 +172,7 @@ export class JsonDefaults {
 		if (fromPath !== 'data/packages/schema') return
 
 		// ...add file type entries
-		FileType.getMonacoSchemaArray().forEach(addSchema => {
+		FileType.getMonacoSchemaArray().forEach((addSchema) => {
 			// Non-json files; e.g. .lang
 			if (!addSchema.uri) return
 
@@ -247,7 +248,7 @@ export class JsonDefaults {
 					object:
 						schemaScript.type === 'properties'
 							? Object.fromEntries(
-									scriptResult.map(res => [res, {}])
+									scriptResult.map((res) => [res, {}])
 							  )
 							: undefined,
 				},

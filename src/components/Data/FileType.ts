@@ -12,6 +12,7 @@ interface IFileType {
 	scope: string | string[]
 	matcher: string | string[]
 	schema: string
+	types: string[]
 	packSpider: string
 	lightningCache: string
 }
