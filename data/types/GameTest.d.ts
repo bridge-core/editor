@@ -6,12 +6,12 @@ declare module 'GameTest' {
 	): TestRunner
 }
 
-declare class TestRunner {
+declare interface TestRunner {
 	maxTicks(ticks: number): TestRunner
 	batch(time: 'night' | 'day'): TestRunner
 }
 
-declare class Test {
+declare interface Test {
 	runAfterDelay(ticks: number, func: (test: Test) => void): void
 	succeed(): void
 	succeedWhen(func: (test: Test) => void): void

@@ -1,5 +1,5 @@
 <template>
-	<div ref="monacoContainer" style="height:calc(100% - 48px); width: 100%;" />
+	<div ref="monacoContainer" style="height: calc(100% - 48px); width: 100%" />
 </template>
 
 <script>
@@ -42,6 +42,7 @@ export default {
 				target: monaco.languages.typescript.ScriptTarget.ESNext,
 				allowNonTsExtensions: true,
 				noLib: true,
+				alwaysStrict: true,
 			})
 
 			if (!this.tab.editorInstance) {
