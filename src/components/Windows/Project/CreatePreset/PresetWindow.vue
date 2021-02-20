@@ -34,16 +34,52 @@
 				{{ content.description }}
 			</p>
 
-			<v-text-field
-				class="mb-1"
-				v-for="([name, id], i) in content.fields"
-				:key="i"
-				v-model="content.models[id]"
-				:label="name"
-				autocomplete="off"
-				outlined
-				dense
-			/>
+			<template v-for="([name, id, opts = {}], i) in content.fields">
+				<v-text-field
+					v-if="!opts.type || opts.type === 'textInput'"
+					class="mb-1"
+					:key="i"
+					v-model="content.models[id]"
+					:label="name"
+					autocomplete="off"
+					outlined
+					dense
+				/>
+				<v-file-input
+					v-else-if="opts.type === 'fileInput'"
+					class="mb-1"
+					:key="i"
+					v-model="content.models[id]"
+					:accept="opts.accept"
+					:prepend-icon="null"
+					:prepend-inner-icon="opts.icon || 'mdi-paperclip'"
+					:label="name"
+					autocomplete="off"
+					outlined
+					dense
+				/>
+
+				<v-switch
+					v-else-if="opts.type === 'switch'"
+					class="mb-1"
+					:key="i"
+					v-model="content.models[id]"
+					:label="name"
+				/>
+
+				<v-slider
+					v-else-if="opts.type === 'numberInput'"
+					class="mb-1"
+					:key="i"
+					v-model="content.models[id]"
+					:min="opts.min || 0"
+					:max="opts.max || 10"
+					discrete
+					:step="opts.step || 1"
+					thumb-label="always"
+					:label="name"
+				/>
+			</template>
 		</template>
 
 		<template #actions>
@@ -81,7 +117,10 @@ export default {
 			return this.sidebar.currentState
 		},
 		fieldsReady() {
-			return Object.values(this.content.models || {}).every(val => !!val)
+			return Object.values(this.content.fields || {}).every(
+				([_, id, opts = {}]) =>
+					!!this.content.models[id] || opts.optional
+			)
 		},
 	},
 	methods: {

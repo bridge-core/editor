@@ -26,7 +26,17 @@ export interface IPresetManifest {
 	expandFiles?: TExpandFile[]
 }
 interface IPresetFieldOpts {
+	// All types
+	type?: 'fileInput' | 'numberInput' | 'textInput' | 'switch'
 	default?: string
+	optional?: boolean
+	// Type = 'numberInput'
+	min?: number
+	max?: number
+	step?: number
+	// type = 'fileInput'
+	accept: string
+	icon: string
 }
 
 export interface IPresetFileOpts {
@@ -101,7 +111,7 @@ export class CreatePresetWindow extends BaseWindow {
 				...Object.fromEntries(
 					manifest.fields.map(([_, id, opts = {}]: any) => [
 						id,
-						opts.default ?? '',
+						opts.default ?? null,
 					])
 				),
 			},
