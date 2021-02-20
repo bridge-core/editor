@@ -3,14 +3,16 @@ import {
 	SidebarCategory,
 	SidebarItem,
 } from '/@/components/Windows/Layout/Sidebar'
-import CreatePresetComponent from './CreatePreset.vue'
+import PresetWindowComponent from './PresetWindow.vue'
 import { BaseWindow } from '../../BaseWindow'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { App } from '/@/App'
 import { v4 as uuid } from 'uuid'
-import { dirname, extname } from '/@/utils/path'
-import { deepmerge } from '/@/utils/deepmerge'
+import { dirname } from '/@/utils/path'
 import { compare, CompareOperator } from 'compare-versions'
+import { runPresetScript } from './PresetScript'
+import { expandFile, TExpandFile } from './ExpandFile'
+import { createFile, TCreateFile } from './CreateFile'
 
 export interface IPresetManifest {
 	name: string
@@ -20,32 +22,23 @@ export interface IPresetManifest {
 	presetPath?: string
 	targetVersion: [CompareOperator, string]
 	fields: [string, string, IPresetFieldOpts][]
-	createFiles?: [string, string, IPresetFileOpts?][]
-	expandFiles?: [string, string, IPresetFileOpts?][]
+	createFiles?: (string | TCreateFile)[]
+	expandFiles?: TExpandFile[]
 }
 interface IPresetFieldOpts {
 	default?: string
 }
 
-interface IPresetFileOpts {
+export interface IPresetFileOpts {
 	inject: string[]
 }
-
-const textTransformFiles = [
-	'.mcfunction',
-	'.json',
-	'.js',
-	'.ts',
-	'.txt',
-	'.molang',
-]
 
 export class CreatePresetWindow extends BaseWindow {
 	protected loadPresetPaths = new Map<string, string>()
 	protected sidebar = new Sidebar([])
 
 	constructor() {
-		super(CreatePresetComponent)
+		super(PresetWindowComponent)
 		this.defineWindow()
 	}
 
@@ -79,7 +72,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 		let category = <SidebarCategory | undefined>(
 			this.sidebar.rawElements.find(
-				element => element.getText() === manifest.category
+				(element) => element.getText() === manifest.category
 			)
 		)
 		if (!category) {
@@ -168,86 +161,33 @@ export class CreatePresetWindow extends BaseWindow {
 		const promises: Promise<unknown>[] = []
 		const createdFiles: string[] = []
 		promises.push(
-			...createFiles.map(async ([originPath, destPath, opts]) => {
-				const inject = opts?.inject ?? []
-				const fullOriginPath = `${presetPath}/${originPath}`
-				const fullDestPath = this.transformString(
-					`projects/${app.selectedProject}/${destPath}`,
-					inject
-				)
-				const ext = extname(fullDestPath)
-				await fs.mkdir(dirname(fullDestPath), { recursive: true })
-				createdFiles.push(this.transformString(destPath, inject))
-
-				if (inject.length === 0 || !textTransformFiles.includes(ext)) {
-					await fs.copyFile(fullOriginPath, fullDestPath)
+			...createFiles.map(async (createFileOpts) => {
+				if (typeof createFileOpts === 'string') {
+					createdFiles.push(
+						...(await runPresetScript(
+							presetPath,
+							createFileOpts,
+							this.sidebar.currentState.models
+						))
+					)
 				} else {
-					const file = await fs.readFile(fullOriginPath)
-					const fileText = await file.text()
-
-					await fs.writeFile(
-						fullDestPath,
-						this.transformString(fileText, inject)
+					createdFiles.push(
+						await createFile(
+							presetPath,
+							createFileOpts,
+							this.sidebar.currentState.models
+						)
 					)
 				}
 			}),
-			...expandFiles.map(async ([originPath, destPath, opts]) => {
-				const inject = opts?.inject ?? []
-				const fullOriginPath = `${presetPath}/${originPath}`
-				const fullDestPath = this.transformString(
-					`projects/${app.selectedProject}/${destPath}`,
-					inject
+			...expandFiles.map(async (expandFileOpts) => {
+				createdFiles.push(
+					await expandFile(
+						presetPath,
+						expandFileOpts,
+						this.sidebar.currentState.models
+					)
 				)
-				const ext = extname(fullDestPath)
-				await fs.mkdir(dirname(fullDestPath), { recursive: true })
-				createdFiles.push(this.transformString(destPath, inject))
-
-				if (ext === '.json') {
-					const json = await fs.readJSON(fullOriginPath)
-
-					let destJson: any
-					try {
-						destJson = await fs.readJSON(fullDestPath)
-					} catch {
-						destJson = {}
-					}
-
-					await fs.writeFile(
-						fullDestPath,
-						this.transformString(
-							JSON.stringify(
-								deepmerge(destJson, json),
-								null,
-								'\t'
-							),
-							inject
-						)
-					)
-				} else {
-					const file = await fs.readFile(fullOriginPath)
-					const fileText = await file.text()
-
-					let destFileText: string
-					try {
-						destFileText = await (
-							await fs.readFile(fullDestPath)
-						).text()
-					} catch {
-						destFileText = ''
-					}
-
-					const outputFileText = this.transformString(
-						fileText,
-						inject
-					)
-
-					await fs.writeFile(
-						fullDestPath,
-						`${destFileText}${
-							destFileText !== '' ? '\n' : ''
-						}${outputFileText}`
-					)
-				}
 			})
 		)
 
@@ -263,7 +203,9 @@ export class CreatePresetWindow extends BaseWindow {
 
 	protected transformString(str: string, inject: string[]) {
 		const models = this.sidebar.currentState.models
-		inject.forEach(val => (str = str.replaceAll(`{{${val}}}`, models[val])))
+		inject.forEach(
+			(val) => (str = str.replaceAll(`{{${val}}}`, models[val]))
+		)
 		return str
 	}
 }
