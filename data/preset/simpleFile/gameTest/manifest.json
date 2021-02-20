@@ -3,6 +3,7 @@
 	"icon": "mdi-test-tube",
 	"description": "Creates a blank game test.",
 	"category": "fileType.simpleFile",
+	"targetVersion": [">=", "1.16.210"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],
