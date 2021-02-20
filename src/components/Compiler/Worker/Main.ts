@@ -46,7 +46,9 @@ export class CompilerService extends TaskService<void, string[]> {
 			this.buildConfig = await this.fileSystem.readJSON(
 				`bridge/compiler/${this.options.config}`
 			)
-		} catch {}
+		} catch {
+			return
+		}
 
 		this.plugins = await loadPlugins(globalFs, this.options.plugins)
 
