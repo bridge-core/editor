@@ -4,7 +4,12 @@ const { join } = require('path')
 
 module.exports = {
 	runtimeCompiler: true,
-	publicPath: process.env.NODE_ENV === 'production' ? '/editor/' : undefined,
+	publicPath:
+		process.argv[3] === 'nightly'
+			? '/nightly/'
+			: process.env.NODE_ENV === 'production'
+			? '/editor/'
+			: undefined,
 	transpileDependencies: ['vuetify', 'molang'],
 
 	pwa: {
