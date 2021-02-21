@@ -1,7 +1,7 @@
 import { App } from '/@/App'
-import { TabSystem } from '../../TabSystem/TabSystem'
+import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import Vue from 'vue'
-import { IPackType, PackType } from '../../Data/PackType'
+import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
 import { TProjectConfig } from '../ProjectConfig'
 import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
@@ -11,7 +11,7 @@ import { ProjectManager } from '../ProjectManager'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { CompilerManager } from '/@/components/Compiler/CompilerManager'
 import { JsonDefaults } from '/@/components/Data/JSONDefaults'
-import { TypeLoader } from '../../Data/TypeLoader'
+import { TypeLoader } from '/@/components/Data/TypeLoader'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -106,6 +106,10 @@ export class Project {
 		this.tabSystems.forEach((tS) =>
 			tabSystem !== tS ? tS.setActive(value, false) : undefined
 		)
+	}
+
+	hasPack(packType: TPackTypeId) {
+		return this._projectData.contains.some(({ id }) => id === packType)
 	}
 
 	async loadProject() {
