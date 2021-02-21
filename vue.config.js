@@ -5,7 +5,7 @@ const { join } = require('path')
 module.exports = {
 	runtimeCompiler: true,
 	publicPath:
-		process.argv[3] === 'nightly'
+		process.argv[3] === '--nightly'
 			? '/nightly/'
 			: process.env.NODE_ENV === 'production'
 			? '/editor/'

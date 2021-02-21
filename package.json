@@ -9,7 +9,8 @@
 		"dev:data": "node ./scripts/dev.mjs",
 		"build:data": "node ./scripts/build.mjs",
 		"dev": "vue-cli-service serve",
-		"build": "node ./scripts/build.mjs && vue-cli-service build"
+		"build": "node ./scripts/build.mjs && vue-cli-service build",
+		"build:nightly": "node ./scripts/build.mjs && vue-cli-service build --nightly"
 	},
 	"dependencies": {
 		"@mdi/font": "^5.8.55",
