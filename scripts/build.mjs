@@ -3,7 +3,6 @@ import fs from 'fs'
 import archiver from 'archiver'
 import { runSchemaScripts } from './buildSchemaScripts.mjs'
 import { buildChangelog } from './buildChangelog.mjs'
-import { build } from 'vite'
 
 /**
  * Taken from https://stackoverflow.com/a/51518100
@@ -32,7 +31,4 @@ function zipDirectory(source, out) {
 		'./public/data/version.txt'
 	)
 	await buildChangelog()
-	await build({
-		base: process.argv[2] === '--nightly' ? '/nightly/' : undefined,
-	})
 })()
