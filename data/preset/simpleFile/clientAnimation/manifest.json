@@ -3,6 +3,7 @@
 	"icon": "mdi-movie-open-outline",
 	"description": "Creates a blank client animation.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["resourcePack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

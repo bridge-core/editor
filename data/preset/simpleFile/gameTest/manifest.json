@@ -4,6 +4,7 @@
 	"description": "Creates a blank game test.",
 	"category": "fileType.simpleFile",
 	"targetVersion": [">=", "1.16.210"],
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

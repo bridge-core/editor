@@ -3,6 +3,7 @@
 	"icon": "mdi-store-outline",
 	"description": "Creates a blank trade table.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

@@ -3,6 +3,7 @@
 	"icon": "mdi-flower",
 	"description": "Creates a blank feature.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

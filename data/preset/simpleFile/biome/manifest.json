@@ -3,6 +3,7 @@
 	"icon": "mdi-earth-box",
 	"description": "Creates a blank biome.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],
