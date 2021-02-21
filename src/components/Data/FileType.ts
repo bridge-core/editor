@@ -1,4 +1,4 @@
-import isMatch from 'minimatch'
+import { isMatch } from 'micromatch'
 import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import type { FileSystem } from '/@/components/FileSystem/FileSystem'
@@ -6,7 +6,7 @@ import type { FileSystem } from '/@/components/FileSystem/FileSystem'
 /**
  * Describes the structure of a file definition
  */
-interface IFileType {
+export interface IFileType {
 	id: string
 	icon?: string
 	scope: string | string[]
@@ -30,6 +30,7 @@ export interface IMonacoSchemaArrayEntry {
  * Utilities around bridge.'s file definitions
  */
 export namespace FileType {
+	const pluginFileTypes = new Set<IFileType>()
 	let fileTypes: IFileType[] = []
 	let fileSystem: FileSystem
 
@@ -43,6 +44,20 @@ export namespace FileType {
 			if (dirent.kind === 'file')
 				fileTypes.push(await fs.readJSON(`${basePath}/${dirent.name}`))
 		}
+	}
+	export function addPluginFileType(fileDef: IFileType) {
+		pluginFileTypes.add(fileDef)
+
+		return {
+			dispose: () => pluginFileTypes.delete(fileDef),
+		}
+	}
+	export function getPluginFileTypes() {
+		return [...pluginFileTypes.values()]
+	}
+	export function setPluginFileTypes(fileDefs: IFileType[]) {
+		pluginFileTypes.clear()
+		fileDefs.forEach((fileDef) => pluginFileTypes.add(fileDef))
 	}
 
 	/**

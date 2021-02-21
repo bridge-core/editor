@@ -3,6 +3,7 @@
 	"icon": "mdi-map-plus",
 	"description": "Creates a blank feature rule.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

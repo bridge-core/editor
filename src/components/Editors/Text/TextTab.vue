@@ -4,6 +4,7 @@
 
 <script>
 import * as monaco from 'monaco-editor'
+import { TextTab } from './TextTab'
 
 const editorInstances = []
 export default {
@@ -59,7 +60,8 @@ export default {
 					}
 				)
 
-				this.tab.receiveEditorInstance(editorInstances[this.id])
+				if (this.tab instanceof TextTab)
+					this.tab.receiveEditorInstance(editorInstances[this.id])
 			}
 
 			editorInstances[this.id]?.layout()
@@ -67,7 +69,8 @@ export default {
 	},
 	watch: {
 		tab() {
-			this.tab.receiveEditorInstance(editorInstances[this.id])
+			if (this.tab instanceof TextTab)
+				this.tab.receiveEditorInstance(editorInstances[this.id])
 		},
 		fontSize(val) {
 			this.monacoEditor.updateOptions({

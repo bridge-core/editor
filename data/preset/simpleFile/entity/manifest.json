@@ -3,6 +3,7 @@
 	"icon": "mdi-minecraft",
 	"description": "Creates a blank entity.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

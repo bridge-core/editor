@@ -4,6 +4,7 @@
 	"description": "Creates a blank client item.",
 	"category": "fileType.simpleFile",
 	"targetVersion": ["<=", "1.16.0"],
+	"packTypes": ["resourcePack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

@@ -5,7 +5,7 @@
 		<keep-alive>
 			<component
 				:is="tabSystem.currentComponent"
-				:key="tabSystem.uuid"
+				:key="`${tabSystem.uuid}.${tabSystem.currentComponent.name}`"
 				:tab="tabSystem.selectedTab"
 				:id="id"
 			/>
@@ -33,7 +33,7 @@ export default {
 	},
 	watch: {
 		'tabSystem.shouldRender'() {
-			App.getApp().then(app => app.windowResize.dispatch())
+			App.getApp().then((app) => app.windowResize.dispatch())
 		},
 	},
 }

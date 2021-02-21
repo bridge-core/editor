@@ -13,10 +13,12 @@ import { compare, CompareOperator } from 'compare-versions'
 import { runPresetScript } from './PresetScript'
 import { expandFile, TExpandFile } from './ExpandFile'
 import { createFile, TCreateFile } from './CreateFile'
+import { TPackTypeId } from '/@/components/Data/PackType'
 
 export interface IPresetManifest {
 	name: string
 	icon: string
+	packTypes?: TPackTypeId[]
 	category: string
 	description?: string
 	presetPath?: string
@@ -62,6 +64,15 @@ export class CreatePresetWindow extends BaseWindow {
 				`Error loading ${manifestPath}: Missing preset category`
 			)
 
+		// Check that project has packType preset needs
+		if (
+			manifest.packTypes &&
+			manifest.packTypes.every((packType) =>
+				app.project?.hasPack(packType)
+			)
+		)
+			return
+
 		// Load current project target version
 		const projectTargetVersion =
 			<string | undefined>await app.projectConfig.get('targetVersion') ??
@@ -70,6 +81,7 @@ export class CreatePresetWindow extends BaseWindow {
 					'data/packages/formatVersions.json'
 				)
 			).pop()
+		// Check that preset is supported on target version
 		if (
 			manifest.targetVersion &&
 			!compare(

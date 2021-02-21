@@ -6,6 +6,7 @@ import { CompilerService, ICompilerOptions } from './Worker/Main'
 import { WorkerManager } from '/@/components/Worker/Manager'
 import { Project } from '../Projects/Project/Project'
 import { CompilerManager } from './CompilerManager'
+import { FileType } from '../Data/FileType'
 
 export class Compiler extends WorkerManager<
 	CompilerService,
@@ -53,10 +54,14 @@ export class Compiler extends WorkerManager<
 				config: this.config,
 				mode,
 				plugins: this.parent.getCompilerPlugins(),
+				pluginFileTypes: FileType.getPluginFileTypes(),
 			})
 		} else {
 			await this._service.updateMode(mode)
-			await this._service.updatePlugins(this.parent.getCompilerPlugins())
+			await this._service.updatePlugins(
+				this.parent.getCompilerPlugins(),
+				FileType.getPluginFileTypes()
+			)
 		}
 
 		// Listen to task progress and update UI
@@ -86,7 +91,10 @@ export class Compiler extends WorkerManager<
 			)
 
 		await this._service.updateMode('dev')
-		await this._service.updatePlugins(this.parent.getCompilerPlugins())
+		await this._service.updatePlugins(
+			this.parent.getCompilerPlugins(),
+			FileType.getPluginFileTypes()
+		)
 		await this._service.updateFile(filePath)
 	}
 }

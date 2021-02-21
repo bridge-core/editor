@@ -3,6 +3,7 @@
 	"icon": "mdi-hat-fedora",
 	"description": "Creates a blank attachable.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["resourcePack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],
