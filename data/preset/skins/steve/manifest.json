@@ -1,31 +1,24 @@
 {
-    "name": "Steve",
-    "icon": "mdi-face-outline",
-    "description": "Add a Steve to the skin pack",
-    "category": "fileType.skins",
-    "targetVersion": [">=", "1.16.100"],
-    "fields": [
-        ["Identifier", "IDENTIFIER"],
-        ["Display Name", "IDENTIFIER_NAME"]
-    ],
+	"name": "Steve",
+	"icon": "mdi-face-outline",
+	"description": "Add a Steve to the skin pack",
+	"category": "fileType.skins",
+	"packTypes": ["skinPack"],
+	"targetVersion": [">=", "1.16.100"],
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
 
-    "createFiles": [
-        [
-            "skin.png",
-            "SP/{{IDENTIFIER}}.png",
-            { "inject": ["IDENTIFIER"] }
-        ]
-    ],
-    "expandFiles": [
-        [
-            "skins.json",
-            "SP/skins.json",
-            { "inject": ["IDENTIFIER"] }
-        ],
-        [
-            "en_US.lang",
-            "SP/texts/en_US.lang",
-            { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
-        ]
-    ]
+	"createFiles": [
+		["skin.png", "SP/{{IDENTIFIER}}.png", { "inject": ["IDENTIFIER"] }]
+	],
+	"expandFiles": [
+		["skins.json", "SP/skins.json", { "inject": ["IDENTIFIER"] }],
+		[
+			"en_US.lang",
+			"SP/texts/en_US.lang",
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
+		]
+	]
 }
