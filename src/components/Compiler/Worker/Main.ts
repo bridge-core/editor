@@ -16,12 +16,7 @@ export interface IBuildConfig {
 	mode: 'dev' | 'build'
 
 	createFiles: string[]
-	plugins: IBuildConfigPlugins
-}
-export interface IBuildConfigPlugins {
-	'*'?: TPluginDef[]
-	'#default'?: TPluginDef[]
-	[fileType: string]: TPluginDef[] | undefined
+	plugins: TPluginDef[]
 }
 export type TPluginDef = string | [string, any]
 
