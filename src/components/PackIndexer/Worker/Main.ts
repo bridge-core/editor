@@ -1,4 +1,4 @@
-import { FileType } from '/@/components/Data/FileType'
+import { FileType, IFileType } from '/@/components/Data/FileType'
 import * as Comlink from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
@@ -15,6 +15,7 @@ export type { ILightningInstruction } from './LightningCache/LightningCache'
 export interface IPackIndexerOptions {
 	projectDirectory: FileSystemDirectoryHandle
 	baseDirectory: FileSystemDirectoryHandle
+	pluginFileTypes: IFileType[]
 	disablePackSpider: boolean
 	noFullLightningCacheRefresh: boolean
 }
@@ -29,6 +30,7 @@ export class PackIndexerService extends TaskService<string[]> {
 		this.lightningStore = new LightningStore(this.fileSystem)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
+		FileType.setPluginFileTypes(options.pluginFileTypes)
 	}
 
 	getOptions() {
@@ -60,6 +62,10 @@ export class PackIndexerService extends TaskService<string[]> {
 		)
 		await this.lightningStore.saveStore()
 		await this.packSpider.updateFile(filePath)
+	}
+
+	updatePlugins(pluginFileTypes: IFileType[]) {
+		FileType.setPluginFileTypes(pluginFileTypes)
 	}
 
 	async readdir(path: string[]) {

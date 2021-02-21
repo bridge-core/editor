@@ -9,6 +9,7 @@ import { loadScripts } from './Scripts/loadScripts'
 import { ExtensionViewer } from '../Windows/ExtensionStore/Extension'
 import { ExtensionStoreWindow } from '../Windows/ExtensionStore/ExtensionStore'
 import { iterateDir } from '/@/utils/iterateDir'
+import { loadFileDefinitions } from './FileDefinition/load'
 
 export class Extension {
 	protected _isActive = false
@@ -66,12 +67,19 @@ export class Extension {
 		try {
 			await iterateDir(
 				await this.baseDirectory.getDirectoryHandle('themes'),
-				fileHandle =>
+				(fileHandle) =>
 					app.themeManager.loadTheme(
 						fileHandle,
 						this.isGlobal,
 						this.disposables
 					)
+			)
+		} catch {}
+
+		try {
+			await loadFileDefinitions(
+				await this.baseDirectory.getDirectoryHandle('fileDefinitions'),
+				this.disposables
 			)
 		} catch {}
 
@@ -100,7 +108,7 @@ export class Extension {
 	}
 
 	deactivate() {
-		this.disposables.forEach(disposable => disposable.dispose())
+		this.disposables.forEach((disposable) => disposable.dispose())
 		this._isActive = false
 	}
 

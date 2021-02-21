@@ -3,6 +3,7 @@ import { WorkerManager } from '/@/components/Worker/Manager'
 import * as Comlink from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
+import { FileType } from '/@/components/Data/FileType'
 // import PackIndexerWorker from './Worker/Main?worker'
 
 export class PackIndexer extends WorkerManager<
@@ -41,6 +42,7 @@ export class PackIndexer extends WorkerManager<
 			projectDirectory: this.baseDirectory,
 			baseDirectory: this.app.fileSystem.baseDirectory,
 			disablePackSpider: !settingsState?.general?.enablePackSpider,
+			pluginFileTypes: FileType.getPluginFileTypes(),
 			noFullLightningCacheRefresh:
 				!forceRefreshCache &&
 				!settingsState?.general?.fullLightningCacheRefresh,
@@ -62,6 +64,7 @@ export class PackIndexer extends WorkerManager<
 	}
 
 	async updateFile(filePath: string) {
+		await this.service!.updatePlugins(FileType.getPluginFileTypes())
 		await this.service!.updateFile(filePath)
 	}
 

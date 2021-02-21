@@ -30,6 +30,7 @@ import { InstallApp } from '/@/components/App/Install'
 import { LanguageManager } from '/@/components/Languages/LanguageManager'
 import { ProjectManager } from './components/Projects/ProjectManager'
 import { ContextMenu } from './components/ContextMenu/ContextMenu'
+import { Project } from './components/Projects/Project/Project'
 
 export class App {
 	public static fileSystemSetup = new FileSystemSetup()
@@ -112,18 +113,21 @@ export class App {
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
 	}
 
-	async switchProject(projectName: string) {
+	async switchProject(project: Project) {
 		this.extensionLoader.deactivateAllLocal()
 		this.extensionLoader
 			.loadExtensions(
 				await this.fileSystem.getDirectoryHandle(
-					`projects/${projectName}/bridge/plugins`,
+					`projects/${project.name}/bridge/plugins`,
 					{ create: true }
 				)
 			)
 			.then(() => {
 				// this.compiler.start(projectName, 'dev', 'default.json')
 				this.themeManager.updateTheme()
+				project.packIndexer.once(() =>
+					project.compilerManager.start('default.json', 'dev')
+				)
 
 				// Set language
 				if (typeof settingsState?.general?.locale === 'string')

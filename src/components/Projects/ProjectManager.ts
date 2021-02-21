@@ -33,7 +33,7 @@ export class ProjectManager extends Signal<void> {
 
 	async getProjects() {
 		await this.fired
-		return Object.values(this.state).map(project => project.projectData)
+		return Object.values(this.state).map((project) => project.projectData)
 	}
 	async addProject(projectDir: FileSystemDirectoryHandle, select = true) {
 		const project = new Project(this, this.app, projectDir)
@@ -98,7 +98,7 @@ export class ProjectManager extends Signal<void> {
 		if (this.currentProject)
 			await this.recentProjects.add(this.currentProject.projectData)
 		await set('selectedProject', projectName)
-		await this.app.switchProject(projectName)
+		await this.app.switchProject(this.currentProject!)
 	}
 	async selectLastProject(app: App) {
 		await this.fired

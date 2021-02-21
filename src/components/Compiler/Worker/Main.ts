@@ -2,7 +2,7 @@ import * as Comlink from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { hooks, loadPlugins, TCompilerHook, TCompilerPlugin } from './Plugins'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { FileType } from '/@/components/Data/FileType'
+import { FileType, IFileType } from '/@/components/Data/FileType'
 import { CompilerFile } from './File'
 
 export interface ICompilerOptions {
@@ -11,6 +11,7 @@ export interface ICompilerOptions {
 	config: string
 	mode: 'dev' | 'build'
 	plugins: Record<string, string>
+	pluginFileTypes: IFileType[]
 }
 export interface IBuildConfig {
 	mode: 'dev' | 'build'
@@ -27,6 +28,7 @@ export class CompilerService extends TaskService<void, string[]> {
 
 	constructor(protected readonly options: ICompilerOptions) {
 		super('compiler', options.projectDirectory)
+		FileType.setPluginFileTypes(options.pluginFileTypes)
 	}
 
 	getOptions() {
@@ -66,9 +68,13 @@ export class CompilerService extends TaskService<void, string[]> {
 		}
 	}
 
-	async updatePlugins(plugins: Record<string, string>) {
+	async updatePlugins(
+		plugins: Record<string, string>,
+		pluginFileTypes: IFileType[]
+	) {
 		const globalFs = new FileSystem(this.options.baseDirectory)
 		this.plugins = await loadPlugins(globalFs, plugins)
+		FileType.setPluginFileTypes(pluginFileTypes)
 	}
 
 	protected async runHook(

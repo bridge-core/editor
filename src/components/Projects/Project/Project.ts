@@ -73,7 +73,7 @@ export class Project {
 		this.typeLoader.activate()
 		await this.packIndexer.activate(forceRefresh).then(() => {
 			this.jsonDefaults.activate()
-			this.compilerManager.start('default.json', 'dev')
+			// this.compilerManager.start('default.json', 'dev')
 		})
 	}
 	deactivate() {
