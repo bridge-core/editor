@@ -1,4 +1,4 @@
-import isMatch from 'minimatch'
+import { isMatch } from 'micromatch'
 import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import type { FileSystem } from '/@/components/FileSystem/FileSystem'
