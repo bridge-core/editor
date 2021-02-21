@@ -28,16 +28,16 @@ export function createErrorNotification(error: Error): IDisposable {
 	return notification
 }
 
-window.addEventListener('error', event => {
+window.addEventListener('error', (event) => {
 	createErrorNotification(event.error ?? event)
 
-	if (import.meta.env.PROD)
-		App.ready.once(app => app.windows.loadingWindow.closeAll())
+	if (process.env.mode === 'development')
+		App.ready.once((app) => app.windows.loadingWindow.closeAll())
 })
 
 window.onunhandledrejection = (event: PromiseRejectionEvent) => {
 	createErrorNotification(new Error(event.reason))
 
-	if (import.meta.env.PROD)
-		App.ready.once(app => app.windows.loadingWindow.closeAll())
+	if (process.env.mode === 'development')
+		App.ready.once((app) => app.windows.loadingWindow.closeAll())
 }

@@ -92,7 +92,7 @@ export class App {
 		const saveWarning =
 			'Are you sure that you want to close bridge.? Unsaved progress will be lost.'
 		// Only prompt in prod mode so we can use HMR in dev mode
-		if (import.meta.env.PROD) {
+		if (process.env.mode === 'development') {
 			window.addEventListener('beforeunload', (event) => {
 				if (
 					this.tabSystem?.hasUnsavedTabs ||
@@ -184,7 +184,7 @@ export class App {
 		setupDefaultMenus(this)
 		this.dataLoader.setup(this)
 
-		if (import.meta.env.PROD) {
+		if (process.env.mode === 'development') {
 			const discordMsg = createNotification({
 				icon: 'mdi-discord',
 				message: 'sidebar.notifications.discord.message',

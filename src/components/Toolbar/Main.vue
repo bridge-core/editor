@@ -1,9 +1,9 @@
 <template>
 	<v-system-bar color="toolbar" fixed app clipped padless height="24px">
 		<img
-			style="height: 16px; padding-right: 8px;"
+			style="height: 16px; padding-right: 8px"
 			alt="bridge. Logo"
-			src="/@/_assets/logo.png"
+			src="@/_assets/logo.png"
 		/>
 		<v-divider vertical />
 

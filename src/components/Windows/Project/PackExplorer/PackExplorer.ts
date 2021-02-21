@@ -1,7 +1,6 @@
 import { App } from '/@/App'
 import { FileType } from '/@/components/Data/FileType'
 import { PackType } from '/@/components/Data/PackType'
-import { translate } from '/@/utils/locales'
 import { BaseWindow } from '../../BaseWindow'
 import {
 	ISidebarItemConfig,
@@ -94,7 +93,7 @@ export class PackExplorerWindow extends BaseWindow {
 			return a.text.localeCompare(b.text)
 		})
 
-		items.forEach(item => this.sidebarCategory.addItem(item))
+		items.forEach((item) => this.sidebarCategory.addItem(item))
 		this.sidebar.setDefaultSelected()
 
 		super.open()

@@ -12,7 +12,11 @@
 		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
 		"baseUrl": ".",
-		"types": ["@types/wicg-file-system-access", "node", "vite/client"],
+		"types": [
+			"webpack-env",
+			"@types/wicg-file-system-access",
+			"node" /*, "vite/client"*/
+		],
 		"paths": {
 			"/@/*": ["src/*"]
 		},

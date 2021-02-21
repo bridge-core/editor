@@ -3,8 +3,7 @@ import { WorkerManager } from '/@/components/Worker/Manager'
 import * as Comlink from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
-import PackIndexerWorker from './Worker/Main?worker'
-import TestWorker from '/@/utils/locales?worker'
+// import PackIndexerWorker from './Worker/Main?worker'
 
 export class PackIndexer extends WorkerManager<
 	PackIndexerService,
@@ -24,7 +23,10 @@ export class PackIndexer extends WorkerManager<
 	}
 
 	createWorker() {
-		this.worker = new PackIndexerWorker()
+		// this.worker = new PackIndexerWorker()
+		this.worker = new Worker('./Worker/Main.ts', {
+			type: 'module',
+		})
 	}
 
 	deactivate() {

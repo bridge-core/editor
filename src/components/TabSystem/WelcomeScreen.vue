@@ -4,15 +4,15 @@
 		:style="`padding-top: 14vh;`"
 	>
 		<img
-			style="height: 128px; width: 128px;"
+			style="height: 128px; width: 128px"
 			class="mb-4"
 			alt="bridge. Logo"
-			src="/@/_assets/logo_high_res.png"
+			src="@/_assets/logo_high_res.png"
 		/>
 		<h1 class="text-h3 text-center">{{ t('welcome.title') }}</h1>
 		<h2 class="text-h6 mb-12 text-center">{{ t('welcome.subtitle') }}</h2>
 
-		<v-row style="flex-wrap: nowrap; width: 60vw;">
+		<v-row style="flex-wrap: nowrap; width: 60vw">
 			<v-col v-if="actions.length > 0" tag="ul">
 				<p>{{ t('welcome.quickActions') }}</p>
 				<v-divider class="mb-2" />
@@ -118,7 +118,7 @@ export default {
 			'bridge.action.openFile',
 			'bridge.action.openSettings',
 		]
-		this.actions = toLoad.map(l => app.actionManager.state[l])
+		this.actions = toLoad.map((l) => app.actionManager.state[l])
 
 		await app.projectManager.fired
 		this.projectManager = app.projectManager
@@ -145,10 +145,10 @@ export default {
 	},
 	methods: {
 		openFile(filePath) {
-			App.getApp().then(app => app.project.openFile(filePath))
+			App.getApp().then((app) => app.project.openFile(filePath))
 		},
 		selectProject(projectName) {
-			App.getApp().then(app =>
+			App.getApp().then((app) =>
 				app.projectManager.selectProject(projectName)
 			)
 		},
