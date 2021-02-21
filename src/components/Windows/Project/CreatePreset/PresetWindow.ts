@@ -18,7 +18,7 @@ import { TPackTypeId } from '/@/components/Data/PackType'
 export interface IPresetManifest {
 	name: string
 	icon: string
-	packType?: TPackTypeId
+	packTypes?: TPackTypeId[]
 	category: string
 	description?: string
 	presetPath?: string
@@ -65,7 +65,13 @@ export class CreatePresetWindow extends BaseWindow {
 			)
 
 		// Check that project has packType preset needs
-		if (manifest.packType && app.project?.hasPack(manifest.packType)) return
+		if (
+			manifest.packTypes &&
+			manifest.packTypes.every((packType) =>
+				app.project?.hasPack(packType)
+			)
+		)
+			return
 
 		// Load current project target version
 		const projectTargetVersion =
