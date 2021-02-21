@@ -65,13 +65,7 @@ export class CreatePresetWindow extends BaseWindow {
 			)
 
 		// Check that project has packType preset needs
-		if (
-			manifest.packTypes &&
-			manifest.packTypes.every((packType) =>
-				app.project?.hasPack(packType)
-			)
-		)
-			return
+		if (!app.project?.hasPacks(manifest.packTypes ?? [])) return
 
 		// Load current project target version
 		const projectTargetVersion =

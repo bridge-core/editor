@@ -108,8 +108,12 @@ export class Project {
 		)
 	}
 
-	hasPack(packType: TPackTypeId) {
-		return this._projectData.contains.some(({ id }) => id === packType)
+	hasPacks(packTypes: TPackTypeId[]) {
+		for (const packType of packTypes) {
+			if (!this._projectData.contains.some(({ id }) => id === packType))
+				return false
+		}
+		return true
 	}
 
 	async loadProject() {
