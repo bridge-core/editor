@@ -1,5 +1,5 @@
 import { ActionManager } from './ActionManager'
-import { KeyBinding } from './KeyBinding'
+import { IKeyBindingConfig, KeyBinding } from './KeyBinding'
 import { v4 as uuid } from 'uuid'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 export interface IActionConfig {
@@ -8,6 +8,7 @@ export interface IActionConfig {
 	name: string
 	description: string
 	keyBinding?: string
+	prevent?: IKeyBindingConfig['prevent']
 	onTrigger: () => Promise<unknown> | unknown
 }
 
@@ -27,7 +28,8 @@ export class Action extends EventDispatcher<void> {
 				KeyBinding.fromStrKeyCode(
 					actionManager.app.keyBindingManager,
 					config.keyBinding,
-					true
+					true,
+					config.prevent
 				)
 			)
 	}
