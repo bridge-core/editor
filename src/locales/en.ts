@@ -233,6 +233,8 @@ export default {
 		common: {
 			confirm: {
 				title: 'Confirm',
+				okay: 'Okay',
+				cancel: 'Cancel',
 			},
 			dropdown: {
 				confirm: 'Confirm',
@@ -250,8 +252,8 @@ export default {
 				downloadingData: 'Downloading new data...',
 			},
 		},
-		changelogWindow:{
-			title: "What's new?"
+		changelogWindow: {
+			title: "What's new?",
 		},
 		openFile: {
 			title: 'Open',
@@ -276,6 +278,9 @@ export default {
 		createPreset: {
 			title: 'Create Preset',
 			searchPresets: 'Search presets...',
+			overwriteFiles:
+				'This preset overwrites one or more exisiting files. Do you want to continue?',
+			overwriteFilesConfirm: 'Continue',
 		},
 		deleteProject: {
 			confirm: 'Delete',

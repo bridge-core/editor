@@ -69,7 +69,7 @@
 				:disabled="currentProject === selectedSidebar"
 				:loading="
 					currentProject !== selectedSidebar &&
-						(!isPackIndexerReady || !isCompilerReady)
+					(!isPackIndexerReady || !isCompilerReady)
 				"
 				@click="onSelectProject"
 			>
@@ -87,7 +87,7 @@ import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
-import { createConfirmWindow } from '/@/components/Windows/Common/CommonDefinitions'
+import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow.ts'
 import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
 import { CompilerMixin } from '/@/components/Mixins/Tasks/Compiler'
 
@@ -118,16 +118,16 @@ export default {
 			app.windows.createProject.open()
 		},
 		onDeleteProject(projectName) {
-			createConfirmWindow(
-				'windows.deleteProject.description',
-				'windows.deleteProject.confirm',
-				'windows.deleteProject.cancel',
-				async () => {
+			new ConfirmationWindow({
+				description: 'windows.deleteProject.description',
+				confirmText: 'windows.deleteProject.confirm',
+				cancelText: 'windows.deleteProject.cancel',
+				onConfirm: async () => {
 					const app = await App.getApp()
 					await app.projectManager.removeProject(projectName)
 					await this.currentWindow.loadProjects()
-				}
-			)
+				},
+			})
 		},
 	},
 }
