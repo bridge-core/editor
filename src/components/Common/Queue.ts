@@ -11,7 +11,7 @@ export class Queue<T> {
 		element: T,
 		isEquals: (e1: T, e2: T) => boolean = this.isEquals.bind(this)
 	) {
-		const index = this.array.findIndex(e => isEquals(e, element))
+		const index = this.array.findIndex((e) => isEquals(e, element))
 		if (index > -1) {
 			this.array.splice(index, 1)
 			this.array.unshift(element)
@@ -27,10 +27,13 @@ export class Queue<T> {
 		element: T,
 		isEquals: (e1: T, e2: T) => boolean = this.isEquals.bind(this)
 	) {
-		const index = this.array.findIndex(e => isEquals(e, element))
+		const index = this.array.findIndex((e) => isEquals(e, element))
 		if (index > -1) this.array.splice(index, 1)
 
 		return this
+	}
+	clear() {
+		this.array = []
 	}
 	protected isEquals(e1: T, e2: T) {
 		return e1 === e2

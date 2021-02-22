@@ -46,6 +46,10 @@ export class PersistentQueue<T> extends Signal<Queue<T>> {
 
 		await this.saveQueue()
 	}
+	clear() {
+		this.queue.clear()
+		return this.saveQueue()
+	}
 	protected async saveQueue() {
 		await this.app.fileSystem.mkdir(dirname(this.savePath), {
 			recursive: true,

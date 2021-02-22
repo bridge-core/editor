@@ -367,6 +367,11 @@ export default {
 					description:
 						'Open links inside of your default browser instead of a native app window',
 				},
+				restoreTabs: {
+					name: 'Restore Tabs',
+					description:
+						'Restore your tabs from when you last used bridge. upon opening the app',
+				},
 				resetBridgeFolder: {
 					name: 'Select Root Folder',
 					description: 'Choose the main folder bridge. operates on',
