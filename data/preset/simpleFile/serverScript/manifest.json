@@ -1,0 +1,16 @@
+{
+	"name": "Server Script",
+	"icon": "mdi-language-javascript",
+	"description": "Creates a blank server script.",
+	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
+	"fields": [["File Name", "FILE_NAME"]],
+
+	"createFiles": [
+		[
+			"script.js",
+			"BP/scripts/server/{{FILE_NAME}}.js",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}
