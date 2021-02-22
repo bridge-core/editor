@@ -4,6 +4,7 @@
 	"description": "Creates a new ghast entity.",
 	"category": "fileType.entity",
 	"targetVersion": [">=", "1.8.0"],
+	"packTypes": ["behaviorPack", "resourcePack"],
 	"fields": [
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]

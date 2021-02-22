@@ -4,6 +4,7 @@
 	"description": "Creates a new, basic block with custom geometry.",
 	"category": "fileType.block",
 	"targetVersion": [">=", "1.16.100"],
+	"packTypes": ["behaviorPack", "resourcePack"],
 	"fields": [
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]
