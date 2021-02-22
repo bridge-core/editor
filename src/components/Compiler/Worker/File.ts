@@ -46,7 +46,7 @@ export class CompilerFile {
 			pluginOpts.mode = this.parent.getOptions().mode
 
 			let pluginObj = plugins.get(plugin)
-			pluginObj?.[hook]?.(this, pluginOpts)
+			await pluginObj?.[hook]?.(this, pluginOpts)
 		}
 
 		// After calling the finalizeBuild hook, save the files
