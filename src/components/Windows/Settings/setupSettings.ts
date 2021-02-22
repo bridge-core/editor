@@ -18,7 +18,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			options: ['auto', 'dark', 'light'],
 			default: 'auto',
 			onChange: () => {
-				App.getApp().then(app => app.themeManager.updateTheme())
+				App.getApp().then((app) => app.themeManager.updateTheme())
 			},
 		})
 	)
@@ -31,11 +31,11 @@ export async function setupSettings(settings: SettingsWindow) {
 			get options() {
 				return settings.parent.themeManager
 					.getThemes('dark')
-					.map(theme => ({ text: theme.name, value: theme.id }))
+					.map((theme) => ({ text: theme.name, value: theme.id }))
 			},
 			default: 'bridge.default.dark',
 			onChange: () => {
-				App.getApp().then(app => app.themeManager.updateTheme())
+				App.getApp().then((app) => app.themeManager.updateTheme())
 			},
 		})
 	)
@@ -48,11 +48,11 @@ export async function setupSettings(settings: SettingsWindow) {
 			get options() {
 				return settings.parent.themeManager
 					.getThemes('light')
-					.map(theme => ({ text: theme.name, value: theme.id }))
+					.map((theme) => ({ text: theme.name, value: theme.id }))
 			},
 			default: 'bridge.default.light',
 			onChange: () => {
-				App.getApp().then(app => app.themeManager.updateTheme())
+				App.getApp().then((app) => app.themeManager.updateTheme())
 			},
 		})
 	)
@@ -66,12 +66,12 @@ export async function setupSettings(settings: SettingsWindow) {
 			get options() {
 				return settings.parent.themeManager
 					.getThemes('dark', false)
-					.map(theme => ({ text: theme.name, value: theme.id }))
+					.map((theme) => ({ text: theme.name, value: theme.id }))
 					.concat([{ text: 'None', value: 'bridge.noSelection' }])
 			},
 			default: 'bridge.noSelection',
 			onChange: () => {
-				App.getApp().then(app => app.themeManager.updateTheme())
+				App.getApp().then((app) => app.themeManager.updateTheme())
 			},
 		})
 	)
@@ -85,12 +85,12 @@ export async function setupSettings(settings: SettingsWindow) {
 			get options() {
 				return settings.parent.themeManager
 					.getThemes('light', false)
-					.map(theme => ({ text: theme.name, value: theme.id }))
+					.map((theme) => ({ text: theme.name, value: theme.id }))
 					.concat([{ text: 'None', value: 'bridge.noSelection' }])
 			},
 			default: 'bridge.noSelection',
 			onChange: () => {
-				App.getApp().then(app => app.themeManager.updateTheme())
+				App.getApp().then((app) => app.themeManager.updateTheme())
 			},
 		})
 	)
@@ -134,7 +134,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 
-	const locales = await App.getApp().then(app => app.locales)
+	const locales = await App.getApp().then((app) => app.locales)
 	settings.addControl(
 		new Selection({
 			category: 'general',
@@ -142,13 +142,13 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.general.language.description',
 			key: 'locale',
 			get options() {
-				return locales.getLanguages().map(lang => ({
+				return locales.getLanguages().map((lang) => ({
 					text: lang[1],
 					value: lang[0],
 				}))
 			},
 			default: locales.getCurrentLanguage(),
-			onChange: val => {
+			onChange: (val) => {
 				locales.selectLanguage(val)
 			},
 		})
@@ -185,6 +185,15 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
+		new Toggle({
+			category: 'general',
+			name: 'windows.settings.general.restoreTabs.name',
+			description: 'windows.settings.general.restoreTabs.description',
+			key: 'restoreTabs',
+			default: true,
+		})
+	)
+	settings.addControl(
 		new Button({
 			category: 'general',
 			name: 'windows.settings.general.resetBridgeFolder.name',
@@ -198,7 +207,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	)
 
 	const app = await App.getApp()
-	Object.values(app.actionManager.state).forEach(action => {
+	Object.values(app.actionManager.state).forEach((action) => {
 		settings.addControl(new ActionViewer(action))
 	})
 }
