@@ -3,6 +3,7 @@
 import { register } from 'register-service-worker'
 import { createNotification } from '/@/components/Notifications/create'
 import { App } from '/@/App'
+import { set } from 'idb-keyval'
 
 if (process.env.mode === 'development') {
 	register(`${process.env.BASE_URL}service-worker.js`, {
@@ -53,7 +54,8 @@ export function updateApp(serviceWorker: ServiceWorkerRegistration) {
 			type: 'SKIP_WAITING',
 		})
 
-	navigator.serviceWorker.addEventListener('controllerchange', () => {
+	navigator.serviceWorker.addEventListener('controllerchange', async () => {
+		await set('firstStartAfterUpdate', true)
 		window.location.reload()
 	})
 }

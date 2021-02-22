@@ -31,6 +31,7 @@ import { LanguageManager } from '/@/components/Languages/LanguageManager'
 import { ProjectManager } from './components/Projects/ProjectManager'
 import { ContextMenu } from './components/ContextMenu/ContextMenu'
 import { Project } from './components/Projects/Project/Project'
+import { get, set } from 'idb-keyval'
 
 export class App {
 	public static fileSystemSetup = new FileSystemSetup()
@@ -161,6 +162,11 @@ export class App {
 		if (!fileHandle) return this.instance.windows.loadingWindow.close()
 
 		this.instance.fileSystem.setup(fileHandle)
+
+		if (await get<boolean>('firstStartAfterUpdate')) {
+			await set('firstStartAfterUpdate', false)
+			this.instance.windows.changelogWindow.open()
+		}
 
 		// Load settings
 		SettingsWindow.loadSettings(this.instance).then(async () => {
