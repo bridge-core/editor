@@ -273,13 +273,13 @@ export default {
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',
 			projectTargetVersion: 'Project Target Version',
-			create: 'Create!',
+			create: 'Create',
 		},
 		createPreset: {
 			title: 'Create Preset',
 			searchPresets: 'Search presets...',
 			overwriteFiles:
-				'This preset overwrites one or more exisiting files. Do you want to continue?',
+				'This preset overwrites one or more existing files. Do you want to continue?',
 			overwriteFilesConfirm: 'Continue',
 		},
 		deleteProject: {
