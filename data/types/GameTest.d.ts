@@ -1,6 +1,6 @@
 declare module 'GameTest' {
 	/**
-	 * Regsiters a GameTest into Minecraft
+	 * Registers a GameTest into Minecraft
 	 * @param namespace
 	 * Namespace of the GameTest. Should match the namespace of the mcstructure file
 	 * @param identifier

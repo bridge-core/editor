@@ -196,8 +196,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 				const overwriteFiles = await confirmWindow.fired
 				if (overwriteFiles) {
-					// Stop file collision checks, close preset creation window & continue creating preset
-					this.close()
+					// Stop file collision checks & continue creating preset
 					break
 				} else {
 					// Close loading window & early return
@@ -206,6 +205,9 @@ export class CreatePresetWindow extends BaseWindow {
 				}
 			}
 		}
+
+		// Close window
+		this.close()
 
 		promises.push(
 			...createFiles.map(async (createFileOpts) => {
