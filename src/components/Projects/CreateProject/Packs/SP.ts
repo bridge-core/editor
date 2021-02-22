@@ -2,7 +2,7 @@ import { CreatePack } from './Pack'
 import { CreateManifest } from '../Files/Manifest'
 import { CreateLang } from '../Files/Lang'
 import { CreatePackIcon } from '../Files/PackIcon'
-import { CreateSkins } from '../Files/Skins'
+import { CreateSkins } from '../Files/SP/Skins'
 
 export class CreateSP extends CreatePack {
 	protected readonly packPath = 'SP'
