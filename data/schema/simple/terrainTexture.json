@@ -68,9 +68,6 @@
 								},
 								{
 									"$ref": "../block/dynamic/texturePathEnum.json"
-								},
-								{
-									"type": "string"
 								}
 							]
 						}
