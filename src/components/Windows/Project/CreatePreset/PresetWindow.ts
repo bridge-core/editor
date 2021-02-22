@@ -243,8 +243,11 @@ export class CreatePresetWindow extends BaseWindow {
 		await Promise.all(promises)
 
 		for (const filePath of createdFiles) {
-			app.project?.updateFile(filePath)
-			app.project?.openFile(`projects/${app.project.name}/${filePath}`)
+			await app.project?.updateFile(filePath)
+			app.project?.openFile(
+				`projects/${app.project.name}/${filePath}`,
+				filePath === createdFiles[createdFiles.length - 1]
+			)
 		}
 
 		app.windows.loadingWindow.close()

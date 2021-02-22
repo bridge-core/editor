@@ -62,7 +62,7 @@ export class TabSystem {
 	}
 	remove(tab: Tab, destroyEditor = true) {
 		tab.onDeactivate()
-		this.tabs = this.tabs.filter(current => current !== tab)
+		this.tabs = this.tabs.filter((current) => current !== tab)
 		if (destroyEditor) tab.onDestroy()
 
 		if (tab === this._selectedTab) this.select(this.tabs[0])
@@ -80,7 +80,7 @@ export class TabSystem {
 		}
 	}
 	closeByPath(path: string) {
-		const tab = this.tabs.find(tab => tab.isFor(path))
+		const tab = this.tabs.find((tab) => tab.isFor(path))
 		if (tab) this.close(tab)
 	}
 	select(tab?: Tab) {
@@ -122,8 +122,8 @@ export class TabSystem {
 		app.windows.loadingWindow.close()
 	}
 
-	activate() {
-		this.selectedTab?.onActivate()
+	async activate() {
+		await this.selectedTab?.onActivate()
 	}
 	deactivate() {
 		this.selectedTab?.onDeactivate()
@@ -142,7 +142,7 @@ export class TabSystem {
 	}
 
 	getTab(path: string) {
-		return this.tabs.find(tab => tab.isFor(path))
+		return this.tabs.find((tab) => tab.isFor(path))
 	}
 	closeTabs(predicate: (tab: Tab) => boolean) {
 		const tabs = [...this.tabs].reverse()
@@ -163,6 +163,6 @@ export class TabSystem {
 	}
 
 	get hasUnsavedTabs() {
-		return this.tabs.some(tab => tab.isUnsaved)
+		return this.tabs.some((tab) => tab.isUnsaved)
 	}
 }

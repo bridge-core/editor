@@ -60,7 +60,7 @@ export abstract class Tab {
 		return path === this.path
 	}
 
-	onActivate() {}
+	async onActivate() {}
 	onDeactivate() {}
 	onDestroy() {}
 	protected async toOtherTabSystem(updateParentTabs = true) {
@@ -121,7 +121,7 @@ export abstract class Tab {
 				icon: 'mdi-chevron-right',
 				onTrigger: () => {
 					let closeTabs = true
-					this.parent.closeTabs(tab => {
+					this.parent.closeTabs((tab) => {
 						if (tab === this) closeTabs = false
 						return closeTabs
 					})
@@ -132,7 +132,7 @@ export abstract class Tab {
 				description: 'actions.closeAllSaved.description',
 				icon: 'mdi-content-save-outline',
 				onTrigger: () => {
-					this.parent.closeTabs(tab => !tab.isUnsaved)
+					this.parent.closeTabs((tab) => !tab.isUnsaved)
 				},
 			},
 			{
@@ -140,7 +140,7 @@ export abstract class Tab {
 				description: 'actions.closeOtherTabs.description',
 				icon: 'mdi-unfold-more-vertical',
 				onTrigger: () => {
-					this.parent.closeTabs(tab => tab !== this)
+					this.parent.closeTabs((tab) => tab !== this)
 				},
 			},
 		])

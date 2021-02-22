@@ -26,7 +26,7 @@ export class TextTab extends Tab {
 		this.editorInstance?.focus()
 		this.editorInstance?.layout()
 
-		if (this.editorModel === undefined) {
+		if (!this.editorModel) {
 			const file = await app.fileSystem.readFile(this.path)
 			const fileContent = await file.text()
 

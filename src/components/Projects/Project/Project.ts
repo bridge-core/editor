@@ -69,7 +69,8 @@ export class Project {
 
 	async activate(forceRefresh = false) {
 		this.parent.title.setProject(this.name)
-		this.tabSystems.forEach((tabSystem) => tabSystem.activate())
+		for (const tabSystem of this.tabSystems) await tabSystem.activate()
+
 		this.typeLoader.activate()
 		await this.packIndexer.activate(forceRefresh).then(() => {
 			this.jsonDefaults.activate()
@@ -88,13 +89,13 @@ export class Project {
 		await this.activate(true)
 	}
 
-	openFile(filePath: string) {
+	openFile(filePath: string, selectTab = true) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = tabSystem.getTab(filePath)
-			if (tab) return tabSystem.select(tab)
+			if (tab) return selectTab ? tabSystem.select(tab) : undefined
 		}
 
-		this.tabSystem?.open(filePath)
+		this.tabSystem?.open(filePath, selectTab)
 	}
 	async updateFile(filePath: string) {
 		await this.packIndexer.updateFile(filePath)
