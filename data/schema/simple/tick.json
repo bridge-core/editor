@@ -4,7 +4,7 @@
 	"title": "Ticking Functions",
 	"additionalProperties": false,
 	"properties": {
-		"value": {
+		"values": {
 			"type": "array",
 			"items": {
 				"$ref": "../function/dynamic/functionPathEnum.json"
