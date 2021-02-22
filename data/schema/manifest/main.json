@@ -97,7 +97,7 @@
 								{
 									"type": "string"
 								}
-							],
+							]
 						},
 						"verison": {
 							"$ref": "#/definitions/triple_integer"
@@ -116,7 +116,7 @@
 					"uuid": {
 						"anyOf": [
 							{
-								"$ref": "../general/uuid.json"
+								"$ref": "../clientManifest/dynamic/uuidEnum.json"
 							},
 							{
 								"type": "string"
