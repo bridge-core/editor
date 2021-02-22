@@ -4,6 +4,6 @@ import { CreateFile } from '/@/components/Projects/CreateProject/Files/File'
 
 export class CreateTick extends CreateFile {
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
-		await fs.writeJSON(`RP/functions/tick.json`, { values: [] }, true)
+		await fs.writeJSON(`BP/functions/tick.json`, { values: [] }, true)
 	}
 }
