@@ -90,6 +90,7 @@
 				:disabled="!fieldsReady"
 				:loading="!isPackIndexerReady"
 			>
+				<v-icon class="mr-1">mdi-plus</v-icon>
 				Create
 			</v-btn>
 		</template>
