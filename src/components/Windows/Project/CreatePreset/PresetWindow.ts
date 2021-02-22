@@ -14,6 +14,8 @@ import { runPresetScript } from './PresetScript'
 import { expandFile, TExpandFile } from './ExpandFile'
 import { createFile, TCreateFile } from './CreateFile'
 import { TPackTypeId } from '/@/components/Data/PackType'
+import { transformString } from './TransformString'
+import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 
 export interface IPresetManifest {
 	name: string
@@ -172,10 +174,39 @@ export class CreatePresetWindow extends BaseWindow {
 
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
-		const fs = app.fileSystem
+		const fs = app.project?.fileSystem!
 
 		const promises: Promise<unknown>[] = []
 		const createdFiles: string[] = []
+
+		// Check that we don't overwrite files
+		for (const createFile of createFiles) {
+			if (typeof createFile === 'string') continue
+
+			const filePath = transformString(
+				createFile[1],
+				createFile[2]?.inject ?? [],
+				this.sidebar.currentState.models
+			)
+			if (await fs.fileExists(filePath)) {
+				const confirmWindow = new ConfirmationWindow({
+					description: 'windows.createPreset.overwriteFiles',
+					confirmText: 'windows.createPreset.overwriteFilesConfirm',
+				})
+
+				const overwriteFiles = await confirmWindow.fired
+				if (overwriteFiles) {
+					// Stop file collision checks, close preset creation window & continue creating preset
+					this.close()
+					break
+				} else {
+					// Close loading window & early return
+					app.windows.loadingWindow.close()
+					return
+				}
+			}
+		}
+
 		promises.push(
 			...createFiles.map(async (createFileOpts) => {
 				if (typeof createFileOpts === 'string') {
@@ -215,13 +246,5 @@ export class CreatePresetWindow extends BaseWindow {
 		}
 
 		app.windows.loadingWindow.close()
-	}
-
-	protected transformString(str: string, inject: string[]) {
-		const models = this.sidebar.currentState.models
-		inject.forEach(
-			(val) => (str = str.replaceAll(`{{${val}}}`, models[val]))
-		)
-		return str
 	}
 }

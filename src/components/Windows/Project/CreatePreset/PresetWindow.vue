@@ -128,7 +128,6 @@ export default {
 			this.currentWindow.close()
 		},
 		onCreatePreset() {
-			this.currentWindow.close()
 			this.currentWindow.createPreset(this.content)
 		},
 	},

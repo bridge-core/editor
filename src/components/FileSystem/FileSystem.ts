@@ -160,4 +160,13 @@ export class FileSystem extends Signal<void> {
 		await writable.write(await fileHandle.getFile())
 		await writable.close()
 	}
+
+	async fileExists(path: string) {
+		try {
+			await this.getFileHandle(path)
+			return true
+		} catch {
+			return false
+		}
+	}
 }
