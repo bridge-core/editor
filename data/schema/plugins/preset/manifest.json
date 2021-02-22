@@ -17,44 +17,178 @@
 			"pattern": "^mdi-",
 			"type": "string"
 		},
-		"bp_map": {
-			"description": "JSON files to create.",
-			"patternProperties": {
-				".*": {
-					"type": "string"
+		"category": {
+			"type": "string"
+		},
+		"targetVersion": {
+			"type": "array",
+			"minItems": 2,
+			"maxItems": 2,
+			"items": [
+				{
+					"type": "string",
+					"description": "Format version"
+				},
+				{
+					"type": "string",
+					"description": "Operator",
+					"enum": [">", ">=", "=", "<", "<="]
 				}
+			]
+		},
+		"packTypes": {
+			"type": "array",
+			"items": {
+				"enum": [
+					"worldTemplate",
+					"behaviorPack",
+					"resourcePack",
+					"skinPack"
+				]
 			}
 		},
-		"rp_map": {
-			"description": "JSON files to create.",
-			"patternProperties": {
-				".*": {
-					"type": "string"
-				}
+		"fields": {
+			"type": "array",
+			"items": {
+				"type": "array",
+				"minItems": 2,
+				"maxItems": 3,
+				"items": [
+					{
+						"type": "string",
+						"description": "Name of the input."
+					},
+					{
+						"type": "string",
+						"description": "Variable for the input value."
+					},
+					{
+						"type": "object",
+						"properties": {
+							"type": {
+								"description": "Type of input.",
+								"type": "string",
+								"enum": [
+									"fileInput",
+									"numberInput",
+									"textInput",
+									"switch"
+								]
+							},
+							"default": {
+								"description": "Default value for the input.",
+								"type": "string"
+							},
+							"optional": {
+								"type": "boolean",
+								"description": "Whether or not the input is optional."
+							}
+						},
+						"allOf": [
+							{
+								"if": {
+									"properties": {
+										"type": {
+											"const": "numberInput"
+										}
+									}
+								},
+								"then": {
+									"properties": {
+										"min": {
+											"type": "number"
+										},
+										"max": {
+											"type": "number"
+										},
+										"step": {
+											"type": "number"
+										}
+									}
+								}
+							},
+							{
+								"if": {
+									"properties": {
+										"type": {
+											"const": "fileInput"
+										}
+									}
+								},
+								"then": {
+									"properties": {
+										"accept": {
+											"type": "string"
+										},
+										"icon": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						]
+					}
+				]
 			}
 		},
-		"expand_rp_files": {
-			"description": "Files to add data to.",
-			"patternProperties": {
-				".*": {
-					"type": "string"
-				}
+		"createFiles": {
+			"type": "array",
+			"items": {
+				"type": "array",
+				"minItems": 2,
+				"maxItems": 3,
+				"items": [
+					{
+						"type": "string",
+						"description": "File name in the preset folder to create."
+					},
+					{
+						"type": "string",
+						"description": "Sets the file path, relative to the project's folder, of where to create the file"
+					},
+					{
+						"type": "object",
+						"properties": {
+							"inject": {
+								"type": "array",
+								"items": {
+									"description": "Variable name defined under fields to inject into the file and file path.",
+									"type": "string"
+								}
+							}
+						}
+					}
+				]
 			}
 		},
-		"expand_bp_files": {
-			"description": "Files to add data to.",
-			"patternProperties": {
-				".*": {
-					"type": "string"
-				}
-			}
-		},
-		"copy_rp_files": {
-			"description": "Files to just copy over.",
-			"patternProperties": {
-				".*": {
-					"type": "string"
-				}
+		"expandFiles": {
+			"type": "array",
+			"items": {
+				"type": "array",
+				"minItems": 2,
+				"maxItems": 3,
+				"items": [
+					{
+						"type": "string",
+						"description": "File name in the preset folder to be merged with the target path."
+					},
+					{
+						"type": "string",
+						"description": "Sets the file path, relative to the project's folder, of the file to add to."
+					},
+					{
+						"type": "object",
+						"properties": {
+							"inject": {
+								"type": "array",
+								"items": {
+									"description": "Variable name defined under fields to inject into the file and file path.",
+									"type": "string"
+								}
+							}
+						}
+					}
+				]
 			}
 		}
 	}

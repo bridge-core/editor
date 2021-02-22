@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { IActionConfig } from '../Actions/Action'
 import { ActionManager } from '../Actions/ActionManager'
 

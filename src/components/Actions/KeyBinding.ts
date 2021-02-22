@@ -1,4 +1,4 @@
-import { EventDispatcher } from '@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { KeyBindingManager } from './KeyBindingManager'
 import { fromStrKeyCode, toStrKeyCode } from './Utils'
 
@@ -22,11 +22,13 @@ export class KeyBinding extends EventDispatcher<void> {
 	static fromStrKeyCode(
 		keyBindingManager: KeyBindingManager,
 		keyCode: string,
-		forceWindowsCtrl = false
+		forceWindowsCtrl = false,
+		prevent: IKeyBindingConfig['prevent']
 	) {
-		return keyBindingManager.create(
-			fromStrKeyCode(keyCode, forceWindowsCtrl)
-		)
+		return keyBindingManager.create({
+			...fromStrKeyCode(keyCode, forceWindowsCtrl),
+			prevent,
+		})
 	}
 	toStrKeyCode() {
 		return toStrKeyCode(this.config)

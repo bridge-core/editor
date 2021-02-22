@@ -1,10 +1,9 @@
-import { Tab } from '@/components/TabSystem/CommonTab'
+import { Tab } from '/@/components/TabSystem/CommonTab'
 import TextTabComponent from './TextTab.vue'
 import * as monaco from 'monaco-editor'
-import { IDisposable } from '@/types/disposable'
-import debounce from 'lodash.debounce'
-import { App } from '@/App'
-import { TabSystem } from '@/components/TabSystem/TabSystem'
+import { IDisposable } from '/@/types/disposable'
+import { App } from '/@/App'
+import { TabSystem } from '/@/components/TabSystem/TabSystem'
 
 export class TextTab extends Tab {
 	component = TextTabComponent
@@ -27,7 +26,7 @@ export class TextTab extends Tab {
 		this.editorInstance?.focus()
 		this.editorInstance?.layout()
 
-		if (this.editorModel === undefined) {
+		if (!this.editorModel) {
 			const file = await app.fileSystem.readFile(this.path)
 			const fileContent = await file.text()
 
@@ -45,7 +44,7 @@ export class TextTab extends Tab {
 			app.windowResize.on(() => this.editorInstance?.layout())
 		)
 		this.disposables.push(
-			this.editorModel?.onDidChangeContent(event => {
+			this.editorModel?.onDidChangeContent((event) => {
 				this.isUnsaved = true
 			})
 		)
@@ -57,10 +56,12 @@ export class TextTab extends Tab {
 	}
 	onDeactivate() {
 		this.editorViewState = this.editorInstance?.saveViewState() ?? undefined
-		this.disposables.forEach(disposable => disposable?.dispose())
+		this.disposables.forEach((disposable) => disposable?.dispose())
 	}
 	onDestroy() {
+		this.disposables.forEach((disposable) => disposable?.dispose())
 		this.editorModel?.dispose()
+		this.editorViewState = undefined
 	}
 	updateParent(parent: TabSystem) {
 		super.updateParent(parent)

@@ -2,7 +2,7 @@
 	<div>
 		<h3>{{ t(config.name) }}</h3>
 		<v-switch
-			style="margin-top: 0;"
+			style="margin-top: 0"
 			inset
 			dense
 			:label="t(config.description)"
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { TranslationMixin } from '@/utils/locales'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
 	props: {
@@ -29,7 +29,7 @@ export default {
 	},
 	methods: {
 		onChange(val) {
-			this.$nextTick(() => this.$emit('change', val))
+			this.$emit('change', val === null ? false : val)
 		},
 	},
 }

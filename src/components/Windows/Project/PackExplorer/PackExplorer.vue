@@ -82,11 +82,11 @@
 </template>
 
 <script>
-import SidebarWindow from '@/components/Windows/Layout/SidebarWindow.vue'
+import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import FileDisplayer from './FileDisplayer.vue'
 
-import { App } from '@/App'
-import { TranslationMixin } from '@/utils/locales'
+import { App } from '/@/App'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
 	name: 'PackExplorerWindow',
@@ -103,9 +103,10 @@ export default {
 		onClose() {
 			this.currentWindow.close()
 		},
-		refreshPackExplorer() {
+		async refreshPackExplorer() {
 			this.currentWindow.close()
-			App.instance.switchProject(selectedProject, true)
+			const app = await App.getApp()
+			await app.project.refresh()
 		},
 		openFile(filePath) {
 			this.currentWindow.close()

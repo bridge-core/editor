@@ -4,6 +4,7 @@
 	"description": "Creates a sword item.",
 	"category": "fileType.item",
 	"targetVersion": [">=", "1.16.100"],
+	"packTypes": ["behaviorPack", "resourcePack"],
 	"fields": [
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]

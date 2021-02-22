@@ -3,6 +3,7 @@
 	"icon": "mdi-sword",
 	"description": "Creates a blank item.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

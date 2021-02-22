@@ -1,13 +1,13 @@
-import { App } from '@/App'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
-import { BaseWindow } from '@/components/Windows/BaseWindow'
+import { App } from '/@/App'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import CreateProjectComponent from './CreateProject.vue'
 import { CreatePack, TPackType } from './Packs/Pack'
 import { CreateBP } from './Packs/BP'
 import { CreateRP } from './Packs/RP'
 import { CreateSP } from './Packs/SP'
 import { CreateBridge } from './Packs/Bridge'
-import { IPackType, PackType } from '@/components/Data/PackType'
+import { IPackType, PackType } from '/@/components/Data/PackType'
 import { CreateGitIgnore } from './Files/GitIgnore'
 
 export interface ICreateProjectOptions {
@@ -83,12 +83,11 @@ export class CreateProjectWindow extends BaseWindow {
 		return new Promise<void>(resolve =>
 			App.ready.once(async app => {
 				const fs = app.fileSystem
-				const scopedFs = new FileSystem(
-					await fs.getDirectoryHandle(
-						`projects/${this.createOptions.name}`,
-						{ create: true }
-					)
+				const projectDir = await fs.getDirectoryHandle(
+					`projects/${this.createOptions.name}`,
+					{ create: true }
 				)
+				const scopedFs = new FileSystem(projectDir)
 
 				for (const createFile of this.createFiles) {
 					await createFile.create(scopedFs, this.createOptions)
@@ -97,7 +96,7 @@ export class CreateProjectWindow extends BaseWindow {
 					await this.packs[pack].create(scopedFs, this.createOptions)
 				}
 
-				await app.projectManager.addProject(this.createOptions.name)
+				await app.projectManager.addProject(projectDir)
 				resolve()
 			})
 		)

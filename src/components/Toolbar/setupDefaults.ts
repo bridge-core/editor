@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { setupEditCategory } from './Category/edit'
 import { setupFileCategory } from './Category/file'
 import { setupHelpCategory } from './Category/help'

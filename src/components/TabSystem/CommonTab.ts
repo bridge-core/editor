@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import { TabSystem } from './TabSystem'
-import { IFileSystem } from '@/components/FileSystem/Common'
-import { App } from '@/App'
+import { IFileSystem } from '/@/components/FileSystem/Common'
+import { App } from '/@/App'
 import { FileType } from '../Data/FileType'
 import { PackType } from '../Data/PackType'
 import { showContextMenu } from '../ContextMenu/showContextMenu'
@@ -60,7 +60,7 @@ export abstract class Tab {
 		return path === this.path
 	}
 
-	onActivate() {}
+	async onActivate() {}
 	onDeactivate() {}
 	onDestroy() {}
 	protected async toOtherTabSystem(updateParentTabs = true) {
@@ -74,8 +74,11 @@ export abstract class Tab {
 		this.updateParent(to)
 		if (updateParentTabs) {
 			to.add(this, true)
-			from.remove(this)
+			from.remove(this, false)
 		} else {
+			await to.openedFiles.add(this.getPath())
+			await from.openedFiles.remove(this.getPath())
+
 			to.select(this)
 			if (this.isSelected) from.select(from.tabs[0])
 		}
@@ -118,7 +121,7 @@ export abstract class Tab {
 				icon: 'mdi-chevron-right',
 				onTrigger: () => {
 					let closeTabs = true
-					this.parent.closeTabs(tab => {
+					this.parent.closeTabs((tab) => {
 						if (tab === this) closeTabs = false
 						return closeTabs
 					})
@@ -129,7 +132,7 @@ export abstract class Tab {
 				description: 'actions.closeAllSaved.description',
 				icon: 'mdi-content-save-outline',
 				onTrigger: () => {
-					this.parent.closeTabs(tab => !tab.isUnsaved)
+					this.parent.closeTabs((tab) => !tab.isUnsaved)
 				},
 			},
 			{
@@ -137,7 +140,7 @@ export abstract class Tab {
 				description: 'actions.closeOtherTabs.description',
 				icon: 'mdi-unfold-more-vertical',
 				onTrigger: () => {
-					this.parent.closeTabs(tab => tab !== this)
+					this.parent.closeTabs((tab) => tab !== this)
 				},
 			},
 		])

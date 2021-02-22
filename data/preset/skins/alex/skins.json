@@ -1,0 +1,10 @@
+{
+    "skins": [
+        {
+            "localization_name": "{{IDENTIFIER}}",
+            "geometry": "geometry.humanoid.custom",
+            "texture": "{{IDENTIFIER}}.png",
+            "type": "free"
+        }
+    ]
+}

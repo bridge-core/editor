@@ -11,23 +11,25 @@
 		:hasCloseButton="false"
 	>
 		<template #default>
-			<p class="mt-2">{{ t(content) }}</p>
+			<p class="mt-2">{{ t($data.description) }}</p>
 		</template>
 		<template #actions>
 			<v-spacer />
 			<v-btn @click="onCancel">
-				<span>{{ t(cancelText) }}</span>
+				<v-icon class="mr-1">mdi-close</v-icon>
+				<span>{{ t($data.cancelText) }}</span>
 			</v-btn>
 			<v-btn color="primary" @click="onConfirm">
-				<span>{{ t(confirmText) }}</span>
+				<v-icon class="mr-1">mdi-check</v-icon>
+				<span>{{ t($data.confirmText) }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>
 </template>
 
 <script>
-import { TranslationMixin } from '@/utils/locales'
-import BaseWindow from '../../Layout/BaseWindow'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 
 export default {
 	name: 'Confirm',
@@ -37,19 +39,15 @@ export default {
 	},
 	props: ['currentWindow'],
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	methods: {
 		onCancel() {
-			this.currentWindow.close()
-			this.onCancelCb()
+			this.currentWindow.onCancel()
 		},
 		onConfirm() {
-			this.currentWindow.close()
-			this.onConfirmCb()
+			this.currentWindow.onConfirm()
 		},
 	},
 }
 </script>
-
-<style></style>

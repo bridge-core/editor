@@ -1,6 +1,5 @@
 import { IModuleConfig } from '../types'
-import { join } from 'path'
-import { App } from '@/App'
+import { App } from '/@/App'
 
 let cachedGlobals: Record<string, unknown> | undefined = undefined
 

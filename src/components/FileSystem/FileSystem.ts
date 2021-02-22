@@ -1,6 +1,6 @@
-import { Signal } from '@/components/Common/Event/Signal'
+import { Signal } from '/@/components/Common/Event/Signal'
 import json5 from 'json5'
-import { IGetHandleConfig, IMkdirConfig } from './Common'
+import type { IGetHandleConfig, IMkdirConfig } from './Common'
 
 export class FileSystem extends Signal<void> {
 	public _baseDirectory!: FileSystemDirectoryHandle
@@ -114,7 +114,9 @@ export class FileSystem extends Signal<void> {
 	}
 
 	readFile(path: string) {
-		return this.getFileHandle(path).then(fileHandle => fileHandle.getFile())
+		return this.getFileHandle(path).then((fileHandle) =>
+			fileHandle.getFile()
+		)
 	}
 
 	async unlink(path: string) {
@@ -157,5 +159,14 @@ export class FileSystem extends Signal<void> {
 		const writable = await copiedFileHandle.createWritable()
 		await writable.write(await fileHandle.getFile())
 		await writable.close()
+	}
+
+	async fileExists(path: string) {
+		try {
+			await this.getFileHandle(path)
+			return true
+		} catch {
+			return false
+		}
 	}
 }

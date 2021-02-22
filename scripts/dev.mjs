@@ -1,20 +1,20 @@
 import { promises as fs } from 'fs'
 import chokidar from 'chokidar'
 import dotenv from 'dotenv'
-import { dirname, join } from 'path'
+import { dirname, join, sep } from 'path'
 dotenv.config()
 
 const targetPath = join(process.env.USER_PATH, 'data/packages')
 console.log(targetPath)
 
 function getPath(path) {
-	return join(targetPath, path.replace('data/', ''))
+	return join(targetPath, path.replace(`data${sep}`, ''))
 }
 async function copyFile(path) {
 	console.log(`Updating file ${getPath(path)}`)
 
 	try {
-		await fs.mkdir(dirname(getPath(path)))
+		await fs.mkdir(dirname(getPath(path)), { recursive: true })
 	} catch {}
 
 	await fs.copyFile(path, getPath(path))

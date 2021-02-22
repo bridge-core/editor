@@ -24,8 +24,8 @@
 </template>
 
 <script>
-import { TranslationMixin } from '@/utils/locales'
-import BaseWindow from '@/components/Windows/Layout/BaseWindow'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 
 export default {
 	name: 'Information',

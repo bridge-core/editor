@@ -1,4 +1,4 @@
-import { FileSystem } from '@/components/FileSystem/FileSystem'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { ICreateProjectOptions } from '../CreateProject'
 
 export abstract class CreateFile {

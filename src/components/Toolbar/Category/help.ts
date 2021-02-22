@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 
 export function setupHelpCategory(app: App) {
@@ -55,8 +55,7 @@ export function setupHelpCategory(app: App) {
 		app.actionManager.create({
 			name: 'actions.faq.name',
 			icon: 'mdi-frequently-asked-questions',
-			description:
-				'actions.faq.description',
+			description: 'actions.faq.description',
 			onTrigger: () =>
 				App.createNativeWindow(
 					'https://bridge-core.github.io/editor-docs/faq/',

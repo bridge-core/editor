@@ -42,11 +42,11 @@ import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import { platform } from './utils/os'
-import { TabSystemMixin } from '@/components/Mixins/TabSystem'
-import ContextMenu from '@/components/ContextMenu/ContextMenu.vue'
-import { App } from '@/App'
-import TabSystem from '@/components/TabSystem/TabSystem.vue'
-import WelcomeScreen from '@/components/TabSystem/WelcomeScreen.vue'
+import { TabSystemMixin } from '/@/components/Mixins/TabSystem'
+import ContextMenu from '/@/components/ContextMenu/ContextMenu.vue'
+import { App } from '/@/App.ts'
+import TabSystem from '/@/components/TabSystem/TabSystem.vue'
+import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 
 export default Vue.extend({
 	name: 'App',

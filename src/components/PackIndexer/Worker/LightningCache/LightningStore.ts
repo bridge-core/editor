@@ -1,5 +1,5 @@
-import { FileType, IMonacoSchemaArrayEntry } from '@/components/Data/FileType'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
+import { FileType, IMonacoSchemaArrayEntry } from '/@/components/Data/FileType'
+import type { FileSystem } from '/@/components/FileSystem/FileSystem'
 
 type TStore = Record<string, Record<string, IStoreEntry>>
 interface IStoreEntry {
@@ -26,7 +26,7 @@ export class LightningStore {
 			loadStore = (
 				await this.fs
 					.readFile('bridge/.lightningCache')
-					.then(file => file.text())
+					.then((file) => file.text())
 			).split('\n')
 		} catch {}
 
@@ -101,7 +101,7 @@ export class LightningStore {
 			const cacheEntries =
 				relevantStore[filePath].data?.[whereCacheKey] ?? []
 
-			if (cacheEntries.find(entry => matchesOneOf.includes(entry))) {
+			if (cacheEntries.find((entry) => matchesOneOf.includes(entry))) {
 				if (!fetchAll) return [filePath]
 				else resultingFiles.push(filePath)
 			}
@@ -203,7 +203,7 @@ export class LightningStore {
 				}${key}Property.json`,
 				schema: {
 					properties: Object.fromEntries(
-						collectedData[key].map(d => [d, {}])
+						collectedData[key].map((d) => [d, {}])
 					),
 				},
 			})

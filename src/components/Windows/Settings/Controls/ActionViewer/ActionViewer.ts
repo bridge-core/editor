@@ -1,8 +1,8 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { Control, IControl } from '../Control'
 import ActionViewerComponent from './ActionViewer.vue'
 import Vue from 'vue'
-import { Action } from '@/components/Actions/Action'
+import { Action } from '/@/components/Actions/Action'
 
 export class ActionViewer extends Control<any> {
 	config: any = Vue.observable({ category: 'actions', action: {} })

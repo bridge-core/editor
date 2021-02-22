@@ -1,6 +1,5 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { createSidebar } from './create'
-import Extensions from './Content/Extensions/Main.vue'
 
 export function setupSidebar() {
 	createSidebar({
@@ -16,10 +15,9 @@ export function setupSidebar() {
 		icon: 'mdi-folder-outline',
 		onClick: async () => {
 			// PackIndexer needs to be done before we can open the PackExplorer
-			await new Promise<void>(resolve => {
-				App.ready.once(app => app.packIndexer.once(() => resolve()))
-			})
-			App.instance.windows.packExplorer.open()
+			const app = await App.getApp()
+			await app.project?.packIndexer.fired
+			app.windows.packExplorer.open()
 		},
 	})
 	createSidebar({
@@ -28,7 +26,7 @@ export function setupSidebar() {
 		icon: 'mdi-cogs',
 		onClick: async () => {
 			const app = await App.getApp()
-			await app.compiler.openWindow()
+			await app.project?.compilerManager.openWindow()
 		},
 	})
 	createSidebar({

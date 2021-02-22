@@ -1,5 +1,5 @@
-import { App } from '@/App'
-import { IPackType, PackType } from '@/components/Data/PackType'
+import { App } from '/@/App'
+import { IPackType, PackType } from '/@/components/Data/PackType'
 import { loadManifest } from './loadManifest'
 
 export interface IPackData extends IPackType {
@@ -20,14 +20,14 @@ export async function loadPacks(app: App, projectName: string) {
 		if (!packType) continue
 
 		// Load pack manifest
-		let manifest: any
+		let manifest: any = {}
 		try {
 			manifest = await loadManifest(app, projectName, handle.name)
 		} catch {}
 
 		packs.push({
 			...packType,
-			version: manifest.header.version ?? [1, 0, 0],
+			version: manifest?.header?.version ?? [1, 0, 0],
 		})
 	}
 

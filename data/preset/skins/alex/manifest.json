@@ -1,0 +1,23 @@
+{
+	"name": "Alex",
+	"icon": "mdi-face-woman-outline",
+	"description": "Add a Alex to the skin pack",
+	"category": "fileType.skins",
+	"packTypes": ["skinPack"],
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
+
+	"createFiles": [
+		["skin.png", "SP/{{IDENTIFIER}}.png", { "inject": ["IDENTIFIER"] }]
+	],
+	"expandFiles": [
+		["skins.json", "SP/skins.json", { "inject": ["IDENTIFIER"] }],
+		[
+			"en_US.lang",
+			"SP/texts/en_US.lang",
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
+		]
+	]
+}

@@ -1,5 +1,5 @@
 import { TUIStore } from '../UI/store'
-import { IDisposable } from '@/types/disposable'
+import { IDisposable } from '/@/types/disposable'
 import { IModuleConfig } from './types'
 
 import { SidebarModule } from './Modules/sidebar'

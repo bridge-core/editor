@@ -1,9 +1,9 @@
-import { FileType } from '@/components/Data/FileType'
-import { run } from '@/components/Extensions/Scripts/run'
-import { walkObject } from '@/utils/walkObject'
+import { FileType } from '/@/components/Data/FileType'
+import { run } from '/@/components/Extensions/Scripts/run'
+import { walkObject } from '/@/utils/walkObject'
 import json5 from 'json5'
-import { PackIndexerService } from '../Main'
-import { LightningStore } from './LightningStore'
+import type { PackIndexerService } from '../Main'
+import type { LightningStore } from './LightningStore'
 
 export interface ILightningInstruction {
 	'@filter'?: string[]
@@ -29,9 +29,9 @@ export class LightningCache {
 			;(await file.text())
 				.split('\n')
 				.concat(['bridge', 'builds'])
-				.forEach(folder => this.folderIgnoreList.add(folder))
+				.forEach((folder) => this.folderIgnoreList.add(folder))
 		} catch {
-			;['bridge', 'builds'].forEach(folder =>
+			;['bridge', 'builds'].forEach((folder) =>
 				this.folderIgnoreList.add(folder)
 			)
 		}
@@ -42,7 +42,7 @@ export class LightningCache {
 
 		if (this.folderIgnoreList.size === 0) await this.loadIgnoreFolders()
 
-		if (this.service.settings.noFullLightningCacheRefresh) {
+		if (this.service.getOptions().noFullLightningCacheRefresh) {
 			const filePaths = this.lightningStore.allFiles()
 			if (filePaths.length > 0) return [filePaths, []]
 		}
@@ -191,11 +191,11 @@ export class LightningCache {
 				readyData = Object.keys(data ?? {})
 			else readyData = [data]
 
-			if (filter) readyData = readyData.filter(d => !filter.includes(d))
+			if (filter) readyData = readyData.filter((d) => !filter.includes(d))
 			if (mapFunc)
 				readyData = readyData
-					.map(value => run(mapFunc, { value }))
-					.filter(value => value !== undefined)
+					.map((value) => run(mapFunc, { value }))
+					.filter((value) => value !== undefined)
 
 			if (!collectedData[key]) collectedData[key] = readyData
 			else
@@ -206,7 +206,7 @@ export class LightningCache {
 
 		for (const instruction of instructions) {
 			const key = Object.keys(instruction).find(
-				key => !key.startsWith('@')
+				(key) => !key.startsWith('@')
 			)
 			if (!key) continue
 			const paths = instruction[key] as string[]

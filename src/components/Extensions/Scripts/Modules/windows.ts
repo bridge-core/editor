@@ -3,11 +3,11 @@ import {
 	createInformationWindow,
 	createInputWindow,
 	createDropdownWindow,
-	createConfirmWindow,
-} from '@/components/Windows/Common/CommonDefinitions'
-import { createWindow } from '@/components/Windows/create'
+} from '/@/components/Windows/Common/CommonDefinitions'
+import { createWindow } from '/@/components/Windows/create'
 import { Component as VueComponent } from 'vue'
-import { BaseWindow } from '@/components/Windows/BaseWindow'
+import { BaseWindow } from '/@/components/Windows/BaseWindow'
+import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 
 export const WindowModule = ({}: IModuleConfig) => ({
 	BaseWindow,
@@ -52,11 +52,11 @@ export const WindowModule = ({}: IModuleConfig) => ({
 		onConfirm: () => void,
 		onCancel: () => void
 	) =>
-		createConfirmWindow(
-			displayContent,
+		new ConfirmationWindow({
+			description: displayContent,
 			confirmText,
 			cancelText,
 			onConfirm,
-			onCancel
-		),
+			onCancel,
+		}),
 })

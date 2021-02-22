@@ -3,6 +3,7 @@
 	"icon": "mdi-function",
 	"description": "Creates a blank function.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

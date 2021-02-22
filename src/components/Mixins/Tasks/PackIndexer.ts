@@ -1,18 +1,18 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 
 export const PackIndexerMixin = {
 	data: () => ({
-		isPackIndexerReady: false,
+		isPackIndexerReady: true,
 	}),
 	mounted() {
-		App.ready.once(app =>
-			app.packIndexer.ready.on((this as any).setIsPackIndexerReady)
-		)
+		// App.ready.once(app =>
+		// 	app.packIndexer.ready.on((this as any).setIsPackIndexerReady)
+		// )
 	},
 	destroyed() {
-		App.ready.once(app =>
-			app.packIndexer.ready.off((this as any).setIsPackIndexerReady)
-		)
+		// App.ready.once(app =>
+		// 	app.packIndexer.ready.off((this as any).setIsPackIndexerReady)
+		// )
 	},
 
 	methods: {

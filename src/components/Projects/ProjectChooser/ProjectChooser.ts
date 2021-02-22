@@ -1,7 +1,7 @@
-import { App } from '@/App'
-import { IProjectData } from '@/components/Projects/Project/Project'
-import { BaseWindow } from '@/components/Windows/BaseWindow'
-import { Sidebar, SidebarItem } from '@/components/Windows/Layout/Sidebar'
+import { App } from '/@/App'
+import { IProjectData } from '/@/components/Projects/Project/Project'
+import { BaseWindow } from '/@/components/Windows/BaseWindow'
+import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import ProjectChooserComponent from './ProjectChooser.vue'
 
 export class ProjectChooserWindow extends BaseWindow {

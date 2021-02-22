@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import { TranslationMixin } from '@/utils/locales'
-import BaseWindow from '../Layout/BaseWindow'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import BaseWindow from '../Layout/BaseWindow.vue'
 
 export default {
 	name: 'Confirm',

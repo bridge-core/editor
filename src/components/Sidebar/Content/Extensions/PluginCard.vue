@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { createManagePluginWindow } from '@/components/Windows/Extensions/Manage/definition'
+import { createManagePluginWindow } from '/@/components/Windows/Extensions/Manage/definition'
 
 export default {
 	name: 'PluginCard',

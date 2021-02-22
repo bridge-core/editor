@@ -1,0 +1,47 @@
+{
+	"name": "Slab",
+	"icon": "mdi-cube-outline",
+	"description": "Creates a new, slab block.",
+	"category": "fileType.block",
+	"targetVersion": [">=", "1.16.100"],
+	"packTypes": ["behaviorPack", "resourcePack"],
+	"fields": [
+		["Identifier", "IDENTIFIER"],
+		["Display Name", "IDENTIFIER_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"block.json",
+			"BP/blocks/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"texture.png",
+			"RP/textures/blocks/{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"geometry.json",
+			"RP/models/blocks/{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER"] }
+		]
+	],
+	"expandFiles": [
+		[
+			"terrainTexture.json",
+			"RP/textures/terrain_textures.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"clientBlock.json",
+			"RP/blocks.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
+		[
+			"en_US.lang",
+			"RP/texts/en_US.lang",
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
+		]
+	]
+}

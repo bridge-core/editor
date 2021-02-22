@@ -1,9 +1,10 @@
 <template>
-	<div ref="monacoContainer" style="height:calc(100% - 48px); width: 100%;" />
+	<div ref="monacoContainer" style="height: calc(100% - 48px); width: 100%" />
 </template>
 
 <script>
 import * as monaco from 'monaco-editor'
+import { TextTab } from './TextTab'
 
 const editorInstances = []
 export default {
@@ -26,35 +27,50 @@ export default {
 			return /** this.$store.state.Settings.file_font_family || */ '14px'
 		},
 	},
+	activated() {
+		this.updateEditor()
+	},
+	deactivated() {
+		this.tab.editorInstance?.dispose()
+		this.tab.editorInstance = undefined
+	},
 	mounted() {
-		monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-			target: monaco.languages.typescript.ScriptTarget.ESNext,
-			allowNonTsExtensions: true,
-			noLib: true,
-		})
+		this.updateEditor()
+	},
+	methods: {
+		updateEditor() {
+			monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+				target: monaco.languages.typescript.ScriptTarget.ESNext,
+				allowNonTsExtensions: true,
+				noLib: true,
+				alwaysStrict: true,
+			})
 
-		if (!this.tab.editorInstance) {
-			editorInstances[this.id]?.dispose()
-			editorInstances[this.id] = monaco.editor.create(
-				this.$refs.monacoContainer,
-				{
-					theme: `bridgeMonacoDefault`,
-					roundedSelection: false,
-					autoIndent: 'full',
-					fontSize: this.fontSize,
-					// fontFamily: this.fontFamily,
-					tabSize: 4,
-				}
-			)
+			if (!this.tab.editorInstance) {
+				editorInstances[this.id]?.dispose()
+				editorInstances[this.id] = monaco.editor.create(
+					this.$refs.monacoContainer,
+					{
+						theme: `bridgeMonacoDefault`,
+						roundedSelection: false,
+						autoIndent: 'full',
+						fontSize: this.fontSize,
+						// fontFamily: this.fontFamily,
+						tabSize: 4,
+					}
+				)
 
-			this.tab.receiveEditorInstance(editorInstances[this.id])
-		}
+				if (this.tab instanceof TextTab)
+					this.tab.receiveEditorInstance(editorInstances[this.id])
+			}
 
-		editorInstances[this.id]?.layout()
+			editorInstances[this.id]?.layout()
+		},
 	},
 	watch: {
 		tab() {
-			this.tab.receiveEditorInstance(editorInstances[this.id])
+			if (this.tab instanceof TextTab)
+				this.tab.receiveEditorInstance(editorInstances[this.id])
 		},
 		fontSize(val) {
 			this.monacoEditor.updateOptions({

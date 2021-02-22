@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import Vue from 'vue'
 import { Action, IActionConfig } from './Action'
 

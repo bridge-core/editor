@@ -1,17 +1,18 @@
 import { isMatch } from 'micromatch'
-import { ILightningInstruction } from '@/components/PackIndexer/Worker/Main'
-import { IPackSpiderFile } from '@/components/PackIndexer/Worker/PackSpider/PackSpider'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
+import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
+import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
+import type { FileSystem } from '/@/components/FileSystem/FileSystem'
 
 /**
  * Describes the structure of a file definition
  */
-interface IFileType {
+export interface IFileType {
 	id: string
 	icon?: string
 	scope: string | string[]
 	matcher: string | string[]
 	schema: string
+	types: string[]
 	packSpider: string
 	lightningCache: string
 }
@@ -29,6 +30,7 @@ export interface IMonacoSchemaArrayEntry {
  * Utilities around bridge.'s file definitions
  */
 export namespace FileType {
+	const pluginFileTypes = new Set<IFileType>()
 	let fileTypes: IFileType[] = []
 	let fileSystem: FileSystem
 
@@ -42,6 +44,20 @@ export namespace FileType {
 			if (dirent.kind === 'file')
 				fileTypes.push(await fs.readJSON(`${basePath}/${dirent.name}`))
 		}
+	}
+	export function addPluginFileType(fileDef: IFileType) {
+		pluginFileTypes.add(fileDef)
+
+		return {
+			dispose: () => pluginFileTypes.delete(fileDef),
+		}
+	}
+	export function getPluginFileTypes() {
+		return [...pluginFileTypes.values()]
+	}
+	export function setPluginFileTypes(fileDefs: IFileType[]) {
+		pluginFileTypes.clear()
+		fileDefs.forEach((fileDef) => pluginFileTypes.add(fileDef))
 	}
 
 	/**
@@ -58,7 +74,9 @@ export namespace FileType {
 					if (filePath.startsWith(fileType.scope)) return fileType
 				} else {
 					if (
-						fileType.scope.some(scope => filePath.startsWith(scope))
+						fileType.scope.some((scope) =>
+							filePath.startsWith(scope)
+						)
 					)
 						return fileType
 				}
@@ -131,12 +149,12 @@ export namespace FileType {
 					if (!packSpider) return
 					return fileSystem
 						.readJSON(`data/packages/packSpider/${packSpider}`)
-						.then(json => ({
+						.then((json) => ({
 							id,
 							packSpider: json,
 						}))
 				})
-				.filter(data => data !== undefined)
+				.filter((data) => data !== undefined)
 		)
 	}
 }

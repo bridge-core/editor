@@ -3,6 +3,7 @@
 	"icon": "mdi-book-outline",
 	"description": "Creates a blank recipe.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

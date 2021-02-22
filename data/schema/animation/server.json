@@ -24,14 +24,7 @@
 								"^\\d+(\\.\\d+)?$": {
 									"type": "array",
 									"items": {
-										"anyOf": [
-											{
-												"$ref": "../function/dynamic/functionPathEnum.json"
-											},
-											{
-												"$ref": "../entity/dynamic/prefixedEntityEventEnum.json"
-											}
-										]
+										"$ref": "../general/reference/animationEvent.json"
 									}
 								}
 							}

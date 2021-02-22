@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 
 export function loadAsDataURL(filePath: string) {
 	return new Promise<string>((resolve, reject) => {

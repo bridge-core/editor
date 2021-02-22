@@ -2,9 +2,10 @@
 	<div v-if="tabSystem.shouldRender" class="tab-system">
 		<TabBar :tabSystem="tabSystem" />
 
-		<keep-alive v-if="tabSystem.shouldRender">
+		<keep-alive>
 			<component
 				:is="tabSystem.currentComponent"
+				:key="`${tabSystem.uuid}.${tabSystem.currentComponent.name}`"
 				:tab="tabSystem.selectedTab"
 				:id="id"
 			/>
@@ -13,9 +14,9 @@
 </template>
 
 <script>
-import WelcomeScreen from '@/components/TabSystem/WelcomeScreen.vue'
-import TabBar from '@/components/TabSystem/TabBar.vue'
-import { App } from '@/App'
+import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
+import TabBar from '/@/components/TabSystem/TabBar.vue'
+import { App } from '/@/App'
 
 export default {
 	name: 'TabSystem',
@@ -32,7 +33,7 @@ export default {
 	},
 	watch: {
 		'tabSystem.shouldRender'() {
-			App.getApp().then(app => app.windowResize.dispatch())
+			App.getApp().then((app) => app.windowResize.dispatch())
 		},
 	},
 }

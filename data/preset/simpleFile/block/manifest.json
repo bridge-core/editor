@@ -3,6 +3,7 @@
 	"icon": "mdi-cube-outline",
 	"description": "Creates a blank block.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

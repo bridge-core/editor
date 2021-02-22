@@ -1,18 +1,18 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 
 export const CompilerMixin = {
 	data: () => ({
-		isCompilerReady: false,
+		isCompilerReady: true,
 	}),
 	mounted() {
-		App.ready.once(app =>
-			app.compiler.ready.on((this as any).setIsCompilerReady)
-		)
+		// App.ready.once(app =>
+		// app.compiler.ready.on((this as any).setIsCompilerReady)
+		// )
 	},
 	destroyed() {
-		App.ready.once(app =>
-			app.compiler.ready.off((this as any).setIsCompilerReady)
-		)
+		// App.ready.once(app =>
+		// app.compiler.ready.off((this as any).setIsCompilerReady)
+		// )
 	},
 
 	methods: {

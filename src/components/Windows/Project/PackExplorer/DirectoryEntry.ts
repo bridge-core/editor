@@ -1,10 +1,10 @@
-import { IFileSystem } from '@/components/FileSystem/Common'
-import { platform } from '@/utils/os'
+import { IFileSystem } from '/@/components/FileSystem/Common'
+import { platform } from '/@/utils/os'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
-import { App } from '@/App'
-import { PackType } from '@/components/Data/PackType'
-import { FileType } from '@/components/Data/FileType'
+import { App } from '/@/App'
+import { PackType } from '/@/components/Data/PackType'
+import { FileType } from '/@/components/Data/FileType'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
@@ -37,34 +37,35 @@ export class DirectoryEntry {
 		}
 	}
 
-	protected loadChildren(path: string[]) {
+	protected async loadChildren(path: string[]) {
 		this.isLoading = true
-		const dirents = <Promise<any>>App.instance.packIndexer.readdir(path, {
-			withFileTypes: true,
-		})
+		const app = await App.getApp()
+		const dirents: any[] =
+			(await app.project?.packIndexer.readdir(path, {
+				withFileTypes: true,
+			})) ?? []
 
-		dirents.then(handles => {
-			handles.forEach((handle: any) => {
-				if (
-					platform() === 'darwin' &&
-					handle.name === '.DS_Store' &&
-					handle.kind === 'file'
-				)
-					return
+		for (const handle of dirents) {
+			if (
+				platform() === 'darwin' &&
+				handle.name === '.DS_Store' &&
+				handle.kind === 'file'
+			)
+				return
 
-				const dirent = new DirectoryEntry(
-					this.fileSystem,
-					this,
-					handle.path ?? path.concat([handle.name]),
-					handle.kind === 'file'
-				)
-				dirent.setDisplayName(handle.displayName)
-				if (handle.filePath) dirent.setPath(handle.filePath)
-				this.children.push(dirent)
-			})
-			this.sortChildren()
-			this.isLoading = false
-		})
+			const dirent = new DirectoryEntry(
+				this.fileSystem,
+				this,
+				handle.path ?? path.concat([handle.name]),
+				handle.kind === 'file'
+			)
+			dirent.setDisplayName(handle.displayName)
+			if (handle.filePath) dirent.setPath(handle.filePath)
+			this.children.push(dirent)
+		}
+
+		this.sortChildren()
+		this.isLoading = false
 		this.hasLoadedChildren = true
 	}
 

@@ -4,6 +4,7 @@
 	"description": "Creates a new ore block with natural generation.",
 	"category": "fileType.block",
 	"targetVersion": [">=", "1.16.0"],
+	"packTypes": ["behaviorPack", "resourcePack"],
 	"fields": [
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]

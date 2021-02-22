@@ -1,7 +1,7 @@
 import UnsavedFileComponent from './UnsavedFile.vue'
-import { App } from '@/App'
+import { App } from '/@/App'
 import { BaseWindow } from '../BaseWindow'
-import { Tab } from '@/components/TabSystem/CommonTab'
+import { Tab } from '/@/components/TabSystem/CommonTab'
 
 export class UnsavedFileWindow extends BaseWindow {
 	constructor(protected tab: Tab) {

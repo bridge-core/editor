@@ -1,9 +1,8 @@
-import { EventSystem } from '@/components/Common/Event/EventSystem'
-import { FileType } from '@/components/Data/FileType'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
-import { file } from 'jszip'
-import { dirname } from 'path'
-import { CompilerService, IBuildConfigPlugins } from './Main'
+import { EventSystem } from '/@/components/Common/Event/EventSystem'
+import { FileType } from '/@/components/Data/FileType'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { dirname } from '/@/utils/path'
+import { CompilerService, TPluginDef } from './Main'
 import { hooks, TCompilerHook, TCompilerPlugin } from './Plugins'
 
 export class CompilerFile {
@@ -35,45 +34,25 @@ export class CompilerFile {
 	}
 
 	async runHook(
-		pluginDefs: IBuildConfigPlugins,
+		runPlugins: TPluginDef[],
 		plugins: Map<string, TCompilerPlugin>,
 		hook: TCompilerHook
 	) {
 		this.hooks.dispatch(hook)
 
-		await this.runHookFrom('*', pluginDefs, plugins, hook)
-		await this.runHookFrom(this.fileType, pluginDefs, plugins, hook)
+		for (let plugin of runPlugins) {
+			let pluginOpts: any = {}
+			if (Array.isArray(plugin)) [plugin, pluginOpts] = plugin
+			pluginOpts.mode = this.parent.getOptions().mode
 
-		for (const file of this.files)
-			await file.runHook(pluginDefs, plugins, hook)
+			let pluginObj = plugins.get(plugin)
+			await pluginObj?.[hook]?.(this, pluginOpts)
+		}
 
 		// After calling the finalizeBuild hook, save the files
 		if (hook === 'finalizeBuild') await this.save()
 		// After calling the cleanup hook, cleanup the file obj
 		if (hook === 'finalizeBuild') this.cleanup()
-	}
-
-	protected async runHookFrom(
-		fromPluginEntry: string,
-		pluginDefs: IBuildConfigPlugins,
-		plugins: Map<string, TCompilerPlugin>,
-		hook: TCompilerHook
-	) {
-		// TODO: Move logic into Main.ts file so we only need to lookup inside of the plugins map once per hook
-		// The compiler currently duplicates a lot of work
-		if (!pluginDefs[fromPluginEntry]) return
-
-		for (let plugin of pluginDefs[fromPluginEntry]!) {
-			let pluginOpts: any = {}
-			if (Array.isArray(plugin)) [plugin, pluginOpts] = plugin
-			pluginOpts.mode = this.parent.settings.mode
-
-			let pluginObj = plugins.get(plugin)
-			if (!pluginObj && fromPluginEntry !== '*')
-				pluginObj = plugins.get('#default')
-
-			await pluginObj?.[hook]?.(this, pluginOpts)
-		}
 	}
 
 	async save() {

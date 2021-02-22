@@ -1,5 +1,5 @@
-import { FileType } from '@/components/Data/FileType'
-import { walkObject } from '@/utils/walkObject'
+import { FileType } from '/@/components/Data/FileType'
+import { walkObject } from '/@/utils/walkObject'
 import { LightningStore } from '../LightningCache/LightningStore'
 import { PackIndexerService } from '../Main'
 
@@ -30,7 +30,7 @@ export class PackSpider {
 	) {}
 
 	async setup(filePaths: string[]) {
-		if (this.packIndexer.settings.disablePackSpider) return
+		if (this.packIndexer.getOptions().disablePackSpider) return
 
 		fileStore = {}
 		const response = await FileType.getPackSpiderData()

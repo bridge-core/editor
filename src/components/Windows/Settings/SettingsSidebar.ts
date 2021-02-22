@@ -1,4 +1,4 @@
-import { Sidebar, TSidebarElement } from '@/components/Windows/Layout/Sidebar'
+import { Sidebar, TSidebarElement } from '/@/components/Windows/Layout/Sidebar'
 import { Control } from './Controls/Control'
 
 export class SettingsSidebar extends Sidebar {

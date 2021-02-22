@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import { TranslationMixin } from '@/utils/locales'
-import ActionViewer from '@/components/Actions/ActionViewer.vue'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 
 export default {
 	props: {

@@ -3,6 +3,7 @@
 	"icon": "mdi-egg-outline",
 	"description": "Creates a blank spawn rule.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

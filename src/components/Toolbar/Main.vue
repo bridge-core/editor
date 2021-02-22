@@ -1,7 +1,7 @@
 <template>
 	<v-system-bar color="toolbar" fixed app clipped padless height="24px">
 		<img
-			style="height: 16px; padding-right: 8px;"
+			style="height: 16px; padding-right: 8px"
 			alt="bridge. Logo"
 			src="@/_assets/logo.png"
 		/>
@@ -25,14 +25,24 @@
 				/>
 			</template>
 		</v-toolbar-items>
+
+		<v-spacer />
+		<div
+			class="px-1 mx-1 rounded-lg app-version-display"
+			v-ripple
+			@click="openChangelogWindow"
+		>
+			v{{ appVersion }}
+		</div>
 	</v-system-bar>
 </template>
 
 <script>
-import WindowAction from './WindowAction'
-import MenuActivator from './Menu/Activator'
-import MenuButton from './Menu/Button'
-import { App } from '@/App'
+import WindowAction from './WindowAction.vue'
+import MenuActivator from './Menu/Activator.vue'
+import MenuButton from './Menu/Button.vue'
+import { App } from '/@/App.ts'
+import { version as appVersion } from '/@/appVersion.json'
 
 export default {
 	name: 'Toolbar',
@@ -44,8 +54,14 @@ export default {
 	data: () => ({
 		toolbar: App.toolbar.state,
 
-		windowActions: [],
+		appVersion,
 	}),
+	methods: {
+		async openChangelogWindow() {
+			const app = await App.getApp()
+			await app.windows.changelogWindow.open()
+		},
+	},
 }
 </script>
 
@@ -58,5 +74,9 @@ export default {
 .toolbar-btn {
 	-webkit-app-region: no-drag;
 	min-width: 0;
+}
+.app-version-display {
+	cursor: pointer;
+	font-size: 12px;
 }
 </style>

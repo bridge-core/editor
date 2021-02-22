@@ -1,3 +1,3 @@
-import path from 'path'
+import * as path from '/@/utils/path'
 
 export const PathModule = () => path

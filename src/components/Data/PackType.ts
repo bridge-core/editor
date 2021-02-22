@@ -1,5 +1,5 @@
 import { isMatch } from 'micromatch'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { v4 as uuid } from 'uuid'
 import { Signal } from '../Common/Event/Signal'
 
@@ -7,10 +7,15 @@ import { Signal } from '../Common/Event/Signal'
  * Describes the structure of a pack definition
  */
 export interface IPackType {
-	id: string
+	id: TPackTypeId
 	matcher: string | string[]
 	color: string
 }
+export type TPackTypeId =
+	| 'behaviorPack'
+	| 'resourcePack'
+	| 'skinPack'
+	| 'worldTemplate'
 
 /**
  * Utilities around bridge.'s pack definitions

@@ -52,8 +52,8 @@
 
 <script>
 import { DirectoryEntry } from './DirectoryEntry'
-import { App } from '@/App.ts'
-import { PackIndexerMixin } from '@/components/Mixins/Tasks/PackIndexer'
+import { App } from '/@/App.ts'
+import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'FileDisplayer',
@@ -71,9 +71,11 @@ export default {
 		tree: [],
 	}),
 	methods: {
-		loadDirectory() {
+		async loadDirectory() {
 			if (!this.entry) {
-				App.instance.packIndexer.once(async () => {
+				const app = await App.getApp()
+
+				app.project.packIndexer.once(async () => {
 					this.directoryEntry = await DirectoryEntry.create(
 						this.startPath
 					)

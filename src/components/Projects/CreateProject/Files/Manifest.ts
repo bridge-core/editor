@@ -1,7 +1,7 @@
-import { FileSystem } from '@/components/FileSystem/FileSystem'
-import { ICreateProjectOptions } from '@/components/Projects/CreateProject/CreateProject'
-import { TPackType } from '@/components/Projects/CreateProject/Packs/Pack'
-import { CreateFile } from '@/components/Projects/CreateProject/Files/File'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/CreateProject'
+import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
+import { CreateFile } from '/@/components/Projects/CreateProject/Files/File'
 import { v4 as uuid } from 'uuid'
 
 export class CreateManifest extends CreateFile {
@@ -31,8 +31,8 @@ export class CreateManifest extends CreateFile {
 					min_engine_version:
 						this.type === 'data' || 'resources'
 							? createOptions.targetVersion
-								.split('.')
-								.map(str => Number(str))
+									.split('.')
+									.map(str => Number(str))
 							: undefined,
 					uuid: uuid(),
 					version: [1, 0, 0],
@@ -46,7 +46,7 @@ export class CreateManifest extends CreateFile {
 					},
 				],
 			},
-			true,
+			true
 		)
 	}
 }

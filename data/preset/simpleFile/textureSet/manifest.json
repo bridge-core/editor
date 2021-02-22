@@ -4,6 +4,7 @@
 	"description": "Creates a blank texture set.",
 	"category": "fileType.simpleFile",
 	"targetVersion": [">=", "1.16.100"],
+	"packTypes": ["resourcePack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

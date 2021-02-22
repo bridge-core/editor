@@ -1,0 +1,19 @@
+{
+	"name": "Game Test",
+	"icon": "mdi-test-tube",
+	"description": "Creates a blank game test.",
+	"category": "fileType.simpleFile",
+	"targetVersion": [">=", "1.16.210"],
+	"packTypes": ["behaviorPack"],
+	"fields": [
+		["File Name", "FILE_NAME"]
+	],
+
+	"createFiles": [
+		[
+			"gameTest.js",
+			"BP/gametests/{{FILE_NAME}}.js",
+			{ "inject": ["FILE_NAME"] }
+		]
+	]
+}

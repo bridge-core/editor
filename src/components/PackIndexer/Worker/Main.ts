@@ -1,6 +1,6 @@
-import { FileType, IMonacoSchemaArrayEntry } from '@/components/Data/FileType'
+import { FileType, IFileType } from '/@/components/Data/FileType'
 import * as Comlink from 'comlink'
-import { TaskService } from '@/components/TaskManager/WorkerTask'
+import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
 import {
 	fileStore,
@@ -9,10 +9,13 @@ import {
 	PackSpider,
 } from './PackSpider/PackSpider'
 import { LightningCache } from './LightningCache/LightningCache'
-import { FileSystem } from '@/components/FileSystem/FileSystem'
-export { ILightningInstruction } from './LightningCache/LightningCache'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+export type { ILightningInstruction } from './LightningCache/LightningCache'
 
-export interface IWorkerSettings {
+export interface IPackIndexerOptions {
+	projectDirectory: FileSystemDirectoryHandle
+	baseDirectory: FileSystemDirectoryHandle
+	pluginFileTypes: IFileType[]
 	disablePackSpider: boolean
 	noFullLightningCacheRefresh: boolean
 }
@@ -22,21 +25,22 @@ export class PackIndexerService extends TaskService<string[]> {
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
 
-	constructor(
-		projectDirectory: FileSystemDirectoryHandle,
-		protected baseDirectory: FileSystemDirectoryHandle,
-		readonly settings: IWorkerSettings
-	) {
-		super('packIndexer', projectDirectory)
+	constructor(protected readonly options: IPackIndexerOptions) {
+		super('packIndexer', options.projectDirectory)
 		this.lightningStore = new LightningStore(this.fileSystem)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
+		FileType.setPluginFileTypes(options.pluginFileTypes)
+	}
+
+	getOptions() {
+		return this.options
 	}
 
 	async onStart() {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
-		await FileType.setup(new FileSystem(this.baseDirectory))
+		await FileType.setup(new FileSystem(this.options.baseDirectory))
 
 		console.timeEnd('[WORKER] SETUP')
 
@@ -60,14 +64,18 @@ export class PackIndexerService extends TaskService<string[]> {
 		await this.packSpider.updateFile(filePath)
 	}
 
+	updatePlugins(pluginFileTypes: IFileType[]) {
+		FileType.setPluginFileTypes(pluginFileTypes)
+	}
+
 	async readdir(path: string[]) {
-		if (this.settings.disablePackSpider) {
+		if (this.options.disablePackSpider) {
 			if (path.length > 0)
 				return (
 					await this.fileSystem.readdir(path.join('/'), {
 						withFileTypes: true,
 					})
-				).map(dirent => ({
+				).map((dirent) => ({
 					kind: dirent.kind,
 					name: dirent.name,
 					path: path.concat([dirent.name]),
@@ -141,7 +149,7 @@ async function loadPack(pack: string, fileSystem: FileSystem) {
 		return []
 	}
 
-	return projects.map(dirent => {
+	return projects.map((dirent) => {
 		const fileType = FileType.getId(`${pack}/${dirent.name}${'/test.json'}`)
 		return {
 			kind: dirent.kind,

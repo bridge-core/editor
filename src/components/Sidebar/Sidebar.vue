@@ -60,11 +60,11 @@
 </template>
 
 <script>
-import { settingsState } from '@/components/Windows/Settings/SettingsState'
-import SidebarButton from './Button'
-import { SidebarState, getSelected } from './state'
-import { tasks } from '@/components/TaskManager/TaskManager'
-import { NotificationStore } from '@/components/Notifications/state'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState.ts'
+import SidebarButton from './Button.vue'
+import { SidebarState } from './state.ts'
+import { tasks } from '/@/components/TaskManager/TaskManager.ts'
+import { NotificationStore } from '/@/components/Notifications/state.ts'
 
 export default {
 	name: 'Sidebar',

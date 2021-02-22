@@ -1,5 +1,5 @@
-import { IDisposable } from '@/types/disposable'
-import debounce from 'lodash.debounce'
+import { IDisposable } from '/@/types/disposable'
+import { debounce } from 'lodash-es'
 import { languages, editor } from 'monaco-editor'
 
 export interface IAddLanguageOptions {
@@ -28,7 +28,7 @@ export abstract class Language {
 			languages.setMonarchTokensProvider(id, tokenProvider),
 			editor.onDidCreateModel(this.onModelAdded.bind(this)),
 			editor.onWillDisposeModel(this.onModelRemoved.bind(this)),
-			editor.onDidChangeModelLanguage(event => {
+			editor.onDidChangeModelLanguage((event) => {
 				this.onModelRemoved(event.model)
 				this.onModelAdded(event.model)
 			}),
@@ -42,7 +42,7 @@ export abstract class Language {
 		this.models.set(
 			model.uri.toString(),
 			model.onDidChangeContent(
-				debounce(event => this.validate(model, event), 500)
+				debounce((event) => this.validate(model, event), 500)
 			)
 		)
 	}
@@ -60,7 +60,7 @@ export abstract class Language {
 	): Promise<void> | void
 
 	dispose() {
-		this.disposables.forEach(disposable => disposable.dispose())
+		this.disposables.forEach((disposable) => disposable.dispose())
 		this.disposables = []
 	}
 }

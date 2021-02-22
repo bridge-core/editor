@@ -1,66 +1,159 @@
-import { App } from '@/App'
-import { FileType, IMonacoSchemaArrayEntry } from '@/components/Data/FileType'
-import { whenIdle } from '@/utils/whenIdle'
+import { App } from '/@/App'
+import { FileType, IMonacoSchemaArrayEntry } from '/@/components/Data/FileType'
 import json5 from 'json5'
 import * as monaco from 'monaco-editor'
 import { runAsync } from '../Extensions/Scripts/run'
-import { FileSystem } from '../FileSystem/FileSystem'
 import { v4 as uuid } from 'uuid'
 import { getFilteredFormatVersions } from './FormatVersions'
+import { Project } from '../Projects/Project/Project'
+import { IDisposable } from '/@/types/disposable'
 
-export namespace JSONDefaults {
-	let schemas: Record<string, IMonacoSchemaArrayEntry> = {}
+const globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
+let loadedGlobalSchemas = false
+export class JsonDefaults {
+	protected loadedSchemas = false
+	protected localSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
+	protected disposables: IDisposable[] = []
 
-	export function addSchemas(
-		addSchemas: IMonacoSchemaArrayEntry[],
-		updateMonaco = true
-	) {
-		// console.log(addSchemas)
-		addSchemas.forEach(addSchema => {
-			if (schemas[addSchema.uri]) {
+	constructor(protected project: Project) {}
+
+	async activate() {
+		console.time('[SETUP] JSONDefaults')
+
+		const app = await App.getApp()
+
+		this.disposables = <IDisposable[]>[
+			App.eventSystem.on('fileUpdated', (filePath: string) =>
+				this.updateDynamicSchemas(filePath)
+			),
+
+			// Updating currentContext/ references
+			App.eventSystem.on('currentTabSwitched', (filePath: string) =>
+				this.updateDynamicSchemas(filePath)
+			),
+			App.eventSystem.on('refreshCurrentContext', (filePath: string) =>
+				this.updateDynamicSchemas(filePath)
+			),
+			App.eventSystem.on('disableValidation', () => {
+				this.setJSONDefaults(false)
+			}),
+			app.actionManager.create({
+				icon: 'mdi-reload',
+				name: 'actions.reloadAutoCompletions.name',
+				description: 'actions.reloadAutoCompletions.description',
+				keyBinding: 'Ctrl + Shift + R',
+				onTrigger: () => this.reload(),
+			}),
+		].filter((disposable) => disposable !== undefined)
+
+		if (!this.loadedSchemas) await this.loadAllSchemas()
+		this.setJSONDefaults()
+		console.timeEnd('[SETUP] JSONDefaults')
+	}
+
+	deactivate() {
+		this.disposables.forEach((disposable) => disposable.dispose())
+		this.disposables = []
+	}
+
+	async loadAllSchemas() {
+		this.localSchemas = {}
+		const app = await App.getApp()
+
+		try {
+			await this.loadStaticSchemas(
+				await app.fileSystem.getDirectoryHandle('data/packages/schema')
+			)
+		} catch {
+			return
+		}
+
+		this.addSchemas(await this.getDynamicSchemas(), false)
+
+		await this.runSchemaScripts(app)
+		const tab = this.project.tabSystem?.selectedTab
+		if (tab) {
+			const fileType = FileType.getId(tab.getPackPath())
+			this.addSchemas(
+				await this.requestSchemaFor(fileType, tab.getPackPath()),
+				false
+			)
+			await this.runSchemaScripts(app, tab.getPackPath())
+		}
+
+		this.loadedSchemas = true
+	}
+
+	setJSONDefaults(validate = true) {
+		monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+			enableSchemaRequest: false,
+			allowComments: true,
+			validate,
+			schemas: Object.values(
+				Object.assign({}, globalSchemas, this.localSchemas)
+			),
+		})
+	}
+
+	async reload() {
+		const app = await App.getApp()
+
+		app.windows.loadingWindow.open()
+		await this.loadAllSchemas()
+		app.windows.loadingWindow.close()
+	}
+
+	async updateDynamicSchemas(filePath: string) {
+		const app = await App.getApp()
+		const fileType = FileType.getId(filePath)
+		this.addSchemas(await this.requestSchemaFor(fileType, filePath), false)
+		await this.runSchemaScripts(app, filePath)
+		this.setJSONDefaults()
+	}
+
+	addSchemas(addSchemas: IMonacoSchemaArrayEntry[], updateMonaco = true) {
+		addSchemas.forEach((addSchema) => {
+			if (this.localSchemas[addSchema.uri]) {
 				if (addSchema.schema)
-					schemas[addSchema.uri].schema = addSchema.schema
+					this.localSchemas[addSchema.uri].schema = addSchema.schema
 				if (addSchema.fileMatch)
-					schemas[addSchema.uri].fileMatch = addSchema.fileMatch
-			} else schemas[addSchema.uri] = addSchema
+					this.localSchemas[addSchema.uri].fileMatch =
+						addSchema.fileMatch
+			} else this.localSchemas[addSchema.uri] = addSchema
 		})
 
-		if (updateMonaco) setJSONDefaults()
+		if (updateMonaco) this.setJSONDefaults()
 	}
 
-	function requestSchemaFor(fileType: string, fromFilePath?: string) {
-		return new Promise<IMonacoSchemaArrayEntry[]>(async resolve => {
-			const app = await App.getApp()
-			app.packIndexer.once(async () => {
-				resolve(
-					await app.packIndexer.service.getSchemasFor(
-						fileType,
-						fromFilePath
-					)
-				)
-			})
-		})
+	async requestSchemaFor(fileType: string, fromFilePath?: string) {
+		const packIndexer = this.project.packIndexer
+
+		return await packIndexer.service!.getSchemasFor(fileType, fromFilePath)
 	}
-	async function getDynamicSchemas() {
+	async getDynamicSchemas() {
 		return (
-			await Promise.all(FileType.getIds().map(id => requestSchemaFor(id)))
+			await Promise.all(
+				FileType.getIds().map((id) => this.requestSchemaFor(id))
+			)
 		).flat()
 	}
-	async function loadStaticSchemas(
+	async loadStaticSchemas(
 		directoryHandle: FileSystemDirectoryHandle,
 		fromPath = 'data/packages/schema'
 	) {
+		if (loadedGlobalSchemas) return
+
 		const promises: Promise<void>[] = []
 		for await (const [name, entry] of directoryHandle.entries()) {
 			const currentPath = `${fromPath}/${name}`
 			if (entry.name === '.DS_Store') continue
 
 			if (entry.kind === 'file') {
-				schemas[`file:///${currentPath}`] = {
+				globalSchemas[`file:///${currentPath}`] = {
 					uri: `file:///${currentPath}`,
 					schema: await entry
 						.getFile()
-						.then(file => file.text())
+						.then((file) => file.text())
 						.then(json5.parse)
 						.catch(() => {
 							throw new Error(
@@ -69,21 +162,34 @@ export namespace JSONDefaults {
 						}),
 				}
 			} else {
-				promises.push(loadStaticSchemas(entry, currentPath))
+				promises.push(this.loadStaticSchemas(entry, currentPath))
 			}
 		}
 
 		await Promise.all(promises)
+
+		// Only if this is the original call to loadStaticSchemas...
+		if (fromPath !== 'data/packages/schema') return
+
+		// ...add file type entries
+		FileType.getMonacoSchemaArray().forEach((addSchema) => {
+			// Non-json files; e.g. .lang
+			if (!addSchema.uri) return
+
+			if (globalSchemas[addSchema.uri]) {
+				if (addSchema.schema)
+					globalSchemas[addSchema.uri].schema = addSchema.schema
+				if (addSchema.fileMatch)
+					globalSchemas[addSchema.uri].fileMatch = addSchema.fileMatch
+			} else globalSchemas[addSchema.uri] = addSchema
+		})
+		loadedGlobalSchemas = true
 	}
-	async function runSchemaScripts(app: App, filePath?: string) {
+	async runSchemaScripts(app: App, filePath?: string) {
 		const baseDirectory = await app.fileSystem.getDirectoryHandle(
 			'data/packages/schemaScript'
 		)
-		const scopedFs = new FileSystem(
-			await app.fileSystem.getDirectoryHandle(
-				`projects/${app.selectedProject}`
-			)
-		)
+		const scopedFs = this.project.fileSystem
 
 		for await (const dirent of baseDirectory.values()) {
 			if (dirent.kind !== 'file' || dirent.name === '.DS_Store') continue
@@ -104,10 +210,9 @@ export namespace JSONDefaults {
 							filePath?: string,
 							cacheKey?: string
 						) => {
-							const app = await App.getApp()
-							await app.packIndexer.fired
+							const packIndexer = this.project.packIndexer
 
-							return app.packIndexer.service.getCacheDataFor(
+							return packIndexer.service!.getCacheDataFor(
 								fileType,
 								filePath,
 								cacheKey
@@ -132,7 +237,7 @@ export namespace JSONDefaults {
 				// console.error(`Error evaluating schemaScript: ${err.message}`)
 			}
 
-			schemas[
+			this.localSchemas[
 				`file:///data/packages/schema/${schemaScript.generateFile}`
 			] = {
 				uri: `file:///data/packages/schema/${schemaScript.generateFile}`,
@@ -143,91 +248,11 @@ export namespace JSONDefaults {
 					object:
 						schemaScript.type === 'properties'
 							? Object.fromEntries(
-									scriptResult.map(res => [res, {}])
+									scriptResult.map((res) => [res, {}])
 							  )
 							: undefined,
 				},
 			}
 		}
-	}
-
-	async function loadAllSchemas() {
-		schemas = {}
-		const app = await App.getApp()
-
-		try {
-			await loadStaticSchemas(
-				await app.fileSystem.getDirectoryHandle('data/packages/schema')
-			)
-		} catch {
-			return
-		}
-
-		addSchemas(FileType.getMonacoSchemaArray(), false)
-		addSchemas(await getDynamicSchemas(), false)
-
-		await runSchemaScripts(app)
-		const tab = app.tabSystem?.selectedTab
-		if (tab) {
-			const fileType = FileType.getId(tab.getPackPath())
-			addSchemas(await requestSchemaFor(fileType, tab.getPackPath()))
-		}
-		setJSONDefaults()
-	}
-
-	function setJSONDefaults(validate = true) {
-		monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-			enableSchemaRequest: false,
-			allowComments: true,
-			validate,
-			schemas: Object.values(schemas),
-		})
-	}
-
-	export function setup() {
-		App.ready.once(app => {
-			app.packIndexer.on(() =>
-				whenIdle(async () => {
-					console.time('[EDITOR] Setting up JSON defaults')
-
-					await loadAllSchemas()
-
-					console.timeEnd('[EDITOR] Setting up JSON defaults')
-				})
-			)
-
-			app.actionManager.create({
-				icon: 'mdi-reload',
-				name: 'actions.reloadAutoCompletions.name',
-				description: 'actions.reloadAutoCompletions.description',
-				keyBinding: 'Ctrl + Shift + R',
-				onTrigger: () => reload(),
-			})
-		})
-
-		App.eventSystem.on('fileUpdated', updateDynamicSchemas)
-
-		// Updating currentContext/ references
-		App.eventSystem.on('currentTabSwitched', updateDynamicSchemas)
-		App.eventSystem.on('refreshCurrentContext', updateDynamicSchemas)
-		App.eventSystem.on('disableValidation', () => {
-			setJSONDefaults(false)
-		})
-	}
-
-	export async function reload() {
-		const app = await App.getApp()
-
-		app.windows.loadingWindow.open()
-		await loadAllSchemas()
-		app.windows.loadingWindow.close()
-	}
-
-	async function updateDynamicSchemas(filePath: string) {
-		const app = await App.getApp()
-		const fileType = FileType.getId(filePath)
-		addSchemas(await requestSchemaFor(fileType, filePath), false)
-		await runSchemaScripts(app, filePath)
-		setJSONDefaults()
 	}
 }

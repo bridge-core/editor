@@ -43,6 +43,7 @@ export default {
 		mcstructure: 'Structure',
 		tradeTable: 'Trade Table',
 		clientManifest: 'Client Manifest',
+		skinManifest: 'Skin Manifest',
 		geometry: 'Geometry',
 		clientAnimation: 'Client Animation',
 		clientAnimationController: 'Client Animation Controller',
@@ -65,6 +66,7 @@ export default {
 		langDef: 'Language Definitions',
 		lang: 'Language',
 		molang: 'Molang',
+		gameTest: 'Game Test',
 		unknown: 'Other',
 		simpleFile: 'Simple Files',
 	},
@@ -231,6 +233,8 @@ export default {
 		common: {
 			confirm: {
 				title: 'Confirm',
+				okay: 'Okay',
+				cancel: 'Cancel',
 			},
 			dropdown: {
 				confirm: 'Confirm',
@@ -247,6 +251,9 @@ export default {
 				loading: 'Loading...',
 				downloadingData: 'Downloading new data...',
 			},
+		},
+		changelogWindow: {
+			title: "What's new?",
 		},
 		openFile: {
 			title: 'Open',
@@ -266,11 +273,14 @@ export default {
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',
 			projectTargetVersion: 'Project Target Version',
-			create: 'Create!',
+			create: 'Create',
 		},
 		createPreset: {
 			title: 'Create Preset',
 			searchPresets: 'Search presets...',
+			overwriteFiles:
+				'This preset overwrites one or more existing files. Do you want to continue?',
+			overwriteFilesConfirm: 'Continue',
 		},
 		deleteProject: {
 			confirm: 'Delete',
@@ -356,6 +366,11 @@ export default {
 					name: 'Open Links in Default Browser',
 					description:
 						'Open links inside of your default browser instead of a native app window',
+				},
+				restoreTabs: {
+					name: 'Restore Tabs',
+					description:
+						'Restore your tabs from when you last used bridge. upon opening the app',
 				},
 				resetBridgeFolder: {
 					name: 'Select Root Folder',

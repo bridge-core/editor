@@ -1,6 +1,6 @@
 import { IModuleConfig } from '../types'
-import { createSidebar } from '@/components/Sidebar/create'
-import { selectSidebar } from '@/components/Sidebar/state'
+import { createSidebar } from '/@/components/Sidebar/create'
+import { selectSidebar } from '/@/components/Sidebar/state'
 
 export const SidebarModule = ({ disposables }: IModuleConfig) => ({
 	create(config: {

@@ -4,6 +4,7 @@
 	"description": "Creates a new Villager type NPC entity. This entity has 3 potential trade tables, and will cycle through them after a period of time.",
 	"category": "fileType.entity",
 	"targetVersion": [">=", "1.8.0"],
+	"packTypes": ["behaviorPack", "resourcePack"],
 	"fields": [
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]

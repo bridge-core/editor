@@ -4,6 +4,7 @@
 	"description": "Creates a new panda entity.",
 	"category": "fileType.entity",
 	"targetVersion": [">=", "1.10.0"],
+	"packTypes": ["behaviorPack", "resourcePack"],
 	"fields": [
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]

@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { FileSystem } from '../FileSystem/FileSystem'
 
 export type TProjectConfigKey =

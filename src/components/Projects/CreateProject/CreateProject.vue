@@ -119,11 +119,11 @@
 </template>
 
 <script>
-import { TranslationMixin } from '@/utils/locales.ts'
-import BaseWindow from '@/components/Windows/Layout/BaseWindow.vue'
-import PackTypeViewer from '@/components/Data/PackTypeViewer.vue'
-import { CompilerMixin } from '@/components/Mixins/Tasks/Compiler'
-import { PackIndexerMixin } from '@/components/Mixins/Tasks/PackIndexer'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
+import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
+import { CompilerMixin } from '/@/components/Mixins/Tasks/Compiler'
+import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'CreateProjectWindow',

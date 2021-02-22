@@ -1,4 +1,4 @@
-import { App } from '@/App'
+import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 
 export function setupEditCategory(app: App) {
@@ -10,6 +10,9 @@ export function setupEditCategory(app: App) {
 			name: 'actions.copy.name',
 			description: 'actions.copy.description',
 			keyBinding: 'Ctrl + C',
+			prevent: (element) => {
+				return element.tagName === 'INPUT'
+			},
 			onTrigger: () => app.tabSystem?.selectedTab?.copy(),
 		})
 	)
@@ -19,6 +22,9 @@ export function setupEditCategory(app: App) {
 			name: 'actions.cut.name',
 			description: 'actions.cut.description',
 			keyBinding: 'Ctrl + X',
+			prevent: (element) => {
+				return element.tagName === 'INPUT'
+			},
 			onTrigger: () => app.tabSystem?.selectedTab?.cut(),
 		})
 	)
@@ -28,6 +34,9 @@ export function setupEditCategory(app: App) {
 			name: 'actions.paste.name',
 			description: 'actions.paste.description',
 			keyBinding: 'Ctrl + V',
+			prevent: (element) => {
+				return element.tagName === 'INPUT'
+			},
 			onTrigger: () => app.tabSystem?.selectedTab?.paste(),
 		})
 	)

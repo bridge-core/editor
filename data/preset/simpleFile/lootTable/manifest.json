@@ -3,6 +3,7 @@
 	"icon": "mdi-skull-outline",
 	"description": "Creates a blank loot table.",
 	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
 	"fields": [
 		["File Name", "FILE_NAME"]
 	],

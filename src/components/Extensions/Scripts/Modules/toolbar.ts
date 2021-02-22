@@ -1,5 +1,5 @@
-import { App } from '@/App'
-import { ToolbarCategory } from '@/components/Toolbar/ToolbarCategory'
+import { App } from '/@/App'
+import { ToolbarCategory } from '/@/components/Toolbar/ToolbarCategory'
 import { IModuleConfig } from '../types'
 
 export const ToolbarModule = async ({ disposables }: IModuleConfig) => ({

@@ -1,4 +1,4 @@
-import { IDisposable } from '@/types/disposable'
+import { IDisposable } from '/@/types/disposable'
 import { TUIStore } from '../UI/store'
 import { createEnv } from './require'
 import { runAsync } from './run'
