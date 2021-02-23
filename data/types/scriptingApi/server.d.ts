@@ -86,12 +86,12 @@ declare interface ServerSystem {
 		maxX: number,
 		maxY: number,
 		maxZ: number
-	): BlockJS[] | null
+	): BlockJS[][][] | null
 	getBlocks(
 		tickingArea: TickingAreaJS,
 		positionMin: { x: number; y: number; z: number },
 		positionMax: { x: number; y: number; z: number }
-	): BlockJS[] | null
+	): BlockJS[][][] | null
 
 	executeCommand(
 		command: string,
