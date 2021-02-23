@@ -3,6 +3,7 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { ComMojangRewrite } from './Plugins/ComMojangRewrite'
 import { Maybe } from '/@/types/Maybe'
 import { TypeScriptPlugin } from './Plugins/TypeScript'
+import json5 from 'json5'
 
 export type TCompilerHook = keyof TCompilerPlugin
 export type TCompilerPlugin = {
@@ -80,8 +81,12 @@ export async function loadPlugins(
 		const module: { exports?: TCompilerPluginFactory } = {}
 		await runAsync(
 			await file.text(),
-			[undefined, module],
-			['require', 'module']
+			[
+				undefined,
+				module,
+				{ parse: json5.parse, stringify: JSON.stringify },
+			],
+			['require', 'module', 'JSON']
 		)
 
 		if (typeof module.exports === 'function')
