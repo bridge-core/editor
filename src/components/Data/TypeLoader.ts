@@ -59,6 +59,10 @@ export class TypeLoader {
 				languages.typescript.javascriptDefaults.addExtraLib(
 					lib,
 					uri.toString()
+				),
+				languages.typescript.typescriptDefaults.addExtraLib(
+					lib,
+					uri.toString()
 				)
 			)
 		}
