@@ -12,12 +12,13 @@ export class TypeLoader {
 
 	constructor(protected fileSystem: FileSystem) {}
 
-	activate() {
+	async activate(filePath?: string) {
 		this.disposables = <IDisposable[]>[
 			App.eventSystem.on('currentTabSwitched', (filePath: string) =>
 				this.setTypeEnv(filePath)
 			),
 		]
+		if (filePath) await this.setTypeEnv(filePath)
 	}
 	deactivate() {
 		this.typeDisposables.forEach((disposable) => disposable.dispose())
