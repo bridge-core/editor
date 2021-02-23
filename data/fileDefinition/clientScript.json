@@ -1,0 +1,10 @@
+{
+	"id": "clientScript",
+	"icon": "mdi-language-javascript",
+	"scope": "BP/scripts/client/",
+	"matcher": "BP/scripts/client/**/*.js",
+	"types": [
+		"types/scriptingApi/common.d.ts",
+		"types/scriptingApi/client.d.ts"
+	]
+}
