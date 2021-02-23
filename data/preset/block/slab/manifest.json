@@ -30,7 +30,7 @@
 	"expandFiles": [
 		[
 			"terrainTexture.json",
-			"RP/textures/terrain_textures.json",
+			"RP/textures/terrain_texture.json",
 			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
 		],
 		[
