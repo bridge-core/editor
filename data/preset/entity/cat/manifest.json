@@ -162,7 +162,7 @@
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
-			"textureWhiteTame.tag",
+			"textureWhiteTame.tga",
 			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_white_tame.tga",
 			{ "inject": ["IDENTIFIER"] }
 		]
