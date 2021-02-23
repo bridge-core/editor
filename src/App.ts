@@ -173,11 +173,13 @@ export class App {
 			await this.instance.dataLoader.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
 		})
+
+		await this.instance.projectManager.selectLastProject(this._instance)
 		await this.instance.startUp()
+
 		this.ready.dispatch(this._instance)
 
 		this.instance.windows.loadingWindow.close()
-		await this.instance.projectManager.selectLastProject(this._instance)
 	}
 
 	/**

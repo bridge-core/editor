@@ -1,32 +1,73 @@
 import { runAsync } from '/@/components/Extensions/Scripts/run'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { CompilerFile } from './File'
 import { ComMojangRewrite } from './Plugins/ComMojangRewrite'
+import { Maybe } from '/@/types/Maybe'
+import { TypeScriptPlugin } from './Plugins/TypeScript'
 
-export const hooks = <const>[
-	'createFiles',
-	'collect',
-	'beforeTransform',
-	'transform',
-	'afterTransform',
-	'transformPath',
-	'finalizeBuild',
-	'cleanup',
-]
-
-export type TCompilerHook = typeof hooks[number]
-
+export type TCompilerHook = keyof TCompilerPlugin
 export type TCompilerPlugin = {
-	[hook in TCompilerHook]?: (file: CompilerFile, opts: any) => Promise<void>
+	/**
+	 * Runs once before a build process starts
+	 */
+	buildStart(): Promise<void>
+
+	/**
+	 * Given a source id, return the filePath it belongs to
+	 * - E.g. resolve custom component names
+	 */
+	resolveId(source: string, importer?: string): Maybe<string>
+	/**
+	 * Runs after all ids have been resolved
+	 */
+	afterResolveId(filePath: string): Promise<void> | void
+
+	/**
+	 * Transform file path
+	 * - E.g. adjust file path to point to build folder
+	 */
+	transformPath(filePath: string): Maybe<string>
+
+	/**
+	 * Load the file at `filePath` and return its content
+	 * - Return null/undefined to just copy the file over
+	 */
+	load(filePath: string, fileHandle: FileSystemFileHandle): Promise<any> | any
+
+	/**
+	 * Transform a file's content
+	 */
+	transform(filePath: string, fileContent: any): Promise<any> | any
+
+	/**
+	 * Prepare data before it gets written to disk
+	 * - Return null/undefined to omit file from output
+	 */
+	finalizeBuild(
+		filePath: string,
+		fileContent: any
+	): Maybe<FileSystemWriteChunkType>
+
+	/**
+	 * Runs once after a build process ended
+	 */
+	buildEnd(): Promise<void>
 }
+export type TCompilerPluginFactory = (context: {
+	options: any
+	fileSystem: FileSystem
+	resolve: (id: string) => Promise<any>
+}) => Partial<TCompilerPlugin>
 
 export async function loadPlugins(
 	fileSystem: FileSystem,
-	pluginPaths: Record<string, string>
+	pluginPaths: Record<string, string>,
+	pluginOpts: Record<string, any>,
+	resolve: (id: string) => Promise<any>
 ) {
-	const plugins = new Map<string, TCompilerPlugin>()
+	const plugins = new Map<string, TCompilerPluginFactory>()
 
 	plugins.set('comMojangRewrite', ComMojangRewrite)
+	plugins.set('typeScript', TypeScriptPlugin)
 
 	for (const [pluginId, pluginPath] of Object.entries(pluginPaths ?? {})) {
 		let file: File
@@ -36,14 +77,34 @@ export async function loadPlugins(
 			continue
 		}
 
-		const module: { exports?: TCompilerPlugin } = {}
+		const module: { exports?: TCompilerPluginFactory } = {}
 		await runAsync(
 			await file.text(),
 			[undefined, module],
 			['require', 'module']
 		)
-		plugins.set(pluginId, module?.exports ?? {})
+
+		if (typeof module.exports === 'function')
+			plugins.set(pluginId, module.exports)
+		else
+			console.error(
+				`Failed to load plugin "${pluginId}": No export of type "function" defined`
+			)
 	}
 
-	return plugins
+	const loadedPlugins = new Map<string, Partial<TCompilerPlugin>>()
+	for (const pluginId in pluginOpts) {
+		const plugin = plugins.get(pluginId)
+		if (!plugin)
+			throw new Error(
+				`Failed to resolve plugin "${pluginId}": Plugin not found`
+			)
+
+		loadedPlugins.set(
+			pluginId,
+			plugin({ options: pluginOpts[pluginId], fileSystem, resolve })
+		)
+	}
+
+	return loadedPlugins
 }

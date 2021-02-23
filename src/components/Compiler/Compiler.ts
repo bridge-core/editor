@@ -44,8 +44,6 @@ export class Compiler extends WorkerManager<
 		this.ready.dispatch(false)
 		const app = await App.getApp()
 
-		console.time('[TASK] Compiling project (total)')
-
 		// Instantiate the worker TaskService
 		if (!this._service) {
 			this._service = await new this.workerClass!({
@@ -72,6 +70,8 @@ export class Compiler extends WorkerManager<
 			}),
 			false
 		)
+
+		console.time('[TASK] Compiling project (total)')
 
 		// Start service
 		let files = (await app.project?.packIndexer.fired) ?? []

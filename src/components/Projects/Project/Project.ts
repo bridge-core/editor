@@ -133,7 +133,10 @@ export class Project {
 			...config,
 			path: this.name,
 			name: this.name,
-			imgSrc: await loadIcon(`projects/${this.name}`),
+			imgSrc: await loadIcon(
+				`projects/${this.name}`,
+				this.app.fileSystem
+			),
 			contains: await loadPacks(this.app, this.name),
 		})
 	}

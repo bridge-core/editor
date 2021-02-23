@@ -50,15 +50,16 @@ export class Extension {
 			}
 		}
 
-		Object.entries(this.manifest.compiler?.plugins ?? {})?.forEach(
-			([pluginId, compilerPlugin]) => {
-				const disposable = app.project?.compilerManager?.addCompilerPlugin(
-					pluginId,
-					`${pluginPath}/${compilerPlugin}`
-				)
-				if (disposable) this.disposables.push(disposable)
-			}
-		)
+		// Compiler plugins
+		for (const [pluginId, compilerPlugin] of Object.entries(
+			this.manifest.compiler?.plugins ?? {}
+		)) {
+			const disposable = app.project?.compilerManager?.addCompilerPlugin(
+				pluginId,
+				`${pluginPath}/${compilerPlugin}`
+			)
+			if (disposable) this.disposables.push(disposable)
+		}
 
 		this.disposables.push(
 			app.windows.createPreset.addPresets(`${pluginPath}/presets`)

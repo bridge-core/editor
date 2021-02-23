@@ -1,30 +1,35 @@
-import { TCompilerPlugin } from '../Plugins'
+import { TCompilerPluginFactory } from '../Plugins'
 
-const folders: any = {
-	BP: 'development_behavior_packs',
-	RP: 'development_resource_packs',
-	SP: 'skin_packs',
-}
-let clearedDir = false
+export const ComMojangRewrite: TCompilerPluginFactory = ({
+	options,
+	fileSystem,
+}) => {
+	if (!options.buildName)
+		options.buildName = options.mode === 'dev' ? 'dev' : 'dist'
+	if (!options.packName) options.packName = 'bridge'
 
-export const ComMojangRewrite: TCompilerPlugin = {
-	async transformPath(file, opts) {
-		if (!opts.buildName)
-			opts.buildName = opts.mode === 'dev' ? 'dev' : 'dist'
+	const folders: Record<string, string> = {
+		BP: 'development_behavior_packs',
+		RP: 'development_resource_packs',
+		SP: 'skin_packs',
+	}
 
-		if (opts.mode === 'build' && !clearedDir) {
-			clearedDir = true
-			await file.rmdir(`builds/${opts.buildName}`)
-		}
+	return {
+		async buildStart() {
+			if (options.mode === 'build') {
+				await fileSystem
+					.unlink(`builds/${options.buildName}`)
+					.catch(() => {})
+			}
+		},
+		async transformPath(filePath) {
+			const pathParts = filePath.split('/')
+			const pack = <string>pathParts.shift()
 
-		const pathParts = file.filePath.split('/')
-		const pack = <string>pathParts.shift()
-
-		if (!opts.packName) opts.packName = 'bridge ' + pack
-
-		if (folders[pack])
-			file.filePath = `builds/${opts.buildName}/${folders[pack]}/${
-				opts.packName
-			}/${pathParts.join('/')}`
-	},
+			if (folders[pack])
+				return `builds/${options.buildName}/${folders[pack]}/${
+					options.packName
+				} ${pack}/${pathParts.join('/')}`
+		},
+	}
 }
