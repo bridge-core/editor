@@ -71,9 +71,7 @@ export class Project {
 		this.parent.title.setProject(this.name)
 		for (const tabSystem of this.tabSystems) await tabSystem.activate()
 
-		await this.typeLoader.activate(
-			this.tabSystem?.selectedTab?.getPackPath()
-		)
+		this.typeLoader.activate(this.tabSystem?.selectedTab?.getPackPath())
 		await this.packIndexer.activate(forceRefresh).then(() => {
 			this.jsonDefaults.activate()
 			// this.compilerManager.start('default.json', 'dev')
