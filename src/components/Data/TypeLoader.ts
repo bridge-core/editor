@@ -47,6 +47,7 @@ export class TypeLoader {
 		this.typeDisposables.forEach((disposable) => disposable.dispose())
 		this.typeDisposables = []
 
+		await FileType.ready.fired
 		const { types = [] } = FileType.get(filePath) ?? {}
 
 		const libs = await Promise.all(

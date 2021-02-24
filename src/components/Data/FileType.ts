@@ -2,6 +2,7 @@ import { isMatch } from 'micromatch'
 import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import type { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { Signal } from '/@/components/Common/Event/Signal'
 
 /**
  * Describes the structure of a file definition
@@ -33,6 +34,7 @@ export namespace FileType {
 	const pluginFileTypes = new Set<IFileType>()
 	let fileTypes: IFileType[] = []
 	let fileSystem: FileSystem
+	export const ready = new Signal<void>()
 
 	export async function setup(fs: FileSystem) {
 		if (fileTypes.length > 0) return
@@ -44,6 +46,8 @@ export namespace FileType {
 			if (dirent.kind === 'file')
 				fileTypes.push(await fs.readJSON(`${basePath}/${dirent.name}`))
 		}
+
+		ready.dispatch()
 	}
 	export function addPluginFileType(fileDef: IFileType) {
 		pluginFileTypes.add(fileDef)
