@@ -1,5 +1,4 @@
 module.exports = async ({ createFile, loadPresetFile, models }) => {
-	console.log(models)
 	const { LANGUAGE, FILE_NAME, SCRIPT_TYPE } = models
 	const file =
 		SCRIPT_TYPE === 'Client'
@@ -12,5 +11,4 @@ module.exports = async ({ createFile, loadPresetFile, models }) => {
 		}`,
 		file
 	)
-	console.log('DONE')
 }
