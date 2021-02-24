@@ -72,7 +72,8 @@
 									"fileInput",
 									"numberInput",
 									"textInput",
-									"switch"
+									"switch",
+									"selectInput"
 								]
 							},
 							"default": {
@@ -122,6 +123,25 @@
 										},
 										"icon": {
 											"type": "string"
+										}
+									}
+								}
+							},
+							{
+								"if": {
+									"properties": {
+										"type": {
+											"const": "selectInput"
+										}
+									}
+								},
+								"then": {
+									"properties": {
+										"options": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
 										}
 									}
 								}

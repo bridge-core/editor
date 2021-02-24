@@ -59,6 +59,22 @@
 					dense
 				/>
 
+				<component
+					v-else-if="opts.type === 'selectInput'"
+					:is="
+						opts.options.length > 4 ? 'v-autocomplete' : 'v-select'
+					"
+					class="mb-1"
+					:key="i"
+					v-model="content.models[id]"
+					:items="opts.options"
+					:menu-props="{ maxHeight: 220 }"
+					:label="name"
+					autocomplete="off"
+					outlined
+					dense
+				/>
+
 				<v-switch
 					v-else-if="opts.type === 'switch'"
 					class="mb-1"
