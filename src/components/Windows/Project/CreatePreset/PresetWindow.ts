@@ -216,7 +216,8 @@ export class CreatePresetWindow extends BaseWindow {
 						...(await runPresetScript(
 							presetPath,
 							createFileOpts,
-							this.sidebar.currentState.models
+							this.sidebar.currentState.models,
+							permissions
 						))
 					)
 				} else {
