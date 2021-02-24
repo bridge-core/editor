@@ -1,0 +1,511 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "UI",
+	"properties": {
+		"namespace": {
+			"type": "string"
+		}
+	},
+	"patternProperties": {
+		".*": {
+			"properties": {
+				"type": {
+					"type": "string",
+					"enum": [
+						"panel",
+						"stack_panel",
+						"input_panel",
+						"grid",
+						"label",
+						"image",
+						"button",
+						"toggle",
+						"slider",
+						"slider_box",
+						"edit_box",
+						"scroll_view",
+						"scroll_track",
+						"scrollbar_box",
+						"dropdown",
+						"factory",
+						"custom"
+					]
+				}
+			},
+			"allOf": [
+				{
+					"if": {
+						"properties": {
+							"type": {
+								"const": "stack_panel"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"orientation": {
+								"enum": ["vertical", "horizontal"]
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": {
+								"const": "input_panel"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"modal": {
+								"type": "boolean"
+							},
+							"inline_modal": {
+								"type": "boolean"
+							},
+							"hover_enabled": {
+								"type": "boolean"
+							},
+							"prevent_touch_input": {
+								"type": "boolean"
+							},
+							"gesture_tracking_button": {
+								"type": "string"
+							},
+							"always_handle_controller_direction": {
+								"type": "boolean"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": {
+								"const": "grid"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"grid_dimensions": {
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"items": {
+									"type": "number"
+								}
+							},
+							"maximum_grid_items": {
+								"type": "number"
+							},
+							"grid_rescaling_type": {
+								"type": "string",
+								"enum": ["vertical", "horizontal"]
+							},
+							"grid_fall_direction": {
+								"type": "string",
+								"enum": ["vertical", "horizontal"]
+							},
+							"grid_item_template": {
+								"type": "number"
+							},
+							"grid_dimension_binding": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": {
+								"const": "label"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"text": {
+								"type": "string"
+							},
+							"color": {
+								"anyOf": [
+									{
+										"type": "string"
+									},
+									{
+										"type": "array",
+										"minItems": 3,
+										"maxItems": 3,
+										"items": {
+											"type": "number"
+										}
+									}
+								]
+							},
+							"locked_color": {
+								"anyOf": [
+									{
+										"type": "string"
+									},
+									{
+										"type": "array",
+										"minItems": 3,
+										"maxItems": 3,
+										"items": {
+											"type": "number"
+										}
+									}
+								]
+							},
+							"text_alignment": {
+								"type": "string",
+								"enum": ["left", "right", "center"]
+							},
+							"line_padding": {
+								"type": "number"
+							},
+							"font_type": {
+								"type": "string",
+								"enum": [
+									"default",
+									"smooth",
+									"rune",
+									"MinecraftSeven",
+									"MinecraftTen",
+									"MinecraftTenEmotion"
+								]
+							},
+							"font_size": {
+								"type": "string",
+								"enum": [
+									"small",
+									"normal",
+									"large",
+									"extra-large"
+								]
+							},
+							"font_scale_factor": {
+								"type": "number"
+							},
+							"shadow": {
+								"type": "boolean"
+							},
+							"localize": {
+								"type": "boolean"
+							},
+							"enable_profanity_filter": {
+								"type": "boolean"
+							},
+							"hide_hyphen": {
+								"type": "boolean"
+							},
+							"notify_on_ellipses": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": {
+								"const": "image"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"texture": {
+								"type": "string"
+							},
+							"tiled": {
+								"anyOf": [
+									{
+										"type": "boolean"
+									},
+									{
+										"type": "string",
+										"enum": ["x", "y"]
+									}
+								]
+							},
+							"tiled_scale": {
+								"type": "array",
+								"items": {
+									"type": "number"
+								}
+							},
+							"bilinear": {
+								"type": "boolean"
+							},
+							"grayscale": {
+								"type": "boolean"
+							},
+							"fill": {
+								"type": "boolean"
+							},
+							"color": {
+								"anyOf": [
+									{
+										"type": "string"
+									},
+									{
+										"type": "array",
+										"minItems": 3,
+										"maxItems": 3,
+										"items": {
+											"type": "number"
+										}
+									}
+								]
+							},
+							"$fit_to_width": {
+								"type": "boolean"
+							},
+							"keep_ratio": {
+								"type": "boolean"
+							},
+							"clip_direction": {
+								"type": "string",
+								"enum": ["up", "down", "left", "right"]
+							},
+							"uv": {
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"items": {
+									"type": "number"
+								}
+							},
+							"uv_size": {
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"items": {
+									"type": "number"
+								}
+							},
+							"nineslice_size": {
+								"anyOf": [
+									{
+										"type": "number"
+									},
+									{
+										"type": "array",
+										"items": {
+											"type": "number"
+										}
+									}
+								]
+							},
+							"base_size": {
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"items": {
+									"type": "number"
+								}
+							},
+							"zip_folder": {
+								"type": "string"
+							},
+							"texture_file_system": {
+								"type": "string"
+							},
+							"force_texture_reload": {
+								"type": "boolean"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": {
+								"const": "button"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"default_control": {
+								"type": "string"
+							},
+							"hover_control": {
+								"type": "string"
+							},
+							"pressed_control": {
+								"type": "string"
+							},
+							"locked_control": {
+								"type": "string"
+							},
+							"sound_name": {
+								"$ref": "../soundDefinition/dynamic/identifierEnum.json"
+							},
+							"sound_volume": {
+								"type": "number"
+							},
+							"sound_pitch": {
+								"type": "number"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": {
+								"const": "toggle"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"toggle_name": {
+								"type": "string"
+							},
+							"toggle_default_state": {
+								"type": "boolean"
+							},
+							"radio_toggle_group": {
+								"type": "boolean"
+							},
+							"toggle_group_forced_index": {
+								"type": "number"
+							},
+							"toggle_group_default_selected": {
+								"type": "number"
+							},
+							"enable_directional_toggling": {
+								"type": "boolean"
+							},
+							"toggle_on_button": {
+								"type": "string"
+							},
+							"toggle_off_button": {
+								"type": "string"
+							},
+							"reset_on_focus_lost": {
+								"type": "boolean"
+							},
+							"checked_control": {
+								"type": "string"
+							},
+							"unchecked_control": {
+								"type": "string"
+							},
+							"check_hover_control": {
+								"type": "string"
+							},
+							"unchecked_hover_control": {
+								"type": "string"
+							},
+							"checked_locked_control": {
+								"type": "string"
+							},
+							"unchecked_locked_control": {
+								"type": "string"
+							},
+							"sound_name": {
+								"$ref": "../soundDefinition/dynamic/identifierEnum.json"
+							},
+							"sound_volume": {
+								"type": "number"
+							},
+							"sound_pitch": {
+								"type": "number"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": {
+								"const": "slider"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"slider_name": {
+								"type": "string"
+							},
+							"slider_direction": {
+								"type": "string",
+								"enum": ["vertical", "horizontal"]
+							},
+							"slider_steps": {
+								"type": "number"
+							},
+							"slider_track_button": {
+								"type": "string"
+							},
+							"slider_small_decrease_button": {
+								"type": "string"
+							},
+							"slider_small_increase_button": {
+								"type": "number"
+							},
+							"slider_selected_button": {
+								"type": "string"
+							},
+							"slider_deselected_button": {
+								"type": "string"
+							},
+							"slider_collection_name": {
+								"type": "string"
+							},
+							"default_control": {
+								"type": "string"
+							},
+							"hover_control": {
+								"type": "string"
+							},
+							"background_control": {
+								"type": "string"
+							},
+							"background_hover_control": {
+								"type": "string"
+							},
+							"progress_control": {
+								"type": "string"
+							},
+							"progress_hover_control": {
+								"type": "string"
+							},
+							"slider_box_control": {
+								"type": "string"
+							},
+							"slider_select_on_hover": {
+								"type": "boolean"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": {
+								"const": "slider_box"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							// TODO https://wiki.bedrock.dev/documentation/json-ui#slider-box
+						}
+					}
+				}
+			]
+		}
+	}
+}
