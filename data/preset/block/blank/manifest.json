@@ -5,21 +5,26 @@
 	"category": "fileType.block",
 	"targetVersion": [">=", "1.16.0"],
 	"packTypes": ["behaviorPack", "resourcePack"],
+	"additionalModels": {
+		"SAVE_PATH": "RP/textures/blocks/",
+		"DEFAULT_IMAGE": "icon.png"
+	},
 	"fields": [
+		[
+			"Image (Optional)",
+			"IMAGE",
+			{ "type": "fileInput", "accept": "image/png", "optional": true }
+		],
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]
 	],
 
 	"createFiles": [
+		"presetScript/optionalImage.js",
 		[
 			"block.json",
 			"BP/blocks/{{IDENTIFIER}}.json",
 			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
-		],
-		[
-			"icon.png",
-			"RP/textures/blocks/{{IDENTIFIER}}.png",
-			{ "inject": ["IDENTIFIER"] }
 		]
 	],
 	"expandFiles": [
