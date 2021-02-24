@@ -11,7 +11,7 @@
 			"LANGUAGE",
 			{
 				"type": "selectInput",
-				"default": "JavaScript",
+				"default": "js",
 				"options": [
 					{ "text": "JavaScript", "value": "js" },
 					{ "text": "TypeScript", "value": "ts" }
