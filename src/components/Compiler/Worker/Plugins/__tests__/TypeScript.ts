@@ -1,5 +1,5 @@
-import { TCompilerPlugin } from '../Plugins'
-import { TypeScriptPlugin } from './TypeScript'
+import { TCompilerPlugin } from '../../Plugins'
+import { TypeScriptPlugin } from '../TypeScript'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 
 describe('TypeScript Compiler Plugin', () => {
@@ -16,7 +16,9 @@ describe('TypeScript Compiler Plugin', () => {
 		).toEqual("let x = 'Hello World';\n")
 	})
 
-	it('should replace .js extension with .ts', () => {
-		expect(typeScript.transformPath('test.ts')).toBe('test.js')
+	it('should replace .js extension with .ts', async () => {
+		expect(await typeScript.transformPath('test.ts')).toMatch(
+			/test_(.+)\.js/
+		)
 	})
 })

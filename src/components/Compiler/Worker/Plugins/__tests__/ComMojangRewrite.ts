@@ -1,5 +1,5 @@
-import { TCompilerPlugin } from '../Plugins'
-import { ComMojangRewrite } from './ComMojangRewrite'
+import { TCompilerPlugin } from '../../Plugins'
+import { ComMojangRewrite } from '../ComMojangRewrite'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 
 describe('ComMojangRewrite Compiler Plugin', () => {

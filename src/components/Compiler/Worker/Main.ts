@@ -155,7 +155,7 @@ export class CompilerService extends TaskService<void, string[]> {
 		}
 
 		const saveFilePath =
-			(await this.runHook('transformPath', filePath)) ?? filePath
+			(await this.runAllHooks('transformPath', 0, filePath)) ?? filePath
 		const data = await this.runHook('load', filePath, originalFile)
 
 		// Nothing to load, just copy file over
@@ -175,7 +175,12 @@ export class CompilerService extends TaskService<void, string[]> {
 
 		if (createId) await this.fileSystem.unlink(filePath)
 
-		const transformedData = await this.runTransformHook(filePath, data)
+		const transformedData = await this.runAllHooks(
+			'transform',
+			1,
+			filePath,
+			data
+		)
 
 		file.transformedData = transformedData
 		file.saveFilePath = saveFilePath
@@ -237,32 +242,38 @@ export class CompilerService extends TaskService<void, string[]> {
 			}
 		}
 	}
-	protected async runTransformHook(filePath: string, data: any) {
+	protected async runAllHooks<T extends TCompilerHook>(
+		hookName: T,
+		writeReturnToIndex: number,
+		...args: Parameters<TCompilerPlugin[T]>
+	) {
 		for (const [_, plugin] of this.plugins) {
-			const hook = plugin.transform
+			const hook = plugin[hookName]
 			if (typeof hook !== 'function') continue
 
-			const hookRes = await hook(filePath, data)
+			// @ts-expect-error TypeScript is not smart enough
+			const hookRes = await hook(...args)
 			if (hookRes === null || hookRes === undefined) continue
 
-			data = hookRes
+			args[writeReturnToIndex] = hookRes
 		}
 
-		return data
+		return args[writeReturnToIndex]
 	}
 
 	async loadPlugins(plugins: Record<string, string>) {
 		const globalFs = new FileSystem(this.options.baseDirectory)
 
-		this.plugins = await loadPlugins(
-			globalFs,
-			plugins,
-			this.pluginOpts,
-			(id: string, importer?: string, createId = false) =>
+		this.plugins = await loadPlugins({
+			fileSystem: globalFs,
+			pluginPaths: plugins,
+			localFs: this.fileSystem,
+			pluginOpts: this.pluginOpts,
+			resolve: (id: string, importer?: string, createId = false) =>
 				this.handle(id, importer, createId).then(
 					(resolveData) => resolveData
-				)
-		)
+				),
+		})
 	}
 	async updatePlugins(
 		plugins: Record<string, string>,

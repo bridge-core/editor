@@ -59,12 +59,21 @@ export type TCompilerPluginFactory = (context: {
 	resolve: (id: string) => Promise<any>
 }) => Partial<TCompilerPlugin>
 
-export async function loadPlugins(
-	fileSystem: FileSystem,
-	pluginPaths: Record<string, string>,
-	pluginOpts: Record<string, any>,
+export interface ILoadPLugins {
+	fileSystem: FileSystem
+	localFs: FileSystem
+	pluginPaths: Record<string, string>
+	pluginOpts: Record<string, any>
 	resolve: (id: string) => Promise<any>
-) {
+}
+
+export async function loadPlugins({
+	fileSystem,
+	pluginPaths,
+	localFs,
+	pluginOpts,
+	resolve,
+}: ILoadPLugins) {
 	const plugins = new Map<string, TCompilerPluginFactory>()
 
 	plugins.set('comMojangRewrite', ComMojangRewrite)
@@ -107,7 +116,11 @@ export async function loadPlugins(
 
 		loadedPlugins.set(
 			pluginId,
-			plugin({ options: pluginOpts[pluginId], fileSystem, resolve })
+			plugin({
+				options: pluginOpts[pluginId],
+				fileSystem: localFs,
+				resolve,
+			})
 		)
 	}
 

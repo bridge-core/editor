@@ -1,9 +1,13 @@
 import { transpile } from 'typescript'
 import { TCompilerPluginFactory } from '../Plugins'
+import { hashString } from '/@/utils/hash'
 
 export const TypeScriptPlugin: TCompilerPluginFactory = () => ({
-	transformPath(filePath) {
-		if (filePath.endsWith('.ts')) return filePath.slice(0, -3) + '.js'
+	async transformPath(filePath) {
+		if (filePath.endsWith('.ts')) {
+			const hash = await hashString(filePath)
+			return `${filePath.slice(0, -3)}_${hash.slice(0, 10)}.js`
+		}
 	},
 	async load(filePath, fileHandle) {
 		if (filePath.endsWith('.ts')) {
