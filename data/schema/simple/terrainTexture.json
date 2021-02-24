@@ -28,6 +28,9 @@
 						"textures": {
 							"anyOf": [
 								{
+									"$ref": "../block/dynamic/texturePathEnum.json"
+								},
+								{
 									"type": "array",
 									"items": {
 										"anyOf": [
@@ -65,9 +68,6 @@
 											}
 										]
 									}
-								},
-								{
-									"$ref": "../block/dynamic/texturePathEnum.json"
 								}
 							]
 						}
