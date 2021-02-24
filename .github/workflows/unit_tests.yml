@@ -7,17 +7,14 @@ on:
 
 jobs:
     build:
-        strategy:
-            matrix:
-                platform: [windows-latest, ubuntu-latest, macos-latest]
-        runs-on: ${{ matrix.platform }}
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout 🛎
               uses: actions/checkout@v1
             - name: Setup Node.js 💻
               uses: actions/setup-node@v1
               with:
-                  node-version: 12
+                  node-version: '14'
             - name: Run Tests 🧪
               run: |
                   npm install
