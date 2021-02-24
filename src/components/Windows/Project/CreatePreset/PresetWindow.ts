@@ -25,6 +25,7 @@ export interface IPresetManifest {
 	description?: string
 	presetPath?: string
 	targetVersion: [CompareOperator, string]
+	additionalModels?: Record<string, unknown>
 	fields: [string, string, IPresetFieldOpts][]
 	createFiles?: (string | TCreateFile)[]
 	expandFiles?: TExpandFile[]
@@ -120,6 +121,7 @@ export class CreatePresetWindow extends BaseWindow {
 			models: {
 				PROJECT_PREFIX:
 					(await app.projectConfig.get('prefix')) ?? 'bridge',
+				...(manifest.additionalModels ?? {}),
 				...Object.fromEntries(
 					manifest.fields.map(([_, id, opts = {}]: any) => [
 						id,

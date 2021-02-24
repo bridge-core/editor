@@ -47,6 +47,14 @@
 				]
 			}
 		},
+		"additionalModels": {
+			"type": "object",
+			"patternProperties": {
+				".+": {
+					"type": "string"
+				}
+			}
+		},
 		"fields": {
 			"type": "array",
 			"items": {
