@@ -5,12 +5,22 @@
 	"category": "fileType.item",
 	"targetVersion": ["<=", "1.16.0"],
 	"packTypes": ["behaviorPack", "resourcePack"],
+	"additionalModels": {
+		"SAVE_PATH": "RP/textures/items/",
+		"DEFAULT_IMAGE": "icon.png"
+	},
 	"fields": [
+		[
+			"Image (Optional)",
+			"IMAGE",
+			{ "type": "fileInput", "accept": "image/png", "optional": true }
+		],
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]
 	],
 
 	"createFiles": [
+		"presetScript/optionalImage.js",
 		[
 			"item.json",
 			"BP/items/{{IDENTIFIER}}.json",
@@ -20,11 +30,6 @@
 			"clientItem.json",
 			"RP/items/{{IDENTIFIER}}.json",
 			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
-		],
-		[
-			"icon.png",
-			"RP/textures/items/{{IDENTIFIER}}.png",
-			{ "inject": ["IDENTIFIER"] }
 		]
 	],
 	"expandFiles": [
@@ -33,6 +38,10 @@
 			"RP/textures/item_texture.json",
 			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
 		],
-		["en_US.lang", "RP/texts/en_US.lang", { "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }]
+		[
+			"en_US.lang",
+			"RP/texts/en_US.lang",
+			{ "inject": ["IDENTIFIER", "IDENTIFIER_NAME", "PROJECT_PREFIX"] }
+		]
 	]
 }
