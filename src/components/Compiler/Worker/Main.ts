@@ -51,7 +51,6 @@ export class CompilerService extends TaskService<void, string[]> {
 	}
 
 	async onStart(updatedFiles: string[]) {
-		console.log(this.options.mode)
 		if (this.files.size === 0) {
 			// Load files.json file
 			try {
