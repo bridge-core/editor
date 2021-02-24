@@ -7,6 +7,7 @@ export interface IPackData extends IPackType {
 }
 
 export async function loadPacks(app: App, projectName: string) {
+	await PackType.ready.fired
 	const handles = await app.fileSystem.readdir(`projects/${projectName}`, {
 		withFileTypes: true,
 	})

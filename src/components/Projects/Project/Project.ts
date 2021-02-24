@@ -137,7 +137,10 @@ export class Project {
 				`projects/${this.name}`,
 				this.app.fileSystem
 			),
-			contains: await loadPacks(this.app, this.name),
+			contains: [],
 		})
+		loadPacks(this.app, this.name).then((packs) =>
+			Vue.set(this._projectData, 'contains', packs)
+		)
 	}
 }
