@@ -11,6 +11,7 @@ export class TextTab extends Tab {
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
 	disposables: (IDisposable | undefined)[] = []
+	isActive = false
 
 	setIsUnsaved(val: boolean) {
 		super.setIsUnsaved(val)
@@ -22,6 +23,9 @@ export class TextTab extends Tab {
 	}
 
 	async onActivate() {
+		if (this.isActive) return
+		this.isActive = true
+
 		const app = await App.getApp()
 		this.editorInstance?.focus()
 		this.editorInstance?.layout()
@@ -29,7 +33,6 @@ export class TextTab extends Tab {
 		if (!this.editorModel) {
 			const file = await app.fileSystem.readFile(this.path)
 			const fileContent = await file.text()
-
 			this.editorModel = monaco.editor.createModel(
 				fileContent,
 				undefined,
@@ -57,11 +60,13 @@ export class TextTab extends Tab {
 	onDeactivate() {
 		this.editorViewState = this.editorInstance?.saveViewState() ?? undefined
 		this.disposables.forEach((disposable) => disposable?.dispose())
+		this.isActive = false
 	}
 	onDestroy() {
 		this.disposables.forEach((disposable) => disposable?.dispose())
 		this.editorModel?.dispose()
 		this.editorViewState = undefined
+		this.isActive = false
 	}
 	updateParent(parent: TabSystem) {
 		super.updateParent(parent)

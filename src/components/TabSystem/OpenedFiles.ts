@@ -8,7 +8,7 @@ export class OpenedFiles extends PersistentQueue<string> {
 		super(app, Infinity, savePath)
 
 		if (settingsState?.general?.restoreTabs ?? true) {
-			this.on((queue) =>
+			this.once((queue) =>
 				queue.elements.forEach((filePath, i) =>
 					tabSystem.open(filePath, i + 1 === queue.elementCount)
 				)

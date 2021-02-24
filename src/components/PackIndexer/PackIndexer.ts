@@ -64,6 +64,7 @@ export class PackIndexer extends WorkerManager<
 	}
 
 	async updateFile(filePath: string) {
+		await this.fired
 		await this.service!.updatePlugins(FileType.getPluginFileTypes())
 		await this.service!.updateFile(filePath)
 	}
