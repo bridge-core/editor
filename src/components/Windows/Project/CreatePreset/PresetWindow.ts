@@ -47,6 +47,10 @@ export interface IPresetFileOpts {
 	inject: string[]
 }
 
+export interface IPermissions {
+	mayOverwriteFiles?: boolean
+}
+
 export class CreatePresetWindow extends BaseWindow {
 	protected loadPresetPaths = new Map<string, string>()
 	protected sidebar = new Sidebar([])
@@ -178,6 +182,9 @@ export class CreatePresetWindow extends BaseWindow {
 
 		const promises: Promise<unknown>[] = []
 		const createdFiles: string[] = []
+		const permissions: IPermissions = {
+			mayOverwriteFiles: undefined,
+		}
 
 		// Check that we don't overwrite files
 		for (const createFile of createFiles) {
@@ -197,6 +204,7 @@ export class CreatePresetWindow extends BaseWindow {
 				const overwriteFiles = await confirmWindow.fired
 				if (overwriteFiles) {
 					// Stop file collision checks & continue creating preset
+					permissions.mayOverwriteFiles = true
 					break
 				} else {
 					// Close loading window & early return
@@ -205,9 +213,6 @@ export class CreatePresetWindow extends BaseWindow {
 				}
 			}
 		}
-
-		// Close window
-		this.close()
 
 		promises.push(
 			...createFiles.map(async (createFileOpts) => {
@@ -242,6 +247,9 @@ export class CreatePresetWindow extends BaseWindow {
 		)
 
 		await Promise.all(promises)
+
+		// Close window
+		if (permissions.mayOverwriteFiles !== false) this.close()
 
 		for (const filePath of createdFiles) {
 			await app.project?.updateFile(filePath)

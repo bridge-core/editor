@@ -1,5 +1,6 @@
 import json5 from 'json5'
-import { IPresetFileOpts } from './PresetWindow'
+import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
+import { IPermissions, IPresetFileOpts } from './PresetWindow'
 import { transformString } from './TransformString'
 import { App } from '/@/App'
 import { run } from '/@/components/Extensions/Scripts/run'
@@ -8,12 +9,14 @@ import { deepmerge } from '/@/utils/deepmerge'
 export async function runPresetScript(
 	presetPath: string,
 	presetScript: string,
-	models: Record<string, unknown>
+	models: Record<string, unknown>,
+	permissions: IPermissions
 ): Promise<string[]> {
 	const app = await App.getApp()
 	const fs = app.project?.fileSystem!
 	const globalFs = app.fileSystem
-	const script = await fs.readFile(`${presetPath}/${presetScript}`)
+
+	const script = await globalFs.readFile(`${presetPath}/${presetScript}`)
 	const scriptSrc = await script.text()
 
 	const module: any = {}
@@ -31,15 +34,51 @@ export async function runPresetScript(
 		)
 
 	const createdFiles: string[] = []
-	const createFile = (
+	const createJSONFile = (
 		filePath: string,
 		data: any,
-		{ inject = [] }: IPresetFileOpts = { inject: [] }
+		opts: IPresetFileOpts = { inject: [] }
 	) => {
 		if (typeof data !== 'string') data = JSON.stringify(data, null, '\t')
+		return createFile(filePath, data, opts)
+	}
+	const createFile = async (
+		filePath: string,
+		data: FileSystemWriteChunkType,
+		{ inject = [] }: IPresetFileOpts = { inject: [] }
+	) => {
+		// Permission not set yet, prompt user if necessary
+		if (
+			permissions.mayOverwriteFiles === undefined &&
+			(await fs.fileExists(filePath))
+		) {
+			const confirmWindow = new ConfirmationWindow({
+				description: 'windows.createPreset.overwriteFiles',
+				confirmText: 'windows.createPreset.overwriteFilesConfirm',
+			})
+
+			const overwriteFiles = await confirmWindow.fired
+			if (overwriteFiles) {
+				// Stop file collision checks & continue creating preset
+				permissions.mayOverwriteFiles = true
+			} else {
+				// Don't create file
+				permissions.mayOverwriteFiles = false
+				return
+			}
+		} else if (permissions.mayOverwriteFiles === false) {
+			// Permission set, abort write
+			return
+		}
 
 		createdFiles.push(filePath)
-		return fs.writeFile(filePath, transformString(data, inject, models))
+		const fileHandle = await fs.getFileHandle(filePath, true)
+		fs.write(
+			fileHandle,
+			typeof data === 'string'
+				? transformString(data, inject, models)
+				: data
+		)
 	}
 	const expandFile = async (
 		filePath: string,
@@ -66,7 +105,13 @@ export async function runPresetScript(
 	const loadPresetFile = (filePath: string) =>
 		globalFs.readFile(`${presetPath}/${filePath}`)
 
-	await module.exports({ models, createFile, expandFile, loadPresetFile })
+	await module.exports({
+		models,
+		createFile,
+		expandFile,
+		loadPresetFile,
+		createJSONFile,
+	})
 
 	return createdFiles
 }
