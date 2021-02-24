@@ -1,11 +1,11 @@
 declare interface EntityJS {
 	/**
-	 * @readonly
-	 * This is the identifier for the object in the format namespace:name. For example, if the type is entity and the object is representing a vanilla cow, the identifier would be minecraft:cow.
+	 * @readonly This defines the type of object. Can be: "entity" or "item_entity".
 	 */
 	readonly __type__: 'entity' | 'item_entity'
 	/**
-	 * @readonly This defines the type of object. Can be: "entity" or "item_entity".
+	 * @readonly
+	 * This is the identifier for the object in the format namespace:name. For example, if the type is entity and the object is representing a vanilla cow, the identifier would be minecraft:cow.
 	 */
 	readonly __identifier__: string
 	/**
@@ -106,7 +106,6 @@ declare interface BlockJS {
 	 * This is the identifier for the object in the format namespace:name. For example, if the type is block and the object is representing a block of bedrock, the identifier would be minecraft:bedrock
 	 */
 	readonly __identifier__: string
-	readonly item: string
 	/**
 	 * @readonly
 	 * This is the position of the block and it functions as part of its unique identifier.
