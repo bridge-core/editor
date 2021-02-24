@@ -6,7 +6,7 @@ export const ComMojangRewrite: TCompilerPluginFactory = ({
 }) => {
 	if (!options.buildName)
 		options.buildName = options.mode === 'dev' ? 'dev' : 'dist'
-	if (!options.packName) options.packName = 'bridge'
+	if (!options.packName) options.packName = 'Bridge'
 
 	const folders: Record<string, string> = {
 		BP: 'development_behavior_packs',
@@ -22,7 +22,7 @@ export const ComMojangRewrite: TCompilerPluginFactory = ({
 					.catch(() => {})
 			}
 		},
-		async transformPath(filePath) {
+		transformPath(filePath) {
 			const pathParts = filePath.split('/')
 			const pack = <string>pathParts.shift()
 

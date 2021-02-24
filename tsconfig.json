@@ -15,6 +15,7 @@
 		"types": [
 			"webpack-env",
 			"@types/wicg-file-system-access",
+			"jest",
 			"node" /*, "vite/client"*/
 		],
 		"paths": {
