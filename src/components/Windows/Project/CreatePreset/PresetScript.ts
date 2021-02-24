@@ -16,7 +16,11 @@ export async function runPresetScript(
 	const fs = app.project?.fileSystem!
 	const globalFs = app.fileSystem
 
-	const script = await globalFs.readFile(`${presetPath}/${presetScript}`)
+	presetScript = presetScript.replaceAll(
+		'./',
+		presetPath.replace('data/packages/', '') + '/'
+	)
+	const script = await globalFs.readFile(`data/packages/${presetScript}`)
 	const scriptSrc = await script.text()
 
 	const module: any = {}

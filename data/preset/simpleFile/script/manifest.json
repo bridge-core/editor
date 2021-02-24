@@ -26,5 +26,5 @@
 		["File Name", "FILE_NAME"]
 	],
 
-	"createFiles": ["preset.js"]
+	"createFiles": ["./preset.js"]
 }
