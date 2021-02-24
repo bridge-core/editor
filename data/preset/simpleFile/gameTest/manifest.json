@@ -6,14 +6,26 @@
 	"targetVersion": [">=", "1.16.210"],
 	"packTypes": ["behaviorPack"],
 	"fields": [
+		[
+			"Language",
+			"LANGUAGE",
+			{
+				"type": "selectInput",
+				"default": "JavaScript",
+				"options": [
+					{ "text": "JavaScript", "value": "js" },
+					{ "text": "TypeScript", "value": "ts" }
+				]
+			}
+		],
 		["File Name", "FILE_NAME"]
 	],
 
 	"createFiles": [
 		[
 			"gameTest.js",
-			"BP/gametests/{{FILE_NAME}}.js",
-			{ "inject": ["FILE_NAME"] }
+			"BP/gametests/{{FILE_NAME}}.{{LANGUAGE}}",
+			{ "inject": ["FILE_NAME", "LANGUAGE"] }
 		]
 	]
 }
