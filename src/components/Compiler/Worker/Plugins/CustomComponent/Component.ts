@@ -1,5 +1,5 @@
 import { run } from '/@/components/Extensions/Scripts/run'
-import { deepMergeAll } from '/@/utils/deepmerge'
+import { deepMerge, deepMergeAll } from '/@/utils/deepmerge'
 
 export type TTemplate = (
 	componentArgs: any,
@@ -47,34 +47,36 @@ export class Component {
 		await module.exports({ name, schema, template })
 	}
 
-	create(template: any, location: string) {
-		const keys = location.split('/')
+	create(fileContent: any, template: any, location?: string) {
+		const keys = (location ?? '').split('/')
 
-		const original = {}
-		let current: any = original
+		let current: any = fileContent
 
 		while (keys.length > 1) {
 			const key = keys.shift()!
 
-			current[key] = {}
-			current = current[key]
+			if (current[key] === undefined) {
+				if (current[Number(key)] !== undefined) {
+					current = current[Number(key)]
+				} else {
+					current[key] = {}
+					current = current[key]
+				}
+			} else {
+				current = current[key]
+			}
 		}
 
-		current[keys[0]] = template ?? {}
-		return original
+		current[keys[0]] = deepMerge(current[keys[0]] ?? {}, template ?? {})
 	}
 
-	getTemplate(componentArgs: any, location: string) {
-		return (
-			deepMergeAll(
-				this.templates.map((template) =>
-					template(componentArgs, {
-						create: (template: any, location: string) =>
-							this.create(template, location),
-						location,
-					})
-				)
-			) ?? {}
-		)
+	processTemplates(fileContent: any, componentArgs: any, location: string) {
+		for (const template of this.templates) {
+			template(componentArgs, {
+				create: (template: any, location?: string) =>
+					this.create(fileContent, template, location),
+				location,
+			})
+		}
 	}
 }

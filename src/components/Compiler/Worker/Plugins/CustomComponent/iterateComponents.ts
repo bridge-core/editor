@@ -1,56 +1,49 @@
 import { IFileData } from '../../Main'
 import { Component } from './Component'
-import { deepMergeAll } from '/@/utils/deepmerge'
 
 export function iterateComponentObjects(
 	filePath: string,
+	fileContent: any,
 	componentObjects: [string, any][],
 	components: Map<string, Component>,
 	files: Map<string, IFileData>
 ) {
-	return deepMergeAll(
-		componentObjects
-			.map(([location, entityComponents]) =>
-				iterateComponents(
-					filePath,
-					entityComponents,
-					components,
-					files,
-					location
-				)
-			)
-			.flat()
-	)
+	for (const [location, componentObject] of componentObjects) {
+		iterateComponents(
+			filePath,
+			fileContent,
+			componentObject,
+			components,
+			files,
+			location
+		)
+	}
 }
 
 function iterateComponents(
 	filePath: string,
-	entityComponents: any,
+	fileContent: any,
+	componentObject: any,
 	components: Map<string, Component>,
 	files: Map<string, IFileData>,
 	location: string
 ) {
-	const templates = []
-
-	for (const componentName in entityComponents) {
+	for (const componentName in componentObject) {
 		if (componentName.startsWith('minecraft:')) continue
 
 		const component = components.get(componentName)
 		if (!component)
 			throw new Error(`Could not resolve component "${componentName}"`)
 
-		templates.push(
-			component.getTemplate(entityComponents[componentName], location)
-		)
+		const componentArgs = componentObject[componentName]
+		delete componentObject[componentName]
+
+		component.processTemplates(fileContent, componentArgs, location)
 
 		// Register that the entity file depends on the component file
 		const file = files.get(component.filePath)
 		if (!file)
 			files.set(component.filePath, { updateFiles: new Set([filePath]) })
 		else file.updateFiles.add(filePath)
-
-		delete entityComponents[componentName]
 	}
-
-	return templates
 }

@@ -68,6 +68,7 @@ export function createCustomComponentPlugin({
 						fileContent,
 						iterateComponentObjects(
 							filePath,
+							fileContent,
 							getComponentObjects(fileContent),
 							components,
 							getFiles()
@@ -77,7 +78,7 @@ export function createCustomComponentPlugin({
 			finalizeBuild(filePath, fileContent) {
 				if (filePath.startsWith('BP/components/')) return null
 				else if (filePath.startsWith(`BP/${folder}/`))
-					return JSON.stringify(fileContent)
+					return JSON.stringify(fileContent, null, '\t')
 			},
 		}
 	}
@@ -122,5 +123,12 @@ export const CustomBlockComponentPlugin = createCustomComponentPlugin({
 			'minecraft:block/components',
 			fileContent?.['minecraft:block']?.components ?? {},
 		],
+		...(<any[]>fileContent?.['minecraft:block']?.permutations ?? []).map(
+			(permutation, index) =>
+				<[string, any]>[
+					`minecraft:block/permutations/${index}/components`,
+					permutation.components ?? {},
+				]
+		),
 	],
 })
