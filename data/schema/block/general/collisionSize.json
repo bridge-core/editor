@@ -6,33 +6,21 @@
 	"properties": {
 		"size": {
 			"description": "Size of each side of the box of the component",
-			"allOf": [
-				{ "const": "false" },
-				{
-					"type": "array",
-					"maxItems": 3,
-					"minItems": 3,
-
-					"items": {
-						"type": "number"
-					}
-				}
-			]
+			"type": "array",
+			"maxItems": 3,
+			"minItems": 3,
+			"items": {
+				"type": "number"
+			}
 		},
 		"origin": {
 			"description": "Minimal position bounds of the collision box",
-			"allOf": [
-				{ "const": "false" },
-				{
-					"type": "array",
-					"maxItems": 3,
-					"minItems": 3,
-
-					"items": {
-						"type": "number"
-					}
-				}
-			]
+			"type": "array",
+			"maxItems": 3,
+			"minItems": 3,
+			"items": {
+				"type": "number"
+			}
 		}
 	}
 }

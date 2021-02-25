@@ -152,12 +152,26 @@
 			}
 		},
 		"minecraft:entity_collision": {
-			"type": "object",
-			"$ref": "../general/collisionSize.json"
+			"anyOf": [
+				{
+					"type": "object",
+					"$ref": "../general/collisionSize.json"
+				},
+				{
+					"type": "boolean"
+				}
+			]
 		},
 		"minecraft:pick_collision": {
-			"type": "object",
-			"$ref": "../general/collisionSize.json"
+			"anyOf": [
+				{
+					"type": "object",
+					"$ref": "../general/collisionSize.json"
+				},
+				{
+					"type": "boolean"
+				}
+			]
 		},
 		"minecraft:breakonpush": {
 			"type": "boolean",
