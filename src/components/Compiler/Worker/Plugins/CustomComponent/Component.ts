@@ -34,8 +34,8 @@ export class Component {
 		const module = { exports: {} }
 		run(
 			src.replace('export default ', 'module.exports = '),
-			[module],
-			['module']
+			[module, (x: any) => x],
+			['module', 'defineComponent']
 		)
 
 		if (typeof module.exports !== 'function') return
@@ -67,6 +67,7 @@ export class Component {
 			}
 		}
 
+		console.log(fileContent)
 		current[keys[0]] = deepMerge(current[keys[0]] ?? {}, template ?? {})
 	}
 
