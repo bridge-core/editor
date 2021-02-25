@@ -85,6 +85,7 @@ export class Compiler extends WorkerManager<
 	}
 
 	async updateFile(filePath: string) {
+		await this.fired
 		if (!this._service)
 			throw new Error(
 				`Trying to update file without service being defined`
