@@ -5,7 +5,7 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { iterateDir } from '/@/utils/iterateDir'
 import { IDisposable } from '/@/types/disposable'
 import json5 from 'json5'
-import { deepmerge } from '/@/utils/deepmerge'
+import { deepMerge } from '/@/utils/deepmerge'
 import { bridgeDark, bridgeLight } from './Default'
 import { Theme } from './Theme'
 
@@ -45,7 +45,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		// Listen for dark/light mode changes
 		const media = window.matchMedia('(prefers-color-scheme: light)')
 		this.mode = media.matches ? 'light' : 'dark'
-		media.addEventListener('change', mediaQuery => {
+		media.addEventListener('change', (mediaQuery) => {
 			this.colorScheme.dispatch(mediaQuery.matches ? 'light' : 'dark')
 			this.mode = mediaQuery.matches ? 'light' : 'dark'
 			this.updateTheme()
@@ -106,7 +106,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		try {
 			await iterateDir(
 				await app.fileSystem.getDirectoryHandle('data/packages/themes'),
-				fileHandle => this.loadTheme(fileHandle)
+				(fileHandle) => this.loadTheme(fileHandle)
 			)
 		} catch {}
 
@@ -159,7 +159,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		this.themeMap.set(
 			themeConfig.id,
 			new Theme(
-				deepmerge(baseTheme?.getThemeDefinition() ?? {}, themeConfig),
+				deepMerge(baseTheme?.getThemeDefinition() ?? {}, themeConfig),
 				isGlobal
 			)
 		)

@@ -7,6 +7,7 @@ describe('TypeScript Compiler Plugin', () => {
 	const typeScript = <TCompilerPlugin>TypeScriptPlugin({
 		options: { mode: 'dev' },
 		fileSystem,
+		getFiles: () => new Map(),
 		resolve: async (_: string) => {},
 	})
 

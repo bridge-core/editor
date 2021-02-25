@@ -1,4 +1,4 @@
-export function deepmerge(obj1: any, obj2: any) {
+export function deepMerge(obj1: any, obj2: any) {
 	if (Array.isArray(obj1) && Array.isArray(obj2)) return obj1.concat(obj2)
 	else if (Array.isArray(obj1)) return obj1.concat([obj2])
 	else if (Array.isArray(obj2)) return obj2.concat([obj1])
@@ -8,7 +8,7 @@ export function deepmerge(obj1: any, obj2: any) {
 
 	for (const key in obj1) {
 		if (obj2[key] === undefined) res[key] = obj1[key]
-		else res[key] = deepmerge(obj1[key], obj2[key])
+		else res[key] = deepMerge(obj1[key], obj2[key])
 	}
 
 	for (const key in obj2) {
@@ -16,4 +16,12 @@ export function deepmerge(obj1: any, obj2: any) {
 	}
 
 	return res
+}
+
+export function deepMergeAll(objs: any[]) {
+	let current = objs[0]
+
+	for (let i = 1; i < objs.length; i++) current = deepMerge(current, objs[i])
+
+	return current
 }

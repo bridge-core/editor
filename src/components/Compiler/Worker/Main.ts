@@ -51,16 +51,14 @@ export class CompilerService extends TaskService<void, string[]> {
 	}
 
 	async onStart(updatedFiles: string[]) {
-		if (this.files.size === 0) {
-			// Load files.json file
-			try {
-				const data = await this.fileSystem.readJSON('bridge/files.json')
-				for (const id in data) {
-					if (Array.isArray(data))
-						this.files.set(id, { updateFiles: new Set(data) })
-				}
-			} catch {}
-		}
+		// Load files.json file
+		try {
+			const data = await this.fileSystem.readJSON('bridge/files.json')
+			for (const id in data) {
+				if (Array.isArray(data[id]))
+					this.files.set(id, { updateFiles: new Set(data[id]) })
+			}
+		} catch {}
 
 		const globalFs = new FileSystem(this.options.baseDirectory)
 		await FileType.setup(globalFs)
@@ -75,30 +73,18 @@ export class CompilerService extends TaskService<void, string[]> {
 
 		await this.loadPlugins(this.options.plugins)
 
-		this.progress.setTotal(updatedFiles.length * 2)
+		this.progress.setTotal(updatedFiles.length)
 
 		await this.runSimpleHook('buildStart')
 
 		for (const updatedFile of updatedFiles) {
-			await this.handle(updatedFile)
+			await this.compileFile(updatedFile)
 			this.progress.addToCurrent(1)
 		}
 
 		await this.runSimpleHook('buildEnd')
 
-		// Clean up file map
-		const filesObject: Record<string, string[]> = {}
-		for (const [id, file] of this.files) {
-			file.filePath = undefined
-			file.saveFilePath = undefined
-			file.transformedData = undefined
-			if (file.updateFiles.size > 0)
-				filesObject[id] = [...file.updateFiles.values()]
-			this.progress.addToCurrent(1)
-		}
-
-		// Save files map
-		await this.fileSystem.writeJSON('bridge/files.json', filesObject)
+		await this.processFileMap()
 	}
 
 	async updateFile(filePath: string) {
@@ -107,15 +93,32 @@ export class CompilerService extends TaskService<void, string[]> {
 
 		if (file) {
 			for (const updateFile of file.updateFiles) {
-				await this.handle(updateFile)
+				await this.compileFile(updateFile)
 			}
 		}
 
-		await this.handle(filePath)
+		await this.compileFile(filePath)
 		await this.runSimpleHook('buildEnd')
+		await this.processFileMap()
 	}
 
-	async handle(id: string, importer?: string, createId?: boolean) {
+	async processFileMap() {
+		// Clean up file map
+		const filesObject: Record<string, string[]> = {}
+
+		for (const [id, file] of this.files) {
+			file.filePath = undefined
+			file.saveFilePath = undefined
+			file.transformedData = undefined
+			if (file.updateFiles.size > 0)
+				filesObject[id] = [...file.updateFiles.values()]
+		}
+
+		// Save files map
+		await this.fileSystem.writeJSON('bridge/files.json', filesObject)
+	}
+
+	async compileFile(id: string, importer?: string, createId?: boolean) {
 		const resolvedData = await this.resolve(id, importer, createId)
 		if (resolvedData) await this.finalizeFile(...resolvedData)
 		return resolvedData
@@ -269,8 +272,9 @@ export class CompilerService extends TaskService<void, string[]> {
 			pluginPaths: plugins,
 			localFs: this.fileSystem,
 			pluginOpts: this.pluginOpts,
+			getFiles: () => this.files,
 			resolve: (id: string, importer?: string, createId = false) =>
-				this.handle(id, importer, createId).then(
+				this.compileFile(id, importer, createId).then(
 					(resolveData) => resolveData
 				),
 		})

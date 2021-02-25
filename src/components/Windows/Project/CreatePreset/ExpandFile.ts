@@ -2,7 +2,7 @@ import { dirname } from 'path'
 import { IPresetFileOpts } from './PresetWindow'
 import { transformString } from './TransformString'
 import { App } from '/@/App'
-import { deepmerge } from '/@/utils/deepmerge'
+import { deepMerge } from '/@/utils/deepmerge'
 import { extname } from '/@/utils/path'
 
 export type TExpandFile = [string, string, IPresetFileOpts?]
@@ -37,7 +37,7 @@ export async function expandFile(
 		await fs.writeFile(
 			fullDestPath,
 			transformString(
-				JSON.stringify(deepmerge(destJson, json), null, '\t'),
+				JSON.stringify(deepMerge(destJson, json), null, '\t'),
 				inject,
 				models
 			)

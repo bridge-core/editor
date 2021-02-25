@@ -4,6 +4,12 @@ import { ComMojangRewrite } from './Plugins/ComMojangRewrite'
 import { Maybe } from '/@/types/Maybe'
 import { TypeScriptPlugin } from './Plugins/TypeScript'
 import json5 from 'json5'
+import {
+	CustomBlockComponentPlugin,
+	CustomEntityComponentPlugin,
+	CustomItemComponentPlugin,
+} from './Plugins/CustomComponent/Plugin'
+import { IFileData } from './Main'
 
 export type TCompilerHook = keyof TCompilerPlugin
 export type TCompilerPlugin = {
@@ -56,6 +62,7 @@ export type TCompilerPlugin = {
 export type TCompilerPluginFactory = (context: {
 	options: any
 	fileSystem: FileSystem
+	getFiles(): Map<string, IFileData>
 	resolve: (id: string) => Promise<any>
 }) => Partial<TCompilerPlugin>
 
@@ -64,6 +71,7 @@ export interface ILoadPLugins {
 	localFs: FileSystem
 	pluginPaths: Record<string, string>
 	pluginOpts: Record<string, any>
+	getFiles(): Map<string, IFileData>
 	resolve: (id: string) => Promise<any>
 }
 
@@ -71,6 +79,7 @@ export async function loadPlugins({
 	fileSystem,
 	pluginPaths,
 	localFs,
+	getFiles,
 	pluginOpts,
 	resolve,
 }: ILoadPLugins) {
@@ -78,6 +87,9 @@ export async function loadPlugins({
 
 	plugins.set('comMojangRewrite', ComMojangRewrite)
 	plugins.set('typeScript', TypeScriptPlugin)
+	plugins.set('customEntityComponents', CustomEntityComponentPlugin)
+	plugins.set('customItemComponents', CustomItemComponentPlugin)
+	plugins.set('customBlockComponents', CustomBlockComponentPlugin)
 
 	for (const [pluginId, pluginPath] of Object.entries(pluginPaths ?? {})) {
 		let file: File
@@ -119,6 +131,7 @@ export async function loadPlugins({
 			plugin({
 				options: pluginOpts[pluginId],
 				fileSystem: localFs,
+				getFiles,
 				resolve,
 			})
 		)

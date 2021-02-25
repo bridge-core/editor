@@ -4,7 +4,7 @@ import { IPermissions, IPresetFileOpts } from './PresetWindow'
 import { transformString } from './TransformString'
 import { App } from '/@/App'
 import { run } from '/@/components/Extensions/Scripts/run'
-import { deepmerge } from '/@/utils/deepmerge'
+import { deepMerge } from '/@/utils/deepmerge'
 
 export async function runPresetScript(
 	presetPath: string,
@@ -102,7 +102,7 @@ export async function runPresetScript(
 		} else {
 			await fs.writeJSON(
 				filePath,
-				deepmerge(json5.parse(current), json5.parse(data))
+				deepMerge(json5.parse(current), json5.parse(data))
 			)
 		}
 	}
