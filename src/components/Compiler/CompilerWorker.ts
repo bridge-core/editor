@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import * as Comlink from 'comlink'
-import { CompilerService, ICompilerOptions } from './Worker/Main'
+import { CompilerService, ICompilerOptions } from './Worker/Service'
 // import CompilerWorker from './Worker/Main?worker'
 import { WorkerManager } from '/@/components/Worker/Manager'
 import { Project } from '../Projects/Project/Project'
@@ -30,7 +30,7 @@ export class Compiler extends WorkerManager<
 
 	createWorker() {
 		// this.worker = new CompilerWorker()
-		this.worker = new Worker('./Worker/Main.ts', {
+		this.worker = new Worker('./Worker/Service.ts', {
 			type: 'module',
 		})
 	}

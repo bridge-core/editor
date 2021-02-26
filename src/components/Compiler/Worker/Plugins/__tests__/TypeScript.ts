@@ -7,13 +7,11 @@ describe('TypeScript Compiler Plugin', () => {
 	const typeScript = <TCompilerPlugin>TypeScriptPlugin({
 		options: { mode: 'dev' },
 		fileSystem,
-		getFiles: () => new Map(),
-		resolve: async (_: string) => {},
 	})
 
 	it('should transpile TypeScript to JavaScript', () => {
 		expect(
-			typeScript.transform('test.ts', "let x: string = 'Hello World';")
+			typeScript.load('test.ts', "let x: string = 'Hello World';")
 		).toEqual("let x = 'Hello World';\n")
 	})
 

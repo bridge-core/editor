@@ -31,13 +31,11 @@ export function createErrorNotification(error: Error): IDisposable {
 window.addEventListener('error', (event) => {
 	createErrorNotification(event.error ?? event)
 
-	if (process.env.mode === 'development')
-		App.ready.once((app) => app.windows.loadingWindow.closeAll())
+	App.ready.once((app) => app.windows.loadingWindow.closeAll())
 })
 
 window.onunhandledrejection = (event: PromiseRejectionEvent) => {
 	createErrorNotification(new Error(event.reason))
 
-	if (process.env.mode === 'development')
-		App.ready.once((app) => app.windows.loadingWindow.closeAll())
+	App.ready.once((app) => app.windows.loadingWindow.closeAll())
 }

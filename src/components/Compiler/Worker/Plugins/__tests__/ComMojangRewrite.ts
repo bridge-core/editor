@@ -7,8 +7,6 @@ describe('ComMojangRewrite Compiler Plugin', () => {
 	const rewrite = <TCompilerPlugin>ComMojangRewrite({
 		options: { mode: 'build' },
 		fileSystem,
-		getFiles: () => new Map(),
-		resolve: async (_: string) => {},
 	})
 
 	it('should put BP into correct folder', () => {
