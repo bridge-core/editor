@@ -63,7 +63,6 @@ export function createCustomComponentPlugin({
 					for (const [componentName, location] of usedComponents.get(
 						filePath
 					) ?? []) {
-						console.log(filePath, dependencies)
 						const component =
 							dependencies[
 								`${fileType}Component#${componentName}`
