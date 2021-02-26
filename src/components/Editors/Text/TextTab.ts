@@ -4,6 +4,7 @@ import * as monaco from 'monaco-editor'
 import { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
+import { settingsState } from '../../Windows/Settings/SettingsState'
 
 export class TextTab extends Tab {
 	component = TextTabComponent
@@ -80,6 +81,13 @@ export class TextTab extends Tab {
 	}
 
 	async save() {
+		if (settingsState?.general?.formatOnSave ?? true) {
+			const action = this.editorInstance?.getAction(
+				'editor.action.formatDocument'
+			)
+			await action?.run()
+		}
+
 		const app = await App.getApp()
 
 		this.isUnsaved = false

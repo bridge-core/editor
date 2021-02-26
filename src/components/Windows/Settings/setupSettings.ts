@@ -177,6 +177,16 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'general',
+			name: 'windows.settings.general.formatOnSave.name',
+			description: 'windows.settings.general.formatOnSave.description',
+			key: 'formatOnSave',
+			default: true,
+		})
+	)
+
+	settings.addControl(
+		new Toggle({
+			category: 'general',
 			name: 'windows.settings.general.openLinksInBrowser.name',
 			description:
 				'windows.settings.general.openLinksInBrowser.description',
