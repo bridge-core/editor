@@ -9,7 +9,6 @@ import {
 	CustomEntityComponentPlugin,
 	CustomItemComponentPlugin,
 } from './Plugins/CustomComponent/Plugin'
-import { IFileData } from './Compiler'
 import { SimpleRewrite } from './Plugins/simpleRewrite'
 
 export type TCompilerHook = keyof TCompilerPlugin
@@ -30,7 +29,10 @@ export type TCompilerPlugin = {
 	 * Read the file at `filePath` and return its content
 	 * - Return null/undefined to just copy the file over
 	 */
-	read(filePath: string, fileHandle: FileSystemFileHandle): Promise<any> | any
+	read(
+		filePath: string,
+		fileHandle?: FileSystemFileHandle
+	): Promise<any> | any
 
 	/**
 	 * Load the fileContent and bring it into a usable form
@@ -73,6 +75,10 @@ export type TCompilerPlugin = {
 export type TCompilerPluginFactory = (context: {
 	options: any
 	fileSystem: FileSystem
+	compileFiles: (
+		files: string[],
+		errorOnReadFailure?: boolean
+	) => Promise<void>
 }) => Partial<TCompilerPlugin>
 
 export interface ILoadPLugins {
@@ -80,6 +86,10 @@ export interface ILoadPLugins {
 	localFs: FileSystem
 	pluginPaths: Record<string, string>
 	pluginOpts: Record<string, any>
+	compileFiles: (
+		files: string[],
+		errorOnReadFailure?: boolean
+	) => Promise<void>
 }
 
 export async function loadPlugins({
@@ -87,6 +97,7 @@ export async function loadPlugins({
 	pluginPaths,
 	localFs,
 	pluginOpts,
+	compileFiles,
 }: ILoadPLugins) {
 	const plugins = new Map<string, TCompilerPluginFactory>()
 
@@ -137,6 +148,7 @@ export async function loadPlugins({
 			plugin({
 				options: pluginOpts[pluginId],
 				fileSystem: localFs,
+				compileFiles,
 			})
 		)
 	}

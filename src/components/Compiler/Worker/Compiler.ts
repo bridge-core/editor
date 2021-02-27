@@ -40,11 +40,14 @@ export class Compiler {
 
 		await this.compileFiles(files)
 
-		await this.processFileMap()
 		await this.runSimpleHook('buildEnd')
+		await this.processFileMap()
 	}
-	async compileFiles(files: string[]) {
-		await this.resolveFiles(this.flatFiles(files, new Set()))
+	async compileFiles(files: string[], errorOnReadFailure = true) {
+		await this.resolveFiles(
+			this.flatFiles(files, new Set()),
+			errorOnReadFailure
+		)
 		await this.requireFiles()
 		const sortedFiles = resolveFileOrder(this.files)
 		await this.finalizeFiles(sortedFiles)
@@ -86,7 +89,7 @@ export class Compiler {
 		return [...fileSet]
 	}
 
-	protected async resolveFiles(files: string[]) {
+	protected async resolveFiles(files: string[], errorOnReadFailure = true) {
 		for (const filePath of files) {
 			let file = this.files.get(filePath)
 			if (file?.isLoaded) continue
@@ -97,18 +100,19 @@ export class Compiler {
 				filePath
 			)
 
-			let fileHandle: FileSystemFileHandle
+			let fileHandle: FileSystemFileHandle | undefined = undefined
 			try {
 				fileHandle = await this.fileSystem.getFileHandle(filePath)
 			} catch {
-				throw new Error(
-					`Cannot access file "${filePath}": File does not exist`
-				)
+				if (errorOnReadFailure)
+					throw new Error(
+						`Cannot access file "${filePath}": File does not exist`
+					)
 			}
 
 			const readData = await this.runHook('read', filePath, fileHandle)
 			if (readData === undefined || readData === null) {
-				if (!!saveFilePath)
+				if (!!saveFilePath && !!fileHandle)
 					await this.copyFile(fileHandle, saveFilePath)
 				continue
 			}

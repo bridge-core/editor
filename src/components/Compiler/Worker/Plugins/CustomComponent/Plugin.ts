@@ -26,6 +26,8 @@ export function createCustomComponentPlugin({
 				if (isComponent(filePath)) return null
 			},
 			async read(filePath, fileHandle) {
+				if (!fileHandle) return
+
 				if (isComponent(filePath) && filePath.endsWith('.js')) {
 					const file = await fileHandle.getFile()
 					return await file.text()

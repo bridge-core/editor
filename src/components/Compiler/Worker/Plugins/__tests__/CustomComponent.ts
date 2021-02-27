@@ -7,6 +7,7 @@ describe('CustomComponent Compiler Plugin', () => {
 	const customComponent = <TCompilerPlugin>CustomEntityComponentPlugin({
 		options: { mode: 'dev' },
 		fileSystem,
+		compileFiles: async () => {},
 	})
 
 	it('should omit custom components from build output', () => {

@@ -7,6 +7,7 @@ describe('TypeScript Compiler Plugin', () => {
 	const typeScript = <TCompilerPlugin>TypeScriptPlugin({
 		options: { mode: 'dev' },
 		fileSystem,
+		compileFiles: async () => {},
 	})
 
 	it('should transpile TypeScript to JavaScript', () => {
