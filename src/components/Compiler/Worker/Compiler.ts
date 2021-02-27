@@ -48,7 +48,7 @@ export class Compiler {
 			this.flatFiles(files, new Set()),
 			errorOnReadFailure
 		)
-		await this.requireFiles()
+		await this.requireFiles(files)
 		const sortedFiles = resolveFileOrder(this.files)
 		await this.finalizeFiles(sortedFiles)
 	}
@@ -141,9 +141,10 @@ export class Compiler {
 		}
 	}
 
-	protected async requireFiles() {
-		for (let file of this.files.values()) {
-			if (!file.isLoaded) continue
+	protected async requireFiles(files: string[]) {
+		for (const filePath of files) {
+			const file = this.files.get(filePath)
+			if (!file || !file.isLoaded) continue
 
 			// Remove old updateFile refs
 			const oldDeps = file.dependencies
@@ -154,11 +155,10 @@ export class Compiler {
 			file.dependencies = new Set()
 
 			// Get new dependencies
-			const dependencies = await this.runCollectHook(
-				'require',
-				file.filePath,
-				file.data
+			const dependencies = new Set(
+				await this.runCollectHook('require', file.filePath, file.data)
 			)
+
 			for (const dependency of dependencies) {
 				const depFile =
 					this.files.get(dependency) ??
@@ -243,7 +243,7 @@ export class Compiler {
 		}
 
 		// Save files map
-		await this.fileSystem.writeJSON('bridge/files.json', filesObject)
+		await this.fileSystem.writeJSON('bridge/files.json', filesObject, true)
 	}
 
 	protected async copyFile(

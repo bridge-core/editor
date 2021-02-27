@@ -4,9 +4,8 @@ export function resolveFileOrder(files: Map<string, IFileData>) {
 	const resolved = new Set<IFileData>()
 
 	for (const file of files.values()) {
-		if (!resolved.has(file)) {
-			resolveSingle(file, files, resolved, new Set<IFileData>())
-		}
+		if (!file.isLoaded || resolved.has(file)) continue
+		resolveSingle(file, files, resolved, new Set<IFileData>())
 	}
 
 	return resolved
