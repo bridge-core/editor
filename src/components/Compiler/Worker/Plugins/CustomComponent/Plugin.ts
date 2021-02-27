@@ -66,6 +66,7 @@ export function createCustomComponentPlugin({
 			},
 			async transform(filePath, fileContent, dependencies = {}) {
 				if (filePath.startsWith(`BP/${folder}/`)) {
+					const components = new Set<Component>()
 					for (const [componentName, location] of usedComponents.get(
 						filePath
 					) ?? []) {
@@ -83,14 +84,20 @@ export function createCustomComponentPlugin({
 						const componentArgs = parentObj[componentName]
 						delete parentObj[componentName]
 
-						// Returns anim & animController files to create
-						const files = component.processTemplates(
+						component.processTemplates(
 							fileContent,
 							componentArgs,
 							location
 						)
-						createAnimFiles = deepMerge(createAnimFiles, files)
+						components.add(component)
 					}
+
+					// Register animation (controllers) that this entity uses
+					for (const component of components)
+						createAnimFiles = deepMerge(
+							createAnimFiles,
+							component.processAnimations(fileContent)
+						)
 				}
 			},
 			finalizeBuild(filePath, fileContent) {

@@ -14,7 +14,7 @@ export type TTemplate = (
 export class Component {
 	protected _name?: string
 	protected schema?: any
-	protected templates: TTemplate[] = []
+	protected template?: TTemplate
 	protected animations: any[] = []
 	protected animationControllers: any[] = []
 	constructor(protected fileType: string, protected componentSrc: string) {}
@@ -37,7 +37,7 @@ export class Component {
 
 		const name = (name: string) => (this._name = name)
 		const schema = (schema: any) => (this.schema = schema)
-		const template = (func: TTemplate) => this.templates.push(func)
+		const template = (func: TTemplate) => (this.template = func)
 
 		await module.exports({
 			name,
@@ -70,11 +70,6 @@ export class Component {
 	}
 
 	processTemplates(fileContent: any, componentArgs: any, location: string) {
-		// Try getting file identifier
-		const identifier =
-			fileContent[`minecraft:${this.fileType}`]?.description
-				?.identifier ?? 'bridge:no_identifier'
-
 		// Setup animation/animationController helper
 		const animation =
 			this.fileType === 'entity'
@@ -87,15 +82,21 @@ export class Component {
 				: () => 0
 
 		// Process template
-		for (const template of this.templates) {
-			template(componentArgs ?? {}, {
+		if (this.template)
+			this.template(componentArgs ?? {}, {
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
 				animationController,
 				animation,
 			})
-		}
+	}
+
+	processAnimations(fileContent: any) {
+		// Try getting file identifier
+		const identifier =
+			fileContent[`minecraft:${this.fileType}`]?.description
+				?.identifier ?? 'bridge:no_identifier'
 
 		const normalizedIdentifier = identifier.replace(':', '_')
 		const normalizedName = this.name?.replace(':', '_')
@@ -111,7 +112,7 @@ export class Component {
 		}
 	}
 
-	createAnimations(identifier: string, fileContent: any) {
+	protected createAnimations(identifier: string, fileContent: any) {
 		if (this.animations.length === 0) return
 
 		let id = 0
@@ -148,7 +149,7 @@ export class Component {
 
 		return JSON.stringify(animations, null, '\t')
 	}
-	createAnimationControllers(identifier: string, fileContent: any) {
+	protected createAnimationControllers(identifier: string, fileContent: any) {
 		if (this.animationControllers.length === 0) return
 
 		let id = 0
