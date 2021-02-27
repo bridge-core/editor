@@ -3,6 +3,7 @@ import { get } from 'lodash'
 import { TCompilerPluginFactory } from '../../Plugins'
 import { Component } from './Component'
 import { findCustomComponents } from './findComponents'
+import { deepMerge } from '/@/utils/deepmerge'
 
 interface IOpts {
 	folder: string
@@ -16,17 +17,20 @@ export function createCustomComponentPlugin({
 	getComponentObjects,
 }: IOpts): TCompilerPluginFactory {
 	const usedComponents = new Map<string, [string, string][]>()
+	let createAnimFiles: Record<string, any> = {}
 
 	const isComponent = (filePath: string | null) =>
 		filePath?.startsWith(`BP/components/${fileType}/`)
 
-	return () => {
+	return ({ compileFiles }) => {
 		return {
 			transformPath(filePath) {
 				if (isComponent(filePath)) return null
 			},
 			async read(filePath, fileHandle) {
-				if (!fileHandle) return
+				// Even if the fileHandle being undefined has nothing to do with custom components,
+				// we still just return "undefined" so we might as well keep the code simple
+				if (!fileHandle) return createAnimFiles[filePath]
 
 				if (isComponent(filePath) && filePath.endsWith('.js')) {
 					const file = await fileHandle.getFile()
@@ -38,7 +42,7 @@ export function createCustomComponentPlugin({
 			},
 			async load(filePath, fileContent) {
 				if (isComponent(filePath)) {
-					const component = new Component(fileContent)
+					const component = new Component(fileType, fileContent)
 
 					await component.load()
 					return component
@@ -79,17 +83,23 @@ export function createCustomComponentPlugin({
 						const componentArgs = parentObj[componentName]
 						delete parentObj[componentName]
 
-						component.processTemplates(
+						// Returns anim & animController files to create
+						const files = component.processTemplates(
 							fileContent,
 							componentArgs,
 							location
 						)
+						createAnimFiles = deepMerge(createAnimFiles, files)
 					}
 				}
 			},
 			finalizeBuild(filePath, fileContent) {
 				if (filePath.startsWith(`BP/${folder}/`))
 					return JSON.stringify(fileContent, null, '\t')
+			},
+			async buildEnd() {
+				await compileFiles(Object.keys(createAnimFiles), false)
+				createAnimFiles = {}
 			},
 		}
 	}
