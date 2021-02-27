@@ -88,6 +88,7 @@ export class TextTab extends Tab {
 
 		if (action && (settingsState?.general?.formatOnSave ?? true)) {
 			app.windows.loadingWindow.open()
+			this.editorModel?.setValue(this.editorModel?.getValue() + ' ')
 			const disposable = this.editorModel?.onDidChangeContent(
 				async () => {
 					disposable?.dispose()
