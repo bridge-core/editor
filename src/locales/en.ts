@@ -365,7 +365,7 @@ export default {
 						'Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system',
 				},
 				formatOnSave: {
-					name: 'Format text files on save',
+					name: 'Format On Save',
 					description: 'Formats your text files upon saving them',
 				},
 				openLinksInBrowser: {
