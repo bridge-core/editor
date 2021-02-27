@@ -10,8 +10,8 @@ describe('CustomComponent Compiler Plugin', () => {
 	})
 
 	it('should omit custom components from build output', () => {
-		expect(customComponent.transformPath('BP/components/test.ts')).toBe(
-			null
-		)
+		expect(
+			customComponent.transformPath('BP/components/entity/test.ts')
+		).toBe(null)
 	})
 })
