@@ -1,6 +1,6 @@
 import { Project } from '/@/components/Projects/Project/Project'
 import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/InformedChoice'
-import { Compiler } from './Compiler'
+import { Compiler } from './CompilerWorker'
 import JSON5 from 'json5'
 
 export class CompilerManager {

@@ -7,13 +7,12 @@ describe('CustomComponent Compiler Plugin', () => {
 	const customComponent = <TCompilerPlugin>CustomEntityComponentPlugin({
 		options: { mode: 'dev' },
 		fileSystem,
-		getFiles: () => new Map(),
-		resolve: async (_: string) => {},
+		compileFiles: async () => {},
 	})
 
 	it('should omit custom components from build output', () => {
 		expect(
-			customComponent.finalizeBuild('BP/components/test.ts', 'something')
+			customComponent.transformPath('BP/components/entity/test.ts')
 		).toBe(null)
 	})
 })

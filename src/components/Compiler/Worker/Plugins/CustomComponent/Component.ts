@@ -13,27 +13,18 @@ export class Component {
 	protected _name?: string
 	protected schema?: any
 	protected templates: TTemplate[] = []
-	constructor(
-		protected fileHandle: FileSystemFileHandle,
-		protected _filePath: string
-	) {}
+	constructor(protected componentSrc: string) {}
 
 	//#region Getters
 	get name() {
 		return this._name
 	}
-	get filePath() {
-		return this._filePath
-	}
 	//#endregion
 
 	async load() {
-		const file = await this.fileHandle.getFile()
-		const src = await file.text()
-
 		const module = { exports: {} }
 		run(
-			src.replace('export default ', 'module.exports = '),
+			this.componentSrc.replace('export default ', 'module.exports = '),
 			[module, (x: any) => x],
 			['module', 'defineComponent']
 		)
@@ -67,13 +58,12 @@ export class Component {
 			}
 		}
 
-		console.log(fileContent)
 		current[keys[0]] = deepMerge(current[keys[0]] ?? {}, template ?? {})
 	}
 
 	processTemplates(fileContent: any, componentArgs: any, location: string) {
 		for (const template of this.templates) {
-			template(componentArgs, {
+			template(componentArgs ?? {}, {
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,

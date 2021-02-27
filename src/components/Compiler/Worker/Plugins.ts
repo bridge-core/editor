@@ -9,7 +9,7 @@ import {
 	CustomEntityComponentPlugin,
 	CustomItemComponentPlugin,
 } from './Plugins/CustomComponent/Plugin'
-import { IFileData } from './Main'
+import { SimpleRewrite } from './Plugins/simpleRewrite'
 
 export type TCompilerHook = keyof TCompilerPlugin
 export type TCompilerPlugin = {
@@ -19,35 +19,48 @@ export type TCompilerPlugin = {
 	buildStart(): Promise<void>
 
 	/**
-	 * Given a source id, return the filePath it belongs to
-	 * - E.g. resolve custom component names
-	 */
-	resolveId(source: string, importer?: string): Maybe<string>
-	/**
-	 * Runs after all ids have been resolved
-	 */
-	afterResolveId(filePath: string): Promise<void> | void
-
-	/**
 	 * Transform file path
 	 * - E.g. adjust file path to point to build folder
+	 * - Return null to omit file from build output
 	 */
-	transformPath(filePath: string): Maybe<string>
+	transformPath(filePath: string | null): Maybe<string>
 
 	/**
-	 * Load the file at `filePath` and return its content
+	 * Read the file at `filePath` and return its content
 	 * - Return null/undefined to just copy the file over
 	 */
-	load(filePath: string, fileHandle: FileSystemFileHandle): Promise<any> | any
+	read(
+		filePath: string,
+		fileHandle?: FileSystemFileHandle
+	): Promise<any> | any
+
+	/**
+	 * Load the fileContent and bring it into a usable form
+	 */
+	load(filePath: string, fileContent: any): Promise<any> | any
+
+	/**
+	 * Provide alternative lookups for a file
+	 * - E.g. custom component names
+	 */
+	registerAliases(source: string, fileContent: any): Maybe<string[]>
+
+	/**
+	 * Register that a file depends on other files
+	 */
+	require(source: string, fileContent: any): Maybe<string[]>
 
 	/**
 	 * Transform a file's content
 	 */
-	transform(filePath: string, fileContent: any): Promise<any> | any
+	transform(
+		filePath: string,
+		fileContent: any,
+		dependencies?: Record<string, any>
+	): Promise<any> | any
 
 	/**
 	 * Prepare data before it gets written to disk
-	 * - Return null/undefined to omit file from output
 	 */
 	finalizeBuild(
 		filePath: string,
@@ -62,8 +75,10 @@ export type TCompilerPlugin = {
 export type TCompilerPluginFactory = (context: {
 	options: any
 	fileSystem: FileSystem
-	getFiles(): Map<string, IFileData>
-	resolve: (id: string) => Promise<any>
+	compileFiles: (
+		files: string[],
+		errorOnReadFailure?: boolean
+	) => Promise<void>
 }) => Partial<TCompilerPlugin>
 
 export interface ILoadPLugins {
@@ -71,20 +86,22 @@ export interface ILoadPLugins {
 	localFs: FileSystem
 	pluginPaths: Record<string, string>
 	pluginOpts: Record<string, any>
-	getFiles(): Map<string, IFileData>
-	resolve: (id: string) => Promise<any>
+	compileFiles: (
+		files: string[],
+		errorOnReadFailure?: boolean
+	) => Promise<void>
 }
 
 export async function loadPlugins({
 	fileSystem,
 	pluginPaths,
 	localFs,
-	getFiles,
 	pluginOpts,
-	resolve,
+	compileFiles,
 }: ILoadPLugins) {
 	const plugins = new Map<string, TCompilerPluginFactory>()
 
+	plugins.set('simpleRewrite', SimpleRewrite)
 	plugins.set('comMojangRewrite', ComMojangRewrite)
 	plugins.set('typeScript', TypeScriptPlugin)
 	plugins.set('customEntityComponents', CustomEntityComponentPlugin)
@@ -131,8 +148,7 @@ export async function loadPlugins({
 			plugin({
 				options: pluginOpts[pluginId],
 				fileSystem: localFs,
-				getFiles,
-				resolve,
+				compileFiles,
 			})
 		)
 	}

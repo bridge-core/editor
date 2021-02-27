@@ -13,7 +13,6 @@ export interface ILightningInstruction {
 
 export class LightningCache {
 	protected folderIgnoreList = new Set<string>()
-	protected fileIgnoreList = new Set<string>(['.DS_Store'])
 	protected totalTime = 0
 
 	constructor(
@@ -87,7 +86,7 @@ export class LightningCache {
 			if (entry.kind === 'directory') {
 				if (this.folderIgnoreList.has(currentFullPath)) continue
 				await this.iterateDir(entry, callback, currentFullPath)
-			} else if (!this.fileIgnoreList.has(fileName)) {
+			} else if (fileName[0] !== '.') {
 				this.service.progress.addToTotal(2)
 				await callback(<FileSystemFileHandle>entry, currentFullPath)
 			}

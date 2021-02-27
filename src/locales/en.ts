@@ -46,6 +46,7 @@ export default {
 		clientManifest: 'Client Manifest',
 		skinManifest: 'Skin Manifest',
 		geometry: 'Geometry',
+		customComponent: 'Component',
 		clientAnimation: 'Client Animation',
 		clientAnimationController: 'Client Animation Controller',
 		attachable: 'Attachable',

@@ -1,9 +1,8 @@
 import json5 from 'json5'
+import { get } from 'lodash'
 import { TCompilerPluginFactory } from '../../Plugins'
 import { Component } from './Component'
-import { iterateComponentObjects } from './iterateComponents'
-import { deepMerge } from '/@/utils/deepmerge'
-import { iterateDir } from '/@/utils/iterateDir'
+import { findCustomComponents } from './findComponents'
 
 interface IOpts {
 	folder: string
@@ -16,68 +15,80 @@ export function createCustomComponentPlugin({
 	fileType,
 	getComponentObjects,
 }: IOpts): TCompilerPluginFactory {
-	return ({ options, fileSystem, getFiles }) => {
-		const components = new Map<string, Component>()
+	const usedComponents = new Map<string, [string, string][]>()
 
+	const isComponent = (filePath: string | null) =>
+		filePath?.startsWith(`BP/components/${fileType}/`)
+
+	return () => {
 		return {
-			async buildStart() {
-				components.clear()
-
-				let componentDir: FileSystemDirectoryHandle
-				try {
-					componentDir = await fileSystem.getDirectoryHandle(
-						`BP/components/${fileType}`
-					)
-				} catch {
-					return
-				}
-
-				await iterateDir(componentDir, async (fileHandle, filePath) => {
-					const component = new Component(
-						fileHandle,
-						`BP/components/${fileType}/${filePath}`
-					)
-					await component.load()
-
-					if (!component.name) {
-						console.error(
-							`Component with invalid name: "component.name"`
-						)
-						return
-					}
-					if (components.has(component.name)) {
-						console.error(
-							`Component with name "${component.name}" already exists`
-						)
-						return
-					}
-
-					components.set(component.name, component)
-				})
+			transformPath(filePath) {
+				if (isComponent(filePath)) return null
 			},
-			async load(filePath, fileHandle) {
-				if (filePath.startsWith('BP/components/')) return {}
-				else if (filePath.startsWith(`BP/${folder}/`)) {
+			async read(filePath, fileHandle) {
+				if (!fileHandle) return
+
+				if (isComponent(filePath) && filePath.endsWith('.js')) {
+					const file = await fileHandle.getFile()
+					return await file.text()
+				} else if (filePath.startsWith(`BP/${folder}/`)) {
 					const file = await fileHandle.getFile()
 					return json5.parse(await file.text())
 				}
 			},
-			async transform(filePath, fileContent) {
-				if (filePath.startsWith(`BP/${folder}/`))
-					return deepMerge(
-						fileContent,
-						iterateComponentObjects(
-							filePath,
-							fileContent,
-							getComponentObjects(fileContent),
-							components,
-							getFiles()
-						)
+			async load(filePath, fileContent) {
+				if (isComponent(filePath)) {
+					const component = new Component(fileContent)
+
+					await component.load()
+					return component
+				}
+			},
+			async registerAliases(filePath, fileContent) {
+				if (isComponent(filePath))
+					return [`${fileType}Component#${fileContent.name}`]
+			},
+			async require(filePath, fileContent) {
+				if (filePath.startsWith(`BP/${folder}/`)) {
+					const components = findCustomComponents(
+						getComponentObjects(fileContent)
 					)
+
+					usedComponents.set(filePath, components)
+					return components.map(
+						(component) => `${fileType}Component#${component[0]}`
+					)
+				}
+			},
+			async transform(filePath, fileContent, dependencies = {}) {
+				if (filePath.startsWith(`BP/${folder}/`)) {
+					for (const [componentName, location] of usedComponents.get(
+						filePath
+					) ?? []) {
+						const component =
+							dependencies[
+								`${fileType}Component#${componentName}`
+							]
+						if (!component) continue
+
+						const parentObj = get(
+							fileContent,
+							location.split('/'),
+							{}
+						)
+						const componentArgs = parentObj[componentName]
+						delete parentObj[componentName]
+
+						component.processTemplates(
+							fileContent,
+							componentArgs,
+							location
+						)
+					}
+				}
 			},
 			finalizeBuild(filePath, fileContent) {
-				if (filePath.startsWith('BP/components/')) return null
-				else if (filePath.startsWith(`BP/${folder}/`))
+				if (filePath.startsWith(`BP/${folder}/`))
 					return JSON.stringify(fileContent, null, '\t')
 			},
 		}
