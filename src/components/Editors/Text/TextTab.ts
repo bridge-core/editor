@@ -90,7 +90,18 @@ export class TextTab extends Tab {
 			app.windows.loadingWindow.open()
 			// This is a terrible hack because we need to make sure that the formatter triggers the "onDidChangeContent" event
 			// The promise returned by action.run() actually resolves before formatting is done
-			this.editorModel?.setValue(this.editorModel?.getValue() + ' ')
+			this.editorInstance?.executeEdits('automatic', [
+				{
+					forceMoveMarkers: false,
+					range: {
+						startLineNumber: 0,
+						endLineNumber: 0,
+						startColumn: 0,
+						endColumn: 0,
+					},
+					text: '\t',
+				},
+			])
 
 			const disposable = this.editorModel?.onDidChangeContent(
 				async () => {
