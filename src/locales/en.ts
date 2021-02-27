@@ -40,6 +40,7 @@ export default {
 		recipe: 'Recipe',
 		clientScript: 'Client Script',
 		serverScript: 'Server Script',
+		script: 'Script',
 		spawnRule: 'Spawn Rule',
 		mcstructure: 'Structure',
 		tradeTable: 'Trade Table',
