@@ -81,15 +81,29 @@ export class TextTab extends Tab {
 	}
 
 	async save() {
-		if (settingsState?.general?.formatOnSave ?? true) {
-			const action = this.editorInstance?.getAction(
-				'editor.action.formatDocument'
-			)
-			await action?.run()
-		}
-
 		const app = await App.getApp()
+		const action = this.editorInstance?.getAction(
+			'editor.action.formatDocument'
+		)
 
+		if (action && (settingsState?.general?.formatOnSave ?? true)) {
+			app.windows.loadingWindow.open()
+			const disposable = this.editorModel?.onDidChangeContent(
+				async () => {
+					disposable?.dispose()
+
+					await this.saveFile(app)
+
+					app.windows.loadingWindow.close()
+				}
+			)
+
+			await action.run()
+		} else {
+			await this.saveFile(app)
+		}
+	}
+	protected async saveFile(app: App) {
 		this.isUnsaved = false
 		if (this.editorModel) {
 			await app.fileSystem.writeFile(
