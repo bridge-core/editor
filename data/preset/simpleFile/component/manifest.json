@@ -24,9 +24,9 @@
 				"type": "selectInput",
 				"default": "entity",
 				"options": [
-					{ "text": "Entity", "value": "entities" },
-					{ "text": "Block", "value": "blocks" },
-					{ "text": "Item", "value": "items" }
+					{ "text": "Entity", "value": "entity" },
+					{ "text": "Block", "value": "block" },
+					{ "text": "Item", "value": "item" }
 				]
 			}
 		],
