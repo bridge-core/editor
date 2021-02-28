@@ -6,7 +6,7 @@
 	"targetVersion": ["<=", "1.16.0"],
 	"packTypes": ["behaviorPack", "resourcePack"],
 	"additionalModels": {
-		"SAVE_PATH": "RP/textures/items/",
+		"IMAGE_SAVE_PATH": "RP/textures/items/",
 		"DEFAULT_IMAGE": "icon.png"
 	},
 	"fields": [

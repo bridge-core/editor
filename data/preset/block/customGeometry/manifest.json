@@ -5,9 +5,35 @@
 	"category": "fileType.block",
 	"targetVersion": [">=", "1.16.100"],
 	"packTypes": ["behaviorPack", "resourcePack"],
+	"additionalModels": {
+		"IMAGE_SAVE_PATH": "RP/textures/blocks",
+		"DEFAULT_IMAGE": "texture.png",
+		"MODEL_SAVE_PATH": "RP/models/blocks/",
+		"DEFAULT_MODEL": "geometry.json"
+	},
 	"fields": [
 		["Identifier", "IDENTIFIER"],
-		["Display Name", "IDENTIFIER_NAME"]
+		["Display Name", "IDENTIFIER_NAME"],
+		[
+			"Block Model",
+			"MODEL",
+			{
+				"type": "fileInput",
+				"accept": "text/json",
+				"optional": "true",
+				"icon": "mdi-file-chart"
+			}
+		],
+		[
+			"Block Texture",
+			"IMAGE",
+			{
+				"type": "fileInput",
+				"accept": "image/png,image/jpeg",
+				"optional": "true",
+				"icon": "mdi-file-image"
+			}
+		]
 	],
 
 	"createFiles": [
@@ -16,16 +42,8 @@
 			"BP/blocks/{{IDENTIFIER}}.json",
 			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
 		],
-		[
-			"texture.png",
-			"RP/textures/blocks/{{IDENTIFIER}}.png",
-			{ "inject": ["IDENTIFIER"] }
-		],
-		[
-			"geometry.json",
-			"RP/models/blocks/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
-		]
+		"presetScript/optionalModel.js",
+		"presetScript/optionalImage.js"
 	],
 	"expandFiles": [
 		[
