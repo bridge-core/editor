@@ -46,7 +46,8 @@ export class CreateProjectWindow extends BaseWindow {
 		super(CreateProjectComponent, false)
 		this.defineWindow()
 
-		App.ready.once(async app => {
+		App.ready.once(async (app) => {
+			await app.dataLoader.fired
 			this.availableTargetVersions = await app.fileSystem.readJSON(
 				'data/packages/formatVersions.json'
 			)
@@ -80,8 +81,8 @@ export class CreateProjectWindow extends BaseWindow {
 	}
 
 	createProject() {
-		return new Promise<void>(resolve =>
-			App.ready.once(async app => {
+		return new Promise<void>((resolve) =>
+			App.ready.once(async (app) => {
 				const fs = app.fileSystem
 				const projectDir = await fs.getDirectoryHandle(
 					`projects/${this.createOptions.name}`,
