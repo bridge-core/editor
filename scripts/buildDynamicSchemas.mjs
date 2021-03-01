@@ -17,7 +17,7 @@ export async function buildDynamicSchemas() {
 		)
 
 		try {
-			await Deno.remove(join('./data/schema', id, 'dynamic'), {
+			await fs.rmdir(join('./data/schema', id, 'dynamic'), {
 				recursive: true,
 			})
 		} catch {}
@@ -26,7 +26,9 @@ export async function buildDynamicSchemas() {
 		})
 
 		for (const cacheDef of json) {
-			const key = Object.keys(cacheDef).find(key => !key.startsWith('@'))
+			const key = Object.keys(cacheDef).find(
+				(key) => !key.startsWith('@')
+			)
 			if (!key) continue
 
 			await fs.writeFile(

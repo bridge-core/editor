@@ -7,6 +7,8 @@ import { v4 as uuid } from 'uuid'
 import { getFilteredFormatVersions } from './FormatVersions'
 import { Project } from '../Projects/Project/Project'
 import { IDisposable } from '/@/types/disposable'
+import { generateComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/generateSchemas'
+import { iterateDir } from '/@/utils/iterateDir'
 
 const globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
@@ -191,13 +193,11 @@ export class JsonDefaults {
 		)
 		const scopedFs = this.project.fileSystem
 
-		for await (const dirent of baseDirectory.values()) {
-			if (dirent.kind !== 'file' || dirent.name === '.DS_Store') continue
-
-			const file = await dirent.getFile()
+		await iterateDir(baseDirectory, async (fileHandle) => {
+			const file = await fileHandle.getFile()
 			const schemaScript = json5.parse(await file.text())
 
-			let scriptResult: string[] = []
+			let scriptResult: any = []
 			try {
 				scriptResult = await runAsync(
 					schemaScript.script,
@@ -223,6 +223,8 @@ export class JsonDefaults {
 							!filePath
 								? undefined
 								: filePath.split(/\/|\\/g).pop(),
+						(fileType: string) =>
+							generateComponentSchemas(fileType),
 					],
 					[
 						'readdir',
@@ -231,10 +233,29 @@ export class JsonDefaults {
 						'getCacheDataFor',
 						'getProjectPrefix',
 						'getFileName',
+						'customComponents',
 					]
 				)
 			} catch (err) {
 				// console.error(`Error evaluating schemaScript: ${err.message}`)
+			}
+
+			if (
+				schemaScript.type === 'object' &&
+				!Array.isArray(scriptResult) &&
+				typeof scriptResult === 'object'
+			) {
+				this.localSchemas[
+					`file:///data/packages/schema/${schemaScript.generateFile}`
+				] = {
+					uri: `file:///data/packages/schema/${schemaScript.generateFile}`,
+					schema: {
+						type: 'object',
+						properties: scriptResult,
+					},
+				}
+
+				return
 			}
 
 			this.localSchemas[
@@ -245,14 +266,14 @@ export class JsonDefaults {
 					type: schemaScript.type === 'enum' ? 'string' : 'object',
 					enum:
 						schemaScript.type === 'enum' ? scriptResult : undefined,
-					object:
+					properties:
 						schemaScript.type === 'properties'
 							? Object.fromEntries(
-									scriptResult.map((res) => [res, {}])
+									scriptResult.map((res: string) => [res, {}])
 							  )
 							: undefined,
 				},
 			}
-		}
+		})
 	}
 }

@@ -1,0 +1,5 @@
+{
+	"type": "object",
+	"generateFile": "block/dynamic/customComponents.json",
+	"script": "return customComponents('block')"
+}

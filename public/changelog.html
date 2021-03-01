@@ -1,22 +1,42 @@
 <h2>Features:</h2>
 <ul>
-<li>Automatic updates if user did not interact with app yet</li>
-<li>Improved app performance while background tasks are running (reduced lag)
+<li>App version is now visible in toolbar</li>
+<li>New changelog window (Thanks to @pascal541)</li>
+<li>bridge. can now restore opened tabs upon opening the application</li>
+<li>Support for GameTest files
 <ul>
-<li>Pack Indexer is now faster</li>
-<li>PackSpider is now faster</li>
-<li>Compiler is now faster</li>
+<li>Auto-Completions</li>
+<li>File creation</li>
 </ul>
 </li>
+<li>Full skin pack support (Thanks to @Gekocaretaker)</li>
+<li>JavaScript API for presets</li>
+<li>New input fields for presets</li>
+<li>Updated compiler plugin format (breaking change - Please create new projects)</li>
+<li>You can no longer created a preset if a pack it needs is missing</li>
+<li>Extensions can now add new file definitions</li>
+<li>bridge. now creates more files upon creating BP/RP and SP</li>
+<li>Presets: Ask user before overwriting files</li>
+<li>Added new slab preset</li>
+<li>Ability to create new JavaScript files (scripting API)</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Localized &quot;Downloading new data...&quot; message</li>
+<li>Added &quot;damager&quot; event target</li>
+<li>Refactored pack indexer structure</li>
+<li>Refactored compiler</li>
+<li>Refactored JSONDefaults</li>
+<li>Updated ConfirmationWindow</li>
+<li>BP now propose RP uuid</li>
+<li>Updated preset schema</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed bee preset</li>
-<li>Fixed error upon closing tab</li>
-<li>Fixed tab being selected when close button is pressed</li>
-<li>Fixed notification divider showing without visible notifications</li>
+<li>Fixed command auto-completions</li>
+<li>Fixed rewrite skin packs to &quot;skin_packs&quot; folder</li>
+<li>Fixed loading of projects</li>
+<li>Fixed error upon loading data</li>
+<li>Fixed compiler without build config file</li>
+<li>Fixed memory leak</li>
+<li>Fixed project creation</li>
 </ul>

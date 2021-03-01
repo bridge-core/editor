@@ -2,16 +2,19 @@ import { dirname, join } from 'path'
 import { promises as fs } from 'fs'
 import json5 from 'json5'
 
-export async function runSchemaScripts() {
-	const dirents = await fs.readdir('./data/schemaScript', {
+export async function runSchemaScripts(directory = './data/schemaScript') {
+	const dirents = await fs.readdir(directory, {
 		withFileTypes: true,
 	})
 
 	for (const dirent of dirents) {
-		if (!dirent.isFile()) continue
+		if (dirent.isDirectory()) {
+			await runSchemaScripts(join(directory, dirent.name))
+			continue
+		} else if (!dirent.isFile()) continue
 
 		const schemaScriptDef = json5.parse(
-			await fs.readFile(join('./data/schemaScript', dirent.name))
+			await fs.readFile(join(directory, dirent.name))
 		)
 		let schema
 		if (schemaScriptDef.type === 'enum') {
@@ -20,7 +23,7 @@ export async function runSchemaScripts() {
 				type: 'string',
 				enum: [],
 			}
-		} else if (schemaScriptDef.type === 'properties') {
+		} else if (schemaScriptDef.type === 'object') {
 			schema = {
 				$schema: 'http://json-schema.org/draft-07/schema',
 				type: 'object',

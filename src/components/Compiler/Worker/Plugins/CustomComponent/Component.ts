@@ -25,7 +25,7 @@ export class Component {
 	}
 	//#endregion
 
-	async load() {
+	async load(type?: 'server' | 'client') {
 		const module = { exports: {} }
 		run(
 			this.componentSrc.replace('export default ', 'module.exports = '),
@@ -36,14 +36,22 @@ export class Component {
 		if (typeof module.exports !== 'function') return
 
 		const name = (name: string) => (this._name = name)
-		const schema = (schema: any) => (this.schema = schema)
-		const template = (func: TTemplate) => (this.template = func)
+		let schema: Function = (schema: any) => (this.schema = schema)
+		let template: Function = () => {}
+		if (!type || type === 'server') {
+			schema = () => {}
+			template = (func: TTemplate) => (this.template = func)
+		}
 
 		await module.exports({
 			name,
 			schema,
 			template,
 		})
+	}
+
+	getSchema() {
+		return this.schema
 	}
 
 	create(fileContent: any, template: any, location?: string) {
