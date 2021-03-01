@@ -2881,7 +2881,21 @@
 									"blocks": {
 										"type": "array",
 										"items": {
-											"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+											"anyOf": [
+												{
+													"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+												},
+												{
+													"properties": {
+														"name": {
+															"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+														},
+														"states": {
+															"$ref": "../../general/vanilla/blockState.json"
+														}
+													}
+												}
+											]
 										}
 									}
 								}
