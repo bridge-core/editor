@@ -196,7 +196,7 @@ export class App {
 		setupDefaultMenus(this)
 		this.dataLoader.setup(this)
 
-		if (process.env.mode === 'development') {
+		if (process.env.NODE_ENV === 'production') {
 			const discordMsg = createNotification({
 				icon: 'mdi-discord',
 				message: 'sidebar.notifications.discord.message',
