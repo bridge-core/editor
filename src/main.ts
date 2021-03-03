@@ -50,9 +50,9 @@ export const vuetify = new Vuetify({
 		},
 		themes: {
 			dark: {
-				primary: '#1778D2',
-				secondary: '#1778D2',
-				accent: '#1778D2',
+				primary: '#0073FF',
+				secondary: '#0073FF',
+				accent: '#0073FF',
 
 				background: '#121212',
 				sidebarNavigation: '#1F1F1F',
@@ -62,9 +62,9 @@ export const vuetify = new Vuetify({
 				tooltip: '#1F1F1F',
 			},
 			light: {
-				primary: '#1778D2',
-				secondary: '#1778D2',
-				accent: '#1778D2',
+				primary: '#0073FF',
+				secondary: '#0073FF',
+				accent: '#0073FF',
 
 				background: '#fafafa',
 				sidebarNavigation: '#FFFFFF',

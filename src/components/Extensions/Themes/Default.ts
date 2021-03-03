@@ -5,9 +5,9 @@ export const bridgeDark = <const>{
 	colors: {
 		text: '#fff',
 
-		primary: '#1778D2',
-		secondary: '#1778D2',
-		accent: '#1778D2',
+		primary: '#0073FF',
+		secondary: '#0073FF',
+		accent: '#0073FF',
 		error: '#ff5252',
 		info: '#2196f3',
 		warning: '#fb8c00',
@@ -66,9 +66,9 @@ export const bridgeLight = <const>{
 	colors: {
 		text: '#000',
 
-		primary: '#1778D2',
-		secondary: '#1778D2',
-		accent: '#1778D2',
+		primary: '#0073FF',
+		secondary: '#0073FF',
+		accent: '#0073FF',
 		error: '#ff5252',
 		info: '#2196f3',
 		warning: '#fb8c00',
