@@ -5,7 +5,7 @@ import { createNotification } from '/@/components/Notifications/create'
 import { App } from '/@/App'
 import { set } from 'idb-keyval'
 
-if (process.env.mode === 'development') {
+if (process.env.NODE_ENV === 'production') {
 	register(`${process.env.BASE_URL}service-worker.js`, {
 		ready() {
 			console.log(
