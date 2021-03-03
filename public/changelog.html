@@ -1,42 +1,55 @@
 <h2>Features:</h2>
 <ul>
-<li>App version is now visible in toolbar</li>
-<li>New changelog window (Thanks to @pascal541)</li>
-<li>bridge. can now restore opened tabs upon opening the application</li>
-<li>Support for GameTest files
+<li>Support for the scripting API</li>
+<li>New compiler infrastructure (again 🙃 )</li>
+<li>You can now just use TypeScript for all files which Minecraft reads as JavaScript
 <ul>
-<li>Auto-Completions</li>
-<li>File creation</li>
+<li>bridge.'s compiler will automatically compile the file to plain JavaScript</li>
+<li>New &quot;Language&quot; option upon creating a file to choose between JavaScript &amp; TypeScript where applicable</li>
 </ul>
 </li>
-<li>Full skin pack support (Thanks to @Gekocaretaker)</li>
-<li>JavaScript API for presets</li>
-<li>New input fields for presets</li>
-<li>Updated compiler plugin format (breaking change - Please create new projects)</li>
-<li>You can no longer created a preset if a pack it needs is missing</li>
-<li>Extensions can now add new file definitions</li>
-<li>bridge. now creates more files upon creating BP/RP and SP</li>
-<li>Presets: Ask user before overwriting files</li>
-<li>Added new slab preset</li>
-<li>Ability to create new JavaScript files (scripting API)</li>
+<li>Option to choose an optional image for your preset upon creation where it makes sense</li>
+<li>It is now possible to choose a geometry for the &quot;Geometry Block&quot; preset (Thanks to @Gekocaretaker)</li>
+<li>Basic support for Minecraft's UI files
+<ul>
+<li>Auto-Completions</li>
+<li>Creation of UI files</li>
+</ul>
+</li>
+<li>Support for custom components
+<ul>
+<li>You can write new components for entities, blocks &amp; items</li>
+<li>Support for JavaScript &amp; TypeScript</li>
+<li>Built-in support for animationControllers &amp; animations (entity component)</li>
+</ul>
+</li>
+<li>Better skin presets (Thanks to @Gekocaretaker)</li>
+<li>Setting to format files upon saving</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Added &quot;damager&quot; event target</li>
-<li>Refactored pack indexer structure</li>
-<li>Refactored compiler</li>
-<li>Refactored JSONDefaults</li>
-<li>Updated ConfirmationWindow</li>
-<li>BP now propose RP uuid</li>
-<li>Updated preset schema</li>
+<li>Added vanilla feature identifiers (Thanks to @pascal541)</li>
+<li>Type Loader now works on .ts files</li>
+<li><strong>Presets:</strong> Added input type &quot;selectInput&quot;</li>
+<li><strong>Internal:</strong> Added fileSystem.write(...) method for cases where fileHandle is already known</li>
+<li><strong>Presets:</strong> Rewrite of file overwriting permissions to include preset scripts</li>
+<li>Improved error message for terrain_texture files when validation of texture fails</li>
+<li>Support block states in minecraft:preferred_path schema</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed command auto-completions</li>
-<li>Fixed rewrite skin packs to &quot;skin_packs&quot; folder</li>
-<li>Fixed loading of projects</li>
-<li>Fixed error upon loading data</li>
-<li>Fixed compiler without build config file</li>
-<li>Fixed memory leak</li>
-<li>Fixed project creation</li>
+<li>Fixed bridge. being not installable</li>
+<li>Fixed Discord invite link not showing up</li>
+<li>Fixed application being closable without warning when user has unsaved changes</li>
+<li>Fixed tick.json being generated inside of RP instead of BP (Thanks to @pascal541)</li>
+<li>Fixed tick.json auto-completions (Thanks to @pascal541)</li>
+<li>Fixed Type Loader upon initial project activation</li>
+<li>Fixed cat preset</li>
+<li>Fixed block presets</li>
+<li>Fixed presets not loading correctly</li>
+<li>Fixed error upon saving while compiler is running</li>
+<li>Fixed &quot;minecraft:pick_collision&quot; and &quot;minecraft:entity_collision&quot; schema</li>
+<li>Fixed fileType.script locale key missing error</li>
+<li>Removed unused file from slab preset</li>
+<li>Fixed formatVersions not loading in</li>
 </ul>
