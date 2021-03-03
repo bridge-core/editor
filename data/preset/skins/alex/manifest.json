@@ -6,7 +6,7 @@
 	"packTypes": ["skinPack"],
 	"additionalModels": {
 		"IMAGE_SAVE_PATH": "SP/",
-		"DEFAULT_IMAGE": "skin.png"
+		"DEFAULT_IMAGE": "alex.png"
 	},
 	"fields": [
 		["Identifier", "IDENTIFIER"],
