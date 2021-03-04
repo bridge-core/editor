@@ -40,6 +40,10 @@ export class DataLoaderService extends SimpleTaskService {
 		} catch {
 			return true
 		}
+
+		// Avoid "not a semantic version" error
+		if (localVersion === '') return true
+
 		console.log(
 			`App version: ${appVersion}\nLocal data version: ${localVersion}\nRemote data version: ${remoteVersion}`
 		)
