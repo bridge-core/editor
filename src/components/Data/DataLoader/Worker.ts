@@ -5,6 +5,7 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { baseUrl } from '/@/utils/baseUrl'
 import { dirname } from '/@/utils/path'
 import { expose } from 'comlink'
+import { whenIdle } from '/@/utils/whenIdle'
 
 export class DataLoaderService extends SimpleTaskService {
 	protected fileSystem: FileSystem
@@ -73,20 +74,26 @@ export class DataLoaderService extends SimpleTaskService {
 			if (fileName.startsWith('.')) continue
 
 			if (zipEntry.dir) {
-				await this.fileSystem.mkdir(
-					`data/packages/${fileName}`.slice(0, -1),
-					{
-						recursive: true,
-					}
+				await whenIdle(
+					async () =>
+						await this.fileSystem.mkdir(
+							`data/packages/${fileName}`.slice(0, -1),
+							{
+								recursive: true,
+							}
+						)
 				)
 
 				this.progress.addToCurrent(1)
 				continue
 			}
 
-			await this.fileSystem.writeFile(
-				`data/packages/${fileName}`,
-				await zipEntry.async('arraybuffer')
+			await whenIdle(
+				async () =>
+					await this.fileSystem.writeFile(
+						`data/packages/${fileName}`,
+						await zipEntry.async('arraybuffer')
+					)
 			)
 
 			this.progress.addToCurrent(1)
