@@ -54,8 +54,8 @@ export class App {
 	public readonly dataLoader = new DataLoader(
 		{
 			icon: 'mdi-download',
-			description: 'Downloading the latest data for the editor',
-			name: 'Downloading Data...',
+			description: 'taskManager.tasks.dataLoader.description',
+			name: 'taskManager.tasks.dataLoader.title',
 		},
 		this
 	)

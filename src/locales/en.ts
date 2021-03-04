@@ -428,6 +428,10 @@ export default {
 	},
 	taskManager: {
 		tasks: {
+			dataLoader: {
+				title: 'Downloading Data...',
+				description: 'Downloading the latest data for the editor',
+			},
 			packIndexing: {
 				title: 'Indexing Packs',
 				description:
