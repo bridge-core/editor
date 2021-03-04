@@ -112,7 +112,9 @@ export class Compiler {
 
 			const readData = await this.runHook('read', filePath, fileHandle)
 			if (readData === undefined || readData === null) {
-				if (!!saveFilePath && !!fileHandle)
+				// Don't copy files if the saveFilePath is equals to the original filePath
+				// ...or if the fileHandle doesn't exist (no file to copy)
+				if (!!fileHandle && saveFilePath !== filePath)
 					await this.copyFile(fileHandle, saveFilePath)
 				continue
 			}
