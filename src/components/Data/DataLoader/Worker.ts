@@ -65,38 +65,32 @@ export class DataLoaderService extends SimpleTaskService {
 			.then((response) => response.arrayBuffer())
 			.then((data) => JSZip.loadAsync(data))
 
-		console.log(zip.length)
-		this.progress.setTotal(zip.length * 2)
+		const files = Object.entries(zip.files)
+		this.progress.setTotal(files.length + 1)
 		this.progress.addToCurrent(1)
 
-		const promises: Promise<void>[] = []
+		for (const [fileName, zipEntry] of files) {
+			if (fileName.startsWith('.')) continue
 
-		zip.forEach((relativePath, zipEntry) => {
-			promises.push(
-				new Promise<void>(async (resolve) => {
-					if (zipEntry.dir) {
-						this.progress.addToCurrent(1)
-						return resolve()
+			if (zipEntry.dir) {
+				await this.fileSystem.mkdir(
+					`data/packages/${fileName}`.slice(0, -1),
+					{
+						recursive: true,
 					}
+				)
 
-					await this.fileSystem.mkdir(
-						dirname(`data/packages/${relativePath}`),
-						{ recursive: true }
-					)
-					this.progress.addToCurrent(1)
+				this.progress.addToCurrent(1)
+				continue
+			}
 
-					await this.fileSystem.writeFile(
-						`data/packages/${relativePath}`,
-						await zipEntry.async('blob')
-					)
-
-					this.progress.addToCurrent(1)
-					resolve()
-				})
+			await this.fileSystem.writeFile(
+				`data/packages/${fileName}`,
+				await zipEntry.async('arraybuffer')
 			)
-		})
 
-		await Promise.all(promises)
+			this.progress.addToCurrent(1)
+		}
 	}
 }
 
