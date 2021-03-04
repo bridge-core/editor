@@ -1,29 +1,28 @@
-import { App } from '/@/App'
-import { Signal } from '/@/components/Common/Event/Signal'
-import { baseUrl } from '/@/utils/baseUrl'
 import { compare } from 'compare-versions'
 import JSZip from 'jszip'
+import { SimpleTaskService } from '/@/components/TaskManager/SimpleWorkerTask'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { baseUrl } from '/@/utils/baseUrl'
 import { dirname } from '/@/utils/path'
-import { FileSystem } from '../FileSystem/FileSystem'
+import { expose } from 'comlink'
 
-export class DataLoader extends Signal<void> {
-	async setup(app: App) {
-		app.windows.loadingWindow.open(
-			'windows.loadingWindow.titles.downloadingData'
-		)
-		await app.fileSystem.fired
-
-		if (await this.isUpdateAvailable(app.fileSystem)) {
-			console.log('Downloading new data...')
-			await this.load(app.fileSystem)
-			console.log('Data updated!')
-		}
-
-		this.dispatch()
-		app.windows.loadingWindow.close()
+export class DataLoaderService extends SimpleTaskService {
+	protected fileSystem: FileSystem
+	constructor(baseDirectory: FileSystemDirectoryHandle) {
+		super()
+		this.fileSystem = new FileSystem(baseDirectory)
 	}
 
-	protected async isUpdateAvailable(fileSystem: FileSystem) {
+	async setup() {
+		console.log('Comparing versions...')
+		if (await this.isUpdateAvailable()) {
+			console.log('Downloading new data...')
+			await this.load()
+			console.log('Data updated!')
+		}
+	}
+
+	protected async isUpdateAvailable() {
 		let remoteVersion: string
 		try {
 			remoteVersion = await fetch(
@@ -35,7 +34,7 @@ export class DataLoader extends Signal<void> {
 
 		let localVersion: string
 		try {
-			localVersion = await fileSystem
+			localVersion = await this.fileSystem
 				.readFile('data/packages/version.txt')
 				.then((data) => data.text())
 		} catch {
@@ -57,32 +56,41 @@ export class DataLoader extends Signal<void> {
 		return compare(remoteVersion, localVersion, '>')
 	}
 
-	protected async load(fileSystem: FileSystem) {
+	protected async load() {
 		try {
-			await fileSystem.unlink('data/packages')
+			await this.fileSystem.unlink('data/packages')
 		} catch {}
 
 		const zip = await fetch(baseUrl + 'data/package.zip')
 			.then((response) => response.arrayBuffer())
 			.then((data) => JSZip.loadAsync(data))
 
+		console.log(zip.length)
+		this.progress.setTotal(zip.length * 2)
+		this.progress.addToCurrent(1)
+
 		const promises: Promise<void>[] = []
 
 		zip.forEach((relativePath, zipEntry) => {
 			promises.push(
 				new Promise<void>(async (resolve) => {
-					if (zipEntry.dir) return resolve()
+					if (zipEntry.dir) {
+						this.progress.addToCurrent(1)
+						return resolve()
+					}
 
-					await fileSystem.mkdir(
+					await this.fileSystem.mkdir(
 						dirname(`data/packages/${relativePath}`),
 						{ recursive: true }
 					)
+					this.progress.addToCurrent(1)
 
-					await fileSystem.writeFile(
+					await this.fileSystem.writeFile(
 						`data/packages/${relativePath}`,
 						await zipEntry.async('blob')
 					)
 
+					this.progress.addToCurrent(1)
 					resolve()
 				})
 			)
@@ -91,3 +99,5 @@ export class DataLoader extends Signal<void> {
 		await Promise.all(promises)
 	}
 }
+
+expose(DataLoaderService, self)

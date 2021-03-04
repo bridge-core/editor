@@ -51,7 +51,6 @@ export class PackIndexer extends WorkerManager<
 		// Listen to task progress and update UI
 		this._service.on(
 			Comlink.proxy(([current, total]) => {
-				if (current === total) this.task?.complete()
 				this.task?.update(current, total)
 			}),
 			false

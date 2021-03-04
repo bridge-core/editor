@@ -19,7 +19,7 @@ import { PackType } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { DataLoader } from '/@/components/Data/DataLoader'
+import { DataLoader } from './components/Data/DataLoader/DataLoader'
 import { ProjectConfig } from '/@/components/Projects/ProjectConfig'
 import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
 import { ActionManager } from '/@/components/Actions/ActionManager'
@@ -51,7 +51,14 @@ export class App {
 	public readonly actionManager = new ActionManager(this)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
-	public readonly dataLoader = new DataLoader()
+	public readonly dataLoader = new DataLoader(
+		{
+			icon: 'mdi-download',
+			description: 'Downloading the latest data for the editor',
+			name: 'Downloading Data...',
+		},
+		this
+	)
 	public readonly fileSystem = new FileSystem()
 	public readonly projectManager = Vue.observable(new ProjectManager(this))
 	public readonly extensionLoader = new ExtensionLoader()
@@ -194,7 +201,7 @@ export class App {
 
 		setupSidebar()
 		setupDefaultMenus(this)
-		this.dataLoader.setup(this)
+		this.dataLoader.activate(this)
 
 		if (process.env.NODE_ENV === 'production') {
 			const discordMsg = createNotification({
