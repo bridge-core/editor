@@ -3,7 +3,7 @@ import JSZip from 'jszip'
 import { SimpleTaskService } from '/@/components/TaskManager/SimpleWorkerTask'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { baseUrl } from '/@/utils/baseUrl'
-import { dirname } from '/@/utils/path'
+import { version as appVersion } from '/@/appVersion.json'
 import { expose } from 'comlink'
 import { whenIdle } from '/@/utils/whenIdle'
 
@@ -15,7 +15,6 @@ export class DataLoaderService extends SimpleTaskService {
 	}
 
 	async setup() {
-		console.log('Comparing versions...')
 		if (await this.isUpdateAvailable()) {
 			console.log('Downloading new data...')
 			await this.load()
@@ -41,6 +40,9 @@ export class DataLoaderService extends SimpleTaskService {
 		} catch {
 			return true
 		}
+		console.log(
+			`App version: ${appVersion}\nLocal data version: ${localVersion}\nRemote data version: ${remoteVersion}`
+		)
 
 		// See: https://discord.com/channels/602097536404160523/603989805763788800/812075892158890034
 		if (

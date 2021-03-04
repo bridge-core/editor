@@ -26,9 +26,7 @@ export class DataLoader extends WorkerManager<
 			false
 		)
 
-		console.log('GELLO')
 		await this._service?.setup()
-		console.log('GELLO')
 
 		app.windows.loadingWindow.close()
 		this.deactivate()
