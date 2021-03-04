@@ -4,6 +4,6 @@
 	"title": "Language Definitions",
 	"type": "array",
 	"items": {
-		"$ref": "../language/dynamic/langPathEnum.json"
+		"$ref": "../lang/dynamic/langPathEnum.json"
 	}
 }
