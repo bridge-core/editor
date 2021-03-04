@@ -37,6 +37,7 @@ export abstract class WorkerManager<T, O, A, R> extends Signal<R> {
 		this.worker?.terminate()
 		this.task?.dispose()
 		this.worker = null
+		this._service = null
 		this.workerClass = null
 	}
 
