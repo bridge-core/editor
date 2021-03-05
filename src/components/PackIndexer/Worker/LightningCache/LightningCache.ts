@@ -67,7 +67,11 @@ export class LightningCache {
 			}
 		)
 
-		if (anyFileChanged) await this.lightningStore.saveStore()
+		if (
+			anyFileChanged ||
+			this.lightningStore.visitedFiles !== this.lightningStore.totalFiles
+		)
+			await this.lightningStore.saveStore()
 		return [filePaths, changedFiles]
 	}
 
@@ -105,6 +109,7 @@ export class LightningCache {
 			file.lastModified ===
 			this.lightningStore.getLastModified(filePath, fileType)
 		) {
+			this.lightningStore.setVisited(filePath, true, fileType)
 			return false
 		}
 
