@@ -33,17 +33,20 @@ export class Compiler {
 	}
 
 	async runWithFiles(files: string[]) {
-		this.parent.progress.setTotal(files.length * 2)
+		this.parent.progress.setTotal(5)
 
 		await this.loadSavedFiles()
 		await this.runSimpleHook('buildStart')
+		this.parent.progress.addToCurrent(1)
 
 		await this.compileFiles(files)
 
 		await this.runSimpleHook('buildEnd')
+		this.parent.progress.addToCurrent(1)
 		await this.processFileMap()
 	}
 	async compileFiles(files: string[], errorOnReadFailure = true) {
+		this.parent.progress.addToCurrent(files.length)
 		await this.resolveFiles(
 			this.flatFiles(files, new Set()),
 			errorOnReadFailure
@@ -67,6 +70,7 @@ export class Compiler {
 				})
 			}
 		} catch {}
+		this.parent.progress.addToCurrent(1)
 	}
 	flatFiles(files: string[], fileSet: Set<string>) {
 		for (const filePath of files) {
@@ -116,6 +120,7 @@ export class Compiler {
 				// ...or if the fileHandle doesn't exist (no file to copy)
 				if (!!fileHandle && saveFilePath !== filePath)
 					await this.copyFile(fileHandle, saveFilePath)
+				this.parent.progress.addToCurrent(2)
 				continue
 			}
 
@@ -246,6 +251,7 @@ export class Compiler {
 
 		// Save files map
 		await this.fileSystem.writeJSON('bridge/files.json', filesObject, true)
+		this.parent.progress.addToCurrent(1)
 	}
 
 	protected async copyFile(
