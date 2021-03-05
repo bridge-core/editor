@@ -4,6 +4,7 @@ import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
 import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/InformedChoice'
 import { ExtensionStoreWindow } from './ExtensionStore'
 import { ExtensionTag } from './ExtensionTag'
+import { Notification } from '../../Notifications/Notification'
 
 export class ExtensionViewer {
 	protected tags: ExtensionTag[]
@@ -17,7 +18,7 @@ export class ExtensionViewer {
 		protected parent: ExtensionStoreWindow,
 		protected config: IExtensionManifest
 	) {
-		this.tags = this.config.tags.map(tag => {
+		this.tags = this.config.tags.map((tag) => {
 			if (!this.parent.tags[tag])
 				this.parent.tags[tag] = new ExtensionTag(this.parent, tag)
 			return this.parent.tags[tag]
@@ -88,7 +89,7 @@ export class ExtensionViewer {
 		const app = await App.getApp()
 		const zip = await fetch(
 			this.parent.getBaseUrl() + this.config.link
-		).then(response => response.arrayBuffer())
+		).then((response) => response.arrayBuffer())
 
 		const basePath = !isGlobalInstall
 			? `projects/${app.selectedProject}/bridge/plugins`

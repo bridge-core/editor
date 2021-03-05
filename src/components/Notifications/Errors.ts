@@ -18,6 +18,7 @@ export function createErrorNotification(error: Error): IDisposable {
 		icon: 'mdi-alert-circle-outline',
 		message: short,
 		color: 'error',
+		textColor: 'white',
 		disposeOnMiddleClick: true,
 		onClick: () => {
 			createInformationWindow(`ERROR: ${short}`, message)
