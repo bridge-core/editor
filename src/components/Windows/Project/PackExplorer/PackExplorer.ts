@@ -147,4 +147,8 @@ export class PackExplorerWindow extends BaseWindow {
 
 		super.open()
 	}
+	close() {
+		this.loadedPack = false
+		super.close()
+	}
 }
