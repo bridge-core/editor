@@ -81,7 +81,7 @@ declare interface Test {
 	 * @param z
 	 * z coordinate value relative to the structure block to check for the entity
 	 */
-	succeedWhenActorPresent(id: string, x: number, y: number, z: number): void
+	succeedWhenActorPresent(id: string, position: BlockPos): void
 	/**
 	 * The GameTest will succeed when the specified block is found at the specified coordinates
 	 * @param id
@@ -93,7 +93,7 @@ declare interface Test {
 	 * @param z
 	 * z coordinate value relative to the structure block to check for the block
 	 */
-	succeedWhenBlockPresent(id: string, x: number, y: number, z: number): void
+	succeedWhenBlockPresent(id: string, position: BlockPos): void
 
 	/**
 	 * When the `func` parameter calls an assert function the GameTest will fail
@@ -112,7 +112,7 @@ declare interface Test {
 	 * @param z
 	 * z coordinate value relative to the structure block to check for the entity
 	 */
-	assertActorPresent(id: string, x: number, y: number, z: number): void
+	assertActorPresent(id: string, position: BlockPos): void
 	/**
 	 * Asserts an error when the specified entity is not found at the specified coordinates
 	 * @param id
@@ -124,7 +124,7 @@ declare interface Test {
 	 * @param z
 	 * z coordinate value relative to the structure block to check for the entity
 	 */
-	assertActorNotPresent(id: string, x: number, y: number, z: number): void
+	assertActorNotPresent(id: string, position: BlockPos): void
 	/**	
 	 * Asserts an error when the specified item stack is not founc at the specified coordinates
 	 * @param itemStack
@@ -144,7 +144,7 @@ declare interface Test {
 	 * @param z
 	 * z coordinate value relative to the structure block to check for the block
 	 */
-	assertBlockPresent(id: string, x: number, y: number, z: number): void
+	assertBlockPresent(id: string, position: BlockPos): void
 
 	/**
 	 * Spawns the specified entity at the specified coordinates
@@ -157,7 +157,7 @@ declare interface Test {
 	 * @param z
 	 * z coordinate value relative to the structure block to spawn the entity
 	 */
-	spawn(id: string, x: number, y: number, z: number): void
+	spawn(id: string, position: BlockPos): void
 	/**
 	 * Places the specified block at the specified coordinates
 	 * @param id
@@ -169,7 +169,7 @@ declare interface Test {
 	 * @param z
 	 * z coordinate value relative to the structure block to place the block
 	 */
-	setBlock(id: string, x: number, y: number, z: number): void
+	setBlock(id: string, position: BlockPos): void
 	/**
 	 * Presses a button at the specified coordinates if there is one there
 	 * @param x
@@ -179,7 +179,7 @@ declare interface Test {
 	 * @param z
 	 * z coordinate value relative to the structure block to press the button
 	 */
-	pressButton(x: number, y: number, z: number): void
+	pressButton(position: BlockPos): void
 }
 
 declare module 'Minecraft' {
