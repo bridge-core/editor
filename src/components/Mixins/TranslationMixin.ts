@@ -5,7 +5,13 @@ export const TranslationMixin = {
 			if (!translationKey?.startsWith('$vuetify.'))
 				translationKey = `$vuetify.${translationKey}`
 
-			const translated = (<any>this).$vuetify.lang.t(translationKey)
+			let translated: string
+			try {
+				translated = (<any>this).$vuetify.lang.t(translationKey)
+			} catch {
+				return orginalKey
+			}
+
 			if (translated === translationKey) return orginalKey
 			return translated
 		},
