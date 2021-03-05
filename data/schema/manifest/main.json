@@ -83,7 +83,8 @@
 								"client_data",
 								"interface",
 								"skin_pack",
-								"world_template"
+								"world_template",
+								"plugin"
 							]
 						},
 						"description": {
@@ -101,6 +102,9 @@
 						},
 						"verison": {
 							"$ref": "#/definitions/triple_integer"
+						},
+						"entry": {
+							"type": "string"
 						}
 					}
 				}
