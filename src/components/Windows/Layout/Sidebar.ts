@@ -5,23 +5,26 @@ export interface ISidebarCategoryConfig {
 	text: string
 	items: SidebarItem[]
 	isOpen?: boolean
+	shouldSort?: boolean
 }
 export class SidebarCategory {
 	readonly type = 'category'
 	protected text: string
 	protected items: SidebarItem[]
 	protected isOpen: boolean
+	protected shouldSort: boolean
 
-	constructor({ items, text, isOpen }: ISidebarCategoryConfig) {
+	constructor({ items, text, isOpen, shouldSort }: ISidebarCategoryConfig) {
 		this.text = text
 		this.items = items
 		this.isOpen = isOpen ?? true
-		this.sortCategory()
+		this.shouldSort = shouldSort ?? true
+		if (this.shouldSort) this.sortCategory()
 	}
 
 	addItem(item: SidebarItem) {
 		this.items.push(item)
-		this.sortCategory()
+		if (this.shouldSort) this.sortCategory()
 	}
 	removeItems() {
 		this.items = []
@@ -35,7 +38,6 @@ export class SidebarCategory {
 	}
 	getItems() {
 		return this.items
-		// return this.sortCategory(this.items)
 	}
 
 	setOpen(val: boolean) {
