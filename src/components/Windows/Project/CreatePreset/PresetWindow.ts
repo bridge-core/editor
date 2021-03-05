@@ -100,6 +100,7 @@ export class CreatePresetWindow extends BaseWindow {
 		)
 		if (!category) {
 			category = new SidebarCategory({
+				isOpen: false,
 				text: manifest.category,
 				items: [],
 			})
@@ -159,6 +160,7 @@ export class CreatePresetWindow extends BaseWindow {
 		for (const [_, loadPresetPath] of this.loadPresetPaths)
 			await this.loadPresets(fs, loadPresetPath)
 
+		this.sidebar.setDefaultSelected()
 		app.windows.loadingWindow.close()
 		super.open()
 	}
