@@ -3,10 +3,10 @@
 	"type": "object",
 	"anyOf": [
 		{
-			"$ref": "../general/vanilla/biomeTagProperty.json"
+			"$ref": "../../general/vanilla/biomeTagProperty.json"
 		},
 		{
-			"$ref": "./dynamic/tagsProperty.json"
+			"$ref": "../dynamic/tagsProperty.json"
 		}
 	]
 }

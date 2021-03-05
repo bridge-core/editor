@@ -87,29 +87,29 @@
 				},
 				"sea_floor_material": {
 					"description": "Controls the block type used as a floor for bodies of water in this biome.",
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				},
 				"sea_material": {
 					"description": "Controls the block type used for the bodies of water in this biome.",
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				},
 				"floor_depth": {
 					"type": "number"
 				},
 				"floor_material": {
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				},
 				"foundation_material": {
 					"description": "Controls the block type used deep underground in this biome.",
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				},
 				"mid_material": {
 					"description": "Controls the block type used in a layer below the surface of this biome.",
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				},
 				"top_material": {
 					"description": " Controls the block type used for the surface of this biome.",
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				}
 			}
 		},
@@ -129,27 +129,27 @@
 					"description": "Materials used for the surface floor.",
 					"type": "array",
 					"items": {
-						"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+						"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 					}
 				},
 				"ceiling_materials": {
 					"description": "Materials used for the surface ceiling.",
 					"type": "array",
 					"items": {
-						"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+						"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 					}
 				},
 				"sea_material": {
 					"description": "Material used to replace air blocks below sea level.",
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				},
 				"foundation_material": {
 					"description": "Material used to repalce solid blocks that are not surface blocks.",
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				},
 				"beach_material": {
 					"description": "Material used to decorate surface near sea level.",
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				}
 			}
 		},
@@ -162,16 +162,16 @@
 				{
 					"properties": {
 						"clay_material": {
-							"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+							"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 						},
 						"hard_clay_material": {
-							"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+							"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 						},
 						"bryce_pillars": {
-							"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+							"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 						},
 						"has_forest": {
-							"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+							"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 						}
 					}
 				}
@@ -247,27 +247,27 @@
 								"additionalProperties": false,
 								"properties": {
 									"floor_material": {
-										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 									},
 									"foundation_material": {
 										"description": "Controls the block type used deep underground in this biome when this adjustment is active.",
-										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 									},
 									"mid_material": {
 										"description": "Controls the block type used in a layer below the surface of this biome when this adjustment is active.",
-										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 									},
 									"top_material": {
 										"description": "Controls the block type used for the surface of this biome when this adjustment is active.",
-										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 									},
 									"sea_floor_material": {
 										"description": "Controls the block type used as a floor for bodies of water in this biome when this adjustment is active.",
-										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 									},
 									"sea_material": {
 										"description": "Controls the block type used in the bodies of water in this biome when this adjustment is active.",
-										"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 									}
 								}
 							},
