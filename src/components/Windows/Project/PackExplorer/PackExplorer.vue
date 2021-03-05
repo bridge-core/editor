@@ -106,11 +106,11 @@ export default {
 		async refreshPackExplorer() {
 			this.currentWindow.close()
 			const app = await App.getApp()
-			await app.project.refresh()
+			app.project.refresh()
 		},
 		openFile(filePath) {
 			this.currentWindow.close()
-			App.ready.once(app => {
+			App.ready.once((app) => {
 				app.project.openFile(
 					`projects/${app.selectedProject}/${filePath}`
 				)
@@ -118,7 +118,7 @@ export default {
 		},
 		createPreset() {
 			this.currentWindow.close()
-			App.ready.once(app => app.windows.createPreset.open())
+			App.ready.once((app) => app.windows.createPreset.open())
 		},
 	},
 	computed: {

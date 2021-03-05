@@ -42,6 +42,7 @@ export abstract class WorkerManager<
 	}
 
 	deactivate() {
+		this.resetSignal()
 		this.worker?.terminate()
 		this.task?.dispose()
 		this.worker = null
