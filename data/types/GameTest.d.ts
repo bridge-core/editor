@@ -125,7 +125,7 @@ declare interface Test {
 	 * z coordinate value relative to the structure block to check for the entity
 	 */
 	assertActorNotPresent(id: string, position: BlockPos): void
-	/**	
+	/**
 	 * Asserts an error when the specified item stack is not founc at the specified coordinates
 	 * @param itemStack
 	 * The item stack to test for
@@ -194,6 +194,10 @@ declare module 'Minecraft' {
 	export const Blocks = {
 		// TODO - Script to generate all block methods
 		air(): Block,
+	}
+	export const BlockStates = {
+		// TODO - Script to generate block state methods
+		topSlotBit(data: boolean): State,
 	}
 }
 
