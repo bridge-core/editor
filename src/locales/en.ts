@@ -226,6 +226,7 @@ export default {
 			updateAvailable: {
 				message: 'Update Available',
 			},
+			updateExtensions: 'Update All Extensions',
 		},
 	},
 	// Welcome Screen

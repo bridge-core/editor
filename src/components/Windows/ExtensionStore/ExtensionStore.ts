@@ -7,7 +7,9 @@ import { getFileSystem } from '/@/utils/fs'
 import { ExtensionTag } from './ExtensionTag'
 import { ExtensionViewer } from './Extension'
 import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
+import { Notification } from '../../Notifications/Notification'
 
+let updateNotification: Notification | undefined = undefined
 export class ExtensionStoreWindow extends BaseWindow {
 	protected baseUrl =
 		'https://raw.githubusercontent.com/bridge-core/plugins/master'
@@ -36,26 +38,47 @@ export class ExtensionStoreWindow extends BaseWindow {
 		const installedExtensions = await app.extensionLoader.getInstalledExtensions()
 
 		const extensions = <IExtensionManifest[]>(
-			await fetch(`${this.baseUrl}/extensions.json`).then(resp =>
+			await fetch(`${this.baseUrl}/extensions.json`).then((resp) =>
 				resp.json()
 			)
 		)
 		this.extensions = extensions.map(
-			plugin => new ExtensionViewer(this, plugin)
+			(plugin) => new ExtensionViewer(this, plugin)
 		)
 
+		const updates = new Set<ExtensionViewer>()
+
 		installedExtensions.forEach((installedExtension, id) => {
-			const extension = this.extensions.find(ext => ext.id === id)
+			const extension = this.extensions.find((ext) => ext.id === id)
 
 			if (extension) {
 				extension.setInstalled()
 				extension.setConnected(installedExtension)
-				if (compare(installedExtension.version, extension.version, '<'))
+
+				// Update for extension is available
+				if (
+					compare(installedExtension.version, extension.version, '<')
+				) {
 					extension.setIsUpdateAvailable()
+					updates.add(extension)
+				}
 			} else {
 				installedExtension.forStore(this)
 			}
 		})
+
+		updateNotification?.dispose()
+		if (updates.size > 0) {
+			updateNotification = new Notification({
+				icon: 'mdi-sync',
+				color: 'primary',
+				message: 'sidebar.notifications.updateExtensions',
+				onClick: () => {
+					updates.forEach((extension) => extension.update())
+					updateNotification?.dispose()
+				},
+			})
+		}
 
 		this.setupSidebar()
 
@@ -82,17 +105,18 @@ export class ExtensionStoreWindow extends BaseWindow {
 			}),
 			this.installedExtensions
 		)
-		Object.values(this.tags).forEach(tag =>
+		Object.values(this.tags).forEach((tag) =>
 			this.sidebar.addElement(
 				tag.asSidebarElement(),
 				this.getExtensionsByTag(tag)
 			)
 		)
+		this.sidebar.setDefaultSelected()
 	}
 
 	protected getExtensions(findTag?: ExtensionTag) {
 		return [...new Set([...this.extensions, ...this.installedExtensions])]
-			.filter(plugin => !findTag || plugin.hasTag(findTag))
+			.filter((plugin) => !findTag || plugin.hasTag(findTag))
 			.sort(
 				({ releaseTimestamp: tA }, { releaseTimestamp: tB }) => tB - tA
 			)
@@ -107,7 +131,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 		return this.extensionTags[tagName].color
 	}
 	getExtensionById(id: string) {
-		return this.getExtensions().find(extension => extension.id === id)
+		return this.getExtensions().find((extension) => extension.id === id)
 	}
 
 	get selectedSidebar() {
