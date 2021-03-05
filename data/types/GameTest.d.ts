@@ -26,6 +26,30 @@ declare interface TestRunner {
 	 * The time that the GameTest must take place in
 	 */
 	batch(time: 'night' | 'day'): TestRunner
+	/**
+	 * Sets the ticks at which the GameTest begins
+	 * @param ticks
+	 * The tick starting point
+	 */
+	setupTicks(ticks: number): TestRunner
+	/**
+	 * Sets a tag for the GameTest to be referenced in the "/gametest runall" command
+	 * @param tag
+	 * The tag of the GameTest
+	 */
+	tag(tag: any): TestRunner
+	/**
+	 * Sets the padding between GameTests being run
+	 * @param time
+	 * The duration of the padding
+	 */
+	padding(time: number): TestRunner
+	/**
+	 * Sets the structure name linked with this GameTest
+	 * @param name
+	 * Name of the structure
+	 */
+	structureName(name: string): TestRunner
 }
 
 declare interface Test {
@@ -101,6 +125,14 @@ declare interface Test {
 	 * z coordinate value relative to the structure block to check for the entity
 	 */
 	assertActorNotPresent(id: string, x: number, y: number, z: number): void
+	/**	
+	 * Asserts an error when the specified item stack is not founc at the specified coordinates
+	 * @param itemStack
+	 * The item stack to test for
+	 * @param position
+	 * The position to test for the item stack
+	 */
+	assertItemActorPresent(block: Block, position: BlockPos): void
 	/**
 	 * Asserts an error when the specified block is found at the specified coordinates
 	 * @param id
@@ -149,3 +181,26 @@ declare interface Test {
 	 */
 	pressButton(x: number, y: number, z: number): void
 }
+
+declare module 'Minecraft' {
+	export class BlockPos {
+		constructor(x: number, y: number, z: number)
+
+		above(): void
+	}
+	export class ItemStack {
+		constructor(block: Block)
+	}
+	export const Blocks = {
+		// TODO - Script to generate all block methods
+		air(): Block,
+	}
+}
+
+declare interface Block {
+	setState(state: State): Block
+}
+
+declare interface Item {}
+
+declare interface State {}
