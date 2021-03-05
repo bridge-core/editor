@@ -21,6 +21,12 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 	constructor() {
 		super(ExtensionStoreComponent)
+
+		App.eventSystem.on('projectChanged', () => {
+			updateNotification?.dispose()
+			updateNotification = undefined
+		})
+
 		this.defineWindow()
 	}
 
