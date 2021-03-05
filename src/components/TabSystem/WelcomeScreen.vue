@@ -116,6 +116,7 @@ export default {
 			'bridge.action.newProject',
 			'bridge.action.newFile',
 			'bridge.action.openFile',
+			'bridge.action.searchFile',
 			'bridge.action.openSettings',
 		]
 		this.actions = toLoad.map((l) => app.actionManager.state[l])
