@@ -1,5 +1,6 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
+import { clearAllNotifications } from '../../Notifications/create'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -59,6 +60,14 @@ export function setupFileCategory(app: App) {
 			description: 'actions.closeFile.description',
 			keyBinding: 'Ctrl + W',
 			onTrigger: () => App.ready.once((app) => app.tabSystem?.close()),
+		})
+	)
+	file.addItem(
+		app.actionManager.create({
+			icon: 'mdi-cancel',
+			name: 'actions.clearAllNotifications.name',
+			description: 'actions.clearAllNotifications.description',
+			onTrigger: () => clearAllNotifications(),
 		})
 	)
 	file.addItem(

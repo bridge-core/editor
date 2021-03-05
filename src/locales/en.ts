@@ -174,6 +174,10 @@ export default {
 			name: 'Close other Tabs',
 			description: 'Close all tabs except this tab',
 		},
+		clearAllNotifcations: {
+			name: 'Clear All Notifications',
+			description: 'Clears all current notifications',
+		},
 		pluginInstallLocation: {
 			global: {
 				name: 'Install Globally',
