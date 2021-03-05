@@ -85,6 +85,10 @@ export default {
 		},
 		openFile: {
 			name: 'Open File',
+			description: 'Open a file from the current project',
+		},
+		searchFile: {
+			name: 'Search File',
 			description: 'Search and open a file from the current project',
 		},
 		saveFile: {
