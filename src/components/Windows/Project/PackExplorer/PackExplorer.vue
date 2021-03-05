@@ -1,5 +1,6 @@
 <template>
 	<SidebarWindow
+		v-if="shouldRender"
 		windowTitle="windows.packExplorer.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
@@ -106,7 +107,7 @@ export default {
 		async refreshPackExplorer() {
 			this.currentWindow.close()
 			const app = await App.getApp()
-			app.project.refresh()
+			await app.project.refresh()
 		},
 		openFile(filePath) {
 			this.currentWindow.close()

@@ -100,16 +100,15 @@ export class PackExplorerWindow extends BaseWindow {
 	}
 
 	async open() {
-		if (this.loadedPack) super.open()
-		else {
+		if (!this.loadedPack) {
 			const app = await App.getApp()
-			app.project?.packIndexer.once(async () => {
-				app.windows.loadingWindow.open()
+			app.windows.loadingWindow.open()
 
-				await this.loadPack()
+			await this.loadPack()
 
-				app.windows.loadingWindow.close()
-			})
+			app.windows.loadingWindow.close()
 		}
+
+		super.open()
 	}
 }
