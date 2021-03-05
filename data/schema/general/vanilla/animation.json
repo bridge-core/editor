@@ -339,6 +339,10 @@
 		"animation.wolf.sitting",
 		"animation.wolf.tail_default",
 		"animation.zombie.attack_bare_hand",
-		"animation.zombie.swimming"
+		"animation.zombie.swimming",
+		"animation.goat.ram_attack",
+		"animation.goat.attack",
+		"animation.goat.look_at_target",
+		"animation.goat.walk"
 	]
 }
