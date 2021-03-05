@@ -30,6 +30,7 @@
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.packExplorer.searchFiles')"
 				v-model="sidebar._filter"
+				autofocus
 				outlined
 				dense
 			/>
@@ -51,6 +52,7 @@
 					:startPath="
 						selectedSidebar ? selectedSidebar.split('/') : undefined
 					"
+					:entry="sidebar.currentState.directoryEntry"
 					@closeWindow="onClose"
 				/>
 			</div>

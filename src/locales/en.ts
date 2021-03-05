@@ -72,6 +72,7 @@ export default {
 		gameTest: 'Game Test',
 		unknown: 'Other',
 		simpleFile: 'Simple Files',
+		ui: 'UI',
 	},
 	// Actions
 	actions: {
