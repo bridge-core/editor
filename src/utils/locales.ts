@@ -15,7 +15,7 @@ export class Locales {
 			return orginalKey ?? 'Unknown'
 		}
 
-		if (translated === translationKey) return orginalKey
+		if (translated === translationKey) return orginalKey ?? 'Unknown'
 		return translated
 	}
 
