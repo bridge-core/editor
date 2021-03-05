@@ -1,7 +1,12 @@
 {
 	"id": "gameTest",
 	"icon": "mdi-test-tube",
-	"scope": "BP/gametests/",
-	"matcher": "BP/gametests/*.js",
+	"scope": "BP/scripts/gametests/",
+	"matcher": [
+		"BP/scripts/gametests/*.js",
+		"BP/scripts/gametests/**/*.js",
+		"BP/scripts/gametests/*.ts",
+		"BP/scripts/gametests/**/*.ts"
+	],
 	"types": ["types/GameTest.d.ts"]
 }
