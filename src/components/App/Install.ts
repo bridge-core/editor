@@ -15,6 +15,7 @@ export class InstallApp extends Notification {
 		window.addEventListener('beforeinstallprompt', (event: any) =>
 			this.onInstallPrompt(event)
 		)
+		window.addEventListener('appinstalled', () => this.dispose())
 		this.addClickHandler(() => this.prompt())
 	}
 
