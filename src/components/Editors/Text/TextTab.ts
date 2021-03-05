@@ -73,6 +73,9 @@ export class TextTab extends Tab {
 		super.updateParent(parent)
 		this.editorInstance = undefined
 	}
+	focus() {
+		this.editorInstance?.focus()
+	}
 
 	loadEditor() {
 		if (this.editorModel) this.editorInstance?.setModel(this.editorModel)

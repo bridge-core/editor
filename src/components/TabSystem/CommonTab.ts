@@ -60,6 +60,7 @@ export abstract class Tab {
 		return path === this.path
 	}
 
+	focus() {}
 	async onActivate() {}
 	onDeactivate() {}
 	onDestroy() {}

@@ -120,6 +120,7 @@ export class TabSystem {
 			)
 
 		app.windows.loadingWindow.close()
+		tab.focus()
 	}
 
 	async activate() {
