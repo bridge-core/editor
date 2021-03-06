@@ -11,6 +11,7 @@ export abstract class Tab {
 	uuid = uuid()
 	hasRemoteChange = false
 	isUnsaved = false
+	protected fileType = FileType.get(this.getPackPath())
 
 	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val

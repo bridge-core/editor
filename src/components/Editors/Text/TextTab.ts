@@ -49,7 +49,7 @@ export class TextTab extends Tab {
 			app.windowResize.on(() => this.editorInstance?.layout())
 		)
 		this.disposables.push(
-			this.editorModel?.onDidChangeContent((event) => {
+			this.editorModel?.onDidChangeContent(() => {
 				this.isUnsaved = true
 			})
 		)
@@ -89,16 +89,15 @@ export class TextTab extends Tab {
 		const action = this.editorInstance?.getAction(
 			'editor.action.formatDocument'
 		)
-		const fileType = FileType.get(this.getPackPath())
 
 		if (
 			action &&
 			(settingsState?.general?.formatOnSave ?? true) &&
-			(fileType?.formatOnSaveCapable ?? true)
+			(this.fileType?.formatOnSaveCapable ?? true)
 		) {
 			app.windows.loadingWindow.open()
 			// This is a terrible hack because we need to make sure that the formatter triggers the "onDidChangeContent" event
-			// The promise returned by action.run() actually resolves before formatting is done
+			// The promise returned by action.run() actually resolves before formatting is done so we need the "onDidChangeContent" event to tell when the formatter is done
 			this.editorInstance?.executeEdits('automatic', [
 				{
 					forceMoveMarkers: false,
