@@ -16,6 +16,7 @@ export interface IFileType {
 	types: string[]
 	packSpider: string
 	lightningCache: string
+	formatOnSaveCapable: boolean
 }
 
 /**
