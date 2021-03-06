@@ -16,9 +16,7 @@ declare module 'GameTest' {
 declare module 'Minecraft' {
 	export const BlockPos: BlockPositionClass
 
-	export class ItemStack {
-		constructor(block: Block)
-	}
+	export const ItemStack: ItemStackClass
 	export const Blocks: Blocks
 	export const BlockStates: BlockStates
 }
@@ -144,7 +142,11 @@ declare interface Test {
 	 * @param amount
 	 * The amount of items that should be in the stack
 	 */
-	assertItemActorPresent(itemStack: ItemStack, position: BlockPos, amount: number): void
+	assertItemActorPresent(
+		itemStack: ItemStack,
+		position: BlockPos,
+		amount: number
+	): void
 	/**
 	 * Asserts an error when the specified block is found at the specified coordinates
 	 * @param id
@@ -194,13 +196,17 @@ declare interface Test {
 	pressButton(position: BlockPos): void
 }
 
-
 declare interface BlockPositionClass {
-	new(x: number, y: number, z: number): BlockPos
+	new (x: number, y: number, z: number): BlockPos
 }
 declare interface BlockPos {
 	above(): void
 }
+
+declare interface ItemStackClass {
+	new (item: Block)
+}
+declare interface ItemStack {}
 
 declare interface BlockStates {
 	// TODO - Script to generate block state methods
