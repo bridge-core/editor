@@ -5,6 +5,7 @@ import { baseUrl } from '/@/utils/baseUrl'
 import { version as appVersion } from '/@/appVersion.json'
 import { expose } from 'comlink'
 import { unzipSync } from 'fflate'
+import { whenIdle } from '/@/utils/whenIdle'
 
 export class DataLoaderService extends SimpleTaskService {
 	protected fileSystem: FileSystem
@@ -78,20 +79,24 @@ export class DataLoaderService extends SimpleTaskService {
 			if (fileName.startsWith('.')) continue
 
 			if (fileName.endsWith('/')) {
-				await this.fileSystem.mkdir(
-					`data/packages/${fileName}`.slice(0, -1),
-					{
-						recursive: true,
-					}
+				await whenIdle(() =>
+					this.fileSystem.mkdir(
+						`data/packages/${fileName}`.slice(0, -1),
+						{
+							recursive: true,
+						}
+					)
 				)
 
 				this.progress.addToCurrent(1)
 				continue
 			}
 
-			await this.fileSystem.writeFile(
-				`data/packages/${fileName}`,
-				zip[fileName]
+			await whenIdle(() =>
+				this.fileSystem.writeFile(
+					`data/packages/${fileName}`,
+					zip[fileName]
+				)
 			)
 
 			this.progress.addToCurrent(1)
