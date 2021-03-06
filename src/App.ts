@@ -80,6 +80,10 @@ export class App {
 		return this.projectManager.selectedProject
 	}
 	get project() {
+		if (!this.projectManager.currentProject)
+			throw new Error(
+				`Trying to access project before it is defined. Make sure to await app.projectManager.projectReady.fired`
+			)
 		return this.projectManager.currentProject
 	}
 
@@ -170,6 +174,7 @@ export class App {
 
 		this.instance.fileSystem.setup(fileHandle)
 
+		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {
 			await set('firstStartAfterUpdate', false)
 			this.instance.windows.changelogWindow.open()
@@ -247,10 +252,13 @@ export class App {
 			this.dataLoader.fired.then(() => PackType.setup(this.fileSystem)),
 		])
 
-		// Load global extensions
-		this.extensionLoader.loadExtensions(
-			await this.fileSystem.getDirectoryHandle(`plugins`),
-			true
+		// Ensure that a project is selected
+		this.projectManager.projectReady.fired.then(async () =>
+			// Then load global extensions
+			this.extensionLoader.loadExtensions(
+				await this.fileSystem.getDirectoryHandle(`plugins`),
+				true
+			)
 		)
 
 		console.timeEnd('[APP] startUp()')

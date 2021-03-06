@@ -2,6 +2,7 @@ import { Project } from '/@/components/Projects/Project/Project'
 import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/InformedChoice'
 import { Compiler } from './CompilerWorker'
 import JSON5 from 'json5'
+import { App } from '/@/App'
 
 export class CompilerManager {
 	protected compilers = new Map<string, Compiler>()
@@ -10,6 +11,9 @@ export class CompilerManager {
 	constructor(protected project: Project) {}
 
 	async start(configName: string, mode: 'dev' | 'build') {
+		const app = await App.getApp()
+		await app.extensionLoader.fired
+
 		let compiler = this.compilers.get(configName)
 		// Compiler for this config already exists, just start it
 		if (compiler) return compiler.activate(mode)

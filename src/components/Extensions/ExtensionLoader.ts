@@ -25,6 +25,7 @@ export class ExtensionLoader extends Signal<void> {
 	protected globalExtensions = new Map<string, Extension>()
 	protected localExtensions = new Map<string, Extension>()
 	protected _loadedInstalledExtensions = new Signal<void>(2)
+
 	get extensions() {
 		return new Map([
 			...this.globalExtensions.entries(),

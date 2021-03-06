@@ -11,6 +11,7 @@ export class ProjectManager extends Signal<void> {
 	public readonly state: Record<string, Project> = {}
 	public readonly title = new Title()
 	protected _selectedProject?: string = undefined
+	public readonly projectReady = new Signal<void>()
 
 	constructor(protected app: App) {
 		super()
@@ -121,6 +122,8 @@ export class ProjectManager extends Signal<void> {
 		} else {
 			throw new Error(`Expected string, found ${typeof projectName}`)
 		}
+
+		this.projectReady.dispatch()
 	}
 	protected async loadFallback() {
 		await this.fired
