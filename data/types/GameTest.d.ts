@@ -13,6 +13,16 @@ declare module 'GameTest' {
 	): TestRunner
 }
 
+declare module 'Minecraft' {
+	export const BlockPos: BlockPositionClass
+
+	export class ItemStack {
+		constructor(block: Block)
+	}
+	export const Blocks: Blocks
+	export const BlockStates: BlockStates
+}
+
 declare interface TestRunner {
 	/**
 	 * Sets the maximum amount of ticks the GameTest must complete until it fails
@@ -182,23 +192,22 @@ declare interface Test {
 	pressButton(position: BlockPos): void
 }
 
-declare module 'Minecraft' {
-	export class BlockPos {
-		constructor(x: number, y: number, z: number)
 
-		above(): void
-	}
-	export class ItemStack {
-		constructor(block: Block)
-	}
-	export const Blocks = {
-		// TODO - Script to generate all block methods
-		air(): Block,
-	}
-	export const BlockStates = {
-		// TODO - Script to generate block state methods
-		topSlotBit(data: boolean): State,
-	}
+declare interface BlockPositionClass {
+	new(x: number, y: number, z: number): BlockPos
+}
+declare interface BlockPos {
+	above(): void
+}
+
+declare interface BlockStates {
+	// TODO - Script to generate block state methods
+	topSlotBit(data: boolean): State
+}
+
+declare interface Blocks {
+	// TODO - Script to generate all block methods
+	air(): Block
 }
 
 declare interface Block {
