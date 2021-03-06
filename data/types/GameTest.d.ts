@@ -144,7 +144,7 @@ declare interface Test {
 	 * @param amount
 	 * The amount of items that should be in the stack
 	 */
-	assertItemActorPresent(block: ItemStack, position: BlockPos, amount: number): void
+	assertItemActorPresent(itemStack: ItemStack, position: BlockPos, amount: number): void
 	/**
 	 * Asserts an error when the specified block is found at the specified coordinates
 	 * @param id
