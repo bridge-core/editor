@@ -3,7 +3,6 @@
 
 
 node_modules/*
-!node_modules/jszip
 !node_modules/vue-template-compiler
 
 # local env files

@@ -1,11 +1,10 @@
 import { compare } from 'compare-versions'
-import JSZip from 'jszip'
 import { SimpleTaskService } from '/@/components/TaskManager/SimpleWorkerTask'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { baseUrl } from '/@/utils/baseUrl'
 import { version as appVersion } from '/@/appVersion.json'
 import { expose } from 'comlink'
-import { whenIdle } from '/@/utils/whenIdle'
+import { unzipSync } from 'fflate'
 
 export class DataLoaderService extends SimpleTaskService {
 	protected fileSystem: FileSystem
@@ -70,36 +69,29 @@ export class DataLoaderService extends SimpleTaskService {
 
 		const zip = await fetch(baseUrl + 'data/package.zip')
 			.then((response) => response.arrayBuffer())
-			.then((data) => JSZip.loadAsync(data))
+			.then((data) => unzipSync(new Uint8Array(data)))
 
-		const files = Object.entries(zip.files)
-		this.progress.setTotal(files.length + 1)
+		this.progress.setTotal(Object.keys(zip).length + 1)
 		this.progress.addToCurrent(1)
 
-		for (const [fileName, zipEntry] of files) {
+		for (const fileName in zip) {
 			if (fileName.startsWith('.')) continue
 
-			if (zipEntry.dir) {
-				await whenIdle(
-					async () =>
-						await this.fileSystem.mkdir(
-							`data/packages/${fileName}`.slice(0, -1),
-							{
-								recursive: true,
-							}
-						)
+			if (fileName.endsWith('/')) {
+				await this.fileSystem.mkdir(
+					`data/packages/${fileName}`.slice(0, -1),
+					{
+						recursive: true,
+					}
 				)
 
 				this.progress.addToCurrent(1)
 				continue
 			}
 
-			await whenIdle(
-				async () =>
-					await this.fileSystem.writeFile(
-						`data/packages/${fileName}`,
-						await zipEntry.async('arraybuffer')
-					)
+			await this.fileSystem.writeFile(
+				`data/packages/${fileName}`,
+				zip[fileName]
 			)
 
 			this.progress.addToCurrent(1)
