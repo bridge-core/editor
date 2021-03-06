@@ -174,7 +174,7 @@ export default {
 			name: 'Close other Tabs',
 			description: 'Close all tabs except this tab',
 		},
-		clearAllNotifcations: {
+		clearAllNotifications: {
 			name: 'Clear All Notifications',
 			description: 'Clears all current notifications',
 		},
