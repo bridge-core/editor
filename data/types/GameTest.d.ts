@@ -204,7 +204,7 @@ declare interface BlockPos {
 }
 
 declare interface ItemStackClass {
-	new (item: Block)
+	new (item: Block): ItemStack
 }
 declare interface ItemStack {}
 
