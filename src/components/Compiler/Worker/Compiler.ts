@@ -52,7 +52,7 @@ export class Compiler {
 			errorOnReadFailure
 		)
 		await this.requireFiles(files)
-		const sortedFiles = resolveFileOrder(this.files)
+		const sortedFiles = resolveFileOrder(files, this.files)
 		await this.finalizeFiles(sortedFiles)
 	}
 

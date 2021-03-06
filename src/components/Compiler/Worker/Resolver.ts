@@ -1,11 +1,16 @@
 import type { IFileData } from './Compiler'
 
-export function resolveFileOrder(files: Map<string, IFileData>) {
+export function resolveFileOrder(
+	files: string[],
+	fileMap: Map<string, IFileData>
+) {
 	const resolved = new Set<IFileData>()
 
-	for (const file of files.values()) {
-		if (!file.isLoaded || resolved.has(file)) continue
-		resolveSingle(file, files, resolved, new Set<IFileData>())
+	for (const filePath of files) {
+		const file = fileMap.get(filePath)
+
+		if (!file || !file.isLoaded || resolved.has(file)) continue
+		resolveSingle(file, fileMap, resolved, new Set<IFileData>())
 	}
 
 	return resolved

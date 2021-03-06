@@ -24,6 +24,10 @@ export function createCustomComponentPlugin({
 
 	return ({ compileFiles }) => {
 		return {
+			buildStart() {
+				usedComponents.clear()
+				createAnimFiles = {}
+			},
 			transformPath(filePath) {
 				if (isComponent(filePath)) return null
 			},
@@ -67,6 +71,13 @@ export function createCustomComponentPlugin({
 			async transform(filePath, fileContent, dependencies = {}) {
 				if (filePath.startsWith(`BP/${folder}/`)) {
 					const components = new Set<Component>()
+
+					// Reset components
+					for (const component of components) {
+						component.reset()
+					}
+
+					// Apply components
 					for (const [componentName, location] of usedComponents.get(
 						filePath
 					) ?? []) {

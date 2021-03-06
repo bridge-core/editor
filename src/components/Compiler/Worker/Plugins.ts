@@ -16,7 +16,7 @@ export type TCompilerPlugin = {
 	/**
 	 * Runs once before a build process starts
 	 */
-	buildStart(): Promise<void>
+	buildStart(): Promise<void> | void
 
 	/**
 	 * Transform file path
@@ -70,7 +70,7 @@ export type TCompilerPlugin = {
 	/**
 	 * Runs once after a build process ended
 	 */
-	buildEnd(): Promise<void>
+	buildEnd(): Promise<void> | void
 }
 export type TCompilerPluginFactory = (context: {
 	options: any

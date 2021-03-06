@@ -49,6 +49,11 @@ export class Component {
 			template,
 		})
 	}
+	reset() {
+		// Clear previous animation (controllers)
+		this.animations = []
+		this.animationControllers = []
+	}
 
 	getSchema() {
 		return this.schema
@@ -78,10 +83,6 @@ export class Component {
 	}
 
 	processTemplates(fileContent: any, componentArgs: any, location: string) {
-		// Clear previous animation (controllers)
-		this.animations = []
-		this.animationControllers = []
-
 		// Setup animation/animationController helper
 		const animation =
 			this.fileType === 'entity'
