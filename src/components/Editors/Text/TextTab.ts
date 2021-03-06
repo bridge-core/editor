@@ -4,8 +4,7 @@ import * as monaco from 'monaco-editor'
 import { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
-import { settingsState } from '../../Windows/Settings/SettingsState'
-import { FileType } from '../../Data/FileType'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 export class TextTab extends Tab {
 	component = TextTabComponent
