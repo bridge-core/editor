@@ -6,6 +6,7 @@ import { version as appVersion } from '/@/appVersion.json'
 import { expose } from 'comlink'
 import { unzipSync } from 'fflate'
 import { whenIdle } from '/@/utils/whenIdle'
+import { basename, dirname } from '/@/utils/path'
 
 export class DataLoaderService extends SimpleTaskService {
 	protected fileSystem: FileSystem
@@ -75,29 +76,39 @@ export class DataLoaderService extends SimpleTaskService {
 		this.progress.setTotal(Object.keys(zip).length + 1)
 		this.progress.addToCurrent(1)
 
-		for (const fileName in zip) {
-			if (fileName.startsWith('.')) continue
+		const handles: Record<string, FileSystemDirectoryHandle> = {
+			'.': await this.fileSystem.getDirectoryHandle('data/packages', {
+				create: true,
+			}),
+		}
 
-			if (fileName.endsWith('/')) {
-				await whenIdle(() =>
-					this.fileSystem.mkdir(
-						`data/packages/${fileName}`.slice(0, -1),
-						{
-							recursive: true,
-						}
-					)
-				)
+		for (const filePath in zip) {
+			const name = basename(filePath)
+			if (name.startsWith('.')) continue
+
+			const parentDir = dirname(filePath)
+
+			if (filePath.endsWith('/')) {
+				await whenIdle(async () => {
+					handles[filePath.slice(0, -1)] = await handles[
+						parentDir
+					].getDirectoryHandle(name, {
+						create: true,
+					})
+				})
 
 				this.progress.addToCurrent(1)
 				continue
 			}
 
-			await whenIdle(() =>
-				this.fileSystem.writeFile(
-					`data/packages/${fileName}`,
-					zip[fileName]
+			await whenIdle(async () => {
+				await this.fileSystem.write(
+					await handles[parentDir].getFileHandle(name, {
+						create: true,
+					}),
+					zip[filePath]
 				)
-			)
+			})
 
 			this.progress.addToCurrent(1)
 		}
