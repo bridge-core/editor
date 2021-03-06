@@ -136,13 +136,15 @@ declare interface Test {
 	 */
 	assertActorNotPresent(id: string, position: BlockPos): void
 	/**
-	 * Asserts an error when the specified item stack is not founc at the specified coordinates
+	 * Asserts an error when the specified item stack is not found at the specified coordinates
 	 * @param itemStack
 	 * The item stack to test for
 	 * @param position
 	 * The position to test for the item stack
+	 * @param amount
+	 * The amount of items that should be in the stack
 	 */
-	assertItemActorPresent(block: Block, position: BlockPos): void
+	assertItemActorPresent(block: ItemStack, position: BlockPos, amount: number): void
 	/**
 	 * Asserts an error when the specified block is found at the specified coordinates
 	 * @param id
