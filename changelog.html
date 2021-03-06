@@ -1,55 +1,34 @@
 <h2>Features:</h2>
 <ul>
-<li>Support for the scripting API</li>
-<li>New compiler infrastructure (again 🙃 )</li>
-<li>You can now just use TypeScript for all files which Minecraft reads as JavaScript
-<ul>
-<li>bridge.'s compiler will automatically compile the file to plain JavaScript</li>
-<li>New &quot;Language&quot; option upon creating a file to choose between JavaScript &amp; TypeScript where applicable</li>
-</ul>
-</li>
-<li>Option to choose an optional image for your preset upon creation where it makes sense</li>
-<li>It is now possible to choose a geometry for the &quot;Geometry Block&quot; preset (Thanks to @Gekocaretaker)</li>
-<li>Basic support for Minecraft's UI files
-<ul>
-<li>Auto-Completions</li>
-<li>Creation of UI files</li>
-</ul>
-</li>
-<li>Support for custom components
-<ul>
-<li>You can write new components for entities, blocks &amp; items</li>
-<li>Support for JavaScript &amp; TypeScript</li>
-<li>Built-in support for animationControllers &amp; animations (entity component)</li>
-</ul>
-</li>
-<li>Better skin presets (Thanks to @Gekocaretaker)</li>
-<li>Setting to format files upon saving</li>
+<li>Deleted files now get removed automatically from the lightning cache</li>
+<li>&quot;Ctrl + O&quot; now open Pack Explorer</li>
+<li>&quot;Ctrl + P&quot; now opens File Picker</li>
+<li>Improved pack explorer</li>
+<li>bridge. now sends a notification which allows users to update all extensions</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Added vanilla feature identifiers (Thanks to @pascal541)</li>
-<li>Type Loader now works on .ts files</li>
-<li><strong>Presets:</strong> Added input type &quot;selectInput&quot;</li>
-<li><strong>Internal:</strong> Added fileSystem.write(...) method for cases where fileHandle is already known</li>
-<li><strong>Presets:</strong> Rewrite of file overwriting permissions to include preset scripts</li>
-<li>Improved error message for terrain_texture files when validation of texture fails</li>
-<li>Support block states in minecraft:preferred_path schema</li>
+<li>Preset window: Sidebar items are now collapsed by default</li>
+<li>Updated GameTest data to latest beta</li>
+<li>Updated manifest schema to latest beta</li>
+<li>Updated biome schema to latest beta</li>
+<li>Updated vanilla identifiers</li>
+<li>Slightly improved data loader performance</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed bridge. being not installable</li>
-<li>Fixed Discord invite link not showing up</li>
-<li>Fixed application being closable without warning when user has unsaved changes</li>
-<li>Fixed tick.json being generated inside of RP instead of BP (Thanks to @pascal541)</li>
-<li>Fixed tick.json auto-completions (Thanks to @pascal541)</li>
-<li>Fixed Type Loader upon initial project activation</li>
-<li>Fixed cat preset</li>
-<li>Fixed block presets</li>
-<li>Fixed presets not loading correctly</li>
-<li>Fixed error upon saving while compiler is running</li>
-<li>Fixed &quot;minecraft:pick_collision&quot; and &quot;minecraft:entity_collision&quot; schema</li>
-<li>Fixed fileType.script locale key missing error</li>
-<li>Removed unused file from slab preset</li>
-<li>Fixed formatVersions not loading in</li>
+<li>Fixed various locale errors</li>
+<li>Fixed &quot;not a semantic version&quot; error</li>
+<li>Fixed discord window not closing after clicking &quot;Join&quot;</li>
+<li>Fixed compiler progress not showing correctly</li>
+<li>Fixed error upon refreshing packs</li>
+<li>Fixed pack explorer re-opening after refreshing pack</li>
+<li>Fixed text editor losing focus after saving</li>
+<li>Fixed TypeScript files not being recognized as scripts/components</li>
+<li>Fixed error notification text color in light mode</li>
+<li>Fixed error upon switching projects</li>
+<li>Fixed manifest modules not showing auto-completions</li>
+<li>Fixed custom components not updating correctly</li>
+<li>Fixed not all animations/animation controllers saving if a file uses a custom component multiple times</li>
+<li>Fixed lang &amp; mcfunction files not saving</li>
 </ul>
