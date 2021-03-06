@@ -132,9 +132,7 @@ export class FileSystem extends Signal<void> {
 
 	async writeFile(path: string, data: FileSystemWriteChunkType) {
 		const fileHandle = await this.getFileHandle(path, true)
-		const writable = await fileHandle.createWritable()
-		await writable.write(data)
-		writable.close()
+		await this.write(fileHandle, data)
 	}
 
 	async write(
