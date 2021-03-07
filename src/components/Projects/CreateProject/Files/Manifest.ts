@@ -21,6 +21,7 @@ export class CreateManifest extends CreateFile {
 	}
 
 	create(fs: FileSystem, createOptions: ICreateProjectOptions) {
+		// Base manifest
 		const manifest: any = {
 			format_version: 2,
 			header: {

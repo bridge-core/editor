@@ -28,9 +28,15 @@ export class FileSystem extends Signal<void> {
 		const pathArr = path.split(/\\|\//g)
 
 		for (const folder of pathArr) {
-			current = await current.getDirectoryHandle(folder, {
-				create: createOnce || create,
-			})
+			try {
+				current = await current.getDirectoryHandle(folder, {
+					create: createOnce || create,
+				})
+			} catch {
+				throw new Error(
+					`Failed to access "${path}": Directory does not exist`
+				)
+			}
 
 			if (createOnce) {
 				createOnce = false
@@ -50,7 +56,11 @@ export class FileSystem extends Signal<void> {
 			create,
 		})
 
-		return await folder.getFileHandle(file, { create })
+		try {
+			return await folder.getFileHandle(file, { create })
+		} catch {
+			throw new Error(`File does not exist: "${path}"`)
+		}
 	}
 
 	async mkdir(path: string, { recursive }: Partial<IMkdirConfig> = {}) {
