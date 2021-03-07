@@ -39,7 +39,57 @@
 					isSelectable
 					:selected="createOptions.packs.includes(packType.packPath)"
 					@click="togglePack(packType.packPath)"
-				/>
+				>
+					<template
+						v-if="packType.packPath === 'BP'"
+						#default="{ selected }"
+					>
+						<v-switch
+							inset
+							dense
+							:label="t('windows.createProject.scripting')"
+							:value="createOptions.scripting"
+							@click.stop.native="
+								createOptions.scripting = !createOptions.scripting
+							"
+							:disabled="!selected"
+							class="mt-3"
+						/>
+						<v-switch
+							inset
+							dense
+							:label="t('windows.createProject.gameTest')"
+							:value="createOptions.gameTest"
+							@click.stop.native="
+								createOptions.gameTest = !createOptions.gameTest
+							"
+							:disabled="!selected"
+							class="ma-0"
+						/>
+					</template>
+
+					<template
+						v-else-if="packType.packPath === 'RP'"
+						#default="{ selected }"
+					>
+						<v-switch
+							inset
+							dense
+							:label="t('windows.createProject.rpAsBpDependency')"
+							:value="
+								createOptions.rpAsBpDependency &&
+								createOptions.packs.includes('BP')
+							"
+							@click.stop.native="
+								createOptions.rpAsBpDependency = !createOptions.rpAsBpDependency
+							"
+							:disabled="
+								!selected || !createOptions.packs.includes('BP')
+							"
+							class="mt-3"
+						/>
+					</template>
+				</PackTypeViewer>
 			</v-row>
 
 			<div class="d-flex">
@@ -99,22 +149,6 @@
 					outlined
 					dense
 					:menu-props="{ maxHeight: 220 }"
-				/>
-			</div>
-			<div class="d-flex">
-				<v-switch
-					inset
-					dense
-					:label="t('windows.createProject.scripting')"
-					v-model="createOptions.scripting"
-					class="mx-4"
-				/>
-				<v-switch
-					inset
-					dense
-					:label="t('windows.createProject.gameTest')"
-					v-model="createOptions.gameTest"
-					class="mx-4"
 				/>
 			</div>
 		</template>
@@ -178,8 +212,13 @@ export default {
 		togglePack(packPath) {
 			const packs = this.createOptions.packs
 			const index = packs.indexOf(packPath)
+
 			if (index > -1) packs.splice(index, 1)
 			else packs.push(packPath)
+		},
+		setModel(key, val) {
+			console.log(key, val)
+			this.createOptions[key] = val
 		},
 	},
 }

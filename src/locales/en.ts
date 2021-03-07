@@ -286,8 +286,10 @@ export default {
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',
 			projectTargetVersion: 'Project Target Version',
-			scripting: 'Enabling Scriping API',
+			scripting: 'Enable Scriping API',
 			gameTest: 'Enable GameTest Framework',
+			rpAsBpDependency:
+				'Register resource pack as behavior pack dependency',
 			create: 'Create',
 		},
 		createPreset: {

@@ -21,7 +21,7 @@ export class CreateManifest extends CreateFile {
 	}
 
 	create(fs: FileSystem, createOptions: ICreateProjectOptions) {
-		let manifest: any = {
+		const manifest: any = {
 			format_version: 2,
 			header: {
 				name: 'pack.name',
@@ -44,6 +44,27 @@ export class CreateManifest extends CreateFile {
 				},
 			],
 		}
+
+		// Register the resource pack as a dependency of the BP
+		if (
+			createOptions.rpAsBpDependency &&
+			createOptions.packs.includes('RP')
+		) {
+			if (this.type === 'resources') {
+				createOptions.rpUuid = manifest.header.uuid
+			} else if (this.type === 'data') {
+				if (!createOptions.rpUuid)
+					throw new Error(
+						`Trying to register RP uuid before it was defined`
+					)
+
+				manifest.dependencies = [
+					{ uuid: createOptions.rpUuid, version: [1, 0, 0] },
+				]
+			}
+		}
+
+		// Behavior pack modules
 		if (this.type === 'data' && createOptions.scripting) {
 			manifest.modules.push({
 				type: 'client_data',
