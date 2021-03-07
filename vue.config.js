@@ -30,7 +30,7 @@ module.exports = {
 		},
 		plugins: [
 			new MonacoWebpackPlugin({ features: ['!toggleHighContrast'] }),
-			new WorkerPlugin(),
+			new WorkerPlugin({ globalObject: 'self' }),
 		],
 	},
 }
