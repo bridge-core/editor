@@ -286,7 +286,7 @@ export default {
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',
 			projectTargetVersion: 'Project Target Version',
-			scripting: 'Enable Scriping API',
+			scripting: 'Enable Scripting API',
 			gameTest: 'Enable GameTest Framework',
 			rpAsBpDependency:
 				'Register resource pack as behavior pack dependency',
