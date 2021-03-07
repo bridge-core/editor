@@ -21,32 +21,45 @@ export class CreateManifest extends CreateFile {
 	}
 
 	create(fs: FileSystem, createOptions: ICreateProjectOptions) {
-		return fs.writeJSON(
-			`${this.pack}/manifest.json`,
-			{
-				format_version: 2,
-				header: {
-					name: 'pack.name',
-					description: 'pack.description',
-					min_engine_version:
-						this.type === 'data' || 'resources'
-							? createOptions.targetVersion
-									.split('.')
-									.map(str => Number(str))
-							: undefined,
+		let manifest: any = {
+			format_version: 2,
+			header: {
+				name: 'pack.name',
+				description: 'pack.description',
+				min_engine_version:
+					this.type === 'data' || 'resources'
+						? createOptions.targetVersion
+								.split('.')
+								.map((str) => Number(str))
+						: undefined,
+				uuid: uuid(),
+				version: [1, 0, 0],
+			},
+			modules: [
+				{
+					description: createOptions.description,
+					type: this.type,
 					uuid: uuid(),
 					version: [1, 0, 0],
 				},
-				modules: [
-					{
-						description: createOptions.description,
-						type: this.type,
-						uuid: uuid(),
-						version: [1, 0, 0],
-					},
-				],
-			},
-			true
-		)
+			],
+		}
+		if (this.type === 'data' && createOptions.scripting) {
+			manifest.modules.push({
+				type: 'client_data',
+				uuid: uuid(),
+				version: [1, 0, 0],
+			})
+		}
+		if (this.type === 'data' && createOptions.gameTest) {
+			manifest.modules.push({
+				type: 'plugin',
+				uuid: uuid(),
+				entry: 'scripts/gametests/Main.js',
+				version: [1, 0, 0],
+			})
+		}
+
+		return fs.writeJSON(`${this.pack}/manifest.json`, manifest, true)
 	}
 }

@@ -286,6 +286,8 @@ export default {
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',
 			projectTargetVersion: 'Project Target Version',
+			scripting: 'Enabling Scriping API',
+			gameTest: 'Enable GameTest Framework',
 			create: 'Create',
 		},
 		createPreset: {

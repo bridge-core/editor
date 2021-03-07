@@ -18,6 +18,8 @@ export interface ICreateProjectOptions {
 	prefix: string
 	targetVersion: string
 	packs: TPackType[]
+	scripting: boolean
+	gameTest: boolean
 }
 export class CreateProjectWindow extends BaseWindow {
 	protected isFirstProject = false
@@ -29,6 +31,8 @@ export class CreateProjectWindow extends BaseWindow {
 		prefix: 'bridge',
 		targetVersion: '',
 		packs: ['bridge', 'BP', 'RP'],
+		scripting: false,
+		gameTest: false,
 	}
 	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []

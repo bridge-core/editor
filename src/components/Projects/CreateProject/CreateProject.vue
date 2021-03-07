@@ -101,6 +101,22 @@
 					:menu-props="{ maxHeight: 220 }"
 				/>
 			</div>
+			<div class="d-flex">
+				<v-switch
+					inset
+					dense
+					:label="t('windows.createProject.scripting')"
+					v-model="createOptions.scripting"
+					class="mx-4"
+				/>
+				<v-switch
+					inset
+					dense
+					:label="t('windows.createProject.gameTest')"
+					v-model="createOptions.gameTest"
+					class="mx-4"
+				/>
+			</div>
 		</template>
 
 		<template #actions>
