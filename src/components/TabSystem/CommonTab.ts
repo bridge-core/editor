@@ -1,16 +1,16 @@
 import { v4 as uuid } from 'uuid'
 import { TabSystem } from './TabSystem'
-import { IFileSystem } from '/@/components/FileSystem/Common'
 import { App } from '/@/App'
-import { FileType } from '../Data/FileType'
-import { PackType } from '../Data/PackType'
-import { showContextMenu } from '../ContextMenu/showContextMenu'
+import { FileType } from '/@/components/Data/FileType'
+import { PackType } from '/@/components/Data/PackType'
+import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 
 export abstract class Tab {
 	abstract component: Vue.Component
 	uuid = uuid()
 	hasRemoteChange = false
 	isUnsaved = false
+	protected fileType = FileType.get(this.getPackPath())
 
 	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val
