@@ -200,7 +200,7 @@ declare interface BlockPositionClass {
 	new (x: number, y: number, z: number): BlockPos
 }
 declare interface BlockPos {
-	above(): void
+	above(): BlockPos
 }
 
 declare interface ItemStackClass {
