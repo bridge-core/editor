@@ -130,7 +130,7 @@ export class App {
 		this.extensionLoader
 			.loadExtensions(
 				await this.fileSystem.getDirectoryHandle(
-					`projects/${project.name}/bridge/plugins`,
+					`projects/${project.name}/bridge/extensions`,
 					{ create: true }
 				)
 			)
@@ -245,7 +245,7 @@ export class App {
 		await Promise.all([
 			// Create default folders
 			this.fileSystem.mkdir('projects'),
-			this.fileSystem.mkdir('plugins'),
+			this.fileSystem.mkdir('extensions'),
 			this.fileSystem.mkdir('data/packages'),
 			// Setup data helpers
 			this.dataLoader.fired.then(() => FileType.setup(this.fileSystem)),
@@ -256,7 +256,7 @@ export class App {
 		this.projectManager.projectReady.fired.then(async () =>
 			// Then load global extensions
 			this.extensionLoader.loadExtensions(
-				await this.fileSystem.getDirectoryHandle(`plugins`),
+				await this.fileSystem.getDirectoryHandle(`extensions`),
 				true
 			)
 		)

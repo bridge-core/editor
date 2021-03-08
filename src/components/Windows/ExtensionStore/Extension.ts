@@ -92,8 +92,8 @@ export class ExtensionViewer {
 		).then((response) => response.arrayBuffer())
 
 		const basePath = !isGlobalInstall
-			? `projects/${app.selectedProject}/bridge/plugins`
-			: 'plugins'
+			? `projects/${app.selectedProject}/bridge/extensions`
+			: 'extensions'
 		const zipPath = basePath + `/${this.name.replace(/\s+/g, '')}.zip`
 		await app.fileSystem.writeFile(zipPath, zip)
 
