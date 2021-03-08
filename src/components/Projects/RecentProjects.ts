@@ -7,7 +7,7 @@ export class RecentProjects extends PersistentQueue<IProjectData> {
 		super(app, 5, savePath)
 	}
 
-	isEquals(file1: IProjectData, file2: IProjectData) {
+	protected isEquals(file1: IProjectData, file2: IProjectData) {
 		return file1.path === file2.path
 	}
 }

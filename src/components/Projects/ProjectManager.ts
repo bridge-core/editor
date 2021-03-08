@@ -22,6 +22,17 @@ export class ProjectManager extends Signal<void> {
 			'recentProjects',
 			new RecentProjects(this.app, `data/recentProjects.json`)
 		)
+
+		// Once possible, scan recentProjects for projects which no longer exist
+		this.once(() => {
+			this.recentProjects.keep(
+				(project) =>
+					Object.values(this.state).findIndex(
+						(currProject) =>
+							currProject.projectData.path === project.path
+					) > -1
+			)
+		})
 	}
 
 	get currentProject() {
