@@ -151,7 +151,7 @@ export class FileSystem extends Signal<void> {
 	) {
 		const writable = await fileHandle.createWritable()
 		await writable.write(data)
-		writable.close()
+		await writable.close()
 	}
 
 	async readJSON(path: string) {
