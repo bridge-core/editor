@@ -47,12 +47,11 @@ export class Compiler {
 	}
 	async compileFiles(files: string[], errorOnReadFailure = true) {
 		this.parent.progress.addToCurrent(files.length)
-		await this.resolveFiles(
-			this.flatFiles(files, new Set()),
-			errorOnReadFailure
-		)
-		await this.requireFiles(files)
-		const sortedFiles = resolveFileOrder(files, this.files)
+		const flatFiles = this.flatFiles(files, new Set())
+
+		await this.resolveFiles(flatFiles, errorOnReadFailure)
+		await this.requireFiles(flatFiles)
+		const sortedFiles = resolveFileOrder([...flatFiles], this.files)
 		await this.finalizeFiles(sortedFiles)
 	}
 
@@ -79,21 +78,26 @@ export class Compiler {
 			const file = this.files.get(filePath)
 			if (file?.isLoaded) continue
 
+			// First: Add dependencies
+			if (file) this.flatFiles([...file.dependencies], fileSet)
+
+			// Then: Add current file
 			fileSet.add(filePath)
 			if (!file) continue
 
-			this.flatFiles(
-				[...file.dependencies, ...file.updateFiles],
-				fileSet
-			).forEach((f) => fileSet.add(f))
+			// Then: Updata files which depend on the current file
+			this.flatFiles([...file.updateFiles], fileSet)
 
 			this.parent.progress.addToCurrent(1)
 		}
 
-		return [...fileSet]
+		return fileSet
 	}
 
-	protected async resolveFiles(files: string[], errorOnReadFailure = true) {
+	protected async resolveFiles(
+		files: Set<string>,
+		errorOnReadFailure = true
+	) {
 		for (const filePath of files) {
 			let file = this.files.get(filePath)
 			if (file?.isLoaded) continue
@@ -148,8 +152,8 @@ export class Compiler {
 		}
 	}
 
-	protected async requireFiles(files: string[]) {
-		for (const filePath of files) {
+	protected async requireFiles(files: Set<string>) {
+		for (const filePath of files.values()) {
 			const file = this.files.get(filePath)
 			if (!file || !file.isLoaded) continue
 
@@ -179,9 +183,18 @@ export class Compiler {
 						`Undefined file dependency: "${file.filePath}" requires "${dependency}"`
 					)
 
-				// New dependency discovered, compile it
-				if (!oldDeps.has(depFile.filePath) && !depFile.isLoaded)
-					await this.compileFiles([depFile.filePath])
+				// New dependency discovered
+				if (!oldDeps.has(depFile.filePath)) {
+					// If necessary, compile it
+					if (!depFile.isLoaded) {
+						const newDep = new Set([depFile.filePath])
+						await this.resolveFiles(newDep)
+						await this.requireFiles(newDep)
+					}
+
+					// Add it to the files we need to load
+					files.add(depFile.filePath)
+				}
 
 				depFile.updateFiles.add(file.filePath)
 				file.dependencies.add(depFile.filePath)
@@ -192,7 +205,7 @@ export class Compiler {
 	protected async finalizeFiles(files: Set<IFileData>) {
 		for (const file of files) {
 			// We don't need to transform files that won't be saved
-			if (!file.saveFilePath || file.isDone) continue
+			if (!file.saveFilePath || !file.isLoaded || file.isDone) continue
 
 			const transformedData =
 				(await this.runAllHooks(
