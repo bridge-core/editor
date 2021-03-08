@@ -214,7 +214,7 @@ declare interface BlockStates {
 }
 
 declare interface Blocks {
-	get(id: string): Block
+	get(id: string): Block | null
 	// TODO - Script to generate all block methods
 	air(): Block
 }

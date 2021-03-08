@@ -10,6 +10,7 @@ import {
 	CustomItemComponentPlugin,
 } from './Plugins/CustomComponent/Plugin'
 import { SimpleRewrite } from './Plugins/simpleRewrite'
+import { EntityIdentifierAlias } from './Plugins/EntityIdentifier'
 
 export type TCompilerHook = keyof TCompilerPlugin
 export type TCompilerPlugin = {
@@ -107,6 +108,7 @@ export async function loadPlugins({
 	plugins.set('customEntityComponents', CustomEntityComponentPlugin)
 	plugins.set('customItemComponents', CustomItemComponentPlugin)
 	plugins.set('customBlockComponents', CustomBlockComponentPlugin)
+	plugins.set('entityIdentifierAlias', EntityIdentifierAlias)
 
 	for (const [pluginId, pluginPath] of Object.entries(pluginPaths ?? {})) {
 		let file: File
