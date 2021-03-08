@@ -16,8 +16,8 @@ export class Component {
 	protected _name?: string
 	protected schema?: any
 	protected template?: TTemplate
-	protected animations: any[] = []
-	protected animationControllers: any[] = []
+	protected animations: [any, string | undefined][] = []
+	protected animationControllers: [any, string | undefined][] = []
 	constructor(protected fileType: string, protected componentSrc: string) {}
 
 	//#region Getters
@@ -87,12 +87,16 @@ export class Component {
 		// Setup animation/animationController helper
 		const animation =
 			this.fileType === 'entity'
-				? (animation: any) => this.animations.push(animation)
+				? (animation: any, molangCondition?: string) =>
+						this.animations.push([animation, molangCondition])
 				: () => 0
 		const animationController =
 			this.fileType === 'entity'
-				? (animationController: any) =>
-						this.animationControllers.push(animationController)
+				? (animationController: any, molangCondition?: string) =>
+						this.animationControllers.push([
+							animationController,
+							molangCondition,
+						])
 				: () => 0
 
 		// Process template
@@ -131,7 +135,7 @@ export class Component {
 		let id = 0
 		const animations: any = { format_version: '1.10.0', animations: {} }
 
-		for (const anim of this.animations) {
+		for (const [anim, condition] of this.animations) {
 			if (!anim) continue
 
 			// Create unique animId
@@ -150,7 +154,9 @@ export class Component {
 					animations: {
 						[shortAnimId]: animId,
 					},
-					scripts: [shortAnimId],
+					scripts: [
+						!condition ? shortAnimId : { [shortAnimId]: condition },
+					],
 				},
 				'minecraft:entity/description'
 			)
@@ -169,7 +175,7 @@ export class Component {
 			animation_controllers: {},
 		}
 
-		for (const anim of this.animationControllers) {
+		for (const [anim, condition] of this.animationControllers) {
 			if (!anim) continue
 
 			// Create unique animId
@@ -188,7 +194,9 @@ export class Component {
 					animations: {
 						[shortAnimId]: animId,
 					},
-					scripts: [shortAnimId],
+					scripts: [
+						!condition ? shortAnimId : { [shortAnimId]: condition },
+					],
 				},
 				'minecraft:entity/description'
 			)
