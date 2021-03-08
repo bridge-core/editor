@@ -1,5 +1,6 @@
 import { run } from '/@/components/Extensions/Scripts/run'
 import { deepMerge } from '/@/utils/deepmerge'
+import { hashString } from '/@/utils/hash'
 
 export type TTemplate = (
 	componentArgs: any,
@@ -105,27 +106,26 @@ export class Component {
 			})
 	}
 
-	processAnimations(fileContent: any) {
+	async processAnimations(fileContent: any) {
 		// Try getting file identifier
 		const identifier =
 			fileContent[`minecraft:${this.fileType}`]?.description
 				?.identifier ?? 'bridge:no_identifier'
 
-		const normalizedIdentifier = identifier.replace(':', '_')
-		const normalizedName = this.name?.replace(':', '_')
-		const animFileName = `BP/animations/bridge/${normalizedName}/${normalizedIdentifier}.json`
-		const animControllerFileName = `BP/animation_controllers/bridge/${normalizedName}/${normalizedIdentifier}.json`
+		const fileName = await hashString(`${this.name}/${identifier}`)
+		const animFileName = `BP/animations/bridge/${fileName}.json`
+		const animControllerFileName = `BP/animation_controllers/bridge/${fileName}.json`
 
 		return {
-			[animFileName]: this.createAnimations(identifier, fileContent),
+			[animFileName]: this.createAnimations(fileName, fileContent),
 			[animControllerFileName]: this.createAnimationControllers(
-				identifier,
+				fileName,
 				fileContent
 			),
 		}
 	}
 
-	protected createAnimations(identifier: string, fileContent: any) {
+	protected createAnimations(fileName: string, fileContent: any) {
 		if (this.animations.length === 0) return
 
 		let id = 0
@@ -135,12 +135,10 @@ export class Component {
 			if (!anim) continue
 
 			// Create unique animId
-			const animId = `animation.${
-				this.name?.replace(':', '_') ?? 'bridge_auto'
-			}.${identifier.replace(':', '_')}_${id}`
+			const animId = `animation.${fileName}_${id}`
 			// Create shorter reference to animId that's unique per entity
 			const shortAnimId = `${
-				this.name?.replace(':', '_') ?? 'bridge_auto'
+				fileName.slice(0, 16) ?? 'bridge_auto'
 			}_anim_${id}`
 
 			// Save animation to animations object
@@ -162,7 +160,7 @@ export class Component {
 
 		return JSON.stringify(animations, null, '\t')
 	}
-	protected createAnimationControllers(identifier: string, fileContent: any) {
+	protected createAnimationControllers(fileName: string, fileContent: any) {
 		if (this.animationControllers.length === 0) return
 
 		let id = 0
@@ -175,12 +173,10 @@ export class Component {
 			if (!anim) continue
 
 			// Create unique animId
-			const animId = `controller.animation.${
-				this.name?.replace(':', '_') ?? 'bridge_auto'
-			}.${identifier.replace(':', '_')}_${id}`
+			const animId = `controller.animation.${fileName}_${id}`
 			// Create shorter reference to animId that's unique per entity
 			const shortAnimId = `${
-				this.name?.replace(':', '_') ?? 'bridge_auto'
+				fileName.slice(0, 16) ?? 'bridge_auto'
 			}_control_${id}`
 
 			// Save animation to animationControllers object

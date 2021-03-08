@@ -72,11 +72,6 @@ export function createCustomComponentPlugin({
 				if (filePath.startsWith(`BP/${folder}/`)) {
 					const components = new Set<Component>()
 
-					// Reset components
-					for (const component of components) {
-						component.reset()
-					}
-
 					// Apply components
 					for (const [componentName, location] of usedComponents.get(
 						filePath
@@ -104,11 +99,17 @@ export function createCustomComponentPlugin({
 					}
 
 					// Register animation (controllers) that this entity uses
-					for (const component of components)
+					for (const component of components) {
 						createAnimFiles = deepMerge(
 							createAnimFiles,
-							component.processAnimations(fileContent)
+							await component.processAnimations(fileContent)
 						)
+					}
+
+					// Reset components
+					for (const component of components) {
+						component.reset()
+					}
 				}
 			},
 			finalizeBuild(filePath, fileContent) {
