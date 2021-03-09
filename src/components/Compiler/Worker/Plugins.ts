@@ -80,6 +80,7 @@ export type TCompilerPluginFactory = (context: {
 		files: string[],
 		errorOnReadFailure?: boolean
 	) => Promise<void>
+	getAliases: (filePath: string) => string[]
 }) => Partial<TCompilerPlugin>
 
 export interface ILoadPLugins {
@@ -91,6 +92,7 @@ export interface ILoadPLugins {
 		files: string[],
 		errorOnReadFailure?: boolean
 	) => Promise<void>
+	getAliases: (filePath: string) => string[]
 }
 
 export async function loadPlugins({
@@ -99,6 +101,7 @@ export async function loadPlugins({
 	localFs,
 	pluginOpts,
 	compileFiles,
+	getAliases,
 }: ILoadPLugins) {
 	const plugins = new Map<string, TCompilerPluginFactory>()
 
@@ -151,6 +154,7 @@ export async function loadPlugins({
 				options: pluginOpts[pluginId],
 				fileSystem: localFs,
 				compileFiles,
+				getAliases,
 			})
 		)
 	}

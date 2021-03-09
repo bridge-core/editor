@@ -15,4 +15,5 @@ declare interface TemplateContext {
 	animation: (animation: any) => void
 	animationController: (animationController: any) => void
 	location: string
+	identifier: string
 }

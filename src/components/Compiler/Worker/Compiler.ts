@@ -2,6 +2,8 @@ import { TCompilerHook, TCompilerPlugin } from './Plugins'
 import { resolveFileOrder } from './Resolver'
 import { dirname } from '/@/utils/path'
 import { CompilerService } from './Service'
+import isGlob from 'is-glob'
+import { isMatch } from 'micromatch'
 
 export interface IFileData {
 	isLoaded?: boolean
@@ -12,12 +14,14 @@ export interface IFileData {
 	aliases: string[]
 	updateFiles: Set<string>
 	dependencies: Set<string>
+	requiresGlobs: Set<string>
 }
 export interface ISaveFile {
 	filePath: string
 	updateFiles: string[]
 	dependencies: string[]
 	aliases: string[]
+	requiresGlobs: string[]
 }
 
 export class Compiler {
@@ -30,6 +34,9 @@ export class Compiler {
 	}
 	protected get plugins() {
 		return this.parent.getPlugins()
+	}
+	getAliases(filePath: string) {
+		return [...(this.files.get(filePath)?.aliases ?? [])]
 	}
 
 	async runWithFiles(files: string[]) {
@@ -49,9 +56,12 @@ export class Compiler {
 		this.parent.progress.addToCurrent(files.length)
 		const flatFiles = this.flatFiles(files, new Set())
 
+		this.addMatchingGlobImporters(flatFiles)
+
 		await this.resolveFiles(flatFiles, errorOnReadFailure)
 		await this.requireFiles(flatFiles)
 		const sortedFiles = resolveFileOrder([...flatFiles], this.files)
+		// console.log([...sortedFiles].map((file) => file.filePath))
 		await this.finalizeFiles(sortedFiles)
 	}
 
@@ -66,6 +76,7 @@ export class Compiler {
 					aliases: fileData.aliases,
 					updateFiles: new Set(fileData.updateFiles ?? []),
 					dependencies: new Set(fileData.dependencies ?? []),
+					requiresGlobs: new Set(fileData.requiresGlobs),
 				})
 			}
 		} catch {}
@@ -92,6 +103,22 @@ export class Compiler {
 		}
 
 		return fileSet
+	}
+
+	addMatchingGlobImporters(files: Set<string>) {
+		const testFiles = [...files]
+
+		for (const file of this.files.values()) {
+			if (file.requiresGlobs.size === 0) continue
+
+			// For every glob
+			for (const glob of file.requiresGlobs.values()) {
+				// If any filePath matches
+				if (testFiles.some((filePath) => isMatch(filePath, glob)))
+					// Also resolve the file with the glob imports later
+					files.add(file.filePath)
+			}
+		}
 	}
 
 	protected async resolveFiles(
@@ -146,6 +173,7 @@ export class Compiler {
 				aliases: aliases ?? [],
 				updateFiles: file?.updateFiles ?? new Set(),
 				dependencies: file?.dependencies ?? new Set(),
+				requiresGlobs: new Set(),
 			})
 
 			this.parent.progress.addToCurrent(1)
@@ -157,20 +185,38 @@ export class Compiler {
 			const file = this.files.get(filePath)
 			if (!file || !file.isLoaded) continue
 
-			// Remove old updateFile refs
+			// Remove old dependencies
 			const oldDeps = file.dependencies
-			for (const dependency of file.dependencies) {
+			for (const dependency of oldDeps) {
 				const depFile = this.files.get(dependency)
 				if (depFile) depFile.updateFiles.delete(file.filePath)
 			}
 			file.dependencies = new Set()
 
 			// Get new dependencies
-			const dependencies = new Set(
+			const dependencies = new Set<string>(
 				await this.runCollectHook('require', file.filePath, file.data)
 			)
 
+			// Resolve glob imports
+			const resolvedDeps = new Set<string>()
 			for (const dependency of dependencies) {
+				if (!isGlob(dependency)) {
+					resolvedDeps.add(dependency)
+					continue
+				}
+
+				// Add files which match glob as dependencies
+				const matchingFiles = [
+					...new Set([...this.files.keys(), ...files]),
+				].filter((filePath) => isMatch(filePath, dependency))
+				matchingFiles.forEach((filePath) => resolvedDeps.add(filePath))
+
+				// Add the glob import to file obj
+				file.requiresGlobs.add(dependency)
+			}
+
+			for (const dependency of resolvedDeps) {
 				const depFile =
 					this.files.get(dependency) ??
 					// Lookup dependency id in file aliases
@@ -180,12 +226,12 @@ export class Compiler {
 
 				if (!depFile)
 					throw new Error(
-						`Undefined file dependency: "${file.filePath}" requires "${dependency}"`
+						`Undefined file dependency: "${filePath}" requires "${dependency}"`
 					)
 
 				// New dependency discovered
 				if (!oldDeps.has(depFile.filePath)) {
-					// If necessary, compile it
+					// If necessary, load it
 					if (!depFile.isLoaded) {
 						const newDep = new Set([depFile.filePath])
 						await this.resolveFiles(newDep)
@@ -252,13 +298,15 @@ export class Compiler {
 			if (
 				file.updateFiles.size > 0 ||
 				file.dependencies.size > 0 ||
-				file.aliases.length > 0
+				file.aliases.length > 0 ||
+				file.requiresGlobs.size > 0
 			)
 				filesObject[id] = {
 					filePath: file.filePath,
 					aliases: file.aliases,
 					updateFiles: [...file.updateFiles.values()],
 					dependencies: [...file.dependencies.values()],
+					requiresGlobs: [...file.requiresGlobs.values()],
 				}
 		}
 

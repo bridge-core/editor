@@ -7,7 +7,7 @@ export const TypeScriptPlugin: TCompilerPluginFactory = () => ({
 		if (!filePath?.endsWith('.ts')) return
 
 		const hash = await hashString(filePath)
-		return `${filePath.slice(0, -3)}_${hash.slice(0, 10)}.js`
+		return `${filePath.slice(0, -3)}_${hash.slice(0, 4)}.ts.js`
 	},
 	async read(filePath, fileHandle) {
 		if (!filePath.endsWith('.ts') || !fileHandle) return

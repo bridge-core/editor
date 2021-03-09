@@ -79,6 +79,8 @@ export class CompilerService extends TaskService<void, string[]> {
 			pluginOpts: this.pluginOpts,
 			compileFiles: (files: string[], errorOnReadFailure = true) =>
 				this.compiler.compileFiles(files, errorOnReadFailure),
+			getAliases: (filePath: string) =>
+				this.compiler.getAliases(filePath),
 		})
 	}
 	async updatePlugins(
