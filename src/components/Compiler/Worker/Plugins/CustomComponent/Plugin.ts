@@ -22,7 +22,15 @@ export function createCustomComponentPlugin({
 	const isComponent = (filePath: string | null) =>
 		filePath?.startsWith(`BP/components/${fileType}/`)
 
-	return ({ compileFiles }) => {
+	const isPlayerFile = (
+		filePath: string | null,
+		getAliases: (file: string) => string[]
+	) =>
+		fileType === 'item' &&
+		filePath?.startsWith('BP/entities/') &&
+		getAliases(filePath).includes('minecraft:player')
+
+	return ({ compileFiles, getAliases }) => {
 		return {
 			buildStart() {
 				usedComponents.clear()
@@ -39,7 +47,10 @@ export function createCustomComponentPlugin({
 				if (isComponent(filePath) && filePath.endsWith('.js')) {
 					const file = await fileHandle.getFile()
 					return await file.text()
-				} else if (filePath.startsWith(`BP/${folder}/`)) {
+				} else if (
+					filePath.startsWith(`BP/${folder}/`) ||
+					isPlayerFile(filePath, getAliases)
+				) {
 					const file = await fileHandle.getFile()
 					return json5.parse(await file.text())
 				}
@@ -57,6 +68,9 @@ export function createCustomComponentPlugin({
 					return [`${fileType}Component#${fileContent.name}`]
 			},
 			async require(filePath, fileContent) {
+				if (isPlayerFile(filePath, getAliases))
+					return ['BP/components/item/**/*.js', 'BP/items/**/*.json']
+
 				if (filePath.startsWith(`BP/${folder}/`)) {
 					const components = findCustomComponents(
 						getComponentObjects(fileContent)
@@ -69,7 +83,21 @@ export function createCustomComponentPlugin({
 				}
 			},
 			async transform(filePath, fileContent, dependencies = {}) {
-				if (filePath.startsWith(`BP/${folder}/`)) {
+				if (isPlayerFile(filePath, getAliases)) {
+					// Get item components from the dependencies
+					const itemComponents = Object.entries(
+						dependencies
+					).filter(([depName]) =>
+						depName.startsWith('itemComponent#')
+					)
+
+					for (const [_, component] of itemComponents) {
+						createAnimFiles = deepMerge(
+							createAnimFiles,
+							await component.processAnimations(fileContent)
+						)
+					}
+				} else if (filePath.startsWith(`BP/${folder}/`)) {
 					const components = new Set<Component>()
 
 					// Apply components
@@ -98,6 +126,9 @@ export function createCustomComponentPlugin({
 						components.add(component)
 					}
 
+					// Items must not & blocks don't need to process animation(s/ controllers)
+					if (fileType !== 'entity') return
+
 					// Register animation (controllers) that this entity uses
 					for (const component of components) {
 						createAnimFiles = deepMerge(
@@ -106,7 +137,7 @@ export function createCustomComponentPlugin({
 						)
 					}
 
-					// Reset components
+					// Reset animation(s/ controllers)
 					for (const component of components) {
 						component.reset()
 					}

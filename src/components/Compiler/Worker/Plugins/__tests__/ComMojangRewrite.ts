@@ -8,6 +8,7 @@ describe('ComMojangRewrite Compiler Plugin', () => {
 		options: { mode: 'build' },
 		fileSystem,
 		compileFiles: async () => {},
+		getAliases: () => [],
 	})
 
 	it('should put BP into correct folder', () => {

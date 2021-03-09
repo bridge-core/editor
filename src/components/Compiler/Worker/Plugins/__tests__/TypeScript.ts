@@ -8,6 +8,7 @@ describe('TypeScript Compiler Plugin', () => {
 		options: { mode: 'dev' },
 		fileSystem,
 		compileFiles: async () => {},
+		getAliases: () => [],
 	})
 
 	it('should transpile TypeScript to JavaScript', () => {

@@ -7,6 +7,7 @@ export type TTemplate = (
 	opts: {
 		create: (t: any, loc: string) => any
 		location: string
+		identifier: string
 		animation: (animation: any) => void
 		animationController: (animationController: any) => void
 	}
@@ -86,18 +87,23 @@ export class Component {
 	processTemplates(fileContent: any, componentArgs: any, location: string) {
 		// Setup animation/animationController helper
 		const animation =
-			this.fileType === 'entity'
-				? (animation: any, molangCondition?: string) =>
+			this.fileType === 'block'
+				? () => {}
+				: (animation: any, molangCondition?: string) =>
 						this.animations.push([animation, molangCondition])
-				: () => 0
+
 		const animationController =
-			this.fileType === 'entity'
-				? (animationController: any, molangCondition?: string) =>
+			this.fileType === 'block'
+				? () => {}
+				: (animationController: any, molangCondition?: string) =>
 						this.animationControllers.push([
 							animationController,
 							molangCondition,
 						])
-				: () => 0
+
+		// Try getting file identifier
+		const identifier =
+			fileContent[`minecraft:${this.fileType}`]?.description?.identifier
 
 		// Process template
 		if (this.template)
@@ -105,6 +111,7 @@ export class Component {
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
+				identifier,
 				animationController,
 				animation,
 			})

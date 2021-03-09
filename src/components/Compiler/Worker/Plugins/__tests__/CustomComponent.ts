@@ -8,6 +8,7 @@ describe('CustomComponent Compiler Plugin', () => {
 		options: { mode: 'dev' },
 		fileSystem,
 		compileFiles: async () => {},
+		getAliases: () => [],
 	})
 
 	it('should omit custom components from build output', () => {
