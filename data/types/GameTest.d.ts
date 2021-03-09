@@ -197,13 +197,22 @@ declare interface Test {
 }
 
 declare interface BlockPositionClass {
+	/**
+	 * Creates a block position
+	 */
 	new (x: number, y: number, z: number): BlockPos
 }
 declare interface BlockPos {
+	/**
+	 * Returns the block position it was called on but increases the y coordinate by 1
+	 */
 	above(): BlockPos
 }
 
 declare interface ItemStackClass {
+	/**
+	 * Creates a an item stack
+	 */
 	new (item: Block): ItemStack
 }
 declare interface ItemStack {}
@@ -214,6 +223,11 @@ declare interface BlockStates {
 }
 
 declare interface Blocks {
+	/**
+	 * Fetches the requested block and returns it, if the block doesn't exist, this returns null
+	 * @param id
+	 * The identifier of the block to get
+	 */
 	get(id: string): Block | null
 	// TODO - Script to generate all block methods
 	air(): Block
