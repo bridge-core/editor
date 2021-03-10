@@ -2,16 +2,7 @@ import { run } from '/@/components/Extensions/Scripts/run'
 import { deepMerge } from '/@/utils/deepmerge'
 import { hashString } from '/@/utils/hash'
 
-export type TTemplate = (
-	componentArgs: any,
-	opts: {
-		create: (t: any, loc: string) => any
-		location: string
-		identifier: string
-		animation: (animation: any) => void
-		animationController: (animationController: any) => void
-	}
-) => any
+export type TTemplate = (componentArgs: any, opts: any) => any
 
 export class Component {
 	protected _name?: string
@@ -19,6 +10,7 @@ export class Component {
 	protected template?: TTemplate
 	protected animations: [any, string | undefined][] = []
 	protected animationControllers: [any, string | undefined][] = []
+	protected createOnPlayer: [string, any][] = []
 	constructor(protected fileType: string, protected componentSrc: string) {}
 
 	//#region Getters
@@ -61,8 +53,12 @@ export class Component {
 		return this.schema
 	}
 
-	create(fileContent: any, template: any, location?: string) {
-		const keys = (location ?? '').split('/')
+	create(
+		fileContent: any,
+		template: any,
+		location = `minecraft:${this.fileType}`
+	) {
+		const keys = location.split('/')
 
 		let current: any = fileContent
 
@@ -85,28 +81,27 @@ export class Component {
 	}
 
 	processTemplates(fileContent: any, componentArgs: any, location: string) {
-		// Setup animation/animationController helper
-		const animation =
-			this.fileType === 'block'
-				? () => {}
-				: (animation: any, molangCondition?: string) =>
-						this.animations.push([animation, molangCondition])
+		if (typeof this.template !== 'function') return
 
-		const animationController =
-			this.fileType === 'block'
-				? () => {}
-				: (animationController: any, molangCondition?: string) =>
-						this.animationControllers.push([
-							animationController,
-							molangCondition,
-						])
+		// Setup animation/animationController helper
+		const animation = (animation: any, molangCondition?: string) =>
+			this.animations.push([animation, molangCondition])
+
+		const animationController = (
+			animationController: any,
+			molangCondition?: string
+		) =>
+			this.animationControllers.push([
+				animationController,
+				molangCondition,
+			])
 
 		// Try getting file identifier
 		const identifier =
 			fileContent[`minecraft:${this.fileType}`]?.description?.identifier
 
-		// Process template
-		if (this.template)
+		// Execute template function with context for current fileType
+		if (this.fileType === 'entity') {
 			this.template(componentArgs ?? {}, {
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
@@ -115,6 +110,30 @@ export class Component {
 				animationController,
 				animation,
 			})
+		} else if (this.fileType === 'item') {
+			this.template(componentArgs ?? {}, {
+				create: (template: any, location?: string) =>
+					this.create(fileContent, template, location),
+				location,
+				identifier,
+				player: {
+					animationController,
+					animation,
+					create: (template: any, location?: string) =>
+						this.createOnPlayer.push([
+							location ?? `minecraft:player`,
+							template,
+						]),
+				},
+			})
+		} else if (this.fileType === 'block') {
+			this.template(componentArgs ?? {}, {
+				create: (template: any, location?: string) =>
+					this.create(fileContent, template, location),
+				location,
+				identifier,
+			})
+		}
 	}
 
 	async processAnimations(fileContent: any) {
@@ -126,6 +145,10 @@ export class Component {
 		const fileName = await hashString(`${this.name}/${identifier}`)
 		const animFileName = `BP/animations/bridge/${fileName}.json`
 		const animControllerFileName = `BP/animation_controllers/bridge/${fileName}.json`
+
+		this.createOnPlayer.forEach(([location, template]) => {
+			this.create(fileContent, template, location)
+		})
 
 		return {
 			[animFileName]: this.createAnimations(fileName, fileContent),

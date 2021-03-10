@@ -1,7 +1,0 @@
-{
-	"id": "customComponent",
-	"icon": "mdi-language-javascript",
-	"scope": "BP/components/",
-	"matcher": ["BP/components/**/*.js", "BP/components/**/*.ts"],
-	"types": ["types/customComponent.d.ts"]
-}
