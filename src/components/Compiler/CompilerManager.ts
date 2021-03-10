@@ -3,10 +3,10 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { Compiler } from './CompilerWorker'
 import JSON5 from 'json5'
 import { App } from '/@/App'
+import { deepMergeAll } from '/@/utils/deepmerge'
 
 export class CompilerManager {
 	protected compilers = new Map<string, Compiler>()
-	protected compilerPlugins = new Map<string, string>()
 
 	constructor(protected project: Project) {}
 
@@ -37,20 +37,12 @@ export class CompilerManager {
 		this.compilers.delete(configName)
 	}
 
-	addCompilerPlugin(pluginId: string, srcPath: string) {
-		if (this.compilerPlugins.has(pluginId))
-			throw new Error(
-				`Compiler plugin with id "${pluginId}" is already registered`
-			)
-		this.compilerPlugins.set(pluginId, srcPath)
-
-		return {
-			dispose: () => this.compilerPlugins.delete(pluginId),
-		}
-	}
-
 	getCompilerPlugins() {
-		return Object.fromEntries(this.compilerPlugins.entries())
+		return deepMergeAll(
+			this.project.app.extensionLoader.mapActive<Record<string, string>>(
+				(ext) => ext.compilerPlugins
+			)
+		)
 	}
 	async openWindow() {
 		const configDir = await this.project.fileSystem.getDirectoryHandle(

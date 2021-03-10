@@ -17,8 +17,14 @@ export class Extension {
 	protected disposables: IDisposable[] = []
 	protected uiStore = createUIStore()
 	protected fileSystem: FileSystem
+	protected _compilerPlugins: Record<string, string> = {}
+
 	get isActive() {
 		return this._isActive
+	}
+
+	get compilerPlugins() {
+		return this._compilerPlugins
 	}
 
 	constructor(
@@ -54,11 +60,7 @@ export class Extension {
 		for (const [pluginId, compilerPlugin] of Object.entries(
 			this.manifest.compiler?.plugins ?? {}
 		)) {
-			const disposable = app.project?.compilerManager?.addCompilerPlugin(
-				pluginId,
-				`${pluginPath}/${compilerPlugin}`
-			)
-			if (disposable) this.disposables.push(disposable)
+			this._compilerPlugins[pluginId] = `${pluginPath}/${compilerPlugin}`
 		}
 
 		this.disposables.push(

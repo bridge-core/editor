@@ -191,4 +191,17 @@ export class ExtensionLoader extends Signal<void> {
 			this.localExtensions.delete(key)
 		}
 	}
+
+	mapActive<T>(cb: (ext: Extension) => T) {
+		const res: T[] = []
+
+		for (const ext of this.globalExtensions.values()) {
+			res.push(cb(ext))
+		}
+		for (const ext of this.localExtensions.values()) {
+			res.push(cb(ext))
+		}
+
+		return res
+	}
 }
