@@ -196,10 +196,10 @@ export class ExtensionLoader extends Signal<void> {
 		const res: T[] = []
 
 		for (const ext of this.globalExtensions.values()) {
-			res.push(cb(ext))
+			if (ext.isActive) res.push(cb(ext))
 		}
 		for (const ext of this.localExtensions.values()) {
-			res.push(cb(ext))
+			if (ext.isActive) res.push(cb(ext))
 		}
 
 		return res
