@@ -18,6 +18,10 @@ export type TCompilerPlugin = {
 	 * Runs once before a build process starts
 	 */
 	buildStart(): Promise<void> | void
+	/**
+	 * Register files that should be loaded too
+	 */
+	include(): Maybe<string[]>
 
 	/**
 	 * Transform file path

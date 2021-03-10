@@ -44,6 +44,12 @@ export class Compiler {
 
 		await this.loadSavedFiles()
 		await this.runSimpleHook('buildStart')
+
+		// Add files that we are supposed to include
+		for (const includeFile of await this.runCollectHook('include')) {
+			if (!this.files.has(includeFile)) files.push(includeFile)
+		}
+
 		this.parent.progress.addToCurrent(1)
 
 		await this.compileFiles(files)
@@ -53,8 +59,8 @@ export class Compiler {
 		await this.processFileMap()
 	}
 	async compileFiles(files: string[], errorOnReadFailure = true) {
-		this.parent.progress.addToCurrent(files.length)
 		const flatFiles = this.flatFiles(files, new Set())
+		this.parent.progress.setTotal(flatFiles.size * 2 + 5)
 
 		this.addMatchingGlobImporters(flatFiles)
 
@@ -82,22 +88,30 @@ export class Compiler {
 		} catch {}
 		this.parent.progress.addToCurrent(1)
 	}
-	flatFiles(files: string[], fileSet: Set<string>) {
+	flatFiles(
+		files: string[],
+		fileSet: Set<string>,
+		ignoreSet = new Set<string>()
+	) {
 		for (const filePath of files) {
-			if (fileSet.has(filePath)) continue
+			if (fileSet.has(filePath) || ignoreSet.has(filePath)) continue
 
 			const file = this.files.get(filePath)
 			if (file?.isLoaded) continue
 
+			ignoreSet.add(filePath)
+
 			// First: Add dependencies
-			if (file) this.flatFiles([...file.dependencies], fileSet)
+			if (file) this.flatFiles([...file.dependencies], fileSet, ignoreSet)
 
 			// Then: Add current file
 			fileSet.add(filePath)
 			if (!file) continue
 
 			// Then: Updata files which depend on the current file
-			this.flatFiles([...file.updateFiles], fileSet)
+			this.flatFiles([...file.updateFiles], fileSet, ignoreSet)
+
+			ignoreSet.delete(filePath)
 
 			this.parent.progress.addToCurrent(1)
 		}
@@ -138,12 +152,7 @@ export class Compiler {
 			let fileHandle: FileSystemFileHandle | undefined = undefined
 			try {
 				fileHandle = await this.fileSystem.getFileHandle(filePath)
-			} catch {
-				if (errorOnReadFailure)
-					throw new Error(
-						`Cannot access file "${filePath}": File does not exist`
-					)
-			}
+			} catch {}
 
 			const readData = await this.runHook('read', filePath, fileHandle)
 			if (readData === undefined || readData === null) {
@@ -151,6 +160,17 @@ export class Compiler {
 				// ...or if the fileHandle doesn't exist (no file to copy)
 				if (!!fileHandle && saveFilePath !== filePath)
 					await this.copyFile(fileHandle, saveFilePath)
+
+				file = {
+					isLoaded: true,
+					filePath,
+					aliases: [],
+					updateFiles: new Set(),
+					dependencies: new Set(),
+					requiresGlobs: new Set(),
+				}
+				this.files.set(filePath, file)
+
 				this.parent.progress.addToCurrent(2)
 				continue
 			}
@@ -197,6 +217,7 @@ export class Compiler {
 			const dependencies = new Set<string>(
 				await this.runCollectHook('require', file.filePath, file.data)
 			)
+			if (dependencies.size === 0) continue
 
 			// Resolve glob imports
 			const resolvedDeps = new Set<string>()

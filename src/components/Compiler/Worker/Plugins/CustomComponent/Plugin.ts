@@ -148,7 +148,8 @@ export function createCustomComponentPlugin({
 					return JSON.stringify(fileContent, null, '\t')
 			},
 			async buildEnd() {
-				await compileFiles(Object.keys(createAnimFiles), false)
+				const animFiles = Object.keys(createAnimFiles)
+				if (animFiles.length > 0) await compileFiles(animFiles, false)
 				createAnimFiles = {}
 			},
 		}
