@@ -8,5 +8,5 @@
 		"BP/scripts/gametests/*.ts",
 		"BP/scripts/gametests/**/*.ts"
 	],
-	"types": ["types/GameTest.d.ts"]
+	"types": ["types/gameTest/GameTestStable.d.ts"]
 }
