@@ -1,0 +1,21 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+
+	"type": "array",
+	"minItems": 3,
+	"maxItems": 3,
+	"items": [
+		{
+			"type": "number",
+			"description": "X"
+		},
+		{
+			"type": "number",
+			"description": "Y"
+		},
+		{
+			"type": "number",
+			"description": "Z"
+		}
+	]
+}
