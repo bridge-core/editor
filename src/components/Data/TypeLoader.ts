@@ -2,7 +2,8 @@ import { FileType } from './FileType'
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { IDisposable } from '/@/types/disposable'
-import { languages, editor, Uri } from 'monaco-editor'
+import { languages, Uri } from 'monaco-editor'
+import { compare, CompareOperator } from 'compare-versions'
 const types = new Map<string, string>()
 
 export class TypeLoader {
@@ -51,10 +52,30 @@ export class TypeLoader {
 		const { types = [] } = FileType.get(filePath) ?? {}
 
 		const libs = await Promise.all(
-			types.map(async (type) => <const>[type, await this.load(type)])
+			types.map(async (type) => {
+				if (typeof type === 'string')
+					return <const>[type, await this.load(type)]
+
+				const app = await App.getApp()
+				const [
+					typePath,
+					{
+						targetVersion: [operator, targetVersion],
+					},
+				] = type
+				const projectTargetVersion = await app.projectConfig.get(
+					'targetVersion'
+				)
+
+				if (compare(projectTargetVersion, targetVersion, operator))
+					return <const>[typePath, await this.load(typePath)]
+			})
+		)
+		const filteredLibs = <(readonly [string, string])[]>(
+			libs.filter((lib) => lib !== undefined)
 		)
 
-		for (const [typePath, lib] of libs) {
+		for (const [typePath, lib] of filteredLibs) {
 			const uri = Uri.file(typePath)
 			this.typeDisposables.push(
 				languages.typescript.javascriptDefaults.addExtraLib(

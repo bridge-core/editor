@@ -2,7 +2,6 @@
 	"id": "clientItem",
 	"icon": "mdi-sword",
 	"scope": "RP/items/",
-	"target_version": "$project_target_version < 1.16.100",
 	"matcher": ["RP/items/**/*.json", "RP/items/*.json"],
 	"schema": "file:///data/packages/schema/clientItem/main.json",
 	"lightningCache": "clientItem.json"

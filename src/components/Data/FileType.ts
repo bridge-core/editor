@@ -3,6 +3,7 @@ import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Mai
 import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import type { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
+import type { CompareOperator } from 'compare-versions'
 
 /**
  * Describes the structure of a file definition
@@ -13,7 +14,7 @@ export interface IFileType {
 	scope: string | string[]
 	matcher: string | string[]
 	schema: string
-	types: string[]
+	types: (string | [string, { targetVersion: [CompareOperator, string] }])[]
 	packSpider: string
 	lightningCache: string
 	formatOnSaveCapable: boolean
