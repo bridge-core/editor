@@ -8,5 +8,12 @@
 		"BP/scripts/gametests/*.ts",
 		"BP/scripts/gametests/**/*.ts"
 	],
-	"types": ["types/gameTest/GameTestStable.d.ts"]
+	"types": [
+		"types/gameTest/common.d.ts",
+		[
+			"types/gameTest/stable.d.ts",
+			{ "targetVersion": ["<=", "v1.16.210"] }
+		],
+		["types/gameTest/beta.d.ts", { "targetVersion": [">=", "v1.16.220"] }]
+	]
 }

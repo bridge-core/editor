@@ -14,8 +14,6 @@ declare module 'GameTest' {
 }
 
 declare module 'Minecraft' {
-	export const BlockPos: BlockPositionClass
-
 	export const ItemStack: ItemStackClass
 	export const Blocks: Blocks
 	export const BlockStates: BlockStates
@@ -74,23 +72,6 @@ declare interface Test {
 	 */
 	succeed(): void
 	/**
-	 * When the `func` paramater calls an assert function the GameTest will succeed
-	 * @param func
-	 */
-	succeedWhen(func: (test: Test) => void): void
-	/**
-	 * The GameTest will succeed when the specified entity is found at the specified coordinates
-	 * @param id
-	 * The identifier of the entity to check for
-	 * @param x
-	 * x coordinate value relative to the structure block to check for the entity
-	 * @param y
-	 * y coordinate value relative to the structure block to check for the entity
-	 * @param z
-	 * z coordinate value relative to the structure block to check for the entity
-	 */
-	succeedWhenActorPresent(id: string, position: BlockPos): void
-	/**
 	 * The GameTest will succeed when the specified block is found at the specified coordinates
 	 * @param id
 	 * The block to check for
@@ -104,59 +85,11 @@ declare interface Test {
 	succeedWhenBlockPresent(id: string, position: BlockPos): void
 
 	/**
-	 * When the `func` parameter calls an assert function the GameTest will fail
-	 * @param func
-	 */
-	failIf(func: (test: Test) => void): void
-
-	/**
-	 * Asserts an error when the specified entity is found at the specified coordinates
-	 * @param id
-	 * The identifier of the entity to check for
-	 * @param x
-	 * x coordinate value relative to the structure block to check for the entity
-	 * @param y
-	 * y coordinate value relative to the structure block to check for the entity
-	 * @param z
-	 * z coordinate value relative to the structure block to check for the entity
-	 */
-	assertActorPresent(id: string, position: BlockPos): void
-	/**
-	 * Asserts an error when the specified entity is not found at the specified coordinates
-	 * @param id
-	 * The identifier of the entity to check for
-	 * @param x
-	 * x coordinate value relative to the structure block to check for the entity
-	 * @param y
-	 * y coordinate value relative to the structure block to check for the entity
-	 * @param z
-	 * z coordinate value relative to the structure block to check for the entity
-	 */
-	assertActorNotPresent(id: string, position: BlockPos): void
-	/**
-	 * Asserts an error when the specified item stack is not found at the specified coordinates
-	 * @param itemStack
-	 * The item stack to test for
-	 * @param position
-	 * The position to test for the item stack
-	 * @param amount
-	 * The amount of items that should be in the stack
-	 */
-	assertItemActorPresent(
-		itemStack: ItemStack,
-		position: BlockPos,
-		amount: number
-	): void
-	/**
 	 * Asserts an error when the specified block is found at the specified coordinates
 	 * @param id
 	 * The block to check for
-	 * @param x
-	 * x coordinate value relative to the structure block to check for the block
-	 * @param y
-	 * y coordinate value relative to the structure block to check for the block
-	 * @param z
-	 * z coordinate value relative to the structure block to check for the block
+	 * @param position
+	 * The relative position to test for the block
 	 */
 	assertBlockPresent(id: string, position: BlockPos): void
 
@@ -164,34 +97,22 @@ declare interface Test {
 	 * Spawns the specified entity at the specified coordinates
 	 * @param id
 	 * The identifier of the entity to spawn
-	 * @param x
-	 * x coordinate value relative to the structure block to spawn the entity
-	 * @param y
-	 * y coordinate value relative to the structure block to spawn the entity
-	 * @param z
-	 * z coordinate value relative to the structure block to spawn the entity
+	 * @param position
+	 * The relative position to spawn the entity
 	 */
 	spawn(id: string, position: BlockPos): void
 	/**
 	 * Places the specified block at the specified coordinates
 	 * @param id
 	 * The block to place
-	 * @param x
-	 * x coordinate value relative to the structure block to place the block
-	 * @param y
-	 * y coordinate value relative to the structure block to place the block
-	 * @param z
-	 * z coordinate value relative to the structure block to place the block
+	 * @param position
+	 * The relative position to place the block
 	 */
 	setBlock(id: string, position: BlockPos): void
 	/**
 	 * Presses a button at the specified coordinates if there is one there
-	 * @param x
-	 * x coordinate value relative to the structure block to press the button
-	 * @param y
-	 * y coordinate value relative to the structure block to press the button
-	 * @param z
-	 * z coordinate value relative to the structure block to press the button
+	 * @param position
+	 * The relative position to press the button
 	 */
 	pressButton(position: BlockPos): void
 }
