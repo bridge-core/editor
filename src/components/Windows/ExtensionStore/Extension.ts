@@ -127,8 +127,10 @@ export class ExtensionViewer {
 		this.isLoading = false
 	}
 
-	async update() {
+	async update(notifyParent = true) {
 		if (!this.connected) return
+
+		if (notifyParent) this.parent.updateInstalled(this)
 
 		this.connected.deactivate()
 		await this.downloadExtension(this.connected.isGlobal)

@@ -18,6 +18,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 	protected extensionTags!: Record<string, { icon: string; color?: string }>
 	protected installedExtensions = new Set<ExtensionViewer>()
 	public readonly tags: Record<string, ExtensionTag> = {}
+	protected updates = new Set<ExtensionViewer>()
 
 	constructor() {
 		super(ExtensionStoreComponent)
@@ -52,7 +53,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 			(plugin) => new ExtensionViewer(this, plugin)
 		)
 
-		const updates = new Set<ExtensionViewer>()
+		this.updates.clear()
 
 		installedExtensions.forEach((installedExtension, id) => {
 			const extension = this.extensions.find((ext) => ext.id === id)
@@ -66,7 +67,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 					compare(installedExtension.version, extension.version, '<')
 				) {
 					extension.setIsUpdateAvailable()
-					updates.add(extension)
+					this.updates.add(extension)
 				}
 			} else {
 				installedExtension.forStore(this)
@@ -74,22 +75,31 @@ export class ExtensionStoreWindow extends BaseWindow {
 		})
 
 		updateNotification?.dispose()
-		if (updates.size > 0) {
-			updateNotification = new Notification({
-				icon: 'mdi-sync',
-				color: 'primary',
-				message: 'sidebar.notifications.updateExtensions',
-				onClick: () => {
-					updates.forEach((extension) => extension.update())
-					updateNotification?.dispose()
-				},
-			})
-		}
 
 		this.setupSidebar()
 
 		app.windows.loadingWindow.close()
 		super.open()
+	}
+
+	close() {
+		super.close()
+
+		if (this.updates.size > 0) {
+			updateNotification = new Notification({
+				icon: 'mdi-sync',
+				color: 'primary',
+				message: 'sidebar.notifications.updateExtensions',
+				onClick: () => {
+					this.updates.forEach((extension) => extension.update(false))
+					updateNotification?.dispose()
+				},
+			})
+		}
+	}
+
+	updateInstalled(extension: ExtensionViewer) {
+		this.updates.delete(extension)
 	}
 
 	setupSidebar() {
