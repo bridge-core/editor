@@ -58,13 +58,13 @@ export class Compiler {
 		this.parent.progress.addToCurrent(1)
 		await this.processFileMap()
 	}
-	async compileFiles(files: string[], errorOnReadFailure = true) {
+	async compileFiles(files: string[]) {
 		const flatFiles = this.flatFiles(files, new Set())
 		this.parent.progress.setTotal(flatFiles.size * 2 + 5)
 
 		this.addMatchingGlobImporters(flatFiles)
 
-		await this.resolveFiles(flatFiles, errorOnReadFailure)
+		await this.resolveFiles(flatFiles)
 		await this.requireFiles(flatFiles)
 		const sortedFiles = resolveFileOrder([...flatFiles], this.files)
 		// console.log([...sortedFiles].map((file) => file.filePath))
@@ -108,7 +108,7 @@ export class Compiler {
 			fileSet.add(filePath)
 			if (!file) continue
 
-			// Then: Updata files which depend on the current file
+			// Then: Update files which depend on the current file
 			this.flatFiles([...file.updateFiles], fileSet, ignoreSet)
 
 			ignoreSet.delete(filePath)
@@ -135,10 +135,7 @@ export class Compiler {
 		}
 	}
 
-	protected async resolveFiles(
-		files: Set<string>,
-		errorOnReadFailure = true
-	) {
+	protected async resolveFiles(files: Set<string>) {
 		for (const filePath of files) {
 			let file = this.files.get(filePath)
 			if (file?.isLoaded) continue

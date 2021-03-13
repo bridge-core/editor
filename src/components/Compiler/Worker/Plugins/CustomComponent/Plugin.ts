@@ -92,6 +92,8 @@ export function createCustomComponentPlugin({
 					)
 
 					for (const [_, component] of itemComponents) {
+						if (!component) return
+
 						createAnimFiles = deepMerge(
 							createAnimFiles,
 							await component.processAnimations(fileContent)

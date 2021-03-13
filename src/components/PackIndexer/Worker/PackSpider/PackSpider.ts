@@ -86,15 +86,15 @@ export function getCategoryDirectory(fileType: string) {
 
 		if (files.length === 1) {
 			folders.push(
-				...files.map(file => ({
+				...files.map((file) => ({
 					...file,
-					displayName: file.identifierName,
+					displayName: file.identifierName || file.name,
 				}))
 			)
 		} else {
 			folders.push({
 				kind: 'directory',
-				displayName: file.identifierName,
+				displayName: file.identifierName || file.fileName,
 				name: file.filePath,
 				path: [fileType, file.filePath],
 			})
@@ -109,7 +109,7 @@ export class File {
 	protected _connectedFiles: Set<File>
 
 	constructor(public readonly filePath: string, parents: File[] = []) {
-		parents.forEach(parent => this.addParent(parent))
+		parents.forEach((parent) => this.addParent(parent))
 
 		this._connectedFiles = new Set()
 	}
@@ -127,7 +127,7 @@ export class File {
 		if (storedFile !== undefined) {
 			if (!forceUpdate) return storedFile
 			else
-				storedFile.connectedFiles.forEach(file =>
+				storedFile.connectedFiles.forEach((file) =>
 					file.removeParent(storedFile)
 				)
 		}
@@ -147,7 +147,7 @@ export class File {
 		const connectedFiles: string[] = []
 		// Directly referenced files (includeFiles)
 		const cacheKeysToInclude = <string[]>packSpiderFile.includeFiles
-				?.map(cacheKey => {
+				?.map((cacheKey) => {
 					if (cacheKey) return cacheData[cacheKey] ?? []
 				})
 				.flat() ?? []
@@ -191,7 +191,7 @@ export class File {
 			suffix = '',
 		} of packSpiderFile.includeFromFiles ?? []) {
 			const transformedTake = take
-				.map(t => {
+				.map((t) => {
 					if (!t.startsWith('@')) return t
 
 					const data = cacheData[t.slice(1)]
@@ -203,10 +203,10 @@ export class File {
 				.join('/')
 			const json = await packSpider.packIndexer.fileSystem.readJSON(from)
 
-			walkObject(transformedTake, json, data => {
+			walkObject(transformedTake, json, (data) => {
 				if (Array.isArray(data))
 					connectedFiles.push(
-						...data.map(d => `${prefix}${d}${suffix}`)
+						...data.map((d) => `${prefix}${d}${suffix}`)
 					)
 				else if (typeof data === 'string')
 					connectedFiles.push(`${prefix}${data}${suffix}`)
@@ -238,13 +238,13 @@ export class File {
 		const deepFiles = this.deepConnectedFiles
 		deepFiles.add(this)
 
-		deepFiles.forEach(file =>
+		deepFiles.forEach((file) =>
 			dirFiles.push({
 				kind: 'file',
 				name: file.fileName,
 				filePath: file.filePath,
 				identifierName: file.identifierName,
-				displayName: file.identifierName,
+				displayName: file.identifierName || file.fileName,
 			})
 		)
 
@@ -253,9 +253,11 @@ export class File {
 	get deepConnectedFiles() {
 		const deepFiles = new Set<File>()
 
-		this.connectedFiles.forEach(file => {
+		this.connectedFiles.forEach((file) => {
 			deepFiles.add(file)
-			file.deepConnectedFiles.forEach(deepFile => deepFiles.add(deepFile))
+			file.deepConnectedFiles.forEach((deepFile) =>
+				deepFiles.add(deepFile)
+			)
 		})
 
 		return deepFiles
