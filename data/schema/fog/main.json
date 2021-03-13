@@ -47,23 +47,26 @@
 							"powder_snow"
 						]
 					},
-					"description": "Valid properties: 'water', 'air', 'weather', 'lava', 'lava_resistance', 'powder_snow'",
+					"description": "The distance fog settings for different camera locations.",
 					"patternProperties": {
 						"^water|air|weather|lava|lava_resistance|powder_snow$": {
 							"properties": {
 								"fog_start": {
-									"type": "number"
+									"type": "number",
+									"description": "The distance from the player that the fog will begin to appear. 'fog_start' must be less than or equal to 'fog_end'."
 								},
 								"fog_end": {
-									"type": "number"
+									"type": "number",
+									"description": "The distance from the player that the fog will become fully opaque. 'fog_end' must be greater than or equal to 'fog_start'."
 								},
 								"fog_color": {
 									"$ref": "#/definitions/hex_color",
-									"description": "A hex color value that defines the color of the fog."
+									"description": "The color that the fog will take on."
 								},
 								"render_distance_types": {
 									"type": "string",
-									"enum": ["fixed", "render"]
+									"enum": ["fixed", "render"],
+									"description": "Determines how distance value is used. Fixed distance is measured in blocks. Dynamic distance is multiplied by the current render distance."
 								}
 							}
 						}
@@ -71,18 +74,23 @@
 				},
 				"volumetric": {
 					"type": "object",
-					"description": "RTX is required for volumetric fogs.",
+					"description": "The volumetric fog settings. RTX is required for volumetric fogs.",
 					"properties": {
 						"media_coefficients": {
 							"type": "object",
-							"description": "Valid properties: 'air', 'water', 'cloud'",
+							"description": "The coefficient settings for the volumetric fog in different blocks.",
+							"propertyNames": {
+								"enum": ["air", "water", "cloud"]
+							},
 							"patternProperties": {
 								"^air|water|cloud$": {
 									"properties": {
 										"scattering": {
+											"description": "Proportion of light that is scattered per block.",
 											"$ref": "#/definitions/hex_color"
 										},
 										"absorption": {
+											"description": "Proportion of light that is absorbed (lost) per block.",
 											"$ref": "#/definitions/hex_color"
 										}
 									}
@@ -91,20 +99,34 @@
 						},
 						"density": {
 							"type": "object",
-							"properties": {
-								"air": {
+							"propertyNames": {
+								"enum": [
+									"water",
+									"air",
+									"weather",
+									"lava",
+									"lava_resistance"
+								]
+							},
+							"description": "The density settings for different camera locations.",
+							"patternProperties": {
+								"^water|air|weather|lava|lava_resistance$": {
 									"type": "object",
 									"properties": {
 										"max_density": {
+											"description": "The maximum amount of opaqueness that the ground fog will take on. A value from [0.0, 1.0].",
 											"type": "number"
 										},
 										"max_density_height": {
+											"description": "The height in blocks that the ground fog will become it's maximum density.",
 											"type": "number"
 										},
 										"zero_density_height": {
+											"description": "The height in blocks that the ground fog will be completely transparent and begin to appear. This value needs to be at least 1 higher than 'max_density_height'.",
 											"type": "number"
 										},
 										"uniform": {
+											"description": "When set to true, the density will be uniform across all heights.",
 											"type": "boolean"
 										}
 									}
