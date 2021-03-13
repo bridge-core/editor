@@ -53,6 +53,7 @@ export default {
 		attachable: 'Attachable',
 		clientEntity: 'Client Entity',
 		clientItem: 'Client Item',
+		clientLang: 'Language',
 		fog: 'Fog',
 		particle: 'Particle',
 		renderController: 'Render Controller',
