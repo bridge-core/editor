@@ -32,6 +32,8 @@
 		"lightning",
 		"charging",
 		"temperature",
-		"all"
+		"all",
+		"stalactite",
+		"stalagmite"
 	]
 }
