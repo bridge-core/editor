@@ -48,7 +48,8 @@
 								"before_sky_pass",
 								"sky_pass",
 								"after_sky_pass",
-								"final_pass"
+								"final_pass",
+								"pregeneration_pass"
 							]
 						},
 						"minecraft:biome_filter": {
@@ -64,14 +65,7 @@
 						},
 						"coordinate_eval_order": {
 							"type": "string",
-							"enum": [
-								"xyz",
-								"zyx",
-								"yxz",
-								"xzy",
-								"zxy",
-								"yzx"
-							]
+							"enum": ["xyz", "zyx", "yxz", "xzy", "zxy", "yzx"]
 						},
 						"scatter_chance": {
 							"$ref": "../feature/main.json#/properties/minecraft:scatter_feature/properties/scatter_chance"
