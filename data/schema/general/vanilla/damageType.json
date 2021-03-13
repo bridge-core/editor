@@ -13,6 +13,7 @@
 		"fall",
 		"fire",
 		"fire_tick",
+		"freezing",
 		"lava",
 		"drowning",
 		"block_explosion",
