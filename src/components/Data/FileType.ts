@@ -132,18 +132,29 @@ export namespace FileType {
 			.flat()
 	}
 
-	const lCacheFiles: Record<string, ILightningInstruction[]> = {}
+	const lCacheFiles: Record<string, ILightningInstruction[] | string> = {}
 	export async function getLightningCache(filePath: string) {
 		const { lightningCache } = get(filePath) ?? {}
 		if (!lightningCache) return []
 
 		if (lCacheFiles[lightningCache]) return lCacheFiles[lightningCache]
 
-		lCacheFiles[lightningCache] = <ILightningInstruction[]>(
-			await fileSystem.readJSON(
+		if (lightningCache.endsWith('.json')) {
+			lCacheFiles[lightningCache] = <ILightningInstruction[]>(
+				await fileSystem.readJSON(
+					`data/packages/lightningCache/${lightningCache}`
+				)
+			)
+		} else if (lightningCache.endsWith('.js')) {
+			const textFile = await fileSystem.readFile(
 				`data/packages/lightningCache/${lightningCache}`
 			)
-		)
+			lCacheFiles[lightningCache] = await textFile.text()
+		} else {
+			throw new Error(
+				`Unknown lightning cache file format: "${lightningCache}"`
+			)
+		}
 
 		return lCacheFiles[lightningCache]
 	}

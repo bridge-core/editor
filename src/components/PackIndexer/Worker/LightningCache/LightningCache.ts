@@ -4,6 +4,7 @@ import { walkObject } from '/@/utils/walkObject'
 import json5 from 'json5'
 import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'
+import { runScript } from './Script'
 
 export interface ILightningInstruction {
 	'@filter'?: string[]
@@ -114,16 +115,14 @@ export class LightningCache {
 		}
 
 		// Second step: Process file
-		if (filePath.endsWith('.json'))
+		if (filePath.endsWith('.json')) {
 			await this.processJSON(filePath, fileType, file)
-		else if (filePath.endsWith('.mcfunction'))
+		} else if (filePath.endsWith('.mcfunction')) {
 			await this.processFunction(filePath, fileType, file)
-		else
-			await this.lightningStore.add(
-				filePath,
-				{ lastModified: file.lastModified },
-				fileType
-			)
+		} else {
+			await this.processText(filePath, fileType, file)
+		}
+
 		return true
 	}
 
@@ -148,6 +147,35 @@ export class LightningCache {
 		return true
 	}
 
+	async processText(filePath: string, fileType: string, file: File) {
+		const instructions = await FileType.getLightningCache(filePath)
+
+		// JavaScript cache API
+		if (typeof instructions === 'string') {
+			const cacheFunction = runScript(instructions)
+			if (typeof cacheFunction !== 'function') return
+
+			const fileContent = await file.text()
+			const textData = cacheFunction(fileContent)
+
+			this.lightningStore.add(
+				filePath,
+				{
+					lastModified: file.lastModified,
+					data:
+						Object.keys(textData).length > 0 ? textData : undefined,
+				},
+				fileType
+			)
+		}
+
+		await this.lightningStore.add(
+			filePath,
+			{ lastModified: file.lastModified },
+			fileType
+		)
+	}
+
 	/**
 	 * Process a JSON file
 	 * @returns Whether this json file did change
@@ -155,6 +183,7 @@ export class LightningCache {
 	async processJSON(filePath: string, fileType: string, file: File) {
 		const fileContent = await file.text()
 
+		// JSON API
 		let data: any
 		try {
 			data = json5.parse(fileContent)
@@ -166,12 +195,14 @@ export class LightningCache {
 				},
 				fileType
 			)
-			return true
+			return
 		}
 
+		// Load instructions for current file
 		const instructions = await FileType.getLightningCache(filePath)
+
 		// No instructions = no work
-		if (instructions.length === 0) {
+		if (instructions.length === 0 || typeof instructions === 'string') {
 			this.lightningStore.add(
 				filePath,
 				{
@@ -179,7 +210,7 @@ export class LightningCache {
 				},
 				fileType
 			)
-			return true
+			return
 		}
 
 		// console.log(instructions)
@@ -252,6 +283,6 @@ export class LightningCache {
 			fileType
 		)
 
-		return true
+		return
 	}
 }
