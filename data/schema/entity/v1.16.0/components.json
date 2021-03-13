@@ -1116,7 +1116,7 @@
 									},
 									"interact_text": {
 										"description": "Text to be displayed when the entity can be equipped with this item when playing with Touch-screen controls.",
-										"type": "string"
+										"$ref": "../../clientLang/dynamic/actionTextEnum.json"
 									},
 									"item": {
 										"description": "Identifier of the item that can be equipped for this slot.",
@@ -1764,7 +1764,7 @@
 									},
 									"interact_text": {
 										"description": "Text to show when the player is able to interact in this way with this entity when playing with Touch-screen controls.",
-										"type": "string"
+										"$ref": "../../clientLang/dynamic/actionTextEnum.json"
 									},
 									"on_interact": {
 										"description": "Event to fire when the interaction occurs.",
@@ -1863,7 +1863,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"interact_text": {
-							"type": "string"
+							"$ref": "../../clientLang/dynamic/actionTextEnum.json"
 						}
 					}
 				},
@@ -3336,7 +3336,7 @@
 						},
 						"interact_text": {
 							"description": "The text to display when the player can interact with the entity when playing with Touch-screen controlsThe text to display when the player can interact with the entity when playing with Touch-screen controls.",
-							"type": "string"
+							"$ref": "../../clientLang/dynamic/actionTextEnum.json"
 						},
 						"pull_in_entities": {
 							"description": "If true, this entity will pull in entities that are in the correct family_types into any available seats.",
