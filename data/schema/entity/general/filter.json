@@ -137,7 +137,7 @@
 						"is_leashed_to",
 						"is_mark_variant",
 						"is_moving",
-						"is_nether",
+						"in_nether",
 						"is_owner",
 						"is_persistent",
 						"is_riding",
@@ -756,7 +756,7 @@
 			"if": {
 				"properties": {
 					"test": {
-						"const": "is_nether"
+						"const": "in_nether"
 					}
 				}
 			},
