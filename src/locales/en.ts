@@ -298,6 +298,9 @@ export default {
 			overwriteFiles:
 				'This preset overwrites one or more existing files. Do you want to continue?',
 			overwriteFilesConfirm: 'Continue',
+			overwriteUnsavedChanges:
+				'This preset overwrites one or more files with unsaved changes. Do you want to continue?',
+			overwriteUnsavedChangesConfirm: 'Continue',
 		},
 		deleteProject: {
 			confirm: 'Delete',

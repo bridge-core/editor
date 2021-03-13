@@ -97,6 +97,23 @@ export class Project {
 
 		this.tabSystem?.open(filePath, selectTab)
 	}
+	closeFile(filePath: string) {
+		for (const tabSystem of this.tabSystems) {
+			const tabToClose = tabSystem.getTab(filePath)
+			tabToClose?.close()
+		}
+	}
+	getFileTab(filePath: string) {
+		for (const tabSystem of this.tabSystems) {
+			const tab = tabSystem.getTab(filePath)
+			if (tab !== undefined) return tab
+		}
+	}
+
+	absolutePath(filePath: string) {
+		return `projects/${this.name}/${filePath}`
+	}
+
 	async updateFile(filePath: string) {
 		await this.packIndexer.updateFile(filePath)
 		await this.compilerManager.updateFile('default.json', filePath)

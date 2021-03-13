@@ -50,6 +50,7 @@ export interface IPresetFileOpts {
 
 export interface IPermissions {
 	mayOverwriteFiles?: boolean
+	mayOverwriteUnsavedChanges?: boolean
 }
 
 export class CreatePresetWindow extends BaseWindow {
@@ -188,6 +189,7 @@ export class CreatePresetWindow extends BaseWindow {
 		const createdFiles: string[] = []
 		const permissions: IPermissions = {
 			mayOverwriteFiles: undefined,
+			mayOverwriteUnsavedChanges: undefined,
 		}
 
 		// Check that we don't overwrite files
@@ -210,6 +212,43 @@ export class CreatePresetWindow extends BaseWindow {
 					// Stop file collision checks & continue creating preset
 					permissions.mayOverwriteFiles = true
 					break
+				} else {
+					// Close loading window & early return
+					app.windows.loadingWindow.close()
+					return
+				}
+			}
+		}
+
+		const project = app.project!
+		// Request permission for overwriting unsaved changes
+		for (const expandFile of expandFiles) {
+			if (typeof expandFile === 'string') continue
+
+			let filePath = transformString(
+				expandFile[1],
+				expandFile[2]?.inject ?? [],
+				this.sidebar.currentState.models
+			)
+			// This filePath is relative to the project root
+			// The project.hasFile/project.closeFile methods expect the path to relative to the bridge project folder
+			filePath = project.absolutePath(filePath)
+			console.log(filePath)
+
+			const tab = project.getFileTab(filePath)
+			if (tab !== undefined && tab.isUnsaved) {
+				const confirmWindow = new ConfirmationWindow({
+					description: 'windows.createPreset.overwriteUnsavedChanges',
+					confirmText:
+						'windows.createPreset.overwriteUnsavedChangesConfirm',
+				})
+
+				const overwriteUnsaved = await confirmWindow.fired
+				if (overwriteUnsaved) {
+					// Stop file collision checks & continue creating preset
+					permissions.mayOverwriteUnsavedChanges = true
+
+					project.closeFile(filePath)
 				} else {
 					// Close loading window & early return
 					app.windows.loadingWindow.close()
