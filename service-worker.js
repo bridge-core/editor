@@ -11,6 +11,8 @@
  * See https://goo.gl/2aRDsh
  */
 
+
+
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
@@ -24,6 +26,8 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
