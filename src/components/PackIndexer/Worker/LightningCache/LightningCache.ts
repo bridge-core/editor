@@ -5,6 +5,9 @@ import json5 from 'json5'
 import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'
 import { runScript } from './Script'
+import { extname } from '/@/utils/path'
+
+const knownTextFiles = new Set(['.js', '.ts', '.lang', '.mcfunction', '.txt'])
 
 export interface ILightningInstruction {
 	'@filter'?: string[]
@@ -114,11 +117,20 @@ export class LightningCache {
 			return false
 		}
 
+		const ext = extname(filePath)
+		console.log(ext)
+
 		// Second step: Process file
-		if (filePath.endsWith('.json')) {
+		if (ext === '.json') {
 			await this.processJSON(filePath, fileType, file)
-		} else {
+		} else if (knownTextFiles.has(ext)) {
 			await this.processText(filePath, fileType, file)
+		} else {
+			this.lightningStore.add(
+				filePath,
+				{ lastModified: file.lastModified },
+				fileType
+			)
 		}
 
 		return true
@@ -146,7 +158,7 @@ export class LightningCache {
 			)
 		}
 
-		await this.lightningStore.add(
+		this.lightningStore.add(
 			filePath,
 			{ lastModified: file.lastModified },
 			fileType
