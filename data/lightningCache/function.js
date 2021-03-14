@@ -1,15 +1,23 @@
 module.exports = (text) => {
-	let tags = []
 	const lines = text.split('\n')
 
-	const addTags = lines.filter((line) =>
+	const entityTags = []
+	const tagCommands = lines.filter((line) =>
 		/tag @(([a-z](\[.+\])?)) (add|remove) [a-zA-z_]+/g.exec(line)
 	)
-	addTags.forEach((line) => {
+	tagCommands.forEach((line) => {
 		let args = line.split(' ')
-		tags.push(args[3].replace('\r', ''))
+		entityTags.push(args[3].replace('\r', ''))
 	})
+
+	const functionPaths = []
+	lines.filter((line) => {
+		let funcName = /function\s+([aA-zZ0-9\/]+)/g.exec(line)
+		if (funcName) functionPaths.push(`functions/${funcName[1]}.mcfunction`)
+	})
+
 	return {
-		entityTag: tags,
+		entityTag: entityTags,
+		functionPath: functionPaths,
 	}
 }
