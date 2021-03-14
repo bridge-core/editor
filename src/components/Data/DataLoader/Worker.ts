@@ -89,26 +89,22 @@ export class DataLoaderService extends SimpleTaskService {
 			const parentDir = dirname(filePath)
 
 			if (filePath.endsWith('/')) {
-				await whenIdle(async () => {
-					handles[filePath.slice(0, -1)] = await handles[
-						parentDir
-					].getDirectoryHandle(name, {
-						create: true,
-					})
+				handles[filePath.slice(0, -1)] = await handles[
+					parentDir
+				].getDirectoryHandle(name, {
+					create: true,
 				})
 
 				this.progress.addToCurrent(1)
 				continue
 			}
 
-			await whenIdle(async () => {
-				await this.fileSystem.write(
-					await handles[parentDir].getFileHandle(name, {
-						create: true,
-					}),
-					zip[filePath]
-				)
-			})
+			await this.fileSystem.write(
+				await handles[parentDir].getFileHandle(name, {
+					create: true,
+				}),
+				zip[filePath]
+			)
 			delete zip[filePath]
 
 			this.progress.addToCurrent(1)
