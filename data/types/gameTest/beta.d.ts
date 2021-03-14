@@ -88,14 +88,14 @@ declare interface Test {
 	assertBlockNotPresent(id: Block, position: BlockPos): void
 	/**
 	 * Asserts an error when the specified block at the specified coordinates has the block state
-	 * @param block
-	 * The block to check for
+	 * @param state
+	 * The block state to test for
 	 * @param data
-	 * The data value of the block to test for
+	 * The value of the state to test for
 	 * @param position
 	 * The relative position to test for the block
 	 */
-	assertBlockState(block: Block, data: number, position: BlockPos): void
+	assertBlockState(state: string, data: number | string, position: BlockPos): void
 	/**
 	 * Asserts an error if there is an empty container at the specified coordinates
 	 * @param position
@@ -127,7 +127,7 @@ declare interface Test {
 	 */
 	assertEntityHasArmor(
 		id: string,
-		slot: string,
+		slot: number,
 		item: string,
 		data: number,
 		position: BlockPos,
@@ -152,7 +152,7 @@ declare interface Test {
 	): void
 
 	/**
-	 * Sets the specified entity at the specified coordinates
+	 * Sets the specified entity at the specified coordinates as tamed
 	 * @param id
 	 * The entity identifier to set to tamed
 	 * @param position
