@@ -25,7 +25,7 @@
 				"features": {
 					"type": "array",
 					"items": {
-						"$ref": "../general/reference/feature.json"
+						"$ref": "../../general/reference/feature.json"
 					}
 				}
 			}
@@ -51,7 +51,7 @@
 				"features": {
 					"type": "array",
 					"items": {
-						"$ref": "../general/reference/feature.json"
+						"$ref": "../../general/reference/feature.json"
 					}
 				}
 			}
@@ -163,7 +163,7 @@
 				"places_feature": {
 					"type": "array",
 					"items": {
-						"$ref": "../general/reference/feature.json"
+						"$ref": "../../general/reference/feature.json"
 					}
 				}
 			}
@@ -186,7 +186,7 @@
 					}
 				},
 				"places_feature": {
-					"$ref": "../general/reference/feature.json"
+					"$ref": "../../general/reference/feature.json"
 				},
 				"search_volume": {
 					"additionalProperties": false,
@@ -249,49 +249,49 @@
 						"top": {
 							"type": "array",
 							"items": {
-								"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 							}
 						},
 						"bottom": {
 							"type": "array",
 							"items": {
-								"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 							}
 						},
 						"north": {
 							"type": "array",
 							"items": {
-								"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 							}
 						},
 						"east": {
 							"type": "array",
 							"items": {
-								"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 							}
 						},
 						"south": {
 							"type": "array",
 							"items": {
-								"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 							}
 						},
 						"west": {
 							"type": "array",
 							"items": {
-								"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 							}
 						},
 						"all": {
 							"type": "array",
 							"items": {
-								"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 							}
 						},
 						"sides": {
 							"type": "array",
 							"items": {
-								"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 							}
 						}
 					}
@@ -370,8 +370,14 @@
 			}
 		},
 		"minecraft:tree_feature": {
-			"$ref": "../general.json#/definitions/branches_reference",
-			"additionalProperties": false,
+			"allOf": [
+				{
+					"$ref": "../general.json#/definitions/branches_reference"
+				},
+				{
+					"$ref": "../general.json#/definitions/canopy_reference"
+				}
+			],
 			"properties": {
 				"description": {
 					"additionalProperties": false,
@@ -495,7 +501,7 @@
 							"$ref": "../general.json#/definitions/block_reference"
 						},
 						"log_decoration_feature": {
-							"$ref": "../general/reference/feature.json"
+							"$ref": "../../general/reference/feature.json"
 						},
 						"trunk_decoration": {
 							"additionalProperties": false,
@@ -698,7 +704,7 @@
 						"maxItems": 2,
 						"items": [
 							{
-								"$ref": "../general/reference/feature.json"
+								"$ref": "../../general/reference/feature.json"
 							},
 							{
 								"type": "integer"

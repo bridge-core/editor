@@ -48,7 +48,6 @@
 			]
 		},
 		"branches_reference": {
-			"additionalProperties": false,
 			"properties": {
 				"branch_length": {
 					"type": "number"
@@ -60,172 +59,169 @@
 					"type": "number"
 				},
 				"branch_canopy": {
+					"$ref": "#/definitions/canopy_reference"
+				}
+			}
+		},
+		"canopy_reference": {
+			"properties": {
+				"acacia_canopy": {
+					"properties": {
+						"canopy_size": {
+							"type": "number"
+						},
+						"simplify_canopy": {
+							"type": "boolean"
+						},
+						"leaf_block": {
+							"$ref": "#/definitions/block_reference"
+						}
+					}
+				},
+				"canopy": {
 					"additionalProperties": false,
 					"properties": {
-						"acacia_canopy": {
+						"canopy_offset": {
 							"properties": {
-								"canopy_size": {
+								"min": {
 									"type": "number"
 								},
-								"simplify_canopy": {
-									"type": "boolean"
-								},
-								"leaf_block": {
-									"$ref": "#/definitions/block_reference"
+								"max": {
+									"type": "number"
 								}
 							}
 						},
-						"canopy": {
+						"min_width": {
+							"type": "number"
+						},
+						"canopy_slope": {
 							"additionalProperties": false,
 							"properties": {
-								"canopy_offset": {
-									"properties": {
-										"min": {
-											"type": "number"
-										},
-										"max": {
-											"type": "number"
-										}
-									}
-								},
-								"min_width": {
+								"rise": {
 									"type": "number"
 								},
-								"canopy_slope": {
-									"additionalProperties": false,
-									"properties": {
-										"rise": {
-											"type": "number"
-										},
-										"run": {
-											"type": "number"
-										}
-									}
-								},
-								"variation_chance": {
-									"type": "array",
-									"items": {
-										"$ref": "#/definitions/chance_information"
-									}
-								},
-								"leaf_block": {
-									"$ref": "#/definitions/block_reference"
-								},
-								"canopy_decoration": {
-									"additionalProperties": false,
-									"properties": {
-										"decoration_chance": {
-											"$ref": "#/definitions/chance_information"
-										},
-										"block_reference": {
-											"$ref": "#/definitions/block_reference"
-										},
-										"num_steps": {
-											"type": "number"
-										},
-										"step_direction": {
-											"type": "string",
-											"enum": [
-												"down",
-												"up",
-												"out",
-												"away"
-											]
-										}
-									}
+								"run": {
+									"type": "number"
 								}
 							}
 						},
-						"fancy_canopy": {
-							"additionalProperties": false,
-							"properties": {
-								"height": {
-									"type": "number"
-								},
-								"radius": {
-									"type": "number"
-								},
-								"leaf_block": {
-									"$ref": "#/definitions/block_reference"
-								}
+						"variation_chance": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/chance_information"
 							}
 						},
-						"mega_canopy": {
-							"additionalProperties": false,
-							"properties": {
-								"canopy_height": {
-									"type": "number"
-								},
-								"core_width": {
-									"type": "number"
-								},
-								"base_radius": {
-									"type": "number"
-								},
-								"simplify_canopy": {
-									"type": "boolean"
-								},
-								"leaf_block": {
-									"$ref": "#/definitions/block_reference"
-								}
-							}
+						"leaf_block": {
+							"$ref": "#/definitions/block_reference"
 						},
-						"mega_pine_canopy": {
+						"canopy_decoration": {
 							"additionalProperties": false,
 							"properties": {
-								"canopy_height": {
-									"type": "number"
+								"decoration_chance": {
+									"$ref": "#/definitions/chance_information"
 								},
-								"core_width": {
-									"type": "number"
-								},
-								"base_radius": {
-									"type": "number"
-								},
-								"radius_step_modifier": {
-									"type": "number"
-								},
-								"leaf_block": {
+								"block_reference": {
 									"$ref": "#/definitions/block_reference"
+								},
+								"num_steps": {
+									"type": "number"
+								},
+								"step_direction": {
+									"type": "string",
+									"enum": ["down", "up", "out", "away"]
 								}
 							}
+						}
+					}
+				},
+				"fancy_canopy": {
+					"additionalProperties": false,
+					"properties": {
+						"height": {
+							"type": "number"
 						},
-						"pine_canopy": {
-							"additionalProperties": false,
-							"properties": {
-								"canopy_height": {
-									"type": "number"
-								},
-								"core_width": {
-									"type": "number"
-								},
-								"outer_radius": {
-									"type": "number"
-								},
-								"inner_radius": {
-									"type": "number"
-								},
-								"leaf_block": {
-									"$ref": "#/definitions/block_reference"
-								}
-							}
+						"radius": {
+							"type": "number"
 						},
-						"spruce_canopy": {
-							"additionalProperties": false,
-							"properties": {
-								"lower_offset": {
-									"type": "number"
-								},
-								"upper_offset": {
-									"type": "number"
-								},
-								"max_radius": {
-									"type": "number"
-								},
-								"leaf_block": {
-									"$ref": "#/definitions/block_reference"
-								}
-							}
+						"leaf_block": {
+							"$ref": "#/definitions/block_reference"
+						}
+					}
+				},
+				"mega_canopy": {
+					"additionalProperties": false,
+					"properties": {
+						"canopy_height": {
+							"type": "number"
+						},
+						"core_width": {
+							"type": "number"
+						},
+						"base_radius": {
+							"type": "number"
+						},
+						"simplify_canopy": {
+							"type": "boolean"
+						},
+						"leaf_block": {
+							"$ref": "#/definitions/block_reference"
+						}
+					}
+				},
+				"mega_pine_canopy": {
+					"additionalProperties": false,
+					"properties": {
+						"canopy_height": {
+							"type": "number"
+						},
+						"core_width": {
+							"type": "number"
+						},
+						"base_radius": {
+							"type": "number"
+						},
+						"radius_step_modifier": {
+							"type": "number"
+						},
+						"leaf_block": {
+							"$ref": "#/definitions/block_reference"
+						}
+					}
+				},
+				"pine_canopy": {
+					"additionalProperties": false,
+					"properties": {
+						"canopy_height": {
+							"type": "number"
+						},
+						"core_width": {
+							"type": "number"
+						},
+						"outer_radius": {
+							"type": "number"
+						},
+						"inner_radius": {
+							"type": "number"
+						},
+						"leaf_block": {
+							"$ref": "#/definitions/block_reference"
+						}
+					}
+				},
+				"spruce_canopy": {
+					"additionalProperties": false,
+					"properties": {
+						"lower_offset": {
+							"type": "number"
+						},
+						"upper_offset": {
+							"type": "number"
+						},
+						"max_radius": {
+							"type": "number"
+						},
+						"leaf_block": {
+							"$ref": "#/definitions/block_reference"
 						}
 					}
 				}

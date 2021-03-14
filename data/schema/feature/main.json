@@ -3,7 +3,6 @@
 	"$id": "bridge.feature",
 	"title": "Feature",
 	"required": ["format_version"],
-	"additionalProperties": false,
 	"allOf": [
 		{
 			"properties": {
