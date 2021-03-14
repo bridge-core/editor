@@ -7,7 +7,14 @@ import type { LightningStore } from './LightningStore'
 import { runScript } from './Script'
 import { extname } from '/@/utils/path'
 
-const knownTextFiles = new Set(['.js', '.ts', '.lang', '.mcfunction', '.txt'])
+const knownTextFiles = new Set([
+	'.js',
+	'.ts',
+	'.lang',
+	'.mcfunction',
+	'.txt',
+	'.molang',
+])
 
 export interface ILightningInstruction {
 	'@filter'?: string[]
