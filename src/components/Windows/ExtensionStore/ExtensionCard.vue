@@ -55,7 +55,7 @@
 				:key="tag.text"
 				class="mr-2"
 				:color="tag.color"
-				text-color="white"
+				:text-color="tag.color ? 'white' : undefined"
 				small
 				@click="
 					tag.type === 'search'
