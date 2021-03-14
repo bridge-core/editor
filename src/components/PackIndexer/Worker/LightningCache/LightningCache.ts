@@ -117,33 +117,10 @@ export class LightningCache {
 		// Second step: Process file
 		if (filePath.endsWith('.json')) {
 			await this.processJSON(filePath, fileType, file)
-		} else if (filePath.endsWith('.mcfunction')) {
-			await this.processFunction(filePath, fileType, file)
 		} else {
 			await this.processText(filePath, fileType, file)
 		}
 
-		return true
-	}
-
-	async processFunction(filePath: string, fileType: string, file: File) {
-		const fileContent = await file.text()
-
-		const functionPath: string[] = []
-		for (const line of fileContent.split('\n')) {
-			let funcName = /function\s+([aA-zZ0-9\/]+)/g.exec(line)
-			if (funcName)
-				functionPath.push(`functions/${funcName[1]}.mcfunction`)
-		}
-
-		await this.lightningStore.add(
-			filePath,
-			{
-				lastModified: file.lastModified,
-				data: { functionPath },
-			},
-			fileType
-		)
 		return true
 	}
 

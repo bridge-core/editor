@@ -4,5 +4,6 @@
 	"scope": "BP/functions/",
 	"matcher": ["BP/functions/**/*.mcfunction", "BP/functions/*.mcfunction"],
 	"packSpider": "function.json",
-	"formatOnSaveCapable": false
+	"formatOnSaveCapable": false,
+	"lightningCache": "function.js"
 }

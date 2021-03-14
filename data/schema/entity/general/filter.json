@@ -347,7 +347,7 @@
 			"then": {
 				"properties": {
 					"value": {
-						"type": "string"
+						"$ref": "../../function/dynamic/entityTagEnum.json"
 					}
 				}
 			}
