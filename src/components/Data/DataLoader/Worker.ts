@@ -109,6 +109,7 @@ export class DataLoaderService extends SimpleTaskService {
 					zip[filePath]
 				)
 			})
+			delete zip[filePath]
 
 			this.progress.addToCurrent(1)
 		}
