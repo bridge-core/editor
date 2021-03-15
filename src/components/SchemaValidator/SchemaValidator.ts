@@ -1,15 +1,19 @@
-import { JSONValidator } from './JSONValidator'
+interface IDiagnostic {
+	path: string
+	message: string
+}
+export class SchemaValidator {
+	protected diagnostics: IDiagnostic[] = []
 
-export class SchemaValidator extends JSONValidator {
-	constructor(schema: any) {
-		super()
-	}
+	constructor(schema: any) {}
 
-	validate(source: string) {
-		super.validate(source)
-
+	validate(source: any) {
 		// TODO: Validate that source matches schema
 
 		return this.diagnostics.length === 0
+	}
+
+	addDiagnostic(diagnostic: IDiagnostic) {
+		this.diagnostics.push(diagnostic)
 	}
 }
