@@ -16,7 +16,8 @@
 			"webpack-env",
 			"@types/wicg-file-system-access",
 			"jest",
-			"node" /*, "vite/client"*/
+			"node",
+			"vite/client"
 		],
 		"paths": {
 			"/@/*": ["src/*"]

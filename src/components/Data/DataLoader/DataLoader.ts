@@ -2,7 +2,7 @@ import { App } from '/@/App'
 import { WorkerManager } from '../../Worker/Manager'
 import type { DataLoaderService } from './Worker'
 import { proxy } from 'comlink'
-
+import DataLoaderWorker from './Worker.ts?worker'
 export class DataLoader extends WorkerManager<
 	DataLoaderService,
 	FileSystemDirectoryHandle,
@@ -33,8 +33,6 @@ export class DataLoader extends WorkerManager<
 	}
 
 	protected createWorker() {
-		this.worker = new Worker('./Worker.ts', {
-			type: 'module',
-		})
+		this.worker = new DataLoaderWorker()
 	}
 }

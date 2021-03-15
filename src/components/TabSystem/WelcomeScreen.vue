@@ -7,7 +7,7 @@
 			style="height: 160px; width: 160px"
 			class="mb-4"
 			alt="bridge. Logo"
-			src="@/_assets/logo.svg"
+			src="/@/_assets/logo.svg"
 		/>
 		<h1 class="text-h3 text-center">{{ t('welcome.title') }}</h1>
 		<h2 class="text-h6 mb-12 text-center">{{ t('welcome.subtitle') }}</h2>

@@ -3,7 +3,7 @@
 		<img
 			style="height: 20px; padding-right: 4px"
 			alt="bridge. Logo"
-			src="@/_assets/logo.svg"
+			src="/@/_assets/logo.svg"
 		/>
 		<v-divider vertical />
 
