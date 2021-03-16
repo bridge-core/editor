@@ -184,9 +184,13 @@ export class Component {
 					animations: {
 						[shortAnimId]: animId,
 					},
-					scripts: [
-						!condition ? shortAnimId : { [shortAnimId]: condition },
-					],
+					scripts: {
+						animate: [
+							!condition
+								? shortAnimId
+								: { [shortAnimId]: condition },
+						],
+					},
 				},
 				'minecraft:entity/description'
 			)
