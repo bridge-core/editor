@@ -1122,7 +1122,14 @@
 									},
 									"interact_text": {
 										"description": "Text to be displayed when the entity can be equipped with this item when playing with Touch-screen controls.",
-										"$ref": "../../clientLang/dynamic/actionTextEnum.json"
+										"anyOf": [
+											{
+												"$ref": "../../clientLang/dynamic/actionTextEnum.json"
+											},
+											{
+												"$ref": "../../general/vanilla/actionText.json"
+											}
+										]
 									},
 									"item": {
 										"description": "Identifier of the item that can be equipped for this slot.",
@@ -1770,7 +1777,14 @@
 									},
 									"interact_text": {
 										"description": "Text to show when the player is able to interact in this way with this entity when playing with Touch-screen controls.",
-										"$ref": "../../clientLang/dynamic/actionTextEnum.json"
+										"anyOf": [
+											{
+												"$ref": "../../clientLang/dynamic/actionTextEnum.json"
+											},
+											{
+												"$ref": "../../general/vanilla/actionText.json"
+											}
+										]
 									},
 									"on_interact": {
 										"description": "Event to fire when the interaction occurs.",
@@ -1869,7 +1883,14 @@
 					"additionalProperties": false,
 					"properties": {
 						"interact_text": {
-							"$ref": "../../clientLang/dynamic/actionTextEnum.json"
+							"anyOf": [
+								{
+									"$ref": "../../clientLang/dynamic/actionTextEnum.json"
+								},
+								{
+									"$ref": "../../general/vanilla/actionText.json"
+								}
+							]
 						}
 					}
 				},
@@ -3342,7 +3363,14 @@
 						},
 						"interact_text": {
 							"description": "The text to display when the player can interact with the entity when playing with Touch-screen controlsThe text to display when the player can interact with the entity when playing with Touch-screen controls.",
-							"$ref": "../../clientLang/dynamic/actionTextEnum.json"
+							"anyOf": [
+								{
+									"$ref": "../../clientLang/dynamic/actionTextEnum.json"
+								},
+								{
+									"$ref": "../../general/vanilla/actionText.json"
+								}
+							]
 						},
 						"pull_in_entities": {
 							"description": "If true, this entity will pull in entities that are in the correct family_types into any available seats.",
