@@ -22,17 +22,7 @@
 					}
 				},
 				"components": {
-					"anyOf": [
-						{
-							"$ref": "../v1.16.0/components.json"
-						},
-						{
-							"$ref": "../v1.16.0/tag.json"
-						},
-						{
-							"$ref": "./components.json"
-						}
-					]
+					"$ref": "./components.json"
 				}
 			}
 		}

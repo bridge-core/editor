@@ -2,6 +2,12 @@
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"allOf": [
 		{
+			"$ref": "./annotations.json"
+		},
+		{
+			"$ref": "./behaviors.json"
+		},
+		{
 			"$ref": "../dynamic/customComponents.json"
 		},
 		{
@@ -4201,12 +4207,6 @@
 					}
 				}
 			}
-		},
-		{
-			"$ref": "./annotations.json"
-		},
-		{
-			"$ref": "./behaviors.json"
 		}
 	]
 }

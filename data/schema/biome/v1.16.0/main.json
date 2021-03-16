@@ -22,14 +22,7 @@
 					}
 				},
 				"components": {
-					"anyOf": [
-						{
-							"$ref": "./components.json"
-						},
-						{
-							"$ref": "./tag.json"
-						}
-					]
+					"$ref": "./components.json"
 				}
 			}
 		}
