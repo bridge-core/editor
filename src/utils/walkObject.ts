@@ -28,3 +28,21 @@ function _walkObject(
 		}
 	} else _walkObject(keys, current[key], onReach)
 }
+
+export function setObjectAt<T = any>(
+	path: string,
+	obj: any,
+	onSet: (data: T) => T
+) {
+	const keys = path.length === 0 || path === '/' ? [] : path.split('/')
+	if (keys.length === 0) return
+
+	const lastKey = keys.pop()
+
+	_walkObject(keys, obj, (currentObj) => {
+		for (const key in currentObj) {
+			if (key === lastKey || lastKey === '*')
+				currentObj[key] = onSet(currentObj[key])
+		}
+	})
+}

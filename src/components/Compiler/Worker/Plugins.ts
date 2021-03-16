@@ -11,6 +11,7 @@ import {
 } from './Plugins/CustomComponent/Plugin'
 import { SimpleRewrite } from './Plugins/simpleRewrite'
 import { EntityIdentifierAlias } from './Plugins/EntityIdentifier'
+import { MoLangPlugin } from './Plugins/MoLang/Plugin'
 
 export type TCompilerHook = keyof TCompilerPlugin
 export type TCompilerPlugin = {
@@ -77,8 +78,8 @@ export type TCompilerPlugin = {
 	 */
 	buildEnd(): Promise<void> | void
 }
-export type TCompilerPluginFactory = (context: {
-	options: any
+export type TCompilerPluginFactory<T = any> = (context: {
+	options: T
 	fileSystem: FileSystem
 	compileFiles: (
 		files: string[],
@@ -92,10 +93,7 @@ export interface ILoadPLugins {
 	localFs: FileSystem
 	pluginPaths: Record<string, string>
 	pluginOpts: Record<string, any>
-	compileFiles: (
-		files: string[],
-		errorOnReadFailure?: boolean
-	) => Promise<void>
+	compileFiles: (files: string[]) => Promise<void>
 	getAliases: (filePath: string) => string[]
 }
 
@@ -116,6 +114,7 @@ export async function loadPlugins({
 	plugins.set('customItemComponents', CustomItemComponentPlugin)
 	plugins.set('customBlockComponents', CustomBlockComponentPlugin)
 	plugins.set('entityIdentifierAlias', EntityIdentifierAlias)
+	plugins.set('moLang', MoLangPlugin)
 
 	for (const [pluginId, pluginPath] of Object.entries(pluginPaths ?? {})) {
 		let file: File

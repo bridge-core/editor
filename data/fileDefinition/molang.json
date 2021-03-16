@@ -2,5 +2,6 @@
 	"id": "molang",
 	"icon": "mdi-alpha-m",
 	"scope": ["RP/molang/", "BP/molang/"],
-	"matcher": ["*/molang/**/*.molang", "*/molang/*.molang"]
+	"matcher": ["*/molang/**/*.molang", "*/molang/*.molang"],
+	"formatOnSaveCapable": false
 }
