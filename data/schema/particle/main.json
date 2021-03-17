@@ -57,17 +57,10 @@
 									}
 								},
 								"input": {
-									"type": "string"
+									"$ref": "../molang/embeddedBeta.json"
 								},
 								"horizontal_range": {
-									"anyOf": [
-										{
-											"type": "number"
-										},
-										{
-											"type": "string"
-										}
-									]
+									"$ref": "../molang/embeddedBeta.json"
 								}
 							}
 						}

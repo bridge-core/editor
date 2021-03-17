@@ -41,7 +41,7 @@
 					]
 				},
 				"pre_effect_expression": {
-					"type": "string"
+					"$ref": "../molang/embeddedBeta.json"
 				}
 			}
 		},
