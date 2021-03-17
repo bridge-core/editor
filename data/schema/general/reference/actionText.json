@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "string",
+	"anyOf": [
+		{
+			"$ref": "../vanilla/actionText.json"
+		},
+		{
+			"$ref": "../../clientLang/dynamic/actionTextEnum.json"
+		}
+	]
+}
