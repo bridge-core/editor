@@ -25,6 +25,10 @@
 		"minecraft:item/components/minecraft:repairable/repair_items/*/repair_amount",
 		"minecraft:item/components/minecraft:icon/frame"
 	],
+	"BP/features/": [
+		"minecraft:growing_plant_feature/height_distribution/*/*",
+		"minecraft:growing_plant_feature/age"
+	],
 
 	"RP/animations/": [
 		"animations/*/anim_time_update",

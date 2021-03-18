@@ -96,6 +96,127 @@
 							"$ref": "../general.json#/definitions/block_reference"
 						}
 					}
+				},
+				"minecraft:growing_plant_feature": {
+					"description": "Places a growing plant in the world. A growing plant is a column that is anchored either to the ceiling or the floor, based on its growth direction. The growing plant has a body and a head, where the head is the tip of the plant, and the body consists of the remainder blocks. This feature can be used to define growing plants with variable body and head blocks, e.g. Cave Vines.",
+					"additionalProperties": false,
+					"properties": {
+						"description": {
+							"additionalProperties": false,
+							"properties": {
+								"identifier": {
+									"anyOf": [
+										{
+											"$ref": "../../project/fileIdentifierEnum.json"
+										},
+										{
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						"height_distribution": {
+							"description": "Collection of weighted heights that placement will select from.",
+							"type": "array",
+							"items": {
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"items": [
+									{
+										"description": "Plant height.",
+										"$ref": "../../molang/embeddedBeta.json"
+									},
+									{
+										"type": "number",
+										"description": "Weight used in random selection. Value is relative to other weights in the collection."
+									}
+								]
+							}
+						},
+						"growth_direction": {
+							"type": "string",
+							"description": "Direction that the plant grows towards.",
+							"enum": ["UP", "DOWN"]
+						},
+						"age": {
+							"description": "Age of the head of the plant.",
+							"$ref": "../../molang/embeddedBeta.json"
+						},
+						"body_blocks": {
+							"type": "array",
+							"description": "Collection of weighted block descriptor that placement will select from for the body of the plant.",
+							"items": {
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"items": [
+									{
+										"description": "Plant body block.",
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+									},
+									{
+										"description": "Weight used in random selection. Value is relative to other weights in the collection.",
+										"type": "number"
+									}
+								]
+							}
+						},
+						"head_blocks": {
+							"type": "array",
+							"description": "Collection of weighted block descriptor that placement will select from for the head of the plant.",
+							"items": {
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"items": [
+									{
+										"description": "Plant head block.",
+										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+									},
+									{
+										"description": "Weight used in random selection. Value is relative to other weights in the collection.",
+										"type": "number"
+									}
+								]
+							}
+						}
+					}
+				},
+				"minecraft:snap_to_surface_feature": {
+					"description": "Snaps the y-value of a feature placement pos to the floor or the ceiling within the provided 'vertical_search_range'. The placement biome is preserved. If the snap position goes outside of the placement biome, placement will fail.",
+					"additionalProperties": false,
+					"properties": {
+						"description": {
+							"additionalProperties": false,
+							"properties": {
+								"identifier": {
+									"anyOf": [
+										{
+											"$ref": "../../project/fileIdentifierEnum.json"
+										},
+										{
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						"feature_to_snap": {
+							"description": "Named reference of feature to be snapped.",
+							"$ref": "../dynamic/identifierEnum.json"
+						},
+						"vertical_search_range": {
+							"description": "Range to search for a floor or ceiling for snaping the feature.",
+							"type": "integer"
+						},
+						"surface": {
+							"description": "Defines the surface that the y-value of the placement position will be snapped to.",
+							"type": "string",
+							"enum": ["ceiling", "floor"]
+						}
+					}
 				}
 			}
 		}
