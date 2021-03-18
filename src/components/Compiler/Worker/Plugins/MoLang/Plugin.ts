@@ -40,12 +40,17 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 
 		async transform(filePath, fileContent) {
 			const includePaths = loadMoLangFrom(filePath)
-			console.log(includePaths, fileContent)
+
 			if (includePaths && includePaths.length > 0) {
 				includePaths.forEach((includePath) =>
 					setObjectAt<string>(includePath, fileContent, (molang) => {
-						console.log(molang, customMoLang.transform(molang))
-						return customMoLang.transform(molang)
+						if (typeof molang !== 'string') return molang
+
+						try {
+							return customMoLang.transform(molang)
+						} catch {
+							return molang
+						}
 					})
 				)
 			}
