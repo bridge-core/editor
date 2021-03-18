@@ -1,5 +1,6 @@
 declare module 'Minecraft' {
 	export const BlockLocation: BlockPositionClass
+	export const World: World
 }
 
 declare interface Test {
@@ -95,7 +96,11 @@ declare interface Test {
 	 * @param position
 	 * The relative position to test for the block
 	 */
-	assertBlockState(state: string, data: number | string, position: BlockPos): void
+	assertBlockState(
+		state: string,
+		data: number | string,
+		position: BlockPos
+	): void
 	/**
 	 * Asserts an error if there is an empty container at the specified coordinates
 	 * @param position
@@ -179,3 +184,11 @@ declare interface Sequence {
 	 */
 	thenSucced(): void
 }
+
+declare interface World {
+	attachEvent(event: WorldEvent, func: (entity: Entity) => void): void
+}
+
+declare interface Entity {}
+
+declare type WorldEvent = 'entitySpawned' // Probably more events, just don't know them yet
