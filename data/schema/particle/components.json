@@ -664,7 +664,7 @@
 		"minecraft:particle_lifetime_expression": {
 			"additionalProperties": false,
 			"properties": {
-				"expirations_expression": {
+				"expiration_expression": {
 					"description": "This expression makes the particle expire when true (non-zero). The float/expr is evaluated once per particle. Evaluated every frame",
 					"$ref": "../molang/embeddedBeta.json"
 				},
