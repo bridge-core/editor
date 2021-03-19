@@ -8,14 +8,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../../project/fileIdentifierEnum.json"
 						}
 					}
 				},
@@ -37,14 +30,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../../project/fileIdentifierEnum.json"
 						}
 					}
 				},
@@ -63,14 +49,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../../project/fileIdentifierEnum.json"
 						}
 					}
 				},
@@ -95,14 +74,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../../project/fileIdentifierEnum.json"
 						}
 					}
 				},
@@ -174,14 +146,7 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../../project/fileIdentifierEnum.json"
 						}
 					}
 				},
@@ -216,14 +181,7 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../../project/fileIdentifierEnum.json"
 						}
 					}
 				},
@@ -310,14 +268,7 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../../project/fileIdentifierEnum.json"
 						}
 					}
 				},
@@ -383,14 +334,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../../project/fileIdentifierEnum.json"
 						}
 					}
 				},
@@ -682,14 +626,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../../project/fileIdentifierEnum.json"
 						}
 					}
 				},

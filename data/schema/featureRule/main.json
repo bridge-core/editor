@@ -15,14 +15,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../project/fileIdentifierEnum.json"
 						},
 						"places_feature": {
 							"$ref": "../general/reference/feature.json"
