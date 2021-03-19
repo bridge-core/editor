@@ -106,7 +106,7 @@
 		"particle_effect/component/minecraft:particle_appearance_billboard/uv/flipbook/max_frame",
 		"particle_effect/component/minecraft:particle_appearance_tinting/color/gradient/*/*",
 		"particle_effect/component/minecraft:particle_appearance/color/interpolant",
-		"particle_effect/component/minecraft:particle_lifetime_expression/expirations_expression",
+		"particle_effect/component/minecraft:particle_lifetime_expression/expiration_expression",
 		"particle_effect/component/minecraft:particle_lifetime_expression/max_lifetime",
 		"particle_effect/component/minecraft:particle_initialization/per_update_expression",
 		"particle_effect/component/minecraft:particle_initialization/per_render_expression"
