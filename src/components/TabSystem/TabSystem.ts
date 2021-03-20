@@ -8,7 +8,8 @@ import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
 import { Project } from '../Projects/Project/Project'
 import { OpenedFiles } from './OpenedFiles'
 import { v4 as uuid } from 'uuid'
-export class TabSystem {
+import { MonacoHolder } from './MonacoHolder'
+export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
 	public tabs: Tab[] = []
 	protected _selectedTab: Tab | undefined = undefined
@@ -24,6 +25,8 @@ export class TabSystem {
 	}
 
 	constructor(protected project: Project, id = 0) {
+		super()
+
 		this.openedFiles = new OpenedFiles(
 			this,
 			project.app,
