@@ -54,7 +54,14 @@
 					"additionalProperties": false,
 					"properties": {
 						"iterations": {
-							"type": "integer"
+							"anyOf": [
+								{
+									"type": "integer"
+								},
+								{
+									"$ref": "../molang/embeddedBeta.json"
+								}
+							]
 						},
 						"coordinate_eval_order": {
 							"type": "string",
