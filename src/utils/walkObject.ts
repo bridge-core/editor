@@ -14,7 +14,6 @@ function _walkObject(
 	current: any,
 	onReach: (data: any) => void
 ) {
-	console.log(keys.join('/'))
 	if (current === undefined) return
 	if (keys.length === 0) return onReach(current)
 	if (typeof current !== 'object') return // Needs to be last because we want to make sure onReach gets called if possible
