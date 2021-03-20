@@ -22,10 +22,6 @@ export default {
 	activated() {
 		this.updateEditor()
 	},
-	deactivated() {
-		this.tab.editorInstance?.dispose()
-		this.tab.editorInstance = undefined
-	},
 	mounted() {
 		this.updateEditor()
 	},
