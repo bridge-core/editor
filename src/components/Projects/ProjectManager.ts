@@ -5,6 +5,7 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { Project } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
 import { Title } from '/@/components/Projects/Title'
+import { editor } from 'monaco-editor'
 
 export class ProjectManager extends Signal<void> {
 	public readonly recentProjects!: RecentProjects
@@ -142,5 +143,13 @@ export class ProjectManager extends Signal<void> {
 		const fallback = Object.keys(this.state)[0]
 		await set('selectedProject', fallback)
 		return fallback
+	}
+
+	updateAllEditorOptions(options: editor.IEditorConstructionOptions) {
+		Object.values(this.state).forEach((project) =>
+			project.tabSystems.forEach((tabSystem) =>
+				tabSystem.updateOptions(options)
+			)
+		)
 	}
 }

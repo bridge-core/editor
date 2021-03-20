@@ -4,9 +4,7 @@
 
 <script>
 import * as monaco from 'monaco-editor'
-import { TextTab } from './TextTab'
 
-const editorInstances = []
 export default {
 	name: 'TextTab',
 	props: {
@@ -17,14 +15,8 @@ export default {
 		},
 	},
 	computed: {
-		isDarkMode() {
-			return this.$vuetify.theme.dark
-		},
-		fontSize() {
-			return /** this.$store.state.Settings.file_font_size || */ '14px'
-		},
-		fontFamily() {
-			return /** this.$store.state.Settings.file_font_family || */ '14px'
+		tabSystem() {
+			return this.tab.parent
 		},
 	},
 	activated() {
@@ -46,32 +38,10 @@ export default {
 				alwaysStrict: true,
 			})
 
-			if (!this.tab.editorInstance) {
-				editorInstances[this.id]?.dispose()
-				editorInstances[this.id] = monaco.editor.create(
-					this.$refs.monacoContainer,
-					{
-						theme: `bridgeMonacoDefault`,
-						roundedSelection: false,
-						autoIndent: 'full',
-						fontSize: this.fontSize,
-						// fontFamily: this.fontFamily,
-						tabSize: 4,
-					}
-				)
-
-				if (this.tab instanceof TextTab)
-					this.tab.receiveEditorInstance(editorInstances[this.id])
-			}
-
-			editorInstances[this.id]?.layout()
+			this.tabSystem.createMonacoEditor(this.$refs.monacoContainer)
 		},
 	},
 	watch: {
-		tab() {
-			if (this.tab instanceof TextTab)
-				this.tab.receiveEditorInstance(editorInstances[this.id])
-		},
 		fontSize(val) {
 			this.monacoEditor.updateOptions({
 				fontSize: this.fontSize,
