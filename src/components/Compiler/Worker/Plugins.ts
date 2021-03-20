@@ -12,6 +12,7 @@ import {
 import { SimpleRewrite } from './Plugins/simpleRewrite'
 import { EntityIdentifierAlias } from './Plugins/EntityIdentifier'
 import { MoLangPlugin } from './Plugins/MoLang/Plugin'
+import { ProjectConfig } from '../../Projects/ProjectConfig'
 
 export type TCompilerHook = keyof TCompilerPlugin
 export type TCompilerPlugin = {
@@ -86,6 +87,7 @@ export type TCompilerPluginFactory<T = any> = (context: {
 		errorOnReadFailure?: boolean
 	) => Promise<void>
 	getAliases: (filePath: string) => string[]
+	targetVersion: string
 }) => Partial<TCompilerPlugin>
 
 export interface ILoadPLugins {
@@ -106,6 +108,8 @@ export async function loadPlugins({
 	getAliases,
 }: ILoadPLugins) {
 	const plugins = new Map<string, TCompilerPluginFactory>()
+	const projectConfig = new ProjectConfig(localFs)
+	const targetVersion = await projectConfig.get('targetVersion')
 
 	plugins.set('simpleRewrite', SimpleRewrite)
 	plugins.set('comMojangRewrite', ComMojangRewrite)
@@ -158,6 +162,7 @@ export async function loadPlugins({
 				fileSystem,
 				compileFiles,
 				getAliases,
+				targetVersion,
 			})
 		)
 	}
