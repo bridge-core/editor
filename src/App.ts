@@ -46,7 +46,6 @@ export class App {
 	public static readonly ready = new Signal<App>()
 	protected static _instance: App
 
-	public readonly projectConfig = new ProjectConfig()
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this)
 	public readonly themeManager: ThemeManager
@@ -85,6 +84,9 @@ export class App {
 				`Trying to access project before it is defined. Make sure to await app.projectManager.projectReady.fired`
 			)
 		return this.projectManager.currentProject
+	}
+	get projectConfig() {
+		return this.project.config
 	}
 
 	static get instance() {
