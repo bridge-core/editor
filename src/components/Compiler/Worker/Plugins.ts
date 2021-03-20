@@ -155,7 +155,7 @@ export async function loadPlugins({
 			pluginId,
 			plugin({
 				options: pluginOpts[pluginId],
-				fileSystem: localFs,
+				fileSystem,
 				compileFiles,
 				getAliases,
 			})

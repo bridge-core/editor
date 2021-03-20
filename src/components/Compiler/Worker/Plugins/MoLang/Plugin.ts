@@ -5,7 +5,7 @@ import json5 from 'json5'
 
 export const MoLangPlugin: TCompilerPluginFactory<{
 	include: Record<string, string[]>
-}> = ({ options: { include = {} } = {} }) => {
+}> = ({ fileSystem, options: { include = {} } = {} }) => {
 	const customMoLang = new CustomMoLang({})
 	const isMoLangFile = (filePath: string | null) =>
 		filePath?.endsWith('.molang')
@@ -15,6 +15,14 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 		)?.[1]
 
 	return {
+		async buildStart() {
+			include = Object.assign(
+				await fileSystem.readJSON(
+					'data/packages/location/validMoLang.json'
+				),
+				include
+			)
+		},
 		transformPath(filePath) {
 			if (isMoLangFile(filePath)) return null
 		},
@@ -45,6 +53,8 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 				includePaths.forEach((includePath) =>
 					setObjectAt<string>(includePath, fileContent, (molang) => {
 						if (typeof molang !== 'string') return molang
+						if (molang[0] === '/' || molang[0] === '@')
+							return molang
 
 						try {
 							return customMoLang.transform(molang)
