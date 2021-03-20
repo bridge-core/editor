@@ -22,11 +22,17 @@
 		"minecraft:entity/components/minecraft:rideable/seats/rotate_rider_by",
 		"minecraft:entity/component_groups/*/minecraft:rideable/seats/rotate_rider_by"
 	],
-	"BP/blocks/": ["minecraft:block/events/*/set_block_property/*"],
+	"BP/blocks/": [
+		"minecraft:block/events/*/set_block_property/*",
+		"minecraft:block/permutations/*/components/**/condition",
+		"minecraft:block/components/**/condition",
+		"minecraft:block/events/**/sequence/*/condition"
+	],
 	"BP/items/": [
 		"minecraft:item/components/minecraft:repairable/repair_items/*/repair_amount",
 		"minecraft:item/components/minecraft:icon/frame",
-		"minecraft:item/components/**/condition"
+		"minecraft:item/components/**/condition",
+		"minecraft:item/events/**/sequence/*/condition"
 	],
 	"BP/features/": [
 		"minecraft:growing_plant_feature/height_distribution/*/*",
