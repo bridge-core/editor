@@ -11,12 +11,10 @@
  * See https://goo.gl/2aRDsh
  */
 
-
-
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/editor/precache-manifest.ed30f3d273381e7326bb1db1f198c128.js"
+  "/editor/precache-manifest.05b86b3a933b987fbc2b12eead96ef69.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "bridge"});
@@ -26,8 +24,6 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
-
-
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
