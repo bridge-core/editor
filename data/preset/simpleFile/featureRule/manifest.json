@@ -4,15 +4,13 @@
 	"description": "Creates a blank feature rule.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],
-	"fields": [
-		["File Name", "FILE_NAME"]
-	],
+	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"featureRule.json",
 			"BP/feature_rules/{{FILE_NAME}}.json",
-			{ "inject": ["FILE_NAME"] }
+			{ "inject": ["FILE_NAME", "PROJECT_PREFIX"] }
 		]
 	]
 }
