@@ -8,7 +8,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/fileIdentifierEnum.json"
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -30,7 +30,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/fileIdentifierEnum.json"
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -49,7 +49,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/fileIdentifierEnum.json"
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -74,7 +74,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/fileIdentifierEnum.json"
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -146,7 +146,7 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/fileIdentifierEnum.json"
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -181,7 +181,7 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/fileIdentifierEnum.json"
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -268,7 +268,7 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/fileIdentifierEnum.json"
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -334,7 +334,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/fileIdentifierEnum.json"
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -626,7 +626,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/fileIdentifierEnum.json"
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},

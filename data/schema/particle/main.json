@@ -15,7 +15,7 @@
 						"identifier": {
 							"anyOf": [
 								{
-									"$ref": "../project/fileIdentifierEnum.json"
+									"$ref": "../project/prefixedFileIdentifierEnum.json"
 								},
 								{
 									"type": "string"
