@@ -1,6 +1,8 @@
 {
 	"BP/animation_controllers/": [
-		"animation_controllers/*/states/*/transitions/*/*"
+		"animation_controllers/*/states/*/transitions/*/*",
+		"animation_controllers/*/states/*/on_entry/*",
+		"animation_controllers/*/states/*/on_exit/*"
 	],
 	"BP/biomes/": [
 		"minecraft:biome/components/minecraft:forced_features/*/*/iterations"
@@ -23,7 +25,8 @@
 	"BP/blocks/": ["minecraft:block/events/*/set_block_property/*"],
 	"BP/items/": [
 		"minecraft:item/components/minecraft:repairable/repair_items/*/repair_amount",
-		"minecraft:item/components/minecraft:icon/frame"
+		"minecraft:item/components/minecraft:icon/frame",
+		"minecraft:item/components/**/condition"
 	],
 	"BP/features/": [
 		"minecraft:growing_plant_feature/height_distribution/*/*",
