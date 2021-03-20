@@ -4,7 +4,7 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 
 describe('ComMojangRewrite Compiler Plugin', () => {
 	const fileSystem = new FileSystem()
-	const rewrite = <TCompilerPlugin>ComMojangRewrite({
+	const rewrite = <TCompilerPlugin>ComMojangRewrite(<any>{
 		options: { mode: 'build' },
 		fileSystem,
 		compileFiles: async () => {},

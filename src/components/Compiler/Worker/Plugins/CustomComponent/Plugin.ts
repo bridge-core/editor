@@ -42,7 +42,10 @@ export function createCustomComponentPlugin({
 			async read(filePath, fileHandle) {
 				// Even if the fileHandle being undefined has nothing to do with custom components,
 				// we still just return "undefined" so we might as well keep the code simple
-				if (!fileHandle) return createAnimFiles[filePath]
+				if (!fileHandle)
+					return createAnimFiles[filePath]
+						? json5.parse(createAnimFiles[filePath])
+						: undefined
 
 				if (isComponent(filePath) && filePath.endsWith('.js')) {
 					const file = await fileHandle.getFile()
@@ -146,12 +149,15 @@ export function createCustomComponentPlugin({
 				}
 			},
 			finalizeBuild(filePath, fileContent) {
-				if (filePath.startsWith(`BP/${folder}/`))
+				if (
+					filePath.startsWith(`BP/${folder}/`) ||
+					createAnimFiles[filePath]
+				)
 					return JSON.stringify(fileContent, null, '\t')
 			},
 			async buildEnd() {
 				const animFiles = Object.keys(createAnimFiles)
-				if (animFiles.length > 0) await compileFiles(animFiles, false)
+				if (animFiles.length > 0) await compileFiles(animFiles)
 				createAnimFiles = {}
 			},
 		}

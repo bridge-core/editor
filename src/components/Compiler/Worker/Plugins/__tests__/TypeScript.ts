@@ -4,7 +4,7 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 
 describe('TypeScript Compiler Plugin', () => {
 	const fileSystem = new FileSystem()
-	const typeScript = <TCompilerPlugin>TypeScriptPlugin({
+	const typeScript = <TCompilerPlugin>TypeScriptPlugin(<any>{
 		options: { mode: 'dev' },
 		fileSystem,
 		compileFiles: async () => {},

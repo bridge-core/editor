@@ -2,7 +2,7 @@ import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import Vue from 'vue'
 import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
-import { TProjectConfig } from '../ProjectConfig'
+import { ProjectConfig, TProjectConfig } from '../ProjectConfig'
 import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
 import { loadPacks } from './loadPacks'
@@ -30,6 +30,7 @@ export class Project {
 	public readonly compilerManager = new CompilerManager(this)
 	protected jsonDefaults = new JsonDefaults(this)
 	protected typeLoader = new TypeLoader(this.app.fileSystem)
+	public readonly config = new ProjectConfig(this.fileSystem)
 
 	//#region Getters
 	get projectData() {

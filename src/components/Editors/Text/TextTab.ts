@@ -9,19 +9,17 @@ import { FileType } from '/@/components/Data/FileType'
 
 export class TextTab extends Tab {
 	component = TextTabComponent
-	editorInstance: monaco.editor.ICodeEditor | undefined
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
 	disposables: (IDisposable | undefined)[] = []
 	isActive = false
 
-	setIsUnsaved(val: boolean) {
-		super.setIsUnsaved(val)
+	get editorInstance() {
+		return this.parent.monacoEditor
 	}
 
-	receiveEditorInstance(editorInstance: monaco.editor.IStandaloneCodeEditor) {
-		this.editorInstance = editorInstance
-		this.editorInstance.layout()
+	setIsUnsaved(val: boolean) {
+		super.setIsUnsaved(val)
 	}
 
 	async onActivate() {
@@ -72,7 +70,6 @@ export class TextTab extends Tab {
 	}
 	updateParent(parent: TabSystem) {
 		super.updateParent(parent)
-		this.editorInstance = undefined
 	}
 	focus() {
 		this.editorInstance?.focus()

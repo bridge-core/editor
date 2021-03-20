@@ -140,11 +140,9 @@ export class Compiler {
 			let file = this.files.get(filePath)
 			if (file?.isLoaded) continue
 
-			const saveFilePath: string = await this.runAllHooks(
-				'transformPath',
-				0,
-				filePath
-			)
+			const saveFilePath: string | undefined =
+				(await this.runAllHooks('transformPath', 0, filePath)) ??
+				undefined
 
 			let fileHandle: FileSystemFileHandle | undefined = undefined
 			try {
@@ -155,7 +153,7 @@ export class Compiler {
 			if (readData === undefined || readData === null) {
 				// Don't copy files if the saveFilePath is equals to the original filePath
 				// ...or if the fileHandle doesn't exist (no file to copy)
-				if (!!fileHandle && saveFilePath !== filePath)
+				if (!!fileHandle && !!saveFilePath && saveFilePath !== filePath)
 					await this.copyFile(fileHandle, saveFilePath)
 
 				file = {

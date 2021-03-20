@@ -417,6 +417,12 @@ export default {
 			actions: {
 				name: 'Actions',
 			},
+			editor: {
+				wordWrap: {
+					name: 'Word Wrap',
+					description: 'Wrap words to disable horizontal scrolling',
+				},
+			},
 		},
 		projectFolder: {
 			title: 'Project Folder',

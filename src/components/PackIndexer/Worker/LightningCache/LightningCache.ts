@@ -125,7 +125,6 @@ export class LightningCache {
 		}
 
 		const ext = extname(filePath)
-		console.log(ext)
 
 		// Second step: Process file
 		if (ext === '.json') {

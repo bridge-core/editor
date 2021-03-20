@@ -10,24 +10,17 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../../project/unprefixedFileIdentifierEnum.json"
 						}
 					}
 				},
 				"components": {
-					"anyOf": [
-						{
-							"$ref": "./components.json"
-						},
+					"allOf": [
 						{
 							"$ref": "./tag.json"
+						},
+						{
+							"$ref": "./components.json"
 						}
 					]
 				}

@@ -15,7 +15,7 @@
 						"identifier": {
 							"anyOf": [
 								{
-									"$ref": "../project/fileIdentifierEnum.json"
+									"$ref": "../project/prefixedFileIdentifierEnum.json"
 								},
 								{
 									"type": "string"
@@ -57,17 +57,10 @@
 									}
 								},
 								"input": {
-									"type": "string"
+									"$ref": "../molang/embeddedBeta.json"
 								},
 								"horizontal_range": {
-									"anyOf": [
-										{
-											"type": "number"
-										},
-										{
-											"type": "string"
-										}
-									]
+									"$ref": "../molang/embeddedBeta.json"
 								}
 							}
 						}

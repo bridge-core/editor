@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
-	"additionalProperties": true,
+
 	"properties": {
 		"minecraft:ignore_automatic_features": {
 			"type": "boolean",
@@ -67,7 +67,7 @@
 			"additionalProperties": false,
 			"properties": {
 				"noise_type": {
-					"$ref": "./general.json#/definitions/noise_type"
+					"$ref": "../general.json#/definitions/noise_type"
 				},
 				"noise_params": {
 					"type": "array",
@@ -192,25 +192,25 @@
 				"hills_transformation": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/vanilla_biomes"
+						"$ref": "../general.json#/definitions/vanilla_biomes"
 					}
 				},
 				"mutate_transformation": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/vanilla_biomes"
+						"$ref": "../general.json#/definitions/vanilla_biomes"
 					}
 				},
 				"shore_transformation": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/vanilla_biomes"
+						"$ref": "../general.json#/definitions/vanilla_biomes"
 					}
 				},
 				"river_transformation": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/vanilla_biomes"
+						"$ref": "../general.json#/definitions/vanilla_biomes"
 					}
 				},
 				"generate_for_climates": {
@@ -223,7 +223,7 @@
 						"items": [
 							{
 								"description": "Name of a climate category.",
-								"$ref": "./general.json#/definitions/temperature"
+								"$ref": "../general.json#/definitions/temperature"
 							},
 							{
 								"description": "Weight with which this biome should be selected, relative to other biomes in the same category.",
@@ -305,67 +305,67 @@
 				"first_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				},
 				"before_underground_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				},
 				"underground_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				},
 				"after_underground_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				},
 				"before_surface_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				},
 				"surface_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				},
 				"after_surface_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				},
 				"before_sky_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				},
 				"sky_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				},
 				"after_sky_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				},
 				"final_pass": {
 					"type": "array",
 					"items": {
-						"$ref": "./general.json#/definitions/forced_features"
+						"$ref": "../general.json#/definitions/forced_features"
 					}
 				}
 			}

@@ -11,6 +11,8 @@ import {
 } from './Plugins/CustomComponent/Plugin'
 import { SimpleRewrite } from './Plugins/simpleRewrite'
 import { EntityIdentifierAlias } from './Plugins/EntityIdentifier'
+import { MoLangPlugin } from './Plugins/MoLang/Plugin'
+import { ProjectConfig } from '../../Projects/ProjectConfig'
 
 export type TCompilerHook = keyof TCompilerPlugin
 export type TCompilerPlugin = {
@@ -77,14 +79,15 @@ export type TCompilerPlugin = {
 	 */
 	buildEnd(): Promise<void> | void
 }
-export type TCompilerPluginFactory = (context: {
-	options: any
+export type TCompilerPluginFactory<T = any> = (context: {
+	options: T
 	fileSystem: FileSystem
 	compileFiles: (
 		files: string[],
 		errorOnReadFailure?: boolean
 	) => Promise<void>
 	getAliases: (filePath: string) => string[]
+	targetVersion: string
 }) => Partial<TCompilerPlugin>
 
 export interface ILoadPLugins {
@@ -92,10 +95,7 @@ export interface ILoadPLugins {
 	localFs: FileSystem
 	pluginPaths: Record<string, string>
 	pluginOpts: Record<string, any>
-	compileFiles: (
-		files: string[],
-		errorOnReadFailure?: boolean
-	) => Promise<void>
+	compileFiles: (files: string[]) => Promise<void>
 	getAliases: (filePath: string) => string[]
 }
 
@@ -108,6 +108,8 @@ export async function loadPlugins({
 	getAliases,
 }: ILoadPLugins) {
 	const plugins = new Map<string, TCompilerPluginFactory>()
+	const projectConfig = new ProjectConfig(localFs)
+	const targetVersion = await projectConfig.get('targetVersion')
 
 	plugins.set('simpleRewrite', SimpleRewrite)
 	plugins.set('comMojangRewrite', ComMojangRewrite)
@@ -116,6 +118,7 @@ export async function loadPlugins({
 	plugins.set('customItemComponents', CustomItemComponentPlugin)
 	plugins.set('customBlockComponents', CustomBlockComponentPlugin)
 	plugins.set('entityIdentifierAlias', EntityIdentifierAlias)
+	plugins.set('moLang', MoLangPlugin)
 
 	for (const [pluginId, pluginPath] of Object.entries(pluginPaths ?? {})) {
 		let file: File
@@ -156,9 +159,10 @@ export async function loadPlugins({
 			pluginId,
 			plugin({
 				options: pluginOpts[pluginId],
-				fileSystem: localFs,
+				fileSystem,
 				compileFiles,
 				getAliases,
+				targetVersion,
 			})
 		)
 	}

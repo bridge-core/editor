@@ -89,6 +89,33 @@ export async function runPresetScript(
 		data: any,
 		{ inject = [] }: IPresetFileOpts = { inject: [] }
 	) => {
+		// Permission for overwriting unsaved changes not set yet, request it
+		if (permissions.mayOverwriteUnsavedChanges === undefined) {
+			const tab = app.project.getFileTab(filePath)
+			if (tab !== undefined && tab.isUnsaved) {
+				const confirmWindow = new ConfirmationWindow({
+					description: 'windows.createPreset.overwriteUnsavedChanges',
+					confirmText:
+						'windows.createPreset.overwriteUnsavedChangesConfirm',
+				})
+
+				const overwriteUnsaved = await confirmWindow.fired
+				if (overwriteUnsaved) {
+					// Stop file collision checks & continue creating preset
+					permissions.mayOverwriteUnsavedChanges = true
+
+					app.project.closeFile(filePath)
+				} else {
+					// Don't expand file
+					permissions.mayOverwriteUnsavedChanges = false
+					return
+				}
+			}
+		} else if (permissions.mayOverwriteUnsavedChanges === false) {
+			// Permission set to false, abort expanding file
+			return
+		}
+
 		let current = ''
 		try {
 			current = await (await fs.readFile(filePath)).text()

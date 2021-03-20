@@ -1,250 +1,260 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"description": "Components allow for block functionality.",
-	"properties": {
-		"minecraft:crafting_table": {
-			"type": "object",
-			"description": "Makes this block a crafting table",
+	"allOf": [
+		{
+			"$ref": "../v1.16.0/components.json"
+		},
+		{
+			"$ref": "../dynamic/tagProperty.json"
+		},
+		{
 			"properties": {
-				"custom_description": {
-					"description": "Crafting table name",
-					"type": "string"
-				},
-				"grid_size": {
-					"description": "Recipe grid size",
-					"enum": [3]
-				},
-				"crafting_tags": {
-					"type": "array",
-					"description": "List of recipe tags",
-					"items": {
-						"type": "string"
-					}
-				}
-			}
-		},
-		"minecraft:unit_cube": {
-			"type": "object",
-			"description": "Specifies that a unit cube is to be used with tessellation",
-			"additionalProperties": false
-		},
-		"minecraft:material_instances": {
-			"type": "object",
-			"description": "Maps face or material_instance names in a geometry file to an actual material instance. Material instance can either be a full material instance or a name to another already defined instance",
-			"propertyNames": {
-				"anyOf": [
-					{
-						"enum": ["*"]
-					},
-					{
-						"$ref": "../../geometry/dynamic/materialInstanceEnum.json"
-					}
-				]
-			},
-			"patternProperties": {
-				".*": {
+				"minecraft:crafting_table": {
+					"type": "object",
+					"description": "Makes this block a crafting table",
 					"properties": {
-						"texture": {
-							"description": "Name of a texture from the terrain_texture.json file",
-							"$ref": "../../general/reference/terrainTexture.json"
+						"custom_description": {
+							"description": "Crafting table name",
+							"type": "string"
 						},
-						"render_method": {
-							"description": "Method to use for rendering this face",
-							"enum": [
-								"opaque",
-								"blend",
-								"alpha_test",
-								"double_sided"
-							]
+						"grid_size": {
+							"description": "Recipe grid size",
+							"enum": [3]
 						},
-						"ambient_occlusion": {
-							"type": "boolean"
-						},
-						"face_dimming": {
-							"type": "boolean"
+						"crafting_tags": {
+							"type": "array",
+							"description": "List of recipe tags",
+							"items": {
+								"type": "string"
+							}
 						}
 					}
-				}
-			}
-		},
-		"minecraft:geometry": {
-			"$ref": "../../general/reference/geometry.json",
-			"description": "The geometry definition name to use"
-		},
-		"minecraft:on_step_on": {
-			"type": "object",
-			"description": "Trigger an event when a player steps onto this block",
-			"$ref": "../general/eventDefinition.json"
-		},
-		"minecraft:on_step_off": {
-			"type": "object",
-			"description": "Trigger an event when a player leaves this block",
-			"$ref": "../general/eventDefinition.json"
-		},
-		"minecraft:on_player_destroyed": {
-			"type": "object",
-			"description": "Trigger an event when a player destroys this block",
-			"$ref": "../general/eventDefinition.json"
-		},
-		"minecraft:on_fall_on": {
-			"type": "object",
-			"description": "Trigger an event when a player falls onto this block",
-			"allOf": [
-				{
-					"$ref": "../general/eventDefinition.json"
 				},
-				{
-					"properties": {
-						"min_fall_distance": {
-							"type": "number"
-						}
-					}
-				}
-			]
-		},
-		"minecraft:on_placed": {
-			"type": "object",
-			"description": "Trigger an event when this block is placed",
-			"$ref": "../general/eventDefinition.json"
-		},
-		"minecraft:on_player_placing": {
-			"type": "object",
-			"description": "Trigger an event when a player places this block",
-			"$ref": "../general/eventDefinition.json"
-		},
-		"minecraft:on_interact": {
-			"type": "object",
-			"description": "Trigger an event when this block is interacted with",
-			"$ref": "../general/eventDefinition.json"
-		},
-		"minecraft:ticking": {
-			"type": "object",
-			"description": "Trigger an event at a regular interval between two values",
-			"additionalProperties": false,
-			"properties": {
-				"looping": {
-					"type": "boolean",
-					"description": "Whether the event should loop"
-				},
-				"range": {
-					"type": "array",
-					"description": "Range between which the component will trigger its event",
-					"minItems": 2,
-					"maxItems": 2,
-
-					"items": {
-						"type": "number"
-					}
-				},
-				"on_tick": {
-					"$ref": "../general/eventDefinition.json"
-				}
-			}
-		},
-		"minecraft:random_ticking": {
-			"type": "object",
-			"description": "Triggers an event at random intervals",
-			"additionalProperties": false,
-			"properties": {
-				"on_tick": {
-					"$ref": "../general/eventDefinition.json"
-				}
-			}
-		},
-		"minecraft:entity_collision": {
-			"anyOf": [
-				{
+				"minecraft:unit_cube": {
 					"type": "object",
-					"$ref": "../general/collisionSize.json"
+					"description": "Specifies that a unit cube is to be used with tessellation",
+					"additionalProperties": false
 				},
-				{
-					"type": "boolean"
-				}
-			]
-		},
-		"minecraft:pick_collision": {
-			"anyOf": [
-				{
+				"minecraft:material_instances": {
 					"type": "object",
-					"$ref": "../general/collisionSize.json"
-				},
-				{
-					"type": "boolean"
-				}
-			]
-		},
-		"minecraft:breakonpush": {
-			"type": "boolean",
-			"description": "When pushed by a piston the block breaks"
-		},
-		"minecraft:immovable": {
-			"type": "boolean",
-			"description": "An Immovable block cannot be pushed by pistons"
-		},
-		"minecraft:breathability": {
-			"type": "string",
-			"description": "Property describing the breathability of this block and whether it is treated as a solid or as air",
-			"enum": ["air", "solid"]
-		},
-		"minecraft:onlypistonpush": {
-			"type": "boolean",
-			"description": "Blocks with those components won't stick to stickyPistons"
-		},
-		"minecraft:placement_filter": {
-			"type": "object",
-			"description": "Sets rules for under what conditions the block can be placed/survive",
-
-			"additionalProperties": false,
-			"properties": {
-				"block_filter": {
-					"type": "array",
-					"description": "List of blocks (can use tags to specify them) that this block can be placed against in the allowed_faces direction",
-					"items": {
-						"type": "string"
-					}
-				},
-				"allowed_faces": {
-					"type": "array",
-					"description": "Defines the block faces this block can be placed on, e.g 'down' means you can only place this block on th bottom face of the block. If the block it is placed on is removed, this block will be destroyed",
-					"items": {
-						"type": "string",
-						"enum": [
-							"up",
-							"down",
-							"north",
-							"south",
-							"east",
-							"west",
-							"side",
-							"all"
+					"description": "Maps face or material_instance names in a geometry file to an actual material instance. Material instance can either be a full material instance or a name to another already defined instance",
+					"propertyNames": {
+						"anyOf": [
+							{
+								"enum": ["*"]
+							},
+							{
+								"$ref": "../../geometry/dynamic/materialInstanceEnum.json"
+							}
 						]
+					},
+					"patternProperties": {
+						".*": {
+							"properties": {
+								"texture": {
+									"description": "Name of a texture from the terrain_texture.json file",
+									"$ref": "../../general/reference/terrainTexture.json"
+								},
+								"render_method": {
+									"description": "Method to use for rendering this face",
+									"enum": [
+										"opaque",
+										"blend",
+										"alpha_test",
+										"double_sided"
+									]
+								},
+								"ambient_occlusion": {
+									"type": "boolean"
+								},
+								"face_dimming": {
+									"type": "boolean"
+								}
+							}
+						}
 					}
+				},
+				"minecraft:geometry": {
+					"$ref": "../../general/reference/geometry.json",
+					"description": "The geometry definition name to use"
+				},
+				"minecraft:on_step_on": {
+					"type": "object",
+					"description": "Trigger an event when a player steps onto this block",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_step_off": {
+					"type": "object",
+					"description": "Trigger an event when a player leaves this block",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_player_destroyed": {
+					"type": "object",
+					"description": "Trigger an event when a player destroys this block",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_fall_on": {
+					"type": "object",
+					"description": "Trigger an event when a player falls onto this block",
+					"allOf": [
+						{
+							"$ref": "../general/eventDefinition.json"
+						},
+						{
+							"properties": {
+								"min_fall_distance": {
+									"type": "number"
+								}
+							}
+						}
+					]
+				},
+				"minecraft:on_placed": {
+					"type": "object",
+					"description": "Trigger an event when this block is placed",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_player_placing": {
+					"type": "object",
+					"description": "Trigger an event when a player places this block",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:on_interact": {
+					"type": "object",
+					"description": "Trigger an event when this block is interacted with",
+					"$ref": "../general/eventDefinition.json"
+				},
+				"minecraft:ticking": {
+					"type": "object",
+					"description": "Trigger an event at a regular interval between two values",
+					"additionalProperties": false,
+					"properties": {
+						"looping": {
+							"type": "boolean",
+							"description": "Whether the event should loop"
+						},
+						"range": {
+							"type": "array",
+							"description": "Range between which the component will trigger its event",
+							"minItems": 2,
+							"maxItems": 2,
+
+							"items": {
+								"type": "number"
+							}
+						},
+						"on_tick": {
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:random_ticking": {
+					"type": "object",
+					"description": "Triggers an event at random intervals",
+					"additionalProperties": false,
+					"properties": {
+						"on_tick": {
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:entity_collision": {
+					"anyOf": [
+						{
+							"type": "object",
+							"$ref": "../general/collisionSize.json"
+						},
+						{
+							"type": "boolean"
+						}
+					]
+				},
+				"minecraft:pick_collision": {
+					"anyOf": [
+						{
+							"type": "object",
+							"$ref": "../general/collisionSize.json"
+						},
+						{
+							"type": "boolean"
+						}
+					]
+				},
+				"minecraft:breakonpush": {
+					"type": "boolean",
+					"description": "When pushed by a piston the block breaks"
+				},
+				"minecraft:immovable": {
+					"type": "boolean",
+					"description": "An Immovable block cannot be pushed by pistons"
+				},
+				"minecraft:breathability": {
+					"type": "string",
+					"description": "Property describing the breathability of this block and whether it is treated as a solid or as air",
+					"enum": ["air", "solid"]
+				},
+				"minecraft:onlypistonpush": {
+					"type": "boolean",
+					"description": "Blocks with those components won't stick to stickyPistons"
+				},
+				"minecraft:placement_filter": {
+					"type": "object",
+					"description": "Sets rules for under what conditions the block can be placed/survive",
+
+					"additionalProperties": false,
+					"properties": {
+						"block_filter": {
+							"type": "array",
+							"description": "List of blocks (can use tags to specify them) that this block can be placed against in the allowed_faces direction",
+							"items": {
+								"type": "string"
+							}
+						},
+						"allowed_faces": {
+							"type": "array",
+							"description": "Defines the block faces this block can be placed on, e.g 'down' means you can only place this block on th bottom face of the block. If the block it is placed on is removed, this block will be destroyed",
+							"items": {
+								"type": "string",
+								"enum": [
+									"up",
+									"down",
+									"north",
+									"south",
+									"east",
+									"west",
+									"side",
+									"all"
+								]
+							}
+						}
+					}
+				},
+				"minecraft:preventsjumping": {
+					"type": "boolean",
+					"description": "This component makes it so actors can't jump when walking on this block"
+				},
+				"minecraft:rotation": {
+					"type": "array",
+					"description": "This is the block's rotation around the center of the cube in degrees. The rotation order is x-y-z",
+
+					"maxItems": 3,
+					"minItems": 3,
+					"items": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 360
+					}
+				},
+				"minecraft:unwalkable": {
+					"type": "boolean",
+					"description": "This component sets a block as unwalkable. Most mobs will not try to jump over it if the value is set to true"
+				},
+				"minecraft:display_name": {
+					"type": "string",
+					"description": "Specifies the display name id for the block"
 				}
 			}
-		},
-		"minecraft:preventsjumping": {
-			"type": "boolean",
-			"description": "This component makes it so actors can't jump when walking on this block"
-		},
-		"minecraft:rotation": {
-			"type": "array",
-			"description": "This is the block's rotation around the center of the cube in degrees. The rotation order is x-y-z",
-
-			"maxItems": 3,
-			"minItems": 3,
-			"items": {
-				"type": "integer",
-				"minimum": 0,
-				"maximum": 360
-			}
-		},
-		"minecraft:unwalkable": {
-			"type": "boolean",
-			"description": "This component sets a block as unwalkable. Most mobs will not try to jump over it if the value is set to true"
-		},
-		"minecraft:display_name": {
-			"type": "string",
-			"description": "Specifies the display name id for the block"
 		}
-	}
+	]
 }
