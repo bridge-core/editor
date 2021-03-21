@@ -27,6 +27,7 @@
 			"type": "boolean"
 		},
 		"animations": {
+			"description": "List server animations and animation controllers to be used in this entity.",
 			"patternProperties": {
 				".*": {
 					"$ref": "../general/reference/serverAnimation.json"
@@ -36,6 +37,7 @@
 		"scripts": {
 			"properties": {
 				"animate": {
+					"description": "Animations to run on this entity.",
 					"type": "array",
 					"items": {
 						"anyOf": [
@@ -53,6 +55,13 @@
 								}
 							}
 						]
+					}
+				},
+				"initialize": {
+					"type": "array",
+					"description": "Initializes variables.",
+					"items": {
+						"$ref": "../molang/embeddedBeta.json"
 					}
 				}
 			}
