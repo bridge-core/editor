@@ -56,13 +56,6 @@
 							}
 						]
 					}
-				},
-				"initialize": {
-					"type": "array",
-					"description": "Initializes variables.",
-					"items": {
-						"$ref": "../molang/embeddedBeta.json"
-					}
 				}
 			}
 		}
