@@ -3,6 +3,9 @@ import { Language } from './Language'
 import { CustomMoLang } from 'molang'
 
 export const config: languages.LanguageConfiguration = {
+	comments: {
+		lineComment: '#',
+	},
 	autoClosingPairs: [
 		{
 			open: '(',
@@ -54,6 +57,7 @@ export const tokenProvider = {
 	],
 	tokenizer: {
 		root: [
+			[/#.*/, 'comment'],
 			[/'[^']'/, 'string'],
 			[/[0-9]+(\.[0-9]+)?/, 'number'],
 			[/true|false/, 'number'],
