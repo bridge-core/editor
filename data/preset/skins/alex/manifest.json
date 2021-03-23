@@ -6,7 +6,7 @@
 	"packTypes": ["skinPack"],
 	"additionalModels": {
 		"IMAGE_SAVE_PATH": "SP/",
-		"DEFAULT_IMAGE": "alex.png"
+		"DEFAULT_IMAGE": "skin.png"
 	},
 	"fields": [
 		["Identifier", "IDENTIFIER"],
@@ -17,7 +17,7 @@
 			{
 				"type": "fileInput",
 				"accept": "image/png,image/jpeg",
-				"optional": "false",
+				"optional": "true",
 				"icon": "mdi-file-account"
 			}
 		]
