@@ -1,5 +1,6 @@
 <template>
 	<SidebarWindow
+		v-if="shouldRender"
 		windowTitle="windows.createPreset.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"

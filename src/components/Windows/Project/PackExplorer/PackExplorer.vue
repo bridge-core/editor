@@ -1,5 +1,6 @@
 <template>
 	<SidebarWindow
+		v-if="shouldRender"
 		windowTitle="windows.packExplorer.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
@@ -29,6 +30,7 @@
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.packExplorer.searchFiles')"
 				v-model="sidebar._filter"
+				autofocus
 				outlined
 				dense
 			/>
@@ -50,6 +52,7 @@
 					:startPath="
 						selectedSidebar ? selectedSidebar.split('/') : undefined
 					"
+					:entry="sidebar.currentState.directoryEntry"
 					@closeWindow="onClose"
 				/>
 			</div>
@@ -110,7 +113,7 @@ export default {
 		},
 		openFile(filePath) {
 			this.currentWindow.close()
-			App.ready.once(app => {
+			App.ready.once((app) => {
 				app.project.openFile(
 					`projects/${app.selectedProject}/${filePath}`
 				)
@@ -118,7 +121,7 @@ export default {
 		},
 		createPreset() {
 			this.currentWindow.close()
-			App.ready.once(app => app.windows.createPreset.open())
+			App.ready.once((app) => app.windows.createPreset.open())
 		},
 	},
 	computed: {

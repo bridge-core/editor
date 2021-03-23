@@ -2,7 +2,7 @@ import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import Vue from 'vue'
 import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
-import { TProjectConfig } from '../ProjectConfig'
+import { ProjectConfig, TProjectConfig } from '../ProjectConfig'
 import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
 import { loadPacks } from './loadPacks'
@@ -30,6 +30,7 @@ export class Project {
 	public readonly compilerManager = new CompilerManager(this)
 	protected jsonDefaults = new JsonDefaults(this)
 	protected typeLoader = new TypeLoader(this.app.fileSystem)
+	public readonly config = new ProjectConfig(this.fileSystem)
 
 	//#region Getters
 	get projectData() {
@@ -97,6 +98,23 @@ export class Project {
 
 		this.tabSystem?.open(filePath, selectTab)
 	}
+	closeFile(filePath: string) {
+		for (const tabSystem of this.tabSystems) {
+			const tabToClose = tabSystem.getTab(filePath)
+			tabToClose?.close()
+		}
+	}
+	getFileTab(filePath: string) {
+		for (const tabSystem of this.tabSystems) {
+			const tab = tabSystem.getTab(filePath)
+			if (tab !== undefined) return tab
+		}
+	}
+
+	absolutePath(filePath: string) {
+		return `projects/${this.name}/${filePath}`
+	}
+
 	async updateFile(filePath: string) {
 		await this.packIndexer.updateFile(filePath)
 		await this.compilerManager.updateFile('default.json', filePath)

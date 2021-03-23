@@ -51,7 +51,6 @@ export class PackIndexer extends WorkerManager<
 		// Listen to task progress and update UI
 		this._service.on(
 			Comlink.proxy(([current, total]) => {
-				if (current === total) this.task?.complete()
 				this.task?.update(current, total)
 			}),
 			false
@@ -69,8 +68,9 @@ export class PackIndexer extends WorkerManager<
 		await this.service!.updateFile(filePath)
 	}
 
-	readdir(path: string[], ..._: any[]) {
-		return this.service!.readdir(path)
+	async readdir(path: string[], ..._: any[]) {
+		await this.fired
+		return await this.service!.readdir(path)
 	}
 
 	get service() {

@@ -4,10 +4,11 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 
 describe('CustomComponent Compiler Plugin', () => {
 	const fileSystem = new FileSystem()
-	const customComponent = <TCompilerPlugin>CustomEntityComponentPlugin({
+	const customComponent = <TCompilerPlugin>CustomEntityComponentPlugin(<any>{
 		options: { mode: 'dev' },
 		fileSystem,
 		compileFiles: async () => {},
+		getAliases: () => [],
 	})
 
 	it('should omit custom components from build output', () => {

@@ -3,5 +3,7 @@
 	"icon": "mdi-function",
 	"scope": "BP/functions/",
 	"matcher": ["BP/functions/**/*.mcfunction", "BP/functions/*.mcfunction"],
-	"packSpider": "function.json"
+	"packSpider": "function.json",
+	"formatOnSaveCapable": false,
+	"lightningCache": "function.js"
 }

@@ -8,12 +8,14 @@ export class PersistentQueue<T> extends Signal<Queue<T>> {
 	protected queue!: Queue<T>
 	constructor(
 		protected app: App,
-		maxSize: number,
-		protected savePath: string
+		protected maxSize: number,
+		protected savePath: string,
+		callSetup = true
 	) {
 		super()
 		Vue.set(this, 'queue', new Queue<T>(maxSize))
-		this.setup()
+
+		if (callSetup) this.setup()
 	}
 
 	async setup() {
@@ -30,6 +32,16 @@ export class PersistentQueue<T> extends Signal<Queue<T>> {
 
 	protected isEquals(e1: T, e2: T) {
 		return e1 === e2
+	}
+
+	keep(cb: (e: T) => boolean) {
+		const queue = new Queue<T>(this.maxSize)
+
+		this.elements
+			.filter((e) => cb(e))
+			.forEach((e) => queue.add(e, this.isEquals.bind(this)))
+
+		this.queue = queue
 	}
 
 	async add(e: T) {

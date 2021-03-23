@@ -8,8 +8,14 @@ export class Locales {
 		if (!translationKey?.startsWith('$vuetify.'))
 			translationKey = `$vuetify.${translationKey}`
 
-		const translated = this.vuetify.lang.t(translationKey)
-		if (translated === translationKey) return orginalKey
+		let translated: string
+		try {
+			translated = this.vuetify.lang.t(translationKey)
+		} catch {
+			return orginalKey ?? 'Unknown'
+		}
+
+		if (translated === translationKey) return orginalKey ?? 'Unknown'
 		return translated
 	}
 

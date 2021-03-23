@@ -216,6 +216,24 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 
+	// Editor
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.wordWrap.name',
+			description: 'windows.settings.editor.wordWrap.description',
+			key: 'wordWrap',
+			default: false,
+			onChange: async (val) => {
+				const app = await App.getApp()
+				app.projectManager.updateAllEditorOptions({
+					wordWrap: val ? 'bounded' : 'off',
+				})
+			},
+		})
+	)
+
+	// Actions
 	const app = await App.getApp()
 	Object.values(app.actionManager.state).forEach((action) => {
 		settings.addControl(new ActionViewer(action))

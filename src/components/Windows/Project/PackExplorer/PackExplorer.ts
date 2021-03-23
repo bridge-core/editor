@@ -9,6 +9,8 @@ import {
 	SidebarItem,
 } from '../../Layout/Sidebar'
 import PackExplorerComponent from './PackExplorer.vue'
+import { DirectoryEntry } from './DirectoryEntry'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 class PackSidebarItem extends SidebarItem {
 	protected packType: string
@@ -27,11 +29,7 @@ class PackSidebarItem extends SidebarItem {
 
 export class PackExplorerWindow extends BaseWindow {
 	protected loadedPack = false
-	protected sidebarCategory = new SidebarCategory({
-		text: 'windows.packExplorer.categories',
-		items: [],
-	})
-	protected sidebar = new Sidebar([this.sidebarCategory])
+	protected sidebar = new Sidebar([])
 
 	constructor() {
 		super(PackExplorerComponent, false, true)
@@ -43,23 +41,27 @@ export class PackExplorerWindow extends BaseWindow {
 	}
 
 	async loadPack() {
-		this.sidebarCategory.removeItems()
-		let items: SidebarItem[] = []
+		this.sidebar.removeElements()
 
 		const app = await App.getApp()
 		const dirents = (await app.project?.packIndexer.readdir([])) ?? []
+		const packSpiderEnabled = settingsState?.general?.enablePackSpider
 
-		dirents.forEach(({ kind, displayName, name, path }: any) => {
-			const fileType = FileType.get(undefined, name)
-			const packType = fileType
-				? PackType.get(
-						`projects/test/${
-							typeof fileType.matcher === 'string'
-								? fileType.matcher
-								: fileType.matcher[0]
-						}`
-				  )
-				: undefined
+		for (const { kind, displayName, name, path } of <any[]>dirents) {
+			const fileType = packSpiderEnabled
+				? FileType.get(undefined, name)
+				: FileType.get(path, name)
+
+			const packType =
+				PackType.get(`projects/test/${path}`) ??
+				PackType.get(
+					`projects/test/${
+						typeof fileType?.matcher === 'string'
+							? fileType?.matcher
+							: fileType?.matcher[0]
+					}`
+				)
+
 			const icon =
 				fileType && fileType.icon
 					? fileType.icon
@@ -68,48 +70,85 @@ export class PackExplorerWindow extends BaseWindow {
 				displayName ?? app.locales.translate(`fileType.${name}`)
 			const color = packType ? packType.color : undefined
 
-			items.push(
-				new PackSidebarItem({
-					kind,
-					packType: packType ? packType.id : 'unknown',
-					id: path ?? name,
-					text,
+			if (packType) {
+				// This dirent belongs to a specific packType
+				const packText = `packType.${packType.id}.name`
+				// Get the packType category if it already exists
+				let category = <SidebarCategory | undefined>(
+					this.sidebar.rawElements.find(
+						(element) => element.getText() === packText
+					)
+				)
+				// Otherwise create the category & add it to the sidebar
+				if (!category) {
+					category = new SidebarCategory({
+						isOpen: false,
+						text: packText,
+						items: [],
+					})
+					this.sidebar.addElement(category)
+				}
 
-					icon,
-					color,
-				})
-			)
+				// Add the dirent to the packType category
+				category.addItem(
+					new PackSidebarItem({
+						kind,
+						packType: packType.id,
+						id: path ?? name,
+						text,
+
+						icon,
+						color,
+					})
+				)
+			} else {
+				// This dirent belongs to no pack
+				// so we just add it to the sidebar without a category
+				this.sidebar.addElement(
+					new PackSidebarItem({
+						kind,
+						packType: 'unknown',
+						id: path ?? name,
+						text,
+
+						icon,
+						color,
+					})
+				)
+			}
 
 			this.sidebar.setState(path ?? name, {
 				text,
 				icon,
 				color,
+				directoryEntry:
+					kind === 'directory'
+						? await DirectoryEntry.create(
+								(path ?? name)?.split('/')
+						  )
+						: undefined,
 			})
-		})
+		}
 
-		items = items.sort((a: any, b: any) => {
-			if (a.packType !== b.packType)
-				return a.packType.localeCompare(b.packType)
-			return a.text.localeCompare(b.text)
-		})
-
-		items.forEach((item) => this.sidebarCategory.addItem(item))
+		this.loadedPack = true
 		this.sidebar.setDefaultSelected()
-
 		super.open()
 	}
 
 	async open() {
-		if (this.loadedPack) super.open()
-		else {
+		if (!this.loadedPack) {
 			const app = await App.getApp()
-			app.project?.packIndexer.once(async () => {
-				app.windows.loadingWindow.open()
+			app.windows.loadingWindow.open()
 
-				await this.loadPack()
+			await this.loadPack()
 
-				app.windows.loadingWindow.close()
-			})
+			app.windows.loadingWindow.close()
 		}
+
+		super.open()
+	}
+	close() {
+		this.loadedPack = false
+		super.close()
 	}
 }

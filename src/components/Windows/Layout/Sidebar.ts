@@ -5,21 +5,26 @@ export interface ISidebarCategoryConfig {
 	text: string
 	items: SidebarItem[]
 	isOpen?: boolean
+	shouldSort?: boolean
 }
 export class SidebarCategory {
 	readonly type = 'category'
 	protected text: string
 	protected items: SidebarItem[]
 	protected isOpen: boolean
+	protected shouldSort: boolean
 
-	constructor({ items, text, isOpen }: ISidebarCategoryConfig) {
+	constructor({ items, text, isOpen, shouldSort }: ISidebarCategoryConfig) {
 		this.text = text
 		this.items = items
 		this.isOpen = isOpen ?? true
+		this.shouldSort = shouldSort ?? true
+		if (this.shouldSort) this.sortCategory()
 	}
 
 	addItem(item: SidebarItem) {
 		this.items.push(item)
+		if (this.shouldSort) this.sortCategory()
 	}
 	removeItems() {
 		this.items = []
@@ -43,9 +48,14 @@ export class SidebarCategory {
 		return this.items.find(({ id }) => id === selected)
 	}
 
+	sortCategory() {
+		this.items = this.items.sort((a, b) =>
+			a.getSearchText().localeCompare(b.getSearchText())
+		)
+	}
 	hasFilterMatches(filter: string) {
 		return (
-			this.items.find(item => item.getSearchText().includes(filter)) !==
+			this.items.find((item) => item.getSearchText().includes(filter)) !==
 			undefined
 		)
 	}
@@ -53,11 +63,11 @@ export class SidebarCategory {
 		if (filter.length === 0) return this
 		return Vue.observable(
 			new SidebarCategory({
-				items: this.items.filter(item =>
+				items: this.items.filter((item) =>
 					item.getSearchText().includes(filter)
 				),
 				text: this.text,
-				isOpen: this.isOpen,
+				isOpen: true,
 			})
 		)
 	}
@@ -105,7 +115,6 @@ export class Sidebar {
 			this.state[element.id] = additionalData
 
 		this._elements.push(element)
-		if (this._elements.length === 1) this.setDefaultSelected()
 	}
 	removeElements() {
 		this._elements = []
@@ -117,12 +126,12 @@ export class Sidebar {
 	get elements() {
 		const elements = this.sortSidebar(
 			this._elements
-				.filter(e => {
+				.filter((e) => {
 					if (e.type === 'item')
 						return e.getSearchText().includes(this.filter)
 					else return e.hasFilterMatches(this.filter)
 				})
-				.map(e => (e.type === 'item' ? e : e.filtered(this.filter)))
+				.map((e) => (e.type === 'item' ? e : e.filtered(this.filter)))
 		)
 
 		if (elements.length === 1) {
@@ -172,7 +181,7 @@ export class Sidebar {
 		})
 	}
 	protected findDefaultSelected() {
-		for (const element of this.elements) {
+		for (const element of this.sortSidebar(this.elements)) {
 			if (element.type === 'category' && element.getItems().length > 0)
 				return element.getItems()[0].id
 			else if (element.type === 'item') return element.id

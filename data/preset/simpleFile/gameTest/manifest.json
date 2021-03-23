@@ -24,7 +24,14 @@
 	"createFiles": [
 		[
 			"gameTest.js",
-			"BP/gametests/{{FILE_NAME}}.{{LANGUAGE}}",
+			"BP/scripts/gametests/{{FILE_NAME}}.{{LANGUAGE}}",
+			{ "inject": ["FILE_NAME", "LANGUAGE"] }
+		]
+	],
+	"expandFiles": [
+		[
+			"Main.js",
+			"BP/scripts/gametests/Main.js",
 			{ "inject": ["FILE_NAME", "LANGUAGE"] }
 		]
 	]

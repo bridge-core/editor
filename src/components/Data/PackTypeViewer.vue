@@ -5,7 +5,7 @@
 			selected: selected,
 		}"
 		v-ripple="isSelectable"
-		@click="$emit('click')"
+		@click.stop="$emit('click')"
 	>
 		<div class="d-flex">
 			<v-icon :color="packType.color" class="mr-2">
@@ -41,6 +41,8 @@
 		</div>
 
 		<span>{{ t(`packType.${packType.id}.description`) }}</span>
+
+		<slot :selected="selected" />
 	</v-col>
 </template>
 

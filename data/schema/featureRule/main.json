@@ -15,14 +15,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
+							"$ref": "../project/prefixedFileIdentifierEnum.json"
 						},
 						"places_feature": {
 							"$ref": "../general/reference/feature.json"
@@ -48,7 +41,8 @@
 								"before_sky_pass",
 								"sky_pass",
 								"after_sky_pass",
-								"final_pass"
+								"final_pass",
+								"pregeneration_pass"
 							]
 						},
 						"minecraft:biome_filter": {
@@ -60,30 +54,30 @@
 					"additionalProperties": false,
 					"properties": {
 						"iterations": {
-							"type": "integer"
+							"anyOf": [
+								{
+									"type": "integer"
+								},
+								{
+									"$ref": "../molang/embeddedBeta.json"
+								}
+							]
 						},
 						"coordinate_eval_order": {
 							"type": "string",
-							"enum": [
-								"xyz",
-								"zyx",
-								"yxz",
-								"xzy",
-								"zxy",
-								"yzx"
-							]
+							"enum": ["xyz", "zyx", "yxz", "xzy", "zxy", "yzx"]
 						},
 						"scatter_chance": {
-							"$ref": "../feature/main.json#/properties/minecraft:scatter_feature/properties/scatter_chance"
+							"$ref": "../feature/v1.16.0/features.json#/properties/minecraft:scatter_feature/properties/scatter_chance"
 						},
 						"x": {
-							"$ref": "../feature/main.json#/properties/minecraft:scatter_feature/properties/x"
+							"$ref": "../feature/v1.16.0/features.json#/properties/minecraft:scatter_feature/properties/x"
 						},
 						"y": {
-							"$ref": "../feature/main.json#/properties/minecraft:scatter_feature/properties/y"
+							"$ref": "../feature/v1.16.0/features.json#/properties/minecraft:scatter_feature/properties/y"
 						},
 						"z": {
-							"$ref": "../feature/main.json#/properties/minecraft:scatter_feature/properties/z"
+							"$ref": "../feature/v1.16.0/features.json#/properties/minecraft:scatter_feature/properties/z"
 						}
 					}
 				}

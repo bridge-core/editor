@@ -19,7 +19,7 @@ import { PackType } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { DataLoader } from '/@/components/Data/DataLoader'
+import { DataLoader } from './components/Data/DataLoader/DataLoader'
 import { ProjectConfig } from '/@/components/Projects/ProjectConfig'
 import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
 import { ActionManager } from '/@/components/Actions/ActionManager'
@@ -46,12 +46,18 @@ export class App {
 	public static readonly ready = new Signal<App>()
 	protected static _instance: App
 
-	public readonly projectConfig = new ProjectConfig()
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
-	public readonly dataLoader = new DataLoader()
+	public readonly dataLoader = new DataLoader(
+		{
+			icon: 'mdi-download',
+			description: 'taskManager.tasks.dataLoader.description',
+			name: 'taskManager.tasks.dataLoader.title',
+		},
+		this
+	)
 	public readonly fileSystem = new FileSystem()
 	public readonly projectManager = Vue.observable(new ProjectManager(this))
 	public readonly extensionLoader = new ExtensionLoader()
@@ -73,7 +79,14 @@ export class App {
 		return this.projectManager.selectedProject
 	}
 	get project() {
+		if (!this.projectManager.currentProject)
+			throw new Error(
+				`Trying to access project before it is defined. Make sure to await app.projectManager.projectReady.fired`
+			)
 		return this.projectManager.currentProject
+	}
+	get projectConfig() {
+		return this.project.config
 	}
 
 	static get instance() {
@@ -119,7 +132,7 @@ export class App {
 		this.extensionLoader
 			.loadExtensions(
 				await this.fileSystem.getDirectoryHandle(
-					`projects/${project.name}/bridge/plugins`,
+					`projects/${project.name}/bridge/extensions`,
 					{ create: true }
 				)
 			)
@@ -163,6 +176,7 @@ export class App {
 
 		this.instance.fileSystem.setup(fileHandle)
 
+		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {
 			await set('firstStartAfterUpdate', false)
 			this.instance.windows.changelogWindow.open()
@@ -194,7 +208,7 @@ export class App {
 
 		setupSidebar()
 		setupDefaultMenus(this)
-		this.dataLoader.setup(this)
+		this.dataLoader.activate(this)
 
 		if (process.env.NODE_ENV === 'production') {
 			const discordMsg = createNotification({
@@ -233,17 +247,20 @@ export class App {
 		await Promise.all([
 			// Create default folders
 			this.fileSystem.mkdir('projects'),
-			this.fileSystem.mkdir('plugins'),
+			this.fileSystem.mkdir('extensions'),
 			this.fileSystem.mkdir('data/packages'),
 			// Setup data helpers
 			this.dataLoader.fired.then(() => FileType.setup(this.fileSystem)),
 			this.dataLoader.fired.then(() => PackType.setup(this.fileSystem)),
 		])
 
-		// Load global extensions
-		this.extensionLoader.loadExtensions(
-			await this.fileSystem.getDirectoryHandle(`plugins`),
-			true
+		// Ensure that a project is selected
+		this.projectManager.projectReady.fired.then(async () =>
+			// Then load global extensions
+			this.extensionLoader.loadExtensions(
+				await this.fileSystem.getDirectoryHandle(`extensions`),
+				true
+			)
 		)
 
 		console.timeEnd('[APP] startUp()')

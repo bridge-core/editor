@@ -1,7 +1,7 @@
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 
-class Progress<T, K> {
+class LegacyProgress<T, K> {
 	constructor(
 		protected taskService: TaskService<T, K>,
 		protected current: number,
@@ -35,7 +35,7 @@ export abstract class TaskService<T, K = void> extends EventDispatcher<
 > {
 	protected lastDispatch = 0
 	public fileSystem: FileSystem
-	public progress!: Progress<T, K>
+	public progress!: LegacyProgress<T, K>
 	constructor(
 		protected taskId: string,
 		baseDirectory: FileSystemDirectoryHandle
@@ -65,7 +65,7 @@ export abstract class TaskService<T, K = void> extends EventDispatcher<
 	protected abstract onStart(data: K): Promise<T> | T
 
 	async start(data: K) {
-		this.progress = new Progress(
+		this.progress = new LegacyProgress(
 			this,
 			0,
 			0,
@@ -81,8 +81,6 @@ export abstract class TaskService<T, K = void> extends EventDispatcher<
 	}
 
 	dispatch(data: [number, number]) {
-		// Always send last data batch
-		if (data[0] === data[1]) super.dispatch(data)
 		// Otherwise, first check that we don't send too many messages to the main thread
 		if (this.lastDispatch + 200 > Date.now()) return
 

@@ -84,7 +84,7 @@ export default {
 	},
 	computed: {
 		hasVisibleNotifications() {
-			return Object.values(NotificationStore).some(
+			return Object.values(this.NotificationStore).some(
 				({ isVisible }) => isVisible
 			)
 		},

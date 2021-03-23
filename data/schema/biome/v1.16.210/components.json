@@ -1,0 +1,40 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"allOf": [
+		{
+			"$ref": "../v1.16.0/components.json"
+		},
+		{
+			"$ref": "../v1.16.0/tag.json"
+		},
+		{
+			"properties": {
+				"minecraft:mountain_parameters": {
+					"additionalProperties": false,
+					"properties": {
+						"top_slide": {
+							"properties": {
+								"enabled": {
+									"type": "boolean"
+								}
+							}
+						},
+						"steep_material_adjustment": {
+							"properties": {
+								"material": {
+									"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+								},
+								"north_slopes": {
+									"type": "boolean"
+								},
+								"east_slopes": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	]
+}

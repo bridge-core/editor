@@ -4,6 +4,17 @@ import { walkObject } from '/@/utils/walkObject'
 import json5 from 'json5'
 import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'
+import { runScript } from './Script'
+import { extname } from '/@/utils/path'
+
+const knownTextFiles = new Set([
+	'.js',
+	'.ts',
+	'.lang',
+	'.mcfunction',
+	'.txt',
+	'.molang',
+])
 
 export interface ILightningInstruction {
 	'@filter'?: string[]
@@ -67,7 +78,11 @@ export class LightningCache {
 			}
 		)
 
-		if (anyFileChanged) await this.lightningStore.saveStore()
+		if (
+			anyFileChanged ||
+			this.lightningStore.visitedFiles !== this.lightningStore.totalFiles
+		)
+			await this.lightningStore.saveStore()
 		return [filePaths, changedFiles]
 	}
 
@@ -105,42 +120,55 @@ export class LightningCache {
 			file.lastModified ===
 			this.lightningStore.getLastModified(filePath, fileType)
 		) {
+			this.lightningStore.setVisited(filePath, true, fileType)
 			return false
 		}
 
+		const ext = extname(filePath)
+
 		// Second step: Process file
-		if (filePath.endsWith('.json'))
+		if (ext === '.json') {
 			await this.processJSON(filePath, fileType, file)
-		else if (filePath.endsWith('.mcfunction'))
-			await this.processFunction(filePath, fileType, file)
-		else
-			await this.lightningStore.add(
+		} else if (knownTextFiles.has(ext)) {
+			await this.processText(filePath, fileType, file)
+		} else {
+			this.lightningStore.add(
 				filePath,
 				{ lastModified: file.lastModified },
 				fileType
 			)
+		}
+
 		return true
 	}
 
-	async processFunction(filePath: string, fileType: string, file: File) {
-		const fileContent = await file.text()
+	async processText(filePath: string, fileType: string, file: File) {
+		const instructions = await FileType.getLightningCache(filePath)
 
-		const functionPath: string[] = []
-		for (const line of fileContent.split('\n')) {
-			let funcName = /function\s+([aA-zZ0-9\/]+)/g.exec(line)
-			if (funcName)
-				functionPath.push(`functions/${funcName[1]}.mcfunction`)
+		// JavaScript cache API
+		if (typeof instructions === 'string') {
+			const cacheFunction = runScript(instructions)
+			if (typeof cacheFunction !== 'function') return
+
+			const fileContent = await file.text()
+			const textData = cacheFunction(fileContent)
+
+			this.lightningStore.add(
+				filePath,
+				{
+					lastModified: file.lastModified,
+					data:
+						Object.keys(textData).length > 0 ? textData : undefined,
+				},
+				fileType
+			)
 		}
 
-		await this.lightningStore.add(
+		this.lightningStore.add(
 			filePath,
-			{
-				lastModified: file.lastModified,
-				data: { functionPath },
-			},
+			{ lastModified: file.lastModified },
 			fileType
 		)
-		return true
 	}
 
 	/**
@@ -150,6 +178,7 @@ export class LightningCache {
 	async processJSON(filePath: string, fileType: string, file: File) {
 		const fileContent = await file.text()
 
+		// JSON API
 		let data: any
 		try {
 			data = json5.parse(fileContent)
@@ -161,12 +190,14 @@ export class LightningCache {
 				},
 				fileType
 			)
-			return true
+			return
 		}
 
+		// Load instructions for current file
 		const instructions = await FileType.getLightningCache(filePath)
+
 		// No instructions = no work
-		if (instructions.length === 0) {
+		if (instructions.length === 0 || typeof instructions === 'string') {
 			this.lightningStore.add(
 				filePath,
 				{
@@ -174,7 +205,7 @@ export class LightningCache {
 				},
 				fileType
 			)
-			return true
+			return
 		}
 
 		// console.log(instructions)
@@ -247,6 +278,6 @@ export class LightningCache {
 			fileType
 		)
 
-		return true
+		return
 	}
 }

@@ -74,6 +74,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		const app = await App.getApp()
 		let colorScheme = settingsState?.appearance?.colorScheme
 		if (!colorScheme || colorScheme === 'auto') colorScheme = this.mode
+		await app.projectManager.projectReady.fired
 
 		const localThemeId =
 			(await app.projectConfig.get(

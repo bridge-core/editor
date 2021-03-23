@@ -17,15 +17,13 @@
 			{
 				"type": "fileInput",
 				"accept": "image/png,image/jpeg",
-				"optional": "true",
+				"optional": true,
 				"icon": "mdi-file-account"
 			}
 		]
 	],
 
-	"createFiles": [
-		"presetScript/optionImage.js"
-	],
+	"createFiles": ["presetScript/optionalImage.js"],
 	"expandFiles": [
 		["skins.json", "SP/skins.json", { "inject": ["IDENTIFIER"] }],
 		[

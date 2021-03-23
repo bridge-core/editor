@@ -1,19 +1,19 @@
 {
-    "format_version": "",
-    "minecraft:feature_rules": {
-        "description": {
-            "identififer": "",
-            "places_feature": ""
-        },
-        "conditions": {
-            "placement_pass": "",
-            "minecraft:biome_filter": {}
-        },
-        "distribution": {
-            "iterations": 1,
-            "x": {},
-            "y": {},
-            "z": {}
-        }
-    }
+	"format_version": "",
+	"minecraft:feature_rules": {
+		"description": {
+			"identifier": "{{PROJECT_PREFIX}}:{{FILE_NAME}}",
+			"places_feature": ""
+		},
+		"conditions": {
+			"placement_pass": "",
+			"minecraft:biome_filter": {}
+		},
+		"distribution": {
+			"iterations": 1,
+			"x": {},
+			"y": {},
+			"z": {}
+		}
+	}
 }

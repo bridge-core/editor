@@ -16,7 +16,9 @@ module.exports = {
 		name: 'bridge v2',
 		appleMobileWebAppCapable: true,
 		themeColor: '#1778D2',
+		msTileColor: '#0F0F0F',
 		manifestOptions: {
+			background_color: '#0F0F0F',
 			// display_modifiers: ['window-controls-overlay'],
 		},
 	},
@@ -28,7 +30,7 @@ module.exports = {
 		},
 		plugins: [
 			new MonacoWebpackPlugin({ features: ['!toggleHighContrast'] }),
-			new WorkerPlugin(),
+			new WorkerPlugin({ globalObject: 'self' }),
 		],
 	},
 }

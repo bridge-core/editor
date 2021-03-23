@@ -18,18 +18,14 @@ export interface ICreateProjectOptions {
 	prefix: string
 	targetVersion: string
 	packs: TPackType[]
+	scripting: boolean
+	gameTest: boolean
+	rpAsBpDependency: boolean
+	rpUuid?: string
 }
 export class CreateProjectWindow extends BaseWindow {
 	protected isFirstProject = false
-	protected createOptions: ICreateProjectOptions = {
-		author: '',
-		description: '',
-		icon: null,
-		name: '',
-		prefix: 'bridge',
-		targetVersion: '',
-		packs: ['bridge', 'BP', 'RP'],
-	}
+	protected createOptions: ICreateProjectOptions = this.getDefaultOptions()
 	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []
 	protected availableTargetVersionsLoading = true
@@ -80,26 +76,47 @@ export class CreateProjectWindow extends BaseWindow {
 		super.open()
 	}
 
-	createProject() {
-		return new Promise<void>((resolve) =>
-			App.ready.once(async (app) => {
-				const fs = app.fileSystem
-				const projectDir = await fs.getDirectoryHandle(
-					`projects/${this.createOptions.name}`,
-					{ create: true }
-				)
-				const scopedFs = new FileSystem(projectDir)
+	async createProject() {
+		const app = await App.getApp()
 
-				for (const createFile of this.createFiles) {
-					await createFile.create(scopedFs, this.createOptions)
-				}
-				for (const pack of this.createOptions.packs) {
-					await this.packs[pack].create(scopedFs, this.createOptions)
-				}
-
-				await app.projectManager.addProject(projectDir)
-				resolve()
-			})
+		const fs = app.fileSystem
+		const projectDir = await fs.getDirectoryHandle(
+			`projects/${this.createOptions.name}`,
+			{ create: true }
 		)
+		const scopedFs = new FileSystem(projectDir)
+
+		// Create individual files without a pack
+		for (const createFile of this.createFiles) {
+			await createFile.create(scopedFs, this.createOptions)
+		}
+
+		// We need to ensure that we create the RP before the BP in order to link it up correctly inside of the BP manifest
+		// if the user chose the corresponding option. This line sorts packs in reverse alphabetical order to achieve that
+		const reversePacks = this.createOptions.packs.sort((a, b) =>
+			b.localeCompare(a)
+		)
+		// Create the different packs
+		for (const pack of reversePacks) {
+			await this.packs[pack].create(scopedFs, this.createOptions)
+		}
+
+		await app.projectManager.addProject(projectDir)
+		this.createOptions = this.getDefaultOptions()
+	}
+
+	getDefaultOptions(): ICreateProjectOptions {
+		return {
+			author: '',
+			description: '',
+			icon: null,
+			name: '',
+			prefix: 'bridge',
+			targetVersion: '',
+			packs: ['bridge', 'BP', 'RP'],
+			scripting: false,
+			gameTest: false,
+			rpAsBpDependency: false,
+		}
 	}
 }

@@ -1,5 +1,6 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
+import { clearAllNotifications } from '../../Notifications/create'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -30,6 +31,16 @@ export function setupFileCategory(app: App) {
 			name: 'actions.openFile.name',
 			description: 'actions.openFile.description',
 			keyBinding: 'Ctrl + O',
+			onTrigger: () => app.windows.packExplorer.open(),
+		})
+	)
+	file.addItem(
+		app.actionManager.create({
+			id: 'bridge.action.searchFile',
+			icon: 'mdi-magnify',
+			name: 'actions.searchFile.name',
+			description: 'actions.searchFile.description',
+			keyBinding: 'Ctrl + P',
 			onTrigger: () => app.windows.filePicker.open(),
 		})
 	)
@@ -39,7 +50,7 @@ export function setupFileCategory(app: App) {
 			name: 'actions.saveFile.name',
 			description: 'actions.saveFile.description',
 			keyBinding: 'Ctrl + S',
-			onTrigger: () => App.ready.once(app => app.tabSystem?.save()),
+			onTrigger: () => App.ready.once((app) => app.tabSystem?.save()),
 		})
 	)
 	file.addItem(
@@ -48,7 +59,15 @@ export function setupFileCategory(app: App) {
 			name: 'actions.closeFile.name',
 			description: 'actions.closeFile.description',
 			keyBinding: 'Ctrl + W',
-			onTrigger: () => App.ready.once(app => app.tabSystem?.close()),
+			onTrigger: () => App.ready.once((app) => app.tabSystem?.close()),
+		})
+	)
+	file.addItem(
+		app.actionManager.create({
+			icon: 'mdi-cancel',
+			name: 'actions.clearAllNotifications.name',
+			description: 'actions.clearAllNotifications.description',
+			onTrigger: () => clearAllNotifications(),
 		})
 	)
 	file.addItem(

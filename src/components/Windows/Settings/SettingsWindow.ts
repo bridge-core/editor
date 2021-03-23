@@ -16,7 +16,7 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async setup() {
-		const locales = await App.getApp().then(app => app.locales)
+		const locales = await App.getApp().then((app) => app.locales)
 
 		this.addCategory(
 			'general',
@@ -28,7 +28,7 @@ export class SettingsWindow extends BaseWindow {
 			locales.translate('windows.settings.appearance.name'),
 			'mdi-palette-outline'
 		)
-		// this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
+		this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
 		this.addCategory(
 			'actions',
 			locales.translate('windows.settings.actions.name'),
@@ -71,8 +71,8 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	static saveSettings() {
-		return new Promise<void>(resolve => {
-			App.ready.once(async app => {
+		return new Promise<void>((resolve) => {
+			App.ready.once(async (app) => {
 				await app.fileSystem.writeJSON(
 					'data/settings.json',
 					settingsState

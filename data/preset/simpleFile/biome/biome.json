@@ -1,9 +1,9 @@
 {
-    "format_version": "",
-    "minecraft:biome": {
-        "description": {
-            "identifier": ""
-        },
-        "components": {}
-    }
+	"format_version": "",
+	"minecraft:biome": {
+		"description": {
+			"identifier": "{{PROJECT_PREFIX}}:{{FILE_NAME}}"
+		},
+		"components": {}
+	}
 }

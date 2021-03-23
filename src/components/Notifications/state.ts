@@ -3,5 +3,8 @@
  */
 
 import Vue from 'vue'
+import { Notification } from './Notification'
 
-export const NotificationStore = Vue.observable({})
+export const NotificationStore: Record<string, Notification> = Vue.observable(
+	{}
+)

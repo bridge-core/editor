@@ -9,17 +9,7 @@
 					"$ref": "../description.json"
 				},
 				"components": {
-					"allOf": [
-						{
-							"$ref": "../v1.10.0/components.json"
-						},
-						{
-							"$ref": "./components.json"
-						},
-						{
-							"$ref": "../dynamic/tagProperty.json"
-						}
-					]
+					"$ref": "./components.json"
 				},
 				"events": {
 					"patternProperties": {

@@ -1,4 +1,3 @@
-import { App } from '/@/App'
 import { FileSystem } from '../FileSystem/FileSystem'
 
 export type TProjectConfigKey =
@@ -13,21 +12,12 @@ export type TProjectConfig = {
 
 export class ProjectConfig {
 	protected data: any
-	protected fileSystem!: FileSystem
 
-	constructor() {
-		App.ready.once(app => (this.fileSystem = app.fileSystem))
-		App.eventSystem.on('projectChanged', () => {
-			this.data = undefined
-		})
-	}
+	constructor(protected fileSystem: FileSystem) {}
 
 	protected async loadData() {
-		const app = await App.getApp()
 		try {
-			this.data = await this.fileSystem.readJSON(
-				`projects/${app.selectedProject}/bridge/config.json`
-			)
+			this.data = await this.fileSystem.readJSON(`bridge/config.json`)
 		} catch {
 			this.data = {}
 		}
@@ -43,14 +33,9 @@ export class ProjectConfig {
 		return this.data![key]
 	}
 	async set(key: TProjectConfigKey, data: unknown) {
-		const app = await App.getApp()
 		if (!this.data) await this.loadData()
 		this.data![key] = data
 
-		await this.fileSystem.writeJSON(
-			`projects/${app.selectedProject}/bridge/config.json`,
-			this.data,
-			true
-		)
+		await this.fileSystem.writeJSON(`bridge/config.json`, this.data, true)
 	}
 }

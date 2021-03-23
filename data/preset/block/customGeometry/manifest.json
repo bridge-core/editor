@@ -6,7 +6,7 @@
 	"targetVersion": [">=", "1.16.100"],
 	"packTypes": ["behaviorPack", "resourcePack"],
 	"additionalModels": {
-		"IMAGE_SAVE_PATH": "RP/textures/blocks",
+		"IMAGE_SAVE_PATH": "RP/textures/blocks/",
 		"DEFAULT_IMAGE": "texture.png",
 		"MODEL_SAVE_PATH": "RP/models/blocks/",
 		"DEFAULT_MODEL": "geometry.json"

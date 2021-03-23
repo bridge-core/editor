@@ -41,14 +41,7 @@
 									"minItems": 2,
 									"maxItems": 2,
 									"items": {
-										"anyOf": [
-											{
-												"type": "number"
-											},
-											{
-												"$ref": "../molang/embeddedBeta.json"
-											}
-										]
+										"$ref": "../molang/embeddedBeta.json"
 									}
 								},
 								"scale": {
@@ -56,14 +49,7 @@
 									"minItems": 2,
 									"maxItems": 2,
 									"items": {
-										"anyOf": [
-											{
-												"type": "number"
-											},
-											{
-												"$ref": "../molang/embeddedBeta.json"
-											}
-										]
+										"$ref": "../molang/embeddedBeta.json"
 									}
 								}
 							}

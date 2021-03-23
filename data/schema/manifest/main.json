@@ -68,43 +68,44 @@
 		},
 		"modules": {
 			"type": "array",
-			"additionalProperties": true,
 			"title": "Modules",
-			"items": [
-				{
-					"type": "object",
-					"title": "Module",
-					"required": ["type", "uuid", "version"],
-					"properties": {
-						"type": {
-							"enum": [
-								"resources",
-								"data",
-								"client_data",
-								"interface",
-								"skin_pack",
-								"world_template"
-							]
-						},
-						"description": {
-							"type": "string"
-						},
-						"uuid": {
-							"anyOf": [
-								{
-									"$ref": "../general/uuid.json"
-								},
-								{
-									"type": "string"
-								}
-							]
-						},
-						"verison": {
-							"$ref": "#/definitions/triple_integer"
-						}
+			"items": {
+				"type": "object",
+				"title": "Module",
+				"required": ["type", "uuid", "version"],
+				"properties": {
+					"type": {
+						"enum": [
+							"resources",
+							"data",
+							"client_data",
+							"interface",
+							"skin_pack",
+							"world_template",
+							"plugin"
+						]
+					},
+					"description": {
+						"type": "string"
+					},
+					"uuid": {
+						"anyOf": [
+							{
+								"$ref": "../general/uuid.json"
+							},
+							{
+								"type": "string"
+							}
+						]
+					},
+					"verison": {
+						"$ref": "#/definitions/triple_integer"
+					},
+					"entry": {
+						"type": "string"
 					}
 				}
-			]
+			}
 		},
 		"dependencies": {
 			"type": "array",

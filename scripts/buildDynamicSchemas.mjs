@@ -7,14 +7,23 @@ export async function buildDynamicSchemas() {
 	const fileDefs = await loadFileDefs()
 
 	for (const { lightningCache, id } of fileDefs) {
-		if (!lightningCache) continue
+		if (!lightningCache || !lightningCache.endsWith('.json')) continue
 
-		const json = JSON5.parse(
-			(
-				await fs.readFile(join('./data/lightningCache', lightningCache))
-			).toString('utf-8'),
-			null
-		)
+		let json
+		try {
+			json = JSON5.parse(
+				(
+					await fs.readFile(
+						join('./data/lightningCache', lightningCache)
+					)
+				).toString('utf-8'),
+				null
+			)
+		} catch {
+			throw new Error(
+				`Failed to load lightning cache file "${lightningCache}"`
+			)
+		}
 
 		try {
 			await fs.rmdir(join('./data/schema', id, 'dynamic'), {

@@ -3,19 +3,27 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { Remote, wrap } from 'comlink'
 import { ITaskDetails, Task } from '../TaskManager/Task'
 
-export abstract class WorkerManager<T, O, A, R> extends Signal<R> {
+export abstract class WorkerManager<
+	RemoteClass,
+	WorkerOptions,
+	StartArg,
+	SignalData
+> extends Signal<SignalData> {
 	protected worker: Worker | null = null
-	protected workerClass: Remote<{ new (options: O): T }> | null = null
-	protected _service: Remote<T> | null = null
+	protected workerClass: Remote<{
+		new (options: WorkerOptions): RemoteClass
+	}> | null = null
+	protected _service: Remote<RemoteClass> | null = null
 	protected task: Task | null = null
 
-	constructor(protected taskOptions: ITaskDetails) {
+	constructor(protected taskOptions: ITaskDetails, protected app?: App) {
 		super()
 	}
 
-	abstract createWorker(): void
+	async activate(arg: StartArg) {
+		const app = this.app ?? (await App.getApp())
+		this.task = app.taskManager.create(this.taskOptions)
 
-	async activate(arg: A) {
 		if (!this.worker) {
 			this.createWorker()
 
@@ -23,22 +31,25 @@ export abstract class WorkerManager<T, O, A, R> extends Signal<R> {
 				throw new Error(
 					`Method WorkerManager.createWorker() doesn't create worker`
 				)
-			this.workerClass = wrap<{ new (): T }>(this.worker)
+			this.workerClass = wrap<{ new (): RemoteClass }>(this.worker)
 		}
 
-		const app = await App.getApp()
-
-		this.task = app.taskManager.create(this.taskOptions)
 		this.resetSignal()
-		await this.start(arg).then((returnData) => this.dispatch(returnData))
+		await this.start(arg).then((returnData) => {
+			this.task?.complete()
+			this.dispatch(returnData)
+		})
 	}
 
 	deactivate() {
+		this.resetSignal()
 		this.worker?.terminate()
 		this.task?.dispose()
 		this.worker = null
+		this._service = null
 		this.workerClass = null
 	}
 
-	protected abstract start(arg: A): Promise<R>
+	protected abstract createWorker(): void
+	protected abstract start(arg: StartArg): Promise<SignalData>
 }

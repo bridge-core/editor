@@ -1,5 +1,5 @@
 import { Signal } from '/@/components/Common/Event/Signal'
-import JSZip from 'jszip'
+import { unzip, Unzipped } from 'fflate'
 import { dirname } from '/@/utils/path'
 import { FileSystem } from '../FileSystem/FileSystem'
 import { createErrorNotification } from '../Notifications/Errors'
@@ -25,6 +25,7 @@ export class ExtensionLoader extends Signal<void> {
 	protected globalExtensions = new Map<string, Extension>()
 	protected localExtensions = new Map<string, Extension>()
 	protected _loadedInstalledExtensions = new Signal<void>(2)
+
 	get extensions() {
 		return new Map([
 			...this.globalExtensions.entries(),
@@ -105,28 +106,26 @@ export class ExtensionLoader extends Signal<void> {
 	) {
 		const fs = new FileSystem(baseDirectory)
 		const file = await fileHandle.getFile()
-		const zip = await JSZip.loadAsync(await file.arrayBuffer())
+		const zip = await new Promise<Unzipped>(async (resolve, reject) =>
+			unzip(new Uint8Array(await file.arrayBuffer()), (err, data) => {
+				if (err) reject(err)
+				else resolve(data)
+			})
+		)
 
-		const promises: Promise<unknown>[] = []
-		zip.forEach((relativePath, zipEntry) => {
-			promises.push(
-				new Promise<void>(async (resolve) => {
-					if (zipEntry.dir) return resolve()
+		for (const fileName in zip) {
+			if (fileName.startsWith('.')) continue
 
-					if (dirname(relativePath) !== '.')
-						await fs.mkdir(dirname(relativePath), {
-							recursive: true,
-						})
-
-					await fs
-						.writeFile(relativePath, await zipEntry.async('blob'))
-						.catch(() => console.log(relativePath))
-
-					resolve()
+			if (fileName.endsWith('/')) {
+				await fs.mkdir(fileName.slice(0, -1), {
+					recursive: true,
 				})
-			)
-		})
-		await Promise.all(promises)
+
+				continue
+			}
+
+			await fs.writeFile(fileName, zip[fileName])
+		}
 
 		return await this.loadManifest(baseDirectory, isGlobal)
 	}
@@ -191,5 +190,18 @@ export class ExtensionLoader extends Signal<void> {
 			ext.deactivate()
 			this.localExtensions.delete(key)
 		}
+	}
+
+	mapActive<T>(cb: (ext: Extension) => T) {
+		const res: T[] = []
+
+		for (const ext of this.globalExtensions.values()) {
+			if (ext.isActive) res.push(cb(ext))
+		}
+		for (const ext of this.localExtensions.values()) {
+			if (ext.isActive) res.push(cb(ext))
+		}
+
+		return res
 	}
 }

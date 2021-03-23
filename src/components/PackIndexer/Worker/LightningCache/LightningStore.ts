@@ -4,6 +4,7 @@ import type { FileSystem } from '/@/components/FileSystem/FileSystem'
 type TStore = Record<string, Record<string, IStoreEntry>>
 interface IStoreEntry {
 	lastModified: number
+	visited?: boolean
 	data?: Record<string, string[]>
 }
 
@@ -13,8 +14,17 @@ interface IStoreEntry {
 export class LightningStore {
 	protected store: TStore | undefined
 	protected fs: FileSystem
+	protected _visitedFiles = 0
+	protected _totalFiles = 0
 	constructor(fs: FileSystem) {
 		this.fs = fs
+	}
+
+	get visitedFiles() {
+		return this._visitedFiles
+	}
+	get totalFiles() {
+		return this._totalFiles
 	}
 
 	reset() {
@@ -31,6 +41,7 @@ export class LightningStore {
 		} catch {}
 
 		this.store = {}
+		this._visitedFiles = 0
 		let currentFileType = 'unknown'
 		for (const definition of loadStore) {
 			if (definition === '') continue
@@ -41,6 +52,7 @@ export class LightningStore {
 			}
 
 			const [filePath, lastModified, data] = definition.split('|')
+			this._totalFiles++
 			this.store[currentFileType][filePath] = {
 				lastModified: Number(lastModified),
 				data: data ? JSON.parse(data) : undefined,
@@ -54,6 +66,11 @@ export class LightningStore {
 
 			for (const filePath in this.store[fileType]) {
 				const entry = this.store[fileType][filePath]
+				// This file no longer seems to exist, omit it from store output
+				if (!entry.visited) {
+					delete this.store[fileType][filePath]
+					continue
+				}
 
 				saveStore += `${filePath}|${entry.lastModified}`
 				if (entry.data) saveStore += `|${JSON.stringify(entry.data)}\n`
@@ -75,9 +92,24 @@ export class LightningStore {
 	) {
 		if (!this.store![fileType]) this.store![fileType] = {}
 
+		this._visitedFiles++
+		if (!this.store![fileType][filePath]) this._totalFiles++
+
 		this.store![fileType][filePath] = {
+			visited: true,
 			lastModified,
 			data: data ?? this.store![fileType]?.[filePath]?.data,
+		}
+	}
+	setVisited(
+		filePath: string,
+		visited: boolean,
+		fileType = FileType.getId(filePath)
+	) {
+		this._visitedFiles++
+
+		if (this.store?.[fileType]?.[filePath]) {
+			this.store![fileType][filePath].visited = visited
 		}
 	}
 

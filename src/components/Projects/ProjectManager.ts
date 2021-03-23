@@ -5,12 +5,14 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { Project } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
 import { Title } from '/@/components/Projects/Title'
+import { editor } from 'monaco-editor'
 
 export class ProjectManager extends Signal<void> {
 	public readonly recentProjects!: RecentProjects
 	public readonly state: Record<string, Project> = {}
 	public readonly title = new Title()
 	protected _selectedProject?: string = undefined
+	public readonly projectReady = new Signal<void>()
 
 	constructor(protected app: App) {
 		super()
@@ -21,6 +23,17 @@ export class ProjectManager extends Signal<void> {
 			'recentProjects',
 			new RecentProjects(this.app, `data/recentProjects.json`)
 		)
+
+		// Once possible, scan recentProjects for projects which no longer exist
+		this.once(() => {
+			this.recentProjects.keep(
+				(project) =>
+					Object.values(this.state).findIndex(
+						(currProject) =>
+							currProject.projectData.path === project.path
+					) > -1
+			)
+		})
 	}
 
 	get currentProject() {
@@ -121,6 +134,8 @@ export class ProjectManager extends Signal<void> {
 		} else {
 			throw new Error(`Expected string, found ${typeof projectName}`)
 		}
+
+		this.projectReady.dispatch()
 	}
 	protected async loadFallback() {
 		await this.fired
@@ -128,5 +143,13 @@ export class ProjectManager extends Signal<void> {
 		const fallback = Object.keys(this.state)[0]
 		await set('selectedProject', fallback)
 		return fallback
+	}
+
+	updateAllEditorOptions(options: editor.IEditorConstructionOptions) {
+		Object.values(this.state).forEach((project) =>
+			project.tabSystems.forEach((tabSystem) =>
+				tabSystem.updateOptions(options)
+			)
+		)
 	}
 }

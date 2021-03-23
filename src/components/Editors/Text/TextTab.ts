@@ -4,23 +4,22 @@ import * as monaco from 'monaco-editor'
 import { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
-import { settingsState } from '../../Windows/Settings/SettingsState'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { FileType } from '/@/components/Data/FileType'
 
 export class TextTab extends Tab {
 	component = TextTabComponent
-	editorInstance: monaco.editor.ICodeEditor | undefined
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
 	disposables: (IDisposable | undefined)[] = []
 	isActive = false
 
-	setIsUnsaved(val: boolean) {
-		super.setIsUnsaved(val)
+	get editorInstance() {
+		return this.parent.monacoEditor
 	}
 
-	receiveEditorInstance(editorInstance: monaco.editor.IStandaloneCodeEditor) {
-		this.editorInstance = editorInstance
-		this.editorInstance.layout()
+	setIsUnsaved(val: boolean) {
+		super.setIsUnsaved(val)
 	}
 
 	async onActivate() {
@@ -48,7 +47,7 @@ export class TextTab extends Tab {
 			app.windowResize.on(() => this.editorInstance?.layout())
 		)
 		this.disposables.push(
-			this.editorModel?.onDidChangeContent((event) => {
+			this.editorModel?.onDidChangeContent(() => {
 				this.isUnsaved = true
 			})
 		)
@@ -71,7 +70,9 @@ export class TextTab extends Tab {
 	}
 	updateParent(parent: TabSystem) {
 		super.updateParent(parent)
-		this.editorInstance = undefined
+	}
+	focus() {
+		this.editorInstance?.focus()
 	}
 
 	loadEditor() {
@@ -85,11 +86,16 @@ export class TextTab extends Tab {
 		const action = this.editorInstance?.getAction(
 			'editor.action.formatDocument'
 		)
+		const fileType = FileType.get(this.getPackPath())
 
-		if (action && (settingsState?.general?.formatOnSave ?? true)) {
+		if (
+			action &&
+			(settingsState?.general?.formatOnSave ?? true) &&
+			(fileType?.formatOnSaveCapable ?? true)
+		) {
 			app.windows.loadingWindow.open()
 			// This is a terrible hack because we need to make sure that the formatter triggers the "onDidChangeContent" event
-			// The promise returned by action.run() actually resolves before formatting is done
+			// The promise returned by action.run() actually resolves before formatting is done so we need the "onDidChangeContent" event to tell when the formatter is done
 			this.editorInstance?.executeEdits('automatic', [
 				{
 					forceMoveMarkers: false,

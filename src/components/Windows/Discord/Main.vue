@@ -43,6 +43,7 @@ export default {
 		close: () => Discord.close(),
 		openDiscord() {
 			window.open('https://discord.gg/jj2PmqU', '_blank')
+			Discord.close()
 		},
 	},
 }

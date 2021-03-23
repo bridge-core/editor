@@ -2,6 +2,8 @@ import { TCompilerHook, TCompilerPlugin } from './Plugins'
 import { resolveFileOrder } from './Resolver'
 import { dirname } from '/@/utils/path'
 import { CompilerService } from './Service'
+import isGlob from 'is-glob'
+import { isMatch } from 'micromatch'
 
 export interface IFileData {
 	isLoaded?: boolean
@@ -12,12 +14,14 @@ export interface IFileData {
 	aliases: string[]
 	updateFiles: Set<string>
 	dependencies: Set<string>
+	requiresGlobs: Set<string>
 }
 export interface ISaveFile {
 	filePath: string
 	updateFiles: string[]
 	dependencies: string[]
 	aliases: string[]
+	requiresGlobs: string[]
 }
 
 export class Compiler {
@@ -31,25 +35,39 @@ export class Compiler {
 	protected get plugins() {
 		return this.parent.getPlugins()
 	}
+	getAliases(filePath: string) {
+		return [...(this.files.get(filePath)?.aliases ?? [])]
+	}
 
 	async runWithFiles(files: string[]) {
-		this.parent.progress.setTotal(files.length * 2)
+		this.parent.progress.setTotal(5)
 
 		await this.loadSavedFiles()
 		await this.runSimpleHook('buildStart')
 
+		// Add files that we are supposed to include
+		for (const includeFile of await this.runCollectHook('include')) {
+			if (!this.files.has(includeFile)) files.push(includeFile)
+		}
+
+		this.parent.progress.addToCurrent(1)
+
 		await this.compileFiles(files)
 
 		await this.runSimpleHook('buildEnd')
+		this.parent.progress.addToCurrent(1)
 		await this.processFileMap()
 	}
-	async compileFiles(files: string[], errorOnReadFailure = true) {
-		await this.resolveFiles(
-			this.flatFiles(files, new Set()),
-			errorOnReadFailure
-		)
-		await this.requireFiles(files)
-		const sortedFiles = resolveFileOrder(this.files)
+	async compileFiles(files: string[]) {
+		const flatFiles = this.flatFiles(files, new Set())
+		this.parent.progress.setTotal(flatFiles.size * 2 + 5)
+
+		this.addMatchingGlobImporters(flatFiles)
+
+		await this.resolveFiles(flatFiles)
+		await this.requireFiles(flatFiles)
+		const sortedFiles = resolveFileOrder([...flatFiles], this.files)
+		// console.log([...sortedFiles].map((file) => file.filePath))
 		await this.finalizeFiles(sortedFiles)
 	}
 
@@ -64,56 +82,91 @@ export class Compiler {
 					aliases: fileData.aliases,
 					updateFiles: new Set(fileData.updateFiles ?? []),
 					dependencies: new Set(fileData.dependencies ?? []),
+					requiresGlobs: new Set(fileData.requiresGlobs),
 				})
 			}
 		} catch {}
+		this.parent.progress.addToCurrent(1)
 	}
-	flatFiles(files: string[], fileSet: Set<string>) {
+	flatFiles(
+		files: string[],
+		fileSet: Set<string>,
+		ignoreSet = new Set<string>()
+	) {
 		for (const filePath of files) {
-			if (fileSet.has(filePath)) continue
+			if (fileSet.has(filePath) || ignoreSet.has(filePath)) continue
 
 			const file = this.files.get(filePath)
 			if (file?.isLoaded) continue
 
+			ignoreSet.add(filePath)
+
+			// First: Add dependencies
+			if (file) this.flatFiles([...file.dependencies], fileSet, ignoreSet)
+
+			// Then: Add current file
 			fileSet.add(filePath)
 			if (!file) continue
 
-			this.flatFiles(
-				[...file.dependencies, ...file.updateFiles],
-				fileSet
-			).forEach((f) => fileSet.add(f))
+			// Then: Update files which depend on the current file
+			this.flatFiles([...file.updateFiles], fileSet, ignoreSet)
+
+			ignoreSet.delete(filePath)
 
 			this.parent.progress.addToCurrent(1)
 		}
 
-		return [...fileSet]
+		return fileSet
 	}
 
-	protected async resolveFiles(files: string[], errorOnReadFailure = true) {
+	addMatchingGlobImporters(files: Set<string>) {
+		const testFiles = [...files]
+
+		for (const file of this.files.values()) {
+			if (file.requiresGlobs.size === 0) continue
+
+			// For every glob
+			for (const glob of file.requiresGlobs.values()) {
+				// If any filePath matches
+				if (testFiles.some((filePath) => isMatch(filePath, glob)))
+					// Also resolve the file with the glob imports later
+					files.add(file.filePath)
+			}
+		}
+	}
+
+	protected async resolveFiles(files: Set<string>) {
 		for (const filePath of files) {
 			let file = this.files.get(filePath)
 			if (file?.isLoaded) continue
 
-			const saveFilePath: string = await this.runAllHooks(
-				'transformPath',
-				0,
-				filePath
-			)
+			const saveFilePath: string | undefined =
+				(await this.runAllHooks('transformPath', 0, filePath)) ??
+				undefined
 
 			let fileHandle: FileSystemFileHandle | undefined = undefined
 			try {
 				fileHandle = await this.fileSystem.getFileHandle(filePath)
-			} catch {
-				if (errorOnReadFailure)
-					throw new Error(
-						`Cannot access file "${filePath}": File does not exist`
-					)
-			}
+			} catch {}
 
 			const readData = await this.runHook('read', filePath, fileHandle)
 			if (readData === undefined || readData === null) {
-				if (!!saveFilePath && !!fileHandle)
+				// Don't copy files if the saveFilePath is equals to the original filePath
+				// ...or if the fileHandle doesn't exist (no file to copy)
+				if (!!fileHandle && !!saveFilePath && saveFilePath !== filePath)
 					await this.copyFile(fileHandle, saveFilePath)
+
+				file = {
+					isLoaded: true,
+					filePath,
+					aliases: [],
+					updateFiles: new Set(),
+					dependencies: new Set(),
+					requiresGlobs: new Set(),
+				}
+				this.files.set(filePath, file)
+
+				this.parent.progress.addToCurrent(2)
 				continue
 			}
 
@@ -135,31 +188,51 @@ export class Compiler {
 				aliases: aliases ?? [],
 				updateFiles: file?.updateFiles ?? new Set(),
 				dependencies: file?.dependencies ?? new Set(),
+				requiresGlobs: new Set(),
 			})
 
 			this.parent.progress.addToCurrent(1)
 		}
 	}
 
-	protected async requireFiles(files: string[]) {
-		for (const filePath of files) {
+	protected async requireFiles(files: Set<string>) {
+		for (const filePath of files.values()) {
 			const file = this.files.get(filePath)
 			if (!file || !file.isLoaded) continue
 
-			// Remove old updateFile refs
+			// Remove old dependencies
 			const oldDeps = file.dependencies
-			for (const dependency of file.dependencies) {
+			for (const dependency of oldDeps) {
 				const depFile = this.files.get(dependency)
 				if (depFile) depFile.updateFiles.delete(file.filePath)
 			}
 			file.dependencies = new Set()
 
 			// Get new dependencies
-			const dependencies = new Set(
+			const dependencies = new Set<string>(
 				await this.runCollectHook('require', file.filePath, file.data)
 			)
+			if (dependencies.size === 0) continue
 
+			// Resolve glob imports
+			const resolvedDeps = new Set<string>()
 			for (const dependency of dependencies) {
+				if (!isGlob(dependency)) {
+					resolvedDeps.add(dependency)
+					continue
+				}
+
+				// Add files which match glob as dependencies
+				const matchingFiles = [
+					...new Set([...this.files.keys(), ...files]),
+				].filter((filePath) => isMatch(filePath, dependency))
+				matchingFiles.forEach((filePath) => resolvedDeps.add(filePath))
+
+				// Add the glob import to file obj
+				file.requiresGlobs.add(dependency)
+			}
+
+			for (const dependency of resolvedDeps) {
 				const depFile =
 					this.files.get(dependency) ??
 					// Lookup dependency id in file aliases
@@ -169,12 +242,21 @@ export class Compiler {
 
 				if (!depFile)
 					throw new Error(
-						`Undefined file dependency: "${file.filePath}" requires "${dependency}"`
+						`Undefined file dependency: "${filePath}" requires "${dependency}"`
 					)
 
-				// New dependency discovered, compile it
-				if (!oldDeps.has(depFile.filePath) && !depFile.isLoaded)
-					await this.compileFiles([depFile.filePath])
+				// New dependency discovered
+				if (!oldDeps.has(depFile.filePath)) {
+					// If necessary, load it
+					if (!depFile.isLoaded) {
+						const newDep = new Set([depFile.filePath])
+						await this.resolveFiles(newDep)
+						await this.requireFiles(newDep)
+					}
+
+					// Add it to the files we need to load
+					files.add(depFile.filePath)
+				}
 
 				depFile.updateFiles.add(file.filePath)
 				file.dependencies.add(depFile.filePath)
@@ -185,7 +267,7 @@ export class Compiler {
 	protected async finalizeFiles(files: Set<IFileData>) {
 		for (const file of files) {
 			// We don't need to transform files that won't be saved
-			if (!file.saveFilePath || file.isDone) continue
+			if (!file.saveFilePath || !file.isLoaded || file.isDone) continue
 
 			const transformedData =
 				(await this.runAllHooks(
@@ -232,18 +314,21 @@ export class Compiler {
 			if (
 				file.updateFiles.size > 0 ||
 				file.dependencies.size > 0 ||
-				file.aliases.length > 0
+				file.aliases.length > 0 ||
+				file.requiresGlobs.size > 0
 			)
 				filesObject[id] = {
 					filePath: file.filePath,
 					aliases: file.aliases,
 					updateFiles: [...file.updateFiles.values()],
 					dependencies: [...file.dependencies.values()],
+					requiresGlobs: [...file.requiresGlobs.values()],
 				}
 		}
 
 		// Save files map
 		await this.fileSystem.writeJSON('bridge/files.json', filesObject, true)
+		this.parent.progress.addToCurrent(1)
 	}
 
 	protected async copyFile(

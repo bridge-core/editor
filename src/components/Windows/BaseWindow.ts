@@ -21,17 +21,10 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 		Vue.set(WINDOWS, this.windowUUID, this)
 	}
 
-	/**
-	 * Used so that windows extending this class can
-	 * easily hook into the closing window process
-	 */
-	onClose() {}
-
 	close(data: T) {
-		this.onClose()
-
 		this.isVisible = false
 		this.dispatch(data)
+
 		if (!this.keepAlive) {
 			setTimeout(() => {
 				this.shouldRender = false

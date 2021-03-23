@@ -16,17 +16,14 @@ export interface INotificationConfig {
 
 export class Notification {
 	protected id = uuid()
-	protected isVisible: boolean
+	protected _isVisible: boolean
 
 	constructor(protected config: INotificationConfig) {
-		this.isVisible = this.config.isVisible ?? true
+		this._isVisible = this.config.isVisible ?? true
 
 		Vue.set(NotificationStore, this.id, this)
 
-		// @ts-expect-error
-		if (typeof navigator.setAppBadge === 'function')
-			// @ts-expect-error
-			navigator.setAppBadge(Object.keys(NotificationStore).length)
+		if (this._isVisible) this.updateAppBadge()
 	}
 
 	//#region Config getters
@@ -41,6 +38,9 @@ export class Notification {
 	}
 	get textColor() {
 		return this.config.textColor
+	}
+	get isVisible() {
+		return this._isVisible
 	}
 	//#endregion
 
@@ -58,15 +58,24 @@ export class Notification {
 	}
 
 	show() {
-		this.isVisible = true
+		if (!this._isVisible) this.updateAppBadge()
+		this._isVisible = true
 	}
 
 	dispose() {
 		Vue.delete(NotificationStore, this.id)
 
+		this.updateAppBadge()
+	}
+
+	protected updateAppBadge() {
 		// @ts-expect-error
 		if (typeof navigator.setAppBadge === 'function')
 			// @ts-expect-error
-			navigator.setAppBadge(Object.keys(NotificationStore).length)
+			navigator.setAppBadge(
+				Object.values(NotificationStore).filter(
+					({ isVisible }) => isVisible
+				).length
+			)
 	}
 }

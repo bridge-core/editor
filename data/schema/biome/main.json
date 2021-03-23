@@ -2,43 +2,46 @@
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"$id": "bridge.biome",
 	"title": "Biome",
-	"additionalProperties": false,
 	"required": ["format_version", "minecraft:biome"],
 	"properties": {
 		"format_version": {
 			"$ref": "../project/formatVersionEnum.json"
-		},
-		"minecraft:biome": {
-			"required": ["description"],
-			"additionalProperties": false,
-			"properties": {
-				"description": {
-					"required": ["identifier"],
-					"additionalProperties": false,
-					"properties": {
-						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../project/fileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
-								}
-							]
-						}
+		}
+	},
+	"allOf": [
+		{
+			"if": {
+				"properties": {
+					"format_version": {
+						"enum": [
+							"1.8.0",
+							"1.10.0",
+							"1.11.0",
+							"1.12.0",
+							"1.13.0",
+							"1.14.0",
+							"1.16.0",
+							"1.16.100",
+							"1.16.200"
+						]
 					}
-				},
-				"components": {
-					"anyOf": [
-						{
-							"$ref": "./components.json"
-						},
-						{
-							"$ref": "./tag.json"
-						}
-					]
 				}
+			},
+			"then": {
+				"$ref": "./v1.16.0/main.json"
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"format_version": {
+						"const": "1.16.210"
+					}
+				}
+			},
+			"then": {
+				"$ref": "./v1.16.210/main.json"
 			}
 		}
-	}
+	]
 }

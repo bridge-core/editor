@@ -53,6 +53,7 @@ export default {
 		attachable: 'Attachable',
 		clientEntity: 'Client Entity',
 		clientItem: 'Client Item',
+		clientLang: 'Language',
 		fog: 'Fog',
 		particle: 'Particle',
 		renderController: 'Render Controller',
@@ -72,6 +73,7 @@ export default {
 		gameTest: 'Game Test',
 		unknown: 'Other',
 		simpleFile: 'Simple Files',
+		ui: 'UI',
 	},
 	// Actions
 	actions: {
@@ -85,6 +87,10 @@ export default {
 		},
 		openFile: {
 			name: 'Open File',
+			description: 'Open a file from the current project',
+		},
+		searchFile: {
+			name: 'Search File',
 			description: 'Search and open a file from the current project',
 		},
 		saveFile: {
@@ -169,6 +175,10 @@ export default {
 			name: 'Close other Tabs',
 			description: 'Close all tabs except this tab',
 		},
+		clearAllNotifications: {
+			name: 'Clear All Notifications',
+			description: 'Clears all current notifications',
+		},
 		pluginInstallLocation: {
 			global: {
 				name: 'Install Globally',
@@ -221,6 +231,7 @@ export default {
 			updateAvailable: {
 				message: 'Update Available',
 			},
+			updateExtensions: 'Update All Extensions',
 		},
 	},
 	// Welcome Screen
@@ -276,6 +287,10 @@ export default {
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',
 			projectTargetVersion: 'Project Target Version',
+			scripting: 'Enable Scripting API',
+			gameTest: 'Enable GameTest Framework',
+			rpAsBpDependency:
+				'Register resource pack as behavior pack dependency',
 			create: 'Create',
 		},
 		createPreset: {
@@ -284,6 +299,9 @@ export default {
 			overwriteFiles:
 				'This preset overwrites one or more existing files. Do you want to continue?',
 			overwriteFilesConfirm: 'Continue',
+			overwriteUnsavedChanges:
+				'This preset overwrites one or more files with unsaved changes. Do you want to continue?',
+			overwriteUnsavedChangesConfirm: 'Continue',
 		},
 		deleteProject: {
 			confirm: 'Delete',
@@ -399,6 +417,12 @@ export default {
 			actions: {
 				name: 'Actions',
 			},
+			editor: {
+				wordWrap: {
+					name: 'Word Wrap',
+					description: 'Wrap words to disable horizontal scrolling',
+				},
+			},
 		},
 		projectFolder: {
 			title: 'Project Folder',
@@ -428,6 +452,10 @@ export default {
 	},
 	taskManager: {
 		tasks: {
+			dataLoader: {
+				title: 'Downloading Data...',
+				description: 'Downloading the latest data for the editor',
+			},
 			packIndexing: {
 				title: 'Indexing Packs',
 				description:

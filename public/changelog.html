@@ -1,55 +1,60 @@
 <h2>Features:</h2>
 <ul>
-<li>Support for the scripting API</li>
-<li>New compiler infrastructure (again 🙃 )</li>
-<li>You can now just use TypeScript for all files which Minecraft reads as JavaScript
+<li>Added toggles upon project creation for...
 <ul>
-<li>bridge.'s compiler will automatically compile the file to plain JavaScript</li>
-<li>New &quot;Language&quot; option upon creating a file to choose between JavaScript &amp; TypeScript where applicable</li>
+<li>GameTest API</li>
+<li>Scripting API</li>
+<li>Registering the RP as a BP dependency</li>
 </ul>
 </li>
-<li>Option to choose an optional image for your preset upon creation where it makes sense</li>
-<li>It is now possible to choose a geometry for the &quot;Geometry Block&quot; preset (Thanks to @Gekocaretaker)</li>
-<li>Basic support for Minecraft's UI files
+<li><strong>Compiler:</strong>
 <ul>
-<li>Auto-Completions</li>
-<li>Creation of UI files</li>
+<li>More logical initial flatFiles order to reduce require overhead later</li>
+<li>Requiring files now only resolves them &amp; requires unknown dependencies. Saving files is now deferred by default</li>
+<li>Added &quot;entityIdentifierAlias&quot; plugin</li>
+<li>Files can now import other files using globs</li>
 </ul>
 </li>
-<li>Support for custom components
+<li><strong>Custom Components:</strong>
 <ul>
-<li>You can write new components for entities, blocks &amp; items</li>
-<li>Support for JavaScript &amp; TypeScript</li>
-<li>Built-in support for animationControllers &amp; animations (entity component)</li>
+<li>Animation(s/ controllers) can now provide a MoLang condition to toggle whether they are supposed to run</li>
+<li>Animation (controller) support for custom item components</li>
 </ul>
 </li>
-<li>Better skin presets (Thanks to @Gekocaretaker)</li>
-<li>Setting to format files upon saving</li>
+<li>Updated JSON schemas to latest beta</li>
+<li>Updated GameTest API to latest beta</li>
+<li>bridge. now proposes action texts from your lang files inside of behavior components</li>
+<li>Auto-completions for entity tags</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Added vanilla feature identifiers (Thanks to @pascal541)</li>
-<li>Type Loader now works on .ts files</li>
-<li><strong>Presets:</strong> Added input type &quot;selectInput&quot;</li>
-<li><strong>Internal:</strong> Added fileSystem.write(...) method for cases where fileHandle is already known</li>
-<li><strong>Presets:</strong> Rewrite of file overwriting permissions to include preset scripts</li>
-<li>Improved error message for terrain_texture files when validation of texture fails</li>
-<li>Support block states in minecraft:preferred_path schema</li>
+<li>Updated MoLang library</li>
+<li>Better error messages for file system related errors</li>
+<li>Renamed &quot;plugins&quot; folder to &quot;extensions&quot;</li>
+<li>Removed unused UIs</li>
+<li>Use hash string for automatically generated animation(s/ controllers)</li>
+<li>Create player.json file upon creating project</li>
+<li>Support for versioning type declarations</li>
+<li>Improved recipe schema</li>
+<li>Added descriptions to fog schema</li>
+<li>Updated tree feature schema</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed bridge. being not installable</li>
-<li>Fixed Discord invite link not showing up</li>
-<li>Fixed application being closable without warning when user has unsaved changes</li>
-<li>Fixed tick.json being generated inside of RP instead of BP (Thanks to @pascal541)</li>
-<li>Fixed tick.json auto-completions (Thanks to @pascal541)</li>
-<li>Fixed Type Loader upon initial project activation</li>
-<li>Fixed cat preset</li>
-<li>Fixed block presets</li>
-<li>Fixed presets not loading correctly</li>
-<li>Fixed error upon saving while compiler is running</li>
-<li>Fixed &quot;minecraft:pick_collision&quot; and &quot;minecraft:entity_collision&quot; schema</li>
-<li>Fixed fileType.script locale key missing error</li>
-<li>Removed unused file from slab preset</li>
-<li>Fixed formatVersions not loading in</li>
+<li>Fixed data loader sometimes freezing computers</li>
+<li>Fixed project creation screen not reseting properly</li>
+<li>Fixed automatic changelog generation</li>
+<li>Fixed rare issue with .crswap files appearing inside of projects</li>
+<li>Fixed error upon downloading extensions</li>
+<li>Fixed custom geometry block preset creating texture in wrong place</li>
+<li>Fixed presets not injecting identifier in custom block geometry preset</li>
+<li>Automatically remove deleted projects from recent projects list</li>
+<li>Fixed &quot;compiler plugin [X] is not defined&quot; error upon switching projects</li>
+<li>Fixed format on save being broken for persistent tabs</li>
+<li>Fixed empty file names in pack explorer</li>
+<li>Fixed error upon creating new item file</li>
+<li>Fixed presets being able to overwrite unsaved changes</li>
+<li>Fixed filter name: &quot;is_nether&quot; -&gt; &quot;in_nether&quot;</li>
+<li>Fixed update extensions notification showing if all extensions were already manually updated</li>
+<li>Fixed compiler hot updates</li>
 </ul>

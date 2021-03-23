@@ -32,6 +32,8 @@
 		"controller.render.fishing_hook",
 		"controller.render.fox",
 		"controller.render.ghast",
+		"controller.render.glow_squid",
+		"controller.render.goat",
 		"controller.render.guardian",
 		"controller.render.hoglin",
 		"controller.render.horse",

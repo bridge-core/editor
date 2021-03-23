@@ -1,536 +1,552 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"description": "Components allow for item functionality.",
-	"properties": {
-		"minecraft:can_destroy_in_creative": {
-			"type": "boolean",
-			"description": "Prevent destruction of blocks in creative mode while holding this item."
+	"allOf": [
+		{
+			"$ref": "../v1.10.0/components.json"
 		},
-		"minecraft:ignores_permission": {
-			"type": "boolean",
-			"description": "Ignores player permissions when holding the item."
+		{
+			"$ref": "../dynamic/tagProperty.json"
 		},
-		"minecraft:mining_speed": {
-			"type": "number",
-			"description": "Set the mining speed of an item."
-		},
-		"minecraft:damage": {
-			"type": "integer",
-			"description": "Set the damage an item deals."
-		},
-		"minecraft:dye_powder": {
-			"type": "object",
-			"description": "Set that this item is a dye and its dye color.",
-			"additionalProperties": false,
+		{
 			"properties": {
-				"color": {
-					"type": "number",
-					"maximum": 15,
-					"minimum": 0
-				}
-			}
-		},
-		"minecraft:mirrored_art": {
-			"type": "boolean",
-			"description": "Mirror the item icon."
-		},
-		"minecraft:explodable": {
-			"type": "boolean",
-			"description": "Whether the item entity survives an explosion."
-		},
-		"minecraft:liquid_clipped": {
-			"type": "boolean",
-			"description": "Whether the item rendering clips liquids."
-		},
-		"minecraft:allow_off_hand": {
-			"type": "boolean",
-			"description": "Whether the item can be placed inside of the off hand."
-		},
-		"minecraft:projectile": {
-			"type": "object",
-			"description": "Sets the projectile used by minecraft:shooter and minecraft:throwable.",
-			"additionalProperties": false,
-			"properties": {
-				"projectile_entity": {
-					"description": "The entity to use as the projectile for this item when it is used as ammunition.",
-					"type": "string"
-				},
-				"minimum_critical_power": {
-					"type": "number"
-				}
-			}
-		},
-		"minecraft:entity_placer": {
-			"type": "object",
-			"description": "Allow this item to place entities",
-			"additionalProperties": false,
-			"properties": {
-				"entity": {
-					"type": "string",
-					"description": "The entity to be placed in the world."
-				},
-				"use_on": {
-					"type": "array",
-					"description": "List of block descriptors that contain blocks that this item can be used on. If left empty, all blocks will be allowed.",
-					"items": {
-						"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
-					}
-				},
-				"dispense_on": {
-					"type": "array",
-					"description": "List of block descriptors that contain blocks that this item can be dispensed on. If left empty, all blocks will be allowed.",
-					"items": {
-						"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
-					}
-				}
-			}
-		},
-		"minecraft:knockback_resistance": {
-			"type": "number",
-			"description": "For items that provide knockback resistance.",
-
-			"minimum": 0.0,
-			"maximum": 1.0
-		},
-		"minecraft:enchantable": {
-			"type": "object",
-			"description": "Makes an item enchantable.",
-			"properties": {
-				"slot": {
-					"type": "string"
-				},
-				"value": {
-					"type": "integer"
-				}
-			}
-		},
-		"minecraft:shooter": {
-			"type": "object",
-			"properties": {
-				"max_draw_duration": {
-					"type": "number",
-					"description": "Draw Duration. Default is set to 0."
-				},
-				"charge_on_draw": {
+				"minecraft:can_destroy_in_creative": {
 					"type": "boolean",
-					"description": "Charge on draw? Default is set to false."
+					"description": "Prevent destruction of blocks in creative mode while holding this item."
 				},
-				"scale_power_by_draw_duration": {
+				"minecraft:ignores_permission": {
 					"type": "boolean",
-					"description": "Scale power by draw duration? Default is set to false."
+					"description": "Ignores player permissions when holding the item."
 				},
-				"launch_power_scale": {
+				"minecraft:mining_speed": {
 					"type": "number",
-					"description": "Launch power scale. Default is set to 1.0."
+					"description": "Set the mining speed of an item."
 				},
-				"max_launch_power": {
-					"type": "number",
-					"description": "Launch power. Default is set to 1.0."
-				},
-				"ammunition": {
-					"type": "array",
-					"description": "Define the ammunition item to use.",
-					"items": {
-						"type": "object",
-						"properties": {
-							"item": {
-								"type": "string"
-							},
-							"use_offhand": {
-								"description": "Whether ammunition can be taken from the offhand.",
-								"type": "boolean"
-							},
-							"search_inventory": {
-								"description": "Whether the whole inventory should be searched for the ammunition.",
-								"type": "boolean"
-							},
-							"use_in_creative": {
-								"description": "Whether this ammunition can be used in creative mode.",
-								"type": "boolean"
-							}
-						}
-					}
-				}
-			}
-		},
-		"minecraft:durability": {
-			"type": "object",
-			"description": "Define an item's durability.",
-			"additionalProperties": false,
-			"properties": {
-				"max_durability": {
+				"minecraft:damage": {
 					"type": "integer",
-					"description": "Max durability is the amount of damage that this item can take before breaking.",
-					"minimum": 0
+					"description": "Set the damage an item deals."
 				},
-				"damage_chance": {
+				"minecraft:dye_powder": {
 					"type": "object",
+					"description": "Set that this item is a dye and its dye color.",
 					"additionalProperties": false,
 					"properties": {
-						"min": { "type": "number" },
-						"max": { "type": "number" }
+						"color": {
+							"type": "number",
+							"maximum": 15,
+							"minimum": 0
+						}
 					}
-				}
-			}
-		},
-		"minecraft:armor": {
-			"type": "object",
-			"description": "Set armor related data.",
-			"additionalProperties": false,
-			"properties": {
-				"protection": { "type": "integer" },
-				"texture_type": {
-					"enum": ["leather", "chain", "diamond", "iron", "gold"]
-				}
-			}
-		},
-		"minecraft:wearable": {
-			"type": "object",
-			"description": "Makes an item wearable.",
-			"additionalProperties": false,
-			"properties": {
-				"slot": { "$ref": "../../general/slotType.json" },
-				"dispensable": { "type": "boolean" }
-			}
-		},
-		"minecraft:weapon": {
-			"type": "object",
-			"description": "Weapon Item Component. Added to every weapon item such as axe, sword, trident, bow, crossbow.",
-			"properties": {
-				"on_hit_block": {
-					"description": "Trigger for letting you know when this item is used to hit a block.",
-					"$ref": "../general/eventDefinition.json"
 				},
-				"on_hurt_entity": {
-					"description": "Trigger for letting you know when this item is used to hurt another mob.",
-					"$ref": "../general/eventDefinition.json"
+				"minecraft:mirrored_art": {
+					"type": "boolean",
+					"description": "Mirror the item icon."
 				},
-				"on_not_hurt_entity": {
-					"description": "Trigger for letting you know when this item hit another actor, but didn't do damage.",
-					"$ref": "../general/eventDefinition.json"
-				}
-			}
-		},
-		"minecraft:record": {
-			"type": "object",
-			"description": "Allows the item to be put in a jukebox and play music.",
-			"properties": {
-				"sound_event": {
-					"type": "string",
-					"description": "A string value correseponding to a sound event in the game code.",
-					"enum": [
-						"13",
-						"cat",
-						"blocks",
-						"chirp",
-						"far",
-						"mall",
-						"mellohi",
-						"stal",
-						"strad",
-						"ward",
-						"11",
-						"wait",
-						"pigstep"
-					]
+				"minecraft:explodable": {
+					"type": "boolean",
+					"description": "Whether the item entity survives an explosion."
 				},
-				"duration": {
-					"type": "integer",
-					"description": "A float value that determines how long particles are spawned from the JukeBox Block, should approximately match length of sound event."
+				"minecraft:liquid_clipped": {
+					"type": "boolean",
+					"description": "Whether the item rendering clips liquids."
 				},
-				"comparator_signal": {
-					"type": "integer",
-					"description": "An integer value that represents the strength of the analog signal, used by the Comparator Block.",
-					"min": 0,
-					"max": 15
-				}
-			}
-		},
-		"minecraft:repairable": {
-			"type": "object",
-			"description": "Repairable item component: how much damage can this item repair, what items can repair it.",
-			"properties": {
-				"on_repaired": {
-					"description": "Event that is called when this item has been repaired.",
-					"$ref": "../general/eventDefinition.json"
+				"minecraft:allow_off_hand": {
+					"type": "boolean",
+					"description": "Whether the item can be placed inside of the off hand."
 				},
-				"repair_items": {
-					"type": "array",
-					"description": "Repair item entries.",
-					"items": {
-						"type": "object",
-						"properties": {
+				"minecraft:projectile": {
+					"type": "object",
+					"description": "Sets the projectile used by minecraft:shooter and minecraft:throwable.",
+					"additionalProperties": false,
+					"properties": {
+						"projectile_entity": {
+							"description": "The entity to use as the projectile for this item when it is used as ammunition.",
+							"type": "string"
+						},
+						"minimum_critical_power": {
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:entity_placer": {
+					"type": "object",
+					"description": "Allow this item to place entities",
+					"additionalProperties": false,
+					"properties": {
+						"entity": {
+							"type": "string",
+							"description": "The entity to be placed in the world."
+						},
+						"use_on": {
+							"type": "array",
+							"description": "List of block descriptors that contain blocks that this item can be used on. If left empty, all blocks will be allowed.",
 							"items": {
-								"type": "array",
-								"items": {
-									"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
-								}
-							},
-							"repair_amount": {
-								"$ref": "../../molang/embeddedBeta.json"
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+							}
+						},
+						"dispense_on": {
+							"type": "array",
+							"description": "List of block descriptors that contain blocks that this item can be dispensed on. If left empty, all blocks will be allowed.",
+							"items": {
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 							}
 						}
 					}
-				}
-			}
-		},
-		"minecraft:cooldown": {
-			"type": "object",
-			"description": "Cool down time for a component. After you use an item it becomes unusable for the duration specified by the 'cool down time' setting in this component.",
-			"properties": {
-				"category": {
-					"type": "string",
-					"description": "The type of cool down for this item."
 				},
-				"duration": {
+				"minecraft:knockback_resistance": {
 					"type": "number",
-					"description": "The duration of time this item will spend cooling down before becoming usable again."
-				}
-			}
-		},
-		"minecraft:on_use_on": {
-			"type": "object",
-			"description": "The on_use_on item component allows you to receive an event when the item is used on a block in the world.",
-			"properties": {
-				"on_use_on": {
-					"description": "Event trigger for when the item is used.",
-					"$ref": "../general/eventDefinition.json"
-				}
-			}
-		},
-		"minecraft:on_use": {
-			"type": "object",
-			"description": "The on_use item component allows you to receive an event when the item is used.",
-			"properties": {
-				"on_use": {
-					"description": "Event trigger for when the item is used.",
-					"$ref": "../general/eventDefinition.json"
-				}
-			}
-		},
-		"minecraft:digger": {
-			"type": "object",
-			"description": "Digger item. Component put on items that dig.",
-			"properties": {
-				"use_efficiency": {
-					"type": "boolean",
-					"description": "Use efficiency? Default is set to false."
+					"description": "For items that provide knockback resistance.",
+
+					"minimum": 0.0,
+					"maximum": 1.0
 				},
-				"destroy_speeds": {
-					"type": "array",
-					"description": "Destroy speed per block.",
-					"items": {
-						"type": "object",
-						"properties": {
-							"block": {
-								"description": "Blocks/block tags that are broken at the set speed.",
-								"anyOf": [
-									{
-										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+				"minecraft:enchantable": {
+					"type": "object",
+					"description": "Makes an item enchantable.",
+					"properties": {
+						"slot": {
+							"type": "string"
+						},
+						"value": {
+							"type": "integer"
+						}
+					}
+				},
+				"minecraft:shooter": {
+					"type": "object",
+					"properties": {
+						"max_draw_duration": {
+							"type": "number",
+							"description": "Draw Duration. Default is set to 0."
+						},
+						"charge_on_draw": {
+							"type": "boolean",
+							"description": "Charge on draw? Default is set to false."
+						},
+						"scale_power_by_draw_duration": {
+							"type": "boolean",
+							"description": "Scale power by draw duration? Default is set to false."
+						},
+						"launch_power_scale": {
+							"type": "number",
+							"description": "Launch power scale. Default is set to 1.0."
+						},
+						"max_launch_power": {
+							"type": "number",
+							"description": "Launch power. Default is set to 1.0."
+						},
+						"ammunition": {
+							"type": "array",
+							"description": "Define the ammunition item to use.",
+							"items": {
+								"type": "object",
+								"properties": {
+									"item": {
+										"type": "string"
 									},
-									{
-										"type": "object",
-										"properties": {
-											"tags": {
-												"type": "string",
-												"examples": [
-													"query.any_tag()",
-													"query.all_tags()"
-												]
-											}
-										}
+									"use_offhand": {
+										"description": "Whether ammunition can be taken from the offhand.",
+										"type": "boolean"
+									},
+									"search_inventory": {
+										"description": "Whether the whole inventory should be searched for the ammunition.",
+										"type": "boolean"
+									},
+									"use_in_creative": {
+										"description": "Whether this ammunition can be used in creative mode.",
+										"type": "boolean"
 									}
-								]
-							},
-							"speed": {
-								"type": "number",
-								"description": "Destroy speed of the block."
+								}
 							}
 						}
 					}
 				},
-				"on_dig": {
-					"description": "Trigger for when you dig a block that isn't listed in destroy_speeds.",
-					"$ref": "../general/eventDefinition.json"
-				}
-			}
-		},
-		"minecraft:fertilizer": {
-			"type": "object",
-			"description": "Allows the item to speed the growth of crops like bone meal.",
-			"properties": {
-				"type": {
+				"minecraft:durability": {
+					"type": "object",
+					"description": "Define an item's durability.",
+					"additionalProperties": false,
+					"properties": {
+						"max_durability": {
+							"type": "integer",
+							"description": "Max durability is the amount of damage that this item can take before breaking.",
+							"minimum": 0
+						},
+						"damage_chance": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"min": { "type": "number" },
+								"max": { "type": "number" }
+							}
+						}
+					}
+				},
+				"minecraft:armor": {
+					"type": "object",
+					"description": "Set armor related data.",
+					"additionalProperties": false,
+					"properties": {
+						"protection": { "type": "integer" },
+						"texture_type": {
+							"enum": [
+								"leather",
+								"chain",
+								"diamond",
+								"iron",
+								"gold"
+							]
+						}
+					}
+				},
+				"minecraft:wearable": {
+					"type": "object",
+					"description": "Makes an item wearable.",
+					"additionalProperties": false,
+					"properties": {
+						"slot": { "$ref": "../../general/slotType.json" },
+						"dispensable": { "type": "boolean" }
+					}
+				},
+				"minecraft:weapon": {
+					"type": "object",
+					"description": "Weapon Item Component. Added to every weapon item such as axe, sword, trident, bow, crossbow.",
+					"properties": {
+						"on_hit_block": {
+							"description": "Trigger for letting you know when this item is used to hit a block.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"on_hurt_entity": {
+							"description": "Trigger for letting you know when this item is used to hurt another mob.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"on_not_hurt_entity": {
+							"description": "Trigger for letting you know when this item hit another actor, but didn't do damage.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:record": {
+					"type": "object",
+					"description": "Allows the item to be put in a jukebox and play music.",
+					"properties": {
+						"sound_event": {
+							"type": "string",
+							"description": "A string value correseponding to a sound event in the game code.",
+							"enum": [
+								"13",
+								"cat",
+								"blocks",
+								"chirp",
+								"far",
+								"mall",
+								"mellohi",
+								"stal",
+								"strad",
+								"ward",
+								"11",
+								"wait",
+								"pigstep"
+							]
+						},
+						"duration": {
+							"type": "integer",
+							"description": "A float value that determines how long particles are spawned from the JukeBox Block, should approximately match length of sound event."
+						},
+						"comparator_signal": {
+							"type": "integer",
+							"description": "An integer value that represents the strength of the analog signal, used by the Comparator Block.",
+							"min": 0,
+							"max": 15
+						}
+					}
+				},
+				"minecraft:repairable": {
+					"type": "object",
+					"description": "Repairable item component: how much damage can this item repair, what items can repair it.",
+					"properties": {
+						"on_repaired": {
+							"description": "Event that is called when this item has been repaired.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"repair_items": {
+							"type": "array",
+							"description": "Repair item entries.",
+							"items": {
+								"type": "object",
+								"properties": {
+									"items": {
+										"type": "array",
+										"items": {
+											"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+										}
+									},
+									"repair_amount": {
+										"$ref": "../../molang/embeddedBeta.json"
+									}
+								}
+							}
+						}
+					}
+				},
+				"minecraft:cooldown": {
+					"type": "object",
+					"description": "Cool down time for a component. After you use an item it becomes unusable for the duration specified by the 'cool down time' setting in this component.",
+					"properties": {
+						"category": {
+							"type": "string",
+							"description": "The type of cool down for this item."
+						},
+						"duration": {
+							"type": "number",
+							"description": "The duration of time this item will spend cooling down before becoming usable again."
+						}
+					}
+				},
+				"minecraft:on_use_on": {
+					"type": "object",
+					"description": "The on_use_on item component allows you to receive an event when the item is used on a block in the world.",
+					"properties": {
+						"on_use_on": {
+							"description": "Event trigger for when the item is used.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:on_use": {
+					"type": "object",
+					"description": "The on_use item component allows you to receive an event when the item is used.",
+					"properties": {
+						"on_use": {
+							"description": "Event trigger for when the item is used.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:digger": {
+					"type": "object",
+					"description": "Digger item. Component put on items that dig.",
+					"properties": {
+						"use_efficiency": {
+							"type": "boolean",
+							"description": "Use efficiency? Default is set to false."
+						},
+						"destroy_speeds": {
+							"type": "array",
+							"description": "Destroy speed per block.",
+							"items": {
+								"type": "object",
+								"properties": {
+									"block": {
+										"description": "Blocks/block tags that are broken at the set speed.",
+										"anyOf": [
+											{
+												"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+											},
+											{
+												"type": "object",
+												"properties": {
+													"tags": {
+														"type": "string",
+														"examples": [
+															"query.any_tag()",
+															"query.all_tags()"
+														]
+													}
+												}
+											}
+										]
+									},
+									"speed": {
+										"type": "number",
+										"description": "Destroy speed of the block."
+									}
+								}
+							}
+						},
+						"on_dig": {
+							"description": "Trigger for when you dig a block that isn't listed in destroy_speeds.",
+							"$ref": "../general/eventDefinition.json"
+						}
+					}
+				},
+				"minecraft:fertilizer": {
+					"type": "object",
+					"description": "Allows the item to speed the growth of crops like bone meal.",
+					"properties": {
+						"type": {
+							"type": "string",
+							"description": "The type of fertilizer.",
+							"enum": ["bonemeal", "rapid"]
+						}
+					}
+				},
+				"minecraft:fuel": {
+					"type": "object",
+					"description": "Fuel component. Allows this item to be used as fuel in a furnace to 'cook' other items.",
+					"properties": {
+						"duration": {
+							"type": "integer",
+							"description": "How long in seconds will this fuel cook items for."
+						}
+					}
+				},
+				"minecraft:throwable": {
+					"type": "object",
+					"description": "Throwable item component. Throwable items, such as a snowball.",
+					"properties": {
+						"do_swing_animation": {
+							"type": "boolean",
+							"description": "Whether the item should use the swing animation when thrown. Default is set to false."
+						},
+						"max_draw_duration": {
+							"type": "number",
+							"description": "The maximum duration to draw a throwable item. Default is set to 0.0."
+						},
+						"min_draw_duration": {
+							"type": "number",
+							"description": "The minimum duration to draw a throwable item. Default is set to 0.0."
+						},
+						"scale_power_by_draw_duration": {
+							"type": "boolean",
+							"description": "Whether or not the power of the throw increases with duration charged. Default is set to false."
+						},
+						"launch_power_scale": {
+							"type": "number",
+							"description": "The scale at which the power of the throw increases. Default is set to 1.0."
+						},
+						"max_launch_power": {
+							"type": "number",
+							"description": "The maximum power to launch the throwable item. Default is set to 1.0."
+						}
+					}
+				},
+				"minecraft:potion": {
+					"type": "object",
+					"description": "Defines the item as a potion.",
+					"properties": {
+						"type": {
+							"type": "string",
+							"enum": ["lingering", "regular", "splash"]
+						}
+					}
+				},
+				"minecraft:creative_category": {
+					"type": "object",
+					"description": "The category for the item to be in the creative menu.",
+					"properties": {
+						"parent": {
+							"$ref": "../general/itemGroups.json"
+						}
+					}
+				},
+				"minecraft:icon": {
+					"type": "object",
+					"description": "The icon item componenent determines the icon to represent the item in the UI and elsewhere.",
+					"properties": {
+						"texture": {
+							"description": "The key from the RP/textures/item_texture.json 'texture_data' object associated with the texture file Example: blaze_powder.",
+							"$ref": "../../general/reference/itemTexture.json"
+						},
+						"frame": {
+							"description": "An index or expression for which frame of the icon to display. Default resolves to 0.",
+							"$ref": "../../molang/embeddedBeta.json"
+						}
+					}
+				},
+				"minecraft:use_animation": {
 					"type": "string",
-					"description": "The type of fertilizer.",
-					"enum": ["bonemeal", "rapid"]
-				}
-			}
-		},
-		"minecraft:fuel": {
-			"type": "object",
-			"description": "Fuel component. Allows this item to be used as fuel in a furnace to 'cook' other items.",
-			"properties": {
-				"duration": {
-					"type": "integer",
-					"description": "How long in seconds will this fuel cook items for."
-				}
-			}
-		},
-		"minecraft:throwable": {
-			"type": "object",
-			"description": "Throwable item component. Throwable items, such as a snowball.",
-			"properties": {
-				"do_swing_animation": {
-					"type": "boolean",
-					"description": "Whether the item should use the swing animation when thrown. Default is set to false."
+					"description": "The animation to use when this item is being used, e.g when the item is being eaten.",
+					"enum": ["bow", "eat", "drink", "crossbow", "camera"]
 				},
-				"max_draw_duration": {
-					"type": "number",
-					"description": "The maximum duration to draw a throwable item. Default is set to 0.0."
-				},
-				"min_draw_duration": {
-					"type": "number",
-					"description": "The minimum duration to draw a throwable item. Default is set to 0.0."
-				},
-				"scale_power_by_draw_duration": {
-					"type": "boolean",
-					"description": "Whether or not the power of the throw increases with duration charged. Default is set to false."
-				},
-				"launch_power_scale": {
-					"type": "number",
-					"description": "The scale at which the power of the throw increases. Default is set to 1.0."
-				},
-				"max_launch_power": {
-					"type": "number",
-					"description": "The maximum power to launch the throwable item. Default is set to 1.0."
-				}
-			}
-		},
-		"minecraft:potion": {
-			"type": "object",
-			"description": "Defines the item as a potion.",
-			"properties": {
-				"type": {
+				"minecraft:render_offsets": {
 					"type": "string",
-					"enum": ["lingering", "regular", "splash"]
-				}
-			}
-		},
-		"minecraft:creative_category": {
-			"type": "object",
-			"description": "The category for the item to be in the creative menu.",
-			"properties": {
-				"parent": {
-					"$ref": "../general/itemGroups.json"
-				}
-			}
-		},
-		"minecraft:icon": {
-			"type": "object",
-			"description": "The icon item componenent determines the icon to represent the item in the UI and elsewhere.",
-			"properties": {
-				"texture": {
-					"description": "The key from the RP/textures/item_texture.json 'texture_data' object associated with the texture file Example: blaze_powder.",
-					"$ref": "../../general/reference/itemTexture.json"
-				},
-				"frame": {
-					"description": "An index or expression for which frame of the icon to display. Default resolves to 0.",
-					"$ref": "../../molang/embeddedBeta.json"
-				}
-			}
-		},
-		"minecraft:use_animation": {
-			"type": "string",
-			"description": "The animation to use when this item is being used, e.g when the item is being eaten.",
-			"enum": ["bow", "eat", "drink", "crossbow", "camera"]
-		},
-		"minecraft:render_offsets": {
-			"type": "string",
-			"description": "The offset of the item rendered in an entity's hand.",
-			"propertyNames": {
-				"enum": ["main_hand", "off_hand"]
-			},
-			"patternProperties": {
-				".*": {
+					"description": "The offset of the item rendered in an entity's hand.",
 					"propertyNames": {
-						"enum": ["first_person", "third_person"]
+						"enum": ["main_hand", "off_hand"]
 					},
 					"patternProperties": {
 						".*": {
-							"properties": {
-								"position": {
-									"type": "array",
-									"minItems": 3,
-									"maxItems": 3,
-									"items": {
-										"type": "number"
-									}
-								},
-								"rotation": {
-									"type": "array",
-									"minItems": 3,
-									"maxItems": 3,
-									"items": {
-										"type": "number"
-									}
-								},
-								"scale": {
-									"type": "array",
-									"minItems": 3,
-									"maxItems": 3,
-									"items": {
-										"type": "number"
+							"propertyNames": {
+								"enum": ["first_person", "third_person"]
+							},
+							"patternProperties": {
+								".*": {
+									"properties": {
+										"position": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"type": "number"
+											}
+										},
+										"rotation": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"type": "number"
+											}
+										},
+										"scale": {
+											"type": "array",
+											"minItems": 3,
+											"maxItems": 3,
+											"items": {
+												"type": "number"
+											}
+										}
 									}
 								}
 							}
 						}
 					}
-				}
-			}
-		},
-		"minecraft:hover_text_color": {
-			"type": "string",
-			"description": "The color of the item's name.",
-			"$ref": "../../general/minecraftColor.json"
-		},
-		"minecraft:food": {
-			"type": "object",
-			"properties": {
-				"on_consume": {
-					"description": "Event to fire once the item has been consumed.",
-					"$ref": "../general/eventDefinition.json"
 				},
-				"using_converts_to": {
-					"doNotSuggest": true,
-					"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
-				},
-				"effects": {
-					"doNotSuggest": true,
-					"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
-				},
-				"remove_effects": {
-					"doNotSuggest": true,
-					"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
-				},
-				"on_use_action": {
-					"doNotSuggest": true,
-					"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
-				},
-				"on_use_range": {
-					"doNotSuggest": true,
-					"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
-				}
-			}
-		},
-		"minecraft:display_name": {
-			"type": "object",
-			"description": "Display name item component. Display names display the name of an item.",
-			"properties": {
-				"value": {
+				"minecraft:hover_text_color": {
 					"type": "string",
-					"description": "Set the display name for an item."
+					"description": "The color of the item's name.",
+					"$ref": "../../general/minecraftColor.json"
+				},
+				"minecraft:food": {
+					"type": "object",
+					"properties": {
+						"on_consume": {
+							"description": "Event to fire once the item has been consumed.",
+							"$ref": "../general/eventDefinition.json"
+						},
+						"using_converts_to": {
+							"doNotSuggest": true,
+							"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
+						},
+						"effects": {
+							"doNotSuggest": true,
+							"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
+						},
+						"remove_effects": {
+							"doNotSuggest": true,
+							"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
+						},
+						"on_use_action": {
+							"doNotSuggest": true,
+							"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
+						},
+						"on_use_range": {
+							"doNotSuggest": true,
+							"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
+						}
+					}
+				},
+				"minecraft:display_name": {
+					"type": "object",
+					"description": "Display name item component. Display names display the name of an item.",
+					"properties": {
+						"value": {
+							"type": "string",
+							"description": "Set the display name for an item."
+						}
+					}
 				}
 			}
 		}
-	}
+	]
 }

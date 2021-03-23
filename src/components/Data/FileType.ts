@@ -3,6 +3,7 @@ import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Mai
 import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import type { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
+import type { CompareOperator } from 'compare-versions'
 
 /**
  * Describes the structure of a file definition
@@ -13,9 +14,10 @@ export interface IFileType {
 	scope: string | string[]
 	matcher: string | string[]
 	schema: string
-	types: string[]
+	types: (string | [string, { targetVersion: [CompareOperator, string] }])[]
 	packSpider: string
 	lightningCache: string
+	formatOnSaveCapable: boolean
 }
 
 /**
@@ -130,18 +132,29 @@ export namespace FileType {
 			.flat()
 	}
 
-	const lCacheFiles: Record<string, ILightningInstruction[]> = {}
+	const lCacheFiles: Record<string, ILightningInstruction[] | string> = {}
 	export async function getLightningCache(filePath: string) {
 		const { lightningCache } = get(filePath) ?? {}
 		if (!lightningCache) return []
 
 		if (lCacheFiles[lightningCache]) return lCacheFiles[lightningCache]
 
-		lCacheFiles[lightningCache] = <ILightningInstruction[]>(
-			await fileSystem.readJSON(
+		if (lightningCache.endsWith('.json')) {
+			lCacheFiles[lightningCache] = <ILightningInstruction[]>(
+				await fileSystem.readJSON(
+					`data/packages/lightningCache/${lightningCache}`
+				)
+			)
+		} else if (lightningCache.endsWith('.js')) {
+			const textFile = await fileSystem.readFile(
 				`data/packages/lightningCache/${lightningCache}`
 			)
-		)
+			lCacheFiles[lightningCache] = await textFile.text()
+		} else {
+			throw new Error(
+				`Unknown lightning cache file format: "${lightningCache}"`
+			)
+		}
 
 		return lCacheFiles[lightningCache]
 	}

@@ -1,22 +1,16 @@
 import { run } from '/@/components/Extensions/Scripts/run'
 import { deepMerge } from '/@/utils/deepmerge'
+import { hashString } from '/@/utils/hash'
 
-export type TTemplate = (
-	componentArgs: any,
-	opts: {
-		create: (t: any, loc: string) => any
-		location: string
-		animation: (animation: any) => void
-		animationController: (animationController: any) => void
-	}
-) => any
+export type TTemplate = (componentArgs: any, opts: any) => any
 
 export class Component {
 	protected _name?: string
 	protected schema?: any
 	protected template?: TTemplate
-	protected animations: any[] = []
-	protected animationControllers: any[] = []
+	protected animations: [any, string | undefined][] = []
+	protected animationControllers: [any, string | undefined][] = []
+	protected createOnPlayer: [string, any][] = []
 	constructor(protected fileType: string, protected componentSrc: string) {}
 
 	//#region Getters
@@ -49,13 +43,22 @@ export class Component {
 			template,
 		})
 	}
+	reset() {
+		// Clear previous animation (controllers)
+		this.animations = []
+		this.animationControllers = []
+	}
 
 	getSchema() {
 		return this.schema
 	}
 
-	create(fileContent: any, template: any, location?: string) {
-		const keys = (location ?? '').split('/')
+	create(
+		fileContent: any,
+		template: any,
+		location = `minecraft:${this.fileType}`
+	) {
+		const keys = location.split('/')
 
 		let current: any = fileContent
 
@@ -78,68 +81,98 @@ export class Component {
 	}
 
 	processTemplates(fileContent: any, componentArgs: any, location: string) {
-		// Clear previous animation (controllers)
-		this.animations = []
-		this.animationControllers = []
+		if (typeof this.template !== 'function') return
 
 		// Setup animation/animationController helper
-		const animation =
-			this.fileType === 'entity'
-				? (animation: any) => this.animations.push(animation)
-				: () => 0
-		const animationController =
-			this.fileType === 'entity'
-				? (animationController: any) =>
-						this.animationControllers.push(animationController)
-				: () => 0
+		const animation = (animation: any, molangCondition?: string) =>
+			this.animations.push([animation, molangCondition])
 
-		// Process template
-		if (this.template)
+		const animationController = (
+			animationController: any,
+			molangCondition?: string
+		) =>
+			this.animationControllers.push([
+				animationController,
+				molangCondition,
+			])
+
+		// Try getting file identifier
+		const identifier =
+			fileContent[`minecraft:${this.fileType}`]?.description?.identifier
+
+		// Execute template function with context for current fileType
+		if (this.fileType === 'entity') {
 			this.template(componentArgs ?? {}, {
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
+				identifier,
 				animationController,
 				animation,
 			})
+		} else if (this.fileType === 'item') {
+			this.template(componentArgs ?? {}, {
+				create: (template: any, location?: string) =>
+					this.create(fileContent, template, location),
+				location,
+				identifier,
+				player: {
+					animationController,
+					animation,
+					create: (template: any, location?: string) =>
+						this.createOnPlayer.push([
+							location ?? `minecraft:player`,
+							template,
+						]),
+				},
+			})
+		} else if (this.fileType === 'block') {
+			this.template(componentArgs ?? {}, {
+				create: (template: any, location?: string) =>
+					this.create(fileContent, template, location),
+				location,
+				identifier,
+			})
+		}
 	}
 
-	processAnimations(fileContent: any) {
+	async processAnimations(fileContent: any) {
 		// Try getting file identifier
 		const identifier =
 			fileContent[`minecraft:${this.fileType}`]?.description
 				?.identifier ?? 'bridge:no_identifier'
 
-		const normalizedIdentifier = identifier.replace(':', '_')
-		const normalizedName = this.name?.replace(':', '_')
-		const animFileName = `BP/animations/bridge/${normalizedName}/${normalizedIdentifier}.json`
-		const animControllerFileName = `BP/animation_controllers/bridge/${normalizedName}/${normalizedIdentifier}.json`
+		const fileName = await hashString(`${this.name}/${identifier}`)
+		const animFileName = `BP/animations/bridge/${fileName}.json`
+		const animControllerFileName = `BP/animation_controllers/bridge/${fileName}.json`
+
+		this.createOnPlayer.forEach(([location, template]) => {
+			this.create(fileContent, template, location)
+		})
 
 		return {
-			[animFileName]: this.createAnimations(identifier, fileContent),
+			[animFileName]: this.createAnimations(fileName, fileContent),
 			[animControllerFileName]: this.createAnimationControllers(
-				identifier,
+				fileName,
 				fileContent
 			),
 		}
 	}
 
-	protected createAnimations(identifier: string, fileContent: any) {
+	protected createAnimations(fileName: string, fileContent: any) {
 		if (this.animations.length === 0) return
 
 		let id = 0
 		const animations: any = { format_version: '1.10.0', animations: {} }
 
-		for (const anim of this.animations) {
+		for (const [anim, condition] of this.animations) {
 			if (!anim) continue
 
 			// Create unique animId
-			const animId = `animation.${
-				this.name?.replace(':', '_') ?? 'bridge_auto'
-			}.${identifier.replace(':', '_')}_${id}`
+			const animId = `animation.${fileName}_${id}`
 			// Create shorter reference to animId that's unique per entity
 			const shortAnimId = `${
-				this.name?.replace(':', '_') ?? 'bridge_auto'
+				fileName.slice(0, 16) ?? 'bridge_auto'
 			}_anim_${id}`
 
 			// Save animation to animations object
@@ -151,7 +184,13 @@ export class Component {
 					animations: {
 						[shortAnimId]: animId,
 					},
-					scripts: [shortAnimId],
+					scripts: {
+						animate: [
+							!condition
+								? shortAnimId
+								: { [shortAnimId]: condition },
+						],
+					},
 				},
 				'minecraft:entity/description'
 			)
@@ -161,7 +200,7 @@ export class Component {
 
 		return JSON.stringify(animations, null, '\t')
 	}
-	protected createAnimationControllers(identifier: string, fileContent: any) {
+	protected createAnimationControllers(fileName: string, fileContent: any) {
 		if (this.animationControllers.length === 0) return
 
 		let id = 0
@@ -170,16 +209,14 @@ export class Component {
 			animation_controllers: {},
 		}
 
-		for (const anim of this.animationControllers) {
+		for (const [anim, condition] of this.animationControllers) {
 			if (!anim) continue
 
 			// Create unique animId
-			const animId = `controller.animation.${
-				this.name?.replace(':', '_') ?? 'bridge_auto'
-			}.${identifier.replace(':', '_')}_${id}`
+			const animId = `controller.animation.${fileName}_${id}`
 			// Create shorter reference to animId that's unique per entity
 			const shortAnimId = `${
-				this.name?.replace(':', '_') ?? 'bridge_auto'
+				fileName.slice(0, 16) ?? 'bridge_auto'
 			}_control_${id}`
 
 			// Save animation to animationControllers object
@@ -191,7 +228,9 @@ export class Component {
 					animations: {
 						[shortAnimId]: animId,
 					},
-					scripts: [shortAnimId],
+					scripts: [
+						!condition ? shortAnimId : { [shortAnimId]: condition },
+					],
 				},
 				'minecraft:entity/description'
 			)
