@@ -69,6 +69,7 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 						try {
 							return customMoLang.transform(molang)
 						} catch {
+							// TODO: This should not fail silently
 							return molang
 						}
 					})
