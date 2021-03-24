@@ -18,6 +18,12 @@ export const SimpleRewrite: TCompilerPluginFactory = ({
 		},
 		transformPath(filePath) {
 			if (!filePath) return
+			// Don't include gametests in production builds
+			if (
+				filePath.includes('BP/scripts/gametests') &&
+				options.mode === 'build'
+			)
+				return
 
 			const pathParts = filePath.split('/')
 			const pack = <string>pathParts.shift()
