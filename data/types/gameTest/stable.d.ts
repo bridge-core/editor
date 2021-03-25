@@ -54,4 +54,13 @@ declare interface Test {
 	 * @param func
 	 */
 	failIf(func: (test: Test) => void): void
+
+	/**
+	 * Spawns the specified entity at the specified coordinates
+	 * @param id
+	 * The identifier of the entity to spawn
+	 * @param position
+	 * The relative position to spawn the entity
+	 */
+	spawn(id: string, position: BlockPos): void
 }

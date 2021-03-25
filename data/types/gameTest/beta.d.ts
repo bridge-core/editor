@@ -58,6 +58,14 @@ declare interface Test {
 	 */
 	assertEntityPresent(id: string, position: BlockPos): void
 	/**
+	 * Asserts an error when the specified entity is found at the specified coordinates
+	 * @param id
+	 * The identifier of the entity to check for
+	 * @param position
+	 * The relative position to test for the actor
+	 */
+	assertEntityInstancePresent(id: string, position: BlockPos): void
+	/**
 	 * Asserts an error when the specified entity is not found at the specified coordinates
 	 * @param id
 	 * The identifier of the entity to check for
@@ -155,21 +163,37 @@ declare interface Test {
 		position: BlockPos,
 		bool: boolean
 	): void
+	/**
+	 * Throws an Error if an entity matching the given identifier does not exist in the test region
+	 * @param id
+	 * The identifer of the entity to test for
+	 */
+	assertEntityPresentInArea(id: string): void
 
 	/**
-	 * Sets the specified entity at the specified coordinates as tamed
-	 * @param id
-	 * The entity identifier to set to tamed
-	 * @param position
-	 * The relative position to the entity to set tamed
+	 * Prints the given text to the chat
+	 * @param text
+	 * The text to print out
 	 */
-	setEntityTamed(id: string, position: BlockPos): void
+	print(text: string): void
+	/**
+	 * Spawns the specified entity at the specified coordinates
+	 * @param id
+	 * The identifier of the entity to spawn
+	 * @param position
+	 * The relative position to spawn the entity
+	 */
+	spawn(id: string, position: BlockPos): Entity
 	/**
 	 * Pulls a lever at the specified coordinates if there is one there
 	 * @param position
 	 * The relative position to pull the lever
 	 */
 	pullLever(position: BlockPos): void
+	/**
+	 * Kills all entities in the test
+	 */
+	killAllEntities(): void
 }
 
 declare interface Sequence {
@@ -186,9 +210,73 @@ declare interface Sequence {
 }
 
 declare interface World {
-	attachEvent(event: WorldEvent, func: (entity: Entity) => void): void
+	/**
+	 * Registers an event listener for entity events Supported
+	 * @param func
+	 * Function to run when the event is triggered
+	 */
+	addEventListener(event: WorldEvent, func: () => void): void
+	getDimension(): Dimension
 }
 
-declare interface Entity {}
+declare interface Entity {
+	/**
+	 * Returns an array of supported components
+	 */
+	getComponents(): Array<EntityComponent> | undefined
+	/**
+	 * Returns the component matching the given identifier
+	 * @param component
+	 * The component identifier to get
+	 */
+	getComponent(component: string): EntityComponent | undefined
+	/**
+	 * Returns true if the given component exists on the entity and is supported
+	 * @param component
+	 * The component identifier to check for
+	 */
+	hasComponent(component: string): boolean
 
-declare type WorldEvent = 'entitySpawned' // Probably more events, just don't know them yet
+	/**
+	 * Returns the name of the entity (e.g. "Horse")
+	 */
+	getName(): string
+
+	/**
+	 * Kills the entity
+	 */
+	kill(): void
+}
+
+declare interface Dimension {}
+
+declare interface EntityComponent {
+	/**
+	 * Returns the name of the component
+	 */
+	getName(): string
+	/**
+	 * Leashes this entity to another specified entity. This must be used on the "minecraft:leashable" component
+	 * @param entity
+	 * The entity to leash this entity to
+	 */
+	leash(entity: Entity): void
+	/**
+	 * Causes this entity to detach leashes. This must be used on the "minecraft:leashable" component
+	 */
+	unleash(): void
+	/**
+	 * Sets the entities color value. This must be used on the "minecraft:color" component
+	 * @param color
+	 * The color value to set
+	 */
+	setColor(color: number): void
+	/**
+	 * Sets the entity as tamed
+	 * @param particles
+	 * Whether to display taming particles
+	 */
+	setTamed(particles: boolean): void
+}
+
+declare type WorldEvent = 'onEntityCreated' | 'onEntityDefinitionTriggered'
