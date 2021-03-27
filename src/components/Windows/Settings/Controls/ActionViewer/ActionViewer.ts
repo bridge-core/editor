@@ -13,7 +13,7 @@ export class ActionViewer extends Control<any> {
 			{
 				category: 'actions',
 				action: {},
-				description: action.description,
+				description: action.description ?? 'No description provided',
 				key: action.id,
 				name: action.name,
 			},

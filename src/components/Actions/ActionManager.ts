@@ -1,6 +1,7 @@
 import { App } from '/@/App'
 import Vue from 'vue'
-import { Action, IActionConfig } from './Action'
+import { Action } from './Action'
+import { IActionConfig } from './SimpleAction'
 
 export class ActionManager {
 	public state: Record<string, Action> = Vue.observable({})
@@ -16,7 +17,7 @@ export class ActionManager {
 		Vue.delete(this.state, actionId)
 	}
 	dispose() {
-		Object.values(this.state).forEach(action => action.dispose())
+		Object.values(this.state).forEach((action) => action.dispose())
 	}
 
 	async trigger(actionId: string) {
