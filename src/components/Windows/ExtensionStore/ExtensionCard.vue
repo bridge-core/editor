@@ -31,7 +31,11 @@
 				Update
 			</v-btn>
 
-			<v-tooltip v-else color="success" right>
+			<v-tooltip
+				v-else
+				:color="extension.isActive ? 'success' : 'error'"
+				right
+			>
 				<template v-slot:activator="{ on }">
 					<v-icon v-if="extension.isActive" color="success" v-on="on">
 						mdi-check
@@ -39,7 +43,13 @@
 					<v-icon v-else color="error" v-on="on">mdi-close</v-icon>
 				</template>
 
-				<span>Extension Active</span>
+				<span>
+					{{
+						extension.isActive
+							? 'Extension Active'
+							: 'Extension Inactive'
+					}}
+				</span>
 			</v-tooltip>
 
 			<v-menu
