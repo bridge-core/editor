@@ -66,12 +66,17 @@ export function setObjectAt<T = any>(
 	const keys = path.length === 0 || path === '/' ? [] : path.split('/')
 	if (keys.length === 0) return
 
-	const lastKey = keys.pop()
+	const lastKey = keys.pop()!
 
 	_walkObject(keys, obj, (currentObj) => {
-		for (const key in currentObj) {
-			if (key === lastKey || lastKey === '*')
+		if (typeof currentObj !== 'object') return
+
+		if (lastKey === '*') {
+			for (const key in currentObj) {
 				currentObj[key] = onSet(currentObj[key])
+			}
+		} else if (currentObj[lastKey] !== undefined) {
+			currentObj[lastKey] = onSet(currentObj[lastKey])
 		}
 	})
 }
