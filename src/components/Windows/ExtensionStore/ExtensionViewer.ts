@@ -4,15 +4,16 @@ import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
 import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/InformedChoice'
 import { ExtensionStoreWindow } from './ExtensionStore'
 import { ExtensionTag } from './ExtensionTag'
-import { Notification } from '../../Notifications/Notification'
+import { extensionActions } from './ExtensionActions'
 
 export class ExtensionViewer {
 	protected tags: ExtensionTag[]
 	protected isLoading = false
 	protected _isInstalled = false
-	protected isActive = false
 	protected isUpdateAvailable = false
 	protected connected?: Extension
+	protected showMenu = false
+	public isActive = true
 
 	constructor(
 		protected parent: ExtensionStoreWindow,
@@ -51,6 +52,15 @@ export class ExtensionViewer {
 
 	get isInstalled() {
 		return this._isInstalled
+	}
+	get displayVersion() {
+		return this.connected?.version ?? this.config.version
+	}
+	get actions() {
+		return extensionActions(this)
+	}
+	get extension() {
+		return this.connected
 	}
 
 	hasTag(tag: ExtensionTag) {
@@ -94,6 +104,9 @@ export class ExtensionViewer {
 		const basePath = !isGlobalInstall
 			? `projects/${app.selectedProject}/bridge/extensions`
 			: 'extensions'
+		const extensionLoader = isGlobalInstall
+			? app.extensionLoader
+			: app.project.extensionLoader
 		const zipPath = basePath + `/${this.name.replace(/\s+/g, '')}.zip`
 		await app.fileSystem.writeFile(zipPath, zip)
 
@@ -114,12 +127,12 @@ export class ExtensionViewer {
 		}
 
 		// Unzip & activate extension
-		const extension = await app.extensionLoader.loadExtension(
+		const extension = await extensionLoader.loadExtension(
 			await app.fileSystem.getDirectoryHandle(basePath),
 			await app.fileSystem.getFileHandle(zipPath),
-			true,
-			isGlobalInstall
+			true
 		)
+
 		if (extension) this.setConnected(extension)
 
 		this.setInstalled()
@@ -145,9 +158,17 @@ export class ExtensionViewer {
 	}
 	setConnected(ext: Extension) {
 		this.connected = ext
+		this.isActive = this.connected?.isActive
 	}
 
-	get displayVersion() {
-		return this.connected?.version ?? this.config.version
+	setActive(value: boolean) {
+		if (!this.connected)
+			throw new Error(`No extension connected to ExtensionViewer`)
+
+		this.connected.setActive(value)
+		this.isActive = value
+	}
+	closeActionMenu() {
+		this.showMenu = false
 	}
 }

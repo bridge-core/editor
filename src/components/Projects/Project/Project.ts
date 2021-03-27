@@ -12,6 +12,7 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { CompilerManager } from '/@/components/Compiler/CompilerManager'
 import { JsonDefaults } from '/@/components/Data/JSONDefaults'
 import { TypeLoader } from '/@/components/Data/TypeLoader'
+import { ExtensionLoader } from '../../Extensions/ExtensionLoader'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -30,7 +31,11 @@ export class Project {
 	public readonly compilerManager = new CompilerManager(this)
 	protected jsonDefaults = new JsonDefaults(this)
 	protected typeLoader = new TypeLoader(this.app.fileSystem)
-	public readonly config = new ProjectConfig(this.fileSystem)
+	public readonly config: ProjectConfig
+	public readonly extensionLoader = new ExtensionLoader(
+		this.app.fileSystem,
+		`projects/${this.name}/bridge/inactiveExtensions.json`
+	)
 
 	//#region Getters
 	get projectData() {
@@ -57,6 +62,7 @@ export class Project {
 		protected _baseDirectory: FileSystemDirectoryHandle
 	) {
 		this._fileSystem = new FileSystem(_baseDirectory)
+		this.config = new ProjectConfig(this._fileSystem)
 		this.packIndexer = new PackIndexer(app, _baseDirectory)
 		Vue.set(
 			this,
@@ -72,6 +78,12 @@ export class Project {
 		this.parent.title.setProject(this.name)
 		for (const tabSystem of this.tabSystems) await tabSystem.activate()
 
+		await this.extensionLoader.loadExtensions(
+			await this.fileSystem.getDirectoryHandle('bridge/extensions', {
+				create: true,
+			})
+		)
+
 		this.typeLoader.activate(this.tabSystem?.selectedTab?.getPackPath())
 		await this.packIndexer.activate(forceRefresh).then(() => {
 			this.jsonDefaults.activate()
@@ -83,6 +95,7 @@ export class Project {
 		this.typeLoader.deactivate()
 		this.packIndexer.deactivate()
 		this.jsonDefaults.deactivate()
+		this.extensionLoader.disposeAll()
 	}
 
 	async refresh() {

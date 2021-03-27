@@ -20,11 +20,9 @@ import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { DataLoader } from './components/Data/DataLoader/DataLoader'
-import { ProjectConfig } from '/@/components/Projects/ProjectConfig'
 import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
 import { ActionManager } from '/@/components/Actions/ActionManager'
 import { Toolbar } from '/@/components/Toolbar/Toolbar'
-import { ExtensionLoader } from '/@/components/Extensions/ExtensionLoader'
 import { WindowResize } from '/@/components/Common/WindowResize'
 import { InstallApp } from '/@/components/App/Install'
 import { LanguageManager } from '/@/components/Languages/LanguageManager'
@@ -32,6 +30,7 @@ import { ProjectManager } from './components/Projects/ProjectManager'
 import { ContextMenu } from './components/ContextMenu/ContextMenu'
 import { Project } from './components/Projects/Project/Project'
 import { get, set } from 'idb-keyval'
+import { GlobalExtensionLoader } from './components/Extensions/GlobalExtensionLoader'
 
 export class App {
 	public static fileSystemSetup = new FileSystemSetup()
@@ -60,7 +59,7 @@ export class App {
 	)
 	public readonly fileSystem = new FileSystem()
 	public readonly projectManager = Vue.observable(new ProjectManager(this))
-	public readonly extensionLoader = new ExtensionLoader()
+	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
 	public readonly contextMenu = new ContextMenu()
 	public readonly locales: Locales
@@ -128,33 +127,22 @@ export class App {
 	}
 
 	async switchProject(project: Project) {
-		this.extensionLoader.deactivateAllLocal()
-		this.extensionLoader
-			.loadExtensions(
-				await this.fileSystem.getDirectoryHandle(
-					`projects/${project.name}/bridge/extensions`,
-					{ create: true }
-				)
-			)
-			.then(() => {
-				// this.compiler.start(projectName, 'dev', 'default.json')
-				this.themeManager.updateTheme()
-				project.packIndexer.once(() =>
-					project.compilerManager.start('default.json', 'dev')
-				)
+		this.themeManager.updateTheme()
+		project.packIndexer.once(() =>
+			project.compilerManager.start('default.json', 'dev')
+		)
 
-				// Set language
-				if (typeof settingsState?.general?.locale === 'string')
-					this.locales.selectLanguage(settingsState?.general?.locale)
-				else {
-					// Set language based off of browser language
-					for (const [lang] of this.locales.getLanguages()) {
-						if (navigator.language.includes(lang)) {
-							this.locales.selectLanguage(lang)
-						}
-					}
+		// Set language
+		if (typeof settingsState?.general?.locale === 'string')
+			this.locales.selectLanguage(settingsState?.general?.locale)
+		else {
+			// Set language based off of browser language
+			for (const [lang] of this.locales.getLanguages()) {
+				if (navigator.language.includes(lang)) {
+					this.locales.selectLanguage(lang)
 				}
-			})
+			}
+		}
 
 		App.eventSystem.dispatch('projectChanged', undefined)
 	}
@@ -258,8 +246,7 @@ export class App {
 		this.projectManager.projectReady.fired.then(async () =>
 			// Then load global extensions
 			this.extensionLoader.loadExtensions(
-				await this.fileSystem.getDirectoryHandle(`extensions`),
-				true
+				await this.fileSystem.getDirectoryHandle(`extensions`)
 			)
 		)
 

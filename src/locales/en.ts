@@ -432,6 +432,8 @@ export default {
 		extensionStore: {
 			title: 'Extension Store',
 			searchExtensions: 'Search extension...',
+			activateExtension: 'Activate Extension',
+			deactivateExtension: 'Deactivate Extension',
 		},
 		pluginInstallLocation: {
 			title: 'Choose Install Location',

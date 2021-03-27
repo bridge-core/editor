@@ -6,25 +6,34 @@ import { loadUIComponents } from './UI/load'
 import { createUIStore } from './UI/store'
 import { App } from '/@/App'
 import { loadScripts } from './Scripts/loadScripts'
-import { ExtensionViewer } from '../Windows/ExtensionStore/Extension'
+import { ExtensionViewer } from '../Windows/ExtensionStore/ExtensionViewer'
 import { ExtensionStoreWindow } from '../Windows/ExtensionStore/ExtensionStore'
 import { iterateDir } from '/@/utils/iterateDir'
 import { loadFileDefinitions } from './FileDefinition/load'
 
 export class Extension {
-	protected _isActive = false
-
 	protected disposables: IDisposable[] = []
 	protected uiStore = createUIStore()
 	protected fileSystem: FileSystem
 	protected _compilerPlugins: Record<string, string> = {}
+	protected isLoaded = false
 
 	get isActive() {
-		return this._isActive
-	}
+		if (!this.parent.activeStatus)
+			throw new Error(
+				`Accessed activeStatus property before the corresponding ActiveClass instance was initialized`
+			)
 
+		return this.parent.activeStatus?.isActive(this.manifest.id)
+	}
 	get compilerPlugins() {
 		return this._compilerPlugins
+	}
+	get version() {
+		return this.manifest.version
+	}
+	get isGlobal() {
+		return this._isGlobal
 	}
 
 	constructor(
@@ -37,7 +46,10 @@ export class Extension {
 	}
 
 	async activate() {
-		this._isActive = true
+		// Make sure we load an extension only once
+		if (this.isLoaded) return
+
+		this.isLoaded = true
 		const app = await App.getApp()
 		const pluginPath = (
 			(await app.fileSystem.baseDirectory.resolve(this.baseDirectory)) ??
@@ -112,14 +124,14 @@ export class Extension {
 
 	deactivate() {
 		this.disposables.forEach((disposable) => disposable.dispose())
-		this._isActive = false
+		this.isLoaded = false
 	}
 
-	get version() {
-		return this.manifest.version
-	}
-	get isGlobal() {
-		return this._isGlobal
+	async setActive(value: boolean) {
+		if (value) await this.activate()
+		else this.deactivate()
+
+		await this.parent.activeStatus?.setActive(this.manifest.id, value)
 	}
 
 	forStore(extensionStore: ExtensionStoreWindow) {

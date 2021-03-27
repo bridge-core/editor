@@ -5,7 +5,7 @@ import { App } from '/@/App'
 import { compare } from 'compare-versions'
 import { getFileSystem } from '/@/utils/fs'
 import { ExtensionTag } from './ExtensionTag'
-import { ExtensionViewer } from './Extension'
+import { ExtensionViewer } from './ExtensionViewer'
 import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
 import { Notification } from '../../Notifications/Notification'
 

@@ -33,21 +33,43 @@
 
 			<v-tooltip v-else color="success" right>
 				<template v-slot:activator="{ on }">
-					<v-icon color="success" v-on="on">mdi-check</v-icon>
+					<v-icon v-if="extension.isActive" color="success" v-on="on">
+						mdi-check
+					</v-icon>
+					<v-icon v-else color="error" v-on="on">mdi-close</v-icon>
 				</template>
 
 				<span>Extension Active</span>
 			</v-tooltip>
 
-			<v-tooltip v-if="extension.isInstalled" color="tooltip" right>
-				<template v-slot:activator="{ on }">
-					<v-btn v-on="on" small icon>
+			<v-menu
+				v-if="extension.isInstalled"
+				v-model="extension.showMenu"
+				offset-y
+				offset-x
+				rounded="lg"
+			>
+				<template v-slot:activator="{ on, attrs }">
+					<v-btn v-on="on" v-bind="attrs" small icon>
 						<v-icon>mdi-dots-vertical</v-icon>
 					</v-btn>
 				</template>
 
-				<span>More...</span>
-			</v-tooltip>
+				<v-list dense>
+					<v-list-item
+						v-for="(action, index) in extension.actions"
+						:key="index"
+						@click.stop="action.trigger()"
+					>
+						<v-list-item-icon>
+							<v-icon color="primary"> {{ action.icon }}</v-icon>
+						</v-list-item-icon>
+						<v-list-item-title>
+							{{ t(action.name) }}
+						</v-list-item-title>
+					</v-list-item>
+				</v-list>
+			</v-menu>
 		</div>
 		<div class="d-flex mb-4">
 			<v-chip
@@ -73,8 +95,11 @@
 </template>
 
 <script>
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+
 export default {
 	name: 'ExtensionCard',
+	mixins: [TranslationMixin],
 	props: {
 		extension: Object,
 	},
