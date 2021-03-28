@@ -1,5 +1,5 @@
 import { transpile } from 'typescript'
-import { TCompilerPluginFactory } from '../Plugins'
+import { TCompilerPluginFactory } from '../TCompilerPluginFactory'
 import { hashString } from '/@/utils/hash'
 
 export const TypeScriptPlugin: TCompilerPluginFactory = () => ({

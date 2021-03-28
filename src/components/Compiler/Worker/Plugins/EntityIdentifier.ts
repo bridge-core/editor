@@ -1,4 +1,4 @@
-import { TCompilerPluginFactory } from '../Plugins'
+import { TCompilerPluginFactory } from '../TCompilerPluginFactory'
 
 export const EntityIdentifierAlias: TCompilerPluginFactory = ({ options }) => {
 	return {

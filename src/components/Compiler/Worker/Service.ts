@@ -1,6 +1,7 @@
 import * as Comlink from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
-import { loadPlugins, TCompilerPlugin } from './Plugins'
+import { loadPlugins } from './Plugins'
+import { TCompilerPlugin } from './TCompilerPlugin'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { FileType, IFileType } from '/@/components/Data/FileType'
 import { Compiler } from './Compiler'

@@ -1,4 +1,5 @@
-import { TCompilerHook, TCompilerPlugin } from './Plugins'
+import { TCompilerHook } from './Plugins'
+import { TCompilerPlugin } from './TCompilerPlugin'
 import { resolveFileOrder } from './Resolver'
 import { dirname } from '/@/utils/path'
 import { CompilerService } from './Service'

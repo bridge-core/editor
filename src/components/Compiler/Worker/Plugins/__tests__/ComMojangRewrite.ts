@@ -1,4 +1,4 @@
-import { TCompilerPlugin } from '../../Plugins'
+import { TCompilerPlugin } from '../../TCompilerPlugin'
 import { ComMojangRewrite } from '../ComMojangRewrite'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 

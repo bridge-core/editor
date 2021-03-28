@@ -1,4 +1,4 @@
-import { TCompilerPlugin } from '../../Plugins'
+import { TCompilerPlugin } from '../../TCompilerPlugin'
 import { CustomEntityComponentPlugin } from '../CustomComponent/Plugin'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 

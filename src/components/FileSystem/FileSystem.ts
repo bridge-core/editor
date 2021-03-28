@@ -1,4 +1,5 @@
-import { Signal } from '/@/components/Common/Event/Signal'
+// This import is relative so the compiler types build correctly
+import { Signal } from '../Common/Event/Signal'
 import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
 

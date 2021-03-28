@@ -11,7 +11,8 @@
 		"dev": "vue-cli-service serve",
 		"build": "node ./scripts/build.mjs && vue-cli-service build",
 		"build:nightly": "node ./scripts/build.mjs && vue-cli-service build --nightly",
-		"test": "jest"
+		"test": "jest",
+		"build-compiler-types": "node ./scripts/buildCompilerTypes.mjs"
 	},
 	"dependencies": {
 		"@mdi/font": "^5.8.55",

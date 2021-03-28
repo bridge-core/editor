@@ -31,9 +31,11 @@ jobs:
             - name: Install and Build 🔧
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
                   npm install
                   npm run build
+                  npm run build-compiler-types
 
             - name: Deploy 🚀
               uses: JamesIves/github-pages-deploy-action@3.7.1
@@ -42,3 +44,12 @@ jobs:
                   BRANCH: gh-pages
                   FOLDER: dist
                   CLEAN: true
+
+            - name: Build & Publish Compiler Plugin Types 📝
+              env:
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: |
+                  npm run build-compiler-types
+                  cd ./distTypes
+                  npm publish
+                  cd ..

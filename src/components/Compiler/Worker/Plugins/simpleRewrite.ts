@@ -1,4 +1,4 @@
-import { TCompilerPluginFactory } from '../Plugins'
+import { TCompilerPluginFactory } from '../TCompilerPluginFactory'
 
 export const SimpleRewrite: TCompilerPluginFactory = ({
 	options,

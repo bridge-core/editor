@@ -1,4 +1,4 @@
-import { TCompilerPlugin } from '../../Plugins'
+import { TCompilerPlugin } from '../../TCompilerPlugin'
 import { TypeScriptPlugin } from '../TypeScript'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 

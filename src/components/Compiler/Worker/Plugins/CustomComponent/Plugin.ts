@@ -1,6 +1,6 @@
 import json5 from 'json5'
 import { get } from 'lodash'
-import { TCompilerPluginFactory } from '../../Plugins'
+import { TCompilerPluginFactory } from '../../TCompilerPluginFactory'
 import { Component } from './Component'
 import { findCustomComponents } from './findComponents'
 import { deepMerge } from '/@/utils/deepmerge'

@@ -1,4 +1,4 @@
-import { TCompilerPluginFactory } from '../../Plugins'
+import { TCompilerPluginFactory } from '../../TCompilerPluginFactory'
 import { CustomMoLang } from 'molang'
 import { setObjectAt } from '/@/utils/walkObject'
 import json5 from 'json5'
