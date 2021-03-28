@@ -21,7 +21,7 @@ export class Unzipper {
 			description: 'unzipper.description',
 		}
 	) {
-		taskManager.create(taskDetails)
+		this.task = taskManager.create(taskDetails)
 	}
 
 	unzip(data: Uint8Array) {
