@@ -470,4 +470,9 @@ export default {
 			},
 		},
 	},
+	fileDropper: {
+		importFiles: 'Drop files here to import them!',
+		importFailed: 'bridge. was unable to import the following files:',
+		andMore: '...and more!',
+	},
 }

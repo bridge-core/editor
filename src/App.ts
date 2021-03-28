@@ -19,18 +19,20 @@ import { PackType } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { DataLoader } from './components/Data/DataLoader/DataLoader'
+import { DataLoader } from './components/Data/DataLoader'
 import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
 import { ActionManager } from '/@/components/Actions/ActionManager'
 import { Toolbar } from '/@/components/Toolbar/Toolbar'
 import { WindowResize } from '/@/components/Common/WindowResize'
 import { InstallApp } from '/@/components/App/Install'
 import { LanguageManager } from '/@/components/Languages/LanguageManager'
-import { ProjectManager } from './components/Projects/ProjectManager'
-import { ContextMenu } from './components/ContextMenu/ContextMenu'
-import { Project } from './components/Projects/Project/Project'
+import { ProjectManager } from '/@/components/Projects/ProjectManager'
+import { ContextMenu } from '/@/components/ContextMenu/ContextMenu'
+import { Project } from '/@/components/Projects/Project/Project'
 import { get, set } from 'idb-keyval'
-import { GlobalExtensionLoader } from './components/Extensions/GlobalExtensionLoader'
+import { GlobalExtensionLoader } from '/@/components/Extensions/GlobalExtensionLoader'
+import { FileDropper } from '/@/components/FileDropper/FileDropper'
+import { FileImportManager } from '/@/components/ImportFile/Manager'
 
 export class App {
 	public static fileSystemSetup = new FileSystemSetup()
@@ -49,20 +51,15 @@ export class App {
 	public readonly actionManager = new ActionManager(this)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
-	public readonly dataLoader = new DataLoader(
-		{
-			icon: 'mdi-download',
-			description: 'taskManager.tasks.dataLoader.description',
-			name: 'taskManager.tasks.dataLoader.title',
-		},
-		this
-	)
+	public readonly dataLoader = new DataLoader(this)
 	public readonly fileSystem = new FileSystem()
 	public readonly projectManager = Vue.observable(new ProjectManager(this))
 	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
 	public readonly contextMenu = new ContextMenu()
 	public readonly locales: Locales
+	public readonly fileDropper = new FileDropper()
+	public readonly fileImportManager = new FileImportManager(this.fileDropper)
 
 	protected languageManager = new LanguageManager()
 	protected installApp = new InstallApp()
@@ -196,7 +193,7 @@ export class App {
 
 		setupSidebar()
 		setupDefaultMenus(this)
-		this.dataLoader.activate(this)
+		this.dataLoader.start()
 
 		if (process.env.NODE_ENV === 'production') {
 			const discordMsg = createNotification({

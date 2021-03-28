@@ -1,60 +1,29 @@
-<h2>Features:</h2>
+<h2>Features</h2>
 <ul>
-<li>Added toggles upon project creation for...
+<li>Added auto-completions for action texts</li>
+<li><strong>Custom MoLang (WIP):</strong>
 <ul>
-<li>GameTest API</li>
-<li>Scripting API</li>
-<li>Registering the RP as a BP dependency</li>
+<li>You are now able to create .molang files in the preset window</li>
+<li>bridge.'s compiler will automatically find where you have used custom MoLang in your files and transform it so it is readable in Minecraft</li>
+<li>The &quot;moLang&quot; compiler plugin will now be added to project compiler configs upon project creation</li>
 </ul>
 </li>
-<li><strong>Compiler:</strong>
-<ul>
-<li>More logical initial flatFiles order to reduce require overhead later</li>
-<li>Requiring files now only resolves them &amp; requires unknown dependencies. Saving files is now deferred by default</li>
-<li>Added &quot;entityIdentifierAlias&quot; plugin</li>
-<li>Files can now import other files using globs</li>
+<li>Added wordWrap setting for text files</li>
 </ul>
-</li>
-<li><strong>Custom Components:</strong>
+<h2>Changes</h2>
 <ul>
-<li>Animation(s/ controllers) can now provide a MoLang condition to toggle whether they are supposed to run</li>
-<li>Animation (controller) support for custom item components</li>
+<li>Updated schemas to latest beta</li>
+<li>The file name is now forced to be used in feature, feature rule and biome identifiers</li>
+<li>Updated GameTest types to latest beta</li>
+<li>Exposed project target version to compiler plugins</li>
+<li>Improved schema for feature rule iterations</li>
+<li>Organised some schemas</li>
 </ul>
-</li>
-<li>Updated JSON schemas to latest beta</li>
-<li>Updated GameTest API to latest beta</li>
-<li>bridge. now proposes action texts from your lang files inside of behavior components</li>
-<li>Auto-completions for entity tags</li>
-</ul>
-<h2>Changes:</h2>
+<h2>Fixes</h2>
 <ul>
-<li>Updated MoLang library</li>
-<li>Better error messages for file system related errors</li>
-<li>Renamed &quot;plugins&quot; folder to &quot;extensions&quot;</li>
-<li>Removed unused UIs</li>
-<li>Use hash string for automatically generated animation(s/ controllers)</li>
-<li>Create player.json file upon creating project</li>
-<li>Support for versioning type declarations</li>
-<li>Improved recipe schema</li>
-<li>Added descriptions to fog schema</li>
-<li>Updated tree feature schema</li>
-</ul>
-<h2>Fixes:</h2>
-<ul>
-<li>Fixed data loader sometimes freezing computers</li>
-<li>Fixed project creation screen not reseting properly</li>
-<li>Fixed automatic changelog generation</li>
-<li>Fixed rare issue with .crswap files appearing inside of projects</li>
-<li>Fixed error upon downloading extensions</li>
-<li>Fixed custom geometry block preset creating texture in wrong place</li>
-<li>Fixed presets not injecting identifier in custom block geometry preset</li>
-<li>Automatically remove deleted projects from recent projects list</li>
-<li>Fixed &quot;compiler plugin [X] is not defined&quot; error upon switching projects</li>
-<li>Fixed format on save being broken for persistent tabs</li>
-<li>Fixed empty file names in pack explorer</li>
-<li>Fixed error upon creating new item file</li>
-<li>Fixed presets being able to overwrite unsaved changes</li>
-<li>Fixed filter name: &quot;is_nether&quot; -&gt; &quot;in_nether&quot;</li>
-<li>Fixed update extensions notification showing if all extensions were already manually updated</li>
-<li>Fixed compiler hot updates</li>
+<li>Fixed extension tags not having color in light mode</li>
+<li>Fixed presets using presetScripts not asking for permission to overwrite files</li>
+<li>Fixed animations and animation controllers in custom components</li>
+<li>Fixed feature and feature rule presets</li>
+<li>Fixed typo in particle component property</li>
 </ul>

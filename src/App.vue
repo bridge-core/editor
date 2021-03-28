@@ -33,6 +33,7 @@
 		</v-main>
 
 		<ContextMenu v-if="contextMenu" :contextMenu="contextMenu" />
+		<FileDropper />
 	</v-app>
 </template>
 
@@ -47,13 +48,14 @@ import ContextMenu from '/@/components/ContextMenu/ContextMenu.vue'
 import { App } from '/@/App.ts'
 import TabSystem from '/@/components/TabSystem/TabSystem.vue'
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
+import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
 
 export default Vue.extend({
 	name: 'App',
 	mixins: [TabSystemMixin],
 
 	mounted() {
-		App.getApp().then(app => {
+		App.getApp().then((app) => {
 			this.contextMenu = app.contextMenu
 		})
 	},
@@ -65,6 +67,7 @@ export default Vue.extend({
 		ContextMenu,
 		TabSystem,
 		WelcomeScreen,
+		FileDropper,
 	},
 
 	data: () => ({
