@@ -4,7 +4,7 @@ import { promises as fs } from 'fs'
 // Build TypeScript declaration files for compiler plugins
 ;(async () => {
 	const { version } = JSON.parse(await fs.readFile('./package.json'))
-	await fs.rmdir('./distTypes/', { recursive: true })
+	await fs.rmdir('./compilerTypes/', { recursive: true })
 
 	exec(
 		'tsc src/components/Compiler/Worker/TCompilerPluginFactory.ts --declaration --outDir ./compilerTypes/ --emitDeclarationOnly --esModuleInterop --target ES6 --moduleResolution node',

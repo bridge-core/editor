@@ -35,7 +35,6 @@ jobs:
               run: |
                   npm install
                   npm run build
-                  npm run build-compiler-types
 
             - name: Deploy 🚀
               uses: JamesIves/github-pages-deploy-action@3.7.1
@@ -50,6 +49,6 @@ jobs:
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
                   npm run build-compiler-types
-                  cd ./distTypes
+                  cd ./compilerTypes
                   npm publish
                   cd ..
