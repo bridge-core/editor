@@ -2,6 +2,7 @@
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"properties": {
 		"minecraft:aggregate_feature": {
+			"description": "Places a collection of features in an arbitary order. All features in the collection use the same input position. Features should not depend on each other, as there is no guarantee on the order the features will be placed.",
 			"additionalProperties": false,
 			"properties": {
 				"description": {
@@ -13,9 +14,11 @@
 					}
 				},
 				"early_out": {
+					"description": "Do not continue placing features once either the first success or first failure has occurred.",
 					"$ref": "../general.json#/definitions/early_outs"
 				},
 				"features": {
+					"description": "Collection of features to be placed one by one. No guarantee of order. All features use the same input position.",
 					"type": "array",
 					"items": {
 						"$ref": "../../general/reference/feature.json"
@@ -24,6 +27,7 @@
 			}
 		},
 		"minecraft:sequence_feature": {
+			"description": "Places a collection of features sequentially, in the order they appear in data. The output position of the previous feature is used as the input position for the next. For example, a tree feature is placed at (0, 0, 0) and places blocks up to (0, 10, 0). The next feature in the sequence begins at (0, 10, 0).",
 			"additionalProperties": false,
 			"properties": {
 				"description": {
@@ -35,6 +39,7 @@
 					}
 				},
 				"features": {
+					"description": "List of features to be placed in sequence. The output position of the previous feature is used as the input position to the next.",
 					"type": "array",
 					"items": {
 						"$ref": "../../general/reference/feature.json"
@@ -43,6 +48,7 @@
 			}
 		},
 		"minecraft:ore_feature": {
+			"description": "Places a vein of blocks to simulate ore deposits. Despite the name, any block can be placed by this feature. During placement, existing world blocks are checked to see if they can be replaced by the new ore block based on the list provided in the 'may_replace' field. If no 'may_replace' field is specified, the ore block can replace any existing block.",
 			"additionalProperties": false,
 			"properties": {
 				"description": {
@@ -54,12 +60,15 @@
 					}
 				},
 				"count": {
+					"description": "The number of blocks to be placed.",
 					"type": "number"
 				},
 				"places_block": {
+					"description": "Reference to the block to be placed.",
 					"$ref": "../general.json#/definitions/block_reference"
 				},
 				"may_replace": {
+					"description": "A list of blocks that may be replaced during placement. Omit this field to allow any block to be replaced.",
 					"type": "array",
 					"items": {
 						"$ref": "../general.json#/definitions/block_reference"
@@ -68,6 +77,7 @@
 			}
 		},
 		"minecraft:scatter_feature": {
+			"description": "Scatters a feature throughout a chunk. The 'x', 'y', and 'z' fields are per-coordinate parameters. Note that coordinates represent an offset from the input position, not an absolute position. Coordinates may be a single value, a random distribution, or molang expression that resolves to a numeric value. The 'coordinate_eval_order' field is provided for finer control of coordinate resolution (particularly when using the 'grid' distribution). 'iterations' controls how many individual placements should occur if the 'scatter_chance' check succeeds. The 'scatter_chance' check happens once, so either all placements will run or none will.",
 			"additionalProperties": false,
 			"properties": {
 				"description": {
@@ -79,20 +89,25 @@
 					}
 				},
 				"iterations": {
+					"description": "Number of scattered positions to generate.",
 					"type": "integer"
 				},
 				"project_input_to_floor": {
+					"description": "If true, snaps the y-value of the scattered position to the terrain heightmap. If false or unset, y-value is unmodified.",
 					"type": "boolean"
 				},
 				"coordinate_eval_order": {
+					"description": "The order in which coordinates will be evaluated. Should be used when a coordinate depends on another. If omitted, defaults to 'xzy'.",
 					"$ref": "../general.json#/definitions/coordinate_eval_order"
 				},
 				"scatter_chance": {
 					"anyOf": [
 						{
+							"description": "Probability (0-100] that this scatter will occur.  Not evaluated each iteration; either no iterations will run, or all will.",
 							"type": "string"
 						},
 						{
+							"description": "Probability numerator / denominator that this scatter will occur.  Not evaluated each iteration; either no iterations will run, or all will.",
 							"$ref": "../general.json#/definitions/chance_information"
 						}
 					]
@@ -100,27 +115,52 @@
 				"x": {
 					"anyOf": [
 						{
+							"description": "Expression for the coordinate (evaluated each iteration).",
 							"type": "string"
 						},
 						{
+							"description": "Distribution for the coordinate (evaluated each iteration).",
 							"properties": {
 								"extent": {
 									"minItems": 2,
 									"maxItems": 2,
 									"type": "array",
-									"items": {
-										"anyOf": [
-											{
-												"type": "number"
-											},
-											{
-												"type": "string"
-											}
-										]
-									}
+									"items": [
+										{
+											"description": "Lower bound (inclusive) of the scatter range, as an offset from the input point to scatter around.",
+											"anyOf": [
+												{
+													"type": "number"
+												},
+												{
+													"type": "string"
+												}
+											]
+										},
+										{
+											"description": "Upper bound (inclusive) of the scatter range, as an offset from the input point to scatter around.",
+											"anyOf": [
+												{
+													"type": "number"
+												},
+												{
+													"type": "string"
+												}
+											]
+										}
+									]
 								},
 								"distribution": {
+									"description": "Type of distribution - uniform random, gaussian (centered in the range), or grid (either fixed-step or jittered).",
 									"$ref": "../general.json#/definitions/distributions"
+								},
+								"step_size": {
+									"type": "integer",
+									"description": "When the distribution type is grid, defines the distance between steps along this axis."
+								},
+								"grid_offset": {
+									"type": "integer",
+									"description": "When the distribution type is grid, defines the offset along this axis."
 								}
 							}
 						}
@@ -133,6 +173,7 @@
 					"$ref": "#/properties/minecraft:scatter_feature/properties/x"
 				},
 				"places_feature": {
+					"description": "Named reference of feature to be placed.",
 					"type": "array",
 					"items": {
 						"$ref": "../../general/reference/feature.json"
@@ -141,6 +182,7 @@
 			}
 		},
 		"minecraft:search_feature": {
+			"description": "Sweeps a volume searching for a valid placement location for its referenced feature. The 'search_volume' field specifies the axis-aligned bounding box that defines the boundaries of the search. The search sweeps along the axis defined by the 'search_axis' field, layer by layer. For example, if 'search_axis' = '-x', blocks with greater x values will be checked before blocks with lower x values. Each layer is searched from the bottom-left to the top-right before moving to the next layer along the axis. By default, only one valid position must be found, but this can be altered by specifying the 'required_successes' field. If fewer than the required successes are found, no placement will occur.",
 			"additionalProperties": false,
 			"properties": {
 				"description": {
@@ -151,12 +193,24 @@
 					}
 				},
 				"places_feature": {
+					"description": "Named reference of feature to be placed.",
 					"$ref": "../../general/reference/feature.json"
 				},
 				"search_volume": {
+					"description": "Axis-aligned bounding box that will be searched for valid placement positions. Expressed as offsets from the input position.",
 					"additionalProperties": false,
 					"properties": {
 						"min": {
+							"description": "Minimum extent of the bounding volume expressed as [ x, y, z ].",
+							"type": "array",
+							"minItems": 3,
+							"maxItems": 3,
+							"items": {
+								"type": "number"
+							}
+						},
+						"max": {
+							"description": "Maxium extent of the bounding volume expressed as [ x, y, z ].",
 							"type": "array",
 							"minItems": 3,
 							"maxItems": 3,
@@ -167,15 +221,18 @@
 					}
 				},
 				"search_axis": {
+					"description": "Axis that the search will sweep along through the 'search_volume'.",
 					"type": "string",
 					"enum": ["-x", "+x", "-y", "+y", "-z", "+z"]
 				},
 				"required_successes": {
+					"description": "Number of valid positions the search must find in order to place the referenced feature.",
 					"type": "number"
 				}
 			}
 		},
 		"minecraft:single_block_feature": {
+			"description": "Places a single block in the world. The 'may_place_on' and 'may_replace' fields are allowlists which specify where the block can be placed. If these fields are omitted, the block can be placed anywhere. The block's internal survivability and placement rules can optionally be enforced with the 'enforce_survivability_rules' and 'enforce_placement_rules' fields. These rules are specified per-block and are typically designed to produce high quality gameplay or natural behavior. However, enabling this enforcement may make it harder to debug placement failures.",
 			"additionalProperties": false,
 			"properties": {
 				"description": {
@@ -186,12 +243,15 @@
 					}
 				},
 				"places_block": {
+					"description": "Reference to the block to be placed.",
 					"$ref": "../general.json#/definitions/block_reference"
 				},
 				"enforce_survivability_rules": {
+					"description": " If true, enforce the block's canSurvive check.",
 					"type": "boolean"
 				},
 				"enforce_placement_rules": {
+					"description": "If true, enforce the block's canPlace check.",
 					"type": "boolean"
 				},
 				"may_attach_to": {
@@ -202,6 +262,7 @@
 							"enum": [1, 2, 3, 4]
 						},
 						"auto_rotate": {
+							"description": "Automatically rotate the block to attach sensibly.",
 							"type": "boolean"
 						},
 						"top": {
@@ -255,6 +316,7 @@
 					}
 				},
 				"may_replace": {
+					"description": "A list of blocks that may be replaced during placement. Omit this field to allow any block to be replaced.",
 					"type": "array",
 					"items": {
 						"$ref": "../general.json#/definitions/block_reference"
@@ -263,6 +325,7 @@
 			}
 		},
 		"minecraft:structure_template_feature": {
+			"description": "Places a structure in the world. The structure must be stored as a .mcstructure file in the 'structures' subdirectory of a behavior pack. It is possible to reference structures that are part of other behavior packs, they do not need to come from the same behavior pack as this feature. Constraints can be defined to specify where the structure is allowed to be placed. During placement, the feature will search for a position within the 'adjustment_radius' that satisfies all constraints. If none are found, the structure will not be placed.",
 			"additionalProperties": false,
 			"properties": {
 				"description": {
@@ -273,9 +336,11 @@
 					}
 				},
 				"structure_name": {
+					"description": "Reference to the structure to be placed.",
 					"type": "string"
 				},
 				"adjustment_radius": {
+					"description": "How far the structure is allowed to move when searching for a valid placement position. Search is radial, stopping when the nearest valid position is found. Defaults to 0 if omitted.",
 					"type": "integer",
 					"enum": [
 						0,
@@ -298,17 +363,25 @@
 					]
 				},
 				"facing_direction": {
+					"description": "Direction the structure will face when placed in the world. Defaults to 'random' if omitted.",
 					"type": "string",
 					"enum": ["north", "south", "east", "west", "random"]
 				},
 				"constraints": {
+					"description": "Specific constraints that must be satisfied when placing this structure.",
 					"additionalProperties": false,
 					"properties": {
-						"grounded": {},
-						"unburied": {},
+						"grounded": {
+							"description": "When specified, ensures the structure is on the ground."
+						},
+						"unburied": {
+							"description": "When specified, ensures the structure has air above it."
+						},
 						"block_intersection": {
+							"description": " When specified, ensures the structure only intersects with allowlisted blocks.",
 							"properties": {
 								"block_allowlist": {
+									"description": "List of blocks the owning structure is allowed to intersect with.",
 									"type": "array",
 									"items": {
 										"$ref": "../general.json#/definitions/block_reference"
@@ -620,6 +693,7 @@
 			}
 		},
 		"minecraft:weighted_random_feature": {
+			"description": "randomly selects and places a feature based on a weight value. Weights are relative, with higher values making selection more likely.",
 			"additionalProperties": false,
 			"properties": {
 				"description": {
@@ -634,6 +708,7 @@
 					"$ref": "../general.json#/definitions/early_outs"
 				},
 				"features": {
+					"description": "Collection of weighted features that placement will select from.",
 					"type": "array",
 					"items": {
 						"type": "array",
@@ -641,9 +716,11 @@
 						"maxItems": 2,
 						"items": [
 							{
+								"description": "Named reference to a feature.",
 								"$ref": "../../general/reference/feature.json"
 							},
 							{
+								"description": "Weight used in random selection. Value is relative to other weights in the collection.",
 								"type": "integer"
 							}
 						]
