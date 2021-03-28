@@ -42,25 +42,25 @@ export class FileDropper {
 
 			this.onDrop([...(event.dataTransfer?.files ?? [])])
 		})
+
+		if ('launchQueue' in window) {
+			;(<any>window).launchQueue.setConsumer(
+				async (launchParams: any) => {
+					if (!launchParams.files.length) return
+
+					for (const fileHandle of launchParams.files) {
+						console.log(fileHandle.name)
+						await this.import(await fileHandle.getFile())
+					}
+				}
+			)
+		}
 	}
 
 	protected async onDrop(files: File[]) {
 		for (const file of files) {
-			const ext = extname(file.name)
-			console.log(ext)
-			const handler = this.fileHandlers.get(ext)
-
-			if (!handler) {
+			if (!(await this.import(file)))
 				this.state.failedImports.push(file.name)
-				continue
-			}
-
-			try {
-				await handler(file)
-			} catch (err) {
-				this.state.failedImports.push(file.name)
-				console.error(err)
-			}
 		}
 
 		this.closeTimeout = window.setTimeout(
@@ -69,6 +69,24 @@ export class FileDropper {
 			},
 			this.state.failedImports.length > 0 ? 2500 : 0
 		)
+	}
+
+	protected async import(file: File) {
+		const ext = extname(file.name)
+		const handler = this.fileHandlers.get(ext)
+
+		if (!handler) {
+			this.state.failedImports.push(file.name)
+			return false
+		}
+
+		try {
+			await handler(file)
+		} catch (err) {
+			console.error(err)
+			return false
+		}
+		return true
 	}
 
 	addImporter(
