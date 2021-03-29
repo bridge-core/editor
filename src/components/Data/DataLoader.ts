@@ -4,7 +4,7 @@ import { baseUrl } from '/@/utils/baseUrl'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { version as appVersion } from '/@/appVersion.json'
 import { compare } from 'compare-versions'
-import { StreamingUnzipper } from '../FileSystem/StreamingUnzipper'
+import { StreamingUnzipper } from '../FileSystem/StreamingUnzipper/StreamingUnzipper'
 
 export class DataLoader extends Signal<void> {
 	constructor(protected app: App) {

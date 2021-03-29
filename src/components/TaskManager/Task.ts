@@ -32,7 +32,7 @@ export class Task {
 	}
 
 	dispose() {
-		this.taskManager.delete(this)
+		this.taskManager?.delete(this)
 	}
 
 	get name() {

@@ -25,6 +25,10 @@ export class Progress extends EventDispatcher<[number, number]> {
 		return this.current
 	}
 
+	get isDone() {
+		return this.getCurrent() === this.getTotal()
+	}
+
 	setTotal(val: number) {
 		this.total = val
 	}
