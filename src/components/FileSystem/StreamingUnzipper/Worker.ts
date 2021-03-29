@@ -30,8 +30,9 @@ export class StreamingUnzipperWorker extends SimpleTaskService {
 			)
 			const writable = await fileHandle.createWritable()
 
-			const data = await this.readFile(file)
+			let data: any = await this.readFile(file)
 			for (const d of data) await writable.write(d)
+			data = undefined
 			await writable.close()
 
 			this.progress.addToCurrent()
