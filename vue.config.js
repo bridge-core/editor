@@ -22,7 +22,7 @@ module.exports = {
 		manifestOptions: {
 			background_color: '#0F0F0F',
 			capture_links: [
-				'existing-client-event',
+				// 'existing-client-event', //Doesn't work yet but we can use "exisiting-client-navigate" because we're a SPA
 				'existing-client-navigate',
 			],
 			file_handlers: [
