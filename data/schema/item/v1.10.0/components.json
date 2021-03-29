@@ -57,7 +57,7 @@
 							]
 						},
 						"using_converts_to": {
-							"type": "string",
+							"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers",
 							"description": "When used, convert the *this* item to the one specified by 'using_converts_to'."
 						},
 						"effects": {

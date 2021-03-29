@@ -514,10 +514,6 @@
 							"description": "Event to fire once the item has been consumed.",
 							"$ref": "../general/eventDefinition.json"
 						},
-						"using_converts_to": {
-							"doNotSuggest": true,
-							"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
-						},
 						"effects": {
 							"doNotSuggest": true,
 							"deprecationMessage": "Deprecated in favor of event responses (format_version: v1.16.100)."
