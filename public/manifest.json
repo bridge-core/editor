@@ -28,5 +28,15 @@
 	],
 	"start_url": "/editor/",
 	"display": "standalone",
-	"background_color": "#000000"
+	"background_color": "#000000",
+	"file_handlers": [
+		{
+			"action": "/",
+			"accept": {
+				"application/zip": [".mcaddon", ".mcpack", ".mcworld"],
+				"application/json": [".json"],
+				"text/plain": [".mcfunction", ".molang", ".lang"]
+			}
+		}
+	]
 }

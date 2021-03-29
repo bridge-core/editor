@@ -2,12 +2,12 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const WorkerPlugin = require('worker-plugin')
 const { join } = require('path')
 
-const publicPath =
-	process.argv[3] === '--nightly'
-		? '/nightly/'
-		: process.env.NODE_ENV === 'production'
-		? '/editor/'
-		: '/'
+const isNightlyBuild = process.argv[3] === '--nightly'
+const publicPath = isNightlyBuild
+	? '/nightly/'
+	: process.env.NODE_ENV === 'production'
+	? '/editor/'
+	: '/'
 
 module.exports = {
 	runtimeCompiler: true,
@@ -15,7 +15,7 @@ module.exports = {
 	transpileDependencies: ['vuetify', 'molang'],
 
 	pwa: {
-		name: 'bridge v2',
+		name: isNightlyBuild ? 'bridge v2' : 'bridge Nightly',
 		appleMobileWebAppCapable: true,
 		themeColor: '#1778D2',
 		msTileColor: '#0F0F0F',
