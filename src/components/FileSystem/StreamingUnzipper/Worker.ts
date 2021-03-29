@@ -4,6 +4,7 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { basename, dirname, join } from '/@/utils/path'
 import { SimpleTaskService } from '/@/components/TaskManager/SimpleWorkerTask'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { whenIdle } from '/@/utils/whenIdle'
 
 export class StreamingUnzipperWorker extends SimpleTaskService {
 	protected unzipper = new Unzip()
@@ -24,16 +25,18 @@ export class StreamingUnzipperWorker extends SimpleTaskService {
 			}
 			this.progress.addToTotal()
 
-			const fileHandle = await this.fileSystem.getFileHandle(
-				join(parentDirName, name),
-				true
-			)
-			const writable = await fileHandle.createWritable()
+			await whenIdle(async () => {
+				const fileHandle = await this.fileSystem.getFileHandle(
+					join(parentDirName, name),
+					true
+				)
+				const writable = await fileHandle.createWritable()
 
-			let data: any = await this.readFile(file)
-			for (const d of data) await writable.write(d)
-			data = undefined
-			await writable.close()
+				let data: any = await this.readFile(file)
+				for (const d of data) await writable.write(d)
+				data = undefined
+				await writable.close()
+			})
 
 			this.progress.addToCurrent()
 		}
