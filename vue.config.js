@@ -2,14 +2,16 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const WorkerPlugin = require('worker-plugin')
 const { join } = require('path')
 
+const publicPath =
+	process.argv[3] === '--nightly'
+		? '/nightly/'
+		: process.env.NODE_ENV === 'production'
+		? '/editor/'
+		: '/'
+
 module.exports = {
 	runtimeCompiler: true,
-	publicPath:
-		process.argv[3] === '--nightly'
-			? '/nightly/'
-			: process.env.NODE_ENV === 'production'
-			? '/editor/'
-			: undefined,
+	publicPath,
 	transpileDependencies: ['vuetify', 'molang'],
 
 	pwa: {
@@ -21,7 +23,7 @@ module.exports = {
 			background_color: '#0F0F0F',
 			file_handlers: [
 				{
-					action: '/',
+					action: publicPath,
 					accept: {
 						'application/zip': ['.mcaddon', '.mcpack', '.mcworld'],
 						'application/json': ['.json'],
