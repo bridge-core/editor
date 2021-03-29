@@ -1,29 +1,8 @@
 import { unzip } from 'fflate'
-import { ITaskDetails, Task } from '/@/components/TaskManager/Task'
-import { TaskManager } from '/@/components/TaskManager/TaskManager'
-import { Progress } from '/@/components/Common/Progress'
-import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { basename, dirname } from '/@/utils/path'
+import { GenericUnzipper } from './GenericUnzipper'
 
-export class Unzipper {
-	protected fileSystem: FileSystem
-	protected task?: Task
-
-	constructor(protected directory: FileSystemDirectoryHandle) {
-		this.fileSystem = new FileSystem(directory)
-	}
-
-	createTask(
-		taskManager: TaskManager,
-		taskDetails: ITaskDetails = {
-			icon: 'mdi-folder-zip',
-			name: 'unzipper.name',
-			description: 'unzipper.description',
-		}
-	) {
-		this.task = taskManager.create(taskDetails)
-	}
-
+export class Unzipper extends GenericUnzipper<Uint8Array> {
 	unzip(data: Uint8Array) {
 		return new Promise<void>(async (resolve, reject) => {
 			unzip(data, async (error, zip) => {

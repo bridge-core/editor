@@ -16,9 +16,10 @@ export class Task {
 		protected taskDetails: ITaskDetails
 	) {}
 
-	update(newStepCount: number, newTotalSteps?: number) {
-		this.currentStepCount = newStepCount
-		if (newTotalSteps) this.taskDetails.totalTaskSteps = newTotalSteps
+	update(newStepCount?: number, newTotalSteps?: number) {
+		if (newStepCount !== undefined) this.currentStepCount = newStepCount
+		if (newTotalSteps !== undefined)
+			this.taskDetails.totalTaskSteps = newTotalSteps
 	}
 
 	createWindow() {

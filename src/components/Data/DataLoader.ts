@@ -4,6 +4,7 @@ import { baseUrl } from '/@/utils/baseUrl'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { version as appVersion } from '/@/appVersion.json'
 import { compare } from 'compare-versions'
+import { StreamingUnzipper } from '../FileSystem/StreamingUnzipper'
 
 export class DataLoader extends Signal<void> {
 	constructor(protected app: App) {
@@ -72,7 +73,7 @@ export class DataLoader extends Signal<void> {
 			await this.app.fileSystem.unlink('data/packages')
 		} catch {}
 
-		const unzipper = new Unzipper(
+		const unzipper = new StreamingUnzipper(
 			await this.app.fileSystem.getDirectoryHandle('data/packages', {
 				create: true,
 			})
@@ -84,9 +85,9 @@ export class DataLoader extends Signal<void> {
 			name: 'taskManager.tasks.dataLoader.title',
 		})
 
-		await fetch(baseUrl + 'data/package.zip')
-			.then((response) => response.arrayBuffer())
-			.then((data) => unzipper.unzip(new Uint8Array(data)))
+		await fetch(baseUrl + 'data/package.zip').then((response) =>
+			response.body ? unzipper.unzip(response.body) : null
+		)
 
 		console.log('Data updated!')
 	}

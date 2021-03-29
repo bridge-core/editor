@@ -1,53 +1,87 @@
-import { Unzip, AsyncUnzipInflate } from 'fflate'
+import { Unzip, AsyncUnzipInflate, UnzipFile } from 'fflate'
+import { GenericUnzipper } from './GenericUnzipper'
+import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { basename, dirname, join } from '/@/utils/path'
 
-// TODO: This will bring great performance benefits but it's tricky to get 100% right
-export async function unzipStreamToDirectory(
-	stream: ReadableStream<Uint8Array>,
-	directory: FileSystemDirectoryHandle
-) {
-	const fileSystem = new FileSystem(directory)
-	const unzipper = new Unzip()
-	let totalFiles = 0
-	let processedFiles = 0
-
-	unzipper.register(AsyncUnzipInflate)
-
-	unzipper.onfile = async (file) => {
-		const name = basename(file.name)
-		const parentDirName = dirname(file.name)
-
-		if (name.startsWith('.') || file.name.endsWith('/')) return
-		totalFiles++
-
-		const fileHandle = await fileSystem.getFileHandle(
-			join(parentDirName, name),
-			true
-		)
-		const writable = await fileHandle.createWritable()
-
-		file.ondata = (error, data, final) => {
-			if (error) {
-				file.terminate()
-				throw error
+export class StreamingUnzipper extends GenericUnzipper<
+	ReadableStream<Uint8Array>
+> {
+	unzip(stream: ReadableStream<Uint8Array>) {
+		return new Promise<void>(async (resolve, reject) => {
+			if (!this.task) {
+				const app = await App.getApp()
+				this.createTask(app.taskManager)
 			}
 
-			writable.write(data)
-			if (final) {
-				writable.close()
-			}
-		}
+			const fileSystem = new FileSystem(this.directory)
+			const unzipper = new Unzip()
 
-		file.start()
+			unzipper.register(AsyncUnzipInflate)
+
+			let currentFileCount = 0
+			let totalFileCount = 0
+
+			unzipper.onfile = async (file) => {
+				const name = basename(file.name)
+				const parentDirName = dirname(file.name)
+
+				if (name.startsWith('.') || file.name.endsWith('/')) {
+					return
+				}
+				this.task?.update(undefined, ++totalFileCount)
+
+				const fileHandle = await fileSystem.getFileHandle(
+					join(parentDirName, name),
+					true
+				)
+				const writable = await fileHandle.createWritable()
+
+				const data = await this.readFile(file)
+				for (const d of data) await writable.write(d)
+				await writable.close()
+
+				this.task?.update(++currentFileCount)
+				if (currentFileCount === totalFileCount) {
+					this.task?.complete()
+					resolve()
+				}
+			}
+
+			const reader = stream.getReader()
+
+			let done = false
+			while (!done) {
+				const result = await reader.read()
+				done = result.done
+
+				if (!done) {
+					unzipper.push(result.value!, done)
+				}
+			}
+
+			reader.cancel()
+		})
 	}
 
-	const reader = stream.getReader()
+	protected readFile(file: UnzipFile) {
+		return new Promise<Uint8Array[]>((resolve, reject) => {
+			const readData: Uint8Array[] = []
 
-	while (true) {
-		const { done, value } = await reader.read()
-		unzipper.push(value ?? new Uint8Array(), done)
+			file.ondata = (error, currentChunk, final) => {
+				if (error) {
+					file.terminate()
+					reject(error)
+				} else if (currentChunk) {
+					readData.push(currentChunk)
+				}
 
-		if (done) break
+				if (final) {
+					resolve(readData)
+				}
+			}
+
+			file.start()
+		})
 	}
 }
