@@ -15,7 +15,7 @@ module.exports = {
 	transpileDependencies: ['vuetify', 'molang'],
 
 	pwa: {
-		name: isNightlyBuild ? 'bridge v2' : 'bridge Nightly',
+		name: isNightlyBuild ? 'bridge Nightly' : 'bridge v2',
 		appleMobileWebAppCapable: true,
 		themeColor: '#1778D2',
 		msTileColor: '#0F0F0F',
