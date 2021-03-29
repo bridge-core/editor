@@ -31,6 +31,7 @@ module.exports = {
 					accept: {
 						'application/zip': ['.mcaddon', '.mcpack', '.mcworld'],
 						'application/json': ['.json'],
+						'application/javascript': ['.js', '.ts'],
 						'text/plain': ['.mcfunction', '.molang', '.lang'],
 					},
 				},
