@@ -25,18 +25,14 @@ export class StreamingUnzipperWorker extends SimpleTaskService {
 			}
 			this.progress.addToTotal()
 
-			await whenIdle(async () => {
-				const fileHandle = await this.fileSystem.getFileHandle(
-					join(parentDirName, name),
-					true
-				)
-				const writable = await fileHandle.createWritable()
+			const fileHandle = await this.fileSystem.getFileHandle(
+				join(parentDirName, name),
+				true
+			)
 
-				let data: any = await this.readFile(file)
-				for (const d of data) await writable.write(d)
-				data = undefined
-				await writable.close()
-			})
+			const writable = await fileHandle.createWritable()
+			await this.processFile(file, writable)
+			await writable.close()
 
 			this.progress.addToCurrent()
 		}
@@ -46,20 +42,21 @@ export class StreamingUnzipperWorker extends SimpleTaskService {
 		this.unzipper.push(data)
 	}
 
-	protected readFile(file: UnzipFile) {
-		return new Promise<Uint8Array[]>((resolve, reject) => {
-			const readData: Uint8Array[] = []
-
-			file.ondata = (error, currentChunk, final) => {
+	protected processFile(
+		file: UnzipFile,
+		writable: FileSystemWritableFileStream
+	) {
+		return new Promise<void>((resolve, reject) => {
+			file.ondata = async (error, currentChunk, final) => {
 				if (error) {
 					file.terminate()
 					reject(error)
 				} else if (currentChunk) {
-					readData.push(currentChunk)
+					await writable.write(currentChunk)
 				}
 
 				if (final) {
-					resolve(readData)
+					resolve()
 				}
 			}
 
