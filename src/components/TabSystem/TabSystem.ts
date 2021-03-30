@@ -123,15 +123,17 @@ export class TabSystem extends MonacoHolder {
 
 		await tab.save()
 
-		await this.project.updateFile(
-			tab.getPath().replace(`projects/${this.project.name}/`, '')
-		)
-		await this.project.recentFiles.add({
-			path: tab.getPath(),
-			name: tab.name,
-			color: tab.iconColor,
-			icon: tab.icon,
-		})
+		if (!tab.isForeignFile) {
+			await this.project.updateFile(
+				tab.getPath().replace(`projects/${this.project.name}/`, '')
+			)
+			await this.project.recentFiles.add({
+				path: tab.getPath(),
+				name: tab.name,
+				color: tab.iconColor,
+				icon: tab.icon,
+			})
+		}
 
 		// Only refresh auto-completion content if tab is active
 		if (tab === this.selectedTab)

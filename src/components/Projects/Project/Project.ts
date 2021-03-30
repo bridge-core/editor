@@ -137,7 +137,7 @@ export class Project {
 		try {
 			await this.fileSystem.getFileHandle(filePath)
 		} catch {
-			// This is a virtual file, don't process it
+			// This is a foreign file, don't process it
 			return
 		}
 
