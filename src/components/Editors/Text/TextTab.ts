@@ -27,16 +27,18 @@ export class TextTab extends Tab {
 		this.isActive = true
 
 		const app = await App.getApp()
+		await this.parent.fired //Make sure a monaco editor is loaded
 		this.editorInstance?.focus()
 		this.editorInstance?.layout()
 
 		if (!this.editorModel) {
-			const file = await app.fileSystem.readFile(this.path)
+			const file = await this.fileHandle.getFile()
 			const fileContent = await file.text()
+
 			this.editorModel = monaco.editor.createModel(
 				fileContent,
 				undefined,
-				monaco.Uri.file(this.path)
+				monaco.Uri.file(this.getPath())
 			)
 			this.loadEditor()
 		} else {
@@ -86,7 +88,7 @@ export class TextTab extends Tab {
 		const action = this.editorInstance?.getAction(
 			'editor.action.formatDocument'
 		)
-		const fileType = FileType.get(this.getPackPath())
+		const fileType = FileType.get(this.getProjectPath())
 
 		if (
 			action &&
@@ -127,8 +129,8 @@ export class TextTab extends Tab {
 	protected async saveFile(app: App) {
 		this.isUnsaved = false
 		if (this.editorModel) {
-			await app.fileSystem.writeFile(
-				this.path,
+			await app.fileSystem.write(
+				this.fileHandle,
 				this.editorModel.getValue()
 			)
 		}

@@ -37,27 +37,45 @@ export class TabSystem extends MonacoHolder {
 	get selectedTab() {
 		return this._selectedTab
 	}
+	get projectRoot() {
+		return this.project.baseDirectory
+	}
+	get projectName() {
+		return this.project.name
+	}
 
-	open(path: string, selectTab = true) {
+	async open(fileHandle: FileSystemFileHandle, selectTab = true) {
 		for (const tab of this.tabs) {
-			if (tab.isFor(path)) return selectTab ? tab.select() : tab
+			if (await tab.isFor(fileHandle))
+				return selectTab ? tab.select() : tab
 		}
 
-		const tab = this.getTabFor(path)
+		const tab = await this.getTabFor(fileHandle)
 		this.add(tab, selectTab)
 		return tab
 	}
-
-	protected getTabFor(filePath: string) {
-		for (const CurrentTab of this.tabTypes) {
-			if (CurrentTab.is(filePath)) return new CurrentTab(this, filePath)
-		}
-		return new TextTab(this, filePath)
+	async openPath(path: string, selectTab = true) {
+		const fileHandle = await this.project.app.fileSystem.getFileHandle(path)
+		return await this.open(fileHandle, selectTab)
 	}
 
-	add(tab: Tab, selectTab = true) {
+	protected async getTabFor(fileHandle: FileSystemFileHandle) {
+		let tab: Tab | undefined = undefined
+		for (const CurrentTab of this.tabTypes) {
+			if (await CurrentTab.is(fileHandle)) {
+				tab = new CurrentTab(this, fileHandle)
+				break
+			}
+		}
+		// Default tab type: Text editor
+		if (!tab) tab = new TextTab(this, fileHandle)
+
+		return await tab.fired
+	}
+
+	async add(tab: Tab, selectTab = true) {
 		this.tabs = [...this.tabs, tab]
-		this.openedFiles.add(tab.getPath())
+		if (!tab.isForeignFile) this.openedFiles.add(tab.getPath())
 
 		if (selectTab) tab.select()
 
@@ -82,8 +100,8 @@ export class TabSystem extends MonacoHolder {
 			this.remove(tab)
 		}
 	}
-	closeByPath(path: string) {
-		const tab = this.tabs.find((tab) => tab.isFor(path))
+	async closeByPath(fileHandle: FileSystemFileHandle) {
+		const tab = await this.getTab(fileHandle)
 		if (tab) this.close(tab)
 	}
 	select(tab?: Tab) {
@@ -140,13 +158,15 @@ export class TabSystem extends MonacoHolder {
 		if (isActive) {
 			App.eventSystem.dispatch(
 				'currentTabSwitched',
-				this._selectedTab?.getPackPath()
+				this._selectedTab?.getProjectPath()
 			)
 		}
 	}
 
-	getTab(path: string) {
-		return this.tabs.find((tab) => tab.isFor(path))
+	async getTab(fileHandle: FileSystemFileHandle) {
+		for (const tab of this.tabs) {
+			if (await tab.isFor(fileHandle)) return tab
+		}
 	}
 	closeTabs(predicate: (tab: Tab) => boolean) {
 		const tabs = [...this.tabs].reverse()

@@ -1,6 +1,6 @@
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { ICreateProjectOptions } from '../CreateProject'
-import { CreateFile } from '../Files/File'
+import { CreateFile } from '../Files/CreateFile'
 
 export type TPackType = 'BP' | 'RP' | 'SP' | 'bridge'
 

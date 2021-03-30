@@ -33,9 +33,12 @@ export class FilePickerWindow extends BaseWindow {
 	}
 
 	protected openFile(filePath: string) {
-		App.ready.once(app =>
-			app.project?.openFile(`projects/${app.selectedProject}/${filePath}`)
-		)
+		App.ready.once(async (app) => {
+			const fileHandle = await app.fileSystem.getFileHandle(
+				`projects/${app.selectedProject}/${filePath}`
+			)
+			app.project?.openFile(fileHandle)
+		})
 		this.close()
 	}
 }

@@ -29,7 +29,12 @@ module.exports = {
 				{
 					action: publicPath,
 					accept: {
-						'application/zip': ['.mcaddon', '.mcpack', '.mcworld'],
+						'application/zip': [
+							'.mcaddon',
+							'.mcpack',
+							'.mcworld',
+							'.mctemplate',
+						],
 						'application/json': ['.json'],
 						'application/javascript': ['.js', '.ts'],
 						'text/plain': ['.mcfunction', '.molang', '.lang'],

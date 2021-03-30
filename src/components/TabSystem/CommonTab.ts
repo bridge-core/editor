@@ -4,42 +4,75 @@ import { App } from '/@/App'
 import { FileType } from '/@/components/Data/FileType'
 import { PackType } from '/@/components/Data/PackType'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
+import { Signal } from '/@/components/Common/Event/Signal'
 
-export abstract class Tab {
+export abstract class Tab extends Signal<Tab> {
 	abstract component: Vue.Component
 	uuid = uuid()
 	hasRemoteChange = false
 	isUnsaved = false
+	protected projectPath?: string
+	isForeignFile = false
 
 	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val
 	}
 
-	static is(filePath: string) {
+	static is(fileHandle: FileSystemFileHandle) {
 		return false
 	}
 
-	constructor(protected parent: TabSystem, protected path: string) {}
+	constructor(
+		protected parent: TabSystem,
+		protected fileHandle: FileSystemFileHandle
+	) {
+		super()
+		this.setup()
+	}
+
+	async setup() {
+		this.projectPath = await this.parent.projectRoot
+			.resolve(this.fileHandle)
+			.then((path) => path?.join('/'))
+
+		// If the resolve above failed, we are dealing with a file which doesn't belong to this project
+		if (!this.projectPath) {
+			this.isForeignFile = true
+			this.projectPath = `${uuid()}/${this.fileHandle.name}`
+		}
+
+		this.dispatch(this)
+	}
 
 	updateParent(parent: TabSystem) {
 		this.parent = parent
 	}
 
 	get name() {
-		const pathArr = this.path.split(/\\|\//g)
-		return pathArr.pop()!
+		return this.fileHandle.name
 	}
+	/**
+	 * @returns Undefined if the file that belongs to this tab is not inside of a bridge. project
+	 */
 	getPath() {
-		return this.path
+		if (!this.projectPath)
+			throw new Error(
+				`Trying to access projectPath before tab finished loading`
+			)
+		return `projects/${this.parent.projectName}/${this.projectPath}`
 	}
-	getPackPath() {
-		return this.path.replace(
-			`projects/${App.instance.selectedProject}/`,
-			''
-		)
+	/**
+	 * @returns Undefined if the file that belongs to this tab is not inside of the current project
+	 */
+	getProjectPath() {
+		if (!this.projectPath)
+			throw new Error(
+				`Trying to access projectPath before tab finished loading`
+			)
+		return this.projectPath
 	}
 	get icon() {
-		return FileType.get(this.getPackPath())?.icon ?? 'mdi-file-outline'
+		return FileType.get(this.getProjectPath())?.icon ?? 'mdi-file-outline'
 	}
 	get iconColor() {
 		return PackType.get(this.getPath())?.color
@@ -55,8 +88,8 @@ export abstract class Tab {
 	close() {
 		this.parent.close(this)
 	}
-	isFor(path: string) {
-		return path === this.path
+	async isFor(fileHandle: FileSystemFileHandle) {
+		return await fileHandle.isSameEntry(this.fileHandle)
 	}
 
 	focus() {}

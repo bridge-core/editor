@@ -1,7 +1,7 @@
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/CreateProject'
 import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
-import { CreateFile } from '/@/components/Projects/CreateProject/Files/File'
+import { CreateFile } from './CreateFile'
 import { v4 as uuid } from 'uuid'
 
 export class CreateManifest extends CreateFile {

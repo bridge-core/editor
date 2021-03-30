@@ -11,7 +11,7 @@ export async function runPresetScript(
 	presetScript: string,
 	models: Record<string, unknown>,
 	permissions: IPermissions
-): Promise<string[]> {
+) {
 	const app = await App.getApp()
 	const fs = app.project?.fileSystem!
 	const globalFs = app.fileSystem
@@ -37,7 +37,7 @@ export async function runPresetScript(
 			`Failed to execute PresetScript "${presetScript}": module.exports is of type ${typeof module.exports}`
 		)
 
-	const createdFiles: string[] = []
+	const createdFiles: FileSystemFileHandle[] = []
 	const createJSONFile = (
 		filePath: string,
 		data: any,
@@ -75,8 +75,8 @@ export async function runPresetScript(
 			return
 		}
 
-		createdFiles.push(filePath)
 		const fileHandle = await fs.getFileHandle(filePath, true)
+		createdFiles.push(fileHandle)
 		fs.write(
 			fileHandle,
 			typeof data === 'string'
@@ -89,9 +89,14 @@ export async function runPresetScript(
 		data: any,
 		{ inject = [] }: IPresetFileOpts = { inject: [] }
 	) => {
+		const fileHandle = await app.project.fileSystem.getFileHandle(
+			filePath,
+			true
+		)
+
 		// Permission for overwriting unsaved changes not set yet, request it
 		if (permissions.mayOverwriteUnsavedChanges === undefined) {
-			const tab = app.project.getFileTab(filePath)
+			const tab = await app.project.getFileTab(fileHandle)
 			if (tab !== undefined && tab.isUnsaved) {
 				const confirmWindow = new ConfirmationWindow({
 					description: 'windows.createPreset.overwriteUnsavedChanges',
@@ -104,7 +109,7 @@ export async function runPresetScript(
 					// Stop file collision checks & continue creating preset
 					permissions.mayOverwriteUnsavedChanges = true
 
-					app.project.closeFile(filePath)
+					tab.close()
 				} else {
 					// Don't expand file
 					permissions.mayOverwriteUnsavedChanges = false
@@ -122,7 +127,7 @@ export async function runPresetScript(
 		} catch {}
 
 		data = transformString(data, inject, models)
-		createdFiles.push(filePath)
+		createdFiles.push(fileHandle)
 
 		if (typeof data === 'string') {
 			await fs.writeFile(filePath, `${current}\n${data}`)

@@ -1,9 +1,12 @@
 import { editor } from 'monaco-editor'
+import { Signal } from '../Common/Event/Signal'
 import { settingsState } from '../Windows/Settings/SettingsState'
 
-export class MonacoHolder {
+export class MonacoHolder extends Signal<void> {
 	protected _monacoEditor?: editor.IStandaloneCodeEditor
 	get monacoEditor() {
+		if (!this._monacoEditor)
+			throw new Error(`Accessed Monaco Editor before it was defined`)
 		return this._monacoEditor
 	}
 
@@ -19,6 +22,7 @@ export class MonacoHolder {
 			tabSize: 4,
 		})
 		this._monacoEditor?.layout()
+		this.dispatch()
 	}
 
 	updateOptions(options: editor.IEditorConstructionOptions) {

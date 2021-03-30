@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { CreateFile } from '/@/components/Projects/CreateProject/Files/File'
+import { CreateFile } from '../CreateFile'
 
 export class CreatePlayer extends CreateFile {
 	async create(fs: FileSystem) {

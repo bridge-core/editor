@@ -75,12 +75,12 @@ export class JsonDefaults {
 		await this.runSchemaScripts(app)
 		const tab = this.project.tabSystem?.selectedTab
 		if (tab) {
-			const fileType = FileType.getId(tab.getPackPath())
+			const fileType = FileType.getId(tab.getProjectPath())
 			this.addSchemas(
-				await this.requestSchemaFor(fileType, tab.getPackPath()),
+				await this.requestSchemaFor(fileType, tab.getProjectPath()),
 				false
 			)
-			await this.runSchemaScripts(app, tab.getPackPath())
+			await this.runSchemaScripts(app, tab.getProjectPath())
 		}
 
 		this.loadedSchemas = true

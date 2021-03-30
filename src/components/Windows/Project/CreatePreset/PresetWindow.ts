@@ -186,7 +186,7 @@ export class CreatePresetWindow extends BaseWindow {
 		const fs = app.project?.fileSystem!
 
 		const promises: Promise<unknown>[] = []
-		const createdFiles: string[] = []
+		const createdFiles: FileSystemFileHandle[] = []
 		const permissions: IPermissions = {
 			mayOverwriteFiles: undefined,
 			mayOverwriteUnsavedChanges: undefined,
@@ -232,10 +232,9 @@ export class CreatePresetWindow extends BaseWindow {
 			)
 			// This filePath is relative to the project root
 			// The project.hasFile/project.closeFile methods expect the path to relative to the bridge project folder
-			filePath = project.absolutePath(filePath)
-			console.log(filePath)
+			const fileHandle = await project.fileSystem.getFileHandle(filePath)
 
-			const tab = project.getFileTab(filePath)
+			const tab = await project.getFileTab(fileHandle)
 			if (tab !== undefined && tab.isUnsaved) {
 				const confirmWindow = new ConfirmationWindow({
 					description: 'windows.createPreset.overwriteUnsavedChanges',
@@ -248,7 +247,7 @@ export class CreatePresetWindow extends BaseWindow {
 					// Stop file collision checks & continue creating preset
 					permissions.mayOverwriteUnsavedChanges = true
 
-					project.closeFile(filePath)
+					project.closeFile(fileHandle)
 				} else {
 					// Close loading window & early return
 					app.windows.loadingWindow.close()
@@ -294,11 +293,13 @@ export class CreatePresetWindow extends BaseWindow {
 		// Close window
 		if (permissions.mayOverwriteFiles !== false) this.close()
 
-		for (const filePath of createdFiles) {
-			await app.project?.updateFile(filePath)
-			app.project?.openFile(
-				`projects/${app.project.name}/${filePath}`,
-				filePath === createdFiles[createdFiles.length - 1]
+		for (const fileHandle of createdFiles) {
+			const filePath = await app.project.getProjectPath(fileHandle)
+			// Preset files only get created inside of the current project so the filePath cannot be undefined
+			await app.project.updateFile(filePath!)
+			app.project.openFile(
+				fileHandle,
+				fileHandle === createdFiles[createdFiles.length - 1]
 			)
 		}
 

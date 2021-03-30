@@ -84,7 +84,7 @@ export class Project {
 			})
 		)
 
-		this.typeLoader.activate(this.tabSystem?.selectedTab?.getPackPath())
+		this.typeLoader.activate(this.tabSystem?.selectedTab?.getProjectPath())
 		await this.packIndexer.activate(forceRefresh).then(() => {
 			this.jsonDefaults.activate()
 			// this.compilerManager.start('default.json', 'dev')
@@ -103,29 +103,34 @@ export class Project {
 		await this.activate(true)
 	}
 
-	openFile(filePath: string, selectTab = true) {
+	async openFile(fileHandle: FileSystemFileHandle, selectTab = true) {
 		for (const tabSystem of this.tabSystems) {
-			const tab = tabSystem.getTab(filePath)
+			const tab = await tabSystem.getTab(fileHandle)
 			if (tab) return selectTab ? tabSystem.select(tab) : undefined
 		}
 
-		this.tabSystem?.open(filePath, selectTab)
+		this.tabSystem?.open(fileHandle, selectTab)
 	}
-	closeFile(filePath: string) {
+	async closeFile(fileHandle: FileSystemFileHandle) {
 		for (const tabSystem of this.tabSystems) {
-			const tabToClose = tabSystem.getTab(filePath)
+			const tabToClose = await tabSystem.getTab(fileHandle)
 			tabToClose?.close()
 		}
 	}
-	getFileTab(filePath: string) {
+	async getFileTab(fileHandle: FileSystemFileHandle) {
 		for (const tabSystem of this.tabSystems) {
-			const tab = tabSystem.getTab(filePath)
+			const tab = await tabSystem.getTab(fileHandle)
 			if (tab !== undefined) return tab
 		}
 	}
 
 	absolutePath(filePath: string) {
 		return `projects/${this.name}/${filePath}`
+	}
+	getProjectPath(fileHandle: FileSystemFileHandle) {
+		return this.baseDirectory
+			.resolve(fileHandle)
+			.then((path) => path?.join('/'))
 	}
 
 	async updateFile(filePath: string) {

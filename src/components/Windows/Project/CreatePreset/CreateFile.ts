@@ -33,17 +33,18 @@ export async function createFile(
 	const ext = extname(fullDestPath)
 	await fs.mkdir(dirname(fullDestPath), { recursive: true })
 
+	let fileHandle: FileSystemFileHandle
 	if (inject.length === 0 || !textTransformFiles.includes(ext)) {
-		await fs.copyFile(fullOriginPath, fullDestPath)
+		fileHandle = await fs.copyFile(fullOriginPath, fullDestPath)
 	} else {
 		const file = await fs.readFile(fullOriginPath)
 		const fileText = await file.text()
 
-		await fs.writeFile(
+		fileHandle = await fs.writeFile(
 			fullDestPath,
 			transformString(fileText, inject, models)
 		)
 	}
 
-	return transformString(destPath, inject, models)
+	return fileHandle
 }

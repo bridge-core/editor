@@ -145,8 +145,10 @@ export default {
 		},
 	},
 	methods: {
-		openFile(filePath) {
-			App.getApp().then((app) => app.project.openFile(filePath))
+		async openFile(filePath) {
+			const app = await App.getApp()
+			const fileHandle = await app.fileSystem.getFileHandle(filePath)
+			app.project.openFile(fileHandle)
 		},
 		selectProject(projectName) {
 			App.getApp().then((app) =>

@@ -13,13 +13,16 @@ export class FileDropper {
 	})
 	protected fileHandlers = new Map<
 		string,
-		(file: File) => Promise<void> | void
+		(fileHandle: FileSystemFileHandle) => Promise<void> | void
 	>()
 	protected closeTimeout?: number
 
 	constructor() {
 		window.addEventListener('dragover', (event) => {
 			event.preventDefault()
+
+			// Moving tabs
+			if (event.dataTransfer?.effectAllowed === 'move') return
 
 			if (this.closeTimeout) window.clearTimeout(this.closeTimeout)
 
@@ -37,10 +40,16 @@ export class FileDropper {
 			}
 		})
 
+		window.addEventListener('dragend', () => {
+			if (!this.closeTimeout) {
+				this.state.isHovering = false
+			}
+		})
+
 		window.addEventListener('drop', (event) => {
 			event.preventDefault()
 
-			this.onDrop([...(event.dataTransfer?.files ?? [])])
+			this.onDrop([...(event.dataTransfer?.items ?? [])])
 		})
 
 		if ('launchQueue' in window) {
@@ -49,18 +58,27 @@ export class FileDropper {
 					if (!launchParams.files.length) return
 
 					for (const fileHandle of launchParams.files) {
-						console.log(fileHandle.name)
-						await this.import(await fileHandle.getFile())
+						await this.importFile(fileHandle)
 					}
 				}
 			)
 		}
 	}
 
-	protected async onDrop(files: File[]) {
-		for (const file of files) {
-			if (!(await this.import(file)))
-				this.state.failedImports.push(file.name)
+	protected async onDrop(dataTransferItems: DataTransferItem[]) {
+		for (const item of dataTransferItems) {
+			const fileHandle = await item.getAsFileSystemHandle()
+			if (!fileHandle) return
+
+			if (fileHandle.kind === 'directory') {
+				// TODO: Handle folder import
+				this.state.failedImports.push(fileHandle.name)
+			} else if (fileHandle.kind === 'file') {
+				const importSucceeded = await this.importFile(fileHandle)
+
+				if (!importSucceeded)
+					this.state.failedImports.push(fileHandle.name)
+			}
 		}
 
 		this.closeTimeout = window.setTimeout(
@@ -71,17 +89,17 @@ export class FileDropper {
 		)
 	}
 
-	protected async import(file: File) {
-		const ext = extname(file.name)
+	protected async importFile(fileHandle: FileSystemFileHandle) {
+		const ext = extname(fileHandle.name)
 		const handler = this.fileHandlers.get(ext)
 
 		if (!handler) {
-			this.state.failedImports.push(file.name)
+			this.state.failedImports.push(fileHandle.name)
 			return false
 		}
 
 		try {
-			await handler(file)
+			await handler(fileHandle)
 		} catch (err) {
 			console.error(err)
 			return false
@@ -89,9 +107,11 @@ export class FileDropper {
 		return true
 	}
 
-	addImporter(
+	addFileImporter(
 		ext: string,
-		importHandler: (file: File) => Promise<void> | void
+		importHandler: (
+			fileHandle: FileSystemFileHandle
+		) => Promise<void> | void
 	) {
 		if (this.fileHandlers.has(ext))
 			throw new Error(`Handler for ${ext} already exists`)

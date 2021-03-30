@@ -6,16 +6,17 @@ export class ImageTab extends Tab {
 	component = ImageTabComponent
 	dataUrl?: string = undefined
 
-	static is(filePath: string) {
+	static is(fileHandle: FileSystemFileHandle) {
+		const fileName = fileHandle.name
 		return (
-			filePath.endsWith('.png') ||
-			filePath.endsWith('.jpg') ||
-			filePath.endsWith('.jpeg')
+			fileName.endsWith('.png') ||
+			fileName.endsWith('.jpg') ||
+			fileName.endsWith('.jpeg')
 		)
 	}
 
 	async onActivate() {
-		this.dataUrl = await loadAsDataURL(this.path)
+		this.dataUrl = await loadAsDataURL(this.getPath())
 	}
 
 	get icon() {

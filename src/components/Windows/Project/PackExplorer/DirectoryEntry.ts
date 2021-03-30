@@ -1,10 +1,10 @@
-import { IFileSystem } from '/@/components/FileSystem/Common'
 import { platform } from '/@/utils/os'
 import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 import { App } from '/@/App'
 import { PackType } from '/@/components/Data/PackType'
 import { FileType } from '/@/components/Data/FileType'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
@@ -25,7 +25,7 @@ export class DirectoryEntry {
 		return Vue.observable(folder)
 	}
 	constructor(
-		protected fileSystem: IFileSystem,
+		protected fileSystem: FileSystem,
 		protected parent: DirectoryEntry | null,
 		protected path: string[],
 		protected _isFile = false
@@ -102,7 +102,12 @@ export class DirectoryEntry {
 	 */
 	open() {
 		if (this.isFile) {
-			App.ready.once((app) => app.project?.openFile(this.getFullPath()))
+			App.ready.once(async (app) => {
+				const fileHandle = await app.fileSystem.getFileHandle(
+					this.getFullPath()
+				)
+				app.project?.openFile(fileHandle)
+			})
 			return true
 		} else {
 			this.isFolderOpen = !this.isFolderOpen

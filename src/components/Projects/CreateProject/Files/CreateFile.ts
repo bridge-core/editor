@@ -5,5 +5,5 @@ export abstract class CreateFile {
 	abstract create(
 		fs: FileSystem,
 		projectOptions: ICreateProjectOptions
-	): Promise<void> | void
+	): Promise<any> | any
 }

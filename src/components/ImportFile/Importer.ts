@@ -2,14 +2,21 @@ import type { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { IDisposable } from '/@/types/disposable'
 
 export abstract class FileImporter {
-	protected disposable: IDisposable
+	protected disposables: IDisposable[] = []
 
-	constructor(extension: string, fileDropper: FileDropper) {
-		this.disposable = fileDropper.addImporter(
-			extension,
-			this.onImport.bind(this)
-		)
+	constructor(extensions: string[], fileDropper: FileDropper) {
+		for (const extension of extensions) {
+			this.disposables.push(
+				fileDropper.addFileImporter(extension, this.onImport.bind(this))
+			)
+		}
 	}
 
-	protected abstract onImport(file: File): Promise<void> | void
+	protected abstract onImport(
+		fileHandle: FileSystemFileHandle
+	): Promise<void> | void
+
+	dispose() {
+		this.disposables.forEach((disposable) => disposable.dispose())
+	}
 }
