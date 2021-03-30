@@ -134,6 +134,13 @@ export class Project {
 	}
 
 	async updateFile(filePath: string) {
+		try {
+			await this.fileSystem.getFileHandle(filePath)
+		} catch {
+			// This is a virtual file, don't process it
+			return
+		}
+
 		await this.packIndexer.updateFile(filePath)
 		await this.compilerManager.updateFile('default.json', filePath)
 
