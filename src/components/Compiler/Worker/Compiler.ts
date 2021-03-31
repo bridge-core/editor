@@ -33,6 +33,9 @@ export class Compiler {
 	protected get fileSystem() {
 		return this.parent.fileSystem
 	}
+	protected get outputFileSystem() {
+		return this.parent.outputFileSystem
+	}
 	protected get plugins() {
 		return this.parent.getPlugins()
 	}
@@ -295,10 +298,10 @@ export class Compiler {
 					transformedData
 				)) ?? transformedData
 
-			await this.fileSystem.mkdir(dirname(file.saveFilePath), {
+			await this.outputFileSystem.mkdir(dirname(file.saveFilePath), {
 				recursive: true,
 			})
-			await this.fileSystem.writeFile(file.saveFilePath, writeData)
+			await this.outputFileSystem.writeFile(file.saveFilePath, writeData)
 
 			file.isDone = true
 			this.parent.progress.addToCurrent(1)
@@ -336,7 +339,7 @@ export class Compiler {
 		originalFile: FileSystemFileHandle,
 		saveFilePath: string
 	) {
-		const copiedFileHandle = await this.fileSystem.getFileHandle(
+		const copiedFileHandle = await this.outputFileSystem.getFileHandle(
 			saveFilePath,
 			true
 		)

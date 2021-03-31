@@ -43,12 +43,14 @@ export class Compiler extends WorkerManager<
 	async start(mode: 'dev' | 'build') {
 		this.ready.dispatch(false)
 		const app = await App.getApp()
+		await app.comMojang.fired
 
 		// Instantiate the worker TaskService
 		if (!this._service) {
 			this._service = await new this.workerClass!({
 				projectDirectory: this.project.baseDirectory,
 				baseDirectory: app.fileSystem.baseDirectory,
+				comMojangDirectory: app.comMojang.fileSystem.baseDirectory,
 				config: this.config,
 				mode,
 				plugins: this.parent.getCompilerPlugins(),

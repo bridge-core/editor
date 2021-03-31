@@ -2,13 +2,14 @@
 import { FileSystem } from '../../FileSystem/FileSystem'
 import { TCompilerPlugin } from './TCompilerPlugin'
 
-export type TCompilerPluginFactory<T = any> = (context: {
+export type TCompilerPluginFactory<
+	T = { mode: 'dev' | 'build'; [key: string]: any }
+> = (context: {
 	options: T
 	fileSystem: FileSystem
-	compileFiles: (
-		files: string[],
-		errorOnReadFailure?: boolean
-	) => Promise<void>
+	outputFileSystem: FileSystem
+	hasComMojangDirectory: boolean
+	compileFiles: (files: string[]) => Promise<void>
 	getAliases: (filePath: string) => string[]
 	targetVersion: string
 }) => Partial<TCompilerPlugin>

@@ -10,7 +10,7 @@ export class KeyBindingManager {
 	protected lastTimeStamp = 0
 
 	constructor() {
-		document.addEventListener('keydown', event => {
+		document.addEventListener('keydown', (event) => {
 			const { key, ctrlKey, altKey, metaKey, shiftKey } = event
 			if (IGNORE_KEYS.includes(key)) return
 

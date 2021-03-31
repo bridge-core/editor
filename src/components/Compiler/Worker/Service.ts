@@ -9,6 +9,7 @@ import { Compiler } from './Compiler'
 export interface ICompilerOptions {
 	projectDirectory: FileSystemDirectoryHandle
 	baseDirectory: FileSystemDirectoryHandle
+	comMojangDirectory?: FileSystemDirectoryHandle
 	config: string
 	mode: 'dev' | 'build'
 	plugins: Record<string, string>
@@ -26,10 +27,16 @@ export class CompilerService extends TaskService<void, string[]> {
 	protected buildConfig!: IBuildConfig
 	protected plugins!: Map<string, Partial<TCompilerPlugin>>
 	protected compiler: Compiler = new Compiler(this)
+	protected _outputFileSystem?: FileSystem
 
 	constructor(protected readonly options: ICompilerOptions) {
 		super('compiler', options.projectDirectory)
 		FileType.setPluginFileTypes(options.pluginFileTypes)
+
+		if (this.options.comMojangDirectory)
+			this._outputFileSystem = new FileSystem(
+				this.options.comMojangDirectory
+			)
 	}
 
 	getOptions() {
@@ -46,6 +53,11 @@ export class CompilerService extends TaskService<void, string[]> {
 					: [def, { mode: this.options.mode }]
 			)
 		)
+	}
+	get outputFileSystem() {
+		if (this.options.mode === 'build') return this.fileSystem
+
+		return this._outputFileSystem ?? this.fileSystem
 	}
 
 	async onStart(updatedFiles: string[]) {
@@ -77,11 +89,14 @@ export class CompilerService extends TaskService<void, string[]> {
 			fileSystem: globalFs,
 			pluginPaths: plugins,
 			localFs: this.fileSystem,
+			outputFs: this.outputFileSystem,
 			pluginOpts: this.pluginOpts,
-			compileFiles: (files: string[]) =>
-				this.compiler.compileFiles(files),
+			hasComMojangDirectory:
+				this.options.comMojangDirectory !== undefined,
 			getAliases: (filePath: string) =>
 				this.compiler.getAliases(filePath),
+			compileFiles: (files: string[]) =>
+				this.compiler.compileFiles(files),
 		})
 	}
 	async updatePlugins(

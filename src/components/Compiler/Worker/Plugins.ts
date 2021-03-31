@@ -1,6 +1,5 @@
 import { runAsync } from '/@/components/Extensions/Scripts/run'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { ComMojangRewrite } from './Plugins/ComMojangRewrite'
 import { TypeScriptPlugin } from './Plugins/TypeScript'
 import json5 from 'json5'
 import {
@@ -19,26 +18,29 @@ export type TCompilerHook = keyof TCompilerPlugin
 export interface ILoadPLugins {
 	fileSystem: FileSystem
 	localFs: FileSystem
+	outputFs: FileSystem
+	hasComMojangDirectory: boolean
 	pluginPaths: Record<string, string>
 	pluginOpts: Record<string, any>
-	compileFiles: (files: string[]) => Promise<void>
 	getAliases: (filePath: string) => string[]
+	compileFiles: (files: string[]) => Promise<void>
 }
 
 export async function loadPlugins({
 	fileSystem,
 	pluginPaths,
 	localFs,
+	outputFs,
 	pluginOpts,
+	hasComMojangDirectory,
 	compileFiles,
 	getAliases,
 }: ILoadPLugins) {
-	const plugins = new Map<string, TCompilerPluginFactory>()
+	const plugins = new Map<string, TCompilerPluginFactory<any>>()
 	const projectConfig = new ProjectConfig(localFs)
 	const targetVersion = await projectConfig.get('targetVersion')
 
 	plugins.set('simpleRewrite', SimpleRewrite)
-	plugins.set('comMojangRewrite', ComMojangRewrite)
 	plugins.set('typeScript', TypeScriptPlugin)
 	plugins.set('customEntityComponents', CustomEntityComponentPlugin)
 	plugins.set('customItemComponents', CustomItemComponentPlugin)
@@ -86,9 +88,11 @@ export async function loadPlugins({
 			plugin({
 				options: pluginOpts[pluginId],
 				fileSystem,
-				compileFiles,
+				outputFileSystem: outputFs,
+				hasComMojangDirectory,
 				getAliases,
 				targetVersion,
+				compileFiles,
 			})
 		)
 	}
