@@ -21,6 +21,7 @@ export class ComMojang extends Signal<void> {
 		get<FileSystemDirectoryHandle | undefined>(comMojangKey).then(
 			async (directoryHandle) => {
 				if (directoryHandle) {
+					await this.app.fileSystem.fired
 					await this.requestPermissions(directoryHandle)
 				}
 				this.dispatch()
