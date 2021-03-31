@@ -3,6 +3,8 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { Remote, wrap } from 'comlink'
 import { ITaskDetails, Task } from '../TaskManager/Task'
 
+const workerKillTime = 2 * 60 * 1000 // 2 minutes
+
 export abstract class WorkerManager<
 	RemoteClass,
 	WorkerOptions,
@@ -15,12 +17,19 @@ export abstract class WorkerManager<
 	}> | null = null
 	protected _service: Remote<RemoteClass> | null = null
 	protected task: Task | null = null
+	protected disposeTimeout?: number
 
 	constructor(protected taskOptions: ITaskDetails, protected app?: App) {
 		super()
 	}
 
 	async activate(arg: StartArg) {
+		if (this.disposeTimeout !== undefined) {
+			window.clearTimeout(this.disposeTimeout)
+			this.disposeTimeout = undefined
+			return
+		}
+
 		const app = this.app ?? (await App.getApp())
 		this.task = app.taskManager.create(this.taskOptions)
 
@@ -42,12 +51,20 @@ export abstract class WorkerManager<
 	}
 
 	deactivate() {
+		this.disposeTimeout = window.setTimeout(
+			() => this.dispose(),
+			workerKillTime
+		)
+	}
+
+	dispose() {
 		this.resetSignal()
 		this.worker?.terminate()
 		this.task?.dispose()
 		this.worker = null
 		this._service = null
 		this.workerClass = null
+		this.disposeTimeout = undefined
 	}
 
 	protected abstract createWorker(): void

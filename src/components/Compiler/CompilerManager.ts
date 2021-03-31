@@ -36,6 +36,9 @@ export class CompilerManager {
 	remove(configName: string) {
 		this.compilers.delete(configName)
 	}
+	deactivate() {
+		this.compilers.forEach((compiler) => compiler.deactivate())
+	}
 
 	getCompilerPlugins() {
 		return deepMergeAll(

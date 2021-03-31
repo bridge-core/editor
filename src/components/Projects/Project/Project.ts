@@ -95,6 +95,7 @@ export class Project {
 		this.tabSystems.forEach((tabSystem) => tabSystem.deactivate())
 		this.typeLoader.deactivate()
 		this.packIndexer.deactivate()
+		this.compilerManager.deactivate()
 		this.jsonDefaults.deactivate()
 		this.extensionLoader.disposeAll()
 	}

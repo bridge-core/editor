@@ -35,8 +35,8 @@ export class Compiler extends WorkerManager<
 		})
 	}
 
-	async deactivate() {
-		await super.deactivate()
+	async dispose() {
+		await super.dispose()
 		this.parent.remove(this.config)
 	}
 
