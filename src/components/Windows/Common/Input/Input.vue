@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="windowTitle"
+		:windowTitle="$data.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -12,13 +12,13 @@
 		<template #default>
 			<v-row>
 				<v-text-field
-					:label="label"
-					v-model="inputValue"
+					:label="$data.label"
+					v-model="$data.inputValue"
 					@keydown.enter.native="onConfirm"
 					autofocus
 				/>
-				<p class="expand_text" v-if="expandText !== ''">
-					{{ expandText }}
+				<p class="expand_text" v-if="$data.expandText !== ''">
+					{{ $data.expandText }}
 				</p>
 			</v-row>
 		</template>
@@ -27,7 +27,7 @@
 			<v-btn
 				color="primary"
 				@click="onConfirm"
-				:disabled="inputValue === ''"
+				:disabled="$data.inputValue === ''"
 			>
 				<span>{{ t('windows.common.input.confirm') }}</span>
 			</v-btn>
@@ -47,23 +47,23 @@ export default {
 	},
 	props: ['currentWindow'],
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	methods: {
 		onClose() {
 			this.currentWindow.close()
-			this.inputValue = ''
+			this.currentWindow.inputValue = ''
 		},
 		onConfirm() {
 			this.currentWindow.close()
-			this.onConfirmCb(this.inputValue + this.expandText)
-			this.inputValue = ''
+			this.currentWindow.confirm()
+			this.currentWindow.inputValue = ''
 		},
 	},
 }
 </script>
 
-<style>
+<style scoped>
 .expand_text {
 	opacity: 60%;
 	padding-top: 26px;

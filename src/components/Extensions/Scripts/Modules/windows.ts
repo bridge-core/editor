@@ -1,13 +1,11 @@
 import { IModuleConfig } from '../types'
-import {
-	createInputWindow,
-	createDropdownWindow,
-} from '/@/components/Windows/Common/CommonDefinitions'
 import { createWindow } from '/@/components/Windows/create'
 import { Component as VueComponent } from 'vue'
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
+import { DropdownWindow } from '/@/components/Windows/Common/Dropdown/DropdownWindow'
+import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 
 export const WindowModule = ({}: IModuleConfig) => ({
 	BaseWindow,
@@ -24,30 +22,30 @@ export const WindowModule = ({}: IModuleConfig) => ({
 		displayName: string,
 		inputLabel: string,
 		defaultValue: string,
-		expandText: string,
-		onConfirm: (input: string) => void
+		onConfirm: (input: string) => void,
+		expandText?: string
 	) =>
-		createInputWindow(
-			displayName,
-			inputLabel,
-			defaultValue,
+		new InputWindow({
+			name: displayName,
+			label: inputLabel,
+			default: defaultValue,
 			expandText,
-			onConfirm
-		),
+			onConfirm,
+		}),
 	createDropdownWindow: (
 		displayName: string,
-		placeholderText: string,
+		placeholder: string,
 		options: Array<string>,
 		defaultSelected: string,
 		onConfirm: (input: string) => void
 	) =>
-		createDropdownWindow(
-			displayName,
-			placeholderText,
+		new DropdownWindow({
+			name: displayName,
+			default: defaultSelected,
 			options,
-			defaultSelected,
-			onConfirm
-		),
+			placeholder,
+			onConfirm,
+		}),
 	createConfirmWindow: (
 		displayContent: string,
 		confirmText: string,

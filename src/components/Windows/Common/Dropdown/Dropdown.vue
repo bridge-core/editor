@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="windowTitle"
+		:windowTitle="$data.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -13,8 +13,8 @@
 			<v-select
 				autofocus
 				solo
-				v-model="selectedValue"
-				:items="items"
+				v-model="$data.currentSelection"
+				:items="$data.options"
 				background-color="background"
 				class="mt-4"
 			/>
@@ -24,7 +24,7 @@
 			<v-btn
 				color="primary"
 				@click="onConfirm"
-				:disabled="selectedValue === ''"
+				:disabled="$data.currentSelection === ''"
 			>
 				<span>{{ t('windows.common.dropdown.confirm') }}</span>
 			</v-btn>
@@ -44,7 +44,7 @@ export default {
 	},
 	props: ['currentWindow'],
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	methods: {
 		onClose() {
@@ -52,7 +52,7 @@ export default {
 		},
 		onConfirm() {
 			this.currentWindow.close()
-			this.onConfirmCb(this.selectedValue)
+			this.currentWindow.confirm()
 		},
 	},
 }
