@@ -1,0 +1,38 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"properties": {
+		"minecraft:behvaior.play_dead": {
+			"properties": {
+				"priority": {
+					"type": "integer"
+				},
+				"duration": {
+					"type": "integer"
+				},
+				"force_below_health": {
+					"type": "integer"
+				},
+				"random_start_chance": {
+					"type": "number"
+				},
+				"random_damage_range": {
+					"type": "array",
+					"minItems": 2,
+					"maxItems": 2,
+					"items": {
+						"type": "integer"
+					}
+				},
+				"damage_sources": {
+					"type": "array",
+					"items": {
+						"$ref": "../../general/vanilla/damageType.json"
+					}
+				},
+				"apply_regeneration": {
+					"type": "boolean"
+				}
+			}
+		}
+	}
+}
