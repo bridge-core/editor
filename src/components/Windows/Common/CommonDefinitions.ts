@@ -1,25 +1,6 @@
 import { createWindow } from '../create'
-import InformationComponent from './Information/Information.vue'
 import InputComponent from './Input/Input.vue'
 import DropdownComponent from './Dropdown/Dropdown.vue'
-
-export function createInformationWindow(
-	displayName: string,
-	displayContent: string,
-	callback?: () => void
-) {
-	const Information = createWindow(InformationComponent, {
-		windowTitle: displayName,
-		content: displayContent,
-		isPersistent: typeof callback === 'function',
-		callback: async () => {
-			await callback?.()
-			Information.status.setDone?.()
-		},
-	})
-	Information.open()
-	return Information
-}
 
 export function createInputWindow(
 	displayName: string,

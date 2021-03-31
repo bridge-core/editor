@@ -33,6 +33,7 @@ import { get, set } from 'idb-keyval'
 import { GlobalExtensionLoader } from '/@/components/Extensions/GlobalExtensionLoader'
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
+import { ComMojang } from './components/FileSystem/ComMojang'
 
 export class App {
 	public static fileSystemSetup = new FileSystemSetup()
@@ -57,8 +58,9 @@ export class App {
 	public readonly windowResize = new WindowResize()
 	public readonly contextMenu = new ContextMenu()
 	public readonly locales: Locales
-	public readonly fileDropper = new FileDropper()
+	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
+	public readonly comMojang = new ComMojang(this)
 
 	protected languageManager = new LanguageManager()
 	protected installApp = new InstallApp()

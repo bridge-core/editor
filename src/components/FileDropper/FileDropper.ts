@@ -1,32 +1,27 @@
 import Vue from 'vue'
+import { App } from '/@/App'
 import { extname } from '/@/utils/path'
 
 export interface IDropState {
 	isHovering: boolean
-	failedImports: string[]
 }
 
 export class FileDropper {
 	public readonly state = Vue.observable<IDropState>({
 		isHovering: false,
-		failedImports: [],
 	})
 	protected fileHandlers = new Map<
 		string,
 		(fileHandle: FileSystemFileHandle) => Promise<void> | void
 	>()
-	protected closeTimeout?: number
 
-	constructor() {
+	constructor(protected app: App) {
 		window.addEventListener('dragover', (event) => {
 			event.preventDefault()
 
 			// Moving tabs
 			if (event.dataTransfer?.effectAllowed === 'move') return
 
-			if (this.closeTimeout) window.clearTimeout(this.closeTimeout)
-
-			this.state.failedImports = []
 			this.state.isHovering = true
 		})
 
@@ -34,22 +29,20 @@ export class FileDropper {
 			event.preventDefault()
 
 			if (event.relatedTarget == null) {
-				if (!this.closeTimeout) {
-					this.state.isHovering = false
-				}
+				this.state.isHovering = false
 			}
 		})
 
-		window.addEventListener('dragend', () => {
-			if (!this.closeTimeout) {
-				this.state.isHovering = false
-			}
+		window.addEventListener('dragend', (event) => {
+			event.preventDefault()
+			this.state.isHovering = false
 		})
 
 		window.addEventListener('drop', (event) => {
 			event.preventDefault()
 
 			this.onDrop([...(event.dataTransfer?.items ?? [])])
+			this.state.isHovering = false
 		})
 
 		if ('launchQueue' in window) {
@@ -71,22 +64,14 @@ export class FileDropper {
 			if (!fileHandle) return
 
 			if (fileHandle.kind === 'directory') {
-				// TODO: Handle folder import
-				this.state.failedImports.push(fileHandle.name)
-			} else if (fileHandle.kind === 'file') {
-				const importSucceeded = await this.importFile(fileHandle)
+				if (fileHandle.name === 'com.mojang')
+					this.app.comMojang.handleComMojangDrop(fileHandle)
 
-				if (!importSucceeded)
-					this.state.failedImports.push(fileHandle.name)
+				// TODO: Handle import of other folders
+			} else if (fileHandle.kind === 'file') {
+				await this.importFile(fileHandle)
 			}
 		}
-
-		this.closeTimeout = window.setTimeout(
-			() => {
-				this.state.isHovering = false
-			},
-			this.state.failedImports.length > 0 ? 2500 : 0
-		)
 	}
 
 	protected async importFile(fileHandle: FileSystemFileHandle) {
@@ -94,7 +79,6 @@ export class FileDropper {
 		const handler = this.fileHandlers.get(ext)
 
 		if (!handler) {
-			this.state.failedImports.push(fileHandle.name)
 			return false
 		}
 

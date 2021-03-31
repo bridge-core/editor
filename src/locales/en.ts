@@ -3,6 +3,8 @@ import { en } from 'vuetify/src/locale'
 export default {
 	...en,
 	languageName: 'English',
+	yes: 'Yes',
+	no: 'No',
 	packType: {
 		behaviorPack: {
 			name: 'Behavior Pack',
@@ -474,5 +476,12 @@ export default {
 		importFiles: 'Drop files here to import them!',
 		importFailed: 'bridge. was unable to import the following files:',
 		andMore: '...and more!',
+	},
+	comMojang: {
+		description:
+			'Do you want to set this folder as your default com.mojang folder?',
+		title: 'Access to folder "com.mojang"',
+		permission:
+			'bridge. needs access to your "com.mojang" folder in order to compile projects to it.',
 	},
 }

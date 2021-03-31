@@ -16,7 +16,8 @@ export class FileSystem extends Signal<void> {
 
 	setup(baseDirectory: FileSystemDirectoryHandle) {
 		this._baseDirectory = baseDirectory
-		this.dispatch()
+
+		if (!this.hasFired) this.dispatch()
 	}
 
 	async getDirectoryHandle(
