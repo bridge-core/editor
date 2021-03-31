@@ -125,9 +125,6 @@ export class App {
 
 	async switchProject(project: Project) {
 		this.themeManager.updateTheme()
-		project.packIndexer.once(() =>
-			project.compilerManager.start('default.json', 'dev')
-		)
 
 		// Set language
 		if (typeof settingsState?.general?.locale === 'string')

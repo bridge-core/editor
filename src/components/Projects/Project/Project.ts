@@ -29,7 +29,7 @@ export class Project {
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
 	public readonly compilerManager = new CompilerManager(this)
-	protected jsonDefaults = new JsonDefaults(this)
+	public readonly jsonDefaults = new JsonDefaults(this)
 	protected typeLoader = new TypeLoader(this.app.fileSystem)
 	public readonly config: ProjectConfig
 	public readonly extensionLoader = new ExtensionLoader(
@@ -85,9 +85,10 @@ export class Project {
 		)
 
 		this.typeLoader.activate(this.tabSystem?.selectedTab?.getProjectPath())
+
 		await this.packIndexer.activate(forceRefresh).then(() => {
 			this.jsonDefaults.activate()
-			// this.compilerManager.start('default.json', 'dev')
+			this.compilerManager.start('default.json', 'dev')
 		})
 	}
 	deactivate() {
@@ -134,6 +135,8 @@ export class Project {
 	}
 
 	async updateFile(filePath: string) {
+		// We already have a check for foreign files inside of the TextTab.save(...) function
+		// but there are a lot of sources that call updateFile(...)
 		try {
 			await this.fileSystem.getFileHandle(filePath)
 		} catch {
