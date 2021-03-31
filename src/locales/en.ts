@@ -478,10 +478,10 @@ export default {
 		andMore: '...and more!',
 	},
 	comMojang: {
-		description:
+		folderDropped:
 			'Do you want to set this folder as your default com.mojang folder?',
 		title: 'Access to folder "com.mojang"',
-		permission:
+		permissionRequest:
 			'bridge. needs access to your "com.mojang" folder in order to compile projects to it.',
 	},
 }

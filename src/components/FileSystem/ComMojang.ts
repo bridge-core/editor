@@ -33,7 +33,7 @@ export class ComMojang extends Signal<void> {
 	) {
 		const informWindow = new InformationWindow({
 			name: 'comMojang.title',
-			description: 'comMojang.permission',
+			description: 'comMojang.permissionRequest',
 			onClose: async () => {
 				const permission = await directoryHandle.requestPermission({
 					mode: 'readwrite',
@@ -57,7 +57,7 @@ export class ComMojang extends Signal<void> {
 
 	async handleComMojangDrop(directoryHandle: FileSystemDirectoryHandle) {
 		const confirmWindow = new ConfirmationWindow({
-			description: 'fileDropper.comMojangDescription',
+			description: 'comMojang.folderDropped',
 			confirmText: 'yes',
 			cancelText: 'no',
 		})
