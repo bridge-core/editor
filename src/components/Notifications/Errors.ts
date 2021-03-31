@@ -1,6 +1,6 @@
+import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { App } from '/@/App'
 import { createNotification } from '/@/components/Notifications/create'
-import { createInformationWindow } from '/@/components/Windows/Common/CommonDefinitions'
 import { IDisposable } from '/@/types/disposable'
 
 /**
@@ -21,7 +21,10 @@ export function createErrorNotification(error: Error): IDisposable {
 		textColor: 'white',
 		disposeOnMiddleClick: true,
 		onClick: () => {
-			createInformationWindow(`ERROR: ${short}`, message)
+			new InformationWindow({
+				name: `ERROR: ${short}`,
+				description: message,
+			})
 			notification.dispose()
 		},
 	})

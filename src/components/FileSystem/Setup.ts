@@ -1,13 +1,12 @@
 import { App } from '/@/App'
 import { get, set } from 'idb-keyval'
-import { createInformationWindow } from '../Windows/Common/CommonDefinitions'
-import { TWindow } from '../Windows/create'
 import { createSelectProjectFolderWindow } from '../Windows/Project/SelectFolder/definition'
+import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
 
 export class FileSystemSetup {
-	protected confirmPermissionWindow: TWindow | null = null
+	protected confirmPermissionWindow: InformationWindow | null = null
 	protected _status: TFileSystemSetupStatus = 'waiting'
 	get status() {
 		return this._status
@@ -32,7 +31,7 @@ export class FileSystemSetup {
 
 		// There's currently no bridge folder yet/the bridge folder has been deleted
 		if (!fileHandle) {
-			await createSelectProjectFolderWindow(async chosenFileHandle => {
+			await createSelectProjectFolderWindow(async (chosenFileHandle) => {
 				if (chosenFileHandle) {
 					await set('bridgeBaseDir', chosenFileHandle)
 					fileHandle = chosenFileHandle
@@ -52,10 +51,10 @@ export class FileSystemSetup {
 			(await fileHandle.queryPermission(opts)) !== 'granted' &&
 			this.confirmPermissionWindow === null
 		) {
-			this.confirmPermissionWindow = createInformationWindow(
-				'windows.projectFolder.title',
-				'windows.projectFolder.content',
-				async () => {
+			this.confirmPermissionWindow = new InformationWindow({
+				name: 'windows.projectFolder.title',
+				description: 'windows.projectFolder.content',
+				onClose: async () => {
 					this._status = 'userInteracted'
 					this.confirmPermissionWindow = null
 					// Check if we already have permission && request permission if not
@@ -64,14 +63,14 @@ export class FileSystemSetup {
 					) {
 						await this.verifyPermissions(fileHandle)
 					}
-				}
-			)
+				},
+			})
 
-			await this.confirmPermissionWindow.status.done
+			await this.confirmPermissionWindow.fired
 		}
 
 		// This checks whether the bridge directory still exists.
-		// Might get a more elegant API in the future but that's all we can do for now
+		// Might get a more elegant API in the future but this method works for now
 		try {
 			await fileHandle.getDirectoryHandle('data', { create: true })
 		} catch {

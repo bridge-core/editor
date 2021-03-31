@@ -1,4 +1,4 @@
-import { createInformationWindow } from '../Windows/Common/CommonDefinitions'
+import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import type { TaskManager } from './TaskManager'
 
 export interface ITaskDetails {
@@ -23,7 +23,10 @@ export class Task {
 	}
 
 	createWindow() {
-		this.window = createInformationWindow(this.name, this.description)
+		this.window = new InformationWindow({
+			name: this.name,
+			description: this.description,
+		})
 	}
 
 	complete() {

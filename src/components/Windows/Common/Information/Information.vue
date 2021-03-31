@@ -1,17 +1,17 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="windowTitle"
+		:windowTitle="$data.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:width="440"
 		:height="120"
 		:hasCloseButton="false"
-		:isPersistent="isPersistent"
+		:isPersistent="$data.isPersistent"
 	>
 		<template #default>
-			<p class="mt-2">{{ t(content) }}</p>
+			<p class="mt-2">{{ t($data.description) }}</p>
 		</template>
 		<template #actions>
 			<v-spacer />
@@ -35,12 +35,11 @@ export default {
 	},
 	props: ['currentWindow'],
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	methods: {
 		close() {
 			this.currentWindow.close()
-			if (typeof this.callback === 'function') this.callback()
 		},
 	},
 }
