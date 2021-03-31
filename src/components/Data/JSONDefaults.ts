@@ -39,13 +39,6 @@ export class JsonDefaults {
 			App.eventSystem.on('disableValidation', () => {
 				this.setJSONDefaults(false)
 			}),
-			app.actionManager.create({
-				icon: 'mdi-reload',
-				name: 'actions.reloadAutoCompletions.name',
-				description: 'actions.reloadAutoCompletions.description',
-				keyBinding: 'Ctrl + Shift + R',
-				onTrigger: () => this.reload(),
-			}),
 		].filter((disposable) => disposable !== undefined)
 
 		if (!this.loadedSchemas) await this.loadAllSchemas()

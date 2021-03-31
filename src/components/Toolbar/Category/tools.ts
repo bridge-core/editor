@@ -16,6 +16,15 @@ export function setupToolsCategory(app: App) {
 				App.createNativeWindow('https://bedrock.dev', 'DocWindow'),
 		})
 	)
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-reload',
+			name: 'actions.reloadAutoCompletions.name',
+			description: 'actions.reloadAutoCompletions.description',
+			keyBinding: 'Ctrl + Shift + R',
+			onTrigger: () => app.project.jsonDefaults.reload(),
+		})
+	)
 
 	App.toolbar.addCategory(tools)
 }
