@@ -55,13 +55,17 @@ export class PackIndexerService extends TaskService<string[]> {
 		return changedFiles
 	}
 
-	async updateFile(filePath: string) {
-		await this.lightningCache.processFile(
+	async updateFile(filePath: string, fileContent?: string) {
+		const fileDidChange = await this.lightningCache.processFile(
 			filePath,
-			await this.fileSystem.getFileHandle(filePath)
+			await this.fileSystem.getFileHandle(filePath),
+			fileContent
 		)
-		await this.lightningStore.saveStore()
-		await this.packSpider.updateFile(filePath)
+
+		if (fileDidChange) {
+			await this.lightningStore.saveStore()
+			await this.packSpider.updateFile(filePath)
+		}
 	}
 
 	updatePlugins(pluginFileTypes: IFileType[]) {

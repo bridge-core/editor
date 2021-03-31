@@ -62,10 +62,10 @@ export class PackIndexer extends WorkerManager<
 		return changedFiles
 	}
 
-	async updateFile(filePath: string) {
+	async updateFile(filePath: string, fileContent?: string) {
 		await this.fired
 		await this.service!.updatePlugins(FileType.getPluginFileTypes())
-		await this.service!.updateFile(filePath)
+		await this.service!.updateFile(filePath, fileContent)
 	}
 
 	async readdir(path: string[], ..._: any[]) {

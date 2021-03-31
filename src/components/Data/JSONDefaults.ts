@@ -25,10 +25,6 @@ export class JsonDefaults {
 		const app = await App.getApp()
 
 		this.disposables = <IDisposable[]>[
-			App.eventSystem.on('fileUpdated', (filePath: string) =>
-				this.updateDynamicSchemas(filePath)
-			),
-
 			// Updating currentContext/ references
 			App.eventSystem.on('currentTabSwitched', (filePath: string) =>
 				this.updateDynamicSchemas(filePath)

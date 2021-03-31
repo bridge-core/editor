@@ -136,7 +136,7 @@ export class Project {
 	}
 
 	async updateFile(filePath: string) {
-		// We already have a check for foreign files inside of the TextTab.save(...) function
+		// We already have a check for foreign files inside of the TabSystem.save(...) function
 		// but there are a lot of sources that call updateFile(...)
 		try {
 			await this.fileSystem.getFileHandle(filePath)
@@ -147,8 +147,7 @@ export class Project {
 
 		await this.packIndexer.updateFile(filePath)
 		await this.compilerManager.updateFile('default.json', filePath)
-
-		App.eventSystem.dispatch('fileUpdated', filePath)
+		await this.jsonDefaults.updateDynamicSchemas(filePath)
 	}
 	setActiveTabSystem(tabSystem: TabSystem, value: boolean) {
 		this.tabSystems.forEach((tS) =>

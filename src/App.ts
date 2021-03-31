@@ -39,7 +39,6 @@ export class App {
 	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventSystem<any>([
 		'projectChanged',
-		'fileUpdated',
 		'currentTabSwitched',
 		'refreshCurrentContext',
 		'disableValidation',

@@ -6,6 +6,23 @@ import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { FileType } from '/@/components/Data/FileType'
+import { debounce } from 'lodash'
+
+const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
+	async (tab) => {
+		if (!tab.editorModel) return
+
+		const app = await App.getApp()
+		await app.project.packIndexer.updateFile(
+			tab.getProjectPath(),
+			tab.editorModel?.getValue()
+		)
+		await app.project.jsonDefaults.updateDynamicSchemas(
+			tab.getProjectPath()
+		)
+	},
+	600
+)
 
 export class TextTab extends Tab {
 	component = TextTabComponent
@@ -51,6 +68,7 @@ export class TextTab extends Tab {
 		this.disposables.push(
 			this.editorModel?.onDidChangeContent(() => {
 				this.isUnsaved = true
+				throttledCacheUpdate(this)
 			})
 		)
 		this.disposables.push(
@@ -140,5 +158,19 @@ export class TextTab extends Tab {
 		this.editorInstance?.trigger('keyboard', 'paste', {
 			text: await navigator.clipboard.readText(),
 		})
+	}
+	async close() {
+		super.close()
+
+		// We need to clear the lightning cache store from temporary data if the user doesn't save changes
+		if (this.isUnsaved) {
+			const app = await App.getApp()
+			const file = await app.fileSystem.readFile(this.getPath())
+			const fileContent = await file.text()
+			await app.project.packIndexer.updateFile(
+				this.getProjectPath(),
+				fileContent
+			)
+		}
 	}
 }

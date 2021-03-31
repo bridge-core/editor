@@ -111,14 +111,20 @@ export class LightningCache {
 	/**
 	 * @returns Whether this file did change
 	 */
-	async processFile(filePath: string, fileHandle: FileSystemFileHandle) {
+	async processFile(
+		filePath: string,
+		fileHandle: FileSystemFileHandle,
+		fileContent?: string
+	) {
 		const file = await fileHandle.getFile()
 		const fileType = FileType.getId(filePath)
 
 		// First step: Check lastModified time. If the file was not modified, we can skip all processing
+		// If custom fileContent is defined, we need to always run processFile
 		if (
+			fileContent === undefined &&
 			file.lastModified ===
-			this.lightningStore.getLastModified(filePath, fileType)
+				this.lightningStore.getLastModified(filePath, fileType)
 		) {
 			this.lightningStore.setVisited(filePath, true, fileType)
 			return false
@@ -128,9 +134,9 @@ export class LightningCache {
 
 		// Second step: Process file
 		if (ext === '.json') {
-			await this.processJSON(filePath, fileType, file)
+			await this.processJSON(filePath, fileType, file, fileContent)
 		} else if (knownTextFiles.has(ext)) {
-			await this.processText(filePath, fileType, file)
+			await this.processText(filePath, fileType, file, fileContent)
 		} else {
 			this.lightningStore.add(
 				filePath,
@@ -142,7 +148,12 @@ export class LightningCache {
 		return true
 	}
 
-	async processText(filePath: string, fileType: string, file: File) {
+	async processText(
+		filePath: string,
+		fileType: string,
+		file: File,
+		fileContent?: string
+	) {
 		const instructions = await FileType.getLightningCache(filePath)
 
 		// JavaScript cache API
@@ -150,7 +161,7 @@ export class LightningCache {
 			const cacheFunction = runScript(instructions)
 			if (typeof cacheFunction !== 'function') return
 
-			const fileContent = await file.text()
+			if (fileContent === undefined) fileContent = await file.text()
 			const textData = cacheFunction(fileContent)
 
 			this.lightningStore.add(
@@ -175,24 +186,12 @@ export class LightningCache {
 	 * Process a JSON file
 	 * @returns Whether this json file did change
 	 */
-	async processJSON(filePath: string, fileType: string, file: File) {
-		const fileContent = await file.text()
-
-		// JSON API
-		let data: any
-		try {
-			data = json5.parse(fileContent)
-		} catch {
-			this.lightningStore.add(
-				filePath,
-				{
-					lastModified: file.lastModified,
-				},
-				fileType
-			)
-			return
-		}
-
+	async processJSON(
+		filePath: string,
+		fileType: string,
+		file: File,
+		fileContent?: string
+	) {
 		// Load instructions for current file
 		const instructions = await FileType.getLightningCache(filePath)
 
@@ -205,6 +204,27 @@ export class LightningCache {
 				},
 				fileType
 			)
+			return
+		}
+
+		if (fileContent === undefined) fileContent = await file.text()
+
+		// JSON API
+		let data: any
+		try {
+			data = json5.parse(fileContent)
+		} catch {
+			// Updating auto-completions in the background shouldn't get rid of all auto-completions currently saved for this file
+			if (fileContent === undefined) {
+				this.lightningStore.add(
+					filePath,
+					{
+						lastModified: file.lastModified,
+					},
+					fileType
+				)
+			}
+
 			return
 		}
 

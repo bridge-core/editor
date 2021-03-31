@@ -124,9 +124,7 @@ export class TabSystem extends MonacoHolder {
 		await tab.save()
 
 		if (!tab.isForeignFile) {
-			await this.project.updateFile(
-				tab.getPath().replace(`projects/${this.project.name}/`, '')
-			)
+			await this.project.updateFile(tab.getProjectPath())
 			await this.project.recentFiles.add({
 				path: tab.getPath(),
 				name: tab.name,
@@ -139,7 +137,7 @@ export class TabSystem extends MonacoHolder {
 		if (tab === this.selectedTab)
 			App.eventSystem.dispatch(
 				'refreshCurrentContext',
-				tab.getPath().replace(`projects/${this.project.name}/`, '')
+				tab.getProjectPath()
 			)
 
 		app.windows.loadingWindow.close()
