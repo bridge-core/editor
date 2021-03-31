@@ -107,6 +107,9 @@
 								]
 							}
 						},
+						"allow_water": {
+							"type": "boolean"
+						},
 						"growth_direction": {
 							"type": "string",
 							"description": "Direction that the plant grows towards.",
@@ -180,6 +183,129 @@
 							"description": "Defines the surface that the y-value of the placement position will be snapped to.",
 							"type": "string",
 							"enum": ["ceiling", "floor"]
+						}
+					}
+				},
+				"minecraft:vegetation_patch_feature": {
+					"properties": {
+						"description": {
+							"additionalProperties": false,
+							"properties": {
+								"identifier": {
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
+								}
+							}
+						},
+						"replaceable_blocks": {
+							"type": "array",
+							"items": {
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+							}
+						},
+						"ground_block": {
+							"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+						},
+						"vegetation_feature": {
+							"$ref": "../../general/reference/feature.json"
+						},
+						"surface": {
+							"type": "string",
+							"enum": ["floor", "ceiling"]
+						},
+						"depth": {
+							"anyOf": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "object",
+									"properties": {
+										"range_min": {
+											"type": "number"
+										},
+										"range_max": {
+											"type": "number"
+										}
+									}
+								}
+							]
+						},
+						"extra_deep_block_chance": {
+							"type": "number"
+						},
+						"vertical_range": {
+							"type": "integer"
+						},
+						"vegetation_chance": {
+							"type": "number"
+						},
+						"horizontal_radius": {
+							"anyOf": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "object",
+									"properties": {
+										"range_min": {
+											"type": "number"
+										},
+										"range_max": {
+											"type": "number"
+										}
+									}
+								}
+							]
+						},
+						"extra_edge_column_chance": {
+							"type": "number"
+						},
+						"waterlogged": {
+							"type": "boolean"
+						}
+					}
+				},
+				"minecraft:multiplace_feature": {
+					"description": "Places one or a few multiface blocks on floors/walls/ceilings. Despite the name, any block can be placed by this feature. During placement, existing world blocks are checked to see if this feature can be placed on them based on the list provided in the 'can_place_on' field. If no 'can_replace_on' field is specified, the 'place_block' block can be placed on any existing block. This feature will also try to spread the 'place_block' block around the location in world the feature is placed.",
+					"properties": {
+						"description": {
+							"additionalProperties": false,
+							"properties": {
+								"identifier": {
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
+								}
+							}
+						},
+						"places_block": {
+							"description": "Reference to the block to be placed.",
+							"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+						},
+						"search_range": {
+							"description": "How far, in blocks, this feature can search for a valid position to place.",
+							"type": "integer"
+						},
+						"can_place_on_floor": {
+							"description": "Can this feature be placed on the ground (top face of a block)?",
+							"type": "boolean"
+						},
+						"can_place_on_ceiling": {
+							"description": "Can this feature be placed on the ceiling (bottom face of a block)?",
+							"type": "boolean"
+						},
+						"can_place_on_wall": {
+							"description": "Can this feature be placed on the wall (side faces of a block)?",
+							"type": "boolean"
+						},
+						"chance_of_spreading": {
+							"description": "For each block placed by this feature, how likely will that block spread to another?",
+							"type": "number"
+						},
+						"can_place_on": {
+							"description": "A list of blocks that the block in this feature can be placed on. Omit this field to allow any block to be placed on.",
+							"type": "array",
+							"items": {
+								"$ref": "../general.json#/definitions/block_reference"
+							}
 						}
 					}
 				}

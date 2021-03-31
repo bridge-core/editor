@@ -47,6 +47,9 @@
 		"query.scoreboard",
 		"query.self",
 		"query.target",
-		"query.time_of_day"
+		"query.time_of_day",
+		"query.is_playing_dead",
+		"query.actor_property",
+		"query.has_actor_property"
 	]
 }
