@@ -1,5 +1,6 @@
 {
 	"id": "geometry",
+	"icon": "mdi-cube-outline",
 	"matcher": [
 		"RP/models/entity/**/*.json",
 		"RP/models/block/**/*.json",
