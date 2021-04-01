@@ -1,5 +1,5 @@
 <template>
-	<div class="d-flex ml-2 mb-1">
+	<div class="d-flex mb-1">
 		<Action v-for="action in actions" :key="action.id" :action="action" />
 	</div>
 </template>
