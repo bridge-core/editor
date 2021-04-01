@@ -7,10 +7,11 @@
 					? `calc(${sidebarWidth} + 12px)`
 					: undefined,
 			}"
-			>{{ windowTitle }}</span
 		>
+			{{ windowTitle }}
+		</span>
 
-		<div style="position: absolute; top: 3px;">
+		<div style="position: absolute; top: 3px">
 			<MacWindowControls
 				v-if="!hasSidebar"
 				:hasCloseButton="hasCloseButton"
@@ -20,11 +21,17 @@
 			/>
 		</div>
 		<v-spacer />
+		<DisplayAction
+			v-for="action in actions"
+			:key="action.id"
+			:action="action"
+		/>
 		<slot />
 	</v-system-bar>
 </template>
 
 <script>
+import DisplayAction from './DisplayAction.vue'
 import MacWindowControls from './Mac/WindowControls.vue'
 
 export default {
@@ -32,10 +39,12 @@ export default {
 
 	components: {
 		MacWindowControls,
+		DisplayAction,
 	},
 	props: {
 		windowTitle: String,
 		hasSidebar: Boolean,
+		actions: Array,
 		sidebarWidth: {
 			type: String,
 			default: '25%',

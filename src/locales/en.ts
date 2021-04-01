@@ -319,6 +319,7 @@ export default {
 		projectChooser: {
 			title: 'Projects',
 			searchProjects: 'Search projects...',
+			newProject: 'New Project',
 		},
 		selectFolder: {
 			title: 'Select Folder',
@@ -330,6 +331,8 @@ export default {
 			title: 'Pack Explorer',
 			searchFiles: 'Search files...',
 			categories: 'Categories',
+			refresh: 'Refresh Project',
+			createPreset: 'New File',
 		},
 		settings: {
 			title: 'Settings',

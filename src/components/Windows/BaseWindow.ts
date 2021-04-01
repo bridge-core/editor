@@ -3,11 +3,13 @@ import Vue from 'vue'
 import { v4 as uuid } from 'uuid'
 import { WINDOWS } from './create'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { SimpleAction } from '/@/components/Actions/SimpleAction'
 
 export abstract class BaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()
 	protected isVisible = false
 	protected shouldRender = false
+	protected actions: SimpleAction[] = []
 
 	constructor(
 		protected component: VueComponent,
@@ -19,6 +21,9 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 
 	defineWindow() {
 		Vue.set(WINDOWS, this.windowUUID, this)
+	}
+	addAction(action: SimpleAction) {
+		this.actions.push(action)
 	}
 
 	close(data: T) {

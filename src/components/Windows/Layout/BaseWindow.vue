@@ -17,6 +17,7 @@
 				v-if="!hideToolbar"
 				:is="platform === 'darwin' ? 'MacToolbar' : 'WindowsToolbar'"
 				:windowTitle="t(windowTitle)"
+				:actions="actions"
 				:hasMaximizeButton="hasMaximizeButton"
 				:hasCloseButton="hasCloseButton"
 				:hasSidebar="!!$slots.sidebar"
@@ -106,6 +107,7 @@ export default {
 		isVisible: Boolean,
 		shouldRender: Boolean,
 		isPersistent: Boolean,
+		actions: Array,
 		sidebarWidth: {
 			type: String,
 			default: '25%',

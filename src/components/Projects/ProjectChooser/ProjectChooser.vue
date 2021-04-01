@@ -8,12 +8,9 @@
 		:percentageHeight="80"
 		@closeWindow="onClose"
 		:sidebarItems="sidebar.elements"
+		:actions="actions"
 		v-model="sidebar.selected"
 	>
-		<template #toolbar>
-			<ToolbarButton @click="createProject" icon="mdi-plus" />
-		</template>
-
 		<template #sidebar>
 			<v-text-field
 				class="pt-2"
@@ -82,7 +79,6 @@
 
 <script>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
-import ToolbarButton from '/@/components/Windows/Layout/Toolbar/Button.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 
 import { App } from '/@/App'
@@ -96,7 +92,6 @@ export default {
 	mixins: [TranslationMixin, PackIndexerMixin, CompilerMixin],
 	components: {
 		SidebarWindow,
-		ToolbarButton,
 		PackTypeViewer,
 	},
 	props: ['currentWindow'],
@@ -111,11 +106,6 @@ export default {
 			const app = await App.getApp()
 			app.projectManager.selectProject(this.sidebar.selected)
 			this.currentWindow.close()
-		},
-		async createProject() {
-			const app = await App.getApp()
-			this.currentWindow.close()
-			app.windows.createProject.open()
 		},
 		onDeleteProject(projectName) {
 			new ConfirmationWindow({

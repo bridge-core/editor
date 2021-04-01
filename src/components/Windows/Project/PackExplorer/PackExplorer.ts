@@ -11,6 +11,7 @@ import {
 import PackExplorerComponent from './PackExplorer.vue'
 import { DirectoryEntry } from './DirectoryEntry'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { SimpleAction } from '/@/components/Actions/SimpleAction'
 
 class PackSidebarItem extends SidebarItem {
 	protected packType: string
@@ -38,6 +39,31 @@ export class PackExplorerWindow extends BaseWindow {
 			this.loadedPack = false
 		})
 		this.defineWindow()
+
+		// Reload project
+		this.addAction(
+			new SimpleAction({
+				icon: 'mdi-refresh',
+				name: 'windows.packExplorer.refresh',
+				onTrigger: async () => {
+					this.close()
+					const app = await App.getApp()
+					await app.project.refresh()
+				},
+			})
+		)
+		// Add new file
+		this.addAction(
+			new SimpleAction({
+				icon: 'mdi-plus',
+				name: 'windows.packExplorer.createPreset',
+				onTrigger: async () => {
+					this.close()
+					const app = await App.getApp()
+					await app.windows.createPreset.open()
+				},
+			})
+		)
 	}
 
 	async loadPack() {

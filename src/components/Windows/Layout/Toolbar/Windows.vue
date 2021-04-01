@@ -12,6 +12,11 @@
 		<span>{{ windowTitle }}</span>
 		<v-spacer></v-spacer>
 		<v-toolbar-items class="px14-font">
+			<DisplayAction
+				v-for="action in actions"
+				:key="action.id"
+				:action="action"
+			/>
 			<slot />
 
 			<v-btn
@@ -29,6 +34,7 @@
 				color="error"
 				@click.stop="$emit('closeWindow')"
 				v-if="hasCloseButton"
+				class="mr-1"
 			>
 				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
 					mdi-close
@@ -39,10 +45,16 @@
 </template>
 
 <script>
+import DisplayAction from './DisplayAction.vue'
+
 export default {
 	name: 'WindowsToolbar',
+	components: {
+		DisplayAction,
+	},
 	props: {
 		windowTitle: String,
+		actions: Array,
 		sidebarWidth: {
 			type: String,
 			default: '25%',

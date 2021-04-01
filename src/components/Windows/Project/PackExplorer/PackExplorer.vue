@@ -9,21 +9,9 @@
 		:percentageHeight="80"
 		@closeWindow="onClose"
 		:sidebarItems="sidebar.elements"
+		:actions="actions"
 		v-model="sidebar.selected"
 	>
-		<template #toolbar>
-			<v-btn @click="createPreset" icon small>
-				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
-					mdi-plus
-				</v-icon>
-			</v-btn>
-			<v-btn @click="refreshPackExplorer" icon small>
-				<v-icon :color="isDarkMode ? 'white' : 'grey darken-1'" small>
-					mdi-refresh
-				</v-icon>
-			</v-btn>
-		</template>
-
 		<template #sidebar>
 			<v-text-field
 				class="pt-2"
@@ -105,11 +93,6 @@ export default {
 	methods: {
 		onClose() {
 			this.currentWindow.close()
-		},
-		async refreshPackExplorer() {
-			this.currentWindow.close()
-			const app = await App.getApp()
-			await app.project.refresh()
 		},
 		async openFile(filePath) {
 			this.currentWindow.close()
