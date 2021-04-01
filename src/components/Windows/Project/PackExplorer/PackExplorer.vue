@@ -97,7 +97,9 @@ export default {
 		async openFile(filePath) {
 			this.currentWindow.close()
 			const app = await App.getApp()
-			const fileHandle = await app.fileSystem.getFileHandle(filePath)
+			const fileHandle = await app.fileSystem.getFileHandle(
+				`projects/${app.project.name}/${filePath}`
+			)
 			app.project.openFile(fileHandle)
 		},
 		createPreset() {
