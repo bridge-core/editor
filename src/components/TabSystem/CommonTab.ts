@@ -119,7 +119,7 @@ export abstract class Tab extends Signal<Tab> {
 		}
 	}
 
-	addTask(...actions: SimpleAction[]) {
+	addAction(...actions: SimpleAction[]) {
 		this.actions.push(...actions)
 	}
 
