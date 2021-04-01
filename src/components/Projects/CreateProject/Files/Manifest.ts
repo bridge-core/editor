@@ -75,11 +75,26 @@ export class CreateManifest extends CreateFile {
 		}
 		if (this.type === 'data' && createOptions.gameTest) {
 			manifest.modules.push({
-				type: 'plugin',
+				type: 'javascript',
 				uuid: uuid(),
 				entry: 'scripts/gametests/Main.js',
 				version: [1, 0, 0],
 			})
+			if (!manifest.dependencies) {
+				manifest.dependencies = []
+			}
+			manifest.dependencies.push(
+				{
+					// Minecraft native module
+					uuid: 'b26a4d4c-afdf-4690-88f8-931846312678',
+					version: [0, 1, 0],
+				},
+				{
+					// GameTest native module
+					uuid: '6f4b6893-1bb6-42fd-b458-7fa3d0c89616',
+					version: [0, 1, 0],
+				}
+			)
 		}
 
 		return fs.writeJSON(`${this.pack}/manifest.json`, manifest, true)

@@ -3,6 +3,7 @@ declare module 'Minecraft' {
 	export const World: World
 	export const Items: Items
 	export const Effects: Effects
+	export const Commands: Commands
 }
 
 declare interface Test {
@@ -241,8 +242,6 @@ declare interface Test {
 	 * Kills all entities in the test
 	 */
 	killAllEntities(): void
-
-	Commands: Commands
 }
 
 declare interface Sequence {
@@ -423,7 +422,7 @@ declare interface Commands {
 	/**
 	 * Runs the given command when called
 	 * @param command
-	 * The command to run
+	 * The command to run (should start with a '/')
 	 */
 	run(command: string): void
 }
