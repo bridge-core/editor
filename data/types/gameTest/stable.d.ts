@@ -64,3 +64,10 @@ declare interface Test {
 	 */
 	spawn(id: string, position: BlockPos): void
 }
+
+declare interface ItemStackClass {
+	/**
+	 * Creates a an item stack
+	 */
+	new (item: Block): ItemStack
+}

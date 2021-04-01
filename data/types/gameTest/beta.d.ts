@@ -1,6 +1,8 @@
 declare module 'Minecraft' {
 	export const BlockLocation: BlockPositionClass
 	export const World: World
+	export const Items: Items
+	export const Effects: Effects
 }
 
 declare interface Test {
@@ -10,7 +12,7 @@ declare interface Test {
 	startSequence(): Sequence
 
 	/**
-	 * The GameTest will succeed when the specified entity is found at the specified coordinates
+	 * The GameTest will succeed when the given entity is found at the given coordinates
 	 * @param id
 	 * The identifier of the entity to check for
 	 * @param position
@@ -18,7 +20,15 @@ declare interface Test {
 	 */
 	succeedWhenEntityPresent(id: string, position: BlockPos): void
 	/**
-	 * The GameTest will succeed when the specified block is found at the specified coordinates
+	 * The GameTest will succeed when the given entity is not found at the given coordinates
+	 * @param id
+	 * The identifier of the entity to check for
+	 * @param position
+	 * The relative position to test for the actor
+	 */
+	succeedWhenEntityNotPresent(id: string, position: BlockPos): void
+	/**
+	 * The GameTest will succeed when the given block is found at the given coordinates
 	 * @param id
 	 * The block to check for
 	 * @param position
@@ -26,13 +36,13 @@ declare interface Test {
 	 */
 	succeedWhenBlockPresent(id: Block, position: BlockPos): void
 	/**
-	 * The GameTest will succeed when the specified amount of ticks has passed
+	 * The GameTest will succeed when the given amount of ticks has passed
 	 * @param tick
 	 * The tick to succed the test after
 	 */
 	succeedOnTick(tick: number): void
 	/**
-	 * The GameTest will succeed when the specified amount of ticks has passed and the `func` parameter calls an assert function
+	 * The GameTest will succeed when the given amount of ticks has passed and the `func` parameter calls an assert function
 	 * @param tick
 	 * @param func
 	 */
@@ -50,7 +60,7 @@ declare interface Test {
 	failIf(func: () => void): void
 
 	/**
-	 * Asserts an error when the specified entity is found at the specified coordinates
+	 * Asserts an error when the given entity is found at the given coordinates
 	 * @param id
 	 * The identifier of the entity to check for
 	 * @param position
@@ -58,7 +68,7 @@ declare interface Test {
 	 */
 	assertEntityPresent(id: string, position: BlockPos): void
 	/**
-	 * Asserts an error when the specified entity is found at the specified coordinates
+	 * Asserts an error when the given entity is found at the given coordinates
 	 * @param id
 	 * The identifier of the entity to check for
 	 * @param position
@@ -66,7 +76,7 @@ declare interface Test {
 	 */
 	assertEntityInstancePresent(id: string, position: BlockPos): void
 	/**
-	 * Asserts an error when the specified entity is not found at the specified coordinates
+	 * Asserts an error when the given entity is not found at the given coordinates
 	 * @param id
 	 * The identifier of the entity to check for
 	 * @param position
@@ -74,7 +84,7 @@ declare interface Test {
 	 */
 	assertEntityNotPresent(id: string, position: BlockPos): void
 	/**
-	 * Asserts an error when the specified item stack is not found at the specified coordinates
+	 * Asserts an error when the given item stack is not found at the given coordinates
 	 * @param itemStack
 	 * The item stack to test for
 	 * @param position
@@ -88,7 +98,7 @@ declare interface Test {
 		amount: number
 	): void
 	/**
-	 * Asserts an error when the specified block is not found at the specified coordinates
+	 * Asserts an error when the given block is not found at the given coordinates
 	 * @param id
 	 * The block to check for
 	 * @param position
@@ -96,7 +106,7 @@ declare interface Test {
 	 */
 	assertBlockNotPresent(id: Block, position: BlockPos): void
 	/**
-	 * Asserts an error when the specified block at the specified coordinates has the block state
+	 * Asserts an error when the given block at the given coordinates has the block state
 	 * @param state
 	 * The block state to test for
 	 * @param data
@@ -110,13 +120,13 @@ declare interface Test {
 		position: BlockPos
 	): void
 	/**
-	 * Asserts an error if there is an empty container at the specified coordinates
+	 * Asserts an error if there is an empty container at the given coordinates
 	 * @param position
 	 * The relative position of the container to check
 	 */
 	assertContainerEmpty(position: BlockPos): void
 	/**
-	 * Asserts an error if there is a container with the specified item at the specified coordinates
+	 * Asserts an error if there is a container with the given item at the given coordinates
 	 * @param id
 	 * The item to test for in the container
 	 * @param position
@@ -124,13 +134,13 @@ declare interface Test {
 	 */
 	assertContainerContains(id: string, position: BlockPos): void
 	/**
-	 * Asserts an error when the armor is found on the entity at the specified coordinates
+	 * Asserts an error when the armor is found on the entity at the given coordinates
 	 * @param id
 	 * The identifier of the entity to check for the armor on
 	 * @param slot
 	 * The slot of the entity to test for the item
 	 * @param item
-	 * The item to test for in the specified slot
+	 * The item to test for in the given slot
 	 * @param data
 	 * The data value of the item
 	 * @param position
@@ -147,7 +157,7 @@ declare interface Test {
 		bool: boolean
 	): void
 	/**
-	 * Asserts an error when the specified entity has the component
+	 * Asserts an error when the given entity has the component
 	 * @param id
 	 * The identifier of the entity to test
 	 * @param component
@@ -169,6 +179,35 @@ declare interface Test {
 	 * The identifer of the entity to test for
 	 */
 	assertEntityPresentInArea(id: string): void
+	/**
+	 * Asserts that the given condition is true for all entities of the given type at the given location
+	 * @param position
+	 * Position of the entity to test
+	 * @param id
+	 * Identifier of the entity to test
+	 * @param func
+	 */
+	assertEntityData(
+		position: BlockPos,
+		id: string,
+		func: (entity: Entity) => void
+	): void
+	/**
+	 * Asserts that the block at the given location is waterlogged
+	 * @param position
+	 * Position of the block to test
+	 * @param isWaterLoggged
+	 * Whether to test if the block is or isn't waterlogged
+	 */
+	assertIsWaterLogged(position: BlockPos, isWaterLoggged: boolean): void
+	/**
+	 * Asserts the redstone power level at the given location
+	 * @param position
+	 * Position of the block to test
+	 * @param power
+	 * The redstone power level to test for
+	 */
+	assertRedstonePower(position: BlockPos, power: number): void
 
 	/**
 	 * Prints the given text to the chat
@@ -177,7 +216,7 @@ declare interface Test {
 	 */
 	print(text: string): void
 	/**
-	 * Spawns the specified entity at the specified coordinates
+	 * Spawns the given entity at the given coordinates
 	 * @param id
 	 * The identifier of the entity to spawn
 	 * @param position
@@ -185,7 +224,15 @@ declare interface Test {
 	 */
 	spawn(id: string, position: BlockPos): Entity
 	/**
-	 * Pulls a lever at the specified coordinates if there is one there
+	 * Spawns an item at the given location
+	 * @param item
+	 * The item stack to spawn
+	 * @param position
+	 * The relative position to spawn the item stack
+	 */
+	spawnItem(item: ItemStack, location: Location): Item
+	/**
+	 * Pulls a lever at the given coordinates if there is one there
 	 * @param position
 	 * The relative position to pull the lever
 	 */
@@ -194,15 +241,33 @@ declare interface Test {
 	 * Kills all entities in the test
 	 */
 	killAllEntities(): void
+
+	Commands: Commands
 }
 
 declare interface Sequence {
 	/**
-	 * Causes the sequence to wait for the specified amount of time
+	 * Causes the sequence to wait for the given amount of time
 	 * @param time
 	 * The amount of time to wait for
 	 */
 	thenIdle(time: number): Sequence
+	/**
+	 * Executes the function when called
+	 * @param func
+	 */
+	thenExecute(func: () => void): Sequence
+	/**
+	 * Executes the function after the time given when called
+	 * @param time
+	 * @param func
+	 */
+	thenExecuteAfter(time: number, func: () => void): Sequence
+	/**
+	 * Causes the sequence to wait until the function asserts an error
+	 * @param func
+	 */
+	thenWait(func: () => void): Sequence
 	/**
 	 * Causes the GameTest to succeed
 	 */
@@ -215,7 +280,10 @@ declare interface World {
 	 * @param func
 	 * Function to run when the event is triggered
 	 */
-	addEventListener(event: WorldEvent, func: () => void): void
+	addEventListener(event: WorldEvent, func: (entity: Entity) => void): void
+	/**
+	 * Gets the current dimension
+	 */
 	getDimension(): Dimension
 }
 
@@ -243,6 +311,17 @@ declare interface Entity {
 	getName(): string
 
 	/**
+	 * Gets an effect from the Entity
+	 * @param effect
+	 */
+	getEffect(effect: Effect): Effect
+	/**
+	 * Adds an effect to the Entity
+	 * @param effect
+	 */
+	addEffect(effect: Effect, duration: number, amplifier: number): Effect
+
+	/**
 	 * Kills the entity
 	 */
 	kill(): void
@@ -256,7 +335,7 @@ declare interface EntityComponent {
 	 */
 	getName(): string
 	/**
-	 * Leashes this entity to another specified entity. This must be used on the "minecraft:leashable" component
+	 * Leashes this entity to another given entity. This must be used on the "minecraft:leashable" component
 	 * @param entity
 	 * The entity to leash this entity to
 	 */
@@ -277,6 +356,76 @@ declare interface EntityComponent {
 	 * Whether to display taming particles
 	 */
 	setTamed(particles: boolean): void
+}
+
+declare interface ItemStackClass {
+	/**
+	 * Creates a an item stack
+	 */
+	new (item: Item, amount: number, data: number): ItemStack
+}
+
+declare interface Items {
+	apple(): Item
+}
+
+declare interface Effects {
+	speed(): Effect
+	slowness(): Effect
+	haste(): Effect
+	miningFatigue(): Effect
+	strength(): Effect
+	instantHealth(): Effect
+	instantDamage(): Effect
+	jumpBoost(): Effect
+	nausea(): Effect
+	regeneration(): Effect
+	resistance(): Effect
+	fireResistance(): Effect
+	waterBreathing(): Effect
+	invisibility(): Effect
+	blindness(): Effect
+	nightVision(): Effect
+	hunger(): Effect
+	weakness(): Effect
+	poison(): Effect
+	wither(): Effect
+	healthBoost(): Effect
+	absorption(): Effect
+	saturation(): Effect
+	levitation(): Effect
+	fatalPoison(): Effect
+	slowFalling(): Effect
+	conduitPower(): Effect
+	badOmen(): Effect
+	heroOfTheVillage(): Effect
+}
+declare interface Effect {
+	/**
+	 * Gets the effect's amplifier level
+	 */
+	getAmplifier()
+	/**
+	 * Gets the effect's remaining duration in ticks
+	 */
+	getDuration()
+}
+
+declare interface LocationClass {
+	/**
+	 * Creates a location
+	 */
+	new (x: number, y: number, z: number): Location
+}
+declare interface Location {}
+
+declare interface Commands {
+	/**
+	 * Runs the given command when called
+	 * @param command
+	 * The command to run
+	 */
+	run(command: string): void
 }
 
 declare type WorldEvent = 'onEntityCreated' | 'onEntityDefinitionTriggered'

@@ -82,7 +82,7 @@ declare interface Test {
 	 * @param z
 	 * z coordinate value relative to the structure block to check for the block
 	 */
-	succeedWhenBlockPresent(id: string, position: BlockPos): void
+	succeedWhenBlockPresent(id: Block, position: BlockPos): void
 
 	/**
 	 * Asserts an error when the specified block is found at the specified coordinates
@@ -91,7 +91,7 @@ declare interface Test {
 	 * @param position
 	 * The relative position to test for the block
 	 */
-	assertBlockPresent(id: string, position: BlockPos): void
+	assertBlockPresent(id: Block, position: BlockPos): void
 
 	/**
 	 * Places the specified block at the specified coordinates
@@ -100,7 +100,7 @@ declare interface Test {
 	 * @param position
 	 * The relative position to place the block
 	 */
-	setBlock(id: string, position: BlockPos): void
+	setBlock(id: Block, position: BlockPos): void
 	/**
 	 * Presses a button at the specified coordinates if there is one there
 	 * @param position
@@ -122,12 +122,6 @@ declare interface BlockPos {
 	above(): BlockPos
 }
 
-declare interface ItemStackClass {
-	/**
-	 * Creates a an item stack
-	 */
-	new (item: Block): ItemStack
-}
 declare interface ItemStack {}
 
 declare interface BlockStates {
