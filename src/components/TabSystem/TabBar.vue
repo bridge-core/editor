@@ -15,24 +15,25 @@
 				:isActive="tabSystem.isActive"
 			/>
 		</Draggable>
-		<TaskBar
+		<ActionBar
 			v-if="
-				tabSystem.selectedTab && tabSystem.selectedTab.tasks.length > 0
+				tabSystem.selectedTab &&
+				tabSystem.selectedTab.actions.length > 0
 			"
-			:tasks="tabSystem.selectedTab.tasks"
+			:actions="tabSystem.selectedTab.actions"
 		/>
 	</div>
 </template>
 
 <script>
 import TabSystemTab from './Tab.vue'
-import TaskBar from './TabTasks/TaskBar.vue'
+import ActionBar from './TabActions/ActionBar.vue'
 import Draggable from 'vuedraggable'
 
 export default {
 	components: {
 		TabSystemTab,
-		TaskBar,
+		ActionBar,
 		Draggable,
 	},
 	props: {

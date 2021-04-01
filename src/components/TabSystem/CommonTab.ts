@@ -14,7 +14,7 @@ export abstract class Tab extends Signal<Tab> {
 	isUnsaved = false
 	protected projectPath?: string
 	isForeignFile = false
-	tasks: SimpleAction[] = []
+	protected actions: SimpleAction[] = []
 
 	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val
@@ -119,13 +119,13 @@ export abstract class Tab extends Signal<Tab> {
 		}
 	}
 
-	addTask(...tasks: SimpleAction[]) {
-		this.tasks.push(...tasks)
+	addTask(...actions: SimpleAction[]) {
+		this.actions.push(...actions)
 	}
 
 	onContextMenu(event: MouseEvent) {
 		let moveSplitScreen = []
-		// It makes no sense to move a fail to the split-screen if the tab system only has one entry
+		// It makes no sense to move a file to the split-screen if the tab system only has one entry
 		if (this.parent.tabs.length > 1) {
 			moveSplitScreen.push({
 				name: 'actions.moveToSplitScreen.name',
