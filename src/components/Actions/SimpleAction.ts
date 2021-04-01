@@ -6,6 +6,7 @@ export interface IActionConfig {
 	id?: string
 	icon: string
 	name: string
+	color?: string
 	description?: string
 	keyBinding?: string
 	prevent?: IKeyBindingConfig['prevent']
@@ -29,6 +30,9 @@ export class SimpleAction extends EventDispatcher<void> {
 	}
 	get description() {
 		return this.config.description
+	}
+	get color() {
+		return this.config.color
 	}
 	//#endregion
 

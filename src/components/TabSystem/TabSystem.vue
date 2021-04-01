@@ -6,6 +6,9 @@
 			<component
 				:is="tabSystem.currentComponent"
 				:key="`${tabSystem.uuid}.${tabSystem.currentComponent.name}`"
+				:style="`height: ${
+					windowHeight - (tabBarHeight + 24)
+				}px; width: 100%`"
 				:tab="tabSystem.selectedTab"
 				:id="id"
 			/>
@@ -30,6 +33,27 @@ export default {
 	components: {
 		TabBar,
 		WelcomeScreen,
+	},
+	data: () => ({
+		windowHeight: window.innerHeight,
+	}),
+	async mounted() {
+		const app = await App.getApp()
+		app.windowResize.on(this.updateWindowHeight)
+	},
+	async destroyed() {
+		const app = await App.getApp()
+		app.windowResize.off(this.updateWindowHeight)
+	},
+	computed: {
+		tabBarHeight() {
+			return this.tabSystem.selectedTab.tasks.length > 0 ? 69 : 48
+		},
+	},
+	methods: {
+		updateWindowHeight() {
+			this.windowHeight = window.innerHeight
+		},
 	},
 	watch: {
 		'tabSystem.shouldRender'() {

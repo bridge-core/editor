@@ -5,6 +5,7 @@ import { FileType } from '/@/components/Data/FileType'
 import { PackType } from '/@/components/Data/PackType'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { SimpleAction } from '../Actions/SimpleAction'
 
 export abstract class Tab extends Signal<Tab> {
 	abstract component: Vue.Component
@@ -13,6 +14,7 @@ export abstract class Tab extends Signal<Tab> {
 	isUnsaved = false
 	protected projectPath?: string
 	isForeignFile = false
+	tasks: SimpleAction[] = []
 
 	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val
@@ -116,6 +118,11 @@ export abstract class Tab extends Signal<Tab> {
 			if (this.isSelected) from.select(from.tabs[0])
 		}
 	}
+
+	addTask(...tasks: SimpleAction[]) {
+		this.tasks.push(...tasks)
+	}
+
 	onContextMenu(event: MouseEvent) {
 		let moveSplitScreen = []
 		// It makes no sense to move a fail to the split-screen if the tab system only has one entry

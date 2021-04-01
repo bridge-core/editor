@@ -1,5 +1,5 @@
 <template>
-	<div ref="monacoContainer" style="height: calc(100% - 48px); width: 100%" />
+	<div ref="monacoContainer" />
 </template>
 
 <script>

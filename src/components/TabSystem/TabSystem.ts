@@ -113,7 +113,11 @@ export class TabSystem extends MonacoHolder {
 		// Next step doesn't need to be done if we simply unselect tab
 		if (!tab) return
 
-		Vue.nextTick(() => this._selectedTab?.onActivate())
+		Vue.nextTick(async () => {
+			await this._selectedTab?.onActivate()
+			this.monacoEditor.layout()
+			// console.log(this.monacoEditor.getLayoutInfo())
+		})
 	}
 	async save(tab = this.selectedTab) {
 		if (!tab) return
