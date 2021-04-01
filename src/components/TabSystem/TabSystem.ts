@@ -115,7 +115,7 @@ export class TabSystem extends MonacoHolder {
 
 		Vue.nextTick(async () => {
 			await this._selectedTab?.onActivate()
-			this.monacoEditor.layout()
+			this._monacoEditor?.layout()
 			// console.log(this.monacoEditor.getLayoutInfo())
 		})
 	}
