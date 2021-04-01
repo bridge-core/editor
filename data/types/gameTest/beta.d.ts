@@ -1,5 +1,6 @@
 declare module 'Minecraft' {
 	export const BlockLocation: BlockPositionClass
+	export const Location: WorldLocationClass
 	export const World: World
 	export const Items: Items
 	export const Effects: Effects
@@ -231,7 +232,7 @@ declare interface Test {
 	 * @param position
 	 * The relative position to spawn the item stack
 	 */
-	spawnItem(item: ItemStack, location: Location): Item
+	spawnItem(item: ItemStack, location: WorldLocation): Item
 	/**
 	 * Pulls a lever at the given coordinates if there is one there
 	 * @param position
@@ -410,13 +411,13 @@ declare interface Effect {
 	getDuration()
 }
 
-declare interface LocationClass {
+declare interface WorldLocationClass {
 	/**
 	 * Creates a location
 	 */
-	new (x: number, y: number, z: number): Location
+	new (x: number, y: number, z: number): WorldLocation
 }
-declare interface Location {}
+declare interface WorldLocation {}
 
 declare interface Commands {
 	/**
