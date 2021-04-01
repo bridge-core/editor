@@ -7,6 +7,7 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
+import { SimpleAction } from '../../Actions/SimpleAction'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -45,8 +46,6 @@ export class TextTab extends Tab {
 
 		const app = await App.getApp()
 		await this.parent.fired //Make sure a monaco editor is loaded
-		this.editorInstance?.focus()
-		this.editorInstance?.layout()
 
 		if (!this.editorModel) {
 			const file = await this.fileHandle.getFile()
@@ -76,6 +75,25 @@ export class TextTab extends Tab {
 				this.parent.setActive(true)
 			})
 		)
+
+		// if (this.fileHandle.name.endsWith('.json'))
+		// 	this.addTask(
+		// 		new SimpleAction({
+		// 			icon: 'mdi-play',
+		// 			name: 'View Model',
+		// 			color: 'primary',
+		// 			onTrigger: () => console.log('Launch'),
+		// 		}),
+		// 		new SimpleAction({
+		// 			icon: 'mdi-movie',
+		// 			name: 'Launch Animator',
+		// 			color: 'primary',
+		// 			onTrigger: () => console.log('Launch'),
+		// 		})
+		// 	)
+
+		this.editorInstance?.focus()
+		this.editorInstance?.layout()
 	}
 	onDeactivate() {
 		this.editorViewState = this.editorInstance?.saveViewState() ?? undefined
