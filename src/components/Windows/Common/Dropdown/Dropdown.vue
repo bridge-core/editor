@@ -26,7 +26,7 @@
 				@click="onConfirm"
 				:disabled="$data.currentSelection === ''"
 			>
-				<span>{{ t('windows.common.dropdown.confirm') }}</span>
+				<span>{{ t('general.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>

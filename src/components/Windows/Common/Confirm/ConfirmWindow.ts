@@ -17,10 +17,10 @@ export class ConfirmationWindow extends BaseWindow<boolean> {
 	}
 
 	get confirmText() {
-		return this.opts.confirmText ?? 'windows.common.confirm.okay'
+		return this.opts.confirmText ?? 'general.okay'
 	}
 	get cancelText() {
-		return this.opts.cancelText ?? 'windows.common.confirm.cancel'
+		return this.opts.cancelText ?? 'general.cancel'
 	}
 	get description() {
 		return this.opts.description

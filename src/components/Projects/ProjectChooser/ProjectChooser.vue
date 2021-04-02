@@ -111,7 +111,7 @@ export default {
 			new ConfirmationWindow({
 				description: 'windows.deleteProject.description',
 				confirmText: 'windows.deleteProject.confirm',
-				cancelText: 'windows.deleteProject.cancel',
+				cancelText: 'general.cancel',
 				onConfirm: async () => {
 					const app = await App.getApp()
 					await app.projectManager.removeProject(projectName)

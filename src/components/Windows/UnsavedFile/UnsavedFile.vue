@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		windowTitle="windows.unsavedFile.title"
+		windowTitle="general.confirm"
 		:isVisible="isVisible"
 		:isPersistent="false"
 		:hasMaximizeButton="false"
@@ -16,10 +16,10 @@
 		<template #actions>
 			<v-spacer />
 			<v-btn @click="onCancel">
-				<span>{{ t('windows.unsavedFile.cancel') }}</span>
+				<span>{{ t('general.cancel') }}</span>
 			</v-btn>
 			<v-btn color="error" @click="onNoSave">
-				<span>{{ t('windows.unsavedFile.noSave') }}</span>
+				<span>{{ t('general.close') }}</span>
 			</v-btn>
 			<v-btn color="primary" @click="onSave">
 				<span>{{ t('windows.unsavedFile.save') }}</span>

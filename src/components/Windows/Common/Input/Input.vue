@@ -29,7 +29,7 @@
 				@click="onConfirm"
 				:disabled="$data.inputValue === ''"
 			>
-				<span>{{ t('windows.common.input.confirm') }}</span>
+				<span>{{ t('general.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>

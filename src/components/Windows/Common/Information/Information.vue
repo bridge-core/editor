@@ -17,7 +17,7 @@
 			<v-spacer />
 			<v-btn color="primary" @click="close">
 				<v-icon>mdi-check</v-icon>
-				<span>{{ t('windows.common.information.confirm') }}</span>
+				<span>{{ t('general.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>

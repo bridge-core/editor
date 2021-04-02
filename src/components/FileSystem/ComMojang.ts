@@ -59,8 +59,8 @@ export class ComMojang extends Signal<void> {
 	async handleComMojangDrop(directoryHandle: FileSystemDirectoryHandle) {
 		const confirmWindow = new ConfirmationWindow({
 			description: 'comMojang.folderDropped',
-			confirmText: 'yes',
-			cancelText: 'no',
+			confirmText: 'general.yes',
+			cancelText: 'general.no',
 		})
 
 		// User wants to set default com.mojang folder

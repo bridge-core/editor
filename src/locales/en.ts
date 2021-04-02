@@ -3,8 +3,15 @@ import { en } from 'vuetify/src/locale'
 export default {
 	...en,
 	languageName: 'English',
-	yes: 'Yes',
-	no: 'No',
+	// Common translations - should help stop unnecessarily repeating keys
+	general: {
+		yes: 'Yes',
+		no: 'No',
+		okay: 'Okay',
+		confirm: 'Confirm',
+		cancel: 'Cancel',
+		close: 'Close',
+	},
 	packType: {
 		behaviorPack: {
 			name: 'Behavior Pack',
@@ -246,22 +253,6 @@ export default {
 	},
 	// Windows
 	windows: {
-		common: {
-			confirm: {
-				title: 'Confirm',
-				okay: 'Okay',
-				cancel: 'Cancel',
-			},
-			dropdown: {
-				confirm: 'Confirm',
-			},
-			information: {
-				confirm: 'Okay',
-			},
-			input: {
-				confirm: 'Confirm',
-			},
-		},
 		loadingWindow: {
 			titles: {
 				loading: 'Loading...',
@@ -307,7 +298,6 @@ export default {
 		},
 		deleteProject: {
 			confirm: 'Delete',
-			cancel: 'Cancel',
 			description: 'Are you sure you want to delete this project?',
 		},
 		discord: {
@@ -444,11 +434,8 @@ export default {
 			title: 'Choose Install Location',
 		},
 		unsavedFile: {
-			title: 'Confirm',
 			description:
 				'Do you want to save your changes to this file before closing it?',
-			cancel: 'Cancel',
-			noSave: 'Close',
 			save: 'Save & Close',
 		},
 		browserUnsupported: {
