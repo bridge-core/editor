@@ -28,6 +28,7 @@
 		"no_legacy_worldgen": {},
 		"ocean": {},
 		"overworld": {},
+		"overworld_generation": {},
 		"plains": {},
 		"plateau": {},
 		"savanna": {},
