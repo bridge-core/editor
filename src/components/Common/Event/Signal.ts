@@ -1,4 +1,5 @@
 import { EventDispatcher } from './EventDispatcher'
+import { IDisposable } from '/@/types/disposable'
 
 export class Signal<T> extends EventDispatcher<T> {
 	protected firedTimes = 0
@@ -31,10 +32,16 @@ export class Signal<T> extends EventDispatcher<T> {
 		if (this.hasFired) return super.dispatch(data)
 	}
 
-	on(listener: (data: T) => void) {
+	on(listener: (data: T) => void, getDisposable?: true): IDisposable
+	on(listener: (data: T) => void, getDisposable: false): undefined
+	on(
+		listener: (data: T) => void,
+		getDisposable?: boolean
+	): IDisposable | undefined
+	on(listener: (data: T) => void, getDisposable = true) {
 		// Needs to be on a timeout because otherwise Signal.once doesn't work
 		if (this.hasFired) listener(this.data!)
 
-		return super.on(listener)
+		return super.on(listener, getDisposable)
 	}
 }
