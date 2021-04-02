@@ -20,6 +20,7 @@
 				tabSystem.selectedTab &&
 				tabSystem.selectedTab.actions.length > 0
 			"
+			:class="{ 'inactive-action-bar': !tabSystem.isActive }"
 			:actions="tabSystem.selectedTab.actions"
 		/>
 	</div>
@@ -60,5 +61,9 @@ export default {
 *::-webkit-scrollbar-thumb {
 	border-radius: 0;
 	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.inactive-action-bar {
+	opacity: 0.5;
 }
 </style>
