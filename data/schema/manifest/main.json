@@ -82,7 +82,7 @@
 							"interface",
 							"skin_pack",
 							"world_template",
-							"plugin"
+							"javascript"
 						]
 					},
 					"description": {
@@ -121,6 +121,14 @@
 							},
 							{
 								"type": "string"
+							},
+							{
+								"description": "Minecraft native module - needed to use the 'Minecraft' module.",
+								"const": "b26a4d4c-afdf-4690-88f8-931846312678"
+							},
+							{
+								"description": "GameTest native module - needed to use the 'GameTest' module.",
+								"const": "6f4b6893-1bb6-42fd-b458-7fa3d0c89616"
 							}
 						],
 						"description": "This is the unique identifier of the pack that this pack depends on. It needs to be the exact same UUID that the pack has defined in the header section of it's manifest file."
