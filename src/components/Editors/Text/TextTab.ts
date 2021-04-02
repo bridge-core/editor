@@ -8,24 +8,27 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
 import { SimpleAction } from '../../Actions/SimpleAction'
+import { ModelViewerTab } from '../Model/ModelViewerTab'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
-		if (!tab.editorModel) return
+		if (!tab.editorModel || tab.editorModel.isDisposed()) return
 
+		const fileContent = tab.editorModel?.getValue()
 		const app = await App.getApp()
 		await app.project.packIndexer.updateFile(
 			tab.getProjectPath(),
-			tab.editorModel?.getValue()
+			fileContent
 		)
 		await app.project.jsonDefaults.updateDynamicSchemas(
 			tab.getProjectPath()
 		)
+		tab.change.dispatch(fileContent)
 	},
 	600
 )
 
-export class TextTab extends Tab {
+export class TextTab extends Tab<string> {
 	component = TextTabComponent
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
@@ -34,6 +37,43 @@ export class TextTab extends Tab {
 
 	get editorInstance() {
 		return this.parent.monacoEditor
+	}
+
+	constructor(parent: TabSystem, fileHandle: FileSystemFileHandle) {
+		super(parent, fileHandle)
+
+		this.fired.then(async () => {
+			const app = await App.getApp()
+
+			if (this.getProjectPath().startsWith('RP/models/')) {
+				this.addAction(
+					new SimpleAction({
+						icon: 'mdi-play',
+						name: 'View Model',
+						onTrigger: async () => {
+							if (!this.editorModel) return
+
+							const tab = new ModelViewerTab(
+								this,
+								this.parent,
+								this.fileHandle
+							)
+							this.connectedTabs.push(tab)
+							app.project.tabSystem?.add(tab, true)
+							this.change.dispatch(this.editorModel.getValue())
+						},
+					})
+				)
+			}
+		})
+	}
+	getTabContent() {
+		if (!this.editorModel)
+			throw new Error(
+				`Cannot get tab content because no editor model was defined`
+			)
+
+		return this.editorModel.getValue()
 	}
 
 	setIsUnsaved(val: boolean) {
@@ -75,22 +115,6 @@ export class TextTab extends Tab {
 				this.parent.setActive(true)
 			})
 		)
-
-		if (this.fileHandle.name.endsWith('.json'))
-			this.addTask(
-				new SimpleAction({
-					icon: 'mdi-play',
-					name: 'View Model',
-					color: 'primary',
-					onTrigger: () => console.log('Launch'),
-				}),
-				new SimpleAction({
-					icon: 'mdi-movie',
-					name: 'Launch Animator',
-					color: 'primary',
-					onTrigger: () => console.log('Launch'),
-				})
-			)
 
 		this.editorInstance?.focus()
 		this.editorInstance?.layout()

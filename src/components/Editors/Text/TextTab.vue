@@ -1,5 +1,5 @@
 <template>
-	<div ref="monacoContainer" />
+	<div @click="tab.parent.setActive(true)" ref="monacoContainer" />
 </template>
 
 <script>

@@ -9,10 +9,13 @@ import { Project } from '../Projects/Project/Project'
 import { OpenedFiles } from './OpenedFiles'
 import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
+
+type TTabWithAnyType = Tab<any>
+
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
-	public tabs: Tab[] = []
-	protected _selectedTab: Tab | undefined = undefined
+	public tabs: TTabWithAnyType[] = []
+	protected _selectedTab: TTabWithAnyType | undefined = undefined
 	protected tabTypes = [ImageTab, TextTab]
 	protected _isActive = true
 	public readonly openedFiles: OpenedFiles
@@ -60,7 +63,7 @@ export class TabSystem extends MonacoHolder {
 	}
 
 	protected async getTabFor(fileHandle: FileSystemFileHandle) {
-		let tab: Tab | undefined = undefined
+		let tab: TTabWithAnyType | undefined = undefined
 		for (const CurrentTab of this.tabTypes) {
 			if (await CurrentTab.is(fileHandle)) {
 				tab = new CurrentTab(this, fileHandle)
@@ -73,7 +76,9 @@ export class TabSystem extends MonacoHolder {
 		return await tab.fired
 	}
 
-	async add(tab: Tab, selectTab = true) {
+	async add(tab: TTabWithAnyType, selectTab = true) {
+		if (!tab.hasFired) await tab.fired
+
 		this.tabs = [...this.tabs, tab]
 		if (!tab.isForeignFile) this.openedFiles.add(tab.getPath())
 
@@ -81,7 +86,7 @@ export class TabSystem extends MonacoHolder {
 
 		return tab
 	}
-	remove(tab: Tab, destroyEditor = true) {
+	remove(tab: TTabWithAnyType, destroyEditor = true) {
 		tab.onDeactivate()
 		this.tabs = this.tabs.filter((current) => current !== tab)
 		if (destroyEditor) tab.onDestroy()
@@ -91,20 +96,23 @@ export class TabSystem extends MonacoHolder {
 
 		return tab
 	}
-	close(tab = this.selectedTab, checkUnsaved = true) {
-		if (!tab) return
+	async close(tab = this.selectedTab, checkUnsaved = true) {
+		if (!tab) return false
 
 		if (checkUnsaved && tab.isUnsaved) {
-			new UnsavedFileWindow(tab)
+			const unsavedWin = new UnsavedFileWindow(tab)
+
+			return (await unsavedWin.fired) !== 'cancel'
 		} else {
 			this.remove(tab)
+			return true
 		}
 	}
 	async closeByPath(fileHandle: FileSystemFileHandle) {
 		const tab = await this.getTab(fileHandle)
 		if (tab) this.close(tab)
 	}
-	select(tab?: Tab) {
+	select(tab?: TTabWithAnyType) {
 		this._selectedTab?.onDeactivate()
 		this._selectedTab = tab
 
@@ -172,14 +180,14 @@ export class TabSystem extends MonacoHolder {
 			if (await tab.isFor(fileHandle)) return tab
 		}
 	}
-	closeTabs(predicate: (tab: Tab) => boolean) {
+	closeTabs(predicate: (tab: TTabWithAnyType) => boolean) {
 		const tabs = [...this.tabs].reverse()
 
 		for (const tab of tabs) {
 			if (predicate(tab)) tab.close()
 		}
 	}
-	has(predicate: (tab: Tab) => boolean) {
+	has(predicate: (tab: TTabWithAnyType) => boolean) {
 		for (const tab of this.tabs) {
 			if (predicate(tab)) return true
 		}

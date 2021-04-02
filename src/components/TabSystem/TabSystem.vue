@@ -47,7 +47,10 @@ export default {
 	},
 	computed: {
 		tabBarHeight() {
-			return this.tabSystem.selectedTab.actions.length > 0 ? 48 + 25 : 48
+			return this.tabSystem.selectedTab &&
+				this.tabSystem.selectedTab.actions.length > 0
+				? 48 + 25
+				: 48
 		},
 	},
 	methods: {

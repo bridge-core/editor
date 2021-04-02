@@ -24,3 +24,21 @@ export async function loadAsDataURL(filePath: string, fileSystem?: FileSystem) {
 		}
 	})
 }
+
+export function loadHandleAsDataURL(fileHandle: FileSystemFileHandle) {
+	return new Promise<string>(async (resolve, reject) => {
+		const reader = new FileReader()
+
+		try {
+			const file = await fileHandle.getFile()
+
+			reader.addEventListener('load', () => {
+				resolve(<string>reader.result)
+			})
+			reader.addEventListener('error', reject)
+			reader.readAsDataURL(file)
+		} catch {
+			reject(`File does not exist: "${fileHandle.name}"`)
+		}
+	})
+}

@@ -48,6 +48,10 @@ export class Project {
 		if (this.tabSystems[0].isActive) return this.tabSystems[0]
 		if (this.tabSystems[1].isActive) return this.tabSystems[1]
 	}
+	get inactiveTabSystem() {
+		if (!this.tabSystems[0].isActive) return this.tabSystems[0]
+		if (!this.tabSystems[1].isActive) return this.tabSystems[1]
+	}
 	get baseDirectory() {
 		return this._baseDirectory
 	}

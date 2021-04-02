@@ -170,6 +170,12 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 			dispose: () => this.themeMap.delete(themeConfig.id),
 		}
 	}
+
+	getColor(colorName: TColorName) {
+		const theme = this.themeMap.get(this.currentTheme)
+		if (!theme) throw new Error(`No theme currently loaded`)
+		return theme.getColor(colorName)
+	}
 }
 
 export interface IThemeDefinition {

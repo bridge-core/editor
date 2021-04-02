@@ -6,8 +6,10 @@ import { PackType } from '/@/components/Data/PackType'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '../Actions/SimpleAction'
+import { EventDispatcher } from '../Common/Event/EventDispatcher'
 
-export abstract class Tab extends Signal<Tab> {
+export abstract class Tab<T> extends Signal<Tab<T>> {
+	public readonly change = new EventDispatcher<T>()
 	abstract component: Vue.Component
 	uuid = uuid()
 	hasRemoteChange = false
@@ -15,6 +17,7 @@ export abstract class Tab extends Signal<Tab> {
 	protected projectPath?: string
 	isForeignFile = false
 	protected actions: SimpleAction[] = []
+	protected connectedTabs: Tab<any>[] = []
 
 	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val
@@ -87,8 +90,9 @@ export abstract class Tab extends Signal<Tab> {
 		this.parent.select(this)
 		return this
 	}
-	close() {
-		this.parent.close(this)
+	async close() {
+		const didClose = await this.parent.close(this)
+		if (didClose) this.connectedTabs.forEach((tab) => tab.close())
 	}
 	async isFor(fileHandle: FileSystemFileHandle) {
 		return await fileHandle.isSameEntry(this.fileHandle)
@@ -187,6 +191,7 @@ export abstract class Tab extends Signal<Tab> {
 	}
 
 	abstract save(): void | Promise<void>
+	abstract getTabContent(): T
 
 	copy() {
 		document.execCommand('copy')
