@@ -1,4 +1,3 @@
-import { SimpleAction } from '../Actions/SimpleAction'
 import { Tab } from './CommonTab'
 import { TabSystem } from './TabSystem'
 import { IDisposable } from '/@/types/disposable'
@@ -17,24 +16,9 @@ export abstract class PreviewTab<T> extends Tab<T> {
 	) {
 		super(parent, fileHandle)
 
-		this.addAction(
-			new SimpleAction({
-				icon: 'mdi-refresh',
-				name: 'Reload',
-				onTrigger: () => this.reload(),
-			}),
-			new SimpleAction({
-				icon: 'mdi-cube-outline',
-				name: 'Model',
-				onTrigger: () => {},
-			}),
-			new SimpleAction({
-				icon: 'mdi-image-outline',
-				name: 'Texture',
-				onTrigger: () => {},
-			})
-		)
+		this.onCreate()
 	}
+	onCreate() {}
 	async onActivate() {
 		this.disposables.push(
 			this.tab.change.on((data: T) => this.onChange(data))

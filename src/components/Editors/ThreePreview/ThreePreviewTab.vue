@@ -6,7 +6,7 @@
 
 <script>
 export default {
-	name: 'ImageTab',
+	name: 'ThreePreviewTab',
 	props: {
 		tab: Object,
 	},

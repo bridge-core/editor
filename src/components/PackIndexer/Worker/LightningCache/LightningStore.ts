@@ -246,7 +246,7 @@ export class LightningStore {
 
 	getCacheDataFor(fileType: string, filePath?: string, cacheKey?: string) {
 		const collectedData = this.getAllFrom(fileType, filePath)
-		if (cacheKey) return collectedData[cacheKey]
+		if (typeof cacheKey === 'string') return collectedData[cacheKey]
 		return collectedData
 	}
 }

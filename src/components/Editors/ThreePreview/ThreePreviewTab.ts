@@ -1,4 +1,4 @@
-import ModelViewerTabComponent from './ModelViewerTab.vue'
+import ThreePreviewTabComponent from './ThreePreviewTab.vue'
 import { IDisposable } from '/@/types/disposable'
 import { Model } from 'bridge-model-viewer/lib/main'
 import { PreviewTab } from '/@/components/TabSystem/PreviewTab'
@@ -11,12 +11,10 @@ import {
 } from 'three'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import json5 from 'json5'
 import { App } from '/@/App'
-import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 
-export class ModelViewerTab extends PreviewTab<string> {
-	public component = ModelViewerTabComponent
+export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
+	public component = ThreePreviewTabComponent
 	public readonly setupComplete = new Signal<void>()
 
 	protected disposables: IDisposable[] = []
@@ -73,7 +71,7 @@ export class ModelViewerTab extends PreviewTab<string> {
 		const app = await App.getApp()
 
 		this.disposables.push(
-			app.themeManager.on((mode) => {
+			app.themeManager.on(() => {
 				const background = app.themeManager.getColor('background')
 				this.scene.background = new Color(background)
 				this.requestRendering()
@@ -83,37 +81,6 @@ export class ModelViewerTab extends PreviewTab<string> {
 	onDeactivate() {
 		this.setupComplete.resetSignal()
 		super.onDeactivate()
-	}
-
-	async onChange(data: string) {
-		await this.setupComplete
-		const app = await App.getApp()
-
-		let modelJson: any
-		try {
-			modelJson = json5.parse(data)
-		} catch {
-			// TODO: Invalid JSON error message
-			return
-		}
-
-		if (modelJson['minecraft:geometry']) {
-			modelJson = modelJson['minecraft:geometry'][0]
-		}
-
-		if (this.model) this.scene?.remove(this.model.getModel())
-		this.model = new Model(
-			modelJson,
-			await loadAsDataURL(
-				'RP/textures/entity/marker.png',
-				app.project.fileSystem
-			)
-		)
-		this.scene.add(this.model.getModel())
-
-		setTimeout(() => {
-			this.requestRendering()
-		}, 100)
 	}
 
 	protected render(checkShouldTick = true) {
@@ -151,12 +118,5 @@ export class ModelViewerTab extends PreviewTab<string> {
 		await super.toOtherTabSystem(updateParentTabs)
 
 		this.onResize()
-	}
-
-	get icon() {
-		return 'mdi-cube-outline'
-	}
-	get iconColor() {
-		return 'primary'
 	}
 }

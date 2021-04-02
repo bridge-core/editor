@@ -29,6 +29,7 @@
 		"texturePath": [
 			"minecraft:block/components/minecraft:material_instances/*/texture",
 			"minecraft:block/permutations/*/components/minecraft:material_instances/*/texture"
-		]
+		],
+		"@map": "return Bridge.value + '.png'"
 	}
 ]

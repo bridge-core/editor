@@ -7,8 +7,8 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
-import { SimpleAction } from '../../Actions/SimpleAction'
-import { ModelViewerTab } from '../Model/ModelViewerTab'
+import { SimpleAction } from '/@/components/Actions/SimpleAction'
+import { ModelPreviewTab } from '/@/components/Editors/ModelPreview/ModelPreviewTab'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -53,7 +53,7 @@ export class TextTab extends Tab<string> {
 						onTrigger: async () => {
 							if (!this.editorModel) return
 
-							const tab = new ModelViewerTab(
+							const tab = new ModelPreviewTab(
 								this,
 								this.parent,
 								this.fileHandle
@@ -72,7 +72,7 @@ export class TextTab extends Tab<string> {
 			throw new Error(
 				`Cannot get tab content because no editor model was defined`
 			)
-
+		if (this.editorModel.isDisposed()) return ''
 		return this.editorModel.getValue()
 	}
 
