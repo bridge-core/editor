@@ -10,7 +10,9 @@
 			"maxItems": 3,
 			"minItems": 3,
 			"items": {
-				"type": "number"
+				"type": "number",
+				"maximum": 16,
+				"minimum": 0
 			}
 		},
 		"origin": {
@@ -18,9 +20,23 @@
 			"type": "array",
 			"maxItems": 3,
 			"minItems": 3,
-			"items": {
-				"type": "number"
-			}
+			"items": [
+				{
+					"type": "number",
+					"minimum": -8,
+					"maximum": 8
+				},
+				{
+					"type": "number",
+					"minimum": 0,
+					"maximum": 16
+				},
+				{
+					"type": "number",
+					"minimum": -8,
+					"maximum": 8
+				}
+			]
 		}
 	}
 }
