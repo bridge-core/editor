@@ -6,10 +6,10 @@ export interface IDropdownWindowOpts {
 	placeholder: string
 	options: Array<string>
 	default: string
-	onConfirm: (selection: string) => Promise<void> | void
+	onConfirm?: (selection: string) => Promise<void> | void
 }
 
-export class DropdownWindow extends BaseWindow<void> {
+export class DropdownWindow extends BaseWindow<string> {
 	protected currentSelection: string
 
 	constructor(protected opts: IDropdownWindowOpts) {
@@ -32,6 +32,6 @@ export class DropdownWindow extends BaseWindow<void> {
 	async confirm() {
 		if (typeof this.opts.onConfirm === 'function')
 			await this.opts.onConfirm(this.currentSelection)
-		super.close()
+		super.close(this.currentSelection)
 	}
 }

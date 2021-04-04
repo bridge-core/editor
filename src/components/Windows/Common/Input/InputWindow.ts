@@ -6,10 +6,10 @@ export interface IInputWindowOpts {
 	label: string
 	default?: string
 	expandText?: string
-	onConfirm: (input: string) => Promise<void> | void
+	onConfirm?: (input: string) => Promise<void> | void
 }
 
-export class InputWindow extends BaseWindow<void> {
+export class InputWindow extends BaseWindow<string> {
 	protected inputValue: string
 
 	constructor(protected opts: IInputWindowOpts) {
@@ -30,8 +30,9 @@ export class InputWindow extends BaseWindow<void> {
 	}
 
 	async confirm() {
+		const finalInput = this.inputValue + (this.expandText ?? '')
 		if (typeof this.opts.onConfirm === 'function')
-			await this.opts.onConfirm(this.inputValue + (this.expandText ?? ''))
-		super.close()
+			await this.opts.onConfirm(finalInput)
+		super.close(finalInput)
 	}
 }
