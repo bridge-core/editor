@@ -40,8 +40,8 @@
 			"lootTable.json",
 			"BP/loot_tables/entities/{{IDENTIFIER}}.json",
 			{ "inject": ["IDENTIFIER"] }
-        ],
-        [
+		],
+		[
 			"lootTableSneeze.json",
 			"BP/loot_tables/entities/{{IDENTIFIER}}_sneeze.json",
 			{ "inject": ["IDENTIFIER"] }
@@ -62,7 +62,7 @@
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
-			"textureAgressive.png",
+			"textureAggressive.png",
 			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_aggressive.png",
 			{ "inject": ["IDENTIFIER"] }
 		],
