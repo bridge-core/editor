@@ -35,6 +35,9 @@
 						"max_distance": {
 							"type": "number"
 						},
+						"subtitle": {
+							"type": "string"
+						},
 						"sounds": {
 							"type": "array",
 							"items": {
