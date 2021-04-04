@@ -55,8 +55,8 @@
 			"texture.png",
 			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}.png",
 			{ "inject": ["IDENTIFIER"] }
-        ],
-        [
+		],
+		[
 			"arcticTexture.png",
 			"RP/textures/entity/{{IDENTIFIER}}/arctic_{{IDENTIFIER}}.png",
 			{ "inject": ["IDENTIFIER"] }
