@@ -47,21 +47,30 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 		})
 		this.renderer.setPixelRatio(window.devicePixelRatio)
 
-		this._camera = new PerspectiveCamera(70, 2, 0.1, 1000)
-		this._camera.position.x = -20
-		this._camera.position.y = 20
-		this._camera.position.z = -20
+		if (!this._camera) {
+			this._camera = new PerspectiveCamera(70, 2, 0.1, 1000)
+			this._camera.position.x = -20
+			this._camera.position.y = 20
+			this._camera.position.z = -20
+		}
 
-		this.camera.updateProjectionMatrix()
-		this.controls = new OrbitControls(this.camera, canvas)
-		this._scene = new Scene()
-		this._scene.add(new AmbientLight(0xffffff))
+		if (!this.controls) {
+			this.controls = new OrbitControls(this.camera, canvas)
+			this.controls.addEventListener('change', () =>
+				this.requestRendering()
+			)
+		}
+
+		if (!this._scene) {
+			this._scene = new Scene()
+			this._scene.add(new AmbientLight(0xffffff))
+		}
+
 		this._scene.background = new Color(
 			app.themeManager.getColor('background')
 		)
 
 		this.disposables.push(app.windowResize.on(this.onResize.bind(this)))
-		this.controls.addEventListener('change', () => this.requestRendering())
 
 		this.onResize()
 		this.setupComplete.dispatch()
@@ -116,7 +125,7 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 	}
 	protected async toOtherTabSystem(updateParentTabs?: boolean) {
 		await super.toOtherTabSystem(updateParentTabs)
-
+		await this.setupComplete.fired
 		this.onResize()
 	}
 }
