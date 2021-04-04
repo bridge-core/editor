@@ -5,6 +5,9 @@ export class EventDispatcher<T> {
 
 	constructor() {}
 
+	get hasListeners() {
+		return this.listeners.size > 0
+	}
 	dispatch(data: T) {
 		this.listeners.forEach((listener) => listener(data))
 	}

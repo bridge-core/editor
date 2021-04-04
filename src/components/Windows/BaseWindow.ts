@@ -26,9 +26,9 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 		this.actions.push(action)
 	}
 
-	close(data: T) {
+	close(data: T | null) {
 		this.isVisible = false
-		this.dispatch(data)
+		if (data !== null) this.dispatch(data)
 
 		if (!this.keepAlive) {
 			setTimeout(() => {

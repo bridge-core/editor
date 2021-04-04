@@ -191,7 +191,9 @@ export abstract class Tab<T> extends Signal<Tab<T>> {
 	}
 
 	abstract save(): void | Promise<void>
-	abstract getTabContent(): T
+	async getFile() {
+		return await this.fileHandle.getFile()
+	}
 
 	copy() {
 		document.execCommand('copy')

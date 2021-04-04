@@ -27,5 +27,4 @@ export class ImageTab extends Tab<unknown> {
 	}
 
 	save() {}
-	getTabContent() {}
 }

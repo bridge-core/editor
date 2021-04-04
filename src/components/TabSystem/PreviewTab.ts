@@ -1,9 +1,7 @@
 import { Tab } from './CommonTab'
 import { TabSystem } from './TabSystem'
-import { IDisposable } from '/@/types/disposable'
 
 export abstract class PreviewTab<T> extends Tab<T> {
-	protected disposables: IDisposable[] = []
 	public readonly isForeignFile = true
 	static is() {
 		return false
@@ -20,27 +18,20 @@ export abstract class PreviewTab<T> extends Tab<T> {
 	}
 	onCreate() {}
 	async onActivate() {
-		this.disposables.push(
-			this.tab.change.on((data: T) => this.onChange(data))
-		)
-		this.onChange(this.getTabContent())
-	}
-
-	onDeactivate() {
-		this.disposables.forEach((disposable) => disposable.dispose())
+		this.onChange(await this.getFile())
 	}
 
 	get name() {
 		return `Preview: ${super.name}`
 	}
 
-	abstract onChange(data: T): Promise<void> | void
+	abstract onChange(data: File): Promise<void> | void
 
 	save() {}
-	getTabContent() {
-		return this.tab.getTabContent()
+	getFile() {
+		return this.tab.getFile()
 	}
-	reload() {
-		this.onChange(this.getTabContent())
+	async reload() {
+		this.onChange(await this.getFile())
 	}
 }

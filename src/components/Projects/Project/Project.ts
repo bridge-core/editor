@@ -13,6 +13,7 @@ import { CompilerManager } from '/@/components/Compiler/CompilerManager'
 import { JsonDefaults } from '/@/components/Data/JSONDefaults'
 import { TypeLoader } from '/@/components/Data/TypeLoader'
 import { ExtensionLoader } from '../../Extensions/ExtensionLoader'
+import { FileChangeRegistry } from './FileChangeRegistry'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -36,6 +37,7 @@ export class Project {
 		this.app.fileSystem,
 		`projects/${this.name}/bridge/inactiveExtensions.json`
 	)
+	public readonly fileChange = new FileChangeRegistry()
 
 	//#region Getters
 	get projectData() {
@@ -152,6 +154,13 @@ export class Project {
 		await this.packIndexer.updateFile(filePath)
 		await this.compilerManager.updateFile('default.json', filePath)
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
+	}
+	async getFileFromDiskOrTab(filePath: string) {
+		const fileHandle = await this.fileSystem.getFileHandle(filePath)
+		const tab = await this.getFileTab(fileHandle)
+		if (tab) return tab.getFile()
+
+		return await fileHandle.getFile()
 	}
 	setActiveTabSystem(tabSystem: TabSystem, value: boolean) {
 		this.tabSystems.forEach((tS) =>

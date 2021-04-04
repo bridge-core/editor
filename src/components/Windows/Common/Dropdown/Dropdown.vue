@@ -5,6 +5,8 @@
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
+		:isPersistent="!$data.isClosable"
+		:hasCloseButton="false"
 		:width="440"
 		:height="140"
 		@closeWindow="onClose"
@@ -51,7 +53,6 @@ export default {
 			this.currentWindow.close()
 		},
 		onConfirm() {
-			this.currentWindow.close()
 			this.currentWindow.confirm()
 		},
 	},

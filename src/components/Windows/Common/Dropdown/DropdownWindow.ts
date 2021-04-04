@@ -3,7 +3,8 @@ import DropdownWindowComponent from './Dropdown.vue'
 
 export interface IDropdownWindowOpts {
 	name: string
-	placeholder: string
+	isClosable?: boolean
+	placeholder?: string
 	options: Array<string>
 	default: string
 	onConfirm?: (selection: string) => Promise<void> | void
@@ -28,10 +29,13 @@ export class DropdownWindow extends BaseWindow<string> {
 	get placeholder() {
 		return this.opts.placeholder
 	}
+	get isClosable() {
+		return this.opts.isClosable
+	}
 
 	async confirm() {
 		if (typeof this.opts.onConfirm === 'function')
 			await this.opts.onConfirm(this.currentSelection)
-		super.close(this.currentSelection)
+		super.close(this.currentSelection ?? null)
 	}
 }

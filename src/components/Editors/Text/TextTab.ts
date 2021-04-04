@@ -8,7 +8,7 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
-import { ModelPreviewTab } from '/@/components/Editors/ModelPreview/ModelPreviewTab'
+import { GeometryPreviewTab } from '../GeometryPreview/GeometryPreviewTab'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -23,7 +23,11 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 		await app.project.jsonDefaults.updateDynamicSchemas(
 			tab.getProjectPath()
 		)
-		tab.change.dispatch(fileContent)
+
+		app.project.fileChange.dispatch(
+			tab.getProjectPath(),
+			new File([tab.editorModel?.getValue()], tab.name)
+		)
 	},
 	600
 )
@@ -53,7 +57,7 @@ export class TextTab extends Tab<string> {
 						onTrigger: async () => {
 							if (!this.editorModel) return
 
-							const tab = new ModelPreviewTab(
+							const tab = new GeometryPreviewTab(
 								this,
 								this.parent,
 								this.fileHandle
@@ -67,13 +71,14 @@ export class TextTab extends Tab<string> {
 			}
 		})
 	}
-	getTabContent() {
+	async getFile() {
 		if (!this.editorModel)
 			throw new Error(
 				`Cannot get tab content because no editor model was defined`
 			)
-		if (this.editorModel.isDisposed()) return ''
-		return this.editorModel.getValue()
+		if (this.editorModel.isDisposed()) return new File([''], this.name)
+
+		return new File([this.editorModel.getValue()], this.name)
 	}
 
 	setIsUnsaved(val: boolean) {
