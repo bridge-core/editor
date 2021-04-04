@@ -10,6 +10,9 @@ export default {
 	props: {
 		tab: Object,
 	},
+	activated() {
+		this.tab.receiveCanvas(this.$refs.canvas)
+	},
 	mounted() {
 		this.tab.receiveCanvas(this.$refs.canvas)
 	},
