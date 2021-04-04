@@ -2,8 +2,8 @@
 	"format_version": "1.13.0",
 	"minecraft:feature_rules": {
 		"description": {
-			"identifier": "{{PROJECT_PREFIX}}:overworld_underground_{{IDENTIFIER}}_feature",
-			"places_feature": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}_feature"
+			"identifier": "{{PROJECT_PREFIX}}:overworld_underground_{{IDENTIFIER}}",
+			"places_feature": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}"
 		},
 		"conditions": {
 			"placement_pass": "underground_pass",
@@ -29,24 +29,15 @@
 			"coordinate_eval_order": "zyx",
 			"x": {
 				"distribution": "uniform",
-				"extent": [
-					0,
-					16
-				]
+				"extent": [0, 16]
 			},
 			"y": {
 				"distribution": "uniform",
-				"extent": [
-					0,
-					64
-				]
+				"extent": [0, 64]
 			},
 			"z": {
 				"distribution": "uniform",
-				"extent": [
-					0,
-					16
-				]
+				"extent": [0, 16]
 			}
 		}
 	}
