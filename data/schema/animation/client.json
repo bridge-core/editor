@@ -27,67 +27,154 @@
 								".*": {
 									"properties": {
 										"rotation": {
-											"type": "array",
-											"minItems": 3,
-											"maxItems": 3,
-											"items": {
-												"anyOf": [
-													{
-														"examples": [
-															0,
-															90,
-															180,
-															270,
-															360
+											"anyOf": [
+												{
+													"type": "array",
+													"minItems": 3,
+													"maxItems": 3,
+													"items": {
+														"anyOf": [
+															{
+																"examples": [
+																	0,
+																	90,
+																	180,
+																	270,
+																	360
+																]
+															},
+															{
+																"$ref": "../molang/embeddedBeta.json"
+															}
 														]
-													},
-													{
-														"$ref": "../molang/embeddedBeta.json"
 													}
-												]
-											}
+												},
+												{
+													"patternProperties": {
+														"[0-9]+.?[0-9]*": {
+															"type": "array",
+															"minItems": 3,
+															"maxItems": 3,
+															"items": {
+																"anyOf": [
+																	{
+																		"examples": [
+																			0,
+																			90,
+																			180,
+																			270,
+																			360
+																		]
+																	},
+																	{
+																		"$ref": "../molang/embeddedBeta.json"
+																	}
+																]
+															}
+														}
+													}
+												}
+											]
 										},
 										"scale": {
-											"type": "array",
-											"minItems": 3,
-											"maxItems": 3,
-											"items": {
-												"anyOf": [
-													{
-														"examples": [
-															0,
-															90,
-															180,
-															270,
-															360
+											"anyOf": [
+												{
+													"type": "array",
+													"minItems": 3,
+													"maxItems": 3,
+													"items": {
+														"anyOf": [
+															{
+																"examples": [
+																	0,
+																	90,
+																	180,
+																	270,
+																	360
+																]
+															},
+															{
+																"$ref": "../molang/embeddedBeta.json"
+															}
 														]
-													},
-													{
-														"$ref": "../molang/embeddedBeta.json"
 													}
-												]
-											}
+												},
+												{
+													"patternProperties": {
+														"[0-9]+.?[0-9]*": {
+															"type": "array",
+															"minItems": 3,
+															"maxItems": 3,
+															"items": {
+																"anyOf": [
+																	{
+																		"examples": [
+																			0,
+																			90,
+																			180,
+																			270,
+																			360
+																		]
+																	},
+																	{
+																		"$ref": "../molang/embeddedBeta.json"
+																	}
+																]
+															}
+														}
+													}
+												}
+											]
 										},
 										"position": {
-											"type": "array",
-											"minItems": 3,
-											"maxItems": 3,
-											"items": {
-												"anyOf": [
-													{
-														"examples": [
-															0,
-															90,
-															180,
-															270,
-															360
+											"anyOf": [
+												{
+													"type": "array",
+													"minItems": 3,
+													"maxItems": 3,
+													"items": {
+														"anyOf": [
+															{
+																"examples": [
+																	0,
+																	90,
+																	180,
+																	270,
+																	360
+																]
+															},
+															{
+																"$ref": "../molang/embeddedBeta.json"
+															}
 														]
-													},
-													{
-														"$ref": "../molang/embeddedBeta.json"
 													}
-												]
-											}
+												},
+												{
+													"patternProperties": {
+														"[0-9]+.?[0-9]*": {
+															"type": "array",
+															"minItems": 3,
+															"maxItems": 3,
+															"items": {
+																"anyOf": [
+																	{
+																		"examples": [
+																			0,
+																			90,
+																			180,
+																			270,
+																			360
+																		]
+																	},
+																	{
+																		"$ref": "../molang/embeddedBeta.json"
+																	}
+																]
+															}
+														}
+													}
+												}
+											]
 										}
 									}
 								}
