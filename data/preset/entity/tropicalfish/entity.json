@@ -1,4 +1,3 @@
-//bridge-file-version: #0
 {
 	"format_version": "1.13.0",
 	"minecraft:entity": {
@@ -515,10 +514,7 @@
 				"on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
 			},
 			"minecraft:type_family": {
-				"family": [
-					"tropicalfish",
-					"fish"
-				]
+				"family": ["tropicalfish", "fish"]
 			},
 			"minecraft:collision_box": {
 				"width": 0.4,
@@ -634,149 +630,107 @@
 		"events": {
 			"{{PROJECT_PREFIX}}:become_anenonme": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:anenonme"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:anenonme"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_black_tang": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:black_tang"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:black_tang"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_blue_dory": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:blue_dory"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:blue_dory"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_butterfly_fish": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:butterfly_fish"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:butterfly_fish"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_cichlid": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:cichlid"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:cichlid"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_clownfish": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:clownfish"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:clownfish"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_cc_betta": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:cc_betta"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:cc_betta"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_dog_fish": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:dog_fish"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:dog_fish"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_e_red_snapper": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:e_red_snapper"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:e_red_snapper"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_goat_fish": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:goat_fish"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:goat_fish"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_moorish_idol": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:moorish_idol"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:moorish_idol"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_ornate_butterfly": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:ornate_butterfly"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:ornate_butterfly"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_parrot_fish": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:parrot_fish"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:parrot_fish"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_queen_angel_fish": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:queen_angel_fish"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:queen_angel_fish"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_red_cichlid": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:red_cichlid"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:red_cichlid"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_red_lipped_benny": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:red_lipped_benny"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:red_lipped_benny"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_red_snapper": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:red_snapper"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:red_snapper"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_threadfin": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:threadfin"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:threadfin"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_tomato_clown": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:tomato_clown"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:tomato_clown"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_triggerfish": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:triggerfish"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:triggerfish"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_yellow_tang": {
 				"add": {
-					"component_groups": [
-						"{{PROJECT_PREFIX}}:yellow_tang"
-					]
+					"component_groups": ["{{PROJECT_PREFIX}}:yellow_tang"]
 				}
 			},
 			"{{PROJECT_PREFIX}}:become_yellow_tail_parrot": {
@@ -790,9 +744,7 @@
 				"sequence": [
 					{
 						"add": {
-							"component_groups": [
-								"adult"
-							]
+							"component_groups": ["adult"]
 						}
 					},
 					{
