@@ -53,7 +53,12 @@
 		],
 		[
 			"texture.png",
-			"RP/textures/entity/{{IDENTIFIER}}.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER"] }
+		],
+		[
+			"textureSaddled.png",
+			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_saddle.png",
 			{ "inject": ["IDENTIFIER"] }
 		]
 	],
