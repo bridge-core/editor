@@ -1,1 +1,7 @@
-[{ "identifier": "*/description/identifier" }]
+[
+	{ "identifier": "*/description/identifier" },
+	{
+		"texturePath": "*/description/basic_render_parameters/texture",
+		"@map": "return Bridge.value + '.png'"
+	}
+]
