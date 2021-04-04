@@ -7,6 +7,9 @@
 		},
 		{
 			"$ref": "../dynamic/familyEnum.json"
+		},
+		{
+			"type": "string"
 		}
 	]
 }

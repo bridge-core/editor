@@ -3952,6 +3952,10 @@
 							"description": "If true, the amount of time on the timer will be random between the min and max values specified in time.",
 							"type": "boolean"
 						},
+						"random_interval": {
+							"description": "If true, the amount of time on the timer will be random between the min and max values specified in time.",
+							"type": "boolean"
+						},
 						"time": {
 							"description": "Amount of time in seconds for the timer. Can be specified as a number or a pair of numbers (min and max). Incompatible with random_time_choices.",
 							"anyOf": [
