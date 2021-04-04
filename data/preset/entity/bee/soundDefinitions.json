@@ -1,6 +1,6 @@
 {
 	"sound_definitions": {
-		"mob.{{IDNENTIFIER}}.aggressive": {
+		"mob.{{IDENTIFIER}}.aggressive": {
 			"category": "neutral",
 			"max_distance": 8,
 			"sounds": [
@@ -12,7 +12,7 @@
 				"sounds/mob/bee/aggressive3"
 			]
 		},
-		"mob.{{IDNENTIFIER}}.death": {
+		"mob.{{IDENTIFIER}}.death": {
 			"category": "neutral",
 			"sounds": [
 				{
@@ -22,7 +22,7 @@
 				"sounds/mob/bee/death2"
 			]
 		},
-		"mob.{{IDNENTIFIER}}.hurt": {
+		"mob.{{IDENTIFIER}}.hurt": {
 			"category": "neutral",
 			"sounds": [
 				"sounds/mob/bee/hurt1",
@@ -33,7 +33,7 @@
 				"sounds/mob/bee/hurt3"
 			]
 		},
-		"mob.{{IDNENTIFIER}}.loop": {
+		"mob.{{IDENTIFIER}}.loop": {
 			"category": "neutral",
 			"max_distance": 6,
 			"sounds": [
@@ -47,7 +47,7 @@
 				}
 			]
 		},
-		"mob.{{IDNENTIFIER}}.pollinate": {
+		"mob.{{IDENTIFIER}}.pollinate": {
 			"category": "neutral",
 			"max_distance": 12,
 			"sounds": [
@@ -60,7 +60,7 @@
 				"sounds/mob/bee/pollinate4"
 			]
 		},
-		"mob.{{IDNENTIFIER}}.sting": {
+		"mob.{{IDENTIFIER}}.sting": {
 			"category": "neutral",
 			"sounds": ["sounds/mob/bee/sting"]
 		}

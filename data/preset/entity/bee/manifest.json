@@ -48,22 +48,22 @@
 		],
 		[
 			"texture.png",
-			"RP/textures/entity/{{IDENTIFIER}}.png",
+			"RP/textures/entity/bee/{{IDENTIFIER}}.png",
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
 			"textureAngry.png",
-			"RP/textures/entity/{{IDENTIFIER}}_angry.png",
+			"RP/textures/entity/bee/{{IDENTIFIER}}_angry.png",
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
 			"textureAngryNectar.png",
-			"RP/textures/entity/{{IDENTIFIER}}_angry_nectar.png",
+			"RP/textures/entity/bee/{{IDENTIFIER}}_angry_nectar.png",
 			{ "inject": ["IDENTIFIER"] }
 		],
 		[
 			"textureNectar.png",
-			"RP/textures/entity/{{IDENTIFIER}}_nectar.png",
+			"RP/textures/entity/bee/{{IDENTIFIER}}_nectar.png",
 			{ "inject": ["IDENTIFIER"] }
 		]
 	],
