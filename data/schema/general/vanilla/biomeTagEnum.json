@@ -4,6 +4,7 @@
 	"enum": [
 		"monster",
 		"animal",
+		"bamboo",
 		"ocean",
 		"nether",
 		"the_end",
@@ -52,6 +53,9 @@
 		"spawn_endermen",
 		"spawn_ghast",
 		"spawn_magma_cubes",
-		"spawn_many_magma_cubes"
+		"spawn_many_magma_cubes",
+		"snowy_slopes",
+		"mountains",
+		"mountain_meadow"
 	]
 }

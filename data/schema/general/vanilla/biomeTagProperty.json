@@ -42,6 +42,18 @@
 		"warm": {},
 		"snowy_slopes": {},
 		"mountains": {},
-		"mountain_meadow": {}
+		"mountain_meadow": {},
+		"netherwart_forest": {},
+		"crimson_forest": {},
+		"warped_forest": {},
+		"soulsand_valley": {},
+		"nether_wastes": {},
+		"basalt_deltas": {},
+		"spawn_few_zombified_piglins": {},
+		"spawn_piglin": {},
+		"spawn_endermen": {},
+		"spawn_ghast": {},
+		"spawn_magma_cubes": {},
+		"spawn_many_magma_cubes": {}
 	}
 }
