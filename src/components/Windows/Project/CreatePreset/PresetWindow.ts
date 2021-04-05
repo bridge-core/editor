@@ -20,6 +20,7 @@ import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 export interface IPresetManifest {
 	name: string
 	icon: string
+	requiredModules?: string[]
 	packTypes?: TPackTypeId[]
 	category: string
 	description?: string
@@ -74,6 +75,21 @@ export class CreatePresetWindow extends BaseWindow {
 
 		// Check that project has packType preset needs
 		if (!app.project?.hasPacks(manifest.packTypes ?? [])) return
+
+		// Check that the project has the required modules
+		if (manifest.requiredModules) {
+			const gameTest = <boolean | undefined>(
+				await app.projectConfig.get('gameTestAPI')
+			)
+			const scripting = <boolean | undefined>(
+				await app.projectConfig.get('scriptingAPI')
+			)
+
+			for (const module of manifest.requiredModules) {
+				if (module == 'gameTest' && !gameTest) return
+				if (module == 'scriping' && !scripting) return
+			}
+		}
 
 		// Load current project target version
 		const projectTargetVersion =

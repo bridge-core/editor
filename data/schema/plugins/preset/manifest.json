@@ -20,6 +20,13 @@
 		"category": {
 			"type": "string"
 		},
+		"requiredModules": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": ["gameTest", "scripting"]
+			}
+		},
 		"targetVersion": {
 			"type": "array",
 			"minItems": 2,

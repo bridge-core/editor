@@ -3,6 +3,7 @@
 	"icon": "mdi-language-javascript",
 	"description": "Creates a blank server script.",
 	"category": "fileType.simpleFile",
+	"requiredModules": ["scripting"],
 	"packTypes": ["behaviorPack"],
 	"fields": [
 		[

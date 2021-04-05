@@ -6,6 +6,8 @@ export type TProjectConfigKey =
 	| 'author'
 	| 'darkTheme'
 	| 'lightTheme'
+	| 'gameTestAPI'
+	| 'scriptingAPI'
 export type TProjectConfig = {
 	[key in TProjectConfigKey]: unknown
 }

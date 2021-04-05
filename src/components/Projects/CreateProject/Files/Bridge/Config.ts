@@ -11,6 +11,8 @@ export class CreateConfig extends CreateFile {
 				author: createOptions.author,
 				targetVersion: createOptions.targetVersion,
 				description: createOptions.description,
+				gameTestAPI: createOptions.gameTest,
+				scriptingAPI: createOptions.scripting,
 			},
 			true
 		)
