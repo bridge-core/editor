@@ -80,7 +80,7 @@ export class TabSystem extends MonacoHolder {
 		if (!tab.hasFired) await tab.fired
 
 		this.tabs = [...this.tabs, tab]
-		if (!tab.isForeignFile) this.openedFiles.add(tab.getPath())
+		if (!tab.isForeignFile) await this.openedFiles.add(tab.getPath())
 
 		if (selectTab) tab.select()
 

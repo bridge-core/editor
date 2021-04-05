@@ -42,7 +42,7 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 
 		this.canvas = canvas
 		this.renderer = new WebGLRenderer({
-			antialias: true,
+			antialias: false,
 			canvas,
 		})
 		this.renderer.setPixelRatio(window.devicePixelRatio)
@@ -54,12 +54,8 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 			this._camera.position.z = -20
 		}
 
-		if (!this.controls) {
-			this.controls = new OrbitControls(this.camera, canvas)
-			this.controls.addEventListener('change', () =>
-				this.requestRendering()
-			)
-		}
+		this.controls = new OrbitControls(this.camera, canvas)
+		this.controls.addEventListener('change', () => this.requestRendering())
 
 		if (!this._scene) {
 			this._scene = new Scene()

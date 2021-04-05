@@ -29,6 +29,23 @@ export class GeometryPreviewTab extends ThreePreviewTab<string> {
 				onTrigger: () => this.reload(),
 			}),
 			new SimpleAction({
+				icon: 'mdi-image-outline',
+				name: 'Texture',
+				onTrigger: async () => {
+					const textures = this.renderContainer.texturePaths
+					const chooseTexture = new DropdownWindow({
+						name: 'Texture',
+						isClosable: false,
+						options: textures,
+						default: this.renderContainer.currentTexturePath,
+					})
+					const choice = await chooseTexture.fired
+
+					this.renderContainer.selectTexturePath(choice)
+					this.createModel()
+				},
+			}),
+			new SimpleAction({
 				icon: 'mdi-cube-outline',
 				name: 'Model',
 				onTrigger: async () => {
@@ -46,28 +63,18 @@ export class GeometryPreviewTab extends ThreePreviewTab<string> {
 				},
 			}),
 			new SimpleAction({
-				icon: 'mdi-image-outline',
-				name: 'Texture',
+				icon: 'mdi-movie-open-outline',
+				name: 'Animation',
 				onTrigger: async () => {
-					const textures = this.renderContainer.texturePaths
-					const chooseTexture = new DropdownWindow({
-						name: 'Texture',
-						isClosable: false,
-						options: textures,
-						default: this.renderContainer.currentTexturePath,
-					})
-					const choice = await chooseTexture.fired
-
-					this.renderContainer.selectTexturePath(choice)
-					this.createModel()
+					// TODO
 				},
 			})
 		)
 	}
 
-	async loadRenderContainer() {}
-
-	async onChange(file: File) {
+	async loadRenderContainer() {
+		if (this._renderContainer !== undefined) return
+		const file = await this.getFile()
 		await this.setupComplete
 		const data = await file.text()
 		const app = await App.getApp()
@@ -105,37 +112,53 @@ export class GeometryPreviewTab extends ThreePreviewTab<string> {
 				true
 			)) ?? []
 
+		const clientEntityData = <Record<string, string[]>[]>(
+			await Promise.all(
+				connectedClientEntities.map((clientEntity) =>
+					packIndexer.getCacheDataFor('clientEntity', clientEntity)
+				)
+			)
+		)
+
 		const connectedTextures = (
 			await Promise.all(<Promise<string[]>[]>[
-				...connectedClientEntities.map((clientEntity) =>
-					packIndexer.getCacheDataFor(
-						'clientEntity',
-						clientEntity,
-						'texturePath'
-					)
-				),
+				...clientEntityData.map((data) => data.texturePath),
 				...connectedBlocks.map((block) =>
 					packIndexer.getCacheDataFor('block', block, 'texturePath')
 				),
 			])
 		).flat()
 
-		const collectedData = {
+		const connectedAnimations = (
+			await Promise.all(<Promise<string[]>[]>[
+				...clientEntityData.map((data) =>
+					packIndexer.find(
+						'clientAnimation',
+						'identifier',
+						data.animationIdentifier,
+						true
+					)
+				),
+			])
+		).flat()
+
+		this._renderContainer = new RenderDataContainer(app, {
 			identifier: modelJson.description.identifer,
 			texturePaths: connectedTextures,
-			animationIdentifiers: [],
-		}
+		})
+		this._renderContainer.createGeometry(this.tab.getProjectPath())
+		for (const anim of connectedAnimations)
+			this._renderContainer.createAnimation(anim)
+		this._renderContainer.on(() => this.createModel())
+	}
 
-		if (this._renderContainer === undefined) {
-			this._renderContainer = new RenderDataContainer(app, collectedData)
-			this._renderContainer.createGeometry(this.tab.getProjectPath())
-			this._renderContainer.on(() => this.createModel())
-		} else {
-			this._renderContainer.update(collectedData)
-		}
+	async onChange() {
+		await this.loadRenderContainer()
 
-		await this._renderContainer.ready
-		await this.createModel()
+		if (this._renderContainer) {
+			await this.renderContainer.ready
+			await this.createModel()
+		}
 	}
 
 	onDestroy() {
@@ -155,9 +178,21 @@ export class GeometryPreviewTab extends ThreePreviewTab<string> {
 		)
 		this.scene.add(this.model.getModel())
 
+		for (const [animId, anim] of this.renderContainer.animations) {
+			this.model.animator.addAnimation(animId, anim)
+			if (animId === 'animation.bee.flying')
+				this.model.animator.play(animId)
+		}
+
 		setTimeout(() => {
 			this.requestRendering()
 		}, 100)
+	}
+	async reload() {
+		if (this.model) this.scene?.remove(this.model.getModel())
+		this._renderContainer?.dispose()
+		this._renderContainer = undefined
+		await this.onChange()
 	}
 
 	get icon() {

@@ -9,6 +9,7 @@ import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { GeometryPreviewTab } from '../GeometryPreview/GeometryPreviewTab'
+import { Signal } from '/@/components/Common/Event/Signal'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -38,6 +39,7 @@ export class TextTab extends Tab<string> {
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
 	disposables: (IDisposable | undefined)[] = []
 	isActive = false
+	protected modelLoaded = new Signal<void>()
 
 	get editorInstance() {
 		return this.parent.monacoEditor
@@ -68,10 +70,35 @@ export class TextTab extends Tab<string> {
 						},
 					})
 				)
+			} else {
+				if (this.getProjectPath().startsWith('RP/animations/')) {
+					this.addAction(
+						new SimpleAction({
+							icon: 'mdi-play',
+							name: 'View Animation',
+							onTrigger: async () => {
+								if (!this.editorModel) return
+
+								const tab = new GeometryPreviewTab(
+									this,
+									this.parent,
+									this.fileHandle
+								)
+								this.connectedTabs.push(tab)
+								app.project.tabSystem?.add(tab, true)
+								this.change.dispatch(
+									this.editorModel.getValue()
+								)
+							},
+						})
+					)
+				}
 			}
 		})
 	}
 	async getFile() {
+		await this.modelLoaded.fired
+
 		if (!this.editorModel)
 			throw new Error(
 				`Cannot get tab content because no editor model was defined`
@@ -101,6 +128,7 @@ export class TextTab extends Tab<string> {
 				undefined,
 				monaco.Uri.file(this.getPath())
 			)
+			this.modelLoaded.dispatch()
 			this.loadEditor()
 		} else {
 			this.loadEditor()
@@ -134,6 +162,7 @@ export class TextTab extends Tab<string> {
 		this.editorModel?.dispose()
 		this.editorViewState = undefined
 		this.isActive = false
+		this.modelLoaded.resetSignal()
 	}
 	updateParent(parent: TabSystem) {
 		super.updateParent(parent)

@@ -9,6 +9,8 @@ export class OpenedFiles extends PersistentQueue<string> {
 
 		if (settingsState?.general?.restoreTabs ?? true) {
 			this.once(async (queue) => {
+				console.log(queue.elements)
+
 				for (let i = 0; i < queue.elements.length; i++) {
 					await tabSystem.openPath(
 						queue.elements[i],

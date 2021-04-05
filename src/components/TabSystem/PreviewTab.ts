@@ -18,20 +18,18 @@ export abstract class PreviewTab<T> extends Tab<T> {
 	}
 	onCreate() {}
 	async onActivate() {
-		this.onChange(await this.getFile())
+		this.onChange()
 	}
 
 	get name() {
 		return `Preview: ${super.name}`
 	}
 
-	abstract onChange(data: File): Promise<void> | void
+	abstract onChange(): Promise<void> | void
 
 	save() {}
 	getFile() {
 		return this.tab.getFile()
 	}
-	async reload() {
-		this.onChange(await this.getFile())
-	}
+	abstract reload(): Promise<void> | void
 }

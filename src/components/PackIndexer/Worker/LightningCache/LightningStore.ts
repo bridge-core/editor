@@ -244,7 +244,11 @@ export class LightningStore {
 		return schemas
 	}
 
-	getCacheDataFor(fileType: string, filePath?: string, cacheKey?: string) {
+	getCacheDataFor(
+		fileType: string,
+		filePath?: string,
+		cacheKey?: string
+	): any {
 		const collectedData = this.getAllFrom(fileType, filePath)
 		if (typeof cacheKey === 'string') return collectedData[cacheKey]
 		return collectedData

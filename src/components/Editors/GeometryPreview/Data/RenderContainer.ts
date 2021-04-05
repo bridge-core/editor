@@ -6,15 +6,16 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { App } from '/@/App'
 import { GeometryData } from './GeometryData'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { AnimationData } from './AnimationData'
 
 export interface IRenderData {
 	identifier: string
 	texturePaths: string[]
-	animationIdentifiers: string[]
 }
 
 export class RenderDataContainer extends EventDispatcher<void> {
 	protected _geometries: GeometryData[] = []
+	protected _animations: AnimationData[] = []
 	protected readyPromises: Promise<void>[] = []
 	protected _currentTexturePath = this.texturePaths[0]
 
@@ -41,6 +42,18 @@ export class RenderDataContainer extends EventDispatcher<void> {
 		this._geometries.push(geo)
 		this.readyPromises.push(geo.fired)
 	}
+	createAnimation(
+		animationFilePath: string,
+		includedAnimationIdentifiers?: string[]
+	) {
+		const anim = new AnimationData(
+			this,
+			animationFilePath,
+			includedAnimationIdentifiers
+		)
+		this._animations.push(anim)
+		this.readyPromises.push(anim.fired)
+	}
 	selectGeometry(id: string) {
 		for (const geo of this._geometries) {
 			if (geo.identifiers.includes(id)) return geo.select(id)
@@ -63,8 +76,8 @@ export class RenderDataContainer extends EventDispatcher<void> {
 	get geometryIdentifiers() {
 		return this._geometries.map((geo) => geo.identifiers).flat()
 	}
-	get animationIdentifiers() {
-		return this.renderData.animationIdentifiers
+	get animations() {
+		return this._animations.map((anim) => anim.includedAnimations).flat()
 	}
 	get modelData() {
 		return this._geometries[0].geometry
