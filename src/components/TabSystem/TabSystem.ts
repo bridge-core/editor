@@ -114,6 +114,8 @@ export class TabSystem extends MonacoHolder {
 		if (tab) this.close(tab)
 	}
 	select(tab?: Tab) {
+		if (tab?.isSelected) return
+
 		this._selectedTab?.onDeactivate()
 		this._selectedTab = tab
 
