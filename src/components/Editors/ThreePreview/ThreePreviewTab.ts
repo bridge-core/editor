@@ -13,7 +13,7 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { App } from '/@/App'
 
-export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
+export abstract class ThreePreviewTab extends PreviewTab {
 	public component = ThreePreviewTabComponent
 	public readonly setupComplete = new Signal<void>()
 
@@ -41,7 +41,7 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 		const app = await App.getApp()
 
 		this.canvas = canvas
-		this.renderer?.dispose()
+
 		this.renderer = new WebGLRenderer({
 			antialias: false,
 			canvas,
@@ -58,8 +58,8 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 		if (this.controls) this.controls.dispose()
 		this.controls = new OrbitControls(this.camera, canvas)
 		this.controls.addEventListener('change', () => {
-			if (!this.parent.isActive) this.parent.setActive(true)
 			this.requestRendering()
+			if (!this.parent.isActive) this.parent.setActive(true)
 		})
 
 		if (!this._scene) {
@@ -92,6 +92,9 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 	}
 	onDeactivate() {
 		this.setupComplete.resetSignal()
+		this.renderer?.resetState()
+		this.renderer?.dispose()
+		this.renderer = undefined
 		super.onDeactivate()
 	}
 
@@ -102,7 +105,7 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 
 		if (checkShouldTick && this.model && this.model.shouldTick) {
 			this.model.tick()
-			this.requestRendering()
+			if (this.isActive) this.requestRendering()
 		}
 	}
 

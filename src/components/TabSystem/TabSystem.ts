@@ -9,14 +9,11 @@ import { Project } from '../Projects/Project/Project'
 import { OpenedFiles } from './OpenedFiles'
 import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
-import { IDisposable } from '/@/types/disposable'
-
-type TTabWithAnyType = Tab<any>
 
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
-	public tabs: TTabWithAnyType[] = []
-	protected _selectedTab: TTabWithAnyType | undefined = undefined
+	public tabs: Tab[] = []
+	protected _selectedTab: Tab | undefined = undefined
 	protected tabTypes = [ImageTab, TextTab]
 	protected _isActive = true
 	public readonly openedFiles: OpenedFiles
@@ -67,7 +64,7 @@ export class TabSystem extends MonacoHolder {
 	}
 
 	protected async getTabFor(fileHandle: FileSystemFileHandle) {
-		let tab: TTabWithAnyType | undefined = undefined
+		let tab: Tab | undefined = undefined
 		for (const CurrentTab of this.tabTypes) {
 			if (await CurrentTab.is(fileHandle)) {
 				tab = new CurrentTab(this, fileHandle)
@@ -80,7 +77,7 @@ export class TabSystem extends MonacoHolder {
 		return await tab.fired
 	}
 
-	async add(tab: TTabWithAnyType, selectTab = true) {
+	async add(tab: Tab, selectTab = true) {
 		if (!tab.hasFired) await tab.fired
 
 		this.tabs = [...this.tabs, tab]
@@ -90,7 +87,7 @@ export class TabSystem extends MonacoHolder {
 
 		return tab
 	}
-	remove(tab: TTabWithAnyType, destroyEditor = true) {
+	remove(tab: Tab, destroyEditor = true) {
 		tab.onDeactivate()
 		this.tabs = this.tabs.filter((current) => current !== tab)
 		if (destroyEditor) tab.onDestroy()
@@ -116,7 +113,7 @@ export class TabSystem extends MonacoHolder {
 		const tab = await this.getTab(fileHandle)
 		if (tab) this.close(tab)
 	}
-	select(tab?: TTabWithAnyType) {
+	select(tab?: Tab) {
 		this._selectedTab?.onDeactivate()
 		this._selectedTab = tab
 
@@ -128,7 +125,6 @@ export class TabSystem extends MonacoHolder {
 		Vue.nextTick(async () => {
 			await this._selectedTab?.onActivate()
 			this._monacoEditor?.layout()
-			// console.log(this.monacoEditor.getLayoutInfo())
 		})
 	}
 	async save(tab = this.selectedTab) {
@@ -185,14 +181,14 @@ export class TabSystem extends MonacoHolder {
 			if (await tab.isFor(fileHandle)) return tab
 		}
 	}
-	closeTabs(predicate: (tab: TTabWithAnyType) => boolean) {
+	closeTabs(predicate: (tab: Tab) => boolean) {
 		const tabs = [...this.tabs].reverse()
 
 		for (const tab of tabs) {
 			if (predicate(tab)) tab.close()
 		}
 	}
-	has(predicate: (tab: TTabWithAnyType) => boolean) {
+	has(predicate: (tab: Tab) => boolean) {
 		for (const tab of this.tabs) {
 			if (predicate(tab)) return true
 		}

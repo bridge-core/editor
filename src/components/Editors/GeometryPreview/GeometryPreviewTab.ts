@@ -8,7 +8,7 @@ import { transformOldModels } from './transformOldModels'
 import { RenderDataContainer } from './Data/RenderContainer'
 import { DropdownWindow } from '../../Windows/Common/Dropdown/DropdownWindow'
 
-export class GeometryPreviewTab extends ThreePreviewTab<string> {
+export class GeometryPreviewTab extends ThreePreviewTab {
 	protected _renderContainer?: RenderDataContainer
 
 	get renderContainer() {
@@ -17,8 +17,8 @@ export class GeometryPreviewTab extends ThreePreviewTab<string> {
 		return this._renderContainer
 	}
 	async onActivate() {
-		this._renderContainer?.activate()
 		await super.onActivate()
+		this._renderContainer?.activate()
 	}
 
 	onCreate() {

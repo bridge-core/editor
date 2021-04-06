@@ -34,7 +34,7 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	600
 )
 
-export class TextTab extends Tab<string> {
+export class TextTab extends Tab {
 	component = TextTabComponent
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
@@ -67,7 +67,6 @@ export class TextTab extends Tab<string> {
 							)
 							this.connectedTabs.push(tab)
 							app.project.tabSystem?.add(tab, true)
-							this.change.dispatch(this.editorModel.getValue())
 						},
 					})
 				)
@@ -86,7 +85,6 @@ export class TextTab extends Tab<string> {
 							)
 							this.connectedTabs.push(tab)
 							app.project.tabSystem?.add(tab, true)
-							this.change.dispatch(this.editorModel.getValue())
 						},
 					})
 				)
@@ -105,7 +103,6 @@ export class TextTab extends Tab<string> {
 							)
 							this.connectedTabs.push(tab)
 							app.project.tabSystem?.add(tab, true)
-							this.change.dispatch(this.editorModel.getValue())
 						},
 					})
 				)

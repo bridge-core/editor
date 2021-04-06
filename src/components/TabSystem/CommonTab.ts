@@ -8,8 +8,7 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '../Actions/SimpleAction'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 
-export abstract class Tab<T> extends Signal<Tab<T>> {
-	public readonly change = new EventDispatcher<T>()
+export abstract class Tab extends Signal<Tab> {
 	abstract component: Vue.Component
 	uuid = uuid()
 	hasRemoteChange = false
@@ -17,7 +16,7 @@ export abstract class Tab<T> extends Signal<Tab<T>> {
 	protected projectPath?: string
 	isForeignFile = false
 	protected actions: SimpleAction[] = []
-	protected connectedTabs: Tab<any>[] = []
+	protected connectedTabs: Tab[] = []
 	protected isActive = false
 
 	setIsUnsaved(val: boolean) {

@@ -4,7 +4,7 @@ import { BaseWindow } from '../BaseWindow'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 
 export class UnsavedFileWindow extends BaseWindow<'cancel' | 'close' | 'save'> {
-	constructor(protected tab: Tab<unknown>) {
+	constructor(protected tab: Tab) {
 		super(UnsavedFileComponent, true, false)
 		this.defineWindow()
 		this.open()

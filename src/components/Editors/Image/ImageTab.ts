@@ -2,7 +2,7 @@ import { Tab } from '/@/components/TabSystem/CommonTab'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import ImageTabComponent from './ImageTab.vue'
 
-export class ImageTab extends Tab<unknown> {
+export class ImageTab extends Tab {
 	component = ImageTabComponent
 	dataUrl?: string = undefined
 

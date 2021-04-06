@@ -8,7 +8,7 @@ import { AxesHelper, GridHelper, Object3D } from 'three'
 import { FileWatcher } from '/@/components/Editors/GeometryPreview/Data/FileWatcher'
 import { ParticleWatcher } from './ParticleWatcher'
 
-export class ParticlePreviewTab extends ThreePreviewTab<string> {
+export class ParticlePreviewTab extends ThreePreviewTab {
 	protected emitter?: Wintersky.Emitter
 	protected config?: Wintersky.Config
 	protected fileWatcher?: FileWatcher
