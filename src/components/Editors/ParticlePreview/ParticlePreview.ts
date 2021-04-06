@@ -17,8 +17,6 @@ export class ParticlePreviewTab extends ThreePreviewTab<string> {
 	async onActivate() {
 		// @ts-ignore
 		Wintersky.fetchTexture = async (config) => {
-			console.log(config)
-
 			const app = await App.getApp()
 
 			return await loadAsDataURL(
@@ -79,8 +77,7 @@ export class ParticlePreviewTab extends ThreePreviewTab<string> {
 		// @ts-ignore
 		this.scene.add(Wintersky.space)
 		this.scene.add(new AxesHelper(1))
-		this.scene.add(new GridHelper(64, 64))
-		console.log(this.scene)
+		// this.scene.add(new GridHelper(64, 64))
 		this.emitter.start()
 	}
 
@@ -96,8 +93,7 @@ export class ParticlePreviewTab extends ThreePreviewTab<string> {
 	}
 
 	async onChange(file?: File) {
-		console.log('UPDATE')
-		this.loadParticle()
+		this.loadParticle(file)
 	}
 
 	async reload() {

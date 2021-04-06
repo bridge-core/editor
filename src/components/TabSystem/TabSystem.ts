@@ -9,6 +9,7 @@ import { Project } from '../Projects/Project/Project'
 import { OpenedFiles } from './OpenedFiles'
 import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
+import { IDisposable } from '/@/types/disposable'
 
 type TTabWithAnyType = Tab<any>
 
@@ -27,11 +28,11 @@ export class TabSystem extends MonacoHolder {
 		return this.tabs.length > 0
 	}
 	get app() {
-		return this.project.app
+		return this._app
 	}
 
 	constructor(protected project: Project, id = 0) {
-		super()
+		super(project.app)
 
 		this.openedFiles = new OpenedFiles(
 			this,
@@ -164,6 +165,7 @@ export class TabSystem extends MonacoHolder {
 	}
 	deactivate() {
 		this.selectedTab?.onDeactivate()
+		this.dispose()
 	}
 
 	setActive(isActive: boolean, updateProject = true) {

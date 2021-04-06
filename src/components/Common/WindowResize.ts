@@ -7,7 +7,7 @@ export class WindowResize extends EventDispatcher<[number, number]> {
 
 		window.addEventListener(
 			'resize',
-			debounce(() => this.dispatch(), 100)
+			debounce(() => this.dispatch(), 200, { trailing: true })
 		)
 	}
 

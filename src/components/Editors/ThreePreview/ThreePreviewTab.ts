@@ -66,7 +66,9 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 			app.themeManager.getColor('background')
 		)
 
-		this.disposables.push(app.windowResize.on(this.onResize.bind(this)))
+		this.disposables.push(
+			app.windowResize.on(() => setTimeout(() => this.onResize()))
+		)
 
 		this.onResize()
 		this.setupComplete.dispatch()

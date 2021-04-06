@@ -8,7 +8,7 @@
 				:key="`${tabSystem.uuid}.${tabSystem.currentComponent.name}`"
 				:style="`height: ${
 					windowHeight - (tabBarHeight + 24)
-				}px; width: 100%`"
+				}px; width: 100%;`"
 				:tab="tabSystem.selectedTab"
 				:id="id"
 			/>

@@ -9,10 +9,6 @@ export default {
 	name: 'TextTab',
 	props: {
 		tab: Object,
-		id: {
-			type: Number,
-			default: 0,
-		},
 	},
 	computed: {
 		tabSystem() {
@@ -27,13 +23,6 @@ export default {
 	},
 	methods: {
 		updateEditor() {
-			monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-				target: monaco.languages.typescript.ScriptTarget.ESNext,
-				allowNonTsExtensions: true,
-				noLib: true,
-				alwaysStrict: true,
-			})
-
 			this.tabSystem.createMonacoEditor(this.$refs.monacoContainer)
 		},
 	},
