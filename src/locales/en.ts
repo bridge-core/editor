@@ -314,7 +314,7 @@ export default {
 		selectFolder: {
 			title: 'Select Folder',
 			content:
-				'Select where to save projects or choose an existing projects directory.',
+				'Select where to save projects or choose an existing projects directory. This should not be the "com.mojang" folder, but rather a new folder specifically for bridge.',
 			select: 'Select!',
 		},
 		packExplorer: {
