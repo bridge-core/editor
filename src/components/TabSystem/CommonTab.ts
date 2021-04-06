@@ -18,6 +18,7 @@ export abstract class Tab<T> extends Signal<Tab<T>> {
 	isForeignFile = false
 	protected actions: SimpleAction[] = []
 	protected connectedTabs: Tab<any>[] = []
+	protected isActive = false
 
 	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val
@@ -102,8 +103,12 @@ export abstract class Tab<T> extends Signal<Tab<T>> {
 	}
 
 	focus() {}
-	async onActivate() {}
-	onDeactivate() {}
+	async onActivate() {
+		this.isActive = true
+	}
+	onDeactivate() {
+		this.isActive = false
+	}
 	onDestroy() {}
 	protected async toOtherTabSystem(updateParentTabs = true) {
 		const app = await App.getApp()

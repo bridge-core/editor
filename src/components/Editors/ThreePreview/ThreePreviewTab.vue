@@ -16,5 +16,10 @@ export default {
 	mounted() {
 		this.tab.receiveCanvas(this.$refs.canvas)
 	},
+	watch: {
+		tab() {
+			this.tab.receiveCanvas(this.$refs.canvas)
+		},
+	},
 }
 </script>

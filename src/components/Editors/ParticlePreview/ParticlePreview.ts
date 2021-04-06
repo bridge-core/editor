@@ -12,7 +12,6 @@ export class ParticlePreviewTab extends ThreePreviewTab<string> {
 	protected emitter?: Wintersky.Emitter
 	protected config?: Wintersky.Config
 	protected fileWatcher?: FileWatcher
-	protected wasDestroyed = false
 
 	async onActivate() {
 		// @ts-ignore
@@ -26,13 +25,18 @@ export class ParticlePreviewTab extends ThreePreviewTab<string> {
 			)
 		}
 		Wintersky.global_options.tick_rate = 60
+		Wintersky.global_options.max_emitter_particles = 1000
 
+		this.emitter?.start()
 		await super.onActivate()
+	}
+	onDeactivate() {
+		this.emitter?.stop(true)
+		super.onDeactivate()
 	}
 	onDestroy() {
 		this.fileWatcher?.dispose()
 		this.emitter?.stop(true)
-		this.wasDestroyed = true
 	}
 
 	onCreate() {
@@ -82,7 +86,7 @@ export class ParticlePreviewTab extends ThreePreviewTab<string> {
 		this.emitter.start()
 	}
 
-	protected render(checkShouldTick = true) {
+	protected render() {
 		this.controls?.update()
 		this.renderer?.render(this.scene, this.camera)
 		this.renderingRequested = false
@@ -90,7 +94,7 @@ export class ParticlePreviewTab extends ThreePreviewTab<string> {
 		Wintersky.updateFacingRotation(this.camera)
 		this.emitter?.tick()
 
-		if (!this.wasDestroyed) this.requestRendering()
+		if (this.isActive) this.requestRendering()
 	}
 
 	async onChange(file?: File) {

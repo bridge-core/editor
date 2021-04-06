@@ -3,8 +3,6 @@
 </template>
 
 <script>
-import * as monaco from 'monaco-editor'
-
 export default {
 	name: 'TextTab',
 	props: {

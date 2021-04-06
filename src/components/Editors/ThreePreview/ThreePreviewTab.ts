@@ -41,6 +41,7 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 		const app = await App.getApp()
 
 		this.canvas = canvas
+		this.renderer?.dispose()
 		this.renderer = new WebGLRenderer({
 			antialias: false,
 			canvas,
@@ -54,8 +55,12 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 			this._camera.position.z = -16
 		}
 
+		if (this.controls) this.controls.dispose()
 		this.controls = new OrbitControls(this.camera, canvas)
-		this.controls.addEventListener('change', () => this.requestRendering())
+		this.controls.addEventListener('change', () => {
+			if (!this.parent.isActive) this.parent.setActive(true)
+			this.requestRendering()
+		})
 
 		if (!this._scene) {
 			this._scene = new Scene()

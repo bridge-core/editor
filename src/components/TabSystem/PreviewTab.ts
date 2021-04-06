@@ -19,6 +19,7 @@ export abstract class PreviewTab<T> extends Tab<T> {
 	onCreate() {}
 	async onActivate() {
 		this.onChange()
+		this.isActive = true
 	}
 
 	get name() {
