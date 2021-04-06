@@ -4,13 +4,13 @@ type TVariableHandler =
 	| ((variableName: string, variables: Record<string, unknown>) => unknown)
 	| null
 export default class MoLang {
-	protected moLang = new BridgeMoLang()
+	protected moLang = new BridgeMoLang({}, { convertUndefined: true })
 	protected _cacheEnabled = true
 	protected _globalVariables: any = {}
 	protected _variableHandler: TVariableHandler = null
 
 	parse(expr: string, variables?: any) {
-		if (variables) this.moLang.updateExecutionEnv(variables)
+		if (variables) this.moLang.updateExecutionEnv(variables, true)
 
 		return this.moLang.executeAndCatch(expr)
 	}

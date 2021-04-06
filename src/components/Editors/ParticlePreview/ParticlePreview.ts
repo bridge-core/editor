@@ -25,6 +25,7 @@ export class ParticlePreviewTab extends ThreePreviewTab<string> {
 				app.project.fileSystem
 			)
 		}
+		Wintersky.global_options.tick_rate = 60
 
 		await super.onActivate()
 	}
@@ -97,7 +98,6 @@ export class ParticlePreviewTab extends ThreePreviewTab<string> {
 	}
 
 	async reload() {
-		// TODO: Reload particle
 		await this.onChange()
 	}
 
