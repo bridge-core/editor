@@ -1,12 +1,10 @@
 {
-	"name": "Server Animation Conroller",
+	"name": "Server Animation Controller",
 	"icon": "mdi-google-controller",
 	"description": "Creates a blank server animation controller.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],
-	"fields": [
-		["File Name", "FILE_NAME"]
-	],
+	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[

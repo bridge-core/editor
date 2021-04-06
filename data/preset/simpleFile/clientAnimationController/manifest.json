@@ -1,5 +1,5 @@
 {
-	"name": "Client Animation Conroller",
+	"name": "Client Animation Controller",
 	"icon": "mdi-movie-search-outline",
 	"description": "Creates a blank client animation controller.",
 	"category": "fileType.simpleFile",
