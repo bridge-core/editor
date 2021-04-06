@@ -4,11 +4,13 @@
 	"properties": {
 		"decrement_stack": {
 			"description": "Decrement item stack.",
-			"additionalProperties": false
-        },
-        "ignore_game_mode": {
-            "description": "Whether the item stack can be decremented in creative mode.",
-            "type": "boolean"
-        }
+			"additionalProperties": false,
+			"properties": {
+				"ignore_game_mode": {
+					"description": "Whether the item stack can be decremented in creative mode.",
+					"type": "boolean"
+				}
+			}
+		}
 	}
 }

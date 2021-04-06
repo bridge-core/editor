@@ -129,7 +129,7 @@
 								"items": [
 									{
 										"description": "Plant body block.",
-										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+										"$ref": "../general.json#/definitions/block_reference"
 									},
 									{
 										"description": "Weight used in random selection. Value is relative to other weights in the collection.",
@@ -148,7 +148,7 @@
 								"items": [
 									{
 										"description": "Plant head block.",
-										"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+										"$ref": "../general.json#/definitions/block_reference"
 									},
 									{
 										"description": "Weight used in random selection. Value is relative to other weights in the collection.",
@@ -199,11 +199,11 @@
 						"replaceable_blocks": {
 							"type": "array",
 							"items": {
-								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+								"$ref": "../general.json#/definitions/block_reference"
 							}
 						},
 						"ground_block": {
-							"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+							"$ref": "../general.json#/definitions/block_reference"
 						},
 						"vegetation_feature": {
 							"$ref": "../../general/reference/feature.json"
@@ -278,7 +278,7 @@
 						},
 						"places_block": {
 							"description": "Reference to the block to be placed.",
-							"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+							"$ref": "../general.json#/definitions/block_reference"
 						},
 						"search_range": {
 							"description": "How far, in blocks, this feature can search for a valid position to place.",
