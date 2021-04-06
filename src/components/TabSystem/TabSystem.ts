@@ -26,6 +26,9 @@ export class TabSystem extends MonacoHolder {
 	get shouldRender() {
 		return this.tabs.length > 0
 	}
+	get app() {
+		return this.project.app
+	}
 
 	constructor(protected project: Project, id = 0) {
 		super()

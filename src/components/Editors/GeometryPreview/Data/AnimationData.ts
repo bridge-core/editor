@@ -6,11 +6,11 @@ export class AnimationData extends FileWatcher {
 	protected animationJson: any
 
 	constructor(
-		parent: RenderDataContainer,
+		protected parent: RenderDataContainer,
 		animationFilePath: string,
 		protected includedAnimationIdentifiers?: string[]
 	) {
-		super(parent, animationFilePath)
+		super(parent.app, animationFilePath)
 	}
 
 	async onChange(file: File, isInitial = false) {

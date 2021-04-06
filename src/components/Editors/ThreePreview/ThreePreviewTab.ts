@@ -49,9 +49,9 @@ export abstract class ThreePreviewTab<T> extends PreviewTab<T> {
 
 		if (!this._camera) {
 			this._camera = new PerspectiveCamera(70, 2, 0.1, 1000)
-			this._camera.position.x = -20
-			this._camera.position.y = 20
-			this._camera.position.z = -20
+			this._camera.position.x = -16
+			this._camera.position.y = 16
+			this._camera.position.z = -16
 		}
 
 		this.controls = new OrbitControls(this.camera, canvas)

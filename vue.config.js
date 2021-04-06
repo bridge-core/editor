@@ -1,6 +1,7 @@
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const WorkerPlugin = require('worker-plugin')
 const { join } = require('path')
+const { NormalModuleReplacementPlugin } = require('webpack')
 
 const isNightlyBuild = process.argv[3] === '--nightly'
 const publicPath = isNightlyBuild
@@ -51,6 +52,10 @@ module.exports = {
 			},
 		},
 		plugins: [
+			new NormalModuleReplacementPlugin(
+				/molangjs/,
+				'../../../src/utils/MoLangJS.ts'
+			),
 			new MonacoWebpackPlugin({ features: ['!toggleHighContrast'] }),
 			new WorkerPlugin({ globalObject: 'self' }),
 		],

@@ -8,11 +8,11 @@ export class GeometryData extends FileWatcher {
 	protected selected!: string
 
 	constructor(
-		parent: RenderDataContainer,
+		protected parent: RenderDataContainer,
 		geometryFilePath: string,
 		protected includedGeometryIdentifiers?: string[]
 	) {
-		super(parent, geometryFilePath)
+		super(parent.app, geometryFilePath)
 	}
 
 	select(id: string) {

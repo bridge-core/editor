@@ -56,6 +56,9 @@ export abstract class Tab<T> extends Signal<Tab<T>> {
 	get name() {
 		return this.fileHandle.name
 	}
+	get tabSystem() {
+		return this.parent
+	}
 	/**
 	 * @returns Undefined if the file that belongs to this tab is not inside of a bridge. project
 	 */
