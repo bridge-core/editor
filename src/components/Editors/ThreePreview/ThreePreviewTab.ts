@@ -55,7 +55,7 @@ export abstract class ThreePreviewTab extends PreviewTab {
 			this._camera.position.z = -16
 		}
 
-		if (this.controls) this.controls.dispose()
+		this.controls?.dispose()
 		this.controls = new OrbitControls(this.camera, canvas)
 		this.controls.addEventListener('change', () => {
 			this.requestRendering()
@@ -92,9 +92,11 @@ export abstract class ThreePreviewTab extends PreviewTab {
 	}
 	onDeactivate() {
 		this.setupComplete.resetSignal()
+		this.controls?.dispose()
 		this.renderer?.resetState()
 		this.renderer?.dispose()
 		this.renderer = undefined
+		this.controls = undefined
 		super.onDeactivate()
 	}
 
