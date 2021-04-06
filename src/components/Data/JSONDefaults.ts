@@ -22,8 +22,6 @@ export class JsonDefaults {
 	async activate() {
 		console.time('[SETUP] JSONDefaults')
 
-		const app = await App.getApp()
-
 		this.disposables = <IDisposable[]>[
 			// Updating currentContext/ references
 			App.eventSystem.on('currentTabSwitched', (filePath: string) =>
@@ -90,7 +88,10 @@ export class JsonDefaults {
 		const app = await App.getApp()
 
 		app.windows.loadingWindow.open()
-		await this.loadAllSchemas()
+		this.loadedSchemas = false
+		this.localSchemas = {}
+		await this.deactivate()
+		await this.activate()
 		app.windows.loadingWindow.close()
 	}
 
