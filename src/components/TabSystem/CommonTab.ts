@@ -122,8 +122,10 @@ export abstract class Tab extends Signal<Tab> {
 			to.add(this, true)
 			from.remove(this, false)
 		} else {
-			await to.openedFiles.add(this.getPath())
-			await from.openedFiles.remove(this.getPath())
+			if (!this.isForeignFile) {
+				await to.openedFiles.add(this.getPath())
+				await from.openedFiles.remove(this.getPath())
+			}
 
 			to.select(this)
 			if (this.isSelected) from.select(from.tabs[0])

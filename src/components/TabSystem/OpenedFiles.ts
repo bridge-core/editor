@@ -12,8 +12,7 @@ export class OpenedFiles extends PersistentQueue<string> {
 				for (let i = 0; i < queue.elements.length; i++) {
 					await tabSystem.openPath(
 						queue.elements[i],
-						i + 1 === queue.elementCount,
-						false
+						i + 1 === queue.elementCount
 					)
 				}
 			})
