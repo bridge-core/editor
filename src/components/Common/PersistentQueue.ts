@@ -45,7 +45,6 @@ export class PersistentQueue<T> extends Signal<Queue<T>> {
 	}
 
 	async add(e: T) {
-		console.log(e)
 		await this.fired
 
 		this.queue.add(e, this.isEquals.bind(this))
