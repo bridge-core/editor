@@ -48,23 +48,19 @@ export class TabSystem extends MonacoHolder {
 		return this.project.name
 	}
 
-	async open(
-		fileHandle: FileSystemFileHandle,
-		selectTab = true,
-		saveOpened = true
-	) {
+	async open(fileHandle: FileSystemFileHandle, selectTab = true) {
 		for (const tab of this.tabs) {
 			if (await tab.isFor(fileHandle))
 				return selectTab ? tab.select() : tab
 		}
 
 		const tab = await this.getTabFor(fileHandle)
-		await this.add(tab, selectTab, saveOpened)
+		await this.add(tab, selectTab)
 		return tab
 	}
-	async openPath(path: string, selectTab = true, saveOpened = true) {
+	async openPath(path: string, selectTab = true) {
 		const fileHandle = await this.project.app.fileSystem.getFileHandle(path)
-		return await this.open(fileHandle, selectTab, saveOpened)
+		return await this.open(fileHandle, selectTab)
 	}
 
 	protected async getTabFor(fileHandle: FileSystemFileHandle) {
@@ -81,12 +77,11 @@ export class TabSystem extends MonacoHolder {
 		return await tab.fired
 	}
 
-	async add(tab: Tab, selectTab = true, saveOpened = true) {
+	async add(tab: Tab, selectTab = true) {
 		if (!tab.hasFired) await tab.fired
 
 		this.tabs = [...this.tabs, tab]
-		if (saveOpened && !tab.isForeignFile)
-			await this.openedFiles.add(tab.getPath())
+		if (!tab.isForeignFile) await this.openedFiles.add(tab.getPath())
 
 		if (selectTab) tab.select()
 
@@ -98,7 +93,7 @@ export class TabSystem extends MonacoHolder {
 		if (destroyEditor) tab.onDestroy()
 
 		if (tab === this._selectedTab) this.select(this.tabs[0])
-		this.openedFiles.remove(tab.getPath())
+		if (!tab.isForeignFile) this.openedFiles.remove(tab.getPath())
 
 		return tab
 	}
