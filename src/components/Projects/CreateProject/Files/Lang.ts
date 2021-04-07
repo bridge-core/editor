@@ -12,7 +12,9 @@ export class CreateLang extends CreateFile {
 		await fs.mkdir(`${this.packPath}/texts`)
 		await fs.writeFile(
 			`${this.packPath}/texts/en_US.lang`,
-			`pack.name=${createOptions.name} ${this.packPath}\npack.description=${createOptions.description}`
+			createOptions.nameAndDescriptionInManifest
+				? ''
+				: `pack.name=${createOptions.name} ${this.packPath}\npack.description=${createOptions.description}`
 		)
 		await fs.writeJSON(
 			`${this.packPath}/texts/languages.json`,

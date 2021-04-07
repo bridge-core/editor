@@ -25,8 +25,12 @@ export class CreateManifest extends CreateFile {
 		const manifest: any = {
 			format_version: 2,
 			header: {
-				name: 'pack.name',
-				description: 'pack.description',
+				name: createOptions.nameAndDescriptionInManifest
+					? createOptions.name
+					: 'pack.name',
+				description: createOptions.nameAndDescriptionInManifest
+					? createOptions.description
+					: 'pack.description',
 				min_engine_version:
 					this.type === 'data' || 'resources'
 						? createOptions.targetVersion

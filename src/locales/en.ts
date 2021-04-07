@@ -284,6 +284,8 @@ export default {
 			gameTest: 'Enable GameTest Framework',
 			rpAsBpDependency:
 				'Register resource pack as behavior pack dependency',
+			nameAndDescriptionInManifest:
+				'Add pack name/description directly to the manifest',
 			create: 'Create',
 		},
 		createPreset: {

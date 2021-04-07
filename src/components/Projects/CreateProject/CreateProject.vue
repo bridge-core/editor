@@ -151,6 +151,20 @@
 					:menu-props="{ maxHeight: 220 }"
 				/>
 			</div>
+			<div class="d-flex">
+				<v-switch
+					inset
+					dense
+					:label="
+						t('windows.createProject.nameAndDescriptionInManifest')
+					"
+					:value="createOptions.nameAndDescriptionInManifest"
+					@click.stop.native="
+						createOptions.nameAndDescriptionInManifest = !createOptions.nameAndDescriptionInManifest
+					"
+					class="ma-3"
+				></v-switch>
+			</div>
 		</template>
 
 		<template #actions>
