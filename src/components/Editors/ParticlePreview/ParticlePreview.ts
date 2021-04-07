@@ -2,8 +2,6 @@ import Wintersky from 'wintersky'
 import { ThreePreviewTab } from '../ThreePreview/ThreePreviewTab'
 import { SimpleAction } from '../../Actions/SimpleAction'
 import json5 from 'json5'
-import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
-import { App } from '/@/App'
 import { AxesHelper, GridHelper, Object3D } from 'three'
 import { FileWatcher } from '/@/components/Editors/GeometryPreview/Data/FileWatcher'
 import { ParticleWatcher } from './ParticleWatcher'
@@ -14,19 +12,6 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	protected fileWatcher?: FileWatcher
 
 	async onActivate() {
-		// @ts-ignore
-		Wintersky.fetchTexture = async (config) => {
-			const app = await App.getApp()
-
-			return await loadAsDataURL(
-				// @ts-ignore
-				`RP/${config.particle_texture_path}.png`,
-				app.project.fileSystem
-			)
-		}
-		Wintersky.global_options.tick_rate = 60
-		Wintersky.global_options.max_emitter_particles = 1000
-
 		this.emitter?.start()
 		await super.onActivate()
 	}
@@ -51,7 +36,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	async receiveCanvas(canvas: HTMLCanvasElement) {
 		const shouldSetPosition = !this._camera
 		await super.receiveCanvas(canvas)
-		if (shouldSetPosition) this.camera.position.set(6, 3, 6)
+		if (shouldSetPosition) this.camera.position.set(60, 30, 60)
 	}
 
 	async loadParticle(file?: File) {
@@ -81,7 +66,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		})
 		// @ts-ignore
 		this.scene.add(Wintersky.space)
-		this.scene.add(new AxesHelper(1))
+		this.scene.add(new AxesHelper(16))
 		// this.scene.add(new GridHelper(64, 64))
 		this.emitter.start()
 	}

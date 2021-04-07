@@ -34,6 +34,8 @@ import { GlobalExtensionLoader } from '/@/components/Extensions/GlobalExtensionL
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/FileSystem/ComMojang'
+import Wintersky from 'wintersky'
+import { loadAsDataURL } from './utils/loadAsDataUrl'
 
 export class App {
 	public static fileSystemSetup = new FileSystemSetup()
@@ -244,6 +246,21 @@ export class App {
 				await this.fileSystem.getDirectoryHandle(`extensions`)
 			)
 		)
+
+		this.projectManager.fired.then(() => {
+			// @ts-ignore
+			Wintersky.fetchTexture = async (config) => {
+				return await loadAsDataURL(
+					// @ts-ignore
+					`RP/${config.particle_texture_path}.png`,
+					this.project.fileSystem
+				)
+			}
+		})
+
+		Wintersky.global_options.tick_rate = 60
+		Wintersky.global_options.max_emitter_particles = 1000
+		Wintersky.global_options.scale = 16
 
 		console.timeEnd('[APP] startUp()')
 	}
