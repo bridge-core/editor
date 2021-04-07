@@ -148,9 +148,6 @@ export class TextTab extends Tab {
 		}
 
 		this.disposables.push(
-			app.windowResize.on(() => this.editorInstance?.layout())
-		)
-		this.disposables.push(
 			this.editorModel?.onDidChangeContent(() => {
 				this.isUnsaved = true
 				throttledCacheUpdate(this)
@@ -166,7 +163,10 @@ export class TextTab extends Tab {
 		this.editorInstance?.layout()
 	}
 	onDeactivate() {
-		this.editorViewState = this.editorInstance?.saveViewState() ?? undefined
+		// MonacoEditor is defined
+		if (this.tabSystem.hasFired)
+			this.editorViewState =
+				this.editorInstance?.saveViewState() ?? undefined
 		this.disposables.forEach((disposable) => disposable?.dispose())
 		this.isActive = false
 	}
