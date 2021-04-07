@@ -114,12 +114,12 @@ export class TabSystem extends MonacoHolder {
 		if (tab) this.close(tab)
 	}
 	select(tab?: Tab) {
+		if (this.isActive !== !!tab) this.setActive(!!tab)
+
 		if (tab?.isSelected) return
 
 		this._selectedTab?.onDeactivate()
 		this._selectedTab = tab
-
-		this.setActive(!!tab)
 
 		// Next step doesn't need to be done if we simply unselect tab
 		if (!tab) return
