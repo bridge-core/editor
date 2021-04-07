@@ -2,7 +2,7 @@
 	"format_version": "",
 	"minecraft:biome": {
 		"description": {
-			"identifier": "{{PROJECT_PREFIX}}:{{FILE_NAME}}"
+			"identifier": "{{FILE_NAME}}"
 		},
 		"components": {}
 	}
