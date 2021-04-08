@@ -155,12 +155,10 @@
 				<v-switch
 					inset
 					dense
-					:label="
-						t('windows.createProject.nameAndDescriptionInManifest')
-					"
-					:value="createOptions.nameAndDescriptionInManifest"
+					:label="t('windows.createProject.useLangForManifest')"
+					:value="createOptions.useLangForManifest"
 					@click.stop.native="
-						createOptions.nameAndDescriptionInManifest = !createOptions.nameAndDescriptionInManifest
+						createOptions.useLangForManifest = !createOptions.useLangForManifest
 					"
 					class="ma-3"
 				></v-switch>

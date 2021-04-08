@@ -9,17 +9,24 @@ export class CreateLang extends CreateFile {
 	}
 
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
-		await fs.mkdir(`${this.packPath}/texts`)
-		await fs.writeFile(
-			`${this.packPath}/texts/en_US.lang`,
-			createOptions.nameAndDescriptionInManifest
-				? ''
-				: `pack.name=${createOptions.name} ${this.packPath}\npack.description=${createOptions.description}`
-		)
-		await fs.writeJSON(
-			`${this.packPath}/texts/languages.json`,
-			['en_US'],
-			true
-		)
+		if (
+			!(
+				(this.packPath == 'BP' || this.packPath == 'SP') &&
+				createOptions.useLangForManifest
+			)
+		) {
+			await fs.mkdir(`${this.packPath}/texts`)
+			await fs.writeFile(
+				`${this.packPath}/texts/en_US.lang`,
+				createOptions.useLangForManifest
+					? ''
+					: `pack.name=${createOptions.name} ${this.packPath}\npack.description=${createOptions.description}`
+			)
+			await fs.writeJSON(
+				`${this.packPath}/texts/languages.json`,
+				['en_US'],
+				true
+			)
+		}
 	}
 }

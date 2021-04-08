@@ -22,7 +22,7 @@ export interface ICreateProjectOptions {
 	gameTest: boolean
 	rpAsBpDependency: boolean
 	rpUuid?: string
-	nameAndDescriptionInManifest: boolean
+	useLangForManifest: boolean
 }
 export class CreateProjectWindow extends BaseWindow {
 	protected isFirstProject = false
@@ -118,7 +118,7 @@ export class CreateProjectWindow extends BaseWindow {
 			scripting: false,
 			gameTest: false,
 			rpAsBpDependency: true,
-			nameAndDescriptionInManifest: false,
+			useLangForManifest: false,
 		}
 	}
 }
