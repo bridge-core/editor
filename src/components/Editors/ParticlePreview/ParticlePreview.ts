@@ -71,7 +71,6 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		const shouldSetPosition = !this._camera
 		await super.receiveCanvas(canvas)
 		if (shouldSetPosition) this.camera.position.set(60, 30, 60)
-		console.log('CANVAS SETUP')
 	}
 
 	async loadParticle(file?: File) {
