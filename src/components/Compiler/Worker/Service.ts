@@ -70,7 +70,6 @@ export class CompilerService extends TaskService<void, string[]> {
 	}
 
 	async onStart(updatedFiles: string[]) {
-		console.log(this)
 		const globalFs = new FileSystem(this.options.baseDirectory)
 		await FileType.setup(globalFs)
 
