@@ -10,6 +10,7 @@ export interface IFileData {
 	isLoaded?: boolean
 	isDone?: boolean
 	filePath: string
+	fileHandle?: { getFile(): Promise<File> | File }
 	saveFilePath?: string
 	data?: any
 	aliases: string[]
@@ -26,7 +27,7 @@ export interface ISaveFile {
 }
 
 export class Compiler {
-	protected files = new Map<string, IFileData>()
+	protected files!: Map<string, IFileData>
 
 	constructor(protected parent: CompilerService) {}
 
@@ -74,11 +75,48 @@ export class Compiler {
 		// console.log([...sortedFiles].map((file) => file.filePath))
 		await this.finalizeFiles(sortedFiles)
 	}
+	async compileWithFile(filePath: string, file: File) {
+		const fileHandle = { getFile: () => file }
+		const fileData = this.files.get(filePath)
+
+		if (fileData) {
+			fileData.fileHandle = fileHandle
+		} else {
+			this.files.set(filePath, {
+				isLoaded: false,
+				filePath,
+				fileHandle,
+				aliases: [],
+				updateFiles: new Set(),
+				dependencies: new Set(),
+				requiresGlobs: new Set(),
+			})
+		}
+
+		const flatFiles = this.flatFiles(
+			[filePath],
+			new Set(),
+			new Set(),
+			false
+		)
+
+		this.parent.progress.setTotal(flatFiles.size * 2 + 5)
+		this.addMatchingGlobImporters(flatFiles)
+
+		await this.resolveFiles(flatFiles, false)
+
+		await this.requireFiles(flatFiles)
+		const sortedFiles = resolveFileOrder([...flatFiles], this.files)
+		// console.log([...sortedFiles].map((file) => file.filePath))
+		const test = await this.finalizeFiles(sortedFiles, false)
+		console.log(test)
+		return test
+	}
 
 	protected async loadSavedFiles() {
 		// Load files.json file
 		try {
-			this.files.clear()
+			this.files = new Map<string, IFileData>()
 			const files = await this.fileSystem.readJSON('bridge/files.json')
 			for (const [fileId, fileData] of Object.entries<ISaveFile>(files)) {
 				this.files.set(fileId, {
@@ -95,7 +133,8 @@ export class Compiler {
 	flatFiles(
 		files: string[],
 		fileSet: Set<string>,
-		ignoreSet = new Set<string>()
+		ignoreSet = new Set<string>(),
+		addUpdateFiles = true
 	) {
 		for (const filePath of files) {
 			if (fileSet.has(filePath) || ignoreSet.has(filePath)) continue
@@ -106,14 +145,26 @@ export class Compiler {
 			ignoreSet.add(filePath)
 
 			// First: Add dependencies
-			if (file) this.flatFiles([...file.dependencies], fileSet, ignoreSet)
+			if (file)
+				this.flatFiles(
+					[...file.dependencies],
+					fileSet,
+					ignoreSet,
+					addUpdateFiles
+				)
 
 			// Then: Add current file
 			fileSet.add(filePath)
 			if (!file) continue
 
 			// Then: Update files which depend on the current file
-			this.flatFiles([...file.updateFiles], fileSet, ignoreSet)
+			if (addUpdateFiles)
+				this.flatFiles(
+					[...file.updateFiles],
+					fileSet,
+					ignoreSet,
+					addUpdateFiles
+				)
 
 			ignoreSet.delete(filePath)
 
@@ -139,7 +190,7 @@ export class Compiler {
 		}
 	}
 
-	protected async resolveFiles(files: Set<string>) {
+	protected async resolveFiles(files: Set<string>, writeFiles = true) {
 		for (const filePath of files) {
 			let file = this.files.get(filePath)
 			if (file?.isLoaded) continue
@@ -148,17 +199,29 @@ export class Compiler {
 				(await this.runAllHooks('transformPath', 0, filePath)) ??
 				undefined
 
-			let fileHandle: FileSystemFileHandle | undefined = undefined
-			try {
-				fileHandle = await this.fileSystem.getFileHandle(filePath)
-			} catch {}
+			let fileHandle: { getFile(): Promise<File> | File } | undefined =
+				file?.fileHandle
+			if (!fileHandle) {
+				try {
+					fileHandle = await this.fileSystem.getFileHandle(filePath)
+				} catch {}
+			}
 
 			const readData = await this.runHook('read', filePath, fileHandle)
 			if (readData === undefined || readData === null) {
 				// Don't copy files if the saveFilePath is equals to the original filePath
 				// ...or if the fileHandle doesn't exist (no file to copy)
-				if (!!fileHandle && !!saveFilePath && saveFilePath !== filePath)
-					await this.copyFile(fileHandle, saveFilePath)
+				if (
+					writeFiles &&
+					!!fileHandle &&
+					file?.fileHandle !== fileHandle &&
+					!!saveFilePath &&
+					saveFilePath !== filePath
+				)
+					await this.copyFile(
+						<FileSystemFileHandle>fileHandle,
+						saveFilePath
+					)
 
 				file = {
 					isLoaded: true,
@@ -268,7 +331,14 @@ export class Compiler {
 		}
 	}
 
-	protected async finalizeFiles(files: Set<IFileData>) {
+	protected async finalizeFiles(files: Set<IFileData>, writeFiles = true) {
+		let writeData:
+			| string
+			| Uint8Array
+			| ArrayBuffer
+			| Blob
+			| undefined = undefined
+
 		for (const file of files) {
 			// We don't need to transform files that won't be saved
 			if (!file.saveFilePath || !file.isLoaded || file.isDone) continue
@@ -291,21 +361,28 @@ export class Compiler {
 							.flat()
 					)
 				)) ?? file.data
-			const writeData =
+			writeData =
 				(await this.runHook(
 					'finalizeBuild',
 					file.filePath,
 					transformedData
 				)) ?? transformedData
 
-			await this.outputFileSystem.mkdir(dirname(file.saveFilePath), {
-				recursive: true,
-			})
-			await this.outputFileSystem.writeFile(file.saveFilePath, writeData)
+			if (writeFiles && !!writeData) {
+				await this.outputFileSystem.mkdir(dirname(file.saveFilePath), {
+					recursive: true,
+				})
+				await this.outputFileSystem.writeFile(
+					file.saveFilePath,
+					writeData
+				)
+			}
 
 			file.isDone = true
 			this.parent.progress.addToCurrent(1)
 		}
+
+		return writeData
 	}
 
 	protected async processFileMap() {

@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { WorkerManager } from '/@/components/Worker/Manager'
-import * as Comlink from 'comlink'
+import { proxy } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
 import { FileType } from '/@/components/Data/FileType'
@@ -50,7 +50,7 @@ export class PackIndexer extends WorkerManager<
 
 		// Listen to task progress and update UI
 		this._service.on(
-			Comlink.proxy(([current, total]) => {
+			proxy(([current, total]) => {
 				this.task?.update(current, total)
 			}),
 			false

@@ -1,4 +1,3 @@
-import { RenderDataContainer } from './RenderContainer'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { IDisposable } from '/@/types/disposable'
@@ -24,7 +23,16 @@ export abstract class FileWatcher extends Signal<void> {
 
 		this.disposable = this.app.project.fileChange.on(
 			this.filePath,
-			(file) => this.onChange(file)
+			async (file) => {
+				console.log(this.filePath, file)
+				const compiled = await this.app.project.compilerManager.compileWithFile(
+					this.filePath,
+					file
+				)
+
+				const compiledFile = new File([compiled], file.name)
+				this.onChange(compiledFile)
+			}
 		)
 	}
 	dispose() {

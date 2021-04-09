@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
-import * as Comlink from 'comlink'
-import { CompilerService, ICompilerOptions } from './Worker/Service'
+import { proxy } from 'comlink'
+import type { CompilerService, ICompilerOptions } from './Worker/Service'
 // import CompilerWorker from './Worker/Main?worker'
 import { WorkerManager } from '/@/components/Worker/Manager'
 import { Project } from '../Projects/Project/Project'
@@ -66,7 +66,7 @@ export class Compiler extends WorkerManager<
 
 		// Listen to task progress and update UI
 		this._service.on(
-			Comlink.proxy(([current, total]) => {
+			proxy(([current, total]) => {
 				this.task?.update(current, total)
 			}),
 			false
@@ -98,5 +98,29 @@ export class Compiler extends WorkerManager<
 			FileType.getPluginFileTypes()
 		)
 		await this._service.updateFile(filePath)
+	}
+
+	async compileWithFile(filePath: string, file: File) {
+		await this.fired
+		if (!this._service)
+			throw new Error(
+				`Trying to update file without service being defined`
+			)
+
+		await this._service.updateMode('dev')
+		await this._service.updatePlugins(
+			this.parent.getCompilerPlugins(),
+			FileType.getPluginFileTypes()
+		)
+
+		const fileBuffer = new Uint8Array(await file.arrayBuffer())
+		const sharedBuffer = new SharedArrayBuffer(fileBuffer.byteLength)
+		const uint8Array = new Uint8Array(sharedBuffer)
+		uint8Array.set(fileBuffer)
+
+		return (
+			(await this._service.compileWithFile(filePath, sharedBuffer)) ??
+			fileBuffer
+		)
 	}
 }

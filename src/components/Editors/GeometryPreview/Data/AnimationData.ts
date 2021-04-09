@@ -1,6 +1,6 @@
 import json5 from 'json5'
 import { RenderDataContainer } from './RenderContainer'
-import { FileWatcher } from './FileWatcher'
+import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 
 export class AnimationData extends FileWatcher {
 	protected animationJson: any

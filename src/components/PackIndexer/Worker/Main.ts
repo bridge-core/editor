@@ -1,5 +1,5 @@
 import { FileType, IFileType } from '/@/components/Data/FileType'
-import * as Comlink from 'comlink'
+import { expose } from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
 import {
@@ -170,4 +170,4 @@ async function loadPack(pack: string, fileSystem: FileSystem) {
 	})
 }
 
-Comlink.expose(PackIndexerService, self)
+expose(PackIndexerService, self)

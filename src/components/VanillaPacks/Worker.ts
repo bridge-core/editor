@@ -1,4 +1,4 @@
-import * as Comlink from 'comlink'
+import { expose } from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
 
 export class VanillaDownloaderService extends TaskService<void> {
@@ -11,4 +11,4 @@ export class VanillaDownloaderService extends TaskService<void> {
 	}
 }
 
-Comlink.expose(VanillaDownloaderService, self)
+expose(VanillaDownloaderService, self)

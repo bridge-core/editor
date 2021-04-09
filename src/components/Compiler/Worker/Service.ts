@@ -1,4 +1,4 @@
-import * as Comlink from 'comlink'
+import { expose } from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { loadPlugins } from './Plugins'
 import { TCompilerPlugin } from './TCompilerPlugin'
@@ -23,15 +23,24 @@ export interface IBuildConfig {
 }
 export type TPluginDef = string | [string, any]
 
+const compilers = new WeakMap<CompilerService, Compiler>()
 export class CompilerService extends TaskService<void, string[]> {
 	protected buildConfig!: IBuildConfig
 	protected plugins!: Map<string, Partial<TCompilerPlugin>>
-	protected compiler: Compiler = new Compiler(this)
 	protected _outputFileSystem?: FileSystem
+
+	// This is necessary so the compiler object doesn't get included in the proxy
+	get compiler() {
+		return compilers.get(this)!
+	}
+	set compiler(val: Compiler) {
+		compilers.set(this, val)
+	}
 
 	constructor(protected readonly options: ICompilerOptions) {
 		super('compiler', options.projectDirectory)
 		FileType.setPluginFileTypes(options.pluginFileTypes)
+		this.compiler = new Compiler(this)
 
 		if (this.options.comMojangDirectory)
 			this._outputFileSystem = new FileSystem(
@@ -61,6 +70,7 @@ export class CompilerService extends TaskService<void, string[]> {
 	}
 
 	async onStart(updatedFiles: string[]) {
+		console.log(this)
 		const globalFs = new FileSystem(this.options.baseDirectory)
 		await FileType.setup(globalFs)
 
@@ -80,6 +90,15 @@ export class CompilerService extends TaskService<void, string[]> {
 	async updateFile(filePath: string) {
 		await this.loadPlugins(this.options.plugins)
 		await this.compiler.runWithFiles([filePath])
+	}
+	async compileWithFile(filePath: string, file: SharedArrayBuffer) {
+		console.log('HEY', this)
+		await this.loadPlugins(this.options.plugins)
+		console.log('HEY')
+		return await this.compiler.compileWithFile(
+			filePath,
+			new File([file], filePath.split('/').pop()!)
+		)
 	}
 
 	async loadPlugins(plugins: Record<string, string>) {
@@ -111,4 +130,4 @@ export class CompilerService extends TaskService<void, string[]> {
 	}
 }
 
-Comlink.expose(CompilerService, self)
+expose(CompilerService, self)

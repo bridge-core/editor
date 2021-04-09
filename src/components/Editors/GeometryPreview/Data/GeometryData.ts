@@ -1,7 +1,7 @@
 import json5 from 'json5'
 import { transformOldModels } from '../transformOldModels'
 import { RenderDataContainer } from './RenderContainer'
-import { FileWatcher } from './FileWatcher'
+import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 
 export class GeometryData extends FileWatcher {
 	protected geometryJson: any

@@ -23,7 +23,7 @@ export type TCompilerPlugin = {
 	 */
 	read(
 		filePath: string,
-		fileHandle?: FileSystemFileHandle
+		fileHandle?: { getFile(): Promise<File> | File }
 	): Promise<any> | any
 
 	/**
@@ -57,7 +57,7 @@ export type TCompilerPlugin = {
 	finalizeBuild(
 		filePath: string,
 		fileContent: any
-	): Maybe<FileSystemWriteChunkType>
+	): Maybe<string | Uint8Array | ArrayBuffer | Blob>
 
 	/**
 	 * Runs once after a build process ended

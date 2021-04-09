@@ -28,9 +28,18 @@ export class CompilerManager {
 
 		if (!compiler)
 			throw new Error(
-				`Cannot update file because compiler for config "${configName}" doesn't exist`
+				`Cannot update file because compiler for config "bridge/compiler/${configName}" doesn't exist`
 			)
 		return compiler.updateFile(filePath)
+	}
+	compileWithFile(filePath: string, file: File) {
+		let compiler = this.compilers.get('default.json')
+
+		if (!compiler)
+			throw new Error(
+				`Cannot update file because compiler for config "bridge/compiler/default.json" doesn't exist`
+			)
+		return compiler.compileWithFile(filePath, file)
 	}
 
 	remove(configName: string) {
