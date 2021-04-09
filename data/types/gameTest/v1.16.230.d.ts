@@ -1,5 +1,4 @@
 declare module 'Minecraft' {
-	export const BlockLocation: BlockPositionClass
 	export const Location: WorldLocationClass
 	export const World: World
 	export const Items: Items
@@ -9,132 +8,30 @@ declare module 'Minecraft' {
 
 declare interface Test {
 	/**
-	 * Allows finer control over advanced test sequences
-	 */
-	startSequence(): Sequence
-
-	/**
-	 * The GameTest will succeed when the given entity is found at the given coordinates
-	 * @param id
-	 * The identifier of the entity to check for
-	 * @param position
-	 * The relative position to test for the actor
-	 */
-	succeedWhenEntityPresent(id: string, position: BlockPos): void
-	/**
-	 * The GameTest will succeed when the given entity is not found at the given coordinates
-	 * @param id
-	 * The identifier of the entity to check for
-	 * @param position
-	 * The relative position to test for the actor
-	 */
-	succeedWhenEntityNotPresent(id: string, position: BlockPos): void
-	/**
-	 * The GameTest will succeed when the given block is found at the given coordinates
-	 * @param id
-	 * The block to check for
-	 * @param position
-	 * The relative position to test for the block
-	 */
-	succeedWhenBlockPresent(id: Block, position: BlockPos): void
-	/**
-	 * The GameTest will succeed when the given amount of ticks has passed
-	 * @param tick
-	 * The tick to succed the test after
-	 */
-	succeedOnTick(tick: number): void
-	/**
-	 * The GameTest will succeed when the given amount of ticks has passed and the `func` parameter calls an assert function
-	 * @param tick
-	 * @param func
-	 */
-	succeedOnTickWhen(tick: number, func: () => void): void
-	/**
-	 * When the `func` paramater calls an assert function the GameTest will succeed
-	 * @param func
-	 */
-	succeedWhen(func: () => void): void
-
-	/**
-	 * When the `func` parameter calls an assert function the GameTest will fail
-	 * @param func
-	 */
-	failIf(func: () => void): void
-
-	/**
 	 * Asserts an error when the given entity is found at the given coordinates
 	 * @param id
 	 * The identifier of the entity to check for
 	 * @param position
 	 * The relative position to test for the actor
 	 */
-	assertEntityPresent(id: string, position: BlockPos): void
+	assertEntityInstancePresent(id: string, position: BlockLocation): void
 	/**
-	 * Asserts an error when the given entity is found at the given coordinates
-	 * @param id
-	 * The identifier of the entity to check for
+	 * Asserts that the entity item count in the given search area matches the expected count
+	 * @param item
+	 * The item type to test for
 	 * @param position
-	 * The relative position to test for the actor
+	 * The position of the item to test for
+	 * @param searchDistance
+	 * The distance to search for the item
+	 * @param count
+	 * The amount of items to expect in the stack
 	 */
-	assertEntityInstancePresent(id: string, position: BlockPos): void
-	/**
-	 * Asserts an error when the given entity is not found at the given coordinates
-	 * @param id
-	 * The identifier of the entity to check for
-	 * @param position
-	 * The relative position to test for the actor
-	 */
-	assertEntityNotPresent(id: string, position: BlockPos): void
-	/**
-	 * Asserts an error when the given item stack is not found at the given coordinates
-	 * @param itemStack
-	 * The item stack to test for
-	 * @param position
-	 * The position to test for the item stack
-	 * @param amount
-	 * The amount of items that should be in the stack
-	 */
-	assertItemEntityPresent(
-		itemStack: ItemStack,
-		position: BlockPos,
-		amount: number
+	assertItemEntityCountIs(
+		item: Item,
+		position: BlockLocation,
+		searchDistance: number,
+		count: number
 	): void
-	/**
-	 * Asserts an error when the given block is not found at the given coordinates
-	 * @param id
-	 * The block to check for
-	 * @param position
-	 * The relative position to test for the block
-	 */
-	assertBlockNotPresent(id: Block, position: BlockPos): void
-	/**
-	 * Asserts an error when the given block at the given coordinates has the block state
-	 * @param state
-	 * The block state to test for
-	 * @param data
-	 * The value of the state to test for
-	 * @param position
-	 * The relative position to test for the block
-	 */
-	assertBlockState(
-		state: string,
-		data: number | string,
-		position: BlockPos
-	): void
-	/**
-	 * Asserts an error if there is an empty container at the given coordinates
-	 * @param position
-	 * The relative position of the container to check
-	 */
-	assertContainerEmpty(position: BlockPos): void
-	/**
-	 * Asserts an error if there is a container with the given item at the given coordinates
-	 * @param id
-	 * The item to test for in the container
-	 * @param position
-	 * The relative position of the container to check
-	 */
-	assertContainerContains(id: string, position: BlockPos): void
 	/**
 	 * Asserts an error when the armor is found on the entity at the given coordinates
 	 * @param id
@@ -155,7 +52,7 @@ declare interface Test {
 		slot: number,
 		item: string,
 		data: number,
-		position: BlockPos,
+		position: BlockLocation,
 		bool: boolean
 	): void
 	/**
@@ -172,15 +69,9 @@ declare interface Test {
 	assertEntityHasComponent(
 		id: string,
 		component: string,
-		position: BlockPos,
+		position: BlockLocation,
 		bool: boolean
 	): void
-	/**
-	 * Throws an Error if an entity matching the given identifier does not exist in the test region
-	 * @param id
-	 * The identifer of the entity to test for
-	 */
-	assertEntityPresentInArea(id: string): void
 	/**
 	 * Asserts that the given condition is true for all entities of the given type at the given location
 	 * @param position
@@ -190,10 +81,26 @@ declare interface Test {
 	 * @param func
 	 */
 	assertEntityData(
-		position: BlockPos,
+		position: BlockLocation,
 		id: string,
 		func: (entity: Entity) => void
 	): void
+	/**
+	 * Asserts that there is no entity of the given type at the given position
+	 * @param id
+	 * The entity to test for
+	 * @param position
+	 * The position of the entity to test
+	 */
+	assertEntityNotTouching(id: string, position: BlockLocation): void
+	/**
+	 * Asserts that there is an entity of the given type at the given position
+	 * @param id
+	 * The entity to test for
+	 * @param position
+	 * The position of the entity to test
+	 */
+	assertEntityTouching(id: string, position: BlockLocation): void
 	/**
 	 * Asserts that the block at the given location is waterlogged
 	 * @param position
@@ -201,7 +108,7 @@ declare interface Test {
 	 * @param isWaterLoggged
 	 * Whether to test if the block is or isn't waterlogged
 	 */
-	assertIsWaterLogged(position: BlockPos, isWaterLoggged: boolean): void
+	assertIsWaterLogged(position: BlockLocation, isWaterLoggged: boolean): void
 	/**
 	 * Asserts the redstone power level at the given location
 	 * @param position
@@ -209,7 +116,7 @@ declare interface Test {
 	 * @param power
 	 * The redstone power level to test for
 	 */
-	assertRedstonePower(position: BlockPos, power: number): void
+	assertRedstonePower(position: BlockLocation, power: number): void
 
 	/**
 	 * Prints the given text to the chat
@@ -217,14 +124,6 @@ declare interface Test {
 	 * The text to print out
 	 */
 	print(text: string): void
-	/**
-	 * Spawns the given entity at the given coordinates
-	 * @param id
-	 * The identifier of the entity to spawn
-	 * @param position
-	 * The relative position to spawn the entity
-	 */
-	spawn(id: string, position: BlockPos): Entity
 	/**
 	 * Spawns an item at the given location
 	 * @param item
@@ -234,44 +133,21 @@ declare interface Test {
 	 */
 	spawnItem(item: ItemStack, location: WorldLocation): Item
 	/**
-	 * Pulls a lever at the given coordinates if there is one there
+	 * Creates a Redstone block at the given position and destroys it after "duration" ticks
 	 * @param position
-	 * The relative position to pull the lever
+	 * Position to place the redstone block
+	 * @param duration
+	 * The time until the redstone block is destroyed
 	 */
-	pullLever(position: BlockPos): void
+	pulseRedstone(position: BlockLocation, duration: number): void
 	/**
-	 * Kills all entities in the test
+	 * Spawns the specified entity at the specified coordinates
+	 * @param id
+	 * The identifier of the entity to spawn
+	 * @param position
+	 * The relative position to spawn the entity
 	 */
-	killAllEntities(): void
-}
-
-declare interface Sequence {
-	/**
-	 * Causes the sequence to wait for the given amount of time
-	 * @param time
-	 * The amount of time to wait for
-	 */
-	thenIdle(time: number): Sequence
-	/**
-	 * Executes the function when called
-	 * @param func
-	 */
-	thenExecute(func: () => void): Sequence
-	/**
-	 * Executes the function after the time given when called
-	 * @param time
-	 * @param func
-	 */
-	thenExecuteAfter(time: number, func: () => void): Sequence
-	/**
-	 * Causes the sequence to wait until the function asserts an error
-	 * @param func
-	 */
-	thenWait(func: () => void): Sequence
-	/**
-	 * Causes the GameTest to succeed
-	 */
-	thenSucced(): void
+	spawn(id: string, position: BlockLocation): Entity
 }
 
 declare interface World {
@@ -291,7 +167,7 @@ declare interface Entity {
 	/**
 	 * Returns an array of supported components
 	 */
-	getComponents(): Array<EntityComponent> | undefined
+	getComponents(): EntityComponent[] | undefined
 	/**
 	 * Returns the component matching the given identifier
 	 * @param component
