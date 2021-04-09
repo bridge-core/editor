@@ -5,6 +5,7 @@ import { dirname } from '/@/utils/path'
 import { CompilerService } from './Service'
 import isGlob from 'is-glob'
 import { isMatch } from 'micromatch'
+import json5 from 'json5'
 
 export interface IFileData {
 	isLoaded?: boolean
@@ -67,7 +68,7 @@ export class Compiler {
 		const flatFiles = this.flatFiles(files, new Set())
 		this.parent.progress.setTotal(flatFiles.size * 2 + 5)
 
-		this.addMatchingGlobImporters(flatFiles)
+		this.addMatchingGlobImporters(flatFiles, this.getChangedFiles(files))
 
 		await this.resolveFiles(flatFiles)
 		await this.requireFiles(flatFiles)
@@ -93,6 +94,8 @@ export class Compiler {
 			})
 		}
 
+		await this.runSimpleHook('buildStart')
+
 		const flatFiles = this.flatFiles(
 			[filePath],
 			new Set(),
@@ -100,17 +103,14 @@ export class Compiler {
 			false
 		)
 
-		this.parent.progress.setTotal(flatFiles.size * 2 + 5)
-		this.addMatchingGlobImporters(flatFiles)
-
 		await this.resolveFiles(flatFiles, false)
-
 		await this.requireFiles(flatFiles)
 		const sortedFiles = resolveFileOrder([...flatFiles], this.files)
-		// console.log([...sortedFiles].map((file) => file.filePath))
-		const test = await this.finalizeFiles(sortedFiles, false)
-		console.log(test)
-		return test
+
+		const compiledFile = await this.finalizeFiles(sortedFiles, false)
+		this.resetFileData(sortedFiles)
+		await this.runSimpleHook('buildEnd')
+		return compiledFile
 	}
 
 	protected async loadSavedFiles() {
@@ -173,9 +173,32 @@ export class Compiler {
 
 		return fileSet
 	}
+	getChangedFiles(
+		files: string[],
+		changedFiles = new Set<string>(),
+		ignoreSet = new Set<string>()
+	) {
+		for (const filePath of files) {
+			if (changedFiles.has(filePath)) continue
 
-	addMatchingGlobImporters(files: Set<string>) {
-		const testFiles = [...files]
+			const file = this.files.get(filePath)
+			if (file?.isLoaded) continue
+
+			ignoreSet.add(filePath)
+
+			changedFiles.add(filePath)
+			if (!file) continue
+
+			this.flatFiles([...file.updateFiles], changedFiles, ignoreSet)
+
+			ignoreSet.delete(filePath)
+		}
+
+		return changedFiles
+	}
+
+	addMatchingGlobImporters(files: Set<string>, changedFiles: Set<string>) {
+		const testFiles = [...changedFiles]
 
 		for (const file of this.files.values()) {
 			if (file.requiresGlobs.size === 0) continue
@@ -377,7 +400,6 @@ export class Compiler {
 					writeData
 				)
 			}
-
 			file.isDone = true
 			this.parent.progress.addToCurrent(1)
 		}
@@ -392,6 +414,8 @@ export class Compiler {
 		for (const [id, file] of this.files) {
 			file.saveFilePath = undefined
 			file.data = undefined
+			file.fileHandle = undefined
+
 			if (
 				file.updateFiles.size > 0 ||
 				file.dependencies.size > 0 ||
@@ -410,6 +434,16 @@ export class Compiler {
 		// Save files map
 		await this.fileSystem.writeJSON('bridge/files.json', filesObject, true)
 		this.parent.progress.addToCurrent(1)
+	}
+
+	protected resetFileData(files: Set<IFileData>) {
+		for (const file of files) {
+			file.data = undefined
+			file.saveFilePath = undefined
+			file.isLoaded = false
+			file.isDone = false
+			file.fileHandle = undefined
+		}
 	}
 
 	protected async copyFile(

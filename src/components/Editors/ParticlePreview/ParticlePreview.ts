@@ -16,14 +16,19 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	protected fileWatcher?: FileWatcher
 
 	protected wintersky = new Wintersky({
+		// @ts-ignore
 		fetchTexture: async (config) => {
 			const app = await App.getApp()
 
-			return await loadAsDataURL(
-				// @ts-ignore
-				`RP/${config.particle_texture_path}.png`,
-				app.project.fileSystem
-			)
+			try {
+				return await loadAsDataURL(
+					// @ts-ignore
+					`RP/${config.particle_texture_path}.png`,
+					app.project.fileSystem
+				)
+			} catch (err) {
+				// Fallback to Wintersky's default handling of textures
+			}
 		},
 	})
 

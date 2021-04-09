@@ -91,10 +91,9 @@ export class CompilerService extends TaskService<void, string[]> {
 		await this.loadPlugins(this.options.plugins)
 		await this.compiler.runWithFiles([filePath])
 	}
-	async compileWithFile(filePath: string, file: SharedArrayBuffer) {
-		console.log('HEY', this)
+	async compileWithFile(filePath: string, file: Uint8Array) {
 		await this.loadPlugins(this.options.plugins)
-		console.log('HEY')
+
 		return await this.compiler.compileWithFile(
 			filePath,
 			new File([file], filePath.split('/').pop()!)

@@ -24,7 +24,7 @@ export abstract class FileWatcher extends Signal<void> {
 		this.disposable = this.app.project.fileChange.on(
 			this.filePath,
 			async (file) => {
-				console.log(this.filePath, file)
+				// console.log(this.filePath, file)
 				const compiled = await this.app.project.compilerManager.compileWithFile(
 					this.filePath,
 					file

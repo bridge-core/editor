@@ -37,7 +37,11 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 			} else if (loadMoLangFrom(filePath) && fileHandle) {
 				// Currently, MoLang in function files is not supported so we can just load files as JSON
 				const file = await fileHandle.getFile()
-				return json5.parse(await file.text())
+				try {
+					return json5.parse(await file.text())
+				} catch (err) {
+					console.error(err)
+				}
 			}
 		},
 		async load(filePath, fileContent) {

@@ -114,12 +114,9 @@ export class Compiler extends WorkerManager<
 		)
 
 		const fileBuffer = new Uint8Array(await file.arrayBuffer())
-		const sharedBuffer = new SharedArrayBuffer(fileBuffer.byteLength)
-		const uint8Array = new Uint8Array(sharedBuffer)
-		uint8Array.set(fileBuffer)
 
 		return (
-			(await this._service.compileWithFile(filePath, sharedBuffer)) ??
+			(await this._service.compileWithFile(filePath, fileBuffer)) ??
 			fileBuffer
 		)
 	}
