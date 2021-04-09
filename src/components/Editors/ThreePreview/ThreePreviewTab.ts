@@ -79,6 +79,7 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		this.setupComplete.dispatch()
 	}
 	async onActivate() {
+		await this.setupComplete.fired
 		await super.onActivate()
 		const app = await App.getApp()
 

@@ -163,6 +163,7 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 
 	onDestroy() {
 		this._renderContainer?.dispose()
+		super.onDestroy()
 	}
 
 	protected async createModel() {

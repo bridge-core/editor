@@ -247,21 +247,6 @@ export class App {
 			)
 		)
 
-		this.projectManager.fired.then(() => {
-			// @ts-ignore
-			Wintersky.fetchTexture = async (config) => {
-				return await loadAsDataURL(
-					// @ts-ignore
-					`RP/${config.particle_texture_path}.png`,
-					this.project.fileSystem
-				)
-			}
-		})
-
-		Wintersky.global_options.tick_rate = 60
-		Wintersky.global_options.max_emitter_particles = 1000
-		Wintersky.global_options.scale = 16
-
 		console.timeEnd('[APP] startUp()')
 	}
 }

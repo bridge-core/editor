@@ -41,7 +41,7 @@
 		"vue-template-compiler": "2.6.12",
 		"vuedraggable": "^2.24.3",
 		"vuetify": "^2.2.11",
-		"wintersky": "^0.2.0"
+		"wintersky": "github:jannisx11/wintersky#pull/5/head"
 	},
 	"devDependencies": {
 		"@types/color-convert": "^2.0.0",
