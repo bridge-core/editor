@@ -1,9 +1,9 @@
 import json5 from 'json5'
 import { transformOldModels } from '../transformOldModels'
+import { PreviewFileWatcher } from './PreviewFileWatcher'
 import { RenderDataContainer } from './RenderContainer'
-import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 
-export class GeometryData extends FileWatcher {
+export class GeometryData extends PreviewFileWatcher {
 	protected geometryJson: any
 	protected selected!: string
 
@@ -32,13 +32,15 @@ export class GeometryData extends FileWatcher {
 
 	get includedGeometries(): any[] {
 		if (this.includedGeometryIdentifiers === undefined)
-			return this.geometryJson['minecraft:geometry']
+			return this.geometryJson?.['minecraft:geometry'] ?? []
 
-		return this.geometryJson['minecraft:geometry'].filter(
-			({ description }: any) =>
-				!this.includedGeometryIdentifiers!.includes(
-					description.identifier
-				)
+		return (
+			this.geometryJson?.['minecraft:geometry']?.filter(
+				({ description }: any) =>
+					!this.includedGeometryIdentifiers!.includes(
+						description.identifier
+					)
+			) ?? []
 		)
 	}
 

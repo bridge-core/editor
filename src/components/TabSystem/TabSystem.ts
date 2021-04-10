@@ -145,6 +145,11 @@ export class TabSystem extends MonacoHolder {
 				color: tab.iconColor,
 				icon: tab.icon,
 			})
+
+			this.project.fileSave.dispatch(
+				tab.getProjectPath(),
+				await tab.getFile()
+			)
 		}
 
 		// Only refresh auto-completion content if tab is active

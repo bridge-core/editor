@@ -1,8 +1,8 @@
 import json5 from 'json5'
+import { PreviewFileWatcher } from './PreviewFileWatcher'
 import { RenderDataContainer } from './RenderContainer'
-import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 
-export class AnimationData extends FileWatcher {
+export class AnimationData extends PreviewFileWatcher {
 	protected animationJson: any
 
 	constructor(

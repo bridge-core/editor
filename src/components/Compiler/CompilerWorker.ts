@@ -26,6 +26,7 @@ export class Compiler extends WorkerManager<
 			name: 'taskManager.tasks.compiler.title',
 			description: 'taskManager.tasks.compiler.description',
 		})
+		this.ready.dispatch(false)
 	}
 
 	createWorker() {
@@ -86,7 +87,8 @@ export class Compiler extends WorkerManager<
 	}
 
 	async updateFile(filePath: string) {
-		await this.fired
+		await this.ready.fired
+		this.ready.resetSignal()
 		if (!this._service)
 			throw new Error(
 				`Trying to update file without service being defined`
@@ -98,10 +100,12 @@ export class Compiler extends WorkerManager<
 			FileType.getPluginFileTypes()
 		)
 		await this._service.updateFile(filePath)
+		this.ready.dispatch(true)
 	}
 
 	async compileWithFile(filePath: string, file: File) {
-		await this.fired
+		await this.ready.fired
+		this.ready.resetSignal()
 		if (!this._service)
 			throw new Error(
 				`Trying to update file without service being defined`
@@ -114,10 +118,12 @@ export class Compiler extends WorkerManager<
 		)
 
 		const fileBuffer = new Uint8Array(await file.arrayBuffer())
-
-		return (
-			(await this._service.compileWithFile(filePath, fileBuffer)) ??
+		const [dependencies, compiled] = await this._service.compileWithFile(
+			filePath,
 			fileBuffer
 		)
+
+		this.ready.dispatch(true)
+		return <const>[dependencies, compiled ?? file]
 	}
 }

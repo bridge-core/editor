@@ -5,7 +5,6 @@ import { dirname } from '/@/utils/path'
 import { CompilerService } from './Service'
 import isGlob from 'is-glob'
 import { isMatch } from 'micromatch'
-import json5 from 'json5'
 
 export interface IFileData {
 	isLoaded?: boolean
@@ -110,7 +109,10 @@ export class Compiler {
 		const compiledFile = await this.finalizeFiles(sortedFiles, false)
 		this.resetFileData(sortedFiles)
 		await this.runSimpleHook('buildEnd')
-		return compiledFile
+
+		flatFiles.delete(filePath)
+
+		return <const>[[...flatFiles], compiledFile]
 	}
 
 	protected async loadSavedFiles() {
@@ -415,6 +417,8 @@ export class Compiler {
 			file.saveFilePath = undefined
 			file.data = undefined
 			file.fileHandle = undefined
+			file.isLoaded = false
+			file.isDone = false
 
 			if (
 				file.updateFiles.size > 0 ||

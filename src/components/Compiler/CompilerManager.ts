@@ -4,11 +4,14 @@ import { Compiler } from './CompilerWorker'
 import JSON5 from 'json5'
 import { App } from '/@/App'
 import { deepMergeAll } from '/@/utils/deepmerge'
+import { Signal } from '../Common/Event/Signal'
 
-export class CompilerManager {
+export class CompilerManager extends Signal<void> {
 	protected compilers = new Map<string, Compiler>()
 
-	constructor(protected project: Project) {}
+	constructor(protected project: Project) {
+		super()
+	}
 
 	async start(configName: string, mode: 'dev' | 'build') {
 		const app = await App.getApp()
@@ -21,6 +24,7 @@ export class CompilerManager {
 		compiler = new Compiler(this, this.project, configName)
 		this.compilers.set(configName, compiler)
 		await compiler.activate(mode)
+		this.dispatch()
 	}
 
 	updateFile(configName: string, filePath: string) {

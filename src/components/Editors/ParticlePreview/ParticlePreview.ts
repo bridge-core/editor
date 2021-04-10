@@ -9,11 +9,13 @@ import { Tab } from '/@/components/TabSystem/CommonTab'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import { App } from '/@/App'
+import { Signal } from '/@/components/Common/Event/Signal'
 
 export class ParticlePreviewTab extends ThreePreviewTab {
 	protected emitter?: Emitter
 	protected config?: Config
 	protected fileWatcher?: FileWatcher
+	protected isReloadingDone = new Signal<void>()
 
 	protected wintersky = new Wintersky({
 		// @ts-ignore
@@ -44,11 +46,14 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 			this.wintersky.global_options.tick_rate = 60
 			this.wintersky.global_options.max_emitter_particles = 1000
 			this.wintersky.global_options.scale = 16
+
 			// this.scene.add(new GridHelper(64, 64))
 		})
+		this.isReloadingDone.dispatch()
 	}
 
 	async onActivate() {
+		console.error('ACTIVATE')
 		await super.onActivate()
 		await this.onChange()
 	}
@@ -79,8 +84,11 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	}
 
 	async loadParticle(file?: File) {
-		if (!file) file = await this.getFile()
 		if (!this.fileWatcher) this.fileWatcher = new ParticleWatcher(this)
+		if (!file)
+			file =
+				(await this.fileWatcher?.requestFile(await this.getFile())) ??
+				(await this.getFile())
 
 		let particle: any
 		try {
@@ -119,7 +127,11 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	}
 
 	async onChange(file?: File) {
+		await this.isReloadingDone.fired
+		this.isReloadingDone.resetSignal()
+
 		await this.loadParticle(file)
+		this.isReloadingDone.dispatch()
 	}
 
 	async reload() {

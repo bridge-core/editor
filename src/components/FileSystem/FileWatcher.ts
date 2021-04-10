@@ -1,39 +1,89 @@
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { IDisposable } from '/@/types/disposable'
 
-export abstract class FileWatcher extends Signal<void> {
+export class FileWatcher extends EventDispatcher<File> {
 	protected fileContent: any
 	protected disposable?: IDisposable
+	protected children: ChildFileWatcher[] = []
+	public readonly ready = new Signal<void>()
 
 	constructor(protected app: App, public readonly filePath: string) {
 		super()
 		this.activate()
 
 		app.project.getFileFromDiskOrTab(filePath).then(async (file) => {
-			await this.onChange(file, true)
-			this.dispatch()
+			await this.onFileChange(file)
+			this.ready.dispatch()
 		})
 	}
 
-	abstract onChange(file: File, isInitial?: boolean): Promise<void> | void
-
 	async activate() {
+		console.log('ACTIVATE FILE WATCHER')
 		if (this.disposable !== undefined) return
 
 		this.disposable = this.app.project.fileChange.on(
 			this.filePath,
-			async (file) => {
-				// console.log(this.filePath, file)
-				const compiled = await this.app.project.compilerManager.compileWithFile(
-					this.filePath,
-					file
-				)
-
-				const compiledFile = new File([compiled], file.name)
-				this.onChange(compiledFile)
-			}
+			(file) => this.onFileChange(file)
 		)
+	}
+	async requestFile(file: File) {
+		await this.onFileChange(file)
+
+		return new Promise<File>((resolve) => {
+			this.on((file) => resolve(file))
+		})
+	}
+
+	protected async onFileChange(file: File) {
+		await this.app.project.compilerManager.fired
+
+		const [
+			dependencies,
+			compiled,
+		] = await this.app.project.compilerManager.compileWithFile(
+			this.filePath,
+			file
+		)
+		console.log(dependencies)
+		this.children.forEach((child) => child.dispose())
+		this.children = []
+
+		dependencies.forEach((dep) => {
+			const watcher = new ChildFileWatcher(this.app, dep)
+			this.children.push(watcher)
+			watcher.on(() => this.onFileChange(file))
+		})
+
+		const compiledFile = new File([compiled], file.name)
+		this.dispatch(compiledFile)
+	}
+	dispose() {
+		this.disposable?.dispose()
+		this.disposable = undefined
+		this.children.forEach((child) => child.dispose())
+	}
+}
+
+export class ChildFileWatcher extends EventDispatcher<void> {
+	protected disposable?: IDisposable
+
+	constructor(protected app: App, public readonly filePath: string) {
+		super()
+		this.activate()
+	}
+
+	async activate() {
+		if (this.disposable !== undefined) return
+
+		this.disposable = this.app.project.fileSave.on(this.filePath, (file) =>
+			this.onFileChange(file)
+		)
+	}
+
+	protected async onFileChange(data: File) {
+		this.dispatch()
 	}
 	dispose() {
 		this.disposable?.dispose()

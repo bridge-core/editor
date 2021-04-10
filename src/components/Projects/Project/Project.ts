@@ -38,6 +38,7 @@ export class Project {
 		`projects/${this.name}/bridge/inactiveExtensions.json`
 	)
 	public readonly fileChange = new FileChangeRegistry()
+	public readonly fileSave = new FileChangeRegistry()
 
 	//#region Getters
 	get projectData() {

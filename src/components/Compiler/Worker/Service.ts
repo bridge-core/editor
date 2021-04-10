@@ -5,6 +5,7 @@ import { TCompilerPlugin } from './TCompilerPlugin'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { FileType, IFileType } from '/@/components/Data/FileType'
 import { Compiler } from './Compiler'
+import { Signal } from '../../Common/Event/Signal'
 
 export interface ICompilerOptions {
 	projectDirectory: FileSystemDirectoryHandle

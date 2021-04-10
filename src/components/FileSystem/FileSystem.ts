@@ -152,6 +152,7 @@ export class FileSystem extends Signal<void> {
 		fileHandle: FileSystemFileHandle,
 		data: FileSystemWriteChunkType
 	) {
+		// console.log(data)
 		const writable = await fileHandle.createWritable()
 		await writable.write(data)
 		await writable.close()

@@ -7,8 +7,6 @@ export class FileChangeRegistry extends EventSystem<File> {
 	dispatch(name: string, fileContent: File) {
 		if (!this.hasEvent(name)) return
 
-		// TODO: Compile fileContent
-
 		super.dispatch(name, fileContent)
 	}
 	on(name: string, listener: (data: File) => void) {

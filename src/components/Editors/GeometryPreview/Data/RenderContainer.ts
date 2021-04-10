@@ -40,7 +40,7 @@ export class RenderDataContainer extends EventDispatcher<void> {
 			includedGeometryIdentifiers
 		)
 		this._geometries.push(geo)
-		this.readyPromises.push(geo.fired)
+		this.readyPromises.push(geo.ready.fired)
 	}
 	createAnimation(
 		animationFilePath: string,
@@ -52,7 +52,7 @@ export class RenderDataContainer extends EventDispatcher<void> {
 			includedAnimationIdentifiers
 		)
 		this._animations.push(anim)
-		this.readyPromises.push(anim.fired)
+		this.readyPromises.push(anim.ready.fired)
 	}
 	selectGeometry(id: string) {
 		for (const geo of this._geometries) {
