@@ -19,11 +19,11 @@
 								{
 									"type": "array",
 									"items": {
-										"$ref": "../item/dynamic/texturePathEnum.json"
+										"$ref": "../general/reference/paths.json#/definitions/item_texture_paths"
 									}
 								},
 								{
-									"$ref": "../item/dynamic/texturePathEnum.json"
+									"$ref": "../general/reference/paths.json#/definitions/item_texture_paths"
 								}
 							]
 						}

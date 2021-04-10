@@ -69,7 +69,7 @@
 							"description": "Defines the textures used in the entity.",
 							"patternProperties": {
 								".*": {
-									"$ref": "../dynamic/texturePathEnum.json"
+									"$ref": "../../general/reference/paths.json#/definitions/entity_texture_paths"
 								}
 							}
 						},

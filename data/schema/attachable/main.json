@@ -50,7 +50,7 @@
 							"description": "Defines the textures used in the attachable.",
 							"patternProperties": {
 								".*": {
-									"$ref": "../clientEntity/dynamic/texturePathEnum.json"
+									"$ref": "../general/reference/paths.json#/definitions/entity_texture_paths"
 								}
 							}
 						},

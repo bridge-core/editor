@@ -28,14 +28,14 @@
 						"textures": {
 							"anyOf": [
 								{
-									"$ref": "../block/dynamic/texturePathEnum.json"
+									"$ref": "../general/reference/paths.json#/definitions/block_texture_paths"
 								},
 								{
 									"type": "array",
 									"items": {
 										"anyOf": [
 											{
-												"$ref": "../block/dynamic/texturePathEnum.json"
+												"$ref": "../general/reference/paths.json#/definitions/block_texture_paths"
 											},
 											{
 												"properties": {
@@ -53,7 +53,7 @@
 																	"type": "integer"
 																},
 																"path": {
-																	"$ref": "../block/dynamic/texturePathEnum.json"
+																	"$ref": "../general/reference/paths.json#/definitions/block_texture_paths"
 																},
 																"overlay_color": {
 																	"$ref": "../general/hexColor.json"

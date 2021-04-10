@@ -1,0 +1,65 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"definitions": {
+		"entity_texture_paths": {
+			"anyOf": [
+				{
+					"$ref": "../../clientEntity/dynamic/texturePathEnum.json"
+				},
+				{
+					"$ref": "../vanilla/paths.json#/definitions/entity_texture_paths"
+				}
+			]
+		},
+		"particle_texture_paths": {
+			"anyOf": [
+				{
+					"$ref": "../../particle/dynamic/texturePathEnum.json"
+				},
+				{
+					"$ref": "../vanilla/paths.json#/definitions/particle_texture_paths"
+				}
+			]
+		},
+		"block_texture_paths": {
+			"anyOf": [
+				{
+					"$ref": "../../block/dynamic/texturePathEnum.json"
+				},
+				{
+					"$ref": "../vanilla/paths.json#/definitions/block_texture_paths"
+				}
+			]
+		},
+		"item_texture_paths": {
+			"anyOf": [
+				{
+					"$ref": "../../item/dynamic/texturePathEnum.json"
+				},
+				{
+					"$ref": "../vanilla/paths.json#/definitions/item_texture_paths"
+				}
+			]
+		},
+		"sound_paths": {
+			"anyOf": [
+				{
+					"$ref": "../../sound/dynamic/soundPathEnum.json"
+				},
+				{
+					"$ref": "../vanilla/paths.json#/definitions/sound_paths"
+				}
+			]
+		},
+		"loot_table_paths": {
+			"anyOf": [
+				{
+					"$ref": "../../lootTable/dynamic/lootTablePathEnum.json"
+				},
+				{
+					"$ref": "../vanilla/paths.json#/definitions/loot_table_paths"
+				}
+			]
+		}
+	}
+}
