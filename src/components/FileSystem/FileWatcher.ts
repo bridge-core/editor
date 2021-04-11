@@ -20,7 +20,6 @@ export class FileWatcher extends EventDispatcher<File> {
 	}
 
 	async activate() {
-		console.log('ACTIVATE FILE WATCHER')
 		if (this.disposable !== undefined) return
 
 		this.disposable = this.app.project.fileChange.on(
@@ -46,7 +45,7 @@ export class FileWatcher extends EventDispatcher<File> {
 			this.filePath,
 			file
 		)
-		console.log(dependencies)
+		// console.log(dependencies)
 		this.children.forEach((child) => child.dispose())
 		this.children = []
 
