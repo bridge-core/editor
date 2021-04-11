@@ -1,29 +1,80 @@
-<h2>Features</h2>
+<h2>Features:</h2>
 <ul>
-<li>Added auto-completions for action texts</li>
-<li><strong>Custom MoLang (WIP):</strong>
+<li><strong>Custom MoLang:</strong>
 <ul>
-<li>You are now able to create .molang files in the preset window</li>
-<li>bridge.'s compiler will automatically find where you have used custom MoLang in your files and transform it so it is readable in Minecraft</li>
-<li>The &quot;moLang&quot; compiler plugin will now be added to project compiler configs upon project creation</li>
+<li>Added support for line comments (&quot;#&quot; character)</li>
+<li>Optimized build output</li>
+<li>Proper support for early returns</li>
+<li>Scoped temporary variables to function context</li>
 </ul>
 </li>
-<li>Added wordWrap setting for text files</li>
-</ul>
-<h2>Changes</h2>
+<li><strong>Extensions:</strong>
 <ul>
-<li>Updated schemas to latest beta</li>
-<li>The file name is now forced to be used in feature, feature rule and biome identifiers</li>
+<li>Every project now has its own extension loader</li>
+<li>Added support for activating/deactivating plugins</li>
+</ul>
+</li>
+<li><strong>Files:</strong>
+<ul>
+<li>Support for dragging files onto bridge. to open &amp; edit them</li>
+<li>Support for opening files with bridge. on supported browsers</li>
+</ul>
+</li>
+<li><strong>Tabs:</strong>
+<ul>
+<li>Tabs now interact with fileHandles directly (support for saving external files)</li>
+<li>Added support for tabs to register &quot;actions&quot; which can e.g. start up a preview of the tab's content</li>
+</ul>
+</li>
+<li><strong>Projects:</strong>
+<ul>
+<li>Switching between projects no longer always requires to restart the PackIndexer &amp; Compiler tasks</li>
+</ul>
+</li>
+<li><strong>Editing:</strong>
+<ul>
+<li>You no longer need to save files in order to update auto-completions. Things like component groups, events etc. are now updated periodically in the background</li>
+<li>bridge. can now compile to com.mojang directly. Simply drag your com.mojang folder onto bridge. to set direct compilation up. <strong>Please note:</strong> You may need to delete two files from your &quot;projects/MyProject/bridge&quot; folder if you set this up for an already existing project: &quot;bridge/files.json&quot; &amp; &quot;bridge/.lightningCache&quot;</li>
+<li>Updated auto-completion &amp; validation schemas to the latest beta</li>
 <li>Updated GameTest types to latest beta</li>
-<li>Exposed project target version to compiler plugins</li>
-<li>Improved schema for feature rule iterations</li>
-<li>Organised some schemas</li>
+<li>Updated schemas to include vanilla sounds &amp; textures</li>
+<li>Added min/max validation for block collisions</li>
+<li>Support for &quot;max_distance&quot; inside of sound_definitions.json file</li>
 </ul>
-<h2>Fixes</h2>
+</li>
+<li><strong>Previews:</strong> (WIP)
 <ul>
-<li>Fixed extension tags not having color in light mode</li>
-<li>Fixed presets using presetScripts not asking for permission to overwrite files</li>
-<li>Fixed animations and animation controllers in custom components</li>
-<li>Fixed feature and feature rule presets</li>
-<li>Fixed typo in particle component property</li>
+<li>Added preview capabilities to models</li>
+<li>Added preview capabilities to particles</li>
+</ul>
+</li>
+<li>Added option to add pack name &amp; description directly to manifest</li>
+<li>Added &quot;requiredModules&quot; option to preset manifests</li>
+</ul>
+<h2>Changes:</h2>
+<ul>
+<li>GameTests no longer get included in production builds</li>
+<li>Added descriptions to feature schema</li>
+<li>Brought back &quot;using_converts_to&quot; component property to items with a format version of &quot;1.16.100&quot; or higher</li>
+<li>Moved compiler startup from app to projects</li>
+<li>Moved InformationWindow, DropdownWindow &amp; InputWindow to class based API</li>
+<li>Added icon for geometries</li>
+<li>Added sound_definitions.json file to files being created upon creating a new project</li>
+<li>Improved behavior of setting a tab system as active in split-screen mode</li>
+</ul>
+<h2>Fixes:</h2>
+<ul>
+<li>Fixed presets using Java instead of Bedrock skins</li>
+<li>Fixed projectConfig being setup incorrectly</li>
+<li>Fixed <code>setObjectAt</code> util trying to set data on primitive values</li>
+<li>Fixed error registering data reloading action</li>
+<li>Fixed dolphin preset</li>
+<li>Fixed error upon opening images</li>
+<li>Fixed various errors inside of presets</li>
+<li>Fixed tabs not resizing correctly</li>
+<li>Fixed reloading of auto-completions</li>
+<li>Fixed selection of an already selected tab</li>
+<li>Fixed error upon opening Monaco in split-screen mode</li>
+<li>Fixed persistent tabs</li>
+<li>Fixed valid MoLang particle locations</li>
 </ul>
