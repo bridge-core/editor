@@ -60,6 +60,16 @@
 					"$ref": "../vanilla/paths.json#/definitions/loot_table_paths"
 				}
 			]
+		},
+		"trade_table_paths": {
+			"anyOf": [
+				{
+					"$ref": "../../tradeTable/dynamic/tradeTablePathEnum.json"
+				},
+				{
+					"$ref": "../vanilla/paths.json#/definitions/trade_table_paths"
+				}
+			]
 		}
 	}
 }

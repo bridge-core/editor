@@ -282,7 +282,7 @@
 					"properties": {
 						"barter_table": {
 							"description": "Loot table that's used to drop a random item.",
-							"$ref": "../../lootTable/dynamic/lootTablePathEnum.json"
+							"$ref": "../../general/reference/paths.json#/definitions/loot_table_paths"
 						},
 						"cooldown_after_being_attacked": {
 							"description": "Duration, in seconds, for which mob won't barter items if it was hurt.",
@@ -968,7 +968,7 @@
 						},
 						"table": {
 							"description": "File path relative to the behavior pack root for this entity's trades.",
-							"$ref": "../../tradeTable/dynamic/tradeTablePathEnum.json"
+							"$ref": "../../general/reference/paths.json#/definitions/trade_table_paths"
 						},
 						"new_screen": {
 							"description": "Used to determine if trading with entity opens the new trade screen.",
@@ -1080,7 +1080,7 @@
 					"properties": {
 						"table": {
 							"description": "The file path to the equipment table, relative to the behavior pack's root.",
-							"$ref": "../../lootTable/dynamic/lootTablePathEnum.json"
+							"$ref": "../../general/reference/paths.json#/definitions/loot_table_paths"
 						},
 						"slot_drop_chance": {
 							"description": "A list of slots with the chance to drop an equipped item from that slot.",
@@ -1752,7 +1752,7 @@
 										"properties": {
 											"table": {
 												"description": "File path, relative to the Behavior Pack's path, to the loot table file.",
-												"$ref": "../../lootTable/dynamic/lootTablePathEnum.json"
+												"$ref": "../../general/reference/paths.json#/definitions/loot_table_paths"
 											}
 										}
 									},
@@ -1795,7 +1795,7 @@
 										"description": "Loot table with items to drop on the ground upon successful interaction.",
 										"properties": {
 											"table": {
-												"$ref": "../../lootTable/dynamic/lootTablePathEnum.json"
+												"$ref": "../general/reference/paths.json#/definitions/loot_table_paths"
 											}
 										}
 									},
@@ -2035,7 +2035,7 @@
 					"properties": {
 						"table": {
 							"description": "The path to the loot table, relative to the Behavior Pack's root.",
-							"$ref": "../../lootTable/dynamic/lootTablePathEnum.json"
+							"$ref": "../../general/reference/paths.json#/definitions/loot_table_paths"
 						}
 					}
 				},
@@ -4005,7 +4005,7 @@
 						},
 						"table": {
 							"description": "File path relative to the behavior pack root for this entity's trades.",
-							"$ref": "../../tradeTable/dynamic/tradeTablePathEnum.json"
+							"$ref": "../../general/reference/paths.json#/definitions/trade_table_paths"
 						},
 						"new_screen": {
 							"description": "Used to determine if trading with entity opens the new trade screen.",

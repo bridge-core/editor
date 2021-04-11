@@ -7,7 +7,7 @@
 			"additionalProperties": false,
 			"properties": {
 				"table": {
-					"$ref": "../../lootTable/dynamic/lootTablePathEnum.json"
+					"$ref": "../../general/reference/paths.json#/definitions/loot_table_paths"
 				}
 			}
 		}
