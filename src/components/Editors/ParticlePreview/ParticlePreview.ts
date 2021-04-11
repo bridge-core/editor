@@ -53,7 +53,6 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	}
 
 	async onActivate() {
-		console.error('ACTIVATE')
 		await super.onActivate()
 		await this.onChange()
 	}
