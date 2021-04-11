@@ -1,9 +1,12 @@
 import { exec } from 'child_process'
 import { promises as fs } from 'fs'
+import { join } from 'path'
 
 // Build TypeScript declaration files for compiler plugins
 ;(async () => {
-	const { version } = JSON.parse(await fs.readFile('./package.json'))
+	const { version } = JSON.parse(
+		await fs.readFile(join(process.cwd(), './package.json'))
+	)
 	await fs.rmdir('./compilerTypes/', { recursive: true })
 
 	exec(

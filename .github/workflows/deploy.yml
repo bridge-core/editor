@@ -44,11 +44,11 @@ jobs:
                   FOLDER: dist
                   CLEAN: true
 
-            - name: Build & Publish Compiler Plugin Types 📝
-              env:
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-              run: |
-                  npm run build-compiler-types
-                  cd ./compilerTypes
-                  npm publish
-                  cd ..
+            # - name: Build & Publish Compiler Plugin Types 📝
+            #   env:
+            #       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+            #   run: |
+            #       npm run build-compiler-types
+            #       cd ./compilerTypes
+            #       npm publish
+            #       cd ..
