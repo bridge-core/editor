@@ -312,6 +312,22 @@ declare interface BlockLocation {
 	 * Returns the block position it was called on but increases the y coordinate by 1
 	 */
 	above(): BlockLocation
+	/**
+	 * Offsets the position of the BlockLocation by the values given
+	 * @param x
+	 * The x position to offset the position by
+	 * @param y
+	 * The y position to offset the position by
+	 * @param z
+	 * The z position to offset the position by
+	 */
+	offset(x: number, y: number, z: number): BlockLocation
+	/**
+	 * Compares this BlockLocation to another given BlockLocation and returns true if they are the same
+	 * @param other
+	 * The other BlockLocation to compare this on with
+	 */
+	equals(other: BlockLocation): boolean
 }
 
 declare interface ItemStack {}
