@@ -5,16 +5,16 @@ import { FileType } from '/@/components/Data/FileType'
 import { PackType } from '/@/components/Data/PackType'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { SimpleAction } from '../Actions/SimpleAction'
-import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { SimpleAction } from '/@/components/Actions/SimpleAction'
 
 export abstract class Tab extends Signal<Tab> {
 	abstract component: Vue.Component
-	uuid = uuid()
-	hasRemoteChange = false
-	isUnsaved = false
+	public uuid = uuid()
+	public hasRemoteChange = false
+	public isUnsaved = false
+	public isForeignFile = false
+
 	protected projectPath?: string
-	isForeignFile = false
 	protected actions: SimpleAction[] = []
 	protected connectedTabs: Tab[] = []
 	protected isActive = false
