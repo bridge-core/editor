@@ -325,7 +325,7 @@ declare interface BlockLocation {
 	/**
 	 * Compares this BlockLocation to another given BlockLocation and returns true if they are the same
 	 * @param other
-	 * The other BlockLocation to compare this on with
+	 * The other BlockLocation to compare this one with
 	 */
 	equals(other: BlockLocation): boolean
 }
