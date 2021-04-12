@@ -1,0 +1,6 @@
+[
+	{
+		"lootTablePath": "pools/*/entries/*/name",
+		"@map": "if (Bridge.value.endsWith('.json')) return Bridge.value"
+	}
+]
