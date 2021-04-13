@@ -4,5 +4,6 @@
 	"scope": "RP/particles/",
 	"matcher": ["RP/particles/**/*.json", "RP/particles/*.json"],
 	"schema": "file:///data/packages/schema/particle/main.json",
+	"packSpider": "particle.json",
 	"lightningCache": "particle.json"
 }
