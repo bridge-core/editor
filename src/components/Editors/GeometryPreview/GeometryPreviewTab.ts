@@ -169,7 +169,7 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 	protected async createModel() {
 		const app = await App.getApp()
 
-		if (this.model) this.scene?.remove(this.model.getModel())
+		if (this.model) this.scene?.remove(this.model.getGroup())
 		this.model = new Model(
 			this.renderContainer.modelData,
 			await loadAsDataURL(
@@ -177,7 +177,7 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 				app.project.fileSystem
 			)
 		)
-		this.scene.add(this.model.getModel())
+		this.scene.add(this.model.getGroup())
 
 		for (const [animId, anim] of this.renderContainer.animations) {
 			this.model.animator.addAnimation(animId, anim)
@@ -190,7 +190,7 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 		}, 100)
 	}
 	async reload() {
-		if (this.model) this.scene?.remove(this.model.getModel())
+		if (this.model) this.scene?.remove(this.model.getGroup())
 		this._renderContainer?.dispose()
 		this._renderContainer = undefined
 		await this.onChange()

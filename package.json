@@ -18,7 +18,7 @@
 		"@mdi/font": "^5.8.55",
 		"@types/micromatch": "^4.0.1",
 		"bridge-compiler": "^0.3.0",
-		"bridge-model-viewer": "^0.4.0",
+		"bridge-model-viewer": "^0.5.0",
 		"color-convert": "^2.0.1",
 		"comlink": "^4.3.0",
 		"compare-versions": "^3.6.0",
