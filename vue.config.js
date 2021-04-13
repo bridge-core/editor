@@ -54,7 +54,7 @@ module.exports = {
 		plugins: [
 			new NormalModuleReplacementPlugin(
 				/molangjs/,
-				'../../../src/utils/MoLangJS.ts'
+				join(__dirname, './src/utils/MoLangJS.ts')
 			),
 			new MonacoWebpackPlugin({ features: ['!toggleHighContrast'] }),
 			new WorkerPlugin({ globalObject: 'self' }),
