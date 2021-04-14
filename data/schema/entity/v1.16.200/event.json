@@ -24,7 +24,9 @@
 						"allOf": [
 							{
 								"properties": {
-									"condition": { "type": "string" }
+									"filters": {
+										"$ref": "../general/filter.json"
+									}
 								}
 							},
 							{
