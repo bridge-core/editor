@@ -45,6 +45,7 @@
 					autocomplete="off"
 					outlined
 					dense
+					@keypress.enter="onCreatePreset"
 				/>
 				<v-file-input
 					v-else-if="opts.type === 'fileInput'"
@@ -146,7 +147,7 @@ export default {
 			this.currentWindow.close()
 		},
 		onCreatePreset() {
-			this.currentWindow.createPreset(this.content)
+			if (this.fieldsReady) this.currentWindow.createPreset(this.content)
 		},
 	},
 }
