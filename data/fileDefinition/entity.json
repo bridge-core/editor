@@ -5,5 +5,43 @@
 	"matcher": ["BP/entities/**/*.json", "BP/entities/*.json"],
 	"schema": "file:///data/packages/schema/entity/main.json",
 	"packSpider": "entity.json",
-	"lightningCache": "entity.json"
+	"lightningCache": "entity.json",
+
+	"definitions": {
+		"identifier": [
+			{
+				"from": "clientEntity",
+				"match": "identifier"
+			},
+			{
+				"from": "spawnRule",
+				"match": "identifier"
+			}
+		],
+		"animationIdentifier": [
+			{
+				"find": "animation",
+				"where": "identifier"
+			},
+			{
+				"find": "animationController",
+				"where": "identifier"
+			}
+		],
+		"lootTablePath": [
+			{
+				"directReference": true
+			}
+		],
+		"tradeTablePath": [
+			{
+				"directReference": true
+			}
+		],
+		"functionPath": [
+			{
+				"directReference": true
+			}
+		]
+	}
 }
