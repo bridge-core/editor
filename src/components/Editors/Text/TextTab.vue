@@ -46,4 +46,20 @@ export default {
 .action-item.focused > a {
 	background: var(--v-primary-base) !important;
 }
+.actions-container {
+	background: var(--v-background-base) !important;
+}
+
+.reference-file {
+	margin-left: 8px;
+	font-size: 14px;
+}
+.monaco-editor
+	.peekview-widget
+	.head
+	.peekview-actions
+	> .monaco-action-bar
+	.action-item {
+	margin: 0px 4px;
+}
 </style>

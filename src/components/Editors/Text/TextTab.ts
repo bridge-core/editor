@@ -135,12 +135,11 @@ export class TextTab extends Tab {
 		if (!this.editorModel) {
 			const file = await this.fileHandle.getFile()
 			const fileContent = await file.text()
+			const uri = monaco.Uri.file(this.getPath())
 
-			this.editorModel = monaco.editor.createModel(
-				fileContent,
-				undefined,
-				monaco.Uri.file(this.getPath())
-			)
+			this.editorModel =
+				monaco.editor.getModel(uri) ??
+				monaco.editor.createModel(fileContent, undefined, uri)
 			this.modelLoaded.dispatch()
 			this.loadEditor()
 		} else {

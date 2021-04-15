@@ -17,7 +17,16 @@ export interface IFileType {
 	types: (string | [string, { targetVersion: [CompareOperator, string] }])[]
 	packSpider: string
 	lightningCache: string
+	definitions: IDefinitions
 	formatOnSaveCapable: boolean
+}
+export interface IDefinitions {
+	[key: string]: IDefinition | IDefinition[]
+}
+export interface IDefinition {
+	directReference?: boolean
+	from: string
+	match: string
 }
 
 /**

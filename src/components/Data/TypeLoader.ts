@@ -2,7 +2,7 @@ import { FileType } from './FileType'
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { IDisposable } from '/@/types/disposable'
-import { languages, Uri } from 'monaco-editor'
+import { editor, languages, Uri } from 'monaco-editor'
 import { compare, CompareOperator } from 'compare-versions'
 const types = new Map<string, string>()
 
@@ -85,7 +85,8 @@ export class TypeLoader {
 				languages.typescript.typescriptDefaults.addExtraLib(
 					lib,
 					uri.toString()
-				)
+				),
+				editor.createModel(lib, 'typescript', uri)
 			)
 		}
 	}
