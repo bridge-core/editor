@@ -58,7 +58,7 @@ export const bridgeDark = <const>{
 		comment: {
 			color: '#75715e',
 		},
-		...colorCodes,
+		...colorCodes('#fff'),
 	},
 }
 
@@ -120,6 +120,6 @@ export const bridgeLight = <const>{
 		comment: {
 			color: '#0080FF',
 		},
-		...colorCodes,
+		...colorCodes('#000'),
 	},
 }

@@ -1,70 +1,65 @@
-export const colorCodes = {
-	'color.darkRed': {
-		textDecoration: 'bold',
+export const colorCodes = (textColor: string) => ({
+	'colorCode.darkRed': {
 		color: '#AA0000',
 	},
-	'color.red': {
-		textDecoration: 'bold',
+	'colorCode.red': {
 		color: '#FF5555',
 	},
-	'color.gold': {
-		textDecoration: 'bold',
+	'colorCode.gold': {
 		color: '#FFAA00',
 	},
-	'color.yellow': {
-		textDecoration: 'bold',
+	'colorCode.yellow': {
 		color: '#FFFF55',
 	},
-	'color.darkGreen': {
-		textDecoration: 'bold',
+	'colorCode.darkGreen': {
 		color: '#00AA00',
 	},
-	'color.green': {
-		textDecoration: 'bold',
+	'colorCode.green': {
 		color: '#55FF55',
 	},
-	'color.aqua': {
-		textDecoration: 'bold',
+	'colorCode.aqua': {
 		color: '#55FFFF',
 	},
-	'color.darkAqua': {
-		textDecoration: 'bold',
+	'colorCode.darkAqua': {
 		color: '#00AAAA',
 	},
-	'color.darkBlue': {
-		textDecoration: 'bold',
+	'colorCode.darkBlue': {
 		color: '#0000AA',
 	},
-	'color.blue': {
-		textDecoration: 'bold',
+	'colorCode.blue': {
 		color: '#5555FF',
 	},
-	'color.lightPurple': {
-		textDecoration: 'bold',
+	'colorCode.lightPurple': {
 		color: '#FF55FF',
 	},
-	'color.darkPurple': {
-		textDecoration: 'bold',
+	'colorCode.darkPurple': {
 		color: '#AA00AA',
 	},
-	'color.white': {
-		textDecoration: 'bold',
+	'colorCode.white': {
 		color: '#FFFFFF',
 	},
-	'color.gray': {
-		textDecoration: 'bold',
+	'colorCode.gray': {
 		color: '#AAAAAA',
 	},
-	'color.darkGray': {
-		textDecoration: 'bold',
+	'colorCode.darkGray': {
 		color: '#555555',
 	},
-	'color.black': {
-		textDecoration: 'bold',
+	'colorCode.black': {
 		color: '#000000',
 	},
-	'color.minecoinGold': {
-		textDecoration: 'bold',
+	'colorCode.minecoinGold': {
 		color: '#ff0000',
 	},
-}
+	'colorCode.bold': {
+		color: textColor,
+		textDecoration: 'bold',
+	},
+	'colorCode.italic': {
+		color: textColor,
+		textDecoration: 'italic',
+	},
+	'colorCode.underline': {
+		color: textColor,
+		textDecoration: 'underline',
+	},
+})
