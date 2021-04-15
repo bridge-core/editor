@@ -28,20 +28,14 @@
 				"where": "identifier"
 			}
 		],
-		"lootTablePath": [
-			{
-				"directReference": true
-			}
-		],
-		"tradeTablePath": [
-			{
-				"directReference": true
-			}
-		],
-		"functionPath": [
-			{
-				"directReference": true
-			}
-		]
+		"lootTablePath": {
+			"directReference": true
+		},
+		"tradeTablePath": {
+			"directReference": true
+		},
+		"functionPath": {
+			"directReference": true
+		}
 	}
 }
