@@ -5,6 +5,7 @@ import { FileType, IDefinition } from '/@/components/Data/FileType'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { isMatch } from 'micromatch'
 import { ILightningInstruction } from '../PackIndexer/Worker/Main'
+import { run } from '../Extensions/Scripts/run'
 
 export class DefinitionProvider {
 	async provideDefinition(
@@ -16,6 +17,7 @@ export class DefinitionProvider {
 		const { word, range } = getJsonWordAtPosition(model, position)
 		const currentPath = app.project.tabSystem?.selectedTab?.getProjectPath()
 		if (!currentPath) return
+		const packPrefix = currentPath.split('/').shift()!
 
 		const { definitions } = FileType.get(currentPath) ?? {}
 		const lightningCache = await FileType.getLightningCache(currentPath)
@@ -32,25 +34,39 @@ export class DefinitionProvider {
 			model.getOffsetAt(position)
 		).path.join('/')
 
-		const definitionId = this.getDefinition(location, lightningCache)
-		if (!definitionId) return
+		const { definitionId, transformedWord } = this.getDefinition(
+			word,
+			location,
+			lightningCache
+		)
+		if (!definitionId || !transformedWord) return
 
 		let definition = definitions[definitionId]
 		if (!definition) return
 		if (!Array.isArray(definition)) definition = [definition]
 
 		const projectName = app.project.name
-		const connectedFiles = await this.getFilePath(word, definition)
+		const connectedFiles = await this.getFilePath(
+			transformedWord,
+			definition,
+			packPrefix
+		)
 
-		return await Promise.all(
+		const result = await Promise.all(
 			connectedFiles.map(async (file) => {
 				const filePath = `projects/${projectName}/${file}`
 				const uri = Uri.file(filePath)
 
 				if (!editor.getModel(uri)) {
-					const fileHandle = await app.fileSystem.getFileHandle(
-						filePath
-					)
+					let fileHandle: FileSystemFileHandle
+					try {
+						fileHandle = await app.fileSystem.getFileHandle(
+							filePath
+						)
+					} catch {
+						return undefined
+					}
+
 					const model = editor.createModel(
 						await fileHandle.getFile().then((file) => file.text()),
 						undefined,
@@ -72,33 +88,69 @@ export class DefinitionProvider {
 				}
 			})
 		)
+
+		return <{ uri: Uri; range: Range }[]>(
+			result.filter((res) => res !== undefined)
+		)
 	}
 
-	getDefinition(location: string, lightningCache: ILightningInstruction[]) {
-		const definitions = lightningCache.map((def) => {
-			const firstValidKey = Object.keys(def).find(
-				(key) => !key.startsWith('@')
-			)
-			if (!firstValidKey)
-				throw new Error(
-					`Invalid lightning cache definition: Missing definition key and/or path pair`
+	getDefinition(
+		word: string,
+		location: string,
+		lightningCache: ILightningInstruction[]
+	) {
+		let transformedWord: string | undefined = word
+		const definitions = lightningCache
+			.map((def) => {
+				const filter = def['@filter']
+				const map = def['@map']
+
+				const firstValidKey = Object.keys(def).find(
+					(key) => !key.startsWith('@')
 				)
+				if (!firstValidKey)
+					throw new Error(
+						`Invalid lightning cache definition: Missing definition key and/or path pair`
+					)
 
-			// def[firstValidKey] may not be undefined for valid lightning cache files
-			return <const>[firstValidKey, def[firstValidKey]!]
-		})
+				// def[firstValidKey] may not be undefined for valid lightning cache files
+				return <const>[
+					firstValidKey,
+					def[firstValidKey]!,
+					{ map, filter },
+				]
+			})
+			.filter((def) => def !== undefined)
 
-		return definitions.find(([def, path]) => isMatch(location, path))?.[0]
+		return {
+			definitionId: definitions.find(([def, path, { map, filter }]) => {
+				const matches = isMatch(location, path)
+				if (matches) {
+					if (filter && filter.includes(word))
+						transformedWord = undefined
+					if (transformedWord && map)
+						transformedWord = run(map, { value: transformedWord })
+
+					return true
+				}
+				return false
+			})?.[0],
+			transformedWord,
+		}
 	}
 
-	async getFilePath(word: string, definition: IDefinition[]) {
+	async getFilePath(
+		word: string,
+		definition: IDefinition[],
+		packPrefix: string
+	) {
 		const app = await App.getApp()
 		const connectedFiles = []
 
 		for (const def of definition) {
 			// Direct references are e.g. loot table paths
 			if (def.directReference) {
-				connectedFiles.push(word)
+				connectedFiles.push(`${packPrefix}/${word}`)
 				continue
 			}
 
