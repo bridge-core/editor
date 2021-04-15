@@ -1,3 +1,5 @@
+import { colorCodes } from './DefaultTheme/ColorCodes'
+
 export const bridgeDark = <const>{
 	id: 'bridge.default.dark',
 	name: 'Default Dark',
@@ -56,6 +58,7 @@ export const bridgeDark = <const>{
 		comment: {
 			color: '#75715e',
 		},
+		...colorCodes,
 	},
 }
 
@@ -117,5 +120,6 @@ export const bridgeLight = <const>{
 		comment: {
 			color: '#0080FF',
 		},
+		...colorCodes,
 	},
 }

@@ -79,13 +79,21 @@ export class MonacoSubTheme {
 					foreground: this.convertColor(this.theme.getColor('text')),
 				},
 				...Object.entries(this.theme.getHighlighterDefinition())
-					.map(([token, { color, textDecoration, isItalic }]) => ({
-						token: token,
-						foreground: this.convertColor(color as string),
-						fontStyle: `${
-							isItalic ? 'italic ' : ''
-						}${textDecoration}`,
-					}))
+					.map(
+						([
+							token,
+							{ color, background, textDecoration, isItalic },
+						]) => ({
+							token: token,
+							foreground: this.convertColor(color as string),
+							background: background
+								? this.convertColor(background as string)
+								: undefined,
+							fontStyle: `${
+								isItalic ? 'italic ' : ''
+							}${textDecoration}`,
+						})
+					)
 					.filter(({ foreground }) => foreground !== undefined),
 			],
 		})

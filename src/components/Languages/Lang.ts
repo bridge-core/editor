@@ -1,4 +1,5 @@
 import { languages } from 'monaco-editor'
+import { colorCodes } from './Common/ColorCodes'
 import { Language } from './Language'
 
 export const config: languages.LanguageConfiguration = {
@@ -9,10 +10,7 @@ export const config: languages.LanguageConfiguration = {
 
 export const tokenProvider = {
 	tokenizer: {
-		root: [
-			[/##.*/, 'comment'],
-			[/=|\.|:/, 'definition'],
-		],
+		root: [[/##.*/, 'comment'], [/=|\.|:/, 'definition'], ...colorCodes],
 	},
 }
 

@@ -1,4 +1,5 @@
 import { languages } from 'monaco-editor'
+import { colorCodes } from './Common/ColorCodes'
 import { Language } from './Language'
 
 export const config: languages.LanguageConfiguration = {
@@ -99,6 +100,7 @@ export const tokenProvider = {
 			[/\=|\,|\!|%=|\*=|\+=|-=|\/=|<|=|>|<>/, 'definition'],
 			[/true|false/, 'number'],
 			[/-?([0-9]+(\.[0-9]+)?)|(\~|\^-?([0-9]+(\.[0-9]+)?)?)/, 'number'],
+			...colorCodes,
 
 			[
 				/[a-z_$][\w$]*/,

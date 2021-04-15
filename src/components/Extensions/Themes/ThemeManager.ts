@@ -185,7 +185,12 @@ export interface IThemeDefinition {
 	colors: Record<TColorName, string>
 	highlighter?: Record<
 		string,
-		{ color?: string; textDecoration?: string; isItalic?: boolean }
+		{
+			color?: string
+			background?: string
+			textDecoration?: string
+			isItalic?: boolean
+		}
 	>
 	monaco?: Record<string, string>
 }
