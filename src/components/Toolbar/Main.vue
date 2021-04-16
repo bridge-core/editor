@@ -1,10 +1,24 @@
 <template>
-	<v-system-bar color="toolbar" fixed app clipped padless height="24px">
+	<v-system-bar
+		color="toolbar"
+		fixed
+		app
+		clipped
+		padless
+		height="env(titlebar-area-height, 24px)"
+		:style="{
+			'padding-left': isMacOS ? 'env(titlebar-area-x, 8px)' : undefined,
+			'padding-right': !isMacOS ? 'env(titlebar-area-x, 0)' : undefined,
+			'z-index': windowControlsOverlay ? 1000 : undefined,
+		}"
+	>
 		<img
+			v-if="!windowControlsOverlay"
 			style="height: 20px; padding-right: 4px"
 			alt="bridge. Logo"
 			src="@/_assets/logo.svg"
 		/>
+
 		<v-divider vertical />
 
 		<!-- App menu buttons -->
@@ -20,7 +34,10 @@
 				<MenuActivator v-else :key="`activator.${key}`" :item="item" />
 				<v-divider
 					:key="`divider.${key}`"
-					v-if="i + 1 < Object.keys(toolbar).length"
+					v-if="
+						windowControlsOverlay ||
+						i + 1 < Object.keys(toolbar).length
+					"
 					vertical
 				/>
 			</template>
@@ -43,6 +60,7 @@ import MenuActivator from './Menu/Activator.vue'
 import MenuButton from './Menu/Button.vue'
 import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/appVersion.json'
+import { platform } from '/@/utils/os'
 
 export default {
 	name: 'Toolbar',
@@ -53,8 +71,12 @@ export default {
 	},
 	data: () => ({
 		toolbar: App.toolbar.state,
+		isMacOS: platform() === 'darwin',
 
 		appVersion,
+		windowControlsOverlay:
+			navigator.windowControlsOverlay &&
+			navigator.windowControlsOverlay.visible,
 	}),
 	methods: {
 		async openChangelogWindow() {
@@ -67,11 +89,13 @@ export default {
 
 <style scoped>
 .v-system-bar {
+	app-region: drag;
 	-webkit-app-region: drag;
 	padding-right: 0;
 }
 
 .toolbar-btn {
+	app-region: no-drag;
 	-webkit-app-region: no-drag;
 	min-width: 0;
 }
