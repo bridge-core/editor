@@ -20,7 +20,10 @@
 		]
 	},
 	{
-		"animationIdentifier": "minecraft:client_entity/description/animations/*"
+		"animationIdentifier": [
+			"minecraft:client_entity/description/animations/*",
+			"minecraft:client_entity/description/animation_controllers/*/*"
+		]
 	},
 	{
 		"texturePath": "minecraft:client_entity/description/textures/*",

@@ -4,5 +4,28 @@
 	"scope": "RP/animations/",
 	"matcher": ["RP/animations/**/*.json", "RP/animations/*.json"],
 	"schema": "file:///data/packages/schema/animation/client.json",
-	"lightningCache": "clientAnimation.json"
+	"lightningCache": "clientAnimation.json",
+
+	"definitions": {
+		"particleEffect": [
+			{
+				"from": "clientEntity",
+				"match": "particleReference"
+			},
+			{
+				"from": "attachable",
+				"match": "particleReference"
+			}
+		],
+		"soundEffect": [
+			{
+				"from": "clientEntity",
+				"match": "soundReference"
+			},
+			{
+				"from": "attachable",
+				"match": "soundReference"
+			}
+		]
+	}
 }

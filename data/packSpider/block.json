@@ -1,5 +1,5 @@
 {
-	"includeFiles": ["lootTablePath", "texturePath"],
+	"includeFiles": ["lootTablePath"],
 	"sharedFiles": [
 		"RP/blocks.json",
 		"RP/textures/terrain_texture.json",

@@ -5,5 +5,11 @@
 	"matcher": ["BP/animations/**/*.json", "BP/animations/*.json"],
 	"schema": "file:///data/packages/schema/animation/server.json",
 	"lightningCache": "animation.json",
-	"packSpider": "animation.json"
+	"packSpider": "animation.json",
+
+	"definitions": {
+		"functionPath": {
+			"directReference": true
+		}
+	}
 }

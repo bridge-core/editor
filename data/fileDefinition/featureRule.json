@@ -3,5 +3,15 @@
 	"icon": "mdi-map-plus",
 	"scope": "BP/feature_rules/",
 	"matcher": "BP/feature_rules/*.json",
-	"schema": "file:///data/packages/schema/featureRule/main.json"
+	"schema": "file:///data/packages/schema/featureRule/main.json",
+	"lightningCache": "featureRule.json",
+
+	"definitions": {
+		"featureIdentifier": [
+			{
+				"from": "feature",
+				"match": "identifier"
+			}
+		]
+	}
 }

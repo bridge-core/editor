@@ -9,5 +9,5 @@
 		"RP/models/mobs.json"
 	],
 	"scope": "RP/models/",
-	"lightningCache": "model.json"
+	"lightningCache": "geometry.json"
 }

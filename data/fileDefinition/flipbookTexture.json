@@ -3,5 +3,11 @@
 	"scope": "RP/textures/flipbook_textures.json",
 	"matcher": "RP/textures/flipbook_textures.json",
 	"schema": "file:///data/packages/schema/simple/flipbookTexture.json",
-	"lightningCache": "flipbookTexture.json"
+	"lightningCache": "flipbookTexture.json",
+
+	"definitions": {
+		"texturePath": {
+			"directReference": true
+		}
+	}
 }

@@ -1,1 +1,4 @@
-[{ "identifier": "minecraft:item/description/identifier" }]
+[
+	{ "identifier": "minecraft:item/description/identifier" },
+	{ "itemTexture": "minecraft:item/components/minecraft:icon" }
+]

@@ -4,5 +4,18 @@
 	"scope": "BP/recipes/",
 	"matcher": ["BP/recipes/**/*.json", "BP/recipes/*.json"],
 	"schema": "file:///data/packages/schema/recipe/main.json",
-	"lightningCache": "recipe.json"
+	"lightningCache": "recipe.json",
+
+	"definitions": {
+		"itemIdentifier": [
+			{
+				"from": "item",
+				"match": "identifier"
+			},
+			{
+				"from": "clientItem",
+				"match": "identifier"
+			}
+		]
+	}
 }

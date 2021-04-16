@@ -8,5 +8,11 @@
 	],
 	"schema": "file:///data/packages/schema/animationController/server.json",
 	"lightningCache": "animationController.json",
-	"packSpider": "animationController.json"
+	"packSpider": "animationController.json",
+
+	"definitions": {
+		"functionPath": {
+			"directReference": true
+		}
+	}
 }

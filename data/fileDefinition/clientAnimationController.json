@@ -7,5 +7,11 @@
 		"RP/animation_controllers/*.json"
 	],
 	"schema": "file:///data/packages/schema/animationController/client.json",
-	"lightningCache": "clientAnimationController.json"
+	"lightningCache": "clientAnimationController.json",
+
+	"definitions": {
+		"functionPath": {
+			"directReference": true
+		}
+	}
 }
