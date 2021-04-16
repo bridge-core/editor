@@ -4,5 +4,18 @@
 	"scope": "BP/features/",
 	"matcher": "BP/features/*.json",
 	"schema": "file:///data/packages/schema/feature/main.json",
-	"lightningCache": "feature.json"
+	"lightningCache": "feature.json",
+
+	"definitions": {
+		"blockIdentifier": [
+			{
+				"from": "block",
+				"match": "identifier"
+			},
+			{
+				"from": "clientBlock",
+				"match": "identifier"
+			}
+		]
+	}
 }
