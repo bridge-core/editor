@@ -13,7 +13,7 @@
 		}"
 	>
 		<img
-			v-if="!windowControlsOverlay"
+			v-if="isMacOS && !windowControlsOverlay"
 			style="height: 20px; padding-right: 4px"
 			alt="bridge. Logo"
 			src="@/_assets/logo.svg"
