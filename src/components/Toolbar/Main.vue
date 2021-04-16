@@ -78,6 +78,14 @@ export default {
 			navigator.windowControlsOverlay &&
 			navigator.windowControlsOverlay.visible,
 	}),
+	mounted() {
+		navigator.windowControlsOverlay.addEventListener(
+			'geometrychange',
+			(event) => {
+				this.windowControlsOverlay = event.visible
+			}
+		)
+	},
 	methods: {
 		async openChangelogWindow() {
 			const app = await App.getApp()
