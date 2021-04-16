@@ -42,7 +42,7 @@ module.exports = {
 					},
 				},
 			],
-			// display_modifiers: ['window-controls-overlay'],
+			display_override: ['window-controls-overlay', 'standalone'],
 		},
 	},
 	configureWebpack: {
