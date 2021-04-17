@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import { Discord } from './DiscordWindow'
 import BaseWindow from '../Layout/BaseWindow.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
@@ -43,10 +42,10 @@ export default {
 	},
 	props: ['currentWindow'],
 	methods: {
-		close: () => Discord.close(),
+		close: () => this.currentWindow.close(),
 		openDiscord() {
 			window.open('https://discord.gg/jj2PmqU', '_blank')
-			Discord.close()
+			this.currentWindow.close()
 		},
 	},
 }
