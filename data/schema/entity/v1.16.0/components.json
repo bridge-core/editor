@@ -3337,7 +3337,7 @@
 							"description": "List of entities that can ride this entity.",
 							"type": "array",
 							"items": {
-								"type": "string"
+								"$ref": "../general/family.json"
 							}
 						},
 						"interact_text": {
