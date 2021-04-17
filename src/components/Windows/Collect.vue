@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<component
-			v-for="(window, uuid) in WINDOWS"
+			v-for="(window, uuid) in windows"
 			:key="uuid"
 			:is="window.component"
 			:currentWindow="window"
@@ -10,13 +10,13 @@
 </template>
 
 <script>
-import { WINDOWS } from './create'
+import { WindowState } from './WindowState'
 
 export default {
 	name: 'CollectedWindows',
 
 	data: () => ({
-		WINDOWS,
+		windows: WindowState.state,
 	}),
 }
 </script>

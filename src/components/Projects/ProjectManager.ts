@@ -10,7 +10,7 @@ import { editor } from 'monaco-editor'
 export class ProjectManager extends Signal<void> {
 	public readonly recentProjects!: RecentProjects
 	public readonly state: Record<string, Project> = {}
-	public readonly title = new Title()
+	public readonly title = Object.freeze(new Title())
 	protected _selectedProject?: string = undefined
 	public readonly projectReady = new Signal<void>()
 

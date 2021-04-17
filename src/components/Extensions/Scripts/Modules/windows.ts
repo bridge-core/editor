@@ -12,7 +12,13 @@ export const WindowModule = ({}: IModuleConfig) => ({
 	createWindow: (
 		vueComponent: VueComponent,
 		state: Record<string, unknown>
-	) => createWindow(vueComponent, state),
+	) => {
+		console.warn(
+			'[@bridge/windows] Calling "createWindow" is deprecated. Please replace direct function calls by defining a class based window instead.'
+		)
+
+		return createWindow(vueComponent, state)
+	},
 	createInformationWindow: (displayName: string, displayContent: string) =>
 		new InformationWindow({
 			name: displayName,

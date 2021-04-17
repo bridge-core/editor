@@ -13,7 +13,6 @@ import { setupSidebar } from '/@/components/Sidebar/setup'
 import { TaskManager } from '/@/components/TaskManager/TaskManager'
 import { setupDefaultMenus } from '/@/components/Toolbar/setupDefaults'
 import { Locales } from '/@/utils/locales'
-import { Discord as DiscordWindow } from '/@/components/Windows/Discord/definition'
 import { createNotification } from '/@/components/Notifications/create'
 import { PackType } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
@@ -34,8 +33,6 @@ import { GlobalExtensionLoader } from '/@/components/Extensions/GlobalExtensionL
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/FileSystem/ComMojang'
-import Wintersky from 'wintersky'
-import { loadAsDataURL } from './utils/loadAsDataUrl'
 
 export class App {
 	public static fileSystemSetup = new FileSystemSetup()
@@ -202,7 +199,7 @@ export class App {
 				color: '#7289DA',
 				textColor: 'white',
 				onClick: () => {
-					DiscordWindow.open()
+					this.windows.discordWindow.open()
 					discordMsg.dispose()
 				},
 			})

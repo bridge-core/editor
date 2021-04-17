@@ -22,7 +22,7 @@ export default {
 		BaseWindow,
 	},
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	props: ['currentWindow'],
 	methods: {

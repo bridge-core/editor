@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { Discord } from './definition'
+import { Discord } from './DiscordWindow'
 import BaseWindow from '../Layout/BaseWindow.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
@@ -38,7 +38,10 @@ export default {
 		BaseWindow,
 	},
 
-	data: () => Discord.getState(),
+	data() {
+		return this.currentWindow
+	},
+	props: ['currentWindow'],
 	methods: {
 		close: () => Discord.close(),
 		openDiscord() {

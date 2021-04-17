@@ -41,7 +41,7 @@ export default {
 	props: ['currentWindow'],
 
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	methods: {
 		close() {
@@ -50,7 +50,7 @@ export default {
 		async selectFolder() {
 			App.fileSystemSetup.setStatus('userInteracted')
 			try {
-				this.callback(
+				await this.callback(
 					await window.showDirectoryPicker({ mode: 'readwrite' })
 				)
 				this.close()
@@ -61,5 +61,3 @@ export default {
 	},
 }
 </script>
-
-<style></style>

@@ -9,9 +9,11 @@ import { PackExplorerWindow } from './Project/PackExplorer/PackExplorer'
 import { ProjectChooserWindow } from '/@/components/Projects/ProjectChooser/ProjectChooser'
 import { SettingsWindow } from './Settings/SettingsWindow'
 import { ChangelogWindow } from '/@/components/Windows/Changelog/Changelog'
+import { DiscordWindow } from './Discord/DiscordWindow'
 
 export class Windows {
 	settings: SettingsWindow
+	discordWindow = new DiscordWindow()
 	projectChooser = new ProjectChooserWindow()
 	packExplorer = new PackExplorerWindow()
 	createProject = new CreateProjectWindow()

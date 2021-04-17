@@ -1,8 +1,7 @@
 import { Component as VueComponent } from 'vue'
 import Vue from 'vue'
 import { v4 as uuid } from 'uuid'
-
-export const WINDOWS = Vue.observable({})
+import { WindowState } from './WindowState'
 
 export function createWindow(
 	vueComponent: VueComponent,
@@ -12,7 +11,7 @@ export function createWindow(
 ) {
 	// It might make sense for some windows to be "await"-able. This is a helper for that
 	const status: { setDone?: () => void; done?: Promise<void> } = {}
-	status.done = new Promise<void>(resolve => {
+	status.done = new Promise<void>((resolve) => {
 		status.setDone = resolve
 	})
 
@@ -40,11 +39,14 @@ export function createWindow(
 			windowState.shouldRender = true
 			windowState.isVisible = true
 		},
-		dispose: () => Vue.delete(WINDOWS, windowUUID),
+		dispose: () => Vue.delete(WindowState.state, windowUUID),
 		status,
+		get isVisible() {
+			return windowState.isVisible
+		},
 	}
 
-	Vue.set(WINDOWS, windowUUID, windowApi)
+	Vue.set(WindowState.state, windowUUID, windowApi)
 
 	return windowApi
 }

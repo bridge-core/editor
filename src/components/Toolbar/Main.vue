@@ -29,9 +29,15 @@
 					:key="`button.${key}`"
 					:displayName="item.name"
 					:displayIcon="item.icon"
+					:disabled="isAnyWindowVisible"
 					@click="() => item.trigger()"
 				/>
-				<MenuActivator v-else :key="`activator.${key}`" :item="item" />
+				<MenuActivator
+					v-else
+					:key="`activator.${key}`"
+					:item="item"
+					:disabled="isAnyWindowVisible"
+				/>
 				<v-divider
 					:key="`divider.${key}`"
 					v-if="
@@ -42,6 +48,10 @@
 				/>
 			</template>
 		</v-toolbar-items>
+
+		<span v-if="windowControlsOverlay" class="pl-3">
+			{{ title }}
+		</span>
 
 		<v-spacer />
 		<div
@@ -61,6 +71,8 @@ import MenuButton from './Menu/Button.vue'
 import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/appVersion.json'
 import { platform } from '/@/utils/os'
+import { reactive, watchEffect } from '@vue/composition-api'
+import { WindowState } from '/@/components/Windows/WindowState'
 
 export default {
 	name: 'Toolbar',
@@ -68,6 +80,18 @@ export default {
 		WindowAction,
 		MenuActivator,
 		MenuButton,
+	},
+	setup() {
+		const setupObj = reactive({
+			title: 'bridge.',
+			isAnyWindowVisible: WindowState.isAnyWindowVisible,
+		})
+
+		App.getApp().then((app) => {
+			setupObj.title = app.projectManager.title.current
+		})
+
+		return setupObj
 	},
 	data: () => ({
 		toolbar: App.toolbar.state,
@@ -79,12 +103,14 @@ export default {
 			navigator.windowControlsOverlay.visible,
 	}),
 	mounted() {
-		navigator.windowControlsOverlay.addEventListener(
-			'geometrychange',
-			(event) => {
-				this.windowControlsOverlay = event.visible
-			}
-		)
+		if (navigator.windowControlsOverlay) {
+			navigator.windowControlsOverlay.addEventListener(
+				'geometrychange',
+				(event) => {
+					this.windowControlsOverlay = event.visible
+				}
+			)
+		}
 	},
 	methods: {
 		async openChangelogWindow() {

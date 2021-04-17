@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { get, set } from 'idb-keyval'
-import { createSelectProjectFolderWindow } from '../Windows/Project/SelectFolder/definition'
+import { SelectProjectFolderWindow } from '../Windows/Project/SelectFolder/SelectProjectFolder'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
@@ -31,14 +31,19 @@ export class FileSystemSetup {
 
 		// There's currently no bridge folder yet/the bridge folder has been deleted
 		if (!fileHandle) {
-			await createSelectProjectFolderWindow(async (chosenFileHandle) => {
-				if (chosenFileHandle) {
-					await set('bridgeBaseDir', chosenFileHandle)
-					fileHandle = chosenFileHandle
-				}
+			const window = new SelectProjectFolderWindow(
+				async (chosenFileHandle) => {
+					if (chosenFileHandle) {
+						await set('bridgeBaseDir', chosenFileHandle)
+						fileHandle = chosenFileHandle
+					}
 
-				await this.verifyPermissions(chosenFileHandle)
-			}).status.done
+					await this.verifyPermissions(chosenFileHandle)
+				}
+			)
+			window.open()
+			console.log(window)
+			await window.fired
 		}
 
 		this._status = 'done'
