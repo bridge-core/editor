@@ -89,10 +89,13 @@ export class TabSystem extends MonacoHolder {
 	}
 	remove(tab: Tab, destroyEditor = true) {
 		tab.onDeactivate()
-		this.tabs = this.tabs.filter((current) => current !== tab)
+		const tabIndex = this.tabs.findIndex((current) => current === tab)
+		if (tabIndex === -1) return
+
+		this.tabs.splice(tabIndex, 1)
 		if (destroyEditor) tab.onDestroy()
 
-		if (tab === this._selectedTab) this.select(this.tabs[0])
+		if (tab === this._selectedTab) this.select(this.tabs[tabIndex - 1])
 		if (!tab.isForeignFile) this.openedFiles.remove(tab.getPath())
 
 		return tab
