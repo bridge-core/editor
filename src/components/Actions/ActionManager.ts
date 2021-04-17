@@ -2,19 +2,20 @@ import { App } from '/@/App'
 import Vue from 'vue'
 import { Action } from './Action'
 import { IActionConfig } from './SimpleAction'
+import { del, set, shallowReactive } from '@vue/composition-api'
 
 export class ActionManager {
-	public state: Record<string, Action> = Vue.observable({})
+	public state: Record<string, Action> = shallowReactive({})
 
 	constructor(public readonly app: App) {}
 
 	create(actionConfig: IActionConfig) {
 		const action = new Action(this, actionConfig)
-		Vue.set(this.state, action.id, action)
+		set(this.state, action.id, action)
 		return action
 	}
 	disposeAction(actionId: string) {
-		Vue.delete(this.state, actionId)
+		del(this.state, actionId)
 	}
 	dispose() {
 		Object.values(this.state).forEach((action) => action.dispose())

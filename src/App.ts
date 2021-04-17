@@ -44,7 +44,7 @@ export class App {
 		'disableValidation',
 	])
 	public static readonly ready = new Signal<App>()
-	protected static _instance: App
+	protected static _instance: Readonly<App>
 
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this)
@@ -86,7 +86,7 @@ export class App {
 	}
 
 	static get instance() {
-		return this._instance
+		return <App>this._instance
 	}
 	static getApp() {
 		return new Promise<App>((resolve) =>
@@ -145,7 +145,7 @@ export class App {
 	 * Starts the app
 	 */
 	static async main(appComponent: Vue) {
-		this._instance = new App(appComponent)
+		this._instance = Object.freeze(new App(appComponent))
 		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
@@ -172,8 +172,8 @@ export class App {
 
 		await this.instance.startUp()
 
-		this.ready.dispatch(this._instance)
-		await this.instance.projectManager.selectLastProject(this._instance)
+		this.ready.dispatch(this.instance)
+		await this.instance.projectManager.selectLastProject(this.instance)
 
 		this.instance.windows.loadingWindow.close()
 	}

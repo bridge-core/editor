@@ -2,11 +2,12 @@ import { platform } from '/@/utils/os'
 import Vue from 'vue'
 import { IKeyBindingConfig, KeyBinding } from './KeyBinding'
 import { toStrKeyCode } from './Utils'
+import { del, set, shallowReactive } from '@vue/composition-api'
 
 const IGNORE_KEYS = ['Control', 'Alt', 'Meta']
 
 export class KeyBindingManager {
-	protected state: Record<string, KeyBinding> = Vue.observable({})
+	protected state: Record<string, KeyBinding> = shallowReactive({})
 	protected lastTimeStamp = 0
 
 	constructor() {
@@ -44,10 +45,10 @@ export class KeyBindingManager {
 				`KeyBinding with keyCode "${keyCode}" already exists!`
 			)
 
-		Vue.set(this.state, keyCode, keyBinding)
+		set(this.state, keyCode, keyBinding)
 		return keyBinding
 	}
 	disposeKeyBinding(keyCode: string) {
-		Vue.delete(this.state, keyCode)
+		del(this.state, keyCode)
 	}
 }

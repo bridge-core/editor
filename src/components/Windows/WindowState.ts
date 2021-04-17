@@ -1,7 +1,5 @@
-import { computed, reactive, ref, watch } from '@vue/composition-api'
-import { setupCompositionAPI } from '../App/setupCompositionAPI'
+import { reactive, ref, watch } from '@vue/composition-api'
 
-setupCompositionAPI()
 export class WindowState {
 	static state = reactive<Record<string, any>>({})
 	static isAnyWindowVisible = ref(true)

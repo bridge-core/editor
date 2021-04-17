@@ -1,10 +1,10 @@
 import { platform } from '/@/utils/os'
 import { v4 as uuid } from 'uuid'
-import Vue from 'vue'
 import { App } from '/@/App'
 import { PackType } from '/@/components/Data/PackType'
 import { FileType } from '/@/components/Data/FileType'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { reactive } from '@vue/composition-api'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
@@ -22,7 +22,7 @@ export class DirectoryEntry {
 			isFile
 		)
 		folder.open()
-		return Vue.observable(folder)
+		return reactive(folder)
 	}
 	constructor(
 		protected fileSystem: FileSystem,
