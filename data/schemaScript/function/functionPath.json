@@ -1,5 +1,5 @@
 {
-    "type": "enum",
-    "generateFile": "function/dynamic/functionPathEnum.json",
-	"script": "return readdir('BP/functions').then(dirents => dirents.map(dirent => dirent.path.replace('BP/', '')))"
+	"type": "enum",
+	"generateFile": "function/dynamic/functionPathEnum.json",
+	"script": "return readdir('BP/functions').then(dirents => dirents.map(dirent => dirent.path.replace('BP/', '')).filter(path => !path.endsWith('.json')))"
 }

@@ -1,5 +1,5 @@
 {
-    "type": "enum",
-    "generateFile": "function/dynamic/commandEnum.json",
-	"script": "return readdir('BP/functions').then(dirents => dirents.map(dirent => `/function ${dirent.path.replace('BP/functions/', '').replace('.mcfunction', '')}`))"
+	"type": "enum",
+	"generateFile": "function/dynamic/commandEnum.json",
+	"script": "return readdir('BP/functions').then(dirents => dirents.map(dirent => `/function ${dirent.path.replace('BP/functions/', '').replace('.mcfunction', '')}`).filter(command => !command.endsWith('.json')))"
 }
