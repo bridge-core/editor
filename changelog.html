@@ -1,80 +1,27 @@
 <h2>Features:</h2>
 <ul>
-<li><strong>Custom MoLang:</strong>
-<ul>
-<li>Added support for line comments (&quot;#&quot; character)</li>
-<li>Optimized build output</li>
-<li>Proper support for early returns</li>
-<li>Scoped temporary variables to function context</li>
-</ul>
-</li>
-<li><strong>Extensions:</strong>
-<ul>
-<li>Every project now has its own extension loader</li>
-<li>Added support for activating/deactivating plugins</li>
-</ul>
-</li>
-<li><strong>Files:</strong>
-<ul>
-<li>Support for dragging files onto bridge. to open &amp; edit them</li>
-<li>Support for opening files with bridge. on supported browsers</li>
-</ul>
-</li>
-<li><strong>Tabs:</strong>
-<ul>
-<li>Tabs now interact with fileHandles directly (support for saving external files)</li>
-<li>Added support for tabs to register &quot;actions&quot; which can e.g. start up a preview of the tab's content</li>
-</ul>
-</li>
-<li><strong>Projects:</strong>
-<ul>
-<li>Switching between projects no longer always requires to restart the PackIndexer &amp; Compiler tasks</li>
-</ul>
-</li>
-<li><strong>Editing:</strong>
-<ul>
-<li>You no longer need to save files in order to update auto-completions. Things like component groups, events etc. are now updated periodically in the background</li>
-<li>bridge. can now compile to com.mojang directly. Simply drag your com.mojang folder onto bridge. to set direct compilation up. <strong>Please note:</strong> You may need to delete two files from your &quot;projects/MyProject/bridge&quot; folder if you set this up for an already existing project: &quot;bridge/files.json&quot; &amp; &quot;bridge/.lightningCache&quot;</li>
-<li>Updated auto-completion &amp; validation schemas to the latest beta</li>
-<li>Updated GameTest types to latest beta</li>
-<li>Updated schemas to include vanilla sounds &amp; textures</li>
-<li>Added min/max validation for block collisions</li>
-<li>Support for &quot;max_distance&quot; inside of sound_definitions.json file</li>
-</ul>
-</li>
-<li><strong>Previews:</strong> (WIP)
-<ul>
-<li>Added preview capabilities to models</li>
-<li>Added preview capabilities to particles</li>
-</ul>
-</li>
-<li>Added option to add pack name &amp; description directly to manifest</li>
-<li>Added &quot;requiredModules&quot; option to preset manifests</li>
+<li><strong>Go To Definition</strong>
+Quickly jump to connected code by clicking on references to it in your current file.</li>
+<li>Syntax highlighting for Minecraft's color codes (e.g. §4) inside of .lang &amp; .mcfunction files</li>
+<li><strong>Experimental:</strong> bridge. v2 now has a custom window toolbar on some browsers</li>
+<li>Added auto-completions for vanilla loot &amp; trade table paths</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>GameTests no longer get included in production builds</li>
-<li>Added descriptions to feature schema</li>
-<li>Brought back &quot;using_converts_to&quot; component property to items with a format version of &quot;1.16.100&quot; or higher</li>
-<li>Moved compiler startup from app to projects</li>
-<li>Moved InformationWindow, DropdownWindow &amp; InputWindow to class based API</li>
-<li>Added icon for geometries</li>
-<li>Added sound_definitions.json file to files being created upon creating a new project</li>
-<li>Improved behavior of setting a tab system as active in split-screen mode</li>
+<li>Updated GameTest type declarations</li>
+<li>Nested loot tables now get cached correctly</li>
+<li>Updated PackSpider particle file to search particle texture</li>
+<li>Added &quot;filters&quot; auto-completions to entity event sequences</li>
+<li>Updated all built-in windows to use bridge.'s internal BaseWindow class</li>
+<li>&quot;minecraft:rideable&quot; &gt; &quot;family_types&quot; now proposes family names</li>
+<li>Upon closing a tab, bridge. now selects the previous tab instead of the first one in your tab row</li>
+<li>You can now press &quot;enter&quot; to create a preset after filling out all inputs</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed presets using Java instead of Bedrock skins</li>
-<li>Fixed projectConfig being setup incorrectly</li>
-<li>Fixed <code>setObjectAt</code> util trying to set data on primitive values</li>
-<li>Fixed error registering data reloading action</li>
-<li>Fixed dolphin preset</li>
-<li>Fixed error upon opening images</li>
-<li>Fixed various errors inside of presets</li>
-<li>Fixed tabs not resizing correctly</li>
-<li>Fixed reloading of auto-completions</li>
-<li>Fixed selection of an already selected tab</li>
-<li>Fixed error upon opening Monaco in split-screen mode</li>
-<li>Fixed persistent tabs</li>
-<li>Fixed valid MoLang particle locations</li>
+<li>Fixed MoLangJS replacer Webpack plugin</li>
+<li>Fixed reference error in entity schema</li>
+<li>Fixed &quot;condition&quot; property appearing in entity event auto-completion</li>
+<li>Fixed validation of event response &quot;run_command&quot;</li>
+<li>Fixed&quot;tick.json&quot; being recognized as .mcfunction file</li>
 </ul>
