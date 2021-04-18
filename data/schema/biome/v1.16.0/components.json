@@ -190,28 +190,60 @@
 			"additionalProperties": false,
 			"properties": {
 				"hills_transformation": {
-					"type": "array",
-					"items": {
-						"$ref": "../general.json#/definitions/vanilla_biomes"
-					}
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"$ref": "../general.json#/definitions/vanilla_biomes"
+							}
+						},
+						{
+							"type": "string",
+							"$ref": "../general.json#/definitions/vanilla_biomes"
+						}
+					]
 				},
 				"mutate_transformation": {
-					"type": "array",
-					"items": {
-						"$ref": "../general.json#/definitions/vanilla_biomes"
-					}
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"$ref": "../general.json#/definitions/vanilla_biomes"
+							}
+						},
+						{
+							"type": "string",
+							"$ref": "../general.json#/definitions/vanilla_biomes"
+						}
+					]
 				},
 				"shore_transformation": {
-					"type": "array",
-					"items": {
-						"$ref": "../general.json#/definitions/vanilla_biomes"
-					}
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"$ref": "../general.json#/definitions/vanilla_biomes"
+							}
+						},
+						{
+							"type": "string",
+							"$ref": "../general.json#/definitions/vanilla_biomes"
+						}
+					]
 				},
 				"river_transformation": {
-					"type": "array",
-					"items": {
-						"$ref": "../general.json#/definitions/vanilla_biomes"
-					}
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"$ref": "../general.json#/definitions/vanilla_biomes"
+							}
+						},
+						{
+							"type": "string",
+							"$ref": "../general.json#/definitions/vanilla_biomes"
+						}
+					]
 				},
 				"generate_for_climates": {
 					"description": "Controls the world generation climate categories that this biome can spawn for.  A single biome can be associated with multiple categories with different weightings.",
