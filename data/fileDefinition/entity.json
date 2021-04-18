@@ -20,12 +20,18 @@
 		],
 		"animationIdentifier": [
 			{
-				"find": "animation",
-				"where": "identifier"
+				"from": "animation",
+				"match": "identifier"
 			},
 			{
-				"find": "animationController",
-				"where": "identifier"
+				"from": "animationController",
+				"match": "identifier"
+			}
+		],
+		"family": [
+			{
+				"from": "entity",
+				"match": "family"
 			}
 		],
 		"lootTablePath": {
