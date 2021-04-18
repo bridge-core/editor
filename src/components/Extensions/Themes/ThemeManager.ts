@@ -107,7 +107,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		try {
 			await iterateDir(
 				await app.fileSystem.getDirectoryHandle(
-					'data/packages/minecraftBedrock/themes'
+					'data/packages/common/themes'
 				),
 				(fileHandle) => this.loadTheme(fileHandle)
 			)

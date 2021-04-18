@@ -1,0 +1,16 @@
+[
+	{
+		"id": "dataPack",
+		"packPath": "DP",
+		"icon": "mdi-wrench",
+		"matcher": "projects/*/DP/**",
+		"color": "error"
+	},
+	{
+		"id": "resourcePack",
+		"packPath": "RP",
+		"icon": "mdi-image",
+		"matcher": "projects/*/RP/**",
+		"color": "info"
+	}
+]

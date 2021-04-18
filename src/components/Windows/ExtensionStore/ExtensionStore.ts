@@ -39,7 +39,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 		const fs = await getFileSystem()
 		this.extensionTags = await fs.readJSON(
-			'data/packages/minecraftBedrock/extensionTags.json'
+			'data/packages/common/extensionTags.json'
 		)
 
 		const installedExtensions = await app.extensionLoader.getInstalledExtensions()

@@ -14,7 +14,7 @@ export class CreatePackIcon extends CreateFile {
 		if (!icon) {
 			const app = await App.getApp()
 			icon = await app.fileSystem.readFile(
-				`data/packages/minecraftBedrock/packIcon.png`
+				`data/packages/common/packIcon.png`
 			)
 		}
 
