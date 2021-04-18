@@ -1,6 +1,6 @@
 import { join } from 'path'
 import { promises as fs } from 'fs'
-import json5 from 'json5'
+import { readJson } from '../common/jsonFs.mjs'
 
 export async function loadFileDefs() {
 	let fileDefs = []
@@ -11,9 +11,7 @@ export async function loadFileDefs() {
 	for (const dirent of dirents) {
 		if (dirent.isFile())
 			fileDefs.push(
-				await fs
-					.readFile(join('./data/fileDefinition', dirent.name))
-					.then(buffer => json5.parse(buffer.toString('utf-8')))
+				await readJson(join('./data/fileDefinition', dirent.name))
 			)
 	}
 

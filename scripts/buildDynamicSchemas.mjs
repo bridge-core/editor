@@ -1,7 +1,7 @@
 import JSON5 from 'json5'
-import { join, basename } from 'path'
+import { join } from 'path'
 import { promises as fs } from 'fs'
-import { loadFileDefs } from './loadFileDefs.mjs'
+import { loadFileDefs } from './buildData/loadFileDefs.mjs'
 
 export async function buildDynamicSchemas() {
 	const fileDefs = await loadFileDefs()
