@@ -19,7 +19,8 @@ export class Unzipper extends GenericUnzipper<Uint8Array> {
 					const name = basename(filePath)
 					if (name.startsWith('.')) {
 						this.task?.update(++currentFileCount)
-						delete zip[filePath]
+						// @ts-expect-error
+						zip[filePath] = undefined
 						continue
 					}
 
@@ -33,7 +34,8 @@ export class Unzipper extends GenericUnzipper<Uint8Array> {
 						})
 
 						this.task?.update(++currentFileCount)
-						delete zip[filePath]
+						// @ts-expect-error
+						zip[filePath] = undefined
 						continue
 					}
 
@@ -43,13 +45,17 @@ export class Unzipper extends GenericUnzipper<Uint8Array> {
 						}),
 						zip[filePath]
 					)
-					delete zip[filePath]
+					// @ts-expect-error
+					zip[filePath] = undefined
 					this.task?.update(++currentFileCount)
 				}
 
 				this.task?.complete()
 				resolve()
 			})
+
+			// @ts-expect-error
+			data = undefined
 		})
 	}
 }
