@@ -1,8 +1,7 @@
-import { buildDynamicSchemas } from './buildDynamicSchemas.mjs'
 import fs from 'fs'
 import archiver from 'archiver'
-import { runSchemaScripts } from './buildSchemaScripts.mjs'
 import { buildChangelog } from './buildChangelog.mjs'
+import { buildPackages } from './buildData/buildPackages.mjs'
 
 /**
  * Taken from https://stackoverflow.com/a/51518100
@@ -23,8 +22,7 @@ function zipDirectory(source, out) {
 }
 
 ;(async () => {
-	await buildDynamicSchemas()
-	await runSchemaScripts()
+	await buildPackages()
 	await zipDirectory('./data', './public/data/package.zip')
 	await fs.promises.copyFile(
 		'./data/version.txt',
