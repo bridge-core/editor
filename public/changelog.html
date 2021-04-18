@@ -1,29 +1,27 @@
-<h2>Features</h2>
+<h2>Features:</h2>
 <ul>
-<li>Added auto-completions for action texts</li>
-<li><strong>Custom MoLang (WIP):</strong>
-<ul>
-<li>You are now able to create .molang files in the preset window</li>
-<li>bridge.'s compiler will automatically find where you have used custom MoLang in your files and transform it so it is readable in Minecraft</li>
-<li>The &quot;moLang&quot; compiler plugin will now be added to project compiler configs upon project creation</li>
+<li><strong>Go To Definition</strong>
+Quickly jump to connected code by clicking on references to it in your current file.</li>
+<li>Syntax highlighting for Minecraft's color codes (e.g. §4) inside of .lang &amp; .mcfunction files</li>
+<li><strong>Experimental:</strong> bridge. v2 now has a custom window toolbar on some browsers</li>
+<li>Added auto-completions for vanilla loot &amp; trade table paths</li>
 </ul>
-</li>
-<li>Added wordWrap setting for text files</li>
-</ul>
-<h2>Changes</h2>
+<h2>Changes:</h2>
 <ul>
-<li>Updated schemas to latest beta</li>
-<li>The file name is now forced to be used in feature, feature rule and biome identifiers</li>
-<li>Updated GameTest types to latest beta</li>
-<li>Exposed project target version to compiler plugins</li>
-<li>Improved schema for feature rule iterations</li>
-<li>Organised some schemas</li>
+<li>Updated GameTest type declarations</li>
+<li>Nested loot tables now get cached correctly</li>
+<li>Updated PackSpider particle file to search particle texture</li>
+<li>Added &quot;filters&quot; auto-completions to entity event sequences</li>
+<li>Updated all built-in windows to use bridge.'s internal BaseWindow class</li>
+<li>&quot;minecraft:rideable&quot; &gt; &quot;family_types&quot; now proposes family names</li>
+<li>Upon closing a tab, bridge. now selects the previous tab instead of the first one in your tab row</li>
+<li>You can now press &quot;enter&quot; to create a preset after filling out all inputs</li>
 </ul>
-<h2>Fixes</h2>
+<h2>Fixes:</h2>
 <ul>
-<li>Fixed extension tags not having color in light mode</li>
-<li>Fixed presets using presetScripts not asking for permission to overwrite files</li>
-<li>Fixed animations and animation controllers in custom components</li>
-<li>Fixed feature and feature rule presets</li>
-<li>Fixed typo in particle component property</li>
+<li>Fixed MoLangJS replacer Webpack plugin</li>
+<li>Fixed reference error in entity schema</li>
+<li>Fixed &quot;condition&quot; property appearing in entity event auto-completion</li>
+<li>Fixed validation of event response &quot;run_command&quot;</li>
+<li>Fixed&quot;tick.json&quot; being recognized as .mcfunction file</li>
 </ul>

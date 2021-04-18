@@ -5,7 +5,6 @@ import { dirname, join, sep } from 'path'
 dotenv.config()
 
 const targetPath = join(process.env.USER_PATH, 'data/packages')
-console.log(targetPath)
 
 function getPath(path) {
 	return join(targetPath, path.replace(`data${sep}`, ''))
@@ -24,11 +23,11 @@ chokidar
 	.watch('./data', { awaitWriteFinish: true })
 	.on('add', copyFile)
 	.on('change', copyFile)
-	.on('unlink', async path => {
+	.on('unlink', async (path) => {
 		console.log(`File ${path} has been removed`)
 		await fs.unlink(getPath(path))
 	})
-	.on('unlinkDir', async path => {
+	.on('unlinkDir', async (path) => {
 		console.log(`Directory ${path} has been removed`)
 		await fs.rmdir(getPath(path), { recursive: true })
 	})
