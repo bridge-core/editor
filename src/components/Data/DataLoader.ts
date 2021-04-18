@@ -74,7 +74,7 @@ export class DataLoader extends Signal<void> {
 		} catch {}
 
 		const unzipper = new Unzipper(
-			await this.app.fileSystem.getDirectoryHandle('data/packages', {
+			await this.app.fileSystem.getDirectoryHandle('data', {
 				create: true,
 			})
 		)

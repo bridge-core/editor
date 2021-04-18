@@ -51,7 +51,9 @@ export class JsonDefaults {
 
 		try {
 			await this.loadStaticSchemas(
-				await app.fileSystem.getDirectoryHandle('data/packages/schema')
+				await app.fileSystem.getDirectoryHandle(
+					'data/packages/minecraftBedrock/schema'
+				)
 			)
 		} catch {
 			return
@@ -131,7 +133,7 @@ export class JsonDefaults {
 	}
 	async loadStaticSchemas(
 		directoryHandle: FileSystemDirectoryHandle,
-		fromPath = 'data/packages/schema'
+		fromPath = 'data/packages/minecraftBedrock/schema'
 	) {
 		if (loadedGlobalSchemas) return
 
@@ -161,7 +163,7 @@ export class JsonDefaults {
 		await Promise.all(promises)
 
 		// Only if this is the original call to loadStaticSchemas...
-		if (fromPath !== 'data/packages/schema') return
+		if (fromPath !== 'data/packages/minecraftBedrock/schema') return
 
 		// ...add file type entries
 		FileType.getMonacoSchemaArray().forEach((addSchema) => {
@@ -179,7 +181,7 @@ export class JsonDefaults {
 	}
 	async runSchemaScripts(app: App, filePath?: string) {
 		const baseDirectory = await app.fileSystem.getDirectoryHandle(
-			'data/packages/schemaScript'
+			'data/packages/minecraftBedrock/schemaScript'
 		)
 		const scopedFs = this.project.fileSystem
 
@@ -236,9 +238,9 @@ export class JsonDefaults {
 				typeof scriptResult === 'object'
 			) {
 				this.localSchemas[
-					`file:///data/packages/schema/${schemaScript.generateFile}`
+					`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
 				] = {
-					uri: `file:///data/packages/schema/${schemaScript.generateFile}`,
+					uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
 					schema: {
 						type: 'object',
 						properties: scriptResult,
@@ -249,9 +251,9 @@ export class JsonDefaults {
 			}
 
 			this.localSchemas[
-				`file:///data/packages/schema/${schemaScript.generateFile}`
+				`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
 			] = {
-				uri: `file:///data/packages/schema/${schemaScript.generateFile}`,
+				uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
 				schema: {
 					type: schemaScript.type === 'enum' ? 'string' : 'object',
 					enum:

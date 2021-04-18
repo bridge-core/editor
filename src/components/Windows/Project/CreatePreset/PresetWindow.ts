@@ -96,7 +96,7 @@ export class CreatePresetWindow extends BaseWindow {
 			<string | undefined>await app.projectConfig.get('targetVersion') ??
 			(
 				await app.fileSystem.readJSON(
-					'data/packages/formatVersions.json'
+					'data/packages/minecraftBedrock/formatVersions.json'
 				)
 			).pop()
 		// Check that preset is supported on target version
@@ -152,7 +152,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 	protected async loadPresets(
 		fs: FileSystem,
-		dirPath = 'data/packages/preset'
+		dirPath = 'data/packages/minecraftBedrock/preset'
 	) {
 		let dirents: FileSystemHandle[] = []
 		try {

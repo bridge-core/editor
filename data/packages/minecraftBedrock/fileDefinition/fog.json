@@ -4,6 +4,6 @@
 	"scope": "RP/fogs/",
 	"target_version": "$project_target_version >= 1.16.100",
 	"matcher": ["RP/fogs/**/*.json", "RP/fogs/*.json"],
-	"schema": "file:///data/packages/schema/fog/main.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/fog/main.json",
 	"lightningCache": "fog.json"
 }

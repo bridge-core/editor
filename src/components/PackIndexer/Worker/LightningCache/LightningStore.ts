@@ -215,7 +215,7 @@ export class LightningStore {
 
 	async getSchemasFor(fileType: string, fromFilePath?: string) {
 		const collectedData = await this.getAllFrom(fileType, fromFilePath)
-		const baseUrl = `file:///data/packages/schema/${fileType}/dynamic`
+		const baseUrl = `file:///data/packages/minecraftBedrock/schema/${fileType}/dynamic`
 		const schemas: IMonacoSchemaArrayEntry[] = []
 
 		for (const key in collectedData) {

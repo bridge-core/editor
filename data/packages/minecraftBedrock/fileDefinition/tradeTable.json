@@ -3,5 +3,5 @@
 	"icon": "mdi-store-outline",
 	"scope": "BP/trading/",
 	"matcher": ["BP/trading/**/*.json", "BP/trading/*.json"],
-	"schema": "file:///data/packages/schema/tradeTable/main.json"
+	"schema": "file:///data/packages/minecraftBedrock/schema/tradeTable/main.json"
 }

@@ -3,7 +3,7 @@
 	"icon": "mdi-egg-outline",
 	"scope": "BP/spawn_rules/",
 	"matcher": ["BP/spawn_rules/**/*.json", "BP/spawn_rules/*.json"],
-	"schema": "file:///data/packages/schema/spawnRule/main.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/spawnRule/main.json",
 	"lightningCache": "spawnRule.json",
 
 	"definitions": {

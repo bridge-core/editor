@@ -3,5 +3,5 @@
 	"icon": "mdi-alpha-m-box-outline",
 	"scope": "BP/manifest.json",
 	"matcher": "BP/manifest.json",
-	"schema": "file:///data/packages/schema/manifest/main.json"
+	"schema": "file:///data/packages/minecraftBedrock/schema/manifest/main.json"
 }

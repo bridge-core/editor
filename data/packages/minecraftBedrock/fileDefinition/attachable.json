@@ -3,7 +3,7 @@
 	"icon": "mdi-hat-fedora",
 	"scope": "RP/attachables/",
 	"matcher": ["RP/attachables/**/*.json", "RP/attachables/*.json"],
-	"schema": "file:///data/packages/schema/attachable/main.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/attachable/main.json",
 	"lightningCache": "attachable.json",
 
 	"definitions": {

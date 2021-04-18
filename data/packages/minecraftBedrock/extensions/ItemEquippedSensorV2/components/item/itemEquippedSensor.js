@@ -12,7 +12,7 @@ export default defineComponent(({ name, template, schema }) => {
 							type: 'array',
 							items: {
 								$ref:
-									'/data/packages/schema/general/reference/animationEvent.json',
+									'/data/packages/minecraftBedrock/schema/general/reference/animationEvent.json',
 							},
 						},
 						on_unequip: {
@@ -21,24 +21,25 @@ export default defineComponent(({ name, template, schema }) => {
 							type: 'array',
 							items: {
 								$ref:
-									'/data/packages/schema/general/reference/animationEvent.json',
+									'/data/packages/minecraftBedrock/schema/general/reference/animationEvent.json',
 							},
 						},
 						is_equipped: {
 							description:
 								'Components to be applied to the player while the item is equipped',
 							$ref:
-								'/data/packages/schema/entity/v1.16.200/components.json',
+								'/data/packages/minecraftBedrock/schema/entity/v1.16.200/components.json',
 						},
 						is_unequipped: {
 							description:
 								'Components to be applied to the player while the item is unequipped',
 							$ref:
-								'/data/packages/schema/entity/v1.16.200/components.json',
+								'/data/packages/minecraftBedrock/schema/entity/v1.16.200/components.json',
 						},
 						slot: {
 							description: 'Set the slot to check for this item',
-							$ref: '/data/packages/schema/general/slotType.json',
+							$ref:
+								'/data/packages/minecraftBedrock/schema/general/slotType.json',
 						},
 					},
 				},

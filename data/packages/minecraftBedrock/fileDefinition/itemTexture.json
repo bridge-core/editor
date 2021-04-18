@@ -2,7 +2,7 @@
 	"id": "itemTexture",
 	"scope": "RP/textures/item_texture.json",
 	"matcher": "RP/textures/item_texture.json",
-	"schema": "file:///data/packages/schema/simple/itemTextures.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/simple/itemTextures.json",
 	"lightningCache": "itemTexture.json",
 
 	"definitions": {

@@ -1,5 +1,5 @@
 {
 	"id": "plugin_manifest",
 	"matcher": "BP/bridge/plugins/*/manifest.json",
-	"schema": "file:///data/packages/schema/plugins/manifest/main.json"
+	"schema": "file:///data/packages/minecraftBedrock/schema/plugins/manifest/main.json"
 }
