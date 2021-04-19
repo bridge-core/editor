@@ -106,19 +106,9 @@ export class Project {
 		this.jsonDefaults.deactivate()
 		this.extensionLoader.disposeAll()
 	}
-	disposeWorkers() {
-		this.packIndexer.dispose()
-		this.compilerManager.dispose()
-	}
-	dispose() {
-		this.disposeWorkers()
-		this.tabSystems.forEach((tabSystem) => tabSystem.dispose())
-		this.extensionLoader.disposeAll()
-	}
 
 	async refresh() {
-		this.deactivate()
-		this.disposeWorkers()
+		await this.deactivate()
 		await this.activate(true)
 	}
 
