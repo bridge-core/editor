@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import { dirname, join, sep } from 'path'
 dotenv.config()
 
-const targetPath = join(process.env.USER_PATH, 'data/packages')
+const targetPath = join(process.env.USER_PATH, 'data')
 
 function getPath(path) {
 	return join(targetPath, path.replace(`data${sep}`, ''))
