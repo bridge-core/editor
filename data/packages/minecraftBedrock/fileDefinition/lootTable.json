@@ -1,0 +1,8 @@
+{
+	"id": "lootTable",
+	"icon": "mdi-skull-outline",
+	"scope": "BP/loot_tables/",
+	"matcher": ["BP/loot_tables/**/*.json", "BP/loot_tables/*.json"],
+	"schema": "file:///data/packages/minecraftBedrock/schema/lootTable/main.json",
+	"lightningCache": "lootTable.json"
+}

@@ -1,0 +1,15 @@
+{
+	"id": "particle",
+	"icon": "mdi-snowflake",
+	"scope": "RP/particles/",
+	"matcher": ["RP/particles/**/*.json", "RP/particles/*.json"],
+	"schema": "file:///data/packages/minecraftBedrock/schema/particle/main.json",
+	"packSpider": "particle.json",
+	"lightningCache": "particle.json",
+
+	"defintions": {
+		"texturePath": {
+			"directReference": true
+		}
+	}
+}

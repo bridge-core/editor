@@ -33,7 +33,9 @@ export namespace PackType {
 		if (packTypes.length > 0) return
 
 		packTypes = <IPackType[]>(
-			await fileSystem.readJSON('data/packages/packDefinitions.json')
+			await fileSystem.readJSON(
+				'data/packages/minecraftBedrock/packDefinitions.json'
+			)
 		)
 		ready.dispatch()
 	}

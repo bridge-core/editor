@@ -1,0 +1,7 @@
+{
+	"id": "skinManifest",
+	"icon": "mdi-alpha-m-box-outline",
+	"scope": "SP/manifest.json",
+	"matcher": "SP/manifest.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/manifest/main.json"
+}

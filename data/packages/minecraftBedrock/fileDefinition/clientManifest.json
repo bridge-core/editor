@@ -1,0 +1,8 @@
+{
+	"id": "clientManifest",
+	"icon": "mdi-alpha-m-box-outline",
+	"scope": "RP/manifest.json",
+	"matcher": "RP/manifest.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/manifest/main.json",
+	"lightningCache": "clientManifest.json"
+}

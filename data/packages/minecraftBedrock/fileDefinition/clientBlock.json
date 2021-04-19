@@ -1,0 +1,16 @@
+{
+	"id": "clientBlock",
+	"scope": "RP/blocks.json",
+	"matcher": "RP/blocks.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/simple/blocks.json",
+	"lightningCache": "clientBlock.json",
+
+	"definitions": {
+		"identifier": [
+			{
+				"from": "block",
+				"match": "identifier"
+			}
+		]
+	}
+}

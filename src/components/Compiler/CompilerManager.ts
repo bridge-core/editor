@@ -52,9 +52,6 @@ export class CompilerManager extends Signal<void> {
 	deactivate() {
 		this.compilers.forEach((compiler) => compiler.deactivate())
 	}
-	dispose() {
-		this.compilers.forEach((compiler) => compiler.dispose())
-	}
 
 	getCompilerPlugins() {
 		return deepMergeAll(

@@ -1,0 +1,8 @@
+{
+	"id": "biome",
+	"icon": "mdi-earth-box",
+	"scope": "BP/biomes/",
+	"matcher": ["BP/biomes/**/*.json", "BP/biomes/*.json"],
+	"schema": "file:///data/packages/minecraftBedrock/schema/biome/main.json",
+	"lightningCache": "biome.json"
+}

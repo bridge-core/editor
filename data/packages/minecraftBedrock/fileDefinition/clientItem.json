@@ -1,0 +1,23 @@
+{
+	"id": "clientItem",
+	"icon": "mdi-sword",
+	"scope": "RP/items/",
+	"matcher": ["RP/items/**/*.json", "RP/items/*.json"],
+	"schema": "file:///data/packages/minecraftBedrock/schema/clientItem/main.json",
+	"lightningCache": "clientItem.json",
+
+	"definitions": {
+		"identifier": [
+			{
+				"from": "item",
+				"match": "identifier"
+			}
+		],
+		"itemTexture": [
+			{
+				"from": "itemTexture",
+				"match": "texture"
+			}
+		]
+	}
+}

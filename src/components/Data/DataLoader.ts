@@ -38,7 +38,7 @@ export class DataLoader extends Signal<void> {
 		let localVersion: string
 		try {
 			localVersion = await this.app.fileSystem
-				.readFile('data/packages/version.txt')
+				.readFile('data/version.txt')
 				.then((data) => data.text())
 		} catch {
 			return true
@@ -74,7 +74,7 @@ export class DataLoader extends Signal<void> {
 		} catch {}
 
 		const unzipper = new Unzipper(
-			await this.app.fileSystem.getDirectoryHandle('data/packages', {
+			await this.app.fileSystem.getDirectoryHandle('data', {
 				create: true,
 			})
 		)

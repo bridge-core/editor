@@ -1,5 +1,0 @@
-{
-	"id": "theme",
-	"matcher": "BP/bridge/plugins/*/themes/*.json",
-	"schema": "file:///data/packages/schema/plugins/theme/main.json"
-}

@@ -13,7 +13,9 @@ export class CreatePackIcon extends CreateFile {
 		let icon = createOptions.icon
 		if (!icon) {
 			const app = await App.getApp()
-			icon = await app.fileSystem.readFile(`data/packages/packIcon.png`)
+			icon = await app.fileSystem.readFile(
+				`data/packages/common/packIcon.png`
+			)
 		}
 
 		await fs.writeFile(`${this.packPath}/pack_icon.png`, icon)

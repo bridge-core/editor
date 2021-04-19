@@ -51,7 +51,7 @@ export namespace FileType {
 		if (fileTypes.length > 0) return
 		fileSystem = fs
 
-		const basePath = 'data/packages/fileDefinition'
+		const basePath = 'data/packages/minecraftBedrock/fileDefinition'
 		const dirents = await fs.readdir(basePath, { withFileTypes: true })
 		for (const dirent of dirents) {
 			if (dirent.kind === 'file')
@@ -151,12 +151,12 @@ export namespace FileType {
 		if (lightningCache.endsWith('.json')) {
 			lCacheFiles[lightningCache] = <ILightningInstruction[]>(
 				await fileSystem.readJSON(
-					`data/packages/lightningCache/${lightningCache}`
+					`data/packages/minecraftBedrock/lightningCache/${lightningCache}`
 				)
 			)
 		} else if (lightningCache.endsWith('.js')) {
 			const textFile = await fileSystem.readFile(
-				`data/packages/lightningCache/${lightningCache}`
+				`data/packages/minecraftBedrock/lightningCache/${lightningCache}`
 			)
 			lCacheFiles[lightningCache] = await textFile.text()
 		} else {
@@ -174,7 +174,9 @@ export namespace FileType {
 				.map(({ id, packSpider }) => {
 					if (!packSpider) return
 					return fileSystem
-						.readJSON(`data/packages/packSpider/${packSpider}`)
+						.readJSON(
+							`data/packages/minecraftBedrock/packSpider/${packSpider}`
+						)
 						.then((json) => ({
 							id,
 							packSpider: json,

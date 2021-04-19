@@ -1,0 +1,17 @@
+{
+	"id": "clientAnimationController",
+	"icon": "mdi-movie-search-outline",
+	"scope": "RP/animation_controllers/",
+	"matcher": [
+		"RP/animation_controllers/**/*.json",
+		"RP/animation_controllers/*.json"
+	],
+	"schema": "file:///data/packages/minecraftBedrock/schema/animationController/client.json",
+	"lightningCache": "clientAnimationController.json",
+
+	"definitions": {
+		"functionPath": {
+			"directReference": true
+		}
+	}
+}

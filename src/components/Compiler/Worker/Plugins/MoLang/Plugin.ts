@@ -20,7 +20,7 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 			// Load default MoLang locations and merge them with user defined locations
 			include = Object.assign(
 				await fileSystem.readJSON(
-					'data/packages/location/validMoLang.json'
+					'data/packages/minecraftBedrock/location/validMoLang.json'
 				),
 				include
 			)

@@ -1,0 +1,27 @@
+{
+	"id": "item",
+	"icon": "mdi-sword",
+	"scope": "BP/items/",
+	"matcher": ["BP/items/**/*.json", "BP/items/*.json"],
+	"schema": "file:///data/packages/minecraftBedrock/schema/item/main.json",
+	"lightningCache": "item.json",
+	"packSpider": "item.json",
+
+	"definitions": {
+		"identifier": [
+			{
+				"from": "clientItem",
+				"match": "identifier"
+			}
+		],
+		"itemTexture": [
+			{
+				"from": "itemTexture",
+				"match": "texture"
+			}
+		],
+		"lootTablePath": {
+			"directReference": true
+		}
+	}
+}

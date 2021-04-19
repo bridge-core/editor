@@ -106,7 +106,9 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	async loadDefaultThemes(app: App) {
 		try {
 			await iterateDir(
-				await app.fileSystem.getDirectoryHandle('data/packages/themes'),
+				await app.fileSystem.getDirectoryHandle(
+					'data/packages/common/themes'
+				),
 				(fileHandle) => this.loadTheme(fileHandle)
 			)
 		} catch {}

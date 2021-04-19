@@ -1,0 +1,6 @@
+{
+	"id": "functionTick",
+	"scope": "BP/functions/tick.json",
+	"matcher": "BP/functions/tick.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/simple/tick.json"
+}

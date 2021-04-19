@@ -1,0 +1,47 @@
+{
+	"id": "entity",
+	"icon": "mdi-minecraft",
+	"scope": "BP/entities/",
+	"matcher": ["BP/entities/**/*.json", "BP/entities/*.json"],
+	"schema": "file:///data/packages/minecraftBedrock/schema/entity/main.json",
+	"packSpider": "entity.json",
+	"lightningCache": "entity.json",
+
+	"definitions": {
+		"identifier": [
+			{
+				"from": "clientEntity",
+				"match": "identifier"
+			},
+			{
+				"from": "spawnRule",
+				"match": "identifier"
+			}
+		],
+		"animationIdentifier": [
+			{
+				"from": "animation",
+				"match": "identifier"
+			},
+			{
+				"from": "animationController",
+				"match": "identifier"
+			}
+		],
+		"family": [
+			{
+				"from": "entity",
+				"match": "family"
+			}
+		],
+		"lootTablePath": {
+			"directReference": true
+		},
+		"tradeTablePath": {
+			"directReference": true
+		},
+		"functionPath": {
+			"directReference": true
+		}
+	}
+}

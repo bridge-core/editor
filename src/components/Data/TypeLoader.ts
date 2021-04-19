@@ -34,7 +34,9 @@ export class TypeLoader {
 		if (src) return src
 
 		// Load types from file
-		const file = await this.fileSystem.readFile(`data/packages/${typePath}`)
+		const file = await this.fileSystem.readFile(
+			`data/packages/minecraftBedrock/${typePath}`
+		)
 		src = await file.text()
 		types.set(typePath, src)
 

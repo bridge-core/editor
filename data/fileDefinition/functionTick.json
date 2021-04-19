@@ -1,6 +1,0 @@
-{
-	"id": "functionTick",
-	"scope": "BP/functions/tick.json",
-	"matcher": "BP/functions/tick.json",
-	"schema": "file:///data/packages/schema/simple/tick.json"
-}

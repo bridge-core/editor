@@ -8,11 +8,11 @@ export async function getFilteredFormatVersions(useVersions?: string[]) {
 	const targetVersion: string | undefined =
 		useVersions ?? (await app.projectConfig.get('targetVersion'))
 	const formatVersions: string[] = await app.fileSystem.readJSON(
-		'data/packages/formatVersions.json'
+		'data/packages/minecraftBedrock/formatVersions.json'
 	)
 
 	return formatVersions.filter(
-		formatVersion =>
+		(formatVersion) =>
 			!targetVersion || compare(formatVersion, targetVersion, '<=')
 	)
 }

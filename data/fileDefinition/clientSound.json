@@ -1,6 +1,0 @@
-{
-	"id": "clientSound",
-	"scope": "RP/sounds.json",
-	"matcher": "RP/sounds.json",
-	"schema": "file:///data/packages/schema/simple/sounds.json"
-}
