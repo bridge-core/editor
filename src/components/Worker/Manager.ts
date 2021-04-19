@@ -58,6 +58,8 @@ export abstract class WorkerManager<
 	}
 
 	dispose() {
+		if (this.disposeTimeout) window.clearTimeout(this.disposeTimeout)
+
 		this.resetSignal()
 		this.worker?.terminate()
 		this.task?.dispose()
