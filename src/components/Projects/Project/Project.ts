@@ -35,7 +35,7 @@ export class Project {
 	public readonly config: ProjectConfig
 	public readonly extensionLoader = new ExtensionLoader(
 		this.app.fileSystem,
-		`projects/${this.name}/bridge/inactiveExtensions.json`
+		`projects/${this.name}/.bridge/inactiveExtensions.json`
 	)
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
@@ -76,7 +76,7 @@ export class Project {
 			'recentFiles',
 			new RecentFiles(
 				app,
-				`projects/${this.name}/bridge/recentFiles.json`
+				`projects/${this.name}/.bridge/recentFiles.json`
 			)
 		)
 	}
@@ -86,7 +86,7 @@ export class Project {
 		for (const tabSystem of this.tabSystems) await tabSystem.activate()
 
 		await this.extensionLoader.loadExtensions(
-			await this.fileSystem.getDirectoryHandle('bridge/extensions', {
+			await this.fileSystem.getDirectoryHandle('.bridge/extensions', {
 				create: true,
 			})
 		)
@@ -191,7 +191,7 @@ export class Project {
 		let config: any
 		try {
 			config = await this.app.fileSystem.readJSON(
-				`projects/${this.name}/bridge/config.json`
+				`projects/${this.name}/.bridge/config.json`
 			)
 		} catch {
 			config = {}

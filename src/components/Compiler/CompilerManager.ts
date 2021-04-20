@@ -32,7 +32,7 @@ export class CompilerManager extends Signal<void> {
 
 		if (!compiler)
 			throw new Error(
-				`Cannot update file because compiler for config "bridge/compiler/${configName}" doesn't exist`
+				`Cannot update file because compiler for config ".bridge/compiler/${configName}" doesn't exist`
 			)
 		return compiler.updateFile(filePath)
 	}
@@ -41,7 +41,7 @@ export class CompilerManager extends Signal<void> {
 
 		if (!compiler)
 			throw new Error(
-				`Cannot update file because compiler for config "bridge/compiler/default.json" doesn't exist`
+				`Cannot update file because compiler for config ".bridge/compiler/default.json" doesn't exist`
 			)
 		return compiler.compileWithFile(filePath, file)
 	}
@@ -65,7 +65,7 @@ export class CompilerManager extends Signal<void> {
 	}
 	async openWindow() {
 		const configDir = await this.project.fileSystem.getDirectoryHandle(
-			`bridge/compiler`,
+			`.bridge/compiler`,
 			{ create: true }
 		)
 		const informedChoice = new InformedChoiceWindow('sidebar.compiler.name')

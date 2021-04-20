@@ -119,7 +119,7 @@ export class Compiler {
 		// Load files.json file
 		try {
 			this.files = new Map<string, IFileData>()
-			const files = await this.fileSystem.readJSON('bridge/files.json')
+			const files = await this.fileSystem.readJSON('.bridge/files.json')
 			for (const [fileId, fileData] of Object.entries<ISaveFile>(files)) {
 				this.files.set(fileId, {
 					filePath: fileData.filePath,
@@ -436,7 +436,7 @@ export class Compiler {
 		}
 
 		// Save files map
-		await this.fileSystem.writeJSON('bridge/files.json', filesObject, true)
+		await this.fileSystem.writeJSON('.bridge/files.json', filesObject, true)
 		this.parent.progress.addToCurrent(1)
 	}
 

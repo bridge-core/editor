@@ -5,7 +5,7 @@ import { CreateFile } from '../CreateFile'
 export class CreateConfig extends CreateFile {
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
 		await fs.writeJSON(
-			`bridge/config.json`,
+			`.bridge/config.json`,
 			{
 				prefix: createOptions.prefix,
 				author: createOptions.author,

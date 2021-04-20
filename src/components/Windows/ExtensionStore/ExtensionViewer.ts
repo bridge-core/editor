@@ -102,7 +102,7 @@ export class ExtensionViewer {
 		).then((response) => response.arrayBuffer())
 
 		const basePath = !isGlobalInstall
-			? `projects/${app.selectedProject}/bridge/extensions`
+			? `projects/${app.selectedProject}/.bridge/extensions`
 			: 'extensions'
 		const extensionLoader = isGlobalInstall
 			? app.extensionLoader

@@ -19,7 +19,7 @@ export class ProjectConfig {
 
 	protected async loadData() {
 		try {
-			this.data = await this.fileSystem.readJSON(`bridge/config.json`)
+			this.data = await this.fileSystem.readJSON(`.bridge/config.json`)
 		} catch {
 			this.data = {}
 		}
@@ -38,6 +38,6 @@ export class ProjectConfig {
 		if (!this.data) await this.loadData()
 		this.data![key] = data
 
-		await this.fileSystem.writeJSON(`bridge/config.json`, this.data, true)
+		await this.fileSystem.writeJSON(`.bridge/config.json`, this.data, true)
 	}
 }

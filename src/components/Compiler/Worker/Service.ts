@@ -76,7 +76,7 @@ export class CompilerService extends TaskService<void, string[]> {
 
 		try {
 			this.buildConfig = await this.fileSystem.readJSON(
-				`bridge/compiler/${this.options.config}`
+				`.bridge/compiler/${this.options.config}`
 			)
 		} catch {
 			return

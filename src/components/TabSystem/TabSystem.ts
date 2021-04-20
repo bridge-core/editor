@@ -34,7 +34,7 @@ export class TabSystem extends MonacoHolder {
 		this.openedFiles = new OpenedFiles(
 			this,
 			project.app,
-			`projects/${project.name}/bridge/openedFiles_${id}.json`
+			`projects/${project.name}/.bridge/openedFiles_${id}.json`
 		)
 	}
 

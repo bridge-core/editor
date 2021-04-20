@@ -47,7 +47,7 @@ export abstract class TaskService<T, K = void> extends EventDispatcher<
 	protected async loadPreviousTaskRun() {
 		try {
 			const file = await this.fileSystem.readFile(
-				`bridge/tasks/${this.taskId}.txt`
+				`.bridge/tasks/${this.taskId}.txt`
 			)
 			const prevTotal = Number(await file.text())
 			return Number.isNaN(prevTotal) ? 100 : prevTotal
@@ -57,7 +57,7 @@ export abstract class TaskService<T, K = void> extends EventDispatcher<
 	}
 	protected async saveCurrentTaskRun() {
 		await this.fileSystem.writeFile(
-			`bridge/tasks/${this.taskId}.txt`,
+			`.bridge/tasks/${this.taskId}.txt`,
 			`${this.progress.getCurrent()}`
 		)
 	}

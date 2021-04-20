@@ -1,5 +1,5 @@
 {
 	"id": "theme",
-	"matcher": "BP/bridge/plugins/*/themes/*.json",
+	"matcher": "BP/.bridge/plugins/*/themes/*.json",
 	"schema": "file:///data/packages/minecraftBedrock/schema/plugins/theme/main.json"
 }

@@ -34,7 +34,7 @@ export class LightningCache {
 	async loadIgnoreFolders() {
 		try {
 			const file = await this.service.fileSystem.readFile(
-				'bridge/.ignore-folders'
+				'.bridge/.ignore-folders'
 			)
 			;(await file.text())
 				.split('\n')

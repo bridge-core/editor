@@ -4,9 +4,9 @@ import { CreateFile } from '../CreateFile'
 
 export class CreateCompilerConfig extends CreateFile {
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
-		await fs.mkdir('bridge/compiler')
+		await fs.mkdir('.bridge/compiler')
 		await fs.writeJSON(
-			`bridge/compiler/default.json`,
+			`.bridge/compiler/default.json`,
 			{
 				icon: 'mdi-cogs',
 				name: 'Default Script',
