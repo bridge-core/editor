@@ -34,7 +34,7 @@ export class CreateProjectWindow extends BaseWindow {
 		BP: new CreateBP(),
 		RP: new CreateRP(),
 		SP: new CreateSP(),
-		bridge: new CreateBridge(),
+		'.bridge': new CreateBridge(),
 	}
 	protected availablePackTypes: IPackType[] = []
 	protected createFiles = [new CreateGitIgnore()]
@@ -114,7 +114,7 @@ export class CreateProjectWindow extends BaseWindow {
 			name: '',
 			prefix: 'bridge',
 			targetVersion: '',
-			packs: ['bridge', 'BP', 'RP'],
+			packs: ['.bridge', 'BP', 'RP'],
 			scripting: false,
 			gameTest: false,
 			rpAsBpDependency: true,

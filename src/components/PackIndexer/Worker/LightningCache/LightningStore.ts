@@ -78,7 +78,7 @@ export class LightningStore {
 			}
 		}
 
-		await this.fs.mkdir('bridge')
+		await this.fs.mkdir('.bridge')
 		await this.fs.writeFile('.bridge/.lightningCache', saveStore)
 	}
 
