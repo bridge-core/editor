@@ -3,7 +3,12 @@
 		class="d-flex align-center justify-center"
 		@click="tab.parent.setActive(true)"
 	>
-		<img :src="tab.dataUrl" :alt="tab.path" class="img-preview" />
+		<img
+			:src="tab.dataUrl"
+			:alt="tab.path"
+			class="img-preview"
+			draggable="false"
+		/>
 	</div>
 </template>
 

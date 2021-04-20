@@ -7,6 +7,7 @@
 			style="height: 160px; width: 160px"
 			class="mb-4"
 			alt="bridge. Logo"
+			draggable="false"
 			src="@/_assets/logo.svg"
 		/>
 		<h1 class="text-h3 text-center">{{ t('welcome.title') }}</h1>
@@ -85,6 +86,7 @@
 							v-if="project.imgSrc"
 							:src="project.imgSrc"
 							:alt="`${project.name} Logo`"
+							draggable="false"
 							class="mr-1 pack-icon"
 						/>
 						<span class="primary-text">{{ project.path }}</span>

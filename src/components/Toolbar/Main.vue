@@ -16,6 +16,7 @@
 			v-if="!isMacOS || !windowControlsOverlay"
 			style="height: 20px; padding-right: 4px"
 			alt="bridge. Logo"
+			draggable="false"
 			src="@/_assets/logo.svg"
 		/>
 

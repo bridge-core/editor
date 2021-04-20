@@ -27,6 +27,7 @@
 					class="mr-2 project-logo rounded-lg"
 					height="64"
 					:src="sidebar.currentState.imgSrc"
+					draggable="false"
 				/>
 				<div>
 					<h1 class="text-h4">{{ sidebar.currentState.name }}</h1>
