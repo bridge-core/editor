@@ -58,7 +58,7 @@
 			"if": {
 				"properties": {
 					"format_version": {
-						"const": "1.16.220"
+						"enum": ["1.16.220", "1.17.0"]
 					}
 				}
 			},
