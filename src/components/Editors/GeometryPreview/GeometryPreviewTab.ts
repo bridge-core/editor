@@ -173,7 +173,7 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 		this.model = new Model(
 			this.renderContainer.modelData,
 			await loadAsDataURL(
-				`RP/${this.renderContainer.currentTexturePath}`,
+				this.renderContainer.currentTexturePath,
 				app.project.fileSystem
 			)
 		)
