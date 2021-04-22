@@ -153,4 +153,9 @@ export class ProjectManager extends Signal<void> {
 			)
 		)
 	}
+
+	async recompileAll(forceStartIfActive = true) {
+		for (const project of Object.values(this.state))
+			await project.recompile(forceStartIfActive)
+	}
 }

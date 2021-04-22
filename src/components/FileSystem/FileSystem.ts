@@ -137,7 +137,12 @@ export class FileSystem extends Signal<void> {
 
 		// This has to be a string because path.length > 0
 		const file = <string>pathArr.pop()
-		const parentDir = await this.getDirectoryHandle(pathArr.join('/'))
+		let parentDir: FileSystemDirectoryHandle
+		try {
+			parentDir = await this.getDirectoryHandle(pathArr.join('/'))
+		} catch {
+			return
+		}
 
 		await parentDir.removeEntry(file, { recursive: true })
 	}

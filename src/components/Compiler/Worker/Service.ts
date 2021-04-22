@@ -13,6 +13,7 @@ export interface ICompilerOptions {
 	comMojangDirectory?: FileSystemDirectoryHandle
 	config: string
 	mode: 'dev' | 'build'
+	isDevServerRestart: boolean
 	plugins: Record<string, string>
 	pluginFileTypes: IFileType[]
 }
@@ -59,8 +60,23 @@ export class CompilerService extends TaskService<void, string[]> {
 		return Object.fromEntries(
 			this.buildConfig.plugins.map((def) =>
 				Array.isArray(def)
-					? [def[0], { ...def[1], mode: this.options.mode }]
-					: [def, { mode: this.options.mode }]
+					? [
+							def[0],
+							{
+								...def[1],
+								mode: this.options.mode,
+								restartDevServer: this.options
+									.isDevServerRestart,
+							},
+					  ]
+					: [
+							def,
+							{
+								mode: this.options.mode,
+								restartDevServer: this.options
+									.isDevServerRestart,
+							},
+					  ]
 			)
 		)
 	}
@@ -124,8 +140,9 @@ export class CompilerService extends TaskService<void, string[]> {
 		await this.loadPlugins(plugins)
 		FileType.setPluginFileTypes(pluginFileTypes)
 	}
-	updateMode(mode: 'dev' | 'build') {
+	updateMode(mode: 'dev' | 'build', isDevServerRestart: boolean) {
 		this.options.mode = mode
+		this.options.isDevServerRestart = isDevServerRestart
 	}
 }
 

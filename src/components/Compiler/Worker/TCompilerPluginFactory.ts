@@ -3,7 +3,11 @@ import { FileSystem } from '../../FileSystem/FileSystem'
 import { TCompilerPlugin } from './TCompilerPlugin'
 
 export type TCompilerPluginFactory<
-	T = { mode: 'dev' | 'build'; [key: string]: any }
+	T = {
+		mode: 'dev' | 'build'
+		restartDevServer: boolean
+		[key: string]: any
+	}
 > = (context: {
 	options: T
 	fileSystem: FileSystem

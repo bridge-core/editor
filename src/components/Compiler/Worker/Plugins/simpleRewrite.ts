@@ -16,12 +16,30 @@ export const SimpleRewrite: TCompilerPluginFactory = ({
 		SP: 'skin_packs',
 	}
 
+	// Rewrite paths so files land in the correct comMojangFolder if comMojang folder is set
+	const pathPrefix = (pack: string) =>
+		hasComMojangDirectory && options.mode === 'dev'
+			? `${folders[pack]}`
+			: `builds/${options.buildName}`
+	const pathPrefixWithPack = (pack: string) =>
+		`${pathPrefix(pack)}/${options.packName} ${pack}`
+
 	return {
 		async buildStart() {
-			if (options.mode === 'build') {
-				await outputFileSystem
-					.unlink(`builds/${options.buildName}`)
-					.catch(() => {})
+			if (options.mode === 'build' || options.restartDevServer) {
+				if (hasComMojangDirectory) {
+					for (const pack in folders) {
+						await outputFileSystem
+							.unlink(pathPrefixWithPack(pack))
+							.catch(() => {})
+					}
+				} else {
+					//Using "BP" is fine here because the path doesn't change based on the pack without a com.mojang folder
+
+					await outputFileSystem
+						.unlink(pathPrefix('BP'))
+						.catch(() => {})
+				}
 			}
 		},
 		transformPath(filePath) {
@@ -36,18 +54,8 @@ export const SimpleRewrite: TCompilerPluginFactory = ({
 			const pathParts = filePath.split('/')
 			const pack = <string>pathParts.shift()
 
-			// Rewrite paths so files land in the correct comMojangFolder
-			if (hasComMojangDirectory && options.mode === 'dev') {
-				if (folders[pack])
-					return `${folders[pack]}/${
-						options.packName
-					} ${pack}/${pathParts.join('/')}`
-			}
-
 			if (['BP', 'RP', 'SP'].includes(pack))
-				return `builds/${options.buildName}/${
-					options.packName
-				} ${pack}/${pathParts.join('/')}`
+				return `${pathPrefixWithPack(pack)}/${pathParts.join('/')}`
 		},
 	}
 }

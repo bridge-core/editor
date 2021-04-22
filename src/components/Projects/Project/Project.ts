@@ -61,6 +61,9 @@ export class Project {
 	get fileSystem() {
 		return this._fileSystem
 	}
+	get isActiveProject() {
+		return this.name === this.parent.selectedProject
+	}
 	//#endregion
 
 	constructor(
@@ -210,5 +213,15 @@ export class Project {
 		loadPacks(this.app, this.name).then((packs) =>
 			Vue.set(this._projectData, 'contains', packs)
 		)
+	}
+
+	async recompile(forceStartIfActive = true) {
+		if (forceStartIfActive) this.compilerManager.dispose()
+
+		if (forceStartIfActive && this.isActiveProject) {
+			this.compilerManager.start('default.json', 'dev', true)
+		} else {
+			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
+		}
 	}
 }

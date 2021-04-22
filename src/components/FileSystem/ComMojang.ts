@@ -41,10 +41,11 @@ export class ComMojang extends Signal<void> {
 				})
 				if (permission !== 'granted') {
 					set(comMojangKey, undefined)
+					await this.app.projectManager.recompileAll(false)
+				} else {
+					this.fileSystem.setup(directoryHandle)
+					this._hasComMojang = true
 				}
-
-				this.fileSystem.setup(directoryHandle)
-				this._hasComMojang = true
 			},
 		})
 
@@ -66,6 +67,7 @@ export class ComMojang extends Signal<void> {
 		// User wants to set default com.mojang folder
 		if (await confirmWindow.fired) {
 			await this.set(directoryHandle)
+			await this.app.projectManager.recompileAll()
 		}
 	}
 }

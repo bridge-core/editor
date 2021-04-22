@@ -13,17 +13,31 @@ export class CompilerManager extends Signal<void> {
 		super()
 	}
 
-	async start(configName: string, mode: 'dev' | 'build') {
+	async start(
+		configName: string,
+		mode: 'dev' | 'build',
+		restartDevServer = false
+	) {
 		const app = await App.getApp()
 		await app.extensionLoader.fired
+		await app.comMojang.fired
+
+		if (
+			await this.project.fileSystem.fileExists(
+				'.bridge/.restartDevServer'
+			)
+		) {
+			restartDevServer = true
+			await this.project.fileSystem.unlink('.bridge/.restartDevServer')
+		}
 
 		let compiler = this.compilers.get(configName)
 		// Compiler for this config already exists, just start it
-		if (compiler) return compiler.activate(mode)
+		if (compiler) return compiler.activate({ mode, restartDevServer })
 
 		compiler = new Compiler(this, this.project, configName)
 		this.compilers.set(configName, compiler)
-		await compiler.activate(mode)
+		await compiler.activate({ mode, restartDevServer })
 		this.dispatch()
 	}
 

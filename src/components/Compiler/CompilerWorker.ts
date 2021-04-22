@@ -8,13 +8,17 @@ import { Project } from '../Projects/Project/Project'
 import { CompilerManager } from './CompilerManager'
 import { FileType } from '../Data/FileType'
 
+interface ICompilerStartOptions {
+	mode: 'dev' | 'build'
+	restartDevServer: boolean
+}
 export class Compiler extends WorkerManager<
 	CompilerService,
 	ICompilerOptions,
-	'dev' | 'build',
+	ICompilerStartOptions,
 	void
 > {
-	public readonly ready = new Signal<boolean>()
+	public readonly ready = new Signal<void>()
 
 	constructor(
 		protected parent: CompilerManager,
@@ -26,7 +30,7 @@ export class Compiler extends WorkerManager<
 			name: 'taskManager.tasks.compiler.title',
 			description: 'taskManager.tasks.compiler.description',
 		})
-		this.ready.dispatch(false)
+		this.ready.dispatch()
 	}
 
 	createWorker() {
@@ -41,8 +45,9 @@ export class Compiler extends WorkerManager<
 		this.parent.remove(this.config)
 	}
 
-	async start(mode: 'dev' | 'build') {
-		this.ready.dispatch(false)
+	async start({ mode, restartDevServer }: ICompilerStartOptions) {
+		await this.ready.fired
+		this.ready.resetSignal()
 		const app = await App.getApp()
 		await app.comMojang.fired
 
@@ -54,11 +59,12 @@ export class Compiler extends WorkerManager<
 				comMojangDirectory: app.comMojang.fileSystem.baseDirectory,
 				config: this.config,
 				mode,
+				isDevServerRestart: restartDevServer,
 				plugins: this.parent.getCompilerPlugins(),
 				pluginFileTypes: FileType.getPluginFileTypes(),
 			})
 		} else {
-			await this._service.updateMode(mode)
+			await this._service.updateMode(mode, restartDevServer)
 			await this._service.updatePlugins(
 				this.parent.getCompilerPlugins(),
 				FileType.getPluginFileTypes()
@@ -77,12 +83,12 @@ export class Compiler extends WorkerManager<
 
 		// Start service
 		let files = (await app.project?.packIndexer.fired) ?? []
-		if (mode === 'build')
+		if (mode === 'build' || restartDevServer)
 			files =
-				(await app.project?.packIndexer.service!.getAllFiles()) ?? []
+				(await this.project.packIndexer.service!.getAllFiles()) ?? []
 
 		await this._service.start(files)
-		this.ready.dispatch(true)
+		this.ready.dispatch()
 		console.timeEnd('[TASK] Compiling project (total)')
 	}
 
@@ -94,13 +100,13 @@ export class Compiler extends WorkerManager<
 				`Trying to update file without service being defined`
 			)
 
-		await this._service.updateMode('dev')
+		await this._service.updateMode('dev', false)
 		await this._service.updatePlugins(
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
 		)
 		await this._service.updateFile(filePath)
-		this.ready.dispatch(true)
+		this.ready.dispatch()
 	}
 
 	async compileWithFile(filePath: string, file: File) {
@@ -111,7 +117,7 @@ export class Compiler extends WorkerManager<
 				`Trying to update file without service being defined`
 			)
 
-		await this._service.updateMode('dev')
+		await this._service.updateMode('dev', false)
 		await this._service.updatePlugins(
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
@@ -123,7 +129,7 @@ export class Compiler extends WorkerManager<
 			fileBuffer
 		)
 
-		this.ready.dispatch(true)
+		this.ready.dispatch()
 		return <const>[dependencies, compiled ?? file]
 	}
 }
