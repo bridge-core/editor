@@ -1,0 +1,119 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Geometry",
+	"properties": {
+		"format_version": {
+			"$ref": "../project/formatVersionEnum.json"
+		},
+		"debug": {
+			"type": "boolean"
+		},
+		"minecraft:geometry": {
+			"properties": {
+				"description": {
+					"properties": {
+						"identifier": {
+							"description": "Entity definition and Client Block definition files refer to this geometry via this identifier.",
+							"type": "string"
+						},
+						"texture_width": {
+							"description": "Assumed width in texels of the texture that will be bound to this geometry.",
+							"type": "integer"
+						},
+						"texture_height": {
+							"description": "Assumed height in texels of the texture that will be bound to this geometry.",
+							"type": "integer"
+						},
+						"visible_bounds_width": {
+							"description": "Width of the visibility bounding box (in model space units).",
+							"type": "number"
+						},
+						"visible_bounds_height": {
+							"description": "Height of the visible bounding box (in model space units).",
+							"type": "number"
+						},
+						"visible_bounds_offset": {
+							"description": "Offset of the visibility bounding box from the entity location point (in model space units).",
+							"type": "array",
+							"minItems": 3,
+							"maxItems": 3,
+							"items": {
+								"type": "number"
+							}
+						}
+					}
+				},
+				"cape": {
+					"type": "string"
+				},
+				"bones": {
+					"description": "Bones define the 'skeleton' of the mob: the parts that can be animated, and to which geometry and other bones are attached.",
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"description": "Animation files refer to this bone via this identifier.",
+								"type": "string"
+							},
+							"parent": {
+								"description": "Bone that this bone is relative to.  If the parent bone moves, this bone will move along with it.",
+								"type": "string"
+							},
+							"pivot": {
+								"description": "The bone pivots around this point (in model space units).",
+								"type": "array",
+								"minItems": 3,
+								"maxItems": 3,
+								"items": {
+									"type": "number"
+								}
+							},
+							"rotation": {
+								"description": "This is the initial rotation of the bone around the pivot, pre-animation (in degrees, x-then-y-then-z order).",
+								"type": "array",
+								"minItems": 3,
+								"maxItems": 3,
+								"items": {
+									"type": "number"
+								}
+							},
+							"mirror": {
+								"description": "Mirrors the UV's of the unrotated cubes along the x axis, also causes the east/west faces to get flipped.",
+								"type": "boolean"
+							},
+							"inflate": {
+								"description": "Grow this box by this additive amount in all directions (in model space units).",
+								"type": "number"
+							},
+							"debug": {
+								"type": "boolean"
+							},
+							"render_group_id": {
+								"type": "integer"
+							},
+							"cubes": {
+								"description": "This is the list of cubes associated with this bone.",
+								"type": "array"
+							},
+							"binding": {
+								"$ref": "../molang/embeddedBeta.json"
+							},
+							"locators": {
+								"type": "object"
+							},
+							"poly_mesh": {
+								"description": "***EXPERIMENTAL*** A triangle or quad mesh object.  Can be used in conjunction with cubes and texture geometry.",
+								"type": "object"
+							},
+							"texture_meshes": {
+								"description": "***EXPERIMENTAL*** Adds a mesh to the bone's geometry by converting texels in a texture into boxes.",
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

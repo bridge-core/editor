@@ -9,5 +9,6 @@
 		"RP/models/mobs.json"
 	],
 	"scope": "RP/models/",
-	"lightningCache": "geometry.json"
+	"lightningCache": "geometry.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/geometry/main.json"
 }
