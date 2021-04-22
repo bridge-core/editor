@@ -23,7 +23,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 
 			try {
 				return await loadAsDataURL(
-					`RP/${config.particle_texture_path}.png`,
+					config.particle_texture_path,
 					app.project.fileSystem
 				)
 			} catch (err) {
