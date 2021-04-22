@@ -27,7 +27,8 @@
 			"minecraft:entity/component_groups/*/minecraft:interact/interactions/spawn_items/table",
 			"minecraft:entity/components/minecraft:interact/interactions/*/spawn_items/table",
 			"minecraft:entity/component_groups/*/minecraft:interact/interactions/*/spawn_items/table"
-		]
+		],
+		"@map": "return `BP/${Bridge.value}`"
 	},
 	{
 		"tradeTablePath": [
@@ -35,11 +36,12 @@
 			"minecraft:entity/component_groups/*/minecraft:trade_table/table",
 			"minecraft:entity/components/minecraft:economy_trade_table/table",
 			"minecraft:entity/component_groups/*/minecraft:economy_trade_table/table"
-		]
+		],
+		"@map": "return `BP/${Bridge.value}`"
 	},
 	{
 		"functionPath": ["minecraft:entity/events/*/run_command"],
-		"@map": "const func = /\\/function\\s+([aA-zZ0-9\\/]+)/g.exec(Bridge.value); if(func) return `functions/${func[1]}.mcfunction`"
+		"@map": "const func = /\\/function\\s+([aA-zZ0-9\\/]+)/g.exec(Bridge.value); if(func) return `BP/functions/${func[1]}.mcfunction`"
 	},
 	{
 		"animationIdentifier": "minecraft:entity/description/animations/*"

@@ -2,6 +2,6 @@
 	{ "identifier": "*/description/identifier" },
 	{
 		"texturePath": "*/description/basic_render_parameters/texture",
-		"@map": "return Bridge.value + '.png'"
+		"@map": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
 	}
 ]

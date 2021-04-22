@@ -1,1 +1,7 @@
-[{ "texture": "*/atlas_tile" }, { "texturePath": "*/flipbook_texture" }]
+[
+	{ "texture": "*/atlas_tile" },
+	{
+		"texturePath": "*/flipbook_texture",
+		"@map": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
+	}
+]

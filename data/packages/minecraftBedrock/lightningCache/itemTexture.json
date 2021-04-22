@@ -1,4 +1,7 @@
 [
 	{ "texture": "texture_data" },
-	{ "texturePath": ["texture_data/*/textures", "texture_data/*/textures/*"] }
+	{
+		"texturePath": ["texture_data/*/textures", "texture_data/*/textures/*"],
+		"@map": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
+	}
 ]

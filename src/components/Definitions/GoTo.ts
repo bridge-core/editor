@@ -4,8 +4,10 @@ import { App } from '/@/App'
 import { FileType, IDefinition } from '/@/components/Data/FileType'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { isMatch } from 'micromatch'
-import { ILightningInstruction } from '../PackIndexer/Worker/Main'
-import { run } from '../Extensions/Scripts/run'
+import { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
+import { run, runAsync } from '/@/components/Extensions/Scripts/run'
+import { findFile } from '/@/components/FileSystem/FindFile'
+import { findAsync } from '/@/utils/array/findAsync'
 
 export class DefinitionProvider {
 	async provideDefinition(
@@ -17,7 +19,6 @@ export class DefinitionProvider {
 		const { word, range } = getJsonWordAtPosition(model, position)
 		const currentPath = app.project.tabSystem?.selectedTab?.getProjectPath()
 		if (!currentPath) return
-		const packPrefix = currentPath.split('/').shift()!
 
 		const { definitions } = FileType.get(currentPath) ?? {}
 		const lightningCache = await FileType.getLightningCache(currentPath)
@@ -34,7 +35,7 @@ export class DefinitionProvider {
 			model.getOffsetAt(position)
 		).path.join('/')
 
-		const { definitionId, transformedWord } = this.getDefinition(
+		const { definitionId, transformedWord } = await this.getDefinition(
 			word,
 			location,
 			lightningCache
@@ -48,8 +49,7 @@ export class DefinitionProvider {
 		const projectName = app.project.name
 		const connectedFiles = await this.getFilePath(
 			transformedWord,
-			definition,
-			packPrefix
+			definition
 		)
 
 		const result = await Promise.all(
@@ -94,11 +94,13 @@ export class DefinitionProvider {
 		)
 	}
 
-	getDefinition(
+	async getDefinition(
 		word: string,
 		location: string,
 		lightningCache: ILightningInstruction[]
 	) {
+		const app = await App.getApp()
+
 		let transformedWord: string | undefined = word
 		const definitions = lightningCache
 			.map((def) => {
@@ -123,34 +125,44 @@ export class DefinitionProvider {
 			.filter((def) => def !== undefined)
 
 		return {
-			definitionId: definitions.find(([def, path, { map, filter }]) => {
-				const matches = isMatch(location, path)
-				if (matches) {
-					if (filter && filter.includes(word))
-						transformedWord = undefined
-					if (transformedWord && map)
-						transformedWord = run(map, { value: transformedWord })
+			definitionId: await findAsync(
+				definitions,
+				async ([def, path, { map, filter }]) => {
+					const matches = isMatch(location, path)
+					if (matches) {
+						if (filter && filter.includes(word))
+							transformedWord = undefined
+						if (transformedWord && map)
+							transformedWord = await runAsync(map, {
+								value: transformedWord,
+								withExtension: (
+									basePath: string,
+									extensions: string[]
+								) =>
+									findFile(
+										app.project.fileSystem,
+										basePath,
+										extensions
+									),
+							})
 
-					return true
+						return true
+					}
+					return false
 				}
-				return false
-			})?.[0],
+			)?.then((value) => value[0]),
 			transformedWord,
 		}
 	}
 
-	async getFilePath(
-		word: string,
-		definition: IDefinition[],
-		packPrefix: string
-	) {
+	async getFilePath(word: string, definition: IDefinition[]) {
 		const app = await App.getApp()
 		const connectedFiles = []
 
 		for (const def of definition) {
 			// Direct references are e.g. loot table paths
 			if (def.directReference) {
-				connectedFiles.push(`${packPrefix}/${word}`)
+				connectedFiles.push(word)
 				continue
 			}
 

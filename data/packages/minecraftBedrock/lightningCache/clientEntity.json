@@ -27,7 +27,7 @@
 	},
 	{
 		"texturePath": "minecraft:client_entity/description/textures/*",
-		"@map": "return Bridge.value + '.png'"
+		"@map": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
 	},
 	{ "materialIdentifier": "minecraft:client_entity/description/materials/*" },
 	{ "geometryIdentifier": "minecraft:client_entity/description/geometry/*" },

@@ -13,7 +13,8 @@ module.exports = (text) => {
 	const functionPaths = []
 	lines.filter((line) => {
 		let funcName = /function\s+([aA-zZ0-9\/]+)/g.exec(line)
-		if (funcName) functionPaths.push(`functions/${funcName[1]}.mcfunction`)
+		if (funcName)
+			functionPaths.push(`BP/functions/${funcName[1]}.mcfunction`)
 	})
 
 	return {

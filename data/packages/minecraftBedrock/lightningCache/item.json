@@ -7,6 +7,7 @@
 		"@map": "if(Bridge.value.startsWith('tag:')) return Bridge.value.replace('tag:', '')"
 	},
 	{
-		"lootTablePath": "minecraft:item/events/*/spawn_loot/table"
+		"lootTablePath": "minecraft:item/events/*/spawn_loot/table",
+		"@map": "return 'BP/' + Bridge.value"
 	}
 ]

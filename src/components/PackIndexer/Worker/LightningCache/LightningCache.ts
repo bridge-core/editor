@@ -1,11 +1,12 @@
 import { FileType } from '/@/components/Data/FileType'
-import { run } from '/@/components/Extensions/Scripts/run'
+import { run, runAsync } from '/@/components/Extensions/Scripts/run'
 import { walkObject } from '/@/utils/walkObject'
 import json5 from 'json5'
 import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'
 import { runScript } from './Script'
 import { extname } from '/@/utils/path'
+import { findFile } from '/@/components/FileSystem/FindFile'
 
 const knownTextFiles = new Set([
 	'.js',
@@ -230,11 +231,11 @@ export class LightningCache {
 
 		// console.log(instructions)
 		const collectedData: Record<string, string[]> = {}
-		const onReceiveData = (
+		const asyncOnReceiveData = (
 			key: string,
 			filter?: string[],
 			mapFunc?: string
-		) => (data: any) => {
+		) => async (data: any) => {
 			let readyData: string[]
 			if (Array.isArray(data)) readyData = data
 			else if (typeof data === 'object')
@@ -243,15 +244,38 @@ export class LightningCache {
 
 			if (filter) readyData = readyData.filter((d) => !filter.includes(d))
 			if (mapFunc)
-				readyData = readyData
-					.map((value) => run(mapFunc, { value }))
-					.filter((value) => value !== undefined)
+				readyData = await Promise.all(
+					readyData
+						.map((value) =>
+							runAsync(mapFunc, {
+								value,
+								withExtension: (
+									basePath: string,
+									extensions: string[]
+								) =>
+									findFile(
+										this.service.fileSystem,
+										basePath,
+										extensions
+									),
+							})
+						)
+						.filter((value) => value !== undefined)
+				)
 
 			if (!collectedData[key]) collectedData[key] = readyData
 			else
 				collectedData[key] = [
 					...new Set(collectedData[key].concat(readyData)),
 				]
+		}
+		const promises: Promise<unknown>[] = []
+		const onReceiveData = (
+			key: string,
+			filter?: string[],
+			mapFunc?: string
+		) => (data: any) => {
+			promises.push(asyncOnReceiveData(key, filter, mapFunc)(data))
 		}
 
 		for (const instruction of instructions) {
@@ -286,6 +310,7 @@ export class LightningCache {
 			}
 		}
 
+		await Promise.all(promises)
 		this.lightningStore.add(
 			filePath,
 			{

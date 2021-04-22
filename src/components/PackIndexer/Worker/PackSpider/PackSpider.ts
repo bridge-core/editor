@@ -132,10 +132,6 @@ export class File {
 				)
 		}
 
-		// Loot tables/trade tables/textures etc. are all scoped differently within Minecraft
-		// (bridge. needs a start of BP/ & RP/)
-		const pathStart = filePath.split('/').shift()
-
 		const packSpiderFile = packSpider.packSpiderFiles[fileType] ?? {}
 
 		// Load cache data of current file
@@ -152,8 +148,7 @@ export class File {
 				})
 				.flat() ?? []
 		for (const foundFilePath of cacheKeysToInclude) {
-			if (`${pathStart}/${foundFilePath}` !== filePath)
-				connectedFiles.push(`${pathStart}/${foundFilePath}`)
+			if (foundFilePath !== filePath) connectedFiles.push(foundFilePath)
 		}
 
 		// Dynamically referenced files (connect)

@@ -6,6 +6,6 @@
 			"animation_controllers/*/states/*/on_exit",
 			"animation_controllers/*/states/*/on_entry"
 		],
-		"@map": "const func = /\\/function\\s+([aA-zZ0-9\\/]+)/g.exec(Bridge.value); if(func) return `functions/${func[1]}.mcfunction`"
+		"@map": "const func = /\\/function\\s+([aA-zZ0-9\\/]+)/g.exec(Bridge.value); if(func) return `BP/functions/${func[1]}.mcfunction`"
 	}
 ]
