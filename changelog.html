@@ -1,27 +1,30 @@
+<h2>Attention:</h2>
+<p><strong>This release contains a larger set of breaking changes. We expect to make no additional breaking changes to bridge. v2's functionality after this alpha release. You may need to create a new project in order for bridge. to function correctly after this update.</strong></p>
 <h2>Features:</h2>
 <ul>
-<li><strong>Go To Definition</strong>
-Quickly jump to connected code by clicking on references to it in your current file.</li>
-<li>Syntax highlighting for Minecraft's color codes (e.g. §4) inside of .lang &amp; .mcfunction files</li>
-<li><strong>Experimental:</strong> bridge. v2 now has a custom window toolbar on some browsers</li>
-<li>Added auto-completions for vanilla loot &amp; trade table paths</li>
+<li>bridge.'s internal data now has a new, modularized format
+<ul>
+<li>This change enables theoretical support for other target platforms</li>
+</ul>
+</li>
+<li>Updated data to latest beta</li>
+<li>bridge. now loads tga, jpg &amp; jpeg image references correctly</li>
+<li>bridge.'s compiler now restarts automatically whenever you add/remove a &quot;com.mojang&quot; folder</li>
+<li>Custom components can now access the compiler mode (&quot;dev&quot;/&quot;build&quot;) they are running in</li>
+<li>Added auto-completions &amp; validation for geometry files</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Updated GameTest type declarations</li>
-<li>Nested loot tables now get cached correctly</li>
-<li>Updated PackSpider particle file to search particle texture</li>
-<li>Added &quot;filters&quot; auto-completions to entity event sequences</li>
-<li>Updated all built-in windows to use bridge.'s internal BaseWindow class</li>
-<li>&quot;minecraft:rideable&quot; &gt; &quot;family_types&quot; now proposes family names</li>
-<li>Upon closing a tab, bridge. now selects the previous tab instead of the first one in your tab row</li>
-<li>You can now press &quot;enter&quot; to create a preset after filling out all inputs</li>
+<li>Enabled Go To Definition for entity families</li>
+<li>Enabled Go To Definitions for BP animations</li>
+<li>Reverted the change that made the data loader performance worse again</li>
+<li>Renamed &quot;bridge/&quot; folder to &quot;.bridge/&quot;</li>
+<li>Disabled image dragging</li>
+<li>Updated internal file name: &quot;files.json&quot; &gt; &quot;.compilerFiles&quot;</li>
+<li>Updated file name: &quot;.ignore-folders&quot; &gt; &quot;.ignoreFolders&quot;</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed MoLangJS replacer Webpack plugin</li>
-<li>Fixed reference error in entity schema</li>
-<li>Fixed &quot;condition&quot; property appearing in entity event auto-completion</li>
-<li>Fixed validation of event response &quot;run_command&quot;</li>
-<li>Fixed&quot;tick.json&quot; being recognized as .mcfunction file</li>
+<li>Fixed &quot;minecraft:overworld_generation_rules&quot; schema</li>
+<li>Fixed refreshing of projects</li>
 </ul>
