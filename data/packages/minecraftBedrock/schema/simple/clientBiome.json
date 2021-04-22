@@ -26,6 +26,14 @@
 						},
 						"water_fog_distance": {
 							"type": "number"
+						},
+						"remove_all_prior_fog": {
+							"description": "When true, will clear all previous fog definitions stored on the stack, making the current pack the new 'starting point' for fogs.",
+							"type": "boolean"
+						},
+						"inherit_from_prior_fog": {
+							"description": "When true, will merge a biome's fog definition with the matching biomes on the stack then create a new merged definition for it.",
+							"type": "boolean"
 						}
 					}
 				}
