@@ -18,7 +18,7 @@ export async function generateComponentSchemas(fileType: string) {
 	await iterateDir(baseDir, async (fileHandle) => {
 		const file = await fileHandle.getFile()
 		const componentSrc = await file.text()
-		const component = new Component(fileType, componentSrc)
+		const component = new Component(fileType, componentSrc, 'dev')
 
 		try {
 			await component.load('client')

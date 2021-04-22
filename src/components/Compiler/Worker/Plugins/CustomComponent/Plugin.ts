@@ -30,7 +30,7 @@ export function createCustomComponentPlugin({
 		filePath?.startsWith('BP/entities/') &&
 		getAliases(filePath).includes('minecraft:player')
 
-	return ({ compileFiles, getAliases }) => {
+	return ({ compileFiles, getAliases, options }) => {
 		return {
 			buildStart() {
 				usedComponents.clear()
@@ -60,7 +60,11 @@ export function createCustomComponentPlugin({
 			},
 			async load(filePath, fileContent) {
 				if (isComponent(filePath)) {
-					const component = new Component(fileType, fileContent)
+					const component = new Component(
+						fileType,
+						fileContent,
+						options.mode
+					)
 
 					await component.load()
 					return component

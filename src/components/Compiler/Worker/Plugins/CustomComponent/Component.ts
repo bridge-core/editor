@@ -11,7 +11,12 @@ export class Component {
 	protected animations: [any, string | undefined][] = []
 	protected animationControllers: [any, string | undefined][] = []
 	protected createOnPlayer: [string, any][] = []
-	constructor(protected fileType: string, protected componentSrc: string) {}
+
+	constructor(
+		protected fileType: string,
+		protected componentSrc: string,
+		protected mode: 'build' | 'dev'
+	) {}
 
 	//#region Getters
 	get name() {
@@ -103,6 +108,7 @@ export class Component {
 		// Execute template function with context for current fileType
 		if (this.fileType === 'entity') {
 			this.template(componentArgs ?? {}, {
+				mode: this.mode,
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
@@ -112,6 +118,7 @@ export class Component {
 			})
 		} else if (this.fileType === 'item') {
 			this.template(componentArgs ?? {}, {
+				mode: this.mode,
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
@@ -128,6 +135,7 @@ export class Component {
 			})
 		} else if (this.fileType === 'block') {
 			this.template(componentArgs ?? {}, {
+				mode: this.mode,
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
