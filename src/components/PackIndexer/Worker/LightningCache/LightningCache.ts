@@ -244,9 +244,9 @@ export class LightningCache {
 
 			if (filter) readyData = readyData.filter((d) => !filter.includes(d))
 			if (mapFunc)
-				readyData = await Promise.all(
-					readyData
-						.map((value) =>
+				readyData = (
+					await Promise.all(
+						readyData.map((value) =>
 							runAsync(mapFunc, {
 								value,
 								withExtension: (
@@ -260,8 +260,8 @@ export class LightningCache {
 									),
 							})
 						)
-						.filter((value) => value !== undefined)
-				)
+					)
+				).filter((value) => value !== undefined)
 
 			if (!collectedData[key]) collectedData[key] = readyData
 			else
