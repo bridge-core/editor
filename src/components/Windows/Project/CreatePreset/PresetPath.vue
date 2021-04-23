@@ -50,7 +50,7 @@ export default {
 	}),
 	mounted() {
 		this.mode = 'view'
-		this.editedPath = this.value
+		this.editedPath = this.path
 	},
 	computed: {
 		path() {
@@ -58,6 +58,9 @@ export default {
 		},
 	},
 	watch: {
+		value() {
+			this.editedPath = this.path
+		},
 		mode() {
 			if (this.mode !== 'view') return
 
