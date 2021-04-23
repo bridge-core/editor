@@ -9,6 +9,7 @@ import { Project } from '../Projects/Project/Project'
 import { IDisposable } from '/@/types/disposable'
 import { generateComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/generateSchemas'
 import { iterateDir } from '/@/utils/iterateDir'
+import { FileTab } from '../TabSystem/FileTab'
 
 const globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
@@ -63,7 +64,7 @@ export class JsonDefaults {
 
 		await this.runSchemaScripts(app)
 		const tab = this.project.tabSystem?.selectedTab
-		if (tab) {
+		if (tab && tab instanceof FileTab) {
 			const fileType = FileType.getId(tab.getProjectPath())
 			this.addSchemas(
 				await this.requestSchemaFor(fileType, tab.getProjectPath()),

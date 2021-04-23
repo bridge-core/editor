@@ -158,7 +158,7 @@ export class TabSystem extends MonacoHolder {
 		}
 
 		// Only refresh auto-completion content if tab is active
-		if (tab === this.selectedTab)
+		if (tab === this.selectedTab && tab instanceof FileTab)
 			App.eventSystem.dispatch(
 				'refreshCurrentContext',
 				tab.getProjectPath()
@@ -180,7 +180,7 @@ export class TabSystem extends MonacoHolder {
 		if (updateProject) this.project.setActiveTabSystem(this, !isActive)
 		this._isActive = isActive
 
-		if (isActive) {
+		if (isActive && this._selectedTab instanceof FileTab) {
 			App.eventSystem.dispatch(
 				'currentTabSwitched',
 				this._selectedTab?.getProjectPath()
