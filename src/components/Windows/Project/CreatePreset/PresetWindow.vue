@@ -35,6 +35,11 @@
 				{{ content.description }}
 			</p>
 
+			<PresetPath
+				v-if="typeof content.models.PRESET_PATH === 'string'"
+				v-model="content.models.PRESET_PATH"
+			/>
+
 			<template v-for="([name, id, opts = {}], i) in content.fields">
 				<v-text-field
 					v-if="!opts.type || opts.type === 'textInput'"
@@ -117,6 +122,7 @@
 
 <script>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
+import PresetPath from './PresetPath.vue'
 
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
@@ -126,6 +132,7 @@ export default {
 	mixins: [TranslationMixin, PackIndexerMixin],
 	components: {
 		SidebarWindow,
+		PresetPath,
 	},
 	props: ['currentWindow'],
 	data() {
