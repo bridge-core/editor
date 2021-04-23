@@ -10,6 +10,7 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { FileTab } from '../../TabSystem/FileTab'
 
 export class ParticlePreviewTab extends ThreePreviewTab {
 	protected emitter?: Emitter
@@ -33,7 +34,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	})
 
 	constructor(
-		tab: Tab,
+		tab: FileTab,
 		tabSystem: TabSystem,
 		fileHandle: FileSystemFileHandle
 	) {

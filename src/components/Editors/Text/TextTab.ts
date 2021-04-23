@@ -1,4 +1,4 @@
-import { Tab } from '/@/components/TabSystem/CommonTab'
+import { FileTab } from '/@/components/TabSystem/FileTab'
 import TextTabComponent from './TextTab.vue'
 import * as monaco from 'monaco-editor'
 import { IDisposable } from '/@/types/disposable'
@@ -34,7 +34,7 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	600
 )
 
-export class TextTab extends Tab {
+export class TextTab extends FileTab {
 	component = TextTabComponent
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
@@ -48,6 +48,7 @@ export class TextTab extends Tab {
 
 	constructor(parent: TabSystem, fileHandle: FileSystemFileHandle) {
 		super(parent, fileHandle)
+		console.log(fileHandle)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()

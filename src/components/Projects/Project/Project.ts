@@ -12,8 +12,9 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { CompilerManager } from '/@/components/Compiler/CompilerManager'
 import { JsonDefaults } from '/@/components/Data/JSONDefaults'
 import { TypeLoader } from '/@/components/Data/TypeLoader'
-import { ExtensionLoader } from '../../Extensions/ExtensionLoader'
+import { ExtensionLoader } from '/@/components/Extensions/ExtensionLoader'
 import { FileChangeRegistry } from './FileChangeRegistry'
+import { FileTab } from '/@/components/TabSystem/FileTab'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -172,7 +173,7 @@ export class Project {
 	async getFileFromDiskOrTab(filePath: string) {
 		const fileHandle = await this.fileSystem.getFileHandle(filePath)
 		const tab = await this.getFileTab(fileHandle)
-		if (tab) return tab.getFile()
+		if (tab && tab instanceof FileTab) return tab.getFile()
 
 		return await fileHandle.getFile()
 	}

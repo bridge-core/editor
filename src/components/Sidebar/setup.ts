@@ -1,5 +1,6 @@
 import { App } from '/@/App'
 import { createSidebar } from './create'
+import { FindAndReplaceTab } from '../Editors/FindAndReplace/Tab'
 
 export function setupSidebar() {
 	createSidebar({
@@ -10,7 +11,7 @@ export function setupSidebar() {
 	})
 
 	createSidebar({
-		id: 'bpExplorer',
+		id: 'packExplorer',
 		displayName: 'windows.packExplorer.title',
 		icon: 'mdi-folder-outline',
 		onClick: async () => {
@@ -20,6 +21,20 @@ export function setupSidebar() {
 			app.windows.packExplorer.open()
 		},
 	})
+
+	createSidebar({
+		id: 'fileSearch',
+		displayName: 'sidebar.fileSearch.name',
+		icon: 'mdi-file-search-outline',
+		onClick: async () => {
+			const app = await App.getApp()
+			app.project.tabSystem?.add(
+				new FindAndReplaceTab(app.project.tabSystem!),
+				true
+			)
+		},
+	})
+
 	createSidebar({
 		id: 'compiler',
 		displayName: 'sidebar.compiler.name',

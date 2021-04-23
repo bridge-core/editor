@@ -1,14 +1,14 @@
-import { Tab } from './CommonTab'
+import { FileTab } from './FileTab'
 import { TabSystem } from './TabSystem'
 
-export abstract class PreviewTab extends Tab {
+export abstract class PreviewTab extends FileTab {
 	public readonly isForeignFile = true
 	static is() {
 		return false
 	}
 
 	constructor(
-		protected tab: Tab,
+		protected tab: FileTab,
 		parent: TabSystem,
 		fileHandle: FileSystemFileHandle
 	) {

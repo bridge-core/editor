@@ -9,6 +9,7 @@ import { Project } from '../Projects/Project/Project'
 import { OpenedFiles } from './OpenedFiles'
 import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
+import { FileTab } from './FileTab'
 
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
@@ -140,7 +141,7 @@ export class TabSystem extends MonacoHolder {
 
 		await tab.save()
 
-		if (!tab.isForeignFile) {
+		if (!tab.isForeignFile && tab instanceof FileTab) {
 			await this.project.updateFile(tab.getProjectPath())
 			await this.project.recentFiles.add({
 				path: tab.getPath(),

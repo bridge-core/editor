@@ -227,6 +227,9 @@ export default {
 		extensions: {
 			name: 'Extensions',
 		},
+		fileSearch: {
+			name: 'Find & Replace',
+		},
 		notifications: {
 			discord: {
 				message: 'Discord Server',

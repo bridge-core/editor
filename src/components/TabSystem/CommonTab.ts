@@ -12,7 +12,7 @@ export abstract class Tab extends Signal<Tab> {
 	public uuid = uuid()
 	public hasRemoteChange = false
 	public isUnsaved = false
-	public isForeignFile = false
+	public isForeignFile = true
 
 	protected projectPath?: string
 	protected actions: SimpleAction[] = []
@@ -27,25 +27,12 @@ export abstract class Tab extends Signal<Tab> {
 		return false
 	}
 
-	constructor(
-		protected parent: TabSystem,
-		protected fileHandle: FileSystemFileHandle
-	) {
+	constructor(protected parent: TabSystem) {
 		super()
-		this.setup()
+		window.setTimeout(() => this.setup())
 	}
 
 	async setup() {
-		this.projectPath = await this.parent.projectRoot
-			.resolve(this.fileHandle)
-			.then((path) => path?.join('/'))
-
-		// If the resolve above failed, we are dealing with a file which doesn't belong to this project
-		if (!this.projectPath) {
-			this.isForeignFile = true
-			this.projectPath = `${uuid()}/${this.fileHandle.name}`
-		}
-
 		this.dispatch(this)
 	}
 
@@ -53,9 +40,7 @@ export abstract class Tab extends Signal<Tab> {
 		this.parent = parent
 	}
 
-	get name() {
-		return this.fileHandle.name
-	}
+	abstract get name(): string
 	get tabSystem() {
 		return this.parent
 	}
@@ -97,9 +82,7 @@ export abstract class Tab extends Signal<Tab> {
 		const didClose = await this.parent.close(this)
 		if (didClose) this.connectedTabs.forEach((tab) => tab.close())
 	}
-	async isFor(fileHandle: FileSystemFileHandle) {
-		return await fileHandle.isSameEntry(this.fileHandle)
-	}
+	abstract isFor(fileHandle: FileSystemFileHandle): Promise<boolean>
 
 	focus() {}
 	async onActivate() {
@@ -200,9 +183,6 @@ export abstract class Tab extends Signal<Tab> {
 	}
 
 	abstract save(): void | Promise<void>
-	async getFile() {
-		return await this.fileHandle.getFile()
-	}
 
 	copy() {
 		document.execCommand('copy')
