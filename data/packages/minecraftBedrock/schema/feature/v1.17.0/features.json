@@ -107,11 +107,11 @@
 							"description": "The likelihood that a special block will be placed on the inside of the geode.",
 							"type": "number"
 						},
-						"use_alternative_layer_chance": {
+						"use_alternative_layer0_chance": {
 							"description": "The likelihood that a block in the innermost layer of the geode will be replaced with an alternate option.",
 							"type": "number"
 						},
-						"placements_require_layer_alternate": {
+						"placements_require_layer0_alternate": {
 							"description": "If true, the potential placement block will only be placed on the alternate layer0 blocks that get placed. Potential placement blocks are blocks that depend on the existance of another block to be placed. The latter are the layer alternate blocks.",
 							"type": "boolean"
 						},
