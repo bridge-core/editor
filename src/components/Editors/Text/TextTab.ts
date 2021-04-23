@@ -48,7 +48,6 @@ export class TextTab extends FileTab {
 
 	constructor(parent: TabSystem, fileHandle: FileSystemFileHandle) {
 		super(parent, fileHandle)
-		console.log(fileHandle)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()

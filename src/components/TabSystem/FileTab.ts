@@ -10,11 +10,9 @@ export abstract class FileTab extends Tab {
 		protected fileHandle: FileSystemFileHandle
 	) {
 		super(parent)
-		console.log(fileHandle)
 	}
 
 	async setup() {
-		console.log(this.fileHandle)
 		this.projectPath = await this.parent.projectRoot
 			.resolve(this.fileHandle)
 			.then((path) => path?.join('/'))
