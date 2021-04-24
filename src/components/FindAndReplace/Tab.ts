@@ -30,6 +30,12 @@ export class FindAndReplaceTab extends Tab {
 		queryResults: [],
 	})
 
+	get displayQueryResults() {
+		return this.state.queryResults
+			.map(({ filePath, matches }) => [filePath, ...matches])
+			.flat()
+	}
+
 	async setup() {
 		this.findAndReplace = await new FindAndReplaceClass(
 			this.parent.projectRoot
@@ -61,7 +67,7 @@ export class FindAndReplaceTab extends Tab {
 		return 'success'
 	}
 	get name() {
-		return this.parent.app.locales.translate('sidebar.fileSearch.name')
+		return this.parent.app.locales.translate('findAndReplace.name')
 	}
 
 	save() {}

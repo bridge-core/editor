@@ -30,36 +30,60 @@
 			>
 				<v-card
 					class="pa-2"
-					:style="`overflow: auto; height: ${height - 24}px`"
+					:style="`height: ${height - 24}px`"
 					outlined
 					rounded
 				>
-					<div
-						v-for="({ filePath, matches }, i) in queryResults"
-						:key="i"
+					<p v-if="queryResults.length === 0">
+						{{
+							t(
+								`findAndReplace.no${
+									searchFor === '' ? 'Search' : 'Results'
+								}`
+							)
+						}}
+					</p>
+					<v-virtual-scroll
+						:items="tab.displayQueryResults"
+						:height="height - 40"
+						:bench="30"
+						item-height="22"
 					>
-						<h2>{{ filePath }}</h2>
-						<div
-							v-for="(
-								{ beforeMatch, match, afterMatch }, i
-							) in matches"
-							:key="i"
-							class="code-font"
-						>
-							<span>...{{ beforeMatch }}</span>
-							<span
-								:class="{
-									'error--text text-decoration-line-through': replaceWith,
-									'success--text': !replaceWith,
-								}"
-								>{{ match }}</span
+						<template v-slot:default="{ item }">
+							<p
+								v-if="typeof item === 'string'"
+								class="font-weight-black"
 							>
-							<span v-if="replaceWith" class="success--text">{{
-								replaceWith
-							}}</span>
-							<span>{{ afterMatch }}...</span>
-						</div>
-					</div>
+								<v-icon
+									style="position: relative; top: -2px"
+									small
+									:color="getIconColor(item)"
+								>
+									{{ getFileIcon(item) }}
+								</v-icon>
+								{{ item }}
+							</p>
+							<div v-else class="code-font code-match">
+								<span
+									>{{ item.isStartOfFile ? '' : '...'
+									}}{{ item.beforeMatch }}</span
+								>
+								<span
+									:class="{
+										'error--text text-decoration-line-through': replaceWith,
+										'success--text': !replaceWith,
+									}"
+									>{{ item.match }}</span
+								>
+								<span
+									v-if="replaceWith"
+									class="success--text"
+									>{{ replaceWith }}</span
+								>
+								<span>{{ item.afterMatch }}...</span>
+							</div>
+						</template>
+					</v-virtual-scroll>
 				</v-card>
 			</v-col>
 		</v-row>
@@ -69,9 +93,13 @@
 <script>
 import { debounce } from 'lodash'
 import SearchType from './Controls/SearchType'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { FileType } from '../Data/FileType'
+import { PackType } from '../Data/PackType'
 
 export default {
 	name: 'FindAndReplaceTab',
+	mixins: [TranslationMixin],
 	props: {
 		tab: Object,
 		height: Number,
@@ -86,7 +114,13 @@ export default {
 	methods: {
 		updateQuery: debounce(async function () {
 			await this.tab.updateQuery()
-		}, 750),
+		}, 200),
+		getFileIcon(filePath) {
+			return (FileType.get(filePath) || {}).icon ?? 'mdi-file-outline'
+		},
+		getIconColor(filePath) {
+			return (PackType.getWithRelativePath(filePath) || {}).color
+		},
 	},
 
 	watch: {

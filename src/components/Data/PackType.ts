@@ -41,7 +41,7 @@ export namespace PackType {
 	}
 
 	/**
-	 * Get the pack definition data for the given file path
+	 * Get the pack definition data for the given file path relative to the bridge folder
 	 * @param filePath file path to fetch pack definition for
 	 */
 	export function get(filePath: string) {
@@ -55,6 +55,14 @@ export namespace PackType {
 			for (const matcher of packType.matcher)
 				if (isMatch(filePath, matcher)) return packType
 		}
+	}
+
+	/**
+	 * Get the pack definition data for the given file path relative to the project root
+	 * @param filePath file path to fetch pack definition for
+	 */
+	export function getWithRelativePath(filePath: string) {
+		return get(`projects/bridge/${filePath}`)
 	}
 
 	/**

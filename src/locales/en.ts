@@ -227,9 +227,7 @@ export default {
 		extensions: {
 			name: 'Extensions',
 		},
-		fileSearch: {
-			name: 'Find & Replace',
-		},
+
 		notifications: {
 			discord: {
 				message: 'Discord Server',
@@ -478,5 +476,11 @@ export default {
 		title: 'Access to folder "com.mojang"',
 		permissionRequest:
 			'bridge. needs access to your "com.mojang" folder in order to compile projects to it.',
+	},
+	findAndReplace: {
+		name: 'Find & Replace',
+		noResults: 'No results found.',
+		noSearch:
+			'Once you start typing, results for your search query will appear here.',
 	},
 }

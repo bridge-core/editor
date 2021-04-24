@@ -2,6 +2,7 @@ import { expose } from 'comlink'
 import { FileSystem } from '../../FileSystem/FileSystem'
 import { ESearchType } from '../Controls/SearchTypeEnum'
 import { iterateDir } from '/@/utils/iterateDir'
+import { clamp } from '/@/utils/math/clamp'
 import { extname } from '/@/utils/path'
 
 export interface IQueryOptions {
@@ -12,6 +13,7 @@ export interface IQueryResult {
 	matches: IMatch[]
 }
 export interface IMatch {
+	isStartOfFile: boolean
 	beforeMatch: string
 	match: string
 	afterMatch: string
@@ -61,10 +63,19 @@ export class FindAndReplace {
 
 				let currentMatch = regExp.exec(fileText)
 				while (currentMatch !== null) {
+					let beforeMatchStart =
+						currentMatch.index - textPreviewLength / 2
+					let beforeMatchLength = textPreviewLength / 2
+					if (beforeMatchStart < 0) {
+						beforeMatchLength = beforeMatchLength + beforeMatchStart
+						beforeMatchStart = 0
+					}
+
 					matches.push({
+						isStartOfFile: beforeMatchStart === 0,
 						beforeMatch: fileText.substr(
-							currentMatch.index - textPreviewLength / 2,
-							textPreviewLength / 2
+							beforeMatchStart,
+							beforeMatchLength
 						),
 						match: currentMatch[0],
 						afterMatch: fileText.substr(

@@ -100,7 +100,7 @@ body {
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 24px;
-	background-color: rgba(0, 0, 0, 0.4);
+	background-color: rgba(0, 0, 0, 0.8);
 }
 
 summary::-webkit-details-marker {

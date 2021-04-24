@@ -24,7 +24,7 @@ export function setupSidebar() {
 
 	createSidebar({
 		id: 'fileSearch',
-		displayName: 'sidebar.fileSearch.name',
+		displayName: 'findAndReplace.name',
 		icon: 'mdi-file-search-outline',
 		onClick: async () => {
 			const app = await App.getApp()
