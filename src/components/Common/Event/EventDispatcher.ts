@@ -40,4 +40,8 @@ export class EventDispatcher<T> {
 		}
 		this.on(callback)
 	}
+
+	disposeListeners() {
+		this.listeners = new Set()
+	}
 }

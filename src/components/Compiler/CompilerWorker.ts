@@ -72,7 +72,7 @@ export class Compiler extends WorkerManager<
 		}
 
 		// Listen to task progress and update UI
-		this._service.on(
+		await this._service.on(
 			proxy(([current, total]) => {
 				this.task?.update(current, total)
 			}),
@@ -88,6 +88,7 @@ export class Compiler extends WorkerManager<
 				(await this.project.packIndexer.service!.getAllFiles()) ?? []
 
 		await this._service.start(files)
+		this._service.disposeListeners()
 		this.ready.dispatch()
 		console.timeEnd('[TASK] Compiling project (total)')
 	}

@@ -49,7 +49,7 @@ export class PackIndexer extends WorkerManager<
 		})
 
 		// Listen to task progress and update UI
-		this._service.on(
+		await this._service.on(
 			proxy(([current, total]) => {
 				this.task?.update(current, total)
 			}),
@@ -58,6 +58,7 @@ export class PackIndexer extends WorkerManager<
 
 		// Start service
 		const changedFiles = await this._service!.start()
+		await this._service.disposeListeners()
 		console.timeEnd('[TASK] Indexing Packs (Total)')
 		return changedFiles
 	}
