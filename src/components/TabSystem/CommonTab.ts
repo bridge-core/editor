@@ -18,6 +18,7 @@ export abstract class Tab extends Signal<Tab> {
 	protected actions: SimpleAction[] = []
 	protected connectedTabs: Tab[] = []
 	protected isActive = false
+	protected isLoading = true
 
 	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val
@@ -34,6 +35,7 @@ export abstract class Tab extends Signal<Tab> {
 
 	async setup() {
 		this.dispatch(this)
+		this.isLoading = false
 	}
 
 	updateParent(parent: TabSystem) {

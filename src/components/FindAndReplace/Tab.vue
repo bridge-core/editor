@@ -30,7 +30,7 @@
 			>
 				<v-card
 					class="pa-2"
-					:style="`height: ${height - 24}px`"
+					:style="`white-space: nowrap; height: ${height - 24}px`"
 					outlined
 					rounded
 				>
@@ -44,15 +44,20 @@
 						}}
 					</p>
 					<v-virtual-scroll
+						ref="virtualScroller"
 						:items="tab.displayQueryResults"
 						:height="height - 40"
 						:bench="30"
 						item-height="22"
+						@scroll.native="onScroll"
 					>
 						<template v-slot:default="{ item }">
-							<p
+							<div
 								v-if="typeof item === 'string'"
-								class="font-weight-black"
+								class="font-weight-black clickable px-1"
+								style="width: fit-content"
+								v-ripple
+								@click="openFile(item)"
 							>
 								<v-icon
 									style="position: relative; top: -2px"
@@ -62,26 +67,12 @@
 									{{ getFileIcon(item) }}
 								</v-icon>
 								{{ item }}
-							</p>
-							<div v-else class="code-font code-match">
-								<span
-									>{{ item.isStartOfFile ? '' : '...'
-									}}{{ item.beforeMatch }}</span
-								>
-								<span
-									:class="{
-										'error--text text-decoration-line-through': replaceWith,
-										'success--text': !replaceWith,
-									}"
-									>{{ item.match }}</span
-								>
-								<span
-									v-if="replaceWith"
-									class="success--text"
-									>{{ replaceWith }}</span
-								>
-								<span>{{ item.afterMatch }}...</span>
 							</div>
+							<Match
+								v-else
+								:replaceWith="replaceWith"
+								:item="item"
+							/>
 						</template>
 					</v-virtual-scroll>
 				</v-card>
@@ -91,11 +82,14 @@
 </template>
 
 <script>
+import SearchType from './Controls/SearchType.vue'
+import Match from './Match.vue'
+
 import { debounce } from 'lodash'
-import SearchType from './Controls/SearchType'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { FileType } from '../Data/FileType'
 import { PackType } from '../Data/PackType'
+import { App } from '/@/App'
 
 export default {
 	name: 'FindAndReplaceTab',
@@ -106,6 +100,13 @@ export default {
 	},
 	components: {
 		SearchType,
+		Match,
+	},
+	mounted() {
+		this.$refs.virtualScroller.$el.scrollTop = this.scrollTop
+	},
+	activated() {
+		this.$refs.virtualScroller.$el.scrollTop = this.scrollTop
 	},
 	data() {
 		return this.tab.state
@@ -114,12 +115,23 @@ export default {
 	methods: {
 		updateQuery: debounce(async function () {
 			await this.tab.updateQuery()
-		}, 200),
+		}, 750),
 		getFileIcon(filePath) {
 			return (FileType.get(filePath) || {}).icon ?? 'mdi-file-outline'
 		},
 		getIconColor(filePath) {
 			return (PackType.getWithRelativePath(filePath) || {}).color
+		},
+		async openFile(filePath) {
+			const app = await App.getApp()
+
+			const fileHandle = await app.fileSystem.getFileHandle(
+				`projects/${app.project.name}/${filePath}`
+			)
+			app.project.openFile(fileHandle)
+		},
+		onScroll(event) {
+			this.scrollTop = event.target.scrollTop
 		},
 	},
 
@@ -127,11 +139,11 @@ export default {
 		searchFor() {
 			this.updateQuery()
 		},
-		replaceWith() {
-			this.updateQuery()
-		},
 		queryOptions() {
 			this.updateQuery()
+		},
+		scrollTop() {
+			this.$refs.virtualScroller.$el.scrollTop = this.scrollTop
 		},
 	},
 }

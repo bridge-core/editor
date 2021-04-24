@@ -138,4 +138,8 @@ summary::-webkit-details-marker {
 	font-family: Menlo, Monaco, 'Courier New', monospace;
 	font-size: 0.8rem;
 }
+.clickable {
+	cursor: pointer;
+	border-radius: 4px;
+}
 </style>

@@ -1,7 +1,11 @@
 <template>
 	<div v-if="tabSystem.shouldRender" class="tab-system">
 		<TabBar :tabSystem="tabSystem" />
-
+		<v-progress-linear
+			v-if="tabSystem.selectedTab.isLoading"
+			absolute
+			indeterminate
+		/>
 		<keep-alive>
 			<component
 				:is="tabSystem.currentComponent"

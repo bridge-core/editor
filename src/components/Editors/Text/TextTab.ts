@@ -248,7 +248,7 @@ export class TextTab extends FileTab {
 		})
 	}
 	async close() {
-		super.close()
+		await super.close()
 
 		// We need to clear the lightning cache store from temporary data if the user doesn't save changes
 		if (this.isUnsaved) {
