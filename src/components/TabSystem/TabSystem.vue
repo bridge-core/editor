@@ -9,6 +9,7 @@
 				:style="`height: ${
 					windowHeight - (tabBarHeight + 24)
 				}px; width: 100%;`"
+				:height="windowHeight - (tabBarHeight + 24)"
 				:tab="tabSystem.selectedTab"
 				:id="id"
 			/>

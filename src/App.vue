@@ -134,4 +134,8 @@ summary::-webkit-details-marker {
 	width: 100%;
 	height: 100%;
 }
+.code-font {
+	font-family: Menlo, Monaco, 'Courier New', monospace;
+	font-size: 0.8rem;
+}
 </style>

@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { createSidebar } from './create'
-import { FindAndReplaceTab } from '../Editors/FindAndReplace/Tab'
+import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 
 export function setupSidebar() {
 	createSidebar({
