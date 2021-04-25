@@ -14,7 +14,14 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../general/reference/identifiers.json#/definitions/entity_identifiers"
+							"anyOf": [
+								{
+									"$ref": "../general/reference/identifiers.json#/definitions/entity_identifiers"
+								},
+								{
+									"const": "minecraft:pillager_patrol"
+								}
+							]
 						},
 						"population_control": {
 							"type": "string",
