@@ -34,12 +34,15 @@
 			"additionalProperties": false,
 			"properties": {
 				"min": {
+					"description": "This is the minimum light level value that allows the mob to spawn.",
 					"type": "number"
 				},
 				"max": {
+					"description": "This is the maximum light level value that allows the mob to spawn.",
 					"type": "number"
 				},
 				"adjust_for_weather": {
+					"description": "This determines if weather can affect the light level conditions that cause the mob to spawn (e.g. Allowing hostile mobs to spawn during the day when it rains.)",
 					"type": "boolean"
 				}
 			}
@@ -48,6 +51,7 @@
 			"additionalProperties": false,
 			"properties": {
 				"min": {
+					"description": "This is the minimum difficulty level that a mob spawns.",
 					"type": "string",
 					"enum": [
 						"easy",
@@ -61,6 +65,7 @@
 					]
 				},
 				"max": {
+					"description": "This is the maximum difficulty level that a mob spawns.",
 					"type": "string",
 					"enum": [
 						"easy",
@@ -79,6 +84,7 @@
 			"additionalProperties": false,
 			"properties": {
 				"default": {
+					"description": "This is the priority of the mob spawning.",
 					"type": "integer"
 				}
 			}
@@ -87,15 +93,19 @@
 			"additionalProperties": false,
 			"properties": {
 				"min_size": {
+					"description": "This is the minimum number of mobs that spawn in a herd.",
 					"type": "integer"
 				},
 				"max_size": {
+					"description": "This is the maximum number of mobs that spawn in a herd.",
 					"type": "integer"
 				},
 				"event_skip_count": {
+					"description": "This is the number of mobs spawned before the specified event is triggered.",
 					"type": "number"
 				},
 				"event": {
+					"description": "This is an event that can be triggered from spawning.",
 					"$ref": "../entity/dynamic/eventEnum.json"
 				},
 				"initial_event_count": {
@@ -110,9 +120,11 @@
 			"additionalProperties": false,
 			"properties": {
 				"surface": {
+					"description": "This is the maximum number of mobs of this type spawnable on the surface.",
 					"type": "integer"
 				},
 				"underground": {
+					"description": "This is the maximum number of mobs of this type spawnable underground.",
 					"type": "integer"
 				}
 			}
