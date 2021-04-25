@@ -55,12 +55,28 @@ export class FindAndReplaceTab extends Tab {
 		this.isLoading = true
 		this.state.queryResults = await this.findAndReplace.createQuery(
 			this.state.searchFor,
-			this.state.replaceWith,
 			this.state.queryOptions
 		)
 		this.isLoading = false
 		this.state.scrollTop = 0
 
+		this.searchReady.dispatch()
+	}
+	async executeQuery() {
+		await this.searchReady.fired
+		this.searchReady.resetSignal()
+		this.isLoading = true
+
+		await this.findAndReplace.executeQuery(
+			this.state.searchFor,
+			this.state.replaceWith,
+			this.state.queryOptions
+		)
+
+		this.state.queryResults = []
+		this.state.scrollTop = 0
+
+		this.isLoading = false
 		this.searchReady.dispatch()
 	}
 

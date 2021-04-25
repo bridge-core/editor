@@ -21,7 +21,16 @@
 					label="Replace"
 					v-model="replaceWith"
 				/>
-				<SearchType v-model="queryOptions.searchType" />
+				<SearchType class="mb-2" v-model="queryOptions.searchType" />
+				<v-btn
+					color="primary"
+					:disabled="replaceWith === '' || searchFor === ''"
+					:loading="tab.isLoading"
+					@click="onReplaceAll()"
+				>
+					<v-icon class="mr-1" small>mdi-file-replace-outline</v-icon>
+					Replace All
+				</v-btn>
 			</v-col>
 			<v-col
 				cols="1"
@@ -54,23 +63,28 @@
 						<template v-slot:default="{ item }">
 							<div
 								v-if="typeof item === 'string'"
-								class="font-weight-black clickable px-1"
-								style="width: fit-content"
-								v-ripple
-								@click="openFile(item)"
+								style="
+									display: inline-flex;
+									width: calc(100% - 8px);
+								"
 							>
-								<v-icon
-									style="position: relative; top: -2px"
-									small
-									:color="getIconColor(item)"
+								<FilePath :filePath="item" />
+								<v-spacer />
+
+								<v-btn
+									style="position: relative; top: 3px"
+									icon
+									x-small
+									disabled
 								>
-									{{ getFileIcon(item) }}
-								</v-icon>
-								{{ item }}
+									<v-icon>mdi-file-replace-outline</v-icon>
+								</v-btn>
 							</div>
+
 							<Match
 								v-else
-								:replaceWith="replaceWith"
+								:showReplaceWith="!!replaceWith"
+								:replaceWith="processReplaceWith(item.match)"
 								:item="item"
 							/>
 						</template>
@@ -84,24 +98,26 @@
 <script>
 import SearchType from './Controls/SearchType.vue'
 import Match from './Match.vue'
+import FilePath from './FilePath.vue'
 
 import { debounce } from 'lodash'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
-import { FileType } from '../Data/FileType'
-import { PackType } from '../Data/PackType'
-import { App } from '/@/App'
+import { createRegExp, processFileText } from './Utils'
 
 export default {
 	name: 'FindAndReplaceTab',
 	mixins: [TranslationMixin],
+	components: {
+		SearchType,
+		Match,
+		FilePath,
+	},
+
 	props: {
 		tab: Object,
 		height: Number,
 	},
-	components: {
-		SearchType,
-		Match,
-	},
+
 	mounted() {
 		this.$refs.virtualScroller.$el.scrollTop = this.scrollTop
 	},
@@ -116,22 +132,19 @@ export default {
 		updateQuery: debounce(async function () {
 			await this.tab.updateQuery()
 		}, 750),
-		getFileIcon(filePath) {
-			return (FileType.get(filePath) || {}).icon ?? 'mdi-file-outline'
-		},
-		getIconColor(filePath) {
-			return (PackType.getWithRelativePath(filePath) || {}).color
-		},
-		async openFile(filePath) {
-			const app = await App.getApp()
 
-			const fileHandle = await app.fileSystem.getFileHandle(
-				`projects/${app.project.name}/${filePath}`
-			)
-			app.project.openFile(fileHandle)
-		},
 		onScroll(event) {
 			this.scrollTop = event.target.scrollTop
+		},
+		onReplaceAll() {
+			this.tab.executeQuery()
+		},
+		processReplaceWith(match) {
+			return processFileText(
+				match,
+				createRegExp(this.searchFor, this.queryOptions.searchType),
+				this.replaceWith
+			)
 		},
 	},
 
@@ -139,7 +152,7 @@ export default {
 		searchFor() {
 			this.updateQuery()
 		},
-		queryOptions() {
+		'queryOptions.searchType'() {
 			this.updateQuery()
 		},
 		scrollTop() {
