@@ -1,5 +1,10 @@
 <template>
-	<v-btn-toggle dense mandatory :value="value" @input="$emit('input')">
+	<v-btn-toggle
+		dense
+		mandatory
+		:value="value"
+		@change="(val) => $emit('input', val)"
+	>
 		<v-btn title="Match Case">
 			<v-icon>mdi-format-letter-case-upper</v-icon>
 		</v-btn>

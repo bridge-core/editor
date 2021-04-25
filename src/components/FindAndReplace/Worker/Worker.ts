@@ -2,8 +2,9 @@ import { expose } from 'comlink'
 import { FileSystem } from '../../FileSystem/FileSystem'
 import { ESearchType } from '../Controls/SearchTypeEnum'
 import { iterateDir } from '/@/utils/iterateDir'
-import { clamp } from '/@/utils/math/clamp'
 import { extname } from '/@/utils/path'
+
+import { createRegExp, processFileText } from '../Utils'
 
 export interface IQueryOptions {
 	searchType: ESearchType
@@ -28,23 +29,47 @@ const knownTextFiles = new Set([
 	'.molang',
 	'.json',
 ])
+const ignoreFolders = new Set(['.bridge', 'builds'])
 const textPreviewLength = 100
 
 export class FindAndReplace {
 	protected fileSystem: FileSystem
+	protected matchedFiles = new Set<string>()
 	constructor(protected projectFolderHandle: FileSystemDirectoryHandle) {
 		this.fileSystem = new FileSystem(projectFolderHandle)
 	}
 
-	async createQuery(
+	async createQuery(searchFor: string, { searchType }: IQueryOptions) {
+		this.matchedFiles.clear()
+
+		if (searchFor === '') return []
+
+		const queryResults: IQueryResult[] = []
+		const regExp = createRegExp(searchFor, searchType)
+		if (!regExp) return []
+
+		await this.iterateProject(regExp, queryResults)
+
+		return queryResults
+	}
+
+	async executeQuery(
 		searchFor: string,
 		replaceWith: string,
 		{ searchType }: IQueryOptions
 	) {
 		if (searchFor === '') return []
 
-		const queryResults: IQueryResult[] = []
+		const regExp = createRegExp(searchFor, searchType)
+		if (!regExp) return []
 
+		await this.replaceAll(regExp, replaceWith)
+	}
+
+	protected async iterateProject(
+		regExp: RegExp,
+		queryResults: IQueryResult[]
+	) {
 		await iterateDir(
 			this.projectFolderHandle,
 			async (fileHandle, filePath) => {
@@ -56,10 +81,7 @@ export class FindAndReplace {
 					.getFile()
 					.then((file) => file.text())
 
-				const regExp = new RegExp(
-					searchFor,
-					`g${searchType === ESearchType.ignoreCase ? 'i' : ''}`
-				)
+				regExp.lastIndex = 0
 
 				let currentMatch = regExp.exec(fileText)
 				while (currentMatch !== null) {
@@ -86,13 +108,43 @@ export class FindAndReplace {
 					currentMatch = regExp.exec(fileText)
 				}
 
-				if (matches.length > 0) queryResults.push({ filePath, matches })
+				if (matches.length > 0) {
+					this.matchedFiles.add(filePath)
+					queryResults.push({ filePath, matches })
+				}
 			},
-			new Set(['.bridge', 'builds'])
+			ignoreFolders
 		)
-
-		return queryResults
 	}
+
+	protected async replaceAll(regExp: RegExp, replaceWith: string) {
+		await iterateDir(
+			this.projectFolderHandle,
+			async (fileHandle, filePath) => {
+				const ext = extname(filePath)
+				if (
+					!knownTextFiles.has(ext) ||
+					!this.matchedFiles.has(filePath)
+				)
+					return
+
+				const fileText = await fileHandle
+					.getFile()
+					.then((file) => file.text())
+
+				const newFileText = processFileText(
+					fileText,
+					regExp,
+					replaceWith
+				)
+
+				if (fileText !== newFileText)
+					await this.fileSystem.write(fileHandle, newFileText)
+			},
+			ignoreFolders
+		)
+	}
+	protected async replaceInFile(regExp: RegExp, replaceWith: string) {}
 }
 
 expose(FindAndReplace)
