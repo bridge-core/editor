@@ -21,15 +21,9 @@
 			"minecraft:{{IDENTIFIER}}_adult": {
 				"minecraft:rideable": {
 					"seat_count": 1,
-					"family_types": [
-						"zombie"
-					],
+					"family_types": ["zombie"],
 					"seats": {
-						"position": [
-							0,
-							1.1,
-							-0.35
-						],
+						"position": [0, 1.1, -0.35],
 						"lock_rider_rotation": 0
 					}
 				},
@@ -79,18 +73,13 @@
 			"minecraft:fire_immune": true,
 			"minecraft:burns_in_daylight": false,
 			"minecraft:type_family": {
-				"family": [
-					"{{IDENTIFIER}}",
-					"undead",
-					"monster",
-					"mob"
-				]
+				"family": ["{{IDENTIFIER}}", "undead", "monster", "mob"]
 			},
 			"minecraft:loot": {
-				"table": "loot_tables/entities/{{IDENTIFIER}}.json"
+				"table": "loot_tables/entities/{{PRESET_PATH}}{{IDENTIFIER}}.json"
 			},
 			"minecraft:equipment": {
-				"table": "loot_tables/entities/{{IDENTIFIER}}_gear.json"
+				"table": "loot_tables/entities/{{PRESET_PATH}}{{IDENTIFIER}}_gear.json"
 			},
 			"minecraft:health": {
 				"value": 20,
@@ -204,26 +193,18 @@
 			},
 			"minecraft:on_calm": {
 				"remove": {
-					"component_groups": [
-						"minecraft:{{IDENTIFIER}}_angry"
-					]
+					"component_groups": ["minecraft:{{IDENTIFIER}}_angry"]
 				},
 				"add": {
-					"component_groups": [
-						"minecraft:{{IDENTIFIER}}_calm"
-					]
+					"component_groups": ["minecraft:{{IDENTIFIER}}_calm"]
 				}
 			},
 			"minecraft:become_angry": {
 				"remove": {
-					"component_groups": [
-						"minecraft:{{IDENTIFIER}}_calm"
-					]
+					"component_groups": ["minecraft:{{IDENTIFIER}}_calm"]
 				},
 				"add": {
-					"component_groups": [
-						"minecraft:{{IDENTIFIER}}_angry"
-					]
+					"component_groups": ["minecraft:{{IDENTIFIER}}_angry"]
 				}
 			}
 		}

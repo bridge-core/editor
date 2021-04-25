@@ -4,14 +4,15 @@
 	"description": "Creates a blank recipe.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],
-	"fields": [
-		["File Name", "FILE_NAME"]
-	],
+	"additionalModels": {
+		"PRESET_PATH": "BP/recipes/"
+	},
+	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"recipe.json",
-			"BP/recipes/{{FILE_NAME}}.json",
+			"{{PRESET_PATH}}{{FILE_NAME}}.json",
 			{ "inject": ["FILE_NAME"] }
 		]
 	]

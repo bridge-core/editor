@@ -4,15 +4,16 @@
 	"description": "Creates a blank entity.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],
-	"fields": [
-		["File Name", "FILE_NAME"]
-	],
+	"additionalModels": {
+		"PRESET_PATH": "BP/entities/"
+	},
+	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"entity.json",
-			"BP/entities/{{FILE_NAME}}.json",
-			{ "inject": ["FILE_NAME"] }
+			"{{PRESET_PATH}}{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
 		]
 	]
 }

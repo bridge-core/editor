@@ -7,7 +7,7 @@
 				"default": "villager"
 			},
 			"textures": {
-				"default": "textures/entity/{{IDENTIFIER}}"
+				"default": "textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}"
 			},
 			"geometry": {
 				"default": "geometry.{{IDENTIFIER}}"
@@ -32,9 +32,7 @@
 					"move": "controller.animation.{{IDENTIFIER}}.move"
 				}
 			],
-			"render_controllers": [
-				"controller.render.{{IDENTIFIER}}"
-			],
+			"render_controllers": ["controller.render.{{IDENTIFIER}}"],
 			"spawn_egg": {
 				"base_color": "#53443E",
 				"overlay_color": "#2E6854"

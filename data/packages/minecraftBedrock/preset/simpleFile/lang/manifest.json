@@ -4,15 +4,16 @@
 	"description": "Creates a blank language file.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["resourcePack"],
-	"fields": [
-		["File Name", "FILE_NAME"]
-	],
+	"additionalModels": {
+		"PRESET_PATH": "RP/texts/"
+	},
+	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"language.lang",
-			"RP/texts/{{FILE_NAME}}.lang",
-			{ "inject": ["FILE_NAME"] }
+			"{{PRESET_PATH}}{{FILE_NAME}}.lang",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
 		]
 	]
 }

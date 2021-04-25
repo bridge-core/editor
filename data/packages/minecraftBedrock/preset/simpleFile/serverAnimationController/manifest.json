@@ -4,13 +4,16 @@
 	"description": "Creates a blank server animation controller.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],
+	"additionalModels": {
+		"PRESET_PATH": "BP/animation_controllers/"
+	},
 	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"animationController.json",
-			"BP/animation_controllers/{{FILE_NAME}}.json",
-			{ "inject": ["FILE_NAME"] }
+			"{{PRESET_PATH}}{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
 		]
 	]
 }

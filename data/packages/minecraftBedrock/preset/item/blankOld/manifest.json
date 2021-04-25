@@ -7,7 +7,8 @@
 	"packTypes": ["behaviorPack", "resourcePack"],
 	"additionalModels": {
 		"IMAGE_SAVE_PATH": "RP/textures/items/",
-		"DEFAULT_IMAGE": "icon.png"
+		"DEFAULT_IMAGE": "icon.png",
+		"PRESET_PATH": ""
 	},
 	"fields": [
 		[
@@ -23,20 +24,20 @@
 		"presetScript/optionalImage.js",
 		[
 			"item.json",
-			"BP/items/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"BP/items/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"clientItem.json",
-			"RP/items/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"RP/items/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		]
 	],
 	"expandFiles": [
 		[
 			"itemTexture.json",
 			"RP/textures/item_texture.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"en_US.lang",

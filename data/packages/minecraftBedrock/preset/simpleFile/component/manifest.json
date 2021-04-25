@@ -4,6 +4,9 @@
 	"description": "Creates a blank custom component.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],
+	"additionalModels": {
+		"PRESET_PATH": "BP/components/"
+	},
 	"fields": [
 		[
 			"Language",
@@ -36,8 +39,8 @@
 	"createFiles": [
 		[
 			"component.js",
-			"BP/components/{{TYPE}}/{{FILE_NAME}}.{{LANGUAGE}}",
-			{ "inject": ["FILE_NAME", "LANGUAGE", "TYPE"] }
+			"{{PRESET_PATH}}{{TYPE}}/{{FILE_NAME}}.{{LANGUAGE}}",
+			{ "inject": ["FILE_NAME", "LANGUAGE", "TYPE", "PRESET_PATH"] }
 		]
 	]
 }

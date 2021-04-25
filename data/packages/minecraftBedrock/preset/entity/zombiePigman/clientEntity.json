@@ -8,7 +8,7 @@
 				"default": "zombie"
 			},
 			"textures": {
-				"default": "textures/entity/{{IDENTIFIER}}"
+				"default": "textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}"
 			},
 			"geometry": {
 				"default": "geometry.{{IDENTIFIER}}",
@@ -94,9 +94,7 @@
 					"zombie_attack_bare_hand": "controller.animation.zombie.attack_bare_hand"
 				}
 			],
-			"render_controllers": [
-				"controller.render.{{IDENTIFIER}}"
-			],
+			"render_controllers": ["controller.render.{{IDENTIFIER}}"],
 			"enable_attachables": true
 		}
 	}

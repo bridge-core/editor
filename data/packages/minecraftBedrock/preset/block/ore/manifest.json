@@ -7,7 +7,8 @@
 	"packTypes": ["behaviorPack", "resourcePack"],
 	"additionalModels": {
 		"IMAGE_SAVE_PATH": "RP/textures/blocks/",
-		"DEFAULT_IMAGE": "icon.png"
+		"DEFAULT_IMAGE": "texture.png",
+		"PRESET_PATH": ""
 	},
 	"fields": [
 		[
@@ -23,13 +24,8 @@
 		"presetScript/optionalImage.js",
 		[
 			"block.json",
-			"BP/blocks/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
-		],
-		[
-			"icon.png",
-			"RP/textures/blocks/{{IDENTIFIER}}.png",
-			{ "inject": ["IDENTIFIER"] }
+			"BP/blocks/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"feature.json",
@@ -46,7 +42,7 @@
 		[
 			"terrainTexture.json",
 			"RP/textures/terrain_texture.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"clientBlock.json",

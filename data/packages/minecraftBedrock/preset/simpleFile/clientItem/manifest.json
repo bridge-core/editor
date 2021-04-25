@@ -5,15 +5,16 @@
 	"category": "fileType.simpleFile",
 	"targetVersion": ["<=", "1.16.0"],
 	"packTypes": ["resourcePack"],
-	"fields": [
-		["File Name", "FILE_NAME"]
-	],
+	"additionalModels": {
+		"PRESET_PATH": "RP/items/"
+	},
+	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"clientItem.json",
-			"RP/items/{{FILE_NAME}}.json",
-			{ "inject": ["FILE_NAME"] }
+			"{{PRESET_PATH}}{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
 		]
 	]
 }

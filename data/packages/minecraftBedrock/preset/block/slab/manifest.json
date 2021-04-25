@@ -5,6 +5,9 @@
 	"category": "fileType.block",
 	"targetVersion": [">=", "1.16.100"],
 	"packTypes": ["behaviorPack", "resourcePack"],
+	"additionalModels": {
+		"PRESET_PATH": ""
+	},
 	"fields": [
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]
@@ -13,13 +16,13 @@
 	"createFiles": [
 		[
 			"block.json",
-			"BP/blocks/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"BP/blocks/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"texture.png",
-			"RP/textures/blocks/{{IDENTIFIER}}.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/blocks/{{PRESET_PATH}}{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"geometry.json",
@@ -31,7 +34,7 @@
 		[
 			"terrainTexture.json",
 			"RP/textures/terrain_texture.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"clientBlock.json",

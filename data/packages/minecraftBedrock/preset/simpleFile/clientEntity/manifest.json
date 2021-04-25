@@ -4,15 +4,16 @@
 	"description": "Creates a blank client entity.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["resourcePack"],
-	"fields": [
-		["File Name", "FILE_NAME"]
-	],
+	"additionalModels": {
+		"PRESET_PATH": "RP/entity/"
+	},
+	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"clientEntity.json",
-			"RP/entity/{{FILE_NAME}}.json",
-			{ "inject": ["FILE_NAME"] }
+			"{{PRESET_PATH}}{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
 		]
 	]
 }

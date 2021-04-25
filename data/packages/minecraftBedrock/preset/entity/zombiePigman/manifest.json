@@ -4,6 +4,9 @@
 	"icon": "mdi-human",
 	"category": "fileType.entity",
 	"packTypes": ["behaviorPack", "resourcePack"],
+	"additionalModels": {
+		"PRESET_PATH": ""
+	},
 	"fields": [
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]
@@ -12,13 +15,13 @@
 	"createFiles": [
 		[
 			"entity.json",
-			"BP/entities/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"BP/entities/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"clientEntity.json",
-			"RP/entity/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"RP/entity/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"geometry.json",
@@ -32,28 +35,28 @@
 		],
 		[
 			"lootTable.json",
-			"BP/loot_tables/entities/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
+			"BP/loot_tables/entities/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"lootTableGear.json",
-			"BP/loot_tables/entities/{{IDENTIFIER}}_gear.json",
-			{ "inject": ["IDENTIFIER"] }
+			"BP/loot_tables/entities/{{PRESET_PATH}}{{IDENTIFIER}}_gear.json",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"renderController.json",
-			"RP/render_controllers/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/render_controllers/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"spawnRule.json",
-			"BP/spawn_rules/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"BP/spawn_rules/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"texture.png",
-			"RP/textures/entity/{{IDENTIFIER}}.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		]
 	],
 	"expandFiles": [

@@ -55,7 +55,7 @@
 
 			"{{PROJECT_PREFIX}}:{{IDENTIFIER}}_with_item": {
 				"minecraft:equipment": {
-					"table": "loot_tables/entities/{{IDENTIFIER}}_equipment.json",
+					"table": "loot_tables/entities/{{PRESET_PATH}}{{IDENTIFIER}}_equipment.json",
 					"slot_drop_chance": [
 						{
 							"slot": "slot.weapon.mainhand",

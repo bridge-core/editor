@@ -4,15 +4,16 @@
 	"description": "Creates a blank item.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],
-	"fields": [
-		["File Name", "FILE_NAME"]
-	],
+	"additionalModels": {
+		"PRESET_PATH": "BP/items/"
+	},
+	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"item.json",
-			"BP/items/{{FILE_NAME}}.json",
-			{ "inject": ["FILE_NAME"] }
+			"{{PRESET_PATH}}{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
 		]
 	]
 }

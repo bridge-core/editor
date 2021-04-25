@@ -5,6 +5,9 @@
 	"category": "fileType.item",
 	"targetVersion": [">=", "1.16.100"],
 	"packTypes": ["behaviorPack", "resourcePack"],
+	"additionalModels": {
+		"PRESET_PATH": ""
+	},
 	"fields": [
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]
@@ -13,13 +16,13 @@
 	"createFiles": [
 		[
 			"armor1.png",
-			"RP/textures/models/armor/{{IDENTIFIER}}_1.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/models/armor/{{PRESET_PATH}}{{IDENTIFIER}}_1.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"armor2.png",
-			"RP/textures/models/armor/{{IDENTIFIER}}_2.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/models/armor/{{PRESET_PATH}}{{IDENTIFIER}}_2.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"itemBoots.json",
@@ -28,65 +31,65 @@
 		],
 		[
 			"iconBoots.png",
-			"RP/textures/items/{{IDENTIFIER}}_boots.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/items/{{PRESET_PATH}}{{IDENTIFIER}}_boots.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"attachableBoots.json",
-			"RP/attachables/{{IDENTIFIER}}_boots.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"RP/attachables/{{PRESET_PATH}}{{IDENTIFIER}}_boots.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"itemLeggings.json",
-			"BP/items/{{IDENTIFIER}}_leggings.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"BP/items/{{PRESET_PATH}}{{IDENTIFIER}}_leggings.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"iconLeggings.png",
-			"RP/textures/items/{{IDENTIFIER}}_leggings.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/items/{{PRESET_PATH}}{{IDENTIFIER}}_leggings.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"attachableLeggings.json",
-			"RP/attachables/{{IDENTIFIER}}_leggings.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"RP/attachables/{{PRESET_PATH}}{{IDENTIFIER}}_leggings.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"itemChestplate.json",
-			"BP/items/{{IDENTIFIER}}_chestplate.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"BP/items/{{PRESET_PATH}}{{IDENTIFIER}}_chestplate.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"iconChestplate.png",
-			"RP/textures/items/{{IDENTIFIER}}_chestplate.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/items/{{PRESET_PATH}}{{IDENTIFIER}}_chestplate.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"attachableChestplate.json",
-			"RP/attachables/{{IDENTIFIER}}_chestplate.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"RP/attachables/{{PRESET_PATH}}{{IDENTIFIER}}_chestplate.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"itemHelmet.json",
-			"BP/items/{{IDENTIFIER}}_helmet.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"BP/items/{{PRESET_PATH}}{{IDENTIFIER}}_helmet.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"iconHelmet.png",
-			"RP/textures/items/{{IDENTIFIER}}_helmet.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/items/{{PRESET_PATH}}{{IDENTIFIER}}_helmet.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"attachableHelmet.json",
-			"RP/attachables/{{IDENTIFIER}}_helmet.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"RP/attachables/{{PRESET_PATH}}{{IDENTIFIER}}_helmet.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		]
 	],
 	"expandFiles": [
 		[
 			"itemTexture.json",
 			"RP/textures/item_texture.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"en_US.lang",

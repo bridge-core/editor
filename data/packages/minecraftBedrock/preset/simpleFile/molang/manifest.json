@@ -4,13 +4,16 @@
 	"description": "Creates a blank molang file.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],
+	"additionalModels": {
+		"PRESET_PATH": "BP/molang/"
+	},
 	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"molang.molang",
-			"BP/molang/{{FILE_NAME}}.molang",
-			{ "inject": ["FILE_NAME"] }
+			"{{PRESET_PATH}}{{FILE_NAME}}.molang",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
 		]
 	]
 }

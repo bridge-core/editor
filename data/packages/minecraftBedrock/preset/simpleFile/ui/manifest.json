@@ -4,9 +4,16 @@
 	"description": "Creates a blank ui file.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["resourcePack"],
+	"additionalModels": {
+		"PRESET_PATH": "RP/ui/"
+	},
 	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
-		["ui.json", "RP/ui/{{FILE_NAME}}.json", { "inject": ["FILE_NAME"] }]
+		[
+			"ui.json",
+			"{{PRESET_PATH}}{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
+		]
 	]
 }

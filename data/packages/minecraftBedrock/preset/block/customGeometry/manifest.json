@@ -9,7 +9,8 @@
 		"IMAGE_SAVE_PATH": "RP/textures/blocks/",
 		"DEFAULT_IMAGE": "texture.png",
 		"MODEL_SAVE_PATH": "RP/models/blocks/",
-		"DEFAULT_MODEL": "geometry.json"
+		"DEFAULT_MODEL": "geometry.json",
+		"PRESET_PATH": ""
 	},
 	"fields": [
 		["Identifier", "IDENTIFIER"],
@@ -39,8 +40,8 @@
 	"createFiles": [
 		[
 			"block.json",
-			"BP/blocks/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"BP/blocks/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		"presetScript/optionalModel.js",
 		"presetScript/optionalImage.js"
@@ -49,7 +50,7 @@
 		[
 			"terrainTexture.json",
 			"RP/textures/terrain_texture.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"clientBlock.json",

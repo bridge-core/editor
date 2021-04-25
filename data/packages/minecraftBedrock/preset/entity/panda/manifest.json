@@ -5,6 +5,9 @@
 	"category": "fileType.entity",
 	"targetVersion": [">=", "1.10.0"],
 	"packTypes": ["behaviorPack", "resourcePack"],
+	"additionalModels": {
+		"PRESET_PATH": ""
+	},
 	"fields": [
 		["Identifier", "IDENTIFIER"],
 		["Display Name", "IDENTIFIER_NAME"]
@@ -13,23 +16,23 @@
 	"createFiles": [
 		[
 			"entity.json",
-			"BP/entities/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"BP/entities/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"clientEntity.json",
-			"RP/entity/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"RP/entity/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"animation.json",
-			"RP/animations/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/animations/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"animationController.json",
-			"RP/animation_controllers/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/animation_controllers/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"geometry.json",
@@ -38,58 +41,58 @@
 		],
 		[
 			"lootTable.json",
-			"BP/loot_tables/entities/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
+			"BP/loot_tables/entities/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"lootTableSneeze.json",
-			"BP/loot_tables/entities/{{IDENTIFIER}}_sneeze.json",
-			{ "inject": ["IDENTIFIER"] }
+			"BP/loot_tables/entities/{{PRESET_PATH}}{{IDENTIFIER}}_sneeze.json",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"renderController.json",
-			"RP/render_controllers/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/render_controllers/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"spawnRule.json",
-			"BP/spawn_rules/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+			"BP/spawn_rules/{{PRESET_PATH}}{{IDENTIFIER}}.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
 			"texture.png",
-			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}/{{IDENTIFIER}}.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"textureAggressive.png",
-			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_aggressive.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}/{{IDENTIFIER}}_aggressive.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"textureBrown.png",
-			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_brown.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}/{{IDENTIFIER}}_brown.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"textureLazy.png",
-			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_lazy.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}/{{IDENTIFIER}}_lazy.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"texturePlayful.png",
-			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_playful.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}/{{IDENTIFIER}}_playful.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"textureSneezy.png",
-			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_sneezy.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}/{{IDENTIFIER}}_sneezy.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
 			"textureWorried.png",
-			"RP/textures/entity/{{IDENTIFIER}}/{{IDENTIFIER}}_worried.png",
-			{ "inject": ["IDENTIFIER"] }
+			"RP/textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}/{{IDENTIFIER}}_worried.png",
+			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		]
 	],
 	"expandFiles": [

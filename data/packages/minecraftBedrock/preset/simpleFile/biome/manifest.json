@@ -4,15 +4,16 @@
 	"description": "Creates a blank biome.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],
-	"fields": [
-		["File Name", "FILE_NAME"]
-	],
+	"additionalModels": {
+		"PRESET_PATH": "BP/biomes/"
+	},
+	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"biome.json",
-			"BP/biomes/{{FILE_NAME}}.json",
-			{ "inject": ["FILE_NAME", "PROJECT_PREFIX"] }
+			"{{PRESET_PATH}}{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME", "PROJECT_PREFIX", "PRESET_PATH"] }
 		]
 	]
 }

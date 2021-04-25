@@ -4,15 +4,16 @@
 	"description": "Creates a blank function.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],
-	"fields": [
-		["File Name", "FILE_NAME"]
-	],
+	"additionalModels": {
+		"PRESET_PATH": "BP/functions/"
+	},
+	"fields": [["File Name", "FILE_NAME"]],
 
 	"createFiles": [
 		[
 			"function.mcfunction",
-			"BP/functions/{{FILE_NAME}}.mcfunction",
-			{ "inject": ["FILE_NAME"] }
+			"{{PRESET_PATH}}{{FILE_NAME}}.mcfunction",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
 		]
 	]
 }

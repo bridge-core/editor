@@ -7,14 +7,12 @@
 				"default": "entity_alphatest"
 			},
 			"textures": {
-				"default": "textures/entity/{{IDENTIFIER}}"
+				"default": "textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}"
 			},
 			"geometry": {
 				"default": "geometry.{{IDENTIFIER}}"
 			},
-			"render_controllers": [
-				"controller.render.{{IDENTIFIER}}"
-			],
+			"render_controllers": ["controller.render.{{IDENTIFIER}}"],
 			"spawn_egg": {
 				"base_color": "#000000",
 				"overlay_color": "#FFFFFF"

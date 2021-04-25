@@ -144,7 +144,7 @@
 				"suffocate_time": 0
 			},
 			"minecraft:loot": {
-				"table": "loot_tables/entities/{{IDENTIFIER}}.json"
+				"table": "loot_tables/entities/{{PRESET_PATH}}{{IDENTIFIER}}.json"
 			},
 			"minecraft:collision_box": {
 				"width": 1.4,
