@@ -61,10 +61,26 @@
 						@scroll.native="onScroll"
 					>
 						<template v-slot:default="{ item }">
-							<FilePath
+							<div
 								v-if="typeof item === 'string'"
-								:filePath="item"
-							/>
+								style="
+									display: inline-flex;
+									width: calc(100% - 8px);
+								"
+							>
+								<FilePath :filePath="item" />
+								<v-spacer />
+
+								<v-btn
+									style="position: relative; top: 3px"
+									icon
+									x-small
+									disabled
+								>
+									<v-icon>mdi-file-replace-outline</v-icon>
+								</v-btn>
+							</div>
+
 							<Match
 								v-else
 								:showReplaceWith="!!replaceWith"

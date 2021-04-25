@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="font-weight-black clickable px-1"
-		style="width: fit-content"
+		style="display: inline-block; width: fit-content"
 		v-ripple
 		@click="openFile(filePath)"
 	>
