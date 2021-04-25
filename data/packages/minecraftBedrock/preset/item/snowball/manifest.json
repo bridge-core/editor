@@ -5,7 +5,7 @@
 	"category": "fileType.item",
 	"targetVersion": [">=", "1.16.100"],
 	"packTypes": ["behaviorPack", "resourcePack"],
-	"additonalModels": {
+	"additionalModels": {
 		"PRESET_PATH": ""
 	},
 	"fields": [
