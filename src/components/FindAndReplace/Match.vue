@@ -3,12 +3,14 @@
 		<span>{{ item.isStartOfFile ? '' : '...' }}{{ item.beforeMatch }}</span>
 		<span
 			:class="{
-				'error--text text-decoration-line-through': replaceWith,
-				'success--text': !replaceWith,
+				'error--text text-decoration-line-through': showReplaceWith,
+				'success--text': !showReplaceWith,
 			}"
 			>{{ item.match }}</span
 		>
-		<span v-if="replaceWith" class="success--text">{{ replaceWith }}</span>
+		<span v-if="showReplaceWith" class="success--text">{{
+			replaceWith
+		}}</span>
 		<span>{{ item.afterMatch }}...</span>
 	</div>
 </template>
@@ -18,6 +20,7 @@ export default {
 	name: 'Match',
 	props: {
 		replaceWith: String,
+		showReplaceWith: Boolean,
 		item: Object,
 	},
 }

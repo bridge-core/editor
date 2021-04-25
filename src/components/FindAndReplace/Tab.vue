@@ -67,6 +67,7 @@
 							/>
 							<Match
 								v-else
+								:showReplaceWith="!!replaceWith"
 								:replaceWith="processReplaceWith(item.match)"
 								:item="item"
 							/>
