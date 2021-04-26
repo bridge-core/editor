@@ -5,6 +5,7 @@ import { dirname } from '/@/utils/path'
 import { CompilerService } from './Service'
 import isGlob from 'is-glob'
 import { isMatch } from 'micromatch'
+import { iterateDir } from '/@/utils/iterateDir'
 
 export interface IFileData {
 	isLoaded?: boolean
@@ -42,6 +43,35 @@ export class Compiler {
 	}
 	getAliases(filePath: string) {
 		return [...(this.files.get(filePath)?.aliases ?? [])]
+	}
+
+	async unlink(path: string, handle?: FileSystemHandle) {
+		if (!handle) {
+			try {
+				handle = await this.fileSystem.getFileHandle(path)
+			} catch {
+				try {
+					handle = await this.fileSystem.getDirectoryHandle(path)
+				} catch {}
+			}
+		}
+
+		if (!handle) return
+		else if (handle.kind === 'file') {
+			const saveFilePath: string | undefined =
+				(await this.runAllHooks('transformPath', 0, path)) ?? undefined
+
+			if (saveFilePath) this.outputFileSystem.unlink(saveFilePath)
+
+			this.files.delete(path)
+		} else if (handle.kind === 'directory') {
+			await iterateDir(
+				handle,
+				(fileHandle, filePath) => this.unlink(filePath, fileHandle),
+				undefined,
+				path
+			)
+		}
 	}
 
 	async runWithFiles(files: string[]) {
@@ -411,7 +441,7 @@ export class Compiler {
 		return writeData
 	}
 
-	protected async processFileMap() {
+	async processFileMap() {
 		// Clean up file map
 		const filesObject: Record<string, ISaveFile> = {}
 

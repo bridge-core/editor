@@ -68,6 +68,10 @@ export class PackIndexerService extends TaskService<string[]> {
 		}
 	}
 
+	unlink(path: string) {
+		return this.lightningCache.unlink(path)
+	}
+
 	updatePlugins(pluginFileTypes: IFileType[]) {
 		FileType.setPluginFileTypes(pluginFileTypes)
 	}

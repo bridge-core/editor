@@ -64,15 +64,15 @@ export class Compiler extends WorkerManager<
 				pluginFileTypes: FileType.getPluginFileTypes(),
 			})
 		} else {
-			await this._service.updateMode(mode, restartDevServer)
-			await this._service.updatePlugins(
+			await this.service.updateMode(mode, restartDevServer)
+			await this.service.updatePlugins(
 				this.parent.getCompilerPlugins(),
 				FileType.getPluginFileTypes()
 			)
 		}
 
 		// Listen to task progress and update UI
-		await this._service.on(
+		await this.service.on(
 			proxy(([current, total]) => {
 				this.task?.update(current, total)
 			}),
@@ -96,41 +96,47 @@ export class Compiler extends WorkerManager<
 	async updateFiles(filePaths: string[]) {
 		await this.ready.fired
 		this.ready.resetSignal()
-		if (!this._service)
-			throw new Error(
-				`Trying to update file without service being defined`
-			)
 
-		await this._service.updateMode('dev', false)
-		await this._service.updatePlugins(
+		await this.service.updateMode('dev', false)
+		await this.service.updatePlugins(
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
 		)
-		await this._service.updateFiles(filePaths)
+		await this.service.updateFiles(filePaths)
 		this.ready.dispatch()
 	}
 
 	async compileWithFile(filePath: string, file: File) {
 		await this.ready.fired
 		this.ready.resetSignal()
-		if (!this._service)
-			throw new Error(
-				`Trying to update file without service being defined`
-			)
 
-		await this._service.updateMode('dev', false)
-		await this._service.updatePlugins(
+		await this.service.updateMode('dev', false)
+		await this.service.updatePlugins(
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
 		)
 
 		const fileBuffer = new Uint8Array(await file.arrayBuffer())
-		const [dependencies, compiled] = await this._service.compileWithFile(
+		const [dependencies, compiled] = await this.service.compileWithFile(
 			filePath,
 			fileBuffer
 		)
 
 		this.ready.dispatch()
 		return <const>[dependencies, compiled ?? file]
+	}
+
+	async unlink(path: string) {
+		await this.ready.fired
+		this.ready.resetSignal()
+
+		this.service.updateMode('dev', false)
+		await this.service.updatePlugins(
+			this.parent.getCompilerPlugins(),
+			FileType.getPluginFileTypes()
+		)
+		await this.service.unlink(path)
+
+		this.ready.dispatch()
 	}
 }

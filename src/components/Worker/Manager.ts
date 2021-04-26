@@ -19,6 +19,12 @@ export abstract class WorkerManager<
 	protected task: Task | null = null
 	protected disposeTimeout?: number
 
+	get service() {
+		if (!this._service)
+			throw new Error(`Accessing service without service being defined`)
+		return this._service
+	}
+
 	constructor(protected taskOptions: ITaskDetails, protected app?: App) {
 		super()
 	}

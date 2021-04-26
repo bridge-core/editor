@@ -12,6 +12,7 @@ import PackExplorerComponent from './PackExplorer.vue'
 import { DirectoryEntry } from './DirectoryEntry'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
+import { InformationWindow } from '../../Common/Information/InformationWindow'
 
 class PackSidebarItem extends SidebarItem {
 	protected packType: string
@@ -176,5 +177,54 @@ export class PackExplorerWindow extends BaseWindow {
 	close() {
 		this.loadedPack = false
 		super.close()
+	}
+
+	async getContextMenu(
+		type: 'file' | 'folder' | 'virtualFolder',
+		path: string,
+		entry: DirectoryEntry
+	) {
+		if (type === 'virtualFolder') return []
+
+		return [
+			{
+				icon: 'mdi-delete-outline',
+				name: 'Delete',
+				description: 'Delete a file or folder',
+				onTrigger: async () => {
+					const project = await App.getApp().then(
+						(app) => app.project
+					)
+					entry.remove()
+
+					await Promise.all([
+						project.packIndexer.unlink(path),
+						project.compilerManager.unlink(path),
+					])
+
+					await project.jsonDefaults.reload()
+
+					await project.fileSystem.unlink(path)
+				},
+			},
+			// TODO
+			// {
+			// 	icon: 'mdi-pencil-outline',
+			// 	name: 'Rename',
+			// 	description: 'Rename a file or folder',
+			// 	onTrigger: () => console.log('TODO'),
+			// },
+			{
+				icon: 'mdi-folder-outline',
+				name: 'Reveal File Path',
+				description: 'Reveals the location of a file or folder',
+				onTrigger: () =>
+					new InformationWindow({
+						name: 'Path',
+						description: path,
+						isPersistent: false,
+					}).open(),
+			},
+		]
 	}
 }

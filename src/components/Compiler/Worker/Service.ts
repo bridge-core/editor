@@ -104,12 +104,13 @@ export class CompilerService extends TaskService<void, string[]> {
 	}
 
 	async updateFiles(filePaths: string[]) {
-		await this.loadPlugins(this.options.plugins)
 		await this.compiler.runWithFiles(filePaths)
 	}
+	async unlink(path: string) {
+		await this.compiler.unlink(path)
+		await this.compiler.processFileMap()
+	}
 	async compileWithFile(filePath: string, file: Uint8Array) {
-		await this.loadPlugins(this.options.plugins)
-
 		return await this.compiler.compileWithFile(
 			filePath,
 			new File([file], filePath.split('/').pop()!)

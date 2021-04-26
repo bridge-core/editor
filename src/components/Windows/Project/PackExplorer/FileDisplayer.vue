@@ -5,6 +5,7 @@
 		v-if="directoryEntry && !directoryEntry.isLoading && isPackIndexerReady"
 	>
 		<template v-for="entry in directoryEntry.children">
+			<!-- FOLDER -->
 			<details
 				class="folder"
 				v-if="!entry.isFile"
@@ -14,6 +15,15 @@
 				<summary
 					class="d-flex rounded-lg"
 					@click.prevent="onClick(entry)"
+					@click.right.prevent.stop="
+						$emit('contextmenu', {
+							type: entry.type,
+							path: entry.path.join('/'),
+							clientX: $event.clientX,
+							clientY: $event.clientY,
+							entry,
+						})
+					"
 					v-ripple
 				>
 					<v-icon class="pr-1" :color="entry.color" small>
@@ -28,6 +38,7 @@
 
 				<FileDisplayer
 					@closeWindow="$emit('closeWindow')"
+					@contextmenu="$emit('contextmenu', $event)"
 					:entry="entry"
 				/>
 			</details>
@@ -37,6 +48,15 @@
 				:key="entry.uuid"
 				class="file rounded-lg"
 				@click.stop="onClick(entry)"
+				@click.right.prevent.stop="
+					$emit('contextmenu', {
+						type: 'file',
+						path: entry.path.join('/'),
+						clientX: $event.clientX,
+						clientY: $event.clientY,
+						entry,
+					})
+				"
 				v-ripple
 			>
 				<v-icon :color="entry.color" small>

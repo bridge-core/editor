@@ -5,6 +5,7 @@ import { PackType } from '/@/components/Data/PackType'
 import { FileType } from '/@/components/Data/FileType'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { reactive } from '@vue/composition-api'
+import { settingsState } from '../../Settings/SettingsState'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
@@ -13,6 +14,11 @@ export class DirectoryEntry {
 	public isFolderOpen = false
 	protected hasLoadedChildren = this._isFile
 	public isLoading = false
+	protected type = this._isFile
+		? 'file'
+		: settingsState.general.enablePackSpider
+		? 'virtualFolder'
+		: 'folder'
 
 	static async create(startPath: string[] = [], isFile = false) {
 		const folder = new DirectoryEntry(
@@ -118,6 +124,15 @@ export class DirectoryEntry {
 
 	setDisplayName(name: string) {
 		this.displayName = name
+	}
+
+	remove() {
+		if (this.parent === undefined)
+			throw new Error('FileDisplayer: Cannot delete root of FS')
+
+		this.parent!.children = this.parent!.children.filter(
+			(child) => child !== this
+		)
 	}
 
 	protected sortChildren() {

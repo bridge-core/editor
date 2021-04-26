@@ -42,6 +42,7 @@
 					"
 					:entry="sidebar.currentState.directoryEntry"
 					@closeWindow="onClose"
+					@contextmenu="onContextMenu"
 				/>
 			</div>
 
@@ -78,6 +79,7 @@ import FileDisplayer from './FileDisplayer.vue'
 
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 
 export default {
 	name: 'PackExplorerWindow',
@@ -93,6 +95,16 @@ export default {
 	methods: {
 		onClose() {
 			this.currentWindow.close()
+		},
+		async onContextMenu(data) {
+			showContextMenu(
+				data,
+				await this.currentWindow.getContextMenu(
+					data.type,
+					data.path,
+					data.entry
+				)
+			)
 		},
 		async openFile(filePath) {
 			this.currentWindow.close()

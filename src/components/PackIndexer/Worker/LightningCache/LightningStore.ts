@@ -101,6 +101,11 @@ export class LightningStore {
 			data: data ?? this.store![fileType]?.[filePath]?.data,
 		}
 	}
+	remove(filePath: string, fileType = FileType.getId(filePath)) {
+		if (!this.store![fileType]) return
+
+		delete this.store![fileType][filePath]
+	}
 	setVisited(
 		filePath: string,
 		visited: boolean,

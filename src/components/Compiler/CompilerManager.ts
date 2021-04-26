@@ -50,6 +50,16 @@ export class CompilerManager extends Signal<void> {
 			)
 		return compiler.updateFiles(filePaths)
 	}
+	unlink(path: string) {
+		let compiler = this.compilers.get('default.json')
+
+		if (!compiler)
+			throw new Error(
+				`Cannot update file because compiler for config ".bridge/compiler/default.json" doesn't exist`
+			)
+
+		return compiler.unlink(path)
+	}
 
 	compileWithFile(filePath: string, file: File) {
 		let compiler = this.compilers.get('default.json')

@@ -51,7 +51,7 @@ export class PackIndexer extends WorkerManager<
 		})
 
 		// Listen to task progress and update UI
-		await this._service.on(
+		await this.service.on(
 			proxy(([current, total]) => {
 				this.task?.update(current, total)
 			}),
@@ -59,8 +59,8 @@ export class PackIndexer extends WorkerManager<
 		)
 
 		// Start service
-		const changedFiles = await this._service!.start()
-		await this._service.disposeListeners()
+		const changedFiles = await this.service.start()
+		await this.service.disposeListeners()
 		this.ready.dispatch()
 		console.timeEnd('[TASK] Indexing Packs (Total)')
 		return changedFiles
@@ -70,29 +70,34 @@ export class PackIndexer extends WorkerManager<
 		await this.ready.fired
 		this.ready.dispatch()
 
-		await this.service!.updatePlugins(FileType.getPluginFileTypes())
-		await this.service!.updateFile(filePath, fileContent)
+		await this.service.updatePlugins(FileType.getPluginFileTypes())
+		await this.service.updateFile(filePath, fileContent)
 
 		this.resetSignal()
 	}
 	async updateFiles(filePaths: string[]) {
 		await this.ready.fired
 		this.ready.dispatch()
-		await this.service!.updatePlugins(FileType.getPluginFileTypes())
+		await this.service.updatePlugins(FileType.getPluginFileTypes())
 
 		for (const filePath of filePaths) {
-			await this.service!.updateFile(filePath)
+			await this.service.updateFile(filePath)
 		}
+
+		this.resetSignal()
+	}
+	async unlink(path: string) {
+		await this.ready.fired
+		this.ready.dispatch()
+		await this.service.updatePlugins(FileType.getPluginFileTypes())
+
+		await this.service.unlink(path)
 
 		this.resetSignal()
 	}
 
 	async readdir(path: string[], ..._: any[]) {
 		await this.fired
-		return await this.service!.readdir(path)
-	}
-
-	get service() {
-		return this._service
+		return await this.service.readdir(path)
 	}
 }

@@ -7,6 +7,7 @@ import type { LightningStore } from './LightningStore'
 import { runScript } from './Script'
 import { extname } from '/@/utils/path'
 import { findFile } from '/@/components/FileSystem/FindFile'
+import { iterateDir } from '/@/utils/iterateDir'
 
 const knownTextFiles = new Set([
 	'.js',
@@ -85,6 +86,29 @@ export class LightningCache {
 		)
 			await this.lightningStore.saveStore()
 		return [filePaths, changedFiles]
+	}
+
+	async unlink(path: string) {
+		let handle: FileSystemHandle | undefined
+		try {
+			handle = await this.service.fileSystem.getFileHandle(path)
+		} catch {
+			try {
+				handle = await this.service.fileSystem.getDirectoryHandle(path)
+			} catch {}
+		}
+
+		if (!handle) return
+		else if (handle.kind === 'file') this.lightningStore.remove(path)
+		else if (handle.kind === 'directory')
+			await iterateDir(
+				handle,
+				(_, filePath) => this.lightningStore.remove(filePath),
+				undefined,
+				path
+			)
+
+		await this.lightningStore.saveStore()
 	}
 
 	protected async iterateDir(

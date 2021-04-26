@@ -1,13 +1,17 @@
 import { App } from '/@/App'
 import { IActionConfig } from '../Actions/SimpleAction'
 import { ActionManager } from '../Actions/ActionManager'
+import { IPosition } from './ContextMenu'
 
 export async function showContextMenu(
-	event: MouseEvent,
+	event: MouseEvent | IPosition,
 	actions: IActionConfig[]
 ) {
-	event.preventDefault()
-	event.stopImmediatePropagation()
+	if (event instanceof MouseEvent) {
+		event.preventDefault()
+		event.stopImmediatePropagation()
+	}
+	if (actions.length === 0) return
 
 	const app = await App.getApp()
 	const actionManager = new ActionManager(app)
