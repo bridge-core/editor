@@ -150,7 +150,7 @@ export class DefinitionProvider {
 					}
 					return false
 				}
-			)?.then((value) => value[0]),
+			)?.then((value) => value?.[0]),
 			transformedWord,
 		}
 	}
