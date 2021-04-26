@@ -93,7 +93,7 @@ export class Compiler extends WorkerManager<
 		console.timeEnd('[TASK] Compiling project (total)')
 	}
 
-	async updateFile(filePath: string) {
+	async updateFiles(filePaths: string[]) {
 		await this.ready.fired
 		this.ready.resetSignal()
 		if (!this._service)
@@ -106,7 +106,7 @@ export class Compiler extends WorkerManager<
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
 		)
-		await this._service.updateFile(filePath)
+		await this._service.updateFiles(filePaths)
 		this.ready.dispatch()
 	}
 

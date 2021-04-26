@@ -39,6 +39,13 @@ export class FindAndReplace {
 		this.fileSystem = new FileSystem(projectFolderHandle)
 	}
 
+	setMatchedFiles(matchedFiles: string[]) {
+		const oldFiles = this.matchedFiles
+		this.matchedFiles = new Set(matchedFiles)
+
+		return [...oldFiles]
+	}
+
 	async createQuery(searchFor: string, { searchType }: IQueryOptions) {
 		this.matchedFiles.clear()
 

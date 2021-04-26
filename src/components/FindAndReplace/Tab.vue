@@ -75,7 +75,8 @@
 									style="position: relative; top: 3px"
 									icon
 									x-small
-									disabled
+									:disabled="replaceWith === ''"
+									@click="onReplaceSingleFile(item)"
 								>
 									<v-icon>mdi-file-replace-outline</v-icon>
 								</v-btn>
@@ -145,6 +146,9 @@ export default {
 				createRegExp(this.searchFor, this.queryOptions.searchType),
 				this.replaceWith
 			)
+		},
+		onReplaceSingleFile(filePath) {
+			this.tab.executeSingleQuery(filePath)
 		},
 	},
 

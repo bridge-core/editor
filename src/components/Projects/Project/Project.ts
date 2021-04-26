@@ -166,10 +166,23 @@ export class Project {
 			return
 		}
 
-		await this.packIndexer.updateFile(filePath)
-		await this.compilerManager.updateFile('default.json', filePath)
+		await Promise.all([
+			this.packIndexer.updateFile(filePath),
+			this.compilerManager.updateFiles('default.json', [filePath]),
+		])
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
 	}
+	async updateFiles(filePaths: string[]) {
+		await Promise.all([
+			this.packIndexer.updateFiles(filePaths),
+			this.compilerManager.updateFiles('default.json', filePaths),
+		])
+
+		for (const filePath of filePaths) {
+			await this.jsonDefaults.updateDynamicSchemas(filePath)
+		}
+	}
+
 	async getFileFromDiskOrTab(filePath: string) {
 		const fileHandle = await this.fileSystem.getFileHandle(filePath)
 		const tab = await this.getFileTab(fileHandle)

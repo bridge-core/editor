@@ -4,6 +4,7 @@ import { proxy } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
 import { FileType } from '/@/components/Data/FileType'
+import { Signal } from '../Common/Event/Signal'
 // import PackIndexerWorker from './Worker/Main?worker'
 
 export class PackIndexer extends WorkerManager<
@@ -12,6 +13,7 @@ export class PackIndexer extends WorkerManager<
 	boolean,
 	string[]
 > {
+	protected ready = new Signal<void>()
 	constructor(
 		protected app: App,
 		protected baseDirectory: FileSystemDirectoryHandle
@@ -59,14 +61,30 @@ export class PackIndexer extends WorkerManager<
 		// Start service
 		const changedFiles = await this._service!.start()
 		await this._service.disposeListeners()
+		this.ready.dispatch()
 		console.timeEnd('[TASK] Indexing Packs (Total)')
 		return changedFiles
 	}
 
 	async updateFile(filePath: string, fileContent?: string) {
-		await this.fired
+		await this.ready.fired
+		this.ready.dispatch()
+
 		await this.service!.updatePlugins(FileType.getPluginFileTypes())
 		await this.service!.updateFile(filePath, fileContent)
+
+		this.resetSignal()
+	}
+	async updateFiles(filePaths: string[]) {
+		await this.ready.fired
+		this.ready.dispatch()
+		await this.service!.updatePlugins(FileType.getPluginFileTypes())
+
+		for (const filePath of filePaths) {
+			await this.service!.updateFile(filePath)
+		}
+
+		this.resetSignal()
 	}
 
 	async readdir(path: string[], ..._: any[]) {

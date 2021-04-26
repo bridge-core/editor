@@ -41,15 +41,16 @@ export class CompilerManager extends Signal<void> {
 		this.dispatch()
 	}
 
-	updateFile(configName: string, filePath: string) {
+	updateFiles(configName: string, filePaths: string[]) {
 		let compiler = this.compilers.get(configName)
 
 		if (!compiler)
 			throw new Error(
 				`Cannot update file because compiler for config ".bridge/compiler/${configName}" doesn't exist`
 			)
-		return compiler.updateFile(filePath)
+		return compiler.updateFiles(filePaths)
 	}
+
 	compileWithFile(filePath: string, file: File) {
 		let compiler = this.compilers.get('default.json')
 

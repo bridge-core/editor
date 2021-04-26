@@ -73,8 +73,42 @@ export class FindAndReplaceTab extends Tab {
 			this.state.queryOptions
 		)
 
+		await this.parent.app.project.updateFiles(
+			this.state.queryResults.map(({ filePath }) => filePath)
+		)
+
 		this.state.queryResults = []
 		this.state.scrollTop = 0
+
+		this.isLoading = false
+		this.searchReady.dispatch()
+	}
+	async executeSingleQuery(filePath: string) {
+		await this.searchReady.fired
+		this.searchReady.resetSignal()
+		this.isLoading = true
+
+		const oldMatchedFiles = await this.findAndReplace.setMatchedFiles([
+			filePath,
+		])
+
+		await this.findAndReplace.executeQuery(
+			this.state.searchFor,
+			this.state.replaceWith,
+			this.state.queryOptions
+		)
+
+		await this.findAndReplace.setMatchedFiles(
+			oldMatchedFiles.filter(
+				(currentFilePath) => currentFilePath !== filePath
+			)
+		)
+
+		await this.parent.app.project.updateFile(filePath)
+
+		this.state.queryResults = this.state.queryResults.filter(
+			(queryResult) => queryResult.filePath !== filePath
+		)
 
 		this.isLoading = false
 		this.searchReady.dispatch()

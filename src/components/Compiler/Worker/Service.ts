@@ -103,9 +103,9 @@ export class CompilerService extends TaskService<void, string[]> {
 		await this.compiler.runWithFiles(updatedFiles)
 	}
 
-	async updateFile(filePath: string) {
+	async updateFiles(filePaths: string[]) {
 		await this.loadPlugins(this.options.plugins)
-		await this.compiler.runWithFiles([filePath])
+		await this.compiler.runWithFiles(filePaths)
 	}
 	async compileWithFile(filePath: string, file: Uint8Array) {
 		await this.loadPlugins(this.options.plugins)
