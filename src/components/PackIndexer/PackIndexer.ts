@@ -73,7 +73,7 @@ export class PackIndexer extends WorkerManager<
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 		await this.service.updateFile(filePath, fileContent)
 
-		this.resetSignal()
+		this.ready.resetSignal()
 	}
 	async updateFiles(filePaths: string[]) {
 		await this.ready.fired
@@ -84,7 +84,7 @@ export class PackIndexer extends WorkerManager<
 			await this.service.updateFile(filePath)
 		}
 
-		this.resetSignal()
+		this.ready.resetSignal()
 	}
 	async unlink(path: string) {
 		await this.ready.fired
@@ -93,7 +93,7 @@ export class PackIndexer extends WorkerManager<
 
 		await this.service.unlink(path)
 
-		this.resetSignal()
+		this.ready.resetSignal()
 	}
 
 	async readdir(path: string[], ..._: any[]) {

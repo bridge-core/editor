@@ -17,7 +17,6 @@ export function setupSidebar() {
 		onClick: async () => {
 			// PackIndexer needs to be done before we can open the PackExplorer
 			const app = await App.getApp()
-			await app.project?.packIndexer.fired
 			app.windows.packExplorer.open()
 		},
 	})
