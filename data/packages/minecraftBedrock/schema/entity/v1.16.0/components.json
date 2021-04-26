@@ -300,6 +300,7 @@
 						"on_break": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"block_list": {
 										"type": "array",
