@@ -10,12 +10,13 @@ import { OpenedFiles } from './OpenedFiles'
 import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
 import { FileTab } from './FileTab'
+import { TreeTab } from '../Editors/TreeEditor/Tab'
 
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
 	public tabs: Tab[] = []
 	protected _selectedTab: Tab | undefined = undefined
-	protected tabTypes = [ImageTab, TextTab]
+	protected tabTypes = [ImageTab, TreeTab, TextTab]
 	protected _isActive = true
 	public readonly openedFiles: OpenedFiles
 

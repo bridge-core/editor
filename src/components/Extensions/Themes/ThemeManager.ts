@@ -178,6 +178,11 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		if (!theme) throw new Error(`No theme currently loaded`)
 		return theme.getColor(colorName)
 	}
+	getHighlighterInfo(colorName: string) {
+		const theme = this.themeMap.get(this.currentTheme)
+		if (!theme) throw new Error(`No theme currently loaded`)
+		return theme.getHighlighterInfo(colorName)
+	}
 }
 
 export interface IThemeDefinition {

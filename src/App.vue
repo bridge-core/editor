@@ -90,17 +90,23 @@ body {
 /** Scrollbar */
 *::-webkit-scrollbar {
 	border-radius: 24px;
-	width: 6px;
-	height: 6px;
+	width: 8px;
+	height: 8px;
 }
 *::-webkit-scrollbar-track {
 	border-radius: 24px;
-	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.6);
 	background-color: var(--v-background-base);
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 24px;
+	background-color: rgba(200, 200, 200, 0.8);
+	border: thin solid rgba(0, 0, 0, 0.12);
+}
+
+.theme--dark *::-webkit-scrollbar-thumb {
+	border-radius: 24px;
 	background-color: rgba(0, 0, 0, 0.8);
+	border: thin solid rgba(255, 255, 255, 0.2);
 }
 
 summary::-webkit-details-marker {

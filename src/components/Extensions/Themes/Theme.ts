@@ -45,6 +45,9 @@ export class Theme {
 	getColor(colorName: TColorName) {
 		return this.colorMap.get(colorName) ?? 'red'
 	}
+	getHighlighterInfo(colorName: string) {
+		return this.highlighterDef?.[colorName]
+	}
 	getMonacoDefinition() {
 		return this.monacoDef ?? {}
 	}
