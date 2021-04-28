@@ -120,6 +120,100 @@
 							"type": "integer"
 						}
 					}
+				},
+				"minecraft:beards_and_shavers": {
+					"description": "Will build a 'beard' or 'shave' out space so as to provide a clear space for a feature to place.",
+					"additionalProperties": false,
+					"properties": {
+						"description": {
+							"additionalProperties": false,
+							"properties": {
+								"identifier": {
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
+								}
+							}
+						},
+						"places_feature": {
+							"description": "Named reference of feature to be placed.",
+							"$ref": "../../general/reference/feature.json"
+						},
+						"bounding_box_min": {
+							"description": "Dimensions of the Bounding Box.",
+							"type": "array",
+							"minItems": 3,
+							"maxItems": 3,
+							"items": {
+								"type": "number"
+							}
+						},
+						"bounding_box_max": {
+							"description": "Dimensions of the Bounding Box.",
+							"type": "array",
+							"minItems": 3,
+							"maxItems": 3,
+							"items": {
+								"type": "number"
+							}
+						},
+						"y_delta": {
+							"description": "Y Delta for BAS.",
+							"type": "number"
+						},
+						"surface_block_type": {
+							"description": "Reference to the block to be placed.",
+							"$ref": "../general.json#/definitions/block_reference"
+						},
+						"subsurface_block_type": {
+							"description": "Reference to the block to be placed.",
+							"$ref": "../general.json#/definitions/block_reference"
+						},
+						"beard_raggedness_min": {
+							"description": "Y Delta for BAS.",
+							"type": "number"
+						},
+						"beard_raggedness_max": {
+							"description": "Y Delta for BAS.",
+							"type": "number"
+						}
+					}
+				},
+				"minecraft:rect_layout": {
+					"description": "Scans the surface of a Chunk, calling place() on the surface of each block column.",
+					"additionalProperties": false,
+					"properties": {
+						"description": {
+							"additionalProperties": false,
+							"properties": {
+								"identifier": {
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
+								}
+							}
+						},
+						"ratio_of_empty_space": {
+							"description": "Ratio of a Chunk to be filled with empty space rather than features.",
+							"type": "number"
+						},
+						"feature_areas": {
+							"type": "array",
+							"items": {
+								"properties": {
+									"feature": {
+										"description": "Feature to be placed.",
+										"$ref": "../../general/reference/feature.json"
+									},
+									"area_dimensions": {
+										"description": "Dimensions (size) of the associated Feature.",
+										"type": "array",
+										"minItems": 2,
+										"maxItems": 2,
+										"items": {
+											"type": "integer"
+										}
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}

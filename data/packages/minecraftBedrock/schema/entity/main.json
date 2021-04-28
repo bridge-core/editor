@@ -58,12 +58,24 @@
 			"if": {
 				"properties": {
 					"format_version": {
-						"enum": ["1.16.220", "1.17.0"]
+						"const": "1.16.220"
 					}
 				}
 			},
 			"then": {
 				"$ref": "./v1.16.220/main.json"
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"format_version": {
+						"const": "1.17.0"
+					}
+				}
+			},
+			"then": {
+				"$ref": "./v1.17.0/main.json"
 			}
 		}
 	]

@@ -164,7 +164,8 @@
 						"surface_mob",
 						"trusts",
 						"weather",
-						"weather_at_position"
+						"weather_at_position",
+						"in_contact_with_water"
 					]
 				}
 			}
@@ -1213,6 +1214,22 @@
 							"thunderstorm",
 							"precipitation"
 						]
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"test": {
+						"const": "in_contact_with_water"
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"value": {
+						"type": "boolean"
 					}
 				}
 			}
