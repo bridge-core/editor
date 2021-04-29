@@ -50,25 +50,32 @@ export default {
 	}),
 	mounted() {
 		this.mode = 'view'
-		this.editedPath = this.path
+		this.editedPath = this.value
+		this.sanitizeEditedPath()
 	},
 	computed: {
 		path() {
 			return this.value.substring(0, this.value.length - 1)
 		},
 	},
+	methods: {
+		sanitizeEditedPath() {
+			this.editedPath = this.editedPath
+				.replaceAll('\\', '/')
+				.replace(/\s+/g, '_')
+			if (!this.editedPath.endsWith('/') && this.editedPath !== '')
+				this.editedPath = this.editedPath + '/'
+		},
+	},
 	watch: {
 		value() {
-			this.editedPath = this.path
+			this.editedPath = this.value
+			this.sanitizeEditedPath()
 		},
 		mode() {
 			if (this.mode !== 'view') return
 
-			this.editedPath = this.editedPath
-				.replaceAll('\\', '/')
-				.replace(/\s+/g, '_')
-			if (!this.editedPath.endsWith('/'))
-				this.editedPath = this.editedPath + '/'
+			this.sanitizeEditedPath()
 
 			this.$emit('input', this.editedPath)
 		},
