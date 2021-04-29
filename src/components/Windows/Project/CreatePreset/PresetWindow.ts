@@ -309,15 +309,20 @@ export class CreatePresetWindow extends BaseWindow {
 		// Close window
 		if (permissions.mayOverwriteFiles !== false) this.close()
 
+		const filePaths: string[] = []
 		for (const fileHandle of createdFiles) {
 			const filePath = await app.project.getProjectPath(fileHandle)
-			// Preset files only get created inside of the current project so the filePath cannot be undefined
-			await app.project.updateFile(filePath!)
-			app.project.openFile(
+			if (!filePath) continue
+
+			filePaths.push(filePath)
+
+			await app.project.openFile(
 				fileHandle,
 				fileHandle === createdFiles[createdFiles.length - 1]
 			)
 		}
+
+		await app.project.updateFiles(filePaths)
 
 		app.windows.loadingWindow.close()
 	}
