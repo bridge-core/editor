@@ -3,6 +3,7 @@
 		<component
 			:is="tab.treeEditor.tree.component"
 			:tree="tab.treeEditor.tree"
+			:height="height"
 		/>
 	</div>
 </template>

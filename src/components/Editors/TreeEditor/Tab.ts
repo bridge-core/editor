@@ -4,10 +4,17 @@ import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { TreeEditor } from './TreeEditor'
 import { parse } from 'json5'
+import { reactive } from '@vue/composition-api'
+
+export interface ITreeEditorState {
+	height: number
+	scrollTop: number
+}
 
 export class TreeTab extends FileTab {
 	component = TreeTabComponent
 	_treeEditor?: TreeEditor
+	state = reactive<ITreeEditorState>({ height: 0, scrollTop: 0 })
 
 	constructor(parent: TabSystem, fileHandle: FileSystemFileHandle) {
 		super(parent, fileHandle)
@@ -23,6 +30,7 @@ export class TreeTab extends FileTab {
 	}
 	async setup() {
 		this._treeEditor = new TreeEditor(
+			this.state,
 			parse(await this.fileHandle.getFile().then((file) => file.text()))
 		)
 		// @ts-ignore

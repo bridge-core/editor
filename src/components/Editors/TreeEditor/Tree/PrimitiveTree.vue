@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div :style="tree.styles">
 		<span v-if="tree.parent.type === 'object'"><slot />:</span>
 		<span
 			:style="{

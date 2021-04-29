@@ -1,5 +1,5 @@
 <template>
-	<details v-if="$slots.default" :open="tree.isOpen">
+	<details v-if="$slots.default" :style="tree.styles" :open="tree.isOpen">
 		<summary
 			:class="{ 'common-tree-key': true, open: tree.isOpen }"
 			@click.stop.prevent="tree.isOpen = !tree.isOpen"
@@ -9,10 +9,10 @@
 			{{ openingBracket }}
 		</summary>
 
-		<TreeChildren v-if="tree.isOpen" :tree="tree" />
+		<TreeChildren v-if="tree.isOpen" :tree="tree" :height="height" />
 		{{ closingBracket }}
 	</details>
-	<TreeChildren v-else :tree="tree" />
+	<TreeChildren v-else :tree="tree" :height="height" />
 </template>
 
 <script>
@@ -31,14 +31,18 @@ export default {
 	props: {
 		tree: Object,
 		treeKey: String,
+		height: Number,
 	},
 	computed: {
 		openingBracket() {
-			return this.tree.isOpen
-				? brackets[this.tree.type][0]
-				: `${brackets[this.tree.type][0]}...${
-						brackets[this.tree.type][1]
-				  }`
+			if (this.tree.isOpen) return brackets[this.tree.type][0]
+			else if (Object.keys(this.tree.children).length > 0)
+				return `${brackets[this.tree.type][0]}...${
+					brackets[this.tree.type][1]
+				}`
+			return `${brackets[this.tree.type][0]}${
+				brackets[this.tree.type][1]
+			}`
 		},
 		closingBracket() {
 			return this.tree.isOpen ? brackets[this.tree.type][1] : undefined
