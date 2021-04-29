@@ -1,30 +1,28 @@
-<h2>Attention:</h2>
-<p><strong>This release contains a larger set of breaking changes. We expect to make no additional breaking changes to bridge. v2's functionality after this alpha release. You may need to create a new project in order for bridge. to function correctly after this update.</strong></p>
 <h2>Features:</h2>
 <ul>
-<li>bridge.'s internal data now has a new, modularized format
+<li>Added the ability to create presets into specified sub-folders</li>
+<li>Added global find &amp; replace system</li>
+<li>Added file actions
 <ul>
-<li>This change enables theoretical support for other target platforms</li>
+<li>&quot;Delete&quot; file</li>
+<li>&quot;Reveal File Path&quot;</li>
 </ul>
 </li>
-<li>Updated data to latest beta</li>
-<li>bridge. now loads tga, jpg &amp; jpeg image references correctly</li>
-<li>bridge.'s compiler now restarts automatically whenever you add/remove a &quot;com.mojang&quot; folder</li>
-<li>Custom components can now access the compiler mode (&quot;dev&quot;/&quot;build&quot;) they are running in</li>
-<li>Added auto-completions &amp; validation for geometry files</li>
+<li>Updated data to latest Minecraft beta</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Enabled Go To Definition for entity families</li>
-<li>Enabled Go To Definitions for BP animations</li>
-<li>Reverted the change that made the data loader performance worse again</li>
-<li>Renamed &quot;bridge/&quot; folder to &quot;.bridge/&quot;</li>
-<li>Disabled image dragging</li>
-<li>Updated internal file name: &quot;files.json&quot; &gt; &quot;.compilerFiles&quot;</li>
-<li>Updated file name: &quot;.ignore-folders&quot; &gt; &quot;.ignoreFolders&quot;</li>
+<li><strong>Technical:</strong> Added the concept of &quot;FileTab&quot;s and &quot;ContentTab&quot;s</li>
+<li>Added spawn rule schema descriptions</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed &quot;minecraft:overworld_generation_rules&quot; schema</li>
-<li>Fixed refreshing of projects</li>
+<li>Fixed &quot;minecraft:geode_feature&quot; schema</li>
+<li>Fixed tab system not selecting correct tab upon closing the first tab</li>
+<li>Fixed error upon closing unsaved tab</li>
+<li>Fixed spawn rule identifier validation error</li>
+<li>Fixed &quot;Go To Definition&quot; error</li>
+<li>Fixed &quot;minecraft:block_sensor&quot; auto-completions</li>
+<li>Fixed entity schema versioning</li>
+<li>Fixed creation of presets</li>
 </ul>
