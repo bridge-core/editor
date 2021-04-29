@@ -45,4 +45,18 @@ export class ObjectTree extends Tree<object> {
 			])
 		)
 	}
+
+	updatePropertyName(oldName: string, newName: string) {
+		let oldTree = this.children[oldName]
+		let newTree = this.children[newName]
+		this.children[newName] = oldTree
+		delete this.children[oldName]
+
+		return {
+			undo: () => {
+				this.children[oldName] = oldTree
+				this.children[newName] = newTree
+			},
+		}
+	}
 }

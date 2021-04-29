@@ -9,10 +9,10 @@
 			{{ openingBracket }}
 		</summary>
 
-		<TreeChildren v-if="tree.isOpen" :tree="tree" :height="height" />
+		<TreeChildren v-if="tree.isOpen" :tree="tree" />
 		{{ closingBracket }}
 	</details>
-	<TreeChildren v-else :tree="tree" :height="height" />
+	<TreeChildren v-else :tree="tree" />
 </template>
 
 <script>
@@ -31,7 +31,6 @@ export default {
 	props: {
 		tree: Object,
 		treeKey: String,
-		height: Number,
 	},
 	computed: {
 		openingBracket() {

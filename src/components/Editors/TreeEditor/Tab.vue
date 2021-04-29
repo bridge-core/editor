@@ -3,7 +3,6 @@
 		<component
 			:is="tab.treeEditor.tree.component"
 			:tree="tab.treeEditor.tree"
-			:height="height"
 		/>
 	</div>
 </template>
@@ -17,5 +16,3 @@ export default {
 	},
 }
 </script>
-
-<style></style>

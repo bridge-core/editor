@@ -32,4 +32,17 @@ export class ArrayTree extends Tree<Array<unknown>> {
 	toJSON() {
 		return this._children.map((child) => child.toJSON())
 	}
+	updatePropertyName(oldIndex: number, newIndex: number) {
+		let oldTree = this.children[oldIndex]
+		let newTree = this.children[newIndex]
+		this.children[newIndex] = oldTree
+		delete this.children[oldIndex]
+
+		return {
+			undo: () => {
+				this.children[oldIndex] = oldTree
+				this.children[newIndex] = newTree
+			},
+		}
+	}
 }

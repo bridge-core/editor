@@ -20,6 +20,10 @@ export class PrimitiveTree extends Tree<TPrimitiveTree> {
 		return treeElementHeight
 	}
 
+	setValue(value: string) {
+		this._value = value
+	}
+
 	toJSON() {
 		return this.value
 	}

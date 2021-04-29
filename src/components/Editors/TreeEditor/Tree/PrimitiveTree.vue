@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { App } from '/@/App'
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 
 export default {

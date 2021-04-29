@@ -5,7 +5,6 @@
 			:key="child.uuid"
 			:is="child.component"
 			:tree="child"
-			:height="height"
 		>
 			<Highlight :def="tree.type === 'object' ? stringDef : numberDef">{{
 				wrapKey(key)
@@ -26,10 +25,6 @@ export default {
 	},
 	props: {
 		tree: Object,
-		height: Number,
-	},
-	mounted() {
-		console.log(this.height)
 	},
 	methods: {
 		wrapKey(key) {
