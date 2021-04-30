@@ -16,7 +16,7 @@ export class DirectoryEntry {
 	public isLoading = false
 	protected type = this._isFile
 		? 'file'
-		: settingsState.general.enablePackSpider
+		: settingsState?.general?.enablePackSpider
 		? 'virtualFolder'
 		: 'folder'
 
