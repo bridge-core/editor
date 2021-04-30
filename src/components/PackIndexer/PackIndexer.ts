@@ -43,7 +43,9 @@ export class PackIndexer extends WorkerManager<
 		this._service = await new this.workerClass!({
 			projectDirectory: this.baseDirectory,
 			baseDirectory: this.app.fileSystem.baseDirectory,
-			disablePackSpider: !settingsState?.general?.enablePackSpider,
+			disablePackSpider: !(
+				settingsState?.general?.enablePackSpider ?? true
+			),
 			pluginFileTypes: FileType.getPluginFileTypes(),
 			noFullLightningCacheRefresh:
 				!forceRefreshCache &&

@@ -72,7 +72,8 @@ export class PackExplorerWindow extends BaseWindow {
 
 		const app = await App.getApp()
 		const dirents = (await app.project?.packIndexer.readdir([])) ?? []
-		const packSpiderEnabled = settingsState?.general?.enablePackSpider
+		const packSpiderEnabled =
+			settingsState?.general?.enablePackSpider ?? true
 
 		for (const { kind, displayName, name, path } of <any[]>dirents) {
 			const fileType = packSpiderEnabled
