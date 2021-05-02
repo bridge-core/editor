@@ -70,32 +70,32 @@ export class PackIndexer extends WorkerManager<
 
 	async updateFile(filePath: string, fileContent?: string) {
 		await this.ready.fired
-		this.ready.dispatch()
+		this.ready.resetSignal()
 
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 		await this.service.updateFile(filePath, fileContent)
 
-		this.ready.resetSignal()
+		this.ready.dispatch()
 	}
 	async updateFiles(filePaths: string[]) {
 		await this.ready.fired
-		this.ready.dispatch()
+		this.ready.resetSignal()
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 
 		for (const filePath of filePaths) {
 			await this.service.updateFile(filePath)
 		}
 
-		this.ready.resetSignal()
+		this.ready.dispatch()
 	}
 	async unlink(path: string) {
 		await this.ready.fired
-		this.ready.dispatch()
+		this.ready.resetSignal()
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 
 		await this.service.unlink(path)
 
-		this.ready.resetSignal()
+		this.ready.dispatch()
 	}
 
 	async readdir(path: string[], ..._: any[]) {
