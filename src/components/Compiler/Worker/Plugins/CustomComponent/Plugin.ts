@@ -37,7 +37,7 @@ export function createCustomComponentPlugin({
 				createAnimFiles = {}
 			},
 			transformPath(filePath) {
-				if (isComponent(filePath)) return null
+				if (isComponent(filePath) && !options.isFileRequest) return null
 			},
 			async read(filePath, fileHandle) {
 				// Even if the fileHandle being undefined has nothing to do with custom components,
@@ -153,7 +153,10 @@ export function createCustomComponentPlugin({
 				}
 			},
 			finalizeBuild(filePath, fileContent) {
-				if (
+				// Necessary to make auto-completions work for TypeScript components
+				if (isComponent(filePath)) {
+					return (<Component>fileContent).toString()
+				} else if (
 					filePath.startsWith(`BP/${folder}/`) ||
 					createAnimFiles[filePath]
 				)

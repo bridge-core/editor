@@ -5,6 +5,7 @@ import { TCompilerPlugin } from './TCompilerPlugin'
 export type TCompilerPluginFactory<
 	T = {
 		mode: 'dev' | 'build'
+		isFileRequest: boolean
 		restartDevServer: boolean
 		[key: string]: any
 	}

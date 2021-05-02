@@ -72,6 +72,9 @@ export class Component {
 	getSchema() {
 		return this.schema
 	}
+	toString() {
+		return this.componentSrc
+	}
 
 	create(
 		fileContent: any,

@@ -15,19 +15,26 @@ export async function generateComponentSchemas(fileType: string) {
 
 	const schemas: any = {}
 
-	await iterateDir(baseDir, async (fileHandle) => {
-		const file = await fileHandle.getFile()
-		const componentSrc = await file.text()
-		const component = new Component(fileType, componentSrc, 'dev')
+	await iterateDir(
+		baseDir,
+		async (fileHandle, filePath) => {
+			const [
+				_,
+				fileContent,
+			] = await app.project.compilerManager.compileWithFile(
+				filePath,
+				await fileHandle.getFile()
+			)
+			const file = new File([fileContent], fileHandle.name)
+			const component = new Component(fileType, await file.text(), 'dev')
 
-		try {
 			await component.load('client')
-		} catch {
-			return
-		}
 
-		if (component.name) schemas[component.name] = component.getSchema()
-	})
+			if (component.name) schemas[component.name] = component.getSchema()
+		},
+		undefined,
+		`BP/components/${fileType}`
+	)
 
 	return schemas
 }

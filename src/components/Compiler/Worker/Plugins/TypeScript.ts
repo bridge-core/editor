@@ -24,6 +24,12 @@ export const TypeScriptPlugin: TCompilerPluginFactory = () => ({
 		})
 	},
 	finalizeBuild(filePath, fileContent) {
-		if (filePath.endsWith('.ts')) return fileContent
+		/**
+		 * We can only finalize the build if the fileContent type didn't change.
+		 * This is necessary because e.g. custom component files need their own
+		 * logic to be transformed from the Component instance back to a transpiled string
+		 */
+		if (filePath.endsWith('.ts') && typeof fileContent === 'string')
+			return fileContent
 	},
 })

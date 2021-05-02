@@ -5,7 +5,6 @@ import { TCompilerPlugin } from './TCompilerPlugin'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { FileType, IFileType } from '/@/components/Data/FileType'
 import { Compiler } from './Compiler'
-import { Signal } from '../../Common/Event/Signal'
 
 export interface ICompilerOptions {
 	projectDirectory: FileSystemDirectoryHandle
@@ -14,6 +13,7 @@ export interface ICompilerOptions {
 	config: string
 	mode: 'dev' | 'build'
 	isDevServerRestart: boolean
+	isFileRequest: boolean
 	plugins: Record<string, string>
 	pluginFileTypes: IFileType[]
 }
@@ -57,6 +57,11 @@ export class CompilerService extends TaskService<void, string[]> {
 		return this.plugins
 	}
 	get pluginOpts() {
+		const extraOpts = {
+			mode: this.options.mode,
+			restartDevServer: this.options.isDevServerRestart,
+			isFileRequest: this.options.isFileRequest,
+		}
 		return Object.fromEntries(
 			this.buildConfig.plugins.map((def) =>
 				Array.isArray(def)
@@ -64,19 +69,10 @@ export class CompilerService extends TaskService<void, string[]> {
 							def[0],
 							{
 								...def[1],
-								mode: this.options.mode,
-								restartDevServer: this.options
-									.isDevServerRestart,
+								...extraOpts,
 							},
 					  ]
-					: [
-							def,
-							{
-								mode: this.options.mode,
-								restartDevServer: this.options
-									.isDevServerRestart,
-							},
-					  ]
+					: [def, extraOpts]
 			)
 		)
 	}
@@ -110,8 +106,8 @@ export class CompilerService extends TaskService<void, string[]> {
 		await this.compiler.unlink(path)
 		await this.compiler.processFileMap()
 	}
-	async compileWithFile(filePath: string, file: Uint8Array) {
-		return await this.compiler.compileWithFile(
+	compileWithFile(filePath: string, file: Uint8Array) {
+		return this.compiler.compileWithFile(
 			filePath,
 			new File([file], filePath.split('/').pop()!)
 		)
@@ -141,9 +137,14 @@ export class CompilerService extends TaskService<void, string[]> {
 		await this.loadPlugins(plugins)
 		FileType.setPluginFileTypes(pluginFileTypes)
 	}
-	updateMode(mode: 'dev' | 'build', isDevServerRestart: boolean) {
+	updateMode(
+		mode: 'dev' | 'build',
+		isFileRequest: boolean,
+		isDevServerRestart: boolean
+	) {
 		this.options.mode = mode
 		this.options.isDevServerRestart = isDevServerRestart
+		this.options.isFileRequest = isFileRequest
 	}
 }
 

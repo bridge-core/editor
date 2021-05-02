@@ -59,12 +59,13 @@ export class Compiler extends WorkerManager<
 				comMojangDirectory: app.comMojang.fileSystem.baseDirectory,
 				config: this.config,
 				mode,
+				isFileRequest: false,
 				isDevServerRestart: restartDevServer,
 				plugins: this.parent.getCompilerPlugins(),
 				pluginFileTypes: FileType.getPluginFileTypes(),
 			})
 		} else {
-			await this.service.updateMode(mode, restartDevServer)
+			await this.service.updateMode(mode, false, restartDevServer)
 			await this.service.updatePlugins(
 				this.parent.getCompilerPlugins(),
 				FileType.getPluginFileTypes()
@@ -97,7 +98,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.service.updateMode('dev', false)
+		await this.service.updateMode('dev', false, false)
 		await this.service.updatePlugins(
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
@@ -110,7 +111,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.service.updateMode('dev', false)
+		await this.service.updateMode('dev', true, false)
 		await this.service.updatePlugins(
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
@@ -130,7 +131,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		this.service.updateMode('dev', false)
+		this.service.updateMode('dev', false, false)
 		await this.service.updatePlugins(
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
