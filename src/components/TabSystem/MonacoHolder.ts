@@ -1,4 +1,4 @@
-import { editor, languages, Range, Uri } from 'monaco-editor'
+import { editor, KeyCode, KeyMod, languages, Range, Uri } from 'monaco-editor'
 import { Signal } from '../Common/Event/Signal'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'
@@ -13,6 +13,7 @@ languages.typescript.javascriptDefaults.setCompilerOptions({
 })
 
 languages.registerDefinitionProvider('json', new DefinitionProvider())
+
 export class MonacoHolder extends Signal<void> {
 	protected _monacoEditor?: editor.IStandaloneCodeEditor
 	protected windowResize?: IDisposable
@@ -63,6 +64,20 @@ export class MonacoHolder extends Signal<void> {
 			}
 			return result // always return the base result
 		}
+
+		// Workaround to make the toggleLineComment action work
+		const commentLineAction = this._monacoEditor.getAction(
+			'editor.action.commentLine'
+		)
+		this._monacoEditor?.addAction({
+			...commentLineAction,
+
+			keybindings: [KeyMod.CtrlCmd | KeyCode.US_BACKSLASH],
+			run(...args: any[]) {
+				// @ts-ignore
+				this._run(...args)
+			},
+		})
 
 		this._monacoEditor?.layout()
 		this.windowResize = this._app.windowResize.on(() =>
