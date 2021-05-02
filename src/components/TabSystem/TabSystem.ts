@@ -125,7 +125,7 @@ export class TabSystem extends MonacoHolder {
 		if (tab?.isSelected) return
 
 		this._selectedTab?.onDeactivate()
-		if (tab && tab !== this._selectedTab) {
+		if (tab && tab !== this._selectedTab && tab instanceof FileTab) {
 			App.eventSystem.dispatch(
 				'currentTabSwitched',
 				tab?.getProjectPath()
