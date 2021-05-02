@@ -26,11 +26,18 @@ export class Component {
 
 	async load(type?: 'server' | 'client') {
 		const module = { exports: {} }
-		run(
-			this.componentSrc.replace('export default ', 'module.exports = '),
-			[module, (x: any) => x],
-			['module', 'defineComponent']
-		)
+		try {
+			run(
+				this.componentSrc.replace(
+					'export default ',
+					'module.exports = '
+				),
+				[module, (x: any) => x],
+				['module', 'defineComponent']
+			)
+		} catch (err) {
+			console.error(err)
+		}
 
 		if (typeof module.exports !== 'function') return
 
@@ -39,7 +46,15 @@ export class Component {
 		let template: Function = () => {}
 		if (!type || type === 'server') {
 			schema = () => {}
-			template = (func: TTemplate) => (this.template = func)
+			template = (func: TTemplate) => {
+				this.template = (componentArgs: any, opts: any) => {
+					try {
+						func(componentArgs, opts)
+					} catch (err) {
+						console.error(err)
+					}
+				}
+			}
 		}
 
 		await module.exports({
