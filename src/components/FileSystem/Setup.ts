@@ -42,7 +42,6 @@ export class FileSystemSetup {
 				}
 			)
 			window.open()
-			console.log(window)
 			await window.fired
 		}
 

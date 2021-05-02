@@ -115,11 +115,6 @@ export class JsonDefaults {
 		for (const filePath of filePaths) {
 			const fileType = FileType.getId(filePath)
 
-			console.log(
-				filePath,
-				await this.requestSchemaFor(fileType, filePath)
-			)
-
 			this.addSchemas(await this.requestSchemaFor(fileType, filePath))
 			this.addSchemas(await this.requestSchemaFor(fileType))
 			await this.runSchemaScripts(app, filePath)

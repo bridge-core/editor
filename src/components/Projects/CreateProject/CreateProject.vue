@@ -229,7 +229,6 @@ export default {
 			else packs.push(packPath)
 		},
 		setModel(key, val) {
-			console.log(key, val)
 			this.createOptions[key] = val
 		},
 	},
