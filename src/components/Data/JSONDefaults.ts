@@ -60,15 +60,14 @@ export class JsonDefaults {
 			return
 		}
 
-		this.addSchemas(await this.getDynamicSchemas(), false)
+		this.addSchemas(await this.getDynamicSchemas())
 
 		await this.runSchemaScripts(app)
 		const tab = this.project.tabSystem?.selectedTab
 		if (tab && tab instanceof FileTab) {
 			const fileType = FileType.getId(tab.getProjectPath())
 			this.addSchemas(
-				await this.requestSchemaFor(fileType, tab.getProjectPath()),
-				false
+				await this.requestSchemaFor(fileType, tab.getProjectPath())
 			)
 			await this.runSchemaScripts(app, tab.getProjectPath())
 		}
@@ -77,6 +76,9 @@ export class JsonDefaults {
 	}
 
 	setJSONDefaults(validate = true) {
+		// console.log(
+		// 	Object.values(Object.assign({}, globalSchemas, this.localSchemas))
+		// )
 		monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
 			enableSchemaRequest: false,
 			allowComments: true,
@@ -101,12 +103,32 @@ export class JsonDefaults {
 	async updateDynamicSchemas(filePath: string) {
 		const app = await App.getApp()
 		const fileType = FileType.getId(filePath)
-		this.addSchemas(await this.requestSchemaFor(fileType, filePath), false)
+
+		this.addSchemas(await this.requestSchemaFor(fileType, filePath))
+		this.addSchemas(await this.requestSchemaFor(fileType))
 		await this.runSchemaScripts(app, filePath)
 		this.setJSONDefaults()
 	}
+	async updateMultipleDynamicSchemas(filePaths: string[]) {
+		const app = await App.getApp()
 
-	addSchemas(addSchemas: IMonacoSchemaArrayEntry[], updateMonaco = true) {
+		for (const filePath of filePaths) {
+			const fileType = FileType.getId(filePath)
+
+			console.log(
+				filePath,
+				await this.requestSchemaFor(fileType, filePath)
+			)
+
+			this.addSchemas(await this.requestSchemaFor(fileType, filePath))
+			this.addSchemas(await this.requestSchemaFor(fileType))
+			await this.runSchemaScripts(app, filePath)
+		}
+
+		this.setJSONDefaults()
+	}
+
+	addSchemas(addSchemas: IMonacoSchemaArrayEntry[]) {
 		addSchemas.forEach((addSchema) => {
 			if (this.localSchemas[addSchema.uri]) {
 				if (addSchema.schema)
@@ -114,10 +136,10 @@ export class JsonDefaults {
 				if (addSchema.fileMatch)
 					this.localSchemas[addSchema.uri].fileMatch =
 						addSchema.fileMatch
-			} else this.localSchemas[addSchema.uri] = addSchema
+			} else {
+				this.localSchemas[addSchema.uri] = addSchema
+			}
 		})
-
-		if (updateMonaco) this.setJSONDefaults()
 	}
 
 	async requestSchemaFor(fileType: string, fromFilePath?: string) {
@@ -180,6 +202,7 @@ export class JsonDefaults {
 		})
 		loadedGlobalSchemas = true
 	}
+
 	async runSchemaScripts(app: App, filePath?: string) {
 		const baseDirectory = await app.fileSystem.getDirectoryHandle(
 			'data/packages/minecraftBedrock/schemaScript'

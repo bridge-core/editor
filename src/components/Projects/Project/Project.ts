@@ -178,9 +178,7 @@ export class Project {
 			this.compilerManager.updateFiles('default.json', filePaths),
 		])
 
-		// for (const filePath of filePaths) {
-		// 	await this.jsonDefaults.updateDynamicSchemas(filePath)
-		// }
+		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 
 	async getFileFromDiskOrTab(filePath: string) {
