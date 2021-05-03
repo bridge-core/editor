@@ -298,6 +298,11 @@ export default {
 			overwriteUnsavedChanges:
 				'This preset overwrites one or more files with unsaved changes. Do you want to continue?',
 			overwriteUnsavedChangesConfirm: 'Continue',
+			validationRule: {
+				alphanumeric:
+					'You may only use alphanumeric characters and/or underscores',
+				lowercase: 'You may only use lowercase letters',
+			},
 		},
 		deleteProject: {
 			confirm: 'Delete',

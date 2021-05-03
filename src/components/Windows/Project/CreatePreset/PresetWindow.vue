@@ -47,6 +47,13 @@
 					:key="i"
 					v-model="content.models[id]"
 					:label="name"
+					:rules="
+						opts.validate
+							? opts.validate.map(
+									(rule) => $data.validationRules[rule]
+							  )
+							: []
+					"
 					autocomplete="off"
 					outlined
 					dense

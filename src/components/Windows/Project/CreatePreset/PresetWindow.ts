@@ -57,6 +57,24 @@ export interface IPermissions {
 export class CreatePresetWindow extends BaseWindow {
 	protected loadPresetPaths = new Map<string, string>()
 	protected sidebar = new Sidebar([])
+	protected _validationRules = {
+		alphanumeric: (value: string) =>
+			value.match(/^[a-zA-Z0-9_]*$/) !== null,
+		lowercase: (value: string) => value.toLowerCase() === value,
+	}
+
+	get validationRules() {
+		return Object.fromEntries(
+			Object.entries(this._validationRules).map(([key, func]) => [
+				key,
+				(value: string) =>
+					func(value) ||
+					App.instance.locales.translate(
+						`windows.createPreset.validationRule.${key}`
+					),
+			])
+		)
+	}
 
 	constructor() {
 		super(PresetWindowComponent)
@@ -143,7 +161,10 @@ export class CreatePresetWindow extends BaseWindow {
 				...Object.fromEntries(
 					manifest.fields.map(([_, id, opts = {}]: any) => [
 						id,
-						opts.default ?? null,
+						opts.default ??
+							(!opts.type || opts.type === 'textInput'
+								? ''
+								: null),
 					])
 				),
 			},

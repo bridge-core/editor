@@ -16,7 +16,11 @@
 			"IMAGE",
 			{ "type": "fileInput", "accept": "image/png", "optional": true }
 		],
-		["Identifier", "IDENTIFIER"],
+		[
+			"Identifier",
+			"IDENTIFIER",
+			{ "validate": ["alphanumeric", "lowercase"] }
+		],
 		["Display Name", "IDENTIFIER_NAME"]
 	],
 
