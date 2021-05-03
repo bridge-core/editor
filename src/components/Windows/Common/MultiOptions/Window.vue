@@ -5,7 +5,7 @@
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
-		:isPersistent="$data.isClosable"
+		:isPersistent="!$data.isClosable"
 		:hasCloseButton="false"
 		:width="440"
 		:height="400"
