@@ -303,6 +303,7 @@ export default {
 					'You may only use alphanumeric characters and/or underscores',
 				lowercase: 'You may only use lowercase letters',
 				required: 'This field is required',
+				noEmptyFolderNames: 'Folder name may not be empty',
 			},
 		},
 		deleteProject: {
