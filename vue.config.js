@@ -39,6 +39,7 @@ module.exports = {
 						'application/json': ['.json'],
 						'application/javascript': ['.js', '.ts'],
 						'text/plain': ['.mcfunction', '.molang', '.lang'],
+						'image/*': ['.tga', '.png', '.jpg', '.jpeg'],
 					},
 				},
 			],

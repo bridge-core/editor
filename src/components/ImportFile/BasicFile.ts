@@ -4,10 +4,21 @@ import { App } from '/@/App'
 import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'
 import { FilePathWindow } from '../Windows/Common/FilePath/Window'
 
-export class TextFileImporter extends FileImporter {
+export class BasicFileImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
 		super(
-			['.mcfunction', '.json', '.molang', '.js', '.ts', '.lang'],
+			[
+				'.mcfunction',
+				'.json',
+				'.molang',
+				'.js',
+				'.ts',
+				'.lang',
+				'.tga',
+				'.png',
+				'.jpg',
+				'.jpeg',
+			],
 			fileDropper
 		)
 	}
