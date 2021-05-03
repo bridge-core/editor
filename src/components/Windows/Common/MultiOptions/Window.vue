@@ -1,22 +1,28 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		windowTitle="windows.filePath.title"
+		:windowTitle="$data.name"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
-		:isPersistent="$data.isPersistent"
+		:isPersistent="$data.isClosable"
 		:hasCloseButton="false"
 		:width="440"
-		:height="140"
-		@closeWindow="onClose(true)"
+		:height="400"
+		@closeWindow="onClose"
 	>
 		<template #default>
-			<PresetPath v-model="currentFilePath" />
+			<v-checkbox
+				v-for="(option, i) in $data.options"
+				:key="i"
+				v-model="option.isSelected"
+				:label="option.name"
+				hide-details
+			/>
 		</template>
 		<template #actions>
 			<v-spacer />
-			<v-btn color="primary" @click="onClose(false)">
+			<v-btn color="primary" @click="onClose">
 				<v-icon>mdi-check</v-icon>
 				<span> {{ t('general.confirm') }} </span>
 			</v-btn>
@@ -41,9 +47,11 @@ export default {
 		return this.currentWindow
 	},
 	methods: {
-		onClose(skippedDialog) {
+		onClose() {
 			this.currentWindow.close(
-				skippedDialog ? null : this.currentFilePath
+				this.$data.options
+					.filter(({ isSelected }) => isSelected)
+					.map(({ name }) => name)
 			)
 		},
 	},

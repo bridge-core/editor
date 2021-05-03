@@ -3,10 +3,11 @@ import json5 from 'json5'
 import { App } from '/@/App'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import { ThreePreviewTab } from '../ThreePreview/ThreePreviewTab'
-import { SimpleAction } from '../../Actions/SimpleAction'
+import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { transformOldModels } from './transformOldModels'
 import { RenderDataContainer } from './Data/RenderContainer'
-import { DropdownWindow } from '../../Windows/Common/Dropdown/DropdownWindow'
+import { DropdownWindow } from '/@/components/Windows/Common/Dropdown/DropdownWindow'
+import { MultiOptionsWindow } from '/@/components/Windows/Common/MultiOptions/Window'
 
 export class GeometryPreviewTab extends ThreePreviewTab {
 	protected _renderContainer?: RenderDataContainer
@@ -67,17 +68,23 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 				name: 'fileType.clientAnimation',
 				onTrigger: async () => {
 					const animations = this.renderContainer.animations
-					const chooseAnimation = new DropdownWindow({
+					const chooseAnimation = new MultiOptionsWindow({
 						name: 'fileType.clientAnimation',
-						isClosable: false,
-						options: animations.map(([anim]) => anim),
-						default: this.renderContainer.currentAnimation,
+						options: animations.map(([animId]) => ({
+							name: animId,
+							isSelected: this.renderContainer.runningAnimations.has(
+								animId
+							),
+						})),
 					})
-					const choice = await chooseAnimation.fired
+					const choices = await chooseAnimation.fired
 
 					this.model?.animator.pauseAll()
-					this.model?.animator.play(choice)
-					this.renderContainer.currentAnimation = choice
+					this.renderContainer.runningAnimations.clear()
+					choices.forEach((choice) => {
+						this.model?.animator.play(choice)
+						this.renderContainer.runningAnimations.add(choice)
+					})
 				},
 			})
 		)
@@ -192,7 +199,9 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 		for (const [animId, anim] of this.renderContainer.animations) {
 			this.model.animator.addAnimation(animId, anim)
 		}
-		this.model.animator.play(this.renderContainer.currentAnimation)
+		this.renderContainer.runningAnimations.forEach((animId) =>
+			this.model?.animator.play(animId)
+		)
 
 		setTimeout(() => {
 			this.requestRendering()

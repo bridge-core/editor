@@ -18,7 +18,7 @@ export class RenderDataContainer extends EventDispatcher<void> {
 	protected _animations: AnimationData[] = []
 	protected readyPromises: Promise<void>[] = []
 	protected _currentTexturePath = this.texturePaths[0]
-	protected _currentAnimation?: string
+	protected _runningAnimations = new Set<string>()
 
 	get ready() {
 		return Promise.all(this.readyPromises)
@@ -83,11 +83,8 @@ export class RenderDataContainer extends EventDispatcher<void> {
 			.flat()
 			.filter(([anim]) => this.renderData.connectedAnimations.has(anim))
 	}
-	get currentAnimation() {
-		return this._currentAnimation ?? this.animations[0][0]
-	}
-	set currentAnimation(animId: string) {
-		this._currentAnimation = animId
+	get runningAnimations() {
+		return this._runningAnimations
 	}
 	get modelData() {
 		return this._geometries[0].geometry
