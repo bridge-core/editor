@@ -8,7 +8,13 @@
 	"additionalModels": {
 		"PRESET_PATH": "RP/textures/blocks/"
 	},
-	"fields": [["File Name", "FILE_NAME"]],
+	"fields": [
+		[
+			"File Name",
+			"FILE_NAME",
+			{ "validate": ["required", "alphanumeric", "lowercase"] }
+		]
+	],
 
 	"createFiles": [
 		[

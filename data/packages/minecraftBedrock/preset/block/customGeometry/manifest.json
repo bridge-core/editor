@@ -13,8 +13,12 @@
 		"PRESET_PATH": ""
 	},
 	"fields": [
-		["Identifier", "IDENTIFIER"],
-		["Display Name", "IDENTIFIER_NAME"],
+		[
+			"Identifier",
+			"IDENTIFIER",
+			{ "validate": ["required", "alphanumeric", "lowercase"] }
+		],
+		["Display Name", "IDENTIFIER_NAME", { "validate": ["required"] }],
 		[
 			"Block Model",
 			"MODEL",

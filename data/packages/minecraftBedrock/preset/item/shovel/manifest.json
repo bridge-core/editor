@@ -16,8 +16,12 @@
 			"IMAGE",
 			{ "type": "fileInput", "accept": "image/png", "optional": true }
 		],
-		["Identifier", "IDENTIFIER"],
-		["Display Name", "IDENTIFIER_NAME"]
+		[
+			"Identifier",
+			"IDENTIFIER",
+			{ "validate": ["required", "alphanumeric", "lowercase"] }
+		],
+		["Display Name", "IDENTIFIER_NAME", { "validate": ["required"] }]
 	],
 
 	"createFiles": [
