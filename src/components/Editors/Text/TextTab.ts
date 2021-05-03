@@ -56,7 +56,7 @@ export class TextTab extends FileTab {
 				this.addAction(
 					new SimpleAction({
 						icon: 'mdi-play',
-						name: 'View Model',
+						name: 'preview.viewModel',
 						onTrigger: async () => {
 							if (!this.editorModel) return
 
@@ -74,7 +74,7 @@ export class TextTab extends FileTab {
 				this.addAction(
 					new SimpleAction({
 						icon: 'mdi-play',
-						name: 'View Animation',
+						name: 'preview.viewAnimation',
 						onTrigger: async () => {
 							if (!this.editorModel) return
 
@@ -92,7 +92,7 @@ export class TextTab extends FileTab {
 				this.addAction(
 					new SimpleAction({
 						icon: 'mdi-play',
-						name: 'View Particle',
+						name: 'preview.viewParticle',
 						onTrigger: async () => {
 							if (!this.editorModel) return
 

@@ -5,12 +5,12 @@
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { App } from '/@/App'
 import { GeometryData } from './GeometryData'
-import { Signal } from '/@/components/Common/Event/Signal'
 import { AnimationData } from './AnimationData'
 
 export interface IRenderData {
 	identifier: string
 	texturePaths: string[]
+	connectedAnimations: Set<string>
 }
 
 export class RenderDataContainer extends EventDispatcher<void> {
@@ -18,6 +18,7 @@ export class RenderDataContainer extends EventDispatcher<void> {
 	protected _animations: AnimationData[] = []
 	protected readyPromises: Promise<void>[] = []
 	protected _currentTexturePath = this.texturePaths[0]
+	protected _currentAnimation?: string
 
 	get ready() {
 		return Promise.all(this.readyPromises)
@@ -77,7 +78,16 @@ export class RenderDataContainer extends EventDispatcher<void> {
 		return this._geometries.map((geo) => geo.identifiers).flat()
 	}
 	get animations() {
-		return this._animations.map((anim) => anim.includedAnimations).flat()
+		return this._animations
+			.map((anim) => anim.includedAnimations)
+			.flat()
+			.filter(([anim]) => this.renderData.connectedAnimations.has(anim))
+	}
+	get currentAnimation() {
+		return this._currentAnimation ?? this.animations[0][0]
+	}
+	set currentAnimation(animId: string) {
+		this._currentAnimation = animId
 	}
 	get modelData() {
 		return this._geometries[0].geometry

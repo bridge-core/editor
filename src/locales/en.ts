@@ -11,6 +11,7 @@ export default {
 		confirm: 'Confirm',
 		cancel: 'Cancel',
 		close: 'Close',
+		reload: 'Reload',
 	},
 	packType: {
 		behaviorPack: {
@@ -66,6 +67,7 @@ export default {
 		fog: 'Fog',
 		particle: 'Particle',
 		renderController: 'Render Controller',
+		texture: 'Texture',
 		textureSet: 'Texture Set',
 		itemTexture: 'Item Texture',
 		clientBlock: 'Client Block',
@@ -516,5 +518,10 @@ export default {
 		noResults: 'No results found.',
 		noSearch:
 			'Once you start typing, results for your search query will appear here.',
+	},
+	preview: {
+		viewAnimation: 'View Animation',
+		viewModel: 'View Model',
+		viewParticle: 'View Particle',
 	},
 }

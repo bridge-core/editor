@@ -7,17 +7,19 @@
 		<v-icon :color="action.color || 'primary'" class="mr-1" small>
 			{{ action.icon }}
 		</v-icon>
-		<span class="action-name">{{ action.name }}</span>
+		<span class="action-name">{{ t(action.name) }}</span>
 	</div>
 </template>
 
 <script>
+import { TranslationMixin } from '../../Mixins/TranslationMixin'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 
 export default {
 	props: {
 		action: SimpleAction,
 	},
+	mixins: [TranslationMixin],
 }
 </script>
 

@@ -25,16 +25,16 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 		this.addAction(
 			new SimpleAction({
 				icon: 'mdi-refresh',
-				name: 'Reload',
+				name: 'general.reload',
 				onTrigger: () => this.reload(),
 			}),
 			new SimpleAction({
 				icon: 'mdi-image-outline',
-				name: 'Texture',
+				name: 'fileType.texture',
 				onTrigger: async () => {
 					const textures = this.renderContainer.texturePaths
 					const chooseTexture = new DropdownWindow({
-						name: 'Texture',
+						name: 'fileType.texture',
 						isClosable: false,
 						options: textures,
 						default: this.renderContainer.currentTexturePath,
@@ -47,11 +47,11 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 			}),
 			new SimpleAction({
 				icon: 'mdi-cube-outline',
-				name: 'Model',
+				name: 'fileType.geometry',
 				onTrigger: async () => {
 					const geomtries = this.renderContainer.geometryIdentifiers
 					const chooseGeometry = new DropdownWindow({
-						name: 'Geometry',
+						name: 'fileType.geometry',
 						isClosable: false,
 						options: geomtries,
 						default: geomtries[0],
@@ -64,9 +64,20 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 			}),
 			new SimpleAction({
 				icon: 'mdi-movie-open-outline',
-				name: 'Animation',
+				name: 'fileType.clientAnimation',
 				onTrigger: async () => {
-					// TODO
+					const animations = this.renderContainer.animations
+					const chooseAnimation = new DropdownWindow({
+						name: 'fileType.clientAnimation',
+						isClosable: false,
+						options: animations.map(([anim]) => anim),
+						default: this.renderContainer.currentAnimation,
+					})
+					const choice = await chooseAnimation.fired
+
+					this.model?.animator.pauseAll()
+					this.model?.animator.play(choice)
+					this.renderContainer.currentAnimation = choice
 				},
 			})
 		)
@@ -104,13 +115,8 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 				true
 			)) ?? []
 
-		const connectedBlocks =
-			(await packIndexer.find(
-				'block',
-				'geometryIdentifier',
-				[modelJson.description.identifier],
-				true
-			)) ?? []
+		// No connected files found
+		if (connectedClientEntities.length === 0) return
 
 		const clientEntityData = <Record<string, string[]>[]>(
 			await Promise.all(
@@ -120,14 +126,9 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 			)
 		)
 
-		const connectedTextures = (
-			await Promise.all(<Promise<string[]>[]>[
-				...clientEntityData.map((data) => data.texturePath),
-				...connectedBlocks.map((block) =>
-					packIndexer.getCacheDataFor('block', block, 'texturePath')
-				),
-			])
-		).flat()
+		const connectedTextures = clientEntityData
+			.map((data) => data.texturePath)
+			.flat()
 
 		const connectedAnimations = (
 			await Promise.all(<Promise<string[]>[]>[
@@ -145,10 +146,19 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 		this._renderContainer = new RenderDataContainer(app, {
 			identifier: modelJson.description.identifer,
 			texturePaths: connectedTextures,
+			connectedAnimations: new Set(
+				clientEntityData
+					.map((data) => data.animationIdentifier)
+					.filter((data) => data !== undefined)
+					.flat()
+			),
 		})
 		this._renderContainer.createGeometry(this.tab.getProjectPath())
-		for (const anim of connectedAnimations)
+
+		for (const anim of connectedAnimations) {
 			this._renderContainer.createAnimation(anim)
+		}
+
 		this._renderContainer.on(() => this.createModel())
 	}
 
@@ -181,9 +191,8 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 
 		for (const [animId, anim] of this.renderContainer.animations) {
 			this.model.animator.addAnimation(animId, anim)
-			if (animId === 'animation.bee.flying')
-				this.model.animator.play(animId)
 		}
+		this.model.animator.play(this.renderContainer.currentAnimation)
 
 		setTimeout(() => {
 			this.requestRendering()
