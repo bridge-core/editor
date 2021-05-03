@@ -302,6 +302,7 @@ export default {
 				alphanumeric:
 					'You may only use alphanumeric characters and/or underscores',
 				lowercase: 'You may only use lowercase letters',
+				required: 'This field is required',
 			},
 		},
 		deleteProject: {

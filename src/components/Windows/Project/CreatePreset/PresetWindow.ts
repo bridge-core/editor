@@ -61,6 +61,7 @@ export class CreatePresetWindow extends BaseWindow {
 		alphanumeric: (value: string) =>
 			value.match(/^[a-zA-Z0-9_]*$/) !== null,
 		lowercase: (value: string) => value.toLowerCase() === value,
+		required: (value: string) => !!value,
 	}
 
 	get validationRules() {

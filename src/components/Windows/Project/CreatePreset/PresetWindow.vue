@@ -151,8 +151,20 @@ export default {
 		},
 		fieldsReady() {
 			return Object.values(this.content.fields || {}).every(
-				([_, id, opts = {}]) =>
-					!!this.content.models[id] || opts.optional
+				([_, id, opts = {}]) => {
+					if (
+						opts.validate &&
+						opts.validate.some(
+							(rule) =>
+								this.$data.validationRules[rule](
+									this.content.models[id]
+								) !== true
+						)
+					)
+						return false
+
+					return !!this.content.models[id] || opts.optional
+				}
 			)
 		},
 	},

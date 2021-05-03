@@ -19,9 +19,9 @@
 		[
 			"Identifier",
 			"IDENTIFIER",
-			{ "validate": ["alphanumeric", "lowercase"] }
+			{ "validate": ["required", "alphanumeric", "lowercase"] }
 		],
-		["Display Name", "IDENTIFIER_NAME"]
+		["Display Name", "IDENTIFIER_NAME", { "validate": ["required"] }]
 	],
 
 	"createFiles": [
