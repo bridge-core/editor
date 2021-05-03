@@ -1,8 +1,9 @@
 [
-	{ "identifier": "*/description/identifier" },
-	{ "recipeTag": "*/tags" },
+	{ "cacheKey": "identifier", "path": "*/description/identifier" },
+	{ "cacheKey": "recipeTag", "path": "*/tags" },
 	{
-		"itemIdentifier": [
+		"cacheKey": "itemIdentifier",
+		"path": [
 			"minecraft:recipe_furnace/input",
 			"minecraft:recipe_furnace/output",
 

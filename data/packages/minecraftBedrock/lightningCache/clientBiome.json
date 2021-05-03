@@ -1,1 +1,1 @@
-[{ "fogIdentifier": "biomes/*/fog_identifier" }]
+[{ "cacheKey": "fogIdentifier", "path": "biomes/*/fog_identifier" }]

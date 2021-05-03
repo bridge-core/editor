@@ -1,38 +1,69 @@
 [
-	{ "identifier": "minecraft:attachable/description/identifier" },
-	{ "itemIdentifier": "minecraft:attachable/description/item" },
 	{
-		"particleReference": [
+		"cacheKey": "identifier",
+		"path": "minecraft:attachable/description/identifier"
+	},
+	{
+		"cacheKey": "itemIdentifier",
+		"path": "minecraft:attachable/description/item"
+	},
+	{
+		"cacheKey": "particleReference",
+		"path": [
 			"minecraft:attachable/description/particle_effects",
 			"minecraft:attachable/description/particle_emitters"
 		]
 	},
-	{ "animationReference": "minecraft:attachable/description/animations" },
-	{ "textureReference": "minecraft:attachable/description/textures" },
-	{ "materialReference": "minecraft:attachable/description/materials" },
-	{ "geometryReference": "minecraft:attachable/description/geometry" },
 	{
-		"soundEffectReference": "minecraft:attachable/description/sound_effect"
+		"cacheKey": "animationReference",
+		"path": "minecraft:attachable/description/animations"
 	},
 	{
-		"particleIdentifier": [
+		"cacheKey": "textureReference",
+		"path": "minecraft:attachable/description/textures"
+	},
+	{
+		"cacheKey": "materialReference",
+		"path": "minecraft:attachable/description/materials"
+	},
+	{
+		"cacheKey": "geometryReference",
+		"path": "minecraft:attachable/description/geometry"
+	},
+	{
+		"cacheKey": "soundEffectReference",
+		"path": "minecraft:attachable/description/sound_effect"
+	},
+	{
+		"cacheKey": "particleIdentifier",
+		"path": [
 			"minecraft:attachable/description/particle_effects/*",
 			"minecraft:attachable/description/particle_emitters/*"
 		]
 	},
 	{
-		"animationIdentifier": "minecraft:attachable/description/animations/*"
+		"cacheKey": "animationIdentifier",
+		"path": "minecraft:attachable/description/animations/*"
 	},
 	{
-		"texturePath": "minecraft:attachable/description/textures/*",
-		"@map": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
-	},
-	{ "materialIdentifier": "minecraft:attachable/description/materials/*" },
-	{ "geometryIdentifier": "minecraft:attachable/description/geometry/*" },
-	{
-		"soundEffectIdentifier": "minecraft:attachable/description/sound_effect/*"
+		"cacheKey": "texturePath",
+		"path": "minecraft:attachable/description/textures/*",
+		"script": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
 	},
 	{
-		"renderControllerIdentifier": "minecraft:attachable/description/render_controllers/*"
+		"cacheKey": "materialIdentifier",
+		"path": "minecraft:attachable/description/materials/*"
+	},
+	{
+		"cacheKey": "geometryIdentifier",
+		"path": "minecraft:attachable/description/geometry/*"
+	},
+	{
+		"cacheKey": "soundEffectIdentifier",
+		"path": "minecraft:attachable/description/sound_effect/*"
+	},
+	{
+		"cacheKey": "renderControllerIdentifier",
+		"path": "minecraft:attachable/description/render_controllers/*"
 	}
 ]

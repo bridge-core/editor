@@ -1,16 +1,27 @@
 [
-	{ "identifier": "minecraft:entity/description/identifier" },
-	{ "event": "minecraft:entity/events" },
-	{ "componentGroup": "minecraft:entity/component_groups" },
-	{ "animation": "minecraft:entity/description/animations" },
 	{
-		"family": [
+		"cacheKey": "identifier",
+		"path": "minecraft:entity/description/identifier"
+	},
+	{ "cacheKey": "event", "path": "minecraft:entity/events" },
+	{
+		"cacheKey": "componentGroup",
+		"path": "minecraft:entity/component_groups"
+	},
+	{
+		"cacheKey": "animation",
+		"path": "minecraft:entity/description/animations"
+	},
+	{
+		"cacheKey": "family",
+		"path": [
 			"minecraft:entity/components/minecraft:type_family/family",
 			"minecraft:entity/component_groups/*/minecraft:type_family/family"
 		]
 	},
 	{
-		"lootTablePath": [
+		"cacheKey": "lootTablePath",
+		"path": [
 			"minecraft:entity/components/minecraft:loot/table",
 			"minecraft:entity/component_groups/*/minecraft:loot/table",
 			"minecraft:entity/components/minecraft:behavior.sneeze/loot_table",
@@ -28,22 +39,25 @@
 			"minecraft:entity/components/minecraft:interact/interactions/*/spawn_items/table",
 			"minecraft:entity/component_groups/*/minecraft:interact/interactions/*/spawn_items/table"
 		],
-		"@map": "return `BP/${Bridge.value}`"
+		"script": "return `BP/${Bridge.value}`"
 	},
 	{
-		"tradeTablePath": [
+		"cacheKey": "tradeTablePath",
+		"path": [
 			"minecraft:entity/components/minecraft:trade_table/table",
 			"minecraft:entity/component_groups/*/minecraft:trade_table/table",
 			"minecraft:entity/components/minecraft:economy_trade_table/table",
 			"minecraft:entity/component_groups/*/minecraft:economy_trade_table/table"
 		],
-		"@map": "return `BP/${Bridge.value}`"
+		"script": "return `BP/${Bridge.value}`"
 	},
 	{
-		"functionPath": ["minecraft:entity/events/*/run_command"],
-		"@map": "const func = /\\/function\\s+([aA-zZ0-9\\/]+)/g.exec(Bridge.value); if(func) return `BP/functions/${func[1]}.mcfunction`"
+		"cacheKey": "functionPath",
+		"path": "minecraft:entity/events/*/run_command",
+		"script": "const func = /\\/function\\s+([aA-zZ0-9\\/]+)/g.exec(Bridge.value); if(func) return `BP/functions/${func[1]}.mcfunction`"
 	},
 	{
-		"animationIdentifier": "minecraft:entity/description/animations/*"
+		"cacheKey": "animationIdentifier",
+		"path": "minecraft:entity/description/animations/*"
 	}
 ]

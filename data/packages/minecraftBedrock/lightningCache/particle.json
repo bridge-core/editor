@@ -1,7 +1,8 @@
 [
-	{ "identifier": "*/description/identifier" },
+	{ "cacheKey": "identifier", "path": "*/description/identifier" },
 	{
-		"texturePath": "*/description/basic_render_parameters/texture",
-		"@map": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
+		"cacheKey": "texturePath",
+		"path": "*/description/basic_render_parameters/texture",
+		"script": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
 	}
 ]

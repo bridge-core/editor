@@ -1,13 +1,21 @@
 [
-	{ "identifier": "minecraft:item/description/identifier" },
-	{ "event": "minecraft:item/events" },
-	{ "itemTexture": "minecraft:item/components/minecraft:icon/texture" },
 	{
-		"tag": "minecraft:item/components",
-		"@map": "if(Bridge.value.startsWith('tag:')) return Bridge.value.replace('tag:', '')"
+		"cacheKey": "identifier",
+		"path": "minecraft:item/description/identifier"
+	},
+	{ "cacheKey": "event", "path": "minecraft:item/events" },
+	{
+		"cacheKey": "itemTexture",
+		"path": "minecraft:item/components/minecraft:icon/texture"
 	},
 	{
-		"lootTablePath": "minecraft:item/events/*/spawn_loot/table",
-		"@map": "return 'BP/' + Bridge.value"
+		"cacheKey": "tag",
+		"path": "minecraft:item/components",
+		"script": "if(Bridge.value.startsWith('tag:')) return Bridge.value.replace('tag:', '')"
+	},
+	{
+		"cacheKey": "lootTablePath",
+		"path": "minecraft:item/events/*/spawn_loot/table",
+		"script": "return 'BP/' + Bridge.value"
 	}
 ]

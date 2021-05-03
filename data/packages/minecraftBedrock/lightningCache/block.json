@@ -1,33 +1,44 @@
 [
-	{ "identifier": "minecraft:block/description/identifier" },
-	{ "event": "minecraft:block/events" },
-	{ "property": "minecraft:block/description/properties" },
 	{
-		"tag": "minecraft:block/components",
-		"@map": "if(Bridge.value.startsWith('tag:')) return Bridge.value.replace('tag:', '')"
+		"cacheKey": "identifier",
+		"path": "minecraft:block/description/identifier"
+	},
+	{ "cacheKey": "event", "path": "minecraft:block/events" },
+	{
+		"cacheKey": "property",
+		"path": "minecraft:block/description/properties"
 	},
 	{
-		"recipeTag": [
+		"cacheKey": "tag",
+		"path": "minecraft:block/components",
+		"script": "if(Bridge.value.startsWith('tag:')) return Bridge.value.replace('tag:', '')"
+	},
+	{
+		"cacheKey": "recipeTag",
+		"path": [
 			"minecraft:block/components/minecraft:crafting_table/crafting_tags",
 			"minecraft:block/permutations/*/components/minecraft:crafting_table/crafting_tags"
 		]
 	},
 	{
-		"lootTablePath": [
+		"cacheKey": "lootTablePath",
+		"path": [
 			"minecraft:block/components/minecraft:loot",
 			"minecraft:block/permutations/*/components/minecraft:loot",
 			"minecraft:block/events/*/spawn_loot/table"
 		],
-		"@map": "return `BP/${Bridge.value}`"
+		"script": "return `BP/${Bridge.value}`"
 	},
 	{
-		"geometryIdentifier": [
+		"cacheKey": "geometryIdentifier",
+		"path": [
 			"minecraft:block/components/minecraft:geometry",
 			"minecraft:block/permutations/*/components/minecraft:geometry"
 		]
 	},
 	{
-		"texture": [
+		"cacheKey": "texture",
+		"path": [
 			"minecraft:block/components/minecraft:material_instances/*/texture",
 			"minecraft:block/permutations/*/components/minecraft:material_instances/*/texture"
 		]

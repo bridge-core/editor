@@ -1,40 +1,68 @@
 [
-	{ "identifier": "minecraft:client_entity/description/identifier" },
 	{
-		"particleReference": [
+		"cacheKey": "identifier",
+		"path": "minecraft:client_entity/description/identifier"
+	},
+	{
+		"cacheKey": "particleReference",
+		"path": [
 			"minecraft:client_entity/description/particle_effects",
 			"minecraft:client_entity/description/particle_emitters"
 		]
 	},
-	{ "animationReference": "minecraft:client_entity/description/animations" },
-	{ "textureReference": "minecraft:client_entity/description/textures" },
-	{ "materialReference": "minecraft:client_entity/description/materials" },
-	{ "geometryReference": "minecraft:client_entity/description/geometry" },
 	{
-		"soundEffectReference": "minecraft:client_entity/description/sound_effect"
+		"cacheKey": "animationReference",
+		"path": "minecraft:client_entity/description/animations"
 	},
 	{
-		"particleIdentifier": [
+		"cacheKey": "textureReference",
+		"path": "minecraft:client_entity/description/textures"
+	},
+	{
+		"cacheKey": "materialReference",
+		"path": "minecraft:client_entity/description/materials"
+	},
+	{
+		"cacheKey": "geometryReference",
+		"path": "minecraft:client_entity/description/geometry"
+	},
+	{
+		"cacheKey": "soundEffectReference",
+		"path": "minecraft:client_entity/description/sound_effect"
+	},
+	{
+		"cacheKey": "particleIdentifier",
+		"path": [
 			"minecraft:client_entity/description/particle_effects/*",
 			"minecraft:client_entity/description/particle_emitters/*"
 		]
 	},
 	{
-		"animationIdentifier": [
+		"cacheKey": "animationIdentifier",
+		"path": [
 			"minecraft:client_entity/description/animations/*",
 			"minecraft:client_entity/description/animation_controllers/*/*"
 		]
 	},
 	{
-		"texturePath": "minecraft:client_entity/description/textures/*",
-		"@map": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
-	},
-	{ "materialIdentifier": "minecraft:client_entity/description/materials/*" },
-	{ "geometryIdentifier": "minecraft:client_entity/description/geometry/*" },
-	{
-		"soundEffectIdentifier": "minecraft:client_entity/description/sound_effect/*"
+		"cacheKey": "texturePath",
+		"path": "minecraft:client_entity/description/textures/*",
+		"script": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
 	},
 	{
-		"renderControllerIdentifier": "minecraft:client_entity/description/render_controllers/*"
+		"cacheKey": "materialIdentifier",
+		"path": "minecraft:client_entity/description/materials/*"
+	},
+	{
+		"cacheKey": "geometryIdentifier",
+		"path": "minecraft:client_entity/description/geometry/*"
+	},
+	{
+		"cacheKey": "soundEffectIdentifier",
+		"path": "minecraft:client_entity/description/sound_effect/*"
+	},
+	{
+		"cacheKey": "renderControllerIdentifier",
+		"path": "minecraft:client_entity/description/render_controllers/*"
 	}
 ]

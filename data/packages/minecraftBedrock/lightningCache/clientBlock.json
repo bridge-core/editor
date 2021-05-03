@@ -1,6 +1,1 @@
-[
-	{
-		"identifier": "",
-		"@filter": ["format_version"]
-	}
-]
+[{ "cacheKey": "identifier", "path": "", "filter": ["format_version"] }]

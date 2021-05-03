@@ -1,7 +1,8 @@
 [
 	{
-		"tags": "minecraft:biome/components",
-		"@filter": [
+		"cacheKey": "tags",
+		"path": "minecraft:biome/components",
+		"filter": [
 			"minecraft:ignore_automatic_features",
 			"minecraft:climate",
 			"minecraft:nether_generation_rules",

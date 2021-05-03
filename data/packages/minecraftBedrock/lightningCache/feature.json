@@ -1,7 +1,8 @@
 [
-	{ "identifier": "*/description/identifier" },
+	{ "cacheKey": "identifier", "path": "*/description/identifier" },
 	{
-		"blockIdentifier": [
+		"cacheKey": "blockIdentifier",
+		"path": [
 			"minecraft:single_block_feature/may_attach_to/top/*",
 			"minecraft:single_block_feature/may_attach_to/bottom/*",
 			"minecraft:single_block_feature/may_attach_to/north/*",

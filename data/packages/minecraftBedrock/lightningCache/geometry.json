@@ -1,11 +1,16 @@
 [
-	{ "identifier": "minecraft:geometry/*/description/identifier" },
 	{
-		"identifier": "/",
-		"@filter": ["format_version", "minecraft:geometry"]
+		"cacheKey": "identifier",
+		"path": "minecraft:geometry/*/description/identifier"
 	},
 	{
-		"materialInstance": "minecraft:geometry/*/bones/*/cubes/*/uv/*/material_instance"
+		"cacheKey": "identifier",
+		"path": "/",
+		"filter": ["format_version", "minecraft:geometry"]
 	},
-	{ "locator": "minecraft:geometry/*/bones/locators" }
+	{
+		"cacheKey": "materialInstance",
+		"path": "minecraft:geometry/*/bones/*/cubes/*/uv/*/material_instance"
+	},
+	{ "cacheKey": "locator", "path": "minecraft:geometry/*/bones/locators" }
 ]

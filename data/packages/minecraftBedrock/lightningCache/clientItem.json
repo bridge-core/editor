@@ -1,4 +1,10 @@
 [
-	{ "identifier": "minecraft:item/description/identifier" },
-	{ "itemTexture": "minecraft:item/components/minecraft:icon" }
+	{
+		"cacheKey": "identifier",
+		"path": "minecraft:item/description/identifier"
+	},
+	{
+		"cacheKey": "itemTexture",
+		"path": "minecraft:item/components/minecraft:icon"
+	}
 ]

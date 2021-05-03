@@ -1,1 +1,6 @@
-[{ "identifier": "minecraft:fog_settings/description/identifier" }]
+[
+	{
+		"cacheKey": "identifier",
+		"path": "minecraft:fog_settings/description/identifier"
+	}
+]

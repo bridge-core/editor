@@ -1,9 +1,16 @@
 [
-	{ "identifier": "animation_controllers" },
-	{ "state": "animation_controllers/*/states" },
-	{ "animationReference": "animation_controllers/*/states/*/animations/*" },
+	{ "cacheKey": "identifier", "path": "animation_controllers" },
+	{ "cacheKey": "state", "path": "animation_controllers/*/states" },
 	{
-		"particleEffect": "animation_controllers/*/states/*/particle_effects/*/effect"
+		"cacheKey": "animationReference",
+		"path": "animation_controllers/*/states/*/animations/*"
 	},
-	{ "soundEffect": "animation_controllers/*/states/*/sound_effects/*/effect" }
+	{
+		"cacheKey": "particleEffect",
+		"path": "animation_controllers/*/states/*/particle_effects/*/effect"
+	},
+	{
+		"cacheKey": "soundEffect",
+		"path": "animation_controllers/*/states/*/sound_effects/*/effect"
+	}
 ]
