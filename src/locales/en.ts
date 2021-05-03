@@ -326,6 +326,9 @@ export default {
 				'Select where to save projects or choose an existing projects directory. This should not be the "com.mojang" folder, but rather a new folder specifically for bridge.',
 			select: 'Select!',
 		},
+		filePath: {
+			title: 'Choose File Path',
+		},
 		packExplorer: {
 			title: 'Pack Explorer',
 			searchFiles: 'Search files...',
@@ -475,6 +478,17 @@ export default {
 		importFiles: 'Drop files here to import them!',
 		importFailed: 'bridge. was unable to import the following files:',
 		andMore: '...and more!',
+		importMethod: 'Import Method',
+		saveToProject: {
+			title: 'Save to Project',
+			description1: 'Save the file ',
+			description2: ' inside of your project.',
+		},
+		openFile: {
+			title: 'Open File',
+			description1: 'Open the file ',
+			description2: ' and save edits to the original file.',
+		},
 	},
 	comMojang: {
 		folderDropped:
