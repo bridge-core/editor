@@ -57,13 +57,22 @@ export interface IPermissions {
 export class CreatePresetWindow extends BaseWindow {
 	protected loadPresetPaths = new Map<string, string>()
 	protected sidebar = new Sidebar([])
-	protected _validationRules = {
+	/**
+	 * Add new validation strategies to this object ([key]: [validationFunction])
+	 * to make them available as the [key] inside of presets.
+	 */
+	protected _validationRules: Record<string, (value: string) => boolean> = {
 		alphanumeric: (value: string) =>
 			value.match(/^[a-zA-Z0-9_]*$/) !== null,
 		lowercase: (value: string) => value.toLowerCase() === value,
 		required: (value: string) => !!value,
 	}
 
+	/**
+	 * This getter returns the validationRules object for usage inside of the PresetWindow.
+	 * It wraps the _validationRules (see above) functions inside of another function call to return the proper
+	 * error message: "windows.createPreset.validationRule.[key]"
+	 */
 	get validationRules() {
 		return Object.fromEntries(
 			Object.entries(this._validationRules).map(([key, func]) => [
