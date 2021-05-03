@@ -28,6 +28,7 @@
 				@click="onConfirm"
 				:disabled="$data.currentSelection === ''"
 			>
+				<v-icon>mdi-check</v-icon>
 				<span>{{ t('general.confirm') }}</span>
 			</v-btn>
 		</template>

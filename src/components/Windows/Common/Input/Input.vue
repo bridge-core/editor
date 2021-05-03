@@ -29,6 +29,7 @@
 				@click="onConfirm"
 				:disabled="$data.inputValue === ''"
 			>
+				<v-icon>mdi-check</v-icon>
 				<span>{{ t('general.confirm') }}</span>
 			</v-btn>
 		</template>
