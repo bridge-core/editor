@@ -20,7 +20,7 @@
 	"createFiles": [
 		[
 			"entity.json",
-			"BP/entities/{{PRESET_PATH}}/{{IDENTIFIER}}.json",
+			"BP/entities/{{PRESET_PATH}}{{IDENTIFIER}}.json",
 			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX", "PRESET_PATH"] }
 		],
 		[
