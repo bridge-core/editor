@@ -16,14 +16,14 @@ export function createErrorNotification(error: Error): IDisposable {
 
 	const notification = createNotification({
 		icon: 'mdi-alert-circle-outline',
-		message: short,
+		message: `[${short}]`,
 		color: 'error',
 		textColor: 'white',
 		disposeOnMiddleClick: true,
 		onClick: () => {
 			new InformationWindow({
-				name: `ERROR: ${short}`,
-				description: message,
+				name: `[ERROR: ${short}]`,
+				description: `[${message}]`,
 			})
 			notification.dispose()
 		},
