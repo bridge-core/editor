@@ -190,8 +190,9 @@ export class PackExplorerWindow extends BaseWindow {
 		return [
 			{
 				icon: 'mdi-delete-outline',
-				name: 'Delete',
-				description: 'Delete a file or folder',
+				name: 'windows.packExplorer.fileActions.delete.name',
+				description:
+					'windows.packExplorer.fileActions.delete.description',
 				onTrigger: async () => {
 					const project = await App.getApp().then(
 						(app) => app.project
@@ -217,12 +218,14 @@ export class PackExplorerWindow extends BaseWindow {
 			// },
 			{
 				icon: 'mdi-folder-outline',
-				name: 'Reveal File Path',
-				description: 'Reveals the location of a file or folder',
+				name: 'windows.packExplorer.fileActions.revealFilePath.name',
+				description:
+					'windows.packExplorer.fileActions.revealFilePath.description',
 				onTrigger: () =>
 					new InformationWindow({
-						name: 'Path',
-						description: path,
+						name:
+							'windows.packExplorer.fileActions.revealFilePath.name',
+						description: `[${path}]`,
 						isPersistent: false,
 					}).open(),
 			},

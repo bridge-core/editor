@@ -335,6 +335,16 @@ export default {
 			categories: 'Categories',
 			refresh: 'Refresh Project',
 			createPreset: 'New File',
+			fileActions: {
+				delete: {
+					name: 'Delete',
+					description: 'Delete a file or folder',
+				},
+				revealFilePath: {
+					name: 'Reveal File Path',
+					description: 'Reveals the location of a file or folder',
+				},
+			},
 		},
 		settings: {
 			title: 'Settings',
@@ -499,6 +509,9 @@ export default {
 	},
 	findAndReplace: {
 		name: 'Find & Replace',
+		search: 'Search',
+		replace: 'Replace',
+		replaceAll: 'Replace All',
 		noResults: 'No results found.',
 		noSearch:
 			'Once you start typing, results for your search query will appear here.',

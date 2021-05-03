@@ -9,7 +9,7 @@
 					dense
 					hide-details
 					autofocus
-					label="Search"
+					:label="t('findAndReplace.search')"
 					v-model="searchFor"
 				/>
 				<v-text-field
@@ -18,7 +18,7 @@
 					outlined
 					dense
 					hide-details
-					label="Replace"
+					:label="t('findAndReplace.replace')"
 					v-model="replaceWith"
 				/>
 				<SearchType class="mb-2" v-model="queryOptions.searchType" />
@@ -29,7 +29,7 @@
 					@click="onReplaceAll()"
 				>
 					<v-icon class="mr-1" small>mdi-file-replace-outline</v-icon>
-					Replace All
+					{{ t('findAndReplace.replaceAll') }}
 				</v-btn>
 			</v-col>
 			<v-col
