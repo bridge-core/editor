@@ -7,7 +7,7 @@
 	"additionalModels": {
 		"PRESET_PATH": "BP/molang/"
 	},
-	"fields": [["File Name", "FILE_NAME"]],
+	"fields": [["File Name", "FILE_NAME", { "validate": ["required"] }]],
 
 	"createFiles": [
 		[

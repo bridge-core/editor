@@ -24,7 +24,7 @@
 				"options": ["Client", "Server"]
 			}
 		],
-		["File Name", "FILE_NAME"]
+		["File Name", "FILE_NAME", { "validate": ["required"] }]
 	],
 
 	"createFiles": ["./preset.js"]

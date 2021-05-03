@@ -7,7 +7,13 @@
 	"additionalModels": {
 		"PRESET_PATH": "RP/animations/"
 	},
-	"fields": [["File Name", "FILE_NAME"]],
+	"fields": [
+		[
+			"File Name",
+			"FILE_NAME",
+			{ "validate": ["required", "alphanumeric", "lowercase"] }
+		]
+	],
 
 	"createFiles": [
 		[

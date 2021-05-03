@@ -9,8 +9,12 @@
 		"DEFAULT_IMAGE": "skin.png"
 	},
 	"fields": [
-		["Identifier", "IDENTIFIER"],
-		["Display Name", "IDENTIFIER_NAME"],
+		[
+			"Identifier",
+			"IDENTIFIER",
+			{ "validate": ["required", "alphanumeric", "lowercase"] }
+		],
+		["Display Name", "IDENTIFIER_NAME", { "validate": ["required"] }],
 		[
 			"Skin File",
 			"IMAGE",
