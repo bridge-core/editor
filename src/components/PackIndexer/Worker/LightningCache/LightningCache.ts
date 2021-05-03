@@ -19,9 +19,10 @@ const knownTextFiles = new Set([
 ])
 
 export interface ILightningInstruction {
-	'@filter'?: string[]
-	'@map'?: string
-	[str: string]: undefined | string | string[]
+	cacheKey: string
+	path: string
+	script?: string
+	filter?: string[]
 }
 
 export class LightningCache {
@@ -303,11 +304,9 @@ export class LightningCache {
 		}
 
 		for (const instruction of instructions) {
-			const key = Object.keys(instruction).find(
-				(key) => !key.startsWith('@')
-			)
+			const key = instruction.cacheKey
 			if (!key) continue
-			const paths = instruction[key] as string[]
+			const paths = instruction.path
 
 			if (Array.isArray(paths)) {
 				for (const path of paths) {
@@ -316,8 +315,8 @@ export class LightningCache {
 						data,
 						onReceiveData(
 							key,
-							instruction['@filter'],
-							instruction['@map']
+							instruction.filter,
+							instruction.script
 						)
 					)
 				}
@@ -325,11 +324,7 @@ export class LightningCache {
 				walkObject(
 					paths,
 					data,
-					onReceiveData(
-						key,
-						instruction['@filter'],
-						instruction['@map']
-					)
+					onReceiveData(key, instruction.filter, instruction.script)
 				)
 			}
 		}

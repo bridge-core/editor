@@ -5,7 +5,7 @@ import { FileType, IDefinition } from '/@/components/Data/FileType'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { isMatch } from 'micromatch'
 import { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
-import { run, runAsync } from '/@/components/Extensions/Scripts/run'
+import { runAsync } from '/@/components/Extensions/Scripts/run'
 import { findFile } from '/@/components/FileSystem/FindFile'
 import { findAsync } from '/@/utils/array/findAsync'
 
@@ -103,37 +103,26 @@ export class DefinitionProvider {
 
 		let transformedWord: string | undefined = word
 		const definitions = lightningCache
-			.map((def) => {
-				const filter = def['@filter']
-				const map = def['@map']
-
-				const firstValidKey = Object.keys(def).find(
-					(key) => !key.startsWith('@')
-				)
-				if (!firstValidKey)
-					throw new Error(
-						`Invalid lightning cache definition: Missing definition key and/or path pair`
-					)
-
-				// def[firstValidKey] may not be undefined for valid lightning cache files
-				return <const>[
-					firstValidKey,
-					def[firstValidKey]!,
-					{ map, filter },
-				]
-			})
+			.map(
+				(def) =>
+					<const>[
+						def.cacheKey,
+						def.path,
+						{ script: def.script, filter: def.filter },
+					]
+			)
 			.filter((def) => def !== undefined)
 
 		return {
 			definitionId: await findAsync(
 				definitions,
-				async ([def, path, { map, filter }]) => {
+				async ([def, path, { script, filter }]) => {
 					const matches = isMatch(location, path)
 					if (matches) {
 						if (filter && filter.includes(word))
 							transformedWord = undefined
-						if (transformedWord && map)
-							transformedWord = await runAsync(map, {
+						if (transformedWord && script)
+							transformedWord = await runAsync(script, {
 								value: transformedWord,
 								withExtension: (
 									basePath: string,

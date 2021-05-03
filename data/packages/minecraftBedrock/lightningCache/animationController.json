@@ -1,11 +1,18 @@
 [
-	{ "identifier": "animation_controllers" },
-	{ "state": "animation_controllers/*/states" },
 	{
-		"functionPath": [
+		"cacheKey": "identifier",
+		"path": "animation_controllers"
+	},
+	{
+		"cacheKey": "state",
+		"path": "animation_controllers/*/states"
+	},
+	{
+		"cacheKey": "functionPath",
+		"path": [
 			"animation_controllers/*/states/*/on_exit",
 			"animation_controllers/*/states/*/on_entry"
 		],
-		"@map": "const func = /\\/function\\s+([aA-zZ0-9\\/]+)/g.exec(Bridge.value); if(func) return `BP/functions/${func[1]}.mcfunction`"
+		"script": "const func = /\\/function\\s+([aA-zZ0-9\\/]+)/g.exec(Bridge.value); if(func) return `BP/functions/${func[1]}.mcfunction`"
 	}
 ]
