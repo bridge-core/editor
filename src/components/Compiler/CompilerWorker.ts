@@ -124,7 +124,7 @@ export class Compiler extends WorkerManager<
 		)
 
 		this.ready.dispatch()
-		return <const>[dependencies, compiled ?? file]
+		return <const>[dependencies, compiled ?? fileBuffer]
 	}
 
 	async unlink(path: string) {

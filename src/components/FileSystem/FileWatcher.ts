@@ -45,7 +45,7 @@ export class FileWatcher extends EventDispatcher<File> {
 			this.filePath,
 			file
 		)
-		// console.log(dependencies)
+
 		this.children.forEach((child) => child.dispose())
 		this.children = []
 
