@@ -1,8 +1,9 @@
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImporter } from './Importer'
 import { App } from '/@/App'
-import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'
-import { FilePathWindow } from '../Windows/Common/FilePath/Window'
+import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/InformedChoice'
+import { FilePathWindow } from '/@/components/Windows/Common/FilePath/Window'
+import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 
 export class BasicFileImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
@@ -62,6 +63,22 @@ export class BasicFileImporter extends FileImporter {
 
 		const filePath = await filePathWindow.fired
 
+		// Get user confirmation if file overwrites already existing file
+		const fileExists = await app.project.fileSystem.fileExists(
+			`${filePath}${fileHandle.name}`
+		)
+		if (fileExists) {
+			const confirmWindow = new ConfirmationWindow({
+				description: 'windows.createPreset.overwriteFiles',
+				confirmText: 'windows.createPreset.overwriteFilesConfirm',
+			})
+
+			confirmWindow.open()
+			if (!(await confirmWindow.fired)) return
+		}
+
+		app.windows.loadingWindow.open()
+
 		const destHandle = await app.project.fileSystem.getFileHandle(
 			`${filePath}${fileHandle.name}`,
 			true
@@ -70,6 +87,8 @@ export class BasicFileImporter extends FileImporter {
 		await app.project.fileSystem.copyFileHandle(fileHandle, destHandle)
 		await app.project.updateFile(`${filePath}${fileHandle.name}`)
 		await app.project.openFile(destHandle)
+
+		app.windows.loadingWindow.close()
 	}
 	protected async onOpen(fileHandle: FileSystemFileHandle) {
 		const app = await App.getApp()
