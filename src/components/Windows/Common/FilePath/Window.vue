@@ -5,18 +5,18 @@
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
-		:isPersistent="!$data.isClosable"
+		:isPersistent="$data.isPersistent"
 		:hasCloseButton="false"
 		:width="440"
 		:height="140"
-		@closeWindow="onClose"
+		@closeWindow="onClose(true)"
 	>
 		<template #default>
 			<PresetPath v-model="currentFilePath" />
 		</template>
 		<template #actions>
 			<v-spacer />
-			<v-btn color="primary" @click="onClose">
+			<v-btn color="primary" @click="onClose(false)">
 				<v-icon>mdi-check</v-icon>
 				<span> {{ t('general.confirm') }} </span>
 			</v-btn>
@@ -41,8 +41,10 @@ export default {
 		return this.currentWindow
 	},
 	methods: {
-		onClose() {
-			this.currentWindow.close(this.currentFilePath)
+		onClose(skippedDialog) {
+			this.currentWindow.close(
+				skippedDialog ? null : this.currentFilePath
+			)
 		},
 	},
 }

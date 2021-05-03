@@ -58,10 +58,11 @@ export class BasicFileImporter extends FileImporter {
 
 	protected async onSave(fileHandle: FileSystemFileHandle) {
 		const app = await App.getApp()
-		const filePathWindow = new FilePathWindow()
+		const filePathWindow = new FilePathWindow('', false)
 		filePathWindow.open()
 
 		const filePath = await filePathWindow.fired
+		if (filePath === null) return
 
 		// Get user confirmation if file overwrites already existing file
 		const fileExists = await app.project.fileSystem.fileExists(
