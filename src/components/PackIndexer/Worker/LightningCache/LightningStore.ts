@@ -128,7 +128,7 @@ export class LightningStore {
 		matchesOneOf: string[],
 		fetchAll = false
 	) {
-		if (matchesOneOf.length === 0) return []
+		if (!matchesOneOf || matchesOneOf.length === 0) return []
 		const relevantStore = this.store![findFileType]
 
 		const resultingFiles: string[] = []

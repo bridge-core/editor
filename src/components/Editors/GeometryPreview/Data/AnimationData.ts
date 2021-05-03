@@ -24,7 +24,7 @@ export class AnimationData extends PreviewFileWatcher {
 
 	get includedAnimations(): [string, any][] {
 		if (this.includedAnimationIdentifiers === undefined)
-			return Object.entries<any>(this.animationJson['animations'])
+			return Object.entries<any>(this.animationJson?.['animations'] ?? {})
 
 		return Object.entries<any>(this.animationJson['animations']).filter(
 			([_, { description }]) =>

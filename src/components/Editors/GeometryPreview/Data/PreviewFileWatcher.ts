@@ -7,11 +7,18 @@ export abstract class PreviewFileWatcher extends FileWatcher {
 	constructor(app: App, filePath: string) {
 		super(app, filePath)
 
-		this.on((file) => {
-			this.onChange(file, this.isInitial)
-			if (this.isInitial) this.isInitial = false
+		// Make sure that the initial setup is complete
+		this.ready.on(() => {
+			// Then, listen for any further changes
+			this.on((file) => {
+				this.onChange(file, this.isInitial)
+				if (this.isInitial) this.isInitial = false
+			})
 		})
 	}
 
+	async setup(file: File) {
+		return await this.onChange(file, true)
+	}
 	abstract onChange(file: File, isInitial?: boolean): Promise<void> | void
 }

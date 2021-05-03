@@ -34,7 +34,7 @@ export abstract class FileTab extends Tab {
 		return await fileHandle.isSameEntry(this.fileHandle)
 	}
 
-	async getFile() {
-		return await this.fileHandle.getFile()
+	getFile() {
+		return this.fileHandle.getFile()
 	}
 }

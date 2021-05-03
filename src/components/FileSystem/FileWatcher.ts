@@ -15,9 +15,12 @@ export class FileWatcher extends EventDispatcher<File> {
 
 		app.project.getFileFromDiskOrTab(filePath).then(async (file) => {
 			await this.onFileChange(file)
+			await this.setup(file)
 			this.ready.dispatch()
 		})
 	}
+
+	async setup(file: File) {}
 
 	async activate() {
 		if (this.disposable !== undefined) return

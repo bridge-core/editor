@@ -82,9 +82,9 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 					this.model?.animator.pauseAll()
 					this.renderContainer.runningAnimations.clear()
 					choices.forEach((choice) => {
-						this.model?.animator.play(choice)
 						this.renderContainer.runningAnimations.add(choice)
 					})
+					this.createModel()
 				},
 			})
 		)
@@ -123,7 +123,8 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 			)) ?? []
 
 		// No connected files found
-		if (connectedClientEntities.length === 0) return
+		if (!connectedClientEntities || connectedClientEntities.length === 0)
+			return
 
 		const clientEntityData = <Record<string, string[]>[]>(
 			await Promise.all(
@@ -166,16 +167,14 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 			this._renderContainer.createAnimation(anim)
 		}
 
-		this._renderContainer.on(() => this.createModel())
-	}
-
-	async onChange() {
-		await this.loadRenderContainer()
-
-		if (this._renderContainer) {
-			await this.renderContainer.ready
-			await this.createModel()
-		}
+		// Once the renderContainer is ready loading, create the initial model...
+		this.renderContainer.ready.then(() => {
+			this.createModel()
+		})
+		// ...and listen to further changes to the files for hot-reloading
+		this._renderContainer.on(() => {
+			this.createModel()
+		})
 	}
 
 	onDestroy() {
@@ -187,6 +186,8 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 		const app = await App.getApp()
 
 		if (this.model) this.scene?.remove(this.model.getGroup())
+		// @ts-ignore
+		console.log(this.renderContainer, this.renderContainer._geometries)
 		this.model = new Model(
 			this.renderContainer.modelData,
 			await loadAsDataURL(
@@ -206,6 +207,10 @@ export class GeometryPreviewTab extends ThreePreviewTab {
 		setTimeout(() => {
 			this.requestRendering()
 		}, 100)
+	}
+
+	async onChange() {
+		await this.loadRenderContainer()
 	}
 	async reload() {
 		if (this.model) this.scene?.remove(this.model.getGroup())

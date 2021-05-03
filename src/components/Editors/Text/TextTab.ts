@@ -110,13 +110,8 @@ export class TextTab extends FileTab {
 		})
 	}
 	async getFile() {
-		await this.modelLoaded.fired
-
-		if (!this.editorModel)
-			throw new Error(
-				`Cannot get tab content because no editor model was defined`
-			)
-		if (this.editorModel.isDisposed()) return new File([''], this.name)
+		if (!this.editorModel || this.editorModel.isDisposed())
+			return await super.getFile()
 
 		return new File([this.editorModel.getValue()], this.name)
 	}

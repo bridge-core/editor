@@ -184,7 +184,7 @@ export class Project {
 	async getFileFromDiskOrTab(filePath: string) {
 		const fileHandle = await this.fileSystem.getFileHandle(filePath)
 		const tab = await this.getFileTab(fileHandle)
-		if (tab && tab instanceof FileTab) return tab.getFile()
+		if (tab && tab instanceof FileTab) return await tab.getFile()
 
 		return await fileHandle.getFile()
 	}
