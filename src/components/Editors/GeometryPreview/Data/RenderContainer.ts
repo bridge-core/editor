@@ -58,9 +58,9 @@ export class RenderDataContainer extends EventDispatcher<void> {
 		this.readyPromises.push(anim.ready.fired)
 	}
 	createParticle(shortName: string | undefined, particleFilePath: string) {
-		this.particleEffects.push(
-			new ParticleData(this, shortName, particleFilePath)
-		)
+		const particle = new ParticleData(this, shortName, particleFilePath)
+		this.particleEffects.push(particle)
+		this.readyPromises.push(particle.ready.fired)
 	}
 	selectGeometry(id: string) {
 		for (const geo of this._geometries) {

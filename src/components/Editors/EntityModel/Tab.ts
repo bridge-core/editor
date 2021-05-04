@@ -1,6 +1,4 @@
-import json5 from 'json5'
 import { App } from '/@/App'
-import { transformOldModels } from './transformOldModels'
 import { RenderDataContainer } from '../GeometryPreview/Data/RenderContainer'
 import { GeometryPreviewTab } from '../GeometryPreview/Tab'
 import { FileTab } from '../../TabSystem/FileTab'
@@ -28,7 +26,6 @@ export class EntityModelTab extends GeometryPreviewTab {
 			'clientEntity',
 			this.clientEntityFilePath
 		)
-		console.log(clientEntityData)
 
 		const connectedTextures = clientEntityData.texturePath
 
@@ -49,7 +46,6 @@ export class EntityModelTab extends GeometryPreviewTab {
 			clientEntityData.particleIdentifier ?? [],
 			true
 		)
-		console.log(connectedParticles)
 
 		this._renderContainer = new RenderDataContainer(app, {
 			identifier: clientEntityData.geometryIdentifier[0],
@@ -67,7 +63,6 @@ export class EntityModelTab extends GeometryPreviewTab {
 				filePath
 			)
 		)
-		console.log(this.renderContainer!.particles)
 
 		// Once the renderContainer is ready loading, create the initial model...
 		this.renderContainer.ready.then(() => {

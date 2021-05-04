@@ -34,11 +34,11 @@ export class FileWatcher extends EventDispatcher<File> {
 		await this.onFileChange(file)
 
 		return new Promise<File>((resolve) => {
-			this.on((file) => resolve(file))
+			this.once((file) => resolve(file))
 		})
 	}
 
-	protected async onFileChange(file: File) {
+	async compileFile(file: File) {
 		await this.app.project.compilerManager.fired
 
 		const [
@@ -58,8 +58,11 @@ export class FileWatcher extends EventDispatcher<File> {
 			watcher.on(() => this.onFileChange(file))
 		})
 
-		const compiledFile = new File([compiled], file.name)
-		this.dispatch(compiledFile)
+		return new File([compiled], file.name)
+	}
+
+	protected async onFileChange(file: File) {
+		this.dispatch(await this.compileFile(file))
 	}
 	dispose() {
 		this.disposable?.dispose()

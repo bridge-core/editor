@@ -16,6 +16,7 @@ export class ParticleData extends PreviewFileWatcher {
 	async onChange(file: File, isInitial = false) {
 		try {
 			this.particleData = json5.parse(await file.text())
+
 			if (!isInitial) this.parent.onChange()
 		} catch {
 			// If parsing JSON fails, do nothing

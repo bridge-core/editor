@@ -96,7 +96,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		} catch {
 			return
 		}
-		console.log(particle)
+
 		this.emitter?.delete()
 		if (!this.scene.children.includes(this.wintersky.space))
 			this.scene.add(this.wintersky.space)

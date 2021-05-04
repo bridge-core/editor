@@ -123,6 +123,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		const app = await App.getApp()
 
 		if (this.model) this.scene?.remove(this.model.getGroup())
+		this.scene.remove(this.winterskyScene.space)
 
 		this.model = new Model(
 			this.renderContainer.modelData,
@@ -134,10 +135,11 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		this.scene.add(this.model.getGroup())
 
 		this.scene.add(this.winterskyScene.space)
+
 		this.model.animator.setupWintersky(this.winterskyScene)
 		this.renderContainer.particles.forEach(([shortName, json]) => {
 			if (!shortName) return
-			console.log(shortName, json)
+
 			this.model?.animator.addEmitter(
 				shortName,
 				new Wintersky.Config(this.winterskyScene, json)
