@@ -12,6 +12,7 @@ export default {
 		cancel: 'Cancel',
 		close: 'Close',
 		reload: 'Reload',
+		information: 'Information',
 	},
 	packType: {
 		behaviorPack: {
@@ -523,5 +524,9 @@ export default {
 		viewAnimation: 'View Animation',
 		viewModel: 'View Model',
 		viewParticle: 'View Particle',
+		failedClientEntityLoad: 'Failed to load connected client entity',
+		chooseGeometry: 'Choose Geometry',
+		noGeometry:
+			'No valid geometry found inside of this file. Make sure that your JSON is valid and that the file structure is correct.',
 	},
 }

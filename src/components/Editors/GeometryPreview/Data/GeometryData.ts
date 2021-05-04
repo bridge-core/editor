@@ -1,5 +1,5 @@
 import json5 from 'json5'
-import { transformOldModels } from '../transformOldModels'
+import { transformOldModels } from '../../EntityModel/transformOldModels'
 import { PreviewFileWatcher } from './PreviewFileWatcher'
 import { RenderDataContainer } from './RenderContainer'
 

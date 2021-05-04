@@ -8,9 +8,10 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
-import { GeometryPreviewTab } from '/@/components/Editors/GeometryPreview/GeometryPreviewTab'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
+import { createFromGeometry } from '../EntityModel/create/fromGeometry'
+import { createFromClientEntity } from '../EntityModel/create/fromClientEntity'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -60,34 +61,47 @@ export class TextTab extends FileTab {
 						onTrigger: async () => {
 							if (!this.editorModel) return
 
-							const tab = new GeometryPreviewTab(
-								this,
-								this.parent,
-								this.fileHandle
-							)
+							const tab = await createFromGeometry(this)
+							if (!tab) return
+
+							this.connectedTabs.push(tab)
+							app.project.tabSystem?.add(tab, true)
+						},
+					})
+				)
+			} else if (this.getProjectPath().startsWith('RP/entity/')) {
+				this.addAction(
+					new SimpleAction({
+						icon: 'mdi-play',
+						name: 'preview.viewModel',
+						onTrigger: async () => {
+							if (!this.editorModel) return
+
+							const tab = await createFromClientEntity(this)
+							if (!tab) return
+
 							this.connectedTabs.push(tab)
 							app.project.tabSystem?.add(tab, true)
 						},
 					})
 				)
 			} else if (this.getProjectPath().startsWith('RP/animations/')) {
-				this.addAction(
-					new SimpleAction({
-						icon: 'mdi-play',
-						name: 'preview.viewAnimation',
-						onTrigger: async () => {
-							if (!this.editorModel) return
-
-							const tab = new GeometryPreviewTab(
-								this,
-								this.parent,
-								this.fileHandle
-							)
-							this.connectedTabs.push(tab)
-							app.project.tabSystem?.add(tab, true)
-						},
-					})
-				)
+				// this.addAction(
+				// 	new SimpleAction({
+				// 		icon: 'mdi-play',
+				// 		name: 'preview.viewAnimation',
+				// 		onTrigger: async () => {
+				// 			if (!this.editorModel) return
+				// 			const tab = new EntityModelTab(
+				// 				this,
+				// 				this.parent,
+				// 				this.fileHandle
+				// 			)
+				// 			this.connectedTabs.push(tab)
+				// 			app.project.tabSystem?.add(tab, true)
+				// 		},
+				// 	})
+				// )
 			} else if (this.getProjectPath().startsWith('RP/particles/')) {
 				this.addAction(
 					new SimpleAction({

@@ -2,7 +2,7 @@ import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import InformationWindowComponent from './Information.vue'
 
 export interface IConfirmWindowOpts {
-	name: string
+	name?: string
 	description: string
 	isPersistent?: boolean
 	onClose?: () => Promise<void> | void
@@ -19,7 +19,7 @@ export class InformationWindow extends BaseWindow<void> {
 		return this.opts.description
 	}
 	get title() {
-		return this.opts.name
+		return this.opts.name ?? 'general.information'
 	}
 	get isPersistent() {
 		return this.opts.isPersistent ?? true

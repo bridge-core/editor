@@ -37,4 +37,7 @@ export abstract class FileTab extends Tab {
 	getFile() {
 		return this.fileHandle.getFile()
 	}
+	getFileHandle() {
+		return this.fileHandle
+	}
 }
