@@ -7,6 +7,8 @@ import { RenderDataContainer } from './Data/RenderContainer'
 import { DropdownWindow } from '/@/components/Windows/Common/Dropdown/DropdownWindow'
 import { MultiOptionsWindow } from '/@/components/Windows/Common/MultiOptions/Window'
 import Wintersky from 'wintersky'
+import { FileTab } from '/@/components/TabSystem/FileTab'
+import { TabSystem } from '/@/components/TabSystem/TabSystem'
 
 export interface IPreviewOptions {
 	loadServerEntity?: boolean
@@ -29,6 +31,19 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	})
 	protected _renderContainer?: RenderDataContainer
 	protected previewOptions: IPreviewOptions = {}
+
+	constructor(
+		tab: FileTab,
+		tabSystem: TabSystem,
+		fileHandle: FileSystemFileHandle
+	) {
+		super(tab, tabSystem, fileHandle)
+
+		this.winterskyScene.global_options.loop_mode = 'once'
+		this.winterskyScene.global_options.tick_rate = 60
+		this.winterskyScene.global_options.max_emitter_particles = 1000
+		this.winterskyScene.global_options.scale = 16
+	}
 
 	setPreviewOptions(previewOptions: IPreviewOptions) {
 		this.previewOptions = previewOptions
@@ -132,11 +147,12 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 				app.project.fileSystem
 			)
 		)
+
 		this.scene.add(this.model.getGroup())
 
+		this.model.animator.setupWintersky(this.winterskyScene)
 		this.scene.add(this.winterskyScene.space)
 
-		this.model.animator.setupWintersky(this.winterskyScene)
 		this.renderContainer.particles.forEach(([shortName, json]) => {
 			if (!shortName) return
 
