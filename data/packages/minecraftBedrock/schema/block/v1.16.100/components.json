@@ -203,32 +203,103 @@
 					"description": "Sets rules for under what conditions the block can be placed/survive",
 
 					"additionalProperties": false,
-					"properties": {
-						"block_filter": {
-							"type": "array",
-							"description": "List of blocks (can use tags to specify them) that this block can be placed against in the allowed_faces direction",
-							"items": {
-								"type": "string"
+					"anyOf": [
+						{
+							"properties": {
+								"block_filter": {
+									"type": "array",
+									"description": "List of blocks (can use tags to specify them) that this block can be placed against in the allowed_faces direction",
+									"items": {
+										"type": "string"
+									}
+								},
+								"allowed_faces": {
+									"type": "array",
+									"description": "Defines the block faces this block can be placed on, e.g 'down' means you can only place this block on th bottom face of the block. If the block it is placed on is removed, this block will be destroyed",
+									"items": {
+										"type": "string",
+										"enum": [
+											"up",
+											"down",
+											"north",
+											"south",
+											"east",
+											"west",
+											"side",
+											"all"
+										]
+									}
+								}
 							}
 						},
-						"allowed_faces": {
-							"type": "array",
-							"description": "Defines the block faces this block can be placed on, e.g 'down' means you can only place this block on th bottom face of the block. If the block it is placed on is removed, this block will be destroyed",
-							"items": {
-								"type": "string",
-								"enum": [
-									"up",
-									"down",
-									"north",
-									"south",
-									"east",
-									"west",
-									"side",
-									"all"
-								]
+						{
+							"properties": {
+								"conditions": {
+									"type": "array",
+									"items": {
+										"properties": {
+											"block_filter": {
+												"type": "array",
+												"description": "List of blocks (can use tags to specify them) that this block can be placed against in the allowed_faces direction",
+												"items": {
+													"type": "string"
+												}
+											},
+											"allowed_faces": {
+												"type": "array",
+												"description": "Defines the block faces this block can be placed on, e.g 'down' means you can only place this block on th bottom face of the block. If the block it is placed on is removed, this block will be destroyed",
+												"items": {
+													"type": "string",
+													"enum": [
+														"up",
+														"down",
+														"north",
+														"south",
+														"east",
+														"west",
+														"side",
+														"all"
+													]
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						{
+							"properties": {
+								"conditions": {
+									"properties": {
+										"block_filter": {
+											"type": "array",
+											"description": "List of blocks (can use tags to specify them) that this block can be placed against in the allowed_faces direction",
+											"items": {
+												"type": "string"
+											}
+										},
+										"allowed_faces": {
+											"type": "array",
+											"description": "Defines the block faces this block can be placed on, e.g 'down' means you can only place this block on th bottom face of the block. If the block it is placed on is removed, this block will be destroyed",
+											"items": {
+												"type": "string",
+												"enum": [
+													"up",
+													"down",
+													"north",
+													"south",
+													"east",
+													"west",
+													"side",
+													"all"
+												]
+											}
+										}
+									}
+								}
 							}
 						}
-					}
+					]
 				},
 				"minecraft:preventsjumping": {
 					"type": "boolean",
