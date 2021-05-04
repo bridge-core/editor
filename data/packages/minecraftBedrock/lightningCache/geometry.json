@@ -12,5 +12,8 @@
 		"cacheKey": "materialInstance",
 		"path": "minecraft:geometry/*/bones/*/cubes/*/uv/*/material_instance"
 	},
-	{ "cacheKey": "locator", "path": "minecraft:geometry/*/bones/locators" }
+	{
+		"cacheKey": "locator",
+		"path": ["minecraft:geometry/*/bones/locators", "*/bones/*/locators"]
+	}
 ]
