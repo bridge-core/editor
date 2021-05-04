@@ -6,6 +6,7 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { App } from '/@/App'
 import { GeometryData } from './GeometryData'
 import { AnimationData } from './AnimationData'
+import { ParticleData } from './ParticleData'
 
 export interface IRenderData {
 	identifier: string
@@ -19,6 +20,7 @@ export class RenderDataContainer extends EventDispatcher<void> {
 	protected readyPromises: Promise<void>[] = []
 	protected _currentTexturePath = this.texturePaths[0]
 	protected _runningAnimations = new Set<string>()
+	protected particleEffects: ParticleData[] = []
 
 	get ready() {
 		return Promise.all(this.readyPromises)
@@ -54,6 +56,11 @@ export class RenderDataContainer extends EventDispatcher<void> {
 		)
 		this._animations.push(anim)
 		this.readyPromises.push(anim.ready.fired)
+	}
+	createParticle(shortName: string | undefined, particleFilePath: string) {
+		this.particleEffects.push(
+			new ParticleData(this, shortName, particleFilePath)
+		)
 	}
 	selectGeometry(id: string) {
 		for (const geo of this._geometries) {
@@ -91,6 +98,11 @@ export class RenderDataContainer extends EventDispatcher<void> {
 	}
 	get currentTexturePath() {
 		return this._currentTexturePath
+	}
+	get particles() {
+		return this.particleEffects.map(
+			(effect) => <const>[effect.shortName, effect.json]
+		)
 	}
 
 	activate() {

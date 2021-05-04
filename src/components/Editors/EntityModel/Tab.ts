@@ -35,14 +35,21 @@ export class EntityModelTab extends GeometryPreviewTab {
 		const connectedAnimations = await packIndexer.find(
 			'clientAnimation',
 			'identifier',
-			clientEntityData.animationIdentifier,
+			clientEntityData.animationIdentifier ?? [],
 			true
 		)
 		const connectedGeometries = await packIndexer.find(
 			'geometry',
 			'identifier',
-			clientEntityData.geometryIdentifier
+			clientEntityData.geometryIdentifier ?? []
 		)
+		const connectedParticles = await packIndexer.find(
+			'particle',
+			'identifier',
+			clientEntityData.particleIdentifier ?? [],
+			true
+		)
+		console.log(connectedParticles)
 
 		this._renderContainer = new RenderDataContainer(app, {
 			identifier: clientEntityData.geometryIdentifier[0],
@@ -51,9 +58,16 @@ export class EntityModelTab extends GeometryPreviewTab {
 		})
 		this._renderContainer.createGeometry(connectedGeometries[0])
 
-		for (const anim of connectedAnimations) {
-			this._renderContainer.createAnimation(anim)
-		}
+		connectedAnimations.forEach((filePath) =>
+			this._renderContainer!.createAnimation(filePath)
+		)
+		connectedParticles.forEach((filePath, i) =>
+			this._renderContainer!.createParticle(
+				(clientEntityData?.particleReference ?? [])[i],
+				filePath
+			)
+		)
+		console.log(this.renderContainer!.particles)
 
 		// Once the renderContainer is ready loading, create the initial model...
 		this.renderContainer.ready.then(() => {

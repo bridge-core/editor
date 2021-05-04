@@ -6,9 +6,33 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { RenderDataContainer } from './Data/RenderContainer'
 import { DropdownWindow } from '/@/components/Windows/Common/Dropdown/DropdownWindow'
 import { MultiOptionsWindow } from '/@/components/Windows/Common/MultiOptions/Window'
+import Wintersky from 'wintersky'
+
+export interface IPreviewOptions {
+	loadServerEntity?: boolean
+}
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
+	protected winterskyScene = new Wintersky.Scene({
+		fetchTexture: async (config) => {
+			const app = await App.getApp()
+
+			try {
+				return await loadAsDataURL(
+					config.particle_texture_path,
+					app.project.fileSystem
+				)
+			} catch (err) {
+				// Fallback to Wintersky's default handling of textures
+			}
+		},
+	})
 	protected _renderContainer?: RenderDataContainer
+	protected previewOptions: IPreviewOptions = {}
+
+	setPreviewOptions(previewOptions: IPreviewOptions) {
+		this.previewOptions = previewOptions
+	}
 
 	get renderContainer() {
 		if (!this._renderContainer)
@@ -108,6 +132,17 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			)
 		)
 		this.scene.add(this.model.getGroup())
+
+		this.scene.add(this.winterskyScene.space)
+		this.model.animator.setupWintersky(this.winterskyScene)
+		this.renderContainer.particles.forEach(([shortName, json]) => {
+			if (!shortName) return
+			console.log(shortName, json)
+			this.model?.animator.addEmitter(
+				shortName,
+				new Wintersky.Config(this.winterskyScene, json)
+			)
+		})
 
 		for (const [animId, anim] of this.renderContainer.animations) {
 			this.model.animator.addAnimation(animId, anim)

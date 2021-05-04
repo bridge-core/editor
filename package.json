@@ -19,7 +19,7 @@
 		"@types/micromatch": "^4.0.1",
 		"@vue/composition-api": "^1.0.0-rc.6",
 		"bridge-compiler": "^0.3.0",
-		"bridge-model-viewer": "^0.5.1",
+		"bridge-model-viewer": "^0.5.2",
 		"color-convert": "^2.0.1",
 		"comlink": "^4.3.0",
 		"compare-versions": "^3.6.0",
@@ -44,7 +44,7 @@
 		"vue-template-compiler": "2.6.12",
 		"vuedraggable": "^2.24.3",
 		"vuetify": "^2.2.11",
-		"wintersky": "github:jannisx11/wintersky#pull/5/head"
+		"wintersky": "github:jannisx11/wintersky#master"
 	},
 	"devDependencies": {
 		"@types/color-convert": "^2.0.0",
@@ -54,7 +54,7 @@
 		"@types/lodash-es": "^4.17.4",
 		"@types/lodash.debounce": "^4.0.6",
 		"@types/node": "^14.11.8",
-		"@types/three": "^0.126.2",
+		"@types/three": "^0.127.1",
 		"@types/uuid": "^8.3.0",
 		"@types/wicg-file-system-access": "^2020.9.1",
 		"@vue/cli-plugin-babel": "^4.5.0",

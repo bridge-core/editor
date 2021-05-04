@@ -18,20 +18,22 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	protected fileWatcher?: FileWatcher
 	protected isReloadingDone = new Signal<void>()
 
-	protected wintersky = new Wintersky.Scene({
-		fetchTexture: async (config) => {
-			const app = await App.getApp()
+	protected wintersky = Object.freeze(
+		new Wintersky.Scene({
+			fetchTexture: async (config) => {
+				const app = await App.getApp()
 
-			try {
-				return await loadAsDataURL(
-					config.particle_texture_path,
-					app.project.fileSystem
-				)
-			} catch (err) {
-				// Fallback to Wintersky's default handling of textures
-			}
-		},
-	})
+				try {
+					return await loadAsDataURL(
+						config.particle_texture_path,
+						app.project.fileSystem
+					)
+				} catch (err) {
+					// Fallback to Wintersky's default handling of textures
+				}
+			},
+		})
+	)
 
 	constructor(
 		tab: FileTab,
@@ -70,7 +72,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		this.addAction(
 			new SimpleAction({
 				icon: 'mdi-refresh',
-				name: 'Reload',
+				name: 'general.reload',
 				onTrigger: () => this.reload(),
 			})
 		)
@@ -94,10 +96,10 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		} catch {
 			return
 		}
-
+		console.log(particle)
 		this.emitter?.delete()
-		// @ts-ignore
-		this.scene.remove(this.wintersky.space)
+		if (!this.scene.children.includes(this.wintersky.space))
+			this.scene.add(this.wintersky.space)
 
 		this.config = new Wintersky.Config(this.wintersky, particle, {
 			path: this.getProjectPath(),
@@ -108,8 +110,6 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 			parent_mode: 'world',
 		})
 
-		// @ts-ignore
-		this.scene.add(this.wintersky.space)
 		this.emitter.start()
 	}
 
