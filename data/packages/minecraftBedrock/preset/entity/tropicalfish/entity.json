@@ -619,7 +619,7 @@
 				"separation_threshold": 0.15,
 				"cohesion_weight": 2.75,
 				"cohesion_threshold": 1.5,
-				"innner_cohesion_threshold": 1.5,
+				"inner_cohesion_threshold": 1.5,
 				"min_height": 1.5,
 				"max_height": 6,
 				"block_distance": 2,

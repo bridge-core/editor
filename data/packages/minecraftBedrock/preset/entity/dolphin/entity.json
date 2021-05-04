@@ -288,7 +288,7 @@
 				"separation_threshold": 3.0,
 				"cohesion_weight": 1.85,
 				"cohesion_threshold": 6.5,
-				"innner_cohesion_threshold": 3.5,
+				"inner_cohesion_threshold": 3.5,
 				"min_height": 4.0,
 				"max_height": 4.0,
 				"block_distance": 1.0,
