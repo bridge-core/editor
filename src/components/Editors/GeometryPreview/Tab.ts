@@ -15,20 +15,22 @@ export interface IPreviewOptions {
 }
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
-	protected winterskyScene = new Wintersky.Scene({
-		fetchTexture: async (config) => {
-			const app = await App.getApp()
+	protected winterskyScene = Object.freeze(
+		new Wintersky.Scene({
+			fetchTexture: async (config) => {
+				const app = await App.getApp()
 
-			try {
-				return await loadAsDataURL(
-					config.particle_texture_path,
-					app.project.fileSystem
-				)
-			} catch (err) {
-				// Fallback to Wintersky's default handling of textures
-			}
-		},
-	})
+				try {
+					return await loadAsDataURL(
+						config.particle_texture_path,
+						app.project.fileSystem
+					)
+				} catch (err) {
+					// Fallback to Wintersky's default handling of textures
+				}
+			},
+		})
+	)
 	protected _renderContainer?: RenderDataContainer
 	protected previewOptions: IPreviewOptions = {}
 
@@ -43,6 +45,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		this.winterskyScene.global_options.tick_rate = 60
 		this.winterskyScene.global_options.max_emitter_particles = 1000
 		this.winterskyScene.global_options.scale = 16
+		this.setupComplete.once(() => this.scene.add(this.winterskyScene.space))
 	}
 
 	setPreviewOptions(previewOptions: IPreviewOptions) {
@@ -137,8 +140,10 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected async createModel() {
 		const app = await App.getApp()
 
-		if (this.model) this.scene?.remove(this.model.getGroup())
-		this.scene.remove(this.winterskyScene.space)
+		if (this.model) {
+			this.scene?.remove(this.model.getGroup())
+			this.model.animator.disposeAnimations()
+		}
 
 		this.model = new Model(
 			this.renderContainer.modelData,
@@ -149,9 +154,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		)
 
 		this.scene.add(this.model.getGroup())
-
 		this.model.animator.setupWintersky(this.winterskyScene)
-		this.scene.add(this.winterskyScene.space)
 
 		this.renderContainer.particles.forEach(([shortName, json]) => {
 			if (!shortName) return
@@ -172,6 +175,11 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		setTimeout(() => {
 			this.requestRendering()
 		}, 100)
+	}
+
+	protected render() {
+		this.winterskyScene.updateFacingRotation(this.camera)
+		super.render()
 	}
 
 	async onChange() {
