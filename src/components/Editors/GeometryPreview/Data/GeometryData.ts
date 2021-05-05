@@ -4,7 +4,7 @@ import { PreviewFileWatcher } from './PreviewFileWatcher'
 import { RenderDataContainer } from './RenderContainer'
 
 export class GeometryData extends PreviewFileWatcher {
-	protected geometryJson: any
+	protected geometryJson: any = {}
 	protected selected!: string
 
 	constructor(

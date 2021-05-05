@@ -3,7 +3,7 @@ import { PreviewFileWatcher } from './PreviewFileWatcher'
 import { RenderDataContainer } from './RenderContainer'
 
 export class AnimationData extends PreviewFileWatcher {
-	protected animationJson: any
+	protected animationJson: any = {}
 
 	constructor(
 		protected parent: RenderDataContainer,

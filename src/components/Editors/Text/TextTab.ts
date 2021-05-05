@@ -12,6 +12,7 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
 import { createFromGeometry } from '../EntityModel/create/fromGeometry'
 import { createFromClientEntity } from '../EntityModel/create/fromClientEntity'
+import { createFromEntity } from '../EntityModel/create/fromEntity'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -78,6 +79,22 @@ export class TextTab extends FileTab {
 							if (!this.editorModel) return
 
 							const tab = await createFromClientEntity(this)
+							if (!tab) return
+
+							this.connectedTabs.push(tab)
+							app.project.tabSystem?.add(tab, true)
+						},
+					})
+				)
+			} else if (this.getProjectPath().startsWith('BP/entities/')) {
+				this.addAction(
+					new SimpleAction({
+						icon: 'mdi-play',
+						name: 'preview.viewEntity',
+						onTrigger: async () => {
+							if (!this.editorModel) return
+
+							const tab = await createFromEntity(this)
 							if (!tab) return
 
 							this.connectedTabs.push(tab)

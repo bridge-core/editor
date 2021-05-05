@@ -55,7 +55,12 @@ export function createCustomComponentPlugin({
 					isPlayerFile(filePath, getAliases)
 				) {
 					const file = await fileHandle.getFile()
-					return json5.parse(await file.text())
+					try {
+						return json5.parse(await file.text())
+					} catch (err) {
+						if (!options.isFileRequest) console.error(err)
+						return {}
+					}
 				}
 			},
 			async load(filePath, fileContent) {

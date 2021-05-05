@@ -3,7 +3,7 @@ import { PreviewFileWatcher } from './PreviewFileWatcher'
 import { RenderDataContainer } from './RenderContainer'
 
 export class ParticleData extends PreviewFileWatcher {
-	protected particleData: any
+	protected particleData: any = {}
 
 	constructor(
 		protected parent: RenderDataContainer,

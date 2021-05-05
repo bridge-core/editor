@@ -9,10 +9,7 @@ import { MultiOptionsWindow } from '/@/components/Windows/Common/MultiOptions/Wi
 import Wintersky from 'wintersky'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
-
-export interface IPreviewOptions {
-	loadServerEntity?: boolean
-}
+import { IDisposable } from '/@/types/disposable'
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected winterskyScene = Object.freeze(
@@ -32,7 +29,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		})
 	)
 	protected _renderContainer?: RenderDataContainer
-	protected previewOptions: IPreviewOptions = {}
+	protected boxHelperDisposables: IDisposable[] = []
 
 	constructor(
 		tab: FileTab,
@@ -46,10 +43,6 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		this.winterskyScene.global_options.max_emitter_particles = 1000
 		this.winterskyScene.global_options.scale = 16
 		this.setupComplete.once(() => this.scene.add(this.winterskyScene.space))
-	}
-
-	setPreviewOptions(previewOptions: IPreviewOptions) {
-		this.previewOptions = previewOptions
 	}
 
 	get renderContainer() {
@@ -130,12 +123,13 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		)
 	}
 
-	abstract loadRenderContainer(): Promise<void>
+	abstract loadRenderContainer(file: File): Promise<void>
 
 	onDestroy() {
 		this._renderContainer?.dispose()
 		super.onDestroy()
 	}
+	onChange() {}
 
 	protected async createModel() {
 		const app = await App.getApp()
@@ -143,6 +137,9 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		if (this.model) {
 			this.scene?.remove(this.model.getGroup())
 			this.model.animator.disposeAnimations()
+			this.boxHelperDisposables.forEach((disposable) =>
+				disposable.dispose()
+			)
 		}
 
 		this.model = new Model(
@@ -172,6 +169,42 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			this.model?.animator.play(animId)
 		)
 
+		const serverEntity = this.renderContainer?.serverEntity
+		if (serverEntity) {
+			this.boxHelperDisposables = serverEntity
+				.getSeatBoxHelpers()
+				.map((box) =>
+					this.model!.createOutlinedBox(
+						'#ff0000',
+						box.position,
+						box.size
+					)
+				)
+			this.boxHelperDisposables.push(
+				...serverEntity
+					.getCollisionBoxes()
+					.map((box) =>
+						this.model!.createOutlinedBox(
+							'#ffff00',
+							box.position,
+							box.size
+						)
+					)
+			)
+			this.boxHelperDisposables.push(
+				...serverEntity
+					.getHitboxes()
+					.map((box) =>
+						this.model!.createOutlinedBox(
+							'#0000ff',
+							box.position,
+							box.size
+						)
+					)
+			)
+		}
+
+		this.requestRendering()
 		setTimeout(() => {
 			this.requestRendering()
 		}, 100)
@@ -182,9 +215,6 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		super.render()
 	}
 
-	async onChange() {
-		await this.loadRenderContainer()
-	}
 	async reload() {
 		if (this.model) this.scene?.remove(this.model.getGroup())
 		this._renderContainer?.dispose()

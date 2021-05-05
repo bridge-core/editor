@@ -524,6 +524,7 @@ export default {
 		viewAnimation: 'View Animation',
 		viewModel: 'View Model',
 		viewParticle: 'View Particle',
+		viewEntity: 'View Entity',
 		failedClientEntityLoad: 'Failed to load connected client entity',
 		chooseGeometry: 'Choose Geometry',
 		noGeometry:
