@@ -123,7 +123,7 @@
 							"description": "Defines the sounds to be played on the entity.",
 							"patternProperties": {
 								".*": {
-									"type": "string"
+									"$ref": "../../soundDefinition/dynamic/identifierEnum.json"
 								}
 							}
 						},
