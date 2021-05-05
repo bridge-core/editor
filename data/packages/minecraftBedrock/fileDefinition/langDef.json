@@ -2,5 +2,5 @@
 	"id": "langDef",
 	"scope": ["BP/texts/languages.json", "RP/texts/languages.json"],
 	"matcher": "*/texts/languages.json",
-	"schema": "file:///data/packages/minecraftBedrock/schema/simple/langDef.json"
+	"schema": "file:///data/packages/minecraftBedrock/schema/langDef/main.json"
 }

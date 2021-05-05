@@ -2,7 +2,7 @@
 	"id": "terrainTexture",
 	"scope": "RP/textures/terrain_texture.json",
 	"matcher": "RP/textures/terrain_texture.json",
-	"schema": "file:///data/packages/minecraftBedrock/schema/simple/terrainTexture.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/terrainTexture/main.json",
 	"lightningCache": "terrainTexture.json",
 
 	"definitions": {

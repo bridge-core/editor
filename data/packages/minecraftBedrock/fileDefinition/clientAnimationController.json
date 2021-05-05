@@ -6,7 +6,7 @@
 		"RP/animation_controllers/**/*.json",
 		"RP/animation_controllers/*.json"
 	],
-	"schema": "file:///data/packages/minecraftBedrock/schema/animationController/client.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/clientAnimationController/main.json",
 	"lightningCache": "clientAnimationController.json",
 
 	"definitions": {

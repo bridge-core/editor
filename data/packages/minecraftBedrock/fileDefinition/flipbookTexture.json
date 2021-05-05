@@ -2,7 +2,7 @@
 	"id": "flipbookTexture",
 	"scope": "RP/textures/flipbook_textures.json",
 	"matcher": "RP/textures/flipbook_textures.json",
-	"schema": "file:///data/packages/minecraftBedrock/schema/simple/flipbookTexture.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/flipbookTexture/main.json",
 	"lightningCache": "flipbookTexture.json",
 
 	"definitions": {

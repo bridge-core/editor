@@ -2,7 +2,7 @@
 	"id": "clientBlock",
 	"scope": "RP/blocks.json",
 	"matcher": "RP/blocks.json",
-	"schema": "file:///data/packages/minecraftBedrock/schema/simple/blocks.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/clientBlock/main.json",
 	"lightningCache": "clientBlock.json",
 
 	"definitions": {

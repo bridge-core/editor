@@ -2,5 +2,5 @@
 	"id": "clientSound",
 	"scope": "RP/sounds.json",
 	"matcher": "RP/sounds.json",
-	"schema": "file:///data/packages/minecraftBedrock/schema/simple/sounds.json"
+	"schema": "file:///data/packages/minecraftBedrock/schema/sounds/main.json"
 }

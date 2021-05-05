@@ -6,7 +6,7 @@
 		"BP/animation_controllers/**/*.json",
 		"BP/animation_controllers/*.json"
 	],
-	"schema": "file:///data/packages/minecraftBedrock/schema/animationController/server.json",
+	"schema": "file:///data/packages/minecraftBedrock/schema/animationController/main.json",
 	"lightningCache": "animationController.json",
 	"packSpider": "animationController.json",
 
