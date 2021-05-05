@@ -158,7 +158,7 @@
 							"description": "Defines the particles to be played on the entity",
 							"patternProperties": {
 								".*": {
-									"type": "string"
+									"$ref": "../../general/reference/identifiers.json#/definitions/particle_identifiers"
 								}
 							}
 						},
@@ -166,7 +166,7 @@
 							"description": "Defines the entity's particle emitters.",
 							"patternProperties": {
 								".*": {
-									"type": "string"
+									"$ref": "../../general/reference/identifiers.json#/definitions/particle_identifiers"
 								}
 							}
 						}
