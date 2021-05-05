@@ -1,10 +1,47 @@
+<h2>Features:</h2>
+<ul>
+<li>Added support for toggling line comments</li>
+<li>Preset inputs now have validation rules to prevent users from entering invalid characters
+<ul>
+<li>Identifiers may only be lowercase</li>
+<li>Identifiers may only contain alphanumeric characters &amp; underscores</li>
+<li>File paths may not contain invalid characters</li>
+</ul>
+</li>
+<li>Added support for previewing animations
+<ul>
+<li>Basic support for playing particles (WIP)</li>
+</ul>
+</li>
+<li>Added support for previewing entity components
+<ul>
+<li>View &quot;minecraft:rideable&quot; seat positions</li>
+<li>View collision boxes</li>
+<li>View hitboxes</li>
+</ul>
+</li>
+<li>Added option to save opened file to project</li>
+<li>Added particle effect &amp; sound effect identifier auto-completions inside of client entities</li>
+</ul>
+<h2>Changes:</h2>
+<ul>
+<li>Added &quot;confirm&quot; icon to all confirm buttons</li>
+<li>Added support for opening images</li>
+<li>Changes to make more texts translatable</li>
+<li>Updated lightning cache format</li>
+<li>Updated schema folder structure to be more consistent</li>
+</ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed &quot;Cannot read enablePackSpider of undefined&quot; error</li>
-<li>Fixed default value of pack spider setting</li>
-<li>Fixed errors in custom components crashing compiler</li>
-<li>Fixed infinite loading upon saving files</li>
-<li>Fixed auto-completions for custom components written in TypeScript</li>
-<li>Fixed &quot;updateDynamicSchemas&quot; being called too often</li>
-<li>Fixed dynamic schemas not updating correctly (e.g. upon creating new presets)</li>
+<li>Fixed on-demand compilation not returning arrayBuffer</li>
+<li>Fixed blaze preset</li>
+<li>Fixed race-condition upon loading model</li>
+<li>Fixed dolphin presets</li>
+<li>Fixed tropical fish preset</li>
+<li>Fixed pig preset</li>
+<li>Fixed &quot;particle_effects&quot; &amp; &quot;sound_effects&quot; inside of animation schema</li>
+<li>Fixed &quot;minecraft:placement_filter&quot;</li>
+<li>Fixed locator caching for old models</li>
+<li>Fixed initial compilation of preview files</li>
+<li>Fixed nested object inside of array for &quot;minecraft:custom_hit_test&quot;</li>
 </ul>
