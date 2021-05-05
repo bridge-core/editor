@@ -64,7 +64,7 @@
 			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		],
 		[
-			"textureSaddled.png",
+			"textureSaddle.png",
 			"RP/textures/entity/{{PRESET_PATH}}{{IDENTIFIER}}/{{IDENTIFIER}}_saddle.png",
 			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
 		]
