@@ -43,9 +43,7 @@ export async function buildDynamicSchemas(packageName) {
 		)
 
 		for (const cacheDef of json) {
-			const key = Object.keys(cacheDef).find(
-				(key) => !key.startsWith('@')
-			)
+			const key = cacheDef.cacheKey
 			if (!key) continue
 
 			await writeJson(

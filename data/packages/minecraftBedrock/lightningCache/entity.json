@@ -5,6 +5,11 @@
 	},
 	{ "cacheKey": "event", "path": "minecraft:entity/events" },
 	{
+		"cacheKey": "eventReference",
+		"pathScript": "return Bridge.paths.map(path => [`*/components/${path}/**/event`, `*/component_groups/*/${path}/**/event`]).flat()",
+		"path": ["minecraft:timer", "minecraft:environment_sensor"]
+	},
+	{
 		"cacheKey": "componentGroup",
 		"path": "minecraft:entity/component_groups"
 	},

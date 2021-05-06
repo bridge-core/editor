@@ -1,11 +1,11 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema",
-    "type": "string",
-    "examples": [
-        "minecraft:entity_born",
-        "minecraft:entity_spawned",
-        "minecraft:entity_transformed",
-        "minecraft:on_prime",
-        "minecraft:start_celebrating"
-    ]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"properties": {
+		"minecraft:entity_born": {},
+		"minecraft:entity_spawned": {},
+		"minecraft:entity_transformed": {},
+		"minecraft:on_prime": {},
+		"minecraft:start_celebrating": {}
+	}
 }
