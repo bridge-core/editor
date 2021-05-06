@@ -10,6 +10,7 @@ import Wintersky from 'wintersky'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { IDisposable } from '/@/types/disposable'
+import { IOutlineBox } from './Data/EntityData'
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected winterskyScene = Object.freeze(
@@ -171,43 +172,24 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 
 		const serverEntity = this.renderContainer?.serverEntity
 		if (serverEntity) {
-			this.boxHelperDisposables = serverEntity
-				.getSeatBoxHelpers()
-				.map((box) =>
-					this.model!.createOutlinedBox(
-						'#ff0000',
-						box.position,
-						box.size
-					)
-				)
-			this.boxHelperDisposables.push(
-				...serverEntity
-					.getCollisionBoxes()
-					.map((box) =>
-						this.model!.createOutlinedBox(
-							'#ffff00',
-							box.position,
-							box.size
-						)
-					)
-			)
-			this.boxHelperDisposables.push(
-				...serverEntity
-					.getHitboxes()
-					.map((box) =>
-						this.model!.createOutlinedBox(
-							'#0000ff',
-							box.position,
-							box.size
-						)
-					)
-			)
+			this.boxHelperDisposables.push()
+			this.createOutlineBoxes([
+				...serverEntity.getHitboxes(),
+				...serverEntity.getCollisionBoxes(),
+				...serverEntity.getSeatBoxHelpers(),
+			])
 		}
 
 		this.requestRendering()
 		setTimeout(() => {
 			this.requestRendering()
 		}, 100)
+	}
+
+	protected createOutlineBoxes(boxes: IOutlineBox[]) {
+		this.boxHelperDisposables = boxes.map((box) =>
+			this.model!.createOutlineBox(box.color, box.position, box.size)
+		)
 	}
 
 	protected render() {
