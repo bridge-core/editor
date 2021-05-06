@@ -40,6 +40,7 @@
 				"event_choices": {
 					"type": "array",
 					"items": {
+						"type": "object",
 						"properties": {
 							"look_at_target": {
 								"description": "If true, the mob will face the entity it sends an event to.",

@@ -25,10 +25,18 @@
 			]
 		},
 		"minecraft:spawns_on_block_prevented_filter": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			}
+			"anyOf": [
+				{
+					"type": "array",
+					"items": {
+						"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					}
+				},
+				{
+					"type": "string",
+					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+				}
+			]
 		},
 		"minecraft:brightness_filter": {
 			"additionalProperties": false,
@@ -207,6 +215,7 @@
 		"minecraft:permute_type": {
 			"type": "array",
 			"items": {
+				"type": "object",
 				"properties": {
 					"weight": {
 						"type": "integer"

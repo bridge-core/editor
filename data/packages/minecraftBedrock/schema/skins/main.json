@@ -5,6 +5,7 @@
 		"skins": {
 			"type": "array",
 			"items": {
+				"type": "object",
 				"additionalProperties": false,
 				"properties": {
 					"localization_name": {

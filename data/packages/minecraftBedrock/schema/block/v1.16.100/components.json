@@ -237,6 +237,7 @@
 								"conditions": {
 									"type": "array",
 									"items": {
+										"type": "object",
 										"properties": {
 											"block_filter": {
 												"type": "array",

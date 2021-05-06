@@ -87,6 +87,7 @@
 						"ingredients": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"item": {
 										"description": "Provides the identifier for the result item",

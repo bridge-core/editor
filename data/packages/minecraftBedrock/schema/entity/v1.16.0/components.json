@@ -57,6 +57,7 @@
 									"items": {
 										"anyOf": [
 											{
+												"type": "object",
 												"properties": {
 													"item": {
 														"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
@@ -332,6 +333,7 @@
 							"description": "List of items that can be used to boost while riding this entity.",
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"item": {
 										"description": "Name of the item that can be used to boost.",
@@ -542,6 +544,7 @@
 								{
 									"type": "array",
 									"items": {
+										"type": "object",
 										"properties": {
 											"blocks": {
 												"description": "The block types required nearby for the entity to breed.",
@@ -797,6 +800,7 @@
 									"description": "List of triggers with the events to call when taking specific kinds of damage.",
 									"type": "array",
 									"items": {
+										"type": "object",
 										"properties": {
 											"on_damage": {
 												"description": "Specifies filters for entity definitions and events.",
@@ -1110,6 +1114,7 @@
 							"description": "List of slots and the item that can be equipped.",
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"accepted_items": {
 										"description": "The list of items that can go in this slot.",
@@ -1371,6 +1376,7 @@
 							"description": "The list of genes that this entity has and will cross with a partner during breeding.",
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"name": {
 										"description": "The name of the gene.",
@@ -1400,6 +1406,7 @@
 										"description": "The list of genetic variants for this gene. These check for particular allele combinations and fire events when all of them are satisfied.",
 										"type": "array",
 										"items": {
+											"type": "object",
 											"properties": {
 												"main_allele": {
 													"description": "If this value is non-negative, compare the mob's main allele with this value for a match. Can also be a range of integers.",
@@ -1493,6 +1500,7 @@
 								{
 									"type": "array",
 									"items": {
+										"type": "object",
 										"properties": {
 											"cooldown": {
 												"description": "An optional cool down in seconds to prevent spamming interactions.",
@@ -1596,6 +1604,7 @@
 							"description": "The array of items that can be used to heal this entity.",
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"item": {
 										"description": "Item identifier that can be used to heal this entity.",
@@ -1615,6 +1624,7 @@
 									"effects": {
 										"type": "array",
 										"items": {
+											"type": "object",
 											"properties": {
 												"name": {
 													"$ref": "../../general/vanilla/effectName.json"
@@ -1701,6 +1711,7 @@
 						"damage_conditions": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"filters": {
 										"$ref": "../general/filter.json"
@@ -1748,6 +1759,7 @@
 						"interactions": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"add_items": {
 										"description": "Loot table with items to add to the player's inventory upon successful interaction.",
@@ -2225,6 +2237,7 @@
 							"description": "Describes the special names for this entity and the events to call when the entity acquires those names.",
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"name_filter": {
 										"description": "List of special names that will cause the events defined in 'on_named' to fire.",
@@ -2694,6 +2707,7 @@
 								"skin_list": {
 									"type": "array",
 									"items": {
+										"type": "object",
 										"properties": {
 											"variant": {
 												"type": "number"
@@ -2897,6 +2911,7 @@
 													"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 												},
 												{
+													"type": "object",
 													"properties": {
 														"name": {
 															"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
@@ -3311,6 +3326,7 @@
 							"description": "A list of weighted responses to the melee attack being blocked.",
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"weight": {
 										"type": "number"
@@ -3364,6 +3380,7 @@
 									"description": "The list of positions and number of riders for each position for entities riding this entity.",
 									"type": "array",
 									"items": {
+										"type": "object",
 										"properties": {
 											"lock_rider_rotation": {
 												"description": "Angle in degrees that a rider is allowed to rotate while riding this entity. Omit this property for no limit.",
@@ -3512,6 +3529,7 @@
 							"description": "List of items that the entity wants to share.",
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"priority": {
 										"description": "Prioritizes which items the entity prefers. 0 is the highest priority.",
@@ -3611,6 +3629,7 @@
 								{
 									"type": "array",
 									"items": {
+										"type": "object",
 										"properties": {
 											"should_leash": {
 												"description": "If true, this the spawned entity will be leashed to the parent.",
@@ -3800,32 +3819,38 @@
 						"auto_reject_items": {
 							"description": "The list of items that, if carried while interacting with the entity, will anger it.",
 							"type": "array",
-							"properties": {
-								"item": {
-									"description": "Name of the item this entity dislikes and will cause it to get angry if used while untamed.",
-									"anyOf": [
-										{
-											"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
-										}
-									]
+							"items": {
+								"type": "object",
+								"properties": {
+									"item": {
+										"description": "Name of the item this entity dislikes and will cause it to get angry if used while untamed.",
+										"anyOf": [
+											{
+												"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+											}
+										]
+									}
 								}
 							}
 						},
 						"feed_items": {
 							"description": "The list of items that can be used to increase the entity's temper and speed up the taming process.",
 							"type": "array",
-							"properties": {
-								"item": {
-									"description": "Name of the item this entity likes and can be used to increase this entity's temper.",
-									"anyOf": [
-										{
-											"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
-										}
-									]
-								},
-								"temper_mod": {
-									"description": "The amount of temper this entity gains when fed this item.",
-									"type": "number"
+							"items": {
+								"type": "object",
+								"properties": {
+									"item": {
+										"description": "Name of the item this entity likes and can be used to increase this entity's temper.",
+										"anyOf": [
+											{
+												"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+											}
+										]
+									},
+									"temper_mod": {
+										"description": "The amount of temper this entity gains when fed this item.",
+										"type": "number"
+									}
 								}
 							}
 						},
@@ -3978,6 +4003,7 @@
 							"description": "This is a list of objects, representing one value in seconds that can be picked before firing the event and an optional weight. Incompatible with time.",
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"weight": {
 										"type": "number"

@@ -16,6 +16,7 @@
 								{
 									"type": "array",
 									"items": {
+										"type": "object",
 										"properties": {
 											"item": {
 												"properties": {
@@ -81,6 +82,7 @@
 						"block_list": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"block": {
 										"properties": {
@@ -110,6 +112,7 @@
 						"conditional_values": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"max_dropped_ticks": {
 										"type": "number"
@@ -132,6 +135,7 @@
 						"default_values": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"max_dropped_ticks": {
 										"type": "number"
@@ -152,12 +156,14 @@
 						"slots": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"accepted_items": {
 										"type": "array",
 										"items": {
 											"anyOf": [
 												{
+													"type": "object",
 													"properties": {
 														"any_tag": {
 															"type": "string"
@@ -179,12 +185,14 @@
 								{
 									"type": "array",
 									"items": {
+										"type": "object",
 										"properties": {
 											"items": {
 												"type": "array",
 												"items": {
 													"anyOf": [
 														{
+															"type": "object",
 															"properties": {
 																"any_tag": {
 																	"type": "string"
@@ -206,10 +214,12 @@
 						"items": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"item": {
 										"anyOf": [
 											{
+												"type": "object",
 												"properties": {
 													"any_tag": {
 														"type": "string"
@@ -238,33 +248,40 @@
 					"properties": {
 						"auto_reject_items": {
 							"type": "array",
-							"properties": {
-								"item": {
-									"anyOf": [
-										{
-											"properties": {
-												"any_tag": {
-													"type": "string"
+							"items": {
+								"properties": {
+									"item": {
+										"anyOf": [
+											{
+												"type": "object",
+												"properties": {
+													"any_tag": {
+														"type": "string"
+													}
 												}
 											}
-										}
-									]
+										]
+									}
 								}
 							}
 						},
 						"feed_items": {
 							"type": "array",
-							"properties": {
-								"item": {
-									"anyOf": [
-										{
-											"properties": {
-												"any_tag": {
-													"type": "string"
+							"items": {
+								"type": "object",
+								"properties": {
+									"item": {
+										"anyOf": [
+											{
+												"type": "object",
+												"properties": {
+													"any_tag": {
+														"type": "string"
+													}
 												}
 											}
-										}
-									]
+										]
+									}
 								}
 							}
 						}

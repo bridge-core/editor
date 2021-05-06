@@ -196,6 +196,7 @@
 						"feature_areas": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"feature": {
 										"description": "Feature to be placed.",

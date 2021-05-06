@@ -252,6 +252,7 @@
 						"patterns": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"pattern": {
 										"$ref": "./general.json#/definitions/banner_patterns"
@@ -414,6 +415,7 @@
 						"enchants": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"id": {
 										"$ref": "../general/vanilla/enchantName.json"
