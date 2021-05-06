@@ -117,6 +117,8 @@ export class DefinitionProvider {
 			definitionId: await findAsync(
 				definitions,
 				async ([def, path, { script, filter }]) => {
+					if (path === '') return false
+
 					const matches = isMatch(location, path)
 					if (matches) {
 						if (filter && filter.includes(word))
