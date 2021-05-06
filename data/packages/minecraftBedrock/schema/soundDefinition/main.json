@@ -43,6 +43,7 @@
 							"items": {
 								"anyOf": [
 									{
+										"type": "object",
 										"properties": {
 											"name": {
 												"$ref": "../sound/dynamic/soundPathEnum.json"

@@ -49,6 +49,7 @@
 			"type": "array",
 			"description": "Defines the result item of this recipe.",
 			"items": {
+				"type": "object",
 				"properties": {
 					"item": {
 						"description": "Provides the identifier for the result item",

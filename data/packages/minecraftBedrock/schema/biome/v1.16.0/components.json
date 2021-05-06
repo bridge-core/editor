@@ -274,6 +274,7 @@
 					"description": "All adjustments that match the column's noise values will be applied in the order listed.",
 					"type": "array",
 					"items": {
+						"type": "object",
 						"properties": {
 							"materials": {
 								"additionalProperties": false,

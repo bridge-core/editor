@@ -1,6 +1,7 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"additionalProperties": false,
+	"type": "object",
 	"properties": {
 		"sequence": {
 			"type": "array",
@@ -13,6 +14,7 @@
 			"items": {
 				"allOf": [
 					{
+						"type": "object",
 						"properties": {
 							"weight": {
 								"type": "integer"

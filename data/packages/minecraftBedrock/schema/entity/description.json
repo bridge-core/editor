@@ -45,6 +45,7 @@
 								"$ref": "./dynamic/currentContext/animationEnum.json"
 							},
 							{
+								"type": "object",
 								"propertyNames": {
 									"$ref": "./dynamic/currentContext/animationEnum.json"
 								},

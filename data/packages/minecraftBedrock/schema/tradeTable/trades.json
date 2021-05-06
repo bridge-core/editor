@@ -2,12 +2,14 @@
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"type": "array",
 	"items": {
+		"type": "object",
 		"properties": {
 			"wants": {
 				"type": "array",
 				"maxItems": 2,
 				"minItems": 1,
 				"items": {
+					"type": "object",
 					"properties": {
 						"item": {
 							"$ref": "../general/reference/identifiers.json#/definitions/item_identifiers"
@@ -43,6 +45,7 @@
 				"maxItems": 1,
 				"minItems": 1,
 				"items": {
+					"type": "object",
 					"properties": {
 						"item": {
 							"$ref": "../general/reference/identifiers.json#/definitions/item_identifiers"
@@ -70,6 +73,7 @@
 						"choice": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"item": {
 										"$ref": "../general/reference/identifiers.json#/definitions/item_identifiers"
