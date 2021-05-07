@@ -28,7 +28,7 @@ export class PackIndexerService extends TaskService<string[]> {
 
 	constructor(protected readonly options: IPackIndexerOptions) {
 		super()
-		this.fileSystem = new FileSystem(options.baseDirectory)
+		this.fileSystem = new FileSystem(options.projectDirectory)
 		this.lightningStore = new LightningStore(this.fileSystem)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
