@@ -6,9 +6,12 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import json5 from 'json5'
 import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
+import { walkObject } from '/@/utils/walkObject'
+import { isValidPositionArray } from '/@/utils/minecraft/validPositionArray'
 
 export class BlockModelTab extends GeometryPreviewTab {
 	protected blockWatcher = new FileWatcher(App.instance, this.blockFilePath)
+	protected blockJson: any = {}
 
 	constructor(
 		protected blockFilePath: string,
@@ -33,10 +36,10 @@ export class BlockModelTab extends GeometryPreviewTab {
 		const packIndexer = app.project.packIndexer.service
 		if (!packIndexer) return
 
-		let blockJson: any
 		try {
-			blockJson =
+			this.blockJson = Object.freeze(
 				json5.parse(await file.text())?.['minecraft:block'] ?? {}
+			)
 		} catch {
 			return
 		}
@@ -98,5 +101,48 @@ export class BlockModelTab extends GeometryPreviewTab {
 		this._renderContainer.on(() => {
 			this.createModel()
 		})
+	}
+
+	async createModel() {
+		await super.createModel()
+		this.createOutlineBoxes([
+			...this.loadCollisionBoxes('entity'),
+			...this.loadCollisionBoxes('pick'),
+		])
+	}
+
+	findComponents(blockJson: any, id: string) {
+		const components: any[] = []
+		const onReach = (data: any) => components.push(data)
+		const locations = [
+			`components/${id}`,
+			`permutations/*/components/${id}`,
+		]
+		locations.forEach((loc) => walkObject(loc, blockJson, onReach))
+
+		return components
+	}
+	loadCollisionBoxes(type: 'pick' | 'entity') {
+		return this.findComponents(
+			this.blockJson,
+			`minecraft:${type}_collision`
+		)
+			.filter(
+				(collisionBox) =>
+					isValidPositionArray(collisionBox.origin) &&
+					isValidPositionArray(collisionBox.size)
+			)
+			.map(
+				({ origin, size }) =>
+					<const>{
+						color: type === 'entity' ? '#ffff00' : '#0000ff',
+						position: {
+							x: origin[0] + size[0] / 2,
+							y: origin[1],
+							z: origin[2] + size[2] / 2,
+						},
+						size: { x: size[0], y: size[1], z: size[2] },
+					}
+			)
 	}
 }
