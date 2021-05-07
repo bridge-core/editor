@@ -1,7 +1,11 @@
 <template>
 	<div
 		class="d-flex px-1 mx-1 align-center action"
-		v-ripple
+		:style="{
+			opacity: action.isDisabled ? 0.2 : 1,
+			cursor: !action.isDisabled ? 'pointer' : null,
+		}"
+		v-ripple="!action.isDisabled"
 		@click="action.trigger()"
 	>
 		<v-icon :color="action.color || 'primary'" class="mr-1" small>
@@ -25,7 +29,6 @@ export default {
 
 <style scoped>
 .action {
-	cursor: pointer;
 	border-radius: 8px;
 }
 

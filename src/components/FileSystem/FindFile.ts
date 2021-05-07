@@ -1,6 +1,6 @@
 import { FileSystem } from './FileSystem'
 
-export async function findFile(
+export async function findFileExtension(
 	fileSystem: FileSystem,
 	basePath: string,
 	possibleExtensions: string[]

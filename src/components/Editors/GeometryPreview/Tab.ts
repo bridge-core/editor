@@ -57,6 +57,11 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	}
 
 	onCreate() {
+		this.registerActions()
+	}
+
+	registerActions() {
+		this.actions = []
 		this.addAction(
 			new SimpleAction({
 				icon: 'mdi-refresh',
@@ -66,6 +71,11 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			new SimpleAction({
 				icon: 'mdi-image-outline',
 				name: 'fileType.texture',
+				isDisabled: () => {
+					return (
+						(this._renderContainer?.texturePaths?.length ?? 0) <= 1
+					)
+				},
 				onTrigger: async () => {
 					const textures = this.renderContainer.texturePaths
 					const chooseTexture = new DropdownWindow({
@@ -83,6 +93,12 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			new SimpleAction({
 				icon: 'mdi-cube-outline',
 				name: 'fileType.geometry',
+				isDisabled: () => {
+					return (
+						(this._renderContainer?.geometryIdentifiers?.length ??
+							0) <= 1
+					)
+				},
 				onTrigger: async () => {
 					const geomtries = this.renderContainer.geometryIdentifiers
 					const chooseGeometry = new DropdownWindow({
@@ -100,6 +116,9 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			new SimpleAction({
 				icon: 'mdi-movie-open-outline',
 				name: 'fileType.clientAnimation',
+				isDisabled: () => {
+					return (this._renderContainer?.animations?.length ?? 0) <= 1
+				},
 				onTrigger: async () => {
 					const animations = this.renderContainer.animations
 					const chooseAnimation = new MultiOptionsWindow({
@@ -142,6 +161,10 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 				disposable.dispose()
 			)
 		}
+		this.registerActions()
+
+		// No texture available for model -> nothing to render
+		if (!this.renderContainer.currentTexturePath) return
 
 		this.model = new Model(
 			this.renderContainer.modelData,

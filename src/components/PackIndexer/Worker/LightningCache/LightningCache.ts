@@ -6,7 +6,7 @@ import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'
 import { runScript } from './Script'
 import { extname } from '/@/utils/path'
-import { findFile } from '/@/components/FileSystem/FindFile'
+import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { iterateDir } from '/@/utils/iterateDir'
 
 const knownTextFiles = new Set([
@@ -279,7 +279,7 @@ export class LightningCache {
 									basePath: string,
 									extensions: string[]
 								) =>
-									findFile(
+									findFileExtension(
 										this.service.fileSystem,
 										basePath,
 										extensions

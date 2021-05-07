@@ -9,6 +9,7 @@ import { createFromGeometry } from '/@/components/Editors/EntityModel/create/fro
 import { createFromClientEntity } from '/@/components/Editors/EntityModel/create/fromClientEntity'
 import { createFromEntity } from '/@/components/Editors/EntityModel/create/fromEntity'
 import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
+import { BlockModelTab } from '../../Editors/BlockModel/Tab'
 
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{
@@ -31,6 +32,17 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 		fileMatch: 'RP/particles/',
 		createPreview: async (tab) =>
 			new ParticlePreviewTab(tab, tab.getParent(), tab.getFileHandle()),
+	},
+	{
+		name: 'preview.viewBlock',
+		fileMatch: 'BP/blocks/',
+		createPreview: async (tab) =>
+			new BlockModelTab(
+				tab.getProjectPath(),
+				tab,
+				tab.getParent(),
+				tab.getFileHandle()
+			),
 	},
 ]
 
