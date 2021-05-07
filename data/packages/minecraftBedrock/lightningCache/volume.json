@@ -2,5 +2,9 @@
 	{
 		"cacheKey": "identifier",
 		"path": "minecraft:volume/description/identifier"
+	},
+	{
+		"cacheKey": "fogIdentifier",
+		"path": "minecraft:volume/components/minecraft:fog/fog_identifier"
 	}
 ]
