@@ -3,6 +3,7 @@
 		<component
 			:is="tab.treeEditor.tree.component"
 			:tree="tab.treeEditor.tree"
+			:treeEditor="tab.treeEditor"
 		/>
 	</div>
 </template>
@@ -16,3 +17,9 @@ export default {
 	},
 }
 </script>
+
+<style>
+.tree-editor-selection {
+	outline: 1px solid white;
+}
+</style>

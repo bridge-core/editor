@@ -5,14 +5,27 @@
 			@click.stop.prevent="tree.isOpen = !tree.isOpen"
 		>
 			<v-icon class="mr-1" small> mdi-chevron-right </v-icon>
-			<span v-if="tree.parent.type === 'object'"><slot />:</span>
-			{{ openingBracket }}
+			<span v-if="tree.parent.type === 'object'">
+				<span
+					:class="{
+						'tree-editor-selection': tree.isSelected,
+					}"
+					@click.stop.prevent="onClickKey"
+				>
+					<slot /> </span
+				>:</span
+			>
+			<span class="ml-1">{{ openingBracket }}</span>
 		</summary>
 
-		<TreeChildren v-if="tree.isOpen" :tree="tree" />
+		<TreeChildren
+			v-if="tree.isOpen"
+			:tree="tree"
+			:treeEditor="treeEditor"
+		/>
 		{{ closingBracket }}
 	</details>
-	<TreeChildren v-else :tree="tree" />
+	<TreeChildren v-else :tree="tree" :treeEditor="treeEditor" />
 </template>
 
 <script>
@@ -31,6 +44,7 @@ export default {
 	props: {
 		tree: Object,
 		treeKey: String,
+		treeEditor: Object,
 	},
 	computed: {
 		openingBracket() {
@@ -47,12 +61,19 @@ export default {
 			return this.tree.isOpen ? brackets[this.tree.type][1] : undefined
 		},
 	},
+	methods: {
+		onClickKey(event) {
+			if (event.altKey) this.treeEditor.toggleSelection(this.tree)
+			else this.treeEditor.setSelection(this.tree)
+		},
+	},
 }
 </script>
 
 <style scoped>
 .common-tree-key {
 	list-style-type: none;
+	display: inline-block;
 }
 .common-tree-key .v-icon {
 	position: relative;

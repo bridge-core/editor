@@ -14,7 +14,7 @@ export class TreeTab extends FileTab {
 	}
 
 	static is(fileHandle: FileSystemFileHandle) {
-		return false
+		// return false
 		return fileHandle.name.endsWith('.json')
 	}
 	get treeEditor() {

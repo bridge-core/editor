@@ -5,6 +5,7 @@
 			:key="child.uuid"
 			:is="child.component"
 			:tree="child"
+			:treeEditor="treeEditor"
 		>
 			<Highlight :def="tree.type === 'object' ? stringDef : numberDef">{{
 				wrapKey(key)
@@ -25,6 +26,7 @@ export default {
 	},
 	props: {
 		tree: Object,
+		treeEditor: Object,
 	},
 	methods: {
 		wrapKey(key) {
@@ -33,5 +35,3 @@ export default {
 	},
 }
 </script>
-
-<style></style>
