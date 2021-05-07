@@ -3,10 +3,11 @@ import { EntityModelTab } from '../Tab'
 import { transformOldModels } from '../transformOldModels'
 import { App } from '/@/App'
 import { FileTab } from '/@/components/TabSystem/FileTab'
+import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { DropdownWindow } from '/@/components/Windows/Common/Dropdown/DropdownWindow'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 
-export async function createFromGeometry(tab: FileTab) {
+export async function createFromGeometry(tabSystem: TabSystem, tab: FileTab) {
 	const app = await App.getApp()
 	const packIndexer = app.project.packIndexer.service
 
@@ -57,7 +58,7 @@ export async function createFromGeometry(tab: FileTab) {
 	return new EntityModelTab(
 		clientEntity[0],
 		tab,
-		tab.tabSystem,
+		tabSystem,
 		tab.getFileHandle()
 	)
 }

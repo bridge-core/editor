@@ -1,10 +1,11 @@
 import json5 from 'json5'
-import { FileTab } from '../../../TabSystem/FileTab'
-import { InformationWindow } from '../../../Windows/Common/Information/InformationWindow'
+import { FileTab } from '/@/components/TabSystem/FileTab'
+import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { EntityModelTab } from '../Tab'
 import { App } from '/@/App'
+import { TabSystem } from '/@/components/TabSystem/TabSystem'
 
-export async function createFromEntity(tab: FileTab) {
+export async function createFromEntity(tabSystem: TabSystem, tab: FileTab) {
 	const app = await App.getApp()
 	const packIndexer = app.project.packIndexer.service
 
@@ -31,7 +32,7 @@ export async function createFromEntity(tab: FileTab) {
 	const previewTab = new EntityModelTab(
 		clientEntity[0],
 		tab,
-		tab.tabSystem,
+		tabSystem,
 		tab.getFileHandle()
 	)
 	previewTab.setPreviewOptions({ loadServerEntity: true })

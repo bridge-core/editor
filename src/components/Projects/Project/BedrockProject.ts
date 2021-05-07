@@ -15,32 +15,33 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 	{
 		name: 'preview.viewModel',
 		fileMatch: 'RP/models/',
-		createPreview: (tab) => createFromGeometry(tab),
+		createPreview: (tabSystem, tab) => createFromGeometry(tabSystem, tab),
 	},
 	{
 		name: 'preview.viewModel',
 		fileMatch: 'RP/entity/',
-		createPreview: (tab) => createFromClientEntity(tab),
+		createPreview: (tabSystem, tab) =>
+			createFromClientEntity(tabSystem, tab),
 	},
 	{
 		name: 'preview.viewEntity',
 		fileMatch: 'BP/entities/',
-		createPreview: (tab) => createFromEntity(tab),
+		createPreview: (tabSystem, tab) => createFromEntity(tabSystem, tab),
 	},
 	{
 		name: 'preview.viewParticle',
 		fileMatch: 'RP/particles/',
-		createPreview: async (tab) =>
-			new ParticlePreviewTab(tab, tab.getParent(), tab.getFileHandle()),
+		createPreview: async (tabSystem, tab) =>
+			new ParticlePreviewTab(tab, tabSystem, tab.getFileHandle()),
 	},
 	{
 		name: 'preview.viewBlock',
 		fileMatch: 'BP/blocks/',
-		createPreview: async (tab) =>
+		createPreview: async (tabSystem, tab) =>
 			new BlockModelTab(
 				tab.getProjectPath(),
 				tab,
-				tab.getParent(),
+				tabSystem,
 				tab.getFileHandle()
 			),
 	},

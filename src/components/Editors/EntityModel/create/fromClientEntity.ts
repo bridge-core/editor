@@ -1,11 +1,15 @@
 import { EntityModelTab } from '../Tab'
 import { FileTab } from '/@/components/TabSystem/FileTab'
+import { TabSystem } from '/@/components/TabSystem/TabSystem'
 
-export async function createFromClientEntity(tab: FileTab) {
+export async function createFromClientEntity(
+	tabSystem: TabSystem,
+	tab: FileTab
+) {
 	return new EntityModelTab(
 		tab.getProjectPath(),
 		tab,
-		tab.tabSystem,
+		tabSystem,
 		tab.getFileHandle()
 	)
 }

@@ -2,6 +2,7 @@ import { App } from '/@/App'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { Tab } from '../CommonTab'
 import { FileTab } from '/@/components/TabSystem/FileTab'
+import { TabSystem } from '../TabSystem'
 
 export interface ITabActionConfig {
 	icon: string
@@ -13,7 +14,7 @@ export interface ITabActionConfig {
 export interface ITabPreviewConfig {
 	name: string
 	fileMatch: string
-	createPreview(tab: FileTab): Promise<Tab | undefined>
+	createPreview(tabSystem: TabSystem, tab: FileTab): Promise<Tab | undefined>
 }
 
 export class TabActionProvider {
@@ -35,11 +36,16 @@ export class TabActionProvider {
 			trigger: async (fileTab) => {
 				const app = await App.getApp()
 
-				const previewTab = await definition.createPreview(fileTab)
+				const previewTab = await definition.createPreview(
+					app.project.inactiveTabSystem!,
+					fileTab
+				)
 				if (!previewTab) return
 
 				fileTab.connectedTabs.push(previewTab)
-				app.project.tabSystem?.add(previewTab, true)
+
+				app.project.inactiveTabSystem?.add(previewTab, true)
+				app.project.inactiveTabSystem?.setActive(true)
 			},
 		})
 	}
