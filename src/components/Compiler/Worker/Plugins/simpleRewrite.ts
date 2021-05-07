@@ -14,6 +14,7 @@ export const SimpleRewrite: TCompilerPluginFactory = ({
 		BP: 'development_behavior_packs',
 		RP: 'development_resource_packs',
 		SP: 'skin_packs',
+		WT: 'minecraftWorlds',
 	}
 
 	// Rewrite paths so files land in the correct comMojangFolder if comMojang folder is set
@@ -35,7 +36,6 @@ export const SimpleRewrite: TCompilerPluginFactory = ({
 					}
 				} else {
 					//Using "BP" is fine here because the path doesn't change based on the pack without a com.mojang folder
-
 					await outputFileSystem
 						.unlink(pathPrefix('BP'))
 						.catch(() => {})
@@ -54,7 +54,7 @@ export const SimpleRewrite: TCompilerPluginFactory = ({
 			const pathParts = filePath.split('/')
 			const pack = <string>pathParts.shift()
 
-			if (['BP', 'RP', 'SP'].includes(pack))
+			if (['BP', 'RP', 'SP', 'WT'].includes(pack))
 				return `${pathPrefixWithPack(pack)}/${pathParts.join('/')}`
 		},
 	}

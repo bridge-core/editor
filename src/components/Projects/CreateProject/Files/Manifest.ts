@@ -17,6 +17,8 @@ export class CreateManifest extends CreateFile {
 				return 'resources'
 			case 'SP':
 				return 'skin_pack'
+			case 'WT':
+				return 'world_template'
 		}
 	}
 

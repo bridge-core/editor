@@ -31,7 +31,8 @@ export default {
 		},
 		worldTemplate: {
 			name: 'World Template',
-			description: 'Give players a world to explore',
+			description:
+				'Create a world that users can create to experience your project',
 		},
 	},
 	// File Type display names
@@ -86,6 +87,8 @@ export default {
 		unknown: 'Other',
 		simpleFile: 'Simple Files',
 		ui: 'UI',
+		volume: 'Volume',
+		worldManifest: 'World Manifest',
 	},
 	// Actions
 	actions: {
