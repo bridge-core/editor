@@ -9,6 +9,7 @@ import { CreateSP } from './Packs/SP'
 import { CreateBridge } from './Packs/Bridge'
 import { IPackType, PackType } from '/@/components/Data/PackType'
 import { CreateGitIgnore } from './Files/GitIgnore'
+import { CreateWT } from './Packs/WT'
 
 export interface ICreateProjectOptions {
 	author: string
@@ -34,6 +35,7 @@ export class CreateProjectWindow extends BaseWindow {
 		BP: new CreateBP(),
 		RP: new CreateRP(),
 		SP: new CreateSP(),
+		WT: new CreateWT(),
 		'.bridge': new CreateBridge(),
 	}
 	protected availablePackTypes: IPackType[] = []
@@ -57,9 +59,7 @@ export class CreateProjectWindow extends BaseWindow {
 
 		PackType.ready.once(() => {
 			// TODO: Remove filter for world templates as soon as we support creating them
-			this.availablePackTypes = PackType.all().filter(
-				({ id }) => id !== 'worldTemplate'
-			)
+			this.availablePackTypes = PackType.all()
 		})
 	}
 

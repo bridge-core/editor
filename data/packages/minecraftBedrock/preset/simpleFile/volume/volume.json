@@ -1,9 +1,9 @@
 {
 	"format_version": "",
-	"minecraft:fog_settings": {
+	"minecraft:volume": {
 		"description": {
 			"identifier": ""
 		},
-		"distance": {}
+		"components": {}
 	}
 }
