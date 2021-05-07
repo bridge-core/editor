@@ -65,6 +65,7 @@ export class CreateProjectWindow extends BaseWindow {
 
 	get hasRequiredData() {
 		return (
+			this.createOptions.packs.length > 1 &&
 			this.createOptions.name.length > 0 &&
 			this.createOptions.prefix.length > 0 &&
 			this.createOptions.author.length > 0 &&

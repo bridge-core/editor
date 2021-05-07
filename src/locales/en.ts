@@ -88,6 +88,7 @@ export default {
 		simpleFile: 'Simple Files',
 		ui: 'UI',
 		volume: 'Volume',
+		worldManifest: 'World Manifest',
 	},
 	// Actions
 	actions: {
