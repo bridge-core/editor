@@ -16,10 +16,9 @@ export class BlockModelTab extends GeometryPreviewTab {
 	constructor(
 		protected blockFilePath: string,
 		tab: FileTab,
-		parent: TabSystem,
-		fileHandle: FileSystemFileHandle
+		parent: TabSystem
 	) {
-		super(tab, parent, fileHandle)
+		super(tab, parent)
 
 		this.blockWatcher.on((file) => {
 			this._renderContainer?.dispose()

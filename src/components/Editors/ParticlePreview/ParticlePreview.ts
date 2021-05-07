@@ -35,12 +35,8 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		})
 	)
 
-	constructor(
-		tab: FileTab,
-		tabSystem: TabSystem,
-		fileHandle: FileSystemFileHandle
-	) {
-		super(tab, tabSystem, fileHandle)
+	constructor(tab: FileTab, tabSystem: TabSystem) {
+		super(tab, tabSystem)
 
 		this.setupComplete.once(() => {
 			this.scene.add(new AxesHelper(16))

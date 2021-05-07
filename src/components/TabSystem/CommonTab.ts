@@ -46,9 +46,7 @@ export abstract class Tab extends Signal<Tab> {
 	get tabSystem() {
 		return this.parent
 	}
-	getParent() {
-		return this.parent
-	}
+
 	/**
 	 * @returns Undefined if the file that belongs to this tab is not inside of a bridge. project
 	 */

@@ -55,10 +55,5 @@ export async function createFromGeometry(tabSystem: TabSystem, tab: FileTab) {
 		return
 	}
 
-	return new EntityModelTab(
-		clientEntity[0],
-		tab,
-		tabSystem,
-		tab.getFileHandle()
-	)
+	return new EntityModelTab(clientEntity[0], tab, tabSystem)
 }

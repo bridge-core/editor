@@ -29,12 +29,7 @@ export async function createFromEntity(tabSystem: TabSystem, tab: FileTab) {
 		return
 	}
 
-	const previewTab = new EntityModelTab(
-		clientEntity[0],
-		tab,
-		tabSystem,
-		tab.getFileHandle()
-	)
+	const previewTab = new EntityModelTab(clientEntity[0], tab, tabSystem)
 	previewTab.setPreviewOptions({ loadServerEntity: true })
 
 	return previewTab

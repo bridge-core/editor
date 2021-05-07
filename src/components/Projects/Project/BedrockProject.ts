@@ -32,18 +32,13 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 		name: 'preview.viewParticle',
 		fileMatch: 'RP/particles/',
 		createPreview: async (tabSystem, tab) =>
-			new ParticlePreviewTab(tab, tabSystem, tab.getFileHandle()),
+			new ParticlePreviewTab(tab, tabSystem),
 	},
 	{
 		name: 'preview.viewBlock',
 		fileMatch: 'BP/blocks/',
 		createPreview: async (tabSystem, tab) =>
-			new BlockModelTab(
-				tab.getProjectPath(),
-				tab,
-				tabSystem,
-				tab.getFileHandle()
-			),
+			new BlockModelTab(tab.getProjectPath(), tab, tabSystem),
 	},
 ]
 
