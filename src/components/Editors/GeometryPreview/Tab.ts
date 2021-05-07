@@ -32,12 +32,8 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected _renderContainer?: RenderDataContainer
 	protected boxHelperDisposables: IDisposable[] = []
 
-	constructor(
-		tab: FileTab,
-		tabSystem: TabSystem,
-		fileHandle: FileSystemFileHandle
-	) {
-		super(tab, tabSystem, fileHandle)
+	constructor(tab: FileTab, tabSystem: TabSystem) {
+		super(tab, tabSystem)
 
 		this.winterskyScene.global_options.loop_mode = 'once'
 		this.winterskyScene.global_options.tick_rate = 60

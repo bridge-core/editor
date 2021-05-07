@@ -521,6 +521,7 @@ export default {
 			'Once you start typing, results for your search query will appear here.',
 	},
 	preview: {
+		name: 'Preview',
 		viewAnimation: 'View Animation',
 		viewModel: 'View Model',
 		viewParticle: 'View Particle',

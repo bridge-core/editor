@@ -37,6 +37,10 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		return this._camera
 	}
 
+	async isFor() {
+		return false
+	}
+
 	async receiveCanvas(canvas: HTMLCanvasElement) {
 		const app = await App.getApp()
 

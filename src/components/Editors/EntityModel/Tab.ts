@@ -20,10 +20,9 @@ export class EntityModelTab extends GeometryPreviewTab {
 	constructor(
 		protected clientEntityFilePath: string,
 		tab: FileTab,
-		parent: TabSystem,
-		fileHandle: FileSystemFileHandle
+		parent: TabSystem
 	) {
-		super(tab, parent, fileHandle)
+		super(tab, parent)
 
 		this.clientEntityWatcher.on((file) => {
 			const runningAnims = this._renderContainer?.runningAnimations

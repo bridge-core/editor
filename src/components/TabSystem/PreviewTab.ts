@@ -1,18 +1,15 @@
+import { Tab } from './CommonTab'
 import { FileTab } from './FileTab'
 import { TabSystem } from './TabSystem'
 
-export abstract class PreviewTab extends FileTab {
+export abstract class PreviewTab extends Tab {
 	public readonly isForeignFile = true
 	static is() {
 		return false
 	}
 
-	constructor(
-		protected tab: FileTab,
-		parent: TabSystem,
-		fileHandle: FileSystemFileHandle
-	) {
-		super(parent, fileHandle)
+	constructor(protected tab: FileTab, parent: TabSystem) {
+		super(parent)
 
 		this.onCreate()
 	}
@@ -23,7 +20,9 @@ export abstract class PreviewTab extends FileTab {
 	}
 
 	get name() {
-		return `Preview: ${super.name}`
+		return `${this.parent.app.locales.translate('preview.name')}: ${
+			this.tab.name
+		}`
 	}
 
 	abstract onChange(): Promise<void> | void
