@@ -166,7 +166,8 @@
 						"trusts",
 						"weather",
 						"weather_at_position",
-						"in_contact_with_water"
+						"in_contact_with_water",
+						"in_block"
 					]
 				}
 			}

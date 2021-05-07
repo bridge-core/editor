@@ -116,7 +116,7 @@
 					"anyOf": [
 						{
 							"description": "Expression for the coordinate (evaluated each iteration).",
-							"type": "string"
+							"$ref": "../../molang/embeddedBeta.json"
 						},
 						{
 							"description": "Distribution for the coordinate (evaluated each iteration).",

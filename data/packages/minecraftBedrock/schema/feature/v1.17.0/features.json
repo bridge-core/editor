@@ -215,6 +215,42 @@
 							}
 						}
 					}
+				},
+				"minecraft:conditional_list": {
+					"description": "Places the first suitable feature within a collection. These conditional features will be evaluated in order.",
+					"additionalProperties": false,
+					"properties": {
+						"description": {
+							"additionalProperties": false,
+							"properties": {
+								"identifier": {
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
+								}
+							}
+						},
+						"conditional_features": {
+							"description": "Array of Features, and their associated Conditions, for attempted placement. These features will be evaluated as ordered.",
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"places_feature": {
+										"description": "Feature to be placed.",
+										"$ref": "../../general/reference/feature.json"
+									},
+									"condition": {
+										"description": "Condition for placing associated Feature.",
+										"$ref": "../../molang/embeddedBeta.json"
+									}
+								}
+							}
+						},
+						"early_out_scheme": {
+							"description": "Denote whether placement should end on first successful placement or first passed condition.",
+							"type": "string",
+							"enum": ["condition_success", "placement_success"]
+						}
+					}
 				}
 			}
 		}
