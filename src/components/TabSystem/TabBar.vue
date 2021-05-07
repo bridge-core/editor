@@ -22,6 +22,7 @@
 			"
 			:class="{ 'inactive-action-bar': !tabSystem.isActive }"
 			:actions="tabSystem.selectedTab.actions"
+			@click="tabSystem.setActive(true)"
 		/>
 	</div>
 </template>
