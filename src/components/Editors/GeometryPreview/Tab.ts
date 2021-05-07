@@ -117,7 +117,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 				icon: 'mdi-movie-open-outline',
 				name: 'fileType.clientAnimation',
 				isDisabled: () => {
-					return (this._renderContainer?.animations?.length ?? 0) <= 1
+					return (this._renderContainer?.animations?.length ?? 0) == 0
 				},
 				onTrigger: async () => {
 					const animations = this.renderContainer.animations
