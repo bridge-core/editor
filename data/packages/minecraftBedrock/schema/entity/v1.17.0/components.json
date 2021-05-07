@@ -31,6 +31,14 @@
 							"type": "number"
 						}
 					}
+				},
+				"minecraft:genetics": {
+					"properties": {
+						"use_simplified_breeding": {
+							"description": "When this flag is set to true, the offspring never inherits hidden alleles of parents as main alleles and main as hidden. This allows to implement simple breeding logic easier.",
+							"type": "boolean"
+						}
+					}
 				}
 			}
 		}
