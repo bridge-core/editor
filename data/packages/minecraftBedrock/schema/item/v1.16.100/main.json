@@ -12,11 +12,19 @@
 					"$ref": "./components.json"
 				},
 				"events": {
-					"patternProperties": {
-						".*": {
-							"$ref": "./event.json"
+					"type": "object",
+					"anyOf": [
+						{
+							"$ref": "../dynamic/currentContext/eventReferenceProperty.json"
+						},
+						{
+							"patternProperties": {
+								".*": {
+									"$ref": "./event.json"
+								}
+							}
 						}
-					}
+					]
 				}
 			},
 			"additionalProperties": false

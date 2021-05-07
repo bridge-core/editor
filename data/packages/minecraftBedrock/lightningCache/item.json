@@ -5,6 +5,18 @@
 	},
 	{ "cacheKey": "event", "path": "minecraft:item/events" },
 	{
+		"cacheKey": "eventReference",
+		"pathScript": "return Bridge.paths.map(path => [`*/components/${path}/**/event`]).flat()",
+		"path": [
+			"minecraft:weapon",
+			"minecraft:repairable",
+			"minecraft:on_use_on",
+			"minecraft:on_use",
+			"minecraft:digger",
+			"minecraft:food"
+		]
+	},
+	{
 		"cacheKey": "itemTexture",
 		"path": "minecraft:item/components/minecraft:icon/texture"
 	},
