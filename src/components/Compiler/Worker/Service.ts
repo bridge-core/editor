@@ -27,6 +27,7 @@ export type TPluginDef = string | [string, any]
 
 const compilers = new WeakMap<CompilerService, Compiler>()
 export class CompilerService extends TaskService<void, string[]> {
+	public fileSystem: FileSystem
 	protected buildConfig!: IBuildConfig
 	protected plugins!: Map<string, Partial<TCompilerPlugin>>
 	protected _outputFileSystem?: FileSystem
@@ -40,7 +41,8 @@ export class CompilerService extends TaskService<void, string[]> {
 	}
 
 	constructor(protected readonly options: ICompilerOptions) {
-		super('compiler', options.projectDirectory)
+		super()
+		this.fileSystem = new FileSystem(options.projectDirectory)
 		FileType.setPluginFileTypes(options.pluginFileTypes)
 		this.compiler = new Compiler(this)
 

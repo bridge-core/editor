@@ -6,7 +6,7 @@
 			cursor: !action.isDisabled ? 'pointer' : null,
 		}"
 		v-ripple="!action.isDisabled"
-		@click="action.trigger()"
+		@click="onClick"
 	>
 		<v-icon :color="action.color || 'primary'" class="mr-1" small>
 			{{ action.icon }}
@@ -24,6 +24,12 @@ export default {
 		action: SimpleAction,
 	},
 	mixins: [TranslationMixin],
+	methods: {
+		onClick() {
+			this.$emit('click')
+			this.action.trigger()
+		},
+	},
 }
 </script>
 
