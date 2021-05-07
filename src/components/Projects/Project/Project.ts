@@ -15,6 +15,7 @@ import { TypeLoader } from '/@/components/Data/TypeLoader'
 import { ExtensionLoader } from '/@/components/Extensions/ExtensionLoader'
 import { FileChangeRegistry } from './FileChangeRegistry'
 import { FileTab } from '/@/components/TabSystem/FileTab'
+import { TabActionProvider } from '/@/components/TabSystem/TabActions/Provider'
 
 export interface IProjectData extends TProjectConfig {
 	path: string
@@ -23,7 +24,7 @@ export interface IProjectData extends TProjectConfig {
 	contains: IPackType[]
 }
 
-export class Project {
+export abstract class Project {
 	public readonly recentFiles!: RecentFiles
 	public readonly tabSystems = [new TabSystem(this), new TabSystem(this, 1)]
 	protected _projectData!: IProjectData
@@ -40,6 +41,7 @@ export class Project {
 	)
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
+	public readonly tabActionProvider = new TabActionProvider()
 
 	//#region Getters
 	get projectData() {
@@ -83,7 +85,11 @@ export class Project {
 				`projects/${this.name}/.bridge/recentFiles.json`
 			)
 		)
+
+		this.onCreate()
 	}
+
+	abstract onCreate(): Promise<void> | void
 
 	async activate(forceRefresh = false) {
 		this.parent.title.setProject(this.name)

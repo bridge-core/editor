@@ -6,6 +6,7 @@ import { Project } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
 import { Title } from '/@/components/Projects/Title'
 import { editor } from 'monaco-editor'
+import { BedrockProject } from './Project/BedrockProject'
 
 export class ProjectManager extends Signal<void> {
 	public readonly recentProjects!: RecentProjects
@@ -49,7 +50,7 @@ export class ProjectManager extends Signal<void> {
 		return Object.values(this.state).map((project) => project.projectData)
 	}
 	async addProject(projectDir: FileSystemDirectoryHandle, select = true) {
-		const project = new Project(this, this.app, projectDir)
+		const project = new BedrockProject(this, this.app, projectDir)
 		await project.loadProject()
 
 		Vue.set(this.state, project.name, project)

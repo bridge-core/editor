@@ -13,10 +13,10 @@ export abstract class Tab extends Signal<Tab> {
 	public hasRemoteChange = false
 	public isUnsaved = false
 	public isForeignFile = true
+	public connectedTabs: Tab[] = []
 
 	protected projectPath?: string
 	protected actions: SimpleAction[] = []
-	protected connectedTabs: Tab[] = []
 	protected isActive = false
 	protected isLoading = true
 
@@ -44,6 +44,9 @@ export abstract class Tab extends Signal<Tab> {
 
 	abstract get name(): string
 	get tabSystem() {
+		return this.parent
+	}
+	getParent() {
 		return this.parent
 	}
 	/**
