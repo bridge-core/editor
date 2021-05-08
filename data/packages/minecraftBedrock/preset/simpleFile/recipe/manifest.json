@@ -19,7 +19,7 @@
 		[
 			"recipe.json",
 			"{{PRESET_PATH}}{{FILE_NAME}}.json",
-			{ "inject": ["FILE_NAME"] }
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
 		]
 	]
 }
