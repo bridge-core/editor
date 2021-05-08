@@ -83,7 +83,8 @@
 							"skin_pack",
 							"world_template",
 							"javascript"
-						]
+						],
+						"type": "string"
 					},
 					"description": {
 						"type": "string"

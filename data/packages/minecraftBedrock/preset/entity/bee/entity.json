@@ -1,5 +1,5 @@
 {
-	"format_version": "1.13.0",
+	"format_version": "1.16.0",
 	"minecraft:entity": {
 		"description": {
 			"identifier": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}",
@@ -42,7 +42,7 @@
 				},
 				"minecraft:behavior.breed": {
 					"priority": 4,
-					"speed_multiplier": 1
+					"speed_multiplier": 1.0
 				},
 				"minecraft:breedable": {
 					"require_tame": false,
@@ -90,26 +90,24 @@
 					"target_dist": 1.2,
 					"track_target": false,
 					"attack_once": true,
-					"reach_multiplier": 2,
-					"look_distance": 30,
-					"untrackable_cooldown_delay": 17,
-					"speed_multiplier": 9,
-					"target_tracking": {
-						"refresh_period_min": 4,
-						"refresh_period_max": 11,
-						"backoff": [
-							{
-								"distance_squared_gt": 256,
-								"refresh_period_delta": 50
-							},
-							{
-								"distance_squared_gt": 1024,
-								"refresh_period_delta": 100
-							}
-						]
-					},
 					"on_attack": {
 						"event": "countdown_to_perish_event",
+						"target": "self"
+					}
+				}
+			},
+			"escape_fire": {
+				"minecraft:behavior.panic": {
+					"priority": 1,
+					"speed_multiplier": 1.25,
+					"force": true
+				},
+				"minecraft:timer": {
+					"looping": false,
+					"time": [20, 50],
+					"randomInterval": true,
+					"time_down_event": {
+						"event": "stop_panicking_after_fire",
 						"target": "self"
 					}
 				}
@@ -125,10 +123,7 @@
 				},
 				"minecraft:timer": {
 					"looping": false,
-					"time": [
-						10,
-						60
-					],
+					"time": [10, 60],
 					"randomInterval": true,
 					"time_down_event": {
 						"event": "perish_event",
@@ -136,12 +131,7 @@
 					}
 				},
 				"minecraft:type_family": {
-					"family": [
-						"{{IDENTIFIER}}",
-						"mob",
-						"arthropod",
-						"pacified"
-					]
+					"family": ["{{IDENTIFIER}}", "mob", "arthropod", "pacified"]
 				}
 			},
 			"perish": {
@@ -187,11 +177,7 @@
 					"goal_radius": 1,
 					"stay_duration": 20,
 					"target_selection_method": "random",
-					"target_offset": [
-						0,
-						0.25,
-						0
-					],
+					"target_offset": [0, 0.25, 0],
 					"target_blocks": [
 						"minecraft:red_flower",
 						"minecraft:yellow_flower",
@@ -288,10 +274,7 @@
 					"search_height": 10,
 					"tick_interval": 1,
 					"goal_radius": 0.633,
-					"target_blocks": [
-						"bee_nest",
-						"beehive"
-					],
+					"target_blocks": ["bee_nest", "beehive"],
 					"on_reach": [
 						{
 							"event": "minecraft:bee_returned_to_hive",
@@ -311,10 +294,7 @@
 			"hive_full": {
 				"minecraft:timer": {
 					"looping": false,
-					"time": [
-						5,
-						20
-					],
+					"time": [5, 20],
 					"randomInterval": true,
 					"time_down_event": {
 						"event": "find_hive_event",
@@ -422,15 +402,12 @@
 				]
 			},
 			"minecraft:behavior.random_hover": {
-				"priority": 11,
+				"priority": 12,
 				"xz_dist": 8,
 				"y_dist": 8,
 				"y_offset": -1,
 				"interval": 1,
-				"hover_height": [
-					1,
-					4
-				]
+				"hover_height": [1, 4]
 			},
 			"minecraft:leashable": {
 				"soft_distance": 4,
@@ -441,11 +418,7 @@
 				"priority": 19
 			},
 			"minecraft:type_family": {
-				"family": [
-					"{{IDENTIFIER}}",
-					"mob",
-					"arthropod"
-				]
+				"family": ["{{IDENTIFIER}}", "mob", "arthropod"]
 			},
 			"minecraft:on_target_acquired": {
 				"event": "attacked",
@@ -459,7 +432,11 @@
 				"width": 0.55,
 				"height": 0.5
 			},
-			"minecraft:home": {},
+			"minecraft:conditional_bandwidth_optimization": {},
+			"minecraft:home": {
+				"restriction_radius": 22,
+				"home_block_list": ["minecraft:bee_nest", "minecraft:beehive"]
+			},
 			"minecraft:follow_range": {
 				"value": 1024
 			},
@@ -531,17 +508,13 @@
 							{
 								"weight": 95,
 								"add": {
-									"component_groups": [
-										"{{IDENTIFIER}}_adult"
-									]
+									"component_groups": ["{{IDENTIFIER}}_adult"]
 								}
 							},
 							{
 								"weight": 5,
 								"add": {
-									"component_groups": [
-										"{{IDENTIFIER}}_baby"
-									]
+									"component_groups": ["{{IDENTIFIER}}_baby"]
 								}
 							}
 						]
@@ -569,21 +542,15 @@
 			},
 			"minecraft:ageable_grow_up": {
 				"remove": {
-					"component_groups": [
-						"{{IDENTIFIER}}_baby"
-					]
+					"component_groups": ["{{IDENTIFIER}}_baby"]
 				},
 				"add": {
-					"component_groups": [
-						"{{IDENTIFIER}}_adult"
-					]
+					"component_groups": ["{{IDENTIFIER}}_adult"]
 				}
 			},
 			"minecraft:exited_disturbed_hive": {
 				"add": {
-					"component_groups": [
-						"take_nearest_target"
-					]
+					"component_groups": ["take_nearest_target"]
 				},
 				"remove": {
 					"component_groups": [
@@ -605,19 +572,24 @@
 							"value": "pacified"
 						},
 						"add": {
-							"component_groups": [
-								"take_nearest_target"
-							]
+							"component_groups": ["take_nearest_target"]
 						}
 					}
 				]
 			},
+			"stop_panicking_after_fire": {
+				"remove": {
+					"component_groups": ["escape_fire"]
+				}
+			},
+			"minecraft:exited_hive_on_fire": {
+				"add": {
+					"component_groups": ["escape_fire"]
+				}
+			},
 			"minecraft:exited_hive": {
 				"add": {
-					"component_groups": [
-						"look_for_food",
-						"shelter_detection"
-					]
+					"component_groups": ["look_for_food", "shelter_detection"]
 				},
 				"remove": {
 					"component_groups": [
@@ -630,29 +602,20 @@
 			},
 			"minecraft:hive_full": {
 				"add": {
-					"component_groups": [
-						"hive_full"
-					]
+					"component_groups": ["hive_full"]
 				},
 				"remove": {
-					"component_groups": [
-						"find_hive",
-						"return_to_home"
-					]
+					"component_groups": ["find_hive", "return_to_home"]
 				}
 			},
 			"attacked": {
 				"sequence": [
 					{
 						"add": {
-							"component_groups": [
-								"angry_{{IDENTIFIER}}"
-							]
+							"component_groups": ["angry_{{IDENTIFIER}}"]
 						},
 						"remove": {
-							"component_groups": [
-								"take_nearest_target"
-							]
+							"component_groups": ["take_nearest_target"]
 						}
 					},
 					{
@@ -661,15 +624,10 @@
 							"value": "easy"
 						},
 						"remove": {
-							"component_groups": [
-								"normal_attack",
-								"hard_attack"
-							]
+							"component_groups": ["normal_attack", "hard_attack"]
 						},
 						"add": {
-							"component_groups": [
-								"easy_attack"
-							]
+							"component_groups": ["easy_attack"]
 						}
 					},
 					{
@@ -678,15 +636,10 @@
 							"value": "normal"
 						},
 						"remove": {
-							"component_groups": [
-								"easy_attack",
-								"hard_attack"
-							]
+							"component_groups": ["easy_attack", "hard_attack"]
 						},
 						"add": {
-							"component_groups": [
-								"normal_attack"
-							]
+							"component_groups": ["normal_attack"]
 						}
 					},
 					{
@@ -695,25 +648,17 @@
 							"value": "hard"
 						},
 						"remove": {
-							"component_groups": [
-								"easy_attack",
-								"normal_attack"
-							]
+							"component_groups": ["easy_attack", "normal_attack"]
 						},
 						"add": {
-							"component_groups": [
-								"hard_attack"
-							]
+							"component_groups": ["hard_attack"]
 						}
 					}
 				]
 			},
 			"calmed_down": {
 				"add": {
-					"component_groups": [
-						"shelter_detection",
-						"return_to_home"
-					]
+					"component_groups": ["shelter_detection", "return_to_home"]
 				},
 				"remove": {
 					"component_groups": [
@@ -724,9 +669,7 @@
 			},
 			"collected_nectar": {
 				"remove": {
-					"component_groups": [
-						"look_for_food"
-					]
+					"component_groups": ["look_for_food"]
 				},
 				"add": {
 					"component_groups": [
@@ -738,15 +681,10 @@
 			},
 			"find_hive_event": {
 				"remove": {
-					"component_groups": [
-						"return_to_home",
-						"hive_full"
-					]
+					"component_groups": ["return_to_home", "hive_full"]
 				},
 				"add": {
-					"component_groups": [
-						"find_hive"
-					]
+					"component_groups": ["find_hive"]
 				}
 			},
 			"find_hive_timeout": {
@@ -758,14 +696,10 @@
 							"value": "minecraft:is_charged"
 						},
 						"remove": {
-							"component_groups": [
-								"find_hive"
-							]
+							"component_groups": ["find_hive", "escape_fire"]
 						},
 						"add": {
-							"component_groups": [
-								"look_for_food"
-							]
+							"component_groups": ["look_for_food"]
 						}
 					},
 					{
@@ -774,28 +708,20 @@
 							"value": "minecraft:is_charged"
 						},
 						"remove": {
-							"component_groups": [
-								"find_hive"
-							]
+							"component_groups": ["find_hive"]
 						},
 						"add": {
-							"component_groups": [
-								"return_to_home"
-							]
+							"component_groups": ["return_to_home"]
 						}
 					}
 				]
 			},
 			"find_flower_timeout": {
 				"remove": {
-					"component_groups": [
-						"look_for_food"
-					]
+					"component_groups": ["look_for_food"]
 				},
 				"add": {
-					"component_groups": [
-						"return_to_home"
-					]
+					"component_groups": ["return_to_home"]
 				}
 			},
 			"seek_shelter": {
@@ -818,14 +744,12 @@
 				"remove": {
 					"component_groups": [
 						"abort_shelter_detection",
-						"return_to_home"
+						"return_to_home",
+						"escape_fire"
 					]
 				},
 				"add": {
-					"component_groups": [
-						"shelter_detection",
-						"look_for_food"
-					]
+					"component_groups": ["shelter_detection", "look_for_food"]
 				}
 			},
 			"countdown_to_perish_event": {
@@ -837,20 +761,17 @@
 						"look_for_food",
 						"angry_{{IDENTIFIER}}",
 						"hive_full",
-						"find_hive"
+						"find_hive",
+						"escape_fire"
 					]
 				},
 				"add": {
-					"component_groups": [
-						"countdown_to_perish"
-					]
+					"component_groups": ["countdown_to_perish"]
 				}
 			},
 			"perish_event": {
 				"add": {
-					"component_groups": [
-						"perish"
-					]
+					"component_groups": ["perish"]
 				}
 			}
 		}

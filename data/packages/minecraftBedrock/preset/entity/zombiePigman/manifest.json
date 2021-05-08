@@ -5,9 +5,16 @@
 	"category": "fileType.entity",
 	"packTypes": ["behaviorPack", "resourcePack"],
 	"additionalModels": {
+		"IMAGE_SAVE_PATH": "RP/textures/items/",
+		"DEFAULT_IMAGE": "eggIcon.png",
 		"PRESET_PATH": ""
 	},
 	"fields": [
+		[
+			"Spawn Egg Image (Optional)",
+			"IMAGE",
+			{ "type": "fileInput", "accept": "image/png", "optional": true }
+		],
 		[
 			"Identifier",
 			"IDENTIFIER",
@@ -17,6 +24,7 @@
 	],
 
 	"createFiles": [
+		"presetScript/optionalImage.js",
 		[
 			"entity.json",
 			"BP/entities/{{PRESET_PATH}}{{IDENTIFIER}}.json",
@@ -64,6 +72,11 @@
 		]
 	],
 	"expandFiles": [
+		[
+			"itemTexture.json",
+			"RP/textures/item_texture.json",
+			{ "inject": ["IDENTIFIER", "PROJECT_PREFIX"] }
+		],
 		[
 			"en_US.lang",
 			"RP/texts/en_US.lang",
