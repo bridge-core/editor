@@ -27,7 +27,7 @@
 			],
 			"render_controllers": ["controller.render.{{IDENTIFIER}}"],
 			"spawn_egg": {
-				"texture": "{{IDENTIFIER}}_egg",
+				"texture": "{{PROJECT_PREFIX}}_{{IDENTIFIER}}_egg",
 				"texture_index": 0
 			}
 		}

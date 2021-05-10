@@ -13,7 +13,7 @@
 				"default": "geometry.zombie.v1.8"
 			},
 			"spawn_egg": {
-				"texture": "{{IDENTIFIER}}_egg",
+				"texture": "{{PROJECT_PREFIX}}_{{IDENTIFIER}}_egg",
 				"texture_index": 0
 			},
 			"scripts": {
