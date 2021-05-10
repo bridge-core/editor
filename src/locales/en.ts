@@ -15,6 +15,7 @@ export default {
 		information: 'Information',
 		continue: 'Continue',
 		skip: 'Skip',
+		selectFolder: 'Select Folder',
 	},
 	packType: {
 		behaviorPack: {
@@ -328,12 +329,6 @@ export default {
 			title: 'Projects',
 			searchProjects: 'Search projects...',
 			newProject: 'New Project',
-		},
-		selectFolder: {
-			title: 'Select Folder',
-			content:
-				'Select where to save projects or choose an existing projects directory. This should not be the "com.mojang" folder, but rather a new folder specifically for bridge.',
-			select: 'Select!',
 		},
 		filePath: {
 			title: 'Choose File Path',

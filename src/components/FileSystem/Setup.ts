@@ -2,10 +2,18 @@ import { App } from '/@/App'
 import { get, set } from 'idb-keyval'
 import { SelectProjectFolderWindow } from '../Windows/Project/SelectFolder/SelectProjectFolder'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
+import { ref } from '@vue/composition-api'
+import { Signal } from '../Common/Event/Signal'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
 
 export class FileSystemSetup {
+	static state = {
+		showInitialSetupDialog: ref(false),
+		receiveDirectoryHandle: new Signal<FileSystemDirectoryHandle>(),
+		setupDone: new Signal<void>(),
+	}
+
 	protected confirmPermissionWindow: InformationWindow | null = null
 	protected _status: TFileSystemSetupStatus = 'waiting'
 	get status() {
@@ -31,25 +39,49 @@ export class FileSystemSetup {
 
 		// There's currently no bridge folder yet/the bridge folder has been deleted
 		if (!fileHandle) {
-			const window = new SelectProjectFolderWindow(
-				async (chosenFileHandle) => {
-					if (chosenFileHandle) {
-						await set('bridgeBaseDir', chosenFileHandle)
-						fileHandle = chosenFileHandle
-					}
+			const globalState = FileSystemSetup.state
+			globalState.showInitialSetupDialog.value = true
+			fileHandle = await globalState.receiveDirectoryHandle.fired
+			console.log(await fileHandle.queryPermission({ mode: 'readwrite' }))
 
-					await this.verifyPermissions(chosenFileHandle)
-				}
-			)
-			window.open()
-			await window.fired
+			await this.verifyPermissions(fileHandle)
+			await set('bridgeBaseDir', fileHandle)
+
+			globalState.setupDone.dispatch()
+
+			// const window = new SelectProjectFolderWindow(
+			// 	async (chosenFileHandle) => {
+			// 		if (chosenFileHandle) {
+			// 			await set('bridgeBaseDir', chosenFileHandle)
+			// 			fileHandle = chosenFileHandle
+			// 		}
+
+			// 		await this.verifyPermissions(chosenFileHandle)
+			// 	}
+			// )
+			// window.open()
+			// await window.fired
 		}
 
 		this._status = 'done'
 		return fileHandle
 	}
-	async verifyPermissions(fileHandle: FileSystemDirectoryHandle) {
+	async verifyPermissions(
+		fileHandle: FileSystemDirectoryHandle,
+		tryImmediateRequest = true
+	) {
 		const opts = { writable: true, mode: 'readwrite' } as const
+
+		// An additional user activation is no longer needed from Chromium 92 onwards.
+		// We can show our first prompt without an additional InformationWindow!
+		try {
+			if (
+				tryImmediateRequest &&
+				(await fileHandle.requestPermission(opts)) !== 'granted'
+			) {
+				await this.verifyPermissions(fileHandle, false)
+			}
+		} catch {}
 
 		if (
 			(await fileHandle.queryPermission(opts)) !== 'granted' &&
@@ -61,11 +93,12 @@ export class FileSystemSetup {
 				onClose: async () => {
 					this._status = 'userInteracted'
 					this.confirmPermissionWindow = null
+
 					// Check if we already have permission && request permission if not
 					if (
 						(await fileHandle.requestPermission(opts)) !== 'granted'
 					) {
-						await this.verifyPermissions(fileHandle)
+						await this.verifyPermissions(fileHandle, false)
 					}
 				},
 			})

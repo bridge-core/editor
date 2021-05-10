@@ -1,6 +1,7 @@
 <template>
 	<v-dialog
-		:value="setupDone && stepId < steps.length + 1"
+		v-if="isVisible"
+		:value="isVisible && stepId < steps.length + 1"
 		fullscreen
 		hide-overlay
 	>
@@ -51,22 +52,17 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import BridgeFolderStep from './Steps/BridgeFolder'
 import ComMojangStep from './Steps/ComMojang'
 import EditorTypeStep from './Steps/EditorType'
-import { get, set } from 'idb-keyval'
+import { FileSystemSetup } from '/@/components/FileSystem/Setup'
 
 export default {
 	name: 'InitialSetupDialog',
 	mixins: [TranslationMixin],
-	async created() {
-		const usedAppBefore = await get('usedAppBefore')
-
-		if (!usedAppBefore) {
-			// Skip the initial setup dialog
-			this.stepId = this.steps.length + 1
+	setup() {
+		return {
+			isVisible: FileSystemSetup.state.showInitialSetupDialog,
 		}
-		this.setupDone = true
 	},
 	data: () => ({
-		setupDone: false,
 		setupInProgress: true,
 		stepId: 1,
 		steps: [
@@ -87,9 +83,6 @@ export default {
 	methods: {
 		async onNext() {
 			this.stepId++
-			if (this.stepId >= this.steps.length + 1) {
-				await set('usedAppBefore', true)
-			}
 		},
 	},
 }
