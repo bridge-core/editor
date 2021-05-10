@@ -13,6 +13,8 @@ export default {
 		close: 'Close',
 		reload: 'Reload',
 		information: 'Information',
+		continue: 'Continue',
+		skip: 'Skip',
 	},
 	packType: {
 		behaviorPack: {
@@ -534,5 +536,37 @@ export default {
 		chooseGeometry: 'Choose Geometry',
 		noGeometry:
 			'No valid geometry found inside of this file. Make sure that your JSON is valid and that the file structure is correct.',
+	},
+	initialSetup: {
+		welcome: 'Welcome to bridge. v2!',
+		welcomeCaption: 'The IDE for Minecraft Add-Ons',
+		step: {
+			bridge: {
+				name: 'bridge. Folder',
+				description:
+					'Please create a folder where bridge. can save app related data and your add-on projects.',
+			},
+			comMojang: {
+				name: 'com.mojang Folder',
+				description:
+					'Now drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.',
+				extraDescription: 'Drag your com.mojang folder onto bridge.',
+			},
+			editorType: {
+				name: 'Choose Editor Type',
+				description:
+					"How do you want to edit JSON files? You can change your choice inside of bridge.'s settings later!",
+				rawText: {
+					name: 'Raw Text',
+					description:
+						'Edit JSON as raw text. Ideal for intermediate to advanced developers. Comes with advanced auto-completions and JSON validation.',
+				},
+				treeEditor: {
+					name: 'Tree Editor',
+					description:
+						'Edit JSON as a tree-like structure that requires little to no JSON knowledge. Ideal for beginners and intermediate creators.',
+				},
+			},
+		},
 	},
 }

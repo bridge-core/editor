@@ -32,6 +32,7 @@
 			<!--  -->
 		</v-main>
 
+		<InitialSetupDialog />
 		<ContextMenu v-if="contextMenu" :contextMenu="contextMenu" />
 		<FileDropper />
 	</v-app>
@@ -49,6 +50,7 @@ import { App } from '/@/App.ts'
 import TabSystem from '/@/components/TabSystem/TabSystem.vue'
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
+import InitialSetupDialog from '/@/components/InitialSetup/Dialog.vue'
 
 export default Vue.extend({
 	name: 'App',
@@ -68,6 +70,7 @@ export default Vue.extend({
 		TabSystem,
 		WelcomeScreen,
 		FileDropper,
+		InitialSetupDialog,
 	},
 
 	data: () => ({
