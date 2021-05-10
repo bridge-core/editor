@@ -16,10 +16,16 @@
 </template>
 
 <script>
+import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 
 export default {
 	mixins: [TranslationMixin],
+	mounted() {
+		App.instance.comMojang.setup.fired.then(() => {
+			this.$emit('next')
+		})
+	},
 }
 </script>
 

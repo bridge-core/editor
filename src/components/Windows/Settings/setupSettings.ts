@@ -7,6 +7,7 @@ import { Selection } from './Controls/Selection/Selection'
 import { ProjectSelection } from './Controls/Selection/ProjectSelection'
 import { Button } from './Controls/Button/Button'
 import { del } from 'idb-keyval'
+import { comMojangKey } from '../../FileSystem/ComMojang'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -211,6 +212,7 @@ export async function setupSettings(settings: SettingsWindow) {
 				'windows.settings.general.resetBridgeFolder.description',
 			onClick: async () => {
 				await del('bridgeBaseDir')
+				await del(comMojangKey)
 				location.reload()
 			},
 		})
