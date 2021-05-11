@@ -60,7 +60,7 @@
 			class="px-1 mx-1 rounded-lg app-version-display"
 			v-ripple="!isAnyWindowVisible"
 			:style="{ opacity: isAnyWindowVisible ? 0.4 : null }"
-			@click="isAnyWindowVisible ? openChangelogWindow : null"
+			@click="openChangelogWindow"
 		>
 			v{{ appVersion }}
 		</div>
@@ -106,6 +106,8 @@ export default {
 	}),
 	methods: {
 		async openChangelogWindow() {
+			if (this.isAnyWindowVisible) return
+
 			const app = await App.getApp()
 			await app.windows.changelogWindow.open()
 		},

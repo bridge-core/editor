@@ -202,4 +202,13 @@ export class FileSystem extends Signal<void> {
 			return false
 		}
 	}
+
+	async directoryExists(path: string) {
+		try {
+			await this.getDirectoryHandle(path)
+			return true
+		} catch {
+			return false
+		}
+	}
 }

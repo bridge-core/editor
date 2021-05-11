@@ -10,6 +10,7 @@ import { ExtensionViewer } from '../Windows/ExtensionStore/ExtensionViewer'
 import { ExtensionStoreWindow } from '../Windows/ExtensionStore/ExtensionStore'
 import { iterateDir } from '/@/utils/iterateDir'
 import { loadFileDefinitions } from './FileDefinition/load'
+import { InstallFiles } from './InstallFiles'
 
 export class Extension {
 	protected disposables: IDisposable[] = []
@@ -17,6 +18,7 @@ export class Extension {
 	protected fileSystem: FileSystem
 	protected _compilerPlugins: Record<string, string> = {}
 	protected isLoaded = false
+	protected installFiles: InstallFiles
 
 	get isActive() {
 		if (!this.parent.activeStatus)
@@ -43,6 +45,10 @@ export class Extension {
 		protected _isGlobal = false
 	) {
 		this.fileSystem = new FileSystem(this.baseDirectory)
+		this.installFiles = new InstallFiles(
+			this.fileSystem,
+			manifest?.install ?? {}
+		)
 	}
 
 	async activate() {
@@ -120,6 +126,11 @@ export class Extension {
 					: undefined
 			),
 		])
+
+		if (await this.fileSystem.fileExists('.installed')) return
+
+		await this.installFiles.execute(this.isGlobal)
+		await this.fileSystem.writeFile('.installed', '')
 	}
 
 	deactivate() {

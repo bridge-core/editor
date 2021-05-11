@@ -81,6 +81,9 @@ export class App {
 			)
 		return this.projectManager.currentProject
 	}
+	get projects() {
+		return Object.values(this.projectManager.state)
+	}
 	get projectConfig() {
 		return this.project.config
 	}
