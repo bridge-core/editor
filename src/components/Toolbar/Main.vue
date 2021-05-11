@@ -58,8 +58,9 @@
 		<v-spacer />
 		<div
 			class="px-1 mx-1 rounded-lg app-version-display"
-			v-ripple
-			@click="openChangelogWindow"
+			v-ripple="!isAnyWindowVisible"
+			:style="{ opacity: isAnyWindowVisible ? 0.4 : null }"
+			@click="isAnyWindowVisible ? openChangelogWindow : null"
 		>
 			v{{ appVersion }}
 		</div>

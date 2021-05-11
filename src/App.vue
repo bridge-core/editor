@@ -6,7 +6,7 @@
 
 		<Sidebar app />
 
-		<v-main>
+		<v-main :style="{ 'padding-top': 'env(titlebar-area-height, 24px)' }">
 			<WindowRenderer />
 
 			<div v-if="shouldRenderWelcomeScreen" class="fill-area d-flex">
