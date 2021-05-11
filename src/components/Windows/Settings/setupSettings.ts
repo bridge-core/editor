@@ -220,6 +220,19 @@ export async function setupSettings(settings: SettingsWindow) {
 
 	// Editor
 	settings.addControl(
+		new Selection({
+			category: 'editor',
+			name: 'windows.settings.editor.jsonEditor.name',
+			description: 'windows.settings.editor.jsonEditor.description',
+			key: 'jsonEditor',
+			options: [
+				{ text: 'Tree Editor', value: 'treeEditor' },
+				{ text: 'Raw Text', value: 'rawText' },
+			],
+			default: 'rawText',
+		})
+	)
+	settings.addControl(
 		new Toggle({
 			category: 'editor',
 			name: 'windows.settings.editor.wordWrap.name',

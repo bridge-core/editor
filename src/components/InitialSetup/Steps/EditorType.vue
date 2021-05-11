@@ -13,6 +13,9 @@
 
 <script>
 import { SimpleAction } from '../../Actions/SimpleAction'
+import { settingsState } from '../../Windows/Settings/SettingsState'
+import { SettingsWindow } from '../../Windows/Settings/SettingsWindow'
+import { App } from '/@/App'
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 
 export default {
@@ -21,13 +24,18 @@ export default {
 	},
 	data() {
 		return {
+			isLoading: false,
 			actions: [
 				new SimpleAction({
 					icon: 'mdi-text',
 					name: 'initialSetup.step.editorType.rawText.name',
 					description:
 						'initialSetup.step.editorType.rawText.description',
-					onTrigger: () => {
+					onTrigger: async () => {
+						if (this.isLoading) return
+
+						this.isLoading = true
+						await this.setJsonEditor('rawText')
 						this.$emit('next')
 					},
 				}),
@@ -36,12 +44,24 @@ export default {
 					name: 'initialSetup.step.editorType.treeEditor.name',
 					description:
 						'initialSetup.step.editorType.treeEditor.description',
-					onTrigger: () => {
+					onTrigger: async () => {
+						if (this.isLoading) return
+
+						this.isLoading = true
+						await this.setJsonEditor('treeEditor')
 						this.$emit('next')
 					},
 				}),
 			],
 		}
+	},
+	methods: {
+		async setJsonEditor(val) {
+			await SettingsWindow.loadSettings(App.instance)
+			if (!settingsState.editor) settingsState.editor = {}
+			settingsState.editor.jsonEditor = val
+			await SettingsWindow.saveSettings(App.instance)
+		},
 	},
 }
 </script>

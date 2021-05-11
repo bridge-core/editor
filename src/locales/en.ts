@@ -439,6 +439,10 @@ export default {
 				name: 'Actions',
 			},
 			editor: {
+				jsonEditor: {
+					name: 'JSON Editor',
+					description: 'Choose how you want to edit JSON files',
+				},
 				wordWrap: {
 					name: 'Word Wrap',
 					description: 'Wrap words to disable horizontal scrolling',

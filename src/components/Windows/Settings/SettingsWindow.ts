@@ -70,16 +70,10 @@ export class SettingsWindow extends BaseWindow {
 		category.push(control)
 	}
 
-	static saveSettings() {
-		return new Promise<void>((resolve) => {
-			App.ready.once(async (app) => {
-				await app.fileSystem.writeJSON(
-					'data/settings.json',
-					settingsState
-				)
-				resolve()
-			})
-		})
+	static async saveSettings(app?: App) {
+		if (!app) app = await App.getApp()
+
+		await app.fileSystem.writeJSON('data/settings.json', settingsState)
 	}
 	static async loadSettings(app: App) {
 		try {
