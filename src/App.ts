@@ -165,7 +165,7 @@ export class App {
 		}
 
 		// Load settings
-		SettingsWindow.loadSettings(this.instance).then(async () => {
+		await SettingsWindow.loadSettings(this.instance).then(async () => {
 			await this.instance.dataLoader.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
 		})
