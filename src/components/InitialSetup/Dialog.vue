@@ -4,6 +4,7 @@
 		:value="isVisible && stepId < steps.length + 1"
 		fullscreen
 		hide-overlay
+		persistent
 	>
 		<v-card>
 			<v-container class="pt-6">
