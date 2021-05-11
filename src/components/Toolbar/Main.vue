@@ -7,7 +7,7 @@
 		padless
 		height="env(titlebar-area-height, 24px)"
 		:style="{
-			'padding-left': windowControlsOverlay ? 0 : undefined,
+			'padding-left': 0,
 			'margin-left': 'env(titlebar-area-x, 0)',
 			width: 'env(titlebar-area-width, 100%)',
 			'z-index': windowControlsOverlay ? 1000 : undefined,
@@ -15,7 +15,7 @@
 	>
 		<img
 			v-if="!isMacOS || !windowControlsOverlay"
-			style="height: 20px; padding-right: 4px"
+			style="height: 20px; padding-right: 4px; padding-left: 8px"
 			alt="bridge. Logo"
 			draggable="false"
 			src="@/_assets/logo.svg"
