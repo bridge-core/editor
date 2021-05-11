@@ -1,4 +1,4 @@
-export default defineComponent(({ name, template, schema }) => {
+export default function defineComponent({ name, template, schema }) {
 	name('bridge:item_equipped_sensor')
 	schema({
 		properties: {
@@ -122,4 +122,4 @@ export default defineComponent(({ name, template, schema }) => {
 			)
 		})
 	})
-})
+}
