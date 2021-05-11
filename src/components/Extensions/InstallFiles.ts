@@ -1,4 +1,3 @@
-import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { iterateDir } from '/@/utils/iterateDir'
