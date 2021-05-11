@@ -6,13 +6,14 @@
 		hide-overlay
 	>
 		<v-card>
-			<v-container>
+			<v-container class="pt-6">
 				<div
 					class="d-flex flex-column justify-center align-center mb-3"
 				>
 					<img
 						height="128"
-						src="../../_assets/logo-simple.svg"
+						draggable="false"
+						src="@/_assets/logo-simple.svg"
 						alt=""
 					/>
 					<h1 class="text-h3">{{ t('initialSetup.welcome') }}</h1>

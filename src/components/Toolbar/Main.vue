@@ -7,8 +7,9 @@
 		padless
 		height="env(titlebar-area-height, 24px)"
 		:style="{
-			'padding-left': isMacOS ? 'env(titlebar-area-x, 8px)' : undefined,
-			'padding-right': !isMacOS ? 'env(titlebar-area-x, 0)' : undefined,
+			'padding-left': windowControlsOverlay ? 0 : undefined,
+			'margin-left': 'env(titlebar-area-x, 0)',
+			width: 'env(titlebar-area-width, 100%)',
 			'z-index': windowControlsOverlay ? 1000 : undefined,
 		}"
 	>
