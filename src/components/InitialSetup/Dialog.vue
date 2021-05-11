@@ -7,7 +7,7 @@
 		persistent
 	>
 		<v-card>
-			<v-container class="pt-6">
+			<v-container :class="{ 'pt-12': windowControlsOverlay }">
 				<div
 					class="d-flex flex-column justify-center align-center mb-3"
 				>
@@ -54,11 +54,12 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import BridgeFolderStep from './Steps/BridgeFolder'
 import ComMojangStep from './Steps/ComMojang'
 import EditorTypeStep from './Steps/EditorType'
-import { FileSystemSetup } from '/@/components/FileSystem/Setup'
+import { FileSystemSetup } from '/@/components/FileSystem/Setup.ts'
+import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 
 export default {
 	name: 'InitialSetupDialog',
-	mixins: [TranslationMixin],
+	mixins: [TranslationMixin, WindowControlsOverlayMixin],
 	setup() {
 		return {
 			isVisible: FileSystemSetup.state.showInitialSetupDialog,

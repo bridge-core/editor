@@ -72,12 +72,14 @@ import MenuActivator from './Menu/Activator.vue'
 import MenuButton from './Menu/Button.vue'
 import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/appVersion.json'
-import { platform } from '/@/utils/os'
-import { reactive, watchEffect } from '@vue/composition-api'
-import { WindowState } from '/@/components/Windows/WindowState'
+import { platform } from '/@/utils/os.ts'
+import { reactive } from '@vue/composition-api'
+import { WindowState } from '/@/components/Windows/WindowState.ts'
+import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 
 export default {
 	name: 'Toolbar',
+	mixins: [WindowControlsOverlayMixin],
 	components: {
 		WindowAction,
 		MenuActivator,
@@ -100,20 +102,7 @@ export default {
 		isMacOS: platform() === 'darwin',
 
 		appVersion,
-		windowControlsOverlay:
-			navigator.windowControlsOverlay &&
-			navigator.windowControlsOverlay.visible,
 	}),
-	mounted() {
-		if (navigator.windowControlsOverlay) {
-			navigator.windowControlsOverlay.addEventListener(
-				'geometrychange',
-				(event) => {
-					this.windowControlsOverlay = event.visible
-				}
-			)
-		}
-	},
 	methods: {
 		async openChangelogWindow() {
 			const app = await App.getApp()
