@@ -65,6 +65,10 @@ export namespace PackType {
 		return get(`projects/bridge/${filePath}`)
 	}
 
+	export function getIdFromPackPath(packPath: string) {
+		return getWithRelativePath(`${packPath}/test.json`)?.id ?? 'unknown'
+	}
+
 	/**
 	 * Get the pack type/pack definition id for the provided file path
 	 * @param filePath file path to get the pack type of

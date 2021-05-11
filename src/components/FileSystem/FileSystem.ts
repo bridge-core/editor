@@ -4,7 +4,7 @@ import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
 
 export class FileSystem extends Signal<void> {
-	public _baseDirectory!: FileSystemDirectoryHandle
+	protected _baseDirectory!: FileSystemDirectoryHandle
 	get baseDirectory() {
 		return this._baseDirectory
 	}

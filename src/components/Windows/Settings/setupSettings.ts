@@ -4,7 +4,7 @@ import { Toggle } from './Controls/Toggle/Toggle'
 import { SettingsWindow } from './SettingsWindow'
 import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
-import { ProjectSelection } from './Controls/Selection/ProjectSelection'
+import { BridgeConfigSelection } from './Controls/Selection/BridgeConfigSelection'
 import { Button } from './Controls/Button/Button'
 import { del } from 'idb-keyval'
 import { comMojangKey } from '../../FileSystem/ComMojang'
@@ -58,7 +58,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
-		new ProjectSelection({
+		new BridgeConfigSelection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.localDarkTheme.name',
 			description:
@@ -77,7 +77,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
-		new ProjectSelection({
+		new BridgeConfigSelection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.localLightTheme.name',
 			description:

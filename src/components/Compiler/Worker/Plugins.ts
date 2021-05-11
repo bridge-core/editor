@@ -38,7 +38,11 @@ export async function loadPlugins({
 }: ILoadPLugins) {
 	const plugins = new Map<string, TCompilerPluginFactory<any>>()
 	const projectConfig = new ProjectConfig(localFs)
-	const targetVersion = await projectConfig.get('targetVersion')
+	await projectConfig.setup()
+
+	const targetVersion =
+		projectConfig.get().targetVersion ??
+		(await getLatestFormatVersion(fileSystem))
 
 	plugins.set('simpleRewrite', SimpleRewrite)
 	plugins.set('typeScript', TypeScriptPlugin)
@@ -98,4 +102,12 @@ export async function loadPlugins({
 	}
 
 	return loadedPlugins
+}
+
+async function getLatestFormatVersion(fileSystem: FileSystem) {
+	const formatVersions: string[] = await fileSystem.readJSON(
+		'data/packages/minecraftBedrock/formatVersions.json'
+	)
+
+	return formatVersions[0]
 }

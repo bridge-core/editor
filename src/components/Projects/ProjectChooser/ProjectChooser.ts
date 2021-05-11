@@ -4,6 +4,7 @@ import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import ProjectChooserComponent from './ProjectChooser.vue'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
+import { v4 as uuid } from 'uuid'
 
 export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
@@ -25,13 +26,13 @@ export class ProjectChooserWindow extends BaseWindow {
 		)
 	}
 
-	addProject(id: string, name: string, project: IProjectData) {
+	addProject(id: string, name: string, project: Partial<IProjectData>) {
 		this.sidebar.addElement(
 			new SidebarItem({
 				color: 'primary',
-				text: name,
+				text: name ?? 'Unknown',
 				icon: `mdi-alpha-${name[0].toLowerCase()}-box-outline`,
-				id,
+				id: id ?? uuid(),
 			}),
 			project
 		)
@@ -45,7 +46,7 @@ export class ProjectChooserWindow extends BaseWindow {
 		const projects = await app.projectManager.getProjects()
 
 		projects.forEach((project) =>
-			this.addProject(project.path, project.name, project)
+			this.addProject(project.path!, project.name!, project)
 		)
 		this.sidebar.setDefaultSelected(app.projectManager.selectedProject)
 		return app.projectManager.selectedProject

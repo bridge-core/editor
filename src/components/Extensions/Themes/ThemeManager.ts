@@ -76,10 +76,11 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		if (!colorScheme || colorScheme === 'auto') colorScheme = this.mode
 		await app.projectManager.projectReady.fired
 
+		const bridgeConfig = app.projectConfig.get().bridge
 		const localThemeId =
-			(await app.projectConfig.get(
-				<'lightTheme' | 'darkTheme'>`${colorScheme}Theme`
-			)) ?? 'bridge.noSelection'
+			(colorScheme === 'light'
+				? bridgeConfig?.lightTheme
+				: bridgeConfig?.darkTheme) ?? 'bridge.noSelection'
 		const themeId =
 			<string>settingsState?.appearance?.[`${colorScheme}Theme`] ??
 			`bridge.default.${colorScheme}`

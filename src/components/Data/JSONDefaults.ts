@@ -229,7 +229,7 @@ export class JsonDefaults {
 								cacheKey
 							)
 						},
-						() => app.projectConfig.get('prefix'),
+						() => app.projectConfig.get().namespace,
 						() =>
 							!filePath
 								? undefined
