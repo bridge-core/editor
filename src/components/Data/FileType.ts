@@ -81,13 +81,14 @@ export namespace FileType {
 	 */
 	export function get(filePath?: string, searchFileType?: string) {
 		for (const fileType of fileTypes) {
-			if (searchFileType === fileType.id) return fileType
+			if (searchFileType !== undefined && searchFileType === fileType.id)
+				return fileType
 			else if (!filePath) continue
 
 			if (fileType.scope) {
 				if (typeof fileType.scope === 'string') {
 					if (filePath.startsWith(fileType.scope)) return fileType
-				} else {
+				} else if (Array.isArray(fileType.scope)) {
 					if (
 						fileType.scope.some((scope) =>
 							filePath.startsWith(scope)
@@ -95,14 +96,16 @@ export namespace FileType {
 					)
 						return fileType
 				}
-			} else if (
-				typeof fileType.matcher === 'string' &&
-				isMatch(filePath, fileType.matcher)
-			) {
-				return fileType
-			} else {
-				for (const matcher of fileType.matcher)
-					if (isMatch(filePath, matcher)) return fileType
+			} else if (fileType.matcher) {
+				if (
+					typeof fileType.matcher === 'string' &&
+					isMatch(filePath, fileType.matcher)
+				) {
+					return fileType
+				} else if (Array.isArray(fileType.matcher)) {
+					for (const matcher of fileType.matcher)
+						if (isMatch(filePath, matcher)) return fileType
+				}
 			}
 		}
 	}
