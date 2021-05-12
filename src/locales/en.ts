@@ -538,7 +538,7 @@ export default {
 	},
 	initialSetup: {
 		welcome: 'Welcome to bridge. v2!',
-		welcomeCaption: 'The IDE for Minecraft Add-Ons',
+		welcomeCaption: 'A powerful IDE for Minecraft Add-Ons',
 		step: {
 			bridge: {
 				name: 'bridge. Folder',
