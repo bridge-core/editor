@@ -80,7 +80,11 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	}
 
 	async loadParticle(file?: File) {
-		if (!this.fileWatcher) this.fileWatcher = new ParticleWatcher(this)
+		if (!this.fileWatcher)
+			this.fileWatcher = new ParticleWatcher(
+				this,
+				this.tab.getProjectPath()
+			)
 		if (!file)
 			file =
 				(await this.fileWatcher?.requestFile(await this.getFile())) ??
@@ -98,7 +102,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 			this.scene.add(this.wintersky.space)
 
 		this.config = new Wintersky.Config(this.wintersky, particle, {
-			path: this.getProjectPath(),
+			path: this.tab.getProjectPath(),
 		})
 
 		this.emitter = new Wintersky.Emitter(this.wintersky, this.config, {

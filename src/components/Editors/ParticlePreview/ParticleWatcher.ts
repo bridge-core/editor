@@ -2,8 +2,8 @@ import { PreviewFileWatcher } from '/@/components/Editors/GeometryPreview/Data/P
 import { ParticlePreviewTab } from './ParticlePreview'
 
 export class ParticleWatcher extends PreviewFileWatcher {
-	constructor(protected tab: ParticlePreviewTab) {
-		super(tab.tabSystem.app, tab.getProjectPath())
+	constructor(protected tab: ParticlePreviewTab, filePath: string) {
+		super(tab.tabSystem.app, filePath)
 	}
 
 	onChange(file: File) {
