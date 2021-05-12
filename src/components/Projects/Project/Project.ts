@@ -91,9 +91,11 @@ export abstract class Project {
 
 	abstract onCreate(): Promise<void> | void
 
-	async activate(forceRefresh = false) {
+	async activate(isReload = false) {
 		this.parent.title.setProject(this.name)
-		for (const tabSystem of this.tabSystems) await tabSystem.activate()
+		if (!isReload) {
+			for (const tabSystem of this.tabSystems) await tabSystem.activate()
+		}
 
 		await this.extensionLoader.loadExtensions(
 			await this.fileSystem.getDirectoryHandle('.bridge/extensions', {
@@ -103,13 +105,15 @@ export abstract class Project {
 
 		this.typeLoader.activate(this.tabSystem?.selectedTab?.getProjectPath())
 
-		await this.packIndexer.activate(forceRefresh).then(() => {
+		await this.packIndexer.activate(isReload).then(() => {
 			this.jsonDefaults.activate()
 			this.compilerManager.start('default.json', 'dev')
 		})
 	}
-	deactivate() {
-		this.tabSystems.forEach((tabSystem) => tabSystem.deactivate())
+	deactivate(isReload = false) {
+		if (!isReload)
+			this.tabSystems.forEach((tabSystem) => tabSystem.deactivate())
+
 		this.typeLoader.deactivate()
 		this.packIndexer.deactivate()
 		this.compilerManager.deactivate()
@@ -127,7 +131,7 @@ export abstract class Project {
 	}
 
 	async refresh() {
-		this.deactivate()
+		this.deactivate(true)
 		this.disposeWorkers()
 		await this.activate(true)
 	}
