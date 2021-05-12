@@ -15,6 +15,8 @@ import { WindowModule } from './Modules/windows'
 import { GlobalsModule } from './Modules/globals'
 import { ToolbarModule } from './Modules/toolbar'
 import { CompareVersions } from './Modules/compareVersions'
+import { MonacoModule } from './Modules/monaco'
+import { Json5Module } from './Modules/json5'
 
 const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/ui', UIModule],
@@ -30,6 +32,8 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/windows', WindowModule],
 	['@bridge/toolbar', ToolbarModule],
 	['@bridge/compare-versions', CompareVersions],
+	['@bridge/monaco', MonacoModule],
+	['@bridge/json5', Json5Module],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
