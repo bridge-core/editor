@@ -14,4 +14,3 @@ export const MonacoModule = ({ disposables }: IModuleConfig) => ({
 		)
 	},
 })
-console.log(languages)
