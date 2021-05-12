@@ -13,8 +13,8 @@
 				"default": "geometry.zombie.v1.8"
 			},
 			"spawn_egg": {
-				"base_color": "#000000",
-				"overlay_color": "#FFFFFF"
+				"texture": "{{PROJECT_PREFIX}}_{{IDENTIFIER}}_egg",
+				"texture_index": 0
 			},
 			"scripts": {
 				"pre_animation": [

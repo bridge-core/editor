@@ -10,6 +10,7 @@ import Wintersky from 'wintersky'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { IDisposable } from '/@/types/disposable'
+import { IOutlineBox } from './Data/EntityData'
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected winterskyScene = Object.freeze(
@@ -31,12 +32,8 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected _renderContainer?: RenderDataContainer
 	protected boxHelperDisposables: IDisposable[] = []
 
-	constructor(
-		tab: FileTab,
-		tabSystem: TabSystem,
-		fileHandle: FileSystemFileHandle
-	) {
-		super(tab, tabSystem, fileHandle)
+	constructor(tab: FileTab, tabSystem: TabSystem) {
+		super(tab, tabSystem)
 
 		this.winterskyScene.global_options.loop_mode = 'once'
 		this.winterskyScene.global_options.tick_rate = 60
@@ -56,6 +53,11 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	}
 
 	onCreate() {
+		this.registerActions()
+	}
+
+	registerActions() {
+		this.actions = []
 		this.addAction(
 			new SimpleAction({
 				icon: 'mdi-refresh',
@@ -65,6 +67,11 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			new SimpleAction({
 				icon: 'mdi-image-outline',
 				name: 'fileType.texture',
+				isDisabled: () => {
+					return (
+						(this._renderContainer?.texturePaths?.length ?? 0) <= 1
+					)
+				},
 				onTrigger: async () => {
 					const textures = this.renderContainer.texturePaths
 					const chooseTexture = new DropdownWindow({
@@ -82,6 +89,12 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			new SimpleAction({
 				icon: 'mdi-cube-outline',
 				name: 'fileType.geometry',
+				isDisabled: () => {
+					return (
+						(this._renderContainer?.geometryIdentifiers?.length ??
+							0) <= 1
+					)
+				},
 				onTrigger: async () => {
 					const geomtries = this.renderContainer.geometryIdentifiers
 					const chooseGeometry = new DropdownWindow({
@@ -99,6 +112,9 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			new SimpleAction({
 				icon: 'mdi-movie-open-outline',
 				name: 'fileType.clientAnimation',
+				isDisabled: () => {
+					return (this._renderContainer?.animations?.length ?? 0) == 0
+				},
 				onTrigger: async () => {
 					const animations = this.renderContainer.animations
 					const chooseAnimation = new MultiOptionsWindow({
@@ -141,6 +157,10 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 				disposable.dispose()
 			)
 		}
+		this.registerActions()
+
+		// No texture available for model -> nothing to render
+		if (!this.renderContainer.currentTexturePath) return
 
 		this.model = new Model(
 			this.renderContainer.modelData,
@@ -171,43 +191,24 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 
 		const serverEntity = this.renderContainer?.serverEntity
 		if (serverEntity) {
-			this.boxHelperDisposables = serverEntity
-				.getSeatBoxHelpers()
-				.map((box) =>
-					this.model!.createOutlinedBox(
-						'#ff0000',
-						box.position,
-						box.size
-					)
-				)
-			this.boxHelperDisposables.push(
-				...serverEntity
-					.getCollisionBoxes()
-					.map((box) =>
-						this.model!.createOutlinedBox(
-							'#ffff00',
-							box.position,
-							box.size
-						)
-					)
-			)
-			this.boxHelperDisposables.push(
-				...serverEntity
-					.getHitboxes()
-					.map((box) =>
-						this.model!.createOutlinedBox(
-							'#0000ff',
-							box.position,
-							box.size
-						)
-					)
-			)
+			this.boxHelperDisposables.push()
+			this.createOutlineBoxes([
+				...serverEntity.getHitboxes(),
+				...serverEntity.getCollisionBoxes(),
+				...serverEntity.getSeatBoxHelpers(),
+			])
 		}
 
 		this.requestRendering()
 		setTimeout(() => {
 			this.requestRendering()
 		}, 100)
+	}
+
+	protected createOutlineBoxes(boxes: IOutlineBox[]) {
+		this.boxHelperDisposables = boxes.map((box) =>
+			this.model!.createOutlineBox(box.color, box.position, box.size)
+		)
 	}
 
 	protected render() {

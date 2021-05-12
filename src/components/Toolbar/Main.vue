@@ -7,14 +7,15 @@
 		padless
 		height="env(titlebar-area-height, 24px)"
 		:style="{
-			'padding-left': isMacOS ? 'env(titlebar-area-x, 8px)' : undefined,
-			'padding-right': !isMacOS ? 'env(titlebar-area-x, 0)' : undefined,
+			'padding-left': 0,
+			'margin-left': 'env(titlebar-area-x, 0)',
+			width: 'env(titlebar-area-width, 100%)',
 			'z-index': windowControlsOverlay ? 1000 : undefined,
 		}"
 	>
 		<img
 			v-if="!isMacOS || !windowControlsOverlay"
-			style="height: 20px; padding-right: 4px"
+			style="height: 20px; padding-right: 4px; padding-left: 8px"
 			alt="bridge. Logo"
 			draggable="false"
 			src="@/_assets/logo.svg"
@@ -57,7 +58,8 @@
 		<v-spacer />
 		<div
 			class="px-1 mx-1 rounded-lg app-version-display"
-			v-ripple
+			v-ripple="!isAnyWindowVisible"
+			:style="{ opacity: isAnyWindowVisible ? 0.4 : null }"
 			@click="openChangelogWindow"
 		>
 			v{{ appVersion }}
@@ -71,12 +73,14 @@ import MenuActivator from './Menu/Activator.vue'
 import MenuButton from './Menu/Button.vue'
 import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/appVersion.json'
-import { platform } from '/@/utils/os'
-import { reactive, watchEffect } from '@vue/composition-api'
-import { WindowState } from '/@/components/Windows/WindowState'
+import { platform } from '/@/utils/os.ts'
+import { reactive } from '@vue/composition-api'
+import { WindowState } from '/@/components/Windows/WindowState.ts'
+import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 
 export default {
 	name: 'Toolbar',
+	mixins: [WindowControlsOverlayMixin],
 	components: {
 		WindowAction,
 		MenuActivator,
@@ -99,22 +103,11 @@ export default {
 		isMacOS: platform() === 'darwin',
 
 		appVersion,
-		windowControlsOverlay:
-			navigator.windowControlsOverlay &&
-			navigator.windowControlsOverlay.visible,
 	}),
-	mounted() {
-		if (navigator.windowControlsOverlay) {
-			navigator.windowControlsOverlay.addEventListener(
-				'geometrychange',
-				(event) => {
-					this.windowControlsOverlay = event.visible
-				}
-			)
-		}
-	},
 	methods: {
 		async openChangelogWindow() {
+			if (this.isAnyWindowVisible) return
+
 			const app = await App.getApp()
 			await app.windows.changelogWindow.open()
 		},

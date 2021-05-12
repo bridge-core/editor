@@ -19,14 +19,22 @@
 					}
 				},
 				"events": {
-					"propertyNames": {
-						"$ref": "../general/builtInEvent.json"
-					},
-					"patternProperties": {
-						".*": {
-							"$ref": "./event.json"
+					"type": "object",
+					"anyOf": [
+						{
+							"$ref": "../dynamic/currentContext/eventReferenceProperty.json"
+						},
+						{
+							"$ref": "../general/builtInEvent.json"
+						},
+						{
+							"patternProperties": {
+								".*": {
+									"$ref": "./event.json"
+								}
+							}
 						}
-					}
+					]
 				},
 				"do_not_upgrade": {}
 			}

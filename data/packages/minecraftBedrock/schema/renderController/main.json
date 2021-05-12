@@ -102,6 +102,7 @@
 						"part_visibility": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"*": {
 										"$ref": "../molang/embeddedBeta.json"
@@ -117,6 +118,7 @@
 						"materials": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"*": {
 										"anyOf": [

@@ -15,8 +15,8 @@
 				"baby": "geometry.{{IDENTIFIER}}.baby"
 			},
 			"spawn_egg": {
-				"texture": "spawn_egg",
-				"texture_index": 13
+				"texture": "{{PROJECT_PREFIX}}_{{IDENTIFIER}}_egg",
+				"texture_index": 0
 			},
 			"scripts": {
 				"pre_animation": [

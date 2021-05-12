@@ -1,27 +1,47 @@
 <h2>Features:</h2>
 <ul>
-<li><strong>Go To Definition</strong>
-Quickly jump to connected code by clicking on references to it in your current file.</li>
-<li>Syntax highlighting for Minecraft's color codes (e.g. §4) inside of .lang &amp; .mcfunction files</li>
-<li><strong>Experimental:</strong> bridge. v2 now has a custom window toolbar on some browsers</li>
-<li>Added auto-completions for vanilla loot &amp; trade table paths</li>
+<li>Added support for toggling line comments</li>
+<li>Preset inputs now have validation rules to prevent users from entering invalid characters
+<ul>
+<li>Identifiers may only be lowercase</li>
+<li>Identifiers may only contain alphanumeric characters &amp; underscores</li>
+<li>File paths may not contain invalid characters</li>
+</ul>
+</li>
+<li>Added support for previewing animations
+<ul>
+<li>Basic support for playing particles (WIP)</li>
+</ul>
+</li>
+<li>Added support for previewing entity components
+<ul>
+<li>View &quot;minecraft:rideable&quot; seat positions</li>
+<li>View collision boxes</li>
+<li>View hitboxes</li>
+</ul>
+</li>
+<li>Added option to save opened file to project</li>
+<li>Added particle effect &amp; sound effect identifier auto-completions inside of client entities</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Updated GameTest type declarations</li>
-<li>Nested loot tables now get cached correctly</li>
-<li>Updated PackSpider particle file to search particle texture</li>
-<li>Added &quot;filters&quot; auto-completions to entity event sequences</li>
-<li>Updated all built-in windows to use bridge.'s internal BaseWindow class</li>
-<li>&quot;minecraft:rideable&quot; &gt; &quot;family_types&quot; now proposes family names</li>
-<li>Upon closing a tab, bridge. now selects the previous tab instead of the first one in your tab row</li>
-<li>You can now press &quot;enter&quot; to create a preset after filling out all inputs</li>
+<li>Added &quot;confirm&quot; icon to all confirm buttons</li>
+<li>Added support for opening images</li>
+<li>Changes to make more texts translatable</li>
+<li>Updated lightning cache format</li>
+<li>Updated schema folder structure to be more consistent</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed MoLangJS replacer Webpack plugin</li>
-<li>Fixed reference error in entity schema</li>
-<li>Fixed &quot;condition&quot; property appearing in entity event auto-completion</li>
-<li>Fixed validation of event response &quot;run_command&quot;</li>
-<li>Fixed&quot;tick.json&quot; being recognized as .mcfunction file</li>
+<li>Fixed on-demand compilation not returning arrayBuffer</li>
+<li>Fixed blaze preset</li>
+<li>Fixed race-condition upon loading model</li>
+<li>Fixed dolphin presets</li>
+<li>Fixed tropical fish preset</li>
+<li>Fixed pig preset</li>
+<li>Fixed &quot;particle_effects&quot; &amp; &quot;sound_effects&quot; inside of animation schema</li>
+<li>Fixed &quot;minecraft:placement_filter&quot;</li>
+<li>Fixed locator caching for old models</li>
+<li>Fixed initial compilation of preview files</li>
+<li>Fixed nested object inside of array for &quot;minecraft:custom_hit_test&quot;</li>
 </ul>

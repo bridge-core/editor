@@ -3,10 +3,11 @@ import { PreviewFileWatcher } from './PreviewFileWatcher'
 import { RenderDataContainer } from './RenderContainer'
 import { walkObject } from '/@/utils/walkObject'
 
-const rideableComponentLocations = [
-	'*/components/minecraft:rideable',
-	'*/component_groups/*/minecraft:rideable',
-]
+export interface IOutlineBox {
+	color: `#${string}`
+	position: { x: number; y: number; z: number }
+	size: { x: number; y: number; z: number }
+}
 
 export class EntityData extends PreviewFileWatcher {
 	protected entityData: any = {}
@@ -53,8 +54,9 @@ export class EntityData extends PreviewFileWatcher {
 			?.map(
 				(position) =>
 					<const>{
+						color: '#ff0000',
 						position: {
-							x: position[0] * 16,
+							x: position[0] * -16,
 							y: position[1] * 16,
 							z: position[2] * 16,
 						},
@@ -73,9 +75,10 @@ export class EntityData extends PreviewFileWatcher {
 			.map(
 				(collisionBox) =>
 					<const>{
+						color: '#ffff00',
 						position: { x: 0, y: 0, z: 0 },
 						size: {
-							x: collisionBox.width * 16,
+							x: collisionBox.width * -16,
 							y: collisionBox.height * 16,
 							z: collisionBox.width * 16,
 						},
@@ -100,8 +103,9 @@ export class EntityData extends PreviewFileWatcher {
 			.map(
 				(hitbox) =>
 					<const>{
+						color: '#0000ff',
 						position: {
-							x: (hitbox?.pivot?.[0] ?? 0) * 16,
+							x: (hitbox?.pivot?.[0] ?? 0) * -16,
 							y: (hitbox?.pivot?.[1] ?? 0) * 16,
 							z: (hitbox?.pivot?.[2] ?? 0) * 16,
 						},

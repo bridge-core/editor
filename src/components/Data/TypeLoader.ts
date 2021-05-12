@@ -4,6 +4,7 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { IDisposable } from '/@/types/disposable'
 import { editor, languages, Uri } from 'monaco-editor'
 import { compare, CompareOperator } from 'compare-versions'
+import { getLatestFormatVersion } from './FormatVersions'
 const types = new Map<string, string>()
 
 export class TypeLoader {
@@ -65,9 +66,9 @@ export class TypeLoader {
 						targetVersion: [operator, targetVersion],
 					},
 				] = type
-				const projectTargetVersion = await app.projectConfig.get(
-					'targetVersion'
-				)
+				const projectTargetVersion =
+					app.projectConfig.get().targetVersion ??
+					(await getLatestFormatVersion())
 
 				if (compare(projectTargetVersion, targetVersion, operator))
 					return <const>[typePath, await this.load(typePath)]

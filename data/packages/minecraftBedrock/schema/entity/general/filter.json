@@ -1,5 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
 	"properties": {
 		"all_of": {
 			"type": "array",
@@ -165,7 +166,8 @@
 						"trusts",
 						"weather",
 						"weather_at_position",
-						"in_contact_with_water"
+						"in_contact_with_water",
+						"in_block"
 					]
 				}
 			}

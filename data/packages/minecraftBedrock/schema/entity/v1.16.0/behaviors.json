@@ -450,6 +450,7 @@
 					"description": "A list of potions that this entity can drink.",
 					"type": "array",
 					"items": {
+						"type": "object",
 						"properties": {
 							"id": {
 								"description": "The registry ID of the potion to use.",
@@ -636,6 +637,7 @@
 				"eat_and_replace_block_pairs": {
 					"type": "array",
 					"items": {
+						"type": "object",
 						"properties": {
 							"eat_block": {
 								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
@@ -1466,6 +1468,7 @@
 						"backoff": {
 							"type": "array",
 							"items": {
+								"type": "object",
 								"properties": {
 									"distance_squared_gt": {
 										"type": "number"
@@ -2613,6 +2616,7 @@
 				"event_choices": {
 					"type": "array",
 					"items": {
+						"type": "object",
 						"properties": {
 							"min_activation_range": {
 								"type": "number"
@@ -2649,6 +2653,7 @@
 							"sequence": {
 								"type": "array",
 								"items": {
+									"type": "object",
 									"properties": {
 										"base_delay": {
 											"description": "Amount of time in seconds before starting this step.",
@@ -3076,6 +3081,7 @@
 				"summon_choices": {
 					"type": "array",
 					"items": {
+						"type": "object",
 						"properties": {
 							"do_casting": {
 								"type": "boolean"
@@ -3107,6 +3113,7 @@
 							"sequence": {
 								"type": "array",
 								"items": {
+									"type": "object",
 									"properties": {
 										"shape": {
 											"type": "string",
@@ -3238,6 +3245,7 @@
 				"entity_types": {
 					"type": "array",
 					"items": {
+						"type": "object",
 						"properties": {
 							"filters": {
 								"$ref": "../general/entityType.json"

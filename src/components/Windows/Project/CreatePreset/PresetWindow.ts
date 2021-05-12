@@ -16,6 +16,7 @@ import { createFile, TCreateFile } from './CreateFile'
 import { TPackTypeId } from '/@/components/Data/PackType'
 import { transformString } from './TransformString'
 import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
+import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 
 export interface IPresetManifest {
 	name: string
@@ -107,10 +108,10 @@ export class CreatePresetWindow extends BaseWindow {
 		// Check that the project has the required modules
 		if (manifest.requiredModules) {
 			const gameTest = <boolean | undefined>(
-				await app.projectConfig.get('gameTestAPI')
+				app.projectConfig.get().capabilities?.includes('gameTestAPI')
 			)
 			const scripting = <boolean | undefined>(
-				await app.projectConfig.get('scriptingAPI')
+				app.projectConfig.get().capabilities?.includes('scriptingAPI')
 			)
 
 			for (const module of manifest.requiredModules) {
@@ -121,12 +122,8 @@ export class CreatePresetWindow extends BaseWindow {
 
 		// Load current project target version
 		const projectTargetVersion =
-			<string | undefined>await app.projectConfig.get('targetVersion') ??
-			(
-				await app.fileSystem.readJSON(
-					'data/packages/minecraftBedrock/formatVersions.json'
-				)
-			).pop()
+			app.projectConfig.get().targetVersion ??
+			(await getLatestFormatVersion())
 		// Check that preset is supported on target version
 		if (
 			manifest.targetVersion &&
@@ -165,8 +162,7 @@ export class CreatePresetWindow extends BaseWindow {
 			...manifest,
 			presetPath: dirname(manifestPath),
 			models: {
-				PROJECT_PREFIX:
-					(await app.projectConfig.get('prefix')) ?? 'bridge',
+				PROJECT_PREFIX: app.projectConfig.get().namespace ?? 'bridge',
 				...(manifest.additionalModels ?? {}),
 				...Object.fromEntries(
 					manifest.fields.map(([_, id, opts = {}]: any) => [

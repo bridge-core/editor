@@ -81,6 +81,9 @@ export class App {
 			)
 		return this.projectManager.currentProject
 	}
+	get projects() {
+		return Object.values(this.projectManager.state)
+	}
 	get projectConfig() {
 		return this.project.config
 	}
@@ -165,7 +168,7 @@ export class App {
 		}
 
 		// Load settings
-		SettingsWindow.loadSettings(this.instance).then(async () => {
+		await SettingsWindow.loadSettings(this.instance).then(async () => {
 			await this.instance.dataLoader.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
 		})

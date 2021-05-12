@@ -2,7 +2,7 @@ import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import Vue from 'vue'
 import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
-import { ProjectConfig, TProjectConfig } from '../ProjectConfig'
+import { ProjectConfig, IConfigJson } from '../ProjectConfig'
 import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
 import { loadPacks } from './loadPacks'
@@ -15,18 +15,19 @@ import { TypeLoader } from '/@/components/Data/TypeLoader'
 import { ExtensionLoader } from '/@/components/Extensions/ExtensionLoader'
 import { FileChangeRegistry } from './FileChangeRegistry'
 import { FileTab } from '/@/components/TabSystem/FileTab'
+import { TabActionProvider } from '/@/components/TabSystem/TabActions/Provider'
 
-export interface IProjectData extends TProjectConfig {
+export interface IProjectData extends IConfigJson {
 	path: string
 	name: string
 	imgSrc: string
 	contains: IPackType[]
 }
 
-export class Project {
+export abstract class Project {
 	public readonly recentFiles!: RecentFiles
 	public readonly tabSystems = [new TabSystem(this), new TabSystem(this, 1)]
-	protected _projectData!: IProjectData
+	protected _projectData!: Partial<IProjectData>
 	// Not directly assigned so they're not responsive
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
@@ -40,6 +41,7 @@ export class Project {
 	)
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
+	public readonly tabActionProvider = new TabActionProvider()
 
 	//#region Getters
 	get projectData() {
@@ -83,7 +85,11 @@ export class Project {
 				`projects/${this.name}/.bridge/recentFiles.json`
 			)
 		)
+
+		this.onCreate()
 	}
+
+	abstract onCreate(): Promise<void> | void
 
 	async activate(forceRefresh = false) {
 		this.parent.title.setProject(this.name)
@@ -196,24 +202,17 @@ export class Project {
 
 	hasPacks(packTypes: TPackTypeId[]) {
 		for (const packType of packTypes) {
-			if (!this._projectData.contains.some(({ id }) => id === packType))
+			if (!this._projectData.contains?.some(({ id }) => id === packType))
 				return false
 		}
 		return true
 	}
 
 	async loadProject() {
-		let config: any
-		try {
-			config = await this.app.fileSystem.readJSON(
-				`projects/${this.name}/.bridge/config.json`
-			)
-		} catch {
-			config = {}
-		}
+		await this.config.setup()
 
 		Vue.set(this, '_projectData', {
-			...config,
+			...this.config.get(),
 			path: this.name,
 			name: this.name,
 			imgSrc: await loadIcon(

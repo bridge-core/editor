@@ -20,10 +20,9 @@ export class EntityModelTab extends GeometryPreviewTab {
 	constructor(
 		protected clientEntityFilePath: string,
 		tab: FileTab,
-		parent: TabSystem,
-		fileHandle: FileSystemFileHandle
+		parent: TabSystem
 	) {
-		super(tab, parent, fileHandle)
+		super(tab, parent)
 
 		this.clientEntityWatcher.on((file) => {
 			const runningAnims = this._renderContainer?.runningAnimations
@@ -45,8 +44,14 @@ export class EntityModelTab extends GeometryPreviewTab {
 		const packIndexer = app.project.packIndexer.service
 		if (!packIndexer) return
 
-		const clientEntity =
-			json5.parse(await file.text())?.['minecraft:client_entity'] ?? {}
+		let clientEntity: any
+		try {
+			clientEntity =
+				json5.parse(await file.text())?.['minecraft:client_entity'] ??
+				{}
+		} catch {
+			return
+		}
 
 		const clientEntityData = await packIndexer.getCacheDataFor(
 			'clientEntity',

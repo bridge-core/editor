@@ -19,7 +19,7 @@
 		"@types/micromatch": "^4.0.1",
 		"@vue/composition-api": "^1.0.0-rc.6",
 		"bridge-compiler": "^0.3.0",
-		"bridge-model-viewer": "^0.5.7",
+		"bridge-model-viewer": "^0.6.0",
 		"color-convert": "^2.0.1",
 		"comlink": "^4.3.0",
 		"compare-versions": "^3.6.0",

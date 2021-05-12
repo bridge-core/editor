@@ -83,7 +83,8 @@
 							"skin_pack",
 							"world_template",
 							"javascript"
-						]
+						],
+						"type": "string"
 					},
 					"description": {
 						"type": "string"
@@ -184,25 +185,23 @@
 		},
 		"subpacks": {
 			"type": "array",
-			"items": [
-				{
-					"type": "object",
-					"properties": {
-						"folder_name": {
-							"type": "string",
-							"description": "The name of the folder that this subpack references."
-						},
-						"name": {
-							"type": "string",
-							"description": "The name of the subpack shown in game."
-						},
-						"memory_tier": {
-							"type": "number",
-							"description": "This number specifies the order subpacks in game."
-						}
+			"items": {
+				"type": "object",
+				"properties": {
+					"folder_name": {
+						"type": "string",
+						"description": "The name of the folder that this subpack references."
+					},
+					"name": {
+						"type": "string",
+						"description": "The name of the subpack shown in game."
+					},
+					"memory_tier": {
+						"type": "number",
+						"description": "This number specifies the order subpacks in game."
 					}
 				}
-			]
+			}
 		}
 	}
 }

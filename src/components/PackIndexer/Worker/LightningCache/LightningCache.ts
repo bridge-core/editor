@@ -6,7 +6,7 @@ import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'
 import { runScript } from './Script'
 import { extname } from '/@/utils/path'
-import { findFile } from '/@/components/FileSystem/FindFile'
+import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { iterateDir } from '/@/utils/iterateDir'
 
 const knownTextFiles = new Set([
@@ -21,6 +21,7 @@ const knownTextFiles = new Set([
 export interface ILightningInstruction {
 	cacheKey: string
 	path: string
+	pathScript?: string
 	script?: string
 	filter?: string[]
 }
@@ -278,7 +279,7 @@ export class LightningCache {
 									basePath: string,
 									extensions: string[]
 								) =>
-									findFile(
+									findFileExtension(
 										this.service.fileSystem,
 										basePath,
 										extensions
@@ -306,23 +307,20 @@ export class LightningCache {
 		for (const instruction of instructions) {
 			const key = instruction.cacheKey
 			if (!key) continue
-			const paths = instruction.path
+			let paths = Array.isArray(instruction.path)
+				? instruction.path
+				: [instruction.path]
+			const generatePaths = instruction.pathScript
 
-			if (Array.isArray(paths)) {
-				for (const path of paths) {
-					walkObject(
-						path,
-						data,
-						onReceiveData(
-							key,
-							instruction.filter,
-							instruction.script
-						)
-					)
-				}
-			} else {
+			if (generatePaths) {
+				paths = run(generatePaths, { paths })
+
+				if (!Array.isArray(paths) || paths.length === 0) return
+			}
+
+			for (const path of paths) {
 				walkObject(
-					paths,
+					path,
 					data,
 					onReceiveData(key, instruction.filter, instruction.script)
 				)

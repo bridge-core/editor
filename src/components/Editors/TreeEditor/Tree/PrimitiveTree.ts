@@ -5,6 +5,8 @@ import type { ObjectTree } from './ObjectTree'
 
 export class PrimitiveTree extends Tree<TPrimitiveTree> {
 	public component = PrimitiveTreeComponent
+	public isValueSelected = false
+
 	constructor(
 		parent: ObjectTree | ArrayTree | null,
 		protected _value: TPrimitiveTree

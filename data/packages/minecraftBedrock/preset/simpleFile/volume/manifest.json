@@ -1,0 +1,26 @@
+{
+	"name": "Volume",
+	"icon": "mdi-shape-rectangle-plus",
+	"description": "Creates a blank volume.",
+	"category": "fileType.simpleFile",
+	"targetVersion": [">=", "1.17.0"],
+	"packTypes": ["worldTemplate"],
+	"additionalModels": {
+		"PRESET_PATH": "WT/volumes/"
+	},
+	"fields": [
+		[
+			"File Name",
+			"FILE_NAME",
+			{ "validate": ["required", "alphanumeric", "lowercase"] }
+		]
+	],
+
+	"createFiles": [
+		[
+			"volume.json",
+			"{{PRESET_PATH}}{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
+		]
+	]
+}

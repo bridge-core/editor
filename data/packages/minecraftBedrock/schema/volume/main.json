@@ -1,0 +1,81 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Volume",
+	"additionalProperties": false,
+	"properties": {
+		"format_version": {
+			"type": "string",
+			"const": "1.17.0"
+		},
+		"minecraft:volume": {
+			"additionalProperties": false,
+			"properties": {
+				"description": {
+					"additionalProperties": false,
+					"properties": {
+						"identifier": {
+							"description": "The unique identifier for this volume.",
+							"anyOf": [
+								{
+									"$ref": "../project/prefixedFileIdentifierEnum.json"
+								},
+								{
+									"type": "string"
+								}
+							]
+						}
+					}
+				},
+				"components": {
+					"required": ["minecraft:bounds"],
+					"additionalProperties": false,
+					"properties": {
+						"minecraft:bounds": {
+							"description": "Component that defines a minimum and maximum block position for a bounding box and which world dimension the bounding box is in. Every volume must have a bounds component.",
+							"additionalProperties": false,
+							"properties": {
+								"dimension": {
+									"description": "The name of the dimension the bounding box will exist in.",
+									"type": "string",
+									"enum": ["overworld", "nether", "the_end"]
+								},
+								"min": {
+									"description": "The minimum block position of the bounding box.",
+									"type": "array",
+									"minItems": 3,
+									"maxItems": 3,
+									"items": {
+										"type": "number"
+									}
+								},
+								"max": {
+									"description": "The maximum block position of the bounding box.",
+									"type": "array",
+									"minItems": 3,
+									"maxItems": 3,
+									"items": {
+										"type": "number"
+									}
+								}
+							}
+						},
+						"minecraft:fog": {
+							"description": "Displays the given fog whenever a player enters the volume. Each volume can only have one fog attached.",
+							"additionalProperties": false,
+							"properties": {
+								"fog_identifier": {
+									"description": "The identifier of a fog definition. Note that you will not receive any feedback if the definition does not exist.",
+									"$ref": "../general/reference/identifiers.json#/definitions/fog_identifiers"
+								},
+								"priority": {
+									"description": "The priority for this fog definition setting. Smaller numbers have higher priority. Fogs with equal priority will be combined together.",
+									"type": "integer"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

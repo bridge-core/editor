@@ -90,6 +90,9 @@
 				},
 				{
 					"$ref": "../../clientBiome/dynamic/fogIdentifierEnum.json"
+				},
+				{
+					"$ref": "../../volume/dynamic/fogIdentifierEnum.json"
 				}
 			]
 		}

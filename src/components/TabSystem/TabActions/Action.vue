@@ -1,8 +1,12 @@
 <template>
 	<div
 		class="d-flex px-1 mx-1 align-center action"
-		v-ripple
-		@click="action.trigger()"
+		:style="{
+			opacity: action.isDisabled ? 0.2 : 1,
+			cursor: !action.isDisabled ? 'pointer' : null,
+		}"
+		v-ripple="!action.isDisabled"
+		@click="onClick"
 	>
 		<v-icon :color="action.color || 'primary'" class="mr-1" small>
 			{{ action.icon }}
@@ -20,12 +24,17 @@ export default {
 		action: SimpleAction,
 	},
 	mixins: [TranslationMixin],
+	methods: {
+		onClick() {
+			this.$emit('click')
+			this.action.trigger()
+		},
+	},
 }
 </script>
 
 <style scoped>
 .action {
-	cursor: pointer;
 	border-radius: 8px;
 }
 

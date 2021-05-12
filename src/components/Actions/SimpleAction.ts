@@ -8,6 +8,7 @@ export interface IActionConfig {
 	name: string
 	color?: string
 	description?: string
+	isDisabled?: () => boolean
 	keyBinding?: string
 	prevent?: IKeyBindingConfig['prevent']
 	onTrigger: () => Promise<unknown> | unknown
@@ -34,9 +35,13 @@ export class SimpleAction extends EventDispatcher<void> {
 	get color() {
 		return this.config.color
 	}
+	get isDisabled() {
+		return this.config.isDisabled?.() ?? false
+	}
 	//#endregion
 
 	async trigger() {
+		if (this.isDisabled) return
 		this.dispatch()
 		return await this.config.onTrigger()
 	}

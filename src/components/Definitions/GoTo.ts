@@ -6,7 +6,7 @@ import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { isMatch } from 'micromatch'
 import { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import { runAsync } from '/@/components/Extensions/Scripts/run'
-import { findFile } from '/@/components/FileSystem/FindFile'
+import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { findAsync } from '/@/utils/array/findAsync'
 
 export class DefinitionProvider {
@@ -117,6 +117,8 @@ export class DefinitionProvider {
 			definitionId: await findAsync(
 				definitions,
 				async ([def, path, { script, filter }]) => {
+					if (path === '') return false
+
 					const matches = isMatch(location, path)
 					if (matches) {
 						if (filter && filter.includes(word))
@@ -128,7 +130,7 @@ export class DefinitionProvider {
 									basePath: string,
 									extensions: string[]
 								) =>
-									findFile(
+									findFileExtension(
 										app.project.fileSystem,
 										basePath,
 										extensions

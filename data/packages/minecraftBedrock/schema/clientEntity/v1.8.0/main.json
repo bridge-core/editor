@@ -154,6 +154,7 @@
 							"description": "Lists the animation controllers to run on this entity.",
 							"type": "array",
 							"items": {
+								"type": "object",
 								"patternProperties": {
 									".*": {
 										"type": "string"

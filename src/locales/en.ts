@@ -13,6 +13,9 @@ export default {
 		close: 'Close',
 		reload: 'Reload',
 		information: 'Information',
+		continue: 'Continue',
+		skip: 'Skip',
+		selectFolder: 'Select Folder',
 	},
 	packType: {
 		behaviorPack: {
@@ -31,7 +34,8 @@ export default {
 		},
 		worldTemplate: {
 			name: 'World Template',
-			description: 'Give players a world to explore',
+			description:
+				'Create a world that users can create to experience your project',
 		},
 	},
 	// File Type display names
@@ -86,6 +90,8 @@ export default {
 		unknown: 'Other',
 		simpleFile: 'Simple Files',
 		ui: 'UI',
+		volume: 'Volume',
+		worldManifest: 'World Manifest',
 	},
 	// Actions
 	actions: {
@@ -324,12 +330,6 @@ export default {
 			searchProjects: 'Search projects...',
 			newProject: 'New Project',
 		},
-		selectFolder: {
-			title: 'Select Folder',
-			content:
-				'Select where to save projects or choose an existing projects directory. This should not be the "com.mojang" folder, but rather a new folder specifically for bridge.',
-			select: 'Select!',
-		},
 		filePath: {
 			title: 'Choose File Path',
 		},
@@ -439,6 +439,10 @@ export default {
 				name: 'Actions',
 			},
 			editor: {
+				jsonEditor: {
+					name: 'JSON Editor',
+					description: 'Choose how you want to edit JSON files',
+				},
 				wordWrap: {
 					name: 'Word Wrap',
 					description: 'Wrap words to disable horizontal scrolling',
@@ -521,13 +525,47 @@ export default {
 			'Once you start typing, results for your search query will appear here.',
 	},
 	preview: {
+		name: 'Preview',
 		viewAnimation: 'View Animation',
 		viewModel: 'View Model',
 		viewParticle: 'View Particle',
 		viewEntity: 'View Entity',
+		viewBlock: 'View Block',
 		failedClientEntityLoad: 'Failed to load connected client entity',
 		chooseGeometry: 'Choose Geometry',
 		noGeometry:
 			'No valid geometry found inside of this file. Make sure that your JSON is valid and that the file structure is correct.',
+	},
+	initialSetup: {
+		welcome: 'Welcome to bridge. v2!',
+		welcomeCaption: 'A powerful IDE for Minecraft Add-Ons',
+		step: {
+			bridge: {
+				name: 'bridge. Folder',
+				description:
+					'Please create a folder where bridge. can save app related data and your add-on projects.',
+			},
+			comMojang: {
+				name: 'com.mojang Folder',
+				description:
+					'Now drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.',
+				extraDescription: 'Drag your com.mojang folder onto bridge.',
+			},
+			editorType: {
+				name: 'Choose Editor Type',
+				description:
+					"How do you want to edit JSON files? You can change your choice inside of bridge.'s settings later!",
+				rawText: {
+					name: 'Raw Text',
+					description:
+						'Edit JSON as raw text. Ideal for intermediate to advanced developers. Comes with advanced auto-completions and JSON validation.',
+				},
+				treeEditor: {
+					name: 'Tree Editor',
+					description:
+						'Edit JSON as a tree-like structure that requires little to no JSON knowledge. Ideal for beginners and intermediate creators.',
+				},
+			},
+		},
 	},
 }

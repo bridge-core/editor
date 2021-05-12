@@ -5,6 +5,21 @@
 	},
 	{ "cacheKey": "event", "path": "minecraft:block/events" },
 	{
+		"cacheKey": "eventReference",
+		"pathScript": "return Bridge.paths.map(path => [`*/components/${path}/**/event`, `*/permutations/*/components/${path}/**/event`]).flat()",
+		"path": [
+			"minecraft:on_step_on",
+			"minecraft:on_step_off",
+			"minecraft:on_player_destroyed",
+			"minecraft:on_fall_on",
+			"minecraft:on_placed",
+			"minecraft:on_player_placing",
+			"minecraft:on_interact",
+			"minecraft:ticking",
+			"minecraft:random_ticking"
+		]
+	},
+	{
 		"cacheKey": "property",
 		"path": "minecraft:block/description/properties"
 	},

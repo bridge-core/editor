@@ -17,6 +17,7 @@
 		[
 			"types/gameTest/v1.16.230.d.ts",
 			{ "targetVersion": [">=", "v1.16.220"] }
-		]
+		],
+		["types/gameTest/v1.17.0.d.ts", { "targetVersion": [">=", "v1.17.0"] }]
 	]
 }

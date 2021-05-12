@@ -7,6 +7,10 @@ export class TreeSelection {
 		tree.isSelected = true
 	}
 
+	getTree() {
+		return this.tree
+	}
+
 	dispose() {
 		this.tree.isSelected = false
 	}
@@ -22,13 +26,20 @@ export class TreeSelection {
 	}
 }
 
-export class TreeValueSelection extends TreeSelection {
-	edit(value: string) {
-		if (!(this.tree instanceof PrimitiveTree))
-			throw new Error(
-				`Cannot create value selection for non-primitive type.`
-			)
+export class TreeValueSelection {
+	constructor(protected tree: PrimitiveTree) {
+		tree.isValueSelected = true
+	}
 
+	getTree() {
+		return this.tree
+	}
+
+	dispose() {
+		this.tree.isValueSelected = false
+	}
+
+	edit(value: string) {
 		this.tree.setValue(value)
 	}
 }

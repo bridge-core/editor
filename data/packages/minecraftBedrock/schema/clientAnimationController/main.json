@@ -104,6 +104,7 @@
 										"particle_effects": {
 											"type": "array",
 											"items": {
+												"type": "object",
 												"additionalProperties": false,
 												"properties": {
 													"effect": {
@@ -118,6 +119,7 @@
 										"sound_effects": {
 											"type": "array",
 											"items": {
+												"type": "object",
 												"patternProperties": {
 													"effect": {
 														"$ref": "../clientEntity/dynamic/soundEffectReferenceEnum.json"

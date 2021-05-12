@@ -13,10 +13,10 @@ export abstract class Tab extends Signal<Tab> {
 	public hasRemoteChange = false
 	public isUnsaved = false
 	public isForeignFile = true
+	public connectedTabs: Tab[] = []
 
 	protected projectPath?: string
 	protected actions: SimpleAction[] = []
-	protected connectedTabs: Tab[] = []
 	protected isActive = false
 	protected isLoading = true
 
@@ -46,6 +46,7 @@ export abstract class Tab extends Signal<Tab> {
 	get tabSystem() {
 		return this.parent
 	}
+
 	/**
 	 * @returns Undefined if the file that belongs to this tab is not inside of a bridge. project
 	 */

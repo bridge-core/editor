@@ -4,9 +4,10 @@ import { Toggle } from './Controls/Toggle/Toggle'
 import { SettingsWindow } from './SettingsWindow'
 import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
-import { ProjectSelection } from './Controls/Selection/ProjectSelection'
+import { BridgeConfigSelection } from './Controls/Selection/BridgeConfigSelection'
 import { Button } from './Controls/Button/Button'
 import { del } from 'idb-keyval'
+import { comMojangKey } from '../../FileSystem/ComMojang'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -57,7 +58,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
-		new ProjectSelection({
+		new BridgeConfigSelection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.localDarkTheme.name',
 			description:
@@ -76,7 +77,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
-		new ProjectSelection({
+		new BridgeConfigSelection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.localLightTheme.name',
 			description:
@@ -211,12 +212,26 @@ export async function setupSettings(settings: SettingsWindow) {
 				'windows.settings.general.resetBridgeFolder.description',
 			onClick: async () => {
 				await del('bridgeBaseDir')
+				await del(comMojangKey)
 				location.reload()
 			},
 		})
 	)
 
 	// Editor
+	settings.addControl(
+		new Selection({
+			category: 'editor',
+			name: 'windows.settings.editor.jsonEditor.name',
+			description: 'windows.settings.editor.jsonEditor.description',
+			key: 'jsonEditor',
+			options: [
+				{ text: 'Tree Editor', value: 'treeEditor' },
+				{ text: 'Raw Text', value: 'rawText' },
+			],
+			default: 'rawText',
+		})
+	)
 	settings.addControl(
 		new Toggle({
 			category: 'editor',

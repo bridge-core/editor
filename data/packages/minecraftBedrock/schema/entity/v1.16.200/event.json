@@ -2,12 +2,14 @@
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"allOf": [
 		{
+			"type": "object",
 			"properties": {
 				"randomize": {
 					"type": "array",
 					"items": {
 						"allOf": [
 							{
+								"type": "object",
 								"properties": {
 									"weight": { "type": "number" }
 								}
@@ -23,6 +25,7 @@
 					"items": {
 						"allOf": [
 							{
+								"type": "object",
 								"properties": {
 									"filters": {
 										"$ref": "../general/filter.json"

@@ -122,6 +122,7 @@
 									"description": "Runs animations and animation controllers that are defines under 'animations'",
 									"type": "array",
 									"items": {
+										"type": "object",
 										"patternProperties": {
 											".*": {
 												"type": "string"

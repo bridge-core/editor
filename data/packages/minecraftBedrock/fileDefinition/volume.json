@@ -1,0 +1,8 @@
+{
+	"id": "volume",
+	"icon": "mdi-shape-rectangle-plus",
+	"scope": "WT/volumes/",
+	"matcher": ["WT/volumes/**/*.json", "WT/volumes/*.json"],
+	"schema": "file:///data/packages/minecraftBedrock/schema/volume/main.json",
+	"lightningCache": "volume.json"
+}

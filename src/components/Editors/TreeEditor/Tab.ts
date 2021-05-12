@@ -4,6 +4,7 @@ import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { TreeEditor } from './TreeEditor'
 import { parse } from 'json5'
+import { settingsState } from '../../Windows/Settings/SettingsState'
 
 export class TreeTab extends FileTab {
 	component = TreeTabComponent
@@ -14,8 +15,10 @@ export class TreeTab extends FileTab {
 	}
 
 	static is(fileHandle: FileSystemFileHandle) {
-		return false
-		return fileHandle.name.endsWith('.json')
+		return (
+			settingsState?.editor.jsonEditor === 'treeEditor' &&
+			fileHandle.name.endsWith('.json')
+		)
 	}
 	get treeEditor() {
 		if (!this._treeEditor)

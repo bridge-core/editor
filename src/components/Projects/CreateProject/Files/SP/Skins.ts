@@ -9,8 +9,8 @@ export class CreateSkins extends CreateFile {
 			{
 				geometry: 'skinpacks/skins.json',
 				skins: [],
-				serialize_name: createOptions.prefix,
-				localization_name: createOptions.prefix,
+				serialize_name: createOptions.namespace,
+				localization_name: createOptions.namespace,
 			},
 			true
 		)

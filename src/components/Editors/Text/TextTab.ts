@@ -53,91 +53,9 @@ export class TextTab extends FileTab {
 
 		this.fired.then(async () => {
 			const app = await App.getApp()
+			await app.projectManager.projectReady.fired
 
-			if (this.getProjectPath().startsWith('RP/models/')) {
-				this.addAction(
-					new SimpleAction({
-						icon: 'mdi-play',
-						name: 'preview.viewModel',
-						onTrigger: async () => {
-							if (!this.editorModel) return
-
-							const tab = await createFromGeometry(this)
-							if (!tab) return
-
-							this.connectedTabs.push(tab)
-							app.project.tabSystem?.add(tab, true)
-						},
-					})
-				)
-			} else if (this.getProjectPath().startsWith('RP/entity/')) {
-				this.addAction(
-					new SimpleAction({
-						icon: 'mdi-play',
-						name: 'preview.viewModel',
-						onTrigger: async () => {
-							if (!this.editorModel) return
-
-							const tab = await createFromClientEntity(this)
-							if (!tab) return
-
-							this.connectedTabs.push(tab)
-							app.project.tabSystem?.add(tab, true)
-						},
-					})
-				)
-			} else if (this.getProjectPath().startsWith('BP/entities/')) {
-				this.addAction(
-					new SimpleAction({
-						icon: 'mdi-play',
-						name: 'preview.viewEntity',
-						onTrigger: async () => {
-							if (!this.editorModel) return
-
-							const tab = await createFromEntity(this)
-							if (!tab) return
-
-							this.connectedTabs.push(tab)
-							app.project.tabSystem?.add(tab, true)
-						},
-					})
-				)
-			} else if (this.getProjectPath().startsWith('RP/animations/')) {
-				// this.addAction(
-				// 	new SimpleAction({
-				// 		icon: 'mdi-play',
-				// 		name: 'preview.viewAnimation',
-				// 		onTrigger: async () => {
-				// 			if (!this.editorModel) return
-				// 			const tab = new EntityModelTab(
-				// 				this,
-				// 				this.parent,
-				// 				this.fileHandle
-				// 			)
-				// 			this.connectedTabs.push(tab)
-				// 			app.project.tabSystem?.add(tab, true)
-				// 		},
-				// 	})
-				// )
-			} else if (this.getProjectPath().startsWith('RP/particles/')) {
-				this.addAction(
-					new SimpleAction({
-						icon: 'mdi-play',
-						name: 'preview.viewParticle',
-						onTrigger: async () => {
-							if (!this.editorModel) return
-
-							const tab = new ParticlePreviewTab(
-								this,
-								this.parent,
-								this.fileHandle
-							)
-							this.connectedTabs.push(tab)
-							app.project.tabSystem?.add(tab, true)
-						},
-					})
-				)
-			}
+			app.project.tabActionProvider.addTabActions(this)
 		})
 	}
 	async getFile() {

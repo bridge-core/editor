@@ -9,13 +9,15 @@ import { CreateSP } from './Packs/SP'
 import { CreateBridge } from './Packs/Bridge'
 import { IPackType, PackType } from '/@/components/Data/PackType'
 import { CreateGitIgnore } from './Files/GitIgnore'
+import { CreateWT } from './Packs/WT'
+import { CreateConfig } from './Files/Config'
 
 export interface ICreateProjectOptions {
 	author: string
 	description: string
 	icon: File | null
 	name: string
-	prefix: string
+	namespace: string
 	targetVersion: string
 	packs: TPackType[]
 	scripting: boolean
@@ -34,10 +36,11 @@ export class CreateProjectWindow extends BaseWindow {
 		BP: new CreateBP(),
 		RP: new CreateRP(),
 		SP: new CreateSP(),
+		WT: new CreateWT(),
 		'.bridge': new CreateBridge(),
 	}
 	protected availablePackTypes: IPackType[] = []
-	protected createFiles = [new CreateGitIgnore()]
+	protected createFiles = [new CreateGitIgnore(), new CreateConfig()]
 
 	constructor() {
 		super(CreateProjectComponent, false)
@@ -57,16 +60,15 @@ export class CreateProjectWindow extends BaseWindow {
 
 		PackType.ready.once(() => {
 			// TODO: Remove filter for world templates as soon as we support creating them
-			this.availablePackTypes = PackType.all().filter(
-				({ id }) => id !== 'worldTemplate'
-			)
+			this.availablePackTypes = PackType.all()
 		})
 	}
 
 	get hasRequiredData() {
 		return (
+			this.createOptions.packs.length > 1 &&
 			this.createOptions.name.length > 0 &&
-			this.createOptions.prefix.length > 0 &&
+			this.createOptions.namespace.length > 0 &&
 			this.createOptions.author.length > 0 &&
 			this.createOptions.targetVersion.length > 0
 		)
@@ -112,7 +114,7 @@ export class CreateProjectWindow extends BaseWindow {
 			description: '',
 			icon: null,
 			name: '',
-			prefix: 'bridge',
+			namespace: 'bridge',
 			targetVersion: '',
 			packs: ['.bridge', 'BP', 'RP'],
 			scripting: false,

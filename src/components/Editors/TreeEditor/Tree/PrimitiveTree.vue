@@ -1,15 +1,26 @@
 <template>
 	<div :style="tree.styles">
-		<span v-if="tree.parent.type === 'object'"><slot />:</span>
+		<span v-if="tree.parent.type === 'object'">
+			<span
+				:class="{ 'tree-editor-selection': tree.isSelected }"
+				@click.stop.prevent="onClickKey"
+				><slot /></span
+			>:</span
+		>
+
 		<span
 			:style="{
 				color: highlighterInfo.color,
 				backgroundColor: highlighterInfo.background,
 				textDecoration,
 			}"
+			:class="{
+				'tree-editor-selection': tree.isValueSelected,
+				'ml-1': true,
+			}"
+			@click.stop.prevent="onClickKey($event, true)"
+			>{{ treeValue }}</span
 		>
-			{{ treeValue }}
-		</span>
 	</div>
 </template>
 
@@ -21,6 +32,7 @@ export default {
 	mixins: [HighlighterMixin(['atom', 'string', 'number'])],
 	props: {
 		tree: Object,
+		treeEditor: Object,
 	},
 	computed: {
 		treeValue() {
@@ -53,7 +65,12 @@ export default {
 			return this.highlighterInfo.textDecoration
 		},
 	},
+	methods: {
+		onClickKey(event, selectValue) {
+			if (event.altKey)
+				this.treeEditor.toggleSelection(this.tree, selectValue)
+			else this.treeEditor.setSelection(this.tree, selectValue)
+		},
+	},
 }
 </script>
-
-<style></style>

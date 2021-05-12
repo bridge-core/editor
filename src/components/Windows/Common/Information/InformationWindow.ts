@@ -26,7 +26,8 @@ export class InformationWindow extends BaseWindow<void> {
 	}
 
 	async close() {
+		super.close(null)
 		if (typeof this.opts.onClose === 'function') await this.opts.onClose()
-		super.close()
+		this.dispatch()
 	}
 }

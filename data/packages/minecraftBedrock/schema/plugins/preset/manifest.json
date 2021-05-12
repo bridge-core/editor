@@ -46,6 +46,7 @@
 		"packTypes": {
 			"type": "array",
 			"items": {
+				"type": "string",
 				"enum": [
 					"worldTemplate",
 					"behaviorPack",

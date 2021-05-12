@@ -123,7 +123,7 @@
 
 			<div class="d-flex">
 				<v-text-field
-					v-model="createOptions.prefix"
+					v-model="createOptions.namespace"
 					:label="t('windows.createProject.projectPrefix')"
 					autocomplete="off"
 					class="mr-2"

@@ -38,6 +38,7 @@
 												"$ref": "../general/reference/paths.json#/definitions/block_texture_paths"
 											},
 											{
+												"type": "object",
 												"properties": {
 													"path": {
 														"type": "string"
@@ -48,6 +49,7 @@
 													"variations": {
 														"type": "array",
 														"items": {
+															"type": "object",
 															"properties": {
 																"weight": {
 																	"type": "integer"
