@@ -141,10 +141,10 @@ export class ExtensionStoreWindow extends BaseWindow {
 		return this.getExtensions(findTag)
 	}
 	getTagIcon(tagName: string) {
-		return this.extensionTags[tagName].icon
+		return this.extensionTags[tagName]?.icon
 	}
 	getTagColor(tagName: string) {
-		return this.extensionTags[tagName].color
+		return this.extensionTags[tagName]?.color
 	}
 	getExtensionById(id: string) {
 		return this.getExtensions().find((extension) => extension.id === id)
