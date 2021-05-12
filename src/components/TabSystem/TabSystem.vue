@@ -11,9 +11,13 @@
 				:is="tabSystem.currentComponent"
 				:key="`${tabSystem.uuid}.${tabSystem.currentComponent.name}`"
 				:style="`height: ${
-					windowHeight - (tabBarHeight + 24)
+					windowHeight -
+					(tabBarHeight + (windowControlsOverlay ? 33 : 24))
 				}px; width: 100%;`"
-				:height="windowHeight - (tabBarHeight + 24)"
+				:height="
+					windowHeight -
+					(tabBarHeight + (windowControlsOverlay ? 33 : 24))
+				"
 				:tab="tabSystem.selectedTab"
 				:id="id"
 			/>
@@ -25,9 +29,11 @@
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import TabBar from '/@/components/TabSystem/TabBar.vue'
 import { App } from '/@/App'
+import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay'
 
 export default {
 	name: 'TabSystem',
+	mixins: [WindowControlsOverlayMixin],
 	props: {
 		tabSystem: Object,
 		id: {
