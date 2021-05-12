@@ -76,9 +76,9 @@ export interface IConfigJson {
 	 */
 	[uniqueToolId: string]: any
 
-	bridge: {
-		lightTheme: string
-		darkTheme: string
+	bridge?: {
+		lightTheme?: string
+		darkTheme?: string
 	}
 }
 
