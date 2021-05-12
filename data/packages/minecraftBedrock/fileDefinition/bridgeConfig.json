@@ -1,0 +1,5 @@
+{
+	"id": "bridgeConfig",
+	"icon": "mdi-cog-outline",
+	"matcher": ["config.json"]
+}

@@ -45,6 +45,7 @@ export default {
 		animationController: 'Animation Controller',
 		biome: 'Biome',
 		block: 'Block',
+		bridgeConfig: 'Project Config',
 		entity: 'Entity',
 		feature: 'Feature',
 		featureRule: 'Feature Rule',
