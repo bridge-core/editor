@@ -34,6 +34,24 @@
 			"description": "The link attribute is optional and allows you to provide a link to an external webpage which appears in bridge.'s UI.",
 			"type": "string",
 			"format": "uri"
+		},
+		"compiler": {
+			"description": "Register compiler plugins",
+			"type": "object",
+			"patternProperties": {
+				".+": {
+					"type": "string"
+				}
+			}
+		},
+		"install": {
+			"description": "List files bridge. is supposed to install to the user's projects",
+			"type": "object",
+			"patternProperties": {
+				".+": {
+					"type": "string"
+				}
+			}
 		}
 	}
 }
