@@ -1,0 +1,96 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Project Config",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"type": {
+			"description": "Defines the type of a project.",
+			"type": "string",
+			"enum": ["minecraftBedrock", "minecraftJava"]
+		},
+		"name": {
+			"description": "The name of the project.",
+			"type": "string"
+		},
+		"author": {
+			"description": "Creator of the project.",
+			"type": "string"
+		},
+		"targetVersion": {
+			"description": "The Minecraft version this project targets.",
+			"type": "string"
+		},
+		"minecraftExperiments": {
+			"description": "Experimental gameplay the project intends to use.",
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": ["upcomingCreatorFeatures", "cavesAndCliffs"]
+			}
+		},
+		"capabilities": {
+			"description": "Additional capabilities the project wants to use.",
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": ["scriptingAPI", "gameTestAPI"]
+			}
+		},
+		"namespace": {
+			"description": "The namespace used for the project. The namespace 'minecraft' is not a valid string for this field.",
+			"type": "string"
+		},
+		"packs": {
+			"description": "Maps the id of packs this project contains to a path relative to the config.json.",
+			"type": "object",
+			"propertyNames": {
+				"enum": [
+					"behaviorPack",
+					"resourcePack",
+					"skinPack",
+					"worldTemplate"
+				]
+			},
+			"patternProperties": {
+				".*": {
+					"type": "string"
+				}
+			}
+		},
+		"packDefinitions": {
+			"description": "Allows users to define additional data which is hard to find for tools (e.g. scoreboards setup inside of a world).",
+			"properties": {
+				"families": {},
+				"tags": {},
+				"scoreboardObjectives": {},
+				"names": {}
+			}
+		}
+	},
+	"definitions": {
+		"packDefinition": {
+			"additionalProperties": false,
+			"properties": {
+				"type": {
+					"description": "Optional: Define e.g. the type of a scoreboard objective.",
+					"type": "string"
+				},
+				"exclude": {
+					"description": "Strings to exclude from a tool's collected data.",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"include": {
+					"description": "String to add to a tool's collected data.",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
+	}
+}
