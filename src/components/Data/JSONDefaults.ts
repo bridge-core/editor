@@ -76,9 +76,6 @@ export class JsonDefaults {
 	}
 
 	setJSONDefaults(validate = true) {
-		// console.log(
-		// 	Object.values(Object.assign({}, globalSchemas, this.localSchemas))
-		// )
 		monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
 			enableSchemaRequest: false,
 			allowComments: true,
@@ -191,9 +188,19 @@ export class JsonDefaults {
 			if (globalSchemas[addSchema.uri]) {
 				if (addSchema.schema)
 					globalSchemas[addSchema.uri].schema = addSchema.schema
-				if (addSchema.fileMatch)
-					globalSchemas[addSchema.uri].fileMatch = addSchema.fileMatch
-			} else globalSchemas[addSchema.uri] = addSchema
+
+				if (addSchema.fileMatch) {
+					if (globalSchemas[addSchema.uri].fileMatch)
+						globalSchemas[addSchema.uri].fileMatch!.push(
+							...addSchema.fileMatch
+						)
+					else
+						globalSchemas[addSchema.uri].fileMatch =
+							addSchema.fileMatch
+				}
+			} else {
+				globalSchemas[addSchema.uri] = addSchema
+			}
 		})
 		loadedGlobalSchemas = true
 	}
