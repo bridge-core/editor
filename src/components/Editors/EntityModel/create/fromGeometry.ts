@@ -1,4 +1,5 @@
 import json5 from 'json5'
+import { BlockModelTab } from '../../BlockModel/Tab'
 import { EntityModelTab } from '../Tab'
 import { transformOldModels } from '../transformOldModels'
 import { App } from '/@/App'
@@ -49,6 +50,16 @@ export async function createFromGeometry(tabSystem: TabSystem, tab: FileTab) {
 	)
 
 	if (clientEntity.length === 0) {
+		// Check whether geometry is connected to a block
+		const block = await packIndexer.find('block', 'geometryIdentifier', [
+			choice,
+		])
+		if (block.length > 0) {
+			const previewTab = new BlockModelTab(block[0], tab, tabSystem)
+			previewTab.setPreviewOptions({ loadComponents: false })
+			return previewTab
+		}
+
 		new InformationWindow({
 			description: 'preview.failedClientEntityLoad',
 		})

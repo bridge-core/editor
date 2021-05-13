@@ -9,9 +9,14 @@ import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { walkObject } from '/@/utils/walkObject'
 import { isValidPositionArray } from '/@/utils/minecraft/validPositionArray'
 
+export interface IBlockPreviewOptions {
+	loadComponents?: boolean
+}
+
 export class BlockModelTab extends GeometryPreviewTab {
 	protected blockWatcher = new FileWatcher(App.instance, this.blockFilePath)
 	protected blockJson: any = {}
+	protected previewOptions: IBlockPreviewOptions = {}
 
 	constructor(
 		protected blockFilePath: string,
@@ -25,6 +30,12 @@ export class BlockModelTab extends GeometryPreviewTab {
 			this._renderContainer = undefined
 			this.loadRenderContainer(file)
 		})
+	}
+
+	setPreviewOptions({ loadComponents = true }: IBlockPreviewOptions) {
+		this.previewOptions = {
+			loadComponents,
+		}
 	}
 
 	async loadRenderContainer(file: File) {
@@ -104,10 +115,12 @@ export class BlockModelTab extends GeometryPreviewTab {
 
 	async createModel() {
 		await super.createModel()
-		this.createOutlineBoxes([
-			...this.loadCollisionBoxes('entity'),
-			...this.loadCollisionBoxes('pick'),
-		])
+
+		if (this.previewOptions.loadComponents)
+			this.createOutlineBoxes([
+				...this.loadCollisionBoxes('entity'),
+				...this.loadCollisionBoxes('pick'),
+			])
 	}
 
 	findComponents(blockJson: any, id: string) {
