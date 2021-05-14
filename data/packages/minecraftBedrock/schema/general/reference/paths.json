@@ -44,7 +44,7 @@
 		"sound_paths": {
 			"anyOf": [
 				{
-					"$ref": "../../sound/dynamic/soundPathEnum.json"
+					"$ref": "../../sounds/dynamic/soundPathEnum.json"
 				},
 				{
 					"$ref": "../vanilla/paths.json#/definitions/sound_paths"

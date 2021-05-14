@@ -46,7 +46,7 @@
 										"type": "object",
 										"properties": {
 											"name": {
-												"$ref": "../sound/dynamic/soundPathEnum.json"
+												"$ref": "../sounds/dynamic/soundPathEnum.json"
 											},
 											"stream": {
 												"type": "boolean"
@@ -60,7 +60,7 @@
 										}
 									},
 									{
-										"$ref": "../sound/dynamic/soundPathEnum.json"
+										"$ref": "../sounds/dynamic/soundPathEnum.json"
 									}
 								]
 							}
