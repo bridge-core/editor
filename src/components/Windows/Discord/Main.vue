@@ -42,7 +42,9 @@ export default {
 	},
 	props: ['currentWindow'],
 	methods: {
-		close: () => this.currentWindow.close(),
+		close() {
+			this.currentWindow.close()
+		},
 		openDiscord() {
 			window.open('https://discord.gg/jj2PmqU', '_blank')
 			this.currentWindow.close()
