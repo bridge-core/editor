@@ -16,7 +16,7 @@ export class TreeTab extends FileTab {
 
 	static is(fileHandle: FileSystemFileHandle) {
 		return (
-			settingsState?.editor.jsonEditor === 'treeEditor' &&
+			settingsState?.editor?.jsonEditor === 'treeEditor' &&
 			fileHandle.name.endsWith('.json')
 		)
 	}
