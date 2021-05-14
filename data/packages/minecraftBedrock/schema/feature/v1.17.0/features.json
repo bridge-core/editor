@@ -251,6 +251,24 @@
 							"enum": ["condition_success", "placement_success"]
 						}
 					}
+				},
+				"minecraft:scan_surface": {
+					"description": "Scans the surface of a Chunk, calling place() on the surface of each block column.",
+					"additionalProperties": false,
+					"properties": {
+						"description": {
+							"additionalProperties": false,
+							"properties": {
+								"identifier": {
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
+								}
+							}
+						},
+						"scan_surface_feature": {
+							"description": "Named reference of feature to be placed.",
+							"$ref": "../../general/reference/feature.json"
+						}
+					}
 				}
 			}
 		}
