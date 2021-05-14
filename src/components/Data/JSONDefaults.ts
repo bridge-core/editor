@@ -2,16 +2,12 @@ import { App } from '/@/App'
 import { FileType, IMonacoSchemaArrayEntry } from '/@/components/Data/FileType'
 import json5 from 'json5'
 import * as monaco from 'monaco-editor'
-import { runAsync } from '../Extensions/Scripts/run'
-import { v4 as uuid } from 'uuid'
-import { getFilteredFormatVersions } from './FormatVersions'
 import { Project } from '../Projects/Project/Project'
 import { IDisposable } from '/@/types/disposable'
-import { generateComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/generateSchemas'
-import { iterateDir } from '/@/utils/iterateDir'
 import { FileTab } from '../TabSystem/FileTab'
+import { SchemaScript } from './SchemaScript'
 
-const globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
+let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
 export class JsonDefaults {
 	protected loadedSchemas = false
@@ -92,6 +88,8 @@ export class JsonDefaults {
 		app.windows.loadingWindow.open()
 		this.loadedSchemas = false
 		this.localSchemas = {}
+		loadedGlobalSchemas = false
+		globalSchemas = {}
 		await this.deactivate()
 		await this.activate()
 		app.windows.loadingWindow.close()
@@ -109,12 +107,15 @@ export class JsonDefaults {
 	async updateMultipleDynamicSchemas(filePaths: string[]) {
 		const app = await App.getApp()
 
+		const updatedFileTypes = new Set<string>()
+
 		for (const filePath of filePaths) {
 			const fileType = FileType.getId(filePath)
+			if (updatedFileTypes.has(fileType)) continue
 
-			this.addSchemas(await this.requestSchemaFor(fileType, filePath))
 			this.addSchemas(await this.requestSchemaFor(fileType))
 			await this.runSchemaScripts(app, filePath)
+			updatedFileTypes.add(fileType)
 		}
 
 		this.setJSONDefaults()
@@ -206,92 +207,7 @@ export class JsonDefaults {
 	}
 
 	async runSchemaScripts(app: App, filePath?: string) {
-		const baseDirectory = await app.fileSystem.getDirectoryHandle(
-			'data/packages/minecraftBedrock/schemaScript'
-		)
-		const scopedFs = this.project.fileSystem
-
-		await iterateDir(baseDirectory, async (fileHandle) => {
-			const file = await fileHandle.getFile()
-			const schemaScript = json5.parse(await file.text())
-
-			let scriptResult: any = []
-			try {
-				scriptResult = await runAsync(
-					schemaScript.script,
-					[
-						scopedFs.readFilesFromDir.bind(scopedFs),
-						uuid,
-						getFilteredFormatVersions,
-						async (
-							fileType: string,
-							filePath?: string,
-							cacheKey?: string
-						) => {
-							const packIndexer = this.project.packIndexer
-
-							return packIndexer.service!.getCacheDataFor(
-								fileType,
-								filePath,
-								cacheKey
-							)
-						},
-						() => app.projectConfig.get().namespace,
-						() =>
-							!filePath
-								? undefined
-								: filePath.split(/\/|\\/g).pop(),
-						(fileType: string) =>
-							generateComponentSchemas(fileType),
-					],
-					[
-						'readdir',
-						'uuid',
-						'getFormatVersions',
-						'getCacheDataFor',
-						'getProjectPrefix',
-						'getFileName',
-						'customComponents',
-					]
-				)
-			} catch (err) {
-				// console.error(`Error evaluating schemaScript: ${err.message}`)
-			}
-
-			if (
-				schemaScript.type === 'object' &&
-				!Array.isArray(scriptResult) &&
-				typeof scriptResult === 'object'
-			) {
-				this.localSchemas[
-					`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
-				] = {
-					uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
-					schema: {
-						type: 'object',
-						properties: scriptResult,
-					},
-				}
-
-				return
-			}
-
-			this.localSchemas[
-				`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
-			] = {
-				uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
-				schema: {
-					type: schemaScript.type === 'enum' ? 'string' : 'object',
-					enum:
-						schemaScript.type === 'enum' ? scriptResult : undefined,
-					properties:
-						schemaScript.type === 'properties'
-							? Object.fromEntries(
-									scriptResult.map((res: string) => [res, {}])
-							  )
-							: undefined,
-				},
-			}
-		})
+		const schemaScript = new SchemaScript(app, filePath)
+		await schemaScript.runSchemaScripts(this.localSchemas)
 	}
 }

@@ -59,7 +59,7 @@ export class BlockModelTab extends GeometryPreviewTab {
 			this.blockFilePath
 		)
 
-		const textureReferences: string[] = blockCacheData.texture
+		const textureReferences: string[] = blockCacheData?.texture ?? []
 		let terrainTexture: any
 		try {
 			terrainTexture =
@@ -85,6 +85,7 @@ export class BlockModelTab extends GeometryPreviewTab {
 					)
 				)
 		)
+		if (connectedTextures.length === 0) return
 
 		const connectedGeometries = await packIndexer.find(
 			'geometry',

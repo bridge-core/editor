@@ -115,5 +115,13 @@
 	{
 		"cacheKey": "animationIdentifier",
 		"path": "minecraft:entity/description/animations/*"
+	},
+	{
+		"cacheKey": "property",
+		"path": "minecraft:entity/description/properties"
+	},
+	{
+		"cacheKey": "alias",
+		"path": "minecraft:entity/description/aliases"
 	}
 ]
