@@ -193,12 +193,13 @@ export const CustomEntityComponentPlugin = createCustomComponentPlugin({
 					groupContent,
 				]
 		),
-		...(
-			fileContent?.['minecraft:entity']?.permutations ?? []
-		).map((permutation: any, index: number) => [
-			`minecraft:entity/permutations/${index}/components`,
-			permutation?.components ?? {},
-		]),
+		...(<any[]>fileContent?.['minecraft:entity']?.permutations ?? []).map(
+			(permutation: any, index: number) =>
+				<[string, any]>[
+					`minecraft:entity/permutations/${index}/components`,
+					permutation?.components ?? {},
+				]
+		),
 	],
 })
 

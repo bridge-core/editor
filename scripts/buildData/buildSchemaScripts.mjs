@@ -15,7 +15,7 @@ export async function buildSchemaScripts(directory, packageName) {
 			continue
 		} else if (!dirent.isFile()) continue
 
-		const schemaScriptDef = await readJson(join(directory, dirent.name))
+		let schemaScriptDef = await readJson(join(directory, dirent.name))
 
 		let schema
 		if (schemaScriptDef.type === 'enum') {

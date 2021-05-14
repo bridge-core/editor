@@ -6,29 +6,7 @@
 			"type": "object",
 			"patternProperties": {
 				".*": {
-					"anyOf": [
-						{
-							"$ref": "../dynamic/currentContext/propertyProperty.json"
-						},
-						{
-							"type": "object",
-							"patternProperties": {
-								".*": {
-									"anyOf": [
-										{
-											"type": "string"
-										},
-										{
-											"type": "number"
-										},
-										{
-											"type": "boolean"
-										}
-									]
-								}
-							}
-						}
-					]
+					"$ref": "../dynamic/currentContext/propertyForAlias.json"
 				}
 			}
 		},
