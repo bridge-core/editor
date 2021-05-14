@@ -21,7 +21,7 @@ function zipDirectory(source, out) {
 	})
 }
 
-;(async () => {
+async function buildData() {
 	await buildPackages()
 	await zipDirectory('./data', './public/data/package.zip')
 	await fs.promises.copyFile(
@@ -29,4 +29,9 @@ function zipDirectory(source, out) {
 		'./public/data/version.txt'
 	)
 	await buildChangelog()
-})()
+}
+
+buildData().catch((err) => {
+	console.error(err)
+	process.exit(1)
+})
