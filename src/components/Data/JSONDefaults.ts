@@ -11,7 +11,7 @@ import { generateComponentSchemas } from '../Compiler/Worker/Plugins/CustomCompo
 import { iterateDir } from '/@/utils/iterateDir'
 import { FileTab } from '../TabSystem/FileTab'
 
-const globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
+let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
 export class JsonDefaults {
 	protected loadedSchemas = false
@@ -92,6 +92,8 @@ export class JsonDefaults {
 		app.windows.loadingWindow.open()
 		this.loadedSchemas = false
 		this.localSchemas = {}
+		loadedGlobalSchemas = false
+		globalSchemas = {}
 		await this.deactivate()
 		await this.activate()
 		app.windows.loadingWindow.close()

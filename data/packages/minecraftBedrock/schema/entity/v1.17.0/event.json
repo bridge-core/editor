@@ -1,4 +1,28 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
-	"$ref": "../v1.16.200/event.json"
+	"anyOf": [
+		{
+			"$ref": "../v1.16.200/event.json"
+		},
+		{
+			"type": "object",
+			"properties": {
+				"set_actor_property": {
+					"type": "object",
+					"anyOf": [
+						{
+							"$ref": "../dynamic/currentContext/propertyProperty.json"
+						},
+						{
+							"patternProperties": {
+								".*": {
+									"$ref": "../../molang/embeddedBeta.json"
+								}
+							}
+						}
+					]
+				}
+			}
+		}
+	]
 }

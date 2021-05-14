@@ -6,7 +6,28 @@
 			"type": "object",
 			"properties": {
 				"description": {
-					"$ref": "../description.json"
+					"anyOf": [
+						{
+							"$ref": "../description.json"
+						},
+						{
+							"$ref": "./description.json"
+						}
+					]
+				},
+				"permutations": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"condition": {
+								"$ref": "../../molang/embeddedBeta.json"
+							},
+							"components": {
+								"$ref": "./components.json"
+							}
+						}
+					}
 				},
 				"components": {
 					"$ref": "./components.json"
