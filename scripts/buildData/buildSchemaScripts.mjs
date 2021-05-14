@@ -15,6 +15,8 @@ export async function buildSchemaScripts(directory, packageName) {
 			continue
 		} else if (!dirent.isFile()) continue
 
+		if (dirent.name.endsWith('.js')) continue
+
 		let schemaScriptDef = await readJson(join(directory, dirent.name))
 
 		let schema

@@ -1,60 +1,28 @@
 <h2>Features:</h2>
 <ul>
-<li><strong>Previews:</strong>
-<ul>
-<li>Simplified entity component previews</li>
-<li>Support for multiple particle effects per timestamp</li>
-<li>Support for previewing blocks</li>
-<li>Updated preview tab style &amp; functionality</li>
-<li>Previews now open in split-screen by default</li>
-</ul>
-</li>
-<li>Added support for &quot;World Template&quot; pack type
-<ul>
-<li>Projects can now contain an additional &quot;World Template&quot; pack (&quot;WT&quot;)</li>
-<li>World templates get moved to your &quot;minecraftWorlds/&quot; folder  for testing automatically</li>
-<li>Added support for Minecraft's new &quot;Volume&quot; files</li>
-</ul>
-</li>
-<li><strong>New Initial Setup Experience:</strong> Users are now guided through setting up bridge. v2
-<ul>
-<li>Choose/Create bridge. folder</li>
-<li>Link com.mojang folder</li>
-<li>Choose editor type (raw text or tree editor)</li>
-</ul>
-</li>
-<li>Auto-completions for event names referenced inside of components</li>
-<li>Added a new input to select a spawn egg texture for entities</li>
-<li>New project config format:
-<ul>
-<li>Moved &quot;config.json&quot; file to the project root</li>
-<li>Moved bridge.-specific setting into &quot;bridge&quot; object</li>
-</ul>
-</li>
-<li>Extensions can now &quot;install&quot; files
-<ul>
-<li>Enables installation of custom component plugins on bridge. v2</li>
-</ul>
-</li>
+<li>Added support for editing the new project config with bridge.</li>
+<li>Added a new extension API to configure the default file formatter</li>
+<li>Added support for actor properties &amp; permutations</li>
+<li>Added support for actor aliases</li>
+<li>Added <code>minecraft:scan_surface</code> feature schema</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Updated to the latest Minecraft beta</li>
-<li>Updated bridge.'s custom title bar
-<ul>
-<li>Activate &quot;edge://flags/#enable-desktop-pwas-window-controls-overlay&quot; or &quot;chrome://flags/#enable-desktop-pwas-window-controls-overlay&quot; and reinstall bridge. v2 to preview it</li>
-</ul>
-</li>
-<li>Updated JSON schemas to propose &quot;{}&quot; for objects nested inside of arrays</li>
-<li>Removed saving of task's last total steps</li>
-<li><strong>Internal:</strong> PreviewTabs are no longer FileTabs</li>
+<li>Updated extension manifest schema</li>
+<li>Merged &quot;sound&quot; schema folder with &quot;sounds&quot; folder</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed error with Go To Definition</li>
-<li>Fixed vanilla events not being suggested inside of entity event object</li>
-<li>Fixed opening of tab previews on inactive tab systems</li>
-<li>Fixed error with recipe preset</li>
-<li>Fixed information window not closing before dispatching &quot;done&quot;</li>
-<li>Fixed extension store not loading if one extension had an unknown tag</li>
+<li>Fixed error upon entering settings</li>
+<li>Fixed sizing of tab content with custom title bar</li>
+<li>Fixed file type matcher returning wrong file types</li>
+<li>Fixed IConfigJSON types</li>
+<li>Fixed project refresh breaking open tabs</li>
+<li>Fixed error upon opening particle preview</li>
+<li>Fixed preview of geometry files connected to blocks</li>
+<li>Fixed manifest schemas not working</li>
+<li>Fixed closing the Discord window</li>
+<li>Fixed error upon creating block preview</li>
+<li>Fixed registration location of animation controllers connected to custom components</li>
+<li>Fixed error upon opening a tab</li>
 </ul>
