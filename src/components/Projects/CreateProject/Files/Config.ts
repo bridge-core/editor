@@ -23,8 +23,8 @@ export class CreateConfig extends CreateFile {
 					createOptions.packs
 						.filter((pack) => pack !== '.bridge')
 						.map((pack) => [
-							`./${pack}`,
 							PackType.getIdFromPackPath(pack),
+							`./${pack}`,
 						])
 				),
 			},

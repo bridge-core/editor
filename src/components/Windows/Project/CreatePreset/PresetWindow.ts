@@ -32,7 +32,7 @@ export interface IPresetManifest {
 	createFiles?: (string | TCreateFile)[]
 	expandFiles?: TExpandFile[]
 }
-interface IPresetFieldOpts {
+export interface IPresetFieldOpts {
 	// All types
 	type?: 'fileInput' | 'numberInput' | 'textInput' | 'switch'
 	default?: string
