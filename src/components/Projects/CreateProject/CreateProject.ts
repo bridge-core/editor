@@ -48,13 +48,13 @@ export class CreateProjectWindow extends BaseWindow {
 
 		App.ready.once(async (app) => {
 			await app.dataLoader.fired
-			this.availableTargetVersions = await app.fileSystem.readJSON(
-				'data/packages/minecraftBedrock/formatVersions.json'
-			)
+			this.availableTargetVersions = (
+				await app.fileSystem.readJSON(
+					'data/packages/minecraftBedrock/formatVersions.json'
+				)
+			).reverse()
 			// Set default version
-			this.createOptions.targetVersion = this.availableTargetVersions[
-				this.availableTargetVersions.length - 1
-			]
+			this.createOptions.targetVersion = this.availableTargetVersions[0]
 			this.availableTargetVersionsLoading = false
 		})
 

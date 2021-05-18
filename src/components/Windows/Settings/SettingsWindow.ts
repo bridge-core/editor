@@ -22,7 +22,7 @@ export class SettingsWindow extends BaseWindow {
 	async setup() {
 		const locales = await App.getApp().then((app) => app.locales)
 
-		this.sidebar.addElement(this.bridgeCategory)
+		// this.sidebar.addElement(this.bridgeCategory)
 
 		this.addCategory(
 			'general',
@@ -53,13 +53,14 @@ export class SettingsWindow extends BaseWindow {
 
 	addCategory(id: string, name: string, icon: string) {
 		if (settingsState[id] === undefined) settingsState[id] = {}
-		this.bridgeCategory.addItem(
+		this.sidebar.addElement(
 			new SidebarItem({
 				color: 'primary',
 				text: name,
 				icon,
 				id,
-			})
+			}),
+			[]
 		)
 	}
 
