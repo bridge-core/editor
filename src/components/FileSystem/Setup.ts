@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { get, set } from 'idb-keyval'
-import { SelectProjectFolderWindow } from '../Windows/Project/SelectFolder/SelectProjectFolder'
+import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { ref } from '@vue/composition-api'
 import { Signal } from '../Common/Event/Signal'
@@ -48,19 +48,8 @@ export class FileSystemSetup {
 			await set('bridgeBaseDir', fileHandle)
 
 			globalState.setupDone.dispatch()
-
-			// const window = new SelectProjectFolderWindow(
-			// 	async (chosenFileHandle) => {
-			// 		if (chosenFileHandle) {
-			// 			await set('bridgeBaseDir', chosenFileHandle)
-			// 			fileHandle = chosenFileHandle
-			// 		}
-
-			// 		await this.verifyPermissions(chosenFileHandle)
-			// 	}
-			// )
-			// window.open()
-			// await window.fired
+		} else {
+			InitialSetup.ready.dispatch()
 		}
 
 		this._status = 'done'

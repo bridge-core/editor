@@ -56,13 +56,16 @@ import ComMojangStep from './Steps/ComMojang'
 import EditorTypeStep from './Steps/EditorType'
 import { FileSystemSetup } from '/@/components/FileSystem/Setup.ts'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
+import { InitialSetup } from './InitialSetup.ts'
 
 export default {
 	name: 'InitialSetupDialog',
 	mixins: [TranslationMixin, WindowControlsOverlayMixin],
-	setup() {
+	setup: () => {
+		const isVisible = FileSystemSetup.state.showInitialSetupDialog
+
 		return {
-			isVisible: FileSystemSetup.state.showInitialSetupDialog,
+			isVisible,
 		}
 	},
 	data: () => ({
@@ -86,6 +89,11 @@ export default {
 	methods: {
 		async onNext() {
 			this.stepId++
+
+			if (this.stepId > this.steps.length) {
+				console.log('HEY')
+				InitialSetup.ready.dispatch()
+			}
 		},
 	},
 }

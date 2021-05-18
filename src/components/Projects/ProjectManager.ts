@@ -7,6 +7,7 @@ import { RecentProjects } from './RecentProjects'
 import { Title } from '/@/components/Projects/Title'
 import { editor } from 'monaco-editor'
 import { BedrockProject } from './Project/BedrockProject'
+import { InitialSetup } from '../InitialSetup/InitialSetup'
 
 export class ProjectManager extends Signal<void> {
 	public readonly recentProjects!: RecentProjects
@@ -72,6 +73,7 @@ export class ProjectManager extends Signal<void> {
 	protected async loadProjects() {
 		await this.app.fileSystem.fired
 		await this.app.dataLoader.fired
+		await InitialSetup.ready.fired
 
 		let potentialProjects: FileSystemHandle[] = []
 		try {
