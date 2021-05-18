@@ -53,8 +53,9 @@ export class SidebarElement {
 	}
 	async click() {
 		this.isLoading = true
-		if(typeof this.config.onClick === "function") await this.config.onClick()
-		else if(this.config.component) createOldSidebarCompatWindow(this)
+		if (typeof this.config.onClick === 'function')
+			await this.config.onClick()
+		else if (this.config.component) createOldSidebarCompatWindow(this)
 		this.isLoading = false
 	}
 }

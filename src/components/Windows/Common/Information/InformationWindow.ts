@@ -26,6 +26,7 @@ export class InformationWindow extends BaseWindow<void> {
 	}
 
 	async close() {
+		new Audio('/audio/click5.ogg').play()
 		super.close(null)
 		if (typeof this.opts.onClose === 'function') await this.opts.onClose()
 		this.dispatch()
