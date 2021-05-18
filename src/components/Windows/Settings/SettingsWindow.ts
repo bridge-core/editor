@@ -1,4 +1,4 @@
-import { SidebarItem } from '../Layout/Sidebar'
+import { SidebarCategory, SidebarItem } from '../Layout/Sidebar'
 import { Control } from './Controls/Control'
 import SettingsWindowComponent from './SettingsWindow.vue'
 import { setupSettings } from './setupSettings'
@@ -9,6 +9,10 @@ import { BaseWindow } from '../BaseWindow'
 
 export class SettingsWindow extends BaseWindow {
 	protected sidebar = new SettingsSidebar([])
+	protected bridgeCategory = new SidebarCategory({
+		items: [],
+		text: 'bridge.',
+	})
 
 	constructor(public parent: App) {
 		super(SettingsWindowComponent, false, true)
@@ -17,6 +21,8 @@ export class SettingsWindow extends BaseWindow {
 
 	async setup() {
 		const locales = await App.getApp().then((app) => app.locales)
+
+		this.sidebar.addElement(this.bridgeCategory)
 
 		this.addCategory(
 			'general',
@@ -47,14 +53,13 @@ export class SettingsWindow extends BaseWindow {
 
 	addCategory(id: string, name: string, icon: string) {
 		if (settingsState[id] === undefined) settingsState[id] = {}
-		this.sidebar.addElement(
+		this.bridgeCategory.addItem(
 			new SidebarItem({
 				color: 'primary',
 				text: name,
 				icon,
 				id,
-			}),
-			[]
+			})
 		)
 	}
 

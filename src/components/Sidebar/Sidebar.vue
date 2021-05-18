@@ -31,6 +31,7 @@
 					:color="notification.color"
 					:iconColor="notification.textColor"
 					@click="notification.onClick()"
+					@click.middle="notification.onMiddleClick()"
 				/>
 			</template>
 		</v-list>
