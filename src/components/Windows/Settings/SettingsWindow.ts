@@ -90,6 +90,7 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async open() {
+		new Audio('/audio/click5.ogg').play()
 		if (this.isVisible) return
 
 		this.sidebar.removeElements()
@@ -99,6 +100,7 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async close() {
+		new Audio('/audio/click5.ogg').play()
 		super.close()
 
 		const app = await App.getApp()

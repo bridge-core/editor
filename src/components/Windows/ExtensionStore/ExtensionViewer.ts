@@ -138,6 +138,8 @@ export class ExtensionViewer {
 		this.setInstalled()
 		this.isUpdateAvailable = false
 		this.isLoading = false
+
+		new Audio('/audio/confirmation_002.ogg').play()
 	}
 
 	async update(notifyParent = true) {
@@ -162,6 +164,7 @@ export class ExtensionViewer {
 	}
 
 	setActive(value: boolean) {
+		new Audio('/audio/click5.ogg').play()
 		if (!this.connected)
 			throw new Error(`No extension connected to ExtensionViewer`)
 
@@ -169,6 +172,7 @@ export class ExtensionViewer {
 		this.isActive = value
 	}
 	closeActionMenu() {
+		new Audio('/audio/click5.ogg').play()
 		this.showMenu = false
 	}
 }

@@ -13,6 +13,7 @@ export class FilePickerWindow extends BaseWindow {
 	}
 
 	async open() {
+		new Audio('/audio/click5.ogg').play()
 		if (this.isCurrentlyOpening) return
 
 		this.isCurrentlyOpening = true
@@ -39,6 +40,7 @@ export class FilePickerWindow extends BaseWindow {
 			)
 			app.project?.openFile(fileHandle)
 		})
+		new Audio('/audio/confirmation_002.ogg').play()
 		this.close()
 	}
 }

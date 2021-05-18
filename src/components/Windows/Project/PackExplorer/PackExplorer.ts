@@ -176,6 +176,7 @@ export class PackExplorerWindow extends BaseWindow {
 		super.open()
 	}
 	close() {
+		new Audio('/audio/click5.ogg').play()
 		this.loadedPack = false
 		super.close()
 	}

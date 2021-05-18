@@ -13,7 +13,9 @@ export class InformedChoiceWindow extends BaseWindow {
 	protected _ready = new Signal<ActionManager>()
 
 	get actionManager() {
-		return new Promise<ActionManager>(resolve => this._ready.once(resolve))
+		return new Promise<ActionManager>((resolve) =>
+			this._ready.once(resolve)
+		)
 	}
 
 	constructor(
@@ -33,6 +35,7 @@ export class InformedChoiceWindow extends BaseWindow {
 	}
 
 	async open() {
+		new Audio('/audio/click5.ogg').play()
 		await this.actionManager
 		super.open()
 	}

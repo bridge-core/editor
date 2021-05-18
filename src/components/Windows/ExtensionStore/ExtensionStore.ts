@@ -32,6 +32,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 	}
 
 	async open() {
+		new Audio('/audio/click5.ogg').play()
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
@@ -83,6 +84,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 	}
 
 	close() {
+		new Audio('/audio/click5.ogg').play()
 		super.close()
 
 		if (this.updates.size > 0) {

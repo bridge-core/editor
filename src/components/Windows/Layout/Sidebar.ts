@@ -41,6 +41,7 @@ export class SidebarCategory {
 	}
 
 	setOpen(val: boolean) {
+		new Audio('/audio/click5.ogg').play()
 		this.isOpen = val
 	}
 

@@ -30,6 +30,7 @@ export class InputWindow extends BaseWindow<string> {
 	}
 
 	async confirm() {
+		new Audio('/audio/click5.ogg').play()
 		const finalInput = this.inputValue + (this.expandText ?? '')
 		if (typeof this.opts.onConfirm === 'function')
 			await this.opts.onConfirm(finalInput)
