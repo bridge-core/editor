@@ -4,6 +4,7 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { WindowState } from './WindowState'
 import { del, set } from '@vue/composition-api'
+import { App } from '/@/App'
 
 export abstract class BaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()
@@ -27,7 +28,7 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 	}
 
 	close(data: T | null) {
-		//new Audio('/audio/click5.ogg').play()
+		App.audioManager.playAudio('click5.ogg', 1)
 		this.isVisible = false
 		if (data !== null) this.dispatch(data)
 

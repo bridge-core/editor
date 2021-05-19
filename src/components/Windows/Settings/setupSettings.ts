@@ -225,12 +225,12 @@ export async function setupSettings(settings: SettingsWindow) {
 			name: 'windows.settings.audio.volume.name',
 			description: 'windows.settings.audio.volume.description',
 			key: 'volume',
-			default: true,
+			default: false,
 			onChange: async (val) => {
 				if (val) {
-					App.audioManager.masterVolume = 1
-				} else {
 					App.audioManager.masterVolume = 0
+				} else {
+					App.audioManager.masterVolume = 1
 				}
 			},
 		})

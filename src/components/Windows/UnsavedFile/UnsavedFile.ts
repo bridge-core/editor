@@ -18,7 +18,6 @@ export class UnsavedFileWindow extends BaseWindow<'cancel' | 'close' | 'save'> {
 	}
 
 	async noSave() {
-		//new Audio('/audio/click5.ogg').play()
 		this.close('close')
 
 		const app = await App.getApp()
@@ -33,7 +32,6 @@ export class UnsavedFileWindow extends BaseWindow<'cancel' | 'close' | 'save'> {
 		await app.tabSystem?.close(this.tab, false)
 	}
 	async cancel() {
-		//new Audio('/audio/click5.ogg').play()
 		this.close('cancel')
 	}
 }
