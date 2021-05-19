@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 import type { IDisposable } from '/@/types/disposable'
 import { createOldSidebarCompatWindow } from '/@/components/Windows/OldSidebarCompat/OldSidebarCompat'
+import { App } from '/@/App'
 
 export interface ISidebar {
 	id?: string
@@ -52,6 +53,7 @@ export class SidebarElement {
 		Vue.delete(SidebarState.sidebarElements, this.sidebarUUID)
 	}
 	async click() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		this.isLoading = true
 		if (typeof this.config.onClick === 'function')
 			await this.config.onClick()

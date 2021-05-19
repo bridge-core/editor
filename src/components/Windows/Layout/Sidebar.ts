@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { App } from '/@/App'
 
 export type TSidebarElement = SidebarCategory | SidebarItem
 export interface ISidebarCategoryConfig {
@@ -41,7 +42,7 @@ export class SidebarCategory {
 	}
 
 	setOpen(val: boolean) {
-		new Audio('/audio/click5.ogg').play()
+		App.audioManager.playAudio('click5.ogg', 1)
 		this.isOpen = val
 	}
 

@@ -25,7 +25,7 @@ export class UnsavedFileWindow extends BaseWindow<'cancel' | 'close' | 'save'> {
 		await app.tabSystem?.close(this.tab, false)
 	}
 	async save() {
-		new Audio('/audio/confirmation_002.ogg').play()
+		App.audioManager.playAudio('confirmation_002.ogg', 1)
 		this.close('save')
 
 		const app = await App.getApp()

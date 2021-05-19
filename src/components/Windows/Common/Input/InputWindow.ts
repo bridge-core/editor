@@ -1,5 +1,6 @@
 import { BaseWindow } from '../../BaseWindow'
 import InputWindowComponent from './Input.vue'
+import { App } from '/@/App'
 
 export interface IInputWindowOpts {
 	name: string
@@ -30,7 +31,7 @@ export class InputWindow extends BaseWindow<string> {
 	}
 
 	async confirm() {
-		new Audio('/audio/click5.ogg').play()
+		App.audioManager.playAudio('click5.ogg', 1)
 		const finalInput = this.inputValue + (this.expandText ?? '')
 		if (typeof this.opts.onConfirm === 'function')
 			await this.opts.onConfirm(finalInput)

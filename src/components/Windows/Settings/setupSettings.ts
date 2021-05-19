@@ -218,6 +218,24 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 
+	//Audio
+	settings.addControl(
+		new Toggle({
+			category: 'audio',
+			name: 'windows.settings.audio.volume.name',
+			description: 'windows.settings.audio.volume.description',
+			key: 'volume',
+			default: true,
+			onChange: async (val) => {
+				if (val) {
+					App.audioManager.masterVolume = 1
+				} else {
+					App.audioManager.masterVolume = 0
+				}
+			},
+		})
+	)
+
 	// Editor
 	settings.addControl(
 		new Selection({

@@ -1,5 +1,7 @@
 import { BaseWindow } from '../../BaseWindow'
 import DropdownWindowComponent from './Dropdown.vue'
+import { App } from '/@/App'
+import { AudioManager } from '/@/components/Audio/AudioManager'
 
 export interface IDropdownWindowOpts {
 	name: string
@@ -34,7 +36,7 @@ export class DropdownWindow extends BaseWindow<string> {
 	}
 
 	async confirm() {
-		new Audio('/audio/click5.ogg').play()
+		App.audioManager.playAudio('click5.ogg', 1)
 		if (typeof this.opts.onConfirm === 'function')
 			await this.opts.onConfirm(this.currentSelection)
 		super.close(this.currentSelection ?? null)
