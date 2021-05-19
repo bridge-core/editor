@@ -204,6 +204,9 @@ export class Sidebar {
 		return this._selected
 	}
 	set selected(val) {
+		if (val) {
+			App.audioManager.playAudio('click5.ogg', 1)
+		}
 		this._selected = val
 	}
 }
