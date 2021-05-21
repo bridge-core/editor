@@ -218,7 +218,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 
-	//Audio
+	/*//Audio
 	settings.addControl(
 		new Toggle({
 			category: 'audio',
@@ -228,13 +228,11 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: false,
 			onChange: async (val) => {
 				if (val) {
-					App.audioManager.masterVolume = 0
 				} else {
-					App.audioManager.masterVolume = 1
 				}
 			},
 		})
-	)
+	)*/
 
 	// Editor
 	settings.addControl(
