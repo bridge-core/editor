@@ -39,6 +39,13 @@
 							"type": "boolean"
 						}
 					}
+				},
+				"minecraft:ageable": {
+					"properties": {
+						"transform_to_item": {
+							"$ref": "../../general/reference/identifiers.json#/definitions/item_identifiers"
+						}
+					}
 				}
 			}
 		}
