@@ -36,7 +36,6 @@ export class DropdownWindow extends BaseWindow<string> {
 	}
 
 	async confirm() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		if (typeof this.opts.onConfirm === 'function')
 			await this.opts.onConfirm(this.currentSelection)
 		super.close(this.currentSelection ?? null)

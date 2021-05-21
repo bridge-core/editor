@@ -28,7 +28,6 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 	}
 
 	close(data: T | null) {
-		App.audioManager.playAudio('click5.ogg', 1)
 		this.isVisible = false
 		if (data !== null) this.dispatch(data)
 

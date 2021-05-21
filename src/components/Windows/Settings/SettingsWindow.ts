@@ -95,7 +95,6 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async open() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		if (this.isVisible) return
 
 		this.sidebar.removeElements()
@@ -105,7 +104,6 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async close() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		super.close()
 
 		const app = await App.getApp()

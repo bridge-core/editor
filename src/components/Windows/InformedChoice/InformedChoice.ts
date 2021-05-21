@@ -35,7 +35,6 @@ export class InformedChoiceWindow extends BaseWindow {
 	}
 
 	async open() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		await this.actionManager
 		super.open()
 	}

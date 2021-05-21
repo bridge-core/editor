@@ -42,7 +42,6 @@ export class SidebarCategory {
 	}
 
 	setOpen(val: boolean) {
-		App.audioManager.playAudio('click5.ogg', 1)
 		this.isOpen = val
 	}
 
@@ -205,7 +204,6 @@ export class Sidebar {
 	}
 	set selected(val) {
 		if (val) {
-			App.audioManager.playAudio('click5.ogg', 1)
 		}
 		this._selected = val
 	}

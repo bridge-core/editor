@@ -14,7 +14,6 @@ export class ChangelogWindow extends BaseWindow {
 	}
 
 	async open() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 

@@ -53,7 +53,6 @@ export class SidebarElement {
 		Vue.delete(SidebarState.sidebarElements, this.sidebarUUID)
 	}
 	async click() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		this.isLoading = true
 		if (typeof this.config.onClick === 'function')
 			await this.config.onClick()

@@ -33,7 +33,6 @@ import { GlobalExtensionLoader } from '/@/components/Extensions/GlobalExtensionL
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/FileSystem/ComMojang'
-import { AudioManager } from '/@/components/Audio/AudioManager'
 
 export class App {
 	public static fileSystemSetup = new FileSystemSetup()
@@ -46,7 +45,6 @@ export class App {
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>
-	public static readonly audioManager = new AudioManager()
 
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this)
