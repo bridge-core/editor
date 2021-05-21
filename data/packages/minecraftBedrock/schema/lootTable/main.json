@@ -81,14 +81,7 @@
 												"type": "integer"
 											},
 											"name": {
-												"anyOf": [
-													{
-														"type": "string"
-													},
-													{
-														"$ref": "../general/reference/identifiers.json#/definitions/item_identifiers"
-													}
-												]
+												"$ref": "../general/reference/identifiers.json#/definitions/item_identifiers"
 											},
 											"pools": {
 												"$ref": "#/properties/pools"
