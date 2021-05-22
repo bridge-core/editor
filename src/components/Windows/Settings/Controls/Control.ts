@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import { settingsState } from '../SettingsState'
+import { App } from '/@/App'
 
 export interface IControl<T> {
 	category: string

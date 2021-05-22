@@ -1,5 +1,6 @@
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import ConfirmWindowComponent from './ConfirmWindow.vue'
+import { App } from '/@/App'
 
 export interface IConfirmWindowOpts {
 	description: string

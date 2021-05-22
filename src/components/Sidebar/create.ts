@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 import Vue from 'vue'
 import type { IDisposable } from '/@/types/disposable'
 import { createOldSidebarCompatWindow } from '/@/components/Windows/OldSidebarCompat/OldSidebarCompat'
+import { App } from '/@/App'
 
 export interface ISidebar {
 	id?: string
@@ -53,8 +54,9 @@ export class SidebarElement {
 	}
 	async click() {
 		this.isLoading = true
-		if(typeof this.config.onClick === "function") await this.config.onClick()
-		else if(this.config.component) createOldSidebarCompatWindow(this)
+		if (typeof this.config.onClick === 'function')
+			await this.config.onClick()
+		else if (this.config.component) createOldSidebarCompatWindow(this)
 		this.isLoading = false
 	}
 }

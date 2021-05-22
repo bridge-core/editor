@@ -1,5 +1,6 @@
 import { BaseWindow } from '../../BaseWindow'
 import InputWindowComponent from './Input.vue'
+import { App } from '/@/App'
 
 export interface IInputWindowOpts {
 	name: string

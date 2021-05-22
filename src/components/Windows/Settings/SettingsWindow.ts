@@ -40,6 +40,11 @@ export class SettingsWindow extends BaseWindow {
 			locales.translate('windows.settings.actions.name'),
 			'mdi-keyboard-outline'
 		)
+		this.addCategory(
+			'audio',
+			locales.translate('windows.settings.audio.name'),
+			'mdi-volume-high'
+		)
 		// this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
 		this.addCategory(
 			'developers',
