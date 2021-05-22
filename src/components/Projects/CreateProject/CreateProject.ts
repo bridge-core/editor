@@ -106,6 +106,8 @@ export class CreateProjectWindow extends BaseWindow {
 
 		await app.projectManager.addProject(projectDir)
 		this.createOptions = this.getDefaultOptions()
+
+		App.audioManager.playAudio('confirmation_002.ogg', 1)
 	}
 
 	getDefaultOptions(): ICreateProjectOptions {
