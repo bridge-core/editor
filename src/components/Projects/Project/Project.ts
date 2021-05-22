@@ -104,8 +104,11 @@ export abstract class Project {
 		)
 
 		const selectedTab = this.tabSystem?.selectedTab
-		if (selectedTab instanceof FileTab)
-			this.typeLoader.activate(selectedTab.getProjectPath())
+		this.typeLoader.activate(
+			selectedTab instanceof FileTab
+				? selectedTab.getProjectPath()
+				: undefined
+		)
 
 		await this.packIndexer.activate(isReload).then(() => {
 			this.jsonDefaults.activate()

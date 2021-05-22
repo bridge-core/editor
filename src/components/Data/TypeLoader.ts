@@ -29,7 +29,7 @@ export class TypeLoader {
 		this.disposables = []
 	}
 
-	async load(typePath: string) {
+	protected async load(typePath: string) {
 		// Check whether we have already loaded types
 		let src = types.get(typePath)
 		if (src) return src
@@ -88,8 +88,8 @@ export class TypeLoader {
 				languages.typescript.typescriptDefaults.addExtraLib(
 					lib,
 					uri.toString()
-				),
-				editor.createModel(lib, 'typescript', uri)
+				)
+				// editor.createModel(lib, 'typescript', uri)
 			)
 		}
 	}
