@@ -218,6 +218,22 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 
+	/*//Audio
+	settings.addControl(
+		new Toggle({
+			category: 'audio',
+			name: 'windows.settings.audio.volume.name',
+			description: 'windows.settings.audio.volume.description',
+			key: 'volume',
+			default: false,
+			onChange: async (val) => {
+				if (val) {
+				} else {
+				}
+			},
+		})
+	)*/
+
 	// Editor
 	settings.addControl(
 		new Selection({

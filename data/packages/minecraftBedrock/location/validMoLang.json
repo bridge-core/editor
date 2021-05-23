@@ -8,6 +8,8 @@
 		"minecraft:biome/components/minecraft:forced_features/*/*/iterations"
 	],
 	"BP/entities/": [
+		"minecraft:entity/permutations/*/condition",
+		"minecraft:entity/events/*/**/set_actor_property/*",
 		"minecraft:entity/description/scripts/animate/*/*",
 		"minecraft:entity/components/minecraft:behavior.eat_block/success_chance",
 		"minecraft:entity/component_groups/*/minecraft:behavior.eat_block/success_chance",

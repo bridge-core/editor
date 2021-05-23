@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { App } from '/@/App'
 
 export type TSidebarElement = SidebarCategory | SidebarItem
 export interface ISidebarCategoryConfig {
@@ -202,6 +203,8 @@ export class Sidebar {
 		return this._selected
 	}
 	set selected(val) {
+		if (val) {
+		}
 		this._selected = val
 	}
 }

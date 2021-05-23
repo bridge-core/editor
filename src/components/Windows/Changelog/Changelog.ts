@@ -18,8 +18,8 @@ export class ChangelogWindow extends BaseWindow {
 		app.windows.loadingWindow.open()
 
 		await fetch(baseUrl + '/changelog.html')
-			.then(response => response.text())
-			.then(html => {
+			.then((response) => response.text())
+			.then((html) => {
 				this.changelog = html
 				this.version = version
 			})

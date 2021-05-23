@@ -436,6 +436,13 @@ export default {
 					description: 'Enable the developer mode for this app',
 				},
 			},
+			audio: {
+				name: 'Audio',
+				volume: {
+					name: 'Mute',
+					description: 'Mute or unmute all bridge sounds',
+				},
+			},
 			actions: {
 				name: 'Actions',
 			},
