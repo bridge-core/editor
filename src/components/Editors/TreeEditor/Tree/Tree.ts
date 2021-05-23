@@ -60,4 +60,9 @@ export abstract class Tree<T> {
 			return children[index][0]
 		}
 	}
+
+	replace(tree: Tree<unknown>) {
+		if (!this.parent) throw new Error(`Cannot replace tree without parent`)
+		;(<any>this.parent.children)[this.key] = tree
+	}
 }

@@ -1,9 +1,10 @@
 import { ArrayTree } from './Tree/ArrayTree'
+import { ObjectTree } from './Tree/ObjectTree'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
-import { Tree } from './Tree/Tree'
+import { TPrimitiveTree } from './Tree/Tree'
 
 export class TreeSelection {
-	constructor(protected tree: Tree<unknown>) {
+	constructor(protected tree: ArrayTree | ObjectTree) {
 		tree.isSelected = true
 	}
 
@@ -23,6 +24,22 @@ export class TreeSelection {
 
 		// The tree key must be of type string because of the instanceof check above
 		parent.updatePropertyName(<string>this.tree.key, value)
+	}
+
+	addKey(key: string) {
+		const newTree = new ObjectTree(this.tree, {})
+		if (this.tree instanceof ArrayTree) this.tree.children.push(newTree)
+		else this.tree.children[key] = this.tree.children[key] = newTree
+
+		this.tree.isSelected = false
+		newTree.isSelected = true
+		this.tree = newTree
+	}
+
+	addValue(value: TPrimitiveTree) {
+		if (Object.keys(this.tree.children).length !== 0) return
+
+		this.tree.replace(new PrimitiveTree(this.tree.getParent(), value))
 	}
 }
 

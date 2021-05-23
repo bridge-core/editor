@@ -1,4 +1,6 @@
+import { ArrayTree } from './Tree/ArrayTree'
 import { createTree } from './Tree/createTree'
+import { ObjectTree } from './Tree/ObjectTree'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
 import { Tree } from './Tree/Tree'
 import { TreeSelection, TreeValueSelection } from './TreeSelection'
@@ -20,7 +22,7 @@ export class TreeEditor {
 		this.selections = [
 			selectPrimitiveValue && tree instanceof PrimitiveTree
 				? new TreeValueSelection(tree)
-				: new TreeSelection(tree),
+				: new TreeSelection(<ArrayTree | ObjectTree>tree),
 		]
 	}
 	toggleSelection(tree: Tree<unknown>, selectPrimitiveValue = false) {
@@ -41,7 +43,7 @@ export class TreeEditor {
 			this.selections.push(
 				selectPrimitiveValue && tree instanceof PrimitiveTree
 					? new TreeValueSelection(tree)
-					: new TreeSelection(tree)
+					: new TreeSelection(<ArrayTree | ObjectTree>tree)
 			)
 	}
 }
