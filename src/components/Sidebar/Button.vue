@@ -18,6 +18,7 @@
 				}"
 				v-on="on"
 				@click="onClick"
+				@click.middle="onMiddleClick"
 				v-ripple="alwaysAllowClick || !isLoading"
 			>
 				<v-icon
@@ -104,6 +105,15 @@ export default {
 		onClick() {
 			if (this.alwaysAllowClick || !this.isLoading) {
 				this.$emit('click')
+
+				// Otherwise the tooltip can get stuck until the user hovers over the button again
+				this.hasClicked = true
+				this.$nextTick(() => (this.hasClicked = false))
+			}
+		},
+		onMiddleClick() {
+			if (this.alwaysAllowClick || !this.isLoading) {
+				this.$emit('middleClick')
 
 				// Otherwise the tooltip can get stuck until the user hovers over the button again
 				this.hasClicked = true
