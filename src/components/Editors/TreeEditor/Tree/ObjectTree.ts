@@ -2,24 +2,23 @@ import { createTree } from './createTree'
 import { Tree, treeElementHeight } from './Tree'
 import ObjecTreeComponent from './CommonTree.vue'
 import type { ArrayTree } from './ArrayTree'
+import { set, del } from '@vue/composition-api'
 
 export class ObjectTree extends Tree<object> {
 	public component = ObjecTreeComponent
 	public isOpen = false
 	public readonly type = 'object'
-	protected _children: Record<string, Tree<unknown>>
+	protected _children: [string, Tree<unknown>][]
 
 	constructor(
 		parent: ObjectTree | ArrayTree | null,
 		protected _value: object
 	) {
 		super(parent)
-		this._children = Object.fromEntries(
-			Object.entries(_value).map(([key, val]) => [
-				key,
-				createTree(this, val),
-			])
-		)
+		this._children = Object.entries(_value).map(([key, val]) => [
+			key,
+			createTree(this, val),
+		])
 	}
 
 	get height() {
@@ -27,10 +26,7 @@ export class ObjectTree extends Tree<object> {
 
 		return (
 			2 * treeElementHeight +
-			Object.values(this._children).reduce(
-				(prev, val) => prev + val.height,
-				0
-			)
+			this._children.reduce((prev, [_, val]) => prev + val.height, 0)
 		)
 	}
 	get children() {
@@ -39,23 +35,28 @@ export class ObjectTree extends Tree<object> {
 
 	toJSON() {
 		return Object.fromEntries(
-			Object.entries(this._children).map(([key, val]) => [
-				key,
-				val.toJSON(),
-			])
+			this._children.map(([key, val]) => [key, val.toJSON()])
 		)
 	}
 
 	updatePropertyName(oldName: string, newName: string) {
-		let oldTree = this.children[oldName]
-		let newTree = this.children[newName]
-		this.children[newName] = oldTree
-		delete this.children[oldName]
+		const oldIndex = this.children.findIndex(
+			(child) => child[0] === oldName
+		)
+		let [_, oldTree] = this.children[oldIndex]
+		if (!oldTree) return
+
+		let i = 0
+		let namePart1 = newName
+		while (this.children.find((child) => child[0] === newName)) {
+			newName = namePart1 + `_${i++}`
+		}
+
+		set(this.children, oldIndex, [newName, oldTree])
 
 		return {
 			undo: () => {
-				this.children[oldName] = oldTree
-				this.children[newName] = newTree
+				set(this.children, oldIndex, [oldName, oldTree])
 			},
 		}
 	}

@@ -35,7 +35,7 @@ export abstract class Tree<T> {
 		if (!this.parent)
 			throw new Error(`Trees without parent do not have a key`)
 
-		if (Array.isArray(this.parent.children)) {
+		if (this.parent.type === 'array') {
 			const index = this.parent.children.findIndex(
 				(currentTree) => currentTree === this
 			)
@@ -47,8 +47,7 @@ export abstract class Tree<T> {
 
 			return index
 		} else {
-			const children = Object.entries(this.parent.children)
-			const index = children.findIndex(
+			const index = this.parent.children.findIndex(
 				([_, currentTree]) => currentTree === this
 			)
 
@@ -57,7 +56,7 @@ export abstract class Tree<T> {
 					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
 				)
 
-			return children[index][0]
+			return this.parent.children[index][0]
 		}
 	}
 

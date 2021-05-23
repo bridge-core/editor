@@ -22,7 +22,7 @@ export class PrimitiveTree extends Tree<TPrimitiveTree> {
 		return treeElementHeight
 	}
 
-	setValue(value: string) {
+	setValue(value: TPrimitiveTree) {
 		this._value = value
 	}
 

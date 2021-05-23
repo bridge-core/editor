@@ -29,7 +29,7 @@ export class TreeSelection {
 	addKey(key: string) {
 		const newTree = new ObjectTree(this.tree, {})
 		if (this.tree instanceof ArrayTree) this.tree.children.push(newTree)
-		else this.tree.children[key] = this.tree.children[key] = newTree
+		else this.tree.children.push([key, newTree])
 
 		this.tree.isSelected = false
 		newTree.isSelected = true
@@ -40,6 +40,12 @@ export class TreeSelection {
 		if (Object.keys(this.tree.children).length !== 0) return
 
 		this.tree.replace(new PrimitiveTree(this.tree.getParent(), value))
+
+		const parent = this.tree.getParent()
+		if (parent) {
+			parent.isSelected = true
+			this.tree = parent
+		}
 	}
 }
 
@@ -57,6 +63,10 @@ export class TreeValueSelection {
 	}
 
 	edit(value: string) {
-		this.tree.setValue(value)
+		if (!Number.isNaN(Number(value))) this.tree.setValue(Number(value))
+		else if (value === 'null') this.tree.setValue(null)
+		else if (value === 'true' || value === 'false')
+			this.tree.setValue(value === 'true')
+		else this.tree.setValue(value)
 	}
 }

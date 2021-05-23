@@ -17,6 +17,12 @@ export class TreeEditor {
 		return this.tree.toJSON()
 	}
 
+	forEachSelection(
+		cb: (selection: TreeSelection | TreeValueSelection) => void
+	) {
+		this.selections.forEach(cb)
+	}
+
 	setSelection(tree: Tree<unknown>, selectPrimitiveValue = false) {
 		this.selections.forEach((selection) => selection.dispose())
 		this.selections = [
