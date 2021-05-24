@@ -28,10 +28,12 @@ export class ConfirmationWindow extends BaseWindow<boolean> {
 	}
 
 	onConfirm() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		if (typeof this.opts.onConfirm === 'function') this.opts.onConfirm()
 		this.close(true)
 	}
 	onCancel() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		if (typeof this.opts.onCancel === 'function') this.opts.onCancel()
 		this.close(false)
 	}

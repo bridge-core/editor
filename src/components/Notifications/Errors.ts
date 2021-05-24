@@ -24,7 +24,6 @@ export function createErrorNotification(error: Error): IDisposable {
 		disposeOnMiddleClick: true,
 		onClick: () => {
 			App.audioManager.playAudio('click5.ogg', 1)
-
 			new InformationWindow({
 				name: `[ERROR: ${short}]`,
 				description: `[${message}]`,
