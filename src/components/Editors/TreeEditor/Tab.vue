@@ -1,5 +1,10 @@
 <template>
-	<div ref="editorContainer">
+	<div
+		class="editor-container"
+		@blur="focusEditor"
+		ref="editorContainer"
+		tabindex="-1"
+	>
 		<div
 			class="pr-4 code-font"
 			:style="`height: ${height - 56}px; overflow: auto;`"
@@ -63,6 +68,7 @@ export default {
 	}),
 	mounted() {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
+		this.focusEditor()
 	},
 	computed: {
 		treeEditor() {
@@ -100,6 +106,9 @@ export default {
 		},
 	},
 	methods: {
+		focusEditor() {
+			this.$refs.editorContainer.focus()
+		},
 		onEdit(value) {
 			console.log(value)
 			this.treeEditor.forEachSelection((selection) => {
@@ -142,5 +151,8 @@ export default {
 <style>
 .tree-editor-selection {
 	outline: 1px solid white;
+}
+.editor-container {
+	outline: none;
 }
 </style>
