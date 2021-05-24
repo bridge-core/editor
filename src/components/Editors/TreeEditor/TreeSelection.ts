@@ -16,8 +16,9 @@ export class TreeSelection {
 		return this.tree
 	}
 
-	dispose() {
+	dispose(removeSel = true) {
 		this.tree.isSelected = false
+		if (removeSel) this.parent.removeSelection(this)
 	}
 
 	edit(value: string) {
@@ -61,8 +62,9 @@ export class TreeValueSelection {
 		return this.tree
 	}
 
-	dispose() {
+	dispose(removeSel = true) {
 		this.tree.isValueSelected = false
+		if (removeSel) this.parent.removeSelection(this)
 	}
 
 	edit(value: string) {

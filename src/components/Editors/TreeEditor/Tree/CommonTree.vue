@@ -74,6 +74,7 @@ export default {
 .common-tree-key {
 	list-style-type: none;
 	display: inline-block;
+	outline: none;
 }
 .common-tree-key .v-icon {
 	position: relative;

@@ -1,3 +1,5 @@
+import { ActionManager } from '../../Actions/ActionManager'
+import { KeyBindingManager } from '../../Actions/KeyBindingManager'
 import { ArrayTree } from './Tree/ArrayTree'
 import { createTree } from './Tree/createTree'
 import { ObjectTree } from './Tree/ObjectTree'
@@ -8,9 +10,54 @@ import { TreeSelection, TreeValueSelection } from './TreeSelection'
 export class TreeEditor {
 	protected tree: Tree<unknown>
 	protected selections: (TreeSelection | TreeValueSelection)[] = []
+	protected _keyBindings: KeyBindingManager | undefined
+	protected _actions: ActionManager | undefined
+
+	get keyBindings() {
+		if (!this._keyBindings)
+			throw new Error(
+				`Cannot access keyBindings before they were initialized.`
+			)
+
+		return this._keyBindings
+	}
+	get actions() {
+		if (!this._actions)
+			throw new Error(
+				`Cannot access keyBindings before they were initialized.`
+			)
+
+		return this._actions
+	}
 
 	constructor(protected json: unknown) {
 		this.tree = createTree(null, json)
+		this.setSelection(this.tree)
+	}
+
+	receiveContainer(container: HTMLDivElement) {
+		this._keyBindings = new KeyBindingManager(container)
+		this._actions = new ActionManager(this._keyBindings)
+
+		this.actions.create({
+			keyBinding: ['DELETE', 'BACKSPACE'],
+			onTrigger: () => {
+				this.forEachSelection((sel) => {
+					const tree = sel.getTree()
+					if (tree.getParent()) this.setSelection(tree.getParent()!)
+
+					sel.getTree().delete()
+					sel.dispose()
+				})
+			},
+		})
+
+		this.actions.create({
+			keyBinding: ['ESCAPE'],
+			onTrigger: () => {
+				this.setSelection(this.tree)
+			},
+		})
 	}
 
 	toJSON() {
@@ -23,8 +70,12 @@ export class TreeEditor {
 		this.selections.forEach(cb)
 	}
 
+	removeSelection(selection: TreeSelection | TreeValueSelection) {
+		this.selections = this.selections.filter((sel) => selection !== sel)
+	}
+
 	setSelection(tree: Tree<unknown>, selectPrimitiveValue = false) {
-		this.selections.forEach((selection) => selection.dispose())
+		this.selections.forEach((selection) => selection.dispose(false))
 		this.selections = [
 			selectPrimitiveValue && tree instanceof PrimitiveTree
 				? new TreeValueSelection(this, tree)
@@ -40,7 +91,7 @@ export class TreeEditor {
 			)
 				return true
 
-			selection.dispose()
+			selection.dispose(false)
 			didRemoveSelection = true
 			return false
 		})

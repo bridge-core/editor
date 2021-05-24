@@ -91,4 +91,31 @@ export abstract class Tree<T> {
 			this.parent.type === 'array' ? tree : [this.key, tree]
 		)
 	}
+
+	delete() {
+		if (!this.parent) throw new Error(`Cannot delete tree without parent`)
+
+		let index: number
+		if (this.parent.type === 'array') {
+			index = this.parent.children.findIndex(
+				(currentTree) => currentTree === this
+			)
+
+			if (index === -1)
+				throw new Error(
+					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
+				)
+		} else {
+			index = this.parent.children.findIndex(
+				([_, currentTree]) => currentTree === this
+			)
+
+			if (index === -1)
+				throw new Error(
+					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
+				)
+		}
+
+		this.parent.children.splice(index, 1)
+	}
 }

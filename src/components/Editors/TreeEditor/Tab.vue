@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div ref="editorContainer">
 		<div
 			class="pr-4 code-font"
 			:style="`height: ${height - 56}px; overflow: auto;`"
@@ -25,6 +25,7 @@
 				ref="addValueInput"
 				v-model="valueToAdd"
 				@change="onAddValue"
+				:disabled="isGlobal"
 				class="mx-4"
 				:label="t('editors.treeEditor.addValue')"
 				outlined
@@ -35,6 +36,7 @@
 				ref="editValueInput"
 				:value="currentValue"
 				@change="onEdit"
+				:disabled="isGlobal"
 				:label="t('editors.treeEditor.edit')"
 				outlined
 				dense
@@ -59,6 +61,9 @@ export default {
 		keyToAdd: '',
 		valueToAdd: '',
 	}),
+	mounted() {
+		this.treeEditor.receiveContainer(this.$refs.editorContainer)
+	},
 	computed: {
 		treeEditor() {
 			return this.tab.treeEditor
@@ -66,6 +71,8 @@ export default {
 		currentValue() {
 			let first = undefined
 			this.treeEditor.forEachSelection((selection) => {
+				if (!selection.getTree().parent) return
+
 				let current
 				if (selection instanceof TreeValueSelection)
 					current = selection.getTree().value
@@ -79,6 +86,17 @@ export default {
 			})
 
 			return first
+		},
+		isGlobal() {
+			let isGlobal = false
+			this.treeEditor.forEachSelection((selection) => {
+				if (isGlobal) return
+				if (!selection.getTree().parent) {
+					isGlobal = true
+				}
+			})
+
+			return isGlobal
 		},
 	},
 	methods: {

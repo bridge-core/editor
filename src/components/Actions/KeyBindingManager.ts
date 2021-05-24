@@ -10,8 +10,9 @@ export class KeyBindingManager {
 	protected state: Record<string, KeyBinding> = shallowReactive({})
 	protected lastTimeStamp = 0
 
-	constructor() {
-		document.addEventListener('keydown', (event) => {
+	constructor(element: HTMLDivElement | Document = document) {
+		// @ts-ignore TypeScript isn't smart enough to understand that the type "KeyboardEvent" is correct
+		element.addEventListener('keydown', (event: KeyboardEvent) => {
 			const { key, ctrlKey, altKey, metaKey, shiftKey } = event
 			if (IGNORE_KEYS.includes(key)) return
 

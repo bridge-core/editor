@@ -1,13 +1,21 @@
-import { App } from '/@/App'
-import Vue from 'vue'
 import { Action } from './Action'
 import { IActionConfig } from './SimpleAction'
 import { del, set, shallowReactive } from '@vue/composition-api'
+import type { KeyBindingManager } from './KeyBindingManager'
 
 export class ActionManager {
 	public state: Record<string, Action> = shallowReactive({})
 
-	constructor(public readonly app: App) {}
+	constructor(public readonly _keyBindingManager?: KeyBindingManager) {}
+
+	get keyBindingManager() {
+		if (!this._keyBindingManager)
+			throw new Error(
+				`No keyBindingManager was defined for this actionManager`
+			)
+
+		return this._keyBindingManager
+	}
 
 	create(actionConfig: IActionConfig) {
 		const action = new Action(this, actionConfig)

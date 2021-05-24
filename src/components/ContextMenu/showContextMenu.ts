@@ -14,7 +14,7 @@ export async function showContextMenu(
 	if (actions.length === 0) return
 
 	const app = await App.getApp()
-	const actionManager = new ActionManager(app)
+	const actionManager = new ActionManager()
 
 	actions.forEach((action) => actionManager.create(action))
 
