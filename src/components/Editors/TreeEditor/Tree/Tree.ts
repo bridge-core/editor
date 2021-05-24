@@ -1,3 +1,4 @@
+import { set } from '@vue/composition-api'
 import { v4 as uuid } from 'uuid'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'
@@ -62,6 +63,32 @@ export abstract class Tree<T> {
 
 	replace(tree: Tree<unknown>) {
 		if (!this.parent) throw new Error(`Cannot replace tree without parent`)
-		;(<any>this.parent.children)[this.key] = tree
+
+		let index: number
+		if (this.parent.type === 'array') {
+			index = this.parent.children.findIndex(
+				(currentTree) => currentTree === this
+			)
+
+			if (index === -1)
+				throw new Error(
+					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
+				)
+		} else {
+			index = this.parent.children.findIndex(
+				([_, currentTree]) => currentTree === this
+			)
+
+			if (index === -1)
+				throw new Error(
+					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
+				)
+		}
+
+		set(
+			this.parent.children,
+			index,
+			this.parent.type === 'array' ? tree : [this.key, tree]
+		)
 	}
 }

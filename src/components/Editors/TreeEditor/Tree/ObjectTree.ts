@@ -48,8 +48,12 @@ export class ObjectTree extends Tree<object> {
 
 		let i = 0
 		let namePart1 = newName
-		while (this.children.find((child) => child[0] === newName)) {
-			newName = namePart1 + `_${i++}`
+		let index = this.children.findIndex((child) => child[0] === newName)
+		if (index !== oldIndex) {
+			while (index !== -1) {
+				index = this.children.findIndex((child) => child[0] === newName)
+				newName = namePart1 + `_${i++}`
+			}
 		}
 
 		set(this.children, oldIndex, [newName, oldTree])

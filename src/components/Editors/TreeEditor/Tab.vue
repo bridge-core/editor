@@ -12,8 +12,19 @@
 		</div>
 
 		<div class="d-flex px-4">
-			<v-combobox label="Add Object" outlined dense hide-details />
 			<v-combobox
+				ref="addKeyInput"
+				v-model="keyToAdd"
+				@change="onAddKey"
+				label="Add Object"
+				outlined
+				dense
+				hide-details
+			/>
+			<v-combobox
+				ref="addValueInput"
+				v-model="valueToAdd"
+				@change="onAddValue"
 				class="mx-4"
 				label="Add Value"
 				outlined
@@ -21,9 +32,10 @@
 				hide-details
 			/>
 			<v-text-field
-				label="Edit"
+				ref="editValueInput"
 				:value="currentValue"
 				@change="onEdit"
+				label="Edit"
 				outlined
 				dense
 				hide-details
@@ -34,12 +46,17 @@
 
 <script>
 import { TreeValueSelection } from './TreeSelection'
+
 export default {
 	name: 'TreeTab',
 	props: {
 		tab: Object,
 		height: Number,
 	},
+	data: () => ({
+		keyToAdd: '',
+		valueToAdd: '',
+	}),
 	computed: {
 		treeEditor() {
 			return this.tab.treeEditor
@@ -69,6 +86,34 @@ export default {
 				console.log(selection)
 				selection.edit(value)
 			})
+		},
+		onAddKey(value) {
+			if (value === null) return
+
+			console.log(value)
+			this.treeEditor.forEachSelection((selection) => {
+				if (selection instanceof TreeValueSelection) return
+
+				selection.addKey(value)
+			})
+
+			this.$nextTick(() => (this.keyToAdd = ''))
+		},
+		onAddValue(value) {
+			if (value === null) return
+
+			if (!Number.isNaN(Number(value))) value = Number(value)
+			else if (value === 'null') value = null
+			else if (value === 'true' || value === 'false')
+				value = value === 'true'
+
+			this.treeEditor.forEachSelection((selection) => {
+				if (selection instanceof TreeValueSelection) return
+
+				selection.addValue(value)
+			})
+
+			this.$nextTick(() => (this.valueToAdd = ''))
 		},
 	},
 }

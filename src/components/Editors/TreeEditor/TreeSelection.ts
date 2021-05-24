@@ -2,9 +2,13 @@ import { ArrayTree } from './Tree/ArrayTree'
 import { ObjectTree } from './Tree/ObjectTree'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
 import { TPrimitiveTree } from './Tree/Tree'
+import type { TreeEditor } from './TreeEditor'
 
 export class TreeSelection {
-	constructor(protected tree: ArrayTree | ObjectTree) {
+	constructor(
+		protected parent: TreeEditor,
+		protected tree: ArrayTree | ObjectTree
+	) {
 		tree.isSelected = true
 	}
 
@@ -32,25 +36,24 @@ export class TreeSelection {
 		else this.tree.children.push([key, newTree])
 
 		this.tree.isSelected = false
+		this.tree.isOpen = true
 		newTree.isSelected = true
 		this.tree = newTree
 	}
 
 	addValue(value: TPrimitiveTree) {
-		if (Object.keys(this.tree.children).length !== 0) return
+		if (Object.keys(this.tree.children).length > 0) return
 
-		this.tree.replace(new PrimitiveTree(this.tree.getParent(), value))
+		const newTree = new PrimitiveTree(this.tree.getParent(), value)
+		this.parent.toggleSelection(this.tree, false)
 
-		const parent = this.tree.getParent()
-		if (parent) {
-			parent.isSelected = true
-			this.tree = parent
-		}
+		this.tree.replace(newTree)
+		this.parent.setSelection(newTree, true)
 	}
 }
 
 export class TreeValueSelection {
-	constructor(protected tree: PrimitiveTree) {
+	constructor(protected parent: TreeEditor, protected tree: PrimitiveTree) {
 		tree.isValueSelected = true
 	}
 

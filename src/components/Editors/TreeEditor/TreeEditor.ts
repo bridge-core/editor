@@ -27,8 +27,8 @@ export class TreeEditor {
 		this.selections.forEach((selection) => selection.dispose())
 		this.selections = [
 			selectPrimitiveValue && tree instanceof PrimitiveTree
-				? new TreeValueSelection(tree)
-				: new TreeSelection(<ArrayTree | ObjectTree>tree),
+				? new TreeValueSelection(this, tree)
+				: new TreeSelection(this, <ArrayTree | ObjectTree>tree),
 		]
 	}
 	toggleSelection(tree: Tree<unknown>, selectPrimitiveValue = false) {
@@ -48,8 +48,8 @@ export class TreeEditor {
 		if (!didRemoveSelection)
 			this.selections.push(
 				selectPrimitiveValue && tree instanceof PrimitiveTree
-					? new TreeValueSelection(tree)
-					: new TreeSelection(<ArrayTree | ObjectTree>tree)
+					? new TreeValueSelection(this, tree)
+					: new TreeSelection(this, <ArrayTree | ObjectTree>tree)
 			)
 	}
 }
