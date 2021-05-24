@@ -218,7 +218,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 
-	/*//Audio
+	//Audio
 	settings.addControl(
 		new Toggle({
 			category: 'audio',
@@ -232,7 +232,7 @@ export async function setupSettings(settings: SettingsWindow) {
 				}
 			},
 		})
-	)*/
+	)
 
 	// Editor
 	settings.addControl(
