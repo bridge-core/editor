@@ -576,4 +576,12 @@ export default {
 			},
 		},
 	},
+	editors: {
+		treeEditor: {
+			addObject: 'Add Object',
+			addArray: 'Add Array',
+			addValue: 'Add Value',
+			edit: 'Edit',
+		},
+	},
 }

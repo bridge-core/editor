@@ -16,7 +16,7 @@
 				ref="addKeyInput"
 				v-model="keyToAdd"
 				@change="onAddKey"
-				label="Add Object"
+				:label="t('editors.treeEditor.addObject')"
 				outlined
 				dense
 				hide-details
@@ -26,7 +26,7 @@
 				v-model="valueToAdd"
 				@change="onAddValue"
 				class="mx-4"
-				label="Add Value"
+				:label="t('editors.treeEditor.addValue')"
 				outlined
 				dense
 				hide-details
@@ -35,7 +35,7 @@
 				ref="editValueInput"
 				:value="currentValue"
 				@change="onEdit"
-				label="Edit"
+				:label="t('editors.treeEditor.edit')"
 				outlined
 				dense
 				hide-details
@@ -45,10 +45,12 @@
 </template>
 
 <script>
+import { TranslationMixin } from '../../Mixins/TranslationMixin'
 import { TreeValueSelection } from './TreeSelection'
 
 export default {
 	name: 'TreeTab',
+	mixins: [TranslationMixin],
 	props: {
 		tab: Object,
 		height: Number,
