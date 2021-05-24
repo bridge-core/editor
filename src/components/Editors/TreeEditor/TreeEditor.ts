@@ -1,5 +1,7 @@
 import { ActionManager } from '../../Actions/ActionManager'
 import { KeyBindingManager } from '../../Actions/KeyBindingManager'
+import { UndoDeleteEntry } from './History/DeleteEntry'
+import { EditorHistory } from './History/EditorHistory'
 import { ArrayTree } from './Tree/ArrayTree'
 import { createTree } from './Tree/createTree'
 import { ObjectTree } from './Tree/ObjectTree'
@@ -12,6 +14,7 @@ export class TreeEditor {
 	protected selections: (TreeSelection | TreeValueSelection)[] = []
 	protected _keyBindings: KeyBindingManager | undefined
 	protected _actions: ActionManager | undefined
+	protected history = new EditorHistory()
 
 	get keyBindings() {
 		if (!this._keyBindings)
@@ -44,10 +47,14 @@ export class TreeEditor {
 			onTrigger: () => {
 				this.forEachSelection((sel) => {
 					const tree = sel.getTree()
-					if (tree.getParent()) this.setSelection(tree.getParent()!)
+					if (!tree.getParent()) return // May not delete global tree
 
-					sel.getTree().delete()
+					this.setSelection(tree.getParent()!)
+
+					const [index, key] = tree.delete()
 					sel.dispose()
+
+					this.history.push(new UndoDeleteEntry(tree, index, key))
 				})
 			},
 		})
@@ -56,6 +63,20 @@ export class TreeEditor {
 			keyBinding: ['ESCAPE'],
 			onTrigger: () => {
 				this.setSelection(this.tree)
+			},
+		})
+
+		this.actions.create({
+			keyBinding: ['CTRL + Z'],
+			onTrigger: () => {
+				this.history.undo()
+			},
+		})
+
+		this.actions.create({
+			keyBinding: ['CTRL + Y'],
+			onTrigger: () => {
+				this.history.redo()
 			},
 		})
 	}

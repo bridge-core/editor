@@ -116,6 +116,8 @@ export abstract class Tree<T> {
 				)
 		}
 
-		this.parent.children.splice(index, 1)
+		const [deleted] = this.parent.children.splice(index, 1)
+
+		return <const>[index, Array.isArray(deleted) ? deleted[0] : '']
 	}
 }
