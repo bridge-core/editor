@@ -4,12 +4,12 @@ import { v4 as uuid } from 'uuid'
 
 export interface IActionConfig {
 	id?: string
-	icon: string
-	name: string
+	icon?: string
+	name?: string
 	color?: string
 	description?: string
 	isDisabled?: () => boolean
-	keyBinding?: string
+	keyBinding?: string | string[]
 	prevent?: IKeyBindingConfig['prevent']
 	onTrigger: () => Promise<unknown> | unknown
 }

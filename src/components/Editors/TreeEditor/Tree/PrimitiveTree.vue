@@ -36,7 +36,8 @@ export default {
 	},
 	computed: {
 		treeValue() {
-			if (this.tree.type === 'string') return `"${this.tree.value}"`
+			if (this.tree.value === null) return 'null'
+			else if (this.tree.type === 'string') return `"${this.tree.value}"`
 			return this.tree.value
 		},
 		highlighterInfoDef() {
@@ -46,6 +47,8 @@ export default {
 				case 'string':
 					return 'stringDef'
 				case 'boolean':
+					return 'atomDef'
+				case 'null':
 					return 'atomDef'
 				default:
 					throw new Error(

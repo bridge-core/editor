@@ -1,3 +1,4 @@
+import { set } from '@vue/composition-api'
 import { v4 as uuid } from 'uuid'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'
@@ -35,7 +36,7 @@ export abstract class Tree<T> {
 		if (!this.parent)
 			throw new Error(`Trees without parent do not have a key`)
 
-		if (Array.isArray(this.parent.children)) {
+		if (this.parent.type === 'array') {
 			const index = this.parent.children.findIndex(
 				(currentTree) => currentTree === this
 			)
@@ -47,8 +48,7 @@ export abstract class Tree<T> {
 
 			return index
 		} else {
-			const children = Object.entries(this.parent.children)
-			const index = children.findIndex(
+			const index = this.parent.children.findIndex(
 				([_, currentTree]) => currentTree === this
 			)
 
@@ -57,7 +57,67 @@ export abstract class Tree<T> {
 					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
 				)
 
-			return children[index][0]
+			return this.parent.children[index][0]
 		}
+	}
+
+	replace(tree: Tree<unknown>) {
+		if (!this.parent) throw new Error(`Cannot replace tree without parent`)
+
+		let index: number
+		if (this.parent.type === 'array') {
+			index = this.parent.children.findIndex(
+				(currentTree) => currentTree === this
+			)
+
+			if (index === -1)
+				throw new Error(
+					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
+				)
+		} else {
+			index = this.parent.children.findIndex(
+				([_, currentTree]) => currentTree === this
+			)
+
+			if (index === -1)
+				throw new Error(
+					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
+				)
+		}
+
+		set(
+			this.parent.children,
+			index,
+			this.parent.type === 'array' ? tree : [this.key, tree]
+		)
+	}
+
+	delete() {
+		if (!this.parent) throw new Error(`Cannot delete tree without parent`)
+
+		let index: number
+		if (this.parent.type === 'array') {
+			index = this.parent.children.findIndex(
+				(currentTree) => currentTree === this
+			)
+
+			if (index === -1)
+				throw new Error(
+					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
+				)
+		} else {
+			index = this.parent.children.findIndex(
+				([_, currentTree]) => currentTree === this
+			)
+
+			if (index === -1)
+				throw new Error(
+					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
+				)
+		}
+
+		const [deleted] = this.parent.children.splice(index, 1)
+
+		return <const>[index, Array.isArray(deleted) ? deleted[0] : '']
 	}
 }

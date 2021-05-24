@@ -1,5 +1,3 @@
-import { App } from '/@/App'
-
 export class AudioManager {
 	protected currentAudioPlaying: HTMLAudioElement | undefined
 

@@ -235,7 +235,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 		})
 	)
-
 	// Editor
 	settings.addControl(
 		new Selection({

@@ -4,6 +4,7 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { WindowState } from './WindowState'
 import { del, set } from '@vue/composition-api'
+import { App } from '/@/App'
 
 export abstract class BaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()

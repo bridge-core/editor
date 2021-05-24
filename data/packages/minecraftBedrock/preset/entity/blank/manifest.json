@@ -7,10 +7,29 @@
 	"packTypes": ["behaviorPack", "resourcePack"],
 	"additionalModels": {
 		"IMAGE_SAVE_PATH": "RP/textures/items/",
+		"IMAGE_SAVE_PATH2": "RP/textures/entity/",
 		"DEFAULT_IMAGE": "eggIcon.png",
+		"DEFAULT_IMAGE2": "texture.png",
+		"MODEL_SAVE_PATH": "RP/models/entity/",
+		"DEFAULT_MODEL": "geometry.json",
 		"PRESET_PATH": ""
 	},
 	"fields": [
+		[
+			"Entity Texture (Optional)",
+			"IMAGE2",
+			{ "type": "fileInput", "accept": "image/png", "optional": true }
+		],
+		[
+			"Entity Model (Optional)",
+			"MODEL",
+			{
+				"type": "fileInput",
+				"accept": "text/json",
+				"optional": "true",
+				"icon": "mdi-file-chart"
+			}
+		],
 		[
 			"Spawn Egg Image (Optional)",
 			"IMAGE",
@@ -26,6 +45,8 @@
 
 	"createFiles": [
 		"presetScript/optionalImage.js",
+		"presetScript/optionalImage2.js",
+		"presetScript/optionalModel.js",
 		[
 			"entity.json",
 			"BP/entities/{{PRESET_PATH}}{{IDENTIFIER}}.json",
@@ -40,16 +61,6 @@
 			"renderController.json",
 			"RP/render_controllers/{{PRESET_PATH}}{{IDENTIFIER}}.json",
 			{ "inject": ["IDENTIFIER", "PRESET_PATH"] }
-		],
-		[
-			"geometry.json",
-			"RP/models/entity/{{IDENTIFIER}}.json",
-			{ "inject": ["IDENTIFIER"] }
-		],
-		[
-			"texture.png",
-			"RP/textures/entity/{{IDENTIFIER}}.png",
-			{ "inject": ["IDENTIFIER"] }
 		]
 	],
 	"expandFiles": [

@@ -14,7 +14,7 @@ export class ActionViewer extends Control<any> {
 				action: {},
 				description: action.description ?? 'No description provided',
 				key: action.id,
-				name: action.name,
+				name: action.name ?? 'general.unknown',
 			},
 			undefined
 		)

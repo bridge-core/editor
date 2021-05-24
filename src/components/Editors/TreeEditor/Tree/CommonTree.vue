@@ -1,8 +1,14 @@
 <template>
-	<details v-if="$slots.default" :style="tree.styles" :open="tree.isOpen">
+	<details
+		v-if="$slots.default"
+		:style="tree.styles"
+		:open="tree.isOpen"
+		tabindex="-1"
+	>
 		<summary
 			:class="{ 'common-tree-key': true, open: tree.isOpen }"
 			@click.stop.prevent="tree.isOpen = !tree.isOpen"
+			tabindex="-1"
 		>
 			<v-icon class="mr-1" small> mdi-chevron-right </v-icon>
 			<span v-if="tree.parent.type === 'object'">
@@ -74,6 +80,7 @@ export default {
 .common-tree-key {
 	list-style-type: none;
 	display: inline-block;
+	outline: none;
 }
 .common-tree-key .v-icon {
 	position: relative;

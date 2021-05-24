@@ -28,7 +28,7 @@ export class InformedChoiceWindow extends BaseWindow {
 	}
 
 	async setup() {
-		this._actionManager = new ActionManager(await App.getApp())
+		this._actionManager = new ActionManager()
 		this._ready.dispatch(this._actionManager)
 		this.defineWindow()
 		this.open()

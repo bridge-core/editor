@@ -49,7 +49,7 @@ export class App {
 	public static readonly audioManager = new AudioManager()
 
 	public readonly keyBindingManager = new KeyBindingManager()
-	public readonly actionManager = new ActionManager(this)
+	public readonly actionManager = new ActionManager(this.keyBindingManager)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
 	public readonly dataLoader = new DataLoader(this)

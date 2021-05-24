@@ -8,7 +8,16 @@
 			"properties": {
 				"type": { "$ref": "../../general/vanilla/damageType.json" },
 				"amount": { "type": "integer" },
-				"target": { "$ref": "../../general/filter/subject.json" }
+				"target": {
+					"anyOf": [
+						{
+							"$ref": "../../general/filter/subject.json"
+						},
+						{
+							"const": "item"
+						}
+					]
+				}
 			}
 		}
 	}
