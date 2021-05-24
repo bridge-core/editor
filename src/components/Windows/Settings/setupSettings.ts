@@ -228,6 +228,9 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 			onChange: async (val) => {
 				if (val) {
+					App.audioManager.masterVolume = 1
+				} else {
+					App.audioManager.masterVolume = 0
 				}
 			},
 		})
