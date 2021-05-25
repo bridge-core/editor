@@ -7,14 +7,19 @@
 	>
 		<summary
 			:class="{ 'common-tree-key': true, open: tree.isOpen }"
-			@click.stop.prevent="tree.isOpen = !tree.isOpen"
+			@click.stop.prevent="tree.toggleOpen()"
 			tabindex="-1"
 		>
-			<v-icon class="mr-1" small> mdi-chevron-right </v-icon>
+			<v-icon v-if="tree.hasChildren" class="mr-1" small>
+				mdi-chevron-right
+			</v-icon>
 			<span v-if="tree.parent.type === 'object'">
+				<!-- Debugging helper -->
+				<span v-if="isDevMode">s: {{ tree.type }} </span>
+
 				<span
 					@click.stop.prevent="onClickKey"
-					@dblclick="tree.isOpen = !tree.isOpen"
+					@dblclick="tree.toggleOpen()"
 				>
 					<slot /> </span
 				>:</span
@@ -34,6 +39,7 @@
 
 <script>
 import TreeChildren from './TreeChildren.vue'
+import { DevModeMixin } from '/@/components/Mixins/DevMode'
 
 const brackets = {
 	array: '[]',
@@ -45,6 +51,7 @@ export default {
 	components: {
 		TreeChildren,
 	},
+	mixins: [DevModeMixin],
 	props: {
 		tree: Object,
 		treeKey: String,

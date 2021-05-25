@@ -4,6 +4,11 @@
 			<span @click.stop.prevent="onClickKey"><slot /></span>:</span
 		>
 
+		<!-- Debugging helper -->
+		<span v-if="isDevMode">
+			s: {{ tree.type }} p: {{ tree.parent.type }}</span
+		>
+
 		<span
 			:style="{
 				color: highlighterInfo.color,
@@ -21,11 +26,12 @@
 </template>
 
 <script>
+import { DevModeMixin } from '/@/components/Mixins/DevMode'
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 
 export default {
 	name: 'PrimitiveTree',
-	mixins: [HighlighterMixin(['atom', 'string', 'number'])],
+	mixins: [HighlighterMixin(['atom', 'string', 'number']), DevModeMixin],
 	props: {
 		tree: Object,
 		treeEditor: Object,

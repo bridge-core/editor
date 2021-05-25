@@ -37,19 +37,26 @@ export class TreeSelection {
 		else this.tree.children.push([key, newTree])
 
 		this.tree.setIsSelected(false)
-		this.tree.isOpen = true
+		this.tree.setOpen(true)
 		newTree.setIsSelected(true)
 		this.tree = newTree
 	}
 
 	addValue(value: TPrimitiveTree) {
-		if (Object.keys(this.tree.children).length > 0) return
+		if (this.tree.type === 'array') {
+			// Push primitive trees into array trees
+			const newTree = new PrimitiveTree(this.tree, value)
 
-		const newTree = new PrimitiveTree(this.tree.getParent(), value)
-		this.parent.toggleSelection(this.tree, false)
+			this.tree.children.push(newTree)
+			this.parent.setSelection(newTree, true)
+		} else if (Object.keys(this.tree.children).length > 0) {
+			// Otherwise only add value to empty objects
+			const newTree = new PrimitiveTree(this.tree.getParent(), value)
 
-		this.tree.replace(newTree)
-		this.parent.setSelection(newTree, true)
+			this.tree.replace(newTree)
+			this.parent.setSelection(newTree, true)
+			this.parent.toggleSelection(this.tree, false)
+		}
 	}
 }
 

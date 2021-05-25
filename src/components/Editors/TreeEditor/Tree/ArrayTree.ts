@@ -5,7 +5,7 @@ import type { ObjectTree } from './ObjectTree'
 
 export class ArrayTree extends Tree<Array<unknown>> {
 	public component = ArrayTreeComponent
-	public isOpen = false
+	public _isOpen = false
 	public readonly type = 'array'
 	protected _children: Tree<unknown>[]
 
@@ -27,6 +27,20 @@ export class ArrayTree extends Tree<Array<unknown>> {
 	}
 	get children() {
 		return this._children
+	}
+	get hasChildren() {
+		return this._children.length > 0
+	}
+	get isOpen() {
+		if (!this.hasChildren) return false
+		return this._isOpen
+	}
+
+	setOpen(val: boolean) {
+		if (this.hasChildren) this._isOpen = val
+	}
+	toggleOpen() {
+		this.setOpen(!this._isOpen)
 	}
 
 	toJSON() {

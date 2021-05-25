@@ -1,7 +1,10 @@
 import { ActionManager } from '../../Actions/ActionManager'
 import { KeyBindingManager } from '../../Actions/KeyBindingManager'
+import { CollectedEntry } from './History/CollectedEntry'
 import { UndoDeleteEntry } from './History/DeleteEntry'
 import { EditorHistory } from './History/EditorHistory'
+import { HistoryEntry } from './History/HistoryEntry'
+import { ReplaceTreeEntry } from './History/ReplaceTree'
 import { ArrayTree } from './Tree/ArrayTree'
 import { createTree } from './Tree/createTree'
 import { ObjectTree } from './Tree/ObjectTree'
@@ -14,7 +17,7 @@ export class TreeEditor {
 	protected selections: (TreeSelection | TreeValueSelection)[] = []
 	protected _keyBindings: KeyBindingManager | undefined
 	protected _actions: ActionManager | undefined
-	protected history = new EditorHistory()
+	protected history = new EditorHistory(this)
 
 	get keyBindings() {
 		if (!this._keyBindings)
@@ -45,17 +48,39 @@ export class TreeEditor {
 		this.actions.create({
 			keyBinding: ['DELETE', 'BACKSPACE'],
 			onTrigger: () => {
+				const entries: HistoryEntry[] = []
+
 				this.forEachSelection((sel) => {
 					const tree = sel.getTree()
 					if (!tree.getParent()) return // May not delete global tree
 
-					this.setSelection(tree.getParent()!)
+					if (
+						sel instanceof TreeValueSelection &&
+						tree.getParent()!.type === 'object'
+					) {
+						// A delete action on a primitive value replaces the PrimitiveTree with an emtpy ObjectTree
+						const newTree = new ObjectTree(tree.getParent(), {})
+						this.toggleSelection(newTree)
 
-					const [index, key] = tree.delete()
+						tree.replace(newTree)
+
+						entries.push(new ReplaceTreeEntry(tree, newTree))
+					} else {
+						this.toggleSelection(tree.getParent()!)
+
+						const [index, key] = tree.delete()
+
+						entries.push(new UndoDeleteEntry(tree, index, key))
+					}
+
 					sel.dispose()
-
-					this.history.push(new UndoDeleteEntry(tree, index, key))
 				})
+
+				if (entries.length === 1) {
+					this.history.push(entries[0])
+				} else if (entries.length > 1) {
+					this.history.push(new CollectedEntry(entries))
+				}
 			},
 		})
 
@@ -93,6 +118,11 @@ export class TreeEditor {
 
 	removeSelection(selection: TreeSelection | TreeValueSelection) {
 		this.selections = this.selections.filter((sel) => selection !== sel)
+	}
+	removeSelectionOf(tree: Tree<unknown>) {
+		this.selections = this.selections.filter(
+			(sel) => sel.getTree() !== tree
+		)
 	}
 
 	setSelection(tree: Tree<unknown>, selectPrimitiveValue = false) {

@@ -2,6 +2,8 @@ import { Tree } from '../Tree/Tree'
 import { HistoryEntry } from './HistoryEntry'
 
 export class UndoDeleteEntry extends HistoryEntry {
+	unselectTrees = []
+
 	constructor(
 		protected tree: Tree<unknown>,
 		protected index: number,
@@ -27,6 +29,8 @@ export class UndoDeleteEntry extends HistoryEntry {
 }
 
 export class DeleteEntry extends HistoryEntry {
+	unselectTrees = []
+
 	constructor(
 		protected tree: Tree<unknown>,
 		protected index: number,
