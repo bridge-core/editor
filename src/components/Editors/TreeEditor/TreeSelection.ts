@@ -9,7 +9,7 @@ export class TreeSelection {
 		protected parent: TreeEditor,
 		protected tree: ArrayTree | ObjectTree
 	) {
-		tree.isSelected = true
+		tree.setIsSelected(true)
 	}
 
 	getTree() {
@@ -17,7 +17,7 @@ export class TreeSelection {
 	}
 
 	dispose(removeSel = true) {
-		this.tree.isSelected = false
+		this.tree.setIsSelected(false)
 		if (removeSel) this.parent.removeSelection(this)
 	}
 
@@ -36,9 +36,9 @@ export class TreeSelection {
 		if (this.tree instanceof ArrayTree) this.tree.children.push(newTree)
 		else this.tree.children.push([key, newTree])
 
-		this.tree.isSelected = false
+		this.tree.setIsSelected(false)
 		this.tree.isOpen = true
-		newTree.isSelected = true
+		newTree.setIsSelected(true)
 		this.tree = newTree
 	}
 

@@ -146,7 +146,14 @@ export default {
 
 <style>
 .tree-editor-selection {
-	outline: 1px solid white;
+	border-radius: 4px;
+	font-weight: bold;
+	font-style: italic;
+	text-decoration: underline;
+	background: rgba(170, 170, 170, 0.2);
+}
+.theme--dark .tree-editor-selection {
+	background: rgba(100, 100, 100, 0.5);
 }
 .editor-container {
 	outline: none;

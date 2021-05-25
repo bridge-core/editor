@@ -13,10 +13,8 @@
 			<v-icon class="mr-1" small> mdi-chevron-right </v-icon>
 			<span v-if="tree.parent.type === 'object'">
 				<span
-					:class="{
-						'tree-editor-selection': tree.isSelected,
-					}"
 					@click.stop.prevent="onClickKey"
+					@dblclick="tree.isOpen = !tree.isOpen"
 				>
 					<slot /> </span
 				>:</span

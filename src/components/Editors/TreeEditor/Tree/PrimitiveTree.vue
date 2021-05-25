@@ -1,11 +1,7 @@
 <template>
 	<div :style="tree.styles">
 		<span v-if="tree.parent.type === 'object'">
-			<span
-				:class="{ 'tree-editor-selection': tree.isSelected }"
-				@click.stop.prevent="onClickKey"
-				><slot /></span
-			>:</span
+			<span @click.stop.prevent="onClickKey"><slot /></span>:</span
 		>
 
 		<span

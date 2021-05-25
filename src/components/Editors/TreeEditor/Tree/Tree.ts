@@ -10,7 +10,7 @@ export const treeElementHeight = 19
 export abstract class Tree<T> {
 	public readonly uuid = uuid()
 	public abstract readonly component: Vue.Component
-	public isSelected: boolean = false
+	protected isSelected: boolean = false
 	public abstract type: TTree
 	public abstract height: number
 	protected abstract _value: T
@@ -18,6 +18,7 @@ export abstract class Tree<T> {
 
 	get styles() {
 		return {
+			outline: 'none',
 			contentVisibility: 'auto',
 			containIntrinsicSize: `${this.height}px`,
 		}
@@ -59,6 +60,10 @@ export abstract class Tree<T> {
 
 			return this.parent.children[index][0]
 		}
+	}
+
+	setIsSelected(val: boolean) {
+		this.isSelected = val
 	}
 
 	replace(tree: Tree<unknown>) {
