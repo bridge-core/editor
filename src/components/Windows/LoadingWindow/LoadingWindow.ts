@@ -21,7 +21,6 @@ export class LoadingWindow extends BaseWindow {
 		if (!this.isVisible) super.open()
 	}
 	close() {
-		//new Audio('/audio/click5.ogg').play()
 		this.virtualWindows--
 		this.loadingMessages.pop()
 
@@ -32,7 +31,6 @@ export class LoadingWindow extends BaseWindow {
 		}
 	}
 	closeAll() {
-		//new Audio('/audio/click5.ogg').play()
 		this.virtualWindows = 0
 		this.loadingMessages = []
 		super.close()
