@@ -1,13 +1,9 @@
 <template>
-	<div
-		class="editor-container"
-		@blur="focusEditor"
-		ref="editorContainer"
-		tabindex="-1"
-	>
+	<div class="editor-container" ref="editorContainer" tabindex="-1">
 		<div
 			class="pr-4 code-font"
 			:style="`height: ${height - 56}px; overflow: auto;`"
+			@blur="focusEditor"
 		>
 			<component
 				:is="tab.treeEditor.tree.component"
@@ -16,7 +12,7 @@
 			/>
 		</div>
 
-		<div class="d-flex px-4">
+		<div class="d-flex px-4" @blur="focusEditor">
 			<v-combobox
 				ref="addKeyInput"
 				v-model="keyToAdd"
@@ -107,7 +103,7 @@ export default {
 	},
 	methods: {
 		focusEditor() {
-			this.$refs.editorContainer.focus()
+			if (this.$refs.editorContainer) this.$refs.editorContainer.focus()
 		},
 		onEdit(value) {
 			console.log(value)
