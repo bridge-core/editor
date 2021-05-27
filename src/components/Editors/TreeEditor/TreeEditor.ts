@@ -9,7 +9,7 @@ import { ArrayTree } from './Tree/ArrayTree'
 import { createTree } from './Tree/createTree'
 import { ObjectTree } from './Tree/ObjectTree'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
-import type { Tree } from './Tree/Tree'
+import type { TPrimitiveTree, Tree } from './Tree/Tree'
 import { TreeSelection, TreeValueSelection } from './TreeSelection'
 
 export class TreeEditor {
@@ -122,9 +122,12 @@ export class TreeEditor {
 		this.selections = this.selections.filter((sel) => selection !== sel)
 	}
 	removeSelectionOf(tree: Tree<unknown>) {
-		this.selections = this.selections.filter(
-			(sel) => sel.getTree() !== tree
-		)
+		this.selections = this.selections.filter((sel) => {
+			if (sel.getTree() !== tree) return true
+
+			sel.dispose(false)
+			return false
+		})
 	}
 
 	setSelection(tree: Tree<unknown>, selectPrimitiveValue = false) {
@@ -164,6 +167,25 @@ export class TreeEditor {
 			if (selection instanceof TreeValueSelection) return
 
 			entries.push(selection.addKey(value))
+		})
+
+		this.history.pushAll(entries)
+	}
+
+	addValue(value: string) {
+		let transformedValue: TPrimitiveTree = value
+		if (!Number.isNaN(Number(value))) transformedValue = Number(value)
+		else if (value === 'null') transformedValue = null
+		else if (value === 'true' || value === 'false')
+			transformedValue = value === 'true'
+
+		const entries: HistoryEntry[] = []
+		console.log(value, this.selections)
+		this.forEachSelection((selection) => {
+			if (selection instanceof TreeValueSelection) return
+
+			const entry = selection.addValue(transformedValue)
+			if (entry) entries.push(entry)
 		})
 
 		this.history.pushAll(entries)

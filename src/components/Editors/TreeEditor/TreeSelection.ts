@@ -1,8 +1,9 @@
 import { DeleteEntry } from './History/DeleteEntry'
+import { ReplaceTreeEntry } from './History/ReplaceTree'
 import { ArrayTree } from './Tree/ArrayTree'
 import { ObjectTree } from './Tree/ObjectTree'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
-import { TPrimitiveTree } from './Tree/Tree'
+import { TPrimitiveTree, Tree } from './Tree/Tree'
 import type { TreeEditor } from './TreeEditor'
 
 export class TreeSelection {
@@ -15,6 +16,12 @@ export class TreeSelection {
 
 	getTree() {
 		return this.tree
+	}
+
+	select(tree: ArrayTree | ObjectTree) {
+		this.tree.setIsSelected(false)
+		this.tree = tree
+		this.tree.setIsSelected(true)
 	}
 
 	dispose(removeSel = true) {
@@ -34,17 +41,25 @@ export class TreeSelection {
 
 	addKey(key: string) {
 		const newTree = new ObjectTree(this.tree, {})
-		if (this.tree instanceof ArrayTree) this.tree.children.push(newTree)
-		else this.tree.children.push([key, newTree])
+		const index = this.tree.children.length
 
-		const index = this.tree.children.length - 1
+		this.tree.setOpen(true, true)
 
-		this.tree.setIsSelected(false)
-		this.tree.setOpen(true)
-		newTree.setIsSelected(true)
-		this.tree = newTree
+		if (this.tree instanceof ArrayTree) {
+			this.tree.children.push(newTree)
 
-		return new DeleteEntry(this.tree, index, key)
+			// Pushing a key to an array should add it inside of an object
+			const keyTree = new ObjectTree(newTree, {})
+			newTree.children.push([key, keyTree])
+
+			this.select(keyTree)
+			newTree.setOpen(true)
+		} else {
+			this.tree.children.push([key, newTree])
+			this.select(newTree)
+		}
+
+		return new DeleteEntry(newTree, index, key)
 	}
 
 	addValue(value: TPrimitiveTree) {
@@ -54,13 +69,18 @@ export class TreeSelection {
 
 			this.tree.children.push(newTree)
 			this.parent.setSelection(newTree, true)
-		} else if (Object.keys(this.tree.children).length > 0) {
+			this.dispose()
+
+			return new DeleteEntry(newTree, this.tree.children.length - 1)
+		} else if (Object.keys(this.tree.children).length === 0) {
 			// Otherwise only add value to empty objects
 			const newTree = new PrimitiveTree(this.tree.getParent(), value)
 
 			this.tree.replace(newTree)
 			this.parent.setSelection(newTree, true)
-			this.parent.toggleSelection(this.tree, false)
+			this.dispose()
+
+			return new ReplaceTreeEntry(this.tree, newTree)
 		}
 	}
 }

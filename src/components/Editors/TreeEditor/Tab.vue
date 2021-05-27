@@ -122,16 +122,7 @@ export default {
 		onAddValue(value) {
 			if (value === null) return
 
-			if (!Number.isNaN(Number(value))) value = Number(value)
-			else if (value === 'null') value = null
-			else if (value === 'true' || value === 'false')
-				value = value === 'true'
-
-			this.treeEditor.forEachSelection((selection) => {
-				if (selection instanceof TreeValueSelection) return
-
-				selection.addValue(value)
-			})
+			this.treeEditor.addValue(value)
 
 			this.$nextTick(() => (this.valueToAdd = ''))
 		},

@@ -40,8 +40,8 @@ export class ObjectTree extends Tree<object> {
 		return this._isOpen
 	}
 
-	setOpen(val: boolean) {
-		if (this.hasChildren) this._isOpen = val
+	setOpen(val: boolean, force = false) {
+		if (this.hasChildren || force) this._isOpen = val
 	}
 	toggleOpen() {
 		this.setOpen(!this._isOpen)
