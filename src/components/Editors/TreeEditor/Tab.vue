@@ -115,12 +115,7 @@ export default {
 		onAddKey(value) {
 			if (value === null) return
 
-			console.log(value)
-			this.treeEditor.forEachSelection((selection) => {
-				if (selection instanceof TreeValueSelection) return
-
-				selection.addKey(value)
-			})
+			this.treeEditor.addKey(value)
 
 			this.$nextTick(() => (this.keyToAdd = ''))
 		},

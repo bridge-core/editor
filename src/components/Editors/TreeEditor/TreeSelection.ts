@@ -1,3 +1,4 @@
+import { DeleteEntry } from './History/DeleteEntry'
 import { ArrayTree } from './Tree/ArrayTree'
 import { ObjectTree } from './Tree/ObjectTree'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
@@ -36,10 +37,14 @@ export class TreeSelection {
 		if (this.tree instanceof ArrayTree) this.tree.children.push(newTree)
 		else this.tree.children.push([key, newTree])
 
+		const index = this.tree.children.length - 1
+
 		this.tree.setIsSelected(false)
 		this.tree.setOpen(true)
 		newTree.setIsSelected(true)
 		this.tree = newTree
+
+		return new DeleteEntry(this.tree, index, key)
 	}
 
 	addValue(value: TPrimitiveTree) {

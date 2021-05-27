@@ -1,15 +1,15 @@
 import { ActionManager } from '../../Actions/ActionManager'
 import { KeyBindingManager } from '../../Actions/KeyBindingManager'
-import { CollectedEntry } from './History/CollectedEntry'
 import { UndoDeleteEntry } from './History/DeleteEntry'
 import { EditorHistory } from './History/EditorHistory'
 import { HistoryEntry } from './History/HistoryEntry'
 import { ReplaceTreeEntry } from './History/ReplaceTree'
+import { TreeTab } from './Tab'
 import { ArrayTree } from './Tree/ArrayTree'
 import { createTree } from './Tree/createTree'
 import { ObjectTree } from './Tree/ObjectTree'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
-import { Tree } from './Tree/Tree'
+import type { Tree } from './Tree/Tree'
 import { TreeSelection, TreeValueSelection } from './TreeSelection'
 
 export class TreeEditor {
@@ -36,9 +36,11 @@ export class TreeEditor {
 		return this._actions
 	}
 
-	constructor(protected json: unknown) {
+	constructor(protected parent: TreeTab, protected json: unknown) {
 		this.tree = createTree(null, json)
 		this.setSelection(this.tree)
+
+		this.history.on((isUnsaved) => this.parent.setIsUnsaved(isUnsaved))
 	}
 
 	receiveContainer(container: HTMLDivElement) {
@@ -76,11 +78,7 @@ export class TreeEditor {
 					sel.dispose()
 				})
 
-				if (entries.length === 1) {
-					this.history.push(entries[0])
-				} else if (entries.length > 1) {
-					this.history.push(new CollectedEntry(entries))
-				}
+				this.history.pushAll(entries)
 			},
 		})
 
@@ -104,6 +102,10 @@ export class TreeEditor {
 				this.history.redo()
 			},
 		})
+	}
+
+	saveState() {
+		this.history.saveState()
 	}
 
 	toJSON() {
@@ -153,5 +155,17 @@ export class TreeEditor {
 					? new TreeValueSelection(this, tree)
 					: new TreeSelection(this, <ArrayTree | ObjectTree>tree)
 			)
+	}
+
+	addKey(value: string) {
+		const entries: HistoryEntry[] = []
+
+		this.forEachSelection((selection) => {
+			if (selection instanceof TreeValueSelection) return
+
+			entries.push(selection.addKey(value))
+		})
+
+		this.history.pushAll(entries)
 	}
 }
