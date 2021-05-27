@@ -10,7 +10,11 @@
 			@click.stop.prevent="tree.toggleOpen()"
 			tabindex="-1"
 		>
-			<v-icon v-if="tree.hasChildren" class="mr-1" small>
+			<v-icon
+				class="mr-1"
+				:style="{ opacity: tree.hasChildren ? null : '60%' }"
+				small
+			>
 				mdi-chevron-right
 			</v-icon>
 			<span v-if="tree.parent.type === 'object'">

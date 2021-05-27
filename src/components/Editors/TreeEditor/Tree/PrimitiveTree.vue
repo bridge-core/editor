@@ -1,5 +1,8 @@
 <template>
 	<div :style="tree.styles">
+		<v-icon class="mr-1" :style="{ opacity: '60%' }" small>
+			mdi-chevron-right
+		</v-icon>
 		<span v-if="tree.parent.type === 'object'">
 			<span @click.stop.prevent="onClickKey"><slot /></span>:</span
 		>
