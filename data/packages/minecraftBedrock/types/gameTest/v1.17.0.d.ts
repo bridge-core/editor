@@ -1,3 +1,14 @@
+declare interface Test {
+	/**
+	 * Returns all players in the server
+	 */
+	getPlayers(): Player[]
+	/**
+	 * Returns an array of all entities at the given block location
+	 */
+	getEntitiesAtBlockLocation(position: BlockLocation): Entity[]
+}
+
 declare interface Container {
 	/**
 	 * Adds itemStack to the container at the given slot
@@ -48,4 +59,11 @@ declare interface EntityComponent {
 	 * The container of this component. Can only be used on the "inventory" component
 	 */
 	container: Container
+}
+
+declare interface Player {
+	/**
+	 * Gets the player's name
+	 */
+	name: string
 }
