@@ -10,13 +10,13 @@ export class AudioManager {
 					this.currentAudioPlaying.duration ==
 				1
 			) {
-				this.currentAudioPlaying = new Audio('/audio/' + audioName)
+				this.currentAudioPlaying = new Audio('./audio/' + audioName)
 				this.currentAudioPlaying.volume =
 					audioVolume * this.masterVolume
 				this.currentAudioPlaying.play()
 			}
 		} else {
-			this.currentAudioPlaying = new Audio('/audio/' + audioName)
+			this.currentAudioPlaying = new Audio('./audio/' + audioName)
 			this.currentAudioPlaying.volume = audioVolume
 			this.currentAudioPlaying.play()
 		}
