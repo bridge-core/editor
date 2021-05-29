@@ -6,7 +6,7 @@ import { set, del } from '@vue/composition-api'
 
 export class ObjectTree extends Tree<object> {
 	public component = ObjecTreeComponent
-	public isOpen = false
+	public _isOpen = false
 	public readonly type = 'object'
 	protected _children: [string, Tree<unknown>][]
 
@@ -31,6 +31,20 @@ export class ObjectTree extends Tree<object> {
 	}
 	get children() {
 		return this._children
+	}
+	get hasChildren() {
+		return this._children.length > 0
+	}
+	get isOpen() {
+		if (!this.hasChildren) return false
+		return this._isOpen
+	}
+
+	setOpen(val: boolean, force = false) {
+		if (this.hasChildren || force) this._isOpen = val
+	}
+	toggleOpen() {
+		this.setOpen(!this._isOpen)
 	}
 
 	toJSON() {

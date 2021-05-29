@@ -1,13 +1,9 @@
 <template>
-	<div
-		class="editor-container"
-		@blur="focusEditor"
-		ref="editorContainer"
-		tabindex="-1"
-	>
+	<div class="editor-container" ref="editorContainer" tabindex="-1">
 		<div
 			class="pr-4 code-font"
 			:style="`height: ${height - 56}px; overflow: auto;`"
+			@blur="focusEditor"
 		>
 			<component
 				:is="tab.treeEditor.tree.component"
@@ -16,7 +12,7 @@
 			/>
 		</div>
 
-		<div class="d-flex px-4">
+		<div class="d-flex px-4" @blur="focusEditor">
 			<v-combobox
 				ref="addKeyInput"
 				v-model="keyToAdd"
@@ -107,7 +103,7 @@ export default {
 	},
 	methods: {
 		focusEditor() {
-			this.$refs.editorContainer.focus()
+			if (this.$refs.editorContainer) this.$refs.editorContainer.focus()
 		},
 		onEdit(value) {
 			console.log(value)
@@ -119,28 +115,14 @@ export default {
 		onAddKey(value) {
 			if (value === null) return
 
-			console.log(value)
-			this.treeEditor.forEachSelection((selection) => {
-				if (selection instanceof TreeValueSelection) return
-
-				selection.addKey(value)
-			})
+			this.treeEditor.addKey(value)
 
 			this.$nextTick(() => (this.keyToAdd = ''))
 		},
 		onAddValue(value) {
 			if (value === null) return
 
-			if (!Number.isNaN(Number(value))) value = Number(value)
-			else if (value === 'null') value = null
-			else if (value === 'true' || value === 'false')
-				value = value === 'true'
-
-			this.treeEditor.forEachSelection((selection) => {
-				if (selection instanceof TreeValueSelection) return
-
-				selection.addValue(value)
-			})
+			this.treeEditor.addValue(value)
 
 			this.$nextTick(() => (this.valueToAdd = ''))
 		},
@@ -150,7 +132,14 @@ export default {
 
 <style>
 .tree-editor-selection {
-	outline: 1px solid white;
+	border-radius: 4px;
+	font-weight: bold;
+	font-style: italic;
+	text-decoration: underline;
+	background: rgba(170, 170, 170, 0.2);
+}
+.theme--dark .tree-editor-selection {
+	background: rgba(100, 100, 100, 0.5);
 }
 .editor-container {
 	outline: none;

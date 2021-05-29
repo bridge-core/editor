@@ -1,11 +1,15 @@
 <template>
 	<div :style="tree.styles">
+		<v-icon class="mr-1" :style="{ opacity: '60%' }" small>
+			mdi-chevron-right
+		</v-icon>
 		<span v-if="tree.parent.type === 'object'">
-			<span
-				:class="{ 'tree-editor-selection': tree.isSelected }"
-				@click.stop.prevent="onClickKey"
-				><slot /></span
-			>:</span
+			<span @click.stop.prevent="onClickKey"><slot /></span>:</span
+		>
+
+		<!-- Debugging helper -->
+		<span v-if="isDevMode">
+			s: {{ tree.type }} p: {{ tree.parent.type }}</span
 		>
 
 		<span
@@ -25,11 +29,12 @@
 </template>
 
 <script>
+import { DevModeMixin } from '/@/components/Mixins/DevMode'
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 
 export default {
 	name: 'PrimitiveTree',
-	mixins: [HighlighterMixin(['atom', 'string', 'number'])],
+	mixins: [HighlighterMixin(['atom', 'string', 'number']), DevModeMixin],
 	props: {
 		tree: Object,
 		treeEditor: Object,

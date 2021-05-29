@@ -27,6 +27,7 @@ export class TreeTab extends FileTab {
 	}
 	async setup() {
 		this._treeEditor = new TreeEditor(
+			this,
 			parse(await this.fileHandle.getFile().then((file) => file.text()))
 		)
 		// @ts-ignore
@@ -46,8 +47,13 @@ export class TreeTab extends FileTab {
 
 	loadEditor() {}
 
-	async save() {}
-	protected async saveFile(app: App) {}
+	async save() {
+		const app = await App.getApp()
+		const fileContent = JSON.stringify(this.treeEditor.toJSON(), null, '\t')
+
+		await app.fileSystem.write(this.fileHandle, fileContent)
+		this.treeEditor.saveState()
+	}
 
 	async paste() {}
 }

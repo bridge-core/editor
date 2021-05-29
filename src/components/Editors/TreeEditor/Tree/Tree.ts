@@ -10,7 +10,7 @@ export const treeElementHeight = 19
 export abstract class Tree<T> {
 	public readonly uuid = uuid()
 	public abstract readonly component: Vue.Component
-	public isSelected: boolean = false
+	protected isSelected: boolean = false
 	public abstract type: TTree
 	public abstract height: number
 	protected abstract _value: T
@@ -18,6 +18,7 @@ export abstract class Tree<T> {
 
 	get styles() {
 		return {
+			outline: 'none',
 			contentVisibility: 'auto',
 			containIntrinsicSize: `${this.height}px`,
 		}
@@ -32,58 +33,51 @@ export abstract class Tree<T> {
 		return this.parent
 	}
 
+	protected findParentIndex() {
+		if (!this.parent)
+			throw new Error(`Cannot findParentIndex for tree without parent`)
+
+		let index: number
+
+		if (this.parent.type === 'array') {
+			index = this.parent.children.findIndex(
+				(currentTree) => currentTree === this
+			)
+		} else {
+			index = this.parent.children.findIndex(
+				([_, currentTree]) => currentTree === this
+			)
+		}
+
+		if (index === -1) {
+			console.log(this)
+			throw new Error(
+				`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
+			)
+		}
+
+		return index
+	}
+
 	get key(): string | number {
 		if (!this.parent)
 			throw new Error(`Trees without parent do not have a key`)
 
-		if (this.parent.type === 'array') {
-			const index = this.parent.children.findIndex(
-				(currentTree) => currentTree === this
-			)
+		const parentIndex = this.findParentIndex()
 
-			if (index === -1)
-				throw new Error(
-					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
-				)
+		return this.parent.type === 'array'
+			? parentIndex
+			: this.parent.children[parentIndex][0]
+	}
 
-			return index
-		} else {
-			const index = this.parent.children.findIndex(
-				([_, currentTree]) => currentTree === this
-			)
-
-			if (index === -1)
-				throw new Error(
-					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
-				)
-
-			return this.parent.children[index][0]
-		}
+	setIsSelected(val: boolean) {
+		this.isSelected = val
 	}
 
 	replace(tree: Tree<unknown>) {
 		if (!this.parent) throw new Error(`Cannot replace tree without parent`)
 
-		let index: number
-		if (this.parent.type === 'array') {
-			index = this.parent.children.findIndex(
-				(currentTree) => currentTree === this
-			)
-
-			if (index === -1)
-				throw new Error(
-					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
-				)
-		} else {
-			index = this.parent.children.findIndex(
-				([_, currentTree]) => currentTree === this
-			)
-
-			if (index === -1)
-				throw new Error(
-					`Invalid state: TreeChild with parent couldn't be found inside of parent's children`
-				)
-		}
+		const index = this.findParentIndex()
 
 		set(
 			this.parent.children,

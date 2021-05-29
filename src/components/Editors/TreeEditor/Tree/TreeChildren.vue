@@ -7,9 +7,13 @@
 			:tree="child"
 			:treeEditor="treeEditor"
 		>
-			<Highlight :def="tree.type === 'object' ? stringDef : numberDef">{{
-				wrapKey(key)
-			}}</Highlight>
+			<Highlight
+				:class="{
+					'tree-editor-selection': child.isSelected,
+				}"
+				:def="tree.type === 'object' ? stringDef : numberDef"
+				>{{ wrapKey(key) }}</Highlight
+			>
 		</component>
 	</div>
 </template>

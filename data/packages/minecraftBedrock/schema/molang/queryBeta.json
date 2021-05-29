@@ -50,6 +50,8 @@
 		"query.time_of_day",
 		"query.is_playing_dead",
 		"query.actor_property",
-		"query.has_actor_property"
+		"query.has_actor_property",
+		"query.show_bottom",
+		"query.death_time"
 	]
 }
