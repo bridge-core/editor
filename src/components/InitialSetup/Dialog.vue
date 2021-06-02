@@ -50,10 +50,10 @@
 </template>
 
 <script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
-import BridgeFolderStep from './Steps/BridgeFolder'
-import ComMojangStep from './Steps/ComMojang'
-import EditorTypeStep from './Steps/EditorType'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import BridgeFolderStep from './Steps/BridgeFolder.vue'
+import ComMojangStep from './Steps/ComMojang.vue'
+import EditorTypeStep from './Steps/EditorType.vue'
 import { FileSystemSetup } from '/@/components/FileSystem/Setup.ts'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 import { InitialSetup } from './InitialSetup.ts'

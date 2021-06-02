@@ -1,8 +1,7 @@
-import { dirname } from 'path'
 import { IPresetFileOpts } from './PresetWindow'
 import { transformString } from './TransformString'
 import { App } from '/@/App'
-import { extname } from '/@/utils/path'
+import { extname, dirname } from '/@/utils/path'
 
 export type TCreateFile = [string, string, IPresetFileOpts?]
 
