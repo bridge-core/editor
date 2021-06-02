@@ -4,23 +4,22 @@ export class AudioManager {
 	masterVolume = 1
 
 	playAudio(audioName = 'click5.ogg', audioVolume = 1) {
+		var audioPath = process.env.BASE_URL + 'audio/'
+		console.warn(audioPath)
 		if (this.currentAudioPlaying) {
 			if (
 				this.currentAudioPlaying.currentTime /
 					this.currentAudioPlaying.duration ==
 				1
 			) {
-				this.currentAudioPlaying = new Audio('/audio/' + audioName)
+				this.currentAudioPlaying = new Audio(audioPath + audioName)
 				this.currentAudioPlaying.volume =
 					audioVolume * this.masterVolume
 				this.currentAudioPlaying.play()
 			}
 		} else {
-			this.currentAudioPlaying = new Audio(
-				'https://github.com/bridge-core/editor/raw/main/public/audio/' +
-					audioName
-			)
-			this.currentAudioPlaying.volume = audioVolume
+			this.currentAudioPlaying = new Audio(audioPath + audioName)
+			this.currentAudioPlaying.volume = audioVolume * this.masterVolume
 			this.currentAudioPlaying.play()
 		}
 	}
