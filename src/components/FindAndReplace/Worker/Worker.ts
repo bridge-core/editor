@@ -29,7 +29,7 @@ const knownTextFiles = new Set([
 	'.molang',
 	'.json',
 ])
-const ignoreFolders = new Set(['.bridge', 'builds'])
+const ignoreFolders = new Set(['.bridge', 'builds', '.git s'])
 const textPreviewLength = 100
 
 export class FindAndReplace {
