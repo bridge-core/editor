@@ -364,10 +364,12 @@ export class Compiler {
 						aliases.includes(dependency)
 					)
 
-				if (!depFile)
-					throw new Error(
+				if (!depFile) {
+					console.error(
 						`Undefined file dependency: "${filePath}" requires "${dependency}"`
 					)
+					continue
+				}
 
 				// New dependency discovered
 				if (!oldDeps.has(depFile.filePath)) {
@@ -524,7 +526,7 @@ export class Compiler {
 				// @ts-expect-error TypeScript is not smart enough
 				await hook(...args)
 			} catch (err) {
-				throw new Error(
+				console.error(
 					`Compiler plugin "${pluginName}#${hookName}" threw error "${err}"`
 				)
 			}
