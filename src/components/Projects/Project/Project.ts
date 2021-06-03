@@ -185,6 +185,7 @@ export abstract class Project {
 			this.packIndexer.updateFile(filePath),
 			this.compilerManager.updateFiles('default.json', [filePath]),
 		])
+
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
 	}
 	async updateFiles(filePaths: string[]) {

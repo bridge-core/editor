@@ -94,15 +94,18 @@ export class Compiler {
 		await this.processFileMap()
 	}
 	async compileFiles(files: string[]) {
+		const changedFiles = this.getChangedFiles(files)
 		const flatFiles = this.flatFiles(files, new Set())
 		this.parent.progress.setTotal(flatFiles.size * 2 + 5)
 
-		this.addMatchingGlobImporters(flatFiles, this.getChangedFiles(files))
+		this.addMatchingGlobImporters(flatFiles, changedFiles)
 
+		// console.log([...flatFiles])
 		await this.resolveFiles(flatFiles)
 		await this.requireFiles(flatFiles)
 		const sortedFiles = resolveFileOrder([...flatFiles], this.files)
 		// console.log([...sortedFiles].map((file) => file.filePath))
+		// console.log(sortedFiles)
 		await this.finalizeFiles(sortedFiles)
 	}
 	async compileWithFile(filePath: string, file: File) {
@@ -168,7 +171,8 @@ export class Compiler {
 		files: string[],
 		fileSet: Set<string>,
 		ignoreSet = new Set<string>(),
-		addUpdateFiles = true
+		addUpdateFiles = true,
+		addDependencyFiles = true
 	) {
 		for (const filePath of files) {
 			if (fileSet.has(filePath) || ignoreSet.has(filePath)) continue
@@ -179,12 +183,12 @@ export class Compiler {
 			ignoreSet.add(filePath)
 
 			// First: Add dependencies
-			if (file)
+			if (file && addDependencyFiles)
 				this.flatFiles(
 					[...file.dependencies],
 					fileSet,
 					ignoreSet,
-					addUpdateFiles
+					false
 				)
 
 			// Then: Add current file
@@ -223,7 +227,13 @@ export class Compiler {
 			changedFiles.add(filePath)
 			if (!file) continue
 
-			this.flatFiles([...file.updateFiles], changedFiles, ignoreSet)
+			this.flatFiles(
+				[...file.updateFiles],
+				changedFiles,
+				ignoreSet,
+				true,
+				false
+			)
 
 			ignoreSet.delete(filePath)
 		}

@@ -5,7 +5,7 @@ export class AudioManager {
 
 	playAudio(audioName = 'click5.ogg', audioVolume = 1) {
 		var audioPath = process.env.BASE_URL + 'audio/'
-		console.warn(audioPath)
+		// console.warn(audioPath)
 		if (this.currentAudioPlaying) {
 			if (
 				this.currentAudioPlaying.currentTime /

@@ -148,6 +148,7 @@ export class TabSystem extends MonacoHolder {
 
 		if (!tab.isForeignFile && tab instanceof FileTab) {
 			await this.project.updateFile(tab.getProjectPath())
+
 			await this.project.recentFiles.add({
 				path: tab.getPath(),
 				name: tab.name,
