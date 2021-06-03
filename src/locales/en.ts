@@ -439,8 +439,8 @@ export default {
 			audio: {
 				name: 'Audio',
 				volume: {
-					name: 'Mute',
-					description: 'Mute or unmute all bridge sounds',
+					name: 'Audio Enabled',
+					description: 'Enable or disable all bridge sounds',
 				},
 			},
 			actions: {

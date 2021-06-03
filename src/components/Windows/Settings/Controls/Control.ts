@@ -45,5 +45,7 @@ export abstract class Control<T> {
 
 		if (typeof this.config.onChange === 'function')
 			await this.config.onChange(value)
+
+		App.audioManager.playAudio('click5.ogg', 1)
 	}
 }

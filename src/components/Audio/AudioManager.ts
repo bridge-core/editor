@@ -4,22 +4,23 @@ export class AudioManager {
 	masterVolume = 1
 
 	playAudio(audioName = 'click5.ogg', audioVolume = 1) {
-		// Disabled for now
-		// if (this.currentAudioPlaying) {
-		// 	if (
-		// 		this.currentAudioPlaying.currentTime /
-		// 			this.currentAudioPlaying.duration ==
-		// 		1
-		// 	) {
-		// 		this.currentAudioPlaying = new Audio('/audio/' + audioName)
-		// 		this.currentAudioPlaying.volume =
-		// 			audioVolume * this.masterVolume
-		// 		this.currentAudioPlaying.play()
-		// 	}
-		// } else {
-		// 	this.currentAudioPlaying = new Audio('/audio/' + audioName)
-		// 	this.currentAudioPlaying.volume = audioVolume
-		// 	this.currentAudioPlaying.play()
-		// }
+		var audioPath = process.env.BASE_URL + 'audio/'
+		console.warn(audioPath)
+		if (this.currentAudioPlaying) {
+			if (
+				this.currentAudioPlaying.currentTime /
+					this.currentAudioPlaying.duration ==
+				1
+			) {
+				this.currentAudioPlaying = new Audio(audioPath + audioName)
+				this.currentAudioPlaying.volume =
+					audioVolume * this.masterVolume
+				this.currentAudioPlaying.play()
+			}
+		} else {
+			this.currentAudioPlaying = new Audio(audioPath + audioName)
+			this.currentAudioPlaying.volume = audioVolume * this.masterVolume
+			this.currentAudioPlaying.play()
+		}
 	}
 }
