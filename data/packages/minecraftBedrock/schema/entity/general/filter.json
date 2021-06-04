@@ -1235,6 +1235,23 @@
 					}
 				}
 			}
+		},
+		{
+			"if": {
+				"properties": {
+					"test": {
+						"const": "in_block"
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"value": {
+						"type": "string",
+						"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+					}
+				}
+			}
 		}
 	]
 }
