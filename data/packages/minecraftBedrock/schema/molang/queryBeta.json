@@ -52,6 +52,9 @@
 		"query.actor_property",
 		"query.has_actor_property",
 		"query.show_bottom",
-		"query.death_time"
+		"query.death_time",
+		"query.bone_aabb",
+		"query.bone_origin",
+		"query.bone_rotation"
 	]
 }
