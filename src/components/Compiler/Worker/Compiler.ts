@@ -188,7 +188,8 @@ export class Compiler {
 					[...file.dependencies],
 					fileSet,
 					ignoreSet,
-					false
+					false,
+					true
 				)
 
 			// Then: Add current file
@@ -201,7 +202,8 @@ export class Compiler {
 					[...file.updateFiles],
 					fileSet,
 					ignoreSet,
-					addUpdateFiles
+					addUpdateFiles,
+					addDependencyFiles
 				)
 
 			ignoreSet.delete(filePath)
