@@ -224,14 +224,10 @@ export async function setupSettings(settings: SettingsWindow) {
 			category: 'audio',
 			name: 'windows.settings.audio.volume.name',
 			description: 'windows.settings.audio.volume.description',
-			key: 'volume',
-			default: true,
-			onChange: async (val) => {
-				if (val) {
-					App.audioManager.masterVolume = 1
-				} else {
-					App.audioManager.masterVolume = 0
-				}
+			key: 'playAudio',
+			default: false,
+			onChange: (val) => {
+				App.audioManager.isMuted = !val
 			},
 		})
 	)
