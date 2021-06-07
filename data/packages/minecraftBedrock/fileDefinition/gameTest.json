@@ -9,14 +9,10 @@
 		"BP/scripts/gametests/**/*.ts"
 	],
 	"types": [
-		"types/gameTest/common.d.ts",
+		"types/gameTest/entityComponentData.d.ts",
 		[
 			"types/gameTest/v1.16.220.d.ts",
-			{ "targetVersion": ["<=", "v1.16.210"] }
-		],
-		[
-			"types/gameTest/v1.16.230.d.ts",
-			{ "targetVersion": [">=", "v1.16.220"] }
+			{ "targetVersion": ["<=", "v1.16.220"] }
 		],
 		["types/gameTest/v1.17.0.d.ts", { "targetVersion": [">=", "v1.17.0"] }]
 	]
