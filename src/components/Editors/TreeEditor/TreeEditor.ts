@@ -55,6 +55,9 @@ export class TreeEditor {
 			this.parent.setIsUnsaved(isUnsaved)
 		})
 		this.history.changed.on(() => {
+			this.propertySuggestions = []
+			this.valueSuggestions = []
+
 			this.parent.updateCache()
 		})
 
@@ -91,14 +94,13 @@ export class TreeEditor {
 		} else if (tree) {
 			const treePath = tree.path
 			const schemas = this.schemaRoot?.getSchemasFor(treePath)
-			console.log(treePath, schemas)
+
 			if (schemas)
 				suggestions = schemas
 					.filter((schema) => schema !== undefined)
 					.map((schema) => schema.getCompletionItems(json))
 					.flat()
 		}
-		console.log(suggestions)
 
 		this.propertySuggestions = suggestions
 			.filter(
@@ -136,6 +138,7 @@ export class TreeEditor {
 
 		this.actions.create({
 			keyBinding: ['DELETE', 'BACKSPACE'],
+			prevent: (el) => el.tagName !== 'SUMMARY' && el.tagName !== 'DIV',
 			onTrigger: () => {
 				const entries: HistoryEntry[] = []
 
