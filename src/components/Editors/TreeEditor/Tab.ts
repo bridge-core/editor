@@ -4,7 +4,28 @@ import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { TreeEditor } from './TreeEditor'
 import json5 from 'json5'
-import { settingsState } from '../../Windows/Settings/SettingsState'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { debounce } from 'lodash-es'
+
+const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
+	async (tab) => {
+		const fileContent = JSON.stringify(tab.treeEditor.toJSON())
+		const app = await App.getApp()
+		await app.project.packIndexer.updateFile(
+			tab.getProjectPath(),
+			fileContent
+		)
+		await app.project.jsonDefaults.updateDynamicSchemas(
+			tab.getProjectPath()
+		)
+
+		app.project.fileChange.dispatch(
+			tab.getProjectPath(),
+			await tab.getFile()
+		)
+	},
+	600
+)
 
 export class TreeTab extends FileTab {
 	component = TreeTabComponent
@@ -39,6 +60,10 @@ export class TreeTab extends FileTab {
 	}
 	async getFile() {
 		return new File([JSON.stringify(this.treeEditor.toJSON())], this.name)
+	}
+
+	updateCache() {
+		throttledCacheUpdate(this)
 	}
 
 	async onActivate() {}

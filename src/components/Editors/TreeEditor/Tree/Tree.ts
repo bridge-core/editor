@@ -32,6 +32,10 @@ export abstract class Tree<T> {
 	getParent() {
 		return this.parent
 	}
+	get path(): (string | number)[] {
+		if (!this.parent) return []
+		else return [...this.parent.path, this.key]
+	}
 
 	protected findParentIndex() {
 		if (!this.parent)

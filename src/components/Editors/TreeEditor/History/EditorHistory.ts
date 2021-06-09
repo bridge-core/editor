@@ -11,6 +11,7 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
  */
 
 export class EditorHistory extends EventDispatcher<boolean> {
+	public readonly changed = new EventDispatcher<void>()
 	protected undoStack: HistoryEntry[] = []
 	protected redoStack: HistoryEntry[] = []
 	protected lastUndoLength = 0
@@ -42,6 +43,7 @@ export class EditorHistory extends EventDispatcher<boolean> {
 		this.redoStack.push(entry.undo())
 
 		this.updateHasChanges()
+		this.changed.dispatch()
 	}
 
 	redo() {
@@ -55,6 +57,7 @@ export class EditorHistory extends EventDispatcher<boolean> {
 		this.undoStack.push(entry.undo())
 
 		this.updateHasChanges()
+		this.changed.dispatch()
 	}
 
 	push(entry: HistoryEntry) {
@@ -62,6 +65,7 @@ export class EditorHistory extends EventDispatcher<boolean> {
 		this.redoStack = []
 
 		this.updateHasChanges()
+		this.changed.dispatch()
 	}
 
 	pushAll(entries: HistoryEntry[]) {

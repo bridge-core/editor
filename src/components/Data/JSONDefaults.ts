@@ -6,15 +6,23 @@ import { Project } from '../Projects/Project/Project'
 import { IDisposable } from '/@/types/disposable'
 import { FileTab } from '../TabSystem/FileTab'
 import { SchemaScript } from './SchemaScript'
+import { SchemaManager } from '../JSONSchema/Manager'
+import { EventDispatcher } from '../Common/Event/EventDispatcher'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
-export class JsonDefaults {
+export class JsonDefaults extends EventDispatcher<void> {
 	protected loadedSchemas = false
 	protected localSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 	protected disposables: IDisposable[] = []
 
-	constructor(protected project: Project) {}
+	constructor(protected project: Project) {
+		super()
+	}
+
+	get isReady() {
+		return this.loadedSchemas && loadedGlobalSchemas
+	}
 
 	async activate() {
 		console.time('[SETUP] JSONDefaults')
@@ -80,6 +88,11 @@ export class JsonDefaults {
 				Object.assign({}, globalSchemas, this.localSchemas)
 			),
 		})
+		SchemaManager.setJSONDefaults(
+			Object.assign({}, globalSchemas, this.localSchemas)
+		)
+
+		this.dispatch()
 	}
 
 	async reload() {

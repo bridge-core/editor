@@ -17,6 +17,7 @@
 				ref="addKeyInput"
 				v-model="keyToAdd"
 				@change="onAddKey"
+				:items="treeEditor.propertySuggestions"
 				:label="t('editors.treeEditor.addObject')"
 				outlined
 				dense
@@ -27,6 +28,7 @@
 				v-model="valueToAdd"
 				@change="onAddValue"
 				:disabled="isGlobal"
+				:items="treeEditor.valueSuggestions"
 				class="mx-4"
 				:label="t('editors.treeEditor.addValue')"
 				outlined

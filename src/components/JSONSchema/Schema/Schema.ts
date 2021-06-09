@@ -1,0 +1,31 @@
+export interface ISchemaResult {
+	diagnostics: IDiagnostic[]
+}
+
+export interface IDiagnostic {
+	message: string
+	// location: string
+}
+
+export interface ICompletionItem {
+	type: 'property' | 'value'
+	value: unknown
+}
+
+export abstract class Schema {
+	constructor(
+		protected location: string,
+		protected key: string,
+		protected value: unknown
+	) {}
+
+	// abstract validate(obj: unknown): IDiagnostic[]
+	validate(obj: unknown): IDiagnostic[] {
+		return []
+	}
+	isValid(obj: unknown) {
+		return this.validate(obj).length === 0
+	}
+	abstract getCompletionItems(obj: unknown): ICompletionItem[]
+	abstract getSchemasFor(location: (string | number)[]): Schema[]
+}

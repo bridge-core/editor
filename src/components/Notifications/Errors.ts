@@ -14,7 +14,7 @@ export function createErrorNotification(error: Error): IDisposable {
 	if (short.length > 24)
 		short = message.length > 24 ? `${message.substr(0, 23)}...` : message
 
-	App.audioManager.playAudio('error_002.ogg', 1)
+	App?.audioManager?.playAudio('error_002.ogg', 1)
 
 	const notification = createNotification({
 		icon: 'mdi-alert-circle-outline',
@@ -38,11 +38,11 @@ export function createErrorNotification(error: Error): IDisposable {
 window.addEventListener('error', (event) => {
 	createErrorNotification(event.error ?? event)
 
-	App.ready.once((app) => app.windows.loadingWindow.closeAll())
+	App?.ready?.once((app) => app.windows.loadingWindow.closeAll())
 })
 
 window.onunhandledrejection = (event: PromiseRejectionEvent) => {
 	createErrorNotification(new Error(event.reason))
 
-	App.ready.once((app) => app.windows.loadingWindow.closeAll())
+	App?.ready?.once((app) => app.windows.loadingWindow.closeAll())
 }

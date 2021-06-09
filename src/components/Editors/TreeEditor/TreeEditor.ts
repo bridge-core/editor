@@ -1,5 +1,10 @@
-import { ActionManager } from '../../Actions/ActionManager'
-import { KeyBindingManager } from '../../Actions/KeyBindingManager'
+import { ActionManager } from '/@/components/Actions/ActionManager'
+import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { FileType } from '/@/components/Data/FileType'
+import { SchemaManager } from '/@/components/JSONSchema/Manager'
+import { RootSchema } from '/@/components/JSONSchema/Schema/Root'
+import { ICompletionItem } from '/@/components/JSONSchema/Schema/Schema'
 import { UndoDeleteEntry } from './History/DeleteEntry'
 import { EditorHistory } from './History/EditorHistory'
 import { HistoryEntry } from './History/HistoryEntry'
@@ -11,13 +16,19 @@ import { ObjectTree } from './Tree/ObjectTree'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
 import type { TPrimitiveTree, Tree } from './Tree/Tree'
 import { TreeSelection, TreeValueSelection } from './TreeSelection'
+import { App } from '/@/App'
 
 export class TreeEditor {
+	public propertySuggestions: string[] = []
+	public valueSuggestions: string[] = []
+
 	protected tree: Tree<unknown>
 	protected selections: (TreeSelection | TreeValueSelection)[] = []
 	protected _keyBindings: KeyBindingManager | undefined
 	protected _actions: ActionManager | undefined
 	protected history = new EditorHistory(this)
+	protected schemaRoot?: RootSchema
+	protected selectionChange = new EventDispatcher<void>()
 
 	get keyBindings() {
 		if (!this._keyBindings)
@@ -40,7 +51,83 @@ export class TreeEditor {
 		this.tree = createTree(null, json)
 		this.setSelection(this.tree)
 
-		this.history.on((isUnsaved) => this.parent.setIsUnsaved(isUnsaved))
+		this.history.on((isUnsaved) => {
+			this.parent.setIsUnsaved(isUnsaved)
+		})
+		this.history.changed.on(() => {
+			this.parent.updateCache()
+		})
+
+		App.getApp().then(async (app) => {
+			await app.projectManager.projectReady.fired
+
+			this.parent.once(() => {
+				if (app.project.jsonDefaults.isReady) this.createSchemaRoot()
+			})
+
+			app.project.jsonDefaults.on(() => {
+				if (this.parent.hasFired) this.createSchemaRoot()
+			})
+		})
+
+		this.selectionChange.on(() => this.updateSuggestions())
+	}
+
+	updateSuggestions() {
+		this.propertySuggestions = []
+		this.valueSuggestions = []
+
+		const tree = <ArrayTree | ObjectTree | undefined>this.selections
+			.find((sel) => {
+				const type = sel.getTree().type
+				return type === 'object' || type === 'array'
+			})
+			?.getTree()
+		const json = tree?.toJSON()
+
+		let suggestions: ICompletionItem[] = []
+		if (this.selections.length === 0 || tree === this.tree) {
+			suggestions = this.schemaRoot?.getCompletionItems(json) ?? []
+		} else if (tree) {
+			const treePath = tree.path
+			const schemas = this.schemaRoot?.getSchemasFor(treePath)
+			console.log(treePath, schemas)
+			if (schemas)
+				suggestions = schemas
+					.filter((schema) => schema !== undefined)
+					.map((schema) => schema.getCompletionItems(json))
+					.flat()
+		}
+		console.log(suggestions)
+
+		this.propertySuggestions = suggestions
+			.filter(
+				(suggestion) =>
+					suggestion.type === 'property' &&
+					!(<any>(tree ?? this.tree)).children.find((test: any) => {
+						if (test.type === 'array') return false
+						return test[0] === suggestion.value
+					})
+			)
+			.map((suggestion) => `${suggestion.value}`)
+
+		// Only suggest values for empty objects
+		if ((tree?.children?.length ?? 1) === 0) {
+			this.valueSuggestions = suggestions
+				.filter((suggestion) => suggestion.type === 'value')
+				.map((suggestion) => `${suggestion.value}`)
+		}
+	}
+
+	createSchemaRoot() {
+		const schemaUri = FileType.get(this.parent.getProjectPath())?.schema
+		if (schemaUri)
+			this.schemaRoot = new RootSchema(
+				schemaUri,
+				'global',
+				SchemaManager.request(schemaUri)
+			)
+		this.updateSuggestions()
 	}
 
 	receiveContainer(container: HTMLDivElement) {
@@ -120,6 +207,7 @@ export class TreeEditor {
 
 	removeSelection(selection: TreeSelection | TreeValueSelection) {
 		this.selections = this.selections.filter((sel) => selection !== sel)
+		this.selectionChange.dispatch()
 	}
 	removeSelectionOf(tree: Tree<unknown>) {
 		this.selections = this.selections.filter((sel) => {
@@ -128,6 +216,7 @@ export class TreeEditor {
 			sel.dispose(false)
 			return false
 		})
+		this.selectionChange.dispatch()
 	}
 
 	setSelection(tree: Tree<unknown>, selectPrimitiveValue = false) {
@@ -137,6 +226,7 @@ export class TreeEditor {
 				? new TreeValueSelection(this, tree)
 				: new TreeSelection(this, <ArrayTree | ObjectTree>tree),
 		]
+		this.selectionChange.dispatch()
 	}
 	toggleSelection(tree: Tree<unknown>, selectPrimitiveValue = false) {
 		let didRemoveSelection = false
@@ -158,6 +248,7 @@ export class TreeEditor {
 					? new TreeValueSelection(this, tree)
 					: new TreeSelection(this, <ArrayTree | ObjectTree>tree)
 			)
+		this.selectionChange.dispatch()
 	}
 
 	addKey(value: string) {
