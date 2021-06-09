@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'path-browserify'
 
 export const dirname = path.dirname
 export const join = path.join

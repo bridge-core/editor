@@ -7,12 +7,7 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
-import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
-import { createFromGeometry } from '../EntityModel/create/fromGeometry'
-import { createFromClientEntity } from '../EntityModel/create/fromClientEntity'
-import { createFromEntity } from '../EntityModel/create/fromEntity'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {

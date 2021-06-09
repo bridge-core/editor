@@ -15,7 +15,6 @@ export class LoadingWindow extends BaseWindow {
 	}
 
 	open(message?: string) {
-		//new Audio('/audio/click5.ogg').play()
 		this.virtualWindows++
 		this.loadingMessages.push(message)
 		if (!this.isVisible) super.open()

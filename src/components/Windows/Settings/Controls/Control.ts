@@ -1,6 +1,6 @@
-import Vue from 'vue'
 import { settingsState } from '../SettingsState'
 import { App } from '/@/App'
+import { set } from '@vue/composition-api'
 
 export interface IControl<T> {
 	category: string
@@ -24,16 +24,16 @@ export abstract class Control<T> {
 		control: IControl<T>,
 		protected state = settingsState
 	) {
-		Vue.set(this, 'config', control)
-		Vue.set(this, 'component', component)
+		set(this, 'config', control)
+		set(this, 'component', component)
 
 		if (this.value === undefined && control.default !== undefined)
 			this.value = control.default
 	}
 	set value(value: T) {
 		if (this.state[this.config.category] === undefined)
-			Vue.set(this.state, this.config.category, {})
-		Vue.set(this.state[this.config.category], this.config.key, value)
+			set(this.state, this.config.category, {})
+		set(this.state[this.config.category], this.config.key, value)
 	}
 	get value() {
 		return <T>this.state[this.config.category]?.[this.config.key]

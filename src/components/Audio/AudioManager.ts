@@ -1,11 +1,23 @@
+import { computed } from '@vue/composition-api'
+import { settingsState } from '../Windows/Settings/SettingsState'
+import { App } from '/@/App'
+
 export class AudioManager {
 	protected currentAudioPlaying: HTMLAudioElement | undefined
 
 	masterVolume = 1
+	isMuted = !settingsState?.audio?.playAudio ?? true
+
+	constructor() {
+		App.getApp().then(() => {
+			this.isMuted = !settingsState?.audio?.playAudio
+		})
+	}
 
 	playAudio(audioName = 'click5.ogg', audioVolume = 1) {
-		var audioPath = process.env.BASE_URL + 'audio/'
-		console.warn(audioPath)
+		const audioPath = process.env.BASE_URL + 'audio/'
+		if (this.isMuted) return
+
 		if (this.currentAudioPlaying) {
 			if (
 				this.currentAudioPlaying.currentTime /

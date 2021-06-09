@@ -1,9 +1,8 @@
-import { dirname } from 'path'
 import { IPresetFileOpts } from './PresetWindow'
 import { transformString } from './TransformString'
 import { App } from '/@/App'
 import { deepMerge } from '/@/utils/deepmerge'
-import { extname } from '/@/utils/path'
+import { extname, dirname } from '/@/utils/path'
 
 export type TExpandFile = [string, string, IPresetFileOpts?]
 

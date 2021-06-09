@@ -95,6 +95,7 @@ export class Compiler extends WorkerManager<
 	}
 
 	async updateFiles(filePaths: string[]) {
+		console.time('[Worker] Compiler: Update Files')
 		await this.ready.fired
 		this.ready.resetSignal()
 
@@ -105,6 +106,7 @@ export class Compiler extends WorkerManager<
 		)
 		await this.service.updateFiles(filePaths)
 		this.ready.dispatch()
+		console.timeEnd('[Worker] Compiler: Update Files')
 	}
 
 	async compileWithFile(filePath: string, file: File) {

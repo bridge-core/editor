@@ -3,7 +3,7 @@ import TreeTabComponent from './Tab.vue'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { TreeEditor } from './TreeEditor'
-import { parse } from 'json5'
+import json5 from 'json5'
 import { settingsState } from '../../Windows/Settings/SettingsState'
 
 export class TreeTab extends FileTab {
@@ -28,7 +28,9 @@ export class TreeTab extends FileTab {
 	async setup() {
 		this._treeEditor = new TreeEditor(
 			this,
-			parse(await this.fileHandle.getFile().then((file) => file.text()))
+			json5.parse(
+				await this.fileHandle.getFile().then((file) => file.text())
+			)
 		)
 		// @ts-ignore
 		console.log(this.treeEditor.tree)
