@@ -291,20 +291,47 @@ declare interface Helper {
 		count: number
 	): void
 
+	/**
+	 * Tests that a particular item entity is not present at a particular location. If it is, an exception is thrown.
+	 * @param itemType
+	 * Type of item to test for.
+	 * @param position
+	 * @param searchDistance
+	 * Radius in blocks to look for the item entity.
+	 */
 	assertItemEntityNotPresent(
 		itemType: ItemType,
 		position: BlockLocation,
 		searchDistance: number
 	): void
 
+	/**
+	 * Tests that a particular item entity is present at a particular location. If not, an exception is thrown.
+	 * @param itemType
+	 * Type of item to test for.
+	 * @param position
+	 * @param searchDistance
+	 * Radius in blocks to look for the item entity.
+	 */
 	assertItemEntityPresent(
 		itemType: ItemType,
 		position: BlockLocation,
 		searchDistance: number
 	): void
 
+	/**
+	 * Tests that Redstone power at a particular location matches a particular value. If not, an exception is thrown.
+	 * @param position
+	 * @param power
+	 * Expected power level.
+	 */
 	assertRedstonePower(position: BlockLocation, power: number): void
 
+	/**
+	 * Marks the current test as a failure case.
+	 * @param errorMessage
+	 * Error message summarizing the failure condition.
+	 */
 	fail(errorMessage: string): void
 
 	/**
@@ -324,43 +351,130 @@ declare interface Helper {
 	 */
 	pressButton(position: BlockLocation): void
 
+	/**
+	 * Displays the specified message to all players.
+	 * @param text
+	 * Message to display.
+	 */
 	print(text: string): void
 
+	/**
+	 * Pulls a lever at a block location.
+	 * @param position
+	 */
 	pullLever(position: BlockLocation): void
 
+	/**
+	 * Sends a Redstone pulse at a particular location by creating a temporary Redstone block.
+	 * @param position
+	 * @param duration
+	 * Number of ticks to pulse Redstone.
+	 */
 	pulseRedstone(position: BlockLocation, duration: number): void
 
+	/**
+	 * From a BlockLocation, returns a new BlockLocation with coordinates relative to the current GameTest structure block. For example, the relative coordinates for the block above the structure block are (0, 1, 0). Rotation of the GameTest structure is also taken into account.
+	 * @param worldLocation
+	 * Absolute location in the world to convert to a relative location.
+	 */
 	relativeLocation(worldLocation: BlockLocation): BlockLocation
 
+	/**
+	 * Runs a specific callback after a specified delay of ticks.
+	 * @param delayTicks
+	 * Number of ticks to delay before running the specified callback.
+	 * @param callback
+	 * Callback function to execute.
+	 */
 	runAfterDelay(delayTicks: number, callback: () => undefined): void
 
+	/**
+	 * Runs the given callback after a delay of tick ticks from the start of the GameTest.
+	 * @param tick
+	 * Tick (after the start of the GameTest) to run the callback at.
+	 * @param callback
+	 * Callback function to execute.
+	 */
 	runAtTickTime(tick: number, callback: () => undefined): void
 
-	setBlock(block: Block, position: BlockLocation): void
-
+	/**
+	 * Spawns an entity at a location.
+	 * @param entityIdentifier
+	 * Type of entity to create. If no namespace is provided, 'minecraft:' is assumed. Note that an optional initial spawn event can be specified between less than/greater than signs (e.g., namespace:entityType).
+	 * @param position
+	 */
 	spawn(entityIdentifier: string, position: BlockLocation): Entity
 
+	/**
+	 * Spawns an item entity at a specified location.
+	 * @param itemStack
+	 * ItemStack that describes the item entity to create.
+	 * @param position
+	 * Location to create the item entity at.
+	 */
 	spawnItem(itemStack: ItemStack, position: Location): Entity
 
+	/**
+	 * Spawns an entity at a location without any AI behaviors. This method is frequently used in conjunction with methods like .walkTo to create predictable mob actions.
+	 * @param entityIdentifier
+	 * @param position
+	 */
 	spawnWithoutBehaviors(
 		entityIdentifier: string,
 		position: BlockLocation
 	): Entity
 
+	/**
+	 * Creates a new GameTestSequence - A set of steps that play out sequentially within a GameTest.
+	 */
 	startSequence(): GameTestSequence
 
+	/**
+	 * Marks the current test as a success case.
+	 */
 	succeed(): void
 
+	/**
+	 * Runs the given callback. If the callback does not throw an exception, the test is marked as a success.
+	 * @param callback
+	 * Callback function that runs. If the function runs successfully, the test is marked as a success. Typically, this function will have .assertXyz method calls within it.
+	 */
 	succeedIf(callback: () => undefined): void
 
+	/**
+	 * Marks the test as a success at the specified tick.
+	 * @param tick
+	 * Tick after the start of the GameTest to mark the test as successful.
+	 */
 	succeedOnTick(tick: number): void
 
+	/**
+	 * Runs the given callback at tick ticks after the start of the test. If the callback does not throw an exception, the test is marked as a failure.
+	 * @param tick
+	 * Tick after the start of the GameTest to run the testing callback at.
+	 * @param callback
+	 * Callback function that runs. If the function runs successfully, the test is marked as a success.
+	 */
 	succeedOnTickWhen(tick: number, callback: () => undefined): void
 
+	/**
+	 * Runs the given callback every tick. When the callback successfully executes, the test is marked as a success. Specifically, the test will succeed when the callback does not throw an exception.
+	 * @param callback
+	 * Testing callback function that runs. If the function runs successfully, the test is marked as a success.
+	 */
 	succeedWhen(callback: () => undefined): void
 
 	succeedWhenBlockPresent(block: Block, position: BlockLocation): void
 
+	/**
+	 * Tests for the presence of a component on every tick. When the specified component is found, the test is marked as a success.
+	 * @param entityIdentifier
+	 * Type of entity to look for. If no namespace is specified, 'minecraft:' is assumed.
+	 * @param componentIdentifier
+	 * Type of component to test for the presence of. If no namespace is specified, 'minecraft:' is assumed.
+	 * @param position
+	 * @param hasComponent
+	 */
 	succeedWhenEntityHasComponent(
 		entityIdentifier: string,
 		componentIdentifier: string,
@@ -368,11 +482,23 @@ declare interface Helper {
 		hasComponent: boolean
 	): void
 
+	/**
+	 * Tests every tick and marks the test as a success when a particular entity is not present at a particular location.
+	 * @param entityIdentifier
+	 * Type of entity to test for (e.g., 'minecraft:skeleton'). If an entity namespace is not specified, 'minecraft:' is assumed.
+	 * @param position
+	 */
 	succeedWhenEntityNotPresent(
 		entityIdentifier: string,
 		position: BlockLocation
 	): void
 
+	/**
+	 * Tests for the presence of an entity on every tick. When an entity of the specified type is found, the test is marked as a success.
+	 * @param entityIdentifier
+	 * Type of entity to test for (e.g., 'minecraft:skeleton'). If an entity namespace is not specified, 'minecraft:' is assumed.
+	 * @param position
+	 */
 	succeedWhenEntityPresent(
 		entityIdentifier: string,
 		position: BlockLocation
@@ -380,20 +506,31 @@ declare interface Helper {
 
 	succeedWhenBlockTypePresent(block: Block, position: BlockLocation): void
 
+	/**
+	 * Forces an entity to walk to a particular location. Usually used in conjunction with methods like .spawnWithoutBehaviors to have more predictable mob behaviors.
+	 * @param mob
+	 * Mob entity to give orders to.
+	 * @param position
+	 * @param speedModifier
+	 * Adjustable modifier to the mob's walking speed.
+	 */
 	walkTo(mob: Entity, position: BlockLocation, speedModifier: number): void
 
+	/**
+	 * From a BlockLocation with coordinates relative to the GameTest structure block, returns a new BlockLocation with coordinates relative to world. Rotation of the GameTest structure is also taken into account.
+	 * @param relativeLocation
+	 * Location relative to the GameTest command block.
+	 */
 	worldLocation(relativeLocation: BlockLocation): BlockLocation
 
 	setTntFuse(entity: Entity, time: number): void
 
-	/**
-	 * Returns all players in the server
-	 */
-	getPlayers(): Entity[]
+	setBlockType(blockType: BlockType, position: BlockLocation): void
 
-	setBlockType(block: Block, position: BlockLocation): void
-
-	setBlockPermutation(block: Block, position: BlockLocation): void
+	setBlockPermutation(
+		blockData: BlockPermutation,
+		position: BlockLocation
+	): void
 }
 
 // -------------------------------------------------------------
@@ -401,7 +538,6 @@ declare interface Helper {
 
 declare module 'Minecraft' {
 	export const ItemStack: ItemStackClass
-	export const BlockStates: BlockStates
 	export const BlockLocation: BlockLocationClass
 	export const Location: LocationClass
 	export const Effects: Effects
@@ -456,30 +592,191 @@ declare interface Items {
 }
 
 declare interface BlockTypes {
-	[block: string]: Block
+	get(blockName: string): BlockType
 
-	get(blockName: string): Block
+	getAllBlockTypes(): BlockType[]
+
+	[block: string]: BlockType
 }
 
+/**
+ * Represents a block in a dimension. A block represents a unique X, Y, and Z within a dimension and get/sets the state of the block at that location.
+ */
 declare interface Block {
-	// Some stuff may be missing/wrong here
-	name: string
+	x: number
 
-	createDefaultBlockPermutation(): Block
+	y: number
 
-	getProperty(property: Property): Property
+	z: number
 
-	setPermutation(permutation: Permutation): void
+	canBeWaterlogged(): boolean
+
+	getBlockData(): BlockPermutation
+
+	getComponent<T extends keyof BlockComponents>(
+		componentId: T
+	): BlockComponents[T] | undefined
+
+	getLocation(): BlockLocation
+
+	getTags(): any[]
+
+	isEmpty(): boolean
+
+	isWaterlogged(): boolean
+
+	/**
+	 * Checks to see if the permutation of this block has a specific tag.
+	 */
+	hasTag(): boolean
+
+	/**
+	 * Sets the block in the dimension to the state of the permutation.
+	 */
+	setPermutation(): void
+
+	setType(): void
+
+	setWaterlogged(setWaterlogged: boolean): void
 }
 
 declare interface BlockProperties {
-	[property: string]: Property
+	[property: string]: BlockProperty
 }
 
-declare interface Permutation {}
+declare interface BlockPermutation {
+	/**
+	 * Returns a copy of the permutation.
+	 */
+	clone(): BlockPermutation
 
-declare interface Property {
+	/**
+	 * Returns the list of all of the properties that the permutation has.
+	 */
+	getAllProperties(): any[]
+
+	/**
+	 * Returns the property if the permutation has it, else null.
+	 * @param propertyName
+	 */
+	getProperty(propertyName: string): any
+
+	/**
+	 * Creates a copy of the permutation.
+	 */
+	getTags(): any[]
+
+	/**
+	 * Returns the BlockType that the permutation has.
+	 */
+	getType(): BlockType
+
+	/**
+	 * Checks to see if the permutation has a specific tag.
+	 * @param tag
+	 */
+	hasTag(tag: string): boolean
+}
+
+/**
+ * The type (or template) of a block. Does not contain permutation data (state) other than the type of block it represents.
+ */
+declare interface BlockType {
+	getName(): string
+
+	canBeWaterlogged(): boolean
+
+	/**
+	 * Creates the default BlockPermutation for this type which uses the default values for all properties.
+	 */
+	createDefaultBlockPermutation(): BlockPermutation
+}
+
+declare interface BlockProperty {
+	/**
+	 * The current value of this property.
+	 */
 	value: string | boolean | number
+
+	validValues: string[] | boolean[] | number[]
+
+	name: string
+}
+
+declare interface Player {
+	/**
+	 * Identifier for the player.
+	 */
+	id: string
+
+	/**
+	 * Current location of the player.
+	 */
+	location: Location
+
+	/**
+	 * Current speed of the player across X, Y, and Z dimensions.
+	 */
+	velocity: Location
+
+	/**
+	 * Optional name tag of the player.
+	 */
+	nameTag: string
+
+	/**
+	 * Name of the player.
+	 */
+	name: string
+
+	/**
+	 * Returns true if the specified component is present on this player.
+	 * @param componentId
+	 * The identifier of the component (e.g., 'minecraft:rideable') to retrieve. If no namespace prefix is specified, 'minecraft:' is assumed.
+	 */
+	hasComponent(componentId: string): boolean
+
+	/**
+	 * Gets a component (that represents additional capabilities) for a player.
+	 * @param componentId
+	 * The identifier of the component (e.g., 'minecraft:rideable') to retrieve. If no namespace prefix is specified, 'minecraft:' is assumed. If the component is not present on the entity, undefined is returned.
+	 */
+	getComponent<T extends keyof EntityComponents>(
+		componentId: T
+	): EntityComponents[T] | undefined
+
+	/**
+	 * Returns all components that are both present on this player and supported by the API.
+	 */
+	getComponents(): any[] | undefined
+
+	/**
+	 * Kills this entity. The player will drop loot as normal.
+	 */
+	kill(): void
+
+	/**
+	 * Returns the effect for the specified EffectType on the player, or undefined if the effect is not present.
+	 * @param effectType
+	 */
+	getEffect(effectType: EffectType): Effect
+
+	/**
+	 * Adds an effect, like poison, to the player.
+	 * @param effectType
+	 * Type of effect to add to the player.
+	 * @param duration
+	 * Amount of time, in seconds, for the effect to apply.
+	 * @param amplifier
+	 * Optional amplification of the effect to apply.
+	 */
+	addEffect(effectType: EffectType, duration: number, amplifier: number): void
+
+	/**
+	 * Triggers an event on a player.
+	 * @param eventName
+	 */
+	triggerEvent(eventName: string): void
 }
 
 declare interface World {
@@ -489,6 +786,11 @@ declare interface World {
 		eventName: string,
 		callback: (entity: Entity) => undefined
 	): void
+
+	/**
+	 * Returns all players in the server
+	 */
+	getPlayers(): Player[]
 
 	events: Events
 }
@@ -532,38 +834,99 @@ declare interface Dimension {
 declare interface Events {
 	tick: TickEventSignal
 
+	/**
+	 * Contains information related to changes in weather in the environment.
+	 */
 	weatherChanged: WeatherChangedEventSignal
 
-	beforeChat: BeforeChatEventSignal
+	/**
+	 * An event that fires as players enter chat messages.
+	 */
+	beforeChat: ChatEventSignal
 }
 
 declare interface TickEventSignal {
+	/**
+	 * Adds a callback that will be called on every tick.
+	 * @param callback
+	 */
 	subscribe(callback: () => undefined): void
 
+	/**
+	 * Removes a callback from being called every tick.
+	 * @param callback
+	 */
 	unsubscribe(callback: () => undefined): void
 }
 
 declare interface WeatherChangedEventSignal {
+	/**
+	 * Adds a callback that will be called when weather changes.
+	 * @param callback
+	 */
 	subscribe(callback: (eventData: WeatherChangedEvent) => undefined): void
 
+	/**
+	 * Removes a callback from being called when weather changes.
+	 * @param callback
+	 */
 	unsubscribe(callback: (eventData: WeatherChangedEvent) => undefined): void
 }
 declare interface WeatherChangedEvent {
+	/**
+	 * Dimension in which the weather has changed.
+	 */
 	dimension: string
+
+	/**
+	 * Whether it is raining after the change in weather.
+	 */
 	raining: boolean
+
+	/**
+	 * Whether it is lightning after the change in weather.
+	 */
 	lightning: boolean
 }
 
-declare interface BeforeChatEventSignal {
-	subscribe(callback: (eventData: BeforeChatEvent) => undefined): void
+declare interface ChatEventSignal {
+	/**
+	 * Adds a callback that will be called when new chat messages are sent.
+	 * @param callback
+	 */
+	subscribe(callback: (eventData: ChatEvent) => undefined): void
 
-	unsubscribe(callback: (eventData: BeforeChatEvent) => undefined): void
+	/**
+	 * Removes a callback from being called when new chat messages are sent.
+	 * @param callback
+	 */
+	unsubscribe(callback: (eventData: ChatEvent) => undefined): void
 }
-declare interface BeforeChatEvent {
+declare interface ChatEvent {
+	/**
+	 * Message that is being broadcast. In a beforeChat event handler, message can be updated with edits before the message is displayed to players.
+	 */
 	message: string
-	sender: Entity
+
+	/**
+	 * Player that sent the chat message.
+	 */
+	sender: Player
+
+	/**
+	 * If set to true in a beforeChat event handler, this message is not broadcast out.
+	 */
 	canceled: boolean
-	targets: string[]
+
+	/**
+	 * List of players that will receive this message.
+	 */
+	targets: Player[]
+
+	/**
+	 * If true, this message is directly targeted to one or more players (i.e., is not broadcast.)
+	 */
+	sendToTargets: boolean
 }
 
 declare interface Commands {
@@ -571,20 +934,67 @@ declare interface Commands {
 }
 
 declare interface Entity {
+	/**
+	 * Identifier for the entity.
+	 */
+	id: string
+
+	/**
+	 * Current location of the entity.
+	 */
+	location: Location
+
+	/**
+	 * Current speed of the entity across X, Y, and Z dimensions.
+	 */
+	velocity: Location
+
+	/**
+	 * Optional name tag of the entity.
+	 */
+	nameTag: string
+
+	/**
+	 * Returns true if the specified component is present on this entity.
+	 * @param componentId
+	 * The identifier of the component (e.g., 'minecraft:rideable') to retrieve. If no namespace prefix is specified, 'minecraft:' is assumed.
+	 */
 	hasComponent(componentId: string): boolean
 
+	/**
+	 * Gets a component (that represents additional capabilities) for an entity.
+	 * @param componentId
+	 * The identifier of the component (e.g., 'minecraft:rideable') to retrieve. If no namespace prefix is specified, 'minecraft:' is assumed. If the component is not present on the entity, undefined is returned.
+	 */
 	getComponent<T extends keyof EntityComponents>(
 		componentId: T
 	): EntityComponents[T] | undefined
 
-	getComponents(): EntityComponent[] | undefined
+	/**
+	 * Returns all components that are both present on this entity and supported by the API.
+	 */
+	getComponents(): any[] | undefined
 
-	getName(): string
-
+	/**
+	 * Kills this entity. The entity will drop loot as normal.
+	 */
 	kill(): void
 
+	/**
+	 * Returns the effect for the specified EffectType on the entity, or undefined if the effect is not present.
+	 * @param effectType
+	 */
 	getEffect(effectType: EffectType): Effect
 
+	/**
+	 * Adds an effect, like poison, to the entity.
+	 * @param effectType
+	 * Type of effect to add to the entity.
+	 * @param duration
+	 * Amount of time, in seconds, for the effect to apply.
+	 * @param amplifier
+	 * Optional amplification of the effect to apply.
+	 */
 	addEffect(effectType: EffectType, duration: number, amplifier: number): void
 
 	/**
@@ -592,14 +1002,10 @@ declare interface Entity {
 	 * @param eventName
 	 */
 	triggerEvent(eventName: string): void
-
-	velocity: number
-
-	location: Location
 }
 
 declare interface EntityComponents {
-	// Component data defined in ./entityComponentData.d.ts
+	// Component data defined in ./componentData.d.ts
 
 	inventory: Inventory
 
@@ -695,6 +1101,11 @@ declare interface EntityComponents {
 
 	strength: Strength
 	'minecraft:strength': Strength
+}
+
+declare interface BlockComponents {
+	// Component data defined in ./componentData.d.ts
+	inventory: BlockInventory
 }
 
 declare interface EffectType {

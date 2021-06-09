@@ -11,29 +11,39 @@ declare interface Inventory {
 
 	restrictToOwner: boolean
 
-	container: {
-		size: number
+	container: Container
+}
+declare interface BlockInventory {
+	container: Container
+}
+declare interface Container {
+	/**
+	 * Represents the size of the container. For example, a standard single-block chest has a size of 27, for the 27 slots in their inventory.
+	 */
+	size: number
 
-		emptySlotsCount: number
+	/**
+	 *Contains a count of the slots in the container that are empty.
+	 */
+	emptySlotsCount: number
 
-		setItem(slot: number, itemStack: ItemStack): void
+	setItem(slot: number, itemStack: ItemStack): void
 
-		getItem(slot: number): ItemStack
+	getItem(slot: number): ItemStack
 
-		addItem(itemStack: ItemStack): void
+	addItem(itemStack: ItemStack): void
 
-		transferItem(
-			fromSlot: number,
-			toSlot: number,
-			toContainer: Inventory['containter']
-		): boolean
+	transferItem(
+		fromSlot: number,
+		toSlot: number,
+		toContainer: Container
+	): boolean
 
-		swapItems(
-			slot: number,
-			otherSlot: number,
-			otherContainer: Inventory['containter']
-		): boolean
-	}
+	swapItems(
+		slot: number,
+		otherSlot: number,
+		otherContainer: Container
+	): boolean
 }
 
 declare interface Color {

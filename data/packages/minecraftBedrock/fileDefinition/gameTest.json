@@ -9,7 +9,7 @@
 		"BP/scripts/gametests/**/*.ts"
 	],
 	"types": [
-		"types/gameTest/entityComponentData.d.ts",
+		"types/gameTest/componentData.d.ts",
 		[
 			"types/gameTest/v1.16.220.d.ts",
 			{ "targetVersion": ["<=", "v1.16.220"] }
