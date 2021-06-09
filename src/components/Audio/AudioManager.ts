@@ -17,7 +17,6 @@ export class AudioManager {
 	playAudio(audioName = 'click5.ogg', audioVolume = 1) {
 		const audioPath = process.env.BASE_URL + 'audio/'
 		if (this.isMuted) return
-		console.log('PLAYOING')
 
 		if (this.currentAudioPlaying) {
 			if (
