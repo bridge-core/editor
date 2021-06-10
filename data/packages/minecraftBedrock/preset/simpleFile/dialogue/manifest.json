@@ -1,0 +1,26 @@
+{
+	"name": "Dialogue",
+	"icon": "mdi-forum",
+	"description": "Creates a blank dialogue.",
+	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
+	"targetVersion": [">=", "1.17.10"],
+	"additionalModels": {
+		"PRESET_PATH": "BP/dialogues/"
+	},
+	"fields": [
+		[
+			"File Name",
+			"FILE_NAME",
+			{ "validate": ["required", "alphanumeric", "lowercase"] }
+		]
+	],
+
+	"createFiles": [
+		[
+			"dialogue.json",
+			"{{PRESET_PATH}}{{FILE_NAME}}.json",
+			{ "inject": ["FILE_NAME", "PRESET_PATH"] }
+		]
+	]
+}

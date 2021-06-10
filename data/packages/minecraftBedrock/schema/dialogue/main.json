@@ -1,0 +1,52 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "Dialogue",
+	"additionalProperties": false,
+	"properties": {
+		"format_version": { "$ref": "../project/formatVersionEnum.json" },
+		"minecraft:npc_dialogue": {
+			"additionalProperties": false,
+			"properties": {
+				"scenes": {
+					"type": "array",
+					"items": {
+						"properties": {
+							"scene_tag": {
+								"type": "string"
+							},
+							"npc_name": {
+								"$ref": "./text.json"
+							},
+							"text": {
+								"$ref": "./text.json"
+							},
+							"buttons": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"name": {
+											"$ref": "./text.json"
+										},
+										"commands": {
+											"type": "array",
+											"items": {
+												"$ref": "../general/vanilla/command.json"
+											}
+										}
+									}
+								}
+							},
+							"on_close_command": {
+								"type": "array",
+								"items": {
+									"$ref": "../general/vanilla/command.json"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
