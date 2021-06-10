@@ -2,7 +2,7 @@
 	<div class="editor-container" ref="editorContainer" tabindex="-1">
 		<div
 			class="pr-4 code-font"
-			:style="`height: ${height - 56}px; overflow: auto;`"
+			:style="`height: ${height - 196}px; overflow: auto;`"
 			@blur="focusEditor"
 		>
 			<component
@@ -12,12 +12,19 @@
 			/>
 		</div>
 
+		<v-divider class="mb-4" />
+
 		<div class="d-flex px-4" @blur="focusEditor">
 			<v-combobox
 				ref="addKeyInput"
 				v-model="keyToAdd"
 				@change="onAddKey"
 				:items="propertySuggestions"
+				:menu-props="{
+					maxHeight: 124,
+					top: false,
+					contentClass: 'json-editor-suggestions-menu',
+				}"
 				:label="t('editors.treeEditor.addObject')"
 				outlined
 				dense
@@ -28,9 +35,14 @@
 				v-model="valueToAdd"
 				@change="onAddValue"
 				:disabled="isGlobal"
-				:items="treeEditor.valueSuggestions"
-				class="mx-4"
+				:items="valueSuggestions"
+				:menu-props="{
+					maxHeight: 124,
+					top: false,
+					contentClass: 'json-editor-suggestions-menu',
+				}"
 				:label="t('editors.treeEditor.addValue')"
+				class="mx-4"
 				outlined
 				dense
 				hide-details
@@ -112,6 +124,9 @@ export default {
 				text: suggestion.value,
 			}))
 		},
+		valueSuggestions() {
+			return this.treeEditor.valueSuggestions
+		},
 	},
 	methods: {
 		focusEditor() {
@@ -160,5 +175,15 @@ export default {
 }
 .editor-container {
 	outline: none;
+}
+
+/* Smaller suggestions menu */
+.json-editor-suggestions-menu .v-list-item,
+.small-list .v-list-item {
+	min-height: 28px !important;
+}
+.json-editor-suggestions-menu .v-list-item__content,
+.small-list .v-list-item__content {
+	padding: 4px 0 !important;
 }
 </style>
