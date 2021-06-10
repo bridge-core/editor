@@ -19,7 +19,7 @@
 						]
 					},
 					"geometry": {
-						"examples": [
+						"enum": [
 							"geometry.humanoid.custom",
 							"geometry.humanoid.customSlim"
 						]
@@ -28,7 +28,7 @@
 						"type": "string"
 					},
 					"type": {
-						"examples": ["free", "custom"]
+						"enum": ["free", "custom"]
 					}
 				}
 			}

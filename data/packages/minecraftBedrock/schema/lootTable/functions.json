@@ -176,7 +176,14 @@
 				"then": {
 					"properties": {
 						"block_state": {
-							"examples": ["color"]
+							"anyOf": [
+								{
+									"const": "color"
+								},
+								{
+									"type": "string"
+								}
+							]
 						},
 						"values": {
 							"properties": {

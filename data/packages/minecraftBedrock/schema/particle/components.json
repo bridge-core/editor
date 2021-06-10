@@ -243,7 +243,7 @@
 						{
 							"description": "'inwards' - Particle direction towards center of the cube. 'outwards' - Particle direction away from center of the cube",
 							"type": "string",
-							"examples": ["outwards", "inwards"]
+							"enum": ["outwards", "inwards"]
 						},
 						{
 							"description": "Evaluated once per particle emitted",
@@ -276,7 +276,7 @@
 						{
 							"description": "'inwards' - Particle direction towards center. 'outwards' - Particle direction away from center",
 							"type": "string",
-							"examples": ["outwards", "inwards"]
+							"enum": ["outwards", "inwards"]
 						},
 						{
 							"description": "Evaluated once per particle emitted",
@@ -303,7 +303,7 @@
 						{
 							"description": "'inwards' - Particle direction towards center. 'outwards' - Particle direction away from center",
 							"type": "string",
-							"examples": ["outwards", "inwards"]
+							"enum": ["outwards", "inwards"]
 						},
 						{
 							"description": "Evaluated once per particle emitted",
@@ -363,7 +363,7 @@
 						{
 							"description": "'inwards' - Particle direction towards center. 'outwards' - Particle direction away from center",
 							"type": "string",
-							"examples": ["outwards", "inwards"]
+							"enum": ["outwards", "inwards"]
 						},
 						{
 							"description": "Evaluated once per particle emitted",

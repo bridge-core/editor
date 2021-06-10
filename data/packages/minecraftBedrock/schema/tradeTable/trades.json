@@ -108,7 +108,7 @@
 				"type": "number"
 			},
 			"max_uses": {
-				"examples": [-1, 1, 2, 3, 4, 5, 6, 7],
+				"enum": [-1, 1, 2, 3, 4, 5, 6, 7],
 				"type": "number"
 			},
 			"reward_exp": {

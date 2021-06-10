@@ -346,10 +346,16 @@
 												"type": "object",
 												"properties": {
 													"tags": {
-														"type": "string",
-														"examples": [
-															"query.any_tag()",
-															"query.all_tags()"
+														"anyOf": [
+															{
+																"enum": [
+																	"query.any_tag()",
+																	"query.all_tags()"
+																]
+															},
+															{
+																"type": "string"
+															}
 														]
 													}
 												}

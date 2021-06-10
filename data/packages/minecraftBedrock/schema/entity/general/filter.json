@@ -101,7 +101,7 @@
 				"test": {
 					"type": "string",
 					"description": "The name of the test to apply",
-					"examples": [
+					"enum": [
 						"clock_time",
 						"distance_to_nearest_player",
 						"has_ability",

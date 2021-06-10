@@ -35,13 +35,7 @@
 													"items": {
 														"anyOf": [
 															{
-																"examples": [
-																	0,
-																	90,
-																	180,
-																	270,
-																	360
-																]
+																"$ref": "../general/degree.json"
 															},
 															{
 																"$ref": "../molang/embeddedBeta.json"
@@ -58,13 +52,7 @@
 															"items": {
 																"anyOf": [
 																	{
-																		"examples": [
-																			0,
-																			90,
-																			180,
-																			270,
-																			360
-																		]
+																		"$ref": "../general/degree.json"
 																	},
 																	{
 																		"$ref": "../molang/embeddedBeta.json"
@@ -85,13 +73,7 @@
 													"items": {
 														"anyOf": [
 															{
-																"examples": [
-																	0,
-																	90,
-																	180,
-																	270,
-																	360
-																]
+																"$ref": "../general/degree.json"
 															},
 															{
 																"$ref": "../molang/embeddedBeta.json"
@@ -108,13 +90,7 @@
 															"items": {
 																"anyOf": [
 																	{
-																		"examples": [
-																			0,
-																			90,
-																			180,
-																			270,
-																			360
-																		]
+																		"$ref": "../general/degree.json"
 																	},
 																	{
 																		"$ref": "../molang/embeddedBeta.json"
@@ -135,13 +111,7 @@
 													"items": {
 														"anyOf": [
 															{
-																"examples": [
-																	0,
-																	90,
-																	180,
-																	270,
-																	360
-																]
+																"$ref": "../general/degree.json"
 															},
 															{
 																"$ref": "../molang/embeddedBeta.json"
@@ -158,13 +128,7 @@
 															"items": {
 																"anyOf": [
 																	{
-																		"examples": [
-																			0,
-																			90,
-																			180,
-																			270,
-																			360
-																		]
+																		"$ref": "../general/degree.json"
 																	},
 																	{
 																		"$ref": "../molang/embeddedBeta.json"
