@@ -85,8 +85,6 @@ export class TreeSelection {
 			const newTree = new PrimitiveTree(this.tree, value)
 
 			this.tree.children.push(newTree)
-			this.parent.setSelection(newTree, true)
-			this.dispose()
 
 			return new DeleteEntry(newTree, this.tree.children.length - 1)
 		} else if (Object.keys(this.tree.children).length === 0) {
@@ -94,7 +92,7 @@ export class TreeSelection {
 			const newTree = new PrimitiveTree(this.tree.getParent(), value)
 
 			this.tree.replace(newTree)
-			this.parent.setSelection(newTree, true)
+			this.parent.setSelection(newTree.getParent()!, true)
 			this.dispose()
 
 			return new ReplaceTreeEntry(this.tree, newTree)

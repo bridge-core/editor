@@ -157,13 +157,13 @@ export default {
 	},
 	watch: {
 		propertySuggestions() {
-			if (
-				this.propertySuggestions.length === 0 &&
-				this.valueSuggestions.length > 0
-			)
+			if (this.propertySuggestions.length === 0) {
+				this.$refs.addKeyInput.blur()
 				this.$refs.addValueInput.focus()
-			else if (this.propertySuggestions.length > 0)
+			} else if (this.propertySuggestions.length > 0) {
+				this.$refs.addValueInput.blur()
 				this.$refs.addKeyInput.focus()
+			}
 		},
 	},
 }
