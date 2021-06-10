@@ -33,6 +33,13 @@ export class TreeTab extends FileTab {
 
 	constructor(parent: TabSystem, fileHandle: FileSystemFileHandle) {
 		super(parent, fileHandle)
+
+		this.fired.then(async () => {
+			const app = await App.getApp()
+			await app.projectManager.projectReady.fired
+
+			app.project.tabActionProvider.addTabActions(this)
+		})
 	}
 
 	static is(fileHandle: FileSystemFileHandle) {
