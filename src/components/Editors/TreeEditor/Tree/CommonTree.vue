@@ -9,8 +9,7 @@
 			:class="{
 				'common-tree-key': true,
 				open: tree.isOpen,
-				'array-tree-editor-selection':
-					tree.parent.type === 'array' && tree.isSelected,
+				'tree-editor-selection': tree.isSelected,
 			}"
 			@click.stop.prevent="onClickKey"
 			tabindex="-1"
@@ -31,7 +30,7 @@
 
 				<span @dblclick="tree.toggleOpen()"> <slot /> </span>:</span
 			>
-			<span class="ml-1" @click.stop.prevent="tree.toggleOpen()">{{
+			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">{{
 				openingBracket
 			}}</span>
 		</summary>

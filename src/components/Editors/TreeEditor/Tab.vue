@@ -178,18 +178,11 @@ export default {
 
 <style>
 .tree-editor-selection {
-	border-radius: 4px;
-	font-weight: bold;
-	font-style: italic;
-	text-decoration: underline;
-	background: rgba(170, 170, 170, 0.2);
-}
-.array-tree-editor-selection {
-	border-radius: 4px;
+	border-radius: 2rem;
 	background: rgba(170, 170, 170, 0.2);
 }
 .theme--dark .tree-editor-selection {
-	background: rgba(100, 100, 100, 0.5);
+	background: rgba(100, 100, 100, 0.3);
 }
 .editor-container {
 	outline: none;
