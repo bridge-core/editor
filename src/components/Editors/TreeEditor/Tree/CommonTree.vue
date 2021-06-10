@@ -16,7 +16,11 @@
 		>
 			<v-icon
 				class="mr-1"
-				:style="{ opacity: tree.hasChildren ? null : '60%' }"
+				:style="{
+					position: 'relative',
+					opacity: tree.hasChildren ? null : '60%',
+					top: '0px',
+				}"
 				@click.native.stop.prevent="tree.toggleOpen()"
 				small
 			>
