@@ -1,0 +1,20 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"allOf": [
+		{
+			"$ref": "../v1.17.0/components.json"
+		},
+		{
+			"properties": {
+				"minecraft:block_climber": {
+					"description": "Allows the player to detect and maneuver on the scaffolding and powder snow blocks.",
+					"additionalProperties": false
+				},
+				"minecraft:scaffolding_climber": {
+					"doNotSuggest": true,
+					"deprecationMessage": "Deprecated in favor of 'minecraft:block_climber' (format_version: v1.17.10)."
+				}
+			}
+		}
+	]
+}
