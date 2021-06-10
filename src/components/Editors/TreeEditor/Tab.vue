@@ -155,6 +155,17 @@ export default {
 			this.$nextTick(() => (this.valueToAdd = ''))
 		},
 	},
+	watch: {
+		propertySuggestions() {
+			if (
+				this.propertySuggestions.length === 0 &&
+				this.valueSuggestions.length > 0
+			)
+				this.$refs.addValueInput.focus()
+			else if (this.propertySuggestions.length > 0)
+				this.$refs.addKeyInput.focus()
+		},
+	},
 }
 </script>
 
