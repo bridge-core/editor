@@ -1,4 +1,5 @@
 import { ignoreFields, schemaRegistry } from './Registry'
+import { ConstSchema } from './Schema/Const'
 import type { IfSchema } from './Schema/IfSchema'
 import type { RootSchema } from './Schema/Root'
 import type { Schema } from './Schema/Schema'
@@ -43,7 +44,7 @@ export class SchemaManager {
 	static createSchemas(location: string, obj: any) {
 		if (typeof obj !== 'object') {
 			console.warn(`Unexpected schema type "${typeof obj}" @ ${location}`)
-			return []
+			return [new ConstSchema(location, '', obj)]
 		}
 
 		let lastIfSchema: IfSchema | undefined

@@ -16,13 +16,16 @@ export class ThenSchema extends Schema {
 		this.ifSchema = ifSchema
 	}
 
-	getSchemasFor(location: (string | number)[]) {
-		return this.rootSchema.getSchemasFor([...location])
+	getSchemasFor(obj: unknown, location: (string | number)[]) {
+		if (this.ifSchema.isTrue(obj))
+			return this.rootSchema.getSchemasFor(obj, [...location])
+		return []
 	}
 
 	getCompletionItems(obj: unknown) {
 		if (this.ifSchema.isTrue(obj))
 			return this.rootSchema.getCompletionItems(obj)
+
 		return []
 	}
 

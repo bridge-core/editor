@@ -9,9 +9,9 @@ export abstract class ParentSchema extends Schema {
 			.flat()
 	}
 
-	getSchemasFor(location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number)[]) {
 		return this.children
-			.map((child) => child.getSchemasFor([...location]))
+			.map((child) => child.getSchemasFor(obj, [...location]))
 			.flat()
 	}
 }

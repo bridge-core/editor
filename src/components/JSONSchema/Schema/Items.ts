@@ -23,7 +23,7 @@ export class ItemsSchema extends Schema {
 		return Array.isArray(this.children) ? this.children : [this.children]
 	}
 
-	getSchemasFor(location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number)[]) {
 		const key = location.shift()
 
 		if (typeof key === 'string') return []
@@ -35,8 +35,12 @@ export class ItemsSchema extends Schema {
 		}
 
 		if (Array.isArray(this.children))
-			return this.children[key]?.getSchemasFor([...location]) ?? []
-		else return this.children.getSchemasFor([...location])
+			return (
+				this.children[key]?.getSchemasFor((<any>obj)[key], [
+					...location,
+				]) ?? []
+			)
+		else return this.children.getSchemasFor((<any>obj)[key], [...location])
 	}
 
 	getCompletionItems(obj: unknown) {

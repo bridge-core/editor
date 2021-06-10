@@ -27,5 +27,8 @@ export abstract class Schema {
 		return this.validate(obj).length === 0
 	}
 	abstract getCompletionItems(obj: unknown): ICompletionItem[]
-	abstract getSchemasFor(location: (string | number)[]): Schema[]
+	abstract getSchemasFor(
+		obj: unknown,
+		location: (string | number)[]
+	): Schema[]
 }

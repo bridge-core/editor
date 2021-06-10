@@ -93,7 +93,10 @@ export class TreeEditor {
 			suggestions = this.schemaRoot?.getCompletionItems(json) ?? []
 		} else if (tree) {
 			const treePath = tree.path
-			const schemas = this.schemaRoot?.getSchemasFor(treePath)
+			const schemas = this.schemaRoot?.getSchemasFor(
+				this.tree.toJSON(),
+				treePath
+			)
 
 			if (schemas)
 				suggestions = schemas
@@ -143,7 +146,11 @@ export class TreeEditor {
 			prevent: (el) => {
 				if (el.tagName === 'INPUT' && (<any>el).value === '')
 					return false
-				return el.tagName !== 'SUMMARY' && el.tagName !== 'DIV'
+				return (
+					el.tagName !== 'SUMMARY' &&
+					el.tagName !== 'DIV' &&
+					el.tagName !== 'SPAN'
+				)
 			},
 			onTrigger: () => {
 				const entries: HistoryEntry[] = []

@@ -20,13 +20,16 @@ export class PropertiesSchema extends Schema {
 		)
 	}
 
-	getSchemasFor(location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number)[]) {
 		const key = location.shift()
 
 		if (key === undefined) return Object.values(this.children)
 		else if (location.length === 0)
 			return this.children[key] ? [this.children[key]] : []
-		return this.children[key]?.getSchemasFor([...location]) ?? []
+		return (
+			this.children[key]?.getSchemasFor((<any>obj)[key], [...location]) ??
+			[]
+		)
 	}
 
 	getCompletionItems() {

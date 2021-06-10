@@ -20,7 +20,7 @@ export class PatternPropertiesSchema extends Schema {
 		)
 	}
 
-	getSchemasFor(location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number)[]) {
 		const key = location.shift()
 		let schemas: Schema[] = []
 		if (typeof key === 'number' || key === undefined) return schemas
@@ -32,7 +32,9 @@ export class PatternPropertiesSchema extends Schema {
 		return location.length === 0
 			? schemas
 			: schemas
-					.map((schema) => schema.getSchemasFor([...location]))
+					.map((schema) =>
+						schema.getSchemasFor((<any>obj)[key], [...location])
+					)
 					.flat()
 	}
 

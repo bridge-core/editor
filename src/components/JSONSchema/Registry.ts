@@ -38,6 +38,7 @@ export const ignoreFields = new Set<string>([
 	'$id',
 	'description', // TODO: Use description for hover text
 	'title',
+	'definitions',
 
 	//TODO: Proper implementation of the following fields instead of ignoring them
 	'additionalProperties',
