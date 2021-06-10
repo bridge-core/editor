@@ -10,12 +10,12 @@ export class IfSchema extends Schema {
 		this.rootSchema = new RootSchema(this.location, 'if', value)
 	}
 
-	getSchemasFor(obj: unknown, location: (string | number)[]) {
-		return this.rootSchema.getSchemasFor(obj, location)
+	getSchemasFor() {
+		return []
 	}
 
-	getCompletionItems(obj: unknown) {
-		return this.rootSchema.getCompletionItems(obj)
+	getCompletionItems() {
+		return []
 	}
 
 	validate() {
