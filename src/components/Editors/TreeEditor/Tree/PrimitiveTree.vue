@@ -1,5 +1,5 @@
 <template>
-	<div :style="tree.styles">
+	<div tabindex="-1" :style="tree.styles">
 		<v-icon class="mr-1" :style="{ opacity: '60%' }" small>
 			mdi-chevron-right
 		</v-icon>
