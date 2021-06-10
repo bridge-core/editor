@@ -9,7 +9,11 @@
 		<keep-alive>
 			<component
 				:is="tabSystem.currentComponent"
-				:key="`${tabSystem.uuid}.${tabSystem.selectedTab.uuid}.${tabSystem.currentComponent.name}`"
+				:key="`${tabSystem.uuid}.${
+					tabSystem.selectedTab
+						? tabSystem.selectedTab.uuid
+						: undefined
+				}.${tabSystem.currentComponent.name}`"
 				:style="`height: ${
 					windowHeight -
 					(tabBarHeight + (windowControlsOverlay ? 33 : 24))
