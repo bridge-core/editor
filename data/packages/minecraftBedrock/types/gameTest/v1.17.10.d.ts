@@ -76,19 +76,49 @@ declare interface RegistrationBuilder {
 }
 
 declare interface GameTestSequence {
+	/**
+	 * Runs the given callback as a step within a GameTest sequence. Exceptions thrown within the callback will end sequence execution.
+	 * @param callback
+	 * Callback function to execute.
+	 */
 	thenExecute(callback: () => undefined): GameTestSequence
 
+	/**
+	 * After a delay, runs the given callback as a step within a GameTest sequence. Exceptions thrown within the callback will end sequence execution.
+	 * @param delayTicks
+	 * Number of ticks to wait before executing the callback.
+	 * @param callback
+	 * Callback function to execute.
+	 */
 	thenExecuteAfter(
 		delayTicks: number,
 		callback: () => undefined
 	): GameTestSequence
 
+	/**
+	 * Causes the test to fail if this step in the GameTest sequence is reached.
+	 * @param errorMessage
+	 * Error message summarizing the failure condition.
+	 */
 	thenFail(errorMessage: string): void
 
+	/**
+	 * Idles the GameTest sequence for the specified delayTicks.
+	 * @param delayTicks
+	 * Number of ticks to delay for this step in the GameTest sequence.
+	 */
 	thenIdle(delayTicks: number): GameTestSequence
 
+	/**
+	 * Marks the GameTest a success if this step is reached in the GameTest sequence.
+	 */
 	thenSucceed(): void
 
+	/**
+	 * Executes the given callback every tick until it succeeds. Exceptions thrown within the callback will end sequence execution.
+	 * @param callback
+	 * Testing callback function to execute. Typically, this function will have .assertXyz functions within it.
+	 */
 	thenWait(callback: () => undefined): GameTestSequence
 
 	thenWaitWithDelay(
@@ -195,7 +225,7 @@ declare interface Helper {
 	 */
 	assertEntityHasComponent(
 		entityIdentifier: string,
-		componentIdentifier: string,
+		componentIdentifier: keyof EntityComponents,
 		position: BlockLocation,
 		hasComponent: boolean
 	): void
@@ -550,7 +580,35 @@ declare interface Effects {
 	slowness: EffectType
 	haste: EffectType
 	miningFatigue: EffectType
+	strength: EffectTyspeed: EffectType
+	slowness: EffectType
+	haste: EffectType
+	miningFatigue: EffectType
 	strength: EffectType
+	instantHealth: EffectType
+	instantDamage: EffectType
+	jumpBoost: EffectType
+	nausea: EffectType
+	regeneration: EffectType
+	resistance: EffectType
+	fireResistance: EffectType
+	waterBreathing: EffectType
+	invisibility: EffectType
+	blindness: EffectType
+	nightVision: EffectType
+	hunger: EffectType
+	weakness: EffectType
+	poison: EffectType
+	wither: EffectType
+	healthBoost: EffectType
+	absorption: EffectType
+	saturation: EffectType
+	levitation: EffectType
+	fatalPoison: EffectType
+	slowFalling: EffectType
+	conduitPower: EffectType
+	badOmen: EffectType
+	heroOfTheVillage: EffectTypepe
 	instantHealth: EffectType
 	instantDamage: EffectType
 	jumpBoost: EffectType
@@ -578,9 +636,17 @@ declare interface Effects {
 }
 
 declare interface Effect {
-	getAmplifier(): number
+	/**
+	 * Gets the entire specified duration, in seconds, of this effect.
+	 */
+	duration: number
 
-	getDuration(): number
+	/**
+	 * Gets an amplifier that may have been applied to this effect. Sample values range typically from 0 to 4. Example: The effect 'Jump Boost II' will have an amplifier value of 1.
+	 */
+	amplifier: number
+
+	displayName: string
 }
 
 declare interface Items {
@@ -691,6 +757,7 @@ declare interface BlockType {
 declare interface BlockProperty {
 	/**
 	 * The current value of this property.
+	 * @throws Setting this property can throw if the value passed is not valid for the property. Use validValues to check allowed values.
 	 */
 	value: string | boolean | number
 
@@ -730,7 +797,7 @@ declare interface Player {
 	 * @param componentId
 	 * The identifier of the component (e.g., 'minecraft:rideable') to retrieve. If no namespace prefix is specified, 'minecraft:' is assumed.
 	 */
-	hasComponent(componentId: string): boolean
+	hasComponent(componentId: keyof EntityComponents): boolean
 
 	/**
 	 * Gets a component (that represents additional capabilities) for a player.
@@ -776,12 +843,12 @@ declare interface Player {
 }
 
 declare interface World {
+	/**
+	 *
+	 * @param dimensionName
+	 * The name of the Dimension.
+	 */
 	getDimension(dimensionName: 'overworld' | 'nether' | 'the end'): Dimension
-
-	addEventListener(
-		eventName: string,
-		callback: (entity: Entity) => undefined
-	): void
 
 	/**
 	 * Returns all players in the server
@@ -828,15 +895,18 @@ declare interface Dimension {
 }
 
 declare interface Events {
+	/**
+	 * This event fires every tick - which is 20 times per second.
+	 */
 	tick: TickEventSignal
 
 	/**
 	 * Contains information related to changes in weather in the environment.
 	 */
-	weatherChanged: WeatherChangedEventSignal
+	changeWeather: WeatherChangedEventSignal
 
 	/**
-	 * An event that fires as players enter chat messages.
+	 * This event fires before a chat message is broadcast or delivered. The event can be canceled, and the message can also be updated.
 	 */
 	beforeChat: ChatEventSignal
 
@@ -844,6 +914,10 @@ declare interface Events {
 	 * This event is triggered after a chat message has been broadcast or sent to players.
 	 */
 	chat: ChatEventSignal
+
+	addEffect: AddEffectEventSignal
+
+	createEntity: EntityEventSignal
 }
 
 declare interface TickEventSignal {
@@ -930,7 +1004,33 @@ declare interface ChatEvent {
 	sendToTargets: boolean
 }
 
+declare interface AddEffectEventSignal {
+	subscribe(callback: (eventData: ActorAddEffectEvent) => void): void
+
+	unsubscribe(callback: (eventData: ActorAddEffectEvent) => void): void
+}
+declare interface ActorAddEffectEvent {
+	entity: Entity
+
+	effect: Effect
+
+	effectState: number
+}
+
+declare interface EntityEventSignal {
+	subscribe(callback: (eventData: EntityEvent) => void): void
+
+	unsubscribe(callback: (eventData: EntityEvent) => void): void
+}
+declare interface EntityEvent {
+	entity: Entity
+}
+
 declare interface Commands {
+	/**
+	 * Runs a particular command from the context of the server. Command strings should not start with slash.
+	 * @param commandString
+	 */
 	run(commandString: string): undefined
 }
 
@@ -960,7 +1060,7 @@ declare interface Entity {
 	 * @param componentId
 	 * The identifier of the component (e.g., 'minecraft:rideable') to retrieve. If no namespace prefix is specified, 'minecraft:' is assumed.
 	 */
-	hasComponent(componentId: string): boolean
+	hasComponent(componentId: keyof EntityComponents): boolean
 
 	/**
 	 * Gets a component (that represents additional capabilities) for an entity.
@@ -1109,11 +1209,23 @@ declare interface BlockComponents {
 	inventory: BlockInventory
 }
 
+/**
+ * Represents a type of effect - like poison - that can be applied to an entity.
+ */
 declare interface EffectType {
+	/**
+	 * Identifier name of this effect type.
+	 */
 	getName(): string
 }
 
+/**
+ * Represents the type of an item - for example, Wool.
+ */
 declare interface ItemType {
+	/**
+	 * Returns the identifier of the item type - for example, 'apple'.
+	 */
 	getName(): string
 }
 
@@ -1145,16 +1257,42 @@ declare interface BlockLocationClass {
 	new (x: number, y: number, z: number): BlockLocation
 }
 declare interface BlockLocation {
+	/**
+	 * Compares this BlockLocation and another BlockLocation to one another.
+	 * @param other 
+	 * Other block location to compare this BlockLocation to.
+	 */
 	equals(other: BlockLocation): boolean
 
+	/**
+	 * Returns a block location using a position relative to this block location.
+	 * @param x 
+	 * X offset relative to this BlockLocation.
+	 * @param y 
+	 * Y offset relative to this BlockLocation.
+	 * @param z 
+	 * Z offset relative to this BlockLocation.
+	 */
 	offset(x: number, y: number, z: number): BlockLocation
 
+	/**
+	 * Returns a BlockLocation for a block above this BlockLocation (that is, y - 1).
+	 */
 	above(): BlockLocation
 
+	/**
+	 * The X coordinate.
+	 */
 	x: number
 
+	/**
+	 * The integer-based Y position.
+	 */
 	y: number
 
+	/**
+	 * The integer-based Z position.
+	 */
 	z: number
 }
 
@@ -1162,22 +1300,48 @@ declare interface LocationClass {
 	new (x: number, y: number, z: number): Location
 }
 declare interface Location {
+	/**
+	 * Compares this Location and another Location to one another.
+	 * @param other 
+	 * Other location to compare this Location to.
+	 */
 	equals(other: Location): boolean
 
+	/**
+	 * X component of this location.
+	 */
 	x: number
 
+	/**
+	 * Y component of this location.
+	 */
 	y: number
 
+	/**
+	 * Z component of this location.
+	 */
 	z: number
 }
 
 declare interface ItemStackClass {
 	new (itemType: ItemType, amount: number, data: number): ItemStack
 }
+/**
+ * Defines a collection of items.
+ */
 declare interface ItemStack {
+	/**
+	 * Identifier of the type of items for the stack. If a namespace is not specified, 'minecraft:' is assumed. Examples include 'wheat' or 'apple'.
+	 */
 	id: string
 
+	/**
+	 * A data value used to configure alternate states of the item.
+	 */
 	data: number
 
+	/**
+	 * Number of the items in the stack. Valid values range between 0 and 64.
+	 */
 	amount: number
 }

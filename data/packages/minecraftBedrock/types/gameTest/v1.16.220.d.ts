@@ -387,35 +387,35 @@ declare module 'Minecraft' {
 }
 
 declare interface Effects {
-	speed: Effect
-	slowness: Effect
-	haste: Effect
-	miningFatigue: Effect
-	strength: Effect
-	instantHealth: Effect
-	instantDamage: Effect
-	jumpBoost: Effect
-	nausea: Effect
-	regeneration: Effect
-	resistance: Effect
-	fireResistance: Effect
-	waterBreathing: Effect
-	invisibility: Effect
-	blindness: Effect
-	nightVision: Effect
-	hunger: Effect
-	weakness: Effect
-	poison: Effect
-	wither: Effect
-	healthBoost: Effect
-	absorption: Effect
-	saturation: Effect
-	levitation: Effect
-	fatalPoison: Effect
-	slowFalling: Effect
-	conduitPower: Effect
-	badOmen: Effect
-	heroOfTheVillage: Effect
+	speed: EffectType
+	slowness: EffectType
+	haste: EffectType
+	miningFatigue: EffectType
+	strength: EffectType
+	instantHealth: EffectType
+	instantDamage: EffectType
+	jumpBoost: EffectType
+	nausea: EffectType
+	regeneration: EffectType
+	resistance: EffectType
+	fireResistance: EffectType
+	waterBreathing: EffectType
+	invisibility: EffectType
+	blindness: EffectType
+	nightVision: EffectType
+	hunger: EffectType
+	weakness: EffectType
+	poison: EffectType
+	wither: EffectType
+	healthBoost: EffectType
+	absorption: EffectType
+	saturation: EffectType
+	levitation: EffectType
+	fatalPoison: EffectType
+	slowFalling: EffectType
+	conduitPower: EffectType
+	badOmen: EffectType
+	heroOfTheVillage: EffectType
 }
 
 declare interface Effect {
