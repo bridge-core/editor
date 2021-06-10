@@ -36,6 +36,10 @@ export class ArrayTree extends Tree<Array<unknown>> {
 		return this._isOpen
 	}
 
+	hasChild(child: Tree<unknown>) {
+		return this.children.includes(child)
+	}
+
 	setOpen(val: boolean) {
 		if (this.hasChildren) this._isOpen = val
 	}

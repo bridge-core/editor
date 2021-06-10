@@ -3,6 +3,8 @@ import { AnyOfSchema } from './Schema/AnyOf'
 import { ConstSchema } from './Schema/Const'
 import { EnumSchema } from './Schema/Enum'
 import { IfSchema } from './Schema/IfSchema'
+import { ItemsSchema } from './Schema/Items'
+import { OneOfSchema } from './Schema/OneOf'
 import { PatternPropertiesSchema } from './Schema/PatternProperties'
 import { PropertiesSchema } from './Schema/Properties'
 import { RefSchema } from './Schema/Ref'
@@ -22,6 +24,8 @@ export const schemaRegistry = new Map<string, ISchemaConstructor>([
 	['const', ConstSchema],
 	['enum', EnumSchema],
 	['if', IfSchema],
+	['items', ItemsSchema],
+	['oneOf', OneOfSchema],
 	['patternProperties', PatternPropertiesSchema],
 	['properties', PropertiesSchema],
 	['required', RequiredSchema],
@@ -32,7 +36,21 @@ export const schemaRegistry = new Map<string, ISchemaConstructor>([
 export const ignoreFields = new Set<string>([
 	'$schema',
 	'$id',
-	'additionalProperties', //TODO: Proper implementation of additionalProperties instead of ignoring the field
-	'description',
+	'description', // TODO: Use description for hover text
 	'title',
+
+	//TODO: Proper implementation of the following fields instead of ignoring them
+	'additionalProperties',
+	'pattern',
+	'min',
+	'max',
+	'doNotSuggest',
+	'maxItems',
+	'minItems',
+	'deprecationMessage',
+	'examples',
+	'propertyNames',
+	'minimum',
+	'maximum',
+	'default',
 ])

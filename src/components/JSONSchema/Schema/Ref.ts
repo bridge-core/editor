@@ -13,21 +13,37 @@ export class RefSchema extends Schema {
 				`Invalid $ref type "${typeof value}": ${JSON.stringify(value)}`
 			)
 
-		const dir = dirname(this.location)
-		let fileUri = join(dir, value).replace('file:/', 'file:///')
+		if (value === '#') {
+			this.rootSchema =
+				SchemaManager.requestRootSchema(this.location) ??
+				new RootSchema(
+					this.location,
+					'$ref',
+					SchemaManager.request(this.location)
+				)
+		} else {
+			const dir = this.location.includes('#/')
+				? dirname(this.location.split('#/')[0])
+				: dirname(this.location)
+			let fileUri = join(dir, value).replace('file:/', 'file:///')
 
-		// Support hashes for navigating inside of schemas
-		let hash: string | undefined = undefined
-		if (fileUri.includes('#/')) {
-			;[fileUri, hash] = fileUri.split('#/')
+			// Support hashes for navigating inside of schemas
+			let hash: string | undefined = undefined
+			if (fileUri.includes('#/')) {
+				;[fileUri, hash] = fileUri.split('#/')
+			}
+
+			this.location = fileUri
+			this.rootSchema =
+				SchemaManager.requestRootSchema(
+					hash ? `${fileUri}#/${hash}` : fileUri
+				) ??
+				new RootSchema(
+					hash ? `${fileUri}#/${hash}` : fileUri,
+					'$ref',
+					SchemaManager.request(this.location, hash)
+				)
 		}
-
-		this.location = fileUri
-		this.rootSchema = new RootSchema(
-			this.location,
-			'$ref',
-			SchemaManager.request(this.location, hash)
-		)
 	}
 
 	getCompletionItems(obj: string) {

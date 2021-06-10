@@ -1,18 +1,25 @@
 import { ignoreFields, schemaRegistry } from './Registry'
 import type { IfSchema } from './Schema/IfSchema'
+import type { RootSchema } from './Schema/Root'
 import type { Schema } from './Schema/Schema'
 import type { ThenSchema } from './Schema/ThenSchema'
 import { walkObject } from '/@/utils/walkObject'
 
 export class SchemaManager {
 	protected static lib: Record<string, any> = {}
+	protected static rootSchemas = new Map<string, RootSchema>()
+
 	static setJSONDefaults(lib: Record<string, any>) {
 		this.lib = lib
+		this.rootSchemas.clear()
 	}
 
 	static request(fileUri: string, hash?: string) {
 		const requested = this.lib[fileUri]
-		if (!requested) throw new Error(`Couldn't find schema for "${fileUri}"`)
+		if (!requested) {
+			console.warn(`Couldn't find schema for "${fileUri}"`)
+			return {}
+		}
 
 		if (!hash) {
 			return requested.schema
@@ -20,10 +27,17 @@ export class SchemaManager {
 			let subSchema: any
 			walkObject(hash, requested.schema, (data) => (subSchema = data))
 			if (subSchema === undefined)
-				throw new Error(`Couldn't find hash ${hash} @ ${fileUri}`)
+				console.error(`Couldn't find hash ${hash} @ ${fileUri}`)
 
-			return subSchema
+			return subSchema ?? {}
 		}
+	}
+	static addRootSchema(location: string, rootSchema: RootSchema) {
+		this.rootSchemas.set(location, rootSchema)
+		return rootSchema
+	}
+	static requestRootSchema(location: string) {
+		return this.rootSchemas.get(location)
 	}
 
 	static createSchemas(location: string, obj: any) {

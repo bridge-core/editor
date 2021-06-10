@@ -2,7 +2,7 @@ import { ParentSchema } from './Parent'
 import { RootSchema } from './Root'
 import { IDiagnostic, Schema } from './Schema'
 
-export class AnyOfSchema extends ParentSchema {
+export class OneOfSchema extends ParentSchema {
 	protected children: Schema[]
 
 	constructor(location: string, key: string, value: unknown) {
@@ -10,25 +10,37 @@ export class AnyOfSchema extends ParentSchema {
 
 		if (!Array.isArray(value))
 			throw new Error(
-				`"anyOf" schema must be of type array, found "${typeof value}"`
+				`"oneOf" schema must be of type array, found "${typeof value}"`
 			)
 
 		this.children = value.map(
-			(val) => new RootSchema(this.location, 'anyOf', val)
+			(val) => new RootSchema(this.location, 'oneOf', val)
 		)
 	}
 
 	validate(obj: unknown) {
 		const allDiagnostics: IDiagnostic[] = []
+		let matchedOne = false
+		let hasTooManyMatches = false
 
 		for (const child of this.children) {
 			const diagnostics = child.validate(obj)
 
-			if (diagnostics.length === 0) return []
+			if (diagnostics.length === 0) {
+				if (matchedOne) hasTooManyMatches = true
+				matchedOne = true
+			}
 
 			allDiagnostics.push(...diagnostics)
 		}
 
-		return allDiagnostics
+		if (hasTooManyMatches)
+			return [
+				{
+					message: `JSON matched more than one schema, expected exactly one match`,
+				},
+			]
+		else if (matchedOne) return []
+		else return allDiagnostics
 	}
 }

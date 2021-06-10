@@ -11,7 +11,7 @@ export class CollectedEntry extends HistoryEntry {
 
 	undo() {
 		return new CollectedEntry(
-			this.entries.map((entry) => entry.undo()).reverse()
+			this.entries.reverse().map((entry) => entry.undo())
 		)
 	}
 }

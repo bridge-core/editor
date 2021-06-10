@@ -6,29 +6,34 @@
 		tabindex="-1"
 	>
 		<summary
-			:class="{ 'common-tree-key': true, open: tree.isOpen }"
-			@click.stop.prevent="tree.toggleOpen()"
+			:class="{
+				'common-tree-key': true,
+				open: tree.isOpen,
+				'array-tree-editor-selection':
+					tree.parent.type === 'array' && tree.isSelected,
+			}"
+			@click.stop.prevent="onClickKey"
 			tabindex="-1"
 		>
 			<v-icon
 				class="mr-1"
 				:style="{ opacity: tree.hasChildren ? null : '60%' }"
+				@click.native.stop.prevent="tree.toggleOpen()"
 				small
 			>
 				mdi-chevron-right
 			</v-icon>
 			<span v-if="tree.parent.type === 'object'">
 				<!-- Debugging helper -->
-				<span v-if="isDevMode">s: {{ tree.type }} </span>
+				<span v-if="isDevMode"
+					>s: {{ tree.type }} p: {{ tree.parent.type }}
+				</span>
 
-				<span
-					@click.stop.prevent="onClickKey"
-					@dblclick="tree.toggleOpen()"
-				>
-					<slot /> </span
-				>:</span
+				<span @dblclick="tree.toggleOpen()"> <slot /> </span>:</span
 			>
-			<span class="ml-1">{{ openingBracket }}</span>
+			<span class="ml-1" @click.stop.prevent="tree.toggleOpen()">{{
+				openingBracket
+			}}</span>
 		</summary>
 
 		<TreeChildren

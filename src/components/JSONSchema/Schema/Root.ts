@@ -8,6 +8,9 @@ export class RootSchema extends ParentSchema {
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
 
+		if (key === '$global' || key === '$ref')
+			SchemaManager.addRootSchema(location, this)
+
 		this.children = SchemaManager.createSchemas(this.location, value)
 	}
 

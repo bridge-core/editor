@@ -1,9 +1,11 @@
+import { CollectedEntry } from './History/CollectedEntry'
 import { DeleteEntry } from './History/DeleteEntry'
+import type { HistoryEntry } from './History/HistoryEntry'
 import { ReplaceTreeEntry } from './History/ReplaceTree'
 import { ArrayTree } from './Tree/ArrayTree'
 import { ObjectTree } from './Tree/ObjectTree'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
-import { TPrimitiveTree, Tree } from './Tree/Tree'
+import { TPrimitiveTree } from './Tree/Tree'
 import type { TreeEditor } from './TreeEditor'
 
 export class TreeSelection {
@@ -39,11 +41,23 @@ export class TreeSelection {
 		parent.updatePropertyName(<string>this.tree.key, value)
 	}
 
-	addKey(key: string) {
-		const newTree = new ObjectTree(this.tree, {})
+	addKey(key: string, type: 'array' | 'object') {
 		const index = this.tree.children.length
+		const historyEntries: HistoryEntry[] = []
 
 		this.tree.setOpen(true, true)
+
+		if (type === 'array' && this.tree instanceof ObjectTree) {
+			this.dispose()
+			const arrayTree = new ArrayTree(this.tree.getParent(), [])
+			this.tree.replace(arrayTree)
+			arrayTree.setOpen(true)
+
+			historyEntries.push(new ReplaceTreeEntry(this.tree, arrayTree))
+			this.tree = arrayTree
+		}
+
+		const newTree = new ObjectTree(this.tree, {})
 
 		if (this.tree instanceof ArrayTree) {
 			this.tree.children.push(newTree)
@@ -52,14 +66,17 @@ export class TreeSelection {
 			const keyTree = new ObjectTree(newTree, {})
 			newTree.children.push([key, keyTree])
 
-			this.select(keyTree)
+			this.parent.setSelection(keyTree)
 			newTree.setOpen(true)
+			this.tree.setOpen(true)
 		} else {
 			this.tree.children.push([key, newTree])
-			this.select(newTree)
+			this.parent.setSelection(newTree)
 		}
 
-		return new DeleteEntry(newTree, index, key)
+		historyEntries.push(new DeleteEntry(newTree, index, key))
+
+		return new CollectedEntry(historyEntries)
 	}
 
 	addValue(value: TPrimitiveTree) {

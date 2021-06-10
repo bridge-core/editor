@@ -17,7 +17,7 @@
 				ref="addKeyInput"
 				v-model="keyToAdd"
 				@change="onAddKey"
-				:items="treeEditor.propertySuggestions"
+				:items="propertySuggestions"
 				:label="t('editors.treeEditor.addObject')"
 				outlined
 				dense
@@ -68,6 +68,10 @@ export default {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
 		this.focusEditor()
 	},
+	activated() {
+		this.treeEditor.receiveContainer(this.$refs.editorContainer)
+		this.focusEditor()
+	},
 	computed: {
 		treeEditor() {
 			return this.tab.treeEditor
@@ -102,6 +106,12 @@ export default {
 
 			return isGlobal
 		},
+		propertySuggestions() {
+			return this.treeEditor.propertySuggestions.map((suggestion) => ({
+				...suggestion,
+				text: suggestion.value,
+			}))
+		},
 	},
 	methods: {
 		focusEditor() {
@@ -110,14 +120,15 @@ export default {
 		onEdit(value) {
 			console.log(value)
 			this.treeEditor.forEachSelection((selection) => {
-				console.log(selection)
 				selection.edit(value)
 			})
 		},
-		onAddKey(value) {
-			if (value === null) return
+		onAddKey(suggestion) {
+			if (suggestion === null) return
 
-			this.treeEditor.addKey(value)
+			const { type, value } = suggestion
+
+			this.treeEditor.addKey(value, type)
 
 			this.$nextTick(() => (this.keyToAdd = ''))
 		},
@@ -138,6 +149,10 @@ export default {
 	font-weight: bold;
 	font-style: italic;
 	text-decoration: underline;
+	background: rgba(170, 170, 170, 0.2);
+}
+.array-tree-editor-selection {
+	border-radius: 4px;
 	background: rgba(170, 170, 170, 0.2);
 }
 .theme--dark .tree-editor-selection {

@@ -19,7 +19,7 @@ import { TreeSelection, TreeValueSelection } from './TreeSelection'
 import { App } from '/@/App'
 
 export class TreeEditor {
-	public propertySuggestions: string[] = []
+	public propertySuggestions: ICompletionItem[] = []
 	public valueSuggestions: string[] = []
 
 	protected tree: Tree<unknown>
@@ -102,16 +102,14 @@ export class TreeEditor {
 					.flat()
 		}
 
-		this.propertySuggestions = suggestions
-			.filter(
-				(suggestion) =>
-					suggestion.type === 'property' &&
-					!(<any>(tree ?? this.tree)).children.find((test: any) => {
-						if (test.type === 'array') return false
-						return test[0] === suggestion.value
-					})
-			)
-			.map((suggestion) => `${suggestion.value}`)
+		this.propertySuggestions = suggestions.filter(
+			(suggestion) =>
+				(suggestion.type === 'object' || suggestion.type === 'array') &&
+				!(<any>(tree ?? this.tree)).children.find((test: any) => {
+					if (test.type === 'array') return false
+					return test[0] === suggestion.value
+				})
+		)
 
 		// Only suggest values for empty objects
 		if ((tree?.children?.length ?? 1) === 0) {
@@ -124,21 +122,29 @@ export class TreeEditor {
 	createSchemaRoot() {
 		const schemaUri = FileType.get(this.parent.getProjectPath())?.schema
 		if (schemaUri)
-			this.schemaRoot = new RootSchema(
+			this.schemaRoot = SchemaManager.addRootSchema(
 				schemaUri,
-				'global',
-				SchemaManager.request(schemaUri)
+				new RootSchema(
+					schemaUri,
+					'$global',
+					SchemaManager.request(schemaUri)
+				)
 			)
 		this.updateSuggestions()
 	}
 
 	receiveContainer(container: HTMLDivElement) {
+		this._actions?.dispose()
 		this._keyBindings = new KeyBindingManager(container)
 		this._actions = new ActionManager(this._keyBindings)
 
 		this.actions.create({
 			keyBinding: ['DELETE', 'BACKSPACE'],
-			prevent: (el) => el.tagName !== 'SUMMARY' && el.tagName !== 'DIV',
+			prevent: (el) => {
+				if (el.tagName === 'INPUT' && (<any>el).value === '')
+					return false
+				return el.tagName !== 'SUMMARY' && el.tagName !== 'DIV'
+			},
 			onTrigger: () => {
 				const entries: HistoryEntry[] = []
 
@@ -214,7 +220,13 @@ export class TreeEditor {
 	}
 	removeSelectionOf(tree: Tree<unknown>) {
 		this.selections = this.selections.filter((sel) => {
-			if (sel.getTree() !== tree) return true
+			const currTree = sel.getTree()
+			if (
+				currTree !== tree &&
+				(tree instanceof PrimitiveTree ||
+					!(<ObjectTree | ArrayTree>tree).hasChild(currTree))
+			)
+				return true
 
 			sel.dispose(false)
 			return false
@@ -254,13 +266,13 @@ export class TreeEditor {
 		this.selectionChange.dispatch()
 	}
 
-	addKey(value: string) {
+	addKey(value: string, type: 'array' | 'object') {
 		const entries: HistoryEntry[] = []
 
 		this.forEachSelection((selection) => {
 			if (selection instanceof TreeValueSelection) return
 
-			entries.push(selection.addKey(value))
+			entries.push(selection.addKey(value, type))
 		})
 
 		this.history.pushAll(entries)
@@ -274,7 +286,7 @@ export class TreeEditor {
 			transformedValue = value === 'true'
 
 		const entries: HistoryEntry[] = []
-		console.log(value, this.selections)
+
 		this.forEachSelection((selection) => {
 			if (selection instanceof TreeValueSelection) return
 

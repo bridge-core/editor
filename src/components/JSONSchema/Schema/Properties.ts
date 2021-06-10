@@ -33,7 +33,7 @@ export class PropertiesSchema extends Schema {
 		return Object.keys(<object>this.value).map(
 			(value) =>
 				<const>{
-					type: 'property',
+					type: 'object',
 					value,
 				}
 		)
