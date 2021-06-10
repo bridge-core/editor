@@ -1,13 +1,25 @@
-import { Schema } from './Schema'
+import { ICompletionItem, Schema } from './Schema'
 import { getTypeOf } from '/@/utils/typeof'
 
 export class TypeSchema extends Schema {
+	get values() {
+		return Array.isArray(this.value) ? this.value : [this.value]
+	}
+
 	getSchemasFor() {
 		return []
 	}
 
 	getCompletionItems() {
-		return []
+		const suggestions: ICompletionItem[] = []
+		if (this.values.includes('boolean'))
+			suggestions.push(
+				...['true', 'false'].map(
+					(value) => <const>{ type: 'value', value }
+				)
+			)
+
+		return suggestions
 	}
 
 	validate(val: unknown) {
