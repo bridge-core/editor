@@ -17,7 +17,7 @@ import { PrimitiveTree } from './Tree/PrimitiveTree'
 import type { TPrimitiveTree, Tree } from './Tree/Tree'
 import { TreeSelection, TreeValueSelection } from './TreeSelection'
 import { App } from '/@/App'
-
+import { debounce } from 'lodash-es'
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
 	public valueSuggestions: string[] = []
@@ -76,7 +76,7 @@ export class TreeEditor {
 		this.selectionChange.on(() => this.updateSuggestions())
 	}
 
-	updateSuggestions() {
+	updateSuggestions = debounce(() => {
 		this.propertySuggestions = []
 		this.valueSuggestions = []
 
@@ -117,7 +117,7 @@ export class TreeEditor {
 				.filter((suggestion) => suggestion.type === 'value')
 				.map((suggestion) => `${suggestion.value}`)
 		}
-	}
+	}, 50)
 
 	createSchemaRoot() {
 		const schemaUri = FileType.get(this.parent.getProjectPath())?.schema
@@ -152,13 +152,15 @@ export class TreeEditor {
 					const tree = sel.getTree()
 					if (!tree.getParent()) return // May not delete global tree
 
+					sel.dispose()
+
 					if (
 						sel instanceof TreeValueSelection &&
 						tree.getParent()!.type === 'object'
 					) {
 						// A delete action on a primitive value replaces the PrimitiveTree with an emtpy ObjectTree
 						const newTree = new ObjectTree(tree.getParent(), {})
-						this.toggleSelection(newTree)
+						this.setSelection(newTree)
 
 						tree.replace(newTree)
 
@@ -170,8 +172,6 @@ export class TreeEditor {
 
 						entries.push(new UndoDeleteEntry(tree, index, key))
 					}
-
-					sel.dispose()
 				})
 
 				this.history.pushAll(entries)
