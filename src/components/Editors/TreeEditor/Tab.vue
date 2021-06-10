@@ -4,6 +4,7 @@
 			class="pr-4 code-font"
 			:style="`height: ${height - 196}px; overflow: auto;`"
 			@blur="focusEditor"
+			@scroll="onScroll"
 		>
 			<component
 				:is="tab.treeEditor.tree.component"
@@ -154,8 +155,14 @@ export default {
 
 			this.$nextTick(() => (this.valueToAdd = ''))
 		},
+		onScroll(event) {
+			this.treeEditor.scrollTop = event.target.scrollTop
+		},
 	},
 	watch: {
+		treeEditor(to, from) {
+			this.treeEditor.receiveContainer(this.$refs.editorContainer)
+		},
 		propertySuggestions() {
 			if (this.propertySuggestions.length === 0) {
 				this.$refs.addKeyInput.blur()

@@ -29,6 +29,8 @@ export class TreeEditor {
 	protected history = new EditorHistory(this)
 	protected schemaRoot?: RootSchema
 	protected selectionChange = new EventDispatcher<void>()
+	protected containerElement?: HTMLDivElement
+	protected scrollTop = 0
 
 	get keyBindings() {
 		if (!this._keyBindings)
@@ -137,9 +139,11 @@ export class TreeEditor {
 	}
 
 	receiveContainer(container: HTMLDivElement) {
+		this._keyBindings?.dispose()
 		this._actions?.dispose()
 		this._keyBindings = new KeyBindingManager(container)
 		this._actions = new ActionManager(this._keyBindings)
+		this.containerElement = container
 
 		this.actions.create({
 			keyBinding: ['DELETE', 'BACKSPACE'],
@@ -205,6 +209,16 @@ export class TreeEditor {
 				this.history.redo()
 			},
 		})
+	}
+	deactivate() {
+		this._keyBindings?.dispose()
+		this._actions?.dispose()
+	}
+	activate() {
+		if (!this.containerElement) return
+		this.receiveContainer(this.containerElement)
+
+		this.containerElement.children[0].scrollTop = this.scrollTop
 	}
 
 	saveState() {

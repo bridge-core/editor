@@ -73,8 +73,12 @@ export class TreeTab extends FileTab {
 		throttledCacheUpdate(this)
 	}
 
-	async onActivate() {}
-	onDeactivate() {}
+	async onActivate() {
+		this.treeEditor.activate()
+	}
+	onDeactivate() {
+		this.treeEditor.deactivate()
+	}
 	onDestroy() {}
 	updateParent(parent: TabSystem) {}
 	focus() {}
