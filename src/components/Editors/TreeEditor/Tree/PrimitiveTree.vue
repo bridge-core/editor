@@ -1,30 +1,47 @@
 <template>
 	<div tabindex="-1" :style="tree.styles">
-		<v-icon class="mr-1" :style="{ opacity: '60%' }" small>
-			mdi-chevron-right
-		</v-icon>
-		<span v-if="tree.parent.type === 'object'">
-			<span @click.stop.prevent="onClickKey"><slot /></span>:</span
+		<div
+			style="display: inline-block"
+			:class="{
+				'tree-editor-selection':
+					tree.type !== 'object' &&
+					tree.type !== 'array' &&
+					tree.isSelected,
+			}"
 		>
+			<v-icon
+				class="mr-1"
+				:style="{ opacity: '60%', position: 'relative', top: '-1.5px' }"
+				small
+			>
+				mdi-chevron-right
+			</v-icon>
+			<span v-if="tree.parent.type === 'object'">
+				<span @click.stop.prevent="onClickKey"><slot /></span>:</span
+			>
+		</div>
 
 		<!-- Debugging helper -->
 		<span v-if="isDevMode">
 			s: {{ tree.type }} p: {{ tree.parent.type }}</span
 		>
 
-		<span
+		<div
 			:style="{
+				height: '20.5px',
+				display: 'inline-block',
 				color: highlighterInfo.color,
 				backgroundColor: highlighterInfo.background,
 				textDecoration,
 			}"
 			:class="{
 				'tree-editor-selection': tree.isValueSelected,
-				'ml-1': true,
+				'px-1': true,
 			}"
 			@click.stop.prevent="onClickKey($event, true)"
-			>{{ treeValue }}</span
 		>
+			{{ treeValue }}
+		</div>
 	</div>
 </template>
 

@@ -1,5 +1,7 @@
 import { CollectedEntry } from './History/CollectedEntry'
 import { DeleteEntry } from './History/DeleteEntry'
+import { EditPropertyEntry } from './History/EditPropertyEntry'
+import { EditValueEntry } from './History/EditValueEntry'
 import type { HistoryEntry } from './History/HistoryEntry'
 import { ReplaceTreeEntry } from './History/ReplaceTree'
 import { ArrayTree } from './Tree/ArrayTree'
@@ -37,8 +39,11 @@ export class TreeSelection {
 		if (parent instanceof ArrayTree)
 			throw new Error(`Cannot edit array indices`)
 
+		const key = <string>this.tree.key
 		// The tree key must be of type string because of the instanceof check above
-		parent.updatePropertyName(<string>this.tree.key, value)
+		parent.updatePropertyName(key, value)
+
+		return new EditPropertyEntry(parent, key, value)
 	}
 
 	addKey(key: string, type: 'array' | 'object') {
@@ -51,7 +56,7 @@ export class TreeSelection {
 			this.dispose()
 			const arrayTree = new ArrayTree(this.tree.getParent(), [])
 			this.tree.replace(arrayTree)
-			arrayTree.setOpen(true)
+			arrayTree.setOpen(true, true)
 
 			historyEntries.push(new ReplaceTreeEntry(this.tree, arrayTree))
 			this.tree = arrayTree
@@ -79,24 +84,41 @@ export class TreeSelection {
 		return new CollectedEntry(historyEntries)
 	}
 
-	addValue(value: TPrimitiveTree) {
+	addValue(value: TPrimitiveTree, type: 'value' | 'valueArray') {
+		const historyEntries: HistoryEntry[] = []
+
+		if (type === 'valueArray' && this.tree instanceof ObjectTree) {
+			this.dispose()
+			const arrayTree = new ArrayTree(this.tree.getParent(), [])
+			arrayTree.setOpen(true, true)
+			this.tree.replace(arrayTree)
+
+			historyEntries.push(new ReplaceTreeEntry(this.tree, arrayTree))
+			this.tree = arrayTree
+		}
+
 		if (this.tree.type === 'array') {
 			// Push primitive trees into array trees
 			const newTree = new PrimitiveTree(this.tree, value)
 
 			this.tree.children.push(newTree)
+			this.parent.setSelection(this.tree)
 
-			return new DeleteEntry(newTree, this.tree.children.length - 1)
+			historyEntries.push(
+				new DeleteEntry(newTree, this.tree.children.length - 1)
+			)
 		} else if (Object.keys(this.tree.children).length === 0) {
 			// Otherwise only add value to empty objects
 			const newTree = new PrimitiveTree(this.tree.getParent(), value)
 
 			this.tree.replace(newTree)
-			this.parent.setSelection(newTree.getParent()!, true)
+			this.parent.setSelection(newTree.getParent()!)
 			this.dispose()
 
-			return new ReplaceTreeEntry(this.tree, newTree)
+			historyEntries.push(new ReplaceTreeEntry(this.tree, newTree))
 		}
+
+		return new CollectedEntry(historyEntries)
 	}
 }
 
@@ -115,10 +137,10 @@ export class TreeValueSelection {
 	}
 
 	edit(value: string) {
-		if (!Number.isNaN(Number(value))) this.tree.setValue(Number(value))
-		else if (value === 'null') this.tree.setValue(null)
-		else if (value === 'true' || value === 'false')
-			this.tree.setValue(value === 'true')
-		else this.tree.setValue(value)
+		const oldValue = `${this.tree.value}`
+
+		this.tree.edit(value)
+
+		return new EditValueEntry(this.tree, oldValue)
 	}
 }

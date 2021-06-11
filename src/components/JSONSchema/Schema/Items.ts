@@ -49,7 +49,8 @@ export class ItemsSchema extends Schema {
 				child.getCompletionItems(obj).map(
 					(item) =>
 						<const>{
-							type: 'array',
+							type:
+								item.type === 'object' ? 'array' : 'valueArray',
 							value: item.value,
 						}
 				)

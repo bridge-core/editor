@@ -9,15 +9,18 @@
 			:class="{
 				'common-tree-key': true,
 				open: tree.isOpen,
-				'array-tree-editor-selection':
-					tree.parent.type === 'array' && tree.isSelected,
+				'tree-editor-selection': tree.isSelected,
 			}"
 			@click.stop.prevent="onClickKey"
 			tabindex="-1"
 		>
 			<v-icon
 				class="mr-1"
-				:style="{ opacity: tree.hasChildren ? null : '60%' }"
+				:style="{
+					position: 'relative',
+					opacity: tree.hasChildren ? null : '60%',
+					top: tree.hasChildren ? '0px' : '-1.5px',
+				}"
 				@click.native.stop.prevent="tree.toggleOpen()"
 				small
 			>
@@ -31,7 +34,10 @@
 
 				<span @dblclick="tree.toggleOpen()"> <slot /> </span>:</span
 			>
-			<span class="ml-1" @click.stop.prevent="tree.toggleOpen()">{{
+			<!-- Spacer to make array objects easier to select -->
+			<span class="mx-2" v-else />
+
+			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">{{
 				openingBracket
 			}}</span>
 		</summary>

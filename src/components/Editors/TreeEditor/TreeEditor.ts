@@ -18,9 +18,10 @@ import type { TPrimitiveTree, Tree } from './Tree/Tree'
 import { TreeSelection, TreeValueSelection } from './TreeSelection'
 import { App } from '/@/App'
 import { debounce } from 'lodash-es'
+import { CollectedEntry } from './History/CollectedEntry'
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
-	public valueSuggestions: string[] = []
+	public valueSuggestions: ICompletionItem[] = []
 
 	protected tree: Tree<unknown>
 	protected selections: (TreeSelection | TreeValueSelection)[] = []
@@ -116,11 +117,13 @@ export class TreeEditor {
 				})
 		)
 
-		// Only suggest values for empty objects
-		if ((tree?.children?.length ?? 1) === 0) {
-			this.valueSuggestions = suggestions
-				.filter((suggestion) => suggestion.type === 'value')
-				.map((suggestion) => `${suggestion.value}`)
+		// Only suggest values for empty objects or arrays
+		if ((tree?.children?.length ?? 1) === 0 || tree?.type === 'array') {
+			this.valueSuggestions = suggestions.filter(
+				(suggestion) =>
+					suggestion.type === 'value' ||
+					suggestion.type === 'valueArray'
+			)
 		}
 	}, 50)
 
@@ -299,7 +302,7 @@ export class TreeEditor {
 		this.history.pushAll(entries)
 	}
 
-	addValue(value: string) {
+	addValue(value: string, type: 'value' | 'valueArray') {
 		let transformedValue: TPrimitiveTree = value
 		if (!Number.isNaN(Number(value))) transformedValue = Number(value)
 		else if (value === 'null') transformedValue = null
@@ -311,10 +314,21 @@ export class TreeEditor {
 		this.forEachSelection((selection) => {
 			if (selection instanceof TreeValueSelection) return
 
-			const entry = selection.addValue(transformedValue)
+			const entry = selection.addValue(transformedValue, type)
 			if (entry) entries.push(entry)
 		})
 
 		this.history.pushAll(entries)
+	}
+
+	edit(value: string) {
+		const historyEntries: HistoryEntry[] = []
+
+		this.forEachSelection((selection) => {
+			const entry = selection.edit(value)
+			if (entry) historyEntries.push(entry)
+		})
+
+		this.history.pushAll(historyEntries)
 	}
 }

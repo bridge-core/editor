@@ -46,6 +46,7 @@ export default {
 		biome: 'Biome',
 		block: 'Block',
 		bridgeConfig: 'Project Config',
+		dialogue: 'Dialogue',
 		entity: 'Entity',
 		feature: 'Feature',
 		featureRule: 'Feature Rule',

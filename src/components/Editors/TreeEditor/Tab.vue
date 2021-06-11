@@ -126,7 +126,10 @@ export default {
 			}))
 		},
 		valueSuggestions() {
-			return this.treeEditor.valueSuggestions
+			return this.treeEditor.valueSuggestions.map((suggestion) => ({
+				...suggestion,
+				text: suggestion.value,
+			}))
 		},
 	},
 	methods: {
@@ -134,24 +137,21 @@ export default {
 			if (this.$refs.editorContainer) this.$refs.editorContainer.focus()
 		},
 		onEdit(value) {
-			console.log(value)
-			this.treeEditor.forEachSelection((selection) => {
-				selection.edit(value)
-			})
+			this.treeEditor.edit(value)
 		},
 		onAddKey(suggestion) {
 			if (suggestion === null) return
-
-			const { type, value } = suggestion
+			const { type = 'object', value = suggestion } = suggestion
 
 			this.treeEditor.addKey(value, type)
 
 			this.$nextTick(() => (this.keyToAdd = ''))
 		},
-		onAddValue(value) {
-			if (value === null) return
+		onAddValue(suggestion) {
+			if (suggestion === null) return
+			const { type = 'value', value = suggestion } = suggestion
 
-			this.treeEditor.addValue(value)
+			this.treeEditor.addValue(value, type)
 
 			this.$nextTick(() => (this.valueToAdd = ''))
 		},
@@ -160,7 +160,7 @@ export default {
 		},
 	},
 	watch: {
-		treeEditor(to, from) {
+		treeEditor() {
 			this.treeEditor.receiveContainer(this.$refs.editorContainer)
 		},
 		propertySuggestions() {
@@ -178,18 +178,11 @@ export default {
 
 <style>
 .tree-editor-selection {
-	border-radius: 4px;
-	font-weight: bold;
-	font-style: italic;
-	text-decoration: underline;
-	background: rgba(170, 170, 170, 0.2);
-}
-.array-tree-editor-selection {
-	border-radius: 4px;
+	border-radius: 2rem;
 	background: rgba(170, 170, 170, 0.2);
 }
 .theme--dark .tree-editor-selection {
-	background: rgba(100, 100, 100, 0.5);
+	background: rgba(100, 100, 100, 0.3);
 }
 .editor-container {
 	outline: none;

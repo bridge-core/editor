@@ -29,4 +29,12 @@ export class PrimitiveTree extends Tree<TPrimitiveTree> {
 	toJSON() {
 		return this.value
 	}
+
+	edit(value: string) {
+		if (!Number.isNaN(Number(value))) this.setValue(Number(value))
+		else if (value === 'null') this.setValue(null)
+		else if (value === 'true' || value === 'false')
+			this.setValue(value === 'true')
+		else this.setValue(value)
+	}
 }
