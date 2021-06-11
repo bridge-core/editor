@@ -9,7 +9,11 @@
 					tree.isSelected,
 			}"
 		>
-			<v-icon class="mr-1 pb-1" :style="{ opacity: '60%' }" small>
+			<v-icon
+				class="mr-1"
+				:style="{ opacity: '60%', position: 'relative', top: '-1.5px' }"
+				small
+			>
 				mdi-chevron-right
 			</v-icon>
 			<span v-if="tree.parent.type === 'object'">

@@ -19,7 +19,7 @@
 				:style="{
 					position: 'relative',
 					opacity: tree.hasChildren ? null : '60%',
-					top: '0px',
+					top: tree.hasChildren ? '0px' : '-1.5px',
 				}"
 				@click.native.stop.prevent="tree.toggleOpen()"
 				small
@@ -34,6 +34,8 @@
 
 				<span @dblclick="tree.toggleOpen()"> <slot /> </span>:</span
 			>
+			<span class="mx-1" v-else></span>
+
 			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">{{
 				openingBracket
 			}}</span>
