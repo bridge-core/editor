@@ -141,7 +141,7 @@ export default {
 		},
 		onAddKey(suggestion) {
 			if (suggestion === null) return
-			const { type, value } = suggestion
+			const { type = 'object', value = suggestion } = suggestion
 
 			this.treeEditor.addKey(value, type)
 
@@ -149,7 +149,7 @@ export default {
 		},
 		onAddValue(suggestion) {
 			if (suggestion === null) return
-			const { type, value } = suggestion
+			const { type = 'value', value = suggestion } = suggestion
 
 			this.treeEditor.addValue(value, type)
 
