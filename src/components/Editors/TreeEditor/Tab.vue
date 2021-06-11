@@ -137,10 +137,7 @@ export default {
 			if (this.$refs.editorContainer) this.$refs.editorContainer.focus()
 		},
 		onEdit(value) {
-			console.log(value)
-			this.treeEditor.forEachSelection((selection) => {
-				selection.edit(value)
-			})
+			this.treeEditor.edit(value)
 		},
 		onAddKey(suggestion) {
 			if (suggestion === null) return

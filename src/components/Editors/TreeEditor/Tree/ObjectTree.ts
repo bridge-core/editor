@@ -75,11 +75,5 @@ export class ObjectTree extends Tree<object> {
 		}
 
 		set(this.children, oldIndex, [newName, oldTree])
-
-		return {
-			undo: () => {
-				set(this.children, oldIndex, [oldName, oldTree])
-			},
-		}
 	}
 }

@@ -1,5 +1,6 @@
 import { CollectedEntry } from './History/CollectedEntry'
 import { DeleteEntry } from './History/DeleteEntry'
+import { EditEntry } from './History/EditEntry'
 import type { HistoryEntry } from './History/HistoryEntry'
 import { ReplaceTreeEntry } from './History/ReplaceTree'
 import { ArrayTree } from './Tree/ArrayTree'
@@ -37,8 +38,11 @@ export class TreeSelection {
 		if (parent instanceof ArrayTree)
 			throw new Error(`Cannot edit array indices`)
 
+		const key = <string>this.tree.key
 		// The tree key must be of type string because of the instanceof check above
-		parent.updatePropertyName(<string>this.tree.key, value)
+		parent.updatePropertyName(key, value)
+
+		return new EditEntry(parent, key, value)
 	}
 
 	addKey(key: string, type: 'array' | 'object') {
