@@ -2,7 +2,7 @@ import { ObjectTree } from '../Tree/ObjectTree'
 import { Tree } from '../Tree/Tree'
 import { HistoryEntry } from './HistoryEntry'
 
-export class EditEntry extends HistoryEntry {
+export class EditPropertyEntry extends HistoryEntry {
 	unselectTrees: Tree<unknown>[]
 
 	constructor(
@@ -17,6 +17,6 @@ export class EditEntry extends HistoryEntry {
 	undo() {
 		this.parent.updatePropertyName(this.newValue, this.oldValue)
 
-		return new EditEntry(this.parent, this.newValue, this.oldValue)
+		return new EditPropertyEntry(this.parent, this.newValue, this.oldValue)
 	}
 }

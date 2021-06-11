@@ -1,6 +1,7 @@
 import { CollectedEntry } from './History/CollectedEntry'
 import { DeleteEntry } from './History/DeleteEntry'
-import { EditEntry } from './History/EditEntry'
+import { EditPropertyEntry } from './History/EditPropertyEntry'
+import { EditValueEntry } from './History/EditValueEntry'
 import type { HistoryEntry } from './History/HistoryEntry'
 import { ReplaceTreeEntry } from './History/ReplaceTree'
 import { ArrayTree } from './Tree/ArrayTree'
@@ -42,7 +43,7 @@ export class TreeSelection {
 		// The tree key must be of type string because of the instanceof check above
 		parent.updatePropertyName(key, value)
 
-		return new EditEntry(parent, key, value)
+		return new EditPropertyEntry(parent, key, value)
 	}
 
 	addKey(key: string, type: 'array' | 'object') {
@@ -136,10 +137,10 @@ export class TreeValueSelection {
 	}
 
 	edit(value: string) {
-		if (!Number.isNaN(Number(value))) this.tree.setValue(Number(value))
-		else if (value === 'null') this.tree.setValue(null)
-		else if (value === 'true' || value === 'false')
-			this.tree.setValue(value === 'true')
-		else this.tree.setValue(value)
+		const oldValue = `${this.tree.value}`
+
+		this.tree.edit(value)
+
+		return new EditValueEntry(this.tree, oldValue)
 	}
 }
