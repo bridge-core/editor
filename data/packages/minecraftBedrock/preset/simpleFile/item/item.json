@@ -1,9 +1,9 @@
 {
-    "format_version": "",
-    "minecraft:item": {
-        "description": {
-            "identifier": ""
-        },
-        "components": {}
-    }
+	"format_version": {},
+	"minecraft:item": {
+		"description": {
+			"identifier": {}
+		},
+		"components": {}
+	}
 }

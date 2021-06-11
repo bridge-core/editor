@@ -1,21 +1,21 @@
 {
-    "format_version": "",
-    "minecraft:attachable": {
-        "description": {
-            "identifier": "",
-            "materials": {
-                "default": ""
-            },
-            "textures": {
-                "default": ""
-            },
-            "geometry": {
-                "default": ""
-            },
-            "scripts": {
-                "pre_animation": []
-            },
-            "render_controllers": []
-        }
-    }
+	"format_version": {},
+	"minecraft:attachable": {
+		"description": {
+			"identifier": {},
+			"materials": {
+				"default": {}
+			},
+			"textures": {
+				"default": {}
+			},
+			"geometry": {
+				"default": {}
+			},
+			"scripts": {
+				"pre_animation": []
+			},
+			"render_controllers": []
+		}
+	}
 }

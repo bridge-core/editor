@@ -1,12 +1,12 @@
 {
-	"format_version": "",
+	"format_version": {},
 	"minecraft:feature_rules": {
 		"description": {
 			"identifier": "{{PROJECT_PREFIX}}:{{FILE_NAME}}",
-			"places_feature": ""
+			"places_feature": {}
 		},
 		"conditions": {
-			"placement_pass": "",
+			"placement_pass": {},
 			"minecraft:biome_filter": {}
 		},
 		"distribution": {

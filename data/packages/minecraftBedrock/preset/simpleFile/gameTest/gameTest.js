@@ -1,5 +1,3 @@
-import { register } from "GameTest";
+import { register } from 'GameTest'
 
-register("", "", (test) => {
-    
-});
+register({}, {}, (test) => {})

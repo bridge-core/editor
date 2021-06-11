@@ -1,24 +1,24 @@
 {
-    "format_version": "",
-    "minecraft:client_entity": {
-        "description": {
-            "identifier": "",
-            "materials": {
-                "default": ""
-            },
-            "textures": {
-                "default": ""
-            },
-            "geometry": {
-                "default": ""
-            },
-            "animations": {},
-            "scripts": {
-                "pre_animation": [],
-                "animate": []
-            },
-            "render_controllers": [],
-            "spawn_egg": {}
-        }
-    }
+	"format_version": {},
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": {},
+			"materials": {
+				"default": {}
+			},
+			"textures": {
+				"default": {}
+			},
+			"geometry": {
+				"default": {}
+			},
+			"animations": {},
+			"scripts": {
+				"pre_animation": [],
+				"animate": []
+			},
+			"render_controllers": [],
+			"spawn_egg": {}
+		}
+	}
 }

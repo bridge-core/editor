@@ -1,5 +1,5 @@
 {
-	"format_version": "",
+	"format_version": {},
 	"minecraft:biome": {
 		"description": {
 			"identifier": "{{FILE_NAME}}"

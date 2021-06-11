@@ -1,8 +1,8 @@
 {
-	"format_version": "",
+	"format_version": {},
 	"minecraft:fog_settings": {
 		"description": {
-			"identifier": ""
+			"identifier": {}
 		},
 		"distance": {}
 	}
