@@ -126,7 +126,10 @@ export default {
 			}))
 		},
 		valueSuggestions() {
-			return this.treeEditor.valueSuggestions
+			return this.treeEditor.valueSuggestions.map((suggestion) => ({
+				...suggestion,
+				text: suggestion.value,
+			}))
 		},
 	},
 	methods: {
@@ -141,17 +144,17 @@ export default {
 		},
 		onAddKey(suggestion) {
 			if (suggestion === null) return
-
 			const { type, value } = suggestion
 
 			this.treeEditor.addKey(value, type)
 
 			this.$nextTick(() => (this.keyToAdd = ''))
 		},
-		onAddValue(value) {
-			if (value === null) return
+		onAddValue(suggestion) {
+			if (suggestion === null) return
+			const { type, value } = suggestion
 
-			this.treeEditor.addValue(value)
+			this.treeEditor.addValue(value, type)
 
 			this.$nextTick(() => (this.valueToAdd = ''))
 		},
@@ -160,7 +163,7 @@ export default {
 		},
 	},
 	watch: {
-		treeEditor(to, from) {
+		treeEditor() {
 			this.treeEditor.receiveContainer(this.$refs.editorContainer)
 		},
 		propertySuggestions() {

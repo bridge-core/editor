@@ -34,7 +34,8 @@
 
 				<span @dblclick="tree.toggleOpen()"> <slot /> </span>:</span
 			>
-			<span class="mx-1" v-else></span>
+			<!-- Spacer to make array objects easier to select -->
+			<span class="mx-2" v-else />
 
 			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">{{
 				openingBracket

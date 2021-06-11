@@ -40,8 +40,8 @@ export class ArrayTree extends Tree<Array<unknown>> {
 		return this.children.includes(child)
 	}
 
-	setOpen(val: boolean) {
-		if (this.hasChildren) this._isOpen = val
+	setOpen(val: boolean, force = false) {
+		if (this.hasChildren || force) this._isOpen = val
 	}
 	toggleOpen() {
 		this.setOpen(!this._isOpen)
