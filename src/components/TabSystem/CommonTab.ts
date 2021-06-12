@@ -6,6 +6,7 @@ import { PackType } from '/@/components/Data/PackType'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
+import { EventDispatcher } from '../Common/Event/EventDispatcher'
 
 export abstract class Tab extends Signal<Tab> {
 	abstract component: Vue.Component
@@ -14,6 +15,7 @@ export abstract class Tab extends Signal<Tab> {
 	public isUnsaved = false
 	public isForeignFile = true
 	public connectedTabs: Tab[] = []
+	public readonly onClose = new EventDispatcher<void>()
 
 	protected projectPath?: string
 	protected actions: SimpleAction[] = []
@@ -83,7 +85,10 @@ export abstract class Tab extends Signal<Tab> {
 	}
 	async close() {
 		const didClose = await this.parent.close(this)
-		if (didClose) this.connectedTabs.forEach((tab) => tab.close())
+		if (didClose) {
+			this.connectedTabs.forEach((tab) => tab.close())
+			this.onClose.dispatch()
+		}
 	}
 	abstract isFor(fileHandle: FileSystemFileHandle): Promise<boolean>
 
@@ -120,6 +125,9 @@ export abstract class Tab extends Signal<Tab> {
 
 	addAction(...actions: SimpleAction[]) {
 		this.actions.push(...actions)
+	}
+	clearActions() {
+		this.actions = []
 	}
 
 	onContextMenu(event: MouseEvent) {

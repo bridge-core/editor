@@ -11,12 +11,15 @@ import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
 import { FileTab } from './FileTab'
 import { TreeTab } from '../Editors/TreeEditor/Tab'
+import { TabProvider } from './TabProvider'
 
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
 	public tabs: Tab[] = []
 	protected _selectedTab: Tab | undefined = undefined
-	protected tabTypes = [ImageTab, TreeTab, TextTab]
+	protected get tabTypes() {
+		return TabProvider.tabs
+	}
 	protected _isActive = true
 	public readonly openedFiles: OpenedFiles
 
@@ -69,6 +72,7 @@ export class TabSystem extends MonacoHolder {
 		let tab: Tab | undefined = undefined
 		for (const CurrentTab of this.tabTypes) {
 			if (await CurrentTab.is(fileHandle)) {
+				// @ts-ignore
 				tab = new CurrentTab(this, fileHandle)
 				break
 			}

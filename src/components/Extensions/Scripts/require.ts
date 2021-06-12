@@ -17,6 +17,9 @@ import { ToolbarModule } from './Modules/toolbar'
 import { CompareVersions } from './Modules/compareVersions'
 import { MonacoModule } from './Modules/monaco'
 import { Json5Module } from './Modules/json5'
+import { ComMojangModule } from './Modules/comMojang'
+import { TabModule } from './Modules/Tab'
+import { TabActionsModule } from './Modules/TabAction'
 
 const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/ui', UIModule],
@@ -34,6 +37,9 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/compare-versions', CompareVersions],
 	['@bridge/monaco', MonacoModule],
 	['@bridge/json5', Json5Module],
+	['@bridge/com-mojang', ComMojangModule],
+	['@bridge/tab', TabModule],
+	['@bridge/tab-actions', TabActionsModule],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([

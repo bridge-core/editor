@@ -19,16 +19,39 @@ export interface ITabPreviewConfig {
 
 export class TabActionProvider {
 	protected definitions = new Set<ITabActionConfig>()
+	protected processedFileTabs = new Set<FileTab>()
 
 	register(definition: ITabActionConfig) {
 		this.definitions.add(definition)
 
+		// Update current tabs
+		this.processedFileTabs.forEach((fileTab) => {
+			if (definition.isFor(fileTab))
+				fileTab.addAction(
+					new SimpleAction({
+						icon: definition.icon,
+						name: definition.name,
+						onTrigger: () => definition.trigger(fileTab),
+					})
+				)
+		})
+
 		return {
-			dispose: () => this.definitions.delete(definition),
+			dispose: () => {
+				this.definitions.delete(definition)
+
+				// Update current tabs
+				this.processedFileTabs.forEach((fileTab) => {
+					if (definition.isFor(fileTab)) {
+						fileTab.clearActions()
+						this.addTabActions(fileTab)
+					}
+				})
+			},
 		}
 	}
-	async registerPreview(definition: ITabPreviewConfig) {
-		this.register({
+	registerPreview(definition: ITabPreviewConfig) {
+		return this.register({
 			icon: 'mdi-play',
 			name: definition.name,
 			isFor: (fileTab) =>
@@ -51,6 +74,9 @@ export class TabActionProvider {
 	}
 
 	async addTabActions(fileTab: FileTab) {
+		this.processedFileTabs.add(fileTab)
+		fileTab.onClose.on(() => this.processedFileTabs.delete(fileTab))
+
 		for (const def of this.definitions) {
 			if (await def.isFor(fileTab))
 				fileTab.addAction(
