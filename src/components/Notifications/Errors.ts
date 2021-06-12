@@ -8,7 +8,7 @@ import { IDisposable } from '/@/types/disposable'
  * @param config
  */
 export function createErrorNotification(error: Error): IDisposable {
-	const message = error.message
+	const message = error.message ?? ''
 	let short = message
 	if (message.includes(': ')) short = message.split(': ').shift() as string
 	if (short.length > 24)
