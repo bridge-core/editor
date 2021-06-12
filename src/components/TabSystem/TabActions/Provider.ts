@@ -9,6 +9,7 @@ export interface ITabActionConfig {
 	name: string
 	trigger(tab: FileTab): Promise<void> | void
 	isFor(tab: FileTab): Promise<boolean> | boolean
+	isDisabled?: (tab: FileTab) => boolean
 }
 
 export interface ITabPreviewConfig {
@@ -31,6 +32,8 @@ export class TabActionProvider {
 					new SimpleAction({
 						icon: definition.icon,
 						name: definition.name,
+						isDisabled: () =>
+							definition.isDisabled?.(fileTab) ?? false,
 						onTrigger: () => definition.trigger(fileTab),
 					})
 				)
@@ -55,6 +58,7 @@ export class TabActionProvider {
 			icon: 'mdi-play',
 			name: definition.name,
 			isFor: (fileTab) =>
+				fileTab instanceof FileTab &&
 				fileTab.getProjectPath().startsWith(definition.fileMatch),
 			trigger: async (fileTab) => {
 				const app = await App.getApp()
