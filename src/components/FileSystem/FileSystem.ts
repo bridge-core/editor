@@ -2,6 +2,8 @@
 import { Signal } from '../Common/Event/Signal'
 import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
+import { iterateDir } from '/@/utils/iterateDir'
+import { join } from '/@/utils/path'
 
 export class FileSystem extends Signal<void> {
 	protected _baseDirectory!: FileSystemDirectoryHandle
@@ -192,6 +194,49 @@ export class FileSystem extends Signal<void> {
 		await writable.write(await originHandle.getFile())
 		await writable.close()
 		return destHandle
+	}
+	async copyFolder(originPath: string, destPath: string) {
+		const originHandle = await this.getDirectoryHandle(originPath, {
+			create: false,
+		})
+
+		await iterateDir(originHandle, async (fileHandle, filePath) => {
+			await this.copyFileHandle(
+				fileHandle,
+				await this.getFileHandle(join(destPath, filePath), true)
+			)
+		})
+	}
+	async copyFolderByHandle(
+		originHandle: FileSystemDirectoryHandle,
+		destHandle: FileSystemDirectoryHandle
+	) {
+		const destFs = new FileSystem(destHandle)
+
+		await iterateDir(originHandle, async (fileHandle, filePath) => {
+			await this.copyFileHandle(
+				fileHandle,
+				await destFs.getFileHandle(filePath, true)
+			)
+		})
+	}
+
+	loadFileHandleAsDataUrl(fileHandle: FileSystemFileHandle) {
+		return new Promise<string>(async (resolve, reject) => {
+			const reader = new FileReader()
+
+			try {
+				const file = await fileHandle.getFile()
+
+				reader.addEventListener('load', () => {
+					resolve(<string>reader.result)
+				})
+				reader.addEventListener('error', reject)
+				reader.readAsDataURL(file)
+			} catch {
+				reject(`File does not exist: "${fileHandle.name}"`)
+			}
+		})
 	}
 
 	async fileExists(path: string) {
