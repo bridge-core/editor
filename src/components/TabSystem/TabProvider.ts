@@ -5,12 +5,12 @@ import { FileTab } from './FileTab'
 
 export class TabProvider {
 	protected static _tabs = new Set<typeof FileTab>([
-		ImageTab,
-		TreeTab,
 		TextTab,
+		TreeTab,
+		ImageTab,
 	])
 	static get tabs() {
-		return [...this._tabs]
+		return [...this._tabs].reverse()
 	}
 
 	static register(tab: typeof FileTab) {
