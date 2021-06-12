@@ -340,6 +340,8 @@ export default {
 			searchFiles: 'Search files...',
 			categories: 'Categories',
 			refresh: 'Refresh Project',
+			refreshDescription:
+				'Fetch the current project for newly added files',
 			createPreset: 'New File',
 			fileActions: {
 				delete: {

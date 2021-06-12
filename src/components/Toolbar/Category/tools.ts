@@ -18,6 +18,19 @@ export function setupToolsCategory(app: App) {
 	)
 	tools.addItem(
 		app.actionManager.create({
+			id: 'bridge.action.refreshProject',
+			keyBinding: 'Ctrl + Meta + R',
+			description: 'windows.packExplorer.refreshDescription',
+			icon: 'mdi-refresh',
+			name: 'windows.packExplorer.refresh',
+			onTrigger: async () => {
+				const app = await App.getApp()
+				await app.project.refresh()
+			},
+		})
+	)
+	tools.addItem(
+		app.actionManager.create({
 			icon: 'mdi-reload',
 			name: 'actions.reloadAutoCompletions.name',
 			description: 'actions.reloadAutoCompletions.description',

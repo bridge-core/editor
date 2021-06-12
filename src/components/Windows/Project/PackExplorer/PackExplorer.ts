@@ -41,30 +41,33 @@ export class PackExplorerWindow extends BaseWindow {
 		})
 		this.defineWindow()
 
-		// Reload project
-		this.addAction(
-			new SimpleAction({
-				icon: 'mdi-refresh',
-				name: 'windows.packExplorer.refresh',
-				onTrigger: async () => {
-					this.close()
-					const app = await App.getApp()
-					await app.project.refresh()
-				},
-			})
-		)
-		// Add new file
-		this.addAction(
-			new SimpleAction({
-				icon: 'mdi-plus',
-				name: 'windows.packExplorer.createPreset',
-				onTrigger: async () => {
-					this.close()
-					const app = await App.getApp()
-					await app.windows.createPreset.open()
-				},
-			})
-		)
+		App.getApp().then((app) => {
+			// Reload project
+			this.addAction(
+				new SimpleAction({
+					icon: 'mdi-refresh',
+					name: 'windows.packExplorer.refresh',
+					onTrigger: async () => {
+						this.close()
+						app.actionManager.trigger(
+							'bridge.action.refreshProject'
+						)
+					},
+				})
+			)
+			// Add new file
+			this.addAction(
+				new SimpleAction({
+					icon: 'mdi-plus',
+					name: 'windows.packExplorer.createPreset',
+					onTrigger: async () => {
+						this.close()
+						const app = await App.getApp()
+						await app.windows.createPreset.open()
+					},
+				})
+			)
+		})
 	}
 
 	async loadPack() {
