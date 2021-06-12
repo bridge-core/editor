@@ -13,6 +13,7 @@ import { DirectoryEntry } from './DirectoryEntry'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { InformationWindow } from '../../Common/Information/InformationWindow'
+import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 
 class PackSidebarItem extends SidebarItem {
 	protected packType: string
@@ -42,11 +43,38 @@ export class PackExplorerWindow extends BaseWindow {
 		this.defineWindow()
 
 		App.getApp().then((app) => {
+			// Restart dev server
+			this.addAction(
+				new SimpleAction({
+					icon: 'mdi-restart-alert',
+					name: 'windows.packExplorer.restartDevServer.name',
+					onTrigger: () => {
+						new ConfirmationWindow({
+							description:
+								'windows.packExplorer.restartDevServer.description',
+							onConfirm: async () => {
+								this.close()
+								await Promise.all([
+									app.project.fileSystem.unlink(
+										'.bridge/.lightningCache'
+									),
+									app.project.fileSystem.unlink(
+										'.bridge/.compilerFiles'
+									),
+								])
+								app.actionManager.trigger(
+									'bridge.action.refreshProject'
+								)
+							},
+						})
+					},
+				})
+			)
 			// Reload project
 			this.addAction(
 				new SimpleAction({
 					icon: 'mdi-refresh',
-					name: 'windows.packExplorer.refresh',
+					name: 'windows.packExplorer.refresh.name',
 					onTrigger: async () => {
 						this.close()
 						app.actionManager.trigger(

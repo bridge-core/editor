@@ -19,10 +19,10 @@ export function setupToolsCategory(app: App) {
 	tools.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.refreshProject',
-			keyBinding: 'Ctrl + Meta + R',
-			description: 'windows.packExplorer.refreshDescription',
 			icon: 'mdi-refresh',
-			name: 'windows.packExplorer.refresh',
+			name: 'windows.packExplorer.refresh.name',
+			description: 'windows.packExplorer.refresh.description',
+			keyBinding: 'Ctrl + Meta + R',
 			onTrigger: async () => {
 				const app = await App.getApp()
 				await app.project.refresh()

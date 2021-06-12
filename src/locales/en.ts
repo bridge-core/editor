@@ -339,9 +339,15 @@ export default {
 			title: 'Pack Explorer',
 			searchFiles: 'Search files...',
 			categories: 'Categories',
-			refresh: 'Refresh Project',
-			refreshDescription:
-				'Fetch the current project for newly added files',
+			refresh: {
+				name: 'Refresh Project',
+				description: 'Fetch the current project for newly added files',
+			},
+			restartDevServer: {
+				name: 'Restart Dev Server',
+				description:
+					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project.",
+			},
 			createPreset: 'New File',
 			fileActions: {
 				delete: {
