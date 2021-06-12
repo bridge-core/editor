@@ -24,15 +24,25 @@ export const TabModule = async ({ disposables }: IModuleConfig) => ({
 	 * Useful for ContentTabs: Programmatically add the tab to the tab system
 	 * @param tab Add the tab to the tab system
 	 */
-	openTab: async (tab: Tab, splitScreen = false) => {
+	openTab: async (FileTabClass: typeof Tab, splitScreen = false) => {
 		const app = await App.getApp()
 		const project = app.project
 
 		if (splitScreen) {
+			// @ts-ignore
+			const tab = new FileTabClass(project.inactiveTabSystem!)
+
 			project.inactiveTabSystem?.add(tab, true)
 			project.inactiveTabSystem?.setActive(true)
+
+			return tab
 		} else {
+			// @ts-ignore
+			const tab = new FileTabClass(project.tabSystem!)
+
 			project.tabSystem?.add(tab, true)
+
+			return tab
 		}
 	},
 })
