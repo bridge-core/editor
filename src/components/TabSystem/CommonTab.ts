@@ -26,6 +26,10 @@ export abstract class Tab extends Signal<Tab> {
 		this.isUnsaved = val
 	}
 
+	get isSharingScreen() {
+		return this.parent.isSharingScreen
+	}
+
 	static is(fileHandle: FileSystemFileHandle) {
 		return false
 	}

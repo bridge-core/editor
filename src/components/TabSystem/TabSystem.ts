@@ -33,6 +33,14 @@ export class TabSystem extends MonacoHolder {
 		return this._app
 	}
 
+	get isSharingScreen() {
+		const other = this.project.tabSystems.find(
+			(tabSystem) => tabSystem !== this
+		)
+
+		return other?.shouldRender
+	}
+
 	constructor(protected project: Project, id = 0) {
 		super(project.app)
 
