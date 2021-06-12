@@ -17,6 +17,11 @@ export const TabActionsModule = async ({ disposables }: IModuleConfig) => ({
 		app.project.tabActionProvider.addTabActions(tab)
 	},
 
+	/**
+	 * Register a new tab action
+	 * @param definition
+	 * @returns Disposable
+	 */
 	register: async (definition: ITabActionConfig) => {
 		const app = await App.getApp()
 		const disposable = app.project.tabActionProvider.register(definition)
@@ -26,6 +31,11 @@ export const TabActionsModule = async ({ disposables }: IModuleConfig) => ({
 		return disposable
 	},
 
+	/**
+	 * Register a new tab preview
+	 * @param definition
+	 * @returns Disposable
+	 */
 	registerPreview: async (definition: ITabPreviewConfig) => {
 		const app = await App.getApp()
 		const disposable = app.project.tabActionProvider.registerPreview(
