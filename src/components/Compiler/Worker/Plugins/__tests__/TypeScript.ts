@@ -18,8 +18,6 @@ describe('TypeScript Compiler Plugin', () => {
 	})
 
 	it('should replace .js extension with .ts', async () => {
-		expect(await typeScript.transformPath('test.ts')).toMatch(
-			/test_(.+)\.js/
-		)
+		expect(await typeScript.transformPath('test.ts')).toMatch(/test.js/)
 	})
 })
