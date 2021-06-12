@@ -1,27 +1,43 @@
 <h2>Features:</h2>
 <ul>
-<li>JSON schemas
+<li>This release contains the first working version of bridge. v2's new tree editor
 <ul>
-<li>Updated to latest beta</li>
-<li>Added subject &quot;item&quot;</li>
-<li>Moved features to correct format version</li>
+<li>Added automatic input shifts</li>
+<li>Added auto-completions</li>
+<li>Improved automatic selection moving</li>
+<li>Added preview registration for tree editor tabs</li>
+<li>Added support for syncing the tree editor's scroll position</li>
+<li>Changed style of tree editor selections</li>
 </ul>
 </li>
-<li>Added option to choose texture &amp; model for the blank entity preset</li>
-<li>Added first, basic version of bridge. v2's tree editor
+<li>Updated data to latest beta</li>
+<li>Added support for entity dialogues</li>
+<li>Added a keyboard shortcut for refreshing a project</li>
+<li>Added a button to restart the compiler's dev server</li>
+<li>Added various new extension APIs:
 <ul>
-<li>Focus delegation is not working correctly yet</li>
-<li>Auto-completions are not available yet</li>
+<li>Tab API</li>
+<li>TabActions API</li>
+<li>ComMojang API</li>
 </ul>
 </li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Updated Dutch translations (Thanks to @pascal541)</li>
-<li>Updated valid MoLang locations</li>
+<li>Updated compiler algorithm to be faster in some cases</li>
+<li>Updated GameTest types to be easily re-useable outside of bridge.</li>
+<li>Added &quot;value&quot; auto-completions for &quot;in_block&quot; entity filter</li>
+<li>Tabs can now lookup whether they are open in split-screen</li>
+<li>Added new file system methods for copying directories and loading a file as a data url</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed type loader</li>
-<li>Fixed middle click to dispose notifications</li>
+<li>Fixed mute button</li>
+<li>Fixed .git files appearing inside of Find &amp; Replace</li>
+<li>Fixed compiler freezing upon missing file dependency</li>
+<li>Fixed ore feature schema</li>
+<li>Fixed various occurrences of missing auto-completions</li>
+<li>Fixed PRESET_PATH not being injected into itemTexture.json in entity presets</li>
+<li>Fixed food preset having a too long use duration</li>
+<li>Fixed deleting input characters with open tree editor</li>
 </ul>
