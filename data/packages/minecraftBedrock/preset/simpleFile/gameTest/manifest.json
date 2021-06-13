@@ -35,7 +35,7 @@
 	"expandFiles": [
 		[
 			"Main.js",
-			"BP/scripts/gametests/Main.js",
+			"BP/scripts/main.js",
 			{ "inject": ["FILE_NAME", "LANGUAGE", "PRESET_PATH"] }
 		]
 	]
