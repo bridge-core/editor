@@ -60,8 +60,6 @@ export class TreeTab extends FileTab {
 				await this.fileHandle.getFile().then((file) => file.text())
 			)
 		)
-		// @ts-ignore
-		console.log(this.treeEditor.tree)
 
 		await super.setup()
 	}
