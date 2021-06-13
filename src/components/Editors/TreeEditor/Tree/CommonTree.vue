@@ -46,10 +46,16 @@
 			v-if="tree.isOpen"
 			:tree="tree"
 			:treeEditor="treeEditor"
+			@setActive="$emit('setActive')"
 		/>
 		{{ closingBracket }}
 	</details>
-	<TreeChildren v-else :tree="tree" :treeEditor="treeEditor" />
+	<TreeChildren
+		v-else
+		:tree="tree"
+		:treeEditor="treeEditor"
+		@setActive="$emit('setActive')"
+	/>
 </template>
 
 <script>
@@ -89,6 +95,8 @@ export default {
 	},
 	methods: {
 		onClickKey(event) {
+			this.$emit('setActive')
+
 			if (event.altKey) this.treeEditor.toggleSelection(this.tree)
 			else this.treeEditor.setSelection(this.tree)
 		},

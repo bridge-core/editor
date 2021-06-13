@@ -6,6 +6,7 @@
 			:is="child.component"
 			:tree="child"
 			:treeEditor="treeEditor"
+			@setActive="$emit('setActive')"
 		>
 			<Highlight :def="tree.type === 'object' ? stringDef : numberDef">{{
 				wrapKey(key)
