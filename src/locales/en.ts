@@ -171,6 +171,10 @@ export default {
 			name: 'Reload Auto-Completions',
 			description: 'Reloads all auto-completion data',
 		},
+		reloadExtensions: {
+			name: 'Reload Extensions',
+			description: 'Reloads all extensions',
+		},
 		moveToSplitScreen: {
 			name: 'Move to Split Screen',
 			description: 'Opens a split screen view and moves this tab to it',

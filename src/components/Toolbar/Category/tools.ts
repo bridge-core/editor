@@ -19,7 +19,7 @@ export function setupToolsCategory(app: App) {
 	tools.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.refreshProject',
-			icon: 'mdi-refresh',
+			icon: 'mdi-folder-refresh-outline',
 			name: 'windows.packExplorer.refresh.name',
 			description: 'windows.packExplorer.refresh.description',
 			keyBinding: 'Ctrl + Meta + R',
@@ -36,6 +36,28 @@ export function setupToolsCategory(app: App) {
 			description: 'actions.reloadAutoCompletions.description',
 			keyBinding: 'Ctrl + Shift + R',
 			onTrigger: () => app.project.jsonDefaults.reload(),
+		})
+	)
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-puzzle-outline',
+			name: 'actions.reloadExtensions.name',
+			description: 'actions.reloadExtensions.description',
+			onTrigger: async () => {
+				// Global extensions
+				app.extensionLoader.deactiveAll(true)
+				app.extensionLoader.loadExtensions(
+					await app.fileSystem.getDirectoryHandle(`extensions`)
+				)
+
+				// Local extensions
+				app.project.extensionLoader.deactiveAll(true)
+				app.project.extensionLoader.loadExtensions(
+					await app.project.fileSystem.getDirectoryHandle(
+						`.bridge/extensions`
+					)
+				)
+			},
 		})
 	)
 
