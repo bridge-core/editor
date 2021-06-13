@@ -25,7 +25,10 @@ export class RefSchema extends Schema {
 			const dir = this.location.includes('#/')
 				? dirname(this.location.split('#/')[0])
 				: dirname(this.location)
-			let fileUri = join(dir, value).replace('file:/', 'file:///')
+
+			let fileUri: string
+			if (value.startsWith('/')) fileUri = `file://${value}`
+			else fileUri = join(dir, value).replace('file:/', 'file:///')
 
 			// Support hashes for navigating inside of schemas
 			let hash: string | undefined = undefined
