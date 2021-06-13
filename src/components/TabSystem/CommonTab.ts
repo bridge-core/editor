@@ -88,6 +88,8 @@ export abstract class Tab extends Signal<Tab> {
 		return this
 	}
 	async close() {
+		this.parent.setActive(true)
+
 		const didClose = await this.parent.close(this)
 		if (didClose) {
 			this.connectedTabs.forEach((tab) => tab.close())
