@@ -8,11 +8,7 @@
 		"PRESET_PATH": "RP/texts/"
 	},
 	"fields": [
-		[
-			"File Name",
-			"FILE_NAME",
-			{ "validate": ["required", "alphanumeric", "lowercase"] }
-		]
+		["File Name", "FILE_NAME", { "validate": ["required", "alphanumeric"] }]
 	],
 
 	"createFiles": [
