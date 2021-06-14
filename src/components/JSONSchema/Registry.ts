@@ -7,6 +7,7 @@ import { ItemsSchema } from './Schema/Items'
 import { OneOfSchema } from './Schema/OneOf'
 import { PatternPropertiesSchema } from './Schema/PatternProperties'
 import { PropertiesSchema } from './Schema/Properties'
+import { PropertyNamesSchema } from './Schema/PropertyNames'
 import { RefSchema } from './Schema/Ref'
 import { RequiredSchema } from './Schema/Required'
 import { Schema } from './Schema/Schema'
@@ -28,6 +29,7 @@ export const schemaRegistry = new Map<string, ISchemaConstructor>([
 	['oneOf', OneOfSchema],
 	['patternProperties', PatternPropertiesSchema],
 	['properties', PropertiesSchema],
+	['propertyNames', PropertyNamesSchema],
 	['required', RequiredSchema],
 	['then', ThenSchema],
 	['type', TypeSchema],
@@ -50,7 +52,6 @@ export const ignoreFields = new Set<string>([
 	'minItems',
 	'deprecationMessage',
 	'examples',
-	'propertyNames',
 	'minimum',
 	'maximum',
 	'default',
