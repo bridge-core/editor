@@ -28,6 +28,7 @@ export class PropertyNamesSchema extends Schema {
 	}
 
 	validate() {
+		// TODO: Add proper property name validation
 		return []
 	}
 

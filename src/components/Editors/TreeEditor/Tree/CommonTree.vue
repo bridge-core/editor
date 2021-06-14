@@ -12,6 +12,7 @@
 				'tree-editor-selection': tree.isSelected,
 			}"
 			@click.stop.prevent="onClickKey"
+			@contextmenu.prevent="treeEditor.onContextMenu($event, tree)"
 			tabindex="-1"
 		>
 			<v-icon

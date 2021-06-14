@@ -215,6 +215,12 @@ export default {
 					'Local extensions are only accessible inside of the projects you add them to',
 			},
 		},
+		toObject: {
+			name: 'Transform to Object',
+		},
+		toArray: {
+			name: 'Transform to Array',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
