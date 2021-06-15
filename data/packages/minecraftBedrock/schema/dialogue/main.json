@@ -22,6 +22,8 @@
 							},
 							"buttons": {
 								"type": "array",
+								"minItems": 0,
+								"maxItems": 6,
 								"items": {
 									"type": "object",
 									"properties": {
