@@ -670,12 +670,7 @@
 				"minecraft:can_fly": {
 					"description": "Marks the entity as being able to fly, the pathfinder won't be restricted to paths where a solid block is required underneath it.",
 					"additionalProperties": false,
-					"anyOf": [
-						{
-							"type": "boolean"
-						},
-						{}
-					]
+					"type": "boolean"
 				},
 				"minecraft:celebrate_hunt": {
 					"description": "Specifies hunt celebration behaviour.",
@@ -702,6 +697,7 @@
 							"type": "string"
 						},
 						"sound_interval": {
+							"additionalProperties": false,
 							"description": "The range of time in seconds to randomly wait before playing the sound again.",
 							"properties": {
 								"range_min": {
@@ -756,6 +752,7 @@
 							"type": "array",
 							"items": {
 								"type": "object",
+								"additionalProperties": false,
 								"properties": {
 									"width": {
 										"type": "number"
@@ -801,6 +798,7 @@
 									"type": "array",
 									"items": {
 										"type": "object",
+										"additionalProperties": false,
 										"properties": {
 											"on_damage": {
 												"description": "Specifies filters for entity definitions and events.",
@@ -827,6 +825,7 @@
 								},
 								{
 									"type": "object",
+									"additionalProperties": false,
 									"properties": {
 										"on_damage": {
 											"description": "Specifies filters for entity definitions and events.",
@@ -1092,6 +1091,7 @@
 							"description": "A list of slots with the chance to drop an equipped item from that slot.",
 							"type": "array",
 							"items": {
+								"additionalProperties": false,
 								"properties": {
 									"slot": {
 										"$ref": "../../general/slotType.json"
@@ -1115,6 +1115,7 @@
 							"type": "array",
 							"items": {
 								"type": "object",
+								"additionalProperties": false,
 								"properties": {
 									"accepted_items": {
 										"description": "The list of items that can go in this slot.",
@@ -1233,12 +1234,7 @@
 				"minecraft:fire_immune": {
 					"description": "Sets that this entity doesn't take damage from fire.",
 					"additionalProperties": false,
-					"anyOf": [
-						{
-							"type": "boolean"
-						},
-						{}
-					]
+					"type": "boolean"
 				},
 				"minecraft:floats_in_liquid": {
 					"additionalProperties": false,
@@ -1377,6 +1373,7 @@
 							"type": "array",
 							"items": {
 								"type": "object",
+								"additionalProperties": false,
 								"properties": {
 									"name": {
 										"description": "The name of the gene.",
@@ -1407,6 +1404,7 @@
 										"type": "array",
 										"items": {
 											"type": "object",
+											"additionalProperties": false,
 											"properties": {
 												"main_allele": {
 													"description": "If this value is non-negative, compare the mob's main allele with this value for a match. Can also be a range of integers.",
@@ -1605,6 +1603,7 @@
 							"type": "array",
 							"items": {
 								"type": "object",
+								"additionalProperties": false,
 								"properties": {
 									"item": {
 										"description": "Item identifier that can be used to heal this entity.",
@@ -1711,6 +1710,7 @@
 						"damage_conditions": {
 							"type": "array",
 							"items": {
+								"additionalProperties": false,
 								"type": "object",
 								"properties": {
 									"filters": {
