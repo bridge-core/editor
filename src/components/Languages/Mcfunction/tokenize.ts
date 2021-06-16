@@ -3,6 +3,7 @@ export function tokenizeCommand(command: string) {
 	let squareBrackets = 0
 
 	let i = 0
+	let wordStart = 0
 	let word = ''
 	let tokens = []
 	while (i < command.length) {
@@ -25,12 +26,19 @@ export function tokenizeCommand(command: string) {
 
 			case '\t':
 			case ' ': {
-				if (curlyBrackets === 0 && squareBrackets === 0) {
-					if (word === '') {
-						tokens.push({ index: i, word })
-						word = ''
-						break
-					}
+				if (
+					curlyBrackets === 0 &&
+					squareBrackets === 0 &&
+					word !== ''
+				) {
+					tokens.push({
+						startColumn: wordStart,
+						endColumn: i,
+						word,
+					})
+					wordStart = i + 1
+					word = ''
+					break
 				}
 			}
 
@@ -40,6 +48,12 @@ export function tokenizeCommand(command: string) {
 		}
 		i++
 	}
+
+	tokens.push({
+		startColumn: wordStart,
+		endColumn: i,
+		word,
+	})
 
 	return { tokens }
 }

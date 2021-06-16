@@ -151,6 +151,7 @@ const completionItemProvider: languages.CompletionItemProvider = {
 			.slice(0, position.column - 1)
 
 		const { tokens } = tokenizeCommand(lineUntilCursor)
+		console.log(lineUntilCursor, tokens)
 
 		if (tokens.length < 2)
 			return {
@@ -167,7 +168,46 @@ const completionItemProvider: languages.CompletionItemProvider = {
 				})),
 			}
 
-		return { suggestions: [] }
+		const lastToken = tokens[tokens.length - 1]
+
+		console.log(
+			lastToken,
+			commandData
+				.getCompletionItemsForArgument(
+					tokens[0].word,
+					tokens.length - 1
+				)
+				.map((suggestion) => ({
+					label: suggestion,
+					insertText: `${suggestion} `,
+					kind: languages.CompletionItemKind.Text,
+					range: new Range(
+						position.lineNumber,
+						lastToken.startColumn,
+						position.lineNumber,
+						lastToken.endColumn
+					),
+				}))
+		)
+
+		return {
+			suggestions: commandData
+				.getCompletionItemsForArgument(
+					tokens[0].word,
+					tokens.length - 2
+				)
+				.map((suggestion) => ({
+					label: suggestion,
+					insertText: `${suggestion} `,
+					kind: languages.CompletionItemKind.Constant,
+					range: new Range(
+						position.lineNumber,
+						lastToken.startColumn + 1,
+						position.lineNumber,
+						lastToken.endColumn + 1
+					),
+				})),
+		}
 	},
 }
 

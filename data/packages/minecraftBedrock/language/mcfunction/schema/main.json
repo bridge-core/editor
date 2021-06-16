@@ -23,12 +23,18 @@
 										"selector",
 										"molang",
 										"blockState",
-										"jsonData"
+										"jsonData",
+										"coordinates"
 									]
 								},
 								"argumentName": { "type": "string" },
 								"description": { "type": "string" },
-								"additionalData": true
+								"additionalData": {
+									"values": {
+										"type": "array",
+										"items": { "type": "string" }
+									}
+								}
 							}
 						}
 					}

@@ -23,5 +23,34 @@ export class CommandData extends Signal<void> {
 		return this.schema.vanilla.map((command: any) => command.commandName)
 	}
 
-	getArgumentsOfCommand(commandName: string, index: number) {}
+	getCompletionItemsForArgument(
+		commandName: string,
+		index: number
+	): string[] {
+		const currentCommand = this.schema.vanilla.find(
+			(command: any) => command.commandName === commandName
+		)
+		if (!currentCommand) return []
+
+		// TODO: This code needs to become more clever to eventually support recursive commands like /execute
+		const argument = currentCommand.arguments[index]
+		if (!argument) return []
+
+		switch (argument.type) {
+			case 'selector':
+				return ['@a', '@e', '@p', '@s', '@r', '@initiator']
+			case 'boolean':
+				return ['true', 'false']
+			case 'coordinates':
+				return ['~ ~ ~', '^ ^ ^']
+			case 'string':
+				return argument.additionalData?.values ?? []
+			case 'jsonData':
+				return ['{}']
+			case 'blockState':
+				return ['[]']
+		}
+
+		return []
+	}
 }
