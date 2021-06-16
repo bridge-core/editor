@@ -2,6 +2,7 @@ import { IModuleConfig } from '../types'
 import { createSidebar } from '/@/components/Sidebar/create'
 import { selectSidebar } from '/@/components/Sidebar/state'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 
 export const SidebarModule = ({ disposables }: IModuleConfig) => ({
 	create(config: {
@@ -17,6 +18,16 @@ export const SidebarModule = ({ disposables }: IModuleConfig) => ({
 				  true
 				: true,
 		})
+
+		if (config.id) {
+			SettingsWindow.loadedSettings.once((settingsState) => {
+				sidebar.isVisible =
+					(<any>settingsState)?.sidebar?.sidebarElements?.[
+						config.id!
+					] ?? true
+			})
+		}
+
 		disposables.push(sidebar)
 		return sidebar
 	},
