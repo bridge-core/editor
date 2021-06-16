@@ -1,12 +1,22 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema",
+	"$schema": "./schema/main.json",
 
-	"allOf": [
+	"vanilla": [
 		{
-			"$ref": "./commands/say.json"
+			"commandName": "alwaysday",
+			"arguments": [
+				{
+					"type": "boolean"
+				}
+			]
 		},
 		{
-			"$ref": "./commands/tp.json"
+			"commandName": "say",
+			"arguments": [
+				{
+					"type": "string"
+				}
+			]
 		}
 	]
 }

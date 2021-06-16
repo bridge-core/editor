@@ -86,7 +86,7 @@ export abstract class Project {
 			)
 		)
 
-		this.onCreate()
+		setTimeout(() => this.onCreate(), 0)
 	}
 
 	abstract onCreate(): Promise<void> | void

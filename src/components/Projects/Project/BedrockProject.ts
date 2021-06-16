@@ -10,6 +10,7 @@ import { createFromClientEntity } from '/@/components/Editors/EntityModel/create
 import { createFromEntity } from '/@/components/Editors/EntityModel/create/fromEntity'
 import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
 import { BlockModelTab } from '../../Editors/BlockModel/Tab'
+import { CommandData } from '../../Languages/Mcfunction/Data'
 
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{
@@ -43,9 +44,12 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 ]
 
 export class BedrockProject extends Project {
+	commandData = new CommandData()
+
 	onCreate() {
 		bedrockPreviews.forEach((tabPreview) =>
 			this.tabActionProvider.registerPreview(tabPreview)
 		)
+		this.commandData.loadCommandData('minecraftBedrock')
 	}
 }
