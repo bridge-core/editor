@@ -80,15 +80,15 @@ export default {
 		isSidebarRight() {
 			return (
 				this.settingsState &&
-				this.settingsState.appearance &&
-				this.settingsState.appearance.isSidebarRight
+				this.settingsState.sidebar &&
+				this.settingsState.sidebar.isSidebarRight
 			)
 		},
 		smallerSidebarElements() {
 			return (
 				this.settingsState &&
-				this.settingsState.appearance &&
-				this.settingsState.appearance.smallerSidebarElements
+				this.settingsState.sidebar &&
+				this.settingsState.sidebar.smallerSidebarElements
 			)
 		},
 		computedColor() {

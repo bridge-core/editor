@@ -373,6 +373,19 @@ export default {
 		settings: {
 			title: 'Settings',
 			searchSettings: 'Search settings...',
+			sidebar: {
+				name: 'Sidebar',
+				sidebarRight: {
+					name: 'Sidebar Right',
+					description:
+						'Moves the sidebar to the right side of the screen',
+				},
+				shrinkSidebarElements: {
+					name: 'Shrink Sidebar Elements',
+					description:
+						"Shrink the size of bridge.'s sidebar elements",
+				},
+			},
 			appearance: {
 				name: 'Appearance',
 				colorScheme: {
@@ -396,16 +409,6 @@ export default {
 					name: 'Local Light Theme',
 					description:
 						'Choose a light theme for the currently active project',
-				},
-				sidebarRight: {
-					name: 'Sidebar Right',
-					description:
-						'Moves the sidebar to the right side of the screen',
-				},
-				shrinkSidebarElements: {
-					name: 'Shrink Sidebar Elements',
-					description:
-						"Shrink the size of bridge.'s sidebar elements",
 				},
 			},
 			general: {
