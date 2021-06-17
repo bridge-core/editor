@@ -3,18 +3,1746 @@
 
 	"vanilla": [
 		{
-			"commandName": "alwaysday",
-			"arguments": [
+			"commands": [
 				{
-					"type": "boolean"
+					"commandName": "alwaysday",
+					"description": "Locks and unlocks the day-night cycle.",
+					"arguments": [
+						{
+							"type": "boolean",
+							"argumentName": "lock",
+							"description": "Specifies whether the eternal daytime is locked or not."
+						}
+					]
+				},
+				{
+					"commandName": "camerashake",
+					"description": "Used to enable a camera shaking effect.",
+					"arguments": [
+						{
+							"additionalData": {
+								"values": ["add"]
+							}
+						},
+						{
+							"type": "selector",
+							"argumentName": "player",
+							"description": "Specifies the player(s) who's clients will be sent a camera shake request. If not specified, defaults to the command's executor (@s)."
+						},
+						{
+							"type": "number",
+							"argumentName": "intensity",
+							"description": "Specifies the intensity of the camera shake."
+						},
+						{
+							"type": "number",
+							"argumentName": "seconds",
+							"description": "Specifies the duration of the camera shake."
+						},
+						{
+							"description": "Specifies the type of camera shake direction.",
+							"argumentName": "shakeType",
+							"additionalData": {
+								"values": ["positional", "rotational"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "camerashake",
+					"description": "Used to enable a camera shaking effect.",
+					"arguments": [
+						{
+							"additionalData": {
+								"values": ["stop"]
+							}
+						},
+						{
+							"type": "selector",
+							"argumentName": "player",
+							"description": "Specifies the player(s) who's clients will be sent a camera shake request. If not specified, defaults to the command's executor (@s)."
+						}
+					]
+				},
+				{
+					"commandName": "clear",
+					"description": "Clears items from player inventory.",
+					"arguments": [
+						{
+							"type": "selector",
+							"argumentName": "player",
+							"description": "Specifies the player(s) whose items are cleared. If not specified, defaults to the player who executes the command."
+						},
+						{
+							"type": "string", // TODO ITEM ID
+							"argumentName": "itemName",
+							"description": "Specifies the item to be cleared. If not specified, all items are cleared."
+						},
+						{
+							"type": "number",
+							"argumentName": "data",
+							"description": "Specifies the data value of the item to be cleared. If not specified, or if -1, all items that match itemName are cleared, regardless of their data."
+						},
+						{
+							"type": "number",
+							"argumentName": "maxCount",
+							"description": "Specifies the maximum number of items to be cleared. If not specified, or if -1, all items that match item, or itemName and data are cleared. If 0, instead of clearing of items, detects and queries the amount of specified items."
+						}
+					]
+				},
+				{
+					"commandName": "clearspawnpoint",
+					"description": "Remove spawnpoints in the world.",
+					"arguments": [
+						{
+							"type": "selector",
+							"argumentName": "player",
+							"description": "Specifies the player whose spawn point should be removed. If not specified, defaults to the command's executor (@s)."
+						}
+					]
+				},
+				{
+					"commandName": "clone",
+					"description": "Copies blocks from one place to another.",
+					"arguments": [
+						{
+							"type": "coordinates",
+							"argumentName": "begin",
+							"description": "Specifies the coordinates of two opposing corner blocks of the source region."
+						},
+						{
+							"type": "coordinates",
+							"argumentName": "end",
+							"description": "Specifies the lower northwest corner of the destination region."
+						},
+						{
+							"type": "string",
+							"description": "Specifies whether to filter the blocks being cloned.",
+							"additionalData": {
+								"values": ["replace", "masked"]
+							}
+						},
+						{
+							"type": "string",
+							"description": "Specifies how to treat the source region.",
+							"additionalData": {
+								"values": ["force", "move", "normal"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "clone",
+					"description": "Copies blocks from one place to another.",
+					"arguments": [
+						{
+							"type": "coordinates",
+							"argumentName": "begin",
+							"description": "Specifies the coordinates of two opposing corner blocks of the source region."
+						},
+						{
+							"type": "coordinates",
+							"argumentName": "end",
+							"description": "Specifies the lower northwest corner of the destination region."
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["filtered"]
+							}
+						},
+						{
+							"type": "string",
+							"description": "Specifies how to treat the source region.",
+							"additionalData": {
+								"values": ["force", "move", "normal"]
+							}
+						},
+						{
+							"type": "string", // TODO BLOCK ID
+							"description": "Specifies the block id to copy in filtered mode."
+						},
+						{
+							"type": "blockState",
+							"description": "Specifies the block states to use for the block."
+						}
+					]
+				},
+				{
+					"commandName": "clone",
+					"description": "Copies blocks from one place to another.",
+					"arguments": [
+						{
+							"type": "coordinates",
+							"argumentName": "begin",
+							"description": "Specifies the coordinates of two opposing corner blocks of the source region."
+						},
+						{
+							"type": "coordinates",
+							"argumentName": "end",
+							"description": "Specifies the lower northwest corner of the destination region."
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["filtered"]
+							}
+						},
+						{
+							"type": "string",
+							"description": "Specifies how to treat the source region.",
+							"additionalData": {
+								"values": ["force", "move", "normal"]
+							}
+						},
+						{
+							"type": "string", // TODO BLOCK ID
+							"description": "Specifies the block id to copy in filtered mode."
+						},
+						{
+							"type": "number",
+							"description": "Specifies the block data to match when finding blocks to clone."
+						}
+					]
+				},
+				{
+					"commandName": "difficulty",
+					"description": "Sets the difficulty level.",
+					"arguments": [
+						{
+							"argumentName": "difficulty",
+							"description": "Specifies the new difficulty level.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"peaceful",
+									"p",
+									"0",
+
+									"easy",
+									"e",
+									"1",
+
+									"normal",
+									"n",
+									"2",
+
+									"hard",
+									"h",
+									"3"
+								]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "effect",
+					"description": "Add or remove status effects.",
+					"arguments": [
+						{
+							"type": "selector",
+							"argumentName": "player",
+							"description": "Specifies the target(s)."
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["clear"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "effect",
+					"description": "Add or remove status effects.",
+					"arguments": [
+						{
+							"type": "selector",
+							"argumentName": "player",
+							"description": "Specifies the target(s)."
+						},
+						{
+							"argumentName": "effect",
+							"description": "Specifies the effect to be added or removed.",
+							"type": "string"
+						},
+						{
+							"argumentName": "seconds",
+							"description": "Specifies the effect's duration in seconds (or in gameticks for instant_damage, instant_health, and saturation). If not specified, defaults to 30 seconds (or 1 gameticks for instant_damage, instant_health, and saturation).",
+							"type": "number"
+						},
+						{
+							"argumentName": "amplifier",
+							"description": "Specifies the number of additional levels to add to the effect. If not specified, defaults to 0. Note that the first tier of a status effect (e.g. Regeneration I) is 0, so the second tier, for example Regeneration II, would be specified by an amplifier level of 1.",
+							"type": "number"
+						},
+						{
+							"argumentName": "hideParticles",
+							"description": "Specifies whether the particles and the HUD indicator‌ of the status effect should be hidden. If not specified, defaults to false.",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "enchant",
+					"description": "Adds an enchantment to a player's selected item.",
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the target(s).",
+							"type": "selector"
+						},
+						{
+							"argumentName": "enchantmentId",
+							"description": "Specifies the enchantment to be added to the item held in main hand by the target.",
+							"type": "number"
+						},
+						{
+							"argumentName": "level",
+							"description": "Specifies the enchantment level. Should be not greater than the maximum level for the specified enchantment. If not specified, defaults to 1.",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "enchant",
+					"description": "Adds an enchantment to a player's selected item.",
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the target(s).",
+							"type": "selector"
+						},
+						{
+							"argumentName": "enchantmentName",
+							"description": "Specifies the enchantment to be added to the item held in main hand by the target.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"all",
+									"absorption",
+									"bad_omen",
+									"blindness",
+									"conduit_power",
+									"fatal_poison",
+									"fire_resistance",
+									"haste",
+									"health_boost",
+									"hunger",
+									"instant_damage",
+									"instant_health",
+									"invisibility",
+									"jump_boost",
+									"levitation",
+									"mining_fatigue",
+									"nausea",
+									"night_vision",
+									"poison",
+									"regeneration",
+									"resistance",
+									"saturation",
+									"slow_falling",
+									"slowness",
+									"speed",
+									"strength",
+									"village_hero",
+									"water_breathing",
+									"weakness",
+									"wither"
+								]
+							}
+						},
+						{
+							"argumentName": "level",
+							"description": "Specifies the enchantment level. Should be not greater than the maximum level for the specified enchantment. If not specified, defaults to 1.",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "event",
+					"description": "Used to trigger an event on an entity.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["entity"]
+							}
+						},
+						{
+							"argumentName": "target",
+							"description": "Specifies the target(s) to execute an entity event.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "eventName",
+							"description": "Specifies the in-game event for the entity.",
+							"type": "string" // TODO EVENT NAMES
+						}
+					]
+				},
+				{
+					"commandName": "execute",
+					"description": "Executes another command.",
+					"arguments": [
+						{
+							"argumentName": "origin",
+							"description": "Specifies the target to be the command's executor. Must be a player name or target selector. If more than one entity is selected, the command is run once as each of them.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "position",
+							"description": "Specifies the position from which to run the command. Coordinates specified with tilde and caret notation are relative to the target, not to the position of the command's execution.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "command",
+							"type": "string", // TODO RECURSIVE COMMANDS
+							"description": "Specifies the command to be run. Must be a valid command."
+						}
+					]
+				},
+				{
+					"commandName": "execute",
+					"description": "Executes another command.",
+					"arguments": [
+						{
+							"argumentName": "origin",
+							"description": "Specifies the target to be the command's executor. Must be a player name or target selector. If more than one entity is selected, the command is run once as each of them.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "position",
+							"description": "Specifies the position from which to run the command. Coordinates specified with tilde and caret notation are relative to the target, not to the position of the command's execution.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["detect"]
+							}
+						},
+						{
+							"argumentName": "detectPos",
+							"description": "Specifies the position of the block to check.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "block",
+							"description": "Specifies the block ID that the block at detectPos, must match for the command to run.",
+							"type": "string" // TODO BLOCK ID
+						},
+						{
+							"argumentName": "data",
+							"description": "Must be a valid block data for that type of block or -1 to match any block data.",
+							"type": "number"
+						},
+						{
+							"argumentName": "command",
+							"type": "string", // TODO RECURSIVE COMMANDS
+							"description": "Specifies the command to be run. Must be a valid command."
+						}
+					]
+				},
+				{
+					"commandName": "fill",
+					"description": "Fills a region with a specific block.",
+					"arguments": [
+						{
+							"argumentName": "from",
+							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "to",
+							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "tileName",
+							"description": "Specifies the block to fill the region with.",
+							"type": "string" // TODO BLOCK ID
+						},
+						{
+							"argumentName": "tileData",
+							"description": "Specifies the block data to match when finding blocks to clone.",
+							"type": "number"
+						},
+						{
+							"argumentName": "oldBlockHandling",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"destroy",
+									"hollow",
+									"keep",
+									"outline",
+									"replace"
+								]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "fill",
+					"description": "Fills a region with a specific block.",
+					"arguments": [
+						{
+							"argumentName": "from",
+							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "to",
+							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "tileName",
+							"description": "Specifies the block to fill the region with.",
+							"type": "string" // TODO BLOCK ID
+						},
+						{
+							"argumentName": "blockStates",
+							"description": "Specifies the block states to use for the block.",
+							"type": "blockState"
+						},
+						{
+							"argumentName": "oldBlockHandling",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"destroy",
+									"hollow",
+									"keep",
+									"outline",
+									"replace"
+								]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "fill",
+					"description": "Fills a region with a specific block.",
+					"arguments": [
+						{
+							"argumentName": "from",
+							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "to",
+							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "tileName",
+							"description": "Specifies the block to fill the region with.",
+							"type": "string" // TODO BLOCK ID
+						},
+						{
+							"argumentName": "tileData",
+							"description": "Specifies the block data to match when finding blocks to clone.",
+							"type": "number"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["replace"]
+							}
+						},
+						{
+							"argumentName": "replaceTileName",
+							"description": "Specifies the block to fill the region with.",
+							"type": "string" // TODO BLOCK ID
+						},
+						{
+							"argumentName": "replaceDataValue",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "fill",
+					"description": "Fills a region with a specific block.",
+					"arguments": [
+						{
+							"argumentName": "from",
+							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "to",
+							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "tileName",
+							"description": "Specifies the block to fill the region with.",
+							"type": "string" // TODO BLOCK ID
+						},
+						{
+							"argumentName": "blockStates",
+							"description": "Specifies the block states to use for the block.",
+							"type": "blockState"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["replace"]
+							}
+						},
+						{
+							"argumentName": "replaceTileName",
+							"description": "Specifies the block to fill the region with.",
+							"type": "string" // TODO BLOCK ID
+						},
+						{
+							"argumentName": "replaceDataValue",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "fog",
+					"description": "Used for managing active fog settings for players.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entity(s) to be triggered. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["push"]
+							}
+						},
+						{
+							"argumentName": "fogID",
+							"description": "Should be in a fog definition name.",
+							"type": "string" // TODO FOG ID
+						},
+						{
+							"argumentName": "userProvidedId",
+							"description": "Should be in the format of name.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "fog",
+					"description": "Used for managing active fog settings for players.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entity(s) to be triggered. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "mode",
+							"description": "Specifies whether to remove the fog in pop or remove mode.",
+							"type": "string",
+							"additionalData": {
+								"values": ["pop", "remove"]
+							}
+						},
+						{
+							"argumentName": "userProvidedId",
+							"description": "Should be in the format of name.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "function",
+					"description": "Runs a function.",
+					"arguments": [
+						{
+							"argumentName": "name",
+							"description": "Must be of the format path/to/function/file, which refers to a function.",
+							"type": "string" // TODO FUNCTION PATH
+						}
+					]
+				},
+				{
+					"commandName": "gamemode",
+					"description": "Sets a player's game mode.",
+					"arguments": [
+						{
+							"argumentName": "gameMode",
+							"description": "Specifies the new game mode.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"survival",
+									"s",
+									"0",
+
+									"creative",
+									"c",
+									"1",
+
+									"adventure",
+									"a",
+									"2"
+								]
+							}
+						},
+						{
+							"argumentName": "player",
+							"description": "Specifies the target(s). If not specified, defaults to the player who executes the command.",
+							"type": "selector"
+						}
+					]
+				},
+				{
+					"commandName": "gamerule",
+					"description": "Sets or queries a game rule value.",
+					"arguments": [
+						{
+							"argumentName": "rule",
+							"description": "Specifies the game rule to set or query.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"alwaysday",
+									"commandblockoutput",
+									"commandblocksenabled",
+									"dodaylightcycle",
+									"doentitydrops",
+									"dofiretick",
+									"doimmediaterespawn",
+									"domobloot",
+									"domobspawning",
+									"dotiledrops",
+									"doweathercycle",
+									"drowningdamage",
+									"falldamage",
+									"firedamage",
+									"functioncommandlimit",
+									"keepinventory",
+									"maxcommandchainlength",
+									"mobgriefing",
+									"naturalregeneration",
+									"pvp",
+									"randomtickspeed",
+									"sendcommandfeedback",
+									"showcoordinates",
+									"showdeathmessages",
+									"tntexplodes"
+								]
+							}
+						},
+						{
+							"argumentName": "value",
+							"description": "Specifies the value to set the game rule to.",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "gamerule",
+					"description": "Sets or queries a game rule value.",
+					"arguments": [
+						{
+							"argumentName": "rule",
+							"description": "Specifies the game rule to set or query.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"alwaysday",
+									"commandblockoutput",
+									"commandblocksenabled",
+									"dodaylightcycle",
+									"doentitydrops",
+									"dofiretick",
+									"doimmediaterespawn",
+									"domobloot",
+									"domobspawning",
+									"dotiledrops",
+									"doweathercycle",
+									"drowningdamage",
+									"falldamage",
+									"firedamage",
+									"functioncommandlimit",
+									"keepinventory",
+									"maxcommandchainlength",
+									"mobgriefing",
+									"naturalregeneration",
+									"pvp",
+									"randomtickspeed",
+									"sendcommandfeedback",
+									"showcoordinates",
+									"showdeathmessages",
+									"tntexplodes"
+								]
+							}
+						},
+						{
+							"argumentName": "value",
+							"description": "Specifies the value to set the game rule to.",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "give",
+					"description": "Gives an item to a player.",
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the target(s) to give item(s) to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "itemName",
+							"description": "Specifies the item to give.",
+							"type": "string" // TODO ITEM ID
+						},
+						{
+							"argumentName": "amount",
+							"description": "Specifies the number of items to give. If not specified, defaults to 1.",
+							"type": "number"
+						},
+						{
+							"argumentName": "data",
+							"description": "Specifies the item data value of the given item(s).",
+							"type": "number"
+						},
+						{
+							"argumentName": "components",
+							"description": "Specifies the item components of the given item(s).",
+							"type": "jsonData"
+						}
+					]
+				},
+				{
+					"commandName": "kick",
+					"description": "Kicks a player off a server.",
+					"arguments": [
+						{
+							"type": "selector",
+							"argumentName": "name",
+							"description": "Specifies the player(s) to be kicked."
+						},
+						{
+							"type": "string",
+							"argumentName": "reason",
+							"description": "Message to display to the kicked player."
+						}
+					]
+				},
+				{
+					"commandName": "kill",
+					"description": "Kills entities (players, mobs, items, etc.).",
+					"arguments": [
+						{
+							"type": "selector",
+							"argumentName": "target",
+							"description": "Specifies the target(s) to kill. If not specified, defaults to the player who executed the command."
+						}
+					]
+				},
+				{
+					"commandName": "locate",
+					"description": "Locates closest structure.",
+					"arguments": [
+						{
+							"argumentName": "feature",
+							"description": "Specifies the structure to locate.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"bastionremnant",
+									"buriedtreasure",
+									"endcity",
+									"fortress",
+									"mansion",
+									"mineshaft",
+									"monument",
+									"pillageroutpost",
+									"ruinedportal",
+									"ruins",
+									"shipwreck",
+									"stronghold",
+									"temple",
+									"village"
+								]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "mobevent",
+					"description": "Enables/disables a specified mob event.",
+					"arguments": [
+						{
+							"argumentName": "event",
+							"description": "Specifies the event(s) to control or query.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"minecraft:pillager_patrols_event",
+									"minecraft:wandering_trader_event",
+									"events_enabled"
+								]
+							}
+						},
+						{
+							"argumentName": "value",
+							"description": "If specified, true enables the events and false disables them. If omitted, the current enabled status is displayed.",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "msg",
+					"description": "Displays a private message to other players.",
+					"arguments": [
+						{
+							"argumentName": "target",
+							"description": "Specifies the player(s) to send the message to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "message",
+							"description": "Specifies the message to tell.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "music",
+					"description": "Allows the player to control playing music tracks.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["play", "queue"]
+							}
+						},
+						{
+							"argumentName": "trackName",
+							"description": "Specifies a music to play.",
+							"type": "string"
+						},
+						{
+							"argumentName": "volume",
+							"description": "Specifies the volume of the music.",
+							"type": "number"
+						},
+						{
+							"argumentName": "fadeSeconds",
+							"description": "Specifies the duration music fades in/out.",
+							"type": "number"
+						},
+						{
+							"argumentName": "repeatMode",
+							"description": "Specified whether set the music on repeat or not. If unspecified, defaults to play_once.",
+							"type": "string",
+							"additionalData": {
+								"values": ["loop", "play_once"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "music",
+					"description": "Allows the player to control playing music tracks.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["stop"]
+							}
+						},
+						{
+							"argumentName": "fadeSeconds",
+							"description": "Specifies the duration music fades in/out.",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "music",
+					"description": "Allows the player to control playing music tracks.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["volume"]
+							}
+						},
+						{
+							"argumentName": "volume",
+							"description": "Specifies the volume of the music.",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "particle",
+					"description": "Creates particles.",
+					"arguments": [
+						{
+							"argumentName": "effect",
+							"description": "Specifies the particle to create.",
+							"type": "string" // TODO PARTICLE ID
+						},
+						{
+							"argumentName": "position",
+							"description": "Specifies the position at which to create the particle. If not specified, defaults to the position of the executor.",
+							"type": "coordinates"
+						}
+					]
+				},
+				{
+					"commandName": "playanimation",
+					"description": "Used to run a one-off animation.",
+					"arguments": [
+						{
+							"argumentName": "entity",
+							"description": "Specifies the targeted entities.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "animation",
+							"description": "Should be an animation name.",
+							"type": "string" // TODO ANIMATION SHORT NAME
+						},
+						{
+							"argumentName": "nextState",
+							"description": "Should be an animation name.",
+							"type": "string" // TODO ANIMATION SHORT NAME
+						},
+						{
+							"argumentName": "blendOutTime",
+							"description": "Specifies the duration of the gradient animation.",
+							"type": "number"
+						},
+						{
+							"argumentName": "stopExpression",
+							"description": "Specifies the conditions for stopping animation.",
+							"type": "string" // TODO MOLANG
+						},
+						{
+							"argumentName": "controller",
+							"description": "Should be an animation controller name.",
+							"type": "string" // TODO ANIMATION CONTROLLER SHORT NAME
+						}
+					]
+				},
+				{
+					"commandName": "playsound",
+					"description": "Plays a sound.",
+					"arguments": [
+						{
+							"argumentName": "sound",
+							"description": "Specifies the sound to play.",
+							"type": "string" // TODO SOUND ID
+						},
+						{
+							"argumentName": "player",
+							"description": "Specifies the sound's target.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "position",
+							"description": "Specifies the position to play the sounds from.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "volume",
+							"description": "Specifies the distance that the sound can be heard. If not specified, defaults to 1. For values less than 1, the volume diminishes and the sound has a smaller sphere in which it may be heard. For values greater than 1, the sound does not actually grow louder, but its audible range (a 16-block radius at 1) is multiplied by volume. There is always a gradual falloff to silence based on distance from the center of the sphere. For values equal to or less than 0, no one can hear the sound.",
+							"type": "number"
+						},
+						{
+							"argumentName": "pitch",
+							"description": "Specifies the pitch of the sound. If not specified, defaults to 1.",
+							"type": "number"
+						},
+						{
+							"argumentName": "minimumVolume",
+							"description": "Specifies the volume for targets outside the sound's normal audible sphere. If a target is outside the normal sphere, the sound is instead centered some short distance from the target (less than four blocks away), and this argument determines its volume.",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "reload",
+					"description": "Reloads functions from disk."
+				},
+				{
+					"commandName": "replaceitem",
+					"description": "Replaces items in inventories.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["block"]
+							}
+						},
+						{
+							"argumentName": "position",
+							"description": "Specifies the position of the block to be modified.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["slot.container"]
+							}
+						},
+						{
+							"argumentName": "slotId",
+							"description": "Specifies the inventory slot to be modified. Valid values depend on whether a block or an entity is being modified.",
+							"type": "number"
+						},
+						{
+							"argumentName": "itemName",
+							"description": "Specifies the item to be placed in the block or entity's inventory slot.",
+							"type": "string" // TODO ITEM ID
+						},
+						{
+							"argumentName": "amount",
+							"description": "Specifies the number of items to be placed in the block or entity's inventory slot.",
+							"type": "number"
+						},
+						{
+							"argumentName": "data",
+							"description": "Specifies the item data for the item(s) to be placed in the block or entity's inventory slot. Values which are invalid for the specified item id will default to 0. If not specified, defaults to 0.",
+							"type": "number"
+						},
+						{
+							"argumentName": "components",
+							"description": "Specifies the item components.",
+							"type": "jsonData"
+						}
+					]
+				},
+				{
+					"commandName": "replaceitem",
+					"description": "Replaces items in inventories.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["entity"]
+							}
+						},
+						{
+							"argumentName": "target",
+							"description": "Specifies one or more entities to modify.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "slotType",
+							"description": "Specifies the inventory slot to be modified. Valid values depend on whether a block or an entity is being modified.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"slot.armor",
+									"slot.armor.chest",
+									"slot.armor.feet",
+									"slot.armor.head",
+									"slot.armor.legs",
+									"slot.chest",
+									"slot.enderchest",
+									"slot.hotbar",
+									"slot.inventory",
+									"slot.saddle",
+									"slot.weapon.mainhand",
+									"slot.weapon.offhand"
+								]
+							}
+						},
+						{
+							"argumentName": "slotId",
+							"description": "Specifies the inventory slot to be modified. Valid values depend on whether a block or an entity is being modified.",
+							"type": "number"
+						},
+						{
+							"argumentName": "itemName",
+							"description": "Specifies the item to be placed in the block or entity's inventory slot.",
+							"type": "string" // TODO ITEM ID
+						},
+						{
+							"argumentName": "amount",
+							"description": "Specifies the number of items to be placed in the block or entity's inventory slot.",
+							"type": "number"
+						},
+						{
+							"argumentName": "data",
+							"description": "Specifies the item data for the item(s) to be placed in the block or entity's inventory slot. Values which are invalid for the specified item id will default to 0. If not specified, defaults to 0.",
+							"type": "number"
+						},
+						{
+							"argumentName": "components",
+							"description": "Specifies the item components.",
+							"type": "jsonData"
+						}
+					]
+				},
+				{
+					"commandName": "replaceitem",
+					"description": "Replaces items in inventories.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["block"]
+							}
+						},
+						{
+							"argumentName": "position",
+							"description": "Specifies the position of the block to be modified.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["slot.container"]
+							}
+						},
+						{
+							"argumentName": "slotId",
+							"description": "Specifies the inventory slot to be modified. Valid values depend on whether a block or an entity is being modified.",
+							"type": "number"
+						},
+						{
+							"argumentName": "oldItemHandling",
+							"type": "string",
+							"additionalData": {
+								"values": ["destroy", "keep"]
+							}
+						},
+						{
+							"argumentName": "itemName",
+							"description": "Specifies the item to be placed in the block or entity's inventory slot.",
+							"type": "string" // TODO ITEM ID
+						},
+						{
+							"argumentName": "amount",
+							"description": "Specifies the number of items to be placed in the block or entity's inventory slot.",
+							"type": "number"
+						},
+						{
+							"argumentName": "data",
+							"description": "Specifies the item data for the item(s) to be placed in the block or entity's inventory slot. Values which are invalid for the specified item id will default to 0. If not specified, defaults to 0.",
+							"type": "number"
+						},
+						{
+							"argumentName": "components",
+							"description": "Specifies the item components.",
+							"type": "jsonData"
+						}
+					]
+				},
+				{
+					"commandName": "replaceitem",
+					"description": "Replaces items in inventories.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["entity"]
+							}
+						},
+						{
+							"argumentName": "target",
+							"description": "Specifies one or more entities to modify.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "slotType",
+							"description": "Specifies the inventory slot to be modified. Valid values depend on whether a block or an entity is being modified.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"slot.armor",
+									"slot.armor.chest",
+									"slot.armor.feet",
+									"slot.armor.head",
+									"slot.armor.legs",
+									"slot.chest",
+									"slot.enderchest",
+									"slot.hotbar",
+									"slot.inventory",
+									"slot.saddle",
+									"slot.weapon.mainhand",
+									"slot.weapon.offhand"
+								]
+							}
+						},
+						{
+							"argumentName": "slotId",
+							"description": "Specifies the inventory slot to be modified. Valid values depend on whether a block or an entity is being modified.",
+							"type": "number"
+						},
+						{
+							"argumentName": "oldItemHandling",
+							"type": "string",
+							"additionalData": {
+								"values": ["destroy", "keep"]
+							}
+						},
+						{
+							"argumentName": "itemName",
+							"description": "Specifies the item to be placed in the block or entity's inventory slot.",
+							"type": "string" // TODO ITEM ID
+						},
+						{
+							"argumentName": "amount",
+							"description": "Specifies the number of items to be placed in the block or entity's inventory slot.",
+							"type": "number"
+						},
+						{
+							"argumentName": "data",
+							"description": "Specifies the item data for the item(s) to be placed in the block or entity's inventory slot. Values which are invalid for the specified item id will default to 0. If not specified, defaults to 0.",
+							"type": "number"
+						},
+						{
+							"argumentName": "components",
+							"description": "Specifies the item components.",
+							"type": "jsonData"
+						}
+					]
+				},
+				{
+					"commandName": "ride",
+					"description": "Used to make entities ride other entities, stop entities from riding, make rides evict their riders, or summon rides or riders.",
+					"arguments": [
+						{
+							"argumentName": "riders",
+							"description": "Specifies the riders.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["start_riding"]
+							}
+						},
+						{
+							"argumentName": "ride",
+							"description": "Specifies an entity to be ridden on.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "teleportRules",
+							"description": "Specified which entities are teleported. If unspecified, defaults to teleport_rider",
+							"type": "string",
+							"additionalData": {
+								"values": ["teleport_ride", "teleport_rider"]
+							}
+						},
+						{
+							"argumentName": "howToFill",
+							"type": "string",
+							"additionalData": {
+								"values": ["if_group_fits", "until_full"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "ride",
+					"description": "Used to make entities ride other entities, stop entities from riding, make rides evict their riders, or summon rides or riders.",
+					"arguments": [
+						{
+							"argumentName": "riders",
+							"description": "Specifies the riders.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["stop_riding"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "ride",
+					"description": "Used to make entities ride other entities, stop entities from riding, make rides evict their riders, or summon rides or riders.",
+					"arguments": [
+						{
+							"argumentName": "riders",
+							"description": "Specifies the riders.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["evict_riders"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "ride",
+					"description": "Used to make entities ride other entities, stop entities from riding, make rides evict their riders, or summon rides or riders.",
+					"arguments": [
+						{
+							"argumentName": "riders",
+							"description": "Specifies the riders.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["summon_rider"]
+							}
+						},
+						{
+							"argumentName": "entityType",
+							"description": "Specifies the entities to be summoned.",
+							"type": "string" // TODO ENTITY ID
+						},
+						{
+							"argumentName": "spawnEvent",
+							"description": "Specifies the in-game event for the to-be-summoned entities.",
+							"type": "string" // TODO ENTITY EVENT
+						},
+						{
+							"argumentName": "nameTag",
+							"description": "Specifies the name of the to-be-summoned entities.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "ride",
+					"description": "Used to make entities ride other entities, stop entities from riding, make rides evict their riders, or summon rides or riders.",
+					"arguments": [
+						{
+							"argumentName": "riders",
+							"description": "Specifies the riders.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["summon_ride"]
+							}
+						},
+						{
+							"argumentName": "entityType",
+							"description": "Specifies the entities to be summoned.",
+							"type": "string" // TODO ENTITY ID
+						},
+						{
+							"argumentName": "rideRules",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"no_ride_change",
+									"reassign_rides",
+									"skip_riders"
+								]
+							}
+						},
+						{
+							"argumentName": "spawnEvent",
+							"description": "Specifies the in-game event for the to-be-summoned entities.",
+							"type": "string" // TODO ENTITY EVENT
+						},
+						{
+							"argumentName": "nameTag",
+							"description": "Specifies the name of the to-be-summoned entities.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "say",
+					"description": "Displays a message to multiple players.",
+					"arguments": [
+						{
+							"type": "string",
+							"argumentName": "message",
+							"description": "Specifies the message to say."
+						}
+					]
+				},
+				{
+					"commandName": "schedule",
+					"description": "Delays the execution of a function.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["on_area_loaded"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["add"]
+							}
+						},
+						{
+							"argumentName": "from",
+							"description": "Specify the coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "to",
+							"description": "Specify the coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "function",
+							"description": "Specify the function to be cleared.",
+							"type": "string" // TODO FUNCTION PATH
+						}
+					]
+				},
+				{
+					"commandName": "schedule",
+					"description": "Delays the execution of a function.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["on_area_loaded"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["add"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["circle"]
+							}
+						},
+						{
+							"argumentName": "center",
+							"description": "Specifies the coordinates of the center point of a circular area used to define a loaded area.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "radius",
+							"description": "Specifies the radius of a circular loaded area as the number of chunks from the center to the edge of the circle.",
+							"type": "number"
+						},
+						{
+							"argumentName": "function",
+							"description": "Specify the function to be cleared.",
+							"type": "string" // TODO FUNCTION PATH
+						}
+					]
+				},
+				{
+					"commandName": "schedule",
+					"description": "Delays the execution of a function.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["on_area_loaded"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["add"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["tickingarea"]
+							}
+						},
+						{
+							"argumentName": "name",
+							"description": "Specifies the name of a ticking area, executes function when which is added.",
+							"type": "string"
+						},
+						{
+							"argumentName": "function",
+							"description": "Specify the function to be cleared.",
+							"type": "string" // TODO FUNCTION PATH
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"arguments": []
+				},
+				{
+					"commandName": "setblock",
+					"arguments": []
+				},
+				{
+					"commandName": "setworldspawn",
+					"arguments": []
+				},
+				{
+					"commandName": "spawnpoint",
+					"arguments": []
+				},
+				{
+					"commandName": "spreadplayers",
+					"arguments": []
+				},
+				{
+					"commandName": "stopsound",
+					"arguments": []
+				},
+				{
+					"commandName": "structure",
+					"arguments": []
+				},
+				{
+					"commandName": "summon",
+					"arguments": []
+				},
+				{
+					"commandName": "tag",
+					"arguments": []
+				},
+				{
+					"commandName": "teleport",
+					"arguments": []
+				},
+				{
+					"commandName": "tell",
+					"arguments": [
+						{
+							"argumentName": "target",
+							"description": "Specifies the player(s) to send the message to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "message",
+							"description": "Specifies the message to tell.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "tellraw",
+					"arguments": []
+				},
+				{
+					"commandName": "testfor",
+					"arguments": []
+				},
+				{
+					"commandName": "testforblock",
+					"arguments": []
+				},
+				{
+					"commandName": "testforblocks",
+					"arguments": []
+				},
+				{
+					"commandName": "tickingarea",
+					"arguments": []
+				},
+				{
+					"commandName": "time",
+					"arguments": []
+				},
+				{
+					"commandName": "title",
+					"arguments": []
+				},
+				{
+					"commandName": "titleraw",
+					"arguments": []
+				},
+				{
+					"commandName": "toggledownfall",
+					"arguments": []
+				},
+				{
+					"commandName": "tp",
+					"arguments": []
+				},
+				{
+					"commandName": "w",
+					"arguments": [
+						{
+							"argumentName": "target",
+							"description": "Specifies the player(s) to send the message to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "message",
+							"description": "Specifies the message to tell.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "weather",
+					"arguments": []
+				},
+				{
+					"commandName": "xp",
+					"arguments": []
 				}
 			]
 		},
 		{
-			"commandName": "say",
-			"arguments": [
+			"targetVersion": ["v1.17.10", ">="],
+			"commands": [
 				{
-					"type": "string"
+					"commandName": "dialogue",
+					"description": "Opens NPC dialogue for a player.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["change"]
+							}
+						},
+						{
+							"type": "selector",
+							"argumentName": "npc"
+						},
+						{
+							"type": "string",
+							"argumentName": "sceneName"
+						},
+						{
+							"type": "selector",
+							"argumentName": "player"
+						}
+					]
+				},
+				{
+					"commandName": "dialogue",
+					"description": "Opens NPC dialogue for a player.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["open"]
+							}
+						},
+						{
+							"type": "selector",
+							"argumentName": "npc"
+						},
+						{
+							"type": "selector",
+							"argumentName": "player"
+						},
+						{
+							"type": "string",
+							"argumentName": "sceneName"
+						}
+					]
 				}
 			]
 		}

@@ -7,32 +7,61 @@
 			"items": {
 				"type": "object",
 				"properties": {
-					"commandName": { "type": "string" },
-					"description": { "type": "string" },
-					"arguments": {
+					"targetVersion": {
+						"type": "array",
+						"minItems": 2,
+						"maxItems": 2,
+						"items": [
+							{
+								"type": "string",
+								"description": "Version"
+							},
+							{
+								"type": "string",
+								"description": "Operator"
+							}
+						]
+					},
+					"commands": {
 						"type": "array",
 						"items": {
 							"type": "object",
 							"properties": {
-								"type": {
-									"type": "string",
-									"enum": [
-										"string",
-										"number",
-										"boolean",
-										"selector",
-										"molang",
-										"blockState",
-										"jsonData",
-										"coordinates"
-									]
-								},
-								"argumentName": { "type": "string" },
+								"commandName": { "type": "string" },
 								"description": { "type": "string" },
-								"additionalData": {
-									"values": {
-										"type": "array",
-										"items": { "type": "string" }
+								"arguments": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"type": {
+												"type": "string",
+												"enum": [
+													"string",
+													"number",
+													"boolean",
+													"selector",
+													"molang",
+													"blockState",
+													"jsonData",
+													"coordinates"
+												]
+											},
+											"argumentName": {
+												"type": "string"
+											},
+											"description": { "type": "string" },
+											"additionalData": {
+												"properties": {
+													"values": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														}
+													}
+												}
+											}
+										}
 									}
 								}
 							}
