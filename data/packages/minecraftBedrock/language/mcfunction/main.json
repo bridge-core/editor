@@ -1694,7 +1694,7 @@
 			]
 		},
 		{
-			"targetVersion": ["v1.17.10", ">="],
+			"targetVersion": [">=", "v1.17.10"],
 			"commands": [
 				{
 					"commandName": "dialogue",
