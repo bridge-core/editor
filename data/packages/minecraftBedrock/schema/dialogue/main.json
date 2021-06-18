@@ -26,6 +26,14 @@
 								"maxItems": 6,
 								"items": {
 									"type": "object",
+									"anyOf": [
+										{
+											"required": ["commands"]
+										},
+										{
+											"required": ["url"]
+										}
+									],
 									"properties": {
 										"name": {
 											"$ref": "./text.json"
@@ -35,6 +43,9 @@
 											"items": {
 												"$ref": "../general/vanilla/command.json"
 											}
+										},
+										"url": {
+											"$ref": "./text.json"
 										}
 									}
 								}
