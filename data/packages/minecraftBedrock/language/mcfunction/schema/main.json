@@ -14,11 +14,11 @@
 						"items": [
 							{
 								"type": "string",
-								"description": "Version"
+								"description": "Operator"
 							},
 							{
 								"type": "string",
-								"description": "Operator"
+								"description": "Version"
 							}
 						]
 					},

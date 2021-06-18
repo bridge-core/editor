@@ -1575,46 +1575,1036 @@
 				},
 				{
 					"commandName": "scoreboard",
-					"arguments": []
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["objectives"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["add"]
+							}
+						},
+						{
+							"argumentName": "objective",
+							"type": "string"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["dummy"]
+							}
+						},
+						{
+							"argumentName": "displayName",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["objectives"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["list"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["objectives"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["remove"]
+							}
+						},
+						{
+							"argumentName": "objective",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["objectives"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["setdisplay"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["belowname"]
+							}
+						},
+						{
+							"argumentName": "objective",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["objectives"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["setdisplay"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["list", "sidebar"]
+							}
+						},
+						{
+							"argumentName": "objective",
+							"type": "string"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["ascending", "descending"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["players"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["list"]
+							}
+						},
+						{
+							"argumentName": "playername",
+							"type": "selector"
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["players"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["reset"]
+							}
+						},
+						{
+							"argumentName": "player",
+							"type": "selector"
+						},
+						{
+							"argumentName": "objective",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["players"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["test"]
+							}
+						},
+						{
+							"argumentName": "player",
+							"type": "selector"
+						},
+						{
+							"argumentName": "objective",
+							"type": "string"
+						},
+						{
+							"argumentName": "min",
+							"type": "number"
+						},
+						{
+							"argumentName": "max",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["players"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["random"]
+							}
+						},
+						{
+							"argumentName": "player",
+							"type": "selector"
+						},
+						{
+							"argumentName": "objective",
+							"type": "string"
+						},
+						{
+							"argumentName": "min",
+							"type": "number"
+						},
+						{
+							"argumentName": "max",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["players"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["set", "add", "remove"]
+							}
+						},
+						{
+							"argumentName": "player",
+							"type": "selector"
+						},
+						{
+							"argumentName": "objective",
+							"type": "string"
+						},
+						{
+							"argumentName": "count",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "scoreboard",
+					"description": "Manages scoreboard objectives and players.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["players"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["operation"]
+							}
+						},
+						{
+							"argumentName": "targetName",
+							"type": "selector"
+						},
+						{
+							"argumentName": "targetObjective",
+							"type": "string"
+						},
+						{
+							"argumentName": "operation",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"+=",
+									"-=",
+									"*=",
+									"/=",
+									"%=",
+									"=",
+									"<",
+									">",
+									"><"
+								]
+							}
+						},
+						{
+							"argumentName": "selector",
+							"type": "selector"
+						},
+						{
+							"argumentName": "objective",
+							"type": "string"
+						}
+					]
 				},
 				{
 					"commandName": "setblock",
-					"arguments": []
+					"description": "Changes a block to another block.",
+					"arguments": [
+						{
+							"argumentName": "position",
+							"description": "Specifies the position of the block to be changed.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "tileName",
+							"description": "Specifies the new block.",
+							"type": "string" // TODO BLOCK ID
+						},
+						{
+							"argumentName": "tileData",
+							"description": "Specifies the block data to use for the new block. Values that are invalid for the specified block id revert to 0. If not specified, defaults to 0.",
+							"type": "number"
+						},
+						{
+							"argumentName": "mode",
+							"description": "Specifies how to handle the block change.",
+							"type": "string",
+							"additionalData": {
+								"values": ["destroy", "keep", "replace"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "setblock",
+					"description": "Changes a block to another block.",
+					"arguments": [
+						{
+							"argumentName": "position",
+							"description": "Specifies the position of the block to be changed.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "tileName",
+							"description": "Specifies the new block.",
+							"type": "string" // TODO BLOCK ID
+						},
+						{
+							"argumentName": "blockStates",
+							"description": "Specifies the block states to use for the block.",
+							"type": "jsonData"
+						},
+						{
+							"argumentName": "mode",
+							"description": "Specifies how to handle the block change.",
+							"type": "string",
+							"additionalData": {
+								"values": ["destroy", "keep", "replace"]
+							}
+						}
+					]
 				},
 				{
 					"commandName": "setworldspawn",
-					"arguments": []
+					"description": "Sets the world spawn.",
+					"arguments": [
+						{
+							"argumentName": "spawnPoint",
+							"description": "Specifies the coordinates of the world spawn. If not specified, defaults to the block position of the command's execution.",
+							"type": "coordinates"
+						}
+					]
 				},
 				{
 					"commandName": "spawnpoint",
-					"arguments": []
+					"description": "Sets the spawn point for a player.",
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the player whose spawn point should be set. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "spawnPos",
+							"description": "Specifies the coordinates of the player's new spawn point. If not specified, defaults to the position of the specified player(s).",
+							"type": "coordinates"
+						}
+					]
 				},
 				{
 					"commandName": "spreadplayers",
-					"arguments": []
+					"description": "Teleports entities to random locations.",
+					"arguments": [
+						{
+							"argumentName": "x",
+							"description": "Specifies the center of the region to spread targets to.",
+							"type": "number"
+						},
+						{
+							"argumentName": "z",
+							"description": "Specifies the center of the region to spread targets to.",
+							"type": "number"
+						},
+						{
+							"argumentName": "spreadDistance",
+							"description": "Specifies the minimum distance between targets.",
+							"type": "number"
+						},
+						{
+							"argumentName": "maxRange",
+							"description": "Specifies the maximum distance on each horizontal axis from the center of the area to spread targets (thus, the area is square, not circular).",
+							"type": "number"
+						},
+						{
+							"argumentName": "victim",
+							"description": "Specifies the targets to spread.",
+							"type": "selector"
+						}
+					]
 				},
 				{
 					"commandName": "stopsound",
-					"arguments": []
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the command's target.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "sound",
+							"description": "Specifies the sound to stop.",
+							"type": "string" // TODO SOUND ID
+						}
+					]
 				},
 				{
 					"commandName": "structure",
-					"arguments": []
+					"description": "Used to save and load structures without having to use structure blocks items in inventories.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["save"]
+							}
+						},
+						{
+							"argumentName": "name",
+							"type": "string" // TODO STRUCTURE NAME
+						},
+						{
+							"argumentName": "from",
+							"description": "Specifies any two opposing corner blocks of the region to be saved.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "to",
+							"description": "Specifies any two opposing corner blocks of the region to be saved.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "saveMode",
+							"description": "Specifies the storage location.",
+							"type": "string",
+							"additionalData": {
+								"values": ["disk", "memory"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "structure",
+					"description": "Used to save and load structures without having to use structure blocks items in inventories.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["save"]
+							}
+						},
+						{
+							"argumentName": "name",
+							"type": "string" // TODO STRUCTURE NAME
+						},
+						{
+							"argumentName": "from",
+							"description": "Specifies any two opposing corner blocks of the region to be saved.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "to",
+							"description": "Specifies any two opposing corner blocks of the region to be saved.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "includeEntities",
+							"description": "Specifies whether including entities or not. If unspecified, defaults to true.",
+							"type": "boolean"
+						},
+						{
+							"argumentName": "saveMode",
+							"description": "Specifies the storage location.",
+							"type": "string",
+							"additionalData": {
+								"values": ["disk", "memory"]
+							}
+						},
+						{
+							"argumentName": "includeBlocks",
+							"description": "Specifies whether including blocks or not. If unspecified, defaults to true.",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "structure",
+					"description": "Used to save and load structures without having to use structure blocks items in inventories.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["load"]
+							}
+						},
+						{
+							"argumentName": "name",
+							"type": "string" // TODO STRUCTURE NAME
+						},
+						{
+							"argumentName": "to",
+							"description": "Specifies the lower northwest corner of the destination region.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "rotation",
+							"description": "Specifies the rotation when loading a structure. If unspecified, defaults to 0_degrees.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"0_degrees",
+									"90_degrees",
+									"180_degrees",
+									"270_degrees"
+								]
+							}
+						},
+						{
+							"argumentName": "mirror",
+							"description": "Specifies the axis of mirror flip when loading a structure. If unspecified, defaults to none.",
+							"type": "string",
+							"additionalData": {
+								"values": ["x", "z", "xz", "none"]
+							}
+						},
+						{
+							"argumentName": "includeEntities",
+							"description": "Specifies whether including entities or not. If unspecified, defaults to true.",
+							"type": "boolean"
+						},
+						{
+							"argumentName": "includeBlocks",
+							"description": "Specifies whether including blocks or not. If unspecified, defaults to true.",
+							"type": "boolean"
+						},
+						{
+							"argumentName": "integrity",
+							"description": "Specifies the integrity (probability of each block being loaded). If 100, all blocks in the structure are loaded. If 0, no blocks are loaded. If unspecified, defaults to 100.",
+							"type": "number"
+						},
+						{
+							"argumentName": "seed",
+							"description": "Specifies the seed when calculating whether a block should be loaded according to integrity. If unspecified, a random seed is taken.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "structure",
+					"description": "Used to save and load structures without having to use structure blocks items in inventories.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["load"]
+							}
+						},
+						{
+							"argumentName": "name",
+							"type": "string" // TODO STRUCTURE NAME
+						},
+						{
+							"argumentName": "to",
+							"description": "Specifies the lower northwest corner of the destination region.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "rotation",
+							"description": "Specifies the rotation when loading a structure. If unspecified, defaults to 0_degrees.",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"0_degrees",
+									"90_degrees",
+									"180_degrees",
+									"270_degrees"
+								]
+							}
+						},
+						{
+							"argumentName": "mirror",
+							"description": "Specifies the axis of mirror flip when loading a structure. If unspecified, defaults to none.",
+							"type": "string",
+							"additionalData": {
+								"values": ["x", "z", "xz", "none"]
+							}
+						},
+						{
+							"argumentName": "animationMode",
+							"description": "Specifies the animation to generate structures.",
+							"type": "string",
+							"additionalData": {
+								"values": ["block_by_block", "layer_by_layer"]
+							}
+						},
+						{
+							"argumentName": "animationSeconds",
+							"description": "Specifies the duration of the animation.",
+							"type": "number"
+						},
+						{
+							"argumentName": "includeEntities",
+							"description": "Specifies whether including entities or not. If unspecified, defaults to true.",
+							"type": "boolean"
+						},
+						{
+							"argumentName": "includeBlocks",
+							"description": "Specifies whether including blocks or not. If unspecified, defaults to true.",
+							"type": "boolean"
+						},
+						{
+							"argumentName": "integrity",
+							"description": "Specifies the integrity (probability of each block being loaded). If 100, all blocks in the structure are loaded. If 0, no blocks are loaded. If unspecified, defaults to 100.",
+							"type": "number"
+						},
+						{
+							"argumentName": "seed",
+							"description": "Specifies the seed when calculating whether a block should be loaded according to integrity. If unspecified, a random seed is taken.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "structure",
+					"description": "Used to save and load structures without having to use structure blocks items in inventories.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["delete"]
+							}
+						},
+						{
+							"argumentName": "name",
+							"type": "string" // TODO STRUCTURE NAME
+						}
+					]
 				},
 				{
 					"commandName": "summon",
-					"arguments": []
+					"description": "Summons an entity.",
+					"arguments": [
+						{
+							"argumentName": "entityType",
+							"description": "Specifies the entity to be summoned.",
+							"type": "string" // TODO ENTITY ID
+						},
+						{
+							"argumentName": "spawnPos",
+							"description": "Specifies the position to summon the entity. If not specified, defaults to the position of the command's execution.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "spawnEvent",
+							"description": "Specifies the in-game event for the entity.",
+							"type": "string" // TODO ENTITY EVENT
+						},
+						{
+							"argumentName": "nameTag",
+							"description": "Specifies the name of the entity.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "summon",
+					"description": "Summons an entity.",
+					"arguments": [
+						{
+							"argumentName": "entityType",
+							"description": "Specifies the entity to be summoned.",
+							"type": "string" // TODO ENTITY ID
+						},
+						{
+							"argumentName": "nameTag",
+							"description": "Specifies the name of the entity.",
+							"type": "string"
+						},
+						{
+							"argumentName": "spawnPos",
+							"description": "Specifies the position to summon the entity. If not specified, defaults to the position of the command's execution.",
+							"type": "coordinates"
+						}
+					]
 				},
 				{
 					"commandName": "tag",
-					"arguments": []
+					"description": "Controls entity tags.",
+					"arguments": [
+						{
+							"argumentName": "entity",
+							"description": "Specifies the command's target.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["add"]
+							}
+						},
+						{
+							"argumentName": "name",
+							"description": "Specifies the name of the tag to be added into or removed from the targets.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "tag",
+					"description": "Controls entity tags.",
+					"arguments": [
+						{
+							"argumentName": "entity",
+							"description": "Specifies the command's target.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["remove"]
+							}
+						},
+						{
+							"argumentName": "name",
+							"description": "Specifies the name of the tag to be added into or removed from the targets.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "tag",
+					"description": "Controls entity tags.",
+					"arguments": [
+						{
+							"argumentName": "entity",
+							"description": "Specifies the command's target.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["list"]
+							}
+						}
+					]
 				},
 				{
 					"commandName": "teleport",
-					"arguments": []
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "teleport",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "yRot",
+							"description": "Specifies the rotation.",
+							"type": "number"
+						},
+						{
+							"argumentName": "xRot",
+							"description": "Specifies the rotation.",
+							"type": "number"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "teleport",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["facing"]
+							}
+						},
+						{
+							"argumentName": "lookAtPosition",
+							"description": "Specifies the coordinates to make the target(s) facing to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "teleport",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["facing"]
+							}
+						},
+						{
+							"argumentName": "lookAtEntity",
+							"description": "Specifies the entity to make the target(s) facing to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "teleport",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entity(s) to be teleported. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "yRot",
+							"description": "Specifies the rotation.",
+							"type": "number"
+						},
+						{
+							"argumentName": "xRot",
+							"description": "Specifies the rotation.",
+							"type": "number"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "teleport",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entity(s) to be teleported. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["facing"]
+							}
+						},
+						{
+							"argumentName": "lookAtPosition",
+							"description": "Specifies the coordinates to make the target(s) facing to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "teleport",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entity(s) to be teleported. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["facing"]
+							}
+						},
+						{
+							"argumentName": "lookAtEntity",
+							"description": "Specifies the entity to make the target(s) facing to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "teleport",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "destination",
+							"description": "Specifies the entity to teleport the target(s) to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "teleport",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entity(s) to be teleported. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
 				},
 				{
 					"commandName": "tell",
+					"description": "Displays a private message to other players.",
 					"arguments": [
 						{
 							"argumentName": "target",
@@ -1630,46 +2620,669 @@
 				},
 				{
 					"commandName": "tellraw",
-					"arguments": []
+					"description": "Displays a JSON message to players.",
+					"arguments": [
+						{
+							"argumentName": "target",
+							"description": "Specifies the player(s) to send the message to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "rawJsonMessage",
+							"description": "Specifies the message to send.",
+							"type": "jsonData"
+						}
+					]
 				},
 				{
 					"commandName": "testfor",
-					"arguments": []
+					"description": "Counts entities matching specified conditions.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entities to test.",
+							"type": "selector"
+						}
+					]
 				},
 				{
 					"commandName": "testforblock",
-					"arguments": []
+					"description": "Tests whether a block is in a location.",
+					"arguments": [
+						{
+							"argumentName": "position",
+							"description": "Specifies the coordinates of the block to test.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "tileName",
+							"description": "Specifies the block to test for.",
+							"type": "string" // TODO BLOCK ID
+						},
+						{
+							"argumentName": "dataValue",
+							"description": "Specifies the block data to match when testfor. Values (bitwise AND 0xFFFF) that are invalid for the specified block id revert to 0. If it is negative, all blocks that match tileName are tested.",
+							"type": "number"
+						}
+					]
 				},
 				{
 					"commandName": "testforblocks",
-					"arguments": []
+					"description": "Tests whether the blocks in two regions match.",
+					"arguments": [
+						{
+							"argumentName": "begin",
+							"description": "Specifies two opposing corners of the region to use as the pattern to test for (the 'source region').",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "end",
+							"description": "Specifies two opposing corners of the region to use as the pattern to test for (the 'source region').",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "destination",
+							"description": "Specifies the lower northwestern corner (the corner with the most-negative values) of the region to be checked (the 'destination region'). Source and destination regions may overlap.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "mode",
+							"description": "Specifies how to match blocks.",
+							"type": "string",
+							"additionalData": {
+								"values": ["all", "masked"]
+							}
+						}
+					]
 				},
 				{
 					"commandName": "tickingarea",
-					"arguments": []
+					"description": "Add, remove, or list ticking areas.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["add"]
+							}
+						},
+						{
+							"argumentName": "from",
+							"description": "Specifies the coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "to",
+							"description": "Specifies the coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "name",
+							"description": "Specifies an optional name for a ticking area.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "tickingarea",
+					"description": "Add, remove, or list ticking areas.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["add"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["circle"]
+							}
+						},
+						{
+							"argumentName": "center",
+							"description": "Specifies the coordinates of the center point of a circular area used to define a ticking area.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "radius",
+							"description": "Specifies the radius of a circular ticking area as the number of chunks from the center to the edge of the circle.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "name",
+							"description": "Specifies an optional name for a ticking area.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "tickingarea",
+					"description": "Add, remove, or list ticking areas.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["remove"]
+							}
+						},
+						{
+							"argumentName": "name",
+							"description": "Specifies an optional name for a ticking area.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "tickingarea",
+					"description": "Add, remove, or list ticking areas.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["remove"]
+							}
+						},
+						{
+							"argumentName": "position",
+							"description": "Specifies the coordinates of a point within the ticking area(s) being removed.",
+							"type": "coordinates"
+						}
+					]
+				},
+				{
+					"commandName": "tickingarea",
+					"description": "Add, remove, or list ticking areas.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["remove_all"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "tickingarea",
+					"description": "Add, remove, or list ticking areas.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["list"]
+							}
+						},
+						{
+							"argumentName": "dimensions",
+							"description": "Specifies whether the ticking area in other dimensions should be listed.",
+							"type": "string",
+							"additionalData": {
+								"values": ["all-dimensions"]
+							}
+						}
+					]
 				},
 				{
 					"commandName": "time",
-					"arguments": []
+					"description": "Changes or queries the world's game time.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["add"]
+							}
+						},
+						{
+							"argumentName": "amount",
+							"description": "Specifies the time to add or set.",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "time",
+					"description": "Changes or queries the world's game time.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["query"]
+							}
+						},
+						{
+							"argumentName": "time",
+							"description": "Specifies the time to query.",
+							"type": "string",
+							"additionalData": {
+								"values": ["daytime", "gametime", "day"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "time",
+					"description": "Changes or queries the world's game time.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["set"]
+							}
+						},
+						{
+							"argumentName": "amount",
+							"description": "Specifies the time to add or set.",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "time",
+					"description": "Changes or queries the world's game time.",
+					"arguments": [
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["set"]
+							}
+						},
+						{
+							"argumentName": "time",
+							"description": "Specifies the time to set (day = 1,000, night = 13,000, noon = 6,000, midnight = 18,000, sunrise = 23,000‌, sunset = 12,000).",
+							"type": "string",
+							"additionalData": {
+								"values": [
+									"day",
+									"night",
+									"noon",
+									"midnight",
+									"sunrise",
+									"sunset"
+								]
+							}
+						}
+					]
 				},
 				{
 					"commandName": "title",
-					"arguments": []
+					"description": "Manages screen titles.",
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the player(s) to display a screen title to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "option",
+							"type": "string",
+							"additionalData": {
+								"values": ["clear", "reset"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "title",
+					"description": "Manages screen titles.",
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the player(s) to display a screen title to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "titleLocation",
+							"type": "string",
+							"additionalData": {
+								"values": ["title", "subtitle", "actionbar"]
+							}
+						},
+						{
+							"argumentName": "titleText",
+							"description": "Specifies the text to display as a title, subtitle, or on the action bar.",
+							"type": "string"
+						}
+					]
+				},
+				{
+					"commandName": "title",
+					"description": "Manages screen titles.",
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the player(s) to display a screen title to.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["times"]
+							}
+						},
+						{
+							"argumentName": "fadeIn",
+							"description": "Specifies the time in game ticks (1/20ths of a second) for the screen title to fade in, stay, and fade out.",
+							"type": "number"
+						},
+						{
+							"argumentName": "stay",
+							"description": "Specifies the time in game ticks (1/20ths of a second) for the screen title to fade in, stay, and fade out.",
+							"type": "number"
+						},
+						{
+							"argumentName": "fadeOut",
+							"description": "Specifies the time in game ticks (1/20ths of a second) for the screen title to fade in, stay, and fade out.",
+							"type": "number"
+						}
+					]
 				},
 				{
 					"commandName": "titleraw",
-					"arguments": []
+					"description": "Controls screen titles with JSON messages.",
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the player(s) to display a screen title to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "option",
+							"type": "string",
+							"additionalData": {
+								"values": ["clear", "reset"]
+							}
+						}
+					]
+				},
+				{
+					"commandName": "titleraw",
+					"description": "Controls screen titles with JSON messages.",
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the player(s) to display a screen title to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "titleLocation",
+							"type": "string",
+							"additionalData": {
+								"values": ["title", "subtitle", "actionbar"]
+							}
+						},
+						{
+							"argumentName": "rawJsontitleText",
+							"description": "Specifies the text to display as a title, subtitle, or on the action bar.",
+							"type": "jsonData"
+						}
+					]
+				},
+				{
+					"commandName": "titleraw",
+					"description": "Controls screen titles with JSON messages.",
+					"arguments": [
+						{
+							"argumentName": "player",
+							"description": "Specifies the player(s) to display a screen title to.",
+							"type": "selector"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["times"]
+							}
+						},
+						{
+							"argumentName": "fadeIn",
+							"description": "Specifies the time in game ticks (1/20ths of a second) for the screen title to fade in, stay, and fade out.",
+							"type": "number"
+						},
+						{
+							"argumentName": "stay",
+							"description": "Specifies the time in game ticks (1/20ths of a second) for the screen title to fade in, stay, and fade out.",
+							"type": "number"
+						},
+						{
+							"argumentName": "fadeOut",
+							"description": "Specifies the time in game ticks (1/20ths of a second) for the screen title to fade in, stay, and fade out.",
+							"type": "number"
+						}
+					]
 				},
 				{
 					"commandName": "toggledownfall",
-					"arguments": []
+					"description": "Toggles the weather."
 				},
 				{
 					"commandName": "tp",
-					"arguments": []
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "tp",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "yRot",
+							"description": "Specifies the rotation.",
+							"type": "number"
+						},
+						{
+							"argumentName": "xRot",
+							"description": "Specifies the rotation.",
+							"type": "number"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "tp",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["facing"]
+							}
+						},
+						{
+							"argumentName": "lookAtPosition",
+							"description": "Specifies the coordinates to make the target(s) facing to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "tp",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["facing"]
+							}
+						},
+						{
+							"argumentName": "lookAtEntity",
+							"description": "Specifies the entity to make the target(s) facing to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "tp",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entity(s) to be teleported. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "yRot",
+							"description": "Specifies the rotation.",
+							"type": "number"
+						},
+						{
+							"argumentName": "xRot",
+							"description": "Specifies the rotation.",
+							"type": "number"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "tp",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entity(s) to be teleported. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["facing"]
+							}
+						},
+						{
+							"argumentName": "lookAtPosition",
+							"description": "Specifies the coordinates to make the target(s) facing to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "tp",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entity(s) to be teleported. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["facing"]
+							}
+						},
+						{
+							"argumentName": "lookAtEntity",
+							"description": "Specifies the entity to make the target(s) facing to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "tp",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "destination",
+							"description": "Specifies the entity to teleport the target(s) to.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
+				},
+				{
+					"commandName": "tp",
+					"description": "Teleports entities.",
+					"arguments": [
+						{
+							"argumentName": "victim",
+							"description": "Specifies the entity(s) to be teleported. If not specified, defaults to the command's executor.",
+							"type": "selector"
+						},
+						{
+							"argumentName": "destination",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
+							"type": "coordinates"
+						},
+						{
+							"argumentName": "checkForBlocks",
+							"description": "If set to true, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If false or not specified, the default behavior applies (do no check; just teleport the target(s)).",
+							"type": "boolean"
+						}
+					]
 				},
 				{
 					"commandName": "w",
+					"description": "Displays a private message to other players.",
 					"arguments": [
 						{
 							"argumentName": "target",
@@ -1685,11 +3298,56 @@
 				},
 				{
 					"commandName": "weather",
-					"arguments": []
+					"description": "Sets the weather.",
+					"arguments": [
+						{
+							"argumentName": "weather",
+							"type": "string",
+							"additionalData": {
+								"values": ["clear", "rain", "thunder"]
+							}
+						},
+						{
+							"argumentName": "duration",
+							"description": "Specifies the time in seconds for the specified weather to last. If not specified, the duration defaults to 5 minutes. If 0, resets to random weather duration.",
+							"type": "number"
+						}
+					]
+				},
+				{
+					"commandName": "weather",
+					"description": "Sets the weather.",
+					"arguments": [
+						{
+							"argumentName": "weather",
+							"type": "string",
+							"additionalData": {
+								"values": ["clear", "rain", "thunder"]
+							}
+						},
+						{
+							"type": "string",
+							"additionalData": {
+								"values": ["query"]
+							}
+						}
+					]
 				},
 				{
 					"commandName": "xp",
-					"arguments": []
+					"description": "Adds or removes player experience.",
+					"arguments": [
+						{
+							"argumentName": "amount",
+							"description": "Specifies the amount of experience points or levels to be added to the player. Negative values remove experience instead of adding them.",
+							"type": "number"
+						},
+						{
+							"argumentName": "player",
+							"description": "Specifies the target of the command.",
+							"type": "selector"
+						}
+					]
 				}
 			]
 		},
