@@ -98,10 +98,14 @@
 			"type": "string",
 			"enum": ["undamaged", "slightly_damaged", "very_damaged", "broken"]
 		},
-		"disarmed_bit": {
+		"dead_bit": {
 			"type": "boolean"
 		},
-		"dead_bit": {
+		"dirt_type": {
+			"type": "string",
+			"enum": ["normal", "coarse"]
+		},
+		"disarmed_bit": {
 			"type": "boolean"
 		},
 		"drag_down": {
@@ -299,6 +303,10 @@
 		"sapling_type": {
 			"type": "string",
 			"enum": ["acacia", "birch", "dark_oak", "jungle", "oak", "spruce"]
+		},
+		"sand_type": {
+			"type": "string",
+			"enum": ["normal", "red"]
 		},
 		"sea_grass_type": {
 			"type": "string",
