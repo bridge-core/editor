@@ -171,6 +171,10 @@ export default {
 			name: 'Reload Auto-Completions',
 			description: 'Reloads all auto-completion data',
 		},
+		reloadExtensions: {
+			name: 'Reload Extensions',
+			description: 'Reloads all extensions',
+		},
 		moveToSplitScreen: {
 			name: 'Move to Split Screen',
 			description: 'Opens a split screen view and moves this tab to it',
@@ -210,6 +214,12 @@ export default {
 				description:
 					'Local extensions are only accessible inside of the projects you add them to',
 			},
+		},
+		toObject: {
+			name: 'Transform to Object',
+		},
+		toArray: {
+			name: 'Transform to Array',
 		},
 	},
 	// Toolbar Categories
@@ -363,6 +373,19 @@ export default {
 		settings: {
 			title: 'Settings',
 			searchSettings: 'Search settings...',
+			sidebar: {
+				name: 'Sidebar',
+				sidebarRight: {
+					name: 'Sidebar Right',
+					description:
+						'Moves the sidebar to the right side of the screen',
+				},
+				shrinkSidebarElements: {
+					name: 'Shrink Sidebar Elements',
+					description:
+						"Shrink the size of bridge.'s sidebar elements",
+				},
+			},
 			appearance: {
 				name: 'Appearance',
 				colorScheme: {
@@ -386,16 +409,6 @@ export default {
 					name: 'Local Light Theme',
 					description:
 						'Choose a light theme for the currently active project',
-				},
-				sidebarRight: {
-					name: 'Sidebar Right',
-					description:
-						'Moves the sidebar to the right side of the screen',
-				},
-				shrinkSidebarElements: {
-					name: 'Shrink Sidebar Elements',
-					description:
-						"Shrink the size of bridge.'s sidebar elements",
 				},
 			},
 			general: {

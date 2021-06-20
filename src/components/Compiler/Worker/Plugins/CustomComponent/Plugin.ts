@@ -132,7 +132,7 @@ export function createCustomComponentPlugin({
 						const componentArgs = parentObj[componentName]
 						delete parentObj[componentName]
 
-						component.processTemplates(
+						await component.processTemplates(
 							fileContent,
 							componentArgs,
 							location

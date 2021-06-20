@@ -1,1 +1,1 @@
-import 'scripts/gametests/{{FILE_NAME}}.{{LANGUAGE}}'
+import '{{PRESET_PATH}}{{FILE_NAME}}.{{LANGUAGE}}'

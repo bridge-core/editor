@@ -8,6 +8,7 @@ import { BridgeConfigSelection } from './Controls/Selection/BridgeConfigSelectio
 import { Button } from './Controls/Button/Button'
 import { del } from 'idb-keyval'
 import { comMojangKey } from '../../FileSystem/ComMojang'
+import { Sidebar } from './Controls/Sidebar/Sidebar'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -98,21 +99,30 @@ export async function setupSettings(settings: SettingsWindow) {
 
 	settings.addControl(
 		new Toggle({
-			category: 'appearance',
-			name: 'windows.settings.appearance.sidebarRight.name',
-			description: 'windows.settings.appearance.sidebarRight.description',
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.sidebarRight.name',
+			description: 'windows.settings.sidebar.sidebarRight.description',
 			key: 'isSidebarRight',
 			default: false,
 		})
 	)
 	settings.addControl(
 		new Toggle({
-			category: 'appearance',
-			name: 'windows.settings.appearance.shrinkSidebarElements.name',
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.shrinkSidebarElements.name',
 			description:
-				'windows.settings.appearance.shrinkSidebarElements.description',
+				'windows.settings.sidebar.shrinkSidebarElements.description',
 			key: 'smallerSidebarElements',
 			default: false,
+		})
+	)
+	settings.addControl(
+		new Sidebar({
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.shrinkSidebarElements.name',
+			description:
+				'windows.settings.sidebar.shrinkSidebarElements.description',
+			key: 'hideElements',
 		})
 	)
 

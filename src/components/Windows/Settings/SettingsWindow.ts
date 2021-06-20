@@ -6,8 +6,11 @@ import { App } from '/@/App'
 import { SettingsSidebar } from './SettingsSidebar'
 import { setSettingsState, settingsState } from './SettingsState'
 import { BaseWindow } from '../BaseWindow'
+import { Signal } from '/@/components/Common/Event/Signal'
 
 export class SettingsWindow extends BaseWindow {
+	public static readonly loadedSettings = new Signal<any>()
+
 	protected sidebar = new SettingsSidebar([])
 	protected bridgeCategory = new SidebarCategory({
 		items: [],
@@ -46,6 +49,11 @@ export class SettingsWindow extends BaseWindow {
 			'mdi-volume-high'
 		)
 		// this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
+		this.addCategory(
+			'sidebar',
+			locales.translate('windows.settings.sidebar.name'),
+			'mdi-table-column'
+		)
 		this.addCategory(
 			'developers',
 			locales.translate('windows.settings.developer.name'),
@@ -91,7 +99,10 @@ export class SettingsWindow extends BaseWindow {
 			setSettingsState(
 				await app.fileSystem.readJSON('data/settings.json')
 			)
-		} catch {}
+		} catch {
+		} finally {
+			this.loadedSettings.dispatch(settingsState)
+		}
 	}
 
 	async open() {

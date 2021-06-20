@@ -87,12 +87,19 @@ export abstract class Tab extends Signal<Tab> {
 		this.parent.select(this)
 		return this
 	}
+	/**
+	 *
+	 * @returns Whether the tab was closed
+	 */
 	async close() {
+		this.parent.setActive(true)
+
 		const didClose = await this.parent.close(this)
 		if (didClose) {
 			this.connectedTabs.forEach((tab) => tab.close())
 			this.onClose.dispatch()
 		}
+		return didClose
 	}
 	abstract isFor(fileHandle: FileSystemFileHandle): Promise<boolean>
 
@@ -112,10 +119,11 @@ export abstract class Tab extends Signal<Tab> {
 			tabSystems[0] === this.parent ? tabSystems[0] : tabSystems[1]
 		const to = tabSystems[0] === this.parent ? tabSystems[1] : tabSystems[0]
 
-		this.updateParent(to)
+		this.parent = to
+
 		if (updateParentTabs) {
-			to.add(this, true)
 			from.remove(this, false)
+			await to.add(this, true)
 		} else {
 			if (!this.isForeignFile) {
 				await to.openedFiles.add(this.getPath())
@@ -123,6 +131,7 @@ export abstract class Tab extends Signal<Tab> {
 			}
 
 			to.select(this)
+
 			if (this.isSelected) from.select(from.tabs[0])
 		}
 	}

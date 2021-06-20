@@ -1,5 +1,5 @@
 <template>
-	<div class="body-1 pa-4 mb-2 rounded-lg control-bg">
+	<div class="body-1 pa-4 mb-2 rounded-lg control-bg" :class="{ selected }">
 		<div class="d-flex align-center">
 			<v-icon v-if="action.icon" color="accent" class="mr-1">
 				{{ action.icon }}
@@ -13,9 +13,18 @@
 			<v-btn v-if="!hideTriggerButton" color="primary" small icon>
 				<v-icon @click="onTrigger">mdi-play</v-icon>
 			</v-btn>
+			<v-icon v-if="selected !== undefined">
+				{{
+					selected
+						? 'mdi-check-circle-outline'
+						: 'mdi-checkbox-blank-circle-outline'
+				}}
+			</v-icon>
 		</div>
 
-		<span v-if="!dense">{{ t(action.description) }}</span>
+		<span v-if="!dense && action.description">
+			{{ t(action.description) }}
+		</span>
 	</div>
 </template>
 
@@ -27,6 +36,10 @@ export default {
 		action: Object,
 		hideTriggerButton: Boolean,
 		dense: Boolean,
+		selected: {
+			type: Boolean,
+			default: undefined,
+		},
 	},
 	mixins: [TranslationMixin],
 	methods: {
@@ -40,5 +53,9 @@ export default {
 <style scoped>
 .control-bg {
 	background-color: var(--v-sidebarNavigation-base);
+	border: 1px solid var(--v-sidebarNavigation-base);
+}
+.selected {
+	border: 1px solid var(--v-primary-base);
 }
 </style>

@@ -22,7 +22,7 @@ export const TabModule = async ({ disposables }: IModuleConfig) => ({
 
 	/**
 	 * Useful for ContentTabs: Programmatically add the tab to the tab system
-	 * @param tab Add the tab to the tab system
+	 * @param tab Tab to add to the tab system
 	 */
 	openTab: async (FileTabClass: typeof Tab, splitScreen = false) => {
 		const app = await App.getApp()

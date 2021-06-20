@@ -1,6 +1,8 @@
 import { App } from '/@/App'
 import { createSidebar } from './create'
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
+import { SettingsWindow } from '../Windows/Settings/SettingsWindow'
+import { SidebarState } from './state'
 
 export function setupSidebar() {
 	createSidebar({
@@ -51,5 +53,12 @@ export function setupSidebar() {
 			const app = await App.getApp()
 			await app.windows.extensionStore.open()
 		},
+	})
+
+	SettingsWindow.loadedSettings.once((settingsState) => {
+		for (const sidebar of Object.values(SidebarState.sidebarElements)) {
+			sidebar.isVisible =
+				settingsState?.sidebar?.sidebarElements?.[sidebar.uuid] ?? true
+		}
 	})
 }

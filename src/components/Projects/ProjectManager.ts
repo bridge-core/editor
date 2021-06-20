@@ -57,6 +57,7 @@ export class ProjectManager extends Signal<void> {
 		Vue.set(this.state, project.name, project)
 
 		if (select) await this.selectProject(project.name)
+		return project
 	}
 	async removeProject(projectName: string) {
 		const project = this.state[projectName]

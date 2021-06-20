@@ -9,6 +9,7 @@ export interface ISidebar {
 	id?: string
 	icon?: string
 	displayName?: string
+	isVisible?: boolean
 	component?: Vue.Component | string
 
 	onClick?: () => void
@@ -30,11 +31,14 @@ export function createSidebar(config: ISidebar) {
 }
 
 export class SidebarElement {
-	protected sidebarUUID = uuid()
+	protected sidebarUUID: string
 	isLoading = false
+	isVisible = true
 
 	constructor(protected config: ISidebar) {
+		this.sidebarUUID = config.id ?? uuid()
 		Vue.set(SidebarState.sidebarElements, this.sidebarUUID, this)
+		if (config.isVisible) this.isVisible = config.isVisible
 	}
 
 	get icon() {

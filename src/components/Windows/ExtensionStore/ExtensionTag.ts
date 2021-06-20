@@ -12,6 +12,10 @@ export class ExtensionTag {
 		this.color = this.parent.getTagColor(tagName)
 	}
 
+	getText() {
+		return this.text
+	}
+
 	asSidebarElement() {
 		return new SidebarItem({
 			id: this.text.toLowerCase(),

@@ -19,11 +19,15 @@ export class ExtensionViewer {
 		protected parent: ExtensionStoreWindow,
 		protected config: IExtensionManifest
 	) {
-		this.tags = this.config.tags.map((tag) => {
-			if (!this.parent.tags[tag])
-				this.parent.tags[tag] = new ExtensionTag(this.parent, tag)
-			return this.parent.tags[tag]
-		})
+		this.tags = this.config.tags
+			.map((tag) => {
+				if (!this.parent.tags[tag])
+					this.parent.tags[tag] = new ExtensionTag(this.parent, tag)
+				return this.parent.tags[tag]
+			})
+			.sort((a, b) =>
+				a.getText().localeCompare(b.getText())
+			)
 	}
 
 	//#region Config getters

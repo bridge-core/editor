@@ -6,6 +6,9 @@
 	"requiredModules": ["gameTest"],
 	"targetVersion": [">=", "1.16.210"],
 	"packTypes": ["behaviorPack"],
+	"additionalModels": {
+		"PRESET_PATH": "scripts/gametests/"
+	},
 	"fields": [
 		[
 			"Language",
@@ -25,15 +28,15 @@
 	"createFiles": [
 		[
 			"gameTest.js",
-			"BP/scripts/gametests/{{FILE_NAME}}.{{LANGUAGE}}",
-			{ "inject": ["FILE_NAME", "LANGUAGE"] }
+			"BP/{{PRESET_PATH}}{{FILE_NAME}}.{{LANGUAGE}}",
+			{ "inject": ["FILE_NAME", "LANGUAGE", "PRESET_PATH"] }
 		]
 	],
 	"expandFiles": [
 		[
 			"Main.js",
-			"BP/scripts/gametests/Main.js",
-			{ "inject": ["FILE_NAME", "LANGUAGE"] }
+			"BP/scripts/main.js",
+			{ "inject": ["FILE_NAME", "LANGUAGE", "PRESET_PATH"] }
 		]
 	]
 }

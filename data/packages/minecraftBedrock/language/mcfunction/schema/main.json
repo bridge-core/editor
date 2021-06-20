@@ -1,0 +1,74 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+
+	"properties": {
+		"vanilla": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"targetVersion": {
+						"type": "array",
+						"minItems": 2,
+						"maxItems": 2,
+						"items": [
+							{
+								"type": "string",
+								"description": "Operator"
+							},
+							{
+								"type": "string",
+								"description": "Version"
+							}
+						]
+					},
+					"commands": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"commandName": { "type": "string" },
+								"description": { "type": "string" },
+								"arguments": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"type": {
+												"type": "string",
+												"enum": [
+													"string",
+													"number",
+													"boolean",
+													"selector",
+													"molang",
+													"blockState",
+													"jsonData",
+													"coordinates"
+												]
+											},
+											"argumentName": {
+												"type": "string"
+											},
+											"description": { "type": "string" },
+											"additionalData": {
+												"properties": {
+													"values": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

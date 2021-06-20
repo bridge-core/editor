@@ -14,7 +14,7 @@ export interface IBlockPreviewOptions {
 }
 
 export class BlockModelTab extends GeometryPreviewTab {
-	protected blockWatcher = new FileWatcher(App.instance, this.blockFilePath)
+	protected blockWatcher: FileWatcher
 	protected blockJson: any = {}
 	protected previewOptions: IBlockPreviewOptions = {}
 
@@ -24,6 +24,8 @@ export class BlockModelTab extends GeometryPreviewTab {
 		parent: TabSystem
 	) {
 		super(tab, parent)
+
+		this.blockWatcher = new FileWatcher(App.instance, blockFilePath)
 
 		this.blockWatcher.on((file) => {
 			this._renderContainer?.dispose()
@@ -36,6 +38,13 @@ export class BlockModelTab extends GeometryPreviewTab {
 		this.previewOptions = {
 			loadComponents,
 		}
+	}
+
+	async close() {
+		const didClose = await super.close()
+		if (didClose) this.blockWatcher.dispose()
+
+		return didClose
 	}
 
 	async loadRenderContainer(file: File) {

@@ -92,6 +92,7 @@ export default {
 	},
 	methods: {
 		onClickKey(event, selectValue) {
+			this.$emit('setActive')
 			if (event.altKey)
 				this.treeEditor.toggleSelection(this.tree, selectValue)
 			else this.treeEditor.setSelection(this.tree, selectValue)

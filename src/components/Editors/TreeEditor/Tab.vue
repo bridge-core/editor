@@ -1,5 +1,10 @@
 <template>
-	<div class="editor-container" ref="editorContainer" tabindex="-1">
+	<div
+		class="editor-container"
+		ref="editorContainer"
+		@click="tab.parent.setActive(true)"
+		tabindex="-1"
+	>
 		<div
 			class="pr-4 code-font"
 			:style="`height: ${height - 196}px; overflow: auto;`"
@@ -10,6 +15,7 @@
 				:is="tab.treeEditor.tree.component"
 				:tree="tab.treeEditor.tree"
 				:treeEditor="tab.treeEditor"
+				@setActive="tab.parent.setActive(true)"
 			/>
 		</div>
 

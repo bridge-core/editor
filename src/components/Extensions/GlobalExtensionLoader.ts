@@ -25,4 +25,12 @@ export class GlobalExtensionLoader extends ExtensionLoader {
 
 		return res
 	}
+
+	installFilesToCurrentProject() {
+		return Promise.all(
+			[...this.extensions.values()].map((ext) =>
+				ext.installFilesToCurrentProject()
+			)
+		)
+	}
 }

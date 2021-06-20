@@ -3,14 +3,12 @@ import WelcomeScreen from './WelcomeScreen.vue'
 import { TextTab } from '../Editors/Text/TextTab'
 import Vue from 'vue'
 import { App } from '/@/App'
-import { ImageTab } from '../Editors/Image/ImageTab'
 import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
 import { Project } from '../Projects/Project/Project'
 import { OpenedFiles } from './OpenedFiles'
 import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
 import { FileTab } from './FileTab'
-import { TreeTab } from '../Editors/TreeEditor/Tab'
 import { TabProvider } from './TabProvider'
 
 export class TabSystem extends MonacoHolder {
@@ -40,6 +38,9 @@ export class TabSystem extends MonacoHolder {
 
 		return other?.shouldRender
 	}
+	get hasUnsavedTabs() {
+		return this.tabs.some((tab) => tab.isUnsaved)
+	}
 
 	constructor(protected project: Project, id = 0) {
 		super(project.app)
@@ -49,10 +50,17 @@ export class TabSystem extends MonacoHolder {
 			project.app,
 			`projects/${project.name}/.bridge/openedFiles_${id}.json`
 		)
+
+		this.openedFiles.once(() => {
+			this.setActive(true)
+		})
 	}
 
 	get selectedTab() {
 		return this._selectedTab
+	}
+	get currentComponent() {
+		return this._selectedTab?.component ?? WelcomeScreen
 	}
 	get projectRoot() {
 		return this.project.baseDirectory
@@ -224,13 +232,5 @@ export class TabSystem extends MonacoHolder {
 			if (predicate(tab)) return true
 		}
 		return true
-	}
-
-	get currentComponent() {
-		return this._selectedTab?.component ?? WelcomeScreen
-	}
-
-	get hasUnsavedTabs() {
-		return this.tabs.some((tab) => tab.isUnsaved)
 	}
 }

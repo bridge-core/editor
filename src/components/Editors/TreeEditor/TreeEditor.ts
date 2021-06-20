@@ -18,6 +18,7 @@ import type { TPrimitiveTree, Tree } from './Tree/Tree'
 import { TreeSelection, TreeValueSelection } from './TreeSelection'
 import { App } from '/@/App'
 import { debounce } from 'lodash-es'
+import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
@@ -330,5 +331,38 @@ export class TreeEditor {
 		})
 
 		this.history.pushAll(historyEntries)
+	}
+
+	onContextMenu(
+		event: MouseEvent,
+		tree: PrimitiveTree | ArrayTree | ObjectTree
+	) {
+		if (tree instanceof PrimitiveTree || tree.children.length > 0) return
+
+		showContextMenu(event, [
+			{
+				name:
+					tree instanceof ArrayTree
+						? 'actions.toObject.name'
+						: 'actions.toArray.name',
+				icon:
+					tree instanceof ArrayTree
+						? 'mdi-code-braces-box'
+						: 'mdi-code-array',
+				onTrigger: () => {
+					this.removeSelectionOf(tree)
+
+					if (tree instanceof ArrayTree) {
+						const newTree = new ObjectTree(tree.getParent(), {})
+						tree.replace(newTree)
+						this.history.push(new ReplaceTreeEntry(tree, newTree))
+					} else {
+						const newTree = new ArrayTree(tree.getParent(), [])
+						tree.replace(newTree)
+						this.history.push(new ReplaceTreeEntry(tree, newTree))
+					}
+				},
+			},
+		])
 	}
 }

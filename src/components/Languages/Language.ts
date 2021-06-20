@@ -7,6 +7,7 @@ export interface IAddLanguageOptions {
 	extensions: string[]
 	config: languages.LanguageConfiguration
 	tokenProvider: any
+	completionItemProvider?: languages.CompletionItemProvider
 }
 
 export abstract class Language {
@@ -19,6 +20,7 @@ export abstract class Language {
 		extensions,
 		config,
 		tokenProvider,
+		completionItemProvider,
 	}: IAddLanguageOptions) {
 		this.id = id
 
@@ -33,6 +35,14 @@ export abstract class Language {
 				this.onModelAdded(event.model)
 			}),
 		]
+
+		if (completionItemProvider)
+			this.disposables.push(
+				languages.registerCompletionItemProvider(
+					id,
+					completionItemProvider
+				)
+			)
 	}
 
 	protected onModelAdded(model: editor.IModel) {

@@ -1,6 +1,15 @@
-import { languages } from 'monaco-editor'
+import {
+	CancellationToken,
+	editor,
+	languages,
+	Position,
+	Range,
+} from 'monaco-editor'
+import { BedrockProject } from '../Projects/Project/BedrockProject'
 import { colorCodes } from './Common/ColorCodes'
 import { Language } from './Language'
+import { tokenizeCommand } from './Mcfunction/tokenize'
+import { App } from '/@/App'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {
@@ -124,6 +133,65 @@ export const tokenProvider = {
 	},
 }
 
+const completionItemProvider: languages.CompletionItemProvider = {
+	triggerCharacters: [],
+	async provideCompletionItems(
+		model: editor.ITextModel,
+		position: Position,
+		context: languages.CompletionContext,
+		token: CancellationToken
+	) {
+		const project = await App.getApp().then((app) => app.project)
+		if (!(project instanceof BedrockProject)) return
+		const commandData = project.commandData
+		await commandData.fired
+
+		const lineUntilCursor = model
+			.getLineContent(position.lineNumber)
+			.slice(0, position.column - 1)
+
+		const { tokens } = tokenizeCommand(lineUntilCursor)
+
+		if (tokens.length < 2)
+			return {
+				suggestions: (await commandData.allCommands()).map(
+					(commandName) => ({
+						label: commandName,
+						insertText: `${commandName} `,
+						kind: languages.CompletionItemKind.Keyword,
+						range: new Range(
+							position.lineNumber,
+							1,
+							position.lineNumber,
+							position.column
+						),
+					})
+				),
+			}
+
+		const lastToken = tokens[tokens.length - 1]
+
+		return {
+			suggestions: (
+				await commandData.getCompletionItemsForArgument(
+					tokens[0].word,
+					tokens.length - 2
+				)
+			).map((suggestion) => ({
+				label: suggestion,
+				insertText: `${suggestion} `,
+				kind: languages.CompletionItemKind.Constant,
+				range: new Range(
+					position.lineNumber,
+					lastToken.startColumn + 1,
+					position.lineNumber,
+					lastToken.endColumn + 1
+				),
+			})),
+		}
+	},
+}
+
 export class McfunctionLanguage extends Language {
 	constructor() {
 		super({
@@ -131,6 +199,7 @@ export class McfunctionLanguage extends Language {
 			extensions: ['mcfunction'],
 			config,
 			tokenProvider,
+			completionItemProvider,
 		})
 	}
 
