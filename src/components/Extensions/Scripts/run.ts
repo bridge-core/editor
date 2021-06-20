@@ -25,12 +25,12 @@ export function createRunner(
 ) {
 	const transformedScript = transformScript(script)
 
-	if (async)
-		return new Function(
-			...envNames,
-			`return (async () => {\n${transformedScript}\n})()`
-		)
 	try {
+		if (async)
+			return new Function(
+				...envNames,
+				`return (async () => {\n${transformedScript}\n})()`
+			)
 		return new Function(...envNames, transformedScript)
 	} catch (err) {
 		console.error(script)

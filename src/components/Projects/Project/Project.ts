@@ -26,19 +26,19 @@ export interface IProjectData extends IConfigJson {
 
 export abstract class Project {
 	public readonly recentFiles!: RecentFiles
-	public readonly tabSystems = [new TabSystem(this), new TabSystem(this, 1)]
+	public readonly tabSystems = <const>[
+		new TabSystem(this),
+		new TabSystem(this, 1),
+	]
 	protected _projectData!: Partial<IProjectData>
 	// Not directly assigned so they're not responsive
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
 	public readonly compilerManager = new CompilerManager(this)
 	public readonly jsonDefaults = new JsonDefaults(this)
-	protected typeLoader = new TypeLoader(this.app.fileSystem)
+	protected typeLoader: TypeLoader
 	public readonly config: ProjectConfig
-	public readonly extensionLoader = new ExtensionLoader(
-		this.app.fileSystem,
-		`projects/${this.name}/.bridge/inactiveExtensions.json`
-	)
+	public readonly extensionLoader: ExtensionLoader
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
 	public readonly tabActionProvider = new TabActionProvider()
@@ -77,6 +77,11 @@ export abstract class Project {
 		this._fileSystem = new FileSystem(_baseDirectory)
 		this.config = new ProjectConfig(this._fileSystem)
 		this.packIndexer = new PackIndexer(app, _baseDirectory)
+		this.extensionLoader = new ExtensionLoader(
+			app.fileSystem,
+			`projects/${this.name}/.bridge/inactiveExtensions.json`
+		)
+		this.typeLoader = new TypeLoader(this.app.fileSystem)
 		Vue.set(
 			this,
 			'recentFiles',
