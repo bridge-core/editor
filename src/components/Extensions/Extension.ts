@@ -150,4 +150,8 @@ export class Extension {
 		viewer.setInstalled()
 		return viewer
 	}
+
+	async installFilesToCurrentProject() {
+		await this.installFiles.execute(false)
+	}
 }

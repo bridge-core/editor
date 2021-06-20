@@ -1,3 +1,4 @@
+import type { Project } from '/@/components/Projects/Project/Project'
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { iterateDir } from '/@/utils/iterateDir'
