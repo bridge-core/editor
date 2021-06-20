@@ -8,8 +8,8 @@ export class Component {
 	protected _name?: string
 	protected schema?: any
 	protected template?: TTemplate
-	protected animations: [any, string | undefined][] = []
-	protected animationControllers: [any, string | undefined][] = []
+	protected animations: [any, string | false | undefined][] = []
+	protected animationControllers: [any, string | false | undefined][] = []
 	protected createOnPlayer: [string, any][] = []
 
 	constructor(
@@ -100,25 +100,44 @@ export class Component {
 		current[keys[0]] = deepMerge(current[keys[0]] ?? {}, template ?? {})
 	}
 
-	processTemplates(fileContent: any, componentArgs: any, location: string) {
+	async processTemplates(
+		fileContent: any,
+		componentArgs: any,
+		location: string
+	) {
 		if (typeof this.template !== 'function') return
 
+		// Try getting file identifier
+		const identifier: string =
+			fileContent[`minecraft:${this.fileType}`]?.description
+				?.identifier ?? 'bridge:no_identifier'
+		// Used to compose the animation (controller) short name so the user knows how to reference their animation (controller)
+		const fileName = await hashString(`${this.name}/${identifier}`)
+
 		// Setup animation/animationController helper
-		const animation = (animation: any, molangCondition?: string) =>
+		const animation = (animation: any, molangCondition?: string) => {
 			this.animations.push([animation, molangCondition])
+			return this.getShortAnimName(
+				'a',
+				fileName,
+				this.animations.length - 1
+			)
+		}
 
 		const animationController = (
 			animationController: any,
 			molangCondition?: string
-		) =>
+		) => {
 			this.animationControllers.push([
 				animationController,
 				molangCondition,
 			])
-
-		// Try getting file identifier
-		const identifier =
-			fileContent[`minecraft:${this.fileType}`]?.description?.identifier
+			return this.getShortAnimName(
+				'ac',
+				fileName,
+				this.animationControllers.length - 1
+			)
+		}
 
 		// Execute template function with context for current fileType
 		if (this.fileType === 'entity') {
@@ -189,17 +208,19 @@ export class Component {
 		const animations: any = { format_version: '1.10.0', animations: {} }
 
 		for (const [anim, condition] of this.animations) {
-			if (!anim) continue
+			if (!anim) {
+				id++
+				continue
+			}
 
 			// Create unique animId
-			const animId = `animation.${fileName}_${id}`
+			const animId = this.getAnimName('animation', fileName, id)
 			// Create shorter reference to animId that's unique per entity
-			const shortAnimId = `${
-				fileName.slice(0, 16) ?? 'bridge_auto'
-			}_anim_${id}`
+			const shortAnimId = this.getShortAnimName('a', fileName, id)
 
 			// Save animation to animations object
 			animations.animations[animId] = anim
+
 			// Register animation on entity
 			this.create(
 				fileContent,
@@ -207,16 +228,26 @@ export class Component {
 					animations: {
 						[shortAnimId]: animId,
 					},
-					scripts: {
-						animate: [
-							!condition
-								? shortAnimId
-								: { [shortAnimId]: condition },
-						],
-					},
 				},
 				'minecraft:entity/description'
 			)
+
+			// Users can set the condition to false to skip running the animation automatically
+			if (condition !== false)
+				// Register animation on entity
+				this.create(
+					fileContent,
+					{
+						scripts: {
+							animate: [
+								!condition
+									? shortAnimId
+									: { [shortAnimId]: condition },
+							],
+						},
+					},
+					'minecraft:entity/description'
+				)
 
 			id++
 		}
@@ -233,38 +264,61 @@ export class Component {
 		}
 
 		for (const [anim, condition] of this.animationControllers) {
-			if (!anim) continue
+			if (!anim) {
+				id++
+				continue
+			}
 
 			// Create unique animId
-			const animId = `controller.animation.${fileName}_${id}`
+			const animId = this.getAnimName(
+				'controller.animation',
+				fileName,
+				id
+			)
 			// Create shorter reference to animId that's unique per entity
-			const shortAnimId = `${
-				fileName.slice(0, 16) ?? 'bridge_auto'
-			}_control_${id}`
+			const shortAnimId = this.getShortAnimName('ac', fileName, id)
 
-			// Save animation to animationControllers object
+			// Save animation controller to animationControllers object
 			animationControllers.animation_controllers[animId] = anim
-			// Register animation on entity
+
+			// Register animation controller on entity
 			this.create(
 				fileContent,
 				{
 					animations: {
 						[shortAnimId]: animId,
 					},
-					scripts: {
-						animate: [
-							!condition
-								? shortAnimId
-								: { [shortAnimId]: condition },
-						],
-					},
 				},
 				'minecraft:entity/description'
 			)
+
+			// Users can set the condition to false to skip running the animation controller automatically
+			if (condition !== false)
+				// Register animation on entity
+				this.create(
+					fileContent,
+					{
+						scripts: {
+							animate: [
+								!condition
+									? shortAnimId
+									: { [shortAnimId]: condition },
+							],
+						},
+					},
+					'minecraft:entity/description'
+				)
 
 			id++
 		}
 
 		return JSON.stringify(animationControllers, null, '\t')
+	}
+
+	protected getAnimName(prefix: string, fileName: string, id: number) {
+		return `${prefix}.${fileName}_${id}`
+	}
+	protected getShortAnimName(category: string, fileName: string, id: number) {
+		return `${fileName.slice(0, 16) ?? 'bridge_auto'}_${category}_${id}`
 	}
 }
