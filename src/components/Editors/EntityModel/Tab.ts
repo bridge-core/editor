@@ -12,10 +12,7 @@ export interface IPreviewOptions {
 
 export class EntityModelTab extends GeometryPreviewTab {
 	protected previewOptions: IPreviewOptions = {}
-	protected clientEntityWatcher = new FileWatcher(
-		App.instance,
-		this.clientEntityFilePath
-	)
+	protected clientEntityWatcher: FileWatcher
 
 	constructor(
 		protected clientEntityFilePath: string,
@@ -23,6 +20,11 @@ export class EntityModelTab extends GeometryPreviewTab {
 		parent: TabSystem
 	) {
 		super(tab, parent)
+
+		this.clientEntityWatcher = new FileWatcher(
+			App.instance,
+			clientEntityFilePath
+		)
 
 		this.clientEntityWatcher.on((file) => {
 			const runningAnims = this._renderContainer?.runningAnimations
@@ -34,6 +36,13 @@ export class EntityModelTab extends GeometryPreviewTab {
 	}
 	setPreviewOptions(previewOptions: IPreviewOptions) {
 		this.previewOptions = previewOptions
+	}
+
+	async close() {
+		const didClose = await super.close()
+		if (didClose) this.clientEntityWatcher.dispose()
+
+		return didClose
 	}
 
 	async loadRenderContainer(file: File, runningAnims = new Set<string>()) {

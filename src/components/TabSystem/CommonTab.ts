@@ -87,6 +87,10 @@ export abstract class Tab extends Signal<Tab> {
 		this.parent.select(this)
 		return this
 	}
+	/**
+	 *
+	 * @returns Whether the tab was closed
+	 */
 	async close() {
 		this.parent.setActive(true)
 
@@ -95,6 +99,7 @@ export abstract class Tab extends Signal<Tab> {
 			this.connectedTabs.forEach((tab) => tab.close())
 			this.onClose.dispatch()
 		}
+		return didClose
 	}
 	abstract isFor(fileHandle: FileSystemFileHandle): Promise<boolean>
 

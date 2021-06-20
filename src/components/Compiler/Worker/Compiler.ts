@@ -96,7 +96,6 @@ export class Compiler {
 	async compileFiles(files: string[]) {
 		const changedFiles = this.getChangedFiles(files)
 		const flatFiles = this.flatFiles(files, new Set())
-		console.log(flatFiles)
 		this.parent.progress.setTotal(flatFiles.size * 2 + 5)
 
 		this.addMatchingGlobImporters(flatFiles, changedFiles)

@@ -223,6 +223,16 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		await this.onChange()
 	}
 
+	async close() {
+		const didClose = await super.close()
+		if (didClose) {
+			this.renderContainer.dispose()
+			this._renderContainer = undefined
+		}
+
+		return didClose
+	}
+
 	get icon() {
 		return 'mdi-cube-outline'
 	}

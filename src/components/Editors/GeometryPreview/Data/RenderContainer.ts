@@ -119,5 +119,7 @@ export class RenderDataContainer extends EventDispatcher<void> {
 	}
 	dispose() {
 		this._geometries.forEach((geo) => geo.dispose())
+		this._animations.forEach((anim) => anim.dispose())
+		this._serverEntity?.dispose()
 	}
 }

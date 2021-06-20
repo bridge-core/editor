@@ -187,10 +187,10 @@ export class TextTab extends FileTab {
 		})
 	}
 	async close() {
-		await super.close()
+		const didClose = await super.close()
 
 		// We need to clear the lightning cache store from temporary data if the user doesn't save changes
-		if (this.isUnsaved) {
+		if (didClose && this.isUnsaved) {
 			const app = await App.getApp()
 			const file = await app.fileSystem.readFile(this.getPath())
 			const fileContent = await file.text()
@@ -199,5 +199,7 @@ export class TextTab extends FileTab {
 				fileContent
 			)
 		}
+
+		return didClose
 	}
 }

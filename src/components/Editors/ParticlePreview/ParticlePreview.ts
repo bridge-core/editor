@@ -2,10 +2,9 @@ import Wintersky, { Emitter, Config } from 'wintersky'
 import { ThreePreviewTab } from '../ThreePreview/ThreePreviewTab'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import json5 from 'json5'
-import { AxesHelper, GridHelper, Object3D } from 'three'
+import { AxesHelper } from 'three'
 import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 import { ParticleWatcher } from './ParticleWatcher'
-import { Tab } from '/@/components/TabSystem/CommonTab'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import { App } from '/@/App'
@@ -130,6 +129,12 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 
 		await this.loadParticle(file)
 		this.isReloadingDone.dispatch()
+	}
+	async close() {
+		const didClose = await super.close()
+		if (didClose) this.fileWatcher?.dispose()
+
+		return didClose
 	}
 
 	async reload() {
