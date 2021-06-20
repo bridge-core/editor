@@ -23,12 +23,19 @@ export function createRunner(
 	envNames = ['Bridge'],
 	async = false
 ) {
+	const transformedScript = transformScript(script)
+
 	if (async)
 		return new Function(
 			...envNames,
-			`return (async () => {\n${transformScript(script)}\n})()`
+			`return (async () => {\n${transformedScript}\n})()`
 		)
-	return new Function(...envNames, script)
+	try {
+		return new Function(...envNames, transformedScript)
+	} catch (err) {
+		console.error(script)
+		throw new Error(`Error within script: ${err}`)
+	}
 }
 
 export function transformScript(script: string) {
