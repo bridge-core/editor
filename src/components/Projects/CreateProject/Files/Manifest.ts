@@ -4,6 +4,10 @@ import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
 import { CreateFile } from './CreateFile'
 import { v4 as uuid } from 'uuid'
 
+const replaceTargetVersion: Record<string, string | undefined> = {
+	'1.17.10': '1.17.0',
+}
+
 export class CreateManifest extends CreateFile {
 	constructor(protected pack: TPackType) {
 		super()
@@ -22,6 +26,10 @@ export class CreateManifest extends CreateFile {
 		}
 	}
 
+	protected transformTargetVersion(targetVersion: string) {
+		return replaceTargetVersion[targetVersion] ?? targetVersion
+	}
+
 	create(fs: FileSystem, createOptions: ICreateProjectOptions) {
 		// Base manifest
 		const manifest: any = {
@@ -35,7 +43,9 @@ export class CreateManifest extends CreateFile {
 					: 'pack.description',
 				min_engine_version:
 					this.type === 'data' || 'resources'
-						? createOptions.targetVersion
+						? this.transformTargetVersion(
+								createOptions.targetVersion
+						  )
 								.split('.')
 								.map((str) => Number(str))
 						: undefined,
