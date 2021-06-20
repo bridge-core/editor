@@ -38,6 +38,9 @@ export class TabSystem extends MonacoHolder {
 
 		return other?.shouldRender
 	}
+	get hasUnsavedTabs() {
+		return this.tabs.some((tab) => tab.isUnsaved)
+	}
 
 	constructor(protected project: Project, id = 0) {
 		super(project.app)
@@ -55,6 +58,9 @@ export class TabSystem extends MonacoHolder {
 
 	get selectedTab() {
 		return this._selectedTab
+	}
+	get currentComponent() {
+		return this._selectedTab?.component ?? WelcomeScreen
 	}
 	get projectRoot() {
 		return this.project.baseDirectory
@@ -226,13 +232,5 @@ export class TabSystem extends MonacoHolder {
 			if (predicate(tab)) return true
 		}
 		return true
-	}
-
-	get currentComponent() {
-		return this._selectedTab?.component ?? WelcomeScreen
-	}
-
-	get hasUnsavedTabs() {
-		return this.tabs.some((tab) => tab.isUnsaved)
 	}
 }
