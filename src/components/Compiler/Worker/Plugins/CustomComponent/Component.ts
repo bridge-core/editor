@@ -28,10 +28,7 @@ export class Component {
 		const module = { exports: {} }
 		try {
 			run(
-				this.componentSrc.replace(
-					'export default ',
-					'module.exports = '
-				),
+				this.componentSrc,
 				[module, (x: any) => x],
 				['module', 'defineComponent']
 			)
