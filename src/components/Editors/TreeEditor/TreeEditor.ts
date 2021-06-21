@@ -19,6 +19,7 @@ import { TreeSelection, TreeValueSelection } from './TreeSelection'
 import { App } from '/@/App'
 import { debounce } from 'lodash-es'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
+import { IActionConfig } from '../../Actions/SimpleAction'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
@@ -333,14 +334,54 @@ export class TreeEditor {
 		this.history.pushAll(historyEntries)
 	}
 
+	delete(tree: Tree<unknown>) {
+		this.removeSelectionOf(tree)
+
+		const [index, key] = tree.delete()
+
+		this.history.push(new UndoDeleteEntry(tree, index, key))
+	}
+	/**
+	 * This delete action on a primitive value replaces the PrimitiveTree with an emtpy ObjectTree
+	 * @param tree
+	 */
+	objectValueDeletion(tree: PrimitiveTree) {
+		this.removeSelectionOf(tree)
+		const newTree = new ObjectTree(tree.getParent(), {})
+
+		tree.replace(newTree)
+
+		this.history.push(new ReplaceTreeEntry(tree, newTree))
+	}
+
 	onContextMenu(
 		event: MouseEvent,
-		tree: PrimitiveTree | ArrayTree | ObjectTree
+		tree: PrimitiveTree | ArrayTree | ObjectTree,
+		selectedKey = true
 	) {
-		if (tree instanceof PrimitiveTree || tree.children.length > 0) return
+		const contextMenu: IActionConfig[] = []
 
-		showContextMenu(event, [
-			{
+		if (tree instanceof PrimitiveTree)
+			contextMenu.push({
+				name: 'general.delete',
+				icon: 'mdi-delete-outline',
+				onTrigger: () => {
+					if (tree.getParent()!.type === 'object' && !selectedKey)
+						this.objectValueDeletion(tree)
+					else this.delete(tree)
+				},
+			})
+		else
+			contextMenu.push({
+				name: 'general.delete',
+				icon: 'mdi-delete-outline',
+				onTrigger: () => {
+					this.delete(tree)
+				},
+			})
+
+		if (!(tree instanceof PrimitiveTree) && tree.children.length === 0) {
+			contextMenu.push({
 				name:
 					tree instanceof ArrayTree
 						? 'actions.toObject.name'
@@ -362,7 +403,9 @@ export class TreeEditor {
 						this.history.push(new ReplaceTreeEntry(tree, newTree))
 					}
 				},
-			},
-		])
+			})
+		}
+
+		showContextMenu(event, contextMenu)
 	}
 }

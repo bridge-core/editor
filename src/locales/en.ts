@@ -14,6 +14,7 @@ export default {
 		reload: 'Reload',
 		information: 'Information',
 		continue: 'Continue',
+		delete: 'Delete',
 		skip: 'Skip',
 		selectFolder: 'Select Folder',
 	},

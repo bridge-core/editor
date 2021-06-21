@@ -8,6 +8,7 @@
 					tree.type !== 'array' &&
 					tree.isSelected,
 			}"
+			@contextmenu.prevent="treeEditor.onContextMenu($event, tree)"
 		>
 			<v-icon
 				class="mr-1"
@@ -39,6 +40,7 @@
 				'px-1': true,
 			}"
 			@click.stop.prevent="onClickKey($event, true)"
+			@contextmenu.prevent="treeEditor.onContextMenu($event, tree, false)"
 		>
 			{{ treeValue }}
 		</div>
