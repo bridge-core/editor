@@ -1,0 +1,20 @@
+{
+  "name": "customentitysyntax",
+  "version": "1.0.0",
+  "description": "",
+  "main": "compiler/customEntitySyntax.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "module": "compiler/customEntitySyntaxCompiled.js",
+  "author": "Joel ant 05",
+  "dependencies": {
+    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "compare-versions": "^3.6.0",
+    "rollup": "^2.52.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "uuid": "^8.3.2"
+  },
+  "license": "MIT"
+}
