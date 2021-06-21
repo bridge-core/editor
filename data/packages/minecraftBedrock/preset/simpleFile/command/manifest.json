@@ -1,0 +1,33 @@
+{
+	"name": "Custom Command",
+	"icon": "mdi-script-text-outline",
+	"description": "Creates a blank custom command.",
+	"category": "fileType.simpleFile",
+	"packTypes": ["behaviorPack"],
+	"additionalModels": {
+		"PRESET_PATH": "BP/commands/"
+	},
+	"fields": [
+		[
+			"Language",
+			"LANGUAGE",
+			{
+				"type": "selectInput",
+				"default": "js",
+				"options": [
+					{ "text": "JavaScript", "value": "js" },
+					{ "text": "TypeScript", "value": "ts" }
+				]
+			}
+		],
+		["File Name", "FILE_NAME", { "validate": ["required"] }]
+	],
+
+	"createFiles": [
+		[
+			"command.js",
+			"{{PRESET_PATH}}{{FILE_NAME}}.{{LANGUAGE}}",
+			{ "inject": ["FILE_NAME", "LANGUAGE", "PRESET_PATH"] }
+		]
+	]
+}

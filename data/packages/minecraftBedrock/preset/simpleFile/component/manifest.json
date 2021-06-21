@@ -1,6 +1,6 @@
 {
 	"name": "Custom Component",
-	"icon": "mdi-language-javascript",
+	"icon": "mdi-package-variant",
 	"description": "Creates a blank custom component.",
 	"category": "fileType.simpleFile",
 	"packTypes": ["behaviorPack"],

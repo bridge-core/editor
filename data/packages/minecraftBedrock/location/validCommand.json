@@ -1,22 +1,10 @@
 {
 	"BP/animations/": ["animations/*/timeline/*"],
 	"BP/animation_controllers/": [
-		"animation_controllers/*/states/*/on_entry/*",
-		"animation_controllers/*/states/*/on_exit/*"
+		"animation_controllers/*/states/*/on_entry",
+		"animation_controllers/*/states/*/on_exit"
 	],
-	"BP/blocks/": [
-		"minecraft:block/events/*/run_command/command/*",
-		"minecraft:block/events/*/randomize/*/run_command/command/*",
-		"minecraft:block/events/*/sequence/*/run_command/command/*"
-	],
-	"BP/entities/": [
-		"minecraft:entity/events/*/run_command/command/*",
-		"minecraft:entity/events/*/randomize/*/run_command/command/*",
-		"minecraft:entity/events/*/sequence/*/run_command/command/*"
-	],
-	"BP/items/": [
-		"minecraft:item/events/*/run_command/command/*",
-		"minecraft:item/events/*/randomize/*/run_command/command/*",
-		"minecraft:item/events/*/sequence/*/run_command/command/*"
-	]
+	"BP/blocks/": ["minecraft:block/events/**/run_command/command"],
+	"BP/entities/": ["minecraft:entity/events/**/run_command/command"],
+	"BP/items/": ["minecraft:item/events/**/run_command/command"]
 }
