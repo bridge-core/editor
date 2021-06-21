@@ -8,6 +8,7 @@
 		absolute
 		:right="isSidebarRight"
 		color="sidebarNavigation"
+		height="calc(100% - env(titlebar-area-height, 24px))"
 	>
 		<v-list>
 			<SidebarButton
