@@ -13,7 +13,13 @@ export async function loadScripts(
 			await loadScripts(entry, uiStore, disposables)
 		} else if (entry.kind === 'file') {
 			const file = await entry.getFile()
-			await executeScript(await file.text(), { uiStore, disposables })
+			await executeScript(await file.text(), {
+				uiStore,
+				disposables,
+				language: entry.name.endsWith('.ts')
+					? 'typeScript'
+					: 'javaScript',
+			})
 		}
 	}
 }
