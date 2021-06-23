@@ -1,7 +1,7 @@
 import { IDisposable } from '/@/types/disposable'
 import { TUIStore } from '../UI/store'
 import { createEnv } from './require'
-import { runAsync } from './run'
+import { run } from './run'
 
 export async function loadScripts(
 	baseDirectory: FileSystemDirectoryHandle,
@@ -13,15 +13,27 @@ export async function loadScripts(
 			await loadScripts(entry, uiStore, disposables)
 		} else if (entry.kind === 'file') {
 			const file = await entry.getFile()
-			await executeScript(await file.text(), uiStore, disposables)
+			await executeScript(await file.text(), { uiStore, disposables })
 		}
 	}
 }
 
+export interface IScriptContext {
+	uiStore: TUIStore
+	disposables: IDisposable[]
+	language?: 'javaScript' | 'typeScript'
+}
+
 export function executeScript(
 	code: string,
-	uiStore: TUIStore,
-	disposables: IDisposable[]
+	{ uiStore, disposables, language }: IScriptContext
 ) {
-	return runAsync(code, createEnv(disposables, uiStore), ['require'])
+	return run({
+		async: true,
+		script: code,
+		language,
+		env: {
+			require: createEnv(disposables, uiStore),
+		},
+	})
 }

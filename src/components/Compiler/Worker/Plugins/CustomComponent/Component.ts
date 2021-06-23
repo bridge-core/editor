@@ -27,11 +27,13 @@ export class Component {
 	async load(type?: 'server' | 'client') {
 		const module = { exports: {} }
 		try {
-			run(
-				this.componentSrc,
-				[module, (x: any) => x],
-				['module', 'defineComponent']
-			)
+			run({
+				script: this.componentSrc,
+				env: {
+					module: module,
+					defineComponent: (x: any) => x,
+				},
+			})
 		} catch (err) {
 			console.error(err)
 		}

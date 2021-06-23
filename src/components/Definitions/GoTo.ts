@@ -5,7 +5,7 @@ import { FileType, IDefinition } from '/@/components/Data/FileType'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { isMatch } from 'micromatch'
 import { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
-import { runAsync } from '/@/components/Extensions/Scripts/run'
+import { run } from '/@/components/Extensions/Scripts/run'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { findAsync } from '/@/utils/array/findAsync'
 
@@ -124,17 +124,22 @@ export class DefinitionProvider {
 						if (filter && filter.includes(word))
 							transformedWord = undefined
 						if (transformedWord && script)
-							transformedWord = await runAsync(script, {
-								value: transformedWord,
-								withExtension: (
-									basePath: string,
-									extensions: string[]
-								) =>
-									findFileExtension(
-										app.project.fileSystem,
-										basePath,
-										extensions
-									),
+							transformedWord = await run({
+								script,
+								env: {
+									Bridge: {
+										value: transformedWord,
+										withExtension: (
+											basePath: string,
+											extensions: string[]
+										) =>
+											findFileExtension(
+												app.project.fileSystem,
+												basePath,
+												extensions
+											),
+									},
+								},
 							})
 
 						return true

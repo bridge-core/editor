@@ -1,4 +1,4 @@
-import { runAsync } from '/@/components/Extensions/Scripts/run'
+import { run } from '/@/components/Extensions/Scripts/run'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { TypeScriptPlugin } from './Plugins/TypeScript'
 import json5 from 'json5'
@@ -61,15 +61,18 @@ export async function loadPlugins({
 		}
 
 		const module: { exports?: TCompilerPluginFactory } = {}
-		await runAsync(
-			await file.text(),
-			[
-				undefined,
+		await run({
+			async: true,
+			script: await file.text(),
+			env: {
+				require: undefined,
 				module,
-				{ parse: json5.parse, stringify: JSON.stringify },
-			],
-			['require', 'module', 'JSON']
-		)
+				JSON: {
+					parse: json5.parse,
+					stringify: JSON.stringify,
+				},
+			},
+		})
 
 		if (typeof module.exports === 'function')
 			plugins.set(pluginId, module.exports)

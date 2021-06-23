@@ -1,5 +1,5 @@
 import { FileType } from '/@/components/Data/FileType'
-import { run, runAsync } from '/@/components/Extensions/Scripts/run'
+import { run } from '/@/components/Extensions/Scripts/run'
 import { walkObject } from '/@/utils/walkObject'
 import json5 from 'json5'
 import type { PackIndexerService } from '../Main'
@@ -273,17 +273,23 @@ export class LightningCache {
 				readyData = (
 					await Promise.all(
 						readyData.map((value) =>
-							runAsync(mapFunc, {
-								value,
-								withExtension: (
-									basePath: string,
-									extensions: string[]
-								) =>
-									findFileExtension(
-										this.service.fileSystem,
-										basePath,
-										extensions
-									),
+							run({
+								async: true,
+								script: mapFunc,
+								env: {
+									Bridge: {
+										value,
+										withExtension: (
+											basePath: string,
+											extensions: string[]
+										) =>
+											findFileExtension(
+												this.service.fileSystem,
+												basePath,
+												extensions
+											),
+									},
+								},
 							})
 						)
 					)
@@ -313,7 +319,10 @@ export class LightningCache {
 			const generatePaths = instruction.pathScript
 
 			if (generatePaths) {
-				paths = run(generatePaths, { paths })
+				paths = run({
+					script: generatePaths,
+					env: { Bridge: { paths } },
+				})
 
 				if (!Array.isArray(paths) || paths.length === 0) return
 			}

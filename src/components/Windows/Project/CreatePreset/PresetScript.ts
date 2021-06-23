@@ -27,7 +27,12 @@ export async function runPresetScript(
 
 	const module: any = {}
 	try {
-		run(scriptSrc, module, ['module'])
+		run({
+			script: scriptSrc,
+			env: {
+				module: { exports: undefined },
+			},
+		})
 	} catch (err) {
 		throw new Error(
 			`Failed to execute PresetScript "${presetScript}": ${err}`

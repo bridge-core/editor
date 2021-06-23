@@ -1,6 +1,6 @@
 import json5 from 'json5'
 import { generateComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/generateSchemas'
-import { runAsync } from '../Extensions/Scripts/run'
+import { run } from '../Extensions/Scripts/run'
 import { getFilteredFormatVersions } from './FormatVersions'
 import { App } from '/@/App'
 import { iterateDir } from '/@/utils/iterateDir'
@@ -27,13 +27,14 @@ export class SchemaScript {
 		}
 
 		try {
-			return await runAsync(
+			return await run({
+				async: true,
 				script,
-				[
-					scopedFs.readFilesFromDir.bind(scopedFs),
+				env: {
+					readdir: scopedFs.readFilesFromDir.bind(scopedFs),
 					uuid,
-					getFilteredFormatVersions,
-					async (
+					getFormatVersions: getFilteredFormatVersions,
+					getCacheDataFor: async (
 						fileType: string,
 						filePath?: string,
 						cacheKey?: string
@@ -46,31 +47,22 @@ export class SchemaScript {
 							cacheKey
 						)
 					},
-					() => this.app.projectConfig.get().namespace,
-					() =>
+					getProjectPrefix: () =>
+						this.app.projectConfig.get().namespace,
+					getFileName: () =>
 						!this.filePath
 							? undefined
 							: this.filePath.split(/\/|\\/g).pop(),
-					(fileType: string) => generateComponentSchemas(fileType),
-					(path: string) => {
+					customComponents: (fileType: string) =>
+						generateComponentSchemas(fileType),
+					get: (path: string) => {
 						const data: any[] = []
 						walkObject(path, currentJson, (d) => data.push(d))
 						return data
 					},
-					failedFileLoad,
-				],
-				[
-					'readdir',
-					'uuid',
-					'getFormatVersions',
-					'getCacheDataFor',
-					'getProjectPrefix',
-					'getFileName',
-					'customComponents',
-					'get',
-					'failedCurrentFileLoad',
-				]
-			)
+					failedCurrentFileLoad: failedFileLoad,
+				},
+			})
 		} catch (err) {
 			// console.error(`Error evaluating schemaScript: ${err.message}`)
 		}

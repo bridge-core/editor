@@ -22,7 +22,7 @@ export async function loadUIComponents(
 	} catch {}
 
 	await Promise.all(
-		dirents.map(dirent => {
+		dirents.map((dirent) => {
 			if (dirent.kind === 'file')
 				return loadUIComponent(
 					fileSystem,
@@ -65,7 +65,7 @@ export async function loadUIComponent(
 		)
 
 		if (errors.length > 0) {
-			;(errors as Error[]).forEach(error =>
+			;(errors as Error[]).forEach((error) =>
 				createErrorNotification(error)
 			)
 			return reject(errors[0])
@@ -76,8 +76,7 @@ export async function loadUIComponent(
 			...(await (<any>(
 				executeScript(
 					script?.content?.replace('export default', 'return') ?? '',
-					uiStore,
-					disposables
+					{ uiStore, disposables }
 				)
 			))),
 			...Vue.compile(
@@ -90,7 +89,7 @@ export async function loadUIComponent(
 			VuetifyComponents
 		)
 
-		styles.forEach(style =>
+		styles.forEach((style) =>
 			disposables.push(createStyleSheet(style.content))
 		)
 
