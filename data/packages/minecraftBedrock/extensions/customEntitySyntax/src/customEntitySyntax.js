@@ -97,15 +97,12 @@ module.exports = () => {
             if (event[eventName]?.execute?.commands) {
                 let { commands } = use(entity.events[eventName], 'execute') ?? []
                 if (typeof commands == 'string') commands = [commands]
-                console.log('FV: ', formatVersion)
-                if (compare(formatVersion, '1.16.100', '<')) {
+                if (compare(formatVersion, '1.16.100', '<') < 0) {
                     // < 1.16.100
                     commandIdCounter++
-                    acId = `controller.animation.bridge.${uuid.v4()}_execute_commands`
 
                     const acShortName = `bridge_execute_command_${uuid.v4()}`
                     let executeCommandsGroup = `execute_command_id_${commandIdCounter}`
-                    console.log('Command: ', commands, commandIdCounter)
 
                     set(entity, `description/animations/${acShortName}`, acId)
                     set(entity, 'description/scripts/animate', [acShortName])
@@ -132,6 +129,7 @@ module.exports = () => {
                     })
 
                     // For some reason set() isn't working here so using deepMerge() instead
+                    
                     animationController = deepMerge(animationController, {
                         animation_controllers: {
                             [acId]: {
@@ -156,14 +154,13 @@ module.exports = () => {
                             }
                         }
                     })
-                    console.log(animationController)
                 } else {
                     // >= 1.16.100
                     set(entity, `events/${eventName}/run_command/command`, commands)
                 }
-                
             }
         }
+
         return { 'minecraft:entity': entity }
     }
 
@@ -179,12 +176,16 @@ module.exports = () => {
         include() {
             return [acPath]
         },
+
+        require(filePath) {
+            if (filePath == acPath) return ['BP/entities/**/*.json', 'BP/entities/*.json']
+        },
+
         read(filePath) {
             if (filePath === acPath) return {}
         },
 
         transform(filePath, fileContent) {
-            console.log(filePath)
             if (filePath.startsWith('BP/entities')) {
                 const events = fileContent['minecraft:entity']?.events
                 const formatVersion = fileContent?.format_version ?? '1.17.0'
@@ -203,6 +204,7 @@ module.exports = () => {
                 }
 
                 commandIdCounter = 0
+                acId = `controller.animation.bridge.${uuid.v4()}_execute_commands`
                 
                 return fileContent
             }
