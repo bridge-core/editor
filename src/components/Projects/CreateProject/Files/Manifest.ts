@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid'
 
 const replaceTargetVersion: Record<string, string | undefined> = {
 	'1.17.10': '1.17.0',
+	'1.17.20': '1.17.0',
 }
 
 export class CreateManifest extends CreateFile {
