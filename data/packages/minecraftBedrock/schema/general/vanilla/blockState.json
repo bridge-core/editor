@@ -75,6 +75,10 @@
 		"conditional_bit": {
 			"type": "boolean"
 		},
+		"coral_color": {
+			"type": "string",
+			"enum": ["blue", "pink", "purple", "red", "yellow"]
+		},
 		"covered_bit": {
 			"type": "boolean"
 		},
@@ -280,6 +284,10 @@
 		"repeater_delay": {
 			"type": "integer",
 			"enum": [0, 1, 2, 3]
+		},
+		"sand_stone_type": {
+			"type": "string",
+			"enum": ["default", "heiroglyphs", "cut", "smooth"]
 		},
 		"stone_type": {
 			"type": "string",
