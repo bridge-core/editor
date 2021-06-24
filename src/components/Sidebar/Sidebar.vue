@@ -17,6 +17,7 @@
 				:displayName="sidebar.displayName"
 				:icon="sidebar.icon"
 				:isLoading="sidebar.isLoading"
+				:isSelected="sidebar.isSelected"
 				@click="sidebar.click()"
 			/>
 		</v-list>

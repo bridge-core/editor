@@ -237,7 +237,11 @@ export abstract class Project {
 			contains: [],
 		})
 		loadPacks(this.app, this.name).then((packs) =>
-			Vue.set(this._projectData, 'contains', packs)
+			Vue.set(
+				this._projectData,
+				'contains',
+				packs.sort((a, b) => a.id.localeCompare(b.id))
+			)
 		)
 	}
 

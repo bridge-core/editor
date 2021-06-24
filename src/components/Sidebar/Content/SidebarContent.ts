@@ -7,7 +7,7 @@ export abstract class SidebarContent {
 
 export interface IContentAction {
 	icon: string
-	color: string
+	color?: string
 
 	onClick: () => void
 }

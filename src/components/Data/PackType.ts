@@ -10,6 +10,8 @@ export interface IPackType {
 	id: TPackTypeId
 	matcher: string | string[]
 	color: string
+	icon: string
+	packPath: string
 }
 export type TPackTypeId =
 	| 'behaviorPack'

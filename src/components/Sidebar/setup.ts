@@ -3,6 +3,7 @@ import { createSidebar } from './create'
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 import { SettingsWindow } from '../Windows/Settings/SettingsWindow'
 import { SidebarState } from './state'
+import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 
 export function setupSidebar() {
 	createSidebar({
@@ -22,6 +23,12 @@ export function setupSidebar() {
 			app.windows.packExplorer.open()
 		},
 	})
+	// createSidebar({
+	// 	id: 'packExplorer',
+	// 	displayName: 'windows.packExplorer.title',
+	// 	icon: 'mdi-folder-outline',
+	// 	sidebarContent: new PackExplorer(),
+	// })
 
 	createSidebar({
 		id: 'fileSearch',

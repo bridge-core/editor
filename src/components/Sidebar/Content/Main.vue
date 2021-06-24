@@ -7,7 +7,10 @@
 		}"
 	>
 		<BridgeSheet :style="{ height: '100%', overflow: 'auto' }">
-			<ActionBar v-if="content.actions && content.actions.length > 0" />
+			<ActionBar
+				v-if="content.actions && content.actions.length > 0"
+				:actions="content.actions"
+			/>
 			<component :is="content.component" />
 		</BridgeSheet>
 	</div>

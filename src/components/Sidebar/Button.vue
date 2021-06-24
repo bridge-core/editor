@@ -10,6 +10,7 @@
 				class="rounded-lg ma-2 d-flex justify-center sidebar-button"
 				:style="{
 					'background-color': computedColor,
+					transform: isSelected ? 'scale(1.1)' : undefined,
 				}"
 				:class="{
 					loading: isLoading,
@@ -63,6 +64,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isSelected: {
+			type: Boolean,
+			default: false,
+		},
 		alwaysAllowClick: {
 			type: Boolean,
 			default: false,
@@ -96,7 +101,7 @@ export default {
 				return this.color.startsWith('#')
 					? this.color
 					: `var(--v-${this.color}-base)`
-			return this.isLoading
+			return this.isLoading || this.isSelected
 				? `var(--v-primary-base)`
 				: `var(--v-sidebarSelection-base)`
 		},

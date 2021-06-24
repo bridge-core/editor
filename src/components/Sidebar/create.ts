@@ -2,10 +2,9 @@ import { SidebarState, toggle } from './state'
 import { v4 as uuid } from 'uuid'
 import { Component } from 'vue'
 import type { IDisposable } from '/@/types/disposable'
-import { createOldSidebarCompatWindow } from '/@/components/Windows/OldSidebarCompat/OldSidebarCompat'
 import { App } from '/@/App'
 import { SidebarContent } from './Content/SidebarContent'
-import { del, set } from '@vue/composition-api'
+import { computed, del, set } from '@vue/composition-api'
 
 export interface ISidebar {
 	id?: string
@@ -37,6 +36,11 @@ export class SidebarElement {
 	protected sidebarUUID: string
 	isLoading = false
 	isVisible = true
+	isSelected = computed(
+		() =>
+			SidebarState.currentState &&
+			SidebarState.currentState === this.config.sidebarContent
+	)
 
 	constructor(protected config: ISidebar) {
 		this.sidebarUUID = config.id ?? uuid()
