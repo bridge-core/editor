@@ -70,7 +70,7 @@ export namespace FileType {
 	export function getPluginFileTypes() {
 		return [...pluginFileTypes.values()]
 	}
-	export function setPluginFileTypes(fileDefs: IFileType[]) {
+	export function setPluginFileTypes(fileDefs: IFileType[] = []) {
 		pluginFileTypes.clear()
 		fileDefs.forEach((fileDef) => pluginFileTypes.add(fileDef))
 	}
