@@ -197,18 +197,18 @@ export class App {
 		setupDefaultMenus(this)
 		this.dataLoader.start()
 
-		if (process.env.NODE_ENV === 'production') {
-			const discordMsg = createNotification({
-				icon: 'mdi-discord',
-				message: 'sidebar.notifications.discord.message',
-				color: '#7289DA',
-				textColor: 'white',
-				onClick: () => {
-					this.windows.discordWindow.open()
-					discordMsg.dispose()
-				},
-			})
-			/* Removed until getting started updated to v2
+		//if (process.env.NODE_ENV === 'production') {
+		const socialsMsg = createNotification({
+			icon: 'mdi-link-variant',
+			message: 'sidebar.notifications.socials.message',
+			color: '#1DA1F2',
+			textColor: 'white',
+			onClick: () => {
+				this.windows.socialsWindow.open()
+				socialsMsg.dispose()
+			},
+		})
+		/* Removed until getting started updated to v2
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
 				message: 'sidebar.notifications.gettingStarted.message',
@@ -220,7 +220,7 @@ export class App {
 				},
 			})
 			*/
-		}
+		//}
 
 		console.timeEnd('[APP] beforeStartUp()')
 	}

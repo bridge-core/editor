@@ -251,8 +251,8 @@ export default {
 		},
 
 		notifications: {
-			discord: {
-				message: 'Discord Server',
+			socials: {
+				message: 'Socials',
 			},
 			gettingStarted: {
 				message: 'Getting Started',
@@ -332,11 +332,13 @@ export default {
 			confirm: 'Delete',
 			description: 'Are you sure you want to delete this project?',
 		},
-		discord: {
-			title: 'Discord',
-			content: 'Join the official bridge. Discord server!',
-			join: 'Join',
-			later: 'Later',
+		socials: {
+			title: 'Socials',
+			content:
+				'Check out our Twitter, Github and join the official bridge. Discord server!',
+			discord: 'Discord',
+			twitter: 'Twitter',
+			github: 'Github',
 		},
 		projectChooser: {
 			title: 'Projects',
