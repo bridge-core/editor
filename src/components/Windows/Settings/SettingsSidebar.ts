@@ -1,4 +1,4 @@
-import { Sidebar, TSidebarElement } from '/@/components/Windows/Layout/Sidebar'
+import { Sidebar } from '/@/components/Windows/Layout/Sidebar'
 import { Control } from './Controls/Control'
 
 export class SettingsSidebar extends Sidebar {
@@ -7,11 +7,11 @@ export class SettingsSidebar extends Sidebar {
 	get elements() {
 		let selectSidebar: string | undefined = undefined
 
-		const elements = this._elements.filter(element => {
+		const elements = this._elements.filter((element) => {
 			if (element.type === 'category') return true
 
 			const controls = <Control<any>[]>this.getState(element.id)
-			const hasControl = controls.some(control =>
+			const hasControl = controls.some((control) =>
 				control.matches(this.filter)
 			)
 			if (!selectSidebar && hasControl) selectSidebar = element.id
@@ -32,6 +32,6 @@ export class SettingsSidebar extends Sidebar {
 		if (!this.selected) return []
 		return (
 			<Control<any>[]>this.state[this.selected] ?? []
-		).filter(control => control.matches(this.filter))
+		).filter((control) => control.matches(this.filter))
 	}
 }

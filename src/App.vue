@@ -9,25 +9,38 @@
 		<v-main :style="{ 'padding-top': 'env(titlebar-area-height, 24px)' }">
 			<WindowRenderer />
 
-			<div v-if="shouldRenderWelcomeScreen" class="fill-area d-flex">
-				<TabSystem
+			<v-row no-gutters class="d-flex fill-area">
+				<v-col :cols="isSidebarContentVisible ? 3 : 0">
+					<SidebarContent />
+				</v-col>
+
+				<v-col
+					:cols="isSidebarContentVisible ? 9 : 12"
 					class="flex-grow-1"
-					:tabSystem="tabSystems[0]"
-					showWelcomeScreen
-				/>
-				<v-divider
-					v-if="
-						tabSystems[0].shouldRender && tabSystems[1].shouldRender
-					"
-					vertical
-				/>
-				<TabSystem
-					class="flex-grow-1"
-					:tabSystem="tabSystems[1]"
-					:id="1"
-				/>
-			</div>
-			<WelcomeScreen v-else />
+				>
+					<div v-if="shouldRenderWelcomeScreen" class="d-flex">
+						<v-divider v-if="isSidebarContentVisible" vertical />
+						<TabSystem
+							class="flex-grow-1"
+							:tabSystem="tabSystems[0]"
+							showWelcomeScreen
+						/>
+						<v-divider
+							v-if="
+								tabSystems[0].shouldRender &&
+								tabSystems[1].shouldRender
+							"
+							vertical
+						/>
+						<TabSystem
+							class="flex-grow-1"
+							:tabSystem="tabSystems[1]"
+							:id="1"
+						/>
+					</div>
+					<WelcomeScreen v-else />
+				</v-col>
+			</v-row>
 
 			<!--  -->
 		</v-main>
@@ -51,11 +64,18 @@ import TabSystem from '/@/components/TabSystem/TabSystem.vue'
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
 import InitialSetupDialog from '/@/components/InitialSetup/Dialog.vue'
+import SidebarContent from './components/Sidebar/Content/Main.vue'
+import { isContentVisible } from './components/Sidebar/state'
 
 export default Vue.extend({
 	name: 'App',
 	mixins: [TabSystemMixin],
 
+	setup() {
+		return {
+			isSidebarContentVisible: isContentVisible,
+		}
+	},
 	mounted() {
 		App.getApp().then((app) => {
 			this.contextMenu = app.contextMenu
@@ -71,6 +91,7 @@ export default Vue.extend({
 		WelcomeScreen,
 		FileDropper,
 		InitialSetupDialog,
+		SidebarContent,
 	},
 
 	data: () => ({
@@ -98,7 +119,6 @@ body {
 }
 *::-webkit-scrollbar-track {
 	border-radius: 24px;
-	background-color: var(--v-background-base);
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 24px;

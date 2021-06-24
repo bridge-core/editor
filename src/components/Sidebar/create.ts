@@ -1,16 +1,19 @@
-import { SidebarState } from './state'
+import { SidebarState, toggle } from './state'
 import { v4 as uuid } from 'uuid'
-import Vue from 'vue'
+import { Component } from 'vue'
 import type { IDisposable } from '/@/types/disposable'
 import { createOldSidebarCompatWindow } from '/@/components/Windows/OldSidebarCompat/OldSidebarCompat'
 import { App } from '/@/App'
+import { SidebarContent } from './Content/SidebarContent'
+import { del, set } from '@vue/composition-api'
 
 export interface ISidebar {
 	id?: string
 	icon?: string
 	displayName?: string
 	isVisible?: boolean
-	component?: Vue.Component | string
+	component?: Component
+	sidebarContent?: SidebarContent
 
 	onClick?: () => void
 }
@@ -37,8 +40,17 @@ export class SidebarElement {
 
 	constructor(protected config: ISidebar) {
 		this.sidebarUUID = config.id ?? uuid()
-		Vue.set(SidebarState.sidebarElements, this.sidebarUUID, this)
+		set(SidebarState.sidebarElements, this.sidebarUUID, this)
 		if (config.isVisible) this.isVisible = config.isVisible
+
+		if (this.config.component) {
+			const component = this.config.component
+
+			this.config.sidebarContent = new (class extends SidebarContent {
+				protected component = component
+				protected actions = undefined
+			})()
+		}
 	}
 
 	get icon() {
@@ -54,14 +66,16 @@ export class SidebarElement {
 		return this.config.component
 	}
 	dispose() {
-		Vue.delete(SidebarState.sidebarElements, this.sidebarUUID)
+		del(SidebarState.sidebarElements, this.sidebarUUID)
 	}
 	async click() {
 		App.audioManager.playAudio('click5.ogg', 1)
 		this.isLoading = true
+
+		if (this.config.sidebarContent) toggle(this.config.sidebarContent)
+
 		if (typeof this.config.onClick === 'function')
 			await this.config.onClick()
-		else if (this.config.component) createOldSidebarCompatWindow(this)
 		this.isLoading = false
 	}
 }
