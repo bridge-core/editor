@@ -34,7 +34,7 @@ export default {
 	},
 	data: () => ({
 		SidebarState,
-		windowDimensions: {},
+		windowDimensions: { currentHeight: window.innerHeight },
 	}),
 	computed: {
 		content() {
