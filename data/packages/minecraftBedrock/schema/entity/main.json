@@ -89,6 +89,18 @@
 			"then": {
 				"$ref": "./v1.17.10/main.json"
 			}
+		},
+		{
+			"if": {
+				"properties": {
+					"format_version": {
+						"const": "1.17.20"
+					}
+				}
+			},
+			"then": {
+				"$ref": "./v1.17.20/main.json"
+			}
 		}
 	]
 }

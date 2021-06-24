@@ -17,7 +17,11 @@
 		["types/gameTest/v1.17.0.d.ts", { "targetVersion": ["=", "v1.17.0"] }],
 		[
 			"types/gameTest/v1.17.10.d.ts",
-			{ "targetVersion": [">=", "v1.17.10"] }
+			{ "targetVersion": ["=", "v1.17.10"] }
+		],
+		[
+			"types/gameTest/v1.17.20.d.ts",
+			{ "targetVersion": [">=", "v1.17.20"] }
 		]
 	]
 }

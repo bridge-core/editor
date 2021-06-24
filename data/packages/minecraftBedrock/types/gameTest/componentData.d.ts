@@ -1,3 +1,5 @@
+// Entity Components
+
 /**
  * Defines this entity's inventory properties.
  */
@@ -32,12 +34,6 @@ declare interface Inventory {
 	 */
 	restrictToOwner: boolean
 
-	container: Container
-}
-/**
- * Represents the inventory of a block in the world. Used with blocks like chests.
- */
-declare interface BlockInventory {
 	container: Container
 }
 /**
@@ -937,4 +933,47 @@ declare interface Strength {
 	 * Maximum strength of this entity, as defined in the entity type definition.
 	 */
 	max: number
+}
+
+// Block Components
+
+/**
+ * Represents the inventory of a block in the world. Used with blocks like chests.
+ */
+declare interface BlockInventory {
+	container: Container
+}
+
+declare interface BlockPiston {
+	location: BlockLocation
+
+	/**
+	 * A set of locations for blocks that are impacted by the activation of this piston.
+	 */
+	attatchedBlocks: BlockLocation[]
+
+	/**
+	 * Whether the piston is in the process of expanding or retracting.
+	 */
+	isMoving: boolean
+
+	/**
+	 * Whether the piston is fully expanded.
+	 */
+	isExpanded: boolean
+
+	/**
+	 * Whether the piston is in the process of expanding.
+	 */
+	isExpanding: boolean
+
+	/**
+	 * Whether the piston is in the process of retracting.
+	 */
+	isRetracting: boolean
+
+	/**
+	 * Whether the piston is fully retracted.
+	 */
+	isRetracted: boolean
 }
