@@ -236,7 +236,7 @@ export abstract class Project {
 			),
 			contains: [],
 		})
-		loadPacks(this.app, this.name).then((packs) =>
+		await loadPacks(this.app, this.name).then((packs) =>
 			Vue.set(
 				this._projectData,
 				'contains',
