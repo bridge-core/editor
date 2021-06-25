@@ -1,5 +1,5 @@
 <template>
-	<v-row cols="5" no-gutters>
+	<v-row class="action-bar pa-1" cols="5" no-gutters>
 		<v-col v-for="(action, i) in actions" :key="i">
 			<Action
 				:color="action.config.color"
@@ -31,4 +31,11 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.action-bar {
+	position: sticky;
+	top: 0;
+	background: var(--v-expandedSidebar-base);
+	z-index: 1;
+}
+</style>

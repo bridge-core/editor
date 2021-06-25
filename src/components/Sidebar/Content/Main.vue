@@ -11,6 +11,7 @@
 				v-if="content.actions && content.actions.length > 0"
 				:actions="content.actions"
 			/>
+
 			<component :is="content.component" :sidebarContent="content" />
 		</BridgeSheet>
 	</div>
@@ -43,5 +44,3 @@ export default {
 	},
 }
 </script>
-
-<style></style>
