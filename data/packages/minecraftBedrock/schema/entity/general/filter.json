@@ -167,7 +167,8 @@
 						"weather",
 						"weather_at_position",
 						"in_contact_with_water",
-						"in_block"
+						"in_block",
+						"in_lava"
 					]
 				}
 			}
@@ -1249,6 +1250,22 @@
 					"value": {
 						"type": "string",
 						"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"test": {
+						"const": "in_lava"
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"value": {
+						"type": "boolean"
 					}
 				}
 			}
