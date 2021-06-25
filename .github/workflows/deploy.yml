@@ -2,6 +2,7 @@ name: Build and Deploy
 on:
     release:
         types: [published]
+    workflow_dispatch:
 jobs:
     build-and-deploy:
         runs-on: macos-latest
