@@ -43,6 +43,7 @@ export class App {
 		'currentTabSwitched',
 		'refreshCurrentContext',
 		'disableValidation',
+		'fileAdded',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>

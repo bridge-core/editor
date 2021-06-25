@@ -48,6 +48,12 @@ export class PackExplorer extends SidebarContent {
 				)
 			})
 		})
+
+		App.eventSystem.on('fileAdded', () =>
+			Object.values(this.directoryEntries).forEach((dirent) =>
+				dirent.refresh()
+			)
+		)
 	}
 
 	async getContextMenu(
@@ -76,7 +82,9 @@ export class PackExplorer extends SidebarContent {
 
 					await project.jsonDefaults.reload()
 
-					await project.fileSystem.unlink(path)
+					try {
+						await project.fileSystem.unlink(path)
+					} catch {}
 				},
 			},
 			// TODO

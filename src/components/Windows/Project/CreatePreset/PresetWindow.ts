@@ -332,6 +332,7 @@ export class CreatePresetWindow extends BaseWindow {
 		)
 
 		await Promise.all(promises)
+		App.eventSystem.dispatch('fileAdded', undefined)
 
 		// Close window
 		if (permissions.mayOverwriteFiles !== false) this.close()

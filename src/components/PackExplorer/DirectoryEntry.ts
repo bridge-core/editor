@@ -54,6 +54,7 @@ export class DirectoryEntry {
 				withFileTypes: true,
 			})) ?? []
 
+		this.children = []
 		for (const handle of dirents) {
 			if (
 				platform() === 'darwin' &&
@@ -78,6 +79,23 @@ export class DirectoryEntry {
 		this.sortChildren()
 		this.isLoading = false
 		this.hasLoadedChildren = true
+	}
+	async createOpenStateMap() {
+		const map: Record<string, boolean> = {}
+
+		await this.iterate((child) => {
+			if (!child._isFile) map[child.getPath()] = child.isFolderOpen
+		})
+
+		return map
+	}
+	async refresh() {
+		const map = await this.createOpenStateMap()
+		await this.loadChildren(this.path)
+
+		await this.iterate(async (child) => {
+			if (!child._isFile && map[child.getPath()]) await child.open()
+		})
 	}
 
 	get name() {
@@ -111,18 +129,18 @@ export class DirectoryEntry {
 	/**
 	 * @returns Whether to close the window
 	 */
-	open() {
+	async open() {
 		if (this.isFile) {
 			App.ready.once(async (app) => {
 				const fileHandle = await app.fileSystem.getFileHandle(
 					this.getFullPath()
 				)
-				app.project?.openFile(fileHandle)
+				await app.project?.openFile(fileHandle)
 			})
 			return true
 		} else {
 			this.isFolderOpen = !this.isFolderOpen
-			if (!this.hasLoadedChildren) this.loadChildren(this.path)
+			if (!this.hasLoadedChildren) await this.loadChildren(this.path)
 			return false
 		}
 	}
@@ -157,5 +175,10 @@ export class DirectoryEntry {
 	}
 	updateUUID() {
 		this.uuid = uuid()
+	}
+
+	async iterate(cb: (child: DirectoryEntry) => Promise<void> | void) {
+		await cb(this)
+		await Promise.all(this.children.map((child) => child.iterate(cb)))
 	}
 }
