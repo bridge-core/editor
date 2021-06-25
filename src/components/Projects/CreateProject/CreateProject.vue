@@ -113,10 +113,13 @@
 				/>
 			</div>
 
-			<v-text-field
+			<v-textarea
 				v-model="createOptions.description"
 				:label="t('windows.createProject.projectDescription')"
 				autocomplete="off"
+				auto-grow
+				rows="1"
+				counter
 				outlined
 				dense
 			/>
