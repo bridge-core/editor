@@ -10,6 +10,7 @@ import {
 } from './PackSpider/PackSpider'
 import { LightningCache } from './LightningCache/LightningCache'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { PackType } from '../../Data/PackType'
 export type { ILightningInstruction } from './LightningCache/LightningCache'
 
 export interface IPackIndexerOptions {
@@ -43,6 +44,7 @@ export class PackIndexerService extends TaskService<string[]> {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
 		await FileType.setup(new FileSystem(this.options.baseDirectory))
+		await PackType.setup(new FileSystem(this.options.baseDirectory))
 
 		console.timeEnd('[WORKER] SETUP')
 
@@ -91,18 +93,13 @@ export class PackIndexerService extends TaskService<string[]> {
 					path: path.concat([dirent.name]),
 				}))
 
-			return (
-				await Promise.all([
-					loadPack('BP', this.fileSystem),
-					loadPack('RP', this.fileSystem),
-					loadPack('SP', this.fileSystem),
-				])
-			).flat()
+			return []
 		}
 
-		if (path.length === 0) return getFileStoreDirectory()
-		if (path.length === 1) return getCategoryDirectory(path[0])
-		return fileStore[path[0]][path[1]].toDirectory()
+		if (path.length === 0) return []
+		if (path.length === 1) return getFileStoreDirectory(path[0])
+		if (path.length === 2) return getCategoryDirectory(path[0], path[1])
+		return fileStore[path[0]][path[1]][path[2]].toDirectory()
 	}
 
 	find(

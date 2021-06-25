@@ -34,7 +34,7 @@ export class CommandData extends Signal<void> {
 		this._data = await app.fileSystem.readJSON(
 			`data/packages/${packageName}/language/mcfunction/main.json`
 		)
-		console.log(this._data)
+		// console.log(this._data)
 		this.dispatch()
 	}
 

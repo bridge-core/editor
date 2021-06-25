@@ -2,8 +2,10 @@
 	<div
 		v-ripple
 		class="rounded-lg ma-1 d-flex justify-center sidebar-actions pa-2"
+		:style="{ background: isSelected ? `var(--v-${color}-base)` : null }"
+		@click="$emit('click', $event)"
 	>
-		<v-icon :color="color">{{ icon }}</v-icon>
+		<v-icon :color="isSelected ? 'white' : color">{{ icon }}</v-icon>
 	</div>
 </template>
 
@@ -12,6 +14,7 @@ export default {
 	props: {
 		color: String,
 		icon: String,
+		isSelected: Boolean,
 	},
 }
 </script>

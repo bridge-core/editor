@@ -156,17 +156,20 @@ export class TextTab extends FileTab {
 				},
 			])
 
+			const actionPromise = action.run()
+
 			const disposable = this.editorModel?.onDidChangeContent(
 				async () => {
 					disposable?.dispose()
 
+					await actionPromise
 					await this.saveFile(app)
 
 					app.windows.loadingWindow.close()
 				}
 			)
 
-			await action.run()
+			await actionPromise
 		} else {
 			await this.saveFile(app)
 		}

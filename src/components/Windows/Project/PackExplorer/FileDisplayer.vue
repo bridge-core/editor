@@ -94,6 +94,7 @@ export default {
 		async loadDirectory() {
 			if (!this.entry) {
 				const app = await App.getApp()
+				await app.projectManager.projectReady.fired
 
 				app.project.packIndexer.once(async () => {
 					this.directoryEntry = await DirectoryEntry.create(

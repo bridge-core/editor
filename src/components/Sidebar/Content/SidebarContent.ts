@@ -1,16 +1,23 @@
 import { Component } from 'vue'
+import { SelectableSidebarAction } from './SelectableSidebarAction'
+import { SidebarAction } from './SidebarAction'
 
 export abstract class SidebarContent {
-	protected abstract actions?: ContentAction[]
+	protected abstract actions?: SidebarAction[]
+	public selectedAction?: SidebarAction = undefined
 	protected abstract component: Component
-}
 
-export interface IContentAction {
-	icon: string
-	color?: string
-
-	onClick: () => void
-}
-export class ContentAction {
-	constructor(protected config: IContentAction) {}
+	unselectAllActions() {
+		this.actions?.forEach((action) =>
+			action instanceof SelectableSidebarAction
+				? action.unselect()
+				: undefined
+		)
+	}
+	getSelectedAction() {
+		return this.actions?.find(
+			(action) =>
+				action instanceof SelectableSidebarAction && action.isSelected
+		)
+	}
 }

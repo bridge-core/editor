@@ -11,7 +11,7 @@
 				v-if="content.actions && content.actions.length > 0"
 				:actions="content.actions"
 			/>
-			<component :is="content.component" />
+			<component :is="content.component" :sidebarContent="content" />
 		</BridgeSheet>
 	</div>
 </template>
@@ -28,9 +28,9 @@ export default {
 		ActionBar,
 	},
 	mounted() {
-		App.getApp().then(
-			(app) => (this.windowDimensions = app.windowResize.state)
-		)
+		App.getApp().then((app) => {
+			this.windowDimensions = app.windowResize.state
+		})
 	},
 	data: () => ({
 		SidebarState,

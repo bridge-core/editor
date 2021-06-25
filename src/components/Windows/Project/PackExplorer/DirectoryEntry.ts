@@ -12,13 +12,9 @@ export class DirectoryEntry {
 	protected displayName?: string
 	public uuid = uuid()
 	public isFolderOpen = false
-	protected hasLoadedChildren = this._isFile
+	protected hasLoadedChildren: boolean
 	public isLoading = false
-	protected type = this._isFile
-		? 'file'
-		: settingsState?.general?.enablePackSpider ?? true
-		? 'virtualFolder'
-		: 'folder'
+	protected type: 'file' | 'folder' | 'virtualFolder'
 
 	static async create(startPath: string[] = [], isFile = false) {
 		const folder = new DirectoryEntry(
@@ -41,6 +37,13 @@ export class DirectoryEntry {
 		} else {
 			if (this.isFolderOpen) this.loadChildren(path)
 		}
+
+		this.type = this._isFile
+			? 'file'
+			: settingsState?.general?.enablePackSpider ?? true
+			? 'virtualFolder'
+			: 'folder'
+		this.hasLoadedChildren = this._isFile
 	}
 
 	protected async loadChildren(path: string[]) {
@@ -62,7 +65,9 @@ export class DirectoryEntry {
 			const dirent = new DirectoryEntry(
 				this.fileSystem,
 				this,
-				handle.path ?? path.concat([handle.name]),
+				(typeof handle.path === 'string'
+					? handle.path.split('/')
+					: handle.path) ?? path.concat([handle.name]),
 				handle.kind === 'file'
 			)
 			dirent.setDisplayName(handle.displayName)
@@ -93,7 +98,7 @@ export class DirectoryEntry {
 			.join('/')
 	}
 	getPath() {
-		return this.path.join('/')
+		return this.path?.join('/') ?? []
 	}
 	getPathWithoutPack() {
 		const path = [...this.path]

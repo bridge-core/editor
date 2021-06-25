@@ -33,7 +33,7 @@
 				</v-btn>
 			</v-col>
 			<v-col
-				cols="1"
+				cols="9"
 				style="min-width: 100px; max-width: 100%"
 				class="flex-grow-1 flex-shrink-0"
 			>
