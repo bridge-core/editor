@@ -24,16 +24,17 @@ export function setupFileCategory(app: App) {
 			onTrigger: () => app.windows.createPreset.open(),
 		})
 	)
-	file.addItem(
-		app.actionManager.create({
-			id: 'bridge.action.openFile',
-			icon: 'mdi-file-upload-outline',
-			name: 'actions.openFile.name',
-			description: 'actions.openFile.description',
-			keyBinding: 'Ctrl + O',
-			onTrigger: () => app.windows.packExplorer.open(),
-		})
-	)
+	// There's no longer a pack explorer window. We should reuse the shortcut for something else...
+	// file.addItem(
+	// 	app.actionManager.create({
+	// 		id: 'bridge.action.openFile',
+	// 		icon: 'mdi-file-upload-outline',
+	// 		name: 'actions.openFile.name',
+	// 		description: 'actions.openFile.description',
+	// 		keyBinding: 'Ctrl + O',
+	// 		onTrigger: () => app.windows.packExplorer.open(),
+	// 	})
+	// )
 	file.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.searchFile',
