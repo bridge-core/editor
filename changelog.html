@@ -1,51 +1,29 @@
 <h2>Features:</h2>
 <ul>
-<li><strong>JSON Schemas:</strong>
+<li><strong>Pack Explorer:</strong>
 <ul>
-<li>Added support for &quot;on_kill&quot; inside of &quot;minecraft:behavior.melee_attack&quot;</li>
-<li>Improved dialogue validation</li>
-<li>Improved entity validation</li>
+<li>The Pack Explorer can once again show persistently next to your tab system</li>
 </ul>
 </li>
-<li><strong>Tree Editor:</strong>
+<li>Added support for custom command presets
 <ul>
-<li>Added support for manually converting an object to an array (and back again)</li>
-<li>Better auto-completions for bridge.'s tree editor thanks to support for &quot;propertyNames&quot; subschema</li>
+<li>Support for custom commands isn't quite there yet</li>
 </ul>
 </li>
-<li><strong>Third-party JavaScript:</strong>
-<ul>
-<li>Support for ESM imports</li>
-<li>Support for &quot;export default&quot; instead of &quot;module.exports = &quot;</li>
-</ul>
-</li>
-<li><strong>Custom Components:</strong>
-<ul>
-<li>Support for receiving animation (controller) short name</li>
-<li>Ability to disable automatically running an animation (controller) through the entity's scripts</li>
-</ul>
-</li>
-<li><strong>Heavy WIP:</strong> Support for auto-completions inside of .mcfunction files</li>
-<li><strong>Settings:</strong> Support for hiding sidebar elements</li>
-<li>Added an action to reload extensions</li>
+<li>Update editor data to latest Minecraft beta</li>
+<li>Added support for persistent sidebars</li>
+<li>Added new &quot;Socials&quot; window</li>
+<li>Project description field now expands vertically</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Support for choosing a folder for game tests</li>
-<li>Changed game test main file location</li>
-<li>Extension tags are now sorted alphabetically</li>
+<li><strong>Tree Editor:</strong> Added right-click action to delete node</li>
+<li>Changed internal script execution architecture</li>
+<li>Update block states schema</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed &quot;1.17.10&quot; being used as &quot;min_engine_version&quot;s. This lead to Minecraft not recognizing the BP/RP</li>
-<li>Removed hash from compiled TypeScript source files to properly support usage with GameTests</li>
-<li>Fixed tab drag &amp; drop</li>
-<li>Fixed closing of unsaved &amp; inactive tabs</li>
-<li>Fixed tab system active status not updating upon interacting with tree editor</li>
-<li>Fixed both tab systems being active at the same time</li>
-<li>Fixed JSON schema references with absolute paths</li>
-<li>Usage of uppercase letters is once again allowed for .lang files</li>
-<li>Users can now open multiple custom tabs at the same time</li>
-<li>Fixed error upon saving a file after closing a preview tab</li>
-<li>Fixed global custom components not working in new projects</li>
+<li>Fixed sidebar navigation height</li>
+<li>Fixed error upon setting plugin file types</li>
+<li>Fixed error upon restoring tabs</li>
 </ul>
