@@ -117,7 +117,6 @@ export default {
 		const toLoad = [
 			'bridge.action.newProject',
 			'bridge.action.newFile',
-			'bridge.action.openFile',
 			'bridge.action.searchFile',
 			'bridge.action.openSettings',
 		]
