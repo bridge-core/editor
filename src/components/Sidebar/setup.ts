@@ -13,16 +13,6 @@ export function setupSidebar() {
 		onClick: () => App.instance.windows.projectChooser.open(),
 	})
 
-	// createSidebar({
-	// 	id: 'packExplorer',
-	// 	displayName: 'windows.packExplorer.title',
-	// 	icon: 'mdi-folder-outline',
-	// 	onClick: async () => {
-	// 		// PackIndexer needs to be done before we can open the PackExplorer
-	// 		const app = await App.getApp()
-	// 		app.windows.packExplorer.open()
-	// 	},
-	// })
 	const packExplorer = createSidebar({
 		id: 'packExplorer',
 		displayName: 'windows.packExplorer.title',

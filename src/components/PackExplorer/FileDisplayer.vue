@@ -114,6 +114,9 @@ export default {
 		startPath() {
 			this.loadDirectory()
 		},
+		entry() {
+			this.loadDirectory()
+		},
 	},
 }
 </script>

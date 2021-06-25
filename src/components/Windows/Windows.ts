@@ -5,7 +5,6 @@ import { LoadingWindow } from './LoadingWindow/LoadingWindow'
 import { CreatePresetWindow } from './Project/CreatePreset/PresetWindow'
 import { CreateProjectWindow } from '/@/components/Projects/CreateProject/CreateProject'
 import { FilePickerWindow } from './Project/FilePicker/FilePicker'
-import { PackExplorerWindow } from './Project/PackExplorer/PackExplorer'
 import { ProjectChooserWindow } from '/@/components/Projects/ProjectChooser/ProjectChooser'
 import { SettingsWindow } from './Settings/SettingsWindow'
 import { ChangelogWindow } from '/@/components/Windows/Changelog/Changelog'
@@ -15,7 +14,6 @@ export class Windows {
 	settings: SettingsWindow
 	socialsWindow = new SocialsWindow()
 	projectChooser = new ProjectChooserWindow()
-	packExplorer = new PackExplorerWindow()
 	createProject = new CreateProjectWindow()
 	loadingWindow = new LoadingWindow()
 	filePicker = new FilePickerWindow()

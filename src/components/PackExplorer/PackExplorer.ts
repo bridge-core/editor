@@ -3,20 +3,32 @@ import { SelectableSidebarAction } from '/@/components/Sidebar/Content/Selectabl
 import { SidebarAction } from '../Sidebar/Content/SidebarAction'
 import PackExplorerComponent from './PackExplorer.vue'
 import { App } from '/@/App'
-import { DirectoryEntry } from '/@/components/Windows/Project/PackExplorer/DirectoryEntry'
+import { DirectoryEntry } from './DirectoryEntry'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { showContextMenu } from '../ContextMenu/showContextMenu'
+import { set } from '@vue/composition-api'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
 	actions: SidebarAction[] = []
+	directoryEntries: Record<string, DirectoryEntry> = {}
 
 	constructor() {
 		super()
 
 		App.eventSystem.on('projectChanged', () => {
-			App.getApp().then((app) => {
+			App.getApp().then(async (app) => {
+				this.unselectAllActions()
+
+				for (const pack of app.project.projectData.contains ?? []) {
+					set(
+						this.directoryEntries,
+						pack.packPath,
+						await DirectoryEntry.create([pack.packPath])
+					)
+				}
+
 				this.actions =
 					app.project.projectData.contains?.map(
 						(pack) =>

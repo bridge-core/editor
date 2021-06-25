@@ -5,7 +5,7 @@ import { PackType } from '/@/components/Data/PackType'
 import { FileType } from '/@/components/Data/FileType'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { reactive } from '@vue/composition-api'
-import { settingsState } from '../../Settings/SettingsState'
+import { settingsState } from '../Windows/Settings/SettingsState'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
@@ -24,7 +24,7 @@ export class DirectoryEntry {
 			isFile
 		)
 		folder.open()
-		return reactive(folder)
+		return <DirectoryEntry>reactive(folder)
 	}
 	constructor(
 		protected fileSystem: FileSystem,
