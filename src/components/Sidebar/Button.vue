@@ -16,6 +16,7 @@
 					loading: isLoading,
 					'pa-1': smallerSidebarElements,
 					'pa-2': !smallerSidebarElements,
+					'elevation-4': isSelected,
 				}"
 				v-on="on"
 				@click="onClick"

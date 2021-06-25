@@ -1,5 +1,5 @@
 <template>
-	<div class="rounded-lg bg elevation-4">
+	<div class="rounded-lg bg">
 		<slot />
 	</div>
 </template>
