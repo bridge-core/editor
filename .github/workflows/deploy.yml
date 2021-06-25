@@ -34,7 +34,7 @@ jobs:
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
                   npm install
-                  npm run build
+                  NODE_OPTIONS=--max_old_space_size=4096 npm run build
 
             - name: Deploy 🚀
               uses: JamesIves/github-pages-deploy-action@3.7.1
