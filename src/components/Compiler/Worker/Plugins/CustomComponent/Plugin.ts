@@ -97,11 +97,13 @@ export function createCustomComponentPlugin({
 			async transform(filePath, fileContent, dependencies = {}) {
 				if (isPlayerFile(filePath, getAliases)) {
 					// Get item components from the dependencies
-					const itemComponents = <Component[]>(
-						Object.values(dependencies).filter(([depName]) =>
+					const itemComponents = <Component[]>Object.entries(
+						dependencies
+					)
+						.filter(([depName]) =>
 							depName.startsWith('itemComponent#')
 						)
-					)
+						.map(([_, component]) => component)
 
 					for (const component of itemComponents) {
 						if (!component) return
