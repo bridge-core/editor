@@ -148,6 +148,11 @@ export class PackExplorer extends SidebarContent {
 									'.bridge/.compilerFiles'
 								),
 							])
+							await app.project.fileSystem.writeFile(
+								'.bridge/.restartDevServer',
+								''
+							)
+
 							app.actionManager.trigger(
 								'bridge.action.refreshProject'
 							)
