@@ -9,7 +9,11 @@
 		<v-main :style="{ 'padding-top': 'env(titlebar-area-height, 24px)' }">
 			<WindowRenderer />
 
-			<v-row no-gutters class="d-flex fill-area">
+			<v-row
+				no-gutters
+				class="d-flex fill-area"
+				:class="{ 'flex-row-reverse': isSidebarRight }"
+			>
 				<v-col :cols="isSidebarContentVisible ? 3 : 0">
 					<SidebarContent />
 				</v-col>
@@ -19,7 +23,11 @@
 					class="flex-grow-1"
 				>
 					<div v-if="shouldRenderWelcomeScreen" class="d-flex">
-						<v-divider v-if="isSidebarContentVisible" vertical />
+						<v-divider
+							v-if="isSidebarContentVisible && !isSidebarRight"
+							vertical
+						/>
+
 						<TabSystem
 							class="flex-grow-1"
 							:tabSystem="tabSystems[0]"
@@ -37,6 +45,11 @@
 							:tabSystem="tabSystems[1]"
 							:id="1"
 						/>
+
+						<v-divider
+							v-if="isSidebarContentVisible && isSidebarRight"
+							vertical
+						/>
 					</div>
 					<WelcomeScreen v-else />
 				</v-col>
@@ -52,7 +65,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
@@ -66,8 +78,9 @@ import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
 import InitialSetupDialog from '/@/components/InitialSetup/Dialog.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
 import { isContentVisible } from './components/Sidebar/state'
+import { settingsState } from './components/Windows/Settings/SettingsState'
 
-export default Vue.extend({
+export default {
 	name: 'App',
 	mixins: [TabSystemMixin],
 
@@ -97,8 +110,19 @@ export default Vue.extend({
 	data: () => ({
 		isMacOs: platform() === 'darwin',
 		contextMenu: null,
+		settingsState: settingsState,
 	}),
-})
+
+	computed: {
+		isSidebarRight() {
+			return (
+				this.settingsState &&
+				this.settingsState.sidebar &&
+				this.settingsState.sidebar.isSidebarRight
+			)
+		},
+	},
+}
 </script>
 
 <style>
