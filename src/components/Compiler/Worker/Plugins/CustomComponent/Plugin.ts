@@ -97,13 +97,13 @@ export function createCustomComponentPlugin({
 			async transform(filePath, fileContent, dependencies = {}) {
 				if (isPlayerFile(filePath, getAliases)) {
 					// Get item components from the dependencies
-					const itemComponents = Object.entries(
-						dependencies
-					).filter(([depName]) =>
-						depName.startsWith('itemComponent#')
+					const itemComponents = <Component[]>(
+						Object.values(dependencies).filter(([depName]) =>
+							depName.startsWith('itemComponent#')
+						)
 					)
 
-					for (const [_, component] of itemComponents) {
+					for (const component of itemComponents) {
 						if (!component) return
 
 						createAnimFiles = deepMerge(
@@ -118,10 +118,11 @@ export function createCustomComponentPlugin({
 					for (const [componentName, location] of usedComponents.get(
 						filePath
 					) ?? []) {
-						const component =
+						const component = <Component>(
 							dependencies[
 								`${fileType}Component#${componentName}`
 							]
+						)
 						if (!component) continue
 
 						const parentObj = get(
