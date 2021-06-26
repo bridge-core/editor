@@ -28,7 +28,7 @@
 						position: isLoading ? 'absolute' : 'relative',
 						margin: isLoading ? '4px' : 0,
 					}"
-					:color="isLoading ? 'white' : iconColor"
+					:color="isLoading || isSelected ? 'white' : iconColor"
 					:small="isLoading"
 				>
 					{{ icon }}
