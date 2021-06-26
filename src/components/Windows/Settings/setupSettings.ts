@@ -117,6 +117,19 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
+		new ButtonToggle({
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.sidebarSize.name',
+			description: 'windows.settings.sidebar.sidebarSize.description',
+			key: 'sidebarSize',
+			options: ['tiny', 'small', 'normal', 'large'],
+			default: 'normal',
+			onChange: () => {
+				App.getApp().then((app) => app.windowResize.dispatch())
+			},
+		})
+	)
+	settings.addControl(
 		new Sidebar({
 			category: 'sidebar',
 			name: 'windows.settings.sidebar.shrinkSidebarElements.name',

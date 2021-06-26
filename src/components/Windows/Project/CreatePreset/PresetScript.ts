@@ -25,12 +25,12 @@ export async function runPresetScript(
 	)
 	const scriptSrc = await script.text()
 
-	const module: any = {}
+	const module: any = { exports: undefined }
 	try {
 		run({
 			script: scriptSrc,
 			env: {
-				module: { exports: undefined },
+				module,
 			},
 		})
 	} catch (err) {
