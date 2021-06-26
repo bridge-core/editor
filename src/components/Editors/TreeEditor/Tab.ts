@@ -6,6 +6,7 @@ import { TreeEditor } from './TreeEditor'
 import json5 from 'json5'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { debounce } from 'lodash-es'
+import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 
 const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {
@@ -54,12 +55,21 @@ export class TreeTab extends FileTab {
 		return this._treeEditor
 	}
 	async setup() {
-		this._treeEditor = new TreeEditor(
-			this,
-			json5.parse(
+		let json: unknown
+		try {
+			json = json5.parse(
 				await this.fileHandle.getFile().then((file) => file.text())
 			)
-		)
+		} catch {
+			new InformationWindow({
+				name: 'windows.invalidJson.title',
+				description: 'windows.invalidJson.description',
+			})
+			this.close()
+			return
+		}
+
+		this._treeEditor = new TreeEditor(this, json)
 
 		await super.setup()
 	}
@@ -75,7 +85,7 @@ export class TreeTab extends FileTab {
 		this.treeEditor.activate()
 	}
 	onDeactivate() {
-		this.treeEditor.deactivate()
+		this._treeEditor?.deactivate()
 	}
 	onDestroy() {}
 	updateParent(parent: TabSystem) {}

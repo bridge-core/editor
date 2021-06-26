@@ -511,6 +511,11 @@ export default {
 			description:
 				'Your browser is currently not supported. Please use Chrome (Desktop) or Edge (Chromium) in order to get started with bridge.!',
 		},
+		invalidJson: {
+			title: 'Invalid JSON',
+			description:
+				'bridge.\'s tree editor cannot open files that contain invalid JSON. You can switch to the "Raw Text" editor type inside of the settings to manually fix the issue.',
+		},
 	},
 	taskManager: {
 		tasks: {
