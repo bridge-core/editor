@@ -65,10 +65,7 @@
 			<v-btn
 				color="primary"
 				:disabled="currentProject === selectedSidebar"
-				:loading="
-					currentProject !== selectedSidebar &&
-					(!isPackIndexerReady || !isCompilerReady)
-				"
+				:loading="currentProject !== selectedSidebar"
 				@click="onSelectProject"
 			>
 				<v-icon>mdi-check</v-icon>
@@ -85,12 +82,10 @@ import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow.ts'
-import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
-import { CompilerMixin } from '/@/components/Mixins/Tasks/Compiler'
 
 export default {
 	name: 'ProjectChooserWindow',
-	mixins: [TranslationMixin, PackIndexerMixin, CompilerMixin],
+	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,
 		PackTypeViewer,

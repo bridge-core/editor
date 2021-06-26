@@ -187,12 +187,10 @@
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
-import { CompilerMixin } from '/@/components/Mixins/Tasks/Compiler'
-import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'CreateProjectWindow',
-	mixins: [TranslationMixin, CompilerMixin, PackIndexerMixin],
+	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
 		PackTypeViewer,
@@ -207,11 +205,7 @@ export default {
 			// If this is the first project, only show a spinner while creating the spinner
 			if (this.isFirstProject) return this.isCreatingProject
 			// Otherwise check that the compiler & pack indexer are done too
-			return (
-				this.isCreatingProject ||
-				!this.isCompilerReady ||
-				!this.isPackIndexerReady
-			)
+			return this.isCreatingProject
 		},
 	},
 	methods: {

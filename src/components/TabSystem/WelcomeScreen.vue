@@ -102,12 +102,10 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { App } from '/@/App.ts'
 import { ProjectMixin } from '/@/components/Mixins/Project.ts'
-import { CompilerMixin } from '../Mixins/Tasks/Compiler.ts'
-import { PackIndexerMixin } from '../Mixins/Tasks/PackIndexer.ts'
 
 export default {
 	name: 'welcome-screen',
-	mixins: [TranslationMixin, ProjectMixin, CompilerMixin, PackIndexerMixin],
+	mixins: [TranslationMixin, ProjectMixin],
 	components: {
 		ActionViewer,
 	},
@@ -129,6 +127,7 @@ export default {
 	data: () => ({
 		actions: [],
 		projectManager: null,
+		maySwitchProjects: true,
 	}),
 	computed: {
 		files() {
@@ -140,9 +139,6 @@ export default {
 			return this.projectManager.recentProjects.elements.filter(
 				({ path }) => path !== this.projectManager.selectedProject
 			)
-		},
-		maySwitchProjects() {
-			return this.isPackIndexerReady && this.isCompilerReady
 		},
 	},
 	methods: {
