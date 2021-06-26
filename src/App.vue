@@ -14,12 +14,12 @@
 				class="d-flex fill-area"
 				:class="{ 'flex-row-reverse': isSidebarRight }"
 			>
-				<v-col :cols="isSidebarContentVisible ? 3 : 0">
+				<v-col :cols="isSidebarContentVisible ? 3 + sidebarSize : 0">
 					<SidebarContent />
 				</v-col>
 
 				<v-col
-					:cols="isSidebarContentVisible ? 9 : 12"
+					:cols="isSidebarContentVisible ? 9 - sidebarSize : 12"
 					class="flex-grow-1"
 				>
 					<div v-if="shouldRenderWelcomeScreen" class="d-flex">
@@ -120,6 +120,24 @@ export default {
 				this.settingsState.sidebar &&
 				this.settingsState.sidebar.isSidebarRight
 			)
+		},
+		sidebarSize() {
+			let size =
+				this.settingsState && this.settingsState.sidebar
+					? this.settingsState.sidebar.sidebarSize
+					: undefined
+			if (!size) size = 'normal'
+
+			switch (size) {
+				case 'tiny':
+					return -2
+				case 'small':
+					return -1
+				case 'normal':
+					return 0
+				case 'large':
+					return 1
+			}
 		},
 	},
 }

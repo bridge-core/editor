@@ -383,6 +383,11 @@ export default {
 					description:
 						'Moves the sidebar to the right side of the screen',
 				},
+				sidebarSize: {
+					name: 'Sidebar Size',
+					description:
+						'Changes the width of the expanded sidebar area.',
+				},
 				shrinkSidebarElements: {
 					name: 'Shrink Sidebar Elements',
 					description:
