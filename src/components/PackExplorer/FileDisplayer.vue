@@ -73,7 +73,6 @@
 <script>
 import { DirectoryEntry } from './DirectoryEntry'
 import { App } from '/@/App.ts'
-import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'FileDisplayer',

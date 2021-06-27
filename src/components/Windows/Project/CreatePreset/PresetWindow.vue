@@ -118,7 +118,6 @@
 				@click="onCreatePreset"
 				color="primary"
 				:disabled="!fieldsReady"
-				:loading="!isPackIndexerReady"
 			>
 				<v-icon class="mr-1">mdi-plus</v-icon>
 				Create
@@ -132,11 +131,10 @@ import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PresetPath from './PresetPath.vue'
 
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
-import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'CreatePresetWindow',
-	mixins: [TranslationMixin, PackIndexerMixin],
+	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,
 		PresetPath,
