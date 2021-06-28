@@ -104,6 +104,7 @@ import FilePath from './FilePath.vue'
 import { debounce } from 'lodash'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { createRegExp, processFileText } from './Utils'
+import { set } from '@vue/composition-api'
 
 export default {
 	name: 'FindAndReplaceTab',
@@ -153,6 +154,11 @@ export default {
 	},
 
 	watch: {
+		tab() {
+			for (const key in this.tab.state) {
+				set(this, key, this.tab.state[key])
+			}
+		},
 		searchFor() {
 			this.updateQuery()
 		},
