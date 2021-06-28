@@ -1,9 +1,6 @@
 <template>
 	<!-- body-1 class sets the font-size -->
-	<div
-		class="body-1"
-		v-if="directoryEntry && !directoryEntry.isLoading && isPackIndexerReady"
-	>
+	<div class="body-1" v-if="directoryEntry && !directoryEntry.isLoading">
 		<template v-for="entry in directoryEntry.children">
 			<!-- FOLDER -->
 			<details
@@ -76,7 +73,6 @@ import { App } from '/@/App.ts'
 
 export default {
 	name: 'FileDisplayer',
-	mixins: [PackIndexerMixin],
 	props: {
 		entry: Object,
 		startPath: Array,
