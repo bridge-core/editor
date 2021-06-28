@@ -2,13 +2,13 @@
 	"format_version": "1.17.0",
 	"minecraft:ore_feature": {
 		"description": {
-			"identifier": "{{PROJ_PREFIX}}:{{IDENTIFIER}}_feature"
+			"identifier": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}_feature"
 		},
 		"count": 9,
 		"replace_rules": [
 			{
 				"places_block": {
-					"name": "{{PROJ_PREFIX}}:{{IDENTIFIER}}",
+					"name": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}",
 					"states": {}
 				},
 			     
