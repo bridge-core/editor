@@ -45,4 +45,17 @@ export const TabModule = async ({ disposables }: IModuleConfig) => ({
 			return tab
 		}
 	},
+
+	/**
+	 * Given a file path relative to the project root, open the corresponding file inside of bridge.'s tab system
+	 * @param filePath File to open
+	 * @param selectTab Whether to automatically select the tab
+	 */
+	openFilePath: async (filePath: string, selectTab = false) => {
+		const app = await App.getApp()
+		const project = app.project
+		const fileHandle = await project.fileSystem.getFileHandle(filePath)
+
+		project.openFile(fileHandle, selectTab)
+	},
 })
