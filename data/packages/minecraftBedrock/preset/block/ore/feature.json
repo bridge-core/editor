@@ -10,9 +10,8 @@
 				"places_block": {
 					"name": "{{PROJ_PREFIX}}:{{IDENTIFIER}}",
 					"states": {}
-				}
-			},
-			{
+				},
+			     
 				"may_replace": [
 					{
 						"name": "minecraft:stone",
