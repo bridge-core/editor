@@ -25,3 +25,10 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+.code-match {
+	font-size: 0.8rem;
+	opacity: 0.8;
+}
+</style>

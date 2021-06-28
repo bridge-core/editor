@@ -207,7 +207,7 @@ summary::-webkit-details-marker {
 }
 .code-font {
 	font-family: Menlo, Monaco, 'Courier New', monospace;
-	font-size: 0.8rem;
+	font-size: 14px;
 }
 .clickable {
 	cursor: pointer;
