@@ -3,7 +3,7 @@
 	"minecraft:feature_rules": {
 		"description": {
 			"identifier": "{{PROJECT_PREFIX}}:overworld_underground_{{IDENTIFIER}}",
-			"places_feature": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}"
+			"places_feature": "{{PROJECT_PREFIX}}:{{IDENTIFIER}}_feature"
 		},
 		"conditions": {
 			"placement_pass": "underground_pass",
