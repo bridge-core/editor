@@ -3,32 +3,34 @@
 	"definitions": {
 		"tags": {
 			"description": "Defines where this recipe can be made",
-			"type": "string",
-			"anyOf": [
-				{
-					"enum": [
-						"blast_furnace",
-						"brewing_stand",
-						"campfire",
-						"cartography_table",
-						"crafting_table",
-						"furnace",
-						"smoker",
-						"stonecutter",
-						"soul_campfire"
-					]
-				},
-				{
-					"$ref": "./dynamic/recipeTagEnum.json"
-				},
-				{
-					"$ref": "../block/dynamic/recipeTagEnum.json"
-				}
-			]
+			"type": "array",
+			"items": {
+				"type": "string",
+				"anyOf": [
+					{
+						"enum": [
+							"blast_furnace",
+							"brewing_stand",
+							"campfire",
+							"cartography_table",
+							"crafting_table",
+							"furnace",
+							"smoker",
+							"stonecutter",
+							"soul_campfire"
+						]
+					},
+					{
+						"$ref": "./dynamic/recipeTagEnum.json"
+					},
+					{
+						"$ref": "../block/dynamic/recipeTagEnum.json"
+					}
+				]
+			}
 		},
 		"description": {
 			"type": "object",
-			"maxProperties": 1,
 			"properties": {
 				"identifier": {
 					"anyOf": [
@@ -53,7 +55,7 @@
 				"properties": {
 					"item": {
 						"description": "Provides the identifier for the result item",
-						"type": "string"
+						"$ref": "../general/vanilla/identifiers.json#/definitions/item_identifiers"
 					},
 					"data": {
 						"description": "Sets the result item's data value",
@@ -67,15 +69,15 @@
 			}
 		},
 		"input": {
-			"type": "string",
+			"$ref": "../general/vanilla/identifiers.json#/definitions/item_identifiers",
 			"description": "Defines the input item for the recipe"
 		},
 		"reagent": {
-			"type": "string"
+			"$ref": "../general/vanilla/identifiers.json#/definitions/item_identifiers"
 		},
 		"output": {
 			"description": "Defines the result item of this recipe",
-			"type": "string"
+			"$ref": "../general/vanilla/identifiers.json#/definitions/item_identifiers"
 		}
 	}
 }
