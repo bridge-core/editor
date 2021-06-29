@@ -82,6 +82,7 @@ export default {
 	data: () => ({
 		keyToAdd: '',
 		valueToAdd: '',
+		triggerCooldown: false,
 	}),
 	mounted() {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
@@ -146,20 +147,34 @@ export default {
 			this.treeEditor.edit(value)
 		},
 		onAddKey(suggestion) {
+			if (this.triggerCooldown) return
+
+			console.log(suggestion)
 			if (suggestion === null) return
 			const { type = 'object', value = suggestion } = suggestion
 
 			this.treeEditor.addKey(value, type)
 
-			this.$nextTick(() => (this.keyToAdd = ''))
+			this.$nextTick(() => {
+				this.keyToAdd = ''
+				this.triggerCooldown = false
+			})
+			this.triggerCooldown = true
 		},
 		onAddValue(suggestion) {
+			if (this.triggerCooldown) return
+
+			console.log(suggestion)
 			if (suggestion === null) return
 			const { type = 'value', value = suggestion } = suggestion
 
 			this.treeEditor.addValue(value, type)
 
-			this.$nextTick(() => (this.valueToAdd = ''))
+			this.$nextTick(() => {
+				this.valueToAdd = ''
+				this.triggerCooldown = false
+			})
+			this.triggerCooldown = true
 		},
 		onScroll(event) {
 			this.treeEditor.scrollTop = event.target.scrollTop
