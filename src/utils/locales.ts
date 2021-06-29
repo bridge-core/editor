@@ -1,22 +1,29 @@
 import Vue from 'vue'
 
+export function translate(vuetify: any, translationKey?: string) {
+	const orginalKey = translationKey
+	if (orginalKey?.startsWith('[') && orginalKey.endsWith(']'))
+		return orginalKey.slice(1, -1)
+
+	if (!translationKey?.startsWith('$vuetify.'))
+		translationKey = `$vuetify.${translationKey}`
+
+	let translated: string
+	try {
+		translated = vuetify.lang.t(translationKey)
+	} catch {
+		return orginalKey
+	}
+
+	if (translated === translationKey) return orginalKey
+	return translated
+}
+
 export class Locales {
 	constructor(protected vuetify: any) {}
 
 	translate(translationKey?: string) {
-		const orginalKey = translationKey
-		if (!translationKey?.startsWith('$vuetify.'))
-			translationKey = `$vuetify.${translationKey}`
-
-		let translated: string
-		try {
-			translated = this.vuetify.lang.t(translationKey)
-		} catch {
-			return orginalKey ?? 'Unknown'
-		}
-
-		if (translated === translationKey) return orginalKey ?? 'Unknown'
-		return translated
+		return translate(this.vuetify, translationKey)
 	}
 
 	addLanguage(key: string, obj: unknown, force = false) {
