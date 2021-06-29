@@ -21,8 +21,11 @@ declare module 'GameTest' {
 
 declare interface Tags {
 	suiteDefault: string
+
 	suiteDisabled: string
+	
 	suiteAll: string
+	
 	suiteDebug: string
 }
 
@@ -458,6 +461,14 @@ declare interface Helper {
 		position: BlockLocation
 	): Entity
 
+	/**
+    *
+    * @param location 
+    * @param fromFace 
+    * @param direction 
+    */
+	spreadFromFaceTowardDirection(location: BlockLocation, fromFace: number, direction: number): void
+
     /**
      * Spawns an entity at the given location.
      * @param location 
@@ -574,6 +585,13 @@ declare interface Helper {
 	 */
 	worldLocation(relativeLocation: BlockLocation): BlockLocation
 
+	/**
+	 * Sets the fuse of an explodable entity.
+	 * @param entity 
+	 * Entity that is explodable.
+	 * @param time 
+	 * Length of time, in ticks, before the entity explodes.
+	 */
 	setTntFuse(entity: Entity, time: number): void
 
 	setBlockType(blockType: BlockType, position: BlockLocation): void
@@ -582,6 +600,15 @@ declare interface Helper {
 		blockData: BlockPermutation,
 		position: BlockLocation
 	): void
+
+	getFenceConnectivity(location: BlockLocation): ScriptGameTestConnectivity
+
+	/**
+    * Gets a block at the specified block location.
+    * @param location 
+	* Location of the block to retrieve.
+    */
+	getBlock(location: BlockLocation): Block;
 }
 
 // -------------------------------------------------------------
@@ -1083,21 +1110,39 @@ declare interface BeforeExplosionSignal {
 
 	unsubscribe(callback: (eventData: BeforeExplosionEvent) => void): void
 }
-declare interface BeforeExplosionEvent {} // TODO
+declare interface BeforeExplosionEvent {
+	cancel: boolean
+
+    dimension: Dimension
+
+    impactedBlocks: BlockLocation[]
+
+    source: Entity
+}
 
 declare interface ExplosionSignal {
     subscribe(callback: (eventData: ExplosionEvent) => void): void
 
 	unsubscribe(callback: (eventData: ExplosionEvent) => void): void
 }
-declare interface ExplosionEvent {} // TODO
+declare interface ExplosionEvent {
+	dimension: Dimension
+
+    impactedBlocks: BlockLocation[]
+
+    source: Entity
+}
 
 declare interface ExplodeBlockSignal {
     subscribe(callback: (eventData: ExplodeBlockEvent) => void): void
 
 	unsubscribe(callback: (eventData: ExplodeBlockEvent) => void): void
 }
-declare interface ExplodeBlockEvent {} // TODO
+declare interface ExplodeBlockEvent {
+	destroyedBlock: Block
+
+    source: Entity
+}
 
 declare interface BeforeActivatePistonSignal {
 	/**
@@ -1437,6 +1482,8 @@ declare interface Location {
 	 */
 	equals(other: Location): boolean
 
+	isNear(other: Location, epsilon: number): boolean;
+
 	/**
 	 * X component of this location.
 	 */
@@ -1475,3 +1522,27 @@ declare interface ItemStack {
 	 */
 	amount: number
 }
+
+declare interface Direction {
+    down: number
+
+    east: number
+
+    north: number
+
+    south: number
+
+    up: number
+
+    west: number
+}
+
+declare interface ScriptGameTestConnectivity {
+    east: boolean
+
+    north: boolean
+
+    south: boolean
+
+    west: boolean
+  }
