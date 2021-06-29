@@ -2795,7 +2795,7 @@
 						}
 					}
 				},
-				"minecraft.player:saturation": {
+				"minecraft:player.saturation": {
 					"description": "Defines the player's saturation.",
 					"additionalProperties": false,
 					"properties": {
@@ -2810,7 +2810,7 @@
 						}
 					}
 				},
-				"minecraft.player:exhaustion": {
+				"minecraft:player.exhaustion": {
 					"description": "Defines the player's exhaustion.",
 					"additionalProperties": false,
 					"properties": {
@@ -2825,7 +2825,7 @@
 						}
 					}
 				},
-				"minecraft.player:level": {
+				"minecraft:player.level": {
 					"description": "Defines the player's level.",
 					"additionalProperties": false,
 					"properties": {
@@ -2840,7 +2840,7 @@
 						}
 					}
 				},
-				"minecraft.player:experience": {
+				"minecraft:player.experience": {
 					"description": "Defines the player's experience.",
 					"additionalProperties": false,
 					"properties": {

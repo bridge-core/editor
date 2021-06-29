@@ -1,9 +1,12 @@
-import { settingsState } from '../Windows/Settings/SettingsState'
+import { Signal } from '/@/components/Common/Event/Signal'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { App } from '/@/App'
 import { PersistentQueue } from '/@/components/Common/PersistentQueue'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 
 export class OpenedFiles extends PersistentQueue<string> {
+	public readonly ready = new Signal<void>()
+
 	constructor(tabSystem: TabSystem, app: App, savePath: string) {
 		super(app, Infinity, savePath)
 
@@ -18,6 +21,8 @@ export class OpenedFiles extends PersistentQueue<string> {
 						)
 					} catch {}
 				}
+
+				this.ready.dispatch()
 			})
 		}
 	}

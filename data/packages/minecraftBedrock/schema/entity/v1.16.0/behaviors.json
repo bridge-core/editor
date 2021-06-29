@@ -427,7 +427,7 @@
 				}
 			}
 		},
-		"minecraft.behavior.door_interact": {
+		"minecraft:behavior.door_interact": {
 			"description": "Allows the mob to open and close doors.",
 			"additionalProperties": false,
 			"properties": {

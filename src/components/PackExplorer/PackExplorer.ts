@@ -85,6 +85,10 @@ export class PackExplorer extends SidebarContent {
 					try {
 						await project.fileSystem.unlink(path)
 					} catch {}
+
+					await project.recentFiles.removeFile(
+						`projects/${project.name}/${path}`
+					)
 				},
 			},
 			// TODO

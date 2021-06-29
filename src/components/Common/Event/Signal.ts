@@ -39,7 +39,6 @@ export class Signal<T> extends EventDispatcher<T> {
 		getDisposable?: boolean
 	): IDisposable | undefined
 	on(listener: (data: T) => void, getDisposable = true) {
-		// Needs to be on a timeout because otherwise Signal.once doesn't work
 		if (this.hasFired) listener(this.data!)
 
 		return super.on(listener, getDisposable)

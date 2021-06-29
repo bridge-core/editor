@@ -16,4 +16,12 @@ export class RecentFiles extends PersistentQueue<IRecentFile> {
 	isEquals(file1: IRecentFile, file2: IRecentFile) {
 		return file1.path === file2.path
 	}
+
+	removeFile(filePath: string) {
+		return this.remove({
+			icon: '',
+			name: '',
+			path: filePath,
+		})
+	}
 }
