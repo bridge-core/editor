@@ -56,6 +56,6 @@ export const TabModule = async ({ disposables }: IModuleConfig) => ({
 		const project = app.project
 		const fileHandle = await project.fileSystem.getFileHandle(filePath)
 
-		project.openFile(fileHandle, selectTab)
+		await project.openFile(fileHandle, selectTab)
 	},
 })

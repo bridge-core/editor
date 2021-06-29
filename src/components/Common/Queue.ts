@@ -28,6 +28,7 @@ export class Queue<T> {
 		isEquals: (e1: T, e2: T) => boolean = this.isEquals.bind(this)
 	) {
 		const index = this.array.findIndex((e) => isEquals(e, element))
+		console.log(index, element, this.array)
 		if (index > -1) this.array.splice(index, 1)
 
 		return this
@@ -41,6 +42,9 @@ export class Queue<T> {
 
 	toJSON() {
 		return JSON.stringify(this.array)
+	}
+	fromArray(arr: any) {
+		this.array = arr
 	}
 	[Symbol.iterator]() {
 		return this.array.values()

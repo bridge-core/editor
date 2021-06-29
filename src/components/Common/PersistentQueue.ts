@@ -26,7 +26,7 @@ export class PersistentQueue<T> extends Signal<Queue<T>> {
 			data = await this.app.fileSystem.readJSON(this.savePath)
 		} catch {}
 
-		data.forEach((e: T) => this.queue.add(e))
+		this.queue.fromArray(data)
 		this.dispatch(this.queue)
 	}
 
