@@ -50,10 +50,6 @@ export class TabSystem extends MonacoHolder {
 			project.app,
 			`projects/${project.name}/.bridge/openedFiles_${id}.json`
 		)
-
-		this.openedFiles.once(() => {
-			this.setActive(true)
-		})
 	}
 
 	get selectedTab() {
@@ -194,6 +190,13 @@ export class TabSystem extends MonacoHolder {
 	}
 
 	async activate() {
+		console.log('WAIT', this.project.name, this.tabs.length)
+		await this.openedFiles.ready.fired
+		console.log('SETUP', this.project.name, this.tabs.length)
+		if (this.tabs.length > 0) this.setActive(true)
+
+		if (!this.selectedTab && this.tabs.length > 0) this.tabs[0].select()
+
 		await this.selectedTab?.onActivate()
 	}
 	deactivate() {
