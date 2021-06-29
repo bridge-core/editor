@@ -12,10 +12,10 @@ export function translate(vuetify: any, translationKey?: string) {
 	try {
 		translated = vuetify.lang.t(translationKey)
 	} catch {
-		return orginalKey
+		return orginalKey ?? 'Unknown'
 	}
 
-	if (translated === translationKey) return orginalKey
+	if (translated === translationKey) return orginalKey ?? 'Unknown'
 	return translated
 }
 
