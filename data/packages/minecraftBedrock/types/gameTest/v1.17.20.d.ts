@@ -414,7 +414,13 @@ declare interface Helper {
 	 * @param worldLocation
 	 * Absolute location in the world to convert to a relative location.
 	 */
-	relativeLocation(worldLocation: BlockLocation): BlockLocation
+	relativeBlockLocation(worldLocation: BlockLocation): BlockLocation
+	/**
+	 * From a Location, returns a new Location with coordinates relative to the current GameTest structure block. For example, the relative coordinates for the block above the structure block are (0, 1, 0). Rotation of the GameTest structure is also taken into account.
+	 * @param worldLocation
+	 * Absolute location in the world to convert to a relative location.
+	 */
+	relativeLocation(worldLocation: Location): Location
 
 	/**
 	 * Runs a specific callback after a specified delay of ticks.
@@ -459,6 +465,15 @@ declare interface Helper {
 	spawnWithoutBehaviors(
 		entityIdentifier: string,
 		position: BlockLocation
+	): Entity
+	/**
+	 * Spawns an entity at a location without any AI behaviors. This method is frequently used in conjunction with methods like .walkTo to create predictable mob actions.
+	 * @param entityIdentifier
+	 * @param position
+	 */
+	 spawnWithoutBehaviorsAtLocation(
+		entityIdentifier: string,
+		position: Location
 	): Entity
 
 	/**
@@ -583,6 +598,12 @@ declare interface Helper {
 	 * @param relativeLocation
 	 * Location relative to the GameTest command block.
 	 */
+	worldBlockLocation(relativeLocation: BlockLocation): BlockLocation
+	/**
+	 * From a Location with coordinates relative to the GameTest structure block, returns a new Location with coordinates relative to world. Rotation of the GameTest structure is also taken into account.
+	 * @param relativeLocation
+	 * Location relative to the GameTest command block.
+	 */
 	worldLocation(relativeLocation: BlockLocation): BlockLocation
 
 	/**
@@ -608,7 +629,18 @@ declare interface Helper {
     * @param location 
 	* Location of the block to retrieve.
     */
-	getBlock(location: BlockLocation): Block;
+	getBlock(location: BlockLocation): Block
+
+	/**
+	 * Rotates the given direction to the GameTest structure rotation.
+	 * @param direction 
+	 */
+	rotateDirection(direction: Direction): Direction
+
+	/**
+	 * Returns the direction the GameTest is facing based on its structure rotation.
+	 */
+	getTestDirection(): Direction
 }
 
 // -------------------------------------------------------------
