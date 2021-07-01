@@ -75,6 +75,36 @@
 									"items": {
 										"type": "string"
 									}
+								},
+								"animate": {
+									"type": "array",
+									"items": {
+										"anyOf": [
+											{
+												"type": "object",
+												"propertyNames": {
+													"$ref": "./dynamic/currentContext/animationReferenceEnum.json"
+												},
+												"patternProperties": {
+													".*": {
+														"$ref": "../molang/embeddedBeta.json"
+													}
+												}
+											},
+											{
+												"type": "string",
+												"$ref": "./dynamic/currentContext/animationReferenceEnum.json"
+											}
+										]
+									}
+								}
+							}
+						},
+						"animations": {
+							"type": "object",
+							"patternProperties": {
+								".*": {
+									"$ref": "../general/reference/clientAnimation.json"
 								}
 							}
 						},
