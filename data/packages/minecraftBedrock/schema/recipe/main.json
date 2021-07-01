@@ -51,15 +51,35 @@
 							"description": "Characters that represent a pattern to be defined by keys",
 							"maxItems": 3,
 							"items": {
-								"type": "string"
+								"type": "string",
+								"minLength": 3,
+								"maxLength": 3
 							}
 						},
 						"key": {
 							"type": "object",
 							"description": "Keys to map characters to item names to be used in 'pattern'",
+							"propertyNames": {
+								"$ref": "./dynamic/currentContext/recipeKey.json"
+							},
 							"patternProperties": {
 								".*": {
-									"type": "string"
+									"type": "object",
+									"properties": {
+										"item": {
+											"$ref": "../general/vanilla/identifiers.json#/definitions/item_identifiers"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"type": "integer"
+												},
+												{
+													"$ref": "../molang/embeddedBeta.json"
+												}
+											]
+										}
+									}
 								}
 							}
 						},
