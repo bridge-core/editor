@@ -83,6 +83,7 @@
 						},
 						"animations": {
 							"description": "Defines animations and animation controllers to be used in this entity.",
+							"type": "object",
 							"patternProperties": {
 								".*": {
 									"$ref": "../../general/reference/clientAnimation.json"
@@ -122,12 +123,23 @@
 									"description": "Runs animations and animation controllers that are defines under 'animations'",
 									"type": "array",
 									"items": {
-										"type": "object",
-										"patternProperties": {
-											".*": {
-												"type": "string"
+										"anyOf": [
+											{
+												"type": "object",
+												"propertyNames": {
+													"$ref": "../dynamic/currentContext/animationReferenceEnum.json"
+												},
+												"patternProperties": {
+													".*": {
+														"$ref": "../../molang/embeddedBeta.json"
+													}
+												}
+											},
+											{
+												"type": "string",
+												"$ref": "../dynamic/currentContext/animationReferenceEnum.json"
 											}
-										}
+										]
 									}
 								},
 								"variable": {

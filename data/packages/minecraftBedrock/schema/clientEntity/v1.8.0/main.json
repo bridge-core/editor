@@ -82,6 +82,7 @@
 						},
 						"animations": {
 							"description": "Defines animations and animation controllers to be used in this entity.",
+							"type": "object",
 							"patternProperties": {
 								".*": {
 									"type": "string"
