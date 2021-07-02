@@ -59,7 +59,9 @@ export function createCustomComponentPlugin({
 						return json5.parse(await file.text())
 					} catch (err) {
 						if (!options.isFileRequest) console.error(err)
-						return {}
+						return {
+							__hint__: `Failed to load original file: ${err}`,
+						}
 					}
 				}
 			},

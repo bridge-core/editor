@@ -5,7 +5,11 @@ import json5 from 'json5'
 
 export const MoLangPlugin: TCompilerPluginFactory<{
 	include: Record<string, string[]>
-}> = ({ fileSystem, options: { include = {} } = {} }) => {
+	isFileRequest?: boolean
+}> = ({
+	fileSystem,
+	options: { include = {}, isFileRequest = false } = {},
+}) => {
 	//Custom MoLang parser from https://github.com/bridge-core/MoLang
 	const customMoLang = new CustomMoLang({})
 	const isMoLangFile = (filePath: string | null) =>
@@ -37,10 +41,14 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 			} else if (loadMoLangFrom(filePath) && fileHandle) {
 				// Currently, MoLang in function files is not supported so we can just load files as JSON
 				const file = await fileHandle.getFile()
+
 				try {
 					return json5.parse(await file.text())
 				} catch (err) {
-					console.error(err)
+					if (!isFileRequest) console.error(err)
+					return {
+						__hint__: `Failed to load original file: ${err}`,
+					}
 				}
 			}
 		},
@@ -72,8 +80,9 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 
 						try {
 							return customMoLang.transform(molang)
-						} catch {
-							// TODO: This should not fail silently
+						} catch (err) {
+							if (!isFileRequest) console.error(err)
+
 							return molang
 						}
 					})
