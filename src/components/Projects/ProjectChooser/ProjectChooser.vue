@@ -65,7 +65,6 @@
 			<v-btn
 				color="primary"
 				:disabled="currentProject === selectedSidebar"
-				:loading="currentProject !== selectedSidebar"
 				@click="onSelectProject"
 			>
 				<v-icon>mdi-check</v-icon>
