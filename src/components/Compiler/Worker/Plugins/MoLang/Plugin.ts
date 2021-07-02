@@ -47,7 +47,7 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 				} catch (err) {
 					if (!isFileRequest) console.error(err)
 					return {
-						__hint__: `Failed to load original file: ${err}`,
+						__error__: `Failed to load original file: ${err}`,
 					}
 				}
 			}

@@ -60,7 +60,7 @@ export function createCustomComponentPlugin({
 					} catch (err) {
 						if (!options.isFileRequest) console.error(err)
 						return {
-							__hint__: `Failed to load original file: ${err}`,
+							__error__: `Failed to load original file: ${err}`,
 						}
 					}
 				}
