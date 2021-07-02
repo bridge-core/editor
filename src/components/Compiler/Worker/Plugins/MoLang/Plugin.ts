@@ -38,14 +38,19 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 				// Load MoLang files as text
 				const file = await fileHandle.getFile()
 				return await file.text()
-			} else if (loadMoLangFrom(filePath) && fileHandle) {
-				// Currently, MoLang in function files is not supported so we can just load files as JSON
+			} else if (
+				loadMoLangFrom(filePath) &&
+				filePath.endsWith('.json') &&
+				fileHandle
+			) {
+				// Currently, MoLang in function files is not supported so we can only load JSON files
 				const file = await fileHandle.getFile()
 
 				try {
 					return json5.parse(await file.text())
 				} catch (err) {
-					if (!isFileRequest) console.error(err)
+					if (!isFileRequest)
+						console.error(`Error within file "${filePath}": ${err}`)
 					return {
 						__error__: `Failed to load original file: ${err}`,
 					}
@@ -81,7 +86,10 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 						try {
 							return customMoLang.transform(molang)
 						} catch (err) {
-							if (!isFileRequest) console.error(err)
+							if (!isFileRequest)
+								console.error(
+									`Error within file "${filePath}"; script "${molang}": ${err}`
+								)
 
 							return molang
 						}

@@ -58,7 +58,10 @@ export function createCustomComponentPlugin({
 					try {
 						return json5.parse(await file.text())
 					} catch (err) {
-						if (!options.isFileRequest) console.error(err)
+						if (!options.isFileRequest)
+							console.error(
+								`Error within file "${filePath}": ${err}`
+							)
 						return {
 							__error__: `Failed to load original file: ${err}`,
 						}
