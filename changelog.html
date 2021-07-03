@@ -1,29 +1,42 @@
 <h2>Features:</h2>
 <ul>
-<li><strong>Pack Explorer:</strong>
-<ul>
-<li>The Pack Explorer can once again show persistently next to your tab system</li>
-</ul>
-</li>
-<li>Added support for custom command presets
-<ul>
-<li>Support for custom commands isn't quite there yet</li>
-</ul>
-</li>
-<li>Update editor data to latest Minecraft beta</li>
-<li>Added support for persistent sidebars</li>
-<li>Added new &quot;Socials&quot; window</li>
-<li>Project description field now expands vertically</li>
+<li>Added a new setting to change the sidebar size</li>
+<li>Added a new dialogue that informs users about files with invalid JSON</li>
+<li>Added a new API that allows extensions to open files</li>
+<li>Updated bridge.'s data to the latest Minecraft beta</li>
+<li>Significantly improved recipe schemas</li>
+<li>bridge. can now automatically discover deleted &amp; renamed files and remove them from the compiler output</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li><strong>Tree Editor:</strong> Added right-click action to delete node</li>
-<li>Changed internal script execution architecture</li>
-<li>Update block states schema</li>
+<li>Added support for &quot;in_lava&quot; entity filter</li>
+<li>Improved &quot;Restart Dev Server&quot; action</li>
+<li>Removed dead code</li>
+<li>Increased tree editor font size to match the font size of bridge.'s text editor</li>
+<li>Unified translation methods</li>
+<li>Support for &quot;scripts&quot;/&quot;animate&quot; &amp; &quot;animations&quot; within attachable files</li>
+<li>Better auto-completions  for &quot;scripts&quot;/&quot;animate&quot; &amp; &quot;animations&quot; within client entity files</li>
+<li>Updated compiler error messages</li>
+<li>Improved compiler path rewrite unit tests</li>
+<li>Added 1.17.0 vanilla identifiers</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed sidebar navigation height</li>
-<li>Fixed error upon setting plugin file types</li>
-<li>Fixed error upon restoring tabs</li>
+<li>Fixed sidebar right option with new persistent sidebar</li>
+<li>Fixed error upon creating presets</li>
+<li>Fixed selected sidebar icon color in light mode</li>
+<li>Fixed error inside of custom component plugin</li>
+<li>Fixed ore &amp; armor presets (Thanks to @KikiCreations)</li>
+<li>Fixed Find &amp; Replace tab</li>
+<li>Fixed deleted files not being removed from &quot;Recent Files&quot; list correctly</li>
+<li>Fixed tab not being selected correctly upon restoring a session</li>
+<li>Fixed typos within component names</li>
+<li>Fixed tree editor adding multiple objects upon searching through completion item list</li>
+<li>Fixed middle click to close tabs</li>
+<li>Fixed &quot;preview.renderContainer was not defined&quot; error</li>
+<li>Fixed project selection</li>
+<li>Fixed error upon parsing MoLang with an array expression</li>
+<li>Fixed files not being discovered by bridge. if they have an invalid cache script</li>
+<li>Fixed cache scripts not executing correctly</li>
+<li>Fixed compiler not updating saved files correctly</li>
 </ul>
