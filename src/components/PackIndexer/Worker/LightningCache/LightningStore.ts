@@ -61,6 +61,8 @@ export class LightningStore {
 	}
 	async saveStore() {
 		let saveStore = ''
+		const deletedFiles: string[] = []
+
 		for (const fileType in this.store) {
 			saveStore += `#${fileType}\n`
 
@@ -68,6 +70,7 @@ export class LightningStore {
 				const entry = this.store[fileType][filePath]
 				// This file no longer seems to exist, omit it from store output
 				if (!entry.visited) {
+					deletedFiles.push(filePath)
 					delete this.store[fileType][filePath]
 					continue
 				}
@@ -80,6 +83,8 @@ export class LightningStore {
 
 		await this.fs.mkdir('.bridge')
 		await this.fs.writeFile('.bridge/.lightningCache', saveStore)
+
+		return deletedFiles
 	}
 
 	add(

@@ -82,12 +82,13 @@ export class LightningCache {
 			}
 		)
 
+		let deletedFiles: string[] = []
 		if (
 			anyFileChanged ||
 			this.lightningStore.visitedFiles !== this.lightningStore.totalFiles
 		)
-			await this.lightningStore.saveStore()
-		return [filePaths, changedFiles]
+			deletedFiles = await this.lightningStore.saveStore()
+		return [filePaths, changedFiles, deletedFiles]
 	}
 
 	async unlink(path: string) {

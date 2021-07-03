@@ -45,8 +45,12 @@ export class Compiler {
 		return [...(this.files.get(filePath)?.aliases ?? [])]
 	}
 
-	async unlink(path: string, handle?: FileSystemHandle) {
-		if (!handle) {
+	async unlink(
+		path: string,
+		handle?: FileSystemHandle,
+		requireHandle = true
+	) {
+		if (!handle && requireHandle) {
 			try {
 				handle = await this.fileSystem.getFileHandle(path)
 			} catch {
@@ -56,17 +60,17 @@ export class Compiler {
 			}
 		}
 
-		if (!handle) return
-		else if (handle.kind === 'file') {
+		if (!handle && requireHandle) return
+		else if (!requireHandle || handle!.kind === 'file') {
 			const saveFilePath: string | undefined =
 				(await this.runAllHooks('transformPath', 0, path)) ?? undefined
 
 			if (saveFilePath) this.outputFileSystem.unlink(saveFilePath)
 
 			this.files.delete(path)
-		} else if (handle.kind === 'directory') {
+		} else if (handle!.kind === 'directory') {
 			await iterateDir(
-				handle,
+				<FileSystemDirectoryHandle>handle,
 				(fileHandle, filePath) => this.unlink(filePath, fileHandle),
 				undefined,
 				path

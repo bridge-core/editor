@@ -83,12 +83,12 @@ export class Compiler extends WorkerManager<
 		console.time('[TASK] Compiling project (total)')
 
 		// Start service
-		let files = (await app.project?.packIndexer.fired) ?? []
+		let [files, deletedFiles] = (await app.project?.packIndexer.fired) ?? []
 		if (mode === 'build' || restartDevServer)
 			files =
 				(await this.project.packIndexer.service!.getAllFiles()) ?? []
 
-		await this._service.start(files)
+		await this._service.start([files, deletedFiles])
 		this._service.disposeListeners()
 		this.ready.dispatch()
 		console.timeEnd('[TASK] Compiling project (total)')

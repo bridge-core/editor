@@ -11,7 +11,7 @@ export class PackIndexer extends WorkerManager<
 	PackIndexerService,
 	IPackIndexerOptions,
 	boolean,
-	string[]
+	readonly [string[], string[]]
 > {
 	protected ready = new Signal<void>()
 	constructor(
@@ -61,11 +61,11 @@ export class PackIndexer extends WorkerManager<
 		)
 
 		// Start service
-		const changedFiles = await this.service.start()
+		const [changedFiles, deletedFiles] = await this.service.start()
 		await this.service.disposeListeners()
 		this.ready.dispatch()
 		console.timeEnd('[TASK] Indexing Packs (Total)')
-		return changedFiles
+		return <const>[changedFiles, deletedFiles]
 	}
 
 	async updateFile(filePath: string, fileContent?: string) {

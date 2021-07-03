@@ -26,7 +26,7 @@ export interface IBuildConfig {
 export type TPluginDef = string | [string, any]
 
 const compilers = new WeakMap<CompilerService, Compiler>()
-export class CompilerService extends TaskService<void, string[]> {
+export class CompilerService extends TaskService<void, [string[], string[]]> {
 	public fileSystem: FileSystem
 	protected buildConfig!: IBuildConfig
 	protected plugins!: Map<string, Partial<TCompilerPlugin>>
@@ -84,7 +84,7 @@ export class CompilerService extends TaskService<void, string[]> {
 		return this._outputFileSystem ?? this.fileSystem
 	}
 
-	async onStart(updatedFiles: string[]) {
+	async onStart([updatedFiles, deletedFiles]: [string[], string[]]) {
 		const globalFs = new FileSystem(this.options.baseDirectory)
 		await FileType.setup(globalFs)
 
@@ -99,6 +99,13 @@ export class CompilerService extends TaskService<void, string[]> {
 		await this.loadPlugins(this.options.plugins)
 
 		await this.compiler.runWithFiles(updatedFiles)
+		console.log(deletedFiles)
+		await Promise.all(
+			deletedFiles.map((deletedFile) =>
+				this.compiler.unlink(deletedFile, undefined, false)
+			)
+		)
+		await this.compiler.processFileMap()
 	}
 
 	async updateFiles(filePaths: string[]) {

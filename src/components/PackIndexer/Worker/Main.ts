@@ -21,7 +21,9 @@ export interface IPackIndexerOptions {
 	noFullLightningCacheRefresh: boolean
 }
 
-export class PackIndexerService extends TaskService<string[]> {
+export class PackIndexerService extends TaskService<
+	readonly [string[], string[]]
+> {
 	protected lightningStore: LightningStore
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
@@ -49,14 +51,18 @@ export class PackIndexerService extends TaskService<string[]> {
 		console.timeEnd('[WORKER] SETUP')
 
 		console.time('[WORKER] LightningCache')
-		const [filePaths, changedFiles] = await this.lightningCache.start()
+		const [
+			filePaths,
+			changedFiles,
+			deletedFiles,
+		] = await this.lightningCache.start()
 		console.timeEnd('[WORKER] LightningCache')
 
 		console.time('[WORKER] PackSpider')
 		await this.packSpider.setup(filePaths)
 		console.timeEnd('[WORKER] PackSpider')
 
-		return changedFiles
+		return <const>[changedFiles, deletedFiles]
 	}
 
 	async updateFile(filePath: string, fileContent?: string) {
