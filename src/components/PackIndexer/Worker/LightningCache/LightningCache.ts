@@ -183,24 +183,29 @@ export class LightningCache {
 		fileContent?: string
 	) {
 		const instructions = await FileType.getLightningCache(filePath)
+		if (fileType === 'function') console.log(filePath, instructions)
 
 		// JavaScript cache API
 		if (typeof instructions === 'string') {
 			const cacheFunction = runScript(instructions)
-			if (typeof cacheFunction !== 'function') return
 
-			if (fileContent === undefined) fileContent = await file.text()
-			const textData = cacheFunction(fileContent)
+			// Only proceed if the script returned a function
+			if (typeof cacheFunction === 'function') {
+				if (fileContent === undefined) fileContent = await file.text()
+				const textData = cacheFunction(fileContent)
 
-			this.lightningStore.add(
-				filePath,
-				{
-					lastModified: file.lastModified,
-					data:
-						Object.keys(textData).length > 0 ? textData : undefined,
-				},
-				fileType
-			)
+				this.lightningStore.add(
+					filePath,
+					{
+						lastModified: file.lastModified,
+						data:
+							Object.keys(textData).length > 0
+								? textData
+								: undefined,
+					},
+					fileType
+				)
+			}
 		}
 
 		this.lightningStore.add(
