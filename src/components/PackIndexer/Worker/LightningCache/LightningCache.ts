@@ -183,7 +183,6 @@ export class LightningCache {
 		fileContent?: string
 	) {
 		const instructions = await FileType.getLightningCache(filePath)
-		if (fileType === 'function') console.log(filePath, instructions)
 
 		// JavaScript cache API
 		if (typeof instructions === 'string') {
