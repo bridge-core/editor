@@ -156,7 +156,7 @@ export class TextTab extends FileTab {
 				},
 			])
 
-			await new Promise<void>((resolve) => {
+			const editPromise = new Promise<void>((resolve) => {
 				const disposable = this.editorModel?.onDidChangeContent(
 					async () => {
 						disposable?.dispose()
@@ -172,6 +172,7 @@ export class TextTab extends FileTab {
 
 			const actionPromise = action.run()
 
+			await editPromise
 			await actionPromise
 		} else {
 			await this.saveFile(app)
