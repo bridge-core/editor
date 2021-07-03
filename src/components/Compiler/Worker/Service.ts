@@ -99,7 +99,7 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 		await this.loadPlugins(this.options.plugins)
 
 		await this.compiler.runWithFiles(updatedFiles)
-		console.log(deletedFiles)
+
 		await Promise.all(
 			deletedFiles.map((deletedFile) =>
 				this.compiler.unlink(deletedFile, undefined, false)
