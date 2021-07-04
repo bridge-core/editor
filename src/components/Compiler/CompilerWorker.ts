@@ -63,6 +63,9 @@ export class Compiler extends WorkerManager<
 				isDevServerRestart: restartDevServer,
 				plugins: this.parent.getCompilerPlugins(),
 				pluginFileTypes: FileType.getPluginFileTypes(),
+				allFiles: await app.project.packIndexer.service.getAllFiles(
+					false
+				),
 			})
 		} else {
 			await this.service.updateMode(mode, false, restartDevServer)

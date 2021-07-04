@@ -1,11 +1,17 @@
 import json5 from 'json5'
 import { TCompilerPluginFactory } from '../../TCompilerPluginFactory'
+import { Command } from './Command'
+import { transformCommands } from './transformCommands'
 import { setObjectAt } from '/@/utils/walkObject'
 
 export const CustomCommandsPlugin: TCompilerPluginFactory<{
 	include: Record<string, string[]>
 	isFileRequest: boolean
-}> = ({ fileSystem, options: { include = {}, isFileRequest } = {} }) => {
+	mode: 'dev' | 'build'
+}> = ({
+	fileSystem,
+	options: { include = {}, isFileRequest, mode = 'dev' } = {},
+}) => {
 	const isCommand = (filePath: string | null) =>
 		filePath?.startsWith('BP/commands/')
 	const isMcfunction = (filePath: string | null) =>
@@ -16,6 +22,10 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 		Object.entries(include).find(([startPath]) =>
 			filePath.startsWith(startPath)
 		)?.[1]
+	const withSlashPrefix = (filePath: string) =>
+		['BP/animations/', 'BP/animation_controllers/'].some((typePath) =>
+			filePath.startsWith(typePath)
+		)
 
 	return {
 		async buildStart() {
@@ -49,13 +59,24 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 				}
 			}
 		},
+		async load(filePath, fileContent) {
+			if (isCommand(filePath)) {
+				const command = new Command(fileContent, mode)
+
+				await command.load()
+				return command
+			}
+		},
+		async registerAliases(filePath, fileContent) {
+			if (isCommand(filePath)) return [`command#${fileContent.name}`]
+		},
 		async require(filePath) {
 			if (loadCommandsFor(filePath) || isMcfunction(filePath)) {
 				// Register custom commands as JSON/mcfunction file dependencies
-				return ['BP/commands/**/*.js']
+				return ['BP/commands/**/*.js', 'BP/commands/*.js']
 			}
 		},
-		async transform(filePath, fileContent) {
+		async transform(filePath, fileContent, dependencies = {}) {
 			const includePaths = loadCommandsFor(filePath)
 
 			if (includePaths && includePaths.length > 0) {
@@ -67,14 +88,21 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 						fileContent,
 						(commands) => {
 							if (!commands) return commands
+							const hasSlashPrefix = withSlashPrefix(filePath)
 
 							commands = Array.isArray(commands)
 								? commands
 								: [commands]
 
-							// TODO: Transform individual commands
-
-							return commands
+							return transformCommands(
+								commands.map((command) =>
+									hasSlashPrefix ? command : `/${command}`
+								),
+								dependencies,
+								false
+							).map((command) =>
+								hasSlashPrefix ? command : command.slice(1)
+							)
 						}
 					)
 				)
@@ -87,10 +115,10 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 					)
 					.map((command) => `/${command}`)
 
-				// TODO: Transform individual commands
-
-				return commands
-					.map((command) => command.trim().slice(1))
+				return transformCommands(commands, dependencies, true)
+					.map((command) =>
+						command.startsWith('/') ? command.slice(1) : command
+					)
 					.join('\n')
 			}
 		},
