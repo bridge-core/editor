@@ -18,6 +18,7 @@ export class CreateCompilerConfig extends CreateFile {
 					'customEntityComponents',
 					'customItemComponents',
 					'customBlockComponents',
+					'customCommands',
 					'moLang',
 					['simpleRewrite', { packName: createOptions.name }],
 				],
