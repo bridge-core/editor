@@ -1,3 +1,4 @@
+import { v1Compat } from './v1Compat'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { tokenizeCommand } from '/@/components/Languages/Mcfunction/tokenize'
 
@@ -10,7 +11,8 @@ export class Command {
 
 	constructor(
 		protected commandSrc: string,
-		protected mode: 'dev' | 'build'
+		protected mode: 'dev' | 'build',
+		protected v1Compat: boolean
 	) {}
 
 	get name() {
@@ -25,6 +27,7 @@ export class Command {
 				env: {
 					module: module,
 					defineCommand: (x: any) => x,
+					Bridge: this.v1Compat ? v1Compat(module) : undefined,
 				},
 			})
 		} catch (err) {

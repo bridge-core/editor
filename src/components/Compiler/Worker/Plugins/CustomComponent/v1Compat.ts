@@ -1,3 +1,6 @@
+/**
+ * A module that emulates bridge. v1's custom component environment
+ */
 export const v1Compat = (module: any, fileType: string) => ({
 	register: (componentClass: any) => {
 		if ((componentClass.type ?? 'entity') !== fileType) return
