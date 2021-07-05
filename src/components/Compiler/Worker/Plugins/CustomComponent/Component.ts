@@ -43,7 +43,7 @@ export class Component {
 			console.error(err)
 		}
 
-		if (typeof module.exports !== 'function') return
+		if (typeof module.exports !== 'function') return false
 
 		const name = (name: string) => (this._name = name)
 		let schema: Function = (schema: any) => (this.schema = schema)
@@ -66,6 +66,7 @@ export class Component {
 			schema,
 			template,
 		})
+		return true
 	}
 	reset() {
 		// Clear previous animation (controllers)

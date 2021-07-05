@@ -8,14 +8,14 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 	include: Record<string, string[]>
 	isFileRequest: boolean
 	mode: 'dev' | 'build'
-	v1Compat?: boolean
+	v1CompatMode?: boolean
 }> = ({
 	fileSystem,
 	options: {
 		include = {},
 		isFileRequest,
 		mode = 'dev',
-		v1Compat = false,
+		v1CompatMode = false,
 	} = {},
 }) => {
 	const isCommand = (filePath: string | null) =>
@@ -67,7 +67,7 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 		},
 		async load(filePath, fileContent) {
 			if (isCommand(filePath)) {
-				const command = new Command(fileContent, mode, v1Compat)
+				const command = new Command(fileContent, mode, v1CompatMode)
 
 				await command.load()
 				return command
