@@ -15,7 +15,11 @@ export function createCustomComponentPlugin({
 	folder,
 	fileType,
 	getComponentObjects,
-}: IOpts): TCompilerPluginFactory {
+}: IOpts): TCompilerPluginFactory<{
+	isFileRequest: boolean
+	mode: 'dev' | 'build'
+	v1Compat?: boolean
+}> {
 	const usedComponents = new Map<string, [string, string][]>()
 	let createAnimFiles: Record<string, any> = {}
 
@@ -73,7 +77,8 @@ export function createCustomComponentPlugin({
 					const component = new Component(
 						fileType,
 						fileContent,
-						options.mode
+						options.mode,
+						!!options.v1Compat
 					)
 
 					await component.load()
