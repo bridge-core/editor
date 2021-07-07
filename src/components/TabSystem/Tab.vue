@@ -9,9 +9,10 @@
 			inactive: !isActive,
 		}"
 		ref="tabElement"
-		@mousedown="hoverClose ? null : tab.select()"
-		@click.middle.prevent="tab.close()"
-		@click.right="tab.onContextMenu($event)"
+		@mousedown.left.prevent="hoverClose ? null : tab.select()"
+		@mousedown.middle.prevent
+		@click.middle="tab.close()"
+		@click.right.prevent="tab.onContextMenu($event)"
 	>
 		<v-icon class="mr-1" :color="tab.iconColor" small>
 			{{ tab.icon }}
