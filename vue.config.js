@@ -5,7 +5,7 @@ const { NormalModuleReplacementPlugin } = require('webpack')
 
 const isNightlyBuild = process.argv[3] === '--nightly'
 const publicPath = isNightlyBuild
-	? '/nightly/'
+	? '/'
 	: process.env.NODE_ENV === 'production'
 	? '/editor/'
 	: '/'
