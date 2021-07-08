@@ -1,5 +1,6 @@
 import { compare } from 'compare-versions'
 import { MoLang } from 'molang'
+import { RefSchema } from '../../JSONSchema/Schema/Ref'
 import { strMatchArray } from './strMatch'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
@@ -175,11 +176,15 @@ export class CommandData extends Signal<void> {
 		switch (commandArgument.type) {
 			case 'string': {
 				if (!commandArgument.additionalData?.values) return 'full'
-				else
-					return strMatchArray(
-						testStr,
-						commandArgument.additionalData.values
-					)
+
+				const values =
+					commandArgument.additionalData?.values ??
+					this.resolveDynamicReference(
+						commandArgument.additionalData.schemaReference
+					) ??
+					[]
+
+				return strMatchArray(testStr, values)
 			}
 
 			case 'number':
@@ -220,7 +225,13 @@ export class CommandData extends Signal<void> {
 		if (!commandArgument.type) {
 			// If additionalData is defined, return its values
 			if (commandArgument.additionalData)
-				return commandArgument.additionalData?.values ?? []
+				return (
+					commandArgument.additionalData?.values ??
+					this.resolveDynamicReference(
+						commandArgument.additionalData.schemaReference
+					) ??
+					[]
+				)
 
 			return []
 		}
@@ -234,8 +245,17 @@ export class CommandData extends Signal<void> {
 				return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 			case 'coordinates':
 				return ['~ ~ ~', '^ ^ ^']
-			case 'string':
-				return commandArgument.additionalData?.values ?? []
+			case 'string': {
+				if (commandArgument.additionalData?.values)
+					return commandArgument.additionalData.values
+				else if (commandArgument.additionalData?.schemaReference)
+					return <string[]>(
+						this.resolveDynamicReference(
+							commandArgument.additionalData.schemaReference
+						).map(({ value }) => value)
+					)
+				else return []
+			}
 			case 'jsonData':
 				return ['{}']
 			case 'blockState':
@@ -243,5 +263,15 @@ export class CommandData extends Signal<void> {
 		}
 
 		return []
+	}
+
+	/**
+	 * Dynamic references hook into our JSON schema engine to pull in dynamic data such as entity events
+	 */
+	protected resolveDynamicReference(reference: string) {
+		const refSchema = new RefSchema(reference, '$ref', reference)
+
+		// Return completions items from refSchema
+		return refSchema.getCompletionItems({})
 	}
 }

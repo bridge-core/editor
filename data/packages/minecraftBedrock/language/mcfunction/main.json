@@ -2273,7 +2273,10 @@
 						{
 							"argumentName": "entityType",
 							"description": "Specifies the entity to be summoned.",
-							"type": "string" // TODO ENTITY ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/entity_identifiers"
+							}
 						},
 						{
 							"argumentName": "spawnPos",
