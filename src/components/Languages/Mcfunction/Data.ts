@@ -1,5 +1,6 @@
 import { compare } from 'compare-versions'
 import { MoLang } from 'molang'
+import { generateCommandSchemas } from '../../Compiler/Worker/Plugins/CustomCommands/generateSchemas'
 import { RefSchema } from '../../JSONSchema/Schema/Ref'
 import { strMatchArray } from './strMatch'
 import { App } from '/@/App'
@@ -13,12 +14,6 @@ export interface ICommand {
 	description: string
 	arguments: ICommandArgument[]
 }
-
-/**
- * RegExp to validate whether a string is a valid command coordinate
- */
-const commandCoordinateRegExp = /^((([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}|\^([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}|(\~([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}$/
-
 /**
  * Type holding all possible argument types
  */
@@ -43,11 +38,15 @@ export interface ICommandArgument {
 }
 
 /**
+ * RegExp to validate whether a string is a valid command coordinate
+ */
+const commandCoordinateRegExp = /^((([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}|\^([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}|(\~([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}$/
+
+/**
  * A class that stores data on all Minecraft commands
  */
 export class CommandData extends Signal<void> {
 	protected _data?: any
-	protected _schema?: Record<string, any>
 
 	protected async getSchema(): Promise<ICommand[]> {
 		const projectTargetVersion = await App.getApp().then(
@@ -68,7 +67,10 @@ export class CommandData extends Signal<void> {
 				)
 		)
 
-		return validEntries.map((entry: any) => entry.commands).flat()
+		return validEntries
+			.map((entry: any) => entry.commands)
+			.flat()
+			.concat(await generateCommandSchemas())
 	}
 
 	async loadCommandData(packageName: string) {

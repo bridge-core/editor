@@ -90,4 +90,21 @@ export class Command {
 				: `/${command}`
 		)
 	}
+
+	getSchema() {
+		if (!this.schema) return []
+		else if (Array.isArray(this.schema)) return this.schema
+
+		// If commandName is not set on the schema, set it to the current name of the command.
+		if (!this.schema.commandName) this.schema.commandName = this.name
+
+		return [this.schema]
+	}
+
+	/**
+	 * Returns the command src as a string.
+	 */
+	toString() {
+		return this.commandSrc
+	}
 }

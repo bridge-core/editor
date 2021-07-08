@@ -129,8 +129,15 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 			}
 		},
 		finalizeBuild(filePath, fileContent) {
+			// Necessary to make auto-completions work for TypeScript components
+			if (isCommand(filePath)) {
+				return (<Command>fileContent).toString()
+			}
 			// Make sure JSON files are transformed back into a format that we can write to disk
-			if (loadCommandsFor(filePath) && typeof fileContent !== 'string')
+			else if (
+				loadCommandsFor(filePath) &&
+				typeof fileContent !== 'string'
+			)
 				return JSON.stringify(fileContent, null, '\t')
 		},
 	}
