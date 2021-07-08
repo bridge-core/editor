@@ -42,7 +42,6 @@ export class FileSystemSetup {
 			const globalState = FileSystemSetup.state
 			globalState.showInitialSetupDialog.value = true
 			fileHandle = await globalState.receiveDirectoryHandle.fired
-			console.log(await fileHandle.queryPermission({ mode: 'readwrite' }))
 
 			await this.verifyPermissions(fileHandle)
 			await set('bridgeBaseDir', fileHandle)
