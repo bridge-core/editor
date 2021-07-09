@@ -1,6 +1,7 @@
 import { v1Compat } from './v1Compat'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { tokenizeCommand } from '/@/components/Languages/Mcfunction/tokenize'
+import { castType } from '/@/utils/castType'
 
 export type TTemplate = (commandArgs: unknown[], opts: any) => string | string[]
 
@@ -68,7 +69,10 @@ export class Command {
 			({ word }) => word
 		)
 
-		const commands = this.template?.(args, {})
+		const commands = this.template?.(
+			args.map((arg) => castType(arg)),
+			{}
+		)
 		let processedCommands: string[] = []
 		if (typeof commands === 'string')
 			processedCommands = commands.split('\n')
