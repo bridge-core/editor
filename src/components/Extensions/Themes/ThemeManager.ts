@@ -67,6 +67,10 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		this.applyTheme(this.themeMap.get('bridge.default.dark'))
 	}
 
+	getCurrentMode() {
+		return this.mode
+	}
+
 	protected applyTheme(theme?: Theme) {
 		theme?.apply(this, this.vuetify)
 	}

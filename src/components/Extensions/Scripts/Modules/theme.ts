@@ -12,6 +12,9 @@ export const ThemeModule = async ({ disposables }: IModuleConfig) => {
 			disposables.push(disposable)
 			return disposable
 		},
+		getCurrentMode() {
+			return app.themeManager.getCurrentMode()
+		},
 		getColor(name: TColorName) {
 			return themeManager.getColor(name)
 		},
