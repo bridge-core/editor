@@ -15,5 +15,8 @@ export const ThemeModule = async ({ disposables }: IModuleConfig) => {
 		getColor(name: TColorName) {
 			return themeManager.getColor(name)
 		},
+		getHighlighterInfo(name: string) {
+			return themeManager.getHighlighterInfo(name)
+		},
 	}
 }
