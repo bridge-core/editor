@@ -2149,7 +2149,10 @@
 						},
 						{
 							"argumentName": "name",
-							"type": "string" // TODO STRUCTURE NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/structure/dynamic/structureIdentifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "from",
@@ -2183,7 +2186,10 @@
 						},
 						{
 							"argumentName": "name",
-							"type": "string" // TODO STRUCTURE NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/structure/dynamic/structureIdentifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "from",
@@ -2227,7 +2233,10 @@
 						},
 						{
 							"argumentName": "name",
-							"type": "string" // TODO STRUCTURE NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/structure/dynamic/structureIdentifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "to",
@@ -2289,7 +2298,10 @@
 						},
 						{
 							"argumentName": "name",
-							"type": "string" // TODO STRUCTURE NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/structure/dynamic/structureIdentifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "to",
@@ -2364,7 +2376,10 @@
 						},
 						{
 							"argumentName": "name",
-							"type": "string" // TODO STRUCTURE NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/structure/dynamic/structureIdentifierEnum.json"
+							}
 						}
 					]
 				},
