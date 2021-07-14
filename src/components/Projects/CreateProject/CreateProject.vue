@@ -77,7 +77,7 @@
 							dense
 							:label="t('windows.createProject.rpAsBpDependency')"
 							:value="
-								createOptions.rpAsBpDependency &&
+								createOptions.rpAsBpDependency ||
 								createOptions.packs.includes('BP')
 							"
 							@click.stop.native="
