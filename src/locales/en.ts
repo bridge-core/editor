@@ -577,7 +577,7 @@ export default {
 		failedClientEntityLoad: 'Failed to load connected client entity',
 		chooseGeometry: 'Choose Geometry',
 		noGeometry:
-			'No valid geometry found inside of this file. Make sure that your JSON is valid and that the file structure is correct.',
+			'No valid geometry found inside of this file. Make sure that your JSON is valid, that the file structure is correct and that a geometry with the provided identifier exists.',
 	},
 	initialSetup: {
 		welcome: 'Welcome to bridge. v2!',
