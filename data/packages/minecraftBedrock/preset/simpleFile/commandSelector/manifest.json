@@ -3,7 +3,7 @@
 	"icon": "mdi-at",
 	"description": "Creates a blank custom command selector.",
 	"category": "fileType.simpleFile",
-	"packTypes": ["behaviorPack"],
+	"packTypes": ["behaviorPack", "disabledPreset"],
 	"additionalModels": {
 		"PRESET_PATH": "BP/commands/selectors/"
 	},

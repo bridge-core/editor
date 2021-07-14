@@ -129,24 +129,6 @@ export class App {
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
 	}
 
-	async switchProject(project: Project) {
-		this.themeManager.updateTheme()
-
-		// Set language
-		if (typeof settingsState?.general?.locale === 'string')
-			this.locales.selectLanguage(settingsState?.general?.locale)
-		else {
-			// Set language based off of browser language
-			for (const [lang] of this.locales.getLanguages()) {
-				if (navigator.language.includes(lang)) {
-					this.locales.selectLanguage(lang)
-				}
-			}
-		}
-
-		App.eventSystem.dispatch('projectChanged', undefined)
-	}
-
 	/**
 	 * Starts the app
 	 */
@@ -231,6 +213,18 @@ export class App {
 	 */
 	async startUp() {
 		console.time('[APP] startUp()')
+
+		// Set language
+		if (typeof settingsState?.general?.locale === 'string')
+			this.locales.selectLanguage(settingsState?.general?.locale)
+		else {
+			// Set language based off of browser language
+			for (const [lang] of this.locales.getLanguages()) {
+				if (navigator.language.includes(lang)) {
+					this.locales.selectLanguage(lang)
+				}
+			}
+		}
 
 		await Promise.all([
 			// Create default folders

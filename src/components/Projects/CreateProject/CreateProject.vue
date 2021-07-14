@@ -72,12 +72,13 @@
 						v-else-if="packType.packPath === 'RP'"
 						#default="{ selected }"
 					>
+						<!-- I am not sure why the rpAsBpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
 						<v-switch
 							inset
 							dense
 							:label="t('windows.createProject.rpAsBpDependency')"
 							:value="
-								createOptions.rpAsBpDependency &&
+								createOptions.rpAsBpDependency ||
 								createOptions.packs.includes('BP')
 							"
 							@click.stop.native="

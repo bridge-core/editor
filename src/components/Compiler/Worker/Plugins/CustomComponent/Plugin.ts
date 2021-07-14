@@ -15,12 +15,13 @@ export function createCustomComponentPlugin({
 	folder,
 	fileType,
 	getComponentObjects,
-}: IOpts): TCompilerPluginFactory {
+}: IOpts): TCompilerPluginFactory<{
+	isFileRequest: boolean
+	mode: 'dev' | 'build'
+	v1CompatMode?: boolean
+}> {
 	const usedComponents = new Map<string, [string, string][]>()
 	let createAnimFiles: Record<string, any> = {}
-
-	const isComponent = (filePath: string | null) =>
-		filePath?.startsWith(`BP/components/${fileType}/`)
 
 	const isPlayerFile = (
 		filePath: string | null,
@@ -31,6 +32,11 @@ export function createCustomComponentPlugin({
 		getAliases(filePath).includes('minecraft:player')
 
 	return ({ compileFiles, getAliases, options }) => {
+		const isComponent = (filePath: string | null) =>
+			options.v1CompatMode
+				? filePath?.startsWith(`BP/components/`)
+				: filePath?.startsWith(`BP/components/${fileType}/`)
+
 		return {
 			buildStart() {
 				usedComponents.clear()
@@ -69,15 +75,16 @@ export function createCustomComponentPlugin({
 				}
 			},
 			async load(filePath, fileContent) {
-				if (isComponent(filePath)) {
+				if (isComponent(filePath) && typeof fileContent === 'string') {
 					const component = new Component(
 						fileType,
 						fileContent,
-						options.mode
+						options.mode,
+						!!options.v1CompatMode
 					)
 
-					await component.load()
-					return component
+					const loadedCorrectly = await component.load()
+					return loadedCorrectly ? component : fileContent
 				}
 			},
 			async registerAliases(filePath, fileContent) {

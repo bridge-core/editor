@@ -37,6 +37,7 @@
 											"type": {
 												"type": "string",
 												"enum": [
+													"command",
 													"string",
 													"number",
 													"boolean",
@@ -58,6 +59,9 @@
 														"items": {
 															"type": "string"
 														}
+													},
+													"schemaReference": {
+														"type": "string"
 													}
 												}
 											}

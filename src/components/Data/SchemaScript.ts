@@ -82,60 +82,64 @@ export class SchemaScript {
 			else schemaScript = json5.parse(fileText)
 
 			let scriptResult: any = await this.runScript(schemaScript.script)
-			if (file.name.endsWith('.js')) {
-				if (scriptResult.keep) return
+			if (scriptResult) {
+				if (file.name.endsWith('.js')) {
+					if (scriptResult.keep) return
 
-				schemaScript = {
-					...schemaScript,
-					type: scriptResult.type,
-					generateFile: scriptResult.generateFile,
+					schemaScript = {
+						...schemaScript,
+						type: scriptResult.type,
+						generateFile: scriptResult.generateFile,
+					}
+					scriptResult = scriptResult.data
 				}
-				scriptResult = scriptResult.data
-			}
 
-			// if (
-			// 	schemaScript.generateFile.startsWith(
-			// 		'entity/dynamic/currentContext'
-			// 	)
-			// )
-			// 	console.log(schemaScript, scriptResult)
+				// if (
+				// 	schemaScript.generateFile.startsWith(
+				// 		'entity/dynamic/currentContext'
+				// 	)
+				// )
+				// 	console.log(schemaScript, scriptResult)
 
-			if (
-				schemaScript.type === 'object' &&
-				!Array.isArray(scriptResult) &&
-				typeof scriptResult === 'object'
-			) {
-				localSchemas[
-					`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
-				] = {
-					uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
-					schema: {
-						type: 'object',
-						properties: scriptResult,
-					},
-				}
-			} else {
-				localSchemas[
-					`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
-				] = {
-					uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
-					schema: {
-						type:
-							schemaScript.type === 'enum' ? 'string' : 'object',
-						enum:
-							schemaScript.type === 'enum'
-								? scriptResult
-								: undefined,
-						properties:
-							schemaScript.type === 'properties'
-								? Object.fromEntries(
-										scriptResult.map((res: string) => [
-											res,
-											{},
-										])
-								  )
-								: undefined,
-					},
+				if (
+					schemaScript.type === 'object' &&
+					!Array.isArray(scriptResult) &&
+					typeof scriptResult === 'object'
+				) {
+					localSchemas[
+						`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
+					] = {
+						uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
+						schema: {
+							type: 'object',
+							properties: scriptResult,
+						},
+					}
+				} else {
+					localSchemas[
+						`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
+					] = {
+						uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
+						schema: {
+							type:
+								schemaScript.type === 'enum'
+									? 'string'
+									: 'object',
+							enum:
+								schemaScript.type === 'enum'
+									? scriptResult
+									: undefined,
+							properties:
+								schemaScript.type === 'properties'
+									? Object.fromEntries(
+											scriptResult.map((res: string) => [
+												res,
+												{},
+											])
+									  )
+									: undefined,
+						},
+					}
 				}
 			}
 		})

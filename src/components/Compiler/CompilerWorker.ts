@@ -50,6 +50,7 @@ export class Compiler extends WorkerManager<
 		this.ready.resetSignal()
 		const app = await App.getApp()
 		await app.comMojang.fired
+		await app.project.packIndexer.fired
 
 		// Instantiate the worker TaskService
 		if (!this._service) {
@@ -63,6 +64,9 @@ export class Compiler extends WorkerManager<
 				isDevServerRestart: restartDevServer,
 				plugins: this.parent.getCompilerPlugins(),
 				pluginFileTypes: FileType.getPluginFileTypes(),
+				allFiles: await app.project.packIndexer.service.getAllFiles(
+					false
+				),
 			})
 		} else {
 			await this.service.updateMode(mode, false, restartDevServer)

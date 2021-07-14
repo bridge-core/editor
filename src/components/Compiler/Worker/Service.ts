@@ -16,6 +16,7 @@ export interface ICompilerOptions {
 	isFileRequest: boolean
 	plugins: Record<string, string>
 	pluginFileTypes: IFileType[]
+	allFiles: string[]
 }
 export interface IBuildConfig {
 	mode: 'dev' | 'build'

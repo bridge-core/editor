@@ -13,6 +13,7 @@ import { MoLangPlugin } from './Plugins/MoLang/Plugin'
 import { ProjectConfig } from '../../Projects/ProjectConfig'
 import { TCompilerPlugin } from './TCompilerPlugin'
 import { TCompilerPluginFactory } from './TCompilerPluginFactory'
+import { CustomCommandsPlugin } from './Plugins/CustomCommands/Plugin'
 
 export type TCompilerHook = keyof TCompilerPlugin
 export interface ILoadPLugins {
@@ -51,6 +52,7 @@ export async function loadPlugins({
 	plugins.set('customBlockComponents', CustomBlockComponentPlugin)
 	plugins.set('entityIdentifierAlias', EntityIdentifierAlias)
 	plugins.set('moLang', MoLangPlugin)
+	plugins.set('customCommands', CustomCommandsPlugin)
 
 	for (const [pluginId, pluginPath] of Object.entries(pluginPaths ?? {})) {
 		let file: File

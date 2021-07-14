@@ -1,13 +1,11 @@
-import { Component } from './Component'
+import { Command } from './Command'
 import { App } from '/@/App'
 import { iterateDir } from '/@/utils/iterateDir'
 
-export async function generateComponentSchemas(fileType: string) {
+export async function generateCommandSchemas() {
 	const app = await App.getApp()
 	const v1CompatMode = app.project.config.get().bridge?.v1CompatMode ?? false
-	const fromFilePath = v1CompatMode
-		? `BP/components`
-		: `BP/components/${fileType}`
+	const fromFilePath = `BP/commands`
 
 	let baseDir: FileSystemDirectoryHandle
 	try {
@@ -16,7 +14,7 @@ export async function generateComponentSchemas(fileType: string) {
 		return
 	}
 
-	const schemas: any = {}
+	const schemas: any[] = []
 
 	await iterateDir(
 		baseDir,
@@ -29,17 +27,11 @@ export async function generateComponentSchemas(fileType: string) {
 				await fileHandle.getFile()
 			)
 			const file = new File([fileContent], fileHandle.name)
-			const component = new Component(
-				fileType,
-				await file.text(),
-				'dev',
-				v1CompatMode
-			)
+			const command = new Command(await file.text(), 'dev', v1CompatMode)
 
-			const loadedCorrectly = await component.load('client')
+			await command.load('client')
 
-			if (loadedCorrectly && component.name)
-				schemas[component.name] = component.getSchema()
+			schemas.push(...command.getSchema())
 		},
 		undefined,
 		fromFilePath

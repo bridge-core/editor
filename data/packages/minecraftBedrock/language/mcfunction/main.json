@@ -74,7 +74,10 @@
 							"description": "Specifies the player(s) whose items are cleared. If not specified, defaults to the player who executes the command."
 						},
 						{
-							"type": "string", // TODO ITEM ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/item_identifiers"
+							},
 							"argumentName": "itemName",
 							"description": "Specifies the item to be cleared. If not specified, all items are cleared."
 						},
@@ -159,7 +162,10 @@
 							}
 						},
 						{
-							"type": "string", // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							},
 							"description": "Specifies the block id to copy in filtered mode."
 						},
 						{
@@ -196,7 +202,10 @@
 							}
 						},
 						{
-							"type": "string", // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							},
 							"description": "Specifies the block id to copy in filtered mode."
 						},
 						{
@@ -377,7 +386,10 @@
 						{
 							"argumentName": "eventName",
 							"description": "Specifies the in-game event for the entity.",
-							"type": "string" // TODO EVENT NAMES
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/entity/dynamic/eventReference.json"
+							}
 						}
 					]
 				},
@@ -397,7 +409,7 @@
 						},
 						{
 							"argumentName": "command",
-							"type": "string", // TODO RECURSIVE COMMANDS
+							"type": "command",
 							"description": "Specifies the command to be run. Must be a valid command."
 						}
 					]
@@ -430,7 +442,10 @@
 						{
 							"argumentName": "block",
 							"description": "Specifies the block ID that the block at detectPos, must match for the command to run.",
-							"type": "string" // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							}
 						},
 						{
 							"argumentName": "data",
@@ -439,7 +454,7 @@
 						},
 						{
 							"argumentName": "command",
-							"type": "string", // TODO RECURSIVE COMMANDS
+							"type": "command",
 							"description": "Specifies the command to be run. Must be a valid command."
 						}
 					]
@@ -461,7 +476,10 @@
 						{
 							"argumentName": "tileName",
 							"description": "Specifies the block to fill the region with.",
-							"type": "string" // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							}
 						},
 						{
 							"argumentName": "tileData",
@@ -500,7 +518,10 @@
 						{
 							"argumentName": "tileName",
 							"description": "Specifies the block to fill the region with.",
-							"type": "string" // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							}
 						},
 						{
 							"argumentName": "blockStates",
@@ -539,7 +560,10 @@
 						{
 							"argumentName": "tileName",
 							"description": "Specifies the block to fill the region with.",
-							"type": "string" // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							}
 						},
 						{
 							"argumentName": "tileData",
@@ -555,7 +579,10 @@
 						{
 							"argumentName": "replaceTileName",
 							"description": "Specifies the block to fill the region with.",
-							"type": "string" // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							}
 						},
 						{
 							"argumentName": "replaceDataValue",
@@ -580,7 +607,10 @@
 						{
 							"argumentName": "tileName",
 							"description": "Specifies the block to fill the region with.",
-							"type": "string" // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							}
 						},
 						{
 							"argumentName": "blockStates",
@@ -596,7 +626,10 @@
 						{
 							"argumentName": "replaceTileName",
 							"description": "Specifies the block to fill the region with.",
-							"type": "string" // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							}
 						},
 						{
 							"argumentName": "replaceDataValue",
@@ -622,7 +655,10 @@
 						{
 							"argumentName": "fogID",
 							"description": "Should be in a fog definition name.",
-							"type": "string" // TODO FOG ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/fog_identifiers"
+							}
 						},
 						{
 							"argumentName": "userProvidedId",
@@ -662,7 +698,10 @@
 						{
 							"argumentName": "name",
 							"description": "Must be of the format path/to/function/file, which refers to a function.",
-							"type": "string" // TODO FUNCTION PATH
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/function/dynamic/functionPathEnum.json"
+							}
 						}
 					]
 				},
@@ -799,7 +838,10 @@
 						{
 							"argumentName": "itemName",
 							"description": "Specifies the item to give.",
-							"type": "string" // TODO ITEM ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/item_identifiers"
+							}
 						},
 						{
 							"argumentName": "amount",
@@ -989,7 +1031,10 @@
 						{
 							"argumentName": "effect",
 							"description": "Specifies the particle to create.",
-							"type": "string" // TODO PARTICLE ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/particle_identifiers"
+							}
 						},
 						{
 							"argumentName": "position",
@@ -1010,12 +1055,18 @@
 						{
 							"argumentName": "animation",
 							"description": "Should be an animation name.",
-							"type": "string" // TODO ANIMATION SHORT NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/animationController/identifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "nextState",
 							"description": "Should be an animation name.",
-							"type": "string" // TODO ANIMATION SHORT NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/animationController/identifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "blendOutTime",
@@ -1025,12 +1076,18 @@
 						{
 							"argumentName": "stopExpression",
 							"description": "Specifies the conditions for stopping animation.",
-							"type": "string" // TODO MOLANG
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/molang/embeddedBeta.json"
+							}
 						},
 						{
 							"argumentName": "controller",
 							"description": "Should be an animation controller name.",
-							"type": "string" // TODO ANIMATION CONTROLLER SHORT NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/animationController/identifierEnum.json"
+							}
 						}
 					]
 				},
@@ -1041,7 +1098,10 @@
 						{
 							"argumentName": "sound",
 							"description": "Specifies the sound to play.",
-							"type": "string" // TODO SOUND ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/soundDefinition/identifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "player",
@@ -1103,7 +1163,10 @@
 						{
 							"argumentName": "itemName",
 							"description": "Specifies the item to be placed in the block or entity's inventory slot.",
-							"type": "string" // TODO ITEM ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/item_identifiers"
+							}
 						},
 						{
 							"argumentName": "amount",
@@ -1166,7 +1229,10 @@
 						{
 							"argumentName": "itemName",
 							"description": "Specifies the item to be placed in the block or entity's inventory slot.",
-							"type": "string" // TODO ITEM ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/item_identifiers"
+							}
 						},
 						{
 							"argumentName": "amount",
@@ -1221,7 +1287,10 @@
 						{
 							"argumentName": "itemName",
 							"description": "Specifies the item to be placed in the block or entity's inventory slot.",
-							"type": "string" // TODO ITEM ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/item_identifiers"
+							}
 						},
 						{
 							"argumentName": "amount",
@@ -1291,7 +1360,10 @@
 						{
 							"argumentName": "itemName",
 							"description": "Specifies the item to be placed in the block or entity's inventory slot.",
-							"type": "string" // TODO ITEM ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/item_identifiers"
+							}
 						},
 						{
 							"argumentName": "amount",
@@ -1399,12 +1471,18 @@
 						{
 							"argumentName": "entityType",
 							"description": "Specifies the entities to be summoned.",
-							"type": "string" // TODO ENTITY ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/entity_identifiers"
+							}
 						},
 						{
 							"argumentName": "spawnEvent",
 							"description": "Specifies the in-game event for the to-be-summoned entities.",
-							"type": "string" // TODO ENTITY EVENT
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/entity/dynamic/eventReference.json"
+							}
 						},
 						{
 							"argumentName": "nameTag",
@@ -1431,7 +1509,10 @@
 						{
 							"argumentName": "entityType",
 							"description": "Specifies the entities to be summoned.",
-							"type": "string" // TODO ENTITY ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/entity_identifiers"
+							}
 						},
 						{
 							"argumentName": "rideRules",
@@ -1447,7 +1528,10 @@
 						{
 							"argumentName": "spawnEvent",
 							"description": "Specifies the in-game event for the to-be-summoned entities.",
-							"type": "string" // TODO ENTITY EVENT
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/entity/dynamic/eventReference.json"
+							}
 						},
 						{
 							"argumentName": "nameTag",
@@ -1496,7 +1580,10 @@
 						{
 							"argumentName": "function",
 							"description": "Specify the function to be cleared.",
-							"type": "string" // TODO FUNCTION PATH
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/function/dynamic/functionPathEnum.json"
+							}
 						}
 					]
 				},
@@ -1535,7 +1622,10 @@
 						{
 							"argumentName": "function",
 							"description": "Specify the function to be cleared.",
-							"type": "string" // TODO FUNCTION PATH
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/function/dynamic/functionPathEnum.json"
+							}
 						}
 					]
 				},
@@ -1569,7 +1659,10 @@
 						{
 							"argumentName": "function",
 							"description": "Specify the function to be cleared.",
-							"type": "string" // TODO FUNCTION PATH
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/function/dynamic/functionPathEnum.json"
+							}
 						}
 					]
 				},
@@ -1916,7 +2009,10 @@
 						{
 							"argumentName": "tileName",
 							"description": "Specifies the new block.",
-							"type": "string" // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							}
 						},
 						{
 							"argumentName": "tileData",
@@ -1945,7 +2041,10 @@
 						{
 							"argumentName": "tileName",
 							"description": "Specifies the new block.",
-							"type": "string" // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							}
 						},
 						{
 							"argumentName": "blockStates",
@@ -2031,7 +2130,10 @@
 						{
 							"argumentName": "sound",
 							"description": "Specifies the sound to stop.",
-							"type": "string" // TODO SOUND ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/soundDefinition/identifierEnum.json"
+							}
 						}
 					]
 				},
@@ -2047,7 +2149,10 @@
 						},
 						{
 							"argumentName": "name",
-							"type": "string" // TODO STRUCTURE NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/structure/dynamic/structureIdentifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "from",
@@ -2081,7 +2186,10 @@
 						},
 						{
 							"argumentName": "name",
-							"type": "string" // TODO STRUCTURE NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/structure/dynamic/structureIdentifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "from",
@@ -2125,7 +2233,10 @@
 						},
 						{
 							"argumentName": "name",
-							"type": "string" // TODO STRUCTURE NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/structure/dynamic/structureIdentifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "to",
@@ -2187,7 +2298,10 @@
 						},
 						{
 							"argumentName": "name",
-							"type": "string" // TODO STRUCTURE NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/structure/dynamic/structureIdentifierEnum.json"
+							}
 						},
 						{
 							"argumentName": "to",
@@ -2262,7 +2376,10 @@
 						},
 						{
 							"argumentName": "name",
-							"type": "string" // TODO STRUCTURE NAME
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/structure/dynamic/structureIdentifierEnum.json"
+							}
 						}
 					]
 				},
@@ -2273,7 +2390,10 @@
 						{
 							"argumentName": "entityType",
 							"description": "Specifies the entity to be summoned.",
-							"type": "string" // TODO ENTITY ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/entity_identifiers"
+							}
 						},
 						{
 							"argumentName": "spawnPos",
@@ -2283,7 +2403,10 @@
 						{
 							"argumentName": "spawnEvent",
 							"description": "Specifies the in-game event for the entity.",
-							"type": "string" // TODO ENTITY EVENT
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/entity/dynamic/eventReference.json"
+							}
 						},
 						{
 							"argumentName": "nameTag",
@@ -2299,7 +2422,10 @@
 						{
 							"argumentName": "entityType",
 							"description": "Specifies the entity to be summoned.",
-							"type": "string" // TODO ENTITY ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/entity_identifiers"
+							}
 						},
 						{
 							"argumentName": "nameTag",
@@ -2657,7 +2783,10 @@
 						{
 							"argumentName": "tileName",
 							"description": "Specifies the block to test for.",
-							"type": "string" // TODO BLOCK ID
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/reference/identifiers.json#/definitions/block_identifiers"
+							}
 						},
 						{
 							"argumentName": "dataValue",

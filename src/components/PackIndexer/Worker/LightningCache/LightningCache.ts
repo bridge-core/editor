@@ -157,6 +157,7 @@ export class LightningCache {
 			this.lightningStore.setVisited(filePath, true, fileType)
 			return false
 		}
+		// console.log('File changed: ' + filePath)
 
 		const ext = extname(filePath)
 
@@ -239,15 +240,18 @@ export class LightningCache {
 			return
 		}
 
+		const isTemporaryUpdateCall = fileContent !== undefined
 		if (fileContent === undefined) fileContent = await file.text()
 
 		// JSON API
 		let data: any
 		try {
 			data = json5.parse(fileContent)
-		} catch {
+		} catch (err) {
+			console.error(`[${filePath}] ${err.message}`)
+
 			// Updating auto-completions in the background shouldn't get rid of all auto-completions currently saved for this file
-			if (fileContent === undefined) {
+			if (!isTemporaryUpdateCall) {
 				this.lightningStore.add(
 					filePath,
 					{

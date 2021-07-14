@@ -14,6 +14,7 @@ export default {
 		reload: 'Herlaad',
 		information: 'Informatie',
 		continue: 'Doorgaan',
+		delete: 'Verwijderen',
 		skip: 'Overslaan',
 		selectFolder: 'Selecteer Map',
 	},
@@ -46,6 +47,7 @@ export default {
 		biome: 'Biome',
 		block: 'Block',
 		bridgeConfig: 'Project Config',
+		dialogue: 'Dialogue',
 		entity: 'Entity',
 		feature: 'Feature',
 		featureRule: 'Feature Rule',
@@ -170,6 +172,10 @@ export default {
 			name: 'Herlaad automatische aanvullingen',
 			description: 'Herlaadt alle gegevens voor automatisch aanvullen opnieuw',
 		},
+		reloadExtensions: {
+			name: 'Herlaad Extensies',
+			description: 'Laadt alle extensies opnieuw',
+		},
 		moveToSplitScreen: {
 			name: 'Verplaats naar gesplitst scherm',
 			description: 'Opent een gesplitste schermweergave en verplaatst dit tabblad ernaar',
@@ -209,6 +215,12 @@ export default {
 				description:
 					'Lokale extensies zijn alleen toegankelijk binnen de projecten waaraan u ze toevoegt',
 			},
+		},
+		toObject: {
+			name: 'Transformeren naar Object',
+		},
+		toArray: {
+			name: 'Transformeren naar Reeks',
 		},
 	},
 	// Toolbar Categories
@@ -321,10 +333,12 @@ export default {
 			description: 'Weet u zeker dat u dit project wilt verwijderen?',
 		},
 		discord: {
-			title: 'Discord',
-			content: 'Sluit je aan bij de officiële bridge. Discord server!',
-			join: 'Aansluiten',
-			later: 'Later',
+			title: 'Socials',
+			content:
+				'Bekijk onze Twitter, Github en sluit je aan bij de officiële bridge. Discord server!',
+			discord: 'Discord',
+			twitter: 'Twitter',
+			github: 'Github',
 		},
 		projectChooser: {
 			title: 'Projecten',
@@ -338,7 +352,15 @@ export default {
 			title: 'Pack Explorer',
 			searchFiles: 'Zoek bestanden...',
 			categories: 'Categorieën',
-			refresh: 'Vernieuw Project',
+			refresh: {
+				name: 'Vernieuw Project',
+				description: 'Haal het huidige project op voor nieuw toegevoegde bestanden',
+			},
+			restartDevServer: {
+				name: 'Herstart Dev Server',
+				description:
+					"Weet u zeker dat u de dev server van de compiler opnieuw wilt starten? Dit kan enige tijd duren, afhankelijk van de grootte van uw project.",
+			},
 			createPreset: 'Nieuw Bestand',
 			fileActions: {
 				delete: {
@@ -354,6 +376,24 @@ export default {
 		settings: {
 			title: 'Instellingen',
 			searchSettings: 'Zoek instellingen...',
+			sidebar: {
+				name: 'Zijbalk',
+				sidebarRight: {
+					name: 'Zijbalk Rechts',
+					description:
+						'Verplaatst de zijbalk naar de rechterkant van het scherm',
+				},
+				sidebarSize: {
+					name: 'Grootte zijbalk',
+					description:
+						'Wijzigt de breedte van het uitgevouwen zijbalkgebied.',
+				},
+				shrinkSidebarElements: {
+					name: 'Zijbalkelementen verkleinen',
+					description:
+						"De grootte van bridge.'s zijbalkelementen verkleinen",
+				},
+			},
 			appearance: {
 				name: 'Uiterlijk',
 				colorScheme: {
@@ -377,16 +417,6 @@ export default {
 					name: 'Lokaal Licht Thema',
 					description:
 						'Kies een licht thema voor het momenteel actieve project',
-				},
-				sidebarRight: {
-					name: 'Zijbalk rechts',
-					description:
-						'Verplaatst de zijbalk naar de rechterkant van het scherm',
-				},
-				shrinkSidebarElements: {
-					name: 'Zijbalkelementen verkleinen',
-					description:
-						"Verklein de grootte van de zijbalkelementen van bridge.",
 				},
 			},
 			general: {
@@ -436,6 +466,13 @@ export default {
 					description: 'Schakel de ontwikkelaarsmodus in voor deze app',
 				},
 			},
+			audio: {
+				name: 'Audio',
+				volume: {
+					name: 'Audio Ingeschakeld',
+					description: 'Alle brige geluiden in- of uitschakelen',
+				},
+			},
 			actions: {
 				name: 'Acties',
 			},
@@ -473,6 +510,11 @@ export default {
 			title: 'Niet-ondersteunde browser',
 			description:
 				'Uw browser wordt momenteel niet ondersteund. Gebruik Chrome (Desktop) of Edge (Chromium) om aan de slag te gaan met bridge.!',
+		},
+		invalidJson: {
+			title: 'Ongeldige JSON',
+			description:
+				'bridge.\'s tree editor kan geen bestanden openen die ongeldige JSON bevatten. U kunt binnen de instellingen overschakelen naar het editortype "Onbewerkte Tekst" om het probleem handmatig op te lossen.',
 		},
 	},
 	taskManager: {
@@ -567,6 +609,14 @@ export default {
 						'Bewerk JSON als een boomachtige structuur die weinig tot geen JSON kennis vereist. Ideaal voor beginners en gemiddelde makers.',
 				},
 			},
+		},
+	},
+	editors: {
+		treeEditor: {
+			addObject: 'Object Toevoegen',
+			addArray: 'Reeks Toevoegen',
+			addValue: 'Waarde Toevoegen',
+			edit: 'Bewerk',
 		},
 	},
 }

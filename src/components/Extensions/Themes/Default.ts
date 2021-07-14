@@ -49,7 +49,7 @@ export const bridgeDark = <const>{
 		variable: {
 			color: '#9effff',
 		},
-		variable_strong: {
+		variableStrong: {
 			color: '#9effff',
 		},
 		meta: {
@@ -90,7 +90,7 @@ export const bridgeLight = <const>{
 		lineHighlightBackground: '#e0e0e0',
 	},
 	highlighter: {
-		property: {
+		type: {
 			color: 'black',
 		},
 		keyword: {
@@ -111,7 +111,7 @@ export const bridgeLight = <const>{
 		variable: {
 			color: 'black',
 		},
-		variable_strong: {
+		variableStrong: {
 			color: 'black',
 		},
 		meta: {

@@ -40,7 +40,7 @@ export class DirectoryEntry {
 
 		this.type = this._isFile
 			? 'file'
-			: settingsState?.general?.enablePackSpider ?? true
+			: settingsState?.general?.enablePackSpider ?? false
 			? 'virtualFolder'
 			: 'folder'
 		this.hasLoadedChildren = this._isFile

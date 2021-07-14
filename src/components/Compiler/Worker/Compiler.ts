@@ -364,7 +364,10 @@ export class Compiler {
 
 				// Add files which match glob as dependencies
 				const matchingFiles = [
-					...new Set([...this.files.keys(), ...files]),
+					...new Set([
+						...this.parent.getOptions().allFiles,
+						...files,
+					]),
 				].filter((filePath) => isMatch(filePath, dependency))
 				matchingFiles.forEach((filePath) => resolvedDeps.add(filePath))
 
@@ -373,7 +376,7 @@ export class Compiler {
 			}
 
 			for (const dependency of resolvedDeps) {
-				const depFile =
+				let depFile =
 					this.files.get(dependency) ??
 					// Lookup dependency id in file aliases
 					[...this.files.values()].find(({ aliases }) =>
@@ -381,10 +384,21 @@ export class Compiler {
 					)
 
 				if (!depFile) {
-					console.error(
-						`Undefined file dependency: "${filePath}" requires "${dependency}"`
-					)
-					continue
+					if (await this.fileSystem.fileExists(dependency)) {
+						depFile = {
+							isLoaded: false,
+							filePath: dependency,
+							aliases: [],
+							updateFiles: new Set(),
+							dependencies: new Set(),
+							requiresGlobs: new Set(),
+						}
+					} else {
+						console.error(
+							`Undefined file dependency: "${filePath}" requires "${dependency}"`
+						)
+						continue
+					}
 				}
 
 				// New dependency discovered

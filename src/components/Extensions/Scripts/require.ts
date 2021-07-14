@@ -20,6 +20,7 @@ import { Json5Module } from './Modules/json5'
 import { ComMojangModule } from './Modules/comMojang'
 import { TabModule } from './Modules/Tab'
 import { TabActionsModule } from './Modules/TabAction'
+import { ThemeModule } from './Modules/theme'
 
 const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/ui', UIModule],
@@ -40,6 +41,7 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/com-mojang', ComMojangModule],
 	['@bridge/tab', TabModule],
 	['@bridge/tab-actions', TabActionsModule],
+	['@bridge/theme', ThemeModule],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([

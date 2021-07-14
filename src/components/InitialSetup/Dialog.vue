@@ -91,7 +91,6 @@ export default {
 			this.stepId++
 
 			if (this.stepId > this.steps.length) {
-				console.log('HEY')
 				InitialSetup.ready.dispatch()
 			}
 		},

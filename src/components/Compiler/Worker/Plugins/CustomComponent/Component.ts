@@ -1,3 +1,4 @@
+import { v1Compat } from './v1Compat'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { deepMerge } from '/@/utils/deepmerge'
 import { hashString } from '/@/utils/hash'
@@ -15,7 +16,8 @@ export class Component {
 	constructor(
 		protected fileType: string,
 		protected componentSrc: string,
-		protected mode: 'build' | 'dev'
+		protected mode: 'build' | 'dev',
+		protected v1Compat: boolean
 	) {}
 
 	//#region Getters
@@ -32,13 +34,16 @@ export class Component {
 				env: {
 					module: module,
 					defineComponent: (x: any) => x,
+					Bridge: this.v1Compat
+						? v1Compat(module, this.fileType)
+						: undefined,
 				},
 			})
 		} catch (err) {
 			console.error(err)
 		}
 
-		if (typeof module.exports !== 'function') return
+		if (typeof module.exports !== 'function') return false
 
 		const name = (name: string) => (this._name = name)
 		let schema: Function = (schema: any) => (this.schema = schema)
@@ -61,6 +66,7 @@ export class Component {
 			schema,
 			template,
 		})
+		return true
 	}
 	reset() {
 		// Clear previous animation (controllers)

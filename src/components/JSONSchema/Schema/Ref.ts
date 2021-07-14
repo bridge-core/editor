@@ -49,7 +49,7 @@ export class RefSchema extends Schema {
 		}
 	}
 
-	getCompletionItems(obj: string) {
+	getCompletionItems(obj: unknown) {
 		return this.rootSchema.getCompletionItems(obj)
 	}
 	validate(obj: string) {

@@ -79,6 +79,7 @@ export interface IConfigJson {
 	bridge?: {
 		lightTheme?: string
 		darkTheme?: string
+		v1CompatMode?: boolean
 	}
 }
 

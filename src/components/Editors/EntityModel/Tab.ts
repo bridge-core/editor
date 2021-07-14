@@ -5,6 +5,7 @@ import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import json5 from 'json5'
 import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
+import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 
 export interface IPreviewOptions {
 	loadServerEntity?: boolean
@@ -80,6 +81,11 @@ export class EntityModelTab extends GeometryPreviewTab {
 			'identifier',
 			clientEntityData.geometryIdentifier ?? []
 		)
+		if (connectedGeometries.length === 0) {
+			new InformationWindow({ description: 'preview.noGeometry' })
+			this.close()
+			return
+		}
 
 		const connectedParticles = await Promise.all(
 			Object.entries<string>(

@@ -194,7 +194,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			name: 'windows.settings.general.packSpider.name',
 			description: 'windows.settings.general.packSpider.description',
 			key: 'enablePackSpider',
-			default: true,
+			default: false,
 		})
 	)
 
