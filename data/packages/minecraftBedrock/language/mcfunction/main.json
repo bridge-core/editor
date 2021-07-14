@@ -409,7 +409,7 @@
 						},
 						{
 							"argumentName": "command",
-							"type": "string", // TODO RECURSIVE COMMANDS
+							"type": "command",
 							"description": "Specifies the command to be run. Must be a valid command."
 						}
 					]
@@ -454,7 +454,7 @@
 						},
 						{
 							"argumentName": "command",
-							"type": "string", // TODO RECURSIVE COMMANDS
+							"type": "command",
 							"description": "Specifies the command to be run. Must be a valid command."
 						}
 					]

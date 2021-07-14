@@ -37,6 +37,7 @@
 											"type": {
 												"type": "string",
 												"enum": [
+													"command",
 													"string",
 													"number",
 													"boolean",
