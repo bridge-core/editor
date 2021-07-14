@@ -1,48 +1,51 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
-	"$id": "bridge.spawn_rule",
 	"title": "Spawn Rule",
-	"additionalProperties": false,
-	"properties": {
-		"format_version": {
-			"$ref": "../project/formatVersionEnum.json"
-		},
-		"minecraft:spawn_rules": {
-			"additionalProperties": false,
+	"allOf": [
+		{
 			"properties": {
-				"description": {
-					"additionalProperties": false,
-					"properties": {
-						"identifier": {
-							"anyOf": [
-								{
-									"$ref": "../general/reference/identifiers.json#/definitions/entity_identifiers"
-								},
-								{
-									"const": "minecraft:pillager_patrol"
-								}
-							]
-						},
-						"population_control": {
-							"type": "string",
-							"enum": [
-								"animal",
-								"monster",
-								"pillager",
-								"water_animal",
-								"cat",
-								"villager"
-							]
-						}
-					}
-				},
-				"conditions": {
-					"type": "array",
-					"items": {
-						"$ref": "./components.json"
-					}
+				"format_version": {
+					"$ref": "../project/formatVersionEnum.json"
 				}
 			}
+		},
+		{
+			"if": {
+				"properties": {
+					"format_version": {
+						"enum": [
+							"1.8.0",
+							"1.10.0",
+							"1.11.0",
+							"1.12.0",
+							"1.13.0",
+							"1.14.0",
+							"1.16.0",
+							"1.16.100",
+							"1.16.200",
+							"1.16.210",
+							"1.16.220",
+							"1.17.0",
+							"1.17.10"
+						]
+					}
+				}
+			},
+			"then": {
+				"$ref": "./v1.17.0/main.json"
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"format_version": {
+						"const": "1.17.20"
+					}
+				}
+			},
+			"then": {
+				"$ref": "./v1.17.20/main.json"
+			}
 		}
-	}
+	]
 }

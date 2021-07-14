@@ -1,0 +1,42 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"properties": {
+		"minecraft:spawn_rules": {
+			"additionalProperties": false,
+			"properties": {
+				"description": {
+					"additionalProperties": false,
+					"properties": {
+						"identifier": {
+							"anyOf": [
+								{
+									"$ref": "../../general/reference/identifiers.json#/definitions/entity_identifiers"
+								},
+								{
+									"const": "minecraft:pillager_patrol"
+								}
+							]
+						},
+						"population_control": {
+							"type": "string",
+							"enum": [
+								"animal",
+								"monster",
+								"pillager",
+								"water_animal",
+								"cat",
+								"villager"
+							]
+						}
+					}
+				},
+				"conditions": {
+					"type": "array",
+					"items": {
+						"$ref": "./components.json"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,27 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"allOf": [
+		{
+			"$ref": "../v1.17.0/components.json"
+		},
+		{
+			"properties": {
+				"minecraft:spawns_above_block_filter": {
+					"description": "Specifies a list of blocks and a distance. The mob can then spawn only if the nearest block within the specified distance below the desired spawnpoint in that list.",
+					"type": "object",
+					"properties": {
+						"blocks": {
+							"type": "array",
+							"items": {
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+							}
+						},
+						"distance": {
+							"type": "integer"
+						}
+					}
+				}
+			}
+		}
+	]
+}

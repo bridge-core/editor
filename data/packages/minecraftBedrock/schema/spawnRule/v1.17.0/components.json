@@ -15,12 +15,12 @@
 				{
 					"type": "array",
 					"items": {
-						"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+						"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 					}
 				},
 				{
 					"type": "string",
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				}
 			]
 		},
@@ -29,12 +29,12 @@
 				{
 					"type": "array",
 					"items": {
-						"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+						"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 					}
 				},
 				{
 					"type": "string",
-					"$ref": "../general/reference/identifiers.json#/definitions/block_identifiers"
+					"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
 				}
 			]
 		},
@@ -114,13 +114,13 @@
 				},
 				"event": {
 					"description": "This is an event that can be triggered from spawning.",
-					"$ref": "../entity/dynamic/eventEnum.json"
+					"$ref": "../../entity/dynamic/eventEnum.json"
 				},
 				"initial_event_count": {
 					"type": "number"
 				},
 				"initial_event": {
-					"$ref": "../entity/dynamic/eventEnum.json"
+					"$ref": "../../entity/dynamic/eventEnum.json"
 				}
 			}
 		},
@@ -157,10 +157,10 @@
 					"const": "has_biome_tag"
 				},
 				"operator": {
-					"$ref": "../general/filter/operator.json"
+					"$ref": "../../general/filter/operator.json"
 				},
 				"value": {
-					"$ref": "../general/reference/biomeTag.json"
+					"$ref": "../../general/reference/biomeTag.json"
 				}
 			}
 		},
