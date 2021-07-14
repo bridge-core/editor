@@ -115,10 +115,12 @@ export abstract class Project {
 				: undefined
 		)
 
-		await this.packIndexer.activate(isReload).then(() => {
-			this.jsonDefaults.activate()
-			this.compilerManager.start('default.json', 'dev')
-		})
+		await this.packIndexer.activate(isReload)
+
+		await Promise.all([
+			this.jsonDefaults.activate(),
+			this.compilerManager.start('default.json', 'dev'),
+		])
 	}
 	deactivate(isReload = false) {
 		if (!isReload)

@@ -26,6 +26,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 
 	async activate() {
 		console.time('[SETUP] JSONDefaults')
+		await this.project.app.project.packIndexer.fired
 
 		this.disposables = <IDisposable[]>[
 			// Updating currentContext/ references

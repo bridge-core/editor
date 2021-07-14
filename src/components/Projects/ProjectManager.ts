@@ -107,6 +107,7 @@ export class ProjectManager extends Signal<void> {
 			throw new Error(
 				`Cannot select project "${projectName}" because it no longer exists`
 			)
+		const app = await App.getApp()
 
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName
@@ -116,7 +117,9 @@ export class ProjectManager extends Signal<void> {
 		if (this.currentProject)
 			await this.recentProjects.add(this.currentProject.projectData)
 		await set('selectedProject', projectName)
-		await this.app.switchProject(this.currentProject!)
+
+		app.themeManager.updateTheme()
+		App.eventSystem.dispatch('projectChanged', undefined)
 	}
 	async selectLastProject(app: App) {
 		await this.fired
