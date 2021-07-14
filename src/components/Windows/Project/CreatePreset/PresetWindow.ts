@@ -1,8 +1,4 @@
-import {
-	Sidebar,
-	SidebarCategory,
-	SidebarItem,
-} from '/@/components/Windows/Layout/Sidebar'
+import { Sidebar, SidebarCategory } from '/@/components/Windows/Layout/Sidebar'
 import PresetWindowComponent from './PresetWindow.vue'
 import { BaseWindow } from '../../BaseWindow'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
@@ -17,6 +13,7 @@ import { TPackTypeId } from '/@/components/Data/PackType'
 import { transformString } from './TransformString'
 import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
+import { PresetItem } from './PresetItem'
 
 export interface IPresetManifest {
 	name: string
@@ -150,31 +147,39 @@ export class CreatePresetWindow extends BaseWindow {
 		}
 
 		const id = uuid()
+
+		const resetState = () => {
+			this.sidebar.setState(id, {
+				...manifest,
+				presetPath: dirname(manifestPath),
+				models: {
+					PROJECT_PREFIX:
+						app.projectConfig.get().namespace ?? 'bridge',
+					...(manifest.additionalModels ?? {}),
+					...Object.fromEntries(
+						manifest.fields.map(([_, id, opts = {}]: any) => [
+							id,
+							opts.default ??
+								(!opts.type || opts.type === 'textInput'
+									? ''
+									: null),
+						])
+					),
+				},
+			})
+		}
+
 		category.addItem(
-			new SidebarItem({
+			new PresetItem({
 				id,
 				text: manifest.name,
 				icon: manifest.icon,
 				color: 'primary',
+				resetState,
 			})
 		)
-		this.sidebar.setState(id, {
-			...manifest,
-			presetPath: dirname(manifestPath),
-			models: {
-				PROJECT_PREFIX: app.projectConfig.get().namespace ?? 'bridge',
-				...(manifest.additionalModels ?? {}),
-				...Object.fromEntries(
-					manifest.fields.map(([_, id, opts = {}]: any) => [
-						id,
-						opts.default ??
-							(!opts.type || opts.type === 'textInput'
-								? ''
-								: null),
-					])
-				),
-			},
-		})
+
+		resetState()
 	}
 
 	protected async loadPresets(
@@ -351,6 +356,10 @@ export class CreatePresetWindow extends BaseWindow {
 		}
 
 		await app.project.updateFiles(filePaths)
+
+		// Reset preset inputs
+		if (this.sidebar.currentElement instanceof PresetItem)
+			this.sidebar.currentElement.resetState()
 
 		app.windows.loadingWindow.close()
 	}

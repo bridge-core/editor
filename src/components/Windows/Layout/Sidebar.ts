@@ -151,7 +151,7 @@ export class Sidebar {
 	}
 
 	get currentElement() {
-		if (!this.selected) return {}
+		if (!this.selected) return
 
 		for (const element of this._elements) {
 			if (element.type === 'item') {
@@ -163,7 +163,7 @@ export class Sidebar {
 			if (item) return item
 		}
 
-		return {}
+		return
 	}
 	get currentState() {
 		if (!this.selected) return {}
