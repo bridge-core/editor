@@ -26,6 +26,7 @@ export type TArgumentType =
 	| 'blockState'
 	| 'jsonData'
 	| 'coordinates'
+	| 'command'
 
 /**
  * An interface that describes a command argument
@@ -71,6 +72,7 @@ export class CommandData extends Signal<void> {
 			.map((entry: any) => entry.commands)
 			.flat()
 			.concat(await generateCommandSchemas())
+			.filter((command: unknown) => command !== undefined)
 	}
 
 	async loadCommandData(packageName: string) {
@@ -90,8 +92,7 @@ export class CommandData extends Signal<void> {
 					.map((command: any) => command?.commandName)
 					.filter(
 						(commandName: string) =>
-							commandName !== undefined &&
-							(!query || commandName.includes(query))
+							!query || commandName.includes(query)
 					)
 			),
 		])
@@ -120,20 +121,23 @@ export class CommandData extends Signal<void> {
 
 		return [
 			...new Set<string>(
-				currentCommands
-					.map((currentCommand: ICommand) => {
-						// Get command argument
-						const argument = this.getNextCommandArgument(
-							currentCommand,
-							[...path]
+				(
+					await Promise.all(
+						currentCommands.map(
+							async (currentCommand: ICommand) => {
+								// Get command argument
+								const argument = this.getNextCommandArgument(
+									currentCommand,
+									[...path]
+								)
+								if (!argument) return []
+
+								// Return possible completion items for the argument
+								return await this.getCompletionItems(argument)
+							}
 						)
-						if (!argument) return []
-
-						// Return possible completion items for the argument
-
-						return this.getCompletionItems(argument)
-					})
-					.flat()
+					)
+				).flat()
 			),
 		]
 	}
@@ -223,7 +227,9 @@ export class CommandData extends Signal<void> {
 	/**
 	 * Given a commandArgument, return completion items for it
 	 */
-	protected getCompletionItems(commandArgument: ICommandArgument): string[] {
+	protected async getCompletionItems(
+		commandArgument: ICommandArgument
+	): Promise<string[]> {
 		// Test whether argument type is defined
 		if (!commandArgument.type) {
 			// If additionalData is defined, return its values
@@ -240,6 +246,8 @@ export class CommandData extends Signal<void> {
 		}
 
 		switch (commandArgument.type) {
+			case 'command':
+				return [...new Set(await this.allCommands())]
 			case 'selector':
 				return ['@a', '@e', '@p', '@s', '@r', '@initiator']
 			case 'boolean':
