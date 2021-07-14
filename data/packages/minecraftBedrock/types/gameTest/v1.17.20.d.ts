@@ -23,9 +23,9 @@ declare interface Tags {
 	suiteDefault: string
 
 	suiteDisabled: string
-	
+
 	suiteAll: string
-	
+
 	suiteDebug: string
 }
 
@@ -158,13 +158,17 @@ declare interface Helper {
 	 */
 	assert(condition: boolean, message: string): void
 
-    /**
-     * Asserts that the given mob can reach the target block location.
-     * @param mob 
-     * @param location 
-     * @param canReach 
-     */
-    assertCanReachLocation(mob: Entity, location: BlockLocation, canReach: boolean): void
+	/**
+	 * Asserts that the given mob can reach the target block location.
+	 * @param mob
+	 * @param location
+	 * @param canReach
+	 */
+	assertCanReachLocation(
+		mob: Entity,
+		location: BlockLocation,
+		canReach: boolean
+	): void
 
 	/**
 	 * Tests that a container (e.g., a chest) at the specified location contains a particular type of item. If not, an error is thrown.
@@ -471,25 +475,29 @@ declare interface Helper {
 	 * @param entityIdentifier
 	 * @param position
 	 */
-	 spawnWithoutBehaviorsAtLocation(
+	spawnWithoutBehaviorsAtLocation(
 		entityIdentifier: string,
 		position: Location
 	): Entity
 
 	/**
-    *
-    * @param location 
-    * @param fromFace 
-    * @param direction 
-    */
-	spreadFromFaceTowardDirection(location: BlockLocation, fromFace: number, direction: number): void
+	 *
+	 * @param location
+	 * @param fromFace
+	 * @param direction
+	 */
+	spreadFromFaceTowardDirection(
+		location: BlockLocation,
+		fromFace: number,
+		direction: number
+	): void
 
-    /**
-     * Spawns an entity at the given location.
-     * @param location 
-     * The location to spawn the entity at.
-     */
-    spawnAtLocation(location: Location): Entity
+	/**
+	 * Spawns an entity at the given location.
+	 * @param location
+	 * The location to spawn the entity at.
+	 */
+	spawnAtLocation(location: Location): Entity
 
 	/**
 	 * Creates a new GameTestSequence - A set of steps that play out sequentially within a GameTest.
@@ -583,15 +591,15 @@ declare interface Helper {
 	 */
 	walkTo(mob: Entity, position: BlockLocation, speedModifier: number): void
 
-    /**
-     * Commands an entity to move to a given location
-     * @param mob 
-     * Mob entity to give orders to.
-     * @param location 
-     * @param speedModifier 
-     * Adjustable modifier to the mob's walking speed.
-     */
-    walkToLocation(mob: Entity, location: Location, speedModifier: number): void
+	/**
+	 * Commands an entity to move to a given location
+	 * @param mob
+	 * Mob entity to give orders to.
+	 * @param location
+	 * @param speedModifier
+	 * Adjustable modifier to the mob's walking speed.
+	 */
+	walkToLocation(mob: Entity, location: Location, speedModifier: number): void
 
 	/**
 	 * From a BlockLocation with coordinates relative to the GameTest structure block, returns a new BlockLocation with coordinates relative to world. Rotation of the GameTest structure is also taken into account.
@@ -608,9 +616,9 @@ declare interface Helper {
 
 	/**
 	 * Sets the fuse of an explodable entity.
-	 * @param entity 
+	 * @param entity
 	 * Entity that is explodable.
-	 * @param time 
+	 * @param time
 	 * Length of time, in ticks, before the entity explodes.
 	 */
 	setTntFuse(entity: Entity, time: number): void
@@ -625,15 +633,15 @@ declare interface Helper {
 	getFenceConnectivity(location: BlockLocation): ScriptGameTestConnectivity
 
 	/**
-    * Gets a block at the specified block location.
-    * @param location 
-	* Location of the block to retrieve.
-    */
+	 * Gets a block at the specified block location.
+	 * @param location
+	 * Location of the block to retrieve.
+	 */
 	getBlock(location: BlockLocation): Block
 
 	/**
 	 * Rotates the given direction to the GameTest structure rotation.
-	 * @param direction 
+	 * @param direction
 	 */
 	rotateDirection(direction: Direction): Direction
 
@@ -650,73 +658,46 @@ declare module 'Minecraft' {
 	export const ItemStack: ItemStackClass
 	export const BlockLocation: BlockLocationClass
 	export const Location: LocationClass
-	export const Effects: Effects
-	export const Items: Items
+	export const MinecraftEffectTypes: MinecraftEffectTypes
+	export const MinecraftItemTypes: MinecraftItemTypes
 	export const World: World
 	export const Commands: Commands
 	export const ExplosionOptions: ExplosionOptionsClass
-	export const BlockTypes: BlockTypes
+	export const MinecraftBlockTypes: MinecraftBlockTypes
 	export const BlockProperties: BlockProperties
 }
 
-declare interface Effects {
+declare interface MinecraftEffectTypes {
+	absorption: EffectType
+	badOmen: EffectType
+	blindness: EffectType
+	conduitPower: EffectType
+	empty: EffectType
+	fatalPoison: EffectType
+	fireResistance: EffectType
+	haste: EffectType
+	healthBoost: EffectType
+	hunger: EffectType
+	instantDamage: EffectType
+	instantHealth: EffectType
+	invisibility: EffectType
+	jumpBoost: EffectType
+	levitation: EffectType
+	miningFatigue: EffectType
+	nausea: EffectType
+	nightVision: EffectType
+	poison: EffectType
+	regeneration: EffectType
+	resistance: EffectType
+	saturation: EffectType
+	slowFalling: EffectType
+	slowness: EffectType
 	speed: EffectType
-	slowness: EffectType
-	haste: EffectType
-	miningFatigue: EffectType
-	strength: EffectTyspeed: EffectType
-	slowness: EffectType
-	haste: EffectType
-	miningFatigue: EffectType
 	strength: EffectType
-	instantHealth: EffectType
-	instantDamage: EffectType
-	jumpBoost: EffectType
-	nausea: EffectType
-	regeneration: EffectType
-	resistance: EffectType
-	fireResistance: EffectType
+	villageHero: EffectType
 	waterBreathing: EffectType
-	invisibility: EffectType
-	blindness: EffectType
-	nightVision: EffectType
-	hunger: EffectType
 	weakness: EffectType
-	poison: EffectType
 	wither: EffectType
-	healthBoost: EffectType
-	absorption: EffectType
-	saturation: EffectType
-	levitation: EffectType
-	fatalPoison: EffectType
-	slowFalling: EffectType
-	conduitPower: EffectType
-	badOmen: EffectType
-	heroOfTheVillage: EffectTypepe
-	instantHealth: EffectType
-	instantDamage: EffectType
-	jumpBoost: EffectType
-	nausea: EffectType
-	regeneration: EffectType
-	resistance: EffectType
-	fireResistance: EffectType
-	waterBreathing: EffectType
-	invisibility: EffectType
-	blindness: EffectType
-	nightVision: EffectType
-	hunger: EffectType
-	weakness: EffectType
-	poison: EffectType
-	wither: EffectType
-	healthBoost: EffectType
-	absorption: EffectType
-	saturation: EffectType
-	levitation: EffectType
-	fatalPoison: EffectType
-	slowFalling: EffectType
-	conduitPower: EffectType
-	badOmen: EffectType
-	heroOfTheVillage: EffectType
 }
 
 declare interface Effect {
@@ -733,11 +714,11 @@ declare interface Effect {
 	displayName: string
 }
 
-declare interface Items {
+declare interface MinecraftItemTypes {
 	[item: string]: ItemType
 }
 
-declare interface BlockTypes {
+declare interface MinecraftBlockTypes {
 	get(blockName: string): BlockType
 
 	getAllBlockTypes(): BlockType[]
@@ -785,7 +766,7 @@ declare interface Block {
 
 	setWaterlogged(setWaterlogged: boolean): void
 
-    getDimension(): Dimension
+	getDimension(): Dimension
 }
 
 declare interface BlockProperties {
@@ -989,7 +970,7 @@ declare interface Events {
 	/**
 	 * Contains information related to changes in weather in the environment.
 	 */
-	changeWeather: WeatherChangedEventSignal
+	weatherChange: WeatherChangedEventSignal
 
 	/**
 	 * This event fires before a chat message is broadcast or delivered. The event can be canceled, and the message can also be updated.
@@ -1001,34 +982,34 @@ declare interface Events {
 	 */
 	chat: ChatEventSignal
 
-	addEffect: AddEffectEventSignal
+	effectAdd: AddEffectEventSignal
 
-	createEntity: EntityEventSignal
+	entityCreate: EntityEventSignal
 
-    /**
-     * Fires before an explosion occurs.
-     */
-    beforeExplosion: BeforeExplosionSignal
+	/**
+	 * Fires before an explosion occurs.
+	 */
+	beforeExplosion: BeforeExplosionSignal
 
-    /**
-     * Fires when an explosion occurs.
-     */
-    explosion: ExplosionSignal
+	/**
+	 * Fires when an explosion occurs.
+	 */
+	explosion: ExplosionSignal
 
-    /**
-     * Fires when a block breaks due to an explosion.
-     */
-    explodeBlock: ExplodeBlockSignal
+	/**
+	 * Fires when a block breaks due to an explosion.
+	 */
+	blockExplode: ExplodeBlockSignal
 
-    /**
-     * Fires before a piston is activated.
-     */
-    beforeActivatePiston: BeforeActivatePistonSignal
+	/**
+	 * Fires before a piston is activated.
+	 */
+	beforePistonActivate: BeforeActivatePistonSignal
 
-    /**
-     * This event fires when a piston expands or retracts.
-     */
-    activatePiston: ActivatePistonSignal
+	/**
+	 * This event fires when a piston expands or retracts.
+	 */
+	pistonActivate: ActivatePistonSignal
 }
 
 declare interface TickEventSignal {
@@ -1036,13 +1017,19 @@ declare interface TickEventSignal {
 	 * Adds a callback that will be called on every tick.
 	 * @param callback
 	 */
-	subscribe(callback: () => undefined): void
+	subscribe(callback: (eventData: TickEvent) => undefined): void
 
 	/**
 	 * Removes a callback from being called every tick.
 	 * @param callback
 	 */
-	unsubscribe(callback: () => undefined): void
+	unsubscribe(callback: (eventData: TickEvent) => undefined): void
+}
+declare interface TickEvent {
+	/**
+	 * Returns the current server tick.
+	 */
+	currentTick: number
 }
 
 declare interface WeatherChangedEventSignal {
@@ -1138,54 +1125,54 @@ declare interface EntityEvent {
 }
 
 declare interface BeforeExplosionSignal {
-    subscribe(callback: (eventData: BeforeExplosionEvent) => void): void
+	subscribe(callback: (eventData: BeforeExplosionEvent) => void): void
 
 	unsubscribe(callback: (eventData: BeforeExplosionEvent) => void): void
 }
 declare interface BeforeExplosionEvent {
 	cancel: boolean
 
-    dimension: Dimension
+	dimension: Dimension
 
-    impactedBlocks: BlockLocation[]
+	impactedBlocks: BlockLocation[]
 
-    source: Entity
+	source: Entity
 }
 
 declare interface ExplosionSignal {
-    subscribe(callback: (eventData: ExplosionEvent) => void): void
+	subscribe(callback: (eventData: ExplosionEvent) => void): void
 
 	unsubscribe(callback: (eventData: ExplosionEvent) => void): void
 }
 declare interface ExplosionEvent {
 	dimension: Dimension
 
-    impactedBlocks: BlockLocation[]
+	impactedBlocks: BlockLocation[]
 
-    source: Entity
+	source: Entity
 }
 
 declare interface ExplodeBlockSignal {
-    subscribe(callback: (eventData: ExplodeBlockEvent) => void): void
+	subscribe(callback: (eventData: ExplodeBlockEvent) => void): void
 
 	unsubscribe(callback: (eventData: ExplodeBlockEvent) => void): void
 }
 declare interface ExplodeBlockEvent {
 	destroyedBlock: Block
 
-    source: Entity
+	source: Entity
 }
 
 declare interface BeforeActivatePistonSignal {
 	/**
 	 * Adds a callback that will be called before a piston expands or retracts.
-	 * @param callback 
+	 * @param callback
 	 */
-    subscribe(callback: (eventData: BeforeActivatePistonEvent) => void): void
+	subscribe(callback: (eventData: BeforeActivatePistonEvent) => void): void
 
 	/**
 	 * Removes a callback from being called before a piston expands or retracts.
-	 * @param callback 
+	 * @param callback
 	 */
 	unsubscribe(callback: (eventData: BeforeActivatePistonEvent) => void): void
 }
@@ -1209,13 +1196,13 @@ declare interface BeforeActivatePistonEvent {
 declare interface ActivatePistonSignal {
 	/**
 	 * Adds a callback that will be called when a piston expands or retracts.
-	 * @param callback 
+	 * @param callback
 	 */
-    subscribe(callback: (eventData: ActivatePistonEvent) => void): void
+	subscribe(callback: (eventData: ActivatePistonEvent) => void): void
 
 	/**
 	 * Removes a callback from being called when a piston expands or retracts.
-	 * @param callback 
+	 * @param callback
 	 */
 	unsubscribe(callback: (eventData: ActivatePistonEvent) => void): void
 }
@@ -1413,7 +1400,7 @@ declare interface BlockComponents {
 	// Component data defined in ./componentData.d.ts
 	inventory: BlockInventory
 
-    piston: BlockPiston
+	piston: BlockPiston
 }
 
 /**
@@ -1466,18 +1453,18 @@ declare interface BlockLocationClass {
 declare interface BlockLocation {
 	/**
 	 * Compares this BlockLocation and another BlockLocation to one another.
-	 * @param other 
+	 * @param other
 	 * Other block location to compare this BlockLocation to.
 	 */
 	equals(other: BlockLocation): boolean
 
 	/**
 	 * Returns a block location using a position relative to this block location.
-	 * @param x 
+	 * @param x
 	 * X offset relative to this BlockLocation.
-	 * @param y 
+	 * @param y
 	 * Y offset relative to this BlockLocation.
-	 * @param z 
+	 * @param z
 	 * Z offset relative to this BlockLocation.
 	 */
 	offset(x: number, y: number, z: number): BlockLocation
@@ -1509,12 +1496,12 @@ declare interface LocationClass {
 declare interface Location {
 	/**
 	 * Compares this Location and another Location to one another.
-	 * @param other 
+	 * @param other
 	 * Other location to compare this Location to.
 	 */
 	equals(other: Location): boolean
 
-	isNear(other: Location, epsilon: number): boolean;
+	isNear(other: Location, epsilon: number): boolean
 
 	/**
 	 * X component of this location.
@@ -1556,25 +1543,25 @@ declare interface ItemStack {
 }
 
 declare interface Direction {
-    down: number
+	down: number
 
-    east: number
+	east: number
 
-    north: number
+	north: number
 
-    south: number
+	south: number
 
-    up: number
+	up: number
 
-    west: number
+	west: number
 }
 
 declare interface ScriptGameTestConnectivity {
-    east: boolean
+	east: boolean
 
-    north: boolean
+	north: boolean
 
-    south: boolean
+	south: boolean
 
-    west: boolean
-  }
+	west: boolean
+}

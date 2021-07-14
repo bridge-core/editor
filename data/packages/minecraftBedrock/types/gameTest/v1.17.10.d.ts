@@ -576,63 +576,36 @@ declare module 'Minecraft' {
 }
 
 declare interface Effects {
+	absorption: EffectType
+	badOmen: EffectType
+	blindness: EffectType
+	conduitPower: EffectType
+	empty: EffectType
+	fatalPoison: EffectType
+	fireResistance: EffectType
+	haste: EffectType
+	healthBoost: EffectType
+	hunger: EffectType
+	instantDamage: EffectType
+	instantHealth: EffectType
+	invisibility: EffectType
+	jumpBoost: EffectType
+	levitation: EffectType
+	miningFatigue: EffectType
+	nausea: EffectType
+	nightVision: EffectType
+	poison: EffectType
+	regeneration: EffectType
+	resistance: EffectType
+	saturation: EffectType
+	slowFalling: EffectType
+	slowness: EffectType
 	speed: EffectType
-	slowness: EffectType
-	haste: EffectType
-	miningFatigue: EffectType
-	strength: EffectTyspeed: EffectType
-	slowness: EffectType
-	haste: EffectType
-	miningFatigue: EffectType
 	strength: EffectType
-	instantHealth: EffectType
-	instantDamage: EffectType
-	jumpBoost: EffectType
-	nausea: EffectType
-	regeneration: EffectType
-	resistance: EffectType
-	fireResistance: EffectType
+	villageHero: EffectType
 	waterBreathing: EffectType
-	invisibility: EffectType
-	blindness: EffectType
-	nightVision: EffectType
-	hunger: EffectType
 	weakness: EffectType
-	poison: EffectType
 	wither: EffectType
-	healthBoost: EffectType
-	absorption: EffectType
-	saturation: EffectType
-	levitation: EffectType
-	fatalPoison: EffectType
-	slowFalling: EffectType
-	conduitPower: EffectType
-	badOmen: EffectType
-	heroOfTheVillage: EffectTypepe
-	instantHealth: EffectType
-	instantDamage: EffectType
-	jumpBoost: EffectType
-	nausea: EffectType
-	regeneration: EffectType
-	resistance: EffectType
-	fireResistance: EffectType
-	waterBreathing: EffectType
-	invisibility: EffectType
-	blindness: EffectType
-	nightVision: EffectType
-	hunger: EffectType
-	weakness: EffectType
-	poison: EffectType
-	wither: EffectType
-	healthBoost: EffectType
-	absorption: EffectType
-	saturation: EffectType
-	levitation: EffectType
-	fatalPoison: EffectType
-	slowFalling: EffectType
-	conduitPower: EffectType
-	badOmen: EffectType
-	heroOfTheVillage: EffectType
 }
 
 declare interface Effect {
@@ -1259,18 +1232,18 @@ declare interface BlockLocationClass {
 declare interface BlockLocation {
 	/**
 	 * Compares this BlockLocation and another BlockLocation to one another.
-	 * @param other 
+	 * @param other
 	 * Other block location to compare this BlockLocation to.
 	 */
 	equals(other: BlockLocation): boolean
 
 	/**
 	 * Returns a block location using a position relative to this block location.
-	 * @param x 
+	 * @param x
 	 * X offset relative to this BlockLocation.
-	 * @param y 
+	 * @param y
 	 * Y offset relative to this BlockLocation.
-	 * @param z 
+	 * @param z
 	 * Z offset relative to this BlockLocation.
 	 */
 	offset(x: number, y: number, z: number): BlockLocation
@@ -1302,7 +1275,7 @@ declare interface LocationClass {
 declare interface Location {
 	/**
 	 * Compares this Location and another Location to one another.
-	 * @param other 
+	 * @param other
 	 * Other location to compare this Location to.
 	 */
 	equals(other: Location): boolean
