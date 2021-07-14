@@ -87,10 +87,11 @@ export class CommandData extends Signal<void> {
 		return this.getSchema().then((schema) => [
 			...new Set<string>(
 				schema
-					.map((command: any) => command.commandName)
+					.map((command: any) => command?.commandName)
 					.filter(
 						(commandName: string) =>
-							!query || commandName.includes(query)
+							commandName !== undefined &&
+							(!query || commandName.includes(query))
 					)
 			),
 		])
