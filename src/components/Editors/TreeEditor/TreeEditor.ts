@@ -98,10 +98,9 @@ export class TreeEditor {
 			suggestions = this.schemaRoot?.getCompletionItems(json) ?? []
 		} else if (tree) {
 			const treePath = tree.path
-			const schemas = this.schemaRoot?.getSchemasFor(
-				this.tree.toJSON(),
-				treePath
-			)
+			const schemas =
+				this.schemaRoot?.getSchemasFor(this.tree.toJSON(), treePath) ??
+				[]
 
 			if (schemas)
 				suggestions = schemas
