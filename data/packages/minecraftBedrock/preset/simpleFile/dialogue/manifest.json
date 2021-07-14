@@ -6,7 +6,7 @@
 	"packTypes": ["behaviorPack"],
 	"targetVersion": [">=", "1.17.10"],
 	"additionalModels": {
-		"PRESET_PATH": "BP/dialogues/"
+		"PRESET_PATH": "BP/dialogue/"
 	},
 	"fields": [
 		[
