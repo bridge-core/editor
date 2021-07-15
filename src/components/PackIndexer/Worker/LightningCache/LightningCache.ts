@@ -51,14 +51,14 @@ export class LightningCache {
 		}
 	}
 
-	async start() {
+	async start(): Promise<readonly [string[], string[], string[]]> {
 		await this.lightningStore.setup()
 
 		if (this.folderIgnoreList.size === 0) await this.loadIgnoreFolders()
 
 		if (this.service.getOptions().noFullLightningCacheRefresh) {
 			const filePaths = this.lightningStore.allFiles()
-			if (filePaths.length > 0) return [filePaths, []]
+			if (filePaths.length > 0) return [filePaths, [], []]
 		}
 
 		let anyFileChanged = false
