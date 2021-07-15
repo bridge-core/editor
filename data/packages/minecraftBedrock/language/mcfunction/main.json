@@ -1,5 +1,18 @@
 {
 	"$schema": "./schema/main.json",
+	"$customTypes": {
+		"coordinates": [
+			{
+				"type": "coordinate"
+			},
+			{
+				"type": "coordinate"
+			},
+			{
+				"type": "coordinate"
+			}
+		]
+	},
 
 	"vanilla": [
 		{
@@ -109,12 +122,12 @@
 					"description": "Copies blocks from one place to another.",
 					"arguments": [
 						{
-							"type": "coordinates",
+							"type": "$coordinates",
 							"argumentName": "begin",
-							"description": "Specifies the coordinates of two opposing corner blocks of the source region."
+							"description": "Specifies the $coordinates of two opposing corner blocks of the source region."
 						},
 						{
-							"type": "coordinates",
+							"type": "$coordinates",
 							"argumentName": "end",
 							"description": "Specifies the lower northwest corner of the destination region."
 						},
@@ -139,12 +152,12 @@
 					"description": "Copies blocks from one place to another.",
 					"arguments": [
 						{
-							"type": "coordinates",
+							"type": "$coordinates",
 							"argumentName": "begin",
-							"description": "Specifies the coordinates of two opposing corner blocks of the source region."
+							"description": "Specifies the $coordinates of two opposing corner blocks of the source region."
 						},
 						{
-							"type": "coordinates",
+							"type": "$coordinates",
 							"argumentName": "end",
 							"description": "Specifies the lower northwest corner of the destination region."
 						},
@@ -179,12 +192,12 @@
 					"description": "Copies blocks from one place to another.",
 					"arguments": [
 						{
-							"type": "coordinates",
+							"type": "$coordinates",
 							"argumentName": "begin",
-							"description": "Specifies the coordinates of two opposing corner blocks of the source region."
+							"description": "Specifies the $coordinates of two opposing corner blocks of the source region."
 						},
 						{
-							"type": "coordinates",
+							"type": "$coordinates",
 							"argumentName": "end",
 							"description": "Specifies the lower northwest corner of the destination region."
 						},
@@ -404,8 +417,8 @@
 						},
 						{
 							"argumentName": "position",
-							"description": "Specifies the position from which to run the command. Coordinates specified with tilde and caret notation are relative to the target, not to the position of the command's execution.",
-							"type": "coordinates"
+							"description": "Specifies the position from which to run the command. $coordinates specified with tilde and caret notation are relative to the target, not to the position of the command's execution.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "command",
@@ -425,8 +438,8 @@
 						},
 						{
 							"argumentName": "position",
-							"description": "Specifies the position from which to run the command. Coordinates specified with tilde and caret notation are relative to the target, not to the position of the command's execution.",
-							"type": "coordinates"
+							"description": "Specifies the position from which to run the command. $coordinates specified with tilde and caret notation are relative to the target, not to the position of the command's execution.",
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -437,7 +450,7 @@
 						{
 							"argumentName": "detectPos",
 							"description": "Specifies the position of the block to check.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "block",
@@ -466,12 +479,12 @@
 						{
 							"argumentName": "from",
 							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "to",
 							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "tileName",
@@ -508,12 +521,12 @@
 						{
 							"argumentName": "from",
 							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "to",
 							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "tileName",
@@ -550,12 +563,12 @@
 						{
 							"argumentName": "from",
 							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "to",
 							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "tileName",
@@ -597,12 +610,12 @@
 						{
 							"argumentName": "from",
 							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "to",
 							"description": "Specifies any two opposing corner blocks of the region to be filled (the 'fill region').",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "tileName",
@@ -768,7 +781,7 @@
 									"pvp",
 									"randomtickspeed",
 									"sendcommandfeedback",
-									"showcoordinates",
+									"show$coordinates",
 									"showdeathmessages",
 									"tntexplodes"
 								]
@@ -813,7 +826,7 @@
 									"pvp",
 									"randomtickspeed",
 									"sendcommandfeedback",
-									"showcoordinates",
+									"show$coordinates",
 									"showdeathmessages",
 									"tntexplodes"
 								]
@@ -1039,7 +1052,7 @@
 						{
 							"argumentName": "position",
 							"description": "Specifies the position at which to create the particle. If not specified, defaults to the position of the executor.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						}
 					]
 				},
@@ -1111,7 +1124,7 @@
 						{
 							"argumentName": "position",
 							"description": "Specifies the position to play the sounds from.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "volume",
@@ -1147,7 +1160,7 @@
 						{
 							"argumentName": "position",
 							"description": "Specifies the position of the block to be modified.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -1264,7 +1277,7 @@
 						{
 							"argumentName": "position",
 							"description": "Specifies the position of the block to be modified.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -1569,13 +1582,13 @@
 						},
 						{
 							"argumentName": "from",
-							"description": "Specify the coordinates of opposite corners of a rectangular area used to define a loaded area.",
-							"type": "coordinates"
+							"description": "Specify the $coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "to",
-							"description": "Specify the coordinates of opposite corners of a rectangular area used to define a loaded area.",
-							"type": "coordinates"
+							"description": "Specify the $coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "function",
@@ -1611,8 +1624,8 @@
 						},
 						{
 							"argumentName": "center",
-							"description": "Specifies the coordinates of the center point of a circular area used to define a loaded area.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates of the center point of a circular area used to define a loaded area.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "radius",
@@ -2004,7 +2017,7 @@
 						{
 							"argumentName": "position",
 							"description": "Specifies the position of the block to be changed.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "tileName",
@@ -2036,7 +2049,7 @@
 						{
 							"argumentName": "position",
 							"description": "Specifies the position of the block to be changed.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "tileName",
@@ -2067,8 +2080,8 @@
 					"arguments": [
 						{
 							"argumentName": "spawnPoint",
-							"description": "Specifies the coordinates of the world spawn. If not specified, defaults to the block position of the command's execution.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates of the world spawn. If not specified, defaults to the block position of the command's execution.",
+							"type": "$coordinates"
 						}
 					]
 				},
@@ -2083,8 +2096,8 @@
 						},
 						{
 							"argumentName": "spawnPos",
-							"description": "Specifies the coordinates of the player's new spawn point. If not specified, defaults to the position of the specified player(s).",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates of the player's new spawn point. If not specified, defaults to the position of the specified player(s).",
+							"type": "$coordinates"
 						}
 					]
 				},
@@ -2157,12 +2170,12 @@
 						{
 							"argumentName": "from",
 							"description": "Specifies any two opposing corner blocks of the region to be saved.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "to",
 							"description": "Specifies any two opposing corner blocks of the region to be saved.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "saveMode",
@@ -2194,12 +2207,12 @@
 						{
 							"argumentName": "from",
 							"description": "Specifies any two opposing corner blocks of the region to be saved.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "to",
 							"description": "Specifies any two opposing corner blocks of the region to be saved.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "includeEntities",
@@ -2241,7 +2254,7 @@
 						{
 							"argumentName": "to",
 							"description": "Specifies the lower northwest corner of the destination region.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "rotation",
@@ -2306,7 +2319,7 @@
 						{
 							"argumentName": "to",
 							"description": "Specifies the lower northwest corner of the destination region.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "rotation",
@@ -2398,7 +2411,7 @@
 						{
 							"argumentName": "spawnPos",
 							"description": "Specifies the position to summon the entity. If not specified, defaults to the position of the command's execution.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "spawnEvent",
@@ -2435,7 +2448,7 @@
 						{
 							"argumentName": "spawnPos",
 							"description": "Specifies the position to summon the entity. If not specified, defaults to the position of the command's execution.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						}
 					]
 				},
@@ -2506,8 +2519,8 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "checkForBlocks",
@@ -2522,8 +2535,8 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "yRot",
@@ -2548,8 +2561,8 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -2559,8 +2572,8 @@
 						},
 						{
 							"argumentName": "lookAtPosition",
-							"description": "Specifies the coordinates to make the target(s) facing to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to make the target(s) facing to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "checkForBlocks",
@@ -2575,8 +2588,8 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -2607,8 +2620,8 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "yRot",
@@ -2638,8 +2651,8 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -2649,8 +2662,8 @@
 						},
 						{
 							"argumentName": "lookAtPosition",
-							"description": "Specifies the coordinates to make the target(s) facing to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to make the target(s) facing to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "checkForBlocks",
@@ -2670,8 +2683,8 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -2718,8 +2731,8 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "checkForBlocks",
@@ -2777,8 +2790,8 @@
 					"arguments": [
 						{
 							"argumentName": "position",
-							"description": "Specifies the coordinates of the block to test.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates of the block to test.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "tileName",
@@ -2802,17 +2815,17 @@
 						{
 							"argumentName": "begin",
 							"description": "Specifies two opposing corners of the region to use as the pattern to test for (the 'source region').",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "end",
 							"description": "Specifies two opposing corners of the region to use as the pattern to test for (the 'source region').",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "destination",
 							"description": "Specifies the lower northwestern corner (the corner with the most-negative values) of the region to be checked (the 'destination region'). Source and destination regions may overlap.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "mode",
@@ -2836,13 +2849,13 @@
 						},
 						{
 							"argumentName": "from",
-							"description": "Specifies the coordinates of opposite corners of a rectangular area used to define a loaded area.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "to",
-							"description": "Specifies the coordinates of opposite corners of a rectangular area used to define a loaded area.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "name",
@@ -2869,13 +2882,13 @@
 						},
 						{
 							"argumentName": "center",
-							"description": "Specifies the coordinates of the center point of a circular area used to define a ticking area.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates of the center point of a circular area used to define a ticking area.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "radius",
 							"description": "Specifies the radius of a circular ticking area as the number of chunks from the center to the edge of the circle.",
-							"type": "coordinates"
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "name",
@@ -2913,8 +2926,8 @@
 						},
 						{
 							"argumentName": "position",
-							"description": "Specifies the coordinates of a point within the ticking area(s) being removed.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates of a point within the ticking area(s) being removed.",
+							"type": "$coordinates"
 						}
 					]
 				},
@@ -3187,8 +3200,8 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "checkForBlocks",
@@ -3203,8 +3216,8 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "yRot",
@@ -3229,8 +3242,8 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -3240,8 +3253,8 @@
 						},
 						{
 							"argumentName": "lookAtPosition",
-							"description": "Specifies the coordinates to make the target(s) facing to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to make the target(s) facing to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "checkForBlocks",
@@ -3256,8 +3269,8 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -3288,8 +3301,8 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "yRot",
@@ -3319,8 +3332,8 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -3330,8 +3343,8 @@
 						},
 						{
 							"argumentName": "lookAtPosition",
-							"description": "Specifies the coordinates to make the target(s) facing to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to make the target(s) facing to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "checkForBlocks",
@@ -3351,8 +3364,8 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"type": "string",
@@ -3399,8 +3412,8 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the coordinates to teleport the target(s) to.",
-							"type": "coordinates"
+							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"type": "$coordinates"
 						},
 						{
 							"argumentName": "checkForBlocks",

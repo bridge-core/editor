@@ -25,8 +25,9 @@ export type TArgumentType =
 	| 'molang'
 	| 'blockState'
 	| 'jsonData'
-	| 'coordinates'
+	| 'coordinate'
 	| 'command'
+	| string
 
 /**
  * An interface that describes a command argument
@@ -48,6 +49,41 @@ const commandCoordinateRegExp = /^((([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}|\^([-+]?
  */
 export class CommandData extends Signal<void> {
 	protected _data?: any
+
+	async loadCommandData(packageName: string) {
+		const app = await App.getApp()
+
+		this._data = await app.fileSystem.readJSON(
+			`data/packages/${packageName}/language/mcfunction/main.json`
+		)
+
+		const customTypes: Record<string, ICommandArgument[]> =
+			this._data.$customTypes ?? {}
+
+		for (const { commands } of this._data.vanilla) {
+			for (const command of commands) {
+				if (!command.arguments) continue
+
+				command.arguments = command.arguments
+					.map((argument: ICommandArgument) => {
+						if (!argument.type || !argument.type.startsWith('$'))
+							return argument
+
+						const replaceWith = customTypes[argument.type.slice(1)]
+						if (!replaceWith) return argument
+
+						return replaceWith.map((replaceArgument) => ({
+							...argument,
+							...replaceArgument,
+						}))
+					})
+					.flat()
+			}
+		}
+
+		// console.log(this._data)
+		this.dispatch()
+	}
 
 	protected async getSchema(): Promise<ICommand[]> {
 		const projectTargetVersion = await App.getApp().then(
@@ -73,16 +109,6 @@ export class CommandData extends Signal<void> {
 			.flat()
 			.concat(await generateCommandSchemas())
 			.filter((command: unknown) => command !== undefined)
-	}
-
-	async loadCommandData(packageName: string) {
-		const app = await App.getApp()
-
-		this._data = await app.fileSystem.readJSON(
-			`data/packages/${packageName}/language/mcfunction/main.json`
-		)
-		// console.log(this._data)
-		this.dispatch()
 	}
 
 	allCommands(query?: string) {
@@ -126,18 +152,22 @@ export class CommandData extends Signal<void> {
 						currentCommands.map(
 							async (currentCommand: ICommand) => {
 								// Get command argument
-								const argument = this.getNextCommandArgument(
+								const args = await this.getNextCommandArgument(
 									currentCommand,
 									[...path]
 								)
-								if (!argument) return []
+								if (args.length === 0) return []
 
 								// Return possible completion items for the argument
-								return await this.getCompletionItems(argument)
+								return await Promise.all(
+									args.map((arg) =>
+										this.getCompletionItems(arg)
+									)
+								)
 							}
 						)
 					)
-				).flat()
+				).flat(2)
 			),
 		]
 	}
@@ -145,7 +175,10 @@ export class CommandData extends Signal<void> {
 	/**
 	 * Given a sequence of command arguments & the currentCommand, return possible values for the next argument
 	 */
-	protected getNextCommandArgument(currentCommand: ICommand, path: string[]) {
+	protected async getNextCommandArgument(
+		currentCommand: ICommand,
+		path: string[]
+	): Promise<ICommandArgument[]> {
 		const args = currentCommand.arguments
 		let argumentIndex = 0
 
@@ -154,32 +187,46 @@ export class CommandData extends Signal<void> {
 
 			if (currentStr === '') continue
 
-			const matchType = this.isArgumentType(
+			const matchType = await this.isArgumentType(
 				currentStr,
 				args[argumentIndex]
 			)
 
-			if (matchType === 'none') return
+			if (matchType === 'none') return []
 			else if (matchType === 'partial')
-				return path.length === i + 1 ? args[argumentIndex] : undefined
+				return path.length === i + 1 ? [args[argumentIndex]] : []
+
+			console.log(args[argumentIndex], i + 1, path.length)
+			if (args[argumentIndex].type === 'command' && i + 1 < path.length) {
+				return (
+					await Promise.all(
+						(await this.getCommands(currentStr)).map((command) =>
+							this.getNextCommandArgument(
+								command,
+								path.slice(i + 1)
+							)
+						)
+					)
+				).flat()
+			}
 
 			// Check next argument
 			argumentIndex++
 			// If argumentIndex to large, return
-			if (argumentIndex >= args.length) return
+			if (argumentIndex >= args.length) return []
 		}
 
 		// If we are here, we are at the next argument, return it
-		return args[argumentIndex]
+		return [args[argumentIndex]]
 	}
 
 	/**
 	 * Given an argument type, test whether a string matches the type
 	 */
-	protected isArgumentType(
+	protected async isArgumentType(
 		testStr: string,
 		commandArgument: ICommandArgument
-	): 'none' | 'partial' | 'full' {
+	): Promise<'none' | 'partial' | 'full'> {
 		switch (commandArgument.type) {
 			case 'string': {
 				if (!commandArgument.additionalData?.values) return 'full'
@@ -193,6 +240,9 @@ export class CommandData extends Signal<void> {
 
 				return strMatchArray(testStr, values)
 			}
+			case 'command': {
+				return strMatchArray(testStr, await this.allCommands())
+			}
 
 			case 'number':
 				return !isNaN(Number(testStr)) ? 'full' : 'none'
@@ -202,8 +252,12 @@ export class CommandData extends Signal<void> {
 				return testStr === 'true' || testStr === 'false'
 					? 'full'
 					: 'none'
-			case 'coordinates':
-				return commandCoordinateRegExp.test(testStr) ? 'full' : 'none'
+			case 'coordinate':
+				return testStr.startsWith('~') ||
+					testStr.startsWith('^') ||
+					!isNaN(Number(testStr))
+					? 'full'
+					: 'none'
 			case 'jsonData':
 				return /^\{.*\}$/.test(testStr) ? 'full' : 'none'
 			case 'blockState':
@@ -254,8 +308,8 @@ export class CommandData extends Signal<void> {
 				return ['true', 'false']
 			case 'number':
 				return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-			case 'coordinates':
-				return ['~ ~ ~', '^ ^ ^']
+			case 'coordinate':
+				return ['~', '^']
 			case 'string': {
 				if (commandArgument.additionalData?.values)
 					return commandArgument.additionalData.values
