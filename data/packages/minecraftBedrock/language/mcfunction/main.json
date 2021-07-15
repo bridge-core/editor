@@ -124,7 +124,7 @@
 						{
 							"type": "$coordinates",
 							"argumentName": "begin",
-							"description": "Specifies the $coordinates of two opposing corner blocks of the source region."
+							"description": "Specifies the coordinates of two opposing corner blocks of the source region."
 						},
 						{
 							"type": "$coordinates",
@@ -154,7 +154,7 @@
 						{
 							"type": "$coordinates",
 							"argumentName": "begin",
-							"description": "Specifies the $coordinates of two opposing corner blocks of the source region."
+							"description": "Specifies the coordinates of two opposing corner blocks of the source region."
 						},
 						{
 							"type": "$coordinates",
@@ -194,7 +194,7 @@
 						{
 							"type": "$coordinates",
 							"argumentName": "begin",
-							"description": "Specifies the $coordinates of two opposing corner blocks of the source region."
+							"description": "Specifies the coordinates of two opposing corner blocks of the source region."
 						},
 						{
 							"type": "$coordinates",
@@ -417,7 +417,7 @@
 						},
 						{
 							"argumentName": "position",
-							"description": "Specifies the position from which to run the command. $coordinates specified with tilde and caret notation are relative to the target, not to the position of the command's execution.",
+							"description": "Specifies the position from which to run the command. coordinates specified with tilde and caret notation are relative to the target, not to the position of the command's execution.",
 							"type": "$coordinates"
 						},
 						{
@@ -438,7 +438,7 @@
 						},
 						{
 							"argumentName": "position",
-							"description": "Specifies the position from which to run the command. $coordinates specified with tilde and caret notation are relative to the target, not to the position of the command's execution.",
+							"description": "Specifies the position from which to run the command. coordinates specified with tilde and caret notation are relative to the target, not to the position of the command's execution.",
 							"type": "$coordinates"
 						},
 						{
@@ -1582,12 +1582,12 @@
 						},
 						{
 							"argumentName": "from",
-							"description": "Specify the $coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"description": "Specify the coordinates of opposite corners of a rectangular area used to define a loaded area.",
 							"type": "$coordinates"
 						},
 						{
 							"argumentName": "to",
-							"description": "Specify the $coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"description": "Specify the coordinates of opposite corners of a rectangular area used to define a loaded area.",
 							"type": "$coordinates"
 						},
 						{
@@ -1624,7 +1624,7 @@
 						},
 						{
 							"argumentName": "center",
-							"description": "Specifies the $coordinates of the center point of a circular area used to define a loaded area.",
+							"description": "Specifies the coordinates of the center point of a circular area used to define a loaded area.",
 							"type": "$coordinates"
 						},
 						{
@@ -2080,7 +2080,7 @@
 					"arguments": [
 						{
 							"argumentName": "spawnPoint",
-							"description": "Specifies the $coordinates of the world spawn. If not specified, defaults to the block position of the command's execution.",
+							"description": "Specifies the coordinates of the world spawn. If not specified, defaults to the block position of the command's execution.",
 							"type": "$coordinates"
 						}
 					]
@@ -2096,7 +2096,7 @@
 						},
 						{
 							"argumentName": "spawnPos",
-							"description": "Specifies the $coordinates of the player's new spawn point. If not specified, defaults to the position of the specified player(s).",
+							"description": "Specifies the coordinates of the player's new spawn point. If not specified, defaults to the position of the specified player(s).",
 							"type": "$coordinates"
 						}
 					]
@@ -2519,7 +2519,7 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -2535,7 +2535,7 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -2561,7 +2561,7 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -2572,7 +2572,7 @@
 						},
 						{
 							"argumentName": "lookAtPosition",
-							"description": "Specifies the $coordinates to make the target(s) facing to.",
+							"description": "Specifies the coordinates to make the target(s) facing to.",
 							"type": "$coordinates"
 						},
 						{
@@ -2588,7 +2588,7 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -2620,7 +2620,7 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -2651,7 +2651,7 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -2662,7 +2662,7 @@
 						},
 						{
 							"argumentName": "lookAtPosition",
-							"description": "Specifies the $coordinates to make the target(s) facing to.",
+							"description": "Specifies the coordinates to make the target(s) facing to.",
 							"type": "$coordinates"
 						},
 						{
@@ -2683,7 +2683,7 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -2731,7 +2731,7 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -2790,7 +2790,7 @@
 					"arguments": [
 						{
 							"argumentName": "position",
-							"description": "Specifies the $coordinates of the block to test.",
+							"description": "Specifies the coordinates of the block to test.",
 							"type": "$coordinates"
 						},
 						{
@@ -2849,12 +2849,12 @@
 						},
 						{
 							"argumentName": "from",
-							"description": "Specifies the $coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"description": "Specifies the coordinates of opposite corners of a rectangular area used to define a loaded area.",
 							"type": "$coordinates"
 						},
 						{
 							"argumentName": "to",
-							"description": "Specifies the $coordinates of opposite corners of a rectangular area used to define a loaded area.",
+							"description": "Specifies the coordinates of opposite corners of a rectangular area used to define a loaded area.",
 							"type": "$coordinates"
 						},
 						{
@@ -2882,7 +2882,7 @@
 						},
 						{
 							"argumentName": "center",
-							"description": "Specifies the $coordinates of the center point of a circular area used to define a ticking area.",
+							"description": "Specifies the coordinates of the center point of a circular area used to define a ticking area.",
 							"type": "$coordinates"
 						},
 						{
@@ -2926,7 +2926,7 @@
 						},
 						{
 							"argumentName": "position",
-							"description": "Specifies the $coordinates of a point within the ticking area(s) being removed.",
+							"description": "Specifies the coordinates of a point within the ticking area(s) being removed.",
 							"type": "$coordinates"
 						}
 					]
@@ -3200,7 +3200,7 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -3216,7 +3216,7 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -3242,7 +3242,7 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -3253,7 +3253,7 @@
 						},
 						{
 							"argumentName": "lookAtPosition",
-							"description": "Specifies the $coordinates to make the target(s) facing to.",
+							"description": "Specifies the coordinates to make the target(s) facing to.",
 							"type": "$coordinates"
 						},
 						{
@@ -3269,7 +3269,7 @@
 					"arguments": [
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -3301,7 +3301,7 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -3332,7 +3332,7 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -3343,7 +3343,7 @@
 						},
 						{
 							"argumentName": "lookAtPosition",
-							"description": "Specifies the $coordinates to make the target(s) facing to.",
+							"description": "Specifies the coordinates to make the target(s) facing to.",
 							"type": "$coordinates"
 						},
 						{
@@ -3364,7 +3364,7 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
@@ -3412,7 +3412,7 @@
 						},
 						{
 							"argumentName": "destination",
-							"description": "Specifies the $coordinates to teleport the target(s) to.",
+							"description": "Specifies the coordinates to teleport the target(s) to.",
 							"type": "$coordinates"
 						},
 						{
