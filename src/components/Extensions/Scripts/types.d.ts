@@ -4,4 +4,5 @@ import { TUIStore } from '../UI/store'
 export interface IModuleConfig {
 	uiStore?: TUIStore
 	disposables: IDisposable[]
+	isGlobal: boolean
 }

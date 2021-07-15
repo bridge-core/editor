@@ -121,7 +121,8 @@ export class Extension {
 					? await loadScripts(
 							scriptHandle,
 							this.uiStore,
-							this.disposables
+							this.disposables,
+							this.isGlobal
 					  )
 					: undefined
 			),

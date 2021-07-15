@@ -58,20 +58,26 @@ const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
 function createGenericEnv(
 	disposables: IDisposable[] = [],
 	uiStore?: TUIStore,
+	isGlobal: boolean = false,
 	modules = BuiltInModules
 ) {
 	return async (importName: string) => {
 		const module = modules.get(importName)
-		if (module) return await module({ uiStore, disposables })
+		if (module) return await module({ uiStore, disposables, isGlobal })
 	}
 }
 
-export function createEnv(disposables: IDisposable[] = [], uiStore?: TUIStore) {
-	return createGenericEnv(disposables, uiStore)
+export function createEnv(
+	disposables: IDisposable[] = [],
+	uiStore?: TUIStore,
+	isGlobal: boolean = false
+) {
+	return createGenericEnv(disposables, uiStore, isGlobal)
 }
 export function createLimitedEnv(
 	disposables: IDisposable[] = [],
-	uiStore?: TUIStore
+	uiStore?: TUIStore,
+	isGlobal: boolean = false
 ) {
-	return createGenericEnv(disposables, uiStore, LimitedModules)
+	return createGenericEnv(disposables, uiStore, isGlobal, LimitedModules)
 }

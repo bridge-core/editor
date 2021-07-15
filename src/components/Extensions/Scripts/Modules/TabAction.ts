@@ -1,12 +1,39 @@
 import { IModuleConfig } from '../types'
 import { App } from '/@/App'
+import type { Project } from '/@/components/Projects/Project/Project'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import {
 	ITabActionConfig,
 	ITabPreviewConfig,
 } from '/@/components/TabSystem/TabActions/Provider'
+import { IDisposable } from '/@/types/disposable'
 
-export const TabActionsModule = async ({ disposables }: IModuleConfig) => ({
+interface IForEachProjectConfig {
+	app: App
+	disposables: IDisposable[]
+	isGlobal: boolean
+	func: (project: Project) => void
+}
+
+// Call a function for every current project and projects newly added in the future
+function forEachProject({
+	isGlobal,
+	func,
+	disposables,
+	app,
+}: IForEachProjectConfig) {
+	if (isGlobal) {
+		app.projects.forEach(func)
+		disposables.push(app.projectManager.addedProject.on(func))
+	} else {
+		func(app.project)
+	}
+}
+
+export const TabActionsModule = async ({
+	disposables,
+	isGlobal,
+}: IModuleConfig) => ({
 	/**
 	 * Add the default tab actions for the specific file tab
 	 * @param tab
@@ -24,11 +51,15 @@ export const TabActionsModule = async ({ disposables }: IModuleConfig) => ({
 	 */
 	register: async (definition: ITabActionConfig) => {
 		const app = await App.getApp()
-		const disposable = app.project.tabActionProvider.register(definition)
 
-		disposables.push(disposable)
-
-		return disposable
+		forEachProject({
+			app,
+			disposables,
+			isGlobal,
+			func: (project) => {
+				disposables.push(project.tabActionProvider.register(definition))
+			},
+		})
 	},
 
 	/**
@@ -38,12 +69,16 @@ export const TabActionsModule = async ({ disposables }: IModuleConfig) => ({
 	 */
 	registerPreview: async (definition: ITabPreviewConfig) => {
 		const app = await App.getApp()
-		const disposable = app.project.tabActionProvider.registerPreview(
-			definition
-		)
 
-		disposables.push(disposable)
-
-		return disposable
+		forEachProject({
+			app,
+			disposables,
+			isGlobal,
+			func: (project) => {
+				disposables.push(
+					project.tabActionProvider.registerPreview(definition)
+				)
+			},
+		})
 	},
 })

@@ -8,8 +8,10 @@ import { Title } from '/@/components/Projects/Title'
 import { editor } from 'monaco-editor'
 import { BedrockProject } from './Project/BedrockProject'
 import { InitialSetup } from '../InitialSetup/InitialSetup'
+import { EventDispatcher } from '../Common/Event/EventDispatcher'
 
 export class ProjectManager extends Signal<void> {
+	public readonly addedProject = new EventDispatcher<Project>()
 	public readonly recentProjects!: RecentProjects
 	public readonly state: Record<string, Project> = {}
 	public readonly title = Object.freeze(new Title())
@@ -50,13 +52,20 @@ export class ProjectManager extends Signal<void> {
 		await this.fired
 		return Object.values(this.state).map((project) => project.projectData)
 	}
-	async addProject(projectDir: FileSystemDirectoryHandle, select = true) {
+	async addProject(
+		projectDir: FileSystemDirectoryHandle,
+		isNewProject = true
+	) {
 		const project = new BedrockProject(this, this.app, projectDir)
 		await project.loadProject()
 
 		Vue.set(this.state, project.name, project)
 
-		if (select) await this.selectProject(project.name)
+		if (isNewProject) {
+			await this.selectProject(project.name)
+			this.addedProject.dispatch(project)
+		}
+
 		return project
 	}
 	async removeProject(projectName: string) {
