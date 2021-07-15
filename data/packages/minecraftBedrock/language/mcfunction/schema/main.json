@@ -39,7 +39,7 @@
 										"properties": {
 											"type": {
 												"type": "string",
-												"enum": [
+												"examples": [
 													"command",
 													"string",
 													"number",
