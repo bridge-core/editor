@@ -497,6 +497,8 @@ export default {
 			searchExtensions: 'Search extension...',
 			activateExtension: 'Activate Extension',
 			deactivateExtension: 'Deactivate Extension',
+			offlineError:
+				'Failed to load extensions. Please confirm that your device has an active network connection.',
 		},
 		pluginInstallLocation: {
 			title: 'Choose Install Location',

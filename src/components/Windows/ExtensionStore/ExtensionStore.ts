@@ -7,7 +7,8 @@ import { getFileSystem } from '/@/utils/fs'
 import { ExtensionTag } from './ExtensionTag'
 import { ExtensionViewer } from './ExtensionViewer'
 import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
-import { Notification } from '../../Notifications/Notification'
+import { Notification } from '/@/components/Notifications/Notification'
+import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 
 let updateNotification: Notification | undefined = undefined
 export class ExtensionStoreWindow extends BaseWindow {
@@ -45,11 +46,20 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 		const installedExtensions = await app.extensionLoader.getInstalledExtensions()
 
-		const extensions = <IExtensionManifest[]>(
-			await fetch(`${this.baseUrl}/extensions.json`).then((resp) =>
-				resp.json()
-			)
-		)
+		let extensions: IExtensionManifest[]
+		try {
+			extensions = await fetch(
+				`${this.baseUrl}/extensions.json`
+			).then((resp) => resp.json())
+		} catch {
+			this.close()
+			app.windows.loadingWindow.close()
+			new InformationWindow({
+				description: 'windows.extensionStore.offlineError',
+			})
+			return
+		}
+
 		this.extensions = extensions.map(
 			(plugin) => new ExtensionViewer(this, plugin)
 		)
