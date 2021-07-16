@@ -38,17 +38,25 @@
 										"type": "object",
 										"properties": {
 											"type": {
-												"type": "string",
-												"examples": [
-													"command",
-													"string",
-													"number",
-													"boolean",
-													"selector",
-													"molang",
-													"blockState",
-													"jsonData",
-													"coordinate"
+												"anyOf": [
+													{
+														"type": "string",
+														"enum": [
+															"command",
+															"string",
+															"number",
+															"boolean",
+															"selector",
+															"molang",
+															"blockState",
+															"jsonData",
+															"coordinate"
+														]
+													},
+													{
+														"type": "string",
+														"pattern": "\\$.+"
+													}
 												]
 											},
 											"argumentName": {
