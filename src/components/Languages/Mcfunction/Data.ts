@@ -27,7 +27,7 @@ export type TArgumentType =
 	| 'jsonData'
 	| 'coordinate'
 	| 'command'
-	| string
+	| `$${string}`
 
 /**
  * An interface that describes a command argument
@@ -196,7 +196,7 @@ export class CommandData extends Signal<void> {
 			else if (matchType === 'partial')
 				return path.length === i + 1 ? [args[argumentIndex]] : []
 
-			console.log(args[argumentIndex], i + 1, path.length)
+			// Propose arguments from nested command when necessary
 			if (args[argumentIndex].type === 'command' && i + 1 < path.length) {
 				return (
 					await Promise.all(
