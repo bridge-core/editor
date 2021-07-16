@@ -5,7 +5,7 @@
 	"category": "fileType.simpleFile",
 	"packTypes": ["resourcePack"],
 	"additionalModels": {
-		"PRESET_PATH": "RP/particles"
+		"PRESET_PATH": "RP/particles/"
 	},
 	"fields": [
 		[
