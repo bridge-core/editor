@@ -1,0 +1,14 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"description": "Identifier",
+	"type": "string",
+	"anyOf": [
+		{
+			"$ref": "../../project/prefixedFileIdentifierEnum.json"
+		},
+		{
+			"type": "string",
+			"pattern": ".+:.+"
+		}
+	]
+}

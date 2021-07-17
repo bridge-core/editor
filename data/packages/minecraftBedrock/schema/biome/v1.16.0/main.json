@@ -10,7 +10,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/unprefixedFileIdentifierEnum.json"
+							"$ref": "../../general/reference/unprefixedFileIdentifier.json"
 						}
 					}
 				},

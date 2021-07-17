@@ -15,7 +15,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../project/prefixedFileIdentifierEnum.json"
+							"$ref": "../general/reference/prefixedFileIdentifier.json"
 						},
 						"places_feature": {
 							"$ref": "../general/reference/feature.json"

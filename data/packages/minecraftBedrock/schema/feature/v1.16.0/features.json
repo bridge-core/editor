@@ -9,7 +9,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/prefixedFileIdentifierEnum.json"
+							"$ref": "../../general/reference/prefixedFileIdentifier.json"
 						}
 					}
 				},
@@ -34,7 +34,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/prefixedFileIdentifierEnum.json"
+							"$ref": "../../general/reference/prefixedFileIdentifier.json"
 						}
 					}
 				},
@@ -54,7 +54,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/prefixedFileIdentifierEnum.json"
+							"$ref": "../../general/reference/prefixedFileIdentifier.json"
 						}
 					}
 				},
@@ -83,7 +83,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/prefixedFileIdentifierEnum.json"
+							"$ref": "../../general/reference/prefixedFileIdentifier.json"
 						}
 					}
 				},
@@ -187,7 +187,7 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/prefixedFileIdentifierEnum.json"
+							"$ref": "../../general/reference/prefixedFileIdentifier.json"
 						}
 					}
 				},
@@ -237,7 +237,7 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/prefixedFileIdentifierEnum.json"
+							"$ref": "../../general/reference/prefixedFileIdentifier.json"
 						}
 					}
 				},
@@ -330,7 +330,7 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/prefixedFileIdentifierEnum.json"
+							"$ref": "../../general/reference/prefixedFileIdentifier.json"
 						}
 					}
 				},
@@ -406,7 +406,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/prefixedFileIdentifierEnum.json"
+							"$ref": "../../general/reference/prefixedFileIdentifier.json"
 						}
 					}
 				},
@@ -699,7 +699,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../project/prefixedFileIdentifierEnum.json"
+							"$ref": "../../general/reference/prefixedFileIdentifier.json"
 						}
 					}
 				},

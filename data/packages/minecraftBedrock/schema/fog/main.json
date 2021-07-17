@@ -22,10 +22,7 @@
 						"identifier": {
 							"anyOf": [
 								{
-									"$ref": "../project/prefixedFileIdentifierEnum.json"
-								},
-								{
-									"type": "string"
+									"$ref": "../general/reference/prefixedFileIdentifier.json"
 								},
 								{
 									"$ref": "../general/vanilla/identifiers.json#/definitions/fog_identifiers"
