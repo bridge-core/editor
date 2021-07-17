@@ -10,7 +10,7 @@ import { v4 as uuid } from 'uuid'
 export class SchemaScript {
 	constructor(protected app: App, protected filePath?: string) {}
 
-	protected async runScript(script: string) {
+	protected async runScript(scriptPath: string, script: string) {
 		const scopedFs = this.app.project.fileSystem
 
 		let currentJson = {}
@@ -31,7 +31,8 @@ export class SchemaScript {
 				async: true,
 				script,
 				env: {
-					readdir: scopedFs.readFilesFromDir.bind(scopedFs),
+					readdir: (path: string) =>
+						scopedFs.readFilesFromDir(path).catch(() => []),
 					uuid,
 					getFormatVersions: getFilteredFormatVersions,
 					getCacheDataFor: async (
@@ -48,7 +49,7 @@ export class SchemaScript {
 						)
 					},
 					getProjectPrefix: () =>
-						this.app.projectConfig.get().namespace,
+						this.app.projectConfig.get().namespace ?? 'bridge',
 					getFileName: () =>
 						!this.filePath
 							? undefined
@@ -64,7 +65,9 @@ export class SchemaScript {
 				},
 			})
 		} catch (err) {
-			// console.error(`Error evaluating schemaScript: ${err.message}`)
+			console.error(
+				`Error evaluating schemaScript "${scriptPath}": ${err.message}`
+			)
 		}
 	}
 
@@ -73,7 +76,7 @@ export class SchemaScript {
 			'data/packages/minecraftBedrock/schemaScript'
 		)
 
-		await iterateDir(baseDirectory, async (fileHandle) => {
+		await iterateDir(baseDirectory, async (fileHandle, filePath) => {
 			const file = await fileHandle.getFile()
 			const fileText = await file.text()
 
@@ -81,7 +84,10 @@ export class SchemaScript {
 			if (file.name.endsWith('.js')) schemaScript = { script: fileText }
 			else schemaScript = json5.parse(fileText)
 
-			let scriptResult: any = await this.runScript(schemaScript.script)
+			let scriptResult: any = await this.runScript(
+				filePath,
+				schemaScript.script
+			)
 			if (scriptResult) {
 				if (file.name.endsWith('.js')) {
 					if (scriptResult.keep) return
