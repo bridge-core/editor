@@ -21,7 +21,6 @@ export function getJsonWordAtPosition(
 
 function getNextQuote(line: string, startIndex: number) {
 	for (let i = startIndex - 1; i < line.length; i++) {
-		console.log(line[i])
 		if (line[i] === '"') return i
 	}
 	return line.length
