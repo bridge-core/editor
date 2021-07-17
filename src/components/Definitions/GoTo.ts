@@ -30,10 +30,17 @@ export class DefinitionProvider {
 		)
 			return
 
-		const location = getLocation(
+		const locationArr = getLocation(
 			model.getValue(),
 			model.getOffsetAt(position)
-		).path.join('/')
+		).path
+
+		let location = locationArr.join('/')
+		// Lightning cache definition implicitely indexes arrays so we need to remove indexes if they are at the last path position
+		if (!isNaN(Number(locationArr[locationArr.length - 1]))) {
+			locationArr.pop()
+			location = locationArr.join('/')
+		}
 
 		const { definitionId, transformedWord } = await this.getDefinition(
 			word,
