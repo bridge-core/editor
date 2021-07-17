@@ -7,8 +7,7 @@
 			"$ref": "../../project/unprefixedFileIdentifierEnum.json"
 		},
 		{
-			"type": "string",
-			"pattern": ".+:.+"
+			"type": "string"
 		}
 	]
 }
