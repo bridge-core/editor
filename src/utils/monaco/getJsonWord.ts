@@ -20,13 +20,14 @@ export function getJsonWordAtPosition(
 }
 
 function getNextQuote(line: string, startIndex: number) {
-	for (let i = startIndex + 1; i < line.length; i++) {
+	for (let i = startIndex - 1; i < line.length; i++) {
+		console.log(line[i])
 		if (line[i] === '"') return i
 	}
 	return line.length
 }
 function getPreviousQuote(line: string, startIndex: number) {
-	for (let i = startIndex - 1; i > 0; i--) {
+	for (let i = startIndex - 2; i > 0; i--) {
 		if (line[i] === '"') return i + 1
 	}
 	return 0
