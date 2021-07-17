@@ -36,7 +36,7 @@ export class DefinitionProvider {
 		).path
 
 		let location = locationArr.join('/')
-		// Lightning cache definition implicitely indexes arrays so we need to remove indexes if they are at the last path position
+		// Lightning cache definition implicitly indexes arrays so we need to remove indexes if they are at the last path position
 		if (!isNaN(Number(locationArr[locationArr.length - 1]))) {
 			locationArr.pop()
 			location = locationArr.join('/')
