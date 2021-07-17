@@ -43,7 +43,7 @@ export function tokenizeCommand(command: string) {
 			}
 
 			default:
-				word += command[i]
+				if (command[i].trim() !== '') word += command[i]
 				break
 		}
 		i++

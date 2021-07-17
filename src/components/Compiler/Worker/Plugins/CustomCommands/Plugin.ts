@@ -101,8 +101,13 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 								: [commands]
 
 							return transformCommands(
-								commands.map((command) =>
-									hasSlashPrefix ? command : `/${command}`
+								commands.map(
+									(command) =>
+										<`/${string}`>(
+											(hasSlashPrefix
+												? command
+												: `/${command}`)
+										)
 								),
 								dependencies,
 								false
@@ -119,7 +124,7 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 					.filter(
 						(command) => command !== '' && !command.startsWith('#')
 					)
-					.map((command) => `/${command}`)
+					.map((command) => <`/${string}`>`/${command}`)
 
 				return transformCommands(commands, dependencies, true)
 					.map((command) =>
