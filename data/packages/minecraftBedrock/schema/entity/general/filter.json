@@ -23,7 +23,7 @@
 		"subject": {
 			"$ref": "../../general/filter/subject.json"
 		},
-		"operators": {
+		"operator": {
 			"$ref": "../../general/filter/operator.json"
 		}
 	},
