@@ -173,7 +173,8 @@ export class DefinitionProvider {
 				(await app.project.packIndexer.service?.find(
 					def.from,
 					def.match,
-					[word]
+					[word],
+					true
 				)) ?? []
 
 			connectedFiles.push(...matches)
