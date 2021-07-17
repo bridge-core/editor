@@ -9,7 +9,8 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../general/reference/prefixedFileIdentifier.json"
+							// Needs to strictly match file name - don't change reference to "general/reference..." schema
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -34,7 +35,8 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../general/reference/prefixedFileIdentifier.json"
+							// Needs to strictly match file name - don't change reference to "general/reference..." schema
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -54,7 +56,8 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../general/reference/prefixedFileIdentifier.json"
+							// Needs to strictly match file name - don't change reference to "general/reference..." schema
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -83,7 +86,8 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../general/reference/prefixedFileIdentifier.json"
+							// Needs to strictly match file name - don't change reference to "general/reference..." schema
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -187,7 +191,8 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"$ref": "../../general/reference/prefixedFileIdentifier.json"
+							// Needs to strictly match file name - don't change reference to "general/reference..." schema
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -237,7 +242,8 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"$ref": "../../general/reference/prefixedFileIdentifier.json"
+							// Needs to strictly match file name - don't change reference to "general/reference..." schema
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -330,7 +336,8 @@
 				"description": {
 					"properties": {
 						"identifier": {
-							"$ref": "../../general/reference/prefixedFileIdentifier.json"
+							// Needs to strictly match file name - don't change reference to "general/reference..." schema
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -406,7 +413,8 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../general/reference/prefixedFileIdentifier.json"
+							// Needs to strictly match file name - don't change reference to "general/reference..." schema
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},
@@ -699,7 +707,8 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../general/reference/prefixedFileIdentifier.json"
+							// Needs to strictly match file name - don't change reference to "general/reference..." schema
+							"$ref": "../../project/prefixedFileIdentifierEnum.json"
 						}
 					}
 				},

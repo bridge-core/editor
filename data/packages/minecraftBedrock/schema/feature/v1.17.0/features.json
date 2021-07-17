@@ -14,7 +14,7 @@
 							"additionalProperties": false,
 							"properties": {
 								"identifier": {
-									"$ref": "../../general/reference/prefixedFileIdentifier.json"
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
 								}
 							}
 						},
@@ -127,7 +127,7 @@
 							"additionalProperties": false,
 							"properties": {
 								"identifier": {
-									"$ref": "../../general/reference/prefixedFileIdentifier.json"
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
 								}
 							}
 						},
@@ -207,7 +207,7 @@
 							"additionalProperties": false,
 							"properties": {
 								"identifier": {
-									"$ref": "../../general/reference/prefixedFileIdentifier.json"
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
 								}
 							}
 						},
@@ -252,7 +252,7 @@
 							"additionalProperties": false,
 							"properties": {
 								"identifier": {
-									"$ref": "../../general/reference/prefixedFileIdentifier.json"
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
 								}
 							}
 						},
@@ -308,7 +308,7 @@
 							"additionalProperties": false,
 							"properties": {
 								"identifier": {
-									"$ref": "../../general/reference/prefixedFileIdentifier.json"
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
 								}
 							}
 						},
@@ -347,7 +347,7 @@
 							"additionalProperties": false,
 							"properties": {
 								"identifier": {
-									"$ref": "../../general/reference/prefixedFileIdentifier.json"
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
 								}
 							}
 						},
@@ -383,7 +383,7 @@
 							"additionalProperties": false,
 							"properties": {
 								"identifier": {
-									"$ref": "../../general/reference/prefixedFileIdentifier.json"
+									"$ref": "../../project/prefixedFileIdentifierEnum.json"
 								}
 							}
 						},

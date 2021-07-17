@@ -10,7 +10,8 @@
 					"additionalProperties": false,
 					"properties": {
 						"identifier": {
-							"$ref": "../../general/reference/unprefixedFileIdentifier.json"
+							// Needs to strictly match file name - don't change reference to "general/reference..." schema
+							"$ref": "../../project/unprefixedFileIdentifierEnum.json"
 						}
 					}
 				},
