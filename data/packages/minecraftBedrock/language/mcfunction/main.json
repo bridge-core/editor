@@ -236,23 +236,7 @@
 							"description": "Specifies the new difficulty level.",
 							"type": "string",
 							"additionalData": {
-								"values": [
-									"peaceful",
-									"p",
-									"0",
-
-									"easy",
-									"e",
-									"1",
-
-									"normal",
-									"n",
-									"2",
-
-									"hard",
-									"h",
-									"3"
-								]
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/gameDifficulty.json"
 							}
 						}
 					]
@@ -286,7 +270,10 @@
 						{
 							"argumentName": "effect",
 							"description": "Specifies the effect to be added or removed.",
-							"type": "string"
+							"type": "string",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/vanilla/effectName.json"
+							}
 						},
 						{
 							"argumentName": "seconds",
@@ -340,38 +327,7 @@
 							"description": "Specifies the enchantment to be added to the item held in main hand by the target.",
 							"type": "string",
 							"additionalData": {
-								"values": [
-									"all",
-									"absorption",
-									"bad_omen",
-									"blindness",
-									"conduit_power",
-									"fatal_poison",
-									"fire_resistance",
-									"haste",
-									"health_boost",
-									"hunger",
-									"instant_damage",
-									"instant_health",
-									"invisibility",
-									"jump_boost",
-									"levitation",
-									"mining_fatigue",
-									"nausea",
-									"night_vision",
-									"poison",
-									"regeneration",
-									"resistance",
-									"saturation",
-									"slow_falling",
-									"slowness",
-									"speed",
-									"strength",
-									"village_hero",
-									"water_breathing",
-									"weakness",
-									"wither"
-								]
+								"schemaReference": "/data/packages/minecraftBedrock/schema/general/vanilla/enchantName.json"
 							}
 						},
 						{
@@ -781,7 +737,7 @@
 									"pvp",
 									"randomtickspeed",
 									"sendcommandfeedback",
-									"show$coordinates",
+									"showcoordinates",
 									"showdeathmessages",
 									"tntexplodes"
 								]
