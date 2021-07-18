@@ -8,11 +8,11 @@ export class CreateGitIgnore extends CreateFile {
 			`.gitignore`,
 			`Desktop.ini    
 .DS_Store 
-!.bridge/
+.bridge/
 .bridge/*
-!.bridge/compiler/
-!.bridge/extensions
-!.bridge/config.json
+.bridge/compiler/
+.bridge/extensions
+.bridge/config.json
 builds`
 		)
 	}
