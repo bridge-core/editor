@@ -100,13 +100,6 @@ export class SchemaScript {
 					scriptResult = scriptResult.data
 				}
 
-				// if (
-				// 	schemaScript.generateFile.startsWith(
-				// 		'entity/dynamic/currentContext'
-				// 	)
-				// )
-				// 	console.log(schemaScript, scriptResult)
-
 				if (
 					schemaScript.type === 'object' &&
 					!Array.isArray(scriptResult) &&
