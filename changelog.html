@@ -1,31 +1,73 @@
-<h2>Features:</h2>
+<h1>v2.0.0 - &quot;Beacon&quot;</h1>
+<p>After over a year of work, we are happy to finally launch bridge. v2! Today, we are also releasing new <a href="https://bridge-core.app/extension-docs/">documentation for bridge. v2</a> and <a href="https://github.com/bridge-core/bridge./releases/tag/v1.8.0">bridge. v1.8.0</a>, an update that eases the process of migrating existing projects to bridge. v2.
+Thanks a lot to all the people who contributed to this milestone release: @Joelant05, @pascal541, @Gekocaretaker, @outercloudstudio, @7dev7urandom, @Chikorita-Lover and @KikiCreations.</p>
+<p>We're going to highlight some of the major new features &amp; changes in this post. For a detailed list of changes, you can browse through the <a href="https://github.com/bridge-core/editor/releases">changelogs of v2's pre-releases</a>.</p>
+<h2>Installation</h2>
+<ol>
+<li>Visit https://editor.bridge-core.app/ with a supported browser. (We recommend the new Edge based on Chromium)</li>
+<li>Click the install icon that appears inside of the URL bar.
+<img src="https://user-images.githubusercontent.com/33347616/126063371-5efd5c57-a8dc-4ac2-83ed-bed60fc44d93.png" alt="install"></li>
+<li>bridge. v2 is now installed to your system. You can continue with the guided setup process.</li>
+</ol>
+<p>For more help on how to get started, please refer to our <a href="https://bridge-core.app/editor-docs/getting-started/#setting-up-bridge">getting started guide</a>.</p>
+<h2>New App UI</h2>
+<p>bridge. v2 comes with a gorgeous redesign of all UI elements. This gives bridge. v2 a fresh new look and increases the usability of our UI.</p>
+<h3>Pack Explorer</h3>
+<p>Our new pack explorer combines all pack types into a single, color-coded sidebar area.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126061729-deb8f6d9-600c-4e8b-9a8a-707ef37135af.png" alt="Bildschirmfoto 2021-07-18 um 11 02 39"></p>
+<hr>
+<h3>Creating Files</h3>
+<p>Presets are now at the front and center of creating files. Presets allow users to quickly create all files necessary to get a feature working in game. They are perfect for e.g. quickly setting up a new entity, block or item. You can also see that all window sidebars now have an updated look and all content windows now offer the ability to quickly search for things.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126061807-c1015a5a-1f4d-4859-97ca-833fa727093e.png" alt="Bildschirmfoto 2021-07-18 um 11 06 06"></p>
+<hr>
+<h3>Extension Store</h3>
+<p>Our new extension store also received a visual overhaul and some significant functionality changes to make it easier to keep extensions up to date, disabling/enabling installed extensions and exploring the catalogue.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126061944-3d608d0f-dd4d-4b53-ba68-1b764b5df36d.png" alt="Bildschirmfoto 2021-07-18 um 11 11 14"></p>
+<h2>Broader Bedrock Support</h2>
+<p>bridge. v2 now supports creating skin packs and world templates in addition to behavior and resource packs. We have also published an extension called &quot;WorldHub&quot; which allows creators to add multiple worlds to a project &amp; pulling/pushing them from/to the com.mojang folder.</p>
+<h2>Project Structure</h2>
+<p>bridge. v2 moves projects out of the com.mojang directory by default. Additionally, all packs that belong to a project can be found inside of a single folder. This allows for very easy integration with version control systems like git and makes it easier to work on the project with other editors. A typical v2 project looks like this:</p>
+<p>-- My Project/
+--- .bridge/
+--- BP/
+---- ...
+---- manifest.json
+--- RP/
+---- ...
+---- manifest.json
+--- SP/
+---- ...
+---- manifest.json
+--- config.json</p>
+<h2>Compiler Architecture</h2>
+<p>Even though bridge. v2 no longer stores your project inside of the com.mojang folder, you still get the same seamless development experience if you have setup com.mojang syncing by dragging the folder onto bridge. v2. Upon making changes to the project folder, bridge. will re-compile the file and move it to Minecraft for testing. Because this process is fully automatic, <strong>you should never manually work on the add-on inside of the com.mojang folder because any changes might get overwritten. Always work with the project folder!</strong></p>
+<p>When you make changes to your project outside of bridge., you can refresh the project and bridge. will pick up any changes made with external editors and update the com.mojang output accordingly. This also works with file deletions &amp; renames.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126063144-656afc65-b3ab-424d-9188-124977bf3061.png" alt="Bildschirmfoto 2021-07-18 um 12 02 09"></p>
+<p>Our compiler generally has two modes: &quot;dev&quot; and &quot;build&quot;. The procedure described above always happens inside of &quot;dev&quot; mode. It is optimized for delivering fast &amp; correct updates to all files that need to change whenever a source file inside of the dependency tree changes. The &quot;build&quot; mode compiles a full build that is ready for production inside of the &quot;project/builds/dist/&quot; folder. Some compiler plugins such as AnyLanguage are designed to only work inside of this compiler mode.</p>
+<h2>Editing</h2>
+<p>bridge. v2 finally allows developers to freely switch between editing JSON files as text or in a dedicated tree editor that prevents newer users from making syntax mistakes. We also added a global find &amp; replace system and live previews of files while your are working on them.</p>
+<h3>Text Editor</h3>
+<p>We are using <a href="https://microsoft.github.io/monaco-editor/index.html">Monaco</a> to provide the same incredible editing experience VS Code provides and we ship auto-completions &amp; validations for all of Minecraft's JSON files.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126062057-5ae6f5fb-0938-4828-89a3-b9df25b22f4a.png" alt="Bildschirmfoto 2021-07-18 um 11 17 33"></p>
+<hr>
+<h3>Tree Editor</h3>
+<p>Our new tree editor features support for multiple selections, direct/more natural keybindings (e.g. &quot;Del&quot; instead of &quot;Ctrl + Del&quot;) and makes use of the same new JSON schemas our text editor uses for its auto-completions. We are looking to add better (more Minecraft-y) syntax highlighting to both our text editor and tree editor in the future.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126062278-329c6a3a-a727-4076-aeae-b60984f59ade.png" alt="Bildschirmfoto 2021-07-18 um 11 26 44"></p>
+<hr>
+<h3>Live Previews</h3>
+<p>bridge. v2 ships with the ability to preview files while you edit them. This allows developers to find the perfect seat positions &amp; collision/hit boxes without needing to jump into Minecraft. We support previewing particles, entities (components, models, particles &amp; animations) and blocks (components &amp; models).</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126062149-4975573c-ebf9-4baf-8510-d55a7d2db538.png" alt="Bildschirmfoto 2021-07-18 um 11 21 42"></p>
+<hr>
+<h3>Global Find &amp; Replace</h3>
+<p>This was one of the most requested features for bridge. v1. It proofed to be technically difficult to implement previously because of the cache system that was in place for the old editor. With our new codebase, we were finally able to add a global find &amp; replace system!</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126062374-c8ee8c2b-627d-4b94-bcaa-227099eaace8.png" alt="Bildschirmfoto 2021-07-18 um 11 32 14"></p>
+<h2>Extensions</h2>
+<p>We are proud to already feature some fantastic new extensions on bridge. v2's extension store.</p>
 <ul>
-<li>Support for basic custom commands</li>
-<li>v1 Compatibility:
-<ul>
-<li>Added a &quot;v1CompatMode&quot; which allows bridge. v2 to interpret v1's custom components &amp; commands</li>
+<li>We have compiler plugins for automatically generating the &quot;texture_list.json&quot; file for production builds or automatically generating all lang files based on the &quot;en_US.lang&quot; file</li>
+<li>A lot of themes are already available for bridge. v2</li>
+<li>@aexer0e's fantastic &quot;Compact Prettier&quot; changes the default &quot;format on save&quot; formatter to produce more compact output</li>
+<li>There are fantastic UI extensions such as @jasonjgardner's texture set generator, the MoLang Playground or @aexer0e's Table2 extension for displaying &amp; editing Google Docs Tables inside of bridge.</li>
 </ul>
-</li>
-<li>Improved command auto-completions</li>
-<li>Added a new extension module: &quot;@bridge/theme&quot;</li>
-</ul>
-<h2>Changes:</h2>
-<ul>
-<li>PackSpider is now off by default</li>
-<li>Updated Dutch translations (Thanks to @pascal541)</li>
-<li>Moved bridge-specific schemas to &quot;common&quot; data package</li>
-</ul>
-<h2>Fixes:</h2>
-<ul>
-<li>Fixed middle click scroll wheel upon disposing tab</li>
-<li>Fixed indexing of files with invalid JSON</li>
-<li>Fixed tree editor not showing when &quot;isDevMode&quot; setting hasn't been set</li>
-<li>Fixed schemaScripts error</li>
-<li>Fixed infinite loading when trying to open changelog</li>
-<li>Fixed dialogue folder name</li>
-<li>Fixed translation error from compiler config</li>
-<li>Fixed error upon creating first project</li>
-<li>Fixed RP as BP dependency</li>
-<li>Fixed error upon loading command auto-completions</li>
-<li>Fixed error upon opening client entity without valid geometry</li>
-</ul>
+<p><img src="https://user-images.githubusercontent.com/33347616/126062619-d870149d-edd4-40d6-83d8-7a34dc666e9d.png" alt="Bildschirmfoto 2021-07-18 um 11 36 11"></p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126062615-8cd0b711-987c-4857-9890-8bb9b6608813.png" alt="Bildschirmfoto 2021-07-18 um 11 35 31"></p>
