@@ -4,11 +4,7 @@ const { join } = require('path')
 const { NormalModuleReplacementPlugin } = require('webpack')
 
 const isNightlyBuild = process.argv[3] === '--nightly'
-const publicPath = isNightlyBuild
-	? '/'
-	: process.env.NODE_ENV === 'production'
-	? '/editor/'
-	: '/'
+const publicPath = '/'
 
 module.exports = {
 	runtimeCompiler: true,
