@@ -29,12 +29,12 @@ export function setupHelpCategory(app: App) {
 	)
 	help.addItem(
 		app.actionManager.create({
-			name: 'actions.pluginAPI.name',
+			name: 'actions.extensionAPI.name',
 			icon: 'mdi-puzzle-outline',
-			description: 'actions.pluginAPI.description',
+			description: 'actions.extensionAPI.description',
 			onTrigger: () =>
 				App.createNativeWindow(
-					'https://bridge-core.github.io/plugin-docs/',
+					'https://bridge-core.github.io/extension-docs/',
 					'_blank'
 				),
 		})

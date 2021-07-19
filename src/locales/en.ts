@@ -155,9 +155,9 @@ export default {
 			name: 'Bug Reports',
 			description: 'Report an issue with bridge.',
 		},
-		pluginAPI: {
-			name: 'Plugin API',
-			description: "Read more about bridge.'s plugin API",
+		extensionAPI: {
+			name: 'Extension API',
+			description: "Read more about bridge.'s extension API",
 		},
 		gettingStarted: {
 			name: 'Getting Started',
