@@ -36,6 +36,7 @@ import { ComMojang } from './components/FileSystem/ComMojang'
 import { AudioManager } from '/@/components/Audio/AudioManager'
 
 export class App {
+	public static readonly installApp = new InstallApp()
 	public static fileSystemSetup = new FileSystemSetup()
 	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventSystem<any>([
@@ -65,7 +66,7 @@ export class App {
 	public readonly comMojang = new ComMojang(this)
 
 	protected languageManager = new LanguageManager()
-	protected installApp = new InstallApp()
+
 	protected _windows: Windows
 	get windows() {
 		return this._windows

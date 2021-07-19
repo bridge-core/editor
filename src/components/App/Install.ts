@@ -1,6 +1,9 @@
+import { Signal } from '../Common/Event/Signal'
 import { Notification } from '../Notifications/Notification'
 
 export class InstallApp extends Notification {
+	public readonly isInstallable = new Signal<void>()
+	public readonly isInstalled = new Signal<void>()
 	protected installEvent!: any
 
 	constructor() {
@@ -23,6 +26,7 @@ export class InstallApp extends Notification {
 		event.preventDefault()
 		this.installEvent = event
 		this.show()
+		this.isInstallable.dispatch()
 	}
 
 	prompt() {
@@ -30,7 +34,10 @@ export class InstallApp extends Notification {
 			this.installEvent.prompt()
 
 			this.installEvent.userChoice.then((choice: any) => {
-				if (choice.outcome === 'accepted') this.dispose()
+				if (choice.outcome === 'accepted') {
+					this.dispose()
+					this.isInstalled.dispatch()
+				}
 			})
 		} else {
 			this.dispose()

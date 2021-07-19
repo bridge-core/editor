@@ -9,7 +9,7 @@
 		<v-card>
 			<v-container :class="{ 'pt-12': windowControlsOverlay }">
 				<div
-					class="d-flex flex-column justify-center align-center mb-3"
+					class="d-flex flex-column justify-center align-center mb-6"
 				>
 					<img
 						height="128"
@@ -50,7 +50,9 @@
 </template>
 
 <script>
+import { App } from '/@/App.ts'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import InstallAppStep from './Steps/InstallApp.vue'
 import BridgeFolderStep from './Steps/BridgeFolder.vue'
 import ComMojangStep from './Steps/ComMojang.vue'
 import EditorTypeStep from './Steps/EditorType.vue'
@@ -86,6 +88,17 @@ export default {
 			},
 		],
 	}),
+	mounted() {
+		App.installApp.isInstallable.on(() => {
+			this.steps.unshift({
+				name: 'initialSetup.step.installApp',
+				component: InstallAppStep,
+			})
+		})
+		App.installApp.isInstalled.on(() => {
+			this.onNext()
+		})
+	},
 	methods: {
 		async onNext() {
 			this.stepId++

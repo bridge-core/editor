@@ -585,6 +585,11 @@ export default {
 		welcome: 'Welcome to bridge. v2!',
 		welcomeCaption: 'A powerful IDE for Minecraft Add-Ons',
 		step: {
+			installApp: {
+				name: 'Install bridge.',
+				description:
+					'For the best experience, install bridge. v2 as an app to your computer.',
+			},
 			bridge: {
 				name: 'bridge. Folder',
 				description:
