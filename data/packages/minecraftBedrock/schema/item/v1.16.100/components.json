@@ -68,6 +68,24 @@
 						}
 					}
 				},
+				"minecraft:block_placer": {
+					"description": "Planter item component. planter items are items that can be planted.",
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"block": {
+							"description": "Set the placement block name for the planter item.",
+							"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+						},
+						"use_on": {
+							"description": "List of block descriptors that contain blocks that this item can be used on. If left empty, all blocks will be allowed.",
+							"type": "array",
+							"items": {
+								"$ref": "../../general/reference/identifiers.json#/definitions/block_identifiers"
+							}
+						}
+					}
+				},
 				"minecraft:entity_placer": {
 					"type": "object",
 					"description": "Allow this item to place entities",
