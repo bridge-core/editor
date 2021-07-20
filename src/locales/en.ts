@@ -120,6 +120,15 @@ export default {
 			name: 'Save File',
 			description: 'Save the currently opened file',
 		},
+		saveAs: {
+			name: 'Save As',
+			description:
+				'Save the currently opened file under a different name',
+		},
+		saveAll: {
+			name: 'Save All',
+			description: 'Save all currently opened files',
+		},
 		closeFile: {
 			name: 'Close File',
 			description: 'Close the currently opened file',

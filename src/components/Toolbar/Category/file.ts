@@ -54,6 +54,25 @@ export function setupFileCategory(app: App) {
 			onTrigger: () => App.ready.once((app) => app.tabSystem?.save()),
 		})
 	)
+	// TODO: Save As
+	// file.addItem(
+	// 	app.actionManager.create({
+	// 		icon: 'mdi-content-save-edit-outline',
+	// 		name: 'actions.saveAs.name',
+	// 		description: 'actions.saveAs.description',
+	// 		keyBinding: 'Ctrl + Shift + S',
+	// 		onTrigger: () => App.ready.once((app) => app.tabSystem?.saveAll()),
+	// 	})
+	// )
+	file.addItem(
+		app.actionManager.create({
+			icon: 'mdi-content-save-settings-outline',
+			name: 'actions.saveAll.name',
+			description: 'actions.saveAll.description',
+			keyBinding: 'Ctrl + Meta + S',
+			onTrigger: () => App.ready.once((app) => app.tabSystem?.saveAll()),
+		})
+	)
 	file.addItem(
 		app.actionManager.create({
 			icon: 'mdi-file-cancel-outline',
