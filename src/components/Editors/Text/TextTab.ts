@@ -11,7 +11,12 @@ import { Signal } from '/@/components/Common/Event/Signal'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
-		if (!tab.editorModel || tab.editorModel.isDisposed()) return
+		if (
+			tab.isForeignFile ||
+			!tab.editorModel ||
+			tab.editorModel.isDisposed()
+		)
+			return
 
 		const fileContent = tab.editorModel?.getValue()
 		const app = await App.getApp()
