@@ -327,7 +327,6 @@ export class TreeEditor {
 		let entries: HistoryEntry[] = []
 
 		this.forEachSelection((sel) => {
-			console.log(sel, json)
 			if (sel instanceof TreeValueSelection) return
 			const parentTree = sel.getTree()
 			const index = parentTree.children.length
