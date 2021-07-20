@@ -149,7 +149,6 @@ export default {
 		onAddKey(suggestion) {
 			if (this.triggerCooldown) return
 
-			console.log(suggestion)
 			if (suggestion === null) return
 			const { type = 'object', value = suggestion } = suggestion
 
@@ -164,7 +163,6 @@ export default {
 		onAddValue(suggestion) {
 			if (this.triggerCooldown) return
 
-			console.log(suggestion)
 			if (suggestion === null) return
 			const { type = 'value', value = suggestion } = suggestion
 
