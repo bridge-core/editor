@@ -1,5 +1,6 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
+import { Divider } from '../Divider'
 
 export function setupHelpCategory(app: App) {
 	const help = new ToolbarCategory('mdi-help', 'toolbar.help.name')
@@ -27,6 +28,9 @@ export function setupHelpCategory(app: App) {
 				),
 		})
 	)
+
+	help.addItem(new Divider())
+
 	help.addItem(
 		app.actionManager.create({
 			name: 'actions.extensionAPI.name',

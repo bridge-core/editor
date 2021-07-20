@@ -1,5 +1,6 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
+import { Divider } from '../Divider'
 
 export function setupToolsCategory(app: App) {
 	const tools = new ToolbarCategory(
@@ -16,6 +17,9 @@ export function setupToolsCategory(app: App) {
 				App.createNativeWindow('https://bedrock.dev', 'DocWindow'),
 		})
 	)
+
+	tools.addItem(new Divider())
+
 	tools.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.refreshProject',
