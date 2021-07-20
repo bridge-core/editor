@@ -7,7 +7,7 @@
 			"const": "1.12"
 		}
 	},
-	"oneOf": [
+	"anyOf": [
 		{
 			"properties": {
 				"minecraft:recipe_furnace": {
