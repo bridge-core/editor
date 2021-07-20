@@ -68,7 +68,6 @@ export class TextTab extends FileTab {
 		if (this.isActive) return
 		this.isActive = true
 
-		const app = await App.getApp()
 		await this.parent.fired //Make sure a monaco editor is loaded
 
 		if (!this.editorModel) {
@@ -157,23 +156,21 @@ export class TextTab extends FileTab {
 			])
 
 			const editPromise = new Promise<void>((resolve) => {
-				const disposable = this.editorModel?.onDidChangeContent(
-					async () => {
-						disposable?.dispose()
+				if (!this.editorModel) return resolve()
 
-						await actionPromise
-						await this.saveFile(app)
+				const disposable = this.editorModel?.onDidChangeContent(() => {
+					disposable?.dispose()
 
-						app.windows.loadingWindow.close()
-						resolve()
-					}
-				)
+					resolve()
+				})
 			})
 
 			const actionPromise = action.run()
 
-			await editPromise
-			await actionPromise
+			await Promise.all([editPromise, actionPromise])
+
+			await this.saveFile(app)
+			app.windows.loadingWindow.close()
 		} else {
 			await this.saveFile(app)
 		}
@@ -185,6 +182,8 @@ export class TextTab extends FileTab {
 				this.fileHandle,
 				this.editorModel.getValue()
 			)
+		} else {
+			console.error(`Cannot save file content without active editorModel`)
 		}
 	}
 

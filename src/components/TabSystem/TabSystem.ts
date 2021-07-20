@@ -131,11 +131,11 @@ export class TabSystem extends MonacoHolder {
 			return true
 		}
 	}
-	async closeByPath(fileHandle: FileSystemFileHandle) {
+	async closeTabWithHandle(fileHandle: FileSystemFileHandle) {
 		const tab = await this.getTab(fileHandle)
 		if (tab) this.close(tab)
 	}
-	select(tab?: Tab) {
+	async select(tab?: Tab) {
 		if (this.isActive !== !!tab) this.setActive(!!tab)
 
 		if (tab?.isSelected) return
@@ -149,8 +149,9 @@ export class TabSystem extends MonacoHolder {
 		// Next step doesn't need to be done if we simply unselect tab
 		if (!tab) return
 
+		await this._selectedTab?.onActivate()
+
 		Vue.nextTick(async () => {
-			await this._selectedTab?.onActivate()
 			this._monacoEditor?.layout()
 		})
 	}
@@ -160,7 +161,14 @@ export class TabSystem extends MonacoHolder {
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 
+		// We need to select the tab before saving to format it correctly
+		const selectedTab = this.selectedTab
+		await this.select(tab)
+
 		await tab.save()
+
+		// Select the previously selected tab again
+		await this.select(selectedTab)
 
 		if (!tab.isForeignFile && tab instanceof FileTab) {
 			await this.project.updateFile(tab.getProjectPath())
