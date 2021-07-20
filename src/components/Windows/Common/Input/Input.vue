@@ -52,11 +52,10 @@ export default {
 	},
 	methods: {
 		onClose() {
-			this.currentWindow.close()
+			this.currentWindow.close(null)
 			this.currentWindow.inputValue = ''
 		},
 		onConfirm() {
-			this.currentWindow.close()
 			this.currentWindow.confirm()
 			this.currentWindow.inputValue = ''
 		},
