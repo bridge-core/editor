@@ -168,7 +168,7 @@ export class TabSystem extends MonacoHolder {
 		const selectedTab = this.selectedTab
 		if (selectedTab !== tab) await this.select(tab)
 
-		await tab.save()
+		if (tab instanceof FileTab) await tab.save()
 
 		// Select the previously selected tab again
 		if (selectedTab !== tab) await this.select(selectedTab)
@@ -187,17 +187,20 @@ export class TabSystem extends MonacoHolder {
 				tab.getProjectPath(),
 				await tab.getFile()
 			)
-		}
 
-		// Only refresh auto-completion content if tab is active
-		if (tabWasActive && tab instanceof FileTab)
-			App.eventSystem.dispatch(
-				'refreshCurrentContext',
-				tab.getProjectPath()
-			)
+			// Only refresh auto-completion content if tab is active
+			if (tabWasActive)
+				App.eventSystem.dispatch(
+					'refreshCurrentContext',
+					tab.getProjectPath()
+				)
+		}
 
 		app.windows.loadingWindow.close()
 		tab.focus()
+	}
+	async saveAs() {
+		if (this.selectedTab instanceof FileTab) await this.selectedTab.saveAs()
 	}
 	async saveAll() {
 		const app = await App.getApp()
