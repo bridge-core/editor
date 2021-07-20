@@ -1,5 +1,4 @@
 import { platform } from '/@/utils/os'
-import Vue from 'vue'
 import { IKeyBindingConfig, KeyBinding } from './KeyBinding'
 import { toStrKeyCode } from './Utils'
 import { del, set, shallowReactive } from '@vue/composition-api'
@@ -11,7 +10,7 @@ export class KeyBindingManager {
 	protected lastTimeStamp = 0
 
 	protected onKeydown = (event: KeyboardEvent) => {
-		const { key, ctrlKey, altKey, metaKey, shiftKey } = event
+		const { key, ctrlKey, altKey, metaKey, shiftKey, code } = event
 		if (IGNORE_KEYS.includes(key)) return
 
 		const keyCode = toStrKeyCode({
