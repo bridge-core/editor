@@ -7,6 +7,8 @@ import json5 from 'json5'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { debounce } from 'lodash-es'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
+import { TreeValueSelection } from './TreeSelection'
+import { PrimitiveTree } from './Tree/PrimitiveTree'
 
 const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {
@@ -101,5 +103,53 @@ export class TreeTab extends FileTab {
 		this.treeEditor.saveState()
 	}
 
-	async paste() {}
+	async paste() {
+		const text = await navigator.clipboard.readText()
+
+		let data: any = undefined
+		// Try parsing clipboard text
+		try {
+			data = json5.parse(text)
+		} catch {
+			// Parsing fails, now try again with brackets around text
+			// -> To support pasting text like this: "minecraft:can_fly": {}
+			try {
+				data = json5.parse(`{${text}}`)
+			} catch {
+				return
+			}
+		}
+		if (data === undefined) return
+
+		this.treeEditor.addFromJSON(data)
+	}
+
+	async copy() {
+		let copyText = ''
+
+		this.treeEditor.forEachSelection((sel) => {
+			const tree = sel.getTree()
+
+			if (sel instanceof TreeValueSelection) {
+				if ((<PrimitiveTree>tree).isValueSelected)
+					copyText += tree.toJSON()
+				else copyText += tree.key
+			} else {
+				copyText += `"${tree.key}": ${JSON.stringify(
+					sel.getTree().toJSON(),
+					null,
+					'\t'
+				)}`
+			}
+		})
+
+		if (copyText !== '') await navigator.clipboard.writeText(copyText)
+	}
+
+	async cut() {
+		await this.copy()
+		this.treeEditor.forEachSelection((sel) =>
+			this.treeEditor.delete(sel.getTree())
+		)
+	}
 }

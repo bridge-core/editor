@@ -43,6 +43,9 @@ export class ObjectTree extends Tree<object> {
 	hasChild(child: Tree<unknown>) {
 		return this.children.some(([_, currChild]) => currChild === child)
 	}
+	addChild(key: string, child: Tree<unknown>) {
+		this._children.push([key, child])
+	}
 
 	setOpen(val: boolean, force = false) {
 		if (this.hasChildren || force) this._isOpen = val

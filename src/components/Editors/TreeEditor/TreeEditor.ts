@@ -5,7 +5,7 @@ import { FileType } from '/@/components/Data/FileType'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
 import { RootSchema } from '/@/components/JSONSchema/Schema/Root'
 import { ICompletionItem } from '/@/components/JSONSchema/Schema/Schema'
-import { UndoDeleteEntry } from './History/DeleteEntry'
+import { DeleteEntry, UndoDeleteEntry } from './History/DeleteEntry'
 import { EditorHistory } from './History/EditorHistory'
 import { HistoryEntry } from './History/HistoryEntry'
 import { ReplaceTreeEntry } from './History/ReplaceTree'
@@ -317,6 +317,35 @@ export class TreeEditor {
 
 			const entry = selection.addValue(transformedValue, type)
 			if (entry) entries.push(entry)
+		})
+
+		this.history.pushAll(entries)
+	}
+	addFromJSON(json: any) {
+		if (typeof json !== 'object') return
+
+		let entries: HistoryEntry[] = []
+
+		this.forEachSelection((sel) => {
+			console.log(sel, json)
+			if (sel instanceof TreeValueSelection) return
+			const parentTree = sel.getTree()
+			const index = parentTree.children.length
+
+			for (const key in json) {
+				const newTree = createTree(parentTree, json[key])
+				if (parentTree instanceof ObjectTree)
+					parentTree.addChild(key, newTree)
+				else parentTree.addChild(newTree)
+
+				entries.push(
+					new DeleteEntry(
+						newTree,
+						index,
+						parentTree instanceof ObjectTree ? key : undefined
+					)
+				)
+			}
 		})
 
 		this.history.pushAll(entries)
