@@ -382,13 +382,30 @@ export class TreeEditor {
 		this.history.push(new ReplaceTreeEntry(tree, newTree))
 	}
 
+	onPasteMenu(event?: MouseEvent, tree = this.tree) {
+		const pasteMenu = [
+			{
+				name: 'actions.paste.name',
+				icon: 'mdi-content-paste',
+				onTrigger: () => {
+					this.setSelection(tree)
+					this.parent.paste()
+				},
+			},
+		]
+
+		if (event) showContextMenu(event, pasteMenu)
+
+		return pasteMenu
+	}
+
 	onContextMenu(
 		event: MouseEvent,
 		tree: PrimitiveTree | ArrayTree | ObjectTree,
 		selectedKey = true
 	) {
-		const contextMenu: IActionConfig[] = []
-
+		const contextMenu: (IActionConfig | null)[] = []
+		// Delete node
 		if (tree instanceof PrimitiveTree)
 			contextMenu.push({
 				name: 'general.delete',
@@ -408,6 +425,30 @@ export class TreeEditor {
 				},
 			})
 
+		// Copy, cut & paste
+		contextMenu.push(
+			{
+				name: 'actions.copy.name',
+				icon: 'mdi-content-copy',
+				onTrigger: () => {
+					this.setSelection(tree, !selectedKey)
+					this.parent.copy()
+				},
+			},
+			{
+				name: 'actions.cut.name',
+				icon: 'mdi-content-cut',
+				onTrigger: () => {
+					this.setSelection(tree, !selectedKey)
+					this.parent.cut()
+				},
+			},
+			...(tree instanceof PrimitiveTree
+				? []
+				: this.onPasteMenu(undefined, tree))
+		)
+
+		// Object -> array and vice versa
 		if (!(tree instanceof PrimitiveTree) && tree.children.length === 0) {
 			contextMenu.push({
 				name:

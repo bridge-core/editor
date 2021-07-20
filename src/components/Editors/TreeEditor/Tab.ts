@@ -9,6 +9,7 @@ import { debounce } from 'lodash-es'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 import { TreeValueSelection } from './TreeSelection'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
+import type { Tree } from './Tree/Tree'
 
 const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {

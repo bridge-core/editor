@@ -10,6 +10,7 @@
 			:style="`height: ${height - 196}px; overflow: auto;`"
 			@blur="focusEditor"
 			@scroll="onScroll"
+			@contextmenu.prevent.stop="tab.treeEditor.onPasteMenu($event)"
 		>
 			<component
 				:is="tab.treeEditor.tree.component"
