@@ -11,7 +11,7 @@ export async function generateCommandSchemas() {
 	try {
 		baseDir = await app.project!.fileSystem.getDirectoryHandle(fromFilePath)
 	} catch {
-		return
+		return []
 	}
 
 	const schemas: any[] = []
