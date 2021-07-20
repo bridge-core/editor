@@ -8,7 +8,7 @@
 					tree.type !== 'array' &&
 					tree.isSelected,
 			}"
-			@contextmenu.prevent="treeEditor.onContextMenu($event, tree)"
+			@contextmenu.prevent.stop="treeEditor.onContextMenu($event, tree)"
 		>
 			<v-icon
 				class="mr-1"

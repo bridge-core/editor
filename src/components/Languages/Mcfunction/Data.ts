@@ -118,7 +118,7 @@ export class CommandData extends Signal<void> {
 					.map((command: any) => command?.commandName)
 					.filter(
 						(commandName: string) =>
-							!query || commandName.includes(query)
+							!query || commandName?.includes(query)
 					)
 			),
 		])

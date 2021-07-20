@@ -155,6 +155,7 @@
 						"is_visible",
 						"is_water",
 						"is_water_or_rain",
+						"is_weather",
 						"light_level",
 						"moon_intensity",
 						"moon_phase",
@@ -1025,6 +1026,22 @@
 				"properties": {
 					"value": {
 						"type": "boolean"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"test": {
+						"const": "is_weather"
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"value": {
+						"type": "string"
 					}
 				}
 			}

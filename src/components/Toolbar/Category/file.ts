@@ -1,6 +1,7 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { clearAllNotifications } from '../../Notifications/create'
+import { Divider } from '../Divider'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -47,6 +48,18 @@ export function setupFileCategory(app: App) {
 	)
 	file.addItem(
 		app.actionManager.create({
+			icon: 'mdi-file-cancel-outline',
+			name: 'actions.closeFile.name',
+			description: 'actions.closeFile.description',
+			keyBinding: 'Ctrl + W',
+			onTrigger: () => App.ready.once((app) => app.tabSystem?.close()),
+		})
+	)
+
+	file.addItem(new Divider())
+
+	file.addItem(
+		app.actionManager.create({
 			icon: 'mdi-content-save-outline',
 			name: 'actions.saveFile.name',
 			description: 'actions.saveFile.description',
@@ -56,13 +69,25 @@ export function setupFileCategory(app: App) {
 	)
 	file.addItem(
 		app.actionManager.create({
-			icon: 'mdi-file-cancel-outline',
-			name: 'actions.closeFile.name',
-			description: 'actions.closeFile.description',
-			keyBinding: 'Ctrl + W',
-			onTrigger: () => App.ready.once((app) => app.tabSystem?.close()),
+			icon: 'mdi-content-save-edit-outline',
+			name: 'actions.saveAs.name',
+			description: 'actions.saveAs.description',
+			keyBinding: 'Ctrl + Shift + S',
+			onTrigger: () => App.ready.once((app) => app.tabSystem?.saveAs()),
 		})
 	)
+	file.addItem(
+		app.actionManager.create({
+			icon: 'mdi-content-save-settings-outline',
+			name: 'actions.saveAll.name',
+			description: 'actions.saveAll.description',
+			keyBinding: 'Ctrl + Meta + S',
+			onTrigger: () => App.ready.once((app) => app.tabSystem?.saveAll()),
+		})
+	)
+
+	file.addItem(new Divider())
+
 	file.addItem(
 		app.actionManager.create({
 			icon: 'mdi-cancel',

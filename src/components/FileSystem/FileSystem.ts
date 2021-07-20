@@ -180,6 +180,10 @@ export class FileSystem extends Signal<void> {
 		)
 	}
 
+	async renameFile(path: string, newPath: string) {
+		await this.copyFile(path, newPath)
+		await this.unlink(path)
+	}
 	async copyFile(originPath: string, destPath: string) {
 		const originHandle = await this.getFileHandle(originPath, false)
 		const destHandle = await this.getFileHandle(destPath, true)

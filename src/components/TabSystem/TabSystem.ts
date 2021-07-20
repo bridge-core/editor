@@ -131,11 +131,11 @@ export class TabSystem extends MonacoHolder {
 			return true
 		}
 	}
-	async closeByPath(fileHandle: FileSystemFileHandle) {
+	async closeTabWithHandle(fileHandle: FileSystemFileHandle) {
 		const tab = await this.getTab(fileHandle)
 		if (tab) this.close(tab)
 	}
-	select(tab?: Tab) {
+	async select(tab?: Tab) {
 		if (this.isActive !== !!tab) this.setActive(!!tab)
 
 		if (tab?.isSelected) return
@@ -149,8 +149,9 @@ export class TabSystem extends MonacoHolder {
 		// Next step doesn't need to be done if we simply unselect tab
 		if (!tab) return
 
+		await this._selectedTab?.onActivate()
+
 		Vue.nextTick(async () => {
-			await this._selectedTab?.onActivate()
 			this._monacoEditor?.layout()
 		})
 	}
@@ -160,7 +161,17 @@ export class TabSystem extends MonacoHolder {
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 
-		await tab.save()
+		// Save whether the tab was selected previously for use later
+		const tabWasActive = this.selectedTab === tab
+
+		// We need to select the tab before saving to format it correctly
+		const selectedTab = this.selectedTab
+		if (selectedTab !== tab) await this.select(tab)
+
+		if (tab instanceof FileTab) await tab.save()
+
+		// Select the previously selected tab again
+		if (selectedTab !== tab) await this.select(selectedTab)
 
 		if (!tab.isForeignFile && tab instanceof FileTab) {
 			await this.project.updateFile(tab.getProjectPath())
@@ -176,17 +187,30 @@ export class TabSystem extends MonacoHolder {
 				tab.getProjectPath(),
 				await tab.getFile()
 			)
-		}
 
-		// Only refresh auto-completion content if tab is active
-		if (tab === this.selectedTab && tab instanceof FileTab)
-			App.eventSystem.dispatch(
-				'refreshCurrentContext',
-				tab.getProjectPath()
-			)
+			// Only refresh auto-completion content if tab is active
+			if (tabWasActive)
+				App.eventSystem.dispatch(
+					'refreshCurrentContext',
+					tab.getProjectPath()
+				)
+		}
 
 		app.windows.loadingWindow.close()
 		tab.focus()
+	}
+	async saveAs() {
+		if (this.selectedTab instanceof FileTab) await this.selectedTab.saveAs()
+	}
+	async saveAll() {
+		const app = await App.getApp()
+		app.windows.loadingWindow.open()
+
+		for (const tab of this.tabs) {
+			if (tab.isUnsaved) await this.save(tab)
+		}
+
+		app.windows.loadingWindow.close()
 	}
 
 	async activate() {

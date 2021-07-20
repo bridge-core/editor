@@ -16,6 +16,9 @@ export async function createFromEntity(tabSystem: TabSystem, tab: FileTab) {
 	try {
 		entityData = json5.parse(fileContent)?.['minecraft:entity'] ?? {}
 	} catch {
+		new InformationWindow({
+			description: 'preview.invalidEntity',
+		})
 		return
 	}
 

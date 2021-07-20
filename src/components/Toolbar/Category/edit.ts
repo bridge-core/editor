@@ -13,7 +13,14 @@ export function setupEditCategory(app: App) {
 			description: 'actions.copy.description',
 			keyBinding: 'Ctrl + C',
 			prevent: (element) => {
-				return blockActions.has(element.tagName)
+				console.log(
+					(<HTMLInputElement>element)?.value === '',
+					blockActions.has(element.tagName)
+				)
+				return (
+					(<HTMLInputElement>element)?.value !== '' &&
+					blockActions.has(element.tagName)
+				)
 			},
 			onTrigger: () => app.tabSystem?.selectedTab?.copy(),
 		})
@@ -25,7 +32,10 @@ export function setupEditCategory(app: App) {
 			description: 'actions.cut.description',
 			keyBinding: 'Ctrl + X',
 			prevent: (element) => {
-				return blockActions.has(element.tagName)
+				return (
+					(<HTMLInputElement>element)?.value !== '' &&
+					blockActions.has(element.tagName)
+				)
 			},
 			onTrigger: () => app.tabSystem?.selectedTab?.cut(),
 		})
@@ -37,7 +47,10 @@ export function setupEditCategory(app: App) {
 			description: 'actions.paste.description',
 			keyBinding: 'Ctrl + V',
 			prevent: (element) => {
-				return blockActions.has(element.tagName)
+				return (
+					(<HTMLInputElement>element)?.value !== '' &&
+					blockActions.has(element.tagName)
+				)
 			},
 			onTrigger: () => app.tabSystem?.selectedTab?.paste(),
 		})

@@ -97,7 +97,11 @@ export class Command {
 
 	getSchema() {
 		if (!this.schema) return []
-		else if (Array.isArray(this.schema)) return this.schema
+		else if (Array.isArray(this.schema))
+			return this.schema.map((schema) => ({
+				commandName: this.name,
+				...schema,
+			}))
 
 		// If commandName is not set on the schema, set it to the current name of the command.
 		if (!this.schema.commandName) this.schema.commandName = this.name

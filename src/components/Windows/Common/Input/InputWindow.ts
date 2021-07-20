@@ -10,7 +10,7 @@ export interface IInputWindowOpts {
 	onConfirm?: (input: string) => Promise<void> | void
 }
 
-export class InputWindow extends BaseWindow<string> {
+export class InputWindow extends BaseWindow<string | null> {
 	protected inputValue: string
 
 	constructor(protected opts: IInputWindowOpts) {
@@ -33,8 +33,10 @@ export class InputWindow extends BaseWindow<string> {
 	async confirm() {
 		App.audioManager.playAudio('click5.ogg', 1)
 		const finalInput = this.inputValue + (this.expandText ?? '')
+
 		if (typeof this.opts.onConfirm === 'function')
 			await this.opts.onConfirm(finalInput)
+
 		super.close(finalInput)
 	}
 }

@@ -3468,7 +3468,10 @@
 						},
 						{
 							"type": "string",
-							"argumentName": "sceneName"
+							"argumentName": "sceneName",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/dialogue/dynamic/sceneTagEnum.json"
+							}
 						},
 						{
 							"type": "selector",
@@ -3496,7 +3499,10 @@
 						},
 						{
 							"type": "string",
-							"argumentName": "sceneName"
+							"argumentName": "sceneName",
+							"additionalData": {
+								"schemaReference": "/data/packages/minecraftBedrock/schema/dialogue/dynamic/sceneTagEnum.json"
+							}
 						}
 					]
 				}

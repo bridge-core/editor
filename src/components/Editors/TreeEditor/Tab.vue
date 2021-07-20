@@ -10,6 +10,7 @@
 			:style="`height: ${height - 196}px; overflow: auto;`"
 			@blur="focusEditor"
 			@scroll="onScroll"
+			@contextmenu.prevent.stop="tab.treeEditor.onPasteMenu($event)"
 		>
 			<component
 				:is="tab.treeEditor.tree.component"
@@ -149,7 +150,6 @@ export default {
 		onAddKey(suggestion) {
 			if (this.triggerCooldown) return
 
-			console.log(suggestion)
 			if (suggestion === null) return
 			const { type = 'object', value = suggestion } = suggestion
 
@@ -164,7 +164,6 @@ export default {
 		onAddValue(suggestion) {
 			if (this.triggerCooldown) return
 
-			console.log(suggestion)
 			if (suggestion === null) return
 			const { type = 'value', value = suggestion } = suggestion
 

@@ -1,5 +1,6 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
+import { Divider } from '../Divider'
 
 export function setupHelpCategory(app: App) {
 	const help = new ToolbarCategory('mdi-help', 'toolbar.help.name')
@@ -27,14 +28,17 @@ export function setupHelpCategory(app: App) {
 				),
 		})
 	)
+
+	help.addItem(new Divider())
+
 	help.addItem(
 		app.actionManager.create({
-			name: 'actions.pluginAPI.name',
+			name: 'actions.extensionAPI.name',
 			icon: 'mdi-puzzle-outline',
-			description: 'actions.pluginAPI.description',
+			description: 'actions.extensionAPI.description',
 			onTrigger: () =>
 				App.createNativeWindow(
-					'https://bridge-core.github.io/plugin-docs/',
+					'https://bridge-core.github.io/extension-docs/',
 					'_blank'
 				),
 		})

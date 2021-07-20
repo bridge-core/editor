@@ -1,3 +1,4 @@
+import { LatheBufferGeometry } from 'three'
 import { en } from 'vuetify/src/locale'
 
 export default {
@@ -17,6 +18,9 @@ export default {
 		delete: 'Delete',
 		skip: 'Skip',
 		selectFolder: 'Select Folder',
+		fileName: 'File Name',
+		confirmOverwriteFile:
+			'A file with this name already exists. Do you want to overwrite it?',
 	},
 	packType: {
 		behaviorPack: {
@@ -118,6 +122,15 @@ export default {
 			name: 'Save File',
 			description: 'Save the currently opened file',
 		},
+		saveAs: {
+			name: 'Save As',
+			description:
+				'Save the currently opened file under a different name',
+		},
+		saveAll: {
+			name: 'Save All',
+			description: 'Save all currently opened files',
+		},
 		closeFile: {
 			name: 'Close File',
 			description: 'Close the currently opened file',
@@ -155,9 +168,9 @@ export default {
 			name: 'Bug Reports',
 			description: 'Report an issue with bridge.',
 		},
-		pluginAPI: {
-			name: 'Plugin API',
-			description: "Read more about bridge.'s plugin API",
+		extensionAPI: {
+			name: 'Extension API',
+			description: "Read more about bridge.'s extension API",
 		},
 		gettingStarted: {
 			name: 'Getting Started',
@@ -366,6 +379,16 @@ export default {
 				delete: {
 					name: 'Delete',
 					description: 'Delete a file or folder',
+					confirmText:
+						"Are you sure that you want to delete this file? You won't be able to restore it later!",
+				},
+				rename: {
+					name: 'Rename',
+					description: 'Rename a file',
+				},
+				duplicate: {
+					name: 'Duplicate',
+					description: 'Duplicate a file',
 				},
 				revealFilePath: {
 					name: 'Reveal File Path',
@@ -577,6 +600,8 @@ export default {
 		viewEntity: 'View Entity',
 		viewBlock: 'View Block',
 		failedClientEntityLoad: 'Failed to load connected client entity',
+		invalidEntity:
+			'Cannot open preview for an entity with invalid JSON. Please fix JSON errors inside of the file and try again.',
 		chooseGeometry: 'Choose Geometry',
 		noGeometry:
 			'No valid geometry found inside of this file. Make sure that your JSON is valid, that the file structure is correct and that a geometry with the provided identifier exists.',
@@ -585,6 +610,11 @@ export default {
 		welcome: 'Welcome to bridge. v2!',
 		welcomeCaption: 'A powerful IDE for Minecraft Add-Ons',
 		step: {
+			installApp: {
+				name: 'Install bridge.',
+				description:
+					'For the best experience, install bridge. v2 as an app to your computer.',
+			},
 			bridge: {
 				name: 'bridge. Folder',
 				description:

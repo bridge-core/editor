@@ -3,6 +3,7 @@
 		<ActionViewer
 			v-for="(action, i) in actions"
 			:key="i"
+			class="clickable"
 			:action="action"
 			hideTriggerButton
 			v-ripple

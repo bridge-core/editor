@@ -206,8 +206,6 @@ export abstract class Tab extends Signal<Tab> {
 		])
 	}
 
-	abstract save(): void | Promise<void>
-
 	copy() {
 		document.execCommand('copy')
 	}
