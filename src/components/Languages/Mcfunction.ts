@@ -48,6 +48,7 @@ export const tokenProvider = {
 		'camerashake',
 		'clearspawnpoint',
 		'clone',
+		'dialogue',
 		'difficulty',
 		'effect',
 		'event',
