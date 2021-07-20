@@ -18,6 +18,7 @@ export default {
 		delete: 'Delete',
 		skip: 'Skip',
 		selectFolder: 'Select Folder',
+		fileName: 'File Name',
 		confirmOverwriteFile:
 			'A file with this name already exists. Do you want to overwrite it?',
 	},
@@ -388,7 +389,6 @@ export default {
 				duplicate: {
 					name: 'Duplicate',
 					description: 'Duplicate a file',
-					fileName: 'File Name',
 				},
 				revealFilePath: {
 					name: 'Reveal File Path',

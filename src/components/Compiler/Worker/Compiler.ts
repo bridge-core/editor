@@ -61,14 +61,14 @@ export class Compiler {
 		}
 
 		if (!handle && requireHandle) return
-		else if (!requireHandle || handle!.kind === 'file') {
+		else if (!requireHandle || handle?.kind === 'file') {
 			const saveFilePath: string | undefined =
 				(await this.runAllHooks('transformPath', 0, path)) ?? undefined
 
 			if (saveFilePath) this.outputFileSystem.unlink(saveFilePath)
 
 			this.files.delete(path)
-		} else if (handle!.kind === 'directory') {
+		} else if (handle?.kind === 'directory') {
 			await iterateDir(
 				<FileSystemDirectoryHandle>handle,
 				(fileHandle, filePath) => this.unlink(filePath, fileHandle),

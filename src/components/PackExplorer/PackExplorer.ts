@@ -106,14 +106,75 @@ export class PackExplorer extends SidebarContent {
 			...(type === 'file'
 				? [
 						// TODO
-						// {
-						// 	icon: 'mdi-pencil-outline',
-						// 	name:
-						// 		'windows.packExplorer.fileActions.rename.name',
-						// 	description:
-						// 		'windows.packExplorer.fileActions.rename.description',
-						// 	onTrigger: () => console.log('TODO'),
-						// },
+						{
+							icon: 'mdi-pencil-outline',
+							name:
+								'windows.packExplorer.fileActions.rename.name',
+							description:
+								'windows.packExplorer.fileActions.rename.description',
+							onTrigger: async () => {
+								// Remove file extension from file name
+								const fileName = entry.name
+									.split('.')
+									.slice(0, -1)
+									.join('.')
+
+								const inputWindow = new InputWindow({
+									name:
+										'windows.packExplorer.fileActions.rename.name',
+									label: 'general.fileName',
+									default: fileName,
+									expandText: extname(path),
+								})
+								const newFileName = await inputWindow.fired
+								if (!newFileName) return
+
+								const newFilePath = join(
+									dirname(path),
+									newFileName
+								)
+
+								// If file with same path already exists, confirm that it's ok to overwrite it
+								if (
+									await project.fileSystem.fileExists(
+										newFilePath
+									)
+								) {
+									const confirmWindow = new ConfirmationWindow(
+										{
+											description:
+												'general.confirmOverwriteFile',
+										}
+									)
+
+									if (!(await confirmWindow.fired)) return
+								}
+
+								// Update pack indexer & compiler
+								await Promise.all([
+									project.packIndexer.unlink(path),
+									project.compilerManager.unlink(path),
+								])
+
+								// The rename action needs to happen after deleting the old file inside of the output directory
+								// because the compiler will fail to unlink it if the original file doesn't exist.
+								await project.fileSystem.renameFile(
+									path,
+									newFilePath
+								)
+
+								// Let the compiler, pack indexer etc. process the renamed file
+								await project.updateFile(newFilePath)
+
+								// Remove from recent files
+								await project.recentFiles.removeFile(
+									`projects/${project.name}/${path}`
+								)
+
+								// Refresh pack explorer
+								this.refresh()
+							},
+						},
 						{
 							icon: 'mdi-content-duplicate',
 							name:
@@ -130,8 +191,7 @@ export class PackExplorer extends SidebarContent {
 								const inputWindow = new InputWindow({
 									name:
 										'windows.packExplorer.fileActions.duplicate.name',
-									label:
-										'windows.packExplorer.fileActions.duplicate.fileName',
+									label: 'general.fileName',
 									default: fileName,
 									expandText: extname(path),
 								})
@@ -164,6 +224,7 @@ export class PackExplorer extends SidebarContent {
 									newFilePath
 								)
 								await project.updateFile(newFilePath)
+								// Refresh pack explorer
 								this.refresh()
 							},
 						},
