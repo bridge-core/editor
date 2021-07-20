@@ -577,6 +577,8 @@ export default {
 		viewEntity: 'View Entity',
 		viewBlock: 'View Block',
 		failedClientEntityLoad: 'Failed to load connected client entity',
+		invalidEntity:
+			'Cannot open preview for an entity with invalid JSON. Please fix JSON errors inside of the file and try again.',
 		chooseGeometry: 'Choose Geometry',
 		noGeometry:
 			'No valid geometry found inside of this file. Make sure that your JSON is valid, that the file structure is correct and that a geometry with the provided identifier exists.',
