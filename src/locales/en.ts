@@ -17,6 +17,8 @@ export default {
 		delete: 'Delete',
 		skip: 'Skip',
 		selectFolder: 'Select Folder',
+		confirmOverwriteFile:
+			'A file with this name already exists. Do you want to overwrite it?',
 	},
 	packType: {
 		behaviorPack: {
@@ -366,6 +368,11 @@ export default {
 				delete: {
 					name: 'Delete',
 					description: 'Delete a file or folder',
+				},
+				duplicate: {
+					name: 'Duplicate',
+					description: 'Duplicate a file',
+					fileName: 'File Name',
 				},
 				revealFilePath: {
 					name: 'Reveal File Path',

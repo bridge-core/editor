@@ -58,7 +58,7 @@ export class EntityData extends PreviewFileWatcher {
 						position: {
 							x: position[0] * -16,
 							y: position[1] * 16,
-							z: position[2] * 16,
+							z: position[2] * -16,
 						},
 						size: playerSize,
 					}
@@ -107,7 +107,7 @@ export class EntityData extends PreviewFileWatcher {
 						position: {
 							x: (hitbox?.pivot?.[0] ?? 0) * -16,
 							y: (hitbox?.pivot?.[1] ?? 0) * 16,
-							z: (hitbox?.pivot?.[2] ?? 0) * 16,
+							z: (hitbox?.pivot?.[2] ?? 0) * -16,
 						},
 						size: {
 							x: hitbox.width * 16,
