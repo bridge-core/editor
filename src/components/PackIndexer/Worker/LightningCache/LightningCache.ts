@@ -248,10 +248,10 @@ export class LightningCache {
 		try {
 			data = json5.parse(fileContent)
 		} catch (err) {
-			console.error(`[${filePath}] ${err.message}`)
-
 			// Updating auto-completions in the background shouldn't get rid of all auto-completions currently saved for this file
 			if (!isTemporaryUpdateCall) {
+				console.error(`[${filePath}] ${err.message}`)
+
 				this.lightningStore.add(
 					filePath,
 					{
