@@ -1,3 +1,4 @@
+import { LatheBufferGeometry } from 'three'
 import { en } from 'vuetify/src/locale'
 
 export default {
@@ -377,6 +378,12 @@ export default {
 				delete: {
 					name: 'Delete',
 					description: 'Delete a file or folder',
+					confirmText:
+						"Are you sure that you want to delete this file? You won't be able to restore it later!",
+				},
+				rename: {
+					name: 'Rename',
+					description: 'Rename a file',
 				},
 				duplicate: {
 					name: 'Duplicate',

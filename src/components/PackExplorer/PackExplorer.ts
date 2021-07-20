@@ -77,6 +77,13 @@ export class PackExplorer extends SidebarContent {
 				description:
 					'windows.packExplorer.fileActions.delete.description',
 				onTrigger: async () => {
+					const confirmWindow = new ConfirmationWindow({
+						description:
+							'windows.packExplorer.fileActions.delete.confirmText',
+					})
+
+					if (!(await confirmWindow.fired)) return
+
 					entry.remove()
 
 					await Promise.all([
@@ -95,57 +102,73 @@ export class PackExplorer extends SidebarContent {
 					)
 				},
 			},
-			// TODO
-			// {
-			// 	icon: 'mdi-pencil-outline',
-			// 	name: 'windows.packExplorer.fileActions.rename.name',
-			// description:
-			// 'windows.packExplorer.fileActions.rename.description',
-			// 	onTrigger: () => console.log('TODO'),
-			// },
-			type === 'file'
-				? {
-						icon: 'mdi-content-duplicate',
-						name: 'windows.packExplorer.fileActions.duplicate.name',
-						description:
-							'windows.packExplorer.fileActions.duplicate.description',
-						onTrigger: async () => {
-							// Remove file extension from file name
-							const fileName = entry.name
-								.split('.')
-								.slice(0, -1)
-								.join('.')
 
-							const inputWindow = new InputWindow({
-								name:
-									'windows.packExplorer.fileActions.duplicate.name',
-								label:
-									'windows.packExplorer.fileActions.duplicate.fileName',
-								default: fileName,
-								expandText: extname(path),
-							})
-							const newFileName = await inputWindow.fired
-							if (!newFileName) return
+			...(type === 'file'
+				? [
+						// TODO
+						// {
+						// 	icon: 'mdi-pencil-outline',
+						// 	name:
+						// 		'windows.packExplorer.fileActions.rename.name',
+						// 	description:
+						// 		'windows.packExplorer.fileActions.rename.description',
+						// 	onTrigger: () => console.log('TODO'),
+						// },
+						{
+							icon: 'mdi-content-duplicate',
+							name:
+								'windows.packExplorer.fileActions.duplicate.name',
+							description:
+								'windows.packExplorer.fileActions.duplicate.description',
+							onTrigger: async () => {
+								// Remove file extension from file name
+								const fileName = entry.name
+									.split('.')
+									.slice(0, -1)
+									.join('.')
 
-							const newFilePath = join(dirname(path), newFileName)
-
-							// If file with same path already exists, confirm that it's ok to overwrite it
-							if (
-								await project.fileSystem.fileExists(newFilePath)
-							) {
-								const confirmWindow = new ConfirmationWindow({
-									description: 'general.confirmOverwriteFile',
+								const inputWindow = new InputWindow({
+									name:
+										'windows.packExplorer.fileActions.duplicate.name',
+									label:
+										'windows.packExplorer.fileActions.duplicate.fileName',
+									default: fileName,
+									expandText: extname(path),
 								})
+								const newFileName = await inputWindow.fired
+								if (!newFileName) return
 
-								if (!(await confirmWindow.fired)) return
-							}
+								const newFilePath = join(
+									dirname(path),
+									newFileName
+								)
 
-							await project.fileSystem.copyFile(path, newFilePath)
-							await project.updateFile(newFilePath)
-							this.refresh()
+								// If file with same path already exists, confirm that it's ok to overwrite it
+								if (
+									await project.fileSystem.fileExists(
+										newFilePath
+									)
+								) {
+									const confirmWindow = new ConfirmationWindow(
+										{
+											description:
+												'general.confirmOverwriteFile',
+										}
+									)
+
+									if (!(await confirmWindow.fired)) return
+								}
+
+								await project.fileSystem.copyFile(
+									path,
+									newFilePath
+								)
+								await project.updateFile(newFilePath)
+								this.refresh()
+							},
 						},
-				  }
-				: null,
+				  ]
+				: []),
 			{
 				icon: 'mdi-folder-outline',
 				name: 'windows.packExplorer.fileActions.revealFilePath.name',
