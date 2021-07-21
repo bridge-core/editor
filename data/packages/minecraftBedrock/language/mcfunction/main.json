@@ -669,7 +669,7 @@
 							"description": "Must be of the format path/to/function/file, which refers to a function.",
 							"type": "string",
 							"additionalData": {
-								"schemaReference": "/data/packages/minecraftBedrock/schema/function/dynamic/functionPathEnum.json"
+								"schemaReference": "/data/packages/minecraftBedrock/schema/function/dynamic/commandPathEnum.json"
 							}
 						}
 					]

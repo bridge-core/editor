@@ -1,0 +1,5 @@
+{
+	"type": "enum",
+	"generateFile": "function/dynamic/commandPathEnum.json",
+	"script": "return readdir('BP/functions').then(dirents => dirents.filter(dirent => dirent.path.endsWith('.mcfunction')).map(dirent => dirent.path.replace('BP/functions/', '').replace('.mcfunction', '')))"
+}
