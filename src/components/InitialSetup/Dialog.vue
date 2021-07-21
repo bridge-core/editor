@@ -90,10 +90,13 @@ export default {
 	}),
 	mounted() {
 		App.installApp.isInstallable.on(() => {
-			this.steps.unshift({
-				name: 'initialSetup.step.installApp',
-				component: InstallAppStep,
-			})
+			this.steps = [
+				{
+					name: 'initialSetup.step.installApp',
+					component: InstallAppStep,
+				},
+				...this.steps,
+			]
 		})
 		App.installApp.isInstalled.on(() => {
 			this.onNext()
