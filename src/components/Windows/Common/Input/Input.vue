@@ -12,7 +12,7 @@
 		<template #default>
 			<v-row>
 				<v-text-field
-					:label="$data.label"
+					:label="t($data.label)"
 					v-model="$data.inputValue"
 					@keydown.enter.native="onConfirm"
 					autofocus
