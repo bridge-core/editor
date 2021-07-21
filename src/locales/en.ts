@@ -1,4 +1,3 @@
-import { LatheBufferGeometry } from 'three'
 import { en } from 'vuetify/src/locale'
 
 export default {
