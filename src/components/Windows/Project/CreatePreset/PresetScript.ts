@@ -16,13 +16,17 @@ export async function runPresetScript(
 	const fs = app.project?.fileSystem!
 	const globalFs = app.fileSystem
 
-	presetScript = presetScript.replaceAll(
-		'./',
-		presetPath.replace('data/packages/minecraftBedrock/', '') + '/'
-	)
-	const script = await globalFs.readFile(
-		`data/packages/minecraftBedrock/${presetScript}`
-	)
+	let loadFilePath: string
+	if (presetScript.startsWith('./')) {
+		loadFilePath = presetScript = presetScript.replaceAll(
+			'./',
+			presetPath + '/'
+		)
+	} else {
+		loadFilePath = `data/packages/minecraftBedrock/${presetScript}`
+	}
+
+	const script = await globalFs.readFile(loadFilePath)
 	const scriptSrc = await script.text()
 
 	const module: any = { exports: undefined }

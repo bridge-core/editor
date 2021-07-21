@@ -22,7 +22,6 @@ export class PackExplorer extends SidebarContent {
 		App.eventSystem.on('projectChanged', () => {
 			App.getApp().then(async (app) => {
 				this.unselectAllActions()
-
 				for (const pack of app.project.projectData.contains ?? []) {
 					set(
 						this.directoryEntries,
