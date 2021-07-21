@@ -31,6 +31,7 @@ export class MonacoHolder extends Signal<void> {
 	createMonacoEditor(domElement: HTMLElement) {
 		this.dispose()
 		this._monacoEditor = editor.create(domElement, {
+			wordBasedSuggestions: false,
 			theme: `bridgeMonacoDefault`,
 			roundedSelection: false,
 			autoIndent: 'full',
