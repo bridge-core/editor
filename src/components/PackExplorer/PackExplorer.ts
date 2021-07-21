@@ -296,6 +296,30 @@ export class PackExplorer extends SidebarContent {
 					})
 				},
 			},
+			// Project config
+			{
+				icon: 'mdi-cog-outline',
+				name: 'windows.packExplorer.projectConfig.name',
+				onTrigger: async () => {
+					const project = await App.getApp().then(
+						(app) => app.project
+					)
+
+					// Test whether project config exists
+					if (!(await project.fileSystem.fileExists('config.json'))) {
+						new InformationWindow({
+							description:
+								'windows.packExplorer.projectConfig.missing',
+						})
+						return
+					}
+
+					// Open project config
+					await project.tabSystem?.openPath(
+						`projects/${project.name}/config.json`
+					)
+				},
+			},
 		])
 	}
 }

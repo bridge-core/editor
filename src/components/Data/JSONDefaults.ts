@@ -11,6 +11,8 @@ import { EventDispatcher } from '../Common/Event/EventDispatcher'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
+const packages = ['common', 'minecraftBedrock']
+
 export class JsonDefaults extends EventDispatcher<void> {
 	protected loadedSchemas = false
 	protected localSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
@@ -55,15 +57,19 @@ export class JsonDefaults extends EventDispatcher<void> {
 		this.localSchemas = {}
 		const app = await App.getApp()
 
-		try {
-			await this.loadStaticSchemas(
-				await app.fileSystem.getDirectoryHandle(
-					'data/packages/minecraftBedrock/schema'
+		for (const packageName of packages) {
+			try {
+				await this.loadStaticSchemas(
+					await app.fileSystem.getDirectoryHandle(
+						`data/packages/${packageName}/schema`
+					),
+					`data/packages/${packageName}/schema`
 				)
-			)
-		} catch {
-			return
+			} catch {
+				return
+			}
 		}
+		loadedGlobalSchemas = true
 
 		this.addSchemas(await this.getDynamicSchemas())
 
@@ -217,7 +223,6 @@ export class JsonDefaults extends EventDispatcher<void> {
 				globalSchemas[addSchema.uri] = addSchema
 			}
 		})
-		loadedGlobalSchemas = true
 	}
 
 	async runSchemaScripts(app: App, filePath?: string) {
