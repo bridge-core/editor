@@ -1,7 +1,7 @@
-import { zh_tw } from 'vuetify/src/locale'
+import { zhHant } from 'vuetify/src/locale'
 
 export default {
-	...zh_tw,
+	...zhHant,
 	languageName: '中文(臺灣)',
 	// Common translations - should help stop unnecessarily repeating keys
 	general: {
@@ -18,28 +18,24 @@ export default {
 		skip: '跳過',
 		selectFolder: '選取資料夾',
 		fileName: '檔案名稱',
-		confirmOverwriteFile:
-			'已存在相同名稱的檔案，是否要覆寫?',
+		confirmOverwriteFile: '已存在相同名稱的檔案，是否要覆寫?',
 	},
 	packType: {
 		behaviorPack: {
 			name: '行為包',
-			description:
-				'在遊戲中創造新的機制，以及修改Minecraft的行為。',
+			description: '在遊戲中創造新的機制，以及修改Minecraft的行為。',
 		},
 		resourcePack: {
 			name: '資源包',
-			description: "用於修改Minecrat的外觀和音效",
+			description: '用於修改Minecrat的外觀和音效',
 		},
 		skinPack: {
 			name: '外觀包',
-			description:
-				'創建可以讓玩家自由使用的全新外觀。',
+			description: '創建可以讓玩家自由使用的全新外觀。',
 		},
 		worldTemplate: {
 			name: '世界範本',
-			description:
-				'創造讓玩家能夠體驗你的專案的世界。',
+			description: '創造讓玩家能夠體驗你的專案的世界。',
 		},
 	},
 	// File Type display names
@@ -49,7 +45,7 @@ export default {
 		animationController: '動畫控制器',
 		biome: '生態域',
 		block: '方塊',
-		bridge.Config: 'bridge.專案設定',
+		bridgeConfig: 'bridge.專案設定',
 		dialogue: '對話框',
 		entity: '實體',
 		feature: '地物',
@@ -123,8 +119,7 @@ export default {
 		},
 		saveAs: {
 			name: '另存新檔',
-			description:
-				'以不同檔名儲存開啟的檔案',
+			description: '以不同檔名儲存開啟的檔案',
 		},
 		saveAll: {
 			name: '全部儲存',
@@ -136,7 +131,7 @@ export default {
 		},
 		settings: {
 			name: '設定',
-			description: "開啟bridge.的設定",
+			description: '開啟bridge.的設定',
 		},
 		extensions: {
 			name: '擴充元件',
@@ -148,8 +143,7 @@ export default {
 		},
 		cut: {
 			name: '剪下',
-			description:
-				'將選取的文字剪下',
+			description: '將選取的文字剪下',
 		},
 		paste: {
 			name: '貼上',
@@ -169,7 +163,7 @@ export default {
 		},
 		extensionAPI: {
 			name: '擴充元件API',
-			description: "查看bridge.擴充元件API的說明",
+			description: '查看bridge.擴充元件API的說明',
 		},
 		gettingStarted: {
 			name: '新手上路',
@@ -177,8 +171,7 @@ export default {
 		},
 		faq: {
 			name: '常見問題',
-			description:
-				'查看使用bridge.開發Add-On常見的問題',
+			description: '查看使用bridge.開發Add-On常見的問題',
 		},
 		reloadAutoCompletions: {
 			name: '重新載入自動完成',
@@ -219,13 +212,11 @@ export default {
 		pluginInstallLocation: {
 			global: {
 				name: '全域安裝',
-				description:
-					'所有專案皆可使用全域擴充元件',
+				description: '所有專案皆可使用全域擴充元件',
 			},
 			local: {
 				name: '區域安裝',
-				description:
-					'僅有安裝該擴充元件的專案可以使用',
+				description: '僅有安裝該擴充元件的專案可以使用',
 			},
 		},
 		toObject: {
@@ -295,7 +286,7 @@ export default {
 			},
 		},
 		changelogWindow: {
-			title: "新功能",
+			title: '新功能',
 		},
 		openFile: {
 			title: '開啟',
@@ -304,8 +295,7 @@ export default {
 		},
 		createProject: {
 			welcome: '歡迎使用bridge.!',
-			welcomeDescription:
-				'新增你的第一個專案。',
+			welcomeDescription: '新增你的第一個專案。',
 			omitPack: '忽略',
 			selectedPack: '已選取',
 			title: '新增專案',
@@ -317,24 +307,20 @@ export default {
 			projectTargetVersion: '專案對應的Minecraft版本',
 			scripting: '啟用腳本API',
 			gameTest: '啟用遊戲測試框架',
-			rpAsBpDependency:
-				'將資源包註冊為行為包的套件相依性',
-			useLangForManifest:
-				'直接將包名和簡介添加至manifest檔案',
+			rpAsBpDependency: '將資源包註冊為行為包的套件相依性',
+			useLangForManifest: '直接將包名和簡介添加至manifest檔案',
 			create: '新增',
 		},
 		createPreset: {
 			title: '新增預設集',
 			searchPresets: '搜尋預設集...',
-			overwriteFiles:
-				'這個預設集會覆寫一或多個檔案，是否繼續?',
+			overwriteFiles: '這個預設集會覆寫一或多個檔案，是否繼續?',
 			overwriteFilesConfirm: '確認',
 			overwriteUnsavedChanges:
 				'這個預設集會覆寫一或多個未儲存變更的檔案，是否繼續?',
 			overwriteUnsavedChangesConfirm: '確認',
 			validationRule: {
-				alphanumeric:
-					'只能使用英數符號或者下劃線',
+				alphanumeric: '只能使用英數符號或者下劃線',
 				lowercase: '只能使用小寫',
 				required: '此欄位為必填',
 				noEmptyFolderNames: '資料夾名稱不可空白',
@@ -346,8 +332,7 @@ export default {
 		},
 		socials: {
 			title: '社群媒體',
-			content:
-				'查看bridge.的官方Twitter和Github，以及加入Discord群組!',
+			content: '查看bridge.的官方Twitter和Github，以及加入Discord群組!',
 			discord: 'Discord',
 			twitter: 'Twitter',
 			github: 'Github',
@@ -371,7 +356,7 @@ export default {
 			restartDevServer: {
 				name: '重新啟動Dev Server',
 				description:
-					"是否要重啟編譯器的Dev Server? 花費的時間依照你的專案大小而定。",
+					'是否要重啟編譯器的Dev Server? 花費的時間依照你的專案大小而定。',
 			},
 			createPreset: '新增檔案',
 			projectConfig: {
@@ -383,8 +368,7 @@ export default {
 				delete: {
 					name: '刪除',
 					description: '刪除檔案或資料夾',
-					confirmText:
-						"是否要刪除這個檔案? 此動作無法還原!",
+					confirmText: '是否要刪除這個檔案? 此動作無法還原!',
 				},
 				rename: {
 					name: '重新命名',
@@ -407,25 +391,22 @@ export default {
 				name: '側邊欄',
 				sidebarRight: {
 					name: '側邊欄移至右方',
-					description:
-						'將側邊欄移至螢幕右方',
+					description: '將側邊欄移至螢幕右方',
 				},
 				sidebarSize: {
 					name: '側邊欄大小',
-					description:
-						'更改展開的側邊欄寬度。',
+					description: '更改展開的側邊欄寬度。',
 				},
 				shrinkSidebarElements: {
 					name: '收合側邊欄元素',
-					description:
-						"收合bridge.的側邊欄元素",
+					description: '收合bridge.的側邊欄元素',
 				},
 			},
 			appearance: {
 				name: '外觀',
 				colorScheme: {
 					name: '配色方案',
-					description: "選取bridge. UI的配色方案",
+					description: '選取bridge. UI的配色方案',
 				},
 				darkTheme: {
 					name: '深色主題',
@@ -437,13 +418,11 @@ export default {
 				},
 				localDarkTheme: {
 					name: '區域深色主題',
-					description:
-						'選取目前專案的深色主題',
+					description: '選取目前專案的深色主題',
 				},
 				localLightTheme: {
 					name: '淺色主題',
-					description:
-						'選取目前專案的淺色主題',
+					description: '選取目前專案的淺色主題',
 				},
 			},
 			general: {
@@ -468,15 +447,13 @@ export default {
 				},
 				openLinksInBrowser: {
 					name: '在瀏覽器中開啟連結',
-					description:
-						'使用系統預設瀏覽器開啟連結。',
+					description: '使用系統預設瀏覽器開啟連結。',
 				},
 				restoreTabs: {
 					name: '回復頁籤',
-					description:
-						'開啟birdge.時回復上一次開啟的頁籤。',
+					description: '開啟birdge.時回復上一次開啟的頁籤。',
 				},
-				resetbridge.Folder: {
+				resetBridgeFolder: {
 					name: '選取根目錄',
 					description: '選取bridge.運作的主要目錄',
 				},
@@ -485,8 +462,7 @@ export default {
 				name: '開發人員',
 				simulateOS: {
 					name: '模擬作業系統',
-					description:
-						'模擬作業系統用於測試特定的行為',
+					description: '模擬作業系統用於測試特定的行為',
 				},
 				devMode: {
 					name: '開發人員模式',
@@ -516,29 +492,25 @@ export default {
 		},
 		projectFolder: {
 			title: '專案資料夾',
-			content:
-				'bridge.必須存取專案資料夾',
+			content: 'bridge.必須存取專案資料夾',
 		},
 		extensionStore: {
 			title: '擴充元件商店',
 			searchExtensions: '搜尋擴充元件...',
 			activateExtension: '啟用擴充元件',
 			deactivateExtension: '停用擴充元件',
-			offlineError:
-				'無法載入擴充元件，請確認裝置已連上網路。',
+			offlineError: '無法載入擴充元件，請確認裝置已連上網路。',
 		},
 		pluginInstallLocation: {
 			title: '選擇安裝位置',
 		},
 		unsavedFile: {
-			description:
-				'是否在關閉檔案前儲存變更?',
+			description: '是否在關閉檔案前儲存變更?',
 			save: '儲存 & 關閉',
 		},
 		browserUnsupported: {
 			title: '不支援的瀏覽器',
-			description:
-				'bridge.不支援你的瀏覽器，請使用電腦版的Chrome或Edge!',
+			description: 'bridge.不支援你的瀏覽器，請使用電腦版的Chrome或Edge!',
 		},
 		invalidJson: {
 			title: '無效的JSON',
@@ -554,13 +526,11 @@ export default {
 			},
 			packIndexing: {
 				title: '檢索套件中',
-				description:
-					'bridge.正在為你的專案功能蒐集必要的資訊',
+				description: 'bridge.正在為你的專案功能蒐集必要的資訊',
 			},
 			compiler: {
 				title: '編譯專案',
-				description:
-					'bridge.正在編譯可匯入至Minecraft的套件',
+				description: 'bridge.正在編譯可匯入至Minecraft的套件',
 			},
 		},
 	},
@@ -581,10 +551,8 @@ export default {
 		},
 	},
 	comMojang: {
-		folderDropped:
-			'是否將這個資料夾設為預設的com.mojang資料夾?',
-		permissionRequest:
-			'bridge.必須存取你的com.mojang資料夾才能編譯專案。',
+		folderDropped: '是否將這個資料夾設為預設的com.mojang資料夾?',
+		permissionRequest: 'bridge.必須存取你的com.mojang資料夾才能編譯專案。',
 	},
 	findAndReplace: {
 		name: '尋找 & 取代',
@@ -592,8 +560,7 @@ export default {
 		replace: '取代',
 		replaceAll: '全部取代',
 		noResults: '沒有結果。',
-		noSearch:
-			'輸入文字，這裡就會顯示搜尋結果。',
+		noSearch: '輸入文字，這裡就會顯示搜尋結果。',
 	},
 	preview: {
 		name: '預覽',
@@ -603,8 +570,7 @@ export default {
 		viewEntity: '檢視實體',
 		viewBlock: '檢視方塊',
 		failedClientEntityLoad: '無法載入連接的使用者端實體',
-		invalidEntity:
-			'實體JSON無效，無法開啟。請修正錯誤後再試一次。',
+		invalidEntity: '實體JSON無效，無法開啟。請修正錯誤後再試一次。',
 		chooseGeometry: '選擇幾何體',
 		noGeometry:
 			'此檔案中未找到有效的幾何體。請檢查JSON是否有效，檔案結構是否正確，以及含有指定的幾何體識別符。',
@@ -615,10 +581,9 @@ export default {
 		step: {
 			installApp: {
 				name: '安裝bridge.',
-				description:
-					'為求最佳使用體驗，將bridge. v2安裝到電腦。',
+				description: '為求最佳使用體驗，將bridge. v2安裝到電腦。',
 			},
-			bridge.: {
+			bridge: {
 				name: 'bridge.的資料夾',
 				description:
 					'請新增一個資料夾，用於存放bridge.的相關資料與Add-On專案。',
@@ -631,8 +596,7 @@ export default {
 			},
 			editorType: {
 				name: '選取編輯器模式',
-				description:
-					" 您想要如何編輯JSON檔案? 之後可再修改設定。",
+				description: ' 您想要如何編輯JSON檔案? 之後可再修改設定。',
 				rawText: {
 					name: '純文本',
 					description:
