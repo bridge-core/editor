@@ -40,7 +40,9 @@ export function createRunner({
 export function transformScript(script: string) {
 	return (
 		script
-			.replace(/export default /g, 'module.exports = ')
+			.replace(/export default([ \(])/g, (_, char) => {
+				return `module.exports =${char}`
+			})
 			// TODO: Support named exports
 			// .replace(/export (var|const|let|function|class) /g, (substr) => {
 			// 	return substr
