@@ -7,7 +7,7 @@
 		"values": {
 			"type": "array",
 			"items": {
-				"$ref": "../function/dynamic/functionPathEnum.json"
+				"$ref": "../function/dynamic/commandEnum.json"
 			}
 		}
 	}
