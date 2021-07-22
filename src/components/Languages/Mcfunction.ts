@@ -135,7 +135,7 @@ export const tokenProvider = {
 }
 
 const completionItemProvider: languages.CompletionItemProvider = {
-	triggerCharacters: [],
+	triggerCharacters: [' '],
 	async provideCompletionItems(
 		model: editor.ITextModel,
 		position: Position,
@@ -163,7 +163,7 @@ const completionItemProvider: languages.CompletionItemProvider = {
 		return {
 			suggestions: completionItems.map((suggestion) => ({
 				label: suggestion,
-				insertText: `${suggestion} `,
+				insertText: suggestion,
 				kind: languages.CompletionItemKind.Constant,
 				range: new Range(
 					position.lineNumber,

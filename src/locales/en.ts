@@ -374,6 +374,11 @@ export default {
 					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project.",
 			},
 			createPreset: 'New File',
+			projectConfig: {
+				name: 'Open Project Config',
+				missing:
+					'It looks like this project has no config.json file. Every project needs a project config in order to work correctly.',
+			},
 			fileActions: {
 				delete: {
 					name: 'Delete',

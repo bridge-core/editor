@@ -24,6 +24,21 @@ export function tokenizeCommand(command: string) {
 				squareBrackets--
 				break
 
+			// Support patterns like "~~~" or "^^^" without whitespace as token separators
+			case '^':
+			case '~': {
+				if (word[0] === '~') {
+					tokens.push({
+						startColumn: wordStart,
+						endColumn: i,
+						word,
+					})
+					wordStart = i + 1
+					word = command[i]
+					break
+				}
+			}
+
 			case '\t':
 			case ' ': {
 				if (

@@ -94,6 +94,8 @@ export default {
 				name: 'initialSetup.step.installApp',
 				component: InstallAppStep,
 			})
+			this.stepId = 0
+			this.$nextTick(() => (this.stepId = 1))
 		})
 		App.installApp.isInstalled.on(() => {
 			this.onNext()
