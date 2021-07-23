@@ -1,6 +1,6 @@
 // GameTest module
 
-declare module 'GameTest' {
+declare module 'mojang-gametest' {
 	/**
 	 * Registers a new GameTest function. This GameTest will become available in Minecraft via /gametest run [testClassName]:[testName].
 	 * @param testClassName
@@ -139,14 +139,15 @@ declare interface GameTestSequence {
 }
 
 declare interface Helper {
-	assertBlockTypePresent(block: Block, position: BlockLocation): void
-
-	assertBlockTypeNotPresent(block: Block, position: BlockLocation): void
+	assertBlockPresent(
+		blockType: BlockType,
+		blockLocation: BlockLocation,
+		isPresent: boolean
+	): void
 
 	assertBlockState(
-		blockStateName: string,
-		stateValue: number,
-		position: BlockLocation
+		blockLocation: BlockLocation,
+		callback: (block: Block) => boolean
 	): void
 
 	/**
@@ -196,13 +197,13 @@ declare interface Helper {
 	 * Callback function where facets of the selected entity can be tested for. If this callback function returns false, an error is thrown.
 	 *
 	 * @example
-	 * test.assertEntityData(
+	 * test.assertEntityState(
 	 *		villagerPos,
 	 *		"minecraft:villager",
 	 *		(entity) => entity.getEffect(Effects.regeneration).getDuration() > 120
 	 * ); // At least 6 seconds remaining in the villagers' effect
 	 */
-	assertEntityData(
+	assertEntityState(
 		position: BlockLocation,
 		entityIdentifier: string,
 		callback: (entity: Entity) => boolean
@@ -252,58 +253,25 @@ declare interface Helper {
 	 */
 	assertEntityInstancePresent(entity: Entity): void
 
-	/**
-	 * Tests that a particular entity is not present at a particular location. If not, an error is thrown.
-	 * @param entityIdentifier
-	 * Type of entity to test for (e.g., 'minecraft:skeleton'). If an entity namespace is not specified, 'minecraft:' is assumed.
-	 * @param position
-	 * Location of the entity to test for.
-	 */
-	assertEntityNotPresent(
-		entityIdentifier: string,
-		position: BlockLocation
+	assertEntityPresent(
+		entityTypeIdentifier: string,
+		blockLocation: BlockLocation,
+		isPresent: boolean
+	): void
+
+	assertEntityPresentInArea(
+		entityTypeIdentifier: string,
+		isPresent: boolean
 	): void
 
 	/**
-	 * Tests that a particular entity is not present within the GameTest area. If not, an error is thrown.
-	 * @param entityIdentifier
-	 * Type of entity to test for (e.g., 'minecraft:skeleton'). If an entity namespace is not specified, 'minecraft:' is assumed.
-	 */
-	assertEntityNotPresentInArea(entityIdentifier: string): void
-
-	/**
-	 * Tests that a particular entity is not touching or connected to another entity.
-	 * @param entityIdentifier
-	 * Type of entity to test for (e.g., 'minecraft:skeleton'). If an entity namespace is not specified, 'minecraft:' is assumed.
-	 * @param position
-	 * Location of the entity to test for.
-	 */
-	assertEntityNotTouching(entityIdentifier: string, position: Location): void
-
-	/**
-	 * Tests that a particular entity is present at a particular location. If not, an error is thrown.
-	 * @param entityIdentifier
-	 * Type of entity to test for (e.g., 'minecraft:skeleton'). If an entity namespace is not specified, 'minecraft:' is assumed.
-	 * @param position
-	 * Location of the entity to test for.
-	 */
-	assertEntityPresent(entityIdentifier: string, position: BlockLocation): void
-
-	/**
-	 * Tests that a particular entity is present within the GameTest area. If not, an error is thrown.
-	 * @param entityIdentifier
-	 * Type of entity to test for (e.g., 'minecraft:skeleton'). If an entity namespace is not specified, 'minecraft:' is assumed.
-	 */
-	assertEntityPresentInArea(entityIdentifier: string): void
-
-	/**
 	 * Tests that a particular entity is touching or connected to another entity.
-	 * @param entityIdentifier
-	 * Type of entity to test for (e.g., 'minecraft:skeleton'). If an entity namespace is not specified, 'minecraft:' is assumed.
-	 * @param position
-	 * Location of the entity to test for.
 	 */
-	assertEntityTouching(entityIdentifier: string, position: Location): void
+	assertEntityTouching(
+		entityTypeIdentifier: string,
+		location: Location,
+		isTouching: boolean
+	): void
 
 	/**
 	 * Tests that a block at a location has some water at it. If not, an error is thrown.
@@ -558,25 +526,12 @@ declare interface Helper {
 	): void
 
 	/**
-	 * Tests every tick and marks the test as a success when a particular entity is not present at a particular location.
-	 * @param entityIdentifier
-	 * Type of entity to test for (e.g., 'minecraft:skeleton'). If an entity namespace is not specified, 'minecraft:' is assumed.
-	 * @param position
-	 */
-	succeedWhenEntityNotPresent(
-		entityIdentifier: string,
-		position: BlockLocation
-	): void
-
-	/**
 	 * Tests for the presence of an entity on every tick. When an entity of the specified type is found, the test is marked as a success.
-	 * @param entityIdentifier
-	 * Type of entity to test for (e.g., 'minecraft:skeleton'). If an entity namespace is not specified, 'minecraft:' is assumed.
-	 * @param position
 	 */
 	succeedWhenEntityPresent(
-		entityIdentifier: string,
-		position: BlockLocation
+		entityTypeIdentifier: string,
+		location: Location,
+		isPresent: boolean
 	): void
 
 	succeedWhenBlockTypePresent(block: Block, position: BlockLocation): void
@@ -654,7 +609,7 @@ declare interface Helper {
 // -------------------------------------------------------------
 // Minecraft module
 
-declare module 'Minecraft' {
+declare module 'mojang-minecraft' {
 	export const ItemStack: ItemStackClass
 	export const BlockLocation: BlockLocationClass
 	export const Location: LocationClass
