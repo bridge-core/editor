@@ -1,0 +1,78 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"allOf": [
+		{
+			"type": "object",
+			"properties": {
+				"randomize": {
+					"type": "array",
+					"items": {
+						"allOf": [
+							{
+								"type": "object",
+								"properties": {
+									"weight": { "type": "number" }
+								}
+							},
+							{
+								"$ref": "#"
+							}
+						]
+					}
+				},
+				"sequence": {
+					"type": "array",
+					"items": {
+						"allOf": [
+							{
+								"type": "object",
+								"properties": {
+									"condition": { "type": "string" }
+								}
+							},
+							{
+								"$ref": "#"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"$ref": "../../event/v1.16.100/damage.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/decrementStack.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/die.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/mobEffect.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/playEffect.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/playSound.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/runCommand.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/shoot.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/swing.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/teleport.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/transformItem.json"
+		},
+		{
+			"$ref": "../../event/v1.16.100/triggerItem.json"
+		}
+	]
+}
