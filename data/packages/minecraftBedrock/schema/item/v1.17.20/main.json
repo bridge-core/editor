@@ -6,7 +6,7 @@
 			"type": "object",
 			"properties": {
 				"description": {
-					"$ref": "../description.json"
+					"$ref": "./description.json"
 				},
 				"components": {
 					"$ref": "./components.json"

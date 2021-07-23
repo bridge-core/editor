@@ -65,9 +65,7 @@
 			"if": {
 				"properties": {
 					"format_version": {
-						"enum": [
-							"1.17.20"
-						]
+						"const": "1.17.20"
 					}
 				}
 			},
