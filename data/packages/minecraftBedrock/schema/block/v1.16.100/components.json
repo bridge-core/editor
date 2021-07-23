@@ -36,6 +36,18 @@
 					"description": "Specifies that a unit cube is to be used with tessellation",
 					"additionalProperties": false
 				},
+				"minecraft:creative_catagory": {
+					"type": "object",
+					"description": "Sets the creative catagory and item group of the block",
+					"properties": {
+						"group": {
+							"$ref": "../general/itemGroups.json"
+						},
+						"catagory": {
+							"$ref": "../general/catagory.json"
+						}
+					}
+				},
 				"minecraft:material_instances": {
 					"type": "object",
 					"description": "Maps face or material_instance names in a geometry file to an actual material instance. Material instance can either be a full material instance or a name to another already defined instance",
