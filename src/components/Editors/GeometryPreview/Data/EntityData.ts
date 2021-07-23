@@ -78,7 +78,7 @@ export class EntityData extends PreviewFileWatcher {
 						color: '#ffff00',
 						position: { x: 0, y: 0, z: 0 },
 						size: {
-							x: collisionBox.width * -16,
+							x: collisionBox.width * 16,
 							y: collisionBox.height * 16,
 							z: collisionBox.width * 16,
 						},
@@ -106,7 +106,7 @@ export class EntityData extends PreviewFileWatcher {
 						color: '#0000ff',
 						position: {
 							x: (hitbox?.pivot?.[0] ?? 0) * -16,
-							y: (hitbox?.pivot?.[1] ?? 0) * 16,
+							y: ((hitbox?.pivot?.[1] ?? 0) - hitbox.height / 2) * 16,
 							z: (hitbox?.pivot?.[2] ?? 0) * -16,
 						},
 						size: {
