@@ -17,6 +17,9 @@ export default {
 		delete: 'Verwijderen',
 		skip: 'Overslaan',
 		selectFolder: 'Selecteer Map',
+		fileName: 'Bestandsnaam',
+		confirmOverwriteFile:
+			'Er bestaat al een bestand met deze naam. Wil je het overschrijven?',
 	},
 	packType: {
 		behaviorPack: {
@@ -46,7 +49,7 @@ export default {
 		animationController: 'Animation Controller',
 		biome: 'Biome',
 		block: 'Block',
-		bridgeConfig: 'Project Config',
+		bridgeConfig: 'Projectconfiguratie',
 		dialogue: 'Dialogue',
 		entity: 'Entity',
 		feature: 'Feature',
@@ -117,6 +120,15 @@ export default {
 		saveFile: {
 			name: 'Bestand Opslaan',
 			description: 'Sla het momenteel geopende bestand op',
+		},
+		saveAs: {
+			name: 'Opslaan Als',
+			description:
+				'Sla het momenteel geopende bestand op onder een andere naam',
+		},
+		saveAll: {
+			name: 'Alles Opslaan',
+			description: 'Alle momenteel geopende bestanden opslaan',
 		},
 		closeFile: {
 			name: 'Bestand Sluiten',
@@ -362,10 +374,25 @@ export default {
 					"Weet u zeker dat u de dev server van de compiler opnieuw wilt starten? Dit kan enige tijd duren, afhankelijk van de grootte van uw project.",
 			},
 			createPreset: 'Nieuw Bestand',
+			projectConfig: {
+				name: 'Projectconfiguratie openen',
+				missing:
+					'Het lijkt erop dat dit project geen config.json bestand heeft. Elk project heeft een projectconfiguratie nodig om correct te kunnen werken.',
+			},
 			fileActions: {
 				delete: {
 					name: 'Verwijderen',
 					description: 'Verwijder een bestand of map',
+					confirmText:
+						"Weet u zeker dat u dit bestand wilt verwijderen? U kunt het later niet meer herstellen!",
+				},
+				rename: {
+					name: 'Hernoemen',
+					description: 'Een bestand hernoemen',
+				},
+				duplicate: {
+					name: 'Dupliceren',
+					description: 'Een bestand dupliceren',
 				},
 				revealFilePath: {
 					name: 'Bestandspad onthullen',
@@ -497,6 +524,8 @@ export default {
 			searchExtensions: 'Extensie zoeken...',
 			activateExtension: 'Activeer extensie',
 			deactivateExtension: 'Extensie Deactiveren',
+			offlineError:
+				'Kan extensies niet laden. Controleer of uw apparaat een actieve netwerkverbinding heeft.',
 		},
 		pluginInstallLocation: {
 			title: 'Kies Installatielocatie',
@@ -575,6 +604,8 @@ export default {
 		viewEntity: 'Bekijk Entity',
 		viewBlock: 'Bekijk Blok',
 		failedClientEntityLoad: 'Kon de verbonden client entity niet laden',
+		invalidEntity:
+			'Kan voorbeeld niet openen voor een entiteit met ongeldige JSON. Corrigeer JSON-fouten in het bestand en probeer het opnieuw.',
 		chooseGeometry: 'Kies Geometrie',
 		noGeometry:
 			'Geen geldige geometrie gevonden in dit bestand. Zorg ervoor dat uw JSON geldig is en dat de bestandsstructuur correct is.',
@@ -583,6 +614,11 @@ export default {
 		welcome: 'Welkom bij bridge. v2!',
 		welcomeCaption: 'Een krachtige IDE voor Minecraft Add-Ons',
 		step: {
+			installApp: {
+				name: 'bridge. installeren',
+				description:
+					'Voor de beste ervaring, installeert u bridge. v2 als app op uw computer.',
+			},
 			bridge: {
 				name: 'bridge. Map',
 				description:
