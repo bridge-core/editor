@@ -116,6 +116,9 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 		await this.compiler.unlink(path)
 		await this.compiler.processFileMap()
 	}
+	getCompilerOutputPath(path: string) {
+		return this.compiler.getCompilerOutputPath(path)
+	}
 	compileWithFile(filePath: string, file: Uint8Array) {
 		return this.compiler.compileWithFile(
 			filePath,

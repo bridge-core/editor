@@ -394,6 +394,11 @@ export default {
 					name: 'Duplicate',
 					description: 'Duplicate a file',
 				},
+				viewCompilerOutput: {
+					name: 'View Compiler Output',
+					description:
+						'View the current compiler output for this file',
+				},
 				revealFilePath: {
 					name: 'Reveal File Path',
 					description: 'Reveals the location of a file or folder',

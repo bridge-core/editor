@@ -7,7 +7,8 @@ export abstract class FileTab extends Tab {
 
 	constructor(
 		protected parent: TabSystem,
-		protected fileHandle: FileSystemFileHandle
+		protected fileHandle: FileSystemFileHandle,
+		public readonly isReadOnly = false
 	) {
 		super(parent)
 	}

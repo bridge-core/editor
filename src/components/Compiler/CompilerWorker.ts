@@ -146,4 +146,20 @@ export class Compiler extends WorkerManager<
 
 		this.ready.dispatch()
 	}
+
+	async getCompilerOutputPath(path: string) {
+		await this.ready.fired
+		this.ready.resetSignal()
+
+		this.service.updateMode('dev', false, false)
+		await this.service.updatePlugins(
+			this.parent.getCompilerPlugins(),
+			FileType.getPluginFileTypes()
+		)
+		const transformedPath = await this.service.getCompilerOutputPath(path)
+
+		this.ready.dispatch()
+
+		return transformedPath
+	}
 }

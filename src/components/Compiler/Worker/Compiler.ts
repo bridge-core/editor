@@ -77,6 +77,9 @@ export class Compiler {
 			)
 		}
 	}
+	async getCompilerOutputPath(path: string) {
+		return (await this.runAllHooks('transformPath', 0, path)) ?? undefined
+	}
 
 	async runWithFiles(files: string[]) {
 		this.parent.progress.setTotal(5)

@@ -227,6 +227,27 @@ export class PackExplorer extends SidebarContent {
 								this.refresh()
 							},
 						},
+						// {
+						// 	icon: 'mdi-cogs',
+						// 	name:
+						// 		'windows.packExplorer.fileActions.viewCompilerOutput.name',
+						// 	description:
+						// 		'windows.packExplorer.fileActions.viewCompilerOutput.description',
+						// 	onTrigger: async () => {
+						// 		const transformedPath = await project.compilerManager.current.getCompilerOutputPath(
+						// 			path
+						// 		)
+
+						// 		const fileHandle = await project.fileSystem.getFileHandle(
+						// 			transformedPath
+						// 		)
+						// 		await project.tabSystem?.open(
+						// 			fileHandle,
+						// 			true,
+						// 			true
+						// 		)
+						// 	},
+						// },
 				  ]
 				: []),
 			{

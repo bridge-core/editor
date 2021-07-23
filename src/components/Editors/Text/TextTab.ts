@@ -48,8 +48,12 @@ export class TextTab extends FileTab {
 		return this.parent.monacoEditor
 	}
 
-	constructor(parent: TabSystem, fileHandle: FileSystemFileHandle) {
-		super(parent, fileHandle)
+	constructor(
+		parent: TabSystem,
+		fileHandle: FileSystemFileHandle,
+		isReadOnly = false
+	) {
+		super(parent, fileHandle, isReadOnly)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()
@@ -130,6 +134,9 @@ export class TextTab extends FileTab {
 		if (this.editorModel) this.editorInstance?.setModel(this.editorModel)
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
+
+		console.log(this.isReadOnly)
+		this.editorInstance?.updateOptions({ readOnly: this.isReadOnly })
 	}
 
 	async save() {

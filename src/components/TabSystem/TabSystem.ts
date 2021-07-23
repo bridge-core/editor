@@ -65,13 +65,17 @@ export class TabSystem extends MonacoHolder {
 		return this.project.name
 	}
 
-	async open(fileHandle: FileSystemFileHandle, selectTab = true) {
+	async open(
+		fileHandle: FileSystemFileHandle,
+		selectTab = true,
+		isReadOnly = false
+	) {
 		for (const tab of this.tabs) {
 			if (await tab.isFor(fileHandle))
 				return selectTab ? tab.select() : tab
 		}
 
-		const tab = await this.getTabFor(fileHandle)
+		const tab = await this.getTabFor(fileHandle, isReadOnly)
 		await this.add(tab, selectTab)
 		return tab
 	}
@@ -80,17 +84,20 @@ export class TabSystem extends MonacoHolder {
 		return await this.open(fileHandle, selectTab)
 	}
 
-	protected async getTabFor(fileHandle: FileSystemFileHandle) {
+	protected async getTabFor(
+		fileHandle: FileSystemFileHandle,
+		isReadOnly = false
+	) {
 		let tab: Tab | undefined = undefined
 		for (const CurrentTab of this.tabTypes) {
 			if (await CurrentTab.is(fileHandle)) {
 				// @ts-ignore
-				tab = new CurrentTab(this, fileHandle)
+				tab = new CurrentTab(this, fileHandle, isReadOnly)
 				break
 			}
 		}
 		// Default tab type: Text editor
-		if (!tab) tab = new TextTab(this, fileHandle)
+		if (!tab) tab = new TextTab(this, fileHandle, isReadOnly)
 
 		return await tab.fired
 	}

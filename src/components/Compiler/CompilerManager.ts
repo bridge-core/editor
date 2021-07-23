@@ -41,6 +41,14 @@ export class CompilerManager extends Signal<void> {
 		this.dispatch()
 	}
 
+	get current() {
+		let compiler = this.compilers.get('default.json')
+
+		if (!compiler) throw new Error(`Cannot get current compiler`)
+
+		return compiler
+	}
+
 	updateFiles(configName: string, filePaths: string[]) {
 		let compiler = this.compilers.get(configName)
 
