@@ -135,7 +135,6 @@ export class TextTab extends FileTab {
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
 
-		console.log(this.isReadOnly)
 		this.editorInstance?.updateOptions({ readOnly: this.isReadOnly })
 	}
 

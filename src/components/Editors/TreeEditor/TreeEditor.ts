@@ -393,7 +393,7 @@ export class TreeEditor {
 			},
 		]
 
-		if (event) showContextMenu(event, pasteMenu)
+		if (event && !this.parent.isReadOnly) showContextMenu(event, pasteMenu)
 
 		return pasteMenu
 	}
@@ -403,6 +403,8 @@ export class TreeEditor {
 		tree: PrimitiveTree | ArrayTree | ObjectTree,
 		selectedKey = true
 	) {
+		if (this.parent.isReadOnly) return []
+
 		const contextMenu: (IActionConfig | null)[] = []
 		// Delete node
 		if (tree instanceof PrimitiveTree)

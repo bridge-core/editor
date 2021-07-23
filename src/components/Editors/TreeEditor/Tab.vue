@@ -7,7 +7,9 @@
 	>
 		<div
 			class="pr-4 code-font"
-			:style="`height: ${height - 196}px; overflow: auto;`"
+			:style="`height: ${
+				height - !tab.isReadOnly * 194
+			}px; overflow: auto;`"
 			@blur="focusEditor"
 			@scroll="onScroll"
 			@contextmenu.prevent.stop="tab.treeEditor.onPasteMenu($event)"
@@ -20,9 +22,9 @@
 			/>
 		</div>
 
-		<v-divider class="mb-4" />
+		<v-divider v-if="!tab.isReadOnly" class="mb-4" />
 
-		<div class="d-flex px-4" @blur="focusEditor">
+		<div v-if="!tab.isReadOnly" class="d-flex px-4" @blur="focusEditor">
 			<v-combobox
 				ref="addKeyInput"
 				v-model="keyToAdd"
@@ -184,6 +186,8 @@ export default {
 			this.treeEditor.receiveContainer(this.$refs.editorContainer)
 		},
 		propertySuggestions() {
+			if (!this.$refs.addKeyInput || !this.$refs.addValueInput) return
+
 			if (this.propertySuggestions.length === 0) {
 				this.$refs.addKeyInput.blur()
 				this.$refs.addValueInput.focus()

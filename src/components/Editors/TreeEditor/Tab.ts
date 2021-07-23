@@ -35,8 +35,12 @@ export class TreeTab extends FileTab {
 	component = TreeTabComponent
 	_treeEditor?: TreeEditor
 
-	constructor(parent: TabSystem, fileHandle: FileSystemFileHandle) {
-		super(parent, fileHandle)
+	constructor(
+		parent: TabSystem,
+		fileHandle: FileSystemFileHandle,
+		isReadOnly = false
+	) {
+		super(parent, fileHandle, isReadOnly)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()
