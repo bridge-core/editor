@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"allOf": [
+		{
+			"$ref": "../v1.16.100/components.json"
+		},
+		{
+			"properties": {
+				"minecraft:creative_category": {
+					"type": "object",
+					"description": "The category and item group for the item.",
+					"properties": {
+						"group": {
+							"$ref": "../../general/vanilla/itemGroup.json"
+						},
+						"category": {
+							"$ref": "../../general/vanilla/creativeCategory.json"
+						}
+					}
+				}
+			}
+		}
+	]
+}

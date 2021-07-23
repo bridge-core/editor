@@ -1,0 +1,4 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$ref": "../v1.16.100/event.json"
+}

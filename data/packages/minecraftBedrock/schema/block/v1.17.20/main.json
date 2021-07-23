@@ -1,0 +1,73 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"properties": {
+		"minecraft:block": {
+			"required": ["description"],
+			"type": "object",
+			"properties": {
+				"description": {
+					"allOf": [
+						{
+							"$ref": "../description.json"
+						},
+						{
+							"properties": {
+								"properties": {
+									"description": "Define block properties and their possible values",
+									"patternProperties": {
+										".*": {
+											"type": "array",
+											"items": {
+												"type": [
+													"boolean",
+													"integer",
+													"string"
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					]
+				},
+				"permutations": {
+					"description": "List of block permutations based on MoLang queries",
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"condition": {
+								"description": "MoLang condition",
+								"type": "string"
+							},
+							"components": {
+								"description": "Components to add when the condition evaluates to 'true'",
+								"$ref": "./components.json"
+							}
+						}
+					}
+				},
+				"components": {
+					"$ref": "./components.json"
+				},
+				"events": {
+					"type": "object",
+					"anyOf": [
+						{
+							"$ref": "../dynamic/currentContext/eventReferenceProperty.json"
+						},
+						{
+							"patternProperties": {
+								".*": {
+									"$ref": "./event.json"
+								}
+							}
+						}
+					]
+				}
+			},
+			"additionalProperties": false
+		}
+	}
+}

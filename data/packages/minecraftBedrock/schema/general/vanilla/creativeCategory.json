@@ -1,0 +1,6 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "string",
+	"description": "The category for this item. Categories are used to control high level properties of how the item is integrated into the bedrock engine, such as whether it can be used in slash commands.",
+	"enum": ["nature", "construction", "items", "equipment", "none", "commands"]
+}

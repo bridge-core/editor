@@ -1,0 +1,29 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"description": "Components allow for item functionality.",
+	"allOf": [
+		{
+			"$ref": "../v1.16.100/components.json"
+		},
+		{
+			"properties": {
+				"minecraft:creative_category": {
+					"type": "object",
+					"description": "The category and item group for the item.",
+					"properties": {
+						"group": {
+							"$ref": "../../general/vanilla/itemGroup.json"
+						},
+						"category": {
+							"$ref": "../../general/vanilla/creativeCategory.json"
+						},
+						"parent": {
+							"doNotSuggest": true,
+							"deprecationMessage": "Deprecated in favor of 'group' and 'category' (format_version: v1.17.20)."
+						}
+					}
+				}
+			}
+		}
+	]
+}
