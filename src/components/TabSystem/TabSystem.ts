@@ -106,7 +106,8 @@ export class TabSystem extends MonacoHolder {
 		if (!tab.hasFired) await tab.fired
 
 		this.tabs = [...this.tabs, tab]
-		if (!tab.isForeignFile) await this.openedFiles.add(tab.getPath())
+		if (!tab.isForeignFile && !(tab instanceof FileTab && tab.isReadOnly))
+			await this.openedFiles.add(tab.getPath())
 
 		if (selectTab) tab.select()
 
@@ -163,7 +164,7 @@ export class TabSystem extends MonacoHolder {
 		})
 	}
 	async save(tab = this.selectedTab) {
-		if (!tab) return
+		if (!tab || (tab instanceof FileTab && tab.isReadOnly)) return
 
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()

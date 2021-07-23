@@ -227,27 +227,40 @@ export class PackExplorer extends SidebarContent {
 								this.refresh()
 							},
 						},
-						// {
-						// 	icon: 'mdi-cogs',
-						// 	name:
-						// 		'windows.packExplorer.fileActions.viewCompilerOutput.name',
-						// 	description:
-						// 		'windows.packExplorer.fileActions.viewCompilerOutput.description',
-						// 	onTrigger: async () => {
-						// 		const transformedPath = await project.compilerManager.current.getCompilerOutputPath(
-						// 			path
-						// 		)
+						{
+							icon: 'mdi-cogs',
+							name:
+								'windows.packExplorer.fileActions.viewCompilerOutput.name',
+							description:
+								'windows.packExplorer.fileActions.viewCompilerOutput.description',
+							onTrigger: async () => {
+								const transformedPath = await project.compilerManager.current.getCompilerOutputPath(
+									path
+								)
 
-						// 		const fileHandle = await project.fileSystem.getFileHandle(
-						// 			transformedPath
-						// 		)
-						// 		await project.tabSystem?.open(
-						// 			fileHandle,
-						// 			true,
-						// 			true
-						// 		)
-						// 	},
-						// },
+								// TODO: Information when file does not exist
+								if (
+									!(await project.fileSystem.fileExists(
+										transformedPath
+									))
+								) {
+									new InformationWindow({
+										description:
+											'windows.packExplorer.fileActions.viewCompilerOutput.fileMissing',
+									})
+									return
+								}
+
+								const fileHandle = await project.fileSystem.getFileHandle(
+									transformedPath
+								)
+								await project.tabSystem?.open(
+									fileHandle,
+									true,
+									true
+								)
+							},
+						},
 				  ]
 				: []),
 			{

@@ -398,6 +398,8 @@ export default {
 					name: 'View Compiler Output',
 					description:
 						'View the current compiler output for this file',
+					fileMissing:
+						"It doesn't look like this file was compiled yet.",
 				},
 				revealFilePath: {
 					name: 'Reveal File Path',
