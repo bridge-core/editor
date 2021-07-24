@@ -194,7 +194,7 @@ export class App {
 					socialsMsg.dispose()
 				},
 			})
-			/* Removed until getting started updated to v2
+
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
 				message: 'sidebar.notifications.gettingStarted.message',
@@ -205,7 +205,6 @@ export class App {
 					gettingStarted.dispose()
 				},
 			})
-			*/
 		}
 
 		console.timeEnd('[APP] beforeStartUp()')
