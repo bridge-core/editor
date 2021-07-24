@@ -45,6 +45,8 @@ export class App {
 		'refreshCurrentContext',
 		'disableValidation',
 		'fileAdded',
+		'fileChange',
+		'fileSave',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>

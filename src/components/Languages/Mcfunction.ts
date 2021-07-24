@@ -1,3 +1,4 @@
+import debounce from 'lodash.debounce'
 import {
 	CancellationToken,
 	editor,
@@ -35,73 +36,13 @@ export const config: languages.LanguageConfiguration = {
 	],
 }
 
-export const tokenProvider = {
+export const tokenProvider: any = {
 	brackets: [
 		['(', ')', 'delimiter.parenthesis'],
 		['[', ']', 'delimiter.square'],
 		['{', '}', 'delimiter.curly'],
 	],
-	keywords: [
-		'alwaysday',
-		'ability',
-		'clear',
-		'camerashake',
-		'clearspawnpoint',
-		'clone',
-		'dialogue',
-		'difficulty',
-		'effect',
-		'event',
-		'enchant',
-		'execute',
-		'fill',
-		'fog',
-		'function',
-		'gamemode',
-		'gamerule',
-		'give',
-		'kick',
-		'kill',
-		'locate',
-		'list',
-		'me',
-		'mobevent',
-		'music',
-		'particle',
-		'playsound',
-		'playanimation',
-		'ride',
-		'reload',
-		'replaceitem',
-		'say',
-		'schedule',
-		'score',
-		'scoreboard',
-		'setblock',
-		'setmaxplayers',
-		'structure',
-		'setworldspawn',
-		'spawnpoint',
-		'spreadplayers',
-		'stopsound',
-		'summon',
-		'tag',
-		'teleport',
-		'tell',
-		'tellraw',
-		'testfor',
-		'testforblock',
-		'testforblocks',
-		'tickingarea',
-		'time',
-		'title',
-		'titleraw',
-		'toggledownfall',
-		'tp',
-		'w',
-		'weather',
-		'xp',
-	],
+	keywords: [],
 	selectors: ['@a', '@e', '@p', '@r', '@s'],
 	tokenizer: {
 		root: [
@@ -176,6 +117,23 @@ const completionItemProvider: languages.CompletionItemProvider = {
 	},
 }
 
+const loadCommands = debounce(async (lang: McfunctionLanguage) => {
+	const app = await App.getApp()
+	await app.projectManager.fired
+
+	const project = app.project
+	if (!(project instanceof BedrockProject)) return
+
+	await project.commandData.fired
+	const commands = await project.commandData.allCommands(
+		undefined,
+		!project.compilerManager.hasFired
+	)
+	tokenProvider.keywords = commands.map((command) => command)
+
+	lang.updateTokenProvider(tokenProvider)
+}, 3000)
+
 export class McfunctionLanguage extends Language {
 	constructor() {
 		super({
@@ -185,6 +143,19 @@ export class McfunctionLanguage extends Language {
 			tokenProvider,
 			completionItemProvider,
 		})
+
+		this.disposables.push(
+			App.eventSystem.on('fileChange', () => loadCommands(this))
+		)
+	}
+
+	onModelAdded(model: editor.ITextModel) {
+		const isLangFor = super.onModelAdded(model)
+		if (!isLangFor) return false
+
+		loadCommands(this)
+
+		return true
 	}
 
 	validate() {}

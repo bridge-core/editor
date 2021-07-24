@@ -91,6 +91,13 @@ export abstract class Project {
 			)
 		)
 
+		this.fileChange.any.on((data) =>
+			App.eventSystem.dispatch('fileChange', data)
+		)
+		this.fileSave.any.on((data) =>
+			App.eventSystem.dispatch('fileSave', data)
+		)
+
 		setTimeout(() => this.onCreate(), 0)
 	}
 

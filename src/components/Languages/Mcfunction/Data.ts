@@ -85,7 +85,9 @@ export class CommandData extends Signal<void> {
 		this.dispatch()
 	}
 
-	protected async getSchema(): Promise<ICommand[]> {
+	protected async getSchema(
+		ignoreCustomCommands = false
+	): Promise<ICommand[]> {
 		const projectTargetVersion = await App.getApp().then(
 			(app) => app.project.config.get().targetVersion
 		)
@@ -107,12 +109,12 @@ export class CommandData extends Signal<void> {
 		return validEntries
 			.map((entry: any) => entry.commands)
 			.flat()
-			.concat(await generateCommandSchemas())
+			.concat(ignoreCustomCommands ? [] : await generateCommandSchemas())
 			.filter((command: unknown) => command !== undefined)
 	}
 
-	allCommands(query?: string) {
-		return this.getSchema().then((schema) => [
+	allCommands(query?: string, ignoreCustomCommands = false) {
+		return this.getSchema(ignoreCustomCommands).then((schema) => [
 			...new Set<string>(
 				schema
 					.map((command: any) => command?.commandName)
@@ -179,7 +181,7 @@ export class CommandData extends Signal<void> {
 		currentCommand: ICommand,
 		path: string[]
 	): Promise<ICommandArgument[]> {
-		const args = currentCommand.arguments
+		const args = currentCommand.arguments ?? []
 		let argumentIndex = 0
 
 		for (let i = 0; i < path.length; i++) {
