@@ -13,8 +13,7 @@ export function setupToolsCategory(app: App) {
 			icon: 'mdi-book-open-page-variant',
 			name: 'actions.docs.name',
 			description: 'actions.docs.description',
-			onTrigger: () =>
-				App.createNativeWindow('https://bedrock.dev', 'DocWindow'),
+			onTrigger: () => App.openUrl('https://bedrock.dev', 'DocWindow'),
 		})
 	)
 

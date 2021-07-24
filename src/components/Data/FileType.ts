@@ -19,6 +19,10 @@ export interface IFileType {
 	lightningCache: string
 	definitions: IDefinitions
 	formatOnSaveCapable: boolean
+	documentation?: {
+		baseUrl: string
+		supportsQuerying?: boolean // Default: true
+	}
 }
 export interface IDefinitions {
 	[key: string]: IDefinition | IDefinition[]

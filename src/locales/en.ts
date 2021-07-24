@@ -68,6 +68,7 @@ export default {
 		clientManifest: 'Client Manifest',
 		skinManifest: 'Skin Manifest',
 		geometry: 'Geometry',
+		customCommand: 'Command',
 		customComponent: 'Component',
 		clientAnimation: 'Client Animation',
 		clientAnimationController: 'Client Animation Controller',
@@ -233,6 +234,10 @@ export default {
 		},
 		toArray: {
 			name: 'Transform to Array',
+		},
+		documentationLookup: {
+			name: 'View Documentation',
+			noDocumentation: 'No documentation available for',
 		},
 	},
 	// Toolbar Categories

@@ -4,6 +4,8 @@ import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
 import { DefinitionProvider } from '../Definitions/GoTo'
+import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
+import { viewDocumentation } from '../Documentation/view'
 
 languages.typescript.javascriptDefaults.setCompilerOptions({
 	target: languages.typescript.ScriptTarget.ESNext,
@@ -77,6 +79,36 @@ export class MonacoHolder extends Signal<void> {
 			run(...args: any[]) {
 				// @ts-ignore
 				this._run(...args)
+			},
+		})
+		this.monacoEditor.addAction({
+			id: 'documentationLookup',
+			label: this._app.locales.translate(
+				'actions.documentationLookup.name'
+			),
+			contextMenuGroupId: 'navigation',
+			run: (editor: editor.IStandaloneCodeEditor) => {
+				const currentModel = editor.getModel()
+				const selection = editor.getSelection()
+				if (!currentModel || !selection) return
+
+				const filePath = this._app.tabSystem?.selectedTab?.getProjectPath()
+				if (!filePath) return
+
+				let word: string | undefined
+				if (filePath.endsWith('.json'))
+					word = getJsonWordAtPosition(
+						currentModel,
+						selection.getPosition()
+					).word
+				else
+					word = currentModel.getWordAtPosition(
+						selection.getPosition()
+					)?.word
+
+				if (!word) return
+
+				viewDocumentation(filePath, word)
 			},
 		})
 

@@ -126,7 +126,7 @@ export class App {
 		}
 	}
 
-	static createNativeWindow(url: string, id?: string) {
+	static openUrl(url: string, id?: string) {
 		if (settingsState?.general?.openLinksInBrowser)
 			return window.open(url, '_blank')
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
@@ -199,7 +199,7 @@ export class App {
 				icon: 'mdi-help-circle-outline',
 				message: 'sidebar.notifications.gettingStarted.message',
 				onClick: () => {
-					App.createNativeWindow(
+					App.openUrl(
 						'https://bridge-core.github.io/editor-docs/getting-started/'
 					)
 					gettingStarted.dispose()

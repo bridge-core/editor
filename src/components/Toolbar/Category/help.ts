@@ -37,7 +37,7 @@ export function setupHelpCategory(app: App) {
 			icon: 'mdi-puzzle-outline',
 			description: 'actions.extensionAPI.description',
 			onTrigger: () =>
-				App.createNativeWindow(
+				App.openUrl(
 					'https://bridge-core.github.io/extension-docs/',
 					'_blank'
 				),
@@ -49,7 +49,7 @@ export function setupHelpCategory(app: App) {
 			icon: 'mdi-help-circle-outline',
 			description: 'actions.gettingStarted.description',
 			onTrigger: () =>
-				App.createNativeWindow(
+				App.openUrl(
 					'https://bridge-core.github.io/editor-docs/getting-started/',
 					'_blank'
 				),
@@ -61,7 +61,7 @@ export function setupHelpCategory(app: App) {
 			icon: 'mdi-frequently-asked-questions',
 			description: 'actions.faq.description',
 			onTrigger: () =>
-				App.createNativeWindow(
+				App.openUrl(
 					'https://bridge-core.github.io/editor-docs/faq/',
 					'_blank'
 				),
