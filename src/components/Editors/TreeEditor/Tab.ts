@@ -109,6 +109,8 @@ export class TreeTab extends FileTab {
 	}
 
 	async paste() {
+		if (this.isReadOnly) return
+
 		const text = await navigator.clipboard.readText()
 
 		let data: any = undefined
@@ -152,6 +154,8 @@ export class TreeTab extends FileTab {
 	}
 
 	async cut() {
+		if (this.isReadOnly) return
+
 		await this.copy()
 		this.treeEditor.forEachSelection((sel) =>
 			this.treeEditor.delete(sel.getTree())

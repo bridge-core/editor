@@ -199,6 +199,8 @@ export class TextTab extends FileTab {
 	}
 
 	async paste() {
+		if (this.isReadOnly) return
+
 		this.editorInstance?.trigger('keyboard', 'paste', {
 			text: await navigator.clipboard.readText(),
 		})
