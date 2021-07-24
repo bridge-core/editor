@@ -44,4 +44,12 @@ export default {
 .changelog ul {
 	margin-bottom: 24px;
 }
+
+.changelog hr {
+	margin-bottom: 24px;
+}
+
+.changelog img {
+	max-width: 100%;
+}
 </style>
