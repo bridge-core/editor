@@ -129,7 +129,7 @@ export class CommandData extends Signal<void> {
 	/**
 	 * Given a commandName, return all matching command definitions
 	 */
-	async getCommands(commandName: string) {
+	async getCommandDefinitions(commandName: string) {
 		const commands = await this.getSchema().then((schema) => {
 			return schema.filter(
 				(command: any) => command.commandName === commandName
@@ -140,10 +140,14 @@ export class CommandData extends Signal<void> {
 	}
 
 	async getNextCompletionItems(path: string[]) {
-		if (path.length <= 1) return await this.allCommands(path[0])
+		if (path.length <= 1)
+			return await this.allCommands(
+				path[0],
+				await App.getApp().then((app) => app.projectManager.hasFired)
+			)
 
 		const commandName = path.shift()
-		const currentCommands = await this.getCommands(commandName!)
+		const currentCommands = await this.getCommandDefinitions(commandName!)
 
 		if (!currentCommands || currentCommands.length === 0) return []
 
@@ -181,6 +185,9 @@ export class CommandData extends Signal<void> {
 		currentCommand: ICommand,
 		path: string[]
 	): Promise<ICommandArgument[]> {
+		if (!currentCommand.arguments || currentCommand.arguments.length === 0)
+			return []
+
 		const args = currentCommand.arguments ?? []
 		let argumentIndex = 0
 
@@ -202,7 +209,9 @@ export class CommandData extends Signal<void> {
 			if (args[argumentIndex].type === 'command' && i + 1 < path.length) {
 				return (
 					await Promise.all(
-						(await this.getCommands(currentStr)).map((command) =>
+						(
+							await this.getCommandDefinitions(currentStr)
+						).map((command) =>
 							this.getNextCommandArgument(
 								command,
 								path.slice(i + 1)
@@ -218,6 +227,7 @@ export class CommandData extends Signal<void> {
 			if (argumentIndex >= args.length) return []
 		}
 
+		if (!args[argumentIndex]) return []
 		// If we are here, we are at the next argument, return it
 		return [args[argumentIndex]]
 	}
@@ -243,7 +253,15 @@ export class CommandData extends Signal<void> {
 				return strMatchArray(testStr, values)
 			}
 			case 'command': {
-				return strMatchArray(testStr, await this.allCommands())
+				return strMatchArray(
+					testStr,
+					await this.allCommands(
+						undefined,
+						await App.getApp().then(
+							(app) => app.projectManager.hasFired
+						)
+					)
+				)
 			}
 
 			case 'number':
