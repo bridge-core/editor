@@ -125,7 +125,23 @@
 							"description": "References all render controllers used to render the entity.",
 							"type": "array",
 							"items": {
-								"$ref": "../../general/reference/renderController.json"
+								"anyOf": [
+									{
+										"type": "object",
+										"propertyNames": {
+											"$ref": "../../general/reference/renderController.json"
+										},
+										"patternProperties": {
+											".+": {
+												"$ref": "../../molang/embeddedBeta.json"
+											}
+										}
+									},
+									{
+										"type": "string",
+										"$ref": "../../general/reference/renderController.json"
+									}
+								]
 							}
 						},
 						"particle_effects": {
