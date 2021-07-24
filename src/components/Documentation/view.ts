@@ -19,7 +19,7 @@ export async function viewDocumentation(filePath: string, word: string) {
 	}
 
 	let url = documentation.baseUrl
-	if (documentation.supportsQuerying) url += `#${word}`
+	if (documentation.supportsQuerying ?? true) url += `#${word}`
 
 	App.openUrl(url)
 }

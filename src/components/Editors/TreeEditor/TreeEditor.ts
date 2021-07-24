@@ -20,6 +20,7 @@ import { App } from '/@/App'
 import { debounce } from 'lodash-es'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { IActionConfig } from '../../Actions/SimpleAction'
+import { viewDocumentation } from '../../Documentation/view'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
@@ -398,14 +399,47 @@ export class TreeEditor {
 		return pasteMenu
 	}
 
+	onReadOnlyMenu(event?: MouseEvent, tree = this.tree, selectedKey = true) {
+		const readOnlyMenu = [
+			{
+				name: 'actions.documentationLookup.name',
+				icon: 'mdi-book-open-outline',
+				onTrigger: () => {
+					const word = selectedKey ? tree.key : tree.value
+
+					if (typeof word === 'string')
+						viewDocumentation(this.parent.getProjectPath(), word)
+				},
+			},
+			{
+				name: 'actions.copy.name',
+				icon: 'mdi-content-copy',
+				onTrigger: () => {
+					this.setSelection(tree, !selectedKey)
+					this.parent.copy()
+				},
+			},
+		]
+
+		if (event) showContextMenu(event, readOnlyMenu)
+
+		return readOnlyMenu
+	}
+
 	onContextMenu(
 		event: MouseEvent,
 		tree: PrimitiveTree | ArrayTree | ObjectTree,
 		selectedKey = true
 	) {
-		if (this.parent.isReadOnly) return []
+		if (this.parent.isReadOnly)
+			return this.onReadOnlyMenu(event, tree, selectedKey)
+		const [viewDocs, copy] = this.onReadOnlyMenu(
+			undefined,
+			tree,
+			selectedKey
+		)
 
-		const contextMenu: (IActionConfig | null)[] = []
+		const contextMenu: (IActionConfig | null)[] = [viewDocs]
 		// Delete node
 		if (tree instanceof PrimitiveTree)
 			contextMenu.push({
@@ -428,14 +462,7 @@ export class TreeEditor {
 
 		// Copy, cut & paste
 		contextMenu.push(
-			{
-				name: 'actions.copy.name',
-				icon: 'mdi-content-copy',
-				onTrigger: () => {
-					this.setSelection(tree, !selectedKey)
-					this.parent.copy()
-				},
-			},
+			copy,
 			{
 				name: 'actions.cut.name',
 				icon: 'mdi-content-cut',

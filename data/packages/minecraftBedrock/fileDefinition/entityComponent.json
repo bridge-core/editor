@@ -6,5 +6,10 @@
 	"types": [
 		"types/customComponent/common.d.ts",
 		"types/customComponent/entity.d.ts"
-	]
+	],
+
+	"documentation": {
+		"baseUrl": "https://bridge-core.app/extension-docs/custom-components",
+		"supportsQuerying": false
+	}
 }
