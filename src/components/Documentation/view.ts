@@ -2,7 +2,7 @@ import { FileType } from '../Data/FileType'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { App } from '/@/App'
 
-export async function viewDocumentation(filePath: string, word: string) {
+export async function viewDocumentation(filePath: string, word?: string) {
 	await FileType.ready.fired
 	const app = await App.getApp()
 	const t = (str: string) => app.locales.translate(str)
@@ -19,7 +19,7 @@ export async function viewDocumentation(filePath: string, word: string) {
 	}
 
 	let url = documentation.baseUrl
-	if (documentation.supportsQuerying ?? true) url += `#${word}`
+	if (word && (documentation.supportsQuerying ?? true)) url += `#${word}`
 
 	App.openUrl(url)
 }

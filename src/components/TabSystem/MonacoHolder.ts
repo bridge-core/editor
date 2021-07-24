@@ -106,8 +106,6 @@ export class MonacoHolder extends Signal<void> {
 						selection.getPosition()
 					)?.word
 
-				if (!word) return
-
 				viewDocumentation(filePath, word)
 			},
 		})
