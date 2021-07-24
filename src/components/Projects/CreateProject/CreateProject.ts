@@ -119,7 +119,7 @@ export class CreateProjectWindow extends BaseWindow {
 			icon: null,
 			name: '',
 			namespace: 'bridge',
-			targetVersion: '',
+			targetVersion: this.availableTargetVersions[0],
 			packs: ['.bridge', 'BP', 'RP'],
 			scripting: false,
 			gameTest: false,
