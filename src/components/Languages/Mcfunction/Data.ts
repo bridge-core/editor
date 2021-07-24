@@ -40,11 +40,6 @@ export interface ICommandArgument {
 }
 
 /**
- * RegExp to validate whether a string is a valid command coordinate
- */
-const commandCoordinateRegExp = /^((([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}|\^([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}|(\~([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}$/
-
-/**
  * A class that stores data on all Minecraft commands
  */
 export class CommandData extends Signal<void> {
