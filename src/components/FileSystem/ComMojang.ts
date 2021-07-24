@@ -14,9 +14,16 @@ export class ComMojang extends Signal<void> {
 	 */
 	public readonly setup = new Signal<void>()
 	protected _hasComMojang = false
+	protected permissionDenied = false
 
 	get hasComMojang() {
 		return this._hasComMojang
+	}
+	get status() {
+		return {
+			hasComMojang: this._hasComMojang,
+			permissionDenied: this.permissionDenied,
+		}
 	}
 
 	constructor(protected app: App) {
@@ -60,8 +67,9 @@ export class ComMojang extends Signal<void> {
 			mode: 'readwrite',
 		})
 		if (permission !== 'granted') {
-			set(comMojangKey, undefined)
-			await this.app.projectManager.recompileAll(false)
+			this._hasComMojang = false
+			this.permissionDenied = true
+			await this.app.projectManager.recompileAll()
 		} else {
 			this.fileSystem.setup(directoryHandle)
 			this._hasComMojang = true
