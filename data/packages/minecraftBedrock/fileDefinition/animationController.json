@@ -14,5 +14,9 @@
 		"functionPath": {
 			"directReference": true
 		}
+	},
+	"documentation": {
+		"baseUrl": "https://bedrock.dev/docs/stable/Entity%20Events#Animation%20Controller%20Events",
+		"supportsQuerying": false
 	}
 }

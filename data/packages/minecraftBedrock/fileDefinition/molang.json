@@ -3,5 +3,10 @@
 	"icon": "mdi-alpha-m",
 	"scope": ["RP/molang/", "BP/molang/"],
 	"matcher": ["*/molang/**/*.molang", "*/molang/*.molang"],
-	"formatOnSaveCapable": false
+	"formatOnSaveCapable": false,
+
+	"documentation": {
+		"baseUrl": "https://bedrock.dev/docs/stable/MoLang",
+		"supportsQuerying": false
+	}
 }

@@ -7,5 +7,10 @@
 		"RP/render_controllers/*.json"
 	],
 	"schema": "file:///data/packages/minecraftBedrock/schema/renderController/main.json",
-	"lightningCache": "renderController.json"
+	"lightningCache": "renderController.json",
+
+	"documentation": {
+		"baseUrl": "https://bedrock.dev/docs/stable/Animations#Render%20Controllers",
+		"supportsQuerying": false
+	}
 }

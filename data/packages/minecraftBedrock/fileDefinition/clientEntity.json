@@ -55,5 +55,10 @@
 		"texturePath": {
 			"directReference": true
 		}
+	},
+
+	"documentation": {
+		"baseUrl": "https://bedrock.dev/docs/stable/Entities#Client%20Entity%20Documentation",
+		"supportsQuerying": false
 	}
 }

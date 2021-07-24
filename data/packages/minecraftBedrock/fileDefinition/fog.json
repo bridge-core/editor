@@ -5,5 +5,10 @@
 	"target_version": "$project_target_version >= 1.16.100",
 	"matcher": ["RP/fogs/**/*.json", "RP/fogs/*.json"],
 	"schema": "file:///data/packages/minecraftBedrock/schema/fog/main.json",
-	"lightningCache": "fog.json"
+	"lightningCache": "fog.json",
+
+	"documentation": {
+		"baseUrl": "https://bedrock.dev/docs/stable/Fogs",
+		"supportsQuerying": false
+	}
 }

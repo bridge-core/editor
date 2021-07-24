@@ -23,5 +23,10 @@
 		"lootTablePath": {
 			"directReference": true
 		}
+	},
+
+	"documentation": {
+		"baseUrl": "https://bedrock.dev/docs/stable/Item",
+		"supportsQuerying": false
 	}
 }

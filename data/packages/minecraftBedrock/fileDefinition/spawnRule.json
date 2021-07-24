@@ -17,5 +17,9 @@
 				"match": "identifier"
 			}
 		]
+	},
+	"documentation": {
+		"baseUrl": "https://bedrock.dev/docs/stable/Entities#Data-Driven%20Spawning",
+		"supportsQuerying": false
 	}
 }

@@ -33,5 +33,10 @@
 		"lootTablePath": {
 			"directReference": true
 		}
+	},
+
+	"documentation": {
+		"baseUrl": "https://bedrock.dev/docs/stable/Blocks",
+		"supportsQuerying": false
 	}
 }

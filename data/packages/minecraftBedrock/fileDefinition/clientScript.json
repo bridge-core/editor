@@ -6,5 +6,10 @@
 	"types": [
 		"types/scriptingApi/common.d.ts",
 		"types/scriptingApi/client.d.ts"
-	]
+	],
+
+	"documentation": {
+		"baseUrl": "https://bedrock.dev/docs/stable/Scripting",
+		"supportsQuerying": false
+	}
 }

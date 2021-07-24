@@ -11,5 +11,9 @@
 		"texturePath": {
 			"directReference": true
 		}
+	},
+	"documentation": {
+		"baseUrl": "https://bedrock.dev/docs/stable/Particles",
+		"supportsQuerying": false
 	}
 }

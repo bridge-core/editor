@@ -3,5 +3,10 @@
 	"icon": "mdi-window-maximize",
 	"scope": "RP/ui/",
 	"matcher": ["RP/ui/**/*.json", "RP/ui/*.json"],
-	"schema": "file:///data/packages/minecraftBedrock/schema/ui/main.json"
+	"schema": "file:///data/packages/minecraftBedrock/schema/ui/main.json",
+
+	"documentation": {
+		"baseUrl": "https://wiki.bedrock.dev/documentation/json-ui",
+		"supportsQuerying": false
+	}
 }
