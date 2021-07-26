@@ -483,7 +483,7 @@
 					"enum": ["bow", "eat", "drink", "crossbow", "camera"]
 				},
 				"minecraft:render_offsets": {
-					"type": "string",
+					"type": "object",
 					"description": "The offset of the item rendered in an entity's hand.",
 					"propertyNames": {
 						"enum": ["main_hand", "off_hand"]
