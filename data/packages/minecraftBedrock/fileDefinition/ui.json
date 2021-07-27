@@ -6,7 +6,7 @@
 	"schema": "file:///data/packages/minecraftBedrock/schema/ui/main.json",
 
 	"documentation": {
-		"baseUrl": "https://wiki.bedrock.dev/documentation/json-ui",
+		"baseUrl": "https://wiki.bedrock.dev/json-ui/json-ui-intro.html",
 		"supportsQuerying": false
 	}
 }
