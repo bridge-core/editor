@@ -20,7 +20,7 @@
 		"@types/micromatch": "^4.0.1",
 		"@vue/composition-api": "^1.0.0-rc.6",
 		"bridge-compiler": "^0.3.0",
-		"bridge-model-viewer": "^0.6.1",
+		"bridge-model-viewer": "^0.6.2",
 		"color-convert": "^2.0.1",
 		"comlink": "^4.3.0",
 		"compare-versions": "^3.6.0",
@@ -46,7 +46,7 @@
 		"vue-template-compiler": "2.6.12",
 		"vuedraggable": "^2.24.3",
 		"vuetify": "^2.2.11",
-		"wintersky": "github:jannisx11/wintersky#master"
+		"wintersky": "^1.0.2"
 	},
 	"devDependencies": {
 		"@types/color-convert": "^2.0.0",
