@@ -554,10 +554,6 @@ export default {
 	},
 	taskManager: {
 		tasks: {
-			dataLoader: {
-				title: 'Loading Data...',
-				description: 'Loading data for the editor',
-			},
 			packIndexing: {
 				title: 'Indexing Packs',
 				description:
