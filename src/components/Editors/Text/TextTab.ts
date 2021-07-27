@@ -131,7 +131,7 @@ export class TextTab extends FileTab {
 	}
 
 	loadEditor() {
-		if (this.editorModel && !this.editorModel.isDisposed)
+		if (this.editorModel && !this.editorModel.isDisposed())
 			this.editorInstance?.setModel(this.editorModel)
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
