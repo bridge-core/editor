@@ -233,8 +233,8 @@ export class App {
 			this.fileSystem.mkdir('extensions'),
 			this.fileSystem.mkdir('data/packages'),
 			// Setup data helpers
-			this.dataLoader.fired.then(() => FileType.setup(this.dataLoader)),
-			this.dataLoader.fired.then(() => PackType.setup(this.dataLoader)),
+			FileType.setup(this.dataLoader),
+			PackType.setup(this.dataLoader),
 		])
 
 		// Ensure that a project is selected
