@@ -1,8 +1,0 @@
-[
-	{ "cacheKey": "texture", "path": "*/atlas_tile" },
-	{
-		"cacheKey": "texturePath",
-		"path": "*/flipbook_texture",
-		"script": "return await Bridge.withExtension('RP/' + Bridge.value, ['.tga', '.png', '.jpg', '.jpeg'])"
-	}
-]

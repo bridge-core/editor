@@ -6,14 +6,10 @@
 		"dev:vite": "vite",
 		"serve": "vite serve",
 		"build:vite": "node ./scripts/build.mjs && node ./scripts/buildApp.mjs",
-		"dev:data": "node ./scripts/dev.mjs",
-		"build:data": "node ./scripts/build.mjs",
 		"dev": "vue-cli-service serve",
 		"build": "node ./scripts/build.mjs && vue-cli-service build",
 		"build:nightly": "node ./scripts/build.mjs && vue-cli-service build --nightly",
-		"test": "jest",
-		"build-compiler-types": "node ./scripts/buildCompilerTypes.mjs",
-		"build-identifiers": "node ./scripts/buildIdentifiers.mjs"
+		"test": "jest"
 	},
 	"dependencies": {
 		"@mdi/font": "^5.8.55",

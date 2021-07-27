@@ -1,5 +1,0 @@
-{
-	"id": "presetManifest",
-	"matcher": "BP/.bridge/plugins/*/presets/*/manifest.json",
-	"schema": "file:///data/packages/minecraftBedrock/schema/bridge/preset/manifest.json"
-}

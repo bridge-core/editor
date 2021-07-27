@@ -1,8 +1,0 @@
-[
-	{ "cacheKey": "identifier", "path": "animations" },
-	{
-		"cacheKey": "particleEffect",
-		"path": "animations/*/particle_effects/*/effect"
-	},
-	{ "cacheKey": "soundEffect", "path": "animations/*/sound_effects/*/effect" }
-]

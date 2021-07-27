@@ -1,5 +1,0 @@
-{
-	"type": "enum",
-	"generateFile": "project/prefixedFileIdentifierEnum.json",
-	"script": "return [`${getProjectPrefix()}:${(getFileName() || '').split('.').shift()}`]"
-}

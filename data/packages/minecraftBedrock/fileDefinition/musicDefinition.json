@@ -1,6 +1,0 @@
-{
-	"id": "musicDefinition",
-	"scope": "RP/sounds/music_definitions.json",
-	"matcher": "RP/sounds/music_definitions.json",
-	"schema": "file:///data/packages/minecraftBedrock/schema/musicDefinition/main.json"
-}

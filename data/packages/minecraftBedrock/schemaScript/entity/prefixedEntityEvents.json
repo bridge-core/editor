@@ -1,5 +1,0 @@
-{
-	"type": "enum",
-	"generateFile": "entity/dynamic/prefixedEntityEventEnum.json",
-	"script": "return getCacheDataFor('entity', undefined, 'event').then(events => (events || []).map(event => `@s ${event}`))"
-}
