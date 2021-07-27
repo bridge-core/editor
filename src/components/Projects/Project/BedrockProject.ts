@@ -1,9 +1,5 @@
-import { App } from '/@/App'
 import { Project } from './Project'
-import {
-	ITabActionConfig,
-	ITabPreviewConfig,
-} from '/@/components/TabSystem/TabActions/Provider'
+import { ITabPreviewConfig } from '/@/components/TabSystem/TabActions/Provider'
 
 import { createFromGeometry } from '/@/components/Editors/EntityModel/create/fromGeometry'
 import { createFromClientEntity } from '/@/components/Editors/EntityModel/create/fromClientEntity'
