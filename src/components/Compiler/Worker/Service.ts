@@ -5,6 +5,7 @@ import { TCompilerPlugin } from './TCompilerPlugin'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { FileType, IFileType } from '/@/components/Data/FileType'
 import { Compiler } from './Compiler'
+import { DataLoader } from '../../Data/DataLoader'
 
 export interface ICompilerOptions {
 	projectDirectory: FileSystemDirectoryHandle
@@ -32,6 +33,7 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 	protected buildConfig!: IBuildConfig
 	protected plugins!: Map<string, Partial<TCompilerPlugin>>
 	protected _outputFileSystem?: FileSystem
+	protected dataLoader = new DataLoader()
 
 	// This is necessary so the compiler object doesn't get included in the proxy
 	get compiler() {
@@ -87,7 +89,7 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 
 	async onStart([updatedFiles, deletedFiles]: [string[], string[]]) {
 		const globalFs = new FileSystem(this.options.baseDirectory)
-		await FileType.setup(globalFs)
+		await FileType.setup(this.dataLoader)
 
 		try {
 			this.buildConfig = await this.fileSystem.readJSON(
@@ -141,6 +143,7 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 				this.compiler.getAliases(filePath),
 			compileFiles: (files: string[]) =>
 				this.compiler.compileFiles(files),
+			dataLoader: this.dataLoader,
 		})
 	}
 	async updatePlugins(

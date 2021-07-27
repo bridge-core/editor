@@ -1,7 +1,7 @@
 import { isMatch } from 'micromatch'
-import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { v4 as uuid } from 'uuid'
 import { Signal } from '../Common/Event/Signal'
+import { DataLoader } from './DataLoader'
 
 /**
  * Describes the structure of a pack definition
@@ -31,11 +31,11 @@ export namespace PackType {
 		return packTypes.concat([...extensionPackTypes.values()])
 	}
 
-	export async function setup(fileSystem: FileSystem) {
+	export async function setup(dataLoader: DataLoader) {
 		if (packTypes.length > 0) return
 
 		packTypes = <IPackType[]>(
-			await fileSystem.readJSON(
+			await dataLoader.readJSON(
 				'data/packages/minecraftBedrock/packDefinitions.json'
 			)
 		)

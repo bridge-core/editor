@@ -15,6 +15,10 @@ export async function runPresetScript(
 	const app = await App.getApp()
 	const fs = app.project?.fileSystem!
 	const globalFs = app.fileSystem
+	const readFile = (filePath: string) =>
+		filePath.startsWith('data/')
+			? app.dataLoader.readFile(filePath)
+			: globalFs.readFile(filePath)
 
 	let loadFilePath: string
 	if (presetScript.startsWith('./')) {
@@ -26,7 +30,7 @@ export async function runPresetScript(
 		loadFilePath = `data/packages/minecraftBedrock/${presetScript}`
 	}
 
-	const script = await globalFs.readFile(loadFilePath)
+	const script = await readFile(loadFilePath)
 	const scriptSrc = await script.text()
 
 	const module: any = { exports: undefined }
@@ -150,7 +154,7 @@ export async function runPresetScript(
 		}
 	}
 	const loadPresetFile = (filePath: string) =>
-		globalFs.readFile(`${presetPath}/${filePath}`)
+		readFile(`${presetPath}/${filePath}`)
 
 	await module.exports({
 		models,

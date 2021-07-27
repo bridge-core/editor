@@ -1,94 +1,166 @@
-import { App } from '/@/App'
-import { Unzipper } from '../FileSystem/Unzipper'
 import { baseUrl } from '/@/utils/baseUrl'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { version as appVersion } from '/@/appVersion.json'
-import { compare } from 'compare-versions'
-import { StreamingUnzipper } from '../FileSystem/StreamingUnzipper/StreamingUnzipper'
+import { unzip, Unzipped } from 'fflate'
+import { VirtualFolder } from './VirtualFs/Folder'
+import { basename, dirname } from '/@/utils/path'
+import { VirtualFile } from './VirtualFs/File'
+import json5 from 'json5'
+import type { VirtualEntry } from './VirtualFs/Entry'
 
 export class DataLoader extends Signal<void> {
-	constructor(protected app: App) {
+	_virtualFileSystem?: VirtualFolder
+
+	get virtualFileSystem() {
+		if (!this._virtualFileSystem) {
+			throw new Error('DataLoader: virtualFileSystem is not initialized')
+		}
+		return this._virtualFileSystem
+	}
+
+	constructor() {
 		super()
+		this.loadData()
 	}
 
-	async start() {
-		this.app.windows.loadingWindow.open(
-			'windows.loadingWindow.titles.downloadingData'
-		)
-		await this.app.fileSystem.fired
+	async loadData() {
+		// Read packages.zip file
+		const rawData = await fetch(
+			baseUrl + 'data/package.zip'
+		).then((response) => response.arrayBuffer())
 
-		if (await this.isUpdateAvailable()) {
-			await this.downloadData()
-		}
-
-		this.dispatch()
-		this.app.windows.loadingWindow.close()
-	}
-
-	protected async isUpdateAvailable() {
-		let remoteVersion: string
-		try {
-			remoteVersion = await fetch(
-				baseUrl + 'data/version.txt'
-			).then((response) => response.text())
-		} catch (err) {
-			return false
-		}
-
-		let localVersion: string
-		try {
-			localVersion = await this.app.fileSystem
-				.readFile('data/version.txt')
-				.then((data) => data.text())
-		} catch {
-			return true
-		}
-
-		// Avoid "not a semantic version" error
-		if (localVersion === '') return true
-
-		console.log(
-			`App version: ${appVersion}\nLocal data version: ${localVersion}\nRemote data version: ${remoteVersion}`
-		)
-
-		// See: https://discord.com/channels/602097536404160523/603989805763788800/812075892158890034
-		if (
-			remoteVersion[0] === "'" &&
-			remoteVersion[remoteVersion.length - 1] === "'"
-		)
-			remoteVersion = remoteVersion.slice(1, -1)
-		if (
-			localVersion[0] === "'" &&
-			localVersion[localVersion.length - 1] === "'"
-		)
-			localVersion = localVersion.slice(1, -1)
-
-		return compare(remoteVersion, localVersion, '>')
-	}
-
-	protected async downloadData() {
-		console.log('Downloading new data...')
-
-		try {
-			await this.app.fileSystem.unlink('data/packages')
-		} catch {}
-
-		const unzipper = new Unzipper(
-			await this.app.fileSystem.getDirectoryHandle('data', {
-				create: true,
+		// Unzip data
+		const unzipped = await new Promise<Unzipped>((resolve, reject) =>
+			unzip(new Uint8Array(rawData), async (error, zip) => {
+				if (error) return reject(error)
+				resolve(zip)
 			})
 		)
 
-		unzipper.createTask(this.app.taskManager, {
-			icon: 'mdi-download',
-			description: 'taskManager.tasks.dataLoader.description',
-			name: 'taskManager.tasks.dataLoader.title',
-		})
+		// Create virtual filesystem
+		this._virtualFileSystem = new VirtualFolder(null, 'global')
+		const folders: Record<string, VirtualFolder> = {
+			'.': new VirtualFolder(this._virtualFileSystem, 'data'),
+		}
+		this._virtualFileSystem.addChild(folders['.'])
 
-		await fetch(baseUrl + 'data/package.zip')
-			.then((response) => response.arrayBuffer())
-			.then((arrayBuffer) => unzipper.unzip(new Uint8Array(arrayBuffer)))
+		for (const path in unzipped) {
+			const name = basename(path)
+			const parentDir = dirname(path)
 
-		console.log('Data updated!')
+			if (path.endsWith('/')) {
+				// Current entry is a folder
+				folders[path.slice(0, -1)] = new VirtualFolder(
+					folders[parentDir],
+					name
+				)
+				folders[parentDir].addChild(folders[path.slice(0, -1)])
+			} else {
+				// Current entry is a file
+				folders[parentDir].addChild(
+					new VirtualFile(folders[parentDir], name, unzipped[path])
+				)
+			}
+		}
+
+		this.dispatch()
+	}
+
+	async getDirectory(path: string) {
+		await this.fired
+
+		if (path === '') return this.virtualFileSystem
+
+		let current = this.virtualFileSystem
+		const pathArr = path.split(/\\|\//g)
+
+		for (const folder of pathArr) {
+			try {
+				current = current.getDirectory(folder)
+			} catch {
+				throw new Error(
+					`Failed to access "${path}": Directory does not exist`
+				)
+			}
+		}
+
+		return current
+	}
+	async getFile(path: string) {
+		await this.fired
+
+		if (path.length === 0) throw new Error(`Error: filePath is empty`)
+
+		const pathArr = path.split(/\\|\//g)
+		// This has to be a string because path.length > 0
+		const file = pathArr.pop() as string
+		const folder = await this.getDirectory(pathArr.join('/'))
+
+		try {
+			return folder.getFile(file)
+		} catch {
+			throw new Error(`File does not exist: "${path}"`)
+		}
+	}
+
+	async readJSON(path: string) {
+		const fileHandle = await this.getFile(path)
+
+		return json5.parse(await fileHandle.text())
+	}
+	async readFile(path: string) {
+		const file = await this.getFile(path)
+		return new File([await file.arrayBuffer()], file.name)
+	}
+
+	async iterateDir(
+		baseDirectory: VirtualFolder,
+		callback: (
+			fileHandle: VirtualFile,
+			path: string
+		) => Promise<void> | void,
+		ignoreFolders: Set<string> = new Set(),
+		path = ''
+	) {
+		for await (const handle of baseDirectory.values()) {
+			const currentPath =
+				path.length === 0 ? handle.name : `${path}/${handle.name}`
+
+			if (handle.kind === 'file') {
+				if (handle.name[0] === '.') continue
+				await callback(<VirtualFile>handle, currentPath)
+			} else if (
+				handle.kind === 'directory' &&
+				!ignoreFolders.has(currentPath)
+			) {
+				await this.iterateDir(
+					<VirtualFolder>handle,
+					callback,
+					ignoreFolders,
+					currentPath
+				)
+			}
+		}
+	}
+
+	readdir(
+		path: string,
+		config: { withFileTypes: true }
+	): Promise<VirtualFolder[]>
+	readdir(path: string, config?: { withFileTypes?: false }): Promise<string[]>
+	async readdir(
+		path: string,
+		{ withFileTypes }: { withFileTypes?: true | false } = {}
+	) {
+		const dirHandle = await this.getDirectory(path)
+		const files: (string | VirtualEntry)[] = []
+
+		for await (const handle of dirHandle.values()) {
+			if (handle.kind === 'file' && handle.name === '.DS_Store') continue
+
+			if (withFileTypes) files.push(handle)
+			else files.push(handle.name)
+		}
+
+		return files
 	}
 }

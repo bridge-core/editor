@@ -1,10 +1,11 @@
 import { FileType } from './FileType'
 import { App } from '/@/App'
-import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { IDisposable } from '/@/types/disposable'
 import { editor, languages, Uri } from 'monaco-editor'
 import { compare, CompareOperator } from 'compare-versions'
 import { getLatestFormatVersion } from './FormatVersions'
+import { DataLoader } from './DataLoader'
+
 const types = new Map<string, string>()
 
 export class TypeLoader {
@@ -12,7 +13,7 @@ export class TypeLoader {
 	protected typeDisposables: IDisposable[] = []
 	protected currentTypeEnv: string | null = null
 
-	constructor(protected fileSystem: FileSystem) {}
+	constructor(protected dataLoader: DataLoader) {}
 
 	async activate(filePath?: string) {
 		this.disposables = <IDisposable[]>[
@@ -35,7 +36,7 @@ export class TypeLoader {
 		if (src) return src
 
 		// Load types from file
-		const file = await this.fileSystem.readFile(
+		const file = await this.dataLoader.readFile(
 			`data/packages/minecraftBedrock/${typePath}`
 		)
 		src = await file.text()

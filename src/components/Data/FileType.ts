@@ -4,6 +4,7 @@ import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpide
 import type { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
 import type { CompareOperator } from 'compare-versions'
+import { DataLoader } from './DataLoader'
 
 /**
  * Describes the structure of a file definition
@@ -48,18 +49,19 @@ export interface IMonacoSchemaArrayEntry {
 export namespace FileType {
 	const pluginFileTypes = new Set<IFileType>()
 	let fileTypes: IFileType[] = []
-	let fileSystem: FileSystem
+	let dataLoader: DataLoader
 	export const ready = new Signal<void>()
 
-	export async function setup(fs: FileSystem) {
+	export async function setup(dL: DataLoader) {
 		if (fileTypes.length > 0) return
-		fileSystem = fs
+		dataLoader = dL
 
 		const basePath = 'data/packages/minecraftBedrock/fileDefinition'
-		const dirents = await fs.readdir(basePath, { withFileTypes: true })
-		for (const dirent of dirents) {
+		const dirents = await dL.getDirectory(basePath)
+
+		for (const dirent of dirents.values()) {
 			if (dirent.kind === 'file')
-				fileTypes.push(await fs.readJSON(`${basePath}/${dirent.name}`))
+				fileTypes.push(await dL.readJSON(`${basePath}/${dirent.name}`))
 		}
 
 		ready.dispatch()
@@ -157,12 +159,12 @@ export namespace FileType {
 
 		if (lightningCache.endsWith('.json')) {
 			lCacheFiles[lightningCache] = <ILightningInstruction[]>(
-				await fileSystem.readJSON(
+				await dataLoader.readJSON(
 					`data/packages/minecraftBedrock/lightningCache/${lightningCache}`
 				)
 			)
 		} else if (lightningCache.endsWith('.js')) {
-			const textFile = await fileSystem.readFile(
+			const textFile = await dataLoader.readFile(
 				`data/packages/minecraftBedrock/lightningCache/${lightningCache}`
 			)
 			lCacheFiles[lightningCache] = await textFile.text()
@@ -180,7 +182,7 @@ export namespace FileType {
 			fileTypes
 				.map(({ id, packSpider }) => {
 					if (!packSpider) return
-					return fileSystem
+					return dataLoader
 						.readJSON(
 							`data/packages/minecraftBedrock/packSpider/${packSpider}`
 						)

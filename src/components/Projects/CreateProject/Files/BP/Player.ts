@@ -5,7 +5,7 @@ import { CreateFile } from '../CreateFile'
 export class CreatePlayer extends CreateFile {
 	async create(fs: FileSystem) {
 		const app = await App.getApp()
-		const defaultPlayer = await app.fileSystem.readFile(
+		const defaultPlayer = await app.dataLoader.readFile(
 			'data/packages/minecraftBedrock/vanilla/player.json'
 		)
 

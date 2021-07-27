@@ -20,6 +20,7 @@ export default {
 			try {
 				fileHandle = await window.showDirectoryPicker({
 					writable: true,
+					startIn: 'documents',
 				})
 			} catch {
 				return

@@ -11,6 +11,7 @@ import {
 import { LightningCache } from './LightningCache/LightningCache'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { PackType } from '../../Data/PackType'
+import { DataLoader } from '../../Data/DataLoader'
 export type { ILightningInstruction } from './LightningCache/LightningCache'
 
 export interface IPackIndexerOptions {
@@ -28,6 +29,7 @@ export class PackIndexerService extends TaskService<
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
 	public fileSystem: FileSystem
+	public dataLoader = new DataLoader()
 
 	constructor(protected readonly options: IPackIndexerOptions) {
 		super()
@@ -45,8 +47,8 @@ export class PackIndexerService extends TaskService<
 	async onStart() {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
-		await FileType.setup(new FileSystem(this.options.baseDirectory))
-		await PackType.setup(new FileSystem(this.options.baseDirectory))
+		await FileType.setup(this.dataLoader)
+		await PackType.setup(this.dataLoader)
 
 		console.timeEnd('[WORKER] SETUP')
 

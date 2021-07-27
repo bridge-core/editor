@@ -8,6 +8,8 @@ import { FileTab } from '../TabSystem/FileTab'
 import { SchemaScript } from './SchemaScript'
 import { SchemaManager } from '../JSONSchema/Manager'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { VirtualFolder } from './VirtualFs/Folder'
+import { VirtualFile } from './VirtualFs/File'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
@@ -60,7 +62,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		for (const packageName of packages) {
 			try {
 				await this.loadStaticSchemas(
-					await app.fileSystem.getDirectoryHandle(
+					await app.dataLoader.getDirectory(
 						`data/packages/${packageName}/schema`
 					),
 					`data/packages/${packageName}/schema`
@@ -168,7 +170,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		).flat()
 	}
 	async loadStaticSchemas(
-		directoryHandle: FileSystemDirectoryHandle,
+		directoryHandle: VirtualFolder,
 		fromPath = 'data/packages/minecraftBedrock/schema'
 	) {
 		if (loadedGlobalSchemas) return
@@ -181,9 +183,8 @@ export class JsonDefaults extends EventDispatcher<void> {
 			if (entry.kind === 'file') {
 				globalSchemas[`file:///${currentPath}`] = {
 					uri: `file:///${currentPath}`,
-					schema: await entry
-						.getFile()
-						.then((file) => file.text())
+					schema: await (<VirtualFile>entry)
+						.text()
 						.then(json5.parse)
 						.catch(() => {
 							throw new Error(
@@ -192,7 +193,9 @@ export class JsonDefaults extends EventDispatcher<void> {
 						}),
 				}
 			} else {
-				promises.push(this.loadStaticSchemas(entry, currentPath))
+				promises.push(
+					this.loadStaticSchemas(<VirtualFolder>entry, currentPath)
+				)
 			}
 		}
 

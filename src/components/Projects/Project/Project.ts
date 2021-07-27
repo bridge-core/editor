@@ -81,7 +81,7 @@ export abstract class Project {
 			app.fileSystem,
 			`projects/${this.name}/.bridge/inactiveExtensions.json`
 		)
-		this.typeLoader = new TypeLoader(this.app.fileSystem)
+		this.typeLoader = new TypeLoader(this.app.dataLoader)
 		Vue.set(
 			this,
 			'recentFiles',

@@ -18,7 +18,7 @@ export async function getFormatVersions() {
 	const app = await App.getApp()
 	await app.dataLoader.fired
 
-	const formatVersions: string[] = await app.fileSystem.readJSON(
+	const formatVersions: string[] = await app.dataLoader.readJSON(
 		'data/packages/minecraftBedrock/formatVersions.json'
 	)
 

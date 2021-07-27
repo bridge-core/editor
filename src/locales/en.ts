@@ -293,12 +293,6 @@ export default {
 	},
 	// Windows
 	windows: {
-		loadingWindow: {
-			titles: {
-				loading: 'Loading...',
-				downloadingData: 'Downloading new data...',
-			},
-		},
 		changelogWindow: {
 			title: "What's new?",
 		},
@@ -561,8 +555,8 @@ export default {
 	taskManager: {
 		tasks: {
 			dataLoader: {
-				title: 'Downloading Data...',
-				description: 'Downloading the latest data for the editor',
+				title: 'Loading Data...',
+				description: 'Loading data for the editor',
 			},
 			packIndexing: {
 				title: 'Indexing Packs',

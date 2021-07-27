@@ -10,7 +10,7 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 	mode: 'dev' | 'build'
 	v1CompatMode?: boolean
 }> = ({
-	fileSystem,
+	dataLoader,
 	options: {
 		include = {},
 		isFileRequest,
@@ -37,7 +37,7 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 		async buildStart() {
 			// Load default command locations and merge them with user defined locations
 			include = Object.assign(
-				await fileSystem.readJSON(
+				await dataLoader.readJSON(
 					'data/packages/minecraftBedrock/location/validCommand.json'
 				),
 				include

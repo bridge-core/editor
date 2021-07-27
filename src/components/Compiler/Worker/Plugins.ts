@@ -10,10 +10,11 @@ import {
 import { SimpleRewrite } from './Plugins/simpleRewrite'
 import { EntityIdentifierAlias } from './Plugins/EntityIdentifier'
 import { MoLangPlugin } from './Plugins/MoLang/Plugin'
-import { ProjectConfig } from '../../Projects/ProjectConfig'
+import { ProjectConfig } from '/@/components/Projects/ProjectConfig'
 import { TCompilerPlugin } from './TCompilerPlugin'
 import { TCompilerPluginFactory } from './TCompilerPluginFactory'
 import { CustomCommandsPlugin } from './Plugins/CustomCommands/Plugin'
+import { DataLoader } from '/@/components/Data/DataLoader'
 
 export type TCompilerHook = keyof TCompilerPlugin
 export interface ILoadPLugins {
@@ -25,6 +26,7 @@ export interface ILoadPLugins {
 	pluginOpts: Record<string, any>
 	getAliases: (filePath: string) => string[]
 	compileFiles: (files: string[]) => Promise<void>
+	dataLoader: DataLoader
 }
 
 export async function loadPlugins({
@@ -36,6 +38,7 @@ export async function loadPlugins({
 	hasComMojangDirectory,
 	compileFiles,
 	getAliases,
+	dataLoader,
 }: ILoadPLugins) {
 	const plugins = new Map<string, TCompilerPluginFactory<any>>()
 	const projectConfig = new ProjectConfig(localFs)
@@ -43,7 +46,7 @@ export async function loadPlugins({
 
 	const targetVersion =
 		projectConfig.get().targetVersion ??
-		(await getLatestFormatVersion(fileSystem))
+		(await getLatestFormatVersion(dataLoader))
 
 	plugins.set('simpleRewrite', SimpleRewrite)
 	plugins.set('typeScript', TypeScriptPlugin)
@@ -97,6 +100,7 @@ export async function loadPlugins({
 			plugin({
 				options: pluginOpts[pluginId],
 				fileSystem,
+				dataLoader,
 				outputFileSystem: outputFs,
 				hasComMojangDirectory,
 				getAliases,
@@ -109,8 +113,8 @@ export async function loadPlugins({
 	return loadedPlugins
 }
 
-async function getLatestFormatVersion(fileSystem: FileSystem) {
-	const formatVersions: string[] = await fileSystem.readJSON(
+async function getLatestFormatVersion(dataLoader: DataLoader) {
+	const formatVersions: string[] = await dataLoader.readJSON(
 		'data/packages/minecraftBedrock/formatVersions.json'
 	)
 

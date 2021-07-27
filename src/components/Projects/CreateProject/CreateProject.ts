@@ -49,7 +49,7 @@ export class CreateProjectWindow extends BaseWindow {
 		App.ready.once(async (app) => {
 			await app.dataLoader.fired
 			this.availableTargetVersions = (
-				await app.fileSystem.readJSON(
+				await app.dataLoader.readJSON(
 					'data/packages/minecraftBedrock/formatVersions.json'
 				)
 			).reverse()

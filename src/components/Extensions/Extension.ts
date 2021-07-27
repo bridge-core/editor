@@ -88,9 +88,9 @@ export class Extension {
 		try {
 			await iterateDir(
 				await this.baseDirectory.getDirectoryHandle('themes'),
-				(fileHandle) =>
+				async (fileHandle) =>
 					app.themeManager.loadTheme(
-						fileHandle,
+						await fileHandle.getFile(),
 						this.isGlobal,
 						this.disposables
 					)

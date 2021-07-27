@@ -7,7 +7,7 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 	include: Record<string, string[]>
 	isFileRequest?: boolean
 }> = ({
-	fileSystem,
+	dataLoader,
 	options: { include = {}, isFileRequest = false } = {},
 }) => {
 	//Custom MoLang parser from https://github.com/bridge-core/MoLang
@@ -23,7 +23,7 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 		async buildStart() {
 			// Load default MoLang locations and merge them with user defined locations
 			include = Object.assign(
-				await fileSystem.readJSON(
+				await dataLoader.readJSON(
 					'data/packages/minecraftBedrock/location/validMoLang.json'
 				),
 				include

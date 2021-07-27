@@ -40,7 +40,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 		this.installedExtensions.clear()
 
 		const fs = await getFileSystem()
-		this.extensionTags = await fs.readJSON(
+		this.extensionTags = await app.dataLoader.readJSON(
 			'data/packages/common/extensionTags.json'
 		)
 

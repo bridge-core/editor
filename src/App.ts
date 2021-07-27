@@ -56,7 +56,7 @@ export class App {
 	public readonly actionManager = new ActionManager(this.keyBindingManager)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
-	public readonly dataLoader = new DataLoader(this)
+	public readonly dataLoader = new DataLoader()
 	public readonly fileSystem = new FileSystem()
 	public readonly projectManager = Vue.observable(new ProjectManager(this))
 	public readonly extensionLoader = new GlobalExtensionLoader(this)
@@ -181,7 +181,6 @@ export class App {
 
 		setupSidebar()
 		setupDefaultMenus(this)
-		this.dataLoader.start()
 
 		if (process.env.NODE_ENV === 'production') {
 			const socialsMsg = createNotification({
@@ -234,8 +233,8 @@ export class App {
 			this.fileSystem.mkdir('extensions'),
 			this.fileSystem.mkdir('data/packages'),
 			// Setup data helpers
-			this.dataLoader.fired.then(() => FileType.setup(this.fileSystem)),
-			this.dataLoader.fired.then(() => PackType.setup(this.fileSystem)),
+			this.dataLoader.fired.then(() => FileType.setup(this.dataLoader)),
+			this.dataLoader.fired.then(() => PackType.setup(this.dataLoader)),
 		])
 
 		// Ensure that a project is selected

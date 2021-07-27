@@ -14,6 +14,8 @@ import { transformString } from './TransformString'
 import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { PresetItem } from './PresetItem'
+import { DataLoader } from '/@/components/Data/DataLoader'
+import { VirtualEntry } from '/@/components/Data/VirtualFs/Entry'
 
 export interface IPresetManifest {
 	name: string
@@ -89,7 +91,10 @@ export class CreatePresetWindow extends BaseWindow {
 		this.defineWindow()
 	}
 
-	protected async addPreset(fs: FileSystem, manifestPath: string) {
+	protected async addPreset(
+		fs: FileSystem | DataLoader,
+		manifestPath: string
+	) {
 		const app = await App.getApp()
 		const manifest = <IPresetManifest>await fs.readJSON(manifestPath)
 
@@ -183,10 +188,10 @@ export class CreatePresetWindow extends BaseWindow {
 	}
 
 	protected async loadPresets(
-		fs: FileSystem,
+		fs: FileSystem | DataLoader,
 		dirPath = 'data/packages/minecraftBedrock/preset'
 	) {
-		let dirents: FileSystemHandle[] = []
+		let dirents: (FileSystemHandle | VirtualEntry)[] = []
 		try {
 			dirents = await fs.readdir(dirPath, { withFileTypes: true })
 		} catch {}
@@ -205,7 +210,7 @@ export class CreatePresetWindow extends BaseWindow {
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
 
-		await this.loadPresets(fs)
+		await this.loadPresets(app.dataLoader)
 		for (const [_, loadPresetPath] of this.loadPresetPaths)
 			await this.loadPresets(fs, loadPresetPath)
 

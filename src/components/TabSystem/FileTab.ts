@@ -46,8 +46,11 @@ export abstract class FileTab extends Tab {
 	abstract save(): void | Promise<void>
 	async saveAs() {
 		const fileHandle = await self
-			// @ts-ignore The type package doesn't know about suggestedName yet
-			.showSaveFilePicker({ suggestedName: this.fileHandle.name })
+			.showSaveFilePicker({
+				// @ts-ignore The type package doesn't know about suggestedName yet
+				suggestedName: this.fileHandle.name,
+				startIn: this.fileHandle,
+			})
 			.catch(() => null)
 		if (!fileHandle) return
 

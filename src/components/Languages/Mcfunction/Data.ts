@@ -48,7 +48,7 @@ export class CommandData extends Signal<void> {
 	async loadCommandData(packageName: string) {
 		const app = await App.getApp()
 
-		this._data = await app.fileSystem.readJSON(
+		this._data = await app.dataLoader.readJSON(
 			`data/packages/${packageName}/language/mcfunction/main.json`
 		)
 
