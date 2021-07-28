@@ -551,6 +551,11 @@ export default {
 			description:
 				'bridge.\'s tree editor cannot open files that contain invalid JSON. You can switch to the "Raw Text" editor type inside of the settings to manually fix the issue.',
 		},
+		loadingWindow: {
+			titles: {
+				loading: 'Loading...',
+			},
+		},
 	},
 	taskManager: {
 		tasks: {
