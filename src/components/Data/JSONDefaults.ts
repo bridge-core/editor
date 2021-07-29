@@ -10,6 +10,7 @@ import { SchemaManager } from '../JSONSchema/Manager'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
 import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
+import { AnyDirectoryHandle } from '../FileSystem/Types'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
@@ -58,6 +59,8 @@ export class JsonDefaults extends EventDispatcher<void> {
 	async loadAllSchemas() {
 		this.localSchemas = {}
 		const app = await App.getApp()
+
+		await app.dataLoader.fired
 
 		for (const packageName of packages) {
 			try {
@@ -170,7 +173,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		).flat()
 	}
 	async loadStaticSchemas(
-		directoryHandle: VirtualDirectoryHandle,
+		directoryHandle: AnyDirectoryHandle,
 		fromPath = 'data/packages/minecraftBedrock/schema'
 	) {
 		if (loadedGlobalSchemas) return

@@ -111,14 +111,14 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		}
 	}
 	async loadDefaultThemes(app: App) {
-		try {
-			await app.dataLoader.iterateDir(
-				await app.dataLoader.getDirectoryHandle(
-					'data/packages/common/themes'
-				),
-				(file) => this.loadTheme(file)
-			)
-		} catch {}
+		await app.dataLoader.fired
+
+		await iterateDir(
+			await app.dataLoader.getDirectoryHandle(
+				'data/packages/common/themes'
+			),
+			(file) => this.loadTheme(file)
+		)
 
 		this.updateTheme()
 	}

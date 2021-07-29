@@ -33,6 +33,7 @@ export namespace PackType {
 
 	export async function setup(dataLoader: DataLoader) {
 		if (packTypes.length > 0) return
+		await dataLoader.fired
 
 		packTypes = <IPackType[]>(
 			await dataLoader.readJSON(

@@ -35,6 +35,8 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 
 	return {
 		async buildStart() {
+			await dataLoader.fired
+
 			// Load default command locations and merge them with user defined locations
 			include = Object.assign(
 				await dataLoader.readJSON(

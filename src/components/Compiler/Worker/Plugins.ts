@@ -114,6 +114,8 @@ export async function loadPlugins({
 }
 
 async function getLatestFormatVersion(dataLoader: DataLoader) {
+	await dataLoader.fired
+
 	const formatVersions: string[] = await dataLoader.readJSON(
 		'data/packages/minecraftBedrock/formatVersions.json'
 	)

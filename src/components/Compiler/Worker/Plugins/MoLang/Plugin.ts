@@ -21,6 +21,8 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 
 	return {
 		async buildStart() {
+			await dataLoader.fired
+
 			// Load default MoLang locations and merge them with user defined locations
 			include = Object.assign(
 				await dataLoader.readJSON(

@@ -55,13 +55,16 @@ export namespace FileType {
 	export async function setup(dL: DataLoader) {
 		if (fileTypes.length > 0) return
 		dataLoader = dL
+		await dataLoader.fired
 
 		const basePath = 'data/packages/minecraftBedrock/fileDefinition'
-		const dirents = await dL.getDirectoryHandle(basePath)
+		const dirents = await dataLoader.getDirectoryHandle(basePath)
 
-		for (const dirent of dirents.values()) {
+		for await (const dirent of dirents.values()) {
 			if (dirent.kind === 'file')
-				fileTypes.push(await dL.readJSON(`${basePath}/${dirent.name}`))
+				fileTypes.push(
+					await dataLoader.readJSON(`${basePath}/${dirent.name}`)
+				)
 		}
 
 		ready.dispatch()

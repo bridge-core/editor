@@ -31,6 +31,7 @@ export async function runPresetScript(
 		loadFilePath = `data/packages/minecraftBedrock/${presetScript}`
 	}
 
+	await app.dataLoader.fired
 	const script = await readFile(loadFilePath)
 	const scriptSrc = await script.text()
 

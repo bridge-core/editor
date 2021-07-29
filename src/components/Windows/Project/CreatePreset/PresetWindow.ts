@@ -192,6 +192,8 @@ export class CreatePresetWindow extends BaseWindow {
 		fs: FileSystem | DataLoader,
 		dirPath = 'data/packages/minecraftBedrock/preset'
 	) {
+		await fs.fired
+
 		let dirents: AnyHandle[] = []
 		try {
 			dirents = await fs.readdir(dirPath, { withFileTypes: true })
