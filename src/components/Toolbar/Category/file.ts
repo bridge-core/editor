@@ -2,6 +2,7 @@ import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { clearAllNotifications } from '../../Notifications/create'
 import { Divider } from '../Divider'
+import { platform } from '/@/utils/os'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -81,7 +82,8 @@ export function setupFileCategory(app: App) {
 			icon: 'mdi-content-save-settings-outline',
 			name: 'actions.saveAll.name',
 			description: 'actions.saveAll.description',
-			keyBinding: 'Ctrl + Meta + S',
+			keyBinding:
+				platform() === 'win32' ? 'Ctrl + Alt + S' : 'Ctrl + Meta + S',
 			onTrigger: () => App.ready.once((app) => app.tabSystem?.saveAll()),
 		})
 	)

@@ -1,6 +1,7 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
+import { platform } from '/@/utils/os'
 
 export function setupToolsCategory(app: App) {
 	const tools = new ToolbarCategory(
@@ -25,7 +26,8 @@ export function setupToolsCategory(app: App) {
 			icon: 'mdi-folder-refresh-outline',
 			name: 'windows.packExplorer.refresh.name',
 			description: 'windows.packExplorer.refresh.description',
-			keyBinding: 'Ctrl + Meta + R',
+			keyBinding:
+				platform() === 'win32' ? 'Ctrl + Alt + R' : 'Ctrl + Meta + R',
 			onTrigger: async () => {
 				const app = await App.getApp()
 				await app.project.refresh()
