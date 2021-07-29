@@ -59,7 +59,7 @@ export class DataLoader extends Signal<void> {
 				folders[path.slice(0, -1)] = handle
 			} else {
 				// Current entry is a file
-				folders[parentDir].getFileHandle(name, {
+				await folders[parentDir].getFileHandle(name, {
 					create: true,
 					initialData: unzipped[path],
 				})

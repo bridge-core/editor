@@ -103,6 +103,18 @@ export class VirtualDirectoryHandle extends VirtualHandle {
 
 		this.children.delete(name)
 	}
+	async resolve(possibleDescendant: VirtualHandle) {
+		const path: string[] = [possibleDescendant.name]
+
+		let current = possibleDescendant.getParent()
+		while (current !== null && current.isSameEntry(this)) {
+			path.unshift(current.name)
+			current = current.getParent()
+		}
+
+		if (current !== this) return null
+		return path
+	}
 
 	keys() {
 		return this.children.keys()
