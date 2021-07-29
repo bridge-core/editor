@@ -1,11 +1,11 @@
 import { baseUrl } from '/@/utils/baseUrl'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { unzip, Unzipped } from 'fflate'
-import { VirtualDirectoryHandle } from './VirtualFs/DirectoryHandle'
+import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
 import { basename, dirname } from '/@/utils/path'
-import { VirtualFileHandle } from './VirtualFs/FileHandle'
+import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
 import json5 from 'json5'
-import type { VirtualHandle } from './VirtualFs/Handle'
+import type { VirtualHandle } from '../FileSystem/Virtual/Handle'
 import { FileSystem } from '../FileSystem/FileSystem'
 
 export class DataLoader extends Signal<void> {
@@ -66,13 +66,6 @@ export class DataLoader extends Signal<void> {
 				})
 			}
 		}
-
-		const fs = new FileSystem(this._virtualFileSystem)
-		console.log(
-			await fs.readJSON(
-				'data/packages/minecraftBedrock/formatVersions.json'
-			)
-		)
 
 		this.dispatch()
 	}

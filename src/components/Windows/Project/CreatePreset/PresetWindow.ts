@@ -15,7 +15,7 @@ import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { PresetItem } from './PresetItem'
 import { DataLoader } from '/@/components/Data/DataLoader'
-import { VirtualHandle } from '../../../Data/VirtualFs/Handle'
+import { VirtualHandle } from '../../../FileSystem/Virtual/Handle'
 import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
 
 export interface IPresetManifest {

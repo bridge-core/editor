@@ -1,4 +1,4 @@
-import { AnyHandle } from '../../FileSystem/Types'
+import { AnyHandle } from '../Types'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import type { VirtualFileHandle } from './FileHandle'
 

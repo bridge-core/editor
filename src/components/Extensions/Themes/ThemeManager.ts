@@ -8,7 +8,7 @@ import json5 from 'json5'
 import { deepMerge } from '/@/utils/deepmerge'
 import { bridgeDark, bridgeLight } from './Default'
 import { Theme } from './Theme'
-import { VirtualFileHandle } from '../../Data/VirtualFs/FileHandle'
+import { VirtualFileHandle } from '../../FileSystem/Virtual/FileHandle'
 import { AnyFileHandle } from '../../FileSystem/Types'
 
 const colorNames = [

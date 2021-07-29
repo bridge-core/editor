@@ -4,8 +4,8 @@ import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
 import { iterateDir } from '/@/utils/iterateDir'
 import { join } from '/@/utils/path'
-import { VirtualDirectoryHandle } from '../Data/VirtualFs/DirectoryHandle'
-import { VirtualHandle } from '../Data/VirtualFs/Handle'
+import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
+import { VirtualHandle } from './Virtual/Handle'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
 
 export class FileSystem extends Signal<void> {

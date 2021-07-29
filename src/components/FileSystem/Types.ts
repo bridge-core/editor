@@ -1,6 +1,6 @@
-import { VirtualDirectoryHandle } from '../Data/VirtualFs/DirectoryHandle'
-import { VirtualFileHandle } from '../Data/VirtualFs/FileHandle'
-import { VirtualHandle } from '../Data/VirtualFs/Handle'
+import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
+import { VirtualFileHandle } from './Virtual/FileHandle'
+import { VirtualHandle } from './Virtual/Handle'
 
 export type AnyHandle = FileSystemHandle | VirtualHandle
 export type AnyDirectoryHandle =

@@ -8,8 +8,8 @@ import { FileTab } from '../TabSystem/FileTab'
 import { SchemaScript } from './SchemaScript'
 import { SchemaManager } from '../JSONSchema/Manager'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
-import { VirtualDirectoryHandle } from './VirtualFs/DirectoryHandle'
-import { VirtualFileHandle } from './VirtualFs/FileHandle'
+import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
+import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
