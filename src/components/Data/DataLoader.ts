@@ -24,9 +24,9 @@ export class DataLoader extends Signal<void> {
 
 	async loadData() {
 		// Read packages.zip file
-		const rawData = await fetch(
-			baseUrl + 'data/package.zip'
-		).then((response) => response.arrayBuffer())
+		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
+			response.arrayBuffer()
+		)
 
 		// Unzip data
 		const unzipped = await new Promise<Unzipped>((resolve, reject) =>
