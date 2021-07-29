@@ -72,7 +72,7 @@ export class SchemaScript {
 	}
 
 	async runSchemaScripts(localSchemas: any) {
-		const baseDirectory = await this.app.dataLoader.getDirectory(
+		const baseDirectory = await this.app.dataLoader.getDirectoryHandle(
 			'data/packages/minecraftBedrock/schemaScript'
 		)
 

@@ -15,7 +15,7 @@ import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { PresetItem } from './PresetItem'
 import { DataLoader } from '/@/components/Data/DataLoader'
-import { VirtualEntry } from '/@/components/Data/VirtualFs/Entry'
+import { VirtualHandle } from '../../../Data/VirtualFs/Handle'
 
 export interface IPresetManifest {
 	name: string
@@ -191,7 +191,7 @@ export class CreatePresetWindow extends BaseWindow {
 		fs: FileSystem | DataLoader,
 		dirPath = 'data/packages/minecraftBedrock/preset'
 	) {
-		let dirents: (FileSystemHandle | VirtualEntry)[] = []
+		let dirents: (FileSystemHandle | VirtualHandle)[] = []
 		try {
 			dirents = await fs.readdir(dirPath, { withFileTypes: true })
 		} catch {}

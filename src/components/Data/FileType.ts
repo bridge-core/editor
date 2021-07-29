@@ -57,7 +57,7 @@ export namespace FileType {
 		dataLoader = dL
 
 		const basePath = 'data/packages/minecraftBedrock/fileDefinition'
-		const dirents = await dL.getDirectory(basePath)
+		const dirents = await dL.getDirectoryHandle(basePath)
 
 		for (const dirent of dirents.values()) {
 			if (dirent.kind === 'file')

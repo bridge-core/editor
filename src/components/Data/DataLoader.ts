@@ -1,14 +1,14 @@
 import { baseUrl } from '/@/utils/baseUrl'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { unzip, Unzipped } from 'fflate'
-import { VirtualFolder } from './VirtualFs/Folder'
+import { VirtualDirectoryHandle } from './VirtualFs/DirectoryHandle'
 import { basename, dirname } from '/@/utils/path'
-import { VirtualFile } from './VirtualFs/File'
+import { VirtualFileHandle } from './VirtualFs/FileHandle'
 import json5 from 'json5'
-import type { VirtualEntry } from './VirtualFs/Entry'
+import type { VirtualHandle } from './VirtualFs/Handle'
 
 export class DataLoader extends Signal<void> {
-	_virtualFileSystem?: VirtualFolder
+	_virtualFileSystem?: VirtualDirectoryHandle
 
 	get virtualFileSystem() {
 		if (!this._virtualFileSystem) {
@@ -37,11 +37,14 @@ export class DataLoader extends Signal<void> {
 		)
 
 		// Create virtual filesystem
-		this._virtualFileSystem = new VirtualFolder(null, 'global')
-		const folders: Record<string, VirtualFolder> = {
-			'.': new VirtualFolder(this._virtualFileSystem, 'data'),
+		this._virtualFileSystem = new VirtualDirectoryHandle(null, 'global')
+		const defaultHandle = await this._virtualFileSystem.getDirectoryHandle(
+			'data',
+			{ create: true }
+		)
+		const folders: Record<string, VirtualDirectoryHandle> = {
+			'.': defaultHandle,
 		}
-		this._virtualFileSystem.addChild(folders['.'])
 
 		for (const path in unzipped) {
 			const name = basename(path)
@@ -49,23 +52,24 @@ export class DataLoader extends Signal<void> {
 
 			if (path.endsWith('/')) {
 				// Current entry is a folder
-				folders[path.slice(0, -1)] = new VirtualFolder(
-					folders[parentDir],
-					name
+				const handle = await folders[parentDir].getDirectoryHandle(
+					name,
+					{ create: true }
 				)
-				folders[parentDir].addChild(folders[path.slice(0, -1)])
+				folders[path.slice(0, -1)] = handle
 			} else {
 				// Current entry is a file
-				folders[parentDir].addChild(
-					new VirtualFile(folders[parentDir], name, unzipped[path])
-				)
+				folders[parentDir].getFileHandle(name, {
+					create: true,
+					initialData: unzipped[path],
+				})
 			}
 		}
 
 		this.dispatch()
 	}
 
-	async getDirectory(path: string) {
+	async getDirectoryHandle(path: string) {
 		await this.fired
 
 		if (path === '') return this.virtualFileSystem
@@ -75,7 +79,7 @@ export class DataLoader extends Signal<void> {
 
 		for (const folder of pathArr) {
 			try {
-				current = current.getDirectory(folder)
+				current = await current.getDirectoryHandle(folder)
 			} catch {
 				throw new Error(
 					`Failed to access "${path}": Directory does not exist`
@@ -85,7 +89,7 @@ export class DataLoader extends Signal<void> {
 
 		return current
 	}
-	async getFile(path: string) {
+	async getFileHandle(path: string) {
 		await this.fired
 
 		if (path.length === 0) throw new Error(`Error: filePath is empty`)
@@ -93,29 +97,30 @@ export class DataLoader extends Signal<void> {
 		const pathArr = path.split(/\\|\//g)
 		// This has to be a string because path.length > 0
 		const file = pathArr.pop() as string
-		const folder = await this.getDirectory(pathArr.join('/'))
+		const folder = await this.getDirectoryHandle(pathArr.join('/'))
 
 		try {
-			return folder.getFile(file)
+			return await folder
+				.getFileHandle(file)
+				.then((file) => file.getFile())
 		} catch {
 			throw new Error(`File does not exist: "${path}"`)
 		}
 	}
 
 	async readJSON(path: string) {
-		const fileHandle = await this.getFile(path)
+		const fileHandle = await this.getFileHandle(path)
 
 		return json5.parse(await fileHandle.text())
 	}
-	async readFile(path: string) {
-		const file = await this.getFile(path)
-		return new File([await file.arrayBuffer()], file.name)
+	readFile(path: string) {
+		return this.getFileHandle(path)
 	}
 
 	async iterateDir(
-		baseDirectory: VirtualFolder,
+		baseDirectory: VirtualDirectoryHandle,
 		callback: (
-			fileHandle: VirtualFile,
+			fileHandle: VirtualFileHandle,
 			path: string
 		) => Promise<void> | void,
 		ignoreFolders: Set<string> = new Set(),
@@ -127,13 +132,13 @@ export class DataLoader extends Signal<void> {
 
 			if (handle.kind === 'file') {
 				if (handle.name[0] === '.') continue
-				await callback(<VirtualFile>handle, currentPath)
+				await callback(<VirtualFileHandle>handle, currentPath)
 			} else if (
 				handle.kind === 'directory' &&
 				!ignoreFolders.has(currentPath)
 			) {
 				await this.iterateDir(
-					<VirtualFolder>handle,
+					<VirtualDirectoryHandle>handle,
 					callback,
 					ignoreFolders,
 					currentPath
@@ -145,14 +150,14 @@ export class DataLoader extends Signal<void> {
 	readdir(
 		path: string,
 		config: { withFileTypes: true }
-	): Promise<VirtualFolder[]>
+	): Promise<VirtualDirectoryHandle[]>
 	readdir(path: string, config?: { withFileTypes?: false }): Promise<string[]>
 	async readdir(
 		path: string,
 		{ withFileTypes }: { withFileTypes?: true | false } = {}
 	) {
-		const dirHandle = await this.getDirectory(path)
-		const files: (string | VirtualEntry)[] = []
+		const dirHandle = await this.getDirectoryHandle(path)
+		const files: (string | VirtualHandle)[] = []
 
 		for await (const handle of dirHandle.values()) {
 			if (handle.kind === 'file' && handle.name === '.DS_Store') continue

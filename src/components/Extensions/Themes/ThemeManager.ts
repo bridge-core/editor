@@ -8,7 +8,7 @@ import json5 from 'json5'
 import { deepMerge } from '/@/utils/deepmerge'
 import { bridgeDark, bridgeLight } from './Default'
 import { Theme } from './Theme'
-import { VirtualFile } from '../../Data/VirtualFs/File'
+import { VirtualFileHandle } from '../../Data/VirtualFs/FileHandle'
 
 const colorNames = [
 	'text',
@@ -112,7 +112,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	async loadDefaultThemes(app: App) {
 		try {
 			await app.dataLoader.iterateDir(
-				await app.dataLoader.getDirectory(
+				await app.dataLoader.getDirectoryHandle(
 					'data/packages/common/themes'
 				),
 				(file) => this.loadTheme(file)
@@ -122,7 +122,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		this.updateTheme()
 	}
 	async loadTheme(
-		file: VirtualFile | File,
+		file: VirtualFileHandle | File,
 		isGlobal = true,
 		disposables?: IDisposable[]
 	) {
