@@ -11,6 +11,7 @@ import { ExtensionStoreWindow } from '../Windows/ExtensionStore/ExtensionStore'
 import { iterateDir } from '/@/utils/iterateDir'
 import { loadFileDefinitions } from './FileDefinition/load'
 import { InstallFiles } from './InstallFiles'
+import { AnyDirectoryHandle } from '../FileSystem/Types'
 
 export class Extension {
 	protected disposables: IDisposable[] = []
@@ -41,7 +42,7 @@ export class Extension {
 	constructor(
 		protected parent: ExtensionLoader,
 		protected manifest: IExtensionManifest,
-		protected baseDirectory: FileSystemDirectoryHandle,
+		protected baseDirectory: AnyDirectoryHandle,
 		protected _isGlobal = false
 	) {
 		this.fileSystem = new FileSystem(this.baseDirectory)
@@ -58,8 +59,9 @@ export class Extension {
 		this.isLoaded = true
 		const app = await App.getApp()
 		const pluginPath = (
-			(await app.fileSystem.baseDirectory.resolve(this.baseDirectory)) ??
-			[]
+			(await app.fileSystem.baseDirectory.resolve(
+				<any>this.baseDirectory
+			)) ?? []
 		).join('/')
 
 		// Activate all dependencies before
@@ -88,9 +90,9 @@ export class Extension {
 		try {
 			await iterateDir(
 				await this.baseDirectory.getDirectoryHandle('themes'),
-				async (fileHandle) =>
+				(fileHandle) =>
 					app.themeManager.loadTheme(
-						await fileHandle.getFile(),
+						fileHandle,
 						this.isGlobal,
 						this.disposables
 					)
@@ -104,7 +106,7 @@ export class Extension {
 			)
 		} catch {}
 
-		let scriptHandle: FileSystemDirectoryHandle
+		let scriptHandle: AnyDirectoryHandle
 		try {
 			scriptHandle = await this.baseDirectory.getDirectoryHandle(
 				'scripts'

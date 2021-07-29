@@ -9,6 +9,7 @@ import { editor } from 'monaco-editor'
 import { BedrockProject } from './Project/BedrockProject'
 import { InitialSetup } from '../InitialSetup/InitialSetup'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { AnyDirectoryHandle, AnyHandle } from '../FileSystem/Types'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -52,10 +53,7 @@ export class ProjectManager extends Signal<void> {
 		await this.fired
 		return Object.values(this.state).map((project) => project.projectData)
 	}
-	async addProject(
-		projectDir: FileSystemDirectoryHandle,
-		isNewProject = true
-	) {
+	async addProject(projectDir: AnyDirectoryHandle, isNewProject = true) {
 		const project = new BedrockProject(this, this.app, projectDir)
 		await project.loadProject()
 
@@ -85,14 +83,14 @@ export class ProjectManager extends Signal<void> {
 		await this.app.dataLoader.fired
 		await InitialSetup.ready.fired
 
-		let potentialProjects: FileSystemHandle[] = []
+		let potentialProjects: AnyHandle[] = []
 		try {
 			potentialProjects = await this.app.fileSystem.readdir('projects', {
 				withFileTypes: true,
 			})
 		} catch {}
 
-		const loadProjects = <FileSystemDirectoryHandle[]>(
+		const loadProjects = <AnyDirectoryHandle[]>(
 			potentialProjects.filter(({ kind }) => kind === 'directory')
 		)
 

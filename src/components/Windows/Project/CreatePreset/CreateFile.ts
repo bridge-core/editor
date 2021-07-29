@@ -1,6 +1,7 @@
 import { IPresetFileOpts } from './PresetWindow'
 import { transformString } from './TransformString'
 import { App } from '/@/App'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { extname, dirname } from '/@/utils/path'
 
 export type TCreateFile = [string, string, IPresetFileOpts?]
@@ -32,7 +33,7 @@ export async function createFile(
 	const ext = extname(fullDestPath)
 	await fs.mkdir(dirname(fullDestPath), { recursive: true })
 
-	let fileHandle: FileSystemFileHandle
+	let fileHandle: AnyFileHandle
 	if (inject.length === 0 || !textTransformFiles.includes(ext)) {
 		fileHandle = await fs.copyFile(fullOriginPath, fullDestPath)
 	} else {

@@ -1,4 +1,5 @@
 import { FileSystem } from '../components/FileSystem/FileSystem'
+import { AnyFileHandle } from '../components/FileSystem/Types'
 import { App } from '/@/App'
 
 export async function loadAsDataURL(filePath: string, fileSystem?: FileSystem) {
@@ -25,7 +26,7 @@ export async function loadAsDataURL(filePath: string, fileSystem?: FileSystem) {
 	})
 }
 
-export function loadHandleAsDataURL(fileHandle: FileSystemFileHandle) {
+export function loadHandleAsDataURL(fileHandle: AnyFileHandle) {
 	return new Promise<string>(async (resolve, reject) => {
 		const reader = new FileReader()
 

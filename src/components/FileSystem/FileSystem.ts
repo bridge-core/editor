@@ -4,19 +4,22 @@ import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
 import { iterateDir } from '/@/utils/iterateDir'
 import { join } from '/@/utils/path'
+import { VirtualDirectoryHandle } from '../Data/VirtualFs/DirectoryHandle'
+import { VirtualHandle } from '../Data/VirtualFs/Handle'
+import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
 
 export class FileSystem extends Signal<void> {
-	protected _baseDirectory!: FileSystemDirectoryHandle
+	protected _baseDirectory!: AnyDirectoryHandle
 	get baseDirectory() {
 		return this._baseDirectory
 	}
 
-	constructor(baseDirectory?: FileSystemDirectoryHandle) {
+	constructor(baseDirectory?: AnyDirectoryHandle) {
 		super()
 		if (baseDirectory) this.setup(baseDirectory)
 	}
 
-	setup(baseDirectory: FileSystemDirectoryHandle) {
+	setup(baseDirectory: AnyDirectoryHandle) {
 		this._baseDirectory = baseDirectory
 
 		if (!this.hasFired) this.dispatch()
@@ -75,22 +78,19 @@ export class FileSystem extends Signal<void> {
 		// else await this.getDirectoryHandle(path, { createOnce: true })
 	}
 
-	readdir(
-		path: string,
-		config: { withFileTypes: true }
-	): Promise<FileSystemHandle[]>
+	readdir(path: string, config: { withFileTypes: true }): Promise<AnyHandle[]>
 	readdir(path: string, config?: { withFileTypes?: false }): Promise<string[]>
 	async readdir(
 		path: string,
 		{ withFileTypes }: { withFileTypes?: true | false } = {}
 	) {
 		const dirHandle = await this.getDirectoryHandle(path)
-		const files: (string | FileSystemHandle)[] = []
+		const files: (string | AnyHandle)[] = []
 
 		for await (const handle of dirHandle.values()) {
 			if (handle.kind === 'file' && handle.name === '.DS_Store') continue
 
-			if (withFileTypes) files.push(handle)
+			if (withFileTypes) files.push(<AnyHandle>handle)
 			else files.push(handle.name)
 		}
 
@@ -99,8 +99,8 @@ export class FileSystem extends Signal<void> {
 	async readFilesFromDir(
 		path: string,
 		dirHandle:
-			| FileSystemDirectoryHandle
-			| Promise<FileSystemDirectoryHandle> = this.getDirectoryHandle(path)
+			| AnyDirectoryHandle
+			| Promise<AnyDirectoryHandle> = this.getDirectoryHandle(path)
 	) {
 		dirHandle = await dirHandle
 
@@ -139,7 +139,7 @@ export class FileSystem extends Signal<void> {
 
 		// This has to be a string because path.length > 0
 		const file = <string>pathArr.pop()
-		let parentDir: FileSystemDirectoryHandle
+		let parentDir: AnyDirectoryHandle
 		try {
 			parentDir = await this.getDirectoryHandle(pathArr.join('/'))
 		} catch {
@@ -155,10 +155,7 @@ export class FileSystem extends Signal<void> {
 		return fileHandle
 	}
 
-	async write(
-		fileHandle: FileSystemFileHandle,
-		data: FileSystemWriteChunkType
-	) {
+	async write(fileHandle: AnyFileHandle, data: FileSystemWriteChunkType) {
 		// console.log(data)
 		const writable = await fileHandle.createWritable()
 		await writable.write(data)
@@ -191,8 +188,8 @@ export class FileSystem extends Signal<void> {
 		return await this.copyFileHandle(originHandle, destHandle)
 	}
 	async copyFileHandle(
-		originHandle: FileSystemFileHandle,
-		destHandle: FileSystemFileHandle
+		originHandle: AnyFileHandle,
+		destHandle: AnyFileHandle
 	) {
 		const writable = await destHandle.createWritable()
 		await writable.write(await originHandle.getFile())
@@ -212,8 +209,8 @@ export class FileSystem extends Signal<void> {
 		})
 	}
 	async copyFolderByHandle(
-		originHandle: FileSystemDirectoryHandle,
-		destHandle: FileSystemDirectoryHandle
+		originHandle: AnyDirectoryHandle,
+		destHandle: AnyDirectoryHandle
 	) {
 		const destFs = new FileSystem(destHandle)
 
@@ -225,7 +222,7 @@ export class FileSystem extends Signal<void> {
 		})
 	}
 
-	loadFileHandleAsDataUrl(fileHandle: FileSystemFileHandle) {
+	loadFileHandleAsDataUrl(fileHandle: AnyFileHandle) {
 		return new Promise<string>(async (resolve, reject) => {
 			const reader = new FileReader()
 

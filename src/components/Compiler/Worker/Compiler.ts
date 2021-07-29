@@ -6,6 +6,11 @@ import { CompilerService } from './Service'
 import isGlob from 'is-glob'
 import { isMatch } from 'micromatch'
 import { iterateDir } from '/@/utils/iterateDir'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+	AnyHandle,
+} from '../../FileSystem/Types'
 
 export interface IFileData {
 	isLoaded?: boolean
@@ -45,11 +50,7 @@ export class Compiler {
 		return [...(this.files.get(filePath)?.aliases ?? [])]
 	}
 
-	async unlink(
-		path: string,
-		handle?: FileSystemHandle,
-		requireHandle = true
-	) {
+	async unlink(path: string, handle?: AnyHandle, requireHandle = true) {
 		if (!handle && requireHandle) {
 			try {
 				handle = await this.fileSystem.getFileHandle(path)
@@ -70,7 +71,7 @@ export class Compiler {
 			this.files.delete(path)
 		} else if (handle?.kind === 'directory') {
 			await iterateDir(
-				<FileSystemDirectoryHandle>handle,
+				<AnyDirectoryHandle>handle,
 				(fileHandle, filePath) => this.unlink(filePath, fileHandle),
 				undefined,
 				path
@@ -294,10 +295,7 @@ export class Compiler {
 					!!saveFilePath &&
 					saveFilePath !== filePath
 				)
-					await this.copyFile(
-						<FileSystemFileHandle>fileHandle,
-						saveFilePath
-					)
+					await this.copyFile(<AnyFileHandle>fileHandle, saveFilePath)
 
 				file = {
 					isLoaded: true,
@@ -522,7 +520,7 @@ export class Compiler {
 	}
 
 	protected async copyFile(
-		originalFile: FileSystemFileHandle,
+		originalFile: AnyFileHandle,
 		saveFilePath: string
 	) {
 		const copiedFileHandle = await this.outputFileSystem.getFileHandle(

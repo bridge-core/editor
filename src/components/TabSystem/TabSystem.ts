@@ -10,6 +10,7 @@ import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
 import { FileTab } from './FileTab'
 import { TabProvider } from './TabProvider'
+import { AnyFileHandle } from '../FileSystem/Types'
 
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
@@ -66,7 +67,7 @@ export class TabSystem extends MonacoHolder {
 	}
 
 	async open(
-		fileHandle: FileSystemFileHandle,
+		fileHandle: AnyFileHandle,
 		selectTab = true,
 		isReadOnly = false
 	) {
@@ -84,10 +85,7 @@ export class TabSystem extends MonacoHolder {
 		return await this.open(fileHandle, selectTab)
 	}
 
-	protected async getTabFor(
-		fileHandle: FileSystemFileHandle,
-		isReadOnly = false
-	) {
+	protected async getTabFor(fileHandle: AnyFileHandle, isReadOnly = false) {
 		let tab: Tab | undefined = undefined
 		for (const CurrentTab of this.tabTypes) {
 			if (await CurrentTab.is(fileHandle)) {
@@ -139,7 +137,7 @@ export class TabSystem extends MonacoHolder {
 			return true
 		}
 	}
-	async closeTabWithHandle(fileHandle: FileSystemFileHandle) {
+	async closeTabWithHandle(fileHandle: AnyFileHandle) {
 		const tab = await this.getTab(fileHandle)
 		if (tab) this.close(tab)
 	}
@@ -249,7 +247,7 @@ export class TabSystem extends MonacoHolder {
 		}
 	}
 
-	async getTab(fileHandle: FileSystemFileHandle) {
+	async getTab(fileHandle: AnyFileHandle) {
 		for (const tab of this.tabs) {
 			if (await tab.isFor(fileHandle)) return tab
 		}

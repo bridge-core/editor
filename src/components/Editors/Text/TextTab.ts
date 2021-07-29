@@ -8,6 +8,7 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { AnyFileHandle } from '../../FileSystem/Types'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -50,7 +51,7 @@ export class TextTab extends FileTab {
 
 	constructor(
 		parent: TabSystem,
-		fileHandle: FileSystemFileHandle,
+		fileHandle: AnyFileHandle,
 		isReadOnly = false
 	) {
 		super(parent, fileHandle, isReadOnly)

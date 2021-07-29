@@ -16,6 +16,7 @@ import { ExtensionLoader } from '/@/components/Extensions/ExtensionLoader'
 import { FileChangeRegistry } from './FileChangeRegistry'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabActionProvider } from '/@/components/TabSystem/TabActions/Provider'
+import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -72,7 +73,7 @@ export abstract class Project {
 	constructor(
 		protected parent: ProjectManager,
 		public readonly app: App,
-		protected _baseDirectory: FileSystemDirectoryHandle
+		protected _baseDirectory: AnyDirectoryHandle
 	) {
 		this._fileSystem = new FileSystem(_baseDirectory)
 		this.config = new ProjectConfig(this._fileSystem)
@@ -155,7 +156,7 @@ export abstract class Project {
 		await this.activate(true)
 	}
 
-	async openFile(fileHandle: FileSystemFileHandle, selectTab = true) {
+	async openFile(fileHandle: AnyFileHandle, selectTab = true) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.getTab(fileHandle)
 			if (tab) return selectTab ? tabSystem.select(tab) : undefined
@@ -163,13 +164,13 @@ export abstract class Project {
 
 		this.tabSystem?.open(fileHandle, selectTab)
 	}
-	async closeFile(fileHandle: FileSystemFileHandle) {
+	async closeFile(fileHandle: AnyFileHandle) {
 		for (const tabSystem of this.tabSystems) {
 			const tabToClose = await tabSystem.getTab(fileHandle)
 			tabToClose?.close()
 		}
 	}
-	async getFileTab(fileHandle: FileSystemFileHandle) {
+	async getFileTab(fileHandle: AnyFileHandle) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.getTab(fileHandle)
 			if (tab !== undefined) return tab
@@ -179,9 +180,9 @@ export abstract class Project {
 	absolutePath(filePath: string) {
 		return `projects/${this.name}/${filePath}`
 	}
-	getProjectPath(fileHandle: FileSystemFileHandle) {
+	getProjectPath(fileHandle: AnyFileHandle) {
 		return this.baseDirectory
-			.resolve(fileHandle)
+			.resolve(<any>fileHandle)
 			.then((path) => path?.join('/'))
 	}
 

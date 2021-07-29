@@ -1,9 +1,11 @@
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+} from '../components/FileSystem/Types'
+
 export async function iterateDir(
-	baseDirectory: FileSystemDirectoryHandle,
-	callback: (
-		fileHandle: FileSystemFileHandle,
-		path: string
-	) => Promise<void> | void,
+	baseDirectory: AnyDirectoryHandle,
+	callback: (fileHandle: AnyFileHandle, path: string) => Promise<void> | void,
 	ignoreFolders: Set<string> = new Set(),
 	path = ''
 ) {

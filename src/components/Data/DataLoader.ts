@@ -6,6 +6,7 @@ import { basename, dirname } from '/@/utils/path'
 import { VirtualFileHandle } from './VirtualFs/FileHandle'
 import json5 from 'json5'
 import type { VirtualHandle } from './VirtualFs/Handle'
+import { FileSystem } from '../FileSystem/FileSystem'
 
 export class DataLoader extends Signal<void> {
 	_virtualFileSystem?: VirtualDirectoryHandle
@@ -65,6 +66,13 @@ export class DataLoader extends Signal<void> {
 				})
 			}
 		}
+
+		const fs = new FileSystem(this._virtualFileSystem)
+		console.log(
+			await fs.readJSON(
+				'data/packages/minecraftBedrock/formatVersions.json'
+			)
+		)
 
 		this.dispatch()
 	}

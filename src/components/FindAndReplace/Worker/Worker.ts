@@ -5,6 +5,7 @@ import { iterateDir } from '/@/utils/iterateDir'
 import { extname } from '/@/utils/path'
 
 import { createRegExp, processFileText } from '../Utils'
+import { AnyDirectoryHandle } from '../../FileSystem/Types'
 
 export interface IQueryOptions {
 	searchType: ESearchType
@@ -35,7 +36,7 @@ const textPreviewLength = 100
 export class FindAndReplace {
 	protected fileSystem: FileSystem
 	protected matchedFiles = new Set<string>()
-	constructor(protected projectFolderHandle: FileSystemDirectoryHandle) {
+	constructor(protected projectFolderHandle: AnyDirectoryHandle) {
 		this.fileSystem = new FileSystem(projectFolderHandle)
 	}
 

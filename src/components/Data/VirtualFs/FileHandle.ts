@@ -1,12 +1,20 @@
-import { VirtualHandle } from './Handle'
+import { BaseVirtualHandle } from './Handle'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 
 /**
  * A class that implements a virtual file
  */
-export class VirtualFileHandle extends VirtualHandle {
+export class VirtualFileHandle extends BaseVirtualHandle {
 	public readonly kind = 'file'
+	/**
+	 * @depracted
+	 */
+	public readonly isFile = true
+	/**
+	 * @depracted
+	 */
+	public readonly isDirectory = false
 
 	constructor(
 		parent: VirtualDirectoryHandle | null,
@@ -24,12 +32,5 @@ export class VirtualFileHandle extends VirtualHandle {
 	}
 	[writeMethodSymbol](data: Uint8Array) {
 		this.data = data
-	}
-
-	async text() {
-		return new TextDecoder('utf-8').decode(this.data)
-	}
-	async arrayBuffer() {
-		return this.data.buffer
 	}
 }

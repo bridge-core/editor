@@ -16,6 +16,7 @@ import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { PresetItem } from './PresetItem'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import { VirtualHandle } from '../../../Data/VirtualFs/Handle'
+import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
 
 export interface IPresetManifest {
 	name: string
@@ -191,7 +192,7 @@ export class CreatePresetWindow extends BaseWindow {
 		fs: FileSystem | DataLoader,
 		dirPath = 'data/packages/minecraftBedrock/preset'
 	) {
-		let dirents: (FileSystemHandle | VirtualHandle)[] = []
+		let dirents: AnyHandle[] = []
 		try {
 			dirents = await fs.readdir(dirPath, { withFileTypes: true })
 		} catch {}
@@ -239,7 +240,7 @@ export class CreatePresetWindow extends BaseWindow {
 		const fs = app.project?.fileSystem!
 
 		const promises: Promise<unknown>[] = []
-		const createdFiles: FileSystemFileHandle[] = []
+		const createdFiles: AnyFileHandle[] = []
 		const permissions: IPermissions = {
 			mayOverwriteFiles: undefined,
 			mayOverwriteUnsavedChanges: undefined,

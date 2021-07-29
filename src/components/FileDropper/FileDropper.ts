@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { AnyFileHandle } from '../FileSystem/Types'
 import { App } from '/@/App'
 import { extname } from '/@/utils/path'
 
@@ -12,7 +13,7 @@ export class FileDropper {
 	})
 	protected fileHandlers = new Map<
 		string,
-		(fileHandle: FileSystemFileHandle) => Promise<void> | void
+		(fileHandle: AnyFileHandle) => Promise<void> | void
 	>()
 
 	constructor(protected app: App) {
@@ -74,7 +75,7 @@ export class FileDropper {
 		}
 	}
 
-	protected async importFile(fileHandle: FileSystemFileHandle) {
+	protected async importFile(fileHandle: AnyFileHandle) {
 		const ext = extname(fileHandle.name)
 		const handler = this.fileHandlers.get(ext)
 
@@ -93,9 +94,7 @@ export class FileDropper {
 
 	addFileImporter(
 		ext: string,
-		importHandler: (
-			fileHandle: FileSystemFileHandle
-		) => Promise<void> | void
+		importHandler: (fileHandle: AnyFileHandle) => Promise<void> | void
 	) {
 		if (this.fileHandlers.has(ext))
 			throw new Error(`Handler for ${ext} already exists`)

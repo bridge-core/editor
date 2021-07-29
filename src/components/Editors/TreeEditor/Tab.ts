@@ -9,6 +9,7 @@ import { debounce } from 'lodash-es'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 import { TreeValueSelection } from './TreeSelection'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
+import { AnyFileHandle } from '../../FileSystem/Types'
 
 const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {
@@ -36,7 +37,7 @@ export class TreeTab extends FileTab {
 
 	constructor(
 		parent: TabSystem,
-		fileHandle: FileSystemFileHandle,
+		fileHandle: AnyFileHandle,
 		isReadOnly = false
 	) {
 		super(parent, fileHandle, isReadOnly)
@@ -49,7 +50,7 @@ export class TreeTab extends FileTab {
 		})
 	}
 
-	static is(fileHandle: FileSystemFileHandle) {
+	static is(fileHandle: AnyFileHandle) {
 		return (
 			settingsState?.editor?.jsonEditor === 'treeEditor' &&
 			fileHandle.name.endsWith('.json')

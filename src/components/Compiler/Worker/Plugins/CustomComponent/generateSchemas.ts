@@ -1,5 +1,6 @@
 import { Component } from './Component'
 import { App } from '/@/App'
+import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { iterateDir } from '/@/utils/iterateDir'
 
 export async function generateComponentSchemas(fileType: string) {
@@ -9,7 +10,7 @@ export async function generateComponentSchemas(fileType: string) {
 		? `BP/components`
 		: `BP/components/${fileType}`
 
-	let baseDir: FileSystemDirectoryHandle
+	let baseDir: AnyDirectoryHandle
 	try {
 		baseDir = await app.project!.fileSystem.getDirectoryHandle(fromFilePath)
 	} catch {

@@ -183,8 +183,9 @@ export class JsonDefaults extends EventDispatcher<void> {
 			if (entry.kind === 'file') {
 				globalSchemas[`file:///${currentPath}`] = {
 					uri: `file:///${currentPath}`,
-					schema: await (<VirtualFileHandle>entry)
-						.text()
+					schema: await entry
+						.getFile()
+						.then((file) => file.text())
 						.then(json5.parse)
 						.catch(() => {
 							throw new Error(

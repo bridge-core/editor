@@ -5,6 +5,7 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
 import { FileType } from '/@/components/Data/FileType'
 import { Signal } from '../Common/Event/Signal'
+import { AnyDirectoryHandle } from '../FileSystem/Types'
 // import PackIndexerWorker from './Worker/Main?worker'
 
 export class PackIndexer extends WorkerManager<
@@ -16,7 +17,7 @@ export class PackIndexer extends WorkerManager<
 	protected ready = new Signal<void>()
 	constructor(
 		protected app: App,
-		protected baseDirectory: FileSystemDirectoryHandle
+		protected baseDirectory: AnyDirectoryHandle
 	) {
 		super({
 			icon: 'mdi-flash-outline',

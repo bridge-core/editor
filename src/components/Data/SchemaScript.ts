@@ -78,7 +78,8 @@ export class SchemaScript {
 
 		await this.app.dataLoader.iterateDir(
 			baseDirectory,
-			async (file, filePath) => {
+			async (fileHandle, filePath) => {
+				const file = await fileHandle.getFile()
 				const fileText = await file.text()
 
 				let schemaScript

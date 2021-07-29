@@ -1,13 +1,14 @@
 import { Tab } from './CommonTab'
 import { TabSystem } from './TabSystem'
 import { v4 as uuid } from 'uuid'
+import { AnyFileHandle } from '../FileSystem/Types'
 
 export abstract class FileTab extends Tab {
 	public isForeignFile = false
 
 	constructor(
 		protected parent: TabSystem,
-		protected fileHandle: FileSystemFileHandle,
+		protected fileHandle: AnyFileHandle,
 		public readonly isReadOnly = false
 	) {
 		super(parent)
@@ -16,7 +17,7 @@ export abstract class FileTab extends Tab {
 	async setup() {
 		this.isForeignFile = false
 		this.projectPath = await this.parent.projectRoot
-			.resolve(this.fileHandle)
+			.resolve(<any>this.fileHandle)
 			.then((path) => path?.join('/'))
 
 		// If the resolve above failed, we are dealing with a file which doesn't belong to this project
@@ -32,7 +33,7 @@ export abstract class FileTab extends Tab {
 		return this.fileHandle.name
 	}
 
-	async isFor(fileHandle: FileSystemFileHandle) {
+	async isFor(fileHandle: AnyFileHandle) {
 		return await fileHandle.isSameEntry(this.fileHandle)
 	}
 

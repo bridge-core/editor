@@ -4,13 +4,14 @@ import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { ref } from '@vue/composition-api'
 import { Signal } from '../Common/Event/Signal'
+import { AnyDirectoryHandle } from './Types'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
 
 export class FileSystemSetup {
 	static state = {
 		showInitialSetupDialog: ref(false),
-		receiveDirectoryHandle: new Signal<FileSystemDirectoryHandle>(),
+		receiveDirectoryHandle: new Signal<AnyDirectoryHandle>(),
 		setupDone: new Signal<void>(),
 	}
 
@@ -31,7 +32,7 @@ export class FileSystemSetup {
 			return false
 		}
 
-		let fileHandle = await get<FileSystemDirectoryHandle | undefined>(
+		let fileHandle = await get<AnyDirectoryHandle | undefined>(
 			'bridgeBaseDir'
 		)
 		// Request permissions to current bridge folder
@@ -55,7 +56,7 @@ export class FileSystemSetup {
 		return fileHandle
 	}
 	async verifyPermissions(
-		fileHandle: FileSystemDirectoryHandle,
+		fileHandle: AnyDirectoryHandle,
 		tryImmediateRequest = true
 	) {
 		const opts = { writable: true, mode: 'readwrite' } as const

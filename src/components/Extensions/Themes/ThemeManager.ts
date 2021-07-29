@@ -9,6 +9,7 @@ import { deepMerge } from '/@/utils/deepmerge'
 import { bridgeDark, bridgeLight } from './Default'
 import { Theme } from './Theme'
 import { VirtualFileHandle } from '../../Data/VirtualFs/FileHandle'
+import { AnyFileHandle } from '../../FileSystem/Types'
 
 const colorNames = [
 	'text',
@@ -122,10 +123,12 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		this.updateTheme()
 	}
 	async loadTheme(
-		file: VirtualFileHandle | File,
+		fileHandle: AnyFileHandle,
 		isGlobal = true,
 		disposables?: IDisposable[]
 	) {
+		const file = await fileHandle.getFile()
+
 		let themeDefinition
 		try {
 			themeDefinition = json5.parse(await file.text())

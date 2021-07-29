@@ -8,6 +8,7 @@ import { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { findAsync } from '/@/utils/array/findAsync'
+import { AnyFileHandle } from '../FileSystem/Types'
 
 export class DefinitionProvider {
 	async provideDefinition(
@@ -65,7 +66,7 @@ export class DefinitionProvider {
 				const uri = Uri.file(filePath)
 
 				if (!editor.getModel(uri)) {
-					let fileHandle: FileSystemFileHandle
+					let fileHandle: AnyFileHandle
 					try {
 						fileHandle = await app.fileSystem.getFileHandle(
 							filePath

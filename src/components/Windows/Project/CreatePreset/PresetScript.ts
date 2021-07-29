@@ -5,6 +5,7 @@ import { transformString } from './TransformString'
 import { App } from '/@/App'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { deepMerge } from '/@/utils/deepmerge'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
 
 export async function runPresetScript(
 	presetPath: string,
@@ -52,7 +53,7 @@ export async function runPresetScript(
 			`Failed to execute PresetScript "${presetScript}": module.exports is of type ${typeof module.exports}`
 		)
 
-	const createdFiles: FileSystemFileHandle[] = []
+	const createdFiles: AnyFileHandle[] = []
 	const createJSONFile = (
 		filePath: string,
 		data: any,

@@ -9,6 +9,7 @@ import Vue from 'vue'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 // @ts-ignore
 import * as VuetifyComponents from 'vuetify/lib/components'
+import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
 
 export async function loadUIComponents(
 	fileSystem: FileSystem,
@@ -16,7 +17,7 @@ export async function loadUIComponents(
 	disposables: IDisposable[],
 	basePath = 'ui'
 ) {
-	let dirents: (FileSystemDirectoryHandle | FileSystemFileHandle)[] = []
+	let dirents: (AnyDirectoryHandle | AnyFileHandle)[] = []
 	try {
 		dirents = await fileSystem.readdir(basePath, { withFileTypes: true })
 	} catch {}

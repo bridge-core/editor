@@ -4,6 +4,11 @@ import { FileSystem } from '../FileSystem/FileSystem'
 import { createErrorNotification } from '../Notifications/Errors'
 import { Extension } from './Extension'
 import { ActiveStatus } from './ActiveStatus'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+	AnyHandle,
+} from '../FileSystem/Types'
 
 export interface IExtensionManifest {
 	icon?: string
@@ -54,7 +59,7 @@ export class ExtensionLoader extends Signal<void> {
 		return new Map(this.extensions.entries())
 	}
 
-	async loadExtensions(baseDirectory: FileSystemDirectoryHandle) {
+	async loadExtensions(baseDirectory: AnyDirectoryHandle) {
 		await this.loadActiveExtensions()
 		const promises: Promise<unknown>[] = []
 
@@ -75,8 +80,8 @@ export class ExtensionLoader extends Signal<void> {
 	}
 
 	async loadExtension(
-		baseDirectory: FileSystemDirectoryHandle,
-		handle: FileSystemHandle,
+		baseDirectory: AnyDirectoryHandle,
+		handle: AnyHandle,
 		activate = false
 	) {
 		let extension: Extension | undefined
@@ -98,8 +103,8 @@ export class ExtensionLoader extends Signal<void> {
 	}
 
 	protected async unzipExtension(
-		fileHandle: FileSystemFileHandle,
-		baseDirectory: FileSystemDirectoryHandle
+		fileHandle: AnyFileHandle,
+		baseDirectory: AnyDirectoryHandle
 	) {
 		const fs = new FileSystem(baseDirectory)
 		const file = await fileHandle.getFile()
@@ -127,8 +132,8 @@ export class ExtensionLoader extends Signal<void> {
 		return await this.loadManifest(baseDirectory)
 	}
 
-	protected async loadManifest(baseDirectory: FileSystemDirectoryHandle) {
-		let manifestHandle: FileSystemFileHandle
+	protected async loadManifest(baseDirectory: AnyDirectoryHandle) {
+		let manifestHandle: AnyFileHandle
 		try {
 			manifestHandle = await baseDirectory.getFileHandle('manifest.json')
 		} catch {

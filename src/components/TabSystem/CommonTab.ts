@@ -7,6 +7,7 @@ import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { AnyFileHandle } from '../FileSystem/Types'
 
 export abstract class Tab extends Signal<Tab> {
 	abstract component: Vue.Component
@@ -30,7 +31,7 @@ export abstract class Tab extends Signal<Tab> {
 		return this.parent.isSharingScreen
 	}
 
-	static is(fileHandle: FileSystemFileHandle) {
+	static is(fileHandle: AnyFileHandle) {
 		return false
 	}
 
@@ -101,7 +102,7 @@ export abstract class Tab extends Signal<Tab> {
 		}
 		return didClose
 	}
-	abstract isFor(fileHandle: FileSystemFileHandle): Promise<boolean>
+	abstract isFor(fileHandle: AnyFileHandle): Promise<boolean>
 
 	focus() {}
 	async onActivate() {

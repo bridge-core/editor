@@ -12,11 +12,12 @@ import { LightningCache } from './LightningCache/LightningCache'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { PackType } from '../../Data/PackType'
 import { DataLoader } from '../../Data/DataLoader'
+import { AnyDirectoryHandle } from '../../FileSystem/Types'
 export type { ILightningInstruction } from './LightningCache/LightningCache'
 
 export interface IPackIndexerOptions {
-	projectDirectory: FileSystemDirectoryHandle
-	baseDirectory: FileSystemDirectoryHandle
+	projectDirectory: AnyDirectoryHandle
+	baseDirectory: AnyDirectoryHandle
 	pluginFileTypes: IFileType[]
 	disablePackSpider: boolean
 	noFullLightningCacheRefresh: boolean

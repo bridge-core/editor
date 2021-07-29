@@ -8,6 +8,11 @@ import { runScript } from './Script'
 import { extname } from '/@/utils/path'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { iterateDir } from '/@/utils/iterateDir'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+	AnyHandle,
+} from '/@/components/FileSystem/Types'
 
 const knownTextFiles = new Set([
 	'.js',
@@ -92,7 +97,7 @@ export class LightningCache {
 	}
 
 	async unlink(path: string) {
-		let handle: FileSystemHandle | undefined
+		let handle: AnyHandle | undefined
 		try {
 			handle = await this.service.fileSystem.getFileHandle(path)
 		} catch {
@@ -115,9 +120,9 @@ export class LightningCache {
 	}
 
 	protected async iterateDir(
-		baseDir: FileSystemDirectoryHandle,
+		baseDir: AnyDirectoryHandle,
 		callback: (
-			file: FileSystemFileHandle,
+			file: AnyFileHandle,
 			filePath: string
 		) => void | Promise<void>,
 		fullPath = ''
@@ -131,7 +136,7 @@ export class LightningCache {
 				await this.iterateDir(entry, callback, currentFullPath)
 			} else if (fileName[0] !== '.') {
 				this.service.progress.addToTotal(2)
-				await callback(<FileSystemFileHandle>entry, currentFullPath)
+				await callback(<AnyFileHandle>entry, currentFullPath)
 			}
 		}
 	}
@@ -141,7 +146,7 @@ export class LightningCache {
 	 */
 	async processFile(
 		filePath: string,
-		fileHandle: FileSystemFileHandle,
+		fileHandle: AnyFileHandle,
 		fileContent?: string
 	) {
 		const file = await fileHandle.getFile()

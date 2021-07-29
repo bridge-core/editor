@@ -4,6 +4,7 @@ import { FileSystem } from './FileSystem'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
+import { AnyDirectoryHandle } from './Types'
 
 export const comMojangKey = 'comMojangDirectory'
 
@@ -29,7 +30,7 @@ export class ComMojang extends Signal<void> {
 	constructor(protected app: App) {
 		super()
 
-		get<FileSystemDirectoryHandle | undefined>(comMojangKey).then(
+		get<AnyDirectoryHandle | undefined>(comMojangKey).then(
 			async (directoryHandle) => {
 				if (directoryHandle) {
 					await this.app.fileSystem.fired
@@ -46,7 +47,7 @@ export class ComMojang extends Signal<void> {
 	}
 
 	protected async createPermissionWindow(
-		directoryHandle: FileSystemDirectoryHandle
+		directoryHandle: AnyDirectoryHandle
 	) {
 		const informWindow = new InformationWindow({
 			name: 'comMojang.title',
@@ -60,9 +61,7 @@ export class ComMojang extends Signal<void> {
 		await informWindow.fired
 	}
 
-	protected async requestPermissions(
-		directoryHandle: FileSystemDirectoryHandle
-	) {
+	protected async requestPermissions(directoryHandle: AnyDirectoryHandle) {
 		const permission = await directoryHandle.requestPermission({
 			mode: 'readwrite',
 		})
@@ -76,13 +75,13 @@ export class ComMojang extends Signal<void> {
 		}
 	}
 
-	async set(directoryHandle: FileSystemDirectoryHandle) {
+	async set(directoryHandle: AnyDirectoryHandle) {
 		set(comMojangKey, directoryHandle)
 		await this.requestPermissions(directoryHandle)
 		if (this._hasComMojang) this.setup.dispatch()
 	}
 
-	async handleComMojangDrop(directoryHandle: FileSystemDirectoryHandle) {
+	async handleComMojangDrop(directoryHandle: AnyDirectoryHandle) {
 		const confirmWindow = new ConfirmationWindow({
 			description: 'comMojang.folderDropped',
 			confirmText: 'general.yes',

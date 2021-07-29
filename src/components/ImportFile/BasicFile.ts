@@ -4,6 +4,7 @@ import { App } from '/@/App'
 import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/InformedChoice'
 import { FilePathWindow } from '/@/components/Windows/Common/FilePath/Window'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
+import { AnyFileHandle } from '../FileSystem/Types'
 
 export class BasicFileImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
@@ -24,7 +25,7 @@ export class BasicFileImporter extends FileImporter {
 		)
 	}
 
-	async onImport(fileHandle: FileSystemFileHandle) {
+	async onImport(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
 		const t = app.locales.translate.bind(app.locales)
 
@@ -56,7 +57,7 @@ export class BasicFileImporter extends FileImporter {
 		await saveOrOpenWindow.fired
 	}
 
-	protected async onSave(fileHandle: FileSystemFileHandle) {
+	protected async onSave(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
 		const filePathWindow = new FilePathWindow('', false)
 		filePathWindow.open()
@@ -93,7 +94,7 @@ export class BasicFileImporter extends FileImporter {
 
 		app.windows.loadingWindow.close()
 	}
-	protected async onOpen(fileHandle: FileSystemFileHandle) {
+	protected async onOpen(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
 
 		await app.project.openFile(fileHandle)

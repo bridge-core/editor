@@ -1,11 +1,19 @@
-import { VirtualHandle } from './Handle'
+import { VirtualHandle, BaseVirtualHandle } from './Handle'
 import { VirtualFileHandle } from './FileHandle'
 
 /**
  * A class that implements a virtual folder
  */
-export class VirtualDirectoryHandle extends VirtualHandle {
+export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	public readonly kind = 'directory'
+	/**
+	 * @depracted
+	 */
+	public readonly isDirectory = true
+	/**
+	 * @depracted
+	 */
+	public readonly isFile = false
 	protected children = new Map<string, VirtualHandle>()
 
 	constructor(parent: VirtualDirectoryHandle | null, name: string) {
@@ -116,6 +124,10 @@ export class VirtualDirectoryHandle extends VirtualHandle {
 		return path
 	}
 
+	[Symbol.asyncIterator]() {
+		return this.children.entries()
+	}
+
 	keys() {
 		return this.children.keys()
 	}
@@ -124,5 +136,24 @@ export class VirtualDirectoryHandle extends VirtualHandle {
 	}
 	values() {
 		return this.children.values()
+	}
+
+	/**
+	 * @deprecated
+	 */
+	getEntries() {
+		return this.values()
+	}
+	/**
+	 * @deprecated
+	 */
+	getDirectory(name: string, opts: { create?: boolean } = {}) {
+		return this.getDirectoryHandle(name, opts)
+	}
+	/**
+	 * @deprecated
+	 */
+	getFile(name: string, opts: { create?: boolean } = {}) {
+		return this.getFileHandle(name, opts)
 	}
 }

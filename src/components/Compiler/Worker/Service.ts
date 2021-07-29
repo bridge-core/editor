@@ -6,11 +6,12 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { FileType, IFileType } from '/@/components/Data/FileType'
 import { Compiler } from './Compiler'
 import { DataLoader } from '../../Data/DataLoader'
+import { AnyDirectoryHandle } from '../../FileSystem/Types'
 
 export interface ICompilerOptions {
-	projectDirectory: FileSystemDirectoryHandle
-	baseDirectory: FileSystemDirectoryHandle
-	comMojangDirectory?: FileSystemDirectoryHandle
+	projectDirectory: AnyDirectoryHandle
+	baseDirectory: AnyDirectoryHandle
+	comMojangDirectory?: AnyDirectoryHandle
 	config: string
 	mode: 'dev' | 'build'
 	isDevServerRestart: boolean

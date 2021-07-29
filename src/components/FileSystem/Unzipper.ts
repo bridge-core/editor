@@ -1,6 +1,7 @@
 import { unzip } from 'fflate'
 import { basename, dirname } from '/@/utils/path'
 import { GenericUnzipper } from './GenericUnzipper'
+import { AnyDirectoryHandle } from './Types'
 
 export class Unzipper extends GenericUnzipper<Uint8Array> {
 	unzip(data: Uint8Array) {
@@ -8,7 +9,7 @@ export class Unzipper extends GenericUnzipper<Uint8Array> {
 			unzip(data, async (error, zip) => {
 				if (error) return reject(error)
 
-				const handles: Record<string, FileSystemDirectoryHandle> = {
+				const handles: Record<string, AnyDirectoryHandle> = {
 					'.': this.directory,
 				}
 

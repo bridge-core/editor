@@ -3,11 +3,13 @@ import { VirtualFileHandle } from './FileHandle'
 const textEncoder = new TextEncoder()
 export const writeMethodSymbol = Symbol('writeMethod')
 
-export class VirtualWritable {
+export class VirtualWritable extends WritableStream {
 	protected tmpData = new Uint8Array()
 	protected cursorOffset = 0
 
-	constructor(protected fileHandle: VirtualFileHandle) {}
+	constructor(protected fileHandle: VirtualFileHandle) {
+		super()
+	}
 
 	async write(data: FileSystemWriteChunkType): Promise<void> {
 		let rawData: Uint8Array

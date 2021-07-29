@@ -1,8 +1,10 @@
+import { AnyHandle } from '../../FileSystem/Types'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
+import type { VirtualFileHandle } from './FileHandle'
 
-export abstract class VirtualHandle {
-	public abstract readonly kind: 'file' | 'directory'
-
+export type VirtualHandle = VirtualDirectoryHandle | VirtualFileHandle
+export abstract class BaseVirtualHandle {
+	public abstract readonly kind: FileSystemHandleKind
 	constructor(
 		protected parent: VirtualDirectoryHandle | null,
 		protected _name: string
@@ -19,14 +21,18 @@ export abstract class VirtualHandle {
 		return this.parent
 	}
 
-	isSameEntry(handle: VirtualHandle) {
-		return handle === this
+	async isSameEntry(other: BaseVirtualHandle | AnyHandle) {
+		return other === this
 	}
 
-	async queryPermission(_: FileSystemHandlePermissionDescriptor) {
+	async queryPermission(
+		_: FileSystemHandlePermissionDescriptor
+	): Promise<PermissionState> {
 		return 'granted'
 	}
-	async requestPermission(_: FileSystemHandlePermissionDescriptor) {
+	async requestPermission(
+		_: FileSystemHandlePermissionDescriptor
+	): Promise<PermissionState> {
 		return 'granted'
 	}
 }
