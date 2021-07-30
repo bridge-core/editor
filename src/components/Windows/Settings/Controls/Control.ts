@@ -13,15 +13,15 @@ export interface IControl<T> {
 	[key: string]: any
 }
 
-export abstract class Control<T> {
+export abstract class Control<T, K extends IControl<T> = IControl<T>> {
 	readonly component!: Vue.Component
-	readonly config!: IControl<T>
+	readonly config!: K
 
 	abstract matches(filter: string): void
 
 	constructor(
 		component: Vue.Component,
-		control: IControl<T>,
+		control: K,
 		protected state = settingsState
 	) {
 		set(this, 'config', control)

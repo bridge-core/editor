@@ -27,10 +27,7 @@ export interface IProjectData extends IConfigJson {
 
 export abstract class Project {
 	public readonly recentFiles!: RecentFiles
-	public readonly tabSystems = <const>[
-		new TabSystem(this),
-		new TabSystem(this, 1),
-	]
+	public readonly tabSystems: readonly [TabSystem, TabSystem]
 	protected _projectData!: Partial<IProjectData>
 	// Not directly assigned so they're not responsive
 	public readonly packIndexer: PackIndexer
@@ -75,6 +72,7 @@ export abstract class Project {
 		public readonly app: App,
 		protected _baseDirectory: AnyDirectoryHandle
 	) {
+		console.log(_baseDirectory)
 		this._fileSystem = new FileSystem(_baseDirectory)
 		this.config = new ProjectConfig(this._fileSystem)
 		this.packIndexer = new PackIndexer(app, _baseDirectory)
@@ -98,6 +96,8 @@ export abstract class Project {
 		this.fileSave.any.on((data) =>
 			App.eventSystem.dispatch('fileSave', data)
 		)
+
+		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
 
 		setTimeout(() => this.onCreate(), 0)
 	}
