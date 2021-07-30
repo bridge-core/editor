@@ -6,6 +6,7 @@ import { App } from '/@/App'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { deepMerge } from '/@/utils/deepmerge'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
 
 export async function runPresetScript(
 	presetPath: string,
@@ -15,11 +16,10 @@ export async function runPresetScript(
 ) {
 	const app = await App.getApp()
 	const fs = app.project?.fileSystem!
-	const globalFs = app.fileSystem
-	const readFile = (filePath: string) =>
-		filePath.startsWith('data/')
-			? app.dataLoader.readFile(filePath)
-			: globalFs.readFile(filePath)
+	const globalFs = new CombinedFileSystem(
+		app.fileSystem.baseDirectory,
+		app.dataLoader
+	)
 
 	let loadFilePath: string
 	if (presetScript.startsWith('./')) {
@@ -32,7 +32,7 @@ export async function runPresetScript(
 	}
 
 	await app.dataLoader.fired
-	const script = await readFile(loadFilePath)
+	const script = await globalFs.readFile(loadFilePath)
 	const scriptSrc = await script.text()
 
 	const module: any = { exports: undefined }
@@ -156,7 +156,7 @@ export async function runPresetScript(
 		}
 	}
 	const loadPresetFile = (filePath: string) =>
-		readFile(`${presetPath}/${filePath}`)
+		globalFs.readFile(`${presetPath}/${filePath}`)
 
 	await module.exports({
 		models,

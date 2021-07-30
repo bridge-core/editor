@@ -17,6 +17,7 @@ import { PresetItem } from './PresetItem'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import { VirtualHandle } from '../../../FileSystem/Virtual/Handle'
 import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
+import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
 
 export interface IPresetManifest {
 	name: string
@@ -239,7 +240,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
-		const fs = app.project?.fileSystem!
+		const fs = app.project!.fileSystem
 
 		const promises: Promise<unknown>[] = []
 		const createdFiles: AnyFileHandle[] = []

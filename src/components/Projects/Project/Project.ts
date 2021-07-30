@@ -72,7 +72,6 @@ export abstract class Project {
 		public readonly app: App,
 		protected _baseDirectory: AnyDirectoryHandle
 	) {
-		console.log(_baseDirectory)
 		this._fileSystem = new FileSystem(_baseDirectory)
 		this.config = new ProjectConfig(this._fileSystem)
 		this.packIndexer = new PackIndexer(app, _baseDirectory)

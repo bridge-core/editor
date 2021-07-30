@@ -1,6 +1,7 @@
 import { IPresetFileOpts } from './PresetWindow'
 import { transformString } from './TransformString'
 import { App } from '/@/App'
+import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { extname, dirname } from '/@/utils/path'
 
@@ -21,7 +22,10 @@ export async function createFile(
 	models: Record<string, unknown>
 ) {
 	const app = await App.getApp()
-	const fs = app.fileSystem
+	const fs = new CombinedFileSystem(
+		app.fileSystem.baseDirectory,
+		app.dataLoader
+	)
 
 	const inject = opts?.inject ?? []
 	const fullOriginPath = `${presetPath}/${originPath}`

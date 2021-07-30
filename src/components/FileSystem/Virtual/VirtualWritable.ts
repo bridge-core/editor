@@ -6,6 +6,7 @@ export const writeMethodSymbol = Symbol('writeMethod')
 export class VirtualWritable {
 	protected tmpData = new Uint8Array()
 	protected cursorOffset = 0
+	locked = false
 
 	constructor(protected fileHandle: VirtualFileHandle) {}
 
@@ -52,4 +53,8 @@ export class VirtualWritable {
 	async close() {
 		this.fileHandle[writeMethodSymbol](this.tmpData)
 	}
+	async abort() {
+		throw new Error(`WriteStream was aborted`)
+	}
+	getWriter(): any {}
 }
