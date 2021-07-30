@@ -9,7 +9,7 @@
 			inactive: !isActive,
 		}"
 		ref="tabElement"
-		@mousedown.left.prevent="hoverClose ? null : tab.select()"
+		@mousedown.left="hoverClose ? null : tab.select()"
 		@mousedown.middle.prevent
 		@click.middle="tab.close()"
 		@click.right.prevent="tab.onContextMenu($event)"
