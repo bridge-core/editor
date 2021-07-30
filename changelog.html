@@ -1,60 +1,11 @@
-<h1>v2.0.2</h1>
-<p>This release should hopefully resolve most of the last remaining issues people had with bridge. v2. We also sneaked a few new features into this minor release.</p>
-<h2>Features:</h2>
-<h3>Editing Project Config</h3>
-<p>We have added a new action that opens the project config file. This allows you to edit project attributes like the current project target version or project prefix. We still plan to incorporate these options into bridge.'s UI in the future.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/127519031-13b42954-ab86-47ed-8601-27b907d8e3df.png" alt="Bildschirmfoto 2021-07-29 um 17 18 58"></p>
-<hr>
-<h3>Added &quot;minecraft:creative_category&quot; Component</h3>
-<p>Thanks to @ExDrill for laying the groundwork for this feature. We now support the new &quot;minecraft:creative_category&quot; component for both items and blocks.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/127520433-b947686c-ed22-4dfb-b080-ff97e460c72e.png" alt="Bildschirmfoto 2021-07-29 um 17 28 18"></p>
-<hr>
-<h3>View Compiler Output</h3>
-<p>We now support opening compiled files inside of readonly tabs. This allows you to easily confirm that bridge. compiled your file correctly.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/127520841-91b8abe4-cc0a-4e43-9333-01d0ab54f7cb.png" alt="Bildschirmfoto 2021-07-29 um 17 30 38"></p>
-<hr>
-<h3>View Documentation</h3>
-<p>We have brought back the &quot;View Documentation&quot; right-click action to both v2's tree editor &amp; text editor.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/127521397-a228a756-d88c-4d0f-ac3f-c67b26fffebc.png" alt="Bildschirmfoto 2021-07-29 um 17 34 09"></p>
-<hr>
-<h3>New Data Loader</h3>
-<p>bridge. now updates its data instantaneously. This means that you no longer need to wait a couple of minutes after an app update rolled out to download the new data.</p>
-<hr>
-<h3>Traditional Chinese Translations</h3>
-<p>Thanks to @ivon852, bridge. is now available in Traditional Chinese.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/127519863-8989c1dc-85d6-43ff-8c82-cfc5a731a39c.png" alt="Bildschirmfoto 2021-07-29 um 17 24 47"></p>
+<h1>v2.0.3</h1>
+<p>A hotfix to fix an issue with creating new files.</p>
 <h2>Changes:</h2>
 <ul>
-<li>Updated the mcfunction auto-completion experience</li>
-<li>Disabled word based suggestions within text editor</li>
-<li>Updated Dutch translations (Thanks to @pascal541)</li>
-<li>Update game test types to latest beta</li>
-<li>We now allow the usage of &quot;.&quot; inside of file names</li>
-<li>We brought back the notification that links to our &quot;Getting Started&quot; guide</li>
-<li>We no longer delete the reference to your &quot;com.mojang&quot; folder if you do not grant bridge. access to it</li>
-<li>Added &quot;music&quot; sound category</li>
-<li>Updated Wintersky</li>
+<li>Aligned virtual file system for internal data with Native File System Access API</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed /function auto-completions</li>
-<li>Fixed &quot;Install App&quot; step not being selectable</li>
-<li>Support for &quot;~~~&quot; and &quot;^^^&quot; within command tokenizer</li>
-<li>Fixed input windows not translating input labels</li>
-<li>Fixed usage of preset scripts within extensions</li>
-<li>Fixed &quot;tick.json&quot; JSON schema</li>
-<li>Fixed &quot;minecraft:can_fly&quot; validation</li>
-<li>Fixed particle validation</li>
-<li>Fixed compiler plugins not supporting &quot;export default&quot; correctly</li>
-<li>Fixed preview boxes (Thanks to @pascal541)</li>
-<li>Fixed custom commands with simple schemas not appearing inside of auto-completions</li>
-<li>Fixed multiple errors upon using command auto-completions</li>
-<li>Project target version input now resets correctly</li>
-<li>Fixed RP as BP dependency toggle</li>
-<li>Fixed error upon closing all tabs</li>
-<li>Fixed image size inside of changelog window</li>
-<li>Fixed render controller validation</li>
-<li>Fixed &quot;minecraft:render_offsets&quot; validation</li>
-<li>Fixed error upon previewing entity</li>
-<li>Fixed usage of &quot;meta&quot; key for keyboard shortcuts on Windows</li>
+<li>Fixed preset creation</li>
+<li>Fixed tab drag &amp; drop</li>
 </ul>
