@@ -42,6 +42,21 @@
 		"ladder",
 		"lodestone",
 		"sweet_berry_bush",
-		"vines"
+		"vines",
+		"amethyst_block",
+		"amethyst_cluster",
+		"deepslate_bricks",
+		"deepslate",
+		"copper",
+		"cave_vines",
+		"moss_block",
+		"calcite",
+		"tuff",
+		"big_dripleaf",
+		"dripstone_block",
+		"pointed_dripstone",
+		"hanging_roots",
+		"spore_blossom",
+		"candle"
 	]
 }
