@@ -3,13 +3,11 @@ import { VirtualFileHandle } from './FileHandle'
 const textEncoder = new TextEncoder()
 export const writeMethodSymbol = Symbol('writeMethod')
 
-export class VirtualWritable extends WritableStream {
+export class VirtualWritable {
 	protected tmpData = new Uint8Array()
 	protected cursorOffset = 0
 
-	constructor(protected fileHandle: VirtualFileHandle) {
-		super()
-	}
+	constructor(protected fileHandle: VirtualFileHandle) {}
 
 	async write(data: FileSystemWriteChunkType): Promise<void> {
 		let rawData: Uint8Array
@@ -33,9 +31,11 @@ export class VirtualWritable extends WritableStream {
 		} else if (!ArrayBuffer.isView(data)) rawData = new Uint8Array(data)
 		else rawData = new Uint8Array(data.buffer)
 
-		for (let i = 0; i < rawData.length; i++) {
-			this.tmpData[this.cursorOffset++] = rawData[i]
-		}
+		this.tmpData = new Uint8Array([
+			...this.tmpData.slice(0, this.cursorOffset),
+			...rawData,
+		])
+		this.cursorOffset = this.tmpData.length
 	}
 
 	async seek(offset: number) {
