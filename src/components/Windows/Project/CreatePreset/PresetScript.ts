@@ -143,15 +143,17 @@ export async function runPresetScript(
 			current = await (await fs.readFile(filePath)).text()
 		} catch {}
 
-		data = transformString(data, inject, models)
 		createdFiles.push(fileHandle)
 
 		if (typeof data === 'string') {
+			data = transformString(data, inject, models)
 			await fs.writeFile(filePath, `${current}\n${data}`)
 		} else {
+			data = transformString(json5.stringify(data), inject, models)
 			await fs.writeJSON(
 				filePath,
-				deepMerge(json5.parse(current), json5.parse(data))
+				deepMerge(json5.parse(current), json5.parse(data)),
+				true
 			)
 		}
 	}
