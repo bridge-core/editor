@@ -115,7 +115,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		const path: string[] = [possibleDescendant.name]
 
 		let current = possibleDescendant.getParent()
-		while (current !== null && current.isSameEntry(this)) {
+		while (!!current && current.isSameEntry(this)) {
 			path.unshift(current.name)
 			current = current.getParent()
 		}
