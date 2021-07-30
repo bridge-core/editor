@@ -5,6 +5,7 @@ import { InformationWindow } from '../Windows/Common/Information/InformationWind
 import { ref } from '@vue/composition-api'
 import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from './Types'
+import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
 
@@ -45,7 +46,8 @@ export class FileSystemSetup {
 			fileHandle = await globalState.receiveDirectoryHandle.fired
 
 			await this.verifyPermissions(fileHandle)
-			await set('bridgeBaseDir', fileHandle)
+			if (!(fileHandle instanceof VirtualDirectoryHandle))
+				await set('bridgeBaseDir', fileHandle)
 
 			globalState.setupDone.dispatch()
 		} else {
