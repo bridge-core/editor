@@ -33,6 +33,7 @@ import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/FileSystem/ComMojang'
 import { AudioManager } from '/@/components/Audio/AudioManager'
+import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
 
 export class App {
 	public static readonly installApp = new InstallApp()
@@ -115,7 +116,8 @@ export class App {
 			window.addEventListener('beforeunload', (event) => {
 				if (
 					this.tabSystem?.hasUnsavedTabs ||
-					this.taskManager.hasRunningTasks
+					this.taskManager.hasRunningTasks ||
+					isUsingFileSystemPolyfill
 				) {
 					event.preventDefault()
 					event.returnValue = saveWarning
