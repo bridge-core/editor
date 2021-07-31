@@ -48,6 +48,18 @@ export class PackExplorer extends SidebarContent {
 								color: pack.color,
 							})
 					) ?? []
+
+				if (isUsingFileSystemPolyfill) {
+					this.actions.push(
+						new SidebarAction({
+							icon: 'mdi-content-save-outline',
+							onTrigger: (event) => {
+								// TODO: Download whole project
+							},
+						})
+					)
+				}
+
 				this.actions.push(
 					new SidebarAction({
 						icon: 'mdi-dots-vertical',

@@ -357,6 +357,16 @@ export default {
 			title: 'Projects',
 			searchProjects: 'Search projects...',
 			newProject: 'New Project',
+			saveCurrentProject: {
+				name: 'Save Project',
+				description:
+					'Download your current project as a .brproject file to save changes that you have made.',
+			},
+			openNewProject: {
+				name: 'Open Project',
+				description:
+					'Open a different project by selecting the corresponding .brproject file.',
+			},
 		},
 		filePath: {
 			title: 'Choose File Path',

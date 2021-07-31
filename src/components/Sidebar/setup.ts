@@ -4,13 +4,48 @@ import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 import { SettingsWindow } from '../Windows/Settings/SettingsWindow'
 import { SidebarState } from './state'
 import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
+import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'
 
 export function setupSidebar() {
 	createSidebar({
 		id: 'projects',
 		displayName: 'windows.projectChooser.title',
 		icon: 'mdi-view-dashboard-outline',
-		onClick: () => App.instance.windows.projectChooser.open(),
+		onClick: async () => {
+			if (isUsingFileSystemPolyfill) {
+				// TODO: Prompt user whether to open new project or to save the current one
+				const choiceWindow = new InformedChoiceWindow(
+					'windows.projectChooser.title',
+					{
+						isPersistent: false,
+					}
+				)
+				const actions = await choiceWindow.actionManager
+
+				actions.create({
+					icon: 'mdi-content-save-outline',
+					name: 'windows.projectChooser.saveCurrentProject.name',
+					description:
+						'windows.projectChooser.saveCurrentProject.description',
+					onTrigger: () => {
+						// TODO: Save current project
+					},
+				})
+
+				actions.create({
+					icon: 'mdi-folder-open-outline',
+					name: 'windows.projectChooser.openNewProject.name',
+					description:
+						'windows.projectChooser.openNewProject.description',
+					onTrigger: () => {
+						// TODO: Prompt user to select new project to open
+					},
+				})
+			} else {
+				App.instance.windows.projectChooser.open()
+			}
+		},
 	})
 
 	const packExplorer = createSidebar({
