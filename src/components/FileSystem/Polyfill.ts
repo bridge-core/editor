@@ -20,12 +20,8 @@ if (typeof window.showOpenFilePicker !== 'function') {
 		input.type = 'file'
 		input.multiple = opts.multiple ?? false
 		input.accept = opts.types
-			.map((e) => Object.entries(e.accept))
-			.map(([mimeType, extensions]) => [
-				...(Array.isArray(extensions) ? extensions : [extensions]),
-				mimeType,
-			])
-			.flat()
+			.map((e) => Object.values(e.accept))
+			.flat(2)
 			.join(',')
 
 		return new Promise((resolve) => {
