@@ -5,6 +5,7 @@ import { editor, languages, Uri } from 'monaco-editor'
 import { compare, CompareOperator } from 'compare-versions'
 import { getLatestFormatVersion } from './FormatVersions'
 import { DataLoader } from './DataLoader'
+import { Tab } from '../TabSystem/CommonTab'
 
 const types = new Map<string, string>()
 
@@ -17,8 +18,8 @@ export class TypeLoader {
 
 	async activate(filePath?: string) {
 		this.disposables = <IDisposable[]>[
-			App.eventSystem.on('currentTabSwitched', (filePath: string) =>
-				this.setTypeEnv(filePath)
+			App.eventSystem.on('currentTabSwitched', (tab: Tab) =>
+				this.setTypeEnv(tab.getProjectPath())
 			),
 		]
 		if (filePath) await this.setTypeEnv(filePath)

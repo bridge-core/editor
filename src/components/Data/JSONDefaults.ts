@@ -9,8 +9,8 @@ import { SchemaScript } from './SchemaScript'
 import { SchemaManager } from '../JSONSchema/Manager'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
-import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
+import { Tab } from '../TabSystem/CommonTab'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
@@ -35,9 +35,10 @@ export class JsonDefaults extends EventDispatcher<void> {
 
 		this.disposables = <IDisposable[]>[
 			// Updating currentContext/ references
-			App.eventSystem.on('currentTabSwitched', (filePath: string) =>
-				this.updateDynamicSchemas(filePath)
-			),
+			App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
+				if (!tab.isForeignFile)
+					this.updateDynamicSchemas(tab.getProjectPath())
+			}),
 			App.eventSystem.on('refreshCurrentContext', (filePath: string) =>
 				this.updateDynamicSchemas(filePath)
 			),
