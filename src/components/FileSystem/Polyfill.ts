@@ -46,6 +46,8 @@ if (typeof window.showOpenFilePicker !== 'function') {
 					)
 				)
 			})
+
+			input.click()
 		})
 	}
 }

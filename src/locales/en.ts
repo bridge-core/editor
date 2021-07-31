@@ -367,6 +367,7 @@ export default {
 				description:
 					'Open a different project by selecting the corresponding .brproject file.',
 			},
+			wrongFileType: 'Project must be a .brproject file',
 		},
 		filePath: {
 			title: 'Choose File Path',

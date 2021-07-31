@@ -6,6 +6,7 @@ import { SidebarState } from './state'
 import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'
+import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 
 export function setupSidebar() {
 	createSidebar({
@@ -38,8 +39,29 @@ export function setupSidebar() {
 					name: 'windows.projectChooser.openNewProject.name',
 					description:
 						'windows.projectChooser.openNewProject.description',
-					onTrigger: () => {
+					onTrigger: async () => {
 						// TODO: Prompt user to select new project to open
+						const [projectHandle] = await window.showOpenFilePicker(
+							{
+								multiple: false,
+								types: [
+									{
+										description: 'Project',
+										accept: {
+											'application/zip': ['.brproject'],
+										},
+									},
+								],
+							}
+						)
+
+						if (!projectHandle.name.endsWith('.brproject'))
+							return new InformationWindow({
+								description:
+									'windows.projectChooser.wrongFileType',
+							})
+
+						console.log(projectHandle)
 					},
 				})
 			} else {
