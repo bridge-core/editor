@@ -42,7 +42,6 @@ export default {
 	},
 
 	mounted() {
-		console.log(content.topPanel)
 		App.getApp().then((app) => {
 			this.windowDimensions = app.windowResize.state
 		})

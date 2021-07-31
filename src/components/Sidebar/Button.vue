@@ -26,7 +26,7 @@
 				<v-icon
 					:style="{
 						position: isLoading ? 'absolute' : 'relative',
-						margin: isLoading ? '4px' : 0,
+						marginTop: isLoading ? '4px' : 0,
 					}"
 					:color="isLoading || isSelected ? 'white' : iconColor"
 					:small="isLoading"
