@@ -10,7 +10,7 @@
 				:open="entry.isFolderOpen"
 			>
 				<summary
-					class="d-flex rounded-lg"
+					class="rounded-lg"
 					@click.prevent="onClick(entry)"
 					@click.right.prevent.stop="
 						$emit('contextmenu', {
@@ -23,14 +23,16 @@
 					"
 					v-ripple
 				>
-					<v-icon class="pr-1" :color="entry.color" small>
-						{{
-							entry.isFolderOpen
-								? 'mdi-folder-open'
-								: 'mdi-folder'
-						}}
-					</v-icon>
-					<span class="folder">{{ entry.name }}</span>
+					<span class="d-flex">
+						<v-icon class="pr-1" :color="entry.color" small>
+							{{
+								entry.isFolderOpen
+									? 'mdi-folder-open'
+									: 'mdi-folder'
+							}}
+						</v-icon>
+						<span class="folder">{{ entry.name }}</span>
+					</span>
 				</summary>
 
 				<FileDisplayer
@@ -43,7 +45,7 @@
 			<div
 				v-else
 				:key="entry.uuid"
-				class="file rounded-lg"
+				class="file d-flex rounded-lg"
 				@click.stop="onClick(entry)"
 				@click.right.prevent.stop="
 					$emit('contextmenu', {
@@ -56,7 +58,7 @@
 				"
 				v-ripple
 			>
-				<v-icon :color="entry.color" small>
+				<v-icon :color="entry.color" class="pr-1" small>
 					{{ entry.icon || 'mdi-file-outline' }}
 				</v-icon>
 				{{ entry.name }}

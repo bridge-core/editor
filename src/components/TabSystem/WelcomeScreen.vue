@@ -20,16 +20,18 @@
 				<li
 					v-for="action in actions"
 					:key="action.id"
-					class="d-flex rounded-lg pa-1 clickable"
+					class="rounded-lg pa-1 clickable"
 					v-ripple
 					@click="() => action.trigger()"
 				>
 					<v-icon color="accent" medium>{{ action.icon }}</v-icon>
 					<span color="text--primary">{{ t(action.name) }}</span>
 
-					<v-spacer></v-spacer>
-
-					<span class="text--secondary" v-if="action.keyBinding">
+					<span
+						class="text--secondary"
+						style="float: right"
+						v-if="action.keyBinding"
+					>
 						{{ action.keyBinding.toStrKeyCode() }}
 					</span>
 				</li>
