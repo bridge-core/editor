@@ -1,5 +1,6 @@
 import { VirtualHandle, BaseVirtualHandle } from './Handle'
 import { VirtualFileHandle } from './FileHandle'
+import { ISerializedDirectoryHandle } from './Comlink'
 
 /**
  * A class that implements a virtual folder
@@ -34,6 +35,30 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	}
 	protected has(childName: string) {
 		return this.children.has(childName)
+	}
+	serialize(): ISerializedDirectoryHandle {
+		return {
+			kind: 'directory',
+			name: this.name,
+			children: [...this.children.values()].map((child: VirtualHandle) =>
+				child.serialize()
+			),
+		}
+	}
+	static deserialize(
+		data: ISerializedDirectoryHandle,
+		parent: VirtualDirectoryHandle | null = null
+	) {
+		const dir = new VirtualDirectoryHandle(parent, data.name)
+
+		for (const child of data.children) {
+			if (child.kind === 'directory')
+				dir.addChild(VirtualDirectoryHandle.deserialize(child, dir))
+			else
+				dir.addChild(new VirtualFileHandle(dir, child.name, child.data))
+		}
+
+		return dir
 	}
 
 	async getDirectoryHandle(
@@ -115,12 +140,12 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		const path: string[] = [possibleDescendant.name]
 
 		let current = possibleDescendant.getParent()
-		while (!!current && current.isSameEntry(this)) {
+		while (current !== null && !(await current.isSameEntry(this))) {
 			path.unshift(current.name)
 			current = current.getParent()
 		}
 
-		if (current !== this) return null
+		if (current === null) return null
 		return path
 	}
 

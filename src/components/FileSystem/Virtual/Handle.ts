@@ -20,6 +20,7 @@ export abstract class BaseVirtualHandle {
 	getParent() {
 		return this.parent
 	}
+	abstract serialize(): unknown
 
 	async isSameEntry(other: BaseVirtualHandle | AnyHandle) {
 		return other === this

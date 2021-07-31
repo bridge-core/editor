@@ -13,8 +13,8 @@ interface ICompilerStartOptions {
 	restartDevServer: boolean
 }
 export class Compiler extends WorkerManager<
+	typeof CompilerService,
 	CompilerService,
-	ICompilerOptions,
 	ICompilerStartOptions,
 	void
 > {
@@ -54,20 +54,22 @@ export class Compiler extends WorkerManager<
 
 		// Instantiate the worker TaskService
 		if (!this._service) {
-			this._service = await new this.workerClass!({
-				projectDirectory: this.project.baseDirectory,
-				baseDirectory: app.fileSystem.baseDirectory,
-				comMojangDirectory: app.comMojang.fileSystem.baseDirectory,
-				config: this.config,
-				mode,
-				isFileRequest: false,
-				isDevServerRestart: restartDevServer,
-				plugins: this.parent.getCompilerPlugins(),
-				pluginFileTypes: FileType.getPluginFileTypes(),
-				allFiles: await app.project.packIndexer.service.getAllFiles(
-					false
-				),
-			})
+			this._service = await new this.workerClass!(
+				this.project.baseDirectory,
+				app.fileSystem.baseDirectory,
+				app.comMojang.fileSystem.baseDirectory,
+				{
+					config: this.config,
+					mode,
+					isFileRequest: false,
+					isDevServerRestart: restartDevServer,
+					plugins: this.parent.getCompilerPlugins(),
+					pluginFileTypes: FileType.getPluginFileTypes(),
+					allFiles: await app.project.packIndexer.service.getAllFiles(
+						false
+					),
+				}
+			)
 		} else {
 			await this.service.updateMode(mode, false, restartDevServer)
 			await this.service.updatePlugins(

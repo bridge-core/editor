@@ -2,15 +2,15 @@ import { App } from '/@/App'
 import { WorkerManager } from '/@/components/Worker/Manager'
 import { proxy } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
+import type { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
 import { FileType } from '/@/components/Data/FileType'
 import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 // import PackIndexerWorker from './Worker/Main?worker'
 
 export class PackIndexer extends WorkerManager<
+	typeof PackIndexerService,
 	PackIndexerService,
-	IPackIndexerOptions,
 	boolean,
 	readonly [string[], string[]]
 > {
@@ -41,17 +41,19 @@ export class PackIndexer extends WorkerManager<
 		console.time('[TASK] Indexing Packs (Total)')
 
 		// Instaniate the worker TaskService
-		this._service = await new this.workerClass!({
-			projectDirectory: this.baseDirectory,
-			baseDirectory: this.app.fileSystem.baseDirectory,
-			disablePackSpider: !(
-				settingsState?.general?.enablePackSpider ?? false
-			),
-			pluginFileTypes: FileType.getPluginFileTypes(),
-			noFullLightningCacheRefresh:
-				!forceRefreshCache &&
-				!settingsState?.general?.fullLightningCacheRefresh,
-		})
+		this._service = await new this.workerClass!(
+			this.baseDirectory,
+			this.app.fileSystem.baseDirectory,
+			{
+				disablePackSpider: !(
+					settingsState?.general?.enablePackSpider ?? false
+				),
+				pluginFileTypes: FileType.getPluginFileTypes(),
+				noFullLightningCacheRefresh:
+					!forceRefreshCache &&
+					!settingsState?.general?.fullLightningCacheRefresh,
+			}
+		)
 
 		// Listen to task progress and update UI
 		await this.service.on(

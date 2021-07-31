@@ -1,3 +1,4 @@
+import '/@/components/FileSystem/Virtual/Comlink'
 import { FileType, IFileType } from '/@/components/Data/FileType'
 import { expose } from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
@@ -16,8 +17,6 @@ import { AnyDirectoryHandle } from '../../FileSystem/Types'
 export type { ILightningInstruction } from './LightningCache/LightningCache'
 
 export interface IPackIndexerOptions {
-	projectDirectory: AnyDirectoryHandle
-	baseDirectory: AnyDirectoryHandle
 	pluginFileTypes: IFileType[]
 	disablePackSpider: boolean
 	noFullLightningCacheRefresh: boolean
@@ -32,9 +31,13 @@ export class PackIndexerService extends TaskService<
 	public fileSystem: FileSystem
 	public dataLoader = new DataLoader()
 
-	constructor(protected readonly options: IPackIndexerOptions) {
+	constructor(
+		projectDirectory: AnyDirectoryHandle,
+		protected baseDirectory: AnyDirectoryHandle,
+		protected readonly options: IPackIndexerOptions
+	) {
 		super()
-		this.fileSystem = new FileSystem(options.projectDirectory)
+		this.fileSystem = new FileSystem(projectDirectory)
 		this.lightningStore = new LightningStore(this.fileSystem)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
@@ -42,7 +45,11 @@ export class PackIndexerService extends TaskService<
 	}
 
 	getOptions() {
-		return this.options
+		return {
+			projectDirectory: this.fileSystem.baseDirectory,
+			baseDirectory: this.baseDirectory,
+			...this.options,
+		}
 	}
 
 	async onStart() {

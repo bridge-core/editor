@@ -1,3 +1,4 @@
+import '/@/components/FileSystem/Virtual/Comlink'
 import { expose } from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { loadPlugins } from './Plugins'
@@ -9,9 +10,6 @@ import { DataLoader } from '../../Data/DataLoader'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 
 export interface ICompilerOptions {
-	projectDirectory: AnyDirectoryHandle
-	baseDirectory: AnyDirectoryHandle
-	comMojangDirectory?: AnyDirectoryHandle
 	config: string
 	mode: 'dev' | 'build'
 	isDevServerRestart: boolean
@@ -44,20 +42,29 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 		compilers.set(this, val)
 	}
 
-	constructor(protected readonly options: ICompilerOptions) {
+	constructor(
+		projectDirectory: AnyDirectoryHandle,
+		protected baseDirectory: AnyDirectoryHandle,
+		comMojangDirectory: AnyDirectoryHandle | undefined,
+		protected readonly options: ICompilerOptions
+	) {
 		super()
-		this.fileSystem = new FileSystem(options.projectDirectory)
+
+		this.fileSystem = new FileSystem(projectDirectory)
 		FileType.setPluginFileTypes(options.pluginFileTypes)
 		this.compiler = new Compiler(this)
 
-		if (this.options.comMojangDirectory)
-			this._outputFileSystem = new FileSystem(
-				this.options.comMojangDirectory
-			)
+		if (comMojangDirectory)
+			this._outputFileSystem = new FileSystem(comMojangDirectory)
 	}
 
 	getOptions() {
-		return this.options
+		return {
+			baseDirectory: this.baseDirectory,
+			projectDirectory: this.fileSystem.baseDirectory,
+			comMojangDirectory: this._outputFileSystem?.baseDirectory,
+			...this.options,
+		}
 	}
 	getPlugins() {
 		return this.plugins
@@ -89,7 +96,6 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 	}
 
 	async onStart([updatedFiles, deletedFiles]: [string[], string[]]) {
-		const globalFs = new FileSystem(this.options.baseDirectory)
 		await FileType.setup(this.dataLoader)
 
 		try {
@@ -130,7 +136,7 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 	}
 
 	async loadPlugins(plugins: Record<string, string>) {
-		const globalFs = new FileSystem(this.options.baseDirectory)
+		const globalFs = new FileSystem(this.getOptions().baseDirectory)
 
 		this.plugins = await loadPlugins({
 			fileSystem: globalFs,
@@ -139,7 +145,7 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 			outputFs: this.outputFileSystem,
 			pluginOpts: this.pluginOpts,
 			hasComMojangDirectory:
-				this.options.comMojangDirectory !== undefined,
+				this.getOptions().comMojangDirectory !== undefined,
 			getAliases: (filePath: string) =>
 				this.compiler.getAliases(filePath),
 			compileFiles: (files: string[]) =>

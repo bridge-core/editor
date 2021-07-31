@@ -1,6 +1,7 @@
 import { BaseVirtualHandle } from './Handle'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
+import { ISerializedFileHandle } from './Comlink'
 
 /**
  * A class that implements a virtual file
@@ -24,6 +25,13 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		super(parent, name)
 	}
 
+	serialize(): ISerializedFileHandle {
+		return {
+			kind: 'file',
+			name: this.name,
+			data: this.data,
+		}
+	}
 	async getFile() {
 		return new File([this.data], this.name)
 	}
