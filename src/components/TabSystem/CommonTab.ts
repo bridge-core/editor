@@ -7,6 +7,7 @@ import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { FileTab } from './FileTab'
 
 export abstract class Tab extends Signal<Tab> {
 	abstract component: Vue.Component
@@ -34,7 +35,7 @@ export abstract class Tab extends Signal<Tab> {
 		return false
 	}
 
-	constructor(protected parent: TabSystem) {
+	constructor(protected parent: TabSystem, protected tab?: FileTab) {
 		super()
 		window.setTimeout(() => this.setup())
 	}
