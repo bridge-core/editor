@@ -47,11 +47,19 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		// Listen for dark/light mode changes
 		const media = window.matchMedia('(prefers-color-scheme: light)')
 		this.mode = media.matches ? 'light' : 'dark'
-		media.addEventListener('change', (mediaQuery) => {
+		const onMediaChange = (mediaQuery: MediaQueryListEvent) => {
 			this.colorScheme.dispatch(mediaQuery.matches ? 'light' : 'dark')
 			this.mode = mediaQuery.matches ? 'light' : 'dark'
 			this.updateTheme()
-		})
+		}
+
+		if ('addEventListener' in media) {
+			media.addEventListener('change', (mediaQuery) =>
+				onMediaChange(mediaQuery)
+			)
+		} else {
+			media.addListener((mediaQuery) => onMediaChange(mediaQuery))
+		}
 
 		/**
 		 * Setup theme meta tag
