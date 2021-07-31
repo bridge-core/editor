@@ -54,6 +54,9 @@ export default {
 	margin-left: 8px;
 	font-size: 14px;
 }
+.monaco-editor {
+	user-select: auto;
+}
 .monaco-editor
 	.peekview-widget
 	.head
