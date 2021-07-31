@@ -20,6 +20,8 @@ export default {
 		fileName: 'File Name',
 		confirmOverwriteFile:
 			'A file with this name already exists. Do you want to overwrite it?',
+		fileSystemPolyfill:
+			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome or Edge!',
 	},
 	packType: {
 		behaviorPack: {

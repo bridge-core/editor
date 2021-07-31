@@ -10,11 +10,20 @@ import { showContextMenu } from '../ContextMenu/showContextMenu'
 import { set } from '@vue/composition-api'
 import { InputWindow } from '../Windows/Common/Input/InputWindow'
 import { dirname, extname, join } from '/@/utils/path'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
+import { SidebarInfoPanel } from '../Sidebar/Content/SidebarInfoPanel'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
 	actions: SidebarAction[] = []
 	directoryEntries: Record<string, DirectoryEntry> = {}
+	topPanel = isUsingFileSystemPolyfill
+		? new SidebarInfoPanel({
+				type: 'warning',
+				text: 'general.fileSystemPolyfill',
+				isDismissible: true,
+		  })
+		: undefined
 
 	constructor() {
 		super()

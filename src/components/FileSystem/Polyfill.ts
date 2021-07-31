@@ -1,7 +1,11 @@
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 import { VirtualFileHandle } from './Virtual/FileHandle'
 
+export let isUsingFileSystemPolyfill = false
+
 if (typeof window.showDirectoryPicker !== 'function') {
+	isUsingFileSystemPolyfill = true
+
 	window.showDirectoryPicker = async () =>
 		// @ts-ignore Typescript doesn't like our polyfill
 		new VirtualDirectoryHandle()

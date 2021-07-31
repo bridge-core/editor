@@ -53,6 +53,7 @@ export class SidebarElement {
 			this.config.sidebarContent = new (class extends SidebarContent {
 				protected component = component
 				protected actions = undefined
+				protected topPanel = undefined
 			})()
 		}
 	}
