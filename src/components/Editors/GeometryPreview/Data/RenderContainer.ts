@@ -19,7 +19,7 @@ export class RenderDataContainer extends EventDispatcher<void> {
 	protected _geometries: GeometryData[] = []
 	protected _animations: AnimationData[] = []
 	protected readyPromises: Promise<void>[] = []
-	protected _currentTexturePath = this.texturePaths[0]
+	protected _currentTexturePath: string
 	protected _runningAnimations = new Set<string>()
 	protected particleEffects: ParticleData[] = []
 	protected _serverEntity?: EntityData
@@ -30,6 +30,8 @@ export class RenderDataContainer extends EventDispatcher<void> {
 
 	constructor(public readonly app: App, protected renderData: IRenderData) {
 		super()
+		console.log(this.renderData)
+		this._currentTexturePath = this.texturePaths[0]
 	}
 	update(renderData: IRenderData) {
 		this.renderData = renderData
