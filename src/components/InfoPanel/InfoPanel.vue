@@ -2,6 +2,7 @@
 	<v-alert
 		:type="infoPanel.type"
 		rounded="lg"
+		border="bottom"
 		:dismissible="infoPanel.isDismissible"
 	>
 		{{ t(infoPanel.text) }}
