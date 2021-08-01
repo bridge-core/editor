@@ -11,14 +11,14 @@ import { set } from '@vue/composition-api'
 import { InputWindow } from '../Windows/Common/Input/InputWindow'
 import { dirname, extname, join } from '/@/utils/path'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
-import { SidebarInfoPanel } from '../Sidebar/Content/SidebarInfoPanel'
+import { InfoPanel } from '../InfoPanel/InfoPanel'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
 	actions: SidebarAction[] = []
 	directoryEntries: Record<string, DirectoryEntry> = {}
 	topPanel = isUsingFileSystemPolyfill
-		? new SidebarInfoPanel({
+		? new InfoPanel({
 				type: 'warning',
 				text: 'general.fileSystemPolyfill',
 				isDismissible: true,

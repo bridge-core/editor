@@ -606,6 +606,12 @@ export default {
 		title: 'Access to folder "com.mojang"',
 		permissionRequest:
 			'bridge. needs access to your "com.mojang" folder in order to compile projects to it.',
+		status: {
+			sucess: 'Syncing your projects to com.mojang is setup correctly.',
+			deniedPermission:
+				'You setup com.mojang syncing but you did not grant bridge. permission to the folder.',
+			notSetup: 'You did not setup com.mojang syncing yet.',
+		},
 	},
 	findAndReplace: {
 		name: 'Find & Replace',

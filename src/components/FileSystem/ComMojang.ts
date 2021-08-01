@@ -1,4 +1,4 @@
-import { get, set } from 'idb-keyval'
+import { del, get, set } from 'idb-keyval'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { FileSystem } from './FileSystem'
 import { App } from '/@/App'
@@ -15,7 +15,7 @@ export class ComMojang extends Signal<void> {
 	 */
 	public readonly setup = new Signal<void>()
 	protected _hasComMojang = false
-	protected permissionDenied = false
+	protected _permissionDenied = false
 
 	get hasComMojang() {
 		return this._hasComMojang
@@ -23,7 +23,7 @@ export class ComMojang extends Signal<void> {
 	get status() {
 		return {
 			hasComMojang: this._hasComMojang,
-			permissionDenied: this.permissionDenied,
+			didDenyPermission: this._permissionDenied,
 		}
 	}
 
@@ -67,7 +67,7 @@ export class ComMojang extends Signal<void> {
 		})
 		if (permission !== 'granted') {
 			this._hasComMojang = false
-			this.permissionDenied = true
+			this._permissionDenied = true
 			await this.app.projectManager.recompileAll()
 		} else {
 			this.fileSystem.setup(directoryHandle)
@@ -93,5 +93,10 @@ export class ComMojang extends Signal<void> {
 			await this.set(directoryHandle)
 			await this.app.projectManager.recompileAll()
 		}
+	}
+
+	async unlink() {
+		await this.app.projectManager.recompileAll()
+		await del(comMojangKey)
 	}
 }

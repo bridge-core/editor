@@ -1,11 +1,11 @@
-interface IPanelOptions {
-	type: 'info' | 'warning' | 'error'
+export interface IPanelOptions {
+	type: 'info' | 'warning' | 'error' | 'success'
 	text: string
 	isDismissible?: boolean
 }
 
-export class SidebarInfoPanel {
-	protected type: 'info' | 'warning' | 'error'
+export class InfoPanel {
+	protected type: 'info' | 'warning' | 'error' | 'success'
 	protected text: string
 	protected isDismissible: boolean
 

@@ -7,15 +7,11 @@
 		}"
 	>
 		<BridgeSheet :style="{ height: '100%', overflow: 'auto' }">
-			<v-alert
-				class="ma-2"
+			<InfoPanel
 				v-if="content.topPanel"
-				:type="content.topPanel.type"
-				rounded="lg"
-				:dismissible="content.topPanel.isDismissible"
-			>
-				{{ t(content.topPanel.text) }}
-			</v-alert>
+				class="ma-2"
+				:infoPanel="content.topPanel"
+			/>
 
 			<ActionBar
 				v-if="content.actions && content.actions.length > 0"
@@ -28,17 +24,17 @@
 </template>
 
 <script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { SidebarState } from '../state'
 import ActionBar from './ActionBar.vue'
 import { App } from '/@/App'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
+import InfoPanel from '/@/components/InfoPanel/InfoPanel.vue'
 
 export default {
-	mixins: [TranslationMixin],
 	components: {
 		BridgeSheet,
 		ActionBar,
+		InfoPanel,
 	},
 
 	mounted() {

@@ -5,6 +5,7 @@ import JSON5 from 'json5'
 import { App } from '/@/App'
 import { deepMergeAll } from '/@/utils/deepmerge'
 import { Signal } from '../Common/Event/Signal'
+import { InfoPanel, IPanelOptions } from '../InfoPanel/InfoPanel'
 
 export class CompilerManager extends Signal<void> {
 	protected compilers = new Map<string, Compiler>()
@@ -97,12 +98,47 @@ export class CompilerManager extends Signal<void> {
 		)
 	}
 	async openWindow() {
+		const comMojang = this.project.app.comMojang
+		const { hasComMojang, didDenyPermission } = comMojang.status
+
 		const configDir = await this.project.fileSystem.getDirectoryHandle(
 			`.bridge/compiler`,
 			{ create: true }
 		)
-		const informedChoice = new InformedChoiceWindow('sidebar.compiler.name')
+		const informedChoice = new (class extends InformedChoiceWindow {
+			constructor() {
+				super('sidebar.compiler.name')
+
+				let panelConfig: IPanelOptions
+
+				if (!hasComMojang && didDenyPermission) {
+					panelConfig = {
+						text: 'comMojang.status.deniedPermission',
+						type: 'warning',
+						isDismissible: false,
+					}
+				} else if (hasComMojang && !didDenyPermission) {
+					panelConfig = {
+						text: 'comMojang.status.sucess',
+						type: 'success',
+						isDismissible: false,
+					}
+				} else if (!hasComMojang) {
+					panelConfig = {
+						text: 'comMojang.status.notSetup',
+						type: 'error',
+						isDismissible: false,
+					}
+				} else {
+					throw new Error(`Invalid com.mojang status`)
+				}
+
+				this.topPanel = new InfoPanel(panelConfig)
+			}
+		})()
+
 		const actionManager = await informedChoice.actionManager
+
 		for await (const entry of configDir.values()) {
 			if (entry.kind !== 'file' || entry.name === '.DS_Store') continue
 			const file = await entry.getFile()

@@ -1,10 +1,10 @@
 import { Component } from 'vue'
 import { SelectableSidebarAction } from './SelectableSidebarAction'
 import { SidebarAction } from './SidebarAction'
-import { SidebarInfoPanel } from './SidebarInfoPanel'
+import { InfoPanel } from '../../InfoPanel/InfoPanel'
 
 export abstract class SidebarContent {
-	protected abstract topPanel?: SidebarInfoPanel
+	protected abstract topPanel?: InfoPanel
 	protected abstract actions?: SidebarAction[]
 	public selectedAction?: SidebarAction = undefined
 	protected abstract component: Component
