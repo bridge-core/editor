@@ -255,13 +255,17 @@ export class PackExplorer extends SidebarContent {
 							description:
 								'windows.packExplorer.fileActions.viewCompilerOutput.description',
 							onTrigger: async () => {
+								const app = project.app
 								const transformedPath = await project.compilerManager.current.getCompilerOutputPath(
 									path
 								)
+								const fileSystem = app.comMojang.hasComMojang
+									? app.comMojang.fileSystem
+									: project.fileSystem
 
 								// TODO: Information when file does not exist
 								if (
-									!(await project.fileSystem.fileExists(
+									!(await fileSystem.fileExists(
 										transformedPath
 									))
 								) {
@@ -272,7 +276,7 @@ export class PackExplorer extends SidebarContent {
 									return
 								}
 
-								const fileHandle = await project.fileSystem.getFileHandle(
+								const fileHandle = await fileSystem.getFileHandle(
 									transformedPath
 								)
 								await project.tabSystem?.open(
