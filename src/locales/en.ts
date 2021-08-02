@@ -611,6 +611,8 @@ export default {
 			deniedPermission:
 				'You setup com.mojang syncing but you did not grant bridge. permission to the folder.',
 			notSetup: 'You have not setup com.mojang syncing yet.',
+			notAvailable:
+				'Syncing projects to the com.mojang folder is only available for Chrome and Edge users.',
 		},
 	},
 	findAndReplace: {
