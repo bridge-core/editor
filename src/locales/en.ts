@@ -366,6 +366,8 @@ export default {
 				name: 'Open Project',
 				description:
 					'Open a different project by selecting the corresponding .brproject file.',
+				saveCurrentProject:
+					'Do you want to save your current project before loading in the new one?',
 			},
 			wrongFileType: 'Project must be a .brproject file',
 		},
@@ -390,6 +392,9 @@ export default {
 				name: 'Open Project Config',
 				missing:
 					'It looks like this project has no config.json file. Every project needs a project config in order to work correctly.',
+			},
+			exportAsMcaddon: {
+				name: 'Export as .mcaddon',
 			},
 			fileActions: {
 				delete: {

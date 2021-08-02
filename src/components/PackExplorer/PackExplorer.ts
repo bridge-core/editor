@@ -13,6 +13,7 @@ import { dirname, extname, join } from '/@/utils/path'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 import { InfoPanel } from '../InfoPanel/InfoPanel'
 import { exportAsBrproject } from '../Projects/Export/AsBrproject'
+import { exportAsMcaddon } from '../Projects/Export/AsMcaddon'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -352,6 +353,12 @@ export class PackExplorer extends SidebarContent {
 						},
 					})
 				},
+			},
+			// Export project as .mcaddon
+			{
+				icon: 'mdi-folder-zip-outline',
+				name: 'windows.packExplorer.exportAsMcaddon.name',
+				onTrigger: () => exportAsMcaddon(),
 			},
 			// Project config
 			{

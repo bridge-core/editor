@@ -2,20 +2,19 @@ import { unzip } from 'fflate'
 import { basename, dirname } from '/@/utils/path'
 import { GenericUnzipper } from './GenericUnzipper'
 import { AnyDirectoryHandle } from '../Types'
+import { FileSystem } from '../FileSystem'
 
 export class Unzipper extends GenericUnzipper<Uint8Array> {
 	unzip(data: Uint8Array) {
 		return new Promise<void>(async (resolve, reject) => {
 			unzip(data, async (error, zip) => {
 				if (error) return reject(error)
-
-				const handles: Record<string, AnyDirectoryHandle> = {
-					'.': this.directory,
-				}
+				const fs = new FileSystem(this.directory)
 
 				this.task?.update(0, Object.keys(zip).length)
 
 				let currentFileCount = 0
+				console.log(zip)
 				for (const filePath in zip) {
 					const name = basename(filePath)
 					if (name.startsWith('.')) {
@@ -25,15 +24,7 @@ export class Unzipper extends GenericUnzipper<Uint8Array> {
 						continue
 					}
 
-					const parentDir = dirname(filePath)
-
 					if (filePath.endsWith('/')) {
-						handles[filePath.slice(0, -1)] = await handles[
-							parentDir
-						].getDirectoryHandle(name, {
-							create: true,
-						})
-
 						this.task?.update(++currentFileCount)
 						// @ts-expect-error
 						zip[filePath] = undefined
@@ -41,9 +32,7 @@ export class Unzipper extends GenericUnzipper<Uint8Array> {
 					}
 
 					await this.fileSystem.write(
-						await handles[parentDir].getFileHandle(name, {
-							create: true,
-						}),
+						await fs.getFileHandle(filePath, true),
 						zip[filePath]
 					)
 					// @ts-expect-error

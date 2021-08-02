@@ -8,6 +8,7 @@ import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { exportAsBrproject } from '../Projects/Export/AsBrproject'
+import { importFromBrproject } from '../Projects/Import/fromBrproject'
 
 export function setupSidebar() {
 	createSidebar({
@@ -60,7 +61,10 @@ export function setupSidebar() {
 									'windows.projectChooser.wrongFileType',
 							})
 
-						console.log(projectHandle)
+						const file = await projectHandle.getFile()
+						await importFromBrproject(
+							new Uint8Array(await file.arrayBuffer())
+						)
 					},
 				})
 			} else {
