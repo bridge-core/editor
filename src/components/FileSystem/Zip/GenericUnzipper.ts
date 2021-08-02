@@ -1,7 +1,7 @@
 import { ITaskDetails, Task } from '/@/components/TaskManager/Task'
 import { TaskManager } from '/@/components/TaskManager/TaskManager'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { AnyDirectoryHandle } from './Types'
+import { AnyDirectoryHandle } from '../Types'
 
 export abstract class GenericUnzipper<T> {
 	protected fileSystem: FileSystem

@@ -1,7 +1,7 @@
 import { unzip } from 'fflate'
 import { basename, dirname } from '/@/utils/path'
 import { GenericUnzipper } from './GenericUnzipper'
-import { AnyDirectoryHandle } from './Types'
+import { AnyDirectoryHandle } from '../Types'
 
 export class Unzipper extends GenericUnzipper<Uint8Array> {
 	unzip(data: Uint8Array) {

@@ -12,6 +12,7 @@ import { InputWindow } from '../Windows/Common/Input/InputWindow'
 import { dirname, extname, join } from '/@/utils/path'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 import { InfoPanel } from '../InfoPanel/InfoPanel'
+import { exportAsBrproject } from '../Projects/Export/AsBrproject'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -53,9 +54,7 @@ export class PackExplorer extends SidebarContent {
 					this.actions.push(
 						new SidebarAction({
 							icon: 'mdi-content-save-outline',
-							onTrigger: (event) => {
-								// TODO: Download whole project
-							},
+							onTrigger: () => exportAsBrproject(),
 						})
 					)
 				}

@@ -7,6 +7,7 @@ import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
+import { exportAsBrproject } from '../Projects/Export/AsBrproject'
 
 export function setupSidebar() {
 	createSidebar({
@@ -29,9 +30,7 @@ export function setupSidebar() {
 					name: 'windows.projectChooser.saveCurrentProject.name',
 					description:
 						'windows.projectChooser.saveCurrentProject.description',
-					onTrigger: () => {
-						// TODO: Save current project
-					},
+					onTrigger: () => exportAsBrproject(),
 				})
 
 				actions.create({
