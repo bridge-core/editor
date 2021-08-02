@@ -30,7 +30,6 @@ export class RenderDataContainer extends EventDispatcher<void> {
 
 	constructor(public readonly app: App, protected renderData: IRenderData) {
 		super()
-		console.log(this.renderData)
 		this._currentTexturePath = this.texturePaths[0]
 	}
 	update(renderData: IRenderData) {
