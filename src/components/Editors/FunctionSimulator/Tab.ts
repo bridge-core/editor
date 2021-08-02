@@ -3,6 +3,7 @@ import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import FunctionSimulatorTabComponent from './Tab.vue'
 import { Tab } from '../../TabSystem/CommonTab'
 import { App } from '/@/App'
+import * as monaco from 'monaco-editor'
 
 export class FunctionSimulatorTab extends Tab {
 	get name(): string {
@@ -42,8 +43,41 @@ export class FunctionSimulatorTab extends Tab {
 
 		console.log(file)
 
-		let contents = await file.text()
+		let contents = await file?.text()
+
+		let textDisplayElement: HTMLElement | null = null
+
+		textDisplayElement = document.getElementById(
+			'function-simulator-line-inspector-text'
+		)
+
+		console.log('Before Color')
+
+		if (textDisplayElement && contents) {
+			//textDisplayElement.textContent = contents || 'Function Is Empty!'
+
+			//monaco.editor.colorizeElement(
+			//	textDisplayElement,
+			//	new monaco.editor.IColorizerElementOptions()
+			//)
+			let colorize = await monaco.editor.colorize(
+				contents,
+				'mcfunction',
+				{
+					tabSize: 5,
+				}
+			)
+
+			console.log('Colorization:')
+			console.log(colorize)
+
+			textDisplayElement.innerHTML = colorize
+		} else {
+			console.log('Text Element Null')
+		}
 
 		console.log(contents)
+
+		console.log('Finished Tab Log')
 	}
 }
