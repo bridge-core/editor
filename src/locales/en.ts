@@ -610,7 +610,7 @@ export default {
 			sucess: 'Syncing your projects to com.mojang is setup correctly.',
 			deniedPermission:
 				'You setup com.mojang syncing but you did not grant bridge. permission to the folder.',
-			notSetup: 'You did not setup com.mojang syncing yet.',
+			notSetup: 'You have not setup com.mojang syncing yet.',
 		},
 	},
 	findAndReplace: {

@@ -175,8 +175,15 @@ export class FileSystem extends Signal<void> {
 		)
 	}
 
-	async renameFile(path: string, newPath: string) {
-		await this.copyFile(path, newPath)
+	async rename(path: string, newPath: string) {
+		if (await this.fileExists(path)) {
+			await this.copyFile(path, newPath)
+		} else if (await this.directoryExists(path)) {
+			await this.copyFolder(path, newPath)
+		} else {
+			throw new Error(`File or folder does not exist: ${path}`)
+		}
+
 		await this.unlink(path)
 	}
 	async copyFile(originPath: string, destPath: string) {

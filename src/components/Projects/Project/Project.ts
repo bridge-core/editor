@@ -210,6 +210,15 @@ export abstract class Project {
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
+	async unlinkFile(filePath: string) {
+		await this.packIndexer.unlink(filePath)
+		await this.compilerManager.unlink(filePath)
+		await this.fileSystem.unlink(filePath)
+	}
+	async updateChangedFiles() {
+		await this.packIndexer.activate(true)
+		await this.compilerManager.start('default.json', 'dev')
+	}
 
 	async getFileFromDiskOrTab(filePath: string) {
 		const fileHandle = await this.fileSystem.getFileHandle(filePath)

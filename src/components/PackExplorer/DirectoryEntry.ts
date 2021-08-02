@@ -6,6 +6,7 @@ import { FileType } from '/@/components/Data/FileType'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { reactive } from '@vue/composition-api'
 import { settingsState } from '../Windows/Settings/SettingsState'
+import { join } from '/@/utils/path'
 
 export class DirectoryEntry {
 	protected children: DirectoryEntry[] = []
@@ -125,6 +126,16 @@ export class DirectoryEntry {
 	}
 	setPath(path: string) {
 		return (this.path = path.split('/'))
+	}
+	updatePath(newPath: string) {
+		this.path = newPath.split('/')
+
+		// If current entry is a directory, update all children
+		if (!this._isFile) {
+			this.children.forEach((child) => {
+				child.updatePath(join(newPath, child.name))
+			})
+		}
 	}
 	/**
 	 * @returns Whether to close the window

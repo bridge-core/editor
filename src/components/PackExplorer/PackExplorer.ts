@@ -178,7 +178,7 @@ export class PackExplorer extends SidebarContent {
 
 								// The rename action needs to happen after deleting the old file inside of the output directory
 								// because the compiler will fail to unlink it if the original file doesn't exist.
-								await project.fileSystem.renameFile(
+								await project.fileSystem.rename(
 									path,
 									newFilePath
 								)
