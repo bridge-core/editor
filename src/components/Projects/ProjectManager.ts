@@ -10,6 +10,7 @@ import { BedrockProject } from './Project/BedrockProject'
 import { InitialSetup } from '../InitialSetup/InitialSetup'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyDirectoryHandle, AnyHandle } from '../FileSystem/Types'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -99,7 +100,10 @@ export class ProjectManager extends Signal<void> {
 			const createProject = this.app.windows.createProject
 			createProject.open(true)
 			await createProject.fired
-		} else {
+		} else if (!isUsingFileSystemPolyfill) {
+			// If a browser is using the file system polyfill, and the folder already contains a project,
+			// then we don't need to load the projects because the importFromBrproject() method already did that
+
 			// Load existing projects
 			for (const projectDir of loadProjects) {
 				await this.addProject(projectDir, false)
@@ -127,6 +131,8 @@ export class ProjectManager extends Signal<void> {
 
 		app.themeManager.updateTheme()
 		App.eventSystem.dispatch('projectChanged', undefined)
+
+		if (!this.projectReady.hasFired) this.projectReady.dispatch()
 	}
 	async selectLastProject(app: App) {
 		await this.fired
@@ -149,8 +155,6 @@ export class ProjectManager extends Signal<void> {
 		} else {
 			throw new Error(`Expected string, found ${typeof projectName}`)
 		}
-
-		this.projectReady.dispatch()
 	}
 	protected async loadFallback() {
 		await this.fired

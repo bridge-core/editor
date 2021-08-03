@@ -1,13 +1,8 @@
 import { baseUrl } from '/@/utils/baseUrl'
-import { Signal } from '/@/components/Common/Event/Signal'
 import { unzip, Unzipped } from 'fflate'
 import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
 import { basename, dirname } from '/@/utils/path'
-import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
-import json5 from 'json5'
-import type { VirtualHandle } from '../FileSystem/Virtual/Handle'
 import { FileSystem } from '../FileSystem/FileSystem'
-import { IGetHandleConfig } from '../FileSystem/Common'
 
 export class DataLoader extends FileSystem {
 	_virtualFileSystem?: VirtualDirectoryHandle

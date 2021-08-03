@@ -672,6 +672,19 @@ export default {
 				description:
 					'Please create a folder where bridge. can save app related data and your add-on projects.',
 			},
+			bridgeProject: {
+				name: 'bridge. Project',
+				description:
+					'Do you want to create a new project or import an existing project from a .brproject file?',
+				createNew: {
+					name: 'New Project',
+					description: 'Create a new project.',
+				},
+				importExisting: {
+					name: 'Import Project',
+					description: 'Import an existing project.',
+				},
+			},
 			comMojang: {
 				name: 'com.mojang Folder',
 				description:

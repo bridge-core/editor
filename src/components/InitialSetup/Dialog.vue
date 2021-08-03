@@ -40,7 +40,11 @@
 							:key="`${name}.content`"
 							:step="i + 1"
 						>
-							<component :is="component" @next="onNext()" />
+							<component
+								:is="component"
+								@next="onNext()"
+								@done="onDone()"
+							/>
 						</v-stepper-content>
 					</template>
 				</v-stepper>
@@ -53,6 +57,7 @@
 import { App } from '/@/App.ts'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import InstallAppStep from './Steps/InstallApp.vue'
+import BridgeProjectStep from './Steps/BridgeProject.vue'
 import BridgeFolderStep from './Steps/BridgeFolder.vue'
 import ComMojangStep from './Steps/ComMojang.vue'
 import EditorTypeStep from './Steps/EditorType.vue'
@@ -75,13 +80,18 @@ export default {
 		setupInProgress: true,
 		stepId: 1,
 		steps: [
-			{
-				name: 'initialSetup.step.bridge',
-				component: BridgeFolderStep,
-			},
 			...(isUsingFileSystemPolyfill
-				? []
+				? [
+						{
+							name: 'initialSetup.step.bridgeProject',
+							component: BridgeProjectStep,
+						},
+				  ]
 				: [
+						{
+							name: 'initialSetup.step.bridge',
+							component: BridgeFolderStep,
+						},
 						{
 							name: 'initialSetup.step.comMojang',
 							component: ComMojangStep,
@@ -107,12 +117,16 @@ export default {
 		})
 	},
 	methods: {
-		async onNext() {
+		onNext() {
 			this.stepId++
 
 			if (this.stepId > this.steps.length) {
 				InitialSetup.ready.dispatch()
 			}
+		},
+		onDone() {
+			this.stepId = this.steps.length + 1
+			InitialSetup.ready.dispatch()
 		},
 	},
 }

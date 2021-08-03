@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 export function translate(vuetify: any, translationKey?: string) {
 	const orginalKey = translationKey
@@ -56,5 +57,19 @@ export class Locales {
 
 	getCurrentLanguage() {
 		return this.vuetify.lang.current
+	}
+
+	setDefaultLanguage() {
+		// Set language
+		if (typeof settingsState?.general?.locale === 'string')
+			this.selectLanguage(settingsState?.general?.locale)
+		else {
+			// Set language based off of browser language
+			for (const [lang] of this.getLanguages()) {
+				if (navigator.language.includes(lang)) {
+					this.selectLanguage(lang)
+				}
+			}
+		}
 	}
 }

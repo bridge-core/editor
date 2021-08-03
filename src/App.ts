@@ -165,7 +165,8 @@ export class App {
 		await this.instance.startUp()
 
 		this.ready.dispatch(this.instance)
-		await this.instance.projectManager.selectLastProject(this.instance)
+		if (!isUsingFileSystemPolyfill)
+			await this.instance.projectManager.selectLastProject(this.instance)
 
 		this.instance.windows.loadingWindow.close()
 	}
@@ -216,17 +217,7 @@ export class App {
 	async startUp() {
 		console.time('[APP] startUp()')
 
-		// Set language
-		if (typeof settingsState?.general?.locale === 'string')
-			this.locales.selectLanguage(settingsState?.general?.locale)
-		else {
-			// Set language based off of browser language
-			for (const [lang] of this.locales.getLanguages()) {
-				if (navigator.language.includes(lang)) {
-					this.locales.selectLanguage(lang)
-				}
-			}
-		}
+		this.locales.setDefaultLanguage()
 
 		await Promise.all([
 			// Create default folders

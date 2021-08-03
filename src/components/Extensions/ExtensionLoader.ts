@@ -189,6 +189,7 @@ export class ExtensionLoader extends Signal<void> {
 	}
 	disposeAll() {
 		this.deactiveAll(true)
+		this.resetSignal()
 	}
 
 	mapActive<T>(cb: (ext: Extension) => T) {

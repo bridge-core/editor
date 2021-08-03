@@ -287,6 +287,7 @@ export async function setupSettings(settings: SettingsWindow) {
 	// Actions
 	const app = await App.getApp()
 	Object.values(app.actionManager.state).forEach((action) => {
-		settings.addControl(new ActionViewer(action))
+		if (action.type === 'action')
+			settings.addControl(new ActionViewer(action))
 	})
 }
