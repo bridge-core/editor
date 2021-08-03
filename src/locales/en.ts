@@ -327,6 +327,8 @@ export default {
 			useLangForManifest:
 				'Add pack name/description directly to the manifest',
 			create: 'Create',
+			saveCurrentProject:
+				'Do you want to save your current project before creating the new one? Any unsaved changes will get lost!',
 		},
 		createPreset: {
 			title: 'Create Preset',

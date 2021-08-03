@@ -11,6 +11,9 @@ import { IPackType, PackType } from '/@/components/Data/PackType'
 import { CreateGitIgnore } from './Files/GitIgnore'
 import { CreateWT } from './Packs/WT'
 import { CreateConfig } from './Files/Config'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import { ConfirmationWindow } from '../../Windows/Common/Confirm/ConfirmWindow'
+import { exportAsBrproject } from '../Export/AsBrproject'
 
 export interface ICreateProjectOptions {
 	author: string
@@ -82,6 +85,18 @@ export class CreateProjectWindow extends BaseWindow {
 	async createProject() {
 		const app = await App.getApp()
 
+		// Ask user whether we should save the current project
+		if (isUsingFileSystemPolyfill && !this.isFirstProject) {
+			const confirmWindow = new ConfirmationWindow({
+				description: 'windows.createProject.saveCurrentProject',
+				cancelText: 'general.no',
+				confirmText: 'general.yes',
+			})
+			if (await confirmWindow.fired) {
+				await exportAsBrproject()
+			}
+		}
+
 		const fs = app.fileSystem
 		const projectDir = await fs.getDirectoryHandle(
 			`projects/${this.createOptions.name}`,
@@ -104,8 +119,15 @@ export class CreateProjectWindow extends BaseWindow {
 			await this.packs[pack].create(scopedFs, this.createOptions)
 		}
 
+		// Save previous project name to delete it later
+		let previousProject: string | undefined
+		if (!this.isFirstProject) previousProject = app.project.name
+
 		await app.projectManager.addProject(projectDir)
 		await app.extensionLoader.installFilesToCurrentProject()
+
+		if (isUsingFileSystemPolyfill && !this.isFirstProject)
+			await app.projectManager.removeProject(previousProject!)
 
 		this.createOptions = this.getDefaultOptions()
 
