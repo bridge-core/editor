@@ -14,7 +14,6 @@ export class Unzipper extends GenericUnzipper<Uint8Array> {
 				this.task?.update(0, Object.keys(zip).length)
 
 				let currentFileCount = 0
-				console.log(zip)
 				for (const filePath in zip) {
 					const name = basename(filePath)
 					if (name.startsWith('.')) {

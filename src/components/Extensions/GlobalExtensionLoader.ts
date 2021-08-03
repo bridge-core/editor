@@ -33,4 +33,11 @@ export class GlobalExtensionLoader extends ExtensionLoader {
 			)
 		)
 	}
+
+	async reload() {
+		this.disposeAll()
+		this.loadExtensions(
+			await this.fileSystem.getDirectoryHandle(`extensions`)
+		)
+	}
 }
