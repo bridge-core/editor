@@ -9,8 +9,6 @@ export class BrprojectImporter extends FileImporter {
 	}
 
 	async onImport(fileHandle: AnyFileHandle) {
-		const file = await fileHandle.getFile()
-
-		await importFromBrproject(new Uint8Array(await file.arrayBuffer()))
+		await importFromBrproject(fileHandle)
 	}
 }
