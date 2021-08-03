@@ -110,6 +110,22 @@ export class MonacoHolder extends Signal<void> {
 			},
 		})
 
+		// Monaco currently doesn't include " as a trigger character. This snippet works artificially makes it so
+		this._monacoEditor.onDidChangeModelContent((event) => {
+			const filePath = this._app.tabSystem?.selectedTab?.getProjectPath()
+			if (!filePath) return
+
+			if (!filePath.endsWith('.json')) return
+
+			if (event.changes.some((change) => change.text === '""')) {
+				this._monacoEditor?.trigger(
+					'',
+					'editor.action.triggerSuggest',
+					null
+				)
+			}
+		})
+
 		this._monacoEditor?.layout()
 		this.windowResize = this._app.windowResize.on(() =>
 			setTimeout(() => this._monacoEditor?.layout())
