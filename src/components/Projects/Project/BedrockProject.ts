@@ -46,7 +46,7 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 		name: 'simulate.function',
 		fileMatch: 'BP/functions/',
 		createPreview: async (tabSystem, tab) =>
-			new FunctionSimulatorTab(tabSystem, tab),
+			new FunctionSimulatorTab(tabSystem),
 	},
 ]
 
