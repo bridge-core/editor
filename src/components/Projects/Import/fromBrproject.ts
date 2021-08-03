@@ -1,11 +1,12 @@
 import { FileSystem } from '../../FileSystem/FileSystem'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import { AnyFileHandle } from '../../FileSystem/Types'
 import { Unzipper } from '../../FileSystem/Zip/Unzipper'
 import { ConfirmationWindow } from '../../Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { App } from '/@/App'
 
-export async function importFromBrproject(data: Uint8Array) {
+export async function importFromBrproject(fileHandle: AnyFileHandle) {
 	const app = await App.getApp()
 	const fs = app.fileSystem
 	const tmpHandle = await fs.getDirectoryHandle('import', {
@@ -14,6 +15,8 @@ export async function importFromBrproject(data: Uint8Array) {
 	const unzipper = new Unzipper(tmpHandle)
 
 	// Unzip .brproject file
+	const file = await fileHandle.getFile()
+	const data = new Uint8Array(await file.arrayBuffer())
 	unzipper.createTask(app.taskManager)
 	await unzipper.unzip(data)
 	let importFrom = 'import'

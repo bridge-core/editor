@@ -23,25 +23,47 @@ if (typeof window.showOpenFilePicker !== 'function') {
 			.map((e) => Object.values(e.accept))
 			.flat(2)
 			.join(',')
+		input.style.display = 'none'
+		document.body.appendChild(input)
 
-		return new Promise((resolve) => {
-			input.addEventListener('change', async (event) => {
-				const files = [...(input.files ?? [])]
+		let isLocked = false
+		return new Promise((resolve, reject) => {
+			input.addEventListener(
+				'change',
+				async (event) => {
+					isLocked = true
+					const files = [...(input.files ?? [])]
+					console.log('HERE')
 
-				resolve(
-					// @ts-ignore
-					await Promise.all(
-						files.map(
-							async (file) =>
-								new VirtualFileHandle(
-									null,
-									file.name,
-									new Uint8Array(await file.arrayBuffer())
-								)
+					document.body.removeChild(input)
+					resolve(
+						// @ts-ignore
+						await Promise.all(
+							files.map(
+								async (file) =>
+									new VirtualFileHandle(
+										null,
+										file.name,
+										new Uint8Array(await file.arrayBuffer())
+									)
+							)
 						)
 					)
-				)
-			})
+				},
+				{ once: true }
+			)
+			window.addEventListener(
+				'focus',
+				() => {
+					setTimeout(() => {
+						if (isLocked) return
+
+						reject('User aborted selecting file')
+						document.body.removeChild(input)
+					}, 300)
+				},
+				{ once: true }
+			)
 
 			input.click()
 		})

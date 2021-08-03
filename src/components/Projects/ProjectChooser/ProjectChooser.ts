@@ -5,6 +5,8 @@ import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import ProjectChooserComponent from './ProjectChooser.vue'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { v4 as uuid } from 'uuid'
+import { importFromBrproject } from '../Import/fromBrproject'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
 
 export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
@@ -15,8 +17,34 @@ export class ProjectChooserWindow extends BaseWindow {
 
 		this.actions.push(
 			new SimpleAction({
+				icon: 'mdi-import',
+				name: 'windows.projectChooser.importBrproject',
+				onTrigger: async () => {
+					let fileHandle: AnyFileHandle
+					try {
+						;[fileHandle] = await window.showOpenFilePicker({
+							multiple: false,
+							types: [
+								{
+									description: 'bridge. Project',
+									accept: {
+										'application/zip': ['.brproject'],
+									},
+								},
+							],
+						})
+					} catch {
+						// User aborted selecting new project
+						return
+					}
+
+					this.close()
+					await importFromBrproject(fileHandle)
+				},
+			}),
+			new SimpleAction({
 				icon: 'mdi-plus',
-				name: 'windows.projectChooser.newProject',
+				name: 'windows.projectChooser.newProject.name',
 				onTrigger: async () => {
 					const app = await App.getApp()
 					this.close()

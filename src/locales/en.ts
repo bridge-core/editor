@@ -356,7 +356,11 @@ export default {
 		projectChooser: {
 			title: 'Projects',
 			searchProjects: 'Search projects...',
-			newProject: 'New Project',
+			newProject: {
+				name: 'New Project',
+				description: 'Create a new bridge. project.',
+			},
+			importBrproject: 'Import Project',
 			saveCurrentProject: {
 				name: 'Save Project',
 				description:

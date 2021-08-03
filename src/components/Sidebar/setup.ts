@@ -9,6 +9,7 @@ import { InformedChoiceWindow } from '../Windows/InformedChoice/InformedChoice'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { exportAsBrproject } from '../Projects/Export/AsBrproject'
 import { importFromBrproject } from '../Projects/Import/fromBrproject'
+import { AnyFileHandle } from '../FileSystem/Types'
 
 export function setupSidebar() {
 	createSidebar({
@@ -27,6 +28,17 @@ export function setupSidebar() {
 				const actions = await choiceWindow.actionManager
 
 				actions.create({
+					icon: 'mdi-plus',
+					name: 'windows.projectChooser.newProject.name',
+					description:
+						'windows.projectChooser.saveCurrentProject.description',
+					onTrigger: async () => {
+						const app = await App.getApp()
+						app.windows.createProject.open()
+					},
+				})
+
+				actions.create({
 					icon: 'mdi-content-save-outline',
 					name: 'windows.projectChooser.saveCurrentProject.name',
 					description:
@@ -40,9 +52,10 @@ export function setupSidebar() {
 					description:
 						'windows.projectChooser.openNewProject.description',
 					onTrigger: async () => {
-						// TODO: Prompt user to select new project to open
-						const [projectHandle] = await window.showOpenFilePicker(
-							{
+						// Prompt user to select new project to open
+						let projectHandle: AnyFileHandle
+						try {
+							;[projectHandle] = await window.showOpenFilePicker({
 								multiple: false,
 								types: [
 									{
@@ -52,8 +65,10 @@ export function setupSidebar() {
 										},
 									},
 								],
-							}
-						)
+							})
+						} catch {
+							return
+						}
 
 						if (!projectHandle.name.endsWith('.brproject'))
 							return new InformationWindow({
@@ -61,10 +76,7 @@ export function setupSidebar() {
 									'windows.projectChooser.wrongFileType',
 							})
 
-						const file = await projectHandle.getFile()
-						await importFromBrproject(
-							new Uint8Array(await file.arrayBuffer())
-						)
+						await importFromBrproject(projectHandle)
 					},
 				})
 			} else {
