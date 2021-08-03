@@ -4,16 +4,22 @@ import FunctionSimulatorTabComponent from './Tab.vue'
 import { Tab } from '../../TabSystem/CommonTab'
 import { App } from '/@/App'
 import * as monaco from 'monaco-editor'
+import { TabSystem } from '../../TabSystem/TabSystem'
 
 export class FunctionSimulatorTab extends Tab {
-	protected fileHandle: FileSystemFileHandle | undefined
+	protected fileTab: FileTab | undefined
+
+	constructor(protected parent: TabSystem, protected tab: FileTab) {
+		super(parent)
+		this.fileTab = tab
+		window.setTimeout(() => this.setup())
+	}
 
 	get name(): string {
 		return this.parent.app.locales.translate('simulator.function')
 	}
 
 	isFor(fileHandle: FileSystemFileHandle): Promise<boolean> {
-		this.fileHandle = fileHandle
 		return Promise.resolve(false)
 	}
 
@@ -42,8 +48,8 @@ export class FunctionSimulatorTab extends Tab {
 				app.themeManager.getColor('lineHighlightBackground')
 		}
 
-		if (this.fileHandle) {
-			let file = await this.fileHandle.getFile()
+		if (this.fileTab) {
+			let file = await this.fileTab.getFile()
 
 			console.log(file)
 

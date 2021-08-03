@@ -54,6 +54,17 @@
 					class="d-flex align-center justify-start wh-100 border flex-column mw-50"
 				>
 					<h2>Inspector / Log</h2>
+					<p>Line: 4</p>
+					<p>Command: give</p>
+					<p>Warnings / Errors</p>
+					<span
+						><i class="mdi mdi-arrow-down-drop-circle mr-1-2"></i>
+						<p>
+							"sp:sapphire_leggings" Not found as an item or
+							block. Ignore this if this item / block is from
+							another pack.
+						</p></span
+					>
 				</div>
 			</div>
 		</div>
