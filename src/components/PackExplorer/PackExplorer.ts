@@ -1,19 +1,19 @@
 import { SidebarContent } from '/@/components/Sidebar/Content/SidebarContent'
 import { SelectableSidebarAction } from '/@/components/Sidebar/Content/SelectableSidebarAction'
-import { SidebarAction } from '../Sidebar/Content/SidebarAction'
+import { SidebarAction } from '/@/components/Sidebar/Content/SidebarAction'
 import PackExplorerComponent from './PackExplorer.vue'
 import { App } from '/@/App'
 import { DirectoryEntry } from './DirectoryEntry'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
-import { showContextMenu } from '../ContextMenu/showContextMenu'
+import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { set } from '@vue/composition-api'
-import { InputWindow } from '../Windows/Common/Input/InputWindow'
+import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 import { dirname, extname, join } from '/@/utils/path'
-import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
-import { InfoPanel } from '../InfoPanel/InfoPanel'
-import { exportAsBrproject } from '../Projects/Export/AsBrproject'
-import { exportAsMcaddon } from '../Projects/Export/AsMcaddon'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
+import { exportAsBrproject } from '/@/components/Projects/Export/AsBrproject'
+import { exportAsMcaddon } from '/@/components/Projects/Export/AsMcaddon'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -354,12 +354,22 @@ export class PackExplorer extends SidebarContent {
 					})
 				},
 			},
+			{ type: 'divider' },
+
 			// Export project as .mcaddon
 			{
 				icon: 'mdi-folder-zip-outline',
 				name: 'windows.packExplorer.exportAsMcaddon.name',
 				onTrigger: () => exportAsMcaddon(),
 			},
+			// Export project as .brproject
+			{
+				icon: 'mdi-export',
+				name: 'windows.packExplorer.exportAsBrproject.name',
+				onTrigger: () => exportAsBrproject(),
+			},
+			{ type: 'divider' },
+
 			// Project config
 			{
 				icon: 'mdi-cog-outline',

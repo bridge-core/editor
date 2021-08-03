@@ -404,6 +404,9 @@ export default {
 			exportAsMcaddon: {
 				name: 'Export as .mcaddon',
 			},
+			exportAsBrproject: {
+				name: 'Export as .brproject',
+			},
 			fileActions: {
 				delete: {
 					name: 'Delete',
