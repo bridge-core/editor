@@ -163,6 +163,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 
 	async requestSchemaFor(fileType: string, fromFilePath?: string) {
 		const packIndexer = this.project.packIndexer
+		await packIndexer.fired
 
 		return await packIndexer.service!.getSchemasFor(fileType, fromFilePath)
 	}
