@@ -11,6 +11,7 @@ export class BasicFileImporter extends FileImporter {
 		super(
 			[
 				'.mcfunction',
+				'.mcstructure',
 				'.json',
 				'.molang',
 				'.js',
