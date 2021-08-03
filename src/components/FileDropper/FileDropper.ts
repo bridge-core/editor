@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { App } from '/@/App'
 import { extname } from '/@/utils/path'
@@ -65,7 +66,10 @@ export class FileDropper {
 			if (!fileHandle) return
 
 			if (fileHandle.kind === 'directory') {
-				if (fileHandle.name === 'com.mojang')
+				if (
+					!isUsingFileSystemPolyfill &&
+					fileHandle.name === 'com.mojang'
+				)
 					this.app.comMojang.handleComMojangDrop(fileHandle)
 
 				// TODO: Handle import of other folders
