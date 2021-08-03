@@ -49,7 +49,10 @@ export class FileSystemSetup {
 			InitialSetup.ready.dispatch()
 		}
 
-		if (isUsingFileSystemPolyfill) {
+		if (
+			isUsingFileSystemPolyfill &&
+			!(await get<boolean>('confirmedUnsupportedBrowser'))
+		) {
 			// The user's browser doesn't support the native file system API
 			app.windows.browserUnsupported.open()
 		}
