@@ -3,6 +3,7 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { v4 as uuid } from 'uuid'
 
 export interface IActionConfig {
+	type?: 'action'
 	id?: string
 	icon?: string
 	name?: string

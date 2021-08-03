@@ -5,9 +5,9 @@ import { IPosition } from './ContextMenu'
 
 export async function showContextMenu(
 	event: MouseEvent | IPosition,
-	actions: (IActionConfig | null)[]
+	actions: (IActionConfig | { type: 'divider' } | null)[]
 ) {
-	let filteredActions = <IActionConfig[]>(
+	let filteredActions = <(IActionConfig | { type: 'divider' })[]>(
 		actions.filter((action) => action !== null)
 	)
 
@@ -20,7 +20,11 @@ export async function showContextMenu(
 	const app = await App.getApp()
 	const actionManager = new ActionManager()
 
-	filteredActions.forEach((action) => actionManager.create(action))
+	filteredActions.forEach((action) =>
+		action.type === 'divider'
+			? actionManager.addDivider()
+			: actionManager.create(action)
+	)
 
 	app.contextMenu.show(event, actionManager)
 }

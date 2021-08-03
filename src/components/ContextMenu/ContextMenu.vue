@@ -9,20 +9,23 @@
 		offset-y
 	>
 		<v-list dense>
-			<v-list-item
-				v-for="action in contextMenu.actionManager.state"
-				:key="action.id"
-				origin="center center"
-				transition="scale-transition"
-				@click="action.trigger()"
-			>
-				<v-list-item-icon class="mr-2">
-					<v-icon color="primary">{{ action.icon }}</v-icon>
-				</v-list-item-icon>
-				<v-list-item-action class="ma-0">{{
-					t(action.name)
-				}}</v-list-item-action>
-			</v-list-item>
+			<template v-for="(action, id) in contextMenu.actionManager.state">
+				<v-divider v-if="action.type === 'divider'" :key="id" />
+				<v-list-item
+					v-else
+					:key="id"
+					origin="center center"
+					transition="scale-transition"
+					@click="action.trigger()"
+				>
+					<v-list-item-icon class="mr-2">
+						<v-icon color="primary">{{ action.icon }}</v-icon>
+					</v-list-item-icon>
+					<v-list-item-action class="ma-0">
+						{{ t(action.name) }}
+					</v-list-item-action>
+				</v-list-item>
+			</template>
 		</v-list>
 	</v-menu>
 </template>
