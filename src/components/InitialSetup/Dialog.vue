@@ -59,6 +59,7 @@ import EditorTypeStep from './Steps/EditorType.vue'
 import { FileSystemSetup } from '/@/components/FileSystem/Setup.ts'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 import { InitialSetup } from './InitialSetup.ts'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 
 export default {
 	name: 'InitialSetupDialog',
@@ -78,10 +79,14 @@ export default {
 				name: 'initialSetup.step.bridge',
 				component: BridgeFolderStep,
 			},
-			{
-				name: 'initialSetup.step.comMojang',
-				component: ComMojangStep,
-			},
+			...(isUsingFileSystemPolyfill
+				? []
+				: [
+						{
+							name: 'initialSetup.step.comMojang',
+							component: ComMojangStep,
+						},
+				  ]),
 			{
 				name: 'initialSetup.step.editorType',
 				component: EditorTypeStep,
