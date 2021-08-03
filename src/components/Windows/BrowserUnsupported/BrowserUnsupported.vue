@@ -11,11 +11,20 @@
 	>
 		<template #default>
 			<div class="text-center">
-				<v-icon color="error" style="font-size: 8em;">
+				<v-icon color="error" style="font-size: 8em">
 					mdi-alert-octagon-outline
 				</v-icon>
 				<p>{{ t('windows.browserUnsupported.description') }}</p>
 			</div>
+		</template>
+
+		<template #actions>
+			<v-spacer />
+			<v-btn @click="onClose" color="error">
+				<v-icon class="mr-1">mdi-check</v-icon>
+				{{ t('windows.browserUnsupported.continue') }}
+			</v-btn>
+			<v-spacer />
 		</template>
 	</BaseWindow>
 </template>

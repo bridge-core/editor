@@ -575,7 +575,8 @@ export default {
 		browserUnsupported: {
 			title: 'Unsupported Browser',
 			description:
-				'Your browser is currently not supported. Please use Chrome (Desktop) or Edge (Chromium) in order to get started with bridge.!',
+				'Please use Chrome (Desktop) or Edge (Chromium) in order to get the best experience using bridge. v2! Your browser does not support saving files directly and syncing projects to your com.mojang folder.',
+			continue: 'Continue Anyways',
 		},
 		invalidJson: {
 			title: 'Invalid JSON',

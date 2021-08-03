@@ -6,6 +6,7 @@ import { ref } from '@vue/composition-api'
 import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from './Types'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
+import { isUsingFileSystemPolyfill } from './Polyfill'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
 
@@ -27,12 +28,6 @@ export class FileSystemSetup {
 	}
 
 	async setupFileSystem(app: App) {
-		if (typeof window.showDirectoryPicker !== 'function') {
-			// The user's browser doesn't support the native file system API
-			app.windows.browserUnsupported.open()
-			return false
-		}
-
 		let fileHandle = await get<AnyDirectoryHandle | undefined>(
 			'bridgeBaseDir'
 		)
@@ -52,6 +47,11 @@ export class FileSystemSetup {
 			globalState.setupDone.dispatch()
 		} else {
 			InitialSetup.ready.dispatch()
+		}
+
+		if (isUsingFileSystemPolyfill) {
+			// The user's browser doesn't support the native file system API
+			app.windows.browserUnsupported.open()
 		}
 
 		this._status = 'done'
