@@ -22,6 +22,10 @@ export default {
 			'A file with this name already exists. Do you want to overwrite it?',
 		fileSystemPolyfill:
 			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome or Edge!',
+		successfulExport: {
+			title: 'Export Successful',
+			description: 'You can find the exported package here',
+		},
 	},
 	packType: {
 		behaviorPack: {

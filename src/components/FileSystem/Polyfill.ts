@@ -33,7 +33,6 @@ if (typeof window.showOpenFilePicker !== 'function') {
 				async (event) => {
 					isLocked = true
 					const files = [...(input.files ?? [])]
-					console.log('HERE')
 
 					document.body.removeChild(input)
 					resolve(
