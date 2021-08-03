@@ -15,8 +15,8 @@ export abstract class GenericUnzipper<T> {
 		taskManager: TaskManager,
 		taskDetails: ITaskDetails = {
 			icon: 'mdi-folder-zip',
-			name: 'unzipper.name',
-			description: 'unzipper.description',
+			name: 'taskManager.tasks.unzipper.name',
+			description: 'taskManager.tasks.unzipper.description',
 		}
 	) {
 		this.task = taskManager.create(taskDetails)

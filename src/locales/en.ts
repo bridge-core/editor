@@ -591,6 +591,10 @@ export default {
 				description:
 					'bridge. is compiling your project to make it ready for import into Minecraft',
 			},
+			unzipper: {
+				name: 'Unpacking ZIP',
+				description: 'bridge. is currently unpacking a ZIP file.',
+			},
 		},
 	},
 	fileDropper: {
