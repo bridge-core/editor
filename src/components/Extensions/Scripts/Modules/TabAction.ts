@@ -23,8 +23,7 @@ function forEachProject({
 	app,
 }: IForEachProjectConfig) {
 	if (isGlobal) {
-		app.projects.forEach(func)
-		disposables.push(app.projectManager.addedProject.on(func))
+		disposables.push(app.projectManager.forEachProject(func))
 	} else {
 		func(app.project)
 	}

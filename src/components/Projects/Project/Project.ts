@@ -17,6 +17,7 @@ import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabActionProvider } from '/@/components/TabSystem/TabActions/Provider'
 import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
 import { markRaw, reactive, set } from '@vue/composition-api'
+import { SnippetLoader } from '../../Snippets/Loader'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -40,6 +41,7 @@ export abstract class Project {
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
 	public readonly tabActionProvider = new TabActionProvider()
+	public readonly snippetLoader = new SnippetLoader()
 
 	//#region Getters
 	get projectData() {
@@ -106,6 +108,8 @@ export abstract class Project {
 
 	async activate(isReload = false) {
 		this.parent.title.setProject(this.name)
+		this.parent.activatedProject.dispatch(this)
+
 		if (!isReload) {
 			for (const tabSystem of this.tabSystems) await tabSystem.activate()
 		}
@@ -129,6 +133,8 @@ export abstract class Project {
 			this.jsonDefaults.activate(),
 			this.compilerManager.start('default.json', 'dev'),
 		])
+
+		this.snippetLoader.activate()
 	}
 	deactivate(isReload = false) {
 		if (!isReload)
@@ -139,6 +145,7 @@ export abstract class Project {
 		this.compilerManager.deactivate()
 		this.jsonDefaults.deactivate()
 		this.extensionLoader.disposeAll()
+		this.snippetLoader.deactivate()
 	}
 	disposeWorkers() {
 		this.packIndexer.dispose()
@@ -273,4 +280,6 @@ export abstract class Project {
 			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
 		}
 	}
+
+	abstract getCurrentDataPackage(): Promise<AnyDirectoryHandle>
 }

@@ -2,6 +2,7 @@ import { Tab } from './CommonTab'
 import { TabSystem } from './TabSystem'
 import { v4 as uuid } from 'uuid'
 import { AnyFileHandle } from '../FileSystem/Types'
+import { FileType } from '../Data/FileType'
 
 export abstract class FileTab extends Tab {
 	public isForeignFile = false
@@ -31,6 +32,9 @@ export abstract class FileTab extends Tab {
 
 	get name() {
 		return this.fileHandle.name
+	}
+	getFileType() {
+		return FileType.getId(this.getProjectPath())
 	}
 
 	async isFor(fileHandle: AnyFileHandle) {

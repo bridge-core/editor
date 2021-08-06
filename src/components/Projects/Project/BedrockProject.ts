@@ -48,4 +48,10 @@ export class BedrockProject extends Project {
 		)
 		this.commandData.loadCommandData('minecraftBedrock')
 	}
+
+	getCurrentDataPackage() {
+		return this.app.dataLoader.getDirectoryHandle(
+			`data/packages/minecraftBedrock`
+		)
+	}
 }

@@ -14,6 +14,7 @@ import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
+	public readonly activatedProject = new EventDispatcher<Project>()
 	public readonly recentProjects!: RecentProjects
 	public readonly state: Record<string, Project> = shallowReactive({})
 	public readonly title = Object.freeze(new Title())
@@ -165,6 +166,21 @@ export class ProjectManager extends Signal<void> {
 				tabSystem.updateOptions(options)
 			)
 		)
+	}
+
+	/**
+	 *  Call a function for every current project and projects newly added in the future
+	 */
+	forEachProject(func: (project: Project) => Promise<void> | void) {
+		Object.values(this.state).forEach(func)
+
+		return this.addedProject.on(func)
+	}
+	/**
+	 * Call a function for every project that gets activated
+	 */
+	onActiveProject(func: (project: Project) => Promise<void> | void) {
+		return this.activatedProject.on(func)
 	}
 
 	async recompileAll(forceStartIfActive = true) {
