@@ -102,17 +102,20 @@ const completionItemProvider: languages.CompletionItemProvider = {
 		)
 
 		return {
-			suggestions: completionItems.map((suggestion) => ({
-				label: suggestion,
-				insertText: suggestion,
-				kind: languages.CompletionItemKind.Constant,
-				range: new Range(
-					position.lineNumber,
-					(lastToken?.startColumn ?? 0) + 1,
-					position.lineNumber,
-					(lastToken?.endColumn ?? 0) + 1
-				),
-			})),
+			suggestions: completionItems.map(
+				({ label, insertText, documentation, kind }) => ({
+					label: label ?? insertText,
+					insertText,
+					documentation,
+					kind,
+					range: new Range(
+						position.lineNumber,
+						(lastToken?.startColumn ?? 0) + 1,
+						position.lineNumber,
+						(lastToken?.endColumn ?? 0) + 1
+					),
+				})
+			),
 		}
 	},
 }

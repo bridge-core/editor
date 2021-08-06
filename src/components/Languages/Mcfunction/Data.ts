@@ -1,5 +1,6 @@
 import { compare } from 'compare-versions'
 import { MoLang } from 'molang'
+import { languages } from 'monaco-editor'
 import { generateCommandSchemas } from '../../Compiler/Worker/Plugins/CustomCommands/generateSchemas'
 import { RefSchema } from '../../JSONSchema/Schema/Ref'
 import { strMatchArray } from './strMatch'
@@ -37,6 +38,13 @@ export interface ICommandArgument {
 	description: string
 	type: TArgumentType
 	additionalData?: any
+}
+
+interface ICompletionItem {
+	label?: string
+	insertText: string
+	documentation?: string
+	kind: languages.CompletionItemKind
 }
 
 /**
@@ -121,6 +129,35 @@ export class CommandData extends Signal<void> {
 		])
 	}
 
+	getCommandCompletionItems(query?: string, ignoreCustomCommands = false) {
+		return this.getSchema(ignoreCustomCommands).then((schema) => {
+			const completionItems: ICompletionItem[] = []
+
+			schema
+				.filter(
+					(command: ICommand) =>
+						!query || command.commandName?.includes(query)
+				)
+				.forEach((command) => {
+					if (
+						completionItems.some(
+							(item) => item.label === command.commandName
+						)
+					)
+						return
+
+					completionItems.push({
+						insertText: command.commandName,
+						label: command.commandName,
+						documentation: command.description,
+						kind: languages.CompletionItemKind.Method,
+					})
+				})
+
+			return completionItems
+		})
+	}
+
 	/**
 	 * Given a commandName, return all matching command definitions
 	 */
@@ -134,9 +171,9 @@ export class CommandData extends Signal<void> {
 		return commands
 	}
 
-	async getNextCompletionItems(path: string[]) {
+	async getNextCompletionItems(path: string[]): Promise<ICompletionItem[]> {
 		if (path.length <= 1)
-			return await this.allCommands(
+			return await this.getCommandCompletionItems(
 				path[0],
 				await App.getApp().then((app) => app.projectManager.hasFired)
 			)
@@ -147,7 +184,7 @@ export class CommandData extends Signal<void> {
 		if (!currentCommands || currentCommands.length === 0) return []
 
 		return [
-			...new Set<string>(
+			...new Set<ICompletionItem>(
 				(
 					await Promise.all(
 						currentCommands.map(
@@ -168,7 +205,12 @@ export class CommandData extends Signal<void> {
 							}
 						)
 					)
-				).flat(2)
+				)
+					.flat(2)
+					.map((insertText) => ({
+						insertText,
+						kind: languages.CompletionItemKind.Text,
+					}))
 			),
 		]
 	}
