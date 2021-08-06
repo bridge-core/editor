@@ -121,6 +121,13 @@ export class CreateManifest extends CreateFile {
 			)
 		}
 
+		if (this.type === 'world_template') {
+			manifest.header.lock_template_options = true
+			manifest.header.base_game_version = createOptions.targetVersion.split(
+				'.'
+			)
+		}
+
 		return fs.writeJSON(`${this.pack}/manifest.json`, manifest, true)
 	}
 }
