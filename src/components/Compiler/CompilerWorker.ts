@@ -7,6 +7,7 @@ import { WorkerManager } from '/@/components/Worker/Manager'
 import { Project } from '../Projects/Project/Project'
 import { CompilerManager } from './CompilerManager'
 import { FileType } from '../Data/FileType'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 interface ICompilerStartOptions {
 	mode: 'dev' | 'build'
@@ -71,11 +72,7 @@ export class Compiler extends WorkerManager<
 				}
 			)
 		} else {
-			await this.service.updateMode(mode, false, restartDevServer)
-			await this.service.updatePlugins(
-				this.parent.getCompilerPlugins(),
-				FileType.getPluginFileTypes()
-			)
+			await this.updateService(false, restartDevServer)
 		}
 
 		// Listen to task progress and update UI
@@ -98,6 +95,25 @@ export class Compiler extends WorkerManager<
 		this._service.disposeListeners()
 		this.ready.dispatch()
 		console.timeEnd('[TASK] Compiling project (total)')
+		console.log(this.project.fileSystem.baseDirectory)
+	}
+	async updateService(isFileRequest: boolean, isDevServerRestart: boolean) {
+		await this.updateDirectoryHandles()
+		await this.service.updateMode('dev', isFileRequest, isDevServerRestart)
+		await this.service.updatePlugins(
+			this.parent.getCompilerPlugins(),
+			FileType.getPluginFileTypes()
+		)
+	}
+	async updateDirectoryHandles() {
+		if (!isUsingFileSystemPolyfill) return
+
+		const app = await App.getApp()
+
+		await this.service.updateDirectoryHandles(
+			this.project.baseDirectory,
+			app.fileSystem.baseDirectory
+		)
 	}
 
 	async updateFiles(filePaths: string[]) {
@@ -105,11 +121,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.service.updateMode('dev', false, false)
-		await this.service.updatePlugins(
-			this.parent.getCompilerPlugins(),
-			FileType.getPluginFileTypes()
-		)
+		await this.updateService(false, false)
 		await this.service.updateFiles(filePaths)
 		this.ready.dispatch()
 		console.timeEnd('[Worker] Compiler: Update Files')
@@ -119,11 +131,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.service.updateMode('dev', true, false)
-		await this.service.updatePlugins(
-			this.parent.getCompilerPlugins(),
-			FileType.getPluginFileTypes()
-		)
+		await this.updateService(true, false)
 
 		const fileBuffer = new Uint8Array(await file.arrayBuffer())
 		const [dependencies, compiled] = await this.service.compileWithFile(
@@ -139,11 +147,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		this.service.updateMode('dev', false, false)
-		await this.service.updatePlugins(
-			this.parent.getCompilerPlugins(),
-			FileType.getPluginFileTypes()
-		)
+		await this.updateService(false, false)
 		await this.service.unlink(path)
 
 		this.ready.dispatch()
@@ -153,11 +157,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		this.service.updateMode('dev', false, false)
-		await this.service.updatePlugins(
-			this.parent.getCompilerPlugins(),
-			FileType.getPluginFileTypes()
-		)
+		await this.updateService(false, false)
 		const transformedPath = await this.service.getCompilerOutputPath(path)
 
 		this.ready.dispatch()

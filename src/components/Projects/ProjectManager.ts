@@ -1,6 +1,6 @@
 import { App } from '/@/App'
-import { get, set } from 'idb-keyval'
-import Vue from 'vue'
+import * as idb from 'idb-keyval'
+import { shallowReactive, set, del, reactive } from '@vue/composition-api'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { Project } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
@@ -15,7 +15,7 @@ import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
 	public readonly recentProjects!: RecentProjects
-	public readonly state: Record<string, Project> = {}
+	public readonly state: Record<string, Project> = shallowReactive({})
 	public readonly title = Object.freeze(new Title())
 	protected _selectedProject?: string = undefined
 	public readonly projectReady = new Signal<void>()
@@ -24,10 +24,8 @@ export class ProjectManager extends Signal<void> {
 		super()
 		this.loadProjects()
 
-		Vue.set(
-			this,
-			'recentProjects',
-			new RecentProjects(this.app, `data/recentProjects.json`)
+		this.recentProjects = <RecentProjects>(
+			reactive(new RecentProjects(this.app, `data/recentProjects.json`))
 		)
 
 		// Once possible, scan recentProjects for projects which no longer exist
@@ -58,7 +56,7 @@ export class ProjectManager extends Signal<void> {
 		const project = new BedrockProject(this, this.app, projectDir)
 		await project.loadProject()
 
-		Vue.set(this.state, project.name, project)
+		set(this.state, project.name, project)
 
 		if (isNewProject) {
 			await this.selectProject(project.name)
@@ -70,10 +68,7 @@ export class ProjectManager extends Signal<void> {
 	async removeProject(projectName: string) {
 		const project = this.state[projectName]
 		if (!project) return
-
-		project.deactivate()
-		project.dispose()
-		Vue.delete(this.state, projectName)
+		del(this.state, projectName)
 		await this.app.fileSystem.unlink(`projects/${projectName}`)
 
 		this.recentProjects.remove(project.projectData)
@@ -127,7 +122,7 @@ export class ProjectManager extends Signal<void> {
 
 		if (this.currentProject)
 			await this.recentProjects.add(this.currentProject.projectData)
-		await set('selectedProject', projectName)
+		await idb.set('selectedProject', projectName)
 
 		app.themeManager.updateTheme()
 		App.eventSystem.dispatch('projectChanged', undefined)
@@ -136,7 +131,7 @@ export class ProjectManager extends Signal<void> {
 	}
 	async selectLastProject(app: App) {
 		await this.fired
-		let projectName = await get('selectedProject')
+		let projectName = await idb.get('selectedProject')
 
 		if (typeof projectName === 'string') {
 			try {
@@ -160,7 +155,7 @@ export class ProjectManager extends Signal<void> {
 		await this.fired
 
 		const fallback = Object.keys(this.state)[0]
-		await set('selectedProject', fallback)
+		await idb.set('selectedProject', fallback)
 		return fallback
 	}
 

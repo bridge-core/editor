@@ -117,6 +117,15 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 		)
 		await this.compiler.processFileMap()
 	}
+	updateDirectoryHandles(
+		baseDirectory: AnyDirectoryHandle,
+		projectDirectory: AnyDirectoryHandle
+	) {
+		this.baseDirectory = baseDirectory
+		this.fileSystem.setup(projectDirectory)
+
+		// Com.mojang syncing isn't available for file system polyfills so we don't need to update the output file system
+	}
 
 	async updateFiles(filePaths: string[]) {
 		await this.compiler.runWithFiles(filePaths)

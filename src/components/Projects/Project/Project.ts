@@ -1,6 +1,5 @@
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
-import Vue from 'vue'
 import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
 import { ProjectConfig, IConfigJson } from '../ProjectConfig'
 import { RecentFiles } from '../RecentFiles'
@@ -17,6 +16,7 @@ import { FileChangeRegistry } from './FileChangeRegistry'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabActionProvider } from '/@/components/TabSystem/TabActions/Provider'
 import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
+import { markRaw, reactive, set } from '@vue/composition-api'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -72,7 +72,7 @@ export abstract class Project {
 		public readonly app: App,
 		protected _baseDirectory: AnyDirectoryHandle
 	) {
-		this._fileSystem = new FileSystem(_baseDirectory)
+		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
 		this.config = new ProjectConfig(this._fileSystem)
 		this.packIndexer = new PackIndexer(app, _baseDirectory)
 		this.extensionLoader = new ExtensionLoader(
@@ -80,12 +80,13 @@ export abstract class Project {
 			`projects/${this.name}/.bridge/inactiveExtensions.json`
 		)
 		this.typeLoader = new TypeLoader(this.app.dataLoader)
-		Vue.set(
-			this,
-			'recentFiles',
-			new RecentFiles(
-				app,
-				`projects/${this.name}/.bridge/recentFiles.json`
+
+		this.recentFiles = <RecentFiles>(
+			reactive(
+				new RecentFiles(
+					app,
+					`projects/${this.name}/.bridge/recentFiles.json`
+				)
 			)
 		)
 
@@ -244,7 +245,7 @@ export abstract class Project {
 	async loadProject() {
 		await this.config.setup()
 
-		Vue.set(this, '_projectData', {
+		set(this, '_projectData', {
 			...this.config.get(),
 			path: this.name,
 			name: this.name,
@@ -255,7 +256,7 @@ export abstract class Project {
 			contains: [],
 		})
 		await loadPacks(this.app, this.name).then((packs) =>
-			Vue.set(
+			set(
 				this._projectData,
 				'contains',
 				packs.sort((a, b) => a.id.localeCompare(b.id))

@@ -6,6 +6,7 @@ import type { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
 import { FileType } from '/@/components/Data/FileType'
 import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 // import PackIndexerWorker from './Worker/Main?worker'
 
 export class PackIndexer extends WorkerManager<
@@ -70,11 +71,20 @@ export class PackIndexer extends WorkerManager<
 		console.timeEnd('[TASK] Indexing Packs (Total)')
 		return <const>[changedFiles, deletedFiles]
 	}
+	updateDirectoryHandles() {
+		if (!isUsingFileSystemPolyfill) return
+
+		return this.service.updateDirectoryHandles(
+			this.baseDirectory,
+			this.app.fileSystem.baseDirectory
+		)
+	}
 
 	async updateFile(filePath: string, fileContent?: string) {
 		await this.ready.fired
 		this.ready.resetSignal()
 
+		await this.updateDirectoryHandles()
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 		await this.service.updateFile(filePath, fileContent)
 
@@ -83,6 +93,8 @@ export class PackIndexer extends WorkerManager<
 	async updateFiles(filePaths: string[]) {
 		await this.ready.fired
 		this.ready.resetSignal()
+
+		await this.updateDirectoryHandles()
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 
 		for (const filePath of filePaths) {
@@ -94,6 +106,8 @@ export class PackIndexer extends WorkerManager<
 	async unlink(path: string) {
 		await this.ready.fired
 		this.ready.resetSignal()
+
+		await this.updateDirectoryHandles()
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 
 		await this.service.unlink(path)
@@ -103,6 +117,9 @@ export class PackIndexer extends WorkerManager<
 
 	async readdir(path: string[], ..._: any[]) {
 		await this.fired
+
+		await this.updateDirectoryHandles()
+
 		return await this.service.readdir(path)
 	}
 }

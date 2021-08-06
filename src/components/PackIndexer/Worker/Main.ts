@@ -44,6 +44,14 @@ export class PackIndexerService extends TaskService<
 		FileType.setPluginFileTypes(options.pluginFileTypes)
 	}
 
+	updateDirectoryHandles(
+		projectDirectory: AnyDirectoryHandle,
+		baseDirectory: AnyDirectoryHandle
+	) {
+		this.fileSystem.setup(projectDirectory)
+		this.baseDirectory = baseDirectory
+	}
+
 	getOptions() {
 		return {
 			projectDirectory: this.fileSystem.baseDirectory,

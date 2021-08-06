@@ -1,19 +1,22 @@
 import { App } from '/@/App'
 import { Signal } from './Event/Signal'
 import { Queue } from './Queue'
-import Vue from 'vue'
+import { set, markRaw } from '@vue/composition-api'
 import { dirname } from '/@/utils/path'
 
 export class PersistentQueue<T> extends Signal<Queue<T>> {
 	protected queue!: Queue<T>
+	protected app: App
+
 	constructor(
-		protected app: App,
+		app: App,
 		protected maxSize: number,
 		protected savePath: string,
 		callSetup = true
 	) {
 		super()
-		Vue.set(this, 'queue', new Queue<T>(maxSize))
+		set(this, 'queue', new Queue<T>(maxSize))
+		this.app = markRaw(app)
 
 		if (callSetup) this.setup()
 	}

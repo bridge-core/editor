@@ -10,7 +10,6 @@ export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
 	isFirstImport = false
 ) {
-	console.log('HERE')
 	const app = await App.getApp()
 	const fs = app.fileSystem
 	const tmpHandle = await fs.getDirectoryHandle('import', {

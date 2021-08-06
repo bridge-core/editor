@@ -58,7 +58,7 @@ export class App {
 	public readonly taskManager = new TaskManager()
 	public readonly dataLoader = new DataLoader()
 	public readonly fileSystem = new FileSystem()
-	public readonly projectManager = Vue.observable(new ProjectManager(this))
+	public readonly projectManager = new ProjectManager(this)
 	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
 	public readonly contextMenu = new ContextMenu()

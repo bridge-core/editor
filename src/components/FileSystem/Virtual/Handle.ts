@@ -1,10 +1,13 @@
 import { AnyHandle } from '../Types'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import type { VirtualFileHandle } from './FileHandle'
+import { v4 as uuid } from 'uuid'
 
 export type VirtualHandle = VirtualDirectoryHandle | VirtualFileHandle
 export abstract class BaseVirtualHandle {
 	public abstract readonly kind: FileSystemHandleKind
+	public readonly uuid = uuid()
+
 	constructor(
 		protected parent: VirtualDirectoryHandle | null,
 		protected _name: string

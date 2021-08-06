@@ -24,7 +24,7 @@ export default {
 	components: { ActionViewer },
 	async mounted() {
 		FileSystemSetup.state.receiveDirectoryHandle.dispatch(
-			new VirtualDirectoryHandle(null, 'global')
+			new VirtualDirectoryHandle(null, 'bridgeFolder')
 		)
 		await FileSystemSetup.state.setupDone
 	},

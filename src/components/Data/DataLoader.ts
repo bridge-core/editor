@@ -34,7 +34,7 @@ export class DataLoader extends FileSystem {
 		)
 
 		// Create virtual filesystem
-		this._virtualFileSystem = new VirtualDirectoryHandle(null, 'global')
+		this._virtualFileSystem = new VirtualDirectoryHandle(null, 'dataFolder')
 		const defaultHandle = await this._virtualFileSystem.getDirectoryHandle(
 			'data',
 			{ create: true }
