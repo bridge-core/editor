@@ -72,7 +72,7 @@ export class Compiler extends WorkerManager<
 				}
 			)
 		} else {
-			await this.updateService(false, restartDevServer)
+			await this.updateService(mode, false, restartDevServer)
 		}
 
 		// Listen to task progress and update UI
@@ -91,15 +91,19 @@ export class Compiler extends WorkerManager<
 			files =
 				(await this.project.packIndexer.service!.getAllFiles()) ?? []
 
+		console.log(files)
 		await this._service.start([files, deletedFiles])
 		this._service.disposeListeners()
 		this.ready.dispatch()
 		console.timeEnd('[TASK] Compiling project (total)')
-		console.log(this.project.fileSystem.baseDirectory)
 	}
-	async updateService(isFileRequest: boolean, isDevServerRestart: boolean) {
+	async updateService(
+		mode: 'build' | 'dev',
+		isFileRequest: boolean,
+		isDevServerRestart: boolean
+	) {
 		await this.updateDirectoryHandles()
-		await this.service.updateMode('dev', isFileRequest, isDevServerRestart)
+		await this.service.updateMode(mode, isFileRequest, isDevServerRestart)
 		await this.service.updatePlugins(
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
@@ -121,7 +125,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.updateService(false, false)
+		await this.updateService('dev', false, false)
 		await this.service.updateFiles(filePaths)
 		this.ready.dispatch()
 		console.timeEnd('[Worker] Compiler: Update Files')
@@ -131,7 +135,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.updateService(true, false)
+		await this.updateService('dev', true, false)
 
 		const fileBuffer = new Uint8Array(await file.arrayBuffer())
 		const [dependencies, compiled] = await this.service.compileWithFile(
@@ -147,7 +151,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.updateService(false, false)
+		await this.updateService('dev', false, false)
 		await this.service.unlink(path)
 
 		this.ready.dispatch()
@@ -157,7 +161,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.updateService(false, false)
+		await this.updateService('dev', false, false)
 		const transformedPath = await this.service.getCompilerOutputPath(path)
 
 		this.ready.dispatch()
