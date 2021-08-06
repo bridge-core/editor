@@ -8,7 +8,7 @@ import { createNotification } from '/@/components/Notifications/create'
 import { v4 as uuid } from 'uuid'
 import { getLatestFormatVersion } from '../../Data/FormatVersions'
 
-export async function exportAsMctemplate() {
+export async function exportAsMctemplate(asMcworld = false) {
 	const app = await App.getApp()
 	const project = app.project
 	const fs = project.fileSystem
@@ -120,7 +120,10 @@ export async function exportAsMctemplate() {
 		)
 
 	// Generate world template manifest if file doesn't exist yet
-	if (!(await fs.fileExists('builds/mctemplate/manifest.json'))) {
+	if (
+		!(await fs.fileExists('builds/mctemplate/manifest.json')) &&
+		!asMcworld
+	) {
 		await fs.writeJSON('builds/mctemplate/manifest.json', {
 			format_version: 2,
 			header: {
@@ -142,6 +145,8 @@ export async function exportAsMctemplate() {
 				},
 			],
 		})
+	} else if (asMcworld && exportWorldFolder === 'WT') {
+		await fs.unlink('builds/mctemplate/manifest.json')
 	}
 
 	// ZIP builds/mctemplate folder
@@ -150,7 +155,9 @@ export async function exportAsMctemplate() {
 			create: true,
 		})
 	)
-	const savePath = `builds/${app.project.name}.mctemplate`
+	const savePath = `builds/${app.project.name}.${
+		asMcworld ? 'mcworld' : 'mctemplate'
+	}`
 
 	try {
 		await saveOrDownload(
@@ -169,6 +176,7 @@ export async function exportAsMctemplate() {
 			color: 'success',
 			textColor: 'white',
 			message: 'general.successfulExport.title',
+			disposeOnMiddleClick: true,
 			onClick: () => {
 				new InformationWindow({
 					description: `[${app.locales.translate(

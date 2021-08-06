@@ -374,7 +374,7 @@ export class PackExplorer extends SidebarContent {
 				icon: 'mdi-earth-box',
 				name: 'windows.packExplorer.exportAsMcworld.name',
 				isDisabled: !(await canExportMctemplate()),
-				onTrigger: () => {},
+				onTrigger: () => exportAsMctemplate(true),
 			},
 			// Export project as .mctemplate
 			{
