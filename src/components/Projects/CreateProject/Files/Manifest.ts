@@ -3,6 +3,7 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
 import { CreateFile } from './CreateFile'
 import { v4 as uuid } from 'uuid'
+import { version as appVersion } from '/@/appVersion.json'
 
 const replaceTargetVersion: Record<string, string | undefined> = {
 	'1.17.10': '1.17.0',
@@ -35,6 +36,12 @@ export class CreateManifest extends CreateFile {
 		// Base manifest
 		const manifest: any = {
 			format_version: 2,
+			metadata: {
+				authors: [createOptions.author],
+				generated_with: {
+					bridge: [appVersion],
+				},
+			},
 			header: {
 				name: createOptions.useLangForManifest
 					? createOptions.name
