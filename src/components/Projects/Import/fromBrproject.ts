@@ -32,10 +32,10 @@ export async function importFromBrproject(
 		if (isUsingFileSystemPolyfill) {
 			// Only load settings & extension if using the polyfill
 			try {
-				await fs.rename('import/data', 'data')
+				await fs.move('import/data', 'data')
 			} catch {}
 			try {
-				await fs.rename('import/extensions', 'extensions')
+				await fs.move('import/extensions', 'extensions')
 			} catch {}
 
 			// Reload settings & extensions
@@ -69,7 +69,7 @@ export async function importFromBrproject(
 	// Get the project name from the config.json file
 	const { name } = await fs.readJSON(`${importFrom}/config.json`)
 	// Move imported project to the user's project directory
-	await fs.rename(importFrom, `projects/${name}`)
+	await fs.move(importFrom, `projects/${name}`)
 
 	// Get current project name
 	let currentProjectName: string | undefined

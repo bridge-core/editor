@@ -9,7 +9,7 @@ export interface IActionConfig {
 	name?: string
 	color?: string
 	description?: string
-	isDisabled?: () => boolean
+	isDisabled?: (() => boolean) | boolean
 	keyBinding?: string | string[]
 	prevent?: IKeyBindingConfig['prevent']
 	onTrigger: () => Promise<unknown> | unknown
@@ -37,7 +37,9 @@ export class SimpleAction extends EventDispatcher<void> {
 		return this.config.color
 	}
 	get isDisabled() {
-		return this.config.isDisabled?.() ?? false
+		if (typeof this.config.isDisabled === 'function')
+			return this.config.isDisabled?.() ?? false
+		return this.config.isDisabled ?? false
 	}
 	//#endregion
 

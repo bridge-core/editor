@@ -406,6 +406,14 @@ export default {
 			exportAsMcaddon: {
 				name: 'Export as .mcaddon',
 			},
+			exportAsMctemplate: {
+				name: 'Export as .mctemplate',
+				chooseWorld: 'Choose a World',
+			},
+			exportAsMcworld: {
+				name: 'Export as .mcworld',
+				chooseWorld: 'Choose a World',
+			},
 			exportAsBrproject: {
 				name: 'Export as .brproject',
 			},

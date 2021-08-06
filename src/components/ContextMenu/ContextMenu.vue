@@ -16,9 +16,13 @@
 					:key="id"
 					origin="center center"
 					transition="scale-transition"
+					:disabled="action.isDisabled"
 					@click="action.trigger()"
 				>
-					<v-list-item-icon class="mr-2">
+					<v-list-item-icon
+						:style="{ opacity: action.isDisabled ? '38%' : null }"
+						class="mr-2"
+					>
 						<v-icon color="primary">{{ action.icon }}</v-icon>
 					</v-list-item-icon>
 					<v-list-item-action class="ma-0">

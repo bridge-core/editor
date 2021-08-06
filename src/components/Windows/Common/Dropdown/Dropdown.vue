@@ -14,7 +14,8 @@
 		<template #default>
 			<v-select
 				autofocus
-				solo
+				outlined
+				dense
 				v-model="$data.currentSelection"
 				:items="$data.options"
 				background-color="background"

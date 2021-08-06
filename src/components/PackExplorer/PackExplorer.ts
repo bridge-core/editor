@@ -14,6 +14,10 @@ import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 import { exportAsBrproject } from '/@/components/Projects/Export/AsBrproject'
 import { exportAsMcaddon } from '/@/components/Projects/Export/AsMcaddon'
+import {
+	canExportMctemplate,
+	exportAsMctemplate,
+} from '../Projects/Export/AsMctemplate'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -178,10 +182,7 @@ export class PackExplorer extends SidebarContent {
 
 								// The rename action needs to happen after deleting the old file inside of the output directory
 								// because the compiler will fail to unlink it if the original file doesn't exist.
-								await project.fileSystem.rename(
-									path,
-									newFilePath
-								)
+								await project.fileSystem.move(path, newFilePath)
 
 								// Let the compiler, pack indexer etc. process the renamed file
 								await project.updateFile(newFilePath)
@@ -356,17 +357,31 @@ export class PackExplorer extends SidebarContent {
 			},
 			{ type: 'divider' },
 
+			// Export project as .brproject
+			{
+				icon: 'mdi-export',
+				name: 'windows.packExplorer.exportAsBrproject.name',
+				onTrigger: () => exportAsBrproject(),
+			},
 			// Export project as .mcaddon
 			{
 				icon: 'mdi-folder-zip-outline',
 				name: 'windows.packExplorer.exportAsMcaddon.name',
 				onTrigger: () => exportAsMcaddon(),
 			},
-			// Export project as .brproject
+			// Export project as .mcworld
 			{
-				icon: 'mdi-export',
-				name: 'windows.packExplorer.exportAsBrproject.name',
-				onTrigger: () => exportAsBrproject(),
+				icon: 'mdi-earth-box',
+				name: 'windows.packExplorer.exportAsMcworld.name',
+				isDisabled: !(await canExportMctemplate()),
+				onTrigger: () => {},
+			},
+			// Export project as .mctemplate
+			{
+				icon: 'mdi-earth-box-plus',
+				name: 'windows.packExplorer.exportAsMctemplate.name',
+				isDisabled: !(await canExportMctemplate()),
+				onTrigger: () => exportAsMctemplate(),
 			},
 			{ type: 'divider' },
 

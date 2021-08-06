@@ -135,7 +135,7 @@ export default {
 				directoryEntry.parent = this.directoryEntry
 
 				// 2. Update actual file system
-				await app.project.fileSystem.rename(oldPath, newPath)
+				await app.project.fileSystem.move(oldPath, newPath)
 				await app.project.updateChangedFiles()
 			}
 
