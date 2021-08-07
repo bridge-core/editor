@@ -130,6 +130,28 @@ export class Extension {
 			),
 		])
 
+		if (await this.fileSystem.directoryExists('snippets')) {
+			const snippetDir = await this.baseDirectory.getDirectoryHandle(
+				'snippets'
+			)
+
+			if (this.isGlobal) {
+				this.disposables.push(
+					app.projectManager.onActiveProject(async (project) => {
+						this.disposables.push(
+							...(await project.snippetLoader.loadFrom(
+								snippetDir
+							))
+						)
+					})
+				)
+			} else {
+				this.disposables.push(
+					...(await app.project.snippetLoader.loadFrom(snippetDir))
+				)
+			}
+		}
+
 		if (await this.fileSystem.fileExists('.installed')) return
 
 		await this.installFiles.execute(this.isGlobal)

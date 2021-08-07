@@ -180,6 +180,9 @@ export class ProjectManager extends Signal<void> {
 	 * Call a function for every project that gets activated
 	 */
 	onActiveProject(func: (project: Project) => Promise<void> | void) {
+		if (this.projectReady.hasFired && this.currentProject)
+			func(this.currentProject)
+
 		return this.activatedProject.on(func)
 	}
 

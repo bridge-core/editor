@@ -44,8 +44,12 @@ export class Snippet {
 			this.fileTypes.has(fileType) &&
 			(this.locations.length === 0 ||
 				this.locations.some((locPattern) =>
-					locations.some((locationInFile) =>
-						isMatch(locationInFile, locPattern)
+					locations.some(
+						(locationInFile) =>
+							locPattern === locationInFile ||
+							(locPattern !== ''
+								? isMatch(locationInFile, locPattern)
+								: false)
 					)
 				))
 		)
