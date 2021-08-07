@@ -110,14 +110,31 @@ export class TreeEditor {
 					.flat()
 		}
 
-		this.propertySuggestions = suggestions.filter(
-			(suggestion) =>
-				(suggestion.type === 'object' || suggestion.type === 'array') &&
-				!(<any>(tree ?? this.tree)).children.find((test: any) => {
-					if (test.type === 'array') return false
-					return test[0] === suggestion.value
-				})
-		)
+		this.propertySuggestions = suggestions
+			.filter(
+				(suggestion) =>
+					(suggestion.type === 'object' ||
+						suggestion.type === 'array') &&
+					!(<any>(tree ?? this.tree)).children.find((test: any) => {
+						if (test.type === 'array') return false
+						return test[0] === suggestion.value
+					})
+			)
+			.concat(
+				this.parent.app.project.snippetLoader
+					.getSnippetsFor(
+						this.parent.getFileType(),
+						this.selections.map((sel) => sel.getLocation())
+					)
+					.map(
+						(snippet) =>
+							<const>{
+								type: 'snippet',
+								label: snippet.displayData.name,
+								value: snippet.insertData,
+							}
+					)
+			)
 
 		// Only suggest values for empty objects or arrays
 		if ((tree?.children?.length ?? 1) === 0 || tree?.type === 'array') {

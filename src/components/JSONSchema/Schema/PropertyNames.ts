@@ -22,6 +22,7 @@ export class PropertyNamesSchema extends Schema {
 				(completionItem) =>
 					<const>{
 						type: 'object',
+						label: `${completionItem.value}`,
 						value: completionItem.value,
 					}
 			)

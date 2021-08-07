@@ -51,6 +51,7 @@ export class ItemsSchema extends Schema {
 						<const>{
 							type:
 								item.type === 'object' ? 'array' : 'valueArray',
+							label: `${item.value}`,
 							value: item.value,
 						}
 				)

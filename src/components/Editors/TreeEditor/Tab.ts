@@ -50,6 +50,10 @@ export class TreeTab extends FileTab {
 		})
 	}
 
+	get app() {
+		return this.parent.app
+	}
+
 	static is(fileHandle: AnyFileHandle) {
 		return (
 			settingsState?.editor?.jsonEditor === 'treeEditor' &&

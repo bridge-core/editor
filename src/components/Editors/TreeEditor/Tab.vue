@@ -29,6 +29,7 @@
 				ref="addKeyInput"
 				v-model="keyToAdd"
 				@change="onAddKey"
+				@keydown.enter="mayTrigger"
 				:items="propertySuggestions"
 				:menu-props="{
 					maxHeight: 124,
@@ -39,11 +40,27 @@
 				outlined
 				dense
 				hide-details
-			/>
+			>
+				<template v-slot:item="{ item }">
+					<v-icon class="mr-1" color="primary" small>
+						{{ getIcon(item) }}
+					</v-icon>
+					<span
+						style="
+							font-size: 0.8125rem;
+							font-weight: 500;
+							line-height: 1rem;
+						"
+					>
+						{{ item.label }}
+					</span>
+				</template>
+			</v-combobox>
 			<v-combobox
 				ref="addValueInput"
 				v-model="valueToAdd"
 				@change="onAddValue"
+				@keydown.enter="mayTrigger"
 				:disabled="isGlobal"
 				:items="valueSuggestions"
 				:menu-props="{
@@ -56,7 +73,22 @@
 				outlined
 				dense
 				hide-details
-			/>
+			>
+				<template v-slot:item="{ item }">
+					<v-icon class="mr-1" color="primary" small>
+						{{ getIcon(item) }}
+					</v-icon>
+					<span
+						style="
+							font-size: 0.8125rem;
+							font-weight: 500;
+							line-height: 1rem;
+						"
+					>
+						{{ item.label }}
+					</span>
+				</template>
+			</v-combobox>
 			<v-text-field
 				ref="editValueInput"
 				:value="currentValue"
@@ -86,6 +118,7 @@ export default {
 		keyToAdd: '',
 		valueToAdd: '',
 		triggerCooldown: false,
+		isUserControlledTrigger: false,
 	}),
 	mounted() {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
@@ -150,35 +183,77 @@ export default {
 			this.treeEditor.edit(value)
 		},
 		onAddKey(suggestion) {
-			if (this.triggerCooldown) return
+			if (this.triggerCooldown || !this.isUserControlledTrigger) {
+				if (!this.isUserControlledTrigger)
+					this.$nextTick(() => (this.keyToAdd = ''))
+				return
+			}
 
-			if (suggestion === null) return
+			if (!suggestion) return this.onTriggerCooldown()
+
 			const { type = 'object', value = suggestion } = suggestion
 
-			this.treeEditor.addKey(value, type)
+			if (type === 'snippet') {
+				this.treeEditor.addFromJSON(value[1])
+			} else {
+				this.treeEditor.addKey(value, type)
+			}
 
-			this.$nextTick(() => {
-				this.keyToAdd = ''
-				this.triggerCooldown = false
-			})
-			this.triggerCooldown = true
+			this.$nextTick(() => (this.keyToAdd = ''))
+
+			this.onTriggerCooldown()
 		},
 		onAddValue(suggestion) {
-			if (this.triggerCooldown) return
+			if (this.triggerCooldown || !this.isUserControlledTrigger) {
+				if (!this.isUserControlledTrigger)
+					this.$nextTick(() => (this.valueToAdd = ''))
+				return
+			}
 
-			if (suggestion === null) return
+			if (!suggestion) return this.onTriggerCooldown()
+
 			const { type = 'value', value = suggestion } = suggestion
 
 			this.treeEditor.addValue(value, type)
 
-			this.$nextTick(() => {
-				this.valueToAdd = ''
+			this.$nextTick(() => (this.valueToAdd = ''))
+
+			this.onTriggerCooldown()
+		},
+		onTriggerCooldown() {
+			if (this.triggerCooldown) return
+
+			setTimeout(() => {
 				this.triggerCooldown = false
-			})
+			}, 100)
 			this.triggerCooldown = true
+		},
+		mayTrigger() {
+			if (this.isUserControlledTrigger) return
+
+			setTimeout(() => {
+				this.isUserControlledTrigger = false
+			}, 100)
+			this.isUserControlledTrigger = true
 		},
 		onScroll(event) {
 			this.treeEditor.scrollTop = event.target.scrollTop
+		},
+		getIcon(item) {
+			switch (item.type) {
+				case 'object':
+					return 'mdi-code-json'
+				case 'array':
+					return 'mdi-code-brackets'
+				case 'value':
+					return 'mdi-alphabetical'
+				case 'arrayValue':
+					return 'mdi-link-variant'
+				case 'snippet':
+					return 'mdi-attachment'
+				default:
+					return 'mdi-text'
+			}
 		},
 	},
 	watch: {

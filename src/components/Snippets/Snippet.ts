@@ -30,7 +30,11 @@ export class Snippet {
 		}
 	}
 	get insertData() {
-		return this.data
+		// This is a hacky solution to a vuetify bug
+		// Keeps the snippet searchable by name even though we just workaround
+		// Vuetify's missing ability to respect the "item-text" prop on the combobox component
+		// https://github.com/vuetifyjs/vuetify/issues/5479
+		return [this.name, this.data]
 	}
 	get insertText() {
 		return JSON.stringify(this.insertData, null, '\t')

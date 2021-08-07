@@ -21,6 +21,9 @@ export class TreeSelection {
 	getTree() {
 		return this.tree
 	}
+	getLocation() {
+		return this.tree.path.join('/')
+	}
 
 	select(tree: ArrayTree | ObjectTree) {
 		this.tree.setIsSelected(false)
@@ -129,6 +132,9 @@ export class TreeValueSelection {
 
 	getTree() {
 		return this.tree
+	}
+	getLocation() {
+		return this.tree.path.join('/')
 	}
 
 	dispose(removeSel = true) {

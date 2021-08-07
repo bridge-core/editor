@@ -8,7 +8,8 @@ export interface IDiagnostic {
 }
 
 export interface ICompletionItem {
-	type: 'object' | 'array' | 'value' | 'valueArray'
+	type: 'object' | 'array' | 'value' | 'valueArray' | 'snippet'
+	label: string
 	value: unknown
 }
 

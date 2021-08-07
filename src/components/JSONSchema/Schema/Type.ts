@@ -15,7 +15,8 @@ export class TypeSchema extends Schema {
 		if (this.values.includes('boolean'))
 			suggestions.push(
 				...['true', 'false'].map(
-					(value) => <const>{ type: 'value', value }
+					(value) =>
+						<const>{ type: 'value', label: `${value}`, value }
 				)
 			)
 

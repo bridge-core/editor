@@ -130,6 +130,7 @@ export class Extension {
 			),
 		])
 
+		// Loading snippets
 		if (await this.fileSystem.directoryExists('snippets')) {
 			const snippetDir = await this.baseDirectory.getDirectoryHandle(
 				'snippets'
