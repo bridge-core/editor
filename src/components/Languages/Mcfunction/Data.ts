@@ -183,36 +183,37 @@ export class CommandData extends Signal<void> {
 
 		if (!currentCommands || currentCommands.length === 0) return []
 
-		return [
-			...new Set<ICompletionItem>(
-				(
-					await Promise.all(
-						currentCommands.map(
-							async (currentCommand: ICommand) => {
-								// Get command argument
-								const args = await this.getNextCommandArgument(
-									currentCommand,
-									[...path]
-								)
-								if (args.length === 0) return []
+		const completionItems: ICompletionItem[] = []
+		;(
+			await Promise.all(
+				currentCommands.map(async (currentCommand: ICommand) => {
+					// Get command argument
+					const args = await this.getNextCommandArgument(
+						currentCommand,
+						[...path]
+					)
+					if (args.length === 0) return []
 
-								// Return possible completion items for the argument
-								return await Promise.all(
-									args.map((arg) =>
-										this.getCompletionItems(arg)
-									)
-								)
-							}
-						)
+					// Return possible completion items for the argument
+					return await Promise.all(
+						args.map((arg) => this.getCompletionItems(arg))
+					)
+				})
+			)
+		)
+			.flat(2)
+			.forEach((item: ICompletionItem) => {
+				if (
+					completionItems.some(
+						(completionItem) => completionItem.label === item.label
 					)
 				)
-					.flat(2)
-					.map((insertText) => ({
-						insertText,
-						kind: languages.CompletionItemKind.Text,
-					}))
-			),
-		]
+					return
+
+				completionItems.push(item)
+			})
+
+		return completionItems
 	}
 
 	/**
@@ -340,7 +341,7 @@ export class CommandData extends Signal<void> {
 	 */
 	protected async getCompletionItems(
 		commandArgument: ICommandArgument
-	): Promise<string[]> {
+	): Promise<ICompletionItem[]> {
 		// Test whether argument type is defined
 		if (!commandArgument.type) {
 			// If additionalData is defined, return its values
@@ -358,33 +359,88 @@ export class CommandData extends Signal<void> {
 
 		switch (commandArgument.type) {
 			case 'command':
-				return [...new Set(await this.allCommands())]
+				return this.mergeCompletionItems(
+					await this.getCommandCompletionItems(),
+					{ documentation: commandArgument.description }
+				)
 			case 'selector':
-				return ['@a', '@e', '@p', '@s', '@r', '@initiator']
+				return this.toCompletionItem(
+					['@a', '@e', '@p', '@s', '@r', '@initiator'],
+					commandArgument.description
+				)
 			case 'boolean':
-				return ['true', 'false']
+				return this.toCompletionItem(
+					['true', 'false'],
+					commandArgument.description,
+					languages.CompletionItemKind.Value
+				)
 			case 'number':
-				return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+				return this.toCompletionItem(
+					['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+					commandArgument.description,
+					languages.CompletionItemKind.Value
+				)
 			case 'coordinate':
-				return ['~', '^']
+				return this.toCompletionItem(
+					['~', '^'],
+					commandArgument.description,
+					languages.CompletionItemKind.Operator
+				)
 			case 'string': {
 				if (commandArgument.additionalData?.values)
-					return commandArgument.additionalData.values
+					return this.toCompletionItem(
+						commandArgument.additionalData.values,
+						commandArgument.description
+					)
 				else if (commandArgument.additionalData?.schemaReference)
-					return <string[]>(
-						this.resolveDynamicReference(
-							commandArgument.additionalData.schemaReference
-						).map(({ value }) => value)
+					return this.toCompletionItem(
+						<string[]>(
+							this.resolveDynamicReference(
+								commandArgument.additionalData.schemaReference
+							).map(({ value }) => value)
+						),
+						commandArgument.description
 					)
 				else return []
 			}
 			case 'jsonData':
-				return ['{}']
+				return this.toCompletionItem(
+					['{}'],
+					commandArgument.description,
+					languages.CompletionItemKind.Struct
+				)
 			case 'blockState':
-				return ['[]']
+				return this.toCompletionItem(
+					['[]'],
+					commandArgument.description,
+					languages.CompletionItemKind.Struct
+				)
 		}
 
 		return []
+	}
+	protected toCompletionItem(
+		strings: string[],
+		documentation?: string,
+		kind = languages.CompletionItemKind.Text
+	): ICompletionItem[] {
+		return strings.map((str) => ({
+			label: str,
+			insertText: str,
+			kind,
+			documentation,
+		}))
+	}
+	protected mergeCompletionItems(
+		completionItems: ICompletionItem[],
+		partialItem: Partial<ICompletionItem>
+	) {
+		return completionItems.map((item) => ({
+			...item,
+			documentation: partialItem.documentation
+				? `${partialItem.documentation}\n\n${item.documentation ?? ''}`
+				: item.documentation,
+		}))
 	}
 
 	/**
