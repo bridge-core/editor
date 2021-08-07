@@ -4,11 +4,7 @@ import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
 import { CreateFile } from './CreateFile'
 import { v4 as uuid } from 'uuid'
 import { version as appVersion } from '/@/appVersion.json'
-
-const replaceTargetVersion: Record<string, string | undefined> = {
-	'1.17.10': '1.17.0',
-	'1.17.20': '1.17.0',
-}
+import { App } from '/@/App'
 
 export class CreateManifest extends CreateFile {
 	constructor(protected pack: TPackType) {
@@ -28,11 +24,22 @@ export class CreateManifest extends CreateFile {
 		}
 	}
 
-	protected transformTargetVersion(targetVersion: string) {
+	protected async transformTargetVersion(
+		fs: FileSystem,
+		targetVersion: string
+	) {
+		const app = await App.getApp()
+		const replaceTargetVersion: Record<
+			string,
+			string
+		> = await app.dataLoader.readJSON(
+			'data/packages/minecraftBedrock/minEngineVersionMap.json'
+		)
+
 		return replaceTargetVersion[targetVersion] ?? targetVersion
 	}
 
-	create(fs: FileSystem, createOptions: ICreateProjectOptions) {
+	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
 		// Base manifest
 		const manifest: any = {
 			format_version: 2,
@@ -51,8 +58,11 @@ export class CreateManifest extends CreateFile {
 					: 'pack.description',
 				min_engine_version:
 					this.type === 'data' || 'resources'
-						? this.transformTargetVersion(
-								createOptions.targetVersion
+						? (
+								await this.transformTargetVersion(
+									fs,
+									createOptions.targetVersion
+								)
 						  )
 								.split('.')
 								.map((str) => Number(str))
@@ -128,6 +138,6 @@ export class CreateManifest extends CreateFile {
 			)
 		}
 
-		return fs.writeJSON(`${this.pack}/manifest.json`, manifest, true)
+		await fs.writeJSON(`${this.pack}/manifest.json`, manifest, true)
 	}
 }
