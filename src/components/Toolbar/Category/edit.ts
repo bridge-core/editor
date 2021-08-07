@@ -13,10 +13,6 @@ export function setupEditCategory(app: App) {
 			description: 'actions.copy.description',
 			keyBinding: 'Ctrl + C',
 			prevent: (element) => {
-				console.log(
-					(<HTMLInputElement>element)?.value === '',
-					blockActions.has(element.tagName)
-				)
 				return (
 					(<HTMLInputElement>element)?.value !== '' &&
 					blockActions.has(element.tagName)
