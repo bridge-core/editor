@@ -8,11 +8,11 @@ import { TabSystem } from '../../TabSystem/TabSystem'
 
 export class FunctionSimulatorTab extends Tab {
 	protected fileTab: FileTab | undefined
+	protected currentLine = 4
 
 	constructor(protected parent: TabSystem, protected tab: FileTab) {
 		super(parent)
 		this.fileTab = tab
-		window.setTimeout(() => this.setup())
 	}
 
 	get name(): string {
@@ -35,23 +35,98 @@ export class FunctionSimulatorTab extends Tab {
 	save() {}
 
 	async onActivate() {
+		function RecolorColor(
+			className: string,
+			color:
+				| 'primary'
+				| 'warning'
+				| 'error'
+				| 'lineHighlightBackground'
+				| 'info'
+				| 'success' = 'info',
+			extra: string = ''
+		) {
+			let elements = document.getElementsByClassName(
+				className
+			) as HTMLCollectionOf<HTMLElement>
+
+			console.log(className)
+			console.log(elements)
+
+			for (let i = 0; i < elements.length; i++) {
+				elements[i].style.color =
+					extra + app.themeManager.getColor(color)
+
+				console.log(elements[i].style.color)
+			}
+		}
+
+		function RecolorBack(
+			className: string,
+			color:
+				| 'primary'
+				| 'warning'
+				| 'error'
+				| 'lineHighlightBackground'
+				| 'info'
+				| 'success'
+				| 'secondary'
+				| 'accent'
+				| 'toolbar'
+				| 'expandedSidebar' = 'info',
+			extra: string = ''
+		) {
+			const elements = document.getElementsByClassName(
+				className
+			) as HTMLCollectionOf<HTMLElement>
+
+			for (let i = 0; i < elements.length; i++) {
+				elements[i].style.background =
+					extra + app.themeManager.getColor(color)
+			}
+		}
+
+		function RecolorBorder(
+			className: string,
+			color:
+				| 'primary'
+				| 'warning'
+				| 'error'
+				| 'lineHighlightBackground'
+				| 'info'
+				| 'success'
+				| 'secondary'
+				| 'accent'
+				| 'toolbar' = 'info',
+			extra: string = ''
+		) {
+			const elements = document.getElementsByClassName(
+				className
+			) as HTMLCollectionOf<HTMLElement>
+
+			for (let i = 0; i < elements.length; i++) {
+				elements[i].style.border =
+					extra + app.themeManager.getColor(color)
+			}
+		}
+
 		await super.onActivate()
 		const app = await App.getApp()
 
-		const borderDivs = document.getElementsByClassName(
-			'border'
-		) as HTMLCollectionOf<HTMLElement>
+		RecolorBorder('border', 'lineHighlightBackground', 'thin solid ')
 
-		for (let i = 0; i < borderDivs.length; i++) {
-			borderDivs[i].style.border =
-				'thin solid ' +
-				app.themeManager.getColor('lineHighlightBackground')
-		}
+		RecolorBack('warning-info', 'warning')
+		RecolorBack('error-info', 'error')
+
+		RecolorColor('ok-icon', 'success')
+		RecolorColor('warning-icon', 'warning')
+		RecolorColor('info-icon', 'info')
+		RecolorColor('error-icon', 'error')
+
+		RecolorBack('icon-back', 'expandedSidebar')
 
 		if (this.fileTab) {
 			let file = await this.fileTab.getFile()
-
-			console.log(file)
 
 			let contents = await file?.text()
 
@@ -61,15 +136,7 @@ export class FunctionSimulatorTab extends Tab {
 				'function-simulator-line-inspector-text'
 			)
 
-			console.log('Before Color')
-
 			if (textDisplayElement && contents) {
-				//textDisplayElement.textContent = contents || 'Function Is Empty!'
-
-				//monaco.editor.colorizeElement(
-				//	textDisplayElement,
-				//	new monaco.editor.IColorizerElementOptions()
-				//)
 				let colorize = await monaco.editor.colorize(
 					contents,
 					'mcfunction',
@@ -78,17 +145,32 @@ export class FunctionSimulatorTab extends Tab {
 					}
 				)
 
-				console.log('Colorization:')
-				console.log(colorize)
-
 				textDisplayElement.innerHTML = colorize
 			} else {
 				console.log('Text Element Null')
 			}
 
-			console.log(contents)
+			let rawCommand = document.getElementById('raw-command')
 
-			console.log('Finished Tab Log')
+			if (rawCommand) {
+				let line = contents.split('\n')[this.currentLine - 1]
+
+				console.log(line)
+
+				let colorize = await monaco.editor.colorize(
+					line,
+					'mcfunction',
+					{
+						tabSize: 5,
+					}
+				)
+
+				rawCommand.innerHTML = colorize
+
+				console.log(colorize)
+			}
+
+			console.log(contents)
 		}
 	}
 }
