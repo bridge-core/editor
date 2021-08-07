@@ -42,18 +42,20 @@
 				hide-details
 			>
 				<template v-slot:item="{ item }">
-					<v-icon class="mr-1" color="primary" small>
-						{{ getIcon(item) }}
-					</v-icon>
-					<span
-						style="
-							font-size: 0.8125rem;
-							font-weight: 500;
-							line-height: 1rem;
-						"
-					>
-						{{ item.label }}
-					</span>
+					<div style="width: 100%" @click="mayTrigger">
+						<v-icon class="mr-1" color="primary" small>
+							{{ getIcon(item) }}
+						</v-icon>
+						<span
+							style="
+								font-size: 0.8125rem;
+								font-weight: 500;
+								line-height: 1rem;
+							"
+						>
+							{{ item.label }}
+						</span>
+					</div>
 				</template>
 			</v-combobox>
 			<v-combobox
@@ -75,18 +77,20 @@
 				hide-details
 			>
 				<template v-slot:item="{ item }">
-					<v-icon class="mr-1" color="primary" small>
-						{{ getIcon(item) }}
-					</v-icon>
-					<span
-						style="
-							font-size: 0.8125rem;
-							font-weight: 500;
-							line-height: 1rem;
-						"
-					>
-						{{ item.label }}
-					</span>
+					<div style="width: 100%" @click="mayTrigger">
+						<v-icon class="mr-1" color="primary" small>
+							{{ getIcon(item) }}
+						</v-icon>
+						<span
+							style="
+								font-size: 0.8125rem;
+								font-weight: 500;
+								line-height: 1rem;
+							"
+						>
+							{{ item.label }}
+						</span>
+					</div>
 				</template>
 			</v-combobox>
 			<v-text-field
