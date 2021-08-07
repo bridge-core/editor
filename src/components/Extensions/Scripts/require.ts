@@ -21,6 +21,7 @@ import { ComMojangModule } from './Modules/comMojang'
 import { TabModule } from './Modules/Tab'
 import { TabActionsModule } from './Modules/TabAction'
 import { ThemeModule } from './Modules/theme'
+import { ProjectModule } from './Modules/project'
 
 const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/ui', UIModule],
@@ -29,6 +30,7 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/fs', FSModule],
 	['@bridge/path', PathModule],
 	['@bridge/env', ENVModule],
+	['@bridge/project', ProjectModule],
 	['@bridge/globals', GlobalsModule],
 	['@bridge/utils', UtilsModule],
 	['@bridge/file-importer', ImportFileModule],

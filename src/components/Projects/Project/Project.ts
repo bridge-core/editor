@@ -18,6 +18,7 @@ import { TabActionProvider } from '/@/components/TabSystem/TabActions/Provider'
 import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
 import { markRaw, reactive, set } from '@vue/composition-api'
 import { SnippetLoader } from '../../Snippets/Loader'
+import { ExportProvider } from '../Export/Extensions/Provider'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -42,6 +43,7 @@ export abstract class Project {
 	public readonly fileSave = new FileChangeRegistry()
 	public readonly tabActionProvider = new TabActionProvider()
 	public readonly snippetLoader = new SnippetLoader()
+	public readonly exportProvider = new ExportProvider()
 
 	//#region Getters
 	get projectData() {

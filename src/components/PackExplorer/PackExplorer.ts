@@ -383,6 +383,7 @@ export class PackExplorer extends SidebarContent {
 				isDisabled: !(await canExportMctemplate()),
 				onTrigger: () => exportAsMctemplate(),
 			},
+			...(await app.project.exportProvider.getExporters()),
 			{ type: 'divider' },
 
 			// Project config
@@ -390,9 +391,7 @@ export class PackExplorer extends SidebarContent {
 				icon: 'mdi-cog-outline',
 				name: 'windows.packExplorer.projectConfig.name',
 				onTrigger: async () => {
-					const project = await App.getApp().then(
-						(app) => app.project
-					)
+					const project = app.project
 
 					// Test whether project config exists
 					if (!(await project.fileSystem.fileExists('config.json'))) {
