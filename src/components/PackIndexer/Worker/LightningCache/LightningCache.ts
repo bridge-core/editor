@@ -82,7 +82,6 @@ export class LightningCache {
 					filePath,
 					fileHandle
 				)
-				console.log(filePath)
 
 				if (fileDidChange) {
 					if (!anyFileChanged) anyFileChanged = true

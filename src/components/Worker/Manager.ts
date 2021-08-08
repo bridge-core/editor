@@ -31,7 +31,6 @@ export abstract class WorkerManager<
 		if (this.disposeTimeout !== undefined) {
 			window.clearTimeout(this.disposeTimeout)
 			this.disposeTimeout = undefined
-			return
 		}
 
 		const app = this.app ?? (await App.getApp())

@@ -91,8 +91,6 @@ export class Compiler extends WorkerManager<
 			files =
 				(await this.project.packIndexer.service!.getAllFiles()) ?? []
 
-		console.log(files)
-
 		await this._service.start([files, deletedFiles])
 		this._service.disposeListeners()
 		this.ready.dispatch()
