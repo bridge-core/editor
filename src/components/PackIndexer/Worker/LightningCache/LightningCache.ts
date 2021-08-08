@@ -21,6 +21,7 @@ const knownTextFiles = new Set([
 	'.mcfunction',
 	'.txt',
 	'.molang',
+	'.html',
 ])
 
 export interface ILightningInstruction {

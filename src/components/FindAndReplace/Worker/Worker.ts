@@ -29,6 +29,7 @@ const knownTextFiles = new Set([
 	'.txt',
 	'.molang',
 	'.json',
+	'.html',
 ])
 const ignoreFolders = new Set(['.bridge', 'builds', '.git s'])
 const textPreviewLength = 100
