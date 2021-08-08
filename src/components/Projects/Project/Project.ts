@@ -15,9 +15,12 @@ import { ExtensionLoader } from '/@/components/Extensions/ExtensionLoader'
 import { FileChangeRegistry } from './FileChangeRegistry'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabActionProvider } from '/@/components/TabSystem/TabActions/Provider'
-import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+} from '/@/components/FileSystem/Types'
 import { markRaw, reactive, set } from '@vue/composition-api'
-import { SnippetLoader } from '../../Snippets/Loader'
+import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 
 export interface IProjectData extends IConfigJson {

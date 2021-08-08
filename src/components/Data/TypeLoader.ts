@@ -6,6 +6,7 @@ import { compare, CompareOperator } from 'compare-versions'
 import { getLatestFormatVersion } from './FormatVersions'
 import { DataLoader } from './DataLoader'
 import { Tab } from '../TabSystem/CommonTab'
+import { FileTab } from '../TabSystem/FileTab'
 
 const types = new Map<string, string>()
 
@@ -18,9 +19,10 @@ export class TypeLoader {
 
 	async activate(filePath?: string) {
 		this.disposables = <IDisposable[]>[
-			App.eventSystem.on('currentTabSwitched', (tab: Tab) =>
-				this.setTypeEnv(tab.getProjectPath())
-			),
+			App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
+				if (!tab.isForeignFile && tab instanceof FileTab)
+					this.setTypeEnv(tab.getProjectPath())
+			}),
 		]
 		if (filePath) await this.setTypeEnv(filePath)
 	}
