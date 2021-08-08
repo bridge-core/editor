@@ -21,13 +21,17 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 
 		const fileContent = tab.editorModel?.getValue()
 		const app = await App.getApp()
-		await app.project.packIndexer.updateFile(
-			tab.getProjectPath(),
-			fileContent
-		)
-		await app.project.jsonDefaults.updateDynamicSchemas(
-			tab.getProjectPath()
-		)
+
+		// Only update the cache if the file still exists
+		if (await app.fileSystem.fileExists(tab.getPath())) {
+			await app.project.packIndexer.updateFile(
+				tab.getProjectPath(),
+				fileContent
+			)
+			await app.project.jsonDefaults.updateDynamicSchemas(
+				tab.getProjectPath()
+			)
+		}
 
 		app.project.fileChange.dispatch(
 			tab.getProjectPath(),
