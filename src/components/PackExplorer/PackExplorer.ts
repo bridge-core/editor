@@ -251,6 +251,9 @@ export class PackExplorer extends SidebarContent {
 							},
 						},
 						{
+							type: 'divider',
+						},
+						{
 							icon: 'mdi-cogs',
 							name:
 								'windows.packExplorer.fileActions.viewCompilerOutput.name',
@@ -289,7 +292,66 @@ export class PackExplorer extends SidebarContent {
 							},
 						},
 				  ]
-				: []),
+				: [
+						{
+							icon: 'mdi-file-plus-outline',
+							name:
+								'windows.packExplorer.fileActions.createFile.name',
+							description:
+								'windows.packExplorer.fileActions.createFile.description',
+							onTrigger: async () => {
+								const inputWindow = new InputWindow({
+									name:
+										'windows.packExplorer.fileActions.createFolder.name',
+									label: 'general.fileName',
+									default: '',
+									expandText: extname(path),
+								})
+								const name = await inputWindow.fired
+								if (!name) return
+
+								const fileHandle = await project.fileSystem.writeFile(
+									`${path}/${name}`,
+									''
+								)
+
+								// Refresh pack explorer
+								this.refresh()
+
+								// Open file in new tab
+								await project.openFile(fileHandle, true)
+								project.updateChangedFiles()
+							},
+						},
+						{
+							icon: 'mdi-folder-plus-outline',
+							name:
+								'windows.packExplorer.fileActions.createFolder.name',
+							description:
+								'windows.packExplorer.fileActions.createFolder.description',
+							onTrigger: async () => {
+								const inputWindow = new InputWindow({
+									name:
+										'windows.packExplorer.fileActions.createFolder.name',
+									label: 'general.fileName',
+									default: '',
+									expandText: extname(path),
+								})
+								const name = await inputWindow.fired
+								if (!name) return
+
+								await project.fileSystem.mkdir(
+									`${path}/${name}`,
+									{ recursive: true }
+								)
+								// Refresh pack explorer
+								this.refresh()
+							},
+						},
+						{
+							type: 'divider',
+						},
+				  ]),
 			{
 				icon: 'mdi-folder-outline',
 				name: 'windows.packExplorer.fileActions.revealFilePath.name',

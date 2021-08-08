@@ -445,6 +445,14 @@ export default {
 					name: 'Reveal File Path',
 					description: 'Reveals the location of a file or folder',
 				},
+				createFile: {
+					name: 'Create File',
+					description: 'Create a new file',
+				},
+				createFolder: {
+					name: 'Create Folder',
+					description: 'Create a new folder',
+				},
 			},
 		},
 		settings: {

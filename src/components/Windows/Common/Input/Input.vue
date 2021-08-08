@@ -10,19 +10,24 @@
 		@closeWindow="onClose"
 	>
 		<template #default>
-			<v-row>
+			<div class="d-flex justify-center align-center">
 				<v-text-field
 					:label="t($data.label)"
 					v-model="$data.inputValue"
+					@keydown.enter.native="onConfirm"
+					class="mr-2"
 					outlined
 					dense
-					@keydown.enter.native="onConfirm"
 					autofocus
+					hide-details
 				/>
-				<p class="expand_text" v-if="$data.expandText !== ''">
+				<span
+					class="expand-text text--secondary"
+					v-if="$data.expandText !== ''"
+				>
 					{{ $data.expandText }}
-				</p>
-			</v-row>
+				</span>
+			</div>
 		</template>
 		<template #actions>
 			<v-spacer />
@@ -64,10 +69,3 @@ export default {
 	},
 }
 </script>
-
-<style scoped>
-.expand_text {
-	opacity: 60%;
-	padding-top: 26px;
-}
-</style>

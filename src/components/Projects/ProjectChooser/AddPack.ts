@@ -75,7 +75,7 @@ export async function addPack() {
 
 				app.project.addPack({ ...packType, version: [1, 0, 0] })
 
-				app.project.recompileChangedFiles()
+				app.project.updateChangedFiles()
 				App.eventSystem.dispatch('projectChanged', undefined)
 
 				app.windows.loadingWindow.close()

@@ -229,6 +229,9 @@ export abstract class Project {
 		await this.fileSystem.unlink(filePath)
 	}
 	async updateChangedFiles() {
+		this.packIndexer.deactivate()
+		this.compilerManager.deactivate()
+
 		await this.packIndexer.activate(true)
 		await this.compilerManager.start('default.json', 'dev')
 	}
@@ -290,13 +293,6 @@ export abstract class Project {
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
 		}
-	}
-	async recompileChangedFiles() {
-		this.packIndexer.deactivate()
-		this.compilerManager.deactivate()
-
-		await this.packIndexer.activate(true)
-		await this.compilerManager.start('default.json', 'dev')
 	}
 
 	abstract getCurrentDataPackage(): Promise<AnyDirectoryHandle>
