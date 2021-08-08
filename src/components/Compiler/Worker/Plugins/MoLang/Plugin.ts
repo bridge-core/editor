@@ -86,7 +86,6 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 						'@bridge/compiler': { mode },
 					},
 				})
-				console.log(module.exports, fileContent)
 
 				if (typeof module.exports === 'function')
 					astTransformers.push(<any>module.exports)
@@ -116,7 +115,6 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 						if (molang[0] === '/' || molang[0] === '@')
 							return molang
 
-						console.log(astTransformers.length)
 						if (astTransformers.length > 0) {
 							let ast: IExpression | undefined
 
@@ -131,10 +129,8 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 							}
 
 							for (const transformer of astTransformers) {
-								console.log(ast)
 								ast = ast.walk(transformer)
 							}
-							console.log(ast)
 
 							molang = ast.toString()
 						}
