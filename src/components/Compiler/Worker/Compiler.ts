@@ -112,7 +112,7 @@ export class Compiler {
 		await this.resolveFiles(flatFiles)
 		await this.requireFiles(flatFiles)
 		const sortedFiles = resolveFileOrder([...flatFiles], this.files)
-		// console.log([...sortedFiles].map((file) => file.filePath))
+		// console.log([...sortedFiles].map((file) => ({ ...file })))
 		// console.log(sortedFiles)
 		await this.finalizeFiles(sortedFiles)
 	}
@@ -458,7 +458,7 @@ export class Compiler {
 					transformedData
 				)) ?? transformedData
 
-			if (writeFiles && !!writeData) {
+			if (writeFiles && writeData !== undefined && writeData !== null) {
 				await this.outputFileSystem.mkdir(dirname(file.saveFilePath), {
 					recursive: true,
 				})
