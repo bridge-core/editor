@@ -3,10 +3,10 @@
 		class="d-flex align-start justify-center"
 		@click="tab.parent.setActive(true)"
 	>
-		<div class="d-flex wh-100 flex-column">
-			<div class="d-flex flex-grow-1 wh-100 mh-50">
+		<div class="d-flex wh-100">
+			<div class="d-flex wh-100 flex-column">
 				<div
-					class="d-flex align-center justify-start wh-100 border flex-column mw-50"
+					class="d-flex align-center justify-start wh-100 border m-h-50 flex-column"
 				>
 					<h2>Call Stack</h2>
 
@@ -33,7 +33,7 @@
 				</div>
 
 				<div
-					class="d-flex align-center justify-start wh-100 border flex-column mw-50"
+					class="d-flex align-center justify-start wh-100 border m-h-50 flex-column"
 				>
 					<h2>Line Inspector</h2>
 					<p
@@ -43,163 +43,88 @@
 				</div>
 			</div>
 
-			<div class="d-flex flex-grow-1 wh-100 mh-50">
-				<div
-					class="d-flex align-center justify-start wh-100 border flex-column mw-50"
-				>
-					<h2>Tests</h2>
-					<div class="d-flex align-start justify-start">
-						<p class="mr-1-2">Test 1</p>
-						<i class="mdi mdi-check mr-1-2 ok-icon scale-1-2"></i>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-pencil info-icon font-size-2 scale-1-2"
-							></button>
-						</div>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-delete error-icon font-size-2 scale-1-2"
-							></button>
-						</div>
-					</div>
+			<div
+				class="d-flex align-center justify-start wh-100 border flex-column mw-50"
+			>
+				<h2>Inspector / Log</h2>
 
-					<div class="d-flex align-start justify-start">
-						<p class="mr-1-2">Test 2</p>
-						<i
-							class="mdi mdi-alert-octagon mr-1-2 error-icon scale-1-2"
-						></i>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-pencil info-icon font-size-2 scale-1-2"
-							></button>
-						</div>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-delete error-icon font-size-2 scale-1-2"
-							></button>
-						</div>
+				<div class="d-flex align-center justify-center w-e-100 mb-1">
+					<div class="icon-back">
+						<button
+							class="mdi mdi-play ok-icon font-size-2 scale-1-2"
+						></button>
 					</div>
-
-					<div class="d-flex align-start justify-start">
-						<p class="mr-1-2">Test 3</p>
-						<i class="mdi mdi-check mr-1-2 ok-icon scale-1-2"></i>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-pencil info-icon font-size-2 scale-1-2"
-							></button>
-						</div>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-delete error-icon font-size-2 scale-1-2"
-							></button>
-						</div>
+					<div class="icon-back">
+						<button
+							class="mdi mdi-debug-step-over info-icon font-size-2 scale-1-2"
+						></button>
 					</div>
-
-					<div class="d-flex align-start justify-start">
-						<p class="mr-1-2">Test 4</p>
-						<i class="mdi mdi-check mr-1-2 ok-icon scale-1-2"></i>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-pencil info-icon font-size-2 scale-1-2"
-							></button>
-						</div>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-delete error-icon font-size-2 scale-1-2"
-							></button>
-						</div>
+					<div class="icon-back">
+						<button
+							class="mdi mdi-stop error-icon font-size-2 scale-1-2"
+						></button>
 					</div>
 				</div>
 
 				<div
-					class="d-flex align-center justify-start wh-100 border flex-column mw-50"
+					class="d-flex align-start justify-start wh-100 w-e-100 flex-column overflow-scroll"
 				>
-					<h2>Inspector / Log</h2>
-
-					<div
-						class="d-flex align-center justify-center w-e-100 mb-1"
-					>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-play ok-icon font-size-2 scale-1-2"
-							></button>
-						</div>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-debug-step-over info-icon font-size-2 scale-1-2"
-							></button>
-						</div>
-						<div class="icon-back">
-							<button
-								class="mdi mdi-stop error-icon font-size-2 scale-1-2"
-							></button>
-						</div>
-					</div>
-
-					<div
-						class="d-flex align-start justify-start wh-100 w-e-100 flex-column overflow-scroll"
-					>
-						<p>Line: 4</p>
-						<p>Command: give</p>
-						<p class="warning-info">
-							<i class="mdi mdi-alert-circle mr-1-2"></i
-							>"sp:sapphire_leggings" Not found as an item or
-							block. Ignore this if this item / block is from
-							another pack.
-						</p>
-						<p class="error-info">
-							<i class="mdi mdi-alert-octagon mr-1-2"></i>Example
-							Error for Testing
-						</p>
-						<p>Docs:</p>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua. Facilisis leo vel fringilla est
-							ullamcorper eget nulla. Lectus sit amet est placerat
-							in egestas erat imperdiet sed. Vestibulum lectus
-							mauris ultrices eros in. Dictumst quisque sagittis
-							purus sit. Sit amet nulla facilisi morbi tempus
-							iaculis. Eget gravida cum sociis natoque penatibus
-							et magnis dis. Et netus et malesuada fames ac. Sem
-							fringilla ut morbi tincidunt augue interdum velit.
-							Parturient montes nascetur ridiculus mus mauris
-							vitae ultricies. Duis tristique sollicitudin nibh
-							sit amet commodo nulla. Quis ipsum suspendisse
-							ultrices gravida dictum fusce. Facilisis sed odio
-							morbi quis commodo odio aenean sed. Commodo quis
-							imperdiet massa tincidunt. Aliquam ultrices sagittis
-							orci a scelerisque purus semper eget duis. Vulputate
-							eu scelerisque felis imperdiet proin fermentum leo
-							vel orci. Id donec ultrices tincidunt arcu non
-							sodales neque sodales. Facilisis leo vel fringilla
-							est ullamcorper eget nulla facilisi etiam. Sit amet
-							mauris commodo quis imperdiet. Libero id faucibus
-							nisl tincidunt eget. Semper auctor neque vitae
-							tempus quam pellentesque nec nam. Ut tellus
-							elementum sagittis vitae et. Orci porta non pulvinar
-							neque. Ultricies mi eget mauris pharetra et ultrices
-							neque. Mi bibendum neque egestas congue. Sit amet
-							dictum sit amet justo. Lobortis elementum nibh
-							tellus molestie. Volutpat consequat mauris nunc
-							congue nisi. Elementum integer enim neque volutpat
-							ac tincidunt vitae semper quis. Pellentesque elit
-							ullamcorper dignissim cras. Amet purus gravida quis
-							blandit turpis. Platea dictumst vestibulum rhoncus
-							est pellentesque elit ullamcorper. Tortor aliquam
-							nulla facilisi cras fermentum odio. Risus viverra
-							adipiscing at in tellus. Augue lacus viverra vitae
-							congue eu. Tincidunt lobortis feugiat vivamus at
-							augue. Adipiscing diam donec adipiscing tristique.
-							Risus in hendrerit gravida rutrum quisque. Tincidunt
-							tortor aliquam nulla facilisi. Nec feugiat nisl
-							pretium fusce id velit ut tortor. Magna fringilla
-							urna porttitor rhoncus dolor purus. Dictumst
-							vestibulum rhoncus est pellentesque elit ullamcorper
-							dignissim. Tellus in metus vulputate eu scelerisque
-							felis imperdiet proin fermentum.
-						</p>
-					</div>
+					<p>Line: 4</p>
+					<p>Command: give</p>
+					<p class="warning-info">
+						<i class="mdi mdi-alert-circle mr-1-2"></i
+						>"sp:sapphire_leggings" Not found as an item or block.
+						Ignore this if this item / block is from another pack.
+					</p>
+					<p class="error-info">
+						<i class="mdi mdi-alert-octagon mr-1-2"></i>Example
+						Error for Testing
+					</p>
+					<p>Docs:</p>
+					<p>
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+						sed do eiusmod tempor incididunt ut labore et dolore
+						magna aliqua. Facilisis leo vel fringilla est
+						ullamcorper eget nulla. Lectus sit amet est placerat in
+						egestas erat imperdiet sed. Vestibulum lectus mauris
+						ultrices eros in. Dictumst quisque sagittis purus sit.
+						Sit amet nulla facilisi morbi tempus iaculis. Eget
+						gravida cum sociis natoque penatibus et magnis dis. Et
+						netus et malesuada fames ac. Sem fringilla ut morbi
+						tincidunt augue interdum velit. Parturient montes
+						nascetur ridiculus mus mauris vitae ultricies. Duis
+						tristique sollicitudin nibh sit amet commodo nulla. Quis
+						ipsum suspendisse ultrices gravida dictum fusce.
+						Facilisis sed odio morbi quis commodo odio aenean sed.
+						Commodo quis imperdiet massa tincidunt. Aliquam ultrices
+						sagittis orci a scelerisque purus semper eget duis.
+						Vulputate eu scelerisque felis imperdiet proin fermentum
+						leo vel orci. Id donec ultrices tincidunt arcu non
+						sodales neque sodales. Facilisis leo vel fringilla est
+						ullamcorper eget nulla facilisi etiam. Sit amet mauris
+						commodo quis imperdiet. Libero id faucibus nisl
+						tincidunt eget. Semper auctor neque vitae tempus quam
+						pellentesque nec nam. Ut tellus elementum sagittis vitae
+						et. Orci porta non pulvinar neque. Ultricies mi eget
+						mauris pharetra et ultrices neque. Mi bibendum neque
+						egestas congue. Sit amet dictum sit amet justo. Lobortis
+						elementum nibh tellus molestie. Volutpat consequat
+						mauris nunc congue nisi. Elementum integer enim neque
+						volutpat ac tincidunt vitae semper quis. Pellentesque
+						elit ullamcorper dignissim cras. Amet purus gravida quis
+						blandit turpis. Platea dictumst vestibulum rhoncus est
+						pellentesque elit ullamcorper. Tortor aliquam nulla
+						facilisi cras fermentum odio. Risus viverra adipiscing
+						at in tellus. Augue lacus viverra vitae congue eu.
+						Tincidunt lobortis feugiat vivamus at augue. Adipiscing
+						diam donec adipiscing tristique. Risus in hendrerit
+						gravida rutrum quisque. Tincidunt tortor aliquam nulla
+						facilisi. Nec feugiat nisl pretium fusce id velit ut
+						tortor. Magna fringilla urna porttitor rhoncus dolor
+						purus. Dictumst vestibulum rhoncus est pellentesque elit
+						ullamcorper dignissim. Tellus in metus vulputate eu
+						scelerisque felis imperdiet proin fermentum.
+					</p>
 				</div>
 			</div>
 		</div>
@@ -221,12 +146,16 @@ export default {
 	height: 100%;
 }
 
+.m-h-50 {
+	max-height: 50%;
+}
+
 .w-100 {
 	width: 100%;
 }
 
 .border {
-	border: thin solid purple;
+	border: thin solid var(--v-lineHighlightBackground-base);
 }
 
 .w-e-100 {
@@ -259,13 +188,13 @@ export default {
 }
 
 .warning-info {
-	background: rgb(255, 0, 170);
+	background: var(--v-warning-base);
 	padding: 0.4rem;
 	border-radius: 0.4rem;
 }
 
 .error-info {
-	background: rgb(255, 0, 170);
+	background: var(--v-error-base);
 	padding: 0.4rem;
 	border-radius: 0.4rem;
 }
@@ -275,19 +204,19 @@ export default {
 }
 
 .ok-icon {
-	color: green;
+	color: var(--v-success-base);
 }
 
 .warning-icon {
-	color: yellow;
+	color: var(--v-warning-base);
 }
 
 .error-icon {
-	color: red;
+	color: var(--v-error-base);
 }
 
 .info-icon {
-	color: blue;
+	color: var(--v-info-base);
 }
 
 .scale-1-2 {
@@ -295,7 +224,7 @@ export default {
 }
 
 .icon-back {
-	background: grey;
+	background: var(--v-expandedSidebar-base);
 	border-radius: 0.4rem;
 	width: 1.8rem;
 	height: 1.8rem;
