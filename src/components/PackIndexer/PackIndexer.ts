@@ -65,7 +65,9 @@ export class PackIndexer extends WorkerManager<
 		)
 
 		// Start service
-		const [changedFiles, deletedFiles] = await this.service.start()
+		const [changedFiles, deletedFiles] = await this.service.start(
+			forceRefreshCache
+		)
 		await this.service.disposeListeners()
 		this.ready.dispatch()
 		console.timeEnd('[TASK] Indexing Packs (Total)')

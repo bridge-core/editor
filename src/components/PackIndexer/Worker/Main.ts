@@ -23,7 +23,8 @@ export interface IPackIndexerOptions {
 }
 
 export class PackIndexerService extends TaskService<
-	readonly [string[], string[]]
+	readonly [string[], string[]],
+	boolean
 > {
 	protected lightningStore: LightningStore
 	protected packSpider: PackSpider
@@ -60,7 +61,7 @@ export class PackIndexerService extends TaskService<
 		}
 	}
 
-	async onStart() {
+	async onStart(forceRefresh: boolean) {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
 		await FileType.setup(this.dataLoader)
@@ -73,7 +74,7 @@ export class PackIndexerService extends TaskService<
 			filePaths,
 			changedFiles,
 			deletedFiles,
-		] = await this.lightningCache.start()
+		] = await this.lightningCache.start(forceRefresh)
 		console.timeEnd('[WORKER] LightningCache')
 
 		console.time('[WORKER] PackSpider')

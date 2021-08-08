@@ -38,7 +38,7 @@
 					:packType="packType"
 					isSelectable
 					:selected="createOptions.packs.includes(packType.packPath)"
-					@click="togglePack(packType.packPath)"
+					@click="togglePack(packType.id)"
 				>
 					<template
 						v-if="packType.packPath === 'BP'"

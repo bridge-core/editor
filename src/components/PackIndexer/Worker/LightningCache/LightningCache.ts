@@ -57,12 +57,17 @@ export class LightningCache {
 		}
 	}
 
-	async start(): Promise<readonly [string[], string[], string[]]> {
+	async start(
+		forceRefresh: boolean
+	): Promise<readonly [string[], string[], string[]]> {
 		await this.lightningStore.setup()
 
 		if (this.folderIgnoreList.size === 0) await this.loadIgnoreFolders()
 
-		if (this.service.getOptions().noFullLightningCacheRefresh) {
+		if (
+			!forceRefresh &&
+			this.service.getOptions().noFullLightningCacheRefresh
+		) {
 			const filePaths = this.lightningStore.allFiles()
 			if (filePaths.length > 0) return [filePaths, [], []]
 		}
@@ -77,6 +82,7 @@ export class LightningCache {
 					filePath,
 					fileHandle
 				)
+				console.log(filePath)
 
 				if (fileDidChange) {
 					if (!anyFileChanged) anyFileChanged = true

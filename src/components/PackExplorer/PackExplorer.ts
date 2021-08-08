@@ -34,48 +34,49 @@ export class PackExplorer extends SidebarContent {
 	constructor() {
 		super()
 
-		App.eventSystem.on('projectChanged', () => {
-			App.getApp().then(async (app) => {
-				this.unselectAllActions()
-				for (const pack of app.project.projectData.contains ?? []) {
-					set(
-						this.directoryEntries,
-						pack.packPath,
-						await DirectoryEntry.create([pack.packPath])
-					)
-				}
-
-				this.actions =
-					app.project.projectData.contains?.map(
-						(pack) =>
-							new SelectableSidebarAction(this, {
-								id: pack.packPath,
-								icon: pack.icon,
-								color: pack.color,
-							})
-					) ?? []
-
-				if (isUsingFileSystemPolyfill) {
-					this.actions.push(
-						new SidebarAction({
-							icon: 'mdi-content-save-outline',
-							onTrigger: () => exportAsBrproject(),
-						})
-					)
-				}
-
-				this.actions.push(
-					new SidebarAction({
-						icon: 'mdi-dots-vertical',
-						onTrigger: (event) => {
-							this.showMoreMenu(event)
-						},
-					})
-				)
-			})
-		})
-
+		App.eventSystem.on('projectChanged', () => this.setup())
 		App.eventSystem.on('fileAdded', () => this.refresh())
+	}
+
+	async setup() {
+		const app = await App.getApp()
+
+		this.unselectAllActions()
+		for (const pack of app.project.projectData.contains ?? []) {
+			set(
+				this.directoryEntries,
+				pack.packPath,
+				await DirectoryEntry.create([pack.packPath])
+			)
+		}
+
+		this.actions =
+			app.project.projectData.contains?.map(
+				(pack) =>
+					new SelectableSidebarAction(this, {
+						id: pack.packPath,
+						icon: pack.icon,
+						color: pack.color,
+					})
+			) ?? []
+
+		if (isUsingFileSystemPolyfill) {
+			this.actions.push(
+				new SidebarAction({
+					icon: 'mdi-content-save-outline',
+					onTrigger: () => exportAsBrproject(),
+				})
+			)
+		}
+
+		this.actions.push(
+			new SidebarAction({
+				icon: 'mdi-dots-vertical',
+				onTrigger: (event) => {
+					this.showMoreMenu(event)
+				},
+			})
+		)
 	}
 
 	async refresh() {

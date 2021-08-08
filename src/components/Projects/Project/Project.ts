@@ -27,7 +27,7 @@ export interface IProjectData extends IConfigJson {
 	path: string
 	name: string
 	imgSrc: string
-	contains: IPackType[]
+	contains: (IPackType & { version: [number, number, number] })[]
 }
 
 export abstract class Project {
@@ -253,6 +253,12 @@ export abstract class Project {
 		}
 		return true
 	}
+	getPacks() {
+		return (this._projectData.contains ?? []).map((pack) => pack.id)
+	}
+	addPack(packType: IPackType & { version: [number, number, number] }) {
+		this._projectData.contains!.push(packType)
+	}
 
 	async loadProject() {
 		await this.config.setup()
@@ -284,6 +290,13 @@ export abstract class Project {
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
 		}
+	}
+	async recompileChangedFiles() {
+		this.packIndexer.deactivate()
+		this.compilerManager.deactivate()
+
+		await this.packIndexer.activate(true)
+		await this.compilerManager.start('default.json', 'dev')
 	}
 
 	abstract getCurrentDataPackage(): Promise<AnyDirectoryHandle>

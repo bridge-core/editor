@@ -83,7 +83,7 @@ export class CreateManifest extends CreateFile {
 		// Register the resource pack as a dependency of the BP
 		if (
 			createOptions.rpAsBpDependency &&
-			createOptions.packs.includes('RP')
+			createOptions.packs.includes('resourcePack')
 		) {
 			if (this.type === 'resources') {
 				createOptions.rpUuid = manifest.header.uuid
