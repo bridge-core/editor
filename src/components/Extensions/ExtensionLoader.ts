@@ -24,9 +24,11 @@ export interface IExtensionManifest {
 	compiler: {
 		plugins: Record<string, string>
 	}
-	install: {
-		[key: string]: string
-	}
+	contributeFiles: Record<string, string>
+	/**
+	 * @deprecated
+	 */
+	install: Record<string, string>
 }
 
 export class ExtensionLoader extends Signal<void> {
