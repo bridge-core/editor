@@ -21,11 +21,8 @@ export class CreateConfig extends CreateFile {
 				capabilities,
 				packs: Object.fromEntries(
 					createOptions.packs
-						.filter((pack) => pack !== '.bridge')
-						.map((pack) => [
-							PackType.getIdFromPackPath(pack),
-							`./${pack}`,
-						])
+						.filter((packId) => packId !== '.bridge')
+						.map((packId) => [packId, PackType.getFromId(packId)])
 				),
 			},
 			true

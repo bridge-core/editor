@@ -2,17 +2,17 @@ import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import CreateProjectComponent from './CreateProject.vue'
-import { CreatePack, TPackType } from './Packs/Pack'
+import { CreatePack } from './Packs/Pack'
 import { CreateBP } from './Packs/BP'
 import { CreateRP } from './Packs/RP'
 import { CreateSP } from './Packs/SP'
 import { CreateBridge } from './Packs/Bridge'
-import { IPackType, PackType } from '/@/components/Data/PackType'
+import { IPackType, PackType, TPackTypeId } from '/@/components/Data/PackType'
 import { CreateGitIgnore } from './Files/GitIgnore'
 import { CreateWT } from './Packs/WT'
 import { CreateConfig } from './Files/Config'
-import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
-import { ConfirmationWindow } from '../../Windows/Common/Confirm/ConfirmWindow'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 
 export interface ICreateProjectOptions {
@@ -22,7 +22,7 @@ export interface ICreateProjectOptions {
 	name: string
 	namespace: string
 	targetVersion: string
-	packs: TPackType[]
+	packs: (TPackTypeId | '.bridge')[]
 	scripting: boolean
 	gameTest: boolean
 	rpAsBpDependency: boolean
@@ -35,11 +35,11 @@ export class CreateProjectWindow extends BaseWindow {
 	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []
 	protected availableTargetVersionsLoading = true
-	protected packs: Record<TPackType, CreatePack> = {
-		BP: new CreateBP(),
-		RP: new CreateRP(),
-		SP: new CreateSP(),
-		WT: new CreateWT(),
+	protected packs: Record<TPackTypeId | '.bridge', CreatePack> = {
+		behaviorPack: new CreateBP(),
+		resourcePack: new CreateRP(),
+		skinPack: new CreateSP(),
+		worldTemplate: new CreateWT(),
 		'.bridge': new CreateBridge(),
 	}
 	protected availablePackTypes: IPackType[] = []
@@ -134,21 +134,57 @@ export class CreateProjectWindow extends BaseWindow {
 		await App.audioManager.playAudio('confirmation_002.ogg', 1)
 	}
 
-	getDefaultOptions(): ICreateProjectOptions {
+	static getDefaultOptions(): ICreateProjectOptions {
 		return {
 			author: '',
 			description: '',
 			icon: null,
 			name: '',
 			namespace: 'bridge',
-			targetVersion: this.availableTargetVersions
-				? this.availableTargetVersions[0]
-				: '',
-			packs: ['.bridge', 'BP', 'RP'],
+			targetVersion: '',
+			packs: ['.bridge', 'behaviorPack', 'resourcePack'],
 			scripting: false,
 			gameTest: false,
 			rpAsBpDependency: false,
 			useLangForManifest: false,
+		}
+	}
+	getDefaultOptions(): ICreateProjectOptions {
+		return {
+			...this.createOptions,
+			targetVersion: this.availableTargetVersions
+				? this.availableTargetVersions[0]
+				: '',
+		}
+	}
+
+	static async loadFromConfig(): Promise<ICreateProjectOptions> {
+		const app = await App.getApp()
+
+		let config: any
+		try {
+			config = await app.project.fileSystem.readJSON('config.json')
+
+			return {
+				author: config.author ?? '',
+				description: config.description ?? '',
+				icon: null,
+				name: config.name ?? '',
+				namespace: config.namespace ?? 'bridge',
+				targetVersion: config.targetVersion ?? '',
+				packs: config.packs ?? [
+					'.bridge',
+					'behaviorPack',
+					'resourcePack',
+				],
+				scripting:
+					config.capabilities?.includes('scriptingAPI') ?? false,
+				gameTest: config.capabilities?.includes('gameTestAPI') ?? false,
+				useLangForManifest: false,
+				rpAsBpDependency: false,
+			}
+		} catch {
+			return this.getDefaultOptions()
 		}
 	}
 }

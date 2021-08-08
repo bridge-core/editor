@@ -68,8 +68,10 @@ export namespace PackType {
 		return get(`projects/bridge/${filePath}`)
 	}
 
-	export function getIdFromPackPath(packPath: string) {
-		return getWithRelativePath(`${packPath}/test.json`)?.id ?? 'unknown'
+	export function getFromId(packId: string) {
+		for (const packType of all()) {
+			if (packType.id === packId) return packType
+		}
 	}
 
 	/**

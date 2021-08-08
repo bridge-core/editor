@@ -53,6 +53,11 @@
 		</template>
 
 		<template #actions="{ selectedSidebar }">
+			<v-btn color="primary" @click="onAddPack">
+				<v-icon class="mr-1">mdi-plus-box</v-icon>
+				{{ t('windows.projectChooser.addPack') }}
+			</v-btn>
+
 			<v-spacer />
 			<v-btn
 				color="error"
@@ -60,7 +65,7 @@
 				@click="onDeleteProject(selectedSidebar)"
 			>
 				<v-icon>mdi-delete</v-icon>
-				Delete
+				{{ t('general.delete') }}
 			</v-btn>
 			<v-btn
 				color="primary"
@@ -68,7 +73,7 @@
 				@click="onSelectProject"
 			>
 				<v-icon>mdi-check</v-icon>
-				Select
+				{{ t('general.select') }}
 			</v-btn>
 		</template>
 	</SidebarWindow>
@@ -81,6 +86,7 @@ import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow.ts'
+import { addPack } from './AddPack'
 
 export default {
 	name: 'ProjectChooserWindow',
@@ -113,6 +119,10 @@ export default {
 					await this.currentWindow.loadProjects()
 				},
 			})
+		},
+		onAddPack() {
+			addPack()
+			this.currentWindow.close()
 		},
 	},
 }

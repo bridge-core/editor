@@ -15,6 +15,7 @@ export default {
 		information: 'Information',
 		continue: 'Continue',
 		delete: 'Delete',
+		select: 'Select',
 		skip: 'Skip',
 		selectFolder: 'Select Folder',
 		fileName: 'File Name',
@@ -380,6 +381,7 @@ export default {
 					'Do you want to save your current project before loading in the new one?',
 			},
 			wrongFileType: 'Project must be a .brproject file',
+			addPack: 'Add Pack',
 		},
 		filePath: {
 			title: 'Choose File Path',
