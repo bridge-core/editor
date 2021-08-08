@@ -3,6 +3,7 @@ import { transpile } from 'typescript'
 export interface IScriptContext {
 	script: string
 	env: Record<string, unknown>
+	modules?: Record<string, unknown>
 	language?: 'javaScript' | 'typeScript'
 	async?: boolean
 }
@@ -15,6 +16,7 @@ export function createRunner({
 	script,
 	env,
 	language,
+	modules,
 	async = false,
 }: IScriptContext) {
 	if (language === 'typeScript')
@@ -23,6 +25,18 @@ export function createRunner({
 			isolatedModules: true,
 		})
 	let transformedScript = transformScript(script)
+
+	// Helper which allows for quickly setting up importable modules
+	if (modules) {
+		const currRequire = env.require
+
+		env.require = async (moduleName: string) => {
+			if (modules[moduleName]) return modules[moduleName]
+
+			if (typeof currRequire === 'function')
+				return await currRequire?.(moduleName)
+		}
+	}
 
 	try {
 		if (async)
