@@ -146,8 +146,20 @@ export class CompilerManager extends Signal<void> {
 
 		const actionManager = await informedChoice.actionManager
 
+		actionManager.create({
+			icon: 'mdi-cog',
+			name: 'sidebar.compiler.default.name',
+			description: 'sidebar.compiler.default.description',
+			onTrigger: () => this.start('default', 'build'),
+		})
+
 		for await (const entry of configDir.values()) {
-			if (entry.kind !== 'file' || entry.name === '.DS_Store') continue
+			if (
+				entry.kind !== 'file' ||
+				entry.name === '.DS_Store' ||
+				entry.name === 'default.json' // Default compiler config already gets triggerd with the default action above (outside of the loop)
+			)
+				continue
 			const file = await entry.getFile()
 
 			let config

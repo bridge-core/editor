@@ -269,6 +269,11 @@ export default {
 	sidebar: {
 		compiler: {
 			name: 'Compiler',
+			default: {
+				name: 'Default Config',
+				description:
+					'Run bridge.\'s compiler with the default compiler configuration that is part of your project\'s "config.json" file.',
+			},
 		},
 		extensions: {
 			name: 'Extensions',
