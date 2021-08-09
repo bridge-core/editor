@@ -15,6 +15,7 @@ import { DefinitionProvider } from '../Definitions/GoTo'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { viewDocumentation } from '../Documentation/view'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
+import '/@/components/Languages/Json/Main'
 
 languages.typescript.javascriptDefaults.setCompilerOptions({
 	target: languages.typescript.ScriptTarget.ESNext,

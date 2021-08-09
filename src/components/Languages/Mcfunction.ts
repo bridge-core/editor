@@ -7,11 +7,11 @@ import {
 	Range,
 } from 'monaco-editor'
 import { BedrockProject } from '../Projects/Project/BedrockProject'
-import { colorCodes } from './Common/ColorCodes'
 import { Language } from './Language'
 import { tokenizeCommand } from './Mcfunction/tokenize'
 import { App } from '/@/App'
 import './Mcfunction/WithinJson'
+import { tokenProvider } from './Mcfunction/TokenProvider'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {
@@ -35,45 +35,6 @@ export const config: languages.LanguageConfiguration = {
 			close: '"',
 		},
 	],
-}
-
-export const tokenProvider: any = {
-	brackets: [
-		['(', ')', 'delimiter.parenthesis'],
-		['[', ']', 'delimiter.square'],
-		['{', '}', 'delimiter.curly'],
-	],
-	keywords: [],
-	selectors: ['@a', '@e', '@p', '@r', '@s'],
-	tokenizer: {
-		root: [
-			[/#.*/, 'comment'],
-			[/"[^"]*"|'[^']*'/, 'string'],
-			[/\=|\,|\!|%=|\*=|\+=|-=|\/=|<|=|>|<>/, 'definition'],
-			[/true|false/, 'number'],
-			[/-?([0-9]+(\.[0-9]+)?)|(\~|\^-?([0-9]+(\.[0-9]+)?)?)/, 'number'],
-			...colorCodes,
-
-			[
-				/[a-z_$][\w$]*/,
-				{
-					cases: {
-						'@keywords': 'keyword',
-						'@default': 'identifier',
-					},
-				},
-			],
-			[
-				/@[a|p|r|e|s]/,
-				{
-					cases: {
-						'@selectors': 'type.identifier',
-						'@default': 'identifier',
-					},
-				},
-			],
-		],
-	},
 }
 
 const completionItemProvider: languages.CompletionItemProvider = {
@@ -121,18 +82,12 @@ const completionItemProvider: languages.CompletionItemProvider = {
 	},
 }
 
-const loadCommands = debounce(async (lang: McfunctionLanguage) => {
+const loadCommands = async (lang: McfunctionLanguage) => {
 	const app = await App.getApp()
 	await app.projectManager.fired
 
 	const project = app.project
 	if (!(project instanceof BedrockProject)) return
-	if (
-		!project.tabSystem?.selectedTab
-			?.getProjectPath()
-			?.endsWith('.mcfunction')
-	)
-		return
 
 	await project.commandData.fired
 	const commands = await project.commandData.allCommands(
@@ -142,7 +97,7 @@ const loadCommands = debounce(async (lang: McfunctionLanguage) => {
 	tokenProvider.keywords = commands.map((command) => command)
 
 	lang.updateTokenProvider(tokenProvider)
-}, 200)
+}
 
 export class McfunctionLanguage extends Language {
 	constructor() {
