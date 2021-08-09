@@ -102,7 +102,10 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 					.readJSON('config.json')
 					.then((config) => config.compiler)
 
-				// Support legacy projects with a default.json file
+				/**
+				 * @depracted Support legacy projects with a default.json file
+				 * Remove with next major release
+				 */
 				if (this.buildConfig === undefined) {
 					this.buildConfig = await this.fileSystem.readJSON(
 						`.bridge/compiler/${this.options.config}.json`
