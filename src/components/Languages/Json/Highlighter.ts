@@ -65,6 +65,7 @@ languages.setMonarchTokensProvider('json', {
 		],
 
 		embeddedCommand: [
+			[/@escapes/, 'string.escape'],
 			[/"/, { token: 'identifier', next: '@pop', nextEmbedded: '@pop' }],
 		],
 
@@ -89,7 +90,7 @@ languages.setMonarchTokensProvider('json', {
 
 		string: [
 			[
-				/[^\\"\\:]+/,
+				/[^\"\:\.]+/,
 				{
 					cases: {
 						'@stringKeywords': 'keyword',
@@ -98,12 +99,6 @@ languages.setMonarchTokensProvider('json', {
 					},
 				},
 			],
-			[/@escapes/, 'string.escape'],
-			[/\\./, 'string.escape.invalid'],
-			[/"/, 'identifier', '@pop'],
-		],
-		command: [
-			[/[^\\"]+/, 'keyword'],
 			[/@escapes/, 'string.escape'],
 			[/\\./, 'string.escape.invalid'],
 			[/"/, 'identifier', '@pop'],
