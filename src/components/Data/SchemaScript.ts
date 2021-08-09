@@ -50,6 +50,7 @@ export class SchemaScript {
 					},
 					getProjectPrefix: () =>
 						this.app.projectConfig.get().namespace ?? 'bridge',
+					getProjectConfig: () => this.app.projectConfig.getFresh(),
 					getFileName: () =>
 						!this.filePath
 							? undefined
