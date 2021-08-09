@@ -2,6 +2,7 @@ import json5 from 'json5'
 import { TCompilerPluginFactory } from '../../TCompilerPluginFactory'
 import { Command } from './Command'
 import { transformCommands } from './transformCommands'
+import { FileType } from '/@/components/Data/FileType'
 import { setObjectAt } from '/@/utils/walkObject'
 
 export const CustomCommandsPlugin: TCompilerPluginFactory<{
@@ -25,8 +26,8 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 		filePath?.endsWith('.mcfunction')
 
 	const loadCommandsFor = (filePath: string) =>
-		Object.entries(include).find(([startPath]) =>
-			filePath.startsWith(startPath)
+		Object.entries(include).find(
+			([fileType]) => FileType.getId(filePath) === fileType
 		)?.[1]
 	const withSlashPrefix = (filePath: string) =>
 		['BP/animations/', 'BP/animation_controllers/'].some((typePath) =>

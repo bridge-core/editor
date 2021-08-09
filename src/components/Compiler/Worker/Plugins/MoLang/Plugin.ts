@@ -3,6 +3,7 @@ import { CustomMoLang, IExpression, MoLang, expressions } from 'molang'
 import { setObjectAt } from '/@/utils/walkObject'
 import json5 from 'json5'
 import { run } from '/@/components/Extensions/Scripts/run'
+import { FileType } from '/@/components/Data/FileType'
 
 export const MoLangPlugin: TCompilerPluginFactory<{
 	include: Record<string, string[]>
@@ -19,8 +20,8 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 	const isMoLangScript = (filePath: string | null) =>
 		filePath?.startsWith('BP/scripts/molang/')
 	const loadMoLangFrom = (filePath: string) =>
-		Object.entries(include).find(([startPath]) =>
-			filePath.startsWith(startPath)
+		Object.entries(include).find(
+			([fileType]) => FileType.getId(filePath) === fileType
 		)?.[1]
 
 	const astTransformers: ((
