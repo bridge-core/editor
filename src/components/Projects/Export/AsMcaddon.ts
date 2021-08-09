@@ -9,7 +9,7 @@ export async function exportAsMcaddon() {
 	const app = await App.getApp()
 	app.windows.loadingWindow.open()
 
-	await app.project.compilerManager.start('default.json', 'build')
+	await app.project.compilerManager.start('default', 'build')
 
 	const zipFolder = new ZipDirectory(
 		await app.project.fileSystem.getDirectoryHandle('builds/dist', {

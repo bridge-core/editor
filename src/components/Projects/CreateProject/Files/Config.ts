@@ -24,6 +24,18 @@ export class CreateConfig extends CreateFile {
 						.filter((packId) => packId !== '.bridge')
 						.map((packId) => [packId, PackType.getFromId(packId)])
 				),
+				compiler: {
+					plugins: [
+						'typeScript',
+						'entityIdentifierAlias',
+						'customEntityComponents',
+						'customItemComponents',
+						'customBlockComponents',
+						'customCommands',
+						'moLang',
+						['simpleRewrite', { packName: createOptions.name }],
+					],
+				},
 			},
 			true
 		)

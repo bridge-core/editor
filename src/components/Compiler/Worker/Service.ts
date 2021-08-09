@@ -19,9 +19,6 @@ export interface ICompilerOptions {
 	allFiles: string[]
 }
 export interface IBuildConfig {
-	mode: 'dev' | 'build'
-
-	createFiles: string[]
 	plugins: TPluginDef[]
 }
 export type TPluginDef = string | [string, any]
@@ -29,7 +26,7 @@ export type TPluginDef = string | [string, any]
 const compilers = new WeakMap<CompilerService, Compiler>()
 export class CompilerService extends TaskService<void, [string[], string[]]> {
 	public fileSystem: FileSystem
-	protected buildConfig!: IBuildConfig
+	protected buildConfig: IBuildConfig = { plugins: [] }
 	protected plugins!: Map<string, Partial<TCompilerPlugin>>
 	protected _outputFileSystem?: FileSystem
 	protected dataLoader = new DataLoader()
@@ -99,9 +96,24 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 		await FileType.setup(this.dataLoader)
 
 		try {
-			this.buildConfig = await this.fileSystem.readJSON(
-				`.bridge/compiler/${this.options.config}`
-			)
+			if (this.options.config === 'default') {
+				// Try loading compiler config from the project config file
+				this.buildConfig = await this.fileSystem
+					.readJSON('config.json')
+					.then((config) => config.compiler)
+
+				// Support legacy projects with a default.json file
+				if (this.buildConfig === undefined) {
+					this.buildConfig = await this.fileSystem.readJSON(
+						`.bridge/compiler/${this.options.config}.json`
+					)
+				}
+			} else {
+				// Load all other compiler config files
+				this.buildConfig = await this.fileSystem.readJSON(
+					`.bridge/compiler/${this.options.config}`
+				)
+			}
 		} catch {
 			return
 		}

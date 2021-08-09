@@ -136,7 +136,7 @@ export abstract class Project {
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
-			this.compilerManager.start('default.json', 'dev'),
+			this.compilerManager.start('default', 'dev'),
 		])
 
 		this.snippetLoader.activate()
@@ -210,7 +210,7 @@ export abstract class Project {
 
 		await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			this.compilerManager.updateFiles('default.json', [filePath]),
+			this.compilerManager.updateFiles('default', [filePath]),
 		])
 
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
@@ -218,7 +218,7 @@ export abstract class Project {
 	async updateFiles(filePaths: string[]) {
 		await Promise.all([
 			this.packIndexer.updateFiles(filePaths),
-			this.compilerManager.updateFiles('default.json', filePaths),
+			this.compilerManager.updateFiles('default', filePaths),
 		])
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
@@ -233,7 +233,7 @@ export abstract class Project {
 		this.compilerManager.deactivate()
 
 		await this.packIndexer.activate(true)
-		await this.compilerManager.start('default.json', 'dev')
+		await this.compilerManager.start('default', 'dev')
 	}
 
 	async getFileFromDiskOrTab(filePath: string) {
@@ -289,7 +289,7 @@ export abstract class Project {
 		if (forceStartIfActive) this.compilerManager.dispose()
 
 		if (forceStartIfActive && this.isActiveProject) {
-			this.compilerManager.start('default.json', 'dev', true)
+			this.compilerManager.start('default', 'dev', true)
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
 		}

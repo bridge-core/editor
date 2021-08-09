@@ -14,7 +14,7 @@ export async function exportAsMctemplate(asMcworld = false) {
 	const fs = project.fileSystem
 	app.windows.loadingWindow.open()
 
-	await app.project.compilerManager.start('default.json', 'build')
+	await app.project.compilerManager.start('default', 'build')
 
 	let baseWorlds: string[] = []
 
