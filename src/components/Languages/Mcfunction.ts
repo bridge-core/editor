@@ -11,6 +11,7 @@ import { colorCodes } from './Common/ColorCodes'
 import { Language } from './Language'
 import { tokenizeCommand } from './Mcfunction/tokenize'
 import { App } from '/@/App'
+import './Mcfunction/WithinJson'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {

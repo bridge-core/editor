@@ -14,6 +14,7 @@ import { IDisposable } from '/@/types/disposable'
 import { DefinitionProvider } from '../Definitions/GoTo'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { viewDocumentation } from '../Documentation/view'
+import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
 
 languages.typescript.javascriptDefaults.setCompilerOptions({
 	target: languages.typescript.ScriptTarget.ESNext,
@@ -118,18 +119,36 @@ export class MonacoHolder extends Signal<void> {
 			},
 		})
 
-		// Monaco currently doesn't include " as a trigger character. This snippet works artificially makes it so
+		// This snippet configures some extra trigger characters for JSON
 		this._monacoEditor.onDidChangeModelContent((event) => {
 			const filePath = this._app.tabSystem?.selectedTab?.getProjectPath()
 			if (!filePath) return
 
 			if (!filePath.endsWith('.json')) return
 
+			const model = this._monacoEditor?.getModel()
+			const position = this._monacoEditor?.getSelection()?.getPosition()
+
+			// Better auto-complete within quotes that represent MoLang/commands
+			if (model && position && isWithinQuotes(model, position)) {
+				if (event.changes.some((change) => change.text === ' ')) {
+					// Timeout is needed for some reason. Otherwise the auto-complete menu doesn't show up
+					setTimeout(() => {
+						this._monacoEditor?.trigger(
+							'auto',
+							'editor.action.triggerSuggest',
+							{}
+						)
+					}, 50)
+				}
+			}
+
+			// Monaco currently doesn't include " as a trigger character. This snippet works artificially makes it so
 			if (event.changes.some((change) => change.text === '""')) {
 				this._monacoEditor?.trigger(
-					'',
+					'auto',
 					'editor.action.triggerSuggest',
-					null
+					{}
 				)
 			}
 		})

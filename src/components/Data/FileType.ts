@@ -24,6 +24,9 @@ export interface IFileType {
 		baseUrl: string
 		supportsQuerying?: boolean // Default: true
 	}
+	meta?: {
+		commandsUseSlash?: boolean
+	}
 }
 export interface IDefinitions {
 	[key: string]: IDefinition | IDefinition[]

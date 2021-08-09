@@ -1,4 +1,4 @@
-import { getLocation } from 'jsonc-parser'
+import { getLocation } from '/@/utils/monaco/getLocation'
 import { Uri, Range, editor, Position, CancellationToken } from 'monaco-editor'
 import { App } from '/@/App'
 import { FileType, IDefinition } from '/@/components/Data/FileType'
@@ -31,17 +31,7 @@ export class DefinitionProvider {
 		)
 			return
 
-		const locationArr = getLocation(
-			model.getValue(),
-			model.getOffsetAt(position)
-		).path
-
-		let location = locationArr.join('/')
-		// Lightning cache definition implicitly indexes arrays so we need to remove indexes if they are at the last path position
-		if (!isNaN(Number(locationArr[locationArr.length - 1]))) {
-			locationArr.pop()
-			location = locationArr.join('/')
-		}
+		const location = getLocation(model, position)
 
 		const { definitionId, transformedWord } = await this.getDefinition(
 			word,
