@@ -151,7 +151,7 @@ export class CreateProjectWindow extends BaseWindow {
 	}
 	getDefaultOptions(): ICreateProjectOptions {
 		return {
-			...this.createOptions,
+			...CreateProjectWindow.getDefaultOptions(),
 			targetVersion: this.availableTargetVersions
 				? this.availableTargetVersions[0]
 				: '',

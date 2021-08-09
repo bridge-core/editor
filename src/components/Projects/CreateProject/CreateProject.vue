@@ -37,11 +37,11 @@
 					:key="packType.id"
 					:packType="packType"
 					isSelectable
-					:selected="createOptions.packs.includes(packType.packPath)"
+					:selected="createOptions.packs.includes(packType.id)"
 					@click="togglePack(packType.id)"
 				>
 					<template
-						v-if="packType.packPath === 'BP'"
+						v-if="packType.id === 'behaviorPack'"
 						#default="{ selected }"
 					>
 						<v-switch
@@ -69,7 +69,7 @@
 					</template>
 
 					<template
-						v-else-if="packType.packPath === 'RP'"
+						v-else-if="packType.id === 'resourcePack'"
 						#default="{ selected }"
 					>
 						<!-- I am not sure why the rpAsBpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
@@ -79,13 +79,14 @@
 							:label="t('windows.createProject.rpAsBpDependency')"
 							:value="
 								createOptions.rpAsBpDependency ||
-								createOptions.packs.includes('BP')
+								createOptions.packs.includes('behaviorPack')
 							"
 							@click.stop.native="
 								createOptions.rpAsBpDependency = !createOptions.rpAsBpDependency
 							"
 							:disabled="
-								!selected || !createOptions.packs.includes('BP')
+								!selected ||
+								!createOptions.packs.includes('behaviorPack')
 							"
 							class="mt-3"
 						/>
