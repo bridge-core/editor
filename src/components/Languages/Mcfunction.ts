@@ -127,6 +127,12 @@ const loadCommands = debounce(async (lang: McfunctionLanguage) => {
 
 	const project = app.project
 	if (!(project instanceof BedrockProject)) return
+	if (
+		!project.tabSystem?.selectedTab
+			?.getProjectPath()
+			?.endsWith('.mcfunction')
+	)
+		return
 
 	await project.commandData.fired
 	const commands = await project.commandData.allCommands(
@@ -136,7 +142,7 @@ const loadCommands = debounce(async (lang: McfunctionLanguage) => {
 	tokenProvider.keywords = commands.map((command) => command)
 
 	lang.updateTokenProvider(tokenProvider)
-}, 3000)
+}, 200)
 
 export class McfunctionLanguage extends Language {
 	constructor() {
@@ -149,7 +155,7 @@ export class McfunctionLanguage extends Language {
 		})
 
 		this.disposables.push(
-			App.eventSystem.on('fileChange', () => loadCommands(this))
+			App.eventSystem.on('currentTabSwitched', () => loadCommands(this))
 		)
 	}
 
