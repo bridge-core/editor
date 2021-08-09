@@ -19,10 +19,14 @@ export class CreateConfig extends CreateFile {
 				targetVersion: createOptions.targetVersion,
 				description: createOptions.description,
 				capabilities,
+				experimentalGameplay: [],
 				packs: Object.fromEntries(
 					createOptions.packs
 						.filter((packId) => packId !== '.bridge')
-						.map((packId) => [packId, PackType.getFromId(packId)])
+						.map((packId) => [
+							packId,
+							`./${PackType.getFromId(packId)?.packPath}`,
+						])
 				),
 				compiler: {
 					plugins: [
