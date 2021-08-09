@@ -153,6 +153,19 @@ export class ProjectConfig {
 		}
 	}
 
+	async refreshConfig() {
+		try {
+			this.data = await this.fileSystem.readJSON(`config.json`)
+		} catch {
+			this.data = {}
+		}
+	}
+
+	async getFresh() {
+		await this.refreshConfig()
+		return this.data
+	}
+
 	get() {
 		return this.data
 	}
