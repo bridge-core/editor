@@ -346,12 +346,12 @@ export class CommandData extends Signal<void> {
 		if (!commandArgument.type) {
 			// If additionalData is defined, return its values
 			if (commandArgument.additionalData)
-				return (
+				return this.toCompletionItem(
 					commandArgument.additionalData?.values ??
-					this.resolveDynamicReference(
-						commandArgument.additionalData.schemaReference
-					) ??
-					[]
+						this.resolveDynamicReference(
+							commandArgument.additionalData.schemaReference
+						) ??
+						[]
 				)
 
 			return []
