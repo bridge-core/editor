@@ -1,4 +1,5 @@
 import { FileSystem } from '../FileSystem/FileSystem'
+import type { Project } from './Project/Project'
 
 export interface IConfigJson {
 	/**
@@ -103,7 +104,13 @@ interface IPackDefinition {
 export class ProjectConfig {
 	protected data: Partial<IConfigJson> = {}
 
-	constructor(protected fileSystem: FileSystem) {}
+	constructor(protected fileSystem: FileSystem, project?: Project) {
+		if (project) {
+			project.fileSave.on('config.json', () => {
+				this.refreshConfig()
+			})
+		}
+	}
 
 	async setup() {
 		// Load legacy project config & transform it to new format specified here: https://github.com/bridge-core/project-config-standard
@@ -159,11 +166,6 @@ export class ProjectConfig {
 		} catch {
 			this.data = {}
 		}
-	}
-
-	async getFresh() {
-		await this.refreshConfig()
-		return this.data
 	}
 
 	get() {

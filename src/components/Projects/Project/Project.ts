@@ -80,7 +80,7 @@ export abstract class Project {
 		protected _baseDirectory: AnyDirectoryHandle
 	) {
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
-		this.config = new ProjectConfig(this._fileSystem)
+		this.config = new ProjectConfig(this._fileSystem, this)
 		this.packIndexer = new PackIndexer(app, _baseDirectory)
 		this.extensionLoader = new ExtensionLoader(
 			app.fileSystem,
