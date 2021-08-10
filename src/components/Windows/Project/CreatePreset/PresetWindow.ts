@@ -112,7 +112,6 @@ export class CreatePresetWindow extends BaseWindow {
 		if (!app.project?.hasPacks(requires.packTypes ?? [])) return
 
 		// Check that the project has the required modules
-		// TODO
 		if (manifest.requiredModules) {
 			const gameTest = <boolean | undefined>(
 				Object.entries(
