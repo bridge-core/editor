@@ -3,20 +3,23 @@ import { v4 as uuid } from 'uuid'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { WindowState } from './WindowState'
-import { del, set } from '@vue/composition-api'
+import { del, markRaw, set } from '@vue/composition-api'
 
 export abstract class BaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()
 	protected isVisible = false
 	protected shouldRender = false
 	protected actions: SimpleAction[] = []
+	protected component: VueComponent
 
 	constructor(
-		protected component: VueComponent,
+		component: VueComponent,
 		protected disposeOnClose = false,
 		protected keepAlive = false
 	) {
 		super()
+
+		this.component = markRaw(component)
 	}
 
 	defineWindow() {

@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { reactive } from '@vue/composition-api'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { App } from '/@/App'
@@ -9,7 +9,7 @@ export interface IDropState {
 }
 
 export class FileDropper {
-	public readonly state = Vue.observable<IDropState>({
+	public readonly state = reactive<IDropState>({
 		isHovering: false,
 	})
 	protected fileHandlers = new Map<

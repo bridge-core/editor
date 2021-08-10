@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { reactive, set } from '@vue/composition-api'
 import { App } from '/@/App'
 
 export type TSidebarElement = SidebarCategory | SidebarItem
@@ -63,15 +63,13 @@ export class SidebarCategory {
 	}
 	filtered(filter: string) {
 		if (filter.length === 0) return this
-		return Vue.observable(
-			new SidebarCategory({
-				items: this.items.filter((item) =>
-					item.getSearchText().includes(filter)
-				),
-				text: this.text,
-				isOpen: true,
-			})
-		)
+		return new SidebarCategory({
+			items: this.items.filter((item) =>
+				item.getSearchText().includes(filter)
+			),
+			text: this.text,
+			isOpen: true,
+		})
 	}
 }
 
@@ -173,7 +171,7 @@ export class Sidebar {
 		return this.state[id] ?? {}
 	}
 	setState(id: string, data: any) {
-		Vue.set(this.state, id, data)
+		set(this.state, id, data)
 	}
 
 	protected sortSidebar(elements: TSidebarElement[]) {

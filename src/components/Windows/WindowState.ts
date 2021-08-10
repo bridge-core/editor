@@ -1,7 +1,7 @@
-import { reactive, ref, watch } from '@vue/composition-api'
+import { ref, shallowReactive, watch } from '@vue/composition-api'
 
 export class WindowState {
-	static state = reactive<Record<string, any>>({})
+	static state = shallowReactive<Record<string, any>>({})
 	static isAnyWindowVisible = ref(true)
 
 	// Computed doesn't work here because of Vue2 limitations

@@ -1,7 +1,7 @@
 import { Component as VueComponent } from 'vue'
-import Vue from 'vue'
 import { v4 as uuid } from 'uuid'
 import { WindowState } from './WindowState'
+import { shallowReactive, del, set } from '@vue/composition-api'
 
 export function createWindow(
 	vueComponent: VueComponent,
@@ -16,7 +16,7 @@ export function createWindow(
 	})
 
 	const windowUUID = uuid()
-	const windowState: typeof state = Vue.observable(
+	const windowState: typeof state = shallowReactive(
 		Object.assign(state, {
 			isVisible: false,
 			shouldRender: false,
@@ -39,14 +39,14 @@ export function createWindow(
 			windowState.shouldRender = true
 			windowState.isVisible = true
 		},
-		dispose: () => Vue.delete(WindowState.state, windowUUID),
+		dispose: () => del(WindowState.state, windowUUID),
 		status,
 		get isVisible() {
 			return windowState.isVisible
 		},
 	}
 
-	Vue.set(WindowState.state, windowUUID, windowApi)
+	set(WindowState.state, windowUUID, windowApi)
 
 	return windowApi
 }

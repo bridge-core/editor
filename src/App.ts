@@ -34,6 +34,7 @@ import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/FileSystem/ComMojang'
 import { AudioManager } from '/@/components/Audio/AudioManager'
 import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
+import { markRaw, shallowReactive } from '@vue/composition-api'
 
 export class App {
 	public static readonly installApp = new InstallApp()
@@ -137,7 +138,7 @@ export class App {
 	 * Starts the app
 	 */
 	static async main(appComponent: Vue) {
-		this._instance = Object.freeze(new App(appComponent))
+		this._instance = markRaw(Object.freeze(new App(appComponent)))
 		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
