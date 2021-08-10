@@ -71,6 +71,38 @@
 				</v-col>
 			</v-row>
 
+			<!-- Experimental Gameplay Toggles -->
+			<v-expansion-panels class="mb-6">
+				<v-expansion-panel>
+					<v-expansion-panel-header expand-icon="mdi-menu-down">
+						Experimental Gameplay
+					</v-expansion-panel-header>
+					<v-expansion-panel-content>
+						<v-row dense>
+							<v-col
+								v-for="experiment in experimentalToggles"
+								:key="experiment.id"
+								xs="12"
+								sm="6"
+								md="4"
+								lg="3"
+								xl="2"
+							>
+								<ExperimentalGameplay
+									:experiment="experiment"
+									v-model="
+										createOptions.experimentalGameplay[
+											experiment.id
+										]
+									"
+									style="height: 100%"
+								/>
+							</v-col>
+						</v-row>
+					</v-expansion-panel-content>
+				</v-expansion-panel>
+			</v-expansion-panels>
+
 			<div class="d-flex">
 				<v-file-input
 					v-model="createOptions.icon"
@@ -133,38 +165,6 @@
 					:menu-props="{ maxHeight: 220 }"
 				/>
 			</div>
-
-			<!-- Experimental Gameplay Toggles -->
-			<v-expansion-panels>
-				<v-expansion-panel>
-					<v-expansion-panel-header expand-icon="mdi-menu-down">
-						Experimental Gameplay
-					</v-expansion-panel-header>
-					<v-expansion-panel-content>
-						<v-row dense>
-							<v-col
-								v-for="experiment in experimentalToggles"
-								:key="experiment.id"
-								xs="12"
-								sm="6"
-								md="4"
-								lg="3"
-								xl="2"
-							>
-								<ExperimentalGameplay
-									:experiment="experiment"
-									v-model="
-										createOptions.experimentalGameplay[
-											experiment.id
-										]
-									"
-									style="height: 100%"
-								/>
-							</v-col>
-						</v-row>
-					</v-expansion-panel-content>
-				</v-expansion-panel>
-			</v-expansion-panels>
 
 			<div class="d-flex">
 				<v-switch
