@@ -51,7 +51,7 @@ export class VirtualWritable {
 	}
 
 	async close() {
-		this.fileHandle[writeMethodSymbol](this.tmpData)
+		await this.fileHandle[writeMethodSymbol](this.tmpData)
 	}
 	async abort() {
 		throw new Error(`WriteStream was aborted`)

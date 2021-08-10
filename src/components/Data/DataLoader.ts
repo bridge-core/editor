@@ -14,12 +14,12 @@ export class DataLoader extends FileSystem {
 		return this._virtualFileSystem
 	}
 
-	constructor() {
+	constructor(clearDB = false) {
 		super()
-		this.loadData()
+		this.loadData(clearDB)
 	}
 
-	async loadData() {
+	async loadData(clearDB = false) {
 		// Read packages.zip file
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
 			response.arrayBuffer()
@@ -34,7 +34,11 @@ export class DataLoader extends FileSystem {
 		)
 
 		// Create virtual filesystem
-		this._virtualFileSystem = new VirtualDirectoryHandle(null, 'dataFolder')
+		this._virtualFileSystem = new VirtualDirectoryHandle(
+			null,
+			'dataFolder',
+			clearDB
+		)
 		const defaultHandle = await this._virtualFileSystem.getDirectoryHandle(
 			'data',
 			{ create: true }

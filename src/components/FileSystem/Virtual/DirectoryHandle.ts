@@ -1,6 +1,13 @@
 import { VirtualHandle, BaseVirtualHandle } from './Handle'
 import { VirtualFileHandle } from './FileHandle'
 import { ISerializedDirectoryHandle } from './Comlink'
+import { clear } from './IDB'
+
+interface IIdbStoredDirectoryHandle {
+	type: 'directory'
+	name: string
+	children: string[]
+}
 
 /**
  * A class that implements a virtual folder
@@ -17,8 +24,23 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	public readonly isFile = false
 	protected children = new Map<string, VirtualHandle>()
 
-	constructor(parent: VirtualDirectoryHandle | null, name: string) {
+	constructor(
+		parent: VirtualDirectoryHandle | null,
+		name: string,
+		clearDB = false
+	) {
 		super(parent, name)
+
+		this.updateIdb(clearDB)
+	}
+
+	async updateIdb(deleteOld = false) {
+		if (deleteOld) {
+			console.error('Clearing old data...')
+			await clear()
+		}
+
+		this.setupDone.dispatch()
 	}
 
 	protected addChild(child: VirtualHandle) {
@@ -74,6 +96,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		} else if (!entry) {
 			if (create) {
 				entry = new VirtualDirectoryHandle(this, name)
+				await entry.setupDone.fired
 				this.addChild(entry)
 			} else {
 				throw new Error(
@@ -104,6 +127,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 					name,
 					initialData ?? new Uint8Array()
 				)
+				await entry.setupDone.fired
 				this.addChild(entry)
 			} else {
 				throw new Error(
@@ -134,6 +158,8 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			)
 		}
 
+		await entry.removeSelf()
+
 		this.children.delete(name)
 	}
 	async resolve(possibleDescendant: VirtualHandle) {
@@ -147,6 +173,11 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 		if (current === null) return null
 		return path
+	}
+	async removeSelf() {
+		for (const child of this.children.values()) {
+			await child.removeSelf()
+		}
 	}
 
 	[Symbol.asyncIterator]() {

@@ -57,7 +57,7 @@ export class App {
 	public readonly actionManager = new ActionManager(this.keyBindingManager)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
-	public readonly dataLoader = new DataLoader()
+	public readonly dataLoader = new DataLoader(true)
 	public readonly fileSystem = new FileSystem()
 	public readonly projectManager = new ProjectManager(this)
 	public readonly extensionLoader = new GlobalExtensionLoader(this)

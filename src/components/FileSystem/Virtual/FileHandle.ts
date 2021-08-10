@@ -2,6 +2,9 @@ import { BaseVirtualHandle } from './Handle'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
+import { get, set, has, del, getMany } from './IDB'
+import { whenIdleDisposable } from '/@/utils/whenIdle'
+import { IDisposable } from '/@/types/disposable'
 
 /**
  * A class that implements a virtual file
@@ -17,28 +20,65 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	 */
 	public readonly isDirectory = false
 
+	protected fileData?: Uint8Array
+	protected disposable?: IDisposable
+
 	constructor(
 		parent: VirtualDirectoryHandle | null,
 		name: string,
-		protected data: Uint8Array
+		data: Uint8Array
 	) {
 		super(parent, name)
+		this.updateIdb(data)
 	}
 
-	serialize(): ISerializedFileHandle {
-		return {
+	protected updateIdb(data: Uint8Array) {
+		this.fileData = data
+
+		this.disposable?.dispose?.()
+
+		this.disposable = whenIdleDisposable(async () => {
+			if (await has(this.idbKey)) return
+
+			await set(this.idbKey, data)
+			this.fileData = undefined
+		})
+
+		if (!this.setupDone.hasFired) this.setupDone.dispatch()
+	}
+
+	protected async loadFromIdb() {
+		if (this.fileData) return this.fileData
+
+		let storedData = await get(this.idbKey)
+		if (!storedData)
+			throw new Error(`File not found: "${this.path.join('/')}"`)
+
+		return storedData!
+	}
+	serialize() {
+		return <const>{
 			kind: 'file',
 			name: this.name,
-			data: this.data,
+			data: new Uint8Array(),
 		}
 	}
+
+	async removeSelf() {
+		this.disposable?.dispose?.()
+		await del(this.idbKey)
+	}
+
 	async getFile() {
-		return new File([this.data], this.name)
+		const fileData = await this.loadFromIdb()
+		// console.log(this.path.join('/'), this.fileData, fileData)
+
+		return new File([fileData], this.name)
 	}
 	async createWritable() {
 		return new VirtualWritable(this)
 	}
-	[writeMethodSymbol](data: Uint8Array) {
-		this.data = data
+	async [writeMethodSymbol](data: Uint8Array) {
+		await this.updateIdb(data)
 	}
 }
