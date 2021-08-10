@@ -58,9 +58,17 @@ export class JsonDefaults extends EventDispatcher<void> {
 	async loadAllSchemas() {
 		this.localSchemas = {}
 		const app = await App.getApp()
+		const task = app.taskManager.create({
+			icon: 'mdi-book-open-outline',
+			name: 'taskManager.tasks.loadingSchemas.name',
+			description: 'taskManager.tasks.loadingSchemas.description',
+			totalTaskSteps: 10,
+		})
 
 		await app.dataLoader.fired
+		task.update(1)
 		const packages = await app.dataLoader.readdir('data/packages')
+		task.update(2)
 
 		for (const packageName of packages) {
 			try {
@@ -74,10 +82,13 @@ export class JsonDefaults extends EventDispatcher<void> {
 			}
 		}
 		loadedGlobalSchemas = true
+		task.update(3)
 
 		this.addSchemas(await this.getDynamicSchemas())
+		task.update(4)
 
 		await this.runSchemaScripts(app)
+		task.update(5)
 		const tab = this.project.tabSystem?.selectedTab
 		if (tab && tab instanceof FileTab) {
 			const fileType = FileType.getId(tab.getProjectPath())
@@ -88,6 +99,8 @@ export class JsonDefaults extends EventDispatcher<void> {
 		}
 
 		this.loadedSchemas = true
+		task.update(6)
+		task.complete()
 	}
 
 	setJSONDefaults(validate = true) {
