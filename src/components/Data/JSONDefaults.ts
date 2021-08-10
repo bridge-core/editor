@@ -183,7 +183,8 @@ export class JsonDefaults extends EventDispatcher<void> {
 		const promises: Promise<void>[] = []
 		for await (const [name, entry] of directoryHandle.entries()) {
 			const currentPath = `${fromPath}/${name}`
-			if (entry.name === '.DS_Store') continue
+			if (entry.name === '.DS_Store' || !entry.name.endsWith('.json'))
+				continue
 
 			if (entry.kind === 'file') {
 				globalSchemas[`file:///${currentPath}`] = {
