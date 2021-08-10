@@ -28,18 +28,10 @@ export interface IConfigJson {
 
 	/**
 	 * Experimental gameplay the project intends to use.
-	 * Exact mapping of strings to experimental gameplay toggles needs to be specified later.
 	 *
-	 * @example ["upcomingCreatorFeatures", "cavesAndCliffs"]
+	 * @example { "cavesAndCliffs": true, "holidayCreatorFeatures": false }
 	 */
-	minecraftExperiments?: string[]
-
-	/**
-	 * Additional capabilities the project wants to use
-	 *
-	 * @example ["scriptingAPI", "gameTestAPI"]
-	 */
-	capabilities: string[]
+	experimentalGameplay?: Record<string, boolean>
 
 	/**
 	 * The namespace used for the project. The namespace "minecraft" is not a valid string for this field.
@@ -125,16 +117,18 @@ export class ProjectConfig {
 			} = await this.fileSystem.readJSON('.bridge/config.json')
 			await this.fileSystem.unlink('.bridge/config.json')
 
-			const capabilities: string[] = []
-			if (gameTestAPI) capabilities.push('gameTestAPI')
-			if (scriptingAPI) capabilities.push('scriptingAPI')
+			const experimentalGameplay: Record<string, boolean> = {}
+			if (gameTestAPI)
+				experimentalGameplay['enableGameTestFramework'] = true
+			if (scriptingAPI)
+				experimentalGameplay['additionalModdingCapabilities'] = true
 
 			const newFormat = {
 				type: 'minecraftBedrock',
 				name: this.fileSystem.baseDirectory.name,
 				namespace: prefix,
+				experimentalGameplay,
 				...other,
-				capabilities,
 				packs: {
 					behaviorPack: './BP',
 					resourcePack: './RP',

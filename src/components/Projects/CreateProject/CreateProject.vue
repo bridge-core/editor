@@ -41,35 +41,7 @@
 					@click="togglePack(packType.id)"
 				>
 					<template
-						v-if="packType.id === 'behaviorPack'"
-						#default="{ selected }"
-					>
-						<v-switch
-							inset
-							dense
-							:label="t('windows.createProject.scripting')"
-							:value="createOptions.scripting"
-							@click.stop.native="
-								createOptions.scripting = !createOptions.scripting
-							"
-							:disabled="!selected"
-							class="mt-3"
-						/>
-						<v-switch
-							inset
-							dense
-							:label="t('windows.createProject.gameTest')"
-							:value="createOptions.gameTest"
-							@click.stop.native="
-								createOptions.gameTest = !createOptions.gameTest
-							"
-							:disabled="!selected"
-							class="ma-0"
-						/>
-					</template>
-
-					<template
-						v-else-if="packType.id === 'resourcePack'"
+						v-if="packType.id === 'resourcePack'"
 						#default="{ selected }"
 					>
 						<!-- I am not sure why the rpAsBpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
@@ -164,6 +136,20 @@
 					:value="createOptions.useLangForManifest"
 					@click.stop.native="
 						createOptions.useLangForManifest = !createOptions.useLangForManifest
+					"
+					class="ma-3"
+				></v-switch>
+				<v-switch
+					v-for="experiment in experimentalToggles"
+					:key="experiment.id"
+					inset
+					dense
+					:label="experiment.name"
+					:value="createOptions.experimentalGameplay[experiment.id]"
+					@click.stop.native="
+						createOptions.experimentalGameplay[
+							experiment.id
+						] = !createOptions.experimentalGameplay[experiment.id]
 					"
 					class="ma-3"
 				></v-switch>
