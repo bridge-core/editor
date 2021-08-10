@@ -45,11 +45,8 @@ languages.registerCompletionItemProvider('json', {
 		let { word, range } = getJsonWordAtPosition(model, position)
 
 		// e.g. animations/animation controller commands need to start with a slash char
-		if (commandsUseSlash) {
-			if (!word.startsWith('/')) return
-
-			word = word.slice(1)
-		}
+		if (commandsUseSlash && !word.startsWith('/')) return
+		if (word.startsWith('/')) word = word.slice(1)
 
 		const { tokens } = tokenizeCommand(word)
 
