@@ -8,13 +8,11 @@ import { FileTab } from '../TabSystem/FileTab'
 import { SchemaScript } from './SchemaScript'
 import { SchemaManager } from '../JSONSchema/Manager'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
-import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
-import { AnyDirectoryHandle } from '../FileSystem/Types'
+import { AnyFileHandle } from '../FileSystem/Types'
 import { Tab } from '../TabSystem/CommonTab'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
-const packages = ['common', 'minecraftBedrock']
 
 export class JsonDefaults extends EventDispatcher<void> {
 	protected loadedSchemas = false
@@ -62,16 +60,17 @@ export class JsonDefaults extends EventDispatcher<void> {
 		const app = await App.getApp()
 
 		await app.dataLoader.fired
+		const packages = await app.dataLoader.readdir('data/packages')
 
 		for (const packageName of packages) {
 			try {
 				await this.loadStaticSchemas(
-					await app.dataLoader.getDirectoryHandle(
-						`data/packages/${packageName}/schema`
-					),
-					`data/packages/${packageName}/schema`
+					await app.dataLoader.getFileHandle(
+						`data/packages/${packageName}/schema.json`
+					)
 				)
-			} catch {
+			} catch (err) {
+				console.error(err)
 				return
 			}
 		}
@@ -174,51 +173,21 @@ export class JsonDefaults extends EventDispatcher<void> {
 			)
 		).flat()
 	}
-	async loadStaticSchemas(
-		directoryHandle: AnyDirectoryHandle,
-		fromPath = 'data/packages/minecraftBedrock/schema'
-	) {
+	async loadStaticSchemas(fileHandle: AnyFileHandle) {
 		if (loadedGlobalSchemas) return
 
-		const promises: Promise<void>[] = []
-		for await (const [name, entry] of directoryHandle.entries()) {
-			const currentPath = `${fromPath}/${name}`
-			if (entry.name === '.DS_Store') continue
+		const file = await fileHandle.getFile()
+		const schemas = json5.parse(await file.text())
 
-			if (entry.kind === 'file') {
-				if (!entry.name.endsWith('.json')) continue
-
-				globalSchemas[`file:///${currentPath}`] = {
-					uri: `file:///${currentPath}`,
-					schema: await entry
-						.getFile()
-						.then((file) => file.text())
-						.then(json5.parse)
-						.catch(() => {
-							throw new Error(
-								`Failed to load schema "${currentPath}"`
-							)
-						}),
-				}
-			} else {
-				promises.push(
-					this.loadStaticSchemas(
-						<VirtualDirectoryHandle>entry,
-						currentPath
-					)
-				)
-			}
+		for (const uri in schemas) {
+			globalSchemas[uri] = { uri, schema: schemas[uri] }
 		}
-
-		await Promise.all(promises)
-
-		// Only if this is the original call to loadStaticSchemas...
-		if (fromPath !== 'data/packages/minecraftBedrock/schema') return
 
 		// ...add file type entries
 		FileType.getMonacoSchemaArray().forEach((addSchema) => {
 			// Non-json files; e.g. .lang
 			if (!addSchema.uri) return
+			console.log(addSchema.uri)
 
 			if (globalSchemas[addSchema.uri]) {
 				if (addSchema.schema)
