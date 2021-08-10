@@ -27,6 +27,8 @@ export default {
 			title: 'Export Successful',
 			description: 'You can find the exported package here',
 		},
+		inactive: 'Inactive',
+		active: 'Active',
 	},
 	packType: {
 		behaviorPack: {

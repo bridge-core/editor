@@ -14,56 +14,61 @@
 		<template #default>
 			<!-- Welcome text for users getting started with bridge. -->
 
-			<div
-				class="rounded-lg pa-3 content-area mb-2"
-				v-if="isFirstProject"
-			>
+			<BridgeSheet class="pa-3 mb-2" v-if="isFirstProject">
 				<h1 class="text-h4">
 					{{ t('windows.createProject.welcome') }}
 				</h1>
 				<span>
 					{{ t('windows.createProject.welcomeDescription') }}
 				</span>
-			</div>
+			</BridgeSheet>
 
-			<v-row class="mb-6" no-gutters>
-				<PackTypeViewer
-					v-for="(packType, i) in availablePackTypes"
-					:class="{
-						'mr-1': i === 0,
-						'ml-1': i + 1 === availablePackTypes.length,
-						'mx-1': i > 0 && i + 1 < availablePackTypes.length,
-					}"
+			<v-row class="mb-6" dense>
+				<v-col
+					v-for="packType in availablePackTypes"
 					:key="packType.id"
-					:packType="packType"
-					isSelectable
-					:selected="createOptions.packs.includes(packType.id)"
-					@click="togglePack(packType.id)"
+					xs="12"
+					sm="6"
+					md="4"
+					lg="3"
+					xl="2"
 				>
-					<template
-						v-if="packType.id === 'resourcePack'"
-						#default="{ selected }"
+					<PackTypeViewer
+						:packType="packType"
+						isSelectable
+						style="height: 100%"
+						:selected="createOptions.packs.includes(packType.id)"
+						@click="togglePack(packType.id)"
 					>
-						<!-- I am not sure why the rpAsBpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
-						<v-switch
-							inset
-							dense
-							:label="t('windows.createProject.rpAsBpDependency')"
-							:value="
-								createOptions.rpAsBpDependency ||
-								createOptions.packs.includes('behaviorPack')
-							"
-							@click.stop.native="
-								createOptions.rpAsBpDependency = !createOptions.rpAsBpDependency
-							"
-							:disabled="
-								!selected ||
-								!createOptions.packs.includes('behaviorPack')
-							"
-							class="mt-3"
-						/>
-					</template>
-				</PackTypeViewer>
+						<template
+							v-if="packType.id === 'resourcePack'"
+							#default="{ selected }"
+						>
+							<!-- I am not sure why the rpAsBpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
+							<v-switch
+								inset
+								dense
+								:label="
+									t('windows.createProject.rpAsBpDependency')
+								"
+								:value="
+									createOptions.rpAsBpDependency ||
+									createOptions.packs.includes('behaviorPack')
+								"
+								@click.stop.native="
+									createOptions.rpAsBpDependency = !createOptions.rpAsBpDependency
+								"
+								:disabled="
+									!selected ||
+									!createOptions.packs.includes(
+										'behaviorPack'
+									)
+								"
+								class="mt-3"
+							/>
+						</template>
+					</PackTypeViewer>
+				</v-col>
 			</v-row>
 
 			<div class="d-flex">
@@ -128,6 +133,39 @@
 					:menu-props="{ maxHeight: 220 }"
 				/>
 			</div>
+
+			<!-- Experimental Gameplay Toggles -->
+			<v-expansion-panels>
+				<v-expansion-panel>
+					<v-expansion-panel-header expand-icon="mdi-menu-down">
+						Experimental Gameplay
+					</v-expansion-panel-header>
+					<v-expansion-panel-content>
+						<v-row dense>
+							<v-col
+								v-for="experiment in experimentalToggles"
+								:key="experiment.id"
+								xs="12"
+								sm="6"
+								md="4"
+								lg="3"
+								xl="2"
+							>
+								<ExperimentalGameplay
+									:experiment="experiment"
+									v-model="
+										createOptions.experimentalGameplay[
+											experiment.id
+										]
+									"
+									style="height: 100%"
+								/>
+							</v-col>
+						</v-row>
+					</v-expansion-panel-content>
+				</v-expansion-panel>
+			</v-expansion-panels>
+
 			<div class="d-flex">
 				<v-switch
 					inset
@@ -136,20 +174,6 @@
 					:value="createOptions.useLangForManifest"
 					@click.stop.native="
 						createOptions.useLangForManifest = !createOptions.useLangForManifest
-					"
-					class="ma-3"
-				></v-switch>
-				<v-switch
-					v-for="experiment in experimentalToggles"
-					:key="experiment.id"
-					inset
-					dense
-					:label="experiment.name"
-					:value="createOptions.experimentalGameplay[experiment.id]"
-					@click.stop.native="
-						createOptions.experimentalGameplay[
-							experiment.id
-						] = !createOptions.experimentalGameplay[experiment.id]
 					"
 					class="ma-3"
 				></v-switch>
@@ -175,6 +199,8 @@
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
+import ExperimentalGameplay from './ExperimentalGameplay.vue'
+import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 
 export default {
 	name: 'CreateProjectWindow',
@@ -182,6 +208,8 @@ export default {
 	components: {
 		BaseWindow,
 		PackTypeViewer,
+		BridgeSheet,
+		ExperimentalGameplay,
 	},
 	props: ['currentWindow'],
 
@@ -222,7 +250,6 @@ export default {
 
 <style scoped>
 .content-area {
-	background-color: var(--v-sidebarNavigation-base);
 	border: solid 2px transparent;
 }
 .content-area.selected {
