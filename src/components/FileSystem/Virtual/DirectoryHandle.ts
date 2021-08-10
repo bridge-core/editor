@@ -36,7 +36,6 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 	async updateIdb(deleteOld = false) {
 		if (deleteOld) {
-			console.error('Clearing old data...')
 			await clear()
 		}
 	}

@@ -69,8 +69,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 						`data/packages/${packageName}/schema.json`
 					)
 				)
-			} catch (err) {
-				console.error(err)
+			} catch {
 				return
 			}
 		}
@@ -187,7 +186,6 @@ export class JsonDefaults extends EventDispatcher<void> {
 		FileType.getMonacoSchemaArray().forEach((addSchema) => {
 			// Non-json files; e.g. .lang
 			if (!addSchema.uri) return
-			console.log(addSchema.uri)
 
 			if (globalSchemas[addSchema.uri]) {
 				if (addSchema.schema)
