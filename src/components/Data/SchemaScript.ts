@@ -115,6 +115,13 @@ export class SchemaScript {
 							properties: scriptResult,
 						},
 					}
+				} else if (schemaScript.type === 'custom') {
+					localSchemas[
+						`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
+					] = {
+						uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
+						schema: scriptResult,
+					}
 				} else {
 					localSchemas[
 						`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`

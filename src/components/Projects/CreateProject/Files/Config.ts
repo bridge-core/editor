@@ -5,10 +5,6 @@ import { PackType } from '/@/components/Data/PackType'
 
 export class CreateConfig extends CreateFile {
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
-		const capabilities: string[] = []
-		if (createOptions.gameTest) capabilities.push('gameTestAPI')
-		if (createOptions.scripting) capabilities.push('scriptingAPI')
-
 		await fs.writeJSON(
 			`config.json`,
 			{
@@ -18,8 +14,7 @@ export class CreateConfig extends CreateFile {
 				author: createOptions.author,
 				targetVersion: createOptions.targetVersion,
 				description: createOptions.description,
-				capabilities,
-				experimentalGameplay: [],
+				experimentalGameplay: createOptions.experimentalGameplay,
 				packs: Object.fromEntries(
 					createOptions.packs
 						.filter((packId) => packId !== '.bridge')

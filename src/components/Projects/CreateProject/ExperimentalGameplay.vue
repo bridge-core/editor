@@ -1,0 +1,39 @@
+<template>
+	<ToggleSheet :value="value" @input="$emit('input', $event)" :dark="true">
+		<template #default="{ value }">
+			<div class="d-flex align-center">
+				<v-icon color="primary" class="mr-1">
+					{{ experiment.icon }}
+				</v-icon>
+				<h1 class="text-h6">
+					{{ t(`experimentalGameplay.${experiment.id}.name`) }}
+				</h1>
+			</div>
+			<SelectedStatus :selected="value" />
+
+			<p>{{ t(`experimentalGameplay.${experiment.id}.description`) }}</p>
+		</template>
+	</ToggleSheet>
+</template>
+
+<script>
+import ToggleSheet from '/@/components/UIElements/ToggleSheet.vue'
+import SelectedStatus from '/@/components/UIElements/SelectedStatus.vue'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+
+export default {
+	name: 'ExperimentalGameplay',
+	mixins: [TranslationMixin],
+	components: {
+		ToggleSheet,
+		SelectedStatus,
+	},
+	props: {
+		experiment: {
+			type: Object,
+			required: true,
+		},
+		value: Boolean,
+	},
+}
+</script>

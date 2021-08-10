@@ -23,11 +23,15 @@ export interface ICreateProjectOptions {
 	namespace: string
 	targetVersion: string
 	packs: (TPackTypeId | '.bridge')[]
-	scripting: boolean
-	gameTest: boolean
 	rpAsBpDependency: boolean
 	rpUuid?: string
 	useLangForManifest: boolean
+	experimentalGameplay: Record<string, boolean>
+}
+interface IExperimentalToggle {
+	name: string
+	id: string
+	description: string
 }
 export class CreateProjectWindow extends BaseWindow {
 	protected isFirstProject = false
@@ -44,6 +48,7 @@ export class CreateProjectWindow extends BaseWindow {
 	}
 	protected availablePackTypes: IPackType[] = []
 	protected createFiles = [new CreateGitIgnore(), new CreateConfig()]
+	protected experimentalToggles: IExperimentalToggle[] = []
 
 	constructor() {
 		super(CreateProjectComponent, false)
@@ -59,6 +64,13 @@ export class CreateProjectWindow extends BaseWindow {
 			// Set default version
 			this.createOptions.targetVersion = this.availableTargetVersions[0]
 			this.availableTargetVersionsLoading = false
+
+			this.experimentalToggles = await app.dataLoader.readJSON(
+				'data/packages/minecraftBedrock/experimentalGameplay.json'
+			)
+			this.createOptions.experimentalGameplay = Object.fromEntries(
+				this.experimentalToggles.map((toggle) => [toggle.id, false])
+			)
 		})
 
 		PackType.ready.once(() => {
@@ -129,6 +141,7 @@ export class CreateProjectWindow extends BaseWindow {
 		if (isUsingFileSystemPolyfill && !this.isFirstProject)
 			await app.projectManager.removeProject(previousProject!)
 
+		// Reset options
 		this.createOptions = this.getDefaultOptions()
 
 		await App.audioManager.playAudio('confirmation_002.ogg', 1)
@@ -143,10 +156,9 @@ export class CreateProjectWindow extends BaseWindow {
 			namespace: 'bridge',
 			targetVersion: '',
 			packs: ['.bridge', 'behaviorPack', 'resourcePack'],
-			scripting: false,
-			gameTest: false,
 			rpAsBpDependency: false,
 			useLangForManifest: false,
+			experimentalGameplay: {},
 		}
 	}
 	getDefaultOptions(): ICreateProjectOptions {
@@ -155,6 +167,14 @@ export class CreateProjectWindow extends BaseWindow {
 			targetVersion: this.availableTargetVersions
 				? this.availableTargetVersions[0]
 				: '',
+			experimentalGameplay: this.experimentalToggles
+				? Object.fromEntries(
+						this.experimentalToggles.map((toggle) => [
+							toggle.id,
+							false,
+						])
+				  )
+				: {},
 		}
 	}
 
@@ -177,11 +197,9 @@ export class CreateProjectWindow extends BaseWindow {
 					'behaviorPack',
 					'resourcePack',
 				],
-				scripting:
-					config.capabilities?.includes('scriptingAPI') ?? false,
-				gameTest: config.capabilities?.includes('gameTestAPI') ?? false,
 				useLangForManifest: false,
 				rpAsBpDependency: false,
+				experimentalGameplay: config.experimentalGameplay ?? {},
 			}
 		} catch {
 			return this.getDefaultOptions()

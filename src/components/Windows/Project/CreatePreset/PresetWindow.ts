@@ -21,15 +21,18 @@ export interface IPresetManifest {
 	name: string
 	icon: string
 	requiredModules?: string[]
-	packTypes?: TPackTypeId[]
 	category: string
 	description?: string
 	presetPath?: string
-	targetVersion: [CompareOperator, string]
 	additionalModels?: Record<string, unknown>
 	fields: [string, string, IPresetFieldOpts][]
 	createFiles?: (string | TCreateFile)[]
 	expandFiles?: TExpandFile[]
+	requires: {
+		targetVersion?: [CompareOperator, string]
+		packTypes?: TPackTypeId[]
+		experimentalGameplay?: string[]
+	}
 }
 export interface IPresetFieldOpts {
 	// All types
@@ -104,22 +107,25 @@ export class CreatePresetWindow extends BaseWindow {
 				`Error loading ${manifestPath}: Missing preset category`
 			)
 
+		const requires = manifest.requires ?? {}
 		// Check that project has packType preset needs
-		if (!app.project?.hasPacks(manifest.packTypes ?? [])) return
+		if (!app.project?.hasPacks(requires.packTypes ?? [])) return
 
 		// Check that the project has the required modules
-		if (manifest.requiredModules) {
-			const gameTest = <boolean | undefined>(
-				app.projectConfig.get().capabilities?.includes('gameTestAPI')
-			)
-			const scripting = <boolean | undefined>(
-				app.projectConfig.get().capabilities?.includes('scriptingAPI')
-			)
+		const gameTest = <boolean | undefined>(
+			Object.entries(
+				app.projectConfig.get().experimentalGameplay ?? {}
+			).includes(['enableGameTestFramework', true])
+		)
+		const scripting = <boolean | undefined>(
+			Object.entries(
+				app.projectConfig.get().experimentalGameplay ?? {}
+			).includes(['additonalModdingCapabilities', true])
+		)
 
-			for (const module of manifest.requiredModules) {
-				if (module == 'gameTest' && !gameTest) return
-				if (module == 'scriping' && !scripting) return
-			}
+		for (const module of requires.experimentalGameplay ?? []) {
+			if (module == 'gameTest' && !gameTest) return
+			if (module == 'scriping' && !scripting) return
 		}
 
 		// Load current project target version
@@ -128,11 +134,11 @@ export class CreatePresetWindow extends BaseWindow {
 			(await getLatestFormatVersion())
 		// Check that preset is supported on target version
 		if (
-			manifest.targetVersion &&
+			requires.targetVersion &&
 			!compare(
 				projectTargetVersion,
-				manifest.targetVersion[1],
-				manifest.targetVersion[0]
+				requires.targetVersion[1],
+				requires.targetVersion[0]
 			)
 		)
 			return
