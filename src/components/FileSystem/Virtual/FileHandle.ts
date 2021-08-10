@@ -29,22 +29,23 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		data: Uint8Array
 	) {
 		super(parent, name)
-		this.updateIdb(data)
+		this.setup(data)
 	}
-
-	protected updateIdb(data: Uint8Array) {
+	protected setup(data: Uint8Array) {
 		this.fileData = data
 
 		this.disposable?.dispose?.()
 
-		this.disposable = whenIdleDisposable(async () => {
-			if (await has(this.idbKey)) return
-
-			await set(this.idbKey, data)
-			this.fileData = undefined
+		this.disposable = whenIdleDisposable(() => {
+			this.updateIdb(data)
 		})
+	}
 
-		if (!this.setupDone.hasFired) this.setupDone.dispatch()
+	protected async updateIdb(data: Uint8Array) {
+		this.disposable?.dispose?.()
+
+		await set(this.idbKey, data)
+		this.fileData = undefined
 	}
 
 	protected async loadFromIdb() {

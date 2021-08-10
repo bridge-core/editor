@@ -2,14 +2,11 @@ import { AnyHandle } from '../Types'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import type { VirtualFileHandle } from './FileHandle'
 import { v4 as v4Uuid } from 'uuid'
-import { Signal } from '../../Common/Event/Signal'
 
 export type VirtualHandle = VirtualDirectoryHandle | VirtualFileHandle
 
 export abstract class BaseVirtualHandle {
 	public abstract readonly kind: FileSystemHandleKind
-
-	public readonly setupDone = new Signal<void>()
 
 	constructor(
 		protected parent: VirtualDirectoryHandle | null,

@@ -39,8 +39,6 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			console.error('Clearing old data...')
 			await clear()
 		}
-
-		this.setupDone.dispatch()
 	}
 
 	protected addChild(child: VirtualHandle) {
@@ -96,7 +94,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		} else if (!entry) {
 			if (create) {
 				entry = new VirtualDirectoryHandle(this, name)
-				await entry.setupDone.fired
+
 				this.addChild(entry)
 			} else {
 				throw new Error(
@@ -127,7 +125,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 					name,
 					initialData ?? new Uint8Array()
 				)
-				await entry.setupDone.fired
+
 				this.addChild(entry)
 			} else {
 				throw new Error(
