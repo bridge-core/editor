@@ -26,10 +26,10 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	constructor(
 		parent: VirtualDirectoryHandle | null,
 		name: string,
-		data: Uint8Array
+		data?: Uint8Array
 	) {
 		super(parent, name)
-		this.setup(data)
+		if (data) this.setup(data)
 	}
 	protected setup(data: Uint8Array) {
 		this.fileData = data
