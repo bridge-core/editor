@@ -305,6 +305,33 @@ export default {
 		recentFiles: 'Recent Files',
 		recentProjects: 'Recent Projects',
 	},
+	// Experimental gameplay toggles
+	experimentalGameplay: {
+		cavesAndCliffs: {
+			name: 'Caves and Cliffs',
+			description: 'Enables auto-completions for the new mountain generation inside of biomes.'
+		},
+		holidayCreatorFeatures: {
+			name: 'Holiday Creator Features',
+			description: 'Enables auto-completions for the data driven item and block features.'
+		},
+		creationOfCustomBiomes: {
+			name: 'Creation of Custom Biomes',
+			description: 'Enables the creation of custom biomes, features and feature rules.'
+		},
+		additionalModdingCapabilities: {
+			name: 'Additional Modding Capabilities',
+			description: 'Enables the Scripting API in the manifest and allows you to create scripts with auto-completions.'
+		},
+		upcomingCreatorFeatures: {
+			name: 'Upcoming Creator Features',
+			description: 'Enables the creation of fog volume files and provides auto-completions for entity properties.'
+		},
+		enableGameTestFramework: {
+			name: 'Enable GameTest Framework',
+			description: 'Enables the GameTest related modules in the manifest and allows you to create GameTets scripts with auto-completions.'
+		},
+	},
 	// Windows
 	windows: {
 		changelogWindow: {

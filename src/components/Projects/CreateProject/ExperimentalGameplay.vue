@@ -6,12 +6,12 @@
 					{{ experiment.icon }}
 				</v-icon>
 				<h1 class="text-h6">
-					{{ experiment.name }}
+					{{ t(`experimentalGameplay.${experiment.id}.name`) }}
 				</h1>
 			</div>
 			<SelectedStatus :selected="value" />
 
-			<p>{{ experiment.description }}</p>
+			<p>{{ t(`experimentalGameplay.${experiment.id}.description`) }}</p>
 		</template>
 	</ToggleSheet>
 </template>
