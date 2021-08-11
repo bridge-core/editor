@@ -1,4 +1,3 @@
-import { computed } from '@vue/composition-api'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'
 

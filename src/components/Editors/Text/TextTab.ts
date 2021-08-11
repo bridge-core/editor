@@ -9,6 +9,7 @@ import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '../../FileSystem/Types'
+import { markRaw } from '@vue/composition-api'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -89,9 +90,10 @@ export class TextTab extends FileTab {
 			const fileContent = await file.text()
 			const uri = monaco.Uri.file(this.getPath())
 
-			this.editorModel =
+			this.editorModel = markRaw(
 				monaco.editor.getModel(uri) ??
-				monaco.editor.createModel(fileContent, undefined, uri)
+					monaco.editor.createModel(fileContent, undefined, uri)
+			)
 			this.modelLoaded.dispatch()
 			this.loadEditor()
 		} else {
@@ -115,9 +117,11 @@ export class TextTab extends FileTab {
 	}
 	onDeactivate() {
 		// MonacoEditor is defined
-		if (this.tabSystem.hasFired)
-			this.editorViewState =
-				this.editorInstance?.saveViewState() ?? undefined
+		if (this.tabSystem.hasFired) {
+			const viewState = this.editorInstance.saveViewState()
+			if (viewState) this.editorViewState = markRaw(viewState)
+		}
+
 		this.disposables.forEach((disposable) => disposable?.dispose())
 		this.isActive = false
 	}

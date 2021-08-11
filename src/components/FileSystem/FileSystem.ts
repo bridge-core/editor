@@ -5,6 +5,7 @@ import type { IGetHandleConfig, IMkdirConfig } from './Common'
 import { iterateDir } from '/@/utils/iterateDir'
 import { join } from '/@/utils/path'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
+import { markRaw } from '@vue/composition-api'
 
 export class FileSystem extends Signal<void> {
 	protected _baseDirectory!: AnyDirectoryHandle
@@ -18,7 +19,7 @@ export class FileSystem extends Signal<void> {
 	}
 
 	setup(baseDirectory: AnyDirectoryHandle) {
-		this._baseDirectory = baseDirectory
+		this._baseDirectory = markRaw(baseDirectory)
 
 		if (!this.hasFired) this.dispatch()
 	}

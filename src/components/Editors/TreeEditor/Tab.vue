@@ -261,7 +261,7 @@ export default {
 		},
 	},
 	watch: {
-		treeEditor() {
+		'tab.uuid'() {
 			this.treeEditor.receiveContainer(this.$refs.editorContainer)
 		},
 		propertySuggestions() {

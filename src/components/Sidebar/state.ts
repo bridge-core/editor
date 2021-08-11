@@ -2,7 +2,7 @@
  * Reactive vue state for the Sidebar
  */
 
-import { computed, reactive } from '@vue/composition-api'
+import { computed, reactive, ref, watch } from '@vue/composition-api'
 import { SidebarContent } from './Content/SidebarContent'
 import { SidebarElement } from './create'
 import { App } from '/@/App'
@@ -27,6 +27,11 @@ export function toggle(content: SidebarContent) {
 	App.getApp().then((app) => app.windowResize.dispatch())
 }
 
-export const isContentVisible = computed(() => {
-	return SidebarState.currentState !== null
-})
+export const isContentVisible = ref(false)
+watch(
+	SidebarState,
+	() => {
+		isContentVisible.value = SidebarState.currentState !== null
+	},
+	{ deep: false }
+)

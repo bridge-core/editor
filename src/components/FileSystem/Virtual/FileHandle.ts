@@ -5,6 +5,7 @@ import { ISerializedFileHandle } from './Comlink'
 import { get, set, has, del, getMany } from './IDB'
 import { whenIdleDisposable } from '/@/utils/whenIdle'
 import { IDisposable } from '/@/types/disposable'
+import { markRaw } from '@vue/composition-api'
 
 /**
  * A class that implements a virtual file
@@ -32,7 +33,7 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		if (data) this.setup(data)
 	}
 	protected setup(fileData: Uint8Array) {
-		this.fileData = fileData
+		this.fileData = markRaw(fileData)
 
 		// This prevents an IndexedDB overload by saving too many small data files to the DB
 		if (

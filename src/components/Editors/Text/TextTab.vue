@@ -24,18 +24,6 @@ export default {
 			this.tabSystem.createMonacoEditor(this.$refs.monacoContainer)
 		},
 	},
-	watch: {
-		fontSize(val) {
-			this.monacoEditor.updateOptions({
-				fontSize: this.fontSize,
-			})
-		},
-		fontFamily(val) {
-			this.monacoEditor.updateOptions({
-				fontFamily: this.fontFamily,
-			})
-		},
-	},
 }
 </script>
 

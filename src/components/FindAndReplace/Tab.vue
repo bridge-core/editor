@@ -154,7 +154,7 @@ export default {
 	},
 
 	watch: {
-		tab() {
+		'tab.uuid'() {
 			for (const key in this.tab.state) {
 				set(this, key, this.tab.state[key])
 			}
