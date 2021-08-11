@@ -34,6 +34,7 @@ export class ConfiguredJsonHighlighter {
 
 		App.eventSystem.on('currentTabSwitched', async () => {
 			const app = await App.getApp()
+			await app.projectManager.projectReady.fired
 
 			const tab = app.project.tabSystem?.selectedTab
 			if (!(tab instanceof TextTab)) return
@@ -43,11 +44,6 @@ export class ConfiguredJsonHighlighter {
 
 			// We have already loaded the needed file type
 			if (!id || id === this.loadedFileType) return
-
-			const fs = new CombinedFileSystem(
-				app.fileSystem.baseDirectory,
-				app.dataLoader
-			)
 
 			this.dynamicKeywords = highlighterConfiguration.keywords ?? []
 			this.typeIdentifiers =
