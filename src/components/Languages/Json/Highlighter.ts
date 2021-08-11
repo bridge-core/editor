@@ -55,10 +55,6 @@ export class ConfiguredJsonHighlighter {
 			this.loadedFileType = id
 		})
 	}
-	async loadFromConfig(fs: CombinedFileSystem, val?: string[]) {
-		if (val === undefined) return []
-		if (Array.isArray(val)) return val
-	}
 
 	async updateKeywords(projectConfig: ProjectConfig) {
 		await projectConfig.refreshConfig()
