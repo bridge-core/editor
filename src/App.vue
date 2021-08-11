@@ -147,10 +147,13 @@ export default {
 /** Reset vuetify's scrolling */
 html {
 	overflow: hidden;
-	overscroll-behavior: contain;
+	overscroll-behavior: none;
 }
 body {
 	overflow: unset;
+	/** This terrible hack is needed to disable safari's overflow scrolling */
+	position: fixed;
+	width: 100%;
 }
 
 /** Scrollbar */
