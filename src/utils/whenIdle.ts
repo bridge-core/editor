@@ -1,3 +1,5 @@
+import { disposableTimeout } from './disposableTimeout'
+
 declare const requestIdleCallback:
 	| ((cb: () => Promise<void> | void) => number)
 	| undefined
@@ -19,8 +21,7 @@ export function whenIdle(cb: () => Promise<void> | void) {
 
 export const whenIdleDisposable = (cb: () => Promise<void> | void) => {
 	if (typeof requestIdleCallback !== 'function') {
-		cb()
-		return { dispose: () => {} }
+		return disposableTimeout(cb, 1)
 	}
 
 	let callbackId: number | undefined = requestIdleCallback(() => {
@@ -32,6 +33,7 @@ export const whenIdleDisposable = (cb: () => Promise<void> | void) => {
 		dispose: () => {
 			if (callbackId && typeof cancelIdleCallback === 'function')
 				cancelIdleCallback(callbackId)
+			callbackId = undefined
 		},
 	}
 }

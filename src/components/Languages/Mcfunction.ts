@@ -12,6 +12,7 @@ import { tokenizeCommand } from './Mcfunction/tokenize'
 import { App } from '/@/App'
 import './Mcfunction/WithinJson'
 import { tokenProvider } from './Mcfunction/TokenProvider'
+import { FileType } from '../Data/FileType'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {
@@ -109,9 +110,22 @@ export class McfunctionLanguage extends Language {
 			completionItemProvider,
 		})
 
-		this.disposables.push(
-			App.eventSystem.on('currentTabSwitched', () => loadCommands(this))
-		)
+		App.getApp().then(async (app) => {
+			await app.projectManager.projectReady.fired
+			app.project.compilerManager.fired.then(() => loadCommands(this))
+
+			this.disposables.push(
+				app.projectManager.forEachProject((project) => {
+					this.disposables.push(
+						project.fileSave.any.on(([filePath]) => {
+							// Whenever a custom command gets saved, we need to update the token provider to account for a potential custom command name change
+							if (FileType.getId(filePath) === 'customCommand')
+								loadCommands(this)
+						})
+					)
+				})
+			)
+		})
 	}
 
 	onModelAdded(model: editor.ITextModel) {
