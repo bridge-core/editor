@@ -47,9 +47,6 @@ export class Compiler extends WorkerManager<
 	}
 
 	async start({ mode, restartDevServer }: ICompilerStartOptions) {
-		// Dev mode makes no sense for browsers without com.mojang syncing
-		if (isUsingFileSystemPolyfill && mode === 'dev') return
-
 		await this.ready.fired
 		this.ready.resetSignal()
 		const app = await App.getApp()
@@ -77,6 +74,9 @@ export class Compiler extends WorkerManager<
 		} else {
 			await this.updateService(mode, false, restartDevServer)
 		}
+
+		// Dev mode makes no sense for browsers without com.mojang syncing
+		// if (isUsingFileSystemPolyfill && mode === 'dev') return
 
 		// Listen to task progress and update UI
 		await this.service.on(
@@ -112,7 +112,7 @@ export class Compiler extends WorkerManager<
 	}
 
 	async updateFiles(filePaths: string[]) {
-		if (isUsingFileSystemPolyfill) return
+		// if (isUsingFileSystemPolyfill) return
 
 		console.time('[Worker] Compiler: Update Files')
 		await this.ready.fired
@@ -141,7 +141,7 @@ export class Compiler extends WorkerManager<
 	}
 
 	async unlink(path: string) {
-		if (isUsingFileSystemPolyfill) return
+		// if (isUsingFileSystemPolyfill) return
 
 		await this.ready.fired
 		this.ready.resetSignal()
