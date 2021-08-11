@@ -11,23 +11,26 @@ import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { IDisposable } from '/@/types/disposable'
 import { IOutlineBox } from './Data/EntityData'
+import { markRaw } from '@vue/composition-api'
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
-	protected winterskyScene = Object.freeze(
-		new Wintersky.Scene({
-			fetchTexture: async (config) => {
-				const app = await App.getApp()
+	protected winterskyScene = markRaw(
+		Object.freeze(
+			new Wintersky.Scene({
+				fetchTexture: async (config) => {
+					const app = await App.getApp()
 
-				try {
-					return await loadAsDataURL(
-						config.particle_texture_path,
-						app.project.fileSystem
-					)
-				} catch (err) {
-					// Fallback to Wintersky's default handling of textures
-				}
-			},
-		})
+					try {
+						return await loadAsDataURL(
+							config.particle_texture_path,
+							app.project.fileSystem
+						)
+					} catch (err) {
+						// Fallback to Wintersky's default handling of textures
+					}
+				},
+			})
+		)
 	)
 	protected _renderContainer?: RenderDataContainer
 	protected boxHelperDisposables: IDisposable[] = []
@@ -164,11 +167,13 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		// No texture available for model -> nothing to render
 		if (!this.renderContainer.currentTexturePath) return
 
-		this.model = new Model(
-			this.renderContainer.modelData,
-			await loadAsDataURL(
-				this.renderContainer.currentTexturePath,
-				app.project.fileSystem
+		this.model = markRaw(
+			new Model(
+				this.renderContainer.modelData,
+				await loadAsDataURL(
+					this.renderContainer.currentTexturePath,
+					app.project.fileSystem
+				)
 			)
 		)
 

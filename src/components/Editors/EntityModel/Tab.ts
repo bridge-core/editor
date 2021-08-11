@@ -6,6 +6,7 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import json5 from 'json5'
 import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
+import { markRaw } from '@vue/composition-api'
 
 export interface IPreviewOptions {
 	loadServerEntity?: boolean
@@ -105,11 +106,15 @@ export class EntityModelTab extends GeometryPreviewTab {
 			})
 		)
 
-		this._renderContainer = new RenderDataContainer(app, {
-			identifier: clientEntityData.geometryIdentifier[0],
-			texturePaths: connectedTextures,
-			connectedAnimations: new Set(clientEntityData.animationIdentifier),
-		})
+		this._renderContainer = markRaw(
+			new RenderDataContainer(app, {
+				identifier: clientEntityData.geometryIdentifier[0],
+				texturePaths: connectedTextures,
+				connectedAnimations: new Set(
+					clientEntityData.animationIdentifier
+				),
+			})
+		)
 		this._renderContainer.createGeometry(connectedGeometries[0])
 
 		connectedAnimations.forEach((filePath) =>
