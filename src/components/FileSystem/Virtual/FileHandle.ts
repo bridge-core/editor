@@ -31,13 +31,20 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		super(parent, name)
 		if (data) this.setup(data)
 	}
-	protected setup(data: Uint8Array) {
-		this.fileData = data
+	protected setup(fileData: Uint8Array) {
+		this.fileData = fileData
+
+		// This prevents an IndexedDB overload by saving too many small data files to the DB
+		if (
+			this.path.join('/').startsWith('data/packages') &&
+			fileData.length < 10_000
+		)
+			return
 
 		this.disposable?.dispose?.()
 
 		this.disposable = whenIdleDisposable(() => {
-			this.updateIdb(data)
+			this.updateIdb(fileData)
 		})
 	}
 
