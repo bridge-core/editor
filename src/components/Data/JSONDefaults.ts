@@ -74,7 +74,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 			try {
 				await this.loadStaticSchemas(
 					await app.dataLoader.getFileHandle(
-						`data/packages/${packageName}/schema.json`
+						`data/packages/${packageName}/schemas.json`
 					)
 				)
 			} catch {
