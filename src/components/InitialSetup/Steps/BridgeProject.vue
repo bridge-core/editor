@@ -30,7 +30,6 @@ export default {
 	},
 	data() {
 		return {
-			isLoading: false,
 			actions: [
 				new SimpleAction({
 					icon: 'mdi-plus',
@@ -38,8 +37,6 @@ export default {
 					description:
 						'initialSetup.step.bridgeProject.createNew.description',
 					onTrigger: async () => {
-						if (this.isLoading) return
-
 						this.$emit('next')
 					},
 				}),
@@ -49,13 +46,6 @@ export default {
 					description:
 						'initialSetup.step.bridgeProject.importExisting.description',
 					onTrigger: async () => {
-						if (this.isLoading) return
-
-						const lw = new LoadingWindow()
-						lw.open()
-
-						this.isLoading = true
-
 						let fileHandle
 						try {
 							;[fileHandle] = await window.showOpenFilePicker({
@@ -70,15 +60,14 @@ export default {
 								],
 							})
 						} catch (err) {
-							this.isLoading = false
-							lw.close()
 							return
 						}
+						const lw = new LoadingWindow()
+						lw.open()
 
 						await importFromBrproject(fileHandle, true)
 
 						this.$emit('done')
-						this.isLoading = false
 						lw.close()
 					},
 				}),
