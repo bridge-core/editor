@@ -72,7 +72,6 @@ export class CreateManifest extends CreateFile {
 			},
 			modules: [
 				{
-					description: createOptions.description,
 					type: this.type,
 					uuid: uuid(),
 					version: [1, 0, 0],
