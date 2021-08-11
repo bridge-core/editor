@@ -33,6 +33,7 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		if (data) this.setup(data)
 	}
 	protected setup(fileData: Uint8Array) {
+		// Composition API isn't available within web workers (and usage of markRaw isn't necessary there) so we can omit the markRaw call
 		this.fileData = globalThis.document ? markRaw(fileData) : fileData
 
 		// This prevents an IndexedDB overload by saving too many small data files to the DB

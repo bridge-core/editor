@@ -38,7 +38,7 @@ export abstract class Project {
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
 	public readonly compilerManager = new CompilerManager(this)
-	public readonly jsonDefaults = new JsonDefaults(this)
+	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 	public readonly config: ProjectConfig
 	public readonly extensionLoader: ExtensionLoader
