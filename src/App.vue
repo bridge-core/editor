@@ -188,6 +188,7 @@ summary::-webkit-details-marker {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	touch-action: manipulation;
 }
 
 .v-application {
