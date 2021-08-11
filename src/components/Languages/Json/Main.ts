@@ -1,15 +1,25 @@
 import { languages } from 'monaco-editor'
-import './Highlighter'
+import { ConfiguredJsonHighlighter } from './Highlighter'
 
-languages.json.jsonDefaults.setModeConfiguration({
-	colors: false,
-	tokens: false,
-	completionItems: true,
-	diagnostics: true,
-	hovers: true,
-	documentFormattingEdits: true,
-	documentRangeFormattingEdits: true,
-	documentSymbols: true,
-	foldingRanges: true,
-	selectionRanges: true,
-})
+export class ConfiguredJsonLanguage {
+	highlighter = new ConfiguredJsonHighlighter()
+
+	constructor() {
+		this.setModeConfiguration()
+	}
+
+	setModeConfiguration() {
+		languages.json.jsonDefaults.setModeConfiguration({
+			colors: false,
+			tokens: false,
+			completionItems: true,
+			diagnostics: true,
+			hovers: true,
+			documentFormattingEdits: true,
+			documentRangeFormattingEdits: true,
+			documentSymbols: true,
+			foldingRanges: true,
+			selectionRanges: true,
+		})
+	}
+}

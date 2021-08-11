@@ -35,7 +35,7 @@ import { ComMojang } from './components/FileSystem/ComMojang'
 import { AudioManager } from '/@/components/Audio/AudioManager'
 import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
 import { markRaw, shallowReactive } from '@vue/composition-api'
-
+import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 export class App {
 	public static readonly installApp = new InstallApp()
 	public static fileSystemSetup = new FileSystemSetup()
@@ -68,7 +68,8 @@ export class App {
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
 	public readonly comMojang = new ComMojang(this)
 
-	protected languageManager = new LanguageManager()
+	protected languageManager = markRaw(new LanguageManager())
+	protected configuredJsonLanguage = markRaw(new ConfiguredJsonLanguage())
 
 	protected _windows: Windows
 	get windows() {

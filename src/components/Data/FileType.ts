@@ -1,7 +1,6 @@
 import { isMatch } from 'micromatch'
 import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
-import type { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
 import type { CompareOperator } from 'compare-versions'
 import { DataLoader } from './DataLoader'
@@ -26,6 +25,12 @@ export interface IFileType {
 	}
 	meta?: {
 		commandsUseSlash?: boolean
+	}
+	highlighterConfiguration?: {
+		keywords?: string[]
+		typeIdentifiers?: string[]
+		variables?: string[]
+		definitions?: string[]
 	}
 }
 export interface IDefinitions {

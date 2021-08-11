@@ -15,7 +15,6 @@ import { DefinitionProvider } from '../Definitions/GoTo'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { viewDocumentation } from '../Documentation/view'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
-import '/@/components/Languages/Json/Main'
 import { markRaw } from '@vue/composition-api'
 
 languages.typescript.javascriptDefaults.setCompilerOptions({

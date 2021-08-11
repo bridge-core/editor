@@ -47,10 +47,10 @@ export const bridgeDark = <const>{
 			color: '#e6db74',
 		},
 		variable: {
-			color: '#9effff',
+			color: '#6e9eff',
 		},
 		variableStrong: {
-			color: '#9effff',
+			color: '#6e9eff',
 		},
 		meta: {
 			color: 'white',
