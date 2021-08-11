@@ -3,7 +3,7 @@ import { VirtualFileHandle } from './Virtual/FileHandle'
 
 export let isUsingFileSystemPolyfill = false
 
-if (typeof window.showDirectoryPicker === 'function') {
+if (typeof window.showDirectoryPicker !== 'function') {
 	isUsingFileSystemPolyfill = true
 
 	window.showDirectoryPicker = async () =>
@@ -11,7 +11,7 @@ if (typeof window.showDirectoryPicker === 'function') {
 		new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
 }
 
-if (typeof window.showOpenFilePicker === 'function') {
+if (typeof window.showOpenFilePicker !== 'function') {
 	// @ts-ignore Typescript doesn't like our polyfill
 	window.showOpenFilePicker = async (options: OpenFilePickerOptions) => {
 		const opts = { types: [], ...options }
