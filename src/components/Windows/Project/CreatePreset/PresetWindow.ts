@@ -112,21 +112,16 @@ export class CreatePresetWindow extends BaseWindow {
 		if (!app.project?.hasPacks(requires.packTypes ?? [])) return
 
 		// Check that the project has the required modules
-		const gameTest = <boolean | undefined>(
-			Object.entries(
-				app.projectConfig.get().experimentalGameplay ?? {}
-			).includes(['enableGameTestFramework', true])
+		const experimentalGameplay =
+			app.projectConfig.get().experimentalGameplay ?? {}
+		const requiredExperimentalFeatures = requires.experimentalGameplay ?? []
+		if (
+			requiredExperimentalFeatures.some(
+				(experimentalFeature) =>
+					!experimentalGameplay[experimentalFeature]
+			)
 		)
-		const scripting = <boolean | undefined>(
-			Object.entries(
-				app.projectConfig.get().experimentalGameplay ?? {}
-			).includes(['additonalModdingCapabilities', true])
-		)
-
-		for (const module of requires.experimentalGameplay ?? []) {
-			if (module == 'gameTest' && !gameTest) return
-			if (module == 'scriping' && !scripting) return
-		}
+			return
 
 		// Load current project target version
 		const projectTargetVersion =
