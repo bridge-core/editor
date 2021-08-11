@@ -241,7 +241,6 @@ export class CreatePresetWindow extends BaseWindow {
 		app.windows.loadingWindow.open()
 		const fs = app.project!.fileSystem
 
-		const promises: Promise<unknown>[] = []
 		const createdFiles: AnyFileHandle[] = []
 		const permissions: IPermissions = {
 			mayOverwriteFiles: undefined,
@@ -312,39 +311,37 @@ export class CreatePresetWindow extends BaseWindow {
 			}
 		}
 
-		promises.push(
-			...createFiles.map(async (createFileOpts) => {
-				if (typeof createFileOpts === 'string') {
-					createdFiles.push(
-						...(await runPresetScript(
-							presetPath,
-							createFileOpts,
-							this.sidebar.currentState.models,
-							permissions
-						))
-					)
-				} else {
-					createdFiles.push(
-						await createFile(
-							presetPath,
-							createFileOpts,
-							this.sidebar.currentState.models
-						)
-					)
-				}
-			}),
-			...expandFiles.map(async (expandFileOpts) => {
+		for (const createFileOpts of createFiles) {
+			if (typeof createFileOpts === 'string') {
 				createdFiles.push(
-					await expandFile(
+					...(await runPresetScript(
 						presetPath,
-						expandFileOpts,
+						createFileOpts,
+						this.sidebar.currentState.models,
+						permissions
+					))
+				)
+			} else {
+				createdFiles.push(
+					await createFile(
+						presetPath,
+						createFileOpts,
 						this.sidebar.currentState.models
 					)
 				)
-			})
-		)
+			}
+		}
+		for (const expandFileOpts of expandFiles) {
+			createdFiles.push(
+				await expandFile(
+					presetPath,
+					expandFileOpts,
+					this.sidebar.currentState.models
+				)
+			)
+		}
 
-		await Promise.all(promises)
+		// await Promise.all(promises)
 		App.eventSystem.dispatch('fileAdded', undefined)
 
 		// Close window
