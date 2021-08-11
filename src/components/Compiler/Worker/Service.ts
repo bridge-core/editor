@@ -6,8 +6,8 @@ import { TCompilerPlugin } from './TCompilerPlugin'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { FileType, IFileType } from '/@/components/Data/FileType'
 import { Compiler } from './Compiler'
-import { DataLoader } from '../../Data/DataLoader'
-import { AnyDirectoryHandle } from '../../FileSystem/Types'
+import { DataLoader } from '/@/components/Data/DataLoader'
+import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 
 export interface ICompilerOptions {
 	config: string
@@ -131,15 +131,6 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 			)
 		)
 		await this.compiler.processFileMap()
-	}
-	updateDirectoryHandles(
-		baseDirectory: AnyDirectoryHandle,
-		projectDirectory: AnyDirectoryHandle
-	) {
-		this.baseDirectory = baseDirectory
-		this.fileSystem.setup(projectDirectory)
-
-		// Com.mojang syncing isn't available for file system polyfills so we don't need to update the output file system
 	}
 
 	async updateFiles(filePaths: string[]) {

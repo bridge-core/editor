@@ -73,20 +73,11 @@ export class PackIndexer extends WorkerManager<
 		console.timeEnd('[TASK] Indexing Packs (Total)')
 		return <const>[changedFiles, deletedFiles]
 	}
-	updateDirectoryHandles() {
-		if (!isUsingFileSystemPolyfill) return
-
-		return this.service.updateDirectoryHandles(
-			this.baseDirectory,
-			this.app.fileSystem.baseDirectory
-		)
-	}
 
 	async updateFile(filePath: string, fileContent?: string) {
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.updateDirectoryHandles()
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 		await this.service.updateFile(filePath, fileContent)
 
@@ -96,7 +87,6 @@ export class PackIndexer extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.updateDirectoryHandles()
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 
 		for (const filePath of filePaths) {
@@ -109,7 +99,6 @@ export class PackIndexer extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.updateDirectoryHandles()
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 
 		await this.service.unlink(path)
@@ -119,8 +108,6 @@ export class PackIndexer extends WorkerManager<
 
 	async readdir(path: string[], ..._: any[]) {
 		await this.fired
-
-		await this.updateDirectoryHandles()
 
 		return await this.service.readdir(path)
 	}

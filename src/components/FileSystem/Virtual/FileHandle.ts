@@ -2,9 +2,7 @@ import { BaseVirtualHandle } from './Handle'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
-import { get, set, has, del, getMany } from './IDB'
-import { whenIdleDisposable } from '/@/utils/whenIdle'
-import { IDisposable } from '/@/types/disposable'
+import { get, set, del } from './IDB'
 import { markRaw } from '@vue/composition-api'
 
 /**
@@ -22,37 +20,34 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	public readonly isDirectory = false
 
 	protected fileData?: Uint8Array
-	protected disposable?: IDisposable
 
 	constructor(
 		parent: VirtualDirectoryHandle | null,
 		name: string,
-		data?: Uint8Array
+		data?: Uint8Array,
+		protected inMemory = false
 	) {
 		super(parent, name)
 		if (data) this.setup(data)
+		else this.setupDone.dispatch()
 	}
-	protected setup(fileData: Uint8Array) {
+	protected async setup(fileData: Uint8Array) {
 		// Composition API isn't available within web workers (and usage of markRaw isn't necessary there) so we can omit the markRaw call
 		this.fileData = globalThis.document ? markRaw(fileData) : fileData
 
 		// This prevents an IndexedDB overload by saving too many small data files to the DB
 		if (
-			this.path.join('/').startsWith('data/packages') &&
-			fileData.length < 10_000
+			this.inMemory ||
+			(this.path.join('/').startsWith('data/packages') &&
+				fileData.length < 10_000)
 		)
-			return
+			return this.setupDone.dispatch()
 
-		this.disposable?.dispose?.()
-
-		this.disposable = whenIdleDisposable(() => {
-			this.updateIdb(fileData)
-		})
+		await this.updateIdb(fileData)
+		this.setupDone.dispatch()
 	}
 
 	protected async updateIdb(data: Uint8Array) {
-		this.disposable?.dispose?.()
-
 		await set(this.idbKey, data)
 		this.fileData = undefined
 	}
@@ -61,21 +56,22 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		if (this.fileData) return this.fileData
 
 		let storedData = await get(this.idbKey)
-		if (!storedData)
+		if (!storedData) {
+			console.log(this.parent)
 			throw new Error(`File not found: "${this.path.join('/')}"`)
+		}
 
 		return storedData!
 	}
-	serialize() {
-		return <const>{
+	serialize(): ISerializedFileHandle {
+		return {
 			kind: 'file',
 			name: this.name,
-			data: new Uint8Array(),
+			fileData: this.fileData,
 		}
 	}
 
 	async removeSelf() {
-		this.disposable?.dispose?.()
 		await del(this.idbKey)
 	}
 
@@ -89,6 +85,7 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		return new VirtualWritable(this)
 	}
 	async [writeMethodSymbol](data: Uint8Array) {
-		await this.updateIdb(data)
+		if (this.inMemory) this.fileData = data
+		else await this.updateIdb(data)
 	}
 }

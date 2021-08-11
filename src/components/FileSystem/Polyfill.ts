@@ -3,15 +3,15 @@ import { VirtualFileHandle } from './Virtual/FileHandle'
 
 export let isUsingFileSystemPolyfill = false
 
-if (typeof window.showDirectoryPicker !== 'function') {
+if (typeof window.showDirectoryPicker === 'function') {
 	isUsingFileSystemPolyfill = true
 
 	window.showDirectoryPicker = async () =>
 		// @ts-ignore Typescript doesn't like our polyfill
-		new VirtualDirectoryHandle()
+		new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
 }
 
-if (typeof window.showOpenFilePicker !== 'function') {
+if (typeof window.showOpenFilePicker === 'function') {
 	// @ts-ignore Typescript doesn't like our polyfill
 	window.showOpenFilePicker = async (options: OpenFilePickerOptions) => {
 		const opts = { types: [], ...options }
@@ -43,7 +43,10 @@ if (typeof window.showOpenFilePicker !== 'function') {
 									new VirtualFileHandle(
 										null,
 										file.name,
-										new Uint8Array(await file.arrayBuffer())
+										new Uint8Array(
+											await file.arrayBuffer()
+										),
+										true
 									)
 							)
 						)
@@ -81,7 +84,8 @@ if (typeof window.showSaveFilePicker !== 'function') {
 		return new VirtualFileHandle(
 			null,
 			options.suggestedName ?? 'newFile.txt',
-			new Uint8Array()
+			new Uint8Array(),
+			true
 		)
 	}
 }
@@ -99,7 +103,8 @@ if (
 			return new VirtualFileHandle(
 				null,
 				file.name,
-				new Uint8Array(await file.arrayBuffer())
+				new Uint8Array(await file.arrayBuffer()),
+				true
 			)
 		} else if (this.kind === 'directory') {
 			return new VirtualDirectoryHandle(null, 'unknown')

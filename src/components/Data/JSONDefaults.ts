@@ -77,8 +77,9 @@ export class JsonDefaults extends EventDispatcher<void> {
 						`data/packages/${packageName}/schemas.json`
 					)
 				)
-			} catch {
-				return
+			} catch (err) {
+				console.error(err)
+				continue
 			}
 		}
 		loadedGlobalSchemas = true

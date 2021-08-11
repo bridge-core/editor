@@ -47,6 +47,9 @@ export class Compiler extends WorkerManager<
 	}
 
 	async start({ mode, restartDevServer }: ICompilerStartOptions) {
+		// Dev mode makes no sense for browsers without com.mojang syncing
+		if (isUsingFileSystemPolyfill && mode === 'dev') return
+
 		await this.ready.fired
 		this.ready.resetSignal()
 		const app = await App.getApp()
@@ -101,25 +104,16 @@ export class Compiler extends WorkerManager<
 		isFileRequest: boolean,
 		isDevServerRestart: boolean
 	) {
-		await this.updateDirectoryHandles()
 		await this.service.updateMode(mode, isFileRequest, isDevServerRestart)
 		await this.service.updatePlugins(
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
 		)
 	}
-	async updateDirectoryHandles() {
-		if (!isUsingFileSystemPolyfill) return
-
-		const app = await App.getApp()
-
-		await this.service.updateDirectoryHandles(
-			this.project.baseDirectory,
-			app.fileSystem.baseDirectory
-		)
-	}
 
 	async updateFiles(filePaths: string[]) {
+		if (isUsingFileSystemPolyfill) return
+
 		console.time('[Worker] Compiler: Update Files')
 		await this.ready.fired
 		this.ready.resetSignal()
@@ -147,6 +141,8 @@ export class Compiler extends WorkerManager<
 	}
 
 	async unlink(path: string) {
+		if (isUsingFileSystemPolyfill) return
+
 		await this.ready.fired
 		this.ready.resetSignal()
 

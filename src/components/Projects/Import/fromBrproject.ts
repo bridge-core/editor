@@ -66,10 +66,10 @@ export async function importFromBrproject(
 		}
 	}
 
-	// Get the project name from the config.json file
-	const { name } = await fs.readJSON(`${importFrom}/config.json`)
+	// Get the new project path
+	const importProject = importFrom.replace('import/', '')
 	// Move imported project to the user's project directory
-	await fs.move(importFrom, `projects/${name}`)
+	await fs.move(importFrom, importProject)
 
 	// Get current project name
 	let currentProjectName: string | undefined
@@ -77,7 +77,7 @@ export async function importFromBrproject(
 
 	// Add new project
 	await app.projectManager.addProject(
-		await fs.getDirectoryHandle(`projects/${name}`),
+		await fs.getDirectoryHandle(importProject),
 		true
 	)
 	// Remove old project if browser is using fileSystem polyfill

@@ -5,7 +5,7 @@ export const bridgeDark = <const>{
 	name: 'Default Dark',
 	colorScheme: 'dark',
 	colors: {
-		text: '#fff',
+		text: '#ffffff',
 
 		primary: '#0073FF',
 		secondary: '#0073FF',
@@ -67,7 +67,7 @@ export const bridgeLight = <const>{
 	name: 'Default Light',
 	colorScheme: 'light',
 	colors: {
-		text: '#000',
+		text: '#000000',
 
 		primary: '#0073FF',
 		secondary: '#0073FF',
@@ -78,15 +78,15 @@ export const bridgeLight = <const>{
 		success: '#4caf50',
 
 		background: '#fafafa',
-		sidebarNavigation: '#FFFFFF',
-		expandedSidebar: '#FFFFFF',
-		sidebarSelection: '#ececec',
-		menu: '#fff',
+		sidebarNavigation: '#e8e8e8',
+		expandedSidebar: '#e8e8e8',
+		sidebarSelection: '#FFFFFF',
+		menu: '#FFFFFF',
 		tooltip: '#424242',
 		toolbar: '#e0e0e0',
 		footer: '#f5f5f5',
 		tabActive: '#fafafa',
-		tabInactive: '#ececec',
+		tabInactive: '#e0e0e0',
 		lineHighlightBackground: '#e0e0e0',
 	},
 	highlighter: {

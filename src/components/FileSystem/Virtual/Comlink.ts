@@ -5,7 +5,7 @@ import { VirtualFileHandle } from './FileHandle'
 export interface ISerializedFileHandle {
 	kind: 'file'
 	name: string
-	data: Uint8Array
+	fileData?: Uint8Array
 }
 
 transferHandlers.set('VirtualFileHandle', <
@@ -16,13 +16,14 @@ transferHandlers.set('VirtualFileHandle', <
 	serialize: (obj) => {
 		return [obj.serialize(), []]
 	},
-	deserialize: (obj) => new VirtualFileHandle(null, obj.name, obj.data),
+	deserialize: (obj) => new VirtualFileHandle(null, obj.name, obj.fileData),
 })
 
 export interface ISerializedDirectoryHandle {
 	kind: 'directory'
 	name: string
-	children: (ISerializedFileHandle | ISerializedDirectoryHandle)[]
+	path: string[]
+	children?: (ISerializedFileHandle | ISerializedDirectoryHandle)[]
 }
 
 transferHandlers.set('VirtualDirectoryHandle', <

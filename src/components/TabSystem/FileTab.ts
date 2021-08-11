@@ -3,6 +3,7 @@ import { TabSystem } from './TabSystem'
 import { v4 as uuid } from 'uuid'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { FileType } from '../Data/FileType'
+import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
 
 export abstract class FileTab extends Tab {
 	public isForeignFile = false
@@ -38,6 +39,13 @@ export abstract class FileTab extends Tab {
 	}
 
 	async isFor(fileHandle: AnyFileHandle) {
+		if (
+			(<VirtualFileHandle>fileHandle).isVirtual !==
+			(<VirtualFileHandle>this.fileHandle).isVirtual
+		)
+			return false
+
+		// @ts-ignore This error can be ignored because of the check above
 		return await fileHandle.isSameEntry(this.fileHandle)
 	}
 

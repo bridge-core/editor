@@ -1,3 +1,4 @@
+import '/@/components/FileSystem/Virtual/Comlink'
 import { expose } from 'comlink'
 import { FileSystem } from '../../FileSystem/FileSystem'
 import { ESearchType } from '../Controls/SearchTypeEnum'

@@ -11,9 +11,9 @@ import {
 } from './PackSpider/PackSpider'
 import { LightningCache } from './LightningCache/LightningCache'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { PackType } from '../../Data/PackType'
-import { DataLoader } from '../../Data/DataLoader'
-import { AnyDirectoryHandle } from '../../FileSystem/Types'
+import { PackType } from '/@/components/Data/PackType'
+import { DataLoader } from '/@/components/Data/DataLoader'
+import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 export type { ILightningInstruction } from './LightningCache/LightningCache'
 
 export interface IPackIndexerOptions {
@@ -43,14 +43,6 @@ export class PackIndexerService extends TaskService<
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
 		FileType.setPluginFileTypes(options.pluginFileTypes)
-	}
-
-	updateDirectoryHandles(
-		projectDirectory: AnyDirectoryHandle,
-		baseDirectory: AnyDirectoryHandle
-	) {
-		this.fileSystem.setup(projectDirectory)
-		this.baseDirectory = baseDirectory
 	}
 
 	getOptions() {
