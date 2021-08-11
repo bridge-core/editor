@@ -53,7 +53,11 @@
 		</template>
 
 		<template #actions="{ selectedSidebar }">
-			<v-btn color="primary" @click="onAddPack">
+			<v-btn
+				color="primary"
+				:disabled="currentProject !== selectedSidebar"
+				@click="onAddPack"
+			>
 				<v-icon class="mr-1">mdi-plus-box</v-icon>
 				{{ t('windows.projectChooser.addPack') }}
 			</v-btn>
