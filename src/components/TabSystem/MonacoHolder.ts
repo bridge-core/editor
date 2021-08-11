@@ -16,6 +16,7 @@ import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { viewDocumentation } from '../Documentation/view'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
 import '/@/components/Languages/Json/Main'
+import { markRaw } from '@vue/composition-api'
 
 languages.typescript.javascriptDefaults.setCompilerOptions({
 	target: languages.typescript.ScriptTarget.ESNext,
@@ -42,16 +43,18 @@ export class MonacoHolder extends Signal<void> {
 
 	createMonacoEditor(domElement: HTMLElement) {
 		this.dispose()
-		this._monacoEditor = editor.create(domElement, {
-			wordBasedSuggestions: false,
-			theme: `bridgeMonacoDefault`,
-			roundedSelection: false,
-			autoIndent: 'full',
-			fontSize: 14,
-			// fontFamily: this.fontFamily,
-			wordWrap: settingsState?.editor?.wordWrap ? 'bounded' : 'off',
-			tabSize: 4,
-		})
+		this._monacoEditor = markRaw(
+			editor.create(domElement, {
+				wordBasedSuggestions: false,
+				theme: `bridgeMonacoDefault`,
+				roundedSelection: false,
+				autoIndent: 'full',
+				fontSize: 14,
+				// fontFamily: this.fontFamily,
+				wordWrap: settingsState?.editor?.wordWrap ? 'bounded' : 'off',
+				tabSize: 4,
+			})
+		)
 		// @ts-ignore
 		const editorService = this._monacoEditor._codeEditorService
 		const openEditorBase = editorService.openCodeEditor.bind(editorService)
