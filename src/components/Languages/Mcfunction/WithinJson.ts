@@ -46,7 +46,12 @@ languages.registerCompletionItemProvider('json', {
 
 		// e.g. animations/animation controller commands need to start with a slash char
 		if (commandsUseSlash && !word.startsWith('/')) return
-		if (word.startsWith('/')) word = word.slice(1)
+
+		let replacedSlash = false
+		if (word.startsWith('/')) {
+			word = word.slice(1)
+			replacedSlash = true
+		}
 
 		const { tokens } = tokenizeCommand(word)
 
@@ -69,7 +74,7 @@ languages.registerCompletionItemProvider('json', {
 							range.endColumn + 1,
 							range.startColumn +
 								lastToken.startColumn +
-								(commandsUseSlash ? 2 : 1)
+								(replacedSlash ? 2 : 1)
 						),
 						position.lineNumber,
 						Math.min(
