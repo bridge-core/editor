@@ -5,7 +5,7 @@ import nodePolyfills from 'rollup-plugin-node-polyfills'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	base: '/editor/',
+	base: '/',
 	server: {
 		port: 8080,
 	},
