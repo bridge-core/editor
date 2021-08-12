@@ -1,1 +1,1 @@
-export const isNightly = location.origin === 'nightly.bridge-core.app'
+export const isNightly = location.origin === 'https://nightly.bridge-core.app'
