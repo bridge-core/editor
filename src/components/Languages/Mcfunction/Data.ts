@@ -1,3 +1,4 @@
+import { markRaw } from '@vue/composition-api'
 import { compare } from 'compare-versions'
 import { MoLang } from 'molang'
 import { languages } from 'monaco-editor'
@@ -56,8 +57,10 @@ export class CommandData extends Signal<void> {
 	async loadCommandData(packageName: string) {
 		const app = await App.getApp()
 
-		this._data = await app.dataLoader.readJSON(
-			`data/packages/${packageName}/language/mcfunction/main.json`
+		this._data = markRaw(
+			await app.dataLoader.readJSON(
+				`data/packages/${packageName}/language/mcfunction/main.json`
+			)
 		)
 
 		const customTypes: Record<string, ICommandArgument[]> =
@@ -86,6 +89,12 @@ export class CommandData extends Signal<void> {
 
 		// console.log(this._data)
 		this.dispatch()
+	}
+
+	get shouldIgnoreCustomCommands() {
+		return App.getApp().then(
+			(app) => !app.projectManager.projectReady.hasFired
+		)
 	}
 
 	protected async getSchema(
@@ -161,12 +170,17 @@ export class CommandData extends Signal<void> {
 	/**
 	 * Given a commandName, return all matching command definitions
 	 */
-	async getCommandDefinitions(commandName: string) {
-		const commands = await this.getSchema().then((schema) => {
-			return schema.filter(
-				(command: any) => command.commandName === commandName
-			)
-		})
+	async getCommandDefinitions(
+		commandName: string,
+		ignoreCustomCommands: boolean
+	) {
+		const commands = await this.getSchema(ignoreCustomCommands).then(
+			(schema) => {
+				return schema.filter(
+					(command: any) => command.commandName === commandName
+				)
+			}
+		)
 
 		return commands
 	}
@@ -175,11 +189,15 @@ export class CommandData extends Signal<void> {
 		if (path.length <= 1)
 			return await this.getCommandCompletionItems(
 				path[0],
-				await App.getApp().then((app) => app.projectManager.hasFired)
+				await this.shouldIgnoreCustomCommands
 			)
 
 		const commandName = path.shift()
-		const currentCommands = await this.getCommandDefinitions(commandName!)
+		const currentCommands = await this.getCommandDefinitions(
+			commandName!,
+			await this.shouldIgnoreCustomCommands
+		)
+		console.log(currentCommands)
 
 		if (!currentCommands || currentCommands.length === 0) return []
 
@@ -248,7 +266,10 @@ export class CommandData extends Signal<void> {
 				return (
 					await Promise.all(
 						(
-							await this.getCommandDefinitions(currentStr)
+							await this.getCommandDefinitions(
+								currentStr,
+								await this.shouldIgnoreCustomCommands
+							)
 						).map((command) =>
 							this.getNextCommandArgument(
 								command,

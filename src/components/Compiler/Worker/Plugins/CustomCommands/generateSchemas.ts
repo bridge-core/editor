@@ -5,6 +5,8 @@ import { iterateDir } from '/@/utils/iterateDir'
 
 export async function generateCommandSchemas() {
 	const app = await App.getApp()
+	await app.project.compilerManager.fired
+
 	const v1CompatMode = app.project.config.get().bridge?.v1CompatMode ?? false
 	const fromFilePath = `BP/commands`
 
