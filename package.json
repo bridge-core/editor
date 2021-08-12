@@ -30,7 +30,6 @@
 		"monaco-editor": "^0.25.1",
 		"path-browserify": "^1.0.1",
 		"peerjs": "^1.3.1",
-		"picomatch": "github:micromatch/picomatch#pull/73/head",
 		"register-service-worker": "^1.7.1",
 		"three": "^0.127.0",
 		"uuid": "^8.3.1",
