@@ -2,10 +2,14 @@ import { languages } from 'monaco-editor'
 import { ConfiguredJsonHighlighter } from './Highlighter'
 
 export class ConfiguredJsonLanguage {
-	highlighter = new ConfiguredJsonHighlighter()
+	protected highlighter = new ConfiguredJsonHighlighter()
 
 	constructor() {
 		this.setModeConfiguration()
+	}
+
+	getHighlighter() {
+		return this.highlighter
 	}
 
 	setModeConfiguration() {

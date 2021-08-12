@@ -1,13 +1,20 @@
-import json5 from 'json5'
 import { languages } from 'monaco-editor'
 import { FileType } from '/@/components/Data/FileType'
 import { TextTab } from '/@/components/Editors/Text/TextTab'
-import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
 import { ProjectConfig } from '/@/components/Projects/ProjectConfig'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { TreeTab } from '../../Editors/TreeEditor/Tab'
 
-export class ConfiguredJsonHighlighter {
+export interface IKnownWords {
+	keywords: string[]
+	typeIdentifiers: string[]
+	variables: string[]
+	definitions: string[]
+}
+
+export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 	protected currentLanguage?: IDisposable
 	protected loadedFileType?: string
 	protected baseKeywords: string[] = ['minecraft']
@@ -19,8 +26,18 @@ export class ConfiguredJsonHighlighter {
 	get keywords() {
 		return this.baseKeywords.concat(this.dynamicKeywords)
 	}
+	get knownWords() {
+		return {
+			keywords: this.keywords,
+			typeIdentifiers: this.typeIdentifiers,
+			variables: this.variables,
+			definitions: this.definitions,
+		}
+	}
 
 	constructor() {
+		super()
+
 		App.getApp().then(async (app) => {
 			await app.projectManager.projectReady.fired
 
@@ -32,28 +49,7 @@ export class ConfiguredJsonHighlighter {
 			})
 		})
 
-		App.eventSystem.on('currentTabSwitched', async () => {
-			const app = await App.getApp()
-			await app.projectManager.projectReady.fired
-
-			const tab = app.project.tabSystem?.selectedTab
-			if (!(tab instanceof TextTab)) return
-
-			const { id, highlighterConfiguration = {} } =
-				FileType.get(tab.getProjectPath()) ?? {}
-
-			// We have already loaded the needed file type
-			if (!id || id === this.loadedFileType) return
-
-			this.dynamicKeywords = highlighterConfiguration.keywords ?? []
-			this.typeIdentifiers =
-				highlighterConfiguration.typeIdentifiers ?? []
-			this.variables = highlighterConfiguration.variables ?? []
-			this.definitions = highlighterConfiguration.definitions ?? []
-
-			this.updateHighlighter()
-			this.loadedFileType = id
-		})
+		App.eventSystem.on('currentTabSwitched', () => this.loadWords())
 	}
 
 	async updateKeywords(projectConfig: ProjectConfig) {
@@ -68,6 +64,29 @@ export class ConfiguredJsonHighlighter {
 		]
 
 		this.updateHighlighter()
+	}
+
+	async loadWords() {
+		const app = await App.getApp()
+		await app.projectManager.projectReady.fired
+
+		const tab = app.project.tabSystem?.selectedTab
+		if (!(tab instanceof TextTab) && !(tab instanceof TreeTab)) return
+
+		const { id, highlighterConfiguration = {} } =
+			FileType.get(tab.getProjectPath()) ?? {}
+
+		// We have already loaded the needed file type
+		if (!id || id === this.loadedFileType) return
+
+		this.dynamicKeywords = highlighterConfiguration.keywords ?? []
+		this.typeIdentifiers = highlighterConfiguration.typeIdentifiers ?? []
+		this.variables = highlighterConfiguration.variables ?? []
+		this.definitions = highlighterConfiguration.definitions ?? []
+
+		if (tab instanceof TextTab) this.updateHighlighter()
+		else if (tab instanceof TreeTab) this.dispatch(this.knownWords)
+		this.loadedFileType = id
 	}
 
 	updateHighlighter() {
@@ -190,5 +209,6 @@ export class ConfiguredJsonHighlighter {
 
 		this.currentLanguage?.dispose()
 		this.currentLanguage = newLanguage
+		this.dispatch(this.knownWords)
 	}
 }

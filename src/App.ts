@@ -67,9 +67,11 @@ export class App {
 	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
 	public readonly comMojang = new ComMojang(this)
+	public readonly configuredJsonLanguage = markRaw(
+		new ConfiguredJsonLanguage()
+	)
 
 	protected languageManager = markRaw(new LanguageManager())
-	protected configuredJsonLanguage = markRaw(new ConfiguredJsonLanguage())
 
 	protected _windows: Windows
 	get windows() {

@@ -27,31 +27,34 @@
 			s: {{ tree.type }} p: {{ tree.parent.type }}</span
 		>
 
-		<div
+		<Highlight
 			:style="{
 				height: '20.5px',
 				display: 'inline-block',
-				color: highlighterInfo.color,
-				backgroundColor: highlighterInfo.background,
-				textDecoration,
 			}"
+			:def="highlighterInfo"
+			:value="this.tree.type === 'string' ? treeValue : undefined"
 			:class="{
 				'tree-editor-selection': tree.isValueSelected,
 				'px-1': true,
 			}"
-			@click.stop.prevent="onClickKey($event, true)"
-			@contextmenu.prevent="treeEditor.onContextMenu($event, tree, false)"
+			@click.stop.prevent.native="onClickKey($event, true)"
+			@contextmenu.prevent.native="
+				treeEditor.onContextMenu($event, tree, false)
+			"
 		>
 			{{ treeValue }}
-		</div>
+		</Highlight>
 	</div>
 </template>
 
 <script>
+import Highlight from '../Highlight.vue'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 
 export default {
+	components: { Highlight },
 	name: 'PrimitiveTree',
 	mixins: [HighlighterMixin(['atom', 'string', 'number']), DevModeMixin],
 	props: {
@@ -61,7 +64,7 @@ export default {
 	computed: {
 		treeValue() {
 			if (this.tree.value === null) return 'null'
-			else if (this.tree.type === 'string') return `"${this.tree.value}"`
+			else if (this.tree.type === 'string') return this.tree.value
 			return this.tree.value
 		},
 		highlighterInfoDef() {
@@ -69,7 +72,7 @@ export default {
 				case 'number':
 					return 'numberDef'
 				case 'string':
-					return 'stringDef'
+					return undefined
 				case 'boolean':
 					return 'atomDef'
 				case 'null':

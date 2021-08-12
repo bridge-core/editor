@@ -8,21 +8,17 @@
 			:treeEditor="treeEditor"
 			@setActive="$emit('setActive')"
 		>
-			<Highlight :def="tree.type === 'object' ? stringDef : numberDef">{{
-				wrapKey(key)
-			}}</Highlight>
+			<Highlight :value="key"></Highlight>
 		</component>
 	</div>
 </template>
 
 <script>
-import { HighlighterMixin } from '/@/components/Mixins/Highlighter.ts'
 import Highlight from '../Highlight.vue'
 import { ArrayTree } from './ArrayTree'
 
 export default {
 	name: 'TreeChildren',
-	mixins: [HighlighterMixin(['string', 'number'])],
 	components: {
 		Highlight,
 	},

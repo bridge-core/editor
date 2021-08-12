@@ -16,7 +16,7 @@
 	>
 		<!-- Context menu button for touch -->
 		<v-btn
-			v-if="tab.isSelected && pointerDevice === 'mouse'"
+			v-if="tab.isSelected && pointerDevice === 'touch'"
 			text
 			icon
 			small
