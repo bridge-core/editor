@@ -1,9 +1,11 @@
 <template>
 	<img
+		v-if="isNightly"
 		draggable="false"
-		:src="isNightly ? '/@/_assets/nightly/logo.svg' : '/@/_assets/logo.svg'"
+		src="/@/_assets/nightly/logo.svg"
 		alt="Logo of bridge. v2"
 	/>
+	<img v-else src="/@/_assets/logo.svg" alt="Logo of bridge. v2" />
 </template>
 
 <script>
