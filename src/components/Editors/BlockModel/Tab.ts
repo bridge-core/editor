@@ -53,6 +53,7 @@ export class BlockModelTab extends GeometryPreviewTab {
 		await this.setupComplete
 		const app = await App.getApp()
 
+		await app.project.packIndexer.fired
 		const packIndexer = app.project.packIndexer.service
 		if (!packIndexer) return
 

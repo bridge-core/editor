@@ -7,6 +7,7 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 
 export async function createFromEntity(tabSystem: TabSystem, tab: FileTab) {
 	const app = await App.getApp()
+	await app.project.packIndexer.fired
 	const packIndexer = app.project.packIndexer.service
 
 	const file = await tab.getFile()
