@@ -32,6 +32,8 @@ export interface ILightningInstruction {
 	filter?: string[]
 }
 
+const baseIgnoreFolders = ['.bridge', 'builds', '.git', 'worlds']
+
 export class LightningCache {
 	protected folderIgnoreList = new Set<string>()
 	protected totalTime = 0
@@ -48,10 +50,10 @@ export class LightningCache {
 			)
 			;(await file.text())
 				.split('\n')
-				.concat(['.bridge', 'builds', '.git'])
+				.concat(baseIgnoreFolders)
 				.forEach((folder) => this.folderIgnoreList.add(folder))
 		} catch {
-			;['.bridge', 'builds'].forEach((folder) =>
+			baseIgnoreFolders.forEach((folder) =>
 				this.folderIgnoreList.add(folder)
 			)
 		}
