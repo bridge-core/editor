@@ -3,6 +3,8 @@ import { resolve, join } from 'path'
 import { createVuePlugin } from 'vite-plugin-vue2'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const isNightly = process.argv[2] === '--nightly'
+
 // https://vitejs.dev/config/
 export default defineConfig({
 	base: '/',
@@ -27,8 +29,8 @@ export default defineConfig({
 		createVuePlugin(),
 		VitePWA({
 			manifest: {
-				name: 'bridge v2',
-				short_name: 'bridge v2',
+				name: isNightly ? 'bridge Nightly' : 'bridge v2',
+				short_name: isNightly ? 'bridge Nightly' : 'bridge v2',
 				theme_color: '#1778D2',
 				icons: [
 					{
