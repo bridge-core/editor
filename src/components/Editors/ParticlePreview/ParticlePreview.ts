@@ -20,10 +20,6 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 
 	protected wintersky = markRaw(
 		new Wintersky.Scene({
-			// @ts-ignore
-			tick_rate: 60,
-			max_emitter_particles: 1000,
-			scale: 1,
 			fetchTexture: async (config) => {
 				const app = await App.getApp()
 
@@ -44,6 +40,9 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 
 		this.setupComplete.once(() => {
 			this.scene.add(new AxesHelper(16))
+			this.wintersky.global_options.tick_rate = 60
+			this.wintersky.global_options.max_emitter_particles = 1000
+			this.wintersky.global_options.scale = 16
 
 			// this.scene.add(new GridHelper(64, 64))
 		})
