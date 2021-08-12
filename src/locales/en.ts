@@ -356,7 +356,11 @@ export default {
 			selectedPack: 'Selected',
 			title: 'Create Project',
 			packIcon: 'Project Icon (optional)',
-			projectName: 'Project Name',
+			projectName: {
+				name: 'Project Name',
+				invalidLetters: 'You may only use alphanumerical characters',
+				mustNotBeEmpty: 'You must enter a project name',
+			},
 			projectDescription: 'Project Description (optional)',
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',

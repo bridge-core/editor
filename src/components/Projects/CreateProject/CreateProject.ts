@@ -49,6 +49,14 @@ export class CreateProjectWindow extends BaseWindow {
 	protected availablePackTypes: IPackType[] = []
 	protected createFiles = [new CreateGitIgnore(), new CreateConfig()]
 	protected experimentalToggles: IExperimentalToggle[] = []
+	protected projectNameRules = [
+		(val: string) =>
+			val.match(/^[a-zA-Z0-9_ ]*$/) !== null ||
+			'windows.createProject.projectName.invalidLetters',
+		(val: string) =>
+			val.trim() !== '' ||
+			'windows.createProject.projectName.mustNotBeEmpty',
+	]
 
 	constructor() {
 		super(CreateProjectComponent, false)
@@ -82,7 +90,9 @@ export class CreateProjectWindow extends BaseWindow {
 	get hasRequiredData() {
 		return (
 			this.createOptions.packs.length > 1 &&
-			this.createOptions.name.length > 0 &&
+			this.projectNameRules.every(
+				(rule) => rule(this.createOptions.name) === true
+			) &&
 			this.createOptions.namespace.length > 0 &&
 			this.createOptions.author.length > 0 &&
 			this.createOptions.targetVersion.length > 0

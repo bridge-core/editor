@@ -116,7 +116,8 @@
 				/>
 				<v-text-field
 					v-model="createOptions.name"
-					:label="t('windows.createProject.projectName')"
+					:label="t('windows.createProject.projectName.name')"
+					:rules="nameRules"
 					autocomplete="off"
 					class="ml-2"
 					outlined
@@ -222,6 +223,14 @@ export default {
 			if (this.isFirstProject) return this.isCreatingProject
 			// Otherwise check that the compiler & pack indexer are done too
 			return this.isCreatingProject
+		},
+		nameRules() {
+			return this.projectNameRules.map((rule) => (val) => {
+				const res = rule(val)
+				if (res === true) return true
+
+				return this.t(res)
+			})
 		},
 	},
 	methods: {
