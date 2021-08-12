@@ -11,19 +11,6 @@ export function tokenizeCommand(command: string) {
 			// TODO: Validate patterns like "][" correctly (bracket count may not be below 0)
 			// TODO: Support strings
 
-			case '{':
-				curlyBrackets++
-				break
-			case '}':
-				curlyBrackets--
-				break
-			case '[':
-				squareBrackets++
-				break
-			case ']':
-				squareBrackets--
-				break
-
 			// Support patterns like "~~~" or "^^^" without whitespace as token separators
 			case '^':
 			case '~': {
@@ -56,6 +43,15 @@ export function tokenizeCommand(command: string) {
 					break
 				}
 			}
+
+			case '{':
+				curlyBrackets++
+			case '}':
+				curlyBrackets--
+			case '[':
+				squareBrackets++
+			case ']':
+				squareBrackets--
 
 			default:
 				if (command[i].trim() !== '') word += command[i]
