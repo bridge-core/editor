@@ -30,7 +30,6 @@ export class PackIndexerService extends TaskService<
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
 	public fileSystem: FileSystem
-	public dataLoader = new DataLoader()
 
 	constructor(
 		projectDirectory: AnyDirectoryHandle,
@@ -56,8 +55,13 @@ export class PackIndexerService extends TaskService<
 	async onStart(forceRefresh: boolean) {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
-		await FileType.setup(this.dataLoader)
-		await PackType.setup(this.dataLoader)
+
+		let dataLoader: DataLoader | undefined = new DataLoader()
+		await Promise.all([
+			FileType.setup(dataLoader),
+			PackType.setup(dataLoader),
+		])
+		dataLoader = undefined
 
 		console.timeEnd('[WORKER] SETUP')
 

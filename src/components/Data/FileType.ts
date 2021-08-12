@@ -57,12 +57,10 @@ export interface IMonacoSchemaArrayEntry {
 export namespace FileType {
 	const pluginFileTypes = new Set<IFileType>()
 	let fileTypes: IFileType[] = []
-	let dataLoader: DataLoader
 	export const ready = new Signal<void>()
 
-	export async function setup(dL: DataLoader) {
+	export async function setup(dataLoader: DataLoader) {
 		if (fileTypes.length > 0) return
-		dataLoader = dL
 		await dataLoader.fired
 
 		const basePath = 'data/packages/minecraftBedrock/fileDefinition'
@@ -74,6 +72,9 @@ export namespace FileType {
 					await dataLoader.readJSON(`${basePath}/${dirent.name}`)
 				)
 		}
+
+		loadLightningCache(dataLoader)
+		loadPackSpider(dataLoader)
 
 		ready.dispatch()
 	}
@@ -162,47 +163,59 @@ export namespace FileType {
 	}
 
 	const lCacheFiles: Record<string, ILightningInstruction[] | string> = {}
+
+	async function loadLightningCache(dataLoader: DataLoader) {
+		for (const fileType of fileTypes) {
+			if (!fileType.lightningCache) continue
+			const filePath = `data/packages/minecraftBedrock/lightningCache/${fileType.lightningCache}`
+
+			if (fileType.lightningCache.endsWith('.json'))
+				lCacheFiles[
+					fileType.lightningCache
+				] = await dataLoader.readJSON(filePath)
+			else if (fileType.lightningCache.endsWith('.js'))
+				lCacheFiles[
+					fileType.lightningCache
+				] = await dataLoader
+					.readFile(filePath)
+					.then((file) => file.text())
+			else
+				throw new Error(
+					`Invalid lightningCache file format: ${fileType.lightningCache}`
+				)
+		}
+	}
+
 	export async function getLightningCache(filePath: string) {
 		const { lightningCache } = get(filePath) ?? {}
 		if (!lightningCache) return []
 
-		if (lCacheFiles[lightningCache]) return lCacheFiles[lightningCache]
-
-		if (lightningCache.endsWith('.json')) {
-			lCacheFiles[lightningCache] = <ILightningInstruction[]>(
-				await dataLoader.readJSON(
-					`data/packages/minecraftBedrock/lightningCache/${lightningCache}`
-				)
-			)
-		} else if (lightningCache.endsWith('.js')) {
-			const textFile = await dataLoader.readFile(
-				`data/packages/minecraftBedrock/lightningCache/${lightningCache}`
-			)
-			lCacheFiles[lightningCache] = await textFile.text()
-		} else {
-			throw new Error(
-				`Unknown lightning cache file format: "${lightningCache}"`
-			)
-		}
-
 		return lCacheFiles[lightningCache]
 	}
 
-	export async function getPackSpiderData() {
-		return <{ id: string; packSpider: IPackSpiderFile }[]>await Promise.all(
-			fileTypes
-				.map(({ id, packSpider }) => {
-					if (!packSpider) return
-					return dataLoader
-						.readJSON(
-							`data/packages/minecraftBedrock/packSpider/${packSpider}`
-						)
-						.then((json) => ({
-							id,
-							packSpider: json,
-						}))
-				})
-				.filter((data) => data !== undefined)
+	const packSpiderFiles: { id: string; packSpider: IPackSpiderFile }[] = []
+	async function loadPackSpider(dataLoader: DataLoader) {
+		packSpiderFiles.push(
+			...(<{ id: string; packSpider: IPackSpiderFile }[]>(
+				await Promise.all(
+					fileTypes
+						.map(({ id, packSpider }) => {
+							if (!packSpider) return
+							return dataLoader
+								.readJSON(
+									`data/packages/minecraftBedrock/packSpider/${packSpider}`
+								)
+								.then((json) => ({
+									id,
+									packSpider: json,
+								}))
+						})
+						.filter((data) => data !== undefined)
+				)
+			))
 		)
+	}
+	export async function getPackSpiderData() {
+		return packSpiderFiles
 	}
 }
