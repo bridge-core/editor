@@ -1,5 +1,7 @@
 import { FileSystem } from '../FileSystem/FileSystem'
+import { IExperimentalToggle } from './CreateProject/CreateProject'
 import type { Project } from './Project/Project'
+import { App } from '/@/App'
 
 export interface IConfigJson {
 	/**
@@ -148,7 +150,36 @@ export class ProjectConfig {
 		}
 
 		try {
-			this.data = await this.fileSystem.readJSON(`config.json`)
+			const config = await this.fileSystem.readJSON(`config.json`)
+
+			// Transform old "capabilities" format to "experimentalGameplay"
+			const app = await App.getApp()
+			const experimentalToggles: IExperimentalToggle[] = await app.dataLoader.readJSON(
+				'data/packages/minecraftBedrock/experimentalGameplay.json'
+			)
+			const experimentalGameplay: Record<string, boolean> =
+				config.experimentalGameplay ?? {}
+			const capabilities: string[] = config.capabilities ?? []
+
+			for (const toggle of experimentalToggles) {
+				// If GameTests and Scripting API weren't enabled on the project originally, set them to false
+				if (!capabilities.includes('gameTestAPI'))
+					experimentalGameplay['enableGameTestFramework'] = false
+				if (!capabilities.includes('scriptingAPI'))
+					experimentalGameplay[
+						'additionalModdingCapabilities'
+					] = false
+
+				// Only change if it doesn't already exist
+				if (!Object.keys(experimentalGameplay).includes(toggle.id)) {
+					// Set all missing experimental toggles to true by default
+					experimentalGameplay[toggle.id] = true
+				}
+			}
+			config.experimentalGameplay = experimentalGameplay
+			config.capabilities = undefined
+			await this.fileSystem.writeJSON('config.json', config, true)
+			this.data = config
 		} catch {
 			this.data = {}
 		}

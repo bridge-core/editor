@@ -28,7 +28,7 @@ export interface ICreateProjectOptions {
 	useLangForManifest: boolean
 	experimentalGameplay: Record<string, boolean>
 }
-interface IExperimentalToggle {
+export interface IExperimentalToggle {
 	name: string
 	id: string
 	description: string
