@@ -3,10 +3,8 @@
 	<div class="body-1" v-if="directoryEntry && !directoryEntry.isLoading">
 		<Draggable
 			v-model="directoryEntry.children"
-			v-bind="{
-				group: 'pack-explorer',
-				disabled: enablePackSpider,
-			}"
+			group="pack-explorer"
+			:disabled="enablePackSpider || pointerDevice === 'touch'"
 			@change="draggedFile"
 		>
 			<template v-for="entry in directoryEntry.children">
@@ -84,6 +82,7 @@ import { App } from '/@/App.ts'
 import Draggable from 'vuedraggable'
 import { join } from '/@/utils/path'
 import { EnablePackSpiderMixin } from '/@/components/Mixins/EnablePackSpider'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'FileDisplayer',
@@ -96,6 +95,11 @@ export default {
 		startPath: Array,
 	},
 
+	setup() {
+		return {
+			pointerDevice,
+		}
+	},
 	mounted() {
 		this.loadDirectory()
 	},
