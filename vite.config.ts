@@ -29,6 +29,7 @@ export default defineConfig({
 	plugins: [
 		createVuePlugin(),
 		VitePWA({
+			filename: 'service-worker.js',
 			registerType: 'prompt',
 			manifest: {
 				name: isNightly ? 'bridge Nightly' : 'bridge v2',
