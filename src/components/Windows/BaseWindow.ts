@@ -2,7 +2,7 @@ import { Component as VueComponent } from 'vue'
 import { v4 as uuid } from 'uuid'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
-import { WindowState } from './WindowState'
+import { App } from '/@/App'
 import { del, markRaw, set } from '@vue/composition-api'
 
 export abstract class BaseWindow<T = void> extends Signal<T> {
@@ -23,7 +23,7 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 	}
 
 	defineWindow() {
-		set(WindowState.state, this.windowUUID, this)
+		set(App.windowState.state, this.windowUUID, this)
 	}
 	addAction(action: SimpleAction) {
 		this.actions.push(action)
@@ -46,6 +46,6 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 		this.resetSignal()
 	}
 	dispose() {
-		del(WindowState.state, this.windowUUID)
+		del(App.windowState.state, this.windowUUID)
 	}
 }

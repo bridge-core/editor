@@ -36,8 +36,10 @@ import { AudioManager } from '/@/components/Audio/AudioManager'
 import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
 import { markRaw, shallowReactive } from '@vue/composition-api'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
+import { WindowState } from '/@/components/Windows/WindowState'
 
 export class App {
+	public static readonly windowState = new WindowState()
 	public static readonly installApp = new InstallApp()
 	public static fileSystemSetup = new FileSystemSetup()
 	public static toolbar = new Toolbar()
