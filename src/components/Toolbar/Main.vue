@@ -18,7 +18,7 @@
 			style="height: 20px; padding-right: 4px; padding-left: 8px"
 			alt="bridge. Logo"
 			draggable="false"
-			src="@/_assets/logo.svg"
+			src="/@/_assets/logo.svg"
 		/>
 
 		<v-divider vertical />
@@ -75,7 +75,6 @@ import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/appVersion.json'
 import { platform } from '/@/utils/os.ts'
 import { reactive } from '@vue/composition-api'
-import { WindowState } from '/@/components/Windows/WindowState.ts'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 
 export default {
@@ -89,7 +88,7 @@ export default {
 	setup() {
 		const setupObj = reactive({
 			title: 'bridge.',
-			isAnyWindowVisible: WindowState.isAnyWindowVisible,
+			isAnyWindowVisible: App.windowState.isAnyWindowVisible,
 		})
 
 		App.getApp().then((app) => {

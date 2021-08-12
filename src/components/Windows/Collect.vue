@@ -10,13 +10,13 @@
 </template>
 
 <script>
-import { WindowState } from './WindowState'
+import { App } from '/@/App'
 
 export default {
 	name: 'CollectedWindows',
 
 	data: () => ({
-		windows: WindowState.state,
+		windows: App.windowState.state,
 	}),
 }
 </script>

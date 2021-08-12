@@ -1,7 +1,7 @@
-import { isMatch } from 'micromatch'
 import { v4 as uuid } from 'uuid'
 import { Signal } from '../Common/Event/Signal'
 import { DataLoader } from './DataLoader'
+import { isMatch } from '/@/utils/glob/isMatch'
 
 /**
  * Describes the structure of a pack definition

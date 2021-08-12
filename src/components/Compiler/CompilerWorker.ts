@@ -1,8 +1,8 @@
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { CompilerService, ICompilerOptions } from './Worker/Service'
+import CompilerWorker from './Worker/Service?worker'
 import { proxy } from 'comlink'
-import type { CompilerService, ICompilerOptions } from './Worker/Service'
-// import CompilerWorker from './Worker/Main?worker'
 import { WorkerManager } from '/@/components/Worker/Manager'
 import { Project } from '../Projects/Project/Project'
 import { CompilerManager } from './CompilerManager'
@@ -35,10 +35,7 @@ export class Compiler extends WorkerManager<
 	}
 
 	createWorker() {
-		// this.worker = new CompilerWorker()
-		this.worker = new Worker('./Worker/Service.ts', {
-			type: 'module',
-		})
+		this.worker = new CompilerWorker()
 	}
 
 	async dispose() {

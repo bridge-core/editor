@@ -1,4 +1,4 @@
-import { isMatch } from 'micromatch'
+import { isMatch } from './glob/isMatch'
 
 export function walkObject(
 	path: string,

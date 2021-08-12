@@ -4,10 +4,9 @@ import { proxy } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import type { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
 import { FileType } from '/@/components/Data/FileType'
+import PackIndexerWorker from './Worker/Main?worker'
 import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
-import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
-// import PackIndexerWorker from './Worker/Main?worker'
 
 export class PackIndexer extends WorkerManager<
 	typeof PackIndexerService,
@@ -28,10 +27,7 @@ export class PackIndexer extends WorkerManager<
 	}
 
 	createWorker() {
-		// this.worker = new PackIndexerWorker()
-		this.worker = new Worker('./Worker/Main.ts', {
-			type: 'module',
-		})
+		this.worker = new PackIndexerWorker()
 	}
 
 	deactivate() {

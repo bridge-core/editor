@@ -3,12 +3,12 @@ import { Uri, Range, editor, Position, CancellationToken } from 'monaco-editor'
 import { App } from '/@/App'
 import { FileType, IDefinition } from '/@/components/Data/FileType'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
-import { isMatch } from 'micromatch'
 import { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { findAsync } from '/@/utils/array/findAsync'
 import { AnyFileHandle } from '../FileSystem/Types'
+import { isMatch } from '/@/utils/glob/isMatch'
 
 export class DefinitionProvider {
 	async provideDefinition(

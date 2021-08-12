@@ -4,13 +4,13 @@ import { resolveFileOrder } from './Resolver'
 import { dirname } from '/@/utils/path'
 import { CompilerService } from './Service'
 import isGlob from 'is-glob'
-import { isMatch } from 'micromatch'
 import { iterateDir } from '/@/utils/iterateDir'
 import {
 	AnyDirectoryHandle,
 	AnyFileHandle,
 	AnyHandle,
 } from '../../FileSystem/Types'
+import { isMatch } from '/@/utils/glob/isMatch'
 
 export interface IFileData {
 	isLoaded?: boolean

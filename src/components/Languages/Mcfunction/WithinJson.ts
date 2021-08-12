@@ -3,10 +3,10 @@ import { getLocation } from '/@/utils/monaco/getLocation'
 import { languages, editor, Position, Range } from 'monaco-editor'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { FileType } from '/@/components/Data/FileType'
-import { isMatch } from 'micromatch'
 import { tokenizeCommand } from './tokenize'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
+import { isMatch } from '/@/utils/glob/isMatch'
 
 languages.registerCompletionItemProvider('json', {
 	provideCompletionItems: async (

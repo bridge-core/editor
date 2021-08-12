@@ -1,4 +1,4 @@
-import { isMatch } from 'micromatch'
+import { isMatch } from '/@/utils/glob/isMatch'
 
 export interface ISnippet {
 	name: string

@@ -36,7 +36,10 @@ import { AudioManager } from '/@/components/Audio/AudioManager'
 import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
 import { markRaw, shallowReactive } from '@vue/composition-api'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
+import { WindowState } from '/@/components/Windows/WindowState'
+
 export class App {
+	public static readonly windowState = new WindowState()
 	public static readonly installApp = new InstallApp()
 	public static fileSystemSetup = new FileSystemSetup()
 	public static toolbar = new Toolbar()
@@ -116,7 +119,7 @@ export class App {
 		const saveWarning =
 			'Are you sure that you want to close bridge.? Unsaved progress will be lost.'
 		// Only prompt in prod mode so we can use HMR in dev mode
-		if (process.env.NODE_ENV === 'production') {
+		if (import.meta.env.PROD) {
 			window.addEventListener('beforeunload', (event) => {
 				if (
 					this.tabSystem?.hasUnsavedTabs ||
@@ -188,7 +191,7 @@ export class App {
 		setupSidebar()
 		setupDefaultMenus(this)
 
-		if (process.env.NODE_ENV === 'production') {
+		if (import.meta.env.PROD) {
 			const socialsMsg = createNotification({
 				icon: 'mdi-link-variant',
 				message: 'sidebar.notifications.socials.message',
