@@ -10,6 +10,7 @@ import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { FileTab } from '../../TabSystem/FileTab'
+import { markRaw } from '@vue/composition-api'
 
 export class ParticlePreviewTab extends ThreePreviewTab {
 	protected emitter?: Emitter
@@ -17,8 +18,12 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	protected fileWatcher?: FileWatcher
 	protected isReloadingDone = new Signal<void>()
 
-	protected wintersky = Object.freeze(
+	protected wintersky = markRaw(
 		new Wintersky.Scene({
+			// @ts-ignore
+			tick_rate: 60,
+			max_emitter_particles: 1000,
+			scale: 1,
 			fetchTexture: async (config) => {
 				const app = await App.getApp()
 
@@ -39,9 +44,6 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 
 		this.setupComplete.once(() => {
 			this.scene.add(new AxesHelper(16))
-			this.wintersky.global_options.tick_rate = 60
-			this.wintersky.global_options.max_emitter_particles = 1000
-			this.wintersky.global_options.scale = 16
 
 			// this.scene.add(new GridHelper(64, 64))
 		})
@@ -80,14 +82,14 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 
 	async loadParticle(file?: File) {
 		if (!this.fileWatcher)
-			this.fileWatcher = new ParticleWatcher(
-				this,
-				this.tab.getProjectPath()
+			this.fileWatcher = markRaw(
+				new ParticleWatcher(this, this.tab.getProjectPath())
 			)
 		if (!file)
 			file =
 				(await this.fileWatcher?.requestFile(await this.getFile())) ??
 				(await this.getFile())
+		console.log('LOAD')
 
 		let particle: any
 		try {
@@ -100,14 +102,19 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		if (!this.scene.children.includes(this.wintersky.space))
 			this.scene.add(this.wintersky.space)
 
-		this.config = new Wintersky.Config(this.wintersky, particle, {
-			path: this.tab.getProjectPath(),
-		})
+		this.config = markRaw(
+			new Wintersky.Config(this.wintersky, particle, {
+				path: this.tab.getProjectPath(),
+			})
+		)
 
-		this.emitter = new Wintersky.Emitter(this.wintersky, this.config, {
-			loop_mode: 'looping',
-			parent_mode: 'world',
-		})
+		this.emitter = markRaw(
+			new Wintersky.Emitter(this.wintersky, this.config, {
+				loop_mode: 'looping',
+				parent_mode: 'world',
+			})
+		)
+		console.log(this.scene)
 
 		this.emitter.start()
 	}
