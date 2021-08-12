@@ -1,6 +1,6 @@
+import '/@/components/App/setupCompositionAPI'
 import '/@/components/FileSystem/Polyfill'
 import '/@/components/FileSystem/Virtual/Comlink'
-import '/@/components/App/setupCompositionAPI'
 import { vue } from '/@/components/App/Vue'
 import '@mdi/font/css/materialdesignicons.min.css'
 import { App } from './App'
