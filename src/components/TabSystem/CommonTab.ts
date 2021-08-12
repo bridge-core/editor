@@ -144,7 +144,7 @@ export abstract class Tab extends Signal<Tab> {
 		this.actions = []
 	}
 
-	onContextMenu(event: MouseEvent) {
+	async onContextMenu(event: MouseEvent) {
 		let moveSplitScreen = []
 		// It makes no sense to move a file to the split-screen if the tab system only has one entry
 		if (this.parent.tabs.length > 1) {
@@ -158,7 +158,7 @@ export abstract class Tab extends Signal<Tab> {
 			})
 		}
 
-		showContextMenu(event, [
+		await showContextMenu(event, [
 			...moveSplitScreen,
 			{
 				name: 'actions.closeTab.name',

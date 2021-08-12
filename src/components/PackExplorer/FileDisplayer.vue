@@ -29,7 +29,7 @@
 						"
 						v-ripple
 					>
-						<span class="d-flex">
+						<span class="d-flex align-center">
 							<v-icon class="pr-1" :color="entry.color" small>
 								{{
 									entry.isFolderOpen
@@ -38,6 +38,31 @@
 								}}
 							</v-icon>
 							<span class="folder">{{ entry.name }}</span>
+
+							<v-spacer />
+
+							<!-- Context menu button for touch -->
+							<v-btn
+								v-if="pointerDevice === 'touch'"
+								text
+								icon
+								small
+								@click="
+									$emit('contextmenu', {
+										type: entry.type,
+										path: entry.path.join('/'),
+										clientX: $event.clientX,
+										clientY: $event.clientY,
+										entry,
+									})
+								"
+								@mouseenter="isHoveringBtn = true"
+								@mouseleave="isHoveringBtn = false"
+							>
+								<v-icon>
+									mdi-dots-vertical-circle-outline
+								</v-icon>
+							</v-btn>
 						</span>
 					</summary>
 
@@ -51,7 +76,7 @@
 				<div
 					v-else
 					:key="entry.uuid"
-					class="file d-flex rounded-lg"
+					class="file d-flex align-center rounded-lg"
 					@click.stop="onClick(entry)"
 					@click.right.prevent.stop="
 						$emit('contextmenu', {
@@ -68,6 +93,29 @@
 						{{ entry.icon || 'mdi-file-outline' }}
 					</v-icon>
 					{{ entry.name }}
+
+					<v-spacer />
+
+					<!-- Context menu button for touch -->
+					<v-btn
+						v-if="pointerDevice === 'touch'"
+						text
+						icon
+						small
+						@click="
+							$emit('contextmenu', {
+								type: 'file',
+								path: entry.path.join('/'),
+								clientX: $event.clientX,
+								clientY: $event.clientY,
+								entry,
+							})
+						"
+						@mouseenter="isHoveringBtn = true"
+						@mouseleave="isHoveringBtn = false"
+					>
+						<v-icon> mdi-dots-vertical-circle-outline </v-icon>
+					</v-btn>
 				</div>
 			</template>
 		</Draggable>
@@ -106,6 +154,7 @@ export default {
 	data: () => ({
 		directoryEntry: null,
 		tree: [],
+		isHoveringBtn: false,
 	}),
 	methods: {
 		async loadDirectory() {
@@ -123,6 +172,8 @@ export default {
 			}
 		},
 		onClick(entry) {
+			if (this.isHoveringBtn) return
+
 			const shouldCloseWindow = entry.open()
 			if (shouldCloseWindow) this.$emit('closeWindow')
 		},
