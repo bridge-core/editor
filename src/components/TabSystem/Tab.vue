@@ -16,7 +16,7 @@
 	>
 		<!-- Context menu button for touch -->
 		<v-btn
-			v-if="pointerDevice === 'touch'"
+			v-if="tab.isSelected && pointerDevice === 'mouse'"
 			text
 			icon
 			small
@@ -24,7 +24,7 @@
 			@mouseenter="hoveringBtn = true"
 			@mouseleave="hoveringBtn = false"
 		>
-			<v-icon>mdi-dots-vertical-circle-outline</v-icon>
+			<v-icon>mdi-dots-vertical</v-icon>
 		</v-btn>
 
 		<v-icon class="mr-1" :color="tab.iconColor" small>

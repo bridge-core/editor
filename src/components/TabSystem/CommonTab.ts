@@ -148,14 +148,17 @@ export abstract class Tab extends Signal<Tab> {
 		let moveSplitScreen = []
 		// It makes no sense to move a file to the split-screen if the tab system only has one entry
 		if (this.parent.tabs.length > 1) {
-			moveSplitScreen.push({
-				name: 'actions.moveToSplitScreen.name',
-				description: 'actions.moveToSplitScreen.description',
-				icon: 'mdi-arrow-split-vertical',
-				onTrigger: async () => {
-					this.toOtherTabSystem()
+			moveSplitScreen.push(
+				{
+					name: 'actions.moveToSplitScreen.name',
+					description: 'actions.moveToSplitScreen.description',
+					icon: 'mdi-arrow-split-vertical',
+					onTrigger: async () => {
+						this.toOtherTabSystem()
+					},
 				},
-			})
+				<const>{ type: 'divider' }
+			)
 		}
 
 		await showContextMenu(event, [
