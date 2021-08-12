@@ -87,7 +87,6 @@ export class CommandData extends Signal<void> {
 			}
 		}
 
-		// console.log(this._data)
 		this.dispatch()
 	}
 
@@ -197,7 +196,6 @@ export class CommandData extends Signal<void> {
 			commandName!,
 			await this.shouldIgnoreCustomCommands
 		)
-		console.log(currentCommands)
 
 		if (!currentCommands || currentCommands.length === 0) return []
 
