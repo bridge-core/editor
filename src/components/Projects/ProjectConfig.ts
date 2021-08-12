@@ -98,7 +98,7 @@ interface IPackDefinition {
 export class ProjectConfig {
 	protected data: Partial<IConfigJson> = {}
 
-	constructor(protected fileSystem: FileSystem, project?: Project) {
+	constructor(protected fileSystem: FileSystem, protected project?: Project) {
 		if (project) {
 			project.fileSave.on('config.json', () => {
 				this.refreshConfig()
@@ -152,14 +152,20 @@ export class ProjectConfig {
 		try {
 			const config = await this.fileSystem.readJSON(`config.json`)
 
+			this.data = config
+		} catch {
+			this.data = {}
+		}
+
+		// Running in main thread, so we can use the App object
+		if (this.project) {
 			// Transform old "capabilities" format to "experimentalGameplay"
-			const app = await App.getApp()
-			const experimentalToggles: IExperimentalToggle[] = await app.dataLoader.readJSON(
+			const experimentalToggles: IExperimentalToggle[] = await this.project.app.dataLoader.readJSON(
 				'data/packages/minecraftBedrock/experimentalGameplay.json'
 			)
 			const experimentalGameplay: Record<string, boolean> =
-				config.experimentalGameplay ?? {}
-			const capabilities: string[] = config.capabilities ?? []
+				this.data.experimentalGameplay ?? {}
+			const capabilities: string[] = this.data.capabilities ?? []
 
 			for (const toggle of experimentalToggles) {
 				// If GameTests and Scripting API weren't enabled on the project originally, set them to false
@@ -176,12 +182,9 @@ export class ProjectConfig {
 					experimentalGameplay[toggle.id] = true
 				}
 			}
-			config.experimentalGameplay = experimentalGameplay
-			config.capabilities = undefined
-			await this.fileSystem.writeJSON('config.json', config, true)
-			this.data = config
-		} catch {
-			this.data = {}
+			this.data.experimentalGameplay = experimentalGameplay
+			this.data.capabilities = undefined
+			await this.fileSystem.writeJSON('config.json', this.data, true)
 		}
 	}
 
