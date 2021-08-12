@@ -35,7 +35,7 @@ export class LightningStore {
 		try {
 			loadStore = (
 				await this.fs
-					.readFile('bridge/.lightningCache')
+					.readFile('.bridge/.lightningCache')
 					.then((file) => file.text())
 			).split('\n')
 		} catch {}
@@ -61,6 +61,8 @@ export class LightningStore {
 	}
 	async saveStore() {
 		let saveStore = ''
+		const deletedFiles: string[] = []
+
 		for (const fileType in this.store) {
 			saveStore += `#${fileType}\n`
 
@@ -68,6 +70,7 @@ export class LightningStore {
 				const entry = this.store[fileType][filePath]
 				// This file no longer seems to exist, omit it from store output
 				if (!entry.visited) {
+					deletedFiles.push(filePath)
 					delete this.store[fileType][filePath]
 					continue
 				}
@@ -78,8 +81,10 @@ export class LightningStore {
 			}
 		}
 
-		await this.fs.mkdir('bridge')
-		await this.fs.writeFile('bridge/.lightningCache', saveStore)
+		await this.fs.mkdir('.bridge')
+		await this.fs.writeFile('.bridge/.lightningCache', saveStore)
+
+		return deletedFiles
 	}
 
 	add(
@@ -100,6 +105,11 @@ export class LightningStore {
 			lastModified,
 			data: data ?? this.store![fileType]?.[filePath]?.data,
 		}
+	}
+	remove(filePath: string, fileType = FileType.getId(filePath)) {
+		if (!this.store![fileType]) return
+
+		delete this.store![fileType][filePath]
 	}
 	setVisited(
 		filePath: string,
@@ -123,7 +133,7 @@ export class LightningStore {
 		matchesOneOf: string[],
 		fetchAll = false
 	) {
-		if (matchesOneOf.length === 0) return []
+		if (!matchesOneOf || matchesOneOf.length === 0) return []
 		const relevantStore = this.store![findFileType]
 
 		const resultingFiles: string[] = []
@@ -215,7 +225,7 @@ export class LightningStore {
 
 	async getSchemasFor(fileType: string, fromFilePath?: string) {
 		const collectedData = await this.getAllFrom(fileType, fromFilePath)
-		const baseUrl = `file:///data/packages/schema/${fileType}/dynamic`
+		const baseUrl = `file:///data/packages/minecraftBedrock/schema/${fileType}/dynamic`
 		const schemas: IMonacoSchemaArrayEntry[] = []
 
 		for (const key in collectedData) {
@@ -244,9 +254,13 @@ export class LightningStore {
 		return schemas
 	}
 
-	getCacheDataFor(fileType: string, filePath?: string, cacheKey?: string) {
+	getCacheDataFor(
+		fileType: string,
+		filePath?: string,
+		cacheKey?: string
+	): any {
 		const collectedData = this.getAllFrom(fileType, filePath)
-		if (cacheKey) return collectedData[cacheKey]
+		if (typeof cacheKey === 'string') return collectedData[cacheKey]
 		return collectedData
 	}
 }

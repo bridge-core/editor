@@ -5,9 +5,10 @@ import { App } from '/@/App'
 import { compare } from 'compare-versions'
 import { getFileSystem } from '/@/utils/fs'
 import { ExtensionTag } from './ExtensionTag'
-import { ExtensionViewer } from './Extension'
+import { ExtensionViewer } from './ExtensionViewer'
 import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
-import { Notification } from '../../Notifications/Notification'
+import { Notification } from '/@/components/Notifications/Notification'
+import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 
 let updateNotification: Notification | undefined = undefined
 export class ExtensionStoreWindow extends BaseWindow {
@@ -32,23 +33,33 @@ export class ExtensionStoreWindow extends BaseWindow {
 	}
 
 	async open() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
 		this.installedExtensions.clear()
 
-		const fs = await getFileSystem()
-		this.extensionTags = await fs.readJSON(
-			'data/packages/extensionTags.json'
+		await app.dataLoader.fired
+		this.extensionTags = await app.dataLoader.readJSON(
+			'data/packages/common/extensionTags.json'
 		)
 
 		const installedExtensions = await app.extensionLoader.getInstalledExtensions()
 
-		const extensions = <IExtensionManifest[]>(
-			await fetch(`${this.baseUrl}/extensions.json`).then((resp) =>
-				resp.json()
-			)
-		)
+		let extensions: IExtensionManifest[]
+		try {
+			extensions = await fetch(
+				`${this.baseUrl}/extensions.json`
+			).then((resp) => resp.json())
+		} catch {
+			this.close()
+			app.windows.loadingWindow.close()
+			new InformationWindow({
+				description: 'windows.extensionStore.offlineError',
+			})
+			return
+		}
+
 		this.extensions = extensions.map(
 			(plugin) => new ExtensionViewer(this, plugin)
 		)
@@ -83,6 +94,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 	}
 
 	close() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		super.close()
 
 		if (this.updates.size > 0) {
@@ -141,10 +153,10 @@ export class ExtensionStoreWindow extends BaseWindow {
 		return this.getExtensions(findTag)
 	}
 	getTagIcon(tagName: string) {
-		return this.extensionTags[tagName].icon
+		return this.extensionTags[tagName]?.icon
 	}
 	getTagColor(tagName: string) {
-		return this.extensionTags[tagName].color
+		return this.extensionTags[tagName]?.color
 	}
 	getExtensionById(id: string) {
 		return this.getExtensions().find((extension) => extension.id === id)

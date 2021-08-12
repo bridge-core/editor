@@ -1,10 +1,26 @@
 <template>
-	<v-system-bar color="toolbar" fixed app clipped padless height="24px">
+	<v-system-bar
+		color="toolbar"
+		fixed
+		app
+		clipped
+		padless
+		height="env(titlebar-area-height, 24px)"
+		:style="{
+			'padding-left': 0,
+			'margin-left': 'env(titlebar-area-x, 0)',
+			width: 'env(titlebar-area-width, 100%)',
+			'z-index': windowControlsOverlay ? 1000 : undefined,
+		}"
+	>
 		<img
-			style="height: 20px; padding-right: 4px"
+			v-if="!isMacOS || !windowControlsOverlay"
+			style="height: 20px; padding-right: 4px; padding-left: 8px"
 			alt="bridge. Logo"
+			draggable="false"
 			src="/@/_assets/logo.svg"
 		/>
+
 		<v-divider vertical />
 
 		<!-- App menu buttons -->
@@ -15,21 +31,35 @@
 					:key="`button.${key}`"
 					:displayName="item.name"
 					:displayIcon="item.icon"
+					:disabled="isAnyWindowVisible"
 					@click="() => item.trigger()"
 				/>
-				<MenuActivator v-else :key="`activator.${key}`" :item="item" />
+				<MenuActivator
+					v-else
+					:key="`activator.${key}`"
+					:item="item"
+					:disabled="isAnyWindowVisible"
+				/>
 				<v-divider
 					:key="`divider.${key}`"
-					v-if="i + 1 < Object.keys(toolbar).length"
+					v-if="
+						windowControlsOverlay ||
+						i + 1 < Object.keys(toolbar).length
+					"
 					vertical
 				/>
 			</template>
 		</v-toolbar-items>
 
+		<span v-if="windowControlsOverlay" class="pl-3">
+			{{ title }}
+		</span>
+
 		<v-spacer />
 		<div
 			class="px-1 mx-1 rounded-lg app-version-display"
-			v-ripple
+			v-ripple="!isAnyWindowVisible"
+			:style="{ opacity: isAnyWindowVisible ? 0.4 : null }"
 			@click="openChangelogWindow"
 		>
 			v{{ appVersion }}
@@ -43,21 +73,41 @@ import MenuActivator from './Menu/Activator.vue'
 import MenuButton from './Menu/Button.vue'
 import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/appVersion.json'
+import { platform } from '/@/utils/os.ts'
+import { reactive } from '@vue/composition-api'
+import { WindowState } from '/@/components/Windows/WindowState.ts'
+import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 
 export default {
 	name: 'Toolbar',
+	mixins: [WindowControlsOverlayMixin],
 	components: {
 		WindowAction,
 		MenuActivator,
 		MenuButton,
 	},
+	setup() {
+		const setupObj = reactive({
+			title: 'bridge.',
+			isAnyWindowVisible: WindowState.isAnyWindowVisible,
+		})
+
+		App.getApp().then((app) => {
+			setupObj.title = app.projectManager.title.current
+		})
+
+		return setupObj
+	},
 	data: () => ({
 		toolbar: App.toolbar.state,
+		isMacOS: platform() === 'darwin',
 
 		appVersion,
 	}),
 	methods: {
 		async openChangelogWindow() {
+			if (this.isAnyWindowVisible) return
+
 			const app = await App.getApp()
 			await app.windows.changelogWindow.open()
 		},
@@ -67,11 +117,13 @@ export default {
 
 <style scoped>
 .v-system-bar {
+	app-region: drag;
 	-webkit-app-region: drag;
 	padding-right: 0;
 }
 
 .toolbar-btn {
+	app-region: no-drag;
 	-webkit-app-region: no-drag;
 	min-width: 0;
 }

@@ -9,6 +9,7 @@ import Vue from 'vue'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 // @ts-ignore
 import * as VuetifyComponents from 'vuetify/lib/components'
+import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
 
 export async function loadUIComponents(
 	fileSystem: FileSystem,
@@ -16,13 +17,13 @@ export async function loadUIComponents(
 	disposables: IDisposable[],
 	basePath = 'ui'
 ) {
-	let dirents: (FileSystemDirectoryHandle | FileSystemFileHandle)[] = []
+	let dirents: (AnyDirectoryHandle | AnyFileHandle)[] = []
 	try {
 		dirents = await fileSystem.readdir(basePath, { withFileTypes: true })
 	} catch {}
 
 	await Promise.all(
-		dirents.map(dirent => {
+		dirents.map((dirent) => {
 			if (dirent.kind === 'file')
 				return loadUIComponent(
 					fileSystem,
@@ -65,7 +66,7 @@ export async function loadUIComponent(
 		)
 
 		if (errors.length > 0) {
-			;(errors as Error[]).forEach(error =>
+			;(errors as Error[]).forEach((error) =>
 				createErrorNotification(error)
 			)
 			return reject(errors[0])
@@ -76,8 +77,7 @@ export async function loadUIComponent(
 			...(await (<any>(
 				executeScript(
 					script?.content?.replace('export default', 'return') ?? '',
-					uiStore,
-					disposables
+					{ uiStore, disposables }
 				)
 			))),
 			...Vue.compile(
@@ -90,7 +90,7 @@ export async function loadUIComponent(
 			VuetifyComponents
 		)
 
-		styles.forEach(style =>
+		styles.forEach((style) =>
 			disposables.push(createStyleSheet(style.content))
 		)
 

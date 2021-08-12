@@ -1,18 +1,31 @@
 import { App } from '/@/App'
-import { IActionConfig } from '../Actions/Action'
+import { IActionConfig } from '../Actions/SimpleAction'
 import { ActionManager } from '../Actions/ActionManager'
+import { IPosition } from './ContextMenu'
 
 export async function showContextMenu(
-	event: MouseEvent,
-	actions: IActionConfig[]
+	event: MouseEvent | IPosition,
+	actions: (IActionConfig | { type: 'divider' } | null)[]
 ) {
-	event.preventDefault()
-	event.stopImmediatePropagation()
+	let filteredActions = <(IActionConfig | { type: 'divider' })[]>(
+		actions.filter((action) => action !== null)
+	)
+
+	if (event instanceof MouseEvent) {
+		event.preventDefault()
+		event.stopImmediatePropagation()
+	}
+	if (filteredActions.length === 0) return
 
 	const app = await App.getApp()
-	const actionManager = new ActionManager(app)
+	const actionManager = new ActionManager()
 
-	actions.forEach(action => actionManager.create(action))
+	filteredActions.forEach((action) =>
+		action.type === 'divider'
+			? actionManager.addDivider()
+			: actionManager.create(action)
+	)
 
-	app.contextMenu.show(event, actionManager)
+	// This is necessary so an old click outside event doesn't close the new menu
+	setTimeout(() => app.contextMenu.show(event, actionManager), 10)
 }

@@ -1,8 +1,4 @@
-import {
-	Sidebar,
-	SidebarCategory,
-	SidebarItem,
-} from '/@/components/Windows/Layout/Sidebar'
+import { Sidebar, SidebarCategory } from '/@/components/Windows/Layout/Sidebar'
 import PresetWindowComponent from './PresetWindow.vue'
 import { BaseWindow } from '../../BaseWindow'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
@@ -16,21 +12,29 @@ import { createFile, TCreateFile } from './CreateFile'
 import { TPackTypeId } from '/@/components/Data/PackType'
 import { transformString } from './TransformString'
 import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
+import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
+import { PresetItem } from './PresetItem'
+import { DataLoader } from '/@/components/Data/DataLoader'
+import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
 
 export interface IPresetManifest {
 	name: string
 	icon: string
-	packTypes?: TPackTypeId[]
+	requiredModules?: string[]
 	category: string
 	description?: string
 	presetPath?: string
-	targetVersion: [CompareOperator, string]
 	additionalModels?: Record<string, unknown>
 	fields: [string, string, IPresetFieldOpts][]
 	createFiles?: (string | TCreateFile)[]
 	expandFiles?: TExpandFile[]
+	requires: {
+		targetVersion?: [CompareOperator, string]
+		packTypes?: TPackTypeId[]
+		experimentalGameplay?: string[]
+	}
 }
-interface IPresetFieldOpts {
+export interface IPresetFieldOpts {
 	// All types
 	type?: 'fileInput' | 'numberInput' | 'textInput' | 'switch'
 	default?: string
@@ -56,13 +60,44 @@ export interface IPermissions {
 export class CreatePresetWindow extends BaseWindow {
 	protected loadPresetPaths = new Map<string, string>()
 	protected sidebar = new Sidebar([])
+	/**
+	 * Add new validation strategies to this object ([key]: [validationFunction])
+	 * to make them available as the [key] inside of presets.
+	 */
+	protected _validationRules: Record<string, (value: string) => boolean> = {
+		alphanumeric: (value: string) =>
+			value.match(/^[a-zA-Z0-9_\.]*$/) !== null,
+		lowercase: (value: string) => value.toLowerCase() === value,
+		required: (value: string) => !!value,
+	}
+
+	/**
+	 * This getter returns the validationRules object for usage inside of the PresetWindow.
+	 * It wraps the _validationRules (see above) functions inside of another function call to return the proper
+	 * error message: "windows.createPreset.validationRule.[key]"
+	 */
+	get validationRules() {
+		return Object.fromEntries(
+			Object.entries(this._validationRules).map(([key, func]) => [
+				key,
+				(value: string) =>
+					func(value) ||
+					App.instance.locales.translate(
+						`windows.createPreset.validationRule.${key}`
+					),
+			])
+		)
+	}
 
 	constructor() {
 		super(PresetWindowComponent)
 		this.defineWindow()
 	}
 
-	protected async addPreset(fs: FileSystem, manifestPath: string) {
+	protected async addPreset(
+		fs: FileSystem | DataLoader,
+		manifestPath: string
+	) {
 		const app = await App.getApp()
 		const manifest = <IPresetManifest>await fs.readJSON(manifestPath)
 
@@ -72,24 +107,33 @@ export class CreatePresetWindow extends BaseWindow {
 				`Error loading ${manifestPath}: Missing preset category`
 			)
 
+		const requires = manifest.requires ?? {}
 		// Check that project has packType preset needs
-		if (!app.project?.hasPacks(manifest.packTypes ?? [])) return
+		if (!app.project?.hasPacks(requires.packTypes ?? [])) return
+
+		// Check that the project has the required modules
+		const experimentalGameplay =
+			app.projectConfig.get().experimentalGameplay ?? {}
+		const requiredExperimentalFeatures = requires.experimentalGameplay ?? []
+		if (
+			requiredExperimentalFeatures.some(
+				(experimentalFeature) =>
+					!experimentalGameplay[experimentalFeature]
+			)
+		)
+			return
 
 		// Load current project target version
 		const projectTargetVersion =
-			<string | undefined>await app.projectConfig.get('targetVersion') ??
-			(
-				await app.fileSystem.readJSON(
-					'data/packages/formatVersions.json'
-				)
-			).pop()
+			app.projectConfig.get().targetVersion ??
+			(await getLatestFormatVersion())
 		// Check that preset is supported on target version
 		if (
-			manifest.targetVersion &&
+			requires.targetVersion &&
 			!compare(
 				projectTargetVersion,
-				manifest.targetVersion[1],
-				manifest.targetVersion[0]
+				requires.targetVersion[1],
+				requires.targetVersion[0]
 			)
 		)
 			return
@@ -109,36 +153,48 @@ export class CreatePresetWindow extends BaseWindow {
 		}
 
 		const id = uuid()
+
+		const resetState = () => {
+			this.sidebar.setState(id, {
+				...manifest,
+				presetPath: dirname(manifestPath),
+				models: {
+					PROJECT_PREFIX:
+						app.projectConfig.get().namespace ?? 'bridge',
+					...(manifest.additionalModels ?? {}),
+					...Object.fromEntries(
+						manifest.fields.map(([_, id, opts = {}]: any) => [
+							id,
+							opts.default ??
+								(!opts.type || opts.type === 'textInput'
+									? ''
+									: null),
+						])
+					),
+				},
+			})
+		}
+
 		category.addItem(
-			new SidebarItem({
+			new PresetItem({
 				id,
 				text: manifest.name,
 				icon: manifest.icon,
 				color: 'primary',
+				resetState,
 			})
 		)
-		this.sidebar.setState(id, {
-			...manifest,
-			presetPath: dirname(manifestPath),
-			models: {
-				PROJECT_PREFIX:
-					(await app.projectConfig.get('prefix')) ?? 'bridge',
-				...(manifest.additionalModels ?? {}),
-				...Object.fromEntries(
-					manifest.fields.map(([_, id, opts = {}]: any) => [
-						id,
-						opts.default ?? null,
-					])
-				),
-			},
-		})
+
+		resetState()
 	}
 
 	protected async loadPresets(
-		fs: FileSystem,
-		dirPath = 'data/packages/preset'
+		fs: FileSystem | DataLoader,
+		dirPath = 'data/packages/minecraftBedrock/preset'
 	) {
-		let dirents: FileSystemHandle[] = []
+		await fs.fired
+
+		let dirents: AnyHandle[] = []
 		try {
 			dirents = await fs.readdir(dirPath, { withFileTypes: true })
 		} catch {}
@@ -157,7 +213,7 @@ export class CreatePresetWindow extends BaseWindow {
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
 
-		await this.loadPresets(fs)
+		await this.loadPresets(app.dataLoader)
 		for (const [_, loadPresetPath] of this.loadPresetPaths)
 			await this.loadPresets(fs, loadPresetPath)
 
@@ -183,10 +239,9 @@ export class CreatePresetWindow extends BaseWindow {
 
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
-		const fs = app.project?.fileSystem!
+		const fs = app.project!.fileSystem
 
-		const promises: Promise<unknown>[] = []
-		const createdFiles: string[] = []
+		const createdFiles: AnyFileHandle[] = []
 		const permissions: IPermissions = {
 			mayOverwriteFiles: undefined,
 			mayOverwriteUnsavedChanges: undefined,
@@ -232,10 +287,9 @@ export class CreatePresetWindow extends BaseWindow {
 			)
 			// This filePath is relative to the project root
 			// The project.hasFile/project.closeFile methods expect the path to relative to the bridge project folder
-			filePath = project.absolutePath(filePath)
-			console.log(filePath)
+			const fileHandle = await project.fileSystem.getFileHandle(filePath)
 
-			const tab = project.getFileTab(filePath)
+			const tab = await project.getFileTab(fileHandle)
 			if (tab !== undefined && tab.isUnsaved) {
 				const confirmWindow = new ConfirmationWindow({
 					description: 'windows.createPreset.overwriteUnsavedChanges',
@@ -248,7 +302,7 @@ export class CreatePresetWindow extends BaseWindow {
 					// Stop file collision checks & continue creating preset
 					permissions.mayOverwriteUnsavedChanges = true
 
-					project.closeFile(filePath)
+					project.closeFile(fileHandle)
 				} else {
 					// Close loading window & early return
 					app.windows.loadingWindow.close()
@@ -257,50 +311,60 @@ export class CreatePresetWindow extends BaseWindow {
 			}
 		}
 
-		promises.push(
-			...createFiles.map(async (createFileOpts) => {
-				if (typeof createFileOpts === 'string') {
-					createdFiles.push(
-						...(await runPresetScript(
-							presetPath,
-							createFileOpts,
-							this.sidebar.currentState.models,
-							permissions
-						))
-					)
-				} else {
-					createdFiles.push(
-						await createFile(
-							presetPath,
-							createFileOpts,
-							this.sidebar.currentState.models
-						)
-					)
-				}
-			}),
-			...expandFiles.map(async (expandFileOpts) => {
+		for (const createFileOpts of createFiles) {
+			if (typeof createFileOpts === 'string') {
 				createdFiles.push(
-					await expandFile(
+					...(await runPresetScript(
 						presetPath,
-						expandFileOpts,
+						createFileOpts,
+						this.sidebar.currentState.models,
+						permissions
+					))
+				)
+			} else {
+				createdFiles.push(
+					await createFile(
+						presetPath,
+						createFileOpts,
 						this.sidebar.currentState.models
 					)
 				)
-			})
-		)
+			}
+		}
+		for (const expandFileOpts of expandFiles) {
+			createdFiles.push(
+				await expandFile(
+					presetPath,
+					expandFileOpts,
+					this.sidebar.currentState.models
+				)
+			)
+		}
 
-		await Promise.all(promises)
+		// await Promise.all(promises)
+		App.eventSystem.dispatch('fileAdded', undefined)
 
 		// Close window
 		if (permissions.mayOverwriteFiles !== false) this.close()
 
-		for (const filePath of createdFiles) {
-			await app.project?.updateFile(filePath)
-			app.project?.openFile(
-				`projects/${app.project.name}/${filePath}`,
-				filePath === createdFiles[createdFiles.length - 1]
+		const filePaths: string[] = []
+		for (const fileHandle of createdFiles) {
+			const filePath = await app.project.getProjectPath(fileHandle)
+			if (!filePath) continue
+
+			filePaths.push(filePath)
+
+			await app.project.openFile(
+				fileHandle,
+				fileHandle === createdFiles[createdFiles.length - 1]
 			)
 		}
+
+		await app.project.updateFiles(filePaths)
+
+		// Reset preset inputs
+		if (this.sidebar.currentElement instanceof PresetItem)
+			this.sidebar.currentElement.resetState()
 
 		app.windows.loadingWindow.close()
 	}

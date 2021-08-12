@@ -11,6 +11,12 @@
 		@closeWindow="onClose"
 	>
 		<template #default>
+			<InfoPanel
+				v-if="currentWindow.topPanel"
+				class="mb-2"
+				:infoPanel="currentWindow.topPanel"
+			/>
+
 			<ActionViewer
 				v-for="(action, id) in $data._actionManager.state"
 				:key="id"
@@ -18,7 +24,7 @@
 				:hideTriggerButton="true"
 				v-ripple
 				@click.native="onClick(action)"
-				style="cursor: pointer;"
+				style="cursor: pointer"
 			/>
 		</template>
 	</BaseWindow>
@@ -28,6 +34,7 @@
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import InfoPanel from '/@/components/InfoPanel/InfoPanel.vue'
 
 export default {
 	name: 'InformedChoiceWindow',
@@ -35,6 +42,7 @@ export default {
 	components: {
 		BaseWindow,
 		ActionViewer,
+		InfoPanel,
 	},
 	props: ['currentWindow'],
 	data() {

@@ -1,10 +1,12 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="windowTitle"
+		:windowTitle="$data.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
+		:isPersistent="!$data.isClosable"
+		:hasCloseButton="false"
 		:width="440"
 		:height="140"
 		@closeWindow="onClose"
@@ -12,9 +14,10 @@
 		<template #default>
 			<v-select
 				autofocus
-				solo
-				v-model="selectedValue"
-				:items="items"
+				outlined
+				dense
+				v-model="$data.currentSelection"
+				:items="$data.options"
 				background-color="background"
 				class="mt-4"
 			/>
@@ -24,9 +27,10 @@
 			<v-btn
 				color="primary"
 				@click="onConfirm"
-				:disabled="selectedValue === ''"
+				:disabled="$data.currentSelection === ''"
 			>
-				<span>{{ t('windows.common.dropdown.confirm') }}</span>
+				<v-icon>mdi-check</v-icon>
+				<span>{{ t('general.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>
@@ -34,7 +38,7 @@
 
 <script>
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
-import BaseWindow from '../../Layout/BaseWindow.vue'
+import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 
 export default {
 	name: 'Dropdown',
@@ -44,15 +48,14 @@ export default {
 	},
 	props: ['currentWindow'],
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	methods: {
 		onClose() {
 			this.currentWindow.close()
 		},
 		onConfirm() {
-			this.currentWindow.close()
-			this.onConfirmCb(this.selectedValue)
+			this.currentWindow.confirm()
 		},
 	},
 }

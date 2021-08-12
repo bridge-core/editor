@@ -7,25 +7,27 @@ export interface IAddLanguageOptions {
 	extensions: string[]
 	config: languages.LanguageConfiguration
 	tokenProvider: any
+	completionItemProvider?: languages.CompletionItemProvider
 }
 
 export abstract class Language {
 	protected id: string
 	protected disposables: IDisposable[] = []
 	protected models = new Map<string, IDisposable>()
+	protected highlighter: IDisposable
 
 	constructor({
 		id,
 		extensions,
 		config,
 		tokenProvider,
+		completionItemProvider,
 	}: IAddLanguageOptions) {
 		this.id = id
 
 		languages.register({ id, extensions })
 		this.disposables = [
 			languages.setLanguageConfiguration(id, config),
-			languages.setMonarchTokensProvider(id, tokenProvider),
 			editor.onDidCreateModel(this.onModelAdded.bind(this)),
 			editor.onWillDisposeModel(this.onModelRemoved.bind(this)),
 			editor.onDidChangeModelLanguage((event) => {
@@ -33,10 +35,27 @@ export abstract class Language {
 				this.onModelAdded(event.model)
 			}),
 		]
+		this.highlighter = languages.setMonarchTokensProvider(id, tokenProvider)
+
+		if (completionItemProvider)
+			this.disposables.push(
+				languages.registerCompletionItemProvider(
+					id,
+					completionItemProvider
+				)
+			)
+	}
+
+	updateTokenProvider(tokenProvider: any) {
+		this.highlighter.dispose()
+		this.highlighter = languages.setMonarchTokensProvider(
+			this.id,
+			tokenProvider
+		)
 	}
 
 	protected onModelAdded(model: editor.IModel) {
-		if (model.getModeId() !== this.id) return
+		if (model.getModeId() !== this.id) return false
 
 		this.validate(model)
 		this.models.set(
@@ -45,6 +64,8 @@ export abstract class Language {
 				debounce((event) => this.validate(model, event), 500)
 			)
 		)
+
+		return true
 	}
 	protected onModelRemoved(model: editor.IModel) {
 		editor.setModelMarkers(model, this.id, [])
@@ -60,6 +81,7 @@ export abstract class Language {
 	): Promise<void> | void
 
 	dispose() {
+		this.highlighter.dispose()
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.disposables = []
 	}

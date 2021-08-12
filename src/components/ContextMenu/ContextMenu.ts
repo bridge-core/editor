@@ -1,5 +1,10 @@
 import { ActionManager } from '../Actions/ActionManager'
 
+export interface IPosition {
+	clientX: number
+	clientY: number
+}
+
 export class ContextMenu {
 	protected isVisible = false
 	protected actionManager: ActionManager | undefined = undefined
@@ -8,7 +13,7 @@ export class ContextMenu {
 		y: 0,
 	}
 
-	show(event: MouseEvent, actionManager: ActionManager) {
+	show(event: IPosition, actionManager: ActionManager) {
 		this.position.x = event.clientX
 		this.position.y = event.clientY
 		this.actionManager = actionManager

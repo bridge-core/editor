@@ -1,6 +1,8 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 
+const blockActions = new Set<string>(['INPUT', 'TEXTAREA'])
+
 export function setupEditCategory(app: App) {
 	const edit = new ToolbarCategory('mdi-pencil-outline', 'toolbar.edit.name')
 
@@ -11,7 +13,10 @@ export function setupEditCategory(app: App) {
 			description: 'actions.copy.description',
 			keyBinding: 'Ctrl + C',
 			prevent: (element) => {
-				return element.tagName === 'INPUT'
+				return (
+					(<HTMLInputElement>element)?.value !== '' &&
+					blockActions.has(element.tagName)
+				)
 			},
 			onTrigger: () => app.tabSystem?.selectedTab?.copy(),
 		})
@@ -23,7 +28,10 @@ export function setupEditCategory(app: App) {
 			description: 'actions.cut.description',
 			keyBinding: 'Ctrl + X',
 			prevent: (element) => {
-				return element.tagName === 'INPUT'
+				return (
+					(<HTMLInputElement>element)?.value !== '' &&
+					blockActions.has(element.tagName)
+				)
 			},
 			onTrigger: () => app.tabSystem?.selectedTab?.cut(),
 		})
@@ -35,7 +43,10 @@ export function setupEditCategory(app: App) {
 			description: 'actions.paste.description',
 			keyBinding: 'Ctrl + V',
 			prevent: (element) => {
-				return element.tagName === 'INPUT'
+				return (
+					(<HTMLInputElement>element)?.value !== '' &&
+					blockActions.has(element.tagName)
+				)
 			},
 			onTrigger: () => app.tabSystem?.selectedTab?.paste(),
 		})

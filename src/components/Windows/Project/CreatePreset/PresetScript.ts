@@ -5,27 +5,44 @@ import { transformString } from './TransformString'
 import { App } from '/@/App'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { deepMerge } from '/@/utils/deepmerge'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
 
 export async function runPresetScript(
 	presetPath: string,
 	presetScript: string,
 	models: Record<string, unknown>,
 	permissions: IPermissions
-): Promise<string[]> {
+) {
 	const app = await App.getApp()
 	const fs = app.project?.fileSystem!
-	const globalFs = app.fileSystem
-
-	presetScript = presetScript.replaceAll(
-		'./',
-		presetPath.replace('data/packages/', '') + '/'
+	const globalFs = new CombinedFileSystem(
+		app.fileSystem.baseDirectory,
+		app.dataLoader
 	)
-	const script = await globalFs.readFile(`data/packages/${presetScript}`)
+
+	let loadFilePath: string
+	if (presetScript.startsWith('./')) {
+		loadFilePath = presetScript = presetScript.replaceAll(
+			'./',
+			presetPath + '/'
+		)
+	} else {
+		loadFilePath = `data/packages/minecraftBedrock/${presetScript}`
+	}
+
+	await app.dataLoader.fired
+	const script = await globalFs.readFile(loadFilePath)
 	const scriptSrc = await script.text()
 
-	const module: any = {}
+	const module: any = { exports: undefined }
 	try {
-		run(scriptSrc, module, ['module'])
+		run({
+			script: scriptSrc,
+			env: {
+				module,
+			},
+		})
 	} catch (err) {
 		throw new Error(
 			`Failed to execute PresetScript "${presetScript}": ${err}`
@@ -37,7 +54,7 @@ export async function runPresetScript(
 			`Failed to execute PresetScript "${presetScript}": module.exports is of type ${typeof module.exports}`
 		)
 
-	const createdFiles: string[] = []
+	const createdFiles: AnyFileHandle[] = []
 	const createJSONFile = (
 		filePath: string,
 		data: any,
@@ -75,8 +92,8 @@ export async function runPresetScript(
 			return
 		}
 
-		createdFiles.push(filePath)
 		const fileHandle = await fs.getFileHandle(filePath, true)
+		createdFiles.push(fileHandle)
 		fs.write(
 			fileHandle,
 			typeof data === 'string'
@@ -89,9 +106,14 @@ export async function runPresetScript(
 		data: any,
 		{ inject = [] }: IPresetFileOpts = { inject: [] }
 	) => {
+		const fileHandle = await app.project.fileSystem.getFileHandle(
+			filePath,
+			true
+		)
+
 		// Permission for overwriting unsaved changes not set yet, request it
 		if (permissions.mayOverwriteUnsavedChanges === undefined) {
-			const tab = app.project.getFileTab(filePath)
+			const tab = await app.project.getFileTab(fileHandle)
 			if (tab !== undefined && tab.isUnsaved) {
 				const confirmWindow = new ConfirmationWindow({
 					description: 'windows.createPreset.overwriteUnsavedChanges',
@@ -104,7 +126,7 @@ export async function runPresetScript(
 					// Stop file collision checks & continue creating preset
 					permissions.mayOverwriteUnsavedChanges = true
 
-					app.project.closeFile(filePath)
+					tab.close()
 				} else {
 					// Don't expand file
 					permissions.mayOverwriteUnsavedChanges = false
@@ -121,15 +143,17 @@ export async function runPresetScript(
 			current = await (await fs.readFile(filePath)).text()
 		} catch {}
 
-		data = transformString(data, inject, models)
-		createdFiles.push(filePath)
+		createdFiles.push(fileHandle)
 
 		if (typeof data === 'string') {
+			data = transformString(data, inject, models)
 			await fs.writeFile(filePath, `${current}\n${data}`)
 		} else {
+			data = transformString(json5.stringify(data), inject, models)
 			await fs.writeJSON(
 				filePath,
-				deepMerge(json5.parse(current), json5.parse(data))
+				deepMerge(json5.parse(current), json5.parse(data)),
+				true
 			)
 		}
 	}

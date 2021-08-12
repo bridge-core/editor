@@ -1,11 +1,10 @@
-import { App } from '/@/App'
-import { Control, IControl } from '../Control'
+import { Control } from '../Control'
 import ActionViewerComponent from './ActionViewer.vue'
-import Vue from 'vue'
 import { Action } from '/@/components/Actions/Action'
+import { shallowReactive } from '@vue/composition-api'
 
 export class ActionViewer extends Control<any> {
-	config: any = Vue.observable({ category: 'actions', action: {} })
+	config: any = shallowReactive({ category: 'actions', action: {} })
 
 	constructor(action: Action) {
 		super(
@@ -13,9 +12,9 @@ export class ActionViewer extends Control<any> {
 			{
 				category: 'actions',
 				action: {},
-				description: action.description,
+				description: action.description ?? 'No description provided',
 				key: action.id,
-				name: action.name,
+				name: action.name ?? 'general.unknown',
 			},
 			undefined
 		)

@@ -1,6 +1,6 @@
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/CreateProject'
-import { CreateFile } from '/@/components/Projects/CreateProject/Files/File'
+import { CreateFile } from '../CreateFile'
 
 export class CreateSkins extends CreateFile {
 	create(fs: FileSystem, createOptions: ICreateProjectOptions) {
@@ -9,8 +9,8 @@ export class CreateSkins extends CreateFile {
 			{
 				geometry: 'skinpacks/skins.json',
 				skins: [],
-				serialize_name: createOptions.prefix,
-				localization_name: createOptions.prefix,
+				serialize_name: createOptions.namespace,
+				localization_name: createOptions.namespace,
 			},
 			true
 		)

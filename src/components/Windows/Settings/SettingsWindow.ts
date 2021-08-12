@@ -1,4 +1,4 @@
-import { SidebarItem } from '../Layout/Sidebar'
+import { SidebarCategory, SidebarItem } from '../Layout/Sidebar'
 import { Control } from './Controls/Control'
 import SettingsWindowComponent from './SettingsWindow.vue'
 import { setupSettings } from './setupSettings'
@@ -6,9 +6,16 @@ import { App } from '/@/App'
 import { SettingsSidebar } from './SettingsSidebar'
 import { setSettingsState, settingsState } from './SettingsState'
 import { BaseWindow } from '../BaseWindow'
+import { Signal } from '/@/components/Common/Event/Signal'
 
 export class SettingsWindow extends BaseWindow {
+	public static readonly loadedSettings = new Signal<any>()
+
 	protected sidebar = new SettingsSidebar([])
+	protected bridgeCategory = new SidebarCategory({
+		items: [],
+		text: 'bridge.',
+	})
 
 	constructor(public parent: App) {
 		super(SettingsWindowComponent, false, true)
@@ -16,7 +23,9 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async setup() {
-		const locales = await App.getApp().then(app => app.locales)
+		const locales = await App.getApp().then((app) => app.locales)
+
+		// this.sidebar.addElement(this.bridgeCategory)
 
 		this.addCategory(
 			'general',
@@ -28,13 +37,23 @@ export class SettingsWindow extends BaseWindow {
 			locales.translate('windows.settings.appearance.name'),
 			'mdi-palette-outline'
 		)
-		// this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
+		this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
 		this.addCategory(
 			'actions',
 			locales.translate('windows.settings.actions.name'),
 			'mdi-keyboard-outline'
 		)
+		this.addCategory(
+			'audio',
+			locales.translate('windows.settings.audio.name'),
+			'mdi-volume-high'
+		)
 		// this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
+		this.addCategory(
+			'sidebar',
+			locales.translate('windows.settings.sidebar.name'),
+			'mdi-table-column'
+		)
 		this.addCategory(
 			'developers',
 			locales.translate('windows.settings.developer.name'),
@@ -70,26 +89,24 @@ export class SettingsWindow extends BaseWindow {
 		category.push(control)
 	}
 
-	static saveSettings() {
-		return new Promise<void>(resolve => {
-			App.ready.once(async app => {
-				await app.fileSystem.writeJSON(
-					'data/settings.json',
-					settingsState
-				)
-				resolve()
-			})
-		})
+	static async saveSettings(app?: App) {
+		if (!app) app = await App.getApp()
+
+		await app.fileSystem.writeJSON('data/settings.json', settingsState)
 	}
 	static async loadSettings(app: App) {
 		try {
 			setSettingsState(
 				await app.fileSystem.readJSON('data/settings.json')
 			)
-		} catch {}
+		} catch {
+		} finally {
+			this.loadedSettings.dispatch(settingsState)
+		}
 	}
 
 	async open() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		if (this.isVisible) return
 
 		this.sidebar.removeElements()
@@ -99,6 +116,7 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async close() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		super.close()
 
 		const app = await App.getApp()

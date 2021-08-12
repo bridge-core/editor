@@ -8,6 +8,7 @@ import { CreateTerrainTexture } from '../Files/RP/TerrainTexture'
 import { CreateFlipbookTexture } from '../Files/RP/FlipbookTexture'
 import { CreateBiomesClient } from '../Files/RP/BiomesClient'
 import { CreateSounds } from '../Files/RP/Sounds'
+import { CreateSoundDefintions } from '../Files/RP/SoundDefinitions'
 
 export class CreateRP extends CreatePack {
 	protected readonly packPath = 'RP'
@@ -21,5 +22,6 @@ export class CreateRP extends CreatePack {
 		new CreateFlipbookTexture(),
 		new CreateBiomesClient(),
 		new CreateSounds(),
+		new CreateSoundDefintions(),
 	]
 }

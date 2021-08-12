@@ -1,5 +1,6 @@
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import ConfirmWindowComponent from './ConfirmWindow.vue'
+import { App } from '/@/App'
 
 export interface IConfirmWindowOpts {
 	description: string
@@ -17,20 +18,22 @@ export class ConfirmationWindow extends BaseWindow<boolean> {
 	}
 
 	get confirmText() {
-		return this.opts.confirmText ?? 'windows.common.confirm.okay'
+		return this.opts.confirmText ?? 'general.okay'
 	}
 	get cancelText() {
-		return this.opts.cancelText ?? 'windows.common.confirm.cancel'
+		return this.opts.cancelText ?? 'general.cancel'
 	}
 	get description() {
 		return this.opts.description
 	}
 
 	onConfirm() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		if (typeof this.opts.onConfirm === 'function') this.opts.onConfirm()
 		this.close(true)
 	}
 	onCancel() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		if (typeof this.opts.onCancel === 'function') this.opts.onCancel()
 		this.close(false)
 	}

@@ -1,7 +1,7 @@
 import { ITaskDetails, Task } from './Task'
-import Vue from 'vue'
+import { reactive } from '@vue/composition-api'
 
-export const tasks: Task[] = Vue.observable([])
+export const tasks: Task[] = reactive([])
 
 export class TaskManager {
 	create(taskDetails: ITaskDetails) {

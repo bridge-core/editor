@@ -13,61 +13,66 @@ import { setupSidebar } from '/@/components/Sidebar/setup'
 import { TaskManager } from '/@/components/TaskManager/TaskManager'
 import { setupDefaultMenus } from '/@/components/Toolbar/setupDefaults'
 import { Locales } from '/@/utils/locales'
-import { Discord as DiscordWindow } from '/@/components/Windows/Discord/definition'
 import { createNotification } from '/@/components/Notifications/create'
 import { PackType } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { DataLoader } from './components/Data/DataLoader/DataLoader'
-import { ProjectConfig } from '/@/components/Projects/ProjectConfig'
+import { DataLoader } from './components/Data/DataLoader'
 import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
 import { ActionManager } from '/@/components/Actions/ActionManager'
 import { Toolbar } from '/@/components/Toolbar/Toolbar'
-import { ExtensionLoader } from '/@/components/Extensions/ExtensionLoader'
 import { WindowResize } from '/@/components/Common/WindowResize'
 import { InstallApp } from '/@/components/App/Install'
 import { LanguageManager } from '/@/components/Languages/LanguageManager'
-import { ProjectManager } from './components/Projects/ProjectManager'
-import { ContextMenu } from './components/ContextMenu/ContextMenu'
-import { Project } from './components/Projects/Project/Project'
+import { ProjectManager } from '/@/components/Projects/ProjectManager'
+import { ContextMenu } from '/@/components/ContextMenu/ContextMenu'
 import { get, set } from 'idb-keyval'
-
+import { GlobalExtensionLoader } from '/@/components/Extensions/GlobalExtensionLoader'
+import { FileDropper } from '/@/components/FileDropper/FileDropper'
+import { FileImportManager } from '/@/components/ImportFile/Manager'
+import { ComMojang } from './components/FileSystem/ComMojang'
+import { AudioManager } from '/@/components/Audio/AudioManager'
+import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
+import { markRaw, shallowReactive } from '@vue/composition-api'
+import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 export class App {
+	public static readonly installApp = new InstallApp()
 	public static fileSystemSetup = new FileSystemSetup()
 	public static toolbar = new Toolbar()
 	public static readonly eventSystem = new EventSystem<any>([
 		'projectChanged',
-		'fileUpdated',
 		'currentTabSwitched',
 		'refreshCurrentContext',
 		'disableValidation',
+		'fileAdded',
+		'fileChange',
+		'fileSave',
 	])
 	public static readonly ready = new Signal<App>()
-	protected static _instance: App
+	protected static _instance: Readonly<App>
+	public static readonly audioManager = new AudioManager()
 
-	public readonly projectConfig = new ProjectConfig()
 	public readonly keyBindingManager = new KeyBindingManager()
-	public readonly actionManager = new ActionManager(this)
+	public readonly actionManager = new ActionManager(this.keyBindingManager)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
-	public readonly dataLoader = new DataLoader(
-		{
-			icon: 'mdi-download',
-			description: 'taskManager.tasks.dataLoader.description',
-			name: 'taskManager.tasks.dataLoader.title',
-		},
-		this
-	)
+	public readonly dataLoader = markRaw(new DataLoader(true))
 	public readonly fileSystem = new FileSystem()
-	public readonly projectManager = Vue.observable(new ProjectManager(this))
-	public readonly extensionLoader = new ExtensionLoader()
+	public readonly projectManager = new ProjectManager(this)
+	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
 	public readonly contextMenu = new ContextMenu()
 	public readonly locales: Locales
+	public readonly fileDropper = new FileDropper(this)
+	public readonly fileImportManager = new FileImportManager(this.fileDropper)
+	public readonly comMojang = new ComMojang(this)
+	public readonly configuredJsonLanguage = markRaw(
+		new ConfiguredJsonLanguage()
+	)
 
-	protected languageManager = new LanguageManager()
-	protected installApp = new InstallApp()
+	protected languageManager = markRaw(new LanguageManager())
+
 	protected _windows: Windows
 	get windows() {
 		return this._windows
@@ -86,9 +91,15 @@ export class App {
 			)
 		return this.projectManager.currentProject
 	}
+	get projects() {
+		return Object.values(this.projectManager.state)
+	}
+	get projectConfig() {
+		return this.project.config
+	}
 
 	static get instance() {
-		return this._instance
+		return <App>this._instance
 	}
 	static getApp() {
 		return new Promise<App>((resolve) =>
@@ -109,7 +120,8 @@ export class App {
 			window.addEventListener('beforeunload', (event) => {
 				if (
 					this.tabSystem?.hasUnsavedTabs ||
-					this.taskManager.hasRunningTasks
+					this.taskManager.hasRunningTasks ||
+					isUsingFileSystemPolyfill
 				) {
 					event.preventDefault()
 					event.returnValue = saveWarning
@@ -119,49 +131,17 @@ export class App {
 		}
 	}
 
-	static createNativeWindow(url: string, id?: string) {
+	static openUrl(url: string, id?: string) {
 		if (settingsState?.general?.openLinksInBrowser)
 			return window.open(url, '_blank')
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
-	}
-
-	async switchProject(project: Project) {
-		this.extensionLoader.deactivateAllLocal()
-		this.extensionLoader
-			.loadExtensions(
-				await this.fileSystem.getDirectoryHandle(
-					`projects/${project.name}/bridge/extensions`,
-					{ create: true }
-				)
-			)
-			.then(() => {
-				// this.compiler.start(projectName, 'dev', 'default.json')
-				this.themeManager.updateTheme()
-				project.packIndexer.once(() =>
-					project.compilerManager.start('default.json', 'dev')
-				)
-
-				// Set language
-				if (typeof settingsState?.general?.locale === 'string')
-					this.locales.selectLanguage(settingsState?.general?.locale)
-				else {
-					// Set language based off of browser language
-					for (const [lang] of this.locales.getLanguages()) {
-						if (navigator.language.includes(lang)) {
-							this.locales.selectLanguage(lang)
-						}
-					}
-				}
-			})
-
-		App.eventSystem.dispatch('projectChanged', undefined)
 	}
 
 	/**
 	 * Starts the app
 	 */
 	static async main(appComponent: Vue) {
-		this._instance = new App(appComponent)
+		this._instance = markRaw(Object.freeze(new App(appComponent)))
 		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
@@ -181,15 +161,16 @@ export class App {
 		}
 
 		// Load settings
-		SettingsWindow.loadSettings(this.instance).then(async () => {
+		await SettingsWindow.loadSettings(this.instance).then(async () => {
 			await this.instance.dataLoader.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
 		})
 
 		await this.instance.startUp()
 
-		this.ready.dispatch(this._instance)
-		await this.instance.projectManager.selectLastProject(this._instance)
+		this.ready.dispatch(this.instance)
+		if (!isUsingFileSystemPolyfill)
+			await this.instance.projectManager.selectLastProject(this.instance)
 
 		this.instance.windows.loadingWindow.close()
 	}
@@ -206,31 +187,29 @@ export class App {
 
 		setupSidebar()
 		setupDefaultMenus(this)
-		this.dataLoader.activate(this)
 
 		if (import.meta.env.PROD) {
-			const discordMsg = createNotification({
-				icon: 'mdi-discord',
-				message: 'sidebar.notifications.discord.message',
-				color: '#7289DA',
+			const socialsMsg = createNotification({
+				icon: 'mdi-link-variant',
+				message: 'sidebar.notifications.socials.message',
+				color: '#1DA1F2',
 				textColor: 'white',
 				onClick: () => {
-					DiscordWindow.open()
-					discordMsg.dispose()
+					this.windows.socialsWindow.open()
+					socialsMsg.dispose()
 				},
 			})
-			/* Removed until getting started updated to v2
+
 			const gettingStarted = createNotification({
 				icon: 'mdi-help-circle-outline',
 				message: 'sidebar.notifications.gettingStarted.message',
 				onClick: () => {
-					App.createNativeWindow(
+					App.openUrl(
 						'https://bridge-core.github.io/editor-docs/getting-started/'
 					)
 					gettingStarted.dispose()
 				},
 			})
-			*/
 		}
 
 		console.timeEnd('[APP] beforeStartUp()')
@@ -242,22 +221,23 @@ export class App {
 	async startUp() {
 		console.time('[APP] startUp()')
 
+		this.locales.setDefaultLanguage()
+
 		await Promise.all([
 			// Create default folders
 			this.fileSystem.mkdir('projects'),
 			this.fileSystem.mkdir('extensions'),
-			this.fileSystem.mkdir('data/packages'),
+			this.fileSystem.mkdir('data'),
 			// Setup data helpers
-			this.dataLoader.fired.then(() => FileType.setup(this.fileSystem)),
-			this.dataLoader.fired.then(() => PackType.setup(this.fileSystem)),
+			FileType.setup(this.dataLoader),
+			PackType.setup(this.dataLoader),
 		])
 
 		// Ensure that a project is selected
 		this.projectManager.projectReady.fired.then(async () =>
 			// Then load global extensions
 			this.extensionLoader.loadExtensions(
-				await this.fileSystem.getDirectoryHandle(`extensions`),
-				true
+				await this.fileSystem.getDirectoryHandle(`extensions`)
 			)
 		)
 

@@ -1,5 +1,6 @@
+import '/@/components/FileSystem/Virtual/Comlink'
 import { FileType, IFileType } from '/@/components/Data/FileType'
-import * as Comlink from 'comlink'
+import { expose } from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
 import {
@@ -10,23 +11,33 @@ import {
 } from './PackSpider/PackSpider'
 import { LightningCache } from './LightningCache/LightningCache'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { PackType } from '/@/components/Data/PackType'
+import { DataLoader } from '/@/components/Data/DataLoader'
+import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 export type { ILightningInstruction } from './LightningCache/LightningCache'
 
 export interface IPackIndexerOptions {
-	projectDirectory: FileSystemDirectoryHandle
-	baseDirectory: FileSystemDirectoryHandle
 	pluginFileTypes: IFileType[]
 	disablePackSpider: boolean
 	noFullLightningCacheRefresh: boolean
 }
 
-export class PackIndexerService extends TaskService<string[]> {
+export class PackIndexerService extends TaskService<
+	readonly [string[], string[]],
+	boolean
+> {
 	protected lightningStore: LightningStore
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
+	public fileSystem: FileSystem
 
-	constructor(protected readonly options: IPackIndexerOptions) {
-		super('packIndexer', options.projectDirectory)
+	constructor(
+		projectDirectory: AnyDirectoryHandle,
+		protected baseDirectory: AnyDirectoryHandle,
+		protected readonly options: IPackIndexerOptions
+	) {
+		super()
+		this.fileSystem = new FileSystem(projectDirectory)
 		this.lightningStore = new LightningStore(this.fileSystem)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
@@ -34,34 +45,56 @@ export class PackIndexerService extends TaskService<string[]> {
 	}
 
 	getOptions() {
-		return this.options
+		return {
+			projectDirectory: this.fileSystem.baseDirectory,
+			baseDirectory: this.baseDirectory,
+			...this.options,
+		}
 	}
 
-	async onStart() {
+	async onStart(forceRefresh: boolean) {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
-		await FileType.setup(new FileSystem(this.options.baseDirectory))
+
+		let dataLoader: DataLoader | undefined = new DataLoader()
+		await Promise.all([
+			FileType.setup(dataLoader),
+			PackType.setup(dataLoader),
+		])
+		dataLoader = undefined
 
 		console.timeEnd('[WORKER] SETUP')
 
 		console.time('[WORKER] LightningCache')
-		const [filePaths, changedFiles] = await this.lightningCache.start()
+		const [
+			filePaths,
+			changedFiles,
+			deletedFiles,
+		] = await this.lightningCache.start(forceRefresh)
 		console.timeEnd('[WORKER] LightningCache')
 
 		console.time('[WORKER] PackSpider')
 		await this.packSpider.setup(filePaths)
 		console.timeEnd('[WORKER] PackSpider')
 
-		return changedFiles
+		return <const>[changedFiles, deletedFiles]
 	}
 
-	async updateFile(filePath: string) {
-		await this.lightningCache.processFile(
+	async updateFile(filePath: string, fileContent?: string) {
+		const fileDidChange = await this.lightningCache.processFile(
 			filePath,
-			await this.fileSystem.getFileHandle(filePath)
+			await this.fileSystem.getFileHandle(filePath),
+			fileContent
 		)
-		await this.lightningStore.saveStore()
-		await this.packSpider.updateFile(filePath)
+
+		if (fileDidChange) {
+			await this.lightningStore.saveStore()
+			await this.packSpider.updateFile(filePath)
+		}
+	}
+
+	unlink(path: string) {
+		return this.lightningCache.unlink(path)
 	}
 
 	updatePlugins(pluginFileTypes: IFileType[]) {
@@ -81,18 +114,13 @@ export class PackIndexerService extends TaskService<string[]> {
 					path: path.concat([dirent.name]),
 				}))
 
-			return (
-				await Promise.all([
-					loadPack('BP', this.fileSystem),
-					loadPack('RP', this.fileSystem),
-					loadPack('SP', this.fileSystem),
-				])
-			).flat()
+			return []
 		}
 
-		if (path.length === 0) return getFileStoreDirectory()
-		if (path.length === 1) return getCategoryDirectory(path[0])
-		return fileStore[path[0]][path[1]].toDirectory()
+		if (path.length === 0) return []
+		if (path.length === 1) return getFileStoreDirectory(path[0])
+		if (path.length === 2) return getCategoryDirectory(path[0], path[1])
+		return fileStore[path[0]][path[1]][path[2]].toDirectory()
 	}
 
 	find(
@@ -166,4 +194,4 @@ async function loadPack(pack: string, fileSystem: FileSystem) {
 	})
 }
 
-Comlink.expose(PackIndexerService, self)
+expose(PackIndexerService, self)

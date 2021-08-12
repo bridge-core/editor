@@ -1,33 +1,50 @@
 import { Component } from './Component'
 import { App } from '/@/App'
+import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { iterateDir } from '/@/utils/iterateDir'
 
 export async function generateComponentSchemas(fileType: string) {
 	const app = await App.getApp()
-	let baseDir: FileSystemDirectoryHandle
+	const v1CompatMode = app.project.config.get().bridge?.v1CompatMode ?? false
+	const fromFilePath = v1CompatMode
+		? `BP/components`
+		: `BP/components/${fileType}`
+
+	let baseDir: AnyDirectoryHandle
 	try {
-		baseDir = await app.project!.fileSystem.getDirectoryHandle(
-			`BP/components/${fileType}`
-		)
+		baseDir = await app.project!.fileSystem.getDirectoryHandle(fromFilePath)
 	} catch {
 		return
 	}
 
 	const schemas: any = {}
 
-	await iterateDir(baseDir, async (fileHandle) => {
-		const file = await fileHandle.getFile()
-		const componentSrc = await file.text()
-		const component = new Component(fileType, componentSrc)
+	await iterateDir(
+		baseDir,
+		async (fileHandle, filePath) => {
+			const [
+				_,
+				fileContent,
+			] = await app.project.compilerManager.compileWithFile(
+				filePath,
+				await fileHandle.getFile()
+			)
+			const file = new File([fileContent], fileHandle.name)
+			const component = new Component(
+				fileType,
+				await file.text(),
+				'dev',
+				v1CompatMode
+			)
 
-		try {
-			await component.load('client')
-		} catch {
-			return
-		}
+			const loadedCorrectly = await component.load('client')
 
-		if (component.name) schemas[component.name] = component.getSchema()
-	})
+			if (loadedCorrectly && component.name)
+				schemas[component.name] = component.getSchema()
+		},
+		undefined,
+		fromFilePath
+	)
 
 	return schemas
 }

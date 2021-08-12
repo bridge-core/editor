@@ -2,6 +2,7 @@ name: Build and Deploy
 on:
     release:
         types: [published]
+    workflow_dispatch:
 jobs:
     build-and-deploy:
         runs-on: macos-latest
@@ -31,9 +32,10 @@ jobs:
             - name: Install and Build 🔧
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
                   npm install
-                  npm run build
+                  NODE_OPTIONS=--max_old_space_size=4096 npm run build
 
             - name: Deploy 🚀
               uses: JamesIves/github-pages-deploy-action@3.7.1
@@ -42,3 +44,12 @@ jobs:
                   BRANCH: gh-pages
                   FOLDER: dist
                   CLEAN: true
+
+            # - name: Build & Publish Compiler Plugin Types 📝
+            #   env:
+            #       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+            #   run: |
+            #       npm run build-compiler-types
+            #       cd ./compilerTypes
+            #       npm publish
+            #       cd ..

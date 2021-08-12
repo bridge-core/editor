@@ -5,17 +5,17 @@ export function fromStrKeyCode(keyCode: string, forceWindowsCtrl = false) {
 	const parts = keyCode.toLowerCase().split(' + ')
 	const keyBinding: IKeyBindingConfig = { key: '' }
 
-	parts.forEach(p => {
+	parts.forEach((p) => {
 		if (
 			p === '⌘' ||
 			((platform() !== 'darwin' || forceWindowsCtrl) && p === 'ctrl')
 		) {
 			keyBinding.ctrlKey = true
-		} else if (p === 'alt') {
+		} else if (p === '⌥' || p === 'alt') {
 			keyBinding.altKey = true
-		} else if (p === 'shift') {
+		} else if (p === '⇧' || p === 'shift') {
 			keyBinding.shiftKey = true
-		} else if (p === 'meta') {
+		} else if (p === '⌃' || p === 'meta') {
 			keyBinding.metaKey = true
 		} else {
 			keyBinding.key = p
@@ -32,15 +32,23 @@ export function toStrKeyCode({
 	shiftKey,
 	metaKey,
 }: IKeyBindingConfig) {
+	const p = platform()
+
 	let code = key.toUpperCase()
-	if (shiftKey) code = 'Shift + ' + code
-	if (altKey) code = 'Alt + ' + code
+	if (shiftKey) {
+		if (p === 'darwin') code = '⇧ + ' + code
+		else code = 'Shift + ' + code
+	}
+	if (altKey) {
+		if (p === 'darwin') code = '⌥ + ' + code
+		else code = 'Alt + ' + code
+	}
 	if (metaKey) {
-		if (platform() === 'darwin') code = 'Ctrl + ' + code
+		if (p === 'darwin') code = '⌃ + ' + code
 		else code = 'Meta + ' + code
 	}
 	if (ctrlKey) {
-		if (platform() === 'darwin') code = '⌘ + ' + code
+		if (p === 'darwin') code = '⌘ + ' + code
 		else code = 'Ctrl + ' + code
 	}
 

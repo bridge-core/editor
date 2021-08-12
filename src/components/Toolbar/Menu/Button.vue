@@ -1,9 +1,15 @@
 <template>
-	<v-btn small text class="toolbar-btn" @click="$emit('click', $event)">
+	<v-btn
+		small
+		text
+		class="toolbar-btn"
+		@click="$emit('click', $event)"
+		:disabled="disabled"
+	>
 		<v-icon
 			v-if="displayIcon"
 			color="accent"
-			style="margin-right: 6px; font-style: normal;"
+			style="margin-right: 6px; font-style: normal"
 		>
 			{{ displayIcon }}
 		</v-icon>
@@ -21,6 +27,9 @@ export default {
 	props: {
 		displayName: String,
 		displayIcon: String,
+		disabled: {
+			type: Boolean,
+		},
 	},
 }
 </script>

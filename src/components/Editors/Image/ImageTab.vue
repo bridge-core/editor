@@ -1,10 +1,14 @@
 <template>
 	<div
 		class="d-flex align-center justify-center"
-		style="height:calc(100% - 48px);"
 		@click="tab.parent.setActive(true)"
 	>
-		<img :src="tab.dataUrl" :alt="tab.path" class="img-preview" />
+		<img
+			:src="tab.dataUrl"
+			:alt="tab.path"
+			class="img-preview"
+			draggable="false"
+		/>
 	</div>
 </template>
 
@@ -19,7 +23,7 @@ export default {
 
 <style scoped>
 .img-preview {
-	height: calc(80% - 48px);
+	height: 80%;
 	image-rendering: pixelated;
 }
 </style>

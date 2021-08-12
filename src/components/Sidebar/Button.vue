@@ -10,22 +10,25 @@
 				class="rounded-lg ma-2 d-flex justify-center sidebar-button"
 				:style="{
 					'background-color': computedColor,
+					transform: isSelected ? 'scale(1.1)' : undefined,
 				}"
 				:class="{
 					loading: isLoading,
 					'pa-1': smallerSidebarElements,
 					'pa-2': !smallerSidebarElements,
+					'elevation-4': isSelected,
 				}"
 				v-on="on"
 				@click="onClick"
+				@click.middle="onMiddleClick"
 				v-ripple="alwaysAllowClick || !isLoading"
 			>
 				<v-icon
 					:style="{
 						position: isLoading ? 'absolute' : 'relative',
-						margin: isLoading ? '4px' : 0,
+						marginTop: isLoading ? '4px' : 0,
 					}"
-					:color="isLoading ? 'white' : iconColor"
+					:color="isLoading || isSelected ? 'white' : iconColor"
 					:small="isLoading"
 				>
 					{{ icon }}
@@ -62,6 +65,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		isSelected: {
+			type: Boolean,
+			default: false,
+		},
 		alwaysAllowClick: {
 			type: Boolean,
 			default: false,
@@ -79,15 +86,15 @@ export default {
 		isSidebarRight() {
 			return (
 				this.settingsState &&
-				this.settingsState.appearance &&
-				this.settingsState.appearance.isSidebarRight
+				this.settingsState.sidebar &&
+				this.settingsState.sidebar.isSidebarRight
 			)
 		},
 		smallerSidebarElements() {
 			return (
 				this.settingsState &&
-				this.settingsState.appearance &&
-				this.settingsState.appearance.smallerSidebarElements
+				this.settingsState.sidebar &&
+				this.settingsState.sidebar.smallerSidebarElements
 			)
 		},
 		computedColor() {
@@ -95,7 +102,7 @@ export default {
 				return this.color.startsWith('#')
 					? this.color
 					: `var(--v-${this.color}-base)`
-			return this.isLoading
+			return this.isLoading || this.isSelected
 				? `var(--v-primary-base)`
 				: `var(--v-sidebarSelection-base)`
 		},
@@ -104,6 +111,15 @@ export default {
 		onClick() {
 			if (this.alwaysAllowClick || !this.isLoading) {
 				this.$emit('click')
+
+				// Otherwise the tooltip can get stuck until the user hovers over the button again
+				this.hasClicked = true
+				this.$nextTick(() => (this.hasClicked = false))
+			}
+		},
+		onMiddleClick() {
+			if (this.alwaysAllowClick || !this.isLoading) {
+				this.$emit('middleClick')
 
 				// Otherwise the tooltip can get stuck until the user hovers over the button again
 				this.hasClicked = true

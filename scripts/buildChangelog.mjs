@@ -19,8 +19,6 @@ export async function buildChangelog() {
 		},
 	)
 		.then((response) => response.json())
-		//TODO Remove console.log if successful for next release
-		.then((data) => (console.log(data), data))
 		.then((data) => new MarkdownIt().render(data[0].body))
 
 	await fs.writeFile('public/changelog.html', html)

@@ -1,29 +1,37 @@
 import { Component as VueComponent } from 'vue'
-import Vue from 'vue'
 import { v4 as uuid } from 'uuid'
-import { WINDOWS } from './create'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { SimpleAction } from '/@/components/Actions/SimpleAction'
+import { WindowState } from './WindowState'
+import { del, markRaw, set } from '@vue/composition-api'
 
 export abstract class BaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()
 	protected isVisible = false
 	protected shouldRender = false
+	protected actions: SimpleAction[] = []
+	protected component: VueComponent
 
 	constructor(
-		protected component: VueComponent,
+		component: VueComponent,
 		protected disposeOnClose = false,
 		protected keepAlive = false
 	) {
 		super()
+
+		this.component = markRaw(component)
 	}
 
 	defineWindow() {
-		Vue.set(WINDOWS, this.windowUUID, this)
+		set(WindowState.state, this.windowUUID, this)
+	}
+	addAction(action: SimpleAction) {
+		this.actions.push(action)
 	}
 
-	close(data: T) {
+	close(data: T | null) {
 		this.isVisible = false
-		this.dispatch(data)
+		if (data !== null) this.dispatch(data)
 
 		if (!this.keepAlive) {
 			setTimeout(() => {
@@ -38,6 +46,6 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 		this.resetSignal()
 	}
 	dispose() {
-		Vue.delete(WINDOWS, this.windowUUID)
+		del(WindowState.state, this.windowUUID)
 	}
 }

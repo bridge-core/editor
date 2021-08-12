@@ -5,8 +5,7 @@ class LegacyProgress<T, K> {
 	constructor(
 		protected taskService: TaskService<T, K>,
 		protected current: number,
-		protected total: number,
-		protected prevTotal: number
+		protected total: number
 	) {}
 
 	addToCurrent(value?: number) {
@@ -19,7 +18,7 @@ class LegacyProgress<T, K> {
 	}
 
 	getTotal() {
-		return this.total > this.prevTotal ? this.total : this.prevTotal
+		return this.total
 	}
 	getCurrent() {
 		return this.current
@@ -34,47 +33,15 @@ export abstract class TaskService<T, K = void> extends EventDispatcher<
 	[number, number]
 > {
 	protected lastDispatch = 0
-	public fileSystem: FileSystem
 	public progress!: LegacyProgress<T, K>
-	constructor(
-		protected taskId: string,
-		baseDirectory: FileSystemDirectoryHandle
-	) {
-		super()
-		this.fileSystem = new FileSystem(baseDirectory)
-	}
-
-	protected async loadPreviousTaskRun() {
-		try {
-			const file = await this.fileSystem.readFile(
-				`bridge/tasks/${this.taskId}.txt`
-			)
-			const prevTotal = Number(await file.text())
-			return Number.isNaN(prevTotal) ? 100 : prevTotal
-		} catch {
-			return 100
-		}
-	}
-	protected async saveCurrentTaskRun() {
-		await this.fileSystem.writeFile(
-			`bridge/tasks/${this.taskId}.txt`,
-			`${this.progress.getCurrent()}`
-		)
-	}
 
 	protected abstract onStart(data: K): Promise<T> | T
 
 	async start(data: K) {
-		this.progress = new LegacyProgress(
-			this,
-			0,
-			0,
-			await this.loadPreviousTaskRun()
-		)
+		this.progress = new LegacyProgress(this, 0, 0)
 
 		const result = await this.onStart(data)
 
-		this.saveCurrentTaskRun()
 		this.dispatch([this.progress.getCurrent(), this.progress.getCurrent()])
 
 		return result

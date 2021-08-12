@@ -1,9 +1,10 @@
-import { dirname } from 'path'
 import { IPresetFileOpts } from './PresetWindow'
 import { transformString } from './TransformString'
 import { App } from '/@/App'
+import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { deepMerge } from '/@/utils/deepmerge'
-import { extname } from '/@/utils/path'
+import { extname, dirname } from '/@/utils/path'
 
 export type TExpandFile = [string, string, IPresetFileOpts?]
 
@@ -13,7 +14,10 @@ export async function expandFile(
 	models: Record<string, unknown>
 ) {
 	const app = await App.getApp()
-	const fs = app.fileSystem
+	const fs = new CombinedFileSystem(
+		app.fileSystem.baseDirectory,
+		app.dataLoader
+	)
 	const inject = opts?.inject ?? []
 	const fullOriginPath = `${presetPath}/${originPath}`
 	const fullDestPath = transformString(
@@ -24,6 +28,7 @@ export async function expandFile(
 	const ext = extname(fullDestPath)
 	await fs.mkdir(dirname(fullDestPath), { recursive: true })
 
+	let fileHandle: AnyFileHandle
 	if (ext === '.json') {
 		const json = await fs.readJSON(fullOriginPath)
 
@@ -34,7 +39,7 @@ export async function expandFile(
 			destJson = {}
 		}
 
-		await fs.writeFile(
+		fileHandle = await fs.writeFile(
 			fullDestPath,
 			transformString(
 				JSON.stringify(deepMerge(destJson, json), null, '\t'),
@@ -55,11 +60,11 @@ export async function expandFile(
 
 		const outputFileText = transformString(fileText, inject, models)
 
-		await fs.writeFile(
+		fileHandle = await fs.writeFile(
 			fullDestPath,
 			`${destFileText}${destFileText !== '' ? '\n' : ''}${outputFileText}`
 		)
 	}
 
-	return transformString(destPath, inject, models)
+	return fileHandle
 }

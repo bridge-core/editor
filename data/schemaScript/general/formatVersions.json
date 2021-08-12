@@ -1,5 +1,0 @@
-{
-	"type": "enum",
-	"generateFile": "project/formatVersionEnum.json",
-	"script": "return getFormatVersions()"
-}

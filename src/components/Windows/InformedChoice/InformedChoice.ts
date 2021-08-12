@@ -3,6 +3,7 @@ import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { App } from '/@/App'
 import { ActionManager } from '/@/components/Actions/ActionManager'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 
 interface IInformedChoiceWindowOpts {
 	isPersistent?: boolean
@@ -11,9 +12,12 @@ interface IInformedChoiceWindowOpts {
 export class InformedChoiceWindow extends BaseWindow {
 	protected _actionManager!: ActionManager
 	protected _ready = new Signal<ActionManager>()
+	protected topPanel?: InfoPanel
 
 	get actionManager() {
-		return new Promise<ActionManager>(resolve => this._ready.once(resolve))
+		return new Promise<ActionManager>((resolve) =>
+			this._ready.once(resolve)
+		)
 	}
 
 	constructor(
@@ -26,13 +30,14 @@ export class InformedChoiceWindow extends BaseWindow {
 	}
 
 	async setup() {
-		this._actionManager = new ActionManager(await App.getApp())
+		this._actionManager = new ActionManager()
 		this._ready.dispatch(this._actionManager)
 		this.defineWindow()
 		this.open()
 	}
 
 	async open() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		await this.actionManager
 		super.open()
 	}

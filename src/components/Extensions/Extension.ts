@@ -6,42 +6,62 @@ import { loadUIComponents } from './UI/load'
 import { createUIStore } from './UI/store'
 import { App } from '/@/App'
 import { loadScripts } from './Scripts/loadScripts'
-import { ExtensionViewer } from '../Windows/ExtensionStore/Extension'
+import { ExtensionViewer } from '../Windows/ExtensionStore/ExtensionViewer'
 import { ExtensionStoreWindow } from '../Windows/ExtensionStore/ExtensionStore'
 import { iterateDir } from '/@/utils/iterateDir'
 import { loadFileDefinitions } from './FileDefinition/load'
+import { InstallFiles } from './InstallFiles'
+import { AnyDirectoryHandle } from '../FileSystem/Types'
 
 export class Extension {
-	protected _isActive = false
-
 	protected disposables: IDisposable[] = []
 	protected uiStore = createUIStore()
 	protected fileSystem: FileSystem
 	protected _compilerPlugins: Record<string, string> = {}
+	protected isLoaded = false
+	protected installFiles: InstallFiles
 
 	get isActive() {
-		return this._isActive
-	}
+		if (!this.parent.activeStatus)
+			throw new Error(
+				`Accessed activeStatus property before the corresponding ActiveClass instance was initialized`
+			)
 
+		return this.parent.activeStatus?.isActive(this.manifest.id)
+	}
 	get compilerPlugins() {
 		return this._compilerPlugins
+	}
+	get version() {
+		return this.manifest.version
+	}
+	get isGlobal() {
+		return this._isGlobal
 	}
 
 	constructor(
 		protected parent: ExtensionLoader,
 		protected manifest: IExtensionManifest,
-		protected baseDirectory: FileSystemDirectoryHandle,
+		protected baseDirectory: AnyDirectoryHandle,
 		protected _isGlobal = false
 	) {
 		this.fileSystem = new FileSystem(this.baseDirectory)
+		this.installFiles = new InstallFiles(
+			this.fileSystem,
+			manifest?.contributeFiles ?? manifest.install ?? {}
+		)
 	}
 
 	async activate() {
-		this._isActive = true
+		// Make sure we load an extension only once
+		if (this.isLoaded) return
+
+		this.isLoaded = true
 		const app = await App.getApp()
 		const pluginPath = (
-			(await app.fileSystem.baseDirectory.resolve(this.baseDirectory)) ??
-			[]
+			(await app.fileSystem.baseDirectory.resolve(
+				<any>this.baseDirectory
+			)) ?? []
 		).join('/')
 
 		// Activate all dependencies before
@@ -86,7 +106,7 @@ export class Extension {
 			)
 		} catch {}
 
-		let scriptHandle: FileSystemDirectoryHandle
+		let scriptHandle: AnyDirectoryHandle
 		try {
 			scriptHandle = await this.baseDirectory.getDirectoryHandle(
 				'scripts'
@@ -103,28 +123,61 @@ export class Extension {
 					? await loadScripts(
 							scriptHandle,
 							this.uiStore,
-							this.disposables
+							this.disposables,
+							this.isGlobal
 					  )
 					: undefined
 			),
 		])
+
+		// Loading snippets
+		if (await this.fileSystem.directoryExists('snippets')) {
+			const snippetDir = await this.baseDirectory.getDirectoryHandle(
+				'snippets'
+			)
+
+			if (this.isGlobal) {
+				this.disposables.push(
+					app.projectManager.onActiveProject(async (project) => {
+						this.disposables.push(
+							...(await project.snippetLoader.loadFrom(
+								snippetDir
+							))
+						)
+					})
+				)
+			} else {
+				this.disposables.push(
+					...(await app.project.snippetLoader.loadFrom(snippetDir))
+				)
+			}
+		}
+
+		if (await this.fileSystem.fileExists('.installed')) return
+
+		await this.installFiles.execute(this.isGlobal)
+		await this.fileSystem.writeFile('.installed', '')
 	}
 
 	deactivate() {
 		this.disposables.forEach((disposable) => disposable.dispose())
-		this._isActive = false
+		this.isLoaded = false
 	}
 
-	get version() {
-		return this.manifest.version
-	}
-	get isGlobal() {
-		return this._isGlobal
+	async setActive(value: boolean) {
+		if (value) await this.activate()
+		else this.deactivate()
+
+		await this.parent.activeStatus?.setActive(this.manifest.id, value)
 	}
 
 	forStore(extensionStore: ExtensionStoreWindow) {
 		const viewer = new ExtensionViewer(extensionStore, this.manifest)
 		viewer.setInstalled()
 		return viewer
+	}
+
+	async installFilesToCurrentProject() {
+		await this.installFiles.execute(false)
 	}
 }

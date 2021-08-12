@@ -1,7 +1,5 @@
-import { runAsync } from '/@/components/Extensions/Scripts/run'
+import { run } from '/@/components/Extensions/Scripts/run'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { ComMojangRewrite } from './Plugins/ComMojangRewrite'
-import { Maybe } from '/@/types/Maybe'
 import { TypeScriptPlugin } from './Plugins/TypeScript'
 import json5 from 'json5'
 import {
@@ -11,111 +9,53 @@ import {
 } from './Plugins/CustomComponent/Plugin'
 import { SimpleRewrite } from './Plugins/simpleRewrite'
 import { EntityIdentifierAlias } from './Plugins/EntityIdentifier'
+import { MoLangPlugin } from './Plugins/MoLang/Plugin'
+import { ProjectConfig } from '/@/components/Projects/ProjectConfig'
+import { TCompilerPlugin } from './TCompilerPlugin'
+import { TCompilerPluginFactory } from './TCompilerPluginFactory'
+import { CustomCommandsPlugin } from './Plugins/CustomCommands/Plugin'
+import { DataLoader } from '/@/components/Data/DataLoader'
 
 export type TCompilerHook = keyof TCompilerPlugin
-export type TCompilerPlugin = {
-	/**
-	 * Runs once before a build process starts
-	 */
-	buildStart(): Promise<void> | void
-	/**
-	 * Register files that should be loaded too
-	 */
-	include(): Maybe<string[]>
-
-	/**
-	 * Transform file path
-	 * - E.g. adjust file path to point to build folder
-	 * - Return null to omit file from build output
-	 */
-	transformPath(filePath: string | null): Maybe<string>
-
-	/**
-	 * Read the file at `filePath` and return its content
-	 * - Return null/undefined to just copy the file over
-	 */
-	read(
-		filePath: string,
-		fileHandle?: FileSystemFileHandle
-	): Promise<any> | any
-
-	/**
-	 * Load the fileContent and bring it into a usable form
-	 */
-	load(filePath: string, fileContent: any): Promise<any> | any
-
-	/**
-	 * Provide alternative lookups for a file
-	 * - E.g. custom component names
-	 */
-	registerAliases(source: string, fileContent: any): Maybe<string[]>
-
-	/**
-	 * Register that a file depends on other files
-	 */
-	require(source: string, fileContent: any): Maybe<string[]>
-
-	/**
-	 * Transform a file's content
-	 */
-	transform(
-		filePath: string,
-		fileContent: any,
-		dependencies?: Record<string, any>
-	): Promise<any> | any
-
-	/**
-	 * Prepare data before it gets written to disk
-	 */
-	finalizeBuild(
-		filePath: string,
-		fileContent: any
-	): Maybe<FileSystemWriteChunkType>
-
-	/**
-	 * Runs once after a build process ended
-	 */
-	buildEnd(): Promise<void> | void
-}
-export type TCompilerPluginFactory = (context: {
-	options: any
-	fileSystem: FileSystem
-	compileFiles: (
-		files: string[],
-		errorOnReadFailure?: boolean
-	) => Promise<void>
-	getAliases: (filePath: string) => string[]
-}) => Partial<TCompilerPlugin>
-
 export interface ILoadPLugins {
 	fileSystem: FileSystem
 	localFs: FileSystem
+	outputFs: FileSystem
+	hasComMojangDirectory: boolean
 	pluginPaths: Record<string, string>
 	pluginOpts: Record<string, any>
-	compileFiles: (
-		files: string[],
-		errorOnReadFailure?: boolean
-	) => Promise<void>
 	getAliases: (filePath: string) => string[]
+	compileFiles: (files: string[]) => Promise<void>
+	dataLoader: DataLoader
 }
 
 export async function loadPlugins({
 	fileSystem,
 	pluginPaths,
 	localFs,
+	outputFs,
 	pluginOpts,
+	hasComMojangDirectory,
 	compileFiles,
 	getAliases,
+	dataLoader,
 }: ILoadPLugins) {
-	const plugins = new Map<string, TCompilerPluginFactory>()
+	const plugins = new Map<string, TCompilerPluginFactory<any>>()
+	const projectConfig = new ProjectConfig(localFs)
+	await projectConfig.setup()
+
+	const targetVersion =
+		projectConfig.get().targetVersion ??
+		(await getLatestFormatVersion(dataLoader))
 
 	plugins.set('simpleRewrite', SimpleRewrite)
-	plugins.set('comMojangRewrite', ComMojangRewrite)
 	plugins.set('typeScript', TypeScriptPlugin)
 	plugins.set('customEntityComponents', CustomEntityComponentPlugin)
 	plugins.set('customItemComponents', CustomItemComponentPlugin)
 	plugins.set('customBlockComponents', CustomBlockComponentPlugin)
 	plugins.set('entityIdentifierAlias', EntityIdentifierAlias)
+	plugins.set('moLang', MoLangPlugin)
+	plugins.set('customCommands', CustomCommandsPlugin)
 
 	for (const [pluginId, pluginPath] of Object.entries(pluginPaths ?? {})) {
 		let file: File
@@ -126,15 +66,18 @@ export async function loadPlugins({
 		}
 
 		const module: { exports?: TCompilerPluginFactory } = {}
-		await runAsync(
-			await file.text(),
-			[
-				undefined,
+		await run({
+			async: true,
+			script: await file.text(),
+			env: {
+				require: undefined,
 				module,
-				{ parse: json5.parse, stringify: JSON.stringify },
-			],
-			['require', 'module', 'JSON']
-		)
+				JSON: {
+					parse: json5.parse,
+					stringify: JSON.stringify,
+				},
+			},
+		})
 
 		if (typeof module.exports === 'function')
 			plugins.set(pluginId, module.exports)
@@ -156,12 +99,26 @@ export async function loadPlugins({
 			pluginId,
 			plugin({
 				options: pluginOpts[pluginId],
-				fileSystem: localFs,
-				compileFiles,
+				fileSystem,
+				dataLoader,
+				outputFileSystem: outputFs,
+				hasComMojangDirectory,
 				getAliases,
+				targetVersion,
+				compileFiles,
 			})
 		)
 	}
 
 	return loadedPlugins
+}
+
+async function getLatestFormatVersion(dataLoader: DataLoader) {
+	await dataLoader.fired
+
+	const formatVersions: string[] = await dataLoader.readJSON(
+		'data/packages/minecraftBedrock/formatVersions.json'
+	)
+
+	return formatVersions[0]
 }

@@ -2,6 +2,7 @@ import { FileType } from '/@/components/Data/FileType'
 import { walkObject } from '/@/utils/walkObject'
 import { LightningStore } from '../LightningCache/LightningStore'
 import { PackIndexerService } from '../Main'
+import { PackType } from '/@/components/Data/PackType'
 
 export interface IPackSpiderFile {
 	connect?: IFileDescription[]
@@ -62,12 +63,12 @@ export interface IFile {
 	identifierName?: string
 	filePath: string
 }
-export let fileStore: Record<string, Record<string, File>> = {}
-export function getFileStoreDirectory() {
+export let fileStore: Record<string, Record<string, Record<string, File>>> = {}
+export function getFileStoreDirectory(packType: string) {
 	const folders: (IDirectory | IFile)[] = []
 
-	for (const fileType in fileStore) {
-		const cFolders = getCategoryDirectory(fileType)
+	for (const fileType in fileStore[packType]) {
+		const cFolders = getCategoryDirectory(packType, fileType)
 
 		if (cFolders.length > 0)
 			folders.push({ kind: 'directory', name: fileType })
@@ -75,11 +76,11 @@ export function getFileStoreDirectory() {
 
 	return folders
 }
-export function getCategoryDirectory(fileType: string) {
+export function getCategoryDirectory(packType: string, fileType: string) {
 	const folders: (IDirectory | IFile)[] = []
 
-	for (const filePath in fileStore[fileType] ?? {}) {
-		const file = fileStore[fileType][filePath]
+	for (const filePath in fileStore[packType][fileType] ?? {}) {
+		const file = fileStore[packType][fileType][filePath]
 		if (!file?.isFeatureFolder) continue
 
 		const files = file.toDirectory()
@@ -96,7 +97,7 @@ export function getCategoryDirectory(fileType: string) {
 				kind: 'directory',
 				displayName: file.identifierName || file.fileName,
 				name: file.filePath,
-				path: [fileType, file.filePath],
+				path: [packType, fileType, file.filePath],
 			})
 		}
 	}
@@ -123,7 +124,11 @@ export class File {
 		forceUpdate = false
 	) {
 		const fileType = FileType.getId(filePath)
-		const storedFile = fileStore[fileType]?.[filePath]
+		const { packPath: packType } = PackType.getWithRelativePath(
+			filePath
+		) ?? { packPath: 'unknown' }
+
+		const storedFile = fileStore[packType]?.[fileType]?.[filePath]
 		if (storedFile !== undefined) {
 			if (!forceUpdate) return storedFile
 			else
@@ -131,10 +136,6 @@ export class File {
 					file.removeParent(storedFile)
 				)
 		}
-
-		// Loot tables/trade tables/textures etc. are all scoped differently within Minecraft
-		// (bridge. needs a start of BP/ & RP/)
-		const pathStart = filePath.split('/').shift()
 
 		const packSpiderFile = packSpider.packSpiderFiles[fileType] ?? {}
 
@@ -152,8 +153,7 @@ export class File {
 				})
 				.flat() ?? []
 		for (const foundFilePath of cacheKeysToInclude) {
-			if (`${pathStart}/${foundFilePath}` !== filePath)
-				connectedFiles.push(`${pathStart}/${foundFilePath}`)
+			if (foundFilePath !== filePath) connectedFiles.push(foundFilePath)
 		}
 
 		// Dynamically referenced files (connect)
@@ -220,9 +220,10 @@ export class File {
 		await file.addConnectedFiles(connectedFiles, packSpider)
 		file.setIdentifier(cacheData.identifier)
 
-		if (!fileStore[fileType]) fileStore[fileType] = {}
-		fileStore[fileType][filePath] = file
-		return fileStore[fileType][filePath]
+		if (!fileStore[packType]) fileStore[packType] = {}
+		if (!fileStore[packType][fileType]) fileStore[packType][fileType] = {}
+		fileStore[packType][fileType][filePath] = file
+		return fileStore[packType][fileType][filePath]
 	}
 
 	async addConnectedFiles(filePaths: string[], packSpider: PackSpider) {

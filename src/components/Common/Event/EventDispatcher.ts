@@ -1,13 +1,24 @@
+import { IDisposable } from '/@/types/disposable'
+
 export class EventDispatcher<T> {
 	protected listeners = new Set<(data: T) => void>()
 
 	constructor() {}
 
+	get hasListeners() {
+		return this.listeners.size > 0
+	}
 	dispatch(data: T) {
-		this.listeners.forEach(listener => listener(data))
+		this.listeners.forEach((listener) => listener(data))
 	}
 
-	on(listener: (data: T) => void, getDisposable = true) {
+	on(listener: (data: T) => void, getDisposable?: true): IDisposable
+	on(listener: (data: T) => void, getDisposable: false): undefined
+	on(
+		listener: (data: T) => void,
+		getDisposable?: boolean
+	): IDisposable | undefined
+	on(listener: (data: T) => void, getDisposable: boolean = true) {
 		this.listeners.add(listener)
 
 		if (getDisposable)
@@ -28,5 +39,9 @@ export class EventDispatcher<T> {
 			this.off(callback)
 		}
 		this.on(callback)
+	}
+
+	disposeListeners() {
+		this.listeners = new Set()
 	}
 }

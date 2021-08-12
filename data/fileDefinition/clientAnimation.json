@@ -1,8 +1,0 @@
-{
-	"id": "clientAnimation",
-	"icon": "mdi-movie-open-outline",
-	"scope": "RP/animations/",
-	"matcher": ["RP/animations/**/*.json", "RP/animations/*.json"],
-	"schema": "file:///data/packages/schema/animation/client.json",
-	"lightningCache": "clientAnimation.json"
-}

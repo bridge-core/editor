@@ -16,16 +16,16 @@ export const ENVModule = ({}: IModuleConfig) => ({
 		return `projects/${App.instance.selectedProject}`
 	},
 	getProjectPrefix() {
-		return App.getApp().then(app => app.projectConfig.get('prefix'))
+		return App.getApp().then((app) => app.projectConfig.get().namespace)
 	},
 	getProjectTargetVersion() {
-		return App.getApp().then(app => app.projectConfig.get('targetVersion'))
+		return App.getApp().then((app) => app.projectConfig.get().targetVersion)
 	},
 	getProjectAuthor() {
-		return App.getApp().then(app => app.projectConfig.get('author'))
+		return App.getApp().then((app) => app.projectConfig.get().author)
 	},
 	getContext() {
-		// TODO
-		// return ContextEnv.value
+		console.warn('This API is deprecated!')
+		return {}
 	},
 })

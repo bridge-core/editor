@@ -14,83 +14,94 @@
 		<template #default>
 			<!-- Welcome text for users getting started with bridge. -->
 
-			<div
-				class="rounded-lg pa-3 content-area mb-2"
-				v-if="isFirstProject"
-			>
+			<BridgeSheet class="pa-3 mb-2" v-if="isFirstProject">
 				<h1 class="text-h4">
 					{{ t('windows.createProject.welcome') }}
 				</h1>
 				<span>
 					{{ t('windows.createProject.welcomeDescription') }}
 				</span>
-			</div>
+			</BridgeSheet>
 
-			<v-row class="mb-6" no-gutters>
-				<PackTypeViewer
-					v-for="(packType, i) in availablePackTypes"
-					:class="{
-						'mr-1': i === 0,
-						'ml-1': i + 1 === availablePackTypes.length,
-						'mx-1': i > 0 && i + 1 < availablePackTypes.length,
-					}"
+			<v-row class="mb-6" dense>
+				<v-col
+					v-for="packType in availablePackTypes"
 					:key="packType.id"
-					:packType="packType"
-					isSelectable
-					:selected="createOptions.packs.includes(packType.packPath)"
-					@click="togglePack(packType.packPath)"
+					xs="12"
+					sm="6"
+					md="4"
+					lg="3"
+					xl="2"
 				>
-					<template
-						v-if="packType.packPath === 'BP'"
-						#default="{ selected }"
+					<PackTypeViewer
+						:packType="packType"
+						isSelectable
+						style="height: 100%"
+						:selected="createOptions.packs.includes(packType.id)"
+						@click="togglePack(packType.id)"
 					>
-						<v-switch
-							inset
-							dense
-							:label="t('windows.createProject.scripting')"
-							:value="createOptions.scripting"
-							@click.stop.native="
-								createOptions.scripting = !createOptions.scripting
-							"
-							:disabled="!selected"
-							class="mt-3"
-						/>
-						<v-switch
-							inset
-							dense
-							:label="t('windows.createProject.gameTest')"
-							:value="createOptions.gameTest"
-							@click.stop.native="
-								createOptions.gameTest = !createOptions.gameTest
-							"
-							:disabled="!selected"
-							class="ma-0"
-						/>
-					</template>
-
-					<template
-						v-else-if="packType.packPath === 'RP'"
-						#default="{ selected }"
-					>
-						<v-switch
-							inset
-							dense
-							:label="t('windows.createProject.rpAsBpDependency')"
-							:value="
-								createOptions.rpAsBpDependency &&
-								createOptions.packs.includes('BP')
-							"
-							@click.stop.native="
-								createOptions.rpAsBpDependency = !createOptions.rpAsBpDependency
-							"
-							:disabled="
-								!selected || !createOptions.packs.includes('BP')
-							"
-							class="mt-3"
-						/>
-					</template>
-				</PackTypeViewer>
+						<template
+							v-if="packType.id === 'resourcePack'"
+							#default="{ selected }"
+						>
+							<!-- I am not sure why the rpAsBpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
+							<v-switch
+								inset
+								dense
+								:label="
+									t('windows.createProject.rpAsBpDependency')
+								"
+								:value="
+									createOptions.rpAsBpDependency ||
+									createOptions.packs.includes('behaviorPack')
+								"
+								@click.stop.native="
+									createOptions.rpAsBpDependency = !createOptions.rpAsBpDependency
+								"
+								:disabled="
+									!selected ||
+									!createOptions.packs.includes(
+										'behaviorPack'
+									)
+								"
+								class="mt-3"
+							/>
+						</template>
+					</PackTypeViewer>
+				</v-col>
 			</v-row>
+
+			<!-- Experimental Gameplay Toggles -->
+			<v-expansion-panels class="mb-6">
+				<v-expansion-panel>
+					<v-expansion-panel-header expand-icon="mdi-menu-down">
+						Experimental Gameplay
+					</v-expansion-panel-header>
+					<v-expansion-panel-content>
+						<v-row dense>
+							<v-col
+								v-for="experiment in experimentalToggles"
+								:key="experiment.id"
+								xs="12"
+								sm="6"
+								md="4"
+								lg="3"
+								xl="2"
+							>
+								<ExperimentalGameplay
+									:experiment="experiment"
+									v-model="
+										createOptions.experimentalGameplay[
+											experiment.id
+										]
+									"
+									style="height: 100%"
+								/>
+							</v-col>
+						</v-row>
+					</v-expansion-panel-content>
+				</v-expansion-panel>
+			</v-expansion-panels>
 
 			<div class="d-flex">
 				<v-file-input
@@ -105,7 +116,8 @@
 				/>
 				<v-text-field
 					v-model="createOptions.name"
-					:label="t('windows.createProject.projectName')"
+					:label="t('windows.createProject.projectName.name')"
+					:rules="nameRules"
 					autocomplete="off"
 					class="ml-2"
 					outlined
@@ -113,17 +125,20 @@
 				/>
 			</div>
 
-			<v-text-field
+			<v-textarea
 				v-model="createOptions.description"
 				:label="t('windows.createProject.projectDescription')"
 				autocomplete="off"
+				auto-grow
+				rows="1"
+				counter
 				outlined
 				dense
 			/>
 
 			<div class="d-flex">
 				<v-text-field
-					v-model="createOptions.prefix"
+					v-model="createOptions.namespace"
 					:label="t('windows.createProject.projectPrefix')"
 					autocomplete="off"
 					class="mr-2"
@@ -151,6 +166,19 @@
 					:menu-props="{ maxHeight: 220 }"
 				/>
 			</div>
+
+			<div class="d-flex">
+				<v-switch
+					inset
+					dense
+					:label="t('windows.createProject.useLangForManifest')"
+					:value="createOptions.useLangForManifest"
+					@click.stop.native="
+						createOptions.useLangForManifest = !createOptions.useLangForManifest
+					"
+					class="ma-3"
+				></v-switch>
+			</div>
 		</template>
 
 		<template #actions>
@@ -172,15 +200,17 @@
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
-import { CompilerMixin } from '/@/components/Mixins/Tasks/Compiler'
-import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
+import ExperimentalGameplay from './ExperimentalGameplay.vue'
+import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 
 export default {
 	name: 'CreateProjectWindow',
-	mixins: [TranslationMixin, CompilerMixin, PackIndexerMixin],
+	mixins: [TranslationMixin],
 	components: {
 		BaseWindow,
 		PackTypeViewer,
+		BridgeSheet,
+		ExperimentalGameplay,
 	},
 	props: ['currentWindow'],
 
@@ -192,11 +222,15 @@ export default {
 			// If this is the first project, only show a spinner while creating the spinner
 			if (this.isFirstProject) return this.isCreatingProject
 			// Otherwise check that the compiler & pack indexer are done too
-			return (
-				this.isCreatingProject ||
-				!this.isCompilerReady ||
-				!this.isPackIndexerReady
-			)
+			return this.isCreatingProject
+		},
+		nameRules() {
+			return this.projectNameRules.map((rule) => (val) => {
+				const res = rule(val)
+				if (res === true) return true
+
+				return this.t(res)
+			})
 		},
 	},
 	methods: {
@@ -217,7 +251,6 @@ export default {
 			else packs.push(packPath)
 		},
 		setModel(key, val) {
-			console.log(key, val)
 			this.createOptions[key] = val
 		},
 	},
@@ -226,7 +259,6 @@ export default {
 
 <style scoped>
 .content-area {
-	background-color: var(--v-sidebarNavigation-base);
 	border: solid 2px transparent;
 }
 .content-area.selected {

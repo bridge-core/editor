@@ -1,7 +1,7 @@
 import { isMatch } from 'micromatch'
-import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { v4 as uuid } from 'uuid'
 import { Signal } from '../Common/Event/Signal'
+import { DataLoader } from './DataLoader'
 
 /**
  * Describes the structure of a pack definition
@@ -10,6 +10,8 @@ export interface IPackType {
 	id: TPackTypeId
 	matcher: string | string[]
 	color: string
+	icon: string
+	packPath: string
 }
 export type TPackTypeId =
 	| 'behaviorPack'
@@ -29,17 +31,20 @@ export namespace PackType {
 		return packTypes.concat([...extensionPackTypes.values()])
 	}
 
-	export async function setup(fileSystem: FileSystem) {
+	export async function setup(dataLoader: DataLoader) {
 		if (packTypes.length > 0) return
+		await dataLoader.fired
 
 		packTypes = <IPackType[]>(
-			await fileSystem.readJSON('data/packages/packDefinitions.json')
+			await dataLoader.readJSON(
+				'data/packages/minecraftBedrock/packDefinitions.json'
+			)
 		)
 		ready.dispatch()
 	}
 
 	/**
-	 * Get the pack definition data for the given file path
+	 * Get the pack definition data for the given file path relative to the bridge folder
 	 * @param filePath file path to fetch pack definition for
 	 */
 	export function get(filePath: string) {
@@ -52,6 +57,20 @@ export namespace PackType {
 
 			for (const matcher of packType.matcher)
 				if (isMatch(filePath, matcher)) return packType
+		}
+	}
+
+	/**
+	 * Get the pack definition data for the given file path relative to the project root
+	 * @param filePath file path to fetch pack definition for
+	 */
+	export function getWithRelativePath(filePath: string) {
+		return get(`projects/bridge/${filePath}`)
+	}
+
+	export function getFromId(packId: string) {
+		for (const packType of all()) {
+			if (packType.id === packId) return packType
 		}
 	}
 

@@ -4,42 +4,78 @@ import { App } from '/@/App'
 import { FileType } from '/@/components/Data/FileType'
 import { PackType } from '/@/components/Data/PackType'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
+import { Signal } from '/@/components/Common/Event/Signal'
+import { SimpleAction } from '/@/components/Actions/SimpleAction'
+import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { AnyFileHandle } from '../FileSystem/Types'
 
-export abstract class Tab {
+export abstract class Tab extends Signal<Tab> {
 	abstract component: Vue.Component
-	uuid = uuid()
-	hasRemoteChange = false
-	isUnsaved = false
+	public uuid = uuid()
+	public hasRemoteChange = false
+	public isUnsaved = false
+	public isForeignFile = true
+	public connectedTabs: Tab[] = []
+	public readonly onClose = new EventDispatcher<void>()
+
+	protected projectPath?: string
+	protected actions: SimpleAction[] = []
+	protected isActive = false
+	protected isLoading = true
 
 	setIsUnsaved(val: boolean) {
 		this.isUnsaved = val
 	}
 
-	static is(filePath: string) {
+	get isSharingScreen() {
+		return this.parent.isSharingScreen
+	}
+
+	static is(fileHandle: AnyFileHandle) {
 		return false
 	}
 
-	constructor(protected parent: TabSystem, protected path: string) {}
+	constructor(protected parent: TabSystem) {
+		super()
+		window.setTimeout(() => this.setup())
+	}
+
+	async setup() {
+		this.dispatch(this)
+		this.isLoading = false
+	}
 
 	updateParent(parent: TabSystem) {
 		this.parent = parent
 	}
 
-	get name() {
-		const pathArr = this.path.split(/\\|\//g)
-		return pathArr.pop()!
+	abstract get name(): string
+	get tabSystem() {
+		return this.parent
 	}
+
+	/**
+	 * @returns Undefined if the file that belongs to this tab is not inside of a bridge. project
+	 */
 	getPath() {
-		return this.path
+		if (!this.projectPath)
+			throw new Error(
+				`Trying to access projectPath before tab finished loading`
+			)
+		return `projects/${this.parent.projectName}/${this.projectPath}`
 	}
-	getPackPath() {
-		return this.path.replace(
-			`projects/${App.instance.selectedProject}/`,
-			''
-		)
+	/**
+	 * @returns Undefined if the file that belongs to this tab is not inside of the current project
+	 */
+	getProjectPath() {
+		if (!this.projectPath)
+			throw new Error(
+				`Trying to access projectPath before tab finished loading`
+			)
+		return this.projectPath
 	}
 	get icon() {
-		return FileType.get(this.getPackPath())?.icon ?? 'mdi-file-outline'
+		return FileType.get(this.getProjectPath())?.icon ?? 'mdi-file-outline'
 	}
 	get iconColor() {
 		return PackType.get(this.getPath())?.color
@@ -52,16 +88,29 @@ export abstract class Tab {
 		this.parent.select(this)
 		return this
 	}
-	close() {
-		this.parent.close(this)
+	/**
+	 *
+	 * @returns Whether the tab was closed
+	 */
+	async close() {
+		this.parent.setActive(true)
+
+		const didClose = await this.parent.close(this)
+		if (didClose) {
+			this.connectedTabs.forEach((tab) => tab.close())
+			this.onClose.dispatch()
+		}
+		return didClose
 	}
-	isFor(path: string) {
-		return path === this.path
-	}
+	abstract isFor(fileHandle: AnyFileHandle): Promise<boolean>
 
 	focus() {}
-	async onActivate() {}
-	onDeactivate() {}
+	async onActivate() {
+		this.isActive = true
+	}
+	onDeactivate() {
+		this.isActive = false
+	}
 	onDestroy() {}
 	protected async toOtherTabSystem(updateParentTabs = true) {
 		const app = await App.getApp()
@@ -71,33 +120,48 @@ export abstract class Tab {
 			tabSystems[0] === this.parent ? tabSystems[0] : tabSystems[1]
 		const to = tabSystems[0] === this.parent ? tabSystems[1] : tabSystems[0]
 
-		this.updateParent(to)
+		this.parent = to
+
 		if (updateParentTabs) {
-			to.add(this, true)
 			from.remove(this, false)
+			await to.add(this, true)
 		} else {
-			await to.openedFiles.add(this.getPath())
-			await from.openedFiles.remove(this.getPath())
+			if (!this.isForeignFile) {
+				await to.openedFiles.add(this.getPath())
+				await from.openedFiles.remove(this.getPath())
+			}
 
 			to.select(this)
+
 			if (this.isSelected) from.select(from.tabs[0])
 		}
 	}
-	onContextMenu(event: MouseEvent) {
+
+	addAction(...actions: SimpleAction[]) {
+		this.actions.push(...actions)
+	}
+	clearActions() {
+		this.actions = []
+	}
+
+	async onContextMenu(event: MouseEvent) {
 		let moveSplitScreen = []
-		// It makes no sense to move a fail to the split-screen if the tab system only has one entry
+		// It makes no sense to move a file to the split-screen if the tab system only has one entry
 		if (this.parent.tabs.length > 1) {
-			moveSplitScreen.push({
-				name: 'actions.moveToSplitScreen.name',
-				description: 'actions.moveToSplitScreen.description',
-				icon: 'mdi-arrow-split-vertical',
-				onTrigger: async () => {
-					this.toOtherTabSystem()
+			moveSplitScreen.push(
+				{
+					name: 'actions.moveToSplitScreen.name',
+					description: 'actions.moveToSplitScreen.description',
+					icon: 'mdi-arrow-split-vertical',
+					onTrigger: async () => {
+						this.toOtherTabSystem()
+					},
 				},
-			})
+				<const>{ type: 'divider' }
+			)
 		}
 
-		showContextMenu(event, [
+		await showContextMenu(event, [
 			...moveSplitScreen,
 			{
 				name: 'actions.closeTab.name',
@@ -145,8 +209,6 @@ export abstract class Tab {
 			},
 		])
 	}
-
-	abstract save(): void | Promise<void>
 
 	copy() {
 		document.execCommand('copy')

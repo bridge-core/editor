@@ -1,4 +1,5 @@
-import Vue from 'vue'
+import { reactive, set } from '@vue/composition-api'
+import { App } from '/@/App'
 
 export type TSidebarElement = SidebarCategory | SidebarItem
 export interface ISidebarCategoryConfig {
@@ -41,6 +42,7 @@ export class SidebarCategory {
 	}
 
 	setOpen(val: boolean) {
+		App.audioManager.playAudio('click5.ogg', 1)
 		this.isOpen = val
 	}
 
@@ -61,15 +63,13 @@ export class SidebarCategory {
 	}
 	filtered(filter: string) {
 		if (filter.length === 0) return this
-		return Vue.observable(
-			new SidebarCategory({
-				items: this.items.filter((item) =>
-					item.getSearchText().includes(filter)
-				),
-				text: this.text,
-				isOpen: true,
-			})
-		)
+		return new SidebarCategory({
+			items: this.items.filter((item) =>
+				item.getSearchText().includes(filter)
+			),
+			text: this.text,
+			isOpen: true,
+		})
 	}
 }
 
@@ -149,7 +149,7 @@ export class Sidebar {
 	}
 
 	get currentElement() {
-		if (!this.selected) return {}
+		if (!this.selected) return
 
 		for (const element of this._elements) {
 			if (element.type === 'item') {
@@ -161,7 +161,7 @@ export class Sidebar {
 			if (item) return item
 		}
 
-		return {}
+		return
 	}
 	get currentState() {
 		if (!this.selected) return {}
@@ -171,7 +171,7 @@ export class Sidebar {
 		return this.state[id] ?? {}
 	}
 	setState(id: string, data: any) {
-		Vue.set(this.state, id, data)
+		set(this.state, id, data)
 	}
 
 	protected sortSidebar(elements: TSidebarElement[]) {
@@ -202,6 +202,9 @@ export class Sidebar {
 		return this._selected
 	}
 	set selected(val) {
+		if (val) {
+			App.audioManager.playAudio('click5.ogg', 1)
+		}
 		this._selected = val
 	}
 }

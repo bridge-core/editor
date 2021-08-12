@@ -9,10 +9,24 @@
 			inactive: !isActive,
 		}"
 		ref="tabElement"
-		@mousedown="hoverClose ? null : tab.select()"
+		@mousedown.left="hoveringBtn ? null : tab.select()"
+		@mousedown.middle.prevent
 		@click.middle="tab.close()"
-		@click.right="tab.onContextMenu($event)"
+		@click.right.prevent="tab.onContextMenu($event)"
 	>
+		<!-- Context menu button for touch -->
+		<v-btn
+			v-if="tab.isSelected && pointerDevice === 'touch'"
+			text
+			icon
+			small
+			@click="tab.onContextMenu($event)"
+			@mouseenter="hoveringBtn = true"
+			@mouseleave="hoveringBtn = false"
+		>
+			<v-icon>mdi-dots-vertical</v-icon>
+		</v-btn>
+
 		<v-icon class="mr-1" :color="tab.iconColor" small>
 			{{ tab.icon }}
 		</v-icon>
@@ -21,13 +35,13 @@
 			{{ tab.name }}
 		</span>
 
-		<v-btn 
-			@click.stop="tab.close()" 
-			text 
-			icon 
-			small 
-			@mouseenter="hoverClose = true" 
-			@mouseleave="hoverClose = false"
+		<v-btn
+			@click.stop="tab.close()"
+			text
+			icon
+			small
+			@mouseenter="hoveringBtn = true"
+			@mouseleave="hoveringBtn = false"
 		>
 			<v-icon small>mdi-close</v-icon>
 		</v-btn>
@@ -36,6 +50,7 @@
 
 <script>
 import { Tab } from './CommonTab'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'TabSystemTab',
@@ -44,8 +59,13 @@ export default {
 		isActive: Boolean,
 	},
 	data: () => ({
-		hoverClose: false
+		hoveringBtn: false,
 	}),
+	setup() {
+		return {
+			pointerDevice,
+		}
+	},
 	mounted() {
 		if (this.isSelected) {
 			this.$refs.tabElement.scrollIntoView({

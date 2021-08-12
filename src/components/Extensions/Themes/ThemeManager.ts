@@ -8,6 +8,8 @@ import json5 from 'json5'
 import { deepMerge } from '/@/utils/deepmerge'
 import { bridgeDark, bridgeLight } from './Default'
 import { Theme } from './Theme'
+import { VirtualFileHandle } from '../../FileSystem/Virtual/FileHandle'
+import { AnyFileHandle } from '../../FileSystem/Types'
 
 const colorNames = [
 	'text',
@@ -45,11 +47,19 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		// Listen for dark/light mode changes
 		const media = window.matchMedia('(prefers-color-scheme: light)')
 		this.mode = media.matches ? 'light' : 'dark'
-		media.addEventListener('change', (mediaQuery) => {
+		const onMediaChange = (mediaQuery: MediaQueryListEvent) => {
 			this.colorScheme.dispatch(mediaQuery.matches ? 'light' : 'dark')
 			this.mode = mediaQuery.matches ? 'light' : 'dark'
 			this.updateTheme()
-		})
+		}
+
+		if ('addEventListener' in media) {
+			media.addEventListener('change', (mediaQuery) =>
+				onMediaChange(mediaQuery)
+			)
+		} else {
+			media.addListener((mediaQuery) => onMediaChange(mediaQuery))
+		}
 
 		/**
 		 * Setup theme meta tag
@@ -67,6 +77,10 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		this.applyTheme(this.themeMap.get('bridge.default.dark'))
 	}
 
+	getCurrentMode() {
+		return this.mode
+	}
+
 	protected applyTheme(theme?: Theme) {
 		theme?.apply(this, this.vuetify)
 	}
@@ -74,11 +88,13 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		const app = await App.getApp()
 		let colorScheme = settingsState?.appearance?.colorScheme
 		if (!colorScheme || colorScheme === 'auto') colorScheme = this.mode
+		await app.projectManager.projectReady.fired
 
+		const bridgeConfig = app.projectConfig.get().bridge
 		const localThemeId =
-			(await app.projectConfig.get(
-				<'lightTheme' | 'darkTheme'>`${colorScheme}Theme`
-			)) ?? 'bridge.noSelection'
+			(colorScheme === 'light'
+				? bridgeConfig?.lightTheme
+				: bridgeConfig?.darkTheme) ?? 'bridge.noSelection'
 		const themeId =
 			<string>settingsState?.appearance?.[`${colorScheme}Theme`] ??
 			`bridge.default.${colorScheme}`
@@ -103,21 +119,24 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		}
 	}
 	async loadDefaultThemes(app: App) {
-		try {
-			await iterateDir(
-				await app.fileSystem.getDirectoryHandle('data/packages/themes'),
-				(fileHandle) => this.loadTheme(fileHandle)
-			)
-		} catch {}
+		await app.dataLoader.fired
+
+		await iterateDir(
+			await app.dataLoader.getDirectoryHandle(
+				'data/packages/common/themes'
+			),
+			(file) => this.loadTheme(file)
+		)
 
 		this.updateTheme()
 	}
 	async loadTheme(
-		fileHandle: FileSystemFileHandle,
+		fileHandle: AnyFileHandle,
 		isGlobal = true,
 		disposables?: IDisposable[]
 	) {
 		const file = await fileHandle.getFile()
+
 		let themeDefinition
 		try {
 			themeDefinition = json5.parse(await file.text())
@@ -169,6 +188,17 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 			dispose: () => this.themeMap.delete(themeConfig.id),
 		}
 	}
+
+	getColor(colorName: TColorName) {
+		const theme = this.themeMap.get(this.currentTheme)
+		if (!theme) throw new Error(`No theme currently loaded`)
+		return theme.getColor(colorName)
+	}
+	getHighlighterInfo(colorName: string) {
+		const theme = this.themeMap.get(this.currentTheme)
+		if (!theme) throw new Error(`No theme currently loaded`)
+		return theme.getHighlighterInfo(colorName)
+	}
 }
 
 export interface IThemeDefinition {
@@ -178,7 +208,12 @@ export interface IThemeDefinition {
 	colors: Record<TColorName, string>
 	highlighter?: Record<
 		string,
-		{ color?: string; textDecoration?: string; isItalic?: boolean }
+		{
+			color?: string
+			background?: string
+			textDecoration?: string
+			isItalic?: boolean
+		}
 	>
 	monaco?: Record<string, string>
 }

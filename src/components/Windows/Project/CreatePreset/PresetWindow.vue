@@ -35,6 +35,11 @@
 				{{ content.description }}
 			</p>
 
+			<PresetPath
+				v-if="typeof content.models.PRESET_PATH === 'string'"
+				v-model="content.models.PRESET_PATH"
+			/>
+
 			<template v-for="([name, id, opts = {}], i) in content.fields">
 				<v-text-field
 					v-if="!opts.type || opts.type === 'textInput'"
@@ -42,9 +47,17 @@
 					:key="i"
 					v-model="content.models[id]"
 					:label="name"
+					:rules="
+						opts.validate
+							? opts.validate.map(
+									(rule) => $data.validationRules[rule]
+							  )
+							: []
+					"
 					autocomplete="off"
 					outlined
 					dense
+					@keypress.enter="onCreatePreset"
 				/>
 				<v-file-input
 					v-else-if="opts.type === 'fileInput'"
@@ -105,7 +118,6 @@
 				@click="onCreatePreset"
 				color="primary"
 				:disabled="!fieldsReady"
-				:loading="!isPackIndexerReady"
 			>
 				<v-icon class="mr-1">mdi-plus</v-icon>
 				Create
@@ -116,15 +128,16 @@
 
 <script>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
+import PresetPath from './PresetPath.vue'
 
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
-import { PackIndexerMixin } from '/@/components/Mixins/Tasks/PackIndexer'
 
 export default {
 	name: 'CreatePresetWindow',
-	mixins: [TranslationMixin, PackIndexerMixin],
+	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,
+		PresetPath,
 	},
 	props: ['currentWindow'],
 	data() {
@@ -136,8 +149,20 @@ export default {
 		},
 		fieldsReady() {
 			return Object.values(this.content.fields || {}).every(
-				([_, id, opts = {}]) =>
-					!!this.content.models[id] || opts.optional
+				([_, id, opts = {}]) => {
+					if (
+						opts.validate &&
+						opts.validate.some(
+							(rule) =>
+								this.$data.validationRules[rule](
+									this.content.models[id]
+								) !== true
+						)
+					)
+						return false
+
+					return !!this.content.models[id] || opts.optional
+				}
 			)
 		},
 	},
@@ -146,7 +171,7 @@ export default {
 			this.currentWindow.close()
 		},
 		onCreatePreset() {
-			this.currentWindow.createPreset(this.content)
+			if (this.fieldsReady) this.currentWindow.createPreset(this.content)
 		},
 	},
 }

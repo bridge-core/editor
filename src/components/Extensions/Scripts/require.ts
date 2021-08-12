@@ -15,6 +15,13 @@ import { WindowModule } from './Modules/windows'
 import { GlobalsModule } from './Modules/globals'
 import { ToolbarModule } from './Modules/toolbar'
 import { CompareVersions } from './Modules/compareVersions'
+import { MonacoModule } from './Modules/monaco'
+import { Json5Module } from './Modules/json5'
+import { ComMojangModule } from './Modules/comMojang'
+import { TabModule } from './Modules/Tab'
+import { TabActionsModule } from './Modules/TabAction'
+import { ThemeModule } from './Modules/theme'
+import { ProjectModule } from './Modules/project'
 
 const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/ui', UIModule],
@@ -23,6 +30,7 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/fs', FSModule],
 	['@bridge/path', PathModule],
 	['@bridge/env', ENVModule],
+	['@bridge/project', ProjectModule],
 	['@bridge/globals', GlobalsModule],
 	['@bridge/utils', UtilsModule],
 	['@bridge/file-importer', ImportFileModule],
@@ -30,6 +38,12 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/windows', WindowModule],
 	['@bridge/toolbar', ToolbarModule],
 	['@bridge/compare-versions', CompareVersions],
+	['@bridge/monaco', MonacoModule],
+	['@bridge/json5', Json5Module],
+	['@bridge/com-mojang', ComMojangModule],
+	['@bridge/tab', TabModule],
+	['@bridge/tab-actions', TabActionsModule],
+	['@bridge/theme', ThemeModule],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
@@ -46,20 +60,26 @@ const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
 function createGenericEnv(
 	disposables: IDisposable[] = [],
 	uiStore?: TUIStore,
+	isGlobal: boolean = false,
 	modules = BuiltInModules
 ) {
 	return async (importName: string) => {
 		const module = modules.get(importName)
-		if (module) return await module({ uiStore, disposables })
+		if (module) return await module({ uiStore, disposables, isGlobal })
 	}
 }
 
-export function createEnv(disposables: IDisposable[] = [], uiStore?: TUIStore) {
-	return createGenericEnv(disposables, uiStore)
+export function createEnv(
+	disposables: IDisposable[] = [],
+	uiStore?: TUIStore,
+	isGlobal: boolean = false
+) {
+	return createGenericEnv(disposables, uiStore, isGlobal)
 }
 export function createLimitedEnv(
 	disposables: IDisposable[] = [],
-	uiStore?: TUIStore
+	uiStore?: TUIStore,
+	isGlobal: boolean = false
 ) {
-	return createGenericEnv(disposables, uiStore, LimitedModules)
+	return createGenericEnv(disposables, uiStore, isGlobal, LimitedModules)
 }

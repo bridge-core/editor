@@ -1,7 +1,0 @@
-[
-	{ "identifier": "animations" },
-	{
-		"functionPath": ["animations/*/timeline/*/*"],
-		"@map": "const func = /\\/function\\s+([aA-zZ0-9\\/]+)/g.exec(Bridge.value); if(func) return `functions/${func[1]}.mcfunction`"
-	}
-]

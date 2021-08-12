@@ -8,14 +8,16 @@
 		absolute
 		:right="isSidebarRight"
 		color="sidebarNavigation"
+		height="calc(100% - env(titlebar-area-height, 24px))"
 	>
 		<v-list>
 			<SidebarButton
-				v-for="(sidebar, uuid) in SidebarState.sidebarElements"
-				:key="`${uuid}`"
+				v-for="sidebar in sidebarElements"
+				:key="`${sidebar.uuid}`"
 				:displayName="sidebar.displayName"
 				:icon="sidebar.icon"
 				:isLoading="sidebar.isLoading"
+				:isSelected="sidebar.isSelected"
 				@click="sidebar.click()"
 			/>
 		</v-list>
@@ -31,6 +33,7 @@
 					:color="notification.color"
 					:iconColor="notification.textColor"
 					@click="notification.onClick()"
+					@middleClick="notification.onMiddleClick()"
 				/>
 			</template>
 		</v-list>
@@ -83,6 +86,11 @@ export default {
 		}
 	},
 	computed: {
+		sidebarElements() {
+			return Object.values(SidebarState.sidebarElements).filter(
+				(sidebar) => sidebar.isVisible
+			)
+		},
 		hasVisibleNotifications() {
 			return Object.values(this.NotificationStore).some(
 				({ isVisible }) => isVisible
@@ -91,8 +99,8 @@ export default {
 		isSidebarRight() {
 			return (
 				this.settingsState &&
-				this.settingsState.appearance &&
-				this.settingsState.appearance.isSidebarRight
+				this.settingsState.sidebar &&
+				this.settingsState.sidebar.isSidebarRight
 			)
 		},
 	},

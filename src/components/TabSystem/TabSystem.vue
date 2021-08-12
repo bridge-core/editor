@@ -1,11 +1,27 @@
 <template>
 	<div v-if="tabSystem.shouldRender" class="tab-system">
 		<TabBar :tabSystem="tabSystem" />
-
+		<v-progress-linear
+			v-if="tabSystem.selectedTab && tabSystem.selectedTab.isLoading"
+			absolute
+			indeterminate
+		/>
 		<keep-alive>
 			<component
 				:is="tabSystem.currentComponent"
-				:key="`${tabSystem.uuid}.${tabSystem.currentComponent.name}`"
+				:key="`${tabSystem.uuid}.${
+					tabSystem.currentComponent.name ||
+					tabSystem.selectedTab.type ||
+					tabSystem.selectedTab.name
+				}`"
+				:style="`height: ${
+					windowHeight -
+					(tabBarHeight + (windowControlsOverlay ? 33 : 24))
+				}px; width: 100%;`"
+				:height="
+					windowHeight -
+					(tabBarHeight + (windowControlsOverlay ? 33 : 24))
+				"
 				:tab="tabSystem.selectedTab"
 				:id="id"
 			/>
@@ -17,9 +33,11 @@
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import TabBar from '/@/components/TabSystem/TabBar.vue'
 import { App } from '/@/App'
+import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay'
 
 export default {
 	name: 'TabSystem',
+	mixins: [WindowControlsOverlayMixin],
 	props: {
 		tabSystem: Object,
 		id: {
@@ -30,6 +48,30 @@ export default {
 	components: {
 		TabBar,
 		WelcomeScreen,
+	},
+	data: () => ({
+		windowHeight: window.innerHeight,
+	}),
+	async mounted() {
+		const app = await App.getApp()
+		app.windowResize.on(this.updateWindowHeight)
+	},
+	async destroyed() {
+		const app = await App.getApp()
+		app.windowResize.off(this.updateWindowHeight)
+	},
+	computed: {
+		tabBarHeight() {
+			return this.tabSystem.selectedTab &&
+				this.tabSystem.selectedTab.actions.length > 0
+				? 48 + 25
+				: 48
+		},
+	},
+	methods: {
+		updateWindowHeight() {
+			this.windowHeight = window.innerHeight
+		},
 	},
 	watch: {
 		'tabSystem.shouldRender'() {

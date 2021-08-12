@@ -4,9 +4,11 @@ import { Toggle } from './Controls/Toggle/Toggle'
 import { SettingsWindow } from './SettingsWindow'
 import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
-import { ProjectSelection } from './Controls/Selection/ProjectSelection'
+import { BridgeConfigSelection } from './Controls/Selection/BridgeConfigSelection'
 import { Button } from './Controls/Button/Button'
 import { del } from 'idb-keyval'
+import { comMojangKey } from '../../FileSystem/ComMojang'
+import { Sidebar } from './Controls/Sidebar/Sidebar'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -57,7 +59,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
-		new ProjectSelection({
+		new BridgeConfigSelection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.localDarkTheme.name',
 			description:
@@ -76,7 +78,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
-		new ProjectSelection({
+		new BridgeConfigSelection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.localLightTheme.name',
 			description:
@@ -97,21 +99,43 @@ export async function setupSettings(settings: SettingsWindow) {
 
 	settings.addControl(
 		new Toggle({
-			category: 'appearance',
-			name: 'windows.settings.appearance.sidebarRight.name',
-			description: 'windows.settings.appearance.sidebarRight.description',
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.sidebarRight.name',
+			description: 'windows.settings.sidebar.sidebarRight.description',
 			key: 'isSidebarRight',
 			default: false,
 		})
 	)
 	settings.addControl(
 		new Toggle({
-			category: 'appearance',
-			name: 'windows.settings.appearance.shrinkSidebarElements.name',
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.shrinkSidebarElements.name',
 			description:
-				'windows.settings.appearance.shrinkSidebarElements.description',
+				'windows.settings.sidebar.shrinkSidebarElements.description',
 			key: 'smallerSidebarElements',
 			default: false,
+		})
+	)
+	settings.addControl(
+		new ButtonToggle({
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.sidebarSize.name',
+			description: 'windows.settings.sidebar.sidebarSize.description',
+			key: 'sidebarSize',
+			options: ['tiny', 'small', 'normal', 'large'],
+			default: 'normal',
+			onChange: () => {
+				App.getApp().then((app) => app.windowResize.dispatch())
+			},
+		})
+	)
+	settings.addControl(
+		new Sidebar({
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.shrinkSidebarElements.name',
+			description:
+				'windows.settings.sidebar.shrinkSidebarElements.description',
+			key: 'hideElements',
 		})
 	)
 
@@ -170,7 +194,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			name: 'windows.settings.general.packSpider.name',
 			description: 'windows.settings.general.packSpider.description',
 			key: 'enablePackSpider',
-			default: true,
+			default: false,
 		})
 	)
 
@@ -211,13 +235,59 @@ export async function setupSettings(settings: SettingsWindow) {
 				'windows.settings.general.resetBridgeFolder.description',
 			onClick: async () => {
 				await del('bridgeBaseDir')
+				await del(comMojangKey)
 				location.reload()
 			},
 		})
 	)
 
+	//Audio
+	settings.addControl(
+		new Toggle({
+			category: 'audio',
+			name: 'windows.settings.audio.volume.name',
+			description: 'windows.settings.audio.volume.description',
+			key: 'playAudio',
+			default: false,
+			onChange: (val) => {
+				App.audioManager.isMuted = !val
+			},
+		})
+	)
+	// Editor
+	settings.addControl(
+		new Selection({
+			category: 'editor',
+			name: 'windows.settings.editor.jsonEditor.name',
+			description: 'windows.settings.editor.jsonEditor.description',
+			key: 'jsonEditor',
+			options: [
+				{ text: 'Tree Editor', value: 'treeEditor' },
+				{ text: 'Raw Text', value: 'rawText' },
+			],
+			default: 'rawText',
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.wordWrap.name',
+			description: 'windows.settings.editor.wordWrap.description',
+			key: 'wordWrap',
+			default: false,
+			onChange: async (val) => {
+				const app = await App.getApp()
+				app.projectManager.updateAllEditorOptions({
+					wordWrap: val ? 'bounded' : 'off',
+				})
+			},
+		})
+	)
+
+	// Actions
 	const app = await App.getApp()
 	Object.values(app.actionManager.state).forEach((action) => {
-		settings.addControl(new ActionViewer(action))
+		if (action.type === 'action')
+			settings.addControl(new ActionViewer(action))
 	})
 }

@@ -1,21 +1,26 @@
-import { Signal } from '/@/components/Common/Event/Signal'
+// This import is relative so the compiler types build correctly
+import { Signal } from '../Common/Event/Signal'
 import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
+import { iterateDir } from '/@/utils/iterateDir'
+import { join } from '/@/utils/path'
+import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
 
 export class FileSystem extends Signal<void> {
-	public _baseDirectory!: FileSystemDirectoryHandle
+	protected _baseDirectory!: AnyDirectoryHandle
 	get baseDirectory() {
 		return this._baseDirectory
 	}
 
-	constructor(baseDirectory?: FileSystemDirectoryHandle) {
+	constructor(baseDirectory?: AnyDirectoryHandle) {
 		super()
 		if (baseDirectory) this.setup(baseDirectory)
 	}
 
-	setup(baseDirectory: FileSystemDirectoryHandle) {
+	setup(baseDirectory: AnyDirectoryHandle) {
 		this._baseDirectory = baseDirectory
-		this.dispatch()
+
+		if (!this.hasFired) this.dispatch()
 	}
 
 	async getDirectoryHandle(
@@ -71,22 +76,19 @@ export class FileSystem extends Signal<void> {
 		// else await this.getDirectoryHandle(path, { createOnce: true })
 	}
 
-	readdir(
-		path: string,
-		config: { withFileTypes: true }
-	): Promise<FileSystemHandle[]>
+	readdir(path: string, config: { withFileTypes: true }): Promise<AnyHandle[]>
 	readdir(path: string, config?: { withFileTypes?: false }): Promise<string[]>
 	async readdir(
 		path: string,
 		{ withFileTypes }: { withFileTypes?: true | false } = {}
 	) {
 		const dirHandle = await this.getDirectoryHandle(path)
-		const files: (string | FileSystemHandle)[] = []
+		const files: (string | AnyHandle)[] = []
 
 		for await (const handle of dirHandle.values()) {
 			if (handle.kind === 'file' && handle.name === '.DS_Store') continue
 
-			if (withFileTypes) files.push(handle)
+			if (withFileTypes) files.push(<AnyHandle>handle)
 			else files.push(handle.name)
 		}
 
@@ -95,8 +97,8 @@ export class FileSystem extends Signal<void> {
 	async readFilesFromDir(
 		path: string,
 		dirHandle:
-			| FileSystemDirectoryHandle
-			| Promise<FileSystemDirectoryHandle> = this.getDirectoryHandle(path)
+			| AnyDirectoryHandle
+			| Promise<AnyDirectoryHandle> = this.getDirectoryHandle(path)
 	) {
 		dirHandle = await dirHandle
 
@@ -135,7 +137,12 @@ export class FileSystem extends Signal<void> {
 
 		// This has to be a string because path.length > 0
 		const file = <string>pathArr.pop()
-		const parentDir = await this.getDirectoryHandle(pathArr.join('/'))
+		let parentDir: AnyDirectoryHandle
+		try {
+			parentDir = await this.getDirectoryHandle(pathArr.join('/'))
+		} catch {
+			return
+		}
 
 		await parentDir.removeEntry(file, { recursive: true })
 	}
@@ -143,12 +150,11 @@ export class FileSystem extends Signal<void> {
 	async writeFile(path: string, data: FileSystemWriteChunkType) {
 		const fileHandle = await this.getFileHandle(path, true)
 		await this.write(fileHandle, data)
+		return fileHandle
 	}
 
-	async write(
-		fileHandle: FileSystemFileHandle,
-		data: FileSystemWriteChunkType
-	) {
+	async write(fileHandle: AnyFileHandle, data: FileSystemWriteChunkType) {
+		// console.log(data)
 		const writable = await fileHandle.createWritable()
 		await writable.write(data)
 		await writable.close()
@@ -169,18 +175,88 @@ export class FileSystem extends Signal<void> {
 		)
 	}
 
-	async copyFile(originPath: string, destPath: string) {
-		const fileHandle = await this.getFileHandle(originPath, false)
-		const copiedFileHandle = await this.getFileHandle(destPath, true)
+	async move(path: string, newPath: string) {
+		if (await this.fileExists(path)) {
+			await this.copyFile(path, newPath)
+		} else if (await this.directoryExists(path)) {
+			await this.copyFolder(path, newPath)
+		} else {
+			throw new Error(`File or folder does not exist: ${path}`)
+		}
 
-		const writable = await copiedFileHandle.createWritable()
-		await writable.write(await fileHandle.getFile())
+		await this.unlink(path)
+	}
+	async copyFile(originPath: string, destPath: string) {
+		const originHandle = await this.getFileHandle(originPath, false)
+		const destHandle = await this.getFileHandle(destPath, true)
+
+		return await this.copyFileHandle(originHandle, destHandle)
+	}
+	async copyFileHandle(
+		originHandle: AnyFileHandle,
+		destHandle: AnyFileHandle
+	) {
+		const writable = await destHandle.createWritable()
+		await writable.write(await originHandle.getFile())
 		await writable.close()
+		return destHandle
+	}
+	async copyFolder(originPath: string, destPath: string) {
+		const originHandle = await this.getDirectoryHandle(originPath, {
+			create: false,
+		})
+
+		await iterateDir(originHandle, async (fileHandle, filePath) => {
+			await this.copyFileHandle(
+				fileHandle,
+				await this.getFileHandle(join(destPath, filePath), true)
+			)
+		})
+	}
+	async copyFolderByHandle(
+		originHandle: AnyDirectoryHandle,
+		destHandle: AnyDirectoryHandle
+	) {
+		const destFs = new FileSystem(destHandle)
+
+		await iterateDir(originHandle, async (fileHandle, filePath) => {
+			await this.copyFileHandle(
+				fileHandle,
+				await destFs.getFileHandle(filePath, true)
+			)
+		})
+	}
+
+	loadFileHandleAsDataUrl(fileHandle: AnyFileHandle) {
+		return new Promise<string>(async (resolve, reject) => {
+			const reader = new FileReader()
+
+			try {
+				const file = await fileHandle.getFile()
+
+				reader.addEventListener('load', () => {
+					resolve(<string>reader.result)
+				})
+				reader.addEventListener('error', reject)
+				reader.readAsDataURL(file)
+			} catch {
+				reject(`File does not exist: "${fileHandle.name}"`)
+			}
+		})
 	}
 
 	async fileExists(path: string) {
 		try {
 			await this.getFileHandle(path)
+			return true
+		} catch {
+			return false
+		}
+	}
+
+	async directoryExists(path: string) {
+		try {
+			await this.getDirectoryHandle(path)
 			return true
 		} catch {
 			return false

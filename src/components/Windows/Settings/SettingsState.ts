@@ -1,14 +1,11 @@
-import Vue from 'vue'
+import { reactive, set } from '@vue/composition-api'
 
-export let settingsState: Record<
-	string,
-	Record<string, unknown>
-> = Vue.observable({})
+export let settingsState: Record<string, Record<string, unknown>> = reactive({})
 
 export function setSettingsState(
 	state: Record<string, Record<string, unknown>>
 ) {
 	for (const key in state) {
-		Vue.set(settingsState, key, state[key])
+		set(settingsState, key, state[key])
 	}
 }

@@ -2,25 +2,36 @@
  * Reactive vue state for the Sidebar
  */
 
-import Vue from 'vue'
+import { computed, reactive, ref, watch } from '@vue/composition-api'
+import { SidebarContent } from './Content/SidebarContent'
 import { SidebarElement } from './create'
-// import { trigger } from '../../AppCycle/EventSystem'
+import { App } from '/@/App'
 
 export interface SidebarState {
-	currentState: string | null
+	currentState: SidebarContent | null
 	sidebarElements: Record<string, SidebarElement>
 }
 
-export const SidebarState: SidebarState = Vue.observable({
+export const SidebarState: SidebarState = reactive({
 	currentState: null,
 	sidebarElements: {},
 })
 
-export function selectSidebar(findId: string) {
-	const sidebar = Object.values(SidebarState.sidebarElements).find(
-		({ uuid }) => uuid === findId
-	)
+export function toggle(content: SidebarContent) {
+	if (content === SidebarState.currentState) {
+		SidebarState.currentState = null
+	} else {
+		SidebarState.currentState = content
+	}
 
-	if (!sidebar) throw new Error(`Sidebar with id "${findId}" not found`)
-	sidebar?.click()
+	App.getApp().then((app) => app.windowResize.dispatch())
 }
+
+export const isContentVisible = ref(false)
+watch(
+	SidebarState,
+	() => {
+		isContentVisible.value = SidebarState.currentState !== null
+	},
+	{ deep: false }
+)

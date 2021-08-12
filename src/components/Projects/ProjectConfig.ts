@@ -1,56 +1,172 @@
-import { App } from '/@/App'
 import { FileSystem } from '../FileSystem/FileSystem'
+import type { Project } from './Project/Project'
 
-export type TProjectConfigKey =
-	| 'prefix'
-	| 'targetVersion'
-	| 'author'
-	| 'darkTheme'
-	| 'lightTheme'
-export type TProjectConfig = {
-	[key in TProjectConfigKey]: unknown
+export interface IConfigJson {
+	/**
+	 * Defines the type of a project
+	 */
+	type: 'minecraftBedrock' | 'minecraftJava'
+
+	/**
+	 * The name of the project
+	 */
+	name: string
+
+	/**
+	 * Creator of the project
+	 *
+	 * @example "solvedDev" / "Joel ant 05"
+	 */
+	author: string
+
+	/**
+	 * The Minecraft version this project targets
+	 *
+	 * @example "1.17.0" / "1.16.220"
+	 */
+	targetVersion: string
+
+	/**
+	 * Experimental gameplay the project intends to use.
+	 *
+	 * @example { "cavesAndCliffs": true, "holidayCreatorFeatures": false }
+	 */
+	experimentalGameplay?: Record<string, boolean>
+
+	/**
+	 * The namespace used for the project. The namespace "minecraft" is not a valid string for this field.
+	 *
+	 * @example "my_project"
+	 */
+	namespace: string
+
+	/**
+	 * Maps the id of packs this project contains to a path relative to the config.json
+	 *
+	 * @example { "behaviorPack": "./BP", "resourcePack": "./RP" }
+	 */
+	packs: {
+		[packId: string]: string
+	}
+
+	/**
+	 * Allows users to define additional data which is hard to find for tools
+	 * (e.g. scoreboards setup inside of a world)
+	 *
+	 * @example { "names": { "include": ["solvedDev"] } }
+	 */
+	packDefinitions: {
+		families: IPackDefinition
+		tags: IPackDefinition
+		scoreboardObjectives: IPackDefinition
+		names: IPackDefinition
+	}
+
+	/**
+	 * Tools can create their own namespace inside of this file to save tool specific data and settings
+	 *
+	 * @example { "bridge": { "darkTheme": "bridge.default.dark", "lightTheme": "bridge.default.light" } }
+	 */
+	[uniqueToolId: string]: any
+
+	bridge?: {
+		lightTheme?: string
+		darkTheme?: string
+		v1CompatMode?: boolean
+	}
+}
+
+interface IPackDefinition {
+	/**
+	 * Optional: Define e.g. the type of a scoreboard objective
+	 *
+	 * @example "dummy"
+	 */
+	type?: string
+	/**
+	 * Strings to exclude from a tool's collected data
+	 */
+	exclude: string[]
+	/**
+	 * String to add to a tool's collected data
+	 */
+	include: string[]
 }
 
 export class ProjectConfig {
-	protected data: any
-	protected fileSystem!: FileSystem
+	protected data: Partial<IConfigJson> = {}
 
-	constructor() {
-		App.ready.once(app => (this.fileSystem = app.fileSystem))
-		App.eventSystem.on('projectChanged', () => {
-			this.data = undefined
-		})
+	constructor(protected fileSystem: FileSystem, project?: Project) {
+		if (project) {
+			project.fileSave.on('config.json', () => {
+				this.refreshConfig()
+			})
+		}
 	}
 
-	protected async loadData() {
-		const app = await App.getApp()
+	async setup() {
+		// Load legacy project config & transform it to new format specified here: https://github.com/bridge-core/project-config-standard
+		if (await this.fileSystem.fileExists('.bridge/config.json')) {
+			const {
+				darkTheme,
+				lightTheme,
+				gameTestAPI,
+				scriptingAPI,
+				prefix,
+				...other
+			} = await this.fileSystem.readJSON('.bridge/config.json')
+			await this.fileSystem.unlink('.bridge/config.json')
+
+			const experimentalGameplay: Record<string, boolean> = {}
+			if (gameTestAPI)
+				experimentalGameplay['enableGameTestFramework'] = true
+			if (scriptingAPI)
+				experimentalGameplay['additionalModdingCapabilities'] = true
+
+			const newFormat = {
+				type: 'minecraftBedrock',
+				name: this.fileSystem.baseDirectory.name,
+				namespace: prefix,
+				experimentalGameplay,
+				...other,
+				packs: {
+					behaviorPack: './BP',
+					resourcePack: './RP',
+					skinPack: './SP',
+					worldTemplate: './WT',
+				},
+				bridge: {
+					darkTheme,
+					lightTheme,
+				},
+			}
+
+			await this.fileSystem.writeJSON('config.json', newFormat, true)
+			this.data = newFormat
+
+			return
+		}
+
 		try {
-			this.data = await this.fileSystem.readJSON(
-				`projects/${app.selectedProject}/bridge/config.json`
-			)
+			this.data = await this.fileSystem.readJSON(`config.json`)
 		} catch {
 			this.data = {}
 		}
 	}
 
-	async getConfig() {
-		if (!this.data) await this.loadData()
+	async refreshConfig() {
+		try {
+			this.data = await this.fileSystem.readJSON(`config.json`)
+		} catch {
+			this.data = {}
+		}
+	}
+
+	get() {
 		return this.data
 	}
 
-	async get(key: TProjectConfigKey) {
-		if (!this.data) await this.loadData()
-		return this.data![key]
-	}
-	async set(key: TProjectConfigKey, data: unknown) {
-		const app = await App.getApp()
-		if (!this.data) await this.loadData()
-		this.data![key] = data
-
-		await this.fileSystem.writeJSON(
-			`projects/${app.selectedProject}/bridge/config.json`,
-			this.data,
-			true
-		)
+	async save() {
+		await this.fileSystem.writeJSON(`config.json`, this.data, true)
 	}
 }

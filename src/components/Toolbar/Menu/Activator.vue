@@ -9,6 +9,7 @@
 		<template v-slot:activator="{ on }">
 			<MenuButton
 				v-on="on"
+				:disabled="disabled"
 				:displayIcon="item.icon"
 				:displayName="item.name"
 			/>
@@ -30,6 +31,7 @@ export default {
 	},
 	props: {
 		item: Object,
+		disabled: Boolean,
 	},
 }
 </script>

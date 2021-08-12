@@ -1,5 +1,0 @@
-{
-	"type": "object",
-	"generateFile": "entity/dynamic/customComponents.json",
-	"script": "return customComponents('entity')"
-}

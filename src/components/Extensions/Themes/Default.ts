@@ -1,9 +1,11 @@
+import { colorCodes } from './DefaultTheme/ColorCodes'
+
 export const bridgeDark = <const>{
 	id: 'bridge.default.dark',
 	name: 'Default Dark',
 	colorScheme: 'dark',
 	colors: {
-		text: '#fff',
+		text: '#ffffff',
 
 		primary: '#0073FF',
 		secondary: '#0073FF',
@@ -45,10 +47,10 @@ export const bridgeDark = <const>{
 			color: '#e6db74',
 		},
 		variable: {
-			color: '#9effff',
+			color: '#6e9eff',
 		},
-		variable_strong: {
-			color: '#9effff',
+		variableStrong: {
+			color: '#6e9eff',
 		},
 		meta: {
 			color: 'white',
@@ -56,6 +58,7 @@ export const bridgeDark = <const>{
 		comment: {
 			color: '#75715e',
 		},
+		...colorCodes('#fff'),
 	},
 }
 
@@ -64,7 +67,7 @@ export const bridgeLight = <const>{
 	name: 'Default Light',
 	colorScheme: 'light',
 	colors: {
-		text: '#000',
+		text: '#000000',
 
 		primary: '#0073FF',
 		secondary: '#0073FF',
@@ -75,19 +78,19 @@ export const bridgeLight = <const>{
 		success: '#4caf50',
 
 		background: '#fafafa',
-		sidebarNavigation: '#FFFFFF',
-		expandedSidebar: '#FFFFFF',
-		sidebarSelection: '#ececec',
-		menu: '#fff',
+		sidebarNavigation: '#e8e8e8',
+		expandedSidebar: '#e8e8e8',
+		sidebarSelection: '#FFFFFF',
+		menu: '#FFFFFF',
 		tooltip: '#424242',
 		toolbar: '#e0e0e0',
 		footer: '#f5f5f5',
 		tabActive: '#fafafa',
-		tabInactive: '#ececec',
+		tabInactive: '#e0e0e0',
 		lineHighlightBackground: '#e0e0e0',
 	},
 	highlighter: {
-		property: {
+		type: {
 			color: 'black',
 		},
 		keyword: {
@@ -108,7 +111,7 @@ export const bridgeLight = <const>{
 		variable: {
 			color: 'black',
 		},
-		variable_strong: {
+		variableStrong: {
 			color: 'black',
 		},
 		meta: {
@@ -117,5 +120,6 @@ export const bridgeLight = <const>{
 		comment: {
 			color: '#0080FF',
 		},
+		...colorCodes('#000'),
 	},
 }

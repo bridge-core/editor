@@ -1,20 +1,23 @@
 import { App } from '/@/App'
 import { WorkerManager } from '/@/components/Worker/Manager'
-import * as Comlink from 'comlink'
+import { proxy } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
+import type { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
 import { FileType } from '/@/components/Data/FileType'
 import PackIndexerWorker from './Worker/Main?worker'
+import { Signal } from '../Common/Event/Signal'
+import { AnyDirectoryHandle } from '../FileSystem/Types'
 
 export class PackIndexer extends WorkerManager<
+	typeof PackIndexerService,
 	PackIndexerService,
-	IPackIndexerOptions,
 	boolean,
-	string[]
+	readonly [string[], string[]]
 > {
+	protected ready = new Signal<void>()
 	constructor(
 		protected app: App,
-		protected baseDirectory: FileSystemDirectoryHandle
+		protected baseDirectory: AnyDirectoryHandle
 	) {
 		super({
 			icon: 'mdi-flash-outline',
@@ -35,42 +38,73 @@ export class PackIndexer extends WorkerManager<
 		console.time('[TASK] Indexing Packs (Total)')
 
 		// Instaniate the worker TaskService
-		this._service = await new this.workerClass!({
-			projectDirectory: this.baseDirectory,
-			baseDirectory: this.app.fileSystem.baseDirectory,
-			disablePackSpider: !settingsState?.general?.enablePackSpider,
-			pluginFileTypes: FileType.getPluginFileTypes(),
-			noFullLightningCacheRefresh:
-				!forceRefreshCache &&
-				!settingsState?.general?.fullLightningCacheRefresh,
-		})
+		this._service = await new this.workerClass!(
+			this.baseDirectory,
+			this.app.fileSystem.baseDirectory,
+			{
+				disablePackSpider: !(
+					settingsState?.general?.enablePackSpider ?? false
+				),
+				pluginFileTypes: FileType.getPluginFileTypes(),
+				noFullLightningCacheRefresh:
+					!forceRefreshCache &&
+					!settingsState?.general?.fullLightningCacheRefresh,
+			}
+		)
 
 		// Listen to task progress and update UI
-		this._service.on(
-			Comlink.proxy(([current, total]) => {
+		await this.service.on(
+			proxy(([current, total]) => {
 				this.task?.update(current, total)
 			}),
 			false
 		)
 
 		// Start service
-		const changedFiles = await this._service!.start()
+		const [changedFiles, deletedFiles] = await this.service.start(
+			forceRefreshCache
+		)
+		await this.service.disposeListeners()
+		this.ready.dispatch()
 		console.timeEnd('[TASK] Indexing Packs (Total)')
-		return changedFiles
+		return <const>[changedFiles, deletedFiles]
 	}
 
-	async updateFile(filePath: string) {
-		await this.fired
-		await this.service!.updatePlugins(FileType.getPluginFileTypes())
-		await this.service!.updateFile(filePath)
+	async updateFile(filePath: string, fileContent?: string) {
+		await this.ready.fired
+		this.ready.resetSignal()
+
+		await this.service.updatePlugins(FileType.getPluginFileTypes())
+		await this.service.updateFile(filePath, fileContent)
+
+		this.ready.dispatch()
+	}
+	async updateFiles(filePaths: string[]) {
+		await this.ready.fired
+		this.ready.resetSignal()
+
+		await this.service.updatePlugins(FileType.getPluginFileTypes())
+
+		for (const filePath of filePaths) {
+			await this.service.updateFile(filePath)
+		}
+
+		this.ready.dispatch()
+	}
+	async unlink(path: string) {
+		await this.ready.fired
+		this.ready.resetSignal()
+
+		await this.service.updatePlugins(FileType.getPluginFileTypes())
+
+		await this.service.unlink(path)
+
+		this.ready.dispatch()
 	}
 
 	async readdir(path: string[], ..._: any[]) {
 		await this.fired
-		return await this.service!.readdir(path)
-	}
 
-	get service() {
-		return this._service
+		return await this.service.readdir(path)
 	}
 }

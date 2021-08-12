@@ -1,21 +1,23 @@
-import { Tab } from '/@/components/TabSystem/CommonTab'
+import { FileTab } from '/@/components/TabSystem/FileTab'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import ImageTabComponent from './ImageTab.vue'
+import { AnyFileHandle } from '../../FileSystem/Types'
 
-export class ImageTab extends Tab {
+export class ImageTab extends FileTab {
 	component = ImageTabComponent
 	dataUrl?: string = undefined
 
-	static is(filePath: string) {
+	static is(fileHandle: AnyFileHandle) {
+		const fileName = fileHandle.name
 		return (
-			filePath.endsWith('.png') ||
-			filePath.endsWith('.jpg') ||
-			filePath.endsWith('.jpeg')
+			fileName.endsWith('.png') ||
+			fileName.endsWith('.jpg') ||
+			fileName.endsWith('.jpeg')
 		)
 	}
 
 	async onActivate() {
-		this.dataUrl = await loadAsDataURL(this.path)
+		this.dataUrl = await loadAsDataURL(this.getPath())
 	}
 
 	get icon() {

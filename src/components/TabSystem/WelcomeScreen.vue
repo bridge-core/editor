@@ -7,6 +7,7 @@
 			style="height: 160px; width: 160px"
 			class="mb-4"
 			alt="bridge. Logo"
+			draggable="false"
 			src="/@/_assets/logo.svg"
 		/>
 		<h1 class="text-h3 text-center">{{ t('welcome.title') }}</h1>
@@ -19,16 +20,18 @@
 				<li
 					v-for="action in actions"
 					:key="action.id"
-					class="d-flex rounded-lg pa-1 clickable"
+					class="rounded-lg pa-1 clickable"
 					v-ripple
 					@click="() => action.trigger()"
 				>
 					<v-icon color="accent" medium>{{ action.icon }}</v-icon>
 					<span color="text--primary">{{ t(action.name) }}</span>
 
-					<v-spacer></v-spacer>
-
-					<span class="text--secondary" v-if="action.keyBinding">
+					<span
+						class="text--secondary"
+						style="float: right"
+						v-if="action.keyBinding"
+					>
 						{{ action.keyBinding.toStrKeyCode() }}
 					</span>
 				</li>
@@ -85,6 +88,7 @@
 							v-if="project.imgSrc"
 							:src="project.imgSrc"
 							:alt="`${project.name} Logo`"
+							draggable="false"
 							class="mr-1 pack-icon"
 						/>
 						<span class="primary-text">{{ project.path }}</span>
@@ -100,12 +104,10 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { App } from '/@/App.ts'
 import { ProjectMixin } from '/@/components/Mixins/Project.ts'
-import { CompilerMixin } from '../Mixins/Tasks/Compiler.ts'
-import { PackIndexerMixin } from '../Mixins/Tasks/PackIndexer.ts'
 
 export default {
 	name: 'welcome-screen',
-	mixins: [TranslationMixin, ProjectMixin, CompilerMixin, PackIndexerMixin],
+	mixins: [TranslationMixin, ProjectMixin],
 	components: {
 		ActionViewer,
 	},
@@ -115,7 +117,6 @@ export default {
 		const toLoad = [
 			'bridge.action.newProject',
 			'bridge.action.newFile',
-			'bridge.action.openFile',
 			'bridge.action.searchFile',
 			'bridge.action.openSettings',
 		]
@@ -128,6 +129,7 @@ export default {
 	data: () => ({
 		actions: [],
 		projectManager: null,
+		maySwitchProjects: true,
 	}),
 	computed: {
 		files() {
@@ -140,13 +142,12 @@ export default {
 				({ path }) => path !== this.projectManager.selectedProject
 			)
 		},
-		maySwitchProjects() {
-			return this.isPackIndexerReady && this.isCompilerReady
-		},
 	},
 	methods: {
-		openFile(filePath) {
-			App.getApp().then((app) => app.project.openFile(filePath))
+		async openFile(filePath) {
+			const app = await App.getApp()
+			const fileHandle = await app.fileSystem.getFileHandle(filePath)
+			app.project.openFile(fileHandle)
 		},
 		selectProject(projectName) {
 			App.getApp().then((app) =>

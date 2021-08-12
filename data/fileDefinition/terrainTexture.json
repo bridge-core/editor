@@ -1,7 +1,0 @@
-{
-	"id": "terrainTexture",
-	"scope": "RP/textures/terrain_texture.json",
-	"matcher": "RP/textures/terrain_texture.json",
-	"schema": "file:///data/packages/schema/simple/terrainTexture.json",
-	"lightningCache": "terrainTexture.json"
-}

@@ -1,9 +1,14 @@
 import { Signal } from '/@/components/Common/Event/Signal'
 import { unzip, Unzipped } from 'fflate'
-import { dirname } from '/@/utils/path'
 import { FileSystem } from '../FileSystem/FileSystem'
 import { createErrorNotification } from '../Notifications/Errors'
 import { Extension } from './Extension'
+import { ActiveStatus } from './ActiveStatus'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+	AnyHandle,
+} from '../FileSystem/Types'
 
 export interface IExtensionManifest {
 	icon?: string
@@ -19,66 +24,67 @@ export interface IExtensionManifest {
 	compiler: {
 		plugins: Record<string, string>
 	}
+	contributeFiles: Record<string, string>
+	/**
+	 * @deprecated
+	 */
+	install: Record<string, string>
 }
 
 export class ExtensionLoader extends Signal<void> {
-	protected globalExtensions = new Map<string, Extension>()
-	protected localExtensions = new Map<string, Extension>()
+	protected _extensions = new Map<string, Extension>()
 	protected _loadedInstalledExtensions = new Signal<void>(2)
+	public activeStatus: ActiveStatus | undefined
 
 	get extensions() {
-		return new Map([
-			...this.globalExtensions.entries(),
-			...this.localExtensions.entries(),
-		])
+		return this._extensions
 	}
 
-	get loadedInstalledExtensions() {
-		return new Promise<void>((resolve) =>
-			this._loadedInstalledExtensions.once(resolve)
+	constructor(
+		protected fileSystem: FileSystem,
+		protected saveInactivePath: string,
+		protected isGlobal = false
+	) {
+		super()
+	}
+
+	async loadActiveExtensions() {
+		this.activeStatus = new ActiveStatus(
+			this.fileSystem,
+			this.saveInactivePath
 		)
-	}
-
-	constructor() {
-		super(2)
+		await this.activeStatus.fired
 	}
 
 	async getInstalledExtensions() {
-		await this.loadedInstalledExtensions
+		await this.fired
 		return new Map(this.extensions.entries())
 	}
 
-	async loadExtensions(
-		baseDirectory: FileSystemDirectoryHandle,
-		isGlobal = false
-	) {
+	async loadExtensions(baseDirectory: AnyDirectoryHandle) {
+		await this.loadActiveExtensions()
 		const promises: Promise<unknown>[] = []
 
 		for await (const entry of baseDirectory.values()) {
 			if (entry.name === '.DS_Store') continue
 
-			promises.push(
-				this.loadExtension(baseDirectory, entry, false, isGlobal)
-			)
+			promises.push(this.loadExtension(baseDirectory, entry, false))
 		}
 
 		await Promise.all(promises)
 		this._loadedInstalledExtensions.dispatch()
 
-		for (const [_, extension] of isGlobal
-			? this.globalExtensions
-			: this.localExtensions) {
-			if (!extension.isActive) await extension.activate()
+		for (const [_, extension] of this._extensions) {
+			if (extension.isActive) await extension.activate()
 		}
 
 		this.dispatch()
 	}
 
 	async loadExtension(
-		baseDirectory: FileSystemDirectoryHandle,
-		handle: FileSystemHandle,
-		activate = false,
-		isGlobal = false
+		baseDirectory: AnyDirectoryHandle,
+		handle: AnyHandle,
+		activate = false
 	) {
 		let extension: Extension | undefined
 		if (handle.kind === 'file' && handle.name.endsWith('.zip')) {
@@ -87,12 +93,11 @@ export class ExtensionLoader extends Signal<void> {
 				await baseDirectory.getDirectoryHandle(
 					handle.name.replace('.zip', ''),
 					{ create: true }
-				),
-				isGlobal
+				)
 			)
 			await baseDirectory.removeEntry(handle.name)
 		} else if (handle.kind === 'directory') {
-			extension = await this.loadManifest(handle, isGlobal)
+			extension = await this.loadManifest(handle)
 		}
 
 		if (activate && extension) await extension.activate()
@@ -100,9 +105,8 @@ export class ExtensionLoader extends Signal<void> {
 	}
 
 	protected async unzipExtension(
-		fileHandle: FileSystemFileHandle,
-		baseDirectory: FileSystemDirectoryHandle,
-		isGlobal: boolean
+		fileHandle: AnyFileHandle,
+		baseDirectory: AnyDirectoryHandle
 	) {
 		const fs = new FileSystem(baseDirectory)
 		const file = await fileHandle.getFile()
@@ -127,14 +131,11 @@ export class ExtensionLoader extends Signal<void> {
 			await fs.writeFile(fileName, zip[fileName])
 		}
 
-		return await this.loadManifest(baseDirectory, isGlobal)
+		return await this.loadManifest(baseDirectory)
 	}
 
-	protected async loadManifest(
-		baseDirectory: FileSystemDirectoryHandle,
-		isGlobal: boolean
-	) {
-		let manifestHandle: FileSystemFileHandle
+	protected async loadManifest(baseDirectory: AnyDirectoryHandle) {
+		let manifestHandle: AnyFileHandle
 		try {
 			manifestHandle = await baseDirectory.getFileHandle('manifest.json')
 		} catch {
@@ -151,12 +152,9 @@ export class ExtensionLoader extends Signal<void> {
 				this,
 				<IExtensionManifest>manifest,
 				baseDirectory,
-				isGlobal
+				this.isGlobal
 			)
-			;(isGlobal ? this.globalExtensions : this.localExtensions).set(
-				manifest.id,
-				extension
-			)
+			this._extensions.set(manifest.id, extension)
 			return extension
 		} else {
 			createErrorNotification(
@@ -185,20 +183,21 @@ export class ExtensionLoader extends Signal<void> {
 		}
 	}
 
-	deactivateAllLocal() {
-		for (const [key, ext] of this.localExtensions) {
+	deactiveAll(dispose = false) {
+		for (const [key, ext] of this._extensions) {
 			ext.deactivate()
-			this.localExtensions.delete(key)
+			if (dispose) this._extensions.delete(key)
 		}
+	}
+	disposeAll() {
+		this.deactiveAll(true)
+		this.resetSignal()
 	}
 
 	mapActive<T>(cb: (ext: Extension) => T) {
 		const res: T[] = []
 
-		for (const ext of this.globalExtensions.values()) {
-			if (ext.isActive) res.push(cb(ext))
-		}
-		for (const ext of this.localExtensions.values()) {
+		for (const ext of this._extensions.values()) {
 			if (ext.isActive) res.push(cb(ext))
 		}
 

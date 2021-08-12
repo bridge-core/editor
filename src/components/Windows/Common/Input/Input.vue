@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		:windowTitle="windowTitle"
+		:windowTitle="$data.title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -10,26 +10,34 @@
 		@closeWindow="onClose"
 	>
 		<template #default>
-			<v-row>
+			<div class="d-flex justify-center align-center">
 				<v-text-field
-					:label="label"
-					v-model="inputValue"
+					:label="t($data.label)"
+					v-model="$data.inputValue"
 					@keydown.enter.native="onConfirm"
+					class="mr-2"
+					outlined
+					dense
 					autofocus
+					hide-details
 				/>
-				<p class="expand_text" v-if="expandText !== ''">
-					{{ expandText }}
-				</p>
-			</v-row>
+				<span
+					class="expand-text text--secondary"
+					v-if="$data.expandText !== ''"
+				>
+					{{ $data.expandText }}
+				</span>
+			</div>
 		</template>
 		<template #actions>
 			<v-spacer />
 			<v-btn
 				color="primary"
 				@click="onConfirm"
-				:disabled="inputValue === ''"
+				:disabled="$data.inputValue === ''"
 			>
-				<span>{{ t('windows.common.input.confirm') }}</span>
+				<v-icon>mdi-check</v-icon>
+				<span>{{ t('general.confirm') }}</span>
 			</v-btn>
 		</template>
 	</BaseWindow>
@@ -47,25 +55,17 @@ export default {
 	},
 	props: ['currentWindow'],
 	data() {
-		return this.currentWindow.getState()
+		return this.currentWindow
 	},
 	methods: {
 		onClose() {
-			this.currentWindow.close()
-			this.inputValue = ''
+			this.currentWindow.close(null)
+			this.currentWindow.inputValue = ''
 		},
 		onConfirm() {
-			this.currentWindow.close()
-			this.onConfirmCb(this.inputValue + this.expandText)
-			this.inputValue = ''
+			this.currentWindow.confirm()
+			this.currentWindow.inputValue = ''
 		},
 	},
 }
 </script>
-
-<style>
-.expand_text {
-	opacity: 60%;
-	padding-top: 26px;
-}
-</style>

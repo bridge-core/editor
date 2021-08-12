@@ -1,5 +1,6 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
+import { Divider } from '../Divider'
 
 export function setupHelpCategory(app: App) {
 	const help = new ToolbarCategory('mdi-help', 'toolbar.help.name')
@@ -27,14 +28,17 @@ export function setupHelpCategory(app: App) {
 				),
 		})
 	)
+
+	help.addItem(new Divider())
+
 	help.addItem(
 		app.actionManager.create({
-			name: 'actions.pluginAPI.name',
+			name: 'actions.extensionAPI.name',
 			icon: 'mdi-puzzle-outline',
-			description: 'actions.pluginAPI.description',
+			description: 'actions.extensionAPI.description',
 			onTrigger: () =>
-				App.createNativeWindow(
-					'https://bridge-core.github.io/plugin-docs/',
+				App.openUrl(
+					'https://bridge-core.github.io/extension-docs/',
 					'_blank'
 				),
 		})
@@ -45,7 +49,7 @@ export function setupHelpCategory(app: App) {
 			icon: 'mdi-help-circle-outline',
 			description: 'actions.gettingStarted.description',
 			onTrigger: () =>
-				App.createNativeWindow(
+				App.openUrl(
 					'https://bridge-core.github.io/editor-docs/getting-started/',
 					'_blank'
 				),
@@ -57,7 +61,7 @@ export function setupHelpCategory(app: App) {
 			icon: 'mdi-frequently-asked-questions',
 			description: 'actions.faq.description',
 			onTrigger: () =>
-				App.createNativeWindow(
+				App.openUrl(
 					'https://bridge-core.github.io/editor-docs/faq/',
 					'_blank'
 				),

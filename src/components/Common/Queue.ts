@@ -42,6 +42,9 @@ export class Queue<T> {
 	toJSON() {
 		return JSON.stringify(this.array)
 	}
+	fromArray(arr: any) {
+		this.array = arr
+	}
 	[Symbol.iterator]() {
 		return this.array.values()
 	}

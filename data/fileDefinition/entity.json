@@ -1,9 +1,0 @@
-{
-	"id": "entity",
-	"icon": "mdi-minecraft",
-	"scope": "BP/entities/",
-	"matcher": ["BP/entities/**/*.json", "BP/entities/*.json"],
-	"schema": "file:///data/packages/schema/entity/main.json",
-	"packSpider": "entity.json",
-	"lightningCache": "entity.json"
-}

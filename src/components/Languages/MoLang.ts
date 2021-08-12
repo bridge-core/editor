@@ -1,8 +1,11 @@
 import { editor, languages, MarkerSeverity } from 'monaco-editor'
 import { Language } from './Language'
-import { MoLang } from 'molang'
+import { CustomMoLang } from 'molang'
 
 export const config: languages.LanguageConfiguration = {
+	comments: {
+		lineComment: '#',
+	},
 	autoClosingPairs: [
 		{
 			open: '(',
@@ -30,10 +33,31 @@ export const tokenProvider = {
 		['[', ']', 'delimiter.square'],
 		['{', '}', 'delimiter.curly'],
 	],
-	keywords: ['return', 'loop', 'for_each', 'break', 'continue', 'this'],
-	identifiers: ['v', 't', 'c', 'q', 'variable', 'temp', 'context', 'query'],
+	keywords: [
+		'return',
+		'loop',
+		'for_each',
+		'break',
+		'continue',
+		'this',
+		'function',
+	],
+	identifiers: [
+		'v',
+		't',
+		'c',
+		'q',
+		'f',
+		'a',
+		'arg',
+		'variable',
+		'temp',
+		'context',
+		'query',
+	],
 	tokenizer: {
 		root: [
+			[/#.*/, 'comment'],
 			[/'[^']'/, 'string'],
 			[/[0-9]+(\.[0-9]+)?/, 'number'],
 			[/true|false/, 'number'],
@@ -53,7 +77,7 @@ export const tokenProvider = {
 }
 
 export class MoLangLanguage extends Language {
-	protected molang = new MoLang({})
+	protected molang = new CustomMoLang({})
 	constructor() {
 		super({
 			id: 'molang',
@@ -65,10 +89,10 @@ export class MoLangLanguage extends Language {
 
 	validate(model: editor.IModel) {
 		try {
-			this.molang.execute(model.getValue())
+			this.molang.parse(model.getValue())
 			editor.setModelMarkers(model, this.id, [])
 		} catch (err) {
-			const token = this.molang.getParser().getLastConsumed()
+			// const token = this.molang.getParser().getLastConsumed()
 			// console.log(
 			// 	token?.getType(),
 			// 	token?.getText(),
@@ -80,7 +104,7 @@ export class MoLangLanguage extends Language {
 				endColumn = Infinity,
 				startLineNumber = 0,
 				endLineNumber = Infinity,
-			} = token?.getPosition() ?? {}
+			} = /*token?.getPosition() ??*/ {}
 
 			editor.setModelMarkers(model, this.id, [
 				{

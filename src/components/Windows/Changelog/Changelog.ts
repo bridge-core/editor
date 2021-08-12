@@ -14,12 +14,13 @@ export class ChangelogWindow extends BaseWindow {
 	}
 
 	async open() {
+		App.audioManager.playAudio('click5.ogg', 1)
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 
-		await fetch(baseUrl + '/changelog.html')
-			.then(response => response.text())
-			.then(html => {
+		await fetch(baseUrl + 'changelog.html')
+			.then((response) => response.text())
+			.then((html) => {
 				this.changelog = html
 				this.version = version
 			})

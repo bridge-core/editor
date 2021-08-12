@@ -1,6 +1,6 @@
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/CreateProject'
-import { CreateFile } from '/@/components/Projects/CreateProject/Files/File'
+import { CreateFile } from './CreateFile'
 
 export class CreateGitIgnore extends CreateFile {
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
@@ -8,11 +8,11 @@ export class CreateGitIgnore extends CreateFile {
 			`.gitignore`,
 			`Desktop.ini    
 .DS_Store 
-!bridge/
-bridge/*
-!bridge/compiler/
-!bridge/extensions
-!bridge/config.json
+!.bridge/
+.bridge/*
+!.bridge/compiler/
+!.bridge/extensions
+!.bridge/config.json
 builds`
 		)
 	}

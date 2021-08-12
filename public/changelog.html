@@ -1,60 +1,39 @@
+<h1>v2.0.1</h1>
+<p>We are releasing this small update to bring some of the most requested missing features from bridge. v1 over to v2. We have also fixed quite a few bugs to make your experience with bridge. v2 even better!</p>
 <h2>Features:</h2>
-<ul>
-<li>Added toggles upon project creation for...
-<ul>
-<li>GameTest API</li>
-<li>Scripting API</li>
-<li>Registering the RP as a BP dependency</li>
-</ul>
-</li>
-<li><strong>Compiler:</strong>
-<ul>
-<li>More logical initial flatFiles order to reduce require overhead later</li>
-<li>Requiring files now only resolves them &amp; requires unknown dependencies. Saving files is now deferred by default</li>
-<li>Added &quot;entityIdentifierAlias&quot; plugin</li>
-<li>Files can now import other files using globs</li>
-</ul>
-</li>
-<li><strong>Custom Components:</strong>
-<ul>
-<li>Animation(s/ controllers) can now provide a MoLang condition to toggle whether they are supposed to run</li>
-<li>Animation (controller) support for custom item components</li>
-</ul>
-</li>
-<li>Updated JSON schemas to latest beta</li>
-<li>Updated GameTest API to latest beta</li>
-<li>bridge. now proposes action texts from your lang files inside of behavior components</li>
-<li>Auto-completions for entity tags</li>
-</ul>
-<h2>Changes:</h2>
-<ul>
-<li>Updated MoLang library</li>
-<li>Better error messages for file system related errors</li>
-<li>Renamed &quot;plugins&quot; folder to &quot;extensions&quot;</li>
-<li>Removed unused UIs</li>
-<li>Use hash string for automatically generated animation(s/ controllers)</li>
-<li>Create player.json file upon creating project</li>
-<li>Support for versioning type declarations</li>
-<li>Improved recipe schema</li>
-<li>Added descriptions to fog schema</li>
-<li>Updated tree feature schema</li>
-</ul>
+<h3>App Installation</h3>
+<p>We are introducing a prominent &quot;Install App&quot; button to the initial setup screen to help users downloading the application. We have previously received reports that users find it hard to install bridge. v2.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126348664-074462b5-b924-457c-9318-b1eaaf17baa2.png" alt="Bildschirmfoto_2021-07-19_um_15 14 14"></p>
+<hr>
+<h3>Missing Auto-Completions</h3>
+<p>We have added support for the &quot;minecraft:block_placer&quot; item component and the &quot;is_weather&quot; entity filter.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126349368-3d34d59e-0bbb-4ed2-a6dd-3ce1a690982d.png" alt="Bildschirmfoto 2021-07-20 um 17 12 56"></p>
+<hr>
+<h3>Better Dialogue Support</h3>
+<p>The &quot;/dialogue&quot; command now proposes scene names from dialogues defined inside of your project.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126350700-68629751-492a-4861-bef2-d05880738a85.png" alt="Bildschirmfoto 2021-07-20 um 17 20 52"></p>
+<hr>
+<h3>More File Actions</h3>
+<p>bridge. v2 now allows you to rename and duplicate files right from the pack explorer! The &quot;Delete&quot; option now asks for confirmation before deleting files.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126351272-0a3e75e9-f997-456e-8faf-7693c2e58bef.png" alt="Bildschirmfoto 2021-07-20 um 17 24 57"></p>
+<hr>
+<h3>Save As &amp; Save All</h3>
+<p>You can now save all currently unsaved tabs at once or save a file under a different name. Additionally, we have added dividers to bridge. v2's toolbar menus to bring a bit more visual clarity to them.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126351610-9278ea5a-561c-4235-8c8b-961419d22caa.png" alt="Bildschirmfoto 2021-07-20 um 17 26 57"></p>
+<hr>
+<h3>Tree Editor</h3>
+<p>The tree editor now supports copy, cut &amp; paste.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/126351744-2e244e03-6aff-4791-9f51-4772b27a8e22.png" alt="Bildschirmfoto 2021-07-20 um 17 27 54"></p>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed data loader sometimes freezing computers</li>
-<li>Fixed project creation screen not reseting properly</li>
-<li>Fixed automatic changelog generation</li>
-<li>Fixed rare issue with .crswap files appearing inside of projects</li>
-<li>Fixed error upon downloading extensions</li>
-<li>Fixed custom geometry block preset creating texture in wrong place</li>
-<li>Fixed presets not injecting identifier in custom block geometry preset</li>
-<li>Automatically remove deleted projects from recent projects list</li>
-<li>Fixed &quot;compiler plugin [X] is not defined&quot; error upon switching projects</li>
-<li>Fixed format on save being broken for persistent tabs</li>
-<li>Fixed empty file names in pack explorer</li>
-<li>Fixed error upon creating new item file</li>
-<li>Fixed presets being able to overwrite unsaved changes</li>
-<li>Fixed filter name: &quot;is_nether&quot; -&gt; &quot;in_nether&quot;</li>
-<li>Fixed update extensions notification showing if all extensions were already manually updated</li>
-<li>Fixed compiler hot updates</li>
+<li>Fixed plugin API link and renamed it to &quot;Extension API&quot;</li>
+<li>Fixed skin preset file names</li>
+<li>Fixed schema reference error</li>
+<li>Fixed schema script error caused by &quot;entity/prefixedEntityEvent.json&quot; file</li>
+<li>Fixed invalid JSON error log from temporary cache update calls</li>
+<li>Fixed infinite loading upon choosing &quot;Save &amp; Close&quot; to close an unsaved tab</li>
+<li>Fixed preview failing silently when source entity file contained invalid JSON</li>
+<li>Fixed z-position of preview boxes (Thanks to @pascal541)</li>
+<li>Fixed recipe schema error</li>
+<li>Fixed error upon using custom command schema</li>
 </ul>

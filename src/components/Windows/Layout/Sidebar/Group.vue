@@ -1,15 +1,18 @@
 <template>
 	<details :open="isOpen">
 		<summary
-			class="d-flex rounded-lg"
+			class="rounded-lg"
 			@click.prevent="$emit('toggleOpen')"
 			v-ripple
 		>
-			<h2 class="d-inline">{{ t(text) }}</h2>
-			<v-spacer />
-			<v-icon color="primary">
-				{{ isOpen ? 'mdi-chevron-down' : 'mdi-chevron-right' }}
-			</v-icon>
+			<!-- Flexbox doesn't work directly on summaries in Safari -->
+			<span class="d-flex">
+				<h2 class="d-inline">{{ t(text) }}</h2>
+				<v-spacer />
+				<v-icon color="primary">
+					{{ isOpen ? 'mdi-chevron-down' : 'mdi-chevron-right' }}
+				</v-icon>
+			</span>
 		</summary>
 
 		<SidebarItem

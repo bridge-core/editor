@@ -1,11 +1,7 @@
-import Vue from 'vue'
-import AppComponent from './App.vue'
-
-import Vuetify from 'vuetify'
-import en from '/@/locales/en'
-import de from '/@/locales/de'
-import nl from '/@/locales/nl'
-import ko from '/@/locales/ko'
+import '/@/components/FileSystem/Polyfill'
+import '/@/components/FileSystem/Virtual/Comlink'
+import '/@/components/App/setupCompositionAPI'
+import { vue } from '/@/components/App/Vue'
 import '@mdi/font/css/materialdesignicons.min.css'
 import { App } from './App'
 import '/@/utils/locales'
@@ -34,53 +30,5 @@ self.MonacoEnvironment = {
 		return new editorWorker()
 	},
 }
-
-Vue.config.productionTip = false
-
-Vue.use(Vuetify)
-
-export const vuetify = new Vuetify({
-	lang: {
-		locales: { nl, de, en, ko },
-	},
-	theme: {
-		dark: true,
-		options: {
-			customProperties: true,
-		},
-		themes: {
-			dark: {
-				primary: '#0073FF',
-				secondary: '#0073FF',
-				accent: '#0073FF',
-
-				background: '#121212',
-				sidebarNavigation: '#1F1F1F',
-				expandedSidebar: '#1F1F1F',
-				menu: '#424242',
-				footer: '#111111',
-				tooltip: '#1F1F1F',
-			},
-			light: {
-				primary: '#0073FF',
-				secondary: '#0073FF',
-				accent: '#0073FF',
-
-				background: '#fafafa',
-				sidebarNavigation: '#FFFFFF',
-				expandedSidebar: '#FFFFFF',
-				tooltip: '#424242',
-				toolbar: '#e0e0e0',
-				footer: '#f5f5f5',
-			},
-		},
-	},
-})
-
-const vue = new Vue({
-	vuetify,
-	render: (h) => h(AppComponent),
-})
-vue.$mount('#app')
 
 App.main(vue)

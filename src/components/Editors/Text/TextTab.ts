@@ -1,4 +1,4 @@
-import { Tab } from '/@/components/TabSystem/CommonTab'
+import { FileTab } from '/@/components/TabSystem/FileTab'
 import TextTabComponent from './TextTab.vue'
 import * as monaco from 'monaco-editor'
 import { IDisposable } from '/@/types/disposable'
@@ -6,51 +6,104 @@ import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { FileType } from '/@/components/Data/FileType'
+import { debounce } from 'lodash'
+import { Signal } from '/@/components/Common/Event/Signal'
+import { AnyFileHandle } from '../../FileSystem/Types'
+import { markRaw } from '@vue/composition-api'
 
-export class TextTab extends Tab {
+const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
+	async (tab) => {
+		if (
+			tab.isForeignFile ||
+			!tab.editorModel ||
+			tab.editorModel.isDisposed()
+		)
+			return
+
+		const fileContent = tab.editorModel?.getValue()
+		const app = await App.getApp()
+
+		// Only update the cache if the file still exists
+		if (await app.fileSystem.fileExists(tab.getPath())) {
+			await app.project.packIndexer.updateFile(
+				tab.getProjectPath(),
+				fileContent
+			)
+			await app.project.jsonDefaults.updateDynamicSchemas(
+				tab.getProjectPath()
+			)
+		}
+
+		app.project.fileChange.dispatch(
+			tab.getProjectPath(),
+			new File([tab.editorModel?.getValue()], tab.name)
+		)
+	},
+	600
+)
+
+export class TextTab extends FileTab {
 	component = TextTabComponent
-	editorInstance: monaco.editor.ICodeEditor | undefined
 	editorModel: monaco.editor.ITextModel | undefined
 	editorViewState: monaco.editor.ICodeEditorViewState | undefined
 	disposables: (IDisposable | undefined)[] = []
 	isActive = false
+	protected modelLoaded = new Signal<void>()
+
+	get editorInstance() {
+		return this.parent.monacoEditor
+	}
+
+	constructor(
+		parent: TabSystem,
+		fileHandle: AnyFileHandle,
+		isReadOnly = false
+	) {
+		super(parent, fileHandle, isReadOnly)
+
+		this.fired.then(async () => {
+			const app = await App.getApp()
+			await app.projectManager.projectReady.fired
+
+			app.project.tabActionProvider.addTabActions(this)
+		})
+	}
+	async getFile() {
+		if (!this.editorModel || this.editorModel.isDisposed())
+			return await super.getFile()
+
+		return new File([this.editorModel.getValue()], this.name)
+	}
 
 	setIsUnsaved(val: boolean) {
 		super.setIsUnsaved(val)
-	}
-
-	receiveEditorInstance(editorInstance: monaco.editor.IStandaloneCodeEditor) {
-		this.editorInstance = editorInstance
-		this.editorInstance.layout()
 	}
 
 	async onActivate() {
 		if (this.isActive) return
 		this.isActive = true
 
-		const app = await App.getApp()
-		this.editorInstance?.focus()
-		this.editorInstance?.layout()
+		await this.parent.fired //Make sure a monaco editor is loaded
 
 		if (!this.editorModel) {
-			const file = await app.fileSystem.readFile(this.path)
+			const file = await this.fileHandle.getFile()
 			const fileContent = await file.text()
-			this.editorModel = monaco.editor.createModel(
-				fileContent,
-				undefined,
-				monaco.Uri.file(this.path)
+			const uri = monaco.Uri.file(this.getPath())
+
+			this.editorModel = markRaw(
+				monaco.editor.getModel(uri) ??
+					monaco.editor.createModel(fileContent, undefined, uri)
 			)
+			this.modelLoaded.dispatch()
 			this.loadEditor()
 		} else {
 			this.loadEditor()
 		}
 
 		this.disposables.push(
-			app.windowResize.on(() => this.editorInstance?.layout())
-		)
-		this.disposables.push(
 			this.editorModel?.onDidChangeContent(() => {
 				this.isUnsaved = true
+				throttledCacheUpdate(this)
 			})
 		)
 		this.disposables.push(
@@ -58,9 +111,17 @@ export class TextTab extends Tab {
 				this.parent.setActive(true)
 			})
 		)
+
+		this.editorInstance?.focus()
+		this.editorInstance?.layout()
 	}
 	onDeactivate() {
-		this.editorViewState = this.editorInstance?.saveViewState() ?? undefined
+		// MonacoEditor is defined
+		if (this.tabSystem.hasFired) {
+			const viewState = this.editorInstance.saveViewState()
+			if (viewState) this.editorViewState = markRaw(viewState)
+		}
+
 		this.disposables.forEach((disposable) => disposable?.dispose())
 		this.isActive = false
 	}
@@ -69,19 +130,22 @@ export class TextTab extends Tab {
 		this.editorModel?.dispose()
 		this.editorViewState = undefined
 		this.isActive = false
+		this.modelLoaded.resetSignal()
 	}
 	updateParent(parent: TabSystem) {
 		super.updateParent(parent)
-		this.editorInstance = undefined
 	}
 	focus() {
 		this.editorInstance?.focus()
 	}
 
 	loadEditor() {
-		if (this.editorModel) this.editorInstance?.setModel(this.editorModel)
+		if (this.editorModel && !this.editorModel.isDisposed())
+			this.editorInstance?.setModel(this.editorModel)
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
+
+		this.editorInstance?.updateOptions({ readOnly: this.isReadOnly })
 	}
 
 	async save() {
@@ -89,7 +153,7 @@ export class TextTab extends Tab {
 		const action = this.editorInstance?.getAction(
 			'editor.action.formatDocument'
 		)
-		const fileType = FileType.get(this.getPackPath())
+		const fileType = FileType.get(this.getProjectPath())
 
 		if (
 			action &&
@@ -112,17 +176,22 @@ export class TextTab extends Tab {
 				},
 			])
 
-			const disposable = this.editorModel?.onDidChangeContent(
-				async () => {
+			const editPromise = new Promise<void>((resolve) => {
+				if (!this.editorModel) return resolve()
+
+				const disposable = this.editorModel?.onDidChangeContent(() => {
 					disposable?.dispose()
 
-					await this.saveFile(app)
+					resolve()
+				})
+			})
 
-					app.windows.loadingWindow.close()
-				}
-			)
+			const actionPromise = action.run()
 
-			await action.run()
+			await Promise.all([editPromise, actionPromise])
+
+			await this.saveFile(app)
+			app.windows.loadingWindow.close()
 		} else {
 			await this.saveFile(app)
 		}
@@ -130,16 +199,36 @@ export class TextTab extends Tab {
 	protected async saveFile(app: App) {
 		this.isUnsaved = false
 		if (this.editorModel) {
-			await app.fileSystem.writeFile(
-				this.path,
+			await app.fileSystem.write(
+				this.fileHandle,
 				this.editorModel.getValue()
 			)
+		} else {
+			console.error(`Cannot save file content without active editorModel`)
 		}
 	}
 
 	async paste() {
+		if (this.isReadOnly) return
+
 		this.editorInstance?.trigger('keyboard', 'paste', {
 			text: await navigator.clipboard.readText(),
 		})
+	}
+	async close() {
+		const didClose = await super.close()
+
+		// We need to clear the lightning cache store from temporary data if the user doesn't save changes
+		if (didClose && this.isUnsaved) {
+			const app = await App.getApp()
+			const file = await app.fileSystem.readFile(this.getPath())
+			const fileContent = await file.text()
+			await app.project.packIndexer.updateFile(
+				this.getProjectPath(),
+				fileContent
+			)
+		}
+
+		return didClose
 	}
 }
