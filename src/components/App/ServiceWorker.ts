@@ -1,61 +1,31 @@
 /* eslint-disable no-console */
 
-import { register } from 'register-service-worker'
+import { registerSW } from 'virtual:pwa-register'
 import { createNotification } from '/@/components/Notifications/create'
 import { App } from '/@/App'
 import { set } from 'idb-keyval'
 
 if (import.meta.env.PROD) {
-	register(`${import.meta.env.BASE_URL}service-worker.js`, {
-		ready() {
-			console.log(
-				'App is being served from cache by a service worker.\n' +
-					'For more details, visit https://goo.gl/AFskqB'
-			)
-		},
-		registered() {
-			console.log('Service worker has been registered.')
-		},
-		cached() {
-			console.log('Content has been cached for offline use.')
-		},
-		updatefound() {
-			console.log('New content is downloading.')
-		},
-		updated(serviceWorker) {
+	const updateSW = registerSW({
+		async onNeedRefresh() {
 			console.log('New content is available; please refresh.')
 
+			await set('firstStartAfterUpdate', true)
+
 			if (App.fileSystemSetup.status === 'waiting') {
-				updateApp(serviceWorker)
+				updateSW()
 			} else {
 				createNotification({
 					icon: 'mdi-update',
 					color: 'primary',
 					message: 'sidebar.notifications.updateAvailable.message',
 					textColor: 'white',
-					onClick: () => updateApp(serviceWorker),
+					onClick: () => updateSW(),
 				})
 			}
 		},
-		offline() {
-			console.log(
-				'No internet connection found. App is running in offline mode.'
-			)
+		onOfflineReady() {
+			// bridge. is ready to work offline
 		},
-		error(error) {
-			console.error('Error during service worker registration:', error)
-		},
-	})
-}
-
-export function updateApp(serviceWorker: ServiceWorkerRegistration) {
-	if (serviceWorker.waiting)
-		serviceWorker.waiting.postMessage({
-			type: 'SKIP_WAITING',
-		})
-
-	navigator.serviceWorker.addEventListener('controllerchange', async () => {
-		await set('firstStartAfterUpdate', true)
-		window.location.reload()
 	})
 }

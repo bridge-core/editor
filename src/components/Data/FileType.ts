@@ -1,9 +1,9 @@
-import { isMatch } from 'micromatch'
 import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import { Signal } from '/@/components/Common/Event/Signal'
 import type { CompareOperator } from 'compare-versions'
 import { DataLoader } from './DataLoader'
+import { isMatch } from '/@/utils/glob/isMatch'
 
 /**
  * Describes the structure of a file definition

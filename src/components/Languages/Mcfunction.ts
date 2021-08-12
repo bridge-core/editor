@@ -1,4 +1,3 @@
-import debounce from 'lodash.debounce'
 import {
 	CancellationToken,
 	editor,

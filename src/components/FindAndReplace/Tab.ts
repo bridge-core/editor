@@ -9,10 +9,9 @@ import type {
 	IQueryResult,
 } from './Worker/Worker'
 import { Tab } from '/@/components/TabSystem/CommonTab'
+import Worker from './Worker/Worker?worker'
 
-const FindAndReplaceClass = wrap<typeof FindAndReplace>(
-	new Worker('./Worker/Worker.ts', { type: 'module' })
-)
+const FindAndReplaceClass = wrap<typeof FindAndReplace>(new Worker())
 
 interface ITabState {
 	scrollTop: number

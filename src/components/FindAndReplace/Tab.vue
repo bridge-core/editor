@@ -102,8 +102,8 @@ import Match from './Match.vue'
 import FilePath from './FilePath.vue'
 
 import { debounce } from 'lodash'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
-import { createRegExp, processFileText } from './Utils'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { createRegExp, processFileText } from './Utils.ts'
 import { set } from '@vue/composition-api'
 
 export default {

@@ -36,6 +36,7 @@ import { AudioManager } from '/@/components/Audio/AudioManager'
 import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
 import { markRaw, shallowReactive } from '@vue/composition-api'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
+
 export class App {
 	public static readonly installApp = new InstallApp()
 	public static fileSystemSetup = new FileSystemSetup()

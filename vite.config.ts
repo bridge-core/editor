@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import { resolve, join } from 'path'
 import { createVuePlugin } from 'vite-plugin-vue2'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,6 +12,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'/@': join(__dirname, 'src'),
+			vue: 'vue/dist/vue.esm.js',
 		},
 	},
 	build: {
@@ -22,5 +24,61 @@ export default defineConfig({
 			},
 		},
 	},
-	plugins: [createVuePlugin()],
+	plugins: [
+		createVuePlugin(),
+		VitePWA({
+			manifest: {
+				name: 'bridge v2',
+				short_name: 'bridge v2',
+				theme_color: '#1778D2',
+				icons: [
+					{
+						src: './img/icons/android-chrome-192x192.png',
+						sizes: '192x192',
+						type: 'image/png',
+					},
+					{
+						src: './img/icons/android-chrome-512x512.png',
+						sizes: '512x512',
+						type: 'image/png',
+					},
+					{
+						src: './img/icons/android-chrome-maskable-192x192.png',
+						sizes: '192x192',
+						type: 'image/png',
+						purpose: 'maskable',
+					},
+					{
+						src: './img/icons/android-chrome-maskable-512x512.png',
+						sizes: '512x512',
+						type: 'image/png',
+						purpose: 'maskable',
+					},
+				],
+				start_url: '.',
+				display: 'standalone',
+				background_color: '#0F0F0F',
+				// @ts-ignore
+				capture_links: ['existing-client-navigate'],
+				file_handlers: [
+					{
+						action: '/',
+						accept: {
+							'application/zip': [
+								'.mcaddon',
+								'.mcpack',
+								'.mcworld',
+								'.mctemplate',
+							],
+							'application/json': ['.json'],
+							'application/javascript': ['.js', '.ts'],
+							'text/plain': ['.mcfunction', '.molang', '.lang'],
+							'image/*': ['.tga', '.png', '.jpg', '.jpeg'],
+						},
+					},
+				],
+				display_override: ['window-controls-overlay', 'standalone'],
+			},
+		}),
+	],
 })

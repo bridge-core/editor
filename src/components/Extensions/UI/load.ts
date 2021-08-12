@@ -1,4 +1,4 @@
-import { extname, basename, relative } from '/@/utils/path'
+import { extname, basename } from '/@/utils/path'
 import { createErrorNotification } from '/@/components/Notifications/Errors'
 import { TUIStore } from './store'
 import { IDisposable } from '/@/types/disposable'
@@ -97,5 +97,5 @@ export async function loadUIComponent(
 		resolve(component)
 	})
 
-	uiStore.set(relative('ui', componentPath).split(/\\|\//g), () => promise)
+	uiStore.set(componentPath.replace('ui/', '').split('/'), () => promise)
 }

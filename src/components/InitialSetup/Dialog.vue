@@ -14,7 +14,7 @@
 					<img
 						height="128"
 						draggable="false"
-						src="@/_assets/logo-simple.svg"
+						src="/@/_assets/logo-simple.svg"
 						alt=""
 					/>
 					<h1 class="text-h3">{{ t('initialSetup.welcome') }}</h1>
