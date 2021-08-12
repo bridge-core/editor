@@ -12,6 +12,7 @@ export default class MoLang {
 	parse(expr: string, variables?: any) {
 		if (variables) this.moLang.updateExecutionEnv(variables, true)
 
+		// console.log(expr, this.moLang.executeAndCatch(expr))
 		return this.moLang.executeAndCatch(expr)
 	}
 

@@ -12,7 +12,6 @@ import {
 import { Signal } from '/@/components/Common/Event/Signal'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { App } from '/@/App'
-import { markRaw } from '@vue/composition-api'
 
 export abstract class ThreePreviewTab extends PreviewTab {
 	public component = ThreePreviewTabComponent
@@ -45,32 +44,30 @@ export abstract class ThreePreviewTab extends PreviewTab {
 	async receiveCanvas(canvas: HTMLCanvasElement) {
 		const app = await App.getApp()
 
-		this.canvas = markRaw(canvas)
+		this.canvas = canvas
 
-		this.renderer = markRaw(
-			new WebGLRenderer({
-				antialias: false,
-				canvas,
-			})
-		)
+		this.renderer = new WebGLRenderer({
+			antialias: false,
+			canvas,
+		})
 		this.renderer.setPixelRatio(window.devicePixelRatio)
 
 		if (!this._camera) {
-			this._camera = markRaw(new PerspectiveCamera(70, 2, 0.1, 1000))
+			this._camera = new PerspectiveCamera(70, 2, 0.1, 1000)
 			this._camera.position.x = -16
 			this._camera.position.y = 16
 			this._camera.position.z = -16
 		}
 
 		this.controls?.dispose()
-		this.controls = markRaw(new OrbitControls(this.camera, canvas))
+		this.controls = new OrbitControls(this.camera, canvas)
 		this.controls.addEventListener('change', () => {
 			this.requestRendering()
 			if (!this.parent.isActive) this.parent.setActive(true)
 		})
 
 		if (!this._scene) {
-			this._scene = markRaw(new Scene())
+			this._scene = new Scene()
 			this._scene.add(new AmbientLight(0xffffff))
 		}
 

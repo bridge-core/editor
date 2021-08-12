@@ -15,7 +15,7 @@ export default defineConfig({
 		alias: {
 			'/@': join(__dirname, 'src'),
 			vue: 'vue/dist/vue.esm.js',
-			molangjs: join(__dirname, './src/utils/MoLangJS.ts'),
+			// molangjs: join(__dirname, './src/utils/MoLangJS.ts'),
 		},
 	},
 	build: {
@@ -29,6 +29,7 @@ export default defineConfig({
 	plugins: [
 		createVuePlugin(),
 		VitePWA({
+			registerType: 'prompt',
 			manifest: {
 				name: isNightly ? 'bridge Nightly' : 'bridge v2',
 				short_name: isNightly ? 'bridge Nightly' : 'bridge v2',

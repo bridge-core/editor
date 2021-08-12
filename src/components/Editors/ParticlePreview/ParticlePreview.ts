@@ -89,7 +89,6 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 			file =
 				(await this.fileWatcher?.requestFile(await this.getFile())) ??
 				(await this.getFile())
-		console.log('LOAD')
 
 		let particle: any
 		try {
@@ -97,6 +96,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		} catch {
 			return
 		}
+		console.log(particle)
 
 		this.emitter?.delete()
 		if (!this.scene.children.includes(this.wintersky.space))
@@ -114,12 +114,13 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 				parent_mode: 'world',
 			})
 		)
-		console.log(this.scene)
+		// console.log(this.scene)
 
 		this.emitter.start()
 	}
 
 	protected render() {
+		// console.log('loop')
 		this.controls?.update()
 		this.wintersky.updateFacingRotation(this.camera)
 		this.emitter?.tick()
