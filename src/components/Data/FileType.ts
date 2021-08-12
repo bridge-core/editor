@@ -190,7 +190,7 @@ export namespace FileType {
 		const { lightningCache } = get(filePath) ?? {}
 		if (!lightningCache) return []
 
-		return lCacheFiles[lightningCache]
+		return lCacheFiles[lightningCache] ?? []
 	}
 
 	const packSpiderFiles: { id: string; packSpider: IPackSpiderFile }[] = []
