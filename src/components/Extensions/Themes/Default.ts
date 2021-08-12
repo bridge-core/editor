@@ -1,4 +1,5 @@
 import { colorCodes } from './DefaultTheme/ColorCodes'
+import { isNightly } from '/@/utils/app/isNightly'
 
 export const bridgeDark = <const>{
 	id: 'bridge.default.dark',
@@ -7,9 +8,9 @@ export const bridgeDark = <const>{
 	colors: {
 		text: '#ffffff',
 
-		primary: '#0073FF',
-		secondary: '#0073FF',
-		accent: '#0073FF',
+		primary: isNightly ? '#3bb6a3' : isNightly ? '#3bb6a3' : '#0073FF',
+		secondary: isNightly ? '#3bb6a3' : '#0073FF',
+		accent: isNightly ? '#3bb6a3' : '#0073FF',
 		error: '#ff5252',
 		info: '#2196f3',
 		warning: '#fb8c00',
@@ -69,9 +70,9 @@ export const bridgeLight = <const>{
 	colors: {
 		text: '#000000',
 
-		primary: '#0073FF',
-		secondary: '#0073FF',
-		accent: '#0073FF',
+		primary: isNightly ? '#3bb6a3' : '#0073FF',
+		secondary: isNightly ? '#3bb6a3' : '#0073FF',
+		accent: isNightly ? '#3bb6a3' : '#0073FF',
 		error: '#ff5252',
 		info: '#2196f3',
 		warning: '#fb8c00',

@@ -4,6 +4,8 @@ import { createVuePlugin } from 'vite-plugin-vue2'
 import { VitePWA } from 'vite-plugin-pwa'
 
 const isNightly = process.argv[2] === '--nightly'
+const iconPath = (filePath: string) =>
+	isNightly ? `./img/icons/nightly/${filePath}` : `./img/icons/${filePath}`
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -37,23 +39,23 @@ export default defineConfig({
 				theme_color: '#1778D2',
 				icons: [
 					{
-						src: './img/icons/android-chrome-192x192.png',
+						src: iconPath('android-chrome-192x192.png'),
 						sizes: '192x192',
 						type: 'image/png',
 					},
 					{
-						src: './img/icons/android-chrome-512x512.png',
+						src: iconPath('android-chrome-512x512.png'),
 						sizes: '512x512',
 						type: 'image/png',
 					},
 					{
-						src: './img/icons/android-chrome-maskable-192x192.png',
+						src: iconPath('android-chrome-maskable-192x192.png'),
 						sizes: '192x192',
 						type: 'image/png',
 						purpose: 'maskable',
 					},
 					{
-						src: './img/icons/android-chrome-maskable-512x512.png',
+						src: iconPath('android-chrome-maskable-512x512.png'),
 						sizes: '512x512',
 						type: 'image/png',
 						purpose: 'maskable',

@@ -13,12 +13,11 @@
 			'z-index': windowControlsOverlay ? 1000 : undefined,
 		}"
 	>
-		<img
+		<Logo
 			v-if="!isMacOS || !windowControlsOverlay"
 			style="height: 20px; padding-right: 4px; padding-left: 8px"
-			alt="bridge. Logo"
+			alt="Logo of bridge. v2"
 			draggable="false"
-			src="/@/_assets/logo.svg"
 		/>
 
 		<v-divider vertical />
@@ -76,6 +75,7 @@ import { version as appVersion } from '/@/appVersion.json'
 import { platform } from '/@/utils/os.ts'
 import { reactive } from '@vue/composition-api'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
+import Logo from '../UIElements/Logo.vue'
 
 export default {
 	name: 'Toolbar',
@@ -84,6 +84,7 @@ export default {
 		WindowAction,
 		MenuActivator,
 		MenuButton,
+		Logo,
 	},
 	setup() {
 		const setupObj = reactive({

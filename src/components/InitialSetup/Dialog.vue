@@ -11,12 +11,7 @@
 				<div
 					class="d-flex flex-column justify-center align-center mb-6"
 				>
-					<img
-						height="128"
-						draggable="false"
-						src="/@/_assets/logo-simple.svg"
-						alt=""
-					/>
+					<Logo height="128" />
 					<h1 class="text-h3">{{ t('initialSetup.welcome') }}</h1>
 					<h2 class="text-h5">
 						- {{ t('initialSetup.welcomeCaption') }} -
@@ -65,10 +60,12 @@ import { FileSystemSetup } from '/@/components/FileSystem/Setup.ts'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 import { InitialSetup } from './InitialSetup.ts'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import Logo from '../UIElements/Logo.vue'
 
 export default {
 	name: 'InitialSetupDialog',
 	mixins: [TranslationMixin, WindowControlsOverlayMixin],
+	components: { Logo },
 	setup: () => {
 		const isVisible = FileSystemSetup.state.showInitialSetupDialog
 

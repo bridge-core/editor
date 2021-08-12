@@ -3,12 +3,10 @@
 		class="d-flex flex-column justify-center align-center px-4"
 		:style="`padding-top: 14vh;`"
 	>
-		<img
+		<Logo
 			style="height: 160px; width: 160px"
 			class="mb-4"
-			alt="bridge. Logo"
-			draggable="false"
-			src="/@/_assets/logo.svg"
+			alt="Logo of bridge. v2"
 		/>
 		<h1 class="text-h3 text-center">{{ t('welcome.title') }}</h1>
 		<h2 class="text-h6 mb-12 text-center">{{ t('welcome.subtitle') }}</h2>
@@ -104,12 +102,14 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { App } from '/@/App.ts'
 import { ProjectMixin } from '/@/components/Mixins/Project.ts'
+import Logo from '../UIElements/Logo.vue'
 
 export default {
 	name: 'welcome-screen',
 	mixins: [TranslationMixin, ProjectMixin],
 	components: {
 		ActionViewer,
+		Logo,
 	},
 
 	async mounted() {
