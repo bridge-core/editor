@@ -5,7 +5,12 @@
 		src="/@/_assets/nightly/logo.svg"
 		alt="Logo of bridge. v2"
 	/>
-	<img v-else src="/@/_assets/logo.svg" alt="Logo of bridge. v2" />
+	<img
+		v-else
+		draggable="false"
+		src="/@/_assets/logo.svg"
+		alt="Logo of bridge. v2"
+	/>
 </template>
 
 <script>
