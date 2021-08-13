@@ -5,7 +5,7 @@
 		app
 		clipped
 		padless
-		height="env(titlebar-area-height, 24px)"
+		:height="appToolbarHeight"
 		:style="{
 			'padding-left': 0,
 			'margin-left': 'env(titlebar-area-x, 0)',
@@ -75,11 +75,12 @@ import { version as appVersion } from '/@/appVersion.json'
 import { platform } from '/@/utils/os.ts'
 import { reactive } from '@vue/composition-api'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
+import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import Logo from '../UIElements/Logo.vue'
 
 export default {
 	name: 'Toolbar',
-	mixins: [WindowControlsOverlayMixin],
+	mixins: [WindowControlsOverlayMixin, AppToolbarHeightMixin],
 	components: {
 		WindowAction,
 		MenuActivator,

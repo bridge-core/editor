@@ -8,7 +8,11 @@
 		absolute
 		:right="isSidebarRight"
 		color="sidebarNavigation"
-		height="calc(100% - env(titlebar-area-height, 24px))"
+		:height="`calc(100% - ${appToolbarHeight})`"
+		:style="{
+			maxHeight: `calc(100% - ${appToolbarHeight})`,
+			top: appToolbarHeight,
+		}"
 	>
 		<v-list>
 			<SidebarButton
@@ -68,9 +72,11 @@ import SidebarButton from './Button.vue'
 import { SidebarState } from './state.ts'
 import { tasks } from '/@/components/TaskManager/TaskManager.ts'
 import { NotificationStore } from '/@/components/Notifications/state.ts'
+import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 
 export default {
 	name: 'Sidebar',
+	mixins: [AppToolbarHeightMixin],
 	props: {
 		app: Boolean,
 	},

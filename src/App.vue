@@ -6,7 +6,7 @@
 
 		<Sidebar app />
 
-		<v-main :style="{ 'padding-top': 'env(titlebar-area-height, 24px)' }">
+		<v-main :style="{ 'padding-top': appToolbarHeight }">
 			<WindowRenderer />
 
 			<v-row
@@ -69,7 +69,8 @@ import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import { platform } from './utils/os'
-import { TabSystemMixin } from '/@/components/Mixins/TabSystem'
+import { TabSystemMixin } from '/@/components/Mixins/TabSystem.ts'
+import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import ContextMenu from '/@/components/ContextMenu/ContextMenu.vue'
 import { App } from '/@/App.ts'
 import TabSystem from '/@/components/TabSystem/TabSystem.vue'
@@ -82,7 +83,7 @@ import { settingsState } from './components/Windows/Settings/SettingsState'
 
 export default {
 	name: 'App',
-	mixins: [TabSystemMixin],
+	mixins: [TabSystemMixin, AppToolbarHeightMixin],
 
 	setup() {
 		return {

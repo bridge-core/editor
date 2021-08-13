@@ -3,7 +3,7 @@
 		v-if="content"
 		class="pa-2"
 		:style="{
-			height: `calc(${windowDimensions.currentHeight}px - env(titlebar-area-height, 24px))`,
+			height: `calc(${windowDimensions.currentHeight}px - ${appToolbarHeight})`,
 		}"
 	>
 		<BridgeSheet :style="{ height: '100%', overflow: 'auto' }">
@@ -29,8 +29,10 @@ import ActionBar from './ActionBar.vue'
 import { App } from '/@/App'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import InfoPanel from '/@/components/InfoPanel/InfoPanel.vue'
+import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 
 export default {
+	mixins: [AppToolbarHeightMixin],
 	components: {
 		BridgeSheet,
 		ActionBar,
