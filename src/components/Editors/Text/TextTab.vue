@@ -48,7 +48,6 @@ export default {
 	-moz-user-select: auto;
 	-ms-user-select: auto;
 	-o-user-select: auto;
-	touch-action: auto;
 }
 .monaco-editor
 	.peekview-widget
