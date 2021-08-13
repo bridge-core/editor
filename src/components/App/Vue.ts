@@ -15,6 +15,9 @@ export const vuetify = new Vuetify({
 	lang: {
 		locales: { nl, de, en, ko, zhTW },
 	},
+	breakpoint: {
+		mobileBreakpoint: 'xs',
+	},
 	theme: {
 		dark: true,
 		options: {

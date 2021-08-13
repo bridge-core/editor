@@ -1,6 +1,7 @@
 <template>
 	<v-dialog
 		:value="isVisible"
+		:fullscreen="$vuetify.breakpoint.mobile"
 		@input="$emit('closeWindow')"
 		:persistent="isPersistent"
 		:hide-overlay="!blurBackground"
@@ -56,12 +57,8 @@
 			</v-navigation-drawer>
 
 			<v-card-text
-				style="padding-top: 12px; overflow-y: auto"
+				style="overflow-y: auto"
 				:style="{
-					height: heightUnset
-						? undefined
-						: `${isFullscreen ? maxWindowHeight : windowHeight}px`,
-					'max-height': `${maxWindowHeight}px`,
 					'padding-top': hideToolbar ? '24px' : '12px',
 					'padding-left': !!$slots.sidebar
 						? `calc(${sidebarWidth} + 12px)`
