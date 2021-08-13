@@ -1,8 +1,6 @@
 <template>
 	<SidebarWindow
-		:windowTitle="`[${sidebar.currentElement.text} - ${t(
-			'windows.settings.title'
-		)}]`"
+		:windowTitle="title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -64,6 +62,15 @@ export default {
 	methods: {
 		onClose() {
 			this.currentWindow.close()
+		},
+	},
+	computed: {
+		title() {
+			if (!this.sidebar.currentElement) return 'windows.settings.title'
+			else
+				return `[${this.sidebar.currentElement.text} - ${this.t(
+					'windows.settings.title'
+				)}]`
 		},
 	},
 }

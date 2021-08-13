@@ -96,10 +96,7 @@ export class ProjectManager extends Signal<void> {
 			const createProject = this.app.windows.createProject
 			createProject.open(true)
 			await createProject.fired
-		} else if (!isUsingFileSystemPolyfill) {
-			// If a browser is using the file system polyfill, and the folder already contains a project,
-			// then we don't need to load the projects because the importFromBrproject() method already did that
-
+		} else {
 			// Load existing projects
 			for (const projectDir of loadProjects) {
 				await this.addProject(projectDir, false)

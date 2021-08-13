@@ -7,6 +7,7 @@ import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from './Types'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 import { isUsingFileSystemPolyfill } from './Polyfill'
+import { has as hasVirtualDirectory } from './Virtual/IDB'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
 
@@ -33,6 +34,16 @@ export class FileSystemSetup {
 		)
 		// Request permissions to current bridge folder
 		if (fileHandle) fileHandle = await this.verifyPermissions(fileHandle)
+
+		// Test whether the user has a virtual file system setup
+		if (await hasVirtualDirectory('bridgeFolder')) {
+			fileHandle = new VirtualDirectoryHandle(
+				null,
+				'bridgeFolder',
+				undefined
+			)
+			await fileHandle.setupDone.fired
+		}
 
 		// There's currently no bridge folder yet/the bridge folder has been deleted
 		if (!fileHandle) {

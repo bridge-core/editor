@@ -6,6 +6,7 @@ import {
 	setMany as rawSetMany,
 	getMany as rawGetMany,
 	clear as clearRaw,
+	keys as rawKeys,
 } from 'idb-keyval'
 
 const virtualFs = createStore('virtual-fs', 'virtual-fs-store')
@@ -18,3 +19,4 @@ export const setMany = (arr: [IDBValidKey, any][]) => rawSetMany(arr, virtualFs)
 export const getMany = <T>(arr: IDBValidKey[]) => rawGetMany<T>(arr, virtualFs)
 export const clear = () => clearRaw(virtualFs)
 export const has = async (key: IDBValidKey) => (await get(key)) !== undefined
+export const keys = () => rawKeys(virtualFs)

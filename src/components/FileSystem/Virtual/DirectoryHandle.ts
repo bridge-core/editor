@@ -1,7 +1,7 @@
 import { VirtualHandle, BaseVirtualHandle } from './Handle'
 import { VirtualFileHandle } from './FileHandle'
 import { ISerializedDirectoryHandle } from './Comlink'
-import { clear, get, set, del } from './IDB'
+import { clear, get, set, del, keys } from './IDB'
 
 /**
  * A class that implements a virtual folder
@@ -31,7 +31,15 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 	async updateIdb(deleteOld = false) {
 		if (deleteOld) {
-			await clear()
+			const paths = await keys()
+
+			for (const path of paths) {
+				if (
+					typeof path === 'string' &&
+					path.startsWith('data/packages/')
+				)
+					await del(path)
+			}
 		}
 		this.setupDone.dispatch()
 	}

@@ -1,4 +1,3 @@
-import { AnyHandle } from '../Types'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import type { VirtualFileHandle } from './FileHandle'
 import { v4 as v4Uuid } from 'uuid'
@@ -22,7 +21,7 @@ export abstract class BaseVirtualHandle {
 		return this.parent ? this.parent.path.concat(this.name) : this.basePath
 	}
 	protected get idbKey() {
-		if (this.path.length === 0) return this.uuid
+		if (this.path.length === 0) return this._name
 		return this.path.join('/')
 	}
 	abstract removeSelf(): Promise<void>

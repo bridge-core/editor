@@ -1,8 +1,6 @@
 <template>
 	<SidebarWindow
-		:windowTitle="`[${
-			this.sidebar._filter || this.sidebar.currentElement.text
-		} - ${t('windows.extensionStore.title')}]`"
+		:windowTitle="title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -58,6 +56,14 @@ export default {
 		return this.currentWindow
 	},
 	computed: {
+		title() {
+			if (!this.sidebar.currentElement)
+				return 'windows.extensionStore.title'
+			else
+				return `[${
+					this.sidebar._filter || this.sidebar.currentElement.text
+				} - ${this.t('windows.extensionStore.title')}]`
+		},
 		currentExtensions() {
 			if (this.sidebar._filter !== '') {
 				const f = this.sidebar._filter.toLowerCase()

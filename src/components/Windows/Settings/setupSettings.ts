@@ -9,6 +9,7 @@ import { Button } from './Controls/Button/Button'
 import { del } from 'idb-keyval'
 import { comMojangKey } from '../../FileSystem/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -227,19 +228,21 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
-	settings.addControl(
-		new Button({
-			category: 'general',
-			name: 'windows.settings.general.resetBridgeFolder.name',
-			description:
-				'windows.settings.general.resetBridgeFolder.description',
-			onClick: async () => {
-				await del('bridgeBaseDir')
-				await del(comMojangKey)
-				location.reload()
-			},
-		})
-	)
+	if (!isUsingFileSystemPolyfill) {
+		settings.addControl(
+			new Button({
+				category: 'general',
+				name: 'windows.settings.general.resetBridgeFolder.name',
+				description:
+					'windows.settings.general.resetBridgeFolder.description',
+				onClick: async () => {
+					await del('bridgeBaseDir')
+					await del(comMojangKey)
+					location.reload()
+				},
+			})
+		)
+	}
 
 	//Audio
 	settings.addControl(
