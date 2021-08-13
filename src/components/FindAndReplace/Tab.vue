@@ -43,7 +43,10 @@
 					outlined
 					rounded
 				>
-					<p v-if="queryResults.length === 0">
+					<p
+						v-if="queryResults.length === 0"
+						style="white-space: normal"
+					>
 						{{
 							t(
 								`findAndReplace.no${
