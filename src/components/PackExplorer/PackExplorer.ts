@@ -246,8 +246,7 @@ export class PackExplorer extends SidebarContent {
 									newFilePath
 								)
 								await project.updateFile(newFilePath)
-								// Refresh pack explorer
-								this.refresh()
+								App.eventSystem.dispatch('fileAdded', undefined)
 							},
 						},
 						{
@@ -315,8 +314,7 @@ export class PackExplorer extends SidebarContent {
 									''
 								)
 
-								// Refresh pack explorer
-								this.refresh()
+								App.eventSystem.dispatch('fileAdded', undefined)
 
 								// Open file in new tab
 								await project.openFile(fileHandle, true)

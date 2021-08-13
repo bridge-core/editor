@@ -44,6 +44,11 @@ export default {
 }
 .monaco-editor {
 	user-select: auto;
+	-webkit-user-select: auto;
+	-moz-user-select: auto;
+	-ms-user-select: auto;
+	-o-user-select: auto;
+	touch-action: auto;
 }
 .monaco-editor
 	.peekview-widget
