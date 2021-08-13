@@ -5,11 +5,13 @@
 		class="toolbar-btn"
 		@click="$emit('click', $event)"
 		:disabled="disabled"
+		:class="{ 'px-1': $vuetify.breakpoint.mobile }"
 	>
 		<v-icon
 			v-if="displayIcon"
 			color="accent"
-			style="margin-right: 6px; font-style: normal"
+			:x-small="$vuetify.breakpoint.mobile"
+			:class="{ 'pr-1': !$vuetify.breakpoint.mobile }"
 		>
 			{{ displayIcon }}
 		</v-icon>
