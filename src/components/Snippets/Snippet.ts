@@ -37,7 +37,7 @@ export class Snippet {
 		return [this.name, this.data]
 	}
 	get insertText() {
-		return JSON.stringify(this.insertData, null, '\t')
+		return JSON.stringify(this.data, null, '\t')
 			.slice(1, -1)
 			.replaceAll('\n\t', '\n')
 			.trim()
