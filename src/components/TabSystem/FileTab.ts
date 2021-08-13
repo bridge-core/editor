@@ -38,7 +38,7 @@ export abstract class FileTab extends Tab {
 		return FileType.getId(this.getProjectPath())
 	}
 
-	override async is(tab: Tab): Promise<boolean> {
+	async is(tab: Tab): Promise<boolean> {
 		if (!(tab instanceof FileTab)) return false
 
 		return await this.isForFileHandle(tab.fileHandle)

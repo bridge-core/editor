@@ -37,7 +37,7 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		return this._camera
 	}
 
-	async isFor() {
+	async is() {
 		return false
 	}
 

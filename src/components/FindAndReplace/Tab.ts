@@ -116,7 +116,7 @@ export class FindAndReplaceTab extends Tab {
 	static is() {
 		return false
 	}
-	async isFor() {
+	async is() {
 		return false
 	}
 
