@@ -92,35 +92,13 @@ export function setupFileCategory(app: App) {
 
 	file.addItem(
 		app.actionManager.create({
-			icon: 'mdi-cancel',
-			name: 'actions.clearAllNotifications.name',
-			description: 'actions.clearAllNotifications.description',
-			onTrigger: () => clearAllNotifications(),
+			id: 'bridge.action.openSettings',
+			icon: 'mdi-cog-outline',
+			name: 'actions.settings.name',
+			description: 'actions.settings.description',
+			keyBinding: 'Ctrl + ,',
+			onTrigger: () => app.windows.settings.open(),
 		})
-	)
-	file.addItem(
-		new ToolbarCategory(
-			'mdi-palette-outline',
-			'toolbar.file.preferences.name'
-		)
-			.addItem(
-				app.actionManager.create({
-					id: 'bridge.action.openSettings',
-					icon: 'mdi-cog-outline',
-					name: 'actions.settings.name',
-					description: 'actions.settings.description',
-					keyBinding: 'Ctrl + ,',
-					onTrigger: () => app.windows.settings.open(),
-				})
-			)
-			.addItem(
-				app.actionManager.create({
-					icon: 'mdi-puzzle-outline',
-					name: 'actions.extensions.name',
-					description: 'actions.extensions.description',
-					onTrigger: () => app.windows.extensionStore.open(),
-				})
-			)
 	)
 
 	App.toolbar.addCategory(file)

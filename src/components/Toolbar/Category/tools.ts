@@ -2,6 +2,7 @@ import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
+import { clearAllNotifications } from '/@/components/Notifications/create'
 
 export function setupToolsCategory(app: App) {
 	const tools = new ToolbarCategory(
@@ -63,6 +64,17 @@ export function setupToolsCategory(app: App) {
 					)
 				)
 			},
+		})
+	)
+
+	tools.addItem(new Divider())
+
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-cancel',
+			name: 'actions.clearAllNotifications.name',
+			description: 'actions.clearAllNotifications.description',
+			onTrigger: () => clearAllNotifications(),
 		})
 	)
 
