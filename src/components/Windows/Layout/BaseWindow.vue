@@ -23,7 +23,7 @@
 				:hasMaximizeButton="hasMaximizeButton"
 				:hasCloseButton="hasCloseButton"
 				:hasSidebar="!!$slots.sidebar"
-				:sidebarWidth="sidebarWidth"
+				:sidebarWidth="calcSidebarWidth"
 				@toggleFullscreen="$emit('toggleFullscreen')"
 				@closeWindow="$emit('closeWindow')"
 			>
@@ -33,7 +33,7 @@
 			<v-navigation-drawer
 				v-if="$slots.sidebar"
 				absolute
-				:width="sidebarWidth"
+				:width="calcSidebarWidth"
 				permanent
 				clipped
 				stateless
@@ -70,7 +70,7 @@
 					'max-height': `${maxWindowHeight}px`,
 					'padding-top': hideToolbar ? '24px' : '12px',
 					'padding-left': !!$slots.sidebar
-						? `calc(${sidebarWidth} + 12px)`
+						? `calc(${calcSidebarWidth} + 12px)`
 						: undefined,
 				}"
 			>
@@ -174,6 +174,11 @@ export default {
 	},
 
 	computed: {
+		calcSidebarWidth() {
+			if (this.$vuetify.breakpoint.mobile) return '76px'
+
+			return this.sidebarWidth
+		},
 		isFullScreenOrMobile() {
 			return (
 				(!this.isSmallPopup && this.$vuetify.breakpoint.mobile) ||

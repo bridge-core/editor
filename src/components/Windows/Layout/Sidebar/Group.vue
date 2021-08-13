@@ -6,10 +6,10 @@
 			v-ripple
 		>
 			<!-- Flexbox doesn't work directly on summaries in Safari -->
-			<span class="d-flex">
-				<h2 class="d-inline">{{ t(text) }}</h2>
-				<v-spacer />
-				<v-icon color="primary">
+			<span class="d-flex" :class="{ 'justify-center': compact }">
+				<h2 v-if="!compact" class="d-inline">{{ t(text) }}</h2>
+				<v-spacer v-if="!compact" />
+				<v-icon color="primary" large>
 					{{ isOpen ? 'mdi-chevron-down' : 'mdi-chevron-right' }}
 				</v-icon>
 			</span>
@@ -22,8 +22,10 @@
 			:color="color"
 			:text="text"
 			:isSelected="selected === id"
+			:compact="compact"
 			@click="$emit('click', id)"
 		/>
+		<v-divider v-if="compact" />
 	</details>
 </template>
 
@@ -42,6 +44,7 @@ export default {
 		isOpen: Boolean,
 		items: Array,
 		selected: String,
+		compact: Boolean,
 	},
 }
 </script>

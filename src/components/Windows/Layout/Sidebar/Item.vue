@@ -6,11 +6,15 @@
 		@click="$emit('click')"
 	>
 		<!-- Flexbox doesn't work directly on summaries in Safari -->
-		<span class="d-flex">
-			<v-icon :color="color" class="pr-1" style="font-size: 22px">
+		<span class="d-flex" :class="{ 'justify-center': compact }">
+			<v-icon
+				:color="color"
+				:class="{ 'pr-1': !compact }"
+				:style="{ 'font-size': `${compact ? 30 : 22}px` }"
+			>
 				{{ icon }}
 			</v-icon>
-			<span>{{ text }}</span>
+			<span v-if="!compact">{{ text }}</span>
 		</span>
 	</div>
 </template>
@@ -24,6 +28,7 @@ export default {
 		text: String,
 		icon: String,
 		color: String,
+		compact: Boolean,
 	},
 }
 </script>

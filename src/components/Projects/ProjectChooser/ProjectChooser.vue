@@ -30,7 +30,9 @@
 					draggable="false"
 				/>
 				<div>
-					<h1 class="text-h4">{{ sidebar.currentState.name }}</h1>
+					<h1 class="text-h4" style="overflow-wrap: anywhere">
+						{{ sidebar.currentState.name }}
+					</h1>
 					<h2 class="text-h6">
 						by {{ sidebar.currentState.author || 'Unknown' }}
 					</h2>
