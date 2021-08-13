@@ -58,6 +58,7 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 				onMediaChange(mediaQuery)
 			)
 		} else {
+			// @ts-ignore This is for supporting older versions of Safari
 			media.addListener((mediaQuery) => onMediaChange(mediaQuery))
 		}
 

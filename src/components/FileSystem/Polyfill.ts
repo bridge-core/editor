@@ -20,7 +20,7 @@ if (typeof window.showOpenFilePicker !== 'function') {
 		input.type = 'file'
 		input.multiple = opts.multiple ?? false
 		input.accept = opts.types
-			.map((e) => Object.values(e.accept))
+			.map((e: FilePickerAcceptType) => Object.values(e.accept))
 			.flat(2)
 			.join(',')
 		input.style.display = 'none'
