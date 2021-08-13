@@ -9,7 +9,7 @@
 		<v-card>
 			<v-container :class="{ 'pt-12': windowControlsOverlay }">
 				<div
-					class="d-flex flex-column justify-center align-center mb-6"
+					class="d-flex flex-column justify-center align-center text-center mb-6"
 				>
 					<Logo height="128" />
 					<h1 class="text-h3">{{ t('initialSetup.welcome') }}</h1>
