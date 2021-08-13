@@ -102,7 +102,7 @@ export abstract class Tab extends Signal<Tab> {
 		}
 		return didClose
 	}
-	abstract isFor(fileHandle: AnyFileHandle): Promise<boolean>
+	abstract is(tab: Tab): Promise<boolean>
 
 	focus() {}
 	async onActivate() {

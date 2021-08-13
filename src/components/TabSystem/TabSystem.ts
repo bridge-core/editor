@@ -72,12 +72,8 @@ export class TabSystem extends MonacoHolder {
 		selectTab = true,
 		isReadOnly = false
 	) {
-		for (const tab of this.tabs) {
-			if (await tab.isFor(fileHandle))
-				return selectTab ? tab.select() : tab
-		}
-
 		const tab = await this.getTabFor(fileHandle, isReadOnly)
+
 		await this.add(tab, selectTab)
 		return tab
 	}
@@ -100,8 +96,24 @@ export class TabSystem extends MonacoHolder {
 
 		return await tab.fired
 	}
+	async hasTab(tab: Tab) {
+		for (const currentTab of this.tabs) {
+			if (await currentTab.is(tab)) return true
+		}
 
-	async add(tab: Tab, selectTab = true) {
+		return false
+	}
+
+	async add(tab: Tab, selectTab = true, noTabExistanceCheck = false) {
+		if (!noTabExistanceCheck) {
+			for (const currentTab of this.tabs) {
+				if (await currentTab.is(tab)) {
+					tab.onDeactivate()
+					return selectTab ? currentTab.select() : currentTab
+				}
+			}
+		}
+
 		if (!tab.hasFired) await tab.fired
 
 		this.tabs = [...this.tabs, tab]
@@ -248,7 +260,11 @@ export class TabSystem extends MonacoHolder {
 
 	async getTab(fileHandle: AnyFileHandle) {
 		for (const tab of this.tabs) {
-			if (await tab.isFor(fileHandle)) return tab
+			if (
+				tab instanceof FileTab &&
+				(await tab.isForFileHandle(fileHandle))
+			)
+				return tab
 		}
 	}
 	closeTabs(predicate: (tab: Tab) => boolean) {

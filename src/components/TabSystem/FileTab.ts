@@ -38,7 +38,12 @@ export abstract class FileTab extends Tab {
 		return FileType.getId(this.getProjectPath())
 	}
 
-	async isFor(fileHandle: AnyFileHandle) {
+	override async is(tab: Tab): Promise<boolean> {
+		if (!(tab instanceof FileTab)) return false
+
+		return await this.isForFileHandle(tab.fileHandle)
+	}
+	async isForFileHandle(fileHandle: AnyFileHandle) {
 		if (
 			(<VirtualFileHandle>fileHandle).isVirtual !==
 			(<VirtualFileHandle>this.fileHandle).isVirtual

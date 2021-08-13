@@ -21,16 +21,8 @@
 					tabSystem.selectedTab.type ||
 					tabSystem.selectedTab.name
 				}`"
-				:style="`height: ${
-					(windowHeight - appToolbarHeightNumber) /
-						(tabSystem.isSharingScreen && isMobile ? 2 : 1) -
-					tabBarHeight
-				}px; width: 100%;`"
-				:height="
-					(windowHeight - appToolbarHeightNumber) /
-						(tabSystem.isSharingScreen && isMobile ? 2 : 1) -
-					tabBarHeight
-				"
+				:style="`height: ${tabHeight}px; width: 100%;`"
+				:height="tabHeight"
 				:tab="tabSystem.selectedTab"
 				:id="id"
 			/>
@@ -75,6 +67,13 @@ export default {
 				this.tabSystem.selectedTab.actions.length > 0
 				? 48 + 25
 				: 48
+		},
+		tabHeight() {
+			return (
+				(this.windowHeight - this.appToolbarHeightNumber) /
+					(this.tabSystem.isSharingScreen && this.isMobile ? 2 : 1) -
+				this.tabBarHeight
+			)
 		},
 		isMobile() {
 			return this.$vuetify.breakpoint.mobile

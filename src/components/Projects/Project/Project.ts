@@ -22,6 +22,7 @@ import {
 import { markRaw, reactive, set } from '@vue/composition-api'
 import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
+import { Tab } from '/@/components/TabSystem/CommonTab'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -187,6 +188,15 @@ export abstract class Project {
 			const tab = await tabSystem.getTab(fileHandle)
 			if (tab !== undefined) return tab
 		}
+	}
+	async openTab(tab: Tab, selectTab = true) {
+		for (const tabSystem of this.tabSystems) {
+			if (await tabSystem.hasTab(tab)) {
+				if (selectTab) tabSystem.select(tab)
+				return
+			}
+		}
+		this.tabSystem?.add(tab, selectTab)
 	}
 
 	absolutePath(filePath: string) {
