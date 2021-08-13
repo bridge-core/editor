@@ -7,7 +7,7 @@
 		"serve": "vite preview",
 		"build": "node ./scripts/build.mjs && node ./scripts/buildApp.mjs",
 		"build:nightly": "node ./scripts/build.mjs && node ./scripts/buildApp.mjs --nightly",
-		"test": "tsc --noEmit && jest"
+		"test": "tsc --project tsconfig.json --noEmit && jest"
 	},
 	"dependencies": {
 		"@mdi/font": "^5.8.55",
