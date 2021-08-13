@@ -1,7 +1,10 @@
 <template>
 	<div class="px-3">
-		<v-row style="flex-wrap: nowrap">
-			<v-col cols="3" class="flex-grow-0 flex-shrink-0">
+		<div class="d-flex" :class="{ 'flex-column': hasLimitedSpace }">
+			<v-col
+				:cols="hasLimitedSpace ? 12 : 3"
+				class="flex-grow-0 flex-shrink-0 align-center"
+			>
 				<v-text-field
 					class="mb-2"
 					prepend-inner-icon="mdi-magnify"
@@ -24,6 +27,7 @@
 				<SearchType class="mb-2" v-model="queryOptions.searchType" />
 				<v-btn
 					color="primary"
+					class="mb-2"
 					:disabled="replaceWith === '' || searchFor === ''"
 					:loading="tab.isLoading"
 					@click="onReplaceAll()"
@@ -33,13 +37,14 @@
 				</v-btn>
 			</v-col>
 			<v-col
-				cols="9"
-				style="min-width: 100px; max-width: 100%"
+				:cols="hasLimitedSpace ? 12 : 9"
 				class="flex-grow-1 flex-shrink-0"
 			>
 				<v-card
 					class="pa-2"
-					:style="`white-space: nowrap; height: ${height - 24}px`"
+					:style="`white-space: nowrap; height: ${
+						(hasLimitedSpace ? 400 : height) - 24
+					}px`"
 					outlined
 					rounded
 				>
@@ -58,7 +63,7 @@
 					<v-virtual-scroll
 						ref="virtualScroller"
 						:items="tab.displayQueryResults"
-						:height="height - 40"
+						:height="(hasLimitedSpace ? 400 : height) - 40"
 						:bench="30"
 						item-height="22"
 						@scroll.native="onScroll"
@@ -95,7 +100,7 @@
 					</v-virtual-scroll>
 				</v-card>
 			</v-col>
-		</v-row>
+		</div>
 	</div>
 </template>
 
@@ -153,6 +158,14 @@ export default {
 		},
 		onReplaceSingleFile(filePath) {
 			this.tab.executeSingleQuery(filePath)
+		},
+	},
+	computed: {
+		hasLimitedSpace() {
+			return (
+				this.$vuetify.breakpoint.mobile ||
+				this.tab.parent.isSharingScreen
+			)
 		},
 	},
 
