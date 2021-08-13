@@ -1,11 +1,11 @@
 <template>
 	<v-dialog
 		:value="isVisible"
-		:fullscreen="$vuetify.breakpoint.mobile"
+		:fullscreen="!isSmallPopup && $vuetify.breakpoint.mobile"
 		@input="$emit('closeWindow')"
 		:persistent="isPersistent"
 		:hide-overlay="!blurBackground"
-		:max-width="isFullscreen ? maxWindowWidth : windowWidth"
+		:max-width="isFullScreenOrMobile ? maxWindowWidth : windowWidth"
 		content-class="no-overflow"
 	>
 		<v-card
@@ -13,6 +13,7 @@
 			width="100%"
 			color="background"
 			:rounded="platform === 'darwin' ? 'lg' : undefined"
+			ref="card"
 		>
 			<component
 				v-if="!hideToolbar"
@@ -59,6 +60,14 @@
 			<v-card-text
 				style="overflow-y: auto"
 				:style="{
+					height: heightUnset
+						? undefined
+						: `${
+								isFullScreenOrMobile
+									? maxWindowHeight
+									: windowHeight
+						  }px`,
+					'max-height': `${maxWindowHeight}px`,
 					'padding-top': hideToolbar ? '24px' : '12px',
 					'padding-left': !!$slots.sidebar
 						? `calc(${sidebarWidth} + 12px)`
@@ -144,6 +153,7 @@ export default {
 		percentageWidth: Number,
 		maxPercentageHeight: Number,
 		maxPercentageWidth: Number,
+		isSmallPopup: Boolean,
 	},
 	data() {
 		return {
@@ -164,6 +174,12 @@ export default {
 	},
 
 	computed: {
+		isFullScreenOrMobile() {
+			return (
+				(!this.isSmallPopup && this.$vuetify.breakpoint.mobile) ||
+				this.isFullscreen
+			)
+		},
 		isDarkMode() {
 			return this.$vuetify.theme.dark
 		},
@@ -192,6 +208,13 @@ export default {
 			}
 		},
 		maxWindowHeight() {
+			if (!this.isSmallPopup && this.$vuetify.breakpoint.mobile)
+				return (
+					this.globalWindowHeight -
+					!this.hideToolbar * 30 -
+					!!this.$slots.actions * 52
+				)
+
 			if (this.maxPercentageHeight == undefined) {
 				return this.maxHeight
 			} else {

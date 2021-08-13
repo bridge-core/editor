@@ -9,6 +9,7 @@
 		:height="120"
 		:hasCloseButton="false"
 		:isPersistent="$data.isPersistent"
+		:isSmallPopup="true"
 	>
 		<template #default>
 			<p class="mt-2">{{ t($data.description) }}</p>

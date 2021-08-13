@@ -9,6 +9,7 @@
 		:width="300"
 		:height="40"
 		@closeWindow="onClose"
+		:isSmallPopup="true"
 	>
 		<template #default>
 			<v-progress-linear indeterminate />
