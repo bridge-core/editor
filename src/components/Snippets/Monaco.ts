@@ -1,5 +1,5 @@
 import { languages, editor, Position } from 'monaco-editor'
-import { getLocation } from 'jsonc-parser'
+import { getLocation } from '/@/utils/monaco/getLocation'
 import { App } from '/@/App'
 import { FileTab } from '../TabSystem/FileTab'
 
@@ -10,14 +10,12 @@ languages.registerCompletionItemProvider('json', {
 		position: Position
 	) => {
 		const app = await App.getApp()
-		const location = getLocation(
-			model.getValue(),
-			model.getOffsetAt(position)
-		).path.join('/')
+		const location = getLocation(model, position)
 		const currentTab = app.project.tabSystem?.selectedTab
 
 		if (!(currentTab instanceof FileTab)) return { suggestions: [] }
 		const fileType = currentTab.getFileType()
+		console.log(location)
 
 		return {
 			suggestions: app.project.snippetLoader
