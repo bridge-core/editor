@@ -1,6 +1,8 @@
 <template>
 	<SidebarWindow
-		windowTitle="windows.settings.title"
+		:windowTitle="`[${sidebar.currentElement.text} - ${t(
+			'windows.settings.title'
+		)}]`"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"

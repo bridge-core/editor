@@ -1,6 +1,8 @@
 <template>
 	<SidebarWindow
-		windowTitle="windows.extensionStore.title"
+		:windowTitle="`[${
+			this.sidebar._filter || this.sidebar.currentElement.text
+		} - ${t('windows.extensionStore.title')}]`"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -29,12 +31,10 @@
 			<template v-else>
 				<ExtensionCard
 					v-for="extension in currentExtensions"
-					:key="
-						`${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`
-					"
+					:key="`${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`"
 					:extension="extension"
-					@search="search => (sidebar._filter = search)"
-					@select="id => ($data.selectedSidebar = id)"
+					@search="(search) => (sidebar._filter = search)"
+					@select="(id) => ($data.selectedSidebar = id)"
 				/>
 			</template>
 		</template>
@@ -63,12 +63,12 @@ export default {
 				const f = this.sidebar._filter.toLowerCase()
 
 				return this.extensions.filter(
-					e =>
+					(e) =>
 						e.name.toLowerCase().includes(f) ||
 						e.description.toLowerCase().includes(f) ||
 						e.author.toLowerCase().includes(f) ||
 						e.version.includes(f) ||
-						e.tags.some(tag => tag.text.toLowerCase().includes(f))
+						e.tags.some((tag) => tag.text.toLowerCase().includes(f))
 				)
 			}
 
