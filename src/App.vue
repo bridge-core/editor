@@ -45,7 +45,7 @@
 								tabSystems[0].shouldRender &&
 								tabSystems[1].shouldRender
 							"
-							:vertical="isMobile"
+							:vertical="!$vuetify.breakpoint.mobile"
 						/>
 						<TabSystem
 							class="flex-grow-1 flex-shrink-0"
