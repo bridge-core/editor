@@ -185,7 +185,7 @@
 			<v-spacer />
 			<v-btn
 				color="primary"
-				:disabled="!currentWindow.hasRequiredData"
+				:disabled="!currentWindow.hasRequiredData || isCreatingProject"
 				:loading="shouldLoad"
 				@click="createProject"
 			>
