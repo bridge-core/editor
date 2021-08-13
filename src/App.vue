@@ -22,14 +22,21 @@
 					:cols="isSidebarContentVisible ? 9 - sidebarSize : 12"
 					class="flex-grow-1"
 				>
-					<div v-if="shouldRenderWelcomeScreen" class="d-flex">
+					<div
+						v-if="shouldRenderWelcomeScreen"
+						class="d-flex"
+						:class="{ 'flex-column': $vuetify.breakpoint.mobile }"
+						:style="{
+							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
+						}"
+					>
 						<v-divider
 							v-if="isSidebarContentVisible && !isSidebarRight"
 							vertical
 						/>
 
 						<TabSystem
-							class="flex-grow-1"
+							class="flex-grow-1 flex-shrink-0"
 							:tabSystem="tabSystems[0]"
 							showWelcomeScreen
 						/>
@@ -38,10 +45,10 @@
 								tabSystems[0].shouldRender &&
 								tabSystems[1].shouldRender
 							"
-							vertical
+							:vertical="isMobile"
 						/>
 						<TabSystem
-							class="flex-grow-1"
+							class="flex-grow-1 flex-shrink-0"
 							:tabSystem="tabSystems[1]"
 							:id="1"
 						/>
@@ -93,6 +100,7 @@ export default {
 	mounted() {
 		App.getApp().then((app) => {
 			this.contextMenu = app.contextMenu
+			this.windowSize = app.windowResize.state
 		})
 	},
 
@@ -112,6 +120,10 @@ export default {
 		isMacOs: platform() === 'darwin',
 		contextMenu: null,
 		settingsState: settingsState,
+		windowSize: {
+			currentWidth: window.innerWidth,
+			currentHeight: window.innerHeight,
+		},
 	}),
 
 	computed: {
@@ -140,6 +152,13 @@ export default {
 				case 'large':
 					return 1
 			}
+		},
+	},
+	watch: {
+		'$vuetify.breakpoint.mobile'() {
+			this.$nextTick(() => {
+				App.getApp().then((app) => app.windowResize.dispatch())
+			})
 		},
 	},
 }

@@ -1,5 +1,12 @@
 <template>
-	<div v-if="tabSystem.shouldRender" class="tab-system">
+	<div
+		v-if="tabSystem.shouldRender"
+		class="tab-system"
+		:style="{
+			width: isMobile ? '100%' : '50%',
+			height: isMobile ? '50%' : '100%',
+		}"
+	>
 		<TabBar :tabSystem="tabSystem" />
 		<v-progress-linear
 			v-if="tabSystem.selectedTab && tabSystem.selectedTab.isLoading"
@@ -15,12 +22,14 @@
 					tabSystem.selectedTab.name
 				}`"
 				:style="`height: ${
-					windowHeight -
-					(tabBarHeight + (windowControlsOverlay ? 33 : 24))
+					(windowHeight - appToolbarHeightNumber) /
+						(tabSystem.isSharingScreen && isMobile ? 2 : 1) -
+					tabBarHeight
 				}px; width: 100%;`"
 				:height="
-					windowHeight -
-					(tabBarHeight + (windowControlsOverlay ? 33 : 24))
+					(windowHeight - appToolbarHeightNumber) /
+						(tabSystem.isSharingScreen && isMobile ? 2 : 1) -
+					tabBarHeight
 				"
 				:tab="tabSystem.selectedTab"
 				:id="id"
@@ -33,11 +42,11 @@
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import TabBar from '/@/components/TabSystem/TabBar.vue'
 import { App } from '/@/App'
-import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay'
+import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight'
 
 export default {
 	name: 'TabSystem',
-	mixins: [WindowControlsOverlayMixin],
+	mixins: [AppToolbarHeightMixin],
 	props: {
 		tabSystem: Object,
 		id: {
@@ -66,6 +75,9 @@ export default {
 				this.tabSystem.selectedTab.actions.length > 0
 				? 48 + 25
 				: 48
+		},
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
 		},
 	},
 	methods: {
