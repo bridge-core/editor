@@ -4,10 +4,46 @@ import { ZipDirectory } from '/@/components/FileSystem/Zip/ZipDirectory'
 import { App } from '/@/App'
 import { createNotification } from '/@/components/Notifications/create'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
+import { PackType } from '../../Data/PackType'
 
 export async function exportAsMcaddon() {
 	const app = await App.getApp()
 	app.windows.loadingWindow.open()
+
+	// Increment manifest versions if using a file system polyfill
+	// This allows user to simply import the file into Minecraft even if the same pack
+	// with a lower version number is already installed
+	if (!isUsingFileSystemPolyfill) {
+		const fs = app.project.fileSystem
+
+		for (const pack of app.project.getPacks()) {
+			const packPath = PackType.getPath(pack)
+
+			if (await fs.fileExists(`${packPath}/manifest.json`)) {
+				const manifest =
+					(await fs.readJSON(`${packPath}/manifest.json`)) ?? {}
+				const [major, minor, patch] = <[number, number, number]>(
+					manifest.header?.version
+				) ?? [0, 0, 0]
+
+				// Increment patch version
+				const newVersion = [major, minor, patch + 1]
+
+				// Write back to file
+				await fs.writeJSON(
+					`${packPath}/manifest.json`,
+					{
+						...manifest,
+						header: {
+							...(manifest.header ?? {}),
+							version: newVersion,
+						},
+					},
+					true
+				)
+			}
+		}
+	}
 
 	await app.project.compilerManager.start('default', 'build')
 

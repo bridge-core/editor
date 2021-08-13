@@ -90,4 +90,8 @@ export namespace PackType {
 			dispose: () => extensionPackTypes.delete(id),
 		}
 	}
+
+	export function getPath(packTypeId: TPackTypeId) {
+		return getFromId(packTypeId)?.packPath
+	}
 }
