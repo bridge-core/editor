@@ -8,6 +8,7 @@ export class InfoPanel {
 	protected type: 'info' | 'warning' | 'error' | 'success'
 	protected text: string
 	protected isDismissible: boolean
+	protected isVisible: boolean = true
 
 	constructor({ type, text, isDismissible }: IPanelOptions) {
 		this.type = type

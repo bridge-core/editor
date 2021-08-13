@@ -4,6 +4,7 @@
 		rounded="lg"
 		border="bottom"
 		:dismissible="infoPanel.isDismissible"
+		v-model="infoPanel.isVisible"
 	>
 		{{ t(infoPanel.text) }}
 	</v-alert>
