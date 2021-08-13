@@ -26,6 +26,10 @@ export function toggle(content: SidebarContent) {
 
 	App.getApp().then((app) => app.windowResize.dispatch())
 }
+export function unselect() {
+	SidebarState.currentState = null
+	App.getApp().then((app) => app.windowResize.dispatch())
+}
 
 export const isContentVisible = ref(false)
 watch(

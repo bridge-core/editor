@@ -73,6 +73,7 @@ export class App {
 	public readonly configuredJsonLanguage = markRaw(
 		new ConfiguredJsonLanguage()
 	)
+	public readonly isMobile: () => boolean
 
 	protected languageManager = markRaw(new LanguageManager())
 
@@ -114,6 +115,8 @@ export class App {
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
 		this.locales = new Locales(appComponent.$vuetify)
 		this._windows = new Windows(this)
+
+		this.isMobile = () => appComponent.$vuetify.breakpoint.mobile
 
 		// Prompt the user whether they really want to close bridge. when unsaved tabs are open
 		const saveWarning =
