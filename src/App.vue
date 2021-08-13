@@ -127,6 +127,7 @@ export default {
 					? this.settingsState.sidebar.sidebarSize
 					: undefined
 			if (!size) size = 'normal'
+			if (this.$vuetify.breakpoint.mobile) return 9
 
 			switch (size) {
 				case 'tiny':
