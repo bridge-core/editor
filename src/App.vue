@@ -10,8 +10,8 @@
 			v-if="!sidebarNavigationVisible"
 			small
 			fab
-			absolute
-			style="bottom: 16px"
+			fixed
+			style="bottom: calc(env(safe-area-inset-bottom, 0) + 16px)"
 			:left="!isSidebarRight"
 			:right="isSidebarRight"
 			color="primary"
