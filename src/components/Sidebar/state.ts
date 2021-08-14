@@ -28,8 +28,8 @@ export function toggle(content: SidebarContent) {
 
 	App.getApp().then((app) => app.windowResize.dispatch())
 }
-export function unselect() {
-	SidebarState.currentState = null
+export function hide() {
+	SidebarState.isNavigationVisible = false
 	App.getApp().then((app) => app.windowResize.dispatch())
 }
 

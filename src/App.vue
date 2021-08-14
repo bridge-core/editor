@@ -28,7 +28,10 @@
 				class="d-flex fill-area"
 				:class="{ 'flex-row-reverse': isSidebarRight }"
 			>
-				<v-col :cols="isSidebarContentVisible ? 3 + sidebarSize : 0">
+				<v-col
+					v-if="isSidebarContentVisible"
+					:cols="isSidebarContentVisible ? 3 + sidebarSize : 0"
+				>
 					<SidebarContent />
 				</v-col>
 
@@ -106,11 +109,6 @@ export default {
 	name: 'App',
 	mixins: [TabSystemMixin, AppToolbarHeightMixin],
 
-	setup() {
-		return {
-			isSidebarContentVisible: isContentVisible,
-		}
-	},
 	mounted() {
 		App.getApp().then((app) => {
 			this.contextMenu = app.contextMenu
@@ -141,6 +139,9 @@ export default {
 	}),
 
 	computed: {
+		isSidebarContentVisible() {
+			return this.sidebarNavigationVisible && isContentVisible.value
+		},
 		sidebarNavigationVisible() {
 			return SidebarState.isNavigationVisible
 		},
@@ -197,6 +198,7 @@ body {
 	/** This terrible hack is needed to disable safari's overflow scrolling */
 	position: fixed;
 	width: 100%;
+	height: 100vh;
 }
 
 /** Scrollbar */

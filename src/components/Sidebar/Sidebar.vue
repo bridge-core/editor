@@ -132,7 +132,6 @@ export default {
 	methods: {
 		closeSidebar() {
 			SidebarState.isNavigationVisible = false
-			SidebarState.currentState = null
 		},
 	},
 }

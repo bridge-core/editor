@@ -11,7 +11,7 @@ import { MonacoHolder } from './MonacoHolder'
 import { FileTab } from './FileTab'
 import { TabProvider } from './TabProvider'
 import { AnyFileHandle } from '../FileSystem/Types'
-import { unselect } from '../Sidebar/state'
+import { hide } from '../Sidebar/state'
 
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
@@ -157,6 +157,7 @@ export class TabSystem extends MonacoHolder {
 	async select(tab?: Tab) {
 		if (this.isActive !== !!tab) this.setActive(!!tab)
 
+		if (this.app.mobile.isCurrentDevice()) hide()
 		if (tab?.isSelected) return
 
 		this._selectedTab?.onDeactivate()
@@ -168,7 +169,6 @@ export class TabSystem extends MonacoHolder {
 		// Next steps don't need to be done if we simply unselect tab
 		if (!tab) return
 
-		if (this.app.mobile.isCurrentDevice()) unselect()
 		await this._selectedTab?.onActivate()
 
 		Vue.nextTick(async () => {
