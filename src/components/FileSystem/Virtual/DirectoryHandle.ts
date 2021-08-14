@@ -41,14 +41,16 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 					await del(path)
 			}
 		}
+
+		if (!this.children && !(await this.hasChildren()))
+			await set(this.idbKey, [])
+
 		this.setupDone.dispatch()
 	}
 
 	protected async addChild(child: VirtualHandle) {
 		if (await this.has(child.name)) {
-			throw new Error(
-				`A file or folder with the name ${child.name} already exists in this folder`
-			)
+			return
 		}
 
 		if (this.children) this.children.set(child.name, child)
@@ -67,18 +69,25 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 				)
 			)
 	}
+	protected getChildPath(childName: string) {
+		return this.path.concat(childName).join('/')
+	}
 	protected async getChild(childName: string) {
 		if (this.children) return this.children.get(childName)
 
 		if (await this.has(childName)) {
-			const data = await get(`${this.idbKey}/${childName}`)
+			const data = await get(this.getChildPath(childName))
+
 			if (data instanceof Uint8Array) {
 				return new VirtualFileHandle(this, childName)
-			} else {
+			} else if (Array.isArray(data)) {
 				return new VirtualDirectoryHandle(this, childName)
+			} else {
+				// File/folder was deleted
 			}
 		}
 	}
+
 	async deleteChild(childName: string) {
 		if (this.children) this.children.delete(childName)
 		else

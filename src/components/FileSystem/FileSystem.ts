@@ -144,7 +144,9 @@ export class FileSystem extends Signal<void> {
 			return
 		}
 
-		await parentDir.removeEntry(file, { recursive: true })
+		try {
+			await parentDir.removeEntry(file, { recursive: true })
+		} catch {}
 	}
 
 	async writeFile(path: string, data: FileSystemWriteChunkType) {

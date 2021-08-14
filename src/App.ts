@@ -234,6 +234,7 @@ export class App {
 			this.fileSystem.mkdir('projects'),
 			this.fileSystem.mkdir('extensions'),
 			this.fileSystem.mkdir('data'),
+
 			// Setup data helpers
 			FileType.setup(this.dataLoader),
 			PackType.setup(this.dataLoader),
