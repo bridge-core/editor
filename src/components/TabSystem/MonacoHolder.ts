@@ -28,7 +28,7 @@ languages.registerDefinitionProvider('json', new DefinitionProvider())
 
 export class MonacoHolder extends Signal<void> {
 	protected _monacoEditor?: editor.IStandaloneCodeEditor
-	protected windowResize?: IDisposable
+	protected disposables: IDisposable[] = []
 
 	constructor(protected _app: App) {
 		super()
@@ -40,6 +40,20 @@ export class MonacoHolder extends Signal<void> {
 		return this._monacoEditor
 	}
 
+	getMobileOptions(isMobile: boolean) {
+		return <const>{
+			lineNumbers: isMobile ? 'off' : 'on',
+			minimap: { enabled: !isMobile },
+			tabSize: isMobile ? 2 : 4,
+			scrollbar: {
+				horizontalScrollbarSize: isMobile ? 15 : undefined,
+				verticalScrollbarSize: isMobile ? 20 : undefined,
+				horizontalSliderSize: isMobile ? 15 : undefined,
+				verticalSliderSize: isMobile ? 20 : undefined,
+			},
+		}
+	}
+
 	createMonacoEditor(domElement: HTMLElement) {
 		this.dispose()
 		this._monacoEditor = markRaw(
@@ -49,9 +63,9 @@ export class MonacoHolder extends Signal<void> {
 				roundedSelection: false,
 				autoIndent: 'full',
 				fontSize: 14,
+				...this.getMobileOptions(this._app.mobile.isCurrentDevice()),
 				// fontFamily: this.fontFamily,
 				wordWrap: settingsState?.editor?.wordWrap ? 'bounded' : 'off',
-				tabSize: 4,
 			})
 		)
 		// @ts-ignore
@@ -157,9 +171,19 @@ export class MonacoHolder extends Signal<void> {
 		})
 
 		this._monacoEditor?.layout()
-		this.windowResize = this._app.windowResize.on(() =>
-			setTimeout(() => this._monacoEditor?.layout())
+		this.disposables.push(
+			this._app.windowResize.on(() =>
+				setTimeout(() => this._monacoEditor?.layout())
+			)
 		)
+		this.disposables.push(
+			this._app.mobile.change.on((isMobile) => {
+				this._monacoEditor?.updateOptions(
+					this.getMobileOptions(isMobile)
+				)
+			})
+		)
+
 		this.dispatch()
 	}
 
@@ -169,6 +193,8 @@ export class MonacoHolder extends Signal<void> {
 
 	dispose() {
 		this._monacoEditor?.dispose()
-		this.windowResize?.dispose()
+		this.disposables.forEach((d) => d.dispose())
+		this.disposables = []
+		this._monacoEditor = undefined
 	}
 }

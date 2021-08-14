@@ -3,7 +3,7 @@
 		mini-variant
 		mini-variant-width="60"
 		stateless
-		:value="true"
+		v-model="isNavigationVisible"
 		:app="app"
 		absolute
 		:right="isSidebarRight"
@@ -14,6 +14,14 @@
 			top: appToolbarHeight,
 		}"
 	>
+		<SidebarButton
+			v-if="isMobile"
+			displayName="general.close"
+			icon="mdi-close"
+			color="error"
+			@click="closeSidebar"
+		/>
+
 		<v-list>
 			<SidebarButton
 				v-for="sidebar in sidebarElements"
@@ -92,6 +100,17 @@ export default {
 		}
 	},
 	computed: {
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
+		},
+		isNavigationVisible: {
+			get() {
+				return !this.isMobile || SidebarState.isNavigationVisible
+			},
+			set(val) {
+				SidebarState.isNavigationVisible = val
+			},
+		},
 		sidebarElements() {
 			return Object.values(SidebarState.sidebarElements).filter(
 				(sidebar) => sidebar.isVisible
@@ -108,6 +127,12 @@ export default {
 				this.settingsState.sidebar &&
 				this.settingsState.sidebar.isSidebarRight
 			)
+		},
+	},
+	methods: {
+		closeSidebar() {
+			SidebarState.isNavigationVisible = false
+			SidebarState.currentState = null
 		},
 	},
 }

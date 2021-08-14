@@ -168,7 +168,7 @@ export class TabSystem extends MonacoHolder {
 		// Next steps don't need to be done if we simply unselect tab
 		if (!tab) return
 
-		if (this.app.isMobile()) unselect()
+		if (this.app.mobile.isCurrentDevice()) unselect()
 		await this._selectedTab?.onActivate()
 
 		Vue.nextTick(async () => {

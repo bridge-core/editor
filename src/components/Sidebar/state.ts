@@ -8,11 +8,13 @@ import { SidebarElement } from './create'
 import { App } from '/@/App'
 
 export interface SidebarState {
+	isNavigationVisible: boolean
 	currentState: SidebarContent | null
 	sidebarElements: Record<string, SidebarElement>
 }
 
 export const SidebarState: SidebarState = reactive({
+	isNavigationVisible: true,
 	currentState: null,
 	sidebarElements: {},
 })

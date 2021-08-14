@@ -81,7 +81,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		return PackType.get(this.getPath())?.color
 	}
 
-	get isSelected() {
+	get isSelected(): boolean {
 		return this.parent.selectedTab === this
 	}
 	select() {
@@ -102,7 +102,9 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		}
 		return didClose
 	}
-	abstract is(tab: Tab): Promise<boolean>
+	async is(tab: Tab): Promise<boolean> {
+		return false
+	}
 	// abstract restore(data: TRestoreData): Promise<Tab | undefined>
 	// abstract serialize(): Promise<TRestoreData>
 

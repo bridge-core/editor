@@ -6,6 +6,20 @@
 
 		<Sidebar app />
 
+		<v-btn
+			v-if="!sidebarNavigationVisible"
+			small
+			fab
+			absolute
+			style="bottom: 16px"
+			:left="!isSidebarRight"
+			:right="isSidebarRight"
+			color="primary"
+			@click="openSidebar"
+		>
+			<v-icon>mdi-table-column</v-icon>
+		</v-btn>
+
 		<v-main :style="{ 'padding-top': appToolbarHeight }">
 			<WindowRenderer />
 
@@ -85,7 +99,7 @@ import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
 import InitialSetupDialog from '/@/components/InitialSetup/Dialog.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
-import { isContentVisible } from './components/Sidebar/state'
+import { isContentVisible, SidebarState } from './components/Sidebar/state'
 import { settingsState } from './components/Windows/Settings/SettingsState'
 
 export default {
@@ -127,6 +141,9 @@ export default {
 	}),
 
 	computed: {
+		sidebarNavigationVisible() {
+			return SidebarState.isNavigationVisible
+		},
 		isSidebarRight() {
 			return (
 				this.settingsState &&
@@ -152,6 +169,11 @@ export default {
 				case 'large':
 					return 1
 			}
+		},
+	},
+	methods: {
+		openSidebar() {
+			SidebarState.isNavigationVisible = true
 		},
 	},
 	watch: {

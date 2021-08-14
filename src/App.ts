@@ -37,6 +37,7 @@ import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
 import { markRaw, shallowReactive } from '@vue/composition-api'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 import { WindowState } from '/@/components/Windows/WindowState'
+import { Mobile } from './components/App/Mobile'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -73,7 +74,7 @@ export class App {
 	public readonly configuredJsonLanguage = markRaw(
 		new ConfiguredJsonLanguage()
 	)
-	public readonly isMobile: () => boolean
+	public readonly mobile: Mobile
 
 	protected languageManager = markRaw(new LanguageManager())
 
@@ -116,7 +117,7 @@ export class App {
 		this.locales = new Locales(appComponent.$vuetify)
 		this._windows = new Windows(this)
 
-		this.isMobile = () => appComponent.$vuetify.breakpoint.mobile
+		this.mobile = new Mobile(appComponent.$vuetify)
 
 		// Prompt the user whether they really want to close bridge. when unsaved tabs are open
 		const saveWarning =
