@@ -101,11 +101,15 @@ export default {
 		],
 	}),
 	mounted() {
+		let addedInstallStep = false
 		App.installApp.isInstallable.on(() => {
+			if (addedInstallStep) return
+
 			this.steps.unshift({
 				name: 'initialSetup.step.installApp',
 				component: InstallAppStep,
 			})
+			addedInstallStep = true
 			this.stepId = 0
 			this.$nextTick(() => (this.stepId = 1))
 		})
