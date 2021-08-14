@@ -27,9 +27,20 @@
 			<v-icon>mdi-dots-vertical</v-icon>
 		</v-btn>
 
-		<v-icon class="mr-1" :color="tab.iconColor" small>
-			{{ tab.icon }}
-		</v-icon>
+		<v-badge
+			:value="tab.isReadOnly || tab.isUnsaved"
+			:class="{ 'mr-3': tab.isReadOnly }"
+			:color="tab.iconColor"
+			:icon="tab.isReadOnly ? 'mdi-lock-outline' : null"
+			bordered
+			overlap
+			depressed
+			:dot="tab.isUnsaved"
+		>
+			<v-icon class="mr-1" :color="tab.iconColor" small>
+				{{ tab.icon }}
+			</v-icon>
+		</v-badge>
 
 		<span :style="{ 'font-style': tab.isUnsaved ? 'italic' : null }">
 			{{ tab.name }}
