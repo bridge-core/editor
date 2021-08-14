@@ -1,12 +1,4 @@
-import {
-	editor,
-	KeyCode,
-	KeyMod,
-	languages,
-	Position,
-	Range,
-	Uri,
-} from 'monaco-editor'
+import { editor, KeyCode, KeyMod, languages } from 'monaco-editor'
 import { Signal } from '../Common/Event/Signal'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'

@@ -248,6 +248,10 @@ export default {
 			name: 'View Documentation',
 			noDocumentation: 'No documentation available for',
 		},
+		toggleReadOnly: {
+			name: 'Toggle Read-Only Mode',
+			description: 'Toggle read-only mode for the currently opened file',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {

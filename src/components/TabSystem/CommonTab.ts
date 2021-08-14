@@ -92,7 +92,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	 *
 	 * @returns Whether the tab was closed
 	 */
-	async close() {
+	async close(): Promise<boolean> {
 		this.parent.setActive(true)
 
 		const didClose = await this.parent.close(this)

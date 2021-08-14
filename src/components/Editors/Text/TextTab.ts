@@ -208,6 +208,11 @@ export class TextTab extends FileTab {
 		}
 	}
 
+	setReadOnly(val: boolean) {
+		this.isReadOnly = val
+		this.editorInstance?.updateOptions({ readOnly: val })
+	}
+
 	async paste() {
 		if (this.isReadOnly) return
 

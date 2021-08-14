@@ -16,6 +16,10 @@ export class ImageTab extends FileTab {
 		)
 	}
 
+	setReadOnly() {
+		this.isReadOnly = true
+	}
+
 	async onActivate() {
 		this.dataUrl = await loadAsDataURL(this.getPath())
 	}

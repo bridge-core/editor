@@ -11,7 +11,7 @@ export abstract class FileTab extends Tab {
 	constructor(
 		protected parent: TabSystem,
 		protected fileHandle: AnyFileHandle,
-		public readonly isReadOnly = false
+		public isReadOnly = false
 	) {
 		super(parent)
 	}
@@ -60,6 +60,8 @@ export abstract class FileTab extends Tab {
 	getFileHandle() {
 		return this.fileHandle
 	}
+
+	abstract setReadOnly(readonly: boolean): Promise<void> | void
 
 	abstract save(): void | Promise<void>
 	async saveAs() {

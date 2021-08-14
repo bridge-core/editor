@@ -98,11 +98,11 @@ export class TreeTab extends FileTab {
 	onDeactivate() {
 		this._treeEditor?.deactivate()
 	}
-	onDestroy() {}
-	updateParent(parent: TabSystem) {}
-	focus() {}
 
 	loadEditor() {}
+	setReadOnly(val: boolean) {
+		this.isReadOnly = val
+	}
 
 	async save() {
 		const app = await App.getApp()

@@ -1,5 +1,7 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
+import { FileTab } from '/@/components/TabSystem/FileTab'
+import { Divider } from '../Divider'
 
 const blockActions = new Set<string>(['INPUT', 'TEXTAREA'])
 
@@ -49,6 +51,22 @@ export function setupEditCategory(app: App) {
 				)
 			},
 			onTrigger: () => app.tabSystem?.selectedTab?.paste(),
+		})
+	)
+
+	edit.addItem(new Divider())
+
+	edit.addItem(
+		app.actionManager.create({
+			icon: 'mdi-pencil-outline',
+			name: 'actions.toggleReadOnly.name',
+			description: 'actions.toggleReadOnly.description',
+			onTrigger: () => {
+				const currentTab = app.tabSystem?.selectedTab
+				if (!(currentTab instanceof FileTab)) return
+
+				currentTab.setReadOnly(!currentTab.isReadOnly)
+			},
 		})
 	)
 
