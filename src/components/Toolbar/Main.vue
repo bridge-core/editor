@@ -15,7 +15,11 @@
 	>
 		<Logo
 			v-if="!isMacOS || !windowControlsOverlay"
-			style="height: 20px; padding-right: 4px; padding-left: 8px"
+			style="
+				height: 20px;
+				padding-right: 4px;
+				padding-left: calc(env(safe-area-inset-left) + 4px);
+			"
 			alt="Logo of bridge. v2"
 			draggable="false"
 		/>
@@ -58,7 +62,10 @@
 		<div
 			class="px-1 mx-1 rounded-lg app-version-display"
 			v-ripple="!isAnyWindowVisible"
-			:style="{ opacity: isAnyWindowVisible ? 0.4 : null }"
+			:style="{
+				opacity: isAnyWindowVisible ? 0.4 : null,
+				'margin-right': 'env(safe-area-inset-right, 0)',
+			}"
 			@click="openChangelogWindow"
 		>
 			v{{ appVersion }}

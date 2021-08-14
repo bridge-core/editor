@@ -199,6 +199,7 @@ body {
 	position: fixed;
 	width: 100%;
 	height: 100vh;
+	padding-left: env(safe-area-inset-left, 0);
 }
 
 /** Scrollbar */
