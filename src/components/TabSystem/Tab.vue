@@ -35,7 +35,7 @@
 			bordered
 			overlap
 			depressed
-			:dot="tab.isUnsaved"
+			:dot="tab.isUnsaved && !tab.isReadOnly"
 		>
 			<v-icon class="mr-1" :color="tab.iconColor" small>
 				{{ tab.icon }}
