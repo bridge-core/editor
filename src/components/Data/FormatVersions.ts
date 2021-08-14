@@ -22,7 +22,7 @@ export async function getFormatVersions() {
 		'data/packages/minecraftBedrock/formatVersions.json'
 	)
 
-	return formatVersions
+	return formatVersions.reverse()
 }
 
 export function getLatestFormatVersion() {

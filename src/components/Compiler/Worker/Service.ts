@@ -23,21 +23,13 @@ export interface IBuildConfig {
 }
 export type TPluginDef = string | [string, any]
 
-const compilers = new WeakMap<CompilerService, Compiler>()
 export class CompilerService extends TaskService<void, [string[], string[]]> {
 	public fileSystem: FileSystem
 	protected buildConfig: IBuildConfig = { plugins: [] }
 	protected plugins!: Map<string, Partial<TCompilerPlugin>>
 	protected _outputFileSystem?: FileSystem
 	protected dataLoader = new DataLoader()
-
-	// This is necessary so the compiler object doesn't get included in the proxy
-	get compiler() {
-		return compilers.get(this)!
-	}
-	set compiler(val: Compiler) {
-		compilers.set(this, val)
-	}
+	protected compiler: Compiler
 
 	constructor(
 		projectDirectory: AnyDirectoryHandle,

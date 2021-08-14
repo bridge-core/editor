@@ -11,7 +11,9 @@ export class CreateConfig extends CreateFile {
 				type: 'minecraftBedrock',
 				name: createOptions.name,
 				namespace: createOptions.namespace,
-				author: createOptions.author,
+				authors: Array.isArray(createOptions.author)
+					? createOptions.author
+					: [createOptions.author],
 				targetVersion: createOptions.targetVersion,
 				description: createOptions.description,
 				experimentalGameplay: createOptions.experimentalGameplay,

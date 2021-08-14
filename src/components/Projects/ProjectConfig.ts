@@ -19,7 +19,7 @@ export interface IConfigJson {
 	 *
 	 * @example "solvedDev" / "Joel ant 05"
 	 */
-	author: string
+	authors: string
 
 	/**
 	 * The Minecraft version this project targets

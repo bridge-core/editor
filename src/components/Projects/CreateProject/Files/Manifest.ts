@@ -44,7 +44,9 @@ export class CreateManifest extends CreateFile {
 		const manifest: any = {
 			format_version: 2,
 			metadata: {
-				authors: [createOptions.author],
+				authors: Array.isArray(createOptions.author)
+					? createOptions.author
+					: [createOptions.author],
 				generated_with: {
 					bridge: [appVersion],
 				},

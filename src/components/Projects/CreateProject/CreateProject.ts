@@ -16,7 +16,7 @@ import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/Confirm
 import { exportAsBrproject } from '../Export/AsBrproject'
 
 export interface ICreateProjectOptions {
-	author: string
+	author: string | string[]
 	description: string
 	icon: File | null
 	name: string

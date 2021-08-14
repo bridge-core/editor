@@ -9,7 +9,7 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 
-export abstract class Tab extends Signal<Tab> {
+export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	abstract component: Vue.Component
 	public uuid = uuid()
 	public hasRemoteChange = false
@@ -103,6 +103,8 @@ export abstract class Tab extends Signal<Tab> {
 		return didClose
 	}
 	abstract is(tab: Tab): Promise<boolean>
+	// abstract restore(data: TRestoreData): Promise<Tab | undefined>
+	// abstract serialize(): Promise<TRestoreData>
 
 	focus() {}
 	async onActivate() {

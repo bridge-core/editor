@@ -33,9 +33,7 @@
 					<h1 class="text-h4" style="overflow-wrap: anywhere">
 						{{ sidebar.currentState.name }}
 					</h1>
-					<h2 class="text-h6">
-						by {{ sidebar.currentState.author || 'Unknown' }}
-					</h2>
+					<h2 class="text-h6">by {{ authors }}</h2>
 				</div>
 			</div>
 			<div class="d-flex">
@@ -94,6 +92,18 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow.ts'
 import { addPack } from './AddPack'
 
+let formatter
+if ('ListFormat' in Intl) {
+	formatter = new Intl.ListFormat('en', {
+		style: 'long',
+		type: 'conjunction',
+	})
+} else {
+	formatter = {
+		format: (arr) => arr.join(', '),
+	}
+}
+
 export default {
 	name: 'ProjectChooserWindow',
 	mixins: [TranslationMixin],
@@ -129,6 +139,13 @@ export default {
 		onAddPack() {
 			addPack()
 			this.currentWindow.close()
+		},
+	},
+	computed: {
+		authors() {
+			const authors = this.sidebar.currentState.authors || 'Unknown'
+			if (Array.isArray(authors)) return formatter.format(authors)
+			return authors
 		},
 	},
 }
