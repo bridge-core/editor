@@ -95,18 +95,5 @@ export function setupFileCategory(app: App) {
 		})
 	)
 
-	file.addItem(new Divider())
-
-	file.addItem(
-		app.actionManager.create({
-			id: 'bridge.action.openSettings',
-			icon: 'mdi-cog-outline',
-			name: 'actions.settings.name',
-			description: 'actions.settings.description',
-			keyBinding: 'Ctrl + ,',
-			onTrigger: () => app.windows.settings.open(),
-		})
-	)
-
 	App.toolbar.addCategory(file)
 }

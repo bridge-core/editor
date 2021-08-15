@@ -12,6 +12,16 @@ export function setupProjectCategory(app: App) {
 
 	project.addItem(
 		app.actionManager.create({
+			icon: 'mdi-package-down',
+			name: 'windows.projectChooser.title',
+			description: 'windows.projectChooser.description',
+			onTrigger: () => app.windows.projectChooser.open(),
+		})
+	)
+	project.addItem(new Divider())
+
+	project.addItem(
+		app.actionManager.create({
 			id: 'bridge.action.newProject',
 			icon: 'mdi-folder-plus-outline',
 			name: 'actions.newProject.name',
@@ -48,12 +58,23 @@ export function setupProjectCategory(app: App) {
 		})
 	)
 	project.addItem(new Divider())
+
 	project.addItem(
 		app.actionManager.create({
-			icon: 'mdi-package-down',
-			name: 'windows.projectChooser.title',
-			description: 'windows.projectChooser.description',
-			onTrigger: () => app.windows.projectChooser.open(),
+			icon: 'mdi-puzzle-outline',
+			name: 'actions.extensions.name',
+			description: 'actions.extensions.description',
+			onTrigger: () => app.windows.extensionStore.open(),
+		})
+	)
+	project.addItem(
+		app.actionManager.create({
+			id: 'bridge.action.openSettings',
+			icon: 'mdi-cog-outline',
+			name: 'actions.settings.name',
+			description: 'actions.settings.description',
+			keyBinding: 'Ctrl + ,',
+			onTrigger: () => app.windows.settings.open(),
 		})
 	)
 
