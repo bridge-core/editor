@@ -1,5 +1,5 @@
 <template>
-	<v-app :style="{ fontSize }">
+	<v-app :style="{ fontSize }" @contextmenu.native="$event.preventDefault()">
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar />
