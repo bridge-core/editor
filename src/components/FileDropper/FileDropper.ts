@@ -79,7 +79,7 @@ export class FileDropper {
 		}
 	}
 
-	protected async importFile(fileHandle: AnyFileHandle) {
+	async importFile(fileHandle: AnyFileHandle) {
 		const ext = extname(fileHandle.name)
 		const handler = this.fileHandlers.get(ext)
 

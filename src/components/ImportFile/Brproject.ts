@@ -5,7 +5,7 @@ import { importFromBrproject } from '../Projects/Import/fromBrproject'
 
 export class BrprojectImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
-		super(['.mcaddon'], fileDropper)
+		super(['.brproject'], fileDropper)
 	}
 
 	async onImport(fileHandle: AnyFileHandle) {

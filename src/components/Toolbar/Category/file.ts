@@ -27,16 +27,26 @@ export function setupFileCategory(app: App) {
 		})
 	)
 	// There's no longer a pack explorer window. We should reuse the shortcut for something else...
-	// file.addItem(
-	// 	app.actionManager.create({
-	// 		id: 'bridge.action.openFile',
-	// 		icon: 'mdi-file-upload-outline',
-	// 		name: 'actions.openFile.name',
-	// 		description: 'actions.openFile.description',
-	// 		keyBinding: 'Ctrl + O',
-	// 		onTrigger: () => app.windows.packExplorer.open(),
-	// 	})
-	// )
+	file.addItem(
+		app.actionManager.create({
+			id: 'bridge.action.openFile',
+			icon: 'mdi-open-in-app',
+			name: 'actions.openFile.name',
+			description: 'actions.openFile.description',
+			keyBinding: 'Ctrl + O',
+			onTrigger: async () => {
+				const fileHandles = await window.showOpenFilePicker({
+					multiple: true,
+				})
+
+				for (const fileHandle of fileHandles) {
+					if (await app.fileDropper.importFile(fileHandle)) continue
+
+					app.project.openFile(fileHandle, { isTemporary: false })
+				}
+			},
+		})
+	)
 	file.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.searchFile',
