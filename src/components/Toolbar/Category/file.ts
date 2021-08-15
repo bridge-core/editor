@@ -3,6 +3,7 @@ import { ToolbarCategory } from '../ToolbarCategory'
 import { clearAllNotifications } from '../../Notifications/create'
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
+import { AnyFileHandle } from '../../FileSystem/Types'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -35,9 +36,14 @@ export function setupFileCategory(app: App) {
 			description: 'actions.openFile.description',
 			keyBinding: 'Ctrl + O',
 			onTrigger: async () => {
-				const fileHandles = await window.showOpenFilePicker({
-					multiple: true,
-				})
+				let fileHandles: AnyFileHandle[]
+				try {
+					fileHandles = await window.showOpenFilePicker({
+						multiple: true,
+					})
+				} catch {
+					return
+				}
 
 				for (const fileHandle of fileHandles) {
 					if (await app.fileDropper.importFile(fileHandle)) continue
