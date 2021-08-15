@@ -39,11 +39,14 @@ export class PackExplorer extends SidebarContent {
 		App.eventSystem.on('fileAdded', () => this.refresh())
 
 		App.getApp().then((app) => {
-			if (!app.mobile.isCurrentDevice()) {
+			if (!app.mobile.isCurrentDevice())
 				this.headerSlot = ProjectDisplayComponent
-				this.headerHeight = '60px'
-			}
+
+			app.mobile.change.on((isMobile) => {
+				this.headerSlot = isMobile ? undefined : ProjectDisplayComponent
+			})
 		})
+		this.headerHeight = '60px'
 	}
 
 	async setup() {
