@@ -38,7 +38,7 @@
 					@click="() => item.trigger()"
 				/>
 				<MenuActivator
-					v-else
+					v-else-if="item.shouldRender"
 					:key="`activator.${key}`"
 					:item="item"
 					:disabled="isAnyWindowVisible"
@@ -46,8 +46,9 @@
 				<v-divider
 					:key="`divider.${key}`"
 					v-if="
-						windowControlsOverlay ||
-						i + 1 < Object.keys(toolbar).length
+						item.shouldRender &&
+						(windowControlsOverlay ||
+							i + 1 < Object.keys(toolbar).length)
 					"
 					vertical
 				/>

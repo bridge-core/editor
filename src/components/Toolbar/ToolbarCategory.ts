@@ -9,6 +9,7 @@ import { Divider } from './Divider'
 export class ToolbarCategory extends EventDispatcher<void> {
 	public readonly id = uuid()
 	protected type = 'category'
+	protected shouldRender = true
 	protected isVisible = false
 
 	protected state: Record<
@@ -19,6 +20,10 @@ export class ToolbarCategory extends EventDispatcher<void> {
 
 	constructor(protected icon: string, protected name: string) {
 		super()
+	}
+
+	setShouldRender(shouldRender: boolean) {
+		this.shouldRender = shouldRender
 	}
 
 	addItem(item: Action | ToolbarCategory | Divider) {
