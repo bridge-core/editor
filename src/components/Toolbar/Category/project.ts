@@ -3,6 +3,8 @@ import { ToolbarCategory } from '../ToolbarCategory'
 import { importFromBrproject } from '/@/components/Projects/Import/fromBrproject'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { Divider } from '../Divider'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
 
 export function setupProjectCategory(app: App) {
 	const project = new ToolbarCategory(
@@ -16,7 +18,13 @@ export function setupProjectCategory(app: App) {
 			icon: 'mdi-package-down',
 			name: 'windows.projectChooser.title',
 			description: 'windows.projectChooser.description',
-			onTrigger: () => app.windows.projectChooser.open(),
+			onTrigger: () => {
+				if (isUsingFileSystemPolyfill) {
+					createVirtualProjectWindow()
+				} else {
+					App.instance.windows.projectChooser.open()
+				}
+			},
 		})
 	)
 	project.addItem(new Divider())
