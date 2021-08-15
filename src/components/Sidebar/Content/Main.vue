@@ -6,7 +6,22 @@
 			height: `calc(${windowDimensions.currentHeight}px - ${appToolbarHeight})`,
 		}"
 	>
-		<BridgeSheet :style="{ height: '100%', overflow: 'auto' }">
+		<BridgeSheet
+			v-if="content.headerSlot"
+			class="mb-2"
+			:style="{ height: content.headerHeight, overflow: 'auto' }"
+		>
+			<component :is="content.headerSlot" />
+		</BridgeSheet>
+
+		<BridgeSheet
+			:style="{
+				height: content.headerSlot
+					? `calc(100% - ${content.headerHeight} - 8px)`
+					: '100%',
+				overflow: 'auto',
+			}"
+		>
 			<InfoPanel
 				v-if="content.topPanel"
 				class="ma-2"

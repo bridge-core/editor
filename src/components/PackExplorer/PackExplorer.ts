@@ -2,6 +2,7 @@ import { SidebarContent } from '/@/components/Sidebar/Content/SidebarContent'
 import { SelectableSidebarAction } from '/@/components/Sidebar/Content/SelectableSidebarAction'
 import { SidebarAction } from '/@/components/Sidebar/Content/SidebarAction'
 import PackExplorerComponent from './PackExplorer.vue'
+import ProjectDisplayComponent from './ProjectDisplay.vue'
 import { App } from '/@/App'
 import { DirectoryEntry } from './DirectoryEntry'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
@@ -36,6 +37,13 @@ export class PackExplorer extends SidebarContent {
 
 		App.eventSystem.on('projectChanged', () => this.setup())
 		App.eventSystem.on('fileAdded', () => this.refresh())
+
+		App.getApp().then((app) => {
+			if (!app.mobile.isCurrentDevice()) {
+				this.headerSlot = ProjectDisplayComponent
+				this.headerHeight = '60px'
+			}
+		})
 	}
 
 	async setup() {
