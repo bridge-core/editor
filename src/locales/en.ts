@@ -17,6 +17,8 @@ export default {
 		delete: 'Delete',
 		select: 'Select',
 		skip: 'Skip',
+		save: 'Save',
+		more: 'More...',
 		selectFolder: 'Select Folder',
 		fileName: 'File Name',
 		confirmOverwriteFile:

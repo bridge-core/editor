@@ -57,12 +57,14 @@ export class PackExplorer extends SidebarContent {
 				await DirectoryEntry.create([pack.packPath])
 			)
 		}
+		console.log(app.project.projectData.contains)
 
 		this.actions =
 			app.project.projectData.contains?.map(
 				(pack) =>
 					new SelectableSidebarAction(this, {
 						id: pack.packPath,
+						name: `packType.${pack.id}.name`,
 						icon: pack.icon,
 						color: pack.color,
 					})
@@ -72,6 +74,7 @@ export class PackExplorer extends SidebarContent {
 			this.actions.push(
 				new SidebarAction({
 					icon: 'mdi-content-save-outline',
+					name: 'general.save',
 					onTrigger: () => exportAsBrproject(),
 				})
 			)
@@ -80,6 +83,7 @@ export class PackExplorer extends SidebarContent {
 		this.actions.push(
 			new SidebarAction({
 				icon: 'mdi-dots-vertical',
+				name: 'general.more',
 				onTrigger: (event) => {
 					this.showMoreMenu(event)
 				},

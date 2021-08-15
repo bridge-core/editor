@@ -1,23 +1,36 @@
 <template>
-	<div
-		v-ripple
-		class="rounded-lg ma-1 d-flex justify-center sidebar-actions pa-2"
-		:class="{ 'elevation-4': isSelected }"
-		:style="{
-			background: isSelected ? `var(--v-${color}-base)` : null,
-			transform: isSelected ? 'scale(1.05)' : null,
-		}"
-		@click="$emit('click', $event)"
-	>
-		<v-icon :color="isSelected ? 'white' : color">{{ icon }}</v-icon>
-	</div>
+	<v-tooltip :color="color" :disabled="$vuetify.breakpoint.mobile" bottom>
+		<template v-slot:activator="{ on, attrs }">
+			<div
+				v-ripple
+				class="rounded-lg ma-1 d-flex justify-center sidebar-actions pa-2"
+				:class="{ 'elevation-4': isSelected }"
+				:style="{
+					background: isSelected ? `var(--v-${color}-base)` : null,
+					transform: isSelected ? 'scale(1.05)' : null,
+				}"
+				@click="$emit('click', $event)"
+				v-on="on"
+				v-bind="attrs"
+			>
+				<v-icon :color="isSelected ? 'white' : color">{{
+					icon
+				}}</v-icon>
+			</div>
+		</template>
+		<span>{{ t(name) }}</span>
+	</v-tooltip>
 </template>
 
 <script>
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+
 export default {
+	mixins: [TranslationMixin],
 	props: {
 		color: String,
 		icon: String,
+		name: String,
 		isSelected: Boolean,
 	},
 }
