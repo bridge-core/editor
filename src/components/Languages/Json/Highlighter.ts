@@ -50,6 +50,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 		})
 
 		App.eventSystem.on('currentTabSwitched', () => this.loadWords())
+		this.loadWords()
 	}
 
 	async updateKeywords(projectConfig: ProjectConfig) {

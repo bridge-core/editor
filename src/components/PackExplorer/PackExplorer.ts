@@ -57,7 +57,6 @@ export class PackExplorer extends SidebarContent {
 				await DirectoryEntry.create([pack.packPath])
 			)
 		}
-		console.log(app.project.projectData.contains)
 
 		this.actions =
 			app.project.projectData.contains?.map(
