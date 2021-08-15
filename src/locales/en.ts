@@ -252,6 +252,10 @@ export default {
 			name: 'Toggle Read-Only Mode',
 			description: 'Toggle read-only mode for the currently opened file',
 		},
+		keepInTabSystem: {
+			name: 'Keep in Tab System',
+			description: 'Converts this tab to a permanent tab',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {

@@ -154,24 +154,34 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	}
 
 	async onContextMenu(event: MouseEvent) {
-		let moveSplitScreen = []
+		const additionalItems = []
 		// It makes no sense to move a file to the split-screen if the tab system only has one entry
-		if (this.parent.tabs.length > 1) {
-			moveSplitScreen.push(
-				{
-					name: 'actions.moveToSplitScreen.name',
-					description: 'actions.moveToSplitScreen.description',
-					icon: 'mdi-arrow-split-vertical',
-					onTrigger: async () => {
-						this.toOtherTabSystem()
-					},
+		if (this.isTemporary) {
+			additionalItems.push({
+				name: 'actions.keepInTabSystem.name',
+				description: 'actions.keepInTabSystem.description',
+				icon: 'mdi-pin-outline',
+				onTrigger: () => {
+					this.isTemporary = false
 				},
-				<const>{ type: 'divider' }
-			)
+			})
+		}
+		if (this.parent.tabs.length > 1) {
+			additionalItems.push({
+				name: 'actions.moveToSplitScreen.name',
+				description: 'actions.moveToSplitScreen.description',
+				icon: 'mdi-arrow-split-vertical',
+				onTrigger: async () => {
+					this.toOtherTabSystem()
+				},
+			})
 		}
 
+		if (additionalItems.length > 0)
+			additionalItems.push(<const>{ type: 'divider' })
+
 		await showContextMenu(event, [
-			...moveSplitScreen,
+			...additionalItems,
 			{
 				name: 'actions.closeTab.name',
 				description: 'actions.closeTab.description',

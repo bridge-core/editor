@@ -120,7 +120,6 @@ export default {
 	},
 	watch: {
 		isSelected() {
-			console.log(this.isSelected)
 			if (this.isSelected)
 				this.$refs.tabElement.scrollIntoView({
 					behavior: 'smooth',
