@@ -58,6 +58,9 @@ export class MonacoHolder extends Signal<void> {
 				...this.getMobileOptions(this._app.mobile.isCurrentDevice()),
 				// fontFamily: this.fontFamily,
 				wordWrap: settingsState?.editor?.wordWrap ? 'bounded' : 'off',
+				wordWrapColumn: Number(
+					settingsState?.editor?.wordWrapColumns ?? '80'
+				),
 			})
 		)
 		// @ts-ignore

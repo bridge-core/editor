@@ -287,6 +287,22 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
+		new Selection({
+			category: 'editor',
+			name: 'windows.settings.editor.wordWrapColumns.name',
+			description: 'windows.settings.editor.wordWrapColumns.description',
+			key: 'wordWrapColumns',
+			default: '80',
+			options: ['40', '60', '80', '100', '120', '140', '160'],
+			onChange: async (val) => {
+				const app = await App.getApp()
+				app.projectManager.updateAllEditorOptions({
+					wordWrapColumn: Number(val),
+				})
+			},
+		})
+	)
+	settings.addControl(
 		new Toggle({
 			category: 'editor',
 			name: 'windows.settings.editor.compactTabDesign.name',

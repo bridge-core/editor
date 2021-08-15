@@ -619,6 +619,11 @@ export default {
 					name: 'Word Wrap',
 					description: 'Wrap words to disable horizontal scrolling',
 				},
+				wordWrapColumns: {
+					name: 'Word Wrap Columns',
+					description:
+						'Defines after how many columns the editor should wrap words',
+				},
 				compactTabDesign: {
 					name: 'Compact Tab Design',
 					description:
