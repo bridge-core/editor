@@ -12,6 +12,7 @@ import { FileTab } from './FileTab'
 import { TabProvider } from './TabProvider'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { hide } from '../Sidebar/state'
+import { reactive } from '@vue/composition-api'
 
 export interface IOpenTabOptions {
 	selectTab?: boolean
@@ -21,7 +22,7 @@ export interface IOpenTabOptions {
 
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
-	public tabs: Tab[] = []
+	public tabs: Tab[] = reactive([])
 	protected _selectedTab: Tab | undefined = undefined
 	protected get tabTypes() {
 		return TabProvider.tabs
@@ -248,7 +249,7 @@ export class TabSystem extends MonacoHolder {
 		app.windows.loadingWindow.close()
 	}
 	closeAllTemporary() {
-		for (const tab of this.tabs) {
+		for (const tab of [...this.tabs]) {
 			if (!tab.isTemporary) continue
 
 			this.remove(tab, true, false)
