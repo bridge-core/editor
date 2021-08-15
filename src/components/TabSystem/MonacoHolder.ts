@@ -34,6 +34,7 @@ export class MonacoHolder extends Signal<void> {
 
 	getMobileOptions(isMobile: boolean) {
 		return <const>{
+			contextmenu: !isMobile,
 			lineNumbers: isMobile ? 'off' : 'on',
 			minimap: { enabled: !isMobile },
 			tabSize: isMobile ? 2 : 4,
