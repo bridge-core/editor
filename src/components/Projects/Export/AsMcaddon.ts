@@ -16,6 +16,8 @@ export async function exportAsMcaddon() {
 	if (isUsingFileSystemPolyfill) {
 		const fs = app.project.fileSystem
 
+		let manifests: Record<string, any> = {}
+
 		for (const pack of app.project.getPacks()) {
 			const packPath = PackType.getPath(pack)
 
@@ -29,19 +31,34 @@ export async function exportAsMcaddon() {
 				// Increment patch version
 				const newVersion = [major, minor, patch + 1]
 
-				// Write back to file
-				await fs.writeJSON(
-					`${packPath}/manifest.json`,
-					{
-						...manifest,
-						header: {
-							...(manifest.header ?? {}),
-							version: newVersion,
-						},
+				manifests[`${packPath}/manifest.json`] = {
+					...manifest,
+					header: {
+						...(manifest.header ?? {}),
+						version: newVersion,
 					},
-					true
-				)
+				}
 			}
+		}
+
+		// Update manifest dependency versions
+		const allManifests = Object.values(manifests)
+		for (const manifest of allManifests) {
+			if (!Array.isArray(manifest.dependencies)) continue
+
+			manifest.dependencies.forEach((dep: any) => {
+				const depManifest = allManifests.find(
+					(manifest) => manifest.header.uuid === dep.uuid
+				)
+				if (!depManifest) return
+
+				dep.version = depManifest.header.version
+			})
+		}
+
+		// Write all manifest changes back to disk
+		for (const [path, manifest] of Object.entries(manifests)) {
+			await fs.writeJSON(path, manifest, true)
 		}
 	}
 
