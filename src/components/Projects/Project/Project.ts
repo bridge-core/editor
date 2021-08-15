@@ -173,7 +173,9 @@ export abstract class Project {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.getTab(fileHandle)
 			if (tab)
-				return options.selectTab ? tabSystem.select(tab) : undefined
+				return options.selectTab ?? true
+					? tabSystem.select(tab)
+					: undefined
 		}
 
 		this.tabSystem?.open(fileHandle, options)

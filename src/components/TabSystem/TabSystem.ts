@@ -118,6 +118,8 @@ export class TabSystem extends MonacoHolder {
 	}
 
 	async add(tab: Tab, selectTab = true, noTabExistanceCheck = false) {
+		this.closeAllTemporary()
+
 		if (!noTabExistanceCheck) {
 			for (const currentTab of this.tabs) {
 				if (await currentTab.is(tab)) {
@@ -126,8 +128,6 @@ export class TabSystem extends MonacoHolder {
 				}
 			}
 		}
-
-		this.closeAllTemporary()
 
 		if (!tab.hasFired) await tab.fired
 
