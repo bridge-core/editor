@@ -552,6 +552,15 @@ export default {
 					description:
 						'Choose a light theme for the currently active project',
 				},
+				fontSize: {
+					name: 'Font Size',
+					description: "Change the font size of bridge.'s text",
+				},
+				editorFontSize: {
+					name: 'Code Font Size',
+					description:
+						"Change the font size of bridge.'s code editor",
+				},
 			},
 			general: {
 				name: 'General',

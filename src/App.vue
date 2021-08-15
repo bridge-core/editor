@@ -1,5 +1,5 @@
 <template>
-	<v-app>
+	<v-app :style="{ fontSize }">
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar />
@@ -171,6 +171,13 @@ export default {
 					return 1
 			}
 		},
+		fontSize() {
+			return settingsState &&
+				settingsState.appearance &&
+				settingsState.appearance.fontSize
+				? `${settingsState.appearance.fontSize} !important`
+				: '16px'
+		},
 	},
 	methods: {
 		openSidebar() {
@@ -257,7 +264,6 @@ summary::-webkit-details-marker {
 }
 .code-font {
 	font-family: Menlo, Monaco, 'Courier New', monospace;
-	font-size: 14px;
 }
 .clickable {
 	cursor: pointer;

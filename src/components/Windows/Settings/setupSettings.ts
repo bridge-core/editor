@@ -97,6 +97,33 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 		})
 	)
+	// settings.addControl(
+	// 	new Selection({
+	// 		category: 'appearance',
+	// 		name: 'windows.settings.appearance.fontSize.name',
+	// 		description: 'windows.settings.appearance.fontSize.description',
+	// 		key: 'fontSize',
+	// 		default: '16px',
+	// 		options: ['8px', '10px', '12px', '14px', '16px', '18px', '20px'],
+	// 	})
+	// )
+	settings.addControl(
+		new Selection({
+			category: 'appearance',
+			name: 'windows.settings.appearance.editorFontSize.name',
+			description:
+				'windows.settings.appearance.editorFontSize.description',
+			key: 'editorFontSize',
+			default: '14px',
+			options: ['8px', '10px', '12px', '14px', '16px', '18px', '20px'],
+			onChange: async (val) => {
+				const app = await App.getApp()
+				app.projectManager.updateAllEditorOptions({
+					fontSize: Number(val.replace('px', '')),
+				})
+			},
+		})
+	)
 
 	settings.addControl(
 		new Toggle({

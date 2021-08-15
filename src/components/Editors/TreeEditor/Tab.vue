@@ -1,6 +1,7 @@
 <template>
 	<div
 		class="editor-container"
+		:style="{ fontSize }"
 		ref="editorContainer"
 		@click="tab.parent.setActive(true)"
 		tabindex="-1"
@@ -108,7 +109,8 @@
 </template>
 
 <script>
-import { TranslationMixin } from '../../Mixins/TranslationMixin'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { TreeValueSelection } from './TreeSelection'
 
 export default {
@@ -133,6 +135,13 @@ export default {
 		this.focusEditor()
 	},
 	computed: {
+		fontSize() {
+			return settingsState &&
+				settingsState.appearance &&
+				settingsState.appearance.editorFontSize
+				? `${settingsState.appearance.editorFontSize}`
+				: '14px'
+		},
 		treeEditor() {
 			return this.tab.treeEditor
 		},

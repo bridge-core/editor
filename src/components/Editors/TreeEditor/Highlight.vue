@@ -14,6 +14,7 @@
 <script>
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 import { App } from '/@/App'
+
 export default {
 	props: {
 		def: Object,

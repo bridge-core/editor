@@ -6,7 +6,10 @@
 		@click="$emit('click')"
 	>
 		<!-- Flexbox doesn't work directly on summaries in Safari -->
-		<span class="d-flex" :class="{ 'justify-center': compact }">
+		<span
+			class="d-flex align-center"
+			:class="{ 'justify-center': compact }"
+		>
 			<v-icon
 				:color="color"
 				:class="{ 'pr-1': !compact }"
