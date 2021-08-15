@@ -7,7 +7,7 @@
 		:icon="minimalDisplay"
 	>
 		<v-icon
-			color="primary"
+			:color="action.accent || 'accent'"
 			:class="{ 'mr-1': true, 'ml-1': minimalDisplay }"
 			small
 		>

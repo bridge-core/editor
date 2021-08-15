@@ -19,6 +19,7 @@ export class ProjectChooserWindow extends BaseWindow {
 			new SimpleAction({
 				icon: 'mdi-import',
 				name: 'actions.importBrproject.name',
+				color: 'accent',
 				onTrigger: async () => {
 					let fileHandle: AnyFileHandle
 					try {
@@ -45,6 +46,7 @@ export class ProjectChooserWindow extends BaseWindow {
 			new SimpleAction({
 				icon: 'mdi-plus',
 				name: 'windows.projectChooser.newProject.name',
+				color: 'accent',
 				onTrigger: async () => {
 					const app = await App.getApp()
 					this.close()
