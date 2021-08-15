@@ -53,7 +53,7 @@
 						/>
 
 						<TabSystem
-							class="flex-grow-1 flex-shrink-0"
+							class="flex-grow-1"
 							:tabSystem="tabSystems[0]"
 							showWelcomeScreen
 						/>
@@ -65,7 +65,7 @@
 							:vertical="!$vuetify.breakpoint.mobile"
 						/>
 						<TabSystem
-							class="flex-grow-1 flex-shrink-0"
+							class="flex-grow-1"
 							:tabSystem="tabSystems[1]"
 							:id="1"
 						/>

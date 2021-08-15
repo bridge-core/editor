@@ -1,9 +1,9 @@
 <template>
 	<div
 		v-if="tabSystem.shouldRender"
-		class="tab-system"
 		:style="{
-			width: isMobile ? '100%' : '50%',
+			'margin-right': '1px',
+			width: isMobile ? '100%' : 'calc(50% - 100px)',
 			height: isMobile ? '50%' : '100%',
 		}"
 	>
@@ -91,11 +91,3 @@ export default {
 	},
 }
 </script>
-
-<style scoped>
-.tab-system {
-	display: inline;
-	width: 50%;
-	height: 100%;
-}
-</style>
