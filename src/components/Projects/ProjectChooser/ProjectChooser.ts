@@ -18,7 +18,7 @@ export class ProjectChooserWindow extends BaseWindow {
 		this.actions.push(
 			new SimpleAction({
 				icon: 'mdi-import',
-				name: 'windows.projectChooser.importBrproject',
+				name: 'actions.importBrproject.name',
 				onTrigger: async () => {
 					let fileHandle: AnyFileHandle
 					try {

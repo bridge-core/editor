@@ -10,15 +10,6 @@ export function setupFileCategory(app: App) {
 
 	file.addItem(
 		app.actionManager.create({
-			id: 'bridge.action.newProject',
-			icon: 'mdi-folder-outline',
-			name: 'actions.newProject.name',
-			description: 'actions.newProject.description',
-			onTrigger: () => app.windows.createProject.open(),
-		})
-	)
-	file.addItem(
-		app.actionManager.create({
 			id: 'bridge.action.newFile',
 			icon: 'mdi-file-plus-outline',
 			name: 'actions.newFile.name',

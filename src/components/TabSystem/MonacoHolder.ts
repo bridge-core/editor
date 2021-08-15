@@ -54,7 +54,12 @@ export class MonacoHolder extends Signal<void> {
 				theme: `bridgeMonacoDefault`,
 				roundedSelection: false,
 				autoIndent: 'full',
-				fontSize: 14,
+				fontSize: Number(
+					(
+						<string>settingsState?.appearance?.editorFontSize ??
+						'14px'
+					).replace('px', '')
+				),
 				...this.getMobileOptions(this._app.mobile.isCurrentDevice()),
 				// fontFamily: this.fontFamily,
 				wordWrap: settingsState?.editor?.wordWrap ? 'bounded' : 'off',

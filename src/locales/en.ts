@@ -256,9 +256,16 @@ export default {
 			name: 'Keep in Tab System',
 			description: 'Converts this tab to a permanent tab',
 		},
+		importBrproject: {
+			name: 'Import Project',
+			description: 'Import a project from a .brproject file',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
+		project: {
+			name: 'Project',
+		},
 		file: {
 			name: 'File',
 			preferences: {
@@ -413,13 +420,14 @@ export default {
 			github: 'Github',
 		},
 		projectChooser: {
-			title: 'Projects',
+			title: 'Choose Project',
+			description: 'Select the currently active project',
 			searchProjects: 'Search projects...',
 			newProject: {
 				name: 'New Project',
 				description: 'Create a new bridge. project.',
 			},
-			importBrproject: 'Import Project',
+
 			saveCurrentProject: {
 				name: 'Save Project',
 				description:
