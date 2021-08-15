@@ -105,6 +105,8 @@ export class TreeTab extends FileTab {
 	}
 
 	async save() {
+		this.isTemporary = false
+
 		const app = await App.getApp()
 		const fileContent = JSON.stringify(this.treeEditor.toJSON(), null, '\t')
 

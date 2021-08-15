@@ -131,6 +131,8 @@ import Draggable from 'vuedraggable'
 import { join } from '/@/utils/path'
 import { EnablePackSpiderMixin } from '/@/components/Mixins/EnablePackSpider'
 import { pointerDevice } from '/@/utils/pointerDevice'
+import { useDoubleClick } from '/@/components/Composables/DoubleClick'
+import { ref } from '@vue/composition-api'
 
 export default {
 	name: 'FileDisplayer',
@@ -143,9 +145,27 @@ export default {
 		startPath: Array,
 	},
 
-	setup() {
+	setup(_, { emit }) {
+		const isHoveringBtn = ref(false)
+
+		const onClick = useDoubleClick((isDoubleClick, entry) => {
+			if (isDoubleClick) {
+				App.getApp().then((app) => {
+					const currentTab = app.project.tabSystem.selectedTab
+					if (currentTab.isTemporary) currentTab.isTemporary = false
+				})
+			} else {
+				if (isHoveringBtn.value) return
+
+				const shouldCloseWindow = entry.open()
+				if (shouldCloseWindow) emit('closeWindow')
+			}
+		}, true)
+
 		return {
 			pointerDevice,
+			onClick,
+			isHoveringBtn,
 		}
 	},
 	mounted() {
@@ -154,7 +174,6 @@ export default {
 	data: () => ({
 		directoryEntry: null,
 		tree: [],
-		isHoveringBtn: false,
 	}),
 	methods: {
 		async loadDirectory() {
@@ -171,12 +190,7 @@ export default {
 				this.directoryEntry = this.entry
 			}
 		},
-		onClick(entry) {
-			if (this.isHoveringBtn) return
 
-			const shouldCloseWindow = entry.open()
-			if (shouldCloseWindow) this.$emit('closeWindow')
-		},
 		async draggedFile(event) {
 			const directoryEntry = Object.values(event)[0].element
 			if ('added' in event) {

@@ -149,6 +149,8 @@ export class TextTab extends FileTab {
 	}
 
 	async save() {
+		this.isTemporary = false
+
 		const app = await App.getApp()
 		const action = this.editorInstance?.getAction(
 			'editor.action.formatDocument'
