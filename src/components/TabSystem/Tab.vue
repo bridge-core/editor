@@ -13,6 +13,9 @@
 		@mousedown.middle.prevent
 		@click.middle="tab.close()"
 		@click.right.prevent="tab.onContextMenu($event)"
+		@dblclick="pointerDevice === 'touch' ? null : (tab.isTemporary = false)"
+		@mouseenter="hoveringTab = true"
+		@mouseleave="hoveringTab = false"
 	>
 		<!-- Context menu button for touch -->
 		<v-btn
@@ -29,7 +32,7 @@
 
 		<v-badge
 			:value="tab.isReadOnly || tab.isUnsaved"
-			:class="{ 'mr-3': tab.isReadOnly }"
+			:class="{ 'mr-3': tab.isReadOnly, 'mr-1': tab.isUnsaved }"
 			:color="tab.iconColor"
 			:icon="tab.isReadOnly ? 'mdi-lock-outline' : null"
 			bordered
@@ -42,8 +45,8 @@
 			</v-icon>
 		</v-badge>
 
-		<span :style="{ 'font-style': tab.isUnsaved ? 'italic' : null }">
-			{{ tab.name }}
+		<span :style="{ 'font-style': tab.isTemporary ? 'italic' : null }">
+			{{ tabName }}
 		</span>
 
 		<v-btn
@@ -60,6 +63,7 @@
 </template>
 
 <script>
+import { settingsState } from '../Windows/Settings/SettingsState'
 import { Tab } from './CommonTab'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
@@ -71,6 +75,7 @@ export default {
 	},
 	data: () => ({
 		hoveringBtn: false,
+		hoveringTab: false,
 	}),
 	setup() {
 		return {
@@ -87,12 +92,35 @@ export default {
 		}
 	},
 	computed: {
+		compactDesign() {
+			if (!settingsState.editor) return true
+			if (settingsState.editor.compactTabDesign === undefined) return true
+
+			return settingsState.editor.compactTabDesign
+		},
 		isSelected() {
 			return this.tab.isSelected
+		},
+		tabName() {
+			if (
+				!this.compactDesign ||
+				(this.pointerDevice === 'mouse' && this.hoveringTab) ||
+				this.isSelected
+			)
+				return this.tab.name
+
+			let baseName = this.tab.name.split('.')
+			baseName.pop()
+			baseName = baseName.join('.')
+
+			return baseName.length > 5
+				? baseName.slice(0, 5) + '...'
+				: this.tab.name
 		},
 	},
 	watch: {
 		isSelected() {
+			console.log(this.isSelected)
 			if (this.isSelected)
 				this.$refs.tabElement.scrollIntoView({
 					behavior: 'smooth',

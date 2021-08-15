@@ -283,11 +283,10 @@ export class PackExplorer extends SidebarContent {
 								const fileHandle = await fileSystem.getFileHandle(
 									transformedPath
 								)
-								await project.tabSystem?.open(
-									fileHandle,
-									true,
-									true
-								)
+								await project?.openFile(fileHandle, {
+									selectTab: true,
+									isReadOnly: true,
+								})
 							},
 						},
 				  ]
@@ -317,7 +316,9 @@ export class PackExplorer extends SidebarContent {
 								App.eventSystem.dispatch('fileAdded', undefined)
 
 								// Open file in new tab
-								await project.openFile(fileHandle, true)
+								await project.openFile(fileHandle, {
+									selectTab: true,
+								})
 								project.updateChangedFiles()
 							},
 						},

@@ -286,6 +286,15 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.compactTabDesign.name',
+			description: 'windows.settings.editor.compactTabDesign.description',
+			key: 'compactTabDesign',
+			default: true,
+		})
+	)
 
 	// Actions
 	const app = await App.getApp()

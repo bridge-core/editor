@@ -354,10 +354,10 @@ export class CreatePresetWindow extends BaseWindow {
 
 			filePaths.push(filePath)
 
-			await app.project.openFile(
-				fileHandle,
-				fileHandle === createdFiles[createdFiles.length - 1]
-			)
+			await app.project.openFile(fileHandle, {
+				selectTab: fileHandle === createdFiles[createdFiles.length - 1],
+				isTemporary: false,
+			})
 		}
 
 		await app.project.updateFiles(filePaths)

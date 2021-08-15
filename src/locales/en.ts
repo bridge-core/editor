@@ -615,6 +615,11 @@ export default {
 					name: 'Word Wrap',
 					description: 'Wrap words to disable horizontal scrolling',
 				},
+				compactTabDesign: {
+					name: 'Compact Tab Design',
+					description:
+						'Display tabs inside of the tab system in a more compact way',
+				},
 			},
 		},
 		projectFolder: {

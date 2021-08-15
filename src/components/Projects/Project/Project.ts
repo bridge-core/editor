@@ -1,5 +1,5 @@
 import { App } from '/@/App'
-import { TabSystem } from '/@/components/TabSystem/TabSystem'
+import { IOpenTabOptions, TabSystem } from '/@/components/TabSystem/TabSystem'
 import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
 import { ProjectConfig, IConfigJson } from '../ProjectConfig'
 import { RecentFiles } from '../RecentFiles'
@@ -169,13 +169,14 @@ export abstract class Project {
 		await this.activate(true)
 	}
 
-	async openFile(fileHandle: AnyFileHandle, selectTab = true) {
+	async openFile(fileHandle: AnyFileHandle, options: IOpenTabOptions = {}) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.getTab(fileHandle)
-			if (tab) return selectTab ? tabSystem.select(tab) : undefined
+			if (tab)
+				return options.selectTab ? tabSystem.select(tab) : undefined
 		}
 
-		this.tabSystem?.open(fileHandle, selectTab)
+		this.tabSystem?.open(fileHandle, options)
 	}
 	async closeFile(fileHandle: AnyFileHandle) {
 		for (const tabSystem of this.tabSystems) {

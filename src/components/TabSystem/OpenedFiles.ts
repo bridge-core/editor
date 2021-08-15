@@ -15,10 +15,10 @@ export class OpenedFiles extends PersistentQueue<string> {
 				for (let i = 0; i < queue.elements.length; i++) {
 					try {
 						// Try to restore tab
-						await tabSystem.openPath(
-							queue.elements[i],
-							i + 1 === queue.elementCount
-						)
+						await tabSystem.openPath(queue.elements[i], {
+							selectTab: i === 0,
+							isTemporary: false,
+						})
 					} catch {}
 				}
 

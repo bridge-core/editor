@@ -102,7 +102,7 @@ export class TextTab extends FileTab {
 
 		this.disposables.push(
 			this.editorModel?.onDidChangeContent(() => {
-				this.isUnsaved = true
+				this.setIsUnsaved(true)
 				throttledCacheUpdate(this)
 			})
 		)
@@ -197,7 +197,8 @@ export class TextTab extends FileTab {
 		}
 	}
 	protected async saveFile(app: App) {
-		this.isUnsaved = false
+		this.setIsUnsaved(false)
+
 		if (this.editorModel) {
 			await app.fileSystem.write(
 				this.fileHandle,

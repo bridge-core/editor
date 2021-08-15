@@ -13,6 +13,12 @@ import { TabProvider } from './TabProvider'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { hide } from '../Sidebar/state'
 
+export interface IOpenTabOptions {
+	selectTab?: boolean
+	isTemporary?: boolean
+	isReadOnly?: boolean
+}
+
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
 	public tabs: Tab[] = []
@@ -69,17 +75,24 @@ export class TabSystem extends MonacoHolder {
 
 	async open(
 		fileHandle: AnyFileHandle,
-		selectTab = true,
-		isReadOnly = false
+		{
+			selectTab = true,
+			isReadOnly = false,
+			isTemporary = true,
+		}: IOpenTabOptions = {}
 	) {
 		const tab = await this.getTabFor(fileHandle, isReadOnly)
+
+		// Default value is true so we only need to update if the caller wants to create a permanent tab
+		if (!isTemporary) tab.isTemporary = false
 
 		await this.add(tab, selectTab)
 		return tab
 	}
-	async openPath(path: string, selectTab = true) {
+	async openPath(path: string, options: IOpenTabOptions = {}) {
 		const fileHandle = await this.project.app.fileSystem.getFileHandle(path)
-		return await this.open(fileHandle, selectTab)
+
+		return await this.open(fileHandle, options)
 	}
 
 	protected async getTabFor(fileHandle: AnyFileHandle, isReadOnly = false) {
@@ -114,6 +127,8 @@ export class TabSystem extends MonacoHolder {
 			}
 		}
 
+		this.closeAllTemporary()
+
 		if (!tab.hasFired) await tab.fired
 
 		this.tabs = [...this.tabs, tab]
@@ -124,7 +139,7 @@ export class TabSystem extends MonacoHolder {
 
 		return tab
 	}
-	remove(tab: Tab, destroyEditor = true) {
+	remove(tab: Tab, destroyEditor = true, selectNewTab = true) {
 		tab.onDeactivate()
 		const tabIndex = this.tabs.findIndex((current) => current === tab)
 		if (tabIndex === -1) return
@@ -132,7 +147,7 @@ export class TabSystem extends MonacoHolder {
 		this.tabs.splice(tabIndex, 1)
 		if (destroyEditor) tab.onDestroy()
 
-		if (tab === this._selectedTab)
+		if (selectNewTab && tab === this._selectedTab)
 			this.select(this.tabs[tabIndex === 0 ? 0 : tabIndex - 1])
 		if (!tab.isForeignFile) this.openedFiles.remove(tab.getPath())
 
@@ -231,6 +246,13 @@ export class TabSystem extends MonacoHolder {
 		}
 
 		app.windows.loadingWindow.close()
+	}
+	closeAllTemporary() {
+		for (const tab of this.tabs) {
+			if (!tab.isTemporary) continue
+
+			this.remove(tab, true, false)
+		}
 	}
 
 	async activate() {

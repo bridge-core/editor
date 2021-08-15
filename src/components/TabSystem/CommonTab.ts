@@ -13,9 +13,10 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	abstract component: Vue.Component
 	public uuid = uuid()
 	public hasRemoteChange = false
-	public isUnsaved = false
+	protected _isUnsaved = false
 	public isForeignFile = true
 	public connectedTabs: Tab[] = []
+	public isTemporary = true
 	public readonly onClose = new EventDispatcher<void>()
 
 	protected projectPath?: string
@@ -24,7 +25,11 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	protected isLoading = true
 
 	setIsUnsaved(val: boolean) {
-		this.isUnsaved = val
+		this._isUnsaved = val
+		this.isTemporary = false
+	}
+	get isUnsaved() {
+		return this._isUnsaved
 	}
 
 	get isSharingScreen() {
