@@ -31,6 +31,10 @@ const colorNames = [
 	'tabActive',
 	'tabInactive',
 	'lineHighlightBackground',
+	'behaviorPack',
+	'resourcePack',
+	'worldTemplate',
+	'skinPack',
 ] as const
 export type TColorName = typeof colorNames[number]
 

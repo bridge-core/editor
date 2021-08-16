@@ -27,6 +27,11 @@ export const bridgeDark = <const>{
 		tabActive: '#121212',
 		tabInactive: '#1F1F1F',
 		lineHighlightBackground: '#1F1F1F',
+
+		behaviorPack: '#ff5252',
+		resourcePack: '#0073FF',
+		skinPack: '#fb8c00',
+		worldTemplate: '#4caf50',
 	},
 	highlighter: {
 		type: {
@@ -89,6 +94,11 @@ export const bridgeLight = <const>{
 		tabActive: '#fafafa',
 		tabInactive: '#e0e0e0',
 		lineHighlightBackground: '#e0e0e0',
+
+		behaviorPack: '#ff5252',
+		resourcePack: '#0073FF',
+		skinPack: '#fb8c00',
+		worldTemplate: '#4caf50',
 	},
 	highlighter: {
 		type: {
