@@ -2,10 +2,11 @@
 	<div class="d-flex align-center pa-2 clickable" @click="onClick" v-ripple>
 		<img
 			:src="imgSrc"
+			style="image-rendering: pixelated"
 			class="rounded-lg"
 			draggable="false"
 			height="44px"
-			alt=""
+			:alt="`Pack Icon of ${name}`"
 		/>
 		<h1
 			class="text-h4 ml-2"
