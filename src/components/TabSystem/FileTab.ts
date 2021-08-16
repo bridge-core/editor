@@ -25,7 +25,12 @@ export abstract class FileTab extends Tab {
 		// If the resolve above failed, we are dealing with a file which doesn't belong to this project
 		if (!this.projectPath) {
 			this.isForeignFile = true
-			this.projectPath = `${uuid()}/${this.fileHandle.name}`
+			const guessedFolder = await FileType.guessFolder(this.fileHandle)
+
+			this.projectPath = `${guessedFolder ?? uuid()}/${
+				this.fileHandle.name
+			}`
+			console.log(this.projectPath)
 		}
 
 		await super.setup()

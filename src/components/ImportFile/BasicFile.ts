@@ -5,6 +5,7 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { FilePathWindow } from '/@/components/Windows/Common/FilePath/Window'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { AnyFileHandle } from '../FileSystem/Types'
+import { FileType } from '../Data/FileType'
 
 export class BasicFileImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
@@ -60,7 +61,10 @@ export class BasicFileImporter extends FileImporter {
 
 	protected async onSave(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
-		const filePathWindow = new FilePathWindow('', false)
+		const filePathWindow = new FilePathWindow(
+			(await FileType.guessFolder(fileHandle)) ?? '',
+			false
+		)
 		filePathWindow.open()
 
 		const filePath = await filePathWindow.fired

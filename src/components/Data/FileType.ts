@@ -4,15 +4,23 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import type { CompareOperator } from 'compare-versions'
 import { DataLoader } from './DataLoader'
 import { isMatch } from '/@/utils/glob/isMatch'
+import { AnyFileHandle } from '../FileSystem/Types'
+import json5 from 'json5'
+import { hasAnyPath, walkObject } from '/@/utils/walkObject'
 
 /**
  * Describes the structure of a file definition
  */
 export interface IFileType {
+	type?: 'json' | 'text' | 'nbt'
 	id: string
 	icon?: string
-	scope: string | string[]
-	matcher: string | string[]
+	detect?: {
+		scope?: string | string[]
+		matcher?: string | string[]
+		fileContent?: string[]
+	}
+
 	schema: string
 	types: (string | [string, { targetVersion: [CompareOperator, string] }])[]
 	packSpider: string
@@ -103,27 +111,25 @@ export namespace FileType {
 				return fileType
 			else if (!filePath) continue
 
-			if (fileType.scope) {
-				if (typeof fileType.scope === 'string') {
-					if (filePath.startsWith(fileType.scope)) return fileType
-				} else if (Array.isArray(fileType.scope)) {
-					if (
-						fileType.scope.some((scope) =>
-							filePath.startsWith(scope)
-						)
-					)
+			const scope = fileType.detect?.scope
+			const matcher = fileType.detect?.matcher
+
+			if (scope) {
+				if (typeof scope === 'string') {
+					if (filePath.startsWith(scope)) return fileType
+				} else if (Array.isArray(scope)) {
+					if (scope.some((scope) => filePath.startsWith(scope)))
 						return fileType
 				}
-			} else if (fileType.matcher) {
-				if (
-					typeof fileType.matcher === 'string' &&
-					isMatch(filePath, fileType.matcher)
-				) {
+			} else if (matcher) {
+				if (isMatch(filePath, matcher)) {
 					return fileType
-				} else if (Array.isArray(fileType.matcher)) {
-					for (const matcher of fileType.matcher)
-						if (isMatch(filePath, matcher)) return fileType
 				}
+			} else {
+				console.log(fileType)
+				throw new Error(
+					`Invalid file definition, no "detect" properties`
+				)
 			}
 		}
 	}
@@ -135,6 +141,37 @@ export namespace FileType {
 		}
 
 		return ids
+	}
+
+	/**
+	 * Guess the file path of a file given a file handle
+	 */
+	export async function guessFolder(fileHandle: AnyFileHandle) {
+		if (!fileHandle.name.endsWith('.json')) return null
+
+		const file = await fileHandle.getFile()
+		let json: any
+		try {
+			json = json5.parse(await file.text())
+		} catch {
+			return null
+		}
+
+		for (const { type, detect } of fileTypes) {
+			if (typeof type === 'string' && type !== 'json') continue
+
+			const { scope, fileContent } = detect ?? {}
+			if (!scope || !fileContent) continue
+
+			if (!hasAnyPath(json, fileContent)) continue
+
+			let startPath = Array.isArray(scope) ? scope[0] : scope
+			if (!startPath.endsWith('/')) startPath += '/'
+
+			return startPath
+		}
+
+		return null
 	}
 
 	/**
@@ -151,11 +188,11 @@ export namespace FileType {
 	export function getMonacoSchemaArray() {
 		return fileTypes
 			.map(
-				({ matcher, schema }) =>
+				({ detect = {}, schema }) =>
 					<IMonacoSchemaArrayEntry>{
-						fileMatch: Array.isArray(matcher)
-							? [...matcher]
-							: [matcher],
+						fileMatch: Array.isArray(detect.matcher)
+							? [...detect.matcher]
+							: [detect.matcher],
 						uri: schema,
 					}
 			)
