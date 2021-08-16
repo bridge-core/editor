@@ -52,17 +52,11 @@ export function setupToolsCategory(app: App) {
 			onTrigger: async () => {
 				// Global extensions
 				app.extensionLoader.deactiveAll(true)
-				app.extensionLoader.loadExtensions(
-					await app.fileSystem.getDirectoryHandle(`extensions`)
-				)
+				app.extensionLoader.loadExtensions()
 
 				// Local extensions
 				app.project.extensionLoader.deactiveAll(true)
-				app.project.extensionLoader.loadExtensions(
-					await app.project.fileSystem.getDirectoryHandle(
-						`.bridge/extensions`
-					)
-				)
+				app.project.extensionLoader.loadExtensions()
 			},
 		})
 	)
