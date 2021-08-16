@@ -34,10 +34,11 @@ import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/FileSystem/ComMojang'
 import { AudioManager } from '/@/components/Audio/AudioManager'
 import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
-import { markRaw, shallowReactive } from '@vue/composition-api'
+import { markRaw } from '@vue/composition-api'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from './components/App/Mobile'
+import { PackExplorer } from './components/PackExplorer/PackExplorer'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -74,6 +75,7 @@ export class App {
 	public readonly configuredJsonLanguage = markRaw(
 		new ConfiguredJsonLanguage()
 	)
+	public readonly packExplorer = new PackExplorer()
 	public readonly mobile: Mobile
 
 	protected languageManager = markRaw(new LanguageManager())
