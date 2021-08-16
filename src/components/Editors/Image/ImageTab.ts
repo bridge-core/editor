@@ -1,5 +1,5 @@
 import { FileTab } from '/@/components/TabSystem/FileTab'
-import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
+import { loadAsDataURL, loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
 import ImageTabComponent from './ImageTab.vue'
 import { AnyFileHandle } from '../../FileSystem/Types'
 
@@ -21,7 +21,7 @@ export class ImageTab extends FileTab {
 	}
 
 	async onActivate() {
-		this.dataUrl = await loadAsDataURL(this.getPath())
+		this.dataUrl = await loadHandleAsDataURL(this.fileHandle)
 	}
 
 	get icon() {
