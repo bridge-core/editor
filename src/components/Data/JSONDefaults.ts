@@ -96,7 +96,10 @@ export class JsonDefaults extends EventDispatcher<void> {
 			this.addSchemas(
 				await this.requestSchemaFor(fileType, tab.getProjectPath())
 			)
-			await this.runSchemaScripts(app, tab.getProjectPath())
+			await this.runSchemaScripts(
+				app,
+				tab.isForeignFile ? undefined : tab.getProjectPath()
+			)
 		}
 
 		this.loadedSchemas = true
