@@ -14,8 +14,6 @@
 		@click.middle="tab.close()"
 		@click.right.prevent="tab.onContextMenu($event)"
 		@dblclick="pointerDevice === 'touch' ? null : (tab.isTemporary = false)"
-		@mouseenter="hoveringTab = true"
-		@mouseleave="hoveringTab = false"
 	>
 		<!-- Context menu button for touch -->
 		<v-btn
@@ -75,7 +73,6 @@ export default {
 	},
 	data: () => ({
 		hoveringBtn: false,
-		hoveringTab: false,
 	}),
 	setup() {
 		return {
@@ -102,12 +99,7 @@ export default {
 			return this.tab.isSelected
 		},
 		tabName() {
-			if (
-				!this.compactDesign ||
-				(this.pointerDevice === 'mouse' && this.hoveringTab) ||
-				this.isSelected
-			)
-				return this.tab.name
+			if (!this.compactDesign || this.isSelected) return this.tab.name
 
 			let baseName = this.tab.name.split('.')
 			baseName.pop()
