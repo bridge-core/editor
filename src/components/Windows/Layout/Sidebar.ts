@@ -106,6 +106,7 @@ export class SidebarItem {
 export class Sidebar {
 	protected _selected?: string
 	protected _filter: string = ''
+	protected reselectedForFilter = ''
 	public readonly state: Record<string, any> = {}
 
 	constructor(protected _elements: TSidebarElement[]) {
@@ -147,12 +148,14 @@ export class Sidebar {
 				.map((e) => (e.type === 'item' ? e : e.filtered(this.filter)))
 		)
 
-		if (elements.length > 0) {
+		if (this.filter !== this.reselectedForFilter && elements.length > 0) {
 			const e = elements[0]
 			if (e.type === 'category' && e.getItems().length > 0) {
 				e.setOpen(true)
 				this.setDefaultSelected(e.getItems()[0].id)
 			}
+
+			this.reselectedForFilter = this.filter
 		}
 
 		return elements
