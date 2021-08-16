@@ -104,16 +104,25 @@
 			</v-expansion-panels>
 
 			<div class="d-flex">
-				<v-file-input
-					v-model="createOptions.icon"
-					:label="t('windows.createProject.packIcon')"
-					:prepend-icon="null"
-					prepend-inner-icon="mdi-image-outline"
-					accept="image/png"
-					class="mr-2"
-					outlined
-					dense
-				/>
+				<div
+					style="width: 40%"
+					@drop.prevent.stop="
+						createOptions.icon = $event.dataTransfer.files[0]
+					"
+					@dragover.prevent.stop
+				>
+					<v-file-input
+						v-model="createOptions.icon"
+						:label="t('windows.createProject.packIcon')"
+						:prepend-icon="null"
+						prepend-inner-icon="mdi-image-outline"
+						accept="image/png"
+						class="mr-2"
+						outlined
+						dense
+					/>
+				</div>
+
 				<v-text-field
 					v-model="createOptions.name"
 					:label="t('windows.createProject.projectName.name')"
