@@ -167,4 +167,21 @@ export class TreeTab extends FileTab {
 			this.treeEditor.delete(sel.getTree())
 		)
 	}
+
+	async close() {
+		const didClose = await super.close()
+
+		// We need to clear the lightning cache store from temporary data if the user doesn't save changes
+		if (!this.isForeignFile && didClose && this.isUnsaved) {
+			const app = await App.getApp()
+			const file = await app.fileSystem.readFile(this.getPath())
+			const fileContent = await file.text()
+			await app.project.packIndexer.updateFile(
+				this.getProjectPath(),
+				fileContent
+			)
+		}
+
+		return didClose
+	}
 }
