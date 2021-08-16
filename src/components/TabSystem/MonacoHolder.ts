@@ -8,6 +8,7 @@ import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { viewDocumentation } from '../Documentation/view'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
 import { markRaw } from '@vue/composition-api'
+import { debounce } from 'lodash-es'
 
 languages.typescript.javascriptDefaults.setCompilerOptions({
 	target: languages.typescript.ScriptTarget.ESNext,
@@ -72,28 +73,32 @@ export class MonacoHolder extends Signal<void> {
 		// @ts-ignore
 		const editorService = this._monacoEditor._codeEditorService
 		const openEditorBase = editorService.openCodeEditor.bind(editorService)
-		editorService.openCodeEditor = async (
-			input: any,
-			source: any,
-			sideBySide?: boolean
-		) => {
-			let result = await openEditorBase(input, source, sideBySide)
+		editorService.openCodeEditor = debounce(
+			async (input: any, source: any, sideBySide?: boolean) => {
+				let result = await openEditorBase(input, source, sideBySide)
 
-			if (!result) {
-				try {
-					await this._app.project.tabSystem?.openPath(
-						input.resource.path.slice(1)
-					)
-				} catch {
-					console.error(
-						`Failed to open file "${input.resource.path.slice(1)}"`
-					)
+				if (!result) {
+					try {
+						const currentTab = this._app.tabSystem?.selectedTab
+						if (currentTab) currentTab.isTemporary = false
+
+						await this._app.project.tabSystem?.openPath(
+							input.resource.path.slice(1)
+						)
+					} catch {
+						console.error(
+							`Failed to open file "${input.resource.path.slice(
+								1
+							)}"`
+						)
+					}
+
+					// source.setModel(editor.getModel(input.resource));
 				}
-
-				// source.setModel(editor.getModel(input.resource));
-			}
-			return result // always return the base result
-		}
+				return result // always return the base result
+			},
+			100
+		)
 
 		// Workaround to make the toggleLineComment action work
 		const commentLineAction = this._monacoEditor.getAction(
