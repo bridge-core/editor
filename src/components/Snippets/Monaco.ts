@@ -15,7 +15,6 @@ languages.registerCompletionItemProvider('json', {
 
 		if (!(currentTab instanceof FileTab)) return { suggestions: [] }
 		const fileType = currentTab.getFileType()
-		console.log(location)
 
 		return {
 			suggestions: app.project.snippetLoader

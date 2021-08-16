@@ -5,7 +5,7 @@ import { ProjectConfig } from '/@/components/Projects/ProjectConfig'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
-import { TreeTab } from '../../Editors/TreeEditor/Tab'
+import { TreeTab } from '/@/components/Editors/TreeEditor/Tab'
 
 export interface IKnownWords {
 	keywords: string[]
@@ -78,7 +78,8 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 			FileType.get(tab.getProjectPath()) ?? {}
 
 		// We have already loaded the needed file type
-		if (!id || id === this.loadedFileType) return
+		if (!id) return this.resetWords(tab)
+		if (id === this.loadedFileType) return
 
 		this.dynamicKeywords = highlighterConfiguration.keywords ?? []
 		this.typeIdentifiers = highlighterConfiguration.typeIdentifiers ?? []
@@ -88,6 +89,16 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 		if (tab instanceof TextTab) this.updateHighlighter()
 		else if (tab instanceof TreeTab) this.dispatch(this.knownWords)
 		this.loadedFileType = id
+	}
+	resetWords(tab: TreeTab | TextTab) {
+		this.dynamicKeywords = []
+		this.typeIdentifiers = []
+		this.variables = []
+		this.definitions = []
+
+		if (tab instanceof TextTab) this.updateHighlighter()
+		else if (tab instanceof TreeTab) this.dispatch(this.knownWords)
+		this.loadedFileType = 'unknown'
 	}
 
 	updateHighlighter() {
