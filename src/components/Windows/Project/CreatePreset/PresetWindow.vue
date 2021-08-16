@@ -59,19 +59,27 @@
 					dense
 					@keypress.enter="onCreatePreset"
 				/>
-				<v-file-input
+				<span
 					v-else-if="opts.type === 'fileInput'"
-					class="mb-1"
+					v-cloak
 					:key="i"
-					v-model="content.models[id]"
-					:accept="opts.accept"
-					:prepend-icon="null"
-					:prepend-inner-icon="opts.icon || 'mdi-paperclip'"
-					:label="name"
-					autocomplete="off"
-					outlined
-					dense
-				/>
+					@drop.prevent.stop="
+						content.models[id] = $event.dataTransfer.files[0]
+					"
+					@dragover.prevent.stop
+				>
+					<v-file-input
+						class="mb-1"
+						v-model="content.models[id]"
+						:accept="opts.accept"
+						:prepend-icon="null"
+						:prepend-inner-icon="opts.icon || 'mdi-paperclip'"
+						:label="name"
+						autocomplete="off"
+						outlined
+						dense
+					/>
+				</span>
 
 				<component
 					v-else-if="opts.type === 'selectInput'"

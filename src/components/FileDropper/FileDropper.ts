@@ -21,6 +21,8 @@ export class FileDropper {
 		window.addEventListener('dragover', (event) => {
 			event.preventDefault()
 
+			if (App.windowState.isAnyWindowVisible.value) return
+
 			// Moving tabs
 			if (event.dataTransfer?.effectAllowed === 'move') return
 
@@ -42,6 +44,8 @@ export class FileDropper {
 
 		window.addEventListener('drop', (event) => {
 			event.preventDefault()
+
+			if (App.windowState.isAnyWindowVisible.value) return
 
 			this.onDrop([...(event.dataTransfer?.items ?? [])])
 			this.state.isHovering = false
