@@ -31,7 +31,6 @@
 			"
 			v-model="editedPath"
 			:rules="Object.values(rules)"
-			autofocus
 			dense
 			@keydown.enter="tryToViewMode()"
 			@blur="tryToViewMode()"

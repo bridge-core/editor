@@ -18,7 +18,7 @@
 					class="mr-2"
 					outlined
 					dense
-					autofocus
+					:autofocus="pointerDevice === 'mouse'"
 					hide-details
 				/>
 				<span
@@ -46,6 +46,7 @@
 <script>
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import BaseWindow from '../../Layout/BaseWindow.vue'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'Input',
@@ -54,6 +55,9 @@ export default {
 		BaseWindow,
 	},
 	props: ['currentWindow'],
+	setup() {
+		return { pointerDevice }
+	},
 	data() {
 		return this.currentWindow
 	},

@@ -17,7 +17,6 @@
 				dense
 				:no-data-text="t('windows.openFile.noData')"
 				outlined
-				autofocus
 				auto-select-first
 				@change="onChange"
 			/>

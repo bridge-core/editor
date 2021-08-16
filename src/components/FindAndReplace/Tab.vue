@@ -11,7 +11,7 @@
 					outlined
 					dense
 					hide-details
-					autofocus
+					:autofocus="pointerDevice === 'mouse'"
 					:label="t('findAndReplace.search')"
 					v-model="searchFor"
 				/>
@@ -113,6 +113,7 @@ import { debounce } from 'lodash'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { createRegExp, processFileText } from './Utils.ts'
 import { set } from '@vue/composition-api'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'FindAndReplaceTab',
@@ -128,6 +129,11 @@ export default {
 		height: Number,
 	},
 
+	setup() {
+		return {
+			pointerDevice,
+		}
+	},
 	mounted() {
 		this.$refs.virtualScroller.$el.scrollTop = this.scrollTop
 	},

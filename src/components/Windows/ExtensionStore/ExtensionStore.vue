@@ -17,7 +17,7 @@
 				:label="t('windows.extensionStore.searchExtensions')"
 				v-model="sidebar._filter"
 				autocomplete="off"
-				autofocus
+				:autofocus="pointerDevice === 'mouse'"
 				outlined
 				dense
 			/>
@@ -43,6 +43,7 @@
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import ExtensionCard from './ExtensionCard.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'CreatePresetWindow',
@@ -52,6 +53,9 @@ export default {
 		ExtensionCard,
 	},
 	props: ['currentWindow'],
+	setup() {
+		return { pointerDevice }
+	},
 	data() {
 		return this.currentWindow
 	},
