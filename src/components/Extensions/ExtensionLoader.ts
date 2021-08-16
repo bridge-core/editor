@@ -33,6 +33,7 @@ export interface IExtensionManifest {
 
 export class ExtensionLoader extends Signal<void> {
 	protected _extensions = new Map<string, Extension>()
+	protected extensionPaths = new Map<string, string>()
 	protected _loadedInstalledExtensions = new Signal<void>(2)
 	public activeStatus: ActiveStatus | undefined
 
@@ -42,6 +43,7 @@ export class ExtensionLoader extends Signal<void> {
 
 	constructor(
 		protected fileSystem: FileSystem,
+		protected loadExtensionsFrom: string,
 		protected saveInactivePath: string,
 		protected isGlobal = false
 	) {
@@ -61,7 +63,11 @@ export class ExtensionLoader extends Signal<void> {
 		return new Map(this.extensions.entries())
 	}
 
-	async loadExtensions(baseDirectory: AnyDirectoryHandle) {
+	async loadExtensions(path: string = this.loadExtensionsFrom) {
+		const baseDirectory = await this.fileSystem.getDirectoryHandle(path, {
+			create: true,
+		})
+
 		await this.loadActiveExtensions()
 		const promises: Promise<unknown>[] = []
 
@@ -155,6 +161,10 @@ export class ExtensionLoader extends Signal<void> {
 				this.isGlobal
 			)
 			this._extensions.set(manifest.id, extension)
+			this.extensionPaths.set(
+				manifest.id,
+				`${this.loadExtensionsFrom}/${baseDirectory.name}`
+			)
 			return extension
 		} else {
 			createErrorNotification(
@@ -192,6 +202,15 @@ export class ExtensionLoader extends Signal<void> {
 	disposeAll() {
 		this.deactiveAll(true)
 		this.resetSignal()
+	}
+	deleteExtension(id: string) {
+		const extensionPath = this.extensionPaths.get(id)
+
+		if (extensionPath) {
+			this.fileSystem.unlink(extensionPath)
+			this.extensionPaths.delete(id)
+			this.extensions.delete(id)
+		}
 	}
 
 	mapActive<T>(cb: (ext: Extension) => T) {

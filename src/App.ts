@@ -243,9 +243,7 @@ export class App {
 		// Ensure that a project is selected
 		this.projectManager.projectReady.fired.then(async () =>
 			// Then load global extensions
-			this.extensionLoader.loadExtensions(
-				await this.fileSystem.getDirectoryHandle(`extensions`)
-			)
+			this.extensionLoader.loadExtensions()
 		)
 
 		console.timeEnd('[APP] startUp()')

@@ -164,6 +164,11 @@ export class Extension {
 		this.isLoaded = false
 	}
 
+	async delete() {
+		this.deactivate()
+		this.parent.deleteExtension(this.manifest.id)
+	}
+
 	async setActive(value: boolean) {
 		if (value) await this.activate()
 		else this.deactivate()
@@ -172,8 +177,9 @@ export class Extension {
 	}
 
 	forStore(extensionStore: ExtensionStoreWindow) {
-		const viewer = new ExtensionViewer(extensionStore, this.manifest)
+		const viewer = new ExtensionViewer(extensionStore, this.manifest, true)
 		viewer.setInstalled()
+		viewer.setConnected(this)
 		return viewer
 	}
 

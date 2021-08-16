@@ -1,5 +1,6 @@
 import { reactive, set } from '@vue/composition-api'
 import { App } from '/@/App'
+import { v4 as uuid } from 'uuid'
 
 export type TSidebarElement = SidebarCategory | SidebarItem
 export interface ISidebarCategoryConfig {
@@ -9,7 +10,8 @@ export interface ISidebarCategoryConfig {
 	shouldSort?: boolean
 }
 export class SidebarCategory {
-	readonly type = 'category'
+	public readonly type = 'category'
+	public readonly id = uuid()
 	protected text: string
 	protected items: SidebarItem[]
 	protected isOpen: boolean
@@ -114,7 +116,18 @@ export class Sidebar {
 		if (element.type === 'item' && additionalData)
 			this.state[element.id] = additionalData
 
-		this._elements.push(element)
+		if (this.has(element)) this.replace(element)
+		else this._elements.push(element)
+	}
+	has(element: TSidebarElement) {
+		return this._elements.find((e) => e.id === element.id) !== undefined
+	}
+	replace(element: TSidebarElement) {
+		this._elements = this._elements.map((e) => {
+			if (e.id === element.id) return element
+
+			return e
+		})
 	}
 	removeElements() {
 		this._elements = []

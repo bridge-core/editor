@@ -17,7 +17,8 @@ export class ExtensionViewer {
 
 	constructor(
 		protected parent: ExtensionStoreWindow,
-		protected config: IExtensionManifest
+		protected config: IExtensionManifest,
+		public readonly isLocalOnly: boolean = false
 	) {
 		this.tags = this.config.tags
 			.map((tag) => {
@@ -25,9 +26,7 @@ export class ExtensionViewer {
 					this.parent.tags[tag] = new ExtensionTag(this.parent, tag)
 				return this.parent.tags[tag]
 			})
-			.sort((a, b) =>
-				a.getText().localeCompare(b.getText())
-			)
+			.sort((a, b) => a.getText().localeCompare(b.getText()))
 	}
 
 	//#region Config getters
@@ -65,6 +64,9 @@ export class ExtensionViewer {
 	}
 	get extension() {
 		return this.connected
+	}
+	get isGlobal() {
+		return this.connected?.isGlobal ?? false
 	}
 
 	hasTag(tag: ExtensionTag) {
@@ -153,6 +155,13 @@ export class ExtensionViewer {
 
 		this.connected.deactivate()
 		await this.downloadExtension(this.connected.isGlobal)
+	}
+	delete() {
+		if (!this.connected) return
+
+		this.connected?.delete()
+		this.parent.delete(this)
+		this._isInstalled = false
 	}
 
 	setInstalled() {

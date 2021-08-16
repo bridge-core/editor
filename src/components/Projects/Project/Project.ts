@@ -85,6 +85,7 @@ export abstract class Project {
 		this.packIndexer = new PackIndexer(app, _baseDirectory)
 		this.extensionLoader = new ExtensionLoader(
 			app.fileSystem,
+			`projects/${this.name}/.bridge/extensions`,
 			`projects/${this.name}/.bridge/inactiveExtensions.json`
 		)
 		this.typeLoader = new TypeLoader(this.app.dataLoader)
@@ -120,11 +121,7 @@ export abstract class Project {
 			for (const tabSystem of this.tabSystems) await tabSystem.activate()
 		}
 
-		await this.extensionLoader.loadExtensions(
-			await this.fileSystem.getDirectoryHandle('.bridge/extensions', {
-				create: true,
-			})
-		)
+		await this.extensionLoader.loadExtensions()
 
 		const selectedTab = this.tabSystem?.selectedTab
 		this.typeLoader.activate(

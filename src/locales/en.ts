@@ -657,7 +657,8 @@ export default {
 		},
 		extensionStore: {
 			title: 'Extension Store',
-			searchExtensions: 'Search extension...',
+			searchExtensions: 'Search Extension...',
+			deleteExtension: 'Delete Extension',
 			activateExtension: 'Activate Extension',
 			deactivateExtension: 'Deactivate Extension',
 			offlineError:
