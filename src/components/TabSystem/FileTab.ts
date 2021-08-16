@@ -30,7 +30,6 @@ export abstract class FileTab extends Tab {
 			this.projectPath = `${guessedFolder ?? uuid()}/${
 				this.fileHandle.name
 			}`
-			console.log(this.projectPath)
 		}
 
 		await super.setup()
