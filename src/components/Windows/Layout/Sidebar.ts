@@ -147,9 +147,9 @@ export class Sidebar {
 				.map((e) => (e.type === 'item' ? e : e.filtered(this.filter)))
 		)
 
-		if (elements.length === 1) {
+		if (elements.length > 0) {
 			const e = elements[0]
-			if (e.type === 'category' && e.getItems().length === 1) {
+			if (e.type === 'category' && e.getItems().length > 0) {
 				e.setOpen(true)
 				this.setDefaultSelected(e.getItems()[0].id)
 			}

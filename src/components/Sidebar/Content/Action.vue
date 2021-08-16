@@ -1,5 +1,10 @@
 <template>
-	<v-tooltip :color="color" :disabled="$vuetify.breakpoint.mobile" bottom>
+	<v-tooltip
+		:color="color"
+		:disabled="$vuetify.breakpoint.mobile"
+		:open-delay="500"
+		bottom
+	>
 		<template v-slot:activator="{ on, attrs }">
 			<div
 				v-ripple
@@ -13,9 +18,9 @@
 				v-on="on"
 				v-bind="attrs"
 			>
-				<v-icon :color="isSelected ? 'white' : color">{{
-					icon
-				}}</v-icon>
+				<v-icon :color="isSelected ? 'white' : color">
+					{{ icon }}
+				</v-icon>
 			</div>
 		</template>
 		<span>{{ t(name) }}</span>
