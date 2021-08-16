@@ -25,6 +25,10 @@ export class ActionManager {
 		set(this.state, action.id, action)
 		return action
 	}
+	getAction(actionId: string) {
+		return <Action | undefined>this.state[actionId]
+	}
+
 	/**
 	 * This is used by some classes that use an action manager as an abstraction to render action lists.
 	 * e.g. showContextMenu(...)
