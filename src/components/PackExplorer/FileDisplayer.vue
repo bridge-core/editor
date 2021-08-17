@@ -152,7 +152,8 @@ export default {
 			if (isDoubleClick) {
 				App.getApp().then((app) => {
 					const currentTab = app.project.tabSystem.selectedTab
-					if (currentTab.isTemporary) currentTab.isTemporary = false
+					if (currentTab && currentTab.isTemporary)
+						currentTab.isTemporary = false
 				})
 			} else {
 				if (isHoveringBtn.value) return
