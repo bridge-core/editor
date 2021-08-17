@@ -15,7 +15,7 @@ export function setupProjectCategory(app: App) {
 
 	project.addItem(
 		app.actionManager.create({
-			icon: 'mdi-package-down',
+			icon: 'mdi-folder-open-outline',
 			name: 'windows.projectChooser.title',
 			description: 'windows.projectChooser.description',
 			onTrigger: () => {
