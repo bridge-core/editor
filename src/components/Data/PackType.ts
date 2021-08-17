@@ -36,9 +36,9 @@ export namespace PackType {
 		await dataLoader.fired
 
 		packTypes = <IPackType[]>(
-			await dataLoader.readJSON(
-				'data/packages/minecraftBedrock/packDefinitions.json'
-			)
+			await dataLoader
+				.readJSON('data/packages/minecraftBedrock/packDefinitions.json')
+				.catch(() => [])
 		)
 		ready.dispatch()
 	}

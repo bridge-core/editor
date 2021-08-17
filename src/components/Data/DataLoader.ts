@@ -3,7 +3,6 @@ import { unzip, Unzipped } from 'fflate'
 import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
 import { basename, dirname } from '/@/utils/path'
 import { FileSystem } from '../FileSystem/FileSystem'
-import { map } from 'lodash-es'
 
 export class DataLoader extends FileSystem {
 	_virtualFileSystem?: VirtualDirectoryHandle
@@ -41,6 +40,8 @@ export class DataLoader extends FileSystem {
 			new Map(),
 			clearDB
 		)
+		await this._virtualFileSystem.setupDone.fired
+
 		const defaultHandle = await this._virtualFileSystem.getDirectoryHandle(
 			'data',
 			{ create: true }
