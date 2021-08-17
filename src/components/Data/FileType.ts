@@ -7,6 +7,7 @@ import { isMatch } from '/@/utils/glob/isMatch'
 import { AnyFileHandle } from '../FileSystem/Types'
 import json5 from 'json5'
 import { hasAnyPath, walkObject } from '/@/utils/walkObject'
+import { extname } from '/@/utils/path'
 
 /**
  * Describes the structure of a file definition
@@ -19,6 +20,7 @@ export interface IFileType {
 		scope?: string | string[]
 		matcher?: string | string[]
 		fileContent?: string[]
+		fileExtensions?: string[]
 	}
 
 	schema: string
@@ -106,13 +108,23 @@ export namespace FileType {
 	 * @param filePath file path to fetch file definition for
 	 */
 	export function get(filePath?: string, searchFileType?: string) {
+		const extension = filePath ? extname(filePath) : null
+
 		for (const fileType of fileTypes) {
 			if (searchFileType !== undefined && searchFileType === fileType.id)
 				return fileType
 			else if (!filePath) continue
 
+			const fileExtensions = fileType.detect?.fileExtensions
 			const scope = fileType.detect?.scope
 			const matcher = fileType.detect?.matcher
+
+			if (
+				fileExtensions &&
+				extension &&
+				!fileExtensions.includes(extension)
+			)
+				continue
 
 			if (scope) {
 				if (typeof scope === 'string') {
@@ -147,8 +159,25 @@ export namespace FileType {
 	 * Guess the file path of a file given a file handle
 	 */
 	export async function guessFolder(fileHandle: AnyFileHandle) {
+		// Helper function
+		const getStartPath = (scope: string | string[]) => {
+			let startPath = Array.isArray(scope) ? scope[0] : scope
+			if (!startPath.endsWith('/')) startPath += '/'
+
+			return startPath
+		}
+
+		// 1. Guess based on file extension
+		const extension = `.${fileHandle.name.split('.').pop()!}`
+		for (const { detect = {} } of fileTypes) {
+			if (!detect.scope) continue
+			if (detect.fileExtensions?.includes(extension))
+				return getStartPath(detect.scope)
+		}
+
 		if (!fileHandle.name.endsWith('.json')) return null
 
+		// 2. Guess based on json file content
 		const file = await fileHandle.getFile()
 		let json: any
 		try {
@@ -165,10 +194,7 @@ export namespace FileType {
 
 			if (!hasAnyPath(json, fileContent)) continue
 
-			let startPath = Array.isArray(scope) ? scope[0] : scope
-			if (!startPath.endsWith('/')) startPath += '/'
-
-			return startPath
+			return getStartPath(scope)
 		}
 
 		return null
