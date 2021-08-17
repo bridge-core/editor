@@ -33,6 +33,16 @@ export default defineConfig({
 		VitePWA({
 			filename: 'service-worker.js',
 			registerType: 'prompt',
+			includeAssets: [
+				iconPath('favicon.svg'),
+				iconPath('favicon-16x16.png'),
+				iconPath('favicon-32x32.png'),
+			],
+			workbox: {
+				// TODO: Remove once most users upgraded to a recent nightly build
+				skipWaiting: true,
+				maximumFileSizeToCacheInBytes: Number.MAX_SAFE_INTEGER,
+			},
 			manifest: {
 				name: isNightly ? 'bridge Nightly' : 'bridge v2',
 				short_name: isNightly ? 'bridge Nightly' : 'bridge v2',
