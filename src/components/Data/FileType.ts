@@ -6,7 +6,7 @@ import { DataLoader } from './DataLoader'
 import { isMatch } from '/@/utils/glob/isMatch'
 import { AnyFileHandle } from '../FileSystem/Types'
 import json5 from 'json5'
-import { hasAnyPath, walkObject } from '/@/utils/walkObject'
+import { hasAnyPath } from '/@/utils/walkObject'
 import { extname } from '/@/utils/path'
 
 /**

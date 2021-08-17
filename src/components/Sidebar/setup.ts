@@ -3,13 +3,10 @@ import { createSidebar } from './create'
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 import { SettingsWindow } from '../Windows/Settings/SettingsWindow'
 import { SidebarState } from './state'
-import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '../FileSystem/Virtual/ProjectWindow'
 
 export async function setupSidebar() {
-	const app = await App.getApp()
-
 	createSidebar({
 		id: 'projects',
 		displayName: 'windows.projectChooser.title',
@@ -27,7 +24,7 @@ export async function setupSidebar() {
 		id: 'packExplorer',
 		displayName: 'windows.packExplorer.title',
 		icon: 'mdi-folder-outline',
-		sidebarContent: app.packExplorer,
+		sidebarContent: App.packExplorer,
 	})
 	packExplorer.click()
 
@@ -36,6 +33,7 @@ export async function setupSidebar() {
 		displayName: 'findAndReplace.name',
 		icon: 'mdi-file-search-outline',
 		onClick: async () => {
+			const app = await App.getApp()
 			app.project.tabSystem?.add(
 				new FindAndReplaceTab(app.project.tabSystem!),
 				true
@@ -48,6 +46,7 @@ export async function setupSidebar() {
 		displayName: 'sidebar.compiler.name',
 		icon: 'mdi-cogs',
 		onClick: async () => {
+			const app = await App.getApp()
 			await app.project?.compilerManager.openWindow()
 		},
 	})
@@ -56,6 +55,7 @@ export async function setupSidebar() {
 		displayName: 'sidebar.extensions.name',
 		icon: 'mdi-puzzle-outline',
 		onClick: async () => {
+			const app = await App.getApp()
 			await app.windows.extensionStore.open()
 		},
 	})

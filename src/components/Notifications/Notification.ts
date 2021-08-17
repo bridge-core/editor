@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { del, set } from '@vue/composition-api'
 
 export interface INotificationConfig {
+	id?: string
 	icon?: string
 	message?: string
 	color?: string
@@ -15,15 +16,15 @@ export interface INotificationConfig {
 }
 
 export class Notification {
-	protected id = uuid()
-	protected _isVisible: boolean
+	protected id: string
+	protected _isVisible: boolean = false
 
 	constructor(protected config: INotificationConfig) {
-		this._isVisible = this.config.isVisible ?? true
+		this.id = config.id ?? uuid()
 
 		set(NotificationStore, this.id, this)
 
-		if (this._isVisible) this.updateAppBadge()
+		if (this.config.isVisible ?? true) this.show()
 	}
 
 	//#region Config getters

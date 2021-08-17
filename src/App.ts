@@ -39,6 +39,7 @@ import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from './components/App/Mobile'
 import { PackExplorer } from './components/PackExplorer/PackExplorer'
+import { PersistentNotification } from './components/Notifications/PersistentNotification'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -57,6 +58,7 @@ export class App {
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>
 	public static readonly audioManager = new AudioManager()
+	public static readonly packExplorer = new PackExplorer()
 
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this.keyBindingManager)
@@ -75,7 +77,7 @@ export class App {
 	public readonly configuredJsonLanguage = markRaw(
 		new ConfiguredJsonLanguage()
 	)
-	public readonly packExplorer = new PackExplorer()
+
 	public readonly mobile: Mobile
 
 	protected languageManager = markRaw(new LanguageManager())
@@ -197,7 +199,8 @@ export class App {
 		setupDefaultMenus(this)
 
 		if (import.meta.env.PROD) {
-			const socialsMsg = createNotification({
+			const socialsMsg = new PersistentNotification({
+				id: 'bridge-social-links',
 				icon: 'mdi-link-variant',
 				message: 'sidebar.notifications.socials.message',
 				color: '#1DA1F2',
@@ -208,7 +211,8 @@ export class App {
 				},
 			})
 
-			const gettingStarted = createNotification({
+			const gettingStarted = new PersistentNotification({
+				id: 'bridge-getting-started',
 				icon: 'mdi-help-circle-outline',
 				message: 'sidebar.notifications.gettingStarted.message',
 				onClick: () => {
