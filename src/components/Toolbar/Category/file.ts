@@ -1,9 +1,11 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
-import { clearAllNotifications } from '../../Notifications/create'
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
 import { AnyFileHandle } from '../../FileSystem/Types'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import { FileTab } from '../../TabSystem/FileTab'
+import { download } from '../../FileSystem/saveOrDownload'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -75,15 +77,53 @@ export function setupFileCategory(app: App) {
 			onTrigger: () => App.ready.once((app) => app.tabSystem?.save()),
 		})
 	)
-	file.addItem(
-		app.actionManager.create({
-			icon: 'mdi-content-save-edit-outline',
-			name: 'actions.saveAs.name',
-			description: 'actions.saveAs.description',
-			keyBinding: 'Ctrl + Shift + S',
-			onTrigger: () => App.ready.once((app) => app.tabSystem?.saveAs()),
-		})
-	)
+
+	if (isUsingFileSystemPolyfill) {
+		file.addItem(
+			app.actionManager.create({
+				icon: 'mdi-file-download-outline',
+				name: 'actions.downloadFile.name',
+				description: 'actions.downloadFile.description',
+				keyBinding: 'Ctrl + Shift + S',
+				onTrigger: async () => {
+					const app = await App.getApp()
+					await app.project.compilerManager.fired
+
+					const currentTab = app.project.tabSystem?.selectedTab
+					if (!(currentTab instanceof FileTab)) return
+
+					const [
+						_,
+						compiled,
+					] = await app.project.compilerManager.compileWithFile(
+						currentTab.getProjectPath(),
+						await currentTab.getFile()
+					)
+
+					let uint8arr: Uint8Array
+					if (typeof compiled === 'string')
+						uint8arr = new TextEncoder().encode(compiled)
+					else if (compiled instanceof Blob)
+						uint8arr = new Uint8Array(await compiled.arrayBuffer())
+					else uint8arr = new Uint8Array(compiled)
+
+					download(currentTab.name, uint8arr)
+				},
+			})
+		)
+	} else {
+		file.addItem(
+			app.actionManager.create({
+				icon: 'mdi-content-save-edit-outline',
+				name: 'actions.saveAs.name',
+				description: 'actions.saveAs.description',
+				keyBinding: 'Ctrl + Shift + S',
+				onTrigger: () =>
+					App.ready.once((app) => app.tabSystem?.saveAs()),
+			})
+		)
+	}
+
 	file.addItem(
 		app.actionManager.create({
 			icon: 'mdi-content-save-settings-outline',

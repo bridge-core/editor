@@ -262,6 +262,10 @@ export default {
 			name: 'Import Project',
 			description: 'Import a project from a .brproject file',
 		},
+		downloadFile: {
+			name: 'Download File',
+			description: 'Download the currently opened file',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
