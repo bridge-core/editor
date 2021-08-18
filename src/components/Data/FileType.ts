@@ -77,10 +77,12 @@ export namespace FileType {
 		const dirents = await dataLoader.getDirectoryHandle(basePath)
 
 		for await (const dirent of dirents.values()) {
-			if (dirent.kind === 'file')
-				fileTypes.push(
-					await dataLoader.readJSON(`${basePath}/${dirent.name}`)
-				)
+			if (dirent.kind !== 'file') return
+
+			let json = await dataLoader
+				.readJSON(`${basePath}/${dirent.name}`)
+				.catch(() => null)
+			if (json) fileTypes.push(json)
 		}
 
 		loadLightningCache(dataLoader)
