@@ -36,6 +36,14 @@ export interface IConfigJson {
 	experimentalGameplay?: Record<string, boolean>
 
 	/**
+	 * Additional capabilities the project wants to use
+	 *
+	 * @deprecated
+	 * @example ["scriptingAPI", "gameTestAPI"]
+	 */
+	capabilities: string[]
+
+	/**
 	 * The namespace used for the project. The namespace "minecraft" is not a valid string for this field.
 	 *
 	 * @example "my_project"
@@ -150,15 +158,13 @@ export class ProjectConfig {
 		}
 
 		try {
-			const config = await this.fileSystem.readJSON(`config.json`)
-
-			this.data = config
+			this.data = await this.fileSystem.readJSON(`config.json`)
 		} catch {
 			this.data = {}
 		}
 
 		// Running in main thread, so we can use the App object
-		if (this.project) {
+		if (this.project && this.data.capabilities) {
 			// Transform old "capabilities" format to "experimentalGameplay"
 			const experimentalToggles: IExperimentalToggle[] = await this.project.app.dataLoader.readJSON(
 				'data/packages/minecraftBedrock/experimentalGameplay.json'
@@ -167,20 +173,17 @@ export class ProjectConfig {
 				this.data.experimentalGameplay ?? {}
 			const capabilities: string[] = this.data.capabilities ?? []
 
-			for (const toggle of experimentalToggles) {
-				// If GameTests and Scripting API weren't enabled on the project originally, set them to false
-				if (!capabilities.includes('gameTestAPI'))
-					experimentalGameplay['enableGameTestFramework'] = false
-				if (!capabilities.includes('scriptingAPI'))
-					experimentalGameplay[
-						'additionalModdingCapabilities'
-					] = false
+			// Update scripting API/GameTest API toggles based on the old "capabilities" field
+			experimentalGameplay[
+				'enableGameTestFramework'
+			] = capabilities.includes('gameTestAPI')
+			experimentalGameplay[
+				'additionalModdingCapabilities'
+			] = capabilities.includes('scriptingAPI')
 
-				// Only change if it doesn't already exist
-				if (!Object.keys(experimentalGameplay).includes(toggle.id)) {
-					// Set all missing experimental toggles to true by default
-					experimentalGameplay[toggle.id] = true
-				}
+			for (const toggle of experimentalToggles) {
+				// Set all missing experimental toggles to true by default
+				experimentalGameplay[toggle.id] ??= true
 			}
 			this.data.experimentalGameplay = experimentalGameplay
 			this.data.capabilities = undefined
