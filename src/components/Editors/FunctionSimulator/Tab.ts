@@ -8,7 +8,8 @@ import { TabSystem } from '../../TabSystem/TabSystem'
 
 export class FunctionSimulatorTab extends Tab {
 	protected fileTab: FileTab | undefined
-	protected currentLine = 4
+	protected currentLine = 0
+	protected content: string = ''
 
 	constructor(protected parent: TabSystem, protected tab: FileTab) {
 		super(parent)
@@ -34,6 +35,44 @@ export class FunctionSimulatorTab extends Tab {
 
 	save() {}
 
+	protected loadCurrentLine() {
+		let lines = this.content.split('\n')
+
+		if (this.currentLine < lines.length) {
+			let lineCounterElement = document.getElementById('line-counter')
+
+			if (lineCounterElement) {
+				lineCounterElement.textContent =
+					'Line: ' + (this.currentLine + 1).toString()
+			}
+
+			let commmandDisplayElement = document.getElementById(
+				'command-display'
+			)
+
+			//.filter(i => i !== "\r")
+
+			if (commmandDisplayElement) {
+				if (lines[this.currentLine] == '\r') {
+					commmandDisplayElement.textContent =
+						'Command: Empty Line (No Command)'
+				} else {
+					commmandDisplayElement.textContent =
+						'Command: ' + lines[this.currentLine].split(' ')[0]
+				}
+			}
+
+			let fullCommmandDisplayElement = document.getElementById(
+				'full-command-display'
+			)
+
+			if (fullCommmandDisplayElement) {
+				fullCommmandDisplayElement.textContent =
+					'Full Command: ' + lines[this.currentLine]
+			}
+		}
+	}
+
 	async onActivate() {
 		await super.onActivate()
 		const app = await App.getApp()
@@ -41,17 +80,18 @@ export class FunctionSimulatorTab extends Tab {
 		if (this.fileTab) {
 			let file = await this.fileTab.getFile()
 
-			let contents = await file?.text()
+			this.content = await file?.text()
 
+			//Colorize
 			let textDisplayElement: HTMLElement | null = null
 
 			textDisplayElement = document.getElementById(
 				'function-simulator-line-inspector-text'
 			)
 
-			if (textDisplayElement && contents) {
+			if (textDisplayElement && this.content) {
 				let colorize = await monaco.editor.colorize(
-					contents,
+					this.content,
 					'mcfunction',
 					{
 						tabSize: 5,
@@ -66,7 +106,7 @@ export class FunctionSimulatorTab extends Tab {
 			let rawCommand = document.getElementById('raw-command')
 
 			if (rawCommand) {
-				let line = contents.split('\n')[this.currentLine - 1]
+				let line = this.content.split('\n')[this.currentLine - 1]
 
 				console.log(line)
 
@@ -83,7 +123,7 @@ export class FunctionSimulatorTab extends Tab {
 				console.log(colorize)
 			}
 
-			console.log(contents)
+			this.loadCurrentLine()
 		}
 	}
 }
