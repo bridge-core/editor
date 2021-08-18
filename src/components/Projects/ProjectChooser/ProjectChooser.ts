@@ -7,10 +7,15 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { v4 as uuid } from 'uuid'
 import { importFromBrproject } from '../Import/fromBrproject'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { IExperimentalToggle } from '../CreateProject/CreateProject'
 
 export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
 	protected currentProject?: string = undefined
+	protected experimentalToggles: (IExperimentalToggle & {
+		isActive: boolean
+	})[] = []
+
 	constructor() {
 		super(ProjectChooserComponent, false, true)
 		this.defineWindow()
@@ -75,8 +80,23 @@ export class ProjectChooserWindow extends BaseWindow {
 
 		const projects = await app.projectManager.getProjects()
 
+		const experimentalToggles = await app.dataLoader.readJSON(
+			'data/packages/minecraftBedrock/experimentalGameplay.json'
+		)
+
 		projects.forEach((project) =>
-			this.addProject(project.path!, project.name!, project)
+			this.addProject(project.path!, project.name!, {
+				...project,
+				experimentalGameplay: experimentalToggles.map(
+					(toggle: IExperimentalToggle) => ({
+						isActive:
+							app.projectConfig.get().experimentalGameplay?.[
+								toggle.id
+							] ?? false,
+						...toggle,
+					})
+				),
+			})
 		)
 		this.sidebar.setDefaultSelected(app.projectManager.selectedProject)
 		return app.projectManager.selectedProject

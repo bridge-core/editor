@@ -21,6 +21,9 @@ export default {
 		more: 'More...',
 		selectFolder: 'Select Folder',
 		fileName: 'File Name',
+		inactive: 'Inactive',
+		active: 'Active',
+
 		confirmOverwriteFile:
 			'A file with this name already exists. Do you want to overwrite it?',
 		fileSystemPolyfill:
@@ -29,8 +32,7 @@ export default {
 			title: 'Export Successful',
 			description: 'You can find the exported package here',
 		},
-		inactive: 'Inactive',
-		active: 'Active',
+		experimentalGameplay: 'Experimental Gameplay',
 	},
 	packType: {
 		behaviorPack: {

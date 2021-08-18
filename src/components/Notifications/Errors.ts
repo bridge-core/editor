@@ -32,12 +32,6 @@ export function createErrorNotification(error: Error): IDisposable {
 		},
 	})
 
-	new InformationWindow({
-		description: `[${error.message}]`,
-		isPersistent: false,
-		name: '[ERROR]',
-	})
-
 	return notification
 }
 

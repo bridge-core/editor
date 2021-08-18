@@ -5,6 +5,7 @@
 			'content-area pa-2': true,
 			selected: internalValue,
 		}"
+		v-ripple="isToggleable"
 		@click.native="onClick"
 	>
 		<slot :value="internalValue" />
@@ -22,6 +23,10 @@ export default {
 	props: {
 		value: Boolean,
 		dark: Boolean,
+		isToggleable: {
+			type: Boolean,
+			default: true,
+		},
 	},
 	data() {
 		return {
@@ -30,6 +35,8 @@ export default {
 	},
 	methods: {
 		onClick() {
+			if (!this.isToggleable) return
+
 			this.internalValue = !this.internalValue
 			this.$emit('input', this.internalValue)
 		},

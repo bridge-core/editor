@@ -109,7 +109,8 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 					`.bridge/compiler/${this.options.config}`
 				)
 			}
-		} catch {
+		} catch (err) {
+			console.error(err)
 			return
 		}
 

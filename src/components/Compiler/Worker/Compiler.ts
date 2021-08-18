@@ -9,7 +9,7 @@ import {
 	AnyDirectoryHandle,
 	AnyFileHandle,
 	AnyHandle,
-} from '../../FileSystem/Types'
+} from '/@/components/FileSystem/Types'
 import { isMatch } from '/@/utils/glob/isMatch'
 
 export interface IFileData {

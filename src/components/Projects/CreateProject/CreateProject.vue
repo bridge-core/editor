@@ -75,7 +75,7 @@
 			<v-expansion-panels class="mb-6">
 				<v-expansion-panel>
 					<v-expansion-panel-header expand-icon="mdi-menu-down">
-						Experimental Gameplay
+						{{ t('general.experimentalGameplay') }}
 					</v-expansion-panel-header>
 					<v-expansion-panel-content>
 						<v-row dense>

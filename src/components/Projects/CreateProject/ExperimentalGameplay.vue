@@ -1,5 +1,10 @@
 <template>
-	<ToggleSheet :value="value" @input="$emit('input', $event)" :dark="true">
+	<ToggleSheet
+		:value="value"
+		@input="$emit('input', $event)"
+		:dark="true"
+		:isToggleable="isToggleable"
+	>
 		<template #default="{ value }">
 			<div class="d-flex align-center">
 				<v-icon color="primary" class="mr-1">
@@ -32,6 +37,10 @@ export default {
 		experiment: {
 			type: Object,
 			required: true,
+		},
+		isToggleable: {
+			type: Boolean,
+			default: true,
 		},
 		value: Boolean,
 	},

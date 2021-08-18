@@ -36,20 +36,40 @@
 					<h2 class="text-h6">by {{ authors }}</h2>
 				</div>
 			</div>
-			<div class="d-flex">
-				<PackTypeViewer
-					v-for="(packType, i) in sidebar.currentState.contains"
+			<v-row class="mb-6" dense>
+				<v-col
+					v-for="packType in sidebar.currentState.contains"
 					:key="packType.id"
-					:packType="packType"
-					:class="{
-						'mr-1': i === 0,
-						'ml-1': i + 1 === sidebar.currentState.contains.length,
-						'mx-1':
-							i > 0 &&
-							i + 1 < sidebar.currentState.contains.length,
-					}"
-				/>
-			</div>
+					xs="12"
+					sm="6"
+					md="4"
+					lg="3"
+					xl="2"
+				>
+					<PackTypeViewer style="height: 100%" :packType="packType" />
+				</v-col>
+			</v-row>
+
+			<h2 class="text-h6">{{ t('general.experimentalGameplay') }}</h2>
+			<v-row dense>
+				<v-col
+					v-for="experiment in sidebar.currentState
+						.experimentalGameplay"
+					:key="experiment.id"
+					xs="12"
+					sm="6"
+					md="4"
+					lg="3"
+					xl="2"
+				>
+					<ExperimentalGameplay
+						:experiment="experiment"
+						:isToggleable="false"
+						:value="experiment.isActive"
+						style="height: 100%"
+					/>
+				</v-col>
+			</v-row>
 		</template>
 
 		<template #actions="{ selectedSidebar }">
@@ -86,6 +106,7 @@
 <script>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
+import ExperimentalGameplay from '/@/components/Projects/CreateProject/ExperimentalGameplay.vue'
 
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
@@ -110,6 +131,7 @@ export default {
 	components: {
 		SidebarWindow,
 		PackTypeViewer,
+		ExperimentalGameplay,
 	},
 	props: ['currentWindow'],
 	data() {
