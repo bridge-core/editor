@@ -63,9 +63,7 @@
 					v-else-if="opts.type === 'fileInput'"
 					v-cloak
 					:key="i"
-					@drop.prevent.stop="
-						content.models[id] = $event.dataTransfer.files[0]
-					"
+					@drop.prevent.stop="onDropFile(id, opts.accept, $event)"
 					@dragover.prevent.stop
 				>
 					<v-file-input
@@ -137,7 +135,7 @@
 <script>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PresetPath from './PresetPath.vue'
-
+import { isFileAccepted } from '/@/utils/file/isAccepted.ts'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
@@ -180,6 +178,12 @@ export default {
 		},
 		onCreatePreset() {
 			if (this.fieldsReady) this.currentWindow.createPreset(this.content)
+		},
+		onDropFile(id, accept, event) {
+			const file = event.dataTransfer.files[0]
+			if (!isFileAccepted(file, accept)) return
+
+			this.content.models[id] = file
 		},
 	},
 }

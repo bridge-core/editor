@@ -106,9 +106,7 @@
 			<div class="d-flex">
 				<div
 					style="width: 40%"
-					@drop.prevent.stop="
-						createOptions.icon = $event.dataTransfer.files[0]
-					"
+					@drop.prevent.stop="onDropFile"
 					@dragover.prevent.stop
 				>
 					<v-file-input
@@ -211,6 +209,7 @@ import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 import ExperimentalGameplay from './ExperimentalGameplay.vue'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
+import { isFileAccepted } from '/@/utils/file/isAccepted.ts'
 
 export default {
 	name: 'CreateProjectWindow',
@@ -261,6 +260,12 @@ export default {
 		},
 		setModel(key, val) {
 			this.createOptions[key] = val
+		},
+		onDropFile(event) {
+			const file = event.dataTransfer.files[0]
+			if (!isFileAccepted(file, 'image/png')) return
+
+			this.createOptions.icon = file
 		},
 	},
 }
