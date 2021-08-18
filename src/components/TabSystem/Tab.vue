@@ -13,7 +13,7 @@
 		@mousedown.middle.prevent
 		@click.middle="tab.close()"
 		@click.right.prevent="tab.onContextMenu($event)"
-		@dblclick="pointerDevice === 'touch' ? null : (tab.isTemporary = false)"
+		@dblclick="tab.isTemporary = false"
 	>
 		<!-- Context menu button for touch -->
 		<v-btn

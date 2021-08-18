@@ -13,7 +13,6 @@ export function isFileAccepted(file: File, accept?: string) {
 	const fileName = file.name || ''
 	const mimeType = file.type || ''
 	const baseMimeType = mimeType.replace(/\/.*$/, '')
-	console.log(acceptedFiles, mimeType)
 
 	return acceptedFiles.some((type) => {
 		const validType = type.trim()
