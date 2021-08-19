@@ -3,6 +3,8 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { CreateFile } from '../CreateFile'
 
 export class CreateBlocks extends CreateFile {
+	public readonly id = 'blocks'
+
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
 		await fs.writeJSON(
 			`RP/blocks.json`,

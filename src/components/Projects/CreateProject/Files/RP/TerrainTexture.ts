@@ -3,6 +3,8 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { CreateFile } from '../CreateFile'
 
 export class CreateTerrainTexture extends CreateFile {
+	public readonly id = 'terrainTexture'
+
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
 		await fs.mkdir('RP/textures', { recursive: true })
 

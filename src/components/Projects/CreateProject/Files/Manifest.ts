@@ -7,6 +7,9 @@ import { version as appVersion } from '/@/appVersion.json'
 import { App } from '/@/App'
 
 export class CreateManifest extends CreateFile {
+	public readonly id = 'packManifest'
+	public isConfigurable = false
+
 	constructor(protected pack: TPackType) {
 		super()
 	}

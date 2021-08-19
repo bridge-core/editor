@@ -3,6 +3,8 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { CreateFile } from '../CreateFile'
 
 export class CreatePlayer extends CreateFile {
+	public readonly id = 'player'
+
 	async create(fs: FileSystem) {
 		const app = await App.getApp()
 		await app.dataLoader.fired

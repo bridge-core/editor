@@ -5,6 +5,9 @@ import { CreateFile } from './CreateFile'
 import { App } from '/@/App'
 
 export class CreatePackIcon extends CreateFile {
+	public readonly id = 'packIcon'
+	public isConfigurable = false
+
 	constructor(protected packPath: TPackType) {
 		super()
 	}

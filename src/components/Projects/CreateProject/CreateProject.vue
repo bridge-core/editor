@@ -103,6 +103,37 @@
 				</v-expansion-panel>
 			</v-expansion-panels>
 
+			<!-- Toggle Creation of individual files -->
+			<v-expansion-panels
+				v-if="$data.packCreateFiles.length > 0"
+				class="mb-6"
+			>
+				<v-expansion-panel>
+					<v-expansion-panel-header expand-icon="mdi-menu-down">
+						{{ t('windows.createProject.individualFiles.name') }}
+					</v-expansion-panel-header>
+					<v-expansion-panel-content>
+						<v-row dense>
+							<v-col
+								v-for="(file, i) in $data.packCreateFiles"
+								:key="`${i}-${file.id}`"
+								xs="12"
+								sm="6"
+								md="4"
+								lg="3"
+								xl="3"
+							>
+								<CreateFile
+									:file="file"
+									v-model="file.isActive"
+									style="height: 100%"
+								/>
+							</v-col>
+						</v-row>
+					</v-expansion-panel-content>
+				</v-expansion-panel>
+			</v-expansion-panels>
+
 			<div class="d-flex">
 				<div
 					style="width: 40%"
@@ -208,6 +239,7 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 import ExperimentalGameplay from './ExperimentalGameplay.vue'
+import CreateFile from './CreateFile.vue'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import { isFileAccepted } from '/@/utils/file/isAccepted.ts'
 
@@ -219,6 +251,7 @@ export default {
 		PackTypeViewer,
 		BridgeSheet,
 		ExperimentalGameplay,
+		CreateFile,
 	},
 	props: ['currentWindow'],
 

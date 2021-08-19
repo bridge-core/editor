@@ -3,6 +3,8 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { CreateFile } from './CreateFile'
 
 export class CreateGitIgnore extends CreateFile {
+	public readonly id = 'gitignore'
+
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
 		await fs.writeFile(
 			`.gitignore`,

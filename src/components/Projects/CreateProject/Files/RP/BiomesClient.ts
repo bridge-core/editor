@@ -3,6 +3,8 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { CreateFile } from '../CreateFile'
 
 export class CreateBiomesClient extends CreateFile {
+	public readonly id = 'biomesClient'
+
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
 		await fs.writeJSON(
 			`RP/biomes_client.json`,

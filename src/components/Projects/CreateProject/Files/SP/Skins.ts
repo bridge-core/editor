@@ -3,6 +3,8 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { CreateFile } from '../CreateFile'
 
 export class CreateSkins extends CreateFile {
+	public readonly id = 'skins'
+
 	create(fs: FileSystem, createOptions: ICreateProjectOptions) {
 		return fs.writeJSON(
 			`SP/skins.json`,

@@ -4,6 +4,8 @@ import { CreateFile } from './CreateFile'
 import { PackType } from '/@/components/Data/PackType'
 
 export class CreateConfig extends CreateFile {
+	public readonly id = 'bridgeConfig'
+
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
 		await fs.writeJSON(
 			`config.json`,

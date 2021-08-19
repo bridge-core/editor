@@ -4,6 +4,9 @@ import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
 import { CreateFile } from './CreateFile'
 
 export class CreateLang extends CreateFile {
+	public readonly id = 'lang'
+	public isConfigurable = false
+
 	constructor(protected packPath: TPackType) {
 		super()
 	}

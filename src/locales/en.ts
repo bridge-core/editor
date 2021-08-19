@@ -397,6 +397,56 @@ export default {
 			create: 'Create',
 			saveCurrentProject:
 				'Do you want to save your current project before creating the new one? Any unsaved changes will get lost!',
+			individualFiles: {
+				name: 'Individual Files',
+				file: {
+					player: {
+						name: 'player.json',
+						description: 'Edit how the default player behaves',
+					},
+					tick: {
+						name: 'tick.json',
+						description:
+							'Define which functions to execute every tick',
+					},
+					skins: {
+						name: 'skins.json',
+						description: 'Register the skins you have created',
+					},
+					blocks: {
+						name: 'blocks.json',
+						description:
+							'Used to define how multiple block faces are combined to a single block',
+					},
+					terrainTexture: {
+						name: 'terrain_texture.json',
+						description: 'Used to assign textures to block faces',
+					},
+					itemTexture: {
+						name: 'item_texture.json',
+						description: 'Used to assign textures to items',
+					},
+					flipbookTextures: {
+						name: 'flipbook_textures.json',
+						description: 'Used for animating block textures',
+					},
+					biomesClient: {
+						name: 'biomes_client.json',
+						description:
+							'Used to define how biome specific effects render',
+					},
+					sounds: {
+						name: 'sounds.json',
+						description:
+							'Used to define sounds for specific game features',
+					},
+					soundDefinitions: {
+						name: 'sound_definitions.json',
+						description:
+							'Used to register ids for sound files to be used elsewhere in the project',
+					},
+				},
+			},
 		},
 		createPreset: {
 			title: 'Create Preset',

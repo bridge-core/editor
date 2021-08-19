@@ -39,7 +39,7 @@ export class CreateProjectWindow extends BaseWindow {
 	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []
 	protected availableTargetVersionsLoading = true
-	protected packs: Record<TPackTypeId | '.bridge', CreatePack> = {
+	protected packs: Record<TPackTypeId | '.bridge', CreatePack> = <const>{
 		behaviorPack: new CreateBP(),
 		resourcePack: new CreateRP(),
 		skinPack: new CreateSP(),
@@ -57,6 +57,23 @@ export class CreateProjectWindow extends BaseWindow {
 			val.trim() !== '' ||
 			'windows.createProject.projectName.mustNotBeEmpty',
 	]
+
+	get packCreateFiles() {
+		return Object.entries(this.packs)
+			.map(([packId, pack]) => {
+				if (
+					!this.createOptions.packs.includes(
+						<TPackTypeId | '.bridge'>packId
+					)
+				)
+					return []
+				return pack.createFiles.map((createFile) =>
+					Object.assign(createFile, { packId })
+				)
+			})
+			.flat()
+			.filter((createFile) => createFile.isConfigurable)
+	}
 
 	constructor() {
 		super(CreateProjectComponent, false)
@@ -101,6 +118,9 @@ export class CreateProjectWindow extends BaseWindow {
 
 	open(isFirstProject = false) {
 		this.isFirstProject = isFirstProject
+		this.packCreateFiles.forEach(
+			(createFile) => (createFile.isActive = true)
+		)
 		super.open()
 	}
 
