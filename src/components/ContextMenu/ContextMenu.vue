@@ -8,7 +8,7 @@
 		absolute
 		offset-y
 	>
-		<v-list dense>
+		<v-list color="menu" dense>
 			<template v-for="(action, id) in contextMenu.actionManager.state">
 				<v-divider v-if="action.type === 'divider'" :key="id" />
 				<v-list-item
