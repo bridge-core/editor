@@ -3,7 +3,7 @@ import { ICreateProjectOptions } from '../CreateProject'
 
 export abstract class CreateFile {
 	public abstract id: string
-	public icon = 'mdi-file'
+	public icon = 'mdi-file-outline'
 	public isActive = true
 	public isConfigurable = true
 

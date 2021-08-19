@@ -40,11 +40,6 @@
 				<v-col
 					v-for="packType in sidebar.currentState.contains"
 					:key="packType.id"
-					xs="12"
-					sm="6"
-					md="4"
-					lg="3"
-					xl="2"
 				>
 					<PackTypeViewer style="height: 100%" :packType="packType" />
 				</v-col>
