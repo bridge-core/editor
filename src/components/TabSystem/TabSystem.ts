@@ -39,6 +39,9 @@ export class TabSystem extends MonacoHolder {
 	get app() {
 		return this._app
 	}
+	get project() {
+		return this._project
+	}
 
 	get isSharingScreen() {
 		const other = this.project.tabSystems.find(
@@ -51,13 +54,13 @@ export class TabSystem extends MonacoHolder {
 		return this.tabs.some((tab) => tab.isUnsaved)
 	}
 
-	constructor(protected project: Project, id = 0) {
-		super(project.app)
+	constructor(protected _project: Project, id = 0) {
+		super(_project.app)
 
 		this.openedFiles = new OpenedFiles(
 			this,
-			project.app,
-			`projects/${project.name}/.bridge/openedFiles_${id}.json`
+			_project.app,
+			`projects/${_project.name}/.bridge/openedFiles_${id}.json`
 		)
 	}
 
