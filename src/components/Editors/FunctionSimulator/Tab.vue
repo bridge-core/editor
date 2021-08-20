@@ -3,70 +3,39 @@
 		class="d-flex align-start justify-center"
 		@click="tab.parent.setActive(true)"
 	>
-		<div class="d-flex wh-100 flex-column">
-			<div class="border half">
-				<h2>Call Stack</h2>
+		<div class="wh-100 ml-1 mr-1">
+			<h2>Inspector / Log</h2>
 
-				<div
-					class="d-flex align-start justify-start flex-column wh-100 w-e-100"
-				>
-					<div class="d-flex align-start justify-start">
-						<button
-							class="mdi mdi-arrow-down-drop-circle mr-1-2"
-						></button>
-						<p class="mb-0">Function1</p>
-					</div>
-					<div
-						class="d-flex align-start justify-start flex-column wh-100 ml-1"
-					>
-						<div class="d-flex align-start justify-start">
-							<button
-								class="mdi mdi-arrow-right-drop-circle mr-1-2"
-							></button>
-							<p class="mb-0">Function2</p>
-						</div>
-					</div>
-				</div>
+			<div class="d-flex align-center justify-center w-e-100 mb-1">
+				<button class="icon-back" v-on:click="runFunction">
+					<i class="mdi mdi-play ok-icon font-size-2 scale-1-2"></i>
+				</button>
+				<button class="icon-back" v-on:click="stepLine">
+					<i
+						class="mdi mdi-debug-step-over info-icon font-size-2 scale-1-2"
+					></i>
+				</button>
+				<button class="icon-back" v-on:click="restart">
+					<i
+						class="mdi mdi-restart error-icon font-size-2 scale-1-2"
+					></i>
+				</button>
 			</div>
 
-			<div class="border half">
-				<h2>Inspector / Log</h2>
+			<div
+				class="d-flex align-start justify-start wh-100 w-e-100 flex-column overflow-scroll"
+			>
+				<p id="line-counter">Line: 4</p>
 
-				<div class="d-flex align-center justify-center w-e-100 mb-1">
-					<button class="icon-back">
-						<i
-							class="mdi mdi-play ok-icon font-size-2 scale-1-2"
-						></i>
-					</button>
-					<button class="icon-back" v-on:click="stepLine">
-						<i
-							class="mdi mdi-debug-step-over info-icon font-size-2 scale-1-2"
-						></i>
-					</button>
-					<button class="icon-back" v-on:click="restart">
-						<i
-							class="mdi mdi-restart error-icon font-size-2 scale-1-2"
-						></i>
-					</button>
-				</div>
+				<p id="command-display">Command: give</p>
 
-				<div
-					class="d-flex align-start justify-start wh-100 w-e-100 flex-column overflow-scroll"
-				>
-					<p id="line-counter">Line: 4</p>
+				<p id="full-command-display">Full Command: give</p>
 
-					<p id="command-display">Command: give</p>
+				<div id="alerts"></div>
 
-					<p id="full-command-display">Full Command: give</p>
+				<p>Documentation:</p>
 
-					<Error alertText="Test Warning" />
-
-					<Warning alertText="Test Text" />
-
-					<p>Documentation:</p>
-
-					<p>I am docs :D TUTORIAL TUTR+ORIAL LERARARARN</p>
-				</div>
+				<p id="docs">I am docs :D TUTORIAL TUTR+ORIAL LERARARARN</p>
 			</div>
 		</div>
 	</div>
@@ -88,6 +57,9 @@ export default {
 		Button,
 	},
 	methods: {
+		runFunction: function (event) {
+			this.tab.play()
+		},
 		stepLine: function (event) {
 			console.log('stepLine')
 
@@ -105,28 +77,9 @@ export default {
 </script>
 
 <style scoped>
-.half {
-	display: flex;
-	flex-grow: 1;
-	justify-content: start;
-	align-items: center;
-	flex-direction: column;
-
-	height: 50%;
-	width: 100%;
-}
-
 .wh-100 {
 	width: 100%;
 	height: 100%;
-}
-
-.m-h-50 {
-	max-height: 50%;
-}
-
-.w-100 {
-	width: 100%;
 }
 
 .border {
@@ -142,16 +95,12 @@ export default {
 	overflow-y: scroll;
 }
 
-.mw-50 {
-	max-width: 50%;
-}
-
-.mh-50 {
-	max-height: 50%;
-}
-
 .ml-1 {
 	margin-left: 1rem !important;
+}
+
+.mr-1 {
+	margin-right: 1rem !important;
 }
 
 .mr-1-2 {

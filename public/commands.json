@@ -1,0 +1,13 @@
+{
+	"commands": [
+		{
+			"name": "help"
+		},
+		{
+			"name": "give"
+		},
+		{
+			"name": "clear"
+		}
+	]
+}
