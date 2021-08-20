@@ -16,7 +16,7 @@
 		</template>
 		<template #actions>
 			<v-spacer />
-			<v-btn @click="onCancel">
+			<v-btn color="menu" @click="onCancel">
 				<span>{{ t('general.cancel') }}</span>
 			</v-btn>
 			<v-btn color="error" @click="onNoSave">
