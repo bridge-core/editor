@@ -1,5 +1,8 @@
 <template>
-	<v-app :style="{ fontSize }" @contextmenu.native="$event.preventDefault()">
+	<v-app
+		:style="{ fontFamily }"
+		@contextmenu.native="$event.preventDefault()"
+	>
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar />
@@ -171,12 +174,12 @@ export default {
 					return 1
 			}
 		},
-		fontSize() {
-			return settingsState &&
-				settingsState.appearance &&
-				settingsState.appearance.fontSize
-				? `${settingsState.appearance.fontSize} !important`
-				: '16px'
+		fontFamily() {
+			return this.settingsState &&
+				this.settingsState.appearance &&
+				this.settingsState.appearance.font
+				? `${this.settingsState.appearance.font} !important`
+				: 'Roboto !important'
 		},
 	},
 	methods: {
@@ -243,6 +246,13 @@ summary::-webkit-details-marker {
 	user-select: none;
 	touch-action: manipulation;
 }
+/* .body-1 {
+    font-size: 1rem !important;
+    font-weight: 400;
+    letter-spacing: 0.03125em !important;
+    line-height: 1.5rem;
+    font-family: "Roboto", sans-serif !important;
+} */
 
 .v-application {
 	background: var(--v-background-base) !important;

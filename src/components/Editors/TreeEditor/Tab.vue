@@ -1,13 +1,13 @@
 <template>
 	<div
 		class="editor-container"
-		:style="{ fontSize }"
+		:style="{ fontSize, fontFamily }"
 		ref="editorContainer"
 		@click="tab.parent.setActive(true)"
 		tabindex="-1"
 	>
 		<div
-			class="pr-4 code-font"
+			class="pr-4"
 			:style="`height: ${
 				height - !tab.isReadOnly * 194
 			}px; overflow: auto;`"
@@ -141,6 +141,13 @@ export default {
 				settingsState.appearance.editorFontSize
 				? `${settingsState.appearance.editorFontSize}`
 				: '14px'
+		},
+		fontFamily() {
+			return settingsState &&
+				settingsState.appearance &&
+				settingsState.appearance.editorFont
+				? `${settingsState.appearance.editorFont} !important`
+				: 'Menlo !important'
 		},
 		treeEditor() {
 			return this.tab.treeEditor

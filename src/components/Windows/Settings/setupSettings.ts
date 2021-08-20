@@ -97,16 +97,56 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 		})
 	)
-	// settings.addControl(
-	// 	new Selection({
-	// 		category: 'appearance',
-	// 		name: 'windows.settings.appearance.fontSize.name',
-	// 		description: 'windows.settings.appearance.fontSize.description',
-	// 		key: 'fontSize',
-	// 		default: '16px',
-	// 		options: ['8px', '10px', '12px', '14px', '16px', '18px', '20px'],
-	// 	})
-	// )
+	settings.addControl(
+		new Selection({
+			category: 'appearance',
+			name: 'windows.settings.appearance.font.name',
+			description: 'windows.settings.appearance.font.description',
+			key: 'font',
+			default: 'Roboto',
+			options: [
+				'Roboto',
+				'Arial',
+				'Verdana',
+				'Helvetica',
+				'Tahome',
+				'Trebuchet MS',
+				'Menlo',
+				'Monaco',
+				'Courier New',
+				'monospace',
+			],
+			onChange: async (val) => {
+				const app = await App.getApp()
+				app.projectManager.updateAllEditorOptions({
+					fontFamily: val,
+				})
+			},
+		})
+	)
+	settings.addControl(
+		new Selection({
+			category: 'appearance',
+			name: 'windows.settings.appearance.editorFont.name',
+			description: 'windows.settings.appearance.editorFont.description',
+			key: 'editorFont',
+			default: 'Roboto',
+			options: [
+				'Roboto',
+				'Arial',
+				'Menlo',
+				'Monaco',
+				'Courier New',
+				'monospace',
+			],
+			onChange: async (val) => {
+				const app = await App.getApp()
+				app.projectManager.updateAllEditorOptions({
+					fontFamily: val,
+				})
+			},
+		})
+	)
 	settings.addControl(
 		new Selection({
 			category: 'appearance',
@@ -124,7 +164,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 		})
 	)
-
 	settings.addControl(
 		new Toggle({
 			category: 'sidebar',

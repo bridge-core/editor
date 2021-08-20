@@ -40,7 +40,7 @@ export default {
 	}),
 	created() {
 		this.value_ =
-			this.config.options.findIndex(val => val === this.value) || 0
+			this.config.options.findIndex((val) => val === this.value) || 0
 	},
 	methods: {
 		onChange(val) {
