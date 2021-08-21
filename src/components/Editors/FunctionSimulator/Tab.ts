@@ -42,6 +42,13 @@ export class FunctionSimulatorTab extends Tab {
 
 	save() {}
 
+	protected async loadFileContent() {
+		if (this.fileTab) {
+			let file = await this.fileTab.getFile()
+			this.content = await file?.text()
+		}
+	}
+
 	protected async readCommandsJson<Object>() {
 		let file = await fetch(process.env.BASE_URL + 'commands.json')
 		return file.json()
@@ -64,11 +71,18 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	protected async getDocs<String>(command: string = '') {
-		/*if (this.commandData) {
-			this.commandData.loadCommandData(command).then(function (data) {
-				console.log(data)
-			})
-		}*/
+		console.log(command)
+
+		if (this.commandData) {
+			for (let i = 0; i < this.commandData.commands.length; i++) {
+				if (this.commandData.commands[i].name == command) {
+					console.log(this.commandData.commands[i])
+					return this.commandData.commands[i].description
+				}
+			}
+		} else {
+			console.error('Unable to load commands.json')
+		}
 
 		return 'Unable to get docs for this command!'
 	}
@@ -147,10 +161,10 @@ export class FunctionSimulatorTab extends Tab {
 
 			let found = false
 
-			console.log(argTypes)
+			//console.log(argTypes)
 
 			for (let i = 0; i < commandValidation.length; i++) {
-				console.log(commandValidation[i].arguments)
+				//console.log(commandValidation[i].arguments)
 
 				if (
 					this.doesStringArrayMatchArray(
@@ -173,7 +187,7 @@ export class FunctionSimulatorTab extends Tab {
 			}
 		}
 
-		console.log('~~~~~~~~~')
+		//console.log('~~~~~~~~~')
 
 		return [errors, warnings]
 	}
@@ -232,33 +246,37 @@ export class FunctionSimulatorTab extends Tab {
 					alertsElement.children[0].remove()
 				}
 
-				if (lines[this.currentLine] != '\r') {
-					let data = await this.readCommand(fullCommand)
+				if (lines[this.currentLine] == '\r') {
+					docsElement.textContent = 'No documentation.'
+				} else {
+					if (lines[this.currentLine] != '\r') {
+						let data = await this.readCommand(fullCommand)
 
-					for (let i = 0; i < data[0].length; i++) {
-						var ComponentClass = Vue.extend(Error)
-						var instance = new ComponentClass({
-							propsData: { alertText: data[0][i] },
-						})
+						for (let i = 0; i < data[0].length; i++) {
+							var ComponentClass = Vue.extend(Error)
+							var instance = new ComponentClass({
+								propsData: { alertText: data[0][i] },
+							})
 
-						instance.$mount() // pass nothing
-						alertsElement.appendChild(instance.$el)
-					}
+							instance.$mount() // pass nothing
+							alertsElement.appendChild(instance.$el)
+						}
 
-					for (let i = 0; i < data[1].length; i++) {
-						var ComponentClass = Vue.extend(Warning)
-						var instance = new ComponentClass({
-							propsData: { alertText: data[1][i] },
-						})
+						for (let i = 0; i < data[1].length; i++) {
+							var ComponentClass = Vue.extend(Warning)
+							var instance = new ComponentClass({
+								propsData: { alertText: data[1][i] },
+							})
 
-						instance.$mount() // pass nothing
-						alertsElement.appendChild(instance.$el)
-					}
+							instance.$mount() // pass nothing
+							alertsElement.appendChild(instance.$el)
+						}
 
-					docsElement.textContent = await this.getDocs(command)
+						docsElement.textContent = await this.getDocs(command)
 
-					if (data[0].length > 0) {
-						return true
+						if (data[0].length > 0) {
+							return true
+						}
 					}
 				}
 			}
@@ -270,6 +288,8 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	protected async play() {
+		await this.loadFileContent()
+
 		this.currentLine = 0
 
 		let shouldStop = false
@@ -286,55 +306,32 @@ export class FunctionSimulatorTab extends Tab {
 		}
 	}
 
+	protected async stepLine() {
+		console.log('stepLine')
+
+		await this.loadFileContent()
+
+		this.currentLine += 1
+		this.loadCurrentLine()
+	}
+
+	protected async restart() {
+		console.log('restart')
+
+		await this.loadFileContent()
+
+		this.currentLine = 0
+		this.loadCurrentLine()
+	}
+
 	async onActivate() {
 		await super.onActivate()
 		const app = await App.getApp()
 
+		await this.loadFileContent()
+
 		await this.loadCommandData()
 
-		if (this.fileTab) {
-			let file = await this.fileTab.getFile()
-			this.content = await file?.text()
-			this.loadCurrentLine()
-
-			//Colorize
-			/*let textDisplayElement: HTMLElement | null = null
-
-			textDisplayElement = document.getElementById(
-				'function-simulator-line-inspector-text'
-			)
-
-			if (textDisplayElement && this.content) {
-				let colorize = await monaco.editor.colorize(
-					this.content,
-					'mcfunction',
-					{
-						tabSize: 5,
-					}
-				)
-
-				textDisplayElement.innerHTML = colorize
-			}
-
-			let rawCommand = document.getElementById('raw-command')
-
-			if (rawCommand) {
-				let line = this.content.split('\n')[this.currentLine - 1]
-
-				console.log(line)
-
-				let colorize = await monaco.editor.colorize(
-					line,
-					'mcfunction',
-					{
-						tabSize: 5,
-					}
-				)
-
-				rawCommand.innerHTML = colorize
-
-				console.log(colorize)
-			}*/
-		}
+		await this.loadCurrentLine()
 	}
 }

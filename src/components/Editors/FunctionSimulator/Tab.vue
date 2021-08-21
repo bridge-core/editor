@@ -61,16 +61,10 @@ export default {
 			this.tab.play()
 		},
 		stepLine: function (event) {
-			console.log('stepLine')
-
-			this.tab.currentLine += 1
-			this.tab.loadCurrentLine()
+			this.tab.stepLine()
 		},
 		restart: function (event) {
-			console.log('restart')
-
-			this.tab.currentLine = 0
-			this.tab.loadCurrentLine()
+			this.tab.restart()
 		},
 	},
 }

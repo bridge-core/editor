@@ -5,8 +5,16 @@
 			"variations": [
 				{
 					"arguments": ["string"]
+				},
+				{
+					"arguments": ["number"]
+				},
+				{
+					"arguments": []
 				}
-			]
+			],
+
+			"description": "Provides documentation on commands."
 		},
 		{
 			"name": "give",
@@ -17,7 +25,9 @@
 				{
 					"arguments": ["selector", "string", "number"]
 				}
-			]
+			],
+
+			"description": "Gives the specified entity the specified item."
 		},
 		{
 			"name": "clear",
@@ -25,7 +35,9 @@
 				{
 					"arguments": ["selector"]
 				}
-			]
+			],
+
+			"description": "Clears the specified entity's inventory."
 		},
 		{
 			"name": "tp",
@@ -33,7 +45,9 @@
 				{
 					"arguments": ["selector", "number", "number", "number"]
 				}
-			]
+			],
+
+			"description": "Teleports the specified entity."
 		},
 		{
 			"name": "say",
@@ -41,7 +55,9 @@
 				{
 					"arguments": ["any"]
 				}
-			]
+			],
+
+			"description": "Says the given text"
 		}
 	],
 	"selectors": ["@a", "@p", "@e", "@r"]
