@@ -8,9 +8,7 @@ import { TabSystem } from '../../TabSystem/TabSystem'
 import Error from './Error.vue'
 import Warning from './Warning.vue'
 import Vue from 'vue'
-import { el, fa } from 'vuetify/src/locale'
-import { BedrockProject } from '../../Projects/Project/BedrockProject'
-import { CommandData } from '../../Languages/Mcfunction/Data'
+import { ca, el, fa } from 'vuetify/src/locale'
 
 export class FunctionSimulatorTab extends Tab {
 	protected fileTab: FileTab | undefined
@@ -75,15 +73,107 @@ export class FunctionSimulatorTab extends Tab {
 		return 'Unable to get docs for this command!'
 	}
 
+	protected getArgType<String>(arg: string) {
+		//Positional
+		if (arg.substring(0, 1) == '~' || arg.substring(0, 1) == '^') {
+			if (!isNaN(parseFloat(arg.substring(1, arg.length)))) {
+				return 'number'
+			} else {
+				return 'Error: Expected number after positional argument!'
+			}
+		}
+
+		//Selector
+		if (arg.substring(0, 1) == '@') {
+			if (this.commandData.selectors.includes(arg)) {
+				return 'selector'
+			} else {
+				return 'Error: Expected letter after selector argument!'
+			}
+		}
+
+		//Number
+		if (!isNaN(parseFloat(arg))) {
+			console.log('Number: ' + arg)
+
+			return 'number'
+		}
+
+		return 'string'
+	}
+
+	protected doesStringArrayMatchArray<Bollean>(
+		array1: Array<string>,
+		array2: Array<string>
+	) {
+		if (array1.length != array2.length) {
+			return false
+		}
+
+		for (let i = 0; i < array1.length; i++) {
+			if (array1[i] != array2[i]) {
+				return false
+			}
+		}
+
+		return true
+	}
+
 	protected async readCommand<Array>(command: string = '') {
 		let errors: string[] = []
 		let warnings: string[] = []
 
-		console.log(this.validCommands)
+		let baseCommand = command.split(' ')[0]
 
-		if (!this.validCommands.includes(command)) {
-			errors.push('Unknown command: ' + command)
+		if (!this.validCommands.includes(baseCommand)) {
+			errors.push('Unknown command: ' + baseCommand)
+		} else {
+			let args = command.split(' ')
+			args.splice(0, 1)
+
+			let argTypes = []
+
+			for (let i = 0; i < args.length; i++) {
+				argTypes.push(this.getArgType(args[i]))
+			}
+
+			let commandValidation = undefined
+
+			for (let i = 0; i < this.commandData.commands.length; i++) {
+				if (this.commandData.commands[i].name == baseCommand) {
+					commandValidation = this.commandData.commands[i].variations
+				}
+			}
+
+			let found = false
+
+			console.log(argTypes)
+
+			for (let i = 0; i < commandValidation.length; i++) {
+				console.log(commandValidation[i].arguments)
+
+				if (
+					this.doesStringArrayMatchArray(
+						commandValidation[i].arguments,
+						argTypes
+					)
+				) {
+					found = true
+					break
+				}
+
+				if (commandValidation[i].arguments.includes('any')) {
+					found = true
+					break
+				}
+			}
+
+			if (!found) {
+				errors.push('Invalid arguments for command: ' + command)
+			}
 		}
+
+		console.log('~~~~~~~~~')
 
 		return [errors, warnings]
 	}
@@ -92,7 +182,14 @@ export class FunctionSimulatorTab extends Tab {
 		let lines = this.content.split('\n')
 
 		if (this.currentLine < lines.length) {
-			let command = lines[this.currentLine].split(' ')[0]
+			let fullCommand = lines[this.currentLine].substring(
+				0,
+				lines[this.currentLine].length - 1
+			)
+
+			console.log(fullCommand)
+
+			let command = fullCommand.split(' ')[0]
 
 			let lineCounterElement = document.getElementById('line-counter')
 
@@ -136,7 +233,7 @@ export class FunctionSimulatorTab extends Tab {
 				}
 
 				if (lines[this.currentLine] != '\r') {
-					let data = await this.readCommand(command)
+					let data = await this.readCommand(fullCommand)
 
 					for (let i = 0; i < data[0].length; i++) {
 						var ComponentClass = Vue.extend(Error)
@@ -173,6 +270,8 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	protected async play() {
+		this.currentLine = 0
+
 		let shouldStop = false
 
 		shouldStop = await this.loadCurrentLine()
@@ -185,18 +284,11 @@ export class FunctionSimulatorTab extends Tab {
 
 			console.log(shouldStop)
 		}
-
-		this.currentLine = 0
 	}
 
 	async onActivate() {
 		await super.onActivate()
 		const app = await App.getApp()
-
-		/*const project = await app.project
-		if (project instanceof BedrockProject) {
-			this.commandData = project.commandData
-		}*/
 
 		await this.loadCommandData()
 

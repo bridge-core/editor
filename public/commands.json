@@ -1,13 +1,48 @@
 {
 	"commands": [
 		{
-			"name": "help"
+			"name": "help",
+			"variations": [
+				{
+					"arguments": ["string"]
+				}
+			]
 		},
 		{
-			"name": "give"
+			"name": "give",
+			"variations": [
+				{
+					"arguments": ["selector", "string"]
+				},
+				{
+					"arguments": ["selector", "string", "number"]
+				}
+			]
 		},
 		{
-			"name": "clear"
+			"name": "clear",
+			"variations": [
+				{
+					"arguments": ["selector"]
+				}
+			]
+		},
+		{
+			"name": "tp",
+			"variations": [
+				{
+					"arguments": ["selector", "number", "number", "number"]
+				}
+			]
+		},
+		{
+			"name": "say",
+			"variations": [
+				{
+					"arguments": ["any"]
+				}
+			]
 		}
-	]
+	],
+	"selectors": ["@a", "@p", "@e", "@r"]
 }
