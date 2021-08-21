@@ -39,8 +39,6 @@ export default defineConfig({
 				iconPath('favicon-32x32.png'),
 			],
 			workbox: {
-				// TODO: Remove once most users upgraded to a recent nightly build
-				skipWaiting: true,
 				maximumFileSizeToCacheInBytes: Number.MAX_SAFE_INTEGER,
 			},
 			manifest: {

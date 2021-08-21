@@ -50,7 +50,6 @@ export class MonacoHolder extends Signal<void> {
 
 	createMonacoEditor(domElement: HTMLElement) {
 		this.dispose()
-		console.log(settingsState?.appearance?.editorFontSize)
 		this._monacoEditor = markRaw(
 			editor.create(domElement, {
 				wordBasedSuggestions: false,
