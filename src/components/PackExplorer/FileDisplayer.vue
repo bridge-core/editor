@@ -1,6 +1,6 @@
 <template>
-	<!-- body-1 class sets the font-size -->
-	<div class="body-1" v-if="directoryEntry && !directoryEntry.isLoading">
+	<!-- text-normal class sets the font-size -->
+	<div class="text-normal" v-if="directoryEntry && !directoryEntry.isLoading">
 		<Draggable
 			v-model="directoryEntry.children"
 			group="pack-explorer"

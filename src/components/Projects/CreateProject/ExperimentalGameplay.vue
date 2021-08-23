@@ -10,7 +10,7 @@
 				<v-icon color="primary" class="mr-1">
 					{{ experiment.icon }}
 				</v-icon>
-				<h1 class="text-h6">
+				<h1 class="header">
 					{{ t(`experimentalGameplay.${experiment.id}.name`) }}
 				</h1>
 			</div>
@@ -49,3 +49,11 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+.header {
+	font-size: 1.25rem !important;
+	font-weight: 500;
+	letter-spacing: 0.0125em !important;
+}
+</style>

@@ -15,7 +15,7 @@
 			<!-- Welcome text for users getting started with bridge. -->
 
 			<BridgeSheet class="pa-3 mb-2" v-if="isFirstProject">
-				<h1 class="text-h4">
+				<h1>
 					{{ t('windows.createProject.welcome') }}
 				</h1>
 				<span>

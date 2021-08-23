@@ -246,13 +246,12 @@ summary::-webkit-details-marker {
 	user-select: none;
 	touch-action: manipulation;
 }
-/* .body-1 {
-    font-size: 1rem !important;
-    font-weight: 400;
-    letter-spacing: 0.03125em !important;
-    line-height: 1.5rem;
-    font-family: "Roboto", sans-serif !important;
-} */
+.text-normal {
+	font-size: 1rem !important;
+	font-weight: 400;
+	letter-spacing: 0.03125em !important;
+	line-height: 1.5rem;
+}
 
 .v-application {
 	background: var(--v-background-base) !important;

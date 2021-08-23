@@ -9,7 +9,7 @@
 			:alt="`Pack Icon of ${name}`"
 		/>
 		<h1
-			class="text-h4 ml-2"
+			class="header ml-2"
 			style="
 				opacity: 0.7;
 				display: block;
@@ -56,3 +56,12 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+.header {
+	font-size: 2.125rem !important;
+	font-weight: 400;
+	line-height: 2.5rem;
+	letter-spacing: 0.0073529412em !important;
+}
+</style>

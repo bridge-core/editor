@@ -21,7 +21,7 @@
 				</v-btn-toggle>
 			</div>
 
-			<span class="ml-4 body-1">{{ t(config.description) }}</span>
+			<span class="ml-4 text-normal">{{ t(config.description) }}</span>
 		</div>
 	</div>
 </template>

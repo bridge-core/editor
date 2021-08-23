@@ -30,10 +30,10 @@
 					draggable="false"
 				/>
 				<div>
-					<h1 class="text-h4" style="overflow-wrap: anywhere">
+					<h1 style="overflow-wrap: anywhere">
 						{{ sidebar.currentState.name }}
 					</h1>
-					<h2 class="text-h6">by {{ authors }}</h2>
+					<h2 class="subheader">by {{ authors }}</h2>
 				</div>
 			</div>
 			<v-row class="mb-6" dense>
@@ -45,7 +45,7 @@
 				</v-col>
 			</v-row>
 
-			<h2 class="text-h6">{{ t('general.experimentalGameplay') }}</h2>
+			<h2 class="subheader">{{ t('general.experimentalGameplay') }}</h2>
 			<v-row dense>
 				<v-col
 					v-for="experiment in sidebar.currentState
@@ -174,5 +174,10 @@ export default {
 }
 .content-area {
 	background-color: var(--v-sidebarNavigation-base);
+}
+.subheader {
+	font-size: 1.25rem !important;
+	font-weight: 500;
+	letter-spacing: 0.0125em !important;
 }
 </style>

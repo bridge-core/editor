@@ -117,12 +117,6 @@ export async function setupSettings(settings: SettingsWindow) {
 				'Courier New',
 				'monospace',
 			],
-			onChange: async (val) => {
-				const app = await App.getApp()
-				app.projectManager.updateAllEditorOptions({
-					fontFamily: val,
-				})
-			},
 		})
 	)
 	settings.addControl(

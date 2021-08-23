@@ -12,9 +12,9 @@
 				{{ packType.icon }}
 			</v-icon>
 
-			<span class="text-h6">
+			<h1 class="header">
 				{{ t(`packType.${packType.id}.name`) }}
-			</span>
+			</h1>
 		</div>
 
 		<SelectedStatus v-if="isSelectable" :selected="selected" />
@@ -55,5 +55,10 @@ export default {
 }
 .content-area.selected {
 	border: 2px solid var(--v-primary-base);
+}
+.header {
+	font-size: 1.25rem !important;
+	font-weight: 500;
+	letter-spacing: 0.0125em !important;
 }
 </style>

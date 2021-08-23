@@ -10,7 +10,7 @@
 				<v-icon color="primary" class="mr-1">
 					{{ file.icon }}
 				</v-icon>
-				<h1 class="text-h6">
+				<h1 class="header">
 					{{
 						t(
 							`windows.createProject.individualFiles.file.${file.id}.name`
@@ -18,7 +18,7 @@
 					}}
 				</h1>
 			</div>
-			<h2 class="body-1 font-weight-light">
+			<h2 class="text-normal font-weight-light">
 				{{ t(`packType.${file.packId}.name`) }}
 			</h2>
 			<SelectedStatus :selected="value" />
@@ -59,3 +59,11 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+.header {
+	font-size: 1.25rem !important;
+	font-weight: 500;
+	letter-spacing: 0.0125em !important;
+}
+</style>

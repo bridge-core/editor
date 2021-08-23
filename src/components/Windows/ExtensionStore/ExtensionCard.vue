@@ -1,5 +1,5 @@
 <template>
-	<div class="body-1 pa-4 mb-2 rounded-lg card">
+	<div class="text-normal pa-4 mb-2 rounded-lg card">
 		<div class="d-flex align-center mb-2">
 			<v-icon v-if="extension.icon" color="accent" class="mr-1">
 				{{ extension.icon }}
