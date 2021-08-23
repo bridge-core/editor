@@ -283,7 +283,10 @@ export default {
 		propertySuggestions() {
 			if (!this.$refs.addKeyInput || !this.$refs.addValueInput) return
 
-			if (this.propertySuggestions.length === 0) {
+			if (
+				this.propertySuggestions.length === 0 &&
+				this.valueSuggestions.length > 0
+			) {
 				this.$refs.addKeyInput.blur()
 				this.$refs.addValueInput.focus()
 			} else if (this.propertySuggestions.length > 0) {
