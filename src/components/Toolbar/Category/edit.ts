@@ -3,6 +3,7 @@ import { ToolbarCategory } from '../ToolbarCategory'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { Divider } from '../Divider'
 import { TreeTab } from '../../Editors/TreeEditor/Tab'
+import { platformRedoBinding } from '/@/utils/constants'
 
 const blockActions = new Set<string>(['INPUT', 'TEXTAREA'])
 
@@ -30,7 +31,7 @@ export function setupEditCategory(app: App) {
 			icon: 'mdi-redo',
 			name: 'actions.redo.name',
 			description: 'actions.redo.description',
-			keyBinding: 'Ctrl + Y',
+			keyBinding: platformRedoBinding,
 			prevent: (el) =>
 				el.tagName === 'INPUT' || el.tagName === 'TEXTAREA',
 			onTrigger: () => {

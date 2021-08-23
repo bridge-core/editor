@@ -21,6 +21,7 @@ import { debounce } from 'lodash-es'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { IActionConfig } from '../../Actions/SimpleAction'
 import { viewDocumentation } from '../../Documentation/view'
+import { platformRedoBinding } from '/@/utils/constants'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
@@ -219,7 +220,7 @@ export class TreeEditor {
 		})
 
 		this.actions.create({
-			keyBinding: ['CTRL + Y'],
+			keyBinding: [platformRedoBinding],
 			onTrigger: () => {
 				this.redo()
 			},
