@@ -14,6 +14,8 @@
 			@click.stop.prevent="onClickKey"
 			@contextmenu.prevent="treeEditor.onContextMenu($event, tree)"
 			tabindex="-1"
+			@pointerdown.prevent="onTouchStart($event)"
+			@pointerup.prevent="onTouchEnd"
 		>
 			<v-icon
 				class="mr-1"
@@ -61,8 +63,10 @@
 
 <script>
 import TreeChildren from './TreeChildren.vue'
+import { useLongPress } from '/@/components/Composables/LongPress'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 const brackets = {
 	array: '[]',
@@ -79,6 +83,17 @@ export default {
 		tree: Object,
 		treeKey: String,
 		treeEditor: Object,
+	},
+	setup(props) {
+		const { onTouchStart, onTouchEnd } = useLongPress((event) => {
+			if (pointerDevice.value === 'touch')
+				props.treeEditor.onContextMenu(event, props.tree)
+		})
+
+		return {
+			onTouchStart,
+			onTouchEnd,
+		}
 	},
 	computed: {
 		openingBracket() {

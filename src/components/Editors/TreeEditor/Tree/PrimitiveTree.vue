@@ -9,6 +9,8 @@
 					tree.isSelected,
 			}"
 			@contextmenu.prevent.stop="treeEditor.onContextMenu($event, tree)"
+			@pointerdown.stop.prevent="onKeyTouchStart($event)"
+			@pointerup.stop.prevent="onKeyTouchEnd"
 		>
 			<v-icon
 				class="mr-1"
@@ -42,6 +44,8 @@
 			@contextmenu.prevent.native="
 				treeEditor.onContextMenu($event, tree, false)
 			"
+			@pointerdown.stop.prevent.native="onTouchStart($event)"
+			@pointerup.stop.prevent.native="onTouchEnd"
 		>
 			{{ treeValue }}
 		</Highlight>
@@ -52,6 +56,8 @@
 import Highlight from '../Highlight.vue'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
+import { useLongPress } from '/@/components/Composables/LongPress'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	components: { Highlight },
@@ -60,6 +66,27 @@ export default {
 	props: {
 		tree: Object,
 		treeEditor: Object,
+	},
+	setup(props) {
+		const { onTouchStart, onTouchEnd } = useLongPress((event) => {
+			if (pointerDevice.value === 'touch')
+				props.treeEditor.onContextMenu(event, props.tree, false)
+		})
+
+		const {
+			onTouchStart: onKeyTouchStart,
+			onTouchEnd: onKeyTouchEnd,
+		} = useLongPress((event) => {
+			if (pointerDevice.value === 'touch')
+				props.treeEditor.onContextMenu(event, props.tree)
+		})
+
+		return {
+			onTouchStart,
+			onTouchEnd,
+			onKeyTouchStart,
+			onKeyTouchEnd,
+		}
 	},
 	computed: {
 		treeValue() {

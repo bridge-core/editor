@@ -33,7 +33,7 @@ const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 
 export class TreeTab extends FileTab {
 	component = TreeTabComponent
-	_treeEditor?: TreeEditor
+	protected _treeEditor?: TreeEditor
 
 	constructor(
 		parent: TabSystem,

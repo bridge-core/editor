@@ -214,14 +214,14 @@ export class TreeEditor {
 		this.actions.create({
 			keyBinding: ['CTRL + Z'],
 			onTrigger: () => {
-				this.history.undo()
+				this.undo()
 			},
 		})
 
 		this.actions.create({
 			keyBinding: ['CTRL + Y'],
 			onTrigger: () => {
-				this.history.redo()
+				this.redo()
 			},
 		})
 	}
@@ -517,5 +517,11 @@ export class TreeEditor {
 		}
 
 		showContextMenu(event, contextMenu)
+	}
+	undo() {
+		this.history.undo()
+	}
+	redo() {
+		this.history.redo()
 	}
 }
