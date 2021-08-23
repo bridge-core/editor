@@ -62,6 +62,7 @@
 <script>
 import TreeChildren from './TreeChildren.vue'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 const brackets = {
 	array: '[]',
@@ -97,6 +98,8 @@ export default {
 	methods: {
 		onClickKey(event) {
 			this.$emit('setActive')
+			if (settingsState.editor?.automaticallyOpenTreeNodes ?? true)
+				this.tree.toggleOpen()
 
 			if (event.altKey) this.treeEditor.toggleSelection(this.tree)
 			else this.treeEditor.setSelection(this.tree)
