@@ -168,16 +168,7 @@ export class TreeEditor {
 		this.containerElement = container
 
 		this.actions.create({
-			keyBinding: ['DELETE', 'BACKSPACE'],
-			prevent: (el) => {
-				if (el.tagName === 'INPUT' && (<any>el).value === '')
-					return false
-				return (
-					el.tagName !== 'SUMMARY' &&
-					el.tagName !== 'DIV' &&
-					el.tagName !== 'SPAN'
-				)
-			},
+			keyBinding: ['Ctrl + DELETE', 'Ctrl + BACKSPACE'],
 			onTrigger: () => {
 				const entries: HistoryEntry[] = []
 
