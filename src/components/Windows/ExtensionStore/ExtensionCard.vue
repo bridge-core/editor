@@ -69,7 +69,7 @@
 					</v-btn>
 				</template>
 
-				<v-list dense>
+				<v-list color="menu" dense>
 					<v-list-item
 						v-for="(action, index) in extension.actions"
 						:key="index"
