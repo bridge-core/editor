@@ -112,6 +112,7 @@
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { TreeValueSelection } from './TreeSelection'
+import { PrimitiveTree } from './Tree/PrimitiveTree'
 
 export default {
 	name: 'TreeTab',
@@ -281,17 +282,32 @@ export default {
 			this.treeEditor.receiveContainer(this.$refs.editorContainer)
 		},
 		propertySuggestions() {
-			if (!this.$refs.addKeyInput || !this.$refs.addValueInput) return
+			if (
+				!this.$refs.addKeyInput ||
+				!this.$refs.addValueInput ||
+				!this.$refs.editValueInput
+			)
+				return
 
 			if (
 				this.propertySuggestions.length === 0 &&
 				this.valueSuggestions.length > 0
 			) {
+				this.$refs.editValueInput.blur()
 				this.$refs.addKeyInput.blur()
 				this.$refs.addValueInput.focus()
 			} else if (this.propertySuggestions.length > 0) {
+				this.$refs.editValueInput.blur()
 				this.$refs.addValueInput.blur()
 				this.$refs.addKeyInput.focus()
+			} else if (
+				this.treeEditor.selections.some(
+					(sel) => sel.tree instanceof PrimitiveTree
+				)
+			) {
+				this.$refs.addKeyInput.blur()
+				this.$refs.addValueInput.blur()
+				this.$refs.editValueInput.focus()
 			}
 		},
 	},
