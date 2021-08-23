@@ -214,6 +214,9 @@ export class TextTab extends FileTab {
 	}
 	protected async saveFile(app: App) {
 		this.setIsUnsaved(false)
+		this.initialContentHash = await hashString(
+			await this.getFile().then((file) => file.text())
+		)
 
 		if (this.editorModel) {
 			await app.fileSystem.write(
