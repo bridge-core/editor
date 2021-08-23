@@ -9,6 +9,7 @@ import { viewDocumentation } from '../Documentation/view'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
 import { markRaw } from '@vue/composition-api'
 import { debounce } from 'lodash-es'
+import { platform } from '/@/utils/os'
 
 languages.typescript.javascriptDefaults.setCompilerOptions({
 	target: languages.typescript.ScriptTarget.ESNext,
@@ -63,7 +64,8 @@ export class MonacoHolder extends Signal<void> {
 					).replace('px', '')
 				),
 				fontFamily:
-					<string>settingsState?.appearance?.editorFont ?? 'Menlo',
+					<string>settingsState?.appearance?.editorFont ??
+					(platform() === 'darwin' ? 'Menlo' : 'Consolas'),
 				...this.getMobileOptions(this._app.mobile.isCurrentDevice()),
 				// fontFamily: this.fontFamily,
 				wordWrap: settingsState?.editor?.wordWrap ? 'bounded' : 'off',

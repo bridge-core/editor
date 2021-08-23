@@ -627,6 +627,15 @@ export default {
 					description:
 						"Change the font size of bridge.'s code editor",
 				},
+				editorFont: {
+					name: 'Code Font',
+					description: "Change the font of bridge.'s code editor",
+				},
+				font: {
+					name: 'Font',
+					description:
+						"Change the font that is used inside of bridge.'s user interface",
+				},
 			},
 			general: {
 				name: 'General',

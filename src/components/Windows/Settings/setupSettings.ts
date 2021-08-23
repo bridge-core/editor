@@ -10,6 +10,7 @@ import { del } from 'idb-keyval'
 import { comMojangKey } from '../../FileSystem/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import { platform } from '/@/utils/os'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -130,13 +131,14 @@ export async function setupSettings(settings: SettingsWindow) {
 			name: 'windows.settings.appearance.editorFont.name',
 			description: 'windows.settings.appearance.editorFont.description',
 			key: 'editorFont',
-			default: 'Roboto',
+			default: platform() === 'darwin' ? 'Menlo' : 'Consolas',
 			options: [
 				'Roboto',
 				'Arial',
+				'Consolas',
 				'Menlo',
 				'Monaco',
-				'Courier New',
+				'"Courier New"',
 				'monospace',
 			],
 			onChange: async (val) => {

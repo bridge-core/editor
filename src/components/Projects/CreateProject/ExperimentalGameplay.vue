@@ -16,7 +16,9 @@
 			</div>
 			<SelectedStatus :selected="value" />
 
-			<p>{{ t(`experimentalGameplay.${experiment.id}.description`) }}</p>
+			<p v-if="!dense">
+				{{ t(`experimentalGameplay.${experiment.id}.description`) }}
+			</p>
 		</template>
 	</ToggleSheet>
 </template>
@@ -43,6 +45,7 @@ export default {
 			default: true,
 		},
 		value: Boolean,
+		dense: Boolean,
 	},
 }
 </script>
