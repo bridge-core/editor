@@ -15,7 +15,7 @@ import { hashString } from '/@/utils/hash'
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
 		// Updates the isUnsaved status of the tab
-		tab.updateCurrentHash()
+		tab.updateUnsavedStatus()
 
 		if (
 			tab.isForeignFile ||
@@ -53,8 +53,7 @@ export class TextTab extends FileTab {
 	disposables: (IDisposable | undefined)[] = []
 	isActive = false
 	protected modelLoaded = new Signal<void>()
-	protected initialContentHash?: string
-	protected currentContentHash?: string
+	protected initialVersionId: number = 0
 
 	get editorInstance() {
 		return this.parent.monacoEditor
@@ -81,17 +80,13 @@ export class TextTab extends FileTab {
 		return new File([this.editorModel.getValue()], this.name)
 	}
 
-	async setup() {
-		super.setup()
+	async updateUnsavedStatus() {
+		if (!this.editorModel || this.editorModel.isDisposed()) return
 
-		const file = await this.getFile()
-		this.initialContentHash = await hashString(await file.text())
-	}
-	async updateCurrentHash() {
-		const file = await this.getFile()
-		const currentContentHash = await hashString(await file.text())
-
-		this.setIsUnsaved(this.initialContentHash !== currentContentHash)
+		this.setIsUnsaved(
+			this.initialVersionId !==
+				this.editorModel?.getAlternativeVersionId()
+		)
 	}
 
 	async onActivate() {
@@ -109,6 +104,8 @@ export class TextTab extends FileTab {
 				monaco.editor.getModel(uri) ??
 					monaco.editor.createModel(fileContent, undefined, uri)
 			)
+			this.initialVersionId = this.editorModel.getAlternativeVersionId()
+
 			this.modelLoaded.dispatch()
 			this.loadEditor()
 		} else {
@@ -214,9 +211,9 @@ export class TextTab extends FileTab {
 	}
 	protected async saveFile(app: App) {
 		this.setIsUnsaved(false)
-		this.initialContentHash = await hashString(
-			await this.getFile().then((file) => file.text())
-		)
+
+		if (this.editorModel && !this.editorModel.isDisposed())
+			this.initialVersionId = this.editorModel.getAlternativeVersionId()
 
 		if (this.editorModel) {
 			await app.fileSystem.write(
