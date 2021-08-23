@@ -80,7 +80,7 @@ export class TextTab extends FileTab {
 		return new File([this.editorModel.getValue()], this.name)
 	}
 
-	async updateUnsavedStatus() {
+	updateUnsavedStatus() {
 		if (!this.editorModel || this.editorModel.isDisposed()) return
 
 		this.setIsUnsaved(
