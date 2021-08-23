@@ -47,37 +47,48 @@ export class SchemaManager {
 			return [new ConstSchema(location, '', obj)]
 		}
 
-		let lastIfSchema: IfSchema | undefined
-		return <Schema[]>Object.entries(obj)
-			.map(([key, value]) => {
-				if (value === undefined) return
+		let schemas: Schema[] = []
 
-				const Class = schemaRegistry.get(key)
+		for (const [key, value] of Object.entries(obj)) {
+			if (value === undefined) continue
 
-				if (Class === undefined) {
-					if (ignoreFields.has(key)) return
+			const Class = schemaRegistry.get(key)
 
-					console.warn(
-						`Schema field not implemented: <${key}, ${value}> @ ${location}`
-					)
-					return
+			if (Class === undefined) {
+				if (ignoreFields.has(key)) continue
+
+				console.warn(
+					`Schema field not implemented: <${key}, ${value}> @ ${location}`
+				)
+				continue
+			}
+
+			const schema = new Class(location, key, value)
+
+			if (key === 'then') {
+				let ifSchemas = <IfSchema[]>schemas
+					.reverse()
+					.map((schema) => {
+						if (schema.type === 'ifSchema') return schema
+						else if (schema.type === 'refSchema')
+							return (<RootSchema>schema).getFreeIfSchema()
+					})
+					.filter((schema) => schema !== undefined)
+
+				// We reverse the schemas array above so index 0 is the last schema
+				let lastIfSchema = ifSchemas[0]
+
+				if (!lastIfSchema) {
+					console.warn(`"then" schema without "if" @ ${location}`)
+					continue
 				}
 
-				const schema = new Class(location, key, value)
+				;(<ThenSchema>schema).receiveIfSchema(lastIfSchema)
+			}
 
-				if (key === 'if') lastIfSchema = <IfSchema>schema
-				else if (key === 'then') {
-					if (!lastIfSchema) {
-						console.warn(`"then" schema without "if" @ ${location}`)
-						return
-					}
+			schemas.push(schema)
+		}
 
-					;(<ThenSchema>schema).receiveIfSchema(lastIfSchema)
-					lastIfSchema = undefined
-				}
-
-				return schema
-			})
-			.filter((schema) => schema !== undefined)
+		return schemas
 	}
 }

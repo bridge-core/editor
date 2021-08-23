@@ -14,6 +14,7 @@ export interface ICompletionItem {
 }
 
 export abstract class Schema {
+	public readonly type?: 'ifSchema' | 'refSchema'
 	constructor(
 		protected location: string,
 		protected key: string,

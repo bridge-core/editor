@@ -4,6 +4,8 @@ import { Schema } from './Schema'
 import { dirname, join } from '/@/utils/path'
 
 export class RefSchema extends Schema {
+	public readonly type = 'refSchema'
+
 	protected rootSchema: RootSchema
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
@@ -57,5 +59,9 @@ export class RefSchema extends Schema {
 	}
 	getSchemasFor(obj: unknown, location: (string | number)[]) {
 		return this.rootSchema.getSchemasFor(obj, [...location])
+	}
+
+	getFreeIfSchema() {
+		return this.rootSchema.getFreeIfSchema()
 	}
 }
