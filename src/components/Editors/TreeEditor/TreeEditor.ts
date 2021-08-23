@@ -86,12 +86,9 @@ export class TreeEditor {
 		this.propertySuggestions = []
 		this.valueSuggestions = []
 
-		const tree = <ArrayTree | ObjectTree | undefined>this.selections
-			.find((sel) => {
-				const type = sel.getTree().type
-				return type === 'object' || type === 'array'
-			})
-			?.getTree()
+		const tree = <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
+			this.selections[0]?.getTree()
+		)
 		const json = tree?.toJSON()
 
 		let suggestions: ICompletionItem[] = []
@@ -136,8 +133,13 @@ export class TreeEditor {
 					)
 			)
 
-		// Only suggest values for empty objects or arrays
-		if ((tree?.children?.length ?? 1) === 0 || tree?.type === 'array') {
+		// Only suggest values for empty objects, arrays or "empty" primitive trees
+		// (a primitive tree is empty if it contains an empty string)
+		if (
+			(tree instanceof ObjectTree && tree?.children?.length === 0) ||
+			tree instanceof ArrayTree ||
+			(tree instanceof PrimitiveTree && tree.isEmpty())
+		) {
 			this.valueSuggestions = suggestions.filter(
 				(suggestion) =>
 					suggestion.type === 'value' ||
@@ -306,7 +308,8 @@ export class TreeEditor {
 		this.forEachSelection((selection) => {
 			if (selection instanceof TreeValueSelection) return
 
-			entries.push(selection.addKey(value, type))
+			const entry = selection.addKey(value, type)
+			if (entry) entries.push()
 		})
 
 		this.history.pushAll(entries)
@@ -338,6 +341,8 @@ export class TreeEditor {
 		this.forEachSelection((sel) => {
 			if (sel instanceof TreeValueSelection) return
 			const parentTree = sel.getTree()
+			if (parentTree instanceof PrimitiveTree) return
+
 			const index = parentTree.children.length
 
 			for (const key in json) {

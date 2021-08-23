@@ -13,7 +13,7 @@ import type { TreeEditor } from './TreeEditor'
 export class TreeSelection {
 	constructor(
 		protected parent: TreeEditor,
-		protected tree: ArrayTree | ObjectTree
+		protected tree: ArrayTree | ObjectTree | PrimitiveTree
 	) {
 		tree.setIsSelected(true)
 	}
@@ -50,6 +50,8 @@ export class TreeSelection {
 	}
 
 	addKey(key: string, type: 'array' | 'object') {
+		if (this.tree instanceof PrimitiveTree) return
+
 		const index = this.tree.children.length
 		const historyEntries: HistoryEntry[] = []
 
@@ -89,6 +91,7 @@ export class TreeSelection {
 
 	addValue(value: TPrimitiveTree, type: 'value' | 'valueArray') {
 		const historyEntries: HistoryEntry[] = []
+		if (this.tree instanceof PrimitiveTree && !this.tree.isEmpty()) return
 
 		if (type === 'valueArray' && this.tree instanceof ObjectTree) {
 			this.dispose()
@@ -110,7 +113,10 @@ export class TreeSelection {
 			historyEntries.push(
 				new DeleteEntry(newTree, this.tree.children.length - 1)
 			)
-		} else if (Object.keys(this.tree.children).length === 0) {
+		} else if (
+			this.tree instanceof PrimitiveTree ||
+			this.tree.children.length === 0
+		) {
 			// Otherwise only add value to empty objects
 			const newTree = new PrimitiveTree(this.tree.getParent(), value)
 

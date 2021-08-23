@@ -20,7 +20,7 @@
 				:style="{
 					position: 'relative',
 					opacity: tree.hasChildren ? null : '60%',
-					top: tree.hasChildren ? '0px' : '-1.5px',
+					top: tree.hasChildren ? '0px' : '-4px',
 				}"
 				@click.native.stop.prevent="tree.toggleOpen()"
 				small
@@ -38,9 +38,9 @@
 			<!-- Spacer to make array objects easier to select -->
 			<span class="mx-2" v-else />
 
-			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">{{
-				openingBracket
-			}}</span>
+			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">
+				{{ openingBracket }}
+			</span>
 		</summary>
 
 		<TreeChildren

@@ -1,5 +1,5 @@
 <template>
-	<span v-if="!value" :style="toStyle(def)"><slot /></span>
+	<span v-if="value === undefined" :style="toStyle(def)"><slot /></span>
 
 	<span v-else
 		>"<template v-for="({ text, def }, i) in tokens">
