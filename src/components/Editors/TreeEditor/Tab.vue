@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="editor-container"
-		:style="{ fontSize, fontFamily }"
+		:style="{ fontSize, fontFamily: codeFontFamily }"
 		ref="editorContainer"
 		@click="tab.parent.setActive(true)"
 		tabindex="-1"
@@ -25,7 +25,12 @@
 
 		<v-divider v-if="!tab.isReadOnly" class="mb-4" />
 
-		<div v-if="!tab.isReadOnly" class="d-flex px-4" @blur="focusEditor">
+		<div
+			v-if="!tab.isReadOnly"
+			class="d-flex px-4"
+			:style="{ fontFamily }"
+			@blur="focusEditor"
+		>
 			<v-combobox
 				ref="addKeyInput"
 				v-model="keyToAdd"
@@ -143,12 +148,19 @@ export default {
 				? `${settingsState.appearance.editorFontSize}`
 				: '14px'
 		},
-		fontFamily() {
+		codeFontFamily() {
 			return settingsState &&
 				settingsState.appearance &&
 				settingsState.appearance.editorFont
 				? `${settingsState.appearance.editorFont} !important`
 				: 'Menlo !important'
+		},
+		fontFamily() {
+			return this.settingsState &&
+				this.settingsState.appearance &&
+				this.settingsState.appearance.font
+				? `${this.settingsState.appearance.font} !important`
+				: 'Roboto !important'
 		},
 		treeEditor() {
 			return this.tab.treeEditor
