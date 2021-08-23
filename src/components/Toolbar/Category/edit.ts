@@ -2,11 +2,46 @@ import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { Divider } from '../Divider'
+import { TreeTab } from '../../Editors/TreeEditor/Tab'
 
 const blockActions = new Set<string>(['INPUT', 'TEXTAREA'])
 
 export function setupEditCategory(app: App) {
 	const edit = new ToolbarCategory('mdi-pencil-outline', 'toolbar.edit.name')
+
+	edit.addItem(
+		app.actionManager.create({
+			icon: 'mdi-undo',
+			name: 'actions.undo.name',
+			description: 'actions.undo.description',
+			keyBinding: 'Ctrl + Z',
+			prevent: (el) =>
+				el.tagName === 'INPUT' || el.tagName === 'TEXTAREA',
+			onTrigger: () => {
+				const currentTab = app.tabSystem?.selectedTab
+
+				if (currentTab instanceof TreeTab) currentTab.treeEditor.undo()
+				else document.execCommand('undo')
+			},
+		})
+	)
+	edit.addItem(
+		app.actionManager.create({
+			icon: 'mdi-redo',
+			name: 'actions.redo.name',
+			description: 'actions.redo.description',
+			keyBinding: 'Ctrl + Y',
+			prevent: (el) =>
+				el.tagName === 'INPUT' || el.tagName === 'TEXTAREA',
+			onTrigger: () => {
+				const currentTab = app.tabSystem?.selectedTab
+
+				if (currentTab instanceof TreeTab) currentTab.treeEditor.redo()
+				else document.execCommand('redo')
+			},
+		})
+	)
+	edit.addItem(new Divider())
 
 	edit.addItem(
 		app.actionManager.create({

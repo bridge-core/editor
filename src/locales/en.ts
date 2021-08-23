@@ -268,6 +268,14 @@ export default {
 			name: 'Download File',
 			description: 'Download the currently opened file',
 		},
+		undo: {
+			name: 'Undo',
+			description: 'Undo the last action',
+		},
+		redo: {
+			name: 'Redo',
+			description: 'Redo the last action',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
