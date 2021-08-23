@@ -713,6 +713,16 @@ export default {
 					description:
 						'Display tabs inside of the tab system in a more compact way',
 				},
+				automaticallyOpenTreeNodes: {
+					name: 'Automatically Open Tree Nodes',
+					description:
+						"Inside of bridge.'s tree editor, automatically open nodes when you select them",
+				},
+				dragAndDropTreeNodes: {
+					name: 'Drag and Drop Tree Nodes',
+					description:
+						"Disable/enable drag & drop for tree nodes inside of bridge.'s tree editor",
+				},
 			},
 		},
 		projectFolder: {

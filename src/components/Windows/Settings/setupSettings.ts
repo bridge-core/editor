@@ -373,6 +373,26 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.automaticallyOpenTreeNodes.name',
+			description:
+				'windows.settings.editor.automaticallyOpenTreeNodes.description',
+			key: 'automaticallyOpenTreeNodes',
+			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.dragAndDropTreeNodes.name',
+			description:
+				'windows.settings.editor.dragAndDropTreeNodes.description',
+			key: 'dragAndDropTreeNodes',
+			default: true,
+		})
+	)
 
 	// Actions
 	const app = await App.getApp()
