@@ -10,9 +10,13 @@ import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '../../FileSystem/Types'
 import { markRaw } from '@vue/composition-api'
+import { hashString } from '/@/utils/hash'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
+		// Updates the isUnsaved status of the tab
+		tab.updateCurrentHash()
+
 		if (
 			tab.isForeignFile ||
 			!tab.editorModel ||
@@ -49,6 +53,8 @@ export class TextTab extends FileTab {
 	disposables: (IDisposable | undefined)[] = []
 	isActive = false
 	protected modelLoaded = new Signal<void>()
+	protected initialContentHash?: string
+	protected currentContentHash?: string
 
 	get editorInstance() {
 		return this.parent.monacoEditor
@@ -75,8 +81,17 @@ export class TextTab extends FileTab {
 		return new File([this.editorModel.getValue()], this.name)
 	}
 
-	setIsUnsaved(val: boolean) {
-		super.setIsUnsaved(val)
+	async setup() {
+		super.setup()
+
+		const file = await this.getFile()
+		this.initialContentHash = await hashString(await file.text())
+	}
+	async updateCurrentHash() {
+		const file = await this.getFile()
+		const currentContentHash = await hashString(await file.text())
+
+		this.setIsUnsaved(this.initialContentHash !== currentContentHash)
 	}
 
 	async onActivate() {
@@ -102,7 +117,6 @@ export class TextTab extends FileTab {
 
 		this.disposables.push(
 			this.editorModel?.onDidChangeContent(() => {
-				this.setIsUnsaved(true)
 				throttledCacheUpdate(this)
 			})
 		)
