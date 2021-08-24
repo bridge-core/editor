@@ -22,6 +22,7 @@ export const vuetify = new Vuetify({
 		dark: true,
 		options: {
 			customProperties: true,
+			variations: false,
 		},
 		themes: {
 			dark: {

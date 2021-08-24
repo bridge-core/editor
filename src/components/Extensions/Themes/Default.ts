@@ -27,6 +27,7 @@ export const bridgeDark = <const>{
 		tabActive: '#121212',
 		tabInactive: '#1F1F1F',
 		lineHighlightBackground: '#1F1F1F',
+		scrollbarThumb: '#000000',
 
 		behaviorPack: '#ff5252',
 		resourcePack: '#0073FF',
@@ -94,6 +95,7 @@ export const bridgeLight = <const>{
 		tabActive: '#fafafa',
 		tabInactive: '#e0e0e0',
 		lineHighlightBackground: '#e0e0e0',
+		scrollbarThumb: '#c8c8c8',
 
 		behaviorPack: '#ff5252',
 		resourcePack: '#0073FF',

@@ -223,14 +223,13 @@ body {
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 24px;
-	background-color: rgba(200, 200, 200, 0.8);
-	border: thin solid rgba(0, 0, 0, 0.12);
+	background-color: var(--v-scrollbarThumb-base);
+	border: thin solid rgba(0, 0, 0, 0.3);
+	opacity: 0.8;
 }
 
 .theme--dark *::-webkit-scrollbar-thumb {
-	border-radius: 24px;
-	background-color: rgba(0, 0, 0, 0.8);
-	border: thin solid rgba(255, 255, 255, 0.2);
+	border: thin solid rgba(255, 255, 255, 0.35);
 }
 
 summary::-webkit-details-marker {

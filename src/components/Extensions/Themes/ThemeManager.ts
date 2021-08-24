@@ -28,6 +28,7 @@ const colorNames = [
 	'footer',
 	'tooltip',
 	'sidebarSelection',
+	'scrollbarThumb',
 	'tabActive',
 	'tabInactive',
 	'lineHighlightBackground',
