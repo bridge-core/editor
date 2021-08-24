@@ -314,7 +314,7 @@ export class PackExplorer extends SidebarContent {
 							onTrigger: async () => {
 								const inputWindow = new InputWindow({
 									name:
-										'windows.packExplorer.fileActions.createFolder.name',
+										'windows.packExplorer.fileActions.createFile.name',
 									label: 'general.fileName',
 									default: '',
 									expandText: extname(path),
