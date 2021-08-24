@@ -22,7 +22,7 @@
 				:style="{
 					position: 'relative',
 					opacity: tree.hasChildren ? null : '60%',
-					top: tree.hasChildren ? '0px' : '-4px',
+					top: tree.hasChildren ? '0px' : '-1.5px',
 				}"
 				@click.native.stop.prevent="tree.toggleOpen()"
 				small
