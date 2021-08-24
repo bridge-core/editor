@@ -329,10 +329,7 @@ export default {
 <style>
 .tree-editor-selection {
 	border-radius: 2rem;
-	background: rgba(170, 170, 170, 0.2);
-}
-.theme--dark .tree-editor-selection {
-	background: rgba(100, 100, 100, 0.3);
+	background: var(--v-lineHighlightBackground-base);
 }
 .editor-container {
 	outline: none;
