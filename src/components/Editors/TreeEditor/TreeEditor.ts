@@ -318,7 +318,7 @@ export class TreeEditor {
 			if (selection instanceof TreeValueSelection) return
 
 			const entry = selection.addKey(value, type)
-			if (entry) entries.push()
+			if (entry) entries.push(entry)
 		})
 
 		this.history.pushAll(entries)
