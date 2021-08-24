@@ -59,12 +59,16 @@ export class Snippet {
 			.trim()
 	}
 
-	isValid(formatVersion: string, fileType: string, locations: string[]) {
-		return (
-			(!this.minTargetFormatVersion ||
+	isValid(formatVersion: unknown, fileType: string, locations: string[]) {
+		const formatVersionValid =
+			typeof formatVersion !== 'string' || //Format version inside of file is a string
+			((!this.minTargetFormatVersion ||
 				compare(formatVersion, this.minTargetFormatVersion, '>=')) &&
-			(!this.maxTargetFormatVersion ||
-				compare(formatVersion, this.maxTargetFormatVersion, '<=')) &&
+				(!this.maxTargetFormatVersion ||
+					compare(formatVersion, this.maxTargetFormatVersion, '<=')))
+
+		return (
+			formatVersionValid &&
 			this.fileTypes.has(fileType) &&
 			(this.locations.length === 0 ||
 				this.locations.some((locPattern) =>
