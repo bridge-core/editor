@@ -9,8 +9,8 @@
 					tree.isSelected,
 			}"
 			@contextmenu.prevent.stop="treeEditor.onContextMenu($event, tree)"
-			@pointerdown.stop.prevent="onKeyTouchStart($event)"
-			@pointerup.stop.prevent="onKeyTouchEnd"
+			@pointerdown="onKeyTouchStart($event)"
+			@pointerup="onKeyTouchEnd"
 		>
 			<v-icon
 				class="mr-1"
@@ -44,8 +44,8 @@
 			@contextmenu.prevent.native="
 				treeEditor.onContextMenu($event, tree, false)
 			"
-			@pointerdown.stop.prevent.native="onTouchStart($event)"
-			@pointerup.stop.prevent.native="onTouchEnd"
+			@pointerdown.native="onTouchStart($event)"
+			@pointerup.native="onTouchEnd"
 		>
 			{{ treeValue }}
 		</Highlight>

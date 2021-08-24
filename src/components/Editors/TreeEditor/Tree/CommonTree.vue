@@ -14,8 +14,8 @@
 			@click.stop.prevent="onClickKey"
 			@contextmenu.prevent="treeEditor.onContextMenu($event, tree)"
 			tabindex="-1"
-			@pointerdown.prevent="onTouchStart($event)"
-			@pointerup.prevent="onTouchEnd"
+			@pointerdown="onTouchStart($event)"
+			@pointerup="onTouchEnd"
 		>
 			<v-icon
 				class="mr-1"
@@ -86,8 +86,8 @@ export default {
 	},
 	setup(props) {
 		const { onTouchStart, onTouchEnd } = useLongPress((event) => {
-			if (pointerDevice.value === 'touch')
-				props.treeEditor.onContextMenu(event, props.tree)
+			// if (pointerDevice.value === 'touch')
+			props.treeEditor.onContextMenu(event, props.tree)
 		})
 
 		return {
