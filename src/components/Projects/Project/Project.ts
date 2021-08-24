@@ -46,7 +46,7 @@ export abstract class Project {
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
 	public readonly tabActionProvider = new TabActionProvider()
-	public readonly snippetLoader = new SnippetLoader()
+	public readonly snippetLoader = new SnippetLoader(this)
 	public readonly exportProvider = new ExportProvider()
 
 	//#region Getters

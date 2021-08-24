@@ -22,6 +22,7 @@ import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { IActionConfig } from '../../Actions/SimpleAction'
 import { viewDocumentation } from '../../Documentation/view'
 import { platformRedoBinding } from '/@/utils/constants'
+import { getLatestFormatVersion } from '../../Data/FormatVersions'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
@@ -83,9 +84,14 @@ export class TreeEditor {
 		this.selectionChange.on(() => this.updateSuggestions())
 	}
 
-	updateSuggestions = debounce(() => {
+	updateSuggestions = debounce(async () => {
 		this.propertySuggestions = []
 		this.valueSuggestions = []
+
+		const currentFormatVersion: string =
+			(<any>this.tree.toJSON()).format_version ||
+			this.parent.project.config.get().targetVersion ||
+			(await getLatestFormatVersion())
 
 		const tree = <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
 			this.selections[0]?.getTree()
@@ -121,6 +127,7 @@ export class TreeEditor {
 			.concat(
 				this.parent.app.project.snippetLoader
 					.getSnippetsFor(
+						currentFormatVersion,
 						this.parent.getFileType(),
 						this.selections.map((sel) => sel.getLocation())
 					)
@@ -133,6 +140,7 @@ export class TreeEditor {
 							}
 					)
 			)
+		// console.log(this.propertySuggestions)
 
 		// Only suggest values for empty objects, arrays or "empty" primitive trees
 		// (a primitive tree is empty if it contains an empty string)

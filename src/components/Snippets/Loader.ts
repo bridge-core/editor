@@ -5,9 +5,12 @@ import { iterateDir } from '/@/utils/iterateDir'
 import './Monaco'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { IDisposable } from '/@/types/disposable'
+import type { Project } from '../Projects/Project/Project'
 
 export class SnippetLoader {
 	protected snippets = new Set<Snippet>()
+
+	constructor(protected project: Project) {}
 
 	async activate() {
 		const app = await App.getApp()
@@ -54,9 +57,13 @@ export class SnippetLoader {
 		}
 	}
 
-	getSnippetsFor(fileType: string, locations: string[]) {
+	getSnippetsFor(
+		formatVersion: string,
+		fileType: string,
+		locations: string[]
+	) {
 		return [...this.snippets].filter((snippet) =>
-			snippet.isValid(fileType, locations)
+			snippet.isValid(formatVersion, fileType, locations)
 		)
 	}
 }

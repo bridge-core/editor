@@ -1,7 +1,12 @@
+import { compare } from 'compare-versions'
 import { isMatch } from '/@/utils/glob/isMatch'
 
 export interface ISnippet {
 	name: string
+	targetFormatVersion?: {
+		min?: string
+		max?: string
+	}
 	description?: string
 	fileTypes: string[]
 	locations?: string[]
@@ -14,13 +19,24 @@ export class Snippet {
 	protected fileTypes: Set<string>
 	protected locations: string[]
 	protected data: unknown
+	protected minTargetFormatVersion?: string
+	protected maxTargetFormatVersion?: string
 
-	constructor({ name, description, fileTypes, locations, data }: ISnippet) {
+	constructor({
+		name,
+		description,
+		fileTypes,
+		locations,
+		data,
+		targetFormatVersion,
+	}: ISnippet) {
 		this.name = name
 		this.description = description
 		this.fileTypes = new Set(fileTypes)
 		this.locations = locations ?? []
 		this.data = data
+		this.minTargetFormatVersion = targetFormatVersion?.min
+		this.maxTargetFormatVersion = targetFormatVersion?.max
 	}
 
 	get displayData() {
@@ -43,8 +59,12 @@ export class Snippet {
 			.trim()
 	}
 
-	isValid(fileType: string, locations: string[]) {
+	isValid(formatVersion: string, fileType: string, locations: string[]) {
 		return (
+			(!this.minTargetFormatVersion ||
+				compare(formatVersion, this.minTargetFormatVersion, '>=')) &&
+			(!this.maxTargetFormatVersion ||
+				compare(formatVersion, this.maxTargetFormatVersion, '<=')) &&
 			this.fileTypes.has(fileType) &&
 			(this.locations.length === 0 ||
 				this.locations.some((locPattern) =>

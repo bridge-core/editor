@@ -53,6 +53,9 @@ export class TreeTab extends FileTab {
 	get app() {
 		return this.parent.app
 	}
+	get project() {
+		return this.parent.project
+	}
 
 	static is(fileHandle: AnyFileHandle) {
 		return (
