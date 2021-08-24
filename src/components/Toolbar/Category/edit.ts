@@ -4,6 +4,7 @@ import { FileTab } from '/@/components/TabSystem/FileTab'
 import { Divider } from '../Divider'
 import { TreeTab } from '../../Editors/TreeEditor/Tab'
 import { platformRedoBinding } from '/@/utils/constants'
+import { TextTab } from '../../Editors/Text/TextTab'
 
 const blockActions = new Set<string>(['INPUT', 'TEXTAREA'])
 
@@ -22,6 +23,8 @@ export function setupEditCategory(app: App) {
 				const currentTab = app.tabSystem?.selectedTab
 
 				if (currentTab instanceof TreeTab) currentTab.treeEditor.undo()
+				else if (currentTab instanceof TextTab)
+					currentTab.editorInstance.trigger('toolbar', 'undo', null)
 				else document.execCommand('undo')
 			},
 		})
@@ -38,6 +41,8 @@ export function setupEditCategory(app: App) {
 				const currentTab = app.tabSystem?.selectedTab
 
 				if (currentTab instanceof TreeTab) currentTab.treeEditor.redo()
+				else if (currentTab instanceof TextTab)
+					currentTab.editorInstance.trigger('toolbar', 'redo', null)
 				else document.execCommand('redo')
 			},
 		})
