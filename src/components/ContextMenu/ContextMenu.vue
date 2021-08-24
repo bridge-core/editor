@@ -7,6 +7,7 @@
 		rounded="lg"
 		absolute
 		offset-y
+		:close-on-click="contextMenu.mayCloseOnClickOutside"
 	>
 		<v-list color="menu" dense>
 			<template v-for="(action, id) in contextMenu.actionManager.state">
@@ -45,7 +46,7 @@ export default {
 	},
 	data: () => ({
 		shouldRender: false,
-		timeoutId: 0,
+		timeoutId: null,
 	}),
 	computed: {
 		isVisible: {
@@ -60,13 +61,13 @@ export default {
 	watch: {
 		isVisible() {
 			if (!this.isVisible) {
-				this.timeoutId = setTimeout(
-					() => (this.shouldRender = false),
-					500
-				)
+				this.timeoutId = setTimeout(() => {
+					this.shouldRender = false
+					this.timeoutId = null
+				}, 500)
 			} else {
 				this.shouldRender = true
-				clearTimeout(this.timeoutId)
+				if (this.timeoutId) clearTimeout(this.timeoutId)
 			}
 		},
 	},

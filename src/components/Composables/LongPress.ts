@@ -5,6 +5,7 @@
 export function useLongPress(
 	longPressCallback: (...args: any[]) => unknown,
 	shortPressCallback?: (...args: any[]) => unknown,
+	touchEndCallback?: (...args: any[]) => unknown,
 	longPressDuration: number = 500
 ) {
 	let timeoutId: number | null = null
@@ -24,6 +25,7 @@ export function useLongPress(
 			timeoutId = null
 			shortPressCallback?.()
 		}
+		touchEndCallback?.()
 	}
 
 	return { onTouchStart, onTouchEnd }

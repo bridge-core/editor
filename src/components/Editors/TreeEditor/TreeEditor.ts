@@ -416,7 +416,8 @@ export class TreeEditor {
 			},
 		]
 
-		if (event && !this.parent.isReadOnly) showContextMenu(event, pasteMenu)
+		if (event && !this.parent.isReadOnly)
+			showContextMenu(event, pasteMenu, false)
 
 		return pasteMenu
 	}
@@ -443,7 +444,7 @@ export class TreeEditor {
 			},
 		]
 
-		if (event) showContextMenu(event, readOnlyMenu)
+		if (event) showContextMenu(event, readOnlyMenu, false)
 
 		return readOnlyMenu
 	}
@@ -525,7 +526,7 @@ export class TreeEditor {
 			})
 		}
 
-		showContextMenu(event, contextMenu)
+		showContextMenu(event, contextMenu, false)
 	}
 	undo() {
 		this.history.undo()

@@ -26,7 +26,7 @@ export const bridgeDark = <const>{
 		toolbar: '#000000',
 		tabActive: '#121212',
 		tabInactive: '#1F1F1F',
-		lineHighlightBackground: '#1F1F1F',
+		lineHighlightBackground: '#292929',
 		scrollbarThumb: '#000000',
 
 		behaviorPack: '#ff5252',

@@ -5,7 +5,8 @@ import { IPosition } from './ContextMenu'
 
 export async function showContextMenu(
 	event: MouseEvent | IPosition,
-	actions: (IActionConfig | { type: 'divider' } | null)[]
+	actions: (IActionConfig | { type: 'divider' } | null)[],
+	mayCloseOnClickOutside = true
 ) {
 	let filteredActions = <(IActionConfig | { type: 'divider' })[]>(
 		actions.filter((action) => action !== null)
@@ -27,5 +28,9 @@ export async function showContextMenu(
 	)
 
 	// This is necessary so an old click outside event doesn't close the new menu
-	setTimeout(() => app.contextMenu.show(event, actionManager), 10)
+	setTimeout(
+		() =>
+			app.contextMenu.show(event, actionManager, mayCloseOnClickOutside),
+		60
+	)
 }

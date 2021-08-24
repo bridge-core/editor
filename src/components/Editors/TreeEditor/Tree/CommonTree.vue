@@ -85,10 +85,18 @@ export default {
 		treeEditor: Object,
 	},
 	setup(props) {
-		const { onTouchStart, onTouchEnd } = useLongPress((event) => {
-			// if (pointerDevice.value === 'touch')
-			props.treeEditor.onContextMenu(event, props.tree)
-		})
+		const { onTouchStart, onTouchEnd } = useLongPress(
+			(event) => {
+				if (pointerDevice.value === 'touch')
+					props.treeEditor.onContextMenu(event, props.tree)
+			},
+			null,
+			() => {
+				props.treeEditor.parent.app.contextMenu.setMayCloseOnClickOutside(
+					true
+				)
+			}
+		)
 
 		return {
 			onTouchStart,

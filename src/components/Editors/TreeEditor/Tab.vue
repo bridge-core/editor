@@ -328,7 +328,7 @@ export default {
 
 <style>
 .tree-editor-selection {
-	border-radius: 2rem;
+	border-radius: 4px;
 	background: var(--v-lineHighlightBackground-base);
 }
 .editor-container {
