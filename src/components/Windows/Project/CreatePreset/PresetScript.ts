@@ -55,10 +55,11 @@ export async function runPresetScript(
 		)
 
 	const createdFiles: AnyFileHandle[] = []
+	const openFiles: AnyFileHandle[] = []
 	const createJSONFile = (
 		filePath: string,
 		data: any,
-		opts: IPresetFileOpts = { inject: [] }
+		opts: IPresetFileOpts = { inject: [], openFile: false }
 	) => {
 		if (typeof data !== 'string') data = JSON.stringify(data, null, '\t')
 		return createFile(filePath, data, opts)
@@ -66,7 +67,10 @@ export async function runPresetScript(
 	const createFile = async (
 		filePath: string,
 		data: FileSystemWriteChunkType,
-		{ inject = [] }: IPresetFileOpts = { inject: [] }
+		{ inject = [], openFile = false }: IPresetFileOpts = {
+			inject: [],
+			openFile: false,
+		}
 	) => {
 		// Permission not set yet, prompt user if necessary
 		if (
@@ -94,6 +98,7 @@ export async function runPresetScript(
 
 		const fileHandle = await fs.getFileHandle(filePath, true)
 		createdFiles.push(fileHandle)
+		if (openFile) openFiles.push(fileHandle)
 		fs.write(
 			fileHandle,
 			typeof data === 'string'
@@ -104,7 +109,10 @@ export async function runPresetScript(
 	const expandFile = async (
 		filePath: string,
 		data: any,
-		{ inject = [] }: IPresetFileOpts = { inject: [] }
+		{ inject = [], openFile = false }: IPresetFileOpts = {
+			inject: [],
+			openFile: false,
+		}
 	) => {
 		const fileHandle = await app.project.fileSystem.getFileHandle(
 			filePath,
@@ -144,6 +152,7 @@ export async function runPresetScript(
 		} catch {}
 
 		createdFiles.push(fileHandle)
+		if (openFile) openFiles.push(fileHandle)
 
 		if (typeof data === 'string') {
 			data = transformString(data, inject, models)
@@ -168,5 +177,8 @@ export async function runPresetScript(
 		createJSONFile,
 	})
 
-	return createdFiles
+	return {
+		createdFiles: createdFiles,
+		openFile: openFiles,
+	}
 }

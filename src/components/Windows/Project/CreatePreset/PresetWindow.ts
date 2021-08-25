@@ -50,6 +50,7 @@ export interface IPresetFieldOpts {
 
 export interface IPresetFileOpts {
 	inject: string[]
+	openFile?: boolean
 }
 
 export interface IPermissions {
@@ -311,34 +312,35 @@ export class CreatePresetWindow extends BaseWindow {
 			}
 		}
 
+		const openFiles: AnyFileHandle[] = []
 		for (const createFileOpts of createFiles) {
 			if (typeof createFileOpts === 'string') {
-				createdFiles.push(
-					...(await runPresetScript(
-						presetPath,
-						createFileOpts,
-						this.sidebar.currentState.models,
-						permissions
-					))
+				const scriptResult = await runPresetScript(
+					presetPath,
+					createFileOpts,
+					this.sidebar.currentState.models,
+					permissions
 				)
+				createdFiles.push(...scriptResult.createdFiles)
+				openFiles.push(...scriptResult.openFile)
 			} else {
-				createdFiles.push(
-					await createFile(
-						presetPath,
-						createFileOpts,
-						this.sidebar.currentState.models
-					)
+				const fileHandle = await createFile(
+					presetPath,
+					createFileOpts,
+					this.sidebar.currentState.models
 				)
+				createdFiles.push(fileHandle)
+				if (createFileOpts[2]?.openFile) openFiles.push(fileHandle)
 			}
 		}
 		for (const expandFileOpts of expandFiles) {
-			createdFiles.push(
-				await expandFile(
-					presetPath,
-					expandFileOpts,
-					this.sidebar.currentState.models
-				)
+			const fileHandle = await expandFile(
+				presetPath,
+				expandFileOpts,
+				this.sidebar.currentState.models
 			)
+			createdFiles.push(fileHandle)
+			if (expandFileOpts[2]?.openFile) openFiles.push(fileHandle)
 		}
 
 		// await Promise.all(promises)
@@ -353,11 +355,11 @@ export class CreatePresetWindow extends BaseWindow {
 			if (!filePath) continue
 
 			filePaths.push(filePath)
-
-			await app.project.openFile(fileHandle, {
-				selectTab: fileHandle === createdFiles[createdFiles.length - 1],
-				isTemporary: false,
-			})
+			if (openFiles.includes(fileHandle))
+				await app.project.openFile(fileHandle, {
+					selectTab: fileHandle === openFiles[openFiles.length - 1],
+					isTemporary: false,
+				})
 		}
 
 		await app.project.updateFiles(filePaths)
