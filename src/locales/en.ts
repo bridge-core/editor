@@ -368,6 +368,11 @@ export default {
 			description:
 				'Enables the GameTest related modules in the manifest and allows you to create GameTets scripts with auto-completions.',
 		},
+		experimentalMolangFeatures: {
+			name: 'Experimental Molang Features',
+			description:
+				'Enables auto-completions for experimental Molang queries.',
+		},
 	},
 	// Windows
 	windows: {
