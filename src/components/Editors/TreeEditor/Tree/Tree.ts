@@ -2,10 +2,11 @@ import { set } from '@vue/composition-api'
 import { v4 as uuid } from 'uuid'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'
+import { pointerDevice } from '/@/utils/pointerDevice'
 export type TPrimitiveTree = string | number | boolean | null
 export type TTree = TPrimitiveTree | Object | Array<unknown>
 
-export const treeElementHeight = 19
+export const treeElementHeight = pointerDevice.value === 'mouse' ? 19 : 26
 
 export abstract class Tree<T> {
 	public readonly uuid = uuid()

@@ -11,6 +11,7 @@
 				open: tree.isOpen,
 				'tree-editor-selection': tree.isSelected,
 			}"
+			:style="{ height: pointerDevice === 'touch' ? '26px' : null }"
 			@click.stop.prevent="onClickKey"
 			@contextmenu.prevent="treeEditor.onContextMenu($event, tree)"
 			tabindex="-1"
@@ -38,7 +39,13 @@
 				<span @dblclick="tree.toggleOpen()"> <slot /> </span>:</span
 			>
 			<!-- Spacer to make array objects easier to select -->
-			<span class="mx-2" v-else />
+			<span
+				:class="{
+					'mx-2': pointerDevice !== 'touch',
+					'mx-6': pointerDevice === 'touch',
+				}"
+				v-else
+			/>
 
 			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">
 				{{ openingBracket }}
@@ -101,6 +108,7 @@ export default {
 		return {
 			onTouchStart,
 			onTouchEnd,
+			pointerDevice,
 		}
 	},
 	computed: {

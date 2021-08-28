@@ -1,5 +1,11 @@
 <template>
-	<div tabindex="-1" :style="tree.styles">
+	<div
+		tabindex="-1"
+		:style="{
+			...tree.styles,
+			height: pointerDevice === 'touch' ? '26px' : null,
+		}"
+	>
 		<div
 			style="display: inline-block"
 			:class="{
@@ -102,6 +108,7 @@ export default {
 			onTouchEnd,
 			onKeyTouchStart,
 			onKeyTouchEnd,
+			pointerDevice,
 		}
 	},
 	computed: {
