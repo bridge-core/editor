@@ -32,12 +32,15 @@ export abstract class Tree<T> {
 	getParent() {
 		return this.parent
 	}
+	setParent(parent: ObjectTree | ArrayTree | null) {
+		this.parent = parent
+	}
 	get path(): (string | number)[] {
 		if (!this.parent) return []
 		else return [...this.parent.path, this.key]
 	}
 
-	protected findParentIndex() {
+	findParentIndex() {
 		if (!this.parent)
 			throw new Error(`Cannot findParentIndex for tree without parent`)
 

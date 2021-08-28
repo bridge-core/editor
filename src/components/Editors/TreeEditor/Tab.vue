@@ -171,9 +171,11 @@ export default {
 				if (!selection.getTree().parent) return
 
 				let current
-				if (selection instanceof TreeValueSelection)
-					current = selection.getTree().value
-				else current = selection.getTree().key
+				try {
+					if (selection instanceof TreeValueSelection)
+						current = selection.getTree().value
+					else current = selection.getTree().key
+				} catch {}
 
 				if (first === undefined) {
 					first = current
