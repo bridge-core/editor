@@ -8,6 +8,7 @@
 			'align-center': true,
 			inactive: !isActive,
 		}"
+		style="position: relative"
 		ref="tabElement"
 		@mousedown.left="hoveringBtn ? null : tab.select()"
 		@mousedown.middle.prevent
@@ -43,9 +44,13 @@
 			</v-icon>
 		</v-badge>
 
+		<!-- style="position: relative; top: -4px" -->
 		<span :style="{ 'font-style': tab.isTemporary ? 'italic' : null }">
 			{{ tabName }}
 		</span>
+		<!-- <span style="position: absolute; top: 22px; left: 32px; font-size: 12px"
+			>entities/</span
+		> -->
 
 		<v-btn
 			@click.stop="tab.close()"
