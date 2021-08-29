@@ -16,7 +16,7 @@
 		</template>
 		<template #actions>
 			<v-spacer />
-			<v-btn @click="onCancel">
+			<v-btn color="sidebarSelection" @click="onCancel">
 				<v-icon class="mr-1">mdi-close</v-icon>
 				<span>{{ t($data.cancelText) }}</span>
 			</v-btn>
