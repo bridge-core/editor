@@ -52,6 +52,7 @@
 					>
 						<v-divider
 							v-if="isSidebarContentVisible && !isSidebarRight"
+							style="z-index: 1"
 							vertical
 						/>
 
