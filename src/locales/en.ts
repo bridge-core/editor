@@ -684,6 +684,11 @@ export default {
 					name: 'Select Root Folder',
 					description: 'Choose the main folder bridge. operates on',
 				},
+				openProjectChooserOnAppStartup: {
+					name: 'Open Project Chooser',
+					description:
+						'Automatically open the project chooser upon starting bridge.',
+				},
 			},
 			developer: {
 				name: 'Developer',

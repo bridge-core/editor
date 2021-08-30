@@ -13,7 +13,6 @@ import { setupSidebar } from '/@/components/Sidebar/setup'
 import { TaskManager } from '/@/components/TaskManager/TaskManager'
 import { setupDefaultMenus } from '/@/components/Toolbar/setupDefaults'
 import { Locales } from '/@/utils/locales'
-import { createNotification } from '/@/components/Notifications/create'
 import { PackType } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
@@ -140,6 +139,16 @@ export class App {
 				}
 			})
 		}
+
+		// Once the settings are loaded...
+		SettingsWindow.loadedSettings.once((state) => {
+			// ...take a look at whether we are supposed to open the project chooser...
+			if (state?.general?.openProjectChooserOnAppStartup ?? false)
+				this.projectManager.projectReady.once(() =>
+					// ...then open it if necessary
+					this.windows.projectChooser.open()
+				)
+		})
 	}
 
 	static openUrl(url: string, id?: string) {

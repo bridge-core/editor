@@ -290,6 +290,17 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'general',
+			name:
+				'windows.settings.general.openProjectChooserOnAppStartup.name',
+			description:
+				'windows.settings.general.openProjectChooserOnAppStartup.description',
+			key: 'openProjectChooserOnAppStartup',
+			default: false,
+		})
+	)
 	if (!isUsingFileSystemPolyfill) {
 		settings.addControl(
 			new Button({
