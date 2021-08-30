@@ -71,7 +71,9 @@ export class Command {
 
 		const commands = this.template?.(
 			args.map((arg) => castType(arg)),
-			{}
+			{
+				compilerMode: this.mode,
+			}
 		)
 		let processedCommands: string[] = []
 		if (typeof commands === 'string')
