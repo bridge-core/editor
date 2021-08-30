@@ -93,7 +93,11 @@ export function createCustomComponentPlugin({
 			},
 			async require(filePath, fileContent) {
 				if (isPlayerFile(filePath, getAliases))
-					return ['BP/components/item/**/*.js', 'BP/items/**/*.json']
+					return [
+						'BP/components/item/**/*.js',
+						'BP/components/item/**/*.ts',
+						'BP/items/**/*.json',
+					]
 
 				if (filePath.startsWith(`BP/${folder}/`)) {
 					const components = findCustomComponents(
