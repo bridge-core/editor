@@ -23,6 +23,7 @@ import { IActionConfig } from '../../Actions/SimpleAction'
 import { viewDocumentation } from '../../Documentation/view'
 import { platformRedoBinding } from '/@/utils/constants'
 import { getLatestFormatVersion } from '../../Data/FormatVersions'
+import { filterDuplicates } from './CompletionItems/filterDuplicates'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
@@ -114,32 +115,36 @@ export class TreeEditor {
 					.flat()
 		}
 
-		this.propertySuggestions = suggestions
-			.filter(
-				(suggestion) =>
-					(suggestion.type === 'object' ||
-						suggestion.type === 'array') &&
-					!(<any>(tree ?? this.tree)).children.find((test: any) => {
-						if (test.type === 'array') return false
-						return test[0] === suggestion.value
-					})
-			)
-			.concat(
-				this.parent.app.project.snippetLoader
-					.getSnippetsFor(
-						currentFormatVersion,
-						this.parent.getFileType(),
-						this.selections.map((sel) => sel.getLocation())
-					)
-					.map(
-						(snippet) =>
-							<const>{
-								type: 'snippet',
-								label: snippet.displayData.name,
-								value: snippet.insertData,
+		this.propertySuggestions = filterDuplicates(
+			suggestions
+				.filter(
+					(suggestion) =>
+						(suggestion.type === 'object' ||
+							suggestion.type === 'array') &&
+						!(<any>(tree ?? this.tree)).children.find(
+							(test: any) => {
+								if (test.type === 'array') return false
+								return test[0] === suggestion.value
 							}
-					)
-			)
+						)
+				)
+				.concat(
+					this.parent.app.project.snippetLoader
+						.getSnippetsFor(
+							currentFormatVersion,
+							this.parent.getFileType(),
+							this.selections.map((sel) => sel.getLocation())
+						)
+						.map(
+							(snippet) =>
+								<const>{
+									type: 'snippet',
+									label: snippet.displayData.name,
+									value: snippet.insertData,
+								}
+						)
+				)
+		)
 		// console.log(this.propertySuggestions)
 
 		// Only suggest values for empty objects, arrays or "empty" primitive trees
@@ -149,10 +154,12 @@ export class TreeEditor {
 			tree instanceof ArrayTree ||
 			(tree instanceof PrimitiveTree && tree.isEmpty())
 		) {
-			this.valueSuggestions = suggestions.filter(
-				(suggestion) =>
-					suggestion.type === 'value' ||
-					suggestion.type === 'valueArray'
+			this.valueSuggestions = filterDuplicates(
+				suggestions.filter(
+					(suggestion) =>
+						suggestion.type === 'value' ||
+						suggestion.type === 'valueArray'
+				)
 			)
 		}
 	}, 50)
