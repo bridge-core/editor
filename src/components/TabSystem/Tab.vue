@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="px-3 py-2"
+		class="px-3 py-2 clickable"
 		:class="{
 			selected: tab.isSelected,
 			'default-tab-style': true,
@@ -44,28 +44,40 @@
 			</v-icon>
 		</v-badge>
 
-		<span
-			:style="{
-				'font-style': tab.isTemporary ? 'italic' : null,
-				position: tab.folderName ? 'relative' : null,
-				top: tab.folderName ? '-4px' : null,
-			}"
+		<v-tooltip
+			color="tooltip"
+			open-delay="1500"
+			:disabled="pointerDevice === 'touch'"
+			bottom
 		>
-			{{ tabName }}
-		</span>
-		<span
-			v-if="tab.folderName"
-			style="
-				position: absolute;
-				top: 22px;
-				left: 32px;
-				font-size: 12px;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				width: calc(100% - 48px);
-			"
-			>{{ tab.folderName }}/</span
-		>
+			<template v-slot:activator="{ on }">
+				<span v-on="on">
+					<span
+						:style="{
+							'font-style': tab.isTemporary ? 'italic' : null,
+							position: tab.folderName ? 'relative' : null,
+							top: tab.folderName ? '-4px' : null,
+						}"
+					>
+						{{ tabName }}
+					</span>
+					<span
+						v-if="tab.folderName"
+						style="
+							position: absolute;
+							top: 22px;
+							left: 32px;
+							font-size: 12px;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							width: calc(100% - 48px);
+						"
+						>{{ tab.folderName }}/</span
+					>
+				</span>
+			</template>
+			<span>{{ tab.getProjectPath() }}</span>
+		</v-tooltip>
 
 		<v-btn
 			@click.stop="tab.close()"
