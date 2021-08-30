@@ -20,21 +20,10 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	public readonly onClose = new EventDispatcher<void>()
 
 	protected projectPath?: string
+	protected folderName: string | null = null
 	protected actions: SimpleAction[] = []
 	protected isActive = false
 	protected isLoading = true
-
-	setIsUnsaved(val: boolean) {
-		this._isUnsaved = val
-		this.isTemporary = false
-	}
-	get isUnsaved() {
-		return this._isUnsaved
-	}
-
-	get isSharingScreen() {
-		return this.parent.isSharingScreen
-	}
 
 	static is(fileHandle: AnyFileHandle) {
 		return false
@@ -50,13 +39,27 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		this.isLoading = false
 	}
 
+	setIsUnsaved(val: boolean) {
+		this._isUnsaved = val
+		this.isTemporary = false
+	}
+	get isUnsaved() {
+		return this._isUnsaved
+	}
+
 	updateParent(parent: TabSystem) {
 		this.parent = parent
 	}
-
-	abstract get name(): string
 	get tabSystem() {
 		return this.parent
+	}
+	get isSharingScreen() {
+		return this.parent.isSharingScreen
+	}
+
+	abstract get name(): string
+	setFolderName(folderName: string | null) {
+		this.folderName = folderName
 	}
 
 	/**

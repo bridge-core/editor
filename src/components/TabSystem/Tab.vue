@@ -44,13 +44,28 @@
 			</v-icon>
 		</v-badge>
 
-		<!-- style="position: relative; top: -4px" -->
-		<span :style="{ 'font-style': tab.isTemporary ? 'italic' : null }">
+		<span
+			:style="{
+				'font-style': tab.isTemporary ? 'italic' : null,
+				position: tab.folderName ? 'relative' : null,
+				top: tab.folderName ? '-4px' : null,
+			}"
+		>
 			{{ tabName }}
 		</span>
-		<!-- <span style="position: absolute; top: 22px; left: 32px; font-size: 12px"
-			>entities/</span
-		> -->
+		<span
+			v-if="tab.folderName"
+			style="
+				position: absolute;
+				top: 22px;
+				left: 32px;
+				font-size: 12px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				width: calc(100% - 48px);
+			"
+			>{{ tab.folderName }}/</span
+		>
 
 		<v-btn
 			@click.stop="tab.close()"

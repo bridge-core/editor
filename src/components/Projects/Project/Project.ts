@@ -23,6 +23,7 @@ import { markRaw, reactive, set } from '@vue/composition-api'
 import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
+import { getFolderDifference } from '/@/components/TabSystem/Util/FolderDifference'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -198,6 +199,30 @@ export abstract class Project {
 			}
 		}
 		this.tabSystem?.add(tab, selectTab)
+	}
+	updateTabFolders() {
+		const nameMap: Record<string, Tab[]> = {}
+		for (const tabSystem of this.tabSystems) {
+			tabSystem.tabs.forEach((tab) => {
+				const name = tab.name
+
+				if (!nameMap[name]) nameMap[name] = []
+				nameMap[name].push(tab)
+			})
+		}
+
+		for (const name in nameMap) {
+			const currentTabs = nameMap[name]
+			if (currentTabs.length === 1) currentTabs[0].setFolderName(null)
+			else {
+				const folderDifference = getFolderDifference(
+					currentTabs.map((tab) => tab.getProjectPath())
+				)
+				currentTabs.forEach((tab, i) =>
+					tab.setFolderName(folderDifference[i])
+				)
+			}
+		}
 	}
 
 	absolutePath(filePath: string) {

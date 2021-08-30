@@ -141,6 +141,8 @@ export class TabSystem extends MonacoHolder {
 
 		if (selectTab) tab.select()
 
+		this.project.updateTabFolders()
+
 		return tab
 	}
 	remove(tab: Tab, destroyEditor = true, selectNewTab = true) {
@@ -154,6 +156,8 @@ export class TabSystem extends MonacoHolder {
 		if (selectNewTab && tab === this._selectedTab)
 			this.select(this.tabs[tabIndex === 0 ? 0 : tabIndex - 1])
 		if (!tab.isForeignFile) this.openedFiles.remove(tab.getPath())
+
+		this.project.updateTabFolders()
 
 		return tab
 	}
