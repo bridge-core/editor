@@ -70,7 +70,6 @@ export default {
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 0;
-	background-color: rgba(0, 0, 0, 0.4);
 }
 
 .inactive-action-bar {
