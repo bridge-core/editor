@@ -37,6 +37,7 @@
 				@change="onAddKey"
 				@keydown.enter="mayTrigger"
 				:items="propertySuggestions"
+				:item-value="(item) => item"
 				:menu-props="{
 					maxHeight: 124,
 					top: false,
@@ -71,6 +72,7 @@
 				@keydown.enter="mayTrigger"
 				:disabled="isGlobal"
 				:items="valueSuggestions"
+				:item-value="(item) => item"
 				:menu-props="{
 					maxHeight: 124,
 					top: false,
