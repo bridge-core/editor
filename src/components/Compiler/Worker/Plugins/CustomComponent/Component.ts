@@ -150,7 +150,9 @@ export class Component {
 		// Execute template function with context for current fileType
 		if (this.fileType === 'entity') {
 			this.template(componentArgs ?? {}, {
+				// @deprecated remove with next major version
 				mode: this.mode,
+				compilerMode: this.mode,
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
@@ -160,7 +162,9 @@ export class Component {
 			})
 		} else if (this.fileType === 'item') {
 			this.template(componentArgs ?? {}, {
+				// @deprecated remove with next major version
 				mode: this.mode,
+				compilerMode: this.mode,
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
@@ -177,7 +181,9 @@ export class Component {
 			})
 		} else if (this.fileType === 'block') {
 			this.template(componentArgs ?? {}, {
+				// @deprecated remove with next major version
 				mode: this.mode,
+				compilerMode: this.mode,
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
