@@ -117,9 +117,10 @@ export class CreatePresetWindow extends BaseWindow {
 			app.projectConfig.get().experimentalGameplay ?? {}
 		const requiredExperimentalFeatures = requires.experimentalGameplay ?? []
 		if (
-			requiredExperimentalFeatures.some(
-				(experimentalFeature) =>
-					!experimentalGameplay[experimentalFeature]
+			requiredExperimentalFeatures.some((experimentalFeature) =>
+				experimentalFeature.startsWith('!')
+					? experimentalGameplay[experimentalFeature.replace('!', '')]
+					: !experimentalGameplay[experimentalFeature]
 			)
 		)
 			return
