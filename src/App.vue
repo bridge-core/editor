@@ -66,6 +66,7 @@
 								tabSystems[0].shouldRender &&
 								tabSystems[1].shouldRender
 							"
+							style="z-index: 1"
 							:vertical="!$vuetify.breakpoint.mobile"
 						/>
 						<TabSystem
