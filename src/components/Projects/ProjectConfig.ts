@@ -17,9 +17,17 @@ export interface IConfigJson {
 	/**
 	 * Creator of the project
 	 *
-	 * @example "solvedDev" / "Joel ant 05"
+	 * @deprecated
+	 * @example "solvedDev"
 	 */
-	authors: string
+	author: string
+
+	/**
+	 * Creators of the project
+	 *
+	 * @example ["solvedDev", "Joel ant 05"]
+	 */
+	authors: string[]
 
 	/**
 	 * The Minecraft version this project targets
@@ -139,6 +147,7 @@ export class ProjectConfig {
 				namespace: prefix,
 				experimentalGameplay,
 				...other,
+				authors: other.author ? [other.author] : ['Unknown'],
 				packs: {
 					behaviorPack: './BP',
 					resourcePack: './RP',
@@ -162,6 +171,8 @@ export class ProjectConfig {
 		} catch {
 			this.data = {}
 		}
+
+		let updatedConfig = false
 
 		// Running in main thread, so we can use the App object
 		if (this.project && this.data.capabilities) {
@@ -187,8 +198,18 @@ export class ProjectConfig {
 			}
 			this.data.experimentalGameplay = experimentalGameplay
 			this.data.capabilities = undefined
-			await this.fileSystem.writeJSON('config.json', this.data, true)
+			updatedConfig = true
 		}
+
+		// Support reading from old "author" field
+		if (this.data.author && !this.data.authors) {
+			this.data.authors = [this.data.author]
+			this.data.author = undefined
+			updatedConfig = true
+		}
+
+		if (updatedConfig)
+			await this.fileSystem.writeJSON('config.json', this.data, true)
 	}
 
 	async refreshConfig() {
