@@ -99,23 +99,33 @@ export class CommandData extends Signal<void> {
 	protected async getSchema(
 		ignoreCustomCommands = false
 	): Promise<ICommand[]> {
-		const projectTargetVersion = await App.getApp().then(
-			(app) => app.project.config.get().targetVersion
-		)
+		const app = await App.getApp()
+		const projectTargetVersion = app.project.config.get().targetVersion
+		const expGameplay = app.project.config.get().experimentalGameplay
 
 		if (!this._data)
 			throw new Error(`Acessing commandData before it was loaded.`)
 
-		const validEntries = this._data.vanilla.filter(
-			({ targetVersion }: any) =>
-				!projectTargetVersion ||
-				!targetVersion ||
-				compare(
-					projectTargetVersion,
-					targetVersion[1],
-					targetVersion[0]
-				)
-		)
+		const validEntries = this._data.vanilla
+			.filter(
+				({ targetVersion }: any) =>
+					!projectTargetVersion ||
+					!targetVersion ||
+					compare(
+						projectTargetVersion,
+						targetVersion[1],
+						targetVersion[0]
+					)
+			)
+			.filter(
+				({ experimentalGameplay }: any) =>
+					!experimentalGameplay ||
+					!expGameplay ||
+					experimentalGameplay.some(
+						(experimentalFeature: string) =>
+							expGameplay[experimentalFeature]
+					)
+			)
 
 		return validEntries
 			.map((entry: any) => entry.commands)
