@@ -373,6 +373,11 @@ export default {
 			description:
 				'Enables auto-completions for experimental Molang queries.',
 		},
+		educationEdition: {
+			name: 'Enable Education Edition',
+			description:
+				'Enables auto-completions for education features such as material reducer recipes.',
+		},
 	},
 	// Windows
 	windows: {
@@ -401,8 +406,6 @@ export default {
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',
 			projectTargetVersion: 'Project Target Version',
-			scripting: 'Enable Scripting API',
-			gameTest: 'Enable GameTest Framework',
 			rpAsBpDependency:
 				'Register resource pack as behavior pack dependency',
 			useLangForManifest:
