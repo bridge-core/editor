@@ -127,6 +127,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	protected async toOtherTabSystem(updateParentTabs = true) {
 		const app = await App.getApp()
 		const tabSystems = app.projectManager.currentProject?.tabSystems!
+		const wasSelected = this.isSelected
 
 		const from =
 			tabSystems[0] === this.parent ? tabSystems[0] : tabSystems[1]
@@ -143,9 +144,9 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 				await from.openedFiles.remove(this.getPath())
 			}
 
-			to.select(this)
+			if (wasSelected) await from.select(from.tabs[0])
 
-			if (this.isSelected) from.select(from.tabs[0])
+			await to.select(this)
 		}
 	}
 
