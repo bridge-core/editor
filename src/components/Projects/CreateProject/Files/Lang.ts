@@ -12,12 +12,7 @@ export class CreateLang extends CreateFile {
 	}
 
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
-		if (
-			!(
-				(this.packPath == 'BP' || this.packPath == 'SP') &&
-				createOptions.useLangForManifest
-			)
-		) {
+		if (!(this.packPath === 'BP' && createOptions.useLangForManifest)) {
 			await fs.mkdir(`${this.packPath}/texts`)
 			await fs.writeFile(
 				`${this.packPath}/texts/en_US.lang`,
