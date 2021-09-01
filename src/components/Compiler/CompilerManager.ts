@@ -150,7 +150,11 @@ export class CompilerManager extends Signal<void> {
 			icon: 'mdi-cog',
 			name: 'sidebar.compiler.default.name',
 			description: 'sidebar.compiler.default.description',
-			onTrigger: () => this.start('default', 'build'),
+			onTrigger: async () => {
+				this.project.packIndexer.deactivate()
+				await this.project.packIndexer.activate(true)
+				await this.start('default', 'build')
+			},
 		})
 
 		for await (const entry of configDir.values()) {
@@ -173,7 +177,11 @@ export class CompilerManager extends Signal<void> {
 				icon: config.icon,
 				name: config.name,
 				description: config.description,
-				onTrigger: () => this.start(entry.name, 'build'),
+				onTrigger: async () => {
+					this.project.packIndexer.deactivate()
+					await this.project.packIndexer.activate(true)
+					await this.start(entry.name, 'build')
+				},
 			})
 		}
 	}
