@@ -213,11 +213,14 @@ export class ProjectConfig {
 	}
 
 	async refreshConfig() {
+		// Update this.data from config on disk
 		try {
 			this.data = await this.fileSystem.readJSON(`config.json`)
 		} catch {
 			this.data = {}
 		}
+		// Update values stored in Requires with latest config data
+		await this.project?.app.requires.update()
 	}
 
 	get() {

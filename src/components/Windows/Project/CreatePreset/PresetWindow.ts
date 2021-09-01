@@ -16,6 +16,7 @@ import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { PresetItem } from './PresetItem'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
+import { IRequirements } from '/@/components/Data/Requires'
 
 export interface IPresetManifest {
 	name: string
@@ -28,11 +29,7 @@ export interface IPresetManifest {
 	fields: [string, string, IPresetFieldOpts][]
 	createFiles?: (string | TCreateFile)[]
 	expandFiles?: TExpandFile[]
-	requires: {
-		targetVersion?: [CompareOperator, string]
-		packTypes?: TPackTypeId[]
-		experimentalGameplay?: string[]
-	}
+	requires: IRequirements
 }
 export interface IPresetFieldOpts {
 	// All types
@@ -108,36 +105,7 @@ export class CreatePresetWindow extends BaseWindow {
 				`Error loading ${manifestPath}: Missing preset category`
 			)
 
-		const requires = manifest.requires ?? {}
-		// Check that project has packType preset needs
-		if (!app.project?.hasPacks(requires.packTypes ?? [])) return
-
-		// Check that the project has the required modules
-		const experimentalGameplay =
-			app.projectConfig.get().experimentalGameplay ?? {}
-		const requiredExperimentalFeatures = requires.experimentalGameplay ?? []
-		if (
-			requiredExperimentalFeatures.some((experimentalFeature) =>
-				experimentalFeature.startsWith('!')
-					? experimentalGameplay[experimentalFeature.replace('!', '')]
-					: !experimentalGameplay[experimentalFeature]
-			)
-		)
-			return
-
-		// Load current project target version
-		const projectTargetVersion =
-			app.projectConfig.get().targetVersion ??
-			(await getLatestFormatVersion())
-		// Check that preset is supported on target version
-		if (
-			requires.targetVersion &&
-			!compare(
-				projectTargetVersion,
-				requires.targetVersion[1],
-				requires.targetVersion[0]
-			)
-		)
+		if (!(await app.requires.meetsRequirements(manifest.requires ?? {})))
 			return
 
 		let category = <SidebarCategory | undefined>(

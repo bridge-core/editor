@@ -100,32 +100,19 @@ export class CommandData extends Signal<void> {
 		ignoreCustomCommands = false
 	): Promise<ICommand[]> {
 		const app = await App.getApp()
-		const projectTargetVersion = app.project.config.get().targetVersion
-		const expGameplay = app.project.config.get().experimentalGameplay
 
 		if (!this._data)
 			throw new Error(`Acessing commandData before it was loaded.`)
 
-		const validEntries = this._data.vanilla
-			.filter(
-				({ targetVersion }: any) =>
-					!projectTargetVersion ||
-					!targetVersion ||
-					compare(
-						projectTargetVersion,
-						targetVersion[1],
-						targetVersion[0]
-					)
+		const validEntries: any[] = []
+		for await (const entry of this._data.vanilla) {
+			if (
+				entry.requires &&
+				(await app.requires.meetsRequirements(entry.requires))
 			)
-			.filter(
-				({ experimentalGameplay }: any) =>
-					!experimentalGameplay ||
-					!expGameplay ||
-					experimentalGameplay.some(
-						(experimentalFeature: string) =>
-							expGameplay[experimentalFeature]
-					)
-			)
+				validEntries.push(entry)
+			else if (!entry.requires) validEntries.push(entry)
+		}
 
 		return validEntries
 			.map((entry: any) => entry.commands)
