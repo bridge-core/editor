@@ -159,6 +159,10 @@ export class Extension {
 		await this.fileSystem.writeFile('.installed', '')
 	}
 
+	async resetInstalled() {
+		await this.fileSystem.unlink('.installed')
+	}
+
 	deactivate() {
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.isLoaded = false

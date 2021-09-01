@@ -154,6 +154,7 @@ export class ExtensionViewer {
 		if (notifyParent) this.parent.updateInstalled(this)
 
 		this.connected.deactivate()
+		await this.connected.resetInstalled()
 		await this.downloadExtension(this.connected.isGlobal)
 	}
 	delete() {
