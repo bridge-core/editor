@@ -70,10 +70,20 @@
 							font-size: 12px;
 							overflow: hidden;
 							text-overflow: ellipsis;
-							width: calc(100% - 48px);
 						"
-						>{{ tab.folderName }}/</span
+						:style="{
+							left:
+								tab.isSelected && pointerDevice === 'touch'
+									? '60px'
+									: '32px',
+							width:
+								tab.isSelected && pointerDevice === 'touch'
+									? 'calc(100% - 76px)'
+									: 'calc(100% - 48px)',
+						}"
 					>
+						{{ tab.folderName }}/
+					</span>
 				</span>
 			</template>
 			<span>{{ tab.projectPath }}</span>
