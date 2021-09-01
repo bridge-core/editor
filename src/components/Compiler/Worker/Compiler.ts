@@ -86,6 +86,7 @@ export class Compiler {
 		this.parent.progress.setTotal(5)
 
 		await this.loadSavedFiles()
+		if (this.parent.getOptions().mode === 'build') this.files = new Map()
 		await this.runSimpleHook('buildStart')
 
 		// Add files that we are supposed to include
