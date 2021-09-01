@@ -109,6 +109,9 @@ export function createCustomComponentPlugin({
 						(component) => `${fileType}Component#${component[0]}`
 					)
 				}
+				// else if (filePath.startsWith('RP/entity/')) {
+				// 	return ['BP/components/entity/**/*.js']
+				// }
 			},
 			async transform(filePath, fileContent, dependencies = {}) {
 				if (isPlayerFile(filePath, getAliases)) {

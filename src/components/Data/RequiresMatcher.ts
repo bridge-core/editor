@@ -9,38 +9,35 @@ export interface IRequirements {
 	packTypes?: TPackTypeId[]
 }
 
-export class Requires {
+export class RequiresMatcher {
 	protected experimentalGameplay: Record<string, boolean> = {}
 	protected projectTargetVersion: string = ''
 
-	constructor() {}
+	constructor(protected requires?: IRequirements) {}
 
-	async update() {
+	async isValid() {
+		if (!this.requires) return true
+
 		const app = await App.getApp()
-
 		const config = app.project.config.get()
 
 		this.experimentalGameplay = config.experimentalGameplay ?? {}
 		this.projectTargetVersion =
 			config.targetVersion ?? (await getLatestFormatVersion())
-	}
 
-	async meetsRequirements(requires: IRequirements) {
-		if (!requires) return true
-
-		const app = await App.getApp()
-
-		const matchesPackTypes = app.project.hasPacks(requires.packTypes ?? [])
+		const matchesPackTypes = app.project.hasPacks(
+			this.requires.packTypes ?? []
+		)
 		const matchesTargetVersion =
-			!requires.targetVersion ||
+			!this.requires.targetVersion ||
 			compare(
 				this.projectTargetVersion,
-				requires.targetVersion[1],
-				requires.targetVersion[0]
+				this.requires.targetVersion[1],
+				this.requires.targetVersion[0]
 			)
 		const matchesExperimentalGameplay =
-			!requires.experimentalGameplay ||
-			requires.experimentalGameplay.some((experimentalFeature) =>
+			!this.requires.experimentalGameplay ||
+			this.requires.experimentalGameplay.some((experimentalFeature) =>
 				experimentalFeature.startsWith('!')
 					? !this.experimentalGameplay[
 							experimentalFeature.replace('!', '')

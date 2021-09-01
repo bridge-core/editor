@@ -16,7 +16,7 @@ import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { PresetItem } from './PresetItem'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
-import { IRequirements } from '/@/components/Data/Requires'
+import { IRequirements, RequiresMatcher } from '../../../Data/RequiresMatcher'
 
 export interface IPresetManifest {
 	name: string
@@ -105,8 +105,8 @@ export class CreatePresetWindow extends BaseWindow {
 				`Error loading ${manifestPath}: Missing preset category`
 			)
 
-		if (!(await app.requires.meetsRequirements(manifest.requires ?? {})))
-			return
+		const requiresMatcher = new RequiresMatcher(manifest.requires)
+		if (!(await requiresMatcher.isValid())) return
 
 		let category = <SidebarCategory | undefined>(
 			this.sidebar.rawElements.find(

@@ -1,7 +1,6 @@
-import { FileSystem } from '../FileSystem/FileSystem'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { IExperimentalToggle } from './CreateProject/CreateProject'
 import type { Project } from './Project/Project'
-import { App } from '/@/App'
 
 export interface IConfigJson {
 	/**
@@ -219,8 +218,6 @@ export class ProjectConfig {
 		} catch {
 			this.data = {}
 		}
-		// Update values stored in Requires with latest config data
-		await this.project?.app.requires.update()
 	}
 
 	get() {

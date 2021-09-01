@@ -39,7 +39,6 @@ import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
 import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { PersistentNotification } from '/@/components/Notifications/PersistentNotification'
-import { Requires } from '/@/components/Data/Requires'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -77,7 +76,6 @@ export class App {
 	public readonly configuredJsonLanguage = markRaw(
 		new ConfiguredJsonLanguage()
 	)
-	public readonly requires = new Requires()
 
 	public readonly mobile: Mobile
 

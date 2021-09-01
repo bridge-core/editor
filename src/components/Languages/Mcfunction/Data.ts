@@ -3,6 +3,7 @@ import { compare } from 'compare-versions'
 import { MoLang } from 'molang'
 import { languages } from 'monaco-editor'
 import { generateCommandSchemas } from '../../Compiler/Worker/Plugins/CustomCommands/generateSchemas'
+import { RequiresMatcher } from '../../Data/RequiresMatcher'
 import { RefSchema } from '../../JSONSchema/Schema/Ref'
 import { strMatchArray } from './strMatch'
 import { App } from '/@/App'
@@ -106,11 +107,8 @@ export class CommandData extends Signal<void> {
 
 		const validEntries: any[] = []
 		for await (const entry of this._data.vanilla) {
-			if (
-				entry.requires &&
-				(await app.requires.meetsRequirements(entry.requires))
-			)
-				validEntries.push(entry)
+			const requiresMatcher = new RequiresMatcher(entry.requires)
+			if (await requiresMatcher.isValid()) validEntries.push(entry)
 			else if (!entry.requires) validEntries.push(entry)
 		}
 
