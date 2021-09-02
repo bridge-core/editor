@@ -10,6 +10,8 @@ import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
 import { markRaw } from '@vue/composition-api'
 import { debounce } from 'lodash-es'
 import { platform } from '/@/utils/os'
+import { showContextMenu } from '../ContextMenu/showContextMenu'
+import { TextTab } from '../Editors/Text/TextTab'
 
 languages.typescript.javascriptDefaults.setCompilerOptions({
 	target: languages.typescript.ScriptTarget.ESNext,
@@ -36,7 +38,6 @@ export class MonacoHolder extends Signal<void> {
 
 	getMobileOptions(isMobile: boolean) {
 		return <const>{
-			contextmenu: !isMobile,
 			lineNumbers: isMobile ? 'off' : 'on',
 			minimap: { enabled: !isMobile },
 			tabSize: isMobile ? 2 : 4,
@@ -67,6 +68,7 @@ export class MonacoHolder extends Signal<void> {
 					<string>settingsState?.appearance?.editorFont ??
 					(platform() === 'darwin' ? 'Menlo' : 'Consolas'),
 				...this.getMobileOptions(this._app.mobile.isCurrentDevice()),
+				contextmenu: false,
 				// fontFamily: this.fontFamily,
 				wordWrap: settingsState?.editor?.wordWrap ? 'bounded' : 'off',
 				wordWrapColumn: Number(
@@ -115,34 +117,6 @@ export class MonacoHolder extends Signal<void> {
 			run(...args: any[]) {
 				// @ts-ignore
 				this._run(...args)
-			},
-		})
-		this.monacoEditor.addAction({
-			id: 'documentationLookup',
-			label: this._app.locales.translate(
-				'actions.documentationLookup.name'
-			),
-			contextMenuGroupId: 'navigation',
-			run: (editor: editor.IStandaloneCodeEditor) => {
-				const currentModel = editor.getModel()
-				const selection = editor.getSelection()
-				if (!currentModel || !selection) return
-
-				const filePath = this._app.tabSystem?.selectedTab?.getProjectPath()
-				if (!filePath) return
-
-				let word: string | undefined
-				if (filePath.endsWith('.json'))
-					word = getJsonWordAtPosition(
-						currentModel,
-						selection.getPosition()
-					).word
-				else
-					word = currentModel.getWordAtPosition(
-						selection.getPosition()
-					)?.word
-
-				viewDocumentation(filePath, word)
 			},
 		})
 
@@ -206,5 +180,106 @@ export class MonacoHolder extends Signal<void> {
 		this.disposables.forEach((d) => d.dispose())
 		this.disposables = []
 		this._monacoEditor = undefined
+	}
+
+	showCustomMonacoContextMenu(event: MouseEvent, tab: TextTab) {
+		showContextMenu(event, [
+			{
+				name: 'actions.documentationLookup.name',
+				icon: 'mdi-book-open-outline',
+				onTrigger: () => {
+					const currentModel = this._monacoEditor?.getModel()
+					const selection = this._monacoEditor?.getSelection()
+					if (!currentModel || !selection) return
+
+					const filePath = this._app.tabSystem?.selectedTab?.getProjectPath()
+					if (!filePath) return
+
+					let word: string | undefined
+					if (filePath.endsWith('.json'))
+						word = getJsonWordAtPosition(
+							currentModel,
+							selection.getPosition()
+						).word
+					else
+						word = currentModel.getWordAtPosition(
+							selection.getPosition()
+						)?.word
+
+					viewDocumentation(filePath, word)
+				},
+			},
+			{
+				name: 'actions.goToDefinition.name',
+				icon: 'mdi-magnify',
+				onTrigger: () => {
+					this._monacoEditor?.trigger(
+						'contextmenu',
+						'editor.action.revealDefinition',
+						null
+					)
+				},
+			},
+			{
+				name: 'actions.goToSymbol.name',
+				icon: 'mdi-at',
+				onTrigger: () => {
+					setTimeout(() => {
+						this._monacoEditor?.focus()
+						this._monacoEditor?.trigger(
+							'contextmenu',
+							'editor.action.quickOutline',
+							null
+						)
+					})
+				},
+			},
+			{ type: 'divider' },
+			{
+				name: 'actions.changeAllOccurrences.name',
+				icon: 'mdi-pencil-outline',
+				onTrigger: () => {
+					this._monacoEditor?.trigger(
+						'contextmenu',
+						'editor.action.rename',
+						null
+					)
+				},
+			},
+
+			{
+				name: 'actions.formatDocument.name',
+				icon: 'mdi-text-box-check-outline',
+				onTrigger: () => {
+					this._monacoEditor?.trigger(
+						'contextmenu',
+						'editor.action.formatDocument',
+						null
+					)
+				},
+			},
+			{ type: 'divider' },
+			{
+				name: 'actions.copy.name',
+				icon: 'mdi-content-copy',
+				onTrigger: () => {
+					document.execCommand('copy')
+				},
+			},
+			{
+				name: 'actions.cut.name',
+				icon: 'mdi-content-cut',
+				onTrigger: () => {
+					document.execCommand('cut')
+				},
+			},
+			{
+				name: 'actions.paste.name',
+				icon: 'mdi-content-paste',
+				onTrigger: () => {
+					tab.paste()
+				},
+			},
+		])
 	}
 }

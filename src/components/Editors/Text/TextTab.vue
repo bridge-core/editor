@@ -1,5 +1,9 @@
 <template>
-	<div @click="tab.parent.setActive(true)" ref="monacoContainer" />
+	<div
+		@click="tab.parent.setActive(true)"
+		@contextmenu="tab.showContextMenu($event)"
+		ref="monacoContainer"
+	/>
 </template>
 
 <script>

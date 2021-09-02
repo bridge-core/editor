@@ -10,7 +10,6 @@ import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '../../FileSystem/Types'
 import { markRaw } from '@vue/composition-api'
-import { hashString } from '/@/utils/hash'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -237,6 +236,11 @@ export class TextTab extends FileTab {
 			text: await navigator.clipboard.readText(),
 		})
 	}
+	cut() {
+		if (this.isReadOnly) return
+
+		this.editorInstance?.trigger('keyboard', 'cut', {})
+	}
 	async close() {
 		const didClose = await super.close()
 
@@ -252,5 +256,9 @@ export class TextTab extends FileTab {
 		}
 
 		return didClose
+	}
+
+	showContextMenu(event: MouseEvent) {
+		this.parent.showCustomMonacoContextMenu(event, this)
 	}
 }

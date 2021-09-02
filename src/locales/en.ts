@@ -276,6 +276,22 @@ export default {
 			name: 'Redo',
 			description: 'Redo the last action',
 		},
+		goToDefinition: {
+			name: 'Go to Definition',
+			description: 'Go to the definition of the selected symbol',
+		},
+		goToSymbol: {
+			name: 'Go to Symbol',
+			description: 'Opens a dialog to select a symbol to go to',
+		},
+		formatDocument: {
+			name: 'Format Document',
+			description: 'Format the currently opened document',
+		},
+		changeAllOccurrences: {
+			name: 'Change All Occurrences',
+			description: 'Change all occurrences of the selected text',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
