@@ -80,7 +80,9 @@ export class SchemaManager {
 
 				if (!lastIfSchema) {
 					console.warn(`"then" schema without "if" @ ${location}`)
-					continue
+					lastIfSchema = <IfSchema>(
+						new (schemaRegistry.get('if')!)(location, 'if', true)
+					)
 				}
 
 				;(<ThenSchema>schema).receiveIfSchema(lastIfSchema)
