@@ -103,7 +103,7 @@ export default {
 	mounted() {
 		let addedInstallStep = false
 		App.installApp.isInstallable.on(() => {
-			if (addedInstallStep) return
+			if (addedInstallStep || this.stepId > 1) return
 
 			this.steps.unshift({
 				name: 'initialSetup.step.installApp',
