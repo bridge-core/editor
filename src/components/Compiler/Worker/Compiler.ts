@@ -33,7 +33,7 @@ export interface ISaveFile {
 }
 
 export class Compiler {
-	protected files!: Map<string, IFileData>
+	protected files = new Map<string, IFileData>()
 
 	constructor(protected parent: CompilerService) {}
 
@@ -66,7 +66,7 @@ export class Compiler {
 			const saveFilePath: string | undefined =
 				(await this.runAllHooks('transformPath', 0, path)) ?? undefined
 
-			if (saveFilePath) this.outputFileSystem.unlink(saveFilePath)
+			if (saveFilePath) await this.outputFileSystem.unlink(saveFilePath)
 
 			this.files.delete(path)
 		} else if (handle?.kind === 'directory') {
@@ -502,11 +502,7 @@ export class Compiler {
 		}
 
 		// Save files map
-		await this.fileSystem.writeJSON(
-			'.bridge/.compilerFiles',
-			filesObject,
-			true
-		)
+		await this.fileSystem.writeJSON('.bridge/.compilerFiles', filesObject)
 		this.parent.progress.addToCurrent(1)
 	}
 
