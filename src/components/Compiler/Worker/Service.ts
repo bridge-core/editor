@@ -116,14 +116,17 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 
 		await this.loadPlugins(this.options.plugins)
 
-		await this.compiler.runWithFiles(updatedFiles)
+		if (updatedFiles.length > 0)
+			await this.compiler.runWithFiles(updatedFiles)
 
-		await Promise.all(
-			deletedFiles.map((deletedFile) =>
-				this.compiler.unlink(deletedFile, undefined, false)
+		if (deletedFiles.length > 0) {
+			await Promise.all(
+				deletedFiles.map((deletedFile) =>
+					this.compiler.unlink(deletedFile, undefined, false)
+				)
 			)
-		)
-		await this.compiler.processFileMap()
+			await this.compiler.processFileMap()
+		}
 	}
 
 	async updateFiles(filePaths: string[]) {
