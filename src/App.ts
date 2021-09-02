@@ -39,6 +39,7 @@ import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
 import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { PersistentNotification } from '/@/components/Notifications/PersistentNotification'
+import { createVirtualProjectWindow } from './components/FileSystem/Virtual/ProjectWindow'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -144,10 +145,14 @@ export class App {
 		SettingsWindow.loadedSettings.once((state) => {
 			// ...take a look at whether we are supposed to open the project chooser...
 			if (state?.general?.openProjectChooserOnAppStartup ?? false)
-				this.projectManager.projectReady.once(() =>
+				this.projectManager.projectReady.once(() => {
 					// ...then open it if necessary
-					this.windows.projectChooser.open()
-				)
+					if (isUsingFileSystemPolyfill) {
+						createVirtualProjectWindow()
+					} else {
+						App.instance.windows.projectChooser.open()
+					}
+				})
 		})
 	}
 
