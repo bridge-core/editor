@@ -5,18 +5,25 @@ import { VirtualFileHandle } from './Virtual/FileHandle'
  * Chrome 93 and 94 crash when we try to call createWritable on a file handle inside of a web worker
  * We therefore enable this polyfill to work around the bug
  */
-const unsupportedChromeVersions = ['93', '94']
+function isCrashingChromeBrowser() {
+	const unsupportedChromeVersions = ['93', '94']
 
-// @ts-ignore: TypeScript doesn't know about userAgentData yet
-const userAgentData: any = navigator.userAgentData
-const isCrashingChromeBrowser =
-	userAgentData?.brands?.[0]?.brand === 'Google Chrome' &&
-	unsupportedChromeVersions.includes(userAgentData?.brands?.[0]?.version)
+	// @ts-ignore: TypeScript doesn't know about userAgentData yet
+	const userAgentData: any = navigator.userAgentData
+	if (!userAgentData) return false
+
+	const chromeBrand = userAgentData.brands.find(
+		({ brand }: any) => brand === 'Google Chrome'
+	)
+	if (!chromeBrand) return false
+
+	return unsupportedChromeVersions.includes(chromeBrand.version)
+}
 
 export let isUsingFileSystemPolyfill = false
 
 if (
-	isCrashingChromeBrowser ||
+	isCrashingChromeBrowser() ||
 	typeof window.showDirectoryPicker !== 'function'
 ) {
 	isUsingFileSystemPolyfill = true
@@ -27,7 +34,7 @@ if (
 }
 
 if (
-	isCrashingChromeBrowser ||
+	isCrashingChromeBrowser() ||
 	typeof window.showOpenFilePicker !== 'function'
 ) {
 	// @ts-ignore Typescript doesn't like our polyfill
@@ -94,7 +101,7 @@ export interface ISaveFilePickerOptions {
 	suggestedName?: string
 }
 if (
-	isCrashingChromeBrowser ||
+	isCrashingChromeBrowser() ||
 	typeof window.showSaveFilePicker !== 'function'
 ) {
 	// @ts-ignore
@@ -112,7 +119,7 @@ if (
 }
 
 if (
-	isCrashingChromeBrowser ||
+	isCrashingChromeBrowser() ||
 	(globalThis.DataTransferItem &&
 		!DataTransferItem.prototype.getAsFileSystemHandle)
 ) {

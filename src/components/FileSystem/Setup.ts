@@ -33,14 +33,16 @@ export class FileSystemSetup {
 			'bridgeBaseDir'
 		)
 
-		if (!isUsingFileSystemPolyfill) {
+		if (!isUsingFileSystemPolyfill && fileHandle) {
 			// Request permissions to current bridge folder
-			if (fileHandle)
-				fileHandle = await this.verifyPermissions(fileHandle)
+			fileHandle = await this.verifyPermissions(fileHandle)
 		}
 
 		// Test whether the user has a virtual file system setup
-		if (await hasVirtualDirectory('bridgeFolder')) {
+		if (
+			isUsingFileSystemPolyfill ||
+			(await hasVirtualDirectory('bridgeFolder'))
+		) {
 			fileHandle = new VirtualDirectoryHandle(
 				null,
 				'bridgeFolder',
