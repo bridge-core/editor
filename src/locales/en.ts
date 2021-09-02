@@ -366,7 +366,7 @@ export default {
 		enableGameTestFramework: {
 			name: 'Enable GameTest Framework',
 			description:
-				'Enables the GameTest related modules in the manifest and allows you to create GameTets scripts with auto-completions.',
+				'Enables the GameTest related modules in the manifest and allows you to create GameTest scripts with auto-completions.',
 		},
 		experimentalMolangFeatures: {
 			name: 'Experimental Molang Features',
