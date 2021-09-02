@@ -1,9 +1,24 @@
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 import { VirtualFileHandle } from './Virtual/FileHandle'
 
+/**
+ * Chrome 93 and 94 crash when we try to call createWritable on a file handle inside of a web worker
+ * We therefore enable this polyfill to work around the bug
+ */
+const unsupportedChromeVersions = ['93', '94']
+
+// @ts-ignore: TypeScript doesn't know about userAgentData yet
+const userAgentData: any = navigator.userAgentData
+const isCrashingChromeBrowser =
+	userAgentData?.brands?.[0]?.brand === 'Google Chrome' &&
+	unsupportedChromeVersions.includes(userAgentData?.brands?.[0]?.version)
+
 export let isUsingFileSystemPolyfill = false
 
-if (typeof window.showDirectoryPicker !== 'function') {
+if (
+	isCrashingChromeBrowser ||
+	typeof window.showDirectoryPicker !== 'function'
+) {
 	isUsingFileSystemPolyfill = true
 
 	window.showDirectoryPicker = async () =>
@@ -11,7 +26,10 @@ if (typeof window.showDirectoryPicker !== 'function') {
 		new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
 }
 
-if (typeof window.showOpenFilePicker !== 'function') {
+if (
+	isCrashingChromeBrowser ||
+	typeof window.showOpenFilePicker !== 'function'
+) {
 	// @ts-ignore Typescript doesn't like our polyfill
 	window.showOpenFilePicker = async (options: OpenFilePickerOptions) => {
 		const opts = { types: [], ...options }
@@ -75,7 +93,10 @@ if (typeof window.showOpenFilePicker !== 'function') {
 export interface ISaveFilePickerOptions {
 	suggestedName?: string
 }
-if (typeof window.showSaveFilePicker !== 'function') {
+if (
+	isCrashingChromeBrowser ||
+	typeof window.showSaveFilePicker !== 'function'
+) {
 	// @ts-ignore
 	window.showSaveFilePicker = async (
 		// @ts-ignore
@@ -91,8 +112,9 @@ if (typeof window.showSaveFilePicker !== 'function') {
 }
 
 if (
-	globalThis.DataTransferItem &&
-	!DataTransferItem.prototype.getAsFileSystemHandle
+	isCrashingChromeBrowser ||
+	(globalThis.DataTransferItem &&
+		!DataTransferItem.prototype.getAsFileSystemHandle)
 ) {
 	// @ts-ignore
 	DataTransferItem.prototype.getAsFileSystemHandle = async function () {
