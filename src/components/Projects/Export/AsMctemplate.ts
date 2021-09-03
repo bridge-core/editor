@@ -155,7 +155,7 @@ export async function exportAsMctemplate(asMcworld = false) {
 			create: true,
 		})
 	)
-	const savePath = `builds/${app.project.name}.${
+	const savePath = `projects/${app.project.name}/builds/${app.project.name}.${
 		asMcworld ? 'mcworld' : 'mctemplate'
 	}`
 
@@ -163,35 +163,16 @@ export async function exportAsMctemplate(asMcworld = false) {
 		await saveOrDownload(
 			savePath,
 			await zipFolder.package(),
-			app.project.fileSystem
+			app.fileSystem
 		)
 	} catch (err) {
 		console.error(err)
 	}
 
-	let projectName = app.project.name
-	if (!isUsingFileSystemPolyfill) {
-		const notification = createNotification({
-			icon: 'mdi-export',
-			color: 'success',
-			textColor: 'white',
-			message: 'general.successfulExport.title',
-			disposeOnMiddleClick: true,
-			onClick: () => {
-				new InformationWindow({
-					description: `[${app.locales.translate(
-						'general.successfulExport.description'
-					)}: "projects/${projectName}/${savePath}"]`,
-				})
-				notification.dispose()
-			},
-		})
-	}
-
 	// Delete builds/mctemplate folder
 	await fs.unlink(`builds/mctemplate`)
 
-	await project.app.windows.loadingWindow.close()
+	project.app.windows.loadingWindow.close()
 }
 
 export async function canExportMctemplate() {

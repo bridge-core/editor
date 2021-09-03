@@ -69,34 +69,16 @@ export async function exportAsMcaddon() {
 			create: true,
 		})
 	)
-	const savePath = `builds/${app.project.name}.mcaddon`
+	const savePath = `projects/${app.project.name}/builds/${app.project.name}.mcaddon`
 
 	try {
 		await saveOrDownload(
 			savePath,
 			await zipFolder.package(),
-			app.project.fileSystem
+			app.fileSystem
 		)
 	} catch (err) {
 		console.error(err)
-	}
-
-	let projectName = app.project.name
-	if (!isUsingFileSystemPolyfill) {
-		const notification = createNotification({
-			icon: 'mdi-export',
-			color: 'success',
-			textColor: 'white',
-			message: 'general.successfulExport.title',
-			onClick: () => {
-				new InformationWindow({
-					description: `[${app.locales.translate(
-						'general.successfulExport.description'
-					)}: "projects/${projectName}/${savePath}"]`,
-				})
-				notification.dispose()
-			},
-		})
 	}
 
 	app.windows.loadingWindow.close()

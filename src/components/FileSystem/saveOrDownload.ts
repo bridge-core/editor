@@ -1,5 +1,8 @@
+import { createNotification } from '../Notifications/create'
+import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { FileSystem } from './FileSystem'
 import { isUsingFileSystemPolyfill } from './Polyfill'
+import { App } from '/@/App'
 import { basename } from '/@/utils/path'
 
 export async function saveOrDownload(
@@ -7,9 +10,29 @@ export async function saveOrDownload(
 	fileData: Uint8Array,
 	fileSystem: FileSystem
 ) {
-	if (isUsingFileSystemPolyfill) {
-		download(basename(filePath), fileData)
-	} else {
+	const app = await App.getApp()
+
+	const notification = createNotification({
+		icon: 'mdi-export',
+		color: 'success',
+		textColor: 'white',
+		message: 'general.successfulExport.title',
+		onClick: () => {
+			if (isUsingFileSystemPolyfill) {
+				download(basename(filePath), fileData)
+			} else {
+				new InformationWindow({
+					description: `[${app.locales.translate(
+						'general.successfulExport.description'
+					)}: "${filePath}"]`,
+				})
+			}
+
+			notification.dispose()
+		},
+	})
+
+	if (!isUsingFileSystemPolyfill) {
 		await fileSystem.writeFile(filePath, fileData)
 	}
 }
