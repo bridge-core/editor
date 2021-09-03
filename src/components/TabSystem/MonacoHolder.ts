@@ -182,8 +182,8 @@ export class MonacoHolder extends Signal<void> {
 		this._monacoEditor = undefined
 	}
 
-	showCustomMonacoContextMenu(event: MouseEvent, tab: TextTab) {
-		showContextMenu(event, [
+	private onReadonlyCustomMonacoContextMenu() {
+		return [
 			{
 				name: 'actions.documentationLookup.name',
 				icon: 'mdi-book-open-outline',
@@ -234,6 +234,18 @@ export class MonacoHolder extends Signal<void> {
 					})
 				},
 			},
+		]
+	}
+
+	showCustomMonacoContextMenu(event: MouseEvent, tab: TextTab) {
+		if (tab.isReadOnly)
+			return showContextMenu(
+				event,
+				this.onReadonlyCustomMonacoContextMenu()
+			)
+
+		showContextMenu(event, [
+			...this.onReadonlyCustomMonacoContextMenu(),
 			{ type: 'divider' },
 			{
 				name: 'actions.changeAllOccurrences.name',
@@ -270,7 +282,7 @@ export class MonacoHolder extends Signal<void> {
 				name: 'actions.cut.name',
 				icon: 'mdi-content-cut',
 				onTrigger: () => {
-					document.execCommand('cut')
+					tab.cut()
 				},
 			},
 			{
