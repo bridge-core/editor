@@ -232,6 +232,7 @@ export class TextTab extends FileTab {
 	async paste() {
 		if (this.isReadOnly) return
 
+		this.editorInstance.focus()
 		this.editorInstance?.trigger('keyboard', 'paste', {
 			text: await navigator.clipboard.readText(),
 		})
@@ -239,7 +240,8 @@ export class TextTab extends FileTab {
 	cut() {
 		if (this.isReadOnly) return
 
-		this.editorInstance?.trigger('keyboard', 'cut', {})
+		this.editorInstance.focus()
+		document.execCommand('cut')
 	}
 	async close() {
 		const didClose = await super.close()
