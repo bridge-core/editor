@@ -1,16 +1,16 @@
 <template>
 	<v-menu
-		v-if="isVisible"
 		v-model="isVisible"
 		:position-x="contextMenu.position.x"
 		:position-y="contextMenu.position.y"
 		rounded="lg"
 		absolute
 		offset-y
+		transition="scale-transition"
 		:close-on-click="contextMenu.mayCloseOnClickOutside"
 	>
 		<v-list color="menu" dense>
-			<template v-for="(action, id) in contextMenu.actionManager.state">
+			<template v-for="(action, id) in actions">
 				<v-divider v-if="action.type === 'divider'" :key="id" />
 				<v-list-item
 					v-else
@@ -56,6 +56,10 @@ export default {
 			get() {
 				return this.contextMenu.isVisible
 			},
+		},
+		actions() {
+			if (!this.contextMenu || !this.contextMenu.actionManager) return []
+			return this.contextMenu.actionManager.state
 		},
 	},
 	watch: {
