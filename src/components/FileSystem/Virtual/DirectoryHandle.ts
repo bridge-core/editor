@@ -65,7 +65,9 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		else
 			return <VirtualHandle[]>(
 				await Promise.all(
-					(await this.fromIdb()).map((name) => this.getChild(name))
+					(await this.fromIdb())
+						.map((name) => this.getChild(name))
+						.filter((child) => child !== undefined)
 				)
 			)
 	}
