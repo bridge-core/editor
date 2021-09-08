@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="px-3 py-2 clickable"
+		class="px-3 py-2 cursor-pointer"
 		:class="{
 			selected: tab.isSelected,
 			'default-tab-style': true,

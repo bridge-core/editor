@@ -279,4 +279,7 @@ summary::-webkit-details-marker {
 	cursor: pointer;
 	border-radius: 4px;
 }
+.cursor-pointer {
+	cursor: pointer;
+}
 </style>
