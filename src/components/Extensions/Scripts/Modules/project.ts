@@ -37,10 +37,12 @@ export const ProjectModule = async ({
 
 		async compileFiles(paths: string[]) {
 			await app.project.updateFiles(paths)
-		},
-
-		async unlinkFile(path: string) {
-			await app.project.unlinkFile(path)
+			for (const path of paths) {
+				app.project.fileSave.dispatch(
+					path,
+					await app.project.fileSystem.readFile(path)
+				)
+			}
 		},
 	}
 }
