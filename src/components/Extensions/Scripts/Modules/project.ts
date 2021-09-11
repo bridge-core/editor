@@ -34,5 +34,15 @@ export const ProjectModule = async ({
 		async compile(configFile: string) {
 			await app.project.compilerManager.start(configFile, 'build')
 		},
+
+		async compileFiles(paths: string[]) {
+			await app.project.updateFiles(paths)
+			for (const path of paths) {
+				app.project.fileSave.dispatch(
+					path,
+					await app.project.fileSystem.readFile(path)
+				)
+			}
+		},
 	}
 }
