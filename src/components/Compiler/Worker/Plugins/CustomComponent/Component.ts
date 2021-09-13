@@ -191,7 +191,18 @@ export class Component {
 				animationController,
 				animation,
 				dialogueScene: compare(this.targetVersion, '1.17.10', '>=')
-					? (scene: any) => this.dialogueScenes.push(scene)
+					? (scene: any, openDialogue = true) => {
+							this.dialogueScenes.push(scene)
+
+							if (scene.scene_tag && openDialogue)
+								onActivated({
+									run_command: {
+										command: [
+											`/dialogue open @s @p ${scene.scene_tag}`,
+										],
+									},
+								})
+					  }
 					: undefined,
 				onActivated,
 				onDeactivated,
