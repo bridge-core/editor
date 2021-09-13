@@ -458,18 +458,31 @@ export class Component {
 			entityEvents[eventName] = eventResponse
 		}
 	}
+	/**
+	 * Merge two events together
+	 *
+	 * @param event Base event
+	 * @param eventResponse New event response
+	 */
 	protected addEventReponse(event: any, eventResponse: any) {
 		if (Array.isArray(event.sequence)) {
 			event.sequence.push(eventResponse)
 		} else if (Object.keys(event).length === 0) {
 			Object.assign(event, eventResponse)
 		} else {
-			let oldEvent = Object.assign({}, event)
-			for (const key in event) event[key] = undefined
+			let oldEvent = Object.assign({}, event, { filters: undefined })
+			for (const key in event) {
+				if (key !== 'filters') event[key] = undefined
+			}
 
 			event.sequence = [oldEvent, eventResponse]
 		}
 	}
+	/**
+	 * Find all references to a component group inside of the events
+	 *
+	 * @returns An array of event objects which have references to the component group
+	 */
 	protected findComponentGroupReferences(
 		events: any,
 		type: 'add' | 'remove',
@@ -480,24 +493,20 @@ export class Component {
 		for (const eventName in events) {
 			const event = events[eventName]
 
-			if (Array.isArray(event.randomize))
+			if (Array.isArray(event.sequence))
 				eventsWithComponentGroups.push(
-					...event.randomize.map((randomize: any) =>
-						this.findComponentGroupReferences(
-							randomize,
-							type,
-							componentGroupName
-						)
+					...this.findComponentGroupReferences(
+						event.sequence,
+						type,
+						componentGroupName
 					)
 				)
-			else if (Array.isArray(event.sequence))
+			else if (Array.isArray(event.randomize))
 				eventsWithComponentGroups.push(
-					...event.sequence.map((sequence: any) =>
-						this.findComponentGroupReferences(
-							sequence,
-							type,
-							componentGroupName
-						)
+					...this.findComponentGroupReferences(
+						event.randomize,
+						type,
+						componentGroupName
 					)
 				)
 			else {
