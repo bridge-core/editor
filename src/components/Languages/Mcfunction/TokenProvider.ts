@@ -12,7 +12,14 @@ export const tokenProvider: any = {
 		root: [
 			[/#.*/, 'comment'],
 
-			[/"/, { token: '@rematch', next: '@pop', nextEmbedded: '@pop' }],
+			// [
+			// 	/{/,
+			// 	{
+			// 		token: '@rematch',
+			// 		next: '@embeddedJson',
+			// 		nextEmbedded: 'json',
+			// 	},
+			// ],
 			[/"[^"]*"|'[^']*'/, 'string'],
 			[/\=|\,|\!|%=|\*=|\+=|-=|\/=|<|=|>|<>/, 'definition'],
 			[/true|false/, 'number'],
@@ -38,5 +45,22 @@ export const tokenProvider: any = {
 				},
 			],
 		],
+		// embeddedJson: [
+		// 	[
+		// 		/{/,
+		// 		{
+		// 			token: 'identifier',
+		// 			next: '@push',
+		// 		},
+		// 	],
+		// 	[
+		// 		/}/,
+		// 		{
+		// 			token: 'identifier',
+		// 			next: '@pop',
+		// 			nextEmbedded: '@pop',
+		// 		},
+		// 	],
+		// ],
 	},
 }
