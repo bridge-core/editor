@@ -31,7 +31,7 @@ export function createCustomComponentPlugin({
 		filePath?.startsWith('BP/entities/') &&
 		getAliases(filePath).includes('minecraft:player')
 
-	return ({ compileFiles, getAliases, options }) => {
+	return ({ compileFiles, getAliases, options, targetVersion }) => {
 		const isComponent = (filePath: string | null) =>
 			options.v1CompatMode
 				? filePath?.startsWith(`BP/components/`)
@@ -80,7 +80,8 @@ export function createCustomComponentPlugin({
 						fileType,
 						fileContent,
 						options.mode,
-						!!options.v1CompatMode
+						!!options.v1CompatMode,
+						targetVersion
 					)
 
 					const loadedCorrectly = await component.load()
@@ -129,7 +130,7 @@ export function createCustomComponentPlugin({
 
 						createAnimFiles = deepMerge(
 							createAnimFiles,
-							await component.processAnimations(fileContent)
+							await component.processAdditionalFiles(fileContent)
 						)
 					}
 				} else if (filePath.startsWith(`BP/${folder}/`)) {
@@ -169,7 +170,7 @@ export function createCustomComponentPlugin({
 					for (const component of components) {
 						createAnimFiles = deepMerge(
 							createAnimFiles,
-							await component.processAnimations(fileContent)
+							await component.processAdditionalFiles(fileContent)
 						)
 					}
 

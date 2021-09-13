@@ -1,3 +1,4 @@
+import { compare } from 'compare-versions'
 import { v1Compat } from './v1Compat'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { deepMerge } from '/@/utils/deepmerge'
@@ -12,12 +13,14 @@ export class Component {
 	protected animations: [any, string | false | undefined][] = []
 	protected animationControllers: [any, string | false | undefined][] = []
 	protected createOnPlayer: [string, any][] = []
+	protected dialogueScenes: any[] = []
 
 	constructor(
 		protected fileType: string,
 		protected componentSrc: string,
 		protected mode: 'build' | 'dev',
-		protected v1Compat: boolean
+		protected v1Compat: boolean,
+		protected targetVersion: string
 	) {}
 
 	//#region Getters
@@ -87,10 +90,17 @@ export class Component {
 		location = `minecraft:${this.fileType}`
 	) {
 		const keys = location.split('/')
+		const lastKey = keys.pop()!
 
+		let current = this.getObjAtLocation(fileContent, keys.join('/'))
+
+		current[lastKey] = deepMerge(current[lastKey] ?? {}, template ?? {})
+	}
+	protected getObjAtLocation(fileContent: any, location: string) {
+		const keys = location.split('/')
 		let current: any = fileContent
 
-		while (keys.length > 1) {
+		while (keys.length > 0) {
 			const key = keys.shift()!
 
 			if (current[key] === undefined) {
@@ -105,7 +115,7 @@ export class Component {
 			}
 		}
 
-		current[keys[0]] = deepMerge(current[keys[0]] ?? {}, template ?? {})
+		return current
 	}
 
 	async processTemplates(
@@ -147,6 +157,26 @@ export class Component {
 			)
 		}
 
+		const permutationEventName = (
+			await hashString(`${this.name}/${location}`)
+		).slice(0, 16)
+		const onActivated = (eventResponse: any) =>
+			this.registerLifecycleHook(
+				fileContent,
+				location,
+				eventResponse,
+				permutationEventName,
+				'activated'
+			)
+		const onDeactivated = (eventResponse: any) =>
+			this.registerLifecycleHook(
+				fileContent,
+				location,
+				eventResponse,
+				permutationEventName,
+				'deactivated'
+			)
+
 		// Execute template function with context for current fileType
 		if (this.fileType === 'entity') {
 			this.template(componentArgs ?? {}, {
@@ -160,6 +190,11 @@ export class Component {
 				identifier,
 				animationController,
 				animation,
+				dialogueScene: compare(this.targetVersion, '1.17.10', '>=')
+					? (scene: any) => this.dialogueScenes.push(scene)
+					: undefined,
+				onActivated,
+				onDeactivated,
 			})
 		} else if (this.fileType === 'item') {
 			this.template(componentArgs ?? {}, {
@@ -195,7 +230,7 @@ export class Component {
 		}
 	}
 
-	async processAnimations(fileContent: any) {
+	async processAdditionalFiles(fileContent: any) {
 		// Try getting file identifier
 		const identifier =
 			fileContent[`minecraft:${this.fileType}`]?.description
@@ -217,6 +252,19 @@ export class Component {
 				fileName,
 				fileContent
 			),
+			[`BP/dialogue/bridge/${fileName}.json`]:
+				this.dialogueScenes.length > 0
+					? JSON.stringify(
+							{
+								format_version: this.targetVersion,
+								'minecraft:npc_dialogue': {
+									scenes: this.dialogueScenes,
+								},
+							},
+							null,
+							'\t'
+					  )
+					: undefined,
 		}
 	}
 
@@ -339,5 +387,126 @@ export class Component {
 	}
 	protected getShortAnimName(category: string, fileName: string, id: number) {
 		return `${fileName.slice(0, 16) ?? 'bridge_auto'}_${category}_${id}`
+	}
+
+	/**
+	 * Component lifecycle logic
+	 */
+	protected registerLifecycleHook(
+		fileContent: any,
+		location: string,
+		eventResponse: any,
+		permutationEventName: string,
+		type: 'activated' | 'deactivated'
+	) {
+		if (!fileContent[`minecraft:${this.fileType}`].events)
+			fileContent[`minecraft:${this.fileType}`].events = {}
+		const entityEvents = fileContent[`minecraft:${this.fileType}`].events
+
+		if (
+			type === 'activated' &&
+			location === `minecraft:${this.fileType}/components`
+		) {
+			if (!entityEvents['minecraft:entity_spawned'])
+				entityEvents['minecraft:entity_spawned'] = {}
+
+			this.addEventReponse(
+				entityEvents['minecraft:entity_spawned'],
+				eventResponse
+			)
+		} else if (
+			this.fileType === 'entity' &&
+			location.startsWith(`minecraft:${this.fileType}/component_groups/`)
+		) {
+			const componentGroupName = location.split('/').pop()!
+			const eventsWithReferences = this.findComponentGroupReferences(
+				entityEvents,
+				type === 'activated' ? 'add' : 'remove',
+				componentGroupName
+			)
+
+			eventsWithReferences.forEach((eventWithReference) =>
+				this.addEventReponse(eventWithReference, eventResponse)
+			)
+		} else if (
+			location.startsWith(`minecraft:${this.fileType}/permutations/`)
+		) {
+			const keys = location.split('/')
+			if (keys.pop() !== 'components')
+				throw new Error(
+					'Invalid component location inside of permutation'
+				)
+
+			const loc = keys.join('/')
+			const permutation = this.getObjAtLocation(fileContent, loc)
+			const eventName = `bridge:${permutationEventName}_${type}`
+
+			if (permutation.condition)
+				this.animationControllers.push([
+					{
+						states: {
+							default: {
+								on_entry: [`@s ${eventName}`],
+							},
+						},
+					},
+					type === 'activated'
+						? permutation.condition
+						: `!(${permutation.condition})`,
+				])
+
+			entityEvents[eventName] = eventResponse
+		}
+	}
+	protected addEventReponse(event: any, eventResponse: any) {
+		if (Array.isArray(event.sequence)) {
+			event.sequence.push(eventResponse)
+		} else if (Object.keys(event).length === 0) {
+			Object.assign(event, eventResponse)
+		} else {
+			let oldEvent = Object.assign({}, event)
+			for (const key in event) event[key] = undefined
+
+			event.sequence = [oldEvent, eventResponse]
+		}
+	}
+	protected findComponentGroupReferences(
+		events: any,
+		type: 'add' | 'remove',
+		componentGroupName: string
+	) {
+		let eventsWithComponentGroups: any[] = []
+
+		for (const eventName in events) {
+			const event = events[eventName]
+
+			if (Array.isArray(event.randomize))
+				eventsWithComponentGroups.push(
+					...event.randomize.map((randomize: any) =>
+						this.findComponentGroupReferences(
+							randomize,
+							type,
+							componentGroupName
+						)
+					)
+				)
+			else if (Array.isArray(event.sequence))
+				eventsWithComponentGroups.push(
+					...event.sequence.map((sequence: any) =>
+						this.findComponentGroupReferences(
+							sequence,
+							type,
+							componentGroupName
+						)
+					)
+				)
+			else {
+				const componentGroups = event[type]?.component_groups ?? []
+				if (componentGroups.includes(componentGroupName))
+					eventsWithComponentGroups.push(event)
+			}
+		}
+
+		return eventsWithComponentGroups
 	}
 }
