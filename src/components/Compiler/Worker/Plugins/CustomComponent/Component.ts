@@ -174,7 +174,7 @@ export class Component {
 					animation,
 					create: (template: any, location?: string) =>
 						this.createOnPlayer.push([
-							location ?? `minecraft:player`,
+							location ?? `minecraft:entity`,
 							template,
 						]),
 				},
