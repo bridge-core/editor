@@ -14,6 +14,7 @@ export class Component {
 	protected animationControllers: [any, string | false | undefined][] = []
 	protected createOnPlayer: [string, any][] = []
 	protected dialogueScenes: any[] = []
+	protected clientFiles: Record<string, any> = {}
 
 	constructor(
 		protected fileType: string,
@@ -206,6 +207,23 @@ export class Component {
 					: undefined,
 				onActivated,
 				onDeactivated,
+				client: {
+					create: (clientEntity: any, formatVersion = '1.10.0') => {
+						this.clientFiles[
+							`RP/entity/bridge/${fileName}.json`
+						] = {
+							format_version: formatVersion,
+							'minecraft:client_entity': Object.assign(
+								{
+									description: {
+										identifier,
+									},
+								},
+								clientEntity
+							),
+						}
+					},
+				},
 			})
 		} else if (this.fileType === 'item') {
 			this.template(componentArgs ?? {}, {
@@ -276,6 +294,14 @@ export class Component {
 							'\t'
 					  )
 					: undefined,
+			...Object.fromEntries(
+				Object.entries(
+					this.clientFiles
+				).map(([filePath, jsonContent]) => [
+					filePath,
+					JSON.stringify(jsonContent, null, '\t'),
+				])
+			),
 		}
 	}
 
