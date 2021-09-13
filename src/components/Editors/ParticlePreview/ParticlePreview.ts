@@ -25,7 +25,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 
 				try {
 					return await loadAsDataURL(
-						config.particle_texture_path,
+						`RP/${config.particle_texture_path}.png`,
 						app.project.fileSystem
 					)
 				} catch (err) {
@@ -95,7 +95,6 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		} catch {
 			return
 		}
-		console.log(particle)
 
 		this.emitter?.delete()
 		if (!this.scene.children.includes(this.wintersky.space))
