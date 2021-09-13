@@ -114,8 +114,6 @@ export class McfunctionLanguage extends Language {
 		const disposable = App.eventSystem.on(
 			'projectChanged',
 			(project: Project) => {
-				console.log('CHANGE')
-
 				loadedProject = project
 				loadCommands(this)
 
