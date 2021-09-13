@@ -256,8 +256,13 @@ export class CreatePresetWindow extends BaseWindow {
 				this.sidebar.currentState.models
 			)
 			// This filePath is relative to the project root
-			// The project.hasFile/project.closeFile methods expect the path to relative to the bridge project folder
-			const fileHandle = await project.fileSystem.getFileHandle(filePath)
+			// The project.hasFile/project.closeFile methods expect a fileHandle
+			let fileHandle: AnyFileHandle | null = null
+			try {
+				fileHandle = await project.fileSystem.getFileHandle(filePath)
+			} catch {
+				continue
+			}
 
 			const tab = await project.getFileTab(fileHandle)
 			if (tab !== undefined && tab.isUnsaved) {
