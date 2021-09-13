@@ -153,6 +153,7 @@ export class Component {
 				// @deprecated remove with next major version
 				mode: this.mode,
 				compilerMode: this.mode,
+				sourceEntity: () => JSON.parse(JSON.stringify(fileContent)),
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
@@ -165,6 +166,7 @@ export class Component {
 				// @deprecated remove with next major version
 				mode: this.mode,
 				compilerMode: this.mode,
+				sourceItem: () => JSON.parse(JSON.stringify(fileContent)),
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
@@ -183,7 +185,8 @@ export class Component {
 			this.template(componentArgs ?? {}, {
 				// @deprecated remove with next major version
 				mode: this.mode,
-				compilerMode: this.mode,
+				sourceBlock: this.mode,
+				fileContent: () => JSON.parse(JSON.stringify(fileContent)),
 				create: (template: any, location?: string) =>
 					this.create(fileContent, template, location),
 				location,
@@ -202,9 +205,11 @@ export class Component {
 		const animFileName = `BP/animations/bridge/${fileName}.json`
 		const animControllerFileName = `BP/animation_controllers/bridge/${fileName}.json`
 
-		this.createOnPlayer.forEach(([location, template]) => {
-			this.create(fileContent, template, location)
-		})
+		if (identifier === 'minecraft:player') {
+			this.createOnPlayer.forEach(([location, template]) => {
+				this.create(fileContent, template, location)
+			})
+		}
 
 		return {
 			[animFileName]: this.createAnimations(fileName, fileContent),
