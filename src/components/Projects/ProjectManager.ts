@@ -123,7 +123,7 @@ export class ProjectManager extends Signal<void> {
 		await idb.set('selectedProject', projectName)
 
 		app.themeManager.updateTheme()
-		App.eventSystem.dispatch('projectChanged', undefined)
+		App.eventSystem.dispatch('projectChanged', this.currentProject!)
 
 		if (!this.projectReady.hasFired) this.projectReady.dispatch()
 	}

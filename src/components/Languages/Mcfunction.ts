@@ -5,13 +5,14 @@ import {
 	Position,
 	Range,
 } from 'monaco-editor'
-import { BedrockProject } from '../Projects/Project/BedrockProject'
+import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 import { Language } from './Language'
 import { tokenizeCommand } from './Mcfunction/tokenize'
 import { App } from '/@/App'
 import './Mcfunction/WithinJson'
 import { tokenProvider } from './Mcfunction/TokenProvider'
-import { FileType } from '../Data/FileType'
+import { FileType } from '/@/components/Data/FileType'
+import type { Project } from '/@/components/Projects/Project/Project'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {
@@ -109,9 +110,25 @@ export class McfunctionLanguage extends Language {
 			completionItemProvider,
 		})
 
+		let loadedProject: Project | null = null
+		const disposable = App.eventSystem.on(
+			'projectChanged',
+			(project: Project) => {
+				console.log('CHANGE')
+
+				loadedProject = project
+				loadCommands(this)
+
+				project.compilerManager.fired.then(() => {
+					// Make sure that we are still supposed to update the language
+					// -> project didn't change
+					if (project === loadedProject) loadCommands(this)
+				})
+			}
+		)
+
 		App.getApp().then(async (app) => {
 			await app.projectManager.projectReady.fired
-			app.project.compilerManager.fired.then(() => loadCommands(this))
 
 			this.disposables.push(
 				app.projectManager.forEachProject((project) => {
@@ -122,7 +139,8 @@ export class McfunctionLanguage extends Language {
 								loadCommands(this)
 						})
 					)
-				})
+				}),
+				disposable
 			)
 		})
 	}
