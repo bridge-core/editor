@@ -149,8 +149,8 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 					[/[:,]/, 'delimiter'],
 
 					// strings
-					[/"([^"\\]|\\.)*$/, 'string.invalid'], // non-teminated string
-					[/'([^'\\]|\\.)*$/, 'string.invalid'], // non-teminated string
+					[/"([^"\\]|\\.)*$/, 'string.invalid'], // non-terminated string
+					[/'([^'\\]|\\.)*$/, 'string.invalid'], // non-terminated string
 					[
 						/"\//,
 						{

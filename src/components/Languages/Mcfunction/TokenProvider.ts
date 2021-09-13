@@ -16,7 +16,6 @@ export const tokenProvider: any = {
 				/{/,
 				{
 					token: '@rematch',
-					bracket: '@open',
 					next: '@embeddedJson',
 					nextEmbedded: 'json',
 				},
@@ -48,19 +47,9 @@ export const tokenProvider: any = {
 		],
 		embeddedJson: [
 			[
-				/{/,
+				/} *?[^,]/,
 				{
-					token: 'identifier',
-					bracket: '@open',
-					next: '@push',
-				},
-			],
-			[/}( *,)/g, 'identifier'],
-			[
-				/}/,
-				{
-					token: 'identifier',
-					bracket: '@close',
+					token: '@rematch',
 					next: '@pop',
 					nextEmbedded: '@pop',
 				},
