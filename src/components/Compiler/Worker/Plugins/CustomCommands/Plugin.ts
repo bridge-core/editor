@@ -30,9 +30,7 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 			([fileType]) => FileType.getId(filePath) === fileType
 		)?.[1]
 	const withSlashPrefix = (filePath: string) =>
-		['BP/animations/', 'BP/animation_controllers/'].some((typePath) =>
-			filePath.startsWith(typePath)
-		)
+		FileType.get(filePath)?.meta?.commandsUseSlash ?? false
 
 	return {
 		async buildStart() {
@@ -59,7 +57,6 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 				const file = await fileHandle.getFile()
 				return await file.text()
 			} else if (loadCommandsFor(filePath) && fileHandle) {
-				// Currently, MoLang in function files is not supported so we can just load files as JSON
 				const file = await fileHandle.getFile()
 				try {
 					return json5.parse(await file.text())
@@ -89,7 +86,9 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 			const includePaths = loadCommandsFor(filePath)
 
 			if (includePaths && includePaths.length > 0) {
-				// For every MoLang location
+				const hasSlashPrefix = withSlashPrefix(filePath)
+
+				// For every command location
 				includePaths.forEach((includePath) =>
 					// Search it inside of the JSON & transform it if it exists
 					setObjectAt<string | string[]>(
@@ -97,20 +96,16 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 						fileContent,
 						(commands) => {
 							if (!commands) return commands
-							const hasSlashPrefix = withSlashPrefix(filePath)
 
 							commands = Array.isArray(commands)
 								? commands
 								: [commands]
 
 							return transformCommands(
-								commands.map(
-									(command) =>
-										<`/${string}`>(
-											(hasSlashPrefix
-												? command
-												: `/${command}`)
-										)
+								commands.map((command) =>
+									!hasSlashPrefix && !command.startsWith('/')
+										? `/${command}`
+										: command
 								),
 								dependencies,
 								false
