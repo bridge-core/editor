@@ -5,6 +5,7 @@ import {
 	IExporter,
 } from '/@/components/Projects/Export/Extensions/Exporter'
 import { TPackTypeId } from '/@/components/Data/PackType'
+import { time } from 'console'
 
 export const ProjectModule = async ({
 	disposables,
@@ -37,12 +38,6 @@ export const ProjectModule = async ({
 
 		async compileFiles(paths: string[]) {
 			await app.project.updateFiles(paths)
-			for (const path of paths) {
-				app.project.fileSave.dispatch(
-					path,
-					await app.project.fileSystem.readFile(path)
-				)
-			}
 		},
 	}
 }
