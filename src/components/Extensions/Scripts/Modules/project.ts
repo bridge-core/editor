@@ -5,6 +5,7 @@ import {
 	IExporter,
 } from '/@/components/Projects/Export/Extensions/Exporter'
 import { TPackTypeId } from '/@/components/Data/PackType'
+import { time } from 'console'
 
 export const ProjectModule = async ({
 	disposables,
@@ -33,6 +34,10 @@ export const ProjectModule = async ({
 
 		async compile(configFile: string) {
 			await app.project.compilerManager.start(configFile, 'build')
+		},
+
+		async compileFiles(paths: string[]) {
+			await app.project.updateFiles(paths)
 		},
 	}
 }
