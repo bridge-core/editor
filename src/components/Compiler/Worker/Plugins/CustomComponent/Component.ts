@@ -93,16 +93,15 @@ export class Component {
 		const keys = location.split('/')
 		const lastKey = keys.pop()!
 
-		let current = this.getObjAtLocation(fileContent, keys.join('/'))
+		const current = this.getObjAtLocation(fileContent, [...keys])
 
 		current[lastKey] = deepMerge(current[lastKey] ?? {}, template ?? {})
 	}
-	protected getObjAtLocation(fileContent: any, location: string) {
-		const keys = location.split('/')
+	protected getObjAtLocation(fileContent: any, location: string[]) {
 		let current: any = fileContent
 
-		while (keys.length > 0) {
-			const key = keys.shift()!
+		while (location.length > 0) {
+			const key = location.shift()!
 
 			if (current[key] === undefined) {
 				if (current[Number(key)] !== undefined) {
@@ -476,8 +475,7 @@ export class Component {
 					'Invalid component location inside of permutation'
 				)
 
-			const loc = keys.join('/')
-			const permutation = this.getObjAtLocation(fileContent, loc)
+			const permutation = this.getObjAtLocation(fileContent, [...keys])
 			const eventName = `bridge:${permutationEventName}_${type}`
 
 			if (permutation.condition)
