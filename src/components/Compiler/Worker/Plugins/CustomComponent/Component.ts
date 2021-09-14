@@ -21,7 +21,7 @@ export class Component {
 		protected componentSrc: string,
 		protected mode: 'build' | 'dev',
 		protected v1Compat: boolean,
-		protected targetVersion: string
+		protected targetVersion?: string
 	) {}
 
 	//#region Getters
@@ -191,20 +191,22 @@ export class Component {
 				identifier,
 				animationController,
 				animation,
-				dialogueScene: compare(this.targetVersion, '1.17.10', '>=')
-					? (scene: any, openDialogue = true) => {
-							this.dialogueScenes.push(scene)
+				dialogueScene:
+					!this.targetVersion ||
+					compare(this.targetVersion, '1.17.10', '>=')
+						? (scene: any, openDialogue = true) => {
+								this.dialogueScenes.push(scene)
 
-							if (scene.scene_tag && openDialogue)
-								onActivated({
-									run_command: {
-										command: [
-											`/dialogue open @s @p ${scene.scene_tag}`,
-										],
-									},
-								})
-					  }
-					: undefined,
+								if (scene.scene_tag && openDialogue)
+									onActivated({
+										run_command: {
+											command: [
+												`/dialogue open @s @p ${scene.scene_tag}`,
+											],
+										},
+									})
+						  }
+						: undefined,
 				onActivated,
 				onDeactivated,
 				client: {
