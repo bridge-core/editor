@@ -101,7 +101,11 @@ export class TextTab extends FileTab {
 
 			this.editorModel = markRaw(
 				monaco.editor.getModel(uri) ??
-					monaco.editor.createModel(fileContent, undefined, uri)
+					monaco.editor.createModel(
+						fileContent,
+						FileType.get(this.getProjectPath())?.meta?.language,
+						uri
+					)
 			)
 			this.initialVersionId = this.editorModel.getAlternativeVersionId()
 
