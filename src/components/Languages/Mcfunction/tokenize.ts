@@ -8,17 +8,17 @@ export function tokenizeCommand(command: string) {
 	let tokens = []
 
 	while (i < command.length) {
-		if (command[i] === '^' || command[i] === '~') {
-			if (word[0] === '~' || word[0] === '^') {
-				tokens.push({
-					startColumn: wordStart,
-					endColumn: i,
-					word,
-				})
-				wordStart = i + 1
-				word = command[i]
-				break
-			}
+		if (
+			(command[i] === '^' && word[0] === '^') ||
+			(command[i] === '~' && word[0] === '~')
+		) {
+			tokens.push({
+				startColumn: wordStart,
+				endColumn: i,
+				word,
+			})
+			wordStart = i + 1
+			word = command[i]
 		} else if (command[i] === ' ' || command[i] === '\t') {
 			if (curlyBrackets === 0 && squareBrackets === 0 && word !== '') {
 				tokens.push({
