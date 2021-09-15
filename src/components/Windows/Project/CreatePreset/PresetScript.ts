@@ -146,7 +146,7 @@ export async function runPresetScript(
 			return
 		}
 
-		let current = ''
+		let current: string | null = null
 		try {
 			current = await (await fs.readFile(filePath)).text()
 		} catch {}
@@ -156,12 +156,15 @@ export async function runPresetScript(
 
 		if (typeof data === 'string') {
 			data = transformString(data, inject, models)
-			await fs.writeFile(filePath, `${current}\n${data}`)
+			await fs.writeFile(filePath, current ? `${current}\n${data}` : data)
 		} else {
 			data = transformString(json5.stringify(data), inject, models)
 			await fs.writeJSON(
 				filePath,
-				deepMerge(json5.parse(current), json5.parse(data)),
+				deepMerge(
+					current ? json5.parse(current) : {},
+					json5.parse(data)
+				),
 				true
 			)
 		}

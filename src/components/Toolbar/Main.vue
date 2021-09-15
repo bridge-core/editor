@@ -137,6 +137,8 @@ export default {
 	min-width: 0;
 }
 .app-version-display {
+	app-region: no-drag;
+	-webkit-app-region: no-drag;
 	cursor: pointer;
 	font-size: 12px;
 }

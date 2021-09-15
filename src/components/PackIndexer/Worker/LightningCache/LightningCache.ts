@@ -175,7 +175,7 @@ export class LightningCache {
 		const ext = extname(filePath)
 
 		// Second step: Process file
-		if (ext === '.json') {
+		if (!FileType.isJsonFile(filePath)) {
 			await this.processJSON(filePath, fileType, file, fileContent)
 		} else if (knownTextFiles.has(ext)) {
 			await this.processText(filePath, fileType, file, fileContent)
@@ -260,7 +260,7 @@ export class LightningCache {
 		let data: any
 		try {
 			data = json5.parse(fileContent)
-		} catch (err) {
+		} catch (err: any) {
 			// Updating auto-completions in the background shouldn't get rid of all auto-completions currently saved for this file
 			if (!isTemporaryUpdateCall) {
 				console.error(`[${filePath}] ${err.message}`)

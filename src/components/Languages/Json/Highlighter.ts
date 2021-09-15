@@ -6,6 +6,7 @@ import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { TreeTab } from '/@/components/Editors/TreeEditor/Tab'
+import type { Tab } from '/@/components/TabSystem/CommonTab'
 
 export interface IKnownWords {
 	keywords: string[]
@@ -49,7 +50,9 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 			})
 		})
 
-		App.eventSystem.on('currentTabSwitched', () => this.loadWords())
+		App.eventSystem.on('currentTabSwitched', (tab: Tab) =>
+			this.loadWords(tab)
+		)
 		this.loadWords()
 	}
 
@@ -67,11 +70,12 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 		this.updateHighlighter()
 	}
 
-	async loadWords() {
+	async loadWords(tabArg?: Tab) {
 		const app = await App.getApp()
 		await app.projectManager.projectReady.fired
+		await FileType.ready.fired
 
-		const tab = app.project.tabSystem?.selectedTab
+		const tab = tabArg ?? app.project.tabSystem?.selectedTab
 		if (!(tab instanceof TextTab) && !(tab instanceof TreeTab)) return
 
 		const { id, highlighterConfiguration = {} } =
@@ -149,8 +153,8 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 					[/[:,]/, 'delimiter'],
 
 					// strings
-					[/"([^"\\]|\\.)*$/, 'string.invalid'], // non-teminated string
-					[/'([^'\\]|\\.)*$/, 'string.invalid'], // non-teminated string
+					[/"([^"\\]|\\.)*$/, 'string.invalid'], // non-terminated string
+					[/'([^'\\]|\\.)*$/, 'string.invalid'], // non-terminated string
 					[
 						/"\//,
 						{

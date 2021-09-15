@@ -35,6 +35,7 @@ export interface IFileType {
 	}
 	meta?: {
 		commandsUseSlash?: boolean
+		language?: string
 	}
 	highlighterConfiguration?: {
 		keywords?: string[]
@@ -208,6 +209,15 @@ export namespace FileType {
 	 */
 	export function getId(filePath: string) {
 		return get(filePath)?.id ?? 'unknown'
+	}
+
+	/**
+	 * A function that tests whether a file path is a JSON file respecting the meta.language property & file extension
+	 * @returns Whether a file is considered a "JSON" file
+	 */
+	export function isJsonFile(filePath: string) {
+		const language = FileType.get(filePath)?.meta?.language
+		return language ? language === 'json' : filePath.endsWith('.json')
 	}
 
 	/**

@@ -9,7 +9,7 @@ import { compare, CompareOperator } from 'compare-versions'
 import { runPresetScript } from './PresetScript'
 import { expandFile, TExpandFile } from './ExpandFile'
 import { createFile, TCreateFile } from './CreateFile'
-import { TPackTypeId } from '/@/components/Data/PackType'
+import { PackType, TPackTypeId } from '/@/components/Data/PackType'
 import { transformString } from './TransformString'
 import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
@@ -145,12 +145,20 @@ export class CreatePresetWindow extends BaseWindow {
 			})
 		}
 
+		const presetPath = manifest.additionalModels?.PRESET_PATH
+		const iconColor =
+			typeof presetPath === 'string' &&
+			manifest.category === 'fileType.simpleFile'
+				? PackType.getWithRelativePath(presetPath + 'test.json')
+						?.color ?? 'primary'
+				: 'primary'
+
 		category.addItem(
 			new PresetItem({
 				id,
 				text: manifest.name,
 				icon: manifest.icon,
-				color: 'primary',
+				color: iconColor,
 				resetState,
 			})
 		)
@@ -256,8 +264,13 @@ export class CreatePresetWindow extends BaseWindow {
 				this.sidebar.currentState.models
 			)
 			// This filePath is relative to the project root
-			// The project.hasFile/project.closeFile methods expect the path to relative to the bridge project folder
-			const fileHandle = await project.fileSystem.getFileHandle(filePath)
+			// The project.hasFile/project.closeFile methods expect a fileHandle
+			let fileHandle: AnyFileHandle | null = null
+			try {
+				fileHandle = await project.fileSystem.getFileHandle(filePath)
+			} catch {
+				continue
+			}
 
 			const tab = await project.getFileTab(fileHandle)
 			if (tab !== undefined && tab.isUnsaved) {

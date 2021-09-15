@@ -101,7 +101,11 @@ export class TextTab extends FileTab {
 
 			this.editorModel = markRaw(
 				monaco.editor.getModel(uri) ??
-					monaco.editor.createModel(fileContent, undefined, uri)
+					monaco.editor.createModel(
+						fileContent,
+						FileType.get(this.getProjectPath())?.meta?.language,
+						uri
+					)
 			)
 			this.initialVersionId = this.editorModel.getAlternativeVersionId()
 
@@ -122,7 +126,7 @@ export class TextTab extends FileTab {
 			})
 		)
 
-		this.editorInstance?.focus()
+		this.focus()
 		this.editorInstance?.layout()
 	}
 	onDeactivate() {
@@ -156,6 +160,7 @@ export class TextTab extends FileTab {
 			this.editorInstance?.restoreViewState(this.editorViewState)
 
 		this.editorInstance?.updateOptions({ readOnly: this.isReadOnly })
+		this.focus()
 	}
 
 	async save() {
@@ -240,7 +245,7 @@ export class TextTab extends FileTab {
 	cut() {
 		if (this.isReadOnly) return
 
-		this.editorInstance.focus()
+		this.focus()
 		document.execCommand('cut')
 	}
 	async close() {
