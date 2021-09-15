@@ -6,57 +6,43 @@ export function tokenizeCommand(command: string) {
 	let wordStart = 0
 	let word = ''
 	let tokens = []
+
 	while (i < command.length) {
-		switch (command[i]) {
-			// TODO: Validate patterns like "][" correctly (bracket count may not be below 0)
-			// TODO: Support strings
-
-			// Support patterns like "~~~" or "^^^" without whitespace as token separators
-			case '^':
-			case '~': {
-				if (word[0] === '~') {
-					tokens.push({
-						startColumn: wordStart,
-						endColumn: i,
-						word,
-					})
-					wordStart = i + 1
-					word = command[i]
-					break
-				}
-			}
-
-			case '\t':
-			case ' ': {
-				if (
-					curlyBrackets === 0 &&
-					squareBrackets === 0 &&
-					word !== ''
-				) {
-					tokens.push({
-						startColumn: wordStart,
-						endColumn: i,
-						word,
-					})
-					wordStart = i + 1
-					word = ''
-					break
-				}
-			}
-
-			case '{':
-				curlyBrackets++
-			case '}':
-				curlyBrackets--
-			case '[':
-				squareBrackets++
-			case ']':
-				squareBrackets--
-
-			default:
-				if (command[i].trim() !== '') word += command[i]
+		if (command[i] === '^' || command[i] === '~') {
+			if (word[0] === '~' || word[0] === '^') {
+				tokens.push({
+					startColumn: wordStart,
+					endColumn: i,
+					word,
+				})
+				wordStart = i + 1
+				word = command[i]
 				break
+			}
+		} else if (command[i] === ' ' || command[i] === '\t') {
+			if (curlyBrackets === 0 && squareBrackets === 0 && word !== '') {
+				tokens.push({
+					startColumn: wordStart,
+					endColumn: i,
+					word,
+				})
+				wordStart = i + 1
+				word = ''
+			}
+		} else {
+			if (command[i] === '{') {
+				curlyBrackets++
+			} else if (command[i] === '}') {
+				curlyBrackets--
+			} else if (command[i] === '[') {
+				squareBrackets++
+			} else if (command[i] === ']') {
+				squareBrackets--
+			}
+
+			if (command[i].trim() !== '') word += command[i]
 		}
+
 		i++
 	}
 
