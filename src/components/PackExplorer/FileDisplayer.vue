@@ -158,8 +158,7 @@ export default {
 			} else {
 				if (isHoveringBtn.value) return
 
-				const shouldCloseWindow = entry.open()
-				if (shouldCloseWindow) emit('closeWindow')
+				entry.open()
 			}
 		}, true)
 
