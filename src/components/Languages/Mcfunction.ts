@@ -7,14 +7,16 @@ import {
 } from 'monaco-editor'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 import { Language } from './Language'
-import { tokenizeCommand } from './Mcfunction/tokenize'
+import { tokenizeCommand, tokenizeTargetSelector } from './Mcfunction/tokenize'
 import { App } from '/@/App'
 import './Mcfunction/WithinJson'
 import { tokenProvider } from './Mcfunction/TokenProvider'
 import { FileType } from '/@/components/Data/FileType'
 import type { Project } from '/@/components/Projects/Project/Project'
+import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
 
 export const config: languages.LanguageConfiguration = {
+	wordPattern: /[aA-zZ]+/,
 	comments: {
 		lineComment: '#',
 	},
@@ -39,7 +41,7 @@ export const config: languages.LanguageConfiguration = {
 }
 
 const completionItemProvider: languages.CompletionItemProvider = {
-	triggerCharacters: [' '],
+	triggerCharacters: [' ', '[', '{', '=', ',', '!'],
 	async provideCompletionItems(
 		model: editor.ITextModel,
 		position: Position,
@@ -51,12 +53,51 @@ const completionItemProvider: languages.CompletionItemProvider = {
 		const commandData = project.commandData
 		await commandData.fired
 
-		const lineUntilCursor = model
-			.getLineContent(position.lineNumber)
-			.slice(0, position.column - 1)
+		const line = model.getLineContent(position.lineNumber)
 
+		const lineUntilCursor = line.slice(0, position.column - 1)
+
+		/**
+		 * Auto-completions for target selector arguments
+		 */
+		const selector = isWithinTargetSelector(line, position.column - 1)
+		if (selector) {
+			const selectorStr = line.slice(
+				selector.selectorStart,
+				position.column - 1
+			)
+			const { tokens } = tokenizeTargetSelector(
+				selectorStr,
+				selector.selectorStart
+			)
+			const lastToken = tokens[tokens.length - 1]
+
+			return {
+				suggestions: await commandData.selectorArguments
+					.getNextCompletionItems(tokens.map((token) => token.word))
+					.then((completionItems) =>
+						completionItems.map(
+							({ label, insertText, documentation, kind }) => ({
+								label: label ?? insertText,
+								insertText,
+								documentation,
+								kind,
+								range: new Range(
+									position.lineNumber,
+									(lastToken?.startColumn ?? 0) + 1,
+									position.lineNumber,
+									(lastToken?.endColumn ?? 0) + 1
+								),
+							})
+						)
+					),
+			}
+		}
+
+		/**
+		 * Normal command auto-completions
+		 */
 		const { tokens } = tokenizeCommand(lineUntilCursor)
-
 		// Get the last token
 		const lastToken = tokens[tokens.length - 1]
 

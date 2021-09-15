@@ -1,5 +1,4 @@
 import { markRaw } from '@vue/composition-api'
-import { compare } from 'compare-versions'
 import { MoLang } from 'molang'
 import { languages } from 'monaco-editor'
 import { generateCommandSchemas } from '../../Compiler/Worker/Plugins/CustomCommands/generateSchemas'
@@ -8,7 +7,7 @@ import { RefSchema } from '../../JSONSchema/Schema/Ref'
 import { strMatchArray } from './strMatch'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
-
+import { SelectorArguments } from './TargetSelector/SelectorArguments'
 /**
  * An interface that describes a command
  */
@@ -17,6 +16,16 @@ export interface ICommand {
 	description: string
 	arguments: ICommandArgument[]
 }
+
+export interface ISelectorArgument extends ICommandArgument {
+	additionalData?: {
+		schemaReference?: string
+		values?: string[]
+		multipleInstancesAllowed?: 'always' | 'whenNegated' | 'never'
+		supportsNegation?: boolean
+	}
+}
+
 /**
  * Type holding all possible argument types
  */
@@ -39,7 +48,10 @@ export interface ICommandArgument {
 	argumentName: string
 	description: string
 	type: TArgumentType
-	additionalData?: any
+	additionalData?: {
+		schemaReference?: string
+		values?: string[]
+	}
 }
 
 interface ICompletionItem {
@@ -53,6 +65,7 @@ interface ICompletionItem {
  * A class that stores data on all Minecraft commands
  */
 export class CommandData extends Signal<void> {
+	public readonly selectorArguments = new SelectorArguments(this)
 	protected _data?: any
 
 	async loadCommandData(packageName: string) {
@@ -97,11 +110,7 @@ export class CommandData extends Signal<void> {
 		)
 	}
 
-	protected async getSchema(
-		ignoreCustomCommands = false
-	): Promise<ICommand[]> {
-		const app = await App.getApp()
-
+	protected async getSchema() {
 		if (!this._data)
 			throw new Error(`Acessing commandData before it was loaded.`)
 
@@ -113,14 +122,27 @@ export class CommandData extends Signal<void> {
 		}
 
 		return validEntries
+	}
+	protected async getCommandsSchema(
+		ignoreCustomCommands = false
+	): Promise<ICommand[]> {
+		return (await this.getSchema())
 			.map((entry: any) => entry.commands)
 			.flat()
 			.concat(ignoreCustomCommands ? [] : await generateCommandSchemas())
 			.filter((command: unknown) => command !== undefined)
 	}
+	async getSelectorArgumentsSchema(): Promise<ISelectorArgument[]> {
+		return (await this.getSchema())
+			.map((entry: any) => entry.selectorArguments)
+			.flat()
+			.filter(
+				(selectorArgument: unknown) => selectorArgument !== undefined
+			)
+	}
 
 	allCommands(query?: string, ignoreCustomCommands = false) {
-		return this.getSchema(ignoreCustomCommands).then((schema) => [
+		return this.getCommandsSchema(ignoreCustomCommands).then((schema) => [
 			...new Set<string>(
 				schema
 					.map((command: any) => command?.commandName)
@@ -133,7 +155,7 @@ export class CommandData extends Signal<void> {
 	}
 
 	getCommandCompletionItems(query?: string, ignoreCustomCommands = false) {
-		return this.getSchema(ignoreCustomCommands).then((schema) => {
+		return this.getCommandsSchema(ignoreCustomCommands).then((schema) => {
 			const completionItems: ICompletionItem[] = []
 
 			schema
@@ -168,13 +190,13 @@ export class CommandData extends Signal<void> {
 		commandName: string,
 		ignoreCustomCommands: boolean
 	) {
-		const commands = await this.getSchema(ignoreCustomCommands).then(
-			(schema) => {
-				return schema.filter(
-					(command: any) => command.commandName === commandName
-				)
-			}
-		)
+		const commands = await this.getCommandsSchema(
+			ignoreCustomCommands
+		).then((schema) => {
+			return schema.filter(
+				(command: any) => command.commandName === commandName
+			)
+		})
 
 		return commands
 	}
@@ -207,7 +229,9 @@ export class CommandData extends Signal<void> {
 
 					// Return possible completion items for the argument
 					return await Promise.all(
-						args.map((arg) => this.getCompletionItems(arg))
+						args.map((arg) =>
+							this.getCompletionItemsForArgument(arg)
+						)
 					)
 				})
 			)
@@ -298,7 +322,7 @@ export class CommandData extends Signal<void> {
 				const values =
 					commandArgument.additionalData?.values ??
 					this.resolveDynamicReference(
-						commandArgument.additionalData.schemaReference
+						commandArgument.additionalData.schemaReference!
 					) ??
 					[]
 
@@ -353,19 +377,23 @@ export class CommandData extends Signal<void> {
 	/**
 	 * Given a commandArgument, return completion items for it
 	 */
-	protected async getCompletionItems(
+	async getCompletionItemsForArgument(
 		commandArgument: ICommandArgument
 	): Promise<ICompletionItem[]> {
 		// Test whether argument type is defined
 		if (!commandArgument.type) {
 			// If additionalData is defined, return its values
-			if (commandArgument.additionalData)
+			if (commandArgument.additionalData?.values)
 				return this.toCompletionItem(
-					commandArgument.additionalData?.values ??
+					commandArgument.additionalData?.values
+				)
+			else if (commandArgument.additionalData?.schemaReference)
+				return this.toCompletionItem(
+					<string[]>(
 						this.resolveDynamicReference(
 							commandArgument.additionalData.schemaReference
-						) ??
-						[]
+						).map(({ value }) => value)
+					)
 				)
 
 			return []
@@ -433,7 +461,7 @@ export class CommandData extends Signal<void> {
 
 		return []
 	}
-	protected toCompletionItem(
+	toCompletionItem(
 		strings: string[],
 		documentation?: string,
 		kind = languages.CompletionItemKind.Text
