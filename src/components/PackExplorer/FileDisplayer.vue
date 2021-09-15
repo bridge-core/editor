@@ -17,7 +17,7 @@
 				>
 					<summary
 						class="rounded-lg"
-						@click.prevent="onClick(entry)"
+						@click.prevent="onClickFolder(entry)"
 						@click.right.prevent.stop="
 							$emit('contextmenu', {
 								type: entry.type,
@@ -177,6 +177,12 @@ export default {
 		tree: [],
 	}),
 	methods: {
+		onClickFolder(entry) {
+			if (this.isHoveringBtn) return
+
+			const shouldCloseWindow = entry.open()
+			if (shouldCloseWindow) emit('closeWindow')
+		},
 		async loadDirectory() {
 			if (!this.entry) {
 				const app = await App.getApp()
