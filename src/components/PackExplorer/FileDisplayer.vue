@@ -158,7 +158,8 @@ export default {
 			} else {
 				if (isHoveringBtn.value) return
 
-				entry.open()
+				const shouldCloseWindow = entry.open()
+				if (shouldCloseWindow) emit('closeWindow')
 			}
 		}, true)
 
@@ -179,8 +180,7 @@ export default {
 		onClickFolder(entry) {
 			if (this.isHoveringBtn) return
 
-			const shouldCloseWindow = entry.open()
-			if (shouldCloseWindow) emit('closeWindow')
+			entry.open()
 		},
 		async loadDirectory() {
 			if (!this.entry) {
