@@ -175,7 +175,7 @@ export class LightningCache {
 		const ext = extname(filePath)
 
 		// Second step: Process file
-		if (!FileType.isJsonFile(filePath)) {
+		if (FileType.isJsonFile(filePath)) {
 			await this.processJSON(filePath, fileType, file, fileContent)
 		} else if (knownTextFiles.has(ext)) {
 			await this.processText(filePath, fileType, file, fileContent)
