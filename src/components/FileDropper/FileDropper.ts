@@ -1,6 +1,7 @@
 import { reactive } from '@vue/composition-api'
-import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
-import { AnyFileHandle } from '../FileSystem/Types'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { App } from '/@/App'
 import { extname } from '/@/utils/path'
 
@@ -21,7 +22,11 @@ export class FileDropper {
 		window.addEventListener('dragover', (event) => {
 			event.preventDefault()
 
-			if (App.windowState.isAnyWindowVisible.value) return
+			if (
+				App.windowState.isAnyWindowVisible.value &&
+				InitialSetup.ready.hasFired
+			)
+				return
 
 			// Moving tabs
 			if (event.dataTransfer?.effectAllowed === 'move') return
@@ -45,7 +50,11 @@ export class FileDropper {
 		window.addEventListener('drop', (event) => {
 			event.preventDefault()
 
-			if (App.windowState.isAnyWindowVisible.value) return
+			if (
+				App.windowState.isAnyWindowVisible.value &&
+				InitialSetup.ready.hasFired
+			)
+				return
 
 			this.onDrop([...(event.dataTransfer?.items ?? [])])
 			this.state.isHovering = false
