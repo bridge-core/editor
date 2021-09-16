@@ -2,10 +2,14 @@
 	<v-btn
 		small
 		text
-		class="toolbar-btn"
 		@click="$emit('click', $event)"
 		:disabled="disabled"
-		:class="{ 'px-1': $vuetify.breakpoint.mobile }"
+		class="toolbar-btn"
+		:class="{
+			'btn-enabled': !disabled,
+			'btn-disabled': disabled,
+			'px-1': $vuetify.breakpoint.mobile,
+		}"
 	>
 		<v-icon
 			v-if="displayIcon"
@@ -38,7 +42,14 @@ export default {
 
 <style scoped>
 .toolbar-btn {
-	-webkit-app-region: no-drag;
 	min-width: 0;
+}
+.btn-disabled {
+	-webkit-app-region: drag;
+	app-region: drag;
+}
+.btn-enabled {
+	-webkit-app-region: no-drag;
+	app-region: no-drag;
 }
 </style>
