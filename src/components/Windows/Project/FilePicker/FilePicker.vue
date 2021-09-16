@@ -18,6 +18,7 @@
 				:no-data-text="t('windows.openFile.noData')"
 				outlined
 				auto-select-first
+				autofocus
 				@change="onChange"
 			/>
 		</template>
