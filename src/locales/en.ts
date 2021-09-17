@@ -424,6 +424,8 @@ export default {
 			projectTargetVersion: 'Project Target Version',
 			rpAsBpDependency:
 				'Register resource pack as behavior pack dependency',
+			bpAsRpDependency:
+				'Register behavior pack as a resource pack dependency',
 			useLangForManifest:
 				'Add pack name/description directly to the manifest',
 			create: 'Create',

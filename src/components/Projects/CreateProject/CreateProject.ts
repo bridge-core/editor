@@ -24,7 +24,13 @@ export interface ICreateProjectOptions {
 	targetVersion: string
 	packs: (TPackTypeId | '.bridge')[]
 	rpAsBpDependency: boolean
-	rpUuid?: string
+	bpAsRpDependency: boolean
+	uuids: {
+		resources?: string
+		data?: string
+		skin_pack?: string
+		world_template?: string
+	}
 	useLangForManifest: boolean
 	experimentalGameplay: Record<string, boolean>
 }
@@ -187,8 +193,10 @@ export class CreateProjectWindow extends BaseWindow {
 			targetVersion: '',
 			packs: ['.bridge', 'behaviorPack', 'resourcePack'],
 			rpAsBpDependency: false,
+			bpAsRpDependency: false,
 			useLangForManifest: false,
 			experimentalGameplay: {},
+			uuids: {},
 		}
 	}
 	getDefaultOptions(): ICreateProjectOptions {
@@ -229,7 +237,9 @@ export class CreateProjectWindow extends BaseWindow {
 				],
 				useLangForManifest: false,
 				rpAsBpDependency: false,
+				bpAsRpDependency: false,
 				experimentalGameplay: config.experimentalGameplay ?? {},
+				uuids: {},
 			}
 		} catch {
 			return this.getDefaultOptions()

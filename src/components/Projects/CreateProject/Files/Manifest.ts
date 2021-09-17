@@ -43,6 +43,16 @@ export class CreateManifest extends CreateFile {
 	}
 
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
+		// Set uuids for packs
+		if (createOptions.packs.includes('behaviorPack'))
+			createOptions.uuids.data ??= uuid()
+		if (createOptions.packs.includes('resourcePack'))
+			createOptions.uuids.resources ??= uuid()
+		if (createOptions.packs.includes('skinPack'))
+			createOptions.uuids.skin_pack ??= uuid()
+		if (createOptions.packs.includes('worldTemplate'))
+			createOptions.uuids.world_template ??= uuid()
+
 		// Base manifest
 		const manifest: any = {
 			format_version: 2,
@@ -72,7 +82,7 @@ export class CreateManifest extends CreateFile {
 								.split('.')
 								.map((str) => Number(str))
 						: undefined,
-				uuid: uuid(),
+				uuid: createOptions.uuids[this.type ?? 'data'] ?? uuid(),
 				version: [1, 0, 0],
 			},
 			modules: [
@@ -87,20 +97,32 @@ export class CreateManifest extends CreateFile {
 		// Register the resource pack as a dependency of the BP
 		if (
 			createOptions.rpAsBpDependency &&
-			createOptions.packs.includes('resourcePack')
+			createOptions.packs.includes('resourcePack') &&
+			this.type === 'data'
 		) {
-			if (this.type === 'resources') {
-				createOptions.rpUuid = manifest.header.uuid
-			} else if (this.type === 'data') {
-				if (!createOptions.rpUuid)
-					throw new Error(
-						`Trying to register RP uuid before it was defined`
-					)
+			if (!createOptions.uuids.resources)
+				throw new Error(
+					'Trying to register RP uuid before it was defined'
+				)
 
-				manifest.dependencies = [
-					{ uuid: createOptions.rpUuid, version: [1, 0, 0] },
-				]
-			}
+			manifest.dependencies = [
+				{ uuid: createOptions.uuids.resources, version: [1, 0, 0] },
+			]
+		}
+		// Register the behavior pack as a dependency of the RP
+		if (
+			createOptions.bpAsRpDependency &&
+			createOptions.packs.includes('behaviorPack') &&
+			this.type === 'resources'
+		) {
+			if (!createOptions.uuids.data)
+				throw new Error(
+					'Trying to register RP uuid before it was defined'
+				)
+
+			manifest.dependencies = [
+				{ uuid: createOptions.uuids.data, version: [1, 0, 0] },
+			]
 		}
 
 		// Behavior pack modules

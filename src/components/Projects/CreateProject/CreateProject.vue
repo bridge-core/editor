@@ -41,7 +41,34 @@
 						@click="togglePack(packType.id)"
 					>
 						<template
-							v-if="packType.id === 'resourcePack'"
+							v-if="packType.id === 'behaviorPack'"
+							#default="{ selected }"
+						>
+							<!-- I am not sure why the bpAsRpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
+							<v-switch
+								inset
+								dense
+								:label="
+									t('windows.createProject.bpAsRpDependency')
+								"
+								:value="
+									createOptions.rpAsBpDependency ||
+									createOptions.packs.includes('resourcePack')
+								"
+								@click.stop.native="
+									createOptions.bpAsRpDependency = !createOptions.bpAsRpDependency
+								"
+								:disabled="
+									!selected ||
+									!createOptions.packs.includes(
+										'resourcePack'
+									)
+								"
+								class="mt-3"
+							/>
+						</template>
+						<template
+							v-else-if="packType.id === 'resourcePack'"
 							#default="{ selected }"
 						>
 							<!-- I am not sure why the rpAsBpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
