@@ -8,7 +8,8 @@ import { TabSystem } from '../../TabSystem/TabSystem'
 import Error from './Error.vue'
 import Warning from './Warning.vue'
 import Vue from 'vue'
-import { ca, el, fa } from 'vuetify/src/locale'
+import { ca, el, fa, tr } from 'vuetify/src/locale'
+import { BedrockProject } from '../../Projects/Project/BedrockProject'
 
 export class FunctionSimulatorTab extends Tab {
 	protected fileTab: FileTab | undefined
@@ -42,6 +43,7 @@ export class FunctionSimulatorTab extends Tab {
 
 	save() {}
 
+	//Load function content
 	protected async loadFileContent() {
 		if (this.fileTab) {
 			let file = await this.fileTab.getFile()
@@ -49,35 +51,63 @@ export class FunctionSimulatorTab extends Tab {
 		}
 	}
 
+	//Reads Command Data
 	protected async readCommandsJson<Object>() {
 		let file = await fetch(process.env.BASE_URL + 'commands.json')
 		return file.json()
 	}
 
 	protected async loadCommandData() {
-		this.commandData = await this.readCommandsJson()
+		const app = await App.getApp()
+		const project = await app.project
+
+		if (project instanceof BedrockProject) {
+			this.commandData = project.commandData
+		}
 
 		this.validCommands = []
 
 		if (this.commandData) {
-			for (let i = 0; i < this.commandData.commands.length; i++) {
-				this.validCommands.push(this.commandData.commands[i].name)
+			for (
+				let i = 0;
+				i < this.commandData._data.vanilla[0].commands.length;
+				i++
+			) {
+				if (
+					!this.validCommands.includes(
+						this.commandData._data.vanilla[0].commands[i]
+							.commandName
+					)
+				) {
+					this.validCommands.push(
+						this.commandData._data.vanilla[0].commands[i]
+							.commandName
+					)
+				}
 			}
 		} else {
 			console.error('Unable to load commands.json')
 		}
 
-		console.log(this.commandData)
+		console.log(this.validCommands)
 	}
 
 	protected async getDocs<String>(command: string = '') {
 		console.log(command)
 
 		if (this.commandData) {
-			for (let i = 0; i < this.commandData.commands.length; i++) {
-				if (this.commandData.commands[i].name == command) {
-					console.log(this.commandData.commands[i])
-					return this.commandData.commands[i].description
+			for (
+				let i = 0;
+				i < this.commandData._data.vanilla[0].commands.length;
+				i++
+			) {
+				if (
+					this.commandData._data.vanilla[0].commands[i].commandName ==
+					command
+				) {
+					console.log(this.commandData._data.vanilla[0].commands[i])
+					return this.commandData._data.vanilla[0].commands[i]
+						.description
 				}
 			}
 		} else {
@@ -99,7 +129,7 @@ export class FunctionSimulatorTab extends Tab {
 
 		//Selector
 		if (arg.substring(0, 1) == '@') {
-			if (this.commandData.selectors.includes(arg)) {
+			if (['@a', '@p', '@e', '@e'].includes(arg)) {
 				return 'selector'
 			} else {
 				return 'Error: Expected letter after selector argument!'
@@ -133,6 +163,7 @@ export class FunctionSimulatorTab extends Tab {
 		return true
 	}
 
+	//Gets Errors and Warnings
 	protected async readCommand<Array>(command: string = '') {
 		let errors: string[] = []
 		let warnings: string[] = []
@@ -151,38 +182,61 @@ export class FunctionSimulatorTab extends Tab {
 				argTypes.push(this.getArgType(args[i]))
 			}
 
-			let commandValidation = undefined
-
-			for (let i = 0; i < this.commandData.commands.length; i++) {
-				if (this.commandData.commands[i].name == baseCommand) {
-					commandValidation = this.commandData.commands[i].variations
-				}
-			}
-
-			let found = false
-
 			//console.log(argTypes)
 
-			for (let i = 0; i < commandValidation.length; i++) {
-				//console.log(commandValidation[i].arguments)
+			let commandValidation = []
 
+			for (
+				let i = 0;
+				i < this.commandData._data.vanilla[0].commands.length;
+				i++
+			) {
 				if (
-					this.doesStringArrayMatchArray(
-						commandValidation[i].arguments,
-						argTypes
-					)
+					this.commandData._data.vanilla[0].commands[i].commandName ==
+					baseCommand
 				) {
-					found = true
-					break
-				}
-
-				if (commandValidation[i].arguments.includes('any')) {
-					found = true
-					break
+					commandValidation.push(
+						this.commandData._data.vanilla[0].commands[i].arguments
+					)
 				}
 			}
 
-			if (!found) {
+			//console.log(commandValidation)
+
+			let fail = true
+
+			for (let i = 0; i < commandValidation.length; i++) {
+				console.log(commandValidation[i])
+
+				if (fail) {
+					fail = false
+				} else {
+					break
+				}
+
+				let argumentIndex = 0
+
+				for (let j = 0; j < commandValidation[i].length; j++) {
+					if (commandValidation[i][j].type != null) {
+						console.log(
+							commandValidation[i][j].type +
+								' ' +
+								argTypes[argumentIndex]
+						)
+						if (
+							commandValidation[i][j].type !=
+							argTypes[argumentIndex]
+						) {
+							fail = true
+							break
+						}
+
+						argumentIndex++
+					}
+				}
+			}
+
+			if (fail) {
 				errors.push('Invalid arguments for command: ' + command)
 			}
 		}
@@ -192,6 +246,7 @@ export class FunctionSimulatorTab extends Tab {
 		return [errors, warnings]
 	}
 
+	//Displays data
 	protected async loadCurrentLine<Boolean>() {
 		let lines = this.content.split('\n')
 
@@ -326,7 +381,6 @@ export class FunctionSimulatorTab extends Tab {
 
 	async onActivate() {
 		await super.onActivate()
-		const app = await App.getApp()
 
 		await this.loadFileContent()
 
