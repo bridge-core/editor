@@ -50,7 +50,7 @@
 				<v-col
 					v-for="experiment in sidebar.currentState
 						.experimentalGameplay"
-					:key="experiment.id"
+					:key="`${experiment.id}.${experiment.isActive}`"
 					xs="12"
 					sm="6"
 					md="4"
