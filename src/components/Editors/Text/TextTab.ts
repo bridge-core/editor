@@ -94,7 +94,7 @@ export class TextTab extends FileTab {
 
 		await this.parent.fired //Make sure a monaco editor is loaded
 
-		if (!this.editorModel) {
+		if (!this.editorModel || this.editorModel.isDisposed()) {
 			const file = await this.fileHandle.getFile()
 			const fileContent = await file.text()
 			const uri = monaco.Uri.file(this.getPath())
@@ -142,6 +142,7 @@ export class TextTab extends FileTab {
 	onDestroy() {
 		this.disposables.forEach((disposable) => disposable?.dispose())
 		this.editorModel?.dispose()
+		this.editorModel = undefined
 		this.editorViewState = undefined
 		this.isActive = false
 		this.modelLoaded.resetSignal()
@@ -194,7 +195,8 @@ export class TextTab extends FileTab {
 			])
 
 			const editPromise = new Promise<void>((resolve) => {
-				if (!this.editorModel) return resolve()
+				if (!this.editorModel || this.editorModel.isDisposed())
+					return resolve()
 
 				const disposable = this.editorModel?.onDidChangeContent(() => {
 					disposable?.dispose()
@@ -214,12 +216,10 @@ export class TextTab extends FileTab {
 		}
 	}
 	protected async saveFile(app: App) {
-		this.setIsUnsaved(false)
-
-		if (this.editorModel && !this.editorModel.isDisposed())
+		if (this.editorModel && !this.editorModel.isDisposed()) {
+			this.setIsUnsaved(false)
 			this.initialVersionId = this.editorModel.getAlternativeVersionId()
 
-		if (this.editorModel) {
 			await app.fileSystem.write(
 				this.fileHandle,
 				this.editorModel.getValue()
