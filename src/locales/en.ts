@@ -23,6 +23,7 @@ export default {
 		fileName: 'File Name',
 		inactive: 'Inactive',
 		active: 'Active',
+		later: 'Later',
 
 		confirmOverwriteFile:
 			'A file with this name already exists. Do you want to overwrite it?',
@@ -777,6 +778,13 @@ export default {
 			deactivateExtension: 'Deactivate Extension',
 			offlineError:
 				'Failed to load extensions. Please confirm that your device has an active network connection.',
+			compilerPluginDownload: {
+				compilerPlugins: 'Compiler Plugins',
+				title: 'Downloaded Compiler Plugin',
+				description:
+					"You have just downloaded a new compiler plugin. Make sure to add it to your compiler config file or otherwise it won't have an effect.",
+				openConfig: 'Open Config',
+			},
 		},
 		pluginInstallLocation: {
 			title: 'Choose Install Location',

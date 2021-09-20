@@ -3,6 +3,7 @@ import ConfirmWindowComponent from './ConfirmWindow.vue'
 import { App } from '/@/App'
 
 export interface IConfirmWindowOpts {
+	title?: string
 	description: string
 	confirmText?: string
 	cancelText?: string
@@ -25,6 +26,9 @@ export class ConfirmationWindow extends BaseWindow<boolean> {
 	}
 	get description() {
 		return this.opts.description
+	}
+	get title() {
+		return this.opts.title ?? 'general.confirmation'
 	}
 
 	onConfirm() {

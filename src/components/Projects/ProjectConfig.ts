@@ -91,6 +91,8 @@ export interface IConfigJson {
 		darkTheme?: string
 		v1CompatMode?: boolean
 	}
+
+	compiler?: any
 }
 
 interface IPackDefinition {

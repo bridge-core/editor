@@ -32,6 +32,9 @@ export class Extension {
 	get compilerPlugins() {
 		return this._compilerPlugins
 	}
+	get contributesCompilerPlugins() {
+		return Object.keys(this.manifest?.compiler?.plugins ?? {}).length > 0
+	}
 	get version() {
 		return this.manifest.version
 	}
