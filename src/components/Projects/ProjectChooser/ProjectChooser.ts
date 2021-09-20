@@ -8,6 +8,8 @@ import { v4 as uuid } from 'uuid'
 import { importFromBrproject } from '../Import/fromBrproject'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { IExperimentalToggle } from '../CreateProject/CreateProject'
+import { importFromMcaddon } from '../Import/fromMcaddon'
+import { importNewProject } from '../Import/ImportNew'
 
 export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
@@ -25,27 +27,9 @@ export class ProjectChooserWindow extends BaseWindow {
 				icon: 'mdi-import',
 				name: 'actions.importBrproject.name',
 				color: 'accent',
-				onTrigger: async () => {
-					let fileHandle: AnyFileHandle
-					try {
-						;[fileHandle] = await window.showOpenFilePicker({
-							multiple: false,
-							types: [
-								{
-									description: 'bridge. Project',
-									accept: {
-										'application/zip': ['.brproject'],
-									},
-								},
-							],
-						})
-					} catch {
-						// User aborted selecting new project
-						return
-					}
-
+				onTrigger: () => {
 					this.close()
-					await importFromBrproject(fileHandle)
+					importNewProject()
 				},
 			}),
 			new SimpleAction({

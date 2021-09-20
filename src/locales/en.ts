@@ -532,7 +532,7 @@ export default {
 				saveCurrentProject:
 					'Do you want to save your current project before loading in the new one?',
 			},
-			wrongFileType: 'Project must be a .brproject file',
+			wrongFileType: 'Project must be a .brproject or .mcaddon file',
 			addPack: 'Add Pack',
 		},
 		filePath: {
