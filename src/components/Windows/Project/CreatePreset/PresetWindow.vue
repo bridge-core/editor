@@ -73,6 +73,7 @@
 						:prepend-icon="null"
 						:prepend-inner-icon="opts.icon || 'mdi-paperclip'"
 						:label="name"
+						:multiple="opts.multiple || false"
 						autocomplete="off"
 						outlined
 						dense
