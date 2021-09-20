@@ -12,7 +12,7 @@ export class Component {
 	protected template?: TTemplate
 	protected animations: [any, string | false | undefined][] = []
 	protected animationControllers: [any, string | false | undefined][] = []
-	protected createOnPlayer: [string, any][] = []
+	protected createOnPlayer: [string, any, any][] = []
 	protected dialogueScenes: any[] = []
 	protected clientFiles: Record<string, any> = {}
 
@@ -88,14 +88,22 @@ export class Component {
 	create(
 		fileContent: any,
 		template: any,
-		location = `minecraft:${this.fileType}`
+		location = `minecraft:${this.fileType}`,
+		operation?: (
+			deepMerge: (oldData: any, newData: any) => any,
+			oldData: any,
+			newData: any
+		) => any
 	) {
 		const keys = location.split('/')
 		const lastKey = keys.pop()!
 
 		const current = this.getObjAtLocation(fileContent, [...keys])
 
-		current[lastKey] = deepMerge(current[lastKey] ?? {}, template ?? {})
+		current[lastKey] = (operation
+			? (oldData: any, newData: any) =>
+					operation(deepMerge, oldData, newData)
+			: deepMerge)(current[lastKey] ?? {}, template ?? {})
 	}
 	protected getObjAtLocation(fileContent: any, location: string[]) {
 		let current: any = fileContent
@@ -184,8 +192,8 @@ export class Component {
 				mode: this.mode,
 				compilerMode: this.mode,
 				sourceEntity: () => JSON.parse(JSON.stringify(fileContent)),
-				create: (template: any, location?: string) =>
-					this.create(fileContent, template, location),
+				create: (template: any, location?: string, operation?: any) =>
+					this.create(fileContent, template, location, operation),
 				location,
 				identifier,
 				animationController,
@@ -232,17 +240,22 @@ export class Component {
 				mode: this.mode,
 				compilerMode: this.mode,
 				sourceItem: () => JSON.parse(JSON.stringify(fileContent)),
-				create: (template: any, location?: string) =>
-					this.create(fileContent, template, location),
+				create: (template: any, location?: string, operation?: any) =>
+					this.create(fileContent, template, location, operation),
 				location,
 				identifier,
 				player: {
 					animationController,
 					animation,
-					create: (template: any, location?: string) =>
+					create: (
+						template: any,
+						location?: string,
+						operation?: any
+					) =>
 						this.createOnPlayer.push([
 							location ?? `minecraft:entity`,
 							template,
+							operation,
 						]),
 				},
 			})
@@ -252,8 +265,8 @@ export class Component {
 				mode: this.mode,
 				sourceBlock: this.mode,
 				fileContent: () => JSON.parse(JSON.stringify(fileContent)),
-				create: (template: any, location?: string) =>
-					this.create(fileContent, template, location),
+				create: (template: any, location?: string, operation?: any) =>
+					this.create(fileContent, template, location, operation),
 				location,
 				identifier,
 			})
@@ -271,8 +284,8 @@ export class Component {
 		const animControllerFileName = `BP/animation_controllers/bridge/${fileName}.json`
 
 		if (identifier === 'minecraft:player') {
-			this.createOnPlayer.forEach(([location, template]) => {
-				this.create(fileContent, template, location)
+			this.createOnPlayer.forEach(([location, template, operation]) => {
+				this.create(fileContent, template, location, operation)
 			})
 		}
 
