@@ -4,12 +4,15 @@ import { App } from '/@/App'
 import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/InformedChoice'
 import { FilePathWindow } from '/@/components/Windows/Common/FilePath/Window'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
+import { AnyFileHandle } from '../FileSystem/Types'
+import { FileType } from '../Data/FileType'
 
 export class BasicFileImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
 		super(
 			[
 				'.mcfunction',
+				'.mcstructure',
 				'.json',
 				'.molang',
 				'.js',
@@ -24,7 +27,7 @@ export class BasicFileImporter extends FileImporter {
 		)
 	}
 
-	async onImport(fileHandle: FileSystemFileHandle) {
+	async onImport(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
 		const t = app.locales.translate.bind(app.locales)
 
@@ -56,9 +59,12 @@ export class BasicFileImporter extends FileImporter {
 		await saveOrOpenWindow.fired
 	}
 
-	protected async onSave(fileHandle: FileSystemFileHandle) {
+	protected async onSave(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
-		const filePathWindow = new FilePathWindow('', false)
+		const filePathWindow = new FilePathWindow(
+			(await FileType.guessFolder(fileHandle)) ?? '',
+			false
+		)
 		filePathWindow.open()
 
 		const filePath = await filePathWindow.fired
@@ -89,11 +95,11 @@ export class BasicFileImporter extends FileImporter {
 		App.eventSystem.dispatch('fileAdded', undefined)
 
 		await app.project.updateFile(`${filePath}${fileHandle.name}`)
-		await app.project.openFile(destHandle)
+		await app.project.openFile(destHandle, { isTemporary: false })
 
 		app.windows.loadingWindow.close()
 	}
-	protected async onOpen(fileHandle: FileSystemFileHandle) {
+	protected async onOpen(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
 
 		await app.project.openFile(fileHandle)

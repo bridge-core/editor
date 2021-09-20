@@ -5,6 +5,9 @@ import { CreateFile } from './CreateFile'
 import { App } from '/@/App'
 
 export class CreatePackIcon extends CreateFile {
+	public readonly id = 'packIcon'
+	public isConfigurable = false
+
 	constructor(protected packPath: TPackType) {
 		super()
 	}
@@ -13,7 +16,8 @@ export class CreatePackIcon extends CreateFile {
 		let icon = createOptions.icon
 		if (!icon) {
 			const app = await App.getApp()
-			icon = await app.fileSystem.readFile(
+			await app.dataLoader.fired
+			icon = await app.dataLoader.readFile(
 				`data/packages/common/packIcon.png`
 			)
 		}

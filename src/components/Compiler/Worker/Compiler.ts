@@ -4,8 +4,13 @@ import { resolveFileOrder } from './Resolver'
 import { dirname } from '/@/utils/path'
 import { CompilerService } from './Service'
 import isGlob from 'is-glob'
-import { isMatch } from 'micromatch'
 import { iterateDir } from '/@/utils/iterateDir'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+	AnyHandle,
+} from '/@/components/FileSystem/Types'
+import { isMatch } from '/@/utils/glob/isMatch'
 
 export interface IFileData {
 	isLoaded?: boolean
@@ -28,7 +33,7 @@ export interface ISaveFile {
 }
 
 export class Compiler {
-	protected files!: Map<string, IFileData>
+	protected files = new Map<string, IFileData>()
 
 	constructor(protected parent: CompilerService) {}
 
@@ -45,11 +50,7 @@ export class Compiler {
 		return [...(this.files.get(filePath)?.aliases ?? [])]
 	}
 
-	async unlink(
-		path: string,
-		handle?: FileSystemHandle,
-		requireHandle = true
-	) {
+	async unlink(path: string, handle?: AnyHandle, requireHandle = true) {
 		if (!handle && requireHandle) {
 			try {
 				handle = await this.fileSystem.getFileHandle(path)
@@ -65,23 +66,27 @@ export class Compiler {
 			const saveFilePath: string | undefined =
 				(await this.runAllHooks('transformPath', 0, path)) ?? undefined
 
-			if (saveFilePath) this.outputFileSystem.unlink(saveFilePath)
+			if (saveFilePath) await this.outputFileSystem.unlink(saveFilePath)
 
 			this.files.delete(path)
 		} else if (handle?.kind === 'directory') {
 			await iterateDir(
-				<FileSystemDirectoryHandle>handle,
+				<AnyDirectoryHandle>handle,
 				(fileHandle, filePath) => this.unlink(filePath, fileHandle),
 				undefined,
 				path
 			)
 		}
 	}
+	async getCompilerOutputPath(path: string) {
+		return (await this.runAllHooks('transformPath', 0, path)) ?? undefined
+	}
 
 	async runWithFiles(files: string[]) {
 		this.parent.progress.setTotal(5)
 
 		await this.loadSavedFiles()
+		if (this.parent.getOptions().mode === 'build') this.files = new Map()
 		await this.runSimpleHook('buildStart')
 
 		// Add files that we are supposed to include
@@ -108,7 +113,7 @@ export class Compiler {
 		await this.resolveFiles(flatFiles)
 		await this.requireFiles(flatFiles)
 		const sortedFiles = resolveFileOrder([...flatFiles], this.files)
-		// console.log([...sortedFiles].map((file) => file.filePath))
+		// console.log([...sortedFiles].map((file) => ({ ...file })))
 		// console.log(sortedFiles)
 		await this.finalizeFiles(sortedFiles)
 	}
@@ -291,10 +296,7 @@ export class Compiler {
 					!!saveFilePath &&
 					saveFilePath !== filePath
 				)
-					await this.copyFile(
-						<FileSystemFileHandle>fileHandle,
-						saveFilePath
-					)
+					await this.copyFile(<AnyFileHandle>fileHandle, saveFilePath)
 
 				file = {
 					isLoaded: true,
@@ -457,7 +459,7 @@ export class Compiler {
 					transformedData
 				)) ?? transformedData
 
-			if (writeFiles && !!writeData) {
+			if (writeFiles && writeData !== undefined && writeData !== null) {
 				await this.outputFileSystem.mkdir(dirname(file.saveFilePath), {
 					recursive: true,
 				})
@@ -500,11 +502,7 @@ export class Compiler {
 		}
 
 		// Save files map
-		await this.fileSystem.writeJSON(
-			'.bridge/.compilerFiles',
-			filesObject,
-			true
-		)
+		await this.fileSystem.writeJSON('.bridge/.compilerFiles', filesObject)
 		this.parent.progress.addToCurrent(1)
 	}
 
@@ -519,7 +517,7 @@ export class Compiler {
 	}
 
 	protected async copyFile(
-		originalFile: FileSystemFileHandle,
+		originalFile: AnyFileHandle,
 		saveFilePath: string
 	) {
 		const copiedFileHandle = await this.outputFileSystem.getFileHandle(

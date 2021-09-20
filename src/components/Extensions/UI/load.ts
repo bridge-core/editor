@@ -1,4 +1,4 @@
-import { extname, basename, relative } from '/@/utils/path'
+import { extname, basename } from '/@/utils/path'
 import { createErrorNotification } from '/@/components/Notifications/Errors'
 import { TUIStore } from './store'
 import { IDisposable } from '/@/types/disposable'
@@ -9,6 +9,7 @@ import Vue from 'vue'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 // @ts-ignore
 import * as VuetifyComponents from 'vuetify/lib/components'
+import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
 
 export async function loadUIComponents(
 	fileSystem: FileSystem,
@@ -16,7 +17,7 @@ export async function loadUIComponents(
 	disposables: IDisposable[],
 	basePath = 'ui'
 ) {
-	let dirents: (FileSystemDirectoryHandle | FileSystemFileHandle)[] = []
+	let dirents: (AnyDirectoryHandle | AnyFileHandle)[] = []
 	try {
 		dirents = await fileSystem.readdir(basePath, { withFileTypes: true })
 	} catch {}
@@ -96,5 +97,5 @@ export async function loadUIComponent(
 		resolve(component)
 	})
 
-	uiStore.set(relative('ui', componentPath).split(/\\|\//g), () => promise)
+	uiStore.set(componentPath.replace('ui/', '').split('/'), () => promise)
 }

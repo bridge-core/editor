@@ -2,12 +2,14 @@ import { RootSchema } from './Root'
 import { Schema } from './Schema'
 
 export class IfSchema extends Schema {
-	protected rootSchema: RootSchema
+	public readonly type = 'ifSchema'
+	protected rootSchema?: RootSchema
 
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
 
-		this.rootSchema = new RootSchema(this.location, 'if', value)
+		if (typeof value !== 'boolean')
+			this.rootSchema = new RootSchema(this.location, 'if', value)
 	}
 
 	getSchemasFor() {
@@ -23,6 +25,8 @@ export class IfSchema extends Schema {
 	}
 
 	isTrue(obj: unknown) {
-		return this.rootSchema.isValid(obj)
+		if (typeof this.value === 'boolean') return this.value
+
+		return this.rootSchema?.isValid(obj)
 	}
 }

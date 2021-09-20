@@ -3,6 +3,13 @@ import { App } from '/@/App'
 import { createNotification } from '/@/components/Notifications/create'
 import { IDisposable } from '/@/types/disposable'
 
+function getStackTrace(error: Error) {
+	let stack = error.stack ?? 'at unknown'
+
+	let stackArr = stack.split('\n').map((line) => line.trim())
+	return stackArr.splice(stackArr[0].startsWith('Error') ? 1 : 0)
+}
+
 /**
  * Creates a new error notification
  * @param config
@@ -26,7 +33,7 @@ export function createErrorNotification(error: Error): IDisposable {
 			App.audioManager.playAudio('click5.ogg', 1)
 			new InformationWindow({
 				name: `[ERROR: ${short}]`,
-				description: `[${message}]`,
+				description: `[${error.message} (${getStackTrace(error)})]`,
 			})
 			notification.dispose()
 		},

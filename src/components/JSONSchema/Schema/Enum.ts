@@ -14,7 +14,7 @@ export class EnumSchema extends Schema {
 
 	getCompletionItems() {
 		return (<unknown[]>this.value).map(
-			(value) => <const>{ type: 'value', value }
+			(value) => <const>{ type: 'value', label: `${value}`, value }
 		)
 	}
 

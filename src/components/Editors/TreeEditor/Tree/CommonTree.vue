@@ -11,9 +11,12 @@
 				open: tree.isOpen,
 				'tree-editor-selection': tree.isSelected,
 			}"
+			:style="{ height: pointerDevice === 'touch' ? '26px' : null }"
 			@click.stop.prevent="onClickKey"
 			@contextmenu.prevent="treeEditor.onContextMenu($event, tree)"
 			tabindex="-1"
+			@pointerdown="onTouchStart($event)"
+			@pointerup="onTouchEnd"
 		>
 			<v-icon
 				class="mr-1"
@@ -36,11 +39,17 @@
 				<span @dblclick="tree.toggleOpen()"> <slot /> </span>:</span
 			>
 			<!-- Spacer to make array objects easier to select -->
-			<span class="mx-2" v-else />
+			<span
+				:class="{
+					'mx-2': pointerDevice !== 'touch',
+					'mx-6': pointerDevice === 'touch',
+				}"
+				v-else
+			/>
 
-			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">{{
-				openingBracket
-			}}</span>
+			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">
+				{{ openingBracket }}
+			</span>
 		</summary>
 
 		<TreeChildren
@@ -61,7 +70,10 @@
 
 <script>
 import TreeChildren from './TreeChildren.vue'
+import { useLongPress } from '/@/components/Composables/LongPress'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 const brackets = {
 	array: '[]',
@@ -78,6 +90,26 @@ export default {
 		tree: Object,
 		treeKey: String,
 		treeEditor: Object,
+	},
+	setup(props) {
+		const { onTouchStart, onTouchEnd } = useLongPress(
+			(event) => {
+				if (pointerDevice.value === 'touch')
+					props.treeEditor.onContextMenu(event, props.tree)
+			},
+			null,
+			() => {
+				props.treeEditor.parent.app.contextMenu.setMayCloseOnClickOutside(
+					true
+				)
+			}
+		)
+
+		return {
+			onTouchStart,
+			onTouchEnd,
+			pointerDevice,
+		}
 	},
 	computed: {
 		openingBracket() {
@@ -97,6 +129,8 @@ export default {
 	methods: {
 		onClickKey(event) {
 			this.$emit('setActive')
+			if (settingsState.editor?.automaticallyOpenTreeNodes ?? true)
+				this.tree.toggleOpen()
 
 			if (event.altKey) this.treeEditor.toggleSelection(this.tree)
 			else this.treeEditor.setSelection(this.tree)

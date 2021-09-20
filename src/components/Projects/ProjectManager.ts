@@ -1,6 +1,6 @@
 import { App } from '/@/App'
-import { get, set } from 'idb-keyval'
-import Vue from 'vue'
+import * as idb from 'idb-keyval'
+import { shallowReactive, set, del, reactive } from '@vue/composition-api'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { Project } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
@@ -9,11 +9,14 @@ import { editor } from 'monaco-editor'
 import { BedrockProject } from './Project/BedrockProject'
 import { InitialSetup } from '../InitialSetup/InitialSetup'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { AnyDirectoryHandle, AnyHandle } from '../FileSystem/Types'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
+	public readonly activatedProject = new EventDispatcher<Project>()
 	public readonly recentProjects!: RecentProjects
-	public readonly state: Record<string, Project> = {}
+	public readonly state: Record<string, Project> = shallowReactive({})
 	public readonly title = Object.freeze(new Title())
 	protected _selectedProject?: string = undefined
 	public readonly projectReady = new Signal<void>()
@@ -22,10 +25,8 @@ export class ProjectManager extends Signal<void> {
 		super()
 		this.loadProjects()
 
-		Vue.set(
-			this,
-			'recentProjects',
-			new RecentProjects(this.app, `data/recentProjects.json`)
+		this.recentProjects = <RecentProjects>(
+			reactive(new RecentProjects(this.app, `data/recentProjects.json`))
 		)
 
 		// Once possible, scan recentProjects for projects which no longer exist
@@ -52,14 +53,11 @@ export class ProjectManager extends Signal<void> {
 		await this.fired
 		return Object.values(this.state).map((project) => project.projectData)
 	}
-	async addProject(
-		projectDir: FileSystemDirectoryHandle,
-		isNewProject = true
-	) {
+	async addProject(projectDir: AnyDirectoryHandle, isNewProject = true) {
 		const project = new BedrockProject(this, this.app, projectDir)
 		await project.loadProject()
 
-		Vue.set(this.state, project.name, project)
+		set(this.state, project.name, project)
 
 		if (isNewProject) {
 			await this.selectProject(project.name)
@@ -71,10 +69,7 @@ export class ProjectManager extends Signal<void> {
 	async removeProject(projectName: string) {
 		const project = this.state[projectName]
 		if (!project) return
-
-		project.deactivate()
-		project.dispose()
-		Vue.delete(this.state, projectName)
+		del(this.state, projectName)
 		await this.app.fileSystem.unlink(`projects/${projectName}`)
 
 		this.recentProjects.remove(project.projectData)
@@ -85,14 +80,14 @@ export class ProjectManager extends Signal<void> {
 		await this.app.dataLoader.fired
 		await InitialSetup.ready.fired
 
-		let potentialProjects: FileSystemHandle[] = []
+		let potentialProjects: AnyHandle[] = []
 		try {
 			potentialProjects = await this.app.fileSystem.readdir('projects', {
 				withFileTypes: true,
 			})
 		} catch {}
 
-		const loadProjects = <FileSystemDirectoryHandle[]>(
+		const loadProjects = <AnyDirectoryHandle[]>(
 			potentialProjects.filter(({ kind }) => kind === 'directory')
 		)
 
@@ -125,14 +120,16 @@ export class ProjectManager extends Signal<void> {
 
 		if (this.currentProject)
 			await this.recentProjects.add(this.currentProject.projectData)
-		await set('selectedProject', projectName)
+		await idb.set('selectedProject', projectName)
 
 		app.themeManager.updateTheme()
-		App.eventSystem.dispatch('projectChanged', undefined)
+		App.eventSystem.dispatch('projectChanged', this.currentProject!)
+
+		if (!this.projectReady.hasFired) this.projectReady.dispatch()
 	}
 	async selectLastProject(app: App) {
 		await this.fired
-		let projectName = await get('selectedProject')
+		let projectName = await idb.get('selectedProject')
 
 		if (typeof projectName === 'string') {
 			try {
@@ -151,14 +148,12 @@ export class ProjectManager extends Signal<void> {
 		} else {
 			throw new Error(`Expected string, found ${typeof projectName}`)
 		}
-
-		this.projectReady.dispatch()
 	}
 	protected async loadFallback() {
 		await this.fired
 
 		const fallback = Object.keys(this.state)[0]
-		await set('selectedProject', fallback)
+		await idb.set('selectedProject', fallback)
 		return fallback
 	}
 
@@ -168,6 +163,24 @@ export class ProjectManager extends Signal<void> {
 				tabSystem.updateOptions(options)
 			)
 		)
+	}
+
+	/**
+	 *  Call a function for every current project and projects newly added in the future
+	 */
+	forEachProject(func: (project: Project) => Promise<void> | void) {
+		Object.values(this.state).forEach(func)
+
+		return this.addedProject.on(func)
+	}
+	/**
+	 * Call a function for every project that gets activated
+	 */
+	onActiveProject(func: (project: Project) => Promise<void> | void) {
+		if (this.projectReady.hasFired && this.currentProject)
+			func(this.currentProject)
+
+		return this.activatedProject.on(func)
 	}
 
 	async recompileAll(forceStartIfActive = true) {

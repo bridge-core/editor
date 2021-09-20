@@ -69,6 +69,7 @@ export class TabActionProvider {
 				)
 				if (!previewTab) return
 
+				previewTab.isTemporary = false
 				fileTab.connectedTabs.push(previewTab)
 
 				app.project.inactiveTabSystem?.add(previewTab, true)

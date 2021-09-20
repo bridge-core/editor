@@ -4,7 +4,12 @@ import { App } from '/@/App'
 
 export class GlobalExtensionLoader extends ExtensionLoader {
 	constructor(protected app: App) {
-		super(app.fileSystem, 'data/inactiveExtensions.json', true)
+		super(
+			app.fileSystem,
+			'extensions',
+			'data/inactiveExtensions.json',
+			true
+		)
 	}
 
 	async getInstalledExtensions() {
@@ -32,5 +37,10 @@ export class GlobalExtensionLoader extends ExtensionLoader {
 				ext.installFilesToCurrentProject()
 			)
 		)
+	}
+
+	async reload() {
+		this.disposeAll()
+		this.loadExtensions()
 	}
 }

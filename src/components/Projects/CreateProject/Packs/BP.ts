@@ -8,7 +8,7 @@ import { CreatePlayer } from '../Files/BP/Player'
 
 export class CreateBP extends CreatePack {
 	protected readonly packPath = 'BP'
-	protected createFiles = [
+	public createFiles = [
 		new CreateManifest(this.packPath),
 		new CreateLang(this.packPath),
 		new CreatePackIcon(this.packPath),

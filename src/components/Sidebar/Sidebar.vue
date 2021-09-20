@@ -3,13 +3,25 @@
 		mini-variant
 		mini-variant-width="60"
 		stateless
-		:value="true"
+		v-model="isNavigationVisible"
 		:app="app"
 		absolute
 		:right="isSidebarRight"
 		color="sidebarNavigation"
-		height="calc(100% - env(titlebar-area-height, 24px))"
+		:height="`calc(100% - ${appToolbarHeight})`"
+		:style="{
+			maxHeight: `calc(100% - ${appToolbarHeight})`,
+			top: appToolbarHeight,
+		}"
 	>
+		<SidebarButton
+			v-if="isMobile"
+			displayName="general.close"
+			icon="mdi-close"
+			color="error"
+			@click="closeSidebar"
+		/>
+
 		<v-list>
 			<SidebarButton
 				v-for="sidebar in sidebarElements"
@@ -68,9 +80,11 @@ import SidebarButton from './Button.vue'
 import { SidebarState } from './state.ts'
 import { tasks } from '/@/components/TaskManager/TaskManager.ts'
 import { NotificationStore } from '/@/components/Notifications/state.ts'
+import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 
 export default {
 	name: 'Sidebar',
+	mixins: [AppToolbarHeightMixin],
 	props: {
 		app: Boolean,
 	},
@@ -86,6 +100,17 @@ export default {
 		}
 	},
 	computed: {
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
+		},
+		isNavigationVisible: {
+			get() {
+				return !this.isMobile || SidebarState.isNavigationVisible
+			},
+			set(val) {
+				SidebarState.isNavigationVisible = val
+			},
+		},
 		sidebarElements() {
 			return Object.values(SidebarState.sidebarElements).filter(
 				(sidebar) => sidebar.isVisible
@@ -102,6 +127,11 @@ export default {
 				this.settingsState.sidebar &&
 				this.settingsState.sidebar.isSidebarRight
 			)
+		},
+	},
+	methods: {
+		closeSidebar() {
+			SidebarState.isNavigationVisible = false
 		},
 	},
 }

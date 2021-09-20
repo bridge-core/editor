@@ -3,13 +3,13 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
 import { CreateFile } from './CreateFile'
 import { v4 as uuid } from 'uuid'
-
-const replaceTargetVersion: Record<string, string | undefined> = {
-	'1.17.10': '1.17.0',
-	'1.17.20': '1.17.0',
-}
+import { version as appVersion } from '/@/appVersion.json'
+import { App } from '/@/App'
 
 export class CreateManifest extends CreateFile {
+	public readonly id = 'packManifest'
+	public isConfigurable = false
+
 	constructor(protected pack: TPackType) {
 		super()
 	}
@@ -27,14 +27,43 @@ export class CreateManifest extends CreateFile {
 		}
 	}
 
-	protected transformTargetVersion(targetVersion: string) {
+	protected async transformTargetVersion(
+		fs: FileSystem,
+		targetVersion: string
+	) {
+		const app = await App.getApp()
+		const replaceTargetVersion: Record<
+			string,
+			string
+		> = await app.dataLoader.readJSON(
+			'data/packages/minecraftBedrock/minEngineVersionMap.json'
+		)
+
 		return replaceTargetVersion[targetVersion] ?? targetVersion
 	}
 
-	create(fs: FileSystem, createOptions: ICreateProjectOptions) {
+	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
+		// Set uuids for packs
+		if (createOptions.packs.includes('behaviorPack'))
+			createOptions.uuids.data ??= uuid()
+		if (createOptions.packs.includes('resourcePack'))
+			createOptions.uuids.resources ??= uuid()
+		if (createOptions.packs.includes('skinPack'))
+			createOptions.uuids.skin_pack ??= uuid()
+		if (createOptions.packs.includes('worldTemplate'))
+			createOptions.uuids.world_template ??= uuid()
+
 		// Base manifest
 		const manifest: any = {
 			format_version: 2,
+			metadata: {
+				authors: Array.isArray(createOptions.author)
+					? createOptions.author
+					: [createOptions.author],
+				generated_with: {
+					bridge: [appVersion],
+				},
+			},
 			header: {
 				name: createOptions.useLangForManifest
 					? createOptions.name
@@ -44,18 +73,20 @@ export class CreateManifest extends CreateFile {
 					: 'pack.description',
 				min_engine_version:
 					this.type === 'data' || 'resources'
-						? this.transformTargetVersion(
-								createOptions.targetVersion
+						? (
+								await this.transformTargetVersion(
+									fs,
+									createOptions.targetVersion
+								)
 						  )
 								.split('.')
 								.map((str) => Number(str))
 						: undefined,
-				uuid: uuid(),
+				uuid: createOptions.uuids[this.type ?? 'data'] ?? uuid(),
 				version: [1, 0, 0],
 			},
 			modules: [
 				{
-					description: createOptions.description,
 					type: this.type,
 					uuid: uuid(),
 					version: [1, 0, 0],
@@ -66,31 +97,49 @@ export class CreateManifest extends CreateFile {
 		// Register the resource pack as a dependency of the BP
 		if (
 			createOptions.rpAsBpDependency &&
-			createOptions.packs.includes('RP')
+			createOptions.packs.includes('resourcePack') &&
+			this.type === 'data'
 		) {
-			if (this.type === 'resources') {
-				createOptions.rpUuid = manifest.header.uuid
-			} else if (this.type === 'data') {
-				if (!createOptions.rpUuid)
-					throw new Error(
-						`Trying to register RP uuid before it was defined`
-					)
+			if (!createOptions.uuids.resources)
+				throw new Error(
+					'Trying to register RP uuid before it was defined'
+				)
 
-				manifest.dependencies = [
-					{ uuid: createOptions.rpUuid, version: [1, 0, 0] },
-				]
-			}
+			manifest.dependencies = [
+				{ uuid: createOptions.uuids.resources, version: [1, 0, 0] },
+			]
+		}
+		// Register the behavior pack as a dependency of the RP
+		if (
+			createOptions.bpAsRpDependency &&
+			createOptions.packs.includes('behaviorPack') &&
+			this.type === 'resources'
+		) {
+			if (!createOptions.uuids.data)
+				throw new Error(
+					'Trying to register RP uuid before it was defined'
+				)
+
+			manifest.dependencies = [
+				{ uuid: createOptions.uuids.data, version: [1, 0, 0] },
+			]
 		}
 
 		// Behavior pack modules
-		if (this.type === 'data' && createOptions.scripting) {
+		if (
+			this.type === 'data' &&
+			createOptions.experimentalGameplay.additionalModdingCapabilities
+		) {
 			manifest.modules.push({
 				type: 'client_data',
 				uuid: uuid(),
 				version: [1, 0, 0],
 			})
 		}
-		if (this.type === 'data' && createOptions.gameTest) {
+		if (
+			this.type === 'data' &&
+			createOptions.experimentalGameplay.enableGameTestFramework
+		) {
 			manifest.modules.push({
 				type: 'javascript',
 				uuid: uuid(),
@@ -114,6 +163,13 @@ export class CreateManifest extends CreateFile {
 			)
 		}
 
-		return fs.writeJSON(`${this.pack}/manifest.json`, manifest, true)
+		if (this.type === 'world_template') {
+			manifest.header.lock_template_options = true
+			manifest.header.base_game_version = createOptions.targetVersion.split(
+				'.'
+			)
+		}
+
+		await fs.writeJSON(`${this.pack}/manifest.json`, manifest, true)
 	}
 }

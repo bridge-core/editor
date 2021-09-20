@@ -1,3 +1,4 @@
+import '/@/components/FileSystem/Virtual/Comlink'
 import { expose } from 'comlink'
 import { FileSystem } from '../../FileSystem/FileSystem'
 import { ESearchType } from '../Controls/SearchTypeEnum'
@@ -5,6 +6,7 @@ import { iterateDir } from '/@/utils/iterateDir'
 import { extname } from '/@/utils/path'
 
 import { createRegExp, processFileText } from '../Utils'
+import { AnyDirectoryHandle } from '../../FileSystem/Types'
 
 export interface IQueryOptions {
 	searchType: ESearchType
@@ -28,6 +30,7 @@ const knownTextFiles = new Set([
 	'.txt',
 	'.molang',
 	'.json',
+	'.html',
 ])
 const ignoreFolders = new Set(['.bridge', 'builds', '.git s'])
 const textPreviewLength = 100
@@ -35,7 +38,7 @@ const textPreviewLength = 100
 export class FindAndReplace {
 	protected fileSystem: FileSystem
 	protected matchedFiles = new Set<string>()
-	constructor(protected projectFolderHandle: FileSystemDirectoryHandle) {
+	constructor(protected projectFolderHandle: AnyDirectoryHandle) {
 		this.fileSystem = new FileSystem(projectFolderHandle)
 	}
 

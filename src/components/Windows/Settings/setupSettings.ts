@@ -9,6 +9,8 @@ import { Button } from './Controls/Button/Button'
 import { del } from 'idb-keyval'
 import { comMojangKey } from '../../FileSystem/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import { platform } from '/@/utils/os'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -96,7 +98,68 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 		})
 	)
-
+	settings.addControl(
+		new Selection({
+			category: 'appearance',
+			name: 'windows.settings.appearance.font.name',
+			description: 'windows.settings.appearance.font.description',
+			key: 'font',
+			default: 'Roboto',
+			options: [
+				'Roboto',
+				'Arial',
+				'Verdana',
+				'Helvetica',
+				'Tahome',
+				'Trebuchet MS',
+				'Menlo',
+				'Monaco',
+				'Courier New',
+				'monospace',
+			],
+		})
+	)
+	settings.addControl(
+		new Selection({
+			category: 'appearance',
+			name: 'windows.settings.appearance.editorFont.name',
+			description: 'windows.settings.appearance.editorFont.description',
+			key: 'editorFont',
+			default: platform() === 'darwin' ? 'Menlo' : 'Consolas',
+			options: [
+				'Roboto',
+				'Arial',
+				'Consolas',
+				'Menlo',
+				'Monaco',
+				'"Courier New"',
+				'monospace',
+			],
+			onChange: async (val) => {
+				const app = await App.getApp()
+				app.projectManager.updateAllEditorOptions({
+					fontFamily: val,
+				})
+			},
+		})
+	)
+	settings.addControl(
+		new Selection({
+			category: 'appearance',
+			name: 'windows.settings.appearance.editorFontSize.name',
+			description:
+				'windows.settings.appearance.editorFontSize.description',
+			key: 'editorFontSize',
+			default: '14px',
+			options: ['8px', '10px', '12px', '14px', '16px', '18px', '20px'],
+			onChange: async (val) => {
+				const app = await App.getApp()
+				app.projectManager.updateAllEditorOptions({
+					fontSize: Number(val.replace('px', '')),
+				})
+			},
+		})
+	)
 	settings.addControl(
 		new Toggle({
 			category: 'sidebar',
@@ -228,18 +291,31 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
-		new Button({
+		new Toggle({
 			category: 'general',
-			name: 'windows.settings.general.resetBridgeFolder.name',
+			name:
+				'windows.settings.general.openProjectChooserOnAppStartup.name',
 			description:
-				'windows.settings.general.resetBridgeFolder.description',
-			onClick: async () => {
-				await del('bridgeBaseDir')
-				await del(comMojangKey)
-				location.reload()
-			},
+				'windows.settings.general.openProjectChooserOnAppStartup.description',
+			key: 'openProjectChooserOnAppStartup',
+			default: false,
 		})
 	)
+	if (!isUsingFileSystemPolyfill) {
+		settings.addControl(
+			new Button({
+				category: 'general',
+				name: 'windows.settings.general.resetBridgeFolder.name',
+				description:
+					'windows.settings.general.resetBridgeFolder.description',
+				onClick: async () => {
+					await del('bridgeBaseDir')
+					await del(comMojangKey)
+					location.reload()
+				},
+			})
+		)
+	}
 
 	//Audio
 	settings.addControl(
@@ -283,10 +359,56 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 		})
 	)
+	settings.addControl(
+		new Selection({
+			category: 'editor',
+			name: 'windows.settings.editor.wordWrapColumns.name',
+			description: 'windows.settings.editor.wordWrapColumns.description',
+			key: 'wordWrapColumns',
+			default: '80',
+			options: ['40', '60', '80', '100', '120', '140', '160'],
+			onChange: async (val) => {
+				const app = await App.getApp()
+				app.projectManager.updateAllEditorOptions({
+					wordWrapColumn: Number(val),
+				})
+			},
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.compactTabDesign.name',
+			description: 'windows.settings.editor.compactTabDesign.description',
+			key: 'compactTabDesign',
+			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.automaticallyOpenTreeNodes.name',
+			description:
+				'windows.settings.editor.automaticallyOpenTreeNodes.description',
+			key: 'automaticallyOpenTreeNodes',
+			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.dragAndDropTreeNodes.name',
+			description:
+				'windows.settings.editor.dragAndDropTreeNodes.description',
+			key: 'dragAndDropTreeNodes',
+			default: true,
+		})
+	)
 
 	// Actions
 	const app = await App.getApp()
 	Object.values(app.actionManager.state).forEach((action) => {
-		settings.addControl(new ActionViewer(action))
+		if (action.type === 'action')
+			settings.addControl(new ActionViewer(action))
 	})
 }

@@ -5,25 +5,23 @@ import { PersistentQueue } from '/@/components/Common/PersistentQueue'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 
 export class OpenedFiles extends PersistentQueue<string> {
-	public readonly ready = new Signal<void>()
-
-	constructor(tabSystem: TabSystem, app: App, savePath: string) {
+	constructor(protected tabSystem: TabSystem, app: App, savePath: string) {
 		super(app, Infinity, savePath)
+	}
 
+	async restoreTabs() {
 		if (settingsState?.general?.restoreTabs ?? true) {
-			this.once(async (queue) => {
-				for (let i = 0; i < queue.elements.length; i++) {
-					try {
-						// Try to restore tab
-						await tabSystem.openPath(
-							queue.elements[i],
-							i + 1 === queue.elementCount
-						)
-					} catch {}
-				}
+			await this.fired
 
-				this.ready.dispatch()
-			})
+			for (let i = 0; i < this.queue.elements.length; i++) {
+				try {
+					// Try to restore tab
+					await this.tabSystem.openPath(this.queue.elements[i], {
+						selectTab: i === 0,
+						isTemporary: false,
+					})
+				} catch {}
+			}
 		}
 	}
 }

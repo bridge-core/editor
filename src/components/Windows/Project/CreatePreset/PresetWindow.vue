@@ -59,19 +59,25 @@
 					dense
 					@keypress.enter="onCreatePreset"
 				/>
-				<v-file-input
+				<span
 					v-else-if="opts.type === 'fileInput'"
-					class="mb-1"
+					v-cloak
 					:key="i"
-					v-model="content.models[id]"
-					:accept="opts.accept"
-					:prepend-icon="null"
-					:prepend-inner-icon="opts.icon || 'mdi-paperclip'"
-					:label="name"
-					autocomplete="off"
-					outlined
-					dense
-				/>
+					@drop.prevent.stop="onDropFile(id, opts.accept, $event)"
+					@dragover.prevent.stop
+				>
+					<v-file-input
+						class="mb-1"
+						v-model="content.models[id]"
+						:accept="opts.accept"
+						:prepend-icon="null"
+						:prepend-inner-icon="opts.icon || 'mdi-paperclip'"
+						:label="name"
+						autocomplete="off"
+						outlined
+						dense
+					/>
+				</span>
 
 				<component
 					v-else-if="opts.type === 'selectInput'"
@@ -129,7 +135,7 @@
 <script>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PresetPath from './PresetPath.vue'
-
+import { isFileAccepted } from '/@/utils/file/isAccepted.ts'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
@@ -172,6 +178,12 @@ export default {
 		},
 		onCreatePreset() {
 			if (this.fieldsReady) this.currentWindow.createPreset(this.content)
+		},
+		onDropFile(id, accept, event) {
+			const file = event.dataTransfer.files[0]
+			if (!isFileAccepted(file, accept)) return
+
+			this.content.models[id] = file
 		},
 	},
 }

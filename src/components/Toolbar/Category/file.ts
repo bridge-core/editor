@@ -1,20 +1,15 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
-import { clearAllNotifications } from '../../Notifications/create'
 import { Divider } from '../Divider'
+import { platform } from '/@/utils/os'
+import { AnyFileHandle } from '../../FileSystem/Types'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import { FileTab } from '../../TabSystem/FileTab'
+import { download } from '../../FileSystem/saveOrDownload'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
 
-	file.addItem(
-		app.actionManager.create({
-			id: 'bridge.action.newProject',
-			icon: 'mdi-folder-outline',
-			name: 'actions.newProject.name',
-			description: 'actions.newProject.description',
-			onTrigger: () => app.windows.createProject.open(),
-		})
-	)
 	file.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.newFile',
@@ -26,16 +21,31 @@ export function setupFileCategory(app: App) {
 		})
 	)
 	// There's no longer a pack explorer window. We should reuse the shortcut for something else...
-	// file.addItem(
-	// 	app.actionManager.create({
-	// 		id: 'bridge.action.openFile',
-	// 		icon: 'mdi-file-upload-outline',
-	// 		name: 'actions.openFile.name',
-	// 		description: 'actions.openFile.description',
-	// 		keyBinding: 'Ctrl + O',
-	// 		onTrigger: () => app.windows.packExplorer.open(),
-	// 	})
-	// )
+	file.addItem(
+		app.actionManager.create({
+			id: 'bridge.action.openFile',
+			icon: 'mdi-open-in-app',
+			name: 'actions.openFile.name',
+			description: 'actions.openFile.description',
+			keyBinding: 'Ctrl + O',
+			onTrigger: async () => {
+				let fileHandles: AnyFileHandle[]
+				try {
+					fileHandles = await window.showOpenFilePicker({
+						multiple: true,
+					})
+				} catch {
+					return
+				}
+
+				for (const fileHandle of fileHandles) {
+					if (await app.fileDropper.importFile(fileHandle)) continue
+
+					app.project.openFile(fileHandle, { isTemporary: false })
+				}
+			},
+		})
+	)
 	file.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.searchFile',
@@ -67,59 +77,71 @@ export function setupFileCategory(app: App) {
 			onTrigger: () => App.ready.once((app) => app.tabSystem?.save()),
 		})
 	)
-	file.addItem(
-		app.actionManager.create({
-			icon: 'mdi-content-save-edit-outline',
-			name: 'actions.saveAs.name',
-			description: 'actions.saveAs.description',
-			keyBinding: 'Ctrl + Shift + S',
-			onTrigger: () => App.ready.once((app) => app.tabSystem?.saveAs()),
-		})
-	)
+
+	if (isUsingFileSystemPolyfill) {
+		file.addItem(
+			app.actionManager.create({
+				icon: 'mdi-file-download-outline',
+				name: 'actions.downloadFile.name',
+				description: 'actions.downloadFile.description',
+				keyBinding: 'Ctrl + Shift + S',
+				onTrigger: async () => {
+					const app = await App.getApp()
+					await app.project.compilerManager.fired
+
+					const currentTab = app.project.tabSystem?.selectedTab
+					if (!(currentTab instanceof FileTab)) return
+
+					const [
+						_,
+						compiled,
+					] = await app.project.compilerManager.compileWithFile(
+						currentTab.getProjectPath(),
+						await currentTab.getFile()
+					)
+
+					let uint8arr: Uint8Array
+					if (typeof compiled === 'string')
+						uint8arr = new TextEncoder().encode(compiled)
+					else if (compiled instanceof Blob)
+						uint8arr = new Uint8Array(await compiled.arrayBuffer())
+					else uint8arr = new Uint8Array(compiled)
+
+					download(currentTab.name, uint8arr)
+				},
+			})
+		)
+	} else {
+		file.addItem(
+			app.actionManager.create({
+				icon: 'mdi-content-save-edit-outline',
+				name: 'actions.saveAs.name',
+				description: 'actions.saveAs.description',
+				keyBinding: 'Ctrl + Shift + S',
+				onTrigger: () =>
+					App.ready.once((app) => app.tabSystem?.saveAs()),
+			})
+		)
+	}
+
 	file.addItem(
 		app.actionManager.create({
 			icon: 'mdi-content-save-settings-outline',
 			name: 'actions.saveAll.name',
 			description: 'actions.saveAll.description',
-			keyBinding: 'Ctrl + Meta + S',
+			keyBinding:
+				platform() === 'win32' ? 'Ctrl + Alt + S' : 'Ctrl + Meta + S',
 			onTrigger: () => App.ready.once((app) => app.tabSystem?.saveAll()),
 		})
 	)
 
-	file.addItem(new Divider())
-
-	file.addItem(
-		app.actionManager.create({
-			icon: 'mdi-cancel',
-			name: 'actions.clearAllNotifications.name',
-			description: 'actions.clearAllNotifications.description',
-			onTrigger: () => clearAllNotifications(),
-		})
+	const settingAction = app.actionManager.getAction(
+		'bridge.action.openSettings'
 	)
-	file.addItem(
-		new ToolbarCategory(
-			'mdi-palette-outline',
-			'toolbar.file.preferences.name'
-		)
-			.addItem(
-				app.actionManager.create({
-					id: 'bridge.action.openSettings',
-					icon: 'mdi-cog-outline',
-					name: 'actions.settings.name',
-					description: 'actions.settings.description',
-					keyBinding: 'Ctrl + ,',
-					onTrigger: () => app.windows.settings.open(),
-				})
-			)
-			.addItem(
-				app.actionManager.create({
-					icon: 'mdi-puzzle-outline',
-					name: 'actions.extensions.name',
-					description: 'actions.extensions.description',
-					onTrigger: () => app.windows.extensionStore.open(),
-				})
-			)
-	)
+	if (settingAction && app.mobile.isCurrentDevice()) {
+		file.addItem(new Divider())
+		file.addItem(settingAction)
+	}
 
 	App.toolbar.addCategory(file)
 }

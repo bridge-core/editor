@@ -20,6 +20,10 @@ import { App } from '/@/App'
 import { debounce } from 'lodash-es'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { IActionConfig } from '../../Actions/SimpleAction'
+import { viewDocumentation } from '../../Documentation/view'
+import { platformRedoBinding } from '/@/utils/constants'
+import { getLatestFormatVersion } from '../../Data/FormatVersions'
+import { filterDuplicates } from './CompletionItems/filterDuplicates'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
@@ -81,16 +85,18 @@ export class TreeEditor {
 		this.selectionChange.on(() => this.updateSuggestions())
 	}
 
-	updateSuggestions = debounce(() => {
+	updateSuggestions = debounce(async () => {
 		this.propertySuggestions = []
 		this.valueSuggestions = []
 
-		const tree = <ArrayTree | ObjectTree | undefined>this.selections
-			.find((sel) => {
-				const type = sel.getTree().type
-				return type === 'object' || type === 'array'
-			})
-			?.getTree()
+		const currentFormatVersion: string =
+			(<any>this.tree.toJSON()).format_version ||
+			this.parent.project.config.get().targetVersion ||
+			(await getLatestFormatVersion())
+
+		const tree = <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
+			this.selections[0]?.getTree()
+		)
 		const json = tree?.toJSON()
 
 		let suggestions: ICompletionItem[] = []
@@ -109,21 +115,51 @@ export class TreeEditor {
 					.flat()
 		}
 
-		this.propertySuggestions = suggestions.filter(
-			(suggestion) =>
-				(suggestion.type === 'object' || suggestion.type === 'array') &&
-				!(<any>(tree ?? this.tree)).children.find((test: any) => {
-					if (test.type === 'array') return false
-					return test[0] === suggestion.value
-				})
+		this.propertySuggestions = filterDuplicates(
+			suggestions
+				.filter(
+					(suggestion) =>
+						(suggestion.type === 'object' ||
+							suggestion.type === 'array') &&
+						!(<any>(tree ?? this.tree)).children.find(
+							(test: any) => {
+								if (test.type === 'array') return false
+								return test[0] === suggestion.value
+							}
+						)
+				)
+				.concat(
+					this.parent.app.project.snippetLoader
+						.getSnippetsFor(
+							currentFormatVersion,
+							this.parent.getFileType(),
+							this.selections.map((sel) => sel.getLocation())
+						)
+						.map(
+							(snippet) =>
+								<const>{
+									type: 'snippet',
+									label: snippet.displayData.name,
+									value: snippet.insertData,
+								}
+						)
+				)
 		)
+		// console.log(this.propertySuggestions)
 
-		// Only suggest values for empty objects or arrays
-		if ((tree?.children?.length ?? 1) === 0 || tree?.type === 'array') {
-			this.valueSuggestions = suggestions.filter(
-				(suggestion) =>
-					suggestion.type === 'value' ||
-					suggestion.type === 'valueArray'
+		// Only suggest values for empty objects, arrays or "empty" primitive trees
+		// (a primitive tree is empty if it contains an empty string)
+		if (
+			(tree instanceof ObjectTree && tree?.children?.length === 0) ||
+			tree instanceof ArrayTree ||
+			(tree instanceof PrimitiveTree && tree.isEmpty())
+		) {
+			this.valueSuggestions = filterDuplicates(
+				suggestions.filter(
+					(suggestion) =>
+						suggestion.type === 'value' ||
+						suggestion.type === 'valueArray'
+				)
 			)
 		}
 	}, 50)
@@ -150,16 +186,7 @@ export class TreeEditor {
 		this.containerElement = container
 
 		this.actions.create({
-			keyBinding: ['DELETE', 'BACKSPACE'],
-			prevent: (el) => {
-				if (el.tagName === 'INPUT' && (<any>el).value === '')
-					return false
-				return (
-					el.tagName !== 'SUMMARY' &&
-					el.tagName !== 'DIV' &&
-					el.tagName !== 'SPAN'
-				)
-			},
+			keyBinding: ['Ctrl + DELETE', 'Ctrl + BACKSPACE'],
 			onTrigger: () => {
 				const entries: HistoryEntry[] = []
 
@@ -203,14 +230,14 @@ export class TreeEditor {
 		this.actions.create({
 			keyBinding: ['CTRL + Z'],
 			onTrigger: () => {
-				this.history.undo()
+				this.undo()
 			},
 		})
 
 		this.actions.create({
-			keyBinding: ['CTRL + Y'],
+			keyBinding: [platformRedoBinding],
 			onTrigger: () => {
-				this.history.redo()
+				this.redo()
 			},
 		})
 	}
@@ -297,7 +324,8 @@ export class TreeEditor {
 		this.forEachSelection((selection) => {
 			if (selection instanceof TreeValueSelection) return
 
-			entries.push(selection.addKey(value, type))
+			const entry = selection.addKey(value, type)
+			if (entry) entries.push(entry)
 		})
 
 		this.history.pushAll(entries)
@@ -329,6 +357,8 @@ export class TreeEditor {
 		this.forEachSelection((sel) => {
 			if (sel instanceof TreeValueSelection) return
 			const parentTree = sel.getTree()
+			if (parentTree instanceof PrimitiveTree) return
+
 			const index = parentTree.children.length
 
 			for (const key in json) {
@@ -393,9 +423,37 @@ export class TreeEditor {
 			},
 		]
 
-		if (event) showContextMenu(event, pasteMenu)
+		if (event && !this.parent.isReadOnly)
+			showContextMenu(event, pasteMenu, false)
 
 		return pasteMenu
+	}
+
+	onReadOnlyMenu(event?: MouseEvent, tree = this.tree, selectedKey = true) {
+		const readOnlyMenu = [
+			{
+				name: 'actions.documentationLookup.name',
+				icon: 'mdi-book-open-outline',
+				onTrigger: () => {
+					const word = selectedKey ? tree.key : tree.value
+
+					if (typeof word === 'string')
+						viewDocumentation(this.parent.getProjectPath(), word)
+				},
+			},
+			{
+				name: 'actions.copy.name',
+				icon: 'mdi-content-copy',
+				onTrigger: () => {
+					this.setSelection(tree, !selectedKey)
+					this.parent.copy()
+				},
+			},
+		]
+
+		if (event) showContextMenu(event, readOnlyMenu, false)
+
+		return readOnlyMenu
 	}
 
 	onContextMenu(
@@ -403,7 +461,15 @@ export class TreeEditor {
 		tree: PrimitiveTree | ArrayTree | ObjectTree,
 		selectedKey = true
 	) {
-		const contextMenu: (IActionConfig | null)[] = []
+		if (this.parent.isReadOnly)
+			return this.onReadOnlyMenu(event, tree, selectedKey)
+		const [viewDocs, copy] = this.onReadOnlyMenu(
+			undefined,
+			tree,
+			selectedKey
+		)
+
+		const contextMenu: (IActionConfig | null)[] = [viewDocs]
 		// Delete node
 		if (tree instanceof PrimitiveTree)
 			contextMenu.push({
@@ -426,14 +492,7 @@ export class TreeEditor {
 
 		// Copy, cut & paste
 		contextMenu.push(
-			{
-				name: 'actions.copy.name',
-				icon: 'mdi-content-copy',
-				onTrigger: () => {
-					this.setSelection(tree, !selectedKey)
-					this.parent.copy()
-				},
-			},
+			copy,
 			{
 				name: 'actions.cut.name',
 				icon: 'mdi-content-cut',
@@ -474,6 +533,12 @@ export class TreeEditor {
 			})
 		}
 
-		showContextMenu(event, contextMenu)
+		showContextMenu(event, contextMenu, false)
+	}
+	undo() {
+		this.history.undo()
+	}
+	redo() {
+		this.history.redo()
 	}
 }

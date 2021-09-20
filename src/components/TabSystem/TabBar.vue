@@ -3,7 +3,10 @@
 		<Draggable
 			v-if="tabSystem.shouldRender"
 			v-model="tabSystem.tabs"
-			:group="{ name: 'tabSystemTabRow' }"
+			:group="{
+				name: 'tabSystemTabRow',
+			}"
+			:disabled="pointerDevice === 'touch'"
 			@change="updateTab"
 			@mousedown.native.self="tabSystem.setActive(true)"
 			:style="`display: flex; overflow-x: scroll; white-space: nowrap; width: 100%; height: 48px;`"
@@ -31,6 +34,7 @@
 import TabSystemTab from './Tab.vue'
 import ActionBar from './TabActions/ActionBar.vue'
 import Draggable from 'vuedraggable'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	components: {
@@ -40,6 +44,11 @@ export default {
 	},
 	props: {
 		tabSystem: Object,
+	},
+	setup() {
+		return {
+			pointerDevice,
+		}
 	},
 	methods: {
 		updateTab({ added }) {
@@ -61,7 +70,6 @@ export default {
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 0;
-	background-color: rgba(0, 0, 0, 0.4);
 }
 
 .inactive-action-bar {

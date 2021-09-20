@@ -9,13 +9,14 @@
 		:width="440"
 		:height="130"
 		:hasCloseButton="false"
+		:isSmallPopup="true"
 	>
 		<template #default>
 			<p class="mt-2">{{ t('windows.unsavedFile.description') }}</p>
 		</template>
 		<template #actions>
 			<v-spacer />
-			<v-btn @click="onCancel">
+			<v-btn color="menu" @click="onCancel">
 				<span>{{ t('general.cancel') }}</span>
 			</v-btn>
 			<v-btn color="error" @click="onNoSave">

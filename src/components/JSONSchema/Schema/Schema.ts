@@ -8,11 +8,13 @@ export interface IDiagnostic {
 }
 
 export interface ICompletionItem {
-	type: 'object' | 'array' | 'value' | 'valueArray'
+	type: 'object' | 'array' | 'value' | 'valueArray' | 'snippet'
+	label: string
 	value: unknown
 }
 
 export abstract class Schema {
+	public readonly type?: 'ifSchema' | 'refSchema'
 	constructor(
 		protected location: string,
 		protected key: string,

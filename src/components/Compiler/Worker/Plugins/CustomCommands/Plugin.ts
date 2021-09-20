@@ -2,6 +2,7 @@ import json5 from 'json5'
 import { TCompilerPluginFactory } from '../../TCompilerPluginFactory'
 import { Command } from './Command'
 import { transformCommands } from './transformCommands'
+import { FileType } from '/@/components/Data/FileType'
 import { setObjectAt } from '/@/utils/walkObject'
 
 export const CustomCommandsPlugin: TCompilerPluginFactory<{
@@ -10,7 +11,7 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 	mode: 'dev' | 'build'
 	v1CompatMode?: boolean
 }> = ({
-	fileSystem,
+	dataLoader,
 	options: {
 		include = {},
 		isFileRequest,
@@ -25,19 +26,19 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 		filePath?.endsWith('.mcfunction')
 
 	const loadCommandsFor = (filePath: string) =>
-		Object.entries(include).find(([startPath]) =>
-			filePath.startsWith(startPath)
+		Object.entries(include).find(
+			([fileType]) => FileType.getId(filePath) === fileType
 		)?.[1]
 	const withSlashPrefix = (filePath: string) =>
-		['BP/animations/', 'BP/animation_controllers/'].some((typePath) =>
-			filePath.startsWith(typePath)
-		)
+		FileType.get(filePath)?.meta?.commandsUseSlash ?? false
 
 	return {
 		async buildStart() {
+			await dataLoader.fired
+
 			// Load default command locations and merge them with user defined locations
 			include = Object.assign(
-				await fileSystem.readJSON(
+				await dataLoader.readJSON(
 					'data/packages/minecraftBedrock/location/validCommand.json'
 				),
 				include
@@ -56,7 +57,6 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 				const file = await fileHandle.getFile()
 				return await file.text()
 			} else if (loadCommandsFor(filePath) && fileHandle) {
-				// Currently, MoLang in function files is not supported so we can just load files as JSON
 				const file = await fileHandle.getFile()
 				try {
 					return json5.parse(await file.text())
@@ -86,7 +86,9 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 			const includePaths = loadCommandsFor(filePath)
 
 			if (includePaths && includePaths.length > 0) {
-				// For every MoLang location
+				const hasSlashPrefix = withSlashPrefix(filePath)
+
+				// For every command location
 				includePaths.forEach((includePath) =>
 					// Search it inside of the JSON & transform it if it exists
 					setObjectAt<string | string[]>(
@@ -94,20 +96,16 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 						fileContent,
 						(commands) => {
 							if (!commands) return commands
-							const hasSlashPrefix = withSlashPrefix(filePath)
 
 							commands = Array.isArray(commands)
 								? commands
 								: [commands]
 
 							return transformCommands(
-								commands.map(
-									(command) =>
-										<`/${string}`>(
-											(hasSlashPrefix
-												? command
-												: `/${command}`)
-										)
+								commands.map((command) =>
+									!hasSlashPrefix && !command.startsWith('/')
+										? `/${command}`
+										: command
 								),
 								dependencies,
 								false

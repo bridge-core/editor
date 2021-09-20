@@ -17,7 +17,7 @@ export default {
 		this.tab.receiveCanvas(this.$refs.canvas)
 	},
 	watch: {
-		tab() {
+		'tab.uuid'() {
 			this.tab.receiveCanvas(this.$refs.canvas)
 		},
 	},

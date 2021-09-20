@@ -4,7 +4,7 @@ import { Component } from 'vue'
 import type { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { SidebarContent } from './Content/SidebarContent'
-import { computed, del, set } from '@vue/composition-api'
+import { del, set, watch, WatchStopHandle } from '@vue/composition-api'
 
 export interface ISidebar {
 	id?: string
@@ -36,11 +36,8 @@ export class SidebarElement {
 	protected sidebarUUID: string
 	isLoading = false
 	isVisible = true
-	isSelected = computed(
-		() =>
-			SidebarState.currentState &&
-			SidebarState.currentState === this.config.sidebarContent
-	)
+	isSelected = false
+	stopHandle: WatchStopHandle | undefined
 
 	constructor(protected config: ISidebar) {
 		this.sidebarUUID = config.id ?? uuid()
@@ -53,8 +50,18 @@ export class SidebarElement {
 			this.config.sidebarContent = new (class extends SidebarContent {
 				protected component = component
 				protected actions = undefined
+				protected topPanel = undefined
 			})()
 		}
+		this.stopHandle = watch(
+			SidebarState,
+			() => {
+				this.isSelected =
+					(SidebarState.currentState ?? false) &&
+					SidebarState.currentState === this.config.sidebarContent
+			},
+			{ deep: false }
+		)
 	}
 
 	get icon() {
@@ -71,6 +78,8 @@ export class SidebarElement {
 	}
 	dispose() {
 		del(SidebarState.sidebarElements, this.sidebarUUID)
+		this.stopHandle?.()
+		this.stopHandle = undefined
 	}
 	async click() {
 		App.audioManager.playAudio('click5.ogg', 1)

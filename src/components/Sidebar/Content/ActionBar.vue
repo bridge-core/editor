@@ -4,6 +4,7 @@
 			<Action
 				:color="action.config.color"
 				:icon="action.config.icon"
+				:name="action.config.name"
 				:isSelected="action.isSelected"
 				@click="onClick($event, action)"
 			/>

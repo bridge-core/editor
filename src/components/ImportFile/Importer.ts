@@ -1,3 +1,4 @@
+import { AnyFileHandle } from '../FileSystem/Types'
 import type { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { IDisposable } from '/@/types/disposable'
 
@@ -12,9 +13,7 @@ export abstract class FileImporter {
 		}
 	}
 
-	protected abstract onImport(
-		fileHandle: FileSystemFileHandle
-	): Promise<void> | void
+	protected abstract onImport(fileHandle: AnyFileHandle): Promise<void> | void
 
 	dispose() {
 		this.disposables.forEach((disposable) => disposable.dispose())

@@ -6,18 +6,23 @@ import en from '/@/locales/en'
 import de from '/@/locales/de'
 import nl from '/@/locales/nl'
 import ko from '/@/locales/ko'
+import zhTW from '/@/locales/zhTW'
 
 Vue.use(Vuetify)
 Vue.config.productionTip = false
 
 export const vuetify = new Vuetify({
 	lang: {
-		locales: { nl, de, en, ko },
+		locales: { nl, de, en, ko, zhTW },
+	},
+	breakpoint: {
+		mobileBreakpoint: 'xs',
 	},
 	theme: {
 		dark: true,
 		options: {
 			customProperties: true,
+			variations: false,
 		},
 		themes: {
 			dark: {

@@ -14,10 +14,31 @@ export class TypeSchema extends Schema {
 		const suggestions: ICompletionItem[] = []
 		if (this.values.includes('boolean'))
 			suggestions.push(
-				...['true', 'false'].map(
-					(value) => <const>{ type: 'value', value }
+				...[true, false].map(
+					(value) =>
+						<const>{ type: 'value', label: `${value}`, value }
 				)
 			)
+		if (this.values.includes('integer'))
+			suggestions.push(
+				...[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(
+					(value) =>
+						<const>{ type: 'value', label: `${value}`, value }
+				)
+			)
+		if (this.values.includes('number'))
+			suggestions.push(
+				...[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9].map(
+					(value) =>
+						<const>{ type: 'value', label: `${value}`, value }
+				)
+			)
+		if (this.values.includes('null'))
+			suggestions.push(<const>{
+				type: 'value',
+				label: 'null',
+				value: null,
+			})
 
 		return suggestions
 	}

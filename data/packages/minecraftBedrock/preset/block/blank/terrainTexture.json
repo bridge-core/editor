@@ -1,7 +1,0 @@
-{
-	"texture_data": {
-		"{{PROJECT_PREFIX}}_{{IDENTIFIER}}": {
-			"textures": "textures/blocks/{{PRESET_PATH}}{{IDENTIFIER}}"
-		}
-	}
-}

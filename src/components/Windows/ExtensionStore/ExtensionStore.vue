@@ -1,6 +1,6 @@
 <template>
 	<SidebarWindow
-		windowTitle="windows.extensionStore.title"
+		:windowTitle="title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -17,7 +17,7 @@
 				:label="t('windows.extensionStore.searchExtensions')"
 				v-model="sidebar._filter"
 				autocomplete="off"
-				autofocus
+				:autofocus="pointerDevice === 'mouse'"
 				outlined
 				dense
 			/>
@@ -29,12 +29,10 @@
 			<template v-else>
 				<ExtensionCard
 					v-for="extension in currentExtensions"
-					:key="
-						`${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`
-					"
+					:key="`${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`"
 					:extension="extension"
-					@search="search => (sidebar._filter = search)"
-					@select="id => ($data.selectedSidebar = id)"
+					@search="(search) => (sidebar._filter = search)"
+					@select="(id) => ($data.selectedSidebar = id)"
 				/>
 			</template>
 		</template>
@@ -45,6 +43,7 @@
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import ExtensionCard from './ExtensionCard.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'CreatePresetWindow',
@@ -54,21 +53,32 @@ export default {
 		ExtensionCard,
 	},
 	props: ['currentWindow'],
+	setup() {
+		return { pointerDevice }
+	},
 	data() {
 		return this.currentWindow
 	},
 	computed: {
+		title() {
+			if (!this.sidebar.currentElement)
+				return 'windows.extensionStore.title'
+			else
+				return `[${
+					this.sidebar._filter || this.sidebar.currentElement.text
+				} - ${this.t('windows.extensionStore.title')}]`
+		},
 		currentExtensions() {
 			if (this.sidebar._filter !== '') {
 				const f = this.sidebar._filter.toLowerCase()
 
 				return this.extensions.filter(
-					e =>
+					(e) =>
 						e.name.toLowerCase().includes(f) ||
 						e.description.toLowerCase().includes(f) ||
 						e.author.toLowerCase().includes(f) ||
 						e.version.includes(f) ||
-						e.tags.some(tag => tag.text.toLowerCase().includes(f))
+						e.tags.some((tag) => tag.text.toLowerCase().includes(f))
 				)
 			}
 

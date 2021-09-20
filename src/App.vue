@@ -1,12 +1,29 @@
 <template>
-	<v-app>
+	<v-app
+		:style="{ fontFamily }"
+		@contextmenu.native="$event.preventDefault()"
+	>
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar />
 
 		<Sidebar app />
 
-		<v-main :style="{ 'padding-top': 'env(titlebar-area-height, 24px)' }">
+		<v-btn
+			v-if="!sidebarNavigationVisible"
+			small
+			fab
+			fixed
+			style="bottom: calc(env(safe-area-inset-bottom, 0) + 16px)"
+			:left="!isSidebarRight"
+			:right="isSidebarRight"
+			color="primary"
+			@click="openSidebar"
+		>
+			<v-icon>mdi-table-column</v-icon>
+		</v-btn>
+
+		<v-main :style="{ 'padding-top': appToolbarHeight }">
 			<WindowRenderer />
 
 			<v-row
@@ -14,7 +31,10 @@
 				class="d-flex fill-area"
 				:class="{ 'flex-row-reverse': isSidebarRight }"
 			>
-				<v-col :cols="isSidebarContentVisible ? 3 + sidebarSize : 0">
+				<v-col
+					v-if="isSidebarContentVisible"
+					:cols="isSidebarContentVisible ? 3 + sidebarSize : 0"
+				>
 					<SidebarContent />
 				</v-col>
 
@@ -22,9 +42,17 @@
 					:cols="isSidebarContentVisible ? 9 - sidebarSize : 12"
 					class="flex-grow-1"
 				>
-					<div v-if="shouldRenderWelcomeScreen" class="d-flex">
+					<div
+						v-if="shouldRenderWelcomeScreen"
+						class="d-flex"
+						:class="{ 'flex-column': $vuetify.breakpoint.mobile }"
+						:style="{
+							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
+						}"
+					>
 						<v-divider
 							v-if="isSidebarContentVisible && !isSidebarRight"
+							style="z-index: 1"
 							vertical
 						/>
 
@@ -38,7 +66,8 @@
 								tabSystems[0].shouldRender &&
 								tabSystems[1].shouldRender
 							"
-							vertical
+							style="z-index: 1"
+							:vertical="!$vuetify.breakpoint.mobile"
 						/>
 						<TabSystem
 							class="flex-grow-1"
@@ -69,7 +98,8 @@ import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import { platform } from './utils/os'
-import { TabSystemMixin } from '/@/components/Mixins/TabSystem'
+import { TabSystemMixin } from '/@/components/Mixins/TabSystem.ts'
+import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import ContextMenu from '/@/components/ContextMenu/ContextMenu.vue'
 import { App } from '/@/App.ts'
 import TabSystem from '/@/components/TabSystem/TabSystem.vue'
@@ -77,21 +107,17 @@ import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
 import InitialSetupDialog from '/@/components/InitialSetup/Dialog.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
-import { isContentVisible } from './components/Sidebar/state'
+import { isContentVisible, SidebarState } from './components/Sidebar/state'
 import { settingsState } from './components/Windows/Settings/SettingsState'
 
 export default {
 	name: 'App',
-	mixins: [TabSystemMixin],
+	mixins: [TabSystemMixin, AppToolbarHeightMixin],
 
-	setup() {
-		return {
-			isSidebarContentVisible: isContentVisible,
-		}
-	},
 	mounted() {
 		App.getApp().then((app) => {
 			this.contextMenu = app.contextMenu
+			this.windowSize = app.windowResize.state
 		})
 	},
 
@@ -111,9 +137,19 @@ export default {
 		isMacOs: platform() === 'darwin',
 		contextMenu: null,
 		settingsState: settingsState,
+		windowSize: {
+			currentWidth: window.innerWidth,
+			currentHeight: window.innerHeight,
+		},
 	}),
 
 	computed: {
+		isSidebarContentVisible() {
+			return this.sidebarNavigationVisible && isContentVisible.value
+		},
+		sidebarNavigationVisible() {
+			return SidebarState.isNavigationVisible
+		},
 		isSidebarRight() {
 			return (
 				this.settingsState &&
@@ -127,6 +163,7 @@ export default {
 					? this.settingsState.sidebar.sidebarSize
 					: undefined
 			if (!size) size = 'normal'
+			if (this.$vuetify.breakpoint.mobile) return 9
 
 			switch (size) {
 				case 'tiny':
@@ -139,6 +176,25 @@ export default {
 					return 1
 			}
 		},
+		fontFamily() {
+			return this.settingsState &&
+				this.settingsState.appearance &&
+				this.settingsState.appearance.font
+				? `${this.settingsState.appearance.font} !important`
+				: 'Roboto !important'
+		},
+	},
+	methods: {
+		openSidebar() {
+			SidebarState.isNavigationVisible = true
+		},
+	},
+	watch: {
+		'$vuetify.breakpoint.mobile'() {
+			this.$nextTick(() => {
+				App.getApp().then((app) => app.windowResize.dispatch())
+			})
+		},
 	},
 }
 </script>
@@ -147,10 +203,15 @@ export default {
 /** Reset vuetify's scrolling */
 html {
 	overflow: hidden;
-	overscroll-behavior: contain;
+	overscroll-behavior: none;
 }
 body {
 	overflow: unset;
+	/** This terrible hack is needed to disable safari's overflow scrolling */
+	position: fixed;
+	width: 100%;
+	height: 100vh;
+	padding-left: env(safe-area-inset-left, 0);
 }
 
 /** Scrollbar */
@@ -164,14 +225,13 @@ body {
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 24px;
-	background-color: rgba(200, 200, 200, 0.8);
-	border: thin solid rgba(0, 0, 0, 0.12);
+	background-color: var(--v-scrollbarThumb-base);
+	border: thin solid rgba(0, 0, 0, 0.3);
+	opacity: 0.8;
 }
 
 .theme--dark *::-webkit-scrollbar-thumb {
-	border-radius: 24px;
-	background-color: rgba(0, 0, 0, 0.8);
-	border: thin solid rgba(255, 255, 255, 0.2);
+	border: thin solid rgba(255, 255, 255, 0.35);
 }
 
 summary::-webkit-details-marker {
@@ -185,6 +245,13 @@ summary::-webkit-details-marker {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	touch-action: manipulation;
+}
+.text-normal {
+	font-size: 1rem !important;
+	font-weight: 400;
+	letter-spacing: 0.03125em !important;
+	line-height: 1.5rem;
 }
 
 .v-application {
@@ -207,10 +274,12 @@ summary::-webkit-details-marker {
 }
 .code-font {
 	font-family: Menlo, Monaco, 'Courier New', monospace;
-	font-size: 14px;
 }
 .clickable {
 	cursor: pointer;
 	border-radius: 4px;
+}
+.cursor-pointer {
+	cursor: pointer;
 }
 </style>

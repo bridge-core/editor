@@ -6,7 +6,9 @@ export class ConstSchema extends Schema {
 	}
 
 	getCompletionItems() {
-		return [<const>{ type: 'value', value: this.value }]
+		return [
+			<const>{ type: 'value', label: `${this.value}`, value: this.value },
+		]
 	}
 
 	validate(val: unknown) {

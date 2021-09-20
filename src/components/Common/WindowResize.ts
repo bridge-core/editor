@@ -1,6 +1,7 @@
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { debounce } from 'lodash-es'
 import { reactive } from '@vue/composition-api'
+import { App } from '/@/App'
 
 export class WindowResize extends EventDispatcher<[number, number]> {
 	protected state = reactive({
@@ -13,13 +14,17 @@ export class WindowResize extends EventDispatcher<[number, number]> {
 
 		window.addEventListener(
 			'resize',
-			debounce(() => this.dispatch(), 200, { trailing: true })
+			debounce(() => this.dispatch(), 50, { trailing: true })
 		)
 
 		this.on(([newWidth, newHeight]) => {
 			this.state.currentWidth = newWidth
 			this.state.currentHeight = newHeight
 		})
+
+		App.getApp().then((app) =>
+			app.projectManager.projectReady.fired.then(() => this.dispatch())
+		)
 	}
 
 	dispatch() {

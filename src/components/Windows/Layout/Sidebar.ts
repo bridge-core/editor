@@ -1,5 +1,6 @@
-import Vue from 'vue'
+import { reactive, set } from '@vue/composition-api'
 import { App } from '/@/App'
+import { v4 as uuid } from 'uuid'
 
 export type TSidebarElement = SidebarCategory | SidebarItem
 export interface ISidebarCategoryConfig {
@@ -9,7 +10,8 @@ export interface ISidebarCategoryConfig {
 	shouldSort?: boolean
 }
 export class SidebarCategory {
-	readonly type = 'category'
+	public readonly type = 'category'
+	public readonly id = uuid()
 	protected text: string
 	protected items: SidebarItem[]
 	protected isOpen: boolean
@@ -63,15 +65,13 @@ export class SidebarCategory {
 	}
 	filtered(filter: string) {
 		if (filter.length === 0) return this
-		return Vue.observable(
-			new SidebarCategory({
-				items: this.items.filter((item) =>
-					item.getSearchText().includes(filter)
-				),
-				text: this.text,
-				isOpen: true,
-			})
-		)
+		return new SidebarCategory({
+			items: this.items.filter((item) =>
+				item.getSearchText().includes(filter)
+			),
+			text: this.text,
+			isOpen: true,
+		})
 	}
 }
 
@@ -106,6 +106,7 @@ export class SidebarItem {
 export class Sidebar {
 	protected _selected?: string
 	protected _filter: string = ''
+	protected reselectedForFilter = ''
 	public readonly state: Record<string, any> = {}
 
 	constructor(protected _elements: TSidebarElement[]) {
@@ -116,7 +117,18 @@ export class Sidebar {
 		if (element.type === 'item' && additionalData)
 			this.state[element.id] = additionalData
 
-		this._elements.push(element)
+		if (this.has(element)) this.replace(element)
+		else this._elements.push(element)
+	}
+	has(element: TSidebarElement) {
+		return this._elements.find((e) => e.id === element.id) !== undefined
+	}
+	replace(element: TSidebarElement) {
+		this._elements = this._elements.map((e) => {
+			if (e.id === element.id) return element
+
+			return e
+		})
 	}
 	removeElements() {
 		this._elements = []
@@ -136,12 +148,14 @@ export class Sidebar {
 				.map((e) => (e.type === 'item' ? e : e.filtered(this.filter)))
 		)
 
-		if (elements.length === 1) {
+		if (this.filter !== this.reselectedForFilter && elements.length > 0) {
 			const e = elements[0]
-			if (e.type === 'category' && e.getItems().length === 1) {
+			if (e.type === 'category' && e.getItems().length > 0) {
 				e.setOpen(true)
 				this.setDefaultSelected(e.getItems()[0].id)
 			}
+
+			this.reselectedForFilter = this.filter
 		}
 
 		return elements
@@ -173,7 +187,7 @@ export class Sidebar {
 		return this.state[id] ?? {}
 	}
 	setState(id: string, data: any) {
-		Vue.set(this.state, id, data)
+		set(this.state, id, data)
 	}
 
 	protected sortSidebar(elements: TSidebarElement[]) {

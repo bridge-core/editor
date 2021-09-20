@@ -5,6 +5,8 @@ import JSON5 from 'json5'
 import { App } from '/@/App'
 import { deepMergeAll } from '/@/utils/deepmerge'
 import { Signal } from '../Common/Event/Signal'
+import { InfoPanel, IPanelOptions } from '../InfoPanel/InfoPanel'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 export class CompilerManager extends Signal<void> {
 	protected compilers = new Map<string, Compiler>()
@@ -41,6 +43,14 @@ export class CompilerManager extends Signal<void> {
 		this.dispatch()
 	}
 
+	get current() {
+		let compiler = this.compilers.get('default')
+
+		if (!compiler) throw new Error(`Cannot get current compiler`)
+
+		return compiler
+	}
+
 	updateFiles(configName: string, filePaths: string[]) {
 		let compiler = this.compilers.get(configName)
 
@@ -51,22 +61,22 @@ export class CompilerManager extends Signal<void> {
 		return compiler.updateFiles(filePaths)
 	}
 	unlink(path: string) {
-		let compiler = this.compilers.get('default.json')
+		let compiler = this.compilers.get('default')
 
 		if (!compiler)
 			throw new Error(
-				`Cannot update file because compiler for config ".bridge/compiler/default.json" doesn't exist`
+				`Cannot update file because compiler for config ".bridge/compiler/default" doesn't exist`
 			)
 
 		return compiler.unlink(path)
 	}
 
 	compileWithFile(filePath: string, file: File) {
-		let compiler = this.compilers.get('default.json')
+		let compiler = this.compilers.get('default')
 
 		if (!compiler)
 			throw new Error(
-				`Cannot update file because compiler for config ".bridge/compiler/default.json" doesn't exist`
+				`Cannot update file because compiler for config ".bridge/compiler/default" doesn't exist`
 			)
 		return compiler.compileWithFile(filePath, file)
 	}
@@ -89,14 +99,71 @@ export class CompilerManager extends Signal<void> {
 		)
 	}
 	async openWindow() {
+		const comMojang = this.project.app.comMojang
+		const { hasComMojang, didDenyPermission } = comMojang.status
+
 		const configDir = await this.project.fileSystem.getDirectoryHandle(
 			`.bridge/compiler`,
 			{ create: true }
 		)
-		const informedChoice = new InformedChoiceWindow('sidebar.compiler.name')
+		const informedChoice = new (class extends InformedChoiceWindow {
+			constructor() {
+				super('sidebar.compiler.name')
+
+				let panelConfig: IPanelOptions
+
+				if (isUsingFileSystemPolyfill) {
+					panelConfig = {
+						text: 'comMojang.status.notAvailable',
+						type: 'error',
+						isDismissible: false,
+					}
+				} else if (!hasComMojang && didDenyPermission) {
+					panelConfig = {
+						text: 'comMojang.status.deniedPermission',
+						type: 'warning',
+						isDismissible: false,
+					}
+				} else if (hasComMojang && !didDenyPermission) {
+					panelConfig = {
+						text: 'comMojang.status.sucess',
+						type: 'success',
+						isDismissible: false,
+					}
+				} else if (!hasComMojang) {
+					panelConfig = {
+						text: 'comMojang.status.notSetup',
+						type: 'error',
+						isDismissible: false,
+					}
+				} else {
+					throw new Error(`Invalid com.mojang status`)
+				}
+
+				this.topPanel = new InfoPanel(panelConfig)
+			}
+		})()
+
 		const actionManager = await informedChoice.actionManager
+
+		actionManager.create({
+			icon: 'mdi-cog',
+			name: 'sidebar.compiler.default.name',
+			description: 'sidebar.compiler.default.description',
+			onTrigger: async () => {
+				this.project.packIndexer.deactivate()
+				await this.project.packIndexer.activate(true)
+				await this.start('default', 'build')
+			},
+		})
+
 		for await (const entry of configDir.values()) {
-			if (entry.kind !== 'file' || entry.name === '.DS_Store') continue
+			if (
+				entry.kind !== 'file' ||
+				entry.name === '.DS_Store' ||
+				entry.name === 'default.json' // Default compiler config already gets triggerd with the default action above (outside of the loop)
+			)
+				continue
 			const file = await entry.getFile()
 
 			let config
@@ -110,7 +177,11 @@ export class CompilerManager extends Signal<void> {
 				icon: config.icon,
 				name: config.name,
 				description: config.description,
-				onTrigger: () => this.start(entry.name, 'build'),
+				onTrigger: async () => {
+					this.project.packIndexer.deactivate()
+					await this.project.packIndexer.activate(true)
+					await this.start(entry.name, 'build')
+				},
 			})
 		}
 	}

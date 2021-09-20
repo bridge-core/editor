@@ -10,6 +10,7 @@ import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { FileTab } from '../../TabSystem/FileTab'
+import { markRaw } from '@vue/composition-api'
 
 export class ParticlePreviewTab extends ThreePreviewTab {
 	protected emitter?: Emitter
@@ -17,14 +18,14 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	protected fileWatcher?: FileWatcher
 	protected isReloadingDone = new Signal<void>()
 
-	protected wintersky = Object.freeze(
+	protected wintersky = markRaw(
 		new Wintersky.Scene({
 			fetchTexture: async (config) => {
 				const app = await App.getApp()
 
 				try {
 					return await loadAsDataURL(
-						config.particle_texture_path,
+						`RP/${config.particle_texture_path}.png`,
 						app.project.fileSystem
 					)
 				} catch (err) {
@@ -80,9 +81,8 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 
 	async loadParticle(file?: File) {
 		if (!this.fileWatcher)
-			this.fileWatcher = new ParticleWatcher(
-				this,
-				this.tab.getProjectPath()
+			this.fileWatcher = markRaw(
+				new ParticleWatcher(this, this.tab.getProjectPath())
 			)
 		if (!file)
 			file =
@@ -100,19 +100,25 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		if (!this.scene.children.includes(this.wintersky.space))
 			this.scene.add(this.wintersky.space)
 
-		this.config = new Wintersky.Config(this.wintersky, particle, {
-			path: this.tab.getProjectPath(),
-		})
+		this.config = markRaw(
+			new Wintersky.Config(this.wintersky, particle, {
+				path: this.tab.getProjectPath(),
+			})
+		)
 
-		this.emitter = new Wintersky.Emitter(this.wintersky, this.config, {
-			loop_mode: 'looping',
-			parent_mode: 'world',
-		})
+		this.emitter = markRaw(
+			new Wintersky.Emitter(this.wintersky, this.config, {
+				loop_mode: 'looping',
+				parent_mode: 'world',
+			})
+		)
+		// console.log(this.scene)
 
 		this.emitter.start()
 	}
 
 	protected render() {
+		// console.log('loop')
 		this.controls?.update()
 		this.wintersky.updateFacingRotation(this.camera)
 		this.emitter?.tick()

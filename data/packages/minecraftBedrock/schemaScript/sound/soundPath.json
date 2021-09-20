@@ -1,5 +1,0 @@
-{
-	"type": "enum",
-	"generateFile": "sounds/dynamic/soundPathEnum.json",
-	"script": "return readdir('RP/sounds').then(dirents => dirents.map(dirent => dirent.path.replace('RP/', '').replace(/\\.fsb|\\.wav|\\.mp3|\\.ogg/, '')).filter((path) => !path.endsWith('.json')))"
-}

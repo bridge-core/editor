@@ -1,94 +1,75 @@
-import { App } from '/@/App'
-import { Unzipper } from '../FileSystem/Unzipper'
 import { baseUrl } from '/@/utils/baseUrl'
-import { Signal } from '/@/components/Common/Event/Signal'
-import { version as appVersion } from '/@/appVersion.json'
-import { compare } from 'compare-versions'
-import { StreamingUnzipper } from '../FileSystem/StreamingUnzipper/StreamingUnzipper'
+import { unzip, Unzipped } from 'fflate'
+import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
+import { basename, dirname } from '/@/utils/path'
+import { FileSystem } from '../FileSystem/FileSystem'
 
-export class DataLoader extends Signal<void> {
-	constructor(protected app: App) {
+export class DataLoader extends FileSystem {
+	_virtualFileSystem?: VirtualDirectoryHandle
+
+	get virtualFileSystem() {
+		if (!this._virtualFileSystem) {
+			throw new Error('DataLoader: virtualFileSystem is not initialized')
+		}
+		return this._virtualFileSystem
+	}
+
+	constructor(clearDB = false) {
 		super()
+		this.loadData(clearDB)
 	}
 
-	async start() {
-		this.app.windows.loadingWindow.open(
-			'windows.loadingWindow.titles.downloadingData'
-		)
-		await this.app.fileSystem.fired
-
-		if (await this.isUpdateAvailable()) {
-			await this.downloadData()
-		}
-
-		this.dispatch()
-		this.app.windows.loadingWindow.close()
-	}
-
-	protected async isUpdateAvailable() {
-		let remoteVersion: string
-		try {
-			remoteVersion = await fetch(
-				baseUrl + 'data/version.txt'
-			).then((response) => response.text())
-		} catch (err) {
-			return false
-		}
-
-		let localVersion: string
-		try {
-			localVersion = await this.app.fileSystem
-				.readFile('data/version.txt')
-				.then((data) => data.text())
-		} catch {
-			return true
-		}
-
-		// Avoid "not a semantic version" error
-		if (localVersion === '') return true
-
-		console.log(
-			`App version: ${appVersion}\nLocal data version: ${localVersion}\nRemote data version: ${remoteVersion}`
+	async loadData(clearDB = false) {
+		// Read packages.zip file
+		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
+			response.arrayBuffer()
 		)
 
-		// See: https://discord.com/channels/602097536404160523/603989805763788800/812075892158890034
-		if (
-			remoteVersion[0] === "'" &&
-			remoteVersion[remoteVersion.length - 1] === "'"
-		)
-			remoteVersion = remoteVersion.slice(1, -1)
-		if (
-			localVersion[0] === "'" &&
-			localVersion[localVersion.length - 1] === "'"
-		)
-			localVersion = localVersion.slice(1, -1)
-
-		return compare(remoteVersion, localVersion, '>')
-	}
-
-	protected async downloadData() {
-		console.log('Downloading new data...')
-
-		try {
-			await this.app.fileSystem.unlink('data/packages')
-		} catch {}
-
-		const unzipper = new Unzipper(
-			await this.app.fileSystem.getDirectoryHandle('data', {
-				create: true,
+		// Unzip data
+		const unzipped = await new Promise<Unzipped>((resolve, reject) =>
+			unzip(new Uint8Array(rawData), async (error, zip) => {
+				if (error) return reject(error)
+				resolve(zip)
 			})
 		)
 
-		unzipper.createTask(this.app.taskManager, {
-			icon: 'mdi-download',
-			description: 'taskManager.tasks.dataLoader.description',
-			name: 'taskManager.tasks.dataLoader.title',
-		})
+		// Create virtual filesystem
+		this._virtualFileSystem = new VirtualDirectoryHandle(
+			null,
+			'bridgeFolder',
+			new Map(),
+			clearDB
+		)
+		await this._virtualFileSystem.setupDone.fired
 
-		await fetch(baseUrl + 'data/package.zip')
-			.then((response) => response.arrayBuffer())
-			.then((arrayBuffer) => unzipper.unzip(new Uint8Array(arrayBuffer)))
+		const defaultHandle = await this._virtualFileSystem.getDirectoryHandle(
+			'data',
+			{ create: true }
+		)
+		const folders: Record<string, VirtualDirectoryHandle> = {
+			'.': defaultHandle,
+		}
 
-		console.log('Data updated!')
+		for (const path in unzipped) {
+			const name = basename(path)
+			const parentDir = dirname(path)
+
+			if (path.endsWith('/')) {
+				// Current entry is a folder
+				const handle = await folders[parentDir].getDirectoryHandle(
+					name,
+					{ create: true }
+				)
+				folders[path.slice(0, -1)] = handle
+			} else {
+				// Current entry is a file
+				await folders[parentDir].getFileHandle(name, {
+					create: true,
+					initialData: unzipped[path],
+				})
+			}
+		}
+
+		this.setup(this._virtualFileSystem)
 	}
 }

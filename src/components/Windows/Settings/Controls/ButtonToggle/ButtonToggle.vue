@@ -21,7 +21,7 @@
 				</v-btn-toggle>
 			</div>
 
-			<span class="ml-4 body-1">{{ t(config.description) }}</span>
+			<span class="ml-4 text-normal">{{ t(config.description) }}</span>
 		</div>
 	</div>
 </template>
@@ -40,7 +40,7 @@ export default {
 	}),
 	created() {
 		this.value_ =
-			this.config.options.findIndex(val => val === this.value) || 0
+			this.config.options.findIndex((val) => val === this.value) || 0
 	},
 	methods: {
 		onChange(val) {

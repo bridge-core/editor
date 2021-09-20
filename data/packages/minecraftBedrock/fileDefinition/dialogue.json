@@ -1,8 +1,0 @@
-{
-	"id": "dialogue",
-	"icon": "mdi-forum",
-	"scope": "BP/dialogue/",
-	"matcher": ["BP/dialogue/**/*.json", "BP/dialogue/*.json"],
-	"schema": "file:///data/packages/minecraftBedrock/schema/dialogue/main.json",
-	"lightningCache": "dialogue.json"
-}

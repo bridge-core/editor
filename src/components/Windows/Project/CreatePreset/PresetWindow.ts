@@ -9,25 +9,27 @@ import { compare, CompareOperator } from 'compare-versions'
 import { runPresetScript } from './PresetScript'
 import { expandFile, TExpandFile } from './ExpandFile'
 import { createFile, TCreateFile } from './CreateFile'
-import { TPackTypeId } from '/@/components/Data/PackType'
+import { PackType, TPackTypeId } from '/@/components/Data/PackType'
 import { transformString } from './TransformString'
 import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { PresetItem } from './PresetItem'
+import { DataLoader } from '/@/components/Data/DataLoader'
+import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
+import { IRequirements, RequiresMatcher } from '../../../Data/RequiresMatcher'
 
 export interface IPresetManifest {
 	name: string
 	icon: string
 	requiredModules?: string[]
-	packTypes?: TPackTypeId[]
 	category: string
 	description?: string
 	presetPath?: string
-	targetVersion: [CompareOperator, string]
 	additionalModels?: Record<string, unknown>
 	fields: [string, string, IPresetFieldOpts][]
 	createFiles?: (string | TCreateFile)[]
 	expandFiles?: TExpandFile[]
+	requires: IRequirements
 }
 export interface IPresetFieldOpts {
 	// All types
@@ -45,6 +47,7 @@ export interface IPresetFieldOpts {
 
 export interface IPresetFileOpts {
 	inject: string[]
+	openFile?: boolean
 }
 
 export interface IPermissions {
@@ -61,7 +64,7 @@ export class CreatePresetWindow extends BaseWindow {
 	 */
 	protected _validationRules: Record<string, (value: string) => boolean> = {
 		alphanumeric: (value: string) =>
-			value.match(/^[a-zA-Z0-9_]*$/) !== null,
+			value.match(/^[a-zA-Z0-9_\.]*$/) !== null,
 		lowercase: (value: string) => value.toLowerCase() === value,
 		required: (value: string) => !!value,
 	}
@@ -89,7 +92,10 @@ export class CreatePresetWindow extends BaseWindow {
 		this.defineWindow()
 	}
 
-	protected async addPreset(fs: FileSystem, manifestPath: string) {
+	protected async addPreset(
+		fs: FileSystem | DataLoader,
+		manifestPath: string
+	) {
 		const app = await App.getApp()
 		const manifest = <IPresetManifest>await fs.readJSON(manifestPath)
 
@@ -99,38 +105,8 @@ export class CreatePresetWindow extends BaseWindow {
 				`Error loading ${manifestPath}: Missing preset category`
 			)
 
-		// Check that project has packType preset needs
-		if (!app.project?.hasPacks(manifest.packTypes ?? [])) return
-
-		// Check that the project has the required modules
-		if (manifest.requiredModules) {
-			const gameTest = <boolean | undefined>(
-				app.projectConfig.get().capabilities?.includes('gameTestAPI')
-			)
-			const scripting = <boolean | undefined>(
-				app.projectConfig.get().capabilities?.includes('scriptingAPI')
-			)
-
-			for (const module of manifest.requiredModules) {
-				if (module == 'gameTest' && !gameTest) return
-				if (module == 'scriping' && !scripting) return
-			}
-		}
-
-		// Load current project target version
-		const projectTargetVersion =
-			app.projectConfig.get().targetVersion ??
-			(await getLatestFormatVersion())
-		// Check that preset is supported on target version
-		if (
-			manifest.targetVersion &&
-			!compare(
-				projectTargetVersion,
-				manifest.targetVersion[1],
-				manifest.targetVersion[0]
-			)
-		)
-			return
+		const requiresMatcher = new RequiresMatcher(manifest.requires)
+		if (!(await requiresMatcher.isValid())) return
 
 		let category = <SidebarCategory | undefined>(
 			this.sidebar.rawElements.find(
@@ -169,12 +145,20 @@ export class CreatePresetWindow extends BaseWindow {
 			})
 		}
 
+		const presetPath = manifest.additionalModels?.PRESET_PATH
+		const iconColor =
+			typeof presetPath === 'string' &&
+			manifest.category === 'fileType.simpleFile'
+				? PackType.getWithRelativePath(presetPath + 'test.json')
+						?.color ?? 'primary'
+				: 'primary'
+
 		category.addItem(
 			new PresetItem({
 				id,
 				text: manifest.name,
 				icon: manifest.icon,
-				color: 'primary',
+				color: iconColor,
 				resetState,
 			})
 		)
@@ -183,10 +167,12 @@ export class CreatePresetWindow extends BaseWindow {
 	}
 
 	protected async loadPresets(
-		fs: FileSystem,
+		fs: FileSystem | DataLoader,
 		dirPath = 'data/packages/minecraftBedrock/preset'
 	) {
-		let dirents: FileSystemHandle[] = []
+		await fs.fired
+
+		let dirents: AnyHandle[] = []
 		try {
 			dirents = await fs.readdir(dirPath, { withFileTypes: true })
 		} catch {}
@@ -205,7 +191,7 @@ export class CreatePresetWindow extends BaseWindow {
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
 
-		await this.loadPresets(fs)
+		await this.loadPresets(app.dataLoader)
 		for (const [_, loadPresetPath] of this.loadPresetPaths)
 			await this.loadPresets(fs, loadPresetPath)
 
@@ -231,10 +217,9 @@ export class CreatePresetWindow extends BaseWindow {
 
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
-		const fs = app.project?.fileSystem!
+		const fs = app.project!.fileSystem
 
-		const promises: Promise<unknown>[] = []
-		const createdFiles: FileSystemFileHandle[] = []
+		const createdFiles: AnyFileHandle[] = []
 		const permissions: IPermissions = {
 			mayOverwriteFiles: undefined,
 			mayOverwriteUnsavedChanges: undefined,
@@ -279,8 +264,13 @@ export class CreatePresetWindow extends BaseWindow {
 				this.sidebar.currentState.models
 			)
 			// This filePath is relative to the project root
-			// The project.hasFile/project.closeFile methods expect the path to relative to the bridge project folder
-			const fileHandle = await project.fileSystem.getFileHandle(filePath)
+			// The project.hasFile/project.closeFile methods expect a fileHandle
+			let fileHandle: AnyFileHandle | null = null
+			try {
+				fileHandle = await project.fileSystem.getFileHandle(filePath)
+			} catch {
+				continue
+			}
 
 			const tab = await project.getFileTab(fileHandle)
 			if (tab !== undefined && tab.isUnsaved) {
@@ -304,39 +294,38 @@ export class CreatePresetWindow extends BaseWindow {
 			}
 		}
 
-		promises.push(
-			...createFiles.map(async (createFileOpts) => {
-				if (typeof createFileOpts === 'string') {
-					createdFiles.push(
-						...(await runPresetScript(
-							presetPath,
-							createFileOpts,
-							this.sidebar.currentState.models,
-							permissions
-						))
-					)
-				} else {
-					createdFiles.push(
-						await createFile(
-							presetPath,
-							createFileOpts,
-							this.sidebar.currentState.models
-						)
-					)
-				}
-			}),
-			...expandFiles.map(async (expandFileOpts) => {
-				createdFiles.push(
-					await expandFile(
-						presetPath,
-						expandFileOpts,
-						this.sidebar.currentState.models
-					)
+		const openFiles: AnyFileHandle[] = []
+		for (const createFileOpts of createFiles) {
+			if (typeof createFileOpts === 'string') {
+				const scriptResult = await runPresetScript(
+					presetPath,
+					createFileOpts,
+					this.sidebar.currentState.models,
+					permissions
 				)
-			})
-		)
+				createdFiles.push(...scriptResult.createdFiles)
+				openFiles.push(...scriptResult.openFile)
+			} else {
+				const fileHandle = await createFile(
+					presetPath,
+					createFileOpts,
+					this.sidebar.currentState.models
+				)
+				createdFiles.push(fileHandle)
+				if (createFileOpts[2]?.openFile) openFiles.push(fileHandle)
+			}
+		}
+		for (const expandFileOpts of expandFiles) {
+			const fileHandle = await expandFile(
+				presetPath,
+				expandFileOpts,
+				this.sidebar.currentState.models
+			)
+			createdFiles.push(fileHandle)
+			if (expandFileOpts[2]?.openFile) openFiles.push(fileHandle)
+		}
 
-		await Promise.all(promises)
+		// await Promise.all(promises)
 		App.eventSystem.dispatch('fileAdded', undefined)
 
 		// Close window
@@ -348,11 +337,11 @@ export class CreatePresetWindow extends BaseWindow {
 			if (!filePath) continue
 
 			filePaths.push(filePath)
-
-			await app.project.openFile(
-				fileHandle,
-				fileHandle === createdFiles[createdFiles.length - 1]
-			)
+			if (openFiles.includes(fileHandle))
+				await app.project.openFile(fileHandle, {
+					selectTab: fileHandle === openFiles[openFiles.length - 1],
+					isTemporary: false,
+				})
 		}
 
 		await app.project.updateFiles(filePaths)

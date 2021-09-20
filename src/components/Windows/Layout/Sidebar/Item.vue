@@ -1,14 +1,24 @@
 <template>
 	<div
-		class="pa-1 rounded-lg category d-flex"
+		class="pa-1 rounded-lg category"
 		:class="{ selected: isSelected }"
 		v-ripple="!isSelected"
 		@click="$emit('click')"
 	>
-		<v-icon :color="color" class="pr-1" style="font-size: 22px;">
-			{{ icon }}
-		</v-icon>
-		<span>{{ text }}</span>
+		<!-- Flexbox doesn't work directly on summaries in Safari -->
+		<span
+			class="d-flex align-center"
+			:class="{ 'justify-center': compact }"
+		>
+			<v-icon
+				:color="color"
+				:class="{ 'pr-1': !compact }"
+				:style="{ 'font-size': `${compact ? 30 : 22}px` }"
+			>
+				{{ icon }}
+			</v-icon>
+			<span v-if="!compact">{{ text }}</span>
+		</span>
 	</div>
 </template>
 
@@ -21,6 +31,7 @@ export default {
 		text: String,
 		icon: String,
 		color: String,
+		compact: Boolean,
 	},
 }
 </script>

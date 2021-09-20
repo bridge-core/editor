@@ -1,6 +1,8 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
+import { platform } from '/@/utils/os'
+import { clearAllNotifications } from '/@/components/Notifications/create'
 
 export function setupToolsCategory(app: App) {
 	const tools = new ToolbarCategory(
@@ -13,8 +15,7 @@ export function setupToolsCategory(app: App) {
 			icon: 'mdi-book-open-page-variant',
 			name: 'actions.docs.name',
 			description: 'actions.docs.description',
-			onTrigger: () =>
-				App.createNativeWindow('https://bedrock.dev', 'DocWindow'),
+			onTrigger: () => App.openUrl('https://bedrock.dev', 'DocWindow'),
 		})
 	)
 
@@ -26,7 +27,8 @@ export function setupToolsCategory(app: App) {
 			icon: 'mdi-folder-refresh-outline',
 			name: 'windows.packExplorer.refresh.name',
 			description: 'windows.packExplorer.refresh.description',
-			keyBinding: 'Ctrl + Meta + R',
+			keyBinding:
+				platform() === 'win32' ? 'Ctrl + Alt + R' : 'Ctrl + Meta + R',
 			onTrigger: async () => {
 				const app = await App.getApp()
 				await app.project.refresh()
@@ -50,18 +52,23 @@ export function setupToolsCategory(app: App) {
 			onTrigger: async () => {
 				// Global extensions
 				app.extensionLoader.deactiveAll(true)
-				app.extensionLoader.loadExtensions(
-					await app.fileSystem.getDirectoryHandle(`extensions`)
-				)
+				app.extensionLoader.loadExtensions()
 
 				// Local extensions
 				app.project.extensionLoader.deactiveAll(true)
-				app.project.extensionLoader.loadExtensions(
-					await app.project.fileSystem.getDirectoryHandle(
-						`.bridge/extensions`
-					)
-				)
+				app.project.extensionLoader.loadExtensions()
 			},
+		})
+	)
+
+	tools.addItem(new Divider())
+
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-cancel',
+			name: 'actions.clearAllNotifications.name',
+			description: 'actions.clearAllNotifications.description',
+			onTrigger: () => clearAllNotifications(),
 		})
 	)
 

@@ -15,8 +15,24 @@ export default {
 		information: 'Informatie',
 		continue: 'Doorgaan',
 		delete: 'Verwijderen',
+		select: 'Selecteren',
 		skip: 'Overslaan',
+		save: 'Opslaan',
+		more: 'Meer...',
 		selectFolder: 'Selecteer Map',
+		fileName: 'Bestandsnaam',
+		inactive: 'Inactief',
+		active: 'Actief',
+
+		confirmOverwriteFile:
+			'Er bestaat al een bestand met deze naam. Wil je het overschrijven?',
+		fileSystemPolyfill:
+			'Vanwege de browser die u gebruikt, moet u uw projecten downloaden om uw voortgang daadwerkelijk op te slaan. Dit is niet nodig als u Chrome of Edge gebruikt!',
+		successfulExport: {
+			title: 'Exporteren succesvol',
+			description: 'U kunt het geëxporteerde pakket hier vinden',
+		},
+		experimentalGameplay: 'Experimental Gameplay',
 	},
 	packType: {
 		behaviorPack: {
@@ -46,7 +62,7 @@ export default {
 		animationController: 'Animation Controller',
 		biome: 'Biome',
 		block: 'Block',
-		bridgeConfig: 'Project Config',
+		bridgeConfig: 'Projectconfiguratie',
 		dialogue: 'Dialogue',
 		entity: 'Entity',
 		feature: 'Feature',
@@ -65,6 +81,7 @@ export default {
 		clientManifest: 'Client Manifest',
 		skinManifest: 'Skin Manifest',
 		geometry: 'Geometry',
+		customCommand: 'Command',
 		customComponent: 'Component',
 		clientAnimation: 'Client Animation',
 		clientAnimationController: 'Client Animation Controller',
@@ -117,6 +134,15 @@ export default {
 		saveFile: {
 			name: 'Bestand Opslaan',
 			description: 'Sla het momenteel geopende bestand op',
+		},
+		saveAs: {
+			name: 'Opslaan Als',
+			description:
+				'Sla het momenteel geopende bestand op onder een andere naam',
+		},
+		saveAll: {
+			name: 'Alles Opslaan',
+			description: 'Alle momenteel geopende bestanden opslaan',
 		},
 		closeFile: {
 			name: 'Bestand Sluiten',
@@ -222,9 +248,40 @@ export default {
 		toArray: {
 			name: 'Transformeren naar Reeks',
 		},
+		documentationLookup: {
+			name: 'Documentatie bekijken',
+			noDocumentation: 'Geen documentatie beschikbaar voor',
+		},
+		toggleReadOnly: {
+			name: 'Schakel Alleen-Lezen Modus',
+			description: 'Schakel alleen-lezen modus voor het momenteel geopende bestand',
+		},
+		keepInTabSystem: {
+			name: 'Houd in Tab Systeem',
+			description: 'Converteert dit tabblad naar een permanent tabblad',
+		},
+		importBrproject: {
+			name: 'Project importeren',
+			description: 'Een project importeren uit een .brproject bestand',
+		},
+		downloadFile: {
+			name: 'Download bestand',
+			description: 'Download het momenteel geopende bestand',
+		},
+		undo: {
+			name: 'Ongedaan maken',
+			description: 'De laatste actie ongedaan maken',
+		},
+		redo: {
+			name: 'Opnieuw uitvoeren',
+			description: 'Voer de laatste actie opnieuw uit',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
+		project: {
+			name: 'Project',
+		},
 		file: {
 			name: 'Bestand',
 			preferences: {
@@ -245,6 +302,11 @@ export default {
 	sidebar: {
 		compiler: {
 			name: 'Compiler',
+			default: {
+				name: 'Default Config',
+				description:
+					'Voer bridge.\'s compiler uit met de standaard compilerconfiguratie die deel uitmaakt van het "config.json" bestand van uw project.',
+			},
 		},
 		extensions: {
 			name: 'Extensies',
@@ -274,14 +336,51 @@ export default {
 		recentFiles: 'Recente Bestanden',
 		recentProjects: 'Recente Projecten',
 	},
+	// Experimental gameplay toggles
+	experimentalGameplay: {
+		cavesAndCliffs: {
+			name: 'Caves and Cliffs',
+			description:
+				'Maakt automatische aanvullingen mogelijk voor de nieuwe berggeneratie in biomen.',
+		},
+		holidayCreatorFeatures: {
+			name: 'Holiday Creator Features',
+			description:
+				'Schakelt automatische aanvullingen in voor de gegevensgestuurde item- en blokfuncties.',
+		},
+		creationOfCustomBiomes: {
+			name: 'Creation of Custom Biomes',
+			description:
+				'Maakt het maken van aangepaste biomen, features en feature rules mogelijk.',
+		},
+		additionalModdingCapabilities: {
+			name: 'Additional Modding Capabilities',
+			description:
+				'Schakelt de Scripting API in het manifest in en stelt u in staat om scripts te maken met automatische aanvullingen.',
+		},
+		upcomingCreatorFeatures: {
+			name: 'Upcoming Creator Features',
+			description:
+				'Maakt het maken van fog volume bestanden mogelijk en biedt automatische aanvullingen voor entity eigenschappen.',
+		},
+		enableGameTestFramework: {
+			name: 'Enable GameTest Framework',
+			description:
+				'Schakelt de GameTest gerelateerde modules in het manifest in en stelt u in staat om GameTest scripts te maken met automatische aanvullingen.',
+		},
+		experimentalMolangFeatures: {
+			name: 'Experimental Molang Features',
+			description:
+				'Schakelt automatische aanvullingen in voor experimentele Molang queries.',
+		},
+		educationEdition: {
+			name: 'Enable Education Edition',
+			description:
+				'Schakelt automatische aanvullingen in voor educatieve functies, zoals recepten voor materiaalreductie.',
+		},
+	},
 	// Windows
 	windows: {
-		loadingWindow: {
-			titles: {
-				loading: 'Laden...',
-				downloadingData: 'Nieuwe gegevens downloaden...',
-			},
-		},
 		changelogWindow:{
 			title: "Wat is er nieuw?"
 		},
@@ -298,18 +397,72 @@ export default {
 			selectedPack: 'Geselecteerd',
 			title: 'Project Maken',
 			packIcon: 'Projectpictogram (optioneel)',
-			projectName: 'Projectnaam',
+			projectName: {
+				name: 'Projectnaam',
+				invalidLetters: 'U mag alleen alfanumerieke tekens gebruiken',
+				mustNotBeEmpty: 'U moet een projectnaam invoeren',
+			},
 			projectDescription: 'Projectbeschrijving (optioneel)',
 			projectPrefix: 'Projectvoorvoegsel',
 			projectAuthor: 'Project Auteur',
 			projectTargetVersion: 'Doelversie van het project',
-			scripting: 'Schakel Scripting API in',
-			gameTest: 'Schakel GameTest Framework in',
 			rpAsBpDependency:
 				'Registreer resourcepakket als afhankelijkheid van gedragspakket',
 			useLangForManifest:
 				'Voeg de naam/beschrijving van het pakket rechtstreeks toe aan het manifest',
 			create: 'Creëer!',
+			saveCurrentProject:
+				'Wilt u uw huidige project opslaan voordat u een nieuwe maakt? Alle niet-opgeslagen wijzigingen gaan verloren!',
+			individualFiles: {
+				name: 'Individuele Bestanden',
+				file: {
+					player: {
+						name: 'player.json',
+						description: 'Bewerk hoe de standaardspeler zich gedraagt',
+					},
+					tick: {
+						name: 'tick.json',
+						description:
+							'Definieer welke functies elke tick moeten worden uitgevoerd',
+					},
+					skins: {
+						name: 'skins.json',
+						description: 'Registreer de skins die je hebt gemaakt',
+					},
+					blocks: {
+						name: 'blocks.json',
+						description:
+							'Wordt gebruikt om te definiëren hoe meerdere blokvlakken worden gecombineerd tot een enkel blok',
+					},
+					terrainTexture: {
+						name: 'terrain_texture.json',
+						description: 'Wordt gebruikt om texturen toe te wijzen aan de vlakken van een blok',
+					},
+					itemTexture: {
+						name: 'item_texture.json',
+						description: 'Wordt gebruikt om texturen aan items toe te wijzen',
+					},
+					flipbookTextures: {
+						name: 'flipbook_textures.json',
+						description: 'Gebruikt voor het animeren van blok texturen',
+					},
+					biomesClient: {
+						name: 'biomes_client.json',
+						description:
+							'Wordt gebruikt om te definiëren hoe bioom specifieke effecten worden weergegeven',
+					},
+					sounds: {
+						name: 'sounds.json',
+						description:
+							'Gebruikt om geluiden te definiëren voor specifieke gamefuncties',
+					},
+					soundDefinitions: {
+						name: 'sound_definitions.json',
+						description:
+							'Wordt gebruikt om id\'s te registreren voor geluidsbestanden die elders in het project kunnen worden gebruikt',
+					},
+				},
+			},
 		},
 		createPreset: {
 			title: 'Voorinstelling maken',
@@ -342,8 +495,27 @@ export default {
 		},
 		projectChooser: {
 			title: 'Projecten',
+			description: 'Selecteer het momenteel actieve project',
 			searchProjects: 'Zoek Projecten...',
-			newProject: 'Nieuw Project',
+			newProject: {
+				name: 'Nieuw Project',
+				description: 'Maak een nieuw bridge. project.',
+			},
+
+			saveCurrentProject: {
+				name: 'Project Opslaan',
+				description:
+					'Download uw huidige project als een .brproject bestand om de aangebrachte wijzigingen op te slaan.',
+			},
+			openNewProject: {
+				name: 'Open Project',
+				description:
+					'Open een ander project door het bijbehorende .brproject bestand te selecteren.',
+				saveCurrentProject:
+					'Wilt u uw huidige project opslaan voordat u het nieuwe laadt?',
+			},
+			wrongFileType: 'Project moet een .brproject bestand zijn',
+			addPack: 'Pakket Toevoegen',
 		},
 		filePath: {
 			title: 'Kies Bestandspad',
@@ -362,14 +534,58 @@ export default {
 					"Weet u zeker dat u de dev server van de compiler opnieuw wilt starten? Dit kan enige tijd duren, afhankelijk van de grootte van uw project.",
 			},
 			createPreset: 'Nieuw Bestand',
+			projectConfig: {
+				name: 'Projectconfiguratie openen',
+				missing:
+					'Het lijkt erop dat dit project geen config.json bestand heeft. Elk project heeft een projectconfiguratie nodig om correct te kunnen werken.',
+			},
+			exportAsMcaddon: {
+				name: 'Exporteer als .mcaddon',
+			},
+			exportAsMctemplate: {
+				name: 'Exporteer als .mctemplate',
+				chooseWorld: 'Kies een wereld',
+			},
+			exportAsMcworld: {
+				name: 'Exporteer als .mcworld',
+				chooseWorld: 'Kies een wereld',
+			},
+			exportAsBrproject: {
+				name: 'Exporteer als .brproject',
+			},
 			fileActions: {
 				delete: {
 					name: 'Verwijderen',
 					description: 'Verwijder een bestand of map',
+					confirmText:
+						"Weet u zeker dat u dit bestand wilt verwijderen? U kunt het later niet meer herstellen!",
+				},
+				rename: {
+					name: 'Hernoemen',
+					description: 'Een bestand hernoemen',
+				},
+				duplicate: {
+					name: 'Dupliceren',
+					description: 'Een bestand dupliceren',
+				},
+				viewCompilerOutput: {
+					name: 'Uitvoer van compiler bekijken',
+					description:
+						'Bekijk de huidige compiler output voor dit bestand',
+					fileMissing:
+						"Het lijkt erop dat dit bestand nog niet is gecompileerd.",
 				},
 				revealFilePath: {
 					name: 'Bestandspad onthullen',
 					description: 'Geeft de locatie van een bestand of map weer',
+				},
+				createFile: {
+					name: 'Bestand aanmaken',
+					description: 'Maak een nieuw bestand',
+				},
+				createFolder: {
+					name: 'Map aanmaken',
+					description: 'Maak een nieuwe map',
 				},
 			},
 		},
@@ -418,6 +634,24 @@ export default {
 					description:
 						'Kies een licht thema voor het momenteel actieve project',
 				},
+				fontSize: {
+					name: 'Lettergrootte',
+					description: "Wijzig de lettergrootte van de tekst van bridge.",
+				},
+				editorFontSize: {
+					name: 'Code Lettergrootte',
+					description:
+						"Wijzig de lettergrootte van de code editor van bridge.",
+				},
+				editorFont: {
+					name: 'Code Lettertype',
+					description: "Wijzig het lettertype van de code editor van bridge.",
+				},
+				font: {
+					name: 'Lettertype',
+					description:
+						"Wijzig het lettertype dat in de gebruikersinterface van bridge. wordt gebruikt",
+				},
 			},
 			general: {
 				name: 'Algemeen',
@@ -453,6 +687,11 @@ export default {
 					name: 'Selecteer Werkmap',
 					description: 'Kies de hoofdmap waarop bridge. werkt',
 				},
+				openProjectChooserOnAppStartup: {
+					name: 'Projectkiezer openen',
+					description:
+						'Open automatisch de projectkiezer bij het starten van bridge.',
+				},
 			},
 			developer: {
 				name: 'Ontwikkelaar',
@@ -485,6 +724,26 @@ export default {
 					name: 'Woordomloop',
 					description: 'Wikkel woorden om horizontaal scrollen uit te schakelen',
 				},
+				wordWrapColumns: {
+					name: 'Woordomloop Kolommen',
+					description:
+						'Definieert na hoeveel kolommen de editor woorden moet laten omlopen',
+				},
+				compactTabDesign: {
+					name: 'Compact tabbladontwerp',
+					description:
+						'Toon tabbladen in het tabbladsysteem op een compactere manier',
+				},
+				automaticallyOpenTreeNodes: {
+					name: 'Automatisch Tree Nodes Openen',
+					description:
+						"Binnen in bridge.'s tree editor, open automatisch nodes wanneer je ze selecteert",
+				},
+				dragAndDropTreeNodes: {
+					name: 'Tree Nodes Slepen en Neerzetten',
+					description:
+						"Schakel tussen slepen & neerzetten voor tree nodes in bridge.'s tree editor",
+				},
 			},
 		},
 		projectFolder: {
@@ -495,8 +754,11 @@ export default {
 		extensionStore: {
 			title: 'Uitbreiding Winkel',
 			searchExtensions: 'Extensie zoeken...',
-			activateExtension: 'Activeer extensie',
+			deleteExtension: 'Extensie Verwijderen',
+			activateExtension: 'Extensie Activeren',
 			deactivateExtension: 'Extensie Deactiveren',
+			offlineError:
+				'Kan extensies niet laden. Controleer of uw apparaat een actieve netwerkverbinding heeft.',
 		},
 		pluginInstallLocation: {
 			title: 'Kies Installatielocatie',
@@ -510,19 +772,21 @@ export default {
 			title: 'Niet-ondersteunde browser',
 			description:
 				'Uw browser wordt momenteel niet ondersteund. Gebruik Chrome (Desktop) of Edge (Chromium) om aan de slag te gaan met bridge.!',
+			continue: 'Toch doorgaan',
 		},
 		invalidJson: {
 			title: 'Ongeldige JSON',
 			description:
 				'bridge.\'s tree editor kan geen bestanden openen die ongeldige JSON bevatten. U kunt binnen de instellingen overschakelen naar het editortype "Onbewerkte Tekst" om het probleem handmatig op te lossen.',
 		},
+		loadingWindow: {
+			titles: {
+				loading: 'Bezig met laden...',
+			},
+		},
 	},
 	taskManager: {
 		tasks: {
-			dataLoader: {
-				title: 'Gegevens Downloaden...',
-				description: 'De nieuwste gegevens aan het downloaden voor de editor',
-			},
 			packIndexing: {
 				title: 'Pakketten Indexeren',
 				description:
@@ -532,6 +796,15 @@ export default {
 				title: 'Project Compileren',
 				description:
 					'bridge. compileert uw project om het klaar te maken om in Minecraft te importeren.',
+			},
+			unzipper: {
+				name: 'ZIP uitpakken',
+				description: 'bridge. is momenteel bezig met het uitpakken van een ZIP-bestand.',
+			},
+			loadingSchemas: {
+				name: 'Automatische Aanvullingen Laden',
+				description:
+					'bridge. is momenteel bezig met het laden van de gegevens voor automatische aanvullingen.',
 			},
 		},
 	},
@@ -557,6 +830,14 @@ export default {
 		title: 'Toegang tot map "com.mojang"',
 		permissionRequest:
 			'bridge. heeft toegang nodig tot uw "com.mojang" map om er projecten naar te kunnen compileren.',
+		status: {
+			sucess: 'Het synchroniseren van uw projecten met com.mojang is correct ingesteld.',
+			deniedPermission:
+				'U heeft com.mojang synchronisatie ingesteld, maar u heeft bridge. geen toestemming verleend voor de map.',
+			notSetup: 'U heeft com.mojang synchronisatie nog niet ingesteld.',
+			notAvailable:
+				'Het synchroniseren van projecten naar de com.mojang map is alleen beschikbaar voor Chrome en Edge gebruikers.',
+		},
 	},
 	findAndReplace: {
 		name: 'Zoek & Vervang',
@@ -575,6 +856,8 @@ export default {
 		viewEntity: 'Bekijk Entity',
 		viewBlock: 'Bekijk Blok',
 		failedClientEntityLoad: 'Kon de verbonden client entity niet laden',
+		invalidEntity:
+			'Kan voorbeeld niet openen voor een entiteit met ongeldige JSON. Corrigeer JSON-fouten in het bestand en probeer het opnieuw.',
 		chooseGeometry: 'Kies Geometrie',
 		noGeometry:
 			'Geen geldige geometrie gevonden in dit bestand. Zorg ervoor dat uw JSON geldig is en dat de bestandsstructuur correct is.',
@@ -583,10 +866,28 @@ export default {
 		welcome: 'Welkom bij bridge. v2!',
 		welcomeCaption: 'Een krachtige IDE voor Minecraft Add-Ons',
 		step: {
+			installApp: {
+				name: 'bridge. installeren',
+				description:
+					'Voor de beste ervaring, installeert u bridge. v2 als app op uw computer.',
+			},
 			bridge: {
 				name: 'bridge. Map',
 				description:
 					'Maak een map waarin bridge. app-gerelateerde gegevens en uw add-on-projecten kan opslaan.',
+			},
+			bridgeProject: {
+				name: 'bridge. Project',
+				description:
+					'Wilt u een nieuw project aanmaken of een bestaand project importeren vanuit een .brproject-bestand?',
+				createNew: {
+					name: 'Nieuw Project',
+					description: 'Maak een nieuw project.',
+				},
+				importExisting: {
+					name: 'Importeer Project',
+					description: 'Importeer een bestaand project.',
+				},
 			},
 			comMojang: {
 				name: 'com.mojang Map',

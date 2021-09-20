@@ -2,21 +2,22 @@ import { App } from '/@/App'
 import { WorkerManager } from '/@/components/Worker/Manager'
 import { proxy } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
+import type { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
 import { FileType } from '/@/components/Data/FileType'
+import PackIndexerWorker from './Worker/Main?worker'
 import { Signal } from '../Common/Event/Signal'
-// import PackIndexerWorker from './Worker/Main?worker'
+import { AnyDirectoryHandle } from '../FileSystem/Types'
 
 export class PackIndexer extends WorkerManager<
+	typeof PackIndexerService,
 	PackIndexerService,
-	IPackIndexerOptions,
 	boolean,
 	readonly [string[], string[]]
 > {
 	protected ready = new Signal<void>()
 	constructor(
 		protected app: App,
-		protected baseDirectory: FileSystemDirectoryHandle
+		protected baseDirectory: AnyDirectoryHandle
 	) {
 		super({
 			icon: 'mdi-flash-outline',
@@ -26,10 +27,7 @@ export class PackIndexer extends WorkerManager<
 	}
 
 	createWorker() {
-		// this.worker = new PackIndexerWorker()
-		this.worker = new Worker('./Worker/Main.ts', {
-			type: 'module',
-		})
+		this.worker = new PackIndexerWorker()
 	}
 
 	deactivate() {
@@ -40,17 +38,19 @@ export class PackIndexer extends WorkerManager<
 		console.time('[TASK] Indexing Packs (Total)')
 
 		// Instaniate the worker TaskService
-		this._service = await new this.workerClass!({
-			projectDirectory: this.baseDirectory,
-			baseDirectory: this.app.fileSystem.baseDirectory,
-			disablePackSpider: !(
-				settingsState?.general?.enablePackSpider ?? false
-			),
-			pluginFileTypes: FileType.getPluginFileTypes(),
-			noFullLightningCacheRefresh:
-				!forceRefreshCache &&
-				!settingsState?.general?.fullLightningCacheRefresh,
-		})
+		this._service = await new this.workerClass!(
+			this.baseDirectory,
+			this.app.fileSystem.baseDirectory,
+			{
+				disablePackSpider: !(
+					settingsState?.general?.enablePackSpider ?? false
+				),
+				pluginFileTypes: FileType.getPluginFileTypes(),
+				noFullLightningCacheRefresh:
+					!forceRefreshCache &&
+					!settingsState?.general?.fullLightningCacheRefresh,
+			}
+		)
 
 		// Listen to task progress and update UI
 		await this.service.on(
@@ -61,7 +61,9 @@ export class PackIndexer extends WorkerManager<
 		)
 
 		// Start service
-		const [changedFiles, deletedFiles] = await this.service.start()
+		const [changedFiles, deletedFiles] = await this.service.start(
+			forceRefreshCache
+		)
 		await this.service.disposeListeners()
 		this.ready.dispatch()
 		console.timeEnd('[TASK] Indexing Packs (Total)')
@@ -80,6 +82,7 @@ export class PackIndexer extends WorkerManager<
 	async updateFiles(filePaths: string[]) {
 		await this.ready.fired
 		this.ready.resetSignal()
+
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 
 		for (const filePath of filePaths) {
@@ -91,6 +94,7 @@ export class PackIndexer extends WorkerManager<
 	async unlink(path: string) {
 		await this.ready.fired
 		this.ready.resetSignal()
+
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
 
 		await this.service.unlink(path)
@@ -100,6 +104,7 @@ export class PackIndexer extends WorkerManager<
 
 	async readdir(path: string[], ..._: any[]) {
 		await this.fired
+
 		return await this.service.readdir(path)
 	}
 }

@@ -1,4 +1,4 @@
-import { isMatch } from 'micromatch'
+import { isMatch } from './glob/isMatch'
 
 export function walkObject(
 	path: string,
@@ -79,4 +79,16 @@ export function setObjectAt<T = any>(
 			currentObj[lastKey] = onSet(currentObj[lastKey])
 		}
 	})
+}
+
+export function hasAnyPath(obj: string, paths: string[]) {
+	let hasPath = false
+
+	for (const path of paths) {
+		walkObject(path, obj, () => (hasPath = true))
+
+		if (hasPath) return true
+	}
+
+	return false
 }

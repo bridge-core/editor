@@ -1,3 +1,4 @@
+import { AdditionalPropertiesSchema } from './Schema/AdditionalProperties'
 import { AllOfSchema } from './Schema/AllOf'
 import { AnyOfSchema } from './Schema/AnyOf'
 import { ConstSchema } from './Schema/Const'
@@ -20,6 +21,7 @@ interface ISchemaConstructor {
 
 export const schemaRegistry = new Map<string, ISchemaConstructor>([
 	['$ref', RefSchema],
+	['additionalProperties', AdditionalPropertiesSchema],
 	['allOf', AllOfSchema],
 	['anyOf', AnyOfSchema],
 	['const', ConstSchema],
@@ -43,7 +45,6 @@ export const ignoreFields = new Set<string>([
 	'definitions',
 
 	//TODO: Proper implementation of the following fields instead of ignoring them
-	'additionalProperties',
 	'pattern',
 	'min',
 	'max',

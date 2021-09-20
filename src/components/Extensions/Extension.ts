@@ -11,6 +11,7 @@ import { ExtensionStoreWindow } from '../Windows/ExtensionStore/ExtensionStore'
 import { iterateDir } from '/@/utils/iterateDir'
 import { loadFileDefinitions } from './FileDefinition/load'
 import { InstallFiles } from './InstallFiles'
+import { AnyDirectoryHandle } from '../FileSystem/Types'
 
 export class Extension {
 	protected disposables: IDisposable[] = []
@@ -41,13 +42,13 @@ export class Extension {
 	constructor(
 		protected parent: ExtensionLoader,
 		protected manifest: IExtensionManifest,
-		protected baseDirectory: FileSystemDirectoryHandle,
+		protected baseDirectory: AnyDirectoryHandle,
 		protected _isGlobal = false
 	) {
 		this.fileSystem = new FileSystem(this.baseDirectory)
 		this.installFiles = new InstallFiles(
 			this.fileSystem,
-			manifest?.install ?? {}
+			manifest?.contributeFiles ?? manifest.install ?? {}
 		)
 	}
 
@@ -58,8 +59,9 @@ export class Extension {
 		this.isLoaded = true
 		const app = await App.getApp()
 		const pluginPath = (
-			(await app.fileSystem.baseDirectory.resolve(this.baseDirectory)) ??
-			[]
+			(await app.fileSystem.baseDirectory.resolve(
+				<any>this.baseDirectory
+			)) ?? []
 		).join('/')
 
 		// Activate all dependencies before
@@ -104,7 +106,7 @@ export class Extension {
 			)
 		} catch {}
 
-		let scriptHandle: FileSystemDirectoryHandle
+		let scriptHandle: AnyDirectoryHandle
 		try {
 			scriptHandle = await this.baseDirectory.getDirectoryHandle(
 				'scripts'
@@ -128,15 +130,47 @@ export class Extension {
 			),
 		])
 
+		// Loading snippets
+		if (await this.fileSystem.directoryExists('snippets')) {
+			const snippetDir = await this.baseDirectory.getDirectoryHandle(
+				'snippets'
+			)
+
+			if (this.isGlobal) {
+				this.disposables.push(
+					app.projectManager.onActiveProject(async (project) => {
+						this.disposables.push(
+							...(await project.snippetLoader.loadFrom(
+								snippetDir
+							))
+						)
+					})
+				)
+			} else {
+				this.disposables.push(
+					...(await app.project.snippetLoader.loadFrom(snippetDir))
+				)
+			}
+		}
+
 		if (await this.fileSystem.fileExists('.installed')) return
 
 		await this.installFiles.execute(this.isGlobal)
 		await this.fileSystem.writeFile('.installed', '')
 	}
 
+	async resetInstalled() {
+		await this.fileSystem.unlink('.installed')
+	}
+
 	deactivate() {
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.isLoaded = false
+	}
+
+	async delete() {
+		this.deactivate()
+		this.parent.deleteExtension(this.manifest.id)
 	}
 
 	async setActive(value: boolean) {
@@ -147,8 +181,9 @@ export class Extension {
 	}
 
 	forStore(extensionStore: ExtensionStoreWindow) {
-		const viewer = new ExtensionViewer(extensionStore, this.manifest)
+		const viewer = new ExtensionViewer(extensionStore, this.manifest, true)
 		viewer.setInstalled()
+		viewer.setConnected(this)
 		return viewer
 	}
 

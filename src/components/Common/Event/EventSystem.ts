@@ -6,6 +6,7 @@ import { EventDispatcher } from './EventDispatcher'
 
 export class EventSystem<T> {
 	protected events = new Map<string, EventDispatcher<T>>()
+	public readonly any = new EventDispatcher<[string, T]>()
 
 	constructor(
 		events: string[] | readonly string[] = [],
@@ -41,6 +42,7 @@ export class EventSystem<T> {
 	}
 
 	dispatch(name: string, data: T) {
+		this.any.dispatch([name, data])
 		return this.getDispatcher(name).dispatch(data)
 	}
 	on(name: string, listener: (data: T) => void) {

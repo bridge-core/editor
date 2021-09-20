@@ -8,6 +8,8 @@ import json5 from 'json5'
 import { deepMerge } from '/@/utils/deepmerge'
 import { bridgeDark, bridgeLight } from './Default'
 import { Theme } from './Theme'
+import { VirtualFileHandle } from '../../FileSystem/Virtual/FileHandle'
+import { AnyFileHandle } from '../../FileSystem/Types'
 
 const colorNames = [
 	'text',
@@ -26,9 +28,14 @@ const colorNames = [
 	'footer',
 	'tooltip',
 	'sidebarSelection',
+	'scrollbarThumb',
 	'tabActive',
 	'tabInactive',
 	'lineHighlightBackground',
+	'behaviorPack',
+	'resourcePack',
+	'worldTemplate',
+	'skinPack',
 ] as const
 export type TColorName = typeof colorNames[number]
 
@@ -45,11 +52,20 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		// Listen for dark/light mode changes
 		const media = window.matchMedia('(prefers-color-scheme: light)')
 		this.mode = media.matches ? 'light' : 'dark'
-		media.addEventListener('change', (mediaQuery) => {
+		const onMediaChange = (mediaQuery: MediaQueryListEvent) => {
 			this.colorScheme.dispatch(mediaQuery.matches ? 'light' : 'dark')
 			this.mode = mediaQuery.matches ? 'light' : 'dark'
 			this.updateTheme()
-		})
+		}
+
+		if ('addEventListener' in media) {
+			media.addEventListener('change', (mediaQuery) =>
+				onMediaChange(mediaQuery)
+			)
+		} else {
+			// @ts-ignore This is for supporting older versions of Safari
+			media.addListener((mediaQuery) => onMediaChange(mediaQuery))
+		}
 
 		/**
 		 * Setup theme meta tag
@@ -109,23 +125,24 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		}
 	}
 	async loadDefaultThemes(app: App) {
-		try {
-			await iterateDir(
-				await app.fileSystem.getDirectoryHandle(
-					'data/packages/common/themes'
-				),
-				(fileHandle) => this.loadTheme(fileHandle)
-			)
-		} catch {}
+		await app.dataLoader.fired
+
+		await iterateDir(
+			await app.dataLoader.getDirectoryHandle(
+				'data/packages/common/themes'
+			),
+			(file) => this.loadTheme(file)
+		)
 
 		this.updateTheme()
 	}
 	async loadTheme(
-		fileHandle: FileSystemFileHandle,
+		fileHandle: AnyFileHandle,
 		isGlobal = true,
 		disposables?: IDisposable[]
 	) {
 		const file = await fileHandle.getFile()
+
 		let themeDefinition
 		try {
 			themeDefinition = json5.parse(await file.text())

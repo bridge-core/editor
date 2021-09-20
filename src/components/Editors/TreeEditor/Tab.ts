@@ -9,7 +9,7 @@ import { debounce } from 'lodash-es'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 import { TreeValueSelection } from './TreeSelection'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
-import type { Tree } from './Tree/Tree'
+import { AnyFileHandle } from '../../FileSystem/Types'
 
 const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {
@@ -33,10 +33,14 @@ const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 
 export class TreeTab extends FileTab {
 	component = TreeTabComponent
-	_treeEditor?: TreeEditor
+	protected _treeEditor?: TreeEditor
 
-	constructor(parent: TabSystem, fileHandle: FileSystemFileHandle) {
-		super(parent, fileHandle)
+	constructor(
+		parent: TabSystem,
+		fileHandle: AnyFileHandle,
+		isReadOnly = false
+	) {
+		super(parent, fileHandle, isReadOnly)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()
@@ -46,7 +50,14 @@ export class TreeTab extends FileTab {
 		})
 	}
 
-	static is(fileHandle: FileSystemFileHandle) {
+	get app() {
+		return this.parent.app
+	}
+	get project() {
+		return this.parent.project
+	}
+
+	static is(fileHandle: AnyFileHandle) {
 		return (
 			settingsState?.editor?.jsonEditor === 'treeEditor' &&
 			fileHandle.name.endsWith('.json')
@@ -90,13 +101,15 @@ export class TreeTab extends FileTab {
 	onDeactivate() {
 		this._treeEditor?.deactivate()
 	}
-	onDestroy() {}
-	updateParent(parent: TabSystem) {}
-	focus() {}
 
 	loadEditor() {}
+	setReadOnly(val: boolean) {
+		this.isReadOnly = val
+	}
 
 	async save() {
+		this.isTemporary = false
+
 		const app = await App.getApp()
 		const fileContent = JSON.stringify(this.treeEditor.toJSON(), null, '\t')
 
@@ -105,6 +118,8 @@ export class TreeTab extends FileTab {
 	}
 
 	async paste() {
+		if (this.isReadOnly) return
+
 		const text = await navigator.clipboard.readText()
 
 		let data: any = undefined
@@ -148,9 +163,28 @@ export class TreeTab extends FileTab {
 	}
 
 	async cut() {
+		if (this.isReadOnly) return
+
 		await this.copy()
 		this.treeEditor.forEachSelection((sel) =>
 			this.treeEditor.delete(sel.getTree())
 		)
+	}
+
+	async close() {
+		const didClose = await super.close()
+
+		// We need to clear the lightning cache store from temporary data if the user doesn't save changes
+		if (!this.isForeignFile && didClose && this.isUnsaved) {
+			const app = await App.getApp()
+			const file = await app.fileSystem.readFile(this.getPath())
+			const fileContent = await file.text()
+			await app.project.packIndexer.updateFile(
+				this.getProjectPath(),
+				fileContent
+			)
+		}
+
+		return didClose
 	}
 }

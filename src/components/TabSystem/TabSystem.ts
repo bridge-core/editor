@@ -10,10 +10,19 @@ import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
 import { FileTab } from './FileTab'
 import { TabProvider } from './TabProvider'
+import { AnyFileHandle } from '../FileSystem/Types'
+import { hide as hideSidebar } from '../Sidebar/state'
+import { reactive } from '@vue/composition-api'
+
+export interface IOpenTabOptions {
+	selectTab?: boolean
+	isTemporary?: boolean
+	isReadOnly?: boolean
+}
 
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
-	public tabs: Tab[] = []
+	public tabs: Tab[] = reactive([])
 	protected _selectedTab: Tab | undefined = undefined
 	protected get tabTypes() {
 		return TabProvider.tabs
@@ -30,6 +39,9 @@ export class TabSystem extends MonacoHolder {
 	get app() {
 		return this._app
 	}
+	get project() {
+		return this._project
+	}
 
 	get isSharingScreen() {
 		const other = this.project.tabSystems.find(
@@ -42,13 +54,13 @@ export class TabSystem extends MonacoHolder {
 		return this.tabs.some((tab) => tab.isUnsaved)
 	}
 
-	constructor(protected project: Project, id = 0) {
-		super(project.app)
+	constructor(protected _project: Project, id = 0) {
+		super(_project.app)
 
 		this.openedFiles = new OpenedFiles(
 			this,
-			project.app,
-			`projects/${project.name}/.bridge/openedFiles_${id}.json`
+			_project.app,
+			`projects/${_project.name}/.bridge/openedFiles_${id}.json`
 		)
 	}
 
@@ -65,47 +77,75 @@ export class TabSystem extends MonacoHolder {
 		return this.project.name
 	}
 
-	async open(fileHandle: FileSystemFileHandle, selectTab = true) {
-		for (const tab of this.tabs) {
-			if (await tab.isFor(fileHandle))
-				return selectTab ? tab.select() : tab
-		}
+	async open(
+		fileHandle: AnyFileHandle,
+		{
+			selectTab = true,
+			isReadOnly = false,
+			isTemporary = true,
+		}: IOpenTabOptions = {}
+	) {
+		const tab = await this.getTabFor(fileHandle, isReadOnly)
 
-		const tab = await this.getTabFor(fileHandle)
+		// Default value is true so we only need to update if the caller wants to create a permanent tab
+		if (!isTemporary) tab.isTemporary = false
+
 		await this.add(tab, selectTab)
 		return tab
 	}
-	async openPath(path: string, selectTab = true) {
+	async openPath(path: string, options: IOpenTabOptions = {}) {
 		const fileHandle = await this.project.app.fileSystem.getFileHandle(path)
-		return await this.open(fileHandle, selectTab)
+
+		return await this.open(fileHandle, options)
 	}
 
-	protected async getTabFor(fileHandle: FileSystemFileHandle) {
+	protected async getTabFor(fileHandle: AnyFileHandle, isReadOnly = false) {
 		let tab: Tab | undefined = undefined
 		for (const CurrentTab of this.tabTypes) {
 			if (await CurrentTab.is(fileHandle)) {
 				// @ts-ignore
-				tab = new CurrentTab(this, fileHandle)
+				tab = new CurrentTab(this, fileHandle, isReadOnly)
 				break
 			}
 		}
 		// Default tab type: Text editor
-		if (!tab) tab = new TextTab(this, fileHandle)
+		if (!tab) tab = new TextTab(this, fileHandle, isReadOnly)
 
 		return await tab.fired
 	}
+	async hasTab(tab: Tab) {
+		for (const currentTab of this.tabs) {
+			if (await currentTab.is(tab)) return true
+		}
 
-	async add(tab: Tab, selectTab = true) {
+		return false
+	}
+
+	async add(tab: Tab, selectTab = true, noTabExistanceCheck = false) {
+		this.closeAllTemporary()
+
+		if (!noTabExistanceCheck) {
+			for (const currentTab of this.tabs) {
+				if (await currentTab.is(tab)) {
+					tab.onDeactivate()
+					return selectTab ? currentTab.select() : currentTab
+				}
+			}
+		}
+
 		if (!tab.hasFired) await tab.fired
 
 		this.tabs = [...this.tabs, tab]
-		if (!tab.isForeignFile) await this.openedFiles.add(tab.getPath())
+		if (!tab.isForeignFile && !(tab instanceof FileTab && tab.isReadOnly))
+			await this.openedFiles.add(tab.getPath())
 
 		if (selectTab) tab.select()
 
+		this.project.updateTabFolders()
+
 		return tab
 	}
-	remove(tab: Tab, destroyEditor = true) {
+	remove(tab: Tab, destroyEditor = true, selectNewTab = true) {
 		tab.onDeactivate()
 		const tabIndex = this.tabs.findIndex((current) => current === tab)
 		if (tabIndex === -1) return
@@ -113,9 +153,11 @@ export class TabSystem extends MonacoHolder {
 		this.tabs.splice(tabIndex, 1)
 		if (destroyEditor) tab.onDestroy()
 
-		if (tab === this._selectedTab)
+		if (selectNewTab && tab === this._selectedTab)
 			this.select(this.tabs[tabIndex === 0 ? 0 : tabIndex - 1])
 		if (!tab.isForeignFile) this.openedFiles.remove(tab.getPath())
+
+		this.project.updateTabFolders()
 
 		return tab
 	}
@@ -131,22 +173,23 @@ export class TabSystem extends MonacoHolder {
 			return true
 		}
 	}
-	async closeTabWithHandle(fileHandle: FileSystemFileHandle) {
+	async closeTabWithHandle(fileHandle: AnyFileHandle) {
 		const tab = await this.getTab(fileHandle)
 		if (tab) this.close(tab)
 	}
 	async select(tab?: Tab) {
 		if (this.isActive !== !!tab) this.setActive(!!tab)
 
+		if (this.app.mobile.isCurrentDevice()) hideSidebar()
 		if (tab?.isSelected) return
 
 		this._selectedTab?.onDeactivate()
-		if (tab && tab !== this._selectedTab && tab instanceof FileTab) {
-			App.eventSystem.dispatch('currentTabSwitched', tab.getProjectPath())
+		if (tab && tab !== this._selectedTab && this.project.isActiveProject) {
+			App.eventSystem.dispatch('currentTabSwitched', tab)
 		}
 		this._selectedTab = tab
 
-		// Next step doesn't need to be done if we simply unselect tab
+		// Next steps don't need to be done if we simply unselect tab
 		if (!tab) return
 
 		await this._selectedTab?.onActivate()
@@ -156,7 +199,7 @@ export class TabSystem extends MonacoHolder {
 		})
 	}
 	async save(tab = this.selectedTab) {
-		if (!tab) return
+		if (!tab || (tab instanceof FileTab && tab.isReadOnly)) return
 
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
@@ -212,9 +255,16 @@ export class TabSystem extends MonacoHolder {
 
 		app.windows.loadingWindow.close()
 	}
+	closeAllTemporary() {
+		for (const tab of [...this.tabs]) {
+			if (!tab.isTemporary) continue
+
+			this.remove(tab, true, false)
+		}
+	}
 
 	async activate() {
-		await this.openedFiles.ready.fired
+		await this.openedFiles.restoreTabs()
 
 		if (this.tabs.length > 0) this.setActive(true)
 
@@ -233,17 +283,18 @@ export class TabSystem extends MonacoHolder {
 
 		this._isActive = isActive
 
-		if (isActive && this._selectedTab instanceof FileTab) {
-			App.eventSystem.dispatch(
-				'currentTabSwitched',
-				this._selectedTab?.getProjectPath()
-			)
+		if (isActive && this._selectedTab && this.project.isActiveProject) {
+			App.eventSystem.dispatch('currentTabSwitched', this._selectedTab)
 		}
 	}
 
-	async getTab(fileHandle: FileSystemFileHandle) {
+	async getTab(fileHandle: AnyFileHandle) {
 		for (const tab of this.tabs) {
-			if (await tab.isFor(fileHandle)) return tab
+			if (
+				tab instanceof FileTab &&
+				(await tab.isForFileHandle(fileHandle))
+			)
+				return tab
 		}
 	}
 	closeTabs(predicate: (tab: Tab) => boolean) {

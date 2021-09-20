@@ -1,6 +1,6 @@
 <template>
-	<div class="body-1 pa-4 mb-2 rounded-lg card">
-		<div class="d-flex align-center">
+	<div class="text-normal pa-4 mb-2 rounded-lg card">
+		<div class="d-flex align-center mb-2">
 			<v-icon v-if="extension.icon" color="accent" class="mr-1">
 				{{ extension.icon }}
 			</v-icon>
@@ -15,8 +15,10 @@
 				class="rounded-lg elevation-0"
 				small
 			>
-				<v-icon small class="mr-1">mdi-download</v-icon>
-				Download
+				<v-icon :small="!isMobile" :class="{ 'mr-1': !isMobile }">
+					mdi-download
+				</v-icon>
+				<span v-if="!isMobile">Download</span>
 			</v-btn>
 
 			<v-btn
@@ -27,8 +29,10 @@
 				class="rounded-lg elevation-0"
 				small
 			>
-				<v-icon small class="mr-1">mdi-sync</v-icon>
-				Update
+				<v-icon :small="!isMobile" :class="{ 'mr-1': !isMobile }">
+					mdi-sync
+				</v-icon>
+				<span v-if="!isMobile">Update</span>
 			</v-btn>
 
 			<v-tooltip
@@ -65,7 +69,7 @@
 					</v-btn>
 				</template>
 
-				<v-list dense>
+				<v-list color="menu" dense>
 					<v-list-item
 						v-for="(action, index) in extension.actions"
 						:key="index"
@@ -81,24 +85,23 @@
 				</v-list>
 			</v-menu>
 		</div>
-		<div class="d-flex mb-4">
-			<v-chip
-				v-for="tag in tags"
-				:key="tag.text"
-				class="mr-2"
-				:color="tag.color"
-				:text-color="tag.color ? 'white' : undefined"
-				small
-				@click="
-					tag.type === 'search'
-						? $emit('search', tag.text)
-						: $emit('select', tag.text.toLowerCase())
-				"
-			>
-				<v-icon class="mr-1">{{ tag.icon }}</v-icon>
-				{{ tag.text }}
-			</v-chip>
-		</div>
+		<v-row class="mb-4" dense>
+			<v-col v-for="tag in tags" :key="tag.text" class="flex-grow-0">
+				<v-chip
+					:color="tag.color"
+					:text-color="tag.color ? 'white' : undefined"
+					small
+					@click="
+						tag.type === 'search'
+							? $emit('search', tag.text)
+							: $emit('select', tag.text.toLowerCase())
+					"
+				>
+					<v-icon class="mr-1">{{ tag.icon }}</v-icon>
+					{{ tag.text }}
+				</v-chip>
+			</v-col>
+		</v-row>
 
 		<span>{{ extension.description }}</span>
 	</div>
@@ -128,6 +131,9 @@ export default {
 					type: 'search',
 				},
 			].concat(this.extension.tags)
+		},
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
 		},
 	},
 }

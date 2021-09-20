@@ -1,13 +1,17 @@
 import { Tab } from './CommonTab'
 import { TabSystem } from './TabSystem'
 import { v4 as uuid } from 'uuid'
+import { AnyFileHandle } from '../FileSystem/Types'
+import { FileType } from '../Data/FileType'
+import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
 
 export abstract class FileTab extends Tab {
 	public isForeignFile = false
 
 	constructor(
 		protected parent: TabSystem,
-		protected fileHandle: FileSystemFileHandle
+		protected fileHandle: AnyFileHandle,
+		public isReadOnly = false
 	) {
 		super(parent)
 	}
@@ -15,13 +19,17 @@ export abstract class FileTab extends Tab {
 	async setup() {
 		this.isForeignFile = false
 		this.projectPath = await this.parent.projectRoot
-			.resolve(this.fileHandle)
+			.resolve(<any>this.fileHandle)
 			.then((path) => path?.join('/'))
 
 		// If the resolve above failed, we are dealing with a file which doesn't belong to this project
 		if (!this.projectPath) {
 			this.isForeignFile = true
-			this.projectPath = `${uuid()}/${this.fileHandle.name}`
+			const guessedFolder = await FileType.guessFolder(this.fileHandle)
+
+			this.projectPath = `${guessedFolder ?? uuid()}/${
+				this.fileHandle.name
+			}`
 		}
 
 		await super.setup()
@@ -30,8 +38,23 @@ export abstract class FileTab extends Tab {
 	get name() {
 		return this.fileHandle.name
 	}
+	getFileType() {
+		return FileType.getId(this.getProjectPath())
+	}
 
-	async isFor(fileHandle: FileSystemFileHandle) {
+	async is(tab: Tab): Promise<boolean> {
+		if (!(tab instanceof FileTab)) return false
+
+		return await this.isForFileHandle(tab.fileHandle)
+	}
+	async isForFileHandle(fileHandle: AnyFileHandle) {
+		if (
+			(<VirtualFileHandle>fileHandle).isVirtual !==
+			(<VirtualFileHandle>this.fileHandle).isVirtual
+		)
+			return false
+
+		// @ts-ignore This error can be ignored because of the check above
 		return await fileHandle.isSameEntry(this.fileHandle)
 	}
 
@@ -42,11 +65,16 @@ export abstract class FileTab extends Tab {
 		return this.fileHandle
 	}
 
+	abstract setReadOnly(readonly: boolean): Promise<void> | void
+
 	abstract save(): void | Promise<void>
 	async saveAs() {
 		const fileHandle = await self
-			// @ts-ignore The type package doesn't know about suggestedName yet
-			.showSaveFilePicker({ suggestedName: this.fileHandle.name })
+			.showSaveFilePicker({
+				// @ts-ignore The type package doesn't know about suggestedName yet
+				suggestedName: this.fileHandle.name,
+				startIn: this.fileHandle,
+			})
 			.catch(() => null)
 		if (!fileHandle) return
 

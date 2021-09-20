@@ -1,9 +1,18 @@
-import { editor, KeyCode, KeyMod, languages, Range, Uri } from 'monaco-editor'
+import { editor, KeyCode, KeyMod, languages } from 'monaco-editor'
 import { Signal } from '../Common/Event/Signal'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
 import { DefinitionProvider } from '../Definitions/GoTo'
+import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
+import { viewDocumentation } from '../Documentation/view'
+import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
+import { markRaw } from '@vue/composition-api'
+import { debounce } from 'lodash-es'
+import { platform } from '/@/utils/os'
+import { showContextMenu } from '../ContextMenu/showContextMenu'
+import { TextTab } from '../Editors/Text/TextTab'
+import { FileType } from '../Data/FileType'
 
 languages.typescript.javascriptDefaults.setCompilerOptions({
 	target: languages.typescript.ScriptTarget.ESNext,
@@ -16,7 +25,7 @@ languages.registerDefinitionProvider('json', new DefinitionProvider())
 
 export class MonacoHolder extends Signal<void> {
 	protected _monacoEditor?: editor.IStandaloneCodeEditor
-	protected windowResize?: IDisposable
+	protected disposables: IDisposable[] = []
 
 	constructor(protected _app: App) {
 		super()
@@ -28,42 +37,75 @@ export class MonacoHolder extends Signal<void> {
 		return this._monacoEditor
 	}
 
+	getMobileOptions(isMobile: boolean) {
+		return <const>{
+			lineNumbers: isMobile ? 'off' : 'on',
+			minimap: { enabled: !isMobile },
+			tabSize: isMobile ? 2 : 4,
+			scrollbar: {
+				horizontalScrollbarSize: isMobile ? 15 : undefined,
+				verticalScrollbarSize: isMobile ? 20 : undefined,
+				horizontalSliderSize: isMobile ? 15 : undefined,
+				verticalSliderSize: isMobile ? 20 : undefined,
+			},
+		}
+	}
+
 	createMonacoEditor(domElement: HTMLElement) {
 		this.dispose()
-		this._monacoEditor = editor.create(domElement, {
-			theme: `bridgeMonacoDefault`,
-			roundedSelection: false,
-			autoIndent: 'full',
-			fontSize: 14,
-			// fontFamily: this.fontFamily,
-			wordWrap: settingsState?.editor?.wordWrap ? 'bounded' : 'off',
-			tabSize: 4,
-		})
+		this._monacoEditor = markRaw(
+			editor.create(domElement, {
+				wordBasedSuggestions: false,
+				theme: `bridgeMonacoDefault`,
+				roundedSelection: false,
+				autoIndent: 'full',
+				fontSize: Number(
+					(
+						<string>settingsState?.appearance?.editorFontSize ??
+						'14px'
+					).replace('px', '')
+				),
+				fontFamily:
+					<string>settingsState?.appearance?.editorFont ??
+					(platform() === 'darwin' ? 'Menlo' : 'Consolas'),
+				...this.getMobileOptions(this._app.mobile.isCurrentDevice()),
+				contextmenu: false,
+				// fontFamily: this.fontFamily,
+				wordWrap: settingsState?.editor?.wordWrap ? 'bounded' : 'off',
+				wordWrapColumn: Number(
+					settingsState?.editor?.wordWrapColumns ?? '80'
+				),
+			})
+		)
 		// @ts-ignore
 		const editorService = this._monacoEditor._codeEditorService
 		const openEditorBase = editorService.openCodeEditor.bind(editorService)
-		editorService.openCodeEditor = async (
-			input: any,
-			source: any,
-			sideBySide?: boolean
-		) => {
-			let result = await openEditorBase(input, source, sideBySide)
+		editorService.openCodeEditor = debounce(
+			async (input: any, source: any, sideBySide?: boolean) => {
+				let result = await openEditorBase(input, source, sideBySide)
 
-			if (!result) {
-				try {
-					await this._app.project.tabSystem?.openPath(
-						input.resource.path.slice(1)
-					)
-				} catch {
-					console.error(
-						`Failed to open file "${input.resource.path.slice(1)}"`
-					)
+				if (!result) {
+					try {
+						const currentTab = this._app.tabSystem?.selectedTab
+						if (currentTab) currentTab.isTemporary = false
+
+						await this._app.project.tabSystem?.openPath(
+							input.resource.path.slice(1)
+						)
+					} catch {
+						console.error(
+							`Failed to open file "${input.resource.path.slice(
+								1
+							)}"`
+						)
+					}
+
+					// source.setModel(editor.getModel(input.resource));
 				}
-
-				// source.setModel(editor.getModel(input.resource));
-			}
-			return result // always return the base result
-		}
+				return result // always return the base result
+			},
+			100
+		)
 
 		// Workaround to make the toggleLineComment action work
 		const commentLineAction = this._monacoEditor.getAction(
@@ -79,10 +121,54 @@ export class MonacoHolder extends Signal<void> {
 			},
 		})
 
+		// This snippet configures some extra trigger characters for JSON
+		this._monacoEditor.onDidChangeModelContent((event) => {
+			const filePath = this._app.tabSystem?.selectedTab?.getProjectPath()
+			if (!filePath) return
+
+			if (!FileType.isJsonFile(filePath)) return
+
+			const model = this._monacoEditor?.getModel()
+			const position = this._monacoEditor?.getSelection()?.getPosition()
+
+			// Better auto-complete within quotes that represent MoLang/commands
+			if (model && position && isWithinQuotes(model, position)) {
+				if (event.changes.some((change) => change.text === ' ')) {
+					// Timeout is needed for some reason. Otherwise the auto-complete menu doesn't show up
+					setTimeout(() => {
+						this._monacoEditor?.trigger(
+							'auto',
+							'editor.action.triggerSuggest',
+							{}
+						)
+					}, 50)
+				}
+			}
+
+			// Monaco currently doesn't include " as a trigger character. This snippet works artificially makes it so
+			if (event.changes.some((change) => change.text === '""')) {
+				this._monacoEditor?.trigger(
+					'auto',
+					'editor.action.triggerSuggest',
+					{}
+				)
+			}
+		})
+
 		this._monacoEditor?.layout()
-		this.windowResize = this._app.windowResize.on(() =>
-			setTimeout(() => this._monacoEditor?.layout())
+		this.disposables.push(
+			this._app.windowResize.on(() =>
+				setTimeout(() => this._monacoEditor?.layout())
+			)
 		)
+		this.disposables.push(
+			this._app.mobile.change.on((isMobile) => {
+				this._monacoEditor?.updateOptions(
+					this.getMobileOptions(isMobile)
+				)
+			})
+		)
+
 		this.dispatch()
 	}
 
@@ -92,6 +178,121 @@ export class MonacoHolder extends Signal<void> {
 
 	dispose() {
 		this._monacoEditor?.dispose()
-		this.windowResize?.dispose()
+		this.disposables.forEach((d) => d.dispose())
+		this.disposables = []
+		this._monacoEditor = undefined
+	}
+
+	private onReadonlyCustomMonacoContextMenu() {
+		return [
+			{
+				name: 'actions.documentationLookup.name',
+				icon: 'mdi-book-open-outline',
+				onTrigger: () => {
+					const currentModel = this._monacoEditor?.getModel()
+					const selection = this._monacoEditor?.getSelection()
+					if (!currentModel || !selection) return
+
+					const filePath = this._app.tabSystem?.selectedTab?.getProjectPath()
+					if (!filePath) return
+
+					let word: string | undefined
+					if (FileType.isJsonFile(filePath))
+						word = getJsonWordAtPosition(
+							currentModel,
+							selection.getPosition()
+						).word
+					else
+						word = currentModel.getWordAtPosition(
+							selection.getPosition()
+						)?.word
+
+					viewDocumentation(filePath, word)
+				},
+			},
+			{
+				name: 'actions.goToDefinition.name',
+				icon: 'mdi-magnify',
+				onTrigger: () => {
+					this._monacoEditor?.trigger(
+						'contextmenu',
+						'editor.action.revealDefinition',
+						null
+					)
+				},
+			},
+			{
+				name: 'actions.goToSymbol.name',
+				icon: 'mdi-at',
+				onTrigger: () => {
+					setTimeout(() => {
+						this._monacoEditor?.focus()
+						this._monacoEditor?.trigger(
+							'contextmenu',
+							'editor.action.quickOutline',
+							null
+						)
+					})
+				},
+			},
+		]
+	}
+
+	showCustomMonacoContextMenu(event: MouseEvent, tab: TextTab) {
+		if (tab.isReadOnly)
+			return showContextMenu(
+				event,
+				this.onReadonlyCustomMonacoContextMenu()
+			)
+
+		showContextMenu(event, [
+			...this.onReadonlyCustomMonacoContextMenu(),
+			{ type: 'divider' },
+			{
+				name: 'actions.changeAllOccurrences.name',
+				icon: 'mdi-pencil-outline',
+				onTrigger: () => {
+					this._monacoEditor?.trigger(
+						'contextmenu',
+						'editor.action.rename',
+						null
+					)
+				},
+			},
+
+			{
+				name: 'actions.formatDocument.name',
+				icon: 'mdi-text-box-check-outline',
+				onTrigger: () => {
+					this._monacoEditor?.trigger(
+						'contextmenu',
+						'editor.action.formatDocument',
+						null
+					)
+				},
+			},
+			{ type: 'divider' },
+			{
+				name: 'actions.copy.name',
+				icon: 'mdi-content-copy',
+				onTrigger: () => {
+					document.execCommand('copy')
+				},
+			},
+			{
+				name: 'actions.cut.name',
+				icon: 'mdi-content-cut',
+				onTrigger: () => {
+					tab.cut()
+				},
+			},
+			{
+				name: 'actions.paste.name',
+				icon: 'mdi-content-paste',
+				onTrigger: () => {
+					tab.paste()
+				},
+			},
+		])
 	}
 }

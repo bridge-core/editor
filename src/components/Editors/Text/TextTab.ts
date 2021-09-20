@@ -8,9 +8,14 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { AnyFileHandle } from '../../FileSystem/Types'
+import { markRaw } from '@vue/composition-api'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
+		// Updates the isUnsaved status of the tab
+		tab.updateUnsavedStatus()
+
 		if (
 			tab.isForeignFile ||
 			!tab.editorModel ||
@@ -20,13 +25,17 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 
 		const fileContent = tab.editorModel?.getValue()
 		const app = await App.getApp()
-		await app.project.packIndexer.updateFile(
-			tab.getProjectPath(),
-			fileContent
-		)
-		await app.project.jsonDefaults.updateDynamicSchemas(
-			tab.getProjectPath()
-		)
+
+		// Only update the cache if the file still exists
+		if (await app.fileSystem.fileExists(tab.getPath())) {
+			await app.project.packIndexer.updateFile(
+				tab.getProjectPath(),
+				fileContent
+			)
+			await app.project.jsonDefaults.updateDynamicSchemas(
+				tab.getProjectPath()
+			)
+		}
 
 		app.project.fileChange.dispatch(
 			tab.getProjectPath(),
@@ -43,13 +52,18 @@ export class TextTab extends FileTab {
 	disposables: (IDisposable | undefined)[] = []
 	isActive = false
 	protected modelLoaded = new Signal<void>()
+	protected initialVersionId: number = 0
 
 	get editorInstance() {
 		return this.parent.monacoEditor
 	}
 
-	constructor(parent: TabSystem, fileHandle: FileSystemFileHandle) {
-		super(parent, fileHandle)
+	constructor(
+		parent: TabSystem,
+		fileHandle: AnyFileHandle,
+		isReadOnly = false
+	) {
+		super(parent, fileHandle, isReadOnly)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()
@@ -65,8 +79,13 @@ export class TextTab extends FileTab {
 		return new File([this.editorModel.getValue()], this.name)
 	}
 
-	setIsUnsaved(val: boolean) {
-		super.setIsUnsaved(val)
+	updateUnsavedStatus() {
+		if (!this.editorModel || this.editorModel.isDisposed()) return
+
+		this.setIsUnsaved(
+			this.initialVersionId !==
+				this.editorModel?.getAlternativeVersionId()
+		)
 	}
 
 	async onActivate() {
@@ -80,9 +99,16 @@ export class TextTab extends FileTab {
 			const fileContent = await file.text()
 			const uri = monaco.Uri.file(this.getPath())
 
-			this.editorModel =
+			this.editorModel = markRaw(
 				monaco.editor.getModel(uri) ??
-				monaco.editor.createModel(fileContent, undefined, uri)
+					monaco.editor.createModel(
+						fileContent,
+						FileType.get(this.getProjectPath())?.meta?.language,
+						uri
+					)
+			)
+			this.initialVersionId = this.editorModel.getAlternativeVersionId()
+
 			this.modelLoaded.dispatch()
 			this.loadEditor()
 		} else {
@@ -91,7 +117,6 @@ export class TextTab extends FileTab {
 
 		this.disposables.push(
 			this.editorModel?.onDidChangeContent(() => {
-				this.isUnsaved = true
 				throttledCacheUpdate(this)
 			})
 		)
@@ -101,14 +126,16 @@ export class TextTab extends FileTab {
 			})
 		)
 
-		this.editorInstance?.focus()
+		this.focus()
 		this.editorInstance?.layout()
 	}
 	onDeactivate() {
 		// MonacoEditor is defined
-		if (this.tabSystem.hasFired)
-			this.editorViewState =
-				this.editorInstance?.saveViewState() ?? undefined
+		if (this.tabSystem.hasFired) {
+			const viewState = this.editorInstance.saveViewState()
+			if (viewState) this.editorViewState = markRaw(viewState)
+		}
+
 		this.disposables.forEach((disposable) => disposable?.dispose())
 		this.isActive = false
 	}
@@ -127,12 +154,18 @@ export class TextTab extends FileTab {
 	}
 
 	loadEditor() {
-		if (this.editorModel) this.editorInstance?.setModel(this.editorModel)
+		if (this.editorModel && !this.editorModel.isDisposed())
+			this.editorInstance?.setModel(this.editorModel)
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
+
+		this.editorInstance?.updateOptions({ readOnly: this.isReadOnly })
+		this.focus()
 	}
 
 	async save() {
+		this.isTemporary = false
+
 		const app = await App.getApp()
 		const action = this.editorInstance?.getAction(
 			'editor.action.formatDocument'
@@ -181,7 +214,11 @@ export class TextTab extends FileTab {
 		}
 	}
 	protected async saveFile(app: App) {
-		this.isUnsaved = false
+		this.setIsUnsaved(false)
+
+		if (this.editorModel && !this.editorModel.isDisposed())
+			this.initialVersionId = this.editorModel.getAlternativeVersionId()
+
 		if (this.editorModel) {
 			await app.fileSystem.write(
 				this.fileHandle,
@@ -192,16 +229,30 @@ export class TextTab extends FileTab {
 		}
 	}
 
+	setReadOnly(val: boolean) {
+		this.isReadOnly = val
+		this.editorInstance?.updateOptions({ readOnly: val })
+	}
+
 	async paste() {
+		if (this.isReadOnly) return
+
+		this.editorInstance.focus()
 		this.editorInstance?.trigger('keyboard', 'paste', {
 			text: await navigator.clipboard.readText(),
 		})
+	}
+	cut() {
+		if (this.isReadOnly) return
+
+		this.focus()
+		document.execCommand('cut')
 	}
 	async close() {
 		const didClose = await super.close()
 
 		// We need to clear the lightning cache store from temporary data if the user doesn't save changes
-		if (didClose && this.isUnsaved) {
+		if (!this.isForeignFile && didClose && this.isUnsaved) {
 			const app = await App.getApp()
 			const file = await app.fileSystem.readFile(this.getPath())
 			const fileContent = await file.text()
@@ -212,5 +263,9 @@ export class TextTab extends FileTab {
 		}
 
 		return didClose
+	}
+
+	showContextMenu(event: MouseEvent) {
+		this.parent.showCustomMonacoContextMenu(event, this)
 	}
 }

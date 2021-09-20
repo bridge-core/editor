@@ -5,13 +5,18 @@ import { tokenizeCommand } from '/@/components/Languages/Mcfunction/tokenize'
  * @param {`/${string}`[]} commands Must start with a "/"
  */
 export function transformCommands(
-	commands: `/${string}`[],
+	commands: string[],
 	dependencies: Record<string, Command>,
 	includeComments: boolean
 ) {
 	const processedCommands = []
 
 	for (const writtenCommand of commands) {
+		if (!writtenCommand.startsWith('/')) {
+			processedCommands.push(writtenCommand)
+			continue
+		}
+
 		const [commandName, ...args] = tokenizeCommand(
 			writtenCommand.slice(1)
 		).tokens.map(({ word }) => word)

@@ -17,7 +17,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
 	protected extensions: ExtensionViewer[] = []
 	protected extensionTags!: Record<string, { icon: string; color?: string }>
-	protected installedExtensions = new Set<ExtensionViewer>()
+	protected installedExtensions: ExtensionViewer[] = []
 	public readonly tags: Record<string, ExtensionTag> = {}
 	protected updates = new Set<ExtensionViewer>()
 
@@ -37,10 +37,10 @@ export class ExtensionStoreWindow extends BaseWindow {
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
-		this.installedExtensions.clear()
+		this.installedExtensions = []
 
-		const fs = await getFileSystem()
-		this.extensionTags = await fs.readJSON(
+		await app.dataLoader.fired
+		this.extensionTags = await app.dataLoader.readJSON(
 			'data/packages/common/extensionTags.json'
 		)
 
@@ -81,7 +81,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 					this.updates.add(extension)
 				}
 			} else {
-				installedExtension.forStore(this)
+				this.extensions.push(installedExtension.forStore(this))
 			}
 		})
 
@@ -112,6 +112,19 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 	updateInstalled(extension: ExtensionViewer) {
 		this.updates.delete(extension)
+	}
+	delete(extension: ExtensionViewer) {
+		const index = this.installedExtensions.findIndex(
+			(e) => e.id === extension.id
+		)
+		if (index === -1) return
+
+		this.installedExtensions.splice(index, 1)
+
+		if (extension.isLocalOnly)
+			this.extensions = this.extensions.filter(
+				(e) => e.id !== extension.id
+			)
 	}
 
 	setupSidebar() {
@@ -144,7 +157,9 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 	protected getExtensions(findTag?: ExtensionTag) {
 		return [...new Set([...this.extensions, ...this.installedExtensions])]
-			.filter((plugin) => !findTag || plugin.hasTag(findTag))
+			.filter(
+				(ext) => !ext.isLocalOnly && (!findTag || ext.hasTag(findTag))
+			)
 			.sort(
 				({ releaseTimestamp: tA }, { releaseTimestamp: tB }) => tB - tA
 			)
@@ -174,6 +189,6 @@ export class ExtensionStoreWindow extends BaseWindow {
 		return this.baseUrl
 	}
 	addInstalledExtension(extension: ExtensionViewer) {
-		this.installedExtensions.add(extension)
+		this.installedExtensions.push(extension)
 	}
 }

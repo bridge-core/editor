@@ -21,7 +21,7 @@ export function createCustomComponentPlugin({
 	v1CompatMode?: boolean
 }> {
 	const usedComponents = new Map<string, [string, string][]>()
-	let createAnimFiles: Record<string, any> = {}
+	let createAdditionalFiles: Record<string, any> = {}
 
 	const isPlayerFile = (
 		filePath: string | null,
@@ -31,7 +31,7 @@ export function createCustomComponentPlugin({
 		filePath?.startsWith('BP/entities/') &&
 		getAliases(filePath).includes('minecraft:player')
 
-	return ({ compileFiles, getAliases, options }) => {
+	return ({ compileFiles, getAliases, options, targetVersion }) => {
 		const isComponent = (filePath: string | null) =>
 			options.v1CompatMode
 				? filePath?.startsWith(`BP/components/`)
@@ -40,7 +40,7 @@ export function createCustomComponentPlugin({
 		return {
 			buildStart() {
 				usedComponents.clear()
-				createAnimFiles = {}
+				createAdditionalFiles = {}
 			},
 			transformPath(filePath) {
 				if (isComponent(filePath) && !options.isFileRequest) return null
@@ -49,8 +49,8 @@ export function createCustomComponentPlugin({
 				// Even if the fileHandle being undefined has nothing to do with custom components,
 				// we still just return "undefined" so we might as well keep the code simple
 				if (!fileHandle)
-					return createAnimFiles[filePath]
-						? json5.parse(createAnimFiles[filePath])
+					return createAdditionalFiles[filePath]
+						? json5.parse(createAdditionalFiles[filePath])
 						: undefined
 
 				if (isComponent(filePath) && filePath.endsWith('.js')) {
@@ -80,7 +80,8 @@ export function createCustomComponentPlugin({
 						fileType,
 						fileContent,
 						options.mode,
-						!!options.v1CompatMode
+						!!options.v1CompatMode,
+						targetVersion
 					)
 
 					const loadedCorrectly = await component.load()
@@ -93,7 +94,11 @@ export function createCustomComponentPlugin({
 			},
 			async require(filePath, fileContent) {
 				if (isPlayerFile(filePath, getAliases))
-					return ['BP/components/item/**/*.js', 'BP/items/**/*.json']
+					return [
+						'BP/components/item/**/*.js',
+						'BP/components/item/**/*.ts',
+						'BP/items/**/*.json',
+					]
 
 				if (filePath.startsWith(`BP/${folder}/`)) {
 					const components = findCustomComponents(
@@ -105,6 +110,9 @@ export function createCustomComponentPlugin({
 						(component) => `${fileType}Component#${component[0]}`
 					)
 				}
+				// else if (filePath.startsWith('RP/entity/')) {
+				// 	return ['BP/components/entity/**/*.js']
+				// }
 			},
 			async transform(filePath, fileContent, dependencies = {}) {
 				if (isPlayerFile(filePath, getAliases)) {
@@ -120,9 +128,9 @@ export function createCustomComponentPlugin({
 					for (const component of itemComponents) {
 						if (!component) return
 
-						createAnimFiles = deepMerge(
-							createAnimFiles,
-							await component.processAnimations(fileContent)
+						createAdditionalFiles = deepMerge(
+							createAdditionalFiles,
+							await component.processAdditionalFiles(fileContent)
 						)
 					}
 				} else if (filePath.startsWith(`BP/${folder}/`)) {
@@ -160,9 +168,9 @@ export function createCustomComponentPlugin({
 
 					// Register animation (controllers) that this entity uses
 					for (const component of components) {
-						createAnimFiles = deepMerge(
-							createAnimFiles,
-							await component.processAnimations(fileContent)
+						createAdditionalFiles = deepMerge(
+							createAdditionalFiles,
+							await component.processAdditionalFiles(fileContent)
 						)
 					}
 
@@ -178,14 +186,14 @@ export function createCustomComponentPlugin({
 					return (<Component>fileContent).toString()
 				} else if (
 					filePath.startsWith(`BP/${folder}/`) ||
-					createAnimFiles[filePath]
+					createAdditionalFiles[filePath]
 				)
 					return JSON.stringify(fileContent, null, '\t')
 			},
 			async buildEnd() {
-				const animFiles = Object.keys(createAnimFiles)
+				const animFiles = Object.keys(createAdditionalFiles)
 				if (animFiles.length > 0) await compileFiles(animFiles)
-				createAnimFiles = {}
+				createAdditionalFiles = {}
 			},
 		}
 	}

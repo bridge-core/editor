@@ -5,7 +5,7 @@
 		app
 		clipped
 		padless
-		height="env(titlebar-area-height, 24px)"
+		:height="appToolbarHeight"
 		:style="{
 			'padding-left': 0,
 			'margin-left': 'env(titlebar-area-x, 0)',
@@ -13,12 +13,15 @@
 			'z-index': windowControlsOverlay ? 1000 : undefined,
 		}"
 	>
-		<img
+		<Logo
 			v-if="!isMacOS || !windowControlsOverlay"
-			style="height: 20px; padding-right: 4px; padding-left: 8px"
-			alt="bridge. Logo"
+			style="
+				height: 20px;
+				padding-right: 4px;
+				padding-left: calc(env(safe-area-inset-left) + 4px);
+			"
+			alt="Logo of bridge. v2"
 			draggable="false"
-			src="@/_assets/logo.svg"
 		/>
 
 		<v-divider vertical />
@@ -35,7 +38,7 @@
 					@click="() => item.trigger()"
 				/>
 				<MenuActivator
-					v-else
+					v-else-if="item.shouldRender"
 					:key="`activator.${key}`"
 					:item="item"
 					:disabled="isAnyWindowVisible"
@@ -43,8 +46,9 @@
 				<v-divider
 					:key="`divider.${key}`"
 					v-if="
-						windowControlsOverlay ||
-						i + 1 < Object.keys(toolbar).length
+						item.shouldRender &&
+						(windowControlsOverlay ||
+							i + 1 < Object.keys(toolbar).length)
 					"
 					vertical
 				/>
@@ -59,7 +63,10 @@
 		<div
 			class="px-1 mx-1 rounded-lg app-version-display"
 			v-ripple="!isAnyWindowVisible"
-			:style="{ opacity: isAnyWindowVisible ? 0.4 : null }"
+			:style="{
+				opacity: isAnyWindowVisible ? 0.4 : null,
+				'margin-right': 'env(safe-area-inset-right, 0)',
+			}"
 			@click="openChangelogWindow"
 		>
 			v{{ appVersion }}
@@ -75,21 +82,23 @@ import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/appVersion.json'
 import { platform } from '/@/utils/os.ts'
 import { reactive } from '@vue/composition-api'
-import { WindowState } from '/@/components/Windows/WindowState.ts'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
+import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
+import Logo from '../UIElements/Logo.vue'
 
 export default {
 	name: 'Toolbar',
-	mixins: [WindowControlsOverlayMixin],
+	mixins: [WindowControlsOverlayMixin, AppToolbarHeightMixin],
 	components: {
 		WindowAction,
 		MenuActivator,
 		MenuButton,
+		Logo,
 	},
 	setup() {
 		const setupObj = reactive({
 			title: 'bridge.',
-			isAnyWindowVisible: WindowState.isAnyWindowVisible,
+			isAnyWindowVisible: App.windowState.isAnyWindowVisible,
 		})
 
 		App.getApp().then((app) => {
@@ -128,6 +137,8 @@ export default {
 	min-width: 0;
 }
 .app-version-display {
+	app-region: no-drag;
+	-webkit-app-region: no-drag;
 	cursor: pointer;
 	font-size: 12px;
 }

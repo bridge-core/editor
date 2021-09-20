@@ -14,99 +14,181 @@
 		<template #default>
 			<!-- Welcome text for users getting started with bridge. -->
 
-			<div
-				class="rounded-lg pa-3 content-area mb-2"
-				v-if="isFirstProject"
-			>
-				<h1 class="text-h4">
+			<BridgeSheet class="pa-3 mb-2" v-if="isFirstProject">
+				<h1>
 					{{ t('windows.createProject.welcome') }}
 				</h1>
 				<span>
 					{{ t('windows.createProject.welcomeDescription') }}
 				</span>
-			</div>
+			</BridgeSheet>
 
-			<v-row class="mb-6" no-gutters>
-				<PackTypeViewer
-					v-for="(packType, i) in availablePackTypes"
-					:class="{
-						'mr-1': i === 0,
-						'ml-1': i + 1 === availablePackTypes.length,
-						'mx-1': i > 0 && i + 1 < availablePackTypes.length,
-					}"
+			<v-row class="mb-6" dense>
+				<v-col
+					v-for="packType in availablePackTypes"
 					:key="packType.id"
-					:packType="packType"
-					isSelectable
-					:selected="createOptions.packs.includes(packType.packPath)"
-					@click="togglePack(packType.packPath)"
+					xs="12"
+					sm="6"
+					md="4"
+					lg="3"
+					xl="2"
 				>
-					<template
-						v-if="packType.packPath === 'BP'"
-						#default="{ selected }"
+					<PackTypeViewer
+						:packType="packType"
+						isSelectable
+						style="height: 100%"
+						:selected="createOptions.packs.includes(packType.id)"
+						@click="togglePack(packType.id)"
 					>
-						<v-switch
-							inset
-							dense
-							:label="t('windows.createProject.scripting')"
-							:value="createOptions.scripting"
-							@click.stop.native="
-								createOptions.scripting = !createOptions.scripting
-							"
-							:disabled="!selected"
-							class="mt-3"
-						/>
-						<v-switch
-							inset
-							dense
-							:label="t('windows.createProject.gameTest')"
-							:value="createOptions.gameTest"
-							@click.stop.native="
-								createOptions.gameTest = !createOptions.gameTest
-							"
-							:disabled="!selected"
-							class="ma-0"
-						/>
-					</template>
-
-					<template
-						v-else-if="packType.packPath === 'RP'"
-						#default="{ selected }"
-					>
-						<!-- I am not sure why the rpAsBpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
-						<v-switch
-							inset
-							dense
-							:label="t('windows.createProject.rpAsBpDependency')"
-							:value="
-								createOptions.rpAsBpDependency ||
-								createOptions.packs.includes('BP')
-							"
-							@click.stop.native="
-								createOptions.rpAsBpDependency = !createOptions.rpAsBpDependency
-							"
-							:disabled="
-								!selected || !createOptions.packs.includes('BP')
-							"
-							class="mt-3"
-						/>
-					</template>
-				</PackTypeViewer>
+						<template
+							v-if="packType.id === 'behaviorPack'"
+							#default="{ selected }"
+						>
+							<!-- I am not sure why the bpAsRpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
+							<v-switch
+								inset
+								dense
+								:label="
+									t('windows.createProject.bpAsRpDependency')
+								"
+								:value="
+									createOptions.rpAsBpDependency ||
+									createOptions.packs.includes('resourcePack')
+								"
+								@click.stop.native="
+									createOptions.bpAsRpDependency = !createOptions.bpAsRpDependency
+								"
+								:disabled="
+									!selected ||
+									!createOptions.packs.includes(
+										'resourcePack'
+									)
+								"
+								class="mt-3"
+							/>
+						</template>
+						<template
+							v-else-if="packType.id === 'resourcePack'"
+							#default="{ selected }"
+						>
+							<!-- I am not sure why the rpAsBpDependency toggle needs an OR here but it seems to work correctly & fixes an issue where the user had to click the toggle twice -->
+							<v-switch
+								inset
+								dense
+								:label="
+									t('windows.createProject.rpAsBpDependency')
+								"
+								:value="
+									createOptions.rpAsBpDependency ||
+									createOptions.packs.includes('behaviorPack')
+								"
+								@click.stop.native="
+									createOptions.rpAsBpDependency = !createOptions.rpAsBpDependency
+								"
+								:disabled="
+									!selected ||
+									!createOptions.packs.includes(
+										'behaviorPack'
+									)
+								"
+								class="mt-3"
+							/>
+						</template>
+					</PackTypeViewer>
+				</v-col>
 			</v-row>
 
+			<!-- Experimental Gameplay Toggles -->
+			<v-expansion-panels class="mb-6">
+				<v-expansion-panel>
+					<v-expansion-panel-header
+						color="expandedSidebar"
+						expand-icon="mdi-menu-down"
+					>
+						{{ t('general.experimentalGameplay') }}
+					</v-expansion-panel-header>
+					<v-expansion-panel-content color="expandedSidebar">
+						<v-row dense>
+							<v-col
+								v-for="experiment in experimentalToggles"
+								:key="experiment.id"
+								xs="12"
+								sm="6"
+								md="4"
+								lg="3"
+								xl="2"
+							>
+								<ExperimentalGameplay
+									:experiment="experiment"
+									v-model="
+										createOptions.experimentalGameplay[
+											experiment.id
+										]
+									"
+									style="height: 100%"
+								/>
+							</v-col>
+						</v-row>
+					</v-expansion-panel-content>
+				</v-expansion-panel>
+			</v-expansion-panels>
+
+			<!-- Toggle Creation of individual files -->
+			<v-expansion-panels
+				v-if="$data.packCreateFiles.length > 0"
+				class="mb-6"
+			>
+				<v-expansion-panel>
+					<v-expansion-panel-header
+						color="expandedSidebar"
+						expand-icon="mdi-menu-down"
+					>
+						{{ t('windows.createProject.individualFiles.name') }}
+					</v-expansion-panel-header>
+					<v-expansion-panel-content color="expandedSidebar">
+						<v-row dense>
+							<v-col
+								v-for="(file, i) in $data.packCreateFiles"
+								:key="`${i}-${file.id}`"
+								xs="12"
+								sm="6"
+								md="4"
+								lg="3"
+								xl="3"
+							>
+								<CreateFile
+									:file="file"
+									v-model="file.isActive"
+									style="height: 100%"
+								/>
+							</v-col>
+						</v-row>
+					</v-expansion-panel-content>
+				</v-expansion-panel>
+			</v-expansion-panels>
+
 			<div class="d-flex">
-				<v-file-input
-					v-model="createOptions.icon"
-					:label="t('windows.createProject.packIcon')"
-					:prepend-icon="null"
-					prepend-inner-icon="mdi-image-outline"
-					accept="image/png"
-					class="mr-2"
-					outlined
-					dense
-				/>
+				<div
+					style="width: 40%"
+					@drop.prevent.stop="onDropFile"
+					@dragover.prevent.stop
+				>
+					<v-file-input
+						v-model="createOptions.icon"
+						:label="t('windows.createProject.packIcon')"
+						:prepend-icon="null"
+						prepend-inner-icon="mdi-image-outline"
+						accept="image/png"
+						class="mr-2"
+						outlined
+						dense
+					/>
+				</div>
+
 				<v-text-field
 					v-model="createOptions.name"
-					:label="t('windows.createProject.projectName')"
+					:label="t('windows.createProject.projectName.name')"
+					:rules="nameRules"
 					autocomplete="off"
 					class="ml-2"
 					outlined
@@ -155,6 +237,7 @@
 					:menu-props="{ maxHeight: 220 }"
 				/>
 			</div>
+
 			<div class="d-flex">
 				<v-switch
 					inset
@@ -173,7 +256,7 @@
 			<v-spacer />
 			<v-btn
 				color="primary"
-				:disabled="!currentWindow.hasRequiredData"
+				:disabled="!currentWindow.hasRequiredData || isCreatingProject"
 				:loading="shouldLoad"
 				@click="createProject"
 			>
@@ -188,6 +271,10 @@
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
+import ExperimentalGameplay from './ExperimentalGameplay.vue'
+import CreateFile from './CreateFile.vue'
+import BridgeSheet from '/@/components/UIElements/Sheet.vue'
+import { isFileAccepted } from '/@/utils/file/isAccepted.ts'
 
 export default {
 	name: 'CreateProjectWindow',
@@ -195,6 +282,9 @@ export default {
 	components: {
 		BaseWindow,
 		PackTypeViewer,
+		BridgeSheet,
+		ExperimentalGameplay,
+		CreateFile,
 	},
 	props: ['currentWindow'],
 
@@ -207,6 +297,14 @@ export default {
 			if (this.isFirstProject) return this.isCreatingProject
 			// Otherwise check that the compiler & pack indexer are done too
 			return this.isCreatingProject
+		},
+		nameRules() {
+			return this.projectNameRules.map((rule) => (val) => {
+				const res = rule(val)
+				if (res === true) return true
+
+				return this.t(res)
+			})
 		},
 	},
 	methods: {
@@ -229,13 +327,18 @@ export default {
 		setModel(key, val) {
 			this.createOptions[key] = val
 		},
+		onDropFile(event) {
+			const file = event.dataTransfer.files[0]
+			if (!isFileAccepted(file, 'image/png')) return
+
+			this.createOptions.icon = file
+		},
 	},
 }
 </script>
 
 <style scoped>
 .content-area {
-	background-color: var(--v-sidebarNavigation-base);
 	border: solid 2px transparent;
 }
 .content-area.selected {

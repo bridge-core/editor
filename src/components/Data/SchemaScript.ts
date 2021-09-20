@@ -50,6 +50,7 @@ export class SchemaScript {
 					},
 					getProjectPrefix: () =>
 						this.app.projectConfig.get().namespace ?? 'bridge',
+					getProjectConfig: () => this.app.projectConfig.get(),
 					getFileName: () =>
 						!this.filePath
 							? undefined
@@ -72,7 +73,7 @@ export class SchemaScript {
 	}
 
 	async runSchemaScripts(localSchemas: any) {
-		const baseDirectory = await this.app.fileSystem.getDirectoryHandle(
+		const baseDirectory = await this.app.dataLoader.getDirectoryHandle(
 			'data/packages/minecraftBedrock/schemaScript'
 		)
 
@@ -113,6 +114,13 @@ export class SchemaScript {
 							type: 'object',
 							properties: scriptResult,
 						},
+					}
+				} else if (schemaScript.type === 'custom') {
+					localSchemas[
+						`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
+					] = {
+						uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
+						schema: scriptResult,
 					}
 				} else {
 					localSchemas[

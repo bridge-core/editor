@@ -3,6 +3,7 @@ import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { App } from '/@/App'
 import { ActionManager } from '/@/components/Actions/ActionManager'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 
 interface IInformedChoiceWindowOpts {
 	isPersistent?: boolean
@@ -11,6 +12,7 @@ interface IInformedChoiceWindowOpts {
 export class InformedChoiceWindow extends BaseWindow {
 	protected _actionManager!: ActionManager
 	protected _ready = new Signal<ActionManager>()
+	protected topPanel?: InfoPanel
 
 	get actionManager() {
 		return new Promise<ActionManager>((resolve) =>

@@ -37,4 +37,8 @@ export class PrimitiveTree extends Tree<TPrimitiveTree> {
 			this.setValue(value === 'true')
 		else this.setValue(value)
 	}
+
+	isEmpty() {
+		return this.value === ''
+	}
 }

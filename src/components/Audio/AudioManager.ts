@@ -1,4 +1,3 @@
-import { computed } from '@vue/composition-api'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'
 
@@ -15,7 +14,7 @@ export class AudioManager {
 	}
 
 	playAudio(audioName = 'click5.ogg', audioVolume = 1) {
-		const audioPath = process.env.BASE_URL + 'audio/'
+		const audioPath = import.meta.env.BASE_URL + 'audio/'
 		if (this.isMuted) return
 
 		if (this.currentAudioPlaying) {

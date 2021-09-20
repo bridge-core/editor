@@ -3,13 +3,16 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { CreateFile } from '../CreateFile'
 
 export class CreatePlayer extends CreateFile {
+	public readonly id = 'player'
+
 	async create(fs: FileSystem) {
 		const app = await App.getApp()
-		const defaultPlayer = await app.fileSystem.readFile(
+		await app.dataLoader.fired
+		const defaultPlayer = await app.dataLoader.readJSON(
 			'data/packages/minecraftBedrock/vanilla/player.json'
 		)
 
-		await fs.writeFile('BP/entities/player.json', defaultPlayer)
+		await fs.writeJSON('BP/entities/player.json', defaultPlayer, true)
 		await fs.writeFile('BP/loot_tables/empty.json', '{}')
 	}
 }

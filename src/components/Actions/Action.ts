@@ -4,7 +4,8 @@ import { v4 as uuid } from 'uuid'
 import { IActionConfig, SimpleAction } from './SimpleAction'
 
 export class Action extends SimpleAction {
-	id: string
+	public readonly type = 'action'
+	public readonly id: string
 	protected _keyBinding: KeyBinding | undefined
 
 	constructor(

@@ -1,10 +1,11 @@
 import json5 from 'json5'
 import { FileType } from '../../Data/FileType'
+import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { IDisposable } from '/@/types/disposable'
 import { iterateDir } from '/@/utils/iterateDir'
 
 export function loadFileDefinitions(
-	baseDirectory: FileSystemDirectoryHandle,
+	baseDirectory: AnyDirectoryHandle,
 	disposables: IDisposable[]
 ) {
 	return iterateDir(baseDirectory, async (fileHandle) => {

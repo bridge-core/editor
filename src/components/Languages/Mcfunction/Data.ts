@@ -1,11 +1,13 @@
-import { compare } from 'compare-versions'
+import { markRaw } from '@vue/composition-api'
 import { MoLang } from 'molang'
+import { languages } from 'monaco-editor'
 import { generateCommandSchemas } from '../../Compiler/Worker/Plugins/CustomCommands/generateSchemas'
+import { RequiresMatcher } from '../../Data/RequiresMatcher'
 import { RefSchema } from '../../JSONSchema/Schema/Ref'
 import { strMatchArray } from './strMatch'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
-
+import { SelectorArguments } from './TargetSelector/SelectorArguments'
 /**
  * An interface that describes a command
  */
@@ -14,6 +16,16 @@ export interface ICommand {
 	description: string
 	arguments: ICommandArgument[]
 }
+
+export interface ISelectorArgument extends ICommandArgument {
+	additionalData?: {
+		schemaReference?: string
+		values?: string[]
+		multipleInstancesAllowed?: 'always' | 'whenNegated' | 'never'
+		supportsNegation?: boolean
+	}
+}
+
 /**
  * Type holding all possible argument types
  */
@@ -36,25 +48,33 @@ export interface ICommandArgument {
 	argumentName: string
 	description: string
 	type: TArgumentType
-	additionalData?: any
+	additionalData?: {
+		schemaReference?: string
+		values?: string[]
+	}
 }
 
-/**
- * RegExp to validate whether a string is a valid command coordinate
- */
-const commandCoordinateRegExp = /^((([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}|\^([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}|(\~([-+]?[0-9]+(\.[0-9]+)?)?[ \t]*){3}$/
+interface ICompletionItem {
+	label?: string
+	insertText: string
+	documentation?: string
+	kind: languages.CompletionItemKind
+}
 
 /**
  * A class that stores data on all Minecraft commands
  */
 export class CommandData extends Signal<void> {
+	public readonly selectorArguments = new SelectorArguments(this)
 	protected _data?: any
 
 	async loadCommandData(packageName: string) {
 		const app = await App.getApp()
 
-		this._data = await app.fileSystem.readJSON(
-			`data/packages/${packageName}/language/mcfunction/main.json`
+		this._data = markRaw(
+			await app.dataLoader.readJSON(
+				`data/packages/${packageName}/language/mcfunction/main.json`
+			)
 		)
 
 		const customTypes: Record<string, ICommandArgument[]> =
@@ -81,38 +101,48 @@ export class CommandData extends Signal<void> {
 			}
 		}
 
-		// console.log(this._data)
 		this.dispatch()
 	}
 
-	protected async getSchema(): Promise<ICommand[]> {
-		const projectTargetVersion = await App.getApp().then(
-			(app) => app.project.config.get().targetVersion
+	get shouldIgnoreCustomCommands() {
+		return App.getApp().then(
+			(app) => !app.projectManager.projectReady.hasFired
 		)
+	}
 
+	protected async getSchema() {
 		if (!this._data)
 			throw new Error(`Acessing commandData before it was loaded.`)
 
-		const validEntries = this._data.vanilla.filter(
-			({ targetVersion }: any) =>
-				!projectTargetVersion ||
-				!targetVersion ||
-				compare(
-					projectTargetVersion,
-					targetVersion[1],
-					targetVersion[0]
-				)
-		)
+		const validEntries: any[] = []
+		for await (const entry of this._data.vanilla) {
+			const requiresMatcher = new RequiresMatcher(entry.requires)
+			if (await requiresMatcher.isValid()) validEntries.push(entry)
+			else if (!entry.requires) validEntries.push(entry)
+		}
 
 		return validEntries
+	}
+	protected async getCommandsSchema(
+		ignoreCustomCommands = false
+	): Promise<ICommand[]> {
+		return (await this.getSchema())
 			.map((entry: any) => entry.commands)
 			.flat()
-			.concat(await generateCommandSchemas())
+			.concat(ignoreCustomCommands ? [] : await generateCommandSchemas())
 			.filter((command: unknown) => command !== undefined)
 	}
+	async getSelectorArgumentsSchema(): Promise<ISelectorArgument[]> {
+		return (await this.getSchema())
+			.map((entry: any) => entry.selectorArguments)
+			.flat()
+			.filter(
+				(selectorArgument: unknown) => selectorArgument !== undefined
+			)
+	}
 
-	allCommands(query?: string) {
-		return this.getSchema().then((schema) => [
+	allCommands(query?: string, ignoreCustomCommands = false) {
+		return this.getCommandsSchema(ignoreCustomCommands).then((schema) => [
 			...new Set<string>(
 				schema
 					.map((command: any) => command?.commandName)
@@ -124,11 +154,45 @@ export class CommandData extends Signal<void> {
 		])
 	}
 
+	getCommandCompletionItems(query?: string, ignoreCustomCommands = false) {
+		return this.getCommandsSchema(ignoreCustomCommands).then((schema) => {
+			const completionItems: ICompletionItem[] = []
+
+			schema
+				.filter(
+					(command: ICommand) =>
+						!query || command.commandName?.includes(query)
+				)
+				.forEach((command) => {
+					if (
+						completionItems.some(
+							(item) => item.label === command.commandName
+						)
+					)
+						return
+
+					completionItems.push({
+						insertText: command.commandName,
+						label: command.commandName,
+						documentation: command.description,
+						kind: languages.CompletionItemKind.Method,
+					})
+				})
+
+			return completionItems
+		})
+	}
+
 	/**
 	 * Given a commandName, return all matching command definitions
 	 */
-	async getCommands(commandName: string) {
-		const commands = await this.getSchema().then((schema) => {
+	async getCommandDefinitions(
+		commandName: string,
+		ignoreCustomCommands: boolean
+	) {
+		const commands = await this.getCommandsSchema(
+			ignoreCustomCommands
+		).then((schema) => {
 			return schema.filter(
 				(command: any) => command.commandName === commandName
 			)
@@ -137,39 +201,54 @@ export class CommandData extends Signal<void> {
 		return commands
 	}
 
-	async getNextCompletionItems(path: string[]) {
-		if (path.length <= 1) return await this.allCommands(path[0])
+	async getNextCompletionItems(path: string[]): Promise<ICompletionItem[]> {
+		if (path.length <= 1)
+			return await this.getCommandCompletionItems(
+				path[0],
+				await this.shouldIgnoreCustomCommands
+			)
 
 		const commandName = path.shift()
-		const currentCommands = await this.getCommands(commandName!)
+		const currentCommands = await this.getCommandDefinitions(
+			commandName!,
+			await this.shouldIgnoreCustomCommands
+		)
 
 		if (!currentCommands || currentCommands.length === 0) return []
 
-		return [
-			...new Set<string>(
-				(
-					await Promise.all(
-						currentCommands.map(
-							async (currentCommand: ICommand) => {
-								// Get command argument
-								const args = await this.getNextCommandArgument(
-									currentCommand,
-									[...path]
-								)
-								if (args.length === 0) return []
+		const completionItems: ICompletionItem[] = []
+		;(
+			await Promise.all(
+				currentCommands.map(async (currentCommand: ICommand) => {
+					// Get command argument
+					const args = await this.getNextCommandArgument(
+						currentCommand,
+						[...path]
+					)
+					if (args.length === 0) return []
 
-								// Return possible completion items for the argument
-								return await Promise.all(
-									args.map((arg) =>
-										this.getCompletionItems(arg)
-									)
-								)
-							}
+					// Return possible completion items for the argument
+					return await Promise.all(
+						args.map((arg) =>
+							this.getCompletionItemsForArgument(arg)
 						)
 					)
-				).flat(2)
-			),
-		]
+				})
+			)
+		)
+			.flat(2)
+			.forEach((item: ICompletionItem) => {
+				if (
+					completionItems.some(
+						(completionItem) => completionItem.label === item.label
+					)
+				)
+					return
+
+				completionItems.push(item)
+			})
+
+		return completionItems
 	}
 
 	/**
@@ -179,7 +258,10 @@ export class CommandData extends Signal<void> {
 		currentCommand: ICommand,
 		path: string[]
 	): Promise<ICommandArgument[]> {
-		const args = currentCommand.arguments
+		if (!currentCommand.arguments || currentCommand.arguments.length === 0)
+			return []
+
+		const args = currentCommand.arguments ?? []
 		let argumentIndex = 0
 
 		for (let i = 0; i < path.length; i++) {
@@ -200,7 +282,12 @@ export class CommandData extends Signal<void> {
 			if (args[argumentIndex].type === 'command' && i + 1 < path.length) {
 				return (
 					await Promise.all(
-						(await this.getCommands(currentStr)).map((command) =>
+						(
+							await this.getCommandDefinitions(
+								currentStr,
+								await this.shouldIgnoreCustomCommands
+							)
+						).map((command) =>
 							this.getNextCommandArgument(
 								command,
 								path.slice(i + 1)
@@ -216,6 +303,7 @@ export class CommandData extends Signal<void> {
 			if (argumentIndex >= args.length) return []
 		}
 
+		if (!args[argumentIndex]) return []
 		// If we are here, we are at the next argument, return it
 		return [args[argumentIndex]]
 	}
@@ -234,14 +322,22 @@ export class CommandData extends Signal<void> {
 				const values =
 					commandArgument.additionalData?.values ??
 					this.resolveDynamicReference(
-						commandArgument.additionalData.schemaReference
+						commandArgument.additionalData.schemaReference!
 					) ??
 					[]
 
 				return strMatchArray(testStr, values)
 			}
 			case 'command': {
-				return strMatchArray(testStr, await this.allCommands())
+				return strMatchArray(
+					testStr,
+					await this.allCommands(
+						undefined,
+						await App.getApp().then(
+							(app) => app.projectManager.hasFired
+						)
+					)
+				)
 			}
 
 			case 'number':
@@ -281,19 +377,23 @@ export class CommandData extends Signal<void> {
 	/**
 	 * Given a commandArgument, return completion items for it
 	 */
-	protected async getCompletionItems(
+	async getCompletionItemsForArgument(
 		commandArgument: ICommandArgument
-	): Promise<string[]> {
+	): Promise<ICompletionItem[]> {
 		// Test whether argument type is defined
 		if (!commandArgument.type) {
 			// If additionalData is defined, return its values
-			if (commandArgument.additionalData)
-				return (
-					commandArgument.additionalData?.values ??
-					this.resolveDynamicReference(
-						commandArgument.additionalData.schemaReference
-					) ??
-					[]
+			if (commandArgument.additionalData?.values)
+				return this.toCompletionItem(
+					commandArgument.additionalData?.values
+				)
+			else if (commandArgument.additionalData?.schemaReference)
+				return this.toCompletionItem(
+					<string[]>(
+						this.resolveDynamicReference(
+							commandArgument.additionalData.schemaReference
+						).map(({ value }) => value)
+					)
 				)
 
 			return []
@@ -301,33 +401,88 @@ export class CommandData extends Signal<void> {
 
 		switch (commandArgument.type) {
 			case 'command':
-				return [...new Set(await this.allCommands())]
+				return this.mergeCompletionItems(
+					await this.getCommandCompletionItems(),
+					{ documentation: commandArgument.description }
+				)
 			case 'selector':
-				return ['@a', '@e', '@p', '@s', '@r', '@initiator']
+				return this.toCompletionItem(
+					['@a', '@e', '@p', '@s', '@r', '@initiator'],
+					commandArgument.description
+				)
 			case 'boolean':
-				return ['true', 'false']
+				return this.toCompletionItem(
+					['true', 'false'],
+					commandArgument.description,
+					languages.CompletionItemKind.Value
+				)
 			case 'number':
-				return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+				return this.toCompletionItem(
+					['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+					commandArgument.description,
+					languages.CompletionItemKind.Value
+				)
 			case 'coordinate':
-				return ['~', '^']
+				return this.toCompletionItem(
+					['~', '^'],
+					commandArgument.description,
+					languages.CompletionItemKind.Operator
+				)
 			case 'string': {
 				if (commandArgument.additionalData?.values)
-					return commandArgument.additionalData.values
+					return this.toCompletionItem(
+						commandArgument.additionalData.values,
+						commandArgument.description
+					)
 				else if (commandArgument.additionalData?.schemaReference)
-					return <string[]>(
-						this.resolveDynamicReference(
-							commandArgument.additionalData.schemaReference
-						).map(({ value }) => value)
+					return this.toCompletionItem(
+						<string[]>(
+							this.resolveDynamicReference(
+								commandArgument.additionalData.schemaReference
+							).map(({ value }) => value)
+						),
+						commandArgument.description
 					)
 				else return []
 			}
 			case 'jsonData':
-				return ['{}']
+				return this.toCompletionItem(
+					['{}'],
+					commandArgument.description,
+					languages.CompletionItemKind.Struct
+				)
 			case 'blockState':
-				return ['[]']
+				return this.toCompletionItem(
+					['[]'],
+					commandArgument.description,
+					languages.CompletionItemKind.Struct
+				)
 		}
 
 		return []
+	}
+	toCompletionItem(
+		strings: string[],
+		documentation?: string,
+		kind = languages.CompletionItemKind.Text
+	): ICompletionItem[] {
+		return strings.map((str) => ({
+			label: str,
+			insertText: str,
+			kind,
+			documentation,
+		}))
+	}
+	protected mergeCompletionItems(
+		completionItems: ICompletionItem[],
+		partialItem: Partial<ICompletionItem>
+	) {
+		return completionItems.map((item) => ({
+			...item,
+			documentation: partialItem.documentation
+				? `${partialItem.documentation}\n\n${item.documentation ?? ''}`
+				: item.documentation,
+		}))
 	}
 
 	/**

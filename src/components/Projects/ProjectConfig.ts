@@ -1,4 +1,6 @@
-import { FileSystem } from '../FileSystem/FileSystem'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { IExperimentalToggle } from './CreateProject/CreateProject'
+import type { Project } from './Project/Project'
 
 export interface IConfigJson {
 	/**
@@ -14,9 +16,17 @@ export interface IConfigJson {
 	/**
 	 * Creator of the project
 	 *
-	 * @example "solvedDev" / "Joel ant 05"
+	 * @deprecated
+	 * @example "solvedDev"
 	 */
 	author: string
+
+	/**
+	 * Creators of the project
+	 *
+	 * @example ["solvedDev", "Joel ant 05"]
+	 */
+	authors: string[]
 
 	/**
 	 * The Minecraft version this project targets
@@ -27,15 +37,15 @@ export interface IConfigJson {
 
 	/**
 	 * Experimental gameplay the project intends to use.
-	 * Exact mapping of strings to experimental gameplay toggles needs to be specified later.
 	 *
-	 * @example ["upcomingCreatorFeatures", "cavesAndCliffs"]
+	 * @example { "cavesAndCliffs": true, "holidayCreatorFeatures": false }
 	 */
-	minecraftExperiments?: string[]
+	experimentalGameplay?: Record<string, boolean>
 
 	/**
 	 * Additional capabilities the project wants to use
 	 *
+	 * @deprecated
 	 * @example ["scriptingAPI", "gameTestAPI"]
 	 */
 	capabilities: string[]
@@ -103,7 +113,13 @@ interface IPackDefinition {
 export class ProjectConfig {
 	protected data: Partial<IConfigJson> = {}
 
-	constructor(protected fileSystem: FileSystem) {}
+	constructor(protected fileSystem: FileSystem, protected project?: Project) {
+		if (project) {
+			project.fileSave.on('config.json', () => {
+				this.refreshConfig()
+			})
+		}
+	}
 
 	async setup() {
 		// Load legacy project config & transform it to new format specified here: https://github.com/bridge-core/project-config-standard
@@ -118,16 +134,19 @@ export class ProjectConfig {
 			} = await this.fileSystem.readJSON('.bridge/config.json')
 			await this.fileSystem.unlink('.bridge/config.json')
 
-			const capabilities: string[] = []
-			if (gameTestAPI) capabilities.push('gameTestAPI')
-			if (scriptingAPI) capabilities.push('scriptingAPI')
+			const experimentalGameplay: Record<string, boolean> = {}
+			if (gameTestAPI)
+				experimentalGameplay['enableGameTestFramework'] = true
+			if (scriptingAPI)
+				experimentalGameplay['additionalModdingCapabilities'] = true
 
 			const newFormat = {
 				type: 'minecraftBedrock',
 				name: this.fileSystem.baseDirectory.name,
 				namespace: prefix,
+				experimentalGameplay,
 				...other,
-				capabilities,
+				authors: other.author ? [other.author] : ['Unknown'],
 				packs: {
 					behaviorPack: './BP',
 					resourcePack: './RP',
@@ -146,6 +165,54 @@ export class ProjectConfig {
 			return
 		}
 
+		try {
+			this.data = await this.fileSystem.readJSON(`config.json`)
+		} catch {
+			this.data = {}
+		}
+
+		let updatedConfig = false
+
+		// Running in main thread, so we can use the App object
+		if (this.project && this.data.capabilities) {
+			// Transform old "capabilities" format to "experimentalGameplay"
+			const experimentalToggles: IExperimentalToggle[] = await this.project.app.dataLoader.readJSON(
+				'data/packages/minecraftBedrock/experimentalGameplay.json'
+			)
+			const experimentalGameplay: Record<string, boolean> =
+				this.data.experimentalGameplay ?? {}
+			const capabilities: string[] = this.data.capabilities ?? []
+
+			// Update scripting API/GameTest API toggles based on the old "capabilities" field
+			experimentalGameplay[
+				'enableGameTestFramework'
+			] = capabilities.includes('gameTestAPI')
+			experimentalGameplay[
+				'additionalModdingCapabilities'
+			] = capabilities.includes('scriptingAPI')
+
+			for (const toggle of experimentalToggles) {
+				// Set all missing experimental toggles to true by default
+				experimentalGameplay[toggle.id] ??= true
+			}
+			this.data.experimentalGameplay = experimentalGameplay
+			this.data.capabilities = undefined
+			updatedConfig = true
+		}
+
+		// Support reading from old "author" field
+		if (this.data.author && !this.data.authors) {
+			this.data.authors = [this.data.author]
+			this.data.author = undefined
+			updatedConfig = true
+		}
+
+		if (updatedConfig)
+			await this.fileSystem.writeJSON('config.json', this.data, true)
+	}
+
+	async refreshConfig() {
+		// Update this.data from config on disk
 		try {
 			this.data = await this.fileSystem.readJSON(`config.json`)
 		} catch {

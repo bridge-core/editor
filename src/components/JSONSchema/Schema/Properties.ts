@@ -37,6 +37,7 @@ export class PropertiesSchema extends Schema {
 			(value) =>
 				<const>{
 					type: 'object',
+					label: `${value}`,
 					value,
 				}
 		)

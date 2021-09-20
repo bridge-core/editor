@@ -8,6 +8,11 @@ import { runScript } from './Script'
 import { extname } from '/@/utils/path'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { iterateDir } from '/@/utils/iterateDir'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+	AnyHandle,
+} from '/@/components/FileSystem/Types'
 
 const knownTextFiles = new Set([
 	'.js',
@@ -16,6 +21,7 @@ const knownTextFiles = new Set([
 	'.mcfunction',
 	'.txt',
 	'.molang',
+	'.html',
 ])
 
 export interface ILightningInstruction {
@@ -25,6 +31,8 @@ export interface ILightningInstruction {
 	script?: string
 	filter?: string[]
 }
+
+const baseIgnoreFolders = ['.bridge', 'builds', '.git', 'worlds']
 
 export class LightningCache {
 	protected folderIgnoreList = new Set<string>()
@@ -42,21 +50,26 @@ export class LightningCache {
 			)
 			;(await file.text())
 				.split('\n')
-				.concat(['.bridge', 'builds', '.git'])
+				.concat(baseIgnoreFolders)
 				.forEach((folder) => this.folderIgnoreList.add(folder))
 		} catch {
-			;['.bridge', 'builds'].forEach((folder) =>
+			baseIgnoreFolders.forEach((folder) =>
 				this.folderIgnoreList.add(folder)
 			)
 		}
 	}
 
-	async start(): Promise<readonly [string[], string[], string[]]> {
+	async start(
+		forceRefresh: boolean
+	): Promise<readonly [string[], string[], string[]]> {
 		await this.lightningStore.setup()
 
 		if (this.folderIgnoreList.size === 0) await this.loadIgnoreFolders()
 
-		if (this.service.getOptions().noFullLightningCacheRefresh) {
+		if (
+			!forceRefresh &&
+			this.service.getOptions().noFullLightningCacheRefresh
+		) {
 			const filePaths = this.lightningStore.allFiles()
 			if (filePaths.length > 0) return [filePaths, [], []]
 		}
@@ -92,7 +105,7 @@ export class LightningCache {
 	}
 
 	async unlink(path: string) {
-		let handle: FileSystemHandle | undefined
+		let handle: AnyHandle | undefined
 		try {
 			handle = await this.service.fileSystem.getFileHandle(path)
 		} catch {
@@ -115,9 +128,9 @@ export class LightningCache {
 	}
 
 	protected async iterateDir(
-		baseDir: FileSystemDirectoryHandle,
+		baseDir: AnyDirectoryHandle,
 		callback: (
-			file: FileSystemFileHandle,
+			file: AnyFileHandle,
 			filePath: string
 		) => void | Promise<void>,
 		fullPath = ''
@@ -131,7 +144,7 @@ export class LightningCache {
 				await this.iterateDir(entry, callback, currentFullPath)
 			} else if (fileName[0] !== '.') {
 				this.service.progress.addToTotal(2)
-				await callback(<FileSystemFileHandle>entry, currentFullPath)
+				await callback(<AnyFileHandle>entry, currentFullPath)
 			}
 		}
 	}
@@ -141,7 +154,7 @@ export class LightningCache {
 	 */
 	async processFile(
 		filePath: string,
-		fileHandle: FileSystemFileHandle,
+		fileHandle: AnyFileHandle,
 		fileContent?: string
 	) {
 		const file = await fileHandle.getFile()
@@ -162,7 +175,7 @@ export class LightningCache {
 		const ext = extname(filePath)
 
 		// Second step: Process file
-		if (ext === '.json') {
+		if (FileType.isJsonFile(filePath)) {
 			await this.processJSON(filePath, fileType, file, fileContent)
 		} else if (knownTextFiles.has(ext)) {
 			await this.processText(filePath, fileType, file, fileContent)
@@ -247,7 +260,7 @@ export class LightningCache {
 		let data: any
 		try {
 			data = json5.parse(fileContent)
-		} catch (err) {
+		} catch (err: any) {
 			// Updating auto-completions in the background shouldn't get rid of all auto-completions currently saved for this file
 			if (!isTemporaryUpdateCall) {
 				console.error(`[${filePath}] ${err.message}`)

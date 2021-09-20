@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import { SimpleAction } from '../../Actions/SimpleAction'
-import { settingsState } from '../../Windows/Settings/SettingsState'
-import { SettingsWindow } from '../../Windows/Settings/SettingsWindow'
+import { SimpleAction } from '/@/components/Actions/SimpleAction'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { App } from '/@/App'
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 
@@ -66,5 +66,3 @@ export default {
 	},
 }
 </script>
-
-<style></style>

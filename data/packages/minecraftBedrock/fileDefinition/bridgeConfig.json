@@ -1,6 +1,0 @@
-{
-	"id": "bridgeConfig",
-	"icon": "mdi-cog-outline",
-	"matcher": ["config.json"],
-	"schema": "file:///data/packages/minecraftBedrock/schema/bridge/config/main.json"
-}

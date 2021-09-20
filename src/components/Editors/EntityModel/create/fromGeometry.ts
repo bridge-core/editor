@@ -10,6 +10,7 @@ import { InformationWindow } from '/@/components/Windows/Common/Information/Info
 
 export async function createFromGeometry(tabSystem: TabSystem, tab: FileTab) {
 	const app = await App.getApp()
+	await app.project.packIndexer.fired
 	const packIndexer = app.project.packIndexer.service
 
 	const file = await tab.getFile()

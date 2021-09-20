@@ -1,5 +1,0 @@
-{
-	"type": "enum",
-	"generateFile": "project/uuidEnum.json",
-	"script": "return [...new Array(10)].map(() => uuid())"
-}

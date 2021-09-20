@@ -1,10 +1,13 @@
 import { FileType } from './FileType'
 import { App } from '/@/App'
-import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { IDisposable } from '/@/types/disposable'
 import { editor, languages, Uri } from 'monaco-editor'
 import { compare, CompareOperator } from 'compare-versions'
 import { getLatestFormatVersion } from './FormatVersions'
+import { DataLoader } from './DataLoader'
+import { Tab } from '../TabSystem/CommonTab'
+import { FileTab } from '../TabSystem/FileTab'
+
 const types = new Map<string, string>()
 
 export class TypeLoader {
@@ -12,13 +15,14 @@ export class TypeLoader {
 	protected typeDisposables: IDisposable[] = []
 	protected currentTypeEnv: string | null = null
 
-	constructor(protected fileSystem: FileSystem) {}
+	constructor(protected dataLoader: DataLoader) {}
 
 	async activate(filePath?: string) {
 		this.disposables = <IDisposable[]>[
-			App.eventSystem.on('currentTabSwitched', (filePath: string) =>
-				this.setTypeEnv(filePath)
-			),
+			App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
+				if (!tab.isForeignFile && tab instanceof FileTab)
+					this.setTypeEnv(tab.getProjectPath())
+			}),
 		]
 		if (filePath) await this.setTypeEnv(filePath)
 	}
@@ -34,8 +38,10 @@ export class TypeLoader {
 		let src = types.get(typePath)
 		if (src) return src
 
+		await this.dataLoader.fired
+
 		// Load types from file
-		const file = await this.fileSystem.readFile(
+		const file = await this.dataLoader.readFile(
 			`data/packages/minecraftBedrock/${typePath}`
 		)
 		src = await file.text()

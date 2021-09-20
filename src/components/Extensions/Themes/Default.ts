@@ -1,15 +1,16 @@
 import { colorCodes } from './DefaultTheme/ColorCodes'
+import { isNightly } from '/@/utils/app/isNightly'
 
 export const bridgeDark = <const>{
 	id: 'bridge.default.dark',
 	name: 'Default Dark',
 	colorScheme: 'dark',
 	colors: {
-		text: '#fff',
+		text: '#ffffff',
 
-		primary: '#0073FF',
-		secondary: '#0073FF',
-		accent: '#0073FF',
+		primary: isNightly ? '#3bb6a3' : isNightly ? '#3bb6a3' : '#0073FF',
+		secondary: isNightly ? '#3bb6a3' : '#0073FF',
+		accent: isNightly ? '#3bb6a3' : '#0073FF',
 		error: '#ff5252',
 		info: '#2196f3',
 		warning: '#fb8c00',
@@ -25,7 +26,13 @@ export const bridgeDark = <const>{
 		toolbar: '#000000',
 		tabActive: '#121212',
 		tabInactive: '#1F1F1F',
-		lineHighlightBackground: '#1F1F1F',
+		lineHighlightBackground: '#292929',
+		scrollbarThumb: '#000000',
+
+		behaviorPack: '#ff5252',
+		resourcePack: '#0073FF',
+		skinPack: '#fb8c00',
+		worldTemplate: '#4caf50',
 	},
 	highlighter: {
 		type: {
@@ -47,10 +54,10 @@ export const bridgeDark = <const>{
 			color: '#e6db74',
 		},
 		variable: {
-			color: '#9effff',
+			color: '#6e9eff',
 		},
 		variableStrong: {
-			color: '#9effff',
+			color: '#6e9eff',
 		},
 		meta: {
 			color: 'white',
@@ -67,27 +74,33 @@ export const bridgeLight = <const>{
 	name: 'Default Light',
 	colorScheme: 'light',
 	colors: {
-		text: '#000',
+		text: '#000000',
 
-		primary: '#0073FF',
-		secondary: '#0073FF',
-		accent: '#0073FF',
+		primary: isNightly ? '#3bb6a3' : '#0073FF',
+		secondary: isNightly ? '#3bb6a3' : '#0073FF',
+		accent: isNightly ? '#3bb6a3' : '#0073FF',
 		error: '#ff5252',
 		info: '#2196f3',
 		warning: '#fb8c00',
 		success: '#4caf50',
 
 		background: '#fafafa',
-		sidebarNavigation: '#FFFFFF',
-		expandedSidebar: '#FFFFFF',
-		sidebarSelection: '#ececec',
-		menu: '#fff',
+		sidebarNavigation: '#e8e8e8',
+		expandedSidebar: '#e8e8e8',
+		sidebarSelection: '#FFFFFF',
+		menu: '#FFFFFF',
 		tooltip: '#424242',
 		toolbar: '#e0e0e0',
 		footer: '#f5f5f5',
 		tabActive: '#fafafa',
-		tabInactive: '#ececec',
+		tabInactive: '#e0e0e0',
 		lineHighlightBackground: '#e0e0e0',
+		scrollbarThumb: '#c8c8c8',
+
+		behaviorPack: '#ff5252',
+		resourcePack: '#0073FF',
+		skinPack: '#fb8c00',
+		worldTemplate: '#4caf50',
 	},
 	highlighter: {
 		type: {

@@ -6,7 +6,7 @@ import { CreateSkins } from '../Files/SP/Skins'
 
 export class CreateSP extends CreatePack {
 	protected readonly packPath = 'SP'
-	protected createFiles = [
+	public createFiles = [
 		new CreateManifest(this.packPath),
 		new CreateLang(this.packPath),
 		new CreatePackIcon(this.packPath),

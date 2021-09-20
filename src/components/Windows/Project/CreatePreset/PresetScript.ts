@@ -5,6 +5,8 @@ import { transformString } from './TransformString'
 import { App } from '/@/App'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { deepMerge } from '/@/utils/deepmerge'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
 
 export async function runPresetScript(
 	presetPath: string,
@@ -14,15 +16,23 @@ export async function runPresetScript(
 ) {
 	const app = await App.getApp()
 	const fs = app.project?.fileSystem!
-	const globalFs = app.fileSystem
+	const globalFs = new CombinedFileSystem(
+		app.fileSystem.baseDirectory,
+		app.dataLoader
+	)
 
-	presetScript = presetScript.replaceAll(
-		'./',
-		presetPath.replace('data/packages/minecraftBedrock/', '') + '/'
-	)
-	const script = await globalFs.readFile(
-		`data/packages/minecraftBedrock/${presetScript}`
-	)
+	let loadFilePath: string
+	if (presetScript.startsWith('./')) {
+		loadFilePath = presetScript = presetScript.replaceAll(
+			'./',
+			presetPath + '/'
+		)
+	} else {
+		loadFilePath = `data/packages/minecraftBedrock/${presetScript}`
+	}
+
+	await app.dataLoader.fired
+	const script = await globalFs.readFile(loadFilePath)
 	const scriptSrc = await script.text()
 
 	const module: any = { exports: undefined }
@@ -44,11 +54,12 @@ export async function runPresetScript(
 			`Failed to execute PresetScript "${presetScript}": module.exports is of type ${typeof module.exports}`
 		)
 
-	const createdFiles: FileSystemFileHandle[] = []
+	const createdFiles: AnyFileHandle[] = []
+	const openFiles: AnyFileHandle[] = []
 	const createJSONFile = (
 		filePath: string,
 		data: any,
-		opts: IPresetFileOpts = { inject: [] }
+		opts: IPresetFileOpts = { inject: [], openFile: false }
 	) => {
 		if (typeof data !== 'string') data = JSON.stringify(data, null, '\t')
 		return createFile(filePath, data, opts)
@@ -56,7 +67,10 @@ export async function runPresetScript(
 	const createFile = async (
 		filePath: string,
 		data: FileSystemWriteChunkType,
-		{ inject = [] }: IPresetFileOpts = { inject: [] }
+		{ inject = [], openFile = false }: IPresetFileOpts = {
+			inject: [],
+			openFile: false,
+		}
 	) => {
 		// Permission not set yet, prompt user if necessary
 		if (
@@ -84,6 +98,7 @@ export async function runPresetScript(
 
 		const fileHandle = await fs.getFileHandle(filePath, true)
 		createdFiles.push(fileHandle)
+		if (openFile) openFiles.push(fileHandle)
 		fs.write(
 			fileHandle,
 			typeof data === 'string'
@@ -94,7 +109,10 @@ export async function runPresetScript(
 	const expandFile = async (
 		filePath: string,
 		data: any,
-		{ inject = [] }: IPresetFileOpts = { inject: [] }
+		{ inject = [], openFile = false }: IPresetFileOpts = {
+			inject: [],
+			openFile: false,
+		}
 	) => {
 		const fileHandle = await app.project.fileSystem.getFileHandle(
 			filePath,
@@ -128,20 +146,26 @@ export async function runPresetScript(
 			return
 		}
 
-		let current = ''
+		let current: string | null = null
 		try {
 			current = await (await fs.readFile(filePath)).text()
 		} catch {}
 
-		data = transformString(data, inject, models)
 		createdFiles.push(fileHandle)
+		if (openFile) openFiles.push(fileHandle)
 
 		if (typeof data === 'string') {
-			await fs.writeFile(filePath, `${current}\n${data}`)
+			data = transformString(data, inject, models)
+			await fs.writeFile(filePath, current ? `${current}\n${data}` : data)
 		} else {
+			data = transformString(json5.stringify(data), inject, models)
 			await fs.writeJSON(
 				filePath,
-				deepMerge(json5.parse(current), json5.parse(data))
+				deepMerge(
+					current ? json5.parse(current) : {},
+					json5.parse(data)
+				),
+				true
 			)
 		}
 	}
@@ -156,5 +180,8 @@ export async function runPresetScript(
 		createJSONFile,
 	})
 
-	return createdFiles
+	return {
+		createdFiles: createdFiles,
+		openFile: openFiles,
+	}
 }

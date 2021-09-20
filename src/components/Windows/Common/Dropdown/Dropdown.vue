@@ -13,8 +13,9 @@
 	>
 		<template #default>
 			<v-select
-				autofocus
-				solo
+				:autofocus="pointerDevice === 'mouse'"
+				outlined
+				dense
 				v-model="$data.currentSelection"
 				:items="$data.options"
 				background-color="background"
@@ -38,6 +39,7 @@
 <script>
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'Dropdown',
@@ -46,6 +48,11 @@ export default {
 		BaseWindow,
 	},
 	props: ['currentWindow'],
+	setup() {
+		return {
+			pointerDevice,
+		}
+	},
 	data() {
 		return this.currentWindow
 	},

@@ -3,6 +3,8 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { CreateFile } from '../CreateFile'
 
 export class CreateSounds extends CreateFile {
+	public readonly id = 'sounds'
+
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
 		await fs.writeJSON(`RP/sounds.json`, {}, true)
 	}

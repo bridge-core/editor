@@ -1,7 +1,0 @@
-{
-	"id": "soundDefinition",
-	"scope": "RP/sounds/sound_definitions.json",
-	"matcher": "RP/sounds/sound_definitions.json",
-	"schema": "file:///data/packages/minecraftBedrock/schema/soundDefinition/main.json",
-	"lightningCache": "soundDefinition.json"
-}

@@ -71,7 +71,9 @@ export class Command {
 
 		const commands = this.template?.(
 			args.map((arg) => castType(arg)),
-			{}
+			{
+				compilerMode: this.mode,
+			}
 		)
 		let processedCommands: string[] = []
 		if (typeof commands === 'string')
@@ -96,12 +98,15 @@ export class Command {
 	}
 
 	getSchema() {
-		if (!this.schema) return []
-		else if (Array.isArray(this.schema))
+		if (!this.schema) return [{ commandName: this.name }]
+		else if (Array.isArray(this.schema)) {
+			if (this.schema.length === 0) return [{ commandName: this.name }]
+
 			return this.schema.map((schema) => ({
 				commandName: this.name,
 				...schema,
 			}))
+		}
 
 		// If commandName is not set on the schema, set it to the current name of the command.
 		if (!this.schema.commandName) this.schema.commandName = this.name

@@ -3,8 +3,11 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { CreateFile } from '../CreateFile'
 
 export class CreateGameTestMain extends CreateFile {
+	public readonly id = 'gameTestMain'
+	public isConfigurable = false
+
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
-		if (createOptions.gameTest) {
+		if (createOptions.experimentalGameplay.enableGameTestFramework) {
 			await fs.mkdir('BP/scripts', { recursive: true })
 			await fs.writeFile('BP/scripts/main.js', '')
 		}

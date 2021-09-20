@@ -1,6 +1,6 @@
 <template>
 	<SidebarWindow
-		windowTitle="windows.settings.title"
+		:windowTitle="title"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -17,7 +17,7 @@
 				:label="t('windows.settings.searchSettings')"
 				v-model.trim="sidebar._filter"
 				autocomplete="off"
-				autofocus
+				:autofocus="pointerDevice === 'mouse'"
 				outlined
 				dense
 			/>
@@ -48,6 +48,7 @@
 <script>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'PackExplorerWindow',
@@ -56,12 +57,24 @@ export default {
 		SidebarWindow,
 	},
 	props: ['currentWindow'],
+	setup() {
+		return { pointerDevice }
+	},
 	data() {
 		return this.currentWindow
 	},
 	methods: {
 		onClose() {
 			this.currentWindow.close()
+		},
+	},
+	computed: {
+		title() {
+			if (!this.sidebar.currentElement) return 'windows.settings.title'
+			else
+				return `[${this.sidebar.currentElement.text} - ${this.t(
+					'windows.settings.title'
+				)}]`
 		},
 	},
 }

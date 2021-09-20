@@ -1,20 +1,21 @@
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { CompilerService, ICompilerOptions } from './Worker/Service'
+import CompilerWorker from './Worker/Service?worker'
 import { proxy } from 'comlink'
-import type { CompilerService, ICompilerOptions } from './Worker/Service'
-// import CompilerWorker from './Worker/Main?worker'
 import { WorkerManager } from '/@/components/Worker/Manager'
 import { Project } from '../Projects/Project/Project'
 import { CompilerManager } from './CompilerManager'
 import { FileType } from '../Data/FileType'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 interface ICompilerStartOptions {
 	mode: 'dev' | 'build'
 	restartDevServer: boolean
 }
 export class Compiler extends WorkerManager<
+	typeof CompilerService,
 	CompilerService,
-	ICompilerOptions,
 	ICompilerStartOptions,
 	void
 > {
@@ -34,10 +35,7 @@ export class Compiler extends WorkerManager<
 	}
 
 	createWorker() {
-		// this.worker = new CompilerWorker()
-		this.worker = new Worker('./Worker/Service.ts', {
-			type: 'module',
-		})
+		this.worker = new CompilerWorker()
 	}
 
 	async dispose() {
@@ -54,27 +52,28 @@ export class Compiler extends WorkerManager<
 
 		// Instantiate the worker TaskService
 		if (!this._service) {
-			this._service = await new this.workerClass!({
-				projectDirectory: this.project.baseDirectory,
-				baseDirectory: app.fileSystem.baseDirectory,
-				comMojangDirectory: app.comMojang.fileSystem.baseDirectory,
-				config: this.config,
-				mode,
-				isFileRequest: false,
-				isDevServerRestart: restartDevServer,
-				plugins: this.parent.getCompilerPlugins(),
-				pluginFileTypes: FileType.getPluginFileTypes(),
-				allFiles: await app.project.packIndexer.service.getAllFiles(
-					false
-				),
-			})
-		} else {
-			await this.service.updateMode(mode, false, restartDevServer)
-			await this.service.updatePlugins(
-				this.parent.getCompilerPlugins(),
-				FileType.getPluginFileTypes()
+			this._service = await new this.workerClass!(
+				this.project.baseDirectory,
+				app.fileSystem.baseDirectory,
+				app.comMojang.fileSystem.baseDirectory,
+				{
+					config: this.config,
+					mode,
+					isFileRequest: false,
+					isDevServerRestart: restartDevServer,
+					plugins: this.parent.getCompilerPlugins(),
+					pluginFileTypes: FileType.getPluginFileTypes(),
+					allFiles: await app.project.packIndexer.service.getAllFiles(
+						false
+					),
+				}
 			)
+		} else {
+			await this.updateService(mode, false, restartDevServer)
 		}
+
+		// Dev mode makes no sense for browsers without com.mojang syncing
+		// if (isUsingFileSystemPolyfill && mode === 'dev') return
 
 		// Listen to task progress and update UI
 		await this.service.on(
@@ -97,17 +96,26 @@ export class Compiler extends WorkerManager<
 		this.ready.dispatch()
 		console.timeEnd('[TASK] Compiling project (total)')
 	}
-
-	async updateFiles(filePaths: string[]) {
-		console.time('[Worker] Compiler: Update Files')
-		await this.ready.fired
-		this.ready.resetSignal()
-
-		await this.service.updateMode('dev', false, false)
+	async updateService(
+		mode: 'build' | 'dev',
+		isFileRequest: boolean,
+		isDevServerRestart: boolean
+	) {
+		await this.service.updateMode(mode, isFileRequest, isDevServerRestart)
 		await this.service.updatePlugins(
 			this.parent.getCompilerPlugins(),
 			FileType.getPluginFileTypes()
 		)
+	}
+
+	async updateFiles(filePaths: string[]) {
+		// if (isUsingFileSystemPolyfill) return
+
+		console.time('[Worker] Compiler: Update Files')
+		await this.ready.fired
+		this.ready.resetSignal()
+
+		await this.updateService('dev', false, false)
 		await this.service.updateFiles(filePaths)
 		this.ready.dispatch()
 		console.timeEnd('[Worker] Compiler: Update Files')
@@ -117,11 +125,7 @@ export class Compiler extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.service.updateMode('dev', true, false)
-		await this.service.updatePlugins(
-			this.parent.getCompilerPlugins(),
-			FileType.getPluginFileTypes()
-		)
+		await this.updateService('dev', true, false)
 
 		const fileBuffer = new Uint8Array(await file.arrayBuffer())
 		const [dependencies, compiled] = await this.service.compileWithFile(
@@ -134,16 +138,26 @@ export class Compiler extends WorkerManager<
 	}
 
 	async unlink(path: string) {
+		// if (isUsingFileSystemPolyfill) return
+
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		this.service.updateMode('dev', false, false)
-		await this.service.updatePlugins(
-			this.parent.getCompilerPlugins(),
-			FileType.getPluginFileTypes()
-		)
+		await this.updateService('dev', false, false)
 		await this.service.unlink(path)
 
 		this.ready.dispatch()
+	}
+
+	async getCompilerOutputPath(path: string) {
+		await this.ready.fired
+		this.ready.resetSignal()
+
+		await this.updateService('dev', false, false)
+		const transformedPath = await this.service.getCompilerOutputPath(path)
+
+		this.ready.dispatch()
+
+		return transformedPath
 	}
 }

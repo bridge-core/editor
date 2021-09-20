@@ -1,9 +1,5 @@
-import { App } from '/@/App'
 import { Project } from './Project'
-import {
-	ITabActionConfig,
-	ITabPreviewConfig,
-} from '/@/components/TabSystem/TabActions/Provider'
+import { ITabPreviewConfig } from '/@/components/TabSystem/TabActions/Provider'
 
 import { createFromGeometry } from '/@/components/Editors/EntityModel/create/fromGeometry'
 import { createFromClientEntity } from '/@/components/Editors/EntityModel/create/fromClientEntity'
@@ -58,5 +54,11 @@ export class BedrockProject extends Project {
 			this.tabActionProvider.registerPreview(tabPreview)
 		)
 		this.commandData.loadCommandData('minecraftBedrock')
+	}
+
+	getCurrentDataPackage() {
+		return this.app.dataLoader.getDirectoryHandle(
+			`data/packages/minecraftBedrock`
+		)
 	}
 }

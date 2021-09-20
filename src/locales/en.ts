@@ -1,4 +1,3 @@
-import { LatheBufferGeometry } from 'three'
 import { en } from 'vuetify/src/locale'
 
 export default {
@@ -16,11 +15,24 @@ export default {
 		information: 'Information',
 		continue: 'Continue',
 		delete: 'Delete',
+		select: 'Select',
 		skip: 'Skip',
+		save: 'Save',
+		more: 'More...',
 		selectFolder: 'Select Folder',
 		fileName: 'File Name',
+		inactive: 'Inactive',
+		active: 'Active',
+
 		confirmOverwriteFile:
 			'A file with this name already exists. Do you want to overwrite it?',
+		fileSystemPolyfill:
+			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome or Edge!',
+		successfulExport: {
+			title: 'Export Successful',
+			description: 'You can find the exported package here',
+		},
+		experimentalGameplay: 'Experimental Gameplay',
 	},
 	packType: {
 		behaviorPack: {
@@ -69,6 +81,7 @@ export default {
 		clientManifest: 'Client Manifest',
 		skinManifest: 'Skin Manifest',
 		geometry: 'Geometry',
+		customCommand: 'Command',
 		customComponent: 'Component',
 		clientAnimation: 'Client Animation',
 		clientAnimationController: 'Client Animation Controller',
@@ -235,9 +248,56 @@ export default {
 		toArray: {
 			name: 'Transform to Array',
 		},
+		documentationLookup: {
+			name: 'View Documentation',
+			noDocumentation: 'No documentation available for',
+		},
+		toggleReadOnly: {
+			name: 'Toggle Read-Only Mode',
+			description: 'Toggle read-only mode for the currently opened file',
+		},
+		keepInTabSystem: {
+			name: 'Keep in Tab System',
+			description: 'Converts this tab to a permanent tab',
+		},
+		importBrproject: {
+			name: 'Import Project',
+			description: 'Import a project from a .brproject file',
+		},
+		downloadFile: {
+			name: 'Download File',
+			description: 'Download the currently opened file',
+		},
+		undo: {
+			name: 'Undo',
+			description: 'Undo the last action',
+		},
+		redo: {
+			name: 'Redo',
+			description: 'Redo the last action',
+		},
+		goToDefinition: {
+			name: 'Go to Definition',
+			description: 'Go to the definition of the selected symbol',
+		},
+		goToSymbol: {
+			name: 'Go to Symbol',
+			description: 'Opens a dialog to select a symbol to go to',
+		},
+		formatDocument: {
+			name: 'Format Document',
+			description: 'Format the currently opened document',
+		},
+		changeAllOccurrences: {
+			name: 'Change All Occurrences',
+			description: 'Change all occurrences of the selected text',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
+		project: {
+			name: 'Project',
+		},
 		file: {
 			name: 'File',
 			preferences: {
@@ -258,6 +318,11 @@ export default {
 	sidebar: {
 		compiler: {
 			name: 'Compiler',
+			default: {
+				name: 'Default Config',
+				description:
+					'Run bridge.\'s compiler with the default compiler configuration that is part of your project\'s "config.json" file.',
+			},
 		},
 		extensions: {
 			name: 'Extensions',
@@ -287,14 +352,51 @@ export default {
 		recentFiles: 'Recent Files',
 		recentProjects: 'Recent Projects',
 	},
+	// Experimental gameplay toggles
+	experimentalGameplay: {
+		cavesAndCliffs: {
+			name: 'Caves and Cliffs',
+			description:
+				'Enables auto-completions for the new mountain generation inside of biomes.',
+		},
+		holidayCreatorFeatures: {
+			name: 'Holiday Creator Features',
+			description:
+				'Enables auto-completions for the data driven item and block features.',
+		},
+		creationOfCustomBiomes: {
+			name: 'Creation of Custom Biomes',
+			description:
+				'Enables the creation of custom biomes, features and feature rules.',
+		},
+		additionalModdingCapabilities: {
+			name: 'Additional Modding Capabilities',
+			description:
+				'Enables the Scripting API in the manifest and allows you to create scripts with auto-completions.',
+		},
+		upcomingCreatorFeatures: {
+			name: 'Upcoming Creator Features',
+			description:
+				'Enables the creation of fog volume files and provides auto-completions for entity properties.',
+		},
+		enableGameTestFramework: {
+			name: 'Enable GameTest Framework',
+			description:
+				'Enables the GameTest related modules in the manifest and allows you to create GameTest scripts with auto-completions.',
+		},
+		experimentalMolangFeatures: {
+			name: 'Experimental Molang Features',
+			description:
+				'Enables auto-completions for experimental Molang queries.',
+		},
+		educationEdition: {
+			name: 'Enable Education Edition',
+			description:
+				'Enables auto-completions for education features such as material reducer recipes.',
+		},
+	},
 	// Windows
 	windows: {
-		loadingWindow: {
-			titles: {
-				loading: 'Loading...',
-				downloadingData: 'Downloading new data...',
-			},
-		},
 		changelogWindow: {
 			title: "What's new?",
 		},
@@ -311,18 +413,74 @@ export default {
 			selectedPack: 'Selected',
 			title: 'Create Project',
 			packIcon: 'Project Icon (optional)',
-			projectName: 'Project Name',
+			projectName: {
+				name: 'Project Name',
+				invalidLetters: 'You may only use alphanumerical characters',
+				mustNotBeEmpty: 'You must enter a project name',
+			},
 			projectDescription: 'Project Description (optional)',
 			projectPrefix: 'Project Prefix',
 			projectAuthor: 'Project Author',
 			projectTargetVersion: 'Project Target Version',
-			scripting: 'Enable Scripting API',
-			gameTest: 'Enable GameTest Framework',
 			rpAsBpDependency:
 				'Register resource pack as behavior pack dependency',
+			bpAsRpDependency:
+				'Register behavior pack as a resource pack dependency',
 			useLangForManifest:
 				'Add pack name/description directly to the manifest',
 			create: 'Create',
+			saveCurrentProject:
+				'Do you want to save your current project before creating the new one? Any unsaved changes will get lost!',
+			individualFiles: {
+				name: 'Individual Files',
+				file: {
+					player: {
+						name: 'player.json',
+						description: 'Edit how the default player behaves',
+					},
+					tick: {
+						name: 'tick.json',
+						description:
+							'Define which functions to execute every tick',
+					},
+					skins: {
+						name: 'skins.json',
+						description: 'Register the skins you have created',
+					},
+					blocks: {
+						name: 'blocks.json',
+						description:
+							'Used to define how multiple block faces are combined to a single block',
+					},
+					terrainTexture: {
+						name: 'terrain_texture.json',
+						description: 'Used to assign textures to block faces',
+					},
+					itemTexture: {
+						name: 'item_texture.json',
+						description: 'Used to assign textures to items',
+					},
+					flipbookTextures: {
+						name: 'flipbook_textures.json',
+						description: 'Used for animating block textures',
+					},
+					biomesClient: {
+						name: 'biomes_client.json',
+						description:
+							'Used to define how biome specific effects render',
+					},
+					sounds: {
+						name: 'sounds.json',
+						description:
+							'Used to define sounds for specific game features',
+					},
+					soundDefinitions: {
+						name: 'sound_definitions.json',
+						description:
+							'Used to register ids for sound files to be used elsewhere in the project',
+					},
+				},
+			},
 		},
 		createPreset: {
 			title: 'Create Preset',
@@ -354,9 +512,28 @@ export default {
 			github: 'Github',
 		},
 		projectChooser: {
-			title: 'Projects',
+			title: 'Choose Project',
+			description: 'Select the currently active project',
 			searchProjects: 'Search projects...',
-			newProject: 'New Project',
+			newProject: {
+				name: 'New Project',
+				description: 'Create a new bridge. project.',
+			},
+
+			saveCurrentProject: {
+				name: 'Save Project',
+				description:
+					'Download your current project as a .brproject file to save changes that you have made.',
+			},
+			openNewProject: {
+				name: 'Open Project',
+				description:
+					'Open a different project by selecting the corresponding .brproject file.',
+				saveCurrentProject:
+					'Do you want to save your current project before loading in the new one?',
+			},
+			wrongFileType: 'Project must be a .brproject file',
+			addPack: 'Add Pack',
 		},
 		filePath: {
 			title: 'Choose File Path',
@@ -375,6 +552,25 @@ export default {
 					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project.",
 			},
 			createPreset: 'New File',
+			projectConfig: {
+				name: 'Open Project Config',
+				missing:
+					'It looks like this project has no config.json file. Every project needs a project config in order to work correctly.',
+			},
+			exportAsMcaddon: {
+				name: 'Export as .mcaddon',
+			},
+			exportAsMctemplate: {
+				name: 'Export as .mctemplate',
+				chooseWorld: 'Choose a World',
+			},
+			exportAsMcworld: {
+				name: 'Export as .mcworld',
+				chooseWorld: 'Choose a World',
+			},
+			exportAsBrproject: {
+				name: 'Export as .brproject',
+			},
 			fileActions: {
 				delete: {
 					name: 'Delete',
@@ -390,9 +586,24 @@ export default {
 					name: 'Duplicate',
 					description: 'Duplicate a file',
 				},
+				viewCompilerOutput: {
+					name: 'View Compiler Output',
+					description:
+						'View the current compiler output for this file',
+					fileMissing:
+						"It doesn't look like this file was compiled yet.",
+				},
 				revealFilePath: {
 					name: 'Reveal File Path',
 					description: 'Reveals the location of a file or folder',
+				},
+				createFile: {
+					name: 'Create File',
+					description: 'Create a new file',
+				},
+				createFolder: {
+					name: 'Create Folder',
+					description: 'Create a new folder',
 				},
 			},
 		},
@@ -441,6 +652,24 @@ export default {
 					description:
 						'Choose a light theme for the currently active project',
 				},
+				fontSize: {
+					name: 'Font Size',
+					description: "Change the font size of bridge.'s text",
+				},
+				editorFontSize: {
+					name: 'Code Font Size',
+					description:
+						"Change the font size of bridge.'s code editor",
+				},
+				editorFont: {
+					name: 'Code Font',
+					description: "Change the font of bridge.'s code editor",
+				},
+				font: {
+					name: 'Font',
+					description:
+						"Change the font that is used inside of bridge.'s user interface",
+				},
 			},
 			general: {
 				name: 'General',
@@ -476,6 +705,11 @@ export default {
 					name: 'Select Root Folder',
 					description: 'Choose the main folder bridge. operates on',
 				},
+				openProjectChooserOnAppStartup: {
+					name: 'Open Project Chooser',
+					description:
+						'Automatically open the project chooser upon starting bridge.',
+				},
 			},
 			developer: {
 				name: 'Developer',
@@ -508,6 +742,26 @@ export default {
 					name: 'Word Wrap',
 					description: 'Wrap words to disable horizontal scrolling',
 				},
+				wordWrapColumns: {
+					name: 'Word Wrap Columns',
+					description:
+						'Defines after how many columns the editor should wrap words',
+				},
+				compactTabDesign: {
+					name: 'Compact Tab Design',
+					description:
+						'Display tabs inside of the tab system in a more compact way',
+				},
+				automaticallyOpenTreeNodes: {
+					name: 'Automatically Open Tree Nodes',
+					description:
+						"Inside of bridge.'s tree editor, automatically open nodes when you select them",
+				},
+				dragAndDropTreeNodes: {
+					name: 'Drag and Drop Tree Nodes',
+					description:
+						"Disable/enable drag & drop for tree nodes inside of bridge.'s tree editor",
+				},
 			},
 		},
 		projectFolder: {
@@ -517,7 +771,8 @@ export default {
 		},
 		extensionStore: {
 			title: 'Extension Store',
-			searchExtensions: 'Search extension...',
+			searchExtensions: 'Search Extension...',
+			deleteExtension: 'Delete Extension',
 			activateExtension: 'Activate Extension',
 			deactivateExtension: 'Deactivate Extension',
 			offlineError:
@@ -534,20 +789,22 @@ export default {
 		browserUnsupported: {
 			title: 'Unsupported Browser',
 			description:
-				'Your browser is currently not supported. Please use Chrome (Desktop) or Edge (Chromium) in order to get started with bridge.!',
+				'Please use Chrome (Desktop) or Edge (Chromium) in order to get the best experience using bridge. v2! Your browser does not support saving files directly and syncing projects to your com.mojang folder.',
+			continue: 'Continue Anyways',
 		},
 		invalidJson: {
 			title: 'Invalid JSON',
 			description:
 				'bridge.\'s tree editor cannot open files that contain invalid JSON. You can switch to the "Raw Text" editor type inside of the settings to manually fix the issue.',
 		},
+		loadingWindow: {
+			titles: {
+				loading: 'Loading...',
+			},
+		},
 	},
 	taskManager: {
 		tasks: {
-			dataLoader: {
-				title: 'Downloading Data...',
-				description: 'Downloading the latest data for the editor',
-			},
 			packIndexing: {
 				title: 'Indexing Packs',
 				description:
@@ -557,6 +814,15 @@ export default {
 				title: 'Compiling Project',
 				description:
 					'bridge. is compiling your project to make it ready for import into Minecraft',
+			},
+			unzipper: {
+				name: 'Unpacking ZIP',
+				description: 'bridge. is currently unpacking a ZIP file.',
+			},
+			loadingSchemas: {
+				name: 'Loading Auto-Completions',
+				description:
+					'bridge. is currently loading its auto-completion data.',
 			},
 		},
 	},
@@ -582,6 +848,14 @@ export default {
 		title: 'Access to folder "com.mojang"',
 		permissionRequest:
 			'bridge. needs access to your "com.mojang" folder in order to compile projects to it.',
+		status: {
+			sucess: 'Syncing your projects to com.mojang is setup correctly.',
+			deniedPermission:
+				'You setup com.mojang syncing but you did not grant bridge. permission to the folder.',
+			notSetup: 'You have not setup com.mojang syncing yet.',
+			notAvailable:
+				'Syncing projects to the com.mojang folder is only available for Chrome and Edge users.',
+		},
 	},
 	findAndReplace: {
 		name: 'Find & Replace',
@@ -619,6 +893,19 @@ export default {
 				name: 'bridge. Folder',
 				description:
 					'Please create a folder where bridge. can save app related data and your add-on projects.',
+			},
+			bridgeProject: {
+				name: 'bridge. Project',
+				description:
+					'Do you want to create a new project or import an existing project from a .brproject file?',
+				createNew: {
+					name: 'New Project',
+					description: 'Create a new project.',
+				},
+				importExisting: {
+					name: 'Import Project',
+					description: 'Import an existing project.',
+				},
 			},
 			comMojang: {
 				name: 'com.mojang Folder',

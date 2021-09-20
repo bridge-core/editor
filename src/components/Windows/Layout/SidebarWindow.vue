@@ -5,7 +5,11 @@
 		</template>
 
 		<template #sidebar>
-			<slot name="sidebar" v-bind:selectedSidebar="selected" />
+			<slot
+				name="sidebar"
+				v-if="!isMobile"
+				v-bind:selectedSidebar="selected"
+			/>
 
 			<template v-for="(element, i) in sidebarItems">
 				<SidebarItem
@@ -15,6 +19,7 @@
 					:color="element.color"
 					:text="element.text"
 					:isSelected="selected === element.id"
+					:compact="isMobile"
 					@click="onSidebarChanged(element.id)"
 				/>
 				<SidebarGroup
@@ -24,6 +29,7 @@
 					:items="element.items"
 					:text="element.text"
 					:selected="selected"
+					:compact="isMobile"
 					@toggleOpen="toggleOpenCategory(element)"
 					@click="onSidebarChanged"
 				/>
@@ -62,6 +68,9 @@ export default {
 	computed: {
 		selected() {
 			return this.value
+		},
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
 		},
 	},
 	methods: {

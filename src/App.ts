@@ -13,7 +13,6 @@ import { setupSidebar } from '/@/components/Sidebar/setup'
 import { TaskManager } from '/@/components/TaskManager/TaskManager'
 import { setupDefaultMenus } from '/@/components/Toolbar/setupDefaults'
 import { Locales } from '/@/utils/locales'
-import { createNotification } from '/@/components/Notifications/create'
 import { PackType } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
@@ -27,15 +26,23 @@ import { InstallApp } from '/@/components/App/Install'
 import { LanguageManager } from '/@/components/Languages/LanguageManager'
 import { ProjectManager } from '/@/components/Projects/ProjectManager'
 import { ContextMenu } from '/@/components/ContextMenu/ContextMenu'
-import { Project } from '/@/components/Projects/Project/Project'
 import { get, set } from 'idb-keyval'
 import { GlobalExtensionLoader } from '/@/components/Extensions/GlobalExtensionLoader'
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/FileSystem/ComMojang'
 import { AudioManager } from '/@/components/Audio/AudioManager'
+import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
+import { markRaw } from '@vue/composition-api'
+import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
+import { WindowState } from '/@/components/Windows/WindowState'
+import { Mobile } from '/@/components/App/Mobile'
+import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
+import { PersistentNotification } from '/@/components/Notifications/PersistentNotification'
+import { createVirtualProjectWindow } from './components/FileSystem/Virtual/ProjectWindow'
 
 export class App {
+	public static readonly windowState = new WindowState()
 	public static readonly installApp = new InstallApp()
 	public static fileSystemSetup = new FileSystemSetup()
 	public static toolbar = new Toolbar()
@@ -45,18 +52,21 @@ export class App {
 		'refreshCurrentContext',
 		'disableValidation',
 		'fileAdded',
+		'fileChange',
+		'fileSave',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>
 	public static readonly audioManager = new AudioManager()
+	public static readonly packExplorer = new PackExplorer()
 
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this.keyBindingManager)
 	public readonly themeManager: ThemeManager
 	public readonly taskManager = new TaskManager()
-	public readonly dataLoader = new DataLoader(this)
+	public readonly dataLoader = markRaw(new DataLoader(true))
 	public readonly fileSystem = new FileSystem()
-	public readonly projectManager = Vue.observable(new ProjectManager(this))
+	public readonly projectManager = new ProjectManager(this)
 	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
 	public readonly contextMenu = new ContextMenu()
@@ -64,8 +74,13 @@ export class App {
 	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
 	public readonly comMojang = new ComMojang(this)
+	public readonly configuredJsonLanguage = markRaw(
+		new ConfiguredJsonLanguage()
+	)
 
-	protected languageManager = new LanguageManager()
+	public readonly mobile: Mobile
+
+	protected languageManager = markRaw(new LanguageManager())
 
 	protected _windows: Windows
 	get windows() {
@@ -106,15 +121,18 @@ export class App {
 		this.locales = new Locales(appComponent.$vuetify)
 		this._windows = new Windows(this)
 
+		this.mobile = new Mobile(appComponent.$vuetify)
+
 		// Prompt the user whether they really want to close bridge. when unsaved tabs are open
 		const saveWarning =
 			'Are you sure that you want to close bridge.? Unsaved progress will be lost.'
 		// Only prompt in prod mode so we can use HMR in dev mode
-		if (process.env.NODE_ENV === 'production') {
+		if (import.meta.env.PROD) {
 			window.addEventListener('beforeunload', (event) => {
 				if (
 					this.tabSystem?.hasUnsavedTabs ||
-					this.taskManager.hasRunningTasks
+					this.taskManager.hasRunningTasks ||
+					isUsingFileSystemPolyfill
 				) {
 					event.preventDefault()
 					event.returnValue = saveWarning
@@ -122,9 +140,23 @@ export class App {
 				}
 			})
 		}
+
+		// Once the settings are loaded...
+		SettingsWindow.loadedSettings.once((state) => {
+			// ...take a look at whether we are supposed to open the project chooser...
+			if (state?.general?.openProjectChooserOnAppStartup ?? false)
+				this.projectManager.projectReady.once(() => {
+					// ...then open it if necessary
+					if (isUsingFileSystemPolyfill) {
+						createVirtualProjectWindow()
+					} else {
+						App.instance.windows.projectChooser.open()
+					}
+				})
+		})
 	}
 
-	static createNativeWindow(url: string, id?: string) {
+	static openUrl(url: string, id?: string) {
 		if (settingsState?.general?.openLinksInBrowser)
 			return window.open(url, '_blank')
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
@@ -134,7 +166,7 @@ export class App {
 	 * Starts the app
 	 */
 	static async main(appComponent: Vue) {
-		this._instance = Object.freeze(new App(appComponent))
+		this._instance = markRaw(Object.freeze(new App(appComponent)))
 		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
@@ -179,10 +211,10 @@ export class App {
 
 		setupSidebar()
 		setupDefaultMenus(this)
-		this.dataLoader.start()
 
-		if (process.env.NODE_ENV === 'production') {
-			const socialsMsg = createNotification({
+		if (import.meta.env.PROD) {
+			const socialsMsg = new PersistentNotification({
+				id: 'bridge-social-links',
 				icon: 'mdi-link-variant',
 				message: 'sidebar.notifications.socials.message',
 				color: '#1DA1F2',
@@ -192,18 +224,18 @@ export class App {
 					socialsMsg.dispose()
 				},
 			})
-			/* Removed until getting started updated to v2
-			const gettingStarted = createNotification({
+
+			const gettingStarted = new PersistentNotification({
+				id: 'bridge-getting-started',
 				icon: 'mdi-help-circle-outline',
 				message: 'sidebar.notifications.gettingStarted.message',
 				onClick: () => {
-					App.createNativeWindow(
+					App.openUrl(
 						'https://bridge-core.github.io/editor-docs/getting-started/'
 					)
 					gettingStarted.dispose()
 				},
 			})
-			*/
 		}
 
 		console.timeEnd('[APP] beforeStartUp()')
@@ -215,34 +247,23 @@ export class App {
 	async startUp() {
 		console.time('[APP] startUp()')
 
-		// Set language
-		if (typeof settingsState?.general?.locale === 'string')
-			this.locales.selectLanguage(settingsState?.general?.locale)
-		else {
-			// Set language based off of browser language
-			for (const [lang] of this.locales.getLanguages()) {
-				if (navigator.language.includes(lang)) {
-					this.locales.selectLanguage(lang)
-				}
-			}
-		}
+		this.locales.setDefaultLanguage()
 
 		await Promise.all([
 			// Create default folders
 			this.fileSystem.mkdir('projects'),
 			this.fileSystem.mkdir('extensions'),
-			this.fileSystem.mkdir('data/packages'),
+			this.fileSystem.mkdir('data'),
+
 			// Setup data helpers
-			this.dataLoader.fired.then(() => FileType.setup(this.fileSystem)),
-			this.dataLoader.fired.then(() => PackType.setup(this.fileSystem)),
+			FileType.setup(this.dataLoader),
+			PackType.setup(this.dataLoader),
 		])
 
 		// Ensure that a project is selected
 		this.projectManager.projectReady.fired.then(async () =>
 			// Then load global extensions
-			this.extensionLoader.loadExtensions(
-				await this.fileSystem.getDirectoryHandle(`extensions`)
-			)
+			this.extensionLoader.loadExtensions()
 		)
 
 		console.timeEnd('[APP] startUp()')

@@ -7,15 +7,13 @@ const workerKillTime = 2 * 60 * 1000 // 2 minutes
 
 export abstract class WorkerManager<
 	RemoteClass,
-	WorkerOptions,
+	RemoteClassInstance,
 	StartArg,
 	SignalData
 > extends Signal<SignalData> {
 	protected worker: Worker | null = null
-	protected workerClass: Remote<{
-		new (options: WorkerOptions): RemoteClass
-	}> | null = null
-	protected _service: Remote<RemoteClass> | null = null
+	protected workerClass: Remote<RemoteClass> | null = null
+	protected _service: Remote<RemoteClassInstance> | null = null
 	protected task: Task | null = null
 	protected disposeTimeout?: number
 
@@ -33,7 +31,6 @@ export abstract class WorkerManager<
 		if (this.disposeTimeout !== undefined) {
 			window.clearTimeout(this.disposeTimeout)
 			this.disposeTimeout = undefined
-			return
 		}
 
 		const app = this.app ?? (await App.getApp())
@@ -46,7 +43,7 @@ export abstract class WorkerManager<
 				throw new Error(
 					`Method WorkerManager.createWorker() doesn't create worker`
 				)
-			this.workerClass = wrap<{ new (): RemoteClass }>(this.worker)
+			this.workerClass = wrap<RemoteClass>(this.worker)
 		}
 
 		this.resetSignal()

@@ -7,30 +7,25 @@ import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { AnyFileHandle } from '../FileSystem/Types'
 
-export abstract class Tab extends Signal<Tab> {
+export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	abstract component: Vue.Component
 	public uuid = uuid()
 	public hasRemoteChange = false
-	public isUnsaved = false
+	protected _isUnsaved = false
 	public isForeignFile = true
 	public connectedTabs: Tab[] = []
+	public isTemporary = true
 	public readonly onClose = new EventDispatcher<void>()
 
 	protected projectPath?: string
+	protected folderName: string | null = null
 	protected actions: SimpleAction[] = []
 	protected isActive = false
 	protected isLoading = true
 
-	setIsUnsaved(val: boolean) {
-		this.isUnsaved = val
-	}
-
-	get isSharingScreen() {
-		return this.parent.isSharingScreen
-	}
-
-	static is(fileHandle: FileSystemFileHandle) {
+	static is(fileHandle: AnyFileHandle) {
 		return false
 	}
 
@@ -44,13 +39,27 @@ export abstract class Tab extends Signal<Tab> {
 		this.isLoading = false
 	}
 
+	setIsUnsaved(val: boolean) {
+		this._isUnsaved = val
+		this.isTemporary = false
+	}
+	get isUnsaved() {
+		return this._isUnsaved
+	}
+
 	updateParent(parent: TabSystem) {
 		this.parent = parent
 	}
-
-	abstract get name(): string
 	get tabSystem() {
 		return this.parent
+	}
+	get isSharingScreen() {
+		return this.parent.isSharingScreen
+	}
+
+	abstract get name(): string
+	setFolderName(folderName: string | null) {
+		this.folderName = folderName
 	}
 
 	/**
@@ -80,7 +89,7 @@ export abstract class Tab extends Signal<Tab> {
 		return PackType.get(this.getPath())?.color
 	}
 
-	get isSelected() {
+	get isSelected(): boolean {
 		return this.parent.selectedTab === this
 	}
 	select() {
@@ -91,7 +100,7 @@ export abstract class Tab extends Signal<Tab> {
 	 *
 	 * @returns Whether the tab was closed
 	 */
-	async close() {
+	async close(): Promise<boolean> {
 		this.parent.setActive(true)
 
 		const didClose = await this.parent.close(this)
@@ -101,7 +110,11 @@ export abstract class Tab extends Signal<Tab> {
 		}
 		return didClose
 	}
-	abstract isFor(fileHandle: FileSystemFileHandle): Promise<boolean>
+	async is(tab: Tab): Promise<boolean> {
+		return false
+	}
+	// abstract restore(data: TRestoreData): Promise<Tab | undefined>
+	// abstract serialize(): Promise<TRestoreData>
 
 	focus() {}
 	async onActivate() {
@@ -114,6 +127,7 @@ export abstract class Tab extends Signal<Tab> {
 	protected async toOtherTabSystem(updateParentTabs = true) {
 		const app = await App.getApp()
 		const tabSystems = app.projectManager.currentProject?.tabSystems!
+		const wasSelected = this.isSelected
 
 		const from =
 			tabSystems[0] === this.parent ? tabSystems[0] : tabSystems[1]
@@ -130,9 +144,9 @@ export abstract class Tab extends Signal<Tab> {
 				await from.openedFiles.remove(this.getPath())
 			}
 
-			to.select(this)
+			if (wasSelected) await from.select(from.tabs[0])
 
-			if (this.isSelected) from.select(from.tabs[0])
+			await to.select(this)
 		}
 	}
 
@@ -143,11 +157,21 @@ export abstract class Tab extends Signal<Tab> {
 		this.actions = []
 	}
 
-	onContextMenu(event: MouseEvent) {
-		let moveSplitScreen = []
+	async onContextMenu(event: MouseEvent) {
+		const additionalItems = []
 		// It makes no sense to move a file to the split-screen if the tab system only has one entry
+		if (this.isTemporary) {
+			additionalItems.push({
+				name: 'actions.keepInTabSystem.name',
+				description: 'actions.keepInTabSystem.description',
+				icon: 'mdi-pin-outline',
+				onTrigger: () => {
+					this.isTemporary = false
+				},
+			})
+		}
 		if (this.parent.tabs.length > 1) {
-			moveSplitScreen.push({
+			additionalItems.push({
 				name: 'actions.moveToSplitScreen.name',
 				description: 'actions.moveToSplitScreen.description',
 				icon: 'mdi-arrow-split-vertical',
@@ -157,8 +181,11 @@ export abstract class Tab extends Signal<Tab> {
 			})
 		}
 
-		showContextMenu(event, [
-			...moveSplitScreen,
+		if (additionalItems.length > 0)
+			additionalItems.push(<const>{ type: 'divider' })
+
+		await showContextMenu(event, [
+			...additionalItems,
 			{
 				name: 'actions.closeTab.name',
 				description: 'actions.closeTab.description',

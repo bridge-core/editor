@@ -3,10 +3,31 @@
 		v-if="content"
 		class="pa-2"
 		:style="{
-			height: `calc(${windowDimensions.currentHeight}px - env(titlebar-area-height, 24px))`,
+			height: `calc(${windowDimensions.currentHeight}px - ${appToolbarHeight})`,
 		}"
 	>
-		<BridgeSheet :style="{ height: '100%', overflow: 'auto' }">
+		<BridgeSheet
+			v-if="content.headerSlot"
+			class="mb-2"
+			:style="{ height: content.headerHeight, overflow: 'auto' }"
+		>
+			<component :is="content.headerSlot" />
+		</BridgeSheet>
+
+		<BridgeSheet
+			:style="{
+				height: content.headerSlot
+					? `calc(100% - ${content.headerHeight} - 8px)`
+					: '100%',
+				overflow: 'auto',
+			}"
+		>
+			<InfoPanel
+				v-if="content.topPanel"
+				class="ma-2"
+				:infoPanel="content.topPanel"
+			/>
+
 			<ActionBar
 				v-if="content.actions && content.actions.length > 0"
 				:actions="content.actions"
@@ -22,12 +43,17 @@ import { SidebarState } from '../state'
 import ActionBar from './ActionBar.vue'
 import { App } from '/@/App'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
+import InfoPanel from '/@/components/InfoPanel/InfoPanel.vue'
+import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 
 export default {
+	mixins: [AppToolbarHeightMixin],
 	components: {
 		BridgeSheet,
 		ActionBar,
+		InfoPanel,
 	},
+
 	mounted() {
 		App.getApp().then((app) => {
 			this.windowDimensions = app.windowResize.state

@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import { App } from '/@/App'
-import { FileType } from '/@/components/Data/FileType'
-import { PackType } from '/@/components/Data/PackType'
+import { App } from '/@/App.ts'
+import { FileType } from '/@/components/Data/FileType.ts'
+import { PackType } from '/@/components/Data/PackType.ts'
 
 export default {
 	name: 'FileName',

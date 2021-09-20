@@ -1,4 +1,7 @@
-import Vue from 'vue'
+import { reactive } from '@vue/composition-api'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { App } from '/@/App'
 import { extname } from '/@/utils/path'
 
@@ -7,17 +10,23 @@ export interface IDropState {
 }
 
 export class FileDropper {
-	public readonly state = Vue.observable<IDropState>({
+	public readonly state = reactive<IDropState>({
 		isHovering: false,
 	})
 	protected fileHandlers = new Map<
 		string,
-		(fileHandle: FileSystemFileHandle) => Promise<void> | void
+		(fileHandle: AnyFileHandle) => Promise<void> | void
 	>()
 
 	constructor(protected app: App) {
 		window.addEventListener('dragover', (event) => {
 			event.preventDefault()
+
+			if (
+				App.windowState.isAnyWindowVisible.value &&
+				InitialSetup.ready.hasFired
+			)
+				return
 
 			// Moving tabs
 			if (event.dataTransfer?.effectAllowed === 'move') return
@@ -40,6 +49,12 @@ export class FileDropper {
 
 		window.addEventListener('drop', (event) => {
 			event.preventDefault()
+
+			if (
+				App.windowState.isAnyWindowVisible.value &&
+				InitialSetup.ready.hasFired
+			)
+				return
 
 			this.onDrop([...(event.dataTransfer?.items ?? [])])
 			this.state.isHovering = false
@@ -64,7 +79,10 @@ export class FileDropper {
 			if (!fileHandle) return
 
 			if (fileHandle.kind === 'directory') {
-				if (fileHandle.name === 'com.mojang')
+				if (
+					!isUsingFileSystemPolyfill &&
+					fileHandle.name === 'com.mojang'
+				)
 					this.app.comMojang.handleComMojangDrop(fileHandle)
 
 				// TODO: Handle import of other folders
@@ -74,7 +92,7 @@ export class FileDropper {
 		}
 	}
 
-	protected async importFile(fileHandle: FileSystemFileHandle) {
+	async importFile(fileHandle: AnyFileHandle) {
 		const ext = extname(fileHandle.name)
 		const handler = this.fileHandlers.get(ext)
 
@@ -93,9 +111,7 @@ export class FileDropper {
 
 	addFileImporter(
 		ext: string,
-		importHandler: (
-			fileHandle: FileSystemFileHandle
-		) => Promise<void> | void
+		importHandler: (fileHandle: AnyFileHandle) => Promise<void> | void
 	) {
 		if (this.fileHandlers.has(ext))
 			throw new Error(`Handler for ${ext} already exists`)

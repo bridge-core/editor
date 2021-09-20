@@ -8,6 +8,7 @@ import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { walkObject } from '/@/utils/walkObject'
 import { isValidPositionArray } from '/@/utils/minecraft/validPositionArray'
+import { markRaw } from '@vue/composition-api'
 
 export interface IBlockPreviewOptions {
 	loadComponents?: boolean
@@ -52,6 +53,7 @@ export class BlockModelTab extends GeometryPreviewTab {
 		await this.setupComplete
 		const app = await App.getApp()
 
+		await app.project.packIndexer.fired
 		const packIndexer = app.project.packIndexer.service
 		if (!packIndexer) return
 
@@ -102,15 +104,17 @@ export class BlockModelTab extends GeometryPreviewTab {
 			blockCacheData.geometryIdentifier ?? []
 		)
 
-		this._renderContainer = new RenderDataContainer(app, {
-			identifier: blockCacheData.geometryIdentifier[0],
-			texturePaths: <string[]>(
-				connectedTextures.filter(
-					(texturePath) => texturePath !== undefined
-				)
-			),
-			connectedAnimations: new Set([]),
-		})
+		this._renderContainer = markRaw(
+			new RenderDataContainer(app, {
+				identifier: blockCacheData.geometryIdentifier[0],
+				texturePaths: <string[]>(
+					connectedTextures.filter(
+						(texturePath) => texturePath !== undefined
+					)
+				),
+				connectedAnimations: new Set([]),
+			})
+		)
 		this._renderContainer.createGeometry(connectedGeometries[0])
 
 		// Once the renderContainer is ready loading, create the initial model...

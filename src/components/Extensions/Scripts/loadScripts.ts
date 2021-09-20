@@ -2,9 +2,10 @@ import { IDisposable } from '/@/types/disposable'
 import { TUIStore } from '../UI/store'
 import { createEnv } from './require'
 import { run } from './run'
+import { AnyDirectoryHandle } from '../../FileSystem/Types'
 
 export async function loadScripts(
-	baseDirectory: FileSystemDirectoryHandle,
+	baseDirectory: AnyDirectoryHandle,
 	uiStore: TUIStore,
 	disposables: IDisposable[],
 	isGlobal = false

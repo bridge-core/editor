@@ -1,20 +1,86 @@
 <template>
-	<!-- body-1 class sets the font-size -->
-	<div class="body-1" v-if="directoryEntry && !directoryEntry.isLoading">
-		<template v-for="entry in directoryEntry.children">
-			<!-- FOLDER -->
-			<details
-				class="folder"
-				v-if="!entry.isFile"
-				:key="entry.uuid"
-				:open="entry.isFolderOpen"
-			>
-				<summary
-					class="d-flex rounded-lg"
-					@click.prevent="onClick(entry)"
+	<!-- text-normal class sets the font-size -->
+	<div class="text-normal" v-if="directoryEntry && !directoryEntry.isLoading">
+		<Draggable
+			v-model="directoryEntry.children"
+			group="pack-explorer"
+			:disabled="enablePackSpider || pointerDevice === 'touch'"
+			@change="draggedFile"
+		>
+			<template v-for="entry in directoryEntry.children">
+				<!-- FOLDER -->
+				<details
+					class="folder"
+					v-if="!entry.isFile"
+					:key="entry.uuid"
+					:open="entry.isFolderOpen"
+				>
+					<summary
+						class="rounded-lg"
+						@click.prevent="onClickFolder(entry)"
+						@click.right.prevent.stop="
+							$emit('contextmenu', {
+								type: entry.type,
+								path: entry.path.join('/'),
+								clientX: $event.clientX,
+								clientY: $event.clientY,
+								entry,
+							})
+						"
+						v-ripple
+					>
+						<span class="d-flex align-center">
+							<v-icon class="pr-1" :color="entry.color" small>
+								{{
+									entry.isFolderOpen
+										? 'mdi-folder-open'
+										: 'mdi-folder'
+								}}
+							</v-icon>
+							<span class="folder">{{ entry.name }}</span>
+
+							<v-spacer />
+
+							<!-- Context menu button for touch -->
+							<v-btn
+								v-if="pointerDevice === 'touch'"
+								text
+								icon
+								small
+								@click="
+									$emit('contextmenu', {
+										type: entry.type,
+										path: entry.path.join('/'),
+										clientX: $event.clientX,
+										clientY: $event.clientY,
+										entry,
+									})
+								"
+								@mouseenter="isHoveringBtn = true"
+								@mouseleave="isHoveringBtn = false"
+							>
+								<v-icon>
+									mdi-dots-vertical-circle-outline
+								</v-icon>
+							</v-btn>
+						</span>
+					</summary>
+
+					<FileDisplayer
+						@closeWindow="$emit('closeWindow')"
+						@contextmenu="$emit('contextmenu', $event)"
+						:entry="entry"
+					/>
+				</details>
+				<!--FILE-->
+				<div
+					v-else
+					:key="entry.uuid"
+					class="file d-flex align-center rounded-lg"
+					@click.stop="onClick(entry)"
 					@click.right.prevent.stop="
 						$emit('contextmenu', {
-							type: entry.type,
+							type: 'file',
 							path: entry.path.join('/'),
 							clientX: $event.clientX,
 							clientY: $event.clientY,
@@ -23,45 +89,36 @@
 					"
 					v-ripple
 				>
-					<v-icon class="pr-1" :color="entry.color" small>
-						{{
-							entry.isFolderOpen
-								? 'mdi-folder-open'
-								: 'mdi-folder'
-						}}
+					<v-icon :color="entry.color" class="pr-1" small>
+						{{ entry.icon || 'mdi-file-outline' }}
 					</v-icon>
-					<span class="folder">{{ entry.name }}</span>
-				</summary>
+					{{ entry.name }}
 
-				<FileDisplayer
-					@closeWindow="$emit('closeWindow')"
-					@contextmenu="$emit('contextmenu', $event)"
-					:entry="entry"
-				/>
-			</details>
-			<!--FILE-->
-			<div
-				v-else
-				:key="entry.uuid"
-				class="file rounded-lg"
-				@click.stop="onClick(entry)"
-				@click.right.prevent.stop="
-					$emit('contextmenu', {
-						type: 'file',
-						path: entry.path.join('/'),
-						clientX: $event.clientX,
-						clientY: $event.clientY,
-						entry,
-					})
-				"
-				v-ripple
-			>
-				<v-icon :color="entry.color" small>
-					{{ entry.icon || 'mdi-file-outline' }}
-				</v-icon>
-				{{ entry.name }}
-			</div>
-		</template>
+					<v-spacer />
+
+					<!-- Context menu button for touch -->
+					<v-btn
+						v-if="pointerDevice === 'touch'"
+						text
+						icon
+						small
+						@click="
+							$emit('contextmenu', {
+								type: 'file',
+								path: entry.path.join('/'),
+								clientX: $event.clientX,
+								clientY: $event.clientY,
+								entry,
+							})
+						"
+						@mouseenter="isHoveringBtn = true"
+						@mouseleave="isHoveringBtn = false"
+					>
+						<v-icon> mdi-dots-vertical-circle-outline </v-icon>
+					</v-btn>
+				</div>
+			</template>
+		</Draggable>
 	</div>
 
 	<v-progress-linear v-else indeterminate />
@@ -70,14 +127,48 @@
 <script>
 import { DirectoryEntry } from './DirectoryEntry'
 import { App } from '/@/App.ts'
+import Draggable from 'vuedraggable'
+import { join } from '/@/utils/path'
+import { EnablePackSpiderMixin } from '/@/components/Mixins/EnablePackSpider'
+import { pointerDevice } from '/@/utils/pointerDevice'
+import { useDoubleClick } from '/@/components/Composables/DoubleClick'
+import { ref } from '@vue/composition-api'
 
 export default {
 	name: 'FileDisplayer',
+	mixins: [EnablePackSpiderMixin],
+	components: {
+		Draggable,
+	},
 	props: {
 		entry: Object,
 		startPath: Array,
 	},
 
+	setup(_, { emit }) {
+		const isHoveringBtn = ref(false)
+
+		const onClick = useDoubleClick((isDoubleClick, entry) => {
+			if (isDoubleClick) {
+				App.getApp().then((app) => {
+					const currentTab = app.project.tabSystem.selectedTab
+					if (currentTab && currentTab.isTemporary)
+						currentTab.isTemporary = false
+				})
+			} else {
+				if (isHoveringBtn.value) return
+
+				const shouldCloseWindow = entry.open()
+				if (shouldCloseWindow) emit('closeWindow')
+			}
+		}, true)
+
+		return {
+			pointerDevice,
+			onClick,
+			isHoveringBtn,
+		}
+	},
 	mounted() {
 		this.loadDirectory()
 	},
@@ -86,6 +177,11 @@ export default {
 		tree: [],
 	}),
 	methods: {
+		onClickFolder(entry) {
+			if (this.isHoveringBtn) return
+
+			entry.open()
+		},
 		async loadDirectory() {
 			if (!this.entry) {
 				const app = await App.getApp()
@@ -100,9 +196,30 @@ export default {
 				this.directoryEntry = this.entry
 			}
 		},
-		onClick(entry) {
-			const shouldCloseWindow = entry.open()
-			if (shouldCloseWindow) this.$emit('closeWindow')
+
+		async draggedFile(event) {
+			const directoryEntry = Object.values(event)[0].element
+			if ('added' in event) {
+				const app = await App.getApp()
+				// 1. Update directoryEntry object
+				const oldPath = directoryEntry.getPath()
+				directoryEntry.updatePath(
+					join(this.directoryEntry.getPath(), directoryEntry.name)
+				)
+				const newPath = directoryEntry.getPath()
+				directoryEntry.parent = this.directoryEntry
+
+				// 2. Update actual file system
+				await app.project.fileSystem.move(oldPath, newPath)
+				await app.project.updateChangedFiles()
+
+				// 3. Remove from recentFiles
+				await app.project.recentFiles.removeFile(
+					`projects/${app.project.name}/${oldPath}`
+				)
+			}
+
+			if (directoryEntry.parent) directoryEntry.parent.sortChildren()
 		},
 	},
 	watch: {

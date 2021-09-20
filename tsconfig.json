@@ -13,11 +13,11 @@
 		"sourceMap": true,
 		"baseUrl": ".",
 		"types": [
-			"webpack-env",
 			"@types/wicg-file-system-access",
-			"jest",
 			"node",
-			"vite/client"
+			"jest",
+			"vite/client",
+			"vite-plugin-pwa/client"
 		],
 		"paths": {
 			"/@/*": ["src/*"]
@@ -29,7 +29,8 @@
 		"src/**/*.tsx",
 		"src/**/*.vue",
 		"tests/**/*.ts",
-		"tests/**/*.tsx"
+		"tests/**/*.tsx",
+		"src/utils/glob/picomatch.js"
 	],
 	"exclude": ["node_modules"]
 }

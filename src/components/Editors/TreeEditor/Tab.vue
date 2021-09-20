@@ -1,13 +1,16 @@
 <template>
 	<div
 		class="editor-container"
+		:style="{ fontSize, fontFamily: codeFontFamily }"
 		ref="editorContainer"
 		@click="tab.parent.setActive(true)"
 		tabindex="-1"
 	>
 		<div
-			class="pr-4 code-font"
-			:style="`height: ${height - 196}px; overflow: auto;`"
+			class="pr-4"
+			:style="`height: ${
+				height - !tab.isReadOnly * 194
+			}px; overflow: auto;`"
 			@blur="focusEditor"
 			@scroll="onScroll"
 			@contextmenu.prevent.stop="tab.treeEditor.onPasteMenu($event)"
@@ -20,14 +23,21 @@
 			/>
 		</div>
 
-		<v-divider class="mb-4" />
+		<v-divider v-if="!tab.isReadOnly" class="mb-4" />
 
-		<div class="d-flex px-4" @blur="focusEditor">
+		<div
+			v-if="!tab.isReadOnly"
+			class="d-flex px-4"
+			:style="{ fontFamily }"
+			@blur="focusEditor"
+		>
 			<v-combobox
 				ref="addKeyInput"
 				v-model="keyToAdd"
 				@change="onAddKey"
+				@keydown.enter="mayTrigger"
 				:items="propertySuggestions"
+				:item-value="(item) => item"
 				:menu-props="{
 					maxHeight: 124,
 					top: false,
@@ -37,13 +47,32 @@
 				outlined
 				dense
 				hide-details
-			/>
+			>
+				<template v-slot:item="{ item }">
+					<div style="width: 100%" @click="mayTrigger">
+						<v-icon class="mr-1" color="primary" small>
+							{{ getIcon(item) }}
+						</v-icon>
+						<span
+							style="
+								font-size: 0.8125rem;
+								font-weight: 500;
+								line-height: 1rem;
+							"
+						>
+							{{ item.label }}
+						</span>
+					</div>
+				</template>
+			</v-combobox>
 			<v-combobox
 				ref="addValueInput"
 				v-model="valueToAdd"
 				@change="onAddValue"
+				@keydown.enter="mayTrigger"
 				:disabled="isGlobal"
 				:items="valueSuggestions"
+				:item-value="(item) => item"
 				:menu-props="{
 					maxHeight: 124,
 					top: false,
@@ -54,7 +83,24 @@
 				outlined
 				dense
 				hide-details
-			/>
+			>
+				<template v-slot:item="{ item }">
+					<div style="width: 100%" @click="mayTrigger">
+						<v-icon class="mr-1" color="primary" small>
+							{{ getIcon(item) }}
+						</v-icon>
+						<span
+							style="
+								font-size: 0.8125rem;
+								font-weight: 500;
+								line-height: 1rem;
+							"
+						>
+							{{ item.label }}
+						</span>
+					</div>
+				</template>
+			</v-combobox>
 			<v-text-field
 				ref="editValueInput"
 				:value="currentValue"
@@ -70,8 +116,10 @@
 </template>
 
 <script>
-import { TranslationMixin } from '../../Mixins/TranslationMixin'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { TreeValueSelection } from './TreeSelection'
+import { PrimitiveTree } from './Tree/PrimitiveTree'
 
 export default {
 	name: 'TreeTab',
@@ -84,6 +132,7 @@ export default {
 		keyToAdd: '',
 		valueToAdd: '',
 		triggerCooldown: false,
+		isUserControlledTrigger: false,
 	}),
 	mounted() {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
@@ -94,6 +143,27 @@ export default {
 		this.focusEditor()
 	},
 	computed: {
+		fontSize() {
+			return settingsState &&
+				settingsState.appearance &&
+				settingsState.appearance.editorFontSize
+				? `${settingsState.appearance.editorFontSize}`
+				: '14px'
+		},
+		codeFontFamily() {
+			return settingsState &&
+				settingsState.appearance &&
+				settingsState.appearance.editorFont
+				? `${settingsState.appearance.editorFont} !important`
+				: 'Menlo !important'
+		},
+		fontFamily() {
+			return this.settingsState &&
+				this.settingsState.appearance &&
+				this.settingsState.appearance.font
+				? `${this.settingsState.appearance.font} !important`
+				: 'Roboto !important'
+		},
 		treeEditor() {
 			return this.tab.treeEditor
 		},
@@ -103,9 +173,11 @@ export default {
 				if (!selection.getTree().parent) return
 
 				let current
-				if (selection instanceof TreeValueSelection)
-					current = selection.getTree().value
-				else current = selection.getTree().key
+				try {
+					if (selection instanceof TreeValueSelection)
+						current = selection.getTree().value
+					else current = selection.getTree().key
+				} catch {}
 
 				if (first === undefined) {
 					first = current
@@ -148,48 +220,110 @@ export default {
 			this.treeEditor.edit(value)
 		},
 		onAddKey(suggestion) {
-			if (this.triggerCooldown) return
+			if (this.triggerCooldown || !this.isUserControlledTrigger) {
+				if (!this.isUserControlledTrigger)
+					this.$nextTick(() => (this.keyToAdd = ''))
+				return
+			}
 
-			if (suggestion === null) return
+			if (!suggestion) return this.onTriggerCooldown()
+
 			const { type = 'object', value = suggestion } = suggestion
 
-			this.treeEditor.addKey(value, type)
+			if (type === 'snippet') {
+				this.treeEditor.addFromJSON(value[1])
+			} else {
+				this.treeEditor.addKey(value, type)
+			}
 
-			this.$nextTick(() => {
-				this.keyToAdd = ''
-				this.triggerCooldown = false
-			})
-			this.triggerCooldown = true
+			this.$nextTick(() => (this.keyToAdd = ''))
+
+			this.onTriggerCooldown()
 		},
 		onAddValue(suggestion) {
-			if (this.triggerCooldown) return
+			if (this.triggerCooldown || !this.isUserControlledTrigger) {
+				if (!this.isUserControlledTrigger)
+					this.$nextTick(() => (this.valueToAdd = ''))
+				return
+			}
 
-			if (suggestion === null) return
+			if (!suggestion) return this.onTriggerCooldown()
+
 			const { type = 'value', value = suggestion } = suggestion
 
 			this.treeEditor.addValue(value, type)
 
-			this.$nextTick(() => {
-				this.valueToAdd = ''
+			this.$nextTick(() => (this.valueToAdd = ''))
+
+			this.onTriggerCooldown()
+		},
+		onTriggerCooldown() {
+			if (this.triggerCooldown) return
+
+			setTimeout(() => {
 				this.triggerCooldown = false
-			})
+			}, 100)
 			this.triggerCooldown = true
+		},
+		mayTrigger() {
+			if (this.isUserControlledTrigger) return
+
+			setTimeout(() => {
+				this.isUserControlledTrigger = false
+			}, 100)
+			this.isUserControlledTrigger = true
 		},
 		onScroll(event) {
 			this.treeEditor.scrollTop = event.target.scrollTop
 		},
+		getIcon(item) {
+			switch (item.type) {
+				case 'object':
+					return 'mdi-code-json'
+				case 'array':
+					return 'mdi-code-brackets'
+				case 'value':
+					return 'mdi-alphabetical'
+				case 'arrayValue':
+					return 'mdi-link-variant'
+				case 'snippet':
+					return 'mdi-attachment'
+				default:
+					return 'mdi-text'
+			}
+		},
 	},
 	watch: {
-		treeEditor() {
+		'tab.uuid'() {
 			this.treeEditor.receiveContainer(this.$refs.editorContainer)
 		},
 		propertySuggestions() {
-			if (this.propertySuggestions.length === 0) {
+			if (
+				!this.$refs.addKeyInput ||
+				!this.$refs.addValueInput ||
+				!this.$refs.editValueInput
+			)
+				return
+
+			if (
+				this.propertySuggestions.length === 0 &&
+				this.valueSuggestions.length > 0
+			) {
+				this.$refs.editValueInput.blur()
 				this.$refs.addKeyInput.blur()
 				this.$refs.addValueInput.focus()
 			} else if (this.propertySuggestions.length > 0) {
+				this.$refs.editValueInput.blur()
 				this.$refs.addValueInput.blur()
 				this.$refs.addKeyInput.focus()
+			} else if (
+				this.treeEditor.selections.some(
+					(sel) => sel.tree instanceof PrimitiveTree
+				)
+			) {
+				this.$refs.addKeyInput.blur()
+				this.$refs.addValueInput.blur()
+				this.$refs.editValueInput.focus()
 			}
 		},
 	},
@@ -198,11 +332,8 @@ export default {
 
 <style>
 .tree-editor-selection {
-	border-radius: 2rem;
-	background: rgba(170, 170, 170, 0.2);
-}
-.theme--dark .tree-editor-selection {
-	background: rgba(100, 100, 100, 0.3);
+	border-radius: 4px;
+	background: var(--v-lineHighlightBackground-base);
 }
 .editor-container {
 	outline: none;

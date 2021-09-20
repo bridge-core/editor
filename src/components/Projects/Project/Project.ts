@@ -1,6 +1,5 @@
 import { App } from '/@/App'
-import { TabSystem } from '/@/components/TabSystem/TabSystem'
-import Vue from 'vue'
+import { IOpenTabOptions, TabSystem } from '/@/components/TabSystem/TabSystem'
 import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
 import { ProjectConfig, IConfigJson } from '../ProjectConfig'
 import { RecentFiles } from '../RecentFiles'
@@ -16,32 +15,40 @@ import { ExtensionLoader } from '/@/components/Extensions/ExtensionLoader'
 import { FileChangeRegistry } from './FileChangeRegistry'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabActionProvider } from '/@/components/TabSystem/TabActions/Provider'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+} from '/@/components/FileSystem/Types'
+import { markRaw, reactive, set } from '@vue/composition-api'
+import { SnippetLoader } from '/@/components/Snippets/Loader'
+import { ExportProvider } from '../Export/Extensions/Provider'
+import { Tab } from '/@/components/TabSystem/CommonTab'
+import { getFolderDifference } from '/@/components/TabSystem/Util/FolderDifference'
 
 export interface IProjectData extends IConfigJson {
 	path: string
 	name: string
 	imgSrc: string
-	contains: IPackType[]
+	contains: (IPackType & { version: [number, number, number] })[]
 }
 
 export abstract class Project {
 	public readonly recentFiles!: RecentFiles
-	public readonly tabSystems = <const>[
-		new TabSystem(this),
-		new TabSystem(this, 1),
-	]
+	public readonly tabSystems: readonly [TabSystem, TabSystem]
 	protected _projectData!: Partial<IProjectData>
 	// Not directly assigned so they're not responsive
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
 	public readonly compilerManager = new CompilerManager(this)
-	public readonly jsonDefaults = new JsonDefaults(this)
+	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 	public readonly config: ProjectConfig
 	public readonly extensionLoader: ExtensionLoader
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
 	public readonly tabActionProvider = new TabActionProvider()
+	public readonly snippetLoader = new SnippetLoader(this)
+	public readonly exportProvider = new ExportProvider()
 
 	//#region Getters
 	get projectData() {
@@ -72,24 +79,35 @@ export abstract class Project {
 	constructor(
 		protected parent: ProjectManager,
 		public readonly app: App,
-		protected _baseDirectory: FileSystemDirectoryHandle
+		protected _baseDirectory: AnyDirectoryHandle
 	) {
-		this._fileSystem = new FileSystem(_baseDirectory)
-		this.config = new ProjectConfig(this._fileSystem)
+		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
+		this.config = new ProjectConfig(this._fileSystem, this)
 		this.packIndexer = new PackIndexer(app, _baseDirectory)
 		this.extensionLoader = new ExtensionLoader(
 			app.fileSystem,
+			`projects/${this.name}/.bridge/extensions`,
 			`projects/${this.name}/.bridge/inactiveExtensions.json`
 		)
-		this.typeLoader = new TypeLoader(this.app.fileSystem)
-		Vue.set(
-			this,
-			'recentFiles',
-			new RecentFiles(
-				app,
-				`projects/${this.name}/.bridge/recentFiles.json`
+		this.typeLoader = new TypeLoader(this.app.dataLoader)
+
+		this.recentFiles = <RecentFiles>(
+			reactive(
+				new RecentFiles(
+					app,
+					`projects/${this.name}/.bridge/recentFiles.json`
+				)
 			)
 		)
+
+		this.fileChange.any.on((data) =>
+			App.eventSystem.dispatch('fileChange', data)
+		)
+		this.fileSave.any.on((data) =>
+			App.eventSystem.dispatch('fileSave', data)
+		)
+
+		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
 
 		setTimeout(() => this.onCreate(), 0)
 	}
@@ -98,15 +116,13 @@ export abstract class Project {
 
 	async activate(isReload = false) {
 		this.parent.title.setProject(this.name)
+		this.parent.activatedProject.dispatch(this)
+
 		if (!isReload) {
 			for (const tabSystem of this.tabSystems) await tabSystem.activate()
 		}
 
-		await this.extensionLoader.loadExtensions(
-			await this.fileSystem.getDirectoryHandle('.bridge/extensions', {
-				create: true,
-			})
-		)
+		await this.extensionLoader.loadExtensions()
 
 		const selectedTab = this.tabSystem?.selectedTab
 		this.typeLoader.activate(
@@ -119,8 +135,10 @@ export abstract class Project {
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
-			this.compilerManager.start('default.json', 'dev'),
+			this.compilerManager.start('default', 'dev'),
 		])
+
+		this.snippetLoader.activate()
 	}
 	deactivate(isReload = false) {
 		if (!isReload)
@@ -131,6 +149,7 @@ export abstract class Project {
 		this.compilerManager.deactivate()
 		this.jsonDefaults.deactivate()
 		this.extensionLoader.disposeAll()
+		this.snippetLoader.deactivate()
 	}
 	disposeWorkers() {
 		this.packIndexer.dispose()
@@ -143,38 +162,75 @@ export abstract class Project {
 	}
 
 	async refresh() {
+		App.packExplorer.refresh()
 		this.deactivate(true)
 		this.disposeWorkers()
 		await this.activate(true)
 	}
 
-	async openFile(fileHandle: FileSystemFileHandle, selectTab = true) {
+	async openFile(fileHandle: AnyFileHandle, options: IOpenTabOptions = {}) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.getTab(fileHandle)
-			if (tab) return selectTab ? tabSystem.select(tab) : undefined
+			if (tab)
+				return options.selectTab ?? true
+					? tabSystem.select(tab)
+					: undefined
 		}
 
-		this.tabSystem?.open(fileHandle, selectTab)
+		this.tabSystem?.open(fileHandle, options)
 	}
-	async closeFile(fileHandle: FileSystemFileHandle) {
+	async closeFile(fileHandle: AnyFileHandle) {
 		for (const tabSystem of this.tabSystems) {
 			const tabToClose = await tabSystem.getTab(fileHandle)
 			tabToClose?.close()
 		}
 	}
-	async getFileTab(fileHandle: FileSystemFileHandle) {
+	async getFileTab(fileHandle: AnyFileHandle) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.getTab(fileHandle)
 			if (tab !== undefined) return tab
+		}
+	}
+	async openTab(tab: Tab, selectTab = true) {
+		for (const tabSystem of this.tabSystems) {
+			if (await tabSystem.hasTab(tab)) {
+				if (selectTab) tabSystem.select(tab)
+				return
+			}
+		}
+		this.tabSystem?.add(tab, selectTab)
+	}
+	updateTabFolders() {
+		const nameMap: Record<string, Tab[]> = {}
+		for (const tabSystem of this.tabSystems) {
+			tabSystem.tabs.forEach((tab) => {
+				const name = tab.name
+
+				if (!nameMap[name]) nameMap[name] = []
+				nameMap[name].push(tab)
+			})
+		}
+
+		for (const name in nameMap) {
+			const currentTabs = nameMap[name]
+			if (currentTabs.length === 1) currentTabs[0].setFolderName(null)
+			else {
+				const folderDifference = getFolderDifference(
+					currentTabs.map((tab) => tab.getProjectPath())
+				)
+				currentTabs.forEach((tab, i) =>
+					tab.setFolderName(folderDifference[i])
+				)
+			}
 		}
 	}
 
 	absolutePath(filePath: string) {
 		return `projects/${this.name}/${filePath}`
 	}
-	getProjectPath(fileHandle: FileSystemFileHandle) {
+	getProjectPath(fileHandle: AnyFileHandle) {
 		return this.baseDirectory
-			.resolve(fileHandle)
+			.resolve(<any>fileHandle)
 			.then((path) => path?.join('/'))
 	}
 
@@ -190,7 +246,7 @@ export abstract class Project {
 
 		await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			this.compilerManager.updateFiles('default.json', [filePath]),
+			this.compilerManager.updateFiles('default', [filePath]),
 		])
 
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
@@ -198,10 +254,22 @@ export abstract class Project {
 	async updateFiles(filePaths: string[]) {
 		await Promise.all([
 			this.packIndexer.updateFiles(filePaths),
-			this.compilerManager.updateFiles('default.json', filePaths),
+			this.compilerManager.updateFiles('default', filePaths),
 		])
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
+	}
+	async unlinkFile(filePath: string) {
+		await this.packIndexer.unlink(filePath)
+		await this.compilerManager.unlink(filePath)
+		await this.fileSystem.unlink(filePath)
+	}
+	async updateChangedFiles() {
+		this.packIndexer.deactivate()
+		this.compilerManager.deactivate()
+
+		await this.packIndexer.activate(true)
+		await this.compilerManager.start('default', 'dev')
 	}
 
 	async getFileFromDiskOrTab(filePath: string) {
@@ -224,11 +292,17 @@ export abstract class Project {
 		}
 		return true
 	}
+	getPacks() {
+		return (this._projectData.contains ?? []).map((pack) => pack.id)
+	}
+	addPack(packType: IPackType & { version: [number, number, number] }) {
+		this._projectData.contains!.push(packType)
+	}
 
 	async loadProject() {
 		await this.config.setup()
 
-		Vue.set(this, '_projectData', {
+		set(this, '_projectData', {
 			...this.config.get(),
 			path: this.name,
 			name: this.name,
@@ -239,7 +313,7 @@ export abstract class Project {
 			contains: [],
 		})
 		await loadPacks(this.app, this.name).then((packs) =>
-			Vue.set(
+			set(
 				this._projectData,
 				'contains',
 				packs.sort((a, b) => a.id.localeCompare(b.id))
@@ -251,9 +325,11 @@ export abstract class Project {
 		if (forceStartIfActive) this.compilerManager.dispose()
 
 		if (forceStartIfActive && this.isActiveProject) {
-			this.compilerManager.start('default.json', 'dev', true)
+			this.compilerManager.start('default', 'dev', true)
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
 		}
 	}
+
+	abstract getCurrentDataPackage(): Promise<AnyDirectoryHandle>
 }

@@ -4,9 +4,9 @@
 			<v-icon color="primary" class="pr-2" x-large>
 				mdi-plus-circle-outline
 			</v-icon>
-			<span class="text-h5">{{
-				t('initialSetup.step.comMojang.extraDescription')
-			}}</span>
+			<span class="text-h5">
+				{{ t('initialSetup.step.comMojang.extraDescription') }}
+			</span>
 		</v-card-text>
 		<v-card-actions>
 			<v-spacer />
@@ -28,5 +28,3 @@ export default {
 	},
 }
 </script>
-
-<style></style>

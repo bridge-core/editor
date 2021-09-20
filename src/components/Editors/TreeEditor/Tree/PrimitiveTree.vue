@@ -1,5 +1,11 @@
 <template>
-	<div tabindex="-1" :style="tree.styles">
+	<div
+		tabindex="-1"
+		:style="{
+			...tree.styles,
+			height: pointerDevice === 'touch' ? '26px' : null,
+		}"
+	>
 		<div
 			style="display: inline-block"
 			:class="{
@@ -9,6 +15,8 @@
 					tree.isSelected,
 			}"
 			@contextmenu.prevent.stop="treeEditor.onContextMenu($event, tree)"
+			@pointerdown="onKeyTouchStart($event)"
+			@pointerup="onKeyTouchEnd"
 		>
 			<v-icon
 				class="mr-1"
@@ -27,41 +35,86 @@
 			s: {{ tree.type }} p: {{ tree.parent.type }}</span
 		>
 
-		<div
+		<Highlight
 			:style="{
 				height: '20.5px',
 				display: 'inline-block',
-				color: highlighterInfo.color,
-				backgroundColor: highlighterInfo.background,
-				textDecoration,
 			}"
+			:def="highlighterInfo"
+			:value="this.tree.type === 'string' ? treeValue : undefined"
 			:class="{
 				'tree-editor-selection': tree.isValueSelected,
 				'px-1': true,
 			}"
-			@click.stop.prevent="onClickKey($event, true)"
-			@contextmenu.prevent="treeEditor.onContextMenu($event, tree, false)"
+			@click.stop.prevent.native="onClickKey($event, true)"
+			@contextmenu.prevent.native="
+				treeEditor.onContextMenu($event, tree, false)
+			"
+			@pointerdown.native="onTouchStart($event)"
+			@pointerup.native="onTouchEnd"
 		>
 			{{ treeValue }}
-		</div>
+		</Highlight>
 	</div>
 </template>
 
 <script>
+import Highlight from '../Highlight.vue'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
+import { useLongPress } from '/@/components/Composables/LongPress'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
+	components: { Highlight },
 	name: 'PrimitiveTree',
 	mixins: [HighlighterMixin(['atom', 'string', 'number']), DevModeMixin],
 	props: {
 		tree: Object,
 		treeEditor: Object,
 	},
+	setup(props) {
+		const { onTouchStart, onTouchEnd } = useLongPress(
+			(event) => {
+				if (pointerDevice.value === 'touch')
+					props.treeEditor.onContextMenu(event, props.tree, false)
+			},
+			null,
+			() => {
+				props.treeEditor.parent.app.contextMenu.setMayCloseOnClickOutside(
+					true
+				)
+			}
+		)
+
+		const {
+			onTouchStart: onKeyTouchStart,
+			onTouchEnd: onKeyTouchEnd,
+		} = useLongPress(
+			(event) => {
+				if (pointerDevice.value === 'touch')
+					props.treeEditor.onContextMenu(event, props.tree)
+			},
+			null,
+			() => {
+				props.treeEditor.parent.app.contextMenu.setMayCloseOnClickOutside(
+					true
+				)
+			}
+		)
+
+		return {
+			onTouchStart,
+			onTouchEnd,
+			onKeyTouchStart,
+			onKeyTouchEnd,
+			pointerDevice,
+		}
+	},
 	computed: {
 		treeValue() {
 			if (this.tree.value === null) return 'null'
-			else if (this.tree.type === 'string') return `"${this.tree.value}"`
+			else if (this.tree.type === 'string') return this.tree.value
 			return this.tree.value
 		},
 		highlighterInfoDef() {
@@ -69,7 +122,7 @@ export default {
 				case 'number':
 					return 'numberDef'
 				case 'string':
-					return 'stringDef'
+					return undefined
 				case 'boolean':
 					return 'atomDef'
 				case 'null':

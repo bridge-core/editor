@@ -1,5 +1,9 @@
 <template>
-	<div @click="tab.parent.setActive(true)" ref="monacoContainer" />
+	<div
+		@click="tab.parent.setActive(true)"
+		@contextmenu="tab.showContextMenu($event)"
+		ref="monacoContainer"
+	/>
 </template>
 
 <script>
@@ -24,18 +28,6 @@ export default {
 			this.tabSystem.createMonacoEditor(this.$refs.monacoContainer)
 		},
 	},
-	watch: {
-		fontSize(val) {
-			this.monacoEditor.updateOptions({
-				fontSize: this.fontSize,
-			})
-		},
-		fontFamily(val) {
-			this.monacoEditor.updateOptions({
-				fontFamily: this.fontFamily,
-			})
-		},
-	},
 }
 </script>
 
@@ -53,6 +45,13 @@ export default {
 .reference-file {
 	margin-left: 8px;
 	font-size: 14px;
+}
+.monaco-editor {
+	user-select: auto;
+	-webkit-user-select: auto;
+	-moz-user-select: auto;
+	-ms-user-select: auto;
+	-o-user-select: auto;
 }
 .monaco-editor
 	.peekview-widget

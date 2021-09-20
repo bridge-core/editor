@@ -1,3 +1,4 @@
+import '/@/components/FileSystem/Virtual/Comlink'
 import { expose } from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { loadPlugins } from './Plugins'
@@ -5,11 +6,10 @@ import { TCompilerPlugin } from './TCompilerPlugin'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { FileType, IFileType } from '/@/components/Data/FileType'
 import { Compiler } from './Compiler'
+import { DataLoader } from '/@/components/Data/DataLoader'
+import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 
 export interface ICompilerOptions {
-	projectDirectory: FileSystemDirectoryHandle
-	baseDirectory: FileSystemDirectoryHandle
-	comMojangDirectory?: FileSystemDirectoryHandle
 	config: string
 	mode: 'dev' | 'build'
 	isDevServerRestart: boolean
@@ -19,42 +19,41 @@ export interface ICompilerOptions {
 	allFiles: string[]
 }
 export interface IBuildConfig {
-	mode: 'dev' | 'build'
-
-	createFiles: string[]
 	plugins: TPluginDef[]
 }
 export type TPluginDef = string | [string, any]
 
-const compilers = new WeakMap<CompilerService, Compiler>()
 export class CompilerService extends TaskService<void, [string[], string[]]> {
 	public fileSystem: FileSystem
-	protected buildConfig!: IBuildConfig
+	protected buildConfig: IBuildConfig = { plugins: [] }
 	protected plugins!: Map<string, Partial<TCompilerPlugin>>
 	protected _outputFileSystem?: FileSystem
+	protected dataLoader = new DataLoader()
+	protected compiler: Compiler
 
-	// This is necessary so the compiler object doesn't get included in the proxy
-	get compiler() {
-		return compilers.get(this)!
-	}
-	set compiler(val: Compiler) {
-		compilers.set(this, val)
-	}
-
-	constructor(protected readonly options: ICompilerOptions) {
+	constructor(
+		projectDirectory: AnyDirectoryHandle,
+		protected baseDirectory: AnyDirectoryHandle,
+		comMojangDirectory: AnyDirectoryHandle | undefined,
+		protected readonly options: ICompilerOptions
+	) {
 		super()
-		this.fileSystem = new FileSystem(options.projectDirectory)
+
+		this.fileSystem = new FileSystem(projectDirectory)
 		FileType.setPluginFileTypes(options.pluginFileTypes)
 		this.compiler = new Compiler(this)
 
-		if (this.options.comMojangDirectory)
-			this._outputFileSystem = new FileSystem(
-				this.options.comMojangDirectory
-			)
+		if (comMojangDirectory)
+			this._outputFileSystem = new FileSystem(comMojangDirectory)
 	}
 
 	getOptions() {
-		return this.options
+		return {
+			baseDirectory: this.baseDirectory,
+			projectDirectory: this.fileSystem.baseDirectory,
+			comMojangDirectory: this._outputFileSystem?.baseDirectory,
+			...this.options,
+		}
 	}
 	getPlugins() {
 		return this.plugins
@@ -86,27 +85,48 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 	}
 
 	async onStart([updatedFiles, deletedFiles]: [string[], string[]]) {
-		const globalFs = new FileSystem(this.options.baseDirectory)
-		await FileType.setup(globalFs)
+		await FileType.setup(this.dataLoader)
 
 		try {
-			this.buildConfig = await this.fileSystem.readJSON(
-				`.bridge/compiler/${this.options.config}`
-			)
-		} catch {
+			if (this.options.config === 'default') {
+				// Try loading compiler config from the project config file
+				this.buildConfig = await this.fileSystem
+					.readJSON('config.json')
+					.then((config) => config.compiler)
+
+				/**
+				 * @depracted Support legacy projects with a default.json file
+				 * Remove with next major release
+				 */
+				if (this.buildConfig === undefined) {
+					this.buildConfig = await this.fileSystem.readJSON(
+						`.bridge/compiler/${this.options.config}.json`
+					)
+				}
+			} else {
+				// Load all other compiler config files
+				this.buildConfig = await this.fileSystem.readJSON(
+					`.bridge/compiler/${this.options.config}`
+				)
+			}
+		} catch (err) {
+			console.error(err)
 			return
 		}
 
 		await this.loadPlugins(this.options.plugins)
 
-		await this.compiler.runWithFiles(updatedFiles)
+		if (updatedFiles.length > 0)
+			await this.compiler.runWithFiles(updatedFiles)
 
-		await Promise.all(
-			deletedFiles.map((deletedFile) =>
-				this.compiler.unlink(deletedFile, undefined, false)
+		if (deletedFiles.length > 0) {
+			await Promise.all(
+				deletedFiles.map((deletedFile) =>
+					this.compiler.unlink(deletedFile, undefined, false)
+				)
 			)
-		)
-		await this.compiler.processFileMap()
+			await this.compiler.processFileMap()
+		}
 	}
 
 	async updateFiles(filePaths: string[]) {
@@ -116,6 +136,9 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 		await this.compiler.unlink(path)
 		await this.compiler.processFileMap()
 	}
+	getCompilerOutputPath(path: string) {
+		return this.compiler.getCompilerOutputPath(path)
+	}
 	compileWithFile(filePath: string, file: Uint8Array) {
 		return this.compiler.compileWithFile(
 			filePath,
@@ -124,7 +147,7 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 	}
 
 	async loadPlugins(plugins: Record<string, string>) {
-		const globalFs = new FileSystem(this.options.baseDirectory)
+		const globalFs = new FileSystem(this.getOptions().baseDirectory)
 
 		this.plugins = await loadPlugins({
 			fileSystem: globalFs,
@@ -133,11 +156,12 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 			outputFs: this.outputFileSystem,
 			pluginOpts: this.pluginOpts,
 			hasComMojangDirectory:
-				this.options.comMojangDirectory !== undefined,
+				this.getOptions().comMojangDirectory !== undefined,
 			getAliases: (filePath: string) =>
 				this.compiler.getAliases(filePath),
 			compileFiles: (files: string[]) =>
 				this.compiler.compileFiles(files),
+			dataLoader: this.dataLoader,
 		})
 	}
 	async updatePlugins(

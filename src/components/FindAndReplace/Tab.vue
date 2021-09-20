@@ -1,14 +1,17 @@
 <template>
 	<div class="px-3">
-		<v-row style="flex-wrap: nowrap">
-			<v-col cols="3" class="flex-grow-0 flex-shrink-0">
+		<div class="d-flex" :class="{ 'flex-column': hasLimitedSpace }">
+			<v-col
+				:cols="hasLimitedSpace ? 12 : 3"
+				class="flex-grow-0 flex-shrink-0 align-center"
+			>
 				<v-text-field
 					class="mb-2"
 					prepend-inner-icon="mdi-magnify"
 					outlined
 					dense
 					hide-details
-					autofocus
+					:autofocus="pointerDevice === 'mouse'"
 					:label="t('findAndReplace.search')"
 					v-model="searchFor"
 				/>
@@ -24,6 +27,7 @@
 				<SearchType class="mb-2" v-model="queryOptions.searchType" />
 				<v-btn
 					color="primary"
+					class="mb-2"
 					:disabled="replaceWith === '' || searchFor === ''"
 					:loading="tab.isLoading"
 					@click="onReplaceAll()"
@@ -33,17 +37,22 @@
 				</v-btn>
 			</v-col>
 			<v-col
-				cols="9"
-				style="min-width: 100px; max-width: 100%"
+				:cols="hasLimitedSpace ? 12 : 9"
 				class="flex-grow-1 flex-shrink-0"
 			>
 				<v-card
 					class="pa-2"
-					:style="`white-space: nowrap; height: ${height - 24}px`"
+					:style="`white-space: nowrap; height: ${
+						(hasLimitedSpace ? 400 : height) - 24
+					}px`"
+					style="background: var(--v-expandedSidebar-base)"
 					outlined
 					rounded
 				>
-					<p v-if="queryResults.length === 0">
+					<p
+						v-if="queryResults.length === 0"
+						style="white-space: normal"
+					>
 						{{
 							t(
 								`findAndReplace.no${
@@ -55,7 +64,7 @@
 					<v-virtual-scroll
 						ref="virtualScroller"
 						:items="tab.displayQueryResults"
-						:height="height - 40"
+						:height="(hasLimitedSpace ? 400 : height) - 40"
 						:bench="30"
 						item-height="22"
 						@scroll.native="onScroll"
@@ -92,7 +101,7 @@
 					</v-virtual-scroll>
 				</v-card>
 			</v-col>
-		</v-row>
+		</div>
 	</div>
 </template>
 
@@ -102,9 +111,10 @@ import Match from './Match.vue'
 import FilePath from './FilePath.vue'
 
 import { debounce } from 'lodash'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
-import { createRegExp, processFileText } from './Utils'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { createRegExp, processFileText } from './Utils.ts'
 import { set } from '@vue/composition-api'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'FindAndReplaceTab',
@@ -120,6 +130,11 @@ export default {
 		height: Number,
 	},
 
+	setup() {
+		return {
+			pointerDevice,
+		}
+	},
 	mounted() {
 		this.$refs.virtualScroller.$el.scrollTop = this.scrollTop
 	},
@@ -152,9 +167,17 @@ export default {
 			this.tab.executeSingleQuery(filePath)
 		},
 	},
+	computed: {
+		hasLimitedSpace() {
+			return (
+				this.$vuetify.breakpoint.mobile ||
+				this.tab.parent.isSharingScreen
+			)
+		},
+	},
 
 	watch: {
-		tab() {
+		'tab.uuid'() {
 			for (const key in this.tab.state) {
 				set(this, key, this.tab.state[key])
 			}

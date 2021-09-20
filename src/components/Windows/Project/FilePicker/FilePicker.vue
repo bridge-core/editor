@@ -5,7 +5,7 @@
 		:hasMaximizeButton="false"
 		:hasCloseButton="true"
 		:isFullscreen="false"
-		:width="460"
+		:width="500"
 		:height="120"
 		@closeWindow="onClose"
 	>
@@ -17,10 +17,18 @@
 				dense
 				:no-data-text="t('windows.openFile.noData')"
 				outlined
-				autofocus
 				auto-select-first
+				autofocus
 				@change="onChange"
-			/>
+			>
+				<template #item="{ item }">
+					<v-icon class="mr-1" :color="getFileIconColor(item)">
+						{{ getFileIcon(item) }}
+					</v-icon>
+
+					<span>{{ item }}</span>
+				</template>
+			</v-autocomplete>
 		</template>
 	</BaseWindow>
 </template>
@@ -28,6 +36,8 @@
 <script>
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { PackType } from '/@/components/Data/PackType'
+import { FileType } from '/@/components/Data/FileType'
 
 export default {
 	name: 'OpenFileWindow',
@@ -45,6 +55,19 @@ export default {
 		},
 		onChange(filePath) {
 			if (filePath) this.currentWindow.openFile(filePath)
+		},
+
+		getFileIcon(filePath) {
+			const fileType = FileType.get(filePath)
+			if (!fileType) return 'mdi-file-outline'
+
+			return fileType.icon || 'mdi-file-outline'
+		},
+		getFileIconColor(filePath) {
+			const packType = PackType.getWithRelativePath(filePath)
+			if (!packType) return 'primary'
+
+			return packType.color || 'primary'
 		},
 	},
 }

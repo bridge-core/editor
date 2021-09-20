@@ -1,10 +1,11 @@
 <template>
 	<v-dialog
 		:value="isVisible"
+		:fullscreen="!isSmallPopup && $vuetify.breakpoint.mobile"
 		@input="$emit('closeWindow')"
 		:persistent="isPersistent"
 		:hide-overlay="!blurBackground"
-		:max-width="isFullscreen ? maxWindowWidth : windowWidth"
+		:max-width="isFullScreenOrMobile ? maxWindowWidth : windowWidth"
 		content-class="no-overflow"
 	>
 		<v-card
@@ -12,6 +13,7 @@
 			width="100%"
 			color="background"
 			:rounded="platform === 'darwin' ? 'lg' : undefined"
+			ref="card"
 		>
 			<component
 				v-if="!hideToolbar"
@@ -21,7 +23,7 @@
 				:hasMaximizeButton="hasMaximizeButton"
 				:hasCloseButton="hasCloseButton"
 				:hasSidebar="!!$slots.sidebar"
-				:sidebarWidth="sidebarWidth"
+				:sidebarWidth="calcSidebarWidth"
 				@toggleFullscreen="$emit('toggleFullscreen')"
 				@closeWindow="$emit('closeWindow')"
 			>
@@ -31,7 +33,7 @@
 			<v-navigation-drawer
 				v-if="$slots.sidebar"
 				absolute
-				:width="sidebarWidth"
+				:width="calcSidebarWidth"
 				permanent
 				clipped
 				stateless
@@ -56,15 +58,19 @@
 			</v-navigation-drawer>
 
 			<v-card-text
-				style="padding-top: 12px; overflow-y: auto"
+				style="overflow-y: auto"
 				:style="{
 					height: heightUnset
 						? undefined
-						: `${isFullscreen ? maxWindowHeight : windowHeight}px`,
+						: `${
+								isFullScreenOrMobile
+									? maxWindowHeight
+									: windowHeight
+						  }px`,
 					'max-height': `${maxWindowHeight}px`,
 					'padding-top': hideToolbar ? '24px' : '12px',
 					'padding-left': !!$slots.sidebar
-						? `calc(${sidebarWidth} + 12px)`
+						? `calc(${calcSidebarWidth} + 12px)`
 						: undefined,
 				}"
 			>
@@ -147,6 +153,7 @@ export default {
 		percentageWidth: Number,
 		maxPercentageHeight: Number,
 		maxPercentageWidth: Number,
+		isSmallPopup: Boolean,
 	},
 	data() {
 		return {
@@ -167,6 +174,17 @@ export default {
 	},
 
 	computed: {
+		calcSidebarWidth() {
+			if (this.$vuetify.breakpoint.mobile) return '76px'
+
+			return this.sidebarWidth
+		},
+		isFullScreenOrMobile() {
+			return (
+				(!this.isSmallPopup && this.$vuetify.breakpoint.mobile) ||
+				this.isFullscreen
+			)
+		},
 		isDarkMode() {
 			return this.$vuetify.theme.dark
 		},
@@ -195,6 +213,13 @@ export default {
 			}
 		},
 		maxWindowHeight() {
+			if (!this.isSmallPopup && this.$vuetify.breakpoint.mobile)
+				return (
+					this.globalWindowHeight -
+					!this.hideToolbar * 30 -
+					!!this.$slots.actions * 52
+				)
+
 			if (this.maxPercentageHeight == undefined) {
 				return this.maxHeight
 			} else {

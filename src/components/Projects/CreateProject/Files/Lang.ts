@@ -4,17 +4,15 @@ import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
 import { CreateFile } from './CreateFile'
 
 export class CreateLang extends CreateFile {
+	public readonly id = 'lang'
+	public isConfigurable = false
+
 	constructor(protected packPath: TPackType) {
 		super()
 	}
 
 	async create(fs: FileSystem, createOptions: ICreateProjectOptions) {
-		if (
-			!(
-				(this.packPath == 'BP' || this.packPath == 'SP') &&
-				createOptions.useLangForManifest
-			)
-		) {
+		if (!(this.packPath === 'BP' && createOptions.useLangForManifest)) {
 			await fs.mkdir(`${this.packPath}/texts`)
 			await fs.writeFile(
 				`${this.packPath}/texts/en_US.lang`,

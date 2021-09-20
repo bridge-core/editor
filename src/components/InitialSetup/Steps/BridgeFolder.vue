@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { TranslationMixin } from '../../Mixins/TranslationMixin'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { FileSystemSetup } from '/@/components/FileSystem/Setup'
 
 export default {
@@ -20,6 +20,7 @@ export default {
 			try {
 				fileHandle = await window.showDirectoryPicker({
 					writable: true,
+					startIn: 'documents',
 				})
 			} catch {
 				return

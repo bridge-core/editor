@@ -30,29 +30,53 @@
 					draggable="false"
 				/>
 				<div>
-					<h1 class="text-h4">{{ sidebar.currentState.name }}</h1>
-					<h2 class="text-h6">
-						by {{ sidebar.currentState.author || 'Unknown' }}
-					</h2>
+					<h1 style="overflow-wrap: anywhere">
+						{{ sidebar.currentState.name }}
+					</h1>
+					<h2 class="subheader">by {{ authors }}</h2>
 				</div>
 			</div>
-			<div class="d-flex">
-				<PackTypeViewer
-					v-for="(packType, i) in sidebar.currentState.contains"
+			<v-row class="mb-6" dense>
+				<v-col
+					v-for="packType in sidebar.currentState.contains"
 					:key="packType.id"
-					:packType="packType"
-					:class="{
-						'mr-1': i === 0,
-						'ml-1': i + 1 === sidebar.currentState.contains.length,
-						'mx-1':
-							i > 0 &&
-							i + 1 < sidebar.currentState.contains.length,
-					}"
-				/>
-			</div>
+				>
+					<PackTypeViewer style="height: 100%" :packType="packType" />
+				</v-col>
+			</v-row>
+
+			<h2 class="subheader">{{ t('general.experimentalGameplay') }}</h2>
+			<v-row dense>
+				<v-col
+					v-for="experiment in sidebar.currentState
+						.experimentalGameplay"
+					:key="experiment.id"
+					xs="12"
+					sm="6"
+					md="4"
+					lg="3"
+					xl="2"
+				>
+					<ExperimentalGameplay
+						:experiment="experiment"
+						:isToggleable="false"
+						:value="experiment.isActive"
+						style="height: 100%"
+					/>
+				</v-col>
+			</v-row>
 		</template>
 
 		<template #actions="{ selectedSidebar }">
+			<v-btn
+				color="primary"
+				:disabled="currentProject !== selectedSidebar"
+				@click="onAddPack"
+			>
+				<v-icon class="mr-1">mdi-plus-box</v-icon>
+				{{ t('windows.projectChooser.addPack') }}
+			</v-btn>
+
 			<v-spacer />
 			<v-btn
 				color="error"
@@ -60,7 +84,7 @@
 				@click="onDeleteProject(selectedSidebar)"
 			>
 				<v-icon>mdi-delete</v-icon>
-				Delete
+				{{ t('general.delete') }}
 			</v-btn>
 			<v-btn
 				color="primary"
@@ -68,7 +92,7 @@
 				@click="onSelectProject"
 			>
 				<v-icon>mdi-check</v-icon>
-				Select
+				{{ t('general.select') }}
 			</v-btn>
 		</template>
 	</SidebarWindow>
@@ -77,10 +101,24 @@
 <script>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
+import ExperimentalGameplay from '/@/components/Projects/CreateProject/ExperimentalGameplay.vue'
 
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow.ts'
+import { addPack } from './AddPack'
+
+let formatter
+if ('ListFormat' in Intl) {
+	formatter = new Intl.ListFormat('en', {
+		style: 'long',
+		type: 'conjunction',
+	})
+} else {
+	formatter = {
+		format: (arr) => arr.join(', '),
+	}
+}
 
 export default {
 	name: 'ProjectChooserWindow',
@@ -88,6 +126,7 @@ export default {
 	components: {
 		SidebarWindow,
 		PackTypeViewer,
+		ExperimentalGameplay,
 	},
 	props: ['currentWindow'],
 	data() {
@@ -114,6 +153,17 @@ export default {
 				},
 			})
 		},
+		onAddPack() {
+			addPack()
+			this.currentWindow.close()
+		},
+	},
+	computed: {
+		authors() {
+			const authors = this.sidebar.currentState.authors || 'Unknown'
+			if (Array.isArray(authors)) return formatter.format(authors)
+			return authors
+		},
 	},
 }
 </script>
@@ -124,5 +174,10 @@ export default {
 }
 .content-area {
 	background-color: var(--v-sidebarNavigation-base);
+}
+.subheader {
+	font-size: 1.25rem !important;
+	font-weight: 500;
+	letter-spacing: 0.0125em !important;
 }
 </style>

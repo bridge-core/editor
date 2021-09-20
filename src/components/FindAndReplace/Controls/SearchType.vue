@@ -5,15 +5,19 @@
 		:value="value"
 		@change="(val) => $emit('input', val)"
 	>
-		<v-btn title="Match Case">
+		<v-btn title="Match Case" color="menu" style="min-width: unset">
 			<v-icon>mdi-format-letter-case-upper</v-icon>
 		</v-btn>
 
-		<v-btn title="Ignore Case">
+		<v-btn title="Ignore Case" color="menu" style="min-width: unset">
 			<v-icon>mdi-format-letter-case</v-icon>
 		</v-btn>
 
-		<v-btn title="Use Regular Expression">
+		<v-btn
+			title="Use Regular Expression"
+			color="menu"
+			style="min-width: unset"
+		>
 			<v-icon>mdi-regex</v-icon>
 		</v-btn>
 	</v-btn-toggle>

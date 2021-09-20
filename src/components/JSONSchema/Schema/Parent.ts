@@ -14,4 +14,16 @@ export abstract class ParentSchema extends Schema {
 			.map((child) => child.getSchemasFor(obj, [...location]))
 			.flat()
 	}
+
+	getFlatChildren() {
+		const children: Schema[] = []
+
+		for (const child of this.children) {
+			if (child instanceof ParentSchema)
+				children.push(...child.getFlatChildren())
+			else children.push(child)
+		}
+
+		return children
+	}
 }
