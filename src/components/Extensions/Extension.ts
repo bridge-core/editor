@@ -156,6 +156,8 @@ export class Extension {
 			}
 		}
 
+		App.eventSystem.dispatch('presetsChanged', null)
+
 		if (await this.fileSystem.fileExists('.installed')) return
 
 		await this.installFiles.execute(this.isGlobal)
@@ -167,6 +169,7 @@ export class Extension {
 	}
 
 	deactivate() {
+		App.eventSystem.dispatch('presetsChanged', null)
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.isLoaded = false
 	}

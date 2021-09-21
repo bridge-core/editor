@@ -59,6 +59,9 @@ export interface IPermissions {
 export class CreatePresetWindow extends BaseWindow {
 	protected loadPresetPaths = new Map<string, string>()
 	protected sidebar = new Sidebar([])
+	protected shouldReloadPresets = false
+	protected modelResetters: (() => void)[] = []
+
 	/**
 	 * Add new validation strategies to this object ([key]: [validationFunction])
 	 * to make them available as the [key] inside of presets.
@@ -91,6 +94,10 @@ export class CreatePresetWindow extends BaseWindow {
 	constructor() {
 		super(PresetWindowComponent)
 		this.defineWindow()
+
+		App.eventSystem.on('presetsChanged', () => {
+			this.shouldReloadPresets = true
+		})
 	}
 
 	protected async addPreset(
@@ -171,6 +178,7 @@ export class CreatePresetWindow extends BaseWindow {
 		)
 
 		resetState()
+		this.modelResetters.push(resetState)
 	}
 
 	protected async loadPresets(
@@ -196,13 +204,20 @@ export class CreatePresetWindow extends BaseWindow {
 		const app = await App.getApp()
 		const fs = app.fileSystem
 		app.windows.loadingWindow.open()
-		this.sidebar.removeElements()
 
-		await this.loadPresets(app.dataLoader)
-		for (const [_, loadPresetPath] of this.loadPresetPaths)
-			await this.loadPresets(fs, loadPresetPath)
+		if (this.shouldReloadPresets) {
+			this.sidebar.removeElements()
 
-		this.sidebar.setDefaultSelected()
+			await this.loadPresets(app.dataLoader)
+			for (const [_, loadPresetPath] of this.loadPresetPaths)
+				await this.loadPresets(fs, loadPresetPath)
+
+			this.sidebar.setDefaultSelected()
+			this.shouldReloadPresets = false
+		} else {
+			this.modelResetters.forEach((reset) => reset())
+		}
+
 		app.windows.loadingWindow.close()
 		super.open()
 	}
