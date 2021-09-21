@@ -81,6 +81,10 @@ export class SidebarElement {
 		this.stopHandle?.()
 		this.stopHandle = undefined
 	}
+	setSidebarContent(sidebarContent: SidebarContent) {
+		this.config.sidebarContent = sidebarContent
+	}
+
 	async click() {
 		App.audioManager.playAudio('click5.ogg', 1)
 		this.isLoading = true

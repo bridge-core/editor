@@ -21,7 +21,7 @@ export function createErrorNotification(error: Error): IDisposable {
 	if (short.length > 24)
 		short = message.length > 24 ? `${message.substr(0, 23)}...` : message
 
-	App?.audioManager?.playAudio('error_002.ogg', 1)
+	// App?.audioManager?.playAudio('error_002.ogg', 1)
 
 	const notification = createNotification({
 		icon: 'mdi-alert-circle-outline',

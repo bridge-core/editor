@@ -162,7 +162,7 @@ export abstract class Project {
 	}
 
 	async refresh() {
-		App.packExplorer.refresh()
+		this.app.packExplorer.refresh()
 		this.deactivate(true)
 		this.disposeWorkers()
 		await this.activate(true)

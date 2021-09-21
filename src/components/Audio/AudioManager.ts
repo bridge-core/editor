@@ -1,5 +1,4 @@
 import { settingsState } from '../Windows/Settings/SettingsState'
-import { App } from '/@/App'
 
 export class AudioManager {
 	protected currentAudioPlaying: HTMLAudioElement | undefined
@@ -7,10 +6,10 @@ export class AudioManager {
 	masterVolume = 1
 	isMuted = !settingsState?.audio?.playAudio ?? true
 
-	constructor() {
-		App.getApp().then(() => {
-			this.isMuted = !settingsState?.audio?.playAudio
-		})
+	constructor() {}
+
+	loadIsMuted() {
+		this.isMuted = !settingsState?.audio?.playAudio
 	}
 
 	playAudio(audioName = 'click5.ogg', audioVolume = 1) {
