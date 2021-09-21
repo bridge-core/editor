@@ -333,10 +333,10 @@ export class TreeEditor {
 
 	addValue(value: string, type: 'value' | 'valueArray') {
 		let transformedValue: TPrimitiveTree = value
-		if (!Number.isNaN(Number(value))) transformedValue = Number(value)
-		else if (value === 'null') transformedValue = null
-		else if (value === 'true' || value === 'false')
+		if (value === 'true' || value === 'false')
 			transformedValue = value === 'true'
+		else if (!Number.isNaN(Number(value))) transformedValue = Number(value)
+		else if (value === 'null') transformedValue = null
 
 		const entries: HistoryEntry[] = []
 
