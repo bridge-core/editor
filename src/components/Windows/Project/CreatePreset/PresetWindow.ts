@@ -97,7 +97,13 @@ export class CreatePresetWindow extends BaseWindow {
 		manifestPath: string
 	) {
 		const app = await App.getApp()
-		const manifest = <IPresetManifest>await fs.readJSON(manifestPath)
+		// Load manifest
+		let manifest: any
+		try {
+			manifest = <IPresetManifest>await fs.readJSON(manifestPath)
+		} catch (err) {
+			return
+		}
 
 		// Presets need a category, presets without category are most likely incompatible v1 presets
 		if (!manifest.category)
