@@ -22,6 +22,7 @@ import { TabModule } from './Modules/Tab'
 import { TabActionsModule } from './Modules/TabAction'
 import { ThemeModule } from './Modules/theme'
 import { ProjectModule } from './Modules/project'
+import { ThreeModule } from './Modules/Three'
 
 const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/ui', UIModule],
@@ -44,6 +45,7 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/tab', TabModule],
 	['@bridge/tab-actions', TabActionsModule],
 	['@bridge/theme', ThemeModule],
+	['@bridge/three', ThreeModule],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
