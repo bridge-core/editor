@@ -191,6 +191,14 @@ export abstract class Project {
 			if (tab !== undefined) return tab
 		}
 	}
+	async getFileTabWithPath(filePath: string) {
+		for (const tabSystem of this.tabSystems) {
+			const tab = await tabSystem.get(
+				(tab) => tab.getProjectPath() === filePath
+			)
+			if (tab !== undefined) return tab
+		}
+	}
 	async openTab(tab: Tab, selectTab = true) {
 		for (const tabSystem of this.tabSystems) {
 			if (await tabSystem.hasTab(tab)) {
@@ -273,11 +281,10 @@ export abstract class Project {
 	}
 
 	async getFileFromDiskOrTab(filePath: string) {
-		const fileHandle = await this.fileSystem.getFileHandle(filePath)
-		const tab = await this.getFileTab(fileHandle)
+		const tab = await this.getFileTabWithPath(filePath)
 		if (tab && tab instanceof FileTab) return await tab.getFile()
 
-		return await fileHandle.getFile()
+		return await this.fileSystem.readFile(filePath)
 	}
 	setActiveTabSystem(tabSystem: TabSystem, value: boolean) {
 		this.tabSystems.forEach((tS) =>

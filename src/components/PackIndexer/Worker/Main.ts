@@ -80,17 +80,24 @@ export class PackIndexerService extends TaskService<
 		return <const>[changedFiles, deletedFiles]
 	}
 
-	async updateFile(filePath: string, fileContent?: string) {
+	async updateFile(
+		filePath: string,
+		fileContent?: string,
+		isForeignFile = false
+	) {
 		const fileDidChange = await this.lightningCache.processFile(
 			filePath,
-			await this.fileSystem.getFileHandle(filePath),
-			fileContent
+			fileContent ?? (await this.fileSystem.getFileHandle(filePath)),
+			isForeignFile
 		)
 
 		if (fileDidChange) {
 			await this.lightningStore.saveStore()
 			await this.packSpider.updateFile(filePath)
 		}
+	}
+	hasFile(filePath: string) {
+		return this.lightningStore.has(filePath)
 	}
 
 	unlink(path: string) {

@@ -2,7 +2,7 @@ import { App } from '/@/App'
 import { WorkerManager } from '/@/components/Worker/Manager'
 import { proxy } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import type { IPackIndexerOptions, PackIndexerService } from './Worker/Main'
+import type { PackIndexerService } from './Worker/Main'
 import { FileType } from '/@/components/Data/FileType'
 import PackIndexerWorker from './Worker/Main?worker'
 import { Signal } from '../Common/Event/Signal'
@@ -70,12 +70,16 @@ export class PackIndexer extends WorkerManager<
 		return <const>[changedFiles, deletedFiles]
 	}
 
-	async updateFile(filePath: string, fileContent?: string) {
+	async updateFile(
+		filePath: string,
+		fileContent?: string,
+		isForeignFile = false
+	) {
 		await this.ready.fired
 		this.ready.resetSignal()
 
 		await this.service.updatePlugins(FileType.getPluginFileTypes())
-		await this.service.updateFile(filePath, fileContent)
+		await this.service.updateFile(filePath, fileContent, isForeignFile)
 
 		this.ready.dispatch()
 	}

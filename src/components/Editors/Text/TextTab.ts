@@ -16,26 +16,19 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 		// Updates the isUnsaved status of the tab
 		tab.updateUnsavedStatus()
 
-		if (
-			tab.isForeignFile ||
-			!tab.editorModel ||
-			tab.editorModel.isDisposed()
-		)
-			return
+		if (!tab.editorModel || tab.editorModel.isDisposed()) return
 
 		const fileContent = tab.editorModel?.getValue()
 		const app = await App.getApp()
 
-		// Only update the cache if the file still exists
-		if (await app.fileSystem.fileExists(tab.getPath())) {
-			await app.project.packIndexer.updateFile(
-				tab.getProjectPath(),
-				fileContent
-			)
-			await app.project.jsonDefaults.updateDynamicSchemas(
-				tab.getProjectPath()
-			)
-		}
+		await app.project.packIndexer.updateFile(
+			tab.getProjectPath(),
+			fileContent,
+			tab.isForeignFile
+		)
+		await app.project.jsonDefaults.updateDynamicSchemas(
+			tab.getProjectPath()
+		)
 
 		app.project.fileChange.dispatch(
 			tab.getProjectPath(),
@@ -252,14 +245,19 @@ export class TextTab extends FileTab {
 		const didClose = await super.close()
 
 		// We need to clear the lightning cache store from temporary data if the user doesn't save changes
-		if (!this.isForeignFile && didClose && this.isUnsaved) {
+		if (didClose && this.isUnsaved) {
 			const app = await App.getApp()
-			const file = await app.fileSystem.readFile(this.getPath())
-			const fileContent = await file.text()
-			await app.project.packIndexer.updateFile(
-				this.getProjectPath(),
-				fileContent
-			)
+
+			if (this.isForeignFile) {
+				await app.fileSystem.unlink(this.getProjectPath())
+			} else {
+				const file = await this.fileHandle.getFile()
+				const fileContent = await file.text()
+				await app.project.packIndexer.updateFile(
+					this.getProjectPath(),
+					fileContent
+				)
+			}
 		}
 
 		return didClose

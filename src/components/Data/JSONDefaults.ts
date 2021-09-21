@@ -34,7 +34,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		this.disposables = <IDisposable[]>[
 			// Updating currentContext/ references
 			App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
-				if (!tab.isForeignFile && tab instanceof FileTab)
+				if (tab instanceof FileTab)
 					this.updateDynamicSchemas(tab.getProjectPath())
 			}),
 			App.eventSystem.on('refreshCurrentContext', (filePath: string) =>

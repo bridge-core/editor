@@ -5,7 +5,7 @@ import json5 from 'json5'
 import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'
 import { runScript } from './Script'
-import { extname } from '/@/utils/path'
+import { basename, extname } from '/@/utils/path'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { iterateDir } from '/@/utils/iterateDir'
 import {
@@ -154,16 +154,25 @@ export class LightningCache {
 	 */
 	async processFile(
 		filePath: string,
-		fileHandle: AnyFileHandle,
-		fileContent?: string
+		fileHandleOrContent: string | AnyFileHandle,
+		isForeignFile = false
 	) {
-		const file = await fileHandle.getFile()
+		const receivedContent = typeof fileHandleOrContent === 'string'
+
+		const file = receivedContent
+			? new File([fileHandleOrContent], basename(filePath))
+			: await fileHandleOrContent.getFile()
 		const fileType = FileType.getId(filePath)
+
+		if (!file)
+			throw new Error(
+				`Invalid call to "processFile": Either fileContent or fileHandle needs to be defined!`
+			)
 
 		// First step: Check lastModified time. If the file was not modified, we can skip all processing
 		// If custom fileContent is defined, we need to always run processFile
 		if (
-			fileContent === undefined &&
+			!receivedContent &&
 			file.lastModified ===
 				this.lightningStore.getLastModified(filePath, fileType)
 		) {
@@ -176,13 +185,19 @@ export class LightningCache {
 
 		// Second step: Process file
 		if (FileType.isJsonFile(filePath)) {
-			await this.processJSON(filePath, fileType, file, fileContent)
+			await this.processJSON(
+				filePath,
+				fileType,
+				file,
+				receivedContent ? fileHandleOrContent : undefined,
+				isForeignFile
+			)
 		} else if (knownTextFiles.has(ext)) {
-			await this.processText(filePath, fileType, file, fileContent)
+			await this.processText(filePath, fileType, file, isForeignFile)
 		} else {
 			this.lightningStore.add(
 				filePath,
-				{ lastModified: file.lastModified },
+				{ lastModified: file.lastModified, isForeignFile },
 				fileType
 			)
 		}
@@ -194,7 +209,7 @@ export class LightningCache {
 		filePath: string,
 		fileType: string,
 		file: File,
-		fileContent?: string
+		isForeignFile?: boolean
 	) {
 		const instructions = await FileType.getLightningCache(filePath)
 
@@ -204,13 +219,13 @@ export class LightningCache {
 
 			// Only proceed if the script returned a function
 			if (typeof cacheFunction === 'function') {
-				if (fileContent === undefined) fileContent = await file.text()
-				const textData = cacheFunction(fileContent)
+				const textData = cacheFunction(await file.text())
 
 				this.lightningStore.add(
 					filePath,
 					{
 						lastModified: file.lastModified,
+						isForeignFile,
 						data:
 							Object.keys(textData).length > 0
 								? textData
@@ -236,7 +251,8 @@ export class LightningCache {
 		filePath: string,
 		fileType: string,
 		file: File,
-		fileContent?: string
+		fileContent?: string,
+		isForeignFile?: boolean
 	) {
 		// Load instructions for current file
 		const instructions = await FileType.getLightningCache(filePath)
@@ -269,6 +285,7 @@ export class LightningCache {
 					filePath,
 					{
 						lastModified: file.lastModified,
+						isForeignFile,
 					},
 					fileType
 				)
@@ -363,6 +380,7 @@ export class LightningCache {
 			filePath,
 			{
 				lastModified: file.lastModified,
+				isForeignFile,
 				data:
 					Object.keys(collectedData).length > 0
 						? collectedData

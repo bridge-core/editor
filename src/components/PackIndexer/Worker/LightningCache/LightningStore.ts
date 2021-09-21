@@ -5,6 +5,7 @@ type TStore = Record<string, Record<string, IStoreEntry>>
 interface IStoreEntry {
 	lastModified: number
 	visited?: boolean
+	isForeignFile?: boolean
 	data?: Record<string, string[]>
 }
 
@@ -68,6 +69,12 @@ export class LightningStore {
 
 			for (const filePath in this.store[fileType]) {
 				const entry = this.store[fileType][filePath]
+
+				// Foreign files can simply be ignored
+				if (entry.isForeignFile) {
+					continue
+				}
+
 				// This file no longer seems to exist, omit it from store output
 				if (!entry.visited) {
 					deletedFiles.push(filePath)
@@ -91,6 +98,7 @@ export class LightningStore {
 		{
 			lastModified,
 			data,
+			isForeignFile,
 		}: IStoreEntry & { data?: Record<string, string[]> },
 		fileType = FileType.getId(filePath)
 	) {
@@ -102,6 +110,7 @@ export class LightningStore {
 		this.store![fileType][filePath] = {
 			visited: true,
 			lastModified,
+			isForeignFile,
 			data: data ?? this.store![fileType]?.[filePath]?.data,
 		}
 	}
@@ -189,6 +198,9 @@ export class LightningStore {
 
 	get(filePath: string, fileType = FileType.getId(filePath)) {
 		return this.store![fileType]?.[filePath] ?? {}
+	}
+	has(filePath: string, fileType = FileType.getId(filePath)) {
+		return !!this.store![fileType]?.[filePath]
 	}
 
 	allFiles() {

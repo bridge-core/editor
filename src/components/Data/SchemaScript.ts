@@ -65,7 +65,7 @@ export class SchemaScript {
 					failedCurrentFileLoad: failedFileLoad,
 				},
 			})
-		} catch (err) {
+		} catch (err: any) {
 			console.error(
 				`Error evaluating schemaScript "${scriptPath}": ${err.message}`
 			)
