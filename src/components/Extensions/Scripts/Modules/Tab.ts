@@ -1,5 +1,6 @@
 import { IModuleConfig } from '../types'
 import { App } from '/@/App'
+import { ThreePreviewTab } from '/@/components/Editors/ThreePreview/ThreePreviewTab'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabProvider } from '/@/components/TabSystem/TabProvider'
@@ -7,6 +8,7 @@ import { TabProvider } from '/@/components/TabSystem/TabProvider'
 export const TabModule = async ({ disposables }: IModuleConfig) => ({
 	ContentTab: Tab,
 	FileTab,
+	ThreePreviewTab,
 
 	/**
 	 * Register new FileTabs to be picked up by the isTabFor tab system method
