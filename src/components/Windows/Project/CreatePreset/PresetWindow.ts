@@ -43,6 +43,7 @@ export interface IPresetFieldOpts {
 	// type = 'fileInput'
 	accept: string
 	icon: string
+	multiple?: boolean
 }
 
 export interface IPresetFileOpts {
