@@ -174,31 +174,4 @@ export class PackIndexerService extends TaskService<
 	}
 }
 
-async function loadPack(pack: string, fileSystem: FileSystem) {
-	let projects
-	try {
-		projects = await fileSystem.readdir(pack, {
-			withFileTypes: true,
-		})
-	} catch {
-		return []
-	}
-
-	return projects.map((dirent) => {
-		const fileType = FileType.getId(`${pack}/${dirent.name}${'/test.json'}`)
-		return {
-			kind: dirent.kind,
-			displayName:
-				dirent.kind === 'file' || fileType === 'unknown'
-					? dirent.name
-					: undefined,
-			name:
-				dirent.kind === 'directory' && fileType !== 'unknown'
-					? fileType
-					: dirent.name,
-			path: `${pack}/${dirent.name}`,
-		}
-	})
-}
-
 expose(PackIndexerService, self)

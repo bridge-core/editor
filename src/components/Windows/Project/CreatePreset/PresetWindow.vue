@@ -87,6 +87,8 @@
 					"
 					class="mb-1"
 					:key="i"
+					:loading="opts.isLoading"
+					:disabled="opts.isLoading"
 					v-model="content.models[id]"
 					:items="opts.options"
 					:menu-props="{ maxHeight: 220 }"
