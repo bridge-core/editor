@@ -88,13 +88,9 @@ export class FunctionSimulatorTab extends Tab {
 		} else {
 			console.error('Unable to load commands.json')
 		}
-
-		console.log(this.validCommands)
 	}
 
 	protected async getDocs<String>(command: string = '') {
-		console.log(command)
-
 		if (this.commandData) {
 			for (
 				let i = 0;
@@ -105,7 +101,6 @@ export class FunctionSimulatorTab extends Tab {
 					this.commandData._data.vanilla[0].commands[i].commandName ==
 					command
 				) {
-					console.log(this.commandData._data.vanilla[0].commands[i])
 					return this.commandData._data.vanilla[0].commands[i]
 						.description
 				}
@@ -120,8 +115,10 @@ export class FunctionSimulatorTab extends Tab {
 	protected getArgType<String>(arg: string) {
 		//Positional
 		if (arg.substring(0, 1) == '~' || arg.substring(0, 1) == '^') {
-			if (!isNaN(parseFloat(arg.substring(1, arg.length)))) {
-				return 'number'
+			if (arg.length == 1) {
+				return 'position'
+			} else if (!isNaN(parseFloat(arg.substring(1, arg.length)))) {
+				return 'position'
 			} else {
 				return 'Error: Expected number after positional argument!'
 			}
@@ -138,8 +135,6 @@ export class FunctionSimulatorTab extends Tab {
 
 		//Number
 		if (!isNaN(parseFloat(arg))) {
-			console.log('Number: ' + arg)
-
 			return 'number'
 		}
 
@@ -179,12 +174,13 @@ export class FunctionSimulatorTab extends Tab {
 			let argTypes = []
 
 			for (let i = 0; i < args.length; i++) {
+				console.log(
+					'Arg type of ' + args[i] + ' is ' + this.getArgType(args[i])
+				)
 				argTypes.push(this.getArgType(args[i]))
 			}
 
-			//console.log(argTypes)
-
-			let commandValidation = []
+			let commandVariations = []
 
 			for (
 				let i = 0;
@@ -195,43 +191,84 @@ export class FunctionSimulatorTab extends Tab {
 					this.commandData._data.vanilla[0].commands[i].commandName ==
 					baseCommand
 				) {
-					commandValidation.push(
+					commandVariations.push(
 						this.commandData._data.vanilla[0].commands[i].arguments
 					)
 				}
 			}
 
-			//console.log(commandValidation)
-
 			let fail = true
 
-			for (let i = 0; i < commandValidation.length; i++) {
-				console.log(commandValidation[i])
+			//Repeat for every variation of the command
+			for (let i = 0; i < commandVariations.length; i++) {
+				console.log('Checking variation...')
+				console.log(commandVariations[i])
 
+				//if already fail end other wise continue
 				if (fail) {
 					fail = false
 				} else {
 					break
 				}
 
+				//Check if current argument variation is valid other fail and move to next variation
 				let argumentIndex = 0
 
-				for (let j = 0; j < commandValidation[i].length; j++) {
-					if (commandValidation[i][j].type != null) {
+				let currentVariation = commandVariations[i]
+
+				for (let j = 0; j < currentVariation.length; j++) {
+					//End check if no more arg types
+					if (argTypes.length <= argumentIndex) {
+						break
+					}
+
+					if (currentVariation[j].type != null) {
 						console.log(
-							commandValidation[i][j].type +
-								' ' +
+							currentVariation[j].type +
+								' : ' +
 								argTypes[argumentIndex]
 						)
 						if (
-							commandValidation[i][j].type !=
-							argTypes[argumentIndex]
+							currentVariation[j].type == argTypes[argumentIndex]
 						) {
+							//Argument matched
+						} else if (
+							currentVariation[j].type == 'coordinate' &&
+							(argTypes[argumentIndex] == 'number' ||
+								argTypes[argumentIndex] == 'position')
+						) {
+							//was cordinate so matched
+						} else {
 							fail = true
 							break
 						}
 
 						argumentIndex++
+					}
+				}
+
+				//Check if still have arguments to check
+				if (argumentIndex <= currentVariation.length) {
+					let allOptional = true
+
+					//check if all left params are optional
+					for (
+						let j = argumentIndex;
+						j < currentVariation.length;
+						j++
+					) {
+						if (currentVariation[j].type != null) {
+							if (currentVariation[j].isOptional == null) {
+								//found not optional param still left
+								fail = true
+								break
+							} else {
+								console.log(
+									'Param is optional: ' +
+										currentVariation[j].type
+								)
+							}
+						}
 					}
 				}
 			}
@@ -240,8 +277,6 @@ export class FunctionSimulatorTab extends Tab {
 				errors.push('Invalid arguments for command: ' + command)
 			}
 		}
-
-		//console.log('~~~~~~~~~')
 
 		return [errors, warnings]
 	}
@@ -256,7 +291,16 @@ export class FunctionSimulatorTab extends Tab {
 				lines[this.currentLine].length - 1
 			)
 
-			console.log(fullCommand)
+			if (
+				lines[this.currentLine].substring(
+					lines[this.currentLine].length - 1
+				) != '\r'
+			) {
+				fullCommand = lines[this.currentLine].substring(
+					0,
+					lines[this.currentLine].length
+				)
+			}
 
 			let command = fullCommand.split(' ')[0]
 
@@ -274,7 +318,10 @@ export class FunctionSimulatorTab extends Tab {
 			//.filter(i => i !== "\r")
 
 			if (commmandDisplayElement) {
-				if (lines[this.currentLine] == '\r') {
+				if (
+					lines[this.currentLine] == '\r' ||
+					lines[this.currentLine].length == 0
+				) {
 					commmandDisplayElement.textContent =
 						'Command: Empty Line (No Command)'
 				} else {
@@ -301,37 +348,38 @@ export class FunctionSimulatorTab extends Tab {
 					alertsElement.children[0].remove()
 				}
 
-				if (lines[this.currentLine] == '\r') {
+				if (
+					lines[this.currentLine] == '\r' ||
+					lines[this.currentLine].length == 0
+				) {
 					docsElement.textContent = 'No documentation.'
 				} else {
-					if (lines[this.currentLine] != '\r') {
-						let data = await this.readCommand(fullCommand)
+					let data = await this.readCommand(fullCommand)
 
-						for (let i = 0; i < data[0].length; i++) {
-							var ComponentClass = Vue.extend(Error)
-							var instance = new ComponentClass({
-								propsData: { alertText: data[0][i] },
-							})
+					for (let i = 0; i < data[0].length; i++) {
+						var ComponentClass = Vue.extend(Error)
+						var instance = new ComponentClass({
+							propsData: { alertText: data[0][i] },
+						})
 
-							instance.$mount() // pass nothing
-							alertsElement.appendChild(instance.$el)
-						}
+						instance.$mount() // pass nothing
+						alertsElement.appendChild(instance.$el)
+					}
 
-						for (let i = 0; i < data[1].length; i++) {
-							var ComponentClass = Vue.extend(Warning)
-							var instance = new ComponentClass({
-								propsData: { alertText: data[1][i] },
-							})
+					for (let i = 0; i < data[1].length; i++) {
+						var ComponentClass = Vue.extend(Warning)
+						var instance = new ComponentClass({
+							propsData: { alertText: data[1][i] },
+						})
 
-							instance.$mount() // pass nothing
-							alertsElement.appendChild(instance.$el)
-						}
+						instance.$mount() // pass nothing
+						alertsElement.appendChild(instance.$el)
+					}
 
-						docsElement.textContent = await this.getDocs(command)
+					docsElement.textContent = await this.getDocs(command)
 
-						if (data[0].length > 0) {
-							return true
-						}
+					if (data[0].length > 0) {
+						return true
 					}
 				}
 			}
@@ -351,19 +399,13 @@ export class FunctionSimulatorTab extends Tab {
 
 		shouldStop = await this.loadCurrentLine()
 
-		console.log(shouldStop)
-
 		while (!shouldStop) {
 			this.currentLine += 1
 			shouldStop = await this.loadCurrentLine()
-
-			console.log(shouldStop)
 		}
 	}
 
 	protected async stepLine() {
-		console.log('stepLine')
-
 		await this.loadFileContent()
 
 		this.currentLine += 1
@@ -371,8 +413,6 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	protected async restart() {
-		console.log('restart')
-
 		await this.loadFileContent()
 
 		this.currentLine = 0
