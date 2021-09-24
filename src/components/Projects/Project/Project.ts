@@ -213,6 +213,8 @@ export abstract class Project {
 		const nameMap: Record<string, Tab[]> = {}
 		for (const tabSystem of this.tabSystems) {
 			tabSystem.tabs.forEach((tab) => {
+				if (!(tab instanceof FileTab)) return
+
 				const name = tab.name
 
 				if (!nameMap[name]) nameMap[name] = []
