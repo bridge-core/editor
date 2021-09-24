@@ -44,8 +44,7 @@ export abstract class FileTab extends Tab {
 					this.isForeignFile
 				)
 
-				const lang = FileType.get(this.getProjectPath())?.meta?.language
-				if (lang === undefined || lang === 'json') {
+				if (FileType.isJsonFile(this.getProjectPath())) {
 					this.parent.project.jsonDefaults.updateDynamicSchemas(
 						this.getProjectPath()
 					)
