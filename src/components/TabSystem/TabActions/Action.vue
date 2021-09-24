@@ -41,5 +41,6 @@ export default {
 .action .action-name {
 	opacity: 0.7;
 	font-size: 14px;
+	white-space: nowrap;
 }
 </style>
