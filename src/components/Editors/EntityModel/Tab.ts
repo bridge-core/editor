@@ -28,13 +28,7 @@ export class EntityModelTab extends GeometryPreviewTab {
 			clientEntityFilePath
 		)
 
-		this.clientEntityWatcher.on((file) => {
-			const runningAnims = this._renderContainer?.runningAnimations
-
-			this._renderContainer?.dispose()
-			this._renderContainer = undefined
-			this.loadRenderContainer(file, runningAnims)
-		})
+		this.clientEntityWatcher.on((file) => this.reload(file))
 	}
 	setPreviewOptions(previewOptions: IPreviewOptions) {
 		this.previewOptions = previewOptions
@@ -45,6 +39,16 @@ export class EntityModelTab extends GeometryPreviewTab {
 		if (didClose) this.clientEntityWatcher.dispose()
 
 		return didClose
+	}
+
+	async reload(file?: File) {
+		if (!file) file = await this.clientEntityWatcher.getFile()
+
+		const runningAnims = this._renderContainer?.runningAnimations
+
+		this._renderContainer?.dispose()
+		this._renderContainer = undefined
+		this.loadRenderContainer(file, runningAnims)
 	}
 
 	async loadRenderContainer(file: File, runningAnims = new Set<string>()) {

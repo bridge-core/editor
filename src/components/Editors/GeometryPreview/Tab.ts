@@ -196,7 +196,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			this.model?.animator.play(animId)
 		)
 
-		const serverEntity = this.renderContainer?.serverEntity
+		const serverEntity = this.renderContainer.serverEntity
 		if (serverEntity) {
 			this.boxHelperDisposables.push()
 			this.createOutlineBoxes([
@@ -221,13 +221,6 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected render() {
 		this.winterskyScene.updateFacingRotation(this.camera)
 		super.render()
-	}
-
-	async reload() {
-		if (this.model) this.scene?.remove(this.model.getGroup())
-		this._renderContainer?.dispose()
-		this._renderContainer = undefined
-		await this.onChange()
 	}
 
 	async close() {
