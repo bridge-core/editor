@@ -206,7 +206,7 @@ export class BBModelImporter extends FileImporter {
 				cube.pivot[0] *= -1
 
 				cube.rotation = element.rotation.slice()
-				cube.rotation.forEach(function(br, axis) {
+				cube.rotation.forEach(function(br: any, axis: number) {
 					if (axis !== 2) cube.rotation[axis] *= -1
 				})
 			}
