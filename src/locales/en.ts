@@ -734,6 +734,13 @@ export default {
 			actions: {
 				name: 'Actions',
 			},
+			projects: {
+				name: 'Projects',
+				defaultAuthor: {
+					name: 'Default Author',
+					description: 'The default author for new projects',
+				},
+			},
 			editor: {
 				jsonEditor: {
 					name: 'JSON Editor',

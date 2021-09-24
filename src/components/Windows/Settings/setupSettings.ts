@@ -11,6 +11,7 @@ import { comMojangKey } from '../../FileSystem/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 import { platform } from '/@/utils/os'
+import { TextField } from './Controls/TextField/TextField'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -402,6 +403,17 @@ export async function setupSettings(settings: SettingsWindow) {
 				'windows.settings.editor.dragAndDropTreeNodes.description',
 			key: 'dragAndDropTreeNodes',
 			default: true,
+		})
+	)
+
+	// Projects
+	settings.addControl(
+		new TextField({
+			category: 'projects',
+			name: 'windows.settings.projects.defaultAuthor.name',
+			description: 'windows.settings.projects.defaultAuthor.description',
+			key: 'defaultAuthor',
+			default: '',
 		})
 	)
 

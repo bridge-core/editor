@@ -14,6 +14,7 @@ import { CreateConfig } from './Files/Config'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
+import { settingsState } from '../../Windows/Settings/SettingsState'
 
 export interface ICreateProjectOptions {
 	author: string | string[]
@@ -123,10 +124,13 @@ export class CreateProjectWindow extends BaseWindow {
 	}
 
 	open(isFirstProject = false) {
+		this.createOptions = this.getDefaultOptions()
+
 		this.isFirstProject = isFirstProject
 		this.packCreateFiles.forEach(
 			(createFile) => (createFile.isActive = true)
 		)
+
 		super.open()
 	}
 
@@ -185,7 +189,9 @@ export class CreateProjectWindow extends BaseWindow {
 
 	static getDefaultOptions(): ICreateProjectOptions {
 		return {
-			author: '',
+			author:
+				<string | undefined>settingsState?.projects?.defaultAuthor ??
+				'',
 			description: '',
 			icon: null,
 			name: '',

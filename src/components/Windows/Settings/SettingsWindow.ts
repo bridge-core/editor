@@ -59,6 +59,11 @@ export class SettingsWindow extends BaseWindow {
 			locales.translate('windows.settings.developer.name'),
 			'mdi-wrench-outline'
 		)
+		this.addCategory(
+			'projects',
+			locales.translate('windows.settings.projects.name'),
+			'mdi-folder-open-outline'
+		)
 
 		await setupSettings(this)
 		this.sidebar.setDefaultSelected()
