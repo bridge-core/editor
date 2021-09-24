@@ -12,6 +12,8 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { IDisposable } from '/@/types/disposable'
 import { IOutlineBox } from './Data/EntityData'
 import { markRaw } from '@vue/composition-api'
+import { Box3, Sphere, Vector3 } from 'three'
+import { saveOrDownload } from '../../FileSystem/saveOrDownload'
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected winterskyScene = markRaw(
@@ -50,6 +52,14 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			throw new Error(`Preview.renderContainer was not defined yet`)
 		return this._renderContainer
 	}
+
+	get icon() {
+		return 'mdi-cube-outline'
+	}
+	get iconColor() {
+		return 'primary'
+	}
+
 	async onActivate() {
 		await super.onActivate()
 		this._renderContainer?.activate()
@@ -62,6 +72,14 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	registerActions() {
 		this.actions = []
 		this.addAction(
+			new SimpleAction({
+				icon: 'mdi-collage',
+				name: '[Asset Preview]',
+				onTrigger: () => {
+					this.renderAssetPreview()
+				},
+			}),
+
 			new SimpleAction({
 				icon: 'mdi-refresh',
 				name: 'general.reload',
@@ -233,10 +251,159 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		return didClose
 	}
 
-	get icon() {
-		return 'mdi-cube-outline'
+	// From: https://github.com/mrdoob/three.js/issues/6784#issuecomment-315963625
+	positionCamera(scale = 1.5, rotate = true) {
+		if (!this.model) return
+
+		if (rotate) this.model?.getGroup().rotation.set(0, Math.PI, 0)
+		const boundingSphere = new Box3()
+			.setFromObject(this.model?.getGroup())
+			.getBoundingSphere(new Sphere())
+
+		const objectAngularSize = ((this.camera.fov * Math.PI) / 180) * scale
+		const distanceToCamera =
+			boundingSphere.radius / Math.tan(objectAngularSize / 2)
+		const len = Math.sqrt(
+			Math.pow(distanceToCamera, 2) + Math.pow(distanceToCamera, 2)
+		)
+
+		this.camera.position.set(len, len, len)
+		this.controls?.update()
+
+		this.camera.lookAt(boundingSphere.center)
+		this.controls?.target.set(
+			boundingSphere.center.x,
+			boundingSphere.center.y,
+			boundingSphere.center.z
+		)
+
+		this.camera.updateProjectionMatrix()
 	}
-	get iconColor() {
-		return 'primary'
+
+	async renderAssetPreview(scale = 1.5, res = 1, color = 0x121212) {
+		const oldView = {
+			modelRotation: this.model?.getGroup().rotation.clone(),
+			camPosition: this.camera.position.clone(),
+			camRotation: this.camera.rotation.clone(),
+		}
+
+		const canvas = document.createElement('canvas')
+		canvas.width = 1400 * res
+		canvas.height = 650 * res
+		const ctx = canvas.getContext('2d')
+		if (!ctx || !this.model || !this.canvas) return
+
+		ctx.imageSmoothingEnabled = false
+
+		const model = this.model.getGroup()
+		this.positionCamera(scale)
+		const urls = []
+		for (let i = 0; i < 5; i++) {
+			if (i === 1) model.rotateY(Math.PI / 4)
+			if (i !== 0) model.rotateY(Math.PI / 2)
+
+			this.render()
+			urls.push(this.canvas.toDataURL('image/png'))
+		}
+
+		// Bottom
+		const box = new Box3().setFromObject(model)
+		const center = box.getCenter(new Vector3())
+		model.position.setY(center.y)
+		model.rotation.set(0.25 * Math.PI, 1.75 * Math.PI, 0.75 * Math.PI)
+		this.positionCamera(scale, false)
+		this.render()
+		urls.push(this.canvas.toDataURL('image/png'))
+		model.position.setY(0)
+
+		// Top
+		model.rotation.set(0, 1.75 * Math.PI, 1.75 * Math.PI)
+		this.positionCamera(scale, false)
+		this.render()
+		urls.push(this.canvas.toDataURL('image/png'))
+
+		// Reset camera position and rotation
+		this.model?.getGroup().rotation.copy(oldView.modelRotation!)
+		this.camera.position.copy(oldView.camPosition)
+		this.camera.rotation.copy(oldView.camRotation)
+
+		const [
+			entityTexture,
+			/* gm1Logo, */ ...modelRenders
+		] = await Promise.all([
+			this.loadImageFromDisk(this.renderContainer.currentTexturePath),
+			// this.loadImage('gm1.webp'),
+			...urls.map((url) => this.loadImage(url)),
+		])
+
+		ctx.fillStyle = '#' + color.toString(16)
+		ctx.fillRect(0, 0, canvas.width, canvas.height)
+		ctx.drawImage(
+			modelRenders[0],
+			0,
+			100 * res,
+			400 * res,
+			(400 * res) / this.camera.aspect
+		)
+
+		for (let i = 0; i < 3; i++) {
+			ctx.drawImage(
+				modelRenders[i + 1],
+				650 * res,
+				i * 200 * res,
+				200 * res,
+				(200 * res) / this.camera.aspect
+			)
+		}
+		for (let i = 0; i < 3; i++) {
+			ctx.drawImage(
+				modelRenders[i + 4],
+				1050 * res,
+				i * 200 * res,
+				200 * res,
+				(200 * res) / this.camera.aspect
+			)
+		}
+
+		ctx.drawImage(entityTexture, 400 * res, 200 * res, 200 * res, 200 * res)
+		// ctx.drawImage(
+		// 	gm1Logo,
+		// 	canvas.width - 50 * res,
+		// 	canvas.height - 50 * res,
+		// 	50 * res,
+		// 	50 * res
+		// )
+
+		await new Promise<void>((resolve) => {
+			canvas.toBlob(async (blob) => {
+				if (!blob) return
+
+				await saveOrDownload(
+					'previews/test.png',
+					new Uint8Array(await blob.arrayBuffer()),
+					this.parent.project.fileSystem
+				)
+				resolve()
+			})
+		})
+	}
+
+	protected loadImage(imageSrc: string) {
+		return new Promise<HTMLImageElement>(async (resolve, reject) => {
+			const image = new Image()
+			image.addEventListener('load', () => resolve(image))
+
+			image.src = imageSrc
+		})
+	}
+
+	protected async loadImageFromDisk(imageSrc: string) {
+		const fileSystem = this.parent.project.fileSystem
+
+		return await this.loadImage(
+			await fileSystem.loadFileHandleAsDataUrl(
+				await fileSystem.getFileHandle(imageSrc)
+			)
+		)
 	}
 }
