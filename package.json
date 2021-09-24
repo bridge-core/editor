@@ -13,7 +13,6 @@
 		"@mdi/font": "^5.8.55",
 		"@vue/composition-api": "^1.0.5",
 		"bridge-model-viewer": "^0.6.3",
-		"buffer": "^6.0.3",
 		"color-convert": "^2.0.1",
 		"comlink": "^4.3.0",
 		"compare-versions": "^3.6.0",
