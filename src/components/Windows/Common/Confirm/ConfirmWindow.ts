@@ -28,7 +28,7 @@ export class ConfirmationWindow extends BaseWindow<boolean> {
 		return this.opts.description
 	}
 	get title() {
-		return this.opts.title ?? 'general.confirmation'
+		return this.opts.title ?? 'general.confirm'
 	}
 
 	onConfirm() {
