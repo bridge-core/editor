@@ -194,7 +194,8 @@ export abstract class Project {
 	async getFileTabWithPath(filePath: string) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.get(
-				(tab) => tab.getProjectPath() === filePath
+				(tab) =>
+					tab instanceof FileTab && tab.getProjectPath() === filePath
 			)
 			if (tab !== undefined) return tab
 		}
