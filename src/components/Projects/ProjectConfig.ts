@@ -204,7 +204,10 @@ export class ProjectConfig {
 
 		// Support reading from old "author" field
 		if (this.data.author && !this.data.authors) {
-			this.data.authors = [this.data.author]
+			this.data.authors =
+				typeof this.data.author === 'string'
+					? [this.data.author]
+					: this.data.author
 			this.data.author = undefined
 			updatedConfig = true
 		}
