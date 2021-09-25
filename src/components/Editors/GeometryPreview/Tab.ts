@@ -303,8 +303,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			if (i === 1) model.rotateY(Math.PI / 4)
 			if (i !== 0) model.rotateY(Math.PI / 2)
 
-			// @ts-ignore
-			modelViewer.render(false)
+			modelViewer.requestRendering(true)
 			urls.push(modelCanvas.toDataURL('image/png'))
 		}
 
@@ -314,16 +313,14 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		model.position.setY(center.y)
 		model.rotation.set(0.25 * Math.PI, 1.75 * Math.PI, 0.75 * Math.PI)
 		modelViewer.positionCamera(scale, false)
-		// @ts-ignore
-		modelViewer.render(false)
+		modelViewer.requestRendering(true)
 		urls.push(modelCanvas.toDataURL('image/png'))
 		model.position.setY(0)
 
 		// Top
 		model.rotation.set(0, 1.75 * Math.PI, 1.75 * Math.PI)
 		modelViewer.positionCamera(scale, false)
-		// @ts-ignore
-		modelViewer.render(false)
+		modelViewer.requestRendering(true)
 		urls.push(modelCanvas.toDataURL('image/png'))
 
 		const [
@@ -358,12 +355,38 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			)
 		}
 
+		console.log(entityTexture.width, entityTexture.height)
+
+		// Render texture correctly even if it's not square
+		const xOffset =
+			(entityTexture.width > entityTexture.height
+				? 0
+				: (entityTexture.height - entityTexture.width) /
+				  entityTexture.width /
+				  2) * 200
+		const yOffset =
+			(entityTexture.height > entityTexture.width
+				? 0
+				: (entityTexture.width - entityTexture.height) /
+				  entityTexture.height /
+				  2) * 200
+		const xSize =
+			entityTexture.width > entityTexture.height
+				? 200
+				: (entityTexture.width / entityTexture.height) * 200
+		const ySize =
+			entityTexture.height > entityTexture.width
+				? 200
+				: (entityTexture.height / entityTexture.width) * 200
+
+		console.log(xOffset, yOffset, xSize, ySize)
+
 		resultCtx.drawImage(
 			entityTexture,
-			400 * res,
-			200 * res,
-			200 * res,
-			200 * res
+			(400 + xOffset) * res,
+			(200 + yOffset) * res,
+			xSize * res,
+			ySize * res
 		)
 		// ctx.drawImage(
 		// 	gm1Logo,
