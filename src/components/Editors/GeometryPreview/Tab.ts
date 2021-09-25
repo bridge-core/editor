@@ -36,6 +36,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			})
 		)
 	)
+	protected model?: Model
 	protected _renderContainer?: RenderDataContainer
 	protected boxHelperDisposables: IDisposable[] = []
 
@@ -196,6 +197,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			)
 		)
 		await this.model.create()
+		console.log(this.model)
 
 		this.scene.add(this.model.getGroup())
 		this.model.animator.setupWintersky(this.winterskyScene)
@@ -238,9 +240,14 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		)
 	}
 
-	protected render() {
+	protected render(checkShouldTick = true) {
 		this.winterskyScene.updateFacingRotation(this.camera)
 		super.render()
+
+		if (checkShouldTick && this.model && this.model.shouldTick) {
+			this.model.tick()
+			if (this.isActive) this.requestRendering()
+		}
 	}
 
 	async close() {

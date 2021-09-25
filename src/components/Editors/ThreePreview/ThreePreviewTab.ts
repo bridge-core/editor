@@ -18,7 +18,7 @@ export abstract class ThreePreviewTab extends PreviewTab {
 	public readonly setupComplete = new Signal<void>()
 
 	protected disposables: IDisposable[] = []
-	protected model?: Model
+
 	protected canvas?: HTMLCanvasElement
 	protected renderer?: WebGLRenderer
 	protected _camera?: PerspectiveCamera
@@ -105,19 +105,14 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		super.onDeactivate()
 	}
 
-	protected render(checkShouldTick = true) {
+	protected render() {
 		this.controls?.update()
 		this.renderer?.render(this.scene, this.camera)
 		this.renderingRequested = false
-
-		if (checkShouldTick && this.model && this.model.shouldTick) {
-			this.model.tick()
-			if (this.isActive) this.requestRendering()
-		}
 	}
 
 	requestRendering(immediate = false) {
-		if (immediate) return this.render(false)
+		if (immediate) return this.render()
 
 		if (this.renderingRequested) return
 
