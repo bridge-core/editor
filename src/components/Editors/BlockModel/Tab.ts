@@ -106,6 +106,7 @@ export class BlockModelTab extends GeometryPreviewTab {
 			'identifier',
 			blockCacheData.geometryIdentifier ?? []
 		)
+		if (connectedGeometries.length === 0) return
 
 		this._renderContainer = markRaw(
 			new RenderDataContainer(app, {
