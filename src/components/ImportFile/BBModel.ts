@@ -6,6 +6,38 @@ import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/Confirm
 import { join } from '/@/utils/path'
 import json5 from 'json5'
 
+type Vector3D = [number, number, number]
+type Vector2D = [number, number]
+interface IBone {
+	name: string
+	parent?: string
+	mirror?: boolean
+	binding?: unknown
+	reset?: boolean
+	material?: unknown
+	rotation?: Vector3D
+	pivot: Vector3D
+	cubes?: ICube[]
+	locators?: {
+		[key: string]: ILocator
+	}
+}
+
+interface ICube {
+	origin?: Vector3D
+	size: Vector3D
+	rotation?: Vector3D
+	inflate?: Vector3D
+	pivot?: Vector3D
+	uv: Vector2D | any
+	mirror?: boolean
+}
+
+interface ILocator {
+	offset: Vector3D
+	rotation?: Vector3D
+}
+
 export class BBModelImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
 		super(['.bbmodel'], fileDropper)
@@ -84,36 +116,34 @@ export class BBModelImporter extends FileImporter {
 	}
 
 	// From: https://github.com/JannisX11/blockbench/blob/1701f764641376414d29100c4f6c7cd74997fad8/js/io/formats/bedrock.js#L652
+	// Full copyright by JannisX11
 	async exportModel(app: App, data: any) {
-		let entitymodel = {} as any
-		let main_tag = {
+		const entityModel = {} as any
+		const entityFile = {
 			format_version: '1.12.0',
-			'minecraft:geometry': [entitymodel],
+			'minecraft:geometry': [entityModel],
 		}
-		entitymodel.description = {
+		entityModel.description = {
 			identifier: 'geometry.' + (data.geometry_name || 'unknown'),
 			texture_width: data.resolution.width || 16,
 			texture_height: data.resolution.height || 16,
 		}
-		let bones: any[] = []
 
-		let groups = this.getAllGroups(data)
-		groups.forEach((group) => {
-			let bone = this.compileGroup(data, group)
-			bones.push(bone)
-		})
+		const cubes = this.extractCubes(data.elements, data.meta.box_uv)
+		const locators = this.extractLocators(data.elements)
+		const bones = this.createBones(data, cubes, locators)
 
-		if (bones.length) {
+		if (bones.size > 0) {
 			let visible_box = this.calculateVisibleBox(data)
-			entitymodel.description.visible_bounds_width = visible_box[0] || 0
-			entitymodel.description.visible_bounds_height = visible_box[1] || 0
-			entitymodel.description.visible_bounds_offset = [
+			entityModel.description.visible_bounds_width = visible_box[0] || 0
+			entityModel.description.visible_bounds_height = visible_box[1] || 0
+			entityModel.description.visible_bounds_offset = [
 				0,
 				visible_box[2] || 0,
 				0,
 			]
 
-			entitymodel.bones = bones
+			entityModel.bones = [...bones.values()]
 		}
 
 		const filePath = join('RP', 'models', 'entity', data.name + '.json')
@@ -134,169 +164,227 @@ export class BBModelImporter extends FileImporter {
 			true
 		)
 
-		await app.project.fileSystem.writeJSON(filePath, main_tag, true)
+		await app.project.fileSystem.writeJSON(filePath, entityFile, true)
 		App.eventSystem.dispatch('fileAdded', undefined)
 
 		await app.project.updateFile(filePath)
 		await app.project.openFile(destHandle, { isTemporary: false })
 	}
 
-	//From: https://github.com/JannisX11/blockbench/blob/1701f764641376414d29100c4f6c7cd74997fad8/js/outliner/group.js#L492
-	getAllGroups(data: any) {
-		let groups: any[] = []
+	/**
+	 * Extract cubes from bbmodel format (elements array)
+	 *
+	 * @param elements bbmodel elements
+	 * @returns Cube map
+	 */
+	extractCubes(elements: any[], hasBoxUV = true) {
+		const cubes = new Map<string, ICube>()
 
-		function iterate(array: any[], parent: undefined) {
-			for (let obj of array) {
-				if (obj instanceof Object) {
-					obj.parent = parent
-					groups.push(obj)
-					iterate(obj.children, obj.name)
+		elements.forEach((element: any) => {
+			if (element.type === 'locator') return
+
+			const isRotatedCube =
+				element.rotation &&
+				element.rotation.every((r: number) => r !== 0)
+
+			const cube: ICube = {
+				origin: element.from ? <Vector3D>[...element.from] : undefined,
+				size: element.to.map(
+					(v: number, i: number) => v - element.from[i]
+				),
+				rotation: isRotatedCube
+					? element.rotation.map((rot: number, i: number) =>
+							i === 2 ? rot : -rot
+					  )
+					: undefined,
+				pivot: isRotatedCube
+					? [
+							element.origin[0] * -1,
+							element.origin[1],
+							element.origin[2],
+					  ]
+					: undefined,
+				inflate: element.inflate,
+				uv: element.uv,
+			}
+
+			if (cube.origin) cube.origin[0] = -(cube.origin[0] + cube.size[0])
+
+			if (hasBoxUV) {
+				cube.uv = element.uv_offset
+				if (element.mirror_uv) {
+					cube.mirror = element.mirror_uv
 				}
-			}
-		}
+			} else {
+				cube.uv = {}
 
-		iterate(data.outliner, undefined)
-		return groups
-	}
-
-	//From: https://github.com/JannisX11/blockbench/blob/1701f764641376414d29100c4f6c7cd74997fad8/js/io/formats/bedrock.js#L571
-	compileGroup(data: any, group: any) {
-		let bone = {} as any
-		bone.name = group.name
-		bone.parent = group.parent
-		bone.pivot = group.origin.slice()
-		bone.pivot[0] *= -1
-		if (group.rotation) {
-			if (
-				group.rotation[0] !== 0 ||
-				group.rotation[1] !== 0 ||
-				group.rotation[2] !== 0
-			) {
-				bone.rotation = group.rotation.slice()
-				bone.rotation[0] *= -1
-				bone.rotation[1] *= -1
-			}
-		}
-		if (group.bedrock_binding) {
-			bone.binding = group.bedrock_binding
-		}
-		if (group.reset) {
-			bone.reset = true
-		}
-		if (group.mirror_uv && data.meta.box_uv) {
-			bone.mirror = true
-		}
-		if (group.material) {
-			bone.material = group.material
-		}
-
-		let cubes = []
-		let locators: any = {}
-
-		for (let child of group.children) {
-			if (!(child instanceof Object)) {
-				let element = data.elements.find(
-					(element: { uuid: string }) => element.uuid === child
-				)
-				if (element.type !== 'locator') {
-					let cube = this.compileCube(data, element, bone)
-					cubes.push(cube)
-				} else if (element.type === 'locator') {
-					let key = element.name
-					let offset = element.from.slice()
-					offset[0] *= -1
-
-					if (
-						element.rotation[0] !== 0 ||
-						element.rotation[1] !== 0 ||
-						element.rotation[2] !== 0
-					) {
-						locators[key] = {
-							offset,
-							rotation: [
-								-element.rotation[0],
-								-element.rotation[0],
-								element.rotation[0],
+				for (const [faceName, face] of Object.entries<any>(
+					element.faces
+				)) {
+					if (face.texture !== null) {
+						cube.uv[faceName] = {
+							uv: [face.uv[0], face.uv[1]],
+							uv_size: [
+								face.uv[2] - face.uv[0],
+								face.uv[3] - face.uv[1],
 							],
 						}
-					} else {
-						locators[key] = offset
+
+						if (face.material_name) {
+							cube.uv[faceName].material_instance =
+								face.material_name
+						}
+
+						if (faceName === 'up' || faceName === 'down') {
+							cube.uv[faceName].uv[0] +=
+								cube.uv[faceName].uv_size[0]
+							cube.uv[faceName].uv[1] +=
+								cube.uv[faceName].uv_size[1]
+							cube.uv[faceName].uv_size[0] *= -1
+							cube.uv[faceName].uv_size[1] *= -1
+						}
 					}
 				}
 			}
-		}
 
-		if (cubes.length) {
-			bone.cubes = cubes
-		}
-		if (Object.keys(locators).length) {
-			bone.locators = locators
-		}
-		return bone
+			cubes.set(element.uuid, cube)
+		})
+
+		return cubes
 	}
 
-	//From: https://github.com/JannisX11/blockbench/blob/1701f764641376414d29100c4f6c7cd74997fad8/js/io/formats/bedrock.js#L516
-	compileCube(data: any, element: any, bone: any) {
-		let cube = {
-			origin: element.from ? element.from.slice() : undefined,
-			size: [
-				element.to[0] - element.from[0],
-				element.to[1] - element.from[1],
-				element.to[2] - element.from[2],
-			],
-			inflate: element.inflate || undefined,
-		} as any
-		cube.origin[0] = -(cube.origin[0] + cube.size[0])
+	/**
+	 * Extract all locators from bbmodel format (elements array)
+	 *
+	 * @param elements bbmodel elements (locators or cubes)
+	 * @returns Locator map
+	 */
+	extractLocators(elements: any[]) {
+		const locators = new Map<string, ILocator>()
 
-		if (element.rotation) {
+		elements.forEach((element: any) => {
+			if (element.type !== 'locator') return
+
+			const locator: ILocator = {
+				offset: <Vector3D>[...element.from],
+			}
+			locator.offset[0] *= -1
+
 			if (
 				element.rotation[0] !== 0 ||
 				element.rotation[1] !== 0 ||
 				element.rotation[2] !== 0
 			) {
-				cube.pivot = element.origin.slice()
-				cube.pivot[0] *= -1
+				locator.rotation = [
+					-element.rotation[0],
+					-element.rotation[0],
+					element.rotation[0],
+				]
+			}
 
-				cube.rotation = element.rotation.slice()
-				cube.rotation.forEach(function (br: any, axis: number) {
-					if (axis !== 2) cube.rotation[axis] *= -1
-				})
-			}
-		}
+			locators.set(element.name, locator)
+		})
 
-		if (data.meta.box_uv) {
-			cube.uv = element.uv_offset
-			if (element.mirror_uv === !bone.mirror) {
-				cube.mirror = element.mirror_uv
-			}
-		} else {
-			cube.uv = {}
-			for (let key in element.faces) {
-				let face = element.faces[key]
-				if (face.texture !== null) {
-					cube.uv[key] = {
-						uv: [face.uv[0], face.uv[1]],
-						uv_size: [
-							face.uv[2] - face.uv[0],
-							face.uv[3] - face.uv[1],
-						],
-					}
-					if (face.material_name) {
-						cube.uv[key].material_instance = face.material_name
-					}
-					if (key === 'up' || key === 'down') {
-						cube.uv[key].uv[0] += cube.uv[key].uv_size[0]
-						cube.uv[key].uv[1] += cube.uv[key].uv_size[1]
-						cube.uv[key].uv_size[0] *= -1
-						cube.uv[key].uv_size[1] *= -1
-					}
-				}
-			}
-		}
-		return cube
+		return locators
 	}
 
-	//From: https://github.com/JannisX11/blockbench/blob/1701f764641376414d29100c4f6c7cd74997fad8/js/io/formats/bedrock.js#L276
+	/**
+	 * Create all bones of the model
+	 *
+	 * @param data bbmodel file data
+	 * @returns Bone map
+	 */
+	createBones(
+		data: any,
+		cubes: Map<string, ICube>,
+		locators: Map<string, ILocator>
+	) {
+		const bones = new Map<string, IBone>()
+
+		if (Array.isArray(data.outliner))
+			data.outliner.forEach((outlinerElement: any) =>
+				this.parseOutlinerElement(
+					outlinerElement,
+					bones,
+					cubes,
+					locators
+				)
+			)
+
+		return bones
+	}
+
+	/**
+	 * An outliner element is Blockbench's equivalent to a bone
+	 *
+	 * @param element Outliner element
+	 * @param bones Bone map
+	 * @param parent Parent bone
+	 */
+	parseOutlinerElement(
+		outlinerElement: any,
+		bones: Map<string, IBone>,
+		cubes: Map<string, ICube>,
+		locators: Map<string, ILocator>,
+		parent?: IBone
+	) {
+		const bone: IBone = {
+			name: outlinerElement.name,
+			parent: parent?.name,
+			pivot: [
+				outlinerElement.origin[0] * -1,
+				outlinerElement.origin[1],
+				outlinerElement.origin[2],
+			],
+			rotation: outlinerElement.rotation
+				? [
+						outlinerElement.rotation[0] * -1,
+						outlinerElement.rotation[1] * -1,
+						outlinerElement.rotation[2],
+				  ]
+				: undefined,
+			binding: outlinerElement.bedrock_binding,
+			mirror: outlinerElement.mirror_uv,
+			material: outlinerElement.material,
+			reset: outlinerElement.reset,
+			cubes: outlinerElement.children
+				.filter((child: any) => typeof child === 'string')
+				.map((child: string) => cubes.get(child))
+				.filter((child: ICube | undefined) => child !== undefined),
+			locators: Object.fromEntries(
+				outlinerElement.children
+					.filter(
+						(locatorName: any) => typeof locatorName === 'string'
+					)
+					.map((locatorName: string) => [
+						locatorName,
+						locators.get(locatorName),
+					])
+					.filter(
+						([locatorName, locator]: [
+							string,
+							ILocator | undefined
+						]) => locator !== undefined
+					)
+			),
+		}
+
+		if (bone.cubes!.length === 0) bone.cubes = undefined
+		if (Object.keys(bone.locators!).length === 0) bone.locators = undefined
+
+		bones.set(outlinerElement.name, bone)
+
+		if (Array.isArray(outlinerElement.children)) {
+			for (let child of outlinerElement.children) {
+				if (!(child instanceof Object)) continue
+
+				this.parseOutlinerElement(child, bones, cubes, locators, bone)
+			}
+		}
+	}
+
+	// From: https://github.com/JannisX11/blockbench/blob/1701f764641376414d29100c4f6c7cd74997fad8/js/io/formats/bedrock.js#L276
+	// Full copyright by JannisX11
 	calculateVisibleBox(data: any) {
 		let visible_box = {
 			max: {
