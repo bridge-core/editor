@@ -115,36 +115,27 @@ export class BBModelImporter extends FileImporter {
 		}
 	}
 
-	// From: https://github.com/JannisX11/blockbench/blob/1701f764641376414d29100c4f6c7cd74997fad8/js/io/formats/bedrock.js#L652
-	// Full copyright by JannisX11
 	async exportModel(app: App, data: any) {
-		const entityModel = {} as any
+		const entityModel = <any>{
+			description: {
+				identifier: 'geometry.' + (data.geometry_name || 'unknown'),
+				texture_width: data.resolution.width || 16,
+				texture_height: data.resolution.height || 16,
+				visible_bounds_width: data.visible_box?.[0] ?? 0,
+				visible_bounds_height: data.visible_box?.[1] ?? 0,
+				visible_bounds_offset: [0, data.visible_box?.[2] ?? 0, 0],
+			},
+		}
 		const entityFile = {
 			format_version: '1.12.0',
 			'minecraft:geometry': [entityModel],
-		}
-		entityModel.description = {
-			identifier: 'geometry.' + (data.geometry_name || 'unknown'),
-			texture_width: data.resolution.width || 16,
-			texture_height: data.resolution.height || 16,
 		}
 
 		const cubes = this.extractCubes(data.elements, data.meta.box_uv)
 		const locators = this.extractLocators(data.elements)
 		const bones = this.createBones(data, cubes, locators)
 
-		if (bones.size > 0) {
-			let visible_box = this.calculateVisibleBox(data)
-			entityModel.description.visible_bounds_width = visible_box[0] || 0
-			entityModel.description.visible_bounds_height = visible_box[1] || 0
-			entityModel.description.visible_bounds_offset = [
-				0,
-				visible_box[2] || 0,
-				0,
-			]
-
-			entityModel.bones = [...bones.values()]
-		}
+		if (bones.size > 0) entityModel.bones = [...bones.values()]
 
 		const filePath = join('RP', 'models', 'entity', data.name + '.json')
 
@@ -381,90 +372,5 @@ export class BBModelImporter extends FileImporter {
 				this.parseOutlinerElement(child, bones, cubes, locators, bone)
 			}
 		}
-	}
-
-	// From: https://github.com/JannisX11/blockbench/blob/1701f764641376414d29100c4f6c7cd74997fad8/js/io/formats/bedrock.js#L276
-	// Full copyright by JannisX11
-	calculateVisibleBox(data: any) {
-		let visible_box = {
-			max: {
-				x: 0,
-				y: 0,
-				z: 0,
-			},
-			min: {
-				x: 0,
-				y: 0,
-				z: 0,
-			},
-		}
-
-		const elements: any[] = data.elements
-		elements.forEach((element) => {
-			if (!element.to || !element.from) return
-
-			visible_box.max.x = Math.max(
-				visible_box.max.x,
-				element.from[0],
-				element.to[0]
-			)
-			visible_box.min.x = Math.min(
-				visible_box.min.x,
-				element.from[0],
-				element.to[0]
-			)
-
-			visible_box.max.y = Math.max(
-				visible_box.max.y,
-				element.from[1],
-				element.to[1]
-			)
-			visible_box.min.y = Math.min(
-				visible_box.min.y,
-				element.from[1],
-				element.to[1]
-			)
-
-			visible_box.max.z = Math.max(
-				visible_box.max.z,
-				element.from[2],
-				element.to[2]
-			)
-			visible_box.min.z = Math.min(
-				visible_box.min.z,
-				element.from[2],
-				element.to[2]
-			)
-		})
-
-		visible_box.max.x += 8
-		visible_box.min.x += 8
-		visible_box.max.y += 8
-		visible_box.min.y += 8
-		visible_box.max.z += 8
-		visible_box.min.z += 8
-
-		//Width
-		let radius = Math.max(
-			visible_box.max.x,
-			visible_box.max.z,
-			-visible_box.min.x,
-			-visible_box.min.z
-		)
-		if (Math.abs(radius) === Infinity) {
-			radius = 0
-		}
-		let width = Math.ceil((radius * 2) / 16)
-		width = Math.max(width, data.visible_box[0])
-
-		//Height
-		let y_min = Math.floor(visible_box.min.y / 16)
-		let y_max = Math.ceil(visible_box.max.y / 16)
-		if (y_min === Infinity) y_min = 0
-		if (y_max === Infinity) y_max = 0
-		y_min = Math.min(y_min, data.visible_box[2] - data.visible_box[1] / 2)
-		y_max = Math.max(y_max, data.visible_box[2] + data.visible_box[1] / 2)
-
-		return [width, y_max - y_min, (y_max + y_min) / 2]
 	}
 }
