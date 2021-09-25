@@ -29,7 +29,7 @@ interface ICube {
 	rotation?: Vector3D
 	inflate?: Vector3D
 	pivot?: Vector3D
-	uv: Vector2D | any
+	uv?: Vector2D | any
 	mirror?: boolean
 }
 
@@ -175,7 +175,7 @@ export class BBModelImporter extends FileImporter {
 			if (element.type === 'locator') return
 
 			const isRotatedCube =
-				element.rotation &&
+				Array.isArray(element.rotation) &&
 				element.rotation.every((r: number) => r !== 0)
 
 			const cube: ICube = {
@@ -196,7 +196,6 @@ export class BBModelImporter extends FileImporter {
 					  ]
 					: undefined,
 				inflate: element.inflate,
-				uv: element.uv,
 			}
 
 			if (cube.origin) cube.origin[0] = -(cube.origin[0] + cube.size[0])
