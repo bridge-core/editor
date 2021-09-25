@@ -197,7 +197,6 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			)
 		)
 		await this.model.create()
-		console.log(this.model)
 
 		this.scene.add(this.model.getGroup())
 		this.model.animator.setupWintersky(this.winterskyScene)
