@@ -6,6 +6,7 @@ import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { App } from '/@/App'
 import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
+import { basename } from '/@/utils/path'
 
 export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
@@ -68,7 +69,10 @@ export async function importFromBrproject(
 	}
 
 	// Get the new project path
-	const importProject = importFrom.replace('import/', '')
+	const importProject =
+		importFrom === 'import'
+			? `projects/${basename(fileHandle.name)}`
+			: importFrom.replace('import/', '')
 	// Move imported project to the user's project directory
 	await fs.move(importFrom, importProject)
 
