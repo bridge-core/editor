@@ -13,7 +13,7 @@ import { IDisposable } from '/@/types/disposable'
 import { IOutlineBox } from './Data/EntityData'
 import { markRaw } from '@vue/composition-api'
 import { Box3, Vector3, Color } from 'three'
-import { saveOrDownload } from '../../FileSystem/saveOrDownload'
+import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
 import { StandaloneModelViewer } from 'bridge-model-viewer/lib/main'
 import { wait } from '/@/utils/wait'
 
@@ -377,6 +377,8 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 				resolve()
 			})
 		})
+
+		modelViewer.dispose()
 	}
 
 	protected loadImage(imageSrc: string) {
