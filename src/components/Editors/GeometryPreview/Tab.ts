@@ -259,12 +259,14 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		return didClose
 	}
 
-	async renderAssetPreview(scale = 1.5, res = 4, color = 0x121212) {
+	async renderAssetPreview(scale = 1.6, res = 4, color = 0x121212) {
+		if (!this._renderContainer) return
+
 		const fileSystem = this.parent.project.fileSystem
 
 		const modelCanvas = document.createElement('canvas')
-		modelCanvas.width = 500
-		modelCanvas.height = 500
+		modelCanvas.width = 500 * res
+		modelCanvas.height = 500 * res
 		const modelViewer = new StandaloneModelViewer(
 			modelCanvas,
 			this.renderContainer.modelData,
@@ -275,8 +277,8 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			),
 			{
 				antialias: true,
-				height: 500,
-				width: 500,
+				height: 500 * res,
+				width: 500 * res,
 			}
 		)
 		await modelViewer.loadedModel
@@ -324,11 +326,12 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		urls.push(modelCanvas.toDataURL('image/png'))
 
 		const [
-			entityTexture,
-			/* gm1Logo, */ ...modelRenders
+			entityTexture /*, gm1Logo*/,
+
+			...modelRenders
 		] = await Promise.all([
 			this.loadImageFromDisk(this.renderContainer.currentTexturePath),
-			// this.loadImage('gm1.webp'),
+			/*this.loadImageFromDisk('authors.webp'),*/
 			...urls.map((url) => this.loadImage(url)),
 		])
 
@@ -388,20 +391,36 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			xSize * res,
 			ySize * res
 		)
-		// ctx.drawImage(
+
+		// Prepare for writing text
+		resultCtx.fillStyle = '#ffffff'
+
+		// Authors
+		// resultCtx.drawImage(
 		// 	gm1Logo,
-		// 	canvas.width - 50 * res,
-		// 	canvas.height - 50 * res,
+		// 	resultCanvas.width - 50 * res,
+		// 	resultCanvas.height - 50 * res,
 		// 	50 * res,
 		// 	50 * res
 		// )
+
+		// Asset preview title
+		resultCtx.font = 30 * res + 'px Arial'
+		resultCtx.fillText(
+			this.tab.getFileHandle().name.split('.').shift()!,
+			20 * res,
+			50 * res
+		)
 
 		await new Promise<void>((resolve) => {
 			resultCanvas.toBlob(async (blob) => {
 				if (!blob) return
 
 				await saveOrDownload(
-					'previews/test.png',
+					`previews/${this.tab
+						.getFileHandle()
+						.name.split('.')
+						.shift()!}.png`,
 					new Uint8Array(await blob.arrayBuffer()),
 					this.parent.project.fileSystem
 				)
