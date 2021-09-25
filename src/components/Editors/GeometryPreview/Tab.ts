@@ -259,7 +259,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		return didClose
 	}
 
-	async renderAssetPreview(scale = 1.6, res = 4, color = 0x121212) {
+	async renderAssetPreview(scale = 1.5, res = 4, color = 0x121212) {
 		if (!this._renderContainer) return
 
 		const fileSystem = this.parent.project.fileSystem

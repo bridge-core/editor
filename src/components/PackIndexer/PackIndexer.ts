@@ -7,6 +7,7 @@ import { FileType } from '/@/components/Data/FileType'
 import PackIndexerWorker from './Worker/Main?worker'
 import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
+import type { Project } from '/@/components/Projects/Project/Project'
 
 export class PackIndexer extends WorkerManager<
 	typeof PackIndexerService,
@@ -16,7 +17,7 @@ export class PackIndexer extends WorkerManager<
 > {
 	protected ready = new Signal<void>()
 	constructor(
-		protected app: App,
+		protected project: Project,
 		protected baseDirectory: AnyDirectoryHandle
 	) {
 		super({
@@ -37,10 +38,14 @@ export class PackIndexer extends WorkerManager<
 	protected async start(forceRefreshCache: boolean) {
 		console.time('[TASK] Indexing Packs (Total)')
 
+		if (forceRefreshCache) {
+			this.project.fileSystem.unlink('.bridge/.lightningCache')
+		}
+
 		// Instaniate the worker TaskService
 		this._service = await new this.workerClass!(
 			this.baseDirectory,
-			this.app.fileSystem.baseDirectory,
+			this.project.app.fileSystem.baseDirectory,
 			{
 				disablePackSpider: !(
 					settingsState?.general?.enablePackSpider ?? false
