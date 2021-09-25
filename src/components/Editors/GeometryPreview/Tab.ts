@@ -195,6 +195,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 				)
 			)
 		)
+		await this.model.create()
 
 		this.scene.add(this.model.getGroup())
 		this.model.animator.setupWintersky(this.winterskyScene)
@@ -272,6 +273,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 				width: 500,
 			}
 		)
+		await modelViewer.loadedModel
 
 		// @ts-ignore
 		modelViewer.scene.background = new Color(color)
