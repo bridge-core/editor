@@ -71,7 +71,7 @@ export async function importFromBrproject(
 	// Get the new project path
 	const importProject =
 		importFrom === 'import'
-			? `projects/${basename(fileHandle.name)}`
+			? `projects/${basename(fileHandle.name, '.brproject')}`
 			: importFrom.replace('import/', '')
 	// Move imported project to the user's project directory
 	await fs.move(importFrom, importProject)
