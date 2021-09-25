@@ -38,6 +38,7 @@ export class BBModelImporter extends FileImporter {
 					extension = 'png'
 					break
 				case 'image/jpeg':
+				case 'image/jpg':
 					extension = 'jpg'
 					break
 				case 'image/tga':
