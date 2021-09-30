@@ -1,65 +1,16 @@
-<h1>v2.1.3</h1>
-<p>This minor update ships with important bug fixes and a few major new features.</p>
+<h1>v2.1.4</h1>
 <h2>Features:</h2>
-<h3>Register BP as RP dependency</h3>
-<p>It is now possible to register the BP as a RP dependency over bridge.'s UI.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/134773967-bf356684-e120-484b-81ed-e45244f846d4.png" alt="Bildschirmfoto 2021-09-25 um 15 54 17"></p>
-<hr>
-<h3>Optional Merge Argument</h3>
-<p>You can now configure how custom components get merged into the main entity file over a third argument for the <code>create</code> function. Thanks to @Joeyrsp for implementing this new feature.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/134773986-60ec59f1-bb99-47eb-bbbe-8a11304f6efa.png" alt="Bildschirmfoto 2021-09-25 um 15 54 58"></p>
-<hr>
-<h3>Better Compiler Plugin Installation</h3>
-<p>Users now get informed that they need to edit the compiler config for compiler plugins to have an effect. Additionally, installed compiler plugins show the plugin name inside of the extension UI.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/134774029-0e92b4a2-1b51-4344-9e30-eddfa4878670.png" alt="Bildschirmfoto 2021-09-25 um 15 56 34">
-<img src="https://user-images.githubusercontent.com/33347616/134774026-2e2049ea-58c9-4013-be53-5fc3c7e452e4.png" alt="Bildschirmfoto 2021-09-25 um 15 56 11"></p>
-<hr>
-<h3>Default Author Setting</h3>
-<p>You can now configure a default author to be filled in whenever you create a new project.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/134774058-74e1cf2c-92e3-4ea8-b792-9f4b2e93bb9f.png" alt="Bildschirmfoto 2021-09-25 um 15 57 22"></p>
-<hr>
-<h3>Asset Previews (Experimental)</h3>
-<p>You can now generate previews of your models with one click. Simply open the model preview and click on &quot;Asset Preview&quot; inside of the tab action bar. We are still looking to improve this feature by allowing users to configure the rendering process (quality, watermark, title etc.).</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/134774082-6ddbf00c-e325-4175-ba25-ba09c56e228d.png" alt="zombie_pigman"></p>
-<hr>
-<h3>Preset Inputs</h3>
-<p>Preset authors can now allow file inputs to accept multiple files. Thanks to @jasonjgardner for implementing this new capability. Additionally, option inputs can now fetch their available options from the lightning cache.</p>
-<h3>Better External File Support</h3>
-<p>External files are files that do not belong to the current project. They are special because they shouldn't get compiled upon saving and we do not even know the full file path of them. We only have the file name and file content to determine the file type of such a file. With the new file type guessing capability in v2.1 (based on the available data), we were able to improve the experience while editing external files considerably already. With v2.1.3, external files also properly support dynamic auto-completions &amp; dynamic file validations.</p>
-<h3>.bbmodel Imports</h3>
-<p>bridge. can now import textures and models from .bbmodel files. We are going to look into support for animations in the future. Thanks to @pascal541 for the implementation!</p>
+<ul>
+<li>bridge. now uses the official gametest types</li>
+</ul>
 <h2>Changes:</h2>
 <ul>
-<li>Made disabled buttons an app drag region</li>
-<li>It is now possible to import .mcaddon files over the &quot;Import Project&quot; actions</li>
-<li>Exposed ThreePreviewTab to extensions</li>
-<li>New &quot;@bridge/three&quot; module</li>
-<li>Significantly improved performance of &quot;New File&quot; window</li>
-<li>Significantly improved performance of model previews</li>
-<li>Updated TypeScript</li>
-<li>Updated ViteJS</li>
-<li>Improved property validation</li>
-<li>Moved model specific logic to &quot;GeometryPreviewTab&quot;</li>
+<li>Rewrote .bbmodel importer to be a bit more flexible</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed files not opening when block or ore preset is created with 1.16.100+ target version</li>
-<li>Fixed &quot;v1.17.40&quot; min engine version injection</li>
-<li>Fixed error upon saving files</li>
-<li>Fixed experimental gameplay UI displaying wrong data</li>
-<li>Fixed copy, cut &amp; paste within inputs</li>
-<li>Fixed infinite loading window when one preset failed to load</li>
-<li>Fixed tree editor converting <code>true</code>/<code>false</code> to <code>1</code>/<code>0</code></li>
-<li><code>interactions</code> now allows passing an object instead of an array</li>
-<li>Fixed error upon using converted v1 project</li>
-<li>Fixed error upon updating non-JSON file</li>
-<li>Fixed reloading of model previews</li>
-<li>Fixed error upon opening preview tab</li>
-<li>Fixed tab action bar overflow</li>
-<li>Fixed simple .brproject imports</li>
-<li>Fixed error upon instantiating block preview</li>
-<li>Fixed geometry loading from multiple source files</li>
-<li>Fixed &quot;Restart Dev Server&quot; option not working correctly</li>
-<li>Fixed lightning cache not updating correctly</li>
-<li>Correctly render models with wrong texture dimensions within JSON file</li>
+<li>Fixed walkObject throwing error upon encountering &quot;null&quot; values</li>
+<li>Fixed terrain_texture.json texture file auto-completions</li>
+<li>Fixed armor preset</li>
+<li>Fixed &quot;New File&quot; window not opening correctly (Thanks to @JacoFaberSA)</li>
 </ul>
