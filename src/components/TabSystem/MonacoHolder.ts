@@ -65,6 +65,9 @@ export class MonacoHolder extends Signal<void> {
 						'14px'
 					).replace('px', '')
 				),
+				// @ts-expect-error The monaco team did not update the types yet
+				'bracketPairColorization.enabled':
+					settingsState?.editor?.bracketPairColorization ?? false,
 				fontFamily:
 					<string>settingsState?.appearance?.editorFont ??
 					(platform() === 'darwin' ? 'Menlo' : 'Consolas'),

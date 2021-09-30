@@ -746,6 +746,10 @@ export default {
 					name: 'JSON Editor',
 					description: 'Choose how you want to edit JSON files',
 				},
+				bracketPairColorization: {
+					name: 'Bracket Pair Colorization',
+					description: 'Give matching brackets an unique color',
+				},
 				wordWrap: {
 					name: 'Word Wrap',
 					description: 'Wrap words to disable horizontal scrolling',
