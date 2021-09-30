@@ -34,7 +34,3 @@ export function packBits(bits: Uint8Array, bitsPerNumber: number) {
 export function unpackStruct(bytes: Uint8Array) {
 	return bytes.length < 4 ? 0 : new DataView(bytes.buffer).getUint32(0, true)
 }
-
-const arr = new Uint8Array([0, 1, 2, 3, 4])
-
-console.log(arr, unpackBits(arr), packBits(unpackBits(arr), 4))

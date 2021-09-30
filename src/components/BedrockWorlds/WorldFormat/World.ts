@@ -1,11 +1,13 @@
 import { LevelDB } from '../LevelDB/LevelDB'
 import { EKeyTypeTag } from './EKeyTypeTags'
 import { Chunk } from './Chunk'
+import { toUint8Array } from '../LevelDB/Uint8ArrayUtils/ToUint8Array'
+import { Block } from './Block'
 
 export class World {
 	protected chunks = new Map<Uint8Array, Chunk>()
 
-	constructor(protected levelDb: LevelDB) {
+	constructor(public readonly levelDb: LevelDB) {
 		this.loadWorld()
 		console.log(this.chunks)
 	}
@@ -25,11 +27,23 @@ export class World {
 			])
 
 			if (!this.chunks.has(position))
-				this.chunks.set(
-					position,
-					new Chunk(this.levelDb, x, z, dimension)
-				)
+				this.chunks.set(position, new Chunk(this, x, z, dimension))
 		}
+	}
+
+	getBlockAt(layer: number, x: number, y: number, z: number) {
+		const chunkX = toUint8Array(Math.floor(x / 16))
+		const chunkZ = toUint8Array(Math.floor(z / 16))
+
+		const chunk = this.chunks.get(new Uint8Array([...chunkX, ...chunkZ]))
+
+		return (
+			chunk
+				?.getSubChunk(Math.floor(y / 16))
+				.getLayer(layer)
+				.getBlockAt(x % 16, y % 16, z % 16) ??
+			new Block('minecraft:air')
+		)
 	}
 
 	decodeChunkKey(key: Uint8Array) {

@@ -4,15 +4,14 @@ export enum ELogRecordType {
 
 	Full = 1,
 
-	// For fragments
+	// Data split across multiple records
 	First = 2,
 	Middle = 3,
 	Last = 4,
 
 	// Util
-	Eof = Last + 1,
-	BadRecord = Last + 2,
-	Undefined = Last + 2,
+	InvalidRecord = Last + 1,
+	Undefined = Last + 1,
 }
 
 interface IRecord {

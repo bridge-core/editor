@@ -37,7 +37,7 @@ export class LogReader {
 			while (true) {
 				let record = this.readNextRecord(logFileData)
 
-				if (record.type === ELogRecordType.BadRecord) {
+				if (record.type === ELogRecordType.InvalidRecord) {
 					break
 				} else if (record.type === ELogRecordType.First) {
 					lastRecord = record
@@ -88,7 +88,7 @@ export class LogReader {
 		// Header is checksum (4 bytes), length (2 bytes), type (1 byte).
 		const header = this.consumeBytes(logFileData, this.headerSize)
 		if (header.length !== this.headerSize)
-			return new Record({ type: ELogRecordType.BadRecord })
+			return new Record({ type: ELogRecordType.InvalidRecord })
 
 		const expectedCrc =
 			header[0] + (header[1] << 8) + (header[2] << 16) + (header[3] << 24)
@@ -100,8 +100,7 @@ export class LogReader {
 
 		const data = this.consumeBytes(logFileData, length)
 
-		// uint actualCrc = Crc32C.Compute(type);
-		// actualCrc = Crc32C.Mask(Crc32C.Append(actualCrc, data));
+		// TODO: Calculate CRC
 
 		const record = new Record({
 			checksum: expectedCrc,
@@ -110,9 +109,7 @@ export class LogReader {
 			data,
 		})
 
-		// if (record.type !== ELogRecordType.Zero && expectedCrc != actualCrc) {
-		// 	throw new Error(`Corrupted data. Failed checksum test. Excpeted {expectedCrc}, but calculated actual {actualCrc}`);
-		// }
+		// TODO: Check CRC
 
 		return record
 	}

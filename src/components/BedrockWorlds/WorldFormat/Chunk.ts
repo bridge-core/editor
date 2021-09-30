@@ -1,16 +1,17 @@
-import { LevelDB } from '../LevelDB/LevelDB'
 import { Uint8ArrayReader } from '../LevelDB/Uint8ArrayUtils/Reader'
 import { EDimension } from './EDimension'
 import { EKeyTypeTag } from './EKeyTypeTags'
 import { simplify } from 'prismarine-nbt'
 import { readAllNbt, readNbt } from './readNbt'
 import { unpackStruct } from '../LevelDB/Uint8ArrayUtils/Unpack'
+import { Block, IBlock } from './Block'
+import type { World } from './World'
 
 export class Chunk {
 	protected subChunks: SubChunk[] = []
 
 	constructor(
-		protected levelDb: LevelDB,
+		protected world: World,
 		public readonly x: Uint8Array,
 		public readonly z: Uint8Array,
 		public readonly dimension = new Uint8Array([0, 0, 0, 0])
@@ -37,7 +38,11 @@ export class Chunk {
 	}
 
 	getLevelDb() {
-		return this.levelDb
+		return this.world.levelDb
+	}
+
+	getSubChunk(n: number) {
+		return this.subChunks[n]
 	}
 
 	loadSubChunks() {
@@ -95,9 +100,9 @@ export class Chunk {
 const totalBlockSpaces = 4096 // 16 * 16 * 16
 
 export class SubChunk {
-	protected blockLayers: BlockLayer[] = []
+	public blockLayers: BlockLayer[] = []
 
-	constructor(protected parent: Chunk, public readonly y: number) {
+	constructor(public readonly parent: Chunk, public readonly y: number) {
 		let blockData = this.loadData(EKeyTypeTag.SubChunkPrefix)
 
 		if (blockData) {
@@ -120,11 +125,6 @@ export class SubChunk {
 				)
 			}
 
-			const subChunkBlocks = new Uint32Array(
-				totalBlockSpaces * blocksPerBlockSpace
-			)
-			const blockPalette = new Map<number, any>()
-
 			for (
 				let blockSpaceIndex = 0;
 				blockSpaceIndex < blocksPerBlockSpace;
@@ -139,7 +139,14 @@ export class SubChunk {
 		}
 	}
 
-	loadBlockPalette(data: Uint8Array) {
+	getLayer(index: number) {
+		if (index < 0 || index >= this.blockLayers.length)
+			throw new Error(`Invalid layer index: ${index}`)
+
+		return this.blockLayers[index]
+	}
+
+	protected loadBlockPalette(data: Uint8Array) {
 		const bitsPerBlock = data[0] >>> 1
 		data = data.slice(1)
 
@@ -217,5 +224,14 @@ export class SubChunk {
 }
 
 export class BlockLayer {
-	constructor(protected blocks: Uint16Array, protected pallete: any[]) {}
+	constructor(protected blocks: Uint16Array, protected pallete: any[]) {
+		console.log(pallete)
+	}
+
+	getBlockAt(x: number, y: number, z: number): IBlock {
+		const numericId = this.blocks[x + y * 16 + z * 256]
+		const block = this.pallete[numericId]
+
+		return block ?? new Block('minecraft:air')
+	}
 }

@@ -17,8 +17,6 @@ enum ELogTagType {
 	CompactPointer = 5,
 	DeletedFile = 6,
 	NewFile = 7,
-
-	// 8 was used for large value refs
 	PrevLogNumber = 9,
 }
 
