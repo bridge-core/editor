@@ -144,15 +144,6 @@ export class MonacoHolder extends Signal<void> {
 					}, 50)
 				}
 			}
-
-			// Monaco currently doesn't include " as a trigger character. This snippet works artificially makes it so
-			if (event.changes.some((change) => change.text === '""')) {
-				this._monacoEditor?.trigger(
-					'auto',
-					'editor.action.triggerSuggest',
-					{}
-				)
-			}
 		})
 
 		this._monacoEditor?.layout()
