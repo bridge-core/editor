@@ -62,7 +62,7 @@ export interface IPermissions {
 export class CreatePresetWindow extends BaseWindow {
 	protected loadPresetPaths = new Map<string, string>()
 	protected sidebar = new Sidebar([])
-	protected shouldReloadPresets = false
+	protected shouldReloadPresets = true
 	protected modelResetters: (() => void)[] = []
 
 	/**
