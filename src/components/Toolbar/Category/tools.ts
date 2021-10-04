@@ -30,7 +30,8 @@ export function setupToolsCategory(app: App) {
 			keyBinding:
 				platform() === 'win32' ? 'Ctrl + Alt + R' : 'Ctrl + Meta + R',
 			onTrigger: async () => {
-				const app = await App.getApp()
+				await app.projectManager.projectReady.fired
+
 				await app.project.refresh()
 			},
 		})
@@ -41,7 +42,11 @@ export function setupToolsCategory(app: App) {
 			name: 'actions.reloadAutoCompletions.name',
 			description: 'actions.reloadAutoCompletions.description',
 			keyBinding: 'Ctrl + Shift + R',
-			onTrigger: () => app.project.jsonDefaults.reload(),
+			onTrigger: async () => {
+				await app.projectManager.projectReady.fired
+
+				app.project.jsonDefaults.reload()
+			},
 		})
 	)
 	tools.addItem(
@@ -53,6 +58,8 @@ export function setupToolsCategory(app: App) {
 				// Global extensions
 				app.extensionLoader.deactiveAll(true)
 				app.extensionLoader.loadExtensions()
+
+				await app.projectManager.projectReady.fired
 
 				// Local extensions
 				app.project.extensionLoader.deactiveAll(true)
