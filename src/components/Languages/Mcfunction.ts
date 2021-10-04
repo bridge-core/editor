@@ -41,7 +41,7 @@ export const config: languages.LanguageConfiguration = {
 }
 
 const completionItemProvider: languages.CompletionItemProvider = {
-	triggerCharacters: [' ', '[', '{', '=', ',', '!'],
+	triggerCharacters: [' ', '\n', '[', '{', '=', ',', '!'],
 	async provideCompletionItems(
 		model: editor.ITextModel,
 		position: Position,
