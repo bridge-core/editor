@@ -17,6 +17,7 @@ export async function saveOrDownload(
 		color: 'success',
 		textColor: 'white',
 		message: 'general.successfulExport.title',
+		isVisible: true,
 		onClick: () => {
 			if (isUsingFileSystemPolyfill) {
 				download(basename(filePath), fileData)
