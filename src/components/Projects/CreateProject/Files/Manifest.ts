@@ -143,12 +143,10 @@ export class CreateManifest extends CreateFile {
 			manifest.modules.push({
 				type: 'javascript',
 				uuid: uuid(),
-				entry: 'scripts/gametests/Main.js',
+				entry: 'scripts/main.js',
 				version: [1, 0, 0],
 			})
-			if (!manifest.dependencies) {
-				manifest.dependencies = []
-			}
+			manifest.dependencies ??= []
 			manifest.dependencies.push(
 				{
 					// Minecraft native module
