@@ -1,6 +1,5 @@
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { Manifest } from './Manifest'
-import { World } from '../WorldFormat/World'
 import { LogReader } from './LogReader'
 import { MemoryCache } from './MemoryCache'
 import { ERequestState } from './RequestStatus'
@@ -39,8 +38,6 @@ export class LevelDB {
 		)
 		this._memoryCache = new MemoryCache()
 		this.memoryCache.load(logReader)
-
-		const world = new World(this)
 	}
 
 	get(key: Uint8Array) {

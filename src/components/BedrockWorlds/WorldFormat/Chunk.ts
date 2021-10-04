@@ -46,7 +46,7 @@ export class Chunk {
 	}
 
 	loadSubChunks() {
-		for (let i = 1; i < 4; i++) {
+		for (let i = 1; i < 5; i++) {
 			this.subChunks.push(new SubChunk(this, i))
 		}
 	}
@@ -225,7 +225,7 @@ export class SubChunk {
 
 export class BlockLayer {
 	constructor(protected blocks: Uint16Array, protected pallete: any[]) {
-		console.log(pallete)
+		// console.log(pallete)
 	}
 
 	getBlockAt(x: number, y: number, z: number): IBlock {

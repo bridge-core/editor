@@ -7,6 +7,7 @@ import { createFromEntity } from '/@/components/Editors/EntityModel/create/fromE
 import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
 import { BlockModelTab } from '../../Editors/BlockModel/Tab'
 import { CommandData } from '../../Languages/Mcfunction/Data'
+import { WorldTab } from '../../BedrockWorlds/Render/Tab'
 
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{

@@ -1,3 +1,4 @@
+import type { TDirection } from '../../BlockLibrary/BlockLibrary'
 import { SubChunk } from '../../WorldFormat/Chunk'
 import { World } from '../../WorldFormat/World'
 import { VoxelFaces } from '../VoxelFaces'
@@ -10,12 +11,13 @@ export class RenderSubChunk {
 	 * TODO:
 	 * This function is currently the big bottleneck of rendering worlds, needs optimizations
 	 */
-	getGeometryData(
-		tileSize: number,
-		tileTextureWidth: number,
-		tileTextureHeight: number
-	) {
+	getGeometryData() {
 		if (this.subChunkInstance.blockLayers.length === 0) return
+		const tileSize = 16
+		const [
+			tileTextureWidth,
+			tileTextureHeight,
+		] = this.world.blockLibrary.getTileMapSize()
 
 		const positions: number[] = []
 		const normals: number[] = []
@@ -67,13 +69,13 @@ export class RenderSubChunk {
 									pos: [oX, oY, oZ],
 									uv: [uvX, uvY],
 								} of corners) {
-									// const [
-									// 	voxelUVX,
-									// 	voxelUVY,
-									// ] = BlockLibrary.getVoxelUV(
-									// 	voxel,
-									// 	(faces as unknown) as TDirection[]
-									// )
+									const [
+										voxelUVX,
+										voxelUVY,
+									] = this.world.blockLibrary.getVoxelUv(
+										block.name,
+										(faces as unknown) as TDirection[]
+									)
 									// if (BlockLibrary.isSlab(voxel)) {
 									// 	oY /= 2
 									// 	uvY /= 2
@@ -100,15 +102,15 @@ export class RenderSubChunk {
 									// 		(uvY as number) =
 									// 			uvY === 0 ? 6 / 16 : 10 / 16
 									// }
-									// positions.push(oX + x, oY + y, oZ + z)
-									// normals.push(...dir)
-									// uvs.push(
-									// 	((voxelUVX + uvX) * tileSize) /
-									// 		tileTextureWidth,
-									// 	1 -
-									// 		((voxelUVY + 1 - uvY) * tileSize) /
-									// 			tileTextureHeight
-									// )
+									positions.push(oX + x, oY + y, oZ + z)
+									normals.push(...dir)
+									uvs.push(
+										((voxelUVX + uvX) * tileSize) /
+											tileTextureWidth,
+										1 -
+											((voxelUVY + 1 - uvY) * tileSize) /
+												tileTextureHeight
+									)
 								}
 								indices.push(
 									ndx,
