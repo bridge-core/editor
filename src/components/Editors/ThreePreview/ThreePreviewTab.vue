@@ -1,6 +1,22 @@
 <template>
-	<div @click="tab.parent.setActive(true)">
-		<canvas ref="canvas" />
+	<div style="position: relative">
+		<div
+			style="width: 100%; height: 100%"
+			@click="tab.parent.setActive(true)"
+		>
+			<canvas ref="canvas" />
+		</div>
+		<!-- <div
+			style="
+				position: absolute;
+				top: 0;
+				pointer-events: none;
+				width: 100%;
+				height: 100%;
+			"
+		>
+			 TODO: Use this slot for 3D UI overlay
+		</div> -->
 	</div>
 </template>
 

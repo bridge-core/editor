@@ -46,7 +46,7 @@ export class Chunk {
 	}
 
 	loadSubChunks() {
-		for (let i = 1; i < 5; i++) {
+		for (let i = 0; i < 16; i++) {
 			this.subChunks.push(new SubChunk(this, i))
 		}
 	}
@@ -103,7 +103,7 @@ export class SubChunk {
 	public blockLayers: BlockLayer[] = []
 
 	constructor(public readonly parent: Chunk, public readonly y: number) {
-		let blockData = this.loadData(EKeyTypeTag.SubChunkPrefix)
+		let blockData = this.loadData()
 
 		if (blockData) {
 			// This var stores how many blocks can be stored in a single block space (e.g. waterlogged blocks)
@@ -136,12 +136,15 @@ export class SubChunk {
 				blockData = data
 				this.blockLayers.push(new BlockLayer(blocks, palette))
 			}
+		} else {
+			this.blockLayers.push(new EmptyBlockLayer())
 		}
 	}
 
 	getLayer(index: number) {
-		if (index < 0 || index >= this.blockLayers.length)
+		if (index < 0 || index >= this.blockLayers.length) {
 			throw new Error(`Invalid layer index: ${index}`)
+		}
 
 		return this.blockLayers[index]
 	}
@@ -174,19 +177,25 @@ export class SubChunk {
 			const processedBlocks = new Uint16Array(totalBlockSpaces)
 			let position = 0
 			for (let wordIndex = 0; wordIndex < wordCount; wordIndex++) {
-				const word = rawBlocks[wordIndex]
+				const rawWord = rawBlocks.slice(
+					wordIndex * 4,
+					(wordIndex + 1) * 4
+				)
+				const uint32Word = new DataView(rawWord.buffer).getUint32(
+					0,
+					true
+				)
 
 				for (
 					let blockIndex = 0;
 					blockIndex < blocksPerWord;
 					blockIndex++
 				) {
-					const block =
-						(word >> ((position % blocksPerWord) * bitsPerBlock)) &
+					const blockId =
+						(uint32Word >>
+							((position % blocksPerWord) * bitsPerBlock)) &
 						((1 << bitsPerBlock) - 1)
-					processedBlocks[
-						wordIndex * blocksPerWord + blockIndex
-					] = block
+					processedBlocks[position] = blockId
 					position++
 				}
 			}
@@ -205,14 +214,8 @@ export class SubChunk {
 		}
 	}
 
-	protected loadData(tagType: EKeyTypeTag) {
-		return this.parent
-			.getLevelDb()
-			.get(
-				tagType === EKeyTypeTag.SubChunkPrefix
-					? this.getSubChunkPrefixKey()
-					: this.parent.getChunkKey(tagType)
-			)
+	protected loadData() {
+		return this.parent.getLevelDb().get(this.getSubChunkPrefixKey())
 	}
 
 	protected getSubChunkPrefixKey() {
@@ -229,9 +232,23 @@ export class BlockLayer {
 	}
 
 	getBlockAt(x: number, y: number, z: number): IBlock {
-		const numericId = this.blocks[x + y * 16 + z * 256]
+		if (x < 0 || x >= 16 || y < 0 || y >= 16 || z < 0 || z >= 16) {
+			throw new Error(`Invalid block coordinates: ${x}, ${y}, ${z}`)
+		}
+
+		const numericId = this.blocks[y + z * 16 + x * 256]
 		const block = this.pallete[numericId]
 
-		return block ?? new Block('minecraft:air')
+		return block ?? new Block('minecraft:info_update')
+	}
+}
+
+export class EmptyBlockLayer extends BlockLayer {
+	constructor() {
+		super(new Uint16Array(totalBlockSpaces), [])
+	}
+
+	getBlockAt(x: number, y: number, z: number): IBlock {
+		return new Block('minecraft:air')
 	}
 }
