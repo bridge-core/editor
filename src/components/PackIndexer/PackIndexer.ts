@@ -38,10 +38,6 @@ export class PackIndexer extends WorkerManager<
 	protected async start(forceRefreshCache: boolean) {
 		console.time('[TASK] Indexing Packs (Total)')
 
-		if (forceRefreshCache) {
-			this.project.fileSystem.unlink('.bridge/.lightningCache')
-		}
-
 		// Instaniate the worker TaskService
 		this._service = await new this.workerClass!(
 			this.baseDirectory,
