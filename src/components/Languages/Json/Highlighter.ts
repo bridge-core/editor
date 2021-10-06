@@ -214,12 +214,6 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 					[/\\./, 'string.escape.invalid'],
 					[/"/, 'identifier', '@pop'],
 				],
-
-				bracketCounting: [
-					[/\{/, 'delimiter.bracket', '@bracketCounting'],
-					[/\}/, 'delimiter.bracket', '@pop'],
-					{ include: 'common' },
-				],
 			},
 		})
 
