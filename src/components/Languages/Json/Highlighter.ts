@@ -111,7 +111,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 			defaultToken: 'invalid',
 			tokenPostfix: '.json',
 
-			atoms: ['false', 'true', 'class', 'null'],
+			atoms: ['false', 'true', 'null'],
 			keywords: this.keywords,
 			typeIdentifiers: this.typeIdentifiers,
 			variables: this.variables,
