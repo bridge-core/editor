@@ -20,6 +20,11 @@ export const config: languages.LanguageConfiguration = {
 	comments: {
 		lineComment: '#',
 	},
+	brackets: [
+		['(', ')'],
+		['[', ']'],
+		['{', '}'],
+	],
 	autoClosingPairs: [
 		{
 			open: '(',
@@ -41,7 +46,7 @@ export const config: languages.LanguageConfiguration = {
 }
 
 const completionItemProvider: languages.CompletionItemProvider = {
-	triggerCharacters: [' ', '\n', '[', '{', '=', ',', '!'],
+	triggerCharacters: [' ', '[', '{', '=', ',', '!'],
 	async provideCompletionItems(
 		model: editor.ITextModel,
 		position: Position,
@@ -77,7 +82,13 @@ const completionItemProvider: languages.CompletionItemProvider = {
 					.getNextCompletionItems(tokens.map((token) => token.word))
 					.then((completionItems) =>
 						completionItems.map(
-							({ label, insertText, documentation, kind }) => ({
+							({
+								label,
+								insertText,
+								documentation,
+								kind,
+								insertTextRules,
+							}) => ({
 								label: label ?? insertText,
 								insertText,
 								documentation,
@@ -88,6 +99,7 @@ const completionItemProvider: languages.CompletionItemProvider = {
 									position.lineNumber,
 									(lastToken?.endColumn ?? 0) + 1
 								),
+								insertTextRules,
 							})
 						)
 					),
@@ -107,7 +119,13 @@ const completionItemProvider: languages.CompletionItemProvider = {
 
 		return {
 			suggestions: completionItems.map(
-				({ label, insertText, documentation, kind }) => ({
+				({
+					label,
+					insertText,
+					documentation,
+					kind,
+					insertTextRules,
+				}) => ({
 					label: label ?? insertText,
 					insertText,
 					documentation,
@@ -118,6 +136,7 @@ const completionItemProvider: languages.CompletionItemProvider = {
 						position.lineNumber,
 						(lastToken?.endColumn ?? 0) + 1
 					),
+					insertTextRules,
 				})
 			),
 		}
@@ -137,6 +156,9 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 		!project.compilerManager.hasFired
 	)
 	tokenProvider.keywords = commands.map((command) => command)
+
+	const targetSelectorArguments = await project.commandData.allSelectorArguments()
+	tokenProvider.targetSelectorArguments = targetSelectorArguments
 
 	lang.updateTokenProvider(tokenProvider)
 }
