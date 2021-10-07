@@ -83,6 +83,9 @@
 
 		<script>
 			window.global = window
+			window.process = {
+				cwd: () => '',
+			}
 		</script>
 		<script type="module" src="/src/main.ts"></script>
 	</body>

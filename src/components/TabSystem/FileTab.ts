@@ -18,28 +18,26 @@ export abstract class FileTab extends Tab {
 
 	async setup() {
 		this.isForeignFile = false
-		this.projectPath = await this.parent.projectRoot
+		this.path = await this.parent.app.fileSystem.baseDirectory
 			.resolve(<any>this.fileHandle)
 			.then((path) => path?.join('/'))
 
 		// If the resolve above failed, we are dealing with a file which doesn't belong to this project
-		if (!this.projectPath) {
+		if (!this.path || !this.parent.project.isFileWithinProject(this.path)) {
 			this.isForeignFile = true
 			let guessedFolder =
 				(await FileType.guessFolder(this.fileHandle)) ?? uuid()
 			if (!guessedFolder.endsWith('/')) guessedFolder += '/'
 
-			this.projectPath = `${guessedFolder}${uuid()}/${
-				this.fileHandle.name
-			}`
+			this.path = `${guessedFolder}${uuid()}/${this.fileHandle.name}`
 		}
 
 		this.parent.project.packIndexer.once(async () => {
 			const packIndexer = this.parent.project.packIndexer.service
 
-			if (!(await packIndexer.hasFile(this.projectPath!))) {
+			if (!(await packIndexer.hasFile(this.path!))) {
 				await packIndexer.updateFile(
-					this.projectPath!,
+					this.path!,
 					await this.getFile().then((file) => file.text()),
 					this.isForeignFile
 				)

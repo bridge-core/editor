@@ -30,6 +30,7 @@ export class PackIndexerService extends TaskService<
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
 	public fileSystem: FileSystem
+	public globalFileSystem: FileSystem
 
 	constructor(
 		projectDirectory: AnyDirectoryHandle,
@@ -38,6 +39,7 @@ export class PackIndexerService extends TaskService<
 	) {
 		super()
 		this.fileSystem = new FileSystem(projectDirectory)
+		this.globalFileSystem = new FileSystem(baseDirectory)
 		this.lightningStore = new LightningStore(this.fileSystem)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
@@ -112,7 +114,7 @@ export class PackIndexerService extends TaskService<
 		if (this.options.disablePackSpider) {
 			if (path.length > 0)
 				return (
-					await this.fileSystem.readdir(path.join('/'), {
+					await this.globalFileSystem.readdir(path.join('/'), {
 						withFileTypes: true,
 					})
 				).map((dirent) => ({

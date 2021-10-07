@@ -19,7 +19,7 @@ export async function exportAsMcaddon() {
 		let manifests: Record<string, any> = {}
 
 		for (const pack of app.project.getPacks()) {
-			const packPath = PackType.getPath(pack)
+			const packPath = app.project.getFilePath(pack)
 
 			if (await fs.fileExists(`${packPath}/manifest.json`)) {
 				const manifest =

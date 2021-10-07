@@ -106,15 +106,11 @@ export class DirectoryEntry {
 		return this._isFile
 	}
 	get color() {
-		return PackType.get(this.getFullPath())?.color
+		return PackType.get(this.getPath())?.color
 	}
 	get icon() {
-		return FileType.get(this.getPath())?.icon
-	}
-	getFullPath() {
-		return ['projects', App.instance.selectedProject]
-			.concat(this.path)
-			.join('/')
+		return FileType.getGlobal(App.instance.project.config, this.getPath())
+			?.icon
 	}
 	getPath() {
 		return this.path?.join('/') ?? []
@@ -144,7 +140,7 @@ export class DirectoryEntry {
 		if (this.isFile) {
 			App.ready.once(async (app) => {
 				const fileHandle = await app.fileSystem.getFileHandle(
-					this.getFullPath()
+					this.getPath()
 				)
 				await app.project?.openFile(fileHandle)
 			})

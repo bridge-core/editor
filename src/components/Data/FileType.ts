@@ -8,6 +8,8 @@ import { AnyFileHandle } from '../FileSystem/Types'
 import json5 from 'json5'
 import { hasAnyPath } from '/@/utils/walkObject'
 import { extname } from '/@/utils/path'
+import { TPackTypeId } from './PackType'
+import type { ProjectConfig } from '/@/components/Projects/Project/Config'
 
 /**
  * Describes the structure of a file definition
@@ -17,6 +19,7 @@ export interface IFileType {
 	id: string
 	icon?: string
 	detect?: {
+		packType?: TPackTypeId | TPackTypeId[]
 		scope?: string | string[]
 		matcher?: string | string[]
 		fileContent?: string[]
@@ -148,6 +151,88 @@ export namespace FileType {
 			}
 		}
 	}
+
+	export function getGlobal(
+		config: ProjectConfig,
+		filePath?: string,
+		searchFileType?: string
+	) {
+		const extension = filePath ? extname(filePath) : null
+
+		for (const fileType of fileTypes) {
+			if (searchFileType !== undefined && searchFileType === fileType.id)
+				return fileType
+			else if (!filePath) continue
+
+			const packTypes =
+				fileType.detect?.packType === undefined
+					? []
+					: Array.isArray(fileType.detect?.packType)
+					? fileType.detect?.packType
+					: [fileType.detect?.packType]
+
+			const fileExtensions = fileType.detect?.fileExtensions
+			const hasScope = !!fileType.detect?.scope
+			const scope = Array.isArray(fileType.detect?.scope)
+				? fileType.detect?.scope
+				: [fileType.detect?.scope!]
+			const hasMatcher = !!fileType.detect?.matcher
+			const matcher = Array.isArray(fileType.detect?.matcher)
+				? fileType.detect?.matcher
+				: [fileType.detect?.matcher!]
+
+			if (
+				fileExtensions &&
+				extension &&
+				!fileExtensions.includes(extension)
+			)
+				continue
+
+			if (hasScope) {
+				if (
+					prefixMatchers(config, packTypes, scope!).some((scope) =>
+						filePath.startsWith(scope)
+					)
+				)
+					return fileType
+			} else if (hasMatcher) {
+				if (
+					isMatch(
+						filePath,
+						prefixMatchers(config, packTypes, matcher!)
+					)
+				) {
+					return fileType
+				}
+			} else {
+				console.log(fileType)
+				throw new Error(
+					`Invalid file definition, no "detect" properties`
+				)
+			}
+		}
+	}
+	function prefixMatchers(
+		config: ProjectConfig,
+		packTypes: TPackTypeId[],
+		matchers: string[]
+	) {
+		if (packTypes.length === 0)
+			return matchers.map((matcher) =>
+				config.getPackFilePath(undefined, matcher)
+			)
+
+		const prefixed: string[] = []
+
+		for (const packType of packTypes) {
+			for (const matcher of matchers) {
+				prefixed.push(config.getPackFilePath(packType, matcher))
+			}
+		}
+
+		return prefixed
+	}
+
 	export function getIds() {
 		const ids = []
 

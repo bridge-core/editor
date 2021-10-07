@@ -1,6 +1,8 @@
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { IExperimentalToggle } from './CreateProject/CreateProject'
-import type { Project } from './Project/Project'
+import { IExperimentalToggle } from '../CreateProject/CreateProject'
+import type { Project } from './Project'
+import type { TPackTypeId } from '/@/components/Data/PackType'
+import { resolve } from '/@/utils/path'
 
 export interface IConfigJson {
 	/**
@@ -63,7 +65,7 @@ export interface IConfigJson {
 	 * @example { "behaviorPack": "./BP", "resourcePack": "./RP" }
 	 */
 	packs: {
-		[packId: string]: string
+		[packId in TPackTypeId]?: string
 	}
 
 	/**
@@ -110,6 +112,13 @@ interface IPackDefinition {
 	 * String to add to a tool's collected data
 	 */
 	include: string[]
+}
+
+export const defaultPackPaths = <const>{
+	behaviorPack: './BP',
+	resourcePack: './RP',
+	skinPack: './SP',
+	worldTemplate: './WT',
 }
 
 export class ProjectConfig {
@@ -227,6 +236,23 @@ export class ProjectConfig {
 
 	get() {
 		return this.data
+	}
+
+	getPackRoot(packId: TPackTypeId) {
+		return this.data.packs?.[packId] ?? defaultPackPaths[packId]
+	}
+	getPackFilePath(packId?: TPackTypeId, filePath?: string) {
+		const name = this.fileSystem.baseDirectory.name
+
+		if (!filePath && !packId) return `projects/${name}`
+		else if (!packId) return `projects/${name}/${filePath}`
+		else if (!filePath)
+			return resolve(`projects/${name}`, `${this.getPackRoot(packId)}`)
+
+		return resolve(
+			`projects/${name}`,
+			`${this.getPackRoot(packId)}/${filePath}`
+		)
 	}
 
 	async save() {

@@ -1,7 +1,8 @@
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/CreateProject'
 import { CreateFile } from './CreateFile'
-import { PackType } from '/@/components/Data/PackType'
+import { PackType, TPackTypeId } from '/@/components/Data/PackType'
+import { defaultPackPaths } from '../../Project/Config'
 
 export class CreateConfig extends CreateFile {
 	public readonly id = 'bridgeConfig'
@@ -24,7 +25,7 @@ export class CreateConfig extends CreateFile {
 						.filter((packId) => packId !== '.bridge')
 						.map((packId) => [
 							packId,
-							`./${PackType.getFromId(packId)?.packPath}`,
+							defaultPackPaths[<TPackTypeId>packId],
 						])
 				),
 				compiler: {

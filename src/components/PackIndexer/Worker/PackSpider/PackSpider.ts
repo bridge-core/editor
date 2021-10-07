@@ -124,8 +124,8 @@ export class File {
 		forceUpdate = false
 	) {
 		const fileType = FileType.getId(filePath)
-		const { packPath: packType } = PackType.getWithRelativePath(
-			filePath
+		const { packPath: packType } = <any>(
+			PackType.getWithRelativePath(filePath)
 		) ?? { packPath: 'unknown' }
 
 		const storedFile = fileStore[packType]?.[fileType]?.[filePath]

@@ -1,10 +1,10 @@
 import { App } from '/@/App'
 import { IOpenTabOptions, TabSystem } from '/@/components/TabSystem/TabSystem'
 import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
-import { ProjectConfig, IConfigJson } from '../ProjectConfig'
+import { ProjectConfig, IConfigJson } from './Config'
 import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
-import { loadPacks } from './loadPacks'
+import { IPackData, loadPacks } from './loadPacks'
 import { PackIndexer } from '/@/components/PackIndexer/PackIndexer'
 import { ProjectManager } from '../ProjectManager'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
@@ -24,12 +24,13 @@ import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { getFolderDifference } from '/@/components/TabSystem/Util/FolderDifference'
+import { resolve } from '/@/utils/path'
 
 export interface IProjectData extends IConfigJson {
 	path: string
 	name: string
 	imgSrc: string
-	contains: (IPackType & { version: [number, number, number] })[]
+	contains: IPackData[]
 }
 
 export abstract class Project {
@@ -305,8 +306,25 @@ export abstract class Project {
 	getPacks() {
 		return (this._projectData.contains ?? []).map((pack) => pack.id)
 	}
-	addPack(packType: IPackType & { version: [number, number, number] }) {
+	addPack(packType: IPackData) {
 		this._projectData.contains!.push(packType)
+	}
+	/**
+	 * @deprecated Use `project.config.getPackFilePath(...)` instead
+	 */
+	getFilePath(packId: TPackTypeId, filePath?: string) {
+		return this.config.getPackFilePath(packId, filePath)
+	}
+	isFileWithinAnyPack(filePath: string) {
+		return this.getPacks()
+			.map((packId) => this.config.getPackFilePath(packId))
+			.some((packPath) => filePath.startsWith(packPath))
+	}
+	isFileWithinProject(filePath: string) {
+		return (
+			filePath.startsWith(`projects/${this.name}/`) ||
+			this.isFileWithinAnyPack(filePath)
+		)
 	}
 
 	async loadProject() {
@@ -316,13 +334,10 @@ export abstract class Project {
 			...this.config.get(),
 			path: this.name,
 			name: this.name,
-			imgSrc: await loadIcon(
-				`projects/${this.name}`,
-				this.app.fileSystem
-			),
+			imgSrc: await loadIcon(this, this.app.fileSystem),
 			contains: [],
 		})
-		await loadPacks(this.app, this.name).then((packs) =>
+		await loadPacks(this.app, this).then((packs) =>
 			set(
 				this._projectData,
 				'contains',

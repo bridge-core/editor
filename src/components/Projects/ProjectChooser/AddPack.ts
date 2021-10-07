@@ -6,6 +6,7 @@ import { CreateProjectWindow } from '../CreateProject/CreateProject'
 import { CreateRP } from '../CreateProject/Packs/RP'
 import { CreateSP } from '../CreateProject/Packs/SP'
 import { CreateWT } from '../CreateProject/Packs/WT'
+import { defaultPackPaths } from '../Project/Config'
 
 export async function addPack() {
 	const app = await App.getApp()
@@ -29,27 +30,22 @@ export async function addPack() {
 				app.windows.loadingWindow.open()
 				const scopedFs = app.project.fileSystem
 				const defaultOptions = await CreateProjectWindow.loadFromConfig()
-				let packPath: string
 
 				switch (packType.id) {
 					case 'behaviorPack': {
 						await new CreateBP().create(scopedFs, defaultOptions)
-						packPath = 'BP'
 						break
 					}
 					case 'resourcePack': {
 						await new CreateRP().create(scopedFs, defaultOptions)
-						packPath = 'RP'
 						break
 					}
 					case 'skinPack': {
 						await new CreateSP().create(scopedFs, defaultOptions)
-						packPath = 'SP'
 						break
 					}
 					case 'worldTemplate': {
 						await new CreateWT().create(scopedFs, defaultOptions)
-						packPath = 'WT'
 						break
 					}
 					default: {
@@ -67,13 +63,17 @@ export async function addPack() {
 						...configJson,
 						packs: {
 							...(configJson.packs ?? {}),
-							[packType.id]: `./${packType.packPath}`,
+							[packType.id]: defaultPackPaths[packType.id],
 						},
 					},
 					true
 				)
 
-				app.project.addPack({ ...packType, version: [1, 0, 0] })
+				app.project.addPack({
+					...packType,
+					packPath: defaultPackPaths[packType.id],
+					version: [1, 0, 0],
+				})
 
 				app.project.updateChangedFiles()
 				App.eventSystem.dispatch('projectChanged', undefined)
