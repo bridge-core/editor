@@ -19,6 +19,7 @@ export class FunctionSimulatorTab extends Tab {
 	protected validCommands: Array<string> = []
 	protected validSelectorArgs: Array<string> = []
 	protected commandData: any | undefined
+	protected stopped = false
 
 	constructor(protected parent: TabSystem, protected tab: FileTab) {
 		super(parent)
@@ -735,14 +736,18 @@ export class FunctionSimulatorTab extends Tab {
 		setTimeout(() => {
 			this.currentLine += 1
 			this.loadCurrentLine().then((shouldStop) => {
-				if (!shouldStop) {
+				if (!shouldStop && !this.stopped) {
 					this.slowStepLine()
 				}
+
+				this.stopped = false
 			})
 		}, 1)
 	}
 
 	protected async play() {
+		this.stopped = false
+
 		await this.loadFileContent()
 
 		this.currentLine = 0
@@ -762,6 +767,8 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	protected async stepLine() {
+		this.stopped = false
+
 		await this.loadFileContent()
 
 		this.currentLine += 1
@@ -773,6 +780,8 @@ export class FunctionSimulatorTab extends Tab {
 
 		this.currentLine = 0
 		this.loadCurrentLine()
+
+		this.stopped = true
 	}
 
 	async onActivate() {
@@ -783,5 +792,9 @@ export class FunctionSimulatorTab extends Tab {
 		await this.loadCommandData()
 
 		await this.loadCurrentLine()
+	}
+
+	async onDeactivate() {
+		this.stopped = true
 	}
 }
