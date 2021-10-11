@@ -449,9 +449,26 @@ export class FunctionSimulatorTab extends Tab {
 																	"' not allowed when negated!"
 															)
 														} else {
-															targetsCompleted.push(
-																target
-															)
+															let strongValued =
+																argData
+																	.additionalData
+																	.values !=
+																	null &&
+																!argData.additionalData.values.includes(
+																	value
+																)
+
+															if (strongValued) {
+																errors.push(
+																	"Unsupported value of '" +
+																		target +
+																		"'!"
+																)
+															} else {
+																targetsCompleted.push(
+																	target
+																)
+															}
 														}
 													}
 												}
