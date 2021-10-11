@@ -335,6 +335,16 @@ export class FunctionSimulatorTab extends Tab {
 											let target = arg[0]
 											let value = arg[1]
 
+											let negated =
+												value.substring(0, 1) == '!'
+
+											if (negated) {
+												value = value.substring(
+													1,
+													value.length
+												)
+											}
+
 											console.log(target + ' : ' + value)
 
 											if (
@@ -351,6 +361,7 @@ export class FunctionSimulatorTab extends Tab {
 												//Validate type and negation
 
 												let targetType = null
+												let argData = null
 
 												for (
 													let i = 0;
@@ -368,16 +379,18 @@ export class FunctionSimulatorTab extends Tab {
 															i
 														].argumentName == target
 													) {
-														targetType = this
+														argData = this
 															.commandData._data
 															.vanilla[0]
 															.selectorArguments[
 															i
-														].type
+														]
 
 														break
 													}
 												}
+
+												targetType = argData.type
 
 												let actualType = this.getArgType(
 													value
@@ -395,26 +408,51 @@ export class FunctionSimulatorTab extends Tab {
 													)
 												} else {
 													if (
-														this.commandData._data
-															.vanilla[0]
-															.selectorArguments[
-															i
-														].additionalData
-															.multipleInstancesAllowed ==
-															'never' &&
-														targetsCompleted.includes(
-															target
-														)
+														argData.additionalData
+															.supportsNegation ==
+															null &&
+														negated
 													) {
 														errors.push(
-															"Multiple instances of '" +
+															"Negation not supported for '" +
 																target +
-																"' not allowed!"
+																"'!"
 														)
 													} else {
-														targetsCompleted.push(
-															target
-														)
+														if (
+															argData
+																.additionalData
+																.multipleInstancesAllowed ==
+																'never' &&
+															targetsCompleted.includes(
+																target
+															)
+														) {
+															errors.push(
+																"Multiple instances of '" +
+																	target +
+																	"' not allowed!"
+															)
+														} else if (
+															argData
+																.additionalData
+																.multipleInstancesAllowed ==
+																'whenNegated' &&
+															targetsCompleted.includes(
+																target
+															) &&
+															negated
+														) {
+															errors.push(
+																"Multiple instances of '" +
+																	target +
+																	"' not allowed when negated!"
+															)
+														} else {
+															targetsCompleted.push(
+																target
+															)
+														}
 													}
 												}
 											}
