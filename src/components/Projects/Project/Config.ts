@@ -128,6 +128,7 @@ export class ProjectConfig {
 		if (project) {
 			project.fileSave.on('config.json', () => {
 				this.refreshConfig()
+				this.project!.app.windows.createPreset.onPresetsChanged()
 			})
 		}
 	}
