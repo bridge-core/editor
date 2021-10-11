@@ -17,6 +17,7 @@ export class FunctionSimulatorTab extends Tab {
 	protected content: string = ''
 
 	protected validCommands: Array<string> = []
+	protected validSelectorArgs: Array<string> = []
 	protected commandData: any | undefined
 
 	constructor(protected parent: TabSystem, protected tab: FileTab) {
@@ -66,6 +67,7 @@ export class FunctionSimulatorTab extends Tab {
 		}
 
 		this.validCommands = []
+		this.validSelectorArgs = []
 
 		if (this.commandData) {
 			for (
@@ -82,6 +84,24 @@ export class FunctionSimulatorTab extends Tab {
 					this.validCommands.push(
 						this.commandData._data.vanilla[0].commands[i]
 							.commandName
+					)
+				}
+			}
+
+			for (
+				let i = 0;
+				i < this.commandData._data.vanilla[0].selectorArguments.length;
+				i++
+			) {
+				if (
+					!this.validSelectorArgs.includes(
+						this.commandData._data.vanilla[0].selectorArguments[i]
+							.argumentName
+					)
+				) {
+					this.validSelectorArgs.push(
+						this.commandData._data.vanilla[0].selectorArguments[i]
+							.argumentName
 					)
 				}
 			}
@@ -295,6 +315,86 @@ export class FunctionSimulatorTab extends Tab {
 										console.log('Isolated Selector:')
 										console.log(addedSelector)
 
+										//TODO: Isolate strings in quotes
+
+										let selectorArgs = addedSelector.split(
+											','
+										)
+
+										console.log(selectorArgs)
+
+										for (
+											let j = 0;
+											j < selectorArgs.length;
+											j++
+										) {
+											let arg = selectorArgs[j].split('=')
+
+											let target = arg[0]
+											let value = arg[1]
+
+											console.log(target + ' : ' + value)
+
+											if (
+												!this.validSelectorArgs.includes(
+													target
+												)
+											) {
+												errors.push(
+													"Invalid selector argument: '" +
+														target +
+														"'!"
+												)
+											} else {
+												//Validate type and negation
+
+												let targetType = null
+
+												for (
+													let i = 0;
+													i <
+													this.commandData._data
+														.vanilla[0]
+														.selectorArguments
+														.length;
+													i++
+												) {
+													if (
+														this.commandData._data
+															.vanilla[0]
+															.selectorArguments[
+															i
+														].argumentName == target
+													) {
+														targetType = this
+															.commandData._data
+															.vanilla[0]
+															.selectorArguments[
+															i
+														].type
+
+														break
+													}
+												}
+
+												let actualType = this.getArgType(
+													value
+												)
+
+												if (targetType != actualType) {
+													errors.push(
+														"Invalid type for '" +
+															target +
+															"'! Expected '" +
+															targetType +
+															"' but got '" +
+															actualType +
+															"'!"
+													)
+												}
+											}
+										}
+
 										i += amountAdded
 									}
 								}
@@ -302,6 +402,8 @@ export class FunctionSimulatorTab extends Tab {
 						}
 					}
 				}
+
+				//TODO: Isolate strings in quotes
 
 				console.log('Arg type of ' + args[i] + ' is ' + argType)
 
