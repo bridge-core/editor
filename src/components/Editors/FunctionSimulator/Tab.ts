@@ -259,32 +259,59 @@ export class FunctionSimulatorTab extends Tab {
 										foundOpenIndex + 1,
 										args[i].length
 									)
-								}
-
-								for (let j = i + 1; j < args.length; j++) {
-									if (
-										j == i + 1 &&
-										args[j].substring(0, 1) == '['
-									) {
-										addedSelector += args[j].substring(
-											1,
-											args[j].length
-										)
-									} else {
-										addedSelector += args[j]
-									}
 
 									if (
-										args[j].substring(
-											args[j].length - 1,
-											args[j].length
+										args[i].substring(
+											args[i].length - 1,
+											args[i].length
 										) == ']'
 									) {
-										amountAdded = j - i
 										foundCloseSquareBrackets = true
-										break
 									}
 								}
+
+								if (!foundCloseSquareBrackets) {
+									console.log('Isolating Selector')
+
+									console.log(args)
+
+									for (let j = i + 1; j < args.length; j++) {
+										if (
+											j == i + 1 &&
+											args[j].substring(0, 1) == '['
+										) {
+											addedSelector += args[j].substring(
+												1,
+												args[j].length
+											)
+										} else {
+											addedSelector += args[j]
+										}
+
+										console.log('Added:')
+										console.log(addedSelector)
+										console.log(
+											args[j].substring(
+												args[j].length - 1,
+												args[j].length
+											)
+										)
+
+										if (
+											args[j].substring(
+												args[j].length - 1,
+												args[j].length
+											) == ']'
+										) {
+											amountAdded = j - i
+											foundCloseSquareBrackets = true
+											break
+										}
+									}
+								}
+
+								console.log('Isolated Selector')
+								console.log(addedSelector)
 
 								if (
 									addedSelector.substring(
