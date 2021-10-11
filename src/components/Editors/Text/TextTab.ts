@@ -164,7 +164,10 @@ export class TextTab extends FileTab {
 		const action = this.editorInstance?.getAction(
 			'editor.action.formatDocument'
 		)
-		const fileType = FileType.get(this.getProjectPath())
+		const fileType = FileType.getGlobal(
+			this.parent.project.config,
+			this.getPath()
+		)
 
 		if (
 			action &&
