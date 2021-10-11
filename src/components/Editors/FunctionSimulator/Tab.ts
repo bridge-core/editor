@@ -392,6 +392,10 @@ export class FunctionSimulatorTab extends Tab {
 
 												targetType = argData.type
 
+												if (targetType == 'tag') {
+													targetType = 'string'
+												}
+
 												let actualType = this.getArgType(
 													value
 												)
