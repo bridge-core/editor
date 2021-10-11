@@ -323,6 +323,8 @@ export class FunctionSimulatorTab extends Tab {
 
 										console.log(selectorArgs)
 
+										let targetsCompleted: string[] = []
+
 										for (
 											let j = 0;
 											j < selectorArgs.length;
@@ -391,6 +393,29 @@ export class FunctionSimulatorTab extends Tab {
 															actualType +
 															"'!"
 													)
+												} else {
+													if (
+														this.commandData._data
+															.vanilla[0]
+															.selectorArguments[
+															i
+														].additionalData
+															.multipleInstancesAllowed ==
+															'never' &&
+														targetsCompleted.includes(
+															target
+														)
+													) {
+														errors.push(
+															"Multiple instances of '" +
+																target +
+																"' not allowed!"
+														)
+													} else {
+														targetsCompleted.push(
+															target
+														)
+													}
 												}
 											}
 										}
