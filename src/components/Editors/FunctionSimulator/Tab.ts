@@ -126,7 +126,7 @@ export class FunctionSimulatorTab extends Tab {
 
 		//Selector
 		if (arg.substring(0, 1) == '@') {
-			if (['@a', '@p', '@e', '@e'].includes(arg)) {
+			if (['@a', '@p', '@e', '@e', '@r'].includes(arg.substring(0, 2))) {
 				return 'selector'
 			} else {
 				return 'Error: Expected letter after selector argument!'
@@ -174,10 +174,138 @@ export class FunctionSimulatorTab extends Tab {
 			let argTypes = []
 
 			for (let i = 0; i < args.length; i++) {
-				console.log(
-					'Arg type of ' + args[i] + ' is ' + this.getArgType(args[i])
-				)
-				argTypes.push(this.getArgType(args[i]))
+				let argType = this.getArgType(args[i])
+
+				if (argType.substring(0, 6) == 'Error:') {
+					errors.push(argType.substring(7, argType.length))
+					break
+				}
+
+				if (argType == 'selector') {
+					//Get selector by looking for [ ] only if selector is over 2 characters and next character is not [
+					let shouldValidateSelector = false
+
+					shouldValidateSelector = args[i].length > 2
+
+					if (!shouldValidateSelector && i < args.length - 1) {
+						shouldValidateSelector =
+							args[i + 1].substring(0, 1) == '['
+					}
+
+					if (shouldValidateSelector) {
+						let foundOpenSquareBrackets = false
+						let foundOpenIndex = 0
+
+						for (let j = 0; j < args[i].length; j++) {
+							if (args[i].substring(j, j + 1) == '[') {
+								if (!foundOpenSquareBrackets) {
+									foundOpenSquareBrackets = true
+									foundOpenIndex = j
+								} else {
+									errors.push(
+										"Unexpected '[' inside of a selector!"
+									)
+									break
+								}
+							}
+						}
+
+						let foundCloseSquareBrackets = false
+
+						if (!foundOpenSquareBrackets) {
+							for (let j = 0; j < args[i].length; j++) {
+								if (args[i].substring(j, j + 1) == ']') {
+									foundCloseSquareBrackets = true
+									errors.push("Unexpected ']' before '['!")
+									break
+								}
+							}
+						}
+
+						if (!foundCloseSquareBrackets) {
+							//Have not found ] before [ and if !foundOpenSquareBrackets then [ is in next arg and this arg should be 2 in length
+							if (
+								args[i].length > 2 &&
+								!foundOpenSquareBrackets
+							) {
+								errors.push("Expected '[' after selector!")
+							} else {
+								//Look for ] then add all args between [ and ] to get selector to validate
+								let addedSelector = ''
+								let amountAdded = 0
+
+								if (args[i].length > 2) {
+									addedSelector += args[i].substring(
+										foundOpenIndex + 1,
+										args[i].length
+									)
+								}
+
+								for (let j = i + 1; j < args.length; j++) {
+									if (
+										j == i + 1 &&
+										args[j].substring(0, 1) == '['
+									) {
+										addedSelector += args[j].substring(
+											1,
+											args[j].length
+										)
+									} else {
+										addedSelector += args[j]
+									}
+
+									if (
+										args[j].substring(
+											args[j].length - 1,
+											args[j].length
+										) == ']'
+									) {
+										amountAdded = j - i
+										foundCloseSquareBrackets = true
+										break
+									}
+								}
+
+								if (
+									addedSelector.substring(
+										addedSelector.length - 1,
+										addedSelector.length
+									) == ']'
+								) {
+									addedSelector = addedSelector.substring(
+										0,
+										addedSelector.length - 1
+									)
+								}
+
+								if (!foundCloseSquareBrackets) {
+									errors.push("Expected ']' after selector!")
+								} else {
+									if (
+										addedSelector.substring(
+											addedSelector.length - 1,
+											addedSelector.length
+										) == ']'
+									) {
+										errors.push(
+											"Unexpected ']' after selector!"
+										)
+									} else {
+										//Should now validate addedSelector because it is now found between [ and ]
+										console.log('Isolated Selector:')
+										console.log(addedSelector)
+
+										i += amountAdded
+									}
+								}
+							}
+						}
+					}
+				}
+
+				console.log('Arg type of ' + args[i] + ' is ' + argType)
+
+				argTypes.push(argType)
 			}
 
 			let commandVariations = []

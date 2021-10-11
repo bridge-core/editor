@@ -58,13 +58,13 @@ export default {
 	},
 	methods: {
 		runFunction: function (event) {
-			this.tab.play()
+			this.tab.play().then(() => {})
 		},
 		stepLine: function (event) {
-			this.tab.stepLine()
+			this.tab.stepLine().then(() => {})
 		},
 		restart: function (event) {
-			this.tab.restart()
+			this.tab.restart().then(() => {})
 		},
 	},
 }
