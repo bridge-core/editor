@@ -731,6 +731,17 @@ export class FunctionSimulatorTab extends Tab {
 		return false
 	}
 
+	protected slowStepLine() {
+		setTimeout(() => {
+			this.currentLine += 1
+			this.loadCurrentLine().then((shouldStop) => {
+				if (!shouldStop) {
+					this.slowStepLine()
+				}
+			})
+		}, 1)
+	}
+
 	protected async play() {
 		await this.loadFileContent()
 
@@ -740,10 +751,14 @@ export class FunctionSimulatorTab extends Tab {
 
 		shouldStop = await this.loadCurrentLine()
 
-		while (!shouldStop) {
+		if (!shouldStop) {
+			this.slowStepLine()
+		}
+
+		/*while (!shouldStop) {
 			this.currentLine += 1
 			shouldStop = await this.loadCurrentLine()
-		}
+		}*/
 	}
 
 	protected async stepLine() {
