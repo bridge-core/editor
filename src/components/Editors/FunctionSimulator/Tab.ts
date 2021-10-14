@@ -10,6 +10,7 @@ import Warning from './Warning.vue'
 import Vue from 'vue'
 import { ca, el, fa, tr } from 'vuetify/src/locale'
 import { BedrockProject } from '../../Projects/Project/BedrockProject'
+import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
 
 export class FunctionSimulatorTab extends Tab {
 	protected fileTab: FileTab | undefined
@@ -343,8 +344,6 @@ export class FunctionSimulatorTab extends Tab {
 										console.log('Isolated Selector:')
 										console.log(addedSelector)
 
-										//TODO: Isolate strings in quotes
-
 										let selectorArgs = addedSelector.split(
 											','
 										)
@@ -372,6 +371,8 @@ export class FunctionSimulatorTab extends Tab {
 													value.length
 												)
 											}
+
+											//TODO: Check for strings in quotes
 
 											console.log(target + ' : ' + value)
 
@@ -481,6 +482,87 @@ export class FunctionSimulatorTab extends Tab {
 																	"' not allowed when negated!"
 															)
 														} else {
+															if (
+																argData
+																	.additionalData
+																	.schemaReference !=
+																null
+															) {
+																//argData.additionalData.schemaReference
+
+																let referencePath =
+																	argData
+																		.additionalData
+																		.schemaReference
+
+																let refSchema = new RefSchema(
+																	referencePath,
+																	'$ref',
+																	referencePath
+																)
+
+																let result = refSchema.getCompletionItems(
+																	{}
+																)
+
+																let found = false
+
+																for (
+																	let i = 0;
+																	i <
+																	result.length;
+																	i++
+																) {
+																	if (
+																		result[
+																			i
+																		]
+																			.value ==
+																		value
+																	) {
+																		found = true
+																		break
+																	}
+																}
+
+																if (!found) {
+																	if (
+																		(target =
+																			'family')
+																	) {
+																		warnings.push(
+																			"Could not find family '" +
+																				value +
+																				"'. This could either be a mistake or the family is from another addon."
+																		)
+																	} else if (
+																		(target =
+																			'type')
+																	) {
+																		warnings.push(
+																			"Could not find type '" +
+																				value +
+																				"'. This could either be a mistake or the type is from another addon."
+																		)
+																	} else if (
+																		(target =
+																			'tag')
+																	) {
+																		warnings.push(
+																			"Could not find tag '" +
+																				value +
+																				"'. This could either be a mistake or the tag is from another addon."
+																		)
+																	} else {
+																		warnings.push(
+																			"Could not find schema value '" +
+																				value +
+																				"'. This could either be a mistake or the schema value is from another addon."
+																		)
+																	}
+																}
+															}
+
 															let strongValued =
 																argData
 																	.additionalData
