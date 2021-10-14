@@ -135,6 +135,11 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	protected getArgType<String>(arg: string) {
+		//Long String
+		if (arg.substring(0, 1) == '"') {
+			return 'long string'
+		}
+
 		//Positional
 		if (arg.substring(0, 1) == '~' || arg.substring(0, 1) == '^') {
 			if (arg.length == 1) {
@@ -148,10 +153,18 @@ export class FunctionSimulatorTab extends Tab {
 
 		//Selector
 		if (arg.substring(0, 1) == '@') {
-			if (['@a', '@p', '@e', '@e', '@r'].includes(arg.substring(0, 2))) {
+			if (arg.length == 1) {
+				return 'Error: Expected letter after selector argument!'
+			}
+
+			if (
+				['@a', '@p', '@e', '@e', '@r', '@s'].includes(
+					arg.substring(0, 2)
+				)
+			) {
 				return 'selector'
 			} else {
-				return 'Error: Expected letter after selector argument!'
+				return "Error: Unknown selector '" + arg.substring(0, 2) + "'!"
 			}
 		}
 
@@ -196,6 +209,53 @@ export class FunctionSimulatorTab extends Tab {
 			let argTypes = []
 
 			for (let i = 0; i < args.length; i++) {
+				if (
+					args[i].includes('"') &&
+					args[i].substring(0, 1) != '"' &&
+					args[i].substring(args[i].length - 1, args[i].length) != '"'
+				) {
+					console.log('Found quote mid arg:')
+
+					let splitArg = args[i].split('"')
+
+					for (let j = 1; j < splitArg.length; j++) {
+						console.log('Adding: ' + '"' + splitArg[j])
+						args.splice(i + 1, 0, '"' + splitArg[j])
+					}
+
+					args.splice(i, 1)
+				}
+			}
+
+			for (let i = 0; i < args.length; i++) {
+				//TODO: Isolate strings in quotes
+				console.log('Detected String:')
+
+				if (args[i].substring(0, 1) == '"') {
+					for (let j = i; j < args.length; j++) {
+						if (
+							args[j].substring(
+								args[j].length - 1,
+								args[j].length
+							) == '"'
+						) {
+							let joinedArg = ''
+
+							for (let u = 0; u < j - i + 1; u++) {
+								joinedArg += args[i + u] + ' '
+
+								console.log('Adding: ' + joinedArg)
+							}
+
+							args[i] = joinedArg
+
+							args.splice(i + 1, j - i)
+
+							break
+						}
+					}
+				}
+
 				let argType = this.getArgType(args[i])
 
 				if (argType.substring(0, 6) == 'Error:') {
@@ -429,7 +489,22 @@ export class FunctionSimulatorTab extends Tab {
 													value
 												)
 
-												if (targetType != actualType) {
+												if (
+													!(
+														//check if type equals actual type
+														(
+															targetType ==
+																actualType ||
+															//or check if what we are checking is name
+															(target == 'name' &&
+																//if so pass if actual type is string or long string
+																(actualType ==
+																	'string' ||
+																	actualType ==
+																		'long string'))
+														)
+													)
+												) {
 													errors.push(
 														"Invalid type for '" +
 															target +
@@ -597,8 +672,6 @@ export class FunctionSimulatorTab extends Tab {
 					}
 				}
 
-				//TODO: Isolate strings in quotes
-
 				console.log('Arg type of ' + args[i] + ' is ' + argType)
 
 				argTypes.push(argType)
@@ -646,7 +719,7 @@ export class FunctionSimulatorTab extends Tab {
 						break
 					}
 
-					if (currentVariation[j].type != null) {
+					if (currentVariation[j].type) {
 						console.log(
 							currentVariation[j].type +
 								' : ' +
@@ -656,12 +729,72 @@ export class FunctionSimulatorTab extends Tab {
 							currentVariation[j].type == argTypes[argumentIndex]
 						) {
 							//Argument matched
+
+							//Check for values and schemas
+							if (currentVariation[j].additionalData) {
+								if (currentVariation[j].additionalData.values) {
+									if (
+										!currentVariation[
+											j
+										].additionalData.values.includes(
+											args[argumentIndex]
+										)
+									) {
+										fail = true
+										break
+									}
+								}
+
+								if (
+									currentVariation[j].additionalData
+										.schemaReference
+								) {
+									let referencePath =
+										currentVariation[j].additionalData
+											.schemaReference
+
+									let refSchema = new RefSchema(
+										referencePath,
+										'$ref',
+										referencePath
+									)
+
+									let result = refSchema.getCompletionItems(
+										{}
+									)
+
+									let found = false
+
+									for (let i = 0; i < result.length; i++) {
+										if (
+											result[i].value ==
+											args[argumentIndex]
+										) {
+											found = true
+											break
+										}
+									}
+
+									if (!found) {
+										warnings.push(
+											"Could not find schema value '" +
+												args[argumentIndex] +
+												"'. This could either be a mistake or the schema value is from another addon."
+										)
+									}
+								}
+							}
 						} else if (
 							currentVariation[j].type == 'coordinate' &&
 							(argTypes[argumentIndex] == 'number' ||
 								argTypes[argumentIndex] == 'position')
 						) {
 							//was cordinate so matched
+						} else if (
+							currentVariation[j].type == 'selector' &&
+							argTypes[argumentIndex] == 'long string'
+						) {
+							//long string matched selector
 						} else {
 							fail = true
 							break
