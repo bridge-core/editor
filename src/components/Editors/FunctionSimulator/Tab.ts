@@ -11,6 +11,7 @@ import Vue from 'vue'
 import { ca, el, fa, tr } from 'vuetify/src/locale'
 import { BedrockProject } from '../../Projects/Project/BedrockProject'
 import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
+import { Token } from './Token'
 
 export class FunctionSimulatorTab extends Tab {
 	protected fileTab: FileTab | undefined
@@ -193,647 +194,90 @@ export class FunctionSimulatorTab extends Tab {
 		return true
 	}
 
+	SpecialSymbols = ['[', ']', '!', '=', '@', '~', '^']
+
+	protected ParseDirty(dirtyString: Token) {
+		console.log('Parsing ' + dirtyString.value)
+
+		//Parse
+		let readStart = 0
+		let readEnd = dirtyString.value.length
+
+		let foundTokens: Token[] = []
+
+		while (readStart < dirtyString.value.length) {
+			while (readEnd > readStart) {
+				let read = dirtyString.value.substring(readStart, readEnd)
+				let found = false
+
+				//Check if read is a command
+				//console.log(read)
+
+				if (this.validCommands.includes(read)) {
+					//console.log('Found command ' + read)
+					foundTokens.push(new Token(read, 'Command'))
+					found = true
+				} else if (this.SpecialSymbols.includes(read)) {
+					//console.log('Found symbol ' + read)
+					foundTokens.push(new Token(read, 'Symbol'))
+					found = true
+				}
+
+				if (found) {
+					readStart = readEnd
+					break
+				}
+
+				readEnd--
+			}
+
+			//console.log('Moving to next...')
+
+			readStart = readEnd + 1
+			readEnd = dirtyString.value.length
+		}
+
+		//console.log('Reached End!')
+
+		return foundTokens
+	}
+
 	//Gets Errors and Warnings
-	protected async readCommand<Array>(command: string = '') {
+	protected async readCommand<Array>(command: string) {
 		let errors: string[] = []
 		let warnings: string[] = []
 
-		let baseCommand = command.split(' ')[0]
+		//Seperate into strings by quotes for parsing
 
-		if (!this.validCommands.includes(baseCommand)) {
-			errors.push('Unknown command: ' + baseCommand)
-		} else {
-			let args = command.split(' ')
-			args.splice(0, 1)
+		let splitStrings = command.split('"').filter((e) => e)
 
-			let argTypes = []
+		let inString = false
 
-			for (let i = 0; i < args.length; i++) {
-				if (
-					args[i].includes('"') &&
-					args[i].substring(0, 1) != '"' &&
-					args[i].substring(args[i].length - 1, args[i].length) != '"'
-				) {
-					console.log('Found quote mid arg:')
+		let tokens: Token[] = []
 
-					let splitArg = args[i].split('"')
-
-					for (let j = 1; j < splitArg.length; j++) {
-						console.log('Adding: ' + '"' + splitArg[j])
-						args.splice(i + 1, 0, '"' + splitArg[j])
-					}
-
-					args.splice(i, 1)
-				}
+		for (let i = 0; i < splitStrings.length; i++) {
+			if (!inString) {
+				tokens.push(new Token(splitStrings[i], 'Dirty'))
+			} else {
+				tokens.push(new Token(splitStrings[i], 'String'))
 			}
 
-			for (let i = 0; i < args.length; i++) {
-				//TODO: Isolate strings in quotes
-				console.log('Detected String:')
+			inString = !inString
+		}
 
-				if (args[i].substring(0, 1) == '"') {
-					for (let j = i; j < args.length; j++) {
-						if (
-							args[j].substring(
-								args[j].length - 1,
-								args[j].length
-							) == '"'
-						) {
-							let joinedArg = ''
+		for (let i = 0; i < tokens.length; i++) {
+			if (tokens[i].type == 'Dirty') {
+				let parsedTokens: Token[] = this.ParseDirty(tokens[i])
 
-							for (let u = 0; u < j - i + 1; u++) {
-								joinedArg += args[i + u] + ' '
-
-								console.log('Adding: ' + joinedArg)
-							}
-
-							args[i] = joinedArg
-
-							args.splice(i + 1, j - i)
-
-							break
-						}
-					}
+				for (let j = 0; j < parsedTokens.length; j++) {
+					tokens.splice(i + j, 0, parsedTokens[j])
 				}
 
-				let argType = this.getArgType(args[i])
-
-				if (argType.substring(0, 6) == 'Error:') {
-					errors.push(argType.substring(7, argType.length))
-					break
-				}
-
-				if (argType == 'selector') {
-					//Get selector by looking for [ ] only if selector is over 2 characters and next character is not [
-					let shouldValidateSelector = false
-
-					shouldValidateSelector = args[i].length > 2
-
-					if (!shouldValidateSelector && i < args.length - 1) {
-						shouldValidateSelector =
-							args[i + 1].substring(0, 1) == '['
-					}
-
-					if (shouldValidateSelector) {
-						let foundOpenSquareBrackets = false
-						let foundOpenIndex = 0
-
-						for (let j = 0; j < args[i].length; j++) {
-							if (args[i].substring(j, j + 1) == '[') {
-								if (!foundOpenSquareBrackets) {
-									foundOpenSquareBrackets = true
-									foundOpenIndex = j
-								} else {
-									errors.push(
-										"Unexpected '[' inside of a selector!"
-									)
-									break
-								}
-							}
-						}
-
-						let foundCloseSquareBrackets = false
-
-						if (!foundOpenSquareBrackets) {
-							for (let j = 0; j < args[i].length; j++) {
-								if (args[i].substring(j, j + 1) == ']') {
-									foundCloseSquareBrackets = true
-									errors.push("Unexpected ']' before '['!")
-									break
-								}
-							}
-						}
-
-						if (!foundCloseSquareBrackets) {
-							//Have not found ] before [ and if !foundOpenSquareBrackets then [ is in next arg and this arg should be 2 in length
-							if (
-								args[i].length > 2 &&
-								!foundOpenSquareBrackets
-							) {
-								errors.push("Expected '[' after selector!")
-							} else {
-								//Look for ] then add all args between [ and ] to get selector to validate
-								let addedSelector = ''
-								let amountAdded = 0
-
-								if (args[i].length > 2) {
-									addedSelector += args[i].substring(
-										foundOpenIndex + 1,
-										args[i].length
-									)
-
-									if (
-										args[i].substring(
-											args[i].length - 1,
-											args[i].length
-										) == ']'
-									) {
-										foundCloseSquareBrackets = true
-									}
-								}
-
-								if (!foundCloseSquareBrackets) {
-									console.log('Isolating Selector')
-
-									console.log(args)
-
-									for (let j = i + 1; j < args.length; j++) {
-										if (
-											j == i + 1 &&
-											args[j].substring(0, 1) == '['
-										) {
-											addedSelector += args[j].substring(
-												1,
-												args[j].length
-											)
-										} else {
-											addedSelector += args[j]
-										}
-
-										console.log('Added:')
-										console.log(addedSelector)
-										console.log(
-											args[j].substring(
-												args[j].length - 1,
-												args[j].length
-											)
-										)
-
-										if (
-											args[j].substring(
-												args[j].length - 1,
-												args[j].length
-											) == ']'
-										) {
-											amountAdded = j - i
-											foundCloseSquareBrackets = true
-											break
-										}
-									}
-								}
-
-								console.log('Isolated Selector')
-								console.log(addedSelector)
-
-								if (
-									addedSelector.substring(
-										addedSelector.length - 1,
-										addedSelector.length
-									) == ']'
-								) {
-									addedSelector = addedSelector.substring(
-										0,
-										addedSelector.length - 1
-									)
-								}
-
-								if (!foundCloseSquareBrackets) {
-									errors.push("Expected ']' after selector!")
-								} else {
-									if (
-										addedSelector.substring(
-											addedSelector.length - 1,
-											addedSelector.length
-										) == ']'
-									) {
-										errors.push(
-											"Unexpected ']' after selector!"
-										)
-									} else {
-										//Should now validate addedSelector because it is now found between [ and ]
-										console.log('Isolated Selector:')
-										console.log(addedSelector)
-
-										let selectorArgs = addedSelector.split(
-											','
-										)
-
-										console.log(selectorArgs)
-
-										let targetsCompleted: string[] = []
-
-										for (
-											let j = 0;
-											j < selectorArgs.length;
-											j++
-										) {
-											let arg = selectorArgs[j].split('=')
-
-											let target = arg[0]
-											let value = arg[1]
-
-											let negated =
-												value.substring(0, 1) == '!'
-
-											if (negated) {
-												value = value.substring(
-													1,
-													value.length
-												)
-											}
-
-											//TODO: Check for strings in quotes
-
-											console.log(target + ' : ' + value)
-
-											if (
-												!this.validSelectorArgs.includes(
-													target
-												)
-											) {
-												errors.push(
-													"Invalid selector argument: '" +
-														target +
-														"'!"
-												)
-											} else {
-												//Validate type and negation
-
-												let targetType = null
-												let argData = null
-
-												for (
-													let i = 0;
-													i <
-													this.commandData._data
-														.vanilla[0]
-														.selectorArguments
-														.length;
-													i++
-												) {
-													if (
-														this.commandData._data
-															.vanilla[0]
-															.selectorArguments[
-															i
-														].argumentName == target
-													) {
-														argData = this
-															.commandData._data
-															.vanilla[0]
-															.selectorArguments[
-															i
-														]
-
-														break
-													}
-												}
-
-												targetType = argData.type
-
-												if (targetType == 'tag') {
-													targetType = 'string'
-												}
-
-												let actualType = this.getArgType(
-													value
-												)
-
-												if (
-													!(
-														//check if type equals actual type
-														(
-															targetType ==
-																actualType ||
-															//or check if what we are checking is name
-															(target == 'name' &&
-																//if so pass if actual type is string or long string
-																(actualType ==
-																	'string' ||
-																	actualType ==
-																		'long string'))
-														)
-													)
-												) {
-													errors.push(
-														"Invalid type for '" +
-															target +
-															"'! Expected '" +
-															targetType +
-															"' but got '" +
-															actualType +
-															"'!"
-													)
-												} else {
-													if (
-														argData.additionalData
-															.supportsNegation ==
-															null &&
-														negated
-													) {
-														errors.push(
-															"Negation not supported for '" +
-																target +
-																"'!"
-														)
-													} else {
-														if (
-															argData
-																.additionalData
-																.multipleInstancesAllowed ==
-																'never' &&
-															targetsCompleted.includes(
-																target
-															)
-														) {
-															errors.push(
-																"Multiple instances of '" +
-																	target +
-																	"' not allowed!"
-															)
-														} else if (
-															argData
-																.additionalData
-																.multipleInstancesAllowed ==
-																'whenNegated' &&
-															targetsCompleted.includes(
-																target
-															) &&
-															negated
-														) {
-															errors.push(
-																"Multiple instances of '" +
-																	target +
-																	"' not allowed when negated!"
-															)
-														} else {
-															if (
-																argData
-																	.additionalData
-																	.schemaReference !=
-																null
-															) {
-																//argData.additionalData.schemaReference
-
-																let referencePath =
-																	argData
-																		.additionalData
-																		.schemaReference
-
-																let refSchema = new RefSchema(
-																	referencePath,
-																	'$ref',
-																	referencePath
-																)
-
-																let result = refSchema.getCompletionItems(
-																	{}
-																)
-
-																let found = false
-
-																for (
-																	let i = 0;
-																	i <
-																	result.length;
-																	i++
-																) {
-																	if (
-																		result[
-																			i
-																		]
-																			.value ==
-																		value
-																	) {
-																		found = true
-																		break
-																	}
-																}
-
-																if (!found) {
-																	if (
-																		(target =
-																			'family')
-																	) {
-																		warnings.push(
-																			"Could not find family '" +
-																				value +
-																				"'. This could either be a mistake or the family is from another addon."
-																		)
-																	} else if (
-																		(target =
-																			'type')
-																	) {
-																		warnings.push(
-																			"Could not find type '" +
-																				value +
-																				"'. This could either be a mistake or the type is from another addon."
-																		)
-																	} else if (
-																		(target =
-																			'tag')
-																	) {
-																		warnings.push(
-																			"Could not find tag '" +
-																				value +
-																				"'. This could either be a mistake or the tag is from another addon."
-																		)
-																	} else {
-																		warnings.push(
-																			"Could not find schema value '" +
-																				value +
-																				"'. This could either be a mistake or the schema value is from another addon."
-																		)
-																	}
-																}
-															}
-
-															let strongValued =
-																argData
-																	.additionalData
-																	.values !=
-																	null &&
-																!argData.additionalData.values.includes(
-																	value
-																)
-
-															if (strongValued) {
-																errors.push(
-																	"Unsupported value of '" +
-																		target +
-																		"'!"
-																)
-															} else {
-																targetsCompleted.push(
-																	target
-																)
-															}
-														}
-													}
-												}
-											}
-										}
-
-										i += amountAdded
-									}
-								}
-							}
-						}
-					}
-				}
-
-				console.log('Arg type of ' + args[i] + ' is ' + argType)
-
-				argTypes.push(argType)
-			}
-
-			let commandVariations = []
-
-			for (
-				let i = 0;
-				i < this.commandData._data.vanilla[0].commands.length;
-				i++
-			) {
-				if (
-					this.commandData._data.vanilla[0].commands[i].commandName ==
-					baseCommand
-				) {
-					commandVariations.push(
-						this.commandData._data.vanilla[0].commands[i].arguments
-					)
-				}
-			}
-
-			let fail = true
-
-			//Repeat for every variation of the command
-			for (let i = 0; i < commandVariations.length; i++) {
-				console.log('Checking variation...')
-				console.log(commandVariations[i])
-
-				//if already fail end other wise continue
-				if (fail) {
-					fail = false
-				} else {
-					break
-				}
-
-				//Check if current argument variation is valid other fail and move to next variation
-				let argumentIndex = 0
-
-				let currentVariation = commandVariations[i]
-
-				for (let j = 0; j < currentVariation.length; j++) {
-					//End check if no more arg types
-					if (argTypes.length <= argumentIndex) {
-						break
-					}
-
-					if (currentVariation[j].type) {
-						console.log(
-							currentVariation[j].type +
-								' : ' +
-								argTypes[argumentIndex]
-						)
-						if (
-							currentVariation[j].type == argTypes[argumentIndex]
-						) {
-							//Argument matched
-
-							//Check for values and schemas
-							if (currentVariation[j].additionalData) {
-								if (currentVariation[j].additionalData.values) {
-									if (
-										!currentVariation[
-											j
-										].additionalData.values.includes(
-											args[argumentIndex]
-										)
-									) {
-										fail = true
-										break
-									}
-								}
-
-								if (
-									currentVariation[j].additionalData
-										.schemaReference
-								) {
-									let referencePath =
-										currentVariation[j].additionalData
-											.schemaReference
-
-									let refSchema = new RefSchema(
-										referencePath,
-										'$ref',
-										referencePath
-									)
-
-									let result = refSchema.getCompletionItems(
-										{}
-									)
-
-									let found = false
-
-									for (let i = 0; i < result.length; i++) {
-										if (
-											result[i].value ==
-											args[argumentIndex]
-										) {
-											found = true
-											break
-										}
-									}
-
-									if (!found) {
-										warnings.push(
-											"Could not find schema value '" +
-												args[argumentIndex] +
-												"'. This could either be a mistake or the schema value is from another addon."
-										)
-									}
-								}
-							}
-						} else if (
-							currentVariation[j].type == 'coordinate' &&
-							(argTypes[argumentIndex] == 'number' ||
-								argTypes[argumentIndex] == 'position')
-						) {
-							//was cordinate so matched
-						} else if (
-							currentVariation[j].type == 'selector' &&
-							argTypes[argumentIndex] == 'long string'
-						) {
-							//long string matched selector
-						} else {
-							fail = true
-							break
-						}
-
-						argumentIndex++
-					}
-				}
-
-				//Check if still have arguments to check
-				if (argumentIndex <= currentVariation.length) {
-					let allOptional = true
-
-					//check if all left params are optional
-					for (
-						let j = argumentIndex;
-						j < currentVariation.length;
-						j++
-					) {
-						if (currentVariation[j].type != null) {
-							if (currentVariation[j].isOptional == null) {
-								//found not optional param still left
-								fail = true
-								break
-							} else {
-								console.log(
-									'Param is optional: ' +
-										currentVariation[j].type
-								)
-							}
-						}
-					}
-				}
-			}
-
-			if (fail) {
-				errors.push('Invalid arguments for command: ' + command)
+				tokens.splice(i, 1)
 			}
 		}
+
+		console.log(tokens)
 
 		return [errors, warnings]
 	}
