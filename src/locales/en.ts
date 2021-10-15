@@ -28,7 +28,7 @@ export default {
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
 		fileSystemPolyfill:
-			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome or Edge!',
+			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome (excluding Chrome 93/94) or Edge!',
 		successfulExport: {
 			title: 'Export Successful',
 			description: 'You can find the exported package here',
@@ -809,7 +809,7 @@ export default {
 		browserUnsupported: {
 			title: 'Unsupported Browser',
 			description:
-				'Please use Chrome (Desktop) or Edge (Chromium) in order to get the best experience using bridge. v2! Your browser does not support saving files directly and syncing projects to your com.mojang folder.',
+				'Please use Chrome (Desktop, excluding Chrome 93/94) or Edge (Chromium) in order to get the best experience using bridge. v2! Your browser does not support saving files directly and syncing projects to your com.mojang folder.',
 			continue: 'Continue Anyways',
 		},
 		invalidJson: {
