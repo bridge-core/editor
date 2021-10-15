@@ -194,24 +194,33 @@ export class FunctionSimulatorTab extends Tab {
 		return true
 	}
 
+	protected isInt(n: string) {
+		return /^-?[\d]+(?:e-?\d+)?$/.test(n)
+	}
+
+	protected isFloat(n: string) {
+		return /^-?[\d.]+(?:e-?\d+)?$/.test(n)
+	}
+
 	SpecialSymbols = ['[', ']', '!', '=', '@', '~', '^']
+
+	WhiteSpace = [' ', '\t', '\n', '\r']
 
 	protected ParseDirty(dirtyString: Token) {
 		console.log('Parsing ' + dirtyString.value)
 
-		//Parse
 		let readStart = 0
 		let readEnd = dirtyString.value.length
 
 		let foundTokens: Token[] = []
 
-		while (readStart < dirtyString.value.length) {
-			while (readEnd > readStart) {
-				let read = dirtyString.value.substring(readStart, readEnd)
-				let found = false
+		let lastUnexpected = -1
 
-				//Check if read is a command
-				//console.log(read)
+		while (readStart < dirtyString.value.length) {
+			let found = false
+
+			while (readEnd > readStart && !found) {
+				let read = dirtyString.value.substring(readStart, readEnd)
 
 				if (this.validCommands.includes(read)) {
 					//console.log('Found command ' + read)
@@ -221,23 +230,59 @@ export class FunctionSimulatorTab extends Tab {
 					//console.log('Found symbol ' + read)
 					foundTokens.push(new Token(read, 'Symbol'))
 					found = true
-				}
-
-				if (found) {
-					readStart = readEnd
-					break
+				} else if (this.isInt(read)) {
+					//console.log('Found int ' + read)
+					foundTokens.push(new Token(read, 'Integer'))
+					found = true
+				} else if (this.isFloat(read)) {
+					//console.log('Found float ' + read)
+					foundTokens.push(new Token(read, 'Float'))
+					found = true
+				} else if (read == ' ') {
+					//console.log('Found space ' + read)
+					foundTokens.push(new Token(read, 'Space'))
+					found = true
 				}
 
 				readEnd--
 			}
 
-			//console.log('Moving to next...')
+			if (found) {
+				if (lastUnexpected != -1) {
+					foundTokens.splice(
+						foundTokens.length - 1,
+						0,
+						new Token(
+							dirtyString.value.substring(
+								lastUnexpected,
+								readEnd
+							),
+							'String'
+						)
+					)
+
+					lastUnexpected = -1
+				}
+			} else {
+				if (lastUnexpected == -1) {
+					lastUnexpected = readStart
+				}
+			}
 
 			readStart = readEnd + 1
 			readEnd = dirtyString.value.length
 		}
 
-		//console.log('Reached End!')
+		if (lastUnexpected != -1) {
+			foundTokens.push(
+				new Token(
+					dirtyString.value.substring(lastUnexpected, readEnd),
+					'String'
+				)
+			)
+
+			lastUnexpected = -1
+		}
 
 		return foundTokens
 	}
@@ -265,15 +310,27 @@ export class FunctionSimulatorTab extends Tab {
 			inString = !inString
 		}
 
+		console.log(Array.from(tokens))
+
 		for (let i = 0; i < tokens.length; i++) {
+			//console.log(tokens[i].type)
+
 			if (tokens[i].type == 'Dirty') {
 				let parsedTokens: Token[] = this.ParseDirty(tokens[i])
 
 				for (let j = 0; j < parsedTokens.length; j++) {
-					tokens.splice(i + j, 0, parsedTokens[j])
+					tokens.splice(i + j + 1, 0, parsedTokens[j])
 				}
 
+				console.log('Deleting ' + tokens[i].value)
+
 				tokens.splice(i, 1)
+
+				console.log(Array.from(tokens))
+
+				i += parsedTokens.length - 1
+			} else {
+				console.log('Skipping ' + tokens[i].value)
 			}
 		}
 
