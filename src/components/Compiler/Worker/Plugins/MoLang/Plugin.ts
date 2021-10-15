@@ -74,7 +74,13 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 		async load(filePath, fileContent) {
 			if (isMoLangFile(filePath) && fileContent) {
 				// Load the custom MoLang functions
-				customMoLang.parse(fileContent)
+				try {
+					customMoLang.parse(fileContent)
+				} catch (err) {
+					console.error(
+						`Error within file "${filePath}"; script "${fileContent}": ${err}`
+					)
+				}
 			} else if (isMoLangScript(filePath)) {
 				const module = { exports: {} }
 				await run({
