@@ -240,7 +240,7 @@ export class FunctionSimulatorTab extends Tab {
 					found = true
 				} else if (read == ' ') {
 					//console.log('Found space ' + read)
-					foundTokens.push(new Token(read, 'Space'))
+					//foundTokens.push(new Token(read, 'Space'))
 					found = true
 				}
 
