@@ -34,6 +34,7 @@ export default {
 			description: 'You can find the exported package here',
 		},
 		experimentalGameplay: 'Experimental Gameplay',
+		textureLocation: 'Texture Location',
 	},
 	packType: {
 		behaviorPack: {
