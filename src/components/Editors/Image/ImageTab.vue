@@ -25,5 +25,6 @@ export default {
 .img-preview {
 	height: 80%;
 	image-rendering: pixelated;
+	overflow: hidden;
 }
 </style>
