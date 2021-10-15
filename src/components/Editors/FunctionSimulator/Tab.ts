@@ -336,6 +336,12 @@ export class FunctionSimulatorTab extends Tab {
 
 		console.log(tokens)
 
+		if (tokens.length > 0) {
+			if (tokens[0].type != 'Command') {
+				errors.push("'" + tokens[0].value + '" is not a valid command!')
+			}
+		}
+
 		return [errors, warnings]
 	}
 
