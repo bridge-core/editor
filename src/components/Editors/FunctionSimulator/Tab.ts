@@ -219,15 +219,12 @@ export class FunctionSimulatorTab extends Tab {
 		while (readStart < dirtyString.value.length) {
 			let found = false
 			let added = true
+			let shouldCombine = false
 
 			while (readEnd > readStart && !found) {
 				let read = dirtyString.value.substring(readStart, readEnd)
 
-				if (this.validCommands.includes(read)) {
-					//console.log('Found command ' + read)
-					foundTokens.push(new Token(read, 'Command'))
-					found = true
-				} else if (this.SpecialSymbols.includes(read)) {
+				if (this.SpecialSymbols.includes(read)) {
 					//console.log('Found symbol ' + read)
 					foundTokens.push(new Token(read, 'Symbol'))
 					found = true
@@ -235,6 +232,7 @@ export class FunctionSimulatorTab extends Tab {
 					//console.log('Found int ' + read)
 					foundTokens.push(new Token(read, 'Integer'))
 					found = true
+					shouldCombine = true
 				} else if (this.isFloat(read)) {
 					//console.log('Found float ' + read)
 					foundTokens.push(new Token(read, 'Float'))
@@ -252,18 +250,42 @@ export class FunctionSimulatorTab extends Tab {
 			if (found) {
 				if (lastUnexpected != -1) {
 					if (added) {
-						foundTokens.splice(
-							foundTokens.length - 1,
-							0,
-							new Token(
+						if (shouldCombine) {
+							let whatToAdd =
+								foundTokens[foundTokens.length - 1].value
+
+							foundTokens.splice(
+								foundTokens.length - 1,
+								1,
+								new Token(
+									dirtyString.value.substring(
+										lastUnexpected,
+										readStart
+									) + whatToAdd,
+									'String'
+								)
+							)
+						} else {
+							foundTokens.splice(
+								foundTokens.length - 1,
+								0,
+								new Token(
+									dirtyString.value.substring(
+										lastUnexpected,
+										readStart
+									),
+									'String'
+								)
+							)
+						}
+					} else {
+						console.log(
+							'Unexpected Special ' +
 								dirtyString.value.substring(
 									lastUnexpected,
-									readStart
-								),
-								'String'
-							)
+									readEnd
+								)
 						)
-					} else {
 						foundTokens.push(
 							new Token(
 								dirtyString.value.substring(
@@ -543,7 +565,7 @@ export class FunctionSimulatorTab extends Tab {
 			//Test for basic command
 			let baseCommand = tokens.shift()!
 
-			if (baseCommand.type != 'Command') {
+			if (!this.validCommands.includes(baseCommand.value)) {
 				errors.push("'" + tokens[0].value + '" is not a valid command!')
 
 				return [errors, warnings]
@@ -560,28 +582,19 @@ export class FunctionSimulatorTab extends Tab {
 					if (i + 1 < tokens.length) {
 						let numberTarget = tokens[i + 1]
 
-						if (numberTarget.type != 'Integer') {
-							errors.push(
-								"Unexpected value of type '" +
-									numberTarget.type +
-									"' after " +
-									token.value +
-									'!'
+						if (numberTarget.type == 'Integer') {
+							tokens[i] = new Token(
+								token.value + numberTarget.value,
+								'Position'
 							)
-							return [errors, warnings]
+
+							tokens.splice(i + 1, 1)
+						} else {
+							tokens[i] = new Token(token.value, 'Position')
 						}
-
-						tokens[i] = new Token(
-							token.value + numberTarget.value,
-							'Position'
-						)
-
-						tokens.splice(i + 1, 1)
 					}
 
 					tokens[i] = new Token(token.value, 'Position')
-
-					tokens.splice(i + 1, 1)
 				}
 			}
 
