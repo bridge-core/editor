@@ -952,7 +952,7 @@ export class FunctionSimulatorTab extends Tab {
 					this.stopped = false
 				})
 			}
-		}, 1)
+		}, 0)
 	}
 
 	protected async play() {
