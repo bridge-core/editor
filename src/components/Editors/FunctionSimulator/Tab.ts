@@ -209,8 +209,6 @@ export class FunctionSimulatorTab extends Tab {
 	SelectorTargets = ['a', 's', 'p', 'r', 'e']
 
 	protected ParseDirty(dirtyString: Token) {
-		console.log('Parsing ' + dirtyString.value)
-
 		let readStart = 0
 		let readEnd = dirtyString.value.length
 
@@ -514,8 +512,6 @@ export class FunctionSimulatorTab extends Tab {
 			inString = !inString
 		}
 
-		console.log(Array.from(tokens))
-
 		//Tokenize strings for validation
 
 		for (let i = 0; i < tokens.length; i++) {
@@ -526,19 +522,11 @@ export class FunctionSimulatorTab extends Tab {
 					tokens.splice(i + j + 1, 0, parsedTokens[j])
 				}
 
-				console.log('Deleting ' + tokens[i].value)
-
 				tokens.splice(i, 1)
 
-				console.log(Array.from(tokens))
-
 				i += parsedTokens.length - 1
-			} else {
-				console.log('Skipping ' + tokens[i].value)
 			}
 		}
-
-		console.log(Array.from(tokens))
 
 		if (tokens.length > 0) {
 			//Test for basic command
@@ -613,9 +601,6 @@ export class FunctionSimulatorTab extends Tab {
 					if (inSelector) {
 						inSelector = false
 
-						console.log('Constructing Selector:')
-						console.log(selectorToReconstruct)
-
 						let result = this.ValidateSelector(
 							selectorToReconstruct
 						)
@@ -629,10 +614,6 @@ export class FunctionSimulatorTab extends Tab {
 
 						let startingPoint = selectorToReconstruct.length - 3
 
-						console.log('Cleaning complex selector')
-
-						console.log(Array.from(tokens))
-
 						tokens.splice(
 							startingPoint,
 							selectorToReconstruct.length + 3,
@@ -642,8 +623,6 @@ export class FunctionSimulatorTab extends Tab {
 							))
 						)
 
-						console.log(Array.from(tokens))
-
 						selectorToReconstruct = []
 					} else {
 						//Unexpected ]
@@ -651,10 +630,6 @@ export class FunctionSimulatorTab extends Tab {
 						return [errors, warnings]
 					}
 				} else {
-					console.log(token.value)
-					console.log(token.type)
-					console.log('~~~~~~~~~~~~~')
-
 					if (inSelector) {
 						selectorToReconstruct.push(token)
 					}
@@ -662,27 +637,58 @@ export class FunctionSimulatorTab extends Tab {
 			}
 
 			//Validate Command Argument Types
-			/*let possibleCommandVariations = []
+			let possibleCommandVariations = []
 
-				for (
-					let i = 0;
-					i < this.commandData._data.vanilla[0].commands.length;
-					i++
+			for (
+				let i = 0;
+				i < this.commandData._data.vanilla[0].commands.length;
+				i++
+			) {
+				if (
+					this.commandData._data.vanilla[0].commands[i].commandName ==
+					baseCommand.value
 				) {
-					if (
-						this.commandData._data.vanilla[0].commands[i]
-							.commandName == baseCommand
-					) {
-						possibleCommandVariations.push(
-							this.commandData._data.vanilla[0].commands[i]
-								.arguments
+					possibleCommandVariations.push(
+						this.commandData._data.vanilla[0].commands[i].arguments
+					)
+				}
+			}
+
+			console.log(Array.from(possibleCommandVariations))
+			console.log(Array.from(tokens))
+
+			let lastValidVariations: Token[] = Array.from(
+				possibleCommandVariations
+			)
+
+			for (let i = 0; i < tokens.length; i++) {
+				const arg = tokens[i]
+
+				for (let j = 0; j < possibleCommandVariations.length; j++) {
+					const variation = possibleCommandVariations[j]
+
+					if (variation.length <= i) {
+						possibleCommandVariations.splice(j, 1)
+						j--
+						continue
+					}
+
+					if (!this.MatchTypes(arg.type, variation[i].type)) {
+						console.log(
+							arg.type + ' did not match ' + variation[i].type
 						)
+						possibleCommandVariations.splice(j, 1)
+						j--
 					}
 				}
 
-				for (let i = 0; i < tokens.length; i++) {
-					const arg = tokens[i]
-				}*/
+				if (possibleCommandVariations.length == 0) {
+					errors.push('No valid command variations found!')
+					return [errors, warnings]
+				}
+
+				lastValidVariations = Array.from(possibleCommandVariations)
+			}
 		}
 
 		return [errors, warnings]
