@@ -433,11 +433,17 @@ export class FunctionSimulatorTab extends Tab {
 					return [errors, warnings]
 				}
 
-				if (this.MatchTypes(value.type, argData.type)) {
+				let targetType = argData.type
+
+				if (targetAtribute == 'name') {
+					targetType = 'selector'
+				}
+
+				if (!this.MatchTypes(value.type, targetType)) {
 					//Error expected type
 					errors.push(
 						"Expected value type of '" +
-							argData.type +
+							targetType +
 							"', but got '" +
 							value.type +
 							"'!"
@@ -474,7 +480,7 @@ export class FunctionSimulatorTab extends Tab {
 
 					if (!foundSchema) {
 						//Warning maybe from wrong addon
-						warnings.push('1')
+						warnings.push('11')
 					}
 				}
 			}
