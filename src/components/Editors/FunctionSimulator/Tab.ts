@@ -367,7 +367,7 @@ export class FunctionSimulatorTab extends Tab {
 
 		if (tokens.length == 0) {
 			//Unexpected empty selector
-			errors.push('1')
+			errors.push('Unexpected empty complex selector!')
 			return [errors, warnings]
 		}
 
@@ -397,24 +397,26 @@ export class FunctionSimulatorTab extends Tab {
 
 			if (!found) {
 				//Error unxexpected selector atribute
-				errors.push('2')
+				errors.push(
+					"Invalid selector attribute '" + targetAtribute + "'!"
+				)
 			}
 
 			if (1 + offset >= tokens.length) {
 				//Error expected '='
-				errors.push('3')
+				errors.push('Expected equals sign but got nothing!')
 				return [errors, warnings]
 			}
 
 			if (tokens[1 + offset].value != '=' && tokens[1].type != 'Symbol') {
 				//Error expected '='
-				errors.push('4')
+				errors.push('Expected equals sign!')
 				return [errors, warnings]
 			}
 
 			if (2 + offset >= tokens.length) {
 				//Error expected value
-				errors.push('5')
+				errors.push('Expected value but got nothing!')
 				return [errors, warnings]
 			}
 
@@ -432,7 +434,11 @@ export class FunctionSimulatorTab extends Tab {
 			if (argData.additionalData) {
 				if (!argData.additionalData.supportsNegation && negated) {
 					//Error negation not supported
-					errors.push('6')
+					errors.push(
+						"Attribute '" +
+							targetAtribute +
+							"' does not support negation!"
+					)
 					return [errors, warnings]
 				}
 
@@ -442,7 +448,11 @@ export class FunctionSimulatorTab extends Tab {
 					confirmedAtributes.includes(targetAtribute)
 				) {
 					//Error multiple instances of this atribute not allowed
-					errors.push('7')
+					errors.push(
+						"Multiple instances of attribute '" +
+							targetAtribute +
+							"' atribute not allowed!"
+					)
 					return [errors, warnings]
 				}
 
@@ -453,7 +463,11 @@ export class FunctionSimulatorTab extends Tab {
 					confirmedAtributes.includes(targetAtribute)
 				) {
 					//Error multiple instances of this atribute not allowed when negated
-					errors.push('8')
+					errors.push(
+						"Multiple instances of '" +
+							targetAtribute +
+							+"' atribute not allowed when negated!"
+					)
 					return [errors, warnings]
 				}
 
@@ -478,7 +492,11 @@ export class FunctionSimulatorTab extends Tab {
 				if (argData.additionalData.values) {
 					if (!argData.additionalData.values.includes(value.value)) {
 						//Error unexpected value
-						errors.push('10')
+						errors.push(
+							"Value '" +
+								value.value +
+								"' is not one of the expected values!"
+						)
 						return [errors, warnings]
 					}
 				}
@@ -504,7 +522,31 @@ export class FunctionSimulatorTab extends Tab {
 
 					if (!foundSchema) {
 						//Warning maybe from wrong addon
-						warnings.push('11')
+						if (targetAtribute == 'family') {
+							warnings.push(
+								"Could not find family '" +
+									value +
+									"'. This could either be a mistake or the family is from another addon."
+							)
+						} else if (targetAtribute == 'type') {
+							warnings.push(
+								"Could not find type '" +
+									value +
+									"'. This could either be a mistake or the type is from another addon."
+							)
+						} else if (targetAtribute == 'tag') {
+							warnings.push(
+								"Could not find tag '" +
+									value +
+									"'. This could either be a mistake or the tag is from another addon."
+							)
+						} else {
+							warnings.push(
+								"Could not find schema value '" +
+									value +
+									"'. This could either be a mistake or the schema value is from another addon."
+							)
+						}
 					}
 				}
 			}
@@ -521,7 +563,7 @@ export class FunctionSimulatorTab extends Tab {
 					tokens[possibleComaPos + offset].type != 'Symbol'
 				) {
 					//Error expected ','
-					errors.push('11')
+					errors.push('Expected comma between selector attributes!')
 					return [errors, warnings]
 				}
 			}
@@ -650,7 +692,7 @@ export class FunctionSimulatorTab extends Tab {
 				if (token.type == 'Symbol' && token.value == '[') {
 					if (inSelector) {
 						//Unexpected [
-						errors.push('12')
+						errors.push('Unexpected [!')
 						return [errors, warnings]
 					} else {
 						if (i - 1 < 0) {
@@ -700,7 +742,7 @@ export class FunctionSimulatorTab extends Tab {
 						selectorToReconstruct = []
 					} else {
 						//Unexpected ]
-						errors.push('13')
+						errors.push('Unexpected ]')
 						return [errors, warnings]
 					}
 				} else {
