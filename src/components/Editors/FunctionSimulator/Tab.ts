@@ -202,9 +202,11 @@ export class FunctionSimulatorTab extends Tab {
 		return /^-?[\d.]+(?:e-?\d+)?$/.test(n)
 	}
 
-	SpecialSymbols = ['[', ']', '!', '=', '@', '~', '^']
+	SpecialSymbols = ['[', ']', '!', '=', '@', '~', '^', '!', ',']
 
 	WhiteSpace = [' ', '\t', '\n', '\r']
+
+	SelectorTargets = ['a', 's', 'p', 'r', 'e']
 
 	protected ParseDirty(dirtyString: Token) {
 		console.log('Parsing ' + dirtyString.value)
@@ -218,6 +220,7 @@ export class FunctionSimulatorTab extends Tab {
 
 		while (readStart < dirtyString.value.length) {
 			let found = false
+			let added = true
 
 			while (readEnd > readStart && !found) {
 				let read = dirtyString.value.substring(readStart, readEnd)
@@ -242,6 +245,7 @@ export class FunctionSimulatorTab extends Tab {
 					//console.log('Found space ' + read)
 					//foundTokens.push(new Token(read, 'Space'))
 					found = true
+					added = false
 				}
 
 				readEnd--
@@ -249,17 +253,29 @@ export class FunctionSimulatorTab extends Tab {
 
 			if (found) {
 				if (lastUnexpected != -1) {
-					foundTokens.splice(
-						foundTokens.length - 1,
-						0,
-						new Token(
-							dirtyString.value.substring(
-								lastUnexpected,
-								readEnd
-							),
-							'String'
+					if (added) {
+						foundTokens.splice(
+							foundTokens.length - 1,
+							0,
+							new Token(
+								dirtyString.value.substring(
+									lastUnexpected,
+									readStart
+								),
+								'String'
+							)
 						)
-					)
+					} else {
+						foundTokens.push(
+							new Token(
+								dirtyString.value.substring(
+									lastUnexpected,
+									readEnd
+								),
+								'String'
+							)
+						)
+					}
 
 					lastUnexpected = -1
 				}
@@ -287,6 +303,194 @@ export class FunctionSimulatorTab extends Tab {
 		return foundTokens
 	}
 
+	protected MatchTypes(currentType: string, targetType: string) {
+		if (currentType == targetType) {
+			return true
+		}
+
+		switch (targetType) {
+			case 'string':
+				if (currentType == 'String') {
+					return true
+				}
+				break
+			case 'number':
+				if (currentType == 'Integer') {
+					return true
+				}
+				break
+			case 'selector':
+				if (
+					currentType == 'Selector' ||
+					currentType == 'String' ||
+					currentType == 'Long String' ||
+					currentType == 'Complex Selector'
+				) {
+					return true
+				}
+				break
+		}
+
+		return false
+	}
+
+	protected ValidateSelector(tokens: Token[]) {
+		let errors: string[] = []
+		let warnings: string[] = []
+
+		if (tokens.length == 0) {
+			//Unexpected empty selector
+			errors.push('1')
+			return [errors, warnings]
+		}
+
+		let confirmedAtributes: string[] = []
+
+		for (let i = 0; i < tokens.length / 4; i++) {
+			const offset = i * 4
+
+			let targetAtribute = tokens[0 + offset].value
+			let found = false
+			let argData = null
+
+			for (
+				let j = 0;
+				j < this.commandData._data.vanilla[0].selectorArguments.length;
+				j++
+			) {
+				const selectorArgument = this.commandData._data.vanilla[0]
+					.selectorArguments[j]
+
+				if (selectorArgument.argumentName == targetAtribute) {
+					argData = selectorArgument
+					found = true
+					break
+				}
+			}
+
+			if (!found) {
+				//Error unxexpected selector atribute
+				errors.push('2')
+			}
+
+			if (1 + offset >= tokens.length) {
+				//Error expected '='
+				errors.push('3')
+				return [errors, warnings]
+			}
+
+			if (tokens[1 + offset].value != '=' && tokens[1].type != 'Symbol') {
+				//Error expected '='
+				errors.push('4')
+				return [errors, warnings]
+			}
+
+			if (2 + offset >= tokens.length) {
+				//Error expected value
+				errors.push('5')
+				return [errors, warnings]
+			}
+
+			let negated = false
+			let value = tokens[2 + offset]
+
+			if (
+				tokens[2 + offset].value == '!' &&
+				tokens[2 + offset].type == 'Symbol'
+			) {
+				value = tokens[3 + offset]
+				negated = true
+			}
+
+			if (argData.additionalData) {
+				if (!argData.additionalData.supportsNegation && negated) {
+					//Error negation not supported
+					errors.push('6')
+					return [errors, warnings]
+				}
+
+				if (
+					argData.additionalData.multipleInstancesAllowed ==
+						'never' &&
+					confirmedAtributes.includes(targetAtribute)
+				) {
+					//Error multiple instances of this atribute not allowed
+					errors.push('7')
+					return [errors, warnings]
+				}
+
+				if (
+					argData.additionalData.multipleInstancesAllowed ==
+						'whenNegated' &&
+					!negated &&
+					confirmedAtributes.includes(targetAtribute)
+				) {
+					//Error multiple instances of this atribute not allowed when negated
+					errors.push('8')
+					return [errors, warnings]
+				}
+
+				if (this.MatchTypes(value.type, argData.type)) {
+					//Error expected type
+					errors.push(
+						"Expected value type of '" +
+							argData.type +
+							"', but got '" +
+							value.type +
+							"'!"
+					)
+					return [errors, warnings]
+				}
+
+				if (argData.additionalData.values) {
+					if (!argData.additionalData.values.includes(value.value)) {
+						//Error unexpected value
+						errors.push('10')
+						return [errors, warnings]
+					}
+				}
+
+				if (argData.additionalData.schemaReference) {
+					let referencePath = argData.additionalData.schemaReference
+
+					let refSchema = new RefSchema(
+						referencePath,
+						'$ref',
+						referencePath
+					)
+
+					let schemaReference = refSchema.getCompletionItems({})
+
+					let foundSchema = false
+
+					for (let j = 0; j < schemaReference.length; j++) {
+						if (schemaReference[j].value == value.value) {
+							foundSchema = true
+						}
+					}
+
+					if (!foundSchema) {
+						//Warning maybe from wrong addon
+						warnings.push('1')
+					}
+				}
+			}
+
+			if (4 + offset < tokens.length) {
+				if (
+					tokens[4 + offset].value != ',' &&
+					tokens[4 + offset].type != 'Symbol'
+				) {
+					//Error expected ','
+					errors.push('11')
+					return [errors, warnings]
+				}
+			}
+		}
+
+		return [errors, warnings]
+	}
+
 	//Gets Errors and Warnings
 	protected async readCommand<Array>(command: string) {
 		let errors: string[] = []
@@ -304,7 +508,7 @@ export class FunctionSimulatorTab extends Tab {
 			if (!inString) {
 				tokens.push(new Token(splitStrings[i], 'Dirty'))
 			} else {
-				tokens.push(new Token(splitStrings[i], 'String'))
+				tokens.push(new Token(splitStrings[i], 'Long String'))
 			}
 
 			inString = !inString
@@ -312,9 +516,9 @@ export class FunctionSimulatorTab extends Tab {
 
 		console.log(Array.from(tokens))
 
-		for (let i = 0; i < tokens.length; i++) {
-			//console.log(tokens[i].type)
+		//Tokenize strings for validation
 
+		for (let i = 0; i < tokens.length; i++) {
 			if (tokens[i].type == 'Dirty') {
 				let parsedTokens: Token[] = this.ParseDirty(tokens[i])
 
@@ -334,12 +538,151 @@ export class FunctionSimulatorTab extends Tab {
 			}
 		}
 
-		console.log(tokens)
+		console.log(Array.from(tokens))
 
 		if (tokens.length > 0) {
-			if (tokens[0].type != 'Command') {
+			//Test for basic command
+			let baseCommand = tokens.shift()!
+
+			if (baseCommand.type != 'Command') {
 				errors.push("'" + tokens[0].value + '" is not a valid command!')
+
+				return [errors, warnings]
 			}
+
+			//Construct Basic Selectors
+			for (let i = 0; i < tokens.length; i++) {
+				const token = tokens[i]
+
+				if (token.type == 'Symbol' && token.value == '@') {
+					if (i + 1 >= tokens.length) {
+						errors.push('Expected leter after @!')
+						return [errors, warnings]
+					}
+
+					let selectorTarget = tokens[i + 1]
+
+					if (selectorTarget.type != 'String') {
+						errors.push('Expected letter after @!')
+						return [errors, warnings]
+					}
+
+					if (!this.SelectorTargets.includes(selectorTarget.value)) {
+						errors.push(
+							'@' + selectorTarget + ' is not a valid selector!'
+						)
+
+						return [errors, warnings]
+					}
+
+					tokens[i] = new Token(
+						'@' + selectorTarget.value,
+						'Selector'
+					)
+
+					tokens.splice(i + 1, 1)
+				}
+			}
+
+			//Construct Complex Selectors
+			let inSelector = false
+			let selectorToReconstruct: Token[] = []
+
+			for (let i = 0; i < tokens.length; i++) {
+				const token = tokens[i]
+
+				if (token.type == 'Symbol' && token.value == '[') {
+					if (inSelector) {
+						//Unexpected [
+						errors.push('12')
+						return [errors, warnings]
+					} else {
+						if (i - 1 < 0) {
+							errors.push('Expected selector before [!')
+							return [errors, warnings]
+						}
+
+						if (tokens[i - 1].type != 'Selector') {
+							errors.push('Expected selector before [!')
+							return [errors, warnings]
+						}
+
+						inSelector = true
+					}
+				} else if (token.type == 'Symbol' && token.value == ']') {
+					if (inSelector) {
+						inSelector = false
+
+						console.log('Constructing Selector:')
+						console.log(selectorToReconstruct)
+
+						let result = this.ValidateSelector(
+							selectorToReconstruct
+						)
+
+						errors = errors.concat(result[0])
+						warnings = warnings.concat(result[1])
+
+						if (errors.length > 0) {
+							return [errors, warnings]
+						}
+
+						let startingPoint = selectorToReconstruct.length - 3
+
+						console.log('Cleaning complex selector')
+
+						console.log(Array.from(tokens))
+
+						tokens.splice(
+							startingPoint,
+							selectorToReconstruct.length + 3,
+							(tokens[startingPoint] = new Token(
+								tokens[startingPoint].value,
+								'Complex Selector'
+							))
+						)
+
+						console.log(Array.from(tokens))
+
+						selectorToReconstruct = []
+					} else {
+						//Unexpected ]
+						errors.push('13')
+						return [errors, warnings]
+					}
+				} else {
+					console.log(token.value)
+					console.log(token.type)
+					console.log('~~~~~~~~~~~~~')
+
+					if (inSelector) {
+						selectorToReconstruct.push(token)
+					}
+				}
+			}
+
+			//Validate Command Argument Types
+			/*let possibleCommandVariations = []
+
+				for (
+					let i = 0;
+					i < this.commandData._data.vanilla[0].commands.length;
+					i++
+				) {
+					if (
+						this.commandData._data.vanilla[0].commands[i]
+							.commandName == baseCommand
+					) {
+						possibleCommandVariations.push(
+							this.commandData._data.vanilla[0].commands[i]
+								.arguments
+						)
+					}
+				}
+
+				for (let i = 0; i < tokens.length; i++) {
+					const arg = tokens[i]
+				}*/
 		}
 
 		return [errors, warnings]
