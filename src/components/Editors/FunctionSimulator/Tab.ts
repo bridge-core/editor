@@ -942,14 +942,16 @@ export class FunctionSimulatorTab extends Tab {
 
 	protected slowStepLine() {
 		setTimeout(() => {
-			this.currentLine += 1
-			this.loadCurrentLine().then((shouldStop) => {
-				if (!shouldStop && !this.stopped) {
-					this.slowStepLine()
-				}
+			if (!this.stopped) {
+				this.currentLine += 1
+				this.loadCurrentLine().then((shouldStop) => {
+					if (!shouldStop && !this.stopped) {
+						this.slowStepLine()
+					}
 
-				this.stopped = false
-			})
+					this.stopped = false
+				})
+			}
 		}, 1)
 	}
 
