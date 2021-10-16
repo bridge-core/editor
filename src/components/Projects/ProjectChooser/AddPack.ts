@@ -71,7 +71,7 @@ export async function addPack() {
 
 				app.project.addPack({
 					...packType,
-					packPath: defaultPackPaths[packType.id],
+					packPath: app.project.config.getPackFilePath(packType.id),
 					version: [1, 0, 0],
 				})
 
