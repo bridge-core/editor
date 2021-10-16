@@ -76,7 +76,7 @@ export async function addPack() {
 				})
 
 				app.project.updateChangedFiles()
-				App.eventSystem.dispatch('projectChanged', undefined)
+				App.eventSystem.dispatch('projectChanged', app.project)
 
 				app.windows.loadingWindow.close()
 			},
