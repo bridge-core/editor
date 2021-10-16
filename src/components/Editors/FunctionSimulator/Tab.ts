@@ -363,6 +363,8 @@ export class FunctionSimulatorTab extends Tab {
 		let errors: string[] = []
 		let warnings: string[] = []
 
+		console.log(Array.from(tokens))
+
 		if (tokens.length == 0) {
 			//Unexpected empty selector
 			errors.push('1')
@@ -507,10 +509,16 @@ export class FunctionSimulatorTab extends Tab {
 				}
 			}
 
-			if (4 + offset < tokens.length) {
+			let possibleComaPos = 3
+
+			if (negated) {
+				possibleComaPos = 4
+			}
+
+			if (possibleComaPos + offset < tokens.length) {
 				if (
-					tokens[4 + offset].value != ',' &&
-					tokens[4 + offset].type != 'Symbol'
+					tokens[possibleComaPos + offset].value != ',' &&
+					tokens[possibleComaPos + offset].type != 'Symbol'
 				) {
 					//Error expected ','
 					errors.push('11')
@@ -672,7 +680,13 @@ export class FunctionSimulatorTab extends Tab {
 							return [errors, warnings]
 						}
 
-						let startingPoint = selectorToReconstruct.length - 3
+						let startingPoint = i - selectorToReconstruct.length - 2
+
+						console.log('Replacing Complex Selector')
+						console.log(
+							'Removing ' + (selectorToReconstruct.length + 3)
+						)
+						console.log('At ' + startingPoint)
 
 						tokens.splice(
 							startingPoint,
