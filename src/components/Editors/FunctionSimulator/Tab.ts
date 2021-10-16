@@ -327,6 +327,11 @@ export class FunctionSimulatorTab extends Tab {
 					return true
 				}
 				break
+			case 'coordinate':
+				if (currentType == 'Integer' || currentType == 'Position') {
+					return true
+				}
+				break
 		}
 
 		return false
@@ -538,6 +543,42 @@ export class FunctionSimulatorTab extends Tab {
 				return [errors, warnings]
 			}
 
+			//Construct Positions
+			for (let i = 0; i < tokens.length; i++) {
+				const token = tokens[i]
+
+				if (
+					token.type == 'Symbol' &&
+					(token.value == '~' || token.value == '^')
+				) {
+					if (i + 1 < tokens.length) {
+						let numberTarget = tokens[i + 1]
+
+						if (numberTarget.type != 'Integer') {
+							errors.push(
+								"Unexpected value of type '" +
+									numberTarget.type +
+									"' after " +
+									token.value +
+									'!'
+							)
+							return [errors, warnings]
+						}
+
+						tokens[i] = new Token(
+							token.value + numberTarget.value,
+							'Position'
+						)
+
+						tokens.splice(i + 1, 1)
+					}
+
+					tokens[i] = new Token(token.value, 'Position')
+
+					tokens.splice(i + 1, 1)
+				}
+			}
+
 			//Construct Basic Selectors
 			for (let i = 0; i < tokens.length; i++) {
 				const token = tokens[i]
@@ -688,6 +729,27 @@ export class FunctionSimulatorTab extends Tab {
 				}
 
 				lastValidVariations = Array.from(possibleCommandVariations)
+			}
+
+			//Check for missing and optional parameters
+			for (let j = 0; j < possibleCommandVariations.length; j++) {
+				const variation = possibleCommandVariations[j]
+
+				if (tokens.length < variation.length) {
+					if (!variation[tokens.length].isOptional) {
+						possibleCommandVariations.splice(j, 1)
+						j--
+					}
+
+					continue
+				}
+			}
+
+			console.log(Array.from(possibleCommandVariations))
+
+			if (possibleCommandVariations.length == 0) {
+				errors.push('No valid command variations found!')
+				return [errors, warnings]
 			}
 		}
 
