@@ -41,6 +41,7 @@ export class FunctionSimulatorTab extends Tab {
 	get icon() {
 		return 'mdi-cog-box'
 	}
+
 	get iconColor() {
 		return 'primary'
 	}
@@ -48,20 +49,14 @@ export class FunctionSimulatorTab extends Tab {
 	save() {}
 
 	//Load function content
-	protected async loadFileContent() {
+	protected async LoadFileContent() {
 		if (this.fileTab) {
 			let file = await this.fileTab.getFile()
 			this.content = await file?.text()
 		}
 	}
 
-	//Reads Command Data
-	protected async readCommandsJson<Object>() {
-		let file = await fetch(process.env.BASE_URL + 'commands.json')
-		return file.json()
-	}
-
-	protected async loadCommandData() {
+	protected async LoadCommandData() {
 		const app = await App.getApp()
 		const project = await app.project
 
@@ -113,7 +108,7 @@ export class FunctionSimulatorTab extends Tab {
 		}
 	}
 
-	protected async getDocs<String>(command: string = '') {
+	protected async GetDocs<String>(command: string = '') {
 		if (this.commandData) {
 			for (
 				let i = 0;
@@ -135,49 +130,7 @@ export class FunctionSimulatorTab extends Tab {
 		return 'Unable to get docs for this command!'
 	}
 
-	protected getArgType<String>(arg: string) {
-		//Long String
-		if (arg.substring(0, 1) == '"') {
-			return 'long string'
-		}
-
-		//Positional
-		if (arg.substring(0, 1) == '~' || arg.substring(0, 1) == '^') {
-			if (arg.length == 1) {
-				return 'position'
-			} else if (!isNaN(parseFloat(arg.substring(1, arg.length)))) {
-				return 'position'
-			} else {
-				return 'Error: Expected number after positional argument!'
-			}
-		}
-
-		//Selector
-		if (arg.substring(0, 1) == '@') {
-			if (arg.length == 1) {
-				return 'Error: Expected letter after selector argument!'
-			}
-
-			if (
-				['@a', '@p', '@e', '@e', '@r', '@s'].includes(
-					arg.substring(0, 2)
-				)
-			) {
-				return 'selector'
-			} else {
-				return "Error: Unknown selector '" + arg.substring(0, 2) + "'!"
-			}
-		}
-
-		//Number
-		if (!isNaN(parseFloat(arg))) {
-			return 'number'
-		}
-
-		return 'string'
-	}
-
-	protected doesStringArrayMatchArray<Bollean>(
+	protected DoesStringArrayMatchArray<Bollean>(
 		array1: Array<string>,
 		array2: Array<string>
 	) {
@@ -279,13 +232,6 @@ export class FunctionSimulatorTab extends Tab {
 							)
 						}
 					} else {
-						console.log(
-							'Unexpected Special ' +
-								dirtyString.value.substring(
-									lastUnexpected,
-									readEnd
-								)
-						)
 						foundTokens.push(
 							new Token(
 								dirtyString.value.substring(
@@ -362,8 +308,6 @@ export class FunctionSimulatorTab extends Tab {
 	protected ValidateSelector(tokens: Token[]) {
 		let errors: string[] = []
 		let warnings: string[] = []
-
-		console.log(Array.from(tokens))
 
 		if (tokens.length == 0) {
 			//Unexpected empty selector
@@ -573,7 +517,9 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	//Gets Errors and Warnings
-	protected async readCommand<Array>(command: string) {
+	protected async ValidateCommand<Array>(command: string) {
+		//TODO: Add error and warning class so errors and warnings can have extened info and potential comments on how to fix the errors
+
 		let errors: string[] = []
 		let warnings: string[] = []
 
@@ -593,6 +539,13 @@ export class FunctionSimulatorTab extends Tab {
 			}
 
 			inString = !inString
+		}
+
+		inString = !inString
+
+		if (inString) {
+			errors.push('Unclosed string!')
+			return [errors, warnings]
 		}
 
 		//Tokenize strings for validation
@@ -724,12 +677,6 @@ export class FunctionSimulatorTab extends Tab {
 
 						let startingPoint = i - selectorToReconstruct.length - 2
 
-						console.log('Replacing Complex Selector')
-						console.log(
-							'Removing ' + (selectorToReconstruct.length + 3)
-						)
-						console.log('At ' + startingPoint)
-
 						tokens.splice(
 							startingPoint,
 							selectorToReconstruct.length + 3,
@@ -769,9 +716,6 @@ export class FunctionSimulatorTab extends Tab {
 					)
 				}
 			}
-
-			console.log(Array.from(possibleCommandVariations))
-			console.log(Array.from(tokens))
 
 			let lastValidVariations: Token[] = Array.from(
 				possibleCommandVariations
@@ -823,8 +767,6 @@ export class FunctionSimulatorTab extends Tab {
 				}
 			}
 
-			console.log(Array.from(possibleCommandVariations))
-
 			if (possibleCommandVariations.length == 0) {
 				errors.push(
 					'No valid command variations found! You may be missing some arguments or argument ' +
@@ -839,7 +781,7 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	//Displays data
-	protected async loadCurrentLine<Boolean>() {
+	protected async LoadCurrentLine<Boolean>() {
 		let lines = this.content.split('\n')
 
 		if (this.currentLine < lines.length) {
@@ -911,7 +853,7 @@ export class FunctionSimulatorTab extends Tab {
 				) {
 					docsElement.textContent = 'No documentation.'
 				} else {
-					let data = await this.readCommand(fullCommand)
+					let data = await this.ValidateCommand(fullCommand)
 
 					for (let i = 0; i < data[0].length; i++) {
 						var ComponentClass = Vue.extend(Error)
@@ -933,7 +875,7 @@ export class FunctionSimulatorTab extends Tab {
 						alertsElement.appendChild(instance.$el)
 					}
 
-					docsElement.textContent = await this.getDocs(command)
+					docsElement.textContent = await this.GetDocs(command)
 
 					if (data[0].length > 0) {
 						return true
@@ -947,13 +889,13 @@ export class FunctionSimulatorTab extends Tab {
 		return false
 	}
 
-	protected slowStepLine() {
+	protected SlowStepLine() {
 		setTimeout(() => {
 			if (!this.stopped) {
 				this.currentLine += 1
-				this.loadCurrentLine().then((shouldStop) => {
+				this.LoadCurrentLine().then((shouldStop) => {
 					if (!shouldStop && !this.stopped) {
-						this.slowStepLine()
+						this.SlowStepLine()
 					}
 
 					this.stopped = false
@@ -962,19 +904,19 @@ export class FunctionSimulatorTab extends Tab {
 		}, 0)
 	}
 
-	protected async play() {
+	protected async Play() {
 		this.stopped = false
 
-		await this.loadFileContent()
+		await this.LoadFileContent()
 
 		this.currentLine = 0
 
 		let shouldStop = false
 
-		shouldStop = await this.loadCurrentLine()
+		shouldStop = await this.LoadCurrentLine()
 
 		if (!shouldStop) {
-			this.slowStepLine()
+			this.SlowStepLine()
 		}
 
 		/*while (!shouldStop) {
@@ -983,20 +925,20 @@ export class FunctionSimulatorTab extends Tab {
 		}*/
 	}
 
-	protected async stepLine() {
+	protected async StepLine() {
 		this.stopped = false
 
-		await this.loadFileContent()
+		await this.LoadFileContent()
 
 		this.currentLine += 1
-		this.loadCurrentLine()
+		this.LoadCurrentLine()
 	}
 
-	protected async restart() {
-		await this.loadFileContent()
+	protected async Restart() {
+		await this.LoadFileContent()
 
 		this.currentLine = 0
-		this.loadCurrentLine()
+		this.LoadCurrentLine()
 
 		this.stopped = true
 	}
@@ -1004,11 +946,11 @@ export class FunctionSimulatorTab extends Tab {
 	async onActivate() {
 		await super.onActivate()
 
-		await this.loadFileContent()
+		await this.LoadFileContent()
 
-		await this.loadCommandData()
+		await this.LoadCommandData()
 
-		await this.loadCurrentLine()
+		await this.LoadCurrentLine()
 	}
 
 	async onDeactivate() {
