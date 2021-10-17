@@ -39,7 +39,7 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 			new BlockModelTab(tab.getProjectPath(), tab, tabSystem),
 	},
 	{
-		name: 'simulate.function',
+		name: 'functionValidator.actionName',
 		fileMatch: 'BP/functions/',
 		createPreview: async (tabSystem, tab) =>
 			new FunctionSimulatorTab(tabSystem, tab),

@@ -29,7 +29,7 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	get name(): string {
-		return this.parent.app.locales.translate('simulator.function')
+		return this.parent.app.locales.translate('functionValidator.tabName')
 	}
 
 	isFor(fileHandle: FileSystemFileHandle): Promise<boolean> {
@@ -47,6 +47,18 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	save() {}
+
+	protected TranslateError(errorName: string) {
+		return this.parent.app.locales.translate(
+			'functionValidator.errors.' + errorName
+		)
+	}
+
+	protected TranslateWarning(errorName: string) {
+		return this.parent.app.locales.translate(
+			'functionValidator.warnings.' + errorName
+		)
+	}
 
 	//Load function content
 	protected async LoadFileContent() {
@@ -311,7 +323,7 @@ export class FunctionSimulatorTab extends Tab {
 
 		if (tokens.length == 0) {
 			//Unexpected empty selector
-			errors.push('Unexpected empty complex selector!')
+			errors.push(this.TranslateError('emptyComplexConstructor'))
 			return [errors, warnings]
 		}
 
@@ -342,25 +354,27 @@ export class FunctionSimulatorTab extends Tab {
 			if (!found) {
 				//Error unxexpected selector atribute
 				errors.push(
-					"Invalid selector attribute '" + targetAtribute + "'!"
+					this.TranslateError('invalidSelectorAttribute.part1') +
+						targetAtribute +
+						this.TranslateError('invalidSelectorAttribute.part2')
 				)
 			}
 
 			if (1 + offset >= tokens.length) {
 				//Error expected '='
-				errors.push('Expected equals sign but got nothing!')
+				errors.push(this.TranslateError('expectedEqualsButNothing'))
 				return [errors, warnings]
 			}
 
 			if (tokens[1 + offset].value != '=' && tokens[1].type != 'Symbol') {
 				//Error expected '='
-				errors.push('Expected equals sign!')
+				errors.push(this.TranslateError('expectedEquals'))
 				return [errors, warnings]
 			}
 
 			if (2 + offset >= tokens.length) {
 				//Error expected value
-				errors.push('Expected value but got nothing!')
+				errors.push(this.TranslateError('expectedValueButNothing'))
 				return [errors, warnings]
 			}
 
@@ -379,9 +393,11 @@ export class FunctionSimulatorTab extends Tab {
 				if (!argData.additionalData.supportsNegation && negated) {
 					//Error negation not supported
 					errors.push(
-						"Attribute '" +
+						this.TranslateError('attributeNegationSupport.part1') +
 							targetAtribute +
-							"' does not support negation!"
+							this.TranslateError(
+								'attributeNegationSupport.part2'
+							)
 					)
 					return [errors, warnings]
 				}
@@ -393,9 +409,9 @@ export class FunctionSimulatorTab extends Tab {
 				) {
 					//Error multiple instances of this atribute not allowed
 					errors.push(
-						"Multiple instances of attribute '" +
+						this.TranslateError('multipleInstancesNever.part1') +
 							targetAtribute +
-							"' atribute not allowed!"
+							this.TranslateError('multipleInstancesNever.part2')
 					)
 					return [errors, warnings]
 				}
@@ -408,9 +424,9 @@ export class FunctionSimulatorTab extends Tab {
 				) {
 					//Error multiple instances of this atribute not allowed when negated
 					errors.push(
-						"Multiple instances of '" +
+						this.TranslateError('multipleInstancesNegated.part1') +
 							targetAtribute +
-							+"' atribute not allowed when negated!"
+							+this.TranslateError('multipleInstances.part2')
 					)
 					return [errors, warnings]
 				}
@@ -424,11 +440,17 @@ export class FunctionSimulatorTab extends Tab {
 				if (!this.MatchTypes(value.type, targetType)) {
 					//Error expected type
 					errors.push(
-						"Expected value type of '" +
+						this.TranslateError(
+							'selectorAttributeTypeMismatch.part1'
+						) +
 							targetType +
-							"', but got '" +
+							this.TranslateError(
+								'selectorAttributeTypeMismatch.part2'
+							) +
 							value.type +
-							"'!"
+							this.TranslateError(
+								'selectorAttributeTypeMismatch.part3'
+							)
 					)
 					return [errors, warnings]
 				}
@@ -437,9 +459,9 @@ export class FunctionSimulatorTab extends Tab {
 					if (!argData.additionalData.values.includes(value.value)) {
 						//Error unexpected value
 						errors.push(
-							"Value '" +
+							this.TranslateError('selectorNotValid.part1') +
 								value.value +
-								"' is not one of the expected values!"
+								this.TranslateError('selectorNotValid.part2')
 						)
 						return [errors, warnings]
 					}
@@ -468,27 +490,27 @@ export class FunctionSimulatorTab extends Tab {
 						//Warning maybe from wrong addon
 						if (targetAtribute == 'family') {
 							warnings.push(
-								"Could not find family '" +
+								this.TranslateWarning('schemaFamily.part1') +
 									value.value +
-									"'. This could either be a mistake or the family is from another addon."
+									this.TranslateWarning('schemaFamily.part2')
 							)
 						} else if (targetAtribute == 'type') {
 							warnings.push(
-								"Could not find type '" +
+								this.TranslateWarning('schemaType.part1') +
 									value.value +
-									"'. This could either be a mistake or the type is from another addon."
+									this.TranslateWarning('schemaType.part2')
 							)
 						} else if (targetAtribute == 'tag') {
 							warnings.push(
-								"Could not find tag '" +
+								this.TranslateWarning('schemaTag.part1') +
 									value.value +
-									"'. This could either be a mistake or the tag is from another addon."
+									this.TranslateWarning('schemaTag.part2')
 							)
 						} else {
 							warnings.push(
-								"Could not find schema value '" +
+								this.TranslateWarning('schemaValue.part1') +
 									value.value +
-									"'. This could either be a mistake or the schema value is from another addon."
+									this.TranslateWarning('schemaValue.part2')
 							)
 						}
 					}
@@ -507,7 +529,7 @@ export class FunctionSimulatorTab extends Tab {
 					tokens[possibleComaPos + offset].type != 'Symbol'
 				) {
 					//Error expected ','
-					errors.push('Expected comma between selector attributes!')
+					errors.push(this.TranslateError('expectedComa'))
 					return [errors, warnings]
 				}
 			}
@@ -544,7 +566,7 @@ export class FunctionSimulatorTab extends Tab {
 		inString = !inString
 
 		if (inString) {
-			errors.push('Unclosed string!')
+			errors.push(this.TranslateError('unclosedString'))
 			return [errors, warnings]
 		}
 
@@ -569,7 +591,11 @@ export class FunctionSimulatorTab extends Tab {
 			let baseCommand = tokens.shift()!
 
 			if (!this.validCommands.includes(baseCommand.value)) {
-				errors.push("'" + tokens[0].value + '" is not a valid command!')
+				errors.push(
+					this.TranslateError('invalidCommand.part1') +
+						tokens[0].value +
+						this.TranslateError('invalidCommand.part2')
+				)
 
 				return [errors, warnings]
 			}
@@ -607,20 +633,28 @@ export class FunctionSimulatorTab extends Tab {
 
 				if (token.type == 'Symbol' && token.value == '@') {
 					if (i + 1 >= tokens.length) {
-						errors.push('Expected leter after @!')
+						errors.push(
+							this.TranslateError(
+								'expectedLetterAfterAtButNothing'
+							)
+						)
 						return [errors, warnings]
 					}
 
 					let selectorTarget = tokens[i + 1]
 
 					if (selectorTarget.type != 'String') {
-						errors.push('Expected letter after @!')
+						errors.push(
+							this.TranslateError('expectedLetterAfterAt')
+						)
 						return [errors, warnings]
 					}
 
 					if (!this.SelectorTargets.includes(selectorTarget.value)) {
 						errors.push(
-							'@' + selectorTarget + ' is not a valid selector!'
+							this.TranslateError('invalidSelector.part1') +
+								selectorTarget +
+								this.TranslateError('invalidSelector.part2')
 						)
 
 						return [errors, warnings]
@@ -645,16 +679,26 @@ export class FunctionSimulatorTab extends Tab {
 				if (token.type == 'Symbol' && token.value == '[') {
 					if (inSelector) {
 						//Unexpected [
-						errors.push('Unexpected [!')
+						errors.push(
+							this.TranslateError('unexpectedOpenSquareBracket')
+						)
 						return [errors, warnings]
 					} else {
 						if (i - 1 < 0) {
-							errors.push('Expected selector before [!')
+							errors.push(
+								this.TranslateError(
+									'selectorNotBeforeOpenSquareBracketButNothing'
+								)
+							)
 							return [errors, warnings]
 						}
 
 						if (tokens[i - 1].type != 'Selector') {
-							errors.push('Expected selector before [!')
+							errors.push(
+								this.TranslateError(
+									'selectorNotBeforeOpenSquareBracket'
+								)
+							)
 							return [errors, warnings]
 						}
 
@@ -689,7 +733,9 @@ export class FunctionSimulatorTab extends Tab {
 						selectorToReconstruct = []
 					} else {
 						//Unexpected ]
-						errors.push('Unexpected ]')
+						errors.push(
+							this.TranslateError('unexpectedClosedSquareBracket')
+						)
 						return [errors, warnings]
 					}
 				} else {
@@ -741,11 +787,13 @@ export class FunctionSimulatorTab extends Tab {
 
 				if (possibleCommandVariations.length == 0) {
 					errors.push(
-						'No valid command variations found! Argument ' +
+						this.TranslateError('noValidCommandVarsFound.part1') +
 							i +
-							" may be invalid! It is of type '" +
+							this.TranslateError(
+								'noValidCommandVarsFound.part2'
+							) +
 							arg.type +
-							"' but that type is not supported in the current variation tree."
+							this.TranslateError('noValidCommandVarsFound.part3')
 					)
 					return [errors, warnings]
 				}
@@ -769,9 +817,9 @@ export class FunctionSimulatorTab extends Tab {
 
 			if (possibleCommandVariations.length == 0) {
 				errors.push(
-					'No valid command variations found! You may be missing some arguments or argument ' +
+					this.TranslateError('noValidCommandVarsFoundEnd.part1') +
 						tokens.length +
-						' may be invalid!'
+						this.TranslateError('noValidCommandVarsFoundEnd.part2')
 				)
 				return [errors, warnings]
 			}
