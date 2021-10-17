@@ -525,25 +525,25 @@ export class FunctionSimulatorTab extends Tab {
 						if (targetAtribute == 'family') {
 							warnings.push(
 								"Could not find family '" +
-									value +
+									value.value +
 									"'. This could either be a mistake or the family is from another addon."
 							)
 						} else if (targetAtribute == 'type') {
 							warnings.push(
 								"Could not find type '" +
-									value +
+									value.value +
 									"'. This could either be a mistake or the type is from another addon."
 							)
 						} else if (targetAtribute == 'tag') {
 							warnings.push(
 								"Could not find tag '" +
-									value +
+									value.value +
 									"'. This could either be a mistake or the tag is from another addon."
 							)
 						} else {
 							warnings.push(
 								"Could not find schema value '" +
-									value +
+									value.value +
 									"'. This could either be a mistake or the schema value is from another addon."
 							)
 						}
@@ -790,16 +790,19 @@ export class FunctionSimulatorTab extends Tab {
 					}
 
 					if (!this.MatchTypes(arg.type, variation[i].type)) {
-						console.log(
-							arg.type + ' did not match ' + variation[i].type
-						)
 						possibleCommandVariations.splice(j, 1)
 						j--
 					}
 				}
 
 				if (possibleCommandVariations.length == 0) {
-					errors.push('No valid command variations found!')
+					errors.push(
+						'No valid command variations found! Argument ' +
+							i +
+							" may be invalid! It is of type '" +
+							arg.type +
+							"' but that type is not supported in the current variation tree."
+					)
 					return [errors, warnings]
 				}
 
@@ -823,7 +826,11 @@ export class FunctionSimulatorTab extends Tab {
 			console.log(Array.from(possibleCommandVariations))
 
 			if (possibleCommandVariations.length == 0) {
-				errors.push('No valid command variations found!')
+				errors.push(
+					'No valid command variations found! You may be missing some arguments or argument ' +
+						tokens.length +
+						' may be invalid!'
+				)
 				return [errors, warnings]
 			}
 		}
