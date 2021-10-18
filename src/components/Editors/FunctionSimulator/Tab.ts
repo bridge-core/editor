@@ -79,6 +79,8 @@ export class FunctionSimulatorTab extends Tab {
 		this.validCommands = []
 		this.validSelectorArgs = []
 
+		let foundTypes: string[] = []
+
 		if (this.commandData) {
 			for (
 				let i = 0;
@@ -118,6 +120,8 @@ export class FunctionSimulatorTab extends Tab {
 		} else {
 			console.error('Unable to load commands.json')
 		}
+
+		console.log(foundTypes)
 	}
 
 	protected async GetDocs<String>(command: string = '') {
@@ -174,6 +178,7 @@ export class FunctionSimulatorTab extends Tab {
 	SelectorTargets = ['a', 's', 'p', 'r', 'e']
 
 	protected ParseDirty(dirtyString: Token) {
+		//TODO: add boolean type
 		let readStart = 0
 		let readEnd = dirtyString.value.length
 
@@ -201,6 +206,9 @@ export class FunctionSimulatorTab extends Tab {
 				} else if (this.isFloat(read)) {
 					//console.log('Found float ' + read)
 					foundTokens.push(new Token(read, 'Float'))
+					found = true
+				} else if (read == 'true' || read == 'false') {
+					foundTokens.push(new Token(read, 'Boolean'))
 					found = true
 				} else if (read == ' ') {
 					//console.log('Found space ' + read)
@@ -309,6 +317,11 @@ export class FunctionSimulatorTab extends Tab {
 				break
 			case 'coordinate':
 				if (currentType == 'Integer' || currentType == 'Position') {
+					return true
+				}
+				break
+			case 'boolean':
+				if (currentType == 'Boolean') {
 					return true
 				}
 				break
@@ -539,7 +552,10 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	//Gets Errors and Warnings
-	protected async ValidateCommand<Array>(command: string) {
+	protected ValidateCommand<Array>(
+		command: string | null,
+		commandTokens: Token[] | null = null
+	) {
 		//TODO: Add error and warning class so errors and warnings can have extened info and potential comments on how to fix the errors
 
 		let errors: string[] = []
@@ -547,282 +563,310 @@ export class FunctionSimulatorTab extends Tab {
 
 		//Seperate into strings by quotes for parsing
 
-		let splitStrings = command.split('"').filter((e) => e)
+		let splitStrings
 
 		let inString = false
 
 		let tokens: Token[] = []
 
-		for (let i = 0; i < splitStrings.length; i++) {
-			if (!inString) {
-				tokens.push(new Token(splitStrings[i], 'Dirty'))
-			} else {
-				tokens.push(new Token(splitStrings[i], 'Long String'))
+		let baseCommand: Token
+
+		if (!commandTokens) {
+			splitStrings = command!.split('"').filter((e) => e)
+			for (let i = 0; i < splitStrings.length; i++) {
+				if (!inString) {
+					tokens.push(new Token(splitStrings[i], 'Dirty'))
+				} else {
+					tokens.push(new Token(splitStrings[i], 'Long String'))
+				}
+
+				inString = !inString
 			}
 
 			inString = !inString
-		}
 
-		inString = !inString
-
-		if (inString) {
-			errors.push(this.TranslateError('unclosedString'))
-			return [errors, warnings]
-		}
-
-		//Tokenize strings for validation
-
-		for (let i = 0; i < tokens.length; i++) {
-			if (tokens[i].type == 'Dirty') {
-				let parsedTokens: Token[] = this.ParseDirty(tokens[i])
-
-				for (let j = 0; j < parsedTokens.length; j++) {
-					tokens.splice(i + j + 1, 0, parsedTokens[j])
-				}
-
-				tokens.splice(i, 1)
-
-				i += parsedTokens.length - 1
-			}
-		}
-
-		if (tokens.length > 0) {
-			//Test for basic command
-			let baseCommand = tokens.shift()!
-
-			if (!this.validCommands.includes(baseCommand.value)) {
-				errors.push(
-					this.TranslateError('invalidCommand.part1') +
-						tokens[0].value +
-						this.TranslateError('invalidCommand.part2')
-				)
-
+			if (inString) {
+				errors.push(this.TranslateError('unclosedString'))
 				return [errors, warnings]
 			}
 
-			//Construct Positions
+			//Tokenize strings for validation
+
 			for (let i = 0; i < tokens.length; i++) {
-				const token = tokens[i]
+				if (tokens[i].type == 'Dirty') {
+					let parsedTokens: Token[] = this.ParseDirty(tokens[i])
 
-				if (
-					token.type == 'Symbol' &&
-					(token.value == '~' || token.value == '^')
-				) {
-					if (i + 1 < tokens.length) {
-						let numberTarget = tokens[i + 1]
+					for (let j = 0; j < parsedTokens.length; j++) {
+						tokens.splice(i + j + 1, 0, parsedTokens[j])
+					}
 
-						if (numberTarget.type == 'Integer') {
-							tokens[i] = new Token(
-								token.value + numberTarget.value,
-								'Position'
+					tokens.splice(i, 1)
+
+					i += parsedTokens.length - 1
+				}
+			}
+
+			if (tokens.length > 0) {
+				//Test for basic command
+				baseCommand = tokens.shift()!
+
+				if (!this.validCommands.includes(baseCommand.value)) {
+					errors.push(
+						this.TranslateError('invalidCommand.part1') +
+							tokens[0].value +
+							this.TranslateError('invalidCommand.part2')
+					)
+
+					return [errors, warnings]
+				}
+
+				//Construct Positions
+				for (let i = 0; i < tokens.length; i++) {
+					const token = tokens[i]
+
+					if (
+						token.type == 'Symbol' &&
+						(token.value == '~' || token.value == '^')
+					) {
+						if (i + 1 < tokens.length) {
+							let numberTarget = tokens[i + 1]
+
+							if (numberTarget.type == 'Integer') {
+								tokens[i] = new Token(
+									token.value + numberTarget.value,
+									'Position'
+								)
+
+								tokens.splice(i + 1, 1)
+							} else {
+								tokens[i] = new Token(token.value, 'Position')
+							}
+						}
+
+						tokens[i] = new Token(token.value, 'Position')
+					}
+				}
+
+				//Construct Basic Selectors
+				for (let i = 0; i < tokens.length; i++) {
+					const token = tokens[i]
+
+					if (token.type == 'Symbol' && token.value == '@') {
+						if (i + 1 >= tokens.length) {
+							errors.push(
+								this.TranslateError(
+									'expectedLetterAfterAtButNothing'
+								)
+							)
+							return [errors, warnings]
+						}
+
+						let selectorTarget = tokens[i + 1]
+
+						if (selectorTarget.type != 'String') {
+							errors.push(
+								this.TranslateError('expectedLetterAfterAt')
+							)
+							return [errors, warnings]
+						}
+
+						if (
+							!this.SelectorTargets.includes(selectorTarget.value)
+						) {
+							errors.push(
+								this.TranslateError('invalidSelector.part1') +
+									selectorTarget +
+									this.TranslateError('invalidSelector.part2')
 							)
 
-							tokens.splice(i + 1, 1)
+							return [errors, warnings]
+						}
+
+						tokens[i] = new Token(
+							'@' + selectorTarget.value,
+							'Selector'
+						)
+
+						tokens.splice(i + 1, 1)
+					}
+				}
+
+				//Construct Complex Selectors
+				let inSelector = false
+				let selectorToReconstruct: Token[] = []
+
+				for (let i = 0; i < tokens.length; i++) {
+					const token = tokens[i]
+
+					if (token.type == 'Symbol' && token.value == '[') {
+						if (inSelector) {
+							//Unexpected [
+							errors.push(
+								this.TranslateError(
+									'unexpectedOpenSquareBracket'
+								)
+							)
+							return [errors, warnings]
 						} else {
-							tokens[i] = new Token(token.value, 'Position')
+							if (i - 1 < 0) {
+								errors.push(
+									this.TranslateError(
+										'selectorNotBeforeOpenSquareBracketButNothing'
+									)
+								)
+								return [errors, warnings]
+							}
+
+							if (tokens[i - 1].type != 'Selector') {
+								errors.push(
+									this.TranslateError(
+										'selectorNotBeforeOpenSquareBracket'
+									)
+								)
+								return [errors, warnings]
+							}
+
+							inSelector = true
 						}
-					}
+					} else if (token.type == 'Symbol' && token.value == ']') {
+						if (inSelector) {
+							inSelector = false
 
-					tokens[i] = new Token(token.value, 'Position')
-				}
-			}
-
-			//Construct Basic Selectors
-			for (let i = 0; i < tokens.length; i++) {
-				const token = tokens[i]
-
-				if (token.type == 'Symbol' && token.value == '@') {
-					if (i + 1 >= tokens.length) {
-						errors.push(
-							this.TranslateError(
-								'expectedLetterAfterAtButNothing'
+							let result = this.ValidateSelector(
+								selectorToReconstruct
 							)
-						)
-						return [errors, warnings]
-					}
 
-					let selectorTarget = tokens[i + 1]
+							errors = errors.concat(result[0])
+							warnings = warnings.concat(result[1])
 
-					if (selectorTarget.type != 'String') {
-						errors.push(
-							this.TranslateError('expectedLetterAfterAt')
-						)
-						return [errors, warnings]
-					}
+							if (errors.length > 0) {
+								return [errors, warnings]
+							}
 
-					if (!this.SelectorTargets.includes(selectorTarget.value)) {
-						errors.push(
-							this.TranslateError('invalidSelector.part1') +
-								selectorTarget +
-								this.TranslateError('invalidSelector.part2')
-						)
+							let startingPoint =
+								i - selectorToReconstruct.length - 2
 
-						return [errors, warnings]
-					}
+							tokens.splice(
+								startingPoint,
+								selectorToReconstruct.length + 3,
+								(tokens[startingPoint] = new Token(
+									tokens[startingPoint].value,
+									'Complex Selector'
+								))
+							)
 
-					tokens[i] = new Token(
-						'@' + selectorTarget.value,
-						'Selector'
-					)
-
-					tokens.splice(i + 1, 1)
-				}
-			}
-
-			//Construct Complex Selectors
-			let inSelector = false
-			let selectorToReconstruct: Token[] = []
-
-			for (let i = 0; i < tokens.length; i++) {
-				const token = tokens[i]
-
-				if (token.type == 'Symbol' && token.value == '[') {
-					if (inSelector) {
-						//Unexpected [
-						errors.push(
-							this.TranslateError('unexpectedOpenSquareBracket')
-						)
-						return [errors, warnings]
-					} else {
-						if (i - 1 < 0) {
+							selectorToReconstruct = []
+						} else {
+							//Unexpected ]
 							errors.push(
 								this.TranslateError(
-									'selectorNotBeforeOpenSquareBracketButNothing'
+									'unexpectedClosedSquareBracket'
 								)
 							)
 							return [errors, warnings]
 						}
-
-						if (tokens[i - 1].type != 'Selector') {
-							errors.push(
-								this.TranslateError(
-									'selectorNotBeforeOpenSquareBracket'
-								)
-							)
-							return [errors, warnings]
-						}
-
-						inSelector = true
-					}
-				} else if (token.type == 'Symbol' && token.value == ']') {
-					if (inSelector) {
-						inSelector = false
-
-						let result = this.ValidateSelector(
-							selectorToReconstruct
-						)
-
-						errors = errors.concat(result[0])
-						warnings = warnings.concat(result[1])
-
-						if (errors.length > 0) {
-							return [errors, warnings]
-						}
-
-						let startingPoint = i - selectorToReconstruct.length - 2
-
-						tokens.splice(
-							startingPoint,
-							selectorToReconstruct.length + 3,
-							(tokens[startingPoint] = new Token(
-								tokens[startingPoint].value,
-								'Complex Selector'
-							))
-						)
-
-						selectorToReconstruct = []
 					} else {
-						//Unexpected ]
-						errors.push(
-							this.TranslateError('unexpectedClosedSquareBracket')
-						)
-						return [errors, warnings]
-					}
-				} else {
-					if (inSelector) {
-						selectorToReconstruct.push(token)
+						if (inSelector) {
+							selectorToReconstruct.push(token)
+						}
 					}
 				}
 			}
+		} else {
+			tokens = commandTokens!
 
-			//Validate Command Argument Types
-			let possibleCommandVariations = []
+			baseCommand = tokens.shift()!
+		}
 
-			for (
-				let i = 0;
-				i < this.commandData._data.vanilla[0].commands.length;
-				i++
+		//Validate Command Argument Types
+		let possibleCommandVariations = []
+
+		for (
+			let i = 0;
+			i < this.commandData._data.vanilla[0].commands.length;
+			i++
+		) {
+			if (
+				this.commandData._data.vanilla[0].commands[i].commandName ==
+				baseCommand!.value
 			) {
-				if (
-					this.commandData._data.vanilla[0].commands[i].commandName ==
-					baseCommand.value
-				) {
-					possibleCommandVariations.push(
-						this.commandData._data.vanilla[0].commands[i].arguments
-					)
-				}
+				possibleCommandVariations.push(
+					this.commandData._data.vanilla[0].commands[i].arguments
+				)
 			}
+		}
 
-			let lastValidVariations: Token[] = Array.from(
-				possibleCommandVariations
-			)
+		let lastValidVariations: Token[] = Array.from(possibleCommandVariations)
 
-			for (let i = 0; i < tokens.length; i++) {
-				const arg = tokens[i]
+		for (let i = 0; i < tokens.length; i++) {
+			const arg = tokens[i]
 
-				for (let j = 0; j < possibleCommandVariations.length; j++) {
-					const variation = possibleCommandVariations[j]
+			for (let j = 0; j < possibleCommandVariations.length; j++) {
+				const variation = possibleCommandVariations[j]
 
-					if (variation.length <= i) {
+				if (variation.length <= i) {
+					if (variation[variation.length - 1].type != 'command') {
 						possibleCommandVariations.splice(j, 1)
 						j--
 						continue
 					}
+				} else {
+					if (variation[i].type == 'command') {
+						let commandSlicedTokens = tokens.slice(i, tokens.length)
 
-					if (!this.MatchTypes(arg.type, variation[i].type)) {
-						possibleCommandVariations.splice(j, 1)
-						j--
+						let result = this.ValidateCommand(
+							null,
+							commandSlicedTokens
+						)
+
+						if (result[0].length > 0) {
+							possibleCommandVariations.splice(j, 1)
+							j--
+						}
+					} else {
+						if (!this.MatchTypes(arg.type, variation[i].type)) {
+							possibleCommandVariations.splice(j, 1)
+							j--
+						}
 					}
-				}
-
-				if (possibleCommandVariations.length == 0) {
-					errors.push(
-						this.TranslateError('noValidCommandVarsFound.part1') +
-							i +
-							this.TranslateError(
-								'noValidCommandVarsFound.part2'
-							) +
-							arg.type +
-							this.TranslateError('noValidCommandVarsFound.part3')
-					)
-					return [errors, warnings]
-				}
-
-				lastValidVariations = Array.from(possibleCommandVariations)
-			}
-
-			//Check for missing and optional parameters
-			for (let j = 0; j < possibleCommandVariations.length; j++) {
-				const variation = possibleCommandVariations[j]
-
-				if (tokens.length < variation.length) {
-					if (!variation[tokens.length].isOptional) {
-						possibleCommandVariations.splice(j, 1)
-						j--
-					}
-
-					continue
 				}
 			}
 
 			if (possibleCommandVariations.length == 0) {
 				errors.push(
-					this.TranslateError('noValidCommandVarsFoundEnd.part1') +
-						tokens.length +
-						this.TranslateError('noValidCommandVarsFoundEnd.part2')
+					this.TranslateError('noValidCommandVarsFound.part1') +
+						i +
+						this.TranslateError('noValidCommandVarsFound.part2') +
+						arg.type +
+						this.TranslateError('noValidCommandVarsFound.part3')
 				)
 				return [errors, warnings]
 			}
+
+			lastValidVariations = Array.from(possibleCommandVariations)
+		}
+
+		//Check for missing and optional parameters
+		for (let j = 0; j < possibleCommandVariations.length; j++) {
+			const variation = possibleCommandVariations[j]
+
+			if (tokens.length < variation.length) {
+				if (!variation[tokens.length].isOptional) {
+					possibleCommandVariations.splice(j, 1)
+					j--
+				}
+
+				continue
+			}
+		}
+
+		if (possibleCommandVariations.length == 0) {
+			errors.push(
+				this.TranslateError('noValidCommandVarsFoundEnd.part1') +
+					tokens.length +
+					this.TranslateError('noValidCommandVarsFoundEnd.part2')
+			)
+			return [errors, warnings]
 		}
 
 		return [errors, warnings]
