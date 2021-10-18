@@ -171,7 +171,7 @@ export class FunctionSimulatorTab extends Tab {
 		return /^-?[\d.]+(?:e-?\d+)?$/.test(n)
 	}
 
-	SpecialSymbols = ['[', ']', '!', '=', '@', '~', '^', '!', ',']
+	SpecialSymbols = ['[', ']', '!', '=', '@', '~', '^', '!', ',', '{', '}']
 
 	WhiteSpace = [' ', '\t', '\n', '\r']
 
@@ -551,6 +551,31 @@ export class FunctionSimulatorTab extends Tab {
 		return [errors, warnings]
 	}
 
+	protected ValidateJSON(tokens: Token[]) {
+		let errors: string[] = []
+		let warnings: string[] = []
+
+		let reconstructedJSON = '{'
+
+		for (let i = 0; i < tokens.length; i++) {
+			if (tokens[i].type == 'Long String') {
+				reconstructedJSON += '"' + tokens[i].value + '"'
+			} else {
+				reconstructedJSON += tokens[i].value
+			}
+		}
+
+		reconstructedJSON += '}'
+
+		try {
+			JSON.parse(reconstructedJSON)
+		} catch (e) {
+			errors.push(this.TranslateError('jsonNotValid'))
+		}
+
+		return [errors, warnings]
+	}
+
 	//Gets Errors and Warnings
 	protected ValidateCommand<Array>(
 		command: string | null,
@@ -572,7 +597,8 @@ export class FunctionSimulatorTab extends Tab {
 		let baseCommand: Token
 
 		if (!commandTokens) {
-			splitStrings = command!.split('"').filter((e) => e)
+			splitStrings = command!.split('"') //.filter((e) => e)
+
 			for (let i = 0; i < splitStrings.length; i++) {
 				if (!inString) {
 					tokens.push(new Token(splitStrings[i], 'Dirty'))
@@ -583,9 +609,7 @@ export class FunctionSimulatorTab extends Tab {
 				inString = !inString
 			}
 
-			inString = !inString
-
-			if (inString) {
+			if (!inString) {
 				errors.push(this.TranslateError('unclosedString'))
 				return [errors, warnings]
 			}
@@ -644,6 +668,66 @@ export class FunctionSimulatorTab extends Tab {
 						}
 
 						tokens[i] = new Token(token.value, 'Position')
+					}
+				}
+
+				//construct json
+				let inJSON = false
+				let JSONToReconstruct: Token[] = []
+
+				for (let i = 0; i < tokens.length; i++) {
+					const token = tokens[i]
+
+					if (token.type == 'Symbol' && token.value == '{') {
+						if (inJSON) {
+							//Unexpected [
+							errors.push(
+								this.TranslateError(
+									'unexpectedOpenCurlyBracket'
+								)
+							)
+							return [errors, warnings]
+						} else {
+							inJSON = true
+						}
+					} else if (token.type == 'Symbol' && token.value == '}') {
+						if (inJSON) {
+							inJSON = false
+
+							let result = this.ValidateJSON(JSONToReconstruct)
+
+							errors = errors.concat(result[0])
+							warnings = warnings.concat(result[1])
+
+							if (errors.length > 0) {
+								return [errors, warnings]
+							}
+
+							let startingPoint = i - JSONToReconstruct.length - 1
+
+							tokens.splice(
+								startingPoint,
+								JSONToReconstruct.length + 2,
+								(tokens[startingPoint] = new Token(
+									tokens[startingPoint].value,
+									'JSON'
+								))
+							)
+
+							JSONToReconstruct = []
+						} else {
+							//Unexpected ]
+							errors.push(
+								this.TranslateError(
+									'unexpectedClosedCurlyBracket'
+								)
+							)
+							return [errors, warnings]
+						}
+					} else {
+						if (inJSON) {
+							JSONToReconstruct.push(token)
+						}
 					}
 				}
 
