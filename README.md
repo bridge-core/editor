@@ -1,9 +1,9 @@
-# v2.0.0 - "Beacon"
+# bridge. v2
 
 ![Version](https://img.shields.io/github/v/release/bridge-core/editor?style=for-the-badge&label=Version&message=Test&color=005bc9&labelColor=121212)
 ![License](https://img.shields.io/static/v1?style=for-the-badge&label=License&message=MIT&color=005bc9&labelColor=121212)
 
-This is the repository for bridge. v2.0.0.
+This is the repository for bridge. v2, a powerful IDE for Minecraft Add-Ons.
 
 ## Installation
 
