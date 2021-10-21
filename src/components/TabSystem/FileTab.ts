@@ -91,6 +91,7 @@ export abstract class FileTab extends Tab {
 			.showSaveFilePicker({
 				// @ts-ignore The type package doesn't know about suggestedName yet
 				suggestedName: this.fileHandle.name,
+				// @ts-ignore The type package doesn't know about startIn yet
 				startIn: this.fileHandle,
 			})
 			.catch(() => null)
