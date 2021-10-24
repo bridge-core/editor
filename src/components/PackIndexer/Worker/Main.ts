@@ -40,7 +40,7 @@ export class PackIndexerService extends TaskService<
 	public projectFileSystem: FileSystem
 	public globalFileSystem: FileSystem
 	public config: ProjectConfig
-	public fileType = new FileTypeLibrary()
+	public fileType: FileTypeLibrary
 
 	constructor(
 		protected projectDirectory: AnyDirectoryHandle,
@@ -52,9 +52,13 @@ export class PackIndexerService extends TaskService<
 		this.fileSystem = new FileSystem(baseDirectory)
 		this.projectFileSystem = new FileSystem(projectDirectory)
 		this.config = new ProjectConfig(new FileSystem(projectDirectory))
+		this.fileType = new FileTypeLibrary(this.config)
 
 		this.globalFileSystem = new FileSystem(baseDirectory)
-		this.lightningStore = new LightningStore(this.fileSystem, this.fileType)
+		this.lightningStore = new LightningStore(
+			this.projectFileSystem,
+			this.fileType
+		)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
 		this.fileType.setPluginFileTypes(options.pluginFileTypes)

@@ -1,3 +1,9 @@
+// @ts-ignore Make "path" work on this worker
+globalThis.process = {
+	cwd: () => '',
+	env: {},
+}
+
 import '/@/components/FileSystem/Virtual/Comlink'
 import { expose } from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'

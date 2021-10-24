@@ -311,7 +311,7 @@ export class FileTypeLibrary {
 	 * @returns Whether a file is considered a "JSON" file
 	 */
 	isJsonFile(filePath: string) {
-		const language = this.get(filePath)?.meta?.language
+		const language = this.getGlobal(filePath)?.meta?.language
 		return language ? language === 'json' : filePath.endsWith('.json')
 	}
 
