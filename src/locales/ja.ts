@@ -18,17 +18,17 @@ export default {
 		select: '選択',
 		skip: 'スキップ',
 		save: '保存',
-		more: 'More...',
+		more: 'もっと...',
 		selectFolder: 'フォルダを選択',
 		fileName: 'ファイル名',
-		inactive: '非アクティブ',
-		active: 'アクティブ',
+		inactive: '無効',
+		active: '有効',
 		later: 'あとで',
 
 		confirmOverwriteFile:
 			'このアクションは、同名のファイルを上書きします。続行しますか？',
 		fileSystemPolyfill:
-			'お使いのブラウザは、進捗状況を保存するためにプロジェクトをダウンロードする必要があります。ChromeやEdgeを使用している場合は、その必要はありません。',
+			'お使いのブラウザは進捗状況を保存するためにプロジェクトをダウンロードする必要があります。 Chrome や Edge を使用している場合は、その必要はありません。',
 		successfulExport: {
 			title: 'エクスポート成功',
 			description:
@@ -41,11 +41,11 @@ export default {
 		behaviorPack: {
 			name: 'ビヘイビアパック',
 			description:
-				'新しいゲームの仕組みを作り、Minecraftの動作を変えます',
+				'新しいゲームの仕組みを作り、 Minecraft の動作を変えます',
 		},
 		resourcePack: {
 			name: 'リソースパック',
-			description: 'マインクラフトの外観やサウンドの変更します',
+			description: 'Minecraft の外観やサウンドの変更します',
 		},
 		skinPack: {
 			name: 'スキンパック',
@@ -188,11 +188,11 @@ export default {
 		},
 		gettingStarted: {
 			name: 'はじめに',
-			description: 'ブリッジを使い始めるためのガイドを読む',
+			description: 'bridge. を使い始めるためのガイドを読む',
 		},
 		faq: {
 			name: 'FAQ',
-			description: 'ブリッジでのアドオン開発に関するよくある質問',
+			description: 'bridge. でのアドオン開発に関するよくある質問',
 		},
 		reloadAutoCompletions: {
 			name: 'オートコンプリートの再読み込み',
@@ -227,7 +227,7 @@ export default {
 			description: 'このタブ以外のすべてのタブを閉じる',
 		},
 		clearAllNotifications: {
-			name: '全ての通知を消去',
+			name: 'すべての通知を消去',
 			description: '現在表示されているすべての通知を消去する',
 		},
 		pluginInstallLocation: {
@@ -263,7 +263,7 @@ export default {
 		},
 		importBrproject: {
 			name: 'プロジェクトのインポート',
-			description: '.brprojectファイルからプロジェクトをインポートする',
+			description: '.brproject ファイルからプロジェクトをインポートする',
 		},
 		downloadFile: {
 			name: 'ファイルをダウンロード',
@@ -322,7 +322,7 @@ export default {
 			default: {
 				name: 'デフォルト設定',
 				description:
-					'プロジェクトの config.json ファイルに含まれるデフォルトのコンパイラー設定で bridge. のコンパイラーを実行します。',
+					'プロジェクトの config.json ファイルに含まれるデフォルトのコンパイラ設定で bridge. のコンパイラを実行します。',
 			},
 		},
 		extensions: {
@@ -358,12 +358,12 @@ export default {
 	experimentalGameplay: {
 		cavesAndCliffs: {
 			name: 'Caves and Cliffs',
-			description: '新しい山の生成に自動補完を有効にします。',
+			description: '新しいワールド生成用の自動補完機能を有効にします。',
 		},
 		holidayCreatorFeatures: {
 			name: 'ホリデークリエイターの特徴',
 			description:
-				'データ駆動型のアイテムおよびブロック機能の自動補完を有効にします。',
+				'データ駆動型のアイテムおよびブロックの自動補完機能を有効にします。',
 		},
 		creationOfCustomBiomes: {
 			name: 'オリジナルバイオームの作成',
@@ -373,17 +373,17 @@ export default {
 		additionalModdingCapabilities: {
 			name: '追加の改造機能',
 			description:
-				'マニフェストで Scripting API を有効にし、自動補完機能付きのスクリプトを作成できるようにします。',
+				'マニフェストの Scripting API とスクリプトの自動補完機能を有効化します。',
 		},
 		upcomingCreatorFeatures: {
 			name: '今後のクリエイター機能',
 			description:
-				'フォグボリュームファイルの作成を可能にし、エンティティプロパティの自動補完機能を提供します。',
+				'フォグボリュームファイルの作成とエンティティプロパティの自動補完機能を有効化します。',
 		},
 		enableGameTestFramework: {
 			name: 'GameTestフレームワークの有効化',
 			description:
-				'マニフェストで GameTest 関連モジュールを有効にし、自動補完機能付きのGameTestスクリプトを作成できるようにします。',
+				'マニフェストの GameTest 関連モジュールとGameTestスクリプトの自動補完機能を有効化します。',
 		},
 		experimentalMolangFeatures: {
 			name: '実験的な Molang の機能',
@@ -393,7 +393,7 @@ export default {
 		educationEdition: {
 			name: 'Education Edition の有効化',
 			description:
-				'物質還元レシピなどの教育機能で自動補完を有効にします。',
+				'物質還元レシピなどの教育機能で自動補完機能を有効にします。',
 		},
 	},
 	// Windows
@@ -422,7 +422,7 @@ export default {
 			projectDescription: 'プロジェクトの説明（任意)',
 			projectPrefix: 'プロジェクト名',
 			projectAuthor: 'プロジェクト作成者',
-			projectTargetVersion: 'プロジェクトターゲットバージョン',
+			projectTargetVersion: 'プロジェクトの対象バージョン',
 			rpAsBpDependency:
 				'リソースパックをビヘイビアパックの依存関係として登録する',
 			bpAsRpDependency:
@@ -437,50 +437,49 @@ export default {
 					player: {
 						name: 'player.json',
 						description:
-							'プレーヤーのデフォルトビヘイビアを定義します',
+							'プレーヤーのデフォルトビヘイビアを定義します。',
 					},
 					tick: {
 						name: 'tick.json',
-						description: 'ティック毎に実行する機能の定義をします',
+						description: 'ティック毎に実行する機能の定義をします。',
 					},
 					skins: {
 						name: 'skins.json',
-						description: '作成したスキンの登録をします',
+						description: '作成したスキンの定義をします。',
 					},
 					blocks: {
 						name: 'blocks.json',
 						description:
-							'ブロックのテクスチャ/サウンドを1つにまとめて使用します',
+							'ブロックのテクスチャ/サウンドを 1 つにまとめて定義します。',
 					},
 					terrainTexture: {
 						name: 'terrain_texture.json',
 						description:
-							'ブロックの面にテクスチャーを割り当てるために使用します',
+							'ブロック面のテクスチャを割り当てを定義します。',
 					},
 					itemTexture: {
 						name: 'item_texture.json',
 						description:
-							'アイテムにテクスチャーを割り当てるために使用します',
+							'アイテムのテクスチャを割り当てを定義します。',
 					},
 					flipbookTextures: {
 						name: 'flipbook_textures.json',
 						description:
-							'ブロックテクスチャーのアニメーションに使用',
+							'ブロックテクスチャのアニメーションを定義します。',
 					},
 					biomesClient: {
 						name: 'biomes_client.json',
 						description:
-							'バイオーム特有の効果がどのようにレンダリングされるかを定義するために使用します',
+							'バイオーム特有の効果がどのようにレンダリングされるかを定義します。',
 					},
 					sounds: {
 						name: 'sounds.json',
-						description:
-							'特定のゲーム機能のサウンドを定義するために使用します',
+						description: '特定のゲーム機能のサウンドを定義します。',
 					},
 					soundDefinitions: {
 						name: 'sound_definitions.json',
 						description:
-							'プロジェクト内の他の場所で使用するサウンドファイルのIDを登録するために使用します。',
+							'プロジェクト内の他の場所で使用するサウンドファイルのIDを定義します。',
 					},
 				},
 			},
@@ -489,10 +488,10 @@ export default {
 			title: 'プリセットの作成',
 			searchPresets: 'プリセットを検索...',
 			overwriteFiles:
-				'このプリセットは、1つまたは複数の既存のファイルを上書きします。続行しますか？',
+				'このプリセットは 1 つまたは複数の既存のファイルを上書きします。続行しますか？',
 			overwriteFilesConfirm: '続行',
 			overwriteUnsavedChanges:
-				'このプリセットは、未保存の変更がある1つまたは複数のファイルを上書きします。続行しますか？',
+				'このプリセットは、未保存の変更がある 1 つまたは複数のファイルを上書きします。続行しますか？',
 			overwriteUnsavedChangesConfirm: '続行',
 			validationRule: {
 				alphanumeric: '使用できる文字は英数字とアンダースコアのみです',
@@ -508,7 +507,7 @@ export default {
 		socials: {
 			title: 'ソーシャル',
 			content:
-				'Twitter, Github をチェックして、 bridge. 公式のDiscordサーバーに参加してください！',
+				'Twitter, Github をチェックして、 bridge. 公式の Discord サーバーに参加してください！',
 			discord: 'Discord',
 			twitter: 'Twitter',
 			github: 'Github',
@@ -559,7 +558,7 @@ export default {
 			projectConfig: {
 				name: 'プロジェクト設定を開く',
 				missing:
-					'このプロジェクトには、config.jsonファイルがないように見えます。すべてのプロジェクトが正常に動作するためには、プロジェクトのコンフィグファイルが必要です。',
+					'このプロジェクトには、 config.json ファイルがないように見えます。すべてのプロジェクトが正常に動作するためには、プロジェクトのコンフィグファイルが必要です。',
 			},
 			exportAsMcaddon: {
 				name: '.mcaddon としてエクスポート',
@@ -625,7 +624,7 @@ export default {
 				},
 				shrinkSidebarElements: {
 					name: 'サイドバー要素を縮小する',
-					description: 'bridge.のサイドバー要素のサイズを縮小します',
+					description: 'bridge. のサイドバー要素のサイズを縮小します',
 				},
 			},
 			appearance: {
@@ -712,7 +711,7 @@ export default {
 				openProjectChooserOnAppStartup: {
 					name: 'プロジェクトを選択を開く',
 					description:
-						'ブリッジの起動時に自動的に「プロジェクトを選択」を開くようにします。',
+						'bridge. の起動時に自動的に「プロジェクトを選択」を開くようにします。',
 				},
 			},
 			developer: {
@@ -732,7 +731,7 @@ export default {
 				volume: {
 					name: 'オーディオの有効化',
 					description:
-						'すべてのbridge. サウンドを有効または無効にします',
+						'すべての bridge. サウンドを有効または無効にします',
 				},
 			},
 			actions: {
@@ -749,7 +748,7 @@ export default {
 			editor: {
 				name: 'エディタ',
 				jsonEditor: {
-					name: 'JSONエディタ',
+					name: 'JSON エディタ',
 					description: 'JSONファイルの編集方法を選択します',
 				},
 				bracketPairColorization: {
@@ -777,7 +776,7 @@ export default {
 				dragAndDropTreeNodes: {
 					name: 'ツリーノードのドラッグ＆ドロップ',
 					description:
-						'bridge.のツリーエディタ内でのツリーノードのドラッグ＆ドロップを有効または無効にします',
+						'bridge. のツリーエディタ内でのツリーノードのドラッグ＆ドロップを有効または無効にします',
 				},
 			},
 		},
@@ -795,10 +794,10 @@ export default {
 			offlineError:
 				'拡張機能の読み込みに失敗しました。お使いの機器がネットワークに接続されていることを確認してください。',
 			compilerPluginDownload: {
-				compilerPlugins: 'コンパイラープラグイン',
-				title: 'コンパイラープラグインをダウンロード',
+				compilerPlugins: 'コンパイラプラグイン',
+				title: 'コンパイラプラグインをダウンロード',
 				description:
-					'新しいコンパイラープラグインをダウンロードしました。コンパイラコンフィグファイルにこのプラグインを追加してください。',
+					'新しいコンパイラプラグインをダウンロードしました。コンパイラコンフィグファイルにこのプラグインを追加してください。',
 				openConfig: 'コンフィグを開く',
 			},
 		},
@@ -812,8 +811,8 @@ export default {
 		browserUnsupported: {
 			title: '未対応のブラウザ',
 			description:
-				'bridge. v2 をより快適にご利用いただくために、 Chrome（Desktop） または Edge（Chromium） をご利用ください。お使いのブラウザは、ファイルを直接保存したり、プロジェクトをcom.mojangフォルダに同期することをサポートしていません。',
-			continue: '了解した上で続ける',
+				'bridge. v2 をより快適にご利用いただくためには Chrome（Desktop） または Edge（Chromium） をご利用ください。お使いのブラウザはファイルを直接保存したり、プロジェクトを com.mojang フォルダに同期することをサポートしていません。',
+			continue: '続行',
 		},
 		invalidJson: {
 			title: '無効な JSON',
@@ -844,7 +843,7 @@ export default {
 			},
 			loadingSchemas: {
 				name: 'オートコンプリートの読み込み中',
-				description: 'bridge. の自動補完データを読み込んでいます',
+				description: 'bridge. の自動補完用データを読み込んでいます',
 			},
 		},
 	},
@@ -868,17 +867,17 @@ export default {
 	comMojang: {
 		folderDropped:
 			'このフォルダをデフォルトの com.mojang フォルダとして設定しますか？',
-		title: '"com.mojang"フォルダへのアクセス',
+		title: 'com.mojang フォルダへのアクセス',
 		permissionRequest:
-			'プロジェクトをコンパイルするには "com.mojang" フォルダにアクセスする必要があります',
+			'プロジェクトをコンパイルするには com.mojang フォルダにアクセスする必要があります',
 		status: {
 			sucess:
 				'com.mojang へのプロジェクトの同期設定は正しく設定されています。',
 			deniedPermission:
-				'com.mojang への同期設定をしましたが、フォルダにbridge. の権限が与えられていません',
+				'com.mojang への同期設定をしましたが、フォルダに bridge. の権限が与えられていません',
 			notSetup: 'com.mojang への同期設定をまだ設定していません。',
 			notAvailable:
-				'プロジェクトを com.mojang フォルダに同期する機能は、 Chrome と Edge ユーザーのみ利用可能です。',
+				'プロジェクトを com.mojang フォルダに同期する機能は Chrome と Edge ユーザーのみ利用可能です。',
 		},
 	},
 	findAndReplace: {
@@ -887,7 +886,7 @@ export default {
 		replace: '置換',
 		replaceAll: 'すべて置換',
 		noResults: '該当する結果はありませんでした',
-		noSearch: '入力を開始すると、検索クエリの結果がここに表示されます。',
+		noSearch: '入力を開始すると検索クエリの結果がここに表示されます。',
 	},
 	preview: {
 		name: 'プレビュー',
@@ -911,7 +910,7 @@ export default {
 			installApp: {
 				name: 'bridge. をインストール',
 				description:
-					'最高の体験をするためには、bridge. v2をアプリとしてコンピュータにインストールしてください。',
+					'最高の体験をするためには、 bridge. v2をアプリとしてコンピュータにインストールしてください。',
 			},
 			bridge: {
 				name: 'bridge. フォルダ',
@@ -945,12 +944,12 @@ export default {
 				rawText: {
 					name: 'Raw Text',
 					description:
-						'JSONを生のテキストとして編集することができます。 中級から上級の開発者に最適です。 高度な自動補完機能とJSONの検証機能を備えています。',
+						'JSON を生のテキストとして編集することができます。 中級から上級の開発者に最適です。 高度な自動補完機能とJSONの検証機能を備えています。',
 				},
 				treeEditor: {
 					name: 'Tree Editor',
 					description:
-						'JSONの知識をほとんど必要とせずに、JSONをツリー状に編集します。 初心者や中級者のクリエイターに最適です。',
+						'JSON の知識をほとんど必要とせずに、 JSON をツリー状に編集します。 初心者や中級者のクリエイターに最適です。',
 				},
 			},
 		},
