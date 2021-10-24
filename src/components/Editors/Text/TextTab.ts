@@ -21,16 +21,14 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 		const app = await App.getApp()
 
 		await app.project.packIndexer.updateFile(
-			tab.getProjectPath(),
+			tab.getPath(),
 			fileContent,
 			tab.isForeignFile
 		)
-		await app.project.jsonDefaults.updateDynamicSchemas(
-			tab.getProjectPath()
-		)
+		await app.project.jsonDefaults.updateDynamicSchemas(tab.getPath())
 
 		app.project.fileChange.dispatch(
-			tab.getProjectPath(),
+			tab.getPath(),
 			new File([tab.editorModel?.getValue()], tab.name)
 		)
 	},
@@ -95,7 +93,7 @@ export class TextTab extends FileTab {
 				monaco.editor.getModel(uri) ??
 					monaco.editor.createModel(
 						fileContent,
-						App.fileType.get(this.getProjectPath())?.meta?.language,
+						App.fileType.get(this.getPath())?.meta?.language,
 						uri
 					)
 			)
@@ -248,12 +246,12 @@ export class TextTab extends FileTab {
 			const app = await App.getApp()
 
 			if (this.isForeignFile) {
-				await app.fileSystem.unlink(this.getProjectPath())
+				await app.fileSystem.unlink(this.getPath())
 			} else {
 				const file = await this.fileHandle.getFile()
 				const fileContent = await file.text()
 				await app.project.packIndexer.updateFile(
-					this.getProjectPath(),
+					this.getPath(),
 					fileContent
 				)
 			}

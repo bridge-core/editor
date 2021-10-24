@@ -59,7 +59,7 @@ export class TabActionProvider {
 			name: definition.name,
 			isFor: (fileTab) =>
 				fileTab instanceof FileTab &&
-				fileTab.getProjectPath().startsWith(definition.fileMatch),
+				fileTab.getPath().startsWith(definition.fileMatch),
 			trigger: async (fileTab) => {
 				const app = await App.getApp()
 

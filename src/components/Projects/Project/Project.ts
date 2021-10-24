@@ -134,9 +134,7 @@ export abstract class Project {
 
 		const selectedTab = this.tabSystem?.selectedTab
 		this.typeLoader.activate(
-			selectedTab instanceof FileTab
-				? selectedTab.getProjectPath()
-				: undefined
+			selectedTab instanceof FileTab ? selectedTab.getPath() : undefined
 		)
 
 		await this.packIndexer.activate(isReload)
@@ -202,8 +200,7 @@ export abstract class Project {
 	async getFileTabWithPath(filePath: string) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.get(
-				(tab) =>
-					tab instanceof FileTab && tab.getProjectPath() === filePath
+				(tab) => tab instanceof FileTab && tab.getPath() === filePath
 			)
 			if (tab !== undefined) return tab
 		}
@@ -235,7 +232,7 @@ export abstract class Project {
 			if (currentTabs.length === 1) currentTabs[0].setFolderName(null)
 			else {
 				const folderDifference = getFolderDifference(
-					currentTabs.map((tab) => tab.getProjectPath())
+					currentTabs.map((tab) => tab.getPath())
 				)
 				currentTabs.forEach((tab, i) =>
 					tab.setFolderName(folderDifference[i])
@@ -246,11 +243,6 @@ export abstract class Project {
 
 	absolutePath(filePath: string) {
 		return `projects/${this.name}/${filePath}`
-	}
-	getProjectPath(fileHandle: AnyFileHandle) {
-		return this.baseDirectory
-			.resolve(<any>fileHandle)
-			.then((path) => path?.join('/'))
 	}
 
 	async updateFile(filePath: string) {

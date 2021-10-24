@@ -72,9 +72,13 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		return this.path
 	}
 	/**
+	 * @deprecated Do not use!
 	 * @returns Undefined if the file that belongs to this tab is not inside of the current project
 	 */
 	getProjectPath() {
+		console.warn(
+			`CommonTab.getProjectPath() is deprecated in favor of CommonTab.getPath()`
+		)
 		if (!this.path)
 			throw new Error(
 				`Trying to access projectPath before tab finished loading`

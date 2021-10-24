@@ -6,5 +6,5 @@ export async function createFromClientEntity(
 	tabSystem: TabSystem,
 	tab: FileTab
 ) {
-	return new EntityModelTab(tab.getProjectPath(), tab, tabSystem)
+	return new EntityModelTab(tab.getPath(), tab, tabSystem)
 }

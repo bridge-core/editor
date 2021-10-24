@@ -30,7 +30,7 @@ languages.registerCompletionItemProvider('json', {
 		const {
 			id,
 			meta: { commandsUseSlash } = { commandsUseSlash: false },
-		} = App.fileType.get(currentTab.getProjectPath()) ?? {
+		} = App.fileType.get(currentTab.getPath()) ?? {
 			id: 'unknown',
 			meta: { commandsUseSlash: false },
 		}

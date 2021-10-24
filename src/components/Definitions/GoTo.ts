@@ -18,7 +18,7 @@ export class DefinitionProvider {
 	) {
 		const app = await App.getApp()
 		const { word, range } = getJsonWordAtPosition(model, position)
-		const currentPath = app.project.tabSystem?.selectedTab?.getProjectPath()
+		const currentPath = app.project.tabSystem?.selectedTab?.getPath()
 		if (!currentPath) return
 
 		const { definitions } = App.fileType.get(currentPath) ?? {}

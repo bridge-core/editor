@@ -36,9 +36,9 @@ export class JsonDefaults extends EventDispatcher<void> {
 			App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
 				if (
 					tab instanceof FileTab &&
-					App.fileType.isJsonFile(tab.getProjectPath())
+					App.fileType.isJsonFile(tab.getPath())
 				)
-					this.updateDynamicSchemas(tab.getProjectPath())
+					this.updateDynamicSchemas(tab.getPath())
 			}),
 			App.eventSystem.on('refreshCurrentContext', (filePath: string) =>
 				this.updateDynamicSchemas(filePath)
@@ -95,13 +95,13 @@ export class JsonDefaults extends EventDispatcher<void> {
 		task.update(5)
 		const tab = this.project.tabSystem?.selectedTab
 		if (tab && tab instanceof FileTab) {
-			const fileType = App.fileType.getId(tab.getProjectPath())
+			const fileType = App.fileType.getId(tab.getPath())
 			this.addSchemas(
-				await this.requestSchemaFor(fileType, tab.getProjectPath())
+				await this.requestSchemaFor(fileType, tab.getPath())
 			)
 			await this.runSchemaScripts(
 				app,
-				tab.isForeignFile ? undefined : tab.getProjectPath()
+				tab.isForeignFile ? undefined : tab.getPath()
 			)
 		}
 

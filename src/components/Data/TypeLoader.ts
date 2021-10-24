@@ -20,7 +20,7 @@ export class TypeLoader {
 		this.disposables = <IDisposable[]>[
 			App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
 				if (!tab.isForeignFile && tab instanceof FileTab)
-					this.setTypeEnv(tab.getProjectPath())
+					this.setTypeEnv(tab.getPath())
 			}),
 		]
 		if (filePath) await this.setTypeEnv(filePath)

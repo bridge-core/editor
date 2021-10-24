@@ -125,7 +125,7 @@ export class MonacoHolder extends Signal<void> {
 
 		// This snippet configures some extra trigger characters for JSON
 		this._monacoEditor.onDidChangeModelContent((event) => {
-			const filePath = this._app.tabSystem?.selectedTab?.getProjectPath()
+			const filePath = this._app.tabSystem?.selectedTab?.getPath()
 			if (!filePath) return
 
 			if (!App.fileType.isJsonFile(filePath)) return
@@ -186,7 +186,7 @@ export class MonacoHolder extends Signal<void> {
 					const selection = this._monacoEditor?.getSelection()
 					if (!currentModel || !selection) return
 
-					const filePath = this._app.tabSystem?.selectedTab?.getProjectPath()
+					const filePath = this._app.tabSystem?.selectedTab?.getPath()
 					if (!filePath) return
 
 					let word: string | undefined

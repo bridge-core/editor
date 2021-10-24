@@ -410,6 +410,7 @@ export class PackExplorer extends SidebarContent {
 					new ConfirmationWindow({
 						description:
 							'windows.packExplorer.restartDevServer.description',
+						height: 168,
 						onConfirm: async () => {
 							await Promise.all([
 								app.project.fileSystem.unlink(

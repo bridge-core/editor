@@ -42,9 +42,9 @@ export abstract class FileTab extends Tab {
 					this.isForeignFile
 				)
 
-				if (App.fileType.isJsonFile(this.getProjectPath())) {
+				if (App.fileType.isJsonFile(this.getPath())) {
 					this.parent.project.jsonDefaults.updateDynamicSchemas(
-						this.getProjectPath()
+						this.getPath()
 					)
 				}
 			}
@@ -57,7 +57,7 @@ export abstract class FileTab extends Tab {
 		return this.fileHandle.name
 	}
 	getFileType() {
-		return App.fileType.getId(this.getProjectPath())
+		return App.fileType.getId(this.getPath())
 	}
 
 	async is(tab: Tab): Promise<boolean> {

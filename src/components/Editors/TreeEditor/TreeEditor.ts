@@ -164,7 +164,7 @@ export class TreeEditor {
 	}, 50)
 
 	createSchemaRoot() {
-		const schemaUri = App.fileType.get(this.parent.getProjectPath())?.schema
+		const schemaUri = App.fileType.get(this.parent.getPath())?.schema
 		if (schemaUri)
 			this.schemaRoot = SchemaManager.addRootSchema(
 				schemaUri,
@@ -438,7 +438,7 @@ export class TreeEditor {
 					const word = selectedKey ? tree.key : tree.value
 
 					if (typeof word === 'string')
-						viewDocumentation(this.parent.getProjectPath(), word)
+						viewDocumentation(this.parent.getPath(), word)
 				},
 			},
 			{
