@@ -11,7 +11,6 @@ import { tokenizeCommand, tokenizeTargetSelector } from './Mcfunction/tokenize'
 import { App } from '/@/App'
 import './Mcfunction/WithinJson'
 import { tokenProvider } from './Mcfunction/TokenProvider'
-import { FileType } from '/@/components/Data/FileType'
 import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
 
@@ -196,7 +195,9 @@ export class McfunctionLanguage extends Language {
 					this.disposables.push(
 						project.fileSave.any.on(([filePath]) => {
 							// Whenever a custom command gets saved, we need to update the token provider to account for a potential custom command name change
-							if (FileType.getId(filePath) === 'customCommand')
+							if (
+								App.fileType.getId(filePath) === 'customCommand'
+							)
 								loadCommands(this)
 						})
 					)

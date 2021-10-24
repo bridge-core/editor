@@ -1,7 +1,6 @@
 import { ActionManager } from '/@/components/Actions/ActionManager'
 import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
-import { FileType } from '/@/components/Data/FileType'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
 import { RootSchema } from '/@/components/JSONSchema/Schema/Root'
 import { ICompletionItem } from '/@/components/JSONSchema/Schema/Schema'
@@ -165,7 +164,7 @@ export class TreeEditor {
 	}, 50)
 
 	createSchemaRoot() {
-		const schemaUri = FileType.get(this.parent.getProjectPath())?.schema
+		const schemaUri = App.fileType.get(this.parent.getProjectPath())?.schema
 		if (schemaUri)
 			this.schemaRoot = SchemaManager.addRootSchema(
 				schemaUri,

@@ -25,6 +25,7 @@ import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { getFolderDifference } from '/@/components/TabSystem/Util/FolderDifference'
 import { resolve } from '/@/utils/path'
+import { FileTypeLibrary } from '../../Data/FileType'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -43,7 +44,9 @@ export abstract class Project {
 	public readonly compilerManager = new CompilerManager(this)
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
+
 	public readonly config: ProjectConfig
+	public readonly fileTypeLibrary: FileTypeLibrary
 	public readonly extensionLoader: ExtensionLoader
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
@@ -84,6 +87,7 @@ export abstract class Project {
 	) {
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
 		this.config = new ProjectConfig(this._fileSystem, this)
+		this.fileTypeLibrary = new FileTypeLibrary(this.config)
 		this.packIndexer = new PackIndexer(this, _baseDirectory)
 		this.extensionLoader = new ExtensionLoader(
 			app.fileSystem,
@@ -116,8 +120,11 @@ export abstract class Project {
 	abstract onCreate(): Promise<void> | void
 
 	async activate(isReload = false) {
+		App.fileType.setProjectConfig(this.config)
 		this.parent.title.setProject(this.name)
 		this.parent.activatedProject.dispatch(this)
+
+		await this.fileTypeLibrary.setup(this.app.dataLoader)
 
 		if (!isReload) {
 			for (const tabSystem of this.tabSystems) await tabSystem.activate()

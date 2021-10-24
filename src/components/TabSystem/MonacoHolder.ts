@@ -12,7 +12,6 @@ import { debounce } from 'lodash-es'
 import { platform } from '/@/utils/os'
 import { showContextMenu } from '../ContextMenu/showContextMenu'
 import { TextTab } from '../Editors/Text/TextTab'
-import { FileType } from '../Data/FileType'
 
 languages.typescript.javascriptDefaults.setCompilerOptions({
 	target: languages.typescript.ScriptTarget.ESNext,
@@ -129,7 +128,7 @@ export class MonacoHolder extends Signal<void> {
 			const filePath = this._app.tabSystem?.selectedTab?.getProjectPath()
 			if (!filePath) return
 
-			if (!FileType.isJsonFile(filePath)) return
+			if (!App.fileType.isJsonFile(filePath)) return
 
 			const model = this._monacoEditor?.getModel()
 			const position = this._monacoEditor?.getSelection()?.getPosition()
@@ -191,7 +190,7 @@ export class MonacoHolder extends Signal<void> {
 					if (!filePath) return
 
 					let word: string | undefined
-					if (FileType.isJsonFile(filePath))
+					if (App.fileType.isJsonFile(filePath))
 						word = getJsonWordAtPosition(
 							currentModel,
 							selection.getPosition()

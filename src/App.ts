@@ -5,7 +5,7 @@ import '/@/components/App/ServiceWorker'
 import Vue from 'vue'
 import { EventSystem } from '/@/components/Common/Event/EventSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { FileType } from '/@/components/Data/FileType'
+import { FileTypeLibrary } from '/@/components/Data/FileType'
 import { ThemeManager } from '/@/components/Extensions/Themes/ThemeManager'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { FileSystemSetup } from '/@/components/FileSystem/Setup'
@@ -78,6 +78,7 @@ export class App {
 	public readonly configuredJsonLanguage = markRaw(
 		new ConfiguredJsonLanguage()
 	)
+	public static readonly fileType = markRaw(new FileTypeLibrary())
 
 	public readonly mobile: Mobile
 
@@ -258,7 +259,7 @@ export class App {
 			this.fileSystem.mkdir('data'),
 
 			// Setup data helpers
-			FileType.setup(this.dataLoader),
+			App.fileType.setup(this.dataLoader),
 			PackType.setup(this.dataLoader),
 		])
 

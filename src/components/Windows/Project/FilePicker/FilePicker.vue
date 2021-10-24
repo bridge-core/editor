@@ -37,7 +37,7 @@
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { PackType } from '/@/components/Data/PackType'
-import { FileType } from '/@/components/Data/FileType'
+import { App } from '/@/App.ts'
 
 export default {
 	name: 'OpenFileWindow',
@@ -58,7 +58,7 @@ export default {
 		},
 
 		getFileIcon(filePath) {
-			const fileType = FileType.get(filePath)
+			const fileType = App.fileType.get(filePath)
 			if (!fileType) return 'mdi-file-outline'
 
 			return fileType.icon || 'mdi-file-outline'

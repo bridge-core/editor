@@ -68,13 +68,19 @@ export interface IMonacoSchemaArrayEntry {
 /**
  * Utilities around bridge.'s file definitions
  */
-export namespace FileType {
-	const pluginFileTypes = new Set<IFileType>()
-	let fileTypes: IFileType[] = []
-	export const ready = new Signal<void>()
+export class FileTypeLibrary {
+	public ready = new Signal<void>()
+	protected pluginFileTypes = new Set<IFileType>()
+	protected fileTypes: IFileType[] = []
 
-	export async function setup(dataLoader: DataLoader) {
-		if (fileTypes.length > 0) return
+	constructor(protected projectConfig?: ProjectConfig) {}
+
+	setProjectConfig(projectConfig: ProjectConfig) {
+		this.projectConfig = projectConfig
+	}
+
+	async setup(dataLoader: DataLoader) {
+		if (this.fileTypes.length > 0) return
 		await dataLoader.fired
 
 		const basePath = 'data/packages/minecraftBedrock/fileDefinition'
@@ -86,37 +92,37 @@ export namespace FileType {
 			let json = await dataLoader
 				.readJSON(`${basePath}/${dirent.name}`)
 				.catch(() => null)
-			if (json) fileTypes.push(json)
+			if (json) this.fileTypes.push(json)
 		}
 
-		await loadLightningCache(dataLoader)
-		await loadPackSpider(dataLoader)
+		await this.loadLightningCache(dataLoader)
+		await this.loadPackSpider(dataLoader)
 
-		ready.dispatch()
+		this.ready.dispatch()
 	}
-	export function addPluginFileType(fileDef: IFileType) {
-		pluginFileTypes.add(fileDef)
+	addPluginFileType(fileDef: IFileType) {
+		this.pluginFileTypes.add(fileDef)
 
 		return {
-			dispose: () => pluginFileTypes.delete(fileDef),
+			dispose: () => this.pluginFileTypes.delete(fileDef),
 		}
 	}
-	export function getPluginFileTypes() {
-		return [...pluginFileTypes.values()]
+	getPluginFileTypes() {
+		return [...this.pluginFileTypes.values()]
 	}
-	export function setPluginFileTypes(fileDefs: IFileType[] = []) {
-		pluginFileTypes.clear()
-		fileDefs.forEach((fileDef) => pluginFileTypes.add(fileDef))
+	setPluginFileTypes(fileDefs: IFileType[] = []) {
+		this.pluginFileTypes.clear()
+		fileDefs.forEach((fileDef) => this.pluginFileTypes.add(fileDef))
 	}
 
 	/**
 	 * Get the file definition data for the given file path
 	 * @param filePath file path to fetch file definition for
 	 */
-	export function get(filePath?: string, searchFileType?: string) {
+	get(filePath?: string, searchFileType?: string) {
 		const extension = filePath ? extname(filePath) : null
 
-		for (const fileType of fileTypes) {
+		for (const fileType of this.fileTypes) {
 			if (searchFileType !== undefined && searchFileType === fileType.id)
 				return fileType
 			else if (!filePath) continue
@@ -152,14 +158,10 @@ export namespace FileType {
 		}
 	}
 
-	export function getGlobal(
-		config: ProjectConfig,
-		filePath?: string,
-		searchFileType?: string
-	) {
+	getGlobal(filePath?: string, searchFileType?: string) {
 		const extension = filePath ? extname(filePath) : null
 
-		for (const fileType of fileTypes) {
+		for (const fileType of this.fileTypes) {
 			if (searchFileType !== undefined && searchFileType === fileType.id)
 				return fileType
 			else if (!filePath) continue
@@ -190,16 +192,22 @@ export namespace FileType {
 
 			if (hasScope) {
 				if (
-					prefixMatchers(config, packTypes, scope!).some((scope) =>
-						filePath.startsWith(scope)
-					)
+					this.prefixMatchers(
+						this.projectConfig,
+						packTypes,
+						scope!
+					).some((scope) => filePath.startsWith(scope))
 				)
 					return fileType
 			} else if (hasMatcher) {
 				if (
 					isMatch(
 						filePath,
-						prefixMatchers(config, packTypes, matcher!)
+						this.prefixMatchers(
+							this.projectConfig,
+							packTypes,
+							matcher!
+						)
 					)
 				) {
 					return fileType
@@ -212,11 +220,13 @@ export namespace FileType {
 			}
 		}
 	}
-	function prefixMatchers(
-		config: ProjectConfig,
+	protected prefixMatchers(
+		config: ProjectConfig | undefined,
 		packTypes: TPackTypeId[],
 		matchers: string[]
 	) {
+		if (!config) return []
+
 		if (packTypes.length === 0)
 			return matchers.map((matcher) =>
 				config.getPackFilePath(undefined, matcher)
@@ -233,10 +243,10 @@ export namespace FileType {
 		return prefixed
 	}
 
-	export function getIds() {
+	getIds() {
 		const ids = []
 
-		for (const fileType of fileTypes) {
+		for (const fileType of this.fileTypes) {
 			ids.push(fileType.id)
 		}
 
@@ -246,7 +256,7 @@ export namespace FileType {
 	/**
 	 * Guess the file path of a file given a file handle
 	 */
-	export async function guessFolder(fileHandle: AnyFileHandle) {
+	async guessFolder(fileHandle: AnyFileHandle) {
 		// Helper function
 		const getStartPath = (scope: string | string[]) => {
 			let startPath = Array.isArray(scope) ? scope[0] : scope
@@ -257,7 +267,7 @@ export namespace FileType {
 
 		// 1. Guess based on file extension
 		const extension = `.${fileHandle.name.split('.').pop()!}`
-		for (const { detect = {} } of fileTypes) {
+		for (const { detect = {} } of this.fileTypes) {
 			if (!detect.scope) continue
 			if (detect.fileExtensions?.includes(extension))
 				return getStartPath(detect.scope)
@@ -274,7 +284,7 @@ export namespace FileType {
 			return null
 		}
 
-		for (const { type, detect } of fileTypes) {
+		for (const { type, detect } of this.fileTypes) {
 			if (typeof type === 'string' && type !== 'json') continue
 
 			const { scope, fileContent } = detect ?? {}
@@ -292,24 +302,24 @@ export namespace FileType {
 	 * Get the file type/file definition id for the provided file path
 	 * @param filePath file path to get the file type of
 	 */
-	export function getId(filePath: string) {
-		return get(filePath)?.id ?? 'unknown'
+	getId(filePath: string) {
+		return this.getGlobal(filePath)?.id ?? 'unknown'
 	}
 
 	/**
 	 * A function that tests whether a file path is a JSON file respecting the meta.language property & file extension
 	 * @returns Whether a file is considered a "JSON" file
 	 */
-	export function isJsonFile(filePath: string) {
-		const language = FileType.get(filePath)?.meta?.language
+	isJsonFile(filePath: string) {
+		const language = this.get(filePath)?.meta?.language
 		return language ? language === 'json' : filePath.endsWith('.json')
 	}
 
 	/**
 	 * Get a JSON schema array that can be used to set Monaco's JSON defaults
 	 */
-	export function getMonacoSchemaArray() {
-		return fileTypes
+	getMonacoSchemaArray() {
+		return this.fileTypes
 			.map(
 				({ detect = {}, schema }) =>
 					<IMonacoSchemaArrayEntry>{
@@ -322,19 +332,18 @@ export namespace FileType {
 			.flat()
 	}
 
-	const lCacheFiles: Record<string, ILightningInstruction[] | string> = {}
-
-	async function loadLightningCache(dataLoader: DataLoader) {
-		for (const fileType of fileTypes) {
+	protected lCacheFiles: Record<string, ILightningInstruction[] | string> = {}
+	async loadLightningCache(dataLoader: DataLoader) {
+		for (const fileType of this.fileTypes) {
 			if (!fileType.lightningCache) continue
 			const filePath = `data/packages/minecraftBedrock/lightningCache/${fileType.lightningCache}`
 
 			if (fileType.lightningCache.endsWith('.json'))
-				lCacheFiles[
+				this.lCacheFiles[
 					fileType.lightningCache
 				] = await dataLoader.readJSON(filePath)
 			else if (fileType.lightningCache.endsWith('.js'))
-				lCacheFiles[
+				this.lCacheFiles[
 					fileType.lightningCache
 				] = await dataLoader
 					.readFile(filePath)
@@ -346,19 +355,22 @@ export namespace FileType {
 		}
 	}
 
-	export async function getLightningCache(filePath: string) {
-		const { lightningCache } = get(filePath) ?? {}
+	async getLightningCache(filePath: string) {
+		const { lightningCache } = this.getGlobal(filePath) ?? {}
 		if (!lightningCache) return []
 
-		return lCacheFiles[lightningCache] ?? []
+		return this.lCacheFiles[lightningCache] ?? []
 	}
 
-	const packSpiderFiles: { id: string; packSpider: IPackSpiderFile }[] = []
-	async function loadPackSpider(dataLoader: DataLoader) {
-		packSpiderFiles.push(
+	protected packSpiderFiles: {
+		id: string
+		packSpider: IPackSpiderFile
+	}[] = []
+	async loadPackSpider(dataLoader: DataLoader) {
+		this.packSpiderFiles.push(
 			...(<{ id: string; packSpider: IPackSpiderFile }[]>(
 				await Promise.all(
-					fileTypes
+					this.fileTypes
 						.map(({ id, packSpider }) => {
 							if (!packSpider) return
 							return dataLoader
@@ -375,7 +387,7 @@ export namespace FileType {
 			))
 		)
 	}
-	export async function getPackSpiderData() {
-		return packSpiderFiles
+	async getPackSpiderData() {
+		return this.packSpiderFiles
 	}
 }

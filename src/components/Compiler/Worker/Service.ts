@@ -4,10 +4,11 @@ import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { loadPlugins } from './Plugins'
 import { TCompilerPlugin } from './TCompilerPlugin'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { FileType, IFileType } from '/@/components/Data/FileType'
+import { FileTypeLibrary, IFileType } from '/@/components/Data/FileType'
 import { Compiler } from './Compiler'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
+import { ProjectConfig } from '../../Projects/Project/Config'
 
 export interface ICompilerOptions {
 	config: string
@@ -30,6 +31,8 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 	protected _outputFileSystem?: FileSystem
 	protected dataLoader = new DataLoader()
 	protected compiler: Compiler
+	public fileType: FileTypeLibrary
+	public config: ProjectConfig
 
 	constructor(
 		projectDirectory: AnyDirectoryHandle,
@@ -40,8 +43,11 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 		super()
 
 		this.fileSystem = new FileSystem(projectDirectory)
-		FileType.setPluginFileTypes(options.pluginFileTypes)
+
 		this.compiler = new Compiler(this)
+		this.config = new ProjectConfig(this.fileSystem)
+		this.fileType = new FileTypeLibrary(this.config)
+		this.fileType.setPluginFileTypes(options.pluginFileTypes)
 
 		if (comMojangDirectory)
 			this._outputFileSystem = new FileSystem(comMojangDirectory)
@@ -85,7 +91,7 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 	}
 
 	async onStart([updatedFiles, deletedFiles]: [string[], string[]]) {
-		await FileType.setup(this.dataLoader)
+		await this.fileType.setup(this.dataLoader)
 
 		try {
 			if (this.options.config === 'default') {
@@ -151,6 +157,7 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 
 		this.plugins = await loadPlugins({
 			fileSystem: globalFs,
+			fileType: this.fileType,
 			pluginPaths: plugins,
 			localFs: this.fileSystem,
 			outputFs: this.outputFileSystem,
@@ -169,7 +176,7 @@ export class CompilerService extends TaskService<void, [string[], string[]]> {
 		pluginFileTypes: IFileType[]
 	) {
 		await this.loadPlugins(plugins)
-		FileType.setPluginFileTypes(pluginFileTypes)
+		this.fileType.setPluginFileTypes(pluginFileTypes)
 	}
 	updateMode(
 		mode: 'dev' | 'build',

@@ -1,7 +1,7 @@
 import { getLocation } from '/@/utils/monaco/getLocation'
 import { Uri, Range, editor, Position, CancellationToken } from 'monaco-editor'
 import { App } from '/@/App'
-import { FileType, IDefinition } from '/@/components/Data/FileType'
+import { IDefinition } from '/@/components/Data/FileType'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import { run } from '/@/components/Extensions/Scripts/run'
@@ -21,8 +21,8 @@ export class DefinitionProvider {
 		const currentPath = app.project.tabSystem?.selectedTab?.getProjectPath()
 		if (!currentPath) return
 
-		const { definitions } = FileType.get(currentPath) ?? {}
-		const lightningCache = await FileType.getLightningCache(currentPath)
+		const { definitions } = App.fileType.get(currentPath) ?? {}
+		const lightningCache = await App.fileType.getLightningCache(currentPath)
 		// lightningCache is string for lightning cache text scripts
 		if (
 			!definitions ||

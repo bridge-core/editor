@@ -133,9 +133,12 @@ export class ProjectConfig {
 		}
 	}
 
-	async setup() {
+	async setup(upgradeConfig = true) {
 		// Load legacy project config & transform it to new format specified here: https://github.com/bridge-core/project-config-standard
-		if (await this.fileSystem.fileExists('.bridge/config.json')) {
+		if (
+			upgradeConfig &&
+			(await this.fileSystem.fileExists('.bridge/config.json'))
+		) {
 			const {
 				darkTheme,
 				lightTheme,
@@ -186,7 +189,7 @@ export class ProjectConfig {
 		let updatedConfig = false
 
 		// Running in main thread, so we can use the App object
-		if (this.project && this.data.capabilities) {
+		if (upgradeConfig && this.project && this.data.capabilities) {
 			// Transform old "capabilities" format to "experimentalGameplay"
 			const experimentalToggles: IExperimentalToggle[] = await this.project.app.dataLoader.readJSON(
 				'data/packages/minecraftBedrock/experimentalGameplay.json'
@@ -254,6 +257,15 @@ export class ProjectConfig {
 			`projects/${name}`,
 			`${this.getPackRoot(packId)}/${filePath}`
 		)
+	}
+	getAvailablePackPaths() {
+		const paths: string[] = []
+
+		for (const packId of Object.keys(this.data.packs ?? {})) {
+			paths.push(this.getPackFilePath(<TPackTypeId>packId))
+		}
+
+		return paths
 	}
 
 	async save() {

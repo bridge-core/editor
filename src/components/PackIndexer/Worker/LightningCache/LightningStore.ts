@@ -1,4 +1,7 @@
-import { FileType, IMonacoSchemaArrayEntry } from '/@/components/Data/FileType'
+import {
+	FileTypeLibrary,
+	IMonacoSchemaArrayEntry,
+} from '/@/components/Data/FileType'
 import type { FileSystem } from '/@/components/FileSystem/FileSystem'
 
 type TStore = Record<string, Record<string, IStoreEntry>>
@@ -17,7 +20,7 @@ export class LightningStore {
 	protected fs: FileSystem
 	protected _visitedFiles = 0
 	protected _totalFiles = 0
-	constructor(fs: FileSystem) {
+	constructor(fs: FileSystem, protected fileType: FileTypeLibrary) {
 		this.fs = fs
 	}
 
@@ -100,7 +103,7 @@ export class LightningStore {
 			data,
 			isForeignFile,
 		}: IStoreEntry & { data?: Record<string, string[]> },
-		fileType = FileType.getId(filePath)
+		fileType = this.fileType.getId(filePath)
 	) {
 		if (!this.store![fileType]) this.store![fileType] = {}
 
@@ -114,7 +117,7 @@ export class LightningStore {
 			data: data ?? this.store![fileType]?.[filePath]?.data,
 		}
 	}
-	remove(filePath: string, fileType = FileType.getId(filePath)) {
+	remove(filePath: string, fileType = this.fileType.getId(filePath)) {
 		if (!this.store![fileType]) return
 
 		delete this.store![fileType][filePath]
@@ -122,7 +125,7 @@ export class LightningStore {
 	setVisited(
 		filePath: string,
 		visited: boolean,
-		fileType = FileType.getId(filePath)
+		fileType = this.fileType.getId(filePath)
 	) {
 		this._visitedFiles++
 
@@ -131,7 +134,10 @@ export class LightningStore {
 		}
 	}
 
-	getLastModified(filePath: string, fileType = FileType.getId(filePath)) {
+	getLastModified(
+		filePath: string,
+		fileType = this.fileType.getId(filePath)
+	) {
 		return this.store![fileType]?.[filePath]?.lastModified
 	}
 
@@ -196,10 +202,10 @@ export class LightningStore {
 		await Promise.all(promises)
 	}
 
-	get(filePath: string, fileType = FileType.getId(filePath)) {
+	get(filePath: string, fileType = this.fileType.getId(filePath)) {
 		return this.store![fileType]?.[filePath] ?? {}
 	}
-	has(filePath: string, fileType = FileType.getId(filePath)) {
+	has(filePath: string, fileType = this.fileType.getId(filePath)) {
 		return !!this.store![fileType]?.[filePath]
 	}
 

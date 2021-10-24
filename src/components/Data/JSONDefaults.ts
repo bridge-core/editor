@@ -1,5 +1,5 @@
 import { App } from '/@/App'
-import { FileType, IMonacoSchemaArrayEntry } from '/@/components/Data/FileType'
+import { IMonacoSchemaArrayEntry } from '/@/components/Data/FileType'
 import json5 from 'json5'
 import * as monaco from 'monaco-editor'
 import { Project } from '../Projects/Project/Project'
@@ -36,7 +36,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 			App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
 				if (
 					tab instanceof FileTab &&
-					FileType.isJsonFile(tab.getProjectPath())
+					App.fileType.isJsonFile(tab.getProjectPath())
 				)
 					this.updateDynamicSchemas(tab.getProjectPath())
 			}),
@@ -95,7 +95,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		task.update(5)
 		const tab = this.project.tabSystem?.selectedTab
 		if (tab && tab instanceof FileTab) {
-			const fileType = FileType.getId(tab.getProjectPath())
+			const fileType = App.fileType.getId(tab.getProjectPath())
 			this.addSchemas(
 				await this.requestSchemaFor(fileType, tab.getProjectPath())
 			)
@@ -141,7 +141,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 
 	async updateDynamicSchemas(filePath: string) {
 		const app = await App.getApp()
-		const fileType = FileType.getId(filePath)
+		const fileType = App.fileType.getId(filePath)
 
 		this.addSchemas(await this.requestSchemaFor(fileType, filePath))
 		this.addSchemas(await this.requestSchemaFor(fileType))
@@ -154,7 +154,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		const updatedFileTypes = new Set<string>()
 
 		for (const filePath of filePaths) {
-			const fileType = FileType.getId(filePath)
+			const fileType = App.fileType.getId(filePath)
 			if (updatedFileTypes.has(fileType)) continue
 
 			this.addSchemas(await this.requestSchemaFor(fileType))
@@ -188,7 +188,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 	async getDynamicSchemas() {
 		return (
 			await Promise.all(
-				FileType.getIds().map((id) => this.requestSchemaFor(id))
+				App.fileType.getIds().map((id) => this.requestSchemaFor(id))
 			)
 		).flat()
 	}
@@ -203,7 +203,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		}
 
 		// ...add file type entries
-		FileType.getMonacoSchemaArray().forEach((addSchema) => {
+		App.fileType.getMonacoSchemaArray().forEach((addSchema) => {
 			// Non-json files; e.g. .lang
 			if (!addSchema.uri) return
 

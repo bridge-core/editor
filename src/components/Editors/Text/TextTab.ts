@@ -5,7 +5,6 @@ import { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '../../FileSystem/Types'
@@ -96,7 +95,7 @@ export class TextTab extends FileTab {
 				monaco.editor.getModel(uri) ??
 					monaco.editor.createModel(
 						fileContent,
-						FileType.get(this.getProjectPath())?.meta?.language,
+						App.fileType.get(this.getProjectPath())?.meta?.language,
 						uri
 					)
 			)
@@ -164,10 +163,7 @@ export class TextTab extends FileTab {
 		const action = this.editorInstance?.getAction(
 			'editor.action.formatDocument'
 		)
-		const fileType = FileType.getGlobal(
-			this.parent.project.config,
-			this.getPath()
-		)
+		const fileType = App.fileType.getGlobal(this.getPath())
 
 		if (
 			action &&
