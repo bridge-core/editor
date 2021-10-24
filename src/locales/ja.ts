@@ -26,9 +26,9 @@ export default {
 		later: 'あとで',
 
 		confirmOverwriteFile:
-			'このアクションは、同名のファイルを上書きします。続行しますか？',
+			'このアクションは同名のファイルを上書きします。 続行しますか？',
 		fileSystemPolyfill:
-			'お使いのブラウザは進捗状況を保存するためにプロジェクトをダウンロードする必要があります。 Chrome や Edge を使用している場合は、その必要はありません。',
+			'お使いのブラウザは進捗状況を保存するためにプロジェクトをダウンロードする必要があります。 Chrome や Edge を使用している場合はその必要はありません。',
 		successfulExport: {
 			title: 'エクスポート成功',
 			description:
@@ -41,7 +41,7 @@ export default {
 		behaviorPack: {
 			name: 'ビヘイビアパック',
 			description:
-				'新しいゲームの仕組みを作り、 Minecraft の動作を変えます',
+				'新しいゲームの仕組みを作り Minecraft の動作を変えます',
 		},
 		resourcePack: {
 			name: 'リソースパック',
@@ -164,7 +164,7 @@ export default {
 		},
 		cut: {
 			name: '切り取り',
-			description: '選択したテキストをクリップボードにコピーし、切り取る',
+			description: '選択したテキストをクリップボードにコピーして切り取る',
 		},
 		paste: {
 			name: '貼り付け',
@@ -204,7 +204,7 @@ export default {
 		},
 		moveToSplitScreen: {
 			name: '分割画面へ移動',
-			description: '分割画面を開き、このタブを移す',
+			description: '分割画面を開きこのタブを移す',
 		},
 		closeTab: {
 			name: 'タブを閉じる',
@@ -233,13 +233,11 @@ export default {
 		pluginInstallLocation: {
 			global: {
 				name: 'グローバルにインストール',
-				description:
-					'グローバル拡張機能は、すべてのプロジェクトでアクセス可能です',
+				description: 'すべてのプロジェクトで利用可能にします',
 			},
 			local: {
 				name: 'ローカルにインストール',
-				description:
-					'ローカル拡張機能は、追加したプロジェクトの中でのみアクセス可能です',
+				description: '追加したプロジェクトの中でのみ利用可能にします',
 			},
 		},
 		toObject: {
@@ -348,8 +346,7 @@ export default {
 	// Welcome Screen
 	welcome: {
 		title: 'ようこそ bridge. へ',
-		subtitle:
-			'Minecraft のアドオンの作成が、これまで以上に便利になりました!',
+		subtitle: 'Minecraft のアドオンの作成がこれまで以上に便利になりました!',
 		quickActions: 'クイックアクション',
 		recentFiles: '最近のファイル',
 		recentProjects: '最近のプロジェクト',
@@ -430,7 +427,7 @@ export default {
 			useLangForManifest: 'マニフェストにパック名/説明文を直接追加する',
 			create: '作成',
 			saveCurrentProject:
-				'新しいプロジェクトを作成する前に、現在のプロジェクトを保存しますか？保存されていない変更点は失われてしまいます',
+				'新しいプロジェクトを作成する前に現在のプロジェクトを保存しますか？ 保存されていない変更点は失われてしまいます',
 			individualFiles: {
 				name: '個別ファイル',
 				file: {
@@ -488,10 +485,10 @@ export default {
 			title: 'プリセットの作成',
 			searchPresets: 'プリセットを検索...',
 			overwriteFiles:
-				'このプリセットは 1 つまたは複数の既存のファイルを上書きします。続行しますか？',
+				'このプリセットは 1 つまたは複数の既存のファイルを上書きします。 続行しますか？',
 			overwriteFilesConfirm: '続行',
 			overwriteUnsavedChanges:
-				'このプリセットは、未保存の変更がある 1 つまたは複数のファイルを上書きします。続行しますか？',
+				'このプリセットは未保存の変更がある 1 つまたは複数のファイルを上書きします。 続行しますか？',
 			overwriteUnsavedChangesConfirm: '続行',
 			validationRule: {
 				alphanumeric: '使用できる文字は英数字とアンダースコアのみです',
@@ -507,7 +504,7 @@ export default {
 		socials: {
 			title: 'ソーシャル',
 			content:
-				'Twitter, Github をチェックして、 bridge. 公式の Discord サーバーに参加してください！',
+				'Twitter, Github をチェックして bridge. 公式の Discord サーバーに参加してください！',
 			discord: 'Discord',
 			twitter: 'Twitter',
 			github: 'Github',
@@ -524,17 +521,17 @@ export default {
 			saveCurrentProject: {
 				name: 'プロジェクトの保存',
 				description:
-					'現在のプロジェクトを .brproject ファイルとしてダウンロードし、行った変更を保存することができます。',
+					'現在のプロジェクトを .brproject ファイルとしてダウンロードし行った変更を保存することができます。',
 			},
 			openNewProject: {
 				name: 'プロジェクトを開く',
 				description:
-					' .brproject ファイルを選択して、プロジェクトを開きます。',
+					' .brproject ファイルを選択してプロジェクトを開きます。',
 				saveCurrentProject:
-					'新しいプロジェクトを読み込む前に、現在のプロジェクトを保存しますか？',
+					'新しいプロジェクトを読み込む前に現在のプロジェクトを保存しますか？',
 			},
 			wrongFileType:
-				'プロジェクトは、 .brproject または .mcaddon ファイルでなければなりません。',
+				'プロジェクトは .brproject または .mcaddon ファイルでなければなりません。',
 			addPack: 'パックの追加',
 		},
 		filePath: {
@@ -547,7 +544,7 @@ export default {
 			refresh: {
 				name: 'プロジェクトの再読み込み',
 				description:
-					'新しく追加されたファイルのために、現在のプロジェクトを再読み込みする',
+					'新しく追加されたファイルのために現在のプロジェクトを再読み込みすます',
 			},
 			restartDevServer: {
 				name: '開発サーバーの再起動',
@@ -558,7 +555,7 @@ export default {
 			projectConfig: {
 				name: 'プロジェクト設定を開く',
 				missing:
-					'このプロジェクトには、 config.json ファイルがないように見えます。すべてのプロジェクトが正常に動作するためには、プロジェクトのコンフィグファイルが必要です。',
+					'このプロジェクトには config.json ファイルがないように見えます。 すべてのプロジェクトが正常に動作するためにはプロジェクトのコンフィグファイルが必要です。',
 			},
 			exportAsMcaddon: {
 				name: '.mcaddon としてエクスポート',
@@ -682,12 +679,12 @@ export default {
 				collaborativeMode: {
 					name: 'コラボレーションモード',
 					description:
-						'プロジェクトの切り替え時に、キャッシュを強制的に再読み込みします。一人で作業していて、プロジェクトの編集にのみ bridge. を使用する場合は無効にします。',
+						'プロジェクトの切り替え時にキャッシュを強制的に再読み込みします。 1 人で作業していてプロジェクトの編集にのみ bridge. を使用する場合は無効にします。',
 				},
 				packSpider: {
 					name: 'Pack Spider',
 					description:
-						'Pack Spider は、プロジェクト内のファイルを接続し、その接続を仮想ファイルシステムで表示します。',
+						'Pack Spider はプロジェクト内のファイルを接続し、その接続を仮想ファイルシステムで表示します。',
 				},
 				formatOnSave: {
 					name: '保存時のフォーマット',
@@ -702,7 +699,7 @@ export default {
 				restoreTabs: {
 					name: 'タブの復元',
 					description:
-						'アプリを起動すると、前回 bridge. を使用したときのタブが復元されます。',
+						'アプリを起動すると前回 bridge. を使用したときのタブが復元されます。',
 				},
 				resetBridgeFolder: {
 					name: 'ルートフォルダの選択',
@@ -771,7 +768,7 @@ export default {
 				automaticallyOpenTreeNodes: {
 					name: 'ツリーのノードを自動的に開く',
 					description:
-						'bridge. のツリーエディタで、ノードを選択すると自動的にノードを開きます',
+						'bridge. のツリーエディタでノードを選択すると自動的にノードを開きます',
 				},
 				dragAndDropTreeNodes: {
 					name: 'ツリーノードのドラッグ＆ドロップ',
@@ -783,7 +780,7 @@ export default {
 		projectFolder: {
 			title: 'プロジェクトフォルダ',
 			content:
-				'bridge. が正常に動作するためには、プロジェクトフォルダにアクセスする必要があります。',
+				'bridge. が正常に動作するためにはプロジェクトフォルダにアクセスする必要があります。',
 		},
 		extensionStore: {
 			title: '拡張機能ストア',
@@ -792,12 +789,12 @@ export default {
 			activateExtension: '拡張機能の有効化',
 			deactivateExtension: '拡張機能の無効化',
 			offlineError:
-				'拡張機能の読み込みに失敗しました。お使いの機器がネットワークに接続されていることを確認してください。',
+				'拡張機能の読み込みに失敗しました。 お使いの機器がネットワークに接続されていることを確認してください。',
 			compilerPluginDownload: {
 				compilerPlugins: 'コンパイラプラグイン',
 				title: 'コンパイラプラグインをダウンロード',
 				description:
-					'新しいコンパイラプラグインをダウンロードしました。コンパイラコンフィグファイルにこのプラグインを追加してください。',
+					'新しいコンパイラプラグインをダウンロードしました。 コンパイラコンフィグファイルにこのプラグインを追加してください。',
 				openConfig: 'コンフィグを開く',
 			},
 		},
@@ -805,19 +802,19 @@ export default {
 			title: 'インストール先の選択',
 		},
 		unsavedFile: {
-			description: 'このファイルを閉じる前に、変更内容を保存しますか？',
+			description: 'このファイルを閉じる前に変更内容を保存しますか？',
 			save: '保存して閉じる',
 		},
 		browserUnsupported: {
 			title: '未対応のブラウザ',
 			description:
-				'bridge. v2 をより快適にご利用いただくためには Chrome（Desktop） または Edge（Chromium） をご利用ください。お使いのブラウザはファイルを直接保存したり、プロジェクトを com.mojang フォルダに同期することをサポートしていません。',
+				'bridge. v2 をより快適にご利用いただくためには Chrome（Desktop） または Edge（Chromium） をご利用ください。 お使いのブラウザはファイルを直接保存したり、プロジェクトを com.mojang フォルダに同期することをサポートしていません。',
 			continue: '続行',
 		},
 		invalidJson: {
 			title: '無効な JSON',
 			description:
-				'bridge. のツリーエディタで、無効な JSON ファイルを開くことができません。この問題を解決するには、設定で JSON エディタタイプを「Raw Text」に切り替えて、手動で修正してください。',
+				'bridge. のツリーエディタで無効な JSON ファイルを開くことはできません。 この問題を解決するには設定で JSON エディタタイプを「Raw Text」に切り替えて手動で修正してください。',
 		},
 		loadingWindow: {
 			titles: {
@@ -848,9 +845,9 @@ export default {
 		},
 	},
 	fileDropper: {
-		importFiles: 'ファイルをドロップすると、インポートされます!',
+		importFiles: 'ファイルをドロップするとインポートされます!',
 		importFailed:
-			'bridge. は、ファイルをインポートすることができませんでした',
+			'bridge. はファイルをインポートすることができませんでした',
 		andMore: '...and more!',
 		importMethod: 'インポート方法',
 		saveToProject: {
@@ -861,7 +858,7 @@ export default {
 		openFile: {
 			title: 'ファイルを開く',
 			description1: '',
-			description2: 'を開き、編集した内容を元のファイルに保存します',
+			description2: 'を開き編集した内容を元のファイルに保存します',
 		},
 	},
 	comMojang: {
@@ -874,8 +871,8 @@ export default {
 			sucess:
 				'com.mojang へのプロジェクトの同期設定は正しく設定されています。',
 			deniedPermission:
-				'com.mojang への同期設定をしましたが、フォルダに bridge. の権限が与えられていません',
-			notSetup: 'com.mojang への同期設定をまだ設定していません。',
+				'com.mojang へのフォルダアクセス権限が与えられていません',
+			notSetup: 'com.mojang への同期設定を設定していません。',
 			notAvailable:
 				'プロジェクトを com.mojang フォルダに同期する機能は Chrome と Edge ユーザーのみ利用可能です。',
 		},
@@ -898,19 +895,19 @@ export default {
 		failedClientEntityLoad:
 			'接続されているクライアントエンティティの読み込みに失敗しました',
 		invalidEntity:
-			'無効な JSON を持つエンティティのプレビューを開くことができません。ファイル内の JSON エラーを修正してから再度お試しください。',
+			'無効な JSON を持つエンティティのプレビューを開くことができません。 ファイル内の JSON エラーを修正してから再度お試しください。',
 		chooseGeometry: 'ジオメトリの選択',
 		noGeometry:
 			'このファイル内に有効なジオメトリが見つかりません。 JSON が有効であること、ファイル構造が正しいこと、および指定された識別子を持つジオメトリが存在することを確認してください。',
 	},
 	initialSetup: {
-		welcome: 'ようこそ、 bridge. v2 へ!',
+		welcome: 'ようこそ bridge. v2 へ!',
 		welcomeCaption: 'Minecraft アドオンのための強力な 統合開発環境',
 		step: {
 			installApp: {
 				name: 'bridge. をインストール',
 				description:
-					'最高の体験をするためには、 bridge. v2をアプリとしてコンピュータにインストールしてください。',
+					'最高の体験をするためには bridge. v2をアプリとしてコンピュータにインストールしてください。',
 			},
 			bridge: {
 				name: 'bridge. フォルダ',
@@ -933,7 +930,7 @@ export default {
 			comMojang: {
 				name: 'com.mojang フォルダ',
 				description:
-					'com.mojang フォルダを bridge. にドラッグして、プロジェクトとの同期を設定します。これにより、 Minecraft for Windows 10 の中でアドオンに自動的にアクセスできるようになります。 com.mojang の同期設定は、 bridge. を開いている間はいつでも行えます。',
+					'com.mojang フォルダを bridge. にドラッグしてプロジェクトとの同期を設定します。 これにより Minecraft for Windows 10 の中でアドオンに自動的にアクセスできるようになります。 com.mojang の同期設定は bridge. を開いている間いつでも行えます。',
 				extraDescription:
 					'com.mojang フォルダを bridge. にドラッグします。',
 			},
@@ -949,7 +946,7 @@ export default {
 				treeEditor: {
 					name: 'Tree Editor',
 					description:
-						'JSON の知識をほとんど必要とせずに、 JSON をツリー状に編集します。 初心者や中級者のクリエイターに最適です。',
+						'JSON の知識をほとんど必要とせずに JSON をツリー状に編集します。 初心者や中級者のクリエイターに最適です。',
 				},
 			},
 		},
