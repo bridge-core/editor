@@ -7,13 +7,14 @@ import de from '/@/locales/de'
 import nl from '/@/locales/nl'
 import ko from '/@/locales/ko'
 import zhTW from '/@/locales/zhTW'
+import ja from '/@/locales/ja'
 
 Vue.use(Vuetify)
 Vue.config.productionTip = false
 
 export const vuetify = new Vuetify({
 	lang: {
-		locales: { nl, de, en, ko, zhTW },
+		locales: { nl, de, en, ko, zhTW, ja },
 	},
 	breakpoint: {
 		mobileBreakpoint: 'xs',

@@ -22,6 +22,10 @@ export class BasicFileImporter extends FileImporter {
 				'.png',
 				'.jpg',
 				'.jpeg',
+				'.wav',
+				'.ogg',
+				'.mp3',
+				'.fsb',
 			],
 			fileDropper
 		)
