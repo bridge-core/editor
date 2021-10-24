@@ -7,7 +7,7 @@
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:width="440"
-		:height="130"
+		:height="$data.height"
 		:hasCloseButton="false"
 		:isSmallPopup="true"
 	>

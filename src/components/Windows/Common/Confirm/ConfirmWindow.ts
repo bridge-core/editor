@@ -9,6 +9,7 @@ export interface IConfirmWindowOpts {
 	cancelText?: string
 	onConfirm?: () => void
 	onCancel?: () => void
+	height?: number
 }
 
 export class ConfirmationWindow extends BaseWindow<boolean> {
@@ -30,7 +31,9 @@ export class ConfirmationWindow extends BaseWindow<boolean> {
 	get title() {
 		return this.opts.title ?? 'general.confirm'
 	}
-
+	get height() {
+		return this.opts.height ?? 130
+	}
 	onConfirm() {
 		App.audioManager.playAudio('click5.ogg', 1)
 		if (typeof this.opts.onConfirm === 'function') this.opts.onConfirm()
