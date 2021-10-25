@@ -5,9 +5,9 @@ import { createFromGeometry } from '/@/components/Editors/EntityModel/create/fro
 import { createFromClientEntity } from '/@/components/Editors/EntityModel/create/fromClientEntity'
 import { createFromEntity } from '/@/components/Editors/EntityModel/create/fromEntity'
 import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
-import { BlockModelTab } from '../../Editors/BlockModel/Tab'
-import { CommandData } from '../../Languages/Mcfunction/Data'
-import { WorldTab } from '../../BedrockWorlds/Render/Tab'
+import { BlockModelTab } from '/@/components/Editors/BlockModel/Tab'
+import { CommandData } from '/@/components/Languages/Mcfunction/Data'
+import { WorldTab } from '/@/components/BedrockWorlds/Render/Tab'
 
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{

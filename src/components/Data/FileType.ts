@@ -192,23 +192,14 @@ export class FileTypeLibrary {
 
 			if (hasScope) {
 				if (
-					this.prefixMatchers(
-						this.projectConfig,
-						packTypes,
-						scope!
-					).some((scope) => filePath.startsWith(scope))
+					this.prefixMatchers(packTypes, scope!).some((scope) =>
+						filePath.startsWith(scope)
+					)
 				)
 					return fileType
 			} else if (hasMatcher) {
 				if (
-					isMatch(
-						filePath,
-						this.prefixMatchers(
-							this.projectConfig,
-							packTypes,
-							matcher!
-						)
-					)
+					isMatch(filePath, this.prefixMatchers(packTypes, matcher!))
 				) {
 					return fileType
 				}
@@ -220,23 +211,21 @@ export class FileTypeLibrary {
 			}
 		}
 	}
-	protected prefixMatchers(
-		config: ProjectConfig | undefined,
-		packTypes: TPackTypeId[],
-		matchers: string[]
-	) {
-		if (!config) return []
+	protected prefixMatchers(packTypes: TPackTypeId[], matchers: string[]) {
+		if (!this.projectConfig) return []
 
 		if (packTypes.length === 0)
 			return matchers.map((matcher) =>
-				config.resolvePackPath(undefined, matcher)
+				this.projectConfig!.resolvePackPath(undefined, matcher)
 			)
 
 		const prefixed: string[] = []
 
 		for (const packType of packTypes) {
 			for (const matcher of matchers) {
-				prefixed.push(config.resolvePackPath(packType, matcher))
+				prefixed.push(
+					this.projectConfig!.resolvePackPath(packType, matcher)
+				)
 			}
 		}
 
@@ -318,17 +307,29 @@ export class FileTypeLibrary {
 	/**
 	 * Get a JSON schema array that can be used to set Monaco's JSON defaults
 	 */
-	getMonacoSchemaArray() {
-		return this.fileTypes
-			.map(
-				({ detect = {}, schema }) =>
-					<IMonacoSchemaArrayEntry>{
-						fileMatch: Array.isArray(detect.matcher)
+	getMonacoSchemaEntries() {
+		return <IMonacoSchemaArrayEntry[]>this.fileTypes
+			.map(({ detect = {}, schema }) => {
+				if (!detect.matcher) return null
+
+				const packTypes =
+					detect?.packType === undefined
+						? []
+						: Array.isArray(detect?.packType)
+						? detect?.packType
+						: [detect?.packType]
+
+				return {
+					fileMatch: this.prefixMatchers(
+						packTypes,
+						Array.isArray(detect.matcher)
 							? [...detect.matcher]
-							: [detect.matcher],
-						uri: schema,
-					}
-			)
+							: [detect.matcher]
+					),
+					uri: schema,
+				}
+			})
+			.filter((schemaEntry) => schemaEntry !== null)
 			.flat()
 	}
 
