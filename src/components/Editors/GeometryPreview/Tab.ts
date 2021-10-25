@@ -192,7 +192,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 				this.renderContainer.modelData,
 				await loadAsDataURL(
 					this.renderContainer.currentTexturePath,
-					app.project.fileSystem
+					app.fileSystem
 				)
 			)
 		)

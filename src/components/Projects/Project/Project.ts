@@ -24,7 +24,6 @@ import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { getFolderDifference } from '/@/components/TabSystem/Util/FolderDifference'
-import { resolve } from '/@/utils/path'
 import { FileTypeLibrary } from '../../Data/FileType'
 
 export interface IProjectData extends IConfigJson {
@@ -287,7 +286,7 @@ export abstract class Project {
 		const tab = await this.getFileTabWithPath(filePath)
 		if (tab && tab instanceof FileTab) return await tab.getFile()
 
-		return await this.fileSystem.readFile(filePath)
+		return await this.app.fileSystem.readFile(filePath)
 	}
 	setActiveTabSystem(tabSystem: TabSystem, value: boolean) {
 		this.tabSystems.forEach((tS) =>
@@ -309,14 +308,14 @@ export abstract class Project {
 		this._projectData.contains!.push(packType)
 	}
 	/**
-	 * @deprecated Use `project.config.getPackFilePath(...)` instead
+	 * @deprecated Use `project.config.resolvePackPath(...)` instead
 	 */
 	getFilePath(packId: TPackTypeId, filePath?: string) {
-		return this.config.getPackFilePath(packId, filePath)
+		return this.config.resolvePackPath(packId, filePath)
 	}
 	isFileWithinAnyPack(filePath: string) {
 		return this.getPacks()
-			.map((packId) => this.config.getPackFilePath(packId))
+			.map((packId) => this.config.resolvePackPath(packId))
 			.some((packPath) => filePath.startsWith(packPath))
 	}
 	isFileWithinProject(filePath: string) {

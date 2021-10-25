@@ -12,29 +12,29 @@ import { WorldTab } from '../../BedrockWorlds/Render/Tab'
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{
 		name: 'preview.viewModel',
-		fileMatch: 'RP/models/',
+		fileType: 'geometry',
 		createPreview: (tabSystem, tab) => createFromGeometry(tabSystem, tab),
 	},
 	{
 		name: 'preview.viewModel',
-		fileMatch: 'RP/entity/',
+		fileType: 'clientEntity',
 		createPreview: (tabSystem, tab) =>
 			createFromClientEntity(tabSystem, tab),
 	},
 	{
 		name: 'preview.viewEntity',
-		fileMatch: 'BP/entities/',
+		fileType: 'entity',
 		createPreview: (tabSystem, tab) => createFromEntity(tabSystem, tab),
 	},
 	{
 		name: 'preview.viewParticle',
-		fileMatch: 'RP/particles/',
+		fileType: 'particle',
 		createPreview: async (tabSystem, tab) =>
 			new ParticlePreviewTab(tab, tabSystem),
 	},
 	{
 		name: 'preview.viewBlock',
-		fileMatch: 'BP/blocks/',
+		fileType: 'block',
 		createPreview: async (tabSystem, tab) =>
 			new BlockModelTab(tab.getPath(), tab, tabSystem),
 	},

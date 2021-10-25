@@ -229,14 +229,14 @@ export class FileTypeLibrary {
 
 		if (packTypes.length === 0)
 			return matchers.map((matcher) =>
-				config.getPackFilePath(undefined, matcher)
+				config.resolvePackPath(undefined, matcher)
 			)
 
 		const prefixed: string[] = []
 
 		for (const packType of packTypes) {
 			for (const matcher of matchers) {
-				prefixed.push(config.getPackFilePath(packType, matcher))
+				prefixed.push(config.resolvePackPath(packType, matcher))
 			}
 		}
 

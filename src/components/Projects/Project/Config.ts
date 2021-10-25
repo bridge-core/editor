@@ -245,7 +245,7 @@ export class ProjectConfig {
 	getPackRoot(packId: TPackTypeId) {
 		return this.data.packs?.[packId] ?? defaultPackPaths[packId]
 	}
-	getPackFilePath(packId?: TPackTypeId, filePath?: string) {
+	resolvePackPath(packId?: TPackTypeId, filePath?: string) {
 		const name = this.fileSystem.baseDirectory.name
 
 		if (!filePath && !packId) return `projects/${name}`
@@ -262,7 +262,7 @@ export class ProjectConfig {
 		const paths: string[] = []
 
 		for (const packId of Object.keys(this.data.packs ?? {})) {
-			paths.push(this.getPackFilePath(<TPackTypeId>packId))
+			paths.push(this.resolvePackPath(<TPackTypeId>packId))
 		}
 
 		return paths

@@ -19,7 +19,7 @@ export async function loadPacks(app: App, project: Project) {
 	const packs: IPackData[] = []
 
 	for (const packId of availablePackIds) {
-		const packPath = project.config.getPackFilePath(packId)
+		const packPath = project.config.resolvePackPath(packId)
 		if (!(await app.fileSystem.directoryExists(packPath))) continue
 
 		// Check whether handle is a valid pack
