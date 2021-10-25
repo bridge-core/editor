@@ -12,6 +12,7 @@ import {
 	AnyFileHandle,
 	AnyHandle,
 } from '/@/components/FileSystem/Types'
+import { TPackTypeId } from '/@/components/Data/PackType'
 
 const knownTextFiles = new Set([
 	'.js',
@@ -347,6 +348,14 @@ export class LightningCache {
 												this.service.fileSystem,
 												basePath,
 												extensions
+											),
+										resolvePackPath: (
+											packId: TPackTypeId,
+											filePath: string
+										) =>
+											this.service.config.resolvePackPath(
+												packId,
+												filePath
 											),
 									},
 								},
