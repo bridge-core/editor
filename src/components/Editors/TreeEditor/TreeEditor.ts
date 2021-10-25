@@ -18,11 +18,11 @@ import { TreeSelection, TreeValueSelection } from './TreeSelection'
 import { App } from '/@/App'
 import { debounce } from 'lodash-es'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
-import { IActionConfig } from '../../Actions/SimpleAction'
-import { viewDocumentation } from '../../Documentation/view'
+import { IActionConfig } from '/@/components/Actions/SimpleAction'
+import { viewDocumentation } from '/@/components/Documentation/view'
 import { platformRedoBinding } from '/@/utils/constants'
-import { getLatestFormatVersion } from '../../Data/FormatVersions'
-import { filterDuplicates } from './CompletionItems/filterDuplicates'
+import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
+import { filterDuplicates } from './CompletionItems/FilterDuplicates'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
