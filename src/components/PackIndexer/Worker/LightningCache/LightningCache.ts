@@ -241,7 +241,10 @@ export class LightningCache {
 
 			// Only proceed if the script returned a function
 			if (typeof cacheFunction === 'function') {
-				const textData = cacheFunction(await file.text())
+				const textData = cacheFunction(await file.text(), {
+					resolvePackPath: (packId: TPackTypeId, filePath: string) =>
+						this.service.config.resolvePackPath(packId, filePath),
+				})
 
 				this.lightningStore.add(
 					filePath,
