@@ -2,7 +2,6 @@ import { platform } from '/@/utils/os'
 import { v4 as uuid } from 'uuid'
 import { App } from '/@/App'
 import { PackType } from '/@/components/Data/PackType'
-import { FileType } from '/@/components/Data/FileType'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { reactive } from '@vue/composition-api'
 import { settingsState } from '../Windows/Settings/SettingsState'
@@ -109,8 +108,7 @@ export class DirectoryEntry {
 		return PackType.get(this.getPath())?.color
 	}
 	get icon() {
-		return FileType.getGlobal(App.instance.project.config, this.getPath())
-			?.icon
+		return App.fileType.getGlobal(this.getPath())?.icon
 	}
 	getPath() {
 		return this.path?.join('/') ?? []

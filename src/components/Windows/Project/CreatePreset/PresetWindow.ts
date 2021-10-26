@@ -389,7 +389,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 		const filePaths: string[] = []
 		for (const fileHandle of createdFiles) {
-			const filePath = await app.project.getProjectPath(fileHandle)
+			const filePath = await app.fileSystem.pathTo(fileHandle)
 			if (!filePath) continue
 
 			filePaths.push(filePath)

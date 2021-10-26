@@ -551,7 +551,7 @@ export default {
 			restartDevServer: {
 				name: 'Restart Dev Server',
 				description:
-					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project.",
+					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
 			},
 			createPreset: 'New File',
 			projectConfig: {

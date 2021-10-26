@@ -2,8 +2,8 @@ import { Tab } from './CommonTab'
 import { TabSystem } from './TabSystem'
 import { v4 as uuid } from 'uuid'
 import { AnyFileHandle } from '../FileSystem/Types'
-import { FileType } from '../Data/FileType'
 import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
+import { App } from '/@/App'
 
 export abstract class FileTab extends Tab {
 	public isForeignFile = false
@@ -26,7 +26,7 @@ export abstract class FileTab extends Tab {
 		if (!this.path || !this.parent.project.isFileWithinProject(this.path)) {
 			this.isForeignFile = true
 			let guessedFolder =
-				(await FileType.guessFolder(this.fileHandle)) ?? uuid()
+				(await App.fileType.guessFolder(this.fileHandle)) ?? uuid()
 			if (!guessedFolder.endsWith('/')) guessedFolder += '/'
 
 			this.path = `${guessedFolder}${uuid()}/${this.fileHandle.name}`
@@ -42,9 +42,9 @@ export abstract class FileTab extends Tab {
 					this.isForeignFile
 				)
 
-				if (FileType.isJsonFile(this.getProjectPath())) {
+				if (App.fileType.isJsonFile(this.getPath())) {
 					this.parent.project.jsonDefaults.updateDynamicSchemas(
-						this.getProjectPath()
+						this.getPath()
 					)
 				}
 			}
@@ -57,7 +57,7 @@ export abstract class FileTab extends Tab {
 		return this.fileHandle.name
 	}
 	getFileType() {
-		return FileType.getId(this.getProjectPath())
+		return App.fileType.getId(this.getPath())
 	}
 
 	async is(tab: Tab): Promise<boolean> {

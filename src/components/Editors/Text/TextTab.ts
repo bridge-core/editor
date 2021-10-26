@@ -5,7 +5,6 @@ import { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { FileType } from '/@/components/Data/FileType'
 import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '../../FileSystem/Types'
@@ -22,16 +21,14 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 		const app = await App.getApp()
 
 		await app.project.packIndexer.updateFile(
-			tab.getProjectPath(),
+			tab.getPath(),
 			fileContent,
 			tab.isForeignFile
 		)
-		await app.project.jsonDefaults.updateDynamicSchemas(
-			tab.getProjectPath()
-		)
+		await app.project.jsonDefaults.updateDynamicSchemas(tab.getPath())
 
 		app.project.fileChange.dispatch(
-			tab.getProjectPath(),
+			tab.getPath(),
 			new File([tab.editorModel?.getValue()], tab.name)
 		)
 	},
@@ -96,7 +93,7 @@ export class TextTab extends FileTab {
 				monaco.editor.getModel(uri) ??
 					monaco.editor.createModel(
 						fileContent,
-						FileType.get(this.getProjectPath())?.meta?.language,
+						App.fileType.get(this.getPath())?.meta?.language,
 						uri
 					)
 			)
@@ -164,10 +161,7 @@ export class TextTab extends FileTab {
 		const action = this.editorInstance?.getAction(
 			'editor.action.formatDocument'
 		)
-		const fileType = FileType.getGlobal(
-			this.parent.project.config,
-			this.getPath()
-		)
+		const fileType = App.fileType.getGlobal(this.getPath())
 
 		if (
 			action &&
@@ -252,12 +246,12 @@ export class TextTab extends FileTab {
 			const app = await App.getApp()
 
 			if (this.isForeignFile) {
-				await app.fileSystem.unlink(this.getProjectPath())
+				await app.fileSystem.unlink(this.getPath())
 			} else {
 				const file = await this.fileHandle.getFile()
 				const fileContent = await file.text()
 				await app.project.packIndexer.updateFile(
-					this.getProjectPath(),
+					this.getPath(),
 					fileContent
 				)
 			}

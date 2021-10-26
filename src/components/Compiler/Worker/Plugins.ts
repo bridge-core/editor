@@ -15,6 +15,7 @@ import { TCompilerPlugin } from './TCompilerPlugin'
 import { TCompilerPluginFactory } from './TCompilerPluginFactory'
 import { CustomCommandsPlugin } from './Plugins/CustomCommands/Plugin'
 import { DataLoader } from '/@/components/Data/DataLoader'
+import type { FileTypeLibrary } from '../../Data/FileType'
 
 export type TCompilerHook = keyof TCompilerPlugin
 export interface ILoadPLugins {
@@ -27,6 +28,7 @@ export interface ILoadPLugins {
 	getAliases: (filePath: string) => string[]
 	compileFiles: (files: string[]) => Promise<void>
 	dataLoader: DataLoader
+	fileType: FileTypeLibrary
 }
 
 export async function loadPlugins({
@@ -39,6 +41,7 @@ export async function loadPlugins({
 	compileFiles,
 	getAliases,
 	dataLoader,
+	fileType,
 }: ILoadPLugins) {
 	const plugins = new Map<string, TCompilerPluginFactory<any>>()
 	const projectConfig = new ProjectConfig(localFs)
@@ -100,6 +103,7 @@ export async function loadPlugins({
 			plugin({
 				options: pluginOpts[pluginId],
 				fileSystem,
+				fileType,
 				dataLoader,
 				outputFileSystem: outputFs,
 				hasComMojangDirectory,

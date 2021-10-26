@@ -1,14 +1,13 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: "[Feature]"
-labels: Feature
+title: ''
+labels: feature
 assignees: ''
-
 ---
 
 **Summary**
-A clear and concise description of what the problem is.
+A clear and concise description of the feature request.
 
 **Alternatives/Considerations**
 A clear and concise description of any alternative solutions or features you've considered.

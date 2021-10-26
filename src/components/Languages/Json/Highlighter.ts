@@ -1,5 +1,4 @@
 import { languages } from 'monaco-editor'
-import { FileType } from '/@/components/Data/FileType'
 import { TextTab } from '/@/components/Editors/Text/TextTab'
 import { ProjectConfig } from '../../Projects/Project/Config'
 import { App } from '/@/App'
@@ -73,13 +72,13 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 	async loadWords(tabArg?: Tab) {
 		const app = await App.getApp()
 		await app.projectManager.projectReady.fired
-		await FileType.ready.fired
+		await App.fileType.ready.fired
 
 		const tab = tabArg ?? app.project.tabSystem?.selectedTab
 		if (!(tab instanceof TextTab) && !(tab instanceof TreeTab)) return
 
 		const { id, highlighterConfiguration = {} } =
-			FileType.getGlobal(app.project.config, tab.getPath()) ?? {}
+			App.fileType.getGlobal(tab.getPath()) ?? {}
 
 		// We have already loaded the needed file type
 		if (!id) return this.resetWords(tab)

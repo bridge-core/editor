@@ -5,19 +5,19 @@ import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 export async function loadIcon(project: Project, fileSystem: FileSystem) {
 	try {
 		return await loadAsDataURL(
-			project.getFilePath('behaviorPack', 'pack_icon.png'),
+			project.config.resolvePackPath('behaviorPack', 'pack_icon.png'),
 			fileSystem
 		)
 	} catch {}
 	try {
 		return await loadAsDataURL(
-			project.getFilePath('resourcePack', 'pack_icon.png'),
+			project.config.resolvePackPath('resourcePack', 'pack_icon.png'),
 			fileSystem
 		)
 	} catch {}
 	try {
 		return await loadAsDataURL(
-			project.getFilePath('skinPack', 'pack_icon.png'),
+			project.config.resolvePackPath('skinPack', 'pack_icon.png'),
 			fileSystem
 		)
 	} catch {}

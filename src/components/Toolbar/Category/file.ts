@@ -96,7 +96,7 @@ export function setupFileCategory(app: App) {
 						_,
 						compiled,
 					] = await app.project.compilerManager.compileWithFile(
-						currentTab.getProjectPath(),
+						currentTab.getPath(),
 						await currentTab.getFile()
 					)
 

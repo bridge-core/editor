@@ -2,7 +2,6 @@ import json5 from 'json5'
 import { TCompilerPluginFactory } from '../../TCompilerPluginFactory'
 import { Command } from './Command'
 import { transformCommands } from './transformCommands'
-import { FileType } from '/@/components/Data/FileType'
 import { setObjectAt } from '/@/utils/walkObject'
 
 export const CustomCommandsPlugin: TCompilerPluginFactory<{
@@ -11,6 +10,7 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 	mode: 'dev' | 'build'
 	v1CompatMode?: boolean
 }> = ({
+	fileType: fileTypeLib,
 	dataLoader,
 	options: {
 		include = {},
@@ -27,10 +27,10 @@ export const CustomCommandsPlugin: TCompilerPluginFactory<{
 
 	const loadCommandsFor = (filePath: string) =>
 		Object.entries(include).find(
-			([fileType]) => FileType.getId(filePath) === fileType
+			([fileType]) => fileTypeLib.getId(filePath) === fileType
 		)?.[1]
 	const withSlashPrefix = (filePath: string) =>
-		FileType.get(filePath)?.meta?.commandsUseSlash ?? false
+		fileTypeLib.get(filePath)?.meta?.commandsUseSlash ?? false
 
 	return {
 		async buildStart() {

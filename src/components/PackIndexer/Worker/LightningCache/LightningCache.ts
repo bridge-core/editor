@@ -1,11 +1,10 @@
-import { FileType } from '/@/components/Data/FileType'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { walkObject } from '/@/utils/walkObject'
 import json5 from 'json5'
 import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'
 import { runScript } from './Script'
-import { basename, extname } from '/@/utils/path'
+import { basename, extname, join } from '/@/utils/path'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { iterateDir } from '/@/utils/iterateDir'
 import {
@@ -13,6 +12,7 @@ import {
 	AnyFileHandle,
 	AnyHandle,
 } from '/@/components/FileSystem/Types'
+import { TPackTypeId } from '/@/components/Data/PackType'
 
 const knownTextFiles = new Set([
 	'.js',
@@ -43,9 +43,13 @@ export class LightningCache {
 		protected lightningStore: LightningStore
 	) {}
 
+	get fileType() {
+		return this.service.fileType
+	}
+
 	async loadIgnoreFolders() {
 		try {
-			const file = await this.service.fileSystem.readFile(
+			const file = await this.service.projectFileSystem.readFile(
 				'.bridge/.ignoreFolders'
 			)
 			;(await file.text())
@@ -77,23 +81,41 @@ export class LightningCache {
 		let anyFileChanged = false
 		const filePaths: string[] = []
 		const changedFiles: string[] = []
-		await this.iterateDir(
-			this.service.fileSystem.baseDirectory,
-			async (fileHandle, filePath) => {
-				const fileDidChange = await this.processFile(
-					filePath,
-					fileHandle
-				)
 
-				if (fileDidChange) {
-					if (!anyFileChanged) anyFileChanged = true
-					changedFiles.push(filePath)
-				}
-				filePaths.push(filePath)
-
-				this.service.progress.addToCurrent()
-			}
+		const availablePackPaths = this.service.config.getAvailablePackPaths()
+		// Find directory handles matching each available pack
+		const directoryHandles = await Promise.all(
+			availablePackPaths.map(
+				async (packPath) =>
+					<const>[
+						packPath,
+						await this.service.fileSystem.getDirectoryHandle(
+							packPath
+						),
+					]
+			)
 		)
+
+		for (const [packPath, directoryHandle] of directoryHandles) {
+			await this.iterateDir(
+				directoryHandle,
+				async (fileHandle, filePath) => {
+					filePath = join(packPath, filePath)
+					const fileDidChange = await this.processFile(
+						filePath,
+						fileHandle
+					)
+
+					if (fileDidChange) {
+						if (!anyFileChanged) anyFileChanged = true
+						changedFiles.push(filePath)
+					}
+					filePaths.push(filePath)
+
+					this.service.progress.addToCurrent()
+				}
+			)
+		}
 
 		let deletedFiles: string[] = []
 		if (
@@ -162,7 +184,7 @@ export class LightningCache {
 		const file = receivedContent
 			? new File([fileHandleOrContent], basename(filePath))
 			: await fileHandleOrContent.getFile()
-		const fileType = FileType.getId(filePath)
+		const fileType = this.fileType.getId(filePath)
 
 		if (!file)
 			throw new Error(
@@ -184,7 +206,7 @@ export class LightningCache {
 		const ext = extname(filePath)
 
 		// Second step: Process file
-		if (FileType.isJsonFile(filePath)) {
+		if (this.fileType.isJsonFile(filePath)) {
 			await this.processJSON(
 				filePath,
 				fileType,
@@ -211,7 +233,7 @@ export class LightningCache {
 		file: File,
 		isForeignFile?: boolean
 	) {
-		const instructions = await FileType.getLightningCache(filePath)
+		const instructions = await this.fileType.getLightningCache(filePath)
 
 		// JavaScript cache API
 		if (typeof instructions === 'string') {
@@ -219,7 +241,10 @@ export class LightningCache {
 
 			// Only proceed if the script returned a function
 			if (typeof cacheFunction === 'function') {
-				const textData = cacheFunction(await file.text())
+				const textData = cacheFunction(await file.text(), {
+					resolvePackPath: (packId: TPackTypeId, filePath: string) =>
+						this.service.config.resolvePackPath(packId, filePath),
+				})
 
 				this.lightningStore.add(
 					filePath,
@@ -255,7 +280,7 @@ export class LightningCache {
 		isForeignFile?: boolean
 	) {
 		// Load instructions for current file
-		const instructions = await FileType.getLightningCache(filePath)
+		const instructions = await this.fileType.getLightningCache(filePath)
 
 		// No instructions = no work
 		if (instructions.length === 0 || typeof instructions === 'string') {
@@ -326,6 +351,14 @@ export class LightningCache {
 												this.service.fileSystem,
 												basePath,
 												extensions
+											),
+										resolvePackPath: (
+											packId: TPackTypeId,
+											filePath: string
+										) =>
+											this.service.config.resolvePackPath(
+												packId,
+												filePath
 											),
 									},
 								},

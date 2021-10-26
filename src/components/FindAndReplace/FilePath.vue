@@ -18,7 +18,6 @@
 
 <script>
 import { App } from '/@/App.ts'
-import { FileType } from '/@/components/Data/FileType.ts'
 import { PackType } from '/@/components/Data/PackType.ts'
 
 export default {
@@ -28,7 +27,7 @@ export default {
 	},
 	methods: {
 		getFileIcon(filePath) {
-			return (FileType.get(filePath) || {}).icon ?? 'mdi-file-outline'
+			return (App.fileType.get(filePath) || {}).icon ?? 'mdi-file-outline'
 		},
 		getIconColor(filePath) {
 			return (PackType.getWithRelativePath(filePath) || {}).color
