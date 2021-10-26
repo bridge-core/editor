@@ -12,7 +12,7 @@ export class SchemaScript {
 	constructor(protected app: App, protected filePath?: string) {}
 
 	protected async runScript(scriptPath: string, script: string) {
-		const scopedFs = this.app.project.fileSystem
+		const fs = this.app.fileSystem
 
 		let currentJson = {}
 		let failedFileLoad = true
@@ -33,7 +33,7 @@ export class SchemaScript {
 				script,
 				env: {
 					readdir: (path: string) =>
-						scopedFs.readFilesFromDir(path).catch(() => []),
+						fs.readFilesFromDir(path).catch(() => []),
 					uuid,
 					getFormatVersions: getFilteredFormatVersions,
 					getCacheDataFor: async (
@@ -64,6 +64,14 @@ export class SchemaScript {
 						return data
 					},
 					compare,
+					resolvePackPath: (
+						packId?: TPackTypeId,
+						filePath?: string
+					) =>
+						this.app.projectConfig.resolvePackPath(
+							packId,
+							filePath
+						),
 					failedCurrentFileLoad: failedFileLoad,
 				},
 			})
