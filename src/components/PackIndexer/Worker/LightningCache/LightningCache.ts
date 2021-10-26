@@ -13,6 +13,7 @@ import {
 	AnyHandle,
 } from '/@/components/FileSystem/Types'
 import { TPackTypeId } from '/@/components/Data/PackType'
+import { getCacheScriptEnv } from './CacheEnv'
 
 const knownTextFiles = new Set([
 	'.js',
@@ -333,7 +334,12 @@ export class LightningCache {
 			else readyData = [data]
 
 			if (filter) readyData = readyData.filter((d) => !filter.includes(d))
-			if (mapFunc)
+			if (mapFunc) {
+				const ctx = {
+					config: this.service.config,
+					fileSystem: this.service.fileSystem,
+				}
+
 				readyData = (
 					await Promise.all(
 						readyData.map((value) =>
@@ -341,31 +347,13 @@ export class LightningCache {
 								async: true,
 								script: mapFunc,
 								env: {
-									Bridge: {
-										value,
-										withExtension: (
-											basePath: string,
-											extensions: string[]
-										) =>
-											findFileExtension(
-												this.service.fileSystem,
-												basePath,
-												extensions
-											),
-										resolvePackPath: (
-											packId: TPackTypeId,
-											filePath: string
-										) =>
-											this.service.config.resolvePackPath(
-												packId,
-												filePath
-											),
-									},
+									...getCacheScriptEnv(value, ctx),
 								},
 							})
 						)
 					)
 				).filter((value) => value !== undefined)
+			}
 
 			if (!collectedData[key]) collectedData[key] = readyData
 			else

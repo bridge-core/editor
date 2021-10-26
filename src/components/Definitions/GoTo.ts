@@ -9,6 +9,7 @@ import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { findAsync } from '/@/utils/array/findAsync'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { isMatch } from '/@/utils/glob/isMatch'
+import { getCacheScriptEnv } from '../PackIndexer/Worker/LightningCache/CacheEnv'
 
 export class DefinitionProvider {
 	async provideDefinition(
@@ -21,8 +22,9 @@ export class DefinitionProvider {
 		const currentPath = app.project.tabSystem?.selectedTab?.getPath()
 		if (!currentPath) return
 
-		const { definitions } = App.fileType.get(currentPath) ?? {}
+		const { definitions } = App.fileType.getGlobal(currentPath) ?? {}
 		const lightningCache = await App.fileType.getLightningCache(currentPath)
+
 		// lightningCache is string for lightning cache text scripts
 		if (
 			!definitions ||
@@ -32,7 +34,6 @@ export class DefinitionProvider {
 			return
 
 		const location = getLocation(model, position)
-
 		const { definitionId, transformedWord } = await this.getDefinition(
 			word,
 			location,
@@ -44,15 +45,13 @@ export class DefinitionProvider {
 		if (!definition) return
 		if (!Array.isArray(definition)) definition = [definition]
 
-		const projectName = app.project.name
 		const connectedFiles = await this.getFilePath(
 			transformedWord,
 			definition
 		)
 
 		const result = await Promise.all(
-			connectedFiles.map(async (file) => {
-				const filePath = `projects/${projectName}/${file}`
+			connectedFiles.map(async (filePath) => {
 				const uri = Uri.file(filePath)
 
 				if (!editor.getModel(uri)) {
@@ -125,18 +124,10 @@ export class DefinitionProvider {
 							transformedWord = await run({
 								script,
 								env: {
-									Bridge: {
-										value: transformedWord,
-										withExtension: (
-											basePath: string,
-											extensions: string[]
-										) =>
-											findFileExtension(
-												app.project.fileSystem,
-												basePath,
-												extensions
-											),
-									},
+									...getCacheScriptEnv(transformedWord, {
+										fileSystem: app.fileSystem,
+										config: app.project.config,
+									}),
 								},
 							})
 

@@ -98,7 +98,7 @@ export class TargaTab extends ImageTab {
 		}
 
 		reader.onerror = () => {
-			throw Error('Failed reading OffscreenCanvas Blob')
+			throw new Error('Failed reading OffscreenCanvas Blob')
 		}
 	}
 }
