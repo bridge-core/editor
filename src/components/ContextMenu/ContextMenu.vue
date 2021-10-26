@@ -6,7 +6,7 @@
 		rounded="lg"
 		absolute
 		offset-y
-		transition="scale-transition"
+		transition="context-menu-transition"
 		:close-on-click="contextMenu.mayCloseOnClickOutside"
 	>
 		<v-list color="menu" dense>
@@ -37,6 +37,11 @@
 
 <script>
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { createSimpleTransition } from 'vuetify/lib/components/transitions/createTransition'
+import Vue from 'vue'
+const contextMenuTransition = createSimpleTransition('context-menu-transition')
+
+Vue.component('context-menu-transition', contextMenuTransition)
 
 export default {
 	name: 'ContextMenu',
@@ -77,3 +82,14 @@ export default {
 	},
 }
 </script>
+
+<style>
+.context-menu-transition-enter-active,
+.context-menu-transition-leave-active {
+	transition: opacity 0.08s;
+}
+.context-menu-transition-enter,
+.context-menu-transition-leave-to {
+	opacity: 0;
+}
+</style>
