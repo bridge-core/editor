@@ -7,6 +7,7 @@ import { iterateDir } from '/@/utils/iterateDir'
 import { walkObject } from '/@/utils/walkObject'
 import { v4 as uuid } from 'uuid'
 import { compare } from 'compare-versions'
+import { TPackTypeId } from './PackType'
 
 export class SchemaScript {
 	constructor(protected app: App, protected filePath?: string) {}
