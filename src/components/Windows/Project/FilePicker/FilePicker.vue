@@ -21,12 +21,12 @@
 				autofocus
 				@change="onChange"
 			>
-				<template #item="{ item }">
-					<v-icon class="mr-1" :color="getFileIconColor(item)">
-						{{ getFileIcon(item) }}
+				<template #item="{ item: { value, text } }">
+					<v-icon class="mr-1" :color="getFileIconColor(value)">
+						{{ getFileIcon(value) }}
 					</v-icon>
 
-					<span>{{ item }}</span>
+					<span>{{ text }}</span>
 				</template>
 			</v-autocomplete>
 		</template>

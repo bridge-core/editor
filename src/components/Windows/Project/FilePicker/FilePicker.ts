@@ -1,9 +1,10 @@
 import { App } from '/@/App'
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import FilePickerComponent from './FilePicker.vue'
+import { relative } from '/@/utils/path'
 
 export class FilePickerWindow extends BaseWindow {
-	protected packFiles: string[] = []
+	protected packFiles: { value: string; text: string }[] = []
 	protected selectedFile = ''
 	protected isCurrentlyOpening = false
 
@@ -24,8 +25,12 @@ export class FilePickerWindow extends BaseWindow {
 
 		const packIndexer = app.project?.packIndexer
 		if (packIndexer) {
-			this.packFiles =
+			this.packFiles = (
 				(await packIndexer.service?.getAllFiles(true)) ?? []
+			).map((filePath) => ({
+				text: relative(`projects/${app.project.name}`, filePath),
+				value: filePath,
+			}))
 		}
 
 		app.windows.loadingWindow.close()
