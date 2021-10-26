@@ -58,13 +58,13 @@ export default {
 		},
 
 		getFileIcon(filePath) {
-			const fileType = App.fileType.get(filePath)
+			const fileType = App.fileType.getGlobal(filePath)
 			if (!fileType) return 'mdi-file-outline'
 
 			return fileType.icon || 'mdi-file-outline'
 		},
 		getFileIconColor(filePath) {
-			const packType = PackType.getWithRelativePath(filePath)
+			const packType = PackType.get(filePath)
 			if (!packType) return 'primary'
 
 			return packType.color || 'primary'

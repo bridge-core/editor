@@ -35,9 +35,7 @@ export class FilePickerWindow extends BaseWindow {
 
 	protected openFile(filePath: string) {
 		App.ready.once(async (app) => {
-			const fileHandle = await app.fileSystem.getFileHandle(
-				`projects/${app.selectedProject}/${filePath}`
-			)
+			const fileHandle = await app.fileSystem.getFileHandle(filePath)
 			app.project?.openFile(fileHandle)
 		})
 		App.audioManager.playAudio('confirmation_002.ogg', 1)
