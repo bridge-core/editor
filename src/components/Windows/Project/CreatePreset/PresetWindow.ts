@@ -8,7 +8,7 @@ import { dirname } from '/@/utils/path'
 import { runPresetScript } from './PresetScript'
 import { expandFile, TExpandFile } from './ExpandFile'
 import { createFile, TCreateFile } from './CreateFile'
-import { PackType } from '/@/components/Data/PackType'
+import { PackType, TPackTypeId } from '/@/components/Data/PackType'
 import { transformString } from './TransformString'
 import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 import { PresetItem } from './PresetItem'
@@ -53,6 +53,7 @@ export interface IPresetFieldOpts {
 export interface IPresetFileOpts {
 	inject: string[]
 	openFile?: boolean
+	packPath?: TPackTypeId
 }
 
 export interface IPermissions {

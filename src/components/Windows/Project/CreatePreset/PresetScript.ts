@@ -15,7 +15,7 @@ export async function runPresetScript(
 	permissions: IPermissions
 ) {
 	const app = await App.getApp()
-	const fs = app.project?.fileSystem!
+	const fs = app.fileSystem
 	const globalFs = new CombinedFileSystem(
 		app.fileSystem.baseDirectory,
 		app.dataLoader
@@ -59,7 +59,11 @@ export async function runPresetScript(
 	const createJSONFile = (
 		filePath: string,
 		data: any,
-		opts: IPresetFileOpts = { inject: [], openFile: false }
+		opts: IPresetFileOpts = {
+			inject: [],
+			openFile: false,
+			packPath: undefined,
+		}
 	) => {
 		if (typeof data !== 'string') data = JSON.stringify(data, null, '\t')
 		return createFile(filePath, data, opts)
@@ -67,15 +71,24 @@ export async function runPresetScript(
 	const createFile = async (
 		filePath: string,
 		data: FileSystemWriteChunkType,
-		{ inject = [], openFile = false }: IPresetFileOpts = {
+		{
+			inject = [],
+			openFile = false,
+			packPath = undefined,
+		}: IPresetFileOpts = {
 			inject: [],
 			openFile: false,
+			packPath: undefined,
 		}
 	) => {
+		const resolvedFilePath = app.projectConfig.resolvePackPath(
+			packPath,
+			filePath
+		)
 		// Permission not set yet, prompt user if necessary
 		if (
 			permissions.mayOverwriteFiles === undefined &&
-			(await fs.fileExists(filePath))
+			(await fs.fileExists(resolvedFilePath))
 		) {
 			const confirmWindow = new ConfirmationWindow({
 				description: 'windows.createPreset.overwriteFiles',
@@ -96,7 +109,7 @@ export async function runPresetScript(
 			return
 		}
 
-		const fileHandle = await fs.getFileHandle(filePath, true)
+		const fileHandle = await fs.getFileHandle(resolvedFilePath, true)
 		createdFiles.push(fileHandle)
 		if (openFile) openFiles.push(fileHandle)
 		fs.write(
@@ -109,15 +122,21 @@ export async function runPresetScript(
 	const expandFile = async (
 		filePath: string,
 		data: any,
-		{ inject = [], openFile = false }: IPresetFileOpts = {
+		{
+			inject = [],
+			openFile = false,
+			packPath = undefined,
+		}: IPresetFileOpts = {
 			inject: [],
 			openFile: false,
+			packPath: undefined,
 		}
 	) => {
-		const fileHandle = await app.project.fileSystem.getFileHandle(
-			filePath,
-			true
+		const resolvedFilePath = app.projectConfig.resolvePackPath(
+			packPath,
+			filePath
 		)
+		const fileHandle = await fs.getFileHandle(resolvedFilePath, true)
 
 		// Permission for overwriting unsaved changes not set yet, request it
 		if (permissions.mayOverwriteUnsavedChanges === undefined) {
@@ -148,7 +167,7 @@ export async function runPresetScript(
 
 		let current: string | null = null
 		try {
-			current = await (await fs.readFile(filePath)).text()
+			current = await (await fs.readFile(resolvedFilePath)).text()
 		} catch {}
 
 		createdFiles.push(fileHandle)
@@ -156,11 +175,14 @@ export async function runPresetScript(
 
 		if (typeof data === 'string') {
 			data = transformString(data, inject, models)
-			await fs.writeFile(filePath, current ? `${current}\n${data}` : data)
+			await fs.writeFile(
+				resolvedFilePath,
+				current ? `${current}\n${data}` : data
+			)
 		} else {
 			data = transformString(json5.stringify(data), inject, models)
 			await fs.writeJSON(
-				filePath,
+				resolvedFilePath,
 				deepMerge(
 					current ? json5.parse(current) : {},
 					json5.parse(data)

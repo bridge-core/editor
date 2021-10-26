@@ -21,7 +21,7 @@ export async function expandFile(
 	const inject = opts?.inject ?? []
 	const fullOriginPath = `${presetPath}/${originPath}`
 	const fullDestPath = transformString(
-		`projects/${app.selectedProject}/${destPath}`,
+		app.projectConfig.resolvePackPath(opts?.packPath, destPath),
 		inject,
 		models
 	)
