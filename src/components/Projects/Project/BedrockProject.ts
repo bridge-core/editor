@@ -8,6 +8,7 @@ import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/Partic
 import { BlockModelTab } from '/@/components/Editors/BlockModel/Tab'
 import { CommandData } from '/@/components/Languages/Mcfunction/Data'
 import { WorldTab } from '/@/components/BedrockWorlds/Render/Tab'
+import { LootTableSimulatorTab } from '/@/components/Editors/LootTableSimulator/LootTableSimulatorTab'
 
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{
@@ -37,6 +38,12 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 		fileType: 'block',
 		createPreview: async (tabSystem, tab) =>
 			new BlockModelTab(tab.getPath(), tab, tabSystem),
+	},
+	{
+		name: 'preview.simulateLoot',
+		fileType: 'lootTable',
+		createPreview: async (tabSystem, tab) =>
+			new LootTableSimulatorTab(tab, tabSystem),
 	},
 ]
 
