@@ -76,6 +76,8 @@ export class FunctionSimulatorTab extends Tab {
 			this.commandData = project.commandData
 		}
 
+		console.log(this.commandData._data.vanilla[0])
+
 		this.validCommands = []
 		this.validSelectorArgs = []
 
@@ -117,6 +119,8 @@ export class FunctionSimulatorTab extends Tab {
 					)
 				}
 			}
+
+			console.log(await this.commandData.getSelectorArgumentsSchema())
 		} else {
 			console.error('Unable to load commands.json')
 		}
