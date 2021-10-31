@@ -80,17 +80,24 @@ export class PackIndexerService extends TaskService<
 		return <const>[changedFiles, deletedFiles]
 	}
 
-	async updateFile(filePath: string, fileContent?: string) {
+	async updateFile(
+		filePath: string,
+		fileContent?: string,
+		isForeignFile = false
+	) {
 		const fileDidChange = await this.lightningCache.processFile(
 			filePath,
-			await this.fileSystem.getFileHandle(filePath),
-			fileContent
+			fileContent ?? (await this.fileSystem.getFileHandle(filePath)),
+			isForeignFile
 		)
 
 		if (fileDidChange) {
 			await this.lightningStore.saveStore()
 			await this.packSpider.updateFile(filePath)
 		}
+	}
+	hasFile(filePath: string) {
+		return this.lightningStore.has(filePath)
 	}
 
 	unlink(path: string) {
@@ -165,33 +172,6 @@ export class PackIndexerService extends TaskService<
 	getCacheDataFor(fileType: string, filePath?: string, cacheKey?: string) {
 		return this.lightningStore.getCacheDataFor(fileType, filePath, cacheKey)
 	}
-}
-
-async function loadPack(pack: string, fileSystem: FileSystem) {
-	let projects
-	try {
-		projects = await fileSystem.readdir(pack, {
-			withFileTypes: true,
-		})
-	} catch {
-		return []
-	}
-
-	return projects.map((dirent) => {
-		const fileType = FileType.getId(`${pack}/${dirent.name}${'/test.json'}`)
-		return {
-			kind: dirent.kind,
-			displayName:
-				dirent.kind === 'file' || fileType === 'unknown'
-					? dirent.name
-					: undefined,
-			name:
-				dirent.kind === 'directory' && fileType !== 'unknown'
-					? fileType
-					: dirent.name,
-			path: `${pack}/${dirent.name}`,
-		}
-	})
 }
 
 expose(PackIndexerService, self)

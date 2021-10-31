@@ -5,6 +5,8 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { ExtensionStoreWindow } from './ExtensionStore'
 import { ExtensionTag } from './ExtensionTag'
 import { extensionActions } from './ExtensionActions'
+import { InformationWindow } from '../Common/Information/InformationWindow'
+import { ConfirmationWindow } from '../Common/Confirm/ConfirmWindow'
 
 export class ExtensionViewer {
 	protected tags: ExtensionTag[]
@@ -99,7 +101,10 @@ export class ExtensionViewer {
 		})
 	}
 
-	protected async downloadExtension(isGlobalInstall: boolean) {
+	protected async downloadExtension(
+		isGlobalInstall: boolean,
+		isUpdateDownload = false
+	) {
 		this.isLoading = true
 
 		const app = await App.getApp()
@@ -127,8 +132,8 @@ export class ExtensionViewer {
 			if (extension) {
 				if (!extension.isInstalled)
 					await extension.downloadExtension(isGlobalInstall)
-				// TODO: Activate inactive extension
-				// else if(!extension.isActive)
+				else if (!extension.isActive && extension.connected)
+					extension.connected?.activate()
 			}
 		}
 
@@ -145,6 +150,42 @@ export class ExtensionViewer {
 		this.isUpdateAvailable = false
 		this.isLoading = false
 
+		if (!isUpdateDownload) {
+			if (extension?.contributesCompilerPlugins) {
+				new ConfirmationWindow({
+					title:
+						'windows.extensionStore.compilerPluginDownload.title',
+					description:
+						'windows.extensionStore.compilerPluginDownload.description',
+					cancelText: 'general.later',
+					confirmText:
+						'windows.extensionStore.compilerPluginDownload.openConfig',
+					onConfirm: async () => {
+						this.parent.close()
+
+						const app = await App.getApp()
+						const project = app.project
+
+						const config = project.config.get()
+
+						if (config.compiler) {
+							await project.openFile(
+								await project.fileSystem.getFileHandle(
+									'config.json'
+								)
+							)
+						} else {
+							await project.openFile(
+								await project.fileSystem.getFileHandle(
+									'.bridge/compiler/default.json'
+								)
+							)
+						}
+					},
+				})
+			}
+		}
+
 		App.audioManager.playAudio('confirmation_002.ogg', 1)
 	}
 
@@ -155,7 +196,7 @@ export class ExtensionViewer {
 
 		this.connected.deactivate()
 		await this.connected.resetInstalled()
-		await this.downloadExtension(this.connected.isGlobal)
+		await this.downloadExtension(this.connected.isGlobal, true)
 	}
 	delete() {
 		if (!this.connected) return

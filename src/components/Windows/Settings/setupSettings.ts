@@ -11,6 +11,7 @@ import { comMojangKey } from '../../FileSystem/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 import { platform } from '/@/utils/os'
+import { TextField } from './Controls/TextField/TextField'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -347,6 +348,23 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'editor',
+			name: 'windows.settings.editor.bracketPairColorization.name',
+			description:
+				'windows.settings.editor.bracketPairColorization.description',
+			key: 'bracketPairColorization',
+			default: false,
+			onChange: async (val) => {
+				const app = await App.getApp()
+				app.projectManager.updateAllEditorOptions({
+					// @ts-expect-error The monaco team did not update the types yet
+					'bracketPairColorization.enabled': val,
+				})
+			},
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
 			name: 'windows.settings.editor.wordWrap.name',
 			description: 'windows.settings.editor.wordWrap.description',
 			key: 'wordWrap',
@@ -402,6 +420,17 @@ export async function setupSettings(settings: SettingsWindow) {
 				'windows.settings.editor.dragAndDropTreeNodes.description',
 			key: 'dragAndDropTreeNodes',
 			default: true,
+		})
+	)
+
+	// Projects
+	settings.addControl(
+		new TextField({
+			category: 'projects',
+			name: 'windows.settings.projects.defaultAuthor.name',
+			description: 'windows.settings.projects.defaultAuthor.description',
+			key: 'defaultAuthor',
+			default: '',
 		})
 	)
 

@@ -63,7 +63,7 @@
 					v-else-if="opts.type === 'fileInput'"
 					v-cloak
 					:key="i"
-					@drop.prevent.stop="onDropFile(id, opts.accept, $event)"
+					@drop.prevent.stop="onDropFile(id, opts, $event)"
 					@dragover.prevent.stop
 				>
 					<v-file-input
@@ -73,6 +73,7 @@
 						:prepend-icon="null"
 						:prepend-inner-icon="opts.icon || 'mdi-paperclip'"
 						:label="name"
+						:multiple="opts.multiple || false"
 						autocomplete="off"
 						outlined
 						dense
@@ -86,6 +87,8 @@
 					"
 					class="mb-1"
 					:key="i"
+					:loading="opts.isLoading"
+					:disabled="opts.isLoading"
 					v-model="content.models[id]"
 					:items="opts.options"
 					:menu-props="{ maxHeight: 220 }"
@@ -179,11 +182,21 @@ export default {
 		onCreatePreset() {
 			if (this.fieldsReady) this.currentWindow.createPreset(this.content)
 		},
-		onDropFile(id, accept, event) {
-			const file = event.dataTransfer.files[0]
-			if (!isFileAccepted(file, accept)) return
+		onDropFile(id, opts, event) {
+			const { accept, multiple } = opts
+			const acceptedFiles = [...event.dataTransfer.files].filter((file) =>
+				isFileAccepted(file, accept)
+			)
+			if (acceptedFiles.length === 0) return
 
-			this.content.models[id] = file
+			if (multiple) {
+				if (!this.content.models[id])
+					this.content.models[id] = [...acceptedFiles]
+				else this.content.models[id].push(...acceptedFiles)
+			} else {
+				this.content.models[id] =
+					acceptedFiles[acceptedFiles.length - 1]
+			}
 		},
 	},
 }

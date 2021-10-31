@@ -64,6 +64,11 @@ export class FileWatcher extends EventDispatcher<File> {
 	protected async onFileChange(file: File) {
 		this.dispatch(await this.compileFile(file))
 	}
+	async getFile() {
+		return this.compileFile(
+			await this.app.project.getFileFromDiskOrTab(this.filePath)
+		)
+	}
 	dispose() {
 		this.disposable?.dispose()
 		this.disposable = undefined

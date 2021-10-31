@@ -12,13 +12,14 @@ import {
 import { Signal } from '/@/components/Common/Event/Signal'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { App } from '/@/App'
+import { markRaw } from '@vue/composition-api'
 
 export abstract class ThreePreviewTab extends PreviewTab {
 	public component = ThreePreviewTabComponent
 	public readonly setupComplete = new Signal<void>()
 
 	protected disposables: IDisposable[] = []
-	protected model?: Model
+
 	protected canvas?: HTMLCanvasElement
 	protected renderer?: WebGLRenderer
 	protected _camera?: PerspectiveCamera
@@ -44,30 +45,32 @@ export abstract class ThreePreviewTab extends PreviewTab {
 	async receiveCanvas(canvas: HTMLCanvasElement) {
 		const app = await App.getApp()
 
-		this.canvas = canvas
+		this.canvas = markRaw(canvas)
 
-		this.renderer = new WebGLRenderer({
-			antialias: false,
-			canvas,
-		})
+		this.renderer = markRaw(
+			new WebGLRenderer({
+				antialias: false,
+				canvas,
+			})
+		)
 		this.renderer.setPixelRatio(window.devicePixelRatio)
 
 		if (!this._camera) {
-			this._camera = new PerspectiveCamera(70, 2, 0.1, 1000)
+			this._camera = markRaw(new PerspectiveCamera(70, 2, 0.1, 1000))
 			this._camera.position.x = -16
 			this._camera.position.y = 16
 			this._camera.position.z = -16
 		}
 
 		this.controls?.dispose()
-		this.controls = new OrbitControls(this.camera, canvas)
+		this.controls = markRaw(new OrbitControls(this.camera, canvas))
 		this.controls.addEventListener('change', () => {
 			this.requestRendering()
 			if (!this.parent.isActive) this.parent.setActive(true)
 		})
 
 		if (!this._scene) {
-			this._scene = new Scene()
+			this._scene = markRaw(new Scene())
 			this._scene.add(new AmbientLight(0xffffff))
 		}
 
@@ -105,19 +108,14 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		super.onDeactivate()
 	}
 
-	protected render(checkShouldTick = true) {
+	protected render() {
 		this.controls?.update()
 		this.renderer?.render(this.scene, this.camera)
 		this.renderingRequested = false
-
-		if (checkShouldTick && this.model && this.model.shouldTick) {
-			this.model.tick()
-			if (this.isActive) this.requestRendering()
-		}
 	}
 
 	requestRendering(immediate = false) {
-		if (immediate) return this.render(false)
+		if (immediate) return this.render()
 
 		if (this.renderingRequested) return
 

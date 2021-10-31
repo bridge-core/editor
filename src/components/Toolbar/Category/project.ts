@@ -5,6 +5,7 @@ import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { Divider } from '../Divider'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
+import { importNewProject } from '../../Projects/Import/ImportNew'
 
 export function setupProjectCategory(app: App) {
 	const project = new ToolbarCategory(
@@ -43,27 +44,7 @@ export function setupProjectCategory(app: App) {
 			icon: 'mdi-import',
 			name: 'actions.importBrproject.name',
 			description: 'actions.importBrproject.description',
-			onTrigger: async () => {
-				let fileHandle: AnyFileHandle
-				try {
-					;[fileHandle] = await window.showOpenFilePicker({
-						multiple: false,
-						types: [
-							{
-								description: 'bridge. Project',
-								accept: {
-									'application/zip': ['.brproject'],
-								},
-							},
-						],
-					})
-				} catch {
-					// User aborted selecting new project
-					return
-				}
-
-				await importFromBrproject(fileHandle)
-			},
+			onTrigger: () => importNewProject(),
 		})
 	)
 	project.addItem(new Divider())

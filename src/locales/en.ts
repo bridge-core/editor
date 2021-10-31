@@ -23,9 +23,10 @@ export default {
 		fileName: 'File Name',
 		inactive: 'Inactive',
 		active: 'Active',
+		later: 'Later',
 
 		confirmOverwriteFile:
-			'A file with this name already exists. Do you want to overwrite it?',
+			'This action overwrites a file with the same name. Do you want to continue?',
 		fileSystemPolyfill:
 			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome or Edge!',
 		successfulExport: {
@@ -532,7 +533,7 @@ export default {
 				saveCurrentProject:
 					'Do you want to save your current project before loading in the new one?',
 			},
-			wrongFileType: 'Project must be a .brproject file',
+			wrongFileType: 'Project must be a .brproject or .mcaddon file',
 			addPack: 'Add Pack',
 		},
 		filePath: {
@@ -733,10 +734,21 @@ export default {
 			actions: {
 				name: 'Actions',
 			},
+			projects: {
+				name: 'Projects',
+				defaultAuthor: {
+					name: 'Default Author',
+					description: 'The default author for new projects',
+				},
+			},
 			editor: {
 				jsonEditor: {
 					name: 'JSON Editor',
 					description: 'Choose how you want to edit JSON files',
+				},
+				bracketPairColorization: {
+					name: 'Bracket Pair Colorization',
+					description: 'Give matching brackets an unique color',
 				},
 				wordWrap: {
 					name: 'Word Wrap',
@@ -777,6 +789,13 @@ export default {
 			deactivateExtension: 'Deactivate Extension',
 			offlineError:
 				'Failed to load extensions. Please confirm that your device has an active network connection.',
+			compilerPluginDownload: {
+				compilerPlugins: 'Compiler Plugins',
+				title: 'Downloaded Compiler Plugin',
+				description:
+					"You have just downloaded a new compiler plugin. Make sure to add it to your compiler config file or otherwise it won't have an effect.",
+				openConfig: 'Open Config',
+			},
 		},
 		pluginInstallLocation: {
 			title: 'Choose Install Location',

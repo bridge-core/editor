@@ -86,8 +86,8 @@ export namespace FileType {
 			if (json) fileTypes.push(json)
 		}
 
-		loadLightningCache(dataLoader)
-		loadPackSpider(dataLoader)
+		await loadLightningCache(dataLoader)
+		await loadPackSpider(dataLoader)
 
 		ready.dispatch()
 	}

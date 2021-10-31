@@ -16,7 +16,7 @@ function _walkObject(
 ) {
 	if (current === undefined) return
 	if (keys.length === 0) return onReach(current)
-	if (typeof current !== 'object') return // Needs to be last because we want to make sure onReach gets called if possible
+	if (typeof current !== 'object' || current === null) return // Needs to be last because we want to make sure onReach gets called if possible
 
 	const key = keys.shift()!
 	if (key === '**') {

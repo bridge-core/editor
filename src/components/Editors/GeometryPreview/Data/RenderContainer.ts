@@ -101,7 +101,12 @@ export class RenderDataContainer extends EventDispatcher<void> {
 		return this._runningAnimations
 	}
 	get modelData() {
-		return this._geometries[0].geometry
+		for (const geo of this._geometries) {
+			let currGeo = geo.geometry
+			if (currGeo) return currGeo
+		}
+
+		return this._geometries[0].fallbackGeometry
 	}
 	get currentTexturePath() {
 		return this._currentTexturePath

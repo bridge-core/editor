@@ -25,12 +25,32 @@ export abstract class FileTab extends Tab {
 		// If the resolve above failed, we are dealing with a file which doesn't belong to this project
 		if (!this.projectPath) {
 			this.isForeignFile = true
-			const guessedFolder = await FileType.guessFolder(this.fileHandle)
+			let guessedFolder =
+				(await FileType.guessFolder(this.fileHandle)) ?? uuid()
+			if (!guessedFolder.endsWith('/')) guessedFolder += '/'
 
-			this.projectPath = `${guessedFolder ?? uuid()}/${
+			this.projectPath = `${guessedFolder}${uuid()}/${
 				this.fileHandle.name
 			}`
 		}
+
+		this.parent.project.packIndexer.once(async () => {
+			const packIndexer = this.parent.project.packIndexer.service
+
+			if (!(await packIndexer.hasFile(this.projectPath!))) {
+				await packIndexer.updateFile(
+					this.projectPath!,
+					await this.getFile().then((file) => file.text()),
+					this.isForeignFile
+				)
+
+				if (FileType.isJsonFile(this.getProjectPath())) {
+					this.parent.project.jsonDefaults.updateDynamicSchemas(
+						this.getProjectPath()
+					)
+				}
+			}
+		})
 
 		await super.setup()
 	}

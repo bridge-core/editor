@@ -32,6 +32,9 @@ export class Extension {
 	get compilerPlugins() {
 		return this._compilerPlugins
 	}
+	get contributesCompilerPlugins() {
+		return Object.keys(this.manifest?.compiler?.plugins ?? {}).length > 0
+	}
 	get version() {
 		return this.manifest.version
 	}
@@ -153,6 +156,8 @@ export class Extension {
 			}
 		}
 
+		App.eventSystem.dispatch('presetsChanged', null)
+
 		if (await this.fileSystem.fileExists('.installed')) return
 
 		await this.installFiles.execute(this.isGlobal)
@@ -164,6 +169,7 @@ export class Extension {
 	}
 
 	deactivate() {
+		App.eventSystem.dispatch('presetsChanged', null)
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.isLoaded = false
 	}

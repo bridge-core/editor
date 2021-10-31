@@ -104,6 +104,27 @@
 		</v-row>
 
 		<span>{{ extension.description }}</span>
+
+		<template
+			v-if="
+				extension.connected &&
+				extension.connected.contributesCompilerPlugins
+			"
+		>
+			<v-divider class="my-2" />
+
+			<span class="font-weight-bold">
+				{{
+					t(
+						'windows.extensionStore.compilerPluginDownload.compilerPlugins'
+					)
+				}}:
+			</span>
+
+			<span>
+				{{ compilerPlugins }}
+			</span>
+		</template>
 	</div>
 </template>
 
@@ -134,6 +155,11 @@ export default {
 		},
 		isMobile() {
 			return this.$vuetify.breakpoint.mobile
+		},
+		compilerPlugins() {
+			return Object.keys(this.extension.connected.compilerPlugins)
+				.map((plugin) => `"${plugin}"`)
+				.join(', ')
 		},
 	},
 }

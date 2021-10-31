@@ -31,10 +31,10 @@ export class PrimitiveTree extends Tree<TPrimitiveTree> {
 	}
 
 	edit(value: string) {
-		if (!Number.isNaN(Number(value))) this.setValue(Number(value))
-		else if (value === 'null') this.setValue(null)
-		else if (value === 'true' || value === 'false')
+		if (value === 'true' || value === 'false')
 			this.setValue(value === 'true')
+		else if (!Number.isNaN(Number(value))) this.setValue(Number(value))
+		else if (value === 'null') this.setValue(null)
 		else this.setValue(value)
 	}
 

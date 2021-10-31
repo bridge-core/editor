@@ -65,6 +65,9 @@ export class MonacoHolder extends Signal<void> {
 						'14px'
 					).replace('px', '')
 				),
+				// @ts-expect-error The monaco team did not update the types yet
+				'bracketPairColorization.enabled':
+					settingsState?.editor?.bracketPairColorization ?? false,
 				fontFamily:
 					<string>settingsState?.appearance?.editorFont ??
 					(platform() === 'darwin' ? 'Menlo' : 'Consolas'),
@@ -143,15 +146,6 @@ export class MonacoHolder extends Signal<void> {
 						)
 					}, 50)
 				}
-			}
-
-			// Monaco currently doesn't include " as a trigger character. This snippet works artificially makes it so
-			if (event.changes.some((change) => change.text === '""')) {
-				this._monacoEditor?.trigger(
-					'auto',
-					'editor.action.triggerSuggest',
-					{}
-				)
 			}
 		})
 

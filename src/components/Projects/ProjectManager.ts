@@ -51,7 +51,7 @@ export class ProjectManager extends Signal<void> {
 
 	async getProjects() {
 		await this.fired
-		return Object.values(this.state).map((project) => project.projectData)
+		return Object.values(this.state)
 	}
 	async addProject(projectDir: AnyDirectoryHandle, isNewProject = true) {
 		const project = new BedrockProject(this, this.app, projectDir)

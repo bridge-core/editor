@@ -91,7 +91,7 @@ export class MoLangLanguage extends Language {
 		try {
 			this.molang.parse(model.getValue())
 			editor.setModelMarkers(model, this.id, [])
-		} catch (err) {
+		} catch (err: any) {
 			// const token = this.molang.getParser().getLastConsumed()
 			// console.log(
 			// 	token?.getType(),

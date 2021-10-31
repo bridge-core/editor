@@ -33,7 +33,7 @@ export interface IPresetManifest {
 }
 export interface IPresetFieldOpts {
 	// All types
-	type?: 'fileInput' | 'numberInput' | 'textInput' | 'switch'
+	type?: 'fileInput' | 'numberInput' | 'textInput' | 'switch' | 'selectInput'
 	default?: string
 	optional?: boolean
 	// Type = 'numberInput'
@@ -41,8 +41,12 @@ export interface IPresetFieldOpts {
 	max?: number
 	step?: number
 	// type = 'fileInput'
-	accept: string
-	icon: string
+	accept?: string
+	icon?: string
+	multiple?: boolean
+	// type = 'selectInput'
+	options?: string[] | { fileType: string; cacheKey: string }
+	isLoading?: boolean
 }
 
 export interface IPresetFileOpts {
@@ -58,6 +62,9 @@ export interface IPermissions {
 export class CreatePresetWindow extends BaseWindow {
 	protected loadPresetPaths = new Map<string, string>()
 	protected sidebar = new Sidebar([])
+	protected shouldReloadPresets = true
+	protected modelResetters: (() => void)[] = []
+
 	/**
 	 * Add new validation strategies to this object ([key]: [validationFunction])
 	 * to make them available as the [key] inside of presets.
@@ -90,6 +97,10 @@ export class CreatePresetWindow extends BaseWindow {
 	constructor() {
 		super(PresetWindowComponent)
 		this.defineWindow()
+
+		App.eventSystem.on('presetsChanged', () => {
+			this.shouldReloadPresets = true
+		})
 	}
 
 	protected async addPreset(
@@ -97,7 +108,13 @@ export class CreatePresetWindow extends BaseWindow {
 		manifestPath: string
 	) {
 		const app = await App.getApp()
-		const manifest = <IPresetManifest>await fs.readJSON(manifestPath)
+		// Load manifest
+		let manifest: IPresetManifest
+		try {
+			manifest = <IPresetManifest>await fs.readJSON(manifestPath)
+		} catch (err) {
+			return
+		}
 
 		// Presets need a category, presets without category are most likely incompatible v1 presets
 		if (!manifest.category)
@@ -125,6 +142,32 @@ export class CreatePresetWindow extends BaseWindow {
 		const id = uuid()
 
 		const resetState = () => {
+			manifest.fields?.forEach(
+				([fieldName, fieldModel, fieldOpts = {}]) => {
+					if (
+						fieldOpts.type !== 'selectInput' ||
+						Array.isArray(fieldOpts.options)
+					)
+						return
+
+					const { fileType, cacheKey } = fieldOpts.options ?? {}
+					if (!fileType || !cacheKey) return
+
+					fieldOpts.options = []
+					fieldOpts.isLoading = true
+					app.project.packIndexer.once(async () => {
+						const options = await app.project.packIndexer.service.getCacheDataFor(
+							fileType,
+							undefined,
+							cacheKey
+						)
+
+						fieldOpts.options = options ?? []
+						fieldOpts.isLoading = false
+					})
+				}
+			)
+
 			this.sidebar.setState(id, {
 				...manifest,
 				presetPath: dirname(manifestPath),
@@ -164,6 +207,7 @@ export class CreatePresetWindow extends BaseWindow {
 		)
 
 		resetState()
+		this.modelResetters.push(resetState)
 	}
 
 	protected async loadPresets(
@@ -189,13 +233,20 @@ export class CreatePresetWindow extends BaseWindow {
 		const app = await App.getApp()
 		const fs = app.fileSystem
 		app.windows.loadingWindow.open()
-		this.sidebar.removeElements()
 
-		await this.loadPresets(app.dataLoader)
-		for (const [_, loadPresetPath] of this.loadPresetPaths)
-			await this.loadPresets(fs, loadPresetPath)
+		if (this.shouldReloadPresets) {
+			this.sidebar.removeElements()
 
-		this.sidebar.setDefaultSelected()
+			await this.loadPresets(app.dataLoader)
+			for (const [_, loadPresetPath] of this.loadPresetPaths)
+				await this.loadPresets(fs, loadPresetPath)
+
+			this.sidebar.setDefaultSelected()
+			this.shouldReloadPresets = false
+		} else {
+			this.modelResetters.forEach((reset) => reset())
+		}
+
 		app.windows.loadingWindow.close()
 		super.open()
 	}

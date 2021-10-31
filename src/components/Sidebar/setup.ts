@@ -24,9 +24,12 @@ export async function setupSidebar() {
 		id: 'packExplorer',
 		displayName: 'windows.packExplorer.title',
 		icon: 'mdi-folder-outline',
-		sidebarContent: App.packExplorer,
 	})
-	packExplorer.click()
+
+	App.getApp().then((app) => {
+		packExplorer.setSidebarContent(app.packExplorer)
+		packExplorer.click()
+	})
 
 	createSidebar({
 		id: 'fileSearch',

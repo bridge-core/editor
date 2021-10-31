@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		windowTitle="general.confirm"
+		:windowTitle="$data.title"
 		:isVisible="isVisible"
 		:isPersistent="true"
 		:hasMaximizeButton="false"

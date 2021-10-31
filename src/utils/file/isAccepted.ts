@@ -5,7 +5,7 @@
  * @param accept The accept filter (see HTML file input)
  */
 export function isFileAccepted(file: File, accept?: string) {
-	if (!accept) {
+	if (!accept || accept === '*') {
 		return true
 	}
 

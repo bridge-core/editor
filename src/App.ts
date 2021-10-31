@@ -54,12 +54,13 @@ export class App {
 		'fileAdded',
 		'fileChange',
 		'fileSave',
+		'presetsChanged',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>
 	public static readonly audioManager = new AudioManager()
-	public static readonly packExplorer = new PackExplorer()
 
+	public readonly packExplorer = new PackExplorer()
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this.keyBindingManager)
 	public readonly themeManager: ThemeManager
@@ -189,6 +190,7 @@ export class App {
 		await SettingsWindow.loadSettings(this.instance).then(async () => {
 			await this.instance.dataLoader.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
+			this.audioManager.loadIsMuted()
 		})
 
 		await this.instance.startUp()

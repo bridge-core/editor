@@ -310,4 +310,9 @@ export class TabSystem extends MonacoHolder {
 		}
 		return true
 	}
+	get(predicate: (tab: Tab) => boolean) {
+		for (const tab of this.tabs) {
+			if (predicate(tab)) return tab
+		}
+	}
 }

@@ -83,7 +83,7 @@ export abstract class Project {
 	) {
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
 		this.config = new ProjectConfig(this._fileSystem, this)
-		this.packIndexer = new PackIndexer(app, _baseDirectory)
+		this.packIndexer = new PackIndexer(this, _baseDirectory)
 		this.extensionLoader = new ExtensionLoader(
 			app.fileSystem,
 			`projects/${this.name}/.bridge/extensions`,
@@ -162,7 +162,7 @@ export abstract class Project {
 	}
 
 	async refresh() {
-		App.packExplorer.refresh()
+		this.app.packExplorer.refresh()
 		this.deactivate(true)
 		this.disposeWorkers()
 		await this.activate(true)
@@ -191,6 +191,15 @@ export abstract class Project {
 			if (tab !== undefined) return tab
 		}
 	}
+	async getFileTabWithPath(filePath: string) {
+		for (const tabSystem of this.tabSystems) {
+			const tab = await tabSystem.get(
+				(tab) =>
+					tab instanceof FileTab && tab.getProjectPath() === filePath
+			)
+			if (tab !== undefined) return tab
+		}
+	}
 	async openTab(tab: Tab, selectTab = true) {
 		for (const tabSystem of this.tabSystems) {
 			if (await tabSystem.hasTab(tab)) {
@@ -204,6 +213,8 @@ export abstract class Project {
 		const nameMap: Record<string, Tab[]> = {}
 		for (const tabSystem of this.tabSystems) {
 			tabSystem.tabs.forEach((tab) => {
+				if (!(tab instanceof FileTab)) return
+
 				const name = tab.name
 
 				if (!nameMap[name]) nameMap[name] = []
@@ -273,11 +284,10 @@ export abstract class Project {
 	}
 
 	async getFileFromDiskOrTab(filePath: string) {
-		const fileHandle = await this.fileSystem.getFileHandle(filePath)
-		const tab = await this.getFileTab(fileHandle)
+		const tab = await this.getFileTabWithPath(filePath)
 		if (tab && tab instanceof FileTab) return await tab.getFile()
 
-		return await fileHandle.getFile()
+		return await this.fileSystem.readFile(filePath)
 	}
 	setActiveTabSystem(tabSystem: TabSystem, value: boolean) {
 		this.tabSystems.forEach((tS) =>

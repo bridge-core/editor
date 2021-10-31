@@ -8,6 +8,7 @@ import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/Partic
 import { BlockModelTab } from '../../Editors/BlockModel/Tab'
 import { FunctionSimulatorTab } from '../../Editors/FunctionSimulator/Tab'
 import { CommandData } from '../../Languages/Mcfunction/Data'
+import { WorldTab } from '../../BedrockWorlds/Render/Tab'
 
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{

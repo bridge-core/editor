@@ -28,11 +28,7 @@ export class BlockModelTab extends GeometryPreviewTab {
 
 		this.blockWatcher = new FileWatcher(App.instance, blockFilePath)
 
-		this.blockWatcher.on((file) => {
-			this._renderContainer?.dispose()
-			this._renderContainer = undefined
-			this.loadRenderContainer(file)
-		})
+		this.blockWatcher.on((file) => this.reload(file))
 	}
 
 	setPreviewOptions({ loadComponents = true }: IBlockPreviewOptions) {
@@ -46,6 +42,13 @@ export class BlockModelTab extends GeometryPreviewTab {
 		if (didClose) this.blockWatcher.dispose()
 
 		return didClose
+	}
+	async reload(file?: File) {
+		if (!file) file = await this.blockWatcher.getFile()
+
+		this._renderContainer?.dispose()
+		this._renderContainer = undefined
+		this.loadRenderContainer(file)
 	}
 
 	async loadRenderContainer(file: File) {
@@ -103,6 +106,7 @@ export class BlockModelTab extends GeometryPreviewTab {
 			'identifier',
 			blockCacheData.geometryIdentifier ?? []
 		)
+		if (connectedGeometries.length === 0) return
 
 		this._renderContainer = markRaw(
 			new RenderDataContainer(app, {

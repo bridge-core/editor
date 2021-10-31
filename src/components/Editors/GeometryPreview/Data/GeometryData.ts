@@ -50,10 +50,11 @@ export class GeometryData extends PreviewFileWatcher {
 		)
 	}
 	get geometry() {
-		return (
-			this.includedGeometries.find(
-				({ description }) => description.identifier === this.selected
-			) ?? this.includedGeometries[0]
+		return this.includedGeometries.find(
+			({ description }) => description.identifier === this.selected
 		)
+	}
+	get fallbackGeometry() {
+		return this.includedGeometries[0]
 	}
 }

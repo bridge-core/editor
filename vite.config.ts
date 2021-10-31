@@ -84,7 +84,7 @@ export default defineConfig({
 								'.mcworld',
 								'.mctemplate',
 							],
-							'application/json': ['.json'],
+							'application/json': ['.json', '.bbmodel'],
 							'application/javascript': ['.js', '.ts'],
 							'text/plain': ['.mcfunction', '.molang', '.lang'],
 							'image/*': ['.tga', '.png', '.jpg', '.jpeg'],
