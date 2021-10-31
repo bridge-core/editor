@@ -120,8 +120,6 @@ export class FunctionSimulatorTab extends Tab {
 		} else {
 			console.error('Unable to load commands.json')
 		}
-
-		console.log(foundTypes)
 	}
 
 	protected async GetDocs<String>(command: string = '') {
@@ -171,7 +169,20 @@ export class FunctionSimulatorTab extends Tab {
 		return /^-?[\d.]+(?:e-?\d+)?$/.test(n)
 	}
 
-	SpecialSymbols = ['[', ']', '!', '=', '@', '~', '^', '!', ',', '{', '}']
+	SpecialSymbols = [
+		'[',
+		']',
+		'!',
+		'=',
+		'@',
+		'~',
+		'^',
+		'!',
+		',',
+		'{',
+		'}',
+		'.',
+	]
 
 	WhiteSpace = [' ', '\t', '\n', '\r']
 
@@ -325,6 +336,21 @@ export class FunctionSimulatorTab extends Tab {
 					return true
 				}
 				break
+			case 'jsonData':
+				if (currentType == 'JSON') {
+					return true
+				}
+				break
+			case 'scoreData':
+				if (currentType == 'Score Data') {
+					return true
+				}
+				break
+			case 'Score':
+				if (currentType == 'Range' || currentType == 'Integer') {
+					return true
+				}
+				break
 		}
 
 		return false
@@ -345,9 +371,20 @@ export class FunctionSimulatorTab extends Tab {
 		for (let i = 0; i < tokens.length / 4; i++) {
 			const offset = i * 4
 
+			if (tokens[0 + offset].type != 'String') {
+				errors.push(
+					this.TranslateError(
+						'complexConstructorExpectedStringAsAttribute'
+					)
+				)
+				return [errors, warnings]
+			}
+
 			let targetAtribute = tokens[0 + offset].value
 			let found = false
 			let argData = null
+
+			console.log(this.commandData._data.vanilla[0].selectorArguments)
 
 			for (
 				let j = 0;
@@ -356,6 +393,10 @@ export class FunctionSimulatorTab extends Tab {
 			) {
 				const selectorArgument = this.commandData._data.vanilla[0]
 					.selectorArguments[j]
+
+				console.log(selectorArgument.argumentName)
+
+				console.log(targetAtribute)
 
 				if (selectorArgument.argumentName == targetAtribute) {
 					argData = selectorArgument
@@ -371,6 +412,8 @@ export class FunctionSimulatorTab extends Tab {
 						targetAtribute +
 						this.TranslateError('invalidSelectorAttribute.part2')
 				)
+
+				return [errors, warnings]
 			}
 
 			if (1 + offset >= tokens.length) {
@@ -401,6 +444,8 @@ export class FunctionSimulatorTab extends Tab {
 				value = tokens[3 + offset]
 				negated = true
 			}
+
+			console.log(argData)
 
 			if (argData.additionalData) {
 				if (!argData.additionalData.supportsNegation && negated) {
@@ -568,9 +613,81 @@ export class FunctionSimulatorTab extends Tab {
 		reconstructedJSON += '}'
 
 		try {
+			console.log('Parsing JSON ' + reconstructedJSON)
 			JSON.parse(reconstructedJSON)
 		} catch (e) {
 			errors.push(this.TranslateError('jsonNotValid'))
+		}
+
+		return [errors, warnings]
+	}
+
+	protected ValidateScoreData(tokens: Token[]) {
+		let errors: string[] = []
+		let warnings: string[] = []
+
+		if (tokens.length == 0) {
+			//Unexpected empty score data
+			errors.push(this.TranslateError('emptScoreData'))
+			return [errors, warnings]
+		}
+
+		let confirmedValues: string[] = []
+
+		for (let i = 0; i < tokens.length / 4; i++) {
+			const offset = i * 4
+
+			let targetValue = tokens[0 + offset].value
+
+			if (tokens[0 + offset].type != 'String') {
+				errors.push(
+					this.TranslateError('scoreDataExpectedStringAsValue')
+				)
+				return [errors, warnings]
+			}
+
+			if (1 + offset >= tokens.length) {
+				//Error expected '='
+				errors.push(this.TranslateError('expectedEqualsButNothing'))
+				return [errors, warnings]
+			}
+
+			if (tokens[1 + offset].value != '=' && tokens[1].type != 'Symbol') {
+				//Error expected '='
+				errors.push(this.TranslateError('expectedEquals'))
+				return [errors, warnings]
+			}
+
+			if (2 + offset >= tokens.length) {
+				//Error expected value
+				errors.push(this.TranslateError('expectedValueButNothing'))
+				return [errors, warnings]
+			}
+
+			let value = tokens[2 + offset]
+
+			if (!this.MatchTypes(value.type, 'Score')) {
+				errors.push(this.TranslateError('invalidScoreType'))
+				return [errors, warnings]
+			}
+
+			if (confirmedValues.includes(value.value)) {
+				errors.push(this.TranslateError('repeatOfSameScore'))
+				return [errors, warnings]
+			}
+
+			if (3 + offset < tokens.length) {
+				if (
+					tokens[3 + offset].value != ',' &&
+					tokens[3 + offset].type != 'Symbol'
+				) {
+					//Error expected ','
+					errors.push(this.TranslateError('expectedComa'))
+					return [errors, warnings]
+				}
+			}
+
+			confirmedValues.push(targetValue)
 		}
 
 		return [errors, warnings]
@@ -696,23 +813,26 @@ export class FunctionSimulatorTab extends Tab {
 
 							let result = this.ValidateJSON(JSONToReconstruct)
 
-							errors = errors.concat(result[0])
+							/*errors = errors.concat(result[0])
 							warnings = warnings.concat(result[1])
 
 							if (errors.length > 0) {
 								return [errors, warnings]
+							}*/
+
+							if (result[0].length == 0) {
+								let startingPoint =
+									i - JSONToReconstruct.length - 1
+
+								tokens.splice(
+									startingPoint,
+									JSONToReconstruct.length + 2,
+									(tokens[startingPoint] = new Token(
+										tokens[startingPoint].value,
+										'JSON'
+									))
+								)
 							}
-
-							let startingPoint = i - JSONToReconstruct.length - 1
-
-							tokens.splice(
-								startingPoint,
-								JSONToReconstruct.length + 2,
-								(tokens[startingPoint] = new Token(
-									tokens[startingPoint].value,
-									'JSON'
-								))
-							)
 
 							JSONToReconstruct = []
 						} else {
@@ -727,6 +847,137 @@ export class FunctionSimulatorTab extends Tab {
 					} else {
 						if (inJSON) {
 							JSONToReconstruct.push(token)
+						}
+					}
+				}
+
+				//construct ranges
+				for (let i = 0; i < tokens.length; i++) {
+					const token = tokens[i]
+
+					if (token.type == 'Symbol' && token.value == '.') {
+						if (i + 1 >= tokens.length) {
+							errors.push(
+								this.TranslateError(
+									'missingDotInRangeButNothing'
+								)
+							)
+							return [errors, warnings]
+						}
+
+						if (i + 2 >= tokens.length) {
+							errors.push(
+								this.TranslateError(
+									'missingSecondNumberInRangeButNothing'
+								)
+							)
+							return [errors, warnings]
+						}
+
+						if (i + -1 < 0) {
+							errors.push(
+								this.TranslateError(
+									'missingFirstNumberInRangeButNothing'
+								)
+							)
+							return [errors, warnings]
+						}
+
+						let firstNum = tokens[i - 1]
+						let secondNum = tokens[i + 2]
+						let dot = tokens[i + 1]
+
+						if (!(dot.value == '.' && dot.type == 'Symbol')) {
+							errors.push(
+								this.TranslateError('missingDotInRange')
+							)
+							return [errors, warnings]
+						}
+
+						if (firstNum.type != 'Integer') {
+							errors.push(
+								this.TranslateError('missingFirstNumberInRange')
+							)
+							return [errors, warnings]
+						}
+
+						if (secondNum.type != 'Integer') {
+							errors.push(
+								this.TranslateError(
+									'missingSecondNumberInRange'
+								)
+							)
+							return [errors, warnings]
+						}
+
+						tokens[i - 1] = new Token(
+							firstNum.value + ' ' + secondNum.value,
+							'Range'
+						)
+
+						tokens.splice(i, 3)
+					}
+				}
+
+				//construct Score Data
+				let inScoreData = false
+				let scoreDataToReconstruct: Token[] = []
+
+				for (let i = 0; i < tokens.length; i++) {
+					const token = tokens[i]
+
+					if (token.type == 'Symbol' && token.value == '{') {
+						if (inScoreData) {
+							//Unexpected [
+							errors.push(
+								this.TranslateError(
+									'unexpectedOpenCurlyBracket'
+								)
+							)
+							return [errors, warnings]
+						} else {
+							inScoreData = true
+						}
+					} else if (token.type == 'Symbol' && token.value == '}') {
+						if (inScoreData) {
+							inScoreData = false
+
+							let result = this.ValidateScoreData(
+								scoreDataToReconstruct
+							)
+
+							errors = errors.concat(result[0])
+							warnings = warnings.concat(result[1])
+
+							if (errors.length > 0) {
+								return [errors, warnings]
+							}
+
+							let startingPoint =
+								i - scoreDataToReconstruct.length - 1
+
+							tokens.splice(
+								startingPoint,
+								scoreDataToReconstruct.length + 2,
+								(tokens[startingPoint] = new Token(
+									tokens[startingPoint].value,
+									'Score Data'
+								))
+							)
+
+							scoreDataToReconstruct = []
+						} else {
+							//Unexpected ]
+							errors.push(
+								this.TranslateError(
+									'unexpectedClosedCurlyBracket'
+								)
+							)
+							return [errors, warnings]
+						}
+					} else {
+						if (inScoreData) {
+							scoreDataToReconstruct.push(token)
 						}
 					}
 				}
@@ -774,6 +1025,8 @@ export class FunctionSimulatorTab extends Tab {
 						tokens.splice(i + 1, 1)
 					}
 				}
+
+				console.log(Array.from(tokens))
 
 				//Construct Complex Selectors
 				let inSelector = false
