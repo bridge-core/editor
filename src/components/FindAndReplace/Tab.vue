@@ -25,6 +25,26 @@
 					v-model="replaceWith"
 				/>
 				<SearchType class="mb-2" v-model="queryOptions.searchType" />
+				<v-text-field
+					class="mb-2"
+					prepend-inner-icon="mdi-folder-plus-outline"
+					outlined
+					dense
+					hide-details
+					:label="t('findAndReplace.includeFiles')"
+					placeholder="e.g. BP/**/*.json, RP/entity"
+					v-model="queryOptions.includeFiles"
+				/>
+				<v-text-field
+					class="mb-2"
+					prepend-inner-icon="mdi-folder-remove-outline"
+					outlined
+					dense
+					hide-details
+					:label="t('findAndReplace.excludeFiles')"
+					placeholder="e.g. BP/**/*.json, RP/entity"
+					v-model="queryOptions.excludeFiles"
+				/>
 				<v-btn
 					color="primary"
 					class="mb-2"
@@ -186,6 +206,12 @@ export default {
 			this.updateQuery()
 		},
 		'queryOptions.searchType'() {
+			this.updateQuery()
+		},
+		'queryOptions.includeFiles'() {
+			this.updateQuery()
+		},
+		'queryOptions.excludeFiles'() {
 			this.updateQuery()
 		},
 		scrollTop() {

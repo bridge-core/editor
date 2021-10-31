@@ -882,6 +882,8 @@ export default {
 		search: 'Search',
 		replace: 'Replace',
 		replaceAll: 'Replace All',
+		includeFiles: 'Files to Include',
+		excludeFiles: 'Files to Exclude',
 		noResults: 'No results found.',
 		noSearch:
 			'Once you start typing, results for your search query will appear here.',

@@ -10,6 +10,7 @@ import type {
 } from './Worker/Worker'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import Worker from './Worker/Worker?worker'
+import { App } from '/@/App'
 
 const FindAndReplaceClass = wrap<typeof FindAndReplace>(new Worker())
 
@@ -28,7 +29,11 @@ export class FindAndReplaceTab extends Tab {
 		scrollTop: 0,
 		searchFor: '',
 		replaceWith: '',
-		queryOptions: { searchType: ESearchType.matchCase },
+		queryOptions: {
+			searchType: ESearchType.matchCase,
+			includeFiles: '',
+			excludeFiles: '',
+		},
 		queryResults: [],
 	})
 	searchReady = new Signal<void>()
