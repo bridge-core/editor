@@ -604,6 +604,10 @@ export default {
 					name: '新しいフォルダ',
 					description: '新規フォルダ作成',
 				},
+				findInFolder: {
+					name: 'フォルダで検索',
+					description: 'フォルダ内を検索する',
+				},
 			},
 		},
 		settings: {
@@ -882,6 +886,8 @@ export default {
 		search: '検索',
 		replace: '置換',
 		replaceAll: 'すべて置換',
+		includeFiles: '含めるファイル',
+		excludeFiles: '除外するファイル',
 		noResults: '該当する結果はありませんでした',
 		noSearch: '入力を開始すると検索クエリの結果がここに表示されます。',
 	},
