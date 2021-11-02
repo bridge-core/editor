@@ -656,6 +656,10 @@ export default {
 					name: 'フォルダー内検索',
 					description: 'フォルダー内を検索する',
 				},
+				findInFolder: {
+					name: 'フォルダで検索',
+					description: 'フォルダ内を検索する',
+				},
 			},
 		},
 		settings: {
