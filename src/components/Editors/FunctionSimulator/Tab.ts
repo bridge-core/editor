@@ -12,6 +12,8 @@ import { ca, el, fa, tr } from 'vuetify/src/locale'
 import { BedrockProject } from '../../Projects/Project/BedrockProject'
 import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
 import { Token } from './Token'
+import { DataLoader } from '../../Data/DataLoader'
+import { isReactive, markRaw } from '@vue/composition-api'
 
 export class FunctionSimulatorTab extends Tab {
 	protected fileTab: FileTab | undefined
@@ -21,6 +23,7 @@ export class FunctionSimulatorTab extends Tab {
 	protected validCommands: Array<string> = []
 	protected validSelectorArgs: Array<string> = []
 	protected commandData: any | undefined
+	protected blockStateData: any | undefined
 	protected stopped = false
 
 	constructor(protected parent: TabSystem, protected tab: FileTab) {
@@ -76,7 +79,7 @@ export class FunctionSimulatorTab extends Tab {
 			this.commandData = project.commandData
 		}
 
-		console.log(this.commandData._data.vanilla[0])
+		//console.log(this.commandData._data.vanilla[0])
 
 		this.validCommands = []
 		this.validSelectorArgs = []
@@ -120,10 +123,29 @@ export class FunctionSimulatorTab extends Tab {
 				}
 			}
 
-			console.log(await this.commandData.getSelectorArgumentsSchema())
+			//console.log(await this.commandData.getSelectorArgumentsSchema())
 		} else {
 			console.error('Unable to load commands.json')
 		}
+
+		let blockStateReferencePath =
+			'/data/packages/minecraftBedrock/schema/general/vanilla/blockState.json'
+
+		let blockStateRefSchema = new RefSchema(
+			blockStateReferencePath,
+			'$ref',
+			blockStateReferencePath
+		)
+
+		console.log('Starting Test')
+
+		console.log(blockStateRefSchema)
+
+		this.blockStateData = await blockStateRefSchema.getCompletionItems({})
+
+		this.blockStateData = this.blockStateData
+
+		console.log('Ending Test')
 	}
 
 	protected async GetDocs<String>(command: string = '') {
@@ -166,11 +188,11 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	protected isInt(n: string) {
-		return /^-?[\d]+(?:e-?\d+)?$/.test(n)
+		return /^-?\d+$/.test(n)
 	}
 
 	protected isFloat(n: string) {
-		return /^-?[\d.]+(?:e-?\d+)?$/.test(n)
+		return /^\d+\.\d+$/.test(n)
 	}
 
 	SpecialSymbols = [
@@ -186,6 +208,7 @@ export class FunctionSimulatorTab extends Tab {
 		'{',
 		'}',
 		'.',
+		':',
 	]
 
 	WhiteSpace = [' ', '\t', '\n', '\r']
@@ -193,7 +216,6 @@ export class FunctionSimulatorTab extends Tab {
 	SelectorTargets = ['a', 's', 'p', 'r', 'e']
 
 	protected ParseDirty(dirtyString: Token) {
-		//TODO: add boolean type
 		let readStart = 0
 		let readEnd = dirtyString.value.length
 
@@ -227,9 +249,9 @@ export class FunctionSimulatorTab extends Tab {
 					found = true
 				} else if (read == ' ') {
 					//console.log('Found space ' + read)
-					//foundTokens.push(new Token(read, 'Space'))
+					foundTokens.push(new Token(read, 'Space'))
 					found = true
-					added = false
+					//added = false
 				}
 
 				readEnd--
@@ -388,7 +410,7 @@ export class FunctionSimulatorTab extends Tab {
 			let found = false
 			let argData = null
 
-			console.log(this.commandData._data.vanilla[0].selectorArguments)
+			//console.log(this.commandData._data.vanilla[0].selectorArguments)
 
 			for (
 				let j = 0;
@@ -398,9 +420,9 @@ export class FunctionSimulatorTab extends Tab {
 				const selectorArgument = this.commandData._data.vanilla[0]
 					.selectorArguments[j]
 
-				console.log(selectorArgument.argumentName)
+				//console.log(selectorArgument.argumentName)
 
-				console.log(targetAtribute)
+				//console.log(targetAtribute)
 
 				if (selectorArgument.argumentName == targetAtribute) {
 					argData = selectorArgument
@@ -426,7 +448,9 @@ export class FunctionSimulatorTab extends Tab {
 				return [errors, warnings]
 			}
 
-			if (tokens[1 + offset].value != '=' && tokens[1].type != 'Symbol') {
+			if (
+				!(tokens[1 + offset].value == '=' && tokens[1].type == 'Symbol')
+			) {
 				//Error expected '='
 				errors.push(this.TranslateError('expectedEquals'))
 				return [errors, warnings]
@@ -449,7 +473,7 @@ export class FunctionSimulatorTab extends Tab {
 				negated = true
 			}
 
-			console.log(argData)
+			//console.log(argData)
 
 			if (argData.additionalData) {
 				if (!argData.additionalData.supportsNegation && negated) {
@@ -540,6 +564,10 @@ export class FunctionSimulatorTab extends Tab {
 
 					let schemaReference = refSchema.getCompletionItems({})
 
+					console.log('Getting Schema Data!')
+					console.log(referencePath)
+					console.log(schemaReference)
+
 					let foundSchema = false
 
 					for (let j = 0; j < schemaReference.length; j++) {
@@ -587,8 +615,8 @@ export class FunctionSimulatorTab extends Tab {
 
 			if (possibleComaPos + offset < tokens.length) {
 				if (
-					tokens[possibleComaPos + offset].value != ',' &&
-					tokens[possibleComaPos + offset].type != 'Symbol'
+					tokens[possibleComaPos + offset].value == ',' &&
+					tokens[possibleComaPos + offset].type == 'Symbol'
 				) {
 					//Error expected ','
 					errors.push(this.TranslateError('expectedComa'))
@@ -632,7 +660,7 @@ export class FunctionSimulatorTab extends Tab {
 
 		if (tokens.length == 0) {
 			//Unexpected empty score data
-			errors.push(this.TranslateError('emptScoreData'))
+			errors.push(this.TranslateError('emptyScoreData'))
 			return [errors, warnings]
 		}
 
@@ -656,7 +684,9 @@ export class FunctionSimulatorTab extends Tab {
 				return [errors, warnings]
 			}
 
-			if (tokens[1 + offset].value != '=' && tokens[1].type != 'Symbol') {
+			if (
+				!(tokens[1 + offset].value == '=' && tokens[1].type == 'Symbol')
+			) {
 				//Error expected '='
 				errors.push(this.TranslateError('expectedEquals'))
 				return [errors, warnings]
@@ -682,8 +712,80 @@ export class FunctionSimulatorTab extends Tab {
 
 			if (3 + offset < tokens.length) {
 				if (
-					tokens[3 + offset].value != ',' &&
-					tokens[3 + offset].type != 'Symbol'
+					!(
+						tokens[3 + offset].value == ',' &&
+						tokens[3 + offset].type == 'Symbol'
+					)
+				) {
+					//Error expected ','
+					errors.push(this.TranslateError('expectedComa'))
+					return [errors, warnings]
+				}
+			}
+
+			confirmedValues.push(targetValue)
+		}
+
+		return [errors, warnings]
+	}
+
+	protected ValidateBlockState(tokens: Token[]) {
+		let errors: string[] = []
+		let warnings: string[] = []
+
+		if (tokens.length == 0) {
+			//Empty Block States Are Supported!
+			return [errors, warnings]
+		}
+
+		let confirmedValues: string[] = []
+
+		for (let i = 0; i < tokens.length / 4; i++) {
+			const offset = i * 4
+
+			let targetValue = tokens[0 + offset].value
+
+			if (tokens[0 + offset].type != 'Long String') {
+				errors.push(
+					this.TranslateError('blockStateExpectedLongStringAsValue')
+				)
+				return [errors, warnings]
+			}
+
+			if (1 + offset >= tokens.length) {
+				//Error expected ':'
+				errors.push(this.TranslateError('expectedColonButNothing'))
+				return [errors, warnings]
+			}
+
+			if (
+				!(tokens[1 + offset].value == ':' && tokens[1].type == 'Symbol')
+			) {
+				//Error expected ':'
+				errors.push(this.TranslateError('expectedColon'))
+				return [errors, warnings]
+			}
+
+			if (2 + offset >= tokens.length) {
+				//Error expected value
+				errors.push(this.TranslateError('expectedValueButNothing'))
+				return [errors, warnings]
+			}
+
+			let value = tokens[2 + offset]
+
+			//TODO: check block state data for validity of types
+			console.log(this.blockStateData)
+
+			if (confirmedValues.includes(value.value)) {
+				errors.push(this.TranslateError('repeatOfBlockState'))
+				return [errors, warnings]
+			}
+
+			if (3 + offset < tokens.length) {
+				if (
+					tokens[3 + offset].value == ',' &&
+					tokens[3 + offset].type == 'Symbol'
 				) {
 					//Error expected ','
 					errors.push(this.TranslateError('expectedComa'))
@@ -752,6 +854,18 @@ export class FunctionSimulatorTab extends Tab {
 			}
 
 			if (tokens.length > 0) {
+				while (tokens[0].type == 'Space') {
+					tokens.splice(0, 1)
+				}
+
+				if (tokens.length == 0) {
+					errors.push(this.TranslateError('emptyCommand'))
+
+					return [errors, warnings]
+				}
+
+				baseCommand = tokens[0]
+
 				//Test for basic command
 				baseCommand = tokens.shift()!
 
@@ -763,6 +877,54 @@ export class FunctionSimulatorTab extends Tab {
 					)
 
 					return [errors, warnings]
+				}
+
+				//Construct Identifiers
+				for (let i = 0; i < tokens.length; i++) {
+					const token = tokens[i]
+
+					if (token.type == 'Symbol' && token.value == ':') {
+						if (i + 1 >= tokens.length) {
+							errors.push(
+								this.TranslateError('gotColonButNothing')
+							)
+							return [errors, warnings]
+						}
+
+						if (i + -1 < 0) {
+							errors.push(
+								this.TranslateError(
+									'missingFirstValueInIdentifierButNothing'
+								)
+							)
+							return [errors, warnings]
+						}
+
+						let firstValue = tokens[i - 1]
+						let secondValue = tokens[i + 1]
+
+						if (
+							firstValue.type == 'String' &&
+							secondValue.type == 'String'
+						) {
+							tokens[i - 1] = new Token(
+								firstValue.value + ':' + secondValue.value,
+								'String'
+							)
+
+							tokens.splice(i, 2)
+						}
+					}
+				}
+
+				//Remove Spaces
+				for (let i = 0; i < tokens.length; i++) {
+					const token = tokens[i]
+
+					if (token.type == 'Space') {
+						tokens.splice(i, 1)
+						i--
+					}
 				}
 
 				//Construct Positions
@@ -792,7 +954,7 @@ export class FunctionSimulatorTab extends Tab {
 					}
 				}
 
-				//construct json
+				//Construct json
 				let inJSON = false
 				let JSONToReconstruct: Token[] = []
 
@@ -855,7 +1017,7 @@ export class FunctionSimulatorTab extends Tab {
 					}
 				}
 
-				//construct ranges
+				//Construct ranges
 				for (let i = 0; i < tokens.length; i++) {
 					const token = tokens[i]
 
@@ -923,7 +1085,9 @@ export class FunctionSimulatorTab extends Tab {
 					}
 				}
 
-				//construct Score Data
+				//console.log(Array.from(tokens))
+
+				//Construct Score Data
 				let inScoreData = false
 				let scoreDataToReconstruct: Token[] = []
 
@@ -1027,6 +1191,69 @@ export class FunctionSimulatorTab extends Tab {
 						)
 
 						tokens.splice(i + 1, 1)
+					}
+				}
+
+				console.log(Array.from(tokens))
+
+				//Construct Block States
+				let inBlockState = false
+				let blockStateToReconstruct: Token[] = []
+
+				for (let i = 0; i < tokens.length; i++) {
+					const token = tokens[i]
+
+					if (token.type == 'Symbol' && token.value == '[') {
+						if (inBlockState) {
+							//Unexpected [
+							errors.push(
+								this.TranslateError(
+									'unexpectedOpenSquareBracket'
+								)
+							)
+							return [errors, warnings]
+						} else {
+							inBlockState = true
+						}
+					} else if (token.type == 'Symbol' && token.value == ']') {
+						if (inBlockState) {
+							inBlockState = false
+
+							let result = this.ValidateBlockState(
+								blockStateToReconstruct
+							)
+
+							//errors = errors.concat(result[0])
+							warnings = warnings.concat(result[1])
+
+							if (result[0].length == 0) {
+								let startingPoint =
+									i - blockStateToReconstruct.length - 2
+
+								tokens.splice(
+									startingPoint,
+									blockStateToReconstruct.length + 3,
+									(tokens[startingPoint] = new Token(
+										tokens[startingPoint].value,
+										'Block State'
+									))
+								)
+							}
+
+							blockStateToReconstruct = []
+						} else {
+							//Unexpected ]
+							errors.push(
+								this.TranslateError(
+									'unexpectedClosedSquareBracket'
+								)
+							)
+							return [errors, warnings]
+						}
+					} else {
+						if (inBlockState) {
+							blockStateToReconstruct.push(token)
+						}
 					}
 				}
 

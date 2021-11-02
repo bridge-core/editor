@@ -1004,7 +1004,7 @@ export default {
 			},
 			unexpectedOpenSquareBracket: 'Unexpected [!',
 			selectorNotBeforeOpenSquareBracketButNothing:
-				'Expected selector before [!',
+				'Either expected selector before [ or got an invalid block state!',
 			selectorNotBeforeOpenSquareBracket: 'Expected selector before [!',
 			unexpectedCloseSquareBracket: 'Unexpected ]',
 			noValidCommandVarsFound: {
