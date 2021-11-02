@@ -10,7 +10,7 @@ import type {
 } from './Worker/Worker'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import Worker from './Worker/Worker?worker'
-import { App } from '/@/App'
+import { TabSystem } from '../TabSystem/TabSystem'
 
 const FindAndReplaceClass = wrap<typeof FindAndReplace>(new Worker())
 
@@ -37,6 +37,12 @@ export class FindAndReplaceTab extends Tab {
 		queryResults: [],
 	})
 	searchReady = new Signal<void>()
+
+	constructor(protected parent: TabSystem, queryOptions?: IQueryOptions) {
+		super(parent)
+		// Support setting queryOptions on tab creation
+		if (queryOptions) this.state.queryOptions = queryOptions
+	}
 
 	get displayQueryResults() {
 		return this.state.queryResults

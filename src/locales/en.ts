@@ -607,6 +607,10 @@ export default {
 					name: 'Create Folder',
 					description: 'Create a new folder',
 				},
+				findInFolder: {
+					name: 'Find in Folder',
+					description: 'Search the contents of a folder',
+				},
 			},
 		},
 		settings: {

@@ -18,7 +18,9 @@ import { exportAsMcaddon } from '/@/components/Projects/Export/AsMcaddon'
 import {
 	canExportMctemplate,
 	exportAsMctemplate,
-} from '../Projects/Export/AsMctemplate'
+} from '/@/components/Projects/Export/AsMctemplate'
+import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
+import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -359,6 +361,37 @@ export class PackExplorer extends SidebarContent {
 						},
 						{
 							type: 'divider',
+						},
+						{
+							icon: 'mdi-file-search-outline',
+							name:
+								'windows.packExplorer.fileActions.findInFolder.name',
+							description:
+								'windows.packExplorer.fileActions.findInFolder.description',
+							onTrigger: () => {
+								const config = project.app.projectConfig
+								const packTypes: { [key: string]: string } = {
+									BP: config.resolvePackPath('behaviorPack'),
+									RP: config.resolvePackPath('resourcePack'),
+									SP: config.resolvePackPath('skinPack'),
+									WT: config.resolvePackPath('worldTemplate'),
+								}
+								let pathPackType = 'BP'
+								for (const packType of Object.keys(packTypes)) {
+									if (path.includes(packTypes[packType]))
+										pathPackType = packType
+								}
+								project.tabSystem?.add(
+									new FindAndReplaceTab(project.tabSystem!, {
+										searchType: ESearchType.matchCase,
+										includeFiles: path.replace(
+											packTypes[pathPackType],
+											pathPackType
+										),
+										excludeFiles: '',
+									})
+								)
+							},
 						},
 				  ]),
 			{
