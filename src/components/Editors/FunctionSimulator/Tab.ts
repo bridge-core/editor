@@ -24,6 +24,8 @@ export class FunctionSimulatorTab extends Tab {
 	protected validCommands: Array<string> = []
 	protected validSelectorArgs: Array<string> = []
 	protected commandData: any | undefined
+	protected generalCommandData: any | undefined
+	protected generalSelectorArgsData: any | undefined
 	protected blockStateData: any | undefined
 	protected stopped = false
 
@@ -73,7 +75,6 @@ export class FunctionSimulatorTab extends Tab {
 	}
 
 	protected LateLoadData() {
-		console.log('Still loading command data')
 		setTimeout(() => {
 			if (!this.blockStateData) {
 				let blockStateDataLoaded = markRaw(
@@ -84,7 +85,6 @@ export class FunctionSimulatorTab extends Tab {
 
 				if (blockStateDataLoaded.type) {
 					this.blockStateData = blockStateDataLoaded
-					console.log('Loaded Block State Data!')
 				} else {
 					this.LateLoadData()
 				}
@@ -100,51 +100,48 @@ export class FunctionSimulatorTab extends Tab {
 			this.commandData = project.commandData
 		}
 
-		//console.log(this.commandData._data.vanilla[0])
-
 		this.validCommands = []
 		this.validSelectorArgs = []
+
+		this.generalCommandData = []
+		this.generalSelectorArgsData = []
 
 		let foundTypes: string[] = []
 
 		if (this.commandData) {
-			for (
-				let i = 0;
-				i < this.commandData._data.vanilla[0].commands.length;
-				i++
-			) {
-				if (
-					!this.validCommands.includes(
-						this.commandData._data.vanilla[0].commands[i]
-							.commandName
-					)
-				) {
-					this.validCommands.push(
-						this.commandData._data.vanilla[0].commands[i]
-							.commandName
-					)
+			for (let v = 0; v < this.commandData._data.vanilla.length; v++) {
+				const vanilla = this.commandData._data.vanilla[v]
+
+				for (let i = 0; i < vanilla.commands.length; i++) {
+					if (
+						!this.validCommands.includes(
+							vanilla.commands[i].commandName
+						)
+					) {
+						this.validCommands.push(vanilla.commands[i].commandName)
+					}
+
+					this.generalCommandData.push(vanilla.commands[i])
+				}
+
+				if (vanilla.selectorArguments) {
+					for (let i = 0; i < vanilla.selectorArguments.length; i++) {
+						if (
+							!this.validSelectorArgs.includes(
+								vanilla.selectorArguments[i].argumentName
+							)
+						) {
+							this.validSelectorArgs.push(
+								vanilla.selectorArguments[i].argumentName
+							)
+						}
+
+						this.generalSelectorArgsData.push(
+							vanilla.selectorArguments[i]
+						)
+					}
 				}
 			}
-
-			for (
-				let i = 0;
-				i < this.commandData._data.vanilla[0].selectorArguments.length;
-				i++
-			) {
-				if (
-					!this.validSelectorArgs.includes(
-						this.commandData._data.vanilla[0].selectorArguments[i]
-							.argumentName
-					)
-				) {
-					this.validSelectorArgs.push(
-						this.commandData._data.vanilla[0].selectorArguments[i]
-							.argumentName
-					)
-				}
-			}
-
-			//console.log(await this.commandData.getSelectorArgumentsSchema())
 		} else {
 			console.error('Unable to load commands.json')
 		}
@@ -157,27 +154,16 @@ export class FunctionSimulatorTab extends Tab {
 
 		if (blockStateDataLoaded.type) {
 			this.blockStateData = blockStateDataLoaded
-			console.log('Loaded Block State Data!')
 		} else {
 			this.LateLoadData()
 		}
-
-		console.log(this.blockStateData)
 	}
 
 	protected async GetDocs<String>(command: string = '') {
 		if (this.commandData) {
-			for (
-				let i = 0;
-				i < this.commandData._data.vanilla[0].commands.length;
-				i++
-			) {
-				if (
-					this.commandData._data.vanilla[0].commands[i].commandName ==
-					command
-				) {
-					return this.commandData._data.vanilla[0].commands[i]
-						.description
+			for (let i = 0; i < this.generalCommandData.length; i++) {
+				if (this.generalCommandData[i].commandName == command) {
+					return this.generalCommandData[i].description
 				}
 			}
 		} else {
@@ -249,26 +235,21 @@ export class FunctionSimulatorTab extends Tab {
 				let read = dirtyString.value.substring(readStart, readEnd)
 
 				if (this.SpecialSymbols.includes(read)) {
-					//console.log('Found symbol ' + read)
 					foundTokens.push(new Token(read, 'Symbol'))
 					found = true
 				} else if (this.isInt(read)) {
-					//console.log('Found int ' + read)
 					foundTokens.push(new Token(read, 'Integer'))
 					found = true
 					shouldCombine = true
 				} else if (this.isFloat(read)) {
-					//console.log('Found float ' + read)
 					foundTokens.push(new Token(read, 'Float'))
 					found = true
 				} else if (read == 'true' || read == 'false') {
 					foundTokens.push(new Token(read, 'Boolean'))
 					found = true
 				} else if (read == ' ') {
-					//console.log('Found space ' + read)
 					foundTokens.push(new Token(read, 'Space'))
 					found = true
-					//added = false
 				}
 
 				readEnd--
@@ -427,19 +408,8 @@ export class FunctionSimulatorTab extends Tab {
 			let found = false
 			let argData = null
 
-			//console.log(this.commandData._data.vanilla[0].selectorArguments)
-
-			for (
-				let j = 0;
-				j < this.commandData._data.vanilla[0].selectorArguments.length;
-				j++
-			) {
-				const selectorArgument = this.commandData._data.vanilla[0]
-					.selectorArguments[j]
-
-				//console.log(selectorArgument.argumentName)
-
-				//console.log(targetAtribute)
+			for (let j = 0; j < this.generalSelectorArgsData.length; j++) {
+				const selectorArgument = this.generalSelectorArgsData[j]
 
 				if (selectorArgument.argumentName == targetAtribute) {
 					argData = selectorArgument
@@ -489,8 +459,6 @@ export class FunctionSimulatorTab extends Tab {
 				value = tokens[3 + offset]
 				negated = true
 			}
-
-			//console.log(argData)
 
 			if (argData.additionalData) {
 				if (!argData.additionalData.supportsNegation && negated) {
@@ -581,10 +549,6 @@ export class FunctionSimulatorTab extends Tab {
 
 					let schemaReference = refSchema.getCompletionItems({})
 
-					console.log('Getting Schema Data!')
-					console.log(referencePath)
-					console.log(schemaReference)
-
 					let foundSchema = false
 
 					for (let j = 0; j < schemaReference.length; j++) {
@@ -662,7 +626,6 @@ export class FunctionSimulatorTab extends Tab {
 		reconstructedJSON += '}'
 
 		try {
-			console.log('Parsing JSON ' + reconstructedJSON)
 			JSON.parse(reconstructedJSON)
 		} catch (e) {
 			errors.push(this.TranslateError('jsonNotValid'))
@@ -809,8 +772,6 @@ export class FunctionSimulatorTab extends Tab {
 					}
 				}
 
-				console.log(targetData)
-
 				let targetValues = targetData.enum
 
 				for (let j = 0; j < targetValues.length; j++) {
@@ -874,7 +835,7 @@ export class FunctionSimulatorTab extends Tab {
 		let baseCommand: Token
 
 		if (!commandTokens) {
-			splitStrings = command!.split('"') //.filter((e) => e)
+			splitStrings = command!.split('"')
 
 			for (let i = 0; i < splitStrings.length; i++) {
 				if (!inString) {
@@ -1139,8 +1100,6 @@ export class FunctionSimulatorTab extends Tab {
 					}
 				}
 
-				//console.log(Array.from(tokens))
-
 				//Construct Score Data
 				let inScoreData = false
 				let scoreDataToReconstruct: Token[] = []
@@ -1248,8 +1207,6 @@ export class FunctionSimulatorTab extends Tab {
 					}
 				}
 
-				console.log(Array.from(tokens))
-
 				//Construct Block States
 				let inBlockState = false
 				let blockStateToReconstruct: Token[] = []
@@ -1277,7 +1234,6 @@ export class FunctionSimulatorTab extends Tab {
 								blockStateToReconstruct
 							)
 
-							//errors = errors.concat(result[0])
 							warnings = warnings.concat(result[1])
 
 							if (result[0].length == 0) {
@@ -1310,8 +1266,6 @@ export class FunctionSimulatorTab extends Tab {
 						}
 					}
 				}
-
-				console.log(Array.from(tokens))
 
 				//Construct Complex Selectors
 				let inSelector = false
@@ -1400,22 +1354,13 @@ export class FunctionSimulatorTab extends Tab {
 			baseCommand = tokens.shift()!
 		}
 
-		console.log(Array.from(tokens))
-
 		//Validate Command Argument Types
 		let possibleCommandVariations = []
 
-		for (
-			let i = 0;
-			i < this.commandData._data.vanilla[0].commands.length;
-			i++
-		) {
-			if (
-				this.commandData._data.vanilla[0].commands[i].commandName ==
-				baseCommand!.value
-			) {
+		for (let i = 0; i < this.generalCommandData.length; i++) {
+			if (this.generalCommandData[i].commandName == baseCommand!.value) {
 				possibleCommandVariations.push(
-					this.commandData._data.vanilla[0].commands[i].arguments
+					this.generalCommandData[i].arguments
 				)
 			}
 		}
@@ -1529,8 +1474,6 @@ export class FunctionSimulatorTab extends Tab {
 			let commmandDisplayElement = document.getElementById(
 				'command-display'
 			)
-
-			//.filter(i => i !== "\r")
 
 			if (commmandDisplayElement) {
 				if (
