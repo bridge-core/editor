@@ -161,6 +161,8 @@ export class FunctionSimulatorTab extends Tab {
 		} else {
 			this.LateLoadData()
 		}
+
+		console.log(this.blockStateData)
 	}
 
 	protected async GetDocs<String>(command: string = '') {
@@ -790,6 +792,39 @@ export class FunctionSimulatorTab extends Tab {
 			let value = tokens[2 + offset]
 
 			if (this.blockStateData) {
+				let targetData
+
+				let properties = Object.getOwnPropertyNames(
+					this.blockStateData.properties
+				)
+
+				for (let j = 0; j < properties.length; j++) {
+					if (properties[j] == targetValue) {
+						targetData = this.blockStateData.properties[
+							properties[j]
+						]
+
+						targetData['name'] = properties[j]
+						break
+					}
+				}
+
+				console.log(targetData)
+
+				let targetValues = targetData.enum
+
+				for (let j = 0; j < targetValues.length; j++) {
+					targetValues[j] = targetValues[j].toString()
+				}
+
+				if (!targetValues.includes(value.value)) {
+					errors.push(
+						this.TranslateError('invalidBlockStateValue.part1') +
+							value.value +
+							this.TranslateError('invalidBlockStateValue.part2')
+					)
+					return [errors, warnings]
+				}
 			}
 
 			if (confirmedValues.includes(value.value)) {

@@ -1005,7 +1005,8 @@ export default {
 			unexpectedOpenSquareBracket: 'Unexpected [!',
 			selectorNotBeforeOpenSquareBracketButNothing:
 				'Either expected selector before [ or got an invalid block state!',
-			selectorNotBeforeOpenSquareBracket: 'Expected selector before [!',
+			selectorNotBeforeOpenSquareBracket:
+				'Expected selector before [ or got an invalid block state!',
 			unexpectedCloseSquareBracket: 'Unexpected ]',
 			noValidCommandVarsFound: {
 				part1: 'No valid command variations found! Argument ',
