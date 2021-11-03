@@ -1282,11 +1282,11 @@ export class FunctionSimulatorTab extends Tab {
 
 							if (result[0].length == 0) {
 								let startingPoint =
-									i - blockStateToReconstruct.length - 2
+									i - blockStateToReconstruct.length - 1
 
 								tokens.splice(
 									startingPoint,
-									blockStateToReconstruct.length + 3,
+									blockStateToReconstruct.length + 2,
 									(tokens[startingPoint] = new Token(
 										tokens[startingPoint].value,
 										'Block State'
@@ -1399,6 +1399,8 @@ export class FunctionSimulatorTab extends Tab {
 
 			baseCommand = tokens.shift()!
 		}
+
+		console.log(Array.from(tokens))
 
 		//Validate Command Argument Types
 		let possibleCommandVariations = []
