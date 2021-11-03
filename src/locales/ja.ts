@@ -19,7 +19,7 @@ export default {
 		skip: 'スキップ',
 		save: '保存',
 		more: 'もっと...',
-		selectFolder: 'フォルダを選択',
+		selectFolder: 'フォルダーを選択',
 		fileName: 'ファイル名',
 		inactive: '無効',
 		active: '有効',
@@ -39,7 +39,7 @@ export default {
 	},
 	packType: {
 		behaviorPack: {
-			name: 'ビヘイビアパック',
+			name: 'ビヘイビアーパック',
 			description:
 				'新しいゲームの仕組みを作り Minecraft の動作を変えます',
 		},
@@ -62,7 +62,7 @@ export default {
 	fileType: {
 		manifest: 'マニフェスト',
 		animation: 'アニメーション',
-		animationController: 'アニメーションコントローラ',
+		animationController: 'アニメーションコントローラー',
 		biome: 'バイオーム',
 		block: 'ブロック',
 		bridgeConfig: 'プロジェクト設定',
@@ -87,14 +87,14 @@ export default {
 		customCommand: 'コマンド',
 		customComponent: 'コンポーネント',
 		clientAnimation: 'クライアントアニメーション',
-		clientAnimationController: 'クライアントアニメーションコントローラ',
+		clientAnimationController: 'クライアントアニメーションコントローラー',
 		attachable: 'アタッチャブル',
 		clientEntity: 'クライアントエンティティ',
 		clientItem: 'クライアントアイテム',
 		clientLang: '言語',
 		fog: 'フォグ',
 		particle: 'パーティクル',
-		renderController: 'レンダーコントローラ',
+		renderController: 'レンダーコントローラー',
 		texture: 'テクスチャ',
 		textureSet: 'テクスチャセット',
 		itemTexture: 'アイテムテクスチャ',
@@ -421,9 +421,9 @@ export default {
 			projectAuthor: 'プロジェクト作成者',
 			projectTargetVersion: 'プロジェクトの対象バージョン',
 			rpAsBpDependency:
-				'リソースパックをビヘイビアパックの依存関係として登録する',
+				'リソースパックをビヘイビアーパックの依存関係として登録する',
 			bpAsRpDependency:
-				'ビヘイビアパックをリソースパックの依存関係として登録する',
+				'ビヘイビアーパックをリソースパックの依存関係として登録する',
 			useLangForManifest: 'マニフェストにパック名/説明文を直接追加する',
 			create: '作成',
 			saveCurrentProject:
@@ -434,7 +434,7 @@ export default {
 					player: {
 						name: 'player.json',
 						description:
-							'プレーヤーのデフォルトビヘイビアを定義します。',
+							'プレーヤーのデフォルトビヘイビアーを定義します。',
 					},
 					tick: {
 						name: 'tick.json',
@@ -491,10 +491,10 @@ export default {
 				'このプリセットは未保存の変更がある 1 つまたは複数のファイルを上書きします。 続行しますか？',
 			overwriteUnsavedChangesConfirm: '続行',
 			validationRule: {
-				alphanumeric: '使用できる文字は英数字とアンダースコアのみです',
+				alphanumeric: '使用できる文字は英数字とアンダーラインのみです',
 				lowercase: '使用できる文字は小文字のみです',
 				required: 'この項目は必須です',
-				noEmptyFolderNames: 'フォルダ名を空にすることはできません',
+				noEmptyFolderNames: 'フォルダー名を空にすることはできません',
 			},
 		},
 		deleteProject: {
@@ -504,7 +504,7 @@ export default {
 		socials: {
 			title: 'ソーシャル',
 			content:
-				'Twitter, Github をチェックして bridge. 公式の Discord サーバーに参加してください！',
+				'bridge. 公式の Twitter, Github, Discord サーバーをぜひチェックしてください！',
 			discord: 'Discord',
 			twitter: 'Twitter',
 			github: 'Github',
@@ -521,12 +521,12 @@ export default {
 			saveCurrentProject: {
 				name: 'プロジェクトの保存',
 				description:
-					'現在のプロジェクトを .brproject ファイルとしてダウンロードし行った変更を保存することができます。',
+					'現在のプロジェクトを .brproject ファイルとしてダウンロードし、行った変更を保存することができます。',
 			},
 			openNewProject: {
 				name: 'プロジェクトを開く',
 				description:
-					' .brproject ファイルを選択してプロジェクトを開きます。',
+					'.brproject ファイルを選択してプロジェクトを開きます。',
 				saveCurrentProject:
 					'新しいプロジェクトを読み込む前に現在のプロジェクトを保存しますか？',
 			},
@@ -544,18 +544,18 @@ export default {
 			refresh: {
 				name: 'プロジェクトの再読み込み',
 				description:
-					'新しく追加されたファイルのために現在のプロジェクトを再読み込みすます',
+					'ファイル追加されました。現在のプロジェクトを再読み込みます。',
 			},
 			restartDevServer: {
 				name: '開発サーバーの再起動',
 				description:
-					'コンパイラの開発サーバーを再起動してもよろしいですか？プロジェクトの規模によっては時間がかかる場合があります。',
+					'コンパイラの開発サーバーを再起動してもよろしいですか？ プロジェクトの規模によっては時間がかかる場合があります。',
 			},
 			createPreset: '新規ファイル',
 			projectConfig: {
 				name: 'プロジェクト設定を開く',
 				missing:
-					'このプロジェクトには config.json ファイルがないように見えます。 すべてのプロジェクトが正常に動作するためにはプロジェクトのコンフィグファイルが必要です。',
+					'このプロジェクトの config.json ファイルが見つかりませんでした。 すべてのプロジェクトが正常に動作するためにはプロジェクトのコンフィグファイルが必要です。',
 			},
 			exportAsMcaddon: {
 				name: '.mcaddon としてエクスポート',
@@ -576,7 +576,7 @@ export default {
 					name: '削除',
 					description: 'ファイルやフォルダーの削除',
 					confirmText:
-						'本当に削除しますか?後からファイルを復元することはできません',
+						'本当に削除しますか? 後からファイルを復元することはできません',
 				},
 				rename: {
 					name: '名前の変更',
@@ -589,8 +589,7 @@ export default {
 				viewCompilerOutput: {
 					name: 'コンパイラの出力表示',
 					description: 'このファイルのコンパイラ出力を表示する',
-					fileMissing:
-						'このファイルはまだコンパイルされていないようです',
+					fileMissing: 'このファイルはまだコンパイルされていません',
 				},
 				revealFilePath: {
 					name: 'ファイルパスの表示',
@@ -601,12 +600,12 @@ export default {
 					description: '新規ファイル作成',
 				},
 				createFolder: {
-					name: '新しいフォルダ',
-					description: '新規フォルダ作成',
+					name: '新しいフォルダー',
+					description: '新規フォルダー作成',
 				},
 				findInFolder: {
-					name: 'フォルダで検索',
-					description: 'フォルダ内を検索する',
+					name: 'フォルダーで検索',
+					description: 'フォルダー内を検索する',
 				},
 			},
 		},
@@ -706,8 +705,9 @@ export default {
 						'アプリを起動すると前回 bridge. を使用したときのタブが復元されます。',
 				},
 				resetBridgeFolder: {
-					name: 'ルートフォルダの選択',
-					description: 'bridge. が動作するメインフォルダを選択します',
+					name: 'ルートフォルダーの選択',
+					description:
+						'bridge. が動作するメインフォルダーを選択します',
 				},
 				openProjectChooserOnAppStartup: {
 					name: 'プロジェクトを選択を開く',
@@ -782,9 +782,9 @@ export default {
 			},
 		},
 		projectFolder: {
-			title: 'プロジェクトフォルダ',
+			title: 'プロジェクトフォルダー',
 			content:
-				'bridge. が正常に動作するためにはプロジェクトフォルダにアクセスする必要があります。',
+				'bridge. を正常に動作するためには、プロジェクトフォルダーにアクセスする必要があります。',
 		},
 		extensionStore: {
 			title: '拡張機能ストア',
@@ -812,7 +812,7 @@ export default {
 		browserUnsupported: {
 			title: '未対応のブラウザ',
 			description:
-				'bridge. v2 をより快適にご利用いただくためには Chrome（Desktop） または Edge（Chromium） をご利用ください。 お使いのブラウザはファイルを直接保存したり、プロジェクトを com.mojang フォルダに同期することをサポートしていません。',
+				'bridge. v2 をより快適にご利用いただくためには Chrome（Desktop） または Edge（Chromium） をご利用ください。 お使いのブラウザはファイルを直接保存したり、プロジェクトを com.mojang フォルダーに同期することをサポートしていません。',
 			continue: '続行',
 		},
 		invalidJson: {
@@ -867,18 +867,18 @@ export default {
 	},
 	comMojang: {
 		folderDropped:
-			'このフォルダをデフォルトの com.mojang フォルダとして設定しますか？',
-		title: 'com.mojang フォルダへのアクセス',
+			'このフォルダーをデフォルトの com.mojang フォルダーとして設定しますか？',
+		title: 'com.mojang フォルダーへのアクセス',
 		permissionRequest:
-			'プロジェクトをコンパイルするには com.mojang フォルダにアクセスする必要があります',
+			'プロジェクトをコンパイルするには com.mojang フォルダーにアクセスする必要があります',
 		status: {
 			sucess:
 				'com.mojang へのプロジェクトの同期設定は正しく設定されています。',
 			deniedPermission:
-				'com.mojang へのフォルダアクセス権限が与えられていません',
-			notSetup: 'com.mojang への同期設定を設定していません。',
+				'com.mojang へのフォルダーアクセス権限が与えられていません',
+			notSetup: 'com.mojang への同期設定をしていません。',
 			notAvailable:
-				'プロジェクトを com.mojang フォルダに同期する機能は Chrome と Edge ユーザーのみ利用可能です。',
+				'プロジェクトを com.mojang フォルダーに同期する機能は Chrome と Edge ユーザーのみ利用可能です。',
 		},
 	},
 	findAndReplace: {
@@ -908,22 +908,22 @@ export default {
 	},
 	initialSetup: {
 		welcome: 'ようこそ bridge. v2 へ!',
-		welcomeCaption: 'Minecraft アドオンのための強力な 統合開発環境',
+		welcomeCaption: 'Minecraft アドオンのための強力な統合開発環境',
 		step: {
 			installApp: {
 				name: 'bridge. をインストール',
 				description:
-					'最高の体験をするためには bridge. v2をアプリとしてコンピュータにインストールしてください。',
+					'最高の体験をするためには bridge. v2をアプリとしてインストールしてください。',
 			},
 			bridge: {
-				name: 'bridge. フォルダ',
+				name: 'bridge. フォルダー',
 				description:
-					'bridge. がアプリ関連のデータやアドオンのプロジェクトを保存できるフォルダを作成してください。',
+					'bridge. がアプリ関連のデータやプロジェクトのデータを保存するフォルダーを作成/選択してください。',
 			},
 			bridgeProject: {
 				name: 'bridge. プロジェクト',
 				description:
-					'新しいプロジェクトを作成したいですか？それとも既存のプロジェクトを .brproject ファイルからインポートしますか？',
+					'新しいプロジェクトを作成しますか？それとも既存のプロジェクトを .brproject ファイルからインポートしますか？',
 				createNew: {
 					name: '新規プロジェクト',
 					description: '新規プロジェクトを作成します。',
@@ -934,11 +934,10 @@ export default {
 				},
 			},
 			comMojang: {
-				name: 'com.mojang フォルダ',
+				name: 'com.mojang フォルダー',
 				description:
-					'com.mojang フォルダを bridge. にドラッグしてプロジェクトとの同期を設定します。 これにより Minecraft for Windows 10 の中でアドオンに自動的にアクセスできるようになります。 com.mojang の同期設定は bridge. を開いている間いつでも行えます。',
-				extraDescription:
-					'com.mojang フォルダを bridge. にドラッグします。',
+					'com.mojang フォルダーを bridge. にドラッグしてプロジェクトをフォルダと同期させます。 これにより Minecraft for Windows 10 の中でアドオンに自動的にアクセスできるようになります。 com.mojang の同期設定は bridge. を開いている間いつでも行えます。',
+				extraDescription: 'com.mojang フォルダーをドラッグ',
 			},
 			editorType: {
 				name: 'エディタータイプの選択',
@@ -947,12 +946,12 @@ export default {
 				rawText: {
 					name: 'Raw Text',
 					description:
-						'JSON を生のテキストとして編集することができます。 中級から上級の開発者に最適です。 高度な自動補完機能とJSONの検証機能を備えています。',
+						'JSON をプレーンテキスト形式で編集します。 中級から上級の開発者に最適です。 高度な自動補完機能とJSONの検証機能を備えています。',
 				},
 				treeEditor: {
 					name: 'Tree Editor',
 					description:
-						'JSON の知識をほとんど必要とせずに JSON をツリー状に編集します。 初心者や中級者のクリエイターに最適です。',
+						'JSON をツリー状に編集します。 初心者や中級者のクリエイターに最適です。JSON の知識をほとんど必要とせずに編集が可能です。',
 				},
 			},
 		},
