@@ -14,6 +14,7 @@ import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
 import { Token } from './Token'
 import { DataLoader } from '../../Data/DataLoader'
 import { isReactive, markRaw } from '@vue/composition-api'
+import { SchemaManager } from '/@/components/JSONSchema/Manager'
 
 export class FunctionSimulatorTab extends Tab {
 	protected fileTab: FileTab | undefined
@@ -69,6 +70,26 @@ export class FunctionSimulatorTab extends Tab {
 			let file = await this.fileTab.getFile()
 			this.content = await file?.text()
 		}
+	}
+
+	protected LateLoadData() {
+		console.log('Still loading command data')
+		setTimeout(() => {
+			if (!this.blockStateData) {
+				let blockStateDataLoaded = markRaw(
+					SchemaManager.request(
+						'file:///data/packages/minecraftBedrock/schema/general/vanilla/blockState.json'
+					)
+				)
+
+				if (blockStateDataLoaded.type) {
+					this.blockStateData = blockStateDataLoaded
+					console.log('Loaded Block State Data!')
+				} else {
+					this.LateLoadData()
+				}
+			}
+		}, 1000)
 	}
 
 	protected async LoadCommandData() {
@@ -128,24 +149,18 @@ export class FunctionSimulatorTab extends Tab {
 			console.error('Unable to load commands.json')
 		}
 
-		let blockStateReferencePath =
-			'/data/packages/minecraftBedrock/schema/general/vanilla/blockState.json'
-
-		let blockStateRefSchema = new RefSchema(
-			blockStateReferencePath,
-			'$ref',
-			blockStateReferencePath
+		let blockStateDataLoaded = markRaw(
+			SchemaManager.request(
+				'file:///data/packages/minecraftBedrock/schema/general/vanilla/blockState.json'
+			)
 		)
 
-		console.log('Starting Test')
-
-		console.log(blockStateRefSchema)
-
-		this.blockStateData = await blockStateRefSchema.getCompletionItems({})
-
-		this.blockStateData = this.blockStateData
-
-		console.log('Ending Test')
+		if (blockStateDataLoaded.type) {
+			this.blockStateData = blockStateDataLoaded
+			console.log('Loaded Block State Data!')
+		} else {
+			this.LateLoadData()
+		}
 	}
 
 	protected async GetDocs<String>(command: string = '') {
@@ -774,8 +789,8 @@ export class FunctionSimulatorTab extends Tab {
 
 			let value = tokens[2 + offset]
 
-			//TODO: check block state data for validity of types
-			console.log(this.blockStateData)
+			if (this.blockStateData) {
+			}
 
 			if (confirmedValues.includes(value.value)) {
 				errors.push(this.TranslateError('repeatOfBlockState'))
@@ -808,6 +823,10 @@ export class FunctionSimulatorTab extends Tab {
 
 		let errors: string[] = []
 		let warnings: string[] = []
+
+		if (!this.blockStateData) {
+			warnings.push(this.TranslateError('missingData'))
+		}
 
 		//Seperate into strings by quotes for parsing
 
