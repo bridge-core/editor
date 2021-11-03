@@ -633,12 +633,8 @@ export default {
 					description: '新規フォルダー作成',
 				},
 				findInFolder: {
-					name: 'フォルダーで検索',
+					name: 'フォルダー内検索',
 					description: 'フォルダー内を検索する',
-				},
-				findInFolder: {
-					name: 'フォルダで検索',
-					description: 'フォルダ内を検索する',
 				},
 			},
 		},
