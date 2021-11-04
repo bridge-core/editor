@@ -1,7 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import { TabSystem } from './TabSystem'
 import { App } from '/@/App'
-import { FileType } from '/@/components/Data/FileType'
 import { PackType } from '/@/components/Data/PackType'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { Signal } from '/@/components/Common/Event/Signal'
@@ -19,7 +18,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	public isTemporary = true
 	public readonly onClose = new EventDispatcher<void>()
 
-	protected projectPath?: string
+	protected path?: string
 	protected folderName: string | null = null
 	protected actions: SimpleAction[] = []
 	protected isActive = false
@@ -66,24 +65,30 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	 * @returns Undefined if the file that belongs to this tab is not inside of a bridge. project
 	 */
 	getPath() {
-		if (!this.projectPath)
+		if (!this.path)
 			throw new Error(
 				`Trying to access projectPath before tab finished loading`
 			)
-		return `projects/${this.parent.projectName}/${this.projectPath}`
+		return this.path
 	}
 	/**
+	 * @deprecated Do not use!
 	 * @returns Undefined if the file that belongs to this tab is not inside of the current project
 	 */
 	getProjectPath() {
-		if (!this.projectPath)
+		console.warn(
+			`CommonTab.getProjectPath() is deprecated in favor of CommonTab.getPath()`
+		)
+		if (!this.path)
 			throw new Error(
 				`Trying to access projectPath before tab finished loading`
 			)
-		return this.projectPath
+		return this.path.split('/').slice(2).join('/')
 	}
 	get icon() {
-		return FileType.get(this.getProjectPath())?.icon ?? 'mdi-file-outline'
+		return (
+			App.fileType.getGlobal(this.getPath())?.icon ?? 'mdi-file-outline'
+		)
 	}
 	get iconColor() {
 		return PackType.get(this.getPath())?.color

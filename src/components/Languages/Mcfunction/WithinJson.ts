@@ -2,7 +2,6 @@ import { App } from '/@/App'
 import { getLocation } from '/@/utils/monaco/getLocation'
 import { languages, editor, Position, Range } from 'monaco-editor'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
-import { FileType } from '/@/components/Data/FileType'
 import { tokenizeCommand } from './tokenize'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
@@ -31,7 +30,7 @@ languages.registerCompletionItemProvider('json', {
 		const {
 			id,
 			meta: { commandsUseSlash } = { commandsUseSlash: false },
-		} = FileType.get(currentTab.getProjectPath()) ?? {
+		} = App.fileType.get(currentTab.getPath()) ?? {
 			id: 'unknown',
 			meta: { commandsUseSlash: false },
 		}

@@ -1,7 +1,6 @@
 import { languages } from 'monaco-editor'
-import { FileType } from '/@/components/Data/FileType'
 import { TextTab } from '/@/components/Editors/Text/TextTab'
-import { ProjectConfig } from '/@/components/Projects/ProjectConfig'
+import { ProjectConfig } from '../../Projects/Project/Config'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
@@ -73,13 +72,13 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 	async loadWords(tabArg?: Tab) {
 		const app = await App.getApp()
 		await app.projectManager.projectReady.fired
-		await FileType.ready.fired
+		await App.fileType.ready.fired
 
 		const tab = tabArg ?? app.project.tabSystem?.selectedTab
 		if (!(tab instanceof TextTab) && !(tab instanceof TreeTab)) return
 
 		const { id, highlighterConfiguration = {} } =
-			FileType.get(tab.getProjectPath()) ?? {}
+			App.fileType.getGlobal(tab.getPath()) ?? {}
 
 		// We have already loaded the needed file type
 		if (!id) return this.resetWords(tab)
@@ -111,7 +110,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 			defaultToken: 'invalid',
 			tokenPostfix: '.json',
 
-			atoms: ['false', 'true', 'class', 'null'],
+			atoms: ['false', 'true', 'null'],
 			keywords: this.keywords,
 			typeIdentifiers: this.typeIdentifiers,
 			variables: this.variables,
@@ -213,12 +212,6 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 					[/@escapes/, 'string.escape'],
 					[/\\./, 'string.escape.invalid'],
 					[/"/, 'identifier', '@pop'],
-				],
-
-				bracketCounting: [
-					[/\{/, 'delimiter.bracket', '@bracketCounting'],
-					[/\}/, 'delimiter.bracket', '@pop'],
-					{ include: 'common' },
 				],
 			},
 		})

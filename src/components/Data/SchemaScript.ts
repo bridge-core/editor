@@ -6,12 +6,14 @@ import { App } from '/@/App'
 import { iterateDir } from '/@/utils/iterateDir'
 import { walkObject } from '/@/utils/walkObject'
 import { v4 as uuid } from 'uuid'
+import { compare } from 'compare-versions'
+import { TPackTypeId } from './PackType'
 
 export class SchemaScript {
 	constructor(protected app: App, protected filePath?: string) {}
 
 	protected async runScript(scriptPath: string, script: string) {
-		const scopedFs = this.app.project.fileSystem
+		const fs = this.app.fileSystem
 
 		let currentJson = {}
 		let failedFileLoad = true
@@ -32,7 +34,7 @@ export class SchemaScript {
 				script,
 				env: {
 					readdir: (path: string) =>
-						scopedFs.readFilesFromDir(path).catch(() => []),
+						fs.readFilesFromDir(path).catch(() => []),
 					uuid,
 					getFormatVersions: getFilteredFormatVersions,
 					getCacheDataFor: async (
@@ -62,6 +64,15 @@ export class SchemaScript {
 						walkObject(path, currentJson, (d) => data.push(d))
 						return data
 					},
+					compare,
+					resolvePackPath: (
+						packId?: TPackTypeId,
+						filePath?: string
+					) =>
+						this.app.projectConfig.resolvePackPath(
+							packId,
+							filePath
+						),
 					failedCurrentFileLoad: failedFileLoad,
 				},
 			})

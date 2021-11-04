@@ -1,5 +1,5 @@
 import { languages } from 'monaco-editor'
-import type { CommandData } from '../Data'
+import type { CommandData, ICompletionItem } from '../Data'
 
 export class SelectorArguments {
 	constructor(protected commandData: CommandData) {}
@@ -30,7 +30,7 @@ export class SelectorArguments {
 		return args.find((arg) => arg.argumentName === word)
 	}
 
-	getArgumentNameCompletions() {
+	getArgumentNameCompletions(): Promise<ICompletionItem[]> {
 		return this.getSchema().then((args) =>
 			args.map((arg) => ({
 				label: arg.argumentName,

@@ -186,10 +186,10 @@ export class BlockLibrary {
 
 		for (let face of faces) {
 			if (entry.faces[face] !== undefined)
-				return entry.faces[face]!.uvOffset ?? [0, 0]
+				return entry.faces[face]!.uvOffset!
 		}
 
-		if (entry.faces.all) return entry.faces.all.uvOffset ?? [0, 0]
+		if (entry.faces.all) return entry.faces.all.uvOffset!
 
 		return [0, 0]
 	}

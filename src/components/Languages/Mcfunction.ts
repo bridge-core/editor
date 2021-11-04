@@ -11,7 +11,6 @@ import { tokenizeCommand, tokenizeTargetSelector } from './Mcfunction/tokenize'
 import { App } from '/@/App'
 import './Mcfunction/WithinJson'
 import { tokenProvider } from './Mcfunction/TokenProvider'
-import { FileType } from '/@/components/Data/FileType'
 import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
 
@@ -20,6 +19,11 @@ export const config: languages.LanguageConfiguration = {
 	comments: {
 		lineComment: '#',
 	},
+	brackets: [
+		['(', ')'],
+		['[', ']'],
+		['{', '}'],
+	],
 	autoClosingPairs: [
 		{
 			open: '(',
@@ -77,7 +81,13 @@ const completionItemProvider: languages.CompletionItemProvider = {
 					.getNextCompletionItems(tokens.map((token) => token.word))
 					.then((completionItems) =>
 						completionItems.map(
-							({ label, insertText, documentation, kind }) => ({
+							({
+								label,
+								insertText,
+								documentation,
+								kind,
+								insertTextRules,
+							}) => ({
 								label: label ?? insertText,
 								insertText,
 								documentation,
@@ -88,6 +98,7 @@ const completionItemProvider: languages.CompletionItemProvider = {
 									position.lineNumber,
 									(lastToken?.endColumn ?? 0) + 1
 								),
+								insertTextRules,
 							})
 						)
 					),
@@ -107,7 +118,13 @@ const completionItemProvider: languages.CompletionItemProvider = {
 
 		return {
 			suggestions: completionItems.map(
-				({ label, insertText, documentation, kind }) => ({
+				({
+					label,
+					insertText,
+					documentation,
+					kind,
+					insertTextRules,
+				}) => ({
 					label: label ?? insertText,
 					insertText,
 					documentation,
@@ -118,6 +135,7 @@ const completionItemProvider: languages.CompletionItemProvider = {
 						position.lineNumber,
 						(lastToken?.endColumn ?? 0) + 1
 					),
+					insertTextRules,
 				})
 			),
 		}
@@ -137,6 +155,9 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 		!project.compilerManager.hasFired
 	)
 	tokenProvider.keywords = commands.map((command) => command)
+
+	const targetSelectorArguments = await project.commandData.allSelectorArguments()
+	tokenProvider.targetSelectorArguments = targetSelectorArguments
 
 	lang.updateTokenProvider(tokenProvider)
 }
@@ -174,7 +195,9 @@ export class McfunctionLanguage extends Language {
 					this.disposables.push(
 						project.fileSave.any.on(([filePath]) => {
 							// Whenever a custom command gets saved, we need to update the token provider to account for a potential custom command name change
-							if (FileType.getId(filePath) === 'customCommand')
+							if (
+								App.fileType.getId(filePath) === 'customCommand'
+							)
 								loadCommands(this)
 						})
 					)

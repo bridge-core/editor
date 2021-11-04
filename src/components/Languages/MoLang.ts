@@ -6,6 +6,11 @@ export const config: languages.LanguageConfiguration = {
 	comments: {
 		lineComment: '#',
 	},
+	brackets: [
+		['(', ')'],
+		['[', ']'],
+		['{', '}'],
+	],
 	autoClosingPairs: [
 		{
 			open: '(',

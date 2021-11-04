@@ -39,6 +39,7 @@ export type TArgumentType =
 	| 'jsonData'
 	| 'coordinate'
 	| 'command'
+	| 'scoreData'
 	| `$${string}`
 
 /**
@@ -54,11 +55,12 @@ export interface ICommandArgument {
 	}
 }
 
-interface ICompletionItem {
+export interface ICompletionItem {
 	label?: string
 	insertText: string
 	documentation?: string
 	kind: languages.CompletionItemKind
+	insertTextRules?: languages.CompletionItemInsertTextRule
 }
 
 /**
@@ -150,6 +152,15 @@ export class CommandData extends Signal<void> {
 						(commandName: string) =>
 							!query || commandName?.includes(query)
 					)
+			),
+		])
+	}
+	allSelectorArguments() {
+		return this.getSelectorArgumentsSchema().then((schema) => [
+			...new Set<string>(
+				schema.map(
+					(selectorArgument: any) => selectorArgument?.argumentName
+				)
 			),
 		])
 	}
@@ -447,13 +458,19 @@ export class CommandData extends Signal<void> {
 			}
 			case 'jsonData':
 				return this.toCompletionItem(
-					['{}'],
+					[['{}', '{${1:json data}}']],
 					commandArgument.description,
 					languages.CompletionItemKind.Struct
 				)
 			case 'blockState':
 				return this.toCompletionItem(
-					['[]'],
+					[['[]', '[${1:block states}]']],
+					commandArgument.description,
+					languages.CompletionItemKind.Struct
+				)
+			case 'scoreData':
+				return this.toCompletionItem(
+					[['{}', '{${1:scores}}']],
 					commandArgument.description,
 					languages.CompletionItemKind.Struct
 				)
@@ -462,15 +479,18 @@ export class CommandData extends Signal<void> {
 		return []
 	}
 	toCompletionItem(
-		strings: string[],
+		strings: (string | [string, string])[],
 		documentation?: string,
 		kind = languages.CompletionItemKind.Text
 	): ICompletionItem[] {
 		return strings.map((str) => ({
-			label: str,
-			insertText: str,
+			label: Array.isArray(str) ? str[0] : str,
+			insertText: Array.isArray(str) ? str[1] : str,
 			kind,
 			documentation,
+			insertTextRules: Array.isArray(str)
+				? languages.CompletionItemInsertTextRule.InsertAsSnippet
+				: undefined,
 		}))
 	}
 	protected mergeCompletionItems(

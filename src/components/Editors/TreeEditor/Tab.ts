@@ -16,18 +16,13 @@ const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 		const fileContent = JSON.stringify(tab.treeEditor.toJSON())
 		const app = await App.getApp()
 		await app.project.packIndexer.updateFile(
-			tab.getProjectPath(),
+			tab.getPath(),
 			fileContent,
 			tab.isForeignFile
 		)
-		await app.project.jsonDefaults.updateDynamicSchemas(
-			tab.getProjectPath()
-		)
+		await app.project.jsonDefaults.updateDynamicSchemas(tab.getPath())
 
-		app.project.fileChange.dispatch(
-			tab.getProjectPath(),
-			await tab.getFile()
-		)
+		app.project.fileChange.dispatch(tab.getPath(), await tab.getFile())
 	},
 	600
 )
@@ -177,15 +172,14 @@ export class TreeTab extends FileTab {
 
 		// We need to clear the lightning cache store from temporary data if the user doesn't save changes
 		if (!this.isForeignFile && didClose && this.isUnsaved) {
-			const app = await App.getApp()
-
+			// TODO: Well... this looks completely messed up. Look into what's the correct way to fix it. Should foreign files really get unlinked or can we just remove this?
 			if (this.isForeignFile) {
-				await app.fileSystem.unlink(this.getProjectPath())
+				await this.app.fileSystem.unlink(this.getPath())
 			} else {
 				const file = await this.fileHandle.getFile()
 				const fileContent = await file.text()
-				await app.project.packIndexer.updateFile(
-					this.getProjectPath(),
+				await this.project.packIndexer.updateFile(
+					this.getPath(),
 					fileContent
 				)
 			}

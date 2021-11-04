@@ -16,11 +16,12 @@ import {
 	NearestFilter,
 	Scene,
 	Vector3,
+	MathUtils,
 } from 'three'
 import { markRaw } from '@vue/composition-api'
 
 export class World {
-	protected chunks = new Map<Uint8Array, Chunk>()
+	protected chunks = new Map<string, Chunk>()
 	public readonly blockLibrary: BlockLibrary
 	public readonly levelDb: LevelDB
 
@@ -34,8 +35,7 @@ export class World {
 	}
 
 	async loadWorld() {
-		await this.blockLibrary.setup()
-		await this.levelDb.open()
+		await Promise.all([this.blockLibrary.setup(), this.levelDb.open()])
 
 		const texture = new CanvasTexture(this.blockLibrary.tileMap)
 		texture.magFilter = NearestFilter
@@ -58,7 +58,7 @@ export class World {
 				...x,
 				...z,
 				...(dimension ? dimension : []),
-			])
+			]).join(',')
 
 			if (!this.chunks.has(position))
 				this.chunks.set(position, new Chunk(this, x, z, dimension))
@@ -69,23 +69,23 @@ export class World {
 		const chunkX = toUint8Array(Math.floor(x / 16))
 		const chunkZ = toUint8Array(Math.floor(z / 16))
 
-		const chunk = this.chunks.get(new Uint8Array([...chunkX, ...chunkZ]))
+		const chunk = this.chunks.get(
+			new Uint8Array([...chunkX, ...chunkZ]).join(',')
+		)
 
 		return chunk?.getSubChunk(Math.floor(y / 16))
 	}
 
 	getBlockAt(layer: number, x: number, y: number, z: number) {
-		const chunkX = toUint8Array(Math.floor(x / 16))
-		const chunkZ = toUint8Array(Math.floor(z / 16))
-
-		const chunk = this.chunks.get(new Uint8Array([...chunkX, ...chunkZ]))
-
+		// console.log(layer, x, y, z, this.getSubChunkAt(x, y, z))
 		return (
-			chunk
-				?.getSubChunk(Math.floor(y / 16))
-				.getLayer(layer)
-				.getBlockAt(x % 16, y % 16, z % 16) ??
-			new Block('minecraft:air')
+			this.getSubChunkAt(x, y, z)
+				?.getLayer(layer)
+				.getBlockAt(
+					Math.abs(x < 0 ? (16 + (x % 16)) % 16 : x % 16),
+					Math.abs(y < 0 ? (16 + (y % 16)) % 16 : y % 16),
+					Math.abs(z < 0 ? (16 + (z % 16)) % 16 : z % 16)
+				) ?? new Block('minecraft:air')
 		)
 	}
 
@@ -127,7 +127,7 @@ export class World {
 	protected loadedChunks = new Set<string>()
 	protected builtChunks = new Map<string, RenderSubChunk>()
 	protected builtChunkMeshes = new Map<string, Mesh>()
-	protected renderDistance = 10
+	protected renderDistance = 16
 	protected material!: MeshLambertMaterial
 
 	async updateCurrentMeshes(currX: number, currY: number, currZ: number) {
@@ -139,10 +139,10 @@ export class World {
 
 		const max = (this.renderDistance * 16) / 2
 		const start = -max
-		const promises: Promise<void>[] = []
-		for (let oX = start; oX < max; oX += 16)
-			for (let oZ = start; oZ < max; oZ += 16)
-				for (let oY = start; oY < max; oY += 16) {
+
+		for (let oX = start; oX <= max; oX += 16)
+			for (let oZ = start; oZ <= max; oZ += 16)
+				for (let oY = start; oY <= max; oY += 16) {
 					const chunkID = this.getChunkId(
 						Math.floor((currX + oX) / 16),
 						Math.floor((currY + oY) / 16),
@@ -158,12 +158,10 @@ export class World {
 					) {
 						let mesh = this.builtChunkMeshes.get(chunkID)
 						if (mesh === undefined) {
-							promises.push(
-								this.updateChunkGeometry(
-									currX + oX,
-									currY + oY,
-									currZ + oZ
-								)
+							this.updateChunkGeometry(
+								currX + oX,
+								currY + oY,
+								currZ + oZ
 							)
 						} else {
 							this.scene.add(mesh)
@@ -171,11 +169,9 @@ export class World {
 						}
 					}
 				}
-
-		await Promise.all(promises)
 	}
 
-	async updateChunkGeometry(x: number, y: number, z: number) {
+	updateChunkGeometry(x: number, y: number, z: number) {
 		const chunkX = Math.floor(x / 16)
 		const chunkY = Math.floor(y / 16)
 		const chunkZ = Math.floor(z / 16)

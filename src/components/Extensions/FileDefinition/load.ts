@@ -1,6 +1,6 @@
 import json5 from 'json5'
-import { FileType } from '../../Data/FileType'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
+import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
 import { iterateDir } from '/@/utils/iterateDir'
 
@@ -12,6 +12,6 @@ export function loadFileDefinitions(
 		const file = await fileHandle.getFile()
 		const fileDefinition = json5.parse(await file.text())
 
-		disposables.push(FileType.addPluginFileType(fileDefinition))
+		disposables.push(App.fileType.addPluginFileType(fileDefinition))
 	})
 }

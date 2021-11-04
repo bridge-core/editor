@@ -217,7 +217,7 @@ export class TabSystem extends MonacoHolder {
 		if (selectedTab !== tab) await this.select(selectedTab)
 
 		if (!tab.isForeignFile && tab instanceof FileTab) {
-			await this.project.updateFile(tab.getProjectPath())
+			await this.project.updateFile(tab.getPath())
 
 			await this.project.recentFiles.add({
 				path: tab.getPath(),
@@ -226,17 +226,11 @@ export class TabSystem extends MonacoHolder {
 				icon: tab.icon,
 			})
 
-			this.project.fileSave.dispatch(
-				tab.getProjectPath(),
-				await tab.getFile()
-			)
+			this.project.fileSave.dispatch(tab.getPath(), await tab.getFile())
 
 			// Only refresh auto-completion content if tab is active
 			if (tabWasActive)
-				App.eventSystem.dispatch(
-					'refreshCurrentContext',
-					tab.getProjectPath()
-				)
+				App.eventSystem.dispatch('refreshCurrentContext', tab.getPath())
 		}
 
 		app.windows.loadingWindow.close()

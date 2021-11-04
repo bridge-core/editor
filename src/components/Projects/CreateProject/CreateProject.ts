@@ -236,7 +236,7 @@ export class CreateProjectWindow extends BaseWindow {
 				name: config.name ?? '',
 				namespace: config.namespace ?? 'bridge',
 				targetVersion: config.targetVersion ?? '',
-				packs: config.packs ?? [
+				packs: Object.values(config.packs) ?? [
 					'.bridge',
 					'behaviorPack',
 					'resourcePack',

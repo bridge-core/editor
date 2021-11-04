@@ -21,12 +21,12 @@
 				autofocus
 				@change="onChange"
 			>
-				<template #item="{ item }">
-					<v-icon class="mr-1" :color="getFileIconColor(item)">
-						{{ getFileIcon(item) }}
+				<template #item="{ item: { value, text } }">
+					<v-icon class="mr-1" :color="getFileIconColor(value)">
+						{{ getFileIcon(value) }}
 					</v-icon>
 
-					<span>{{ item }}</span>
+					<span>{{ text }}</span>
 				</template>
 			</v-autocomplete>
 		</template>
@@ -37,7 +37,7 @@
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { PackType } from '/@/components/Data/PackType'
-import { FileType } from '/@/components/Data/FileType'
+import { App } from '/@/App.ts'
 
 export default {
 	name: 'OpenFileWindow',
@@ -58,13 +58,13 @@ export default {
 		},
 
 		getFileIcon(filePath) {
-			const fileType = FileType.get(filePath)
+			const fileType = App.fileType.getGlobal(filePath)
 			if (!fileType) return 'mdi-file-outline'
 
 			return fileType.icon || 'mdi-file-outline'
 		},
 		getFileIconColor(filePath) {
-			const packType = PackType.getWithRelativePath(filePath)
+			const packType = PackType.get(filePath)
 			if (!packType) return 'primary'
 
 			return packType.color || 'primary'

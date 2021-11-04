@@ -67,6 +67,11 @@ export class FileSystem extends Signal<void> {
 			throw new Error(`File does not exist: "${path}"`)
 		}
 	}
+	pathTo(fileHandle: AnyFileHandle) {
+		return this.baseDirectory
+			.resolve(<any>fileHandle)
+			.then((path) => path?.join('/'))
+	}
 
 	async mkdir(path: string, { recursive }: Partial<IMkdirConfig> = {}) {
 		await this.getDirectoryHandle(path, { create: true })

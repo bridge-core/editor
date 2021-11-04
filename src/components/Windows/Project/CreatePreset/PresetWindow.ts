@@ -5,18 +5,19 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { App } from '/@/App'
 import { v4 as uuid } from 'uuid'
 import { dirname } from '/@/utils/path'
-import { compare, CompareOperator } from 'compare-versions'
 import { runPresetScript } from './PresetScript'
 import { expandFile, TExpandFile } from './ExpandFile'
 import { createFile, TCreateFile } from './CreateFile'
 import { PackType, TPackTypeId } from '/@/components/Data/PackType'
 import { transformString } from './TransformString'
 import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
-import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { PresetItem } from './PresetItem'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
-import { IRequirements, RequiresMatcher } from '../../../Data/RequiresMatcher'
+import {
+	IRequirements,
+	RequiresMatcher,
+} from '/@/components/Data/RequiresMatcher'
 
 export interface IPresetManifest {
 	name: string
@@ -52,6 +53,7 @@ export interface IPresetFieldOpts {
 export interface IPresetFileOpts {
 	inject: string[]
 	openFile?: boolean
+	packPath?: TPackTypeId
 }
 
 export interface IPermissions {
@@ -99,8 +101,12 @@ export class CreatePresetWindow extends BaseWindow {
 		this.defineWindow()
 
 		App.eventSystem.on('presetsChanged', () => {
-			this.shouldReloadPresets = true
+			this.onPresetsChanged()
 		})
+	}
+
+	onPresetsChanged() {
+		this.shouldReloadPresets = true
 	}
 
 	protected async addPreset(
@@ -384,7 +390,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 		const filePaths: string[] = []
 		for (const fileHandle of createdFiles) {
-			const filePath = await app.project.getProjectPath(fileHandle)
+			const filePath = await app.fileSystem.pathTo(fileHandle)
 			if (!filePath) continue
 
 			filePaths.push(filePath)

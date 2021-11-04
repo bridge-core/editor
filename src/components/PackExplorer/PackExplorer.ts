@@ -18,7 +18,9 @@ import { exportAsMcaddon } from '/@/components/Projects/Export/AsMcaddon'
 import {
 	canExportMctemplate,
 	exportAsMctemplate,
-} from '../Projects/Export/AsMctemplate'
+} from '/@/components/Projects/Export/AsMctemplate'
+import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
+import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -133,18 +135,15 @@ export class PackExplorer extends SidebarContent {
 					await project.jsonDefaults.reload()
 
 					try {
-						await project.fileSystem.unlink(path)
+						await project.app.fileSystem.unlink(path)
 					} catch {}
 
-					await project.recentFiles.removeFile(
-						`projects/${project.name}/${path}`
-					)
+					await project.recentFiles.removeFile(path)
 				},
 			},
 
 			...(type === 'file'
 				? [
-						// TODO
 						{
 							icon: 'mdi-pencil-outline',
 							name:
@@ -175,7 +174,7 @@ export class PackExplorer extends SidebarContent {
 
 								// If file with same path already exists, confirm that it's ok to overwrite it
 								if (
-									await project.fileSystem.fileExists(
+									await project.app.fileSystem.fileExists(
 										newFilePath
 									)
 								) {
@@ -197,15 +196,16 @@ export class PackExplorer extends SidebarContent {
 
 								// The rename action needs to happen after deleting the old file inside of the output directory
 								// because the compiler will fail to unlink it if the original file doesn't exist.
-								await project.fileSystem.move(path, newFilePath)
+								await project.app.fileSystem.move(
+									path,
+									newFilePath
+								)
 
 								// Let the compiler, pack indexer etc. process the renamed file
 								await project.updateFile(newFilePath)
 
 								// Remove from recent files
-								await project.recentFiles.removeFile(
-									`projects/${project.name}/${path}`
-								)
+								await project.recentFiles.removeFile(path)
 
 								// Refresh pack explorer
 								this.refresh()
@@ -241,7 +241,7 @@ export class PackExplorer extends SidebarContent {
 
 								// If file with same path already exists, confirm that it's ok to overwrite it
 								if (
-									await project.fileSystem.fileExists(
+									await project.app.fileSystem.fileExists(
 										newFilePath
 									)
 								) {
@@ -255,7 +255,7 @@ export class PackExplorer extends SidebarContent {
 									if (!(await confirmWindow.fired)) return
 								}
 
-								await project.fileSystem.copyFile(
+								await project.app.fileSystem.copyFile(
 									path,
 									newFilePath
 								)
@@ -281,7 +281,7 @@ export class PackExplorer extends SidebarContent {
 									? app.comMojang.fileSystem
 									: project.fileSystem
 
-								// TODO: Information when file does not exist
+								// Information when file does not exist
 								if (
 									!(await fileSystem.fileExists(
 										transformedPath
@@ -317,12 +317,11 @@ export class PackExplorer extends SidebarContent {
 										'windows.packExplorer.fileActions.createFile.name',
 									label: 'general.fileName',
 									default: '',
-									expandText: extname(path),
 								})
 								const name = await inputWindow.fired
 								if (!name) return
 
-								const fileHandle = await project.fileSystem.writeFile(
+								const fileHandle = await project.app.fileSystem.writeFile(
 									`${path}/${name}`,
 									''
 								)
@@ -348,12 +347,11 @@ export class PackExplorer extends SidebarContent {
 										'windows.packExplorer.fileActions.createFolder.name',
 									label: 'general.fileName',
 									default: '',
-									expandText: extname(path),
 								})
 								const name = await inputWindow.fired
 								if (!name) return
 
-								await project.fileSystem.mkdir(
+								await project.app.fileSystem.mkdir(
 									`${path}/${name}`,
 									{ recursive: true }
 								)
@@ -363,6 +361,37 @@ export class PackExplorer extends SidebarContent {
 						},
 						{
 							type: 'divider',
+						},
+						{
+							icon: 'mdi-file-search-outline',
+							name:
+								'windows.packExplorer.fileActions.findInFolder.name',
+							description:
+								'windows.packExplorer.fileActions.findInFolder.description',
+							onTrigger: () => {
+								const config = project.app.projectConfig
+								const packTypes: { [key: string]: string } = {
+									BP: config.resolvePackPath('behaviorPack'),
+									RP: config.resolvePackPath('resourcePack'),
+									SP: config.resolvePackPath('skinPack'),
+									WT: config.resolvePackPath('worldTemplate'),
+								}
+								let pathPackType = 'BP'
+								for (const packType of Object.keys(packTypes)) {
+									if (path.includes(packTypes[packType]))
+										pathPackType = packType
+								}
+								project.tabSystem?.add(
+									new FindAndReplaceTab(project.tabSystem!, {
+										searchType: ESearchType.matchCase,
+										includeFiles: path.replace(
+											packTypes[pathPackType],
+											pathPackType
+										),
+										excludeFiles: '',
+									})
+								)
+							},
 						},
 				  ]),
 			{
@@ -410,6 +439,7 @@ export class PackExplorer extends SidebarContent {
 					new ConfirmationWindow({
 						description:
 							'windows.packExplorer.restartDevServer.description',
+						height: 168,
 						onConfirm: async () => {
 							await Promise.all([
 								app.project.fileSystem.unlink(

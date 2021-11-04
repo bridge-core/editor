@@ -28,12 +28,13 @@ export default {
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
 		fileSystemPolyfill:
-			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome or Edge!',
+			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome (excluding Chrome 93/94) or Edge!',
 		successfulExport: {
 			title: 'Export Successful',
 			description: 'You can find the exported package here',
 		},
 		experimentalGameplay: 'Experimental Gameplay',
+		textureLocation: 'Texture Location',
 	},
 	packType: {
 		behaviorPack: {
@@ -550,7 +551,7 @@ export default {
 			restartDevServer: {
 				name: 'Restart Dev Server',
 				description:
-					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project.",
+					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
 			},
 			createPreset: 'New File',
 			projectConfig: {
@@ -605,6 +606,10 @@ export default {
 				createFolder: {
 					name: 'Create Folder',
 					description: 'Create a new folder',
+				},
+				findInFolder: {
+					name: 'Find in Folder',
+					description: 'Search the contents of a folder',
 				},
 			},
 		},
@@ -808,7 +813,7 @@ export default {
 		browserUnsupported: {
 			title: 'Unsupported Browser',
 			description:
-				'Please use Chrome (Desktop) or Edge (Chromium) in order to get the best experience using bridge. v2! Your browser does not support saving files directly and syncing projects to your com.mojang folder.',
+				'Please use Chrome (Desktop, excluding Chrome 93/94) or Edge (Chromium) in order to get the best experience using bridge. v2! Your browser does not support saving files directly and syncing projects to your com.mojang folder.',
 			continue: 'Continue Anyways',
 		},
 		invalidJson: {
@@ -881,6 +886,8 @@ export default {
 		search: 'Search',
 		replace: 'Replace',
 		replaceAll: 'Replace All',
+		includeFiles: 'Files to Include',
+		excludeFiles: 'Files to Exclude',
 		noResults: 'No results found.',
 		noSearch:
 			'Once you start typing, results for your search query will appear here.',

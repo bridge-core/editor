@@ -1,7 +1,6 @@
 import { ActionManager } from '/@/components/Actions/ActionManager'
 import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
-import { FileType } from '/@/components/Data/FileType'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
 import { RootSchema } from '/@/components/JSONSchema/Schema/Root'
 import { ICompletionItem } from '/@/components/JSONSchema/Schema/Schema'
@@ -19,11 +18,11 @@ import { TreeSelection, TreeValueSelection } from './TreeSelection'
 import { App } from '/@/App'
 import { debounce } from 'lodash-es'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
-import { IActionConfig } from '../../Actions/SimpleAction'
-import { viewDocumentation } from '../../Documentation/view'
+import { IActionConfig } from '/@/components/Actions/SimpleAction'
+import { viewDocumentation } from '/@/components/Documentation/view'
 import { platformRedoBinding } from '/@/utils/constants'
-import { getLatestFormatVersion } from '../../Data/FormatVersions'
-import { filterDuplicates } from './CompletionItems/filterDuplicates'
+import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
+import { filterDuplicates } from './CompletionItems/FilterDuplicates'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
@@ -165,7 +164,7 @@ export class TreeEditor {
 	}, 50)
 
 	createSchemaRoot() {
-		const schemaUri = FileType.get(this.parent.getProjectPath())?.schema
+		const schemaUri = App.fileType.get(this.parent.getPath())?.schema
 		if (schemaUri)
 			this.schemaRoot = SchemaManager.addRootSchema(
 				schemaUri,
@@ -439,7 +438,7 @@ export class TreeEditor {
 					const word = selectedKey ? tree.key : tree.value
 
 					if (typeof word === 'string')
-						viewDocumentation(this.parent.getProjectPath(), word)
+						viewDocumentation(this.parent.getPath(), word)
 				},
 			},
 			{

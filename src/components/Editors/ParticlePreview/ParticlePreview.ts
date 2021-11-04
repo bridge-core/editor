@@ -82,7 +82,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	async loadParticle(file?: File) {
 		if (!this.fileWatcher)
 			this.fileWatcher = markRaw(
-				new ParticleWatcher(this, this.tab.getProjectPath())
+				new ParticleWatcher(this, this.tab.getPath())
 			)
 		if (!file)
 			file =
@@ -102,7 +102,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 
 		this.config = markRaw(
 			new Wintersky.Config(this.wintersky, particle, {
-				path: this.tab.getProjectPath(),
+				path: this.tab.getPath(),
 			})
 		)
 

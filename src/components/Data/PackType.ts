@@ -11,7 +11,6 @@ export interface IPackType {
 	matcher: string | string[]
 	color: string
 	icon: string
-	packPath: string
 }
 export type TPackTypeId =
 	| 'behaviorPack'
@@ -89,9 +88,5 @@ export namespace PackType {
 		return {
 			dispose: () => extensionPackTypes.delete(id),
 		}
-	}
-
-	export function getPath(packTypeId: TPackTypeId) {
-		return getFromId(packTypeId)?.packPath
 	}
 }

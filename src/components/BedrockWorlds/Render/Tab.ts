@@ -10,21 +10,23 @@ export class WorldTab extends ThreePreviewTab {
 		const project = this.parent.project
 
 		this.world = new World(
-			await project.fileSystem.getDirectoryHandle('worlds/Chum M5/db'),
+			await project.fileSystem.getDirectoryHandle(
+				'PATH TO WORLD DB FOLDER'
+			),
 			project.fileSystem.baseDirectory,
 			this.scene
 		)
 
 		await this.world.loadWorld()
+		this.requestRendering()
 
-		const chunk = this.world.getSubChunkAt(223, 63, 164)
-		console.log(chunk)
+		console.log(this.world.blockLibrary, this)
 	}
 
-	render() {
+	async render() {
 		super.render()
 
-		this.world?.updateCurrentMeshes(
+		await this.world?.updateCurrentMeshes(
 			this.camera.position.x,
 			this.camera.position.y,
 			this.camera.position.z

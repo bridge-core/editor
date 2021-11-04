@@ -1,5 +1,5 @@
 import { platform } from '/@/utils/os'
-import { IKeyBindingConfig } from './Keybinding'
+import { IKeyBindingConfig } from './KeyBinding'
 
 export function fromStrKeyCode(keyCode: string, forceWindowsCtrl = false) {
 	const parts = keyCode.toLowerCase().split(' + ')
