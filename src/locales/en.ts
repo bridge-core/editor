@@ -957,4 +957,90 @@ export default {
 			edit: 'Edit',
 		},
 	},
+	functionValidator: {
+		actionName: 'Validate Function',
+		tabName: 'Function Validator',
+		errors: {
+			emptyComplexConstructor: 'Unexpected empty complex selector!',
+			invalidSelectorAttribute: {
+				part1: "Invalid selector attribute '",
+				part2: "'!",
+			},
+			expectedEqualsButNothing: 'Expected equals sign but got nothing!',
+			expectedEquals: 'Expected equals sign!',
+			expectedValueButNothing: 'Expected value but got nothing!',
+			attributeNegationSupport: {
+				part1: "Attribute '",
+				part2: "' does not support negation!",
+			},
+			multipleInstancesNever: {
+				part1: "Multiple instances of attribute '",
+				part2: "' atribute not allowed!",
+			},
+			multipleInstancesNegated: {
+				part1: "Multiple instances of '",
+				part2: "' atribute not allowed when negated!",
+			},
+			selectorAttributeTypeMismatch: {
+				part1: "Expected value type of '",
+				part2: "', but got '",
+				part3: "'!",
+			},
+			selectorValueNotValid: {
+				part1: "Value '",
+				part2: "' is not one of the expected values!",
+			},
+			expectedComma: 'Expected comma between selector attributes!',
+			unclosedString: 'Unclosed string!',
+			invalidCommand: {
+				part1: "'",
+				part2: '" is not a valid command!',
+			},
+			expectedLetterAfterAtButNothing: 'Expected leter after @!',
+			expectedLetterAfterAt: 'Expected letter after @!',
+			invalidSelector: {
+				part1: '@',
+				part2: ' is not a valid selector!',
+			},
+			unexpectedOpenSquareBracket: 'Unexpected [!',
+			selectorNotBeforeOpenSquareBracketButNothing:
+				'Either expected selector before [ or got an invalid block state!',
+			selectorNotBeforeOpenSquareBracket:
+				'Expected selector before [ or got an invalid block state!',
+			unexpectedCloseSquareBracket: 'Unexpected ]',
+			noValidCommandVarsFound: {
+				part1: 'No valid command variations found! Argument ',
+				part2: " may be invalid! It is of type '",
+				part3:
+					"' but that type is not supported in the current variation tree.",
+			},
+			noValidCommandVarsFoundEnd: {
+				part1:
+					'No valid command variations found! You may be missing some arguments or argument ',
+				part2: ' may be invalid!',
+			},
+		},
+		warnings: {
+			schemaFamily: {
+				part1: "Could not find family '",
+				part2:
+					"'. This could either be a mistake or the family is from another addon.",
+			},
+			schemaType: {
+				part1: "Could not find type '",
+				part2:
+					"'. This could either be a mistake or the type is from another addon.",
+			},
+			schemaTag: {
+				part1: "Could not find tag '",
+				part2:
+					"'. This could either be a mistake or the tag is from another addon.",
+			},
+			schemaValue: {
+				part1: "Could not find schema value '",
+				part2:
+					"'. This could either be a mistake or the schema value is from another addon.",
+			},
+		},
+	},
 }

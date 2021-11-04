@@ -6,6 +6,7 @@ import { createFromClientEntity } from '/@/components/Editors/EntityModel/create
 import { createFromEntity } from '/@/components/Editors/EntityModel/create/fromEntity'
 import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
 import { BlockModelTab } from '../../Editors/BlockModel/Tab'
+import { FunctionSimulatorTab } from '../../Editors/FunctionSimulator/Tab'
 import { CommandData } from '../../Languages/Mcfunction/Data'
 import { WorldTab } from '../../BedrockWorlds/Render/Tab'
 
@@ -37,6 +38,12 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 		fileMatch: 'BP/blocks/',
 		createPreview: async (tabSystem, tab) =>
 			new BlockModelTab(tab.getProjectPath(), tab, tabSystem),
+	},
+	{
+		name: 'functionValidator.actionName',
+		fileMatch: 'BP/functions/',
+		createPreview: async (tabSystem, tab) =>
+			new FunctionSimulatorTab(tabSystem, tab),
 	},
 ]
 
