@@ -59,6 +59,7 @@ export class FindAndReplaceTab extends Tab {
 	}
 
 	async updateQuery() {
+		this.isTemporary = false
 		await this.searchReady.fired
 		this.searchReady.resetSignal()
 
