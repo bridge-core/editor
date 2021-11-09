@@ -1,7 +1,5 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
-import { importFromBrproject } from '/@/components/Projects/Import/fromBrproject'
-import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { Divider } from '../Divider'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'

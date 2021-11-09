@@ -2,9 +2,6 @@ import { DropdownWindow } from '/@/components/Windows/Common/Dropdown/DropdownWi
 import { App } from '/@/App'
 import { ZipDirectory } from '/@/components/FileSystem/Zip/ZipDirectory'
 import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
-import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
-import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
-import { createNotification } from '/@/components/Notifications/create'
 import { v4 as uuid } from 'uuid'
 import { getLatestFormatVersion } from '../../Data/FormatVersions'
 
