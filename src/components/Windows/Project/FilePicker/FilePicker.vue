@@ -58,7 +58,7 @@ export default {
 		},
 
 		getFileIcon(filePath) {
-			const fileType = App.fileType.getGlobal(filePath)
+			const fileType = App.fileType.get(filePath)
 			if (!fileType) return 'mdi-file-outline'
 
 			return fileType.icon || 'mdi-file-outline'

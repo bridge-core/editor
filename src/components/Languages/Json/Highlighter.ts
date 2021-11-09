@@ -78,7 +78,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 		if (!(tab instanceof TextTab) && !(tab instanceof TreeTab)) return
 
 		const { id, highlighterConfiguration = {} } =
-			App.fileType.getGlobal(tab.getPath()) ?? {}
+			App.fileType.get(tab.getPath()) ?? {}
 
 		// We have already loaded the needed file type
 		if (!id) return this.resetWords(tab)

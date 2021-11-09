@@ -27,7 +27,7 @@ export class FileSystem extends Signal<void> {
 		path: string,
 		{ create, createOnce }: Partial<IGetHandleConfig> = {}
 	) {
-		if (path === '') return this.baseDirectory
+		if (path === '' || path === '.') return this.baseDirectory
 
 		let current = this.baseDirectory
 		const pathArr = path.split(/\\|\//g)
@@ -158,19 +158,19 @@ export class FileSystem extends Signal<void> {
 	}
 
 	async write(fileHandle: AnyFileHandle, data: FileSystemWriteChunkType) {
-		// @ts-ignore
-		if (typeof fileHandle.createAccessHandle === 'function') {
-			// @ts-ignore
-			const handle = await fileHandle.createAccessHandle({
-				mode: 'in-place',
-			})
-			await handle.writable.getWriter().write(data)
-			handle.close()
-		} else {
-			const writable = await fileHandle.createWritable()
-			await writable.write(data)
-			await writable.close()
-		}
+		// Safari doesn't support createWritable yet
+		// if (typeof fileHandle.createWritable !== 'function') {
+		// 	// @ts-ignore
+		// 	const handle = await fileHandle.createAccessHandle({
+		// 		mode: 'in-place',
+		// 	})
+		// 	await handle.writable.getWriter().write(data)
+		// 	handle.close()
+		// } else {
+		const writable = await fileHandle.createWritable()
+		await writable.write(data)
+		await writable.close()
+		// }
 	}
 
 	async readJSON(path: string) {

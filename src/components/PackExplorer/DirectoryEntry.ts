@@ -108,7 +108,7 @@ export class DirectoryEntry {
 		return PackType.get(this.getPath())?.color
 	}
 	get icon() {
-		return App.fileType.getGlobal(this.getPath())?.icon
+		return App.fileType.get(this.getPath())?.icon
 	}
 	getPath() {
 		return this.path?.join('/') ?? []

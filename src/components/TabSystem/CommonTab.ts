@@ -86,9 +86,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		return this.path.split('/').slice(2).join('/')
 	}
 	get icon() {
-		return (
-			App.fileType.getGlobal(this.getPath())?.icon ?? 'mdi-file-outline'
-		)
+		return App.fileType.get(this.getPath())?.icon ?? 'mdi-file-outline'
 	}
 	get iconColor() {
 		return PackType.get(this.getPath())?.color

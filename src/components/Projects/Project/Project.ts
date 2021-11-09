@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { IOpenTabOptions, TabSystem } from '/@/components/TabSystem/TabSystem'
-import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
+import { TPackTypeId } from '/@/components/Data/PackType'
 import { ProjectConfig, IConfigJson } from './Config'
 import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
