@@ -28,7 +28,10 @@ if (
 	isCrashingChromeBrowser() ||
 	typeof window.showDirectoryPicker !== 'function'
 ) {
-	if (typeof navigator.storage.getDirectory === 'function') {
+	if (
+		!isCrashingChromeBrowser() &&
+		typeof navigator.storage.getDirectory === 'function'
+	) {
 		isUsingOriginPrivateFs = true
 
 		window.showDirectoryPicker = () => navigator.storage.getDirectory()

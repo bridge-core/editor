@@ -59,7 +59,10 @@ import EditorTypeStep from './Steps/EditorType.vue'
 import { FileSystemSetup } from '/@/components/FileSystem/Setup.ts'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 import { InitialSetup } from './InitialSetup.ts'
-import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import {
+	isUsingFileSystemPolyfill,
+	isUsingOriginPrivateFs,
+} from '/@/components/FileSystem/Polyfill'
 import Logo from '../UIElements/Logo.vue'
 
 export default {
@@ -84,6 +87,8 @@ export default {
 							component: BridgeProjectStep,
 						},
 				  ]
+				: isUsingOriginPrivateFs
+				? []
 				: [
 						{
 							name: 'initialSetup.step.bridge',

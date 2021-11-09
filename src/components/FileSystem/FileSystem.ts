@@ -3,7 +3,7 @@ import { Signal } from '../Common/Event/Signal'
 import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
 import { iterateDir } from '/@/utils/iterateDir'
-import { join } from '/@/utils/path'
+import { join, dirname, basename } from '/@/utils/path'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
 
 export class FileSystem extends Signal<void> {
@@ -54,15 +54,12 @@ export class FileSystem extends Signal<void> {
 	async getFileHandle(path: string, create = false) {
 		if (path.length === 0) throw new Error(`Error: filePath is empty`)
 
-		const pathArr = path.split(/\\|\//g)
-		// This has to be a string because path.length > 0
-		const file = pathArr.pop() as string
-		const folder = await this.getDirectoryHandle(pathArr.join('/'), {
+		const folder = await this.getDirectoryHandle(dirname(path), {
 			create,
 		})
 
 		try {
-			return await folder.getFileHandle(file, { create })
+			return await folder.getFileHandle(basename(path), { create })
 		} catch {
 			throw new Error(`File does not exist: "${path}"`)
 		}
@@ -161,10 +158,19 @@ export class FileSystem extends Signal<void> {
 	}
 
 	async write(fileHandle: AnyFileHandle, data: FileSystemWriteChunkType) {
-		// console.log(data)
-		const writable = await fileHandle.createWritable()
-		await writable.write(data)
-		await writable.close()
+		// @ts-ignore
+		if (typeof fileHandle.createAccessHandle === 'function') {
+			// @ts-ignore
+			const handle = await fileHandle.createAccessHandle({
+				mode: 'in-place',
+			})
+			await handle.writable.getWriter().write(data)
+			handle.close()
+		} else {
+			const writable = await fileHandle.createWritable()
+			await writable.write(data)
+			await writable.close()
+		}
 	}
 
 	async readJSON(path: string) {
