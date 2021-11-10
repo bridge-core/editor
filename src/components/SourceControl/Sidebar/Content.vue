@@ -11,7 +11,7 @@
 				outlined
 				hide-details
 			/>
-			<v-btn color="primary">
+			<v-btn small height="38px" color="primary">
 				<v-icon>mdi-check</v-icon>
 			</v-btn>
 		</div>
