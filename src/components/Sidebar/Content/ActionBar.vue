@@ -6,6 +6,7 @@
 				:icon="action.config.icon"
 				:name="action.config.name"
 				:isSelected="action.isSelected"
+				:isSelectable="action.isSelected !== undefined"
 				@click="onClick($event, action)"
 			/>
 		</v-col>

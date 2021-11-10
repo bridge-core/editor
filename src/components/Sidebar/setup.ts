@@ -5,6 +5,7 @@ import { SettingsWindow } from '../Windows/Settings/SettingsWindow'
 import { SidebarState } from './state'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '../FileSystem/Virtual/ProjectWindow'
+import { SourceControl } from '/@/components/SourceControl/Sidebar/SourceControl'
 
 export async function setupSidebar() {
 	createSidebar({
@@ -29,6 +30,13 @@ export async function setupSidebar() {
 	App.getApp().then((app) => {
 		packExplorer.setSidebarContent(app.packExplorer)
 		packExplorer.click()
+	})
+
+	createSidebar({
+		id: 'sourceControl',
+		displayName: 'sourceControl.name',
+		icon: 'mdi-source-branch',
+		sidebarContent: new SourceControl(),
 	})
 
 	createSidebar({

@@ -1050,4 +1050,12 @@ export default {
 			},
 		},
 	},
+	sourceControl: {
+		name: 'Source Control',
+		commitMessage: 'Commit Message',
+		actions: {
+			fetch: 'Fetch Remote Changes',
+			changeBranch: 'Change Branch',
+		},
+	},
 }
