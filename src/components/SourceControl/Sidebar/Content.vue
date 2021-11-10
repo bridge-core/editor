@@ -1,37 +1,62 @@
 <template>
-	<v-container>
-		<div class="d-flex align-center mb-3">
-			<v-textarea
-				class="mr-2"
-				color="primary"
-				:label="t('sourceControl.commitMessage')"
-				rows="1"
-				auto-grow
-				dense
-				outlined
-				hide-details
-			/>
-			<v-btn small height="38px" color="primary">
-				<v-icon>mdi-check</v-icon>
-			</v-btn>
-		</div>
-
-		<File
-			v-for="{ filePath, status } in files"
-			:key="filePath"
-			:filePath="filePath"
+	<div class="pa-1 pt-0">
+		<v-row
+			class="align-center"
+			no-gutters
+			style="
+				width: 100%;
+				position: sticky;
+				z-index: 1;
+				top: 56px;
+				background: var(--v-expandedSidebar-base);
+			"
 		>
-			<template #append>
-				<span
-					:style="{
-						color: `var(--v-${modifiedStatusToColor(status)}-base)`,
-					}"
+			<v-col :cols="10" :lg="10" :md="10" :sm="12" class="px-1 py-1">
+				<v-textarea
+					color="primary"
+					:label="t('sourceControl.commitMessage')"
+					rows="1"
+					auto-grow
+					dense
+					outlined
+					hide-details
+				/>
+			</v-col>
+			<v-col :cols="2" :lg="2" :md="2" :sm="12" class="px-1 py-1">
+				<v-btn
+					small
+					width="100%"
+					min-width="unset"
+					height="38px"
+					color="primary"
 				>
-					{{ status[0].toUpperCase() }}
-				</span>
-			</template>
-		</File>
-	</v-container>
+					<v-icon :small="$vuetify.breakpoint.mdOnly"
+						>mdi-check</v-icon
+					>
+				</v-btn>
+			</v-col>
+		</v-row>
+
+		<div class="pa-1" style="width: 100%; overflow-x: hidden">
+			<File
+				v-for="({ filePath, status }, i) in files"
+				:key="filePath + i"
+				:filePath="filePath"
+			>
+				<template #append>
+					<span
+						:style="{
+							color: `var(--v-${modifiedStatusToColor(
+								status
+							)}-base)`,
+						}"
+					>
+						{{ status[0].toUpperCase() }}
+					</span>
+				</template>
+			</File>
+		</div>
+	</div>
 </template>
 
 <script>
