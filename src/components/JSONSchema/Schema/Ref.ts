@@ -15,13 +15,19 @@ export class RefSchema extends Schema {
 				`Invalid $ref type "${typeof value}": ${JSON.stringify(value)}`
 			)
 
-		if (value === '#') {
+		if (value.startsWith('#')) {
+			const baseLoc = this.location.split('#/')[0]
+			const locWithHash = value === '#' ? baseLoc : `${baseLoc}${value}`
+
 			this.rootSchema =
-				SchemaManager.requestRootSchema(this.location) ??
+				SchemaManager.requestRootSchema(locWithHash) ??
 				new RootSchema(
-					this.location,
+					locWithHash,
 					'$ref',
-					SchemaManager.request(this.location)
+					SchemaManager.request(
+						baseLoc,
+						value === '#' ? undefined : value.replace('#/', '')
+					)
 				)
 		} else {
 			const dir = this.location.includes('#/')
