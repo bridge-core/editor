@@ -123,6 +123,7 @@ export class DefinitionProvider {
 						if (transformedWord && script)
 							transformedWord = await run({
 								script,
+								async: true,
 								env: {
 									...getCacheScriptEnv(transformedWord, {
 										fileSystem: app.fileSystem,
