@@ -273,8 +273,7 @@ export class Component {
 			this.template(componentArgs ?? {}, {
 				// @deprecated remove with next major version
 				mode: this.mode,
-				sourceBlock: this.mode,
-				fileContent: () => JSON.parse(JSON.stringify(fileContent)),
+				sourceBlock: () => JSON.parse(JSON.stringify(fileContent)),
 				create: (template: any, location?: string, operation?: any) =>
 					this.create(fileContent, template, location, operation),
 				location,
