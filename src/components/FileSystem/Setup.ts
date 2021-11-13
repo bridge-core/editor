@@ -6,7 +6,7 @@ import { ref } from '@vue/composition-api'
 import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from './Types'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
-import { isUsingFileSystemPolyfill } from './Polyfill'
+import { isUsingFileSystemPolyfill, isUsingOriginPrivateFs } from './Polyfill'
 import { has as hasVirtualDirectory } from './Virtual/IDB'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
@@ -55,11 +55,17 @@ export class FileSystemSetup {
 		if (!fileHandle) {
 			const globalState = FileSystemSetup.state
 			globalState.showInitialSetupDialog.value = true
-			fileHandle = await globalState.receiveDirectoryHandle.fired
+			fileHandle = isUsingOriginPrivateFs
+				? await window.showDirectoryPicker()
+				: await globalState.receiveDirectoryHandle.fired
 
 			await this.verifyPermissions(fileHandle)
-			if (!(fileHandle instanceof VirtualDirectoryHandle))
-				await set('bridgeBaseDir', fileHandle)
+
+			// Safari doesn't support storing file handles inside of IndexedDB yet
+			try {
+				if (!(fileHandle instanceof VirtualDirectoryHandle))
+					await set('bridgeBaseDir', fileHandle)
+			} catch {}
 
 			globalState.setupDone.dispatch()
 		} else {
@@ -81,6 +87,16 @@ export class FileSystemSetup {
 		fileHandle: AnyDirectoryHandle,
 		tryImmediateRequest = true
 	) {
+		// Safari doesn't support these functions just yet
+		if (
+			typeof fileHandle.requestPermission !== 'function' ||
+			typeof fileHandle.queryPermission !== 'function'
+		) {
+			// Create the data directory and return
+			await fileHandle.getDirectoryHandle('data', { create: true })
+			return fileHandle
+		}
+
 		const opts = { writable: true, mode: 'readwrite' } as const
 
 		// An additional user activation is no longer needed from Chromium 92 onwards.

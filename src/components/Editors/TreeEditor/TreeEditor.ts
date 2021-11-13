@@ -120,7 +120,7 @@ export class TreeEditor {
 					(suggestion) =>
 						(suggestion.type === 'object' ||
 							suggestion.type === 'array') &&
-						!(<any>(tree ?? this.tree)).children.find(
+						!(<any>(tree ?? this.tree)).children?.find(
 							(test: any) => {
 								if (test.type === 'array') return false
 								return test[0] === suggestion.value

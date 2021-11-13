@@ -4,6 +4,8 @@ import { v4 as uuid } from 'uuid'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
 import { App } from '/@/App'
+import { isUsingSaveAsPolyfill } from '../FileSystem/Polyfill'
+import { download } from '../FileSystem/saveOrDownload'
 
 export abstract class FileTab extends Tab {
 	public isForeignFile = false
@@ -110,5 +112,15 @@ export abstract class FileTab extends Tab {
 
 		// Add tab with new path to openedFiles list
 		if (!this.isForeignFile) this.parent.openedFiles.add(this.getPath())
+
+		// Download the file if the user is using a file system polyfill
+		if (isUsingSaveAsPolyfill) {
+			const file = await this.fileHandle.getFile()
+
+			download(
+				this.fileHandle.name,
+				new Uint8Array(await file.arrayBuffer())
+			)
+		}
 	}
 }

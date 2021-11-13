@@ -13,7 +13,7 @@ import { setupSidebar } from '/@/components/Sidebar/setup'
 import { TaskManager } from '/@/components/TaskManager/TaskManager'
 import { setupDefaultMenus } from '/@/components/Toolbar/setupDefaults'
 import { Locales } from '/@/utils/locales'
-import { PackType } from '/@/components/Data/PackType'
+import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
@@ -79,6 +79,7 @@ export class App {
 		new ConfiguredJsonLanguage()
 	)
 	public static readonly fileType = markRaw(new FileTypeLibrary())
+	public static readonly packType = markRaw(new PackTypeLibrary())
 
 	public readonly mobile: Mobile
 
@@ -260,7 +261,7 @@ export class App {
 
 			// Setup data helpers
 			App.fileType.setup(this.dataLoader),
-			PackType.setup(this.dataLoader),
+			App.packType.setup(this.dataLoader),
 		])
 
 		// Ensure that a project is selected

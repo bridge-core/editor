@@ -57,7 +57,7 @@ export class TypeLoader {
 		this.typeDisposables = []
 
 		await App.fileType.ready.fired
-		const { types = [] } = App.fileType.getGlobal(filePath) ?? {}
+		const { types = [] } = App.fileType.get(filePath) ?? {}
 
 		const libs = await Promise.all(
 			types.map(async (type) => {

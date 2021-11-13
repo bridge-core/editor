@@ -7,7 +7,7 @@ import { CreateBP } from './Packs/BP'
 import { CreateRP } from './Packs/RP'
 import { CreateSP } from './Packs/SP'
 import { CreateBridge } from './Packs/Bridge'
-import { IPackType, PackType, TPackTypeId } from '/@/components/Data/PackType'
+import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
 import { CreateGitIgnore } from './Files/GitIgnore'
 import { CreateWT } from './Packs/WT'
 import { CreateConfig } from './Files/Config'
@@ -105,9 +105,9 @@ export class CreateProjectWindow extends BaseWindow {
 			)
 		})
 
-		PackType.ready.once(() => {
+		App.packType.ready.once(() => {
 			// TODO: Remove filter for world templates as soon as we support creating them
-			this.availablePackTypes = PackType.all()
+			this.availablePackTypes = App.packType.all
 		})
 	}
 

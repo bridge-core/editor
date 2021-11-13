@@ -5,6 +5,7 @@ import { createFromGeometry } from '/@/components/Editors/EntityModel/create/fro
 import { createFromClientEntity } from '/@/components/Editors/EntityModel/create/fromClientEntity'
 import { createFromEntity } from '/@/components/Editors/EntityModel/create/fromEntity'
 import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
+import { FunctionSimulatorTab } from '/@/components/Editors/FunctionSimulator/Tab'
 import { BlockModelTab } from '/@/components/Editors/BlockModel/Tab'
 import { CommandData } from '/@/components/Languages/Mcfunction/Data'
 import { WorldTab } from '/@/components/BedrockWorlds/Render/Tab'
@@ -44,6 +45,12 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 		fileType: 'lootTable',
 		createPreview: async (tabSystem, tab) =>
 			new LootTableSimulatorTab(tab, tabSystem),
+	},
+	{
+		name: 'functionValidator.actionName',
+		fileType: 'function',
+		createPreview: async (tabSystem, tab) =>
+			new FunctionSimulatorTab(tabSystem, tab),
 	},
 ]
 

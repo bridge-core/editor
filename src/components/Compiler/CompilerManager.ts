@@ -6,7 +6,10 @@ import { App } from '/@/App'
 import { deepMergeAll } from '/@/utils/deepmerge'
 import { Signal } from '../Common/Event/Signal'
 import { InfoPanel, IPanelOptions } from '../InfoPanel/InfoPanel'
-import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
+import {
+	isUsingOriginPrivateFs,
+	isUsingFileSystemPolyfill,
+} from '../FileSystem/Polyfill'
 
 export class CompilerManager extends Signal<void> {
 	protected compilers = new Map<string, Compiler>()
@@ -112,7 +115,7 @@ export class CompilerManager extends Signal<void> {
 
 				let panelConfig: IPanelOptions
 
-				if (isUsingFileSystemPolyfill) {
+				if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill) {
 					panelConfig = {
 						text: 'comMojang.status.notAvailable',
 						type: 'error',

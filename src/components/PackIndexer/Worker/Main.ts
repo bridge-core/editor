@@ -17,7 +17,7 @@ import {
 } from './PackSpider/PackSpider'
 import { LightningCache } from './LightningCache/LightningCache'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { PackType } from '/@/components/Data/PackType'
+import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { ProjectConfig } from '/@/components/Projects/Project/Config'
@@ -41,6 +41,7 @@ export class PackIndexerService extends TaskService<
 	public globalFileSystem: FileSystem
 	public config: ProjectConfig
 	public fileType: FileTypeLibrary
+	public packType: PackTypeLibrary
 
 	constructor(
 		protected projectDirectory: AnyDirectoryHandle,
@@ -53,6 +54,7 @@ export class PackIndexerService extends TaskService<
 		this.projectFileSystem = new FileSystem(projectDirectory)
 		this.config = new ProjectConfig(new FileSystem(projectDirectory))
 		this.fileType = new FileTypeLibrary(this.config)
+		this.packType = new PackTypeLibrary(this.config)
 
 		this.globalFileSystem = new FileSystem(baseDirectory)
 		this.lightningStore = new LightningStore(
@@ -79,7 +81,7 @@ export class PackIndexerService extends TaskService<
 		let dataLoader: DataLoader | undefined = new DataLoader()
 		await Promise.all([
 			this.fileType.setup(dataLoader),
-			PackType.setup(dataLoader),
+			this.packType.setup(dataLoader),
 			this.config.setup(false),
 		])
 		dataLoader = undefined
