@@ -46,7 +46,9 @@ export const treasureEnchants = [
 	'curse_of_vanishing',
 ]
 
-export const functionData: any = {
+export const functionData: {
+	[func: string]: (args: ILootTableFunction, itemIdentifier: string) => any
+} = {
 	set_count: (args: ILootTableFunction) => {
 		if (!args.count)
 			return { warnings: ['Function "set_count" requires "count"'] }

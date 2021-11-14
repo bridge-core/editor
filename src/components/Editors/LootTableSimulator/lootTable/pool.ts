@@ -111,8 +111,9 @@ export class LootTablePool {
 		for (const func of functions) {
 			if (functionNames.includes(func.function)) {
 				const result = functionData[func.function](func, itemIdentifier)
-				item = deepMerge(item, result.item)
-				this.warnings.concat(result.warnings)
+				if (result && result.item) item = deepMerge(item, result.item)
+				if (result && result.warnings)
+					this.warnings.concat(result.warnings)
 			} else
 				this.warnings.push(`Invalid loot function "${func.function}"`)
 		}
