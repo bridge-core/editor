@@ -1,7 +1,7 @@
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/CreateProject'
 import { CreateFile } from './CreateFile'
-import { PackType, TPackTypeId } from '/@/components/Data/PackType'
+import { TPackTypeId } from '/@/components/Data/PackType'
 import { defaultPackPaths } from '../../Project/Config'
 
 export class CreateConfig extends CreateFile {

@@ -105,6 +105,7 @@ export async function loadPlugins({
 				fileSystem,
 				fileType,
 				dataLoader,
+				projectConfig,
 				outputFileSystem: outputFs,
 				hasComMojangDirectory,
 				getAliases,

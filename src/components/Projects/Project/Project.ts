@@ -25,6 +25,7 @@ import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { getFolderDifference } from '/@/components/TabSystem/Util/FolderDifference'
 import { FileTypeLibrary } from '../../Data/FileType'
+import { relative } from '/@/utils/path'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -120,6 +121,7 @@ export abstract class Project {
 
 	async activate(isReload = false) {
 		App.fileType.setProjectConfig(this.config)
+		App.packType.setProjectConfig(this.config)
 		this.parent.title.setProject(this.name)
 		this.parent.activatedProject.dispatch(this)
 
@@ -242,6 +244,9 @@ export abstract class Project {
 
 	absolutePath(filePath: string) {
 		return `projects/${this.name}/${filePath}`
+	}
+	relativePath(filePath: string) {
+		return relative(`projects/${this.name}`, filePath)
 	}
 
 	async updateFile(filePath: string) {

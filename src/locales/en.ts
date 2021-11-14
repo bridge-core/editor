@@ -24,6 +24,8 @@ export default {
 		inactive: 'Inactive',
 		active: 'Active',
 		later: 'Later',
+		clear: 'Clear',
+		reset: 'Reset',
 
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
@@ -540,6 +542,33 @@ export default {
 		filePath: {
 			title: 'Choose File Path',
 		},
+		lootSimulatorSettings: {
+			title: 'Simulator Settings',
+			repeat: {
+				name: 'Repeat Options',
+				amount: {
+					name: 'Repeat',
+					description: 'Repeat the loot table a set amount of times',
+				},
+				itemFound: {
+					name: 'Item Identifier',
+					description:
+						'Run the loot table until an item stack with the specified identifier is found',
+				},
+				quantityFound: {
+					name: 'Quantity',
+					description:
+						'Run the loot table until an item stack with the specified quantity is found',
+				},
+			},
+			killConditions: {
+				looting: {
+					name: 'Looting Enchant',
+					description:
+						'The level of looting used to run the table, 0 for no looting',
+				},
+			},
+		},
 		packExplorer: {
 			title: 'Pack Explorer',
 			searchFiles: 'Search files...',
@@ -899,12 +928,34 @@ export default {
 		viewParticle: 'View Particle',
 		viewEntity: 'View Entity',
 		viewBlock: 'View Block',
+		simulateLoot: 'Simulate Loot',
 		failedClientEntityLoad: 'Failed to load connected client entity',
 		invalidEntity:
 			'Cannot open preview for an entity with invalid JSON. Please fix JSON errors inside of the file and try again.',
 		chooseGeometry: 'Choose Geometry',
 		noGeometry:
 			'No valid geometry found inside of this file. Make sure that your JSON is valid, that the file structure is correct and that a geometry with the provided identifier exists.',
+		lootTableSimulator: {
+			emptyLootOutput:
+				'Output is empty, try running the loot table to collect results.',
+			data: {
+				value: 'Data Value',
+				enchantments: 'Enchantments',
+				blockStates: 'Block States',
+				itemAuxValue: 'Aux Value',
+				eggIdentifier: 'Spawns Entity',
+				bannerType: 'Banner Type',
+				bookData: {
+					view: 'View Book',
+					title: 'Title',
+					author: 'Author',
+				},
+				durability: 'Durability',
+				lore: 'Lore',
+				displayName: 'Display Name',
+				mapDestination: 'Map Destination',
+			},
+		},
 	},
 	initialSetup: {
 		welcome: 'Welcome to bridge. v2!',

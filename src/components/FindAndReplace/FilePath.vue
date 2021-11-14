@@ -12,13 +12,12 @@
 		>
 			{{ getFileIcon(filePath) }}
 		</v-icon>
-		{{ filePath }}
+		{{ relFilePath }}
 	</div>
 </template>
 
 <script>
 import { App } from '/@/App.ts'
-import { PackType } from '/@/components/Data/PackType.ts'
 
 export default {
 	name: 'FileName',
@@ -30,15 +29,18 @@ export default {
 			return (App.fileType.get(filePath) || {}).icon ?? 'mdi-file-outline'
 		},
 		getIconColor(filePath) {
-			return (PackType.getWithRelativePath(filePath) || {}).color
+			return (App.packType.get(filePath) || {}).color
 		},
 		async openFile(filePath) {
 			const app = await App.getApp()
 
-			const fileHandle = await app.fileSystem.getFileHandle(
-				`projects/${app.project.name}/${filePath}`
-			)
+			const fileHandle = await app.fileSystem.getFileHandle(filePath)
 			app.project.openFile(fileHandle)
+		},
+	},
+	computed: {
+		relFilePath() {
+			return App.instance.project.relativePath(this.filePath)
 		},
 	},
 }

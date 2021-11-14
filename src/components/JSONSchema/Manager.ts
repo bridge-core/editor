@@ -18,7 +18,11 @@ export class SchemaManager {
 	static request(fileUri: string, hash?: string) {
 		const requested = this.lib[fileUri]
 		if (!requested) {
-			console.warn(`Couldn't find schema for "${fileUri}"`)
+			console.warn(
+				`Couldn't find schema for "${fileUri}"${
+					hash ? `(#${hash})` : ''
+				}`
+			)
 			return {}
 		}
 

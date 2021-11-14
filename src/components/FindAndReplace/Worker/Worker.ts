@@ -9,7 +9,7 @@ import { expose } from 'comlink'
 import { FileSystem } from '../../FileSystem/FileSystem'
 import { ESearchType } from '../Controls/SearchTypeEnum'
 import { iterateDir } from '/@/utils/iterateDir'
-import { extname, resolve } from '/@/utils/path'
+import { extname, join, resolve } from '/@/utils/path'
 
 import { createRegExp, processFileText } from '../Utils'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
@@ -64,6 +64,9 @@ export class FindAndReplace {
 	}
 
 	protected matchFolder(path: string, include: string, exclude: string) {
+		// fast path
+		if (include === '' && exclude === '') return true
+
 		let matchesInclude: boolean | undefined =
 			include.length === 0 ? true : undefined
 		let matchesExclude: boolean | undefined =
@@ -191,8 +194,12 @@ export class FindAndReplace {
 				}
 
 				if (matches.length > 0) {
-					this.matchedFiles.add(filePath)
-					queryResults.push({ filePath, matches })
+					const absFilePath = join(
+						`projects/${this.projectFolderHandle.name}`,
+						filePath
+					)
+					this.matchedFiles.add(absFilePath)
+					queryResults.push({ filePath: absFilePath, matches })
 				}
 			},
 			ignoreFolders
@@ -206,7 +213,12 @@ export class FindAndReplace {
 				const ext = extname(filePath)
 				if (
 					!knownTextFiles.has(ext) ||
-					!this.matchedFiles.has(filePath)
+					!this.matchedFiles.has(
+						join(
+							`projects/${this.projectFolderHandle.name}`,
+							filePath
+						)
+					)
 				)
 					return
 

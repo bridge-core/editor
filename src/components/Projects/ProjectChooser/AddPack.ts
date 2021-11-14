@@ -1,4 +1,3 @@
-import { PackType } from '/@/components/Data/PackType'
 import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/InformedChoice'
 import { App } from '/@/App'
 import { CreateBP } from '../CreateProject/Packs/BP'
@@ -15,7 +14,7 @@ export async function addPack() {
 
 	const createdPacks = app.project.getPacks()
 
-	const createablePacks = PackType.all().filter(
+	const createablePacks = App.packType.all.filter(
 		(packType) => !createdPacks.includes(packType.id)
 	)
 
