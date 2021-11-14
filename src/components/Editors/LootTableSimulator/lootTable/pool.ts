@@ -1,7 +1,8 @@
-import { treasureEnchants, defaultEnchants, unsupportedFunctions } from './data'
+import { functionData } from './data'
 import { createDefaultItemStack, ItemStack } from './itemStack'
 import { ILootTableEntry, ILootTableFunction } from './interfaces'
 import { randomInt } from '/@/utils/math/randomInt'
+import { deepMerge } from '/@/utils/deepmerge'
 
 export class LootTablePool {
 	/**
@@ -105,121 +106,16 @@ export class LootTablePool {
 		functions: ILootTableFunction[],
 		itemIdentifier: string
 	) {
-		const item = createDefaultItemStack()
+		let item = createDefaultItemStack()
+		const functionNames = Object.keys(functionData)
 		for (const func of functions) {
-			if (func.function == 'set_count' && func.count) {
-				if (typeof func.count !== 'number') {
-					const randomAmount = randomInt(
-						func.count.min,
-						func.count.max
-					)
-					item.amount = randomAmount
-				} else item.amount = func.count
-			} else if (func.function == 'set_data' && func.data) {
-				item.data.value = func.data
-			} else if (func.function == 'specific_enchants' && func.enchants) {
-				item.data.enchantments ??= []
-				for (const enchant of func.enchants) {
-					if (typeof enchant === 'string') {
-						item.data.enchantments.push({
-							id: enchant,
-							level: 1,
-						})
-					} else item.data.enchantments.push(enchant)
-				}
-			} else if (func.function == 'enchant_randomly') {
-				// TODO - Filter to enchants available for the item
-				// TODO - Test how many enchants can randomly be applied
-				// TODO - Could load these from json data
-				item.data.enchantments ??= []
-				const enchants = func.treasure
-					? defaultEnchants.concat(treasureEnchants)
-					: defaultEnchants
-				const i = randomInt(0, enchants.length - 1)
-				item.data.enchantments.push({
-					id: enchants[i],
-					level: randomInt(1, 3),
-				})
-			} else if (func.function == 'enchant_with_levels' && func.levels) {
-				// TODO - Need to try and match enchantment table levels algorithm
-			} else if (func.function == 'looting_enchant' && func.count) {
-				// TODO - support inputs, need kill condition options, killed by looting
-			} else if (
-				func.function == 'random_block_state' &&
-				func.block_state &&
-				func.values
-			) {
-				item.data.blockStates ??= []
-				item.data.blockStates.push({
-					id: func.block_state,
-					value: randomInt(func.values.min, func.values.max),
-				})
-			} else if (func.function == 'random_aux_value' && func.values) {
-				item.data.itemAuxValue = randomInt(
-					func.values.min,
-					func.values.max
-				)
-			} else if (func.function == 'set_actor_id' && func.id) {
-				if (
-					itemIdentifier == 'minecraft:spawn_egg' ||
-					itemIdentifier == 'spawn_egg'
-				)
-					item.data.eggIdentifier = func.id
-				else
-					this.warnings.push(
-						`Cannot use "set_actor_id" on item "${itemIdentifier}", expected item "minecraft:spawn_egg"`
-					)
-			} else if (func.function == 'set_banner_details' && func.type) {
-				if (
-					itemIdentifier == 'minecraft:banner' ||
-					itemIdentifier == 'banner'
-				)
-					item.data.bannerType = func.type
-				else
-					this.warnings.push(
-						`Cannot use "set_banner_details" on item "${itemIdentifier}", expected item "minecraft:banner"`
-					)
-			} else if (
-				func.function == 'set_book_contents' &&
-				func.author &&
-				func.title &&
-				func.pages
-			) {
-				if (
-					itemIdentifier == 'minecraft:book' ||
-					itemIdentifier == 'book'
-				) {
-					item.data.bookData = {}
-					item.data.bookData.author = func.author
-					item.data.bookData.title = func.title
-					item.data.bookData.pages = func.pages
-				} else
-					this.warnings.push(
-						`Cannot use "set_book_contents on item "${itemIdentifier}", expected item "minecraft:book"`
-					)
-			} else if (func.function == 'set_damage' && func.damage) {
-				if (typeof func.damage !== 'number') {
-					const randomAmount = randomInt(
-						func.damage.min,
-						func.damage.max
-					)
-					item.data.durability = randomAmount
-				} else item.data.durability = func.damage
-			} else if (func.function == 'set_lore' && func.lore) {
-				item.data.lore = func.lore
-			} else if (func.function == 'set_name' && func.name) {
-				item.data.displayName = func.name
-			} else if (func.function == 'exploration_map' && func.destination) {
-				item.data.mapDestination = func.destination
-			} else if (unsupportedFunctions.includes(func.function)) {
-				this.warnings.push(
-					`"${func.function}" is not yet supported by the simulator`
-				)
-			} else {
+			if (functionNames.includes(func.function)) {
+				const result = functionData[func.function](func, itemIdentifier)
+				item = deepMerge(item, result.item)
+				this.warnings.concat(result.warnings)
+			} else
 				this.warnings.push(`Invalid loot function "${func.function}"`)
-			}
 		}
-
 		return item
 	}
 }
