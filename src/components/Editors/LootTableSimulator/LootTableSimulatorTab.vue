@@ -3,9 +3,18 @@
 		<BridgeSheet
 			style="height: 65%; margin: 10px; padding: 10px; display: block"
 		>
-			<h1><v-icon color="success">mdi-sword</v-icon> Output</h1>
+			<div class="d-flex">
+				<h1><v-icon color="success">mdi-sword</v-icon> Output</h1>
+				<span style="padding: 1em">
+					Run: {{ tab.state.counters.table }} | Pool:
+					{{ tab.state.counters.pool }} | Condition Met:
+					{{ tab.state.conditionMet }}
+				</span>
+			</div>
+
 			<v-container style="max-height: 85%">
 				<v-row>
+					<!--Item list-->
 					<v-col style="max-height: 325px" class="overflow-y-auto">
 						<div>
 							<span
@@ -32,6 +41,7 @@
 						</span>
 					</v-col>
 					<v-divider vertical v-if="tab.selectedItemStack" />
+					<!--Selected item data-->
 					<v-col v-if="tab.selectedItemStack">
 						<div style="position: fixed">
 							<span>{{ tab.selectedItemStack.identifier }}</span
@@ -59,6 +69,7 @@
 				</v-row>
 			</v-container>
 		</BridgeSheet>
+		<!--Warning panel-->
 		<BridgeSheet style="height: 30%; margin: 10px; padding: 10px">
 			<h1><v-icon color="warning">mdi-alert</v-icon> Warnings</h1>
 			<span
