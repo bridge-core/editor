@@ -14,6 +14,27 @@
 <script>
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 import { App } from '/@/App'
+import { reactive } from '@vue/composition-api'
+
+const knownWords = new reactive({
+	keywords: [],
+	typeIdentifiers: [],
+	variables: [],
+	definitions: [],
+})
+
+setTimeout(() => {
+	App.getApp().then((app) =>
+		app.configuredJsonLanguage
+			.getHighlighter()
+			.on(({ keywords, typeIdentifiers, variables, definitions }) => {
+				knownWords.keywords = keywords
+				knownWords.typeIdentifiers = typeIdentifiers
+				knownWords.variables = variables
+				knownWords.definitions = definitions
+			})
+	)
+})
 
 export default {
 	props: {
@@ -30,22 +51,10 @@ export default {
 			'type',
 		]),
 	],
-	data: () => ({
-		keywords: [],
-		typeIdentifiers: [],
-		variables: [],
-		definitions: [],
-	}),
-	async mounted() {
-		const app = await App.getApp()
-		app.configuredJsonLanguage.getHighlighter().on(this.updateKnownWords)
-		this.updateKnownWords(
-			app.configuredJsonLanguage.getHighlighter().knownWords
-		)
-	},
-	async destroyed() {
-		const app = await App.getApp()
-		app.configuredJsonLanguage.getHighlighter().on(this.updateKnownWords)
+	setup() {
+		return {
+			knownWords,
+		}
 	},
 	computed: {
 		tokens() {
@@ -56,23 +65,14 @@ export default {
 		},
 	},
 	methods: {
-		updateKnownWords({
-			keywords,
-			typeIdentifiers,
-			variables,
-			definitions,
-		}) {
-			this.keywords = keywords
-			this.typeIdentifiers = typeIdentifiers
-			this.variables = variables
-			this.definitions = definitions
-		},
-
 		getDefinition(text) {
-			if (this.keywords.includes(text)) return this.keywordDef
-			else if (this.typeIdentifiers.includes(text)) return this.typeDef
-			else if (this.variables.includes(text)) return this.variableDef
-			else if (this.definitions.includes(text)) return this.definitionDef
+			if (this.knownWords.keywords.includes(text)) return this.keywordDef
+			else if (this.knownWords.typeIdentifiers.includes(text))
+				return this.typeDef
+			else if (this.knownWords.variables.includes(text))
+				return this.variableDef
+			else if (this.knownWords.definitions.includes(text))
+				return this.definitionDef
 			else return this.stringDef
 		},
 		getTextDecoration(def) {
