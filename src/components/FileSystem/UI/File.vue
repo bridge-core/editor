@@ -12,7 +12,6 @@
 <script>
 import { basename } from '/@/utils/path'
 import { App } from '/@/App'
-import { PackType } from '../../Data/PackType'
 
 export default {
 	props: {
@@ -26,7 +25,7 @@ export default {
 		App.getApp().then((app) => {
 			this.icon =
 				App.fileType.get(this.filePath)?.icon ?? 'mdi-file-outline'
-			this.color = PackType.get(this.filePath)?.color ?? null
+			this.color = App.packType.get(this.filePath)?.color ?? null
 		})
 	},
 	computed: {
