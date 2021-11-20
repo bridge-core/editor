@@ -936,7 +936,7 @@ export default {
 		noGeometry:
 			'このファイル内に有効なジオメトリが見つかりません。 JSON が有効であること、ファイル構造が正しいこと、および指定された識別子を持つジオメトリが存在することを確認してください。',
 		lootTableSimulator: {
-			emptyLootOutput: '出力が空です.実行して結果を出力してください。',
+			emptyLootOutput: '出力が空です。実行して結果を出力してください。',
 			data: {
 				value: 'データ値',
 				enchantments: 'エンチャント',
