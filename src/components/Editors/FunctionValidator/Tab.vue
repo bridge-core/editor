@@ -47,7 +47,7 @@ import Error from './Error.vue'
 import Warning from './Warning.vue'
 
 export default {
-	name: 'FunctionSimulatorTab',
+	name: 'FunctionValidatorTab',
 	props: {
 		tab: Object,
 	},

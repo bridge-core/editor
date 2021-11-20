@@ -1,6 +1,6 @@
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
-import FunctionSimulatorTabComponent from './Tab.vue'
+import FunctionValidatorTabComponent from './Tab.vue'
 import { Tab } from '../../TabSystem/CommonTab'
 import { App } from '/@/App'
 import * as monaco from 'monaco-editor'
@@ -16,7 +16,7 @@ import { DataLoader } from '../../Data/DataLoader'
 import { isReactive, markRaw } from '@vue/composition-api'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
 
-export class FunctionSimulatorTab extends Tab {
+export class FunctionValidatorTab extends Tab {
 	protected fileTab: FileTab | undefined
 	protected currentLine = 0
 	protected content: string = ''
@@ -42,7 +42,7 @@ export class FunctionSimulatorTab extends Tab {
 		return Promise.resolve(false)
 	}
 
-	component = FunctionSimulatorTabComponent
+	component = FunctionValidatorTabComponent
 
 	get icon() {
 		return 'mdi-cog-box'
