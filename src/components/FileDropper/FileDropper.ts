@@ -1,5 +1,8 @@
 import { reactive } from '@vue/composition-api'
-import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import {
+	isUsingOriginPrivateFs,
+	isUsingFileSystemPolyfill,
+} from '/@/components/FileSystem/Polyfill'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { App } from '/@/App'
@@ -80,6 +83,7 @@ export class FileDropper {
 
 			if (fileHandle.kind === 'directory') {
 				if (
+					!isUsingOriginPrivateFs &&
 					!isUsingFileSystemPolyfill &&
 					fileHandle.name === 'com.mojang'
 				)

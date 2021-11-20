@@ -22,7 +22,7 @@ export class DefinitionProvider {
 		const currentPath = app.project.tabSystem?.selectedTab?.getPath()
 		if (!currentPath) return
 
-		const { definitions } = App.fileType.getGlobal(currentPath) ?? {}
+		const { definitions } = App.fileType.get(currentPath) ?? {}
 		const lightningCache = await App.fileType.getLightningCache(currentPath)
 
 		// lightningCache is string for lightning cache text scripts
@@ -123,6 +123,7 @@ export class DefinitionProvider {
 						if (transformedWord && script)
 							transformedWord = await run({
 								script,
+								async: true,
 								env: {
 									...getCacheScriptEnv(transformedWord, {
 										fileSystem: app.fileSystem,

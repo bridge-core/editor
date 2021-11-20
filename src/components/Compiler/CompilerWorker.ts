@@ -6,7 +6,6 @@ import { proxy } from 'comlink'
 import { WorkerManager } from '/@/components/Worker/Manager'
 import { Project } from '../Projects/Project/Project'
 import { CompilerManager } from './CompilerManager'
-import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 interface ICompilerStartOptions {
 	mode: 'dev' | 'build'

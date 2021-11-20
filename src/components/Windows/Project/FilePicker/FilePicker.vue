@@ -36,7 +36,6 @@
 <script>
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
-import { PackType } from '/@/components/Data/PackType'
 import { App } from '/@/App.ts'
 
 export default {
@@ -58,13 +57,13 @@ export default {
 		},
 
 		getFileIcon(filePath) {
-			const fileType = App.fileType.getGlobal(filePath)
+			const fileType = App.fileType.get(filePath)
 			if (!fileType) return 'mdi-file-outline'
 
 			return fileType.icon || 'mdi-file-outline'
 		},
 		getFileIconColor(filePath) {
-			const packType = PackType.get(filePath)
+			const packType = App.packType.get(filePath)
 			if (!packType) return 'primary'
 
 			return packType.color || 'primary'

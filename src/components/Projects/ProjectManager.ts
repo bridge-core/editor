@@ -10,7 +10,6 @@ import { BedrockProject } from './Project/BedrockProject'
 import { InitialSetup } from '../InitialSetup/InitialSetup'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyDirectoryHandle, AnyHandle } from '../FileSystem/Types'
-import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()

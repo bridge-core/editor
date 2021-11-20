@@ -1,4 +1,5 @@
 import { compare } from 'compare-versions'
+import { ProjectConfig } from '/@/components/Projects/Project/Config'
 import { v1Compat } from './v1Compat'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { deepMerge } from '/@/utils/deepmerge'
@@ -15,6 +16,7 @@ export class Component {
 	protected createOnPlayer: [string, any, any][] = []
 	protected dialogueScenes: any[] = []
 	protected clientFiles: Record<string, any> = {}
+	protected projectConfig?: ProjectConfig
 
 	constructor(
 		protected fileType: string,
@@ -23,6 +25,10 @@ export class Component {
 		protected v1Compat: boolean,
 		protected targetVersion?: string
 	) {}
+
+	setProjectConfig(projectConfig: ProjectConfig) {
+		this.projectConfig = projectConfig
+	}
 
 	//#region Getters
 	get name() {
@@ -139,6 +145,8 @@ export class Component {
 				?.identifier ?? 'bridge:no_identifier'
 		// Used to compose the animation (controller) short name so the user knows how to reference their animation (controller)
 		const fileName = await hashString(`${this.name}/${identifier}`)
+		const projectNamespace =
+			this.projectConfig?.get()?.namespace ?? 'bridge'
 
 		// Setup animation/animationController helper
 		const animation = (animation: any, molangCondition?: string) => {
@@ -196,6 +204,7 @@ export class Component {
 					this.create(fileContent, template, location, operation),
 				location,
 				identifier,
+				projectNamespace,
 				animationController,
 				animation,
 				dialogueScene:
@@ -244,6 +253,7 @@ export class Component {
 					this.create(fileContent, template, location, operation),
 				location,
 				identifier,
+				projectNamespace,
 				player: {
 					animationController,
 					animation,
@@ -263,12 +273,13 @@ export class Component {
 			this.template(componentArgs ?? {}, {
 				// @deprecated remove with next major version
 				mode: this.mode,
-				sourceBlock: this.mode,
-				fileContent: () => JSON.parse(JSON.stringify(fileContent)),
+				compilerMode: this.mode,
+				sourceBlock: () => JSON.parse(JSON.stringify(fileContent)),
 				create: (template: any, location?: string, operation?: any) =>
 					this.create(fileContent, template, location, operation),
 				location,
 				identifier,
+				projectNamespace,
 			})
 		}
 	}

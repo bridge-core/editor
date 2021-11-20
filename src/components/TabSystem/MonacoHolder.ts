@@ -116,7 +116,7 @@ export class MonacoHolder extends Signal<void> {
 		this._monacoEditor?.addAction({
 			...commentLineAction,
 
-			keybindings: [KeyMod.CtrlCmd | KeyCode.US_BACKSLASH],
+			keybindings: [KeyMod.CtrlCmd | KeyCode.Backslash],
 			run(...args: any[]) {
 				// @ts-ignore
 				this._run(...args)

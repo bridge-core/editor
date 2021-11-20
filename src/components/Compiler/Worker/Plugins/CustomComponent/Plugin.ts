@@ -31,7 +31,13 @@ export function createCustomComponentPlugin({
 		filePath?.startsWith('BP/entities/') &&
 		getAliases(filePath).includes('minecraft:player')
 
-	return ({ compileFiles, getAliases, options, targetVersion }) => {
+	return ({
+		projectConfig,
+		compileFiles,
+		getAliases,
+		options,
+		targetVersion,
+	}) => {
 		const isComponent = (filePath: string | null) =>
 			options.v1CompatMode
 				? filePath?.startsWith(`BP/components/`)
@@ -83,6 +89,7 @@ export function createCustomComponentPlugin({
 						!!options.v1CompatMode,
 						targetVersion
 					)
+					component.setProjectConfig(projectConfig)
 
 					const loadedCorrectly = await component.load()
 					return loadedCorrectly ? component : fileContent

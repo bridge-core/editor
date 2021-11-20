@@ -55,7 +55,7 @@ export abstract class Language {
 	}
 
 	protected onModelAdded(model: editor.IModel) {
-		if (model.getModeId() !== this.id) return false
+		if (model.getLanguageId() !== this.id) return false
 
 		this.validate(model)
 		this.models.set(

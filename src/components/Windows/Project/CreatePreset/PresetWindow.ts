@@ -8,7 +8,7 @@ import { dirname } from '/@/utils/path'
 import { runPresetScript } from './PresetScript'
 import { expandFile, TExpandFile } from './ExpandFile'
 import { createFile, TCreateFile } from './CreateFile'
-import { PackType, TPackTypeId } from '/@/components/Data/PackType'
+import { TPackTypeId } from '/@/components/Data/PackType'
 import { transformString } from './TransformString'
 import { ConfirmationWindow } from '../../Common/Confirm/ConfirmWindow'
 import { PresetItem } from './PresetItem'
@@ -198,8 +198,7 @@ export class CreatePresetWindow extends BaseWindow {
 		const iconColor =
 			typeof presetPath === 'string' &&
 			manifest.category === 'fileType.simpleFile'
-				? PackType.getWithRelativePath(presetPath + 'test.json')
-						?.color ?? 'primary'
+				? App.packType.get(presetPath + 'test.json')?.color ?? 'primary'
 				: 'primary'
 
 		category.addItem(

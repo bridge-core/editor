@@ -21,16 +21,27 @@ function isCrashingChromeBrowser() {
 }
 
 export let isUsingFileSystemPolyfill = false
+export let isUsingSaveAsPolyfill = false
+export let isUsingOriginPrivateFs = false
 
 if (
 	isCrashingChromeBrowser() ||
 	typeof window.showDirectoryPicker !== 'function'
 ) {
-	isUsingFileSystemPolyfill = true
+	if (
+		!isCrashingChromeBrowser() &&
+		typeof navigator.storage.getDirectory === 'function'
+	) {
+		isUsingOriginPrivateFs = true
 
-	window.showDirectoryPicker = async () =>
-		// @ts-ignore Typescript doesn't like our polyfill
-		new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
+		window.showDirectoryPicker = () => navigator.storage.getDirectory()
+	} else {
+		isUsingFileSystemPolyfill = true
+
+		window.showDirectoryPicker = async () =>
+			// @ts-ignore Typescript doesn't like our polyfill
+			new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
+	}
 }
 
 if (
@@ -104,6 +115,8 @@ if (
 	isCrashingChromeBrowser() ||
 	typeof window.showSaveFilePicker !== 'function'
 ) {
+	isUsingSaveAsPolyfill = true
+
 	// @ts-ignore
 	window.showSaveFilePicker = async (
 		// @ts-ignore

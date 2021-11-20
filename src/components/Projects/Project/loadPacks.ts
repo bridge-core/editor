@@ -1,5 +1,5 @@
 import { App } from '/@/App'
-import { IPackType, PackType, TPackTypeId } from '/@/components/Data/PackType'
+import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
 import { loadManifest } from './loadManifest'
 import type { Project } from './Project'
 import { defaultPackPaths } from './Config'
@@ -10,7 +10,7 @@ export interface IPackData extends IPackType {
 }
 
 export async function loadPacks(app: App, project: Project) {
-	await PackType.ready.fired
+	await App.packType.ready.fired
 
 	const availablePackIds = <TPackTypeId[]>(
 		Object.keys(project.config.get().packs ?? defaultPackPaths)
@@ -23,7 +23,7 @@ export async function loadPacks(app: App, project: Project) {
 		if (!(await app.fileSystem.directoryExists(packPath))) continue
 
 		// Check whether handle is a valid pack
-		const packType = PackType.getFromId(packId)
+		const packType = App.packType.getFromId(packId)
 		if (!packType) continue
 
 		// Load pack manifest
