@@ -75,6 +75,8 @@ export default {
 	text-decoration-line: underline;
 	text-decoration-style: wavy;
 	text-decoration-color: var(--v-error-base);
+	text-decoration-skip-ink: none;
+	color: var(--v-error-base);
 }
 </style>
 

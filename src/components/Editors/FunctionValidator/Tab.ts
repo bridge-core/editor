@@ -827,6 +827,21 @@ export class FunctionValidatorTab extends Tab {
 		return [errors, warnings]
 	}
 
+	protected GetTransformOfToken(tokens: Token[], token: Token) {
+		let start = 0
+
+		for (let i = 0; i < tokens.length; i++) {
+			if (token == tokens[i]) {
+				console.log(token)
+				return [start, start + token.size]
+			} else {
+				start += tokens[i].size
+			}
+		}
+
+		return [-1, -1]
+	}
+
 	//Gets Errors and Warnings
 	protected ValidateCommand<Array>(
 		command: string | null,
@@ -852,18 +867,52 @@ export class FunctionValidatorTab extends Tab {
 		if (!commandTokens) {
 			splitStrings = command!.split('"')
 
+			let lastChange = -1
+
 			for (let i = 0; i < splitStrings.length; i++) {
 				if (!inString) {
-					tokens.push(new Token(splitStrings[i], 'Dirty'))
+					tokens.push(
+						new Token(
+							splitStrings[i],
+							'Dirty',
+							splitStrings[i].length
+						)
+					)
 				} else {
-					tokens.push(new Token(splitStrings[i], 'Long String'))
+					tokens.push(
+						new Token(
+							splitStrings[i],
+							'Long String',
+							splitStrings[i].length
+						)
+					)
 				}
 
 				inString = !inString
+				lastChange = i
 			}
 
 			if (!inString) {
-				errors.push(this.translateError('unclosedString'))
+				const errorDimensions = this.GetTransformOfToken(
+					tokens,
+					tokens[lastChange]
+				)
+
+				const endDimensions = this.GetTransformOfToken(
+					tokens,
+					tokens[tokens.length - 1]
+				)
+
+				console.log(errorDimensions)
+				console.log(endDimensions)
+
+				errors.push(
+					new SmartError(
+						this.translateError('unclosedString'),
+						errorDimensions[0],
+						endDimensions[1]
+					)
+				)
 				return [errors, warnings]
 			}
 
@@ -1575,10 +1624,6 @@ export class FunctionValidatorTab extends Tab {
 							for (let i = 0; i < currentErrorLines.length; i++) {
 								console.log(fullCommmandDisplayElement)
 
-								console.log(
-									fullCommmandDisplayElement.innerHTML
-								)
-
 								fullCommmandDisplayElement.innerHTML =
 									fullCommmandDisplayElement.innerHTML.substring(
 										0,
@@ -1595,12 +1640,6 @@ export class FunctionValidatorTab extends Tab {
 										fullCommmandDisplayElement.innerHTML
 											.length
 									)
-
-								console.log(fullCommmandDisplayElement)
-
-								console.log(
-									fullCommmandDisplayElement.innerHTML
-								)
 
 								//TODO: Add suppport for multiple of these
 							}
