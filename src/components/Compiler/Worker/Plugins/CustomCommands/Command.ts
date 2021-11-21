@@ -1,3 +1,4 @@
+import { transformCommands } from './transformCommands'
 import { v1Compat } from './v1Compat'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { tokenizeCommand } from '/@/components/Languages/Mcfunction/tokenize'
@@ -62,7 +63,11 @@ export class Command {
 		})
 	}
 
-	process(command: string) {
+	process(
+		command: string,
+		dependencies: Record<string, Command>,
+		nestingDepth: number
+	) {
 		if (command.startsWith('/')) command = command.slice(1)
 
 		const [commandName, ...args] = tokenizeCommand(command).tokens.map(
@@ -73,6 +78,17 @@ export class Command {
 			args.map((arg) => castType(arg)),
 			{
 				compilerMode: this.mode,
+				commandNestingDepth: nestingDepth,
+				compileCommands: (customCommands: string[]) => {
+					return transformCommands(
+						customCommands,
+						dependencies,
+						false,
+						nestingDepth + 1
+					).map((command) =>
+						command.startsWith('/') ? command.slice(1) : command
+					)
+				},
 			}
 		)
 		let processedCommands: string[] = []
