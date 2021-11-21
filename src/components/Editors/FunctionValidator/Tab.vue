@@ -70,6 +70,14 @@ export default {
 }
 </script>
 
+<style>
+.error-line {
+	text-decoration-line: underline;
+	text-decoration-style: wavy;
+	text-decoration-color: var(--v-error-base);
+}
+</style>
+
 <style scoped>
 .wh-100 {
 	width: 100%;

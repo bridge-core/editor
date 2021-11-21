@@ -832,8 +832,6 @@ export class FunctionValidatorTab extends Tab {
 		command: string | null,
 		commandTokens: Token[] | null = null
 	) {
-		//TODO: Add error and warning class so errors and warnings can have extened info and potential comments on how to fix the errors
-
 		let errors: any[] = []
 		let warnings: string[] = []
 
@@ -1519,7 +1517,7 @@ export class FunctionValidatorTab extends Tab {
 			)
 
 			if (fullCommmandDisplayElement) {
-				fullCommmandDisplayElement.textContent =
+				fullCommmandDisplayElement.innerHTML =
 					'Full Command: ' + lines[this.currentLine]
 			}
 
@@ -1551,6 +1549,8 @@ export class FunctionValidatorTab extends Tab {
 
 						currentErrorLines.push([start, end])
 
+						//TODO: Add suppport for multiple of these
+
 						var ComponentClass = Vue.extend(Error)
 						var instance = new ComponentClass({
 							propsData: { alertText: data[0][i].value },
@@ -1571,44 +1571,38 @@ export class FunctionValidatorTab extends Tab {
 					}
 
 					if (fullCommmandDisplayElement) {
-						if (fullCommmandDisplayElement.textContent) {
+						if (fullCommmandDisplayElement.innerHTML) {
 							for (let i = 0; i < currentErrorLines.length; i++) {
-								//Command: !
+								console.log(fullCommmandDisplayElement)
+
 								console.log(
-									fullCommmandDisplayElement.textContent.substring(
-										0,
-										14 + currentErrorLines[i][0]
-									)
+									fullCommmandDisplayElement.innerHTML
 								)
 
-								console.log(
-									fullCommmandDisplayElement.textContent.substring(
-										14 + currentErrorLines[i][1],
-										fullCommmandDisplayElement.textContent
-											.length
-									)
-								)
-
-								console.log(14 + currentErrorLines[i][0])
-								console.log(14 + currentErrorLines[i][1])
-
-								console.log(
-									fullCommmandDisplayElement.textContent.substring(
+								fullCommmandDisplayElement.innerHTML =
+									fullCommmandDisplayElement.innerHTML.substring(
 										0,
 										14 + currentErrorLines[i][0]
 									) +
-										'<span class="error-line">' +
-										fullCommmandDisplayElement.textContent.substring(
-											14 + currentErrorLines[i][0],
-											14 + currentErrorLines[i][1]
-										) +
-										'</span>' +
-										fullCommmandDisplayElement.textContent.substring(
-											14 + currentErrorLines[i][1],
-											fullCommmandDisplayElement
-												.textContent.length
-										)
+									'<span class="error-line">' +
+									fullCommmandDisplayElement.innerHTML.substring(
+										14 + currentErrorLines[i][0],
+										14 + currentErrorLines[i][1]
+									) +
+									'</span>' +
+									fullCommmandDisplayElement.innerHTML.substring(
+										14 + currentErrorLines[i][1],
+										fullCommmandDisplayElement.innerHTML
+											.length
+									)
+
+								console.log(fullCommmandDisplayElement)
+
+								console.log(
+									fullCommmandDisplayElement.innerHTML
 								)
+
+								//TODO: Add suppport for multiple of these
 							}
 						}
 					}
