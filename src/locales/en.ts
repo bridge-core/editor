@@ -788,6 +788,11 @@ export default {
 					name: 'JSON Editor',
 					description: 'Choose how you want to edit JSON files',
 				},
+				bridgePredictions: {
+					name: 'bridge. Predictions',
+					description:
+						"Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly",
+				},
 				bracketPairColorization: {
 					name: 'Bracket Pair Colorization',
 					description: 'Give matching brackets an unique color',
@@ -1017,9 +1022,11 @@ export default {
 	},
 	editors: {
 		treeEditor: {
+			add: 'Add',
 			addObject: 'Add Object',
 			addArray: 'Add Array',
 			addValue: 'Add Value',
+			forceValue: 'Force Value',
 			edit: 'Edit',
 		},
 	},

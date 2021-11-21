@@ -348,6 +348,16 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'editor',
+			name: 'windows.settings.editor.bridgePredictions.name',
+			description:
+				'windows.settings.editor.bridgePredictions.description',
+			key: 'bridgePredictions',
+			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
 			name: 'windows.settings.editor.bracketPairColorization.name',
 			description:
 				'windows.settings.editor.bracketPairColorization.description',
