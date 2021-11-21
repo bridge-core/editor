@@ -1,5 +1,4 @@
 import { FileTab } from '/@/components/TabSystem/FileTab'
-import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import FunctionValidatorTabComponent from './Tab.vue'
 import { Tab } from '../../TabSystem/CommonTab'
 import { App } from '/@/App'
@@ -8,13 +7,12 @@ import { TabSystem } from '../../TabSystem/TabSystem'
 import Error from './Error.vue'
 import Warning from './Warning.vue'
 import Vue from 'vue'
-import { ca, el, fa, tr } from 'vuetify/src/locale'
 import { BedrockProject } from '../../Projects/Project/BedrockProject'
 import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
 import { Token } from './Token'
-import { DataLoader } from '../../Data/DataLoader'
-import { isReactive, markRaw } from '@vue/composition-api'
+import { markRaw } from '@vue/composition-api'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
+import { SmartError } from './Error'
 
 export class FunctionValidatorTab extends Tab {
 	protected fileTab: FileTab | undefined
@@ -235,20 +233,20 @@ export class FunctionValidatorTab extends Tab {
 				let read = dirtyString.value.substring(readStart, readEnd)
 
 				if (this.specialSymbols.includes(read)) {
-					foundTokens.push(new Token(read, 'Symbol'))
+					foundTokens.push(new Token(read, 'Symbol', read.length))
 					found = true
 				} else if (this.isInt(read)) {
-					foundTokens.push(new Token(read, 'Integer'))
+					foundTokens.push(new Token(read, 'Integer', read.length))
 					found = true
 					shouldCombine = true
 				} else if (this.isFloat(read)) {
-					foundTokens.push(new Token(read, 'Float'))
+					foundTokens.push(new Token(read, 'Float', read.length))
 					found = true
 				} else if (read == 'true' || read == 'false') {
-					foundTokens.push(new Token(read, 'Boolean'))
+					foundTokens.push(new Token(read, 'Boolean', read.length))
 					found = true
 				} else if (read == ' ') {
-					foundTokens.push(new Token(read, 'Space'))
+					foundTokens.push(new Token(read, 'Space', read.length))
 					found = true
 				}
 
@@ -270,7 +268,13 @@ export class FunctionValidatorTab extends Tab {
 										lastUnexpected,
 										readStart
 									) + whatToAdd,
-									'String'
+									'String',
+									(
+										dirtyString.value.substring(
+											lastUnexpected,
+											readStart
+										) + whatToAdd
+									).length
 								)
 							)
 						} else {
@@ -282,7 +286,11 @@ export class FunctionValidatorTab extends Tab {
 										lastUnexpected,
 										readStart
 									),
-									'String'
+									'String',
+									dirtyString.value.substring(
+										lastUnexpected,
+										readStart
+									).length
 								)
 							)
 						}
@@ -293,7 +301,11 @@ export class FunctionValidatorTab extends Tab {
 									lastUnexpected,
 									readEnd
 								),
-								'String'
+								'String',
+								dirtyString.value.substring(
+									lastUnexpected,
+									readEnd
+								).length
 							)
 						)
 					}
@@ -822,7 +834,7 @@ export class FunctionValidatorTab extends Tab {
 	) {
 		//TODO: Add error and warning class so errors and warnings can have extened info and potential comments on how to fix the errors
 
-		let errors: string[] = []
+		let errors: any[] = []
 		let warnings: string[] = []
 
 		if (!this.blockStateData) {
@@ -874,8 +886,10 @@ export class FunctionValidatorTab extends Tab {
 			}
 
 			if (tokens.length > 0) {
-				while (tokens[0].type == 'Space') {
-					tokens.splice(0, 1)
+				if (tokens[0].type == 'Space') {
+					errors.push(this.translateError('spaceAtStart'))
+
+					return [errors, warnings]
 				}
 
 				if (tokens.length == 0) {
@@ -889,11 +903,19 @@ export class FunctionValidatorTab extends Tab {
 				//Test for basic command
 				baseCommand = tokens.shift()!
 
+				console.log(Array.from(tokens))
+
 				if (!this.validCommands.includes(baseCommand.value)) {
+					console.log(baseCommand)
+
 					errors.push(
-						this.translateError('invalidCommand.part1') +
-							tokens[0].value +
-							this.translateError('invalidCommand.part2')
+						new SmartError(
+							this.translateError('invalidCommand.part1') +
+								baseCommand.value +
+								this.translateError('invalidCommand.part2'),
+							0,
+							baseCommand.size
+						)
 					)
 
 					return [errors, warnings]
@@ -1519,24 +1541,76 @@ export class FunctionValidatorTab extends Tab {
 				} else {
 					let data = await this.ValidateCommand(fullCommand)
 
+					let currentErrorLines = []
+
 					for (let i = 0; i < data[0].length; i++) {
+						console.log(data[0][i])
+
+						const start = data[0][i].start
+						const end = data[0][i].end
+
+						currentErrorLines.push([start, end])
+
 						var ComponentClass = Vue.extend(Error)
 						var instance = new ComponentClass({
-							propsData: { alertText: data[0][i] },
+							propsData: { alertText: data[0][i].value },
 						})
 
-						instance.$mount() // pass nothing
+						instance.$mount()
 						alertsElement.appendChild(instance.$el)
 					}
 
 					for (let i = 0; i < data[1].length; i++) {
 						var ComponentClass = Vue.extend(Warning)
 						var instance = new ComponentClass({
-							propsData: { alertText: data[1][i] },
+							propsData: { alertText: data[1][i].value },
 						})
 
-						instance.$mount() // pass nothing
+						instance.$mount()
 						alertsElement.appendChild(instance.$el)
+					}
+
+					if (fullCommmandDisplayElement) {
+						if (fullCommmandDisplayElement.textContent) {
+							for (let i = 0; i < currentErrorLines.length; i++) {
+								//Command: !
+								console.log(
+									fullCommmandDisplayElement.textContent.substring(
+										0,
+										14 + currentErrorLines[i][0]
+									)
+								)
+
+								console.log(
+									fullCommmandDisplayElement.textContent.substring(
+										14 + currentErrorLines[i][1],
+										fullCommmandDisplayElement.textContent
+											.length
+									)
+								)
+
+								console.log(14 + currentErrorLines[i][0])
+								console.log(14 + currentErrorLines[i][1])
+
+								console.log(
+									fullCommmandDisplayElement.textContent.substring(
+										0,
+										14 + currentErrorLines[i][0]
+									) +
+										'<span class="error-line">' +
+										fullCommmandDisplayElement.textContent.substring(
+											14 + currentErrorLines[i][0],
+											14 + currentErrorLines[i][1]
+										) +
+										'</span>' +
+										fullCommmandDisplayElement.textContent.substring(
+											14 + currentErrorLines[i][1],
+											fullCommmandDisplayElement
+												.textContent.length
+										)
+								)
+							}
+						}
 					}
 
 					docsElement.textContent = await this.GetDocs(command)

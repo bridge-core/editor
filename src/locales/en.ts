@@ -1052,7 +1052,7 @@ export default {
 			unclosedString: 'Unclosed string!',
 			invalidCommand: {
 				part1: "'",
-				part2: '" is not a valid command!',
+				part2: "' is not a valid command!",
 			},
 			expectedLetterAfterAtButNothing: 'Expected leter after @!',
 			expectedLetterAfterAt: 'Expected letter after @!',
