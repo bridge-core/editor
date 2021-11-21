@@ -603,6 +603,14 @@ export default {
 				name: 'Export as .brproject',
 			},
 			fileActions: {
+				open: {
+					name: 'Open',
+					description: 'Open the file in the editor',
+				},
+				openInSplitScreen: {
+					name: 'Open in Split Screen',
+					description: 'Open the file in split screen mode',
+				},
 				delete: {
 					name: 'Delete',
 					description: 'Delete a file or folder',

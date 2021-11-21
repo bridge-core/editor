@@ -175,7 +175,10 @@ export abstract class Project {
 		await this.activate(true)
 	}
 
-	async openFile(fileHandle: AnyFileHandle, options: IOpenTabOptions = {}) {
+	async openFile(
+		fileHandle: AnyFileHandle,
+		options: IOpenTabOptions & { openInSplitScreen?: boolean } = {}
+	) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.getTab(fileHandle)
 			if (tab)
@@ -184,7 +187,9 @@ export abstract class Project {
 					: undefined
 		}
 
-		this.tabSystem?.open(fileHandle, options)
+		if (!options.openInSplitScreen)
+			await this.tabSystem?.open(fileHandle, options)
+		else await this.inactiveTabSystem?.open(fileHandle, options)
 	}
 	async closeFile(fileHandle: AnyFileHandle) {
 		for (const tabSystem of this.tabSystems) {

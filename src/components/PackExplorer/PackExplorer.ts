@@ -109,9 +109,46 @@ export class PackExplorer extends SidebarContent {
 		entry: DirectoryEntry
 	) {
 		if (type === 'virtualFolder') return []
-		const project = await App.getApp().then((app) => app.project)
+		const app = await App.getApp()
+		const project = app.project
 
 		return [
+			...(type === 'file'
+				? [
+						(project.tabSystem?.tabs.length ?? 0) > 0
+							? {
+									icon: 'mdi-arrow-split-vertical',
+									name:
+										'windows.packExplorer.fileActions.openInSplitScreen.name',
+									description:
+										'windows.packExplorer.fileActions.openInSplitScreen.description',
+									onTrigger: async () => {
+										const handle = await app.fileSystem.getFileHandle(
+											entry.getPath()
+										)
+										project.openFile(handle, {
+											openInSplitScreen: true,
+										})
+									},
+							  }
+							: {
+									icon: 'mdi-plus',
+									name:
+										'windows.packExplorer.fileActions.open.name',
+									description:
+										'windows.packExplorer.fileActions.open.description',
+									onTrigger: async () => {
+										const handle = await app.fileSystem.getFileHandle(
+											entry.getPath()
+										)
+										project.openFile(handle)
+									},
+							  },
+						{
+							type: 'divider',
+						},
+				  ]
+				: []),
 			{
 				icon: 'mdi-delete-outline',
 				name: 'windows.packExplorer.fileActions.delete.name',
