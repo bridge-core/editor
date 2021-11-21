@@ -124,7 +124,7 @@ export class PackExplorer extends SidebarContent {
 										'windows.packExplorer.fileActions.openInSplitScreen.description',
 									onTrigger: async () => {
 										const handle = await app.fileSystem.getFileHandle(
-											entry.getPath()
+											path
 										)
 										project.openFile(handle, {
 											openInSplitScreen: true,

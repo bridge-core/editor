@@ -112,7 +112,7 @@ export class DirectoryEntry {
 	getPath() {
 		return this.path?.join('/') ?? []
 	}
-	getPathWithoutPack() {
+	protected getPathWithoutPack() {
 		const path = [...this.path]
 		path.shift()
 		return path.join('/')
