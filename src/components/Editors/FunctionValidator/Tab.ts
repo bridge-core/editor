@@ -233,20 +233,30 @@ export class FunctionValidatorTab extends Tab {
 				let read = dirtyString.value.substring(readStart, readEnd)
 
 				if (this.specialSymbols.includes(read)) {
-					foundTokens.push(new Token(read, 'Symbol', read.length))
+					foundTokens.push(
+						new Token(read, 'Symbol', readStart, readEnd)
+					)
 					found = true
 				} else if (this.isInt(read)) {
-					foundTokens.push(new Token(read, 'Integer', read.length))
+					foundTokens.push(
+						new Token(read, 'Integer', readStart, readEnd)
+					)
 					found = true
 					shouldCombine = true
 				} else if (this.isFloat(read)) {
-					foundTokens.push(new Token(read, 'Float', read.length))
+					foundTokens.push(
+						new Token(read, 'Float', readStart, readEnd)
+					)
 					found = true
 				} else if (read == 'true' || read == 'false') {
-					foundTokens.push(new Token(read, 'Boolean', read.length))
+					foundTokens.push(
+						new Token(read, 'Boolean', readStart, readEnd)
+					)
 					found = true
 				} else if (read == ' ') {
-					foundTokens.push(new Token(read, 'Space', read.length))
+					foundTokens.push(
+						new Token(read, 'Space', readStart, readEnd)
+					)
 					found = true
 				}
 
@@ -269,12 +279,8 @@ export class FunctionValidatorTab extends Tab {
 										readStart
 									) + whatToAdd,
 									'String',
-									(
-										dirtyString.value.substring(
-											lastUnexpected,
-											readStart
-										) + whatToAdd
-									).length
+									lastUnexpected,
+									readStart + whatToAdd.length
 								)
 							)
 						} else {
@@ -287,10 +293,8 @@ export class FunctionValidatorTab extends Tab {
 										readStart
 									),
 									'String',
-									dirtyString.value.substring(
-										lastUnexpected,
-										readStart
-									).length
+									lastUnexpected,
+									readStart
 								)
 							)
 						}
@@ -302,10 +306,8 @@ export class FunctionValidatorTab extends Tab {
 									readEnd
 								),
 								'String',
-								dirtyString.value.substring(
-									lastUnexpected,
-									readEnd
-								).length
+								lastUnexpected,
+								readStart
 							)
 						)
 					}
@@ -326,7 +328,9 @@ export class FunctionValidatorTab extends Tab {
 			foundTokens.push(
 				new Token(
 					dirtyString.value.substring(lastUnexpected, readEnd),
-					'String'
+					'String',
+					lastUnexpected,
+					readEnd
 				)
 			)
 
@@ -827,21 +831,6 @@ export class FunctionValidatorTab extends Tab {
 		return [errors, warnings]
 	}
 
-	protected GetTransformOfToken(tokens: Token[], token: Token) {
-		let start = 0
-
-		for (let i = 0; i < tokens.length; i++) {
-			if (token == tokens[i]) {
-				console.log(token)
-				return [start, start + token.size]
-			} else {
-				start += tokens[i].size
-			}
-		}
-
-		return [-1, -1]
-	}
-
 	//Gets Errors and Warnings
 	protected ValidateCommand<Array>(
 		command: string | null,
@@ -871,19 +860,33 @@ export class FunctionValidatorTab extends Tab {
 
 			for (let i = 0; i < splitStrings.length; i++) {
 				if (!inString) {
+					let tokenStart = 0
+
+					if (tokens.length > 0) {
+						tokenStart = tokens[tokens.length - 1].end + 1
+					}
+
 					tokens.push(
 						new Token(
 							splitStrings[i],
 							'Dirty',
-							splitStrings[i].length
+							tokenStart,
+							tokenStart + splitStrings[i].length
 						)
 					)
 				} else {
+					let tokenStart = 0
+
+					if (tokens.length > 0) {
+						tokenStart = tokens[tokens.length - 1].end + 1
+					}
+
 					tokens.push(
 						new Token(
 							splitStrings[i],
 							'Long String',
-							splitStrings[i].length
+							tokenStart,
+							tokenStart + splitStrings[i].length
 						)
 					)
 				}
@@ -893,24 +896,11 @@ export class FunctionValidatorTab extends Tab {
 			}
 
 			if (!inString) {
-				const errorDimensions = this.GetTransformOfToken(
-					tokens,
-					tokens[lastChange]
-				)
-
-				const endDimensions = this.GetTransformOfToken(
-					tokens,
-					tokens[tokens.length - 1]
-				)
-
-				console.log(errorDimensions)
-				console.log(endDimensions)
-
 				errors.push(
 					new SmartError(
 						this.translateError('unclosedString'),
-						errorDimensions[0],
-						endDimensions[1]
+						tokens[lastChange].start,
+						tokens[tokens.length - 1].end
 					)
 				)
 				return [errors, warnings]
@@ -960,8 +950,8 @@ export class FunctionValidatorTab extends Tab {
 							this.translateError('invalidCommand.part1') +
 								baseCommand.value +
 								this.translateError('invalidCommand.part2'),
-							0,
-							baseCommand.size
+							baseCommand.start,
+							baseCommand.end
 						)
 					)
 
