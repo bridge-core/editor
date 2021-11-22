@@ -401,13 +401,19 @@ export class FunctionValidatorTab extends Tab {
 		return false
 	}
 
-	protected ValidateSelector(tokens: Token[]) {
-		let errors: string[] = []
+	protected ValidateSelector(
+		tokens: Token[],
+		start: number,
+		end: number
+	): any {
+		console.log(Array.from(tokens))
+
+		let errors: SmartError[] = []
 		let warnings: string[] = []
 
 		if (tokens.length == 0) {
-			//Unexpected empty selector
-			errors.push(this.translateError('emptyComplexConstructor'))
+			errors.push(new SmartError('emptyComplexConstructor', start, end))
+
 			return [errors, warnings]
 		}
 
@@ -416,16 +422,19 @@ export class FunctionValidatorTab extends Tab {
 		for (let i = 0; i < tokens.length / 4; i++) {
 			const offset = i * 4
 
-			if (tokens[0 + offset].type != 'String') {
+			if (tokens[offset].type != 'String') {
 				errors.push(
-					this.translateError(
-						'complexConstructorExpectedStringAsAttribute'
+					new SmartError(
+						'complexConstructorExpectedStringAsAttribute',
+						tokens[offset].start,
+						tokens[offset].end
 					)
 				)
+
 				return [errors, warnings]
 			}
 
-			let targetAtribute = tokens[0 + offset].value
+			let targetAtribute = tokens[offset].value
 			let found = false
 			let argData = null
 
@@ -440,33 +449,56 @@ export class FunctionValidatorTab extends Tab {
 			}
 
 			if (!found) {
-				//Error unxexpected selector atribute
 				errors.push(
-					this.translateError('invalidSelectorAttribute.part1') +
-						targetAtribute +
-						this.translateError('invalidSelectorAttribute.part2')
+					new SmartError(
+						[
+							'invalidSelectorAttribute.part1',
+							'$' + targetAtribute,
+							'invalidSelectorAttribute.part2',
+						],
+						tokens[offset].start,
+						tokens[offset].end
+					)
 				)
 
 				return [errors, warnings]
 			}
 
 			if (1 + offset >= tokens.length) {
-				//Error expected '='
-				errors.push(this.translateError('expectedEqualsButNothing'))
+				errors.push(
+					new SmartError(
+						'expectedEqualsButNothing',
+						tokens[offset].start,
+						tokens[offset].end
+					)
+				)
+
 				return [errors, warnings]
 			}
 
 			if (
 				!(tokens[1 + offset].value == '=' && tokens[1].type == 'Symbol')
 			) {
-				//Error expected '='
-				errors.push(this.translateError('expectedEquals'))
+				errors.push(
+					new SmartError(
+						'expectedEquals',
+						tokens[offset + 1].start,
+						tokens[offset + 1].end
+					)
+				)
+
 				return [errors, warnings]
 			}
 
 			if (2 + offset >= tokens.length) {
-				//Error expected value
-				errors.push(this.translateError('expectedValueButNothing'))
+				errors.push(
+					new SmartError(
+						'expectedValueButNothing',
+						tokens[offset + 1].start,
+						tokens[offset + 1].end
+					)
+				)
+
 				return [errors, warnings]
 			}
 
@@ -483,14 +515,18 @@ export class FunctionValidatorTab extends Tab {
 
 			if (argData.additionalData) {
 				if (!argData.additionalData.supportsNegation && negated) {
-					//Error negation not supported
 					errors.push(
-						this.translateError('attributeNegationSupport.part1') +
-							targetAtribute +
-							this.translateError(
-								'attributeNegationSupport.part2'
-							)
+						new SmartError(
+							[
+								'attributeNegationSupport.part1',
+								'$' + targetAtribute,
+								'attributeNegationSupport.part2',
+							],
+							tokens[2 + offset].start,
+							value.end
+						)
 					)
+
 					return [errors, warnings]
 				}
 
@@ -499,12 +535,18 @@ export class FunctionValidatorTab extends Tab {
 						'never' &&
 					confirmedAtributes.includes(targetAtribute)
 				) {
-					//Error multiple instances of this atribute not allowed
 					errors.push(
-						this.translateError('multipleInstancesNever.part1') +
-							targetAtribute +
-							this.translateError('multipleInstancesNever.part2')
+						new SmartError(
+							[
+								'multipleInstancesNever.part1',
+								'$' + targetAtribute,
+								'multipleInstancesNever.part2',
+							],
+							tokens[offset].start,
+							value.end
+						)
 					)
+
 					return [errors, warnings]
 				}
 
@@ -514,12 +556,18 @@ export class FunctionValidatorTab extends Tab {
 					!negated &&
 					confirmedAtributes.includes(targetAtribute)
 				) {
-					//Error multiple instances of this atribute not allowed when negated
 					errors.push(
-						this.translateError('multipleInstancesNegated.part1') +
-							targetAtribute +
-							+this.translateError('multipleInstances.part2')
+						new SmartError(
+							[
+								'multipleInstancesNegated.part1',
+								'$' + targetAtribute,
+								'multipleInstances.part2',
+							],
+							tokens[offset].start,
+							value.end
+						)
 					)
+
 					return [errors, warnings]
 				}
 
@@ -530,31 +578,37 @@ export class FunctionValidatorTab extends Tab {
 				}
 
 				if (!this.MatchTypes(value.type, targetType)) {
-					//Error expected type
 					errors.push(
-						this.translateError(
-							'selectorAttributeTypeMismatch.part1'
-						) +
-							targetType +
-							this.translateError(
-								'selectorAttributeTypeMismatch.part2'
-							) +
-							value.type +
-							this.translateError(
-								'selectorAttributeTypeMismatch.part3'
-							)
+						new SmartError(
+							[
+								'selectorAttributeTypeMismatch.part1',
+								'$' + targetType,
+								'selectorAttributeTypeMismatch.part2',
+								'$' + value.type,
+								'selectorAttributeTypeMismatch.part3',
+							],
+							value.start,
+							value.end
+						)
 					)
+
 					return [errors, warnings]
 				}
 
 				if (argData.additionalData.values) {
 					if (!argData.additionalData.values.includes(value.value)) {
-						//Error unexpected value
 						errors.push(
-							this.translateError('selectorNotValid.part1') +
-								value.value +
-								this.translateError('selectorNotValid.part2')
+							new SmartError(
+								[
+									'selectorNotValid.part1',
+									'$' + value.type,
+									'selectorNotValid.part2',
+								],
+								value.start,
+								value.end
+							)
 						)
+
 						return [errors, warnings]
 					}
 				}
@@ -617,11 +671,18 @@ export class FunctionValidatorTab extends Tab {
 
 			if (possibleComaPos + offset < tokens.length) {
 				if (
-					tokens[possibleComaPos + offset].value == ',' &&
-					tokens[possibleComaPos + offset].type == 'Symbol'
+					!(
+						tokens[possibleComaPos + offset].value == ',' &&
+						tokens[possibleComaPos + offset].type == 'Symbol'
+					)
 				) {
-					//Error expected ','
-					errors.push(this.translateError('expectedComa'))
+					errors.push(
+						new SmartError(
+							'expectedComa',
+							tokens[possibleComaPos + offset - 1].start,
+							tokens[possibleComaPos + offset - 1].end
+						)
+					)
 					return [errors, warnings]
 				}
 			}
@@ -1397,6 +1458,9 @@ export class FunctionValidatorTab extends Tab {
 				let inSelector = false
 				let selectorToReconstruct: Token[] = []
 
+				let startBracketPos = 0
+				let endBracketPos = 0
+
 				for (let i = 0; i < tokens.length; i++) {
 					const token = tokens[i]
 
@@ -1437,13 +1501,18 @@ export class FunctionValidatorTab extends Tab {
 							}
 
 							inSelector = true
+
+							startBracketPos = tokens[i - 1].start
 						}
 					} else if (token.type == 'Symbol' && token.value == ']') {
 						if (inSelector) {
 							inSelector = false
+							endBracketPos = tokens[i].end
 
 							let result = this.ValidateSelector(
-								selectorToReconstruct
+								selectorToReconstruct,
+								startBracketPos,
+								endBracketPos
 							)
 
 							errors = errors.concat(result[0])
@@ -1676,7 +1745,7 @@ export class FunctionValidatorTab extends Tab {
 
 						let translated = ''
 
-						if (typeof data[0][i] === 'string') {
+						if (typeof data[0][i].value === 'string') {
 							translated = this.translateError(data[0][i].value)
 						} else {
 							for (let j = 0; j < data[0][i].value.length; j++) {
