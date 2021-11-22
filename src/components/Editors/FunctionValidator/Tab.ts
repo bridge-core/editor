@@ -679,8 +679,8 @@ export class FunctionValidatorTab extends Tab {
 					errors.push(
 						new SmartError(
 							'expectedComa',
-							tokens[possibleComaPos + offset - 1].start,
-							tokens[possibleComaPos + offset - 1].end
+							tokens[possibleComaPos + offset].start,
+							tokens[possibleComaPos + offset].end
 						)
 					)
 					return [errors, warnings]
@@ -716,13 +716,17 @@ export class FunctionValidatorTab extends Tab {
 		return [errors, warnings]
 	}
 
-	protected ValidateScoreData(tokens: Token[]) {
-		let errors: string[] = []
+	protected ValidateScoreData(
+		tokens: Token[],
+		start: number,
+		end: number
+	): any {
+		let errors: SmartError[] = []
 		let warnings: string[] = []
 
 		if (tokens.length == 0) {
 			//Unexpected empty score data
-			errors.push(this.translateError('emptyScoreData'))
+			errors.push(new SmartError('emptyScoreData', start, end))
 			return [errors, warnings]
 		}
 
@@ -731,44 +735,81 @@ export class FunctionValidatorTab extends Tab {
 		for (let i = 0; i < tokens.length / 4; i++) {
 			const offset = i * 4
 
-			let targetValue = tokens[0 + offset].value
+			let targetValue = tokens[offset].value
 
-			if (tokens[0 + offset].type != 'String') {
+			if (tokens[offset].type != 'String') {
 				errors.push(
-					this.translateError('scoreDataExpectedStringAsValue')
+					new SmartError(
+						'scoreDataExpectedStringAsValue',
+						tokens[offset].start,
+						tokens[offset].end
+					)
 				)
+
 				return [errors, warnings]
 			}
 
 			if (1 + offset >= tokens.length) {
-				//Error expected '='
-				errors.push(this.translateError('expectedEqualsButNothing'))
+				errors.push(
+					new SmartError(
+						'expectedEqualsButNothing',
+						tokens[offset].start,
+						tokens[offset].end
+					)
+				)
+
 				return [errors, warnings]
 			}
 
 			if (
 				!(tokens[1 + offset].value == '=' && tokens[1].type == 'Symbol')
 			) {
-				//Error expected '='
-				errors.push(this.translateError('expectedEquals'))
+				errors.push(
+					new SmartError(
+						'expectedEquals',
+						tokens[offset + 1].start,
+						tokens[offset + 1].end
+					)
+				)
+
 				return [errors, warnings]
 			}
 
 			if (2 + offset >= tokens.length) {
-				//Error expected value
-				errors.push(this.translateError('expectedValueButNothing'))
+				errors.push(
+					new SmartError(
+						'expectedValueButNothing',
+						tokens[offset + 1].start,
+						tokens[offset + 1].end
+					)
+				)
+
 				return [errors, warnings]
 			}
 
 			let value = tokens[2 + offset]
 
 			if (!this.MatchTypes(value.type, 'Score')) {
-				errors.push(this.translateError('invalidScoreType'))
+				errors.push(
+					new SmartError(
+						'invalidScoreType',
+						tokens[offset + 2].start,
+						tokens[offset + 2].end
+					)
+				)
+
 				return [errors, warnings]
 			}
 
 			if (confirmedValues.includes(value.value)) {
-				errors.push(this.translateError('repeatOfSameScore'))
+				errors.push(
+					new SmartError(
+						'repeatOfSameScore',
+						tokens[offset + 2].start,
+						tokens[offset + 2].end
+					)
+				)
+
 				return [errors, warnings]
 			}
 
@@ -779,8 +820,14 @@ export class FunctionValidatorTab extends Tab {
 						tokens[3 + offset].type == 'Symbol'
 					)
 				) {
-					//Error expected ','
-					errors.push(this.translateError('expectedComa'))
+					errors.push(
+						new SmartError(
+							'expectedComa',
+							tokens[offset + 3].start,
+							tokens[offset + 3].end
+						)
+					)
+
 					return [errors, warnings]
 				}
 			}
@@ -1269,6 +1316,9 @@ export class FunctionValidatorTab extends Tab {
 				let inScoreData = false
 				let scoreDataToReconstruct: Token[] = []
 
+				let startBracketPos = 0
+				let endBracketPos = 0
+
 				for (let i = 0; i < tokens.length; i++) {
 					const token = tokens[i]
 
@@ -1285,13 +1335,19 @@ export class FunctionValidatorTab extends Tab {
 							return [errors, warnings]
 						} else {
 							inScoreData = true
+
+							startBracketPos = token.start
 						}
 					} else if (token.type == 'Symbol' && token.value == '}') {
 						if (inScoreData) {
 							inScoreData = false
 
+							endBracketPos = token.end
+
 							let result = this.ValidateScoreData(
-								scoreDataToReconstruct
+								scoreDataToReconstruct,
+								startBracketPos,
+								endBracketPos
 							)
 
 							errors = errors.concat(result[0])
@@ -1458,8 +1514,8 @@ export class FunctionValidatorTab extends Tab {
 				let inSelector = false
 				let selectorToReconstruct: Token[] = []
 
-				let startBracketPos = 0
-				let endBracketPos = 0
+				startBracketPos = 0
+				endBracketPos = 0
 
 				for (let i = 0; i < tokens.length; i++) {
 					const token = tokens[i]
@@ -1502,12 +1558,12 @@ export class FunctionValidatorTab extends Tab {
 
 							inSelector = true
 
-							startBracketPos = tokens[i - 1].start
+							startBracketPos = token.start
 						}
 					} else if (token.type == 'Symbol' && token.value == ']') {
 						if (inSelector) {
 							inSelector = false
-							endBracketPos = tokens[i].end
+							endBracketPos = token.end
 
 							let result = this.ValidateSelector(
 								selectorToReconstruct,
