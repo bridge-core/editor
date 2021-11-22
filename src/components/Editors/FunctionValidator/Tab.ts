@@ -898,7 +898,7 @@ export class FunctionValidatorTab extends Tab {
 			if (!inString) {
 				errors.push(
 					new SmartError(
-						this.translateError('unclosedString'),
+						'unclosedString',
 						tokens[lastChange].start,
 						tokens[tokens.length - 1].end
 					)
@@ -924,13 +924,19 @@ export class FunctionValidatorTab extends Tab {
 
 			if (tokens.length > 0) {
 				if (tokens[0].type == 'Space') {
-					errors.push(this.translateError('spaceAtStart'))
+					errors.push(
+						new SmartError(
+							'spaceAtStart',
+							tokens[lastChange].start,
+							tokens[lastChange].end
+						)
+					)
 
 					return [errors, warnings]
 				}
 
 				if (tokens.length == 0) {
-					errors.push(this.translateError('emptyCommand'))
+					errors.push(new SmartError('emptyCommand'))
 
 					return [errors, warnings]
 				}
@@ -940,11 +946,7 @@ export class FunctionValidatorTab extends Tab {
 				//Test for basic command
 				baseCommand = tokens.shift()!
 
-				console.log(Array.from(tokens))
-
 				if (!this.validCommands.includes(baseCommand.value)) {
-					console.log(baseCommand)
-
 					errors.push(
 						new SmartError(
 							this.translateError('invalidCommand.part1') +
@@ -965,17 +967,37 @@ export class FunctionValidatorTab extends Tab {
 					if (token.type == 'Symbol' && token.value == ':') {
 						if (i + 1 >= tokens.length) {
 							errors.push(
-								this.translateError('gotColonButNothing')
+								new SmartError(
+									'gotColonButNothing',
+									token.start,
+									token.end
+								)
 							)
+
 							return [errors, warnings]
 						}
 
-						if (i + -1 < 0) {
+						if (i - 1 < 0) {
 							errors.push(
-								this.translateError(
-									'missingFirstValueInIdentifierButNothing'
+								new SmartError(
+									'missingFirstValueInIdentifierButNothing',
+									token.start,
+									token.end
 								)
 							)
+
+							return [errors, warnings]
+						}
+
+						if (tokens[i - 1].type == 'Space') {
+							errors.push(
+								new SmartError(
+									'missingFirstValueInIdentifierButNothing',
+									token.start,
+									token.end
+								)
+							)
+
 							return [errors, warnings]
 						}
 
@@ -1042,12 +1064,14 @@ export class FunctionValidatorTab extends Tab {
 
 					if (token.type == 'Symbol' && token.value == '{') {
 						if (inJSON) {
-							//Unexpected [
 							errors.push(
-								this.translateError(
-									'unexpectedOpenCurlyBracket'
+								new SmartError(
+									'unexpectedOpenCurlyBracket',
+									token.start,
+									token.end
 								)
 							)
+
 							return [errors, warnings]
 						} else {
 							inJSON = true
@@ -1057,13 +1081,6 @@ export class FunctionValidatorTab extends Tab {
 							inJSON = false
 
 							let result = this.ValidateJSON(JSONToReconstruct)
-
-							/*errors = errors.concat(result[0])
-							warnings = warnings.concat(result[1])
-
-							if (errors.length > 0) {
-								return [errors, warnings]
-							}*/
 
 							if (result[0].length == 0) {
 								let startingPoint =
@@ -1081,10 +1098,11 @@ export class FunctionValidatorTab extends Tab {
 
 							JSONToReconstruct = []
 						} else {
-							//Unexpected ]
 							errors.push(
-								this.translateError(
-									'unexpectedClosedCurlyBracket'
+								new SmartError(
+									'unexpectedClosedCurlyBracket',
+									token.start,
+									token.end
 								)
 							)
 							return [errors, warnings]
@@ -1101,30 +1119,39 @@ export class FunctionValidatorTab extends Tab {
 					const token = tokens[i]
 
 					if (token.type == 'Symbol' && token.value == '.') {
-						if (i + 1 >= tokens.length) {
+						if (i + -1 < 0) {
 							errors.push(
-								this.translateError(
-									'missingDotInRangeButNothing'
+								new SmartError(
+									'missingFirstNumberInRangeButNothing',
+									token.start,
+									token.end
 								)
 							)
+
+							return [errors, warnings]
+						}
+
+						if (i + 1 >= tokens.length) {
+							errors.push(
+								new SmartError(
+									'missingDotInRangeButNothing',
+									tokens[i - 1].start,
+									token.end
+								)
+							)
+
 							return [errors, warnings]
 						}
 
 						if (i + 2 >= tokens.length) {
 							errors.push(
-								this.translateError(
-									'missingSecondNumberInRangeButNothing'
+								new SmartError(
+									'missingSecondNumberInRangeButNothing',
+									tokens[i - 1].start,
+									tokens[i + 1].end
 								)
 							)
-							return [errors, warnings]
-						}
 
-						if (i + -1 < 0) {
-							errors.push(
-								this.translateError(
-									'missingFirstNumberInRangeButNothing'
-								)
-							)
 							return [errors, warnings]
 						}
 
@@ -1132,26 +1159,39 @@ export class FunctionValidatorTab extends Tab {
 						let secondNum = tokens[i + 2]
 						let dot = tokens[i + 1]
 
-						if (!(dot.value == '.' && dot.type == 'Symbol')) {
+						if (firstNum.type != 'Integer') {
 							errors.push(
-								this.translateError('missingDotInRange')
+								new SmartError(
+									'missingFirstNumberInRange',
+									token.start,
+									token.end
+								)
 							)
+
 							return [errors, warnings]
 						}
 
-						if (firstNum.type != 'Integer') {
+						if (!(dot.value == '.' && dot.type == 'Symbol')) {
 							errors.push(
-								this.translateError('missingFirstNumberInRange')
+								new SmartError(
+									'missingDotInRange',
+									tokens[i - 1].start,
+									token.end
+								)
 							)
+
 							return [errors, warnings]
 						}
 
 						if (secondNum.type != 'Integer') {
 							errors.push(
-								this.translateError(
-									'missingSecondNumberInRange'
+								new SmartError(
+									'missingSecondNumberInRange',
+									tokens[i - 1].start,
+									tokens[i + 1].end
 								)
 							)
+
 							return [errors, warnings]
 						}
 
@@ -1173,12 +1213,14 @@ export class FunctionValidatorTab extends Tab {
 
 					if (token.type == 'Symbol' && token.value == '{') {
 						if (inScoreData) {
-							//Unexpected [
 							errors.push(
-								this.translateError(
-									'unexpectedOpenCurlyBracket'
+								new SmartError(
+									'unexpectedOpenCurlyBracket',
+									token.start,
+									token.end
 								)
 							)
+
 							return [errors, warnings]
 						} else {
 							inScoreData = true
@@ -1212,12 +1254,14 @@ export class FunctionValidatorTab extends Tab {
 
 							scoreDataToReconstruct = []
 						} else {
-							//Unexpected ]
 							errors.push(
-								this.translateError(
-									'unexpectedClosedCurlyBracket'
+								new SmartError(
+									'unexpectedClosedCurlyBracket',
+									token.start,
+									token.end
 								)
 							)
+
 							return [errors, warnings]
 						}
 					} else {
@@ -1234,10 +1278,13 @@ export class FunctionValidatorTab extends Tab {
 					if (token.type == 'Symbol' && token.value == '@') {
 						if (i + 1 >= tokens.length) {
 							errors.push(
-								this.translateError(
-									'expectedLetterAfterAtButNothing'
+								new SmartError(
+									'expectedLetterAfterAtButNothing',
+									token.start,
+									token.end
 								)
 							)
+
 							return [errors, warnings]
 						}
 
@@ -1245,8 +1292,13 @@ export class FunctionValidatorTab extends Tab {
 
 						if (selectorTarget.type != 'String') {
 							errors.push(
-								this.translateError('expectedLetterAfterAt')
+								new SmartError(
+									'expectedLetterAfterAt',
+									token.start,
+									token.end
+								)
 							)
+
 							return [errors, warnings]
 						}
 
@@ -1254,9 +1306,15 @@ export class FunctionValidatorTab extends Tab {
 							!this.selectorTargets.includes(selectorTarget.value)
 						) {
 							errors.push(
-								this.translateError('invalidSelector.part1') +
-									selectorTarget +
-									this.translateError('invalidSelector.part2')
+								new SmartError(
+									[
+										'invalidSelector.part1',
+										'$' + selectorTarget.value,
+										'invalidSelector.part2',
+									],
+									token.start,
+									tokens[i + 1].end
+								)
 							)
 
 							return [errors, warnings]
@@ -1280,12 +1338,14 @@ export class FunctionValidatorTab extends Tab {
 
 					if (token.type == 'Symbol' && token.value == '[') {
 						if (inBlockState) {
-							//Unexpected [
 							errors.push(
-								this.translateError(
-									'unexpectedOpenSquareBracket'
+								new SmartError(
+									'unexpectedOpenSquareBracket',
+									token.start,
+									token.end
 								)
 							)
+
 							return [errors, warnings]
 						} else {
 							inBlockState = true
@@ -1316,12 +1376,14 @@ export class FunctionValidatorTab extends Tab {
 
 							blockStateToReconstruct = []
 						} else {
-							//Unexpected ]
 							errors.push(
-								this.translateError(
-									'unexpectedClosedSquareBracket'
+								new SmartError(
+									'unexpectedClosedSquareBracket',
+									token.start,
+									token.end
 								)
 							)
+
 							return [errors, warnings]
 						}
 					} else {
@@ -1340,29 +1402,37 @@ export class FunctionValidatorTab extends Tab {
 
 					if (token.type == 'Symbol' && token.value == '[') {
 						if (inSelector) {
-							//Unexpected [
 							errors.push(
-								this.translateError(
-									'unexpectedOpenSquareBracket'
+								new SmartError(
+									'unexpectedOpenSquareBracket',
+									token.start,
+									token.end
 								)
 							)
+
 							return [errors, warnings]
 						} else {
 							if (i - 1 < 0) {
 								errors.push(
-									this.translateError(
-										'selectorNotBeforeOpenSquareBracketButNothing'
+									new SmartError(
+										'selectorNotBeforeOpenSquareBracketButNothing',
+										token.start,
+										token.end
 									)
 								)
+
 								return [errors, warnings]
 							}
 
 							if (tokens[i - 1].type != 'Selector') {
 								errors.push(
-									this.translateError(
-										'selectorNotBeforeOpenSquareBracket'
+									new SmartError(
+										'selectorNotBeforeOpenSquareBracket',
+										token.start,
+										token.end
 									)
 								)
+
 								return [errors, warnings]
 							}
 
@@ -1397,12 +1467,14 @@ export class FunctionValidatorTab extends Tab {
 
 							selectorToReconstruct = []
 						} else {
-							//Unexpected ]
 							errors.push(
-								this.translateError(
-									'unexpectedClosedSquareBracket'
+								new SmartError(
+									'unexpectedClosedSquareBracket',
+									token.start,
+									token.end
 								)
 							)
+
 							return [errors, warnings]
 						}
 					} else {
@@ -1467,12 +1539,19 @@ export class FunctionValidatorTab extends Tab {
 
 			if (possibleCommandVariations.length == 0) {
 				errors.push(
-					this.translateError('noValidCommandVarsFound.part1') +
-						i +
-						this.translateError('noValidCommandVarsFound.part2') +
-						arg.type +
-						this.translateError('noValidCommandVarsFound.part3')
+					new SmartError(
+						[
+							'noValidCommandVarsFound.part1',
+							'$' + i,
+							'noValidCommandVarsFound.part2',
+							'$' + arg.type,
+							'noValidCommandVarsFound.part3',
+						],
+						arg.start,
+						arg.end
+					)
 				)
+
 				return [errors, warnings]
 			}
 
@@ -1495,10 +1574,17 @@ export class FunctionValidatorTab extends Tab {
 
 		if (possibleCommandVariations.length == 0) {
 			errors.push(
-				this.translateError('noValidCommandVarsFoundEnd.part1') +
-					tokens.length +
-					this.translateError('noValidCommandVarsFoundEnd.part2')
+				new SmartError(
+					[
+						'noValidCommandVarsFoundEnd.part1',
+						'$' + tokens.length,
+						'noValidCommandVarsFoundEnd.part2',
+					],
+					tokens[tokens.length - 1].start,
+					tokens[tokens.length - 1].end
+				)
 			)
+
 			return [errors, warnings]
 		}
 
@@ -1581,8 +1667,6 @@ export class FunctionValidatorTab extends Tab {
 					let currentErrorLines = []
 
 					for (let i = 0; i < data[0].length; i++) {
-						console.log(data[0][i])
-
 						const start = data[0][i].start
 						const end = data[0][i].end
 
@@ -1590,9 +1674,31 @@ export class FunctionValidatorTab extends Tab {
 
 						//TODO: Add suppport for multiple of these
 
+						let translated = ''
+
+						if (typeof data[0][i] === 'string') {
+							translated = this.translateError(data[0][i].value)
+						} else {
+							for (let j = 0; j < data[0][i].value.length; j++) {
+								console.log(data[0][i].value[j])
+
+								if (data[0][i].value[j].startsWith('$')) {
+									translated += data[0][i].value[j].substring(
+										1
+									)
+								} else {
+									translated += this.translateError(
+										data[0][i].value[j]
+									)
+								}
+							}
+						}
+
 						var ComponentClass = Vue.extend(Error)
 						var instance = new ComponentClass({
-							propsData: { alertText: data[0][i].value },
+							propsData: {
+								alertText: translated,
+							},
 						})
 
 						instance.$mount()
@@ -1600,9 +1706,15 @@ export class FunctionValidatorTab extends Tab {
 					}
 
 					for (let i = 0; i < data[1].length; i++) {
+						//TODO: correct translations for warnings
+
 						var ComponentClass = Vue.extend(Warning)
 						var instance = new ComponentClass({
-							propsData: { alertText: data[1][i].value },
+							propsData: {
+								alertText: this.translateWarning(
+									data[1][i].value
+								),
+							},
 						})
 
 						instance.$mount()
@@ -1612,8 +1724,6 @@ export class FunctionValidatorTab extends Tab {
 					if (fullCommmandDisplayElement) {
 						if (fullCommmandDisplayElement.innerHTML) {
 							for (let i = 0; i < currentErrorLines.length; i++) {
-								console.log(fullCommmandDisplayElement)
-
 								fullCommmandDisplayElement.innerHTML =
 									fullCommmandDisplayElement.innerHTML.substring(
 										0,

@@ -73,10 +73,11 @@ export default {
 <style>
 .error-line {
 	text-decoration-line: underline;
-	text-decoration-style: wavy;
+	text-decoration-style: solid;
 	text-decoration-color: var(--v-error-base);
 	text-decoration-skip-ink: none;
-	color: var(--v-error-base);
+	text-underline-offset: 0.1rem;
+	text-decoration-thickness: 0.15rem;
 }
 </style>
 

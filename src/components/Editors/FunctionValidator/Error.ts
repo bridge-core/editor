@@ -1,7 +1,7 @@
 export class SmartError {
 	constructor(
-		public value: string,
-		public start: number,
-		public end: number
+		public value: string | string[],
+		public start: number = 0,
+		public end: number = 0
 	) {}
 }
