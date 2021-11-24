@@ -13,6 +13,7 @@ import { Token } from './Token'
 import { markRaw } from '@vue/composition-api'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
 import { SmartError } from './Error'
+import { SmartWarning } from './Warning'
 
 export class FunctionValidatorTab extends Tab {
 	protected fileTab: FileTab | undefined
@@ -406,10 +407,8 @@ export class FunctionValidatorTab extends Tab {
 		start: number,
 		end: number
 	): any {
-		console.log(Array.from(tokens))
-
 		let errors: SmartError[] = []
-		let warnings: string[] = []
+		let warnings: SmartError[] = []
 
 		if (tokens.length == 0) {
 			errors.push(new SmartError('emptyComplexConstructor', start, end))
@@ -636,27 +635,51 @@ export class FunctionValidatorTab extends Tab {
 						//Warning maybe from wrong addon
 						if (targetAtribute == 'family') {
 							warnings.push(
-								this.translateWarning('schemaFamily.part1') +
-									value.value +
-									this.translateWarning('schemaFamily.part2')
+								new SmartWarning(
+									[
+										'schemaFamily.part1',
+										'$' + value.value,
+										'schemaFamily.part2',
+									],
+									value.start,
+									value.end
+								)
 							)
 						} else if (targetAtribute == 'type') {
 							warnings.push(
-								this.translateWarning('schemaType.part1') +
-									value.value +
-									this.translateWarning('schemaType.part2')
+								new SmartWarning(
+									[
+										'schemaType.part1',
+										'$' + value.value,
+										'schemaType.part2',
+									],
+									value.start,
+									value.end
+								)
 							)
 						} else if (targetAtribute == 'tag') {
 							warnings.push(
-								this.translateWarning('schemaTag.part1') +
-									value.value +
-									this.translateWarning('schemaTag.part2')
+								new SmartWarning(
+									[
+										'schemaTag.part1',
+										'$' + value.value,
+										'schemaTag.part2',
+									],
+									value.start,
+									value.end
+								)
 							)
 						} else {
 							warnings.push(
-								this.translateWarning('schemaValue.part1') +
-									value.value +
-									this.translateWarning('schemaValue.part2')
+								new SmartWarning(
+									[
+										'schemaValue.part1',
+										'$' + value.value,
+										'schemaValue.part2',
+									],
+									value.start,
+									value.end
+								)
 							)
 						}
 					}
@@ -693,7 +716,7 @@ export class FunctionValidatorTab extends Tab {
 
 	protected ValidateJSON(tokens: Token[]) {
 		let errors: string[] = []
-		let warnings: string[] = []
+		let warnings: SmartError[] = []
 
 		let reconstructedJSON = '{'
 
@@ -722,7 +745,7 @@ export class FunctionValidatorTab extends Tab {
 		end: number
 	): any {
 		let errors: SmartError[] = []
-		let warnings: string[] = []
+		let warnings: SmartError[] = []
 
 		if (tokens.length == 0) {
 			//Unexpected empty score data
@@ -840,7 +863,7 @@ export class FunctionValidatorTab extends Tab {
 
 	protected ValidateBlockState(tokens: Token[]) {
 		let errors: string[] = []
-		let warnings: string[] = []
+		let warnings: SmartError[] = []
 
 		if (tokens.length == 0) {
 			//Empty Block States Are Supported!
@@ -944,11 +967,11 @@ export class FunctionValidatorTab extends Tab {
 		command: string | null,
 		commandTokens: Token[] | null = null
 	) {
-		let errors: any[] = []
-		let warnings: string[] = []
+		let errors: SmartError[] = []
+		let warnings: any[] = []
 
 		if (!this.blockStateData) {
-			warnings.push(this.translateError('missingData'))
+			warnings.push(new SmartWarning('missingData', 0, 0))
 		}
 
 		//Seperate into strings by quotes for parsing
@@ -1797,16 +1820,12 @@ export class FunctionValidatorTab extends Tab {
 
 						currentErrorLines.push([start, end])
 
-						//TODO: Add suppport for multiple of these
-
 						let translated = ''
 
 						if (typeof data[0][i].value === 'string') {
 							translated = this.translateError(data[0][i].value)
 						} else {
 							for (let j = 0; j < data[0][i].value.length; j++) {
-								console.log(data[0][i].value[j])
-
 								if (data[0][i].value[j].startsWith('$')) {
 									translated += data[0][i].value[j].substring(
 										1
@@ -1830,15 +1849,36 @@ export class FunctionValidatorTab extends Tab {
 						alertsElement.appendChild(instance.$el)
 					}
 
+					let currentWarningLines = []
+
 					for (let i = 0; i < data[1].length; i++) {
-						//TODO: correct translations for warnings
+						const start = data[1][i].start
+						const end = data[1][i].end
+
+						currentWarningLines.push([start, end])
+
+						let translated = ''
+
+						if (typeof data[1][i].value === 'string') {
+							translated = this.translateWarning(data[1][i].value)
+						} else {
+							for (let j = 0; j < data[1][i].value.length; j++) {
+								if (data[1][i].value[j].startsWith('$')) {
+									translated += data[1][i].value[j].substring(
+										1
+									)
+								} else {
+									translated += this.translateWarning(
+										data[1][i].value[j]
+									)
+								}
+							}
+						}
 
 						var ComponentClass = Vue.extend(Warning)
 						var instance = new ComponentClass({
 							propsData: {
-								alertText: this.translateWarning(
-									data[1][i].value
-								),
+								alertText: translated,
 							},
 						})
 
@@ -1848,25 +1888,128 @@ export class FunctionValidatorTab extends Tab {
 
 					if (fullCommmandDisplayElement) {
 						if (fullCommmandDisplayElement.innerHTML) {
-							for (let i = 0; i < currentErrorLines.length; i++) {
-								fullCommmandDisplayElement.innerHTML =
-									fullCommmandDisplayElement.innerHTML.substring(
-										0,
-										14 + currentErrorLines[i][0]
-									) +
-									'<span class="error-line">' +
-									fullCommmandDisplayElement.innerHTML.substring(
-										14 + currentErrorLines[i][0],
-										14 + currentErrorLines[i][1]
-									) +
-									'</span>' +
-									fullCommmandDisplayElement.innerHTML.substring(
-										14 + currentErrorLines[i][1],
-										fullCommmandDisplayElement.innerHTML
-											.length
-									)
+							let writeOffset = 0
+							let writeIndex = 0
 
-								//TODO: Add suppport for multiple of these
+							for (
+								let i = 0;
+								i < fullCommmandDisplayElement.innerHTML.length;
+								i++
+							) {
+								console.log(i + ' : ' + writeIndex)
+								for (
+									let j = 0;
+									j < currentErrorLines.length;
+									j++
+								) {
+									console.log(
+										'    ' +
+											currentErrorLines[j][0] +
+											' : ' +
+											currentErrorLines[j][1]
+									)
+									if (currentErrorLines[j][0] == writeIndex) {
+										fullCommmandDisplayElement.innerHTML =
+											'Full Command: ' +
+											fullCommmandDisplayElement.innerHTML.substring(
+												14,
+												14 + i
+											) +
+											'<span class="error-line">' +
+											fullCommmandDisplayElement.innerHTML.substring(
+												14 + i,
+												fullCommmandDisplayElement
+													.innerHTML.length
+											)
+
+										console.log(
+											fullCommmandDisplayElement.innerHTML
+										)
+
+										i += 25
+									}
+
+									if (currentErrorLines[j][1] == writeIndex) {
+										fullCommmandDisplayElement.innerHTML =
+											'Full Command: ' +
+											fullCommmandDisplayElement.innerHTML.substring(
+												14,
+												14 + i
+											) +
+											'</span>' +
+											fullCommmandDisplayElement.innerHTML.substring(
+												14 + i,
+												fullCommmandDisplayElement
+													.innerHTML.length
+											)
+
+										console.log(
+											fullCommmandDisplayElement.innerHTML
+										)
+
+										i += 7
+									}
+								}
+
+								for (
+									let j = 0;
+									j < currentWarningLines.length;
+									j++
+								) {
+									console.log(
+										'    ' +
+											currentWarningLines[j][0] +
+											' : ' +
+											currentWarningLines[j][1]
+									)
+									if (
+										currentWarningLines[j][0] == writeIndex
+									) {
+										fullCommmandDisplayElement.innerHTML =
+											'Full Command: ' +
+											fullCommmandDisplayElement.innerHTML.substring(
+												14,
+												14 + i
+											) +
+											'<span class="warning-line">' +
+											fullCommmandDisplayElement.innerHTML.substring(
+												14 + i,
+												fullCommmandDisplayElement
+													.innerHTML.length
+											)
+
+										console.log(
+											fullCommmandDisplayElement.innerHTML
+										)
+
+										i += 27
+									}
+
+									if (
+										currentWarningLines[j][1] == writeIndex
+									) {
+										fullCommmandDisplayElement.innerHTML =
+											'Full Command: ' +
+											fullCommmandDisplayElement.innerHTML.substring(
+												14,
+												14 + i
+											) +
+											'</span>' +
+											fullCommmandDisplayElement.innerHTML.substring(
+												14 + i,
+												fullCommmandDisplayElement
+													.innerHTML.length
+											)
+
+										console.log(
+											fullCommmandDisplayElement.innerHTML
+										)
+
+										i += 7
+									}
+								}
+
+								writeIndex++
 							}
 						}
 					}
@@ -1914,11 +2057,6 @@ export class FunctionValidatorTab extends Tab {
 		if (!shouldStop) {
 			this.SlowStepLine()
 		}
-
-		/*while (!shouldStop) {
-			this.currentLine += 1
-			shouldStop = await this.loadCurrentLine()
-		}*/
 	}
 
 	protected async StepLine() {

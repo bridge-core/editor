@@ -1,6 +1,6 @@
-export class Warning {
+export class SmartWarning {
 	constructor(
-		public value: string,
+		public value: string | string[],
 		public start: number,
 		public end: number
 	) {}

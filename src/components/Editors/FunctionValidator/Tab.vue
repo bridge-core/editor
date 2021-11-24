@@ -79,6 +79,15 @@ export default {
 	text-underline-offset: 0.1rem;
 	text-decoration-thickness: 0.15rem;
 }
+
+.warning-line {
+	text-decoration-line: underline;
+	text-decoration-style: solid;
+	text-decoration-color: var(--v-warning-base);
+	text-decoration-skip-ink: none;
+	text-underline-offset: 0.1rem;
+	text-decoration-thickness: 0.15rem;
+}
 </style>
 
 <style scoped>
