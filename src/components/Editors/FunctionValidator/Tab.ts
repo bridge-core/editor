@@ -1739,8 +1739,29 @@ export class FunctionValidatorTab extends Tab {
 		return [errors, warnings]
 	}
 
+	protected UpdateLoadedState() {
+		let dataLoadingElement = document.getElementById('data-loading')
+		let loadedDataElement = document.getElementById('loaded-content')
+
+		if (this.blockStateData) {
+			if (dataLoadingElement) {
+				dataLoadingElement.classList.add('hidden')
+			}
+
+			if (loadedDataElement) {
+				loadedDataElement.classList.remove('hidden')
+			}
+		} else {
+			setTimeout(() => {
+				this.UpdateLoadedState()
+			}, 0)
+		}
+	}
+
 	//Displays data
 	protected async LoadCurrentLine<Boolean>() {
+		this.UpdateLoadedState()
+
 		let lines = this.content.split('\n')
 
 		if (this.currentLine < lines.length) {
@@ -1896,18 +1917,11 @@ export class FunctionValidatorTab extends Tab {
 								i < fullCommmandDisplayElement.innerHTML.length;
 								i++
 							) {
-								console.log(i + ' : ' + writeIndex)
 								for (
 									let j = 0;
 									j < currentErrorLines.length;
 									j++
 								) {
-									console.log(
-										'    ' +
-											currentErrorLines[j][0] +
-											' : ' +
-											currentErrorLines[j][1]
-									)
 									if (currentErrorLines[j][0] == writeIndex) {
 										fullCommmandDisplayElement.innerHTML =
 											'Full Command: ' +
@@ -1921,10 +1935,6 @@ export class FunctionValidatorTab extends Tab {
 												fullCommmandDisplayElement
 													.innerHTML.length
 											)
-
-										console.log(
-											fullCommmandDisplayElement.innerHTML
-										)
 
 										i += 25
 									}
@@ -1943,10 +1953,6 @@ export class FunctionValidatorTab extends Tab {
 													.innerHTML.length
 											)
 
-										console.log(
-											fullCommmandDisplayElement.innerHTML
-										)
-
 										i += 7
 									}
 								}
@@ -1956,12 +1962,6 @@ export class FunctionValidatorTab extends Tab {
 									j < currentWarningLines.length;
 									j++
 								) {
-									console.log(
-										'    ' +
-											currentWarningLines[j][0] +
-											' : ' +
-											currentWarningLines[j][1]
-									)
 									if (
 										currentWarningLines[j][0] == writeIndex
 									) {
@@ -1977,10 +1977,6 @@ export class FunctionValidatorTab extends Tab {
 												fullCommmandDisplayElement
 													.innerHTML.length
 											)
-
-										console.log(
-											fullCommmandDisplayElement.innerHTML
-										)
 
 										i += 27
 									}
@@ -2000,10 +1996,6 @@ export class FunctionValidatorTab extends Tab {
 												fullCommmandDisplayElement
 													.innerHTML.length
 											)
-
-										console.log(
-											fullCommmandDisplayElement.innerHTML
-										)
 
 										i += 7
 									}
