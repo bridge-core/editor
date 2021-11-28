@@ -1125,8 +1125,8 @@ export default {
 			},
 			arguments: {
 				noneValid: {
-					part1: '有効なコマンド形式ではありません。第',
-					part2: "引数が無効です。現在'",
+					part1: '有効なコマンド形式ではありません。 第',
+					part2: "引数が無効です。 現在'",
 					part3: "' 型はサポートされていません。",
 				},
 				noneValidEnd: {
