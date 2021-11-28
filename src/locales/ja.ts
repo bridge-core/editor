@@ -1020,12 +1020,14 @@ export default {
 		errors: {
 			emptyComplexConstructor: 'Unexpected empty complex selector!',
 			invalidSelectorAttribute: {
-				part1: "Invalid selector attribute '",
-				part2: "'!",
+				part1: "'",
+				part2: "'は無効なセレクター属性です。",
 			},
-			expectedEqualsButNothing: 'Expected equals sign but got nothing!',
-			expectedEquals: 'Expected equals sign!',
-			expectedValueButNothing: 'Expected value but got nothing!',
+			complexConstructorExpectedStringAsAttribute:
+				'セレクター属性名がありません',
+			expectedEqualsButNothing: 'セレクター属性の等号、値がありません',
+			expectedEquals: 'セレクター属性の等号がありません',
+			expectedValueButNothing: 'セレクター属性の値がありません',
 			attributeNegationSupport: {
 				part1: "Attribute '",
 				part2: "' does not support negation!",
@@ -1039,42 +1041,42 @@ export default {
 				part2: "' atribute not allowed when negated!",
 			},
 			selectorAttributeTypeMismatch: {
-				part1: "Expected value type of '",
-				part2: "', but got '",
-				part3: "'!",
+				part1: "セレクター属性値の型は'",
+				part2: "'です。'",
+				part3: "'ではありません。",
 			},
 			selectorValueNotValid: {
 				part1: "Value '",
 				part2: "' is not one of the expected values!",
 			},
-			expectedComma: 'Expected comma between selector attributes!',
-			unclosedString: 'Unclosed string!',
+			expectedComma: 'セレクタ属性の間にカンマが必要です。',
+			unclosedString: '"文字列の終わりに"がありません。',
 			invalidCommand: {
 				part1: "'",
-				part2: '" is not a valid command!',
+				part2: "' 無効なコマンドです。",
 			},
-			expectedLetterAfterAtButNothing: 'Expected leter after @!',
-			expectedLetterAfterAt: 'Expected letter after @!',
+			expectedLetterAfterAtButNothing: '@後がありません',
+			expectedLetterAfterAt: '@後が文字ではありません!',
 			invalidSelector: {
 				part1: '@',
-				part2: ' is not a valid selector!',
+				part2: ' は有効なセレクタではありません。',
 			},
-			unexpectedOpenSquareBracket: 'Unexpected [!',
+			unexpectedOpenSquareBracket: '予期しない[があります。',
 			selectorNotBeforeOpenSquareBracketButNothing:
-				'Either expected selector before [ or got an invalid block state!',
+				'[の前にセレクターが必要か無効なblock stateになっています。',
+			unexpectedClosedSquareBracket: '予期しない]があります。',
 			selectorNotBeforeOpenSquareBracket:
-				'Expected selector before [ or got an invalid block state!',
+				']の前にセレクターが必要か無効なblock stateになっています。',
 			unexpectedCloseSquareBracket: 'Unexpected ]',
 			noValidCommandVarsFound: {
-				part1: 'No valid command variations found! Argument ',
-				part2: " may be invalid! It is of type '",
-				part3:
-					"' but that type is not supported in the current variation tree.",
+				part1: '有効なコマンド形式ではありません。第',
+				part2: "引数が無効です。現在'",
+				part3: "' 型はサポートされていません。",
 			},
 			noValidCommandVarsFoundEnd: {
 				part1:
-					'No valid command variations found! You may be missing some arguments or argument ',
-				part2: ' may be invalid!',
+					'有効なコマンド形式ではありません。引数が不足しているか、第',
+				part2: '引数が無効です。',
 			},
 		},
 		warnings: {
