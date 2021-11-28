@@ -13,7 +13,7 @@ Vue.config.productionTip = false
 
 export const vuetify = new Vuetify({
 	lang: {
-		locales: { nl, de, en, ko, zhTW },
+		locales: { nl, de, en, ko, zhCN, zhTW },
 	},
 	breakpoint: {
 		mobileBreakpoint: 'xs',
