@@ -14,7 +14,11 @@ export interface ITabActionConfig {
 
 export interface ITabPreviewConfig {
 	name: string
-	fileMatch: string
+	/**
+	 * @deprecated Deprecated in favor of matching by file type
+	 */
+	fileMatch?: string
+	fileType: string
 	createPreview(tabSystem: TabSystem, tab: FileTab): Promise<Tab | undefined>
 }
 
@@ -57,9 +61,17 @@ export class TabActionProvider {
 		return this.register({
 			icon: 'mdi-play',
 			name: definition.name,
-			isFor: (fileTab) =>
-				fileTab instanceof FileTab &&
-				fileTab.getProjectPath().startsWith(definition.fileMatch),
+			isFor: (fileTab) => {
+				if (!(fileTab instanceof FileTab)) return false
+				else if (definition.fileType)
+					return fileTab.getFileType() === definition.fileType
+				else if (definition.fileMatch)
+					return fileTab
+						.getProjectPath()
+						.startsWith(definition.fileMatch)
+
+				return false
+			},
 			trigger: async (fileTab) => {
 				const app = await App.getApp()
 

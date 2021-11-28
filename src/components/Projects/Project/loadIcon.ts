@@ -1,22 +1,23 @@
+import type { Project } from './Project'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 
-export async function loadIcon(projectPath: string, fileSystem: FileSystem) {
+export async function loadIcon(project: Project, fileSystem: FileSystem) {
 	try {
 		return await loadAsDataURL(
-			`${projectPath}/BP/pack_icon.png`,
+			project.config.resolvePackPath('behaviorPack', 'pack_icon.png'),
 			fileSystem
 		)
 	} catch {}
 	try {
 		return await loadAsDataURL(
-			`${projectPath}/RP/pack_icon.png`,
+			project.config.resolvePackPath('resourcePack', 'pack_icon.png'),
 			fileSystem
 		)
 	} catch {}
 	try {
 		return await loadAsDataURL(
-			`${projectPath}/SP/pack_icon.png`,
+			project.config.resolvePackPath('skinPack', 'pack_icon.png'),
 			fileSystem
 		)
 	} catch {}

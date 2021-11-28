@@ -1,8 +1,6 @@
 import { platform } from '/@/utils/os'
 import { v4 as uuid } from 'uuid'
 import { App } from '/@/App'
-import { PackType } from '/@/components/Data/PackType'
-import { FileType } from '/@/components/Data/FileType'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { reactive } from '@vue/composition-api'
 import { settingsState } from '../Windows/Settings/SettingsState'
@@ -106,20 +104,15 @@ export class DirectoryEntry {
 		return this._isFile
 	}
 	get color() {
-		return PackType.get(this.getFullPath())?.color
+		return App.packType.get(this.getPath())?.color
 	}
 	get icon() {
-		return FileType.get(this.getPath())?.icon
-	}
-	getFullPath() {
-		return ['projects', App.instance.selectedProject]
-			.concat(this.path)
-			.join('/')
+		return App.fileType.get(this.getPath())?.icon
 	}
 	getPath() {
 		return this.path?.join('/') ?? []
 	}
-	getPathWithoutPack() {
+	protected getPathWithoutPack() {
 		const path = [...this.path]
 		path.shift()
 		return path.join('/')
@@ -144,7 +137,7 @@ export class DirectoryEntry {
 		if (this.isFile) {
 			App.ready.once(async (app) => {
 				const fileHandle = await app.fileSystem.getFileHandle(
-					this.getFullPath()
+					this.getPath()
 				)
 				await app.project?.openFile(fileHandle)
 			})

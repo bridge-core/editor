@@ -1,5 +1,5 @@
 import { FileTab } from '/@/components/TabSystem/FileTab'
-import { loadAsDataURL, loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
+import { loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
 import ImageTabComponent from './ImageTab.vue'
 import { AnyFileHandle } from '../../FileSystem/Types'
 

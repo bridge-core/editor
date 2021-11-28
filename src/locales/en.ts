@@ -24,16 +24,19 @@ export default {
 		inactive: 'Inactive',
 		active: 'Active',
 		later: 'Later',
+		clear: 'Clear',
+		reset: 'Reset',
 
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
 		fileSystemPolyfill:
-			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome or Edge!',
+			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome (excluding Chrome 93/94) or Edge!',
 		successfulExport: {
 			title: 'Export Successful',
 			description: 'You can find the exported package here',
 		},
 		experimentalGameplay: 'Experimental Gameplay',
+		textureLocation: 'Texture Location',
 	},
 	packType: {
 		behaviorPack: {
@@ -539,6 +542,33 @@ export default {
 		filePath: {
 			title: 'Choose File Path',
 		},
+		lootSimulatorSettings: {
+			title: 'Simulator Settings',
+			repeat: {
+				name: 'Repeat Options',
+				amount: {
+					name: 'Repeat',
+					description: 'Repeat the loot table a set amount of times',
+				},
+				itemFound: {
+					name: 'Item Identifier',
+					description:
+						'Run the loot table until an item stack with the specified identifier is found',
+				},
+				quantityFound: {
+					name: 'Quantity',
+					description:
+						'Run the loot table until an item stack with the specified quantity is found',
+				},
+			},
+			killConditions: {
+				looting: {
+					name: 'Looting Enchant',
+					description:
+						'The level of looting used to run the table, 0 for no looting',
+				},
+			},
+		},
 		packExplorer: {
 			title: 'Pack Explorer',
 			searchFiles: 'Search files...',
@@ -550,7 +580,7 @@ export default {
 			restartDevServer: {
 				name: 'Restart Dev Server',
 				description:
-					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project.",
+					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
 			},
 			createPreset: 'New File',
 			projectConfig: {
@@ -573,6 +603,14 @@ export default {
 				name: 'Export as .brproject',
 			},
 			fileActions: {
+				open: {
+					name: 'Open',
+					description: 'Open the file in the editor',
+				},
+				openInSplitScreen: {
+					name: 'Open in Split Screen',
+					description: 'Open the file in split screen mode',
+				},
 				delete: {
 					name: 'Delete',
 					description: 'Delete a file or folder',
@@ -605,6 +643,10 @@ export default {
 				createFolder: {
 					name: 'Create Folder',
 					description: 'Create a new folder',
+				},
+				findInFolder: {
+					name: 'Find in Folder',
+					description: 'Search the contents of a folder',
 				},
 			},
 		},
@@ -746,6 +788,11 @@ export default {
 					name: 'JSON Editor',
 					description: 'Choose how you want to edit JSON files',
 				},
+				bridgePredictions: {
+					name: 'bridge. Predictions',
+					description:
+						"Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly",
+				},
 				bracketPairColorization: {
 					name: 'Bracket Pair Colorization',
 					description: 'Give matching brackets an unique color',
@@ -808,7 +855,7 @@ export default {
 		browserUnsupported: {
 			title: 'Unsupported Browser',
 			description:
-				'Please use Chrome (Desktop) or Edge (Chromium) in order to get the best experience using bridge. v2! Your browser does not support saving files directly and syncing projects to your com.mojang folder.',
+				'Please use Chrome (Desktop, excluding Chrome 93/94) or Edge (Chromium) in order to get the best experience using bridge. v2! Your browser does not support saving files directly and syncing projects to your com.mojang folder.',
 			continue: 'Continue Anyways',
 		},
 		invalidJson: {
@@ -881,6 +928,8 @@ export default {
 		search: 'Search',
 		replace: 'Replace',
 		replaceAll: 'Replace All',
+		includeFiles: 'Files to Include',
+		excludeFiles: 'Files to Exclude',
 		noResults: 'No results found.',
 		noSearch:
 			'Once you start typing, results for your search query will appear here.',
@@ -892,12 +941,34 @@ export default {
 		viewParticle: 'View Particle',
 		viewEntity: 'View Entity',
 		viewBlock: 'View Block',
+		simulateLoot: 'Simulate Loot',
 		failedClientEntityLoad: 'Failed to load connected client entity',
 		invalidEntity:
 			'Cannot open preview for an entity with invalid JSON. Please fix JSON errors inside of the file and try again.',
 		chooseGeometry: 'Choose Geometry',
 		noGeometry:
 			'No valid geometry found inside of this file. Make sure that your JSON is valid, that the file structure is correct and that a geometry with the provided identifier exists.',
+		lootTableSimulator: {
+			emptyLootOutput:
+				'Output is empty, try running the loot table to collect results.',
+			data: {
+				value: 'Data Value',
+				enchantments: 'Enchantments',
+				blockStates: 'Block States',
+				itemAuxValue: 'Aux Value',
+				eggIdentifier: 'Spawns Entity',
+				bannerType: 'Banner Type',
+				bookData: {
+					view: 'View Book',
+					title: 'Title',
+					author: 'Author',
+				},
+				durability: 'Durability',
+				lore: 'Lore',
+				displayName: 'Display Name',
+				mapDestination: 'Map Destination',
+			},
+		},
 	},
 	initialSetup: {
 		welcome: 'Welcome to bridge. v2!',
@@ -951,10 +1022,98 @@ export default {
 	},
 	editors: {
 		treeEditor: {
+			add: 'Add',
 			addObject: 'Add Object',
 			addArray: 'Add Array',
 			addValue: 'Add Value',
+			forceValue: 'Force Value',
 			edit: 'Edit',
+		},
+	},
+	functionValidator: {
+		actionName: 'Validate Function',
+		tabName: 'Function Validator',
+		errors: {
+			emptyComplexConstructor: 'Unexpected empty complex selector!',
+			invalidSelectorAttribute: {
+				part1: "Invalid selector attribute '",
+				part2: "'!",
+			},
+			expectedEqualsButNothing: 'Expected equals sign but got nothing!',
+			expectedEquals: 'Expected equals sign!',
+			expectedValueButNothing: 'Expected value but got nothing!',
+			attributeNegationSupport: {
+				part1: "Attribute '",
+				part2: "' does not support negation!",
+			},
+			multipleInstancesNever: {
+				part1: "Multiple instances of attribute '",
+				part2: "' atribute not allowed!",
+			},
+			multipleInstancesNegated: {
+				part1: "Multiple instances of '",
+				part2: "' atribute not allowed when negated!",
+			},
+			selectorAttributeTypeMismatch: {
+				part1: "Expected value type of '",
+				part2: "', but got '",
+				part3: "'!",
+			},
+			selectorValueNotValid: {
+				part1: "Value '",
+				part2: "' is not one of the expected values!",
+			},
+			expectedComma: 'Expected comma between selector attributes!',
+			unclosedString: 'Unclosed string!',
+			invalidCommand: {
+				part1: "'",
+				part2: '" is not a valid command!',
+			},
+			expectedLetterAfterAtButNothing: 'Expected leter after @!',
+			expectedLetterAfterAt: 'Expected letter after @!',
+			invalidSelector: {
+				part1: '@',
+				part2: ' is not a valid selector!',
+			},
+			unexpectedOpenSquareBracket: 'Unexpected [!',
+			selectorNotBeforeOpenSquareBracketButNothing:
+				'Either expected selector before [ or got an invalid block state!',
+			selectorNotBeforeOpenSquareBracket:
+				'Expected selector before [ or got an invalid block state!',
+			unexpectedCloseSquareBracket: 'Unexpected ]',
+			noValidCommandVarsFound: {
+				part1: 'No valid command variations found! Argument ',
+				part2: " may be invalid! It is of type '",
+				part3:
+					"' but that type is not supported in the current variation tree.",
+			},
+			noValidCommandVarsFoundEnd: {
+				part1:
+					'No valid command variations found! You may be missing some arguments or argument ',
+				part2: ' may be invalid!',
+			},
+		},
+		warnings: {
+			schemaFamily: {
+				part1: "Could not find family '",
+				part2:
+					"'. This could either be a mistake or the family is from another addon.",
+			},
+			schemaType: {
+				part1: "Could not find type '",
+				part2:
+					"'. This could either be a mistake or the type is from another addon.",
+			},
+			schemaTag: {
+				part1: "Could not find tag '",
+				part2:
+					"'. This could either be a mistake or the tag is from another addon.",
+			},
+			schemaValue: {
+				part1: "Could not find schema value '",
+				part2:
+					"'. This could either be a mistake or the schema value is from another addon.",
+			},
 		},
 	},
 }

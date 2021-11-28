@@ -17,6 +17,10 @@ export function castType(value: string): any {
 		return undefined
 	} else if (isNumeric(value)) {
 		return Number(value)
+	} else if (typeof value === 'string') {
+		if (value.startsWith('"') && value.endsWith('"'))
+			return value.slice(1, -1)
+		return value
 	} else {
 		return value
 	}

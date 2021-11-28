@@ -73,7 +73,10 @@ export default defineConfig({
 				display: 'standalone',
 				background_color: '#0F0F0F',
 				// @ts-ignore
-				capture_links: ['existing-client-navigate'],
+				launch_handler: {
+					route_to: 'existing-client',
+					navigate_existing_client: 'never',
+				},
 				file_handlers: [
 					{
 						action: '/',

@@ -1,8 +1,7 @@
-import { FileType } from './FileType'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
-import { editor, languages, Uri } from 'monaco-editor'
-import { compare, CompareOperator } from 'compare-versions'
+import { languages, Uri } from 'monaco-editor'
+import { compare } from 'compare-versions'
 import { getLatestFormatVersion } from './FormatVersions'
 import { DataLoader } from './DataLoader'
 import { Tab } from '../TabSystem/CommonTab'
@@ -21,7 +20,7 @@ export class TypeLoader {
 		this.disposables = <IDisposable[]>[
 			App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
 				if (!tab.isForeignFile && tab instanceof FileTab)
-					this.setTypeEnv(tab.getProjectPath())
+					this.setTypeEnv(tab.getPath())
 			}),
 		]
 		if (filePath) await this.setTypeEnv(filePath)
@@ -57,8 +56,8 @@ export class TypeLoader {
 		this.typeDisposables.forEach((disposable) => disposable.dispose())
 		this.typeDisposables = []
 
-		await FileType.ready.fired
-		const { types = [] } = FileType.get(filePath) ?? {}
+		await App.fileType.ready.fired
+		const { types = [] } = App.fileType.get(filePath) ?? {}
 
 		const libs = await Promise.all(
 			types.map(async (type) => {

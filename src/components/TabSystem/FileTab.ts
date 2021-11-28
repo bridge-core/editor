@@ -2,8 +2,10 @@ import { Tab } from './CommonTab'
 import { TabSystem } from './TabSystem'
 import { v4 as uuid } from 'uuid'
 import { AnyFileHandle } from '../FileSystem/Types'
-import { FileType } from '../Data/FileType'
 import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
+import { App } from '/@/App'
+import { isUsingSaveAsPolyfill } from '../FileSystem/Polyfill'
+import { download } from '../FileSystem/saveOrDownload'
 
 export abstract class FileTab extends Tab {
 	public isForeignFile = false
@@ -18,35 +20,33 @@ export abstract class FileTab extends Tab {
 
 	async setup() {
 		this.isForeignFile = false
-		this.projectPath = await this.parent.projectRoot
+		this.path = await this.parent.app.fileSystem.baseDirectory
 			.resolve(<any>this.fileHandle)
 			.then((path) => path?.join('/'))
 
 		// If the resolve above failed, we are dealing with a file which doesn't belong to this project
-		if (!this.projectPath) {
+		if (!this.path || !this.parent.project.isFileWithinProject(this.path)) {
 			this.isForeignFile = true
 			let guessedFolder =
-				(await FileType.guessFolder(this.fileHandle)) ?? uuid()
+				(await App.fileType.guessFolder(this.fileHandle)) ?? uuid()
 			if (!guessedFolder.endsWith('/')) guessedFolder += '/'
 
-			this.projectPath = `${guessedFolder}${uuid()}/${
-				this.fileHandle.name
-			}`
+			this.path = `${guessedFolder}${uuid()}/${this.fileHandle.name}`
 		}
 
 		this.parent.project.packIndexer.once(async () => {
 			const packIndexer = this.parent.project.packIndexer.service
 
-			if (!(await packIndexer.hasFile(this.projectPath!))) {
+			if (!(await packIndexer.hasFile(this.path!))) {
 				await packIndexer.updateFile(
-					this.projectPath!,
+					this.path!,
 					await this.getFile().then((file) => file.text()),
 					this.isForeignFile
 				)
 
-				if (FileType.isJsonFile(this.getProjectPath())) {
+				if (App.fileType.isJsonFile(this.getPath())) {
 					this.parent.project.jsonDefaults.updateDynamicSchemas(
-						this.getProjectPath()
+						this.getPath()
 					)
 				}
 			}
@@ -59,7 +59,7 @@ export abstract class FileTab extends Tab {
 		return this.fileHandle.name
 	}
 	getFileType() {
-		return FileType.getId(this.getProjectPath())
+		return App.fileType.getId(this.getPath())
 	}
 
 	async is(tab: Tab): Promise<boolean> {
@@ -93,6 +93,7 @@ export abstract class FileTab extends Tab {
 			.showSaveFilePicker({
 				// @ts-ignore The type package doesn't know about suggestedName yet
 				suggestedName: this.fileHandle.name,
+				// @ts-ignore The type package doesn't know about startIn yet
 				startIn: this.fileHandle,
 			})
 			.catch(() => null)
@@ -111,5 +112,15 @@ export abstract class FileTab extends Tab {
 
 		// Add tab with new path to openedFiles list
 		if (!this.isForeignFile) this.parent.openedFiles.add(this.getPath())
+
+		// Download the file if the user is using a file system polyfill
+		if (isUsingSaveAsPolyfill) {
+			const file = await this.fileHandle.getFile()
+
+			download(
+				this.fileHandle.name,
+				new Uint8Array(await file.arrayBuffer())
+			)
+		}
 	}
 }

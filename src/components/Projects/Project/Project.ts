@@ -1,10 +1,10 @@
 import { App } from '/@/App'
 import { IOpenTabOptions, TabSystem } from '/@/components/TabSystem/TabSystem'
-import { IPackType, TPackTypeId } from '/@/components/Data/PackType'
-import { ProjectConfig, IConfigJson } from '../ProjectConfig'
+import { TPackTypeId } from '/@/components/Data/PackType'
+import { ProjectConfig, IConfigJson } from './Config'
 import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
-import { loadPacks } from './loadPacks'
+import { IPackData, loadPacks } from './loadPacks'
 import { PackIndexer } from '/@/components/PackIndexer/PackIndexer'
 import { ProjectManager } from '../ProjectManager'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
@@ -24,12 +24,14 @@ import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { getFolderDifference } from '/@/components/TabSystem/Util/FolderDifference'
+import { FileTypeLibrary } from '../../Data/FileType'
+import { relative } from '/@/utils/path'
 
 export interface IProjectData extends IConfigJson {
 	path: string
 	name: string
 	imgSrc: string
-	contains: (IPackType & { version: [number, number, number] })[]
+	contains: IPackData[]
 }
 
 export abstract class Project {
@@ -42,7 +44,9 @@ export abstract class Project {
 	public readonly compilerManager = new CompilerManager(this)
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
+
 	public readonly config: ProjectConfig
+	public readonly fileTypeLibrary: FileTypeLibrary
 	public readonly extensionLoader: ExtensionLoader
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
@@ -83,6 +87,7 @@ export abstract class Project {
 	) {
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
 		this.config = new ProjectConfig(this._fileSystem, this)
+		this.fileTypeLibrary = new FileTypeLibrary(this.config)
 		this.packIndexer = new PackIndexer(this, _baseDirectory)
 		this.extensionLoader = new ExtensionLoader(
 			app.fileSystem,
@@ -115,8 +120,12 @@ export abstract class Project {
 	abstract onCreate(): Promise<void> | void
 
 	async activate(isReload = false) {
+		App.fileType.setProjectConfig(this.config)
+		App.packType.setProjectConfig(this.config)
 		this.parent.title.setProject(this.name)
 		this.parent.activatedProject.dispatch(this)
+
+		await this.fileTypeLibrary.setup(this.app.dataLoader)
 
 		if (!isReload) {
 			for (const tabSystem of this.tabSystems) await tabSystem.activate()
@@ -126,9 +135,7 @@ export abstract class Project {
 
 		const selectedTab = this.tabSystem?.selectedTab
 		this.typeLoader.activate(
-			selectedTab instanceof FileTab
-				? selectedTab.getProjectPath()
-				: undefined
+			selectedTab instanceof FileTab ? selectedTab.getPath() : undefined
 		)
 
 		await this.packIndexer.activate(isReload)
@@ -168,7 +175,10 @@ export abstract class Project {
 		await this.activate(true)
 	}
 
-	async openFile(fileHandle: AnyFileHandle, options: IOpenTabOptions = {}) {
+	async openFile(
+		fileHandle: AnyFileHandle,
+		options: IOpenTabOptions & { openInSplitScreen?: boolean } = {}
+	) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.getTab(fileHandle)
 			if (tab)
@@ -177,7 +187,9 @@ export abstract class Project {
 					: undefined
 		}
 
-		this.tabSystem?.open(fileHandle, options)
+		if (!options.openInSplitScreen)
+			await this.tabSystem?.open(fileHandle, options)
+		else await this.inactiveTabSystem?.open(fileHandle, options)
 	}
 	async closeFile(fileHandle: AnyFileHandle) {
 		for (const tabSystem of this.tabSystems) {
@@ -194,8 +206,7 @@ export abstract class Project {
 	async getFileTabWithPath(filePath: string) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.get(
-				(tab) =>
-					tab instanceof FileTab && tab.getProjectPath() === filePath
+				(tab) => tab instanceof FileTab && tab.getPath() === filePath
 			)
 			if (tab !== undefined) return tab
 		}
@@ -227,7 +238,7 @@ export abstract class Project {
 			if (currentTabs.length === 1) currentTabs[0].setFolderName(null)
 			else {
 				const folderDifference = getFolderDifference(
-					currentTabs.map((tab) => tab.getProjectPath())
+					currentTabs.map((tab) => tab.getPath())
 				)
 				currentTabs.forEach((tab, i) =>
 					tab.setFolderName(folderDifference[i])
@@ -239,10 +250,8 @@ export abstract class Project {
 	absolutePath(filePath: string) {
 		return `projects/${this.name}/${filePath}`
 	}
-	getProjectPath(fileHandle: AnyFileHandle) {
-		return this.baseDirectory
-			.resolve(<any>fileHandle)
-			.then((path) => path?.join('/'))
+	relativePath(filePath: string) {
+		return relative(`projects/${this.name}`, filePath)
 	}
 
 	async updateFile(filePath: string) {
@@ -287,7 +296,7 @@ export abstract class Project {
 		const tab = await this.getFileTabWithPath(filePath)
 		if (tab && tab instanceof FileTab) return await tab.getFile()
 
-		return await this.fileSystem.readFile(filePath)
+		return await this.app.fileSystem.readFile(filePath)
 	}
 	setActiveTabSystem(tabSystem: TabSystem, value: boolean) {
 		this.tabSystems.forEach((tS) =>
@@ -305,8 +314,25 @@ export abstract class Project {
 	getPacks() {
 		return (this._projectData.contains ?? []).map((pack) => pack.id)
 	}
-	addPack(packType: IPackType & { version: [number, number, number] }) {
+	addPack(packType: IPackData) {
 		this._projectData.contains!.push(packType)
+	}
+	/**
+	 * @deprecated Use `project.config.resolvePackPath(...)` instead
+	 */
+	getFilePath(packId: TPackTypeId, filePath?: string) {
+		return this.config.resolvePackPath(packId, filePath)
+	}
+	isFileWithinAnyPack(filePath: string) {
+		return this.getPacks()
+			.map((packId) => this.config.resolvePackPath(packId))
+			.some((packPath) => filePath.startsWith(packPath))
+	}
+	isFileWithinProject(filePath: string) {
+		return (
+			filePath.startsWith(`projects/${this.name}/`) ||
+			this.isFileWithinAnyPack(filePath)
+		)
 	}
 
 	async loadProject() {
@@ -316,13 +342,10 @@ export abstract class Project {
 			...this.config.get(),
 			path: this.name,
 			name: this.name,
-			imgSrc: await loadIcon(
-				`projects/${this.name}`,
-				this.app.fileSystem
-			),
+			imgSrc: await loadIcon(this, this.app.fileSystem),
 			contains: [],
 		})
-		await loadPacks(this.app, this.name).then((packs) =>
+		await loadPacks(this.app, this).then((packs) =>
 			set(
 				this._projectData,
 				'contains',

@@ -1,7 +1,7 @@
 import { createNotification } from '../Notifications/create'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { FileSystem } from './FileSystem'
-import { isUsingFileSystemPolyfill } from './Polyfill'
+import { isUsingFileSystemPolyfill, isUsingOriginPrivateFs } from './Polyfill'
 import { App } from '/@/App'
 import { basename } from '/@/utils/path'
 
@@ -19,7 +19,7 @@ export async function saveOrDownload(
 		message: 'general.successfulExport.title',
 		isVisible: true,
 		onClick: () => {
-			if (isUsingFileSystemPolyfill) {
+			if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill) {
 				download(basename(filePath), fileData)
 			} else {
 				new InformationWindow({
@@ -33,7 +33,7 @@ export async function saveOrDownload(
 		},
 	})
 
-	if (!isUsingFileSystemPolyfill) {
+	if (!isUsingOriginPrivateFs || isUsingFileSystemPolyfill) {
 		await fileSystem.writeFile(filePath, fileData)
 	}
 }

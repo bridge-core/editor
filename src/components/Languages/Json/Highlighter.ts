@@ -1,7 +1,6 @@
 import { languages } from 'monaco-editor'
-import { FileType } from '/@/components/Data/FileType'
 import { TextTab } from '/@/components/Editors/Text/TextTab'
-import { ProjectConfig } from '/@/components/Projects/ProjectConfig'
+import { ProjectConfig } from '../../Projects/Project/Config'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
@@ -50,9 +49,9 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 			})
 		})
 
-		App.eventSystem.on('currentTabSwitched', (tab: Tab) =>
+		App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
 			this.loadWords(tab)
-		)
+		})
 		this.loadWords()
 	}
 
@@ -73,16 +72,16 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 	async loadWords(tabArg?: Tab) {
 		const app = await App.getApp()
 		await app.projectManager.projectReady.fired
-		await FileType.ready.fired
+		await App.fileType.ready.fired
 
 		const tab = tabArg ?? app.project.tabSystem?.selectedTab
 		if (!(tab instanceof TextTab) && !(tab instanceof TreeTab)) return
 
 		const { id, highlighterConfiguration = {} } =
-			FileType.get(tab.getProjectPath()) ?? {}
+			App.fileType.get(tab.getPath()) ?? {}
 
 		// We have already loaded the needed file type
-		if (!id) return this.resetWords(tab)
+		if (!id) return this.resetWords()
 		if (id === this.loadedFileType) return
 
 		this.dynamicKeywords = highlighterConfiguration.keywords ?? []
@@ -90,18 +89,18 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 		this.variables = highlighterConfiguration.variables ?? []
 		this.definitions = highlighterConfiguration.definitions ?? []
 
-		if (tab instanceof TextTab) this.updateHighlighter()
-		else if (tab instanceof TreeTab) this.dispatch(this.knownWords)
+		this.updateHighlighter()
+		this.dispatch(this.knownWords)
 		this.loadedFileType = id
 	}
-	resetWords(tab: TreeTab | TextTab) {
+	resetWords() {
 		this.dynamicKeywords = []
 		this.typeIdentifiers = []
 		this.variables = []
 		this.definitions = []
 
-		if (tab instanceof TextTab) this.updateHighlighter()
-		else if (tab instanceof TreeTab) this.dispatch(this.knownWords)
+		this.updateHighlighter()
+		this.dispatch(this.knownWords)
 		this.loadedFileType = 'unknown'
 	}
 
@@ -111,7 +110,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 			defaultToken: 'invalid',
 			tokenPostfix: '.json',
 
-			atoms: ['false', 'true', 'class', 'null'],
+			atoms: ['false', 'true', 'null'],
 			keywords: this.keywords,
 			typeIdentifiers: this.typeIdentifiers,
 			variables: this.variables,
@@ -213,12 +212,6 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 					[/@escapes/, 'string.escape'],
 					[/\\./, 'string.escape.invalid'],
 					[/"/, 'identifier', '@pop'],
-				],
-
-				bracketCounting: [
-					[/\{/, 'delimiter.bracket', '@bracketCounting'],
-					[/\}/, 'delimiter.bracket', '@pop'],
-					{ include: 'common' },
 				],
 			},
 		})

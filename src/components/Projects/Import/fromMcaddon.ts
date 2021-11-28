@@ -5,11 +5,12 @@ import { Unzipper } from '/@/components/FileSystem/Zip/Unzipper'
 import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
-import { PackType, TPackTypeId } from '/@/components/Data/PackType'
+import { TPackTypeId } from '/@/components/Data/PackType'
 import { CreateProjectWindow } from '../CreateProject/CreateProject'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { CreateConfig } from '../CreateProject/Files/Config'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { defaultPackPaths } from '../Project/Config'
 
 export async function importFromMcaddon(
 	fileHandle: AnyFileHandle,
@@ -63,7 +64,7 @@ export async function importFromMcaddon(
 			if (!packId) return
 
 			packs.push(packId)
-			const packPath = PackType.getPath(packId)
+			const packPath = defaultPackPaths[packId]
 			// Move the pack to the correct location
 			await fs.move(
 				`import/${pack.name}`,
@@ -114,7 +115,6 @@ function getPackId(modules: IManifestModule[]): TPackTypeId | undefined {
 		switch (type) {
 			case 'data':
 				return 'behaviorPack'
-
 			case 'resources':
 				return 'resourcePack'
 			case 'skin_pack':

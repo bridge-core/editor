@@ -32,26 +32,51 @@ export class RenderSubChunk {
 		const startZ = chunkZ * chunkSize
 
 		for (let y = 0; y < 16; y++) {
+			const correctedY = chunkY < 0 ? chunkSize - 1 - y : y
+
 			for (let z = 0; z < 16; z++) {
+				const correctedZ = chunkZ < 0 ? chunkSize - 1 - z : z
+
 				for (let x = 0; x < 16; x++) {
+					const correctedX = chunkX < 0 ? chunkSize - 1 - x : x
+
 					const block = this.subChunkInstance
 						.getLayer(0)
-						.getBlockAt(x, y, z)
+						.getBlockAt(correctedX, correctedY, correctedZ)
 
 					// The current voxel is not air, we may need to render faces for it
 					if (block.name !== 'minecraft:air') {
-						x = chunkX < 0 ? chunkSize - x : x
-						y = chunkY < 0 ? chunkSize - y : y
-						z = chunkZ < 0 ? chunkSize - z : z
+						// console.warn(
+						// 	chunkX,
+						// 	chunkY,
+						// 	chunkZ,
+						// 	correctedX,
+						// 	correctedY,
+						// 	correctedZ
+						// )
+						// console.log(
+						// 	'MAIN:',
+						// 	block.name,
+						// 	startX + correctedX,
+						// 	startY + correctedY,
+						// 	startZ + correctedZ
+						// )
 
 						// Do we need faces for the current voxel?
 						for (const { dir, corners, faces } of VoxelFaces) {
 							const neighbour = this.world.getBlockAt(
 								0,
-								startX + x + dir[0],
-								startY + y + dir[1],
-								startZ + z + dir[2]
+								startX + correctedX + dir[0],
+								startY + correctedY + dir[1],
+								startZ + correctedZ + dir[2]
 							)
+							// console.log(
+							// 	faces[0] + ':',
+							// 	neighbour.name,
+							// 	startX + correctedX + dir[0],
+							// 	startY + correctedY + dir[1],
+							// 	startZ + correctedZ + dir[2]
+							// )
 
 							// This voxel has a transparent voxel as a neighbour in the current direction -> add face
 							if (
@@ -102,7 +127,11 @@ export class RenderSubChunk {
 									// 		(uvY as number) =
 									// 			uvY === 0 ? 6 / 16 : 10 / 16
 									// }
-									positions.push(oX + x, oY + y, oZ + z)
+									positions.push(
+										oX + correctedX,
+										oY + correctedY,
+										oZ + correctedZ
+									)
 									normals.push(...dir)
 									uvs.push(
 										((voxelUVX + uvX) * tileSize) /

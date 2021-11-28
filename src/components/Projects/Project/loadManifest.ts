@@ -1,12 +1,8 @@
 import { App } from '/@/App'
 import { version as appVersion } from '/@/appVersion.json'
 
-export async function loadManifest(
-	app: App,
-	projectName: string,
-	packPath: string
-) {
-	const manifestPath = `projects/${projectName}/${packPath}/manifest.json`
+export async function loadManifest(app: App, packPath: string) {
+	const manifestPath = `${packPath}/manifest.json`
 	let manifest = await app.fileSystem.readJSON(manifestPath)
 
 	const generatedWithBridge: string[] | undefined =

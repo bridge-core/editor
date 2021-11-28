@@ -1,5 +1,11 @@
+// @ts-ignore Make "path" work on this worker
+globalThis.process = {
+	cwd: () => '',
+	env: {},
+}
+
 import '/@/components/FileSystem/Virtual/Comlink'
-import { FileType, IFileType } from '/@/components/Data/FileType'
+import { FileTypeLibrary, IFileType } from '/@/components/Data/FileType'
 import { expose } from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
@@ -11,9 +17,10 @@ import {
 } from './PackSpider/PackSpider'
 import { LightningCache } from './LightningCache/LightningCache'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { PackType } from '/@/components/Data/PackType'
+import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
+import { ProjectConfig } from '/@/components/Projects/Project/Config'
 export type { ILightningInstruction } from './LightningCache/LightningCache'
 
 export interface IPackIndexerOptions {
@@ -30,24 +37,39 @@ export class PackIndexerService extends TaskService<
 	protected packSpider: PackSpider
 	protected lightningCache: LightningCache
 	public fileSystem: FileSystem
+	public projectFileSystem: FileSystem
+	public globalFileSystem: FileSystem
+	public config: ProjectConfig
+	public fileType: FileTypeLibrary
+	public packType: PackTypeLibrary
 
 	constructor(
-		projectDirectory: AnyDirectoryHandle,
-		protected baseDirectory: AnyDirectoryHandle,
+		protected projectDirectory: AnyDirectoryHandle,
+		baseDirectory: AnyDirectoryHandle,
 		protected readonly options: IPackIndexerOptions
 	) {
 		super()
-		this.fileSystem = new FileSystem(projectDirectory)
-		this.lightningStore = new LightningStore(this.fileSystem)
+
+		this.fileSystem = new FileSystem(baseDirectory)
+		this.projectFileSystem = new FileSystem(projectDirectory)
+		this.config = new ProjectConfig(new FileSystem(projectDirectory))
+		this.fileType = new FileTypeLibrary(this.config)
+		this.packType = new PackTypeLibrary(this.config)
+
+		this.globalFileSystem = new FileSystem(baseDirectory)
+		this.lightningStore = new LightningStore(
+			this.projectFileSystem,
+			this.fileType
+		)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
-		FileType.setPluginFileTypes(options.pluginFileTypes)
+		this.fileType.setPluginFileTypes(options.pluginFileTypes)
 	}
 
 	getOptions() {
 		return {
-			projectDirectory: this.fileSystem.baseDirectory,
-			baseDirectory: this.baseDirectory,
+			projectDirectory: this.projectDirectory,
+			baseDirectory: this.fileSystem.baseDirectory,
 			...this.options,
 		}
 	}
@@ -58,8 +80,9 @@ export class PackIndexerService extends TaskService<
 
 		let dataLoader: DataLoader | undefined = new DataLoader()
 		await Promise.all([
-			FileType.setup(dataLoader),
-			PackType.setup(dataLoader),
+			this.fileType.setup(dataLoader),
+			this.packType.setup(dataLoader),
+			this.config.setup(false),
 		])
 		dataLoader = undefined
 
@@ -105,14 +128,14 @@ export class PackIndexerService extends TaskService<
 	}
 
 	updatePlugins(pluginFileTypes: IFileType[]) {
-		FileType.setPluginFileTypes(pluginFileTypes)
+		this.fileType.setPluginFileTypes(pluginFileTypes)
 	}
 
 	async readdir(path: string[]) {
 		if (this.options.disablePackSpider) {
 			if (path.length > 0)
 				return (
-					await this.fileSystem.readdir(path.join('/'), {
+					await this.globalFileSystem.readdir(path.join('/'), {
 						withFileTypes: true,
 					})
 				).map((dirent) => ({

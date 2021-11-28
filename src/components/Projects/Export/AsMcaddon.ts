@@ -1,10 +1,10 @@
-import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import {
+	isUsingFileSystemPolyfill,
+	isUsingOriginPrivateFs,
+} from '/@/components/FileSystem/Polyfill'
 import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
 import { ZipDirectory } from '/@/components/FileSystem/Zip/ZipDirectory'
 import { App } from '/@/App'
-import { createNotification } from '/@/components/Notifications/create'
-import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
-import { PackType } from '../../Data/PackType'
 
 export async function exportAsMcaddon() {
 	const app = await App.getApp()
@@ -13,13 +13,13 @@ export async function exportAsMcaddon() {
 	// Increment manifest versions if using a file system polyfill
 	// This allows user to simply import the file into Minecraft even if the same pack
 	// with a lower version number is already installed
-	if (isUsingFileSystemPolyfill) {
+	if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill) {
 		const fs = app.project.fileSystem
 
 		let manifests: Record<string, any> = {}
 
 		for (const pack of app.project.getPacks()) {
-			const packPath = PackType.getPath(pack)
+			const packPath = app.project.getFilePath(pack)
 
 			if (await fs.fileExists(`${packPath}/manifest.json`)) {
 				const manifest =

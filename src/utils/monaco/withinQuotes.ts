@@ -1,7 +1,12 @@
 import { editor, Position, Range } from 'monaco-editor'
 
 export function isWithinQuotes(model: editor.ITextModel, position: Position) {
-	const line = model.getLineContent(position.lineNumber)
+	let line: string
+	try {
+		line = model.getLineContent(position.lineNumber)
+	} catch {
+		return false
+	}
 
 	const wordStart = getPreviousQuote(line, position.column)
 	const wordEnd = getNextQuote(line, position.column)

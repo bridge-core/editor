@@ -1,7 +1,7 @@
 import { getLocation } from '/@/utils/monaco/getLocation'
 import { Uri, Range, editor, Position, CancellationToken } from 'monaco-editor'
 import { App } from '/@/App'
-import { FileType, IDefinition } from '/@/components/Data/FileType'
+import { IDefinition } from '/@/components/Data/FileType'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import { run } from '/@/components/Extensions/Scripts/run'
@@ -9,6 +9,7 @@ import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { findAsync } from '/@/utils/array/findAsync'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { isMatch } from '/@/utils/glob/isMatch'
+import { getCacheScriptEnv } from '../PackIndexer/Worker/LightningCache/CacheEnv'
 
 export class DefinitionProvider {
 	async provideDefinition(
@@ -18,11 +19,12 @@ export class DefinitionProvider {
 	) {
 		const app = await App.getApp()
 		const { word, range } = getJsonWordAtPosition(model, position)
-		const currentPath = app.project.tabSystem?.selectedTab?.getProjectPath()
+		const currentPath = app.project.tabSystem?.selectedTab?.getPath()
 		if (!currentPath) return
 
-		const { definitions } = FileType.get(currentPath) ?? {}
-		const lightningCache = await FileType.getLightningCache(currentPath)
+		const { definitions } = App.fileType.get(currentPath) ?? {}
+		const lightningCache = await App.fileType.getLightningCache(currentPath)
+
 		// lightningCache is string for lightning cache text scripts
 		if (
 			!definitions ||
@@ -32,7 +34,6 @@ export class DefinitionProvider {
 			return
 
 		const location = getLocation(model, position)
-
 		const { definitionId, transformedWord } = await this.getDefinition(
 			word,
 			location,
@@ -44,15 +45,13 @@ export class DefinitionProvider {
 		if (!definition) return
 		if (!Array.isArray(definition)) definition = [definition]
 
-		const projectName = app.project.name
 		const connectedFiles = await this.getFilePath(
 			transformedWord,
 			definition
 		)
 
 		const result = await Promise.all(
-			connectedFiles.map(async (file) => {
-				const filePath = `projects/${projectName}/${file}`
+			connectedFiles.map(async (filePath) => {
 				const uri = Uri.file(filePath)
 
 				if (!editor.getModel(uri)) {
@@ -124,19 +123,12 @@ export class DefinitionProvider {
 						if (transformedWord && script)
 							transformedWord = await run({
 								script,
+								async: true,
 								env: {
-									Bridge: {
-										value: transformedWord,
-										withExtension: (
-											basePath: string,
-											extensions: string[]
-										) =>
-											findFileExtension(
-												app.project.fileSystem,
-												basePath,
-												extensions
-											),
-									},
+									...getCacheScriptEnv(transformedWord, {
+										fileSystem: app.fileSystem,
+										config: app.project.config,
+									}),
 								},
 							})
 

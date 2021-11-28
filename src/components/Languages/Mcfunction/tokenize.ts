@@ -6,6 +6,7 @@
 export function tokenizeCommand(command: string) {
 	let curlyBrackets = 0
 	let squareBrackets = 0
+	let inQuotes = false
 
 	let i = 0
 	let wordStart = 0
@@ -24,7 +25,27 @@ export function tokenizeCommand(command: string) {
 			})
 			wordStart = i + 1
 			word = command[i]
+		} else if (command[i] === '"') {
+			word += command[i]
+
+			if (inQuotes) {
+				tokens.push({
+					startColumn: wordStart,
+					endColumn: i,
+					word,
+				})
+
+				wordStart = i + 1
+				word = ''
+			}
+			inQuotes = !inQuotes
 		} else if (command[i] === ' ' || command[i] === '\t') {
+			if (inQuotes) {
+				word += command[i]
+				i++
+				continue
+			}
+
 			if (curlyBrackets === 0 && squareBrackets === 0 && word !== '') {
 				tokens.push({
 					startColumn: wordStart,

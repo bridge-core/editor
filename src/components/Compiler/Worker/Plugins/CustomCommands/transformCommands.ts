@@ -7,7 +7,8 @@ import { tokenizeCommand } from '/@/components/Languages/Mcfunction/tokenize'
 export function transformCommands(
 	commands: string[],
 	dependencies: Record<string, Command>,
-	includeComments: boolean
+	includeComments: boolean,
+	nestingDepth: number = 0
 ) {
 	const processedCommands = []
 
@@ -47,7 +48,11 @@ export function transformCommands(
 
 			processedCommands.push(
 				...nestedCommand
-					.process(`${nestedCommandName} ${nestedArgs.join(' ')}`)
+					.process(
+						`${nestedCommandName} ${nestedArgs.join(' ')}`,
+						dependencies,
+						nestingDepth + 1
+					)
 					.map((command) =>
 						command.startsWith('/')
 							? `/execute ${args
@@ -62,7 +67,9 @@ export function transformCommands(
 			continue
 		}
 
-		processedCommands.push(...command.process(writtenCommand))
+		processedCommands.push(
+			...command.process(writtenCommand, dependencies, nestingDepth)
+		)
 	}
 
 	return processedCommands

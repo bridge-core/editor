@@ -3,13 +3,13 @@ import { CustomMoLang, IExpression, MoLang, expressions } from 'molang'
 import { setObjectAt } from '/@/utils/walkObject'
 import json5 from 'json5'
 import { run } from '/@/components/Extensions/Scripts/run'
-import { FileType } from '/@/components/Data/FileType'
 
 export const MoLangPlugin: TCompilerPluginFactory<{
 	include: Record<string, string[]>
 	isFileRequest?: boolean
 	mode: 'build' | 'dev'
 }> = ({
+	fileType: fileTypeLib,
 	dataLoader,
 	options: { include = {}, isFileRequest = false, mode } = {},
 }) => {
@@ -21,7 +21,7 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 		filePath?.startsWith('BP/scripts/molang/')
 	const loadMoLangFrom = (filePath: string) =>
 		Object.entries(include).find(
-			([fileType]) => FileType.getId(filePath) === fileType
+			([fileType]) => fileTypeLib.getId(filePath) === fileType
 		)?.[1]
 
 	const astTransformers: ((
@@ -74,7 +74,13 @@ export const MoLangPlugin: TCompilerPluginFactory<{
 		async load(filePath, fileContent) {
 			if (isMoLangFile(filePath) && fileContent) {
 				// Load the custom MoLang functions
-				customMoLang.parse(fileContent)
+				try {
+					customMoLang.parse(fileContent)
+				} catch (err) {
+					console.error(
+						`Error within file "${filePath}"; script "${fileContent}": ${err}`
+					)
+				}
 			} else if (isMoLangScript(filePath)) {
 				const module = { exports: {} }
 				await run({

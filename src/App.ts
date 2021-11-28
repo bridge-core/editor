@@ -5,7 +5,7 @@ import '/@/components/App/ServiceWorker'
 import Vue from 'vue'
 import { EventSystem } from '/@/components/Common/Event/EventSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { FileType } from '/@/components/Data/FileType'
+import { FileTypeLibrary } from '/@/components/Data/FileType'
 import { ThemeManager } from '/@/components/Extensions/Themes/ThemeManager'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { FileSystemSetup } from '/@/components/FileSystem/Setup'
@@ -13,7 +13,7 @@ import { setupSidebar } from '/@/components/Sidebar/setup'
 import { TaskManager } from '/@/components/TaskManager/TaskManager'
 import { setupDefaultMenus } from '/@/components/Toolbar/setupDefaults'
 import { Locales } from '/@/utils/locales'
-import { PackType } from '/@/components/Data/PackType'
+import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
@@ -78,6 +78,8 @@ export class App {
 	public readonly configuredJsonLanguage = markRaw(
 		new ConfiguredJsonLanguage()
 	)
+	public static readonly fileType = markRaw(new FileTypeLibrary())
+	public static readonly packType = markRaw(new PackTypeLibrary())
 
 	public readonly mobile: Mobile
 
@@ -258,8 +260,8 @@ export class App {
 			this.fileSystem.mkdir('data'),
 
 			// Setup data helpers
-			FileType.setup(this.dataLoader),
-			PackType.setup(this.dataLoader),
+			App.fileType.setup(this.dataLoader),
+			App.packType.setup(this.dataLoader),
 		])
 
 		// Ensure that a project is selected

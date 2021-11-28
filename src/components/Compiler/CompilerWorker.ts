@@ -6,8 +6,6 @@ import { proxy } from 'comlink'
 import { WorkerManager } from '/@/components/Worker/Manager'
 import { Project } from '../Projects/Project/Project'
 import { CompilerManager } from './CompilerManager'
-import { FileType } from '../Data/FileType'
-import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 interface ICompilerStartOptions {
 	mode: 'dev' | 'build'
@@ -62,7 +60,7 @@ export class Compiler extends WorkerManager<
 					isFileRequest: false,
 					isDevServerRestart: restartDevServer,
 					plugins: this.parent.getCompilerPlugins(),
-					pluginFileTypes: FileType.getPluginFileTypes(),
+					pluginFileTypes: App.fileType.getPluginFileTypes(),
 					allFiles: await app.project.packIndexer.service.getAllFiles(
 						false
 					),
@@ -104,7 +102,7 @@ export class Compiler extends WorkerManager<
 		await this.service.updateMode(mode, isFileRequest, isDevServerRestart)
 		await this.service.updatePlugins(
 			this.parent.getCompilerPlugins(),
-			FileType.getPluginFileTypes()
+			App.fileType.getPluginFileTypes()
 		)
 	}
 

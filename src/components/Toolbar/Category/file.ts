@@ -2,10 +2,13 @@ import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
-import { AnyFileHandle } from '../../FileSystem/Types'
-import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
-import { FileTab } from '../../TabSystem/FileTab'
-import { download } from '../../FileSystem/saveOrDownload'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import {
+	isUsingFileSystemPolyfill,
+	isUsingOriginPrivateFs,
+} from '/@/components/FileSystem/Polyfill'
+import { FileTab } from '/@/components/TabSystem/FileTab'
+import { download } from '/@/components/FileSystem/saveOrDownload'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -78,7 +81,7 @@ export function setupFileCategory(app: App) {
 		})
 	)
 
-	if (isUsingFileSystemPolyfill) {
+	if (isUsingFileSystemPolyfill || isUsingOriginPrivateFs) {
 		file.addItem(
 			app.actionManager.create({
 				icon: 'mdi-file-download-outline',
@@ -96,7 +99,7 @@ export function setupFileCategory(app: App) {
 						_,
 						compiled,
 					] = await app.project.compilerManager.compileWithFile(
-						currentTab.getProjectPath(),
+						currentTab.getPath(),
 						await currentTab.getFile()
 					)
 

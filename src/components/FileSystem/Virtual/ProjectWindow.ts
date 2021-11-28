@@ -16,7 +16,7 @@ export async function createVirtualProjectWindow() {
 	actions.create({
 		icon: 'mdi-plus',
 		name: 'windows.projectChooser.newProject.name',
-		description: 'windows.projectChooser.saveCurrentProject.description',
+		description: 'windows.projectChooser.newProject.description',
 		onTrigger: async () => {
 			const app = await App.getApp()
 			app.windows.createProject.open()

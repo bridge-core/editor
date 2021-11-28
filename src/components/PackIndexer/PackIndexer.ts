@@ -3,7 +3,6 @@ import { WorkerManager } from '/@/components/Worker/Manager'
 import { proxy } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import type { PackIndexerService } from './Worker/Main'
-import { FileType } from '/@/components/Data/FileType'
 import PackIndexerWorker from './Worker/Main?worker'
 import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
@@ -46,7 +45,7 @@ export class PackIndexer extends WorkerManager<
 				disablePackSpider: !(
 					settingsState?.general?.enablePackSpider ?? false
 				),
-				pluginFileTypes: FileType.getPluginFileTypes(),
+				pluginFileTypes: App.fileType.getPluginFileTypes(),
 				noFullLightningCacheRefresh:
 					!forceRefreshCache &&
 					!settingsState?.general?.fullLightningCacheRefresh,
@@ -79,7 +78,7 @@ export class PackIndexer extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.service.updatePlugins(FileType.getPluginFileTypes())
+		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
 		await this.service.updateFile(filePath, fileContent, isForeignFile)
 
 		this.ready.dispatch()
@@ -88,7 +87,7 @@ export class PackIndexer extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.service.updatePlugins(FileType.getPluginFileTypes())
+		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
 
 		for (const filePath of filePaths) {
 			await this.service.updateFile(filePath)
@@ -100,7 +99,7 @@ export class PackIndexer extends WorkerManager<
 		await this.ready.fired
 		this.ready.resetSignal()
 
-		await this.service.updatePlugins(FileType.getPluginFileTypes())
+		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
 
 		await this.service.unlink(path)
 

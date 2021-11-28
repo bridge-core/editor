@@ -34,16 +34,24 @@
 			<v-combobox
 				ref="addKeyInput"
 				v-model="keyToAdd"
-				@change="onAddKey"
+				@change="onAdd"
 				@keydown.enter="mayTrigger"
-				:items="propertySuggestions"
+				:items="
+					isUsingBridgePredictions
+						? allSuggestions
+						: propertySuggestions
+				"
 				:item-value="(item) => item"
 				:menu-props="{
 					maxHeight: 124,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
 				}"
-				:label="t('editors.treeEditor.addObject')"
+				:label="
+					isUsingBridgePredictions
+						? t('editors.treeEditor.add')
+						: t('editors.treeEditor.addObject')
+				"
 				outlined
 				dense
 				hide-details
@@ -65,10 +73,20 @@
 					</div>
 				</template>
 			</v-combobox>
+			<v-tooltip v-if="isUsingBridgePredictions" color="tooltip" bottom>
+				<template v-slot:activator="{ on }">
+					<v-btn v-on="on" @click="forceValue" class="mx-4">
+						<v-icon>mdi-alphabetical</v-icon>
+					</v-btn>
+				</template>
+				<span>{{ t('editors.treeEditor.forceValue') }}</span>
+			</v-tooltip>
+
 			<v-combobox
+				v-else
 				ref="addValueInput"
 				v-model="valueToAdd"
-				@change="onAddValue"
+				@change="onAdd"
 				@keydown.enter="mayTrigger"
 				:disabled="isGlobal"
 				:items="valueSuggestions"
@@ -131,6 +149,7 @@ export default {
 	data: () => ({
 		keyToAdd: '',
 		valueToAdd: '',
+		pressedShift: false,
 		triggerCooldown: false,
 		isUserControlledTrigger: false,
 	}),
@@ -143,6 +162,9 @@ export default {
 		this.focusEditor()
 	},
 	computed: {
+		isUsingBridgePredictions() {
+			return settingsState?.editor?.bridgePredictions ?? true
+		},
 		fontSize() {
 			return settingsState &&
 				settingsState.appearance &&
@@ -211,6 +233,9 @@ export default {
 				text: suggestion.value,
 			}))
 		},
+		allSuggestions() {
+			return this.propertySuggestions.concat(this.valueSuggestions)
+		},
 	},
 	methods: {
 		focusEditor() {
@@ -219,41 +244,42 @@ export default {
 		onEdit(value) {
 			this.treeEditor.edit(value)
 		},
-		onAddKey(suggestion) {
+		onAdd(suggestion) {
 			if (this.triggerCooldown || !this.isUserControlledTrigger) {
 				if (!this.isUserControlledTrigger)
-					this.$nextTick(() => (this.keyToAdd = ''))
+					this.$nextTick(() => {
+						this.keyToAdd = ''
+						this.valueToAdd = ''
+					})
+				this.pressedShift = false
 				return
 			}
 
-			if (!suggestion) return this.onTriggerCooldown()
+			if (!suggestion) {
+				this.pressedShift = false
+				return this.onTriggerCooldown()
+			}
 
-			const { type = 'object', value = suggestion } = suggestion
+			const {
+				type = this.pressedShift ? 'value' : 'object',
+				value = suggestion,
+			} = suggestion
+			this.pressedShift = false
 
 			if (type === 'snippet') {
 				this.treeEditor.addFromJSON(value[1])
-			} else {
+			} else if (type === 'object' || type === 'array') {
 				this.treeEditor.addKey(value, type)
+			} else if (type === 'value' || type === 'valueArray') {
+				this.treeEditor.addValue(value, type)
+			} else {
+				console.error(`Unknown suggestion type: "${type}"`)
 			}
 
-			this.$nextTick(() => (this.keyToAdd = ''))
-
-			this.onTriggerCooldown()
-		},
-		onAddValue(suggestion) {
-			if (this.triggerCooldown || !this.isUserControlledTrigger) {
-				if (!this.isUserControlledTrigger)
-					this.$nextTick(() => (this.valueToAdd = ''))
-				return
-			}
-
-			if (!suggestion) return this.onTriggerCooldown()
-
-			const { type = 'value', value = suggestion } = suggestion
-
-			this.treeEditor.addValue(value, type)
-
-			this.$nextTick(() => (this.valueToAdd = ''))
+			this.$nextTick(() => {
+				this.keyToAdd = ''
+				this.valueToAdd = ''
+			})
 
 			this.onTriggerCooldown()
 		},
@@ -265,13 +291,24 @@ export default {
 			}, 100)
 			this.triggerCooldown = true
 		},
-		mayTrigger() {
+		mayTrigger(event) {
+			this.pressedShift = event.shiftKey
+
 			if (this.isUserControlledTrigger) return
 
 			setTimeout(() => {
 				this.isUserControlledTrigger = false
 			}, 100)
 			this.isUserControlledTrigger = true
+		},
+		forceValue() {
+			this.$refs.addKeyInput.blur()
+
+			this.$nextTick(() => {
+				this.pressedShift = true
+				this.isUserControlledTrigger = true
+				this.onAdd(this.keyToAdd)
+			})
 		},
 		onScroll(event) {
 			this.treeEditor.scrollTop = event.target.scrollTop
@@ -298,6 +335,14 @@ export default {
 			this.treeEditor.receiveContainer(this.$refs.editorContainer)
 		},
 		propertySuggestions() {
+			if (
+				this.isUsingBridgePredictions &&
+				this.propertySuggestions.length > 0
+			) {
+				this.$refs.addKeyInput.focus()
+
+				return
+			}
 			if (
 				!this.$refs.addKeyInput ||
 				!this.$refs.addValueInput ||

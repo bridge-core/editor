@@ -8,7 +8,7 @@ export const bridgeDark = <const>{
 	colors: {
 		text: '#ffffff',
 
-		primary: isNightly ? '#3bb6a3' : isNightly ? '#3bb6a3' : '#0073FF',
+		primary: isNightly ? '#3bb6a3' : '#0073FF',
 		secondary: isNightly ? '#3bb6a3' : '#0073FF',
 		accent: isNightly ? '#3bb6a3' : '#0073FF',
 		error: '#ff5252',

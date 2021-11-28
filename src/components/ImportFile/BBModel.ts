@@ -5,6 +5,7 @@ import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { join } from '/@/utils/path'
 import json5 from 'json5'
+import { DropdownWindow } from '../Windows/Common/Dropdown/DropdownWindow'
 
 type Vector3D = [number, number, number]
 type Vector2D = [number, number]
@@ -83,11 +84,17 @@ export class BBModelImporter extends FileImporter {
 					break
 			}
 
+			const folder = await new DropdownWindow({
+				name: 'general.textureLocation',
+				default: 'entity',
+				options: ['entity', 'blocks', 'items'],
+			}).fired
+
 			// Compose file path
 			const filePath = join(
 				'RP',
 				'textures',
-				'entity',
+				folder,
 				texture.folder,
 				`${texture.name}.${extension}`
 			)

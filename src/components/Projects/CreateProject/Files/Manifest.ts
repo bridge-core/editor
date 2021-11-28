@@ -143,12 +143,10 @@ export class CreateManifest extends CreateFile {
 			manifest.modules.push({
 				type: 'javascript',
 				uuid: uuid(),
-				entry: 'scripts/gametests/Main.js',
+				entry: 'scripts/main.js',
 				version: [1, 0, 0],
 			})
-			if (!manifest.dependencies) {
-				manifest.dependencies = []
-			}
+			manifest.dependencies ??= []
 			manifest.dependencies.push(
 				{
 					// Minecraft native module
@@ -165,9 +163,9 @@ export class CreateManifest extends CreateFile {
 
 		if (this.type === 'world_template') {
 			manifest.header.lock_template_options = true
-			manifest.header.base_game_version = createOptions.targetVersion.split(
-				'.'
-			)
+			manifest.header.base_game_version = createOptions.targetVersion
+				.split('.')
+				.map((n) => Number(n))
 		}
 
 		await fs.writeJSON(`${this.pack}/manifest.json`, manifest, true)

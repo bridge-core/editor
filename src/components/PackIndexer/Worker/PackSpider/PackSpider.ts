@@ -1,8 +1,6 @@
-import { FileType } from '/@/components/Data/FileType'
 import { walkObject } from '/@/utils/walkObject'
 import { LightningStore } from '../LightningCache/LightningStore'
 import { PackIndexerService } from '../Main'
-import { PackType } from '/@/components/Data/PackType'
 
 export interface IPackSpiderFile {
 	connect?: IFileDescription[]
@@ -34,7 +32,7 @@ export class PackSpider {
 		if (this.packIndexer.getOptions().disablePackSpider) return
 
 		fileStore = {}
-		const response = await FileType.getPackSpiderData()
+		const response = await this.packIndexer.fileType.getPackSpiderData()
 		response.forEach(
 			({ id, packSpider }) => (this.packSpiderFiles[id] = packSpider)
 		)
@@ -123,9 +121,9 @@ export class File {
 		packSpider: PackSpider,
 		forceUpdate = false
 	) {
-		const fileType = FileType.getId(filePath)
-		const { packPath: packType } = PackType.getWithRelativePath(
-			filePath
+		const fileType = packSpider.packIndexer.fileType.getId(filePath)
+		const { packPath: packType } = <any>(
+			packSpider.packIndexer.packType.get(filePath)
 		) ?? { packPath: 'unknown' }
 
 		const storedFile = fileStore[packType]?.[fileType]?.[filePath]
