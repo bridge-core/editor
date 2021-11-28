@@ -24,16 +24,19 @@ export default {
 		inactive: '待用',
 		active: '激活',
 		later: '稍后',
+		clear: '清除',
+		reset: '重置',
 
 		confirmOverwriteFile:
 			'此操作会覆盖同名文件。你要继续吗？',
 		fileSystemPolyfill:
-			'由于你的浏览器原因，你需要将你的项目下载到本地来实际保存你的进度。如果你使用的是Chrome或Edge，就无需这么做了！',
+			'由于你的浏览器原因，你需要将你的项目下载到本地来实际保存你的进度。如果你使用的是Chrome（除了Chrome 93或94）或Edge，就无需这么做了！',
 		successfulExport: {
 			title: '导出成功',
 			description: '你可以在这里找到导出的包',
 		},
 		experimentalGameplay: '实验性玩法',
+		textureLocation: '纹理位置',
 	},
 	packType: {
 		behaviorPack: {
@@ -539,6 +542,33 @@ export default {
 		filePath: {
 			title: '选择文件路径',
 		},
+		lootSimulatorSettings: {
+			title: '模拟器设置',
+			repeat: {
+				name: '重复选项',
+				amount: {
+					name: '重复',
+					description: '重复抓取战利品表一定次数',
+				},
+				itemFound: {
+					name: '物品标识符',
+					description:
+						'运行战利品表，直到找到具有指定标识符的物品堆叠',
+				},
+				quantityFound: {
+					name: '数量',
+					description:
+						'运行战利品表，直到找到具有指定的物品堆叠数量',
+				},
+			},
+			killConditions: {
+				looting: {
+					name: '抢夺附魔',
+					description:
+						'用于运行表的抢夺级别，0表示没有抢夺',
+				},
+			},
+		},
 		packExplorer: {
 			title: '包浏览器',
 			searchFiles: '搜索文件...',
@@ -550,7 +580,7 @@ export default {
 			restartDevServer: {
 				name: '重启开发服务器',
 				description:
-					"您确定要重新启动编译器的开发服务器吗？这可能需要一些时间，具体取决于项目的大小。",
+					"您确定要重新启动编译器的开发服务器吗？这可能需要一些时间，具体取决于项目的大小。重新启动编译器会从com.mojang文件夹中删除你的附加包，并基于你的bridge.文件夹将其重新编译！",
 			},
 			createPreset: '新建文件',
 			projectConfig: {
@@ -573,6 +603,14 @@ export default {
 				name: '导出为.brproject',
 			},
 			fileActions: {
+				open: {
+					name: '打开',
+					description: '在编辑器中打开文件',
+				},
+				openInSplitScreen: {
+					name: '在分屏中打开',
+					description: '在分屏模式中打开文件',
+				},
 				delete: {
 					name: '删除',
 					description: '删除一个文件或文件夹',
@@ -605,6 +643,10 @@ export default {
 				createFolder: {
 					name: '创建文件夹',
 					description: '创建一个新文件夹',
+				},
+				findInFolder: {
+					name: '在文件夹中查找',
+					description: '搜索文件夹中的内容',
 				},
 			},
 		},
@@ -746,6 +788,11 @@ export default {
 					name: 'JSON编辑器',
 					description: '选择编辑JSON文件的方式',
 				},
+				bridgePredictions: {
+					name: 'bridge.预测',
+					description:
+						"启用bridge.预测可以让应用程序智能地决定是否在bridge.的树状编辑器中添加值或对象。这可以显著简化JSON编辑",
+				},
 				bracketPairColorization: {
 					name: '括号对着色',
 					description: '为匹配的括号给予独一的颜色',
@@ -808,7 +855,7 @@ export default {
 		browserUnsupported: {
 			title: '不支持的浏览器',
 			description:
-				'请使用Chrome（桌面版）或Edge（Chromium版）以获得使用bridge. v2的最佳体验！你的浏览器不支持直接保存文件以及将项目同步到你的com.mojang文件夹的功能。',
+				'请使用Chrome（桌面版，除了Chrome 93或94）或Edge（Chromium版）以获得使用bridge. v2的最佳体验！你的浏览器不支持直接保存文件以及将项目同步到你的com.mojang文件夹的功能。',
 			continue: '依旧继续',
 		},
 		invalidJson: {
@@ -881,6 +928,8 @@ export default {
 		search: '搜索',
 		replace: '替换',
 		replaceAll: '替换全部',
+		includeFiles: '要包含的文件',
+		excludeFiles: '要排除的文件',
 		noResults: '未找到结果。',
 		noSearch:
 			'开始输入后，搜索查询的结果将显示在此处。',
@@ -892,12 +941,34 @@ export default {
 		viewParticle: '查看粒子',
 		viewEntity: '查看实体',
 		viewBlock: '查看方块',
+		simulateLoot: '模拟战利品抢夺',
 		failedClientEntityLoad: '无法加载所连接的客户端实体',
 		invalidEntity:
 			'无法为具有无效JSON的实体打开预览。请修复文件中的JSON错误，然后重试。',
 		chooseGeometry: '选择几何',
 		noGeometry:
-			'在此文件中找不到有效的几何。确保您的JSON有效、文件结构正确且具有所提供ID的几何存在。',
+			'在此文件中找不到有效的几何。确保您的JSON有效、文件结构正确且具有所提供标识符的几何存在。',
+		lootTableSimulator: {
+			emptyLootOutput:
+				'输出为空，尝试运行战利品表以收集结果。',
+			data: {
+				value: '数据值',
+				enchantments: '魔咒',
+				blockStates: '方块状态',
+				itemAuxValue: '附加值',
+				eggIdentifier: '生成实体',
+				bannerType: '旗帜类型',
+				bookData: {
+					view: '查看方块',
+					title: '标题',
+					author: '作者',
+				},
+				durability: '耐久',
+				lore: '详细信息',
+				displayName: '显示名称',
+				mapDestination: '地图目的地',
+			},
+		},
 	},
 	initialSetup: {
 		welcome: '欢迎来到bridge. v2！',
@@ -952,9 +1023,98 @@ export default {
 	editors: {
 		treeEditor: {
 			addObject: '添加对象',
+			add: '添加',
 			addArray: '添加数组',
 			addValue: '添加值',
+			forceValue: '强制值',
 			edit: '编辑',
+		},
+	},
+	functionValidator: {
+		actionName: '验证函数',
+		tabName: '函数验证器',
+		errors: {
+			emptyComplexConstructor: '意外的空的复杂选择器！',
+			invalidSelectorAttribute: {
+				part1: "无效的选择器特性‘",
+				part2: "’！",
+			},
+			expectedEqualsButNothing: '预期的等号但所得为空！',
+			expectedEquals: '预期的等号！',
+			expectedValueButNothing: '预期的值但所得为空！',
+			attributeNegationSupport: {
+				part1: "特性‘",
+				part2: "’不支持否定！",
+			},
+			multipleInstancesNever: {
+				part1: "不允许出现特性‘",
+				part2: "’的多个实例！",
+			},
+			multipleInstancesNegated: {
+				part1: "在否定时不允许出现特性‘",
+				part2: "’的多个实例！",
+			},
+			selectorAttributeTypeMismatch: {
+				part1: "预期的值类型‘",
+				part2: "’，但所得为‘",
+				part3: "’！",
+			},
+			selectorValueNotValid: {
+				part1: "值‘",
+				part2: "’不是预期值之一！",
+			},
+			expectedComma: '选择器特性之间需要逗号！',
+			unclosedString: '未闭合的字符串！',
+			invalidCommand: {
+				part1: "‘",
+				part2: '’不是一个有效的命令！',
+			},
+			expectedLetterAfterAtButNothing: '在@之后出现了预期的的字母！',
+			expectedLetterAfterAt: '在@之后出现了预期的的字母！',
+			invalidSelector: {
+				part1: '‘@',
+				part2: '’不是一个有效的选择器！',
+',
+			},
+			unexpectedOpenSquareBracket: '意外的‘[’！',
+			selectorNotBeforeOpenSquareBracketButNothing:
+				'在‘[’之前出现了预期的选择器，或得到了一个无效的方块状态！',
+			selectorNotBeforeOpenSquareBracket:
+				'在‘[’之前出现了预期的选择器，或得到了一个无效的方块状态！',
+			unexpectedCloseSquareBracket: '意外的‘]’！',
+			noValidCommandVarsFound: {
+				part1: '找不到有效的命令变体！参数‘',
+				part2: "’可能无效！它的类型是‘",
+				part3:
+					"’，但当前的变体树不支持该类型。",
+			},
+			noValidCommandVarsFoundEnd: {
+				part1:
+					'找不到有效的命令变体！您可能遗漏了一些参数或参数‘',
+				part2: '’可能无效！',
+			},
+		},
+		warnings: {
+			schemaFamily: {
+				part1: "找不到父族‘",
+				part2:
+					"’。这可能是一个错误，或者该父族来自另一个附加包。",
+			},
+			schemaType: {
+				part1: "找不到类型‘",
+				part2:
+					"’。这可能是一个错误，或者该类型来自另一个附加包。",
+			},
+			schemaTag: {
+				part1: "找不到标签‘",
+				part2:
+					"’。这可能是一个错误，或者该标签来自另一个附加包。",
+			},
+			schemaValue: {
+				part1: "找不到模式值‘",
+				part2:
+					"’。这可能是一个错误，或者该模式值来自另一个附加包。",
+			},
 		},
 	},
 }
