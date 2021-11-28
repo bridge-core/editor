@@ -7,6 +7,7 @@ import de from '/@/locales/de'
 import nl from '/@/locales/nl'
 import ko from '/@/locales/ko'
 import zhTW from '/@/locales/zhTW'
+import zhCN from '/@/locales/zhCN'
 
 Vue.use(Vuetify)
 Vue.config.productionTip = false
