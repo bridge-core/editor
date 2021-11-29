@@ -457,7 +457,7 @@ export class Compiler {
 					'finalizeBuild',
 					file.filePath,
 					transformedData
-				)) ?? transformedData
+				)) ?? JSON.stringify(transformedData)
 
 			if (writeFiles && writeData !== undefined && writeData !== null) {
 				await this.outputFileSystem.mkdir(dirname(file.saveFilePath), {
