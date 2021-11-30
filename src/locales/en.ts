@@ -1019,85 +1019,120 @@ export default {
 		actionName: 'Validate Function',
 		tabName: 'Function Validator',
 		errors: {
-			emptyComplexConstructor: 'Unexpected empty complex selector!',
-			invalidSelectorAttribute: {
-				part1: "Invalid selector attribute '",
-				part2: "'!",
+			common: {
+				expectedEquals: 'Expected equals!',
+				expectedValue: 'Expected value!',
+				expectedType: {
+					part1: "Expected type '",
+					part2: "' but got type of '",
+					part3: "'!",
+				},
+				expectedComma: 'Expected comma!',
+				unclosedString: 'Unclosed string!',
+				spaceAtStart: 'Spaces at the start are not supported!',
+				expectedColon: 'Expected colon!',
+				unexpectedOpenCurlyBracket: 'Unexpected open curly bracket!',
+				unexpectedCloseCurlyBracket: 'Unexpected close curly bracket!',
+				unexpectedOpenSquareBracket: 'Unexpected open sqaure bracket!',
+				unexpectedCloseSquareBracket:
+					'Unexpected close sqaure bracket!',
 			},
-			expectedEqualsButNothing: 'Expected equals sign but got nothing!',
-			expectedEquals: 'Expected equals sign!',
-			expectedValueButNothing: 'Expected value but got nothing!',
-			attributeNegationSupport: {
-				part1: "Attribute '",
-				part2: "' does not support negation!",
+			commands: {
+				empty: 'Empty commands are not supported!',
+				invalid: {
+					part1: "Command: '",
+					part2: "' is not a valid command!",
+				},
 			},
-			multipleInstancesNever: {
-				part1: "Multiple instances of attribute '",
-				part2: "' atribute not allowed!",
+			identifiers: {
+				missingNamespace: 'Missing namespace in identifier!',
 			},
-			multipleInstancesNegated: {
-				part1: "Multiple instances of '",
-				part2: "' atribute not allowed when negated!",
+			ranges: {
+				missingFirstNumber: 'Missing first number in range!',
+				missingDot: 'Missing dot in range!',
+				missingSecondNumber: 'Missing second number in range!',
 			},
-			selectorAttributeTypeMismatch: {
-				part1: "Expected value type of '",
-				part2: "', but got '",
-				part3: "'!",
+			selectors: {
+				emptyComplex: 'Unexpected empty complex selector!',
+				expectedStringAsAttribute:
+					'Selector attribute must be a string!',
+				invalidSelectorAttribute: {
+					part1: "'",
+					part2: "' is not a valid selector attribute!",
+				},
+				unsupportedNegation: {
+					part1: "Selector attribute: '",
+					part2: "' does not support negation!",
+				},
+				multipleInstancesNever: {
+					part1: "Selector attribute: '",
+					part2: "' does not support multiple instances!",
+				},
+				multipleInstancesNegated: {
+					part1: "Selector attribute: '",
+					part2: "' only supports multiple instances when negated!",
+				},
+				valueNotValid: {
+					part1: "Selector attribute does not support value '",
+					part2: "'!",
+				},
+				expectedLetterAfterAt: "Expected letter after '@'!",
+				invalid: {
+					part1: "Selector: '",
+					part2: "' is not a valid selector!",
+				},
+				selectorNotBeforeOpenSquareBracket:
+					"Expected a selector before '['!",
 			},
-			selectorValueNotValid: {
-				part1: "Value '",
-				part2: "' is not one of the expected values!",
+			scoreData: {
+				empty: 'Unexpected empty score data!',
+				expectedStringAsAttribute:
+					'Score data attribute must be a string!',
+				invalidType: {
+					part1: "This score data value type: '",
+					part2: "' is not supported!",
+				},
+				repeat: 'Score data value must not repeat!',
 			},
-			expectedComma: 'Expected comma between selector attributes!',
-			unclosedString: 'Unclosed string!',
-			invalidCommand: {
-				part1: "'",
-				part2: "' is not a valid command!",
-			},
-			expectedLetterAfterAtButNothing: 'Expected leter after @!',
-			expectedLetterAfterAt: 'Expected letter after @!',
-			invalidSelector: {
-				part1: '@',
-				part2: ' is not a valid selector!',
-			},
-			unexpectedOpenSquareBracket: 'Unexpected [!',
-			selectorNotBeforeOpenSquareBracketButNothing:
-				'Either expected selector before [ or got an invalid block state!',
-			selectorNotBeforeOpenSquareBracket:
-				'Expected selector before [ or got an invalid block state!',
-			unexpectedCloseSquareBracket: 'Unexpected ]',
-			noValidCommandVarsFound: {
-				part1: 'No valid command variations found! Argument ',
-				part2: " may be invalid! It is of type '",
-				part3:
-					"' but that type is not supported in the current variation tree.",
-			},
-			noValidCommandVarsFoundEnd: {
-				part1:
-					'No valid command variations found! You may be missing some arguments or argument ',
-				part2: ' may be invalid!',
+			arguments: {
+				noneValid: {
+					part1: 'No valid command variations found! Argument ',
+					part2: " may be invalid! It is of type '",
+					part3:
+						"' but that type is not supported in the current variation tree.",
+				},
+				noneValidEnd: {
+					part1:
+						'No valid command variations found! You may be missing some arguments or argument ',
+					part2: ' may be invalid!',
+				},
 			},
 		},
 		warnings: {
-			schemaFamily: {
-				part1: "Could not find family '",
-				part2:
-					"'. This could either be a mistake or the family is from another addon.",
+			schema: {
+				familyNotFound: {
+					part1: "Could not find family '",
+					part2:
+						"'. This could either be a mistake or the family is from another addon.",
+				},
+				typeNotFound: {
+					part1: "Could not find type '",
+					part2:
+						"'. This could either be a mistake or the type is from another addon.",
+				},
+				tagNotFound: {
+					part1: "Could not find tag '",
+					part2:
+						"'. This could either be a mistake or the tag is from another addon.",
+				},
+				schemaValueNotFound: {
+					part1: "Could not find schema value '",
+					part2:
+						"'. This could either be a mistake or the schema value is from another addon.",
+				},
 			},
-			schemaType: {
-				part1: "Could not find type '",
-				part2:
-					"'. This could either be a mistake or the type is from another addon.",
-			},
-			schemaTag: {
-				part1: "Could not find tag '",
-				part2:
-					"'. This could either be a mistake or the tag is from another addon.",
-			},
-			schemaValue: {
-				part1: "Could not find schema value '",
-				part2:
-					"'. This could either be a mistake or the schema value is from another addon.",
+			data: {
+				missingData: 'Some data was not correctly loaded!',
 			},
 		},
 	},

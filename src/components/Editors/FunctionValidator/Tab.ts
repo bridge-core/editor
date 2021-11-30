@@ -411,8 +411,6 @@ export class FunctionValidatorTab extends Tab {
 		await this.app.languageManager.mcfunction.validator.LoadCommandData()
 
 		await this.UpdateLoadedState()
-
-		//await this.LoadCurrentLine()
 	}
 
 	async onDeactivate() {

@@ -360,7 +360,7 @@ export class FunctionValidator {
 		let warnings: SmartError[] = []
 
 		if (tokens.length == 0) {
-			errors.push(new SmartError('emptyComplexConstructor', start, end))
+			errors.push(new SmartError('selectors.emptyComplex', start, end))
 
 			return [errors, warnings]
 		}
@@ -373,7 +373,7 @@ export class FunctionValidator {
 			if (tokens[offset].type != 'String') {
 				errors.push(
 					new SmartError(
-						'complexConstructorExpectedStringAsAttribute',
+						'selectors.expectedStringAsAttribute',
 						tokens[offset].start,
 						tokens[offset].end
 					)
@@ -400,9 +400,9 @@ export class FunctionValidator {
 				errors.push(
 					new SmartError(
 						[
-							'invalidSelectorAttribute.part1',
+							'selectors.invalidSelectorAttribute.part1',
 							'$' + targetAtribute,
-							'invalidSelectorAttribute.part2',
+							'selectors.invalidSelectorAttribute.part2',
 						],
 						tokens[offset].start,
 						tokens[offset].end
@@ -415,7 +415,7 @@ export class FunctionValidator {
 			if (1 + offset >= tokens.length) {
 				errors.push(
 					new SmartError(
-						'expectedEqualsButNothing',
+						'common.expectedEquals',
 						tokens[offset].start,
 						tokens[offset].end
 					)
@@ -429,7 +429,7 @@ export class FunctionValidator {
 			) {
 				errors.push(
 					new SmartError(
-						'expectedEquals',
+						'common.expectedEquals',
 						tokens[offset + 1].start,
 						tokens[offset + 1].end
 					)
@@ -441,7 +441,7 @@ export class FunctionValidator {
 			if (2 + offset >= tokens.length) {
 				errors.push(
 					new SmartError(
-						'expectedValueButNothing',
+						'common.expectedValue',
 						tokens[offset + 1].start,
 						tokens[offset + 1].end
 					)
@@ -466,9 +466,9 @@ export class FunctionValidator {
 					errors.push(
 						new SmartError(
 							[
-								'attributeNegationSupport.part1',
+								'selectors.unsupportedNegation.part1',
 								'$' + targetAtribute,
-								'attributeNegationSupport.part2',
+								'selectors.unsupportedNegation.part2',
 							],
 							tokens[2 + offset].start,
 							value.end
@@ -486,9 +486,9 @@ export class FunctionValidator {
 					errors.push(
 						new SmartError(
 							[
-								'multipleInstancesNever.part1',
+								'selectors.multipleInstancesNever.part1',
 								'$' + targetAtribute,
-								'multipleInstancesNever.part2',
+								'selectors.multipleInstancesNever.part2',
 							],
 							tokens[offset].start,
 							value.end
@@ -507,9 +507,9 @@ export class FunctionValidator {
 					errors.push(
 						new SmartError(
 							[
-								'multipleInstancesNegated.part1',
+								'selectors.multipleInstancesNegated.part1',
 								'$' + targetAtribute,
-								'multipleInstances.part2',
+								'selectors.multipleInstancesNegated.part1',
 							],
 							tokens[offset].start,
 							value.end
@@ -529,11 +529,11 @@ export class FunctionValidator {
 					errors.push(
 						new SmartError(
 							[
-								'selectorAttributeTypeMismatch.part1',
+								'common.expectedType.part1',
 								'$' + targetType,
-								'selectorAttributeTypeMismatch.part2',
+								'common.expectedType.part2',
 								'$' + value.type,
-								'selectorAttributeTypeMismatch.part3',
+								'common.expectedType.part3',
 							],
 							value.start,
 							value.end
@@ -548,9 +548,9 @@ export class FunctionValidator {
 						errors.push(
 							new SmartError(
 								[
-									'selectorNotValid.part1',
-									'$' + value.type,
-									'selectorNotValid.part2',
+									'selectors.valueNotValid.part1',
+									'$' + value.value,
+									'selectors.valueNotValid.part2',
 								],
 								value.start,
 								value.end
@@ -586,9 +586,9 @@ export class FunctionValidator {
 							warnings.push(
 								new SmartWarning(
 									[
-										'schemaFamily.part1',
+										'schema.familyNotFound.part1',
 										'$' + value.value,
-										'schemaFamily.part2',
+										'schema.familyNotFound.part2',
 									],
 									value.start,
 									value.end
@@ -598,9 +598,9 @@ export class FunctionValidator {
 							warnings.push(
 								new SmartWarning(
 									[
-										'schemaType.part1',
+										'schema.typeNotFound.part1',
 										'$' + value.value,
-										'schemaType.part2',
+										'schema.typeNotFound.part2',
 									],
 									value.start,
 									value.end
@@ -610,9 +610,9 @@ export class FunctionValidator {
 							warnings.push(
 								new SmartWarning(
 									[
-										'schemaTag.part1',
+										'schema.tagNotFound.part1',
 										'$' + value.value,
-										'schemaTag.part2',
+										'schema.tagNotFound.part2',
 									],
 									value.start,
 									value.end
@@ -622,9 +622,9 @@ export class FunctionValidator {
 							warnings.push(
 								new SmartWarning(
 									[
-										'schemaValue.part1',
+										'schema.schemaValueNotFound.part1',
 										'$' + value.value,
-										'schemaValue.part2',
+										'schema.schemaValueNotFound.part2',
 									],
 									value.start,
 									value.end
@@ -650,7 +650,7 @@ export class FunctionValidator {
 				) {
 					errors.push(
 						new SmartError(
-							'expectedComa',
+							'common.expectedComma',
 							tokens[possibleComaPos + offset].start,
 							tokens[possibleComaPos + offset].end
 						)
@@ -698,7 +698,7 @@ export class FunctionValidator {
 
 		if (tokens.length == 0) {
 			//Unexpected empty score data
-			errors.push(new SmartError('emptyScoreData', start, end))
+			errors.push(new SmartError('scoreData.empty', start, end))
 			return [errors, warnings]
 		}
 
@@ -712,7 +712,7 @@ export class FunctionValidator {
 			if (tokens[offset].type != 'String') {
 				errors.push(
 					new SmartError(
-						'scoreDataExpectedStringAsValue',
+						'scoreData.expectedStringAsAttribute',
 						tokens[offset].start,
 						tokens[offset].end
 					)
@@ -724,7 +724,7 @@ export class FunctionValidator {
 			if (1 + offset >= tokens.length) {
 				errors.push(
 					new SmartError(
-						'expectedEqualsButNothing',
+						'common.expectedEquals',
 						tokens[offset].start,
 						tokens[offset].end
 					)
@@ -738,7 +738,7 @@ export class FunctionValidator {
 			) {
 				errors.push(
 					new SmartError(
-						'expectedEquals',
+						'common.expectedEquals',
 						tokens[offset + 1].start,
 						tokens[offset + 1].end
 					)
@@ -750,7 +750,7 @@ export class FunctionValidator {
 			if (2 + offset >= tokens.length) {
 				errors.push(
 					new SmartError(
-						'expectedValueButNothing',
+						'common.expectedValue',
 						tokens[offset + 1].start,
 						tokens[offset + 1].end
 					)
@@ -764,7 +764,11 @@ export class FunctionValidator {
 			if (!this.MatchTypes(value.type, 'Score')) {
 				errors.push(
 					new SmartError(
-						'invalidScoreType',
+						[
+							'scoreData.invalidType.part1',
+							'$' + value.type,
+							'scoreData.invalidType.part2',
+						],
 						tokens[offset + 2].start,
 						tokens[offset + 2].end
 					)
@@ -776,7 +780,7 @@ export class FunctionValidator {
 			if (confirmedValues.includes(value.value)) {
 				errors.push(
 					new SmartError(
-						'repeatOfSameScore',
+						'scoreData.repeat',
 						tokens[offset + 2].start,
 						tokens[offset + 2].end
 					)
@@ -794,7 +798,7 @@ export class FunctionValidator {
 				) {
 					errors.push(
 						new SmartError(
-							'expectedComa',
+							'common.expectedComa',
 							tokens[offset + 3].start,
 							tokens[offset + 3].end
 						)
@@ -917,7 +921,7 @@ export class FunctionValidator {
 		let warnings: any[] = []
 
 		if (!this.blockStateData) {
-			warnings.push(new SmartWarning('missingData', 0, 0))
+			warnings.push(new SmartWarning('data.missingData', 0, 0))
 		}
 
 		//Seperate into strings by quotes for parsing
@@ -975,7 +979,7 @@ export class FunctionValidator {
 			if (!inString) {
 				errors.push(
 					new SmartError(
-						'unclosedString',
+						'common.unclosedString',
 						tokens[lastChange].start,
 						tokens[tokens.length - 1].end
 					)
@@ -1003,7 +1007,7 @@ export class FunctionValidator {
 				if (tokens[0].type == 'Space') {
 					errors.push(
 						new SmartError(
-							'spaceAtStart',
+							'common.spaceAtStart',
 							tokens[lastChange].start,
 							tokens[lastChange].end
 						)
@@ -1013,7 +1017,7 @@ export class FunctionValidator {
 				}
 
 				if (tokens.length == 0) {
-					errors.push(new SmartError('emptyCommand'))
+					errors.push(new SmartError('commands.empty'))
 
 					return [errors, warnings]
 				}
@@ -1026,9 +1030,9 @@ export class FunctionValidator {
 				if (!this.validCommands.includes(baseCommand.value)) {
 					errors.push(
 						new SmartError(
-							'invalidCommand.part1' +
+							'command.invalid.part1' +
 								baseCommand.value +
-								'invalidCommand.part2',
+								'command.invalid.part2',
 							baseCommand.start,
 							baseCommand.end
 						)
@@ -1045,7 +1049,7 @@ export class FunctionValidator {
 						if (i + 1 >= tokens.length) {
 							errors.push(
 								new SmartError(
-									'gotColonButNothing',
+									'common.exptectedColon',
 									token.start,
 									token.end
 								)
@@ -1057,7 +1061,7 @@ export class FunctionValidator {
 						if (i - 1 < 0) {
 							errors.push(
 								new SmartError(
-									'missingFirstValueInIdentifierButNothing',
+									'identifiers.missingNamespace',
 									token.start,
 									token.end
 								)
@@ -1069,7 +1073,7 @@ export class FunctionValidator {
 						if (tokens[i - 1].type == 'Space') {
 							errors.push(
 								new SmartError(
-									'missingFirstValueInIdentifierButNothing',
+									'identifiers.missingNamespace',
 									token.start,
 									token.end
 								)
@@ -1143,7 +1147,7 @@ export class FunctionValidator {
 						if (inJSON) {
 							errors.push(
 								new SmartError(
-									'unexpectedOpenCurlyBracket',
+									'common.unexpectedOpenBracket',
 									token.start,
 									token.end
 								)
@@ -1177,7 +1181,7 @@ export class FunctionValidator {
 						} else {
 							errors.push(
 								new SmartError(
-									'unexpectedClosedCurlyBracket',
+									'common.unexpectedClosedCurlyBracket',
 									token.start,
 									token.end
 								)
@@ -1199,7 +1203,7 @@ export class FunctionValidator {
 						if (i + -1 < 0) {
 							errors.push(
 								new SmartError(
-									'missingFirstNumberInRangeButNothing',
+									'ranges.missingFirstNumber',
 									token.start,
 									token.end
 								)
@@ -1211,7 +1215,7 @@ export class FunctionValidator {
 						if (i + 1 >= tokens.length) {
 							errors.push(
 								new SmartError(
-									'missingDotInRangeButNothing',
+									'ranges.missingDot',
 									tokens[i - 1].start,
 									token.end
 								)
@@ -1223,7 +1227,7 @@ export class FunctionValidator {
 						if (i + 2 >= tokens.length) {
 							errors.push(
 								new SmartError(
-									'missingSecondNumberInRangeButNothing',
+									'ranges.missingSecondNumber',
 									tokens[i - 1].start,
 									tokens[i + 1].end
 								)
@@ -1239,7 +1243,7 @@ export class FunctionValidator {
 						if (firstNum.type != 'Integer') {
 							errors.push(
 								new SmartError(
-									'missingFirstNumberInRange',
+									'ranges.missingFirstNumber',
 									token.start,
 									token.end
 								)
@@ -1251,7 +1255,7 @@ export class FunctionValidator {
 						if (!(dot.value == '.' && dot.type == 'Symbol')) {
 							errors.push(
 								new SmartError(
-									'missingDotInRange',
+									'ranges.missingDot',
 									tokens[i - 1].start,
 									token.end
 								)
@@ -1263,7 +1267,7 @@ export class FunctionValidator {
 						if (secondNum.type != 'Integer') {
 							errors.push(
 								new SmartError(
-									'missingSecondNumberInRange',
+									'ranges.missingSecondNumber',
 									tokens[i - 1].start,
 									tokens[i + 1].end
 								)
@@ -1295,7 +1299,7 @@ export class FunctionValidator {
 						if (inScoreData) {
 							errors.push(
 								new SmartError(
-									'unexpectedOpenCurlyBracket',
+									'common.unexpectedOpenCurlyBracket',
 									token.start,
 									token.end
 								)
@@ -1342,7 +1346,7 @@ export class FunctionValidator {
 						} else {
 							errors.push(
 								new SmartError(
-									'unexpectedClosedCurlyBracket',
+									'common.unexpectedClosedCurlyBracket',
 									token.start,
 									token.end
 								)
@@ -1365,7 +1369,7 @@ export class FunctionValidator {
 						if (i + 1 >= tokens.length) {
 							errors.push(
 								new SmartError(
-									'expectedLetterAfterAtButNothing',
+									'selectors.expectedLetterAfterAt',
 									token.start,
 									token.end
 								)
@@ -1379,7 +1383,7 @@ export class FunctionValidator {
 						if (selectorTarget.type != 'String') {
 							errors.push(
 								new SmartError(
-									'expectedLetterAfterAt',
+									'selectors.expectedLetterAfterAt',
 									token.start,
 									token.end
 								)
@@ -1394,9 +1398,9 @@ export class FunctionValidator {
 							errors.push(
 								new SmartError(
 									[
-										'invalidSelector.part1',
+										'selectors.invalid.part1',
 										'$' + selectorTarget.value,
-										'invalidSelector.part2',
+										'iselectors.invalid.part2',
 									],
 									token.start,
 									tokens[i + 1].end
@@ -1426,7 +1430,7 @@ export class FunctionValidator {
 						if (inBlockState) {
 							errors.push(
 								new SmartError(
-									'unexpectedOpenSquareBracket',
+									'common.unexpectedOpenSquareBracket',
 									token.start,
 									token.end
 								)
@@ -1464,7 +1468,7 @@ export class FunctionValidator {
 						} else {
 							errors.push(
 								new SmartError(
-									'unexpectedClosedSquareBracket',
+									'common.unexpectedClosedSquareBracket',
 									token.start,
 									token.end
 								)
@@ -1493,7 +1497,7 @@ export class FunctionValidator {
 						if (inSelector) {
 							errors.push(
 								new SmartError(
-									'unexpectedOpenSquareBracket',
+									'common.unexpectedOpenSquareBracket',
 									token.start,
 									token.end
 								)
@@ -1504,7 +1508,7 @@ export class FunctionValidator {
 							if (i - 1 < 0) {
 								errors.push(
 									new SmartError(
-										'selectorNotBeforeOpenSquareBracketButNothing',
+										'identifiers.selectorNotBeforeOpenSquareBracket',
 										token.start,
 										token.end
 									)
@@ -1516,7 +1520,7 @@ export class FunctionValidator {
 							if (tokens[i - 1].type != 'Selector') {
 								errors.push(
 									new SmartError(
-										'selectorNotBeforeOpenSquareBracket',
+										'identifiers.selectorNotBeforeOpenSquareBracket',
 										token.start,
 										token.end
 									)
@@ -1563,7 +1567,7 @@ export class FunctionValidator {
 						} else {
 							errors.push(
 								new SmartError(
-									'unexpectedClosedSquareBracket',
+									'common.unexpectedClosedSquareBracket',
 									token.start,
 									token.end
 								)
@@ -1635,11 +1639,11 @@ export class FunctionValidator {
 				errors.push(
 					new SmartError(
 						[
-							'noValidCommandVarsFound.part1',
-							'$' + i,
-							'noValidCommandVarsFound.part2',
+							'arguments.noneValid.part1',
+							'$' + (i + 1),
+							'arguments.noneValid.part2',
 							'$' + arg.type,
-							'noValidCommandVarsFound.part3',
+							'arguments.noneValid.part3',
 						],
 						arg.start,
 						arg.end
@@ -1670,9 +1674,9 @@ export class FunctionValidator {
 			errors.push(
 				new SmartError(
 					[
-						'noValidCommandVarsFoundEnd.part1',
+						'arguments.noneValidEnd.part1',
 						'$' + tokens.length,
-						'noValidCommandVarsFoundEnd.part2',
+						'arguments.noneValidEnd.part2',
 					],
 					tokens[tokens.length - 1].start,
 					tokens[tokens.length - 1].end
