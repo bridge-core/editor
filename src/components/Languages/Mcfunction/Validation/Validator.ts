@@ -233,6 +233,32 @@ export class FunctionValidator {
 									readStart + whatToAdd.length
 								)
 							)
+
+							if (foundTokens.length - 3 >= 0) {
+								if (
+									foundTokens[foundTokens.length - 3].type ==
+									'Integer'
+								) {
+									foundTokens.splice(
+										foundTokens.length - 3,
+										2,
+										new Token(
+											foundTokens[foundTokens.length - 3]
+												.value +
+												foundTokens[
+													foundTokens.length - 2
+												].value,
+											'String',
+											foundTokens[
+												foundTokens.length - 3
+											].start,
+											foundTokens[
+												foundTokens.length - 2
+											].end
+										)
+									)
+								}
+							}
 						} else {
 							foundTokens.splice(
 								foundTokens.length - 1,
@@ -247,6 +273,32 @@ export class FunctionValidator {
 									readStart
 								)
 							)
+
+							if (foundTokens.length - 3 >= 0) {
+								if (
+									foundTokens[foundTokens.length - 3].type ==
+									'Integer'
+								) {
+									foundTokens.splice(
+										foundTokens.length - 3,
+										2,
+										new Token(
+											foundTokens[foundTokens.length - 3]
+												.value +
+												foundTokens[
+													foundTokens.length - 2
+												].value,
+											'String',
+											foundTokens[
+												foundTokens.length - 3
+											].start,
+											foundTokens[
+												foundTokens.length - 2
+											].end
+										)
+									)
+								}
+							}
 						}
 					} else {
 						foundTokens.push(
@@ -260,6 +312,29 @@ export class FunctionValidator {
 								readStart
 							)
 						)
+
+						if (foundTokens.length - 3 >= 0) {
+							if (
+								foundTokens[foundTokens.length - 3].type ==
+								'Integer'
+							) {
+								foundTokens.splice(
+									foundTokens.length - 3,
+									2,
+									new Token(
+										foundTokens[foundTokens.length - 3]
+											.value +
+											foundTokens[foundTokens.length - 2]
+												.value,
+										'String',
+										foundTokens[
+											foundTokens.length - 3
+										].start,
+										foundTokens[foundTokens.length - 2].end
+									)
+								)
+							}
+						}
 					}
 
 					lastUnexpected = -1
@@ -283,6 +358,22 @@ export class FunctionValidator {
 					readEnd
 				)
 			)
+
+			if (foundTokens.length - 3 >= 0) {
+				if (foundTokens[foundTokens.length - 3].type == 'Integer') {
+					foundTokens.splice(
+						foundTokens.length - 3,
+						2,
+						new Token(
+							foundTokens[foundTokens.length - 3].value +
+								foundTokens[foundTokens.length - 2].value,
+							'String',
+							foundTokens[foundTokens.length - 3].start,
+							foundTokens[foundTokens.length - 2].end
+						)
+					)
+				}
+			}
 
 			lastUnexpected = -1
 		}
