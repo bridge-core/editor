@@ -105,6 +105,8 @@ export class FunctionValidatorTab extends Tab {
 				)
 			}
 
+			let command = fullCommand.split(' ')[0]
+
 			let lineCounterElement = document.getElementById('line-counter')
 
 			if (lineCounterElement) {
