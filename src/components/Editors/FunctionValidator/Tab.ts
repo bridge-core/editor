@@ -105,29 +105,11 @@ export class FunctionValidatorTab extends Tab {
 				)
 			}
 
-			let command = fullCommand.split(' ')[0]
-
 			let lineCounterElement = document.getElementById('line-counter')
 
 			if (lineCounterElement) {
 				lineCounterElement.textContent =
 					'Line: ' + (this.currentLine + 1).toString()
-			}
-
-			let commmandDisplayElement = document.getElementById(
-				'command-display'
-			)
-
-			if (commmandDisplayElement) {
-				if (
-					lines[this.currentLine] == '\r' ||
-					lines[this.currentLine].length == 0
-				) {
-					commmandDisplayElement.textContent =
-						'Command: Empty Line (No Command)'
-				} else {
-					commmandDisplayElement.textContent = 'Command: ' + command
-				}
 			}
 
 			let fullCommmandDisplayElement = document.getElementById(

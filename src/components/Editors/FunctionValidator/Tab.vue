@@ -6,22 +6,6 @@
 		<div class="wh-100 ml-1 mr-1">
 			<h2>Inspector / Log</h2>
 
-			<div class="d-flex align-center justify-center w-e-100 mb-1">
-				<button class="icon-back" v-on:click="runFunction">
-					<i class="mdi mdi-play ok-icon font-size-2 scale-1-2"></i>
-				</button>
-				<button class="icon-back" v-on:click="stepLine">
-					<i
-						class="mdi mdi-debug-step-over info-icon font-size-2 scale-1-2"
-					></i>
-				</button>
-				<button class="icon-back" v-on:click="restart">
-					<i
-						class="mdi mdi-restart error-icon font-size-2 scale-1-2"
-					></i>
-				</button>
-			</div>
-
 			<div class="lds-default" id="data-loading">
 				<div></div>
 				<div></div>
@@ -41,15 +25,31 @@
 				class="d-flex align-start justify-start wh-100 w-e-100 flex-column overflow-scroll hidden"
 				id="loaded-content"
 			>
-				<p id="line-counter">Line: 4</p>
+				<div class="d-flex align-center justify-center w-e-100 mb-1">
+					<button class="icon-back" v-on:click="runFunction">
+						<i
+							class="mdi mdi-play ok-icon font-size-2 scale-1-2"
+						></i>
+					</button>
+					<button class="icon-back" v-on:click="stepLine">
+						<i
+							class="mdi mdi-debug-step-over info-icon font-size-2 scale-1-2"
+						></i>
+					</button>
+					<button class="icon-back" v-on:click="restart">
+						<i
+							class="mdi mdi-restart error-icon font-size-2 scale-1-2"
+						></i>
+					</button>
+				</div>
 
-				<p id="command-display">Command: give</p>
+				<p id="line-counter">Line: 4</p>
 
 				<p id="full-command-display">Full Command: give</p>
 
 				<div id="alerts"></div>
 
-				<p>Documentation:</p>
+				<p class="m-b-small">Description:</p>
 
 				<p id="docs">I am docs :D TUTORIAL TUTR+ORIAL LERARARARN</p>
 			</div>
@@ -139,6 +139,10 @@ export default {
 
 .mb-0 {
 	margin-bottom: 0rem !important;
+}
+
+.m-b-small {
+	margin-bottom: 0.5rem !important;
 }
 
 .warning-info {
