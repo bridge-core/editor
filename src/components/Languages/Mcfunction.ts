@@ -13,6 +13,7 @@ import './Mcfunction/WithinJson'
 import { tokenProvider } from './Mcfunction/TokenProvider'
 import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
+import { FunctionValidator } from '/@/components/Languages/Mcfunction/Validation/Validator'
 
 export const config: languages.LanguageConfiguration = {
 	wordPattern: /[aA-zZ]+/,
@@ -163,6 +164,8 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 }
 
 export class McfunctionLanguage extends Language {
+	public validator = new FunctionValidator()
+
 	constructor() {
 		super({
 			id: 'mcfunction',

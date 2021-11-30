@@ -7,6 +7,7 @@ import Error from './Error.vue'
 import Warning from './Warning.vue'
 import Vue from 'vue'
 import { FunctionValidator } from '/@/components/Languages/Mcfunction/Validation/Validator'
+import { App } from '/@/App'
 
 export class FunctionValidatorTab extends Tab {
 	protected fileTab: FileTab | undefined
@@ -15,7 +16,7 @@ export class FunctionValidatorTab extends Tab {
 
 	protected stopped = false
 
-	protected validator = new FunctionValidator()
+	protected app: App | undefined
 
 	constructor(protected parent: TabSystem, protected tab: FileTab) {
 		super(parent)
@@ -66,7 +67,7 @@ export class FunctionValidatorTab extends Tab {
 		let dataLoadingElement = document.getElementById('data-loading')
 		let loadedDataElement = document.getElementById('loaded-content')
 
-		if (this.validator.blockStateData) {
+		if (this.app!.languageManager.mcfunction.validator.blockStateData) {
 			if (dataLoadingElement) {
 				dataLoadingElement.classList.add('hidden')
 			}
@@ -154,7 +155,9 @@ export class FunctionValidatorTab extends Tab {
 				) {
 					docsElement.textContent = 'No documentation.'
 				} else {
-					let data = await this.validator.ValidateCommand(fullCommand)
+					let data = await this.app!.languageManager.mcfunction.validator.ValidateCommand(
+						fullCommand
+					)
 
 					let currentErrorLines = []
 
@@ -329,7 +332,7 @@ export class FunctionValidatorTab extends Tab {
 						}
 					}
 
-					docsElement.textContent = await this.validator.GetDocs(
+					docsElement.textContent = await this.app!.languageManager.mcfunction.validator.GetDocs(
 						command
 					)
 
@@ -397,9 +400,15 @@ export class FunctionValidatorTab extends Tab {
 	async onActivate() {
 		await super.onActivate()
 
+		this.app = await App.getApp()
+
+		if (!this.app.languageManager.mcfunction.validator.loadedCommandData) {
+			this.app.languageManager.mcfunction.validator.LoadCommandData()
+		}
+
 		await this.LoadFileContent()
 
-		await this.validator.LoadCommandData()
+		await this.app.languageManager.mcfunction.validator.LoadCommandData()
 
 		await this.UpdateLoadedState()
 

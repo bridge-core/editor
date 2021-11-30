@@ -14,6 +14,8 @@ export class FunctionValidator {
 	protected generalCommandData: any | undefined
 	protected generalSelectorArgsData: any | undefined
 
+	public loadedCommandData = false
+
 	public blockStateData: any | undefined
 
 	constructor() {}
@@ -54,6 +56,8 @@ export class FunctionValidator {
 	}
 
 	public async LoadCommandData() {
+		this.loadedCommandData = true
+
 		const app = await App.getApp()
 		const project = await app.project
 
