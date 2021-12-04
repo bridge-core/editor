@@ -83,7 +83,7 @@ export class App {
 
 	public readonly mobile: Mobile
 
-	protected languageManager = markRaw(new LanguageManager())
+	public readonly languageManager = markRaw(new LanguageManager())
 
 	protected _windows: Windows
 	get windows() {
