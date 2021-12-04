@@ -11,6 +11,7 @@ import {
 	AnyHandle,
 } from '/@/components/FileSystem/Types'
 import { isMatch } from '/@/utils/glob/isMatch'
+import { isWritableData } from '/@/utils/isWritableData'
 
 export interface IFileData {
 	isLoaded?: boolean
@@ -457,9 +458,19 @@ export class Compiler {
 					'finalizeBuild',
 					file.filePath,
 					transformedData
-				)) ?? JSON.stringify(transformedData)
+				)) ?? transformedData
 
 			if (writeFiles && writeData !== undefined && writeData !== null) {
+				if (!isWritableData(writeData)) {
+					console.warn(
+						`File "${
+							file.filePath
+						}" was not in a writable format: "${typeof writeData}". Trying to JSON.stringify(...) it...`,
+						writeData
+					)
+					writeData = JSON.stringify(writeData)
+				}
+
 				await this.outputFileSystem.mkdir(dirname(file.saveFilePath), {
 					recursive: true,
 				})
