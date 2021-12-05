@@ -982,8 +982,7 @@ export default {
 			},
 			selectors: {
 				emptyComplex: '出现了意外的空的复杂选择器！',
-				expectedStringAsAttribute:
-					'选择器特性必须是一个字符串！',
+				expectedStringAsAttribute: '选择器特性必须是一个字符串！',
 				invalidSelectorAttribute: {
 					part1: '‘',
 					part2: '’不是一个有效的选择器特性！',
@@ -1009,13 +1008,11 @@ export default {
 					part1: '选择器‘',
 					part2: '’不是一个有效的选择器！',
 				},
-				selectorNotBeforeOpenSquareBracket:
-					'预期在‘[’之前应出现一个选择器！',
+				selectorNotBeforeOpenSquareBracket: '预期在‘[’之前应出现一个选择器！',
 			},
 			scoreData: {
 				empty: '出现了意外的空的分数数据！',
-				expectedStringAsAttribute:
-					'分数数据特性必须是一个字符串！',
+				expectedStringAsAttribute: '分数数据特性必须是一个字符串！',
 				invalidType: {
 					part1: '不支持该分数数据的值的类型：',
 					part2: '’！',
