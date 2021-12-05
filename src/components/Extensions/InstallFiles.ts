@@ -1,4 +1,4 @@
-import type { Project } from '/@/components/Projects/Project/Project'
+import { TPackTypeId } from '../Data/PackType'
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { iterateDir } from '/@/utils/iterateDir'
@@ -7,7 +7,10 @@ import { join } from '/@/utils/path'
 export class InstallFiles {
 	constructor(
 		protected fileSystem: FileSystem,
-		protected contributeFiles: Record<string, string>
+		protected contributeFiles: Record<
+			string,
+			{ pack: TPackTypeId; path: string }
+		>
 	) {}
 
 	async execute(isGlobal: boolean) {
@@ -21,8 +24,12 @@ export class InstallFiles {
 				const file = await this.fileSystem.readFile(from)
 
 				for (const project of projects) {
-					await project.fileSystem.writeFile(
-						to,
+					const target = project.config.resolvePackPath(
+						to.pack,
+						to.path
+					)
+					await app.fileSystem.writeFile(
+						target,
 						await file.arrayBuffer()
 					)
 				}
@@ -32,11 +39,15 @@ export class InstallFiles {
 					await this.fileSystem.getDirectoryHandle(from),
 					async (fileHandle, filePath) => {
 						for (const project of projects) {
-							const newFileHandle = await project.fileSystem.getFileHandle(
-								join(to, filePath),
+							const target = project.config.resolvePackPath(
+								to.pack,
+								to.path
+							)
+							const newFileHandle = await app.fileSystem.getFileHandle(
+								join(target, filePath),
 								true
 							)
-							await project.fileSystem.copyFileHandle(
+							await app.fileSystem.copyFileHandle(
 								fileHandle,
 								newFileHandle
 							)
