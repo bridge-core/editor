@@ -21,6 +21,7 @@ export default {
 		more: 'More...',
 		selectFolder: 'Select Folder',
 		fileName: 'File Name',
+		folderName: 'Folder Name',
 		inactive: 'Inactive',
 		active: 'Active',
 		later: 'Later',
@@ -29,6 +30,8 @@ export default {
 
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
+		confirmOverwriteFolder:
+			'This action overwrites a folder with the same name. Do you want to continue?',
 		fileSystemPolyfill:
 			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome (excluding Chrome 93/94) or Edge!',
 		successfulExport: {

@@ -343,6 +343,66 @@ export class PackExplorer extends SidebarContent {
 				  ]
 				: [
 						{
+							icon: 'mdi-pencil-outline',
+							name:
+								'windows.packExplorer.fileActions.rename.name',
+							description:
+								'windows.packExplorer.fileActions.rename.description',
+							onTrigger: async () => {
+								const inputWindow = new InputWindow({
+									name:
+										'windows.packExplorer.fileActions.rename.name',
+									label: 'general.folderName',
+									default: entry.name,
+								})
+								const newFolderName = await inputWindow.fired
+								if (!newFolderName) return
+
+								const newFolderPath = join(
+									dirname(path),
+									newFolderName
+								)
+
+								// If folder with same path already exists, confirm that it's ok to overwrite it
+								if (
+									await project.app.fileSystem.directoryExists(
+										newFolderPath
+									)
+								) {
+									const confirmWindow = new ConfirmationWindow(
+										{
+											description:
+												'general.confirmOverwriteFolder',
+										}
+									)
+
+									if (!(await confirmWindow.fired)) return
+								}
+
+								// Update pack indexer & compiler
+								await Promise.all([
+									project.packIndexer.unlink(path),
+									project.compilerManager.unlink(path),
+								])
+
+								// The rename action needs to happen after deleting the old folder inside of the output directory
+								// because the compiler will fail to unlink it if the original folder doesn't exist.
+								await project.app.fileSystem.move(
+									path,
+									newFolderPath
+								)
+
+								// Let the compiler, pack indexer etc. process the renamed folder
+								let files = await project.app.fileSystem.readFilesFromDir(newFolderPath)
+								for (let file of files) {
+									await project.updateFile(file.path)
+								}
+
+								// Refresh pack explorer
+								this.refresh()
+							},
+						},
+						{
 							icon: 'mdi-file-plus-outline',
 							name:
 								'windows.packExplorer.fileActions.createFile.name',
@@ -382,7 +442,7 @@ export class PackExplorer extends SidebarContent {
 								const inputWindow = new InputWindow({
 									name:
 										'windows.packExplorer.fileActions.createFolder.name',
-									label: 'general.fileName',
+									label: 'general.folderName',
 									default: '',
 								})
 								const name = await inputWindow.fired

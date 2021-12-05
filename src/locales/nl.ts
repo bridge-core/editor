@@ -21,11 +21,14 @@ export default {
 		more: 'Meer...',
 		selectFolder: 'Selecteer Map',
 		fileName: 'Bestandsnaam',
+		folderName: 'Map Naam',
 		inactive: 'Inactief',
 		active: 'Actief',
 
 		confirmOverwriteFile:
 			'Er bestaat al een bestand met deze naam. Wil je het overschrijven?',
+		confirmOverwriteFolder:
+			'Er bestaat al een map met deze naam. Wil je het overschrijven?',
 		fileSystemPolyfill:
 			'Vanwege de browser die u gebruikt, moet u uw projecten downloaden om uw voortgang daadwerkelijk op te slaan. Dit is niet nodig als u Chrome of Edge gebruikt!',
 		successfulExport: {
