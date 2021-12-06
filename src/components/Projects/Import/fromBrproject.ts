@@ -10,22 +10,25 @@ import { basename } from '/@/utils/path'
 
 export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
-	isFirstImport = false
+	isFirstImport = false,
+	unzip = true
 ) {
 	const app = await App.getApp()
 	const fs = app.fileSystem
 	const tmpHandle = await fs.getDirectoryHandle('import', {
 		create: true,
 	})
-	const unzipper = new Unzipper(tmpHandle)
 
 	if (!isFirstImport) await app.projectManager.projectReady.fired
 
-	// Unzip .brproject file
-	const file = await fileHandle.getFile()
-	const data = new Uint8Array(await file.arrayBuffer())
-	unzipper.createTask(app.taskManager)
-	await unzipper.unzip(data)
+	// Unzip .brproject file, do not unzip if already unzipped
+	if (unzip) {
+		const unzipper = new Unzipper(tmpHandle)
+		const file = await fileHandle.getFile()
+		const data = new Uint8Array(await file.arrayBuffer())
+		unzipper.createTask(app.taskManager)
+		await unzipper.unzip(data)
+	}
 	let importFrom = 'import'
 
 	if (!(await fs.fileExists('import/config.json'))) {

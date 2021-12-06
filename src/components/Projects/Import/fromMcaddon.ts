@@ -14,23 +14,28 @@ import { defaultPackPaths } from '../Project/Config'
 
 export async function importFromMcaddon(
 	fileHandle: AnyFileHandle,
-	isFirstImport = false
+	isFirstImport = false,
+	unzip = true
 ) {
 	const app = await App.getApp()
 	const fs = app.fileSystem
 	const tmpHandle = await fs.getDirectoryHandle('import', {
 		create: true,
 	})
-	const unzipper = new Unzipper(tmpHandle)
 
 	if (!isFirstImport) await app.projectManager.projectReady.fired
 
 	// Unzip .mcaddon file
-	const file = await fileHandle.getFile()
-	const data = new Uint8Array(await file.arrayBuffer())
-	unzipper.createTask(app.taskManager)
-	await unzipper.unzip(data)
-	const projectName = fileHandle.name.replace('.mcaddon', '')
+	if (unzip) {
+		const unzipper = new Unzipper(tmpHandle)
+		const file = await fileHandle.getFile()
+		const data = new Uint8Array(await file.arrayBuffer())
+		unzipper.createTask(app.taskManager)
+		await unzipper.unzip(data)
+	}
+	const projectName = fileHandle.name
+		.replace('.mcaddon', '')
+		.replace('.zip', '')
 
 	// Ask user whether he wants to save the current project if we are going to delete it later in the import process
 	if (isUsingFileSystemPolyfill && !isFirstImport) {
