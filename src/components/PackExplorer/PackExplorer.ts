@@ -510,16 +510,47 @@ export class PackExplorer extends SidebarContent {
 	async showMoreMenu(event: MouseEvent) {
 		const app = await App.getApp()
 
+		const packPath = this.selectedAction?.getConfig()?.id
+
 		showContextMenu(event, [
 			// Add new file
 			{
 				icon: 'mdi-plus',
 				name: 'windows.packExplorer.createPreset',
 				onTrigger: async () => {
-					const app = await App.getApp()
 					await app.windows.createPreset.open()
 				},
 			},
+			// Create a new top-level folder
+			...(packPath
+				? [
+						{
+							icon: 'mdi-folder-plus-outline',
+							name:
+								'windows.packExplorer.fileActions.createFolder.name',
+							description:
+								'windows.packExplorer.fileActions.createFolder.description',
+							onTrigger: async () => {
+								const inputWindow = new InputWindow({
+									name:
+										'windows.packExplorer.fileActions.createFolder.name',
+									label: 'general.fileName',
+									default: '',
+								})
+								const name = await inputWindow.fired
+								if (!name) return
+
+								await app.fileSystem.mkdir(
+									`${packPath}/${name}`,
+									{ recursive: true }
+								)
+								// Refresh pack explorer
+								this.refresh()
+							},
+						},
+				  ]
+				: []),
+			{ type: 'divider' },
 			// Reload project
 			{
 				icon: 'mdi-refresh',
