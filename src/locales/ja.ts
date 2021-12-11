@@ -1029,8 +1029,8 @@ export default {
 			expectedEquals: 'セレクター属性の等号がありません',
 			expectedValueButNothing: 'セレクター属性の値がありません',
 			attributeNegationSupport: {
-				part1: "Attribute '",
-				part2: "' does not support negation!",
+				part1: "セレクター属性'",
+				part2: "'は否定をサポートしていません。",
 			},
 			multipleInstancesNever: {
 				part1: "Multiple instances of attribute '",
@@ -1067,7 +1067,6 @@ export default {
 			unexpectedClosedSquareBracket: '予期しない]があります。',
 			selectorNotBeforeOpenSquareBracket:
 				']の前にセレクターが必要か無効なblock stateになっています。',
-			unexpectedCloseSquareBracket: 'Unexpected ]',
 			noValidCommandVarsFound: {
 				part1: '有効なコマンド形式ではありません。第',
 				part2: "引数が無効です。現在'",
@@ -1081,24 +1080,24 @@ export default {
 		},
 		warnings: {
 			schemaFamily: {
-				part1: "Could not find family '",
+				part1: "family='",
 				part2:
-					"'. This could either be a mistake or the family is from another addon.",
+					"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
 			},
 			schemaType: {
-				part1: "Could not find type '",
+				part1: "type='",
 				part2:
-					"'. This could either be a mistake or the type is from another addon.",
+					"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
 			},
 			schemaTag: {
-				part1: "Could not find tag '",
+				part1: "tag='",
 				part2:
-					"'. This could either be a mistake or the tag is from another addon.",
+					"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
 			},
 			schemaValue: {
-				part1: "Could not find schema value '",
+				part1: "value='",
 				part2:
-					"'. This could either be a mistake or the schema value is from another addon.",
+					"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
 			},
 		},
 	},
