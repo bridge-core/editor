@@ -299,6 +299,9 @@ export default {
 			name: 'Change All Occurrences',
 			description: 'Change all occurrences of the selected text',
 		},
+		tgaMaskToggle: {
+			name: 'Show/Hide Alpha Mask'
+		}
 	},
 	// Toolbar Categories
 	toolbar: {
