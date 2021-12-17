@@ -1,9 +1,9 @@
-import { compare } from 'compare-versions'
+import { compareVersions } from 'bridge-common-utils'
 import { ProjectConfig } from '/@/components/Projects/Project/Config'
 import { v1Compat } from './v1Compat'
 import { run } from '/@/components/Extensions/Scripts/run'
-import { deepMerge } from '/@/utils/deepmerge'
-import { hashString } from '/@/utils/hash'
+import { deepMerge } from 'bridge-common-utils'
+import { hashString } from 'bridge-common-utils'
 
 export type TTemplate = (componentArgs: any, opts: any) => any
 
@@ -209,7 +209,7 @@ export class Component {
 				animation,
 				dialogueScene:
 					!this.targetVersion ||
-					compare(this.targetVersion, '1.17.10', '>=')
+					compareVersions(this.targetVersion, '1.17.10', '>=')
 						? (scene: any, openDialogue = true) => {
 								this.dialogueScenes.push(scene)
 

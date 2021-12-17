@@ -1,8 +1,8 @@
 import { transformCommands } from './transformCommands'
 import { v1Compat } from './v1Compat'
 import { run } from '/@/components/Extensions/Scripts/run'
-import { tokenizeCommand } from '/@/components/Languages/Mcfunction/tokenize'
-import { castType } from '/@/utils/castType'
+import { tokenizeCommand } from 'bridge-common-utils'
+import { castType } from 'bridge-common-utils'
 
 export type TTemplate = (commandArgs: unknown[], opts: any) => string | string[]
 

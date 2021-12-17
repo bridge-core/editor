@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
 import { languages, Uri } from 'monaco-editor'
-import { compare } from 'compare-versions'
+import { compareVersions } from 'bridge-common-utils'
 import { getLatestFormatVersion } from './FormatVersions'
 import { DataLoader } from './DataLoader'
 import { Tab } from '../TabSystem/CommonTab'
@@ -75,7 +75,13 @@ export class TypeLoader {
 					app.projectConfig.get().targetVersion ??
 					(await getLatestFormatVersion())
 
-				if (compare(projectTargetVersion, targetVersion, operator))
+				if (
+					compareVersions(
+						projectTargetVersion,
+						targetVersion,
+						operator
+					)
+				)
 					return <const>[typePath, await this.load(typePath)]
 			})
 		)

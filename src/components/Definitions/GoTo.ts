@@ -8,7 +8,7 @@ import { run } from '/@/components/Extensions/Scripts/run'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { findAsync } from '/@/utils/array/findAsync'
 import { AnyFileHandle } from '../FileSystem/Types'
-import { isMatch } from '/@/utils/glob/isMatch'
+import { isMatch } from 'bridge-common-utils'
 import { getCacheScriptEnv } from '../PackIndexer/Worker/LightningCache/CacheEnv'
 
 export class DefinitionProvider {

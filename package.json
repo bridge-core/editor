@@ -12,6 +12,7 @@
 	"dependencies": {
 		"@mdi/font": "^5.8.55",
 		"@vue/composition-api": "^1.0.5",
+		"bridge-common-utils": "^0.3.3",
 		"bridge-model-viewer": "^0.7.0",
 		"buffer": "^6.0.3",
 		"color-convert": "^2.0.1",
@@ -46,7 +47,6 @@
 		"@types/json5": "0.0.30",
 		"@types/lodash-es": "^4.17.4",
 		"@types/lodash.debounce": "^4.0.6",
-		"@types/micromatch": "^4.0.1",
 		"@types/node": "^14.17.9",
 		"@types/three": "^0.127.1",
 		"@types/uuid": "^8.3.0",

@@ -4,9 +4,9 @@ import { run } from '../Extensions/Scripts/run'
 import { getFilteredFormatVersions } from './FormatVersions'
 import { App } from '/@/App'
 import { iterateDir } from '/@/utils/iterateDir'
-import { walkObject } from '/@/utils/walkObject'
+import { walkObject } from 'bridge-common-utils'
 import { v4 as uuid } from 'uuid'
-import { compare } from 'compare-versions'
+import { compare } from 'bridge-common-utils'
 import { TPackTypeId } from './PackType'
 
 export class SchemaScript {

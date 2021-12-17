@@ -2,7 +2,7 @@ import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Mai
 import type { IPackSpiderFile } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { DataLoader } from './DataLoader'
-import { isMatch } from '/@/utils/glob/isMatch'
+import { isMatch } from 'bridge-common-utils'
 import type { ProjectConfig } from '/@/components/Projects/Project/Config'
 import { FileType } from 'mc-project-core'
 

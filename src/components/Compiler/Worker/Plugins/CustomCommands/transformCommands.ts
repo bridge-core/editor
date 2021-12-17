@@ -1,5 +1,5 @@
 import { Command } from './Command'
-import { tokenizeCommand } from '/@/components/Languages/Mcfunction/tokenize'
+import { tokenizeCommand } from 'bridge-common-utils'
 
 /**
  * @param {`/${string}`[]} commands Must start with a "/"

@@ -1,5 +1,5 @@
 import { run } from '/@/components/Extensions/Scripts/run'
-import { walkObject } from '/@/utils/walkObject'
+import { walkObject } from 'bridge-common-utils'
 import json5 from 'json5'
 import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'

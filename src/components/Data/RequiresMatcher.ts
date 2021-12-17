@@ -1,10 +1,10 @@
-import { CompareOperator, compare } from 'compare-versions'
+import { TCompareOperator, compareVersions } from 'bridge-common-utils'
 import { TPackTypeId } from '/@/components/Data/PackType'
 import { App } from '/@/App'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 
 export interface IRequirements {
-	targetVersion?: [CompareOperator, string]
+	targetVersion?: [TCompareOperator, string]
 	experimentalGameplay?: string[]
 	packTypes?: TPackTypeId[]
 }
@@ -30,7 +30,7 @@ export class RequiresMatcher {
 		)
 		const matchesTargetVersion =
 			!this.requires.targetVersion ||
-			compare(
+			compareVersions(
 				this.projectTargetVersion,
 				this.requires.targetVersion[1],
 				this.requires.targetVersion[0]

@@ -1,5 +1,4 @@
-import { compare } from 'compare-versions'
-import { isMatch } from '/@/utils/glob/isMatch'
+import { isMatch, compareVersions } from 'bridge-common-utils'
 
 export interface ISnippet {
 	name: string
@@ -66,9 +65,17 @@ export class Snippet {
 		const formatVersionValid =
 			typeof formatVersion !== 'string' || //Format version inside of file is a string
 			((!this.minTargetFormatVersion ||
-				compare(formatVersion, this.minTargetFormatVersion, '>=')) &&
+				compareVersions(
+					formatVersion,
+					this.minTargetFormatVersion,
+					'>='
+				)) &&
 				(!this.maxTargetFormatVersion ||
-					compare(formatVersion, this.maxTargetFormatVersion, '<=')))
+					compareVersions(
+						formatVersion,
+						this.maxTargetFormatVersion,
+						'<='
+					)))
 
 		return (
 			formatVersionValid &&

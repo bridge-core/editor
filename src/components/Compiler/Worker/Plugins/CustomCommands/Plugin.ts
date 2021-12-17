@@ -2,7 +2,7 @@ import json5 from 'json5'
 import { TCompilerPluginFactory } from '../../TCompilerPluginFactory'
 import { Command } from './Command'
 import { transformCommands } from './transformCommands'
-import { setObjectAt } from '/@/utils/walkObject'
+import { setObjectAt } from 'bridge-common-utils'
 
 export const CustomCommandsPlugin: TCompilerPluginFactory<{
 	include: Record<string, string[]>

@@ -2,8 +2,7 @@ import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import ExtensionStoreComponent from './ExtensionStore.vue'
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { App } from '/@/App'
-import { compare } from 'compare-versions'
-import { getFileSystem } from '/@/utils/fs'
+import { compareVersions } from 'bridge-common-utils'
 import { ExtensionTag } from './ExtensionTag'
 import { ExtensionViewer } from './ExtensionViewer'
 import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
@@ -75,7 +74,11 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 				// Update for extension is available
 				if (
-					compare(installedExtension.version, extension.version, '<')
+					compareVersions(
+						installedExtension.version,
+						extension.version,
+						'<'
+					)
 				) {
 					extension.setIsUpdateAvailable()
 					this.updates.add(extension)

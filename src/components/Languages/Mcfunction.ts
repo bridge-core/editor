@@ -7,7 +7,7 @@ import {
 } from 'monaco-editor'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 import { Language } from './Language'
-import { tokenizeCommand, tokenizeTargetSelector } from './Mcfunction/tokenize'
+import { tokenizeCommand, tokenizeTargetSelector } from 'bridge-common-utils'
 import { App } from '/@/App'
 import './Mcfunction/WithinJson'
 import { tokenProvider } from './Mcfunction/TokenProvider'

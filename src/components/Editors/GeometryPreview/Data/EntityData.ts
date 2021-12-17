@@ -1,7 +1,7 @@
 import json5 from 'json5'
 import { PreviewFileWatcher } from './PreviewFileWatcher'
 import { RenderDataContainer } from './RenderContainer'
-import { walkObject } from '/@/utils/walkObject'
+import { walkObject } from 'bridge-common-utils'
 
 export interface IOutlineBox {
 	color: `#${string}`
@@ -106,7 +106,10 @@ export class EntityData extends PreviewFileWatcher {
 						color: '#0000ff',
 						position: {
 							x: (hitbox?.pivot?.[0] ?? 0) * -16,
-							y: ((hitbox?.pivot?.[1] ?? 0) - hitbox.height / 2) * 16,
+							y:
+								((hitbox?.pivot?.[1] ?? 0) -
+									hitbox.height / 2) *
+								16,
 							z: (hitbox?.pivot?.[2] ?? 0) * -16,
 						},
 						size: {

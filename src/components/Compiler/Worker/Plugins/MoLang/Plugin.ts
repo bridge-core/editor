@@ -1,6 +1,6 @@
 import { TCompilerPluginFactory } from '../../TCompilerPluginFactory'
 import { CustomMoLang, IExpression, MoLang, expressions } from 'molang'
-import { setObjectAt } from '/@/utils/walkObject'
+import { setObjectAt } from 'bridge-common-utils'
 import json5 from 'json5'
 import { run } from '/@/components/Extensions/Scripts/run'
 

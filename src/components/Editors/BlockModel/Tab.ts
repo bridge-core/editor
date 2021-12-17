@@ -6,7 +6,7 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import json5 from 'json5'
 import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
-import { walkObject } from '/@/utils/walkObject'
+import { walkObject } from 'bridge-common-utils'
 import { isValidPositionArray } from '/@/utils/minecraft/validPositionArray'
 import { markRaw } from '@vue/composition-api'
 

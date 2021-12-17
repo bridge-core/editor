@@ -10,7 +10,7 @@ import {
 	AnyFileHandle,
 	AnyHandle,
 } from '/@/components/FileSystem/Types'
-import { isMatch } from '/@/utils/glob/isMatch'
+import { isMatch } from 'bridge-common-utils'
 import { isWritableData } from '/@/utils/isWritableData'
 
 export interface IFileData {

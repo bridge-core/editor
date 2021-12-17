@@ -3,7 +3,7 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { Compiler } from './CompilerWorker'
 import JSON5 from 'json5'
 import { App } from '/@/App'
-import { deepMergeAll } from '/@/utils/deepmerge'
+import { deepMergeAll } from 'bridge-common-utils'
 import { Signal } from '../Common/Event/Signal'
 import { InfoPanel, IPanelOptions } from '../InfoPanel/InfoPanel'
 import {

@@ -1,4 +1,4 @@
-import { walkObject } from '/@/utils/walkObject'
+import { walkObject } from 'bridge-common-utils'
 import { LightningStore } from '../LightningCache/LightningStore'
 import { PackIndexerService } from '../Main'
 

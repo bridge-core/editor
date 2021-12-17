@@ -1,9 +1,9 @@
 import json5 from 'json5'
-import { get } from 'lodash'
+import { get } from 'bridge-common-utils'
 import { TCompilerPluginFactory } from '../../TCompilerPluginFactory'
 import { Component } from './Component'
 import { findCustomComponents } from './findComponents'
-import { deepMerge } from '/@/utils/deepmerge'
+import { deepMerge } from 'bridge-common-utils'
 
 interface IOpts {
 	folder: string

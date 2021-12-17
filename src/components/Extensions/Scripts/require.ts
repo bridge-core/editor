@@ -39,7 +39,7 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/fetch-definition', FetchDefinitionModule],
 	['@bridge/windows', WindowModule],
 	['@bridge/toolbar', ToolbarModule],
-	['@bridge/compare-versions', CompareVersions],
+	['@bridge/bridge-common-utils', CompareVersions],
 	['@bridge/monaco', MonacoModule],
 	['@bridge/json5', Json5Module],
 	['@bridge/com-mojang', ComMojangModule],
@@ -47,7 +47,7 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/tab-actions', TabActionsModule],
 	['@bridge/theme', ThemeModule],
 	['@bridge/three', ThreeModule],
-	['@bridge/model-viewer', ModelViewerModule]
+	['@bridge/model-viewer', ModelViewerModule],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
@@ -58,7 +58,7 @@ const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/globals', GlobalsModule],
 	['@bridge/utils', UtilsModule],
 	['@bridge/fetch-definition', FetchDefinitionModule],
-	['@bridge/compare-versions', CompareVersions],
+	['@bridge/bridge-common-utils', CompareVersions],
 ])
 
 function createGenericEnv(
