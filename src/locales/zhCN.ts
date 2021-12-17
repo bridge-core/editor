@@ -286,6 +286,9 @@ export default {
 			name: '更改所有匹配项',
 			description: '更改所选文本的所有匹配项',
 		},
+		tgaMaskToggle: {
+			name: '显示/隐藏Alpha蒙版'
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -1034,8 +1037,8 @@ export default {
 		warnings: {
 			schema: {
 				familyNotFound: {
-					part1: '找不到父族‘',
-					part2: '’。这可能是一个错误，或者该父族来自另一个附加包。',
+					part1: '找不到族‘',
+					part2: '’。这可能是一个错误，或者该族来自另一个附加包。',
 				},
 				typeNotFound: {
 					part1: '找不到类型‘',
