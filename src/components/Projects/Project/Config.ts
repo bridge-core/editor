@@ -6,6 +6,7 @@ import {
 	IConfigJson,
 	ProjectConfig as BaseProjectConfig,
 } from 'mc-project-core'
+import { dirname } from '/@/utils/path'
 
 export type { IConfigJson } from 'mc-project-core'
 export { defaultPackPaths } from 'mc-project-core'
@@ -14,6 +15,9 @@ export class ProjectConfig extends BaseProjectConfig {
 	constructor(protected fileSystem: FileSystem, protected project?: Project) {
 		super(`projects/${fileSystem.baseDirectory.name}`)
 
+		console.log(
+			dirname(`projects/${fileSystem.baseDirectory.name}/config.json`)
+		)
 		if (project) {
 			project.fileSave.on('config.json', () => {
 				this.refreshConfig()

@@ -1,11 +1,10 @@
-import { Command } from './Command'
+import { Command } from 'dash-compiler'
 import { App } from '/@/App'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { iterateDir } from '/@/utils/iterateDir'
 
 export async function generateCommandSchemas() {
 	const app = await App.getApp()
-	await app.project.compilerManager.fired
 
 	const v1CompatMode = app.project.config.get().bridge?.v1CompatMode ?? false
 	const fromFilePath = `BP/commands`
@@ -25,9 +24,13 @@ export async function generateCommandSchemas() {
 			const [
 				_,
 				fileContent,
-			] = await app.project.compilerManager.compileWithFile(
+			] = await app.project.compilerService.dash.compileFile(
 				filePath,
-				await fileHandle.getFile()
+				await fileHandle
+					.getFile()
+					.then(
+						async (file) => new Uint8Array(await file.arrayBuffer())
+					)
 			)
 			const file = new File([fileContent], fileHandle.name)
 			const command = new Command(await file.text(), 'dev', v1CompatMode)

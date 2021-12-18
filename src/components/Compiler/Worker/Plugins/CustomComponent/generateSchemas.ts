@@ -1,4 +1,4 @@
-import { Component } from './Component'
+import { Component } from 'dash-compiler'
 import { App } from '/@/App'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { iterateDir } from '/@/utils/iterateDir'
@@ -25,9 +25,13 @@ export async function generateComponentSchemas(fileType: string) {
 			const [
 				_,
 				fileContent,
-			] = await app.project.compilerManager.compileWithFile(
+			] = await app.project.compilerService.dash.compileFile(
 				filePath,
-				await fileHandle.getFile()
+				await fileHandle
+					.getFile()
+					.then(
+						async (file) => new Uint8Array(await file.arrayBuffer())
+					)
 			)
 			const file = new File([fileContent], fileHandle.name)
 			const component = new Component(

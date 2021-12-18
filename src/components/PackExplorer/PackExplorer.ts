@@ -166,7 +166,7 @@ export class PackExplorer extends SidebarContent {
 
 					await Promise.all([
 						project.packIndexer.unlink(path),
-						project.compilerManager.unlink(path),
+						project.compilerService.dash.unlink(path),
 					])
 
 					await project.jsonDefaults.reload()
@@ -228,7 +228,7 @@ export class PackExplorer extends SidebarContent {
 								// Update pack indexer & compiler
 								await Promise.all([
 									project.packIndexer.unlink(path),
-									project.compilerManager.unlink(path),
+									project.compilerService.dash.unlink(path),
 								])
 
 								// The rename action needs to happen after deleting the old file inside of the output directory
@@ -311,7 +311,7 @@ export class PackExplorer extends SidebarContent {
 								'windows.packExplorer.fileActions.viewCompilerOutput.description',
 							onTrigger: async () => {
 								const app = project.app
-								const transformedPath = await project.compilerManager.current.getCompilerOutputPath(
+								const transformedPath = await project.compilerService.dash.getCompilerOutputPath(
 									path
 								)
 								const fileSystem = app.comMojang.hasComMojang
@@ -320,6 +320,7 @@ export class PackExplorer extends SidebarContent {
 
 								// Information when file does not exist
 								if (
+									!transformedPath ||
 									!(await fileSystem.fileExists(
 										transformedPath
 									))
@@ -382,7 +383,7 @@ export class PackExplorer extends SidebarContent {
 								// Update pack indexer & compiler
 								await Promise.all([
 									project.packIndexer.unlink(path),
-									project.compilerManager.unlink(path),
+									project.compilerService.dash.unlink(path),
 								])
 
 								// The rename action needs to happen after deleting the old folder inside of the output directory
@@ -393,7 +394,9 @@ export class PackExplorer extends SidebarContent {
 								)
 
 								// Let the compiler, pack indexer etc. process the renamed folder
-								let files = await project.app.fileSystem.readFilesFromDir(newFolderPath)
+								let files = await project.app.fileSystem.readFilesFromDir(
+									newFolderPath
+								)
 								for (let file of files) {
 									await project.updateFile(file.path)
 								}

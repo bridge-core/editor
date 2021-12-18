@@ -50,7 +50,8 @@ export async function setupSidebar() {
 		icon: 'mdi-cogs',
 		onClick: async () => {
 			const app = await App.getApp()
-			await app.project?.compilerManager.openWindow()
+			// TODO(Dash): Re-add compiler config window
+			// await app.project?.compilerManager.openWindow()
 		},
 	})
 	createSidebar({

@@ -8,7 +8,6 @@ import { IPackData, loadPacks } from './loadPacks'
 import { PackIndexer } from '/@/components/PackIndexer/PackIndexer'
 import { ProjectManager } from '../ProjectManager'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { CompilerManager } from '/@/components/Compiler/CompilerManager'
 import { JsonDefaults } from '/@/components/Data/JSONDefaults'
 import { TypeLoader } from '/@/components/Data/TypeLoader'
 import { ExtensionLoader } from '/@/components/Extensions/ExtensionLoader'
@@ -26,6 +25,7 @@ import { Tab } from '/@/components/TabSystem/CommonTab'
 import { getFolderDifference } from '/@/components/TabSystem/Util/FolderDifference'
 import { FileTypeLibrary } from '../../Data/FileType'
 import { relative } from '/@/utils/path'
+import { DashService } from '../../Compiler/Worker/Service'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -41,7 +41,7 @@ export abstract class Project {
 	// Not directly assigned so they're not responsive
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
-	public readonly compilerManager = new CompilerManager(this)
+	public readonly compilerService: DashService
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 
@@ -114,7 +114,23 @@ export abstract class Project {
 
 		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
 
+		this.compilerService = markRaw(this.createDashService('development'))
+
 		setTimeout(() => this.onCreate(), 0)
+	}
+
+	createDashService(mode: 'development' | 'production') {
+		return new DashService(
+			this.app.fileSystem.baseDirectory,
+			this.app.comMojang.hasComMojang
+				? this.app.comMojang.fileSystem.baseDirectory
+				: undefined,
+			{
+				config: `projects/${this.name}/config.json`,
+				mode: 'development',
+				pluginFileTypes: this.fileTypeLibrary.getPluginFileTypes(),
+			}
+		)
 	}
 
 	abstract onCreate(): Promise<void> | void
@@ -139,10 +155,11 @@ export abstract class Project {
 		)
 
 		await this.packIndexer.activate(isReload)
+		await this.compilerService.setup()
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
-			this.compilerManager.start('default', 'dev'),
+			this.compilerService.dash.build(),
 		])
 
 		this.snippetLoader.activate()
@@ -153,14 +170,12 @@ export abstract class Project {
 
 		this.typeLoader.deactivate()
 		this.packIndexer.deactivate()
-		this.compilerManager.deactivate()
 		this.jsonDefaults.deactivate()
 		this.extensionLoader.disposeAll()
 		this.snippetLoader.deactivate()
 	}
 	disposeWorkers() {
 		this.packIndexer.dispose()
-		this.compilerManager.dispose()
 	}
 	dispose() {
 		this.disposeWorkers()
@@ -266,30 +281,30 @@ export abstract class Project {
 
 		await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			this.compilerManager.updateFiles('default', [filePath]),
+			this.compilerService.dash.updateFile(filePath),
 		])
 
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
 	}
 	async updateFiles(filePaths: string[]) {
-		await Promise.all([
-			this.packIndexer.updateFiles(filePaths),
-			this.compilerManager.updateFiles('default', filePaths),
-		])
+		await this.packIndexer.updateFiles(filePaths)
+
+		for (const filePath of filePaths) {
+			await this.compilerService.dash.updateFile(filePath)
+		}
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 	async unlinkFile(filePath: string) {
 		await this.packIndexer.unlink(filePath)
-		await this.compilerManager.unlink(filePath)
+		await this.compilerService.dash.unlink(filePath)
 		await this.fileSystem.unlink(filePath)
 	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()
-		this.compilerManager.deactivate()
 
 		await this.packIndexer.activate(true)
-		await this.compilerManager.start('default', 'dev')
+		await this.compilerService.dash.build()
 	}
 
 	async getFileFromDiskOrTab(filePath: string) {
@@ -355,10 +370,9 @@ export abstract class Project {
 	}
 
 	async recompile(forceStartIfActive = true) {
-		if (forceStartIfActive) this.compilerManager.dispose()
-
 		if (forceStartIfActive && this.isActiveProject) {
-			this.compilerManager.start('default', 'dev', true)
+			// TODO(Dash): Add argument to force full recompilation once file caching is in
+			this.compilerService.dash.build()
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
 		}
