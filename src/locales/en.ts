@@ -300,8 +300,8 @@ export default {
 			description: 'Change all occurrences of the selected text',
 		},
 		tgaMaskToggle: {
-			name: 'Show/Hide Alpha Mask'
-		}
+			name: 'Show/Hide Alpha Mask',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -399,6 +399,12 @@ export default {
 			description:
 				'Enables auto-completions for experimental Molang queries.',
 		},
+		theWildUpdate: {
+			name: 'The Wild Update',
+			description:
+				'Enables auto-completions for new features introduced in the Wild Update, such as entity components.',
+		},
+
 		educationEdition: {
 			name: 'Enable Education Edition',
 			description:
