@@ -6,7 +6,7 @@ import { App } from '/@/App'
 import { iterateDir } from '/@/utils/iterateDir'
 import { walkObject } from 'bridge-common-utils'
 import { v4 as uuid } from 'uuid'
-import { compare } from 'bridge-common-utils'
+import { compareVersions } from 'bridge-common-utils'
 import { TPackTypeId } from './PackType'
 
 export class SchemaScript {
@@ -64,7 +64,7 @@ export class SchemaScript {
 						walkObject(path, currentJson, (d) => data.push(d))
 						return data
 					},
-					compare,
+					compare: compareVersions,
 					resolvePackPath: (
 						packId?: TPackTypeId,
 						filePath?: string
