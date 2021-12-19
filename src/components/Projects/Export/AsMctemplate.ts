@@ -13,7 +13,7 @@ export async function exportAsMctemplate(asMcworld = false) {
 
 	const service = app.project.createDashService('production')
 	await service.setup()
-	await service.dash.build()
+	await service.build()
 
 	let baseWorlds: string[] = []
 

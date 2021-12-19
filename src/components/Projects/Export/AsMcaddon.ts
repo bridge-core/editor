@@ -64,7 +64,7 @@ export async function exportAsMcaddon() {
 
 	const service = app.project.createDashService('production')
 	await service.setup()
-	await service.dash.build()
+	await service.build()
 
 	const zipFolder = new ZipDirectory(
 		await app.project.fileSystem.getDirectoryHandle('builds/dist', {

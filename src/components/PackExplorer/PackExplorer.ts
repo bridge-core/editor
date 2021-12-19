@@ -166,7 +166,7 @@ export class PackExplorer extends SidebarContent {
 
 					await Promise.all([
 						project.packIndexer.unlink(path),
-						project.compilerService.dash.unlink(path),
+						project.compilerService.unlink(path),
 					])
 
 					await project.jsonDefaults.reload()
@@ -228,7 +228,7 @@ export class PackExplorer extends SidebarContent {
 								// Update pack indexer & compiler
 								await Promise.all([
 									project.packIndexer.unlink(path),
-									project.compilerService.dash.unlink(path),
+									project.compilerService.unlink(path),
 								])
 
 								// The rename action needs to happen after deleting the old file inside of the output directory
@@ -311,7 +311,7 @@ export class PackExplorer extends SidebarContent {
 								'windows.packExplorer.fileActions.viewCompilerOutput.description',
 							onTrigger: async () => {
 								const app = project.app
-								const transformedPath = await project.compilerService.dash.getCompilerOutputPath(
+								const transformedPath = await project.compilerService.getCompilerOutputPath(
 									path
 								)
 								const fileSystem = app.comMojang.hasComMojang
@@ -383,7 +383,7 @@ export class PackExplorer extends SidebarContent {
 								// Update pack indexer & compiler
 								await Promise.all([
 									project.packIndexer.unlink(path),
-									project.compilerService.dash.unlink(path),
+									project.compilerService.unlink(path),
 								])
 
 								// The rename action needs to happen after deleting the old folder inside of the output directory

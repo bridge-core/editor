@@ -42,7 +42,7 @@ export class FileWatcher extends EventDispatcher<File> {
 		const [
 			dependencies,
 			compiled,
-		] = await this.app.project.compilerService.dash.compileFile(
+		] = await this.app.project.compilerService.compileFile(
 			this.filePath,
 			new Uint8Array(await file.arrayBuffer())
 		)

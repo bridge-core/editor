@@ -159,7 +159,7 @@ export abstract class Project {
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
-			this.compilerService.dash.build(),
+			this.compilerService.build(),
 		])
 
 		this.snippetLoader.activate()
@@ -273,7 +273,7 @@ export abstract class Project {
 		// We already have a check for foreign files inside of the TabSystem.save(...) function
 		// but there are a lot of sources that call updateFile(...)
 		try {
-			await this.fileSystem.getFileHandle(filePath)
+			await this.app.fileSystem.getFileHandle(filePath)
 		} catch {
 			// This is a foreign file, don't process it
 			return
@@ -281,7 +281,7 @@ export abstract class Project {
 
 		await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			this.compilerService.dash.updateFile(filePath),
+			this.compilerService.updateFile(filePath),
 		])
 
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
@@ -290,21 +290,21 @@ export abstract class Project {
 		await this.packIndexer.updateFiles(filePaths)
 
 		for (const filePath of filePaths) {
-			await this.compilerService.dash.updateFile(filePath)
+			await this.compilerService.updateFile(filePath)
 		}
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 	async unlinkFile(filePath: string) {
 		await this.packIndexer.unlink(filePath)
-		await this.compilerService.dash.unlink(filePath)
+		await this.compilerService.unlink(filePath)
 		await this.fileSystem.unlink(filePath)
 	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()
 
 		await this.packIndexer.activate(true)
-		await this.compilerService.dash.build()
+		await this.compilerService.build()
 	}
 
 	async getFileFromDiskOrTab(filePath: string) {
@@ -372,7 +372,7 @@ export abstract class Project {
 	async recompile(forceStartIfActive = true) {
 		if (forceStartIfActive && this.isActiveProject) {
 			// TODO(Dash): Add argument to force full recompilation once file caching is in
-			this.compilerService.dash.build()
+			this.compilerService.build()
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
 		}

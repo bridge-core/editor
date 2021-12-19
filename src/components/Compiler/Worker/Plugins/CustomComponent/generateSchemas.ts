@@ -25,8 +25,8 @@ export async function generateComponentSchemas(fileType: string) {
 			const [
 				_,
 				fileContent,
-			] = await app.project.compilerService.dash.compileFile(
-				filePath,
+			] = await app.project.compilerService.compileFile(
+				app.project.absolutePath(filePath),
 				await fileHandle
 					.getFile()
 					.then(

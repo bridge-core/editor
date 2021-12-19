@@ -97,7 +97,7 @@ export function setupFileCategory(app: App) {
 					const [
 						_,
 						compiled,
-					] = await app.project.compilerService.dash.compileFile(
+					] = await app.project.compilerService.compileFile(
 						currentTab.getPath(),
 						await currentTab
 							.getFile()

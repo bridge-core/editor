@@ -33,7 +33,7 @@ export const ProjectModule = async ({
 
 		async compile(configFile: string) {
 			// TODO(Dash): Support providing configFile again
-			await app.project.compilerService.dash.build()
+			await app.project.compilerService.build()
 		},
 
 		async compileFiles(paths: string[]) {

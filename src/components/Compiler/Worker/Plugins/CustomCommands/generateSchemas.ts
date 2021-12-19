@@ -24,8 +24,8 @@ export async function generateCommandSchemas() {
 			const [
 				_,
 				fileContent,
-			] = await app.project.compilerService.dash.compileFile(
-				filePath,
+			] = await app.project.compilerService.compileFile(
+				app.project.absolutePath(filePath),
 				await fileHandle
 					.getFile()
 					.then(
