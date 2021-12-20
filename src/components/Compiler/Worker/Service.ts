@@ -39,7 +39,7 @@ export class DashService {
 		this.fileType.setPluginFileTypes(options.pluginFileTypes)
 		this.dash = new Dash<DataLoader>(fileSystem, outputFileSystem, {
 			config: options.config,
-			mode: 'development',
+			mode: options.mode,
 			fileType: this.fileType,
 			packType: new PackTypeLibrary(),
 			requestJsonData: (path) => this.dataLoader.readJSON(path),

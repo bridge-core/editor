@@ -127,7 +127,7 @@ export abstract class Project {
 				: undefined,
 			{
 				config: `projects/${this.name}/config.json`,
-				mode: 'development',
+				mode,
 				pluginFileTypes: this.fileTypeLibrary.getPluginFileTypes(),
 			}
 		)

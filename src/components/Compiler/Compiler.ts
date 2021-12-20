@@ -4,4 +4,3 @@ import { proxy, wrap } from 'comlink'
 
 const worker = new CompilerWorker()
 export const DashCompiler = wrap<typeof DashService>(worker)
-console.log(DashCompiler)
