@@ -121,7 +121,10 @@ export abstract class Project {
 		setTimeout(() => this.onCreate(), 0)
 	}
 
-	createDashService(mode: 'development' | 'production') {
+	createDashService(
+		mode: 'development' | 'production',
+		compilerConfig?: string
+	) {
 		return new DashService(
 			this.app.fileSystem.baseDirectory,
 			this.app.comMojang.hasComMojang
@@ -129,6 +132,7 @@ export abstract class Project {
 				: undefined,
 			{
 				config: `projects/${this.name}/config.json`,
+				compilerConfig,
 				mode,
 				pluginFileTypes: this.fileTypeLibrary.getPluginFileTypes(),
 			}
@@ -159,15 +163,10 @@ export abstract class Project {
 		await this.packIndexer.activate(isReload)
 		await this.compilerService.setup()
 		const [changedFiles, deletedFiles] = await this.packIndexer.fired
-		console.log(changedFiles, deletedFiles)
-
-		await Promise.all([
-			...deletedFiles.map((f) => this.compilerService.unlink(f, false)),
-		])
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
-			this.compilerService.updateFiles(changedFiles),
+			this.compilerService.start(changedFiles, deletedFiles),
 		])
 
 		this.snippetLoader.activate()
@@ -377,7 +376,7 @@ export abstract class Project {
 
 	async recompile(forceStartIfActive = true) {
 		if (forceStartIfActive && this.isActiveProject) {
-			// TODO(Dash): Add argument to force full recompilation once file caching is in
+			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
 			this.compilerService.build()
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')

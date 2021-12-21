@@ -32,8 +32,13 @@ export const ProjectModule = async ({
 		},
 
 		async compile(configFile: string) {
-			// TODO(Dash): Support providing configFile again
-			await app.project.compilerService.build()
+			const service = app.project.createDashService(
+				'production',
+				configFile === 'default'
+					? undefined
+					: `projects/${app.project.name}/.bridge/${configFile}`
+			)
+			await service.build()
 		},
 
 		async compileFiles(paths: string[]) {

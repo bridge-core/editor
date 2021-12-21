@@ -13,37 +13,44 @@ import { Dash } from 'dash-compiler'
 import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { DashFileSystem } from './FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { dirname } from '/@/utils/path'
 
 export interface ICompilerOptions {
 	config: string
+	compilerConfig?: string
 	mode: 'development' | 'production'
 	pluginFileTypes: IFileType[]
 }
 
 export class DashService {
+	protected fileSystem: DashFileSystem
 	protected dataLoader = new DataLoader()
 	public fileType: FileTypeLibrary
 	protected dash: Dash<DataLoader>
 	protected isDashFree = new Signal<void>()
+	protected projectDir: string
 
 	constructor(
 		baseDirectory: AnyDirectoryHandle,
 		comMojangDirectory: AnyDirectoryHandle | undefined,
 		options: ICompilerOptions
 	) {
-		const fileSystem = new DashFileSystem(baseDirectory)
+		this.fileSystem = new DashFileSystem(baseDirectory)
 		const outputFileSystem = comMojangDirectory
 			? new DashFileSystem(comMojangDirectory)
 			: undefined
 		this.fileType = new FileTypeLibrary()
 		this.fileType.setPluginFileTypes(options.pluginFileTypes)
-		this.dash = new Dash<DataLoader>(fileSystem, outputFileSystem, {
+		this.dash = new Dash<DataLoader>(this.fileSystem, outputFileSystem, {
 			config: options.config,
+			compilerConfig: options.compilerConfig,
 			mode: options.mode,
 			fileType: this.fileType,
 			packType: new PackTypeLibrary(),
 			requestJsonData: (path) => this.dataLoader.readJSON(path),
 		})
+
+		this.projectDir = dirname(options.config)
 	}
 
 	async compileFile(filePath: string, fileContent: Uint8Array) {
@@ -54,6 +61,28 @@ export class DashService {
 		this.isDashFree.dispatch()
 		return data
 	}
+
+	async start(changedFiles: string[], deletedFiles: string[]) {
+		if (
+			await this.fileSystem.internal.fileExists(
+				`${this.projectDir}/.bridge/.restartDevServer`
+			)
+		) {
+			await Promise.all([
+				this.build(),
+				this.fileSystem.internal.unlink(
+					`${this.projectDir}/.bridge/.restartDevServer`
+				),
+			])
+		} else {
+			await Promise.all([
+				...deletedFiles.map((f) => this.unlink(f, false)),
+			])
+
+			if (changedFiles.length > 0) await this.updateFiles(changedFiles)
+		}
+	}
+
 	async build() {
 		await this.isDashFree.fired
 		this.isDashFree.resetSignal()
@@ -93,6 +122,15 @@ export class DashService {
 	async setup() {
 		await this.dataLoader.fired
 		await this.dash.setup(this.dataLoader)
+
+		this.isDashFree.dispatch()
+	}
+	async reloadPlugins() {
+		await this.isDashFree.fired
+		this.isDashFree.resetSignal()
+
+		await this.dash.reloadPlugins()
+
 		this.isDashFree.dispatch()
 	}
 }

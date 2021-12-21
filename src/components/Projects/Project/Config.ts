@@ -18,6 +18,7 @@ export class ProjectConfig extends BaseProjectConfig {
 			project.fileSave.on('config.json', () => {
 				this.refreshConfig()
 				this.project!.app.windows.createPreset.onPresetsChanged()
+				this.project!.compilerService.reloadPlugins()
 			})
 		}
 	}

@@ -11,6 +11,10 @@ export class DashFileSystem extends FileSystem {
 		this.internalFs = new BridgeFileSystem(baseDirectory)
 	}
 
+	get internal() {
+		return this.internalFs
+	}
+
 	readJson(path: string) {
 		return this.internalFs.readJSON(path)
 	}
