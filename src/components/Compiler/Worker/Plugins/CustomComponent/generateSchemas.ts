@@ -27,7 +27,6 @@ export async function generateComponentSchemas(fileType: string) {
 	await iterateDir(
 		baseDir,
 		async (fileHandle, filePath) => {
-			console.log(filePath)
 			const [_, fileContent] = await project.compilerService.compileFile(
 				filePath,
 				await fileHandle
