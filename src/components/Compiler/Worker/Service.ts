@@ -27,8 +27,9 @@ export class DashService {
 	protected dataLoader = new DataLoader()
 	public fileType: FileTypeLibrary
 	protected dash: Dash<DataLoader>
-	protected isDashFree = new Signal<void>()
+	public isDashFree = new Signal<void>()
 	protected projectDir: string
+	public isSetup = false
 
 	constructor(
 		baseDirectory: AnyDirectoryHandle,
@@ -127,6 +128,7 @@ export class DashService {
 		await this.dash.setup(this.dataLoader)
 
 		this.isDashFree.dispatch()
+		this.isSetup = true
 	}
 	async reloadPlugins() {
 		await this.isDashFree.fired

@@ -153,9 +153,7 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 	await project.commandData.fired
 	const commands = await project.commandData.allCommands(
 		undefined,
-		true
-		// TODO(Dash): Look into re-enabling once we have a way to wait for the first compilation of dash
-		// !project.compilerManager.hasFired
+		!project.compilerService.isSetup
 	)
 	tokenProvider.keywords = commands.map((command) => command)
 
@@ -184,12 +182,11 @@ export class McfunctionLanguage extends Language {
 				loadedProject = project
 				loadCommands(this)
 
-				// TODO(Dash): Look into re-enabling once we have a way to wait for the first compilation of dash
-				// project.compilerManager.fired.then(() => {
-				// 	// Make sure that we are still supposed to update the language
-				// 	// -> project didn't change
-				// 	if (project === loadedProject) loadCommands(this)
-				// })
+				project.compilerService.isDashFree.once(() => {
+					// Make sure that we are still supposed to update the language
+					// -> project didn't change
+					if (project === loadedProject) loadCommands(this)
+				})
 			}
 		)
 
