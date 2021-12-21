@@ -5,13 +5,17 @@ import { iterateDir } from '/@/utils/iterateDir'
 
 export async function generateCommandSchemas() {
 	const app = await App.getApp()
+	const project = app.project
 
-	const v1CompatMode = app.project.config.get().bridge?.v1CompatMode ?? false
-	const fromFilePath = `BP/commands`
+	const v1CompatMode = project.config.get().bridge?.v1CompatMode ?? false
+	const fromFilePath = project.config.resolvePackPath(
+		'behaviorPack',
+		'commands'
+	)
 
 	let baseDir: AnyDirectoryHandle
 	try {
-		baseDir = await app.project!.fileSystem.getDirectoryHandle(fromFilePath)
+		baseDir = await app.fileSystem.getDirectoryHandle(fromFilePath)
 	} catch {
 		return []
 	}
@@ -21,11 +25,8 @@ export async function generateCommandSchemas() {
 	await iterateDir(
 		baseDir,
 		async (fileHandle, filePath) => {
-			const [
-				_,
-				fileContent,
-			] = await app.project.compilerService.compileFile(
-				app.project.absolutePath(filePath),
+			const [_, fileContent] = await project.compilerService.compileFile(
+				filePath,
 				await fileHandle
 					.getFile()
 					.then(
