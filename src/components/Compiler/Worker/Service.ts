@@ -63,16 +63,19 @@ export class DashService {
 	}
 
 	async start(changedFiles: string[], deletedFiles: string[]) {
+		const fs = this.fileSystem.internal
 		if (
-			await this.fileSystem.internal.fileExists(
+			(await fs.fileExists(
 				`${this.projectDir}/.bridge/.restartDevServer`
-			)
+			)) ||
+			!(await fs.fileExists(
+				// TODO(Dash): Replace with call to "this.dash.dashFilePath" once the accessor is no longer protected
+				`${this.projectDir}/.bridge/.dash.${this.dash.getMode()}.json`
+			))
 		) {
 			await Promise.all([
 				this.build(),
-				this.fileSystem.internal.unlink(
-					`${this.projectDir}/.bridge/.restartDevServer`
-				),
+				fs.unlink(`${this.projectDir}/.bridge/.restartDevServer`),
 			])
 		} else {
 			await Promise.all([
