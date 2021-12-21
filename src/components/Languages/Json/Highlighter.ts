@@ -77,12 +77,16 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 		const tab = tabArg ?? app.project.tabSystem?.selectedTab
 		if (!(tab instanceof TextTab) && !(tab instanceof TreeTab)) return
 
-		const { id, highlighterConfiguration = {} } =
+		const { id, highlighterConfiguration = {}, type } =
 			App.fileType.get(tab.getPath()) ?? {}
 
 		// We have already loaded the needed file type
 		if (!id) return this.resetWords()
-		if (id === this.loadedFileType) return
+		if (
+			id === this.loadedFileType ||
+			(type !== undefined && type !== 'json')
+		)
+			return
 
 		this.dynamicKeywords = highlighterConfiguration.keywords ?? []
 		this.typeIdentifiers = highlighterConfiguration.typeIdentifiers ?? []
