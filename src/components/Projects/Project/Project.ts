@@ -86,15 +86,17 @@ export abstract class Project {
 		protected _baseDirectory: AnyDirectoryHandle
 	) {
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
-		this.config = new ProjectConfig(this._fileSystem, this)
-		this.fileTypeLibrary = new FileTypeLibrary(this.config)
-		this.packIndexer = new PackIndexer(this, _baseDirectory)
-		this.extensionLoader = new ExtensionLoader(
-			app.fileSystem,
-			`projects/${this.name}/.bridge/extensions`,
-			`projects/${this.name}/.bridge/inactiveExtensions.json`
+		this.config = markRaw(new ProjectConfig(this._fileSystem, this))
+		this.fileTypeLibrary = markRaw(new FileTypeLibrary(this.config))
+		this.packIndexer = markRaw(new PackIndexer(this, _baseDirectory))
+		this.extensionLoader = markRaw(
+			new ExtensionLoader(
+				app.fileSystem,
+				`projects/${this.name}/.bridge/extensions`,
+				`projects/${this.name}/.bridge/inactiveExtensions.json`
+			)
 		)
-		this.typeLoader = new TypeLoader(this.app.dataLoader)
+		this.typeLoader = markRaw(new TypeLoader(this.app.dataLoader))
 
 		this.recentFiles = <RecentFiles>(
 			reactive(
@@ -156,10 +158,16 @@ export abstract class Project {
 
 		await this.packIndexer.activate(isReload)
 		await this.compilerService.setup()
+		const [changedFiles, deletedFiles] = await this.packIndexer.fired
+		console.log(changedFiles, deletedFiles)
+
+		await Promise.all([
+			...deletedFiles.map((f) => this.compilerService.unlink(f, false)),
+		])
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
-			this.compilerService.build(),
+			this.compilerService.updateFiles(changedFiles),
 		])
 
 		this.snippetLoader.activate()
@@ -281,7 +289,7 @@ export abstract class Project {
 
 		await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			this.compilerService.updateFile(filePath),
+			this.compilerService.updateFiles([filePath]),
 		])
 
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
@@ -289,9 +297,7 @@ export abstract class Project {
 	async updateFiles(filePaths: string[]) {
 		await this.packIndexer.updateFiles(filePaths)
 
-		for (const filePath of filePaths) {
-			await this.compilerService.updateFile(filePath)
-		}
+		await this.compilerService.updateFiles(filePaths)
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}

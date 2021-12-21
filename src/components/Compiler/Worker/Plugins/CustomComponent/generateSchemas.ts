@@ -37,7 +37,7 @@ export async function generateComponentSchemas(fileType: string) {
 			const component = new Component(
 				fileType,
 				await file.text(),
-				'dev',
+				'development',
 				v1CompatMode
 			)
 

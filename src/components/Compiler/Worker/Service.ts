@@ -62,19 +62,19 @@ export class DashService {
 
 		this.isDashFree.dispatch()
 	}
-	async updateFile(filePath: string) {
+	async updateFiles(filePaths: string[]) {
 		await this.isDashFree.fired
 		this.isDashFree.resetSignal()
 
-		await this.dash.updateFile(filePath)
+		await this.dash.updateFiles(filePaths)
 
 		this.isDashFree.dispatch()
 	}
-	async unlink(path: string) {
+	async unlink(path: string, updateDashFile = true) {
 		await this.isDashFree.fired
 		this.isDashFree.resetSignal()
 
-		await this.dash.unlink(path)
+		await this.dash.unlink(path, updateDashFile)
 
 		this.isDashFree.dispatch()
 	}

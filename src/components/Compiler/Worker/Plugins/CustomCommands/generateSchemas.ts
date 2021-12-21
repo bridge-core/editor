@@ -33,7 +33,11 @@ export async function generateCommandSchemas() {
 					)
 			)
 			const file = new File([fileContent], fileHandle.name)
-			const command = new Command(await file.text(), 'dev', v1CompatMode)
+			const command = new Command(
+				await file.text(),
+				'development',
+				v1CompatMode
+			)
 
 			await command.load('client')
 
