@@ -153,7 +153,7 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 	await project.commandData.fired
 	const commands = await project.commandData.allCommands(
 		undefined,
-		!project.compilerService.isSetup
+		!project.compilerService?.isSetup
 	)
 	tokenProvider.keywords = commands.map((command) => command)
 
@@ -182,11 +182,13 @@ export class McfunctionLanguage extends Language {
 				loadedProject = project
 				loadCommands(this)
 
-				project.compilerService.isDashFree.once(() => {
-					// Make sure that we are still supposed to update the language
-					// -> project didn't change
-					if (project === loadedProject) loadCommands(this)
-				})
+				project.compilerService?.isDashFree
+					.then((isDashFree) => isDashFree.fired)
+					.then(() => {
+						// Make sure that we are still supposed to update the language
+						// -> project didn't change
+						if (project === loadedProject) loadCommands(this)
+					})
 			}
 		)
 

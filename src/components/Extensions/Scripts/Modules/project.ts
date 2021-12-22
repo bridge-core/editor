@@ -32,7 +32,7 @@ export const ProjectModule = async ({
 		},
 
 		async compile(configFile: string) {
-			const service = app.project.createDashService(
+			const service = await app.project.createDashService(
 				'production',
 				configFile === 'default'
 					? undefined

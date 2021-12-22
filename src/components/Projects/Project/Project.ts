@@ -23,9 +23,11 @@ import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { getFolderDifference } from '/@/components/TabSystem/Util/FolderDifference'
-import { FileTypeLibrary } from '../../Data/FileType'
+import { FileTypeLibrary } from '/@/components/Data/FileType'
 import { relative } from '/@/utils/path'
-import { DashService } from '../../Compiler/Worker/Service'
+import { DashCompiler } from '/@/components/Compiler/Compiler'
+import { proxy, Remote } from 'comlink'
+import { DashService } from '/@/components/Compiler/Worker/Service'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -41,7 +43,7 @@ export abstract class Project {
 	// Not directly assigned so they're not responsive
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
-	public readonly compilerService: DashService
+	public compilerService!: Remote<DashService>
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 
@@ -116,16 +118,18 @@ export abstract class Project {
 
 		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
 
-		this.compilerService = markRaw(this.createDashService('development'))
+		this.createDashService('development').then((service) => {
+			this.compilerService = markRaw(service)
+		})
 
 		setTimeout(() => this.onCreate(), 0)
 	}
 
-	createDashService(
+	async createDashService(
 		mode: 'development' | 'production',
 		compilerConfig?: string
 	) {
-		return new DashService(
+		const compiler = await new DashCompiler(
 			this.app.fileSystem.baseDirectory,
 			this.app.comMojang.hasComMojang
 				? this.app.comMojang.fileSystem.baseDirectory
@@ -137,6 +141,27 @@ export abstract class Project {
 				pluginFileTypes: this.fileTypeLibrary.getPluginFileTypes(),
 			}
 		)
+
+		compiler.on(
+			proxy(async () => {
+				const task = this.app.taskManager.create({
+					icon: 'mdi-cogs',
+					name: 'taskManager.tasks.compiler.title',
+					description: 'taskManager.tasks.compiler.description',
+					totalTaskSteps: 100,
+				})
+
+				compiler.onProgress(
+					proxy((percentage) => {
+						if (percentage === 1) task.complete()
+						else task.update(100 * percentage)
+					})
+				)
+			}),
+			false
+		)
+
+		return compiler
 	}
 
 	abstract onCreate(): Promise<void> | void

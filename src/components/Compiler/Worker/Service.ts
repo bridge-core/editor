@@ -14,6 +14,7 @@ import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { DashFileSystem } from './FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { dirname } from '/@/utils/path'
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 
 export interface ICompilerOptions {
 	config: string
@@ -22,7 +23,7 @@ export interface ICompilerOptions {
 	pluginFileTypes: IFileType[]
 }
 
-export class DashService {
+export class DashService extends EventDispatcher<void> {
 	protected fileSystem: DashFileSystem
 	protected dataLoader = new DataLoader()
 	public fileType: FileTypeLibrary
@@ -30,16 +31,19 @@ export class DashService {
 	public isDashFree = new Signal<void>()
 	protected projectDir: string
 	public isSetup = false
+	public completedStartUp = new Signal<void>()
 
 	constructor(
 		baseDirectory: AnyDirectoryHandle,
 		comMojangDirectory: AnyDirectoryHandle | undefined,
 		options: ICompilerOptions
 	) {
+		super()
 		this.fileSystem = new DashFileSystem(baseDirectory)
-		const outputFileSystem = comMojangDirectory
-			? new DashFileSystem(comMojangDirectory)
-			: undefined
+		const outputFileSystem =
+			comMojangDirectory && options.mode === 'development'
+				? new DashFileSystem(comMojangDirectory)
+				: undefined
 		this.fileType = new FileTypeLibrary()
 		this.fileType.setPluginFileTypes(options.pluginFileTypes)
 		this.dash = new Dash<DataLoader>(this.fileSystem, outputFileSystem, {
@@ -85,11 +89,14 @@ export class DashService {
 
 			if (changedFiles.length > 0) await this.updateFiles(changedFiles)
 		}
+
+		this.completedStartUp.dispatch()
 	}
 
 	async build() {
 		await this.isDashFree.fired
 		this.isDashFree.resetSignal()
+		this.dispatch()
 
 		await this.dash.build()
 
@@ -137,6 +144,17 @@ export class DashService {
 		await this.dash.reload()
 
 		this.isDashFree.dispatch()
+	}
+
+	onProgress(cb: (progress: number) => void) {
+		const disposable = this.dash.progress.onChange((progress) => {
+			if (progress.percentage === 1) {
+				disposable.dispose()
+				cb(1)
+			} else {
+				cb(progress.percentage)
+			}
+		})
 	}
 }
 

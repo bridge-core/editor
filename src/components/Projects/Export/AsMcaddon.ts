@@ -62,7 +62,7 @@ export async function exportAsMcaddon() {
 		}
 	}
 
-	const service = app.project.createDashService('production')
+	const service = await app.project.createDashService('production')
 	await service.setup()
 	await service.build()
 

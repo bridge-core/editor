@@ -11,7 +11,7 @@ export async function exportAsMctemplate(asMcworld = false) {
 	const fs = project.fileSystem
 	app.windows.loadingWindow.open()
 
-	const service = app.project.createDashService('production')
+	const service = await app.project.createDashService('production')
 	await service.setup()
 	await service.build()
 

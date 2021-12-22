@@ -6,6 +6,7 @@ import { iterateDir } from '/@/utils/iterateDir'
 export async function generateCommandSchemas() {
 	const app = await App.getApp()
 	const project = app.project
+	await (await project.compilerService.completedStartUp).fired
 
 	const v1CompatMode = project.config.get().bridge?.v1CompatMode ?? false
 	const fromFilePath = project.config.resolvePackPath(
