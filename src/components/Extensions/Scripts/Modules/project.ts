@@ -36,7 +36,7 @@ export const ProjectModule = async ({
 				'production',
 				configFile === 'default'
 					? undefined
-					: `projects/${app.project.name}/.bridge/${configFile}`
+					: `projects/${app.project.name}/.bridge/compiler/${configFile}`
 			)
 			await service.build()
 		},
