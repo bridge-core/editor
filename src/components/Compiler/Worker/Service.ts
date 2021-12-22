@@ -58,7 +58,7 @@ export class DashService {
 		await this.isDashFree.fired
 		this.isDashFree.resetSignal()
 
-		let data = this.dash.compileFile(filePath, fileContent)
+		const data = await this.dash.compileFile(filePath, fileContent)
 		this.isDashFree.dispatch()
 		return data
 	}
@@ -134,7 +134,7 @@ export class DashService {
 		await this.isDashFree.fired
 		this.isDashFree.resetSignal()
 
-		await this.dash.reloadPlugins()
+		await this.dash.reload()
 
 		this.isDashFree.dispatch()
 	}
