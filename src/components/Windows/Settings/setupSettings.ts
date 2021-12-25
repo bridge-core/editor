@@ -252,15 +252,15 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
-	settings.addControl(
-		new Toggle({
-			category: 'general',
-			name: 'windows.settings.general.packSpider.name',
-			description: 'windows.settings.general.packSpider.description',
-			key: 'enablePackSpider',
-			default: false,
-		})
-	)
+	// settings.addControl(
+	// 	new Toggle({
+	// 		category: 'general',
+	// 		name: 'windows.settings.general.packSpider.name',
+	// 		description: 'windows.settings.general.packSpider.description',
+	// 		key: 'enablePackSpider',
+	// 		default: false,
+	// 	})
+	// )
 
 	settings.addControl(
 		new Toggle({

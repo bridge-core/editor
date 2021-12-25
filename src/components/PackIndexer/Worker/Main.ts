@@ -132,7 +132,8 @@ export class PackIndexerService extends TaskService<
 	}
 
 	async readdir(path: string[]) {
-		if (this.options.disablePackSpider) {
+		// TODO(Dash): Re-enable pack spider
+		if (this.options.disablePackSpider || true) {
 			if (path.length > 0)
 				return (
 					await this.globalFileSystem.readdir(path.join('/'), {
