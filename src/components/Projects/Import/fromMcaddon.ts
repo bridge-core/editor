@@ -11,6 +11,7 @@ import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { CreateConfig } from '../CreateProject/Files/Config'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { defaultPackPaths } from '../Project/Config'
+import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 
 export async function importFromMcaddon(
 	fileHandle: AnyFileHandle,
@@ -76,7 +77,12 @@ export async function importFromMcaddon(
 				`projects/${projectName}/${packPath}`
 			)
 		}
+		// TODO: Support unpacking .mcpack files
 	}
+	if (packs.length === 1)
+		new InformationWindow({
+			description: 'fileDropper.mcaddon.missingManifests',
+		})
 
 	const defaultOptions = CreateProjectWindow.getDefaultOptions()
 	defaultOptions.name = projectName
@@ -85,7 +91,11 @@ export async function importFromMcaddon(
 	defaultOptions.packs = packs
 	defaultOptions.targetVersion = await getLatestFormatVersion()
 	await new CreateConfig().create(
-		new FileSystem(await fs.getDirectoryHandle(`projects/${projectName}`)),
+		new FileSystem(
+			await fs.getDirectoryHandle(`projects/${projectName}`, {
+				create: true,
+			})
+		),
 		defaultOptions
 	)
 
