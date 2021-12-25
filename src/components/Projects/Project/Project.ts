@@ -185,6 +185,9 @@ export abstract class Project {
 			selectedTab instanceof FileTab ? selectedTab.getPath() : undefined
 		)
 
+		// Data needs to be loaded into IndexedDB before the PackIndexer can be used
+		await this.app.dataLoader.fired
+
 		await Promise.all([
 			this.packIndexer.activate(isReload),
 			this.compilerService.setup(),

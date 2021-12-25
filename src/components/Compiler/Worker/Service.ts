@@ -22,10 +22,10 @@ export interface ICompilerOptions {
 	mode: 'development' | 'production'
 	pluginFileTypes: IFileType[]
 }
+const dataLoader = new DataLoader()
 
 export class DashService extends EventDispatcher<void> {
 	protected fileSystem: DashFileSystem
-	protected dataLoader = new DataLoader()
 	public fileType: FileTypeLibrary
 	protected dash: Dash<DataLoader>
 	public isDashFree = new Signal<void>()
@@ -52,7 +52,7 @@ export class DashService extends EventDispatcher<void> {
 			mode: options.mode,
 			fileType: this.fileType,
 			packType: new PackTypeLibrary(),
-			requestJsonData: (path) => this.dataLoader.readJSON(path),
+			requestJsonData: (path) => dataLoader.readJSON(path),
 		})
 
 		this.projectDir = dirname(options.config)
@@ -133,8 +133,8 @@ export class DashService extends EventDispatcher<void> {
 	}
 
 	async setup() {
-		await this.dataLoader.fired
-		await this.dash.setup(this.dataLoader)
+		await dataLoader.fired
+		await this.dash.setup(dataLoader)
 
 		this.isDashFree.dispatch()
 		this.isSetup = true
