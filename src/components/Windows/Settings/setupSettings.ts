@@ -252,6 +252,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
+	// TODO(Dash): Re-enable pack spider
 	// settings.addControl(
 	// 	new Toggle({
 	// 		category: 'general',
