@@ -2,7 +2,7 @@ import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import ChangelogComponent from './Changelog.vue'
 import { App } from '/@/App'
 import { baseUrl } from '/@/utils/baseUrl'
-import { version } from '/@/appVersion.json'
+import { version } from '/@/utils/app/version'
 
 export class ChangelogWindow extends BaseWindow {
 	changelog: string | undefined

@@ -1,5 +1,5 @@
 import { IModuleConfig } from '../types'
-import { version } from '/@/appVersion.json'
+import { version } from '/@/utils/app/version'
 import { App } from '/@/App'
 
 export const ContextEnv: { value: any } = { value: {} }

@@ -1,5 +1,5 @@
 import { App } from '/@/App'
-import { version as appVersion } from '/@/appVersion.json'
+import { version as appVersion } from '/@/utils/app/version'
 
 export async function loadManifest(app: App, packPath: string) {
 	const manifestPath = `${packPath}/manifest.json`
