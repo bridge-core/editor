@@ -44,7 +44,11 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 			return this.setupDone.dispatch()
 
 		// We only need to write the data within the main thread, web workers can just load the already written data from the main thread
-		if (globalThis.document) await this.updateIdb(fileData)
+		if (
+			this.path.join('/').startsWith('data/packages') &&
+			globalThis.document
+		)
+			await this.updateIdb(fileData)
 		this.setupDone.dispatch()
 	}
 
