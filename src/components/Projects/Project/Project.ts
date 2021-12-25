@@ -185,8 +185,10 @@ export abstract class Project {
 			selectedTab instanceof FileTab ? selectedTab.getPath() : undefined
 		)
 
-		await this.packIndexer.activate(isReload)
-		await this.compilerService.setup()
+		await Promise.all([
+			this.packIndexer.activate(isReload),
+			this.compilerService.setup(),
+		])
 		const [changedFiles, deletedFiles] = await this.packIndexer.fired
 
 		await Promise.all([

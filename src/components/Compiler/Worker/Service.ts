@@ -105,6 +105,7 @@ export class DashService extends EventDispatcher<void> {
 	async updateFiles(filePaths: string[]) {
 		await this.isDashFree.fired
 		this.isDashFree.resetSignal()
+		this.dispatch()
 
 		await this.dash.updateFiles(filePaths)
 
@@ -121,6 +122,7 @@ export class DashService extends EventDispatcher<void> {
 	async rename(oldPath: string, newPath: string) {
 		await this.isDashFree.fired
 		this.isDashFree.resetSignal()
+		this.dispatch()
 
 		await this.dash.rename(oldPath, newPath)
 

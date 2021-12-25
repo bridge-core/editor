@@ -14,6 +14,7 @@ import { tokenProvider } from './Mcfunction/TokenProvider'
 import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
 import { FunctionValidator } from '/@/components/Languages/Mcfunction/Validation/Validator'
+import { proxy } from 'comlink'
 
 export const config: languages.LanguageConfiguration = {
 	wordPattern: /[aA-zZ]+/,
@@ -153,7 +154,7 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 	await project.commandData.fired
 	const commands = await project.commandData.allCommands(
 		undefined,
-		!project.compilerService?.isSetup
+		!(await project.compilerService?.isSetup)
 	)
 	tokenProvider.keywords = commands.map((command) => command)
 
@@ -178,17 +179,17 @@ export class McfunctionLanguage extends Language {
 		let loadedProject: Project | null = null
 		const disposable = App.eventSystem.on(
 			'projectChanged',
-			(project: Project) => {
+			async (project: Project) => {
 				loadedProject = project
 				loadCommands(this)
 
-				project.compilerService?.isDashFree
-					.then((isDashFree) => isDashFree.fired)
-					.then(() => {
+				await project.compilerService.once(
+					proxy(() => {
 						// Make sure that we are still supposed to update the language
 						// -> project didn't change
 						if (project === loadedProject) loadCommands(this)
 					})
+				)
 			}
 		)
 
