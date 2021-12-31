@@ -29,6 +29,7 @@ export interface IPackIndexerOptions {
 	noFullLightningCacheRefresh: boolean
 }
 
+const dataLoader: DataLoader = new DataLoader()
 export class PackIndexerService extends TaskService<
 	readonly [string[], string[]],
 	boolean
@@ -78,13 +79,11 @@ export class PackIndexerService extends TaskService<
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
 
-		let dataLoader: DataLoader | undefined = new DataLoader()
 		await Promise.all([
 			this.fileType.setup(dataLoader),
 			this.packType.setup(dataLoader),
 			this.config.setup(false),
 		])
-		dataLoader = undefined
 
 		console.timeEnd('[WORKER] SETUP')
 
@@ -106,7 +105,8 @@ export class PackIndexerService extends TaskService<
 	async updateFile(
 		filePath: string,
 		fileContent?: string,
-		isForeignFile = false
+		isForeignFile = false,
+		hotUpdate = false
 	) {
 		const fileDidChange = await this.lightningCache.processFile(
 			filePath,
@@ -115,7 +115,7 @@ export class PackIndexerService extends TaskService<
 		)
 
 		if (fileDidChange) {
-			await this.lightningStore.saveStore()
+			if (!hotUpdate) await this.lightningStore.saveStore()
 			await this.packSpider.updateFile(filePath)
 		}
 	}

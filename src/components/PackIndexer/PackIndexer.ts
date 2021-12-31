@@ -73,13 +73,19 @@ export class PackIndexer extends WorkerManager<
 	async updateFile(
 		filePath: string,
 		fileContent?: string,
-		isForeignFile = false
+		isForeignFile = false,
+		hotUpdate = false
 	) {
 		await this.ready.fired
 		this.ready.resetSignal()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
-		await this.service.updateFile(filePath, fileContent, isForeignFile)
+		await this.service.updateFile(
+			filePath,
+			fileContent,
+			isForeignFile,
+			hotUpdate
+		)
 
 		this.ready.dispatch()
 	}

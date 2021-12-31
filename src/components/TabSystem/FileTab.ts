@@ -35,9 +35,10 @@ export abstract class FileTab extends Tab {
 		}
 
 		this.parent.project.packIndexer.once(async () => {
-			const packIndexer = this.parent.project.packIndexer.service
+			const packIndexer = this.parent.project.packIndexer
+			const service = packIndexer.service
 
-			if (!(await packIndexer.hasFile(this.path!))) {
+			if (!(await service.hasFile(this.path!))) {
 				await packIndexer.updateFile(
 					this.path!,
 					await this.getFile().then((file) => file.text()),

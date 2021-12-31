@@ -23,7 +23,8 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 		await app.project.packIndexer.updateFile(
 			tab.getPath(),
 			fileContent,
-			tab.isForeignFile
+			tab.isForeignFile,
+			true
 		)
 		await app.project.jsonDefaults.updateDynamicSchemas(tab.getPath())
 

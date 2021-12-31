@@ -45,7 +45,8 @@ export class PackSpider {
 	}
 
 	async updateFile(filePath: string) {
-		await File.create(filePath, this, true)
+		// TODO(Dash): Re-enable pack spider
+		// await File.create(filePath, this, true)
 	}
 }
 
