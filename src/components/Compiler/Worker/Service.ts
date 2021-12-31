@@ -62,9 +62,9 @@ export class DashService extends EventDispatcher<void> {
 		await this.isDashFree.fired
 		this.isDashFree.resetSignal()
 
-		const data = await this.dash.compileFile(filePath, fileContent)
+		const [deps, data] = await this.dash.compileFile(filePath, fileContent)
 		this.isDashFree.dispatch()
-		return data
+		return <const>[deps, data ?? fileContent]
 	}
 
 	async start(changedFiles: string[], deletedFiles: string[]) {
