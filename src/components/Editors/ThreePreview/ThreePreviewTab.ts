@@ -49,7 +49,7 @@ export abstract class ThreePreviewTab extends PreviewTab {
 
 		this.renderer = markRaw(
 			new WebGLRenderer({
-				antialias: false,
+				antialias: true,
 				canvas,
 			})
 		)
