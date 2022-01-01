@@ -28,7 +28,9 @@ if (
 	isCrashingChromeBrowser() ||
 	typeof window.showDirectoryPicker !== 'function'
 ) {
+	// TODO: Enable once safari properly supports file handles (createWritable)
 	if (
+		false &&
 		!isCrashingChromeBrowser() &&
 		typeof navigator.storage.getDirectory === 'function'
 	) {
