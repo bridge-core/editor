@@ -352,7 +352,7 @@ export default {
 	experimentalGameplay: {
 		cavesAndCliffs: {
 			name: '洞穴与山崖',
-			description: '为生物群系内的新一代山峰内容启用自动补全。',
+			description: '为生物群系内的新一代山地内容启用自动补全。',
 		},
 		holidayCreatorFeatures: {
 			name: '假日创作者功能',
@@ -363,21 +363,26 @@ export default {
 			description: '允许创建自定义生物群系、地物和地物规则。',
 		},
 		additionalModdingCapabilities: {
-			name: '其他修改功能‌',
+			name: '其他修改功能',
 			description: '在清单中启用脚本API，并允许你创建脚本时使用自动补全。',
 		},
 		upcomingCreatorFeatures: {
-			name: '即将推出的创作者功能‌',
+			name: '即将推出的创作者功能',
 			description: '启用迷雾功能域文件的创建并提供实体属性的自动补全。',
 		},
 		enableGameTestFramework: {
-			name: '启用GameTest框架‌',
+			name: '启用GameTest框架',
 			description: '在清单中启用GameTest相关模块，并允许你创建GameTest脚本时使用自动补全。',
 		},
 		experimentalMolangFeatures: {
-			name: '实验Molang功能‌',
+			name: '实验性Molang功能',
 			description: '为实验性Molang查询启用自动补全。',
 		},
+		theWildUpdate: {
+			name: '荒野更新',
+			description: '为荒野更新中引入的实体组件等新功能启用自动补全。',
+		},
+		
 		educationEdition: {
 			name: '启用教育版',
 			description: '启用教育版功能的自动补全，例如材料分解器配方。',
@@ -829,6 +834,9 @@ export default {
 		importFailed: 'bridge.无法导入以下文件：',
 		andMore: '...和其他更多文件！',
 		importMethod: '导入方法',
+		mcaddon: {
+			missingManifests: "由于无法找到包的清单文件，bridge.无法从你的.mcaddon文件中加载数据。",
+		},
 		saveToProject: {
 			title: '保存至项目',
 			description1: '在项目中保存',
