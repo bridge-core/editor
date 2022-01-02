@@ -38,11 +38,12 @@ export const ProjectModule = async ({
 					? undefined
 					: `projects/${app.project.name}/.bridge/compiler/${configFile}`
 			)
+
 			await service.build()
 		},
 
 		async compileFiles(paths: string[]) {
-			await app.project.updateFiles(paths)
+			await app.project.compilerService.updateFiles(paths)
 		},
 
 		async unlinkFile(path: string) {
