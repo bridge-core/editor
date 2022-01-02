@@ -12,7 +12,7 @@
 		"@mdi/font": "^5.8.55",
 		"@vue/composition-api": "^1.0.5",
 		"bridge-common-utils": "^0.3.3",
-		"bridge-model-viewer": "^0.7.2",
+		"bridge-model-viewer": "^0.7.3",
 		"buffer": "^6.0.3",
 		"color-convert": "^2.0.1",
 		"comlink": "^4.3.0",
@@ -39,7 +39,7 @@
 		"vue-template-compiler": "2.6.12",
 		"vuedraggable": "^2.24.3",
 		"vuetify": "^2.5.8",
-		"wintersky": "^1.0.2"
+		"wintersky": "github:jannisx11/wintersky#pull/11/head"
 	},
 	"devDependencies": {
 		"@types/color-convert": "^2.0.0",
