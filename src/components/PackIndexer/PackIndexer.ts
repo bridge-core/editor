@@ -89,15 +89,12 @@ export class PackIndexer extends WorkerManager<
 
 		this.ready.dispatch()
 	}
-	async updateFiles(filePaths: string[]) {
+	async updateFiles(filePaths: string[], hotUpdate = false) {
 		await this.ready.fired
 		this.ready.resetSignal()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
-
-		for (const filePath of filePaths) {
-			await this.service.updateFile(filePath)
-		}
+		await this.service.updateFiles(filePaths, hotUpdate)
 
 		this.ready.dispatch()
 	}

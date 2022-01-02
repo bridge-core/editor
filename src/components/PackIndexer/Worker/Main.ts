@@ -119,6 +119,13 @@ export class PackIndexerService extends TaskService<
 			await this.packSpider.updateFile(filePath)
 		}
 	}
+	async updateFiles(filePaths: string[], hotUpdate = false) {
+		for (let i = 0; i < filePaths.length; i++) {
+			await this.updateFile(filePaths[i], undefined, false, false)
+		}
+
+		if (!hotUpdate) await this.lightningStore.saveStore()
+	}
 	hasFile(filePath: string) {
 		return this.lightningStore.has(filePath)
 	}
