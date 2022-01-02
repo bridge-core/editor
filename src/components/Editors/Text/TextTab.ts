@@ -20,6 +20,8 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 		const fileContent = tab.editorModel?.getValue()
 		const app = await App.getApp()
 
+		app.project.fileChange.dispatch(tab.getPath(), await tab.getFile())
+
 		await app.project.packIndexer.updateFile(
 			tab.getPath(),
 			fileContent,
@@ -27,11 +29,6 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 			true
 		)
 		await app.project.jsonDefaults.updateDynamicSchemas(tab.getPath())
-
-		app.project.fileChange.dispatch(
-			tab.getPath(),
-			new File([tab.editorModel?.getValue()], tab.name)
-		)
 	},
 	600
 )
