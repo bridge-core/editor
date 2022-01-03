@@ -21,6 +21,7 @@ export default {
 		more: 'もっと...',
 		selectFolder: 'フォルダーを選択',
 		fileName: 'ファイル名',
+		folderName: 'フォルダー名',
 		inactive: '無効',
 		active: '有効',
 		later: 'あとで',
@@ -29,6 +30,8 @@ export default {
 
 		confirmOverwriteFile:
 			'このアクションは同名のファイルを上書きします。 続行しますか？',
+		confirmOverwriteFolder:
+			'このアクションは同名のフォルダを上書きします。 続行しますか？',
 		fileSystemPolyfill:
 			'お使いのブラウザは進捗状況を保存するためにプロジェクトをダウンロードする必要があります。 Chrome や Edge を使用している場合はその必要はありません。',
 		successfulExport: {
@@ -293,6 +296,9 @@ export default {
 			name: 'すべての出現個所を変更',
 			description: '選択されたテキストのすべての出現箇所を変更する',
 		},
+		tgaMaskToggle: {
+			name: 'Alphaチャンネルの切替',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -389,6 +395,12 @@ export default {
 			description:
 				'実験的な Molang のクエリに対する自動補完機能を有効にします。',
 		},
+		theWildUpdate: {
+			name: 'ワイルドアップデート',
+			description:
+				'Wild Update で導入された新機能の自動補完機能を有効にします。',
+		},
+
 		educationEdition: {
 			name: 'Education Edition の有効化',
 			description:
@@ -601,6 +613,14 @@ export default {
 				name: '.brproject としてエクスポート',
 			},
 			fileActions: {
+				open: {
+					name: '開く',
+					description: 'エディタでファイルを開く',
+				},
+				openInSplitScreen: {
+					name: '分割画面で開く',
+					description: '分割画面でファイルを開く',
+				},
 				delete: {
 					name: '削除',
 					description: 'ファイルやフォルダーの削除',
@@ -781,6 +801,11 @@ export default {
 					name: 'JSON エディタ',
 					description: 'JSONファイルの編集方法を選択します',
 				},
+				bridgePredictions: {
+					name: 'bridge. 予測機能',
+					description:
+						'bridge. のツリーエディタ内で値やオブジェクトを追加するかどうかをアプリがインテリジェントに判断できるようにします。 これによりJSONの編集が大幅に簡素化されます。',
+				},
 				bracketPairColorization: {
 					name: 'ブラケットペアのカラーリング',
 					description: '対になっているブラケットに色をつけます',
@@ -883,6 +908,10 @@ export default {
 			'bridge. はファイルをインポートすることができませんでした',
 		andMore: '...and more!',
 		importMethod: 'インポート方法',
+		mcaddon: {
+			missingManifests:
+				'.mcaddonファイル内のパックマニフェストが見つからなかったためデータをロードできませんでした',
+		},
 		saveToProject: {
 			title: 'プロジェクトへの保存',
 			description1: '',
@@ -1008,96 +1037,130 @@ export default {
 	},
 	editors: {
 		treeEditor: {
+			add: '追加',
 			addObject: 'オブジェクトの追加',
 			addArray: '配列の追加',
 			addValue: '値の追加',
+			forceValue: '必須',
 			edit: '編集',
 		},
 	},
 	functionValidator: {
-		actionName: 'Validate Function',
-		tabName: 'Function Validator',
+		actionName: 'Function を検証',
+		tabName: '関数 バリデーター',
 		errors: {
-			emptyComplexConstructor: 'Unexpected empty complex selector!',
-			invalidSelectorAttribute: {
-				part1: "'",
-				part2: "'は無効なセレクター属性です。",
+			common: {
+				expectedEquals: '= がありません',
+				expectedValue: '値がありません',
+				expectedType: {
+					part1: "セレクタの型は '",
+					part2: "' ではありません '",
+					part3: "' にしてください",
+				},
+				expectedComma: '， がありません',
+				unclosedString: '文字列が閉じられていません',
+				spaceAtStart: '先頭の空白文字はサポートされていません',
+				expectedColon: ': がありません',
+				unexpectedOpenCurlyBracket: '予期せぬ { があります',
+				unexpectedCloseCurlyBracket: '予期せぬ } があります',
+				unexpectedOpenSquareBracket: '予期せぬ [ があります',
+				unexpectedCloseSquareBracket: '予期せぬ ] があります',
 			},
-			complexConstructorExpectedStringAsAttribute:
-				'セレクター属性名がありません',
-			expectedEqualsButNothing: 'セレクター属性の等号、値がありません',
-			expectedEquals: 'セレクター属性の等号がありません',
-			expectedValueButNothing: 'セレクター属性の値がありません',
-			attributeNegationSupport: {
-				part1: "セレクター属性'",
-				part2: "'は否定をサポートしていません。",
+			commands: {
+				empty: '空のコマンドはサポートされていません',
+				invalid: {
+					part1: "コマンド '",
+					part2: "' は有効なコマンドではありません",
+				},
 			},
-			multipleInstancesNever: {
-				part1: "Multiple instances of attribute '",
-				part2: "' atribute not allowed!",
+			identifiers: {
+				missingNamespace: 'ID に名前空間がありません',
 			},
-			multipleInstancesNegated: {
-				part1: "Multiple instances of '",
-				part2: "' atribute not allowed when negated!",
+			ranges: {
+				missingFirstNumber: '整数部が正しくありません',
+				missingDot: '予期しない少数点の位置です',
+				missingSecondNumber: '少数部が正しくありません',
 			},
-			selectorAttributeTypeMismatch: {
-				part1: "セレクター属性値の型は'",
-				part2: "'です。'",
-				part3: "'ではありません。",
+			selectors: {
+				emptyComplex: 'セレクター属性が空です',
+				expectedStringAsAttribute:
+					'セレクター属性は文字列である必要があります',
+				invalidSelectorAttribute: {
+					part1: "'",
+					part2: "' は有効なセレクター属性ではありません",
+				},
+				unsupportedNegation: {
+					part1: "セレクター属性: '",
+					part2: "' は否定をサポートしていません",
+				},
+				multipleInstancesNever: {
+					part1: "セレクター属性: '",
+					part2: "' は複数のインスタンスをサポートしていません",
+				},
+				multipleInstancesNegated: {
+					part1: "セレクター属性: '",
+					part2:
+						"' は否定された場合のみ複数のインスタンスをサポートします",
+				},
+				valueNotValid: {
+					part1: "セレクター属性は '",
+					part2: "' をサポートしていません",
+				},
+				expectedLetterAfterAt: '@ の後に文字がありません',
+				invalid: {
+					part1: "セレクター: '",
+					part2: "' は有効なセレクタではありません",
+				},
+				selectorNotBeforeOpenSquareBracket: '予期しない [ があります',
 			},
-			selectorValueNotValid: {
-				part1: "Value '",
-				part2: "' is not one of the expected values!",
+			scoreData: {
+				empty: 'スコアデータが空です',
+				expectedStringAsAttribute:
+					'スコアデータは文字列でなければなりません',
+				invalidType: {
+					part1: "スコアデータでは '",
+					part2: "' 型はサポートされていません",
+				},
+				repeat: 'スコアデータ値は繰り返し使えません',
 			},
-			expectedComma: 'セレクタ属性の間にカンマが必要です。',
-			unclosedString: '"文字列の終わりに"がありません。',
-			invalidCommand: {
-				part1: "'",
-				part2: "' 無効なコマンドです。",
-			},
-			expectedLetterAfterAtButNothing: '@後がありません',
-			expectedLetterAfterAt: '@後が文字ではありません!',
-			invalidSelector: {
-				part1: '@',
-				part2: ' は有効なセレクタではありません。',
-			},
-			unexpectedOpenSquareBracket: '予期しない[があります。',
-			selectorNotBeforeOpenSquareBracketButNothing:
-				'[の前にセレクターが必要か無効なblock stateになっています。',
-			unexpectedClosedSquareBracket: '予期しない]があります。',
-			selectorNotBeforeOpenSquareBracket:
-				']の前にセレクターが必要か無効なblock stateになっています。',
-			noValidCommandVarsFound: {
-				part1: '有効なコマンド形式ではありません。第',
-				part2: "引数が無効です。現在'",
-				part3: "' 型はサポートされていません。",
-			},
-			noValidCommandVarsFoundEnd: {
-				part1:
-					'有効なコマンド形式ではありません。引数が不足しているか、第',
-				part2: '引数が無効です。',
+			arguments: {
+				noneValid: {
+					part1: '有効なコマンド形式ではありません。第',
+					part2: "引数が無効です。現在'",
+					part3: "' 型はサポートされていません。",
+				},
+				noneValidEnd: {
+					part1:
+						'有効なコマンド形式ではありません。引数が不足しているか、第',
+					part2: '引数が無効です。',
+				},
 			},
 		},
 		warnings: {
-			schemaFamily: {
-				part1: "family='",
-				part2:
-					"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
+			schema: {
+				familyNotFound: {
+					part1: "family='",
+					part2:
+						"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
+				},
+				typeNotFound: {
+					part1: "type='",
+					part2:
+						"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
+				},
+				tagNotFound: {
+					part1: "tag='",
+					part2:
+						"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
+				},
+				schemaValueNotFound: {
+					part1: "value='",
+					part2:
+						"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
+				},
 			},
-			schemaType: {
-				part1: "type='",
-				part2:
-					"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
-			},
-			schemaTag: {
-				part1: "tag='",
-				part2:
-					"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
-			},
-			schemaValue: {
-				part1: "value='",
-				part2:
-					"'が見つかりませんでした。これは何かの間違いか、他のアドオンのタグである可能性があります。",
+			data: {
+				missingData: '一部のデータが正しく読み込まれませんでした',
 			},
 		},
 	},
