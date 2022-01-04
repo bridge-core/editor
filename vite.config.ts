@@ -45,6 +45,7 @@ export default defineConfig({
 				iconPath('safari-pinned-tab.svg'),
 				iconPath('msapplication-icon-144x144.png'),
 				'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900',
+				'./packages.zip',
 			],
 			workbox: {
 				maximumFileSizeToCacheInBytes: Number.MAX_SAFE_INTEGER,
