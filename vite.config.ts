@@ -45,6 +45,7 @@ export default defineConfig({
 			],
 			workbox: {
 				maximumFileSizeToCacheInBytes: Number.MAX_SAFE_INTEGER,
+				globPatterns: ['**/*.{js,css,html}', '**/*.woff2'],
 			},
 			manifest: {
 				name: isNightly ? 'bridge Nightly' : 'bridge v2',
