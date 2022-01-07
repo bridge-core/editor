@@ -47,6 +47,8 @@ export class LightningStore {
 
 		this.store = {}
 		this._visitedFiles = 0
+		this._totalFiles = 0
+		if (loadStore.length === 0) return
 
 		let formatVersion = 0
 		if (loadStore[0].startsWith('$formatVersion: ')) {
