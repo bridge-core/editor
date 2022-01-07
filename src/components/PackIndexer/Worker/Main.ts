@@ -115,7 +115,7 @@ export class PackIndexerService extends TaskService<
 		)
 
 		if (fileDidChange) {
-			if (!hotUpdate) await this.lightningStore.saveStore()
+			if (!hotUpdate) await this.lightningStore.saveStore(false)
 			await this.packSpider.updateFile(filePath)
 		}
 	}
@@ -124,7 +124,7 @@ export class PackIndexerService extends TaskService<
 			await this.updateFile(filePaths[i], undefined, false, false)
 		}
 
-		if (!hotUpdate) await this.lightningStore.saveStore()
+		if (!hotUpdate) await this.lightningStore.saveStore(false)
 	}
 	hasFile(filePath: string) {
 		return this.lightningStore.has(filePath)

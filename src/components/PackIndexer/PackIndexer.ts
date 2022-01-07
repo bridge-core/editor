@@ -89,6 +89,16 @@ export class PackIndexer extends WorkerManager<
 
 		this.ready.dispatch()
 	}
+	async hasFile(filePath: string) {
+		await this.ready.fired
+		this.ready.resetSignal()
+
+		const res = await this.service.hasFile(filePath)
+
+		this.ready.dispatch()
+
+		return res
+	}
 	async updateFiles(filePaths: string[], hotUpdate = false) {
 		await this.ready.fired
 		this.ready.resetSignal()

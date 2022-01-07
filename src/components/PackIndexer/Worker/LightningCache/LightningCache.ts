@@ -146,7 +146,7 @@ export class LightningCache {
 				path
 			)
 
-		await this.lightningStore.saveStore()
+		await this.lightningStore.saveStore(false)
 	}
 
 	protected async iterateDir(
