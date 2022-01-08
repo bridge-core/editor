@@ -1,5 +1,5 @@
 import { App } from '/@/App'
-import * as idb from 'idb-keyval'
+import { get as idbGet, set as idbSet } from 'idb-keyval'
 import { shallowReactive, set, del, reactive } from '@vue/composition-api'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { Project } from './Project/Project'
@@ -119,7 +119,7 @@ export class ProjectManager extends Signal<void> {
 
 		if (this.currentProject)
 			await this.recentProjects.add(this.currentProject.projectData)
-		await idb.set('selectedProject', projectName)
+		await idbSet('selectedProject', projectName)
 
 		app.themeManager.updateTheme()
 		App.eventSystem.dispatch('projectChanged', this.currentProject!)
@@ -128,7 +128,7 @@ export class ProjectManager extends Signal<void> {
 	}
 	async selectLastProject(app: App) {
 		await this.fired
-		let projectName = await idb.get('selectedProject')
+		let projectName = await idbGet('selectedProject')
 
 		if (typeof projectName === 'string') {
 			try {
@@ -152,7 +152,7 @@ export class ProjectManager extends Signal<void> {
 		await this.fired
 
 		const fallback = Object.keys(this.state)[0]
-		await idb.set('selectedProject', fallback)
+		await idbSet('selectedProject', fallback)
 		return fallback
 	}
 

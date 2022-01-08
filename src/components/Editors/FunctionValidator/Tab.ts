@@ -1,7 +1,6 @@
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import FunctionValidatorTabComponent from './Tab.vue'
 import { Tab } from '../../TabSystem/CommonTab'
-import * as monaco from 'monaco-editor'
 import { TabSystem } from '../../TabSystem/TabSystem'
 import Error from './Error.vue'
 import Warning from './Warning.vue'
