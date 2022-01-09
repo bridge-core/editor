@@ -81,7 +81,7 @@ export function setupFileCategory(app: App) {
 		})
 	)
 
-	if (isUsingFileSystemPolyfill || isUsingOriginPrivateFs) {
+	if (isUsingFileSystemPolyfill.value || isUsingOriginPrivateFs) {
 		file.addItem(
 			app.actionManager.create({
 				icon: 'mdi-file-download-outline',

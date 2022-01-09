@@ -13,7 +13,7 @@ export async function setupSidebar() {
 		displayName: 'windows.projectChooser.title',
 		icon: 'mdi-view-dashboard-outline',
 		onClick: async () => {
-			if (isUsingFileSystemPolyfill) {
+			if (isUsingFileSystemPolyfill.value) {
 				createVirtualProjectWindow()
 			} else {
 				App.instance.windows.projectChooser.open()

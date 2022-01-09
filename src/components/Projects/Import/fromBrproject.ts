@@ -34,7 +34,7 @@ export async function importFromBrproject(
 	if (!(await fs.fileExists('import/config.json'))) {
 		// The .brproject file contains data/, projects/ & extensions/ folder
 		// We need to change the folder structure to process it correctly
-		if (isUsingFileSystemPolyfill) {
+		if (isUsingFileSystemPolyfill.value) {
 			// Only load settings & extension if using the polyfill
 			try {
 				await fs.move('import/data', 'data')
@@ -59,7 +59,7 @@ export async function importFromBrproject(
 	}
 
 	// Ask user whether he wants to save the current project if we are going to delete it later in the import process
-	if (isUsingFileSystemPolyfill && !isFirstImport) {
+	if (isUsingFileSystemPolyfill.value && !isFirstImport) {
 		const confirmWindow = new ConfirmationWindow({
 			description:
 				'windows.projectChooser.openNewProject.saveCurrentProject',
@@ -92,7 +92,7 @@ export async function importFromBrproject(
 	}
 
 	// Remove old project if browser is using fileSystem polyfill
-	if (isUsingFileSystemPolyfill && !isFirstImport)
+	if (isUsingFileSystemPolyfill.value && !isFirstImport)
 		await app.projectManager.removeProject(currentProjectName!)
 
 	await fs.unlink('import')

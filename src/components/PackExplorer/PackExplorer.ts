@@ -26,7 +26,7 @@ export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
 	actions: SidebarAction[] = []
 	directoryEntries: Record<string, DirectoryEntry> = {}
-	topPanel = isUsingFileSystemPolyfill
+	topPanel = isUsingFileSystemPolyfill.value
 		? new InfoPanel({
 				type: 'warning',
 				text: 'general.fileSystemPolyfill',
@@ -74,7 +74,7 @@ export class PackExplorer extends SidebarContent {
 					})
 			) ?? []
 
-		if (isUsingFileSystemPolyfill) {
+		if (isUsingFileSystemPolyfill.value) {
 			this.actions.push(
 				new SidebarAction({
 					icon: 'mdi-content-save-outline',

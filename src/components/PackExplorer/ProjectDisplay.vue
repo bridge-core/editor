@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
 import { App } from '/@/App'
 
 const defaultImgSrc = '/img/icons/android-chrome-192x192.png'
@@ -43,7 +45,11 @@ export default {
 	},
 	methods: {
 		onClick() {
-			App.getApp().then((app) => app.windows.projectChooser.open())
+			if (isUsingFileSystemPolyfill.value) {
+				createVirtualProjectWindow()
+			} else {
+				App.instance.windows.projectChooser.open()
+			}
 		},
 		async onProjectChanged() {
 			const app = await App.getApp()

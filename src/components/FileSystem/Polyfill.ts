@@ -1,3 +1,4 @@
+import { ref } from '@vue/composition-api'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 import { VirtualFileHandle } from './Virtual/FileHandle'
 
@@ -20,7 +21,7 @@ function isCrashingChromeBrowser() {
 	return unsupportedChromeVersions.includes(chromeBrand.version)
 }
 
-export let isUsingFileSystemPolyfill = false
+export let isUsingFileSystemPolyfill = ref(false)
 export let isUsingSaveAsPolyfill = false
 export let isUsingOriginPrivateFs = false
 
@@ -38,7 +39,7 @@ if (
 
 		window.showDirectoryPicker = () => navigator.storage.getDirectory()
 	} else {
-		isUsingFileSystemPolyfill = true
+		isUsingFileSystemPolyfill.value = true
 
 		window.showDirectoryPicker = async () =>
 			// @ts-ignore Typescript doesn't like our polyfill

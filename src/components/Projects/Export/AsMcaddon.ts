@@ -13,7 +13,7 @@ export async function exportAsMcaddon() {
 	// Increment manifest versions if using a file system polyfill
 	// This allows user to simply import the file into Minecraft even if the same pack
 	// with a lower version number is already installed
-	if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill) {
+	if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value) {
 		const fs = app.project.fileSystem
 
 		let manifests: Record<string, any> = {}

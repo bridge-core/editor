@@ -880,6 +880,11 @@ export default {
 				loading: 'Loading...',
 			},
 		},
+		upgradeFs: {
+			title: 'Upgrade File System?',
+			description:
+				'Your browser now supports saving files directly to your computer. Do you want to upgrade now?',
+		},
 	},
 	taskManager: {
 		tasks: {

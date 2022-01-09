@@ -303,7 +303,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: false,
 		})
 	)
-	if (!isUsingFileSystemPolyfill) {
+	if (!isUsingFileSystemPolyfill.value) {
 		settings.addControl(
 			new Button({
 				category: 'general',

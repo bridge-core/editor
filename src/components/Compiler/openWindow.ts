@@ -20,7 +20,7 @@ export async function openCompilerWindow() {
 
 			let panelConfig: IPanelOptions
 
-			if (isUsingFileSystemPolyfill) {
+			if (isUsingFileSystemPolyfill.value) {
 				panelConfig = {
 					text: 'comMojang.status.notAvailable',
 					type: 'error',
