@@ -2,7 +2,6 @@ import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
 import { ZipDirectory } from '/@/components/FileSystem/Zip/ZipDirectory'
 import { App } from '/@/App'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
-import { AnyDirectoryHandle } from '../../FileSystem/Types'
 
 export async function exportAsBrproject() {
 	const app = App.instance

@@ -24,7 +24,7 @@ export class ProjectConfig extends BaseProjectConfig {
 	}
 
 	readConfig() {
-		return this.fileSystem.readJSON(`config.json`)
+		return this.fileSystem.readJSON(`config.json`).catch(() => ({}))
 	}
 	async writeConfig(config: Partial<IConfigJson>) {
 		await this.fileSystem.writeJSON(`config.json`, config, true)
