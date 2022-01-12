@@ -43,7 +43,8 @@ export abstract class Project {
 	// Not directly assigned so they're not responsive
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
-	public compilerService!: Remote<DashService>
+	public _compilerService?: Remote<DashService>
+	public compilerReady: Promise<void>
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 
@@ -79,6 +80,14 @@ export abstract class Project {
 	}
 	get isActiveProject() {
 		return this.name === this.parent.selectedProject
+	}
+	get compilerService() {
+		if (!this._compilerService)
+			throw new Error(
+				`Trying to access compilerService before it was setup. Make sure to await compilerReady before accessing it.`
+			)
+
+		return this._compilerService
 	}
 	//#endregion
 
@@ -118,9 +127,11 @@ export abstract class Project {
 
 		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
 
-		this.createDashService('development').then((service) => {
-			this.compilerService = markRaw(service)
-		})
+		this.compilerReady = this.createDashService('development').then(
+			(service) => {
+				this._compilerService = markRaw(service)
+			}
+		)
 
 		setTimeout(() => this.onCreate(), 0)
 	}
@@ -129,6 +140,8 @@ export abstract class Project {
 		mode: 'development' | 'production',
 		compilerConfig?: string
 	) {
+		await this.app.comMojang.fired
+
 		const compiler = await new DashCompiler(
 			this.app.fileSystem.baseDirectory,
 			this.app.comMojang.hasComMojang
@@ -173,6 +186,8 @@ export abstract class Project {
 		this.parent.activatedProject.dispatch(this)
 
 		await this.fileTypeLibrary.setup(this.app.dataLoader)
+		// Wait for compilerService to be ready
+		await this.compilerReady
 
 		if (!isReload) {
 			for (const tabSystem of this.tabSystems) await tabSystem.activate()

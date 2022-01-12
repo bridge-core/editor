@@ -152,9 +152,11 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 	if (!(project instanceof BedrockProject)) return
 
 	await project.commandData.fired
+	await project.compilerReady
+
 	const commands = await project.commandData.allCommands(
 		undefined,
-		!(await project.compilerService?.isSetup)
+		!(await project.compilerService.isSetup)
 	)
 	tokenProvider.keywords = commands.map((command) => command)
 
@@ -182,6 +184,8 @@ export class McfunctionLanguage extends Language {
 			async (project: Project) => {
 				loadedProject = project
 				loadCommands(this)
+
+				await project.compilerReady
 
 				await project.compilerService.once(
 					proxy(() => {
