@@ -879,6 +879,11 @@ export default {
 				loading: '読み込み中...',
 			},
 		},
+		upgradeFs: {
+			title: 'ファイルシステムのアップグレード',
+			description:
+				'お使いのブラウザがファイルを直接コンピュータに保存する機能に対応しました。今すぐアップグレードしますか？',
+		},
 	},
 	taskManager: {
 		tasks: {
@@ -934,7 +939,8 @@ export default {
 				'com.mojang へのプロジェクトの同期設定は正しく設定されています。',
 			deniedPermission:
 				'com.mojang へのフォルダーアクセス権限が与えられていません',
-			notSetup: 'com.mojang への同期設定をしていません。',
+			notSetup:
+				'com.mojang への同期設定をしていません。 com.mojang フォルダを bridge. にドラッグしてください。',
 			notAvailable:
 				'プロジェクトを com.mojang フォルダーに同期する機能は Chrome と Edge ユーザーのみ利用可能です。',
 		},
