@@ -2,7 +2,7 @@ import { functionData } from './data'
 import { createDefaultItemStack, ItemStack } from './itemStack'
 import { ILootTableEntry, ILootTableFunction } from './interfaces'
 import { randomInt } from '/@/utils/math/randomInt'
-import { deepMerge } from '/@/utils/deepmerge'
+import { deepMerge } from 'bridge-common-utils'
 
 export class LootTablePool {
 	/**
