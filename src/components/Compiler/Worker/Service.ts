@@ -79,8 +79,10 @@ export class DashService extends EventDispatcher<void> {
 			))
 		) {
 			await Promise.all([
-				this.build(),
-				fs.unlink(`${this.projectDir}/.bridge/.restartDevServer`),
+				this.build().catch((err) => console.error(err)),
+				fs
+					.unlink(`${this.projectDir}/.bridge/.restartDevServer`)
+					.catch((err) => console.error(err)),
 			])
 		} else {
 			await Promise.all([

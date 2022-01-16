@@ -113,6 +113,18 @@ export class ProjectConfig extends BaseProjectConfig {
 			updatedConfig = true
 		}
 
+		if (
+			upgradeConfig &&
+			(await this.fileSystem.fileExists('.bridge/compiler/default.json'))
+		) {
+			const compilerConfig = await this.fileSystem.readJSON(
+				'.bridge/compiler/default.json'
+			)
+			this.data.compiler = { plugins: compilerConfig.plugins }
+			await this.fileSystem.unlink('.bridge/compiler/default.json')
+			updatedConfig = true
+		}
+
 		if (updatedConfig) await this.writeConfig(this.data)
 	}
 }
