@@ -34,11 +34,13 @@
 			sizes="any"
 			type="image/svg+xml"
 		/>
-		<title>bridge. v2</title>
+		<title>bridge v2</title>
 		<link
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
 		/>
+
+		
 		<link
 			rel="icon"
 			type="image/png"
@@ -51,10 +53,6 @@
 			sizes="16x16"
 			href="/img/icons/favicon-16x16.png"
 		/>
-
-		<meta name="theme-color" content="#1778D2" />
-		<meta name="apple-mobile-web-app-capable" content />
-		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 		<meta name="apple-mobile-web-app-title" content="bridge v2" />
 		<link
 			rel="apple-touch-icon"
@@ -69,12 +67,18 @@
 			name="msapplication-TileImage"
 			content="/img/icons/msapplication-icon-144x144.png"
 		/>
+		
+
+		<meta name="theme-color" content="#1778D2" />
+		<meta name="apple-mobile-web-app-capable" content />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
 		<meta name="msapplication-TileColor" content="#0F0F0F" />
-	  <script type="module" crossorigin src="/assets/main.48555c7a.js"></script>
-    <link rel="modulepreload" href="/assets/vendor.5369cb71.js">
-    <link rel="stylesheet" href="/assets/vendor.a8e7d3ec.css">
-    <link rel="stylesheet" href="/assets/main.e304075b.css">
-  <link rel="manifest" href="/manifest.webmanifest"></head>
+		<script type="module" crossorigin src="/assets/main.d7a1eb35.js"></script>
+		<link rel="modulepreload" href="/assets/vendor.04adacda.js">
+		<link rel="stylesheet" href="/assets/vendor.688d388e.css">
+		<link rel="stylesheet" href="/assets/main.61973d91.css">
+	<link rel="manifest" href="/manifest.webmanifest"></head>
 
 	<body>
 		<noscript>
@@ -87,6 +91,11 @@
 
 		<script>
 			window.global = window
+			window.process = {
+				cwd: () => '',
+				env: {},
+			}
+			self.setImmediate = setTimeout
 		</script>
 		
 	</body>
