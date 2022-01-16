@@ -35,15 +35,14 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		// Composition API isn't available within web workers (and usage of markRaw isn't necessary there) so we can omit the markRaw call
 		this.fileData = globalThis.document ? markRaw(fileData) : fileData
 
+		const isDataFile = this.path.join('/').startsWith('data/packages')
+
 		// This prevents an IndexedDB overload by saving too many small data files to the DB
-		if (
-			this.inMemory ||
-			(this.path.join('/').startsWith('data/packages') &&
-				fileData.length < 10_000)
-		)
+		if (this.inMemory || (isDataFile && fileData.length < 10_000))
 			return this.setupDone.dispatch()
 
-		await this.updateIdb(fileData)
+		// We only need to write data files from the main thread, web workers can just load the already written data from the main thread
+		if (!isDataFile || globalThis.document) await this.updateIdb(fileData)
 		this.setupDone.dispatch()
 	}
 

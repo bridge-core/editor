@@ -4,9 +4,10 @@ import { McfunctionLanguage } from './Mcfunction'
 import { MoLangLanguage } from './MoLang'
 
 export class LanguageManager {
-	protected languages = new Set<Language>([
+	public readonly mcfunction = new McfunctionLanguage()
+
+	protected otherLanguages = new Set<Language>([
 		new MoLangLanguage(),
 		new LangLanguage(),
-		new McfunctionLanguage(),
 	])
 }

@@ -39,14 +39,12 @@ export class FileWatcher extends EventDispatcher<File> {
 	}
 
 	async compileFile(file: File) {
-		await this.app.project.compilerManager.fired
-
 		const [
 			dependencies,
 			compiled,
-		] = await this.app.project.compilerManager.compileWithFile(
+		] = await this.app.project.compilerService.compileFile(
 			this.filePath,
-			file
+			new Uint8Array(await file.arrayBuffer())
 		)
 
 		this.children.forEach((child) => child.dispose())

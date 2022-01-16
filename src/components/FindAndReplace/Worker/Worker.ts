@@ -13,7 +13,7 @@ import { extname, join, resolve } from '/@/utils/path'
 
 import { createRegExp, processFileText } from '../Utils'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
-import { isMatch } from '/@/utils/glob/isMatch'
+import { isMatch } from 'bridge-common-utils'
 import { ProjectConfig } from '../../Projects/Project/Config'
 import { TPackTypeId } from '../../Data/PackType'
 

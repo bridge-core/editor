@@ -47,7 +47,7 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/tab-actions', TabActionsModule],
 	['@bridge/theme', ThemeModule],
 	['@bridge/three', ThreeModule],
-	['@bridge/model-viewer', ModelViewerModule]
+	['@bridge/model-viewer', ModelViewerModule],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([

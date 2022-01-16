@@ -3,6 +3,7 @@ import { BasicFileImporter } from './BasicFile'
 import type { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { BrprojectImporter } from './Brproject'
 import { BBModelImporter } from '/@/components/ImportFile/BBModel'
+import { ZipImporter } from './ZipImporter'
 
 export class FileImportManager {
 	constructor(fileDropper: FileDropper) {
@@ -10,5 +11,6 @@ export class FileImportManager {
 		new BasicFileImporter(fileDropper)
 		new BrprojectImporter(fileDropper)
 		new BBModelImporter(fileDropper)
+		new ZipImporter(fileDropper)
 	}
 }

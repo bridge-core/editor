@@ -10,28 +10,31 @@ import { basename } from '/@/utils/path'
 
 export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
-	isFirstImport = false
+	isFirstImport = false,
+	unzip = true
 ) {
 	const app = await App.getApp()
 	const fs = app.fileSystem
 	const tmpHandle = await fs.getDirectoryHandle('import', {
 		create: true,
 	})
-	const unzipper = new Unzipper(tmpHandle)
 
 	if (!isFirstImport) await app.projectManager.projectReady.fired
 
-	// Unzip .brproject file
-	const file = await fileHandle.getFile()
-	const data = new Uint8Array(await file.arrayBuffer())
-	unzipper.createTask(app.taskManager)
-	await unzipper.unzip(data)
+	// Unzip .brproject file, do not unzip if already unzipped
+	if (unzip) {
+		const unzipper = new Unzipper(tmpHandle)
+		const file = await fileHandle.getFile()
+		const data = new Uint8Array(await file.arrayBuffer())
+		unzipper.createTask(app.taskManager)
+		await unzipper.unzip(data)
+	}
 	let importFrom = 'import'
 
 	if (!(await fs.fileExists('import/config.json'))) {
 		// The .brproject file contains data/, projects/ & extensions/ folder
 		// We need to change the folder structure to process it correctly
-		if (isUsingFileSystemPolyfill) {
+		if (isUsingFileSystemPolyfill.value) {
 			// Only load settings & extension if using the polyfill
 			try {
 				await fs.move('import/data', 'data')
@@ -56,7 +59,7 @@ export async function importFromBrproject(
 	}
 
 	// Ask user whether he wants to save the current project if we are going to delete it later in the import process
-	if (isUsingFileSystemPolyfill && !isFirstImport) {
+	if (isUsingFileSystemPolyfill.value && !isFirstImport) {
 		const confirmWindow = new ConfirmationWindow({
 			description:
 				'windows.projectChooser.openNewProject.saveCurrentProject',
@@ -89,7 +92,7 @@ export async function importFromBrproject(
 	}
 
 	// Remove old project if browser is using fileSystem polyfill
-	if (isUsingFileSystemPolyfill && !isFirstImport)
+	if (isUsingFileSystemPolyfill.value && !isFirstImport)
 		await app.projectManager.removeProject(currentProjectName!)
 
 	await fs.unlink('import')

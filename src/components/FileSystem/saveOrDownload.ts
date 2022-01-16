@@ -10,18 +10,18 @@ export async function saveOrDownload(
 	fileData: Uint8Array,
 	fileSystem: FileSystem
 ) {
-	const app = await App.getApp()
-
 	const notification = createNotification({
 		icon: 'mdi-export',
 		color: 'success',
 		textColor: 'white',
 		message: 'general.successfulExport.title',
 		isVisible: true,
-		onClick: () => {
-			if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill) {
+		onClick: async () => {
+			if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value) {
 				download(basename(filePath), fileData)
 			} else {
+				const app = await App.getApp()
+
 				new InformationWindow({
 					description: `[${app.locales.translate(
 						'general.successfulExport.description'
@@ -33,7 +33,7 @@ export async function saveOrDownload(
 		},
 	})
 
-	if (!isUsingOriginPrivateFs || isUsingFileSystemPolyfill) {
+	if (!isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value) {
 		await fileSystem.writeFile(filePath, fileData)
 	}
 }

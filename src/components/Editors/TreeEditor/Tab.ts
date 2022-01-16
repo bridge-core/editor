@@ -15,14 +15,16 @@ const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {
 		const fileContent = JSON.stringify(tab.treeEditor.toJSON())
 		const app = await App.getApp()
+
+		app.project.fileChange.dispatch(tab.getPath(), await tab.getFile())
+
 		await app.project.packIndexer.updateFile(
 			tab.getPath(),
 			fileContent,
-			tab.isForeignFile
+			tab.isForeignFile,
+			true
 		)
 		await app.project.jsonDefaults.updateDynamicSchemas(tab.getPath())
-
-		app.project.fileChange.dispatch(tab.getPath(), await tab.getFile())
 	},
 	600
 )

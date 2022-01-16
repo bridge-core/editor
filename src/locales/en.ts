@@ -21,6 +21,7 @@ export default {
 		more: 'More...',
 		selectFolder: 'Select Folder',
 		fileName: 'File Name',
+		folderName: 'Folder Name',
 		inactive: 'Inactive',
 		active: 'Active',
 		later: 'Later',
@@ -29,6 +30,8 @@ export default {
 
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
+		confirmOverwriteFolder:
+			'This action overwrites a folder with the same name. Do you want to continue?',
 		fileSystemPolyfill:
 			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome (excluding Chrome 93/94) or Edge!',
 		successfulExport: {
@@ -296,6 +299,9 @@ export default {
 			name: 'Change All Occurrences',
 			description: 'Change all occurrences of the selected text',
 		},
+		tgaMaskToggle: {
+			name: 'Show/Hide Alpha Mask',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -393,6 +399,12 @@ export default {
 			description:
 				'Enables auto-completions for experimental Molang queries.',
 		},
+		theWildUpdate: {
+			name: 'The Wild Update',
+			description:
+				'Enables auto-completions for new features introduced in the Wild Update, such as entity components.',
+		},
+
 		educationEdition: {
 			name: 'Enable Education Edition',
 			description:
@@ -603,6 +615,14 @@ export default {
 				name: 'Export as .brproject',
 			},
 			fileActions: {
+				open: {
+					name: 'Open',
+					description: 'Open the file in the editor',
+				},
+				openInSplitScreen: {
+					name: 'Open in Split Screen',
+					description: 'Open the file in split screen mode',
+				},
 				delete: {
 					name: 'Delete',
 					description: 'Delete a file or folder',
@@ -780,6 +800,11 @@ export default {
 					name: 'JSON Editor',
 					description: 'Choose how you want to edit JSON files',
 				},
+				bridgePredictions: {
+					name: 'bridge. Predictions',
+					description:
+						"Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly",
+				},
 				bracketPairColorization: {
 					name: 'Bracket Pair Colorization',
 					description: 'Give matching brackets an unique color',
@@ -855,6 +880,11 @@ export default {
 				loading: 'Loading...',
 			},
 		},
+		upgradeFs: {
+			title: 'Upgrade File System?',
+			description:
+				'Your browser now supports saving files directly to your computer. Do you want to upgrade now?',
+		},
 	},
 	taskManager: {
 		tasks: {
@@ -884,6 +914,10 @@ export default {
 		importFailed: 'bridge. was unable to import the following files:',
 		andMore: '...and more!',
 		importMethod: 'Import Method',
+		mcaddon: {
+			missingManifests:
+				"bridge. was unable to load data from your .mcaddon file because it wasn't able to find pack manifest files inside of it.",
+		},
 		saveToProject: {
 			title: 'Save to Project',
 			description1: 'Save the file ',
@@ -905,7 +939,8 @@ export default {
 			sucess: 'Syncing your projects to com.mojang is setup correctly.',
 			deniedPermission:
 				'You setup com.mojang syncing but you did not grant bridge. permission to the folder.',
-			notSetup: 'You have not setup com.mojang syncing yet.',
+			notSetup:
+				'You have not setup com.mojang syncing yet. Drag your com.mojang folder onto bridge. to do so.',
 			notAvailable:
 				'Syncing projects to the com.mojang folder is only available for Chrome and Edge users.',
 		},
@@ -1009,9 +1044,11 @@ export default {
 	},
 	editors: {
 		treeEditor: {
+			add: 'Add',
 			addObject: 'Add Object',
 			addArray: 'Add Array',
 			addValue: 'Add Value',
+			forceValue: 'Force Value',
 			edit: 'Edit',
 		},
 	},
@@ -1019,85 +1056,120 @@ export default {
 		actionName: 'Validate Function',
 		tabName: 'Function Validator',
 		errors: {
-			emptyComplexConstructor: 'Unexpected empty complex selector!',
-			invalidSelectorAttribute: {
-				part1: "Invalid selector attribute '",
-				part2: "'!",
+			common: {
+				expectedEquals: 'Expected equals!',
+				expectedValue: 'Expected value!',
+				expectedType: {
+					part1: "Expected type '",
+					part2: "' but got type of '",
+					part3: "'!",
+				},
+				expectedComma: 'Expected comma!',
+				unclosedString: 'Unclosed string!',
+				spaceAtStart: 'Spaces at the start are not supported!',
+				expectedColon: 'Expected colon!',
+				unexpectedOpenCurlyBracket: 'Unexpected open curly bracket!',
+				unexpectedCloseCurlyBracket: 'Unexpected close curly bracket!',
+				unexpectedOpenSquareBracket: 'Unexpected open sqaure bracket!',
+				unexpectedCloseSquareBracket:
+					'Unexpected close sqaure bracket!',
 			},
-			expectedEqualsButNothing: 'Expected equals sign but got nothing!',
-			expectedEquals: 'Expected equals sign!',
-			expectedValueButNothing: 'Expected value but got nothing!',
-			attributeNegationSupport: {
-				part1: "Attribute '",
-				part2: "' does not support negation!",
+			commands: {
+				empty: 'Empty commands are not supported!',
+				invalid: {
+					part1: "Command: '",
+					part2: "' is not a valid command!",
+				},
 			},
-			multipleInstancesNever: {
-				part1: "Multiple instances of attribute '",
-				part2: "' atribute not allowed!",
+			identifiers: {
+				missingNamespace: 'Missing namespace in identifier!',
 			},
-			multipleInstancesNegated: {
-				part1: "Multiple instances of '",
-				part2: "' atribute not allowed when negated!",
+			ranges: {
+				missingFirstNumber: 'Missing first number in range!',
+				missingDot: 'Missing dot in range!',
+				missingSecondNumber: 'Missing second number in range!',
 			},
-			selectorAttributeTypeMismatch: {
-				part1: "Expected value type of '",
-				part2: "', but got '",
-				part3: "'!",
+			selectors: {
+				emptyComplex: 'Unexpected empty complex selector!',
+				expectedStringAsAttribute:
+					'Selector attribute must be a string!',
+				invalidSelectorAttribute: {
+					part1: "'",
+					part2: "' is not a valid selector attribute!",
+				},
+				unsupportedNegation: {
+					part1: "Selector attribute: '",
+					part2: "' does not support negation!",
+				},
+				multipleInstancesNever: {
+					part1: "Selector attribute: '",
+					part2: "' does not support multiple instances!",
+				},
+				multipleInstancesNegated: {
+					part1: "Selector attribute: '",
+					part2: "' only supports multiple instances when negated!",
+				},
+				valueNotValid: {
+					part1: "Selector attribute does not support value '",
+					part2: "'!",
+				},
+				expectedLetterAfterAt: "Expected letter after '@'!",
+				invalid: {
+					part1: "Selector: '",
+					part2: "' is not a valid selector!",
+				},
+				selectorNotBeforeOpenSquareBracket:
+					"Expected a selector before '['!",
 			},
-			selectorValueNotValid: {
-				part1: "Value '",
-				part2: "' is not one of the expected values!",
+			scoreData: {
+				empty: 'Unexpected empty score data!',
+				expectedStringAsAttribute:
+					'Score data attribute must be a string!',
+				invalidType: {
+					part1: "This score data value type: '",
+					part2: "' is not supported!",
+				},
+				repeat: 'Score data value must not repeat!',
 			},
-			expectedComma: 'Expected comma between selector attributes!',
-			unclosedString: 'Unclosed string!',
-			invalidCommand: {
-				part1: "'",
-				part2: '" is not a valid command!',
-			},
-			expectedLetterAfterAtButNothing: 'Expected leter after @!',
-			expectedLetterAfterAt: 'Expected letter after @!',
-			invalidSelector: {
-				part1: '@',
-				part2: ' is not a valid selector!',
-			},
-			unexpectedOpenSquareBracket: 'Unexpected [!',
-			selectorNotBeforeOpenSquareBracketButNothing:
-				'Either expected selector before [ or got an invalid block state!',
-			selectorNotBeforeOpenSquareBracket:
-				'Expected selector before [ or got an invalid block state!',
-			unexpectedCloseSquareBracket: 'Unexpected ]',
-			noValidCommandVarsFound: {
-				part1: 'No valid command variations found! Argument ',
-				part2: " may be invalid! It is of type '",
-				part3:
-					"' but that type is not supported in the current variation tree.",
-			},
-			noValidCommandVarsFoundEnd: {
-				part1:
-					'No valid command variations found! You may be missing some arguments or argument ',
-				part2: ' may be invalid!',
+			arguments: {
+				noneValid: {
+					part1: 'No valid command variations found! Argument ',
+					part2: " may be invalid! It is of type '",
+					part3:
+						"' but that type is not supported in the current variation tree.",
+				},
+				noneValidEnd: {
+					part1:
+						'No valid command variations found! You may be missing some arguments or argument ',
+					part2: ' may be invalid!',
+				},
 			},
 		},
 		warnings: {
-			schemaFamily: {
-				part1: "Could not find family '",
-				part2:
-					"'. This could either be a mistake or the family is from another addon.",
+			schema: {
+				familyNotFound: {
+					part1: "Could not find family '",
+					part2:
+						"'. This could either be a mistake or the family is from another addon.",
+				},
+				typeNotFound: {
+					part1: "Could not find type '",
+					part2:
+						"'. This could either be a mistake or the type is from another addon.",
+				},
+				tagNotFound: {
+					part1: "Could not find tag '",
+					part2:
+						"'. This could either be a mistake or the tag is from another addon.",
+				},
+				schemaValueNotFound: {
+					part1: "Could not find schema value '",
+					part2:
+						"'. This could either be a mistake or the schema value is from another addon.",
+				},
 			},
-			schemaType: {
-				part1: "Could not find type '",
-				part2:
-					"'. This could either be a mistake or the type is from another addon.",
-			},
-			schemaTag: {
-				part1: "Could not find tag '",
-				part2:
-					"'. This could either be a mistake or the tag is from another addon.",
-			},
-			schemaValue: {
-				part1: "Could not find schema value '",
-				part2:
-					"'. This could either be a mistake or the schema value is from another addon.",
+			data: {
+				missingData: 'Some data was not correctly loaded!',
 			},
 		},
 	},

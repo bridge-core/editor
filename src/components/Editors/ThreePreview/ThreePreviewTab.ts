@@ -1,6 +1,6 @@
 import ThreePreviewTabComponent from './ThreePreviewTab.vue'
 import { IDisposable } from '/@/types/disposable'
-import { Model } from 'bridge-model-viewer/lib/main'
+import { Model } from 'bridge-model-viewer'
 import { PreviewTab } from '/@/components/TabSystem/PreviewTab'
 import {
 	AmbientLight,
@@ -49,7 +49,7 @@ export abstract class ThreePreviewTab extends PreviewTab {
 
 		this.renderer = markRaw(
 			new WebGLRenderer({
-				antialias: false,
+				antialias: true,
 				canvas,
 			})
 		)

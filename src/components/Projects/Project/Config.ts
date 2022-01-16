@@ -18,12 +18,13 @@ export class ProjectConfig extends BaseProjectConfig {
 			project.fileSave.on('config.json', () => {
 				this.refreshConfig()
 				this.project!.app.windows.createPreset.onPresetsChanged()
+				this.project!.compilerService.reloadPlugins()
 			})
 		}
 	}
 
 	readConfig() {
-		return this.fileSystem.readJSON(`config.json`)
+		return this.fileSystem.readJSON(`config.json`).catch(() => ({}))
 	}
 	async writeConfig(config: Partial<IConfigJson>) {
 		await this.fileSystem.writeJSON(`config.json`, config, true)

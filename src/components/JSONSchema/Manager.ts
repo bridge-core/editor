@@ -4,7 +4,7 @@ import type { IfSchema } from './Schema/IfSchema'
 import type { RootSchema } from './Schema/Root'
 import type { Schema } from './Schema/Schema'
 import type { ThenSchema } from './Schema/ThenSchema'
-import { walkObject } from '/@/utils/walkObject'
+import { walkObject } from 'bridge-common-utils'
 
 export class SchemaManager {
 	protected static lib: Record<string, any> = {}

@@ -81,7 +81,7 @@ export function setupFileCategory(app: App) {
 		})
 	)
 
-	if (isUsingFileSystemPolyfill || isUsingOriginPrivateFs) {
+	if (isUsingFileSystemPolyfill.value || isUsingOriginPrivateFs) {
 		file.addItem(
 			app.actionManager.create({
 				icon: 'mdi-file-download-outline',
@@ -90,7 +90,6 @@ export function setupFileCategory(app: App) {
 				keyBinding: 'Ctrl + Shift + S',
 				onTrigger: async () => {
 					const app = await App.getApp()
-					await app.project.compilerManager.fired
 
 					const currentTab = app.project.tabSystem?.selectedTab
 					if (!(currentTab instanceof FileTab)) return
@@ -98,9 +97,14 @@ export function setupFileCategory(app: App) {
 					const [
 						_,
 						compiled,
-					] = await app.project.compilerManager.compileWithFile(
+					] = await app.project.compilerService.compileFile(
 						currentTab.getPath(),
-						await currentTab.getFile()
+						await currentTab
+							.getFile()
+							.then(
+								async (file) =>
+									new Uint8Array(await file.arrayBuffer())
+							)
 					)
 
 					let uint8arr: Uint8Array

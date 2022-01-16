@@ -1,5 +1,5 @@
 import { App } from '/@/App'
-import { compare } from 'compare-versions'
+import { compareVersions } from 'bridge-common-utils'
 
 export async function getFilteredFormatVersions(targetVersion?: string) {
 	const app = await App.getApp()
@@ -10,7 +10,8 @@ export async function getFilteredFormatVersions(targetVersion?: string) {
 	return getFormatVersions().then((formatVersions) =>
 		formatVersions.filter(
 			(formatVersion) =>
-				!targetVersion || compare(formatVersion, targetVersion, '<=')
+				!targetVersion ||
+				compareVersions(formatVersion, targetVersion, '<=')
 		)
 	)
 }

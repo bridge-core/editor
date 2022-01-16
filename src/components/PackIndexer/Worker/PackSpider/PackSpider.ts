@@ -1,4 +1,4 @@
-import { walkObject } from '/@/utils/walkObject'
+import { walkObject } from 'bridge-common-utils'
 import { LightningStore } from '../LightningCache/LightningStore'
 import { PackIndexerService } from '../Main'
 
@@ -29,7 +29,8 @@ export class PackSpider {
 	) {}
 
 	async setup(filePaths: string[]) {
-		if (this.packIndexer.getOptions().disablePackSpider) return
+		// TODO(Dash): Re-enable pack spider
+		if (this.packIndexer.getOptions().disablePackSpider || true) return
 
 		fileStore = {}
 		const response = await this.packIndexer.fileType.getPackSpiderData()
@@ -44,7 +45,8 @@ export class PackSpider {
 	}
 
 	async updateFile(filePath: string) {
-		await File.create(filePath, this, true)
+		// TODO(Dash): Re-enable pack spider
+		// await File.create(filePath, this, true)
 	}
 }
 

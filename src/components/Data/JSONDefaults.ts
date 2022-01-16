@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { IMonacoSchemaArrayEntry } from '/@/components/Data/FileType'
 import json5 from 'json5'
-import * as monaco from 'monaco-editor'
+import { languages } from 'monaco-editor'
 import { Project } from '../Projects/Project/Project'
 import { IDisposable } from '/@/types/disposable'
 import { FileTab } from '../TabSystem/FileTab'
@@ -113,7 +113,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 
 	setJSONDefaults(validate = true) {
 		const schemas = Object.assign({}, globalSchemas, this.localSchemas)
-		monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+		languages.json.jsonDefaults.setDiagnosticsOptions({
 			enableSchemaRequest: false,
 			allowComments: true,
 			validate,

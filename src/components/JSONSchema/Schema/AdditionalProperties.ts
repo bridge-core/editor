@@ -23,6 +23,7 @@ export class AdditionalPropertiesSchema extends Schema {
 		else if (location.length === 1)
 			return this.rootSchema ? [this.rootSchema] : []
 		const key = location.shift()!
+		if (Array.isArray(obj[key])) return []
 
 		return this.rootSchema?.getSchemasFor(obj[key], location) ?? []
 	}

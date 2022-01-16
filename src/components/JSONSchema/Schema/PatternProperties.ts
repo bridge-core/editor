@@ -22,8 +22,10 @@ export class PatternPropertiesSchema extends Schema {
 
 	getSchemasFor(obj: unknown, location: (string | number)[]) {
 		const key = location.shift()
+
 		let schemas: Schema[] = []
 		if (typeof key === 'number' || key === undefined) return schemas
+		if (Array.isArray((<any>obj)[key])) return []
 
 		for (const [pattern, child] of Object.entries(this.children)) {
 			if (key.match(new RegExp(pattern)) !== null) schemas.push(child)

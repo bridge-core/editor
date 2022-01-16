@@ -1,18 +1,22 @@
-import { Command } from './Command'
+import { Command } from 'dash-compiler'
 import { App } from '/@/App'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { iterateDir } from '/@/utils/iterateDir'
 
 export async function generateCommandSchemas() {
 	const app = await App.getApp()
-	await app.project.compilerManager.fired
+	const project = app.project
+	await (await project.compilerService.completedStartUp).fired
 
-	const v1CompatMode = app.project.config.get().bridge?.v1CompatMode ?? false
-	const fromFilePath = `BP/commands`
+	const v1CompatMode = project.config.get().bridge?.v1CompatMode ?? false
+	const fromFilePath = project.config.resolvePackPath(
+		'behaviorPack',
+		'commands'
+	)
 
 	let baseDir: AnyDirectoryHandle
 	try {
-		baseDir = await app.project!.fileSystem.getDirectoryHandle(fromFilePath)
+		baseDir = await app.fileSystem.getDirectoryHandle(fromFilePath)
 	} catch {
 		return []
 	}
@@ -22,15 +26,20 @@ export async function generateCommandSchemas() {
 	await iterateDir(
 		baseDir,
 		async (fileHandle, filePath) => {
-			const [
-				_,
-				fileContent,
-			] = await app.project.compilerManager.compileWithFile(
+			const [_, fileContent] = await project.compilerService.compileFile(
 				filePath,
-				await fileHandle.getFile()
+				await fileHandle
+					.getFile()
+					.then(
+						async (file) => new Uint8Array(await file.arrayBuffer())
+					)
 			)
 			const file = new File([fileContent], fileHandle.name)
-			const command = new Command(await file.text(), 'dev', v1CompatMode)
+			const command = new Command(
+				await file.text(),
+				'development',
+				v1CompatMode
+			)
 
 			await command.load('client')
 

@@ -6,193 +6,158 @@ globalThis.process = {
 
 import '/@/components/FileSystem/Virtual/Comlink'
 import { expose } from 'comlink'
-import { TaskService } from '/@/components/TaskManager/WorkerTask'
-import { loadPlugins } from './Plugins'
-import { TCompilerPlugin } from './TCompilerPlugin'
-import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { FileTypeLibrary, IFileType } from '/@/components/Data/FileType'
-import { Compiler } from './Compiler'
 import { DataLoader } from '/@/components/Data/DataLoader'
-import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
-import { ProjectConfig } from '../../Projects/Project/Config'
+import type { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
+import { Dash } from 'dash-compiler'
+import { PackTypeLibrary } from '/@/components/Data/PackType'
+import { DashFileSystem } from './FileSystem'
+import { Signal } from '/@/components/Common/Event/Signal'
+import { dirname } from '/@/utils/path'
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 
 export interface ICompilerOptions {
 	config: string
-	mode: 'dev' | 'build'
-	isDevServerRestart: boolean
-	isFileRequest: boolean
-	plugins: Record<string, string>
+	compilerConfig?: string
+	mode: 'development' | 'production'
 	pluginFileTypes: IFileType[]
-	allFiles: string[]
 }
-export interface IBuildConfig {
-	plugins: TPluginDef[]
-}
-export type TPluginDef = string | [string, any]
+const dataLoader = new DataLoader()
 
-export class CompilerService extends TaskService<void, [string[], string[]]> {
-	public fileSystem: FileSystem
-	protected buildConfig: IBuildConfig = { plugins: [] }
-	protected plugins!: Map<string, Partial<TCompilerPlugin>>
-	protected _outputFileSystem?: FileSystem
-	protected dataLoader = new DataLoader()
-	protected compiler: Compiler
+export class DashService extends EventDispatcher<void> {
+	protected fileSystem: DashFileSystem
 	public fileType: FileTypeLibrary
-	public config: ProjectConfig
+	protected dash: Dash<DataLoader>
+	public isDashFree = new Signal<void>()
+	protected projectDir: string
+	public isSetup = false
+	public completedStartUp = new Signal<void>()
 
 	constructor(
-		projectDirectory: AnyDirectoryHandle,
-		protected baseDirectory: AnyDirectoryHandle,
+		baseDirectory: AnyDirectoryHandle,
 		comMojangDirectory: AnyDirectoryHandle | undefined,
-		protected readonly options: ICompilerOptions
+		options: ICompilerOptions
 	) {
 		super()
-
-		this.fileSystem = new FileSystem(projectDirectory)
-
-		this.compiler = new Compiler(this)
-		this.config = new ProjectConfig(this.fileSystem)
-		this.fileType = new FileTypeLibrary(this.config)
+		this.fileSystem = new DashFileSystem(baseDirectory)
+		const outputFileSystem =
+			comMojangDirectory && options.mode === 'development'
+				? new DashFileSystem(comMojangDirectory)
+				: undefined
+		this.fileType = new FileTypeLibrary()
 		this.fileType.setPluginFileTypes(options.pluginFileTypes)
-
-		if (comMojangDirectory)
-			this._outputFileSystem = new FileSystem(comMojangDirectory)
-	}
-
-	getOptions() {
-		return {
-			baseDirectory: this.baseDirectory,
-			projectDirectory: this.fileSystem.baseDirectory,
-			comMojangDirectory: this._outputFileSystem?.baseDirectory,
-			...this.options,
-		}
-	}
-	getPlugins() {
-		return this.plugins
-	}
-	get pluginOpts() {
-		const extraOpts = {
-			mode: this.options.mode,
-			restartDevServer: this.options.isDevServerRestart,
-			isFileRequest: this.options.isFileRequest,
-		}
-		return Object.fromEntries(
-			this.buildConfig.plugins.map((def) =>
-				Array.isArray(def)
-					? [
-							def[0],
-							{
-								...def[1],
-								...extraOpts,
-							},
-					  ]
-					: [def, extraOpts]
-			)
-		)
-	}
-	get outputFileSystem() {
-		if (this.options.mode === 'build') return this.fileSystem
-
-		return this._outputFileSystem ?? this.fileSystem
-	}
-
-	async onStart([updatedFiles, deletedFiles]: [string[], string[]]) {
-		await this.fileType.setup(this.dataLoader)
-
-		try {
-			if (this.options.config === 'default') {
-				// Try loading compiler config from the project config file
-				this.buildConfig = await this.fileSystem
-					.readJSON('config.json')
-					.then((config) => config.compiler)
-
-				/**
-				 * @depracted Support legacy projects with a default.json file
-				 * Remove with next major release
-				 */
-				if (this.buildConfig === undefined) {
-					this.buildConfig = await this.fileSystem.readJSON(
-						`.bridge/compiler/${this.options.config}.json`
-					)
-				}
-			} else {
-				// Load all other compiler config files
-				this.buildConfig = await this.fileSystem.readJSON(
-					`.bridge/compiler/${this.options.config}`
-				)
-			}
-		} catch (err) {
-			console.error(err)
-			return
-		}
-
-		await this.loadPlugins(this.options.plugins)
-
-		if (updatedFiles.length > 0)
-			await this.compiler.runWithFiles(updatedFiles)
-
-		if (deletedFiles.length > 0) {
-			await Promise.all(
-				deletedFiles.map((deletedFile) =>
-					this.compiler.unlink(deletedFile, undefined, false)
-				)
-			)
-			await this.compiler.processFileMap()
-		}
-	}
-
-	async updateFiles(filePaths: string[]) {
-		await this.compiler.runWithFiles(filePaths)
-	}
-	async unlink(path: string) {
-		await this.compiler.unlink(path)
-		await this.compiler.processFileMap()
-	}
-	getCompilerOutputPath(path: string) {
-		return this.compiler.getCompilerOutputPath(path)
-	}
-	compileWithFile(filePath: string, file: Uint8Array) {
-		return this.compiler.compileWithFile(
-			filePath,
-			new File([file], filePath.split('/').pop()!)
-		)
-	}
-
-	async loadPlugins(plugins: Record<string, string>) {
-		const globalFs = new FileSystem(this.getOptions().baseDirectory)
-
-		this.plugins = await loadPlugins({
-			fileSystem: globalFs,
+		this.dash = new Dash<DataLoader>(this.fileSystem, outputFileSystem, {
+			config: options.config,
+			compilerConfig: options.compilerConfig,
+			mode: options.mode,
 			fileType: this.fileType,
-			pluginPaths: plugins,
-			localFs: this.fileSystem,
-			outputFs: this.outputFileSystem,
-			pluginOpts: this.pluginOpts,
-			hasComMojangDirectory:
-				this.getOptions().comMojangDirectory !== undefined,
-			getAliases: (filePath: string) =>
-				this.compiler.getAliases(filePath),
-			compileFiles: (files: string[]) =>
-				this.compiler.compileFiles(files),
-			dataLoader: this.dataLoader,
+			packType: new PackTypeLibrary(),
+			requestJsonData: (path) => dataLoader.readJSON(path),
 		})
+
+		this.projectDir = dirname(options.config)
 	}
-	async updatePlugins(
-		plugins: Record<string, string>,
-		pluginFileTypes: IFileType[]
-	) {
-		await this.loadPlugins(plugins)
-		this.fileType.setPluginFileTypes(pluginFileTypes)
+
+	async compileFile(filePath: string, fileContent: Uint8Array) {
+		await this.isDashFree.fired
+		this.isDashFree.resetSignal()
+
+		const [deps, data] = await this.dash.compileFile(filePath, fileContent)
+		this.isDashFree.dispatch()
+		return <const>[deps, data ?? fileContent]
 	}
-	updateMode(
-		mode: 'dev' | 'build',
-		isFileRequest: boolean,
-		isDevServerRestart: boolean
-	) {
-		this.options.mode = mode
-		this.options.isDevServerRestart = isDevServerRestart
-		this.options.isFileRequest = isFileRequest
+
+	async start(changedFiles: string[], deletedFiles: string[]) {
+		const fs = this.fileSystem.internal
+		if (
+			(await fs.fileExists(
+				`${this.projectDir}/.bridge/.restartDevServer`
+			)) ||
+			!(await fs.fileExists(
+				// TODO(Dash): Replace with call to "this.dash.dashFilePath" once the accessor is no longer protected
+				`${this.projectDir}/.bridge/.dash.${this.dash.getMode()}.json`
+			))
+		) {
+			await Promise.all([
+				this.build(),
+				fs.unlink(`${this.projectDir}/.bridge/.restartDevServer`),
+			])
+		} else {
+			await Promise.all([
+				...deletedFiles.map((f) => this.unlink(f, false)),
+			])
+
+			if (changedFiles.length > 0) await this.updateFiles(changedFiles)
+		}
+
+		this.completedStartUp.dispatch()
+	}
+
+	async build() {
+		await this.isDashFree.fired
+		this.isDashFree.resetSignal()
+		this.dispatch()
+
+		await this.dash.build()
+
+		this.isDashFree.dispatch()
+	}
+	async updateFiles(filePaths: string[]) {
+		await this.isDashFree.fired
+		this.isDashFree.resetSignal()
+		this.dispatch()
+
+		await this.dash.updateFiles(filePaths)
+
+		this.isDashFree.dispatch()
+	}
+	async unlink(path: string, updateDashFile = true) {
+		await this.isDashFree.fired
+		this.isDashFree.resetSignal()
+
+		await this.dash.unlink(path, updateDashFile)
+
+		this.isDashFree.dispatch()
+	}
+	async rename(oldPath: string, newPath: string) {
+		await this.isDashFree.fired
+		this.isDashFree.resetSignal()
+		this.dispatch()
+
+		await this.dash.rename(oldPath, newPath)
+
+		this.isDashFree.dispatch()
+	}
+	getCompilerOutputPath(filePath: string) {
+		return this.dash.getCompilerOutputPath(filePath)
+	}
+
+	async setup() {
+		await dataLoader.fired
+		await this.dash.setup(dataLoader)
+
+		this.isDashFree.dispatch()
+		this.isSetup = true
+	}
+	async reloadPlugins() {
+		await this.isDashFree.fired
+		this.isDashFree.resetSignal()
+
+		await this.dash.reload()
+
+		this.isDashFree.dispatch()
+	}
+
+	onProgress(cb: (progress: number) => void) {
+		const disposable = this.dash.progress.onChange((progress) => {
+			if (progress.percentage === 1) {
+				disposable.dispose()
+				cb(1)
+			} else {
+				cb(progress.percentage)
+			}
+		})
 	}
 }
 
-expose(CompilerService, self)
+expose(DashService, self)

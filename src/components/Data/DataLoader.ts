@@ -3,6 +3,7 @@ import { unzip, Unzipped } from 'fflate'
 import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
 import { basename, dirname } from '/@/utils/path'
 import { FileSystem } from '../FileSystem/FileSystem'
+import { zipSize } from '/@/utils/app/dataPackage'
 
 export class DataLoader extends FileSystem {
 	_virtualFileSystem?: VirtualDirectoryHandle
@@ -24,6 +25,11 @@ export class DataLoader extends FileSystem {
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
 			response.arrayBuffer()
 		)
+		if (rawData.byteLength !== zipSize) {
+			throw new Error(
+				`Error: Data package was larger than the expected size of ${zipSize} bytes; got ${rawData.byteLength} bytes`
+			)
+		}
 
 		// Unzip data
 		const unzipped = await new Promise<Unzipped>((resolve, reject) =>

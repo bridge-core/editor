@@ -8,6 +8,8 @@ import { AnyDirectoryHandle } from './Types'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 import { isUsingFileSystemPolyfill, isUsingOriginPrivateFs } from './Polyfill'
 import { has as hasVirtualDirectory } from './Virtual/IDB'
+import { ConfirmationWindow } from '../Windows/Common/Confirm/ConfirmWindow'
+import { FileSystem } from './FileSystem'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
 
@@ -33,22 +35,45 @@ export class FileSystemSetup {
 			'bridgeBaseDir'
 		)
 
-		if (!isUsingFileSystemPolyfill && fileHandle) {
+		if (!isUsingFileSystemPolyfill.value && fileHandle) {
 			// Request permissions to current bridge folder
 			fileHandle = await this.verifyPermissions(fileHandle)
 		}
 
+		let isUpgradingVirtualFs = false
+
 		// Test whether the user has a virtual file system setup
 		if (
-			isUsingFileSystemPolyfill ||
+			isUsingFileSystemPolyfill.value ||
 			(await hasVirtualDirectory('bridgeFolder'))
 		) {
-			fileHandle = new VirtualDirectoryHandle(
-				null,
-				'bridgeFolder',
-				undefined
-			)
-			await fileHandle.setupDone.fired
+			if (!isUsingFileSystemPolyfill.value) {
+				// Ask user whether to upgrade to the real file system
+				const confirmWindow = new ConfirmationWindow({
+					title: 'windows.upgradeFs.title',
+					description: 'windows.upgradeFs.description',
+					cancelText: 'general.later',
+					onCancel: () => {
+						isUsingFileSystemPolyfill.value = true
+					},
+					onConfirm: async () => {
+						isUpgradingVirtualFs = true
+						isUsingFileSystemPolyfill.value = false
+					},
+				})
+
+				await confirmWindow.fired
+			}
+
+			// Only create virtual folder if we are not migrating away from the virtual file system
+			if (!isUpgradingVirtualFs) {
+				fileHandle = new VirtualDirectoryHandle(
+					null,
+					'bridgeFolder',
+					undefined
+				)
+				await fileHandle.setupDone.fired
+			}
 		}
 
 		// There's currently no bridge folder yet/the bridge folder has been deleted
@@ -73,11 +98,26 @@ export class FileSystemSetup {
 		}
 
 		if (
-			isUsingFileSystemPolyfill &&
+			isUsingFileSystemPolyfill.value &&
 			!(await get<boolean>('confirmedUnsupportedBrowser'))
 		) {
 			// The user's browser doesn't support the native file system API
 			app.windows.browserUnsupported.open()
+		}
+
+		// Migrate virtual project over
+		if (isUpgradingVirtualFs) {
+			const virtualFolder = new VirtualDirectoryHandle(
+				null,
+				'bridgeFolder',
+				undefined
+			)
+			await virtualFolder.setupDone.fired
+
+			const fs = new FileSystem(fileHandle)
+			await fs.copyFolderByHandle(virtualFolder, fileHandle)
+
+			await virtualFolder.removeSelf()
 		}
 
 		this._status = 'done'

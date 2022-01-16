@@ -18,7 +18,7 @@ export function setupProjectCategory(app: App) {
 			name: 'windows.projectChooser.title',
 			description: 'windows.projectChooser.description',
 			onTrigger: () => {
-				if (isUsingFileSystemPolyfill) {
+				if (isUsingFileSystemPolyfill.value) {
 					createVirtualProjectWindow()
 				} else {
 					App.instance.windows.projectChooser.open()

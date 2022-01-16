@@ -1,6 +1,6 @@
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import TextTabComponent from './TextTab.vue'
-import * as monaco from 'monaco-editor'
+import { editor, Uri } from 'monaco-editor'
 import { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
@@ -20,25 +20,23 @@ const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 		const fileContent = tab.editorModel?.getValue()
 		const app = await App.getApp()
 
+		app.project.fileChange.dispatch(tab.getPath(), await tab.getFile())
+
 		await app.project.packIndexer.updateFile(
 			tab.getPath(),
 			fileContent,
-			tab.isForeignFile
+			tab.isForeignFile,
+			true
 		)
 		await app.project.jsonDefaults.updateDynamicSchemas(tab.getPath())
-
-		app.project.fileChange.dispatch(
-			tab.getPath(),
-			new File([tab.editorModel?.getValue()], tab.name)
-		)
 	},
 	600
 )
 
 export class TextTab extends FileTab {
 	component = TextTabComponent
-	editorModel: monaco.editor.ITextModel | undefined
-	editorViewState: monaco.editor.ICodeEditorViewState | undefined
+	editorModel: editor.ITextModel | undefined
+	editorViewState: editor.ICodeEditorViewState | undefined
 	disposables: (IDisposable | undefined)[] = []
 	isActive = false
 	protected modelLoaded = new Signal<void>()
@@ -87,11 +85,11 @@ export class TextTab extends FileTab {
 		if (!this.editorModel || this.editorModel.isDisposed()) {
 			const file = await this.fileHandle.getFile()
 			const fileContent = await file.text()
-			const uri = monaco.Uri.file(this.getPath())
+			const uri = Uri.file(this.getPath())
 
 			this.editorModel = markRaw(
-				monaco.editor.getModel(uri) ??
-					monaco.editor.createModel(
+				editor.getModel(uri) ??
+					editor.createModel(
 						fileContent,
 						App.fileType.get(this.getPath())?.meta?.language,
 						uri

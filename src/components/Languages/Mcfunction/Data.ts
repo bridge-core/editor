@@ -344,9 +344,7 @@ export class CommandData extends Signal<void> {
 					testStr,
 					await this.allCommands(
 						undefined,
-						await App.getApp().then(
-							(app) => app.projectManager.hasFired
-						)
+						await this.shouldIgnoreCustomCommands
 					)
 				)
 			}

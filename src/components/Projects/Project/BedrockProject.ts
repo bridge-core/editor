@@ -5,11 +5,10 @@ import { createFromGeometry } from '/@/components/Editors/EntityModel/create/fro
 import { createFromClientEntity } from '/@/components/Editors/EntityModel/create/fromClientEntity'
 import { createFromEntity } from '/@/components/Editors/EntityModel/create/fromEntity'
 import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
-import { FunctionSimulatorTab } from '/@/components/Editors/FunctionSimulator/Tab'
+import { FunctionValidatorTab } from '../../Editors/FunctionValidator/Tab'
 import { BlockModelTab } from '/@/components/Editors/BlockModel/Tab'
 import { CommandData } from '/@/components/Languages/Mcfunction/Data'
 import { WorldTab } from '/@/components/BedrockWorlds/Render/Tab'
-import { LootTableSimulatorTab } from '/@/components/Editors/LootTableSimulator/LootTableSimulatorTab'
 
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{
@@ -40,18 +39,12 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 		createPreview: async (tabSystem, tab) =>
 			new BlockModelTab(tab.getPath(), tab, tabSystem),
 	},
-	{
-		name: 'preview.simulateLoot',
-		fileType: 'lootTable',
-		createPreview: async (tabSystem, tab) =>
-			new LootTableSimulatorTab(tab, tabSystem),
-	},
-	{
-		name: 'functionValidator.actionName',
-		fileType: 'function',
-		createPreview: async (tabSystem, tab) =>
-			new FunctionSimulatorTab(tabSystem, tab),
-	},
+	// {
+	// 	name: 'functionValidator.actionName',
+	// 	fileType: 'function',
+	// 	createPreview: async (tabSystem, tab) =>
+	// 		new FunctionValidatorTab(tabSystem, tab),
+	// },
 ]
 
 export class BedrockProject extends Project {

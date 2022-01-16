@@ -84,7 +84,7 @@ export class FileDropper {
 			if (fileHandle.kind === 'directory') {
 				if (
 					!isUsingOriginPrivateFs &&
-					!isUsingFileSystemPolyfill &&
+					!isUsingFileSystemPolyfill.value &&
 					fileHandle.name === 'com.mojang'
 				)
 					this.app.comMojang.handleComMojangDrop(fileHandle)

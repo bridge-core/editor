@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import { resolve, join } from 'path'
 import { createVuePlugin } from 'vite-plugin-vue2'
 import { VitePWA } from 'vite-plugin-pwa'
-
+import { ViteEjsPlugin } from 'vite-plugin-ejs'
 const isNightly = process.argv[2] === '--nightly'
 const iconPath = (filePath: string) =>
 	isNightly ? `./img/icons/nightly/${filePath}` : `./img/icons/${filePath}`
@@ -30,13 +30,18 @@ export default defineConfig({
 	},
 	plugins: [
 		createVuePlugin(),
+		ViteEjsPlugin({
+			isNightly,
+			title: isNightly ? 'bridge Nightly' : 'bridge v2',
+		}),
 		VitePWA({
 			filename: 'service-worker.js',
 			registerType: 'prompt',
 			includeAssets: [
-				iconPath('favicon.svg'),
-				iconPath('favicon-16x16.png'),
-				iconPath('favicon-32x32.png'),
+				'./img/**/*.png',
+				'./img/**/*.svg',
+				'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900',
+				'./packages.zip',
 			],
 			workbox: {
 				maximumFileSizeToCacheInBytes: Number.MAX_SAFE_INTEGER,
