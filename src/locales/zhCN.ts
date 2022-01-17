@@ -28,7 +28,7 @@ export default {
 		reset: '重置',
 
 		confirmOverwriteFile: '此操作会覆盖同名文件。你要继续吗？',
-		fileSystemPolyfill: '由于你的浏览器原因，你需要将你的项目下载到本地来实际保存你的进度。如果你使用的是Chrome（除了Chrome 93或94）或Edge，就无需这么做了！',
+		fileSystemPolyfill: '由于你的浏览器原因，你需要将你的项目下载到本地来实际保存你的进度。如果你将浏览器换成Chrome（除了Chrome 93和94）或Edge，便无需如此！',
 		successfulExport: {
 			title: '导出成功',
 			description: '你可以在这里找到导出的包',
@@ -363,7 +363,7 @@ export default {
 			description: '允许创建自定义生物群系、地物和地物规则。',
 		},
 		additionalModdingCapabilities: {
-			name: '其他修改功能',
+			name: '其他修改权能',
 			description: '在清单中启用脚本API，并允许你创建脚本时使用自动补全。',
 		},
 		upcomingCreatorFeatures: {
@@ -694,7 +694,7 @@ export default {
 					description: '在默认浏览器而非本地应用程序窗口中打开链接',
 				},
 				restoreTabs: {
-					name: '回复标签页',
+					name: '恢复标签页',
 					description: '在打开应用程序后恢复你上次使用bridge.时的标签页',
 				},
 				resetBridgeFolder: {
@@ -714,7 +714,7 @@ export default {
 				},
 				devMode: {
 					name: '开发者模式',
-					description: '为这个应用启用开发者模式',
+					description: '为该应用启用开发者模式',
 				},
 			},
 			audio: {
@@ -796,17 +796,21 @@ export default {
 		},
 		browserUnsupported: {
 			title: '不支持的浏览器',
-			description: '请使用Chrome（桌面版，除了Chrome 93或94）或Edge（Chromium版）以获得使用bridge. v2的最佳体验！你的浏览器不支持直接保存文件以及将项目同步到你的com.mojang文件夹的功能。',
+			description: '请使用Chrome（桌面版，除了Chrome 93和94）或Edge（Chromium版）以获得使用bridge. v2的最佳体验！你的浏览器不支持直接保存文件以及将项目同步到你的com.mojang文件夹的功能。',
 			continue: '依旧继续',
 		},
 		invalidJson: {
 			title: '无效的JSON',
-			description: 'bridge.的树状编辑器无法打开包含无效JSON 的文件。你可以在设置中切换到“原始文本”编辑器类型以手动修复问题。',
+			description: 'bridge.的树状编辑器无法打开包含无效JSON的文件。你可以在设置中切换到“原始文本”编辑器类型以手动修复问题。',
 		},
 		loadingWindow: {
 			titles: {
 				loading: '正在加载...',
 			},
+		},
+		upgradeFs: {
+			title: '升级文件系统？',
+			description: '你的浏览器现在支持将文件直接保存在你的计算机上。你想现在就升级吗？',
 		},
 	},
 	taskManager: {
@@ -816,7 +820,7 @@ export default {
 				description: 'bridge.正在收集所需的数据，以便为你的包添加智能功能',
 			},
 			compiler: {
-				title: '正在编辑项目',
+				title: '正在编译项目',
 				description: 'bridge.正在编译你的项目，为其导入Minecraft做好准备',
 			},
 			unzipper: {
@@ -855,7 +859,7 @@ export default {
 		status: {
 			sucess: '已正确设置你的项目与com.mojang的同步。',
 			deniedPermission: '你设置了与com.mojang的同步，但你没有授予bridge.访问文件夹的权限。',
-			notSetup: '你尚未设置与com.mojang的同步。',
+			notSetup: '你尚未设置与com.mojang的同步。将你的com.mojang文件夹拖动到bridge.上即可设置同步',
 			notAvailable: '将项目同步到com.mojang文件夹的功能仅适用于使用Chrome和Edge的用户。',
 		},
 	},
