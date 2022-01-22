@@ -27,7 +27,7 @@
 								entry,
 							})
 						"
-						v-ripple
+						v-ripple="pointerDevice !== 'touch'"
 					>
 						<span class="d-flex align-center">
 							<v-icon class="pr-1" :color="entry.color" small>
@@ -87,7 +87,7 @@
 							entry,
 						})
 					"
-					v-ripple
+					v-ripple="pointerDevice !== 'touch'"
 				>
 					<v-icon :color="entry.color" class="pr-1" small>
 						{{ entry.icon || 'mdi-file-outline' }}
