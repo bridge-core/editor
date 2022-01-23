@@ -74,7 +74,7 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 						Array.isArray(detect.matcher)
 							? [...detect.matcher]
 							: [detect.matcher]
-					),
+					).map((fileMatch) => encodeURI(fileMatch)),
 					uri: schema,
 				}
 			})

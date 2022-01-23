@@ -86,7 +86,7 @@
 				v-else
 				ref="addValueInput"
 				v-model="valueToAdd"
-				@change="onAdd"
+				@change="(s) => onAdd(s, true)"
 				@keydown.enter="mayTrigger"
 				:disabled="isGlobal"
 				:items="valueSuggestions"
@@ -244,7 +244,7 @@ export default {
 		onEdit(value) {
 			this.treeEditor.edit(value)
 		},
-		onAdd(suggestion) {
+		onAdd(suggestion, forceValue = false) {
 			if (this.triggerCooldown || !this.isUserControlledTrigger) {
 				if (!this.isUserControlledTrigger)
 					this.$nextTick(() => {
@@ -260,6 +260,7 @@ export default {
 				return this.onTriggerCooldown()
 			}
 
+			if (forceValue) this.pressedShift = true
 			const {
 				type = this.pressedShift ? 'value' : 'object',
 				value = suggestion,

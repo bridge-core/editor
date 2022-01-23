@@ -316,7 +316,7 @@ export class PackExplorer extends SidebarContent {
 								)
 								const fileSystem = app.comMojang.hasComMojang
 									? app.comMojang.fileSystem
-									: project.fileSystem
+									: app.fileSystem
 
 								// Information when file does not exist
 								if (

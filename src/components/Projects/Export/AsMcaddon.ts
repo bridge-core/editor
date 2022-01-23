@@ -14,16 +14,24 @@ export async function exportAsMcaddon() {
 	// This allows user to simply import the file into Minecraft even if the same pack
 	// with a lower version number is already installed
 	if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value) {
-		const fs = app.project.fileSystem
+		const fs = app.fileSystem
 
 		let manifests: Record<string, any> = {}
 
 		for (const pack of app.project.getPacks()) {
-			const packPath = app.project.getFilePath(pack)
+			const manifestPath = app.project.config.resolvePackPath(
+				pack,
+				'manifest.json'
+			)
 
-			if (await fs.fileExists(`${packPath}/manifest.json`)) {
-				const manifest =
-					(await fs.readJSON(`${packPath}/manifest.json`)) ?? {}
+			if (await fs.fileExists(manifestPath)) {
+				let manifest
+				try {
+					manifest = (await fs.readJSON(manifestPath)) ?? {}
+				} catch {
+					continue
+				}
+
 				const [major, minor, patch] = <[number, number, number]>(
 					manifest.header?.version
 				) ?? [0, 0, 0]
@@ -31,7 +39,7 @@ export async function exportAsMcaddon() {
 				// Increment patch version
 				const newVersion = [major, minor, patch + 1]
 
-				manifests[`${packPath}/manifest.json`] = {
+				manifests[manifestPath] = {
 					...manifest,
 					header: {
 						...(manifest.header ?? {}),
