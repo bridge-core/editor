@@ -12,6 +12,7 @@ import { CreateConfig } from '../CreateProject/Files/Config'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { defaultPackPaths } from '../Project/Config'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
+import { basename } from '/@/utils/path'
 
 export async function importFromMcaddon(
 	fileHandle: AnyFileHandle,
@@ -54,6 +55,28 @@ export async function importFromMcaddon(
 	let authors: string[] | string | undefined
 	let description: string | undefined
 	const packs: (TPackTypeId | '.bridge')[] = ['.bridge']
+
+	// 1. Unpack all .mcpack files
+	for await (const pack of tmpHandle.values()) {
+		if (pack.kind === 'file' && pack.name.endsWith('.mcpack')) {
+			const directory = await tmpHandle.getDirectoryHandle(
+				basename(pack.name, '.mcpack'),
+				{
+					create: true,
+				}
+			)
+
+			const unzipper = new Unzipper(directory)
+			const file = await pack.getFile()
+			const data = new Uint8Array(await file.arrayBuffer())
+			unzipper.createTask(app.taskManager)
+			await unzipper.unzip(data)
+
+			await tmpHandle.removeEntry(pack.name)
+		}
+	}
+
+	// 2. Process all packs
 	for await (const pack of tmpHandle.values()) {
 		if (
 			pack.kind === 'directory' &&
