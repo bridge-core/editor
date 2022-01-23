@@ -39,7 +39,7 @@ export class DashFileSystem extends FileSystem {
 			(file) => file.path
 		)
 	}
-	async readdir(path: string): Promise<IDirEntry[]> {
+	readdir(path: string): Promise<IDirEntry[]> {
 		return this.internalFs.readdir(path, { withFileTypes: true })
 	}
 	async lastModified(filePath: string) {
