@@ -1074,7 +1074,7 @@ export default {
 				unexpectedCloseSquareBracket:
 					'Unexpected close sqaure bracket!',
 			},
-			commands: {
+			command: {
 				empty: 'Empty commands are not supported!',
 				invalid: {
 					part1: "Command: '",
