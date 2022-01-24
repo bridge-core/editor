@@ -1,5 +1,6 @@
 import { App } from '/@/App'
-import { version as appVersion } from '/@/appVersion.json'
+import { dashVersion } from '/@/utils/app/dashVersion'
+import { version as appVersion } from '/@/utils/app/version'
 
 export async function loadManifest(app: App, packPath: string) {
 	const manifestPath = `${packPath}/manifest.json`
@@ -7,6 +8,8 @@ export async function loadManifest(app: App, packPath: string) {
 
 	const generatedWithBridge: string[] | undefined =
 		manifest?.metadata?.generated_with?.bridge
+	const generatedWithDash: string[] | undefined =
+		manifest?.metadata?.generated_with?.dash
 
 	let updatedManifest = false
 	if (generatedWithBridge) {
@@ -14,14 +17,23 @@ export async function loadManifest(app: App, packPath: string) {
 			generatedWithBridge.push(appVersion)
 			updatedManifest = true
 		}
-	} else {
+	}
+	if (generatedWithDash) {
+		if (!generatedWithDash.includes(dashVersion)) {
+			generatedWithDash.push(dashVersion)
+			updatedManifest = true
+		}
+	}
+	if (!generatedWithBridge || !generatedWithDash) {
 		manifest = {
 			...(manifest ?? {}),
 			metadata: {
 				...(manifest?.metadata ?? {}),
 				generated_with: {
 					...(manifest?.metadata?.generated_with ?? {}),
-					bridge: [appVersion],
+					...(!generatedWithBridge
+						? { bridge: [appVersion] }
+						: { dash: [dashVersion] }),
 				},
 			},
 		}

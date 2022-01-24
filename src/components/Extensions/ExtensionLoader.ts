@@ -9,6 +9,7 @@ import {
 	AnyFileHandle,
 	AnyHandle,
 } from '../FileSystem/Types'
+import { TPackTypeId } from '../Data/PackType'
 
 export interface IExtensionManifest {
 	icon?: string
@@ -24,11 +25,7 @@ export interface IExtensionManifest {
 	compiler: {
 		plugins: Record<string, string>
 	}
-	contributeFiles: Record<string, string>
-	/**
-	 * @deprecated
-	 */
-	install: Record<string, string>
+	contributeFiles: Record<string, { pack: TPackTypeId; path: string }>
 }
 
 export class ExtensionLoader extends Signal<void> {

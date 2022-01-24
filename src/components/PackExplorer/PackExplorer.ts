@@ -26,7 +26,7 @@ export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
 	actions: SidebarAction[] = []
 	directoryEntries: Record<string, DirectoryEntry> = {}
-	topPanel = isUsingFileSystemPolyfill
+	topPanel = isUsingFileSystemPolyfill.value
 		? new InfoPanel({
 				type: 'warning',
 				text: 'general.fileSystemPolyfill',
@@ -74,7 +74,7 @@ export class PackExplorer extends SidebarContent {
 					})
 			) ?? []
 
-		if (isUsingFileSystemPolyfill) {
+		if (isUsingFileSystemPolyfill.value) {
 			this.actions.push(
 				new SidebarAction({
 					icon: 'mdi-content-save-outline',
@@ -109,9 +109,46 @@ export class PackExplorer extends SidebarContent {
 		entry: DirectoryEntry
 	) {
 		if (type === 'virtualFolder') return []
-		const project = await App.getApp().then((app) => app.project)
+		const app = await App.getApp()
+		const project = app.project
 
 		return [
+			...(type === 'file'
+				? [
+						(project.tabSystem?.tabs.length ?? 0) > 0
+							? {
+									icon: 'mdi-arrow-split-vertical',
+									name:
+										'windows.packExplorer.fileActions.openInSplitScreen.name',
+									description:
+										'windows.packExplorer.fileActions.openInSplitScreen.description',
+									onTrigger: async () => {
+										const handle = await app.fileSystem.getFileHandle(
+											path
+										)
+										project.openFile(handle, {
+											openInSplitScreen: true,
+										})
+									},
+							  }
+							: {
+									icon: 'mdi-plus',
+									name:
+										'windows.packExplorer.fileActions.open.name',
+									description:
+										'windows.packExplorer.fileActions.open.description',
+									onTrigger: async () => {
+										const handle = await app.fileSystem.getFileHandle(
+											entry.getPath()
+										)
+										project.openFile(handle)
+									},
+							  },
+						{
+							type: 'divider',
+						},
+				  ]
+				: []),
 			{
 				icon: 'mdi-delete-outline',
 				name: 'windows.packExplorer.fileActions.delete.name',
@@ -129,7 +166,7 @@ export class PackExplorer extends SidebarContent {
 
 					await Promise.all([
 						project.packIndexer.unlink(path),
-						project.compilerManager.unlink(path),
+						project.compilerService.unlink(path),
 					])
 
 					await project.jsonDefaults.reload()
@@ -191,7 +228,7 @@ export class PackExplorer extends SidebarContent {
 								// Update pack indexer & compiler
 								await Promise.all([
 									project.packIndexer.unlink(path),
-									project.compilerManager.unlink(path),
+									project.compilerService.unlink(path),
 								])
 
 								// The rename action needs to happen after deleting the old file inside of the output directory
@@ -274,15 +311,16 @@ export class PackExplorer extends SidebarContent {
 								'windows.packExplorer.fileActions.viewCompilerOutput.description',
 							onTrigger: async () => {
 								const app = project.app
-								const transformedPath = await project.compilerManager.current.getCompilerOutputPath(
+								const transformedPath = await project.compilerService.getCompilerOutputPath(
 									path
 								)
 								const fileSystem = app.comMojang.hasComMojang
 									? app.comMojang.fileSystem
-									: project.fileSystem
+									: app.fileSystem
 
 								// Information when file does not exist
 								if (
+									!transformedPath ||
 									!(await fileSystem.fileExists(
 										transformedPath
 									))
@@ -305,6 +343,68 @@ export class PackExplorer extends SidebarContent {
 						},
 				  ]
 				: [
+						{
+							icon: 'mdi-pencil-outline',
+							name:
+								'windows.packExplorer.fileActions.rename.name',
+							description:
+								'windows.packExplorer.fileActions.rename.description',
+							onTrigger: async () => {
+								const inputWindow = new InputWindow({
+									name:
+										'windows.packExplorer.fileActions.rename.name',
+									label: 'general.folderName',
+									default: entry.name,
+								})
+								const newFolderName = await inputWindow.fired
+								if (!newFolderName) return
+
+								const newFolderPath = join(
+									dirname(path),
+									newFolderName
+								)
+
+								// If folder with same path already exists, confirm that it's ok to overwrite it
+								if (
+									await project.app.fileSystem.directoryExists(
+										newFolderPath
+									)
+								) {
+									const confirmWindow = new ConfirmationWindow(
+										{
+											description:
+												'general.confirmOverwriteFolder',
+										}
+									)
+
+									if (!(await confirmWindow.fired)) return
+								}
+
+								// Update pack indexer & compiler
+								await Promise.all([
+									project.packIndexer.unlink(path),
+									project.compilerService.unlink(path),
+								])
+
+								// The rename action needs to happen after deleting the old folder inside of the output directory
+								// because the compiler will fail to unlink it if the original folder doesn't exist.
+								await project.app.fileSystem.move(
+									path,
+									newFolderPath
+								)
+
+								// Let the compiler, pack indexer etc. process the renamed folder
+								let files = await project.app.fileSystem.readFilesFromDir(
+									newFolderPath
+								)
+								for (let file of files) {
+									await project.updateFile(file.path)
+								}
+
+								// Refresh pack explorer
+								this.refresh()
+							},
+						},
 						{
 							icon: 'mdi-file-plus-outline',
 							name:
@@ -345,7 +445,7 @@ export class PackExplorer extends SidebarContent {
 								const inputWindow = new InputWindow({
 									name:
 										'windows.packExplorer.fileActions.createFolder.name',
-									label: 'general.fileName',
+									label: 'general.folderName',
 									default: '',
 								})
 								const name = await inputWindow.fired
@@ -413,16 +513,47 @@ export class PackExplorer extends SidebarContent {
 	async showMoreMenu(event: MouseEvent) {
 		const app = await App.getApp()
 
+		const packPath = this.selectedAction?.getConfig()?.id
+
 		showContextMenu(event, [
 			// Add new file
 			{
 				icon: 'mdi-plus',
 				name: 'windows.packExplorer.createPreset',
 				onTrigger: async () => {
-					const app = await App.getApp()
 					await app.windows.createPreset.open()
 				},
 			},
+			// Create a new top-level folder
+			...(packPath
+				? [
+						{
+							icon: 'mdi-folder-plus-outline',
+							name:
+								'windows.packExplorer.fileActions.createFolder.name',
+							description:
+								'windows.packExplorer.fileActions.createFolder.description',
+							onTrigger: async () => {
+								const inputWindow = new InputWindow({
+									name:
+										'windows.packExplorer.fileActions.createFolder.name',
+									label: 'general.fileName',
+									default: '',
+								})
+								const name = await inputWindow.fired
+								if (!name) return
+
+								await app.fileSystem.mkdir(
+									`${packPath}/${name}`,
+									{ recursive: true }
+								)
+								// Refresh pack explorer
+								this.refresh()
+							},
+						},
+				  ]
+				: []),
+			{ type: 'divider' },
 			// Reload project
 			{
 				icon: 'mdi-refresh',

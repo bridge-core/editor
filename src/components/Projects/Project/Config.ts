@@ -18,12 +18,13 @@ export class ProjectConfig extends BaseProjectConfig {
 			project.fileSave.on('config.json', () => {
 				this.refreshConfig()
 				this.project!.app.windows.createPreset.onPresetsChanged()
+				this.project!.compilerService.reloadPlugins()
 			})
 		}
 	}
 
 	readConfig() {
-		return this.fileSystem.readJSON(`config.json`)
+		return this.fileSystem.readJSON(`config.json`).catch(() => ({}))
 	}
 	async writeConfig(config: Partial<IConfigJson>) {
 		await this.fileSystem.writeJSON(`config.json`, config, true)
@@ -109,6 +110,18 @@ export class ProjectConfig extends BaseProjectConfig {
 					? [this.data.author]
 					: this.data.author
 			this.data.author = undefined
+			updatedConfig = true
+		}
+
+		if (
+			upgradeConfig &&
+			(await this.fileSystem.fileExists('.bridge/compiler/default.json'))
+		) {
+			const compilerConfig = await this.fileSystem.readJSON(
+				'.bridge/compiler/default.json'
+			)
+			this.data.compiler = { plugins: compilerConfig.plugins }
+			await this.fileSystem.unlink('.bridge/compiler/default.json')
 			updatedConfig = true
 		}
 

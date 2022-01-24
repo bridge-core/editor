@@ -135,7 +135,7 @@ export class App {
 				if (
 					this.tabSystem?.hasUnsavedTabs ||
 					this.taskManager.hasRunningTasks ||
-					isUsingFileSystemPolyfill
+					isUsingFileSystemPolyfill.value
 				) {
 					event.preventDefault()
 					event.returnValue = saveWarning
@@ -150,7 +150,7 @@ export class App {
 			if (state?.general?.openProjectChooserOnAppStartup ?? false)
 				this.projectManager.projectReady.once(() => {
 					// ...then open it if necessary
-					if (isUsingFileSystemPolyfill) {
+					if (isUsingFileSystemPolyfill.value) {
 						createVirtualProjectWindow()
 					} else {
 						App.instance.windows.projectChooser.open()

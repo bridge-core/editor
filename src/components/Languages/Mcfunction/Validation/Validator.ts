@@ -726,24 +726,24 @@ export class FunctionValidator {
 				}
 			}
 
-			let possibleComaPos = 3
+			let possibleCommaPos = 3
 
 			if (negated) {
-				possibleComaPos = 4
+				possibleCommaPos = 4
 			}
 
-			if (possibleComaPos + offset < tokens.length) {
+			if (possibleCommaPos + offset < tokens.length) {
 				if (
 					!(
-						tokens[possibleComaPos + offset].value == ',' &&
-						tokens[possibleComaPos + offset].type == 'Symbol'
+						tokens[possibleCommaPos + offset].value == ',' &&
+						tokens[possibleCommaPos + offset].type == 'Symbol'
 					)
 				) {
 					errors.push(
 						new SmartError(
 							'common.expectedComma',
-							tokens[possibleComaPos + offset].start,
-							tokens[possibleComaPos + offset].end
+							tokens[possibleCommaPos + offset].start,
+							tokens[possibleCommaPos + offset].end
 						)
 					)
 					return [errors, warnings]

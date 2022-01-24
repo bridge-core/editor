@@ -2,10 +2,10 @@ import { App } from '/@/App'
 import { getLocation } from '/@/utils/monaco/getLocation'
 import { languages, editor, Position, Range } from 'monaco-editor'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
-import { tokenizeCommand } from './tokenize'
+import { tokenizeCommand } from 'bridge-common-utils'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
-import { isMatch } from '/@/utils/glob/isMatch'
+import { isMatch } from 'bridge-common-utils'
 
 languages.registerCompletionItemProvider('json', {
 	provideCompletionItems: async (

@@ -9,6 +9,10 @@ export interface ISidebarAction {
 export class SidebarAction {
 	constructor(protected config: ISidebarAction) {}
 
+	getConfig() {
+		return this.config
+	}
+
 	trigger(event: MouseEvent) {
 		this.config.onTrigger?.(event)
 	}

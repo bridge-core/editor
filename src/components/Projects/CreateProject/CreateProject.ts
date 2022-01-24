@@ -138,7 +138,7 @@ export class CreateProjectWindow extends BaseWindow {
 		const app = await App.getApp()
 
 		// Ask user whether we should save the current project
-		if (isUsingFileSystemPolyfill && !this.isFirstProject) {
+		if (isUsingFileSystemPolyfill.value && !this.isFirstProject) {
 			const confirmWindow = new ConfirmationWindow({
 				description: 'windows.createProject.saveCurrentProject',
 				cancelText: 'general.no',
@@ -178,7 +178,7 @@ export class CreateProjectWindow extends BaseWindow {
 		await app.projectManager.addProject(projectDir)
 		await app.extensionLoader.installFilesToCurrentProject()
 
-		if (isUsingFileSystemPolyfill && !this.isFirstProject)
+		if (isUsingFileSystemPolyfill.value && !this.isFirstProject)
 			await app.projectManager.removeProject(previousProject!)
 
 		// Reset options

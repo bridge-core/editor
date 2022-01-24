@@ -252,15 +252,16 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
-	settings.addControl(
-		new Toggle({
-			category: 'general',
-			name: 'windows.settings.general.packSpider.name',
-			description: 'windows.settings.general.packSpider.description',
-			key: 'enablePackSpider',
-			default: false,
-		})
-	)
+	// TODO(Dash): Re-enable pack spider
+	// settings.addControl(
+	// 	new Toggle({
+	// 		category: 'general',
+	// 		name: 'windows.settings.general.packSpider.name',
+	// 		description: 'windows.settings.general.packSpider.description',
+	// 		key: 'enablePackSpider',
+	// 		default: false,
+	// 	})
+	// )
 
 	settings.addControl(
 		new Toggle({
@@ -302,7 +303,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: false,
 		})
 	)
-	if (!isUsingFileSystemPolyfill) {
+	if (!isUsingFileSystemPolyfill.value) {
 		settings.addControl(
 			new Button({
 				category: 'general',
@@ -343,6 +344,16 @@ export async function setupSettings(settings: SettingsWindow) {
 				{ text: 'Raw Text', value: 'rawText' },
 			],
 			default: 'rawText',
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.bridgePredictions.name',
+			description:
+				'windows.settings.editor.bridgePredictions.description',
+			key: 'bridgePredictions',
+			default: true,
 		})
 	)
 	settings.addControl(

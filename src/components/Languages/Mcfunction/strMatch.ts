@@ -1,5 +1,5 @@
 /**
- * A function that returns whether string a matches string b fully or partially.
+ * A function that returns whether string a matches string b fully or partially or not at all.
  */
 export function strMatch(a: string, b: string) {
 	if (a === b) return 'full'
@@ -8,7 +8,7 @@ export function strMatch(a: string, b: string) {
 }
 
 /**
- * A function that returns whether string a matches string array b fully or partially.
+ * A function that returns whether string a matches one string from array b fully, partially or not at all.
  */
 export function strMatchArray(a: string, b: string[]) {
 	if (b.includes(a)) return 'full'

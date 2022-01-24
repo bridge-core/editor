@@ -51,7 +51,7 @@ export class Extension {
 		this.fileSystem = new FileSystem(this.baseDirectory)
 		this.installFiles = new InstallFiles(
 			this.fileSystem,
-			manifest?.contributeFiles ?? manifest.install ?? {}
+			manifest?.contributeFiles ?? {}
 		)
 	}
 

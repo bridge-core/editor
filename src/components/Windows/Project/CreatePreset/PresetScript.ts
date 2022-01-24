@@ -4,7 +4,7 @@ import { IPermissions, IPresetFileOpts } from './PresetWindow'
 import { transformString } from './TransformString'
 import { App } from '/@/App'
 import { run } from '/@/components/Extensions/Scripts/run'
-import { deepMerge } from '/@/utils/deepmerge'
+import { deepMerge } from 'bridge-common-utils'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
 

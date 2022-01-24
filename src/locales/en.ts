@@ -21,6 +21,7 @@ export default {
 		more: 'More...',
 		selectFolder: 'Select Folder',
 		fileName: 'File Name',
+		folderName: 'Folder Name',
 		inactive: 'Inactive',
 		active: 'Active',
 		later: 'Later',
@@ -29,6 +30,8 @@ export default {
 
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
+		confirmOverwriteFolder:
+			'This action overwrites a folder with the same name. Do you want to continue?',
 		fileSystemPolyfill:
 			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome (excluding Chrome 93/94) or Edge!',
 		successfulExport: {
@@ -296,6 +299,9 @@ export default {
 			name: 'Change All Occurrences',
 			description: 'Change all occurrences of the selected text',
 		},
+		tgaMaskToggle: {
+			name: 'Show/Hide Alpha Mask',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -393,6 +399,12 @@ export default {
 			description:
 				'Enables auto-completions for experimental Molang queries.',
 		},
+		theWildUpdate: {
+			name: 'The Wild Update',
+			description:
+				'Enables auto-completions for new features introduced in the Wild Update, such as entity components.',
+		},
+
 		educationEdition: {
 			name: 'Enable Education Edition',
 			description:
@@ -603,6 +615,14 @@ export default {
 				name: 'Export as .brproject',
 			},
 			fileActions: {
+				open: {
+					name: 'Open',
+					description: 'Open the file in the editor',
+				},
+				openInSplitScreen: {
+					name: 'Open in Split Screen',
+					description: 'Open the file in split screen mode',
+				},
 				delete: {
 					name: 'Delete',
 					description: 'Delete a file or folder',
@@ -780,6 +800,11 @@ export default {
 					name: 'JSON Editor',
 					description: 'Choose how you want to edit JSON files',
 				},
+				bridgePredictions: {
+					name: 'bridge. Predictions',
+					description:
+						"Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly",
+				},
 				bracketPairColorization: {
 					name: 'Bracket Pair Colorization',
 					description: 'Give matching brackets an unique color',
@@ -855,6 +880,11 @@ export default {
 				loading: 'Loading...',
 			},
 		},
+		upgradeFs: {
+			title: 'Upgrade File System?',
+			description:
+				'Your browser now supports saving files directly to your computer. Do you want to upgrade now?',
+		},
 	},
 	taskManager: {
 		tasks: {
@@ -884,6 +914,10 @@ export default {
 		importFailed: 'bridge. was unable to import the following files:',
 		andMore: '...and more!',
 		importMethod: 'Import Method',
+		mcaddon: {
+			missingManifests:
+				"bridge. was unable to load data from your .mcaddon file because it wasn't able to find pack manifest files inside of it.",
+		},
 		saveToProject: {
 			title: 'Save to Project',
 			description1: 'Save the file ',
@@ -905,7 +939,8 @@ export default {
 			sucess: 'Syncing your projects to com.mojang is setup correctly.',
 			deniedPermission:
 				'You setup com.mojang syncing but you did not grant bridge. permission to the folder.',
-			notSetup: 'You have not setup com.mojang syncing yet.',
+			notSetup:
+				'You have not setup com.mojang syncing yet. Drag your com.mojang folder onto bridge. to do so.',
 			notAvailable:
 				'Syncing projects to the com.mojang folder is only available for Chrome and Edge users.',
 		},
@@ -1009,9 +1044,11 @@ export default {
 	},
 	editors: {
 		treeEditor: {
+			add: 'Add',
 			addObject: 'Add Object',
 			addArray: 'Add Array',
 			addValue: 'Add Value',
+			forceValue: 'Force Value',
 			edit: 'Edit',
 		},
 	},

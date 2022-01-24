@@ -80,7 +80,7 @@ export default {
 		setupInProgress: true,
 		stepId: 1,
 		steps: [
-			...(isUsingFileSystemPolyfill
+			...(isUsingFileSystemPolyfill.value
 				? [
 						{
 							name: 'initialSetup.step.bridgeProject',

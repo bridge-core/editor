@@ -32,11 +32,18 @@ export const ProjectModule = async ({
 		},
 
 		async compile(configFile: string) {
-			await app.project.compilerManager.start(configFile, 'build')
+			const service = await app.project.createDashService(
+				'production',
+				configFile === 'default'
+					? undefined
+					: `projects/${app.project.name}/.bridge/compiler/${configFile}`
+			)
+
+			await service.build()
 		},
 
 		async compileFiles(paths: string[]) {
-			await app.project.updateFiles(paths)
+			await app.project.compilerService.updateFiles(paths)
 		},
 
 		async unlinkFile(path: string) {

@@ -9,7 +9,6 @@ import { FunctionValidatorTab } from '../../Editors/FunctionValidator/Tab'
 import { BlockModelTab } from '/@/components/Editors/BlockModel/Tab'
 import { CommandData } from '/@/components/Languages/Mcfunction/Data'
 import { WorldTab } from '/@/components/BedrockWorlds/Render/Tab'
-import { LootTableSimulatorTab } from '/@/components/Editors/LootTableSimulator/LootTableSimulatorTab'
 
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{

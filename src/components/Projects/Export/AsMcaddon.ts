@@ -13,7 +13,7 @@ export async function exportAsMcaddon() {
 	// Increment manifest versions if using a file system polyfill
 	// This allows user to simply import the file into Minecraft even if the same pack
 	// with a lower version number is already installed
-	if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill) {
+	if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value) {
 		const fs = app.project.fileSystem
 
 		let manifests: Record<string, any> = {}
@@ -62,7 +62,9 @@ export async function exportAsMcaddon() {
 		}
 	}
 
-	await app.project.compilerManager.start('default', 'build')
+	const service = await app.project.createDashService('production')
+	await service.setup()
+	await service.build()
 
 	const zipFolder = new ZipDirectory(
 		await app.project.fileSystem.getDirectoryHandle('builds/dist', {

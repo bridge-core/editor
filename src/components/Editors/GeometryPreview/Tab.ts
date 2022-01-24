@@ -1,4 +1,4 @@
-import { Model } from 'bridge-model-viewer/lib/main'
+import { Model } from 'bridge-model-viewer'
 import { App } from '/@/App'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import { ThreePreviewTab } from '../ThreePreview/ThreePreviewTab'
@@ -14,7 +14,7 @@ import { IOutlineBox } from './Data/EntityData'
 import { markRaw } from '@vue/composition-api'
 import { Box3, Vector3, Color } from 'three'
 import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
-import { StandaloneModelViewer } from 'bridge-model-viewer/lib/main'
+import { StandaloneModelViewer } from 'bridge-model-viewer'
 import { wait } from '/@/utils/wait'
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {

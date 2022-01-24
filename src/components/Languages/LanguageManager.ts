@@ -9,6 +9,5 @@ export class LanguageManager {
 	protected otherLanguages = new Set<Language>([
 		new MoLangLanguage(),
 		new LangLanguage(),
-		new McfunctionLanguage(),
 	])
 }

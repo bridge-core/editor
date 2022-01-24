@@ -3,6 +3,7 @@ import {
 	IMonacoSchemaArrayEntry,
 } from '/@/components/Data/FileType'
 import type { FileSystem } from '/@/components/FileSystem/FileSystem'
+import { join } from '/@/utils/path'
 
 type TStore = Record<string, Record<string, IStoreEntry>>
 interface IStoreEntry {
@@ -46,6 +47,18 @@ export class LightningStore {
 
 		this.store = {}
 		this._visitedFiles = 0
+		this._totalFiles = 0
+		if (loadStore.length === 0) return
+
+		let formatVersion = 0
+		if (loadStore[0].startsWith('$formatVersion: ')) {
+			// Load formatVersion from string with format "$formatVersion: [number]"
+			formatVersion = Number(loadStore[0].match(/\d+/)?.[0] ?? 0)
+			loadStore.shift()
+		}
+
+		const projectPrefix = `projects/${this.fs.baseDirectory.name}`
+
 		let currentFileType = 'unknown'
 		for (const definition of loadStore) {
 			if (definition === '') continue
@@ -55,7 +68,11 @@ export class LightningStore {
 				continue
 			}
 
-			const [filePath, lastModified, data] = definition.split('|')
+			let [filePath, lastModified, data] = definition.split('|')
+			if (formatVersion === 0) {
+				filePath = join(projectPrefix, filePath)
+			}
+
 			this._totalFiles++
 			this.store[currentFileType][filePath] = {
 				lastModified: Number(lastModified),
@@ -63,8 +80,8 @@ export class LightningStore {
 			}
 		}
 	}
-	async saveStore() {
-		let saveStore = ''
+	async saveStore(checkVisited = true) {
+		let saveStore = `$formatVersion: 1\n`
 		const deletedFiles: string[] = []
 
 		for (const fileType in this.store) {
@@ -79,7 +96,7 @@ export class LightningStore {
 				}
 
 				// This file no longer seems to exist, omit it from store output
-				if (!entry.visited) {
+				if (checkVisited && !entry.visited) {
 					deletedFiles.push(filePath)
 					delete this.store[fileType][filePath]
 					continue
@@ -90,7 +107,6 @@ export class LightningStore {
 				else saveStore += '\n'
 			}
 		}
-
 		await this.fs.writeFile('.bridge/.lightningCache', saveStore)
 
 		return deletedFiles

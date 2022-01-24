@@ -2,11 +2,9 @@ import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
 import { ZipDirectory } from '/@/components/FileSystem/Zip/ZipDirectory'
 import { App } from '/@/App'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
-import { createNotification } from '/@/components/Notifications/create'
-import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 
 export async function exportAsBrproject() {
-	const app = await App.getApp()
+	const app = App.instance
 	app.windows.loadingWindow.open()
 
 	/**
@@ -15,7 +13,7 @@ export async function exportAsBrproject() {
 	 * - Package only including the project files (no data/ & extensions/) for other browsers
 	 */
 	const zipFolder = new ZipDirectory(
-		isUsingFileSystemPolyfill
+		isUsingFileSystemPolyfill.value
 			? app.fileSystem.baseDirectory
 			: app.project.baseDirectory
 	)

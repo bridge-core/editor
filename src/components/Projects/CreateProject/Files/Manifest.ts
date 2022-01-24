@@ -3,8 +3,9 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
 import { CreateFile } from './CreateFile'
 import { v4 as uuid } from 'uuid'
-import { version as appVersion } from '/@/appVersion.json'
+import { version as appVersion } from '/@/utils/app/version'
 import { App } from '/@/App'
+import { dashVersion } from '/@/utils/app/dashVersion'
 
 export class CreateManifest extends CreateFile {
 	public readonly id = 'packManifest'
@@ -62,6 +63,7 @@ export class CreateManifest extends CreateFile {
 					: [createOptions.author],
 				generated_with: {
 					bridge: [appVersion],
+					dash: [dashVersion],
 				},
 			},
 			header: {

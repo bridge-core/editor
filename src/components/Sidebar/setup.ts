@@ -1,10 +1,11 @@
 import { App } from '/@/App'
 import { createSidebar } from './create'
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
-import { SettingsWindow } from '../Windows/Settings/SettingsWindow'
+import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { SidebarState } from './state'
-import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
-import { createVirtualProjectWindow } from '../FileSystem/Virtual/ProjectWindow'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
+import { openCompilerWindow } from '/@/components/Compiler/openWindow'
 
 export async function setupSidebar() {
 	createSidebar({
@@ -12,7 +13,7 @@ export async function setupSidebar() {
 		displayName: 'windows.projectChooser.title',
 		icon: 'mdi-view-dashboard-outline',
 		onClick: async () => {
-			if (isUsingFileSystemPolyfill) {
+			if (isUsingFileSystemPolyfill.value) {
 				createVirtualProjectWindow()
 			} else {
 				App.instance.windows.projectChooser.open()
@@ -49,8 +50,7 @@ export async function setupSidebar() {
 		displayName: 'sidebar.compiler.name',
 		icon: 'mdi-cogs',
 		onClick: async () => {
-			const app = await App.getApp()
-			await app.project?.compilerManager.openWindow()
+			openCompilerWindow()
 		},
 	})
 	createSidebar({

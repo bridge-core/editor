@@ -8,7 +8,6 @@ import { IPackData, loadPacks } from './loadPacks'
 import { PackIndexer } from '/@/components/PackIndexer/PackIndexer'
 import { ProjectManager } from '../ProjectManager'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { CompilerManager } from '/@/components/Compiler/CompilerManager'
 import { JsonDefaults } from '/@/components/Data/JSONDefaults'
 import { TypeLoader } from '/@/components/Data/TypeLoader'
 import { ExtensionLoader } from '/@/components/Extensions/ExtensionLoader'
@@ -24,8 +23,11 @@ import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { getFolderDifference } from '/@/components/TabSystem/Util/FolderDifference'
-import { FileTypeLibrary } from '../../Data/FileType'
+import { FileTypeLibrary } from '/@/components/Data/FileType'
 import { relative } from '/@/utils/path'
+import { DashCompiler } from '/@/components/Compiler/Compiler'
+import { proxy, Remote } from 'comlink'
+import { DashService } from '/@/components/Compiler/Worker/Service'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -41,7 +43,8 @@ export abstract class Project {
 	// Not directly assigned so they're not responsive
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
-	public readonly compilerManager = new CompilerManager(this)
+	public _compilerService?: Remote<DashService>
+	public compilerReady: Promise<void>
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 
@@ -78,6 +81,14 @@ export abstract class Project {
 	get isActiveProject() {
 		return this.name === this.parent.selectedProject
 	}
+	get compilerService() {
+		if (!this._compilerService)
+			throw new Error(
+				`Trying to access compilerService before it was setup. Make sure to await compilerReady before accessing it.`
+			)
+
+		return this._compilerService
+	}
 	//#endregion
 
 	constructor(
@@ -86,15 +97,17 @@ export abstract class Project {
 		protected _baseDirectory: AnyDirectoryHandle
 	) {
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
-		this.config = new ProjectConfig(this._fileSystem, this)
-		this.fileTypeLibrary = new FileTypeLibrary(this.config)
-		this.packIndexer = new PackIndexer(this, _baseDirectory)
-		this.extensionLoader = new ExtensionLoader(
-			app.fileSystem,
-			`projects/${this.name}/.bridge/extensions`,
-			`projects/${this.name}/.bridge/inactiveExtensions.json`
+		this.config = markRaw(new ProjectConfig(this._fileSystem, this))
+		this.fileTypeLibrary = markRaw(new FileTypeLibrary(this.config))
+		this.packIndexer = markRaw(new PackIndexer(this, _baseDirectory))
+		this.extensionLoader = markRaw(
+			new ExtensionLoader(
+				app.fileSystem,
+				`projects/${this.name}/.bridge/extensions`,
+				`projects/${this.name}/.bridge/inactiveExtensions.json`
+			)
 		)
-		this.typeLoader = new TypeLoader(this.app.dataLoader)
+		this.typeLoader = markRaw(new TypeLoader(this.app.dataLoader))
 
 		this.recentFiles = <RecentFiles>(
 			reactive(
@@ -114,7 +127,54 @@ export abstract class Project {
 
 		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
 
+		this.compilerReady = this.createDashService('development').then(
+			(service) => {
+				this._compilerService = markRaw(service)
+			}
+		)
+
 		setTimeout(() => this.onCreate(), 0)
+	}
+
+	async createDashService(
+		mode: 'development' | 'production',
+		compilerConfig?: string
+	) {
+		await this.app.comMojang.fired
+
+		const compiler = await new DashCompiler(
+			this.app.fileSystem.baseDirectory,
+			this.app.comMojang.hasComMojang
+				? this.app.comMojang.fileSystem.baseDirectory
+				: undefined,
+			{
+				config: `projects/${this.name}/config.json`,
+				compilerConfig,
+				mode,
+				pluginFileTypes: this.fileTypeLibrary.getPluginFileTypes(),
+			}
+		)
+
+		compiler.on(
+			proxy(async () => {
+				const task = this.app.taskManager.create({
+					icon: 'mdi-cogs',
+					name: 'taskManager.tasks.compiler.title',
+					description: 'taskManager.tasks.compiler.description',
+					totalTaskSteps: 100,
+				})
+
+				compiler.onProgress(
+					proxy((percentage) => {
+						if (percentage === 1) task.complete()
+						else task.update(100 * percentage)
+					})
+				)
+			}),
+			false
+		)
+
+		return compiler
 	}
 
 	abstract onCreate(): Promise<void> | void
@@ -126,6 +186,8 @@ export abstract class Project {
 		this.parent.activatedProject.dispatch(this)
 
 		await this.fileTypeLibrary.setup(this.app.dataLoader)
+		// Wait for compilerService to be ready
+		await this.compilerReady
 
 		if (!isReload) {
 			for (const tabSystem of this.tabSystems) await tabSystem.activate()
@@ -138,11 +200,18 @@ export abstract class Project {
 			selectedTab instanceof FileTab ? selectedTab.getPath() : undefined
 		)
 
-		await this.packIndexer.activate(isReload)
+		// Data needs to be loaded into IndexedDB before the PackIndexer can be used
+		await this.app.dataLoader.fired
+
+		await Promise.all([
+			this.packIndexer.activate(isReload),
+			this.compilerService.setup(),
+		])
+		const [changedFiles, deletedFiles] = await this.packIndexer.fired
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
-			this.compilerManager.start('default', 'dev'),
+			this.compilerService.start(changedFiles, deletedFiles),
 		])
 
 		this.snippetLoader.activate()
@@ -153,14 +222,12 @@ export abstract class Project {
 
 		this.typeLoader.deactivate()
 		this.packIndexer.deactivate()
-		this.compilerManager.deactivate()
 		this.jsonDefaults.deactivate()
 		this.extensionLoader.disposeAll()
 		this.snippetLoader.deactivate()
 	}
 	disposeWorkers() {
 		this.packIndexer.dispose()
-		this.compilerManager.dispose()
 	}
 	dispose() {
 		this.disposeWorkers()
@@ -175,7 +242,10 @@ export abstract class Project {
 		await this.activate(true)
 	}
 
-	async openFile(fileHandle: AnyFileHandle, options: IOpenTabOptions = {}) {
+	async openFile(
+		fileHandle: AnyFileHandle,
+		options: IOpenTabOptions & { openInSplitScreen?: boolean } = {}
+	) {
 		for (const tabSystem of this.tabSystems) {
 			const tab = await tabSystem.getTab(fileHandle)
 			if (tab)
@@ -184,7 +254,9 @@ export abstract class Project {
 					: undefined
 		}
 
-		this.tabSystem?.open(fileHandle, options)
+		if (!options.openInSplitScreen)
+			await this.tabSystem?.open(fileHandle, options)
+		else await this.inactiveTabSystem?.open(fileHandle, options)
 	}
 	async closeFile(fileHandle: AnyFileHandle) {
 		for (const tabSystem of this.tabSystems) {
@@ -253,7 +325,7 @@ export abstract class Project {
 		// We already have a check for foreign files inside of the TabSystem.save(...) function
 		// but there are a lot of sources that call updateFile(...)
 		try {
-			await this.fileSystem.getFileHandle(filePath)
+			await this.app.fileSystem.getFileHandle(filePath)
 		} catch {
 			// This is a foreign file, don't process it
 			return
@@ -261,30 +333,28 @@ export abstract class Project {
 
 		await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			this.compilerManager.updateFiles('default', [filePath]),
+			this.compilerService.updateFiles([filePath]),
 		])
 
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
 	}
 	async updateFiles(filePaths: string[]) {
-		await Promise.all([
-			this.packIndexer.updateFiles(filePaths),
-			this.compilerManager.updateFiles('default', filePaths),
-		])
+		await this.packIndexer.updateFiles(filePaths)
+
+		await this.compilerService.updateFiles(filePaths)
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 	async unlinkFile(filePath: string) {
 		await this.packIndexer.unlink(filePath)
-		await this.compilerManager.unlink(filePath)
+		await this.compilerService.unlink(filePath)
 		await this.fileSystem.unlink(filePath)
 	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()
-		this.compilerManager.deactivate()
 
 		await this.packIndexer.activate(true)
-		await this.compilerManager.start('default', 'dev')
+		await this.compilerService.build()
 	}
 
 	async getFileFromDiskOrTab(filePath: string) {
@@ -350,10 +420,9 @@ export abstract class Project {
 	}
 
 	async recompile(forceStartIfActive = true) {
-		if (forceStartIfActive) this.compilerManager.dispose()
-
 		if (forceStartIfActive && this.isActiveProject) {
-			this.compilerManager.start('default', 'dev', true)
+			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
+			this.compilerService.build()
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
 		}

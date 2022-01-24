@@ -7,13 +7,14 @@ import {
 } from 'monaco-editor'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 import { Language } from './Language'
-import { tokenizeCommand, tokenizeTargetSelector } from './Mcfunction/tokenize'
+import { tokenizeCommand, tokenizeTargetSelector } from 'bridge-common-utils'
 import { App } from '/@/App'
 import './Mcfunction/WithinJson'
 import { tokenProvider } from './Mcfunction/TokenProvider'
 import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
 import { FunctionValidator } from '/@/components/Languages/Mcfunction/Validation/Validator'
+import { proxy } from 'comlink'
 
 export const config: languages.LanguageConfiguration = {
 	wordPattern: /[aA-zZ]+/,
@@ -151,9 +152,11 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 	if (!(project instanceof BedrockProject)) return
 
 	await project.commandData.fired
+	await project.compilerReady
+
 	const commands = await project.commandData.allCommands(
 		undefined,
-		!project.compilerManager.hasFired
+		!(await project.compilerService.isSetup)
 	)
 	tokenProvider.keywords = commands.map((command) => command)
 
@@ -178,15 +181,19 @@ export class McfunctionLanguage extends Language {
 		let loadedProject: Project | null = null
 		const disposable = App.eventSystem.on(
 			'projectChanged',
-			(project: Project) => {
+			async (project: Project) => {
 				loadedProject = project
 				loadCommands(this)
 
-				project.compilerManager.fired.then(() => {
-					// Make sure that we are still supposed to update the language
-					// -> project didn't change
-					if (project === loadedProject) loadCommands(this)
-				})
+				await project.compilerReady
+
+				await project.compilerService.once(
+					proxy(() => {
+						// Make sure that we are still supposed to update the language
+						// -> project didn't change
+						if (project === loadedProject) loadCommands(this)
+					})
+				)
 			}
 		)
 
