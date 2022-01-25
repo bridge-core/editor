@@ -1,16 +1,25 @@
+<h2>Features:</h2>
+<h3>Initial Boot Screen (#330)</h3>
+<p>There's now a new loading screen that shows up when you start bridge.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/150689007-ca437b8a-548c-4a5d-ba6f-61d5342e9fbe.png" alt="">
+<img src="https://user-images.githubusercontent.com/33347616/150689011-a39d6e85-4e63-4904-9582-042beabbe14c.png" alt=""></p>
+<hr>
+<h3>Dash Updates</h3>
+<ul>
+<li>Dash no longer crashes when a plugin throws an error</li>
+<li>Throw detailed error when encountering an invalid command</li>
+<li>Support for Molang AST scripts within virtual ACs (#304)</li>
+<li>Support for hot updating virtual files</li>
+<li>Support for omitting files via &quot;finalizeBuild&quot; hook</li>
+<li>New built-in plugin: &quot;rewriteForPackaging&quot;</li>
+</ul>
 <h2>Changes:</h2>
 <ul>
-<li>Updated zh_CN translations (Thanks to @MiemieMethod)</li>
-<li>Fogs are no longer locked behind the &quot;upcomingCreatorFeatures&quot; toggle</li>
-<li>Experimental event responses are now locked behind &quot;holidayCreatorFeatures&quot; toggle</li>
-<li><strong>Dash:</strong> &quot;include&quot; hook can now reference virtual files (<code>['path/to/some/file.txt', ['path/to/another/file.txt', { isVirtual: true }]]</code>)</li>
-<li><strong>Dash:</strong> readJson now throws more precise errors</li>
+<li>We now log the current app version and platform to the console</li>
+<li>&quot;.mcaddon&quot; files may now contain &quot;.mcpack&quot; files (#272)</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed tree editor's &quot;Add Value&quot; input</li>
-<li>Fixed &quot;View Compiler Output&quot; action</li>
-<li>Fixed guessFolder not adding pack paths to paths (#316)</li>
-<li>Fixed error when opening PackExplorer context menu on mobile (#310)</li>
-<li>Fixed auto-incrementing manifest versions (#320)</li>
+<li>Fixed invalid JSON error connected to the dash cache file</li>
+<li>Fixed aliases not being correctly restored from Dash's cache file</li>
 </ul>
