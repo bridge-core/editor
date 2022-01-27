@@ -161,9 +161,17 @@ export class TextTab extends FileTab {
 		)
 		const fileType = App.fileType.get(this.getPath())
 
+		const fileContentStr = this.editorModel?.getValue()
+
 		if (
+			// Make sure that there is fileContent to format,
+			fileContentStr &&
+			fileContentStr !== '' &&
+			// ...that we have an action to trigger,
 			action &&
+			// ...that formatOnSave is enabled,
 			(settingsState?.general?.formatOnSave ?? true) &&
+			// ...and that the current file type supports formatting
 			(fileType?.formatOnSaveCapable ?? true)
 		) {
 			app.windows.loadingWindow.open()
