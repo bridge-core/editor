@@ -32,7 +32,7 @@
 		"path-browserify": "^1.0.1",
 		"prismarine-nbt": "^1.6.0",
 		"tga-js": "^1.1.1",
-		"three": "^0.136.0",
+		"three": "^0.137.0",
 		"uuid": "^8.3.1",
 		"vite-plugin-ejs": "^1.4.3",
 		"vue": "2.6.12",
