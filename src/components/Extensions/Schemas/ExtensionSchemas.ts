@@ -7,6 +7,7 @@ export interface IContributesSchemas {
 	// TODO: Implement replacing existing schemas
 	// type?: 'add' | 'replace'
 	fileType: string
+	scope: ISchemaScope
 	path: string
 }
 export interface IExtensionSchema {
@@ -31,56 +32,34 @@ export class ExtensionSchemaProvider {
 	) {
 		const fs = await App.getApp().then((app) => app.fileSystem)
 
-		for (const { fileType, path } of contributesSchemas) {
+		for (const { fileType, path, scope } of contributesSchemas) {
 			const fullPath = join(extensionDir, path)
-			const jsonData = await fs.readJSON(fullPath)
-			if (!jsonData.schema) {
-				console.error(
-					`Failed to load extension schema "${fullPath}": Missing schema property`
-				)
-			} else if (
-				!jsonData.scope ||
-				!Array.isArray(jsonData.scope.from) ||
-				!Array.isArray(jsonData.scope.to)
+			const schema = await fs.readJSON(fullPath)
+
+			if (
+				!scope ||
+				!Array.isArray(scope.from) ||
+				!Array.isArray(scope.to)
 			) {
 				console.error(
-					`Failed to load extension schema "${fullPath}": Missing or invalid scope property`
+					`Failed to load extension schema "${fullPath}": Missing or invalid scope property inside of extension manifest`
 				)
 			}
 
 			if (!this.schemas[fileType]) this.schemas[fileType] = []
 			this.schemas[fileType].push({
-				scope: jsonData.scope,
-				schema: jsonData.schema,
+				scope,
+				schema,
 			})
 		}
-
-		console.log(
-			this.schemas,
-			this.relevantSchemas(
-				'1.18.0',
-				'entity',
-				'minecraft:entity/events/test/execute'
-			)
-		)
 	}
 
 	relevantSchemas(formatVersion: string, fileType: string, location: string) {
 		const potentialSchemas = this.schemas[fileType] ?? []
 
 		return potentialSchemas
-			.filter(({ schema, scope }) => {
-				const schemaMatched = isMatch(
-					location,
-					this.getAllScopeVariants(scope)
-				)
-				console.log(
-					location,
-					this.getAllScopeVariants(scope),
-					schemaMatched
-				)
-
-				return schemaMatched
+			.filter(({ scope }) => {
+				return isMatch(location, this.getAllScopeVariants(scope))
 			})
 			.map(({ schema }) => schema)
 	}
