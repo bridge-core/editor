@@ -12,6 +12,7 @@ import { iterateDir } from '/@/utils/iterateDir'
 import { loadFileDefinitions } from './FileDefinition/load'
 import { InstallFiles } from './InstallFiles'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
+import { ExtensionSchemaProvider } from './Schemas/ExtensionSchemas'
 
 export class Extension {
 	protected disposables: IDisposable[] = []
@@ -20,6 +21,7 @@ export class Extension {
 	protected _compilerPlugins: Record<string, string> = {}
 	protected isLoaded = false
 	protected installFiles: InstallFiles
+	public readonly extensionSchemaProvider = new ExtensionSchemaProvider()
 
 	get isActive() {
 		if (!this.parent.activeStatus)
@@ -51,7 +53,10 @@ export class Extension {
 		this.fileSystem = new FileSystem(this.baseDirectory)
 		this.installFiles = new InstallFiles(
 			this.fileSystem,
-			manifest?.contributeFiles ?? {}
+			/**
+			 * TODO: manifest.contributeFiles is deprecated and should be removed with the next major version
+			 */
+			manifest?.contributes?.files ?? manifest?.contributeFiles ?? {}
 		)
 	}
 
@@ -61,7 +66,7 @@ export class Extension {
 
 		this.isLoaded = true
 		const app = await App.getApp()
-		const pluginPath = (
+		const extensionDir = (
 			(await app.fileSystem.baseDirectory.resolve(
 				<any>this.baseDirectory
 			)) ?? []
@@ -83,11 +88,13 @@ export class Extension {
 		for (const [pluginId, compilerPlugin] of Object.entries(
 			this.manifest.compiler?.plugins ?? {}
 		)) {
-			this._compilerPlugins[pluginId] = `${pluginPath}/${compilerPlugin}`
+			this._compilerPlugins[
+				pluginId
+			] = `${extensionDir}/${compilerPlugin}`
 		}
 
 		this.disposables.push(
-			app.windows.createPreset.addPresets(`${pluginPath}/presets`)
+			app.windows.createPreset.addPresets(`${extensionDir}/presets`)
 		)
 
 		try {
@@ -155,6 +162,13 @@ export class Extension {
 				)
 			}
 		}
+
+		await Promise.allSettled([
+			this.extensionSchemaProvider.load(
+				extensionDir,
+				this.manifest?.contributes?.schemas ?? []
+			),
+		])
 
 		App.eventSystem.dispatch('presetsChanged', null)
 

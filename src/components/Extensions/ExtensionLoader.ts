@@ -10,6 +10,7 @@ import {
 	AnyHandle,
 } from '../FileSystem/Types'
 import { TPackTypeId } from '../Data/PackType'
+import { IContributesSchemas } from './Schemas/ExtensionSchemas'
 
 export interface IExtensionManifest {
 	icon?: string
@@ -25,7 +26,14 @@ export interface IExtensionManifest {
 	compiler: {
 		plugins: Record<string, string>
 	}
+	/**
+	 * @deprecated Use `contribute.files` instead
+	 */
 	contributeFiles: Record<string, { pack: TPackTypeId; path: string }>
+	contributes?: {
+		files?: Record<string, { pack: TPackTypeId; path: string }>
+		schemas?: IContributesSchemas[]
+	}
 }
 
 export class ExtensionLoader extends Signal<void> {
