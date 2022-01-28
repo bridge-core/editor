@@ -10,7 +10,10 @@ export class FilePickerWindow extends BaseWindow {
 	protected selectedFile = ''
 	protected isCurrentlyOpening = false
 	protected processedFiles: { value: string; text: string }[] = []
-	protected quickScore = markRaw(new QuickScore(this.packFiles))
+	protected quickScore: QuickScore<{
+		value: string
+		text: string
+	}> | null = null
 
 	constructor() {
 		super(FilePickerComponent, false, true)
@@ -37,6 +40,7 @@ export class FilePickerWindow extends BaseWindow {
 				text: relative(`projects/${app.project.name}`, filePath),
 				value: filePath,
 			}))
+			this.quickScore = markRaw(new QuickScore(this.packFiles))
 		}
 
 		app.windows.loadingWindow.close()

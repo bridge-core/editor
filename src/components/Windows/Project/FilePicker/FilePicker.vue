@@ -40,8 +40,6 @@
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { App } from '/@/App.ts'
-import { QuickScore } from 'quick-score'
-import { markRaw } from '@vue/composition-api'
 
 export default {
 	name: 'OpenFileWindow',
@@ -82,11 +80,6 @@ export default {
 			this.processedFiles = this.quickScore
 				.search(searchInput)
 				.map(({ item }) => item)
-		},
-	},
-	watch: {
-		packFiles() {
-			this.quickScore = markRaw(new QuickScore(this.packFiles))
 		},
 	},
 }
