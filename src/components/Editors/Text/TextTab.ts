@@ -169,7 +169,7 @@ export class TextTab extends FileTab {
 			fileContentStr !== '' &&
 			// ...that we have an action to trigger,
 			action &&
-			// ...that the file is a valid fileType
+			// ...that the file is a valid fileType,
 			fileType &&
 			// ...that formatOnSave is enabled,
 			(settingsState?.general?.formatOnSave ?? true) &&
