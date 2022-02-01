@@ -1,4 +1,4 @@
-import { Command } from 'dash-compiler'
+import { Command, DefaultConsole } from 'dash-compiler'
 import { App } from '/@/App'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { iterateDir } from '/@/utils/iterateDir'
@@ -36,6 +36,7 @@ export async function generateCommandSchemas() {
 			)
 			const file = new File([fileContent], fileHandle.name)
 			const command = new Command(
+				new DefaultConsole(),
 				await file.text(),
 				'development',
 				v1CompatMode

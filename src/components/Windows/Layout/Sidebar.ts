@@ -109,7 +109,10 @@ export class Sidebar {
 	protected reselectedForFilter = ''
 	public readonly state: Record<string, any> = {}
 
-	constructor(protected _elements: TSidebarElement[]) {
+	constructor(
+		protected _elements: TSidebarElement[],
+		protected readonly shouldSortSidebar = true
+	) {
 		this.selected = this.findDefaultSelected()
 	}
 
@@ -191,6 +194,8 @@ export class Sidebar {
 	}
 
 	protected sortSidebar(elements: TSidebarElement[]) {
+		if (!this.shouldSortSidebar) return elements
+
 		return elements.sort((a, b) => {
 			if (a.type !== b.type) return a.type.localeCompare(b.type)
 			return a.getSearchText().localeCompare(b.getSearchText())

@@ -15,6 +15,7 @@ import { DashFileSystem } from './FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { dirname } from '/@/utils/path'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { ForeignConsole } from './Console'
 
 export interface ICompilerOptions {
 	config: string
@@ -23,6 +24,7 @@ export interface ICompilerOptions {
 	pluginFileTypes: IFileType[]
 }
 const dataLoader = new DataLoader()
+const console = new ForeignConsole()
 
 export class DashService extends EventDispatcher<void> {
 	protected fileSystem: DashFileSystem
@@ -46,9 +48,11 @@ export class DashService extends EventDispatcher<void> {
 				: undefined
 		this.fileType = new FileTypeLibrary()
 		this.fileType.setPluginFileTypes(options.pluginFileTypes)
+
 		this.dash = new Dash<DataLoader>(this.fileSystem, outputFileSystem, {
 			config: options.config,
 			compilerConfig: options.compilerConfig,
+			console,
 			mode: options.mode,
 			fileType: this.fileType,
 			packType: new PackTypeLibrary(),
@@ -56,6 +60,19 @@ export class DashService extends EventDispatcher<void> {
 		})
 
 		this.projectDir = dirname(options.config)
+	}
+
+	getCompilerLogs() {
+		return console.getLogs()
+	}
+	clearCompilerLogs() {
+		console.clear()
+	}
+	onConsoleUpdate(cb: () => void) {
+		console.addChangeListener(cb)
+	}
+	removeConsoleListeners() {
+		console.removeChangeListeners()
 	}
 
 	async compileFile(filePath: string, fileContent: Uint8Array) {

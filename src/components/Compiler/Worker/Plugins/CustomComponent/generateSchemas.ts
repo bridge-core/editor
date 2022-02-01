@@ -1,4 +1,4 @@
-import { Component } from 'dash-compiler'
+import { Component, DefaultConsole } from 'dash-compiler'
 import { App } from '/@/App'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { iterateDir } from '/@/utils/iterateDir'
@@ -38,6 +38,7 @@ export async function generateComponentSchemas(fileType: string) {
 			)
 			const file = new File([fileContent], fileHandle.name)
 			const component = new Component(
+				new DefaultConsole(),
 				fileType,
 				await file.text(),
 				'development',

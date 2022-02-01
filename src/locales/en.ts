@@ -328,6 +328,14 @@ export default {
 	sidebar: {
 		compiler: {
 			name: 'Compiler',
+			categories: {
+				profiles: 'Build Profiles',
+				outputFolders: 'Output Folders',
+				logs: {
+					name: 'Logs',
+					noLogs: 'Dash did not produce any logs to show yet.',
+				},
+			},
 			default: {
 				name: 'Default Config',
 				description:
