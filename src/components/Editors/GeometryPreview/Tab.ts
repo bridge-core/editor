@@ -263,7 +263,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		if (!this._renderContainer || !this.renderContainer.currentTexturePath)
 			return
 
-		const fileSystem = this.parent.project.fileSystem
+		const fileSystem = this.parent.app.fileSystem
 
 		const modelCanvas = document.createElement('canvas')
 		modelCanvas.width = 500 * res
@@ -441,7 +441,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		})
 	}
 	protected async loadImageFromDisk(imageSrc: string) {
-		const fileSystem = this.parent.project.fileSystem
+		const fileSystem = this.parent.app.fileSystem
 
 		return await this.loadImage(
 			await fileSystem.loadFileHandleAsDataUrl(
