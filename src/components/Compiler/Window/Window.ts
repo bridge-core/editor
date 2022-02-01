@@ -35,8 +35,6 @@ export class CompilerWindow extends BaseWindow {
 		super(Content, false, true)
 		this.defineWindow()
 
-		const loc = App.instance.locales
-
 		this.actions.push(
 			new SimpleAction({
 				icon: 'mdi-refresh',
@@ -48,36 +46,39 @@ export class CompilerWindow extends BaseWindow {
 			})
 		)
 
-		this.sidebar.addElement(
-			new SidebarItem({
-				id: 'buildProfiles',
-				text: loc.translate('sidebar.compiler.categories.profiles'),
-				color: 'primary',
-				icon: 'mdi-motion-play-outline',
-			})
-		)
+		App.getApp().then((app) => {
+			const loc = app.locales
 
-		this.sidebar.addElement(
-			new SidebarItem({
-				id: 'outputFolders',
-				text: loc.translate(
-					'sidebar.compiler.categories.outputFolders'
-				),
-				color: 'primary',
-				icon: 'mdi-folder-open-outline',
-			})
-		)
-
-		this.sidebar.addElement(
-			new SidebarItem({
-				id: 'logs',
-				text: loc.translate('sidebar.compiler.categories.logs.name'),
-				color: 'primary',
-				icon: 'mdi-format-list-text',
-			})
-		)
-
-		this.sidebar.setDefaultSelected()
+			this.sidebar.addElement(
+				new SidebarItem({
+					id: 'buildProfiles',
+					text: loc.translate('sidebar.compiler.categories.profiles'),
+					color: 'primary',
+					icon: 'mdi-motion-play-outline',
+				})
+			)
+			this.sidebar.addElement(
+				new SidebarItem({
+					id: 'outputFolders',
+					text: loc.translate(
+						'sidebar.compiler.categories.outputFolders'
+					),
+					color: 'primary',
+					icon: 'mdi-folder-open-outline',
+				})
+			)
+			this.sidebar.addElement(
+				new SidebarItem({
+					id: 'logs',
+					text: loc.translate(
+						'sidebar.compiler.categories.logs.name'
+					),
+					color: 'primary',
+					icon: 'mdi-format-list-text',
+				})
+			)
+			this.sidebar.setDefaultSelected()
+		})
 	}
 
 	async reload() {
@@ -102,6 +103,8 @@ export class CompilerWindow extends BaseWindow {
 	async close() {
 		const app = await App.getApp()
 		await app.project.compilerService.removeConsoleListeners()
+
+		super.close()
 	}
 
 	async loadProfiles() {

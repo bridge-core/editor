@@ -9,6 +9,7 @@ import { ProjectChooserWindow } from '/@/components/Projects/ProjectChooser/Proj
 import { SettingsWindow } from './Settings/SettingsWindow'
 import { ChangelogWindow } from '/@/components/Windows/Changelog/Changelog'
 import { SocialsWindow } from './Socials/SocialsWindow'
+import { CompilerWindow } from '../Compiler/Window/Window'
 
 export class Windows {
 	settings: SettingsWindow
@@ -21,6 +22,7 @@ export class Windows {
 	extensionStore = new ExtensionStoreWindow()
 	browserUnsupported = new BrowserUnsupportedWindow()
 	changelogWindow = new ChangelogWindow()
+	compilerWindow = new CompilerWindow()
 
 	constructor(protected app: App) {
 		this.settings = new SettingsWindow(app)

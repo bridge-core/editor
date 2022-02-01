@@ -5,7 +5,6 @@ import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { SidebarState } from './state'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
-import { openCompilerWindow } from '/@/components/Compiler/openWindow'
 
 export async function setupSidebar() {
 	createSidebar({
@@ -50,7 +49,9 @@ export async function setupSidebar() {
 		displayName: 'sidebar.compiler.name',
 		icon: 'mdi-cogs',
 		onClick: async () => {
-			openCompilerWindow()
+			const app = await App.getApp()
+
+			await app.windows.compilerWindow.open()
 		},
 	})
 	createSidebar({
