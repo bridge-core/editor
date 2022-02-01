@@ -1,6 +1,7 @@
 import { reactive, set } from '@vue/composition-api'
 import { App } from '/@/App'
 import { v4 as uuid } from 'uuid'
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 
 export type TSidebarElement = SidebarCategory | SidebarItem
 export interface ISidebarCategoryConfig {
@@ -103,7 +104,7 @@ export class SidebarItem {
 	}
 }
 
-export class Sidebar {
+export class Sidebar extends EventDispatcher<string | undefined> {
 	protected _selected?: string
 	protected _filter: string = ''
 	protected reselectedForFilter = ''
@@ -113,6 +114,7 @@ export class Sidebar {
 		protected _elements: TSidebarElement[],
 		protected readonly shouldSortSidebar = true
 	) {
+		super()
 		this.selected = this.findDefaultSelected()
 	}
 
@@ -226,6 +228,10 @@ export class Sidebar {
 		if (val) {
 			App.audioManager.playAudio('click5.ogg', 1)
 		}
-		this._selected = val
+
+		if (this._selected !== val) {
+			this.dispatch(val)
+			this._selected = val
+		}
 	}
 }

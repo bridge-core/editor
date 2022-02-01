@@ -46,6 +46,24 @@ export class CompilerWindow extends BaseWindow {
 			})
 		)
 
+		const clearConsoleAction = new SimpleAction({
+			icon: 'mdi-close-circle-outline',
+			name: 'general.clear',
+			color: 'accent',
+			onTrigger: async () => {
+				const app = await App.getApp()
+				app.project.compilerService.clearCompilerLogs()
+				this.categories.logs.data.value = []
+			},
+		})
+		this.sidebar.on((selected) => {
+			if (selected === 'logs') this.actions.unshift(clearConsoleAction)
+			else
+				this.actions = this.actions.filter(
+					(a) => a !== clearConsoleAction
+				)
+		})
+
 		App.getApp().then((app) => {
 			const loc = app.locales
 
