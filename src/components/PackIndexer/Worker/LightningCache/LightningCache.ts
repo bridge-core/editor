@@ -89,14 +89,21 @@ export class LightningCache {
 				async (packPath) =>
 					<const>[
 						packPath,
-						await this.service.fileSystem.getDirectoryHandle(
-							packPath
-						),
+						await this.service.fileSystem
+							.getDirectoryHandle(packPath)
+							.catch(() => undefined),
 					]
 			)
 		)
 
 		for (const [packPath, directoryHandle] of directoryHandles) {
+			if (!directoryHandle) {
+				console.warn(
+					`Cannot index pack "${packPath}" because it does not exist`
+				)
+				continue
+			}
+
 			await this.iterateDir(
 				directoryHandle,
 				async (fileHandle, filePath) => {
