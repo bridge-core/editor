@@ -1,7 +1,7 @@
 <template>
 	<v-tooltip
 		:color="color ? color : 'tooltip'"
-		:disabled="hasClicked"
+		:disabled="hasClicked || isSelected"
 		:right="!isSidebarRight"
 		:left="isSidebarRight"
 	>
@@ -23,16 +23,28 @@
 				@click.middle="onMiddleClick"
 				v-ripple="alwaysAllowClick || !isLoading"
 			>
-				<v-icon
+				<v-badge
+					:value="badge && !isLoading ? badge.count : 0"
+					:content="badge && !badge.icon ? badge.count : 0"
+					:color="badge ? badge.color : null"
+					:icon="badge ? badge.icon : null"
+					:dot="badge && badge.dot"
 					:style="{
 						position: isLoading ? 'absolute' : 'relative',
 						marginTop: isLoading ? '4px' : 0,
+						marginLeft: isLoading ? '4px' : 0,
 					}"
-					:color="isLoading || isSelected ? 'white' : iconColor"
-					:small="isLoading"
+					overlap
+					bordered
 				>
-					{{ icon }}
-				</v-icon>
+					<v-icon
+						:color="isLoading || isSelected ? 'white' : iconColor"
+						:small="isLoading"
+					>
+						{{ icon }}
+					</v-icon>
+				</v-badge>
+
 				<slot v-if="isLoading">
 					<v-progress-circular
 						size="24"
@@ -77,6 +89,7 @@ export default {
 			type: Number,
 			default: 1,
 		},
+		badge: Object,
 	},
 	data: () => ({
 		settingsState,

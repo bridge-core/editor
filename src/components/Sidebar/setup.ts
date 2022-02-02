@@ -5,6 +5,8 @@ import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { SidebarState } from './state'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
+import { ref } from '@vue/composition-api'
+import { createCompilerSidebar } from '../Compiler/Sidebar/create'
 
 export async function setupSidebar() {
 	createSidebar({
@@ -44,16 +46,8 @@ export async function setupSidebar() {
 		},
 	})
 
-	createSidebar({
-		id: 'compiler',
-		displayName: 'sidebar.compiler.name',
-		icon: 'mdi-cogs',
-		onClick: async () => {
-			const app = await App.getApp()
+	createCompilerSidebar()
 
-			await app.windows.compilerWindow.open()
-		},
-	})
 	createSidebar({
 		id: 'extensions',
 		displayName: 'sidebar.extensions.name',

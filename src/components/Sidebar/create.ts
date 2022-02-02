@@ -14,7 +14,7 @@ export interface ISidebar {
 	component?: Component
 	sidebarContent?: SidebarContent
 
-	onClick?: () => void
+	onClick?: (sidebarElement: SidebarElement) => void
 }
 
 export interface SidebarInstance extends IDisposable, ISidebar {
@@ -32,12 +32,20 @@ export function createSidebar(config: ISidebar) {
 	return new SidebarElement(config)
 }
 
+export interface IBadge {
+	count: number
+	color?: string
+	icon?: string
+	dot?: boolean
+}
+
 export class SidebarElement {
 	protected sidebarUUID: string
 	isLoading = false
 	isVisible = true
 	isSelected = false
 	stopHandle: WatchStopHandle | undefined
+	badge: IBadge | null = null
 
 	constructor(protected config: ISidebar) {
 		this.sidebarUUID = config.id ?? uuid()
@@ -84,6 +92,11 @@ export class SidebarElement {
 	setSidebarContent(sidebarContent: SidebarContent) {
 		this.config.sidebarContent = sidebarContent
 	}
+	attachBadge(badge: IBadge | null) {
+		this.badge = badge
+
+		return this
+	}
 
 	async click() {
 		App.audioManager.playAudio('click5.ogg', 1)
@@ -92,7 +105,7 @@ export class SidebarElement {
 		if (this.config.sidebarContent) toggle(this.config.sidebarContent)
 
 		if (typeof this.config.onClick === 'function')
-			await this.config.onClick()
+			await this.config.onClick(this)
 		this.isLoading = false
 	}
 }

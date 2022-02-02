@@ -9,8 +9,9 @@ import { App } from '/@/App'
 import { markRaw, ref } from '@vue/composition-api'
 import json5 from 'json5'
 import { proxy } from 'comlink'
-import { InfoPanel, IPanelOptions } from '../../InfoPanel/InfoPanel'
-import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import { InfoPanel, IPanelOptions } from '/@/components/InfoPanel/InfoPanel'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 
 export class CompilerWindow extends BaseWindow {
 	protected sidebar = new Sidebar([], false)
@@ -30,6 +31,9 @@ export class CompilerWindow extends BaseWindow {
 			data: ref(null),
 		},
 	})
+	public readonly activeCategoryChanged = markRaw(
+		new EventDispatcher<string | undefined>()
+	)
 
 	constructor() {
 		super(Content, false, true)
@@ -57,6 +61,8 @@ export class CompilerWindow extends BaseWindow {
 			},
 		})
 		this.sidebar.on((selected) => {
+			this.activeCategoryChanged.dispatch(selected)
+
 			if (selected === 'logs') this.actions.unshift(clearConsoleAction)
 			else
 				this.actions = this.actions.filter(
