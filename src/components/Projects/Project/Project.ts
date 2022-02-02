@@ -151,6 +151,7 @@ export abstract class Project {
 				config: `projects/${this.name}/config.json`,
 				compilerConfig,
 				mode,
+				projectName: this.name,
 				pluginFileTypes: this.fileTypeLibrary.getPluginFileTypes(),
 			}
 		)

@@ -1,10 +1,21 @@
 import { proxy } from 'comlink'
-import { createSidebar } from '../../Sidebar/create'
+import { Project } from '/@/components/Projects/Project/Project'
+import { createSidebar } from '/@/components/Sidebar/create'
 import { App } from '/@/App'
 
+const saveState = new Map<string, ISidebarState>()
+interface ISidebarState {
+	projectName: string
+	lastReadCount: number
+	currentCount: number
+}
+
 export function createCompilerSidebar() {
-	let lastReadCount = 0
-	let currentCount = 0
+	let state: ISidebarState = {
+		projectName: '',
+		lastReadCount: 0,
+		currentCount: 0,
+	}
 	let selectedCategory: string | undefined = undefined
 	let isWindowOpen = false
 
@@ -21,18 +32,18 @@ export function createCompilerSidebar() {
 			proxy(async () => {
 				const logs = await app.project.compilerService.getCompilerLogs()
 
-				currentCount = logs.length
+				state.currentCount = logs.length
 
 				// User currently still has logs tab selected and therefore sees the new logs
 				if (isWindowOpen && selectedCategory === 'logs')
-					lastReadCount = currentCount
+					state.lastReadCount = state.currentCount
 				updateBadge()
 			})
 		)
 	}
 	const updateBadge = () => {
 		sidebar.attachBadge({
-			count: currentCount - lastReadCount,
+			count: state.currentCount - state.lastReadCount,
 			color: 'error',
 		})
 	}
@@ -51,7 +62,7 @@ export function createCompilerSidebar() {
 
 					// User switched to logs tab and therefore saw all previously unread logs
 					if (selected === 'logs') {
-						lastReadCount = currentCount
+						state.lastReadCount = state.currentCount
 						updateBadge()
 					}
 				}
@@ -73,14 +84,21 @@ export function createCompilerSidebar() {
 
 			// User opened window and logs tab is still selected
 			if (selectedCategory === 'logs') {
-				lastReadCount = currentCount
+				state.lastReadCount = state.currentCount
 				updateBadge()
 			}
 		},
 	})
 
-	App.eventSystem.on('projectChanged', async () => {
-		lastReadCount = 0
+	App.eventSystem.on('projectChanged', async (project: Project) => {
+		saveState.set(state.projectName, state)
+
+		state = saveState.get(project.name) ?? {
+			projectName: project.name,
+			lastReadCount: 0,
+			currentCount: 0,
+		}
+		updateBadge()
 
 		await listenForLogChanges(true)
 	})

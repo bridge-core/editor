@@ -21,10 +21,11 @@ export interface ICompilerOptions {
 	config: string
 	compilerConfig?: string
 	mode: 'development' | 'production'
+	projectName: string
 	pluginFileTypes: IFileType[]
 }
 const dataLoader = new DataLoader()
-const console = new ForeignConsole()
+const consoles = new Map<string, ForeignConsole>()
 
 export class DashService extends EventDispatcher<void> {
 	protected fileSystem: DashFileSystem
@@ -34,6 +35,7 @@ export class DashService extends EventDispatcher<void> {
 	protected projectDir: string
 	public isSetup = false
 	public completedStartUp = new Signal<void>()
+	protected console: ForeignConsole
 
 	constructor(
 		baseDirectory: AnyDirectoryHandle,
@@ -49,6 +51,13 @@ export class DashService extends EventDispatcher<void> {
 		this.fileType = new FileTypeLibrary()
 		this.fileType.setPluginFileTypes(options.pluginFileTypes)
 
+		let console = consoles.get(options.projectName)
+		if (!console) {
+			console = new ForeignConsole()
+			consoles.set(options.projectName, console)
+		}
+		this.console = console
+
 		this.dash = new Dash<DataLoader>(this.fileSystem, outputFileSystem, {
 			config: options.config,
 			compilerConfig: options.compilerConfig,
@@ -63,16 +72,16 @@ export class DashService extends EventDispatcher<void> {
 	}
 
 	getCompilerLogs() {
-		return console.getLogs()
+		return this.console.getLogs()
 	}
 	clearCompilerLogs() {
-		console.clear()
+		this.console.clear()
 	}
 	onConsoleUpdate(cb: () => void) {
-		console.addChangeListener(cb)
+		this.console.addChangeListener(cb)
 	}
 	removeConsoleListeners() {
-		console.removeChangeListeners()
+		this.console.removeChangeListeners()
 	}
 
 	async compileFile(filePath: string, fileContent: Uint8Array) {
