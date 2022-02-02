@@ -31,8 +31,8 @@
 					:dot="badge && badge.dot"
 					:style="{
 						position: isLoading ? 'absolute' : 'relative',
-						marginTop: isLoading ? '4px' : 0,
-						marginLeft: isLoading ? '4px' : 0,
+						marginTop: isLoading ? '3px' : 0,
+						marginLeft: isLoading ? '1px' : 0,
 					}"
 					overlap
 					bordered
