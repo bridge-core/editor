@@ -20,18 +20,17 @@ export interface ItemStack {
 	}
 }
 
-export function createDefaultItemStack() {
-	const item: ItemStack = {
+export function createDefaultItemStack(): ItemStack {
+	return {
 		identifier: 'minecraft:air',
 		amount: 1,
 		data: {},
 	}
-	return item
 }
 
-interface IEnchantment {
+export interface IEnchantment {
 	id: string
-	level: number
+	level: [number, number] | number
 }
 
 interface IBlockState {

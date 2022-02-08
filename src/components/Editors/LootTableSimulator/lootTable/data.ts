@@ -71,7 +71,14 @@ export const functionData: {
 		for (const enchant of args.enchants) {
 			if (typeof enchant === 'string')
 				itemEnchantments.push({ id: enchant, level: 1 })
-			else itemEnchantments.push(enchant)
+			else if (typeof enchant.level === 'number') {
+				itemEnchantments.push(enchant)
+			} else {
+				itemEnchantments.push({
+					id: enchant.id,
+					level: randomInt(enchant.level[0], enchant.level[1]),
+				})
+			}
 		}
 		return { item: { data: { enchantments: itemEnchantments } } }
 	},

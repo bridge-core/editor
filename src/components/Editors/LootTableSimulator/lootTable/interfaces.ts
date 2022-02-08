@@ -1,3 +1,5 @@
+import { IEnchantment } from './itemStack'
+
 export interface ILootTablePool {
 	// tiers: {
 	//     initial_range: number
@@ -35,12 +37,7 @@ export interface ILootTableFunction {
 	// set_data
 	data?: number
 	// specific_enchants
-	enchants?:
-		| string[]
-		| {
-				id: string
-				level: number
-		  }[]
+	enchants?: string[] | IEnchantment[]
 	// random_enchants
 	treasure?: boolean
 	// enchant_with_levels
