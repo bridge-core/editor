@@ -30,7 +30,10 @@ export function createCompilerSidebar() {
 
 		app.project.compilerService.onConsoleUpdate(
 			proxy(async () => {
-				const logs = await app.project.compilerService.getCompilerLogs()
+				let logs = await app.project.compilerService.getCompilerLogs()
+				logs = logs.filter(
+					([_, { type }]) => type === 'error' || type === 'warning'
+				)
 
 				state.currentCount = logs.length
 
