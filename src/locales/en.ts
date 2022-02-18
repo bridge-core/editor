@@ -355,6 +355,9 @@ export default {
 				description:
 					'Run bridge.\'s compiler with the default compiler configuration that is part of your project\'s "config.json" file.',
 			},
+			actions: {
+				runLastProfile: 'Run Last Profile',
+			},
 		},
 		extensions: {
 			name: 'Extensions',

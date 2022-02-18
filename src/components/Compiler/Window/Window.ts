@@ -42,7 +42,7 @@ export class CompilerWindow extends BaseWindow {
 	)
 	protected lastUsedBuildProfile: SimpleAction | null = null
 	protected runLastProfileAction = new SimpleAction({
-		name: 'Run Last Profile',
+		name: 'sidebar.compiler.actions.runLastProfile',
 		icon: 'mdi-play',
 		color: 'accent',
 		onTrigger: () => {
@@ -157,8 +157,8 @@ export class CompilerWindow extends BaseWindow {
 			})
 		)
 
-		// if (this.lastUsedBuildProfile)
-		// 	this.actions.unshift(this.runLastProfileAction)
+		if (this.lastUsedBuildProfile)
+			this.actions.unshift(this.runLastProfileAction)
 
 		super.open()
 	}
