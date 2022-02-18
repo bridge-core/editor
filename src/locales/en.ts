@@ -329,6 +329,20 @@ export default {
 		compiler: {
 			name: 'Compiler',
 			categories: {
+				watchMode: {
+					name: 'Watch Mode',
+					settings: {
+						watchModeActive: {
+							name: 'Watch Mode',
+							description: 'Enable or disable watch mode',
+						},
+						autoFetch: {
+							name: 'Auto Fetch',
+							description:
+								'Automatically search the project for changed files upon starting bridge.',
+						},
+					},
+				},
 				profiles: 'Build Profiles',
 				outputFolders: 'Output Folders',
 				logs: {
@@ -597,10 +611,12 @@ export default {
 				name: 'Refresh Project',
 				description: 'Fetch the current project for newly added files',
 			},
-			restartDevServer: {
-				name: 'Restart Dev Server',
+			restartWatchMode: {
+				name: 'Restart Watch Mode',
 				description:
-					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
+					"Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
+				confirmDescription:
+					"Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
 			},
 			createPreset: 'New File',
 			projectConfig: {

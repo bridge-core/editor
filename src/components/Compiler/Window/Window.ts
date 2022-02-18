@@ -4,7 +4,8 @@ import Content from './Content.vue'
 import BuildProfiles from './BuildProfiles.vue'
 import Logs from './Logs.vue'
 import OutputFolders from './OutputFolders.vue'
-import { SimpleAction } from '/@/components/Actions/SimpleAction'
+import WatchMode from './WatchMode.vue'
+import { IActionConfig, SimpleAction } from '/@/components/Actions/SimpleAction'
 import { App } from '/@/App'
 import { markRaw, ref } from '@vue/composition-api'
 import json5 from 'json5'
@@ -12,12 +13,17 @@ import { proxy } from 'comlink'
 import { InfoPanel, IPanelOptions } from '/@/components/InfoPanel/InfoPanel'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { restartWatchModeAction } from '../Actions/RestartWatchMode'
 
 export class CompilerWindow extends BaseWindow {
 	protected sidebar = new Sidebar([], false)
 	protected categories = markRaw<
 		Record<string, { component: any; data: any }>
 	>({
+		watchMode: {
+			component: WatchMode,
+			data: ref(null),
+		},
 		buildProfiles: {
 			component: BuildProfiles,
 			data: ref(null),
@@ -34,21 +40,33 @@ export class CompilerWindow extends BaseWindow {
 	public readonly activeCategoryChanged = markRaw(
 		new EventDispatcher<string | undefined>()
 	)
+	protected lastUsedBuildProfile: SimpleAction | null = null
+	protected runLastProfileAction = new SimpleAction({
+		name: 'Run Last Profile',
+		icon: 'mdi-play',
+		color: 'accent',
+		onTrigger: () => {
+			if (!this.lastUsedBuildProfile)
+				throw new Error(
+					`Invalid state: Triggered runLastProfileAction without a last used build profile`
+				)
+			this.lastUsedBuildProfile.trigger()
+		},
+	})
 
 	constructor() {
 		super(Content, false, true)
 		this.defineWindow()
 
-		this.actions.push(
-			new SimpleAction({
-				icon: 'mdi-refresh',
-				name: 'general.reload',
-				color: 'accent',
-				onTrigger: () => {
-					this.reload()
-				},
-			})
-		)
+		const reloadAction = new SimpleAction({
+			icon: 'mdi-refresh',
+			name: 'general.reload',
+			color: 'accent',
+			onTrigger: () => {
+				this.reload()
+			},
+		})
+		this.actions.push(reloadAction)
 
 		const clearConsoleAction = new SimpleAction({
 			icon: 'mdi-close-circle-outline',
@@ -63,16 +81,33 @@ export class CompilerWindow extends BaseWindow {
 		this.sidebar.on((selected) => {
 			this.activeCategoryChanged.dispatch(selected)
 
-			if (selected === 'logs') this.actions.unshift(clearConsoleAction)
+			if (selected === 'logs')
+				this.actions.splice(
+					this.actions.indexOf(reloadAction),
+					0,
+					clearConsoleAction
+				)
 			else
 				this.actions = this.actions.filter(
 					(a) => a !== clearConsoleAction
 				)
 		})
+		// Close this window whenever the watch mode is restarted
+		restartWatchModeAction.on(() => this.close())
 
 		App.getApp().then((app) => {
 			const loc = app.locales
 
+			this.sidebar.addElement(
+				new SidebarItem({
+					id: 'watchMode',
+					text: loc.translate(
+						'sidebar.compiler.categories.watchMode.name'
+					),
+					color: 'primary',
+					icon: 'mdi-eye-outline',
+				})
+			)
 			this.sidebar.addElement(
 				new SidebarItem({
 					id: 'buildProfiles',
@@ -122,11 +157,18 @@ export class CompilerWindow extends BaseWindow {
 			})
 		)
 
+		// if (this.lastUsedBuildProfile)
+		// 	this.actions.unshift(this.runLastProfileAction)
+
 		super.open()
 	}
 	async close() {
 		const app = await App.getApp()
 		await app.project.compilerService.removeConsoleListeners()
+
+		this.actions = this.actions.filter(
+			(a) => a !== this.runLastProfileAction
+		)
 
 		super.close()
 	}
@@ -140,13 +182,14 @@ export class CompilerWindow extends BaseWindow {
 			{ create: true }
 		)
 
-		const actions = [
+		const actions: IActionConfig[] = [
 			{
 				icon: 'mdi-cog',
 				name: 'sidebar.compiler.default.name',
 				description: 'sidebar.compiler.default.description',
-				onTrigger: async () => {
+				onTrigger: async (action) => {
 					this.close()
+					this.lastUsedBuildProfile = action
 
 					const service = await project.createDashService(
 						'production'
@@ -177,8 +220,9 @@ export class CompilerWindow extends BaseWindow {
 				icon: config.icon,
 				name: config.name,
 				description: config.description,
-				onTrigger: async () => {
+				onTrigger: async (action) => {
 					this.close()
+					this.lastUsedBuildProfile = action
 
 					const service = await project.createDashService(
 						'production',

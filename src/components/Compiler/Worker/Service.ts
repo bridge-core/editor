@@ -97,7 +97,7 @@ export class DashService extends EventDispatcher<void> {
 		const fs = this.fileSystem.internal
 		if (
 			(await fs.fileExists(
-				`${this.projectDir}/.bridge/.restartDevServer`
+				`${this.projectDir}/.bridge/.restartWatchMode`
 			)) ||
 			!(await fs.fileExists(
 				// TODO(Dash): Replace with call to "this.dash.dashFilePath" once the accessor is no longer protected
@@ -107,7 +107,7 @@ export class DashService extends EventDispatcher<void> {
 			await Promise.all([
 				this.build().catch((err) => console.error(err)),
 				fs
-					.unlink(`${this.projectDir}/.bridge/.restartDevServer`)
+					.unlink(`${this.projectDir}/.bridge/.restartWatchMode`)
 					.catch((err) => console.error(err)),
 			])
 		} else {

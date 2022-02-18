@@ -21,6 +21,7 @@ import {
 } from '/@/components/Projects/Export/AsMctemplate'
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
+import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -563,35 +564,7 @@ export class PackExplorer extends SidebarContent {
 				},
 			},
 			// Restart dev server
-			{
-				icon: 'mdi-restart-alert',
-				name: 'windows.packExplorer.restartDevServer.name',
-				onTrigger: () => {
-					new ConfirmationWindow({
-						description:
-							'windows.packExplorer.restartDevServer.description',
-						height: 168,
-						onConfirm: async () => {
-							await Promise.all([
-								app.project.fileSystem.unlink(
-									'.bridge/.lightningCache'
-								),
-								app.project.fileSystem.unlink(
-									'.bridge/.compilerFiles'
-								),
-							])
-							await app.project.fileSystem.writeFile(
-								'.bridge/.restartDevServer',
-								''
-							)
-
-							app.actionManager.trigger(
-								'bridge.action.refreshProject'
-							)
-						},
-					})
-				},
-			},
+			restartWatchModeConfig,
 			{ type: 'divider' },
 
 			// Export project as .brproject
