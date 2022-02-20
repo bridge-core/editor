@@ -1,5 +1,5 @@
 <template>
-	<v-row class="mb-6" dense xs="12" sm="6" md="4" lg="3" xl="2">
+	<v-row class="mb-6" dense>
 		<v-col>
 			<ActionViewer
 				v-ripple
@@ -10,7 +10,11 @@
 			/>
 		</v-col>
 		<v-col v-for="{ id, icon } in settings" :key="id">
-			<SettingSheet style="height: 100%">
+			<SettingSheet
+				v-model="settingsState.compiler[id]"
+				style="height: 100%"
+				@input="data.shouldSaveSettings = true"
+			>
 				<template #header>
 					<div class="d-flex align-center">
 						<v-icon color="accent" class="mr-1">
@@ -43,6 +47,8 @@ import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { restartWatchModeAction } from '../Actions/RestartWatchMode'
 import SettingSheet from './WatchMode/SettingSheet.vue'
 import { TranslationMixin } from '../../Mixins/TranslationMixin'
+import { settingsState } from '../../Windows/Settings/SettingsState'
+import { set } from '@vue/composition-api'
 
 export default {
 	components: {
@@ -56,12 +62,20 @@ export default {
 	data: () => ({
 		settings: [
 			{ id: 'watchModeActive', icon: 'mdi-eye-outline' },
-			{ id: 'autoFetch', icon: 'mdi-radar' },
+			{ id: 'autoFetchChangedFiles', icon: 'mdi-radar' },
 		],
 	}),
 	setup() {
+		if (!settingsState.compiler) {
+			set(settingsState, 'compiler', {
+				watchModeActive: true,
+				autoFetchChangedFiles: true,
+			})
+		}
+
 		return {
 			restartWatchModeAction,
+			settingsState,
 		}
 	},
 }

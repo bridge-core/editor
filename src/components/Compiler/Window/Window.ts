@@ -14,6 +14,7 @@ import { InfoPanel, IPanelOptions } from '/@/components/InfoPanel/InfoPanel'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { restartWatchModeAction } from '../Actions/RestartWatchMode'
+import { SettingsWindow } from '../../Windows/Settings/SettingsWindow'
 
 export class CompilerWindow extends BaseWindow {
 	protected sidebar = new Sidebar([], false)
@@ -22,7 +23,9 @@ export class CompilerWindow extends BaseWindow {
 	>({
 		watchMode: {
 			component: WatchMode,
-			data: ref(null),
+			data: ref({
+				shouldSaveSettings: false,
+			}),
 		},
 		buildProfiles: {
 			component: BuildProfiles,
@@ -171,6 +174,11 @@ export class CompilerWindow extends BaseWindow {
 		)
 
 		super.close()
+
+		if (this.categories.watchMode.data.value.shouldSaveSettings) {
+			this.categories.watchMode.data.value.shouldSaveSettings = false
+			await SettingsWindow.saveSettings()
+		}
 	}
 
 	async loadProfiles() {

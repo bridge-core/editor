@@ -12,9 +12,14 @@ import ToggleSheet from '/@/components/UIElements/ToggleSheet.vue'
 
 export default {
 	components: { ToggleSheet, SelectedStatus },
-	data: () => ({
-		selected: false,
-	}),
+	props: {
+		value: Boolean,
+	},
+	data() {
+		return {
+			selected: this.value || false,
+		}
+	},
 	methods: {
 		onInput(val) {
 			this.selected = val

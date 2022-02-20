@@ -334,9 +334,10 @@ export default {
 					settings: {
 						watchModeActive: {
 							name: 'Watch Mode',
-							description: 'Enable or disable watch mode',
+							description:
+								'Enable or disable automatically recompiling files when you make changes with bridge.',
 						},
-						autoFetch: {
+						autoFetchChangedFiles: {
 							name: 'Auto Fetch',
 							description:
 								'Automatically search the project for changed files upon starting bridge.',

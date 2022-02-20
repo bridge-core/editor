@@ -28,6 +28,7 @@ import { relative } from '/@/utils/path'
 import { DashCompiler } from '/@/components/Compiler/Compiler'
 import { proxy, Remote } from 'comlink'
 import { DashService } from '/@/components/Compiler/Worker/Service'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -210,9 +211,14 @@ export abstract class Project {
 		])
 		const [changedFiles, deletedFiles] = await this.packIndexer.fired
 
+		const autoFetchChangedFiles =
+			settingsState.compiler?.autoFetchChangedFiles ?? true
+
 		await Promise.all([
 			this.jsonDefaults.activate(),
-			this.compilerService.start(changedFiles, deletedFiles),
+			autoFetchChangedFiles
+				? this.compilerService.start(changedFiles, deletedFiles)
+				: Promise.resolve(),
 		])
 
 		this.snippetLoader.activate()
@@ -332,9 +338,13 @@ export abstract class Project {
 			return
 		}
 
+		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
+
 		await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			this.compilerService.updateFiles([filePath]),
+			watchModeActive
+				? this.compilerService.updateFiles([filePath])
+				: Promise.resolve(),
 		])
 
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
@@ -342,7 +352,9 @@ export abstract class Project {
 	async updateFiles(filePaths: string[]) {
 		await this.packIndexer.updateFiles(filePaths)
 
-		await this.compilerService.updateFiles(filePaths)
+		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
+
+		if (watchModeActive) await this.compilerService.updateFiles(filePaths)
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
