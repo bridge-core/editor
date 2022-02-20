@@ -35,7 +35,7 @@ export class FilePickerWindow extends BaseWindow {
 			await packIndexer.fired
 
 			this.packFiles = (
-				(await packIndexer.service?.getAllFiles(true)) ?? []
+				(await packIndexer.service?.getAllFiles(undefined, true)) ?? []
 			).map((filePath) => ({
 				text: relative(`projects/${app.project.name}`, filePath),
 				value: filePath,
