@@ -30,7 +30,7 @@ export class RequiresMatcher {
 		)
 		const matchesTargetVersion =
 			!this.requires.targetVersion ||
-			!Array.isArray(this.requires.targetVersion)
+			(!Array.isArray(this.requires.targetVersion)
 				? compareVersions(
 						this.projectTargetVersion,
 						this.requires.targetVersion?.min ?? '1.8.0',
@@ -45,7 +45,7 @@ export class RequiresMatcher {
 						this.projectTargetVersion,
 						this.requires.targetVersion[1],
 						this.requires.targetVersion[0]
-				  )
+				  ))
 		const matchesExperimentalGameplay =
 			!this.requires.experimentalGameplay ||
 			this.requires.experimentalGameplay.some((experimentalFeature) =>
@@ -55,7 +55,6 @@ export class RequiresMatcher {
 					  ]
 					: this.experimentalGameplay[experimentalFeature]
 			)
-
 		return (
 			matchesPackTypes &&
 			matchesExperimentalGameplay &&
