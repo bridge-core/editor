@@ -6,7 +6,7 @@ export interface IConfirmWindowOpts {
 	name?: string
 	description: string
 	isPersistent?: boolean
-	onClose?: () => Promise<void> | void
+	onClose?: () => Promise<any> | any
 }
 
 export class InformationWindow extends BaseWindow<void> {
