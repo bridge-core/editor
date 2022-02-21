@@ -457,8 +457,10 @@ export default {
 			packIcon: 'Project Icon (optional)',
 			projectName: {
 				name: 'Project Name',
-				invalidLetters: 'You may only use alphanumerical characters',
+				invalidLetters:
+					'Project name must not contain the following characters: "  \\ / : | < >  * ?',
 				mustNotBeEmpty: 'You must enter a project name',
+				endsInPeriod: 'Project name cannot end with a period',
 			},
 			projectDescription: 'Project Description (optional)',
 			projectPrefix: 'Project Prefix',
