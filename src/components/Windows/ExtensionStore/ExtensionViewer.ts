@@ -7,6 +7,8 @@ import { ExtensionTag } from './ExtensionTag'
 import { extensionActions } from './ExtensionActions'
 import { InformationWindow } from '../Common/Information/InformationWindow'
 import { ConfirmationWindow } from '../Common/Confirm/ConfirmWindow'
+import { compareVersions } from 'bridge-common-utils'
+import { version as appVersion } from '/@/utils/app/version'
 
 export class ExtensionViewer {
 	protected tags: ExtensionTag[]
@@ -73,6 +75,26 @@ export class ExtensionViewer {
 
 	hasTag(tag: ExtensionTag) {
 		return this.tags.includes(tag)
+	}
+
+	isCompatibleVersion() {
+		return (
+			!this.config.compatibleAppVersions ||
+			(((this.config.compatibleAppVersions.min &&
+				compareVersions(
+					appVersion,
+					this.config.compatibleAppVersions.min,
+					'>='
+				)) ||
+				!this.config.compatibleAppVersions.min) &&
+				((this.config.compatibleAppVersions.max &&
+					compareVersions(
+						appVersion,
+						this.config.compatibleAppVersions.max,
+						'<='
+					)) ||
+					!this.config.compatibleAppVersions.max))
+		)
 	}
 
 	async download(isGlobalInstall?: boolean) {

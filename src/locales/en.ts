@@ -878,6 +878,7 @@ export default {
 			deactivateExtension: 'Deactivate Extension',
 			offlineError:
 				'Failed to load extensions. Please confirm that your device has an active network connection.',
+			incompatibleVersion: 'Incompatible bridge. version',
 			compilerPluginDownload: {
 				compilerPlugins: 'Compiler Plugins',
 				title: 'Downloaded Compiler Plugin',
