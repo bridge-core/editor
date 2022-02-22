@@ -13,13 +13,16 @@
 			<v-autocomplete
 				:label="t('windows.openFile.search')"
 				v-model="selectedFile"
-				:items="packFiles"
+				:items="processedFiles"
+				:cache-items="false"
 				dense
 				:no-data-text="t('windows.openFile.noData')"
+				:filter="filter"
 				outlined
 				auto-select-first
 				autofocus
 				@change="onChange"
+				@update:search-input="onUpdateSearchInput"
 			>
 				<template #item="{ item: { value, text } }">
 					<v-icon class="mr-1" :color="getFileIconColor(value)">
@@ -67,6 +70,16 @@ export default {
 			if (!packType) return 'primary'
 
 			return packType.color || 'primary'
+		},
+		filter() {
+			return 1
+		},
+		onUpdateSearchInput(searchInput) {
+			if (searchInput === null) searchInput = ''
+
+			this.processedFiles = this.quickScore
+				.search(searchInput)
+				.map(({ item }) => item)
 		},
 	},
 }

@@ -60,7 +60,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 		}
 
 		this.extensions = extensions.map(
-			(plugin) => new ExtensionViewer(this, plugin)
+			(extension) => new ExtensionViewer(this, extension)
 		)
 
 		this.updates.clear()

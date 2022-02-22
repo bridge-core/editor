@@ -97,7 +97,12 @@ export class BasicFileImporter extends FileImporter {
 		await app.project.fileSystem.copyFileHandle(fileHandle, destHandle)
 		App.eventSystem.dispatch('fileAdded', undefined)
 
-		await app.project.updateFile(`${filePath}${fileHandle.name}`)
+		await app.project.updateFile(
+			app.project.config.resolvePackPath(
+				undefined,
+				`${filePath}${fileHandle.name}`
+			)
+		)
 		await app.project.openFile(destHandle, { isTemporary: false })
 
 		app.windows.loadingWindow.close()

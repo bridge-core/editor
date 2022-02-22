@@ -189,12 +189,12 @@ export class PackIndexerService extends TaskService<
 		)
 	}
 
-	getAllFiles(sorted = false) {
+	getAllFiles(fileType?: string, sorted = false) {
 		if (sorted)
 			return this.lightningStore
-				.allFiles()
+				.allFiles(fileType)
 				.sort((a, b) => a.localeCompare(b))
-		return this.lightningStore.allFiles()
+		return this.lightningStore.allFiles(fileType)
 	}
 
 	getSchemasFor(fileType: string, fromFilePath?: string) {

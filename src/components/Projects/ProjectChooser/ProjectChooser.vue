@@ -16,6 +16,7 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.projectChooser.searchProjects')"
+				autofocus
 				v-model="sidebar._filter"
 				outlined
 				dense

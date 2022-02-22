@@ -2,11 +2,18 @@ import { App } from '/@/App'
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import FilePickerComponent from './FilePicker.vue'
 import { relative } from '/@/utils/path'
+import { QuickScore } from 'quick-score'
+import { markRaw } from '@vue/composition-api'
 
 export class FilePickerWindow extends BaseWindow {
 	protected packFiles: { value: string; text: string }[] = []
 	protected selectedFile = ''
 	protected isCurrentlyOpening = false
+	protected processedFiles: { value: string; text: string }[] = []
+	protected quickScore: QuickScore<{
+		value: string
+		text: string
+	}> | null = null
 
 	constructor() {
 		super(FilePickerComponent, false, true)
@@ -25,12 +32,15 @@ export class FilePickerWindow extends BaseWindow {
 
 		const packIndexer = app.project?.packIndexer
 		if (packIndexer) {
+			await packIndexer.fired
+
 			this.packFiles = (
-				(await packIndexer.service?.getAllFiles(true)) ?? []
+				(await packIndexer.service?.getAllFiles(undefined, true)) ?? []
 			).map((filePath) => ({
 				text: relative(`projects/${app.project.name}`, filePath),
 				value: filePath,
 			}))
+			this.quickScore = markRaw(new QuickScore(this.packFiles))
 		}
 
 		app.windows.loadingWindow.close()

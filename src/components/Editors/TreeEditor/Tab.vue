@@ -305,11 +305,8 @@ export default {
 		forceValue() {
 			this.$refs.addKeyInput.blur()
 
-			this.$nextTick(() => {
-				this.pressedShift = true
-				this.isUserControlledTrigger = true
-				this.onAdd(this.keyToAdd)
-			})
+			this.isUserControlledTrigger = true
+			this.onAdd(this.keyToAdd, true)
 		},
 		onScroll(event) {
 			this.treeEditor.scrollTop = event.target.scrollTop

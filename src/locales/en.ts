@@ -328,10 +328,36 @@ export default {
 	sidebar: {
 		compiler: {
 			name: 'Compiler',
+			categories: {
+				watchMode: {
+					name: 'Watch Mode',
+					settings: {
+						watchModeActive: {
+							name: 'Watch Mode',
+							description:
+								'Enable or disable automatically recompiling files when you make changes with bridge.',
+						},
+						autoFetchChangedFiles: {
+							name: 'Auto Fetch',
+							description:
+								'Automatically search the project for changed files upon starting bridge.',
+						},
+					},
+				},
+				profiles: 'Build Profiles',
+				outputFolders: 'Output Folders',
+				logs: {
+					name: 'Logs',
+					noLogs: 'Dash did not produce any logs to show yet.',
+				},
+			},
 			default: {
 				name: 'Default Config',
 				description:
 					'Run bridge.\'s compiler with the default compiler configuration that is part of your project\'s "config.json" file.',
+			},
+			actions: {
+				runLastProfile: 'Run Last Profile',
 			},
 		},
 		extensions: {
@@ -431,8 +457,10 @@ export default {
 			packIcon: 'Project Icon (optional)',
 			projectName: {
 				name: 'Project Name',
-				invalidLetters: 'You may only use alphanumerical characters',
+				invalidLetters:
+					'Project name must not contain the following characters: "  \\ / : | < >  * ?',
 				mustNotBeEmpty: 'You must enter a project name',
+				endsInPeriod: 'Project name cannot end with a period',
 			},
 			projectDescription: 'Project Description (optional)',
 			projectPrefix: 'Project Prefix',
@@ -589,10 +617,12 @@ export default {
 				name: 'Refresh Project',
 				description: 'Fetch the current project for newly added files',
 			},
-			restartDevServer: {
-				name: 'Restart Dev Server',
+			restartWatchMode: {
+				name: 'Restart Watch Mode',
 				description:
-					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
+					"Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
+				confirmDescription:
+					"Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
 			},
 			createPreset: 'New File',
 			projectConfig: {
@@ -848,6 +878,7 @@ export default {
 			deactivateExtension: 'Deactivate Extension',
 			offlineError:
 				'Failed to load extensions. Please confirm that your device has an active network connection.',
+			incompatibleVersion: 'Incompatible bridge. version',
 			compilerPluginDownload: {
 				compilerPlugins: 'Compiler Plugins',
 				title: 'Downloaded Compiler Plugin',

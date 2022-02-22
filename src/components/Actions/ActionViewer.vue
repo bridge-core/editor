@@ -1,8 +1,5 @@
 <template>
-	<div
-		class="text-normal pa-4 mb-2 rounded-lg control-bg"
-		:class="{ selected }"
-	>
+	<div class="pa-4 mb-2 rounded-lg control-bg" :class="{ selected }">
 		<div class="d-flex align-center">
 			<v-icon
 				v-if="action.icon"
@@ -29,9 +26,9 @@
 			</v-icon>
 		</div>
 
-		<span v-if="!dense && action.description">
+		<p v-if="!dense && action.description">
 			{{ t(action.description) }}
-		</span>
+		</p>
 	</div>
 </template>
 

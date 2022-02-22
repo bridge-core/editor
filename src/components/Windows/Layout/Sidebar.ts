@@ -1,6 +1,7 @@
 import { reactive, set } from '@vue/composition-api'
 import { App } from '/@/App'
 import { v4 as uuid } from 'uuid'
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 
 export type TSidebarElement = SidebarCategory | SidebarItem
 export interface ISidebarCategoryConfig {
@@ -103,13 +104,20 @@ export class SidebarItem {
 	}
 }
 
-export class Sidebar {
+export class Sidebar extends EventDispatcher<string | undefined> {
 	protected _selected?: string
 	protected _filter: string = ''
+	/**
+	 * Stores the last _filter value that we have already selected a new element for
+	 */
 	protected reselectedForFilter = ''
 	public readonly state: Record<string, any> = {}
 
-	constructor(protected _elements: TSidebarElement[]) {
+	constructor(
+		protected _elements: TSidebarElement[],
+		protected readonly shouldSortSidebar = true
+	) {
+		super()
 		this.selected = this.findDefaultSelected()
 	}
 
@@ -153,6 +161,8 @@ export class Sidebar {
 			if (e.type === 'category' && e.getItems().length > 0) {
 				e.setOpen(true)
 				this.setDefaultSelected(e.getItems()[0].id)
+			} else if (e.type === 'item') {
+				this.setDefaultSelected(e.id)
 			}
 
 			this.reselectedForFilter = this.filter
@@ -191,6 +201,8 @@ export class Sidebar {
 	}
 
 	protected sortSidebar(elements: TSidebarElement[]) {
+		if (!this.shouldSortSidebar) return elements
+
 		return elements.sort((a, b) => {
 			if (a.type !== b.type) return a.type.localeCompare(b.type)
 			return a.getSearchText().localeCompare(b.getSearchText())
@@ -221,6 +233,10 @@ export class Sidebar {
 		if (val) {
 			App.audioManager.playAudio('click5.ogg', 1)
 		}
-		this._selected = val
+
+		if (this._selected !== val) {
+			this.dispatch(val)
+			this._selected = val
+		}
 	}
 }

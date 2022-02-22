@@ -50,6 +50,18 @@ export class SchemaScript {
 							cacheKey
 						)
 					},
+					getIndexedPaths: async (
+						fileType?: string,
+						sort?: boolean
+					) => {
+						const packIndexer = this.app.project.packIndexer
+
+						const paths = await packIndexer.service!.getAllFiles(
+							fileType,
+							sort
+						)
+						return paths
+					},
 					getProjectPrefix: () =>
 						this.app.projectConfig.get().namespace ?? 'bridge',
 					getProjectConfig: () => this.app.projectConfig.get(),
