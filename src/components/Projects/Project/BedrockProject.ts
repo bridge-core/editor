@@ -39,18 +39,12 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 		createPreview: async (tabSystem, tab) =>
 			new BlockModelTab(tab.getPath(), tab, tabSystem),
 	},
-	{
+	/*{
 		name: 'preview.simulateLoot',
 		fileType: 'lootTable',
 		createPreview: async (tabSystem, tab) =>
 			new LootTableSimulatorTab(tab, tabSystem),
-	},
-	{
-		name: 'functionValidator.actionName',
-		fileType: 'function',
-		createPreview: async (tabSystem, tab) =>
-			new FunctionValidatorTab(tabSystem, tab),
-	},
+	},*/
 ]
 
 export class BedrockProject extends Project {
