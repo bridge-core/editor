@@ -1,6 +1,6 @@
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
-
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
 export interface ISerializedOutputFolder<DataBag> {
 	directoryHandle: AnyDirectoryHandle
 	dataBag: DataBag
@@ -8,27 +8,37 @@ export interface ISerializedOutputFolder<DataBag> {
 
 export class OutputFolder<DataBag> {
 	protected permission: PermissionState = 'prompt'
+	public readonly fileSystem = new FileSystem()
 	constructor(
 		protected directoryHandle: AnyDirectoryHandle,
 		protected dataBag: DataBag
 	) {}
 
-	async requestPermission() {
+	protected async requestPermissionFromNavigator() {
 		const permission = await this.directoryHandle.requestPermission({
 			mode: 'readwrite',
 		})
 
 		return permission
 	}
-	protected async createPermissionWindow() {
-		const informWindow = new InformationWindow({
-			name: 'comMojang.title',
-			description: 'comMojang.permissionRequest',
-			onClose: () => this.requestPermission(),
-		})
-		informWindow.open()
+	async requestPermission() {
+		try {
+			this.permission = await this.requestPermissionFromNavigator()
+		} catch {
+			const informWindow = new InformationWindow({
+				name: 'comMojang.title',
+				description: 'comMojang.permissionRequest',
+				onClose: async () => {
+					this.permission = await this.requestPermissionFromNavigator()
+				},
+			})
+			informWindow.open()
 
-		await informWindow.fired
+			await informWindow.fired
+		}
+
+		if (this.permission === 'granted')
+			this.fileSystem.setup(this.directoryHandle)
 	}
 
 	static from<DataBag>(serialized: ISerializedOutputFolder<DataBag>) {
