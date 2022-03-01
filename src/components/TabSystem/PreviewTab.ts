@@ -8,7 +8,7 @@ export abstract class PreviewTab extends Tab {
 		return false
 	}
 
-	constructor(protected tab: FileTab, parent: TabSystem) {
+	constructor(protected tab: FileTab | undefined, parent: TabSystem) {
 		super(parent)
 
 		this.onCreate()
@@ -21,7 +21,7 @@ export abstract class PreviewTab extends Tab {
 
 	get name() {
 		return `${this.parent.app.locales.translate('preview.name')}: ${
-			this.tab.name
+			this.tab?.name ?? '???'
 		}`
 	}
 
@@ -29,7 +29,7 @@ export abstract class PreviewTab extends Tab {
 
 	save() {}
 	getFile() {
-		return this.tab.getFile()
+		return this.tab?.getFile()
 	}
 	abstract reload(): Promise<void> | void
 }

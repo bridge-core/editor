@@ -1,3 +1,6 @@
+import { markRaw } from '@vue/composition-api'
+import { AnyDirectoryHandle } from '../../FileSystem/Types'
+import { TabSystem } from '../../TabSystem/TabSystem'
 import { World } from '../WorldFormat/World'
 import { ThreePreviewTab } from '/@/components/Editors/ThreePreview/ThreePreviewTab'
 
@@ -6,15 +9,23 @@ export class WorldTab extends ThreePreviewTab {
 	onChange() {}
 	reload() {}
 
+	constructor(
+		protected worldHandle: AnyDirectoryHandle,
+		tabSystem: TabSystem
+	) {
+		super(undefined, tabSystem)
+	}
+
 	async onActivate() {
+		await super.onActivate()
 		const project = this.parent.project
 
-		this.world = new World(
-			await project.fileSystem.getDirectoryHandle(
-				'PATH TO WORLD DB FOLDER'
-			),
-			project.fileSystem.baseDirectory,
-			this.scene
+		this.world = markRaw(
+			new World(
+				this.worldHandle,
+				project.fileSystem.baseDirectory,
+				this.scene
+			)
 		)
 
 		await this.world.loadWorld()

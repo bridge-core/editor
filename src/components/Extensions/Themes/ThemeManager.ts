@@ -36,6 +36,7 @@ const colorNames = [
 	'resourcePack',
 	'worldTemplate',
 	'skinPack',
+	'worlds',
 ] as const
 export type TColorName = typeof colorNames[number]
 

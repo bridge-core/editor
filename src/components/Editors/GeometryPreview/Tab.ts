@@ -408,7 +408,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		// Asset preview title
 		resultCtx.font = 30 * res + 'px Arial'
 		resultCtx.fillText(
-			this.tab.getFileHandle().name.split('.').shift()!,
+			this.tab!.getFileHandle().name.split('.').shift()!,
 			20 * res,
 			50 * res
 		)
@@ -418,8 +418,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 				if (!blob) return
 
 				await saveOrDownload(
-					`previews/${this.tab
-						.getFileHandle()
+					`previews/${this.tab!.getFileHandle()
 						.name.split('.')
 						.shift()!}.png`,
 					new Uint8Array(await blob.arrayBuffer()),

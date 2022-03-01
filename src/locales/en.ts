@@ -27,6 +27,8 @@ export default {
 		later: 'Later',
 		clear: 'Clear',
 		reset: 'Reset',
+		open: 'Open',
+		preview: 'Preview',
 
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
@@ -61,6 +63,7 @@ export default {
 			description:
 				'Create a world that users can create to experience your project',
 		},
+		worlds: { name: 'Worlds' },
 	},
 	// File Type display names
 	fileType: {
@@ -439,6 +442,9 @@ export default {
 	},
 	// Windows
 	windows: {
+		allWorlds: {
+			title: 'Worlds',
+		},
 		changelogWindow: {
 			title: "What's new?",
 		},

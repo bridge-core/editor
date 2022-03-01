@@ -1,6 +1,5 @@
 import ThreePreviewTabComponent from './ThreePreviewTab.vue'
 import { IDisposable } from '/@/types/disposable'
-import { Model } from 'bridge-model-viewer'
 import { PreviewTab } from '/@/components/TabSystem/PreviewTab'
 import {
 	AmbientLight,
@@ -106,6 +105,11 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		this.renderer = undefined
 		this.controls = undefined
 		super.onDeactivate()
+	}
+	onDestroy() {
+		super.onDestroy()
+		this.disposables.forEach((d) => d.dispose())
+		this.disposables = []
 	}
 
 	protected render() {

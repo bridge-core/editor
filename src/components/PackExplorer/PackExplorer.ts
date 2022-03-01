@@ -22,6 +22,7 @@ import {
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
+import { AllWorldsWindow } from '../BedrockWorlds/Window/AllWorldsWindow'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -84,6 +85,22 @@ export class PackExplorer extends SidebarContent {
 				})
 			)
 		}
+
+		if (
+			await app.fileSystem.directoryExists(
+				app.project.config.resolvePackPath(undefined, 'worlds')
+			)
+		)
+			this.actions.push(
+				new SidebarAction({
+					icon: 'mdi-earth-box-plus',
+					name: 'packType.worlds.name',
+					color: 'worlds',
+					onTrigger: () => {
+						new AllWorldsWindow()
+					},
+				})
+			)
 
 		this.actions.push(
 			new SidebarAction({

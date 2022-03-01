@@ -33,6 +33,7 @@ export const bridgeDark = <const>{
 		resourcePack: '#0073FF',
 		skinPack: '#fb8c00',
 		worldTemplate: '#4caf50',
+		worlds: '#4caf50',
 	},
 	highlighter: {
 		type: {
@@ -101,6 +102,7 @@ export const bridgeLight = <const>{
 		resourcePack: '#0073FF',
 		skinPack: '#fb8c00',
 		worldTemplate: '#4caf50',
+		worlds: '#4caf50',
 	},
 	highlighter: {
 		type: {
