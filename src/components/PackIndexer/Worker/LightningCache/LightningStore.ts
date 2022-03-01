@@ -225,12 +225,18 @@ export class LightningStore {
 		return !!this.store![fileType]?.[filePath]
 	}
 
-	allFiles() {
+	allFiles(searchFileType?: string) {
 		const filePaths = []
 
-		for (const fileType in this.store) {
-			for (const filePath in this.store[fileType]) {
+		if (searchFileType && this.store) {
+			for (const filePath in this.store[searchFileType]) {
 				filePaths.push(filePath)
+			}
+		} else {
+			for (const fileType in this.store) {
+				for (const filePath in this.store[fileType]) {
+					filePaths.push(filePath)
+				}
 			}
 		}
 

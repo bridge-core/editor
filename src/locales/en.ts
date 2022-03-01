@@ -457,8 +457,10 @@ export default {
 			packIcon: 'Project Icon (optional)',
 			projectName: {
 				name: 'Project Name',
-				invalidLetters: 'You may only use alphanumerical characters',
+				invalidLetters:
+					'Project name must not contain the following characters: "  \\ / : | < >  * ?',
 				mustNotBeEmpty: 'You must enter a project name',
+				endsInPeriod: 'Project name cannot end with a period',
 			},
 			projectDescription: 'Project Description (optional)',
 			projectPrefix: 'Project Prefix',
@@ -876,6 +878,7 @@ export default {
 			deactivateExtension: 'Deactivate Extension',
 			offlineError:
 				'Failed to load extensions. Please confirm that your device has an active network connection.',
+			incompatibleVersion: 'Incompatible bridge. version',
 			compilerPluginDownload: {
 				compilerPlugins: 'Compiler Plugins',
 				title: 'Downloaded Compiler Plugin',

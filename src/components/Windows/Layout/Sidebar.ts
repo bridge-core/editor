@@ -107,6 +107,9 @@ export class SidebarItem {
 export class Sidebar extends EventDispatcher<string | undefined> {
 	protected _selected?: string
 	protected _filter: string = ''
+	/**
+	 * Stores the last _filter value that we have already selected a new element for
+	 */
 	protected reselectedForFilter = ''
 	public readonly state: Record<string, any> = {}
 
@@ -158,6 +161,8 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 			if (e.type === 'category' && e.getItems().length > 0) {
 				e.setOpen(true)
 				this.setDefaultSelected(e.getItems()[0].id)
+			} else if (e.type === 'item') {
+				this.setDefaultSelected(e.id)
 			}
 
 			this.reselectedForFilter = this.filter

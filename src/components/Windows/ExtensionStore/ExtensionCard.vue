@@ -11,6 +11,7 @@
 				v-if="!extension.isInstalled"
 				@click="extension.download()"
 				:loading="extension.isLoading"
+				:disabled="!extension.isCompatibleVersion()"
 				color="primary"
 				class="rounded-lg elevation-0"
 				small
@@ -107,23 +108,39 @@
 
 		<template
 			v-if="
-				extension.connected &&
-				extension.connected.contributesCompilerPlugins
+				(extension.connected &&
+					extension.connected.contributesCompilerPlugins) ||
+				!extension.isCompatibleVersion()
 			"
 		>
 			<v-divider class="my-2" />
 
-			<span class="font-weight-bold">
-				{{
-					t(
-						'windows.extensionStore.compilerPluginDownload.compilerPlugins'
-					)
-				}}:
-			</span>
+			<div
+				v-if="
+					extension.connected &&
+					extension.connected.contributesCompilerPlugins
+				"
+			>
+				<v-icon color="secondary">mdi-format-list-bulleted</v-icon>
+				<span class="font-weight-bold">
+					{{
+						t(
+							'windows.extensionStore.compilerPluginDownload.compilerPlugins'
+						)
+					}}:
+				</span>
 
-			<span>
-				{{ compilerPlugins }}
-			</span>
+				<span>
+					{{ compilerPlugins }}
+				</span>
+			</div>
+
+			<div v-if="!extension.isCompatibleVersion()" class="pt-1">
+				<span class="font-weight-bold">
+					<v-icon color="error">mdi-alert-circle</v-icon>
+					{{ t('windows.extensionStore.incompatibleVersion') }}</span
+				>
+			</div>
 		</template>
 	</div>
 </template>

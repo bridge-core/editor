@@ -26,6 +26,10 @@ export interface IExtensionManifest {
 		plugins: Record<string, string>
 	}
 	contributeFiles: Record<string, { pack: TPackTypeId; path: string }>
+	compatibleAppVersions?: {
+		min?: string
+		max?: string
+	}
 }
 
 export class ExtensionLoader extends Signal<void> {
