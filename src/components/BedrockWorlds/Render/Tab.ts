@@ -22,7 +22,7 @@ export class WorldTab extends ThreePreviewTab {
 
 		this.world = markRaw(
 			new World(
-				this.worldHandle,
+				await this.worldHandle.getDirectoryHandle('db'),
 				project.fileSystem.baseDirectory,
 				this.scene
 			)
@@ -45,12 +45,12 @@ export class WorldTab extends ThreePreviewTab {
 	}
 
 	get name() {
-		return 'World'
+		return this.worldHandle.name
 	}
 	get iconColor() {
-		return '#ffb400'
+		return 'worlds'
 	}
 	get icon() {
-		return 'mdi-earth'
+		return 'mdi-earth-box'
 	}
 }

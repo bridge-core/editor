@@ -43,11 +43,17 @@ export class Manifest {
 			.getFileHandle('CURRENT')
 			.then((fileHandle) => fileHandle.getFile())
 			.then((file) => file.text())
+			.catch(() => {
+				throw new Error('CURRENT file not found')
+			})
 		const manifestData = await this.dbDirectory
 			.getFileHandle(currentManifest.trim())
 			.then((fileHandle) => fileHandle.getFile())
 			.then((file) => file.arrayBuffer())
 			.then((data) => new Uint8Array(data))
+			.catch(() => {
+				throw new Error(`Manifest file ${currentManifest} not found`)
+			})
 
 		this._version = this.readVersionEdit(manifestData)
 

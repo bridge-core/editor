@@ -43,7 +43,7 @@ export class BlockLibrary {
 		return this._tileMap
 	}
 
-	protected library = new Map<string, IBlockLibEntry>()
+	protected library = new Map<string, IBlockLibEntry | null>()
 
 	constructor(baseDirectory: AnyDirectoryHandle) {
 		this.fileSystem = new FileSystem(baseDirectory)
@@ -74,7 +74,6 @@ export class BlockLibrary {
 			(await this.fileSystem.readJSON('RP/textures/terrain_texture.json'))
 				.texture_data
 		)
-		console.log(terrainTexture)
 
 		for (let id in blocksJson) {
 			const { textures } = blocksJson[id]
@@ -82,7 +81,8 @@ export class BlockLibrary {
 			// Normalize identifiers to make sure they include a namespace
 			if (id.indexOf(':') === -1) id = `minecraft:${id}`
 
-			if (typeof textures === 'string')
+			if (!terrainTexture[textures]) this.library.set(id, null)
+			else if (typeof textures === 'string')
 				this.library.set(id, {
 					faces: {
 						all: {
@@ -109,8 +109,6 @@ export class BlockLibrary {
 			}
 		}
 
-		console.log(this.library)
-
 		return await this.createTileMap()
 	}
 
@@ -126,6 +124,7 @@ export class BlockLibrary {
 			  )[]
 			| { path?: string; variations?: { path: string; weight: number }[] }
 	}) {
+		if (typeof textureData !== 'object') console.log(textureData)
 		let { textures } = textureData
 
 		if (Array.isArray(textures)) textures = textures[0]
@@ -147,6 +146,8 @@ export class BlockLibrary {
 
 		let currentUVOffset = 0
 		for (const blockData of this.library.values()) {
+			if (!blockData) continue
+
 			for (const [dir, { texturePath, overlayColor }] of Object.entries(
 				blockData.faces
 			)) {

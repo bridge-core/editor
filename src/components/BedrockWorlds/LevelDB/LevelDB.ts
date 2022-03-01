@@ -25,7 +25,6 @@ export class LevelDB {
 
 	async open() {
 		this._manifest = new Manifest(this.dbDirectory)
-		console.log(this.manifest)
 		await this.manifest.load()
 
 		const logReader = new LogReader()
@@ -42,10 +41,12 @@ export class LevelDB {
 
 	get(key: Uint8Array) {
 		let res = this.memoryCache.get(key)
+		// console.log(key, res)
 		if (res.state === ERequestState.Success) return res.value!
 		else if (res.state === ERequestState.Deleted) return null
 
 		res = this.manifest.get(key)
+		// console.log(key, res)
 		if (res.value === undefined || res.value.length === 0) return null
 
 		return res.value
