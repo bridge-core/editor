@@ -36,7 +36,7 @@ export class BlockSeeker {
 		let high = this.restartCount - 1
 
 		while (low < high) {
-			const mid = (low + high + 1) >> 1
+			const mid = Math.floor((low + high + 1) / 2)
 			this.seekToRestart(mid)
 
 			if (
@@ -48,18 +48,7 @@ export class BlockSeeker {
 			}
 		}
 
-		this.seekToRestart(low)
-
-		while (this.hasNext()) {
-			const usableKey = asUsableKey(this.currentKey!)
-
-			if (this.comparator.compare(usableKey, key) >= 0) {
-				return true
-			}
-			this.next()
-		}
-
-		for (let i = low - 1; i >= 0; i--) {
+		for (let i = low; i >= 0; i--) {
 			this.seekToRestart(i)
 
 			while (this.hasNext()) {
@@ -76,11 +65,13 @@ export class BlockSeeker {
 	}
 	keys() {
 		let keys: Uint8Array[] = []
-		this.seekToRestart(0)
+		for (let i = 0; i < this.restartCount; i++) {
+			this.seekToRestart(i)
 
-		while (this.hasNext()) {
-			keys.push(asUsableKey(this.currentKey!))
-			this.next()
+			while (this.hasNext()) {
+				keys.push(asUsableKey(this.currentKey!))
+				this.next()
+			}
 		}
 
 		return keys
