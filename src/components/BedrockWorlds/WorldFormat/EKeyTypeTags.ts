@@ -1,4 +1,5 @@
 export enum EKeyTypeTag {
+	Data3D = 43,
 	ChunkVersion = 44,
 	Data2D = 45,
 	Data2DLegacy = 46,
