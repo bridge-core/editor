@@ -8,17 +8,18 @@ export class Version {
 	public lastSequence?: number
 
 	public deletedFiles = new Map<number, Set<number>>()
-	public levels = new Map<number, FileMetaData[]>()
+	public levels = new Map<number, Set<FileMetaData>>()
 	public compactPointers = new Map<number, Uint8Array>()
 
 	getFiles(level: number): FileMetaData[] {
-		return this.levels.get(level) ?? []
+		return [...(this.levels.get(level) ?? [])]
 	}
 	addFile(level: number, file: FileMetaData) {
 		if (!this.levels.has(level)) {
-			this.levels.set(level, [])
+			this.levels.set(level, new Set())
 		}
-		this.levels.get(level)!.push(file)
+
+		this.levels.get(level)!.add(file)
 	}
 	removeFile(level: number, fileNumber: number) {
 		const files = this.getFiles(level)
@@ -28,7 +29,7 @@ export class Version {
 			throw new Error(`File ${fileNumber} not found in level ${level}`)
 		}
 
-		files.splice(index, 1)
+		this.levels.get(level)!.delete(files[index])
 
 		if (!this.deletedFiles.has(level)) {
 			this.deletedFiles.set(level, new Set())

@@ -1,4 +1,5 @@
 import { BytewiseComparator } from './Comparators/Bytewise'
+import { toStrKey } from './Key/ToStrKey'
 import { EOperationType, LogReader } from './LogReader'
 import { ERequestState, RequestStatus } from './RequestStatus'
 import { Uint8ArrayReader } from './Uint8ArrayUtils/Reader'
@@ -11,7 +12,7 @@ interface ILogEntry {
 
 export class MemoryCache {
 	protected comparator = new BytewiseComparator()
-	protected cache: Map<Uint8Array, ILogEntry> = new Map()
+	protected cache: Map<string, ILogEntry> = new Map()
 	protected size = 0
 
 	load(logReader: LogReader) {
@@ -22,26 +23,32 @@ export class MemoryCache {
 			data = logReader.readData()
 			if (data === null) break
 
-			const logEntries = this.decodeData(new Uint8ArrayReader(data))
+			const logEntries = this.decodeData(data).sort((a, b) => {
+				const res = a[1].sequenceNumber - b[1].sequenceNumber
+				if (res === 0n) return 0
+				return res < 0n ? -1 : 1
+			})
+
 			for (const [key, value] of logEntries) {
-				this.cache.set(key, value)
+				this.set(key, value)
 				this.size += key.length + (value.data?.length ?? 0)
 			}
 		}
 	}
 
-	protected decodeData(data: Uint8ArrayReader) {
-		const sequenceNumber = data.readUint64()
-		const totalOperations = data.readUint32()
+	protected decodeData(data: Uint8Array) {
+		const reader = new Uint8ArrayReader(data)
+		const sequenceNumber = reader.readUint64()
+		const totalOperations = reader.readUint32()
 
 		const res: [Uint8Array, ILogEntry][] = []
 
 		for (let i = 0; i < totalOperations; i++) {
-			const operation = data.readByte()
-			const key = data.readLengthPrefixedBytes()
+			const operation = reader.readByte()
+			const key = reader.readLengthPrefixedBytes()
 
 			if (operation === EOperationType.PUT) {
-				const value = data.readLengthPrefixedBytes()
+				const value = reader.readLengthPrefixedBytes()
 
 				res.push([
 					key,
@@ -67,13 +74,18 @@ export class MemoryCache {
 	}
 
 	get(key: Uint8Array) {
-		const entry = this.cache.get(key)
+		const entry = this.cache.get(toStrKey(key))
 		if (entry === undefined) {
 			return RequestStatus.createNotFound()
 		}
-		return new RequestStatus(entry.data)
+		return new RequestStatus(entry.data, entry.state)
+	}
+	set(key: Uint8Array, val: ILogEntry) {
+		this.cache.set(toStrKey(key), val)
 	}
 	keys() {
-		return this.cache.keys()
+		return [...this.cache.keys()].map(
+			(str) => new Uint8Array(str.split(' ').map((n) => Number(n)))
+		)
 	}
 }

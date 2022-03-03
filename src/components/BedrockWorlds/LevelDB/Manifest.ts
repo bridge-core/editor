@@ -170,10 +170,7 @@ export class Manifest {
 							largestKey,
 						})
 
-						if (!version.levels.has(level))
-							version.levels.set(level, [])
-
-						version.levels.get(level)!.push(fileMetaData)
+						version.addFile(level, fileMetaData)
 						break
 					}
 					case ELogTagType.PrevLogNumber:
@@ -186,20 +183,13 @@ export class Manifest {
 		}
 
 		// Cleanup deleted files
-		const deletedFiles = new Set<number>()
-		for (const deletedFile of version.deletedFiles.values()) {
-			for (const fileNumber of deletedFile) {
-				deletedFiles.add(fileNumber)
-			}
-		}
+		for (const [level, files] of version.levels) {
+			const deleted = version.deletedFiles.get(level)
+			if (!deleted) continue
 
-		for (const [levelKey, fileMetaData] of version.levels.entries()) {
-			version.levels.set(
-				levelKey,
-				fileMetaData.filter(
-					(fileMetaData) => !deletedFiles.has(fileMetaData.fileNumber)
-				)
-			)
+			for (const file of files) {
+				if (deleted.has(file.fileNumber)) files.delete(file)
+			}
 		}
 
 		if (!version.comparator) version.comparator = defaultLdbOperator
