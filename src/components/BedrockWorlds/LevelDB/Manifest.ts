@@ -68,8 +68,6 @@ export class Manifest {
 			throw new Error(
 				`Unsupported comparator: "${this.version.comparator}"`
 			)
-
-		console.log(this._version)
 	}
 
 	get(key: Uint8Array) {
