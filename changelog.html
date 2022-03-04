@@ -1,19 +1,28 @@
 <h2>Features:</h2>
-<ul>
-<li>Added dynamic event references to more entity components</li>
-<li>Updated data to latest Minecraft beta</li>
-<li>The built-in file picker now uses fuzzy search instead of strict string matches</li>
-</ul>
+<h3>New Compiler Window (#182, #350)</h3>
+<p>We have added a new compiler window that supports configuring bridge.'s watch mode, seeing the latest logs from bridge.'s compiler and choosing a build profile. We are also working on integrating support for multiple output directories to this window to properly support the new Minecraft Preview program but this work isn't quite ready just yet.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/156764554-d2085673-0238-4755-8ea9-887bddea9a27.png" alt="Bildschirmfoto 2022-03-04 um 13 35 17"></p>
+<hr>
+<h3>Better Texture Auto-Completions (#363)</h3>
+<p>bridge. now proposes all images it can find within your resource pack wherever an image path is valid. Previously, the proposed values where restricted to subfolders, e.g. &quot;textures/blocks/&quot; for blocks or &quot;textures/items/&quot; for items.</p>
 <h2>Changes:</h2>
 <ul>
-<li>Client Entity Validation: <code>scripts/animate</code> requires at least one child</li>
-<li>Updated armor preset (Thanks to @Chikorita-Lover)</li>
+<li>Added &quot;pickup_only&quot; property to &quot;minecraft:sahreables&quot;</li>
+<li>Updated item groups (Thanks to @Chikorita-Lover)</li>
+<li>Updated data to v1.18.20.27</li>
+<li>Support for min/max values within targetVersion matcher</li>
+<li>Improved display of app title</li>
+<li>ProjectChooser input now automatically receives focus</li>
+<li>Allow more characters within project name (#284, #273)</li>
+<li>Extensions can now define a min/max version of bridge. required to run the extension (#241)</li>
+<li>Renamed &quot;Restart Dev Server&quot; to &quot;Restart Watch Mode&quot;</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed reference error within entity schema</li>
-<li>Fixed reference error in feature schema</li>
-<li>Fixed infinite loading upon saving file</li>
-<li>Fixed custom components being compiled twice</li>
-<li>Fixed opening of blank files with bridge.'s tree editor</li>
+<li>Fixed error upon invalid pack path within config</li>
+<li>&quot;specific_enchants&quot; loot table function now also supports a single integer value</li>
+<li>Fixed error upon creating asset preview</li>
+<li>Fixed addition of a file not triggering compilation (#347)</li>
+<li>Properly select filter matches without sidebar category</li>
+<li>Fixed ref error within attachable schema</li>
 </ul>
