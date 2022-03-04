@@ -19,6 +19,8 @@ import {
 	MathUtils,
 } from 'three'
 import { markRaw } from '@vue/composition-api'
+import { readAllNbt } from './readNbt'
+import { simplify } from 'prismarine-nbt'
 
 export class World {
 	protected chunks = new Map<string, Chunk>()
@@ -47,22 +49,37 @@ export class World {
 			transparent: true,
 		})
 
-		const keys = this.levelDb.keys()
+		const playerData = this.levelDb.get(
+			new TextEncoder().encode('~local_player')
+		)
+		if (playerData) console.log(simplify(readAllNbt(playerData).data[0]))
 
-		for (const key of keys) {
-			const decoded = this.decodeChunkKey(key)
-			if (!decoded) continue
-			const { x, z, dimension } = decoded
+		for (let i = -16; i < 16; i++) {
+			for (let j = -16; j < 16; j++) {
+				const x = toUint8Array(i)
+				const z = toUint8Array(j)
+				const pos = new Uint8Array([...x, ...z]).join(',')
 
-			const position = new Uint8Array([
-				...x,
-				...z,
-				...(dimension ? dimension : []),
-			]).join(',')
-
-			if (!this.chunks.has(position))
-				this.chunks.set(position, new Chunk(this, x, z, dimension))
+				if (!this.chunks.has(pos))
+					this.chunks.set(pos, new Chunk(this, x, z))
+			}
 		}
+
+		// const keys = this.levelDb.keys()
+		// for (const key of keys) {
+		// 	const decoded = this.decodeChunkKey(key)
+		// 	if (!decoded) continue
+		// 	const { x, z, dimension } = decoded
+
+		// 	const position = new Uint8Array([
+		// 		...x,
+		// 		...z,
+		// 		...(dimension ? dimension : []),
+		// 	]).join(',')
+
+		// 	if (!this.chunks.has(position))
+		// 		this.chunks.set(position, new Chunk(this, x, z, dimension))
+		// }
 	}
 
 	getSubChunkAt(x: number, y: number, z: number) {
@@ -94,9 +111,9 @@ export class World {
 
 		/**
 		 * Chunk key format
-		 * 1) little endian int32 (chunk x coordinate)
-		 * 2) little endian int32 (chunk z coordinate)
-		 * 3) optional little endian int32 (dimension)
+		 * 1) little endian int32 (chunk x coordinate) (4 bytes)
+		 * 2) little endian int32 (chunk z coordinate) (4 bytes)
+		 * 3) optional little endian int32 (dimension) (4 bytes)
 		 * 4) key type byte (see EKeyTypeTag)
 		 * 5) one byte for SubChunkPrefix data when type is EKeyTypeTag.SubChunkPrefix
 		 */
@@ -107,7 +124,8 @@ export class World {
 		// Optional dimension is defined if key is long enough
 		const dimension = key.length >= 13 ? key.slice(8, 12) : undefined
 
-		const keyTypeByte = key[key.length - 2]
+		const keyTypeByte =
+			key[key.length > 13 ? key.length - 2 : key.length - 1]
 		const subChunkPrefixByte =
 			keyTypeByte === EKeyTypeTag.SubChunkPrefix &&
 			(key.length === 10 || key.length === 14)
