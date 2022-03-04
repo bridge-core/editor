@@ -81,17 +81,21 @@ export class BlockLibrary {
 			// Normalize identifiers to make sure they include a namespace
 			if (id.indexOf(':') === -1) id = `minecraft:${id}`
 
-			if (!terrainTexture[textures]) this.library.set(id, null)
-			else if (typeof textures === 'string')
-				this.library.set(id, {
-					faces: {
-						all: {
-							texturePath: `RP/${this.chooseTexture(
-								terrainTexture[textures]
-							)}`,
-						},
-					},
-				})
+			if (typeof textures === 'string')
+				this.library.set(
+					id,
+					!terrainTexture[textures]
+						? null
+						: {
+								faces: {
+									all: {
+										texturePath: `RP/${this.chooseTexture(
+											terrainTexture[textures]
+										)}`,
+									},
+								},
+						  }
+				)
 			else if (typeof textures === 'object') {
 				const entry: IBlockLibEntry = { faces: {} }
 
