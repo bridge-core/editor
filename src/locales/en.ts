@@ -302,6 +302,11 @@ export default {
 		tgaMaskToggle: {
 			name: 'Show/Hide Alpha Mask',
 		},
+		recompileChanges: {
+			name: 'Compile Changes',
+			description:
+				'Compile all files that were edited without bridge. This will not compile any changes made in the editor itself after disabling watch mode',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
