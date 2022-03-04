@@ -103,7 +103,7 @@ bridge. v2 ships with the ability to preview files while you edit them. This all
 
 ### Global Find & Replace
 
-This was one of the most requested features for bridge. v1. It proofed to be technically difficult to implement previously because of the cache system that was in place for the old editor. With our new codebase, we were finally able to add a global find & replace system!
+This was one of the most requested features for bridge. v1. It proved to be technically difficult to implement previously because of the cache system that was in place for the old editor. With our new codebase, we were finally able to add a global find & replace system!
 
 ![Bildschirmfoto 2021-07-18 um 11 32 14](https://user-images.githubusercontent.com/33347616/126062374-c8ee8c2b-627d-4b94-bcaa-227099eaace8.png)
 
