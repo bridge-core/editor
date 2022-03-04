@@ -103,7 +103,7 @@ export class BlockSeeker {
 	}
 
 	protected parseCurrentIndex() {
-		if (this.reader.getPosition() >= this.reader.getLength()) {
+		if (this.reader.getPosition() >= this.reader.getLength() - 4) {
 			this.currentKey = null
 			return false
 		}
