@@ -129,7 +129,7 @@ export class CreatePresetWindow extends BaseWindow {
 			)
 
 		const requiresMatcher = new RequiresMatcher(manifest.requires)
-		if (!(await requiresMatcher.isValid())) return
+		const mayUsePreset = await requiresMatcher.isValid()
 
 		let category = <SidebarCategory | undefined>(
 			this.sidebar.rawElements.find(
@@ -207,6 +207,13 @@ export class CreatePresetWindow extends BaseWindow {
 				text: manifest.name,
 				icon: manifest.icon,
 				color: iconColor,
+				isDisabled: !mayUsePreset,
+				disabledText:
+					requiresMatcher.failures.length > 0
+						? app.locales.translate(
+								`windows.createPreset.disabledPreset.${requiresMatcher.failures[0].type}`
+						  )
+						: undefined,
 				resetState,
 			})
 		)

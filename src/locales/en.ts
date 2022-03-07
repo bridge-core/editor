@@ -444,6 +444,9 @@ export default {
 	},
 	// Windows
 	windows: {
+		sidebar: {
+			disabledItem: 'This item is disabled',
+		},
 		changelogWindow: {
 			title: "What's new?",
 		},
@@ -546,6 +549,13 @@ export default {
 				lowercase: 'You may only use lowercase letters',
 				required: 'This field is required',
 				noEmptyFolderNames: 'Folder name may not be empty',
+			},
+			showAllPresets: 'Show all presets',
+			disabledPreset: {
+				experimentalGameplay:
+					'Required experimental gameplay not active',
+				packTypes: 'Required pack missing within project',
+				targetVersion: 'Required target version not specified',
 			},
 		},
 		deleteProject: {
