@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid'
 import { compareVersions } from 'bridge-common-utils'
 import { TPackTypeId } from './PackType'
 import type { JsonDefaults } from './JSONDefaults'
-import { TComponentFileType } from '../Compiler/Worker/Plugins/CustomComponent/generateSchemas'
+import { TComponentFileType } from '../Compiler/Worker/Plugins/CustomComponent/ComponentSchemas'
 
 export class SchemaScript {
 	constructor(

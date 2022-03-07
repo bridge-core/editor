@@ -10,7 +10,7 @@ import { SchemaManager } from '../JSONSchema/Manager'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { Tab } from '../TabSystem/CommonTab'
-import { ComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/generateSchemas'
+import { ComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/ComponentSchemas'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
