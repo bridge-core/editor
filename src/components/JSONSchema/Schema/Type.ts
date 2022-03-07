@@ -5,6 +5,9 @@ export class TypeSchema extends Schema {
 	get values() {
 		return Array.isArray(this.value) ? this.value : [this.value]
 	}
+	get types() {
+		return this.values
+	}
 
 	getSchemasFor() {
 		return []

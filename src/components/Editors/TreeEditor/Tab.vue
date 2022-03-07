@@ -138,6 +138,8 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { TreeValueSelection } from './TreeSelection'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
+import { inferType } from '/@/utils/inferType'
+import { mayCastTo } from './mayCastTo'
 
 export default {
 	name: 'TreeTab',
@@ -260,7 +262,40 @@ export default {
 				return this.onTriggerCooldown()
 			}
 
+			let forcedValueType = undefined
+
 			if (forceValue) this.pressedShift = true
+			else if (typeof suggestion === 'string') {
+				// Logic for infering whether an unknown value should be treated as a key or a value
+				const castedValue = inferType(suggestion)
+				// Make sure we differentiate between a decimal number and an integer
+				const castedType =
+					typeof castedValue === 'number'
+						? suggestion.includes('.')
+							? 'number'
+							: 'integer'
+						: typeof castedValue
+
+				// Load current schemas
+				const schemas = this.treeEditor.getSchemas()
+				// Get valid value types for current schemas
+				const types = schemas.map((schema) => schema.types).flat()
+
+				if (
+					// Is the current type a valid type...
+					types.includes(castedType) ||
+					// ...or can we cast it to a valid type?
+					mayCastTo[castedType].some((type) => {
+						if (types.includes(type)) {
+							forcedValueType = type
+							return true
+						}
+					})
+				) {
+					// Force add the input as a value
+					this.pressedShift = true
+				}
+			}
 			const {
 				type = this.pressedShift ? 'value' : 'object',
 				value = suggestion,
@@ -272,7 +307,7 @@ export default {
 			} else if (type === 'object' || type === 'array') {
 				this.treeEditor.addKey(value, type)
 			} else if (type === 'value' || type === 'valueArray') {
-				this.treeEditor.addValue(value, type)
+				this.treeEditor.addValue(value, type, forcedValueType)
 			} else {
 				console.error(`Unknown suggestion type: "${type}"`)
 			}
