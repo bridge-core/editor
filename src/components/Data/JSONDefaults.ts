@@ -10,6 +10,7 @@ import { SchemaManager } from '../JSONSchema/Manager'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { Tab } from '../TabSystem/CommonTab'
+import { ComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/generateSchemas'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
@@ -18,6 +19,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 	protected loadedSchemas = false
 	protected localSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 	protected disposables: IDisposable[] = []
+	public readonly componentSchemas = new ComponentSchemas()
 
 	constructor(protected project: Project) {
 		super()
@@ -30,6 +32,8 @@ export class JsonDefaults extends EventDispatcher<void> {
 	async activate() {
 		console.time('[SETUP] JSONDefaults')
 		await this.project.app.project.packIndexer.fired
+
+		await this.componentSchemas.activate()
 
 		this.disposables = <IDisposable[]>[
 			// Updating currentContext/ references
@@ -55,6 +59,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 
 	deactivate() {
 		this.disposables.forEach((disposable) => disposable.dispose())
+		this.componentSchemas.dispose()
 		this.disposables = []
 	}
 
@@ -246,7 +251,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 	addSchemaEntries() {}
 
 	async runSchemaScripts(app: App, filePath?: string) {
-		const schemaScript = new SchemaScript(app, filePath)
+		const schemaScript = new SchemaScript(this, app, filePath)
 		await schemaScript.runSchemaScripts(this.localSchemas)
 	}
 }
