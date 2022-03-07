@@ -31,6 +31,7 @@ export interface IPresetManifest {
 	createFiles?: (string | TCreateFile)[]
 	expandFiles?: TExpandFile[]
 	requires: IRequirements
+	showIfDisabled?: boolean
 }
 export interface IPresetFieldOpts {
 	// All types
@@ -130,6 +131,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 		const requiresMatcher = new RequiresMatcher(manifest.requires)
 		const mayUsePreset = await requiresMatcher.isValid()
+		if (!mayUsePreset && manifest.showIfDisabled === false) return
 
 		let category = <SidebarCategory | undefined>(
 			this.sidebar.rawElements.find(
