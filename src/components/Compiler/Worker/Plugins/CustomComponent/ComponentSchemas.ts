@@ -80,16 +80,12 @@ export class ComponentSchemas {
 		this.disposable = undefined
 	}
 
-	protected async generateComponentSchemas(
-		fileType: TComponentFileType,
-		compatModeExpected = false
-	) {
+	protected async generateComponentSchemas(fileType: TComponentFileType) {
 		const app = await App.getApp()
 		const project = app.project
 		await (await project.compilerService.completedStartUp).fired
 
 		const v1CompatMode = project.config.get().bridge?.v1CompatMode ?? false
-		if (!v1CompatMode && compatModeExpected) return
 
 		const fromFilePath = v1CompatMode
 			? project.config.resolvePackPath('behaviorPack', 'components')
