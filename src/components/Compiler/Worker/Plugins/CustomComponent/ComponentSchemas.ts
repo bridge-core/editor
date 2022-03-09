@@ -12,7 +12,8 @@ export class ComponentSchemas {
 		item: {},
 		entity: {},
 	}
-	protected disposable?: IDisposable
+	protected schemaLookup = new Map<string, [TComponentFileType, string]>()
+	protected disposables?: IDisposable[]
 
 	constructor() {}
 
@@ -21,52 +22,62 @@ export class ComponentSchemas {
 	}
 
 	async activate() {
-		this.disposable = App.eventSystem.on(
-			'fileSave',
-			async ([filePath, file]: [string, File]) => {
-				const app = await App.getApp()
-				const project = app.project
-				const componentPath = project.config.resolvePackPath(
-					'behaviorPack',
-					'components'
-				)
-
-				const v1CompatMode =
-					project.config.get().bridge?.v1CompatMode ?? false
-
-				if (filePath.startsWith(componentPath)) {
-					const fileType = filePath
-						.replace(componentPath + '/', '')
-						.split('/')[0] as TComponentFileType
-					const isSupportedFileType = supportsCustomComponents.includes(
-						fileType
+		this.disposables = [
+			App.eventSystem.on(
+				'fileSave',
+				async ([filePath, file]: [string, File]) => {
+					const app = await App.getApp()
+					const project = app.project
+					const componentPath = project.config.resolvePackPath(
+						'behaviorPack',
+						'components'
 					)
 
-					if (!isSupportedFileType && v1CompatMode) {
-						// This is not a supported file type but v1CompatMode is enabled,
-						// meaning that we emulate v1's behavior where components could be placed anywhere
-						await Promise.all(
-							supportsCustomComponents.map((fileType) =>
-								this.evalComponentSchema(
-									fileType,
-									filePath,
-									file,
-									true
+					const v1CompatMode =
+						project.config.get().bridge?.v1CompatMode ?? false
+
+					if (filePath.startsWith(componentPath)) {
+						const fileType = filePath
+							.replace(componentPath + '/', '')
+							.split('/')[0] as TComponentFileType
+						const isSupportedFileType = supportsCustomComponents.includes(
+							fileType
+						)
+
+						if (!isSupportedFileType && v1CompatMode) {
+							// This is not a supported file type but v1CompatMode is enabled,
+							// meaning that we emulate v1's behavior where components could be placed anywhere
+							await Promise.all(
+								supportsCustomComponents.map((fileType) =>
+									this.evalComponentSchema(
+										fileType,
+										filePath,
+										file,
+										true
+									)
 								)
 							)
-						)
-					} else if (isSupportedFileType) {
-						// No v1CompatMode but a valid file type which supports custom components to work with
-						await this.evalComponentSchema(
-							fileType,
-							filePath,
-							file,
-							v1CompatMode
-						)
+						} else if (isSupportedFileType) {
+							// No v1CompatMode but a valid file type which supports custom components to work with
+							await this.evalComponentSchema(
+								fileType,
+								filePath,
+								file,
+								v1CompatMode
+							)
+						}
 					}
 				}
-			}
-		)
+			),
+			App.eventSystem.on('fileUnlinked', (filePath: string) => {
+				const [fileType, componentName] =
+					this.schemaLookup.get(filePath) ?? []
+				if (!fileType || !componentName) return
+
+				this.schemas[fileType][componentName] = undefined
+				this.schemaLookup.delete(filePath)
+			}),
+		]
 
 		await Promise.all(
 			supportsCustomComponents.map((fileType) =>
@@ -76,8 +87,8 @@ export class ComponentSchemas {
 	}
 
 	dispose() {
-		this.disposable?.dispose()
-		this.disposable = undefined
+		this.disposables?.forEach((disposable) => disposable.dispose())
+		this.disposables = undefined
 	}
 
 	protected async generateComponentSchemas(fileType: TComponentFileType) {
@@ -144,7 +155,9 @@ export class ComponentSchemas {
 
 		const loadedCorrectly = await component.load('client')
 
-		if (loadedCorrectly && component.name)
+		if (loadedCorrectly && component.name) {
 			this.schemas[fileType][component.name] = component.getSchema()
+			this.schemaLookup.set(filePath, [fileType, component.name])
+		}
 	}
 }
