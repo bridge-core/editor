@@ -56,6 +56,7 @@ export class App {
 		'fileAdded',
 		'fileChange',
 		'fileSave',
+		'fileUnlinked',
 		'presetsChanged',
 	])
 	public static readonly ready = new Signal<App>()

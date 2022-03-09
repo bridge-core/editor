@@ -1,10 +1,10 @@
 import { EventSystem } from '/@/components/Common/Event/EventSystem'
 
-export class FileChangeRegistry extends EventSystem<File> {
+export class FileChangeRegistry<T = File> extends EventSystem<T> {
 	constructor() {
 		super([], true)
 	}
-	dispatch(name: string, fileContent: File) {
+	dispatch(name: string, fileContent: T) {
 		// We always want to dispatch the event for "any" file changed
 		this.any.dispatch([name, fileContent])
 
@@ -13,7 +13,7 @@ export class FileChangeRegistry extends EventSystem<File> {
 			super.dispatch(name, fileContent)
 		}
 	}
-	on(name: string, listener: (data: File) => void) {
+	on(name: string, listener: (data: T) => void) {
 		if (!this.hasEvent(name)) this.create(name)
 
 		return super.on(name, listener)
