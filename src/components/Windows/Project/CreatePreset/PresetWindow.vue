@@ -21,6 +21,11 @@
 				autofocus
 				outlined
 				dense
+				hide-details
+			/>
+			<v-switch
+				:label="t('windows.createPreset.showAllPresets')"
+				v-model="sidebar.showDisabled"
 			/>
 		</template>
 		<template #default>

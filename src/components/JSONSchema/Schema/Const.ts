@@ -1,6 +1,7 @@
 import { Schema } from './Schema'
 
 export class ConstSchema extends Schema {
+	public readonly types = []
 	getSchemasFor() {
 		return []
 	}

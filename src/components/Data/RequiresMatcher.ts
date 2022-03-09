@@ -9,9 +9,14 @@ export interface IRequirements {
 	packTypes?: TPackTypeId[]
 }
 
+export interface IFailure {
+	type: 'targetVersion' | 'experimentalGameplay' | 'packTypes'
+}
+
 export class RequiresMatcher {
 	protected experimentalGameplay: Record<string, boolean> = {}
 	protected projectTargetVersion: string = ''
+	public failures: IFailure[] = []
 
 	constructor(protected requires?: IRequirements) {}
 
@@ -55,6 +60,12 @@ export class RequiresMatcher {
 					  ]
 					: this.experimentalGameplay[experimentalFeature]
 			)
+
+		if (!matchesPackTypes) this.failures.push({ type: 'packTypes' })
+		if (!matchesTargetVersion) this.failures.push({ type: 'targetVersion' })
+		if (!matchesExperimentalGameplay)
+			this.failures.push({ type: 'experimentalGameplay' })
+
 		return (
 			matchesPackTypes &&
 			matchesExperimentalGameplay &&

@@ -1,6 +1,8 @@
 import { Schema } from './Schema'
 
 export class EnumSchema extends Schema {
+	public readonly types = []
+
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
 

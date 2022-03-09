@@ -19,6 +19,8 @@
 					:color="element.color"
 					:text="element.text"
 					:isSelected="selected === element.id"
+					:isDisabled="element.isDisabled"
+					:disabledText="element.disabledText"
 					:compact="isMobile"
 					@click="onSidebarChanged(element.id)"
 				/>
@@ -26,7 +28,7 @@
 					v-else
 					:key="`${element.text}.${i}.${element.isOpen}`"
 					:isOpen="element.isOpen"
-					:items="element.items"
+					:items="element.getItems()"
 					:text="element.text"
 					:selected="selected"
 					:compact="isMobile"
