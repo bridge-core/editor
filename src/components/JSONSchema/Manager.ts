@@ -73,8 +73,8 @@ export class SchemaManager {
 				let ifSchemas = <IfSchema[]>schemas
 					.reverse()
 					.map((schema) => {
-						if (schema.type === 'ifSchema') return schema
-						else if (schema.type === 'refSchema')
+						if (schema.schemaType === 'ifSchema') return schema
+						else if (schema.schemaType === 'refSchema')
 							return (<RootSchema>schema).getFreeIfSchema()
 					})
 					.filter((schema) => schema !== undefined)

@@ -4,9 +4,13 @@ import { Schema } from './Schema'
 import { dirname, join } from '/@/utils/path'
 
 export class RefSchema extends Schema {
-	public readonly type = 'refSchema'
+	public readonly schemaType = 'refSchema'
 
 	protected rootSchema: RootSchema
+	get types() {
+		return this.rootSchema.types
+	}
+
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
 

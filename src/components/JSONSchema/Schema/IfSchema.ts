@@ -2,8 +2,9 @@ import { RootSchema } from './Root'
 import { Schema } from './Schema'
 
 export class IfSchema extends Schema {
-	public readonly type = 'ifSchema'
+	public readonly schemaType = 'ifSchema'
 	protected rootSchema?: RootSchema
+	public readonly types = []
 
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)

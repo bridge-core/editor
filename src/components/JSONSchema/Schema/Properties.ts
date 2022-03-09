@@ -4,6 +4,10 @@ import { IDiagnostic, Schema } from './Schema'
 export class PropertiesSchema extends Schema {
 	protected children: Record<string, Schema> = {}
 
+	get types() {
+		return [<const>'object']
+	}
+
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
 

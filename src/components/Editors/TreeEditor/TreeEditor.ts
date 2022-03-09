@@ -23,6 +23,7 @@ import { viewDocumentation } from '/@/components/Documentation/view'
 import { platformRedoBinding } from '/@/utils/constants'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { filterDuplicates } from './CompletionItems/FilterDuplicates'
+import { inferType } from '/@/utils/inferType'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
@@ -93,26 +94,14 @@ export class TreeEditor {
 			this.parent.project.config.get().targetVersion ||
 			(await getLatestFormatVersion())
 
-		const tree = <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
-			this.selections[0]?.getTree()
-		)
+		const tree = this.getSelectedTree()
 		const json = tree?.toJSON()
 
-		let suggestions: ICompletionItem[] = []
-		if (this.selections.length === 0 || tree === this.tree) {
-			suggestions = this.schemaRoot?.getCompletionItems(json) ?? []
-		} else if (tree) {
-			const treePath = tree.path
-			const schemas =
-				this.schemaRoot?.getSchemasFor(this.tree.toJSON(), treePath) ??
-				[]
-
-			if (schemas)
-				suggestions = schemas
-					.filter((schema) => schema !== undefined)
-					.map((schema) => schema.getCompletionItems(json))
-					.flat()
-		}
+		const schemas = this.getSchemas()
+		let suggestions = schemas
+			.filter((schema) => schema !== undefined)
+			.map((schema) => schema.getCompletionItems(json))
+			.flat()
 
 		this.propertySuggestions = filterDuplicates(
 			suggestions
@@ -175,6 +164,26 @@ export class TreeEditor {
 				)
 			)
 		this.updateSuggestions()
+	}
+
+	getSchemas() {
+		const tree = this.getSelectedTree()
+
+		if (this.selections.length === 0 || tree === this.tree) {
+			return this.schemaRoot ? [this.schemaRoot] : []
+		} else if (tree) {
+			return (
+				this.schemaRoot?.getSchemasFor(this.tree.toJSON(), tree.path) ??
+				[]
+			)
+		}
+
+		return []
+	}
+	getSelectedTree() {
+		return <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
+			this.selections[0]?.getTree()
+		)
 	}
 
 	receiveContainer(container: HTMLDivElement) {
@@ -330,13 +339,24 @@ export class TreeEditor {
 		this.history.pushAll(entries)
 	}
 
-	addValue(value: string, type: 'value' | 'valueArray') {
-		let transformedValue: TPrimitiveTree = value
-		if (typeof value === 'boolean' || value === 'true' || value === 'false')
-			transformedValue =
-				typeof value === 'boolean' ? value : value === 'true'
-		else if (!Number.isNaN(Number(value))) transformedValue = Number(value)
-		else if (value === 'null' || value === null) transformedValue = null
+	addValue(
+		value: string,
+		type: 'value' | 'valueArray',
+		forcedValueType?: 'number' | 'string' | 'null' | 'boolean' | 'integer'
+	) {
+		let transformedValue: TPrimitiveTree = inferType(value)
+
+		// Force values for bridge. prediction schema type hints
+		if (forcedValueType) {
+			if (forcedValueType === 'string') transformedValue = value
+			else if (forcedValueType === 'integer')
+				transformedValue = parseInt(value)
+			else if (forcedValueType === 'number')
+				transformedValue = parseFloat(value)
+			else if (forcedValueType === 'boolean')
+				transformedValue = value === 'true'
+			else if (forcedValueType === 'null') transformedValue = null
+		}
 
 		const entries: HistoryEntry[] = []
 

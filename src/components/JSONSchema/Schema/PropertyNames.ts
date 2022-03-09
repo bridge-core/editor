@@ -3,6 +3,7 @@ import { Schema } from './Schema'
 
 export class PropertyNamesSchema extends Schema {
 	protected rootSchema: RootSchema
+	public readonly types = []
 
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)

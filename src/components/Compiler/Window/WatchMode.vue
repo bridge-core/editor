@@ -3,9 +3,18 @@
 		<v-col>
 			<ActionViewer
 				v-ripple
-				style="margin-bottom: 0 !important"
+				style="margin-bottom: 0 !important; height: 100%"
 				@click.native="restartWatchModeAction.trigger()"
 				:action="restartWatchModeAction"
+				:hideTriggerButton="true"
+			/>
+		</v-col>
+		<v-col>
+			<ActionViewer
+				v-ripple
+				style="margin-bottom: 0 !important; height: 100%"
+				@click.native="recompileChangesAction.trigger()"
+				:action="recompileChangesAction"
 				:hideTriggerButton="true"
 			/>
 		</v-col>
@@ -45,6 +54,7 @@
 <script>
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { restartWatchModeAction } from '../Actions/RestartWatchMode'
+import { recompileChangesAction } from '../Actions/RecompileChanges'
 import SettingSheet from './WatchMode/SettingSheet.vue'
 import { TranslationMixin } from '../../Mixins/TranslationMixin'
 import { settingsState } from '../../Windows/Settings/SettingsState'
@@ -74,6 +84,7 @@ export default {
 		}
 
 		return {
+			recompileChangesAction,
 			restartWatchModeAction,
 			settingsState,
 		}

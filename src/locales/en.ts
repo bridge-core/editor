@@ -305,6 +305,11 @@ export default {
 		tgaMaskToggle: {
 			name: 'Show/Hide Alpha Mask',
 		},
+		recompileChanges: {
+			name: 'Compile Changes',
+			description:
+				'Compile all files that were edited without bridge. This will not compile any changes made in the editor itself after disabling watch mode',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -445,6 +450,9 @@ export default {
 		allWorlds: {
 			title: 'Worlds',
 		},
+		sidebar: {
+			disabledItem: 'This item is disabled',
+		},
 		changelogWindow: {
 			title: "What's new?",
 		},
@@ -547,6 +555,13 @@ export default {
 				lowercase: 'You may only use lowercase letters',
 				required: 'This field is required',
 				noEmptyFolderNames: 'Folder name may not be empty',
+			},
+			showAllPresets: 'Show all presets',
+			disabledPreset: {
+				experimentalGameplay:
+					'Required experimental gameplay not active',
+				packTypes: 'Required pack missing within project',
+				targetVersion: 'Required target version not specified',
 			},
 		},
 		deleteProject: {
@@ -1111,7 +1126,7 @@ export default {
 				unexpectedCloseSquareBracket:
 					'Unexpected close sqaure bracket!',
 			},
-			commands: {
+			command: {
 				empty: 'Empty commands are not supported!',
 				invalid: {
 					part1: "Command: '",

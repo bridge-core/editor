@@ -156,6 +156,9 @@ export class FunctionValidatorTab extends Tab {
 							translated = this.translateError(data[0][i].value)
 						} else {
 							for (let j = 0; j < data[0][i].value.length; j++) {
+								console.log(data[0][i].value[j])
+								console.log(data[0][i].value[j].startsWith('$'))
+
 								if (data[0][i].value[j].startsWith('$')) {
 									translated += data[0][i].value[j].substring(
 										1
@@ -167,6 +170,8 @@ export class FunctionValidatorTab extends Tab {
 								}
 							}
 						}
+
+						console.log(translated)
 
 						var ComponentClass = Vue.extend(Error)
 						var instance = new ComponentClass({

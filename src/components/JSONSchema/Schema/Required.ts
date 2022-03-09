@@ -1,6 +1,8 @@
 import { Schema } from './Schema'
 
 export class RequiredSchema extends Schema {
+	public readonly types = []
+
 	getSchemasFor() {
 		return []
 	}

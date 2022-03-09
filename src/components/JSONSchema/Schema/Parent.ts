@@ -3,6 +3,10 @@ import { Schema } from './Schema'
 export abstract class ParentSchema extends Schema {
 	protected abstract children: Schema[]
 
+	get types() {
+		return this.children.map((child) => child.types).flat()
+	}
+
 	getCompletionItems(obj: unknown) {
 		return this.children
 			.map((child) => child.getCompletionItems(obj))
