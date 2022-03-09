@@ -378,6 +378,12 @@ export abstract class Project {
 		if (currentPath)
 			await this.jsonDefaults.updateDynamicSchemas(currentPath)
 	}
+	async renameFile(fromPath: string, toPath: string) {
+		await this.app.fileSystem.move(fromPath, toPath)
+
+		await this.unlinkFile(fromPath)
+		await this.updateFile(toPath)
+	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()
 
