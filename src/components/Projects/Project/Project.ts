@@ -365,7 +365,7 @@ export abstract class Project {
 	async unlinkFile(filePath: string) {
 		await this.packIndexer.unlink(filePath)
 		await this.compilerService.unlink(filePath)
-		await this.fileSystem.unlink(filePath)
+		await this.app.fileSystem.unlink(filePath)
 		await this.recentFiles.removeFile(filePath)
 
 		this.fileUnlinked.dispatch(filePath)
