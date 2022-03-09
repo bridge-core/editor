@@ -364,7 +364,10 @@ export abstract class Project {
 	}
 	async unlinkFile(filePath: string) {
 		await this.packIndexer.unlink(filePath)
-		await this.compilerService.unlink(filePath)
+
+		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
+
+		if (watchModeActive) await this.compilerService.unlink(filePath)
 		await this.app.fileSystem.unlink(filePath)
 		await this.recentFiles.removeFile(filePath)
 
