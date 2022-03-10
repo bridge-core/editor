@@ -154,7 +154,7 @@ export class World {
 	// TODO: Move all following methods to its own class dedicated to rendering a world
 	protected loadedChunks = new Set<string>()
 	protected builtChunkMeshes = new Map<string, Mesh>()
-	protected renderDistance = 8
+	protected renderDistance = 16
 	protected material!: MeshLambertMaterial
 	protected pendingChunkRequests = new Set<string>()
 	public readonly chunkUpdate = new EventDispatcher<void>()
@@ -165,13 +165,13 @@ export class World {
 
 		const currPosition = new Vector3(currX, currY, currZ)
 
-		Array.from(this.loadedChunks).forEach((currId) => {
+		;[...this.loadedChunks.values()].forEach((currId) => {
 			const [x, y, z] = currId.split(',').map((n) => Number(n))
 
 			// Only remove chunks which are outside of the render distance
 			if (
 				currPosition.distanceTo(new Vector3(x * 16, y * 16, z * 16)) >
-				max * 16
+				max
 			) {
 				this.removeLoadedMesh(currId)
 				this.chunkUpdate.dispatch()
@@ -190,8 +190,7 @@ export class World {
 
 					if (
 						!this.loadedChunks.has(chunkId) &&
-						currPosition.distanceTo(new Vector3(oX, oY, oZ)) <=
-							max * 16
+						currPosition.distanceTo(new Vector3(oX, oY, oZ)) <= max
 					) {
 						//Building chunks is expensive, skip it whenever possible
 						let mesh = this.builtChunkMeshes.get(chunkId)
@@ -239,7 +238,9 @@ export class World {
 		const chunkId = this.getChunkId(chunkX, chunkY, chunkZ)
 
 		let mesh = this.builtChunkMeshes.get(chunkId)
-		let geometry = mesh?.geometry ?? new BufferGeometry()
+		if (mesh) return mesh
+
+		const geometry = new BufferGeometry()
 
 		const subChunkData = await this.getSubChunkDataAt(x, y, z)
 		if (subChunkData === undefined) {
