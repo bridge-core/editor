@@ -29,7 +29,7 @@ export class WorldTab extends ThreePreviewTab {
 			)
 		)
 
-		await this.world.loadWorld()
+		const { playerPosition, playerRotation } = await this.world.loadWorld()
 		setTimeout(() => this.requestRendering(), 300)
 
 		// this.controls?.addEventListener('change', () => {
@@ -37,6 +37,9 @@ export class WorldTab extends ThreePreviewTab {
 		// })
 
 		this.addHelpers()
+
+		this.camera.position.set(...playerPosition)
+		if (playerRotation) this.camera.rotation.set(...playerRotation, 0)
 	}
 
 	render() {

@@ -39,6 +39,9 @@ export class World {
 	}
 
 	async loadWorld() {
+		let playerPosition = <const>[0, 0, 0]
+		let playerRotation: [number, number] | null = null
+
 		if (!this._worker)
 			this._worker = await new WorldWorker(this.baseDirectory, {
 				config: `projects/${this.projectHandle.name}/config.json`,
@@ -60,15 +63,26 @@ export class World {
 		texture.minFilter = NearestFilter
 		this.material = new MeshLambertMaterial({
 			map: texture,
-			side: DoubleSide,
+			side: FrontSide,
 			alphaTest: 0.1,
-			transparent: true,
+			transparent: false,
 		})
 
-		const playerData = await this.worker.getFromLevelDb(
+		const rawPlayerData = await this.worker.getFromLevelDb(
 			new TextEncoder().encode('~local_player')
 		)
-		if (playerData) console.log(simplify(readAllNbt(playerData).data[0]))
+		if (rawPlayerData) {
+			const playerData = simplify(readAllNbt(rawPlayerData).data[0])
+			console.log(playerData)
+
+			playerPosition = playerData.Pos
+			playerRotation = playerData.Rotation
+		}
+
+		return {
+			playerPosition,
+			playerRotation,
+		}
 	}
 
 	getSubChunkDataAt(x: number, y: number, z: number) {
