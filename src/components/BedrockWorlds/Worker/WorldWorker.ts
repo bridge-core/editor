@@ -60,12 +60,10 @@ export class WorldWorker {
 		)
 
 		await Promise.all([this.blockLibrary.setup(), this.levelDb.open()])
-
-		console.log(this._blockLibrary)
 	}
 
-	getTileMap() {
-		return this.blockLibrary.getTileMapAsImageBitmap()
+	getRawTileMap() {
+		return this.blockLibrary.getRawTileMap()
 	}
 
 	getFromLevelDb(key: Uint8Array) {

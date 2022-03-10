@@ -147,7 +147,6 @@ export abstract class ThreePreviewTab extends PreviewTab {
 	}
 
 	addHelpers() {
-		this.scene.add(new AmbientLight(0xffffff))
 		this.scene.add(new AxesHelper(100))
 		this.scene.add(new GridHelper(1))
 	}

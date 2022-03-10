@@ -3,27 +3,31 @@ import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import {
 	BufferAttribute,
 	BufferGeometry,
-	CanvasTexture,
 	FrontSide,
 	Mesh,
 	MeshLambertMaterial,
-	NearestFilter,
 	Scene,
 	Vector3,
-	MathUtils,
-	DataTexture,
-	Texture,
-	DoubleSide,
 } from 'three'
 import { readAllNbt, simplify } from './readNbt'
 import type { WorldWorker as TWorldWorker } from '../Worker/WorldWorker'
 import Worker from '../Worker/WorldWorker?worker'
 import { Remote, wrap } from 'comlink'
-import { FileSystem } from '../../FileSystem/FileSystem'
+import { EventDispatcher } from '../../Common/Event/EventDispatcher'
+import { IDisposable } from '/@/types/disposable'
+import { BlockLibrary } from '../BlockLibrary/BlockLibrary'
 
-const WorldWorker = wrap<typeof TWorldWorker>(new Worker())
+function createWorldWorker() {
+	const worker = new Worker()
+	return {
+		WorldWorker: wrap<typeof TWorldWorker>(worker),
+		dispose: () => worker.terminate(),
+	}
+}
 export class World {
-	protected _worker?: Remote<TWorldWorker>
+	protected _workers?: Remote<TWorldWorker>[]
+	protected workerIndex = 0
+	protected disposables: IDisposable[] = []
 
 	constructor(
 		protected baseDirectory: AnyDirectoryHandle,
@@ -33,40 +37,53 @@ export class World {
 	) {}
 
 	get worker() {
-		if (!this._worker)
-			throw new Error(`World worker is not initialized yet`)
-		return this._worker
+		if (!this._workers || this._workers.length === 0)
+			throw new Error(`World worker pool is not initialized yet`)
+
+		if (this.workerIndex === this._workers.length) this.workerIndex = 0
+		return this._workers[this.workerIndex++]
 	}
 
 	async loadWorld() {
 		let playerPosition = <const>[0, 0, 0]
 		let playerRotation: [number, number] | null = null
 
-		if (!this._worker)
-			this._worker = await new WorldWorker(this.baseDirectory, {
-				config: `projects/${this.projectHandle.name}/config.json`,
-				worldPath: `projects/${this.projectHandle.name}/worlds/${this.worldHandle.name}`,
-			})
+		// const blockLib = new BlockLibrary(this.projectHandle)
+		// await blockLib.setup()
 
-		await this.worker.open()
-
-		const fs = new FileSystem(this.baseDirectory)
-		const image = new Image()
-		image.src = await fs.loadFileHandleAsDataUrl(
-			await fs.getFileHandle(
-				`projects/${this.projectHandle.name}/.bridge/bedrockWorld/uvMap.png`
-			)
-		)
-
-		const texture = new Texture(image) //new CanvasTexture(await this.worker.getTileMap())
-		texture.magFilter = NearestFilter
-		texture.minFilter = NearestFilter
+		// const texture = new CanvasTexture(
+		// 	blockLib.tileMap.transferToImageBitmap()
+		// ) /*new DataTexture(data, width, height, RGBAFormat)*/
+		// texture.magFilter = NearestFilter
+		// texture.minFilter = NearestFilter
 		this.material = new MeshLambertMaterial({
-			map: texture,
+			// map: texture,
+			color: 0x088cdc,
 			side: FrontSide,
 			alphaTest: 0.1,
 			transparent: false,
 		})
+
+		// Initialize workerPool
+		if (!this._workers) {
+			this._workers = []
+			for (let i = 0; i < navigator.hardwareConcurrency - 1; i++) {
+				const { WorldWorker, dispose } = createWorldWorker()
+				this.disposables.push({ dispose })
+
+				const worker = await new WorldWorker(this.baseDirectory, {
+					config: `projects/${this.projectHandle.name}/config.json`,
+					worldPath: `projects/${this.projectHandle.name}/worlds/${this.worldHandle.name}`,
+				})
+				await worker.open()
+
+				this._workers.push(worker)
+			}
+		}
+
+		// const { data, width, height } =
+		// 	(await this.worker.getRawTileMap()) ?? {}
+		// if (!data || !width || !height) throw new Error('No tile map data')
 
 		const rawPlayerData = await this.worker.getFromLevelDb(
 			new TextEncoder().encode('~local_player')
@@ -84,9 +101,12 @@ export class World {
 			playerRotation,
 		}
 	}
+	dispose() {
+		this.disposables.forEach((disposable) => disposable.dispose())
+	}
 
 	getSubChunkDataAt(x: number, y: number, z: number) {
-		if (!this._worker) return
+		if (!this._workers || this._workers.length === 0) return
 
 		// console.log(this.worker.getSubChunkDataAt(x, y, z))
 		return this.worker.getSubChunkDataAt(x, y, z)
@@ -134,22 +154,29 @@ export class World {
 	// TODO: Move all following methods to its own class dedicated to rendering a world
 	protected loadedChunks = new Set<string>()
 	protected builtChunkMeshes = new Map<string, Mesh>()
-	protected renderDistance = 16
+	protected renderDistance = 8
 	protected material!: MeshLambertMaterial
-	protected updateInProgress = false
+	protected pendingChunkRequests = new Set<string>()
+	public readonly chunkUpdate = new EventDispatcher<void>()
 
-	async updateCurrentMeshes(currX: number, currY: number, currZ: number) {
-		if (this.updateInProgress) return
-		this.updateInProgress = true
-
-		Array.from(this.loadedChunks).forEach((currID) => {
-			let mesh = this.builtChunkMeshes.get(currID)
-			if (mesh !== undefined) this.scene.remove(mesh)
-			this.loadedChunks.delete(currID)
-		})
-
+	updateCurrentMeshes(currX: number, currY: number, currZ: number) {
 		const max = (this.renderDistance * 16) / 2
 		const start = -max
+
+		const currPosition = new Vector3(currX, currY, currZ)
+
+		Array.from(this.loadedChunks).forEach((currId) => {
+			const [x, y, z] = currId.split(',').map((n) => Number(n))
+
+			// Only remove chunks which are outside of the render distance
+			if (
+				currPosition.distanceTo(new Vector3(x * 16, y * 16, z * 16)) >
+				max * 16
+			) {
+				this.removeLoadedMesh(currId)
+				this.chunkUpdate.dispatch()
+			}
+		})
 
 		for (let oX = start; oX <= max; oX += 16) {
 			for (let oZ = start; oZ <= max; oZ += 16) {
@@ -163,32 +190,46 @@ export class World {
 
 					if (
 						!this.loadedChunks.has(chunkId) &&
-						new Vector3(oX, oY, oZ).distanceTo(
-							new Vector3(currX, currY, currZ)
-						) <
+						currPosition.distanceTo(new Vector3(oX, oY, oZ)) <=
 							max * 16
 					) {
 						//Building chunks is expensive, skip it whenever possible
 						let mesh = this.builtChunkMeshes.get(chunkId)
-						if (mesh === undefined)
-							mesh = await this.updateChunkGeometry(
+						if (mesh === undefined) {
+							if (this.pendingChunkRequests.has(chunkId)) return
+							this.pendingChunkRequests.add(chunkId)
+
+							this.updateChunkGeometry(
 								currX + oX,
 								currY + oY,
 								currZ + oZ
-							)
+							).then((mesh) => {
+								this.pendingChunkRequests.delete(chunkId)
 
-						if (mesh) {
-							this.scene.add(mesh)
-							this.builtChunkMeshes.set(chunkId, mesh)
-							this.loadedChunks.add(chunkId)
+								if (!mesh) return
+
+								this.addLoadedMesh(chunkId, mesh)
+								this.chunkUpdate.dispatch()
+							})
+						} else {
+							this.addLoadedMesh(chunkId, mesh)
 						}
 					}
 				}
 			}
 		}
+	}
 
-		this.updateInProgress = false
-		console.log(this.scene)
+	protected addLoadedMesh(chunkId: string, mesh: Mesh) {
+		this.scene.add(mesh)
+		this.builtChunkMeshes.set(chunkId, mesh)
+		this.loadedChunks.add(chunkId)
+	}
+	protected removeLoadedMesh(chunkId: string, deleteFromCache = false) {
+		const mesh = this.builtChunkMeshes.get(chunkId)
+		if (mesh) this.scene.remove(mesh)
+		if (deleteFromCache) this.builtChunkMeshes.delete(chunkId)
+		this.loadedChunks.delete(chunkId)
 	}
 
 	async updateChunkGeometry(x: number, y: number, z: number) {

@@ -106,12 +106,7 @@ export default defineConfig({
 		{
 			name: 'prismarine-nbt-fix',
 			enforce: 'pre',
-			resolveId(id) {
-				if (id === 'prismarine-nbt') {
-					return id
-				}
-				return null
-			},
+
 			transform(code, id) {
 				if (id.includes('prismarine-nbt')) {
 					// @ts-ignore

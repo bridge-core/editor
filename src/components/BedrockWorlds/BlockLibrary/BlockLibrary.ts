@@ -28,6 +28,7 @@ export class BlockLibrary {
 	protected dataLoader = new DataLoader()
 	protected _missingTexture?: ImageBitmap
 	protected _tileMap?: OffscreenCanvas
+	protected tileMapContext?: OffscreenCanvasRenderingContext2D
 
 	get missingTexture() {
 		if (!this._missingTexture)
@@ -175,12 +176,16 @@ export class BlockLibrary {
 		)
 
 		this._tileMap = canvas
-
-		return canvas
+		this.tileMapContext = context
 	}
 
-	getTileMapAsImageBitmap() {
-		return this.tileMap.transferToImageBitmap()
+	getRawTileMap() {
+		return this.tileMapContext?.getImageData(
+			0,
+			0,
+			this.tileMap.width,
+			this.tileMap.height
+		)
 	}
 
 	getTileMapSize() {
