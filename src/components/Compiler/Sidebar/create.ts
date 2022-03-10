@@ -21,6 +21,7 @@ export function createCompilerSidebar() {
 
 	const removeListeners = async () => {
 		const app = await App.getApp()
+		await app.project.compilerReady
 		app.project.compilerService.removeConsoleListeners()
 	}
 	const listenForLogChanges = async (resetListeners = false) => {
@@ -28,6 +29,7 @@ export function createCompilerSidebar() {
 
 		if (resetListeners) await removeListeners()
 
+		await app.project.compilerReady
 		app.project.compilerService.onConsoleUpdate(
 			proxy(async () => {
 				let logs = await app.project.compilerService.getCompilerLogs()
