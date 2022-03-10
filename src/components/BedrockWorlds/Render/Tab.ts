@@ -17,31 +17,38 @@ export class WorldTab extends ThreePreviewTab {
 	}
 
 	async onActivate() {
-		await super.onActivate()
 		const project = this.parent.project
+		await super.onActivate()
 
 		this.world = markRaw(
 			new World(
-				await this.worldHandle.getDirectoryHandle('db'),
+				this.parent.app.fileSystem.baseDirectory,
+				this.worldHandle,
 				project.fileSystem.baseDirectory,
 				this.scene
 			)
 		)
 
 		await this.world.loadWorld()
-		this.requestRendering()
+		setTimeout(() => this.requestRendering(), 300)
 
-		console.log(this.world.blockLibrary, this)
+		// this.controls?.addEventListener('change', () => {
+		// 	console.log(this.camera.position)
+		// })
+
+		this.addHelpers()
 	}
 
-	async render() {
-		super.render()
-
-		await this.world?.updateCurrentMeshes(
+	render() {
+		console.log('RENDER')
+		this.world?.updateCurrentMeshes(
 			this.camera.position.x,
 			this.camera.position.y,
 			this.camera.position.z
 		)
+		// .then(() => super.render())
+
+		super.render()
 	}
 
 	get name() {

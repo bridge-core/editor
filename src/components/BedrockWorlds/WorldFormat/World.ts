@@ -1,11 +1,5 @@
-import { LevelDB } from '../LevelDB/LevelDB'
 import { EKeyTypeTag } from './EKeyTypeTags'
-import { Chunk } from './Chunk'
-import { toUint8Array } from '../LevelDB/Uint8ArrayUtils/ToUint8Array'
-import { Block } from './Block'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
-import { BlockLibrary } from '../BlockLibrary/BlockLibrary'
-import { RenderSubChunk } from '../Render/World/SubChunk'
 import {
 	BufferAttribute,
 	BufferGeometry,
@@ -17,93 +11,75 @@ import {
 	Scene,
 	Vector3,
 	MathUtils,
+	DataTexture,
+	Texture,
+	DoubleSide,
 } from 'three'
-import { markRaw } from '@vue/composition-api'
-import { readAllNbt } from './readNbt'
-import { simplify } from 'prismarine-nbt'
+import { readAllNbt, simplify } from './readNbt'
+import type { WorldWorker as TWorldWorker } from '../Worker/WorldWorker'
+import Worker from '../Worker/WorldWorker?worker'
+import { Remote, wrap } from 'comlink'
+import { FileSystem } from '../../FileSystem/FileSystem'
 
+const WorldWorker = wrap<typeof TWorldWorker>(new Worker())
 export class World {
-	protected chunks = new Map<string, Chunk>()
-	public readonly blockLibrary: BlockLibrary
-	public readonly levelDb: LevelDB
+	protected _worker?: Remote<TWorldWorker>
 
 	constructor(
+		protected baseDirectory: AnyDirectoryHandle,
 		protected worldHandle: AnyDirectoryHandle,
 		protected projectHandle: AnyDirectoryHandle,
 		protected scene: Scene
-	) {
-		this.levelDb = markRaw(new LevelDB(this.worldHandle))
-		this.blockLibrary = markRaw(new BlockLibrary(this.projectHandle))
+	) {}
+
+	get worker() {
+		if (!this._worker)
+			throw new Error(`World worker is not initialized yet`)
+		return this._worker
 	}
 
 	async loadWorld() {
-		await Promise.all([this.blockLibrary.setup(), this.levelDb.open()])
+		if (!this._worker)
+			this._worker = await new WorldWorker(this.baseDirectory, {
+				config: `projects/${this.projectHandle.name}/config.json`,
+				worldPath: `projects/${this.projectHandle.name}/worlds/${this.worldHandle.name}`,
+			})
 
-		const texture = new CanvasTexture(this.blockLibrary.tileMap)
+		await this.worker.open()
+
+		const fs = new FileSystem(this.baseDirectory)
+		const image = new Image()
+		image.src = await fs.loadFileHandleAsDataUrl(
+			await fs.getFileHandle(
+				`projects/${this.projectHandle.name}/.bridge/bedrockWorld/uvMap.png`
+			)
+		)
+
+		const texture = new Texture(image) //new CanvasTexture(await this.worker.getTileMap())
 		texture.magFilter = NearestFilter
 		texture.minFilter = NearestFilter
 		this.material = new MeshLambertMaterial({
 			map: texture,
-			side: FrontSide,
+			side: DoubleSide,
 			alphaTest: 0.1,
 			transparent: true,
 		})
 
-		const playerData = this.levelDb.get(
+		const playerData = await this.worker.getFromLevelDb(
 			new TextEncoder().encode('~local_player')
 		)
 		if (playerData) console.log(simplify(readAllNbt(playerData).data[0]))
-
-		for (let i = -16; i < 16; i++) {
-			for (let j = -16; j < 16; j++) {
-				const x = toUint8Array(i)
-				const z = toUint8Array(j)
-				const pos = new Uint8Array([...x, ...z]).join(',')
-
-				if (!this.chunks.has(pos))
-					this.chunks.set(pos, new Chunk(this, x, z))
-			}
-		}
-
-		// const keys = this.levelDb.keys()
-		// for (const key of keys) {
-		// 	const decoded = this.decodeChunkKey(key)
-		// 	if (!decoded) continue
-		// 	const { x, z, dimension } = decoded
-
-		// 	const position = new Uint8Array([
-		// 		...x,
-		// 		...z,
-		// 		...(dimension ? dimension : []),
-		// 	]).join(',')
-
-		// 	if (!this.chunks.has(position))
-		// 		this.chunks.set(position, new Chunk(this, x, z, dimension))
-		// }
 	}
 
-	getSubChunkAt(x: number, y: number, z: number) {
-		const chunkX = toUint8Array(Math.floor(x / 16))
-		const chunkZ = toUint8Array(Math.floor(z / 16))
+	getSubChunkDataAt(x: number, y: number, z: number) {
+		if (!this._worker) return
 
-		const chunk = this.chunks.get(
-			new Uint8Array([...chunkX, ...chunkZ]).join(',')
-		)
-
-		return chunk?.getSubChunk(Math.floor(y / 16))
+		// console.log(this.worker.getSubChunkDataAt(x, y, z))
+		return this.worker.getSubChunkDataAt(x, y, z)
 	}
 
 	getBlockAt(layer: number, x: number, y: number, z: number) {
-		// console.log(layer, x, y, z, this.getSubChunkAt(x, y, z))
-		return (
-			this.getSubChunkAt(x, y, z)
-				?.getLayer(layer)
-				.getBlockAt(
-					Math.abs(x < 0 ? (16 + (x % 16)) % 16 : x % 16),
-					Math.abs(y < 0 ? (16 + (y % 16)) % 16 : y % 16),
-					Math.abs(z < 0 ? (16 + (z % 16)) % 16 : z % 16)
-				) ?? new Block('minecraft:air')
-		)
+		return this.worker.getBlockAt(layer, x, y, z)
 	}
 
 	decodeChunkKey(key: Uint8Array) {
@@ -143,12 +119,15 @@ export class World {
 
 	// TODO: Move all following methods to its own class dedicated to rendering a world
 	protected loadedChunks = new Set<string>()
-	protected builtChunks = new Map<string, RenderSubChunk>()
 	protected builtChunkMeshes = new Map<string, Mesh>()
 	protected renderDistance = 16
 	protected material!: MeshLambertMaterial
+	protected updateInProgress = false
 
 	async updateCurrentMeshes(currX: number, currY: number, currZ: number) {
+		if (this.updateInProgress) return
+		this.updateInProgress = true
+
 		Array.from(this.loadedChunks).forEach((currID) => {
 			let mesh = this.builtChunkMeshes.get(currID)
 			if (mesh !== undefined) this.scene.remove(mesh)
@@ -158,55 +137,58 @@ export class World {
 		const max = (this.renderDistance * 16) / 2
 		const start = -max
 
-		for (let oX = start; oX <= max; oX += 16)
-			for (let oZ = start; oZ <= max; oZ += 16)
+		for (let oX = start; oX <= max; oX += 16) {
+			for (let oZ = start; oZ <= max; oZ += 16) {
 				for (let oY = start; oY <= max; oY += 16) {
-					const chunkID = this.getChunkId(
+					const chunkId = this.getChunkId(
 						Math.floor((currX + oX) / 16),
 						Math.floor((currY + oY) / 16),
 						Math.floor((currZ + oZ) / 16)
 					)
+					// console.log(chunkID)
 
 					if (
-						!this.loadedChunks.has(chunkID) &&
+						!this.loadedChunks.has(chunkId) &&
 						new Vector3(oX, oY, oZ).distanceTo(
 							new Vector3(currX, currY, currZ)
 						) <
 							max * 16
 					) {
-						let mesh = this.builtChunkMeshes.get(chunkID)
-						if (mesh === undefined) {
-							this.updateChunkGeometry(
+						//Building chunks is expensive, skip it whenever possible
+						let mesh = this.builtChunkMeshes.get(chunkId)
+						if (mesh === undefined)
+							mesh = await this.updateChunkGeometry(
 								currX + oX,
 								currY + oY,
 								currZ + oZ
 							)
-						} else {
+
+						if (mesh) {
 							this.scene.add(mesh)
-							this.loadedChunks.add(chunkID)
+							this.builtChunkMeshes.set(chunkId, mesh)
+							this.loadedChunks.add(chunkId)
 						}
 					}
 				}
+			}
+		}
+
+		this.updateInProgress = false
+		console.log(this.scene)
 	}
 
-	updateChunkGeometry(x: number, y: number, z: number) {
+	async updateChunkGeometry(x: number, y: number, z: number) {
 		const chunkX = Math.floor(x / 16)
 		const chunkY = Math.floor(y / 16)
 		const chunkZ = Math.floor(z / 16)
 		const chunkId = this.getChunkId(chunkX, chunkY, chunkZ)
 
-		//Building chunks is expensive, skip it whenever possible
-		if (this.builtChunks.has(chunkId)) return
-
 		let mesh = this.builtChunkMeshes.get(chunkId)
 		let geometry = mesh?.geometry ?? new BufferGeometry()
 
-		const subChunk = this.getSubChunkAt(x, y, z)
-		if (!subChunk) return
-
-		const renderSubChunk = new RenderSubChunk(this, subChunk)
-		const data = renderSubChunk.getGeometryData()
-		if (data === undefined) {
+		const subChunkData = await this.getSubChunkDataAt(x, y, z)
+		if (subChunkData === undefined) {
+			// TODO: Empty chunk data should probably also get cached instead of just removing those subchunks from all caches
 			if (mesh) {
 				this.scene.remove(mesh)
 				this.loadedChunks.delete(chunkId)
@@ -215,7 +197,7 @@ export class World {
 			return
 		}
 
-		const { positions, normals, uvs, indices } = data
+		const { positions, normals, uvs, indices } = subChunkData
 
 		const positionNumComponents = 3
 		geometry.setAttribute(
@@ -241,11 +223,10 @@ export class World {
 		if (mesh === undefined) {
 			mesh = new Mesh(geometry, this.material)
 			mesh.name = chunkId
-			this.builtChunkMeshes.set(chunkId, mesh)
-			this.loadedChunks.add(chunkId)
 			mesh.position.set(chunkX * 16, chunkY * 16, chunkZ * 16)
-			this.scene.add(mesh)
 		}
+
+		return mesh
 	}
 
 	getChunkId(x: number, y: number, z: number) {

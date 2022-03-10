@@ -3,7 +3,9 @@ import { IDisposable } from '/@/types/disposable'
 import { PreviewTab } from '/@/components/TabSystem/PreviewTab'
 import {
 	AmbientLight,
+	AxesHelper,
 	Color,
+	GridHelper,
 	PerspectiveCamera,
 	Scene,
 	WebGLRenderer,
@@ -142,5 +144,11 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		await super.toOtherTabSystem(updateParentTabs)
 		await this.setupComplete.fired
 		this.onResize()
+	}
+
+	addHelpers() {
+		this.scene.add(new AmbientLight(0xffffff))
+		this.scene.add(new AxesHelper(100))
+		this.scene.add(new GridHelper(1))
 	}
 }

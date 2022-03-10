@@ -2,7 +2,6 @@ import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { FileSystem } from '../../FileSystem/FileSystem'
 import { DataLoader } from '../../Data/DataLoader'
 import { loadImage } from './loadImage'
-import { toBlob } from '/@/utils/canvasToBlob'
 
 export type TDirection =
 	| 'up'
@@ -28,7 +27,7 @@ export class BlockLibrary {
 	protected fileSystem: FileSystem
 	protected dataLoader = new DataLoader()
 	protected _missingTexture?: ImageBitmap
-	protected _tileMap?: HTMLCanvasElement
+	protected _tileMap?: OffscreenCanvas
 
 	get missingTexture() {
 		if (!this._missingTexture)
@@ -113,7 +112,7 @@ export class BlockLibrary {
 			}
 		}
 
-		return await this.createTileMap()
+		await this.createTileMap()
 	}
 
 	protected chooseTexture(textureData: {
@@ -139,10 +138,8 @@ export class BlockLibrary {
 	}
 
 	protected async createTileMap() {
-		const canvas = document.createElement('canvas')
 		const rowLength = Math.ceil(Math.sqrt(this.library.size * 8))
-		canvas.width = rowLength * 16
-		canvas.height = canvas.width
+		const canvas = new OffscreenCanvas(rowLength * 16, rowLength * 16)
 		const context = canvas.getContext('2d')
 		if (!context) throw new Error(`Failed to initialize canvas 2d context`)
 
@@ -174,12 +171,16 @@ export class BlockLibrary {
 
 		await this.fileSystem.writeFile(
 			'.bridge/bedrockWorld/uvMap.png',
-			await toBlob(canvas)
+			await canvas.convertToBlob()
 		)
 
 		this._tileMap = canvas
 
 		return canvas
+	}
+
+	getTileMapAsImageBitmap() {
+		return this.tileMap.transferToImageBitmap()
 	}
 
 	getTileMapSize() {

@@ -16,7 +16,8 @@
 			"@types/wicg-file-system-access",
 			"node",
 			"vite/client",
-			"vite-plugin-pwa/client"
+			"vite-plugin-pwa/client",
+			"@types/offscreencanvas"
 		],
 		"paths": {
 			"/@/*": ["src/*"]

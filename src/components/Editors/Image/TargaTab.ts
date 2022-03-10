@@ -64,11 +64,11 @@ export class TargaTab extends ImageTab {
 		/// Get ImageData from TGALoader
 		const { width, height, data } = this.tga.getImageData()
 
-		// @ts-ignore OffscreenCanvas API types not available in TypeScript
 		const offscreen = new OffscreenCanvas(width, height)
 
 		/// Create context to contain new image
 		const ctx = offscreen.getContext('2d')
+		if (!ctx) throw new Error('Failed to initialize canvas 2d context')
 		const imageData = ctx.createImageData(width, height)
 
 		/// Rewrite ImageData

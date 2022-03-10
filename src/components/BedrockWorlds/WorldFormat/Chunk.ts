@@ -1,22 +1,22 @@
 import { Uint8ArrayReader } from '../LevelDB/Uint8ArrayUtils/Reader'
 import { EDimension } from './EDimension'
 import { EKeyTypeTag } from './EKeyTypeTags'
-import { simplify } from 'prismarine-nbt'
-import { readAllNbt, readNbt } from './readNbt'
+import { readAllNbt, simplify, readNbt } from './readNbt'
 import { unpackStruct } from '../LevelDB/Uint8ArrayUtils/Unpack'
 import { Block, IBlock } from './Block'
-import type { World } from './World'
+import { VoxelFaces } from '../Render/VoxelFaces'
+import { TDirection } from '../BlockLibrary/BlockLibrary'
+import { WorldWorker } from '../Worker/WorldWorker'
 
 export class Chunk {
-	protected subChunks: SubChunk[] = []
+	protected subChunks = new Map<number, SubChunk>()
 
 	constructor(
-		protected world: World,
+		protected world: WorldWorker,
 		public readonly x: Uint8Array,
 		public readonly z: Uint8Array,
 		public readonly dimension = new Uint8Array([0, 0, 0, 0])
 	) {
-		this.loadSubChunks()
 		// const entityData = this.loadNbtData(EKeyTypeTag.Entity)
 		// if (entityData) console.log(entityData)
 		// const blockEntity = this.loadNbtData(EKeyTypeTag.BlockEntity)
@@ -37,18 +37,22 @@ export class Chunk {
 		return new Uint8ArrayReader(this.z).readInt32()
 	}
 
-	getLevelDb() {
-		return this.world.levelDb
+	getFromLevelDb(key: Uint8Array) {
+		return this.world.getFromLevelDb(key)
+	}
+	getWorld() {
+		return this.world
 	}
 
 	getSubChunk(n: number) {
-		return this.subChunks[n]
-	}
+		let chunk = this.subChunks.get(n)
 
-	loadSubChunks() {
-		for (let i = 0; i < 16; i++) {
-			this.subChunks.push(new SubChunk(this, i))
+		if (!chunk) {
+			chunk = new SubChunk(this, n)
+			this.subChunks.set(n, chunk)
 		}
+
+		return chunk
 	}
 
 	getChunkKey(tagType: EKeyTypeTag) {
@@ -76,7 +80,7 @@ export class Chunk {
 				'SubChunkPrefix data should be loaded by sub chunks'
 			)
 
-		return this.getLevelDb().get(this.getChunkKey(tagType))
+		return this.getFromLevelDb(this.getChunkKey(tagType))
 	}
 
 	protected loadNbtData(tagType: EKeyTypeTag) {
@@ -98,7 +102,7 @@ export class Chunk {
 }
 
 const totalBlockSpaces = 4096 // 16 * 16 * 16
-
+const chunkSize = 16
 export class SubChunk {
 	public blockLayers: BlockLayer[] = []
 
@@ -214,8 +218,174 @@ export class SubChunk {
 		}
 	}
 
+	/**
+	 * TODO:
+	 * This function is currently the big bottleneck of rendering worlds, needs optimizations
+	 */
+	getGeometryData() {
+		if (this.blockLayers.length === 0) return
+		const tileSize = 16
+		const [
+			tileTextureWidth,
+			tileTextureHeight,
+		] = this.blockLibrary.getTileMapSize()
+
+		const positions: number[] = []
+		const normals: number[] = []
+		const uvs: number[] = []
+		const indices: number[] = []
+		const chunkX = this.parent.getX()
+		const chunkY = this.y
+		const chunkZ = this.parent.getZ()
+
+		const startX = chunkX * chunkSize
+		const startY = chunkY * chunkSize
+		const startZ = chunkZ * chunkSize
+
+		for (let y = 0; y < 16; y++) {
+			const correctedY = chunkY < 0 ? chunkSize - 1 - y : y
+
+			for (let z = 0; z < 16; z++) {
+				const correctedZ = chunkZ < 0 ? chunkSize - 1 - z : z
+
+				for (let x = 0; x < 16; x++) {
+					const correctedX = chunkX < 0 ? chunkSize - 1 - x : x
+
+					const block = this.getLayer(0).getBlockAt(
+						correctedX,
+						correctedY,
+						correctedZ
+					)
+
+					// The current voxel is not air, we may need to render faces for it
+					if (block.name !== 'minecraft:air') {
+						// console.warn(
+						// 	chunkX,
+						// 	chunkY,
+						// 	chunkZ,
+						// 	correctedX,
+						// 	correctedY,
+						// 	correctedZ
+						// )
+						// console.log(
+						// 	'MAIN:',
+						// 	block.name,
+						// 	startX + correctedX,
+						// 	startY + correctedY,
+						// 	startZ + correctedZ
+						// )
+
+						// Do we need faces for the current voxel?
+						for (const { dir, corners, faces } of VoxelFaces) {
+							const neighbour = this.getWorld().getBlockAt(
+								0,
+								startX + correctedX + dir[0],
+								startY + correctedY + dir[1],
+								startZ + correctedZ + dir[2]
+							)
+							// console.log(
+							// 	faces[0] + ':',
+							// 	neighbour.name,
+							// 	startX + correctedX + dir[0],
+							// 	startY + correctedY + dir[1],
+							// 	startZ + correctedZ + dir[2]
+							// )
+
+							// This voxel has a transparent voxel as a neighbour in the current direction -> add face
+							if (
+								neighbour.name === 'minecraft:air'
+								// BlockLibrary.isTransparent(
+								// 	neighbour,
+								// 	(faces as unknown) as TDirection[]
+								// ) ||
+								// BlockLibrary.isSlab(voxel) ||
+								// BlockLibrary.isFence(voxel) ||
+								// BlockLibrary.isStairs(voxel)
+							) {
+								const ndx = positions.length / 3
+								for (let {
+									pos: [oX, oY, oZ],
+									uv: [uvX, uvY],
+								} of corners) {
+									const [
+										voxelUVX,
+										voxelUVY,
+									] = this.blockLibrary.getVoxelUv(
+										block.name,
+										(faces as unknown) as TDirection[]
+									)
+									// if (BlockLibrary.isSlab(voxel)) {
+									// 	oY /= 2
+									// 	uvY /= 2
+									// } else if (BlockLibrary.isStairs(voxel)) {
+									// 	oY /= 2
+									// 	oX /= 2
+									// 	uvY /= 2
+									// 	uvX /= 2
+									// } else if (BlockLibrary.isFence(voxel)) {
+									// 	;(oX as number) =
+									// 		oX === 0 ? 6 / 16 : 10 / 16
+									// 	;(oZ as number) =
+									// 		oZ === 0 ? 6 / 16 : 10 / 16
+									// 	;(uvX as number) =
+									// 		uvX === 0 ? 6 / 16 : 10 / 16
+									// 	if (
+									// 		((faces as unknown) as TDirection[]).includes(
+									// 			'up'
+									// 		) ||
+									// 		((faces as unknown) as TDirection[]).includes(
+									// 			'down'
+									// 		)
+									// 	)
+									// 		(uvY as number) =
+									// 			uvY === 0 ? 6 / 16 : 10 / 16
+									// }
+									positions.push(
+										oX + correctedX,
+										oY + correctedY,
+										oZ + correctedZ
+									)
+									normals.push(...dir)
+									uvs.push(
+										((voxelUVX + uvX) * tileSize) /
+											tileTextureWidth,
+										1 -
+											((voxelUVY + 1 - uvY) * tileSize) /
+												tileTextureHeight
+									)
+								}
+								indices.push(
+									ndx,
+									ndx + 1,
+									ndx + 2,
+									ndx + 2,
+									ndx + 1,
+									ndx + 3
+								)
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return {
+			positions,
+			normals,
+			uvs,
+			indices,
+		}
+	}
+
+	getWorld() {
+		return this.parent.getWorld()
+	}
+	get blockLibrary() {
+		return this.getWorld().blockLibrary
+	}
+
 	protected loadData() {
-		return this.parent.getLevelDb().get(this.getSubChunkPrefixKey())
+		return this.parent.getFromLevelDb(this.getSubChunkPrefixKey())
 	}
 
 	protected getSubChunkPrefixKey() {

@@ -103,5 +103,22 @@ export default defineConfig({
 				display_override: ['window-controls-overlay', 'standalone'],
 			},
 		}),
+		{
+			name: 'prismarine-nbt-fix',
+			enforce: 'pre',
+			resolveId(id) {
+				if (id === 'prismarine-nbt') {
+					return id
+				}
+				return null
+			},
+			transform(code, id) {
+				if (id.includes('prismarine-nbt')) {
+					// @ts-ignore
+					return code.replaceAll('global.', 'globalThis.')
+				}
+				return null
+			},
+		},
 	],
 })

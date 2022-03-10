@@ -1,5 +1,6 @@
 import { protoLE } from 'prismarine-nbt'
 import { Buffer } from 'buffer'
+export { simplify } from 'prismarine-nbt'
 
 export function readNbt(nbtData: Uint8Array, offset = 0) {
 	const { data, metadata } = protoLE.parsePacketBuffer(
