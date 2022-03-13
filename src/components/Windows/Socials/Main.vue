@@ -60,7 +60,7 @@ export default {
 			window.open('https://discord.gg/jj2PmqU', '_blank')
 		},
 		openTwitter() {
-			window.open('https://twitter.com/bridgeEditor', '_blank')
+			window.open('https://twitter.com/bridgeIDE', '_blank')
 		},
 		openGithub() {
 			window.open('https://github.com/bridge-core', '_blank')
