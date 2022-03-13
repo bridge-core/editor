@@ -54,6 +54,7 @@ export abstract class Project {
 	public readonly extensionLoader: ExtensionLoader
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
+	public readonly fileUnlinked = new FileChangeRegistry<void>()
 	public readonly tabActionProvider = new TabActionProvider()
 	public readonly snippetLoader = new SnippetLoader(this)
 	public readonly exportProvider = new ExportProvider()
@@ -124,6 +125,9 @@ export abstract class Project {
 		)
 		this.fileSave.any.on((data) =>
 			App.eventSystem.dispatch('fileSave', data)
+		)
+		this.fileUnlinked.any.on((data) =>
+			App.eventSystem.dispatch('fileUnlinked', data[0])
 		)
 
 		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
@@ -360,8 +364,25 @@ export abstract class Project {
 	}
 	async unlinkFile(filePath: string) {
 		await this.packIndexer.unlink(filePath)
-		await this.compilerService.unlink(filePath)
-		await this.fileSystem.unlink(filePath)
+
+		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
+
+		if (watchModeActive) await this.compilerService.unlink(filePath)
+		await this.app.fileSystem.unlink(filePath)
+		await this.recentFiles.removeFile(filePath)
+
+		this.fileUnlinked.dispatch(filePath)
+
+		// Reload dynamic schemas
+		const currentPath = this.tabSystem?.selectedTab?.getPath()
+		if (currentPath)
+			await this.jsonDefaults.updateDynamicSchemas(currentPath)
+	}
+	async renameFile(fromPath: string, toPath: string) {
+		await this.app.fileSystem.move(fromPath, toPath)
+
+		await this.unlinkFile(fromPath)
+		await this.updateFile(toPath)
 	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()

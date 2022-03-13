@@ -165,18 +165,7 @@ export class PackExplorer extends SidebarContent {
 
 					entry.remove()
 
-					await Promise.all([
-						project.packIndexer.unlink(path),
-						project.compilerService.unlink(path),
-					])
-
-					await project.jsonDefaults.reload()
-
-					try {
-						await project.app.fileSystem.unlink(path)
-					} catch {}
-
-					await project.recentFiles.removeFile(path)
+					await project.unlinkFile(path)
 				},
 			},
 
