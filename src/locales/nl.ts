@@ -24,6 +24,9 @@ export default {
 		folderName: 'Map Naam',
 		inactive: 'Inactief',
 		active: 'Actief',
+		later: 'Later',
+		clear: 'Leegmaken',
+		reset: 'Reset',
 
 		confirmOverwriteFile:
 			'Er bestaat al een bestand met deze naam. Wil je het overschrijven?',
@@ -36,6 +39,7 @@ export default {
 			description: 'U kunt het geëxporteerde pakket hier vinden',
 		},
 		experimentalGameplay: 'Experimental Gameplay',
+		textureLocation: 'Texture Locatie',
 	},
 	packType: {
 		behaviorPack: {
@@ -279,6 +283,30 @@ export default {
 			name: 'Opnieuw uitvoeren',
 			description: 'Voer de laatste actie opnieuw uit',
 		},
+		goToDefinition: {
+			name: 'Ga naar Definitie',
+			description: 'Ga naar de definitie van het geselecteerde symbool',
+		},
+		goToSymbol: {
+			name: 'Ga naar Symbool',
+			description: 'Opent een dialoogvenster om een symbool te selecteren om naar toe te gaan',
+		},
+		formatDocument: {
+			name: 'Document Opmaken',
+			description: 'Het momenteel geopende document opmaken',
+		},
+		changeAllOccurrences: {
+			name: 'Alle Exemplaren Wijzigen',
+			description: 'Alle exemplaren van de geselecteerde tekst wijzigen',
+		},
+		tgaMaskToggle: {
+			name: 'Alfamasker tonen/verbergen',
+		},
+		recompileChanges: {
+			name: 'Wijzigingen Compileren',
+			description:
+				'Compileer alle bestanden die zijn bewerkt zonder bridge. Hiermee worden geen wijzigingen gecompileerd die in de editor zelf zijn gemaakt na het uitschakelen van de kijkmodus',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -305,10 +333,36 @@ export default {
 	sidebar: {
 		compiler: {
 			name: 'Compiler',
+			categories: {
+				watchMode: {
+					name: 'Kijkmodus',
+					settings: {
+						watchModeActive: {
+							name: 'Kijkmodus',
+							description:
+								'Schakel automatisch hercompileren van bestanden in of uit wanneer u wijzigingen aanbrengt met bridge.',
+						},
+						autoFetchChangedFiles: {
+							name: 'Automatisch Ophalen',
+							description:
+								'Zoek automatisch in het project naar gewijzigde bestanden bij het starten van bridge.',
+						},
+					},
+				},
+				profiles: 'Bouw Profielen',
+				outputFolders: 'Uitvoermappen',
+				logs: {
+					name: 'Logboeken',
+					noLogs: 'Dash heeft nog geen logs geproduceerd om te tonen.',
+				},
+			},
 			default: {
-				name: 'Default Config',
+				name: 'Standaardconfiguratie',
 				description:
 					'Voer bridge.\'s compiler uit met de standaard compilerconfiguratie die deel uitmaakt van het "config.json" bestand van uw project.',
+			},
+			actions: {
+				runLastProfile: 'Laatste Profiel Uitvoeren',
 			},
 		},
 		extensions: {
@@ -376,6 +430,12 @@ export default {
 			description:
 				'Schakelt automatische aanvullingen in voor experimentele Molang queries.',
 		},
+		theWildUpdate: {
+			name: 'The Wild Update',
+			description:
+				'Maakt automatische aanvullingen mogelijk voor nieuwe functies die in de Wild Update zijn geïntroduceerd, zoals entiteitscomponenten.',
+		},
+
 		educationEdition: {
 			name: 'Enable Education Edition',
 			description:
@@ -384,6 +444,9 @@ export default {
 	},
 	// Windows
 	windows: {
+		sidebar: {
+			disabledItem: 'Dit item is uitgeschakeld',
+		},
 		changelogWindow:{
 			title: "Wat is er nieuw?"
 		},
@@ -402,8 +465,10 @@ export default {
 			packIcon: 'Projectpictogram (optioneel)',
 			projectName: {
 				name: 'Projectnaam',
-				invalidLetters: 'U mag alleen alfanumerieke tekens gebruiken',
+				invalidLetters:
+					'De projectnaam mag de volgende tekens niet bevatten: " \\ / : | < > * ?',
 				mustNotBeEmpty: 'U moet een projectnaam invoeren',
+				endsInPeriod: 'Projectnaam mag niet eindigen met een punt',
 			},
 			projectDescription: 'Projectbeschrijving (optioneel)',
 			projectPrefix: 'Projectvoorvoegsel',
@@ -411,6 +476,8 @@ export default {
 			projectTargetVersion: 'Doelversie van het project',
 			rpAsBpDependency:
 				'Registreer resourcepakket als afhankelijkheid van gedragspakket',
+			bpAsRpDependency:
+				'Registreer gedragspakket als afhankelijkheid van resourcepakket',
 			useLangForManifest:
 				'Voeg de naam/beschrijving van het pakket rechtstreeks toe aan het manifest',
 			create: 'Creëer!',
@@ -483,12 +550,19 @@ export default {
 				required: 'Dit veld is verplicht',
 				noEmptyFolderNames: 'De mapnaam mag niet leeg zijn',
 			},
+			showAllPresets: 'Toon alle voorinstellingen',
+			disabledPreset: {
+				experimentalGameplay:
+					'Vereiste experimentele gameplay niet actief',
+				packTypes: 'Vereist pakket ontbreekt in project',
+				targetVersion: 'Vereiste doelversie niet gespecificeerd',
+			},
 		},
 		deleteProject: {
 			confirm: 'Verwijderen',
 			description: 'Weet u zeker dat u dit project wilt verwijderen?',
 		},
-		discord: {
+		socials: {
 			title: 'Socials',
 			content:
 				'Bekijk onze Twitter, Github en sluit je aan bij de officiële bridge. Discord server!',
@@ -523,6 +597,33 @@ export default {
 		filePath: {
 			title: 'Kies Bestandspad',
 		},
+		lootSimulatorSettings: {
+			title: 'Simulatorinstellingen',
+			repeat: {
+				name: 'Herhaal Opties',
+				amount: {
+					name: 'Herhaal',
+					description: 'Herhaal de buittabel een bepaald aantal keren',
+				},
+				itemFound: {
+					name: 'Item Identifier',
+					description:
+						'Voer de buittabel uit totdat een itemstapel met de opgegeven identifier is gevonden',
+				},
+				quantityFound: {
+					name: 'Hoeveelheid',
+					description:
+						'Voer de buittabel uit totdat een itemstapel met de opgegeven hoeveelheid is gevonden',
+				},
+			},
+			killConditions: {
+				looting: {
+					name: 'Betoverende buit',
+					description:
+						'Het niveau van de buit dat werd gebruikt om de tabel te runnen, 0 voor geen buit',
+				},
+			},
+		},
 		packExplorer: {
 			title: 'Pack Explorer',
 			searchFiles: 'Zoek bestanden...',
@@ -534,7 +635,9 @@ export default {
 			restartDevServer: {
 				name: 'Herstart Dev Server',
 				description:
-					"Weet u zeker dat u de dev server van de compiler opnieuw wilt starten? Dit kan enige tijd duren, afhankelijk van de grootte van uw project.",
+					"Herstart de kijkmodus van de compiler opnieuw om de huidige build-output te verwijderen, het volledige project opnieuw op te bouwen en te kijken naar verdere wijzigingen.",
+				confirmDescription:
+					"Weet u zeker dat u de kijkmodus van de compiler opnieuw wilt starten? Dit kan enige tijd duren, afhankelijk van de grootte van uw project. Als u de compiler opnieuw start, wordt uw add-on uit de map com.mojang verwijderd en opnieuw gecompileerd op basis van uw bridge. map!",
 			},
 			createPreset: 'Nieuw Bestand',
 			projectConfig: {
@@ -557,6 +660,14 @@ export default {
 				name: 'Exporteer als .brproject',
 			},
 			fileActions: {
+				open: {
+					name: 'Open',
+					description: 'Open het bestand in de editor',
+				},
+				openInSplitScreen: {
+					name: 'Openen in Gesplitst Scherm',
+					description: 'Open het bestand in de modus voor gesplitst scherm',
+				},
 				delete: {
 					name: 'Verwijderen',
 					description: 'Verwijder een bestand of map',
@@ -589,6 +700,10 @@ export default {
 				createFolder: {
 					name: 'Map aanmaken',
 					description: 'Maak een nieuwe map',
+				},
+				findInFolder: {
+					name: 'Zoek in Map',
+					description: 'Doorzoek de inhoud van een map',
 				},
 			},
 		},
@@ -718,10 +833,26 @@ export default {
 			actions: {
 				name: 'Acties',
 			},
+			projects: {
+				name: 'Projecten',
+				defaultAuthor: {
+					name: 'Standaard Auteur',
+					description: 'De standaard auteur voor nieuwe projecten',
+				},
+			},
 			editor: {
 				jsonEditor: {
 					name: 'JSON Editor',
 					description: 'Kies hoe u JSON bestanden wilt bewerken',
+				},
+				bridgePredictions: {
+					name: 'bridge. Voorspellingen',
+					description:
+						"Schakel de voorspellingen van bridge. in om de app intelligent te laten beslissen of een waarde of object wordt toegevoegd in de tree editor van bridge. Dit vereenvoudigt het bewerken van JSON aanzienlijk",
+				},
+				bracketPairColorization: {
+					name: 'Haakjes Paar Inkleuring',
+					description: 'Geef bijpassende haakjes een unieke kleur',
 				},
 				wordWrap: {
 					name: 'Woordomloop',
@@ -762,6 +893,14 @@ export default {
 			deactivateExtension: 'Extensie Deactiveren',
 			offlineError:
 				'Kan extensies niet laden. Controleer of uw apparaat een actieve netwerkverbinding heeft.',
+			incompatibleVersion: 'Incompatibele bridge. versie',
+			compilerPluginDownload: {
+				compilerPlugins: 'Compiler Plugins',
+				title: 'Gedownloade Compiler Plugin',
+				description:
+					"U hebt zojuist een nieuwe compiler plugin gedownload. Zorg ervoor dat u het toevoegt aan uw compiler configuratiebestand, anders heeft het geen effect.",
+				openConfig: 'Configuratie Openen',
+			},
 		},
 		pluginInstallLocation: {
 			title: 'Kies Installatielocatie',
@@ -786,6 +925,11 @@ export default {
 			titles: {
 				loading: 'Bezig met laden...',
 			},
+		},
+		upgradeFs: {
+			title: 'Bestandssysteem Upgraden?',
+			description:
+				'Uw browser ondersteunt nu het rechtstreeks opslaan van bestanden op uw computer. Wil je nu upgraden?',
 		},
 	},
 	taskManager: {
@@ -816,8 +960,12 @@ export default {
 		importFailed: 'bridge. kon de volgende bestanden niet importeren:',
 		andMore: '...en meer!',
 		importMethod: 'Importeer Methode',
+		mcaddon: {
+			missingManifests:
+				"bridge. kon geen gegevens uit uw .mcaddon bestand laden omdat het daarin geen manifest bestanden kon vinden.",
+		},
 		saveToProject: {
-			title: 'Save to Project',
+			title: 'Opslaan in Project',
 			description1: 'Het bestand opslaan ',
 			description2: ' in uw project.',
 		},
@@ -837,7 +985,8 @@ export default {
 			sucess: 'Het synchroniseren van uw projecten met com.mojang is correct ingesteld.',
 			deniedPermission:
 				'U heeft com.mojang synchronisatie ingesteld, maar u heeft bridge. geen toestemming verleend voor de map.',
-			notSetup: 'U heeft com.mojang synchronisatie nog niet ingesteld.',
+			notSetup:
+				'U heeft com.mojang synchronisatie nog niet ingesteld. Sleep uw com.mojang map naar bridge. om dat te doen.',
 			notAvailable:
 				'Het synchroniseren van projecten naar de com.mojang map is alleen beschikbaar voor Chrome en Edge gebruikers.',
 		},
@@ -847,6 +996,8 @@ export default {
 		search: 'Zoeken',
 		replace: 'Vervangen',
 		replaceAll: 'Vervang Alles',
+		includeFiles: 'Op te nemen bestanden',
+		excludeFiles: 'Uit te sluiten bestanden',
 		noResults: 'Geen resultaten gevonden.',
 		noSearch:
 			'Zodra u begint met typen, worden de resultaten voor uw zoekopdracht hier weergegeven.',
@@ -858,12 +1009,34 @@ export default {
 		viewParticle: 'Bekijk Particle',
 		viewEntity: 'Bekijk Entity',
 		viewBlock: 'Bekijk Blok',
+		simulateLoot: 'Simuleer Buit',
 		failedClientEntityLoad: 'Kon de verbonden client entity niet laden',
 		invalidEntity:
 			'Kan voorbeeld niet openen voor een entiteit met ongeldige JSON. Corrigeer JSON-fouten in het bestand en probeer het opnieuw.',
 		chooseGeometry: 'Kies Geometrie',
 		noGeometry:
 			'Geen geldige geometrie gevonden in dit bestand. Zorg ervoor dat uw JSON geldig is en dat de bestandsstructuur correct is.',
+		lootTableSimulator: {
+			emptyLootOutput:
+				'De uitvoer is leeg, probeer de buittabel te gebruiken om resultaten te verzamelen.',
+			data: {
+				value: 'Data Waarde',
+				enchantments: 'Betoveringen',
+				blockStates: 'Block States',
+				itemAuxValue: 'Aux Waarde',
+				eggIdentifier: 'Spawnt entiteit',
+				bannerType: 'Banner Type',
+				bookData: {
+					view: 'Bekijk Boek',
+					title: 'Titel',
+					author: 'Auteur',
+				},
+				durability: 'Duurzaamheid',
+				lore: 'Lore',
+				displayName: 'Weergavenaam',
+				mapDestination: 'Kaart Bestemming',
+			},
+		},
 	},
 	initialSetup: {
 		welcome: 'Welkom bij bridge. v2!',
@@ -917,10 +1090,132 @@ export default {
 	},
 	editors: {
 		treeEditor: {
+			add: 'Toevoegen',
 			addObject: 'Object Toevoegen',
 			addArray: 'Reeks Toevoegen',
 			addValue: 'Waarde Toevoegen',
+			forceValue: 'Forceer Waarde',
 			edit: 'Bewerk',
+		},
+	},
+	functionValidator: {
+		actionName: 'Functie Valideren',
+		tabName: 'Functievalidator',
+		errors: {
+			common: {
+				expectedEquals: 'Verwachte gelijk aan!',
+				expectedValue: 'Verwachte waarde!',
+				expectedType: {
+					part1: "Verwachte type '",
+					part2: "' maar kreeg een type van '",
+					part3: "'!",
+				},
+				expectedComma: 'Verwachte komma!',
+				unclosedString: 'Ongesloten string!',
+				spaceAtStart: 'Spaties aan het begin worden niet ondersteund!',
+				expectedColon: 'Verwachte dubbele punt!',
+				unexpectedOpenCurlyBracket: 'Onverwachte open accolade!',
+				unexpectedCloseCurlyBracket: 'Onverwachte gesloten accolade!',
+				unexpectedOpenSquareBracket: 'Onverwachte open vierkante haak!',
+				unexpectedCloseSquareBracket: 'Onverwachte gesloten vierkant haak!',
+			},
+			command: {
+				empty: "Lege commando's worden niet ondersteund!",
+				invalid: {
+					part1: "Commando: '",
+					part2: "' is geen geldig commando!",
+				},
+			},
+			identifiers: {
+				missingNamespace: 'Ontbrekende namespace in identifier!',
+			},
+			ranges: {
+				missingFirstNumber: 'Ontbrekend eerste nummer in bereik!',
+				missingDot: 'Ontbrekende punt in bereik!',
+				missingSecondNumber: 'Ontbrekend tweede nummer in bereik!',
+			},
+			selectors: {
+				emptyComplex: 'Onverwachte lege complexe selector!',
+				expectedStringAsAttribute:
+					'Selector attribuut moet een string zijn!',
+				invalidSelectorAttribute: {
+					part1: "'",
+					part2: "' is geen geldig selector attribuut!",
+				},
+				unsupportedNegation: {
+					part1: "Selector attribuut: '",
+					part2: "' ondersteunt geen negatie!",
+				},
+				multipleInstancesNever: {
+					part1: "Selector attribuut: '",
+					part2: "' ondersteunt niet meerdere instanties!",
+				},
+				multipleInstancesNegated: {
+					part1: "Selector attribuut: '",
+					part2: "' ondersteunt alleen meerdere instanties wanneer deze worden genegeerd!",
+				},
+				valueNotValid: {
+					part1: "Selector attribuut ondersteunt waarde '",
+					part2: "' niet!",
+				},
+				expectedLetterAfterAt: "Verwachte letter na '@'!",
+				invalid: {
+					part1: "Selector: '",
+					part2: "' is geen geldige selector!",
+				},
+				selectorNotBeforeOpenSquareBracket:
+					"Verwachtte een selector vóór '['!",
+			},
+			scoreData: {
+				empty: 'Onverwachte lege score gegevens!',
+				expectedStringAsAttribute:
+					'Score gegevens attribuut moet een string zijn!',
+				invalidType: {
+					part1: "Dit type score gegevenswaarde: '",
+					part2: "' wordt niet ondersteund!",
+				},
+				repeat: 'Score gegevenswaarde mag niet herhalen!',
+			},
+			arguments: {
+				noneValid: {
+					part1: 'Geen geldige commandovariaties gevonden! Argument ',
+					part2: " kan ongeldig zijn! Het is van het type '",
+					part3:
+						"' maar dat type wordt niet ondersteund in de huidige variatieboom.",
+				},
+				noneValidEnd: {
+					part1:
+						'Geen geldige commandovariaties gevonden! Mogelijk mist u enkele argumenten of argumenten ',
+					part2: ' kunnen ongeldig zijn!',
+				},
+			},
+		},
+		warnings: {
+			schema: {
+				familyNotFound: {
+					part1: "Kon familie '",
+					part2:
+						"' niet vinden. Dit kan een vergissing zijn of de familie is van een andere add-on.",
+				},
+				typeNotFound: {
+					part1: "Kon type '",
+					part2:
+						"' niet vinden. Dit kan een vergissing zijn of het type is van een andere add-on.",
+				},
+				tagNotFound: {
+					part1: "Kon tag '",
+					part2:
+						"' niet vinden. Dit kan een vergissing zijn of de tag is van een andere add-on.",
+				},
+				schemaValueNotFound: {
+					part1: "Kon schemawaarde '",
+					part2:
+						"' niet vinden. Dit kan een vergissing zijn of de schemawaarde is van een andere add-on.",
+				},
+			},
+			data: {
+				missingData: 'Sommige gegevens zijn niet correct geladen!',
+			},
 		},
 	},
 }
