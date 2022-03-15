@@ -1116,9 +1116,8 @@ export default {
 				expectedColon: 'Expected colon!',
 				unexpectedOpenCurlyBracket: 'Unexpected open curly bracket!',
 				unexpectedCloseCurlyBracket: 'Unexpected close curly bracket!',
-				unexpectedOpenSquareBracket: 'Unexpected open sqaure bracket!',
-				unexpectedCloseSquareBracket:
-					'Unexpected close sqaure bracket!',
+				unexpectedOpenSquareBracket: 'Unexpected open square bracket!',
+				unexpectedCloseSquareBracket: 'Unexpected close square bracket!',
 			},
 			command: {
 				empty: 'Empty commands are not supported!',
