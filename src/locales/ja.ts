@@ -39,7 +39,7 @@ export default {
 			description:
 				'エクスポートされたパッケージはこちらでご覧いただけます。',
 		},
-		experimentalGameplay: '試験的ゲームプレイ',
+		experimentalGameplay: '実験的ゲームプレイ',
 		textureLocation: 'テクスチャの場所',
 	},
 	packType: {
@@ -299,6 +299,11 @@ export default {
 		tgaMaskToggle: {
 			name: 'Alphaチャンネルの切替',
 		},
+		recompileChanges: {
+			name: '変更時にコンパイルする',
+			description:
+				'bridge. なしで編集されたすべてのファイルをコンパイルします ウォッチモードを無効にした後エディター自体で行われた変更はコンパイルされません',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -325,10 +330,36 @@ export default {
 	sidebar: {
 		compiler: {
 			name: 'コンパイラ',
+			categories: {
+				watchMode: {
+					name: 'ウォッチモード',
+					settings: {
+						watchModeActive: {
+							name: 'ウォッチモード',
+							description:
+								'ファイルに変更を行った際に再コンパイルするか切り替えます',
+						},
+						autoFetchChangedFiles: {
+							name: '自動取得',
+							description:
+								'bridge. の起動時に変更されたファイルを検索します',
+						},
+					},
+				},
+				profiles: 'ビルドプロファイル',
+				outputFolders: '出力先フォルダー',
+				logs: {
+					name: 'ログ',
+					noLogs: 'ログはまだありません',
+				},
+			},
 			default: {
 				name: 'デフォルト設定',
 				description:
-					'プロジェクトの config.json ファイルに含まれるデフォルトのコンパイラ設定で bridge. のコンパイラを実行します。',
+					'プロジェクト設定(config.json)内にあるデフォルトのコンパイラ設定でコンパイルします',
+			},
+			actions: {
+				runLastProfile: '最新のプロファイルを実行する',
 			},
 		},
 		extensions: {
@@ -409,6 +440,9 @@ export default {
 	},
 	// Windows
 	windows: {
+		sidebar: {
+			disabledItem: 'このアイテムは無効です',
+		},
 		changelogWindow: {
 			title: "What's new?",
 		},
@@ -429,6 +463,8 @@ export default {
 				name: 'プロジェクト名',
 				invalidLetters: '使用できる文字は半角英数字のみです',
 				mustNotBeEmpty: 'プロジェクト名を入力する必要があります',
+				endsInPeriod:
+					'プロジェクト名の末尾にピリオドを使用することはできません',
 			},
 			projectDescription: 'プロジェクトの説明（任意)',
 			projectPrefix: 'プロジェクト名',
@@ -510,6 +546,14 @@ export default {
 				required: 'この項目は必須です',
 				noEmptyFolderNames: 'フォルダー名を空にすることはできません',
 			},
+			showAllPresets: 'すべてのプリセットを表示',
+			disabledPreset: {
+				experimentalGameplay:
+					'要求される実験的ゲームプレイが有効になっていません',
+				packTypes: '要求されるパックがプロジェクトにありません',
+				targetVersion:
+					'要求されるターゲットバージョンが指定されていません',
+			},
 		},
 		deleteProject: {
 			confirm: '削除',
@@ -587,10 +631,12 @@ export default {
 				description:
 					'ファイル追加されました。現在のプロジェクトを再読み込みます。',
 			},
-			restartDevServer: {
-				name: '開発サーバーの再起動',
+			restartWatchMode: {
+				name: 'ウォッチモードの再起動',
 				description:
-					'コンパイラの開発サーバーを再起動してもよろしいですか？ プロジェクトの規模によっては時間がかかる場合があります。',
+					'ウォッチモードを再起動し、プロジェクトで出力されたパックの削除と再コンパイルを行います。',
+				confirmDescription:
+					'本当にウォッチモードを再起動しますか？ プロジェクトの規模によっては時間がかかる場合があります。 コンパイラを再起動すると com.mojang フォルダからプロジェクトのアドオンが削除され、再コンパイルされます!',
 			},
 			createPreset: '新規ファイル',
 			projectConfig: {
@@ -848,6 +894,7 @@ export default {
 			deactivateExtension: '拡張機能の無効化',
 			offlineError:
 				'拡張機能の読み込みに失敗しました。 お使いの機器がネットワークに接続されていることを確認してください。',
+			incompatibleVersion: '現在のバージョンと互換性がありません',
 			compilerPluginDownload: {
 				compilerPlugins: 'コンパイラプラグイン',
 				title: 'コンパイラプラグインをダウンロード',
