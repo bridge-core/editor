@@ -48,6 +48,7 @@ export class ForeignConsole extends Console {
 
 	clear() {
 		this.logs = []
+		this.logsChanged()
 	}
 	log(...args: any[]) {
 		args.forEach((arg) => this.basicLog(arg))
