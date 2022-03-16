@@ -839,6 +839,11 @@ export default {
 					name: 'Default Author',
 					description: 'The default author for new projects',
 				},
+				incrementVersionOnExport: {
+					name: 'Increment Version',
+					description:
+						'Automatically increment the version number inside of your pack manifests when exporting a project',
+				},
 			},
 			editor: {
 				jsonEditor: {
@@ -1117,7 +1122,8 @@ export default {
 				unexpectedOpenCurlyBracket: 'Unexpected open curly bracket!',
 				unexpectedCloseCurlyBracket: 'Unexpected close curly bracket!',
 				unexpectedOpenSquareBracket: 'Unexpected open square bracket!',
-				unexpectedCloseSquareBracket: 'Unexpected close square bracket!',
+				unexpectedCloseSquareBracket:
+					'Unexpected close square bracket!',
 			},
 			command: {
 				empty: 'Empty commands are not supported!',

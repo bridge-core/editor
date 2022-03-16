@@ -5,6 +5,7 @@ import {
 import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
 import { ZipDirectory } from '/@/components/FileSystem/Zip/ZipDirectory'
 import { App } from '/@/App'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 export async function exportAsMcaddon() {
 	const app = await App.getApp()
@@ -13,7 +14,10 @@ export async function exportAsMcaddon() {
 	// Increment manifest versions if using a file system polyfill
 	// This allows user to simply import the file into Minecraft even if the same pack
 	// with a lower version number is already installed
-	if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value) {
+	if (
+		settingsState?.projects?.incrementVersionOnExport ??
+		(isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value)
+	) {
 		const fs = app.fileSystem
 
 		let manifests: Record<string, any> = {}
@@ -79,7 +83,10 @@ export async function exportAsMcaddon() {
 			create: true,
 		})
 	)
-	const savePath = `projects/${app.project.name}/builds/${app.project.name}.mcaddon`
+	const savePath = app.project.config.resolvePackPath(
+		undefined,
+		`builds/${app.project.name}.mcaddon`
+	)
 
 	try {
 		await saveOrDownload(

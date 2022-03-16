@@ -9,7 +9,10 @@ import { Button } from './Controls/Button/Button'
 import { del } from 'idb-keyval'
 import { comMojangKey } from '../../FileSystem/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
-import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import {
+	isUsingFileSystemPolyfill,
+	isUsingOriginPrivateFs,
+} from '/@/components/FileSystem/Polyfill'
 import { platform } from '/@/utils/os'
 import { TextField } from './Controls/TextField/TextField'
 
@@ -442,6 +445,16 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.projects.defaultAuthor.description',
 			key: 'defaultAuthor',
 			default: '',
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'projects',
+			name: 'windows.settings.projects.incrementVersionOnExport.name',
+			description:
+				'windows.settings.projects.incrementVersionOnExport.description',
+			key: 'incrementVersionOnExport',
+			default: isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value,
 		})
 	)
 
