@@ -15,6 +15,7 @@ import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { settingsState } from '../../Windows/Settings/SettingsState'
+import { CreateWorlds } from './Packs/worlds'
 
 export interface ICreateProjectOptions {
 	author: string | string[]
@@ -46,12 +47,15 @@ export class CreateProjectWindow extends BaseWindow {
 	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []
 	protected availableTargetVersionsLoading = true
-	protected packs: Record<TPackTypeId | '.bridge', CreatePack> = <const>{
+	protected packs: Record<TPackTypeId | '.bridge' | 'worlds', CreatePack> = <
+		const
+	>{
 		behaviorPack: new CreateBP(),
 		resourcePack: new CreateRP(),
 		skinPack: new CreateSP(),
 		worldTemplate: new CreateWT(),
 		'.bridge': new CreateBridge(),
+		worlds: new CreateWorlds(),
 	}
 	protected availablePackTypes: IPackType[] = []
 	protected createFiles = [new CreateGitIgnore(), new CreateConfig()]

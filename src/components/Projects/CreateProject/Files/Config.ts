@@ -28,6 +28,7 @@ export class CreateConfig extends CreateFile {
 							defaultPackPaths[<TPackTypeId>packId],
 						])
 				),
+				worlds: ['./worlds/*'],
 				compiler: {
 					plugins: [
 						'typeScript',

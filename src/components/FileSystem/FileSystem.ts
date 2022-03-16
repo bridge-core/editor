@@ -31,6 +31,7 @@ export class FileSystem extends Signal<void> {
 
 		let current = this.baseDirectory
 		const pathArr = path.split(/\\|\//g)
+		if (pathArr[0] === '.') pathArr.shift()
 
 		for (const folder of pathArr) {
 			try {
@@ -274,5 +275,42 @@ export class FileSystem extends Signal<void> {
 		} catch {
 			return false
 		}
+	}
+
+	async getDirectoryHandlesFromGlob(glob: string, startPath = '.') {
+		const globParts = glob.split(/\/|\\/g)
+		const handles = new Set<AnyDirectoryHandle>([
+			await this.getDirectoryHandle(startPath),
+		])
+
+		for (const part of globParts) {
+			if (part === '*') {
+				for (const current of [...handles.values()]) {
+					handles.delete(current)
+
+					for await (const child of current.values()) {
+						if (child.kind === 'directory') {
+							handles.add(child)
+						}
+					}
+				}
+			} else if (part === '**') {
+				console.warn('"**" is not supported yet')
+				return []
+			} else {
+				for (const current of [...handles.values()]) {
+					handles.delete(current)
+
+					try {
+						handles.add(await current.getDirectoryHandle(part))
+					} catch (err) {}
+				}
+			}
+
+			// If there are no more handles, we're done
+			if (handles.size === 0) return []
+		}
+
+		return [...handles.values()]
 	}
 }

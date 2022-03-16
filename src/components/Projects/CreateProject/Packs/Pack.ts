@@ -2,7 +2,7 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { ICreateProjectOptions } from '../CreateProject'
 import { CreateFile } from '../Files/CreateFile'
 
-export type TPackType = 'BP' | 'RP' | 'SP' | 'WT' | '.bridge'
+export type TPackType = 'BP' | 'RP' | 'SP' | 'WT' | '.bridge' | 'worlds'
 
 export abstract class CreatePack {
 	protected abstract packPath: TPackType
