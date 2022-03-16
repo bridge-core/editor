@@ -100,7 +100,6 @@ export async function importFromMcaddon(
 				`projects/${projectName}/${packPath}`
 			)
 		}
-		// TODO: Support unpacking .mcpack files
 	}
 	if (packs.length === 1)
 		new InformationWindow({
