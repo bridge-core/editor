@@ -6,7 +6,6 @@ import {
 	IConfigJson,
 	ProjectConfig as BaseProjectConfig,
 } from 'mc-project-core'
-import { App } from '/@/App'
 
 export type { IConfigJson } from 'mc-project-core'
 export { defaultPackPaths } from 'mc-project-core'
@@ -130,7 +129,12 @@ export class ProjectConfig extends BaseProjectConfig {
 	}
 
 	async getWorldHandles() {
-		const app = await App.getApp()
+		if (!this.project)
+			throw new Error(
+				`Cannot use getWorldHandles() within web workers yet`
+			)
+
+		const app = this.project.app
 		const globPatterns = (this.get().worlds ?? ['./worlds/*']).map((glob) =>
 			this.resolvePackPath(undefined, glob)
 		)
