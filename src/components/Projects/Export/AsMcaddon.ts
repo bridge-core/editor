@@ -11,7 +11,7 @@ export async function exportAsMcaddon() {
 	const app = await App.getApp()
 	app.windows.loadingWindow.open()
 
-	// Increment manifest versions if using a file system polyfill
+	// Automatically increment manifest versions (by default only active if using a file system polyfill but can be manually turned on/off inside of the settings)
 	// This allows user to simply import the file into Minecraft even if the same pack
 	// with a lower version number is already installed
 	if (
