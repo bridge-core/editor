@@ -5,6 +5,8 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { FilePathWindow } from '/@/components/Windows/Common/FilePath/Window'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { AnyFileHandle } from '../FileSystem/Types'
+import { extname } from '/@/utils/path'
+import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 
 export class BasicFileImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
@@ -64,6 +66,7 @@ export class BasicFileImporter extends FileImporter {
 
 	protected async onSave(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
+		// Allow user to change file path that the file is saved to
 		const filePathWindow = new FilePathWindow(
 			(await App.fileType.guessFolder(fileHandle)) ?? '',
 			false
@@ -73,9 +76,19 @@ export class BasicFileImporter extends FileImporter {
 		const filePath = await filePathWindow.fired
 		if (filePath === null) return
 
+		// Allow user to change file name
+		const inputWindow = new InputWindow({
+			name: 'windows.packExplorer.fileActions.rename.name',
+			label: 'general.fileName',
+			default: fileHandle.name.split('.').slice(0, -1).join('.'),
+			expandText: extname(fileHandle.name),
+		})
+		const newFileName = await inputWindow.fired
+		if (!newFileName) return
+
 		// Get user confirmation if file overwrites already existing file
 		const fileExists = await app.project.fileSystem.fileExists(
-			`${filePath}${fileHandle.name}`
+			`${filePath}${newFileName}`
 		)
 		if (fileExists) {
 			const confirmWindow = new ConfirmationWindow({
@@ -90,7 +103,7 @@ export class BasicFileImporter extends FileImporter {
 		app.windows.loadingWindow.open()
 
 		const destHandle = await app.project.fileSystem.getFileHandle(
-			`${filePath}${fileHandle.name}`,
+			`${filePath}${newFileName}`,
 			true
 		)
 
@@ -100,7 +113,7 @@ export class BasicFileImporter extends FileImporter {
 		await app.project.updateFile(
 			app.project.config.resolvePackPath(
 				undefined,
-				`${filePath}${fileHandle.name}`
+				`${filePath}${newFileName}`
 			)
 		)
 		await app.project.openFile(destHandle, { isTemporary: false })
