@@ -184,6 +184,6 @@ export default {
 
 <style scoped>
 .card {
-	background-color: var(--v-sidebarNavigation-base);
+	background-color: rgb(var(--v-theme-sidebarNavigation));
 }
 </style>

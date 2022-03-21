@@ -1,7 +1,8 @@
 <template>
 	<v-btn
 		:max-height="appToolbarHeight"
-		text
+		flat
+		size="small"
 		@click="$emit('click', $event)"
 		:disabled="disabled"
 		class="toolbar-btn"
@@ -14,7 +15,7 @@
 		<v-icon
 			v-if="displayIcon"
 			color="accent"
-			:x-small="$vuetify.display.mobile"
+			:size="$vuetify.display.mobile ? 'xsmall' : '16px'"
 			:class="{ 'pr-1': !$vuetify.display.mobile }"
 		>
 			{{ displayIcon }}
@@ -41,10 +42,18 @@ export default {
 }
 </script>
 
+<style>
+.toolbar-btn .v-btn__underlay {
+	background: none !important;
+}
+</style>
+
 <style scoped>
 .toolbar-btn {
 	min-width: 0;
+	padding-left: 4px;
 }
+
 .btn-disabled {
 	-webkit-app-region: drag;
 	app-region: drag;

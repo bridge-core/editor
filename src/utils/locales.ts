@@ -10,8 +10,8 @@ export function translate(vuetify: any, translationKey?: string) {
 
 	let translated: string
 	try {
-		translated = vuetify.lang.t(translationKey)
-	} catch {
+		translated = vuetify.locale.getScope().t(translationKey)
+	} catch (err) {
 		return orginalKey ?? 'Unknown'
 	}
 

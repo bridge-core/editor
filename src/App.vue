@@ -1,5 +1,9 @@
 <template>
-	<v-app :style="{ fontFamily }" @contextmenu="$event.preventDefault()">
+	<v-app
+		theme="dark"
+		:style="{ fontFamily, height: '100vh' }"
+		@contextmenu="$event.preventDefault()"
+	>
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar />
@@ -200,7 +204,7 @@ export default {
 <style>
 /** Reset vuetify's scrolling */
 html {
-	overflow: hidden;
+	overflow-y: hidden !important;
 	overscroll-behavior: none;
 }
 body {
@@ -223,7 +227,7 @@ body {
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 24px;
-	background-color: var(--v-scrollbarThumb-base);
+	background-color: rgb(var(--v-theme-scrollbarThumb));
 	border: thin solid rgba(0, 0, 0, 0.3);
 	opacity: 0.8;
 }
@@ -253,7 +257,7 @@ summary::-webkit-details-marker {
 }
 
 .v-application {
-	background: var(--v-background-base) !important;
+	background: rgb(var(--v-theme-background)) !important;
 }
 
 .v-system-bar .v-icon {
@@ -264,7 +268,7 @@ summary::-webkit-details-marker {
 }
 
 .v-select-list {
-	background-color: var(--v-menu-base) !important;
+	background-color: rgb(var(--v-theme-menu)) !important;
 }
 .fill-area {
 	width: 100%;

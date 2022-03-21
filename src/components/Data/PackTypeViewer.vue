@@ -54,7 +54,7 @@ export default {
 	border: solid 2px transparent;
 }
 .content-area.selected {
-	border: 2px solid var(--v-primary-base);
+	border: 2px solid rgb(var(--v-theme-primary));
 }
 .header {
 	font-size: 1.25rem !important;

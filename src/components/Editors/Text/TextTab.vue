@@ -33,13 +33,13 @@ export default {
 
 <style>
 .monaco-action-bar {
-	background: var(--v-menu-base) !important;
+	background: rgb(var(--v-theme-menu)) !important;
 }
 .action-item.focused > a {
-	background: var(--v-primary-base) !important;
+	background: rgb(var(--v-theme-primary)) !important;
 }
 .actions-container {
-	background: var(--v-background-base) !important;
+	background: rgb(var(--v-theme-background)) !important;
 }
 
 .reference-file {

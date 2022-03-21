@@ -411,7 +411,7 @@ export default {
 <style>
 .tree-editor-selection {
 	border-radius: 4px;
-	background: var(--v-lineHighlightBackground-base);
+	background: rgb(var(--v-theme-lineHighlightBackground));
 }
 .editor-container {
 	outline: none;

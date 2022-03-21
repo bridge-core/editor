@@ -65,7 +65,7 @@
 					:style="`white-space: nowrap; height: ${
 						(hasLimitedSpace ? 400 : height) - 24
 					}px`"
-					style="background: var(--v-expandedSidebar-base)"
+					style="background: rgb(var(--v-theme-expandedSidebar))"
 					outlined
 					rounded
 				>

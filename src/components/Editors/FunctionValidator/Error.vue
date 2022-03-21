@@ -19,7 +19,7 @@ export default {
 }
 
 .error-info {
-	background: var(--v-error-base);
+	background: rgb(var(--v-theme-error));
 	padding: 0.4rem;
 	border-radius: 0.4rem;
 }

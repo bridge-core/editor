@@ -40,6 +40,7 @@ export const vuetify = createVuetify({
 		variations: false,
 		themes: {
 			dark: {
+				dark: true,
 				colors: {
 					primary: '#0073FF',
 					secondary: '#0073FF',
@@ -54,6 +55,7 @@ export const vuetify = createVuetify({
 				},
 			},
 			light: {
+				dark: false,
 				colors: {
 					primary: '#0073FF',
 					secondary: '#0073FF',

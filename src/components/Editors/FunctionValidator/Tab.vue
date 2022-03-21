@@ -90,7 +90,7 @@ export default {
 .error-line {
 	text-decoration-line: underline;
 	text-decoration-style: solid;
-	text-decoration-color: var(--v-error-base);
+	text-decoration-color: rgb(var(--v-theme-error));
 	text-decoration-skip-ink: none;
 	text-underline-offset: 0.1rem;
 	text-decoration-thickness: 0.15rem;
@@ -99,7 +99,7 @@ export default {
 .warning-line {
 	text-decoration-line: underline;
 	text-decoration-style: solid;
-	text-decoration-color: var(--v-warning-base);
+	text-decoration-color: rgb(var(--v-theme-warning));
 	text-decoration-skip-ink: none;
 	text-underline-offset: 0.1rem;
 	text-decoration-thickness: 0.15rem;
@@ -113,7 +113,7 @@ export default {
 }
 
 .border {
-	border: thin solid var(--v-lineHighlightBackground-base);
+	border: thin solid rgb(var(--v-theme-lineHighlightBackground));
 }
 
 .w-e-100 {
@@ -146,13 +146,13 @@ export default {
 }
 
 .warning-info {
-	background: var(--v-warning-base);
+	background: rgb(var(--v-theme-warning));
 	padding: 0.4rem;
 	border-radius: 0.4rem;
 }
 
 .error-info {
-	background: var(--v-error-base);
+	background: rgb(var(--v-theme-error));
 	padding: 0.4rem;
 	border-radius: 0.4rem;
 }
@@ -162,19 +162,19 @@ export default {
 }
 
 .ok-icon {
-	color: var(--v-success-base);
+	color: rgb(var(--v-theme-success));
 }
 
 .warning-icon {
-	color: var(--v-warning-base);
+	color: rgb(var(--v-theme-warning));
 }
 
 .error-icon {
-	color: var(--v-error-base);
+	color: rgb(var(--v-theme-error));
 }
 
 .info-icon {
-	color: var(--v-info-base);
+	color: rgb(var(--v-theme-info));
 }
 
 .scale-1-2 {
@@ -182,7 +182,7 @@ export default {
 }
 
 .icon-back {
-	background: var(--v-expandedSidebar-base);
+	background: rgb(var(--v-theme-expandedSidebar));
 	border-radius: 0.4rem;
 	width: 1.8rem;
 	height: 1.8rem;

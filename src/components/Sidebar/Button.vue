@@ -24,6 +24,7 @@
 				v-ripple="alwaysAllowClick || !isLoading"
 			>
 				<v-badge
+					:model-value="badge && !isLoading && badge.count > 0"
 					:value="badge && !isLoading ? badge.count : 0"
 					:content="badge && !badge.icon ? badge.count : 0"
 					:color="badge ? badge.color : null"
@@ -114,10 +115,10 @@ export default {
 			if (this.color)
 				return this.color.startsWith('#')
 					? this.color
-					: `var(--v-${this.color}-base)`
+					: `rgb(var(--v-theme-${this.color}))`
 			return this.isLoading || this.isSelected
-				? `var(--v-primary-base)`
-				: `var(--v-sidebarSelection-base)`
+				? `rgb(var(--v-theme-primary))`
+				: `rgb(var(--v-theme-sidebarSelection))`
 		},
 	},
 	methods: {

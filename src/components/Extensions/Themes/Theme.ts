@@ -30,9 +30,11 @@ export class Theme {
 	}
 
 	apply(themeManager: ThemeManager, vuetify: any) {
-		vuetify.theme.themes[this.colorScheme] = Object.fromEntries(
-			this.colorMap.entries()
-		)
+		const theme = vuetify.theme.getTheme(this.colorScheme)
+		vuetify.theme.setTheme(this.colorScheme, {
+			...theme,
+			colors: Object.fromEntries(this.colorMap.entries()),
+		})
 		// TODO(Vue3): Implement v-theme-provider and change theme here
 
 		themeManager.setThemeColor(this.colorMap.get('toolbar') ?? 'red')

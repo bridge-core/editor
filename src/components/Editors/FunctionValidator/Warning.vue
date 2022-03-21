@@ -19,7 +19,7 @@ export default {
 }
 
 .warning-info {
-	background: var(--v-warning-base);
+	background: rgb(var(--v-theme-warning));
 	padding: 0.4rem;
 	border-radius: 0.4rem;
 }

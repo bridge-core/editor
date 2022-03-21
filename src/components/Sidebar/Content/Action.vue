@@ -11,7 +11,9 @@
 				class="rounded-lg ma-1 d-flex justify-center sidebar-actions pa-2"
 				:class="{ 'elevation-4': isSelected }"
 				:style="{
-					background: isSelected ? `var(--v-${color}-base)` : null,
+					background: isSelected
+						? `rgb(var(--v-theme-${color}))`
+						: null,
 					transform: isSelected ? 'scale(1.05)' : null,
 				}"
 				@click="$emit('click', $event)"
@@ -45,6 +47,6 @@ export default {
 .sidebar-actions {
 	cursor: pointer;
 	transition: all 0.1s ease-in-out;
-	background-color: var(--v-sidebarSelection-base);
+	background-color: rgb(var(--v-theme-sidebarSelection));
 }
 </style>

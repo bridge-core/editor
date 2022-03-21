@@ -66,7 +66,7 @@ export default {
 }
 *::-webkit-scrollbar-track {
 	border-radius: 0;
-	background-color: var(--v-background-base);
+	background-color: rgb(var(--v-theme-background));
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 0;
