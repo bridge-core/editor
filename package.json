@@ -38,7 +38,6 @@
 		"uuid": "^8.3.1",
 		"vite-plugin-ejs": "^1.4.3",
 		"vue": "^3.2.31",
-		"vue-template-compiler": "2.6.12",
 		"vuedraggable": "^2.24.3",
 		"vuetify": "^3.0.0-beta.0",
 		"wintersky": "github:jannisx11/wintersky#pull/11/head"

@@ -2,8 +2,7 @@
 /dist
 /compilerTypes
 
-node_modules/*
-!node_modules/vue-template-compiler
+node_modules
 
 # local env files
 .env
