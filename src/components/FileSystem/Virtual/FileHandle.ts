@@ -3,7 +3,7 @@ import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
 import { get, set, del } from './IDB'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 /**
  * A class that implements a virtual file

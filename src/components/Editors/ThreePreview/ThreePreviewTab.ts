@@ -12,7 +12,7 @@ import {
 import { Signal } from '/@/components/Common/Event/Signal'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { App } from '/@/App'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 export abstract class ThreePreviewTab extends PreviewTab {
 	public component = ThreePreviewTabComponent

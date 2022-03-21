@@ -4,7 +4,6 @@ import { Tab } from '../../TabSystem/CommonTab'
 import { TabSystem } from '../../TabSystem/TabSystem'
 import Error from './Error.vue'
 import Warning from './Warning.vue'
-import Vue from 'vue'
 import { FunctionValidator } from '/@/components/Languages/Mcfunction/Validation/Validator'
 import { App } from '/@/App'
 
@@ -173,15 +172,15 @@ export class FunctionValidatorTab extends Tab {
 
 						console.log(translated)
 
-						var ComponentClass = Vue.extend(Error)
-						var instance = new ComponentClass({
-							propsData: {
-								alertText: translated,
-							},
-						})
+						// var ComponentClass = Vue.extend(Error)
+						// var instance = new ComponentClass({
+						// 	propsData: {
+						// 		alertText: translated,
+						// 	},
+						// })
 
-						instance.$mount()
-						alertsElement.appendChild(instance.$el)
+						// instance.$mount()
+						// alertsElement.appendChild(instance.$el)
 					}
 
 					let currentWarningLines = []
@@ -210,15 +209,15 @@ export class FunctionValidatorTab extends Tab {
 							}
 						}
 
-						var ComponentClass = Vue.extend(Warning)
-						var instance = new ComponentClass({
-							propsData: {
-								alertText: translated,
-							},
-						})
+						// var ComponentClass = Vue.extend(Warning)
+						// var instance = new ComponentClass({
+						// 	propsData: {
+						// 		alertText: translated,
+						// 	},
+						// })
 
-						instance.$mount()
-						alertsElement.appendChild(instance.$el)
+						// instance.$mount()
+						// alertsElement.appendChild(instance.$el)
 					}
 
 					if (fullCommmandDisplayElement) {

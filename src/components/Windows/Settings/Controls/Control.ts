@@ -1,6 +1,6 @@
 import { settingsState } from '../SettingsState'
 import { App } from '/@/App'
-import { set } from '@vue/composition-api'
+import { Component } from 'vue'
 
 export interface IControl<T> {
 	category: string
@@ -14,26 +14,25 @@ export interface IControl<T> {
 }
 
 export abstract class Control<T, K extends IControl<T> = IControl<T>> {
-	readonly component!: Vue.Component
-	readonly config!: K
+	readonly config: K
 
 	abstract matches(filter: string): void
 
 	constructor(
-		component: Vue.Component,
+		protected readonly component: Component,
 		control: K,
 		protected state = settingsState
 	) {
-		set(this, 'config', control)
-		set(this, 'component', component)
+		this.config = control
 
 		if (this.value === undefined && control.default !== undefined)
 			this.value = control.default
 	}
 	set value(value: T) {
 		if (this.state[this.config.category] === undefined)
-			set(this.state, this.config.category, {})
-		set(this.state[this.config.category], this.config.key, value)
+			this.state[this.config.category] = {}
+
+		this.state[this.config.category][this.config.key] = value
 	}
 	get value() {
 		return <T>this.state[this.config.category]?.[this.config.key]

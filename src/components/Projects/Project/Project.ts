@@ -18,7 +18,7 @@ import {
 	AnyDirectoryHandle,
 	AnyFileHandle,
 } from '/@/components/FileSystem/Types'
-import { markRaw, reactive, set } from '@vue/composition-api'
+import { markRaw, reactive } from 'vue'
 import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
@@ -437,20 +437,18 @@ export abstract class Project {
 	async loadProject() {
 		await this.config.setup()
 
-		set(this, '_projectData', {
+		this._projectData = {
 			...this.config.get(),
 			path: this.name,
 			name: this.name,
 			imgSrc: await loadIcon(this, this.app.fileSystem),
 			contains: [],
-		})
-		await loadPacks(this.app, this).then((packs) =>
-			set(
-				this._projectData,
-				'contains',
-				packs.sort((a, b) => a.id.localeCompare(b.id))
+		}
+		await loadPacks(this.app, this).then((packs) => {
+			this._projectData.contains = packs.sort((a, b) =>
+				a.id.localeCompare(b.id)
 			)
-		)
+		})
 	}
 
 	async recompile(forceStartIfActive = true) {

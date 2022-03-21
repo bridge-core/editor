@@ -35,10 +35,7 @@
 				</li>
 			</v-col>
 
-			<v-col
-				v-if="$vuetify.breakpoint.smAndUp && files.length > 0"
-				tag="ul"
-			>
+			<v-col v-if="$vuetify.display.smAndUp && files.length > 0" tag="ul">
 				<p>{{ t('welcome.recentFiles') }}</p>
 				<v-divider class="mb-2" />
 				<li
@@ -56,7 +53,7 @@
 			</v-col>
 
 			<v-col
-				v-if="$vuetify.breakpoint.mdAndUp && projects.length > 0"
+				v-if="$vuetify.display.mdAndUp && projects.length > 0"
 				tag="ul"
 				:class="{
 					disabled: !maySwitchProjects,

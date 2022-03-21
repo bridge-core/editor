@@ -171,7 +171,7 @@ export default {
 			].concat(this.extension.tags)
 		},
 		isMobile() {
-			return this.$vuetify.breakpoint.mobile
+			return this.$vuetify.display.mobile
 		},
 		compilerPlugins() {
 			return Object.keys(this.extension.connected.compilerPlugins)

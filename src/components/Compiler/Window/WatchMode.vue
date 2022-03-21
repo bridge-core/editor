@@ -4,7 +4,7 @@
 			<ActionViewer
 				v-ripple
 				style="margin-bottom: 0 !important; height: 100%"
-				@click.native="restartWatchModeAction.trigger()"
+				@click="restartWatchModeAction.trigger()"
 				:action="restartWatchModeAction"
 				:hideTriggerButton="true"
 			/>
@@ -13,7 +13,7 @@
 			<ActionViewer
 				v-ripple
 				style="margin-bottom: 0 !important; height: 100%"
-				@click.native="recompileChangesAction.trigger()"
+				@click="recompileChangesAction.trigger()"
 				:action="recompileChangesAction"
 				:hideTriggerButton="true"
 			/>
@@ -39,13 +39,11 @@
 					</div>
 				</template>
 
-				<template>
-					{{
-						t(
-							`sidebar.compiler.categories.watchMode.settings.${id}.description`
-						)
-					}}
-				</template>
+				{{
+					t(
+						`sidebar.compiler.categories.watchMode.settings.${id}.description`
+					)
+				}}
 			</SettingSheet>
 		</v-col>
 	</v-row>
@@ -58,7 +56,6 @@ import { recompileChangesAction } from '../Actions/RecompileChanges'
 import SettingSheet from './WatchMode/SettingSheet.vue'
 import { TranslationMixin } from '../../Mixins/TranslationMixin'
 import { settingsState } from '../../Windows/Settings/SettingsState'
-import { set } from '@vue/composition-api'
 
 export default {
 	components: {
@@ -77,10 +74,10 @@ export default {
 	}),
 	setup() {
 		if (!settingsState.compiler) {
-			set(settingsState, 'compiler', {
+			settingsState.compiler = {
 				watchModeActive: true,
 				autoFetchChangedFiles: true,
-			})
+			}
 		}
 
 		return {

@@ -2,11 +2,9 @@
 	<span v-if="value === undefined" :style="toStyle(def)"><slot /></span>
 
 	<span v-else
-		>"<template v-for="({ text, def }, i) in tokens">
-			<span :key="text" :style="toStyle(def)">{{ text }}</span
-			><span :key="`${text}.colon`">{{
-				tokens.length > i + 1 ? ':' : ''
-			}}</span> </template
+		>"<template v-for="({ text, def }, i) in tokens" :key="text">
+			<span :style="toStyle(def)">{{ text }}</span
+			><span>{{ tokens.length > i + 1 ? ':' : '' }}</span> </template
 		>"</span
 	>
 </template>
@@ -14,7 +12,7 @@
 <script>
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 import { App } from '/@/App'
-import { reactive } from '@vue/composition-api'
+import { reactive } from 'vue'
 
 const knownWords = new reactive({
 	keywords: [],

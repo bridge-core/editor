@@ -55,7 +55,7 @@
 									createOptions.rpAsBpDependency ||
 									createOptions.packs.includes('resourcePack')
 								"
-								@click.stop.native="
+								@click.stop="
 									createOptions.bpAsRpDependency = !createOptions.bpAsRpDependency
 								"
 								:disabled="
@@ -82,7 +82,7 @@
 									createOptions.rpAsBpDependency ||
 									createOptions.packs.includes('behaviorPack')
 								"
-								@click.stop.native="
+								@click.stop="
 									createOptions.rpAsBpDependency = !createOptions.rpAsBpDependency
 								"
 								:disabled="
@@ -244,7 +244,7 @@
 					dense
 					:label="t('windows.createProject.useLangForManifest')"
 					:value="createOptions.useLangForManifest"
-					@click.stop.native="
+					@click.stop="
 						createOptions.useLangForManifest = !createOptions.useLangForManifest
 					"
 					class="ma-3"

@@ -6,7 +6,7 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import json5 from 'json5'
 import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 export interface IPreviewOptions {
 	loadServerEntity?: boolean

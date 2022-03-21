@@ -10,7 +10,7 @@ import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { FileTab } from '../../TabSystem/FileTab'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 export class ParticlePreviewTab extends ThreePreviewTab {
 	protected emitter?: Emitter

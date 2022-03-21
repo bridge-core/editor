@@ -4,11 +4,8 @@ import { TUIStore } from './store'
 import { IDisposable } from '/@/types/disposable'
 import { executeScript } from '../Scripts/loadScripts'
 import { createStyleSheet } from '../Styles/createStyle'
-import { parseComponent } from 'vue-template-compiler'
-import Vue from 'vue'
+import { compileTemplate, parse } from '@vue/compiler-sfc'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-// @ts-ignore
-import * as VuetifyComponents from 'vuetify/lib/components'
 import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
 
 export async function loadUIComponents(
@@ -60,41 +57,48 @@ export async function loadUIComponent(
 	}
 
 	const promise = new Promise(async (resolve, reject) => {
-		//@ts-expect-error "errors" is not defined in .d.ts file
-		const { template, script, styles, errors } = parseComponent(
-			await (await fileSystem.readFile(componentPath)).text()
+		const { errors, descriptor } = parse(
+			await (await fileSystem.readFile(componentPath)).text(),
+			{
+				filename: componentPath,
+			}
 		)
+		const { source, styles, template } = descriptor
+		console.log(descriptor)
 
-		if (errors.length > 0) {
-			;(errors as Error[]).forEach((error) =>
-				createErrorNotification(error)
-			)
-			return reject(errors[0])
-		}
+		// TODO(Vue3): make custom UI work again
+		return resolve(null)
 
-		const component = {
-			name: basename(componentPath),
-			...(await (<any>(
-				executeScript(
-					script?.content?.replace('export default', 'return') ?? '',
-					{ uiStore, disposables }
-				)
-			))),
-			...Vue.compile(
-				template?.content ?? `<p color="red">NO TEMPLATE DEFINED</p>`
-			),
-		}
-		// Add vuetify components in
-		component.components = Object.assign(
-			component.components ?? {},
-			VuetifyComponents
-		)
+		// if (errors.length > 0) {
+		// 	;(errors as Error[]).forEach((error) =>
+		// 		createErrorNotification(error)
+		// 	)
+		// 	return reject(errors[0])
+		// }
 
-		styles.forEach((style) =>
-			disposables.push(createStyleSheet(style.content))
-		)
+		// const component = {
+		// 	name: basename(componentPath),
+		// 	...(await (<any>(
+		// 		executeScript(
+		// 			script?.content?.replace('export default', 'return') ?? '',
+		// 			{ uiStore, disposables }
+		// 		)
+		// 	))),
+		// 	...Vue.compile(
+		// 		template?.content ?? `<p color="red">NO TEMPLATE DEFINED</p>`
+		// 	),
+		// }
+		// // Add vuetify components in
+		// component.components = Object.assign(
+		// 	component.components ?? {}
+		// 	// VuetifyComponents
+		// )
 
-		resolve(component)
+		// styles.forEach((style) =>
+		// 	disposables.push(createStyleSheet(style.content))
+		// )
+
+		// resolve(component)
 	})
 
 	uiStore.set(componentPath.replace('ui/', '').split('/'), () => promise)

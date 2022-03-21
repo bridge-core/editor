@@ -1,4 +1,4 @@
-import { zhHans } from 'vuetify/src/locale'
+import { zhHans } from 'vuetify/locale'
 
 export default {
 	...zhHans,
@@ -28,7 +28,8 @@ export default {
 		reset: '重置',
 
 		confirmOverwriteFile: '此操作会覆盖同名文件。你要继续吗？',
-		fileSystemPolyfill: '由于你的浏览器原因，你需要将你的项目下载到本地来实际保存你的进度。如果你将浏览器换成Chrome（除了Chrome 93和94）或Edge，便无需如此！',
+		fileSystemPolyfill:
+			'由于你的浏览器原因，你需要将你的项目下载到本地来实际保存你的进度。如果你将浏览器换成Chrome（除了Chrome 93和94）或Edge，便无需如此！',
 		successfulExport: {
 			title: '导出成功',
 			description: '你可以在这里找到导出的包',
@@ -51,7 +52,8 @@ export default {
 		},
 		worldTemplate: {
 			name: '世界模板',
-			description: '创建一个世界，其他用户可以通过在游戏中创建这个世界来体验你的项目',
+			description:
+				'创建一个世界，其他用户可以通过在游戏中创建这个世界来体验你的项目',
 		},
 	},
 	// File Type display names
@@ -287,7 +289,7 @@ export default {
 			description: '更改所选文本的所有匹配项',
 		},
 		tgaMaskToggle: {
-			name: '显示/隐藏Alpha蒙版'
+			name: '显示/隐藏Alpha蒙版',
 		},
 	},
 	// Toolbar Categories
@@ -317,7 +319,8 @@ export default {
 			name: '编译器',
 			default: {
 				name: '默认配置',
-				description: '使用编译器的默认配置运行bridge.编译器，该配置位于项目的“config.json”文件中。',
+				description:
+					'使用编译器的默认配置运行bridge.编译器，该配置位于项目的“config.json”文件中。',
 			},
 		},
 		extensions: {
@@ -364,7 +367,8 @@ export default {
 		},
 		additionalModdingCapabilities: {
 			name: '其他修改权能',
-			description: '在清单中启用脚本API，并允许你创建脚本时使用自动补全。',
+			description:
+				'在清单中启用脚本API，并允许你创建脚本时使用自动补全。',
 		},
 		upcomingCreatorFeatures: {
 			name: '即将推出的创作者功能',
@@ -372,7 +376,8 @@ export default {
 		},
 		enableGameTestFramework: {
 			name: '启用GameTest框架',
-			description: '在清单中启用GameTest相关模块，并允许你创建GameTest脚本时使用自动补全。',
+			description:
+				'在清单中启用GameTest相关模块，并允许你创建GameTest脚本时使用自动补全。',
 		},
 		experimentalMolangFeatures: {
 			name: '实验性Molang功能',
@@ -382,7 +387,7 @@ export default {
 			name: '荒野更新',
 			description: '为荒野更新中引入的实体组件等新功能启用自动补全。',
 		},
-		
+
 		educationEdition: {
 			name: '启用教育版',
 			description: '启用教育版功能的自动补全，例如材料分解器配方。',
@@ -418,7 +423,8 @@ export default {
 			bpAsRpDependency: '将行为包注册为资源包依赖',
 			useLangForManifest: '将包的名称/描述直接添加到清单',
 			create: '创建',
-			saveCurrentProject: '你想在创建新项目之前保存当前项目吗？任何未保存的更改都将丢失！',
+			saveCurrentProject:
+				'你想在创建新项目之前保存当前项目吗？任何未保存的更改都将丢失！',
 			individualFiles: {
 				name: '独立文件',
 				file: {
@@ -460,7 +466,8 @@ export default {
 					},
 					soundDefinitions: {
 						name: 'sound_definitions.json',
-						description: '用于注册要在项目其他地方使用的音效文件的ID',
+						description:
+							'用于注册要在项目其他地方使用的音效文件的ID',
 					},
 				},
 			},
@@ -470,7 +477,8 @@ export default {
 			searchPresets: '搜索预设...',
 			overwriteFiles: '此预设会覆盖一个或多个现有文件。你要继续吗？',
 			overwriteFilesConfirm: '继续',
-			overwriteUnsavedChanges: '此预设会用未保存的更改覆盖一个或多个文件。你要继续吗？',
+			overwriteUnsavedChanges:
+				'此预设会用未保存的更改覆盖一个或多个文件。你要继续吗？',
 			overwriteUnsavedChangesConfirm: '继续',
 			validationRule: {
 				alphanumeric: '你只能使用字母、数字或下划线',
@@ -485,7 +493,8 @@ export default {
 		},
 		socials: {
 			title: '社交媒体',
-			content: '查看我们的Twitter、Github并加入bridge.的官方Discord服务器！',
+			content:
+				'查看我们的Twitter、Github并加入bridge.的官方Discord服务器！',
 			discord: 'Discord',
 			twitter: 'Twitter',
 			github: 'Github',
@@ -501,7 +510,8 @@ export default {
 
 			saveCurrentProject: {
 				name: '保存项目',
-				description: '将当前项目下载为.brproject文件以保存你所做的更改。',
+				description:
+					'将当前项目下载为.brproject文件以保存你所做的更改。',
 			},
 			openNewProject: {
 				name: '打开项目',
@@ -524,7 +534,8 @@ export default {
 				},
 				itemFound: {
 					name: '物品标识符',
-					description: '运行战利品表，直到找到具有指定标识符的物品堆叠',
+					description:
+						'运行战利品表，直到找到具有指定标识符的物品堆叠',
 				},
 				quantityFound: {
 					name: '数量',
@@ -548,12 +559,14 @@ export default {
 			},
 			restartDevServer: {
 				name: '重启开发服务器',
-				description: '你确定要重新启动编译器的开发服务器吗？这可能需要一些时间，具体取决于项目的大小。重新启动编译器会从com.mojang文件夹中删除你的附加包，并基于你的bridge.文件夹将其重新编译！',
+				description:
+					'你确定要重新启动编译器的开发服务器吗？这可能需要一些时间，具体取决于项目的大小。重新启动编译器会从com.mojang文件夹中删除你的附加包，并基于你的bridge.文件夹将其重新编译！',
 			},
 			createPreset: '新建文件',
 			projectConfig: {
 				name: '打开项目配置',
-				missing: '看起来这个项目没有config.json文件。每个项目都需要一个项目配置才能正常工作。',
+				missing:
+					'看起来这个项目没有config.json文件。每个项目都需要一个项目配置才能正常工作。',
 			},
 			exportAsMcaddon: {
 				name: '导出为.mcaddon',
@@ -679,11 +692,13 @@ export default {
 				},
 				collaborativeMode: {
 					name: '协作模式',
-					description: '在切换项目时强制完全刷新缓存。当你独自作业且只用bridge.来编辑你的项目时请禁用',
+					description:
+						'在切换项目时强制完全刷新缓存。当你独自作业且只用bridge.来编辑你的项目时请禁用',
 				},
 				packSpider: {
 					name: '包爬虫',
-					description: '包爬虫能够为你项目中的文件建立连接，并在虚拟文件系统中向你展示这些连接',
+					description:
+						'包爬虫能够为你项目中的文件建立连接，并在虚拟文件系统中向你展示这些连接',
 				},
 				formatOnSave: {
 					name: '保存时格式化',
@@ -695,7 +710,8 @@ export default {
 				},
 				restoreTabs: {
 					name: '恢复标签页',
-					description: '在打开应用程序后恢复你上次使用bridge.时的标签页',
+					description:
+						'在打开应用程序后恢复你上次使用bridge.时的标签页',
 				},
 				resetBridgeFolder: {
 					name: '选择根文件夹',
@@ -741,7 +757,8 @@ export default {
 				},
 				bridgePredictions: {
 					name: 'bridge.预测',
-					description: '启用bridge.预测可以让应用程序智能地决定是否在bridge.的树状编辑器中添加值或对象。这可以显著简化JSON编辑',
+					description:
+						'启用bridge.预测可以让应用程序智能地决定是否在bridge.的树状编辑器中添加值或对象。这可以显著简化JSON编辑',
 				},
 				bracketPairColorization: {
 					name: '括号对着色',
@@ -761,7 +778,8 @@ export default {
 				},
 				automaticallyOpenTreeNodes: {
 					name: '自动打开树状节点',
-					description: '在bridge.的树状编辑器中，选择节点时会自动打开它们',
+					description:
+						'在bridge.的树状编辑器中，选择节点时会自动打开它们',
 				},
 				dragAndDropTreeNodes: {
 					name: '拖放树状节点',
@@ -783,7 +801,8 @@ export default {
 			compilerPluginDownload: {
 				compilerPlugins: '编译器插件',
 				title: '下载编译器插件',
-				description: '你刚刚下载了一个新的编译器插件。请确保将其添加到你的编译器配置文件中，否则它不会有任何效果。',
+				description:
+					'你刚刚下载了一个新的编译器插件。请确保将其添加到你的编译器配置文件中，否则它不会有任何效果。',
 				openConfig: '打开配置',
 			},
 		},
@@ -796,12 +815,14 @@ export default {
 		},
 		browserUnsupported: {
 			title: '不支持的浏览器',
-			description: '请使用Chrome（桌面版，除了Chrome 93和94）或Edge（Chromium版）以获得使用bridge. v2的最佳体验！你的浏览器不支持直接保存文件以及将项目同步到你的com.mojang文件夹的功能。',
+			description:
+				'请使用Chrome（桌面版，除了Chrome 93和94）或Edge（Chromium版）以获得使用bridge. v2的最佳体验！你的浏览器不支持直接保存文件以及将项目同步到你的com.mojang文件夹的功能。',
 			continue: '依旧继续',
 		},
 		invalidJson: {
 			title: '无效的JSON',
-			description: 'bridge.的树状编辑器无法打开包含无效JSON的文件。你可以在设置中切换到“原始文本”编辑器类型以手动修复问题。',
+			description:
+				'bridge.的树状编辑器无法打开包含无效JSON的文件。你可以在设置中切换到“原始文本”编辑器类型以手动修复问题。',
 		},
 		loadingWindow: {
 			titles: {
@@ -810,18 +831,21 @@ export default {
 		},
 		upgradeFs: {
 			title: '升级文件系统？',
-			description: '你的浏览器现在支持将文件直接保存在你的计算机上。你想现在就升级吗？',
+			description:
+				'你的浏览器现在支持将文件直接保存在你的计算机上。你想现在就升级吗？',
 		},
 	},
 	taskManager: {
 		tasks: {
 			packIndexing: {
 				title: '正在为包添加索引',
-				description: 'bridge.正在收集所需的数据，以便为你的包添加智能功能',
+				description:
+					'bridge.正在收集所需的数据，以便为你的包添加智能功能',
 			},
 			compiler: {
 				title: '正在编译项目',
-				description: 'bridge.正在编译你的项目，为其导入Minecraft做好准备',
+				description:
+					'bridge.正在编译你的项目，为其导入Minecraft做好准备',
 			},
 			unzipper: {
 				name: '正在解压ZIP',
@@ -839,7 +863,8 @@ export default {
 		andMore: '...和其他更多文件！',
 		importMethod: '导入方法',
 		mcaddon: {
-			missingManifests: "由于无法找到包的清单文件，bridge.无法从你的.mcaddon文件中加载数据。",
+			missingManifests:
+				'由于无法找到包的清单文件，bridge.无法从你的.mcaddon文件中加载数据。',
 		},
 		saveToProject: {
 			title: '保存至项目',
@@ -855,12 +880,16 @@ export default {
 	comMojang: {
 		folderDropped: '你想将此文件夹设置为默认的com.mojang文件夹吗？',
 		title: '访问文件夹“com.mojang”',
-		permissionRequest: 'bridge.需要访问你的“com.mojang”文件夹才能将项目编译到其中。',
+		permissionRequest:
+			'bridge.需要访问你的“com.mojang”文件夹才能将项目编译到其中。',
 		status: {
 			sucess: '已正确设置你的项目与com.mojang的同步。',
-			deniedPermission: '你设置了与com.mojang的同步，但你没有授予bridge.访问文件夹的权限。',
-			notSetup: '你尚未设置与com.mojang的同步。将你的com.mojang文件夹拖动到bridge.上即可设置同步',
-			notAvailable: '将项目同步到com.mojang文件夹的功能仅适用于使用Chrome和Edge的用户。',
+			deniedPermission:
+				'你设置了与com.mojang的同步，但你没有授予bridge.访问文件夹的权限。',
+			notSetup:
+				'你尚未设置与com.mojang的同步。将你的com.mojang文件夹拖动到bridge.上即可设置同步',
+			notAvailable:
+				'将项目同步到com.mojang文件夹的功能仅适用于使用Chrome和Edge的用户。',
 		},
 	},
 	findAndReplace: {
@@ -882,9 +911,11 @@ export default {
 		viewBlock: '查看方块',
 		simulateLoot: '模拟战利品抢夺',
 		failedClientEntityLoad: '无法加载所连接的客户端实体',
-		invalidEntity: '无法为具有无效JSON的实体打开预览。请修复文件中的JSON错误，然后重试。',
+		invalidEntity:
+			'无法为具有无效JSON的实体打开预览。请修复文件中的JSON错误，然后重试。',
 		chooseGeometry: '选择几何',
-		noGeometry: '在此文件中找不到有效的几何。确保你的JSON有效、文件结构正确且具有所提供标识符的几何存在。',
+		noGeometry:
+			'在此文件中找不到有效的几何。确保你的JSON有效、文件结构正确且具有所提供标识符的几何存在。',
 		lootTableSimulator: {
 			emptyLootOutput: '输出为空，尝试运行战利品表以收集结果。',
 			data: {
@@ -912,15 +943,18 @@ export default {
 		step: {
 			installApp: {
 				name: '安装bridge.',
-				description: '为获得最佳体验，请安装bridge. v2作为你计算机的应用程序。',
+				description:
+					'为获得最佳体验，请安装bridge. v2作为你计算机的应用程序。',
 			},
 			bridge: {
 				name: 'bridge.文件夹',
-				description: '请创建一个文件夹，用于bridge.保存应用程序相关数据和你的附加包项目。',
+				description:
+					'请创建一个文件夹，用于bridge.保存应用程序相关数据和你的附加包项目。',
 			},
 			bridgeProject: {
 				name: 'bridge.项目',
-				description: '你是要创建新项目还是从.brproject文件导入现有项目？',
+				description:
+					'你是要创建新项目还是从.brproject文件导入现有项目？',
 				createNew: {
 					name: '新建项目',
 					description: '创建一个新项目。',
@@ -932,19 +966,23 @@ export default {
 			},
 			comMojang: {
 				name: 'com.mojang文件夹',
-				description: '现在可以将你的com.mojang文件夹拖到bridge.上以设置项目到该文件夹的同步。这可以使Minecraft的Windows 10版本自动访问你的附加包。你也可以在后续使用bridge.过程中的任何时间完成设置与com.mojang的同步。',
+				description:
+					'现在可以将你的com.mojang文件夹拖到bridge.上以设置项目到该文件夹的同步。这可以使Minecraft的Windows 10版本自动访问你的附加包。你也可以在后续使用bridge.过程中的任何时间完成设置与com.mojang的同步。',
 				extraDescription: '将你的com.mojang文件夹拖到bridge.上',
 			},
 			editorType: {
 				name: '选择编辑器类型',
-				description: '你想如何编辑JSON文件？你可以稍后在bridge.的设置中更改你的选择！',
+				description:
+					'你想如何编辑JSON文件？你可以稍后在bridge.的设置中更改你的选择！',
 				rawText: {
 					name: '原始文本',
-					description: '以原始文本的形式编辑JSON，中、高级开发者的理想选择。带有高级自动补全和JSON验证功能。',
+					description:
+						'以原始文本的形式编辑JSON，中、高级开发者的理想选择。带有高级自动补全和JSON验证功能。',
 				},
 				treeEditor: {
 					name: '树状编辑器',
-					description: '以树状结构的形式编辑JSON，几乎不需要JSON相关知识。非常适合初学者和中级创作者',
+					description:
+						'以树状结构的形式编辑JSON，几乎不需要JSON相关知识。非常适合初学者和中级创作者',
 				},
 			},
 		},
@@ -1023,7 +1061,8 @@ export default {
 					part1: '选择器‘',
 					part2: '’不是一个有效的选择器！',
 				},
-				selectorNotBeforeOpenSquareBracket: '预期在‘[’之前应出现一个选择器！',
+				selectorNotBeforeOpenSquareBracket:
+					'预期在‘[’之前应出现一个选择器！',
 			},
 			scoreData: {
 				empty: '出现了意外的空的分数数据！',
@@ -1062,7 +1101,8 @@ export default {
 				},
 				schemaValueNotFound: {
 					part1: '找不到模式值‘',
-					part2: '’。这可能是一个错误，或者该模式值来自另一个附加包。',
+					part2:
+						'’。这可能是一个错误，或者该模式值来自另一个附加包。',
 				},
 			},
 			data: {

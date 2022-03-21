@@ -1,4 +1,4 @@
-import { zhHant } from 'vuetify/src/locale'
+import { zhHant } from 'vuetify/locale'
 
 export default {
 	...zhHant,

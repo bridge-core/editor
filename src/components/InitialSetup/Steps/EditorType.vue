@@ -7,7 +7,7 @@
 			:action="action"
 			hideTriggerButton
 			v-ripple
-			@click.native="action.trigger()"
+			@click="action.trigger()"
 		/>
 	</v-card>
 </template>

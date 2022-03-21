@@ -2,7 +2,7 @@ import { platform } from '/@/utils/os'
 import { v4 as uuid } from 'uuid'
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { reactive } from '@vue/composition-api'
+import { reactive } from 'vue'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { join } from '/@/utils/path'
 

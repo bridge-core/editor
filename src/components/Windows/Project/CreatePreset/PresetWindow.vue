@@ -49,7 +49,7 @@
 				<v-text-field
 					v-if="!opts.type || opts.type === 'textInput'"
 					class="mb-1"
-					:key="i"
+					:key="`textInput-${i}`"
 					v-model="content.models[id]"
 					:label="name"
 					:rules="
@@ -67,7 +67,7 @@
 				<span
 					v-else-if="opts.type === 'fileInput'"
 					v-cloak
-					:key="i"
+					:key="`fileInput-${i}`"
 					@drop.prevent.stop="onDropFile(id, opts, $event)"
 					@dragover.prevent.stop
 				>
@@ -91,7 +91,7 @@
 						opts.options.length > 4 ? 'v-autocomplete' : 'v-select'
 					"
 					class="mb-1"
-					:key="i"
+					:key="`selectInput-${i}`"
 					:loading="opts.isLoading"
 					:disabled="opts.isLoading"
 					v-model="content.models[id]"
@@ -106,7 +106,7 @@
 				<v-switch
 					v-else-if="opts.type === 'switch'"
 					class="mb-1"
-					:key="i"
+					:key="`switch-${i}`"
 					v-model="content.models[id]"
 					:label="name"
 				/>
@@ -114,7 +114,7 @@
 				<v-slider
 					v-else-if="opts.type === 'numberInput'"
 					class="mb-1"
-					:key="i"
+					:key="`numberInput-${i}`"
 					v-model="content.models[id]"
 					:min="opts.min || 0"
 					:max="opts.max || 10"

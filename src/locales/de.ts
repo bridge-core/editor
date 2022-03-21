@@ -1,4 +1,4 @@
-import { de } from 'vuetify/src/locale'
+import { de } from 'vuetify/locale'
 
 export default {
 	...de,

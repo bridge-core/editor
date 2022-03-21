@@ -25,7 +25,7 @@
 					opacity: tree.hasChildren ? null : '60%',
 					top: tree.hasChildren ? '0px' : '-1.5px',
 				}"
-				@click.native.stop.prevent="tree.toggleOpen()"
+				@click.stop.prevent="tree.toggleOpen()"
 				small
 			>
 				mdi-chevron-right

@@ -1,6 +1,6 @@
 import { Action } from './Action'
 import { IActionConfig } from './SimpleAction'
-import { del, set, shallowReactive } from '@vue/composition-api'
+import { shallowReactive } from 'vue'
 import type { KeyBindingManager } from './KeyBindingManager'
 import { v4 as uuid } from 'uuid'
 export class ActionManager {
@@ -22,7 +22,7 @@ export class ActionManager {
 
 	create(actionConfig: IActionConfig) {
 		const action = new Action(this, actionConfig)
-		set(this.state, action.id, action)
+		this.state[action.id] = action
 		return action
 	}
 	getAction(actionId: string) {
@@ -37,7 +37,7 @@ export class ActionManager {
 		this.state[uuid()] = { type: 'divider' }
 	}
 	disposeAction(actionId: string) {
-		del(this.state, actionId)
+		delete this.state[actionId]
 	}
 	dispose() {
 		Object.values(this.state).forEach((action) =>

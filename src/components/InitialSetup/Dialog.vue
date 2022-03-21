@@ -18,10 +18,13 @@
 					</h2>
 				</div>
 
-				<v-stepper v-model="stepId" vertical>
-					<template v-for="({ name, component }, i) in steps">
+				<!-- TODO(Vue3): Re-enable initial setup dialog -->
+				<!-- <v-stepper v-model="stepId" vertical>
+					<template
+						v-for="({ name, component }, i) in steps"
+						:key="name"
+					>
 						<v-stepper-step
-							:key="`${name}.header`"
 							:complete="stepId > i + 1"
 							:step="i + 1"
 						>
@@ -31,10 +34,7 @@
 							</span>
 						</v-stepper-step>
 
-						<v-stepper-content
-							:key="`${name}.content`"
-							:step="i + 1"
-						>
+						<v-stepper-content :step="i + 1">
 							<component
 								:is="component"
 								@next="onNext()"
@@ -42,7 +42,7 @@
 							/>
 						</v-stepper-content>
 					</template>
-				</v-stepper>
+				</v-stepper> -->
 			</v-container>
 		</v-card>
 	</v-dialog>

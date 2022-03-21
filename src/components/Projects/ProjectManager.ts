@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { get as idbGet, set as idbSet } from 'idb-keyval'
-import { shallowReactive, set, del, reactive } from '@vue/composition-api'
+import { shallowReactive, reactive } from 'vue'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { Project } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
@@ -56,7 +56,7 @@ export class ProjectManager extends Signal<void> {
 		const project = new BedrockProject(this, this.app, projectDir)
 		await project.loadProject()
 
-		set(this.state, project.name, project)
+		this.state[project.name] = project
 
 		if (isNewProject) {
 			await this.selectProject(project.name)
@@ -68,7 +68,7 @@ export class ProjectManager extends Signal<void> {
 	async removeProject(projectName: string) {
 		const project = this.state[projectName]
 		if (!project) return
-		del(this.state, projectName)
+		delete this.state[projectName]
 		await this.app.fileSystem.unlink(`projects/${projectName}`)
 
 		this.recentProjects.remove(project.projectData)

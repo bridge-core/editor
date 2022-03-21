@@ -1,4 +1,4 @@
-import { reactive, set } from '@vue/composition-api'
+import { reactive } from 'vue'
 import { App } from '/@/App'
 import { v4 as uuid } from 'uuid'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
@@ -240,7 +240,7 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 		return this.state[id] ?? {}
 	}
 	setState(id: string, data: any) {
-		set(this.state, id, data)
+		this.state[id] = data
 	}
 
 	protected sortSidebar(elements: TSidebarElement[]) {

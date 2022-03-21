@@ -1,7 +1,7 @@
 <template>
 	<v-navigation-drawer
-		mini-variant
-		mini-variant-width="60"
+		rail
+		rail-width="60"
 		stateless
 		v-model="isNavigationVisible"
 		:app="app"
@@ -102,7 +102,7 @@ export default {
 	},
 	computed: {
 		isMobile() {
-			return this.$vuetify.breakpoint.mobile
+			return this.$vuetify.display.mobile
 		},
 		isNavigationVisible: {
 			get() {

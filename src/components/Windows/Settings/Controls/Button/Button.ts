@@ -1,6 +1,5 @@
 import { Control, IControl } from '../Control'
 import ButtonComponent from './Button.vue'
-import Vue from 'vue'
 
 export class Button extends Control<any> {
 	constructor(config: {

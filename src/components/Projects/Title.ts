@@ -1,4 +1,4 @@
-import { ref } from '@vue/composition-api'
+import { ref } from 'vue'
 import { isNightly } from '/@/utils/app/isNightly'
 
 const appName = isNightly ? 'bridge. Nightly' : 'bridge. v2'

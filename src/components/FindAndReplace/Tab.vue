@@ -87,7 +87,7 @@
 						:height="(hasLimitedSpace ? 400 : height) - 40"
 						:bench="30"
 						item-height="22"
-						@scroll.native="onScroll"
+						@scroll="onScroll"
 					>
 						<template v-slot:default="{ item }">
 							<div
@@ -133,7 +133,6 @@ import FilePath from './FilePath.vue'
 import { debounce } from 'lodash'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { createRegExp, processFileText } from './Utils.ts'
-import { set } from '@vue/composition-api'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
@@ -190,8 +189,7 @@ export default {
 	computed: {
 		hasLimitedSpace() {
 			return (
-				this.$vuetify.breakpoint.mobile ||
-				this.tab.parent.isSharingScreen
+				this.$vuetify.display.mobile || this.tab.parent.isSharingScreen
 			)
 		},
 	},
@@ -199,7 +197,7 @@ export default {
 	watch: {
 		'tab.uuid'() {
 			for (const key in this.tab.state) {
-				set(this, key, this.tab.state[key])
+				this[key] = this.tab.state[key]
 			}
 		},
 		searchFor() {

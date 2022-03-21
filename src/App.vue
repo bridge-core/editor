@@ -1,8 +1,5 @@
 <template>
-	<v-app
-		:style="{ fontFamily }"
-		@contextmenu.native="$event.preventDefault()"
-	>
+	<v-app :style="{ fontFamily }" @contextmenu="$event.preventDefault()">
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar />
@@ -45,7 +42,7 @@
 					<div
 						v-if="shouldRenderWelcomeScreen"
 						class="d-flex"
-						:class="{ 'flex-column': $vuetify.breakpoint.mobile }"
+						:class="{ 'flex-column': $vuetify.display.mobile }"
 						:style="{
 							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
 						}"
@@ -67,7 +64,7 @@
 								tabSystems[1].shouldRender
 							"
 							style="z-index: 1"
-							:vertical="!$vuetify.breakpoint.mobile"
+							:vertical="!$vuetify.display.mobile"
 						/>
 						<TabSystem
 							class="flex-grow-1"
@@ -115,7 +112,8 @@ export default {
 	mixins: [TabSystemMixin, AppToolbarHeightMixin],
 
 	mounted() {
-		App.getApp().then((app) => {
+		App._instanceReady.once((app) => {
+			app.mounted(this.$vuetify)
 			this.contextMenu = app.contextMenu
 			this.windowSize = app.windowResize.state
 		})
@@ -163,7 +161,7 @@ export default {
 					? this.settingsState.sidebar.sidebarSize
 					: undefined
 			if (!size) size = 'normal'
-			if (this.$vuetify.breakpoint.mobile) return 9
+			if (this.$vuetify.display.mobile) return 9
 
 			switch (size) {
 				case 'tiny':
@@ -190,7 +188,7 @@ export default {
 		},
 	},
 	watch: {
-		'$vuetify.breakpoint.mobile'() {
+		'$vuetify.display.mobile'() {
 			this.$nextTick(() => {
 				App.getApp().then((app) => app.windowResize.dispatch())
 			})

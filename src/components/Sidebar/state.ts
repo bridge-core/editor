@@ -2,7 +2,7 @@
  * Reactive vue state for the Sidebar
  */
 
-import { computed, reactive, ref, watch } from '@vue/composition-api'
+import { computed, reactive, ref, watch } from 'vue'
 import { SidebarContent } from './Content/SidebarContent'
 import { SidebarElement } from './create'
 import { App } from '/@/App'

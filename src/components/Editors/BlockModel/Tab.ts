@@ -8,7 +8,7 @@ import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
 import { walkObject } from 'bridge-common-utils'
 import { isValidPositionArray } from '/@/utils/minecraft/validPositionArray'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 export interface IBlockPreviewOptions {
 	loadComponents?: boolean

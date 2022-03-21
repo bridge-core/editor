@@ -5,7 +5,7 @@
 			selected: selected,
 		}"
 		v-ripple="isSelectable"
-		@click.stop.native="$emit('click')"
+		@click.stop="$emit('click')"
 	>
 		<div class="d-flex">
 			<v-icon :color="packType.color" class="mr-2">

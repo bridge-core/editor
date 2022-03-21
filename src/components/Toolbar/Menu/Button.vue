@@ -1,6 +1,6 @@
 <template>
 	<v-btn
-		small
+		:max-height="appToolbarHeight"
 		text
 		@click="$emit('click', $event)"
 		:disabled="disabled"
@@ -8,14 +8,14 @@
 		:class="{
 			'btn-enabled': !disabled,
 			'btn-disabled': disabled,
-			'px-1': $vuetify.breakpoint.mobile,
+			'px-1': $vuetify.display.mobile,
 		}"
 	>
 		<v-icon
 			v-if="displayIcon"
 			color="accent"
-			:x-small="$vuetify.breakpoint.mobile"
-			:class="{ 'pr-1': !$vuetify.breakpoint.mobile }"
+			:x-small="$vuetify.display.mobile"
+			:class="{ 'pr-1': !$vuetify.display.mobile }"
 		>
 			{{ displayIcon }}
 		</v-icon>
@@ -25,11 +25,12 @@
 </template>
 
 <script>
+import { AppToolbarHeightMixin } from '../../Mixins/AppToolbarHeight'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
 	name: 'MenuButton',
-	mixins: [TranslationMixin],
+	mixins: [TranslationMixin, AppToolbarHeightMixin],
 	props: {
 		displayName: String,
 		displayIcon: String,

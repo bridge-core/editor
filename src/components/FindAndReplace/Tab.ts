@@ -1,4 +1,4 @@
-import { reactive } from '@vue/composition-api'
+import { reactive } from 'vue'
 import { Remote, wrap } from 'comlink'
 import { Signal } from '../Common/Event/Signal'
 import { ESearchType } from './Controls/SearchTypeEnum'

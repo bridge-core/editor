@@ -6,9 +6,10 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
+import { Component } from 'vue'
 
 export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
-	abstract component: Vue.Component
+	abstract component: Component
 	public uuid = uuid()
 	public hasRemoteChange = false
 	protected _isUnsaved = false

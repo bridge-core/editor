@@ -11,7 +11,10 @@
 	>
 		<v-list color="menu" dense>
 			<template v-for="(action, id) in actions">
-				<v-divider v-if="action.type === 'divider'" :key="id" />
+				<v-divider
+					v-if="action.type === 'divider'"
+					:key="`${id}-div`"
+				/>
 				<v-list-item
 					v-else
 					:key="id"
@@ -37,11 +40,11 @@
 
 <script>
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
-import { createSimpleTransition } from 'vuetify/lib/components/transitions/createTransition'
-import Vue from 'vue'
-const contextMenuTransition = createSimpleTransition('context-menu-transition')
+// import { createSimpleTransition } from 'vuetify/lib/components/transitions/createTransition.mjs'
+// TODO(Vue3): Bring back context menu transition
+// const contextMenuTransition = createSimpleTransition('context-menu-transition')
 
-Vue.component('context-menu-transition', contextMenuTransition)
+// Vue.component('context-menu-transition', contextMenuTransition)
 
 export default {
 	name: 'ContextMenu',

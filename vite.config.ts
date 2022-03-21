@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
 import { resolve, join } from 'path'
-import { createVuePlugin } from 'vite-plugin-vue2'
+import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
+import vuetify from '@vuetify/vite-plugin'
 const isNightly = process.argv[2] === '--nightly'
 const iconPath = (filePath: string) =>
 	isNightly ? `./img/icons/nightly/${filePath}` : `./img/icons/${filePath}`
@@ -16,7 +17,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'/@': join(__dirname, 'src'),
-			vue: 'vue/dist/vue.esm.js',
+			// vue: '@vue/compat',
 			molangjs: join(__dirname, './src/utils/MoLangJS.ts'),
 		},
 	},
@@ -29,7 +30,16 @@ export default defineConfig({
 		},
 	},
 	plugins: [
-		createVuePlugin(),
+		vue({
+			template: {
+				compilerOptions: {
+					compatConfig: {
+						MODE: 2,
+					},
+				},
+			},
+		}),
+		vuetify({}),
 		ViteEjsPlugin({
 			isNightly,
 			title: isNightly ? 'bridge Nightly' : 'bridge v2',

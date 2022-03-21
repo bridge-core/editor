@@ -1,4 +1,4 @@
-import { ref } from '@vue/composition-api'
+import { ref } from 'vue'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 import { VirtualFileHandle } from './Virtual/FileHandle'
 

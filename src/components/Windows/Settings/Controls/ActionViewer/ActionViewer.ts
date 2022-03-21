@@ -1,7 +1,7 @@
 import { Control } from '../Control'
 import ActionViewerComponent from './ActionViewer.vue'
 import { Action } from '/@/components/Actions/Action'
-import { shallowReactive } from '@vue/composition-api'
+import { shallowReactive } from 'vue'
 
 export class ActionViewer extends Control<any> {
 	config: any = shallowReactive({ category: 'actions', action: {} })

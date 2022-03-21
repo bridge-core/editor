@@ -1,4 +1,4 @@
-import { ref } from '@vue/composition-api'
+import { ref } from 'vue'
 
 type TPointerType = 'touch' | 'mouse' | 'pen'
 export const pointerDevice = ref<TPointerType>('mouse')

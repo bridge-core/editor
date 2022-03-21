@@ -1,7 +1,7 @@
 <template>
 	<v-dialog
 		:value="isVisible"
-		:fullscreen="!isSmallPopup && $vuetify.breakpoint.mobile"
+		:fullscreen="!isSmallPopup && $vuetify.display.mobile"
 		@input="$emit('closeWindow')"
 		:persistent="isPersistent"
 		:hide-overlay="!blurBackground"
@@ -175,13 +175,13 @@ export default {
 
 	computed: {
 		calcSidebarWidth() {
-			if (this.$vuetify.breakpoint.mobile) return '76px'
+			if (this.$vuetify.display.mobile) return '76px'
 
 			return this.sidebarWidth
 		},
 		isFullScreenOrMobile() {
 			return (
-				(!this.isSmallPopup && this.$vuetify.breakpoint.mobile) ||
+				(!this.isSmallPopup && this.$vuetify.display.mobile) ||
 				this.isFullscreen
 			)
 		},
@@ -213,7 +213,7 @@ export default {
 			}
 		},
 		maxWindowHeight() {
-			if (!this.isSmallPopup && this.$vuetify.breakpoint.mobile)
+			if (!this.isSmallPopup && this.$vuetify.display.mobile)
 				return (
 					this.globalWindowHeight -
 					!this.hideToolbar * 30 -

@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 export function translate(vuetify: any, translationKey?: string) {
@@ -31,12 +30,13 @@ export class Locales {
 		const lang = this.vuetify.lang
 		if (key in lang.locales && !force)
 			throw new Error(`Language key "${key}" already exists!`)
-		Vue.set(lang.locales, key, obj)
+
+		lang.locales[key] = obj
 
 		return {
 			dispose: () => {
 				if (lang.current === key) lang.current = lang.defaultLocale
-				Vue.delete(lang.locales, key)
+				lang.locales[key] = undefined
 			},
 		}
 	}

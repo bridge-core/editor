@@ -4,7 +4,7 @@ import { Component } from 'vue'
 import type { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { SidebarContent } from './Content/SidebarContent'
-import { del, set, watch, WatchStopHandle } from '@vue/composition-api'
+import { watch, WatchStopHandle } from 'vue'
 
 export interface ISidebar {
 	id?: string
@@ -49,7 +49,7 @@ export class SidebarElement {
 
 	constructor(protected config: ISidebar) {
 		this.sidebarUUID = config.id ?? uuid()
-		set(SidebarState.sidebarElements, this.sidebarUUID, this)
+		SidebarState.sidebarElements[this.sidebarUUID] = this
 		if (config.isVisible) this.isVisible = config.isVisible
 
 		if (this.config.component) {
@@ -85,7 +85,7 @@ export class SidebarElement {
 		return this.config.component
 	}
 	dispose() {
-		del(SidebarState.sidebarElements, this.sidebarUUID)
+		delete SidebarState.sidebarElements[this.sidebarUUID]
 		this.stopHandle?.()
 		this.stopHandle = undefined
 	}

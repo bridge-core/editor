@@ -1,7 +1,7 @@
 import { Tab } from './CommonTab'
 import WelcomeScreen from './WelcomeScreen.vue'
 import { TextTab } from '../Editors/Text/TextTab'
-import Vue from 'vue'
+import { nextTick } from 'vue'
 import { App } from '/@/App'
 import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
 import { Project } from '../Projects/Project/Project'
@@ -12,7 +12,7 @@ import { FileTab } from './FileTab'
 import { TabProvider } from './TabProvider'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { hide as hideSidebar } from '../Sidebar/state'
-import { reactive } from '@vue/composition-api'
+import { reactive } from 'vue'
 
 export interface IOpenTabOptions {
 	selectTab?: boolean
@@ -194,7 +194,7 @@ export class TabSystem extends MonacoHolder {
 
 		await this._selectedTab?.onActivate()
 
-		Vue.nextTick(async () => {
+		nextTick(async () => {
 			this._monacoEditor?.layout()
 		})
 	}

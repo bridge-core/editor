@@ -18,7 +18,7 @@ import {
 	Vector3,
 	MathUtils,
 } from 'three'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 export class World {
 	protected chunks = new Map<string, Chunk>()

@@ -2,7 +2,7 @@ import '/@/components/Notifications/Errors'
 import '/@/components/Languages/LanguageManager'
 import '/@/components/App/ServiceWorker'
 
-import Vue from 'vue'
+import { Component } from 'vue'
 import { EventSystem } from '/@/components/Common/Event/EventSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { FileTypeLibrary } from '/@/components/Data/FileType'
@@ -33,7 +33,7 @@ import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/FileSystem/ComMojang'
 import { AudioManager } from '/@/components/Audio/AudioManager'
 import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
@@ -60,13 +60,15 @@ export class App {
 		'presetsChanged',
 	])
 	public static readonly ready = new Signal<App>()
+	public readonly didMount = new Signal<void>()
+	public static readonly _instanceReady = new Signal<App>()
 	protected static _instance: Readonly<App>
 	public static readonly audioManager = new AudioManager()
 
 	public readonly packExplorer = new PackExplorer()
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this.keyBindingManager)
-	public readonly themeManager: ThemeManager
+	public themeManager!: ThemeManager
 	public readonly taskManager = new TaskManager()
 	public readonly dataLoader = markRaw(new DataLoader(true))
 	public readonly fileSystem = new FileSystem()
@@ -74,7 +76,7 @@ export class App {
 	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
 	public readonly contextMenu = new ContextMenu()
-	public readonly locales: Locales
+	public locales!: Locales
 	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
 	public readonly comMojang = new ComMojang(this)
@@ -84,11 +86,11 @@ export class App {
 	public static readonly fileType = markRaw(new FileTypeLibrary())
 	public static readonly packType = markRaw(new PackTypeLibrary())
 
-	public readonly mobile: Mobile
+	public mobile!: Mobile
 
 	public readonly languageManager = markRaw(new LanguageManager())
 
-	protected _windows: Windows
+	protected _windows!: Windows
 	get windows() {
 		return this._windows
 	}
@@ -122,13 +124,8 @@ export class App {
 		)
 	}
 
-	constructor(appComponent: Vue) {
-		this.themeManager = new ThemeManager(appComponent.$vuetify)
-		this.locales = new Locales(appComponent.$vuetify)
-		this._windows = new Windows(this)
-
-		this.mobile = new Mobile(appComponent.$vuetify)
-
+	// TODO(Vue3): Change to Component
+	constructor() {
 		// Prompt the user whether they really want to close bridge. when unsaved tabs are open
 		const saveWarning =
 			'Are you sure that you want to close bridge.? Unsaved progress will be lost.'
@@ -161,6 +158,14 @@ export class App {
 				})
 		})
 	}
+	mounted(vuetify: any) {
+		this.themeManager = new ThemeManager(vuetify)
+		this.locales = new Locales(vuetify)
+		this._windows = new Windows(this)
+
+		this.mobile = new Mobile(vuetify)
+		this.didMount.dispatch()
+	}
 
 	static openUrl(url: string, id?: string) {
 		if (settingsState?.general?.openLinksInBrowser)
@@ -171,9 +176,10 @@ export class App {
 	/**
 	 * Starts the app
 	 */
-	static async main(appComponent: Vue) {
-		this._instance = markRaw(Object.freeze(new App(appComponent)))
-		this.instance.windows.loadingWindow.open()
+	static async main() {
+		this._instance = markRaw(new App())
+		this._instanceReady.dispatch(this.instance)
+		await this.instance.didMount.fired
 
 		await this.instance.beforeStartUp()
 
@@ -188,7 +194,9 @@ export class App {
 		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {
 			await set('firstStartAfterUpdate', false)
-			this.instance.windows.changelogWindow.open()
+			this.instance.didMount.once(() =>
+				this.instance.windows.changelogWindow.open()
+			)
 		}
 
 		// Load settings
@@ -202,8 +210,6 @@ export class App {
 
 		this.ready.dispatch(this.instance)
 		await this.instance.projectManager.selectLastProject(this.instance)
-
-		this.instance.windows.loadingWindow.close()
 	}
 
 	/**

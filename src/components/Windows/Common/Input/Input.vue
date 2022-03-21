@@ -14,7 +14,7 @@
 				<v-text-field
 					:label="t($data.label)"
 					v-model="$data.inputValue"
-					@keydown.enter.native="onConfirm"
+					@keydown.enter="onConfirm"
 					class="mr-2"
 					outlined
 					dense

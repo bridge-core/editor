@@ -1,7 +1,6 @@
-import '/@/components/App/setupCompositionAPI'
 import '/@/components/FileSystem/Polyfill'
 import '/@/components/FileSystem/Virtual/Comlink'
-import { vue } from '/@/components/App/Vue'
+import '/@/components/App/Vue'
 import '@mdi/font/css/materialdesignicons.min.css'
 import { App } from './App'
 import '/@/utils/locales'
@@ -32,4 +31,4 @@ self.MonacoEnvironment = {
 	},
 }
 
-App.main(vue)
+App.main()

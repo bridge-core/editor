@@ -5,7 +5,7 @@ import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { SidebarState } from './state'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
-import { ref } from '@vue/composition-api'
+import { ref } from 'vue'
 import { createCompilerSidebar } from '../Compiler/Sidebar/create'
 
 export async function setupSidebar() {

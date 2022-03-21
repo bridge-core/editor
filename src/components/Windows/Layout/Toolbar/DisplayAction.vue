@@ -43,7 +43,7 @@ export default {
 	}),
 	computed: {
 		minimalDisplay() {
-			return !this.$vuetify.breakpoint.mdAndUp
+			return !this.$vuetify.display.mdAndUp
 		},
 		isDarkMode() {
 			return this.$vuetify.theme.dark

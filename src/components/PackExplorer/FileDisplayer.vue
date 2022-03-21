@@ -132,7 +132,7 @@ import { join } from '/@/utils/path'
 import { EnablePackSpiderMixin } from '/@/components/Mixins/EnablePackSpider'
 import { pointerDevice } from '/@/utils/pointerDevice'
 import { useDoubleClick } from '/@/components/Composables/DoubleClick'
-import { ref } from '@vue/composition-api'
+import { ref } from 'vue'
 
 export default {
 	name: 'FileDisplayer',

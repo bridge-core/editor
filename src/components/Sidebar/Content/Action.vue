@@ -1,7 +1,7 @@
 <template>
 	<v-tooltip
 		:color="color || 'tooltip'"
-		:disabled="$vuetify.breakpoint.mobile"
+		:disabled="$vuetify.display.mobile"
 		:open-delay="500"
 		bottom
 	>

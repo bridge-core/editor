@@ -1,4 +1,4 @@
-import { ref, shallowReactive, watch } from '@vue/composition-api'
+import { ref, shallowReactive, watch } from 'vue'
 
 export class WindowState {
 	public state = shallowReactive<Record<string, any>>({})

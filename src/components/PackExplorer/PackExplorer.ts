@@ -8,7 +8,6 @@ import { DirectoryEntry } from './DirectoryEntry'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
-import { set } from '@vue/composition-api'
 import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 import { dirname, extname, join } from '/@/utils/path'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
@@ -57,11 +56,9 @@ export class PackExplorer extends SidebarContent {
 
 		this.unselectAllActions()
 		for (const pack of app.project.projectData.contains ?? []) {
-			set(
-				this.directoryEntries,
+			this.directoryEntries[pack.packPath] = await DirectoryEntry.create([
 				pack.packPath,
-				await DirectoryEntry.create([pack.packPath])
-			)
+			])
 		}
 
 		this.actions =

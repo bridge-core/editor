@@ -10,7 +10,8 @@
 	},
 	"dependencies": {
 		"@mdi/font": "^5.8.55",
-		"@vue/composition-api": "^1.0.5",
+		"@vue/compat": "^3.2.31",
+		"@vue/compiler-sfc": "^3.2.31",
 		"bridge-common-utils": "^0.3.3",
 		"bridge-model-viewer": "^0.7.6",
 		"buffer": "^6.0.3",
@@ -36,10 +37,10 @@
 		"three": "^0.136.0",
 		"uuid": "^8.3.1",
 		"vite-plugin-ejs": "^1.4.3",
-		"vue": "2.6.12",
+		"vue": "^3.2.31",
 		"vue-template-compiler": "2.6.12",
 		"vuedraggable": "^2.24.3",
-		"vuetify": "^2.5.8",
+		"vuetify": "^3.0.0-beta.0",
 		"wintersky": "github:jannisx11/wintersky#pull/11/head"
 	},
 	"devDependencies": {
@@ -52,13 +53,14 @@
 		"@types/three": "^0.127.1",
 		"@types/uuid": "^8.3.0",
 		"@types/wicg-file-system-access": "^2020.9.5",
+		"@vitejs/plugin-vue": "^2.2.4",
+		"@vuetify/vite-plugin": "^1.0.0-alpha.10",
 		"markdown-it": "^12.3.2",
 		"node-fetch": "^2.6.7",
 		"prettier": "^2.2.1",
 		"sass": "^1.19.0",
 		"typescript": "^4.4.3",
 		"vite": "^2.7.3",
-		"vite-plugin-pwa": "^0.11.12",
-		"vite-plugin-vue2": "^1.8.0"
+		"vite-plugin-pwa": "^0.11.12"
 	}
 }

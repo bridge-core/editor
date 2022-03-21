@@ -1,5 +1,5 @@
 import { ITaskDetails, Task } from './Task'
-import { reactive } from '@vue/composition-api'
+import { reactive } from 'vue'
 
 export const tasks: Task[] = reactive([])
 

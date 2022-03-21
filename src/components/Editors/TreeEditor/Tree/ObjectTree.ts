@@ -2,7 +2,6 @@ import { createTree } from './createTree'
 import { Tree, treeElementHeight } from './Tree'
 import ObjecTreeComponent from './CommonTree.vue'
 import type { ArrayTree } from './ArrayTree'
-import { set, del } from '@vue/composition-api'
 
 export class ObjectTree extends Tree<object> {
 	public component = ObjecTreeComponent
@@ -77,6 +76,6 @@ export class ObjectTree extends Tree<object> {
 			}
 		}
 
-		set(this.children, oldIndex, [newName, oldTree])
+		this.children[oldIndex] = [newName, oldTree]
 	}
 }

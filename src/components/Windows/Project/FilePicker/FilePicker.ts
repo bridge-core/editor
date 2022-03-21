@@ -3,7 +3,7 @@ import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import FilePickerComponent from './FilePicker.vue'
 import { relative } from '/@/utils/path'
 import { QuickScore } from 'quick-score'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 export class FilePickerWindow extends BaseWindow {
 	protected packFiles: { value: string; text: string }[] = []

@@ -8,7 +8,7 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '../../FileSystem/Types'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {

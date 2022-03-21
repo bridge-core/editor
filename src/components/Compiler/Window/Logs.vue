@@ -14,9 +14,9 @@
 			</v-icon>
 
 			<div>
-				<template v-for="(line, i) in getMessageParts(msg)">
-					<span :key="`line-${i}`">{{ line }}</span>
-					<br :key="`break-${i}`" />
+				<template v-for="(line, i) in getMessageParts(msg)" :key="i">
+					<span>{{ line }}</span>
+					<br />
 				</template>
 			</div>
 		</Sheet>

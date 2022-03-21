@@ -76,7 +76,7 @@ export default {
 			)
 		},
 		isMobile() {
-			return this.$vuetify.breakpoint.mobile
+			return this.$vuetify.display.mobile
 		},
 	},
 	methods: {
