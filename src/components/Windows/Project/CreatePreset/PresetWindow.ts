@@ -77,6 +77,7 @@ export class CreatePresetWindow extends BaseWindow {
 			value.match(/^[a-zA-Z0-9_\.]*$/) !== null,
 		lowercase: (value: string) => value.toLowerCase() === value,
 		required: (value: string) => !!value,
+		numeric: (value: string) => !isNaN(Number(value)),
 	}
 
 	/**
