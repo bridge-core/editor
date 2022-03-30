@@ -5,7 +5,7 @@
 		:open-delay="500"
 		bottom
 	>
-		<template v-slot:activator="{ on, attrs }">
+		<template v-slot:activator="{ props }">
 			<div
 				v-ripple
 				class="rounded-lg ma-1 d-flex justify-center sidebar-actions pa-2"
@@ -17,8 +17,7 @@
 					transform: isSelected ? 'scale(1.05)' : null,
 				}"
 				@click="$emit('click', $event)"
-				v-on="on"
-				v-bind="attrs"
+				v-bind="props"
 			>
 				<v-icon :color="isSelected ? 'white' : color">
 					{{ icon }}

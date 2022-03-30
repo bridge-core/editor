@@ -5,8 +5,9 @@
 		:right="!isSidebarRight"
 		:left="isSidebarRight"
 	>
-		<template v-slot:activator="{ on }">
+		<template v-slot:activator="{ props }">
 			<div
+				v-bind="props"
 				class="rounded-lg ma-2 d-flex justify-center sidebar-button"
 				:style="{
 					'background-color': computedColor,
@@ -18,7 +19,6 @@
 					'pa-2': !smallerSidebarElements,
 					'elevation-4': isSelected,
 				}"
-				v-on="on"
 				@click="onClick"
 				@click.middle="onMiddleClick"
 				v-ripple="alwaysAllowClick || !isLoading"

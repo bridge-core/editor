@@ -74,8 +74,8 @@
 				</template>
 			</v-combobox>
 			<v-tooltip v-if="isUsingBridgePredictions" color="tooltip" bottom>
-				<template v-slot:activator="{ on }">
-					<v-btn v-on="on" @click="forceValue" class="mx-4">
+				<template v-slot:activator="{ props }">
+					<v-btn v-bind="props" @click="forceValue" class="mx-4">
 						<v-icon>mdi-alphabetical</v-icon>
 					</v-btn>
 				</template>

@@ -41,8 +41,12 @@
 				:color="extension.isActive ? 'success' : 'error'"
 				right
 			>
-				<template v-slot:activator="{ on }">
-					<v-icon v-if="extension.isActive" color="success" v-on="on">
+				<template v-slot:activator="{ props }">
+					<v-icon
+						v-if="extension.isActive"
+						v-on="props"
+						color="success"
+					>
 						mdi-check
 					</v-icon>
 					<v-icon v-else color="error" v-on="on">mdi-close</v-icon>
