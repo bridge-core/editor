@@ -1,28 +1,43 @@
 <h2>Features:</h2>
-<h3>New Compiler Window (#182, #350)</h3>
-<p>We have added a new compiler window that supports configuring bridge.'s watch mode, seeing the latest logs from bridge.'s compiler and choosing a build profile. We are also working on integrating support for multiple output directories to this window to properly support the new Minecraft Preview program but this work isn't quite ready just yet.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/156764554-d2085673-0238-4755-8ea9-887bddea9a27.png" alt="Bildschirmfoto 2022-03-04 um 13 35 17"></p>
-<hr>
-<h3>Better Texture Auto-Completions (#363)</h3>
-<p>bridge. now proposes all images it can find within your resource pack wherever an image path is valid. Previously, the proposed values where restricted to subfolders, e.g. &quot;textures/blocks/&quot; for blocks or &quot;textures/items/&quot; for items.</p>
+<ul>
+<li>Added a new toggle to show all presets</li>
+<li>Drastically improved performance of custom component schema generation</li>
+<li>Updated data to latest Minecraft beta</li>
+<li>Added a new setting to control whether bridge. should automatically increment your add-on's version upon export</li>
+<li>Added &quot;numeric&quot; preset field validation option (#387)</li>
+</ul>
 <h2>Changes:</h2>
 <ul>
-<li>Added &quot;pickup_only&quot; property to &quot;minecraft:sahreables&quot;</li>
-<li>Updated item groups (Thanks to @Chikorita-Lover)</li>
-<li>Updated data to v1.18.20.27</li>
-<li>Support for min/max values within targetVersion matcher</li>
-<li>Improved display of app title</li>
-<li>ProjectChooser input now automatically receives focus</li>
-<li>Allow more characters within project name (#284, #273)</li>
-<li>Extensions can now define a min/max version of bridge. required to run the extension (#241)</li>
-<li>Renamed &quot;Restart Dev Server&quot; to &quot;Restart Watch Mode&quot;</li>
+<li>Files now get deleted faster</li>
+<li>Big improvements to the client animation schema</li>
+<li>Updated Japanese and Dutch translations (Thanks to @toka7290 &amp; @pascal541)</li>
+<li>bridge. now only stores the most recent app version within the manifest's &quot;generated_with&quot; field</li>
+<li>Added &quot;set_block_at_pos&quot; block event auto-completions (#391)</li>
+<li>Allow file name to be changed on import (#392)</li>
+<li>Improved priority auto-completions within entity behaviors</li>
+<li>Tree Editor: partial support for &quot;default&quot; schema property</li>
+<li>Presets: &quot;expandFile&quot; now replaces preset variables before merging</li>
+<li>Improved &quot;minecraft:buoyant&quot; validation</li>
+<li>Improved public variable declaration validation inside of client entities</li>
+<li>MoLang: Support more queries by default (query.in_range, query.any, query.all, query.count and query.self; #399)</li>
+<li>MoLang: Support &quot;&quot; for strings within .molang files</li>
+<li>MoLang Functions: Support for scoped structs</li>
+<li>MoLang: Throw error if function expression isn't followed by semicolon</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed error upon invalid pack path within config</li>
-<li>&quot;specific_enchants&quot; loot table function now also supports a single integer value</li>
-<li>Fixed error upon creating asset preview</li>
-<li>Fixed addition of a file not triggering compilation (#347)</li>
-<li>Properly select filter matches without sidebar category</li>
-<li>Fixed ref error within attachable schema</li>
+<li>Fixed bridge. Predictions: Correct type inference for unknown values (#344)</li>
+<li>Dash: Fixed &quot;compileFiles&quot; API being able to write files</li>
+<li>Fixed &quot;fileSave.any&quot; event not firing correctly</li>
+<li>CompilerService: Fixed error upon starting bridge.</li>
+<li>Fixed ghast preset error</li>
+<li>Fixed negative notification batch (#384)</li>
+<li>Fixed block previews (#382)</li>
+<li>Fixed particle previews</li>
+<li>Fixed armor preset</li>
+<li>Fixed description of &quot;mojang-minecraft-ui&quot; module inside of manifests</li>
+<li>Fixed GameTest preset referencing TypeScript files</li>
+<li>&quot;max_stack_size&quot; component now proposes integers</li>
+<li>Fixed functions with uppercase letters not working</li>
+<li>Fixed MoLang's context switch operator not supporting callable queries</li>
 </ul>
