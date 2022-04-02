@@ -289,6 +289,10 @@ export default {
 		tgaMaskToggle: {
 			name: '显示/隐藏Alpha蒙版'
 		},
+		recompileChanges: {
+			name: '编译更改',
+			description: '编译所有非使用bridge.编辑的文件。在禁用监视模式后，这并不会编译在编辑器本身中所做的任何更改',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -315,9 +319,33 @@ export default {
 	sidebar: {
 		compiler: {
 			name: '编译器',
+			categories: {
+				watchMode: {
+					name: '监视模式',
+					settings: {
+						watchModeActive: {
+							name: '监视模式',
+							description: '启用或禁用当使用bridge.进行更改时的自动重新编译文件',
+						},
+						autoFetchChangedFiles: {
+							name: '自动读取',
+							description: '当启动bridge.时自动在项目中搜索发生更改的文件',
+						},
+					},
+				},
+				profiles: '构建配置文件',
+				outputFolders: '输出文件夹',
+				logs: {
+					name: '日志',
+					noLogs: 'Dash尚未产生和显示任何日志。',
+				},
+			},
 			default: {
 				name: '默认配置',
-				description: '使用编译器的默认配置运行bridge.编译器，该配置位于项目的“config.json”文件中。',
+				description: '使用编译器的默认配置运行bridge.的编译器，该配置位于项目的“config.json”文件中。',
+			},
+			actions: {
+				runLastProfile: '运行最后一次的配置文件',
 			},
 		},
 		extensions: {
@@ -363,7 +391,7 @@ export default {
 			description: '允许创建自定义生物群系、地物和地物规则。',
 		},
 		additionalModdingCapabilities: {
-			name: '其他修改权能',
+			name: '额外修改权能',
 			description: '在清单中启用脚本API，并允许你创建脚本时使用自动补全。',
 		},
 		upcomingCreatorFeatures: {
@@ -390,6 +418,9 @@ export default {
 	},
 	// Windows
 	windows: {
+		sidebar: {
+			disabledItem: '该项已禁用',
+		},
 		changelogWindow: {
 			title: '有何新内容？',
 		},
@@ -407,8 +438,9 @@ export default {
 			packIcon: '项目图标（可选）',
 			projectName: {
 				name: '项目名称',
-				invalidLetters: '你只能使用字母和数字字符',
+				invalidLetters: '项目名称不得包含以下字符："  \\ / : | < >  * ?',
 				mustNotBeEmpty: '你必须输入项目名称',
+				endsInPeriod: '项目名称不能以句点结尾',
 			},
 			projectDescription: '项目描述（可选）',
 			projectPrefix: '项目前缀',
@@ -478,6 +510,12 @@ export default {
 				required: '该字段是必需的',
 				noEmptyFolderNames: '文件夹名称不能为空',
 			},
+			showAllPresets: '显示所有预设',
+			disabledPreset: {
+				experimentalGameplay: '未激活所需的实验性玩法',
+				packTypes: '项目中缺少所需的包',
+				targetVersion: '未指定所需的目标版本',
+			},
 		},
 		deleteProject: {
 			confirm: '删除',
@@ -546,9 +584,10 @@ export default {
 				name: '刷新项目',
 				description: '为新添加的文件提取当前项目',
 			},
-			restartDevServer: {
-				name: '重启开发服务器',
-				description: '你确定要重新启动编译器的开发服务器吗？这可能需要一些时间，具体取决于项目的大小。重新启动编译器会从com.mojang文件夹中删除你的附加包，并基于你的bridge.文件夹将其重新编译！',
+			restartWatchMode: {
+				name: '重启监视模式',
+				description: "重新启动编译器的监视模式以删除当前的构建输出，重建整个项目，然后开始监视进一步的更改。",
+				confirmDescription: "你确定要重新启动编译器的监视模式吗？这可能需要一些时间，具体取决于项目的大小。重新启动编译器会从com.mojang文件夹中删除你的附加包，并基于你的bridge.文件夹将其重新编译！",
 			},
 			createPreset: '新建文件',
 			projectConfig: {
@@ -733,6 +772,10 @@ export default {
 					name: '默认作者',
 					description: '新项目的默认作者',
 				},
+				incrementVersionOnExport: {
+					name: '版本自增',
+					description: '在导出项目时自动自增包清单中的版本号',
+				},
 			},
 			editor: {
 				jsonEditor: {
@@ -780,6 +823,7 @@ export default {
 			activateExtension: '激活扩展',
 			deactivateExtension: '停用扩展',
 			offlineError: '无法加载扩展。请确认你的设备具有可用的网络连接。',
+			incompatibleVersion: '不兼容的bridge.版本',
 			compilerPluginDownload: {
 				compilerPlugins: '编译器插件',
 				title: '下载编译器插件',
@@ -900,7 +944,7 @@ export default {
 					author: '作者',
 				},
 				durability: '耐久',
-				lore: '详细信息',
+				lore: '词条',
 				displayName: '显示名称',
 				mapDestination: '地图目的地',
 			},
@@ -980,7 +1024,7 @@ export default {
 				unexpectedOpenSquareBracket: '出现了意外的左方括号！',
 				unexpectedCloseSquareBracket: '出现了意外的右方括号！',
 			},
-			commands: {
+			command: {
 				empty: '不支持命令为空！',
 				invalid: {
 					part1: '命令：‘',
