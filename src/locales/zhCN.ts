@@ -944,7 +944,7 @@ export default {
 					author: '作者',
 				},
 				durability: '耐久',
-				lore: '详细信息',
+				lore: '词条',
 				displayName: '显示名称',
 				mapDestination: '地图目的地',
 			},
