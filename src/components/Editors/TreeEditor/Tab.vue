@@ -121,7 +121,7 @@
 			</v-combobox>
 			<v-text-field
 				ref="editValueInput"
-				:value="currentValue"
+				:value="`${currentValue}`"
 				@change="onEdit"
 				:disabled="isGlobal"
 				:label="t('editors.treeEditor.edit')"
