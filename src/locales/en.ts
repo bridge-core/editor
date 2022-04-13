@@ -466,7 +466,7 @@ export default {
 			projectName: {
 				name: 'Project Name',
 				invalidLetters:
-					'Project name must not contain the following characters: "  \\ / : | < >  * ?',
+					'Project name must not contain the following characters: "  \\ / : | < >  * ? ~',
 				mustNotBeEmpty: 'You must enter a project name',
 				endsInPeriod: 'Project name cannot end with a period',
 			},

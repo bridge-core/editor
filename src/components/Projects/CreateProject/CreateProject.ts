@@ -62,7 +62,7 @@ export class CreateProjectWindow extends BaseWindow {
 	protected experimentalToggles: IExperimentalToggle[] = []
 	protected projectNameRules = [
 		(val: string) =>
-			val.match(/"|\\|\/|:|\||<|>|\*|\?/g) === null ||
+			val.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) === null ||
 			'windows.createProject.projectName.invalidLetters',
 		(val: string) =>
 			!val.endsWith('.') ||
