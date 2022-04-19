@@ -131,16 +131,6 @@ export class CreateManifest extends CreateFile {
 		// Behavior pack modules
 		if (
 			this.type === 'data' &&
-			createOptions.experimentalGameplay.additionalModdingCapabilities
-		) {
-			manifest.modules.push({
-				type: 'client_data',
-				uuid: uuid(),
-				version: [1, 0, 0],
-			})
-		}
-		if (
-			this.type === 'data' &&
 			createOptions.experimentalGameplay.enableGameTestFramework
 		) {
 			manifest.modules.push({
