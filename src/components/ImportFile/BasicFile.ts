@@ -67,28 +67,20 @@ export class BasicFileImporter extends FileImporter {
 	protected async onSave(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
 		// Allow user to change file path that the file is saved to
-		const filePathWindow = new FilePathWindow(
-			(await App.fileType.guessFolder(fileHandle)) ?? '',
-			false
-		)
+		const filePathWindow = new FilePathWindow({
+			fileName: fileHandle.name,
+			startPath: (await App.fileType.guessFolder(fileHandle)) ?? '',
+			isPersistent: false,
+		})
 		filePathWindow.open()
 
-		const filePath = await filePathWindow.fired
-		if (filePath === null) return
-
-		// Allow user to change file name
-		const inputWindow = new InputWindow({
-			name: 'windows.packExplorer.fileActions.rename.name',
-			label: 'general.fileName',
-			default: fileHandle.name.split('.').slice(0, -1).join('.'),
-			expandText: extname(fileHandle.name),
-		})
-		const newFileName = await inputWindow.fired
-		if (!newFileName) return
+		const userInput = await filePathWindow.fired
+		if (userInput === null) return
+		const { filePath, fileName = fileHandle.name } = userInput
 
 		// Get user confirmation if file overwrites already existing file
 		const fileExists = await app.project.fileSystem.fileExists(
-			`${filePath}${newFileName}`
+			`${filePath}${fileName}`
 		)
 		if (fileExists) {
 			const confirmWindow = new ConfirmationWindow({
@@ -103,7 +95,7 @@ export class BasicFileImporter extends FileImporter {
 		app.windows.loadingWindow.open()
 
 		const destHandle = await app.project.fileSystem.getFileHandle(
-			`${filePath}${newFileName}`,
+			`${filePath}${fileName}`,
 			true
 		)
 
@@ -113,7 +105,7 @@ export class BasicFileImporter extends FileImporter {
 		await app.project.updateFile(
 			app.project.config.resolvePackPath(
 				undefined,
-				`${filePath}${newFileName}`
+				`${filePath}${fileName}`
 			)
 		)
 		await app.project.openFile(destHandle, { isTemporary: false })
