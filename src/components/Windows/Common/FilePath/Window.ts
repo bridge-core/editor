@@ -42,7 +42,7 @@ export class FilePathWindow extends BaseWindow<IChangedFileData | null> {
 		return this.close(
 			skippedDialog
 				? null
-				: { filePath: this.currentFilePath, fileName: this.fileName }
+				: { filePath: this.currentFilePath, fileName: this.hasFilePath ? `${this.fileName}${this.fileExt}` : undefined }
 		)
 	}
 }
