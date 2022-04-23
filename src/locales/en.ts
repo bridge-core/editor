@@ -677,6 +677,8 @@ export default {
 				rename: {
 					name: 'Rename',
 					description: 'Rename a file',
+					sameName:
+						'Your new file name only differs in capitalization. This is not allowed on Windows.',
 				},
 				duplicate: {
 					name: 'Duplicate',

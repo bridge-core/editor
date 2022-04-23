@@ -22,6 +22,7 @@ import {
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
+import { platform } from '/@/utils/os'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -198,6 +199,18 @@ export class PackExplorer extends SidebarContent {
 									dirname(path),
 									newFileName
 								)
+
+								if (
+									path.toLowerCase() ===
+										newFilePath.toLowerCase() &&
+									platform() === 'win32'
+								) {
+									new InformationWindow({
+										description:
+											'windows.packExplorer.fileActions.rename.sameName',
+									})
+									return
+								}
 
 								// If file with same path already exists, confirm that it's ok to overwrite it
 								if (
