@@ -5,6 +5,7 @@ import type { RootSchema } from './Schema/Root'
 import type { Schema } from './Schema/Schema'
 import type { ThenSchema } from './Schema/ThenSchema'
 import { walkObject } from 'bridge-common-utils'
+import { ElseSchema } from './Schema/ElseSchema'
 
 export class SchemaManager {
 	protected static lib: Record<string, any> = {}
@@ -69,7 +70,7 @@ export class SchemaManager {
 
 			const schema = new Class(location, key, value)
 
-			if (key === 'then') {
+			if (key === 'then' || key === 'else') {
 				let ifSchemas = <IfSchema[]>schemas
 					.reverse()
 					.map((schema) => {
@@ -83,13 +84,13 @@ export class SchemaManager {
 				let lastIfSchema = ifSchemas[0]
 
 				if (!lastIfSchema) {
-					console.warn(`"then" schema without "if" @ ${location}`)
+					console.warn(`"${key}" schema without "if" @ ${location}`)
 					lastIfSchema = <IfSchema>(
 						new (schemaRegistry.get('if')!)(location, 'if', true)
 					)
 				}
 
-				;(<ThenSchema>schema).receiveIfSchema(lastIfSchema)
+				;(<ThenSchema | ElseSchema>schema).receiveIfSchema(lastIfSchema)
 			}
 
 			schemas.push(schema)

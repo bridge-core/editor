@@ -3,6 +3,7 @@ import { AllOfSchema } from './Schema/AllOf'
 import { AnyOfSchema } from './Schema/AnyOf'
 import { ConstSchema } from './Schema/Const'
 import { DefaultSchema } from './Schema/Default'
+import { ElseSchema } from './Schema/ElseSchema'
 import { EnumSchema } from './Schema/Enum'
 import { IfSchema } from './Schema/IfSchema'
 import { ItemsSchema } from './Schema/Items'
@@ -37,6 +38,7 @@ export const schemaRegistry = new Map<string, ISchemaConstructor>([
 	['then', ThenSchema],
 	['type', TypeSchema],
 	['default', DefaultSchema],
+	['else', ElseSchema],
 ])
 
 export const ignoreFields = new Set<string>([
