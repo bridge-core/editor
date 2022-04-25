@@ -349,13 +349,16 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		modelViewer.requestRendering(true)
 		urls.push(modelCanvas.toDataURL('image/png'))
 
-		const [
-			entityTexture /*, gm1Logo*/,
+		// Load textures
+		const authorImagePath = this.parent.project.config.getAuthorImage()
 
+		const [
+			entityTexture,
+			authorImageUrl,
 			...modelRenders
 		] = await Promise.all([
 			this.loadImageFromDisk(this.renderContainer.currentTexturePath),
-			/*this.loadImageFromDisk('authors.webp'),*/
+			authorImagePath ? this.loadImageFromDisk(authorImagePath) : null,
 			...urls.map((url) => this.loadImage(url)),
 		])
 
@@ -388,8 +391,6 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			)
 		}
 
-		console.log(entityTexture.width, entityTexture.height)
-
 		// Render texture correctly even if it's not square
 		const xOffset =
 			(entityTexture.width > entityTexture.height
@@ -412,8 +413,6 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 				? 200
 				: (entityTexture.height / entityTexture.width) * 200
 
-		console.log(xOffset, yOffset, xSize, ySize)
-
 		resultCtx.drawImage(
 			entityTexture,
 			(400 + xOffset) * outputResolution,
@@ -422,14 +421,15 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			ySize * outputResolution
 		)
 
-		// Authors
-		// resultCtx.drawImage(
-		// 	gm1Logo,
-		// 	resultCanvas.width - 50 * res,
-		// 	resultCanvas.height - 50 * res,
-		// 	50 * res,
-		// 	50 * res
-		// )
+		// Draw watermark of author's logo
+		if (authorImageUrl)
+			resultCtx.drawImage(
+				authorImageUrl,
+				resultCanvas.width - 50 * outputResolution,
+				resultCanvas.height - 50 * outputResolution,
+				50 * outputResolution,
+				50 * outputResolution
+			)
 
 		// Asset preview title
 		if (assetName !== '') {

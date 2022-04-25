@@ -147,4 +147,15 @@ export class ProjectConfig extends BaseProjectConfig {
 			)
 		).flat()
 	}
+
+	getAuthorImage() {
+		const author = <{ logo: string; name: string } | undefined>(
+			this.get().authors?.find(
+				(author) => typeof author !== 'string' && author.logo
+			)
+		)
+		if (!author) return
+
+		return this.resolvePackPath(undefined, author.logo)
+	}
 }
