@@ -1,31 +1,26 @@
-<h2>Features:</h2>
+<h2>Features</h2>
+<h3>Asset Preview (#130)</h3>
+<p>We have updated bridge.'s asset preview to add new features, such as hiding individual bones, choosing a texture before export and adding a watermark to your preview. All of these options can be configured in the new &quot;Asset Preview&quot; window.</p>
+<p><img src="https://user-images.githubusercontent.com/64587014/165151928-b2cd6851-8ad5-4f2b-b2a5-a630f1f03be8.png" alt="asset preview window"></p>
 <ul>
-<li>Added types for &quot;mojang-minecraft-ui&quot; module</li>
-<li>Simplified the file import process by unifying folder selection and file renaming window (#406)</li>
+<li>Added support for &quot;else&quot; schema field in the tree editor (#408)</li>
+<li>Support for .mcpack file imports (#123)</li>
+<li>Added a new built-in compiler plugin &quot;formatVersionCorrection&quot; which maps format versions into ones that work inside of Minecraft, e.g. &quot;1.18.30&quot; is unsupported in blocks and will be mapped to &quot;1.18.0&quot; in the compiler output (#386)</li>
 </ul>
-<h2>Changes:</h2>
+<h2>Changes</h2>
 <ul>
-<li>Updated Chinese translations (Thanks to @MiemieMethod)</li>
-<li>Improved &quot;config.json&quot; schema</li>
-<li>bridge. now falls back to oldest schema if no &quot;format_version&quot; is set</li>
-<li>Added file icon for &quot;tick.json&quot; file</li>
-<li>Updated GameTest types</li>
-<li>Updated data to latest 1.19 Minecraft Preview</li>
-<li>Improved entity schema</li>
-<li>Blocks: Added descriptions for &quot;material_instances&quot; &gt; &quot;render_method&quot; values</li>
-<li>Removed support for the old scripting API (#322)</li>
-<li>Bumped various dependencies (Three, Wintersky, MoLang, bridge-model-viewer, mc-project-core)</li>
+<li>Added new molang locations for 1.19.0 entity components</li>
+<li>Added more syntax highlighting to JSON files which were missing it before</li>
+<li>A link to bridge.'s Twitter account can now be found under the &quot;Help&quot; toolbar menu</li>
+<li>Included 1.19.0 Molang queries in embedded Molang schema</li>
+<li>Better file detection when importing animation files to differentiate between client and server animations (#83)</li>
+<li>Bumped various dependencies</li>
 </ul>
-<h2>Fixes:</h2>
+<h2>Fixes</h2>
 <ul>
-<li>Fixed validation error in geometry schema when &quot;minecraft:geometry&quot; is an array</li>
-<li>Fixed scatter feature validation error</li>
-<li>Removed reference to old GameTest module</li>
-<li>Fixed incorrect validation in render controller schemas</li>
-<li>Fixed boolean values converting to integer in tree editor edit input (#410)</li>
-<li>Fixed file moving not updating in file system (#405)</li>
-<li>&quot;~&quot; is no longer allowed within project names</li>
-<li>Fixed certain characters within project name breaking text editor auto-completions (#411)</li>
-<li>Fixed rename file action on windows (#413)</li>
-<li>Tree Editor: Infer value type from available suggestions if possible (#385)</li>
+<li>Fogs are now created in the RP rather than the BP</li>
+<li>Fixed import file saving without a file extension (#420)</li>
+<li>Fixed validation error in fog schema</li>
+<li>Fixed zip imports (#412)</li>
+<li>Browsers such as Brave and Opera will now use the FS API polyfill as they do not support the FileSystem API (#371, #343)</li>
 </ul>
