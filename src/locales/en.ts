@@ -188,6 +188,10 @@ export default {
 			name: 'Bug Reports',
 			description: 'Report an issue with bridge.',
 		},
+		twitter: {
+			name: 'Twitter',
+			description: 'Follow bridge. on Twitter',
+		},
 		extensionAPI: {
 			name: 'Extension API',
 			description: "Read more about bridge.'s extension API",
