@@ -16,6 +16,7 @@ import { Box3, Vector3, Color } from 'three'
 import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
 import { StandaloneModelViewer } from 'bridge-model-viewer'
 import { wait } from '/@/utils/wait'
+import { AssetPreviewWindow } from './AssetPreview/Window'
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected winterskyScene = markRaw(
@@ -259,44 +260,66 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		return didClose
 	}
 
-	async renderAssetPreview(scale = 1.5, res = 4, color = 0x121212) {
+	async renderAssetPreview() {
 		if (!this._renderContainer || !this.renderContainer.currentTexturePath)
 			return
 
 		const fileSystem = this.parent.app.fileSystem
+		const texture = await fileSystem.loadFileHandleAsDataUrl(
+			await fileSystem.getFileHandle(
+				this.renderContainer.currentTexturePath
+			)
+		)
+
+		const configWindow = new AssetPreviewWindow({
+			assetName: this.tab.getFileHandle().name.split('.').shift()!,
+			modelData: this.renderContainer.modelData,
+			textureUrl: texture,
+		})
+		const renderConfig = await configWindow.fired
+		if (!renderConfig) return
+		const {
+			backgroundColor,
+			boneVisibility,
+			previewScale,
+			outputResolution,
+		} = renderConfig
+		let assetName = renderConfig.assetName
 
 		const modelCanvas = document.createElement('canvas')
-		modelCanvas.width = 500 * res
-		modelCanvas.height = 500 * res
+		modelCanvas.width = 500 * outputResolution
+		modelCanvas.height = 500 * outputResolution
+
 		const modelViewer = new StandaloneModelViewer(
 			modelCanvas,
 			this.renderContainer.modelData,
-			await fileSystem.loadFileHandleAsDataUrl(
-				await fileSystem.getFileHandle(
-					this.renderContainer.currentTexturePath
-				)
-			),
+			texture,
 			{
 				antialias: true,
-				height: 500 * res,
-				width: 500 * res,
+				height: 500 * outputResolution,
+				width: 500 * outputResolution,
 			}
 		)
 		await modelViewer.loadedModel
 
+		// Hide bones which were disabled by the user
+		for (const [boneName, isVisible] of Object.entries(boneVisibility)) {
+			if (!isVisible) modelViewer.getModel().hideBone(boneName)
+		}
+
 		// @ts-ignore
-		modelViewer.scene.background = new Color(color)
+		modelViewer.scene.background = new Color(backgroundColor)
 
 		const resultCanvas = document.createElement('canvas')
-		resultCanvas.width = 1400 * res
-		resultCanvas.height = 600 * res
+		resultCanvas.width = 1400 * outputResolution
+		resultCanvas.height = 600 * outputResolution
 		const resultCtx = resultCanvas.getContext('2d')
 		if (!resultCtx) return
 
 		resultCtx.imageSmoothingEnabled = false
 
 		const model = modelViewer.getModel().getGroup()
-		modelViewer.positionCamera(scale)
+		modelViewer.positionCamera(previewScale)
 
 		modelViewer.requestRendering()
 		await wait(100)
@@ -315,14 +338,14 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		const center = box.getCenter(new Vector3())
 		model.position.setY(center.y)
 		model.rotation.set(0.25 * Math.PI, 1.75 * Math.PI, 0.75 * Math.PI)
-		modelViewer.positionCamera(scale, false)
+		modelViewer.positionCamera(previewScale, false)
 		modelViewer.requestRendering(true)
 		urls.push(modelCanvas.toDataURL('image/png'))
 		model.position.setY(0)
 
 		// Top
 		model.rotation.set(0, 1.75 * Math.PI, 1.75 * Math.PI)
-		modelViewer.positionCamera(scale, false)
+		modelViewer.positionCamera(previewScale, false)
 		modelViewer.requestRendering(true)
 		urls.push(modelCanvas.toDataURL('image/png'))
 
@@ -336,26 +359,32 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 			...urls.map((url) => this.loadImage(url)),
 		])
 
-		resultCtx.fillStyle = '#' + color.toString(16)
+		resultCtx.fillStyle = backgroundColor
 		resultCtx.fillRect(0, 0, resultCanvas.width, resultCanvas.height)
-		resultCtx.drawImage(modelRenders[0], 0, 100 * res, 400 * res, 400 * res)
+		resultCtx.drawImage(
+			modelRenders[0],
+			0,
+			100 * outputResolution,
+			400 * outputResolution,
+			400 * outputResolution
+		)
 
 		for (let i = 0; i < 3; i++) {
 			resultCtx.drawImage(
 				modelRenders[i + 1],
-				650 * res,
-				i * 200 * res,
-				200 * res,
-				200 * res
+				650 * outputResolution,
+				i * 200 * outputResolution,
+				200 * outputResolution,
+				200 * outputResolution
 			)
 		}
 		for (let i = 0; i < 3; i++) {
 			resultCtx.drawImage(
 				modelRenders[i + 4],
-				1050 * res,
-				i * 200 * res,
-				200 * res,
-				200 * res
+				1050 * outputResolution,
+				i * 200 * outputResolution,
+				200 * outputResolution,
+				200 * outputResolution
 			)
 		}
 
@@ -387,14 +416,11 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 
 		resultCtx.drawImage(
 			entityTexture,
-			(400 + xOffset) * res,
-			(200 + yOffset) * res,
-			xSize * res,
-			ySize * res
+			(400 + xOffset) * outputResolution,
+			(200 + yOffset) * outputResolution,
+			xSize * outputResolution,
+			ySize * outputResolution
 		)
-
-		// Prepare for writing text
-		resultCtx.fillStyle = '#ffffff'
 
 		// Authors
 		// resultCtx.drawImage(
@@ -406,22 +432,26 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		// )
 
 		// Asset preview title
-		resultCtx.font = 30 * res + 'px Arial'
-		resultCtx.fillText(
-			this.tab.getFileHandle().name.split('.').shift()!,
-			20 * res,
-			50 * res
-		)
+		if (assetName !== '') {
+			// Prepare for writing text
+			resultCtx.fillStyle = '#ffffff'
+
+			resultCtx.font = 30 * outputResolution + 'px Arial'
+			resultCtx.fillText(
+				assetName,
+				20 * outputResolution,
+				50 * outputResolution
+			)
+		} else {
+			assetName = this.tab.getFileHandle().name.split('.')[0]
+		}
 
 		await new Promise<void>((resolve) => {
 			resultCanvas.toBlob(async (blob) => {
 				if (!blob) return
 
 				await saveOrDownload(
-					`previews/${this.tab
-						.getFileHandle()
-						.name.split('.')
-						.shift()!}.png`,
+					`previews/${assetName}.png`,
 					new Uint8Array(await blob.arrayBuffer()),
 					this.parent.project.fileSystem
 				)

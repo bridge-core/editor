@@ -282,4 +282,12 @@ summary::-webkit-details-marker {
 .cursor-pointer {
 	cursor: pointer;
 }
+.outlined {
+	border-width: thin;
+	border-color: #555555;
+	border-style: solid;
+}
+.theme--light .outlined {
+	border-color: #a4a4a4;
+}
 </style>

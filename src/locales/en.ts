@@ -459,6 +459,14 @@ export default {
 			search: 'Search file...',
 			noData: 'No results...',
 		},
+		assetPreview: {
+			title: 'Asset Preview',
+			previewScale: 'Preview Scale',
+			assetName: 'Asset Name',
+			boneVisibility: 'Bone Visibility',
+			backgroundColor: 'Background Color',
+			outputResolution: 'Output Resolution',
+		},
 		createProject: {
 			welcome: 'Welcome to bridge.!',
 			welcomeDescription:
