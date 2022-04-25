@@ -12,10 +12,9 @@ import { CreateConfig } from '../CreateProject/Files/Config'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { defaultPackPaths } from '../Project/Config'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
-import { basename } from '/@/utils/path'
 import { getPackId, IManifestModule } from '/@/utils/manifest/getPackId'
 
-export async function importFromMcaddon(
+export async function importFromMcpack(
 	fileHandle: AnyFileHandle,
 	isFirstImport = false,
 	unzip = true
@@ -28,7 +27,7 @@ export async function importFromMcaddon(
 
 	if (!isFirstImport) await app.projectManager.projectReady.fired
 
-	// Unzip .mcaddon file
+	// Unzip .mcpack file
 	if (unzip) {
 		const unzipper = new Unzipper(tmpHandle)
 		const file = await fileHandle.getFile()
@@ -37,7 +36,7 @@ export async function importFromMcaddon(
 		await unzipper.unzip(data)
 	}
 	const projectName = fileHandle.name
-		.replace('.mcaddon', '')
+		.replace('.mcpack', '')
 		.replace('.zip', '')
 
 	// Ask user whether they want to save the current project if we are going to delete it later in the import process
@@ -57,55 +56,25 @@ export async function importFromMcaddon(
 	let description: string | undefined
 	const packs: (TPackTypeId | '.bridge')[] = ['.bridge']
 
-	// 1. Unpack all .mcpack files
-	for await (const pack of tmpHandle.values()) {
-		if (pack.kind === 'file' && pack.name.endsWith('.mcpack')) {
-			const directory = await tmpHandle.getDirectoryHandle(
-				basename(pack.name, '.mcpack'),
-				{
-					create: true,
-				}
-			)
+	// 1. Process pack
+	if (await fs.fileExists(`import/manifest.json`)) {
+		const manifest = await fs.readJSON(`import/manifest.json`)
+		const modules = <IManifestModule[]>manifest?.modules ?? []
+		if (!authors) authors = manifest?.metadata?.authors
+		if (!description) description = manifest?.header?.description
 
-			const unzipper = new Unzipper(directory)
-			const file = await pack.getFile()
-			const data = new Uint8Array(await file.arrayBuffer())
-			unzipper.createTask(app.taskManager)
-			await unzipper.unzip(data)
+		const packId = getPackId(modules)
+		if (!packId) return
 
-			await tmpHandle.removeEntry(pack.name)
-		}
-	}
-
-	// 2. Process all packs
-	for await (const pack of tmpHandle.values()) {
-		if (
-			pack.kind === 'directory' &&
-			(await fs.fileExists(`import/${pack.name}/manifest.json`))
-		) {
-			const manifest = await fs.readJSON(
-				`import/${pack.name}/manifest.json`
-			)
-			const modules = <IManifestModule[]>manifest?.modules ?? []
-			if (!authors) authors = manifest?.metadata?.authors
-			if (!description) description = manifest?.header?.description
-
-			const packId = getPackId(modules)
-			if (!packId) return
-
-			packs.push(packId)
-			const packPath = defaultPackPaths[packId]
-			// Move the pack to the correct location
-			await fs.move(
-				`import/${pack.name}`,
-				`projects/${projectName}/${packPath}`
-			)
-		}
-	}
-	if (packs.length === 1)
+		packs.push(packId)
+		const packPath = defaultPackPaths[packId]
+		// Move the pack to the correct location
+		await fs.move(`import`, `projects/${projectName}/${packPath}`)
+	} else {
 		new InformationWindow({
 			description: 'fileDropper.mcaddon.missingManifests',
 		})
+	}
 
 	const defaultOptions = CreateProjectWindow.getDefaultOptions()
 	defaultOptions.name = projectName
@@ -133,9 +102,9 @@ export async function importFromMcaddon(
 		)
 	}
 
-	// Remove old project if browser is using fileSystem polyfill
 	if (isUsingFileSystemPolyfill.value && !isFirstImport)
-		await app.projectManager.removeProject(app.project.name!)
+		// Remove old project if browser is using fileSystem polyfill
+		await app.projectManager.removeProject(app.project.name)
 
 	await fs.unlink('import')
 }

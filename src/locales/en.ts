@@ -969,7 +969,7 @@ export default {
 		importMethod: 'Import Method',
 		mcaddon: {
 			missingManifests:
-				"bridge. was unable to load data from your .mcaddon file because it wasn't able to find pack manifest files inside of it.",
+				"bridge. was unable to load data from your .mcaddon or .mpack file because it wasn't able to find a pack manifest file inside of it.",
 		},
 		saveToProject: {
 			title: 'Save to Project',

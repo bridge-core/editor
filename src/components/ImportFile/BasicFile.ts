@@ -5,8 +5,6 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { FilePathWindow } from '/@/components/Windows/Common/FilePath/Window'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { AnyFileHandle } from '../FileSystem/Types'
-import { extname } from '/@/utils/path'
-import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 
 export class BasicFileImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
