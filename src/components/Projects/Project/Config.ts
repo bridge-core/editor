@@ -6,9 +6,22 @@ import {
 	IConfigJson,
 	ProjectConfig as BaseProjectConfig,
 } from 'mc-project-core'
+import { get } from 'idb-keyval'
 
 export type { IConfigJson } from 'mc-project-core'
 export { defaultPackPaths } from 'mc-project-core'
+
+/**
+ * Internal config format versions
+ * We use an IDB key to store the config version because some changes we need to make automatically
+ * don't make sense as a format version that is stored inside of the file
+ *
+ * Format version data:
+ * [bridge. v2.2.8] Unset or "0": Projects may not contain the formatVersionCorrection compiler plugin
+ * [bridge. v2.2.9] "1": Configs were upgraded to add the plugin
+ */
+
+export const latestFormatVersion = 1
 
 export class ProjectConfig extends BaseProjectConfig {
 	constructor(protected fileSystem: FileSystem, protected project?: Project) {
@@ -31,6 +44,8 @@ export class ProjectConfig extends BaseProjectConfig {
 	}
 
 	async setup(upgradeConfig = true) {
+		const formatVersion = (await get(`projectConfigFormatVersion`)) ?? 0
+
 		// Load legacy project config & transform it to new format specified here: https://github.com/bridge-core/project-config-standard
 		if (
 			upgradeConfig &&
@@ -122,6 +137,16 @@ export class ProjectConfig extends BaseProjectConfig {
 			)
 			this.data.compiler = { plugins: compilerConfig.plugins }
 			await this.fileSystem.unlink('.bridge/compiler/default.json')
+			updatedConfig = true
+		}
+
+		if (
+			upgradeConfig &&
+			formatVersion === 0 &&
+			this.data.compiler?.plugins &&
+			!this.data.compiler.plugins.includes('formatVersionCorrection')
+		) {
+			this.data.compiler.plugins.push('formatVersionCorrection')
 			updatedConfig = true
 		}
 

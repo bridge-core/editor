@@ -10,6 +10,7 @@ import { BedrockProject } from './Project/BedrockProject'
 import { InitialSetup } from '../InitialSetup/InitialSetup'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyDirectoryHandle, AnyHandle } from '../FileSystem/Types'
+import { latestFormatVersion } from './Project/Config'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -100,6 +101,9 @@ export class ProjectManager extends Signal<void> {
 			for (const projectDir of loadProjects) {
 				await this.addProject(projectDir, false)
 			}
+
+			// All configs have been updated by now, update the projectConfigFormatVersion idb value
+			await idbSet('projectConfigFormatVersion', latestFormatVersion)
 		}
 
 		this.dispatch()
