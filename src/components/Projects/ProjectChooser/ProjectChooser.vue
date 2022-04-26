@@ -162,7 +162,12 @@ export default {
 	computed: {
 		authors() {
 			const authors = this.sidebar.currentState.authors || 'Unknown'
-			if (Array.isArray(authors)) return formatter.format(authors)
+			if (Array.isArray(authors))
+				return formatter.format(
+					authors.map((author) =>
+						typeof author === 'string' ? author : author.name
+					)
+				)
 			return authors
 		},
 	},
