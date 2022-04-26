@@ -6,7 +6,7 @@
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:isPersistent="false"
-		:hasCloseButton="false"
+		:hasCloseButton="true"
 		:width="760"
 		:height="560"
 		@closeWindow="onClose(true)"
