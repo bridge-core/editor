@@ -42,7 +42,7 @@ export type TColorName = typeof colorNames[number]
 export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	protected mode: 'light' | 'dark'
 	protected themeMap = new Map<string, Theme>()
-	protected themeColorTag = document.querySelector("meta[name='theme-color']")
+	protected themeColorTag: Element | null = null
 	protected currentTheme = 'bridge.default.dark'
 	public readonly colorScheme = new Signal<'light' | 'dark'>()
 
@@ -71,11 +71,17 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		 * Setup theme meta tag
 		 * @see ThemeManager.setThemeColor
 		 */
+		const allThemeColorTags = document.querySelectorAll(
+			"meta[name='theme-color']"
+		)
+		this.themeColorTag = allThemeColorTags[0] ?? null
+		this.themeColorTag.removeAttribute('media')
+		allThemeColorTags[1]?.remove()
 		if (!this.themeColorTag) {
 			this.themeColorTag = document.createElement('meta')
+			this.themeColorTag.setAttribute('name', 'theme-color')
 			document.head.appendChild(this.themeColorTag)
 		}
-		this.themeColorTag.setAttribute('name', 'theme-color')
 		this.themeColorTag.id = 'theme-color-tag'
 
 		this.addTheme(bridgeDark, true)

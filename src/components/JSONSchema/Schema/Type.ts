@@ -5,6 +5,9 @@ export class TypeSchema extends Schema {
 	get values() {
 		return Array.isArray(this.value) ? this.value : [this.value]
 	}
+	get types() {
+		return this.values
+	}
 
 	getSchemasFor() {
 		return []
@@ -28,7 +31,7 @@ export class TypeSchema extends Schema {
 			)
 		if (this.values.includes('number'))
 			suggestions.push(
-				...[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9].map(
+				...[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0].map(
 					(value) =>
 						<const>{ type: 'value', label: `${value}`, value }
 				)

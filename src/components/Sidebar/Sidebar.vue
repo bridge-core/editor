@@ -30,6 +30,7 @@
 				:icon="sidebar.icon"
 				:isLoading="sidebar.isLoading"
 				:isSelected="sidebar.isSelected"
+				:badge="sidebar.badge"
 				@click="sidebar.click()"
 			/>
 		</v-list>

@@ -113,6 +113,49 @@ export class ProjectConfig extends BaseProjectConfig {
 			updatedConfig = true
 		}
 
+		if (
+			upgradeConfig &&
+			(await this.fileSystem.fileExists('.bridge/compiler/default.json'))
+		) {
+			const compilerConfig = await this.fileSystem.readJSON(
+				'.bridge/compiler/default.json'
+			)
+			this.data.compiler = { plugins: compilerConfig.plugins }
+			await this.fileSystem.unlink('.bridge/compiler/default.json')
+			updatedConfig = true
+		}
+
 		if (updatedConfig) await this.writeConfig(this.data)
+	}
+
+	async getWorldHandles() {
+		if (!this.project)
+			throw new Error(
+				`Cannot use getWorldHandles() within web workers yet`
+			)
+
+		const app = this.project.app
+		const globPatterns = (this.get().worlds ?? ['./worlds/*']).map((glob) =>
+			this.resolvePackPath(undefined, glob)
+		)
+
+		return (
+			await Promise.all(
+				globPatterns.map((glob) =>
+					app.fileSystem.getDirectoryHandlesFromGlob(glob)
+				)
+			)
+		).flat()
+	}
+
+	getAuthorImage() {
+		const author = <{ logo: string; name: string } | undefined>(
+			this.get().authors?.find(
+				(author) => typeof author !== 'string' && author.logo
+			)
+		)
+		if (!author) return
+
+		return this.resolvePackPath(undefined, author.logo)
 	}
 }

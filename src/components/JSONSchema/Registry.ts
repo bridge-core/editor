@@ -2,6 +2,8 @@ import { AdditionalPropertiesSchema } from './Schema/AdditionalProperties'
 import { AllOfSchema } from './Schema/AllOf'
 import { AnyOfSchema } from './Schema/AnyOf'
 import { ConstSchema } from './Schema/Const'
+import { DefaultSchema } from './Schema/Default'
+import { ElseSchema } from './Schema/ElseSchema'
 import { EnumSchema } from './Schema/Enum'
 import { IfSchema } from './Schema/IfSchema'
 import { ItemsSchema } from './Schema/Items'
@@ -35,6 +37,8 @@ export const schemaRegistry = new Map<string, ISchemaConstructor>([
 	['required', RequiredSchema],
 	['then', ThenSchema],
 	['type', TypeSchema],
+	['default', DefaultSchema],
+	['else', ElseSchema],
 ])
 
 export const ignoreFields = new Set<string>([
@@ -55,5 +59,4 @@ export const ignoreFields = new Set<string>([
 	'examples',
 	'minimum',
 	'maximum',
-	'default',
 ])

@@ -4,6 +4,10 @@ import { IDiagnostic, Schema } from './Schema'
 export class ItemsSchema extends Schema {
 	protected children: Schema | Schema[]
 
+	get types() {
+		return [<const>'array']
+	}
+
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
 

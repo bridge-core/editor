@@ -188,6 +188,10 @@ export default {
 			name: 'Bug Reports',
 			description: 'Report an issue with bridge.',
 		},
+		twitter: {
+			name: 'Twitter',
+			description: 'Follow bridge. on Twitter',
+		},
 		extensionAPI: {
 			name: 'Extension API',
 			description: "Read more about bridge.'s extension API",
@@ -302,6 +306,11 @@ export default {
 		tgaMaskToggle: {
 			name: 'Show/Hide Alpha Mask',
 		},
+		recompileChanges: {
+			name: 'Compile Changes',
+			description:
+				'Compile all files that were edited without bridge. This will not compile any changes made in the editor itself after disabling watch mode',
+		},
 	},
 	// Toolbar Categories
 	toolbar: {
@@ -328,10 +337,36 @@ export default {
 	sidebar: {
 		compiler: {
 			name: 'Compiler',
+			categories: {
+				watchMode: {
+					name: 'Watch Mode',
+					settings: {
+						watchModeActive: {
+							name: 'Watch Mode',
+							description:
+								'Enable or disable automatically recompiling files when you make changes with bridge.',
+						},
+						autoFetchChangedFiles: {
+							name: 'Auto Fetch',
+							description:
+								'Automatically search the project for changed files upon starting bridge.',
+						},
+					},
+				},
+				profiles: 'Build Profiles',
+				outputFolders: 'Output Folders',
+				logs: {
+					name: 'Logs',
+					noLogs: 'Dash did not produce any logs to show yet.',
+				},
+			},
 			default: {
 				name: 'Default Config',
 				description:
 					'Run bridge.\'s compiler with the default compiler configuration that is part of your project\'s "config.json" file.',
+			},
+			actions: {
+				runLastProfile: 'Run Last Profile',
 			},
 		},
 		extensions: {
@@ -413,6 +448,9 @@ export default {
 	},
 	// Windows
 	windows: {
+		sidebar: {
+			disabledItem: 'This item is disabled',
+		},
 		changelogWindow: {
 			title: "What's new?",
 		},
@@ -420,6 +458,14 @@ export default {
 			title: 'Open',
 			search: 'Search file...',
 			noData: 'No results...',
+		},
+		assetPreview: {
+			title: 'Asset Preview',
+			previewScale: 'Preview Scale',
+			assetName: 'Asset Name',
+			boneVisibility: 'Bone Visibility',
+			backgroundColor: 'Background Color',
+			outputResolution: 'Output Resolution',
 		},
 		createProject: {
 			welcome: 'Welcome to bridge.!',
@@ -431,8 +477,10 @@ export default {
 			packIcon: 'Project Icon (optional)',
 			projectName: {
 				name: 'Project Name',
-				invalidLetters: 'You may only use alphanumerical characters',
+				invalidLetters:
+					'Project name must not contain the following characters: "  \\ / : | < >  * ? ~',
 				mustNotBeEmpty: 'You must enter a project name',
+				endsInPeriod: 'Project name cannot end with a period',
 			},
 			projectDescription: 'Project Description (optional)',
 			projectPrefix: 'Project Prefix',
@@ -514,6 +562,13 @@ export default {
 				required: 'This field is required',
 				noEmptyFolderNames: 'Folder name may not be empty',
 			},
+			showAllPresets: 'Show all presets',
+			disabledPreset: {
+				experimentalGameplay:
+					'Required experimental gameplay not active',
+				packTypes: 'Required pack missing within project',
+				targetVersion: 'Required target version not specified',
+			},
 		},
 		deleteProject: {
 			confirm: 'Delete',
@@ -589,10 +644,12 @@ export default {
 				name: 'Refresh Project',
 				description: 'Fetch the current project for newly added files',
 			},
-			restartDevServer: {
-				name: 'Restart Dev Server',
+			restartWatchMode: {
+				name: 'Restart Watch Mode',
 				description:
-					"Are you sure that you want to restart the compiler's dev server? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
+					"Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
+				confirmDescription:
+					"Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
 			},
 			createPreset: 'New File',
 			projectConfig: {
@@ -632,6 +689,8 @@ export default {
 				rename: {
 					name: 'Rename',
 					description: 'Rename a file',
+					sameName:
+						'Your new file name only differs in capitalization. This is not allowed on Windows.',
 				},
 				duplicate: {
 					name: 'Duplicate',
@@ -794,6 +853,11 @@ export default {
 					name: 'Default Author',
 					description: 'The default author for new projects',
 				},
+				incrementVersionOnExport: {
+					name: 'Increment Version',
+					description:
+						'Automatically increment the version number inside of your pack manifests when exporting a project',
+				},
 			},
 			editor: {
 				jsonEditor: {
@@ -848,6 +912,7 @@ export default {
 			deactivateExtension: 'Deactivate Extension',
 			offlineError:
 				'Failed to load extensions. Please confirm that your device has an active network connection.',
+			incompatibleVersion: 'Incompatible bridge. version',
 			compilerPluginDownload: {
 				compilerPlugins: 'Compiler Plugins',
 				title: 'Downloaded Compiler Plugin',
@@ -916,7 +981,7 @@ export default {
 		importMethod: 'Import Method',
 		mcaddon: {
 			missingManifests:
-				"bridge. was unable to load data from your .mcaddon file because it wasn't able to find pack manifest files inside of it.",
+				"bridge. was unable to load data from your .mcaddon or .mpack file because it wasn't able to find a pack manifest file inside of it.",
 		},
 		saveToProject: {
 			title: 'Save to Project',
@@ -1070,11 +1135,11 @@ export default {
 				expectedColon: 'Expected colon!',
 				unexpectedOpenCurlyBracket: 'Unexpected open curly bracket!',
 				unexpectedCloseCurlyBracket: 'Unexpected close curly bracket!',
-				unexpectedOpenSquareBracket: 'Unexpected open sqaure bracket!',
+				unexpectedOpenSquareBracket: 'Unexpected open square bracket!',
 				unexpectedCloseSquareBracket:
-					'Unexpected close sqaure bracket!',
+					'Unexpected close square bracket!',
 			},
-			commands: {
+			command: {
 				empty: 'Empty commands are not supported!',
 				invalid: {
 					part1: "Command: '",

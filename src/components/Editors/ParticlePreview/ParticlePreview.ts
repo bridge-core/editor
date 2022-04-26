@@ -22,11 +22,15 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		new Wintersky.Scene({
 			fetchTexture: async (config) => {
 				const app = await App.getApp()
+				const projectConfig = app.project.config
 
 				try {
 					return await loadAsDataURL(
-						`RP/${config.particle_texture_path}.png`,
-						app.project.fileSystem
+						projectConfig.resolvePackPath(
+							'resourcePack',
+							`${config.particle_texture_path}.png`
+						),
+						app.fileSystem
 					)
 				} catch (err) {
 					// Fallback to Wintersky's default handling of textures

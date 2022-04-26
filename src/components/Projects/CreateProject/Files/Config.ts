@@ -28,6 +28,7 @@ export class CreateConfig extends CreateFile {
 							defaultPackPaths[<TPackTypeId>packId],
 						])
 				),
+				worlds: ['./worlds/*'],
 				compiler: {
 					plugins: [
 						'typeScript',
@@ -37,6 +38,7 @@ export class CreateConfig extends CreateFile {
 						'customBlockComponents',
 						'customCommands',
 						'moLang',
+						'formatVersionCorrection',
 						['simpleRewrite', { packName: createOptions.name }],
 					],
 				},

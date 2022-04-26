@@ -31,6 +31,7 @@ export interface IPresetManifest {
 	createFiles?: (string | TCreateFile)[]
 	expandFiles?: TExpandFile[]
 	requires: IRequirements
+	showIfDisabled?: boolean
 }
 export interface IPresetFieldOpts {
 	// All types
@@ -76,6 +77,7 @@ export class CreatePresetWindow extends BaseWindow {
 			value.match(/^[a-zA-Z0-9_\.]*$/) !== null,
 		lowercase: (value: string) => value.toLowerCase() === value,
 		required: (value: string) => !!value,
+		numeric: (value: string) => !isNaN(Number(value)),
 	}
 
 	/**
@@ -129,7 +131,8 @@ export class CreatePresetWindow extends BaseWindow {
 			)
 
 		const requiresMatcher = new RequiresMatcher(manifest.requires)
-		if (!(await requiresMatcher.isValid())) return
+		const mayUsePreset = await requiresMatcher.isValid()
+		if (!mayUsePreset && manifest.showIfDisabled === false) return
 
 		let category = <SidebarCategory | undefined>(
 			this.sidebar.rawElements.find(
@@ -207,6 +210,13 @@ export class CreatePresetWindow extends BaseWindow {
 				text: manifest.name,
 				icon: manifest.icon,
 				color: iconColor,
+				isDisabled: !mayUsePreset,
+				disabledText:
+					requiresMatcher.failures.length > 0
+						? app.locales.translate(
+								`windows.createPreset.disabledPreset.${requiresMatcher.failures[0].type}`
+						  )
+						: undefined,
 				resetState,
 			})
 		)

@@ -3,7 +3,7 @@ import {
 	isUsingOriginPrivateFs,
 	isUsingFileSystemPolyfill,
 } from '/@/components/FileSystem/Polyfill'
-import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
 import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { App } from '/@/App'
 import { extname } from '/@/utils/path'
@@ -78,7 +78,9 @@ export class FileDropper {
 
 	protected async onDrop(dataTransferItems: DataTransferItem[]) {
 		for (const item of dataTransferItems) {
-			const fileHandle = await item.getAsFileSystemHandle()
+			const fileHandle = <AnyHandle | null>(
+				await item.getAsFileSystemHandle()
+			)
 			if (!fileHandle) return
 
 			if (fileHandle.kind === 'directory') {

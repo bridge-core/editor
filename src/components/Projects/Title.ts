@@ -4,14 +4,14 @@ import { isNightly } from '/@/utils/app/isNightly'
 const appName = isNightly ? 'bridge. Nightly' : 'bridge. v2'
 export class Title {
 	protected titleTag: HTMLTitleElement
-	public current = ref(appName)
+	public current = ref(`${appName} - No Project`)
 
 	constructor() {
 		this.titleTag = document.head.getElementsByTagName('title')[0]
 	}
 
 	setProject(projectName: string) {
-		this.titleTag.innerText = `${projectName} - ${appName}`
-		this.current.value = `${projectName} - ${appName}`
+		this.titleTag.innerText = projectName
+		this.current.value = `${appName} - ${projectName}`
 	}
 }

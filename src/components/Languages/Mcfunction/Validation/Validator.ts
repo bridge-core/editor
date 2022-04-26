@@ -1026,6 +1026,8 @@ export class FunctionValidator {
 		let baseCommand: Token
 
 		if (!commandTokens) {
+			if (command?.startsWith('/')) command = command.substring(1)
+
 			splitStrings = command!.split('"')
 
 			let lastChange = -1
@@ -1121,9 +1123,11 @@ export class FunctionValidator {
 				if (!this.validCommands.includes(baseCommand.value)) {
 					errors.push(
 						new SmartError(
-							'command.invalid.part1' +
-								baseCommand.value +
+							[
+								'command.invalid.part1',
+								'$' + baseCommand.value,
 								'command.invalid.part2',
+							],
 							baseCommand.start,
 							baseCommand.end
 						)

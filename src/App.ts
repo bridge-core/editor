@@ -40,6 +40,8 @@ import { Mobile } from '/@/components/App/Mobile'
 import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { PersistentNotification } from '/@/components/Notifications/PersistentNotification'
 import { createVirtualProjectWindow } from './components/FileSystem/Virtual/ProjectWindow'
+import { version as appVersion } from './utils/app/version'
+import { platform } from './utils/os'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -54,6 +56,7 @@ export class App {
 		'fileAdded',
 		'fileChange',
 		'fileSave',
+		'fileUnlinked',
 		'presetsChanged',
 	])
 	public static readonly ready = new Signal<App>()
@@ -207,6 +210,9 @@ export class App {
 	 * Everything that doesn't need access to the fileSystem should be there immediately
 	 */
 	async beforeStartUp() {
+		console.log(
+			`--- Running bridge. ${appVersion} on a "${platform()}" machine ---`
+		)
 		console.time('[APP] beforeStartUp()')
 		// @ts-expect-error
 		if (navigator.clearAppBadge)

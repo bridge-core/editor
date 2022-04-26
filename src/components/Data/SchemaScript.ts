@@ -1,5 +1,4 @@
 import json5 from 'json5'
-import { generateComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/generateSchemas'
 import { run } from '../Extensions/Scripts/run'
 import { getFilteredFormatVersions } from './FormatVersions'
 import { App } from '/@/App'
@@ -8,9 +7,15 @@ import { walkObject } from 'bridge-common-utils'
 import { v4 as uuid } from 'uuid'
 import { compareVersions } from 'bridge-common-utils'
 import { TPackTypeId } from './PackType'
+import type { JsonDefaults } from './JSONDefaults'
+import { TComponentFileType } from '../Compiler/Worker/Plugins/CustomComponent/ComponentSchemas'
 
 export class SchemaScript {
-	constructor(protected app: App, protected filePath?: string) {}
+	constructor(
+		protected jsonDefaults: JsonDefaults,
+		protected app: App,
+		protected filePath?: string
+	) {}
 
 	protected async runScript(scriptPath: string, script: string) {
 		const fs = this.app.fileSystem
@@ -50,6 +55,18 @@ export class SchemaScript {
 							cacheKey
 						)
 					},
+					getIndexedPaths: async (
+						fileType?: string,
+						sort?: boolean
+					) => {
+						const packIndexer = this.app.project.packIndexer
+
+						const paths = await packIndexer.service!.getAllFiles(
+							fileType,
+							sort
+						)
+						return paths
+					},
 					getProjectPrefix: () =>
 						this.app.projectConfig.get().namespace ?? 'bridge',
 					getProjectConfig: () => this.app.projectConfig.get(),
@@ -57,8 +74,8 @@ export class SchemaScript {
 						!this.filePath
 							? undefined
 							: this.filePath.split(/\/|\\/g).pop(),
-					customComponents: (fileType: string) =>
-						generateComponentSchemas(fileType),
+					customComponents: (fileType: TComponentFileType) =>
+						this.jsonDefaults.componentSchemas.get(fileType),
 					get: (path: string) => {
 						const data: any[] = []
 						walkObject(path, currentJson, (d) => data.push(d))

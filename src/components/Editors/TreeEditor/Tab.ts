@@ -69,9 +69,12 @@ export class TreeTab extends FileTab {
 	async setup() {
 		let json: unknown
 		try {
-			json = json5.parse(
-				await this.fileHandle.getFile().then((file) => file.text())
-			)
+			const fileStr = await this.fileHandle
+				.getFile()
+				.then((file) => file.text())
+
+			if (fileStr === '') json = {}
+			else json = json5.parse(fileStr)
 		} catch {
 			new InformationWindow({
 				name: 'windows.invalidJson.title',

@@ -58,13 +58,15 @@ export class BlockModelTab extends GeometryPreviewTab {
 
 		await app.project.packIndexer.fired
 		const packIndexer = app.project.packIndexer.service
+		const config = app.project.config
 		if (!packIndexer) return
 
 		try {
 			this.blockJson = Object.freeze(
 				json5.parse(await file.text())?.['minecraft:block'] ?? {}
 			)
-		} catch {
+		} catch (err) {
+			console.error(`Invalid JSON within block file`)
 			return
 		}
 
@@ -80,11 +82,15 @@ export class BlockModelTab extends GeometryPreviewTab {
 				json5.parse(
 					await app.project
 						.getFileFromDiskOrTab(
-							'RP/textures/terrain_texture.json'
+							config.resolvePackPath(
+								'resourcePack',
+								'textures/terrain_texture.json'
+							)
 						)
 						.then((file) => file.text())
 				)?.['texture_data'] ?? {}
-		} catch {
+		} catch (err) {
+			console.error(`Invalid JSON within terrain_texture.json file`)
 			return
 		}
 		const connectedTextures = await Promise.all(
@@ -93,8 +99,8 @@ export class BlockModelTab extends GeometryPreviewTab {
 				.flat()
 				.map((texturePath) =>
 					findFileExtension(
-						app.project.fileSystem,
-						`RP/${texturePath}`,
+						app.fileSystem,
+						config.resolvePackPath('resourcePack', texturePath),
 						['.tga', '.png', '.jpg', '.jpeg']
 					)
 				)

@@ -7,7 +7,7 @@ export type VirtualHandle = VirtualDirectoryHandle | VirtualFileHandle
 
 export abstract class BaseVirtualHandle {
 	public readonly isVirtual = true
-	public abstract readonly kind: FileSystemHandleKind
+	public abstract readonly kind: 'directory' | 'file'
 	public readonly setupDone = new Signal<void>()
 
 	constructor(

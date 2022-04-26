@@ -15,14 +15,17 @@ import { DashFileSystem } from './FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { dirname } from '/@/utils/path'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { ForeignConsole } from './Console'
 
 export interface ICompilerOptions {
 	config: string
 	compilerConfig?: string
 	mode: 'development' | 'production'
+	projectName: string
 	pluginFileTypes: IFileType[]
 }
 const dataLoader = new DataLoader()
+const consoles = new Map<string, ForeignConsole>()
 
 export class DashService extends EventDispatcher<void> {
 	protected fileSystem: DashFileSystem
@@ -32,6 +35,7 @@ export class DashService extends EventDispatcher<void> {
 	protected projectDir: string
 	public isSetup = false
 	public completedStartUp = new Signal<void>()
+	protected console: ForeignConsole
 
 	constructor(
 		baseDirectory: AnyDirectoryHandle,
@@ -46,9 +50,18 @@ export class DashService extends EventDispatcher<void> {
 				: undefined
 		this.fileType = new FileTypeLibrary()
 		this.fileType.setPluginFileTypes(options.pluginFileTypes)
+
+		let console = consoles.get(options.projectName)
+		if (!console) {
+			console = new ForeignConsole()
+			consoles.set(options.projectName, console)
+		}
+		this.console = console
+
 		this.dash = new Dash<DataLoader>(this.fileSystem, outputFileSystem, {
 			config: options.config,
 			compilerConfig: options.compilerConfig,
+			console,
 			mode: options.mode,
 			fileType: this.fileType,
 			packType: new PackTypeLibrary(),
@@ -56,6 +69,19 @@ export class DashService extends EventDispatcher<void> {
 		})
 
 		this.projectDir = dirname(options.config)
+	}
+
+	getCompilerLogs() {
+		return this.console.getLogs()
+	}
+	clearCompilerLogs() {
+		this.console.clear()
+	}
+	onConsoleUpdate(cb: () => void) {
+		this.console.addChangeListener(cb)
+	}
+	removeConsoleListeners() {
+		this.console.removeChangeListeners()
 	}
 
 	async compileFile(filePath: string, fileContent: Uint8Array) {
@@ -71,7 +97,7 @@ export class DashService extends EventDispatcher<void> {
 		const fs = this.fileSystem.internal
 		if (
 			(await fs.fileExists(
-				`${this.projectDir}/.bridge/.restartDevServer`
+				`${this.projectDir}/.bridge/.restartWatchMode`
 			)) ||
 			!(await fs.fileExists(
 				// TODO(Dash): Replace with call to "this.dash.dashFilePath" once the accessor is no longer protected
@@ -79,8 +105,10 @@ export class DashService extends EventDispatcher<void> {
 			))
 		) {
 			await Promise.all([
-				this.build(),
-				fs.unlink(`${this.projectDir}/.bridge/.restartDevServer`),
+				this.build().catch((err) => console.error(err)),
+				fs
+					.unlink(`${this.projectDir}/.bridge/.restartWatchMode`)
+					.catch((err) => console.error(err)),
 			])
 		} else {
 			await Promise.all([

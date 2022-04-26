@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid'
 import { version as appVersion } from '/@/utils/app/version'
 import { App } from '/@/App'
 import { dashVersion } from '/@/utils/app/dashVersion'
+import { compareVersions } from 'bridge-common-utils'
 
 export class CreateManifest extends CreateFile {
 	public readonly id = 'packManifest'
@@ -130,16 +131,6 @@ export class CreateManifest extends CreateFile {
 		// Behavior pack modules
 		if (
 			this.type === 'data' &&
-			createOptions.experimentalGameplay.additionalModdingCapabilities
-		) {
-			manifest.modules.push({
-				type: 'client_data',
-				uuid: uuid(),
-				version: [1, 0, 0],
-			})
-		}
-		if (
-			this.type === 'data' &&
 			createOptions.experimentalGameplay.enableGameTestFramework
 		) {
 			manifest.modules.push({
@@ -151,16 +142,22 @@ export class CreateManifest extends CreateFile {
 			manifest.dependencies ??= []
 			manifest.dependencies.push(
 				{
-					// Minecraft native module
+					// 'mojang-minecraft' module
 					uuid: 'b26a4d4c-afdf-4690-88f8-931846312678',
 					version: [0, 1, 0],
 				},
 				{
-					// GameTest native module
+					// 'mojang-gametest' module
 					uuid: '6f4b6893-1bb6-42fd-b458-7fa3d0c89616',
 					version: [0, 1, 0],
 				}
 			)
+			if (compareVersions(createOptions.targetVersion, '1.18.20', '>='))
+				manifest.dependencies.push({
+					// 'mojang-minecraft-ui' module
+					uuid: '2bd50a27-ab5f-4f40-a596-3641627c635e',
+					version: [0, 1, 0],
+				})
 		}
 
 		if (this.type === 'world_template') {

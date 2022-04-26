@@ -27,7 +27,7 @@
 								entry,
 							})
 						"
-						v-ripple
+						v-ripple="pointerDevice !== 'touch'"
 					>
 						<span class="d-flex align-center">
 							<v-icon class="pr-1" :color="entry.color" small>
@@ -87,7 +87,7 @@
 							entry,
 						})
 					"
-					v-ripple
+					v-ripple="pointerDevice !== 'touch'"
 				>
 					<v-icon :color="entry.color" class="pr-1" small>
 						{{ entry.icon || 'mdi-file-outline' }}
@@ -210,7 +210,7 @@ export default {
 				directoryEntry.parent = this.directoryEntry
 
 				// 2. Update actual file system
-				await app.project.fileSystem.move(oldPath, newPath)
+				await app.fileSystem.move(oldPath, newPath)
 				await app.project.updateChangedFiles()
 
 				// 3. Remove from recentFiles

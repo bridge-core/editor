@@ -1,6 +1,7 @@
 import { reactive, set } from '@vue/composition-api'
 import { App } from '/@/App'
 import { v4 as uuid } from 'uuid'
+import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 
 export type TSidebarElement = SidebarCategory | SidebarItem
 export interface ISidebarCategoryConfig {
@@ -16,6 +17,11 @@ export class SidebarCategory {
 	protected items: SidebarItem[]
 	protected isOpen: boolean
 	protected shouldSort: boolean
+	public showDisabled = false
+
+	get isDisabled() {
+		return this.items.every((i) => i.isDisabled)
+	}
 
 	constructor({ items, text, isOpen, shouldSort }: ISidebarCategoryConfig) {
 		this.text = text
@@ -39,8 +45,10 @@ export class SidebarCategory {
 	getSearchText() {
 		return this.text.toLowerCase()
 	}
-	getItems() {
-		return this.items
+	getItems(showDisabled = this.showDisabled) {
+		return showDisabled
+			? this.items
+			: this.items.filter((item) => !item.isDisabled)
 	}
 
 	setOpen(val: boolean) {
@@ -65,13 +73,18 @@ export class SidebarCategory {
 	}
 	filtered(filter: string) {
 		if (filter.length === 0) return this
-		return new SidebarCategory({
-			items: this.items.filter((item) =>
+
+		const category = new SidebarCategory({
+			items: this.getItems().filter((item) =>
 				item.getSearchText().includes(filter)
 			),
 			text: this.text,
+			shouldSort: this.shouldSort,
 			isOpen: true,
 		})
+		category.showDisabled = this.showDisabled
+
+		return category
 	}
 }
 
@@ -80,6 +93,8 @@ export interface ISidebarItemConfig {
 	text: string
 	icon?: string
 	color?: string
+	isDisabled?: boolean
+	disabledText?: string
 }
 export class SidebarItem {
 	readonly type = 'item'
@@ -87,12 +102,23 @@ export class SidebarItem {
 	protected text: string
 	protected icon?: string
 	protected color?: string
+	public isDisabled: boolean
+	public disabledText?: string
 
-	constructor({ id, text, icon, color }: ISidebarItemConfig) {
+	constructor({
+		id,
+		text,
+		icon,
+		color,
+		isDisabled,
+		disabledText,
+	}: ISidebarItemConfig) {
 		this.id = id
 		this.text = text
 		this.icon = icon
 		this.color = color
+		this.isDisabled = isDisabled ?? false
+		this.disabledText = disabledText
 	}
 
 	getText() {
@@ -103,14 +129,33 @@ export class SidebarItem {
 	}
 }
 
-export class Sidebar {
+export class Sidebar extends EventDispatcher<string | undefined> {
 	protected _selected?: string
 	protected _filter: string = ''
+	/**
+	 * Stores the last _filter value that we have already selected a new element for
+	 */
 	protected reselectedForFilter = ''
 	public readonly state: Record<string, any> = {}
+	protected _showDisabled = false
 
-	constructor(protected _elements: TSidebarElement[]) {
+	constructor(
+		protected _elements: TSidebarElement[],
+		protected readonly shouldSortSidebar = true
+	) {
+		super()
 		this.selected = this.findDefaultSelected()
+	}
+
+	get showDisabled() {
+		return this._showDisabled
+	}
+	set showDisabled(val: boolean) {
+		this._showDisabled = val
+
+		this.rawElements.forEach((e) => {
+			if (e.type === 'category') e.showDisabled = val
+		})
 	}
 
 	addElement(element: TSidebarElement, additionalData?: unknown) {
@@ -141,6 +186,8 @@ export class Sidebar {
 		const elements = this.sortSidebar(
 			this._elements
 				.filter((e) => {
+					if (!this.showDisabled && e.isDisabled) return false
+
 					if (e.type === 'item')
 						return e.getSearchText().includes(this.filter)
 					else return e.hasFilterMatches(this.filter)
@@ -149,10 +196,16 @@ export class Sidebar {
 		)
 
 		if (this.filter !== this.reselectedForFilter && elements.length > 0) {
-			const e = elements[0]
-			if (e.type === 'category' && e.getItems().length > 0) {
+			const e = elements.find((e) => !e.isDisabled)
+			if (!e) return elements
+
+			if (e.type === 'category' && e.getItems(false).length > 0) {
 				e.setOpen(true)
-				this.setDefaultSelected(e.getItems()[0].id)
+
+				const item = e.getItems(false)[0]
+				if (item) this.setDefaultSelected(item.id)
+			} else if (e.type === 'item') {
+				this.setDefaultSelected(e.id)
 			}
 
 			this.reselectedForFilter = this.filter
@@ -191,6 +244,8 @@ export class Sidebar {
 	}
 
 	protected sortSidebar(elements: TSidebarElement[]) {
+		if (!this.shouldSortSidebar) return elements
+
 		return elements.sort((a, b) => {
 			if (a.type !== b.type) return a.type.localeCompare(b.type)
 			return a.getSearchText().localeCompare(b.getSearchText())
@@ -198,9 +253,15 @@ export class Sidebar {
 	}
 	protected findDefaultSelected() {
 		for (const element of this.sortSidebar(this.elements)) {
-			if (element.type === 'category' && element.getItems().length > 0)
-				return element.getItems()[0].id
-			else if (element.type === 'item') return element.id
+			if (element.isDisabled) continue
+
+			if (
+				element.type === 'category' &&
+				element.getItems(false).length > 0
+			) {
+				const item = element.getItems(false)[0]
+				if (item) return item.id
+			} else if (element.type === 'item') return element.id
 		}
 	}
 	setDefaultSelected(value?: string) {
@@ -221,6 +282,10 @@ export class Sidebar {
 		if (val) {
 			App.audioManager.playAudio('click5.ogg', 1)
 		}
-		this._selected = val
+
+		if (this._selected !== val) {
+			this.dispatch(val)
+			this._selected = val
+		}
 	}
 }

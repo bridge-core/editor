@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import { resolve, join } from 'path'
 import { createVuePlugin } from 'vite-plugin-vue2'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -29,6 +29,7 @@ export default defineConfig({
 		},
 	},
 	plugins: [
+		splitVendorChunkPlugin(),
 		createVuePlugin(),
 		ViteEjsPlugin({
 			isNightly,

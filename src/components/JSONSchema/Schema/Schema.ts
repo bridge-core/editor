@@ -14,7 +14,16 @@ export interface ICompletionItem {
 }
 
 export abstract class Schema {
-	public readonly type?: 'ifSchema' | 'refSchema'
+	public readonly schemaType?: 'ifSchema' | 'refSchema'
+	public abstract readonly types: (
+		| 'object'
+		| 'array'
+		| 'string'
+		| 'integer'
+		| 'number'
+		| 'boolean'
+		| 'null'
+	)[]
 	constructor(
 		protected location: string,
 		protected key: string,

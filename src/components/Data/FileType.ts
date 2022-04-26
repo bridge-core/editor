@@ -74,7 +74,11 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 						Array.isArray(detect.matcher)
 							? [...detect.matcher]
 							: [detect.matcher]
-					).map((fileMatch) => encodeURI(fileMatch)),
+					).map((fileMatch) =>
+						encodeURI(fileMatch)
+							// Monaco doesn't like these characters in fileMatch
+							.replaceAll(/;|,|@|&|=|\+|\$|\.|!|'|\(|\)|#/g, '*')
+					),
 					uri: schema,
 				}
 			})

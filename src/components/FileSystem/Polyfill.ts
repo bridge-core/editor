@@ -5,20 +5,29 @@ import { VirtualFileHandle } from './Virtual/FileHandle'
 /**
  * Chrome 93 and 94 crash when we try to call createWritable on a file handle inside of a web worker
  * We therefore enable this polyfill to work around the bug
+ *
+ * Additionally, Brave, Opera and similar browsers do not support the FileSystem API so we enable
+ * the polyfill for all browsers which are not Chrome or Edge
+ * (Brave and Opera still have the API methods but they're NOOPs so our detection doesn't work)
  */
-function isCrashingChromeBrowser() {
+function isUnsupportedBrowser() {
 	const unsupportedChromeVersions = ['93', '94']
 
 	// @ts-ignore: TypeScript doesn't know about userAgentData yet
 	const userAgentData: any = navigator.userAgentData
-	if (!userAgentData) return false
+	if (!userAgentData) return true
 
 	const chromeBrand = userAgentData.brands.find(
 		({ brand }: any) => brand === 'Google Chrome'
 	)
-	if (!chromeBrand) return false
+	const edgeBrand = userAgentData.brands.find(
+		({ brand }: any) => brand === 'Microsoft Edge'
+	)
+	if (chromeBrand)
+		return unsupportedChromeVersions.includes(chromeBrand.version)
+	if (edgeBrand) return false
 
-	return unsupportedChromeVersions.includes(chromeBrand.version)
+	return true
 }
 
 export let isUsingFileSystemPolyfill = ref(false)
@@ -26,13 +35,13 @@ export let isUsingSaveAsPolyfill = false
 export let isUsingOriginPrivateFs = false
 
 if (
-	isCrashingChromeBrowser() ||
+	isUnsupportedBrowser() ||
 	typeof window.showDirectoryPicker !== 'function'
 ) {
 	// TODO: Enable once safari properly supports file handles (createWritable)
 	if (
 		false &&
-		!isCrashingChromeBrowser() &&
+		!isUnsupportedBrowser() &&
 		typeof navigator.storage.getDirectory === 'function'
 	) {
 		isUsingOriginPrivateFs = true
@@ -47,10 +56,7 @@ if (
 	}
 }
 
-if (
-	isCrashingChromeBrowser() ||
-	typeof window.showOpenFilePicker !== 'function'
-) {
+if (isUnsupportedBrowser() || typeof window.showOpenFilePicker !== 'function') {
 	// @ts-ignore Typescript doesn't like our polyfill
 	window.showOpenFilePicker = async (options: OpenFilePickerOptions) => {
 		const opts = { types: [], ...options }
@@ -114,10 +120,7 @@ if (
 export interface ISaveFilePickerOptions {
 	suggestedName?: string
 }
-if (
-	isCrashingChromeBrowser() ||
-	typeof window.showSaveFilePicker !== 'function'
-) {
+if (isUnsupportedBrowser() || typeof window.showSaveFilePicker !== 'function') {
 	isUsingSaveAsPolyfill = true
 
 	// @ts-ignore
@@ -135,7 +138,7 @@ if (
 }
 
 if (
-	isCrashingChromeBrowser() ||
+	isUnsupportedBrowser() ||
 	(globalThis.DataTransferItem &&
 		!DataTransferItem.prototype.getAsFileSystemHandle)
 ) {

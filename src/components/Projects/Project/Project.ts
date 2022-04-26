@@ -28,6 +28,7 @@ import { relative } from '/@/utils/path'
 import { DashCompiler } from '/@/components/Compiler/Compiler'
 import { proxy, Remote } from 'comlink'
 import { DashService } from '/@/components/Compiler/Worker/Service'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -53,6 +54,7 @@ export abstract class Project {
 	public readonly extensionLoader: ExtensionLoader
 	public readonly fileChange = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
+	public readonly fileUnlinked = new FileChangeRegistry<void>()
 	public readonly tabActionProvider = new TabActionProvider()
 	public readonly snippetLoader = new SnippetLoader(this)
 	public readonly exportProvider = new ExportProvider()
@@ -124,6 +126,9 @@ export abstract class Project {
 		this.fileSave.any.on((data) =>
 			App.eventSystem.dispatch('fileSave', data)
 		)
+		this.fileUnlinked.any.on((data) =>
+			App.eventSystem.dispatch('fileUnlinked', data[0])
+		)
 
 		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
 
@@ -151,6 +156,7 @@ export abstract class Project {
 				config: `projects/${this.name}/config.json`,
 				compilerConfig,
 				mode,
+				projectName: this.name,
 				pluginFileTypes: this.fileTypeLibrary.getPluginFileTypes(),
 			}
 		)
@@ -209,9 +215,14 @@ export abstract class Project {
 		])
 		const [changedFiles, deletedFiles] = await this.packIndexer.fired
 
+		const autoFetchChangedFiles =
+			settingsState.compiler?.autoFetchChangedFiles ?? true
+
 		await Promise.all([
 			this.jsonDefaults.activate(),
-			this.compilerService.start(changedFiles, deletedFiles),
+			autoFetchChangedFiles
+				? this.compilerService.start(changedFiles, deletedFiles)
+				: Promise.resolve(),
 		])
 
 		this.snippetLoader.activate()
@@ -331,9 +342,13 @@ export abstract class Project {
 			return
 		}
 
+		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
+
 		await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			this.compilerService.updateFiles([filePath]),
+			watchModeActive
+				? this.compilerService.updateFiles([filePath])
+				: Promise.resolve(),
 		])
 
 		await this.jsonDefaults.updateDynamicSchemas(filePath)
@@ -341,14 +356,33 @@ export abstract class Project {
 	async updateFiles(filePaths: string[]) {
 		await this.packIndexer.updateFiles(filePaths)
 
-		await this.compilerService.updateFiles(filePaths)
+		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
+
+		if (watchModeActive) await this.compilerService.updateFiles(filePaths)
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 	async unlinkFile(filePath: string) {
 		await this.packIndexer.unlink(filePath)
-		await this.compilerService.unlink(filePath)
-		await this.fileSystem.unlink(filePath)
+
+		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
+
+		if (watchModeActive) await this.compilerService.unlink(filePath)
+		await this.app.fileSystem.unlink(filePath)
+		await this.recentFiles.removeFile(filePath)
+
+		this.fileUnlinked.dispatch(filePath)
+
+		// Reload dynamic schemas
+		const currentPath = this.tabSystem?.selectedTab?.getPath()
+		if (currentPath)
+			await this.jsonDefaults.updateDynamicSchemas(currentPath)
+	}
+	async renameFile(fromPath: string, toPath: string) {
+		await this.app.fileSystem.move(fromPath, toPath)
+
+		await this.unlinkFile(fromPath)
+		await this.updateFile(toPath)
 	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()
@@ -421,10 +455,10 @@ export abstract class Project {
 
 	async recompile(forceStartIfActive = true) {
 		if (forceStartIfActive && this.isActiveProject) {
-			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
+			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
 			this.compilerService.build()
 		} else {
-			await this.fileSystem.writeFile('.bridge/.restartDevServer', '')
+			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
 		}
 	}
 
