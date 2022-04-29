@@ -23,9 +23,12 @@ function isUnsupportedBrowser() {
 	const edgeBrand = userAgentData.brands.find(
 		({ brand }: any) => brand === 'Microsoft Edge'
 	)
+	const operaBrand = userAgentData.brands.find(
+		({ brand }: any) => brand === 'Opera GX' || brand === 'Opera'
+	)
 	if (chromeBrand)
 		return unsupportedChromeVersions.includes(chromeBrand.version)
-	if (edgeBrand) return false
+	if (edgeBrand || operaBrand) return false
 
 	return true
 }
