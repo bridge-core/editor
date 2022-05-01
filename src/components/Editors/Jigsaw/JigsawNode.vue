@@ -1,26 +1,26 @@
 <template>
-	<div
+	<GridElement
+		:isEnabled="boundToGrid"
 		:class="`component rounded-${roundedType}`"
-		:style="{
-			position: 'absolute',
-			top: `${containerY + this.y * 42 + 3}px`,
-			left: `${containerX + this.x * 42 + 3}px`,
-			height: '37px',
-			width: '37px',
-			cursor: 'pointer',
-			background: `var(--v-${color}-base)`,
-		}"
+		:background="`var(--v-${color}-base)`"
+		:x="x"
+		:y="y"
+		:containerX="containerX"
+		:containerY="containerY"
 	>
 		<v-icon>{{ icon }}</v-icon>
-	</div>
+	</GridElement>
 </template>
 
 <script>
+import GridElement from './FlowArea/GridElement.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 
 export default {
+	components: { GridElement },
 	mixins: [TranslationMixin],
 	props: {
+		boundToGrid: { type: Boolean, default: true },
 		x: Number,
 		y: Number,
 		containerX: Number,
@@ -54,10 +54,10 @@ export default {
 
 <style scoped>
 .component {
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
 	user-select: none;
 	display: inline-grid;
+	height: 37px;
+	width: 37px;
+	cursor: pointer;
 }
 </style>

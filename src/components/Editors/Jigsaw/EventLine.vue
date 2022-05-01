@@ -1,24 +1,28 @@
 <template>
-	<div
-		:class="`component rounded-lg`"
-		:style="{
-			position: 'absolute',
-			top: `${containerY + this.y * 42 + 19}px`,
-			left: `${containerX + this.x * 42 + 3}px`,
-			height: '5px',
-			width: '37px',
-			cursor: 'pointer',
-			background: `var(--v-${color}-base)`,
-		}"
+	<GridElement
+		:isEnabled="boundToGrid"
+		:class="`event-line rounded-lg`"
+		:background="`var(--v-${color}-base)`"
+		:x="x"
+		:y="y"
+		:yOffset="16"
+		:containerX="containerX"
+		:containerY="containerY"
 	/>
 </template>
 
 <script>
+import GridElement from './FlowArea/GridElement.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 
 export default {
+	components: { GridElement },
 	mixins: [TranslationMixin],
 	props: {
+		boundToGrid: {
+			type: Boolean,
+			default: true,
+		},
 		x: Number,
 		y: Number,
 		containerX: Number,
@@ -33,11 +37,12 @@ export default {
 </script>
 
 <style scoped>
-.component {
-	width: 100%;
-	height: 100%;
+.event-line {
+	width: 37px;
+	height: 5px;
 	overflow: hidden;
 	user-select: none;
+	cursor: pointer;
 	display: inline-grid;
 }
 </style>

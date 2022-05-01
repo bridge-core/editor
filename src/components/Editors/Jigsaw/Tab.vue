@@ -1,29 +1,24 @@
 <template>
 	<div
-		class="editor-container px-3 pb-3"
+		class="editor-container d-flex px-3 pb-3"
 		:style="{
 			fontSize,
 			fontFamily: codeFontFamily,
 			height: `${height - 12}px`,
+			gap: '8px',
 		}"
 		ref="editorContainer"
 		@click="tab.parent.setActive(true)"
 		tabindex="-1"
 	>
+		<ComponentLib />
 		<div
-			class="grid-container outlined rounded-full"
+			class="grid-container outlined rounded-lg"
 			:style="{ cursor: cursorStyle }"
-			@mousedown="onMouseDown"
 			@mousemove="onMouseMove"
 			@mouseup="onMouseUp"
 		>
-			<div
-				:style="{
-					top: `${(this.currentY % 42) - 42}px`,
-					left: `${(this.currentX % 42) - 42}px`,
-				}"
-				class="grid"
-			/>
+			<Grid :x="currentX" :y="currentY" @mousedown.self="onMouseDown" />
 			<JigsawNode
 				:containerX="currentX"
 				:containerY="currentY"
@@ -80,6 +75,7 @@
 				:containerY="currentY"
 				icon="mdi-filter"
 				color="success"
+				type="event"
 				:x="6"
 				:y="2"
 			/>
@@ -133,10 +129,12 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import JigsawNode from './JigsawNode.vue'
 import EventLine from './EventLine.vue'
+import ComponentLib from './ComponentLib/ComponentLib.vue'
+import Grid from './FlowArea/Grid.vue'
 
 export default {
 	mixins: [TranslationMixin],
-	components: { JigsawNode, EventLine },
+	components: { JigsawNode, EventLine, ComponentLib, Grid },
 	props: {
 		tab: Object,
 
@@ -231,24 +229,5 @@ export default {
 	height: 100%;
 	overflow: hidden;
 	user-select: none;
-}
-.grid {
-	position: absolute;
-	height: calc(100% + 84px);
-	width: calc(100% + 84px);
-	background-image: repeating-linear-gradient(
-			#555555 0 1px,
-			transparent 1px 100%
-		),
-		repeating-linear-gradient(90deg, #555555 0 1px, transparent 1px 100%);
-	background-size: 42px 42px;
-	background-repeat: repeat;
-}
-.theme--light .grid {
-	background-image: repeating-linear-gradient(
-			#a4a4a4 0 1px,
-			transparent 1px 100%
-		),
-		repeating-linear-gradient(90deg, #a4a4a4 0 1px, transparent 1px 100%);
 }
 </style>
