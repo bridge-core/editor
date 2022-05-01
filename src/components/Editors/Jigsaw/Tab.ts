@@ -30,6 +30,10 @@ const throttledCacheUpdate = debounce<(tab: JigsawTab) => Promise<void> | void>(
 
 export class JigsawTab extends FileTab {
 	component = JigsawTabComponent
+	position = {
+		x: 0,
+		y: 0,
+	}
 
 	constructor(
 		parent: TabSystem,

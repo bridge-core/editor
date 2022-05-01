@@ -40,8 +40,6 @@ export default {
 		height: Number,
 	},
 	data: () => ({
-		currentX: 0,
-		currentY: 0,
 		cursorStyle: 'grab',
 		startPosData: null,
 	}),
@@ -97,6 +95,22 @@ export default {
 				this.settingsState.appearance.font
 				? `${this.settingsState.appearance.font} !important`
 				: 'Roboto !important'
+		},
+		currentX: {
+			get() {
+				return this.tab.position.x
+			},
+			set(val) {
+				this.tab.position.x = val
+			},
+		},
+		currentY: {
+			get() {
+				return this.tab.position.y
+			},
+			set(val) {
+				this.tab.position.y = val
+			},
 		},
 	},
 	watch: {
