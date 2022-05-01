@@ -1,5 +1,6 @@
 import { ImageTab } from '../Editors/Image/ImageTab'
 import { TargaTab } from '../Editors/Image/TargaTab'
+import { JigsawTab } from '../Editors/Jigsaw/Tab'
 import { TextTab } from '../Editors/Text/TextTab'
 import { TreeTab } from '../Editors/TreeEditor/Tab'
 import { FileTab } from './FileTab'
@@ -7,6 +8,7 @@ import { FileTab } from './FileTab'
 export class TabProvider {
 	protected static _tabs = new Set<typeof FileTab>([
 		TextTab,
+		JigsawTab,
 		TreeTab,
 		ImageTab,
 		TargaTab,
