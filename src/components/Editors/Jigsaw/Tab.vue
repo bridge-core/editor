@@ -11,7 +11,7 @@
 		tabindex="-1"
 	>
 		<div
-			class="grid-container outlined rounded-lg"
+			class="grid-container outlined rounded-full"
 			:style="{ cursor: cursorStyle }"
 			@mousedown="onMouseDown"
 			@mousemove="onMouseMove"
@@ -23,7 +23,107 @@
 					left: `${(this.currentX % 42) - 42}px`,
 				}"
 				class="grid"
-			></div>
+			/>
+			<JigsawNode
+				:containerX="currentX"
+				:containerY="currentY"
+				icon="mdi-heart"
+				:x="2"
+				:y="1"
+			/>
+			<JigsawNode
+				:containerX="currentX"
+				:containerY="currentY"
+				icon="mdi-shoe-print"
+				color="info"
+				:x="1"
+				:y="1"
+			/>
+			<JigsawNode
+				:containerX="currentX"
+				:containerY="currentY"
+				icon="mdi-sword"
+				color="toolbar"
+				:x="1"
+				:y="2"
+			/>
+			<JigsawNode
+				:containerX="currentX"
+				:containerY="currentY"
+				icon="mdi-camera-timer"
+				color="info"
+				:x="2"
+				:y="2"
+			/>
+
+			<EventLine
+				:containerX="currentX"
+				:containerY="currentY"
+				:x="3"
+				:y="2"
+			/>
+			<EventLine
+				:containerX="currentX"
+				:containerY="currentY"
+				:x="4"
+				:y="2"
+			/>
+			<EventLine
+				:containerX="currentX"
+				:containerY="currentY"
+				:x="5"
+				:y="2"
+			/>
+
+			<JigsawNode
+				:containerX="currentX"
+				:containerY="currentY"
+				icon="mdi-filter"
+				color="success"
+				:x="6"
+				:y="2"
+			/>
+
+			<EventLine
+				:containerX="currentX"
+				:containerY="currentY"
+				:x="7"
+				:y="2"
+			/>
+			<EventLine
+				:containerX="currentX"
+				:containerY="currentY"
+				:x="8"
+				:y="2"
+			/>
+			<EventLine
+				:containerX="currentX"
+				:containerY="currentY"
+				:x="9"
+				:y="2"
+			/>
+			<EventLine
+				:containerX="currentX"
+				:containerY="currentY"
+				:x="10"
+				:y="2"
+			/>
+
+			<JigsawNode
+				:containerX="currentX"
+				:containerY="currentY"
+				icon="mdi-heart"
+				:x="11"
+				:y="2"
+			/>
+			<JigsawNode
+				:containerX="currentX"
+				:containerY="currentY"
+				icon="mdi-shoe-print"
+				color="info"
+				:x="12"
+				:y="2"
+			/>
 		</div>
 	</div>
 </template>
@@ -31,12 +131,15 @@
 <script>
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import JigsawNode from './JigsawNode.vue'
+import EventLine from './EventLine.vue'
 
 export default {
-	name: 'TreeTab',
 	mixins: [TranslationMixin],
+	components: { JigsawNode, EventLine },
 	props: {
 		tab: Object,
+
 		height: Number,
 	},
 	data: () => ({
@@ -123,13 +226,14 @@ export default {
 
 <style scoped>
 .grid-container {
+	position: relative;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
 	user-select: none;
 }
 .grid {
-	position: relative;
+	position: absolute;
 	height: calc(100% + 84px);
 	width: calc(100% + 84px);
 	background-image: repeating-linear-gradient(
