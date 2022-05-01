@@ -8,6 +8,11 @@
 		:containerX="containerX"
 		:containerY="containerY"
 	>
+		<div
+			v-if="connection === 'left'"
+			class="component rounded-lg connection"
+			:style="`background: var(--v-${color}-base)`"
+		></div>
 		<v-icon>{{ icon }}</v-icon>
 	</GridElement>
 </template>
@@ -35,6 +40,7 @@ export default {
 			default: 'component',
 			validate: (val) => ['component', 'event'].includes(val),
 		},
+		connection: String,
 	},
 	data: () => ({}),
 	computed: {
@@ -59,5 +65,10 @@ export default {
 	height: 37px;
 	width: 37px;
 	cursor: pointer;
+}
+.connection {
+	position: absolute;
+	transform: rotate(45deg) scale(0.5);
+	left: 12px;
 }
 </style>

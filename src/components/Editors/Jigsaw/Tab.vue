@@ -45,6 +45,7 @@
 			<JigsawNode
 				:containerX="currentX"
 				:containerY="currentY"
+				connection="left"
 				icon="mdi-camera-timer"
 				color="info"
 				:x="2"
@@ -73,6 +74,7 @@
 			<JigsawNode
 				:containerX="currentX"
 				:containerY="currentY"
+				connection="left"
 				icon="mdi-filter"
 				color="success"
 				type="event"
@@ -83,24 +85,28 @@
 			<EventLine
 				:containerX="currentX"
 				:containerY="currentY"
+				color="success"
 				:x="7"
 				:y="2"
 			/>
 			<EventLine
 				:containerX="currentX"
 				:containerY="currentY"
+				color="success"
 				:x="8"
 				:y="2"
 			/>
 			<EventLine
 				:containerX="currentX"
 				:containerY="currentY"
+				color="success"
 				:x="9"
 				:y="2"
 			/>
 			<EventLine
 				:containerX="currentX"
 				:containerY="currentY"
+				color="success"
 				:x="10"
 				:y="2"
 			/>
