@@ -345,7 +345,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			options: [
 				{ text: 'Tree Editor', value: 'treeEditor' },
 				{ text: 'Raw Text', value: 'rawText' },
-				{ text: 'Jigsaw Editor', value: 'jigsawEditor' },
 			],
 			default: 'rawText',
 		})

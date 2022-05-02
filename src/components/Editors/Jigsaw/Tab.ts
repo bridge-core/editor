@@ -58,10 +58,7 @@ export class JigsawTab extends FileTab {
 	}
 
 	static is(fileHandle: AnyFileHandle) {
-		return (
-			settingsState?.editor?.jsonEditor === 'jigsawEditor' &&
-			fileHandle.name.endsWith('.json')
-		)
+		return fileHandle.name.endsWith('.flow')
 	}
 	async setup() {
 		let json: unknown
