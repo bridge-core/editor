@@ -9,10 +9,15 @@
 		:containerY="containerY"
 	>
 		<div
-			v-if="connection === 'left'"
-			class="component rounded-lg connection"
-			:style="`background: var(--v-${color}-base)`"
-		></div>
+			v-for="dir in connectTo"
+			:key="dir"
+			class="component rounded-lg connect"
+			:style="{
+				background: `var(--v-${color}-base)`,
+				left: `${dir === 'left' ? 12 : dir === 'right' ? -12 : 0}px`,
+				top: `${dir === 'up' ? -12 : dir === 'down' ? 12 : 0}px`,
+			}"
+		/>
 		<v-icon>{{ icon }}</v-icon>
 	</GridElement>
 </template>
@@ -40,7 +45,11 @@ export default {
 			default: 'component',
 			validate: (val) => ['component', 'event'].includes(val),
 		},
-		connection: String,
+		connect: {
+			type: [Array, String],
+			validate: (val) =>
+				val.every((v) => ['left', 'right', 'up', 'down'].includes(v)),
+		},
 	},
 	data: () => ({}),
 	computed: {
@@ -54,6 +63,11 @@ export default {
 					return '0'
 			}
 		},
+		connectTo() {
+			return typeof this.connect === 'string'
+				? [this.connect]
+				: this.connect
+		},
 	},
 }
 </script>
@@ -66,9 +80,8 @@ export default {
 	width: 37px;
 	cursor: pointer;
 }
-.connection {
+.connect {
 	position: absolute;
 	transform: rotate(45deg) scale(0.5);
-	left: 12px;
 }
 </style>

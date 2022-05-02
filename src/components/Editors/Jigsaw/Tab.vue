@@ -45,7 +45,7 @@
 			<JigsawNode
 				:containerX="currentX"
 				:containerY="currentY"
-				connection="left"
+				:connect="['left', 'down']"
 				icon="mdi-camera-timer"
 				color="info"
 				:x="2"
@@ -74,7 +74,7 @@
 			<JigsawNode
 				:containerX="currentX"
 				:containerY="currentY"
-				connection="left"
+				:connect="['left']"
 				icon="mdi-filter"
 				color="success"
 				type="event"
