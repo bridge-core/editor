@@ -15,8 +15,6 @@
 		<div
 			class="grid-container outlined rounded-lg"
 			:style="{ cursor: cursorStyle }"
-			@mousemove="onMouseMove"
-			@mouseup="onMouseUp"
 		>
 			<Grid :x="currentX" :y="currentY" @mousedown.self="onMouseDown" />
 			<JigsawNode
@@ -137,6 +135,7 @@ import JigsawNode from './JigsawNode.vue'
 import EventLine from './EventLine.vue'
 import ComponentLib from './ComponentLib/ComponentLib.vue'
 import Grid from './FlowArea/Grid.vue'
+import { addListener } from '/@/utils/disposableListener'
 
 export default {
 	mixins: [TranslationMixin],
@@ -149,6 +148,7 @@ export default {
 	data: () => ({
 		cursorStyle: 'grab',
 		startPosData: null,
+		disposables: null,
 	}),
 	mounted() {
 		// this.treeEditor.receiveContainer(this.$refs.editorContainer)
@@ -165,6 +165,10 @@ export default {
 				y: event.clientY,
 			}
 			this.cursorStyle = 'grabbing'
+			this.disposables = [
+				addListener('mousemove', this.onMouseMove),
+				addListener('mouseup', this.onMouseUp),
+			]
 		},
 		onMouseMove(event) {
 			if (!this.startPosData) return
@@ -179,6 +183,9 @@ export default {
 		onMouseUp(event) {
 			this.startPosData = null
 			this.cursorStyle = 'grab'
+			if (this.disposables)
+				this.disposables.forEach((disposable) => disposable.dispose())
+			this.disposables = null
 		},
 	},
 	computed: {
