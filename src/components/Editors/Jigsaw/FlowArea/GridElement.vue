@@ -5,6 +5,7 @@
 			top: `${containerY + this.y * 42 + 3 + yOffset}px`,
 			left: `${containerX + this.x * 42 + 3}px`,
 			background,
+			cursor,
 		}"
 	>
 		<slot />
@@ -27,6 +28,7 @@ export default {
 		containerX: Number,
 		containerY: Number,
 		background: String,
+		cursor: String,
 	},
 }
 </script>
