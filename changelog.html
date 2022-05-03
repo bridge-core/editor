@@ -1,26 +1,24 @@
-<h2>Features</h2>
-<h3>Asset Preview (#130)</h3>
-<p>We have updated bridge.'s asset preview to add new features, such as hiding individual bones, choosing a texture before export and adding a watermark to your preview. All of these options can be configured in the new &quot;Asset Preview&quot; window.</p>
-<p><img src="https://user-images.githubusercontent.com/64587014/165151928-b2cd6851-8ad5-4f2b-b2a5-a630f1f03be8.png" alt="asset preview window"></p>
+<h2>Features:</h2>
 <ul>
-<li>Added support for &quot;else&quot; schema field in the tree editor (#408)</li>
-<li>Support for .mcpack file imports (#123)</li>
-<li>Added a new built-in compiler plugin &quot;formatVersionCorrection&quot; which maps format versions into ones that work inside of Minecraft, e.g. &quot;1.18.30&quot; is unsupported in blocks and will be mapped to &quot;1.18.0&quot; in the compiler output (#386)</li>
+<li>Updated data to latest Minecraft preview</li>
+<li>Local extension installations now properly overwrite global installations (#434)</li>
 </ul>
-<h2>Changes</h2>
+<h2>Changes:</h2>
 <ul>
-<li>Added new molang locations for 1.19.0 entity components</li>
-<li>Added more syntax highlighting to JSON files which were missing it before</li>
-<li>A link to bridge.'s Twitter account can now be found under the &quot;Help&quot; toolbar menu</li>
-<li>Included 1.19.0 Molang queries in embedded Molang schema</li>
-<li>Better file detection when importing animation files to differentiate between client and server animations (#83)</li>
-<li>Bumped various dependencies</li>
+<li>Enabled close button for asset preview window (#424)</li>
+<li>Automatically add new &quot;formatVersionCorrection&quot; plugin to old projects (#422)</li>
+<li>Updated texture set file highlighter</li>
+<li>Improved schema validation with &quot;require&quot; field</li>
+<li>Added &quot;format_version&quot; property to default sound definitions file (#435; Thanks to @Chikorita-Lover)</li>
+<li>Updated simple file names and descriptions (bridge-core/editor-packages#20; Thanks to @Chikorita-Lover)</li>
+<li>Updated &quot;randomize&quot; event response (bridge-core/editor-packages#18; Thanks to @Chikorita-Lover)</li>
+<li>Updated &quot;behavior.knockback_roar&quot; (bridge-core/editor-packages#19; Thanks to @Chikorita-Lover)</li>
 </ul>
-<h2>Fixes</h2>
+<h2>Fixes:</h2>
 <ul>
-<li>Fogs are now created in the RP rather than the BP</li>
-<li>Fixed import file saving without a file extension (#420)</li>
-<li>Fixed validation error in fog schema</li>
-<li>Fixed zip imports (#412)</li>
-<li>Browsers such as Brave and Opera will now use the FS API polyfill as they do not support the FileSystem API (#371, #343)</li>
+<li>Fixed error upon opening project chooser</li>
+<li>Fixed particle texture path go to definition</li>
+<li>Fixed some format versions breaking items</li>
+<li>Fixed bridge. no longer properly working on Opera (#426)</li>
+<li>Fixed presets not properly reloading upon switching projects (#432)</li>
 </ul>
