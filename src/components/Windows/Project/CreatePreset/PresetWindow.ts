@@ -102,9 +102,11 @@ export class CreatePresetWindow extends BaseWindow {
 		super(PresetWindowComponent)
 		this.defineWindow()
 
-		App.eventSystem.on('presetsChanged', () => {
-			this.onPresetsChanged()
-		})
+		const reloadEvents = ['presetsChanged', 'projectChanged']
+
+		reloadEvents.forEach((eventName) =>
+			App.eventSystem.on(eventName, () => this.onPresetsChanged())
+		)
 	}
 
 	onPresetsChanged() {
