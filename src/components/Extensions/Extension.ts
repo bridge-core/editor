@@ -41,6 +41,9 @@ export class Extension {
 	get isGlobal() {
 		return this._isGlobal
 	}
+	get id() {
+		return this.manifest.id
+	}
 
 	constructor(
 		protected parent: ExtensionLoader,
@@ -158,6 +161,14 @@ export class Extension {
 
 		App.eventSystem.dispatch('presetsChanged', null)
 
+		// Disable global extension with same ID if such an extension exists
+		if (!this.isGlobal) {
+			const globalExtensions = App.instance.extensionLoader
+
+			if (globalExtensions.has(this.id))
+				globalExtensions.deactivate(this.id)
+		}
+
 		if (await this.fileSystem.fileExists('.installed')) return
 
 		await this.installFiles.execute(this.isGlobal)
@@ -172,6 +183,14 @@ export class Extension {
 		App.eventSystem.dispatch('presetsChanged', null)
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.isLoaded = false
+
+		// Enable global extension with same ID if such an extension exists
+		if (!this.isGlobal) {
+			const globalExtensions = App.instance.extensionLoader
+
+			if (globalExtensions.has(this.id))
+				globalExtensions.activate(this.id)
+		}
 	}
 
 	async delete() {
