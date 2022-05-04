@@ -133,12 +133,22 @@ export class CreateManifest extends CreateFile {
 			this.type === 'data' &&
 			createOptions.experimentalGameplay.enableGameTestFramework
 		) {
-			manifest.modules.push({
-				type: 'javascript',
-				uuid: uuid(),
-				entry: 'scripts/main.js',
-				version: [1, 0, 0],
-			})
+			if (compareVersions(createOptions.targetVersion, '1.19.0', '>='))
+				// New module format
+				manifest.modules.push({
+					type: 'script',
+					language: 'javascript',
+					uuid: uuid(),
+					entry: 'scripts/main.js',
+					version: [1, 0, 0],
+				})
+			else
+				manifest.modules.push({
+					type: 'javascript',
+					uuid: uuid(),
+					entry: 'scripts/main.js',
+					version: [1, 0, 0],
+				})
 			manifest.dependencies ??= []
 			manifest.dependencies.push(
 				{
