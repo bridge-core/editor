@@ -14,8 +14,12 @@ import { CreateConfig } from './Files/Config'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
-import { settingsState } from '../../Windows/Settings/SettingsState'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { CreateWorlds } from './Packs/worlds'
+import {
+	getFormatVersions,
+	getStableFormatVersion,
+} from '/@/components/Data/FormatVersions'
 
 export interface ICreateProjectOptions {
 	author: string | string[]
@@ -47,6 +51,7 @@ export class CreateProjectWindow extends BaseWindow {
 	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []
 	protected availableTargetVersionsLoading = true
+	protected stableVersion: string = ''
 	protected packs: Record<TPackTypeId | '.bridge' | 'worlds', CreatePack> = <
 		const
 	>{
@@ -95,13 +100,10 @@ export class CreateProjectWindow extends BaseWindow {
 
 		App.ready.once(async (app) => {
 			await app.dataLoader.fired
-			this.availableTargetVersions = (
-				await app.dataLoader.readJSON(
-					'data/packages/minecraftBedrock/formatVersions.json'
-				)
-			).reverse()
+			this.availableTargetVersions = await getFormatVersions()
 			// Set default version
-			this.createOptions.targetVersion = this.availableTargetVersions[0]
+			this.stableVersion = await getStableFormatVersion()
+			this.createOptions.targetVersion = this.stableVersion
 			this.availableTargetVersionsLoading = false
 
 			this.experimentalToggles = await app.dataLoader.readJSON(
@@ -113,7 +115,6 @@ export class CreateProjectWindow extends BaseWindow {
 		})
 
 		App.packType.ready.once(() => {
-			// TODO: Remove filter for world templates as soon as we support creating them
 			this.availablePackTypes = App.packType.all
 		})
 	}
@@ -216,7 +217,7 @@ export class CreateProjectWindow extends BaseWindow {
 		return {
 			...CreateProjectWindow.getDefaultOptions(),
 			targetVersion: this.availableTargetVersions
-				? this.availableTargetVersions[0]
+				? this.stableVersion
 				: '',
 			experimentalGameplay: this.experimentalToggles
 				? Object.fromEntries(
