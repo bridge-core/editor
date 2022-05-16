@@ -80,7 +80,7 @@ export default defineConfig({
 				background_color: '#0F0F0F',
 				// @ts-ignore
 				launch_handler: {
-					route_to: 'existing-client',
+					route_to: 'existing-client-retain',
 					navigate_existing_client: 'never',
 				},
 				file_handlers: [
