@@ -174,7 +174,7 @@ export class CreateManifest extends CreateFile {
 			manifest.header.lock_template_options = true
 			manifest.header.base_game_version = createOptions.targetVersion
 				.split('.')
-				.map((n) => Number(n))
+				.map((str) => Number(str))
 		}
 
 		await fs.writeJSON(`${this.pack}/manifest.json`, manifest, true)

@@ -134,7 +134,9 @@ export async function exportAsMctemplate(asMcworld = false) {
 				base_game_version: (
 					app.project.config.get().targetVersion ??
 					(await getLatestFormatVersion())
-				).split('.'),
+				)
+					.split('.')
+					.map((str) => Number(str)),
 			},
 			modules: [
 				{
