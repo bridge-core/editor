@@ -5,16 +5,27 @@
 		width="100%"
 		class="mt-2 mb-12 pa-3"
 		color="purple"
+		:style="`color: ${textColor}`"
 		border="bottom"
 		rounded="lg"
 	>
 		<div class="d-flex align-center">
-			<v-icon v-if="icon" large class="pr-2">{{ icon }}</v-icon>
+			<v-icon v-if="icon" :color="textColor" large class="pr-2">
+				{{ icon }}
+			</v-icon>
 			<span>{{ title }}</span>
 			<v-spacer />
-			<v-btn v-if="link" @click="onClick" text dense>
+			<v-btn
+				v-if="link"
+				:style="`color: ${textColor}`"
+				@click="onClick"
+				text
+				dense
+			>
 				Read more
-				<v-icon class="pl-2">mdi-chevron-right</v-icon>
+				<v-icon :color="textColor" class="pl-2">
+					mdi-chevron-right
+				</v-icon>
 			</v-btn>
 		</div>
 	</v-alert>
@@ -45,6 +56,7 @@ export default {
 		this.icon = icon
 		this.title = title
 		this.color = color
+		this.textColor = textColor
 		this.link = link
 
 		if (title) {
@@ -80,6 +92,7 @@ export default {
 		icon: null,
 		title: null,
 		color: null,
+		textColor: null,
 		link: null,
 	}),
 	methods: {
