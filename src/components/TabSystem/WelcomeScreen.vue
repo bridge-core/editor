@@ -1,8 +1,10 @@
 <template>
 	<div
-		class="d-flex flex-column justify-center align-center px-4"
-		:style="`padding-top: 14vh;`"
+		:class="`d-flex flex-column justify-center align-center ${containerPadding}`"
+		:style="`padding-top: ${hasAlert ? 0 : 14}vh;`"
 	>
+		<WelcomeAlert />
+
 		<Logo
 			style="height: 160px; width: 160px"
 			class="mb-4"
@@ -103,6 +105,7 @@ import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { App } from '/@/App.ts'
 import { ProjectMixin } from '/@/components/Mixins/Project.ts'
 import Logo from '../UIElements/Logo.vue'
+import WelcomeAlert from '../WelcomeAlert/Alert.vue'
 
 export default {
 	name: 'welcome-screen',
@@ -110,6 +113,10 @@ export default {
 	components: {
 		ActionViewer,
 		Logo,
+		WelcomeAlert,
+	},
+	props: {
+		containerPadding: String,
 	},
 
 	async mounted() {
@@ -130,6 +137,7 @@ export default {
 		actions: [],
 		projectManager: null,
 		maySwitchProjects: true,
+		hasAlert: true,
 	}),
 	computed: {
 		files() {

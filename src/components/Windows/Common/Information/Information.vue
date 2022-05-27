@@ -6,7 +6,7 @@
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:width="440"
-		:height="120"
+		:height="124"
 		:hasCloseButton="false"
 		:isPersistent="$data.isPersistent"
 		:isSmallPopup="true"

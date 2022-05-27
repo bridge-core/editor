@@ -80,7 +80,16 @@
 							vertical
 						/>
 					</div>
-					<WelcomeScreen v-else />
+					<WelcomeScreen
+						v-else
+						:containerPadding="
+							isSidebarContentVisible
+								? isSidebarRight
+									? 'pl-2'
+									: 'pr-2'
+								: 'px-2'
+						"
+					/>
 				</v-col>
 			</v-row>
 

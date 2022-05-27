@@ -162,8 +162,8 @@ export class App {
 		})
 	}
 
-	static openUrl(url: string, id?: string) {
-		if (settingsState?.general?.openLinksInBrowser)
+	static openUrl(url: string, id?: string, openInBrowser = false) {
+		if (settingsState?.general?.openLinksInBrowser || openInBrowser)
 			return window.open(url, '_blank')
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
 	}
