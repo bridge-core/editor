@@ -22,6 +22,7 @@
 
 <script>
 import { PersistentNotification } from '../Notifications/PersistentNotification'
+import { ConfirmationWindow } from '../Windows/Common/Confirm/ConfirmWindow'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { App } from '/@/App'
 
@@ -54,10 +55,22 @@ export default {
 				color,
 				textColor,
 				onClick: () => {
-					new InformationWindow({
-						name: `[${title}]`,
+					const baseConfig = {
+						title: `[${title}]`,
 						description: `[${description}]`,
-					})
+					}
+
+					if (!link) {
+						new InformationWindow(baseConfig)
+					} else {
+						new ConfirmationWindow({
+							...baseConfig,
+							confirmText: 'general.readMore',
+							onConfirm: () => {
+								this.onClick()
+							},
+						})
+					}
 					alertMsg.dispose()
 				},
 			})

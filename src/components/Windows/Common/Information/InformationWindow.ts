@@ -3,6 +3,8 @@ import InformationWindowComponent from './Information.vue'
 import { App } from '/@/App'
 
 export interface IConfirmWindowOpts {
+	title?: string
+	/** @deprecated Use "title" instead */
 	name?: string
 	description: string
 	isPersistent?: boolean
@@ -20,7 +22,7 @@ export class InformationWindow extends BaseWindow<void> {
 		return this.opts.description
 	}
 	get title() {
-		return this.opts.name ?? 'general.information'
+		return this.opts.title ?? this.opts.name ?? 'general.information'
 	}
 	get isPersistent() {
 		return this.opts.isPersistent ?? true

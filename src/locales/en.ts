@@ -27,6 +27,7 @@ export default {
 		later: 'Later',
 		clear: 'Clear',
 		reset: 'Reset',
+		readMore: 'Read More',
 
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
