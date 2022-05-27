@@ -12,7 +12,7 @@
 			<v-icon v-if="icon" large class="pr-2">{{ icon }}</v-icon>
 			<span>{{ title }}</span>
 			<v-spacer />
-			<v-btn v-if="!link" @click="onClick" text dense>
+			<v-btn v-if="link" @click="onClick" text dense>
 				Read more
 				<v-icon class="pl-2">mdi-chevron-right</v-icon>
 			</v-btn>
