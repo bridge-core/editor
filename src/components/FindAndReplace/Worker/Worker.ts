@@ -85,13 +85,13 @@ export class FindAndReplace {
 			includePaths = includePaths.map((includePath) =>
 				includePath.replace(
 					pack,
-					resolve(this.config.getPackRoot(packs[pack]))
+					resolve(this.config.getRelativePackRoot(packs[pack]))
 				)
 			)
 			excludePaths = excludePaths.map((excludePath) =>
 				excludePath.replace(
 					pack,
-					resolve(this.config.getPackRoot(packs[pack]))
+					resolve(this.config.getRelativePackRoot(packs[pack]))
 				)
 			)
 		}
