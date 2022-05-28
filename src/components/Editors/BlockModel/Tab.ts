@@ -139,7 +139,6 @@ export class BlockModelTab extends GeometryPreviewTab {
 
 	async createModel() {
 		await super.createModel()
-		console.log('CREATE MODEL', this.previewOptions.loadComponents)
 
 		if (this.previewOptions.loadComponents)
 			this.createOutlineBoxes([
@@ -160,9 +159,6 @@ export class BlockModelTab extends GeometryPreviewTab {
 		return components
 	}
 	loadCollisionBoxes(type: 'pick' | 'entity') {
-		console.log(
-			this.findComponents(this.blockJson, `minecraft:${type}_collision`)
-		)
 		return this.findComponents(
 			this.blockJson,
 			`minecraft:${type}_collision`
