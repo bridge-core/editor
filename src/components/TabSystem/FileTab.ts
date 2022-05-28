@@ -53,7 +53,6 @@ export abstract class FileTab extends Tab {
 		})
 
 		await super.setup()
-		console.log(this.path, this.getFileType())
 	}
 
 	get name() {

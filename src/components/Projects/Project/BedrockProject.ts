@@ -36,8 +36,12 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 	{
 		name: 'preview.viewBlock',
 		fileType: 'block',
-		createPreview: async (tabSystem, tab) =>
-			new BlockModelTab(tab.getPath(), tab, tabSystem),
+		createPreview: async (tabSystem, tab) => {
+			const previewTab = new BlockModelTab(tab.getPath(), tab, tabSystem)
+			previewTab.setPreviewOptions({ loadComponents: true })
+
+			return previewTab
+		},
 	},
 	/*{
 		name: 'preview.simulateLoot',
