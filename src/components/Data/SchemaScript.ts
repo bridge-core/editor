@@ -23,11 +23,11 @@ export class SchemaScript {
 		let currentJson = {}
 		let failedFileLoad = true
 		if (this.filePath) {
-			const currentFile = await this.app.project.getFileFromDiskOrTab(
-				this.filePath
-			)
-
 			try {
+				const currentFile = await this.app.project.getFileFromDiskOrTab(
+					this.filePath
+				)
+
 				currentJson = json5.parse(await currentFile.text())
 				failedFileLoad = false
 			} catch {}
