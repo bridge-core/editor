@@ -29,6 +29,7 @@
 				margin-top: 0;
 				padding-top: 0;
 			"
+			autofocus
 			v-model="editedPath"
 			:rules="Object.values(rules)"
 			dense
