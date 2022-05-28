@@ -5,6 +5,7 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { FilePathWindow } from '/@/components/Windows/Common/FilePath/Window'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { AnyFileHandle } from '../FileSystem/Types'
+import { join } from '/@/utils/path'
 
 export class BasicFileImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
@@ -67,7 +68,9 @@ export class BasicFileImporter extends FileImporter {
 		// Allow user to change file path that the file is saved to
 		const filePathWindow = new FilePathWindow({
 			fileName: fileHandle.name,
-			startPath: (await App.fileType.guessFolder(fileHandle)) ?? '',
+			startPath: app.project.relativePath(
+				(await App.fileType.guessFolder(fileHandle)) ?? ''
+			),
 			isPersistent: false,
 		})
 		filePathWindow.open()
@@ -75,11 +78,10 @@ export class BasicFileImporter extends FileImporter {
 		const userInput = await filePathWindow.fired
 		if (userInput === null) return
 		const { filePath, fileName = fileHandle.name } = userInput
+		const newFilePath = join(filePath, fileName)
 
 		// Get user confirmation if file overwrites already existing file
-		const fileExists = await app.project.fileSystem.fileExists(
-			`${filePath}${fileName}`
-		)
+		const fileExists = await app.project.fileSystem.fileExists(newFilePath)
 		if (fileExists) {
 			const confirmWindow = new ConfirmationWindow({
 				description: 'windows.createPreset.overwriteFiles',
@@ -93,7 +95,7 @@ export class BasicFileImporter extends FileImporter {
 		app.windows.loadingWindow.open()
 
 		const destHandle = await app.project.fileSystem.getFileHandle(
-			`${filePath}${fileName}`,
+			newFilePath,
 			true
 		)
 
@@ -101,10 +103,7 @@ export class BasicFileImporter extends FileImporter {
 		App.eventSystem.dispatch('fileAdded', undefined)
 
 		await app.project.updateFile(
-			app.project.config.resolvePackPath(
-				undefined,
-				`${filePath}${fileName}`
-			)
+			app.project.config.resolvePackPath(undefined, newFilePath)
 		)
 		await app.project.openFile(destHandle, { isTemporary: false })
 
