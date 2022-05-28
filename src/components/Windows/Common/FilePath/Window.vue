@@ -22,7 +22,7 @@
 					prepend-icon="mdi-pencil-outline"
 					:rules="[
 						(value) =>
-							value.match(/^[a-zA-Z0-9_\.]*$/) ||
+							!!value.match(/^[a-zA-Z0-9_\.]*$/) ||
 							t(
 								'windows.createPreset.validationRule.alphanumeric'
 							),
