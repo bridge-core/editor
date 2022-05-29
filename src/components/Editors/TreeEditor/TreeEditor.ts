@@ -28,6 +28,7 @@ import { inferType } from '/@/utils/inferType'
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
 	public valueSuggestions: ICompletionItem[] = []
+	public editSuggestions: ICompletionItem[] = []
 
 	protected tree: Tree<unknown>
 	protected selections: (TreeSelection | TreeValueSelection)[] = []
@@ -88,20 +89,16 @@ export class TreeEditor {
 	updateSuggestions = debounce(async () => {
 		this.propertySuggestions = []
 		this.valueSuggestions = []
+		this.editSuggestions = []
 
 		const currentFormatVersion: string =
 			(<any>this.tree.toJSON()).format_version ||
 			this.parent.project.config.get().targetVersion ||
 			(await getLatestFormatVersion())
 
-		const tree = this.getSelectedTree()
-		const json = tree?.toJSON()
+		const { tree, isValueSelection } = this.getSelectedTree()
 
-		const schemas = this.getSchemas()
-		let suggestions = schemas
-			.filter((schema) => schema !== undefined)
-			.map((schema) => schema.getCompletionItems(json))
-			.flat()
+		const suggestions = this.getSuggestions(tree)
 
 		this.propertySuggestions = filterDuplicates(
 			suggestions
@@ -150,6 +147,21 @@ export class TreeEditor {
 				)
 			)
 		}
+
+		// Support auto-completions for value edits
+		if (isValueSelection && tree instanceof PrimitiveTree) {
+			this.editSuggestions = filterDuplicates(
+				suggestions.filter((suggestion) => suggestion.type === 'value')
+			)
+		}
+		// Support auto-completions for property edits
+		if (tree instanceof ObjectTree) {
+			this.editSuggestions = filterDuplicates(
+				this.getSuggestions(tree.getParent() ?? undefined).filter(
+					(suggestion) => suggestion.type === 'object'
+				)
+			)
+		}
 	}, 50)
 
 	createSchemaRoot() {
@@ -166,9 +178,7 @@ export class TreeEditor {
 		this.updateSuggestions()
 	}
 
-	getSchemas() {
-		const tree = this.getSelectedTree()
-
+	getSchemas(tree: Tree<unknown> | undefined) {
 		if (this.selections.length === 0 || tree === this.tree) {
 			return this.schemaRoot ? [this.schemaRoot] : []
 		} else if (tree) {
@@ -180,10 +190,23 @@ export class TreeEditor {
 
 		return []
 	}
+	getSuggestions(tree: Tree<unknown> | undefined) {
+		const json = tree?.toJSON()
+
+		const schemas = this.getSchemas(tree)
+		return schemas
+			.filter((schema) => schema !== undefined)
+			.map((schema) => schema.getCompletionItems(json))
+			.flat()
+	}
 	getSelectedTree() {
-		return <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
-			this.selections[0]?.getTree()
-		)
+		const selection = this.selections[0]
+		return {
+			tree: <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
+				selection?.getTree()
+			),
+			isValueSelection: selection instanceof TreeValueSelection,
+		}
 	}
 
 	receiveContainer(container: HTMLDivElement) {

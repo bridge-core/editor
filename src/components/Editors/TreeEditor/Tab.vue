@@ -119,16 +119,43 @@
 					</div>
 				</template>
 			</v-combobox>
-			<v-text-field
+			<v-combobox
 				ref="editValueInput"
-				:value="`${currentValue}`"
-				@change="onEdit"
+				:value="
+					currentValue === undefined ? undefined : `${currentValue}`
+				"
+				@change="(s) => onEdit(s)"
+				@keydown.enter="mayTrigger"
 				:disabled="isGlobal"
+				:items="editSuggestions"
+				:item-value="(item) => item"
+				:menu-props="{
+					maxHeight: 124,
+					top: false,
+					contentClass: 'json-editor-suggestions-menu',
+				}"
 				:label="t('editors.treeEditor.edit')"
 				outlined
 				dense
 				hide-details
-			/>
+			>
+				<template v-slot:item="{ item }">
+					<div style="width: 100%" @click="mayTrigger">
+						<v-icon class="mr-1" color="primary" small>
+							{{ getIcon(item) }}
+						</v-icon>
+						<span
+							style="
+								font-size: 0.8125rem;
+								font-weight: 500;
+								line-height: 1rem;
+							"
+						>
+							{{ item.label }}
+						</span>
+					</div>
+				</template>
+			</v-combobox>
 		</div>
 	</div>
 </template>
@@ -235,6 +262,12 @@ export default {
 				text: suggestion.value,
 			}))
 		},
+		editSuggestions() {
+			return this.treeEditor.editSuggestions.map((suggestion) => ({
+				...suggestion,
+				text: suggestion.value,
+			}))
+		},
 		allSuggestions() {
 			return this.propertySuggestions.concat(this.valueSuggestions)
 		},
@@ -243,8 +276,10 @@ export default {
 		focusEditor() {
 			if (this.$refs.editorContainer) this.$refs.editorContainer.focus()
 		},
-		onEdit(value) {
-			this.treeEditor.edit(value)
+		onEdit(suggestion) {
+			if (typeof suggestion !== 'string') suggestion = suggestion.value
+
+			this.treeEditor.edit(`${suggestion}`)
 		},
 		onAdd(suggestion, forceValue = false) {
 			if (this.triggerCooldown || !this.isUserControlledTrigger) {
