@@ -36,15 +36,21 @@ export class PropertiesSchema extends Schema {
 		)
 	}
 
-	getCompletionItems() {
-		return Object.keys(<object>this.value).map(
-			(value) =>
-				<const>{
-					type: 'object',
-					label: `${value}`,
-					value,
-				}
+	getCompletionItems(context: unknown) {
+		const propertyContext = Object.keys(
+			typeof context === 'object' ? context ?? {} : {}
 		)
+
+		return Object.keys(<object>this.value)
+			.filter((property) => !propertyContext.includes(property))
+			.map(
+				(value) =>
+					<const>{
+						type: 'object',
+						label: `${value}`,
+						value,
+					}
+			)
 	}
 
 	validate(obj: unknown) {
