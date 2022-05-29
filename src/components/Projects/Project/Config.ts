@@ -28,11 +28,14 @@ export class ProjectConfig extends BaseProjectConfig {
 		super(`projects/${fileSystem.baseDirectory.name}`)
 
 		if (project) {
-			project.fileSave.on('config.json', () => {
-				this.refreshConfig()
-				this.project!.app.windows.createPreset.onPresetsChanged()
-				this.project!.compilerService.reloadPlugins()
-			})
+			project.fileSave.on(
+				this.resolvePackPath(undefined, 'config.json'),
+				() => {
+					this.refreshConfig()
+					this.project!.app.windows.createPreset.onPresetsChanged()
+					this.project!.compilerService.reloadPlugins()
+				}
+			)
 		}
 	}
 

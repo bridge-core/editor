@@ -43,8 +43,9 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 
 			app.projectManager.onActiveProject((project) => {
 				this.updateKeywords(project.config)
-				project.fileSave.on('config.json', () =>
-					this.updateKeywords(project.config)
+				project.fileSave.on(
+					project.config.resolvePackPath(undefined, 'config.json'),
+					() => this.updateKeywords(project.config)
 				)
 			})
 		})
