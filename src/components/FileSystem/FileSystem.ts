@@ -168,7 +168,9 @@ export class FileSystem extends Signal<void> {
 		// 	await handle.writable.getWriter().write(data)
 		// 	handle.close()
 		// } else {
-		const writable = await fileHandle.createWritable()
+		const writable = await fileHandle.createWritable({
+			keepExistingData: false,
+		})
 		await writable.write(data)
 		await writable.close()
 		// }
