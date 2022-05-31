@@ -838,13 +838,6 @@ export default {
 					description: 'Enable the developer mode for this app',
 				},
 			},
-			audio: {
-				name: 'Audio',
-				volume: {
-					name: 'Audio Enabled',
-					description: 'Enable or disable all bridge sounds',
-				},
-			},
 			actions: {
 				name: 'Actions',
 			},

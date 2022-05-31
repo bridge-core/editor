@@ -43,11 +43,6 @@ export class SettingsWindow extends BaseWindow {
 			locales.translate('windows.settings.actions.name'),
 			'mdi-keyboard-outline'
 		)
-		this.addCategory(
-			'audio',
-			locales.translate('windows.settings.audio.name'),
-			'mdi-volume-high'
-		)
 		// this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
 		this.addCategory(
 			'sidebar',
@@ -111,7 +106,6 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async open() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		if (this.isVisible) return
 
 		this.sidebar.removeElements()
@@ -121,7 +115,6 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async close() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		super.close()
 
 		const app = await App.getApp()

@@ -195,7 +195,6 @@ export class App {
 		await SettingsWindow.loadSettings(this.instance).then(async () => {
 			await this.instance.dataLoader.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
-			this.audioManager.loadIsMuted()
 		})
 
 		await this.instance.startUp()

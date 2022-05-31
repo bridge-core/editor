@@ -99,7 +99,6 @@ export class SidebarElement {
 	}
 
 	async click() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		this.isLoading = true
 
 		if (this.config.sidebarContent) toggle(this.config.sidebarContent)

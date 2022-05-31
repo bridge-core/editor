@@ -191,8 +191,6 @@ export class CreateProjectWindow extends BaseWindow {
 
 		// Reset options
 		this.createOptions = this.getDefaultOptions()
-
-		await App.audioManager.playAudio('confirmation_002.ogg', 1)
 	}
 
 	static getDefaultOptions(): ICreateProjectOptions {

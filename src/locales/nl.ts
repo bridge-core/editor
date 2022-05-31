@@ -49,7 +49,8 @@ export default {
 		},
 		resourcePack: {
 			name: 'Resourcepakket',
-			description: "Wordt gebruikt voor het veranderen van Minecraft's uiterlijk en geluid",
+			description:
+				"Wordt gebruikt voor het veranderen van Minecraft's uiterlijk en geluid",
 		},
 		skinPack: {
 			name: 'Skin Pakket',
@@ -58,8 +59,7 @@ export default {
 		},
 		worldTemplate: {
 			name: 'Wereldsjabloon',
-			description:
-				'Geef spelers een wereld om te verkennen',
+			description: 'Geef spelers een wereld om te verkennen',
 		},
 	},
 	// File Type display names
@@ -157,7 +157,7 @@ export default {
 		},
 		settings: {
 			name: 'Instellingen',
-			description: "Open de app instellingen van bridge.",
+			description: 'Open de app instellingen van bridge.',
 		},
 		extensions: {
 			name: 'Extensies',
@@ -190,7 +190,7 @@ export default {
 		},
 		pluginAPI: {
 			name: 'Plugin API',
-			description: "Lees meer over de plugin API van bridge",
+			description: 'Lees meer over de plugin API van bridge',
 		},
 		gettingStarted: {
 			name: 'Beginnen',
@@ -203,7 +203,8 @@ export default {
 		},
 		reloadAutoCompletions: {
 			name: 'Herlaad automatische aanvullingen',
-			description: 'Herlaadt alle gegevens voor automatisch aanvullen opnieuw',
+			description:
+				'Herlaadt alle gegevens voor automatisch aanvullen opnieuw',
 		},
 		reloadExtensions: {
 			name: 'Herlaad Extensies',
@@ -211,7 +212,8 @@ export default {
 		},
 		moveToSplitScreen: {
 			name: 'Verplaats naar gesplitst scherm',
-			description: 'Opent een gesplitste schermweergave en verplaatst dit tabblad ernaar',
+			description:
+				'Opent een gesplitste schermweergave en verplaatst dit tabblad ernaar',
 		},
 		closeTab: {
 			name: 'Sluit Tab',
@@ -223,7 +225,8 @@ export default {
 		},
 		closeTabsToRight: {
 			name: 'Sluit tabbladen aan de rechterkant',
-			description: 'Sluit alle tabbladen aan de rechterkant van dit tabblad',
+			description:
+				'Sluit alle tabbladen aan de rechterkant van dit tabblad',
 		},
 		closeAllSaved: {
 			name: 'Sluit alle opgeslagen',
@@ -261,7 +264,8 @@ export default {
 		},
 		toggleReadOnly: {
 			name: 'Schakel Alleen-Lezen Modus',
-			description: 'Schakel alleen-lezen modus voor het momenteel geopende bestand',
+			description:
+				'Schakel alleen-lezen modus voor het momenteel geopende bestand',
 		},
 		keepInTabSystem: {
 			name: 'Houd in Tab Systeem',
@@ -289,7 +293,8 @@ export default {
 		},
 		goToSymbol: {
 			name: 'Ga naar Symbool',
-			description: 'Opent een dialoogvenster om een symbool te selecteren om naar toe te gaan',
+			description:
+				'Opent een dialoogvenster om een symbool te selecteren om naar toe te gaan',
 		},
 		formatDocument: {
 			name: 'Document Opmaken',
@@ -353,7 +358,8 @@ export default {
 				outputFolders: 'Uitvoermappen',
 				logs: {
 					name: 'Logboeken',
-					noLogs: 'Dash heeft nog geen logs geproduceerd om te tonen.',
+					noLogs:
+						'Dash heeft nog geen logs geproduceerd om te tonen.',
 				},
 			},
 			default: {
@@ -388,7 +394,8 @@ export default {
 	// Welcome Screen
 	welcome: {
 		title: 'Welkom bij bridge.',
-		subtitle: 'Het maken van Minecraft addons is nog nooit zo gemakkelijk geweest!',
+		subtitle:
+			'Het maken van Minecraft addons is nog nooit zo gemakkelijk geweest!',
 		quickActions: 'Snelle Acties',
 		recentFiles: 'Recente Bestanden',
 		recentProjects: 'Recente Projecten',
@@ -447,8 +454,8 @@ export default {
 		sidebar: {
 			disabledItem: 'Dit item is uitgeschakeld',
 		},
-		changelogWindow:{
-			title: "Wat is er nieuw?"
+		changelogWindow: {
+			title: 'Wat is er nieuw?',
 		},
 		openFile: {
 			title: 'Openen',
@@ -488,7 +495,8 @@ export default {
 				file: {
 					player: {
 						name: 'player.json',
-						description: 'Bewerk hoe de standaardspeler zich gedraagt',
+						description:
+							'Bewerk hoe de standaardspeler zich gedraagt',
 					},
 					tick: {
 						name: 'tick.json',
@@ -506,15 +514,18 @@ export default {
 					},
 					terrainTexture: {
 						name: 'terrain_texture.json',
-						description: 'Wordt gebruikt om texturen toe te wijzen aan de vlakken van een blok',
+						description:
+							'Wordt gebruikt om texturen toe te wijzen aan de vlakken van een blok',
 					},
 					itemTexture: {
 						name: 'item_texture.json',
-						description: 'Wordt gebruikt om texturen aan items toe te wijzen',
+						description:
+							'Wordt gebruikt om texturen aan items toe te wijzen',
 					},
 					flipbookTextures: {
 						name: 'flipbook_textures.json',
-						description: 'Gebruikt voor het animeren van blok texturen',
+						description:
+							'Gebruikt voor het animeren van blok texturen',
 					},
 					biomesClient: {
 						name: 'biomes_client.json',
@@ -529,7 +540,7 @@ export default {
 					soundDefinitions: {
 						name: 'sound_definitions.json',
 						description:
-							'Wordt gebruikt om id\'s te registreren voor geluidsbestanden die elders in het project kunnen worden gebruikt',
+							"Wordt gebruikt om id's te registreren voor geluidsbestanden die elders in het project kunnen worden gebruikt",
 					},
 				},
 			},
@@ -603,7 +614,8 @@ export default {
 				name: 'Herhaal Opties',
 				amount: {
 					name: 'Herhaal',
-					description: 'Herhaal de buittabel een bepaald aantal keren',
+					description:
+						'Herhaal de buittabel een bepaald aantal keren',
 				},
 				itemFound: {
 					name: 'Item Identifier',
@@ -630,14 +642,15 @@ export default {
 			categories: 'Categorieën',
 			refresh: {
 				name: 'Vernieuw Project',
-				description: 'Haal het huidige project op voor nieuw toegevoegde bestanden',
+				description:
+					'Haal het huidige project op voor nieuw toegevoegde bestanden',
 			},
 			restartDevServer: {
 				name: 'Herstart Dev Server',
 				description:
-					"Herstart de kijkmodus van de compiler opnieuw om de huidige build-output te verwijderen, het volledige project opnieuw op te bouwen en te kijken naar verdere wijzigingen.",
+					'Herstart de kijkmodus van de compiler opnieuw om de huidige build-output te verwijderen, het volledige project opnieuw op te bouwen en te kijken naar verdere wijzigingen.',
 				confirmDescription:
-					"Weet u zeker dat u de kijkmodus van de compiler opnieuw wilt starten? Dit kan enige tijd duren, afhankelijk van de grootte van uw project. Als u de compiler opnieuw start, wordt uw add-on uit de map com.mojang verwijderd en opnieuw gecompileerd op basis van uw bridge. map!",
+					'Weet u zeker dat u de kijkmodus van de compiler opnieuw wilt starten? Dit kan enige tijd duren, afhankelijk van de grootte van uw project. Als u de compiler opnieuw start, wordt uw add-on uit de map com.mojang verwijderd en opnieuw gecompileerd op basis van uw bridge. map!',
 			},
 			createPreset: 'Nieuw Bestand',
 			projectConfig: {
@@ -666,13 +679,14 @@ export default {
 				},
 				openInSplitScreen: {
 					name: 'Openen in Gesplitst Scherm',
-					description: 'Open het bestand in de modus voor gesplitst scherm',
+					description:
+						'Open het bestand in de modus voor gesplitst scherm',
 				},
 				delete: {
 					name: 'Verwijderen',
 					description: 'Verwijder een bestand of map',
 					confirmText:
-						"Weet u zeker dat u dit bestand wilt verwijderen? U kunt het later niet meer herstellen!",
+						'Weet u zeker dat u dit bestand wilt verwijderen? U kunt het later niet meer herstellen!',
 				},
 				rename: {
 					name: 'Hernoemen',
@@ -687,7 +701,7 @@ export default {
 					description:
 						'Bekijk de huidige compiler output voor dit bestand',
 					fileMissing:
-						"Het lijkt erop dat dit bestand nog niet is gecompileerd.",
+						'Het lijkt erop dat dit bestand nog niet is gecompileerd.',
 				},
 				revealFilePath: {
 					name: 'Bestandspad onthullen',
@@ -732,15 +746,18 @@ export default {
 				name: 'Uiterlijk',
 				colorScheme: {
 					name: 'Kleurenschema',
-					description: "Kies het kleurenschema voor de gebruikersinterface van bridge.",
+					description:
+						'Kies het kleurenschema voor de gebruikersinterface van bridge.',
 				},
 				darkTheme: {
 					name: 'Donker Thema',
-					description: 'Selecteer het standaard donkere thema dat door bridge. wordt gebruikt',
+					description:
+						'Selecteer het standaard donkere thema dat door bridge. wordt gebruikt',
 				},
 				lightTheme: {
 					name: 'Licht Thema',
-					description: 'Selecteer het standaard lichte thema dat door bridge. wordt gebruikt',
+					description:
+						'Selecteer het standaard lichte thema dat door bridge. wordt gebruikt',
 				},
 				localDarkTheme: {
 					name: 'Lokaal Donker Thema',
@@ -754,21 +771,23 @@ export default {
 				},
 				fontSize: {
 					name: 'Lettergrootte',
-					description: "Wijzig de lettergrootte van de tekst van bridge.",
+					description:
+						'Wijzig de lettergrootte van de tekst van bridge.',
 				},
 				editorFontSize: {
 					name: 'Code Lettergrootte',
 					description:
-						"Wijzig de lettergrootte van de code editor van bridge.",
+						'Wijzig de lettergrootte van de code editor van bridge.',
 				},
 				editorFont: {
 					name: 'Code Lettertype',
-					description: "Wijzig het lettertype van de code editor van bridge.",
+					description:
+						'Wijzig het lettertype van de code editor van bridge.',
 				},
 				font: {
 					name: 'Lettertype',
 					description:
-						"Wijzig het lettertype dat in de gebruikersinterface van bridge. wordt gebruikt",
+						'Wijzig het lettertype dat in de gebruikersinterface van bridge. wordt gebruikt',
 				},
 			},
 			general: {
@@ -820,14 +839,8 @@ export default {
 				},
 				devMode: {
 					name: 'Ontwikkelaarsmodus',
-					description: 'Schakel de ontwikkelaarsmodus in voor deze app',
-				},
-			},
-			audio: {
-				name: 'Audio',
-				volume: {
-					name: 'Audio Ingeschakeld',
-					description: 'Alle brige geluiden in- of uitschakelen',
+					description:
+						'Schakel de ontwikkelaarsmodus in voor deze app',
 				},
 			},
 			actions: {
@@ -848,7 +861,7 @@ export default {
 				bridgePredictions: {
 					name: 'bridge. Voorspellingen',
 					description:
-						"Schakel de voorspellingen van bridge. in om de app intelligent te laten beslissen of een waarde of object wordt toegevoegd in de tree editor van bridge. Dit vereenvoudigt het bewerken van JSON aanzienlijk",
+						'Schakel de voorspellingen van bridge. in om de app intelligent te laten beslissen of een waarde of object wordt toegevoegd in de tree editor van bridge. Dit vereenvoudigt het bewerken van JSON aanzienlijk',
 				},
 				bracketPairColorization: {
 					name: 'Haakjes Paar Inkleuring',
@@ -856,7 +869,8 @@ export default {
 				},
 				wordWrap: {
 					name: 'Woordomloop',
-					description: 'Wikkel woorden om horizontaal scrollen uit te schakelen',
+					description:
+						'Wikkel woorden om horizontaal scrollen uit te schakelen',
 				},
 				wordWrapColumns: {
 					name: 'Woordomloop Kolommen',
@@ -898,7 +912,7 @@ export default {
 				compilerPlugins: 'Compiler Plugins',
 				title: 'Gedownloade Compiler Plugin',
 				description:
-					"U hebt zojuist een nieuwe compiler plugin gedownload. Zorg ervoor dat u het toevoegt aan uw compiler configuratiebestand, anders heeft het geen effect.",
+					'U hebt zojuist een nieuwe compiler plugin gedownload. Zorg ervoor dat u het toevoegt aan uw compiler configuratiebestand, anders heeft het geen effect.',
 				openConfig: 'Configuratie Openen',
 			},
 		},
@@ -946,7 +960,8 @@ export default {
 			},
 			unzipper: {
 				name: 'ZIP uitpakken',
-				description: 'bridge. is momenteel bezig met het uitpakken van een ZIP-bestand.',
+				description:
+					'bridge. is momenteel bezig met het uitpakken van een ZIP-bestand.',
 			},
 			loadingSchemas: {
 				name: 'Automatische Aanvullingen Laden',
@@ -962,7 +977,7 @@ export default {
 		importMethod: 'Importeer Methode',
 		mcaddon: {
 			missingManifests:
-				"bridge. kon geen gegevens uit uw .mcaddon bestand laden omdat het daarin geen manifest bestanden kon vinden.",
+				'bridge. kon geen gegevens uit uw .mcaddon bestand laden omdat het daarin geen manifest bestanden kon vinden.',
 		},
 		saveToProject: {
 			title: 'Opslaan in Project',
@@ -982,7 +997,8 @@ export default {
 		permissionRequest:
 			'bridge. heeft toegang nodig tot uw "com.mojang" map om er projecten naar te kunnen compileren.',
 		status: {
-			sucess: 'Het synchroniseren van uw projecten met com.mojang is correct ingesteld.',
+			sucess:
+				'Het synchroniseren van uw projecten met com.mojang is correct ingesteld.',
 			deniedPermission:
 				'U heeft com.mojang synchronisatie ingesteld, maar u heeft bridge. geen toestemming verleend voor de map.',
 			notSetup:
@@ -1074,7 +1090,7 @@ export default {
 			editorType: {
 				name: 'Kies Editor Type',
 				description:
-					"Hoe wilt u JSON bestanden bewerken? U kunt uw keuze later in de instellingen van bridge. wijzigen!",
+					'Hoe wilt u JSON bestanden bewerken? U kunt uw keuze later in de instellingen van bridge. wijzigen!',
 				rawText: {
 					name: 'Onbewerkte Tekst',
 					description:
@@ -1117,7 +1133,8 @@ export default {
 				unexpectedOpenCurlyBracket: 'Onverwachte open accolade!',
 				unexpectedCloseCurlyBracket: 'Onverwachte gesloten accolade!',
 				unexpectedOpenSquareBracket: 'Onverwachte open vierkante haak!',
-				unexpectedCloseSquareBracket: 'Onverwachte gesloten vierkant haak!',
+				unexpectedCloseSquareBracket:
+					'Onverwachte gesloten vierkant haak!',
 			},
 			command: {
 				empty: "Lege commando's worden niet ondersteund!",
@@ -1152,7 +1169,8 @@ export default {
 				},
 				multipleInstancesNegated: {
 					part1: "Selector attribuut: '",
-					part2: "' ondersteunt alleen meerdere instanties wanneer deze worden genegeerd!",
+					part2:
+						"' ondersteunt alleen meerdere instanties wanneer deze worden genegeerd!",
 				},
 				valueNotValid: {
 					part1: "Selector attribuut ondersteunt waarde '",

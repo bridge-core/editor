@@ -469,13 +469,6 @@ export default {
 					description: '開啟開發人員模式',
 				},
 			},
-			audio: {
-				name: '音效',
-				volume: {
-					name: '音效已開啟',
-					description: '開啟或關閉bridge.的音效',
-				},
-			},
 			actions: {
 				name: '動作',
 			},
