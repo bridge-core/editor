@@ -924,10 +924,10 @@ export default {
 			save: 'Save & Close',
 		},
 		browserUnsupported: {
-			title: 'Unsupported Browser',
+			title: 'Browser Warning',
 			description:
-				'Please use Chrome (Desktop, excluding Chrome 93/94) or Edge (Chromium) in order to get the best experience using bridge. v2! Your browser does not support saving files directly and syncing projects to your com.mojang folder.',
-			continue: 'Continue Anyways',
+				'In order to get the best experience with bridge., you need to use Chrome (excluding Chrome 93/94) or Edge (Chromium) on desktop. If you continue, you will not be able to save files directly and you will need to download your project in order to save it or test your changes in Minecraft.',
+			continue: 'Continue Anyway',
 		},
 		invalidJson: {
 			title: 'Invalid JSON',

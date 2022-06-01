@@ -11,7 +11,7 @@
 	>
 		<template #default>
 			<div class="text-center">
-				<v-icon color="error" style="font-size: 8em">
+				<v-icon color="warning" style="font-size: 8em">
 					mdi-alert-octagon-outline
 				</v-icon>
 				<p>{{ t('windows.browserUnsupported.description') }}</p>
