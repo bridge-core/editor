@@ -44,7 +44,7 @@ if (
 	// TODO: Enable once safari properly supports file handles (createWritable)
 	if (
 		false &&
-		!isUnsupportedBrowser() &&
+		isUnsupportedBrowser() &&
 		typeof navigator.storage.getDirectory === 'function'
 	) {
 		isUsingOriginPrivateFs = true

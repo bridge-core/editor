@@ -212,9 +212,8 @@ export class FileSystem extends Signal<void> {
 		originHandle: AnyFileHandle,
 		destHandle: AnyFileHandle
 	) {
-		const writable = await destHandle.createWritable()
-		await writable.write(await originHandle.getFile())
-		await writable.close()
+		await this.write(destHandle, await originHandle.getFile())
+
 		return destHandle
 	}
 	async copyFolder(originPath: string, destPath: string) {
