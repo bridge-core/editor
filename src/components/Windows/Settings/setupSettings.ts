@@ -443,6 +443,16 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value,
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'projects',
+			name: 'windows.settings.projects.addGeneratedWith.name',
+			description:
+				'windows.settings.projects.addGeneratedWith.description',
+			key: 'addGeneratedWith',
+			default: true,
+		})
+	)
 
 	// Actions
 	const app = await App.getApp()

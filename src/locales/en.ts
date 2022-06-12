@@ -852,6 +852,11 @@ export default {
 					description:
 						'Automatically increment the version number inside of your pack manifests when exporting a project',
 				},
+				addGeneratedWith: {
+					name: 'Add "generated_with"',
+					description:
+						'Add the "generated_with" metadata to your projects\' manifests',
+				},
 			},
 			editor: {
 				jsonEditor: {
