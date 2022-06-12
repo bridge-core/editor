@@ -31,7 +31,6 @@ import { GlobalExtensionLoader } from '/@/components/Extensions/GlobalExtensionL
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/FileSystem/ComMojang'
-import { AudioManager } from '/@/components/Audio/AudioManager'
 import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
 import { markRaw } from '@vue/composition-api'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
@@ -61,7 +60,6 @@ export class App {
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>
-	public static readonly audioManager = new AudioManager()
 
 	public readonly packExplorer = new PackExplorer()
 	public readonly keyBindingManager = new KeyBindingManager()
