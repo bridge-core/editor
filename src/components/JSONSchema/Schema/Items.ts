@@ -1,5 +1,7 @@
 import { RootSchema } from './Root'
 import { IDiagnostic, Schema } from './Schema'
+import { Tuple } from '../ToTypes/Tuple'
+import { ArrayType } from '../ToTypes/Array'
 
 export class ItemsSchema extends Schema {
 	protected children: Schema | Schema[]
@@ -66,5 +68,20 @@ export class ItemsSchema extends Schema {
 	// TODO: Implement proper item validation
 	validate(obj: unknown) {
 		return []
+	}
+
+	override toTypeDefinitions() {
+		if (Array.isArray(this.children)) {
+			return new Tuple(
+				this.children
+					.map((child) => child.toTypeDefinitions())
+					.filter((type) => type !== null)
+			)
+		} else {
+			const type = this.children.toTypeDefinitions()
+			if (type === null) return null
+
+			return new ArrayType(type)
+		}
 	}
 }

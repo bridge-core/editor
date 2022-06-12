@@ -1,6 +1,6 @@
 import { Type } from './Type'
 
-export class Array extends Type {
+export class ArrayType extends Type {
 	constructor(public readonly type: Type) {
 		super()
 	}

@@ -1,5 +1,7 @@
 import { ICompletionItem, Schema } from './Schema'
 import { getTypeOf } from '/@/utils/typeof'
+import { PrimitiveType, TSupportedPrimitiveTypes } from '../ToTypes/Primitive'
+import { UnionType } from '../ToTypes/Union'
 
 export class TypeSchema extends Schema {
 	get values() {
@@ -59,5 +61,17 @@ export class TypeSchema extends Schema {
 			]
 
 		return []
+	}
+
+	override toTypeDefinitions() {
+		const values = (
+			Array.isArray(this.value) ? this.value : [this.value]
+		).filter((type) => !['object', 'array'].includes(type))
+
+		return new UnionType(
+			values.map(
+				(val) => new PrimitiveType(PrimitiveType.toTypeScriptType(val))
+			)
+		)
 	}
 }

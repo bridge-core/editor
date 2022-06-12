@@ -38,4 +38,8 @@ export class ThenSchema extends Schema {
 		if (this.ifSchema.isTrue(obj)) return this.rootSchema.validate(obj)
 		return []
 	}
+
+	override toTypeDefinitions() {
+		return this.rootSchema.toTypeDefinitions()
+	}
 }

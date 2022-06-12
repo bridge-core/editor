@@ -1,3 +1,5 @@
+import { Type } from '../ToTypes/Type'
+
 export interface ISchemaResult {
 	diagnostics: IDiagnostic[]
 }
@@ -42,4 +44,8 @@ export abstract class Schema {
 		obj: unknown,
 		location: (string | number)[]
 	): Schema[]
+
+	toTypeDefinitions(): Type | null {
+		return null
+	}
 }

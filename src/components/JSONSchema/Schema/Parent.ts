@@ -30,4 +30,12 @@ export abstract class ParentSchema extends Schema {
 
 		return children
 	}
+
+	override toTypeDefinitions() {
+		return new UnionType(
+			this.children
+				.map((child) => child.toTypeDefinitions())
+				.filter((child) => child !== null)
+		)
+	}
 }

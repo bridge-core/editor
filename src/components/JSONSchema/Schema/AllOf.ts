@@ -1,6 +1,7 @@
 import { ParentSchema } from './Parent'
 import { RootSchema } from './Root'
 import { Schema } from './Schema'
+import { UnionType } from '../ToTypes/Union'
 
 export class AllOfSchema extends ParentSchema {
 	protected children: Schema[]
