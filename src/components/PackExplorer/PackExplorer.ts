@@ -157,9 +157,14 @@ export class PackExplorer extends SidebarContent {
 				description:
 					'windows.packExplorer.fileActions.delete.description',
 				onTrigger: async () => {
+					const app = await App.getApp()
+					const t = (str: string) => app.locales.translate(str)
 					const confirmWindow = new ConfirmationWindow({
-						description:
-							'windows.packExplorer.fileActions.delete.confirmText',
+						description: `[${t(
+							'windows.packExplorer.fileActions.delete.confirmText'
+						)} "${path}"? ${t(
+							'windows.packExplorer.fileActions.delete.noRestoring'
+						)}]`,
 					})
 
 					if (!(await confirmWindow.fired)) return
