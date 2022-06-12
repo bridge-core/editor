@@ -1,3 +1,4 @@
+import { LiteralType } from '../ToTypes/Literal'
 import { Schema } from './Schema'
 
 export class EnumSchema extends Schema {
@@ -30,5 +31,9 @@ export class EnumSchema extends Schema {
 				},
 			]
 		return []
+	}
+
+	override toTypeDefinitions() {
+		return this.value.map(val => new LiteralType(val))
 	}
 }

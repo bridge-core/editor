@@ -10,9 +10,9 @@ export class Interface extends Type {
 	toString() {
 		return `{
             ${Object.entries(this.properties)
-				.map(([key, type]) => `\t${key}: ${type.toString()}`)
+				.map(([key, type]) => `${key}?: ${type.toString()}`)
 				.join('\n')}
             [k: string]: any
-        }`
+        }\n`
 	}
 }
