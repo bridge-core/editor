@@ -63,7 +63,7 @@ export class TypeSchema extends Schema {
 		return []
 	}
 
-	override toTypeDefinitions() {
+	override toTypeDefinition() {
 		const values = (
 			Array.isArray(this.value) ? this.value : [this.value]
 		).filter((type) => !['object', 'array'].includes(type))

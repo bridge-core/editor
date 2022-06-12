@@ -1,7 +1,7 @@
-import { Type } from './Type'
+import { BaseType } from './Type'
 
-export class ArrayType extends Type {
-	constructor(public readonly type: Type) {
+export class ArrayType extends BaseType {
+	constructor(public readonly type: BaseType) {
 		super()
 	}
 

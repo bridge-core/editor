@@ -1,18 +1,15 @@
-import { Type } from './Type'
+import { BaseType } from './Type'
 
-export class Interface extends Type {
-	protected properties: Record<string, Type> = {}
+export class InterfaceType extends BaseType {
+	protected properties: Record<string, BaseType> = {}
 
-	addProperty(name: string, type: Type) {
+	addProperty(name: string, type: BaseType) {
 		this.properties[name] = type
 	}
 
 	toString() {
-		return `{
-            ${Object.entries(this.properties)
-				.map(([key, type]) => `${key}?: ${type.toString()}`)
-				.join('\n')}
-            [k: string]: any
-        }\n`
+		return `{ ${Object.entries(this.properties)
+			.map(([key, type]) => `${key}?: ${type.toString()}`)
+			.join(';')}; }`
 	}
 }

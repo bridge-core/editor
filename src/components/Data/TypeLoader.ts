@@ -6,6 +6,8 @@ import { getLatestFormatVersion } from './FormatVersions'
 import { DataLoader } from './DataLoader'
 import { Tab } from '../TabSystem/CommonTab'
 import { FileTab } from '../TabSystem/FileTab'
+import { SchemaManager } from '../JSONSchema/Manager'
+import { requestOrCreateSchema } from '../JSONSchema/requestOrCreateSchema'
 
 const types = new Map<string, string>()
 
@@ -58,6 +60,19 @@ export class TypeLoader {
 
 		await App.fileType.ready.fired
 		const { types = [] } = App.fileType.get(filePath) ?? {}
+
+		// console.log(
+		// 	App.fileType.all.filter(
+		// 		(fileType) => fileType.id === 'tradeTable'
+		// 	)[0]?.schema,
+		// 	requestOrCreateSchema(
+		// 		App.fileType.all.filter(
+		// 			(fileType) => fileType.id === 'tradeTable'
+		// 		)[0]?.schema
+		// 	)
+		// 		?.toTypeDefinition()
+		// 		.toString()
+		// )
 
 		const libs = await Promise.all(
 			types.map(async (type) => {

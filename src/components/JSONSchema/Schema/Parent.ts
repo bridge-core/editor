@@ -1,3 +1,5 @@
+import { BaseType } from 'typescript'
+import { UnionType } from '../ToTypes/Union'
 import { Schema } from './Schema'
 
 export abstract class ParentSchema extends Schema {
@@ -31,10 +33,10 @@ export abstract class ParentSchema extends Schema {
 		return children
 	}
 
-	override toTypeDefinitions() {
+	override toTypeDefinition() {
 		return new UnionType(
-			this.children
-				.map((child) => child.toTypeDefinitions())
+			<BaseType[]>this.children
+				.map((child) => child.toTypeDefinition())
 				.filter((child) => child !== null)
 		)
 	}

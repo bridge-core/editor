@@ -1,7 +1,7 @@
-import { Type } from './Type'
+import { BaseType } from './Type'
 
-export class Tuple extends Type {
-	constructor(public readonly types: Type[]) {
+export class TupleType extends BaseType {
+	constructor(public readonly types: BaseType[]) {
 		super()
 	}
 

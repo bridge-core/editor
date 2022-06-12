@@ -201,11 +201,6 @@ export abstract class Project {
 
 		await this.extensionLoader.loadExtensions()
 
-		const selectedTab = this.tabSystem?.selectedTab
-		this.typeLoader.activate(
-			selectedTab instanceof FileTab ? selectedTab.getPath() : undefined
-		)
-
 		// Data needs to be loaded into IndexedDB before the PackIndexer can be used
 		await this.app.dataLoader.fired
 
@@ -218,8 +213,18 @@ export abstract class Project {
 		const autoFetchChangedFiles =
 			settingsState.compiler?.autoFetchChangedFiles ?? true
 
+		const selectedTab = this.tabSystem?.selectedTab
+
 		await Promise.all([
-			this.jsonDefaults.activate(),
+			this.jsonDefaults
+				.activate()
+				.finally(() =>
+					this.typeLoader.activate(
+						selectedTab instanceof FileTab
+							? selectedTab.getPath()
+							: undefined
+					)
+				),
 			autoFetchChangedFiles
 				? this.compilerService.start(changedFiles, deletedFiles)
 				: Promise.resolve(),

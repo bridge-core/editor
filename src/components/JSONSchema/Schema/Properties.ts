@@ -1,6 +1,6 @@
 import { RootSchema } from './Root'
 import { IDiagnostic, Schema } from './Schema'
-import { Interface } from '../ToTypes/Interface'
+import { InterfaceType } from '../ToTypes/Interface'
 
 export class PropertiesSchema extends Schema {
 	protected children: Record<string, Schema> = {}
@@ -76,16 +76,16 @@ export class PropertiesSchema extends Schema {
 		return diagnostics
 	}
 
-	override toTypeDefinitions() {
-		const interface = new Interface()
+	override toTypeDefinition() {
+		const interfaceType = new InterfaceType()
 
 		for (const [propertyName, child] of Object.entries(this.children)) {
-			const type = child.toTypeDefinitions()
+			const type = child.toTypeDefinition()
 			if (type === null) continue
 
-			interface.addProperty(propertyName, type)
+			interfaceType.addProperty(propertyName, type)
 		}
 
-		return interface
+		return interfaceType
 	}
 }

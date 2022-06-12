@@ -75,7 +75,7 @@ export class RefSchema extends Schema {
 		return this.rootSchema.getFreeIfSchema()
 	}
 
-	override toTypeDefinitions() {
-		return this.rootSchema.toTypeDefinitions()
+	override toTypeDefinition() {
+		return this.rootSchema.toTypeDefinition()
 	}
 }

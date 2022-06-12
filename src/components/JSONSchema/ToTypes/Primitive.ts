@@ -1,8 +1,8 @@
-import { Type } from './Type'
+import { BaseType } from './Type'
 
 export type TSupportedPrimitiveTypes = 'string' | 'number' | 'boolean' | 'null'
 
-export class PrimitiveType extends Type {
+export class PrimitiveType extends BaseType {
 	constructor(protected primitiveType: TSupportedPrimitiveTypes) {
 		super()
 	}
@@ -10,7 +10,7 @@ export class PrimitiveType extends Type {
 	static toTypeScriptType(
 		jsonSchemaType: 'boolean' | 'string' | 'decimal' | 'integer' | 'null'
 	) {
-		if ((jsonSchemaType === 'decimal') | (type === 'integer'))
+		if (jsonSchemaType === 'decimal' || jsonSchemaType === 'integer')
 			return 'number'
 
 		return jsonSchemaType

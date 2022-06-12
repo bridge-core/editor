@@ -22,7 +22,7 @@ export class ConstSchema extends Schema {
 		return []
 	}
 
-	override toTypeDefinitions() {
+	override toTypeDefinition() {
 		return new LiteralType(this.value)
 	}
 }

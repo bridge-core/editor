@@ -1,9 +1,19 @@
-import { Type } from '../ToTypes/Type'
+import { BaseType } from '../ToTypes/Type'
 
-export class UnionType extends Type {
-	constructor(protected types: Type[]) {}
+export class UnionType extends BaseType {
+	constructor(public readonly types: BaseType[]) {
+		super()
+	}
+
+	flat(): BaseType[] {
+		return this.types
+			.map((type) => (type instanceof UnionType ? type.flat() : type))
+			.flat(Infinity)
+	}
 
 	toString() {
-		return this.types.map((type) => type.toString()).join(' | ')
+		return [...new Set(this.flat().map((type) => type.toString()))].join(
+			' | '
+		)
 	}
 }

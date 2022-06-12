@@ -39,7 +39,7 @@ export class ElseSchema extends Schema {
 		return []
 	}
 
-	override toTypeDefinitions() {
-		return this.rootSchema.toTypeDefinitions()
+	override toTypeDefinition() {
+		return this.rootSchema.toTypeDefinition()
 	}
 }

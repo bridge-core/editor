@@ -1,4 +1,4 @@
-import { Type } from '../ToTypes/Type'
+import { BaseType } from '../ToTypes/Type'
 
 export interface ISchemaResult {
 	diagnostics: IDiagnostic[]
@@ -45,7 +45,7 @@ export abstract class Schema {
 		location: (string | number)[]
 	): Schema[]
 
-	toTypeDefinitions(): Type | null {
+	toTypeDefinition(): BaseType | null {
 		return null
 	}
 }

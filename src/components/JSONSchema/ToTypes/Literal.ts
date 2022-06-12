@@ -1,21 +1,12 @@
-import { Type } from './Type'
+import { BaseType } from './Type'
 
-export class LiteralType extends Type {
+export class LiteralType extends BaseType {
 	constructor(protected literalType: string | number | boolean) {
 		super()
 	}
 
-	static toTypeScriptType(
-		jsonSchemaType: 'boolean' | 'string' | 'decimal' | 'integer' | 'null'
-	) {
-		if ((jsonSchemaType === 'decimal') | (type === 'integer'))
-			return 'number'
-
-		return jsonSchemaType
-	}
-
 	public toString() {
 		if (typeof this.literalType === 'string') return `'${this.literalType}'`
-		return this.literalType
+		return `${this.literalType}`
 	}
 }

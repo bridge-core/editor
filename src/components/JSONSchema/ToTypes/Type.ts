@@ -1,3 +1,3 @@
-export abstract class Type {
+export abstract class BaseType {
 	public abstract toString(): string
 }

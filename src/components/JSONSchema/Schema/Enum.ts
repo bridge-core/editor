@@ -33,7 +33,9 @@ export class EnumSchema extends Schema {
 		return []
 	}
 
-	override toTypeDefinitions() {
+	override toTypeDefinition() {
+		if(!Array.isArray(this.value)) return null
+		
 		return this.value.map(val => new LiteralType(val))
 	}
 }
