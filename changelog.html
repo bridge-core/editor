@@ -1,15 +1,36 @@
+<h2>Features:</h2>
+<ul>
+<li><strong>Tree Editor:</strong> Auto-completions for the &quot;Edit&quot; input (#453)</li>
+<li><strong>Tree Editor:</strong> Now filters out already used property names from auto-completions correctly</li>
+<li><strong>MoLang:</strong> Support for omitting leading zeros</li>
+<li><strong>MoLang:</strong> Improved &quot;MoLang.resolveStatic(...)&quot;</li>
+<li><strong>MoLang:</strong> Optimized loops with 0 repetitions</li>
+<li><strong>Custom components:</strong> New &quot;lootTable(...)&quot;, &quot;tradeTable(...)&quot;, &quot;spawnRule(...)&quot; and &quot;recipe(...)&quot; generator functions</li>
+<li>Added title and default fields for block components</li>
+<li>Added a new toggle for &quot;generated_with&quot; metadata (#455)</li>
+</ul>
 <h2>Changes:</h2>
 <ul>
-<li>bridge. now supports the various different block collision components from Minecraft v1.16.100 to v1.19.10 and only renders collision box previews for components that match the specified format version</li>
+<li>Changed wording on deprecation messages within JSON schemas</li>
+<li>Removed audio manager for now</li>
+<li>Changed &quot;Browser Unsupported&quot; message (#429)</li>
+<li>Updated schemas to latest Minecraft Preview</li>
+<li>Swapped dimension and biome icons (#22; Thanks to @Chikorita-Lover)</li>
+<li>Changed &quot;copyFileHandle(...)&quot; method to use &quot;write(...)&quot; method internally</li>
+<li>Added missing molang auto-completions in item and block conditions</li>
+<li>Added missing parameters to 1.19.0+ &quot;minecraft:behavior.pickup_items&quot;</li>
+<li>File/folder name now shows before deleting (#461)</li>
+<li>Updated monaco-editor to the latest version</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed contrast of new alert UI in light mode</li>
-<li>Fixed file type guessing not working correctly</li>
-<li>Fixed file error caused by schema scripts and virtual compiler files</li>
-<li>Fixed lightning cache failing to process empty JSON files</li>
-<li>Fixed block component previews</li>
-<li>Fixed edit path input not focusing automatically</li>
-<li>Fixed validation error within FilePathWindow</li>
-<li>Fixed file imports being broken</li>
+<li>Fixed &quot;placement_filter&quot; component schema</li>
+<li>Removed invalid fields from &quot;minecraft:breedable&quot; schema</li>
+<li>Fixed block and item event auto-completions not working when another event is invalid</li>
+<li>Fixed &quot;minecraft:ignore_automatic_features&quot; biome component</li>
+<li>Fixed block identifiers not showing within recipe auto-completions (bridge-core/editor-packages#23)</li>
+<li>Fixed custom components not resetting correctly</li>
+<li>Fixed error upon deleting file outside of bridge. (#458)</li>
+<li>Fixed recipe preset not being opened with tree editor correctly (#442)</li>
+<li>Fixed tree feature schema (bridge-core/editor-packages#24; Thanks to @KekeCreations)</li>
 </ul>
