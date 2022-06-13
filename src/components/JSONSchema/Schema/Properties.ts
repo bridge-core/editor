@@ -76,11 +76,11 @@ export class PropertiesSchema extends Schema {
 		return diagnostics
 	}
 
-	override toTypeDefinition() {
+	override toTypeDefinition(hoisted: Set<Schema>) {
 		const interfaceType = new InterfaceType()
 
 		for (const [propertyName, child] of Object.entries(this.children)) {
-			const type = child.toTypeDefinition()
+			const type = child.toTypeDefinition(hoisted)
 			if (type === null) continue
 
 			interfaceType.addProperty(propertyName, type)

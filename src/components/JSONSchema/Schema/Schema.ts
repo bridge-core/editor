@@ -1,4 +1,6 @@
+import { pathToName } from '../pathToName'
 import { BaseType } from '../ToTypes/Type'
+import { relative } from '/@/utils/path'
 
 export interface ISchemaResult {
 	diagnostics: IDiagnostic[]
@@ -45,7 +47,21 @@ export abstract class Schema {
 		location: (string | number)[]
 	): Schema[]
 
-	toTypeDefinition(): BaseType | null {
+	toTypeDefinition(
+		hoisted: Set<Schema>,
+		forceEval?: boolean
+	): BaseType | null {
 		return null
+	}
+	getName() {
+		return pathToName(
+			relative(
+				'file:///data/packages/minecraftBedrock/schema',
+				this.location
+			)
+		)
+	}
+	getLocation() {
+		return this.location
 	}
 }

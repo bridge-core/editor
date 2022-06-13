@@ -1,4 +1,5 @@
 import { LiteralType } from '../ToTypes/Literal'
+import { UnionType } from '../ToTypes/Union'
 import { Schema } from './Schema'
 
 export class EnumSchema extends Schema {
@@ -36,6 +37,6 @@ export class EnumSchema extends Schema {
 	override toTypeDefinition() {
 		if(!Array.isArray(this.value)) return null
 		
-		return this.value.map(val => new LiteralType(val))
+		return new UnionType(this.value.map(val => new LiteralType(val))) 
 	}
 }

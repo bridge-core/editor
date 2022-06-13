@@ -2,6 +2,7 @@ import { LiteralType } from '../ToTypes/Literal'
 import { Schema } from './Schema'
 
 export class ConstSchema extends Schema {
+	public readonly types = []
 	getSchemasFor() {
 		return []
 	}
@@ -23,6 +24,6 @@ export class ConstSchema extends Schema {
 	}
 
 	override toTypeDefinition() {
-		return new LiteralType(this.value)
+		return new LiteralType(<string | number | boolean>this.value)
 	}
 }

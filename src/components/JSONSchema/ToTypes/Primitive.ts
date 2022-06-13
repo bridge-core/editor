@@ -3,7 +3,7 @@ import { BaseType } from './Type'
 export type TSupportedPrimitiveTypes = 'string' | 'number' | 'boolean' | 'null'
 
 export class PrimitiveType extends BaseType {
-	constructor(protected primitiveType: TSupportedPrimitiveTypes) {
+	constructor(protected primitiveType: TSupportedPrimitiveTypes | string) {
 		super()
 	}
 

@@ -1,19 +1,12 @@
 import { BaseType } from '../ToTypes/Type'
+import { CombinedType } from './CombinedType'
 
-export class UnionType extends BaseType {
-	constructor(public readonly types: BaseType[]) {
-		super()
+export class UnionType extends CombinedType {
+	constructor(types: BaseType[]) {
+		super(types, ' | ')
 	}
 
-	flat(): BaseType[] {
-		return this.types
-			.map((type) => (type instanceof UnionType ? type.flat() : type))
-			.flat(Infinity)
-	}
-
-	toString() {
-		return [...new Set(this.flat().map((type) => type.toString()))].join(
-			' | '
-		)
+	isOfThisType(type: CombinedType) {
+		return type instanceof UnionType
 	}
 }

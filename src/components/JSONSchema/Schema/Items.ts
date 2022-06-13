@@ -2,6 +2,7 @@ import { RootSchema } from './Root'
 import { IDiagnostic, Schema } from './Schema'
 import { TupleType } from '../ToTypes/Tuple'
 import { ArrayType } from '../ToTypes/Array'
+import { BaseType } from '../ToTypes/Type'
 
 export class ItemsSchema extends Schema {
 	protected children: Schema | Schema[]
@@ -70,15 +71,15 @@ export class ItemsSchema extends Schema {
 		return []
 	}
 
-	override toTypeDefinition() {
+	override toTypeDefinition(hoisted: Set<Schema>) {
 		if (Array.isArray(this.children)) {
 			return new TupleType(
-				this.children
-					.map((child) => child.toTypeDefinition())
+				<BaseType[]>this.children
+					.map((child) => child.toTypeDefinition(hoisted))
 					.filter((type) => type !== null)
 			)
 		} else {
-			const type = this.children.toTypeDefinition()
+			const type = this.children.toTypeDefinition(hoisted)
 			if (type === null) return null
 
 			return new ArrayType(type)

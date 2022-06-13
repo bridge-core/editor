@@ -1,7 +1,9 @@
 import { SchemaManager } from '../Manager'
+import { pathToName } from '../pathToName'
+import { PrimitiveType } from '../ToTypes/Primitive'
 import { RootSchema } from './Root'
 import { Schema } from './Schema'
-import { dirname, join } from '/@/utils/path'
+import { dirname, join, relative } from '/@/utils/path'
 
 export class RefSchema extends Schema {
 	public readonly schemaType = 'refSchema'
@@ -75,7 +77,21 @@ export class RefSchema extends Schema {
 		return this.rootSchema.getFreeIfSchema()
 	}
 
-	override toTypeDefinition() {
-		return this.rootSchema.toTypeDefinition()
+	getName() {
+		return pathToName(
+			relative(
+				'file:///data/packages/minecraftBedrock/schema',
+				this.rootSchema.getLocation()
+			)
+		)
+	}
+
+	override toTypeDefinition(hoisted: Set<Schema>, forceEval?: boolean) {
+		if(forceEval) return this.rootSchema.toTypeDefinition(hoisted)
+
+		if(!hoisted.has(this)) 
+			hoisted.add(this)
+			
+		return new PrimitiveType(this.getName())
 	}
 }
