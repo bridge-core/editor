@@ -3,7 +3,7 @@
 		v-if="title"
 		:value="!!title"
 		width="100%"
-		class="mt-2 mb-12 pa-3"
+		class="mt-2 mb-8 pa-3"
 		color="purple"
 		:style="`color: ${textColor}`"
 		border="bottom"

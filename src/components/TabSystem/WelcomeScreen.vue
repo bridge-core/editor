@@ -7,7 +7,7 @@
 
 		<Logo
 			style="height: 160px; width: 160px"
-			class="mb-4"
+			class="mt-4 mb-4"
 			alt="Logo of bridge. v2"
 		/>
 		<h1 class="text-h3 text-center">{{ t('welcome.title') }}</h1>
