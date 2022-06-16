@@ -8,6 +8,7 @@ import { ElseSchema } from './Schema/ElseSchema'
 import { EnumSchema } from './Schema/Enum'
 import { IfSchema } from './Schema/IfSchema'
 import { ItemsSchema } from './Schema/Items'
+import { NotSchema } from './Schema/Not'
 import { OneOfSchema } from './Schema/OneOf'
 import { PatternPropertiesSchema } from './Schema/PatternProperties'
 import { PropertiesSchema } from './Schema/Properties'
@@ -41,6 +42,7 @@ export const schemaRegistry = new Map<string, ISchemaConstructor>([
 	['default', DefaultSchema],
 	['else', ElseSchema],
 	['doNotSuggest', DoNotSuggestSchema],
+	['not', NotSchema],
 ])
 
 export const ignoreFields = new Set<string>([

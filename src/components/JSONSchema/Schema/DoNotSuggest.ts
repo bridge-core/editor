@@ -6,7 +6,7 @@ export class DoNotSuggestSchema extends Schema {
 	constructor(location: string, key: string, value: unknown) {
 		if (typeof value !== 'boolean') {
 			throw new Error(
-				`[${location}] Type of doNotSuggest must be boolean, found ${typeof value}`
+				`[${location}] Type of "doNotSuggest" must be boolean, found ${typeof value}`
 			)
 		}
 

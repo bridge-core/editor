@@ -46,16 +46,16 @@ export class PropertiesSchema extends Schema {
 
 		return Object.entries(this.children)
 			.filter(
-				([property, schema]) =>
-					!propertyContext.includes(property) &&
+				([propertyName, schema]) =>
+					!propertyContext.includes(propertyName) &&
 					!schema.hasDoNotSuggest
 			)
 			.map(
-				(value) =>
+				([propertyName]) =>
 					<const>{
 						type: 'object',
-						label: `${value}`,
-						value,
+						label: `${propertyName}`,
+						value: propertyName,
 					}
 			)
 	}
