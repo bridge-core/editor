@@ -1,9 +1,10 @@
+import { DoNotSuggestSchema } from './DoNotSuggest'
 import { RootSchema } from './Root'
 import { IDiagnostic, Schema } from './Schema'
 import { InterfaceType } from '../ToTypes/Interface'
 
 export class PropertiesSchema extends Schema {
-	protected children: Record<string, Schema> = {}
+	protected children: Record<string, RootSchema> = {}
 
 	get types() {
 		return [<const>'object']
@@ -14,7 +15,9 @@ export class PropertiesSchema extends Schema {
 
 		if (typeof value !== 'object' && typeof value !== 'undefined')
 			throw new Error(
-				`Invalid usage of "properties" schema field. Expected type "object", received "${typeof value}"`
+				`[${
+					this.location
+				}] Invalid usage of "properties" schema field. Expected type "object", received "${typeof value}"`
 			)
 
 		this.children = Object.fromEntries(
@@ -42,14 +45,18 @@ export class PropertiesSchema extends Schema {
 			typeof context === 'object' ? context ?? {} : {}
 		)
 
-		return Object.keys(<object>this.value)
-			.filter((property) => !propertyContext.includes(property))
+		return Object.entries(this.children)
+			.filter(
+				([propertyName, schema]) =>
+					!propertyContext.includes(propertyName) &&
+					!schema.hasDoNotSuggest
+			)
 			.map(
-				(value) =>
+				([propertyName]) =>
 					<const>{
 						type: 'object',
-						label: `${value}`,
-						value,
+						label: `${propertyName}`,
+						value: propertyName,
 					}
 			)
 	}

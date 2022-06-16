@@ -19,7 +19,7 @@ export default {
 			let fileHandle
 			try {
 				fileHandle = await window.showDirectoryPicker({
-					writable: true,
+					mode: 'readwrite',
 					startIn: 'documents',
 				})
 			} catch {

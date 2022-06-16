@@ -13,7 +13,7 @@ import { AnyFileHandle } from '../../FileSystem/Types'
 
 const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {
-		const fileContent = JSON.stringify(tab.treeEditor.toJSON())
+		const fileContent = tab.treeEditor.toJsonString()
 		const app = await App.getApp()
 
 		app.project.fileChange.dispatch(tab.getPath(), await tab.getFile())
@@ -74,7 +74,7 @@ export class TreeTab extends FileTab {
 				.then((file) => file.text())
 
 			if (fileStr === '') json = {}
-			else json = json5.parse(fileStr)
+			else json = json5.parse(fileStr.replaceAll('\\n', '\\\\n'))
 		} catch {
 			new InformationWindow({
 				name: 'windows.invalidJson.title',
@@ -89,7 +89,10 @@ export class TreeTab extends FileTab {
 		await super.setup()
 	}
 	async getFile() {
-		return new File([JSON.stringify(this.treeEditor.toJSON())], this.name)
+		return new File(
+			[JSON.stringify(this.treeEditor.toJsonString())],
+			this.name
+		)
 	}
 
 	updateCache() {
@@ -112,7 +115,7 @@ export class TreeTab extends FileTab {
 		this.isTemporary = false
 
 		const app = await App.getApp()
-		const fileContent = JSON.stringify(this.treeEditor.toJSON(), null, '\t')
+		const fileContent = this.treeEditor.toJsonString(true)
 
 		await app.fileSystem.write(this.fileHandle, fileContent)
 		this.treeEditor.saveState()
