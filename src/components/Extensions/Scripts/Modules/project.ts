@@ -5,6 +5,7 @@ import {
 	IExporter,
 } from '/@/components/Projects/Export/Extensions/Exporter'
 import { TPackTypeId } from '/@/components/Data/PackType'
+import { Project } from '/@/components/Projects/Project/Project'
 
 export const ProjectModule = async ({
 	disposables,
@@ -48,6 +49,16 @@ export const ProjectModule = async ({
 
 		async unlinkFile(path: string) {
 			await app.project.unlinkFile(path)
+		},
+
+		onProjectChanged(cb: (projectName: string) => any) {
+			const disposable = App.eventSystem.on(
+				'projectChanged',
+				(project: Project) => cb(project.name)
+			)
+			disposables.push(disposable)
+
+			return disposable
 		},
 	}
 }
