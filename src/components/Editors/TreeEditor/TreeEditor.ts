@@ -290,6 +290,13 @@ export class TreeEditor {
 	toJSON() {
 		return this.tree.toJSON()
 	}
+	toJsonString(beautify = false) {
+		return JSON.stringify(
+			this.toJSON(),
+			null,
+			beautify ? '\t' : undefined
+		).replaceAll('\\\\', '\\')
+	}
 
 	forEachSelection(
 		cb: (selection: TreeSelection | TreeValueSelection) => void
