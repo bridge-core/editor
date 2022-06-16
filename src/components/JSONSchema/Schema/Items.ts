@@ -2,7 +2,7 @@ import { RootSchema } from './Root'
 import { IDiagnostic, Schema } from './Schema'
 
 export class ItemsSchema extends Schema {
-	protected children: Schema | Schema[]
+	protected children: RootSchema | RootSchema[]
 
 	get types() {
 		return [<const>'array']
@@ -49,6 +49,7 @@ export class ItemsSchema extends Schema {
 
 	getCompletionItems(obj: unknown) {
 		return this.arrayChildren
+			.filter((child) => !child.hasDoNotSuggest)
 			.map((child) =>
 				child.getCompletionItems(obj).map(
 					(item) =>
