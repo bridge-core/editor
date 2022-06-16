@@ -10,6 +10,7 @@ export async function getFilteredFormatVersions(targetVersion?: string) {
 	const app = await App.getApp()
 	await app.dataLoader.fired
 
+	await app.projectManager.projectReady.fired
 	if (!targetVersion) targetVersion = app.projectConfig.get().targetVersion
 
 	return getFormatVersions().then((formatVersions) =>

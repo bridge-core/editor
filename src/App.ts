@@ -108,7 +108,13 @@ export class App {
 		return Object.values(this.projectManager.state)
 	}
 	get projectConfig() {
-		return this.project.config
+		try {
+			return this.project.config
+		} catch {
+			throw new Error(
+				`Trying to access projectConfig before project is defined. Make sure to await app.projectManager.projectReady.fired`
+			)
+		}
 	}
 
 	static get instance() {

@@ -13,6 +13,8 @@ export class GlobalExtensionLoader extends ExtensionLoader {
 	}
 
 	async getInstalledExtensions() {
+		await this.app.projectManager.projectReady.fired
+
 		return new Map([
 			...(await super.getInstalledExtensions()).entries(),
 			...(

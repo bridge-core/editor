@@ -24,6 +24,7 @@ export class RequiresMatcher {
 		if (!this.requires) return true
 
 		const app = await App.getApp()
+		await app.projectManager.projectReady.fired
 		const config = app.project.config.get()
 
 		this.experimentalGameplay = config.experimentalGameplay ?? {}
