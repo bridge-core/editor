@@ -10,6 +10,7 @@
 				class="rounded-lg ma-2 d-flex justify-center sidebar-button"
 				:style="{
 					'background-color': computedColor,
+					position: 'relative',
 					transform: isSelected ? 'scale(1.1)' : undefined,
 				}"
 				:class="{
