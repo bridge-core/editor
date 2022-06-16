@@ -87,6 +87,8 @@ export class PropertiesSchema extends Schema {
 		const interfaceType = new InterfaceType()
 
 		for (const [propertyName, child] of Object.entries(this.children)) {
+			if(child.hasDoNotSuggest) continue
+			
 			const type = child.toTypeDefinition(hoisted)
 			if (type === null) continue
 

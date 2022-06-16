@@ -76,10 +76,13 @@ export class ItemsSchema extends Schema {
 		if (Array.isArray(this.children)) {
 			return new TupleType(
 				<BaseType[]>this.children
+					.filter((child) => !child.hasDoNotSuggest)
 					.map((child) => child.toTypeDefinition(hoisted))
 					.filter((type) => type !== null)
 			)
 		} else {
+			if(this.children.hasDoNotSuggest) return null
+			
 			const type = this.children.toTypeDefinition(hoisted)
 			if (type === null) return null
 

@@ -43,6 +43,8 @@ export abstract class ParentSchema extends Schema {
 	}
 
 	override toTypeDefinition(hoisted: Set<Schema>) {
+		if(this.hasDoNotSuggest) console.warn(`[${this.location}] Called Schema.toTypeDefinition on a schema which has "doNotSuggest"`)
+
 		return new UnionType(
 			<BaseType[]>(this.children
 				.map((child) => child.toTypeDefinition(hoisted))
