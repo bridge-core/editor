@@ -35,6 +35,7 @@ export class PackExplorer extends SidebarContent {
 				isDismissible: true,
 		  })
 		: undefined
+	showNoProjectView = false
 
 	constructor() {
 		super()
@@ -42,19 +43,38 @@ export class PackExplorer extends SidebarContent {
 		App.eventSystem.on('projectChanged', () => this.setup())
 		App.eventSystem.on('fileAdded', () => this.refresh())
 
-		App.getApp().then((app) => {
-			if (!app.mobile.isCurrentDevice())
-				this.headerSlot = ProjectDisplayComponent
+		const updateHeaderSlot = async () => {
+			const app = await App.getApp()
+			await app.projectManager.projectReady.fired
+			const project = app.project
 
-			app.mobile.change.on((isMobile) => {
-				this.headerSlot = isMobile ? undefined : ProjectDisplayComponent
-			})
+			if (app.mobile.isCurrentDevice() || project.isVirtualProject)
+				this.headerSlot = undefined
+			else this.headerSlot = ProjectDisplayComponent
+		}
+
+		App.getApp().then((app) => {
+			updateHeaderSlot()
+
+			app.mobile.change.on(() => updateHeaderSlot())
 		})
+
+		App.eventSystem.on('projectChanged', () => updateHeaderSlot())
+
 		this.headerHeight = '60px'
 	}
 
 	async setup() {
 		const app = await App.getApp()
+		await app.projectManager.projectReady.fired
+		const isVirtualProject = app.project.isVirtualProject
+
+		this.actions = []
+		// Do not show actions for virtual project
+		if (isVirtualProject) {
+			this.showNoProjectView = true
+			return
+		}
 
 		this.unselectAllActions()
 		for (const pack of app.project.projectData.contains ?? []) {

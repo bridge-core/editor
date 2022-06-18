@@ -93,8 +93,6 @@ export class FileSystemSetup {
 			} catch {}
 
 			globalState.setupDone.dispatch()
-		} else {
-			InitialSetup.ready.dispatch()
 		}
 
 		if (

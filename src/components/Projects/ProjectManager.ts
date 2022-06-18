@@ -2,7 +2,7 @@ import { App } from '/@/App'
 import { get as idbGet, set as idbSet } from 'idb-keyval'
 import { shallowReactive, set, del, reactive } from '@vue/composition-api'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { Project } from './Project/Project'
+import { Project, virtualProjectName } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
 import { Title } from '/@/components/Projects/Title'
 import { editor } from 'monaco-editor'
@@ -11,6 +11,11 @@ import { InitialSetup } from '../InitialSetup/InitialSetup'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyDirectoryHandle, AnyHandle } from '../FileSystem/Types'
 import { latestFormatVersion } from './Project/Config'
+import { FileSystem } from '../FileSystem/FileSystem'
+import { CreateConfig } from './CreateProject/Files/Config'
+import { getStableFormatVersion } from '../Data/FormatVersions'
+import { v4 as uuid } from 'uuid'
+import { ICreateProjectOptions } from './CreateProject/CreateProject'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -42,7 +47,7 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	get currentProject() {
-		if (!this.selectedProject) return
+		if (!this.selectedProject) return null
 		return this.state[this.selectedProject]
 	}
 	get selectedProject() {
@@ -92,10 +97,8 @@ export class ProjectManager extends Signal<void> {
 		)
 
 		if (loadProjects.length === 0) {
-			// Force creation of new project
-			const createProject = this.app.windows.createProject
-			createProject.open(true)
-			await createProject.fired
+			// Create a placeholder project (virtual project)
+			await this.createVirtualProject()
 		} else {
 			// Load existing projects
 			for (const projectDir of loadProjects) {
@@ -107,6 +110,50 @@ export class ProjectManager extends Signal<void> {
 		}
 
 		this.dispatch()
+	}
+
+	async createVirtualProject() {
+		const handle = await this.app.fileSystem.getDirectoryHandle(
+			`projects/${virtualProjectName}`,
+			{
+				create: true,
+			}
+		)
+		const fs = new FileSystem(handle)
+
+		const createOptions: ICreateProjectOptions = {
+			name: 'bridge',
+			namespace: 'bridge',
+			author: [],
+			description: '',
+			bpAsRpDependency: false,
+			experimentalGameplay: {},
+			icon: null,
+			packs: [
+				'behaviorPack',
+				'resourcePack',
+				'skinPack',
+				'worldTemplate',
+				'.bridge',
+			],
+			rpAsBpDependency: false,
+			targetVersion: await getStableFormatVersion(),
+			useLangForManifest: false,
+			uuids: {
+				data: uuid(),
+				resources: uuid(),
+				skin_pack: uuid(),
+				world_template: uuid(),
+			},
+		}
+
+		await Promise.all(
+			['BP', 'RP', 'WT', 'SP'].map((folder) => fs.mkdir(folder))
+		)
+
+		await new CreateConfig().create(fs, createOptions)
+
+		await this.addProject(handle, false)
 	}
 
 	async selectProject(projectName: string) {

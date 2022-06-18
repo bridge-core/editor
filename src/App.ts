@@ -41,6 +41,7 @@ import { PersistentNotification } from '/@/components/Notifications/PersistentNo
 import { createVirtualProjectWindow } from './components/FileSystem/Virtual/ProjectWindow'
 import { version as appVersion } from './utils/app/version'
 import { platform } from './utils/os'
+import { InitialSetup } from './components/InitialSetup/InitialSetup'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -96,6 +97,13 @@ export class App {
 	}
 	get selectedProject() {
 		return this.projectManager.selectedProject
+	}
+
+	get hasProject() {
+		return (
+			this.projectManager.currentProject !== null &&
+			!this.projectManager.currentProject.isVirtualProject
+		)
 	}
 	get project() {
 		if (!this.projectManager.currentProject)
@@ -182,12 +190,14 @@ export class App {
 		await this.instance.beforeStartUp()
 
 		// Try setting up the file system
-		const fileHandle = await this.fileSystemSetup.setupFileSystem(
-			this.instance
-		)
-		if (!fileHandle) return this.instance.windows.loadingWindow.close()
+		// const fileHandle = await this.fileSystemSetup.setupFileSystem(
+		// 	this.instance
+		// )
+		// if (!fileHandle) return this.instance.windows.loadingWindow.close()
 
-		this.instance.fileSystem.setup(fileHandle)
+		InitialSetup.ready.dispatch()
+		this.instance.fileSystem.setup(await navigator.storage.getDirectory())
+		await this.instance.fileSystem.unlink('projects')
 
 		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {

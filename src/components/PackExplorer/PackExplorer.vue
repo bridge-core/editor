@@ -1,6 +1,7 @@
 <template>
+	<NoProjectView v-if="sidebarContent.showNoProjectView" />
 	<FileDisplayer
-		v-if="sidebarContent.selectedAction"
+		v-else-if="sidebarContent.selectedAction"
 		:key="sidebarContent.selectedAction.config.id"
 		:entry="
 			sidebarContent.directoryEntries[
@@ -14,6 +15,7 @@
 <script>
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import FileDisplayer from './FileDisplayer.vue'
+import NoProjectView from './NoProjectView.vue'
 
 export default {
 	props: {
@@ -21,6 +23,7 @@ export default {
 	},
 	components: {
 		FileDisplayer,
+		NoProjectView,
 	},
 	methods: {
 		async onContextMenu(data) {

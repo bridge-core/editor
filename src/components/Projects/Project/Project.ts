@@ -37,6 +37,8 @@ export interface IProjectData extends IConfigJson {
 	contains: IPackData[]
 }
 
+export const virtualProjectName = 'bridge-temp-project'
+
 export abstract class Project {
 	public readonly recentFiles!: RecentFiles
 	public readonly tabSystems: readonly [TabSystem, TabSystem]
@@ -49,6 +51,11 @@ export abstract class Project {
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 
+	/**
+	 * A virtual project is a project with the exact name of "virtualProjectName"
+	 * We use it as a placeholder project to skip the previously mandatory bridge folder selection dialog
+	 */
+	public readonly isVirtualProject: boolean
 	public readonly config: ProjectConfig
 	public readonly fileTypeLibrary: FileTypeLibrary
 	public readonly extensionLoader: ExtensionLoader
@@ -91,6 +98,13 @@ export abstract class Project {
 
 		return this._compilerService
 	}
+	protected get watchModeActive() {
+		// Only update compilation results if the watch mode setting is active and the current project is not a virtual project
+		return (
+			(settingsState.compiler?.watchModeActive ?? true) &&
+			!this.isVirtualProject
+		)
+	}
 	//#endregion
 
 	constructor(
@@ -98,6 +112,8 @@ export abstract class Project {
 		public readonly app: App,
 		protected _baseDirectory: AnyDirectoryHandle
 	) {
+		this.isVirtualProject = virtualProjectName === this.name
+
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
 		this.config = markRaw(new ProjectConfig(this._fileSystem, this))
 		this.fileTypeLibrary = markRaw(new FileTypeLibrary(this.config))
@@ -215,8 +231,10 @@ export abstract class Project {
 		])
 		const [changedFiles, deletedFiles] = await this.packIndexer.fired
 
+		// Only recompile changed files if the setting is active and the project is not a virtual project
 		const autoFetchChangedFiles =
-			settingsState.compiler?.autoFetchChangedFiles ?? true
+			(settingsState.compiler?.autoFetchChangedFiles ?? true) &&
+			!this.isVirtualProject
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
@@ -342,11 +360,9 @@ export abstract class Project {
 			return
 		}
 
-		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
-
 		await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			watchModeActive
+			this.watchModeActive
 				? this.compilerService.updateFiles([filePath])
 				: Promise.resolve(),
 		])
@@ -356,18 +372,15 @@ export abstract class Project {
 	async updateFiles(filePaths: string[]) {
 		await this.packIndexer.updateFiles(filePaths)
 
-		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
-
-		if (watchModeActive) await this.compilerService.updateFiles(filePaths)
+		if (this.watchModeActive)
+			await this.compilerService.updateFiles(filePaths)
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 	async unlinkFile(filePath: string) {
 		await this.packIndexer.unlink(filePath)
 
-		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
-
-		if (watchModeActive) await this.compilerService.unlink(filePath)
+		if (this.watchModeActive) await this.compilerService.unlink(filePath)
 		await this.app.fileSystem.unlink(filePath)
 		await this.recentFiles.removeFile(filePath)
 
