@@ -21,6 +21,7 @@ export class DataLoader extends FileSystem {
 	}
 
 	async loadData(clearDB = false) {
+		console.time('[App] Data')
 		// Read packages.zip file
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
 			response.arrayBuffer()
@@ -77,5 +78,6 @@ export class DataLoader extends FileSystem {
 		}
 
 		this.setup(this._virtualFileSystem)
+		console.timeEnd('[App] Data')
 	}
 }

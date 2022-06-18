@@ -184,6 +184,7 @@ export class App {
 	 * Starts the app
 	 */
 	static async main(appComponent: Vue) {
+		console.time('[APP] Ready')
 		this._instance = markRaw(Object.freeze(new App(appComponent)))
 		this.instance.windows.loadingWindow.open()
 
@@ -217,6 +218,7 @@ export class App {
 		await this.instance.projectManager.selectLastProject(this.instance)
 
 		this.instance.windows.loadingWindow.close()
+		console.timeEnd('[APP] Ready')
 	}
 
 	/**
