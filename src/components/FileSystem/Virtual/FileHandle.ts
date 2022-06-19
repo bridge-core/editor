@@ -70,8 +70,9 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		}
 	}
 
-	async removeSelf() {
+	async removeSelf(isFirst = true) {
 		await del(this.idbKey)
+		if (this.parent && isFirst) this.parent.deleteChild(this.name)
 	}
 
 	async getFile() {

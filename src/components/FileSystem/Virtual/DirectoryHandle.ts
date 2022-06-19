@@ -240,14 +240,15 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		if (current === null) return null
 		return path
 	}
-	async removeSelf() {
+	async removeSelf(isFirst = true) {
 		const children = await this.getChildren()
 
 		for (const child of children) {
-			await child.removeSelf()
+			await child.removeSelf(false)
 		}
 
 		if (!this.children) await del(this.idbKey)
+		if (this.parent && isFirst) this.parent.deleteChild(this.name)
 	}
 
 	[Symbol.asyncIterator]() {
