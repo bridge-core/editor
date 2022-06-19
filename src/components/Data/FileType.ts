@@ -35,20 +35,12 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 		if (this.fileTypes.length > 0) return
 		await dataLoader.fired
 
-		const basePath = 'data/packages/minecraftBedrock/fileDefinition'
-		const dirents = await dataLoader.getDirectoryHandle(basePath)
+		this.fileTypes = await dataLoader.readJSON(
+			'data/packages/minecraftBedrock/fileDefinitions.json'
+		)
 
-		for await (const dirent of dirents.values()) {
-			if (dirent.kind !== 'file') return
-
-			let json = await dataLoader
-				.readJSON(`${basePath}/${dirent.name}`)
-				.catch(() => null)
-			if (json) this.fileTypes.push(json)
-		}
-
-		await this.loadLightningCache(dataLoader)
-		await this.loadPackSpider(dataLoader)
+		this.loadLightningCache(dataLoader)
+		this.loadPackSpider(dataLoader)
 
 		this.ready.dispatch()
 	}
@@ -87,6 +79,7 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 	}
 
 	protected lCacheFiles: Record<string, ILightningInstruction[] | string> = {}
+	protected lCacheFilesLoaded = new Signal<void>()
 	async loadLightningCache(dataLoader: DataLoader) {
 		for (const fileType of this.fileTypes) {
 			if (!fileType.lightningCache) continue
@@ -107,11 +100,14 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 					`Invalid lightningCache file format: ${fileType.lightningCache}`
 				)
 		}
+		this.lCacheFilesLoaded.dispatch()
 	}
 
 	async getLightningCache(filePath: string) {
 		const { lightningCache } = this.get(filePath) ?? {}
 		if (!lightningCache) return []
+
+		await this.lCacheFilesLoaded.fired
 
 		return this.lCacheFiles[lightningCache] ?? []
 	}
@@ -120,6 +116,7 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 		id: string
 		packSpider: IPackSpiderFile
 	}[] = []
+	protected packSpiderFilesLoaded = new Signal<void>()
 	async loadPackSpider(dataLoader: DataLoader) {
 		this.packSpiderFiles.push(
 			...(<{ id: string; packSpider: IPackSpiderFile }[]>(
@@ -140,8 +137,11 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 				)
 			))
 		)
+		this.packSpiderFilesLoaded.dispatch()
 	}
 	async getPackSpiderData() {
+		await this.packSpiderFilesLoaded.fired
+
 		return this.packSpiderFiles
 	}
 }
