@@ -206,35 +206,6 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 
-	settings.addControl(
-		new ButtonToggle({
-			category: 'developers',
-			name: 'windows.settings.developer.simulateOS.name',
-			description: 'windows.settings.developer.simulateOS.description',
-			key: 'simulateOS',
-			options: ['auto', 'win32', 'darwin', 'linux'],
-			default: 'auto',
-		})
-	)
-	settings.addControl(
-		new Toggle({
-			category: 'developers',
-			name: 'windows.settings.developer.devMode.name',
-			description: 'windows.settings.developer.devMode.description',
-			key: 'isDevMode',
-		})
-	)
-	settings.addControl(
-		new Toggle({
-			category: 'developers',
-			name: 'windows.settings.developer.forceDataDownload.name',
-			description:
-				'windows.settings.developer.forceDataDownload.description',
-			key: 'forceDataDownload',
-			default: false,
-		})
-	)
-
 	const locales = await App.getApp().then((app) => app.locales)
 	settings.addControl(
 		new Selection({
@@ -470,4 +441,36 @@ export async function setupSettings(settings: SettingsWindow) {
 		if (action.type === 'action')
 			settings.addControl(new ActionViewer(action))
 	})
+
+	if (import.meta.env.DEV) {
+		settings.addControl(
+			new ButtonToggle({
+				category: 'developers',
+				name: 'windows.settings.developer.simulateOS.name',
+				description:
+					'windows.settings.developer.simulateOS.description',
+				key: 'simulateOS',
+				options: ['auto', 'win32', 'darwin', 'linux'],
+				default: 'auto',
+			})
+		)
+		settings.addControl(
+			new Toggle({
+				category: 'developers',
+				name: 'windows.settings.developer.devMode.name',
+				description: 'windows.settings.developer.devMode.description',
+				key: 'isDevMode',
+			})
+		)
+		settings.addControl(
+			new Toggle({
+				category: 'developers',
+				name: 'windows.settings.developer.forceDataDownload.name',
+				description:
+					'windows.settings.developer.forceDataDownload.description',
+				key: 'forceDataDownload',
+				default: false,
+			})
+		)
+	}
 }
