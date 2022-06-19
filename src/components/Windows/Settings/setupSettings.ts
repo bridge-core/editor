@@ -224,6 +224,16 @@ export async function setupSettings(settings: SettingsWindow) {
 			key: 'isDevMode',
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'developers',
+			name: 'windows.settings.developer.forceDataDownload.name',
+			description:
+				'windows.settings.developer.forceDataDownload.description',
+			key: 'forceDataDownload',
+			default: false,
+		})
+	)
 
 	const locales = await App.getApp().then((app) => app.locales)
 	settings.addControl(

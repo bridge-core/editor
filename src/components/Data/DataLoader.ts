@@ -21,7 +21,7 @@ export class DataLoader extends FileSystem {
 		super()
 	}
 
-	async loadData() {
+	async loadData(forceDataDownload = false) {
 		if (this.hasFired) {
 			console.warn(
 				`This dataLoader instance already loaded data. You called loadData() twice.`
@@ -29,9 +29,14 @@ export class DataLoader extends FileSystem {
 			return
 		}
 
-		const savedAllDataInIdb = await get<boolean | undefined>(
+		let savedAllDataInIdb = await get<boolean | undefined>(
 			'savedAllDataInIdb'
 		)
+		if (forceDataDownload) {
+			savedAllDataInIdb = false
+			await set('savedAllDataInIdb', false)
+		}
+
 		if (this.isMainLoader)
 			console.log(
 				savedAllDataInIdb
@@ -115,7 +120,7 @@ export class DataLoader extends FileSystem {
 		this.setup(this._virtualFileSystem)
 		console.timeEnd('[App] Data')
 
-		if (this.isMainLoader && supportsIdleCallback) {
+		if (this.isMainLoader && supportsIdleCallback && !forceDataDownload) {
 			const allMemoryHandles: BaseVirtualHandle[] = [
 				...inMemoryFiles,
 				...Object.values(folders),
@@ -126,10 +131,10 @@ export class DataLoader extends FileSystem {
 						whenIdle(() => fileHandle.moveToIdb())
 					)
 				).then(async () => {
-					console.log('ALL DATA SAVED')
+					console.log('[App] All data saved')
 					await set('savedAllDataInIdb', true)
 				})
-			}, 100000)
+			}, 60000)
 		}
 	}
 }

@@ -837,6 +837,11 @@ export default {
 					name: 'Developer Mode',
 					description: 'Enable the developer mode for this app',
 				},
+				forceDataDownload: {
+					name: 'Force Data Download',
+					description:
+						'Ignore the cached app data and instead download the latest data',
+				},
 			},
 			actions: {
 				name: 'Actions',

@@ -135,7 +135,7 @@ export class App {
 	}
 
 	constructor(appComponent: Vue) {
-		this.dataLoader.loadData()
+		if (import.meta.env.PROD) this.dataLoader.loadData()
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
 		this.locales = new Locales(appComponent.$vuetify)
 		this._windows = new Windows(this)
@@ -208,7 +208,16 @@ export class App {
 		}
 
 		// Load settings
-		await SettingsWindow.loadSettings(this.instance).then(async () => {
+		const settingsLoaded = SettingsWindow.loadSettings(this.instance)
+		await settingsLoaded
+
+		// Force data download
+		if (import.meta.env.DEV)
+			this.instance.dataLoader.loadData(
+				<boolean>settingsState?.developers?.forceDataDownload ?? false
+			)
+
+		settingsLoaded.then(async () => {
 			await this.instance.dataLoader.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
 		})
