@@ -7,9 +7,13 @@ import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from './Types'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 import { isUsingFileSystemPolyfill, isUsingOriginPrivateFs } from './Polyfill'
-import { has as hasVirtualDirectory } from './Virtual/IDB'
+import {
+	get as getVirtualDirectory,
+	has as hasVirtualDirectory,
+} from './Virtual/IDB'
 import { ConfirmationWindow } from '../Windows/Common/Confirm/ConfirmWindow'
 import { FileSystem } from './FileSystem'
+import { VirtualFileHandle } from './Virtual/FileHandle'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
 
@@ -45,7 +49,9 @@ export class FileSystemSetup {
 		// Test whether the user has a virtual file system setup
 		if (
 			isUsingFileSystemPolyfill.value ||
-			(await hasVirtualDirectory('bridgeFolder'))
+			((await hasVirtualDirectory('bridgeFolder')) &&
+				((await getVirtualDirectory<string[]>('projects')) ?? [])
+					.length > 0)
 		) {
 			if (!isUsingFileSystemPolyfill.value) {
 				// Ask user whether to upgrade to the real file system
@@ -103,7 +109,7 @@ export class FileSystemSetup {
 			app.windows.browserUnsupported.open()
 		}
 
-		// Migrate virtual project over
+		// Migrate virtual projects over
 		if (isUpgradingVirtualFs) {
 			const virtualFolder = new VirtualDirectoryHandle(
 				null,
@@ -111,11 +117,43 @@ export class FileSystemSetup {
 				undefined
 			)
 			await virtualFolder.setupDone.fired
+			const virtualFs = new FileSystem(virtualFolder)
 
 			const fs = new FileSystem(fileHandle)
-			await fs.copyFolderByHandle(virtualFolder, fileHandle)
 
-			await virtualFolder.removeSelf()
+			// 1. Migrate folders
+			const foldersToMigrate = ['projects', 'extensions']
+			for (const folder of foldersToMigrate) {
+				const handle = <VirtualDirectoryHandle | undefined>(
+					await virtualFs
+						.getDirectoryHandle(folder)
+						.catch(() => undefined)
+				)
+				if (!handle) continue
+
+				await fs.copyFolderByHandle(
+					handle,
+					await fs.getDirectoryHandle(folder, { create: true })
+				)
+
+				await handle.removeSelf()
+			}
+
+			// 2. Migrate files
+			const filesToMigrate = ['data/settings.json']
+			for (const file of filesToMigrate) {
+				const handle = <VirtualFileHandle | undefined>(
+					await virtualFs.getFileHandle(file).catch(() => undefined)
+				)
+				if (!handle || (await fs.fileExists(file))) continue
+
+				await fs.copyFileHandle(
+					handle,
+					await fs.getFileHandle(file, true)
+				)
+
+				await handle.removeSelf()
+			}
 		}
 
 		this._status = 'done'
