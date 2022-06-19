@@ -135,6 +135,7 @@ export class App {
 	}
 
 	constructor(appComponent: Vue) {
+		this.dataLoader.loadData()
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
 		this.locales = new Locales(appComponent.$vuetify)
 		this._windows = new Windows(this)

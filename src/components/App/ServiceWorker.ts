@@ -10,6 +10,7 @@ const updateSW = registerSW({
 		console.log('New content is available; please refresh.')
 
 		await set('firstStartAfterUpdate', true)
+		await set('savedAllDataInIdb', false)
 
 		createNotification({
 			icon: 'mdi-update',

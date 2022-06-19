@@ -78,6 +78,7 @@ export class PackIndexerService extends TaskService<
 	async onStart(forceRefresh: boolean) {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
+		if (!dataLoader.hasFired) await dataLoader.loadData()
 
 		await Promise.all([
 			this.fileType.setup(dataLoader),

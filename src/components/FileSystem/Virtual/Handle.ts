@@ -10,6 +10,8 @@ export abstract class BaseVirtualHandle {
 	public abstract readonly kind: 'directory' | 'file'
 	public readonly setupDone = new Signal<void>()
 
+	abstract moveToIdb(): Promise<void>
+
 	constructor(
 		protected parent: VirtualDirectoryHandle | null,
 		protected _name: string,

@@ -17,6 +17,19 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	 */
 	public readonly isFile = false
 
+	get isDirectoryInMemory() {
+		return this.children !== undefined
+	}
+	async moveToIdb() {
+		if (!this.children)
+			throw new Error(
+				`No directory data to move to IDB for directory "${this.name}"`
+			)
+
+		await set(this.idbKey, [...this.children.keys()])
+		this.children = undefined
+	}
+
 	constructor(
 		parent: VirtualDirectoryHandle | null,
 		name: string,
@@ -56,7 +69,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		if (this.children) this.children.set(child.name, child)
 		else await set(this.idbKey, [...(await this.fromIdb()), child.name])
 	}
-	async fromIdb() {
+	protected async fromIdb() {
 		return (await get<string[]>(this.idbKey)) ?? []
 	}
 
