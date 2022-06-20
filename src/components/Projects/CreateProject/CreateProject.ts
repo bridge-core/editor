@@ -102,7 +102,7 @@ export class CreateProjectWindow extends BaseWindow {
 			await app.dataLoader.fired
 			this.availableTargetVersions = await getFormatVersions()
 			// Set default version
-			this.stableVersion = await getStableFormatVersion()
+			this.stableVersion = await getStableFormatVersion(app.dataLoader)
 			this.createOptions.targetVersion = this.stableVersion
 			this.availableTargetVersionsLoading = false
 

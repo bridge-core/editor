@@ -225,7 +225,7 @@ export class App {
 		await this.instance.startUp()
 
 		this.ready.dispatch(this.instance)
-		await this.instance.projectManager.selectLastProject(this.instance)
+		await this.instance.projectManager.selectLastProject()
 
 		this.instance.windows.loadingWindow.close()
 		console.timeEnd('[APP] Ready')

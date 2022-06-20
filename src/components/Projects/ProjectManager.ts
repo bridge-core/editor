@@ -81,32 +81,23 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	protected async loadProjects() {
+		await InitialSetup.ready.fired
 		await this.app.fileSystem.fired
 		await this.app.dataLoader.fired
-		await InitialSetup.ready.fired
 
-		let potentialProjects: AnyHandle[] = []
-		try {
-			potentialProjects = await this.app.fileSystem.readdir('projects', {
-				withFileTypes: true,
-			})
-		} catch {}
-
-		const loadProjects = <AnyDirectoryHandle[]>(
-			potentialProjects.filter(({ kind }) => kind === 'directory')
+		const directoryHandle = await this.app.fileSystem.getDirectoryHandle(
+			'projects'
 		)
+		// Load existing projects
+		for await (const handle of directoryHandle.values()) {
+			if (handle.kind !== 'directory') continue
 
-		if (loadProjects.length === 0) {
+			await this.addProject(handle, false)
+		}
+
+		if (Object.keys(this.state).length === 0) {
 			// Create a placeholder project (virtual project)
 			await this.createVirtualProject()
-		} else {
-			// Load existing projects
-			for (const projectDir of loadProjects) {
-				await this.addProject(projectDir, false)
-			}
-
-			// All configs have been updated by now, update the projectConfigFormatVersion idb value
-			await idbSet('projectConfigFormatVersion', latestFormatVersion)
 		}
 
 		this.dispatch()
@@ -137,7 +128,7 @@ export class ProjectManager extends Signal<void> {
 				'.bridge',
 			],
 			rpAsBpDependency: false,
-			targetVersion: await getStableFormatVersion(),
+			targetVersion: await getStableFormatVersion(this.app.dataLoader),
 			useLangForManifest: false,
 			uuids: {
 				data: uuid(),
@@ -177,34 +168,9 @@ export class ProjectManager extends Signal<void> {
 
 		if (!this.projectReady.hasFired) this.projectReady.dispatch()
 	}
-	async selectLastProject(app: App) {
+	async selectLastProject() {
 		await this.fired
-		let projectName = await idbGet('selectedProject')
-
-		if (typeof projectName === 'string') {
-			try {
-				await app.fileSystem.getDirectoryHandle(
-					`projects/${projectName}`
-				)
-			} catch {
-				projectName = await this.loadFallback()
-			}
-		} else {
-			projectName = await this.loadFallback()
-		}
-
-		if (typeof projectName === 'string') {
-			await this.selectProject(projectName)
-		} else {
-			throw new Error(`Expected string, found ${typeof projectName}`)
-		}
-	}
-	protected async loadFallback() {
-		await this.fired
-
-		const fallback = Object.keys(this.state)[0]
-		await idbSet('selectedProject', fallback)
-		return fallback
+		await this.selectProject(virtualProjectName)
 	}
 
 	updateAllEditorOptions(options: editor.IEditorConstructionOptions) {
