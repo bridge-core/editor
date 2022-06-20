@@ -81,24 +81,29 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 	protected lCacheFiles: Record<string, ILightningInstruction[] | string> = {}
 	protected lCacheFilesLoaded = new Signal<void>()
 	async loadLightningCache(dataLoader: DataLoader) {
+		const lightningCache = await dataLoader.readJSON(
+			`data/packages/minecraftBedrock/lightningCaches.json`
+		)
+
+		const findCacheFile = (fileName: string) =>
+			Object.entries(lightningCache).find(([filePath]) =>
+				filePath.endsWith(fileName)
+			)
+
 		for (const fileType of this.fileTypes) {
 			if (!fileType.lightningCache) continue
-			const filePath = `data/packages/minecraftBedrock/lightningCache/${fileType.lightningCache}`
 
-			if (fileType.lightningCache.endsWith('.json'))
-				this.lCacheFiles[
-					fileType.lightningCache
-				] = await dataLoader.readJSON(filePath)
-			else if (fileType.lightningCache.endsWith('.js'))
-				this.lCacheFiles[
-					fileType.lightningCache
-				] = await dataLoader
-					.readFile(filePath)
-					.then((file) => file.text())
-			else
+			const [filePath, cacheFile] =
+				findCacheFile(fileType.lightningCache) ?? []
+			if (!filePath) {
 				throw new Error(
-					`Invalid lightningCache file format: ${fileType.lightningCache}`
+					`Lightning cache file "${fileType.lightningCache}" for file type "${fileType.id}" not found`
 				)
+			}
+
+			this.lCacheFiles[fileType.lightningCache] = <
+				string | ILightningInstruction[]
+			>cacheFile
 		}
 		this.lCacheFilesLoaded.dispatch()
 	}
