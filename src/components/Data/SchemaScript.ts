@@ -101,24 +101,22 @@ export class SchemaScript {
 	}
 
 	async runSchemaScripts(localSchemas: any) {
-		const baseDirectory = await this.app.dataLoader.getDirectoryHandle(
-			'data/packages/minecraftBedrock/schemaScript'
+		const schemaScripts = await this.app.dataLoader.readJSON(
+			'data/packages/minecraftBedrock/schemaScripts.json'
 		)
 
-		await iterateDir(baseDirectory, async (fileHandle, filePath) => {
-			const file = await fileHandle.getFile()
-			const fileText = await file.text()
-
-			let schemaScript
-			if (file.name.endsWith('.js')) schemaScript = { script: fileText }
-			else schemaScript = json5.parse(fileText)
+		for (const [scriptPath, script] of Object.entries(schemaScripts)) {
+			let schemaScript: any
+			if (scriptPath.endsWith('.js')) schemaScript = { script }
+			else schemaScript = script
 
 			let scriptResult: any = await this.runScript(
-				filePath,
+				scriptPath,
 				schemaScript.script
 			)
+
 			if (scriptResult) {
-				if (file.name.endsWith('.js')) {
+				if (scriptPath.endsWith('.js')) {
 					if (scriptResult.keep) return
 
 					schemaScript = {
@@ -177,6 +175,6 @@ export class SchemaScript {
 					}
 				}
 			}
-		})
+		}
 	}
 }
