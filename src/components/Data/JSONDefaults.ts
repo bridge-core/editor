@@ -1,6 +1,5 @@
 import { App } from '/@/App'
 import { IMonacoSchemaArrayEntry } from '/@/components/Data/FileType'
-import json5 from 'json5'
 import { languages } from 'monaco-editor'
 import { Project } from '../Projects/Project/Project'
 import { IDisposable } from '/@/types/disposable'
@@ -78,6 +77,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		const packages = await app.dataLoader.readdir('data/packages')
 		task.update(2)
 
+		// Static schemas
 		for (const packageName of packages) {
 			try {
 				await this.loadStaticSchemas(
@@ -94,9 +94,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		loadedGlobalSchemas = true
 		task.update(3)
 
-		this.addSchemas(await this.getDynamicSchemas())
-		task.update(4)
-
+		// Schema scripts
 		await this.runSchemaScripts(app)
 		task.update(5)
 		const tab = this.project.tabSystem?.selectedTab
@@ -110,6 +108,10 @@ export class JsonDefaults extends EventDispatcher<void> {
 				tab.isForeignFile ? undefined : tab.getPath()
 			)
 		}
+
+		// Schemas generated from lightning cache
+		this.addSchemas(await this.getDynamicSchemas())
+		task.update(4)
 
 		this.loadedSchemas = true
 		task.update(6)
@@ -201,7 +203,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 	) {
 		if (!loadedGlobalSchemas) {
 			const file = await fileHandle.getFile()
-			const schemas = json5.parse(await file.text())
+			const schemas = JSON.parse(await file.text())
 
 			for (const uri in schemas) {
 				globalSchemas[uri] = { uri, schema: schemas[uri] }
