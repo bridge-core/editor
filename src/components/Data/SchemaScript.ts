@@ -48,8 +48,9 @@ export class SchemaScript {
 						cacheKey?: string
 					) => {
 						const packIndexer = this.app.project.packIndexer
+						await packIndexer.fired
 
-						return packIndexer.service!.getCacheDataFor(
+						return packIndexer.service.getCacheDataFor(
 							fileType,
 							filePath,
 							cacheKey
@@ -60,8 +61,9 @@ export class SchemaScript {
 						sort?: boolean
 					) => {
 						const packIndexer = this.app.project.packIndexer
+						await packIndexer.fired
 
-						const paths = await packIndexer.service!.getAllFiles(
+						const paths = await packIndexer.service.getAllFiles(
 							fileType,
 							sort
 						)
