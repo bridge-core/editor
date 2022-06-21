@@ -1,6 +1,6 @@
 {
 	"name": "bridge",
-	"version": "2.2.12",
+	"version": "2.2.13",
 	"private": true,
 	"scripts": {
 		"dev": "tsc --project tsconfig.json --noEmit && vite",
