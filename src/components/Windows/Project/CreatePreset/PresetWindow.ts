@@ -206,6 +206,53 @@ export class CreatePresetWindow extends BaseWindow {
 				? App.packType.get(presetPath + 'test.json')?.color ?? 'primary'
 				: 'primary'
 
+		let failureMessage: string | undefined
+		if (requiresMatcher.failures.length > 0) {
+			const failureMessageHeader = app.locales.translate(
+				`windows.createPreset.disabledPreset.${requiresMatcher.failures[0].type}`
+			)
+			let failureMessageDetails
+			switch (requiresMatcher.failures[0].type) {
+				case 'experimentalGameplay':
+					if (manifest.requires.experimentalGameplay)
+						failureMessageDetails = manifest.requires.experimentalGameplay
+							.map((exp) =>
+								app.locales.translate(
+									`experimentalGameplay.${exp}.name`
+								)
+							)
+							.join(', ')
+
+					break
+				case 'packTypes':
+					if (manifest.requires.packTypes)
+						failureMessageDetails = manifest.requires.packTypes
+							.map((packType) =>
+								app.locales.translate(
+									`packType.${packType}.name`
+								)
+							)
+							.join(', ')
+
+					break
+				case 'targetVersion':
+					if (Array.isArray(manifest.requires.targetVersion))
+						failureMessageDetails = manifest.requires.targetVersion.join(
+							' '
+						)
+					else if (
+						manifest.requires.targetVersion &&
+						manifest.requires.targetVersion.min &&
+						manifest.requires.targetVersion.max
+					)
+						failureMessageDetails = `Min: ${manifest.requires.targetVersion.min} | Max: ${manifest.requires.targetVersion.max}`
+					break
+			}
+			failureMessage = failureMessageDetails
+				? `${failureMessageHeader}: ${failureMessageDetails}`
+				: undefined
+		}
+
 		category.addItem(
 			new PresetItem({
 				id,
@@ -213,12 +260,7 @@ export class CreatePresetWindow extends BaseWindow {
 				icon: manifest.icon,
 				color: iconColor,
 				isDisabled: !mayUsePreset,
-				disabledText:
-					requiresMatcher.failures.length > 0
-						? app.locales.translate(
-								`windows.createPreset.disabledPreset.${requiresMatcher.failures[0].type}`
-						  )
-						: undefined,
+				disabledText: failureMessage,
 				resetState,
 			})
 		)
