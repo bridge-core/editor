@@ -167,20 +167,6 @@ export class App {
 				}
 			})
 		}
-
-		// Once the settings are loaded...
-		SettingsWindow.loadedSettings.once((state) => {
-			// ...take a look at whether we are supposed to open the project chooser...
-			if (state?.general?.openProjectChooserOnAppStartup ?? false)
-				this.projectManager.projectReady.once(() => {
-					// ...then open it if necessary
-					if (isUsingFileSystemPolyfill.value) {
-						createVirtualProjectWindow()
-					} else {
-						App.instance.windows.projectChooser.open()
-					}
-				})
-		})
 	}
 
 	static openUrl(url: string, id?: string, openInBrowser = false) {
