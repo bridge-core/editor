@@ -33,3 +33,14 @@ self.MonacoEnvironment = {
 }
 
 App.main(vue)
+
+if ('launchQueue' in window) {
+	;(<any>window).launchQueue.setConsumer(async (launchParams: any) => {
+		if (!launchParams.files.length) return
+		const app = await App.getApp()
+
+		for (const fileHandle of launchParams.files) {
+			await app.fileDropper.importFile(fileHandle)
+		}
+	})
+}

@@ -53,18 +53,6 @@ export class FileDropper {
 			this.onDrop([...(event.dataTransfer?.items ?? [])])
 			this.state.isHovering = false
 		})
-
-		if ('launchQueue' in window) {
-			;(<any>window).launchQueue.setConsumer(
-				async (launchParams: any) => {
-					if (!launchParams.files.length) return
-
-					for (const fileHandle of launchParams.files) {
-						await this.importFile(fileHandle)
-					}
-				}
-			)
-		}
 	}
 
 	protected async onDrop(dataTransferItems: DataTransferItem[]) {
