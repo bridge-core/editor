@@ -216,10 +216,20 @@ export class CreatePresetWindow extends BaseWindow {
 				case 'experimentalGameplay':
 					if (manifest.requires.experimentalGameplay)
 						failureMessageDetails = manifest.requires.experimentalGameplay
-							.map((exp) =>
-								app.locales.translate(
-									`experimentalGameplay.${exp}.name`
-								)
+							.map(
+								(exp) =>
+									`${
+										exp.startsWith('!')
+											? app.locales.translate(
+													'general.no'
+											  )
+											: ''
+									} ${app.locales.translate(
+										`experimentalGameplay.${exp.replace(
+											'!',
+											''
+										)}.name`
+									)}`
 							)
 							.join(', ')
 
@@ -227,10 +237,20 @@ export class CreatePresetWindow extends BaseWindow {
 				case 'packTypes':
 					if (manifest.requires.packTypes)
 						failureMessageDetails = manifest.requires.packTypes
-							.map((packType) =>
-								app.locales.translate(
-									`packType.${packType}.name`
-								)
+							.map(
+								(packType) =>
+									`${
+										packType.startsWith('!')
+											? app.locales.translate(
+													'general.no'
+											  )
+											: ''
+									} ${app.locales.translate(
+										`packType.${packType.replace(
+											'!',
+											''
+										)}.name`
+									)}`
 							)
 							.join(', ')
 
