@@ -21,6 +21,7 @@ import { CreateConfig } from './CreateProject/Files/Config'
 import { getStableFormatVersion } from '../Data/FormatVersions'
 import { v4 as uuid } from 'uuid'
 import { ICreateProjectOptions } from './CreateProject/CreateProject'
+import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -164,7 +165,13 @@ export class ProjectManager extends Signal<void> {
 
 	async selectProject(projectName: string, failGracefully = false) {
 		if (this.state[projectName] === undefined) {
-			if (failGracefully) return
+			if (failGracefully) {
+				new InformationWindow({
+					description:
+						'windows.packExplorer.noProjectView.projectNoLongerExists',
+				})
+				return
+			}
 
 			throw new Error(
 				`Cannot select project "${projectName}" because it no longer exists`
