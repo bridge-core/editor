@@ -57,6 +57,7 @@ export function createCompilerSidebar() {
 		id: 'compiler',
 		displayName: 'sidebar.compiler.name',
 		icon: 'mdi-cogs',
+		disabled: () => !App.instance.hasProject,
 		onClick: async () => {
 			const app = await App.getApp()
 			const compilerWindow = app.windows.compilerWindow
