@@ -212,11 +212,6 @@ export default {
 				// 2. Update actual file system
 				await app.fileSystem.move(oldPath, newPath)
 				await app.project.updateChangedFiles()
-
-				// 3. Remove from recentFiles
-				await app.project.recentFiles.removeFile(
-					`projects/${app.project.name}/${oldPath}`
-				)
 			}
 
 			if (directoryEntry.parent) directoryEntry.parent.sortChildren()

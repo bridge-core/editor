@@ -40,7 +40,6 @@ export interface IProjectData extends IConfigJson {
 export const virtualProjectName = 'bridge-temp-project'
 
 export abstract class Project {
-	public readonly recentFiles!: RecentFiles
 	public readonly tabSystems: readonly [TabSystem, TabSystem]
 	protected _projectData!: Partial<IProjectData>
 	// Not directly assigned so they're not responsive
@@ -107,6 +106,10 @@ export abstract class Project {
 		)
 	}
 	//#endregion
+	get projectPath() {
+		if (this.requiresPermissions) return `projects/${this.name}`
+		return `~local/projects/${this.name}`
+	}
 
 	constructor(
 		protected parent: ProjectManager,
@@ -124,20 +127,11 @@ export abstract class Project {
 		this.extensionLoader = markRaw(
 			new ExtensionLoader(
 				app.fileSystem,
-				`projects/${this.name}/.bridge/extensions`,
-				`projects/${this.name}/.bridge/inactiveExtensions.json`
+				`${this.projectPath}/.bridge/extensions`,
+				`${this.projectPath}/.bridge/inactiveExtensions.json`
 			)
 		)
 		this.typeLoader = markRaw(new TypeLoader(this.app.dataLoader))
-
-		this.recentFiles = <RecentFiles>(
-			reactive(
-				new RecentFiles(
-					app,
-					`projects/${this.name}/.bridge/recentFiles.json`
-				)
-			)
-		)
 
 		this.fileChange.any.on((data) =>
 			App.eventSystem.dispatch('fileChange', data)
@@ -172,7 +166,7 @@ export abstract class Project {
 				? this.app.comMojang.fileSystem.baseDirectory
 				: undefined,
 			{
-				config: `projects/${this.name}/config.json`,
+				config: `${this.projectPath}/config.json`,
 				compilerConfig,
 				mode,
 				projectName: this.name,
@@ -347,10 +341,10 @@ export abstract class Project {
 	}
 
 	absolutePath(filePath: string) {
-		return `projects/${this.name}/${filePath}`
+		return `${this.projectPath}/${filePath}`
 	}
 	relativePath(filePath: string) {
-		return relative(`projects/${this.name}`, filePath)
+		return relative(this.projectPath, filePath)
 	}
 
 	async updateFile(filePath: string) {
@@ -385,7 +379,6 @@ export abstract class Project {
 
 		if (this.watchModeActive) await this.compilerService.unlink(filePath)
 		await this.app.fileSystem.unlink(filePath)
-		await this.recentFiles.removeFile(filePath)
 
 		this.fileUnlinked.dispatch(filePath)
 
@@ -445,7 +438,7 @@ export abstract class Project {
 	}
 	isFileWithinProject(filePath: string) {
 		return (
-			filePath.startsWith(`projects/${this.name}/`) ||
+			filePath.startsWith(`${this.projectPath}/`) ||
 			this.isFileWithinAnyPack(filePath)
 		)
 	}

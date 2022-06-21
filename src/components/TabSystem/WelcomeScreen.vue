@@ -67,30 +67,6 @@ export default {
 		maySwitchProjects: true,
 		hasAlert: true,
 	}),
-	computed: {
-		files() {
-			if (!this.project) return []
-			return this.project.recentFiles.elements
-		},
-		projects() {
-			if (!this.projectManager) return []
-			return this.projectManager.recentProjects.elements.filter(
-				({ path }) => path !== this.projectManager.selectedProject
-			)
-		},
-	},
-	methods: {
-		async openFile(filePath) {
-			const app = await App.getApp()
-			const fileHandle = await app.fileSystem.getFileHandle(filePath)
-			app.project.openFile(fileHandle)
-		},
-		selectProject(projectName) {
-			App.getApp().then((app) =>
-				app.projectManager.selectProject(projectName)
-			)
-		},
-	},
 }
 </script>
 

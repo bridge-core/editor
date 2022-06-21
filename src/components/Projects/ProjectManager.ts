@@ -25,7 +25,6 @@ import { InformationWindow } from '../Windows/Common/Information/InformationWind
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
 	public readonly activatedProject = new EventDispatcher<Project>()
-	public readonly recentProjects!: RecentProjects
 	public readonly state: Record<string, Project> = shallowReactive({})
 	public readonly title = Object.freeze(new Title())
 	protected _selectedProject?: string = undefined
@@ -34,21 +33,6 @@ export class ProjectManager extends Signal<void> {
 	constructor(protected app: App) {
 		super()
 		this.loadProjects()
-
-		this.recentProjects = <RecentProjects>(
-			reactive(new RecentProjects(this.app, `data/recentProjects.json`))
-		)
-
-		// Once possible, scan recentProjects for projects which no longer exist
-		this.once(() => {
-			this.recentProjects.keep(
-				(project) =>
-					Object.values(this.state).findIndex(
-						(currProject) =>
-							currProject.projectData.path === project.path
-					) > -1
-			)
-		})
 	}
 
 	get currentProject() {
@@ -91,7 +75,6 @@ export class ProjectManager extends Signal<void> {
 		del(this.state, projectName)
 		await this.app.fileSystem.unlink(`projects/${projectName}`)
 
-		this.recentProjects.remove(project.projectData)
 		await this.storeProjects(projectName)
 	}
 
@@ -102,6 +85,16 @@ export class ProjectManager extends Signal<void> {
 		const directoryHandle = await this.app.fileSystem.getDirectoryHandle(
 			'projects'
 		)
+		const localDirectoryHandle = await this.app.fileSystem.getDirectoryHandle(
+			'~local/projects'
+		)
+
+		const isBridgeFolderSetup = !(await directoryHandle.isSameEntry(
+			// @ts-ignore
+			localDirectoryHandle
+		))
+		console.log(isBridgeFolderSetup)
+
 		// Load existing projects
 		for await (const handle of directoryHandle.values()) {
 			if (handle.kind !== 'directory') continue
@@ -109,8 +102,17 @@ export class ProjectManager extends Signal<void> {
 			await this.addProject(handle, false, requiresPermissions)
 		}
 
+		if (isBridgeFolderSetup) {
+			// Load local projects as well
+			for await (const handle of localDirectoryHandle.values()) {
+				if (handle.kind !== 'directory') continue
+
+				await this.addProject(handle, false, false)
+			}
+		}
+
 		// Update stored projects
-		if (requiresPermissions) await this.storeProjects(undefined, true)
+		if (isBridgeFolderSetup) await this.storeProjects(undefined, true)
 		// Create a placeholder project (virtual project)
 		else await this.createVirtualProject()
 
@@ -183,8 +185,6 @@ export class ProjectManager extends Signal<void> {
 		App.eventSystem.dispatch('disableValidation', null)
 		this.currentProject?.activate()
 
-		if (this.currentProject)
-			await this.recentProjects.add(this.currentProject.projectData)
 		await idbSet('selectedProject', projectName)
 
 		app.themeManager.updateTheme()

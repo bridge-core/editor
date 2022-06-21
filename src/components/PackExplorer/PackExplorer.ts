@@ -270,9 +270,6 @@ export class PackExplorer extends SidebarContent {
 								// Let the compiler, pack indexer etc. process the renamed file
 								await project.updateFile(newFilePath)
 
-								// Remove from recent files
-								await project.recentFiles.removeFile(path)
-
 								// Refresh pack explorer
 								this.refresh()
 							},

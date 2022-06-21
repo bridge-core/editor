@@ -139,6 +139,7 @@ export default {
 		},
 		async onSelectProject() {
 			const app = await App.getApp()
+			console.log(this.sidebar.currentState)
 			app.projectManager.selectProject(this.sidebar.selected)
 			this.currentWindow.close()
 		},
