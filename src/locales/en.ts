@@ -642,6 +642,7 @@ export default {
 					'It does not look like you have any projects yet!',
 				createLocalProject: 'Create Local Project',
 				chooseBridgeFolder: 'Choose bridge. Folder',
+				accessBridgeFolder: 'Access bridge. Folder',
 				projectNoLongerExists:
 					'It looks like this project no longer exists!',
 			},

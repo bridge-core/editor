@@ -2,19 +2,8 @@
 	<div class="pa-2">
 		<v-progress-linear v-if="isLoading" indeterminate />
 		<div v-else-if="projectData.length === 0">
-			<v-btn
-				@click="selectBridgeFolder"
-				color="primary"
-				class="mb-2"
-				block
-			>
-				<v-icon>mdi-folder-outline</v-icon>
-				{{ t('windows.packExplorer.noProjectView.chooseBridgeFolder') }}
-			</v-btn>
-			<v-btn @click="createProject" color="success" class="mb-2" block>
-				<v-icon>mdi-plus</v-icon>
-				{{ t('windows.packExplorer.noProjectView.createLocalProject') }}
-			</v-btn>
+			<BridgeFolderBtn />
+			<CreateProjectBtn color="success" />
 
 			<p>
 				{{ t('windows.packExplorer.noProjectView.noProjectsFound') }}
@@ -22,10 +11,8 @@
 		</div>
 
 		<template v-else>
-			<v-btn @click="createProject" color="background" class="mb-2" block>
-				<v-icon>mdi-plus</v-icon>
-				{{ t('windows.packExplorer.noProjectView.createLocalProject') }}
-			</v-btn>
+			<BridgeFolderBtn />
+			<CreateProjectBtn />
 
 			<v-row dense>
 				<v-col
@@ -88,13 +75,17 @@
 
 <script>
 import { App } from '/@/App'
-import { TranslationMixin } from '../Mixins/TranslationMixin'
+import { TranslationMixin } from '../../Mixins/TranslationMixin'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
+import CreateProjectBtn from './CreateProjectBtn.vue'
+import BridgeFolderBtn from './BridgeFolderBtn.vue'
 
 export default {
 	mixins: [TranslationMixin],
 	components: {
 		BridgeSheet,
+		CreateProjectBtn,
+		BridgeFolderBtn,
 	},
 	mounted() {
 		this.loadProjects()
@@ -129,16 +120,7 @@ export default {
 
 			this.isLoading = false
 		},
-		async createProject() {
-			const app = await App.getApp()
 
-			app.windows.createProject.open()
-		},
-		async selectBridgeFolder() {
-			const app = await App.getApp()
-
-			await app.setupBridgeFolder()
-		},
 		async selectProject(name, requiresPermissions) {
 			const app = await App.getApp()
 

@@ -15,7 +15,7 @@
 <script>
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import FileDisplayer from './FileDisplayer.vue'
-import NoProjectView from './NoProjectView.vue'
+import NoProjectView from './NoProjectView/NoProjectView.vue'
 
 export default {
 	props: {

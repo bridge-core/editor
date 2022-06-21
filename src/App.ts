@@ -185,12 +185,6 @@ export class App {
 
 		await this.instance.beforeStartUp()
 
-		// Try setting up the file system
-		// const fileHandle = await this.fileSystemSetup.setupFileSystem(
-		// 	this.instance
-		// )
-		// if (!fileHandle) return this.instance.windows.loadingWindow.close()
-
 		InitialSetup.ready.dispatch()
 		this.instance.fileSystem.setup(await navigator.storage.getDirectory())
 		await this.instance.fileSystem.unlink(`projects/${virtualProjectName}`)
@@ -298,12 +292,13 @@ export class App {
 		console.timeEnd('[APP] startUp()')
 	}
 
-	async setupBridgeFolder() {
+	public readonly bridgeFolderSetup = new Signal<void>()
+	async setupBridgeFolder(forceReselect = false) {
 		let fileHandle = await get<AnyDirectoryHandle | undefined>(
 			'bridgeBaseDir'
 		)
 
-		if (fileHandle) {
+		if (fileHandle && !forceReselect) {
 			const permissionState = await fileHandle.requestPermission({
 				mode: 'readwrite',
 			})
@@ -321,6 +316,7 @@ export class App {
 		}
 
 		this.fileSystem.setup(fileHandle)
+		this.bridgeFolderSetup.dispatch()
 		await this.projectManager.loadProjects(true)
 
 		return true
