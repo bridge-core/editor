@@ -558,9 +558,9 @@ export default {
 			showAllPresets: 'Show all presets',
 			disabledPreset: {
 				experimentalGameplay:
-					'Required experimental gameplay toggle(s) not active',
-				packTypes: 'Required pack(s) missing within project',
-				targetVersion: 'Required target version not specified',
+					'Required experimental gameplay toggle condition(s) not met',
+				packTypes: 'Required pack condition(s) not met',
+				targetVersion: 'Required target version not met',
 			},
 		},
 		deleteProject: {
