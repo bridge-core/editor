@@ -4,6 +4,9 @@ import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
 import { basename, dirname } from '/@/utils/path'
 import { FileSystem } from '../FileSystem/FileSystem'
 import { zipSize } from '/@/utils/app/dataPackage'
+import { supportsIdleCallback, whenIdle } from '/@/utils/whenIdle'
+import { get, set } from 'idb-keyval'
+import { BaseVirtualHandle } from '../FileSystem/Virtual/Handle'
 
 export class DataLoader extends FileSystem {
 	_virtualFileSystem?: VirtualDirectoryHandle
@@ -14,13 +17,52 @@ export class DataLoader extends FileSystem {
 		}
 		return this._virtualFileSystem
 	}
-
-	constructor(clearDB = false) {
+	constructor(protected isMainLoader = false) {
 		super()
-		this.loadData(clearDB)
 	}
 
-	async loadData(clearDB = false) {
+	async loadData(forceDataDownload = false) {
+		if (this.hasFired) {
+			console.warn(
+				`This dataLoader instance already loaded data. You called loadData() twice.`
+			)
+			return
+		}
+
+		let savedAllDataInIdb = await get<boolean | undefined>(
+			'savedAllDataInIdb'
+		)
+		if (forceDataDownload) {
+			savedAllDataInIdb = false
+			await set('savedAllDataInIdb', false)
+		}
+
+		if (this.isMainLoader)
+			console.log(
+				savedAllDataInIdb
+					? '[APP] Data saved; restoring from cache...'
+					: '[APP] Data not saved; fetching now...'
+			)
+
+		console.time('[App] Data')
+		const mayClearDb = this.isMainLoader && !savedAllDataInIdb
+
+		// Create virtual filesystem
+		this._virtualFileSystem = new VirtualDirectoryHandle(
+			null,
+			'bridgeFolder',
+			savedAllDataInIdb ? undefined : new Map(),
+			mayClearDb
+		)
+		await this._virtualFileSystem.setupDone.fired
+
+		// All current data is already downloaded & saved in IDB, no need to do it again
+		if (savedAllDataInIdb) {
+			this.setup(this._virtualFileSystem)
+			console.timeEnd('[App] Data')
+			return
+		}
+
 		// Read packages.zip file
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
 			response.arrayBuffer()
@@ -39,15 +81,6 @@ export class DataLoader extends FileSystem {
 			})
 		)
 
-		// Create virtual filesystem
-		this._virtualFileSystem = new VirtualDirectoryHandle(
-			null,
-			'bridgeFolder',
-			new Map(),
-			clearDB
-		)
-		await this._virtualFileSystem.setupDone.fired
-
 		const defaultHandle = await this._virtualFileSystem.getDirectoryHandle(
 			'data',
 			{ create: true }
@@ -55,6 +88,8 @@ export class DataLoader extends FileSystem {
 		const folders: Record<string, VirtualDirectoryHandle> = {
 			'.': defaultHandle,
 		}
+
+		const inMemoryFiles = []
 
 		for (const path in unzipped) {
 			const name = basename(path)
@@ -69,13 +104,37 @@ export class DataLoader extends FileSystem {
 				folders[path.slice(0, -1)] = handle
 			} else {
 				// Current entry is a file
-				await folders[parentDir].getFileHandle(name, {
-					create: true,
-					initialData: unzipped[path],
-				})
+				const fileHandle = await folders[parentDir].getFileHandle(
+					name,
+					{
+						create: true,
+						initialData: unzipped[path],
+					}
+				)
+
+				if (fileHandle.isFileStoredInMemory)
+					inMemoryFiles.push(fileHandle)
 			}
 		}
 
 		this.setup(this._virtualFileSystem)
+		console.timeEnd('[App] Data')
+
+		if (this.isMainLoader && supportsIdleCallback && !forceDataDownload) {
+			const allMemoryHandles: BaseVirtualHandle[] = [
+				...inMemoryFiles,
+				...Object.values(folders),
+			]
+			setTimeout(() => {
+				Promise.all(
+					allMemoryHandles.map((fileHandle) =>
+						whenIdle(() => fileHandle.moveToIdb())
+					)
+				).then(async () => {
+					console.log('[App] All data saved')
+					await set('savedAllDataInIdb', true)
+				})
+			}, 60000)
+		}
 	}
 }

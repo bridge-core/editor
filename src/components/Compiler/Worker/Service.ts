@@ -161,7 +161,7 @@ export class DashService extends EventDispatcher<void> {
 	}
 
 	async setup() {
-		await dataLoader.fired
+		if (!dataLoader.hasFired) await dataLoader.loadData()
 		await this.dash.setup(dataLoader)
 
 		this.isDashFree.dispatch()

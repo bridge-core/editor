@@ -17,7 +17,7 @@ export async function exportAsBrproject() {
 			? app.fileSystem.baseDirectory
 			: app.project.baseDirectory
 	)
-	const savePath = `projects/${app.project.name}/builds/${app.project.name}.brproject`
+	const savePath = `${app.project.projectPath}/builds/${app.project.name}.brproject`
 
 	try {
 		await saveOrDownload(

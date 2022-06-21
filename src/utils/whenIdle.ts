@@ -5,6 +5,8 @@ declare const requestIdleCallback:
 	| undefined
 declare const cancelIdleCallback: ((handle: number) => void) | undefined
 
+export const supportsIdleCallback = typeof requestIdleCallback === 'function'
+
 export function whenIdle(cb: () => Promise<void> | void) {
 	return new Promise<void>(async (resolve) => {
 		if (typeof requestIdleCallback === 'function') {

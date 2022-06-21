@@ -234,7 +234,7 @@ export class CompilerWindow extends BaseWindow {
 
 					const service = await project.createDashService(
 						'production',
-						`projects/${project.name}/.bridge/compiler/${entry.name}`
+						`${project.projectPath}/.bridge/compiler/${entry.name}`
 					)
 					await service.setup()
 					await service.build()

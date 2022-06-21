@@ -2,10 +2,9 @@
 	<v-alert
 		v-if="title"
 		:value="!!title"
-		width="100%"
 		class="mt-2 mb-8 pa-3"
 		color="purple"
-		:style="`color: ${textColor}`"
+		:style="`color: ${textColor}; width: calc(100% - 8px); position: absolute; top: 0; left: 0;`"
 		border="bottom"
 		rounded="lg"
 	>

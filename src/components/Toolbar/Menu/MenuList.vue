@@ -19,6 +19,7 @@
 						dense
 						v-on="item.type === 'category' ? on : undefined"
 						@click="onClick(item)"
+						:disabled="item.isDisabled"
 					>
 						<v-list-item-icon v-if="item.icon">
 							<v-icon color="accent" small>{{

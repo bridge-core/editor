@@ -17,6 +17,7 @@ export abstract class SidebarContent {
 				? action.unselect()
 				: undefined
 		)
+		this.selectedAction = undefined
 	}
 	getSelectedAction() {
 		return this.actions?.find(

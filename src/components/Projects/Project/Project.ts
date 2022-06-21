@@ -37,8 +37,9 @@ export interface IProjectData extends IConfigJson {
 	contains: IPackData[]
 }
 
+export const virtualProjectName = 'bridge-temp-project'
+
 export abstract class Project {
-	public readonly recentFiles!: RecentFiles
 	public readonly tabSystems: readonly [TabSystem, TabSystem]
 	protected _projectData!: Partial<IProjectData>
 	// Not directly assigned so they're not responsive
@@ -49,6 +50,12 @@ export abstract class Project {
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 
+	/**
+	 * A virtual project is a project with the exact name of "virtualProjectName"
+	 * We use it as a placeholder project to skip the previously mandatory bridge folder selection dialog
+	 */
+	public readonly isVirtualProject: boolean
+	public readonly requiresPermissions: boolean
 	public readonly config: ProjectConfig
 	public readonly fileTypeLibrary: FileTypeLibrary
 	public readonly extensionLoader: ExtensionLoader
@@ -91,34 +98,42 @@ export abstract class Project {
 
 		return this._compilerService
 	}
+	protected get watchModeActive() {
+		// Only update compilation results if the watch mode setting is active and the current project is not a virtual project
+		return (
+			(settingsState.compiler?.watchModeActive ?? true) &&
+			!this.isVirtualProject
+		)
+	}
 	//#endregion
+	get projectPath() {
+		if (this.requiresPermissions) return `projects/${this.name}`
+		return `~local/projects/${this.name}`
+	}
 
 	constructor(
 		protected parent: ProjectManager,
 		public readonly app: App,
-		protected _baseDirectory: AnyDirectoryHandle
+		protected _baseDirectory: AnyDirectoryHandle,
+		{ requiresPermissions }: { requiresPermissions?: boolean } = {}
 	) {
+		this.isVirtualProject = virtualProjectName === this.name
+		this.requiresPermissions = requiresPermissions ?? false
+
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
-		this.config = markRaw(new ProjectConfig(this._fileSystem, this))
+		this.config = markRaw(
+			new ProjectConfig(this._fileSystem, this.projectPath, this)
+		)
 		this.fileTypeLibrary = markRaw(new FileTypeLibrary(this.config))
 		this.packIndexer = markRaw(new PackIndexer(this, _baseDirectory))
 		this.extensionLoader = markRaw(
 			new ExtensionLoader(
 				app.fileSystem,
-				`projects/${this.name}/.bridge/extensions`,
-				`projects/${this.name}/.bridge/inactiveExtensions.json`
+				`${this.projectPath}/.bridge/extensions`,
+				`${this.projectPath}/.bridge/inactiveExtensions.json`
 			)
 		)
 		this.typeLoader = markRaw(new TypeLoader(this.app.dataLoader))
-
-		this.recentFiles = <RecentFiles>(
-			reactive(
-				new RecentFiles(
-					app,
-					`projects/${this.name}/.bridge/recentFiles.json`
-				)
-			)
-		)
 
 		this.fileChange.any.on((data) =>
 			App.eventSystem.dispatch('fileChange', data)
@@ -153,7 +168,7 @@ export abstract class Project {
 				? this.app.comMojang.fileSystem.baseDirectory
 				: undefined,
 			{
-				config: `projects/${this.name}/config.json`,
+				config: `${this.projectPath}/config.json`,
 				compilerConfig,
 				mode,
 				projectName: this.name,
@@ -215,8 +230,10 @@ export abstract class Project {
 		])
 		const [changedFiles, deletedFiles] = await this.packIndexer.fired
 
+		// Only recompile changed files if the setting is active and the project is not a virtual project
 		const autoFetchChangedFiles =
-			settingsState.compiler?.autoFetchChangedFiles ?? true
+			(settingsState.compiler?.autoFetchChangedFiles ?? true) &&
+			!this.isVirtualProject
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
@@ -326,10 +343,10 @@ export abstract class Project {
 	}
 
 	absolutePath(filePath: string) {
-		return `projects/${this.name}/${filePath}`
+		return `${this.projectPath}/${filePath}`
 	}
 	relativePath(filePath: string) {
-		return relative(`projects/${this.name}`, filePath)
+		return relative(this.projectPath, filePath)
 	}
 
 	async updateFile(filePath: string) {
@@ -342,11 +359,9 @@ export abstract class Project {
 			return
 		}
 
-		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
-
 		await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			watchModeActive
+			this.watchModeActive
 				? this.compilerService.updateFiles([filePath])
 				: Promise.resolve(),
 		])
@@ -356,20 +371,16 @@ export abstract class Project {
 	async updateFiles(filePaths: string[]) {
 		await this.packIndexer.updateFiles(filePaths)
 
-		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
-
-		if (watchModeActive) await this.compilerService.updateFiles(filePaths)
+		if (this.watchModeActive)
+			await this.compilerService.updateFiles(filePaths)
 
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 	async unlinkFile(filePath: string) {
 		await this.packIndexer.unlink(filePath)
 
-		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
-
-		if (watchModeActive) await this.compilerService.unlink(filePath)
+		if (this.watchModeActive) await this.compilerService.unlink(filePath)
 		await this.app.fileSystem.unlink(filePath)
-		await this.recentFiles.removeFile(filePath)
 
 		this.fileUnlinked.dispatch(filePath)
 
@@ -429,7 +440,7 @@ export abstract class Project {
 	}
 	isFileWithinProject(filePath: string) {
 		return (
-			filePath.startsWith(`projects/${this.name}/`) ||
+			filePath.startsWith(`${this.projectPath}/`) ||
 			this.isFileWithinAnyPack(filePath)
 		)
 	}

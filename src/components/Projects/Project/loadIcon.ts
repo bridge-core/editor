@@ -21,4 +21,10 @@ export async function loadIcon(project: Project, fileSystem: FileSystem) {
 			fileSystem
 		)
 	} catch {}
+	try {
+		return await loadAsDataURL(
+			project.config.resolvePackPath('worldTemplate', 'pack_icon.png'),
+			fileSystem
+		)
+	} catch {}
 }

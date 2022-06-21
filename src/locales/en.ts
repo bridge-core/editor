@@ -390,14 +390,6 @@ export default {
 			updateExtensions: 'Update All Extensions',
 		},
 	},
-	// Welcome Screen
-	welcome: {
-		title: 'Welcome to bridge.',
-		subtitle: 'Creating Minecraft addons has never been more convenient!',
-		quickActions: 'Quick Actions',
-		recentFiles: 'Recent Files',
-		recentProjects: 'Recent Projects',
-	},
 	// Experimental gameplay toggles
 	experimentalGameplay: {
 		cavesAndCliffs: {
@@ -587,6 +579,12 @@ export default {
 			title: 'Choose Project',
 			description: 'Select the currently active project',
 			searchProjects: 'Search projects...',
+			loadAllProjects: 'Load All',
+			localProject: {
+				name: 'Local Project',
+				description:
+					'Local projects cannot be accessed outside of bridge.',
+			},
 			newProject: {
 				name: 'New Project',
 				description: 'Create a new bridge. project.',
@@ -644,6 +642,15 @@ export default {
 			refresh: {
 				name: 'Refresh Project',
 				description: 'Fetch the current project for newly added files',
+			},
+			noProjectView: {
+				noProjectsFound:
+					'It does not look like you have any projects yet!',
+				createLocalProject: 'Create Local Project',
+				chooseBridgeFolder: 'Choose bridge. Folder',
+				accessBridgeFolder: 'Access bridge. Folder',
+				projectNoLongerExists:
+					'It looks like this project no longer exists!',
 			},
 			restartWatchMode: {
 				name: 'Restart Watch Mode',
@@ -820,11 +827,6 @@ export default {
 					name: 'Select Root Folder',
 					description: 'Choose the main folder bridge. operates on',
 				},
-				openProjectChooserOnAppStartup: {
-					name: 'Open Project Chooser',
-					description:
-						'Automatically open the project chooser upon starting bridge.',
-				},
 			},
 			developer: {
 				name: 'Developer',
@@ -836,6 +838,11 @@ export default {
 				devMode: {
 					name: 'Developer Mode',
 					description: 'Enable the developer mode for this app',
+				},
+				forceDataDownload: {
+					name: 'Force Data Download',
+					description:
+						'Ignore the cached app data and instead download the latest data',
 				},
 			},
 			actions: {
@@ -1086,7 +1093,7 @@ export default {
 			comMojang: {
 				name: 'com.mojang Folder',
 				description:
-					'Now drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.',
+					'Drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.',
 				extraDescription: 'Drag your com.mojang folder onto bridge.',
 			},
 			editorType: {

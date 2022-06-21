@@ -21,7 +21,11 @@ export class LightningStore {
 	protected fs: FileSystem
 	protected _visitedFiles = 0
 	protected _totalFiles = 0
-	constructor(fs: FileSystem, protected fileType: FileTypeLibrary) {
+	constructor(
+		fs: FileSystem,
+		protected fileType: FileTypeLibrary,
+		protected projectPath: string
+	) {
 		this.fs = fs
 	}
 
@@ -57,7 +61,7 @@ export class LightningStore {
 			loadStore.shift()
 		}
 
-		const projectPrefix = `projects/${this.fs.baseDirectory.name}`
+		const projectPrefix = this.projectPath
 
 		let currentFileType = 'unknown'
 		for (const definition of loadStore) {

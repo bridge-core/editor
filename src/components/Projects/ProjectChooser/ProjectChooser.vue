@@ -13,29 +13,54 @@
 	>
 		<template #sidebar>
 			<v-text-field
-				class="pt-2"
+				class="pt-2 mb-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.projectChooser.searchProjects')"
+				hide-details
 				autofocus
 				v-model="sidebar._filter"
 				outlined
 				dense
 			/>
+			<v-btn
+				v-if="showLoadAllButton"
+				:loading="showLoadAllButton === 'isLoading'"
+				@click="onLoadAllProjects"
+				class="mb-2"
+				block
+				color="primary"
+			>
+				<v-icon class="mr-1">mdi-folder-open-outline</v-icon>
+				{{ t('windows.projectChooser.loadAllProjects') }}
+			</v-btn>
 		</template>
 		<template #default>
 			<div class="d-flex align-center mb-4 rounded-lg content-area pa-4">
-				<img
-					class="mr-2 project-logo rounded-lg"
-					height="64"
-					:src="sidebar.currentState.imgSrc"
-					draggable="false"
-				/>
-				<div>
-					<h1 style="overflow-wrap: anywhere">
-						{{ sidebar.currentState.name }}
-					</h1>
-					<h2 class="subheader">by {{ authors }}</h2>
+				<div class="d-flex align-center">
+					<img
+						class="mr-2 project-logo rounded-lg"
+						height="64"
+						:src="sidebar.currentState.imgSrc"
+						draggable="false"
+					/>
+					<div>
+						<h1 style="overflow-wrap: anywhere">
+							{{ sidebar.currentState.name }}
+						</h1>
+						<h2 class="subheader">by {{ authors }}</h2>
+					</div>
 				</div>
+
+				<v-spacer />
+
+				<BridgeSheet
+					v-if="sidebar.currentState.isLocalProject"
+					dark
+					class="d-flex flex-column pa-2"
+				>
+					<v-icon color="primary">mdi-lock</v-icon>
+					{{ t('windows.projectChooser.localProject.name') }}
+				</BridgeSheet>
 			</div>
 			<v-row class="mb-6" dense>
 				<v-col
@@ -103,6 +128,7 @@
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 import ExperimentalGameplay from '/@/components/Projects/CreateProject/ExperimentalGameplay.vue'
+import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
@@ -128,6 +154,7 @@ export default {
 		SidebarWindow,
 		PackTypeViewer,
 		ExperimentalGameplay,
+		BridgeSheet,
 	},
 	props: ['currentWindow'],
 	data() {
@@ -139,6 +166,7 @@ export default {
 		},
 		async onSelectProject() {
 			const app = await App.getApp()
+
 			app.projectManager.selectProject(this.sidebar.selected)
 			this.currentWindow.close()
 		},
@@ -149,14 +177,19 @@ export default {
 				cancelText: 'general.cancel',
 				onConfirm: async () => {
 					const app = await App.getApp()
-					await app.projectManager.removeProject(projectName)
-					await this.currentWindow.loadProjects()
+					await app.projectManager.removeProjectWithName(projectName)
+
+					if (app.hasNoProjects) this.onClose()
+					else await this.currentWindow.loadProjects()
 				},
 			})
 		},
 		onAddPack() {
 			addPack()
 			this.currentWindow.close()
+		},
+		onLoadAllProjects() {
+			this.currentWindow.loadAllProjects()
 		},
 	},
 	computed: {

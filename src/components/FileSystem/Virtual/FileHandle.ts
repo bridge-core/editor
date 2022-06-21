@@ -21,6 +21,19 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 
 	protected fileData?: Uint8Array
 
+	get isFileStoredInMemory() {
+		return this.fileData !== undefined
+	}
+	async moveToIdb() {
+		if (!this.fileData)
+			throw new Error(
+				`No file data to move to IDB for file "${this.name}"`
+			)
+
+		this.inMemory = false
+		await this.updateIdb(this.fileData)
+	}
+
 	constructor(
 		parent: VirtualDirectoryHandle | null,
 		name: string,
@@ -38,8 +51,10 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		const isDataFile = this.path.join('/').startsWith('data/packages')
 
 		// This prevents an IndexedDB overload by saving too many small data files to the DB
-		if (this.inMemory || (isDataFile && fileData.length < 10_000))
+		if (this.inMemory || (isDataFile && fileData.length < 10_000)) {
+			this.inMemory = true
 			return this.setupDone.dispatch()
+		}
 
 		// We only need to write data files from the main thread, web workers can just load the already written data from the main thread
 		if (!isDataFile || globalThis.document) await this.updateIdb(fileData)
@@ -55,7 +70,7 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		if (this.fileData) return this.fileData
 
 		let storedData = await get(this.idbKey)
-		if (!storedData) {
+		if (storedData === undefined) {
 			console.log(this.parent)
 			throw new Error(`File not found: "${this.path.join('/')}"`)
 		}

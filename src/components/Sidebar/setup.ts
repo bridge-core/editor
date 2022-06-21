@@ -5,7 +5,6 @@ import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { SidebarState } from './state'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
-import { ref } from '@vue/composition-api'
 import { createCompilerSidebar } from '../Compiler/Sidebar/create'
 
 export async function setupSidebar() {
@@ -13,6 +12,7 @@ export async function setupSidebar() {
 		id: 'projects',
 		displayName: 'windows.projectChooser.title',
 		icon: 'mdi-view-dashboard-outline',
+		disabled: () => App.instance.hasNoProjects,
 		onClick: async () => {
 			if (isUsingFileSystemPolyfill.value) {
 				createVirtualProjectWindow()
@@ -37,6 +37,7 @@ export async function setupSidebar() {
 		id: 'fileSearch',
 		displayName: 'findAndReplace.name',
 		icon: 'mdi-file-search-outline',
+		disabled: () => App.instance.isNoProjectSelected,
 		onClick: async () => {
 			const app = await App.getApp()
 			app.project.tabSystem?.add(

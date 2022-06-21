@@ -35,6 +35,7 @@ export class PackExplorer extends SidebarContent {
 				isDismissible: true,
 		  })
 		: undefined
+	showNoProjectView = false
 
 	constructor() {
 		super()
@@ -42,19 +43,39 @@ export class PackExplorer extends SidebarContent {
 		App.eventSystem.on('projectChanged', () => this.setup())
 		App.eventSystem.on('fileAdded', () => this.refresh())
 
-		App.getApp().then((app) => {
-			if (!app.mobile.isCurrentDevice())
-				this.headerSlot = ProjectDisplayComponent
+		const updateHeaderSlot = async () => {
+			const app = await App.getApp()
+			await app.projectManager.projectReady.fired
 
-			app.mobile.change.on((isMobile) => {
-				this.headerSlot = isMobile ? undefined : ProjectDisplayComponent
-			})
+			if (app.mobile.isCurrentDevice() || app.isNoProjectSelected)
+				this.headerSlot = undefined
+			else this.headerSlot = ProjectDisplayComponent
+		}
+
+		App.getApp().then((app) => {
+			updateHeaderSlot()
+
+			app.mobile.change.on(() => updateHeaderSlot())
 		})
+
+		App.eventSystem.on('projectChanged', () => updateHeaderSlot())
+
 		this.headerHeight = '60px'
 	}
 
 	async setup() {
 		const app = await App.getApp()
+		await app.projectManager.projectReady.fired
+
+		this.actions = []
+		// Show select bridge. folder & create project buttons
+		if (app.isNoProjectSelected) {
+			this.showNoProjectView = true
+
+			return
+		} else {
+			this.showNoProjectView = false
+		}
 
 		this.unselectAllActions()
 		for (const pack of app.project.projectData.contains ?? []) {
@@ -248,9 +269,6 @@ export class PackExplorer extends SidebarContent {
 
 								// Let the compiler, pack indexer etc. process the renamed file
 								await project.updateFile(newFilePath)
-
-								// Remove from recent files
-								await project.recentFiles.removeFile(path)
 
 								// Refresh pack explorer
 								this.refresh()
@@ -621,7 +639,7 @@ export class PackExplorer extends SidebarContent {
 
 					// Open project config
 					await project.tabSystem?.openPath(
-						`projects/${project.name}/config.json`
+						`${project.projectPath}/config.json`
 					)
 				},
 			},

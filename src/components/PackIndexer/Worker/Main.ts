@@ -27,6 +27,7 @@ export interface IPackIndexerOptions {
 	pluginFileTypes: IFileType[]
 	disablePackSpider: boolean
 	noFullLightningCacheRefresh: boolean
+	projectPath: string
 }
 
 const dataLoader: DataLoader = new DataLoader()
@@ -53,14 +54,18 @@ export class PackIndexerService extends TaskService<
 
 		this.fileSystem = new FileSystem(baseDirectory)
 		this.projectFileSystem = new FileSystem(projectDirectory)
-		this.config = new ProjectConfig(new FileSystem(projectDirectory))
+		this.config = new ProjectConfig(
+			this.projectFileSystem,
+			options.projectPath
+		)
 		this.fileType = new FileTypeLibrary(this.config)
 		this.packType = new PackTypeLibrary(this.config)
 
 		this.globalFileSystem = new FileSystem(baseDirectory)
 		this.lightningStore = new LightningStore(
 			this.projectFileSystem,
-			this.fileType
+			this.fileType,
+			options.projectPath
 		)
 		this.packSpider = new PackSpider(this, this.lightningStore)
 		this.lightningCache = new LightningCache(this, this.lightningStore)
@@ -78,6 +83,7 @@ export class PackIndexerService extends TaskService<
 	async onStart(forceRefresh: boolean) {
 		console.time('[WORKER] SETUP')
 		this.lightningStore.reset()
+		if (!dataLoader.hasFired) await dataLoader.loadData()
 
 		await Promise.all([
 			this.fileType.setup(dataLoader),

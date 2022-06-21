@@ -18,26 +18,28 @@ export async function loadPacks(app: App, project: Project) {
 
 	const packs: IPackData[] = []
 
-	for (const packId of availablePackIds) {
-		const packPath = project.config.resolvePackPath(packId)
-		if (!(await app.fileSystem.directoryExists(packPath))) continue
+	await Promise.allSettled(
+		availablePackIds.map(async (packId) => {
+			const packPath = project.config.resolvePackPath(packId)
+			if (!(await app.fileSystem.directoryExists(packPath))) return
 
-		// Check whether handle is a valid pack
-		const packType = App.packType.getFromId(packId)
-		if (!packType) continue
+			// Check whether handle is a valid pack
+			const packType = App.packType.getFromId(packId)
+			if (!packType) return
 
-		// Load pack manifest
-		let manifest: any = {}
-		try {
-			manifest = await loadManifest(app, packPath)
-		} catch {}
+			// Load pack manifest
+			let manifest: any = {}
+			try {
+				manifest = await loadManifest(app, packPath)
+			} catch {}
 
-		packs.push({
-			...packType,
-			packPath,
-			version: manifest?.header?.version ?? [1, 0, 0],
+			packs.push({
+				...packType,
+				packPath,
+				version: manifest?.header?.version ?? [1, 0, 0],
+			})
 		})
-	}
+	)
 
 	return packs
 }

@@ -1,5 +1,6 @@
 import { App } from '/@/App'
 import { compareVersions } from 'bridge-common-utils'
+import type { DataLoader } from './DataLoader'
 
 interface IFormatVersionDefs {
 	currentStable: string
@@ -36,11 +37,10 @@ export function getLatestFormatVersion() {
 	return getFormatVersions().then((formatVersions) => formatVersions[0])
 }
 
-export async function getStableFormatVersion() {
-	const app = await App.getApp()
-	await app.dataLoader.fired
+export async function getStableFormatVersion(dataLoader: DataLoader) {
+	await dataLoader.fired
 
-	const def: IFormatVersionDefs = await app.dataLoader.readJSON(
+	const def: IFormatVersionDefs = await dataLoader.readJSON(
 		'data/packages/minecraftBedrock/formatVersions.json'
 	)
 

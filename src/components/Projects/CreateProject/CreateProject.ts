@@ -20,6 +20,7 @@ import {
 	getFormatVersions,
 	getStableFormatVersion,
 } from '/@/components/Data/FormatVersions'
+import { Project } from '../Project/Project'
 
 export interface ICreateProjectOptions {
 	author: string | string[]
@@ -102,7 +103,7 @@ export class CreateProjectWindow extends BaseWindow {
 			await app.dataLoader.fired
 			this.availableTargetVersions = await getFormatVersions()
 			// Set default version
-			this.stableVersion = await getStableFormatVersion()
+			this.stableVersion = await getStableFormatVersion(app.dataLoader)
 			this.createOptions.targetVersion = this.stableVersion
 			this.availableTargetVersionsLoading = false
 
@@ -180,8 +181,8 @@ export class CreateProjectWindow extends BaseWindow {
 		}
 
 		// Save previous project name to delete it later
-		let previousProject: string | undefined
-		if (!this.isFirstProject) previousProject = app.project.name
+		let previousProject: Project | undefined
+		if (!this.isFirstProject) previousProject = app.project
 
 		await app.projectManager.addProject(projectDir)
 		await app.extensionLoader.installFilesToCurrentProject()

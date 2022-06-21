@@ -1,21 +1,30 @@
 import { App } from '/@/App'
 import { get as idbGet, set as idbSet } from 'idb-keyval'
-import { shallowReactive, set, del, reactive } from '@vue/composition-api'
+import {
+	shallowReactive,
+	set,
+	del,
+	reactive,
+	computed,
+} from '@vue/composition-api'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { Project } from './Project/Project'
+import { Project, virtualProjectName } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
 import { Title } from '/@/components/Projects/Title'
 import { editor } from 'monaco-editor'
 import { BedrockProject } from './Project/BedrockProject'
-import { InitialSetup } from '../InitialSetup/InitialSetup'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
-import { AnyDirectoryHandle, AnyHandle } from '../FileSystem/Types'
-import { latestFormatVersion } from './Project/Config'
+import { AnyDirectoryHandle } from '../FileSystem/Types'
+import { FileSystem } from '../FileSystem/FileSystem'
+import { CreateConfig } from './CreateProject/Files/Config'
+import { getStableFormatVersion } from '../Data/FormatVersions'
+import { v4 as uuid } from 'uuid'
+import { ICreateProjectOptions } from './CreateProject/CreateProject'
+import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
 	public readonly activatedProject = new EventDispatcher<Project>()
-	public readonly recentProjects!: RecentProjects
 	public readonly state: Record<string, Project> = shallowReactive({})
 	public readonly title = Object.freeze(new Title())
 	protected _selectedProject?: string = undefined
@@ -24,37 +33,31 @@ export class ProjectManager extends Signal<void> {
 	constructor(protected app: App) {
 		super()
 		this.loadProjects()
-
-		this.recentProjects = <RecentProjects>(
-			reactive(new RecentProjects(this.app, `data/recentProjects.json`))
-		)
-
-		// Once possible, scan recentProjects for projects which no longer exist
-		this.once(() => {
-			this.recentProjects.keep(
-				(project) =>
-					Object.values(this.state).findIndex(
-						(currProject) =>
-							currProject.projectData.path === project.path
-					) > -1
-			)
-		})
 	}
 
 	get currentProject() {
-		if (!this.selectedProject) return
+		if (!this.selectedProject) return null
 		return this.state[this.selectedProject]
 	}
 	get selectedProject() {
 		return this._selectedProject
 	}
+	get totalProjects() {
+		return Object.keys(this.state).length
+	}
 
 	async getProjects() {
 		await this.fired
-		return Object.values(this.state)
+		return Object.values(this.state).filter((p) => !p.isVirtualProject)
 	}
-	async addProject(projectDir: AnyDirectoryHandle, isNewProject = true) {
-		const project = new BedrockProject(this, this.app, projectDir)
+	async addProject(
+		projectDir: AnyDirectoryHandle,
+		isNewProject = true,
+		requiresPermissions = false
+	) {
+		const project = new BedrockProject(this, this.app, projectDir, {
+			requiresPermissions,
+		})
 		await project.loadProject()
 
 		set(this.state, project.name, project)
@@ -66,54 +69,119 @@ export class ProjectManager extends Signal<void> {
 
 		return project
 	}
-	async removeProject(projectName: string) {
-		const project = this.state[projectName]
-		if (!project) return
-		del(this.state, projectName)
-		await this.app.fileSystem.unlink(`projects/${projectName}`)
+	async removeProject(project: Project) {
+		if (!this.state[project.name])
+			throw new Error('Project to delete not found')
 
-		this.recentProjects.remove(project.projectData)
+		del(this.state, project.name)
+		await this.app.fileSystem.unlink(project.projectPath)
+
+		await this.storeProjects(project.name)
+	}
+	async removeProjectWithName(projectName: string) {
+		const project = this.state[projectName]
+		if (!project)
+			throw new Error(`Project with name "${projectName}" not found`)
+
+		await this.removeProject(project)
 	}
 
-	protected async loadProjects() {
+	async loadProjects(requiresPermissions = false) {
 		await this.app.fileSystem.fired
 		await this.app.dataLoader.fired
-		await InitialSetup.ready.fired
 
-		let potentialProjects: AnyHandle[] = []
-		try {
-			potentialProjects = await this.app.fileSystem.readdir('projects', {
-				withFileTypes: true,
-			})
-		} catch {}
-
-		const loadProjects = <AnyDirectoryHandle[]>(
-			potentialProjects.filter(({ kind }) => kind === 'directory')
+		const directoryHandle = await this.app.fileSystem.getDirectoryHandle(
+			'projects'
+		)
+		const localDirectoryHandle = await this.app.fileSystem.getDirectoryHandle(
+			'~local/projects'
 		)
 
-		if (loadProjects.length === 0) {
-			// Force creation of new project
-			const createProject = this.app.windows.createProject
-			createProject.open(true)
-			await createProject.fired
-		} else {
-			// Load existing projects
-			for (const projectDir of loadProjects) {
-				await this.addProject(projectDir, false)
-			}
+		const isBridgeFolderSetup = this.app.bridgeFolderSetup.hasFired
 
-			// All configs have been updated by now, update the projectConfigFormatVersion idb value
-			await idbSet('projectConfigFormatVersion', latestFormatVersion)
+		// Load existing projects
+		for await (const handle of directoryHandle.values()) {
+			if (handle.kind !== 'directory') continue
+
+			await this.addProject(handle, false, requiresPermissions)
 		}
+
+		if (isBridgeFolderSetup) {
+			// Load local projects as well
+			for await (const handle of localDirectoryHandle.values()) {
+				if (handle.kind !== 'directory') continue
+
+				await this.addProject(handle, false, false)
+			}
+		}
+
+		// Update stored projects
+		if (isBridgeFolderSetup) await this.storeProjects(undefined, true)
+		// Create a placeholder project (virtual project)
+		else await this.createVirtualProject()
 
 		this.dispatch()
 	}
 
-	async selectProject(projectName: string) {
-		if (this.state[projectName] === undefined)
+	async createVirtualProject() {
+		const handle = await this.app.fileSystem.getDirectoryHandle(
+			`projects/${virtualProjectName}`,
+			{
+				create: true,
+			}
+		)
+		const fs = new FileSystem(handle)
+
+		const createOptions: ICreateProjectOptions = {
+			name: 'bridge',
+			namespace: 'bridge',
+			author: [],
+			description: '',
+			bpAsRpDependency: false,
+			experimentalGameplay: {},
+			icon: null,
+			packs: [
+				'behaviorPack',
+				'resourcePack',
+				'skinPack',
+				'worldTemplate',
+				'.bridge',
+			],
+			rpAsBpDependency: false,
+			targetVersion: await getStableFormatVersion(this.app.dataLoader),
+			useLangForManifest: false,
+			uuids: {
+				data: uuid(),
+				resources: uuid(),
+				skin_pack: uuid(),
+				world_template: uuid(),
+			},
+		}
+
+		await Promise.all(
+			['BP', 'RP', 'WT', 'SP'].map((folder) => fs.mkdir(folder))
+		)
+
+		await new CreateConfig().create(fs, createOptions)
+
+		await this.addProject(handle, false)
+	}
+
+	async selectProject(projectName: string, failGracefully = false) {
+		if (this.state[projectName] === undefined) {
+			if (failGracefully) {
+				new InformationWindow({
+					description:
+						'windows.packExplorer.noProjectView.projectNoLongerExists',
+				})
+				return
+			}
+
 			throw new Error(
 				`Cannot select project "${projectName}" because it no longer exists`
 			)
+		}
+
 		const app = await App.getApp()
 
 		this.currentProject?.deactivate()
@@ -121,43 +189,19 @@ export class ProjectManager extends Signal<void> {
 		App.eventSystem.dispatch('disableValidation', null)
 		this.currentProject?.activate()
 
-		if (this.currentProject)
-			await this.recentProjects.add(this.currentProject.projectData)
 		await idbSet('selectedProject', projectName)
 
 		app.themeManager.updateTheme()
 		App.eventSystem.dispatch('projectChanged', this.currentProject!)
 
+		// Store projects in local storage fs
+		await this.storeProjects()
+
 		if (!this.projectReady.hasFired) this.projectReady.dispatch()
 	}
-	async selectLastProject(app: App) {
+	async selectLastProject() {
 		await this.fired
-		let projectName = await idbGet('selectedProject')
-
-		if (typeof projectName === 'string') {
-			try {
-				await app.fileSystem.getDirectoryHandle(
-					`projects/${projectName}`
-				)
-			} catch {
-				projectName = await this.loadFallback()
-			}
-		} else {
-			projectName = await this.loadFallback()
-		}
-
-		if (typeof projectName === 'string') {
-			await this.selectProject(projectName)
-		} else {
-			throw new Error(`Expected string, found ${typeof projectName}`)
-		}
-	}
-	protected async loadFallback() {
-		await this.fired
-
-		const fallback = Object.keys(this.state)[0]
-		await idbSet('selectedProject', fallback)
-		return fallback
+		await this.selectProject(virtualProjectName)
 	}
 
 	updateAllEditorOptions(options: editor.IEditorConstructionOptions) {
@@ -189,5 +233,39 @@ export class ProjectManager extends Signal<void> {
 	async recompileAll(forceStartIfActive = true) {
 		for (const project of Object.values(this.state))
 			await project.recompile(forceStartIfActive)
+	}
+
+	async loadAvailableProjects(exceptProject?: string) {
+		return (
+			await this.app.fileSystem.readJSON('~local/data/projects.json')
+		).filter(
+			(project: any) => !exceptProject || project.name !== exceptProject
+		)
+	}
+	async storeProjects(exceptProject?: string, forceRefresh = false) {
+		let data: {
+			displayName: string
+			name: string
+			icon?: string
+			requiresPermissions: boolean
+		}[] = forceRefresh
+			? []
+			: await this.loadAvailableProjects(exceptProject)
+
+		this.forEachProject((project) => {
+			if (project.isVirtualProject) return
+
+			if (data.find((p) => project.name === p.name)) return
+
+			data.push({
+				name: project.name,
+				displayName: project.config.get().name ?? project.name,
+				icon: project.projectData.imgSrc,
+				requiresPermissions: project.requiresPermissions,
+			})
+		})
+
+		await this.app.fileSystem.writeJSON('~local/data/projects.json', data)
+		App.eventSystem.dispatch('availableProjectsFileChanged', undefined)
 	}
 }

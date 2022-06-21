@@ -32,6 +32,10 @@ export class FileSystem extends Signal<void> {
 		let current = this.baseDirectory
 		const pathArr = path.split(/\\|\//g)
 		if (pathArr[0] === '.') pathArr.shift()
+		if (pathArr[0] === '~local') {
+			current = await navigator.storage.getDirectory()
+			pathArr.shift()
+		}
 
 		for (const folder of pathArr) {
 			try {
