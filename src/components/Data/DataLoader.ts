@@ -7,6 +7,10 @@ import { zipSize } from '/@/utils/app/dataPackage'
 import { supportsIdleCallback, whenIdle } from '/@/utils/whenIdle'
 import { get, set } from 'idb-keyval'
 import { BaseVirtualHandle } from '../FileSystem/Virtual/Handle'
+import {
+	get as getVirtualDirectory,
+	set as setVirtualDirectory,
+} from '/@/components/FileSystem/Virtual/IDB'
 
 export class DataLoader extends FileSystem {
 	_virtualFileSystem?: VirtualDirectoryHandle
@@ -55,6 +59,14 @@ export class DataLoader extends FileSystem {
 			mayClearDb
 		)
 		await this._virtualFileSystem.setupDone.fired
+
+		// bridgeFolder needs to contain 'data' folder
+		// TODO: This way only necessary to save a few users on the unstable nightly build; remove this snippet soon!
+		const bridgeFolder =
+			(await getVirtualDirectory<string[]>('bridgeFolder')) ?? []
+		if (!bridgeFolder.includes('data')) {
+			await setVirtualDirectory('bridgeFolder', [...bridgeFolder, 'data'])
+		}
 
 		// All current data is already downloaded & saved in IDB, no need to do it again
 		if (savedAllDataInIdb) {
@@ -124,6 +136,7 @@ export class DataLoader extends FileSystem {
 			const allMemoryHandles: BaseVirtualHandle[] = [
 				...inMemoryFiles,
 				...Object.values(folders),
+				this._virtualFileSystem,
 			]
 			setTimeout(() => {
 				Promise.all(
@@ -134,7 +147,7 @@ export class DataLoader extends FileSystem {
 					console.log('[App] All data saved')
 					await set('savedAllDataInIdb', true)
 				})
-			}, 60000)
+			}, 60_000)
 		}
 	}
 }
