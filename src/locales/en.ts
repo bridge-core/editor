@@ -579,6 +579,12 @@ export default {
 			title: 'Choose Project',
 			description: 'Select the currently active project',
 			searchProjects: 'Search projects...',
+			loadAllProjects: 'Load All',
+			localProject: {
+				name: 'Local Project',
+				description:
+					'Local projects cannot be accessed outside of bridge.',
+			},
 			newProject: {
 				name: 'New Project',
 				description: 'Create a new bridge. project.',

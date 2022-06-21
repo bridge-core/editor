@@ -132,7 +132,7 @@ export async function importFromMcaddon(
 
 	// Remove old project if browser is using fileSystem polyfill
 	if (isUsingFileSystemPolyfill.value && !isFirstImport)
-		await app.projectManager.removeProject(app.project.name!)
+		await app.projectManager.removeProject(app.project)
 
 	await fs.unlink('import')
 }

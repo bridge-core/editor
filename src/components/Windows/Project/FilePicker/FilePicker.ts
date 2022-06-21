@@ -36,7 +36,7 @@ export class FilePickerWindow extends BaseWindow {
 			this.packFiles = (
 				(await packIndexer.service?.getAllFiles(undefined, true)) ?? []
 			).map((filePath) => ({
-				text: relative(`projects/${app.project.name}`, filePath),
+				text: app.project.relativePath(filePath),
 				value: filePath,
 			}))
 			this.quickScore = markRaw(new QuickScore(this.packFiles))

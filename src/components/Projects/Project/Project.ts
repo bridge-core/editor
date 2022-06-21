@@ -121,7 +121,9 @@ export abstract class Project {
 		this.requiresPermissions = requiresPermissions ?? false
 
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
-		this.config = markRaw(new ProjectConfig(this._fileSystem, this))
+		this.config = markRaw(
+			new ProjectConfig(this._fileSystem, this.projectPath, this)
+		)
 		this.fileTypeLibrary = markRaw(new FileTypeLibrary(this.config))
 		this.packIndexer = markRaw(new PackIndexer(this, _baseDirectory))
 		this.extensionLoader = markRaw(

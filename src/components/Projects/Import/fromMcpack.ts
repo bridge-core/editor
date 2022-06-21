@@ -101,7 +101,7 @@ export async function importFromMcpack(
 
 	if (isUsingFileSystemPolyfill.value && !isFirstImport)
 		// Remove old project if browser is using fileSystem polyfill
-		await app.projectManager.removeProject(app.project.name)
+		await app.projectManager.removeProject(app.project)
 
 	await fs.unlink('import')
 }

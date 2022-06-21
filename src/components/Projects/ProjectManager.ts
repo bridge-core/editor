@@ -69,13 +69,21 @@ export class ProjectManager extends Signal<void> {
 
 		return project
 	}
-	async removeProject(projectName: string) {
-		const project = this.state[projectName]
-		if (!project) return
-		del(this.state, projectName)
-		await this.app.fileSystem.unlink(`projects/${projectName}`)
+	async removeProject(project: Project) {
+		if (!this.state[project.name])
+			throw new Error('Project to delete not found')
 
-		await this.storeProjects(projectName)
+		del(this.state, project.name)
+		await this.app.fileSystem.unlink(project.projectPath)
+
+		await this.storeProjects(project.name)
+	}
+	async removeProjectWithName(projectName: string) {
+		const project = this.state[projectName]
+		if (!project)
+			throw new Error(`Project with name "${projectName}" not found`)
+
+		await this.removeProject(project)
 	}
 
 	async loadProjects(requiresPermissions = false) {
@@ -89,11 +97,7 @@ export class ProjectManager extends Signal<void> {
 			'~local/projects'
 		)
 
-		const isBridgeFolderSetup = !(await directoryHandle.isSameEntry(
-			// @ts-ignore
-			localDirectoryHandle
-		))
-		console.log(isBridgeFolderSetup)
+		const isBridgeFolderSetup = this.app.bridgeFolderSetup.hasFired
 
 		// Load existing projects
 		for await (const handle of directoryHandle.values()) {

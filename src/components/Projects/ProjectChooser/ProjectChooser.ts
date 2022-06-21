@@ -7,6 +7,7 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { v4 as uuid } from 'uuid'
 import { IExperimentalToggle } from '../CreateProject/CreateProject'
 import { importNewProject } from '../Import/ImportNew'
+import { markRaw } from '@vue/composition-api'
 
 export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
@@ -14,6 +15,7 @@ export class ProjectChooserWindow extends BaseWindow {
 	protected experimentalToggles: (IExperimentalToggle & {
 		isActive: boolean
 	})[] = []
+	protected showLoadAllButton: boolean | 'isLoading' = false
 
 	constructor() {
 		super(ProjectChooserComponent, false, true)
@@ -40,6 +42,23 @@ export class ProjectChooserWindow extends BaseWindow {
 				},
 			})
 		)
+
+		App.getApp().then((app) => {
+			this.showLoadAllButton = !app.bridgeFolderSetup.hasFired
+		})
+	}
+
+	async loadAllProjects() {
+		this.showLoadAllButton = 'isLoading'
+		const app = await App.getApp()
+
+		const wasSuccessful = await app.setupBridgeFolder()
+		if (wasSuccessful) {
+			await this.loadProjects()
+			this.showLoadAllButton = false
+		} else {
+			this.showLoadAllButton = true
+		}
 	}
 
 	addProject(id: string, name: string, project: Partial<IProjectData>) {

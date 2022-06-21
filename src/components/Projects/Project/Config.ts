@@ -22,8 +22,12 @@ export { defaultPackPaths } from 'mc-project-core'
 export const latestFormatVersion = 1
 
 export class ProjectConfig extends BaseProjectConfig {
-	constructor(protected fileSystem: FileSystem, protected project?: Project) {
-		super(`projects/${fileSystem.baseDirectory.name}`)
+	constructor(
+		protected fileSystem: FileSystem,
+		projectPath: string,
+		protected project?: Project
+	) {
+		super(projectPath)
 
 		if (project) {
 			project.fileSave.on(

@@ -144,6 +144,9 @@ export default {
 		entry: Object,
 		startPath: Array,
 	},
+	mounted() {
+		console.log(this.directoryEntry)
+	},
 
 	setup(_, { emit }) {
 		const isHoveringBtn = ref(false)

@@ -639,7 +639,7 @@ export class PackExplorer extends SidebarContent {
 
 					// Open project config
 					await project.tabSystem?.openPath(
-						`projects/${project.name}/config.json`
+						`${project.projectPath}/config.json`
 					)
 				},
 			},

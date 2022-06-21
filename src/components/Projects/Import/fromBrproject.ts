@@ -6,6 +6,7 @@ import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { App } from '/@/App'
 import { basename } from '/@/utils/path'
+import { Project } from '../Project/Project'
 
 export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
@@ -79,8 +80,8 @@ export async function importFromBrproject(
 	await fs.move(importFrom, importProject)
 
 	// Get current project name
-	let currentProjectName: string | undefined
-	if (!isFirstImport) currentProjectName = app.project.name
+	let currentProject: Project | undefined
+	if (!isFirstImport) currentProject = app.project
 
 	// Add new project
 	await app.projectManager.addProject(
@@ -90,7 +91,7 @@ export async function importFromBrproject(
 
 	// Remove old project if browser is using fileSystem polyfill
 	if (isUsingFileSystemPolyfill.value && !isFirstImport)
-		await app.projectManager.removeProject(currentProjectName!)
+		await app.projectManager.removeProject(currentProject!)
 
 	await fs.unlink('import')
 }
