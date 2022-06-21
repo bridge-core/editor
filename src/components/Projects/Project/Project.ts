@@ -56,6 +56,7 @@ export abstract class Project {
 	 * We use it as a placeholder project to skip the previously mandatory bridge folder selection dialog
 	 */
 	public readonly isVirtualProject: boolean
+	public readonly requiresPermissions: boolean
 	public readonly config: ProjectConfig
 	public readonly fileTypeLibrary: FileTypeLibrary
 	public readonly extensionLoader: ExtensionLoader
@@ -110,9 +111,11 @@ export abstract class Project {
 	constructor(
 		protected parent: ProjectManager,
 		public readonly app: App,
-		protected _baseDirectory: AnyDirectoryHandle
+		protected _baseDirectory: AnyDirectoryHandle,
+		{ requiresPermissions }: { requiresPermissions?: boolean } = {}
 	) {
 		this.isVirtualProject = virtualProjectName === this.name
+		this.requiresPermissions = requiresPermissions ?? false
 
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
 		this.config = markRaw(new ProjectConfig(this._fileSystem, this))

@@ -66,8 +66,14 @@ export class ProjectManager extends Signal<void> {
 		await this.fired
 		return Object.values(this.state).filter((p) => !p.isVirtualProject)
 	}
-	async addProject(projectDir: AnyDirectoryHandle, isNewProject = true) {
-		const project = new BedrockProject(this, this.app, projectDir)
+	async addProject(
+		projectDir: AnyDirectoryHandle,
+		isNewProject = true,
+		requiresPermissions = false
+	) {
+		const project = new BedrockProject(this, this.app, projectDir, {
+			requiresPermissions,
+		})
 		await project.loadProject()
 
 		set(this.state, project.name, project)
@@ -89,7 +95,7 @@ export class ProjectManager extends Signal<void> {
 		await this.storeProjects(projectName)
 	}
 
-	protected async loadProjects() {
+	async loadProjects(requiresPermissions = false) {
 		await InitialSetup.ready.fired
 		await this.app.fileSystem.fired
 		await this.app.dataLoader.fired
@@ -101,11 +107,13 @@ export class ProjectManager extends Signal<void> {
 		for await (const handle of directoryHandle.values()) {
 			if (handle.kind !== 'directory') continue
 
-			await this.addProject(handle, false)
+			await this.addProject(handle, false, requiresPermissions)
 		}
 
+		// Update stored projects
+		if (requiresPermissions) await this.storeProjects(undefined, true)
 		// Create a placeholder project (virtual project)
-		await this.createVirtualProject()
+		else await this.createVirtualProject()
 
 		this.dispatch()
 	}
@@ -154,11 +162,15 @@ export class ProjectManager extends Signal<void> {
 		await this.addProject(handle, false)
 	}
 
-	async selectProject(projectName: string) {
-		if (this.state[projectName] === undefined)
+	async selectProject(projectName: string, failGracefully = false) {
+		if (this.state[projectName] === undefined) {
+			if (failGracefully) return
+
 			throw new Error(
 				`Cannot select project "${projectName}" because it no longer exists`
 			)
+		}
+
 		const app = await App.getApp()
 
 		this.currentProject?.deactivate()
@@ -214,19 +226,22 @@ export class ProjectManager extends Signal<void> {
 			await project.recompile(forceStartIfActive)
 	}
 
-	async loadAvailbleProjects(exceptProject?: string) {
+	async loadAvailableProjects(exceptProject?: string) {
 		return (
 			await this.app.fileSystem.readJSON('~local/data/projects.json')
 		).filter(
 			(project: any) => !exceptProject || project.name !== exceptProject
 		)
 	}
-	async storeProjects(exceptProject?: string) {
+	async storeProjects(exceptProject?: string, forceRefresh = false) {
 		let data: {
 			displayName: string
 			name: string
 			icon?: string
-		}[] = await this.loadAvailbleProjects(exceptProject)
+			requiresPermissions: boolean
+		}[] = forceRefresh
+			? []
+			: await this.loadAvailableProjects(exceptProject)
 
 		this.forEachProject((project) => {
 			if (project.isVirtualProject) return
@@ -237,10 +252,10 @@ export class ProjectManager extends Signal<void> {
 				name: project.name,
 				displayName: project.config.get().name ?? project.name,
 				icon: project.projectData.imgSrc,
+				requiresPermissions: project.requiresPermissions,
 			})
 		})
 
-		console.log(data)
 		await this.app.fileSystem.writeJSON('~local/data/projects.json', data)
 		App.eventSystem.dispatch('availableProjectsFileChanged', undefined)
 	}

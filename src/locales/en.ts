@@ -390,14 +390,6 @@ export default {
 			updateExtensions: 'Update All Extensions',
 		},
 	},
-	// Welcome Screen
-	welcome: {
-		title: 'Welcome to bridge.',
-		subtitle: 'Creating Minecraft addons has never been more convenient!',
-		quickActions: 'Quick Actions',
-		recentFiles: 'Recent Files',
-		recentProjects: 'Recent Projects',
-	},
 	// Experimental gameplay toggles
 	experimentalGameplay: {
 		cavesAndCliffs: {
@@ -648,6 +640,8 @@ export default {
 			noProjectView: {
 				noProjectsFound:
 					'It does not look like you have any projects yet!',
+				createLocalProject: 'Create Local Project',
+				chooseBridgeFolder: 'Choose bridge. Folder',
 			},
 			restartWatchMode: {
 				name: 'Restart Watch Mode',

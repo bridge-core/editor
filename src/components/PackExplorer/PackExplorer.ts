@@ -72,15 +72,6 @@ export class PackExplorer extends SidebarContent {
 		if (app.isNoProjectSelected) {
 			this.showNoProjectView = true
 
-			this.actions.push(
-				new SidebarAction({
-					icon: 'mdi-folder-plus-outline',
-					name: 'actions.newProject.name',
-					color: 'success',
-					onTrigger: () => App.instance.windows.createProject.open(),
-				})
-			)
-
 			return
 		} else {
 			this.showNoProjectView = false

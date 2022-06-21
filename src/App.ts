@@ -43,6 +43,7 @@ import { version as appVersion } from './utils/app/version'
 import { platform } from './utils/os'
 import { InitialSetup } from './components/InitialSetup/InitialSetup'
 import { virtualProjectName } from './components/Projects/Project/Project'
+import { AnyDirectoryHandle } from './components/FileSystem/Types'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -309,5 +310,33 @@ export class App {
 		)
 
 		console.timeEnd('[APP] startUp()')
+	}
+
+	async setupBridgeFolder() {
+		let fileHandle = await get<AnyDirectoryHandle | undefined>(
+			'bridgeBaseDir'
+		)
+
+		if (fileHandle) {
+			const permissionState = await fileHandle.requestPermission({
+				mode: 'readwrite',
+			})
+			if (permissionState !== 'granted') return false
+		} else {
+			try {
+				fileHandle = await window.showDirectoryPicker({
+					mode: 'readwrite',
+				})
+			} catch {
+				return false
+			}
+
+			await set('bridgeBaseDir', fileHandle)
+		}
+
+		this.fileSystem.setup(fileHandle)
+		await this.projectManager.loadProjects(true)
+
+		return true
 	}
 }
