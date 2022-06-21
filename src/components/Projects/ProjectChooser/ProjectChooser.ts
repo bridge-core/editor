@@ -42,10 +42,6 @@ export class ProjectChooserWindow extends BaseWindow {
 				},
 			})
 		)
-
-		App.getApp().then((app) => {
-			this.showLoadAllButton = !app.bridgeFolderSetup.hasFired
-		})
 	}
 
 	async loadAllProjects() {
@@ -78,8 +74,9 @@ export class ProjectChooserWindow extends BaseWindow {
 		this.sidebar.removeElements()
 		const app = await App.getApp()
 
-		const projects = await app.projectManager.getProjects()
+		this.showLoadAllButton = !app.bridgeFolderSetup.hasFired
 
+		const projects = await app.projectManager.getProjects()
 		const experimentalToggles = await app.dataLoader.readJSON(
 			'data/packages/minecraftBedrock/experimentalGameplay.json'
 		)
