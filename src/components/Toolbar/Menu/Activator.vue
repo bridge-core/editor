@@ -9,7 +9,7 @@
 		<template v-slot:activator="{ on }">
 			<MenuButton
 				v-on="on"
-				:disabled="disabled"
+				:disabled="disabled || item.isDisabled"
 				:displayIcon="item.icon"
 				:displayName="item.name"
 			/>

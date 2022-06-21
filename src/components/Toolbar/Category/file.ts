@@ -20,6 +20,7 @@ export function setupFileCategory(app: App) {
 			name: 'actions.newFile.name',
 			description: 'actions.newFile.description',
 			keyBinding: 'Ctrl + N',
+			isDisabled: () => !app.hasProject,
 			onTrigger: () => app.windows.createPreset.open(),
 		})
 	)

@@ -17,6 +17,7 @@ export function setupProjectCategory(app: App) {
 			icon: 'mdi-folder-open-outline',
 			name: 'windows.projectChooser.title',
 			description: 'windows.projectChooser.description',
+			isDisabled: () => !app.hasProject,
 			onTrigger: () => {
 				if (isUsingFileSystemPolyfill.value) {
 					createVirtualProjectWindow()
