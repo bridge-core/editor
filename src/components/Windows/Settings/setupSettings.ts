@@ -6,7 +6,7 @@ import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
 import { BridgeConfigSelection } from './Controls/Selection/BridgeConfigSelection'
 import { Button } from './Controls/Button/Button'
-import { del } from 'idb-keyval'
+import { del, set } from 'idb-keyval'
 import { comMojangKey } from '../../FileSystem/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
 import {
@@ -459,6 +459,46 @@ export async function setupSettings(settings: SettingsWindow) {
 					'windows.settings.developer.forceDataDownload.description',
 				key: 'forceDataDownload',
 				default: false,
+			})
+		)
+		settings.addControl(
+			new Button({
+				category: 'developers',
+				name: '[Reset local fs]',
+				description:
+					'[Reset the local fs (navigator.storage.getDirectory()) to be completely emtpy]',
+				onClick: async () => {
+					const app = await App.getApp()
+					await Promise.all([
+						app.fileSystem.unlink('~local/data'),
+						app.fileSystem.unlink('~local/projects'),
+						app.fileSystem.unlink('~local/extensions'),
+					])
+				},
+			})
+		)
+		settings.addControl(
+			new Button({
+				category: 'developers',
+				name: '[Clear app data]',
+				description:
+					'[Clear data from bridge-core/editor-packages repository]',
+				onClick: async () => {
+					const app = await App.getApp()
+					await set('savedAllDataInIdb', false)
+				},
+			})
+		)
+		settings.addControl(
+			new Button({
+				category: 'developers',
+				name: '[Reset initial setup]',
+				description: '[Resets editor type and com.mojang selection]',
+				onClick: async () => {
+					const app = await App.getApp()
+					await del('didChooseEditorType')
+					await del(comMojangKey)
+				},
 			})
 		)
 	}
