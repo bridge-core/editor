@@ -566,8 +566,8 @@ export default {
 			showAllPresets: 'Show all presets',
 			disabledPreset: {
 				experimentalGameplay:
-					'Required experimental gameplay not active',
-				packTypes: 'Required pack missing within project',
+					'Required experimental gameplay toggle(s) not active',
+				packTypes: 'Required pack(s) missing within project',
 				targetVersion: 'Required target version not specified',
 			},
 		},
