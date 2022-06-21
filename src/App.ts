@@ -42,6 +42,7 @@ import { createVirtualProjectWindow } from './components/FileSystem/Virtual/Proj
 import { version as appVersion } from './utils/app/version'
 import { platform } from './utils/os'
 import { InitialSetup } from './components/InitialSetup/InitialSetup'
+import { virtualProjectName } from './components/Projects/Project/Project'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -58,6 +59,7 @@ export class App {
 		'fileSave',
 		'fileUnlinked',
 		'presetsChanged',
+		'availableProjectsFileChanged',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>
@@ -99,10 +101,15 @@ export class App {
 		return this.projectManager.selectedProject
 	}
 
-	get hasProject() {
+	get isNoProjectSelected() {
 		return (
-			this.projectManager.currentProject !== null &&
-			!this.projectManager.currentProject.isVirtualProject
+			this.projectManager.currentProject === null ||
+			this.projectManager.currentProject.isVirtualProject
+		)
+	}
+	get hasNoProjects() {
+		return (
+			this.isNoProjectSelected && this.projectManager.totalProjects <= 1
 		)
 	}
 	get project() {
@@ -199,7 +206,7 @@ export class App {
 
 		InitialSetup.ready.dispatch()
 		this.instance.fileSystem.setup(await navigator.storage.getDirectory())
-		await this.instance.fileSystem.unlink('projects')
+		await this.instance.fileSystem.unlink(`projects/${virtualProjectName}`)
 
 		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {

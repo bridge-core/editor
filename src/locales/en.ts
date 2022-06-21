@@ -645,6 +645,10 @@ export default {
 				name: 'Refresh Project',
 				description: 'Fetch the current project for newly added files',
 			},
+			noProjectView: {
+				noProjectsFound:
+					'It does not look like you have any projects yet!',
+			},
 			restartWatchMode: {
 				name: 'Restart Watch Mode',
 				description:

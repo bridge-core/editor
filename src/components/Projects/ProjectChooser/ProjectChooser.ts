@@ -79,8 +79,15 @@ export class ProjectChooserWindow extends BaseWindow {
 				),
 			})
 		)
-		this.sidebar.setDefaultSelected(app.projectManager.selectedProject)
-		return app.projectManager.selectedProject
+
+		this.sidebar.setDefaultSelected(
+			app.isNoProjectSelected
+				? undefined
+				: app.projectManager.selectedProject
+		)
+		return app.isNoProjectSelected
+			? undefined
+			: app.projectManager.selectedProject
 	}
 
 	async open() {

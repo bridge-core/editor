@@ -150,7 +150,9 @@ export default {
 				onConfirm: async () => {
 					const app = await App.getApp()
 					await app.projectManager.removeProject(projectName)
-					await this.currentWindow.loadProjects()
+
+					if (app.hasNoProjects) this.onClose()
+					else await this.currentWindow.loadProjects()
 				},
 			})
 		},

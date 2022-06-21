@@ -46,9 +46,8 @@ export class PackExplorer extends SidebarContent {
 		const updateHeaderSlot = async () => {
 			const app = await App.getApp()
 			await app.projectManager.projectReady.fired
-			const project = app.project
 
-			if (app.mobile.isCurrentDevice() || project.isVirtualProject)
+			if (app.mobile.isCurrentDevice() || app.isNoProjectSelected)
 				this.headerSlot = undefined
 			else this.headerSlot = ProjectDisplayComponent
 		}
@@ -67,13 +66,24 @@ export class PackExplorer extends SidebarContent {
 	async setup() {
 		const app = await App.getApp()
 		await app.projectManager.projectReady.fired
-		const isVirtualProject = app.project.isVirtualProject
 
 		this.actions = []
-		// Do not show actions for virtual project
-		if (isVirtualProject) {
+		// Show select bridge. folder & create project buttons
+		if (app.isNoProjectSelected) {
 			this.showNoProjectView = true
+
+			this.actions.push(
+				new SidebarAction({
+					icon: 'mdi-folder-plus-outline',
+					name: 'actions.newProject.name',
+					color: 'success',
+					onTrigger: () => App.instance.windows.createProject.open(),
+				})
+			)
+
 			return
+		} else {
+			this.showNoProjectView = false
 		}
 
 		this.unselectAllActions()

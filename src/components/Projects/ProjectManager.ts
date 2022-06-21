@@ -1,6 +1,12 @@
 import { App } from '/@/App'
 import { get as idbGet, set as idbSet } from 'idb-keyval'
-import { shallowReactive, set, del, reactive } from '@vue/composition-api'
+import {
+	shallowReactive,
+	set,
+	del,
+	reactive,
+	computed,
+} from '@vue/composition-api'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { Project, virtualProjectName } from './Project/Project'
 import { RecentProjects } from './RecentProjects'
@@ -9,8 +15,7 @@ import { editor } from 'monaco-editor'
 import { BedrockProject } from './Project/BedrockProject'
 import { InitialSetup } from '../InitialSetup/InitialSetup'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
-import { AnyDirectoryHandle, AnyHandle } from '../FileSystem/Types'
-import { latestFormatVersion } from './Project/Config'
+import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { FileSystem } from '../FileSystem/FileSystem'
 import { CreateConfig } from './CreateProject/Files/Config'
 import { getStableFormatVersion } from '../Data/FormatVersions'
@@ -53,10 +58,13 @@ export class ProjectManager extends Signal<void> {
 	get selectedProject() {
 		return this._selectedProject
 	}
+	get totalProjects() {
+		return Object.keys(this.state).length
+	}
 
 	async getProjects() {
 		await this.fired
-		return Object.values(this.state)
+		return Object.values(this.state).filter((p) => !p.isVirtualProject)
 	}
 	async addProject(projectDir: AnyDirectoryHandle, isNewProject = true) {
 		const project = new BedrockProject(this, this.app, projectDir)
@@ -78,6 +86,7 @@ export class ProjectManager extends Signal<void> {
 		await this.app.fileSystem.unlink(`projects/${projectName}`)
 
 		this.recentProjects.remove(project.projectData)
+		await this.storeProjects(projectName)
 	}
 
 	protected async loadProjects() {
@@ -95,10 +104,8 @@ export class ProjectManager extends Signal<void> {
 			await this.addProject(handle, false)
 		}
 
-		if (Object.keys(this.state).length === 0) {
-			// Create a placeholder project (virtual project)
-			await this.createVirtualProject()
-		}
+		// Create a placeholder project (virtual project)
+		await this.createVirtualProject()
 
 		this.dispatch()
 	}
@@ -166,6 +173,9 @@ export class ProjectManager extends Signal<void> {
 		app.themeManager.updateTheme()
 		App.eventSystem.dispatch('projectChanged', this.currentProject!)
 
+		// Store projects in local storage fs
+		await this.storeProjects()
+
 		if (!this.projectReady.hasFired) this.projectReady.dispatch()
 	}
 	async selectLastProject() {
@@ -202,5 +212,36 @@ export class ProjectManager extends Signal<void> {
 	async recompileAll(forceStartIfActive = true) {
 		for (const project of Object.values(this.state))
 			await project.recompile(forceStartIfActive)
+	}
+
+	async loadAvailbleProjects(exceptProject?: string) {
+		return (
+			await this.app.fileSystem.readJSON('~local/data/projects.json')
+		).filter(
+			(project: any) => !exceptProject || project.name !== exceptProject
+		)
+	}
+	async storeProjects(exceptProject?: string) {
+		let data: {
+			displayName: string
+			name: string
+			icon?: string
+		}[] = await this.loadAvailbleProjects(exceptProject)
+
+		this.forEachProject((project) => {
+			if (project.isVirtualProject) return
+
+			if (data.find((p) => project.name === p.name)) return
+
+			data.push({
+				name: project.name,
+				displayName: project.config.get().name ?? project.name,
+				icon: project.projectData.imgSrc,
+			})
+		})
+
+		console.log(data)
+		await this.app.fileSystem.writeJSON('~local/data/projects.json', data)
+		App.eventSystem.dispatch('availableProjectsFileChanged', undefined)
 	}
 }
