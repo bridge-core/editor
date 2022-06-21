@@ -1,6 +1,6 @@
 <template>
 	<v-btn @click="createProject" :color="color" class="mb-2" block>
-		<v-icon>mdi-plus</v-icon>
+		<v-icon class="mr-1">mdi-plus</v-icon>
 		{{ t('windows.packExplorer.noProjectView.createLocalProject') }}
 	</v-btn>
 </template>

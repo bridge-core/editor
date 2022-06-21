@@ -13,7 +13,6 @@ import { RecentProjects } from './RecentProjects'
 import { Title } from '/@/components/Projects/Title'
 import { editor } from 'monaco-editor'
 import { BedrockProject } from './Project/BedrockProject'
-import { InitialSetup } from '../InitialSetup/InitialSetup'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { FileSystem } from '../FileSystem/FileSystem'
@@ -97,7 +96,6 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async loadProjects(requiresPermissions = false) {
-		await InitialSetup.ready.fired
 		await this.app.fileSystem.fired
 		await this.app.dataLoader.fired
 

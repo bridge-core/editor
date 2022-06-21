@@ -1087,7 +1087,7 @@ export default {
 			comMojang: {
 				name: 'com.mojang Folder',
 				description:
-					'Now drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.',
+					'Drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.',
 				extraDescription: 'Drag your com.mojang folder onto bridge.',
 			},
 			editorType: {

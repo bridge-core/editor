@@ -96,7 +96,6 @@
 			<!--  -->
 		</v-main>
 
-		<InitialSetupDialog />
 		<ContextMenu v-if="contextMenu" :contextMenu="contextMenu" />
 		<FileDropper />
 	</v-app>
@@ -114,7 +113,6 @@ import { App } from '/@/App.ts'
 import TabSystem from '/@/components/TabSystem/TabSystem.vue'
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
-import InitialSetupDialog from '/@/components/InitialSetup/Dialog.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
 import { isContentVisible, SidebarState } from './components/Sidebar/state'
 import { settingsState } from './components/Windows/Settings/SettingsState'
@@ -138,7 +136,6 @@ export default {
 		TabSystem,
 		WelcomeScreen,
 		FileDropper,
-		InitialSetupDialog,
 		SidebarContent,
 	},
 

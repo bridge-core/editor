@@ -1,6 +1,6 @@
 <template>
 	<v-btn @click="selectBridgeFolder" :color="color" class="mb-2" block>
-		<v-icon>mdi-folder-outline</v-icon>
+		<v-icon class="mr-1">mdi-folder-outline</v-icon>
 		{{
 			t(
 				`windows.packExplorer.noProjectView.${

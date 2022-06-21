@@ -5,7 +5,6 @@ import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/Confirm
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { App } from '/@/App'
-import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { basename } from '/@/utils/path'
 
 export async function importFromBrproject(
@@ -84,12 +83,10 @@ export async function importFromBrproject(
 	if (!isFirstImport) currentProjectName = app.project.name
 
 	// Add new project
-	if (InitialSetup.ready.hasFired) {
-		await app.projectManager.addProject(
-			await fs.getDirectoryHandle(importProject),
-			true
-		)
-	}
+	await app.projectManager.addProject(
+		await fs.getDirectoryHandle(importProject),
+		true
+	)
 
 	// Remove old project if browser is using fileSystem polyfill
 	if (isUsingFileSystemPolyfill.value && !isFirstImport)

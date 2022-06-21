@@ -1,5 +1,5 @@
 <template>
-	<div class="pa-4 mb-2 rounded-lg control-bg" :class="{ selected }">
+	<div class="pa-4 mb-2 rounded-lg control-bg" :class="{ selected, dark }">
 		<div class="d-flex align-center">
 			<v-icon
 				v-if="action.icon"
@@ -40,6 +40,7 @@ export default {
 		action: Object,
 		hideTriggerButton: Boolean,
 		dense: Boolean,
+		dark: Boolean,
 		selected: {
 			type: Boolean,
 			default: undefined,
@@ -58,6 +59,10 @@ export default {
 .control-bg {
 	background-color: var(--v-sidebarNavigation-base);
 	border: 1px solid var(--v-sidebarNavigation-base);
+}
+.dark {
+	background-color: var(--v-background-base);
+	border: 1px solid var(--v-background-base);
 }
 .selected {
 	border: 1px solid var(--v-primary-base);

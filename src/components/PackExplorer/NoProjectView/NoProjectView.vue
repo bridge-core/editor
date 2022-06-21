@@ -1,14 +1,7 @@
 <template>
 	<div class="pa-2">
 		<v-progress-linear v-if="isLoading" indeterminate />
-		<div v-else-if="projectData.length === 0">
-			<BridgeFolderBtn />
-			<CreateProjectBtn color="success" />
-
-			<p>
-				{{ t('windows.packExplorer.noProjectView.noProjectsFound') }}
-			</p>
-		</div>
+		<NoProjects v-else-if="projectData.length === 0" />
 
 		<template v-else>
 			<BridgeFolderBtn />
@@ -75,17 +68,17 @@
 
 <script>
 import { App } from '/@/App'
-import { TranslationMixin } from '../../Mixins/TranslationMixin'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import CreateProjectBtn from './CreateProjectBtn.vue'
 import BridgeFolderBtn from './BridgeFolderBtn.vue'
+import NoProjects from './NoProjects.vue'
 
 export default {
-	mixins: [TranslationMixin],
 	components: {
 		BridgeSheet,
 		CreateProjectBtn,
 		BridgeFolderBtn,
+		NoProjects,
 	},
 	mounted() {
 		this.loadProjects()

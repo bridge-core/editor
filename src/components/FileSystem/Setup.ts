@@ -1,6 +1,5 @@
 import { App } from '/@/App'
 import { get, set } from 'idb-keyval'
-import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { ref } from '@vue/composition-api'
 import { Signal } from '../Common/Event/Signal'

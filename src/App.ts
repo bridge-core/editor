@@ -38,10 +38,8 @@ import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
 import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { PersistentNotification } from '/@/components/Notifications/PersistentNotification'
-import { createVirtualProjectWindow } from './components/FileSystem/Virtual/ProjectWindow'
 import { version as appVersion } from './utils/app/version'
 import { platform } from './utils/os'
-import { InitialSetup } from './components/InitialSetup/InitialSetup'
 import { virtualProjectName } from './components/Projects/Project/Project'
 import { AnyDirectoryHandle } from './components/FileSystem/Types'
 
@@ -185,7 +183,6 @@ export class App {
 
 		await this.instance.beforeStartUp()
 
-		InitialSetup.ready.dispatch()
 		this.instance.fileSystem.setup(await navigator.storage.getDirectory())
 		await this.instance.fileSystem.unlink(`projects/${virtualProjectName}`)
 
