@@ -107,9 +107,9 @@ export default {
 			this.isLoading = true
 
 			const app = await App.getApp()
-			this.projectData = await app.fileSystem.readJSON(
-				'~local/data/projects.json'
-			)
+			this.projectData = await app.fileSystem
+				.readJSON('~local/data/projects.json')
+				.catch(() => [])
 
 			this.isLoading = false
 		},

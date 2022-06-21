@@ -237,7 +237,9 @@ export class ProjectManager extends Signal<void> {
 
 	async loadAvailableProjects(exceptProject?: string) {
 		return (
-			await this.app.fileSystem.readJSON('~local/data/projects.json')
+			await this.app.fileSystem
+				.readJSON('~local/data/projects.json')
+				.catch(() => [])
 		).filter(
 			(project: any) => !exceptProject || project.name !== exceptProject
 		)
