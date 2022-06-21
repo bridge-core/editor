@@ -1,101 +1,29 @@
 <template>
 	<div
 		:class="`d-flex flex-column justify-center align-center ${containerPadding}`"
-		:style="`padding-top: ${hasAlert ? 0 : 14}vh;`"
+		:style="`position: relative; padding-top: ${
+			hasAlert ? 0 : 14
+		}vh; height: 80vh;`"
 	>
 		<WelcomeAlert />
 
-		<Logo
-			style="height: 160px; width: 160px"
-			class="mt-4 mb-4"
-			alt="Logo of bridge. v2"
-		/>
-		<h1 class="text-h3 text-center">{{ t('welcome.title') }}</h1>
-		<h2 class="text-h6 mb-12 text-center">{{ t('welcome.subtitle') }}</h2>
+		<div
+			class="d-flex flex-column justify-center align-center"
+			style="width: 70%; max-width: 500px"
+		>
+			<Logo
+				style="height: 160px; width: 160px"
+				class="mt-4 mb-8"
+				alt="Logo of bridge. v2"
+			/>
 
-		<v-row style="flex-wrap: nowrap; width: 60vw">
-			<v-col v-if="actions.length > 0" tag="ul">
-				<p>{{ t('welcome.quickActions') }}</p>
-				<v-divider class="mb-2" />
-				<li
-					v-for="action in actions"
-					:key="action.id"
-					class="rounded-lg pa-1 clickable"
-					v-ripple
-					@click="() => action.trigger()"
-				>
-					<v-icon color="accent" medium>{{ action.icon }}</v-icon>
-					<span color="text--primary">{{ t(action.name) }}</span>
-
-					<span
-						class="text--secondary"
-						style="float: right"
-						v-if="action.keyBinding"
-					>
-						{{ action.keyBinding.toStrKeyCode() }}
-					</span>
-				</li>
-			</v-col>
-
-			<v-col
-				v-if="$vuetify.breakpoint.smAndUp && files.length > 0"
-				tag="ul"
-			>
-				<p>{{ t('welcome.recentFiles') }}</p>
-				<v-divider class="mb-2" />
-				<li
-					v-for="file in files"
-					:key="file.path"
-					class="d-flex rounded-lg pa-1 clickable"
-					v-ripple
-					@click="openFile(file.path)"
-				>
-					<v-icon :color="file.color || 'error'" medium>
-						{{ file.icon }}
-					</v-icon>
-					<span class="primary-text">{{ file.name }}</span>
-				</li>
-			</v-col>
-
-			<v-col
-				v-if="$vuetify.breakpoint.mdAndUp && projects.length > 0"
-				tag="ul"
-				:class="{
-					disabled: !maySwitchProjects,
-				}"
-			>
-				<p>{{ t('welcome.recentProjects') }}</p>
-
-				<v-divider v-if="maySwitchProjects" class="mb-2" />
-				<v-progress-linear v-else class="mb-1" rounded indeterminate />
-
-				<li
-					v-for="project in projects"
-					:key="project.name"
-					:class="{
-						'd-flex rounded-lg pa-1': true,
-						clickable: maySwitchProjects,
-					}"
-					v-ripple="maySwitchProjects"
-					@click="
-						maySwitchProjects
-							? selectProject(project.path)
-							: undefined
-					"
-				>
-					<div class="d-flex align-center">
-						<img
-							v-if="project.imgSrc"
-							:src="project.imgSrc"
-							:alt="`${project.name} Logo`"
-							draggable="false"
-							class="mr-1 pack-icon"
-						/>
-						<span class="primary-text">{{ project.path }}</span>
-					</div>
-				</li>
-			</v-col>
-		</v-row>
+			<v-text-field
+				style="width: 100%"
+				prepend-inner-icon="mdi-chevron-right"
+				solo
+				rounded
+			/>
+		</div>
 	</div>
 </template>
 
