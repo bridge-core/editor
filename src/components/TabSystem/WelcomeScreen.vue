@@ -15,12 +15,7 @@
 				alt="Logo of bridge. v2"
 			/>
 
-			<v-text-field
-				style="width: 100%"
-				prepend-inner-icon="mdi-chevron-right"
-				solo
-				rounded
-			/>
+			<CommandBar />
 		</div>
 	</div>
 </template>
@@ -30,6 +25,7 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { ProjectMixin } from '/@/components/Mixins/Project.ts'
 import Logo from '../UIElements/Logo.vue'
 import WelcomeAlert from '../WelcomeAlert/Alert.vue'
+import CommandBar from '../CommandBar/CommandBar.vue'
 
 export default {
 	name: 'welcome-screen',
@@ -37,6 +33,7 @@ export default {
 	components: {
 		Logo,
 		WelcomeAlert,
+		CommandBar,
 	},
 	props: {
 		containerPadding: String,
