@@ -91,10 +91,12 @@ export class ProjectManager extends Signal<void> {
 		await this.app.dataLoader.fired
 
 		const directoryHandle = await this.app.fileSystem.getDirectoryHandle(
-			'projects'
+			'projects',
+			{ create: true }
 		)
 		const localDirectoryHandle = await this.app.fileSystem.getDirectoryHandle(
-			'~local/projects'
+			'~local/projects',
+			{ create: true }
 		)
 
 		const isBridgeFolderSetup = this.app.bridgeFolderSetup.hasFired
