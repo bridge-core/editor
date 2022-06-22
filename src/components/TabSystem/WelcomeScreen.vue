@@ -1,9 +1,7 @@
 <template>
 	<div
 		:class="`d-flex flex-column justify-center align-center ${containerPadding}`"
-		:style="`position: relative; padding-top: ${
-			hasAlert ? 0 : 14
-		}vh; height: 80vh;`"
+		:style="`position: relative; height: 80vh;`"
 	>
 		<WelcomeAlert />
 
@@ -29,8 +27,6 @@
 
 <script>
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
-import ActionViewer from '/@/components/Actions/ActionViewer.vue'
-import { App } from '/@/App.ts'
 import { ProjectMixin } from '/@/components/Mixins/Project.ts'
 import Logo from '../UIElements/Logo.vue'
 import WelcomeAlert from '../WelcomeAlert/Alert.vue'
@@ -39,34 +35,12 @@ export default {
 	name: 'welcome-screen',
 	mixins: [TranslationMixin, ProjectMixin],
 	components: {
-		ActionViewer,
 		Logo,
 		WelcomeAlert,
 	},
 	props: {
 		containerPadding: String,
 	},
-
-	async mounted() {
-		const app = await App.getApp()
-		const toLoad = [
-			'bridge.action.newProject',
-			'bridge.action.newFile',
-			'bridge.action.searchFile',
-			'bridge.action.openSettings',
-		]
-		this.actions = toLoad.map((l) => app.actionManager.state[l])
-
-		await app.projectManager.fired
-		this.projectManager = app.projectManager
-	},
-
-	data: () => ({
-		actions: [],
-		projectManager: null,
-		maySwitchProjects: true,
-		hasAlert: true,
-	}),
 }
 </script>
 
