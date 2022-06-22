@@ -184,7 +184,11 @@ export class CreateProjectWindow extends BaseWindow {
 		let previousProject: Project | undefined
 		if (!this.isFirstProject) previousProject = app.project
 
-		await app.projectManager.addProject(projectDir)
+		await app.projectManager.addProject(
+			projectDir,
+			true,
+			app.bridgeFolderSetup.hasFired
+		)
 		await app.extensionLoader.installFilesToCurrentProject()
 
 		if (isUsingFileSystemPolyfill.value && !this.isFirstProject)
