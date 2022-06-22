@@ -32,7 +32,7 @@
 
 		<template v-slot:item="{ item }">
 			<v-list-item-avatar
-				:color="item.color"
+				:color="item.color || 'warning'"
 				class="text-h5 font-weight-light white--text"
 			>
 				<v-icon>{{ item.icon }}</v-icon>

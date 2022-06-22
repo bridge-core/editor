@@ -34,7 +34,7 @@ export class SimpleAction extends EventDispatcher<void> {
 		return this.config.description
 	}
 	get color() {
-		return this.config.color ?? 'warning'
+		return this.config.color
 	}
 	get isDisabled() {
 		if (typeof this.config.isDisabled === 'function')
