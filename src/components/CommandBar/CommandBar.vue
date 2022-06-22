@@ -6,7 +6,15 @@
 		rounded
 		hide-details
 		:append-icon="null"
-		:menu-props="{ rounded: 'xl', dense: true }"
+		:menu-props="{
+			rounded: 'lg',
+			dense: true,
+			'nudge-top': -12,
+			'min-width': 'unset',
+			'max-width': '500px',
+			transition: 'slide-y-transition',
+			contentClass: 'commandbar-menu',
+		}"
 		:items="actions"
 		:item-text="(item) => `${item.name}\n${item.description}`"
 		:item-value="(item) => item"
@@ -107,3 +115,9 @@ export default {
 	},
 }
 </script>
+
+<style>
+.commandbar-menu {
+	width: 50vw;
+}
+</style>

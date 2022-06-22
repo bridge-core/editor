@@ -7,7 +7,7 @@
 
 		<div
 			class="d-flex flex-column justify-center align-center"
-			style="width: 70%; max-width: 500px"
+			style="width: 50vw; max-width: 500px"
 		>
 			<Logo
 				style="height: 160px; width: 160px"
