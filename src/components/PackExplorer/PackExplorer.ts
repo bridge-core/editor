@@ -23,18 +23,13 @@ import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
 import { platform } from '/@/utils/os'
+import { Project } from '../Projects/Project/Project'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
 	actions: SidebarAction[] = []
 	directoryEntries: Record<string, DirectoryEntry> = {}
-	topPanel = isUsingFileSystemPolyfill.value
-		? new InfoPanel({
-				type: 'warning',
-				text: 'general.fileSystemPolyfill',
-				isDismissible: true,
-		  })
-		: undefined
+	topPanel: InfoPanel | undefined = undefined
 	showNoProjectView = false
 
 	constructor() {
@@ -54,13 +49,28 @@ export class PackExplorer extends SidebarContent {
 
 		App.getApp().then((app) => {
 			updateHeaderSlot()
+			this.updateTopPanel(app)
 
 			app.mobile.change.on(() => updateHeaderSlot())
 		})
 
-		App.eventSystem.on('projectChanged', () => updateHeaderSlot())
+		App.eventSystem.on('projectChanged', (project: Project) => {
+			updateHeaderSlot()
+			this.updateTopPanel(project.app)
+		})
 
 		this.headerHeight = '60px'
+	}
+
+	updateTopPanel(app: App) {
+		this.topPanel =
+			isUsingFileSystemPolyfill.value && !app.isNoProjectSelected
+				? new InfoPanel({
+						type: 'warning',
+						text: 'general.fileSystemPolyfill',
+						isDismissible: true,
+				  })
+				: undefined
 	}
 
 	async setup() {
