@@ -47,8 +47,7 @@ export default {
 	async mounted() {
 		const app = await App.getApp()
 
-		const allActions = app.actionManager.getAllActions()
-		this.fileActions.push(...allActions)
+		this.baseActions = app.actionManager.getAllActions()
 
 		if (!app.isNoProjectSelected) this.loadFilesFromProject(app.project)
 
@@ -75,7 +74,6 @@ export default {
 	},
 	methods: {
 		onSelectedAction(item) {
-			console.log(item)
 			this.$nextTick(() => (this.currentItem = ''))
 			item.trigger()
 		},
