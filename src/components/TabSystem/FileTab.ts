@@ -20,9 +20,7 @@ export abstract class FileTab extends Tab {
 
 	async setup() {
 		this.isForeignFile = false
-		this.path = await this.parent.app.fileSystem.baseDirectory
-			.resolve(<any>this.fileHandle)
-			.then((path) => path?.join('/'))
+		this.path = await this.parent.app.fileSystem.pathTo(this.fileHandle)
 
 		// If the resolve above failed, we are dealing with a file which doesn't belong to this project
 		if (!this.path || !this.parent.project.isFileWithinProject(this.path)) {
