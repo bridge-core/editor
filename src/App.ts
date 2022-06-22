@@ -313,6 +313,19 @@ export class App {
 		}
 
 		this.fileSystem.setup(fileHandle)
+
+		// Migrate old settings over to ~local/data/settings.json
+		if (await this.fileSystem.fileExists('data/settings.json')) {
+			await this.fileSystem.copyFile(
+				'data/settings.json',
+				'~local/data/settings.json'
+			)
+			await this.fileSystem.unlink('data/settings.json')
+			await SettingsWindow.loadSettings(this).then(async () => {
+				this.themeManager.loadDefaultThemes(this)
+			})
+		}
+
 		this.bridgeFolderSetup.dispatch()
 		await this.projectManager.loadProjects(true)
 

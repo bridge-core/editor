@@ -92,12 +92,15 @@ export class SettingsWindow extends BaseWindow {
 	static async saveSettings(app?: App) {
 		if (!app) app = await App.getApp()
 
-		await app.fileSystem.writeJSON('data/settings.json', settingsState)
+		await app.fileSystem.writeJSON(
+			'~local/data/settings.json',
+			settingsState
+		)
 	}
 	static async loadSettings(app: App) {
 		try {
 			setSettingsState(
-				await app.fileSystem.readJSON('data/settings.json')
+				await app.fileSystem.readJSON('~local/data/settings.json')
 			)
 		} catch {
 		} finally {

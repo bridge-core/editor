@@ -14,7 +14,12 @@
 			<span v-if="action.keyBinding">
 				{{ action.keyBinding.toStrKeyCode() }}
 			</span>
-			<v-btn v-if="!hideTriggerButton" color="primary" small icon>
+			<v-btn
+				v-if="!hideTriggerButton"
+				:color="action.color || 'accent'"
+				small
+				icon
+			>
 				<v-icon @click="onTrigger">mdi-play</v-icon>
 			</v-btn>
 			<v-icon v-if="selected !== undefined">
