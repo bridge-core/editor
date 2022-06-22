@@ -5,6 +5,7 @@ import type { IGetHandleConfig, IMkdirConfig } from './Common'
 import { iterateDir } from '/@/utils/iterateDir'
 import { join, dirname, basename } from '/@/utils/path'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
+import { getStorageDirectory } from '/@/utils/getStorageDirectory'
 
 export class FileSystem extends Signal<void> {
 	protected _baseDirectory!: AnyDirectoryHandle
@@ -33,7 +34,7 @@ export class FileSystem extends Signal<void> {
 		const pathArr = path.split(/\\|\//g)
 		if (pathArr[0] === '.') pathArr.shift()
 		if (pathArr[0] === '~local') {
-			current = await navigator.storage.getDirectory()
+			current = await getStorageDirectory()
 			pathArr.shift()
 		}
 
@@ -70,7 +71,7 @@ export class FileSystem extends Signal<void> {
 		}
 	}
 	async pathTo(fileHandle: AnyFileHandle) {
-		const localHandle = await navigator.storage.getDirectory()
+		const localHandle = await getStorageDirectory()
 		let path = await localHandle
 			.resolve(<any>fileHandle)
 			.then((path) => path?.join('/'))

@@ -38,10 +38,11 @@ import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
 import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { PersistentNotification } from '/@/components/Notifications/PersistentNotification'
-import { version as appVersion } from './utils/app/version'
-import { platform } from './utils/os'
+import { version as appVersion } from '/@/utils/app/version'
+import { platform } from '/@/utils/os'
 import { virtualProjectName } from './components/Projects/Project/Project'
 import { AnyDirectoryHandle } from './components/FileSystem/Types'
+import { getStorageDirectory } from './utils/getStorageDirectory'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -183,7 +184,7 @@ export class App {
 
 		await this.instance.beforeStartUp()
 
-		this.instance.fileSystem.setup(await navigator.storage.getDirectory())
+		this.instance.fileSystem.setup(await getStorageDirectory())
 		await this.instance.fileSystem.unlink(`projects/${virtualProjectName}`)
 
 		// Show changelog after an update
