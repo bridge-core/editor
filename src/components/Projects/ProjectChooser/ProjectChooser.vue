@@ -58,7 +58,7 @@
 					dark
 					class="d-flex flex-column pa-2"
 				>
-					<v-icon color="primary">mdi-lock</v-icon>
+					<v-icon color="primary">mdi-lock-open-outline</v-icon>
 					{{ t('windows.projectChooser.localProject.name') }}
 				</BridgeSheet>
 			</div>

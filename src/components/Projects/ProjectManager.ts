@@ -252,20 +252,26 @@ export class ProjectManager extends Signal<void> {
 			name: string
 			icon?: string
 			requiresPermissions: boolean
-		}[] = forceRefresh
-			? []
-			: await this.loadAvailableProjects(exceptProject)
+			isFavorite?: boolean
+		}[] = await this.loadAvailableProjects(exceptProject)
 
 		this.forEachProject((project) => {
 			if (project.isVirtualProject) return
 
-			if (data.find((p) => project.name === p.name)) return
+			const storedData = data.find(
+				(p) =>
+					project.name === p.name &&
+					project.requiresPermissions === p.requiresPermissions
+			)
+
+			if (!forceRefresh && storedData) return
 
 			data.push({
 				name: project.name,
 				displayName: project.config.get().name ?? project.name,
 				icon: project.projectData.imgSrc,
 				requiresPermissions: project.requiresPermissions,
+				isFavorite: storedData?.isFavorite ?? false,
 			})
 		})
 
