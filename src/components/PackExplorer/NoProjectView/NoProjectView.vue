@@ -146,6 +146,7 @@ export default {
 					isFavorite: project.isFavorite ?? false,
 				}
 			})
+			this.sortProjects()
 
 			this.isLoading = false
 		},

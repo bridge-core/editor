@@ -255,6 +255,7 @@ export class ProjectManager extends Signal<void> {
 			isFavorite?: boolean
 		}[] = await this.loadAvailableProjects(exceptProject)
 
+		let newData: any[] = forceRefresh ? [] : data
 		this.forEachProject((project) => {
 			if (project.isVirtualProject) return
 
@@ -266,7 +267,7 @@ export class ProjectManager extends Signal<void> {
 
 			if (!forceRefresh && storedData) return
 
-			data.push({
+			newData.push({
 				name: project.name,
 				displayName: project.config.get().name ?? project.name,
 				icon: project.projectData.imgSrc,
@@ -275,7 +276,10 @@ export class ProjectManager extends Signal<void> {
 			})
 		})
 
-		await this.app.fileSystem.writeJSON('~local/data/projects.json', data)
+		await this.app.fileSystem.writeJSON(
+			'~local/data/projects.json',
+			newData
+		)
 		App.eventSystem.dispatch('availableProjectsFileChanged', undefined)
 	}
 }
