@@ -70,7 +70,7 @@
 						}"
 					>
 						<v-icon
-							v-if="project.requiresPermissions"
+							v-if="!project.requiresPermissions"
 							color="accent"
 						>
 							mdi-lock-open-outline
