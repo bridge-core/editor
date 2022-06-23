@@ -4,10 +4,23 @@
 		<CreateProjectBtn color="success" />
 
 		<BridgeSheet dark class="pa-2 mb-2 d-flex flex-column">
-			<v-icon style="font-size: 3rem" color="primary" class="mb-4">
+			<v-icon style="font-size: 3rem" color="error" class="mb-4">
 				mdi-folder-open-outline
 			</v-icon>
 			{{ t('windows.packExplorer.noProjectView.noProjectsFound') }}
+		</BridgeSheet>
+
+		<BridgeSheet
+			v-if="showInstallAppButton"
+			dark
+			class="pa-2 mb-2 d-flex flex-column"
+			v-ripple
+			@click.native="installApp"
+		>
+			<v-icon style="font-size: 3rem" color="primary" class="mb-4">
+				mdi-download
+			</v-icon>
+			{{ t('initialSetup.step.installApp.description') }}
 		</BridgeSheet>
 
 		<BridgeSheet
@@ -93,23 +106,35 @@ export default {
 			Number(!this.hasComMojangSetup) + Number(!this.didChooseEditorType)
 
 		const app = await App.getApp()
-		this.disposable = app.comMojang.setup.once(() => {
-			console.log(this.hasComMojangSetup)
-			this.hasComMojangSetup = true
-		})
+		this.disposables.push(
+			app.comMojang.setup.once(() => {
+				console.log(this.hasComMojangSetup)
+				this.hasComMojangSetup = true
+			}, true)
+		)
+		this.disposables.push(
+			App.installApp.isInstallable.once(
+				() => (this.showInstallAppButton = true),
+				true
+			)
+		)
+		this.disposables.push(
+			App.installApp.isInstalled.once(
+				() => (this.showInstallAppButton = false),
+				true
+			)
+		)
 	},
 	destroyed() {
-		if (this.disposable) {
-			this.disposable.dispose()
-			this.disposable = null
-		}
+		this.disposables.forEach((disposable) => disposable.dispose())
 	},
 	data() {
 		return {
 			hasComMojangSetup: true,
 			didChooseEditorType: false,
+			showInstallAppButton: false,
 			setupStepCount: 0,
-			disposable: null,
+			disposables: [],
 			actions: [
 				new SimpleAction({
 					icon: 'mdi-text',
@@ -149,6 +174,9 @@ export default {
 
 			this.didChooseEditorType = true
 			await set('didChooseEditorType', true)
+		},
+		installApp() {
+			App.installApp.prompt()
 		},
 	},
 }

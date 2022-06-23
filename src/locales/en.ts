@@ -1071,7 +1071,7 @@ export default {
 			installApp: {
 				name: 'Install bridge.',
 				description:
-					'For the best experience, install bridge. v2 as an app to your computer.',
+					'For the best experience, install bridge. v2 as an app to your device.',
 			},
 			bridge: {
 				name: 'bridge. Folder',
