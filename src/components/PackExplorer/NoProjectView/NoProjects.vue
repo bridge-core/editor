@@ -13,7 +13,7 @@
 		<BridgeSheet
 			v-if="showInstallAppButton"
 			dark
-			class="pa-2 mb-2 d-flex flex-column"
+			class="pa-2 mb-2 d-flex flex-column clickable"
 			v-ripple
 			@click.native="installApp"
 		>
