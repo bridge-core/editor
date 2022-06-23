@@ -1,7 +1,7 @@
 <template>
 	<div class="pa-2">
 		<v-progress-linear v-if="isLoading" indeterminate />
-		<NoProjects v-else-if="projectData.length === 0 || true" />
+		<NoProjects v-else-if="projectData.length === 0" />
 
 		<template v-else>
 			<BridgeFolderBtn />
