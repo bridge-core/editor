@@ -1,7 +1,7 @@
 <template>
 	<v-autocomplete
 		style="width: 100%"
-		prepend-inner-icon="mdi-chevron-right"
+		prepend-inner-icon="mdi-magnify"
 		solo
 		rounded
 		hide-details
@@ -18,7 +18,8 @@
 		:items="actions"
 		:item-text="(item) => `${item.name}\n${item.description}`"
 		:item-value="(item) => item"
-		label="Search..."
+		:placeholder="t('general.search')"
+		auto-select-first
 		v-model="currentItem"
 		@change="onSelectedAction"
 	>
