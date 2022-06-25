@@ -42,7 +42,7 @@ export class BasicFileImporter extends FileImporter {
 		}
 
 		const saveOrOpenWindow = new InformedChoiceWindow(
-			'fileDropper.importMethod',
+			'fileDropper.importMethod.name',
 			{
 				isPersistent: true,
 			}
