@@ -2,6 +2,7 @@ import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import type { VirtualFileHandle } from './FileHandle'
 import { v4 as v4Uuid } from 'uuid'
 import { Signal } from '../../Common/Event/Signal'
+import { AnyDirectoryHandle } from '../Types'
 
 export type VirtualHandle = VirtualDirectoryHandle | VirtualFileHandle
 

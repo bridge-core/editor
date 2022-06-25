@@ -8,7 +8,7 @@ import { DirectoryEntry } from './DirectoryEntry'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
-import { set } from '@vue/composition-api'
+import { markRaw, set } from '@vue/composition-api'
 import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 import { dirname, extname, join } from '/@/utils/path'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
@@ -24,11 +24,12 @@ import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnu
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
 import { platform } from '/@/utils/os'
 import { Project } from '../Projects/Project/Project'
+import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryWrapper'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
 	actions: SidebarAction[] = []
-	directoryEntries: Record<string, DirectoryEntry> = {}
+	directoryEntries: Record<string, DirectoryWrapper> = {}
 	topPanel: InfoPanel | undefined = undefined
 	showNoProjectView = false
 
@@ -89,11 +90,22 @@ export class PackExplorer extends SidebarContent {
 
 		this.unselectAllActions()
 		for (const pack of app.project.projectData.contains ?? []) {
-			set(
-				this.directoryEntries,
-				pack.packPath,
-				await DirectoryEntry.create([pack.packPath])
+			const wrapper = new DirectoryWrapper(
+				null,
+				await app.fileSystem.getDirectoryHandle(pack.packPath),
+				{
+					startPath: pack.packPath,
+					onFileRightClick: () => {
+						console.log('RIGHT CLICK')
+					},
+					onFolderRightClick: () => {
+						console.log('RIGHT CLICK')
+					},
+				}
 			)
+			await wrapper.open()
+
+			set(this.directoryEntries, pack.packPath, markRaw(wrapper))
 		}
 
 		this.actions =
