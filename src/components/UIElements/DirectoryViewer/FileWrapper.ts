@@ -15,17 +15,20 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 		super(parent, fileHandle, options)
 	}
 
-	async openFile() {
-		const app = await App.getApp()
-
-		await app.project.openFile(this.handle, { selectTab: true })
-	}
-
 	get icon() {
 		const path = this.path
 		if (!path) return 'mdi-file-outline'
 
 		return App.fileType.get(path)?.icon ?? 'mdi-file-outline'
+	}
+
+	async openFile() {
+		const app = await App.getApp()
+
+		await app.project.openFile(this.handle, {
+			selectTab: true,
+			isReadOnly: this.options.isReadonly,
+		})
 	}
 
 	onRightClick() {
