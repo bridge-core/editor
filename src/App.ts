@@ -43,6 +43,7 @@ import { platform } from '/@/utils/os'
 import { virtualProjectName } from './components/Projects/Project/Project'
 import { AnyDirectoryHandle } from './components/FileSystem/Types'
 import { getStorageDirectory } from './utils/getStorageDirectory'
+import { FolderImportManager } from './components/ImportFolder/manager'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -78,6 +79,7 @@ export class App {
 	public readonly locales: Locales
 	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
+	public readonly folderImportManager = new FolderImportManager()
 	public readonly comMojang = new ComMojang(this)
 	public readonly configuredJsonLanguage = markRaw(
 		new ConfiguredJsonLanguage()

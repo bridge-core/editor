@@ -3,7 +3,11 @@ import {
 	isUsingOriginPrivateFs,
 	isUsingFileSystemPolyfill,
 } from '/@/components/FileSystem/Polyfill'
-import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+	AnyHandle,
+} from '/@/components/FileSystem/Types'
 import { App } from '/@/App'
 import { extname } from '/@/utils/path'
 
@@ -57,22 +61,13 @@ export class FileDropper {
 
 	protected async onDrop(dataTransferItems: DataTransferItem[]) {
 		for (const item of dataTransferItems) {
-			const fileHandle = <AnyHandle | null>(
-				await item.getAsFileSystemHandle()
-			)
-			if (!fileHandle) return
+			const handle = <AnyHandle | null>await item.getAsFileSystemHandle()
+			if (!handle) return
 
-			if (fileHandle.kind === 'directory') {
-				if (
-					!isUsingOriginPrivateFs &&
-					!isUsingFileSystemPolyfill.value &&
-					fileHandle.name === 'com.mojang'
-				)
-					this.app.comMojang.handleComMojangDrop(fileHandle)
-
-				// TODO: Handle import of other folders
-			} else if (fileHandle.kind === 'file') {
-				await this.importFile(fileHandle)
+			if (handle.kind === 'directory') {
+				await this.importFolder(handle)
+			} else if (handle.kind === 'file') {
+				await this.importFile(handle)
 			}
 		}
 	}
@@ -92,6 +87,10 @@ export class FileDropper {
 			return false
 		}
 		return true
+	}
+
+	async importFolder(directoryHandle: AnyDirectoryHandle) {
+		await this.app.folderImportManager.onImportFolder(directoryHandle)
 	}
 
 	addFileImporter(

@@ -24,6 +24,7 @@ import { ThemeModule } from './Modules/theme'
 import { ProjectModule } from './Modules/project'
 import { ThreeModule } from './Modules/Three'
 import { ModelViewerModule } from './Modules/ModelViewer'
+import { ImportModule } from './Modules/import'
 
 const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/ui', UIModule],
@@ -48,6 +49,7 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/theme', ThemeModule],
 	['@bridge/three', ThreeModule],
 	['@bridge/model-viewer', ModelViewerModule],
+	['@bridge/import', ImportModule],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([

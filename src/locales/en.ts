@@ -987,7 +987,19 @@ export default {
 		importFiles: 'Drop files here to import them!',
 		importFailed: 'bridge. was unable to import the following files:',
 		andMore: '...and more!',
-		importMethod: 'Import Method',
+		importMethod: {
+			name: 'Import Method',
+			folder: {
+				output: {
+					name: 'Output Folder',
+					description: 'Sets this folder as a new output folder',
+				},
+				open: {
+					name: 'Open Folder',
+					description: "Opens this folder in bridge.'s file explorer",
+				},
+			},
+		},
 		mcaddon: {
 			missingManifests:
 				"bridge. was unable to load data from your .mcaddon or .mpack file because it wasn't able to find a pack manifest file inside of it.",
