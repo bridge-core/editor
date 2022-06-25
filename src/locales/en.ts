@@ -562,6 +562,8 @@ export default {
 					'Required experimental gameplay toggle condition(s) not met',
 				packTypes: 'Required pack condition(s) not met',
 				targetVersion: 'Required target version not met',
+				manifestDependency:
+					'Required BP manifest dependencies are missing',
 			},
 		},
 		deleteProject: {
