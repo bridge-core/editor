@@ -267,6 +267,11 @@ export class CreatePresetWindow extends BaseWindow {
 					)
 						failureMessageDetails = `Min: ${manifest.requires.targetVersion.min} | Max: ${manifest.requires.targetVersion.max}`
 					break
+				case 'manifestDependency':
+					if (manifest.requires.dependencies)
+						failureMessageDetails = manifest.requires.dependencies.join(
+							', '
+						)
 			}
 			failureMessage = failureMessageDetails
 				? `${failureMessageHeader}: ${failureMessageDetails}`
