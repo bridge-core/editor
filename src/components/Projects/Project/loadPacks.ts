@@ -9,7 +9,7 @@ export interface IPackData extends IPackType {
 }
 
 export async function loadPacks(app: App, project: Project) {
-	await project.packIndexer.fired
+	await App.packType.ready.fired
 	const packs: IPackData[] = []
 	const config = project.config
 	const definedPacks = config.getAvailablePacks()
