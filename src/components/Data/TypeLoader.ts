@@ -1,12 +1,13 @@
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
 import { languages, Uri } from 'monaco-editor'
-import { compareVersions } from 'bridge-common-utils'
-import { getLatestFormatVersion } from './FormatVersions'
 import { DataLoader } from './DataLoader'
 import { Tab } from '../TabSystem/CommonTab'
 import { FileTab } from '../TabSystem/FileTab'
-import { IRequirements, RequiresMatcher } from './RequiresMatcher'
+import {
+	IRequirements,
+	RequiresMatcher,
+} from './RequiresMatcher/RequiresMatcher'
 
 const types = new Map<string, string>()
 
