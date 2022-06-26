@@ -6,7 +6,6 @@ import {
 	IConfigJson,
 	ProjectConfig as BaseProjectConfig,
 } from 'mc-project-core'
-import { get } from 'idb-keyval'
 
 export type { IConfigJson } from 'mc-project-core'
 export { defaultPackPaths } from 'mc-project-core'

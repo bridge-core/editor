@@ -207,6 +207,9 @@ export class FileSystem extends Signal<void> {
 		)
 	}
 
+	// TODO: Use moveHandle() util function
+	// This function can utilize FileSystemHandle.move() where available
+	// and therefore is more efficient
 	async move(path: string, newPath: string) {
 		if (await this.fileExists(path)) {
 			await this.copyFile(path, newPath)

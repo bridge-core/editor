@@ -9,6 +9,7 @@ export interface IPackData extends IPackType {
 }
 
 export async function loadPacks(app: App, project: Project) {
+	await App.packType.ready.fired
 	const packs: IPackData[] = []
 	const config = project.config
 	const definedPacks = config.getAvailablePacks()
@@ -17,7 +18,10 @@ export async function loadPacks(app: App, project: Project) {
 		// Load pack manifest
 		let manifest: any = {}
 		try {
-			manifest = await loadManifest(app, packPath)
+			manifest = await loadManifest(
+				app,
+				config.resolvePackPath(<TPackTypeId>packId, 'manifest.json')
+			)
 		} catch {}
 
 		packs.push({

@@ -448,20 +448,18 @@ export abstract class Project {
 	async loadProject() {
 		await this.config.setup()
 
+		const [iconUrl, packs] = await Promise.all([
+			loadIcon(this, this.app.fileSystem),
+			loadPacks(this.app, this),
+		])
+
 		set(this, '_projectData', {
 			...this.config.get(),
 			path: this.name,
 			name: this.name,
-			imgSrc: await loadIcon(this, this.app.fileSystem),
-			contains: [],
+			imgSrc: iconUrl,
+			contains: packs.sort((a, b) => a.id.localeCompare(b.id)),
 		})
-		await loadPacks(this.app, this).then((packs) =>
-			set(
-				this._projectData,
-				'contains',
-				packs.sort((a, b) => a.id.localeCompare(b.id))
-			)
-		)
 	}
 
 	async recompile(forceStartIfActive = true) {

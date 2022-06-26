@@ -5,7 +5,7 @@ import { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { markRaw } from '@vue/composition-api'
@@ -93,9 +93,10 @@ export class TextTab extends FileTab {
 		}
 
 		const { editor, Uri } = await useMonaco()
-		this.isLoading = false
 
 		await this.parent.fired //Make sure a monaco editor is loaded
+		await wait(1)
+		this.isLoading = false
 
 		if (!this.editorModel || this.editorModel.isDisposed()) {
 			const file = await this.fileHandle.getFile()
@@ -113,7 +114,7 @@ export class TextTab extends FileTab {
 			this.initialVersionId = this.editorModel.getAlternativeVersionId()
 
 			this.modelLoaded.dispatch()
-			this.loadEditor()
+			this.loadEditor(false)
 		} else {
 			this.loadEditor()
 		}
@@ -129,7 +130,6 @@ export class TextTab extends FileTab {
 			})
 		)
 
-		this.focus()
 		this.editorInstance?.layout()
 	}
 	onDeactivate() {
@@ -157,14 +157,14 @@ export class TextTab extends FileTab {
 		this.editorInstance?.focus()
 	}
 
-	loadEditor() {
+	loadEditor(shouldFocus = true) {
 		if (this.editorModel && !this.editorModel.isDisposed())
 			this.editorInstance?.setModel(this.editorModel)
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
 
 		this.editorInstance?.updateOptions({ readOnly: this.isReadOnly })
-		this.focus()
+		if (shouldFocus) setTimeout(() => this.focus(), 10)
 	}
 
 	async _save() {
@@ -268,7 +268,7 @@ export class TextTab extends FileTab {
 	async paste() {
 		if (this.isReadOnly) return
 
-		this.editorInstance.focus()
+		this.focus()
 		this.editorInstance?.trigger('keyboard', 'paste', {
 			text: await navigator.clipboard.readText(),
 		})
