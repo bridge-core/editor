@@ -1,5 +1,11 @@
 import { getLocation } from '/@/utils/monaco/getLocation'
-import { Uri, Range, editor, Position, CancellationToken } from 'monaco-editor'
+import type {
+	Uri,
+	Range,
+	editor,
+	Position,
+	CancellationToken,
+} from 'monaco-editor'
 import { App } from '/@/App'
 import { IDefinition } from '/@/components/Data/FileType'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
@@ -10,6 +16,7 @@ import { findAsync } from '/@/utils/array/findAsync'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { isMatch } from 'bridge-common-utils'
 import { getCacheScriptEnv } from '../PackIndexer/Worker/LightningCache/CacheEnv'
+import { useMonaco } from '/@/utils/useMonaco'
 
 export class DefinitionProvider {
 	async provideDefinition(
@@ -18,7 +25,7 @@ export class DefinitionProvider {
 		cancellationToken: CancellationToken
 	) {
 		const app = await App.getApp()
-		const { word, range } = getJsonWordAtPosition(model, position)
+		const { word, range } = await getJsonWordAtPosition(model, position)
 		const currentPath = app.project.tabSystem?.selectedTab?.getPath()
 		if (!currentPath) return
 
@@ -49,6 +56,8 @@ export class DefinitionProvider {
 			transformedWord,
 			definition
 		)
+
+		const { editor, Uri, Range } = await useMonaco()
 
 		const result = await Promise.all(
 			connectedFiles.map(async (filePath) => {

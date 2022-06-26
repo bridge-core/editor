@@ -1,4 +1,4 @@
-import { editor, KeyCode, KeyMod, languages } from 'monaco-editor'
+import type { editor, KeyCode, KeyMod } from 'monaco-editor'
 import { Signal } from '../Common/Event/Signal'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'
@@ -12,15 +12,10 @@ import { debounce } from 'lodash-es'
 import { platform } from '/@/utils/os'
 import { showContextMenu } from '../ContextMenu/showContextMenu'
 import { TextTab } from '../Editors/Text/TextTab'
+import { useMonaco } from '/@/utils/useMonaco'
+import { registerTextSnippetProvider } from '../Snippets/Monaco'
 
-languages.typescript.javascriptDefaults.setCompilerOptions({
-	target: languages.typescript.ScriptTarget.ESNext,
-	allowNonTsExtensions: true,
-	noLib: true,
-	alwaysStrict: true,
-})
-
-languages.registerDefinitionProvider('json', new DefinitionProvider())
+let configuredMonaco = false
 
 export class MonacoHolder extends Signal<void> {
 	protected _monacoEditor?: editor.IStandaloneCodeEditor
@@ -28,6 +23,25 @@ export class MonacoHolder extends Signal<void> {
 
 	constructor(protected _app: App) {
 		super()
+
+		if (!configuredMonaco) {
+			configuredMonaco = true
+			useMonaco().then(({ languages }) => {
+				languages.typescript.javascriptDefaults.setCompilerOptions({
+					target: languages.typescript.ScriptTarget.ESNext,
+					allowNonTsExtensions: true,
+					noLib: true,
+					alwaysStrict: true,
+				})
+
+				languages.registerDefinitionProvider(
+					'json',
+					new DefinitionProvider()
+				)
+
+				registerTextSnippetProvider()
+			})
+		}
 	}
 
 	get monacoEditor() {
@@ -50,7 +64,9 @@ export class MonacoHolder extends Signal<void> {
 		}
 	}
 
-	createMonacoEditor(domElement: HTMLElement) {
+	async createMonacoEditor(domElement: HTMLElement) {
+		const { KeyCode, KeyMod, editor } = await useMonaco()
+
 		this.dispose()
 		this._monacoEditor = markRaw(
 			editor.create(domElement, {
@@ -181,7 +197,7 @@ export class MonacoHolder extends Signal<void> {
 			{
 				name: 'actions.documentationLookup.name',
 				icon: 'mdi-book-open-outline',
-				onTrigger: () => {
+				onTrigger: async () => {
 					const currentModel = this._monacoEditor?.getModel()
 					const selection = this._monacoEditor?.getSelection()
 					if (!currentModel || !selection) return
@@ -191,10 +207,10 @@ export class MonacoHolder extends Signal<void> {
 
 					let word: string | undefined
 					if (App.fileType.isJsonFile(filePath))
-						word = getJsonWordAtPosition(
+						word = await getJsonWordAtPosition(
 							currentModel,
 							selection.getPosition()
-						).word
+						).then((res) => res.word)
 					else
 						word = currentModel.getWordAtPosition(
 							selection.getPosition()

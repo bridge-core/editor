@@ -30,7 +30,7 @@ export class Theme {
 		this.monacoSubTheme = new MonacoSubTheme(this)
 	}
 
-	apply(themeManager: ThemeManager, vuetify: any) {
+	async apply(themeManager: ThemeManager, vuetify: any) {
 		Vue.set(
 			vuetify.theme.themes,
 			this.colorScheme,
@@ -39,7 +39,7 @@ export class Theme {
 		Vue.set(vuetify.theme, 'dark', this.colorScheme === 'dark')
 
 		themeManager.setThemeColor(this.colorMap.get('toolbar') ?? 'red')
-		this.monacoSubTheme.apply()
+		await this.monacoSubTheme.apply()
 	}
 
 	getColor(colorName: TColorName) {

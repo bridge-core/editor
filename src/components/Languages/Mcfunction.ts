@@ -1,9 +1,8 @@
-import {
+import type {
 	CancellationToken,
 	editor,
 	languages,
 	Position,
-	Range,
 } from 'monaco-editor'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 import { Language } from './Language'
@@ -15,6 +14,7 @@ import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
 import { FunctionValidator } from '/@/components/Languages/Mcfunction/Validation/Validator'
 import { proxy } from 'comlink'
+import { useMonaco } from '/@/utils/useMonaco'
 
 export const config: languages.LanguageConfiguration = {
 	wordPattern: /[aA-zZ]+/,
@@ -56,6 +56,8 @@ const completionItemProvider: languages.CompletionItemProvider = {
 	) {
 		const project = await App.getApp().then((app) => app.project)
 		if (!(project instanceof BedrockProject)) return
+
+		const { Range } = await useMonaco()
 		const commandData = project.commandData
 		await commandData.fired
 

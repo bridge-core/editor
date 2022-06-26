@@ -1,6 +1,6 @@
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import TextTabComponent from './TextTab.vue'
-import { editor, Uri } from 'monaco-editor'
+import type { editor } from 'monaco-editor'
 import { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
@@ -9,6 +9,7 @@ import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '../../FileSystem/Types'
 import { markRaw } from '@vue/composition-api'
+import { useMonaco } from '/@/utils/useMonaco'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -79,6 +80,8 @@ export class TextTab extends FileTab {
 	async onActivate() {
 		if (this.isActive) return
 		this.isActive = true
+
+		const { editor, Uri } = await useMonaco()
 
 		await this.parent.fired //Make sure a monaco editor is loaded
 

@@ -1,18 +1,24 @@
-import { languages } from 'monaco-editor'
+import { registerJsonSnippetProvider } from '/@/components/Snippets/Monaco'
+import { registerEmbeddedMcfunctionProvider } from '/@/components/languages/Mcfunction/WithinJson'
 import { ConfiguredJsonHighlighter } from './Highlighter'
+import { useMonaco } from '/@/utils/useMonaco'
 
 export class ConfiguredJsonLanguage {
 	protected highlighter = new ConfiguredJsonHighlighter()
 
 	constructor() {
 		this.setModeConfiguration()
+		registerEmbeddedMcfunctionProvider()
+		registerJsonSnippetProvider()
 	}
 
 	getHighlighter() {
 		return this.highlighter
 	}
 
-	setModeConfiguration() {
+	async setModeConfiguration() {
+		const { languages } = await useMonaco()
+
 		languages.json.jsonDefaults.setModeConfiguration({
 			colors: false,
 			tokens: false,

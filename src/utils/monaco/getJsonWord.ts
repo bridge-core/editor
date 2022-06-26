@@ -1,9 +1,11 @@
-import { editor, Position, Range } from 'monaco-editor'
+import type { editor, Position, Range } from 'monaco-editor'
+import { useMonaco } from '../useMonaco'
 
-export function getJsonWordAtPosition(
+export async function getJsonWordAtPosition(
 	model: editor.ITextModel,
 	position: Position
 ) {
+	const { Range } = await useMonaco()
 	const line = model.getLineContent(position.lineNumber)
 
 	const wordStart = getPreviousQuote(line, position.column)

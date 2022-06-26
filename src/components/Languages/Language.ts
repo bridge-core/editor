@@ -1,6 +1,7 @@
 import { IDisposable } from '/@/types/disposable'
 import { debounce } from 'lodash-es'
-import { languages, editor } from 'monaco-editor'
+import type { languages, editor } from 'monaco-editor'
+import { useMonaco } from '/@/utils/useMonaco'
 
 export interface IAddLanguageOptions {
 	id: string
@@ -14,7 +15,7 @@ export abstract class Language {
 	protected id: string
 	protected disposables: IDisposable[] = []
 	protected models = new Map<string, IDisposable>()
-	protected highlighter: IDisposable
+	protected highlighter?: IDisposable
 
 	constructor({
 		id,
@@ -25,33 +26,40 @@ export abstract class Language {
 	}: IAddLanguageOptions) {
 		this.id = id
 
-		languages.register({ id, extensions })
-		this.disposables = [
-			languages.setLanguageConfiguration(id, config),
-			editor.onDidCreateModel(this.onModelAdded.bind(this)),
-			editor.onWillDisposeModel(this.onModelRemoved.bind(this)),
-			editor.onDidChangeModelLanguage((event) => {
-				this.onModelRemoved(event.model)
-				this.onModelAdded(event.model)
-			}),
-		]
-		this.highlighter = languages.setMonarchTokensProvider(id, tokenProvider)
-
-		if (completionItemProvider)
-			this.disposables.push(
-				languages.registerCompletionItemProvider(
-					id,
-					completionItemProvider
-				)
+		useMonaco().then(({ languages, editor }) => {
+			languages.register({ id, extensions })
+			this.disposables = [
+				languages.setLanguageConfiguration(id, config),
+				editor.onDidCreateModel(this.onModelAdded.bind(this)),
+				editor.onWillDisposeModel(this.onModelRemoved.bind(this)),
+				editor.onDidChangeModelLanguage((event) => {
+					this.onModelRemoved(event.model)
+					this.onModelAdded(event.model)
+				}),
+			]
+			this.highlighter = languages.setMonarchTokensProvider(
+				id,
+				tokenProvider
 			)
+
+			if (completionItemProvider)
+				this.disposables.push(
+					languages.registerCompletionItemProvider(
+						id,
+						completionItemProvider
+					)
+				)
+		})
 	}
 
 	updateTokenProvider(tokenProvider: any) {
-		this.highlighter.dispose()
-		this.highlighter = languages.setMonarchTokensProvider(
-			this.id,
-			tokenProvider
-		)
+		useMonaco().then(({ languages }) => {
+			this.highlighter?.dispose()
+			this.highlighter = languages.setMonarchTokensProvider(
+				this.id,
+				tokenProvider
+			)
+		})
 	}
 
 	protected onModelAdded(model: editor.IModel) {
@@ -68,7 +76,9 @@ export abstract class Language {
 		return true
 	}
 	protected onModelRemoved(model: editor.IModel) {
-		editor.setModelMarkers(model, this.id, [])
+		useMonaco().then(({ editor }) => {
+			editor.setModelMarkers(model, this.id, [])
+		})
 
 		const uriStr = model.uri.toString()
 		this.models.get(uriStr)?.dispose()
@@ -81,7 +91,7 @@ export abstract class Language {
 	): Promise<void> | void
 
 	dispose() {
-		this.highlighter.dispose()
+		this.highlighter?.dispose()
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.disposables = []
 	}

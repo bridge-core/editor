@@ -1,12 +1,14 @@
-import { editor as Editor } from 'monaco-editor'
 import { keyword } from 'color-convert'
 import { Theme } from './Theme'
+import { useMonaco } from '/@/utils/useMonaco'
 
 export class MonacoSubTheme {
 	constructor(protected theme: Theme) {}
 
-	apply() {
-		Editor.defineTheme(`bridgeMonacoDefault`, {
+	async apply() {
+		const { editor } = await useMonaco()
+
+		editor.defineTheme(`bridgeMonacoDefault`, {
 			base: this.theme.colorScheme === 'light' ? 'vs' : 'vs-dark',
 			inherit: false,
 			colors: {

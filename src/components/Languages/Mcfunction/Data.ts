@@ -1,6 +1,6 @@
 import { markRaw } from '@vue/composition-api'
 import { MoLang } from 'molang'
-import { languages } from 'monaco-editor'
+import type { languages } from 'monaco-editor'
 import { generateCommandSchemas } from '../../Compiler/Worker/Plugins/CustomCommands/generateSchemas'
 import { RequiresMatcher } from '../../Data/RequiresMatcher/RequiresMatcher'
 import { RefSchema } from '../../JSONSchema/Schema/Ref'
@@ -8,6 +8,7 @@ import { strMatchArray } from './strMatch'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SelectorArguments } from './TargetSelector/SelectorArguments'
+import { useMonaco } from '/@/utils/useMonaco'
 /**
  * An interface that describes a command
  */
@@ -165,33 +166,37 @@ export class CommandData extends Signal<void> {
 		])
 	}
 
-	getCommandCompletionItems(query?: string, ignoreCustomCommands = false) {
-		return this.getCommandsSchema(ignoreCustomCommands).then((schema) => {
-			const completionItems: ICompletionItem[] = []
+	async getCommandCompletionItems(
+		query?: string,
+		ignoreCustomCommands = false
+	) {
+		const { languages } = await useMonaco()
 
-			schema
-				.filter(
-					(command: ICommand) =>
-						!query || command.commandName?.includes(query)
-				)
-				.forEach((command) => {
-					if (
-						completionItems.some(
-							(item) => item.label === command.commandName
-						)
+		const schema = await this.getCommandsSchema(ignoreCustomCommands)
+		const completionItems: ICompletionItem[] = []
+
+		schema
+			.filter(
+				(command: ICommand) =>
+					!query || command.commandName?.includes(query)
+			)
+			.forEach((command) => {
+				if (
+					completionItems.some(
+						(item) => item.label === command.commandName
 					)
-						return
+				)
+					return
 
-					completionItems.push({
-						insertText: command.commandName,
-						label: command.commandName,
-						documentation: command.description,
-						kind: languages.CompletionItemKind.Method,
-					})
+				completionItems.push({
+					insertText: command.commandName,
+					label: command.commandName,
+					documentation: command.description,
+					kind: languages.CompletionItemKind.Method,
 				})
+			})
 
-			return completionItems
-		})
+		return completionItems
 	}
 
 	/**
@@ -389,6 +394,8 @@ export class CommandData extends Signal<void> {
 	async getCompletionItemsForArgument(
 		commandArgument: ICommandArgument
 	): Promise<ICompletionItem[]> {
+		const { languages } = await useMonaco()
+
 		// Test whether argument type is defined
 		if (!commandArgument.type) {
 			// If additionalData is defined, return its values
@@ -476,15 +483,18 @@ export class CommandData extends Signal<void> {
 
 		return []
 	}
-	toCompletionItem(
+	async toCompletionItem(
 		strings: (string | [string, string])[],
 		documentation?: string,
-		kind = languages.CompletionItemKind.Text
-	): ICompletionItem[] {
+		kind?: languages.CompletionItemKind
+	): Promise<ICompletionItem[]> {
+		const { languages } = await useMonaco()
+		if (!kind) kind = languages.CompletionItemKind.Text
+
 		return strings.map((str) => ({
 			label: Array.isArray(str) ? str[0] : str,
 			insertText: Array.isArray(str) ? str[1] : str,
-			kind,
+			kind: kind!,
 			documentation,
 			insertTextRules: Array.isArray(str)
 				? languages.CompletionItemInsertTextRule.InsertAsSnippet
