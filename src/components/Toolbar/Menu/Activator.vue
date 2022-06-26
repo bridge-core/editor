@@ -3,8 +3,9 @@
 		v-model="item.isVisible"
 		min-width="260px"
 		offset-y
-		tile
 		z-index="11"
+		:nudge-top="-8"
+		rounded="lg"
 	>
 		<template v-slot:activator="{ on }">
 			<MenuButton

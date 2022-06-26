@@ -229,12 +229,17 @@
 					v-model="createOptions.targetVersion"
 					:label="t('windows.createProject.projectTargetVersion')"
 					autocomplete="off"
+					:menu-props="{
+						maxHeight: 220,
+						rounded: 'lg',
+						'nudge-top': -8,
+						transition: 'slide-y-transition',
+					}"
 					:items="availableTargetVersions"
 					:loading="availableTargetVersionsLoading"
 					class="ml-2"
 					outlined
 					dense
-					:menu-props="{ maxHeight: 220 }"
 				/>
 			</div>
 

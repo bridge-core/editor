@@ -12,7 +12,12 @@
 					@change="onChange"
 					:items="config.options"
 					hide-details
-					:menu-props="{ maxHeight: 220 }"
+					:menu-props="{
+						maxHeight: 220,
+						rounded: 'lg',
+						'nudge-top': -8,
+						transition: 'slide-y-transition',
+					}"
 				/>
 			</div>
 

@@ -96,7 +96,12 @@
 					:disabled="opts.isLoading"
 					v-model="content.models[id]"
 					:items="opts.options"
-					:menu-props="{ maxHeight: 220 }"
+					:menu-props="{
+						maxHeight: 220,
+						rounded: 'lg',
+						'nudge-top': -8,
+						transition: 'slide-y-transition',
+					}"
 					:label="name"
 					autocomplete="off"
 					outlined

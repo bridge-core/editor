@@ -17,6 +17,12 @@
 				:cache-items="false"
 				dense
 				:no-data-text="t('windows.openFile.noData')"
+				:menu-props="{
+					rounded: 'lg',
+					dense: true,
+					'nudge-top': -8,
+					transition: 'slide-y-transition',
+				}"
 				:filter="filter"
 				outlined
 				auto-select-first
