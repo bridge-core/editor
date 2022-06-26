@@ -2,6 +2,7 @@
 	<v-progress-linear v-if="!directoryWrapper" indeterminate />
 	<DirectoryView
 		v-else
+		class="mx-1"
 		:directoryWrapper="directoryWrapper"
 		:renderDirectoryName="renderTopLevelDirectory"
 	/>
