@@ -11,8 +11,9 @@
 				:key="`menu.${i}.${Math.random()}`"
 				open-on-hover
 				offset-x
-				tile
 				z-index="11"
+				:nudge-top="-8"
+				rounded="lg"
 			>
 				<template v-slot:activator="{ on }">
 					<v-list-item

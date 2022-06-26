@@ -46,6 +46,9 @@
 					maxHeight: 124,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
+					rounded: 'lg',
+					'nudge-top': -8,
+					transition: 'slide-y-transition',
 				}"
 				:label="
 					isUsingBridgePredictions
@@ -95,6 +98,9 @@
 					maxHeight: 124,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
+					rounded: 'lg',
+					'nudge-top': -8,
+					transition: 'slide-y-transition',
 				}"
 				:label="t('editors.treeEditor.addValue')"
 				class="mx-4"
@@ -133,6 +139,9 @@
 					maxHeight: 124,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
+					rounded: 'lg',
+					'nudge-top': -8,
+					transition: 'slide-y-transition',
 				}"
 				:label="t('editors.treeEditor.edit')"
 				outlined
