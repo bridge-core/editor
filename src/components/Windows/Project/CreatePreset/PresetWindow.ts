@@ -17,7 +17,8 @@ import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
 import {
 	IRequirements,
 	RequiresMatcher,
-} from '/@/components/Data/RequiresMatcher'
+} from '/@/components/Data/RequiresMatcher/RequiresMatcher'
+import { createFailureMessage } from '/@/components/Data/RequiresMatcher/FailureMessage'
 
 export interface IPresetManifest {
 	name: string
@@ -208,74 +209,10 @@ export class CreatePresetWindow extends BaseWindow {
 
 		let failureMessage: string | undefined
 		if (requiresMatcher.failures.length > 0) {
-			const failureMessageHeader = app.locales.translate(
-				`windows.createPreset.disabledPreset.${requiresMatcher.failures[0].type}`
+			failureMessage = await createFailureMessage(
+				requiresMatcher.failures[0],
+				manifest.requires
 			)
-			let failureMessageDetails
-			switch (requiresMatcher.failures[0].type) {
-				case 'experimentalGameplay':
-					if (manifest.requires.experimentalGameplay)
-						failureMessageDetails = manifest.requires.experimentalGameplay
-							.map(
-								(exp) =>
-									`${
-										exp.startsWith('!')
-											? app.locales.translate(
-													'general.no'
-											  )
-											: ''
-									} ${app.locales.translate(
-										`experimentalGameplay.${exp.replace(
-											'!',
-											''
-										)}.name`
-									)}`
-							)
-							.join(', ')
-
-					break
-				case 'packTypes':
-					if (manifest.requires.packTypes)
-						failureMessageDetails = manifest.requires.packTypes
-							.map(
-								(packType) =>
-									`${
-										packType.startsWith('!')
-											? app.locales.translate(
-													'general.no'
-											  )
-											: ''
-									} ${app.locales.translate(
-										`packType.${packType.replace(
-											'!',
-											''
-										)}.name`
-									)}`
-							)
-							.join(', ')
-
-					break
-				case 'targetVersion':
-					if (Array.isArray(manifest.requires.targetVersion))
-						failureMessageDetails = manifest.requires.targetVersion.join(
-							' '
-						)
-					else if (
-						manifest.requires.targetVersion &&
-						manifest.requires.targetVersion.min &&
-						manifest.requires.targetVersion.max
-					)
-						failureMessageDetails = `Min: ${manifest.requires.targetVersion.min} | Max: ${manifest.requires.targetVersion.max}`
-					break
-				case 'manifestDependency':
-					if (manifest.requires.dependencies)
-						failureMessageDetails = manifest.requires.dependencies.join(
-							', '
-						)
-			}
-			failureMessage = failureMessageDetails
-				? `${failureMessageHeader}: ${failureMessageDetails}`
-				: undefined
 		}
 
 		category.addItem(

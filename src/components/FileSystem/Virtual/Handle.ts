@@ -2,30 +2,46 @@ import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import type { VirtualFileHandle } from './FileHandle'
 import { v4 as v4Uuid } from 'uuid'
 import { Signal } from '../../Common/Event/Signal'
-import { AnyDirectoryHandle } from '../Types'
+import { IDBWrapper } from './IDB'
 
 export type VirtualHandle = VirtualDirectoryHandle | VirtualFileHandle
 
 export abstract class BaseVirtualHandle {
+	protected _idbWrapper: IDBWrapper | null = null
+	protected parent: VirtualDirectoryHandle | null = null
 	public readonly isVirtual = true
 	public abstract readonly kind: 'directory' | 'file'
 	public readonly setupDone = new Signal<void>()
 
-	abstract moveToIdb(): Promise<void>
+	abstract moveData(): any
 
 	constructor(
-		protected parent: VirtualDirectoryHandle | null,
+		parent: VirtualDirectoryHandle | IDBWrapper | null,
 		protected _name: string,
 		protected basePath: string[] = [],
 		public readonly uuid = v4Uuid()
-	) {}
+	) {
+		if (parent === null) {
+			this._idbWrapper = new IDBWrapper()
+		} else if (parent instanceof IDBWrapper) {
+			this._idbWrapper = parent
+		} else {
+			this.parent = parent
+		}
+	}
 
 	protected get path(): string[] {
 		return this.parent ? this.parent.path.concat(this.name) : this.basePath
 	}
-	protected get idbKey() {
+	get idbKey() {
 		if (this.path.length === 0) return this._name
 		return this.path.join('/')
+	}
+	protected get idbWrapper(): IDBWrapper {
+		if (this._idbWrapper === null) {
+			return this.parent!.idbWrapper
+		}
+		return this._idbWrapper
 	}
 	abstract removeSelf(): Promise<void>
 
