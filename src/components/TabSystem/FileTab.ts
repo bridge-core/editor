@@ -7,15 +7,22 @@ import { App } from '/@/App'
 import { isUsingSaveAsPolyfill } from '../FileSystem/Polyfill'
 import { download } from '../FileSystem/saveOrDownload'
 
+export type TReadOnlyMode = 'forced' | 'manual' | 'off'
+
 export abstract class FileTab extends Tab {
 	public isForeignFile = false
+	public isSaving = false
 
 	constructor(
 		protected parent: TabSystem,
 		protected fileHandle: AnyFileHandle,
-		public isReadOnly = false
+		public readOnlyMode: TReadOnlyMode = 'off'
 	) {
 		super(parent)
+	}
+
+	get isReadOnly() {
+		return this.readOnlyMode !== 'off'
 	}
 
 	async setup() {
@@ -83,9 +90,19 @@ export abstract class FileTab extends Tab {
 		return this.fileHandle
 	}
 
-	abstract setReadOnly(readonly: boolean): Promise<void> | void
+	abstract setReadOnly(readonly: TReadOnlyMode): Promise<void> | void
 
-	abstract save(): void | Promise<void>
+	async save() {
+		if (this.isSaving) return
+		this.isSaving = true
+		// this.setReadOnly('forced')
+
+		await this._save()
+
+		this.isSaving = false
+		// this.setReadOnly('off')
+	}
+	protected abstract _save(): void | Promise<void>
 	async saveAs() {
 		const fileHandle = await self
 			.showSaveFilePicker({

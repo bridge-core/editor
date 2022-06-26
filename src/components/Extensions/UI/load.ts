@@ -4,12 +4,37 @@ import { TUIStore } from './store'
 import { IDisposable } from '/@/types/disposable'
 import { executeScript } from '../Scripts/loadScripts'
 import { createStyleSheet } from '../Styles/createStyle'
-import { parseComponent } from 'vue-template-compiler'
 import Vue from 'vue'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-// @ts-ignore
-import * as VuetifyComponents from 'vuetify/lib/components'
+import {
+	VBtn,
+	VAlert,
+	VApp,
+	VToolbar,
+	VToolbarItems,
+	VAutocomplete,
+	VCombobox,
+	VSwitch,
+	VTextField,
+	VWindow,
+	VTooltip,
+} from 'vuetify/lib'
 import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
+import { useVueTemplateCompiler } from '/@/utils/libs/useVueTemplateCompiler'
+
+const VuetifyComponents = {
+	VBtn,
+	VAlert,
+	VApp,
+	VToolbar,
+	VToolbarItems,
+	VAutocomplete,
+	VCombobox,
+	VSwitch,
+	VTextField,
+	VWindow,
+	VTooltip,
+}
 
 export async function loadUIComponents(
 	fileSystem: FileSystem,
@@ -58,6 +83,8 @@ export async function loadUIComponent(
 		)
 		return
 	}
+
+	const { parseComponent } = await useVueTemplateCompiler()
 
 	const promise = new Promise(async (resolve, reject) => {
 		//@ts-expect-error "errors" is not defined in .d.ts file

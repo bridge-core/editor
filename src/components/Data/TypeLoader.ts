@@ -1,6 +1,5 @@
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
-import { languages, Uri } from 'monaco-editor'
 import { DataLoader } from './DataLoader'
 import { Tab } from '../TabSystem/CommonTab'
 import { FileTab } from '../TabSystem/FileTab'
@@ -8,6 +7,7 @@ import {
 	IRequirements,
 	RequiresMatcher,
 } from './RequiresMatcher/RequiresMatcher'
+import { useMonaco } from '../../utils/libs/useMonaco'
 
 const types = new Map<string, string>()
 
@@ -53,6 +53,8 @@ export class TypeLoader {
 
 	async setTypeEnv(filePath: string) {
 		if (filePath === this.currentTypeEnv) return
+
+		const { languages, Uri } = await useMonaco()
 
 		this.currentTypeEnv = filePath
 		this.typeDisposables.forEach((disposable) => disposable.dispose())

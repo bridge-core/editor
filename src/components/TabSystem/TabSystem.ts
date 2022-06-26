@@ -109,7 +109,8 @@ export class TabSystem extends MonacoHolder {
 			}
 		}
 		// Default tab type: Text editor
-		if (!tab) tab = new TextTab(this, fileHandle, isReadOnly)
+		if (!tab)
+			tab = new TextTab(this, fileHandle, isReadOnly ? 'forced' : 'off')
 
 		return await tab.fired
 	}
@@ -200,9 +201,7 @@ export class TabSystem extends MonacoHolder {
 	}
 	async save(tab = this.selectedTab) {
 		if (!tab || (tab instanceof FileTab && tab.isReadOnly)) return
-
-		const app = await App.getApp()
-		app.windows.loadingWindow.open()
+		tab?.setIsLoading(true)
 
 		// Save whether the tab was selected previously for use later
 		const tabWasActive = this.selectedTab === tab
@@ -226,8 +225,8 @@ export class TabSystem extends MonacoHolder {
 				App.eventSystem.dispatch('refreshCurrentContext', tab.getPath())
 		}
 
-		app.windows.loadingWindow.close()
 		tab.focus()
+		tab?.setIsLoading(false)
 	}
 	async saveAs() {
 		if (this.selectedTab instanceof FileTab) await this.selectedTab.saveAs()

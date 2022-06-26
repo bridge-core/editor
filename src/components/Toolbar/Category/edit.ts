@@ -95,9 +95,15 @@ export function setupEditCategory(app: App) {
 			description: 'actions.toggleReadOnly.description',
 			onTrigger: () => {
 				const currentTab = app.tabSystem?.selectedTab
-				if (!(currentTab instanceof FileTab)) return
+				if (
+					!(currentTab instanceof FileTab) ||
+					currentTab.readOnlyMode === 'forced'
+				)
+					return
 
-				currentTab.setReadOnly(!currentTab.isReadOnly)
+				currentTab.setReadOnly(
+					currentTab.readOnlyMode === 'manual' ? 'off' : 'manual'
+				)
 			},
 		})
 	)

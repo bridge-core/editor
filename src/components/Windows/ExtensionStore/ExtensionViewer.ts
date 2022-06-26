@@ -136,7 +136,7 @@ export class ExtensionViewer {
 
 		const basePath = !isGlobalInstall
 			? `${app.project.projectPath}/.bridge/extensions`
-			: 'extensions'
+			: '~local/extensions'
 		const extensionLoader = isGlobalInstall
 			? app.extensionLoader
 			: app.project.extensionLoader

@@ -96,6 +96,9 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	protected applyTheme(theme?: Theme) {
 		theme?.apply(this, this.vuetify)
 	}
+	async applyMonacoTheme() {
+		this.themeMap.get(this.currentTheme)?.applyMonacoTheme()
+	}
 	async updateTheme() {
 		const app = await App.getApp()
 		let colorScheme = settingsState?.appearance?.colorScheme

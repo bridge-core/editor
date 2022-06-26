@@ -1,4 +1,4 @@
-import { FileTab } from '/@/components/TabSystem/FileTab'
+import { FileTab, TReadOnlyMode } from '/@/components/TabSystem/FileTab'
 import { loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
 import ImageTabComponent from './ImageTab.vue'
 import { AnyFileHandle } from '../../FileSystem/Types'
@@ -16,8 +16,8 @@ export class ImageTab extends FileTab {
 		)
 	}
 
-	setReadOnly() {
-		this.isReadOnly = true
+	setReadOnly(val: TReadOnlyMode) {
+		this.readOnlyMode = val
 	}
 
 	async onActivate() {
@@ -31,5 +31,5 @@ export class ImageTab extends FileTab {
 		return 'primary'
 	}
 
-	save() {}
+	_save() {}
 }

@@ -93,7 +93,8 @@ export default {
 			await app.setupBridgeFolder(this.isBridgeFolderSelected)
 		},
 		calculateAvailableWidth() {
-			this.availableWidth = this.$refs.button.$el.getBoundingClientRect().width
+			if (this.$refs.button)
+				this.availableWidth = this.$refs.button.$el.getBoundingClientRect().width
 		},
 	},
 }

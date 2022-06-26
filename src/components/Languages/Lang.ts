@@ -1,4 +1,4 @@
-import { languages } from 'monaco-editor'
+import type { languages } from 'monaco-editor'
 import { colorCodes } from './Common/ColorCodes'
 import { Language } from './Language'
 

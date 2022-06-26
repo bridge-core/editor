@@ -1,17 +1,10 @@
 import { App } from '/@/App'
 import { get as idbGet, set as idbSet } from 'idb-keyval'
-import {
-	shallowReactive,
-	set,
-	del,
-	reactive,
-	computed,
-} from '@vue/composition-api'
+import { shallowReactive, set, del } from '@vue/composition-api'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { Project, virtualProjectName } from './Project/Project'
-import { RecentProjects } from './RecentProjects'
 import { Title } from '/@/components/Projects/Title'
-import { editor } from 'monaco-editor'
+import type { editor } from 'monaco-editor'
 import { BedrockProject } from './Project/BedrockProject'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
