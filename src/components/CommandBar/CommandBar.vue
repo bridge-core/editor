@@ -36,7 +36,7 @@
 				:color="item.color || 'warning'"
 				class="text-h5 font-weight-light white--text"
 			>
-				<v-icon>{{ item.icon }}</v-icon>
+				<v-icon color="white">{{ item.icon }}</v-icon>
 			</v-list-item-avatar>
 			<v-list-item-content>
 				<v-list-item-title v-text="t(item.name)" />
