@@ -135,8 +135,6 @@ summary {
 	outline: none;
 	cursor: pointer;
 	display: block;
-	border: 1px solid transparent;
-	margin: -1px 0;
 }
 summary.selected {
 	background: var(--v-background-base);
