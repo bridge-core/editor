@@ -36,6 +36,7 @@
 				v-model="keyToAdd"
 				@change="onAdd"
 				@keydown.enter="mayTrigger"
+				@keydown.tab="mayTrigger"
 				:items="
 					isUsingBridgePredictions
 						? allSuggestions
@@ -91,6 +92,7 @@
 				v-model="valueToAdd"
 				@change="(s) => onAdd(s, true)"
 				@keydown.enter="mayTrigger"
+				@keydown.tab="mayTrigger"
 				:disabled="isGlobal"
 				:items="valueSuggestions"
 				:item-value="(item) => item"
@@ -132,6 +134,7 @@
 				"
 				@change="(s) => onEdit(s)"
 				@keydown.enter="mayTrigger"
+				@keydown.tab="mayTrigger"
 				:disabled="isGlobal"
 				:items="editSuggestions"
 				:item-value="(item) => item"
