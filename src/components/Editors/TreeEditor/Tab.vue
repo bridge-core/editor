@@ -193,11 +193,9 @@ export default {
 	}),
 	mounted() {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
-		this.focusEditor()
 	},
 	activated() {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
-		this.focusEditor()
 	},
 	computed: {
 		isUsingBridgePredictions() {

@@ -114,7 +114,6 @@ export class TextTab extends FileTab {
 			})
 		)
 
-		this.focus()
 		this.editorInstance?.layout()
 	}
 	onDeactivate() {
@@ -149,7 +148,6 @@ export class TextTab extends FileTab {
 			this.editorInstance?.restoreViewState(this.editorViewState)
 
 		this.editorInstance?.updateOptions({ readOnly: this.isReadOnly })
-		this.focus()
 	}
 
 	async save() {
@@ -235,7 +233,7 @@ export class TextTab extends FileTab {
 	async paste() {
 		if (this.isReadOnly) return
 
-		this.editorInstance.focus()
+		this.focus()
 		this.editorInstance?.trigger('keyboard', 'paste', {
 			text: await navigator.clipboard.readText(),
 		})
