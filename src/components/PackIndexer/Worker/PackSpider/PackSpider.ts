@@ -32,16 +32,16 @@ export class PackSpider {
 		// TODO(Dash): Re-enable pack spider
 		if (this.packIndexer.getOptions().disablePackSpider || true) return
 
-		fileStore = {}
-		const response = await this.packIndexer.fileType.getPackSpiderData()
-		response.forEach(
-			({ id, packSpider }) => (this.packSpiderFiles[id] = packSpider)
-		)
+		// fileStore = {}
+		// const response = await this.packIndexer.fileType.getPackSpiderData()
+		// response.forEach(
+		// 	({ id, packSpider }) => (this.packSpiderFiles[id] = packSpider)
+		// )
 
-		for (const filePath of filePaths) {
-			await File.create(filePath, this)
-			this.packIndexer.progress.addToCurrent()
-		}
+		// for (const filePath of filePaths) {
+		// 	await File.create(filePath, this)
+		// 	this.packIndexer.progress.addToCurrent()
+		// }
 	}
 
 	async updateFile(filePath: string) {

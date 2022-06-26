@@ -40,7 +40,7 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 		)
 
 		this.loadLightningCache(dataLoader)
-		this.loadPackSpider(dataLoader)
+		// this.loadPackSpider(dataLoader)
 
 		this.ready.dispatch()
 	}
@@ -117,36 +117,40 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 		return this.lCacheFiles[lightningCache] ?? []
 	}
 
-	protected packSpiderFiles: {
-		id: string
-		packSpider: IPackSpiderFile
-	}[] = []
-	protected packSpiderFilesLoaded = new Signal<void>()
-	async loadPackSpider(dataLoader: DataLoader) {
-		this.packSpiderFiles.push(
-			...(<{ id: string; packSpider: IPackSpiderFile }[]>(
-				await Promise.all(
-					this.fileTypes
-						.map(({ id, packSpider }) => {
-							if (!packSpider) return
-							return dataLoader
-								.readJSON(
-									`data/packages/minecraftBedrock/packSpider/${packSpider}`
-								)
-								.then((json) => ({
-									id,
-									packSpider: json,
-								}))
-						})
-						.filter((data) => data !== undefined)
-				)
-			))
-		)
-		this.packSpiderFilesLoaded.dispatch()
-	}
-	async getPackSpiderData() {
-		await this.packSpiderFilesLoaded.fired
+	// protected packSpiderFiles: {
+	// 	id: string
+	// 	packSpider: IPackSpiderFile
+	// }[] = []
+	// protected packSpiderFilesLoaded = new Signal<void>()
+	// async loadPackSpider(dataLoader: DataLoader) {
+	// 	const packSpiderFiles = await dataLoader.readJSON(
+	// 		`data/packages/minecraftBedrock/packSpiders.json`
+	// 	)
 
-		return this.packSpiderFiles
-	}
+	// 	this.packSpiderFiles.push(
+	// 		...(<{ id: string; packSpider: IPackSpiderFile }[]>(
+	// 			await Promise.all(
+	// 				this.fileTypes
+	// 					.map(({ id, packSpider }) => {
+	// 						if (!packSpider) return
+	// 						return dataLoader
+	// 							.readJSON(
+	// 								`data/packages/minecraftBedrock/packSpider/${packSpider}`
+	// 							)
+	// 							.then((json) => ({
+	// 								id,
+	// 								packSpider: json,
+	// 							}))
+	// 					})
+	// 					.filter((data) => data !== undefined)
+	// 			)
+	// 		))
+	// 	)
+	// 	this.packSpiderFilesLoaded.dispatch()
+	// }
+	// async getPackSpiderData() {
+	// 	await this.packSpiderFilesLoaded.fired
+
+	// 	return this.packSpiderFiles
+	// }
 }
