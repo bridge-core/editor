@@ -37,6 +37,10 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		this.isLoading = false
 	}
 
+	setIsLoading(val: boolean) {
+		this.isLoading = val
+	}
+
 	setIsUnsaved(val: boolean) {
 		this._isUnsaved = val
 		this.isTemporary = false

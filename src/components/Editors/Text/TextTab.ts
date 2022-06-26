@@ -191,7 +191,6 @@ export class TextTab extends FileTab {
 			// ...and that the current file type supports formatting
 			(fileType?.formatOnSaveCapable ?? true)
 		) {
-			app.windows.loadingWindow.open()
 			// This is a terrible hack because we need to make sure that the formatter triggers the "onDidChangeContent" event
 			// The promise returned by action.run() actually resolves before formatting is done so we need the "onDidChangeContent" event to tell when the formatter is done
 			this.editorInstance?.executeEdits('automatic', [
@@ -223,7 +222,6 @@ export class TextTab extends FileTab {
 			await Promise.all([editPromise, actionPromise])
 
 			await this.saveFile(app)
-			app.windows.loadingWindow.close()
 		} else {
 			await this.saveFile(app)
 		}
