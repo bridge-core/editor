@@ -4,9 +4,13 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { Component } from 'vue'
 import { SidebarContent } from '/@/components/Sidebar/Content/SidebarContent'
+import { SidebarAction } from '/@/components/Sidebar/Content/SidebarAction'
+import { SelectableSidebarAction } from '/@/components/Sidebar/Content/SelectableSidebarAction'
 
 export const SidebarModule = ({ disposables }: IModuleConfig) => ({
 	SidebarContent,
+	SidebarAction,
+	SelectableSidebarAction,
 
 	create(config: {
 		id?: string
