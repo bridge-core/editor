@@ -144,7 +144,8 @@ export default {
 	},
 	methods: {
 		calculateAvailableWidth() {
-			this.availableWidth = this.$refs.sheet.$el.getBoundingClientRect().width
+			if (this.$refs.sheet)
+				this.availableWidth = this.$refs.sheet.$el.getBoundingClientRect().width
 		},
 	},
 }

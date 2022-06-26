@@ -70,7 +70,8 @@ export default {
 			app.windows.createProject.open()
 		},
 		calculateAvailableWidth() {
-			this.availableWidth = this.$refs.button.$el.getBoundingClientRect().width
+			if (this.$refs.button)
+				this.availableWidth = this.$refs.button.$el.getBoundingClientRect().width
 		},
 	},
 }
