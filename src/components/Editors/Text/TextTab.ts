@@ -1,4 +1,4 @@
-import { FileTab } from '/@/components/TabSystem/FileTab'
+import { FileTab, TReadOnlyMode } from '/@/components/TabSystem/FileTab'
 import TextTabComponent from './TextTab.vue'
 import type { editor } from 'monaco-editor'
 import { IDisposable } from '/@/types/disposable'
@@ -52,9 +52,9 @@ export class TextTab extends FileTab {
 	constructor(
 		parent: TabSystem,
 		fileHandle: AnyFileHandle,
-		isReadOnly = false
+		readOnlyMode?: TReadOnlyMode
 	) {
-		super(parent, fileHandle, isReadOnly)
+		super(parent, fileHandle, readOnlyMode)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()
@@ -167,7 +167,7 @@ export class TextTab extends FileTab {
 		this.focus()
 	}
 
-	async save() {
+	async _save() {
 		this.isTemporary = false
 
 		const app = await App.getApp()
@@ -193,18 +193,7 @@ export class TextTab extends FileTab {
 		) {
 			// This is a terrible hack because we need to make sure that the formatter triggers the "onDidChangeContent" event
 			// The promise returned by action.run() actually resolves before formatting is done so we need the "onDidChangeContent" event to tell when the formatter is done
-			this.editorInstance?.executeEdits('automatic', [
-				{
-					forceMoveMarkers: false,
-					range: {
-						startLineNumber: 0,
-						endLineNumber: 0,
-						startColumn: 0,
-						endColumn: 0,
-					},
-					text: '\t',
-				},
-			])
+			this.makeFakeEdit('\t')
 
 			const editPromise = new Promise<void>((resolve) => {
 				if (!this.editorModel || this.editorModel.isDisposed())
@@ -219,11 +208,42 @@ export class TextTab extends FileTab {
 
 			const actionPromise = action.run()
 
-			await Promise.all([editPromise, actionPromise])
+			let didAnyFinish = false
+			await Promise.race([
+				// Wait for the action to finish
+				Promise.all([editPromise, actionPromise]),
+				// But don't wait longer than 1.5s, action then likely failed for some weird reason
+				wait(1500).then(() => {
+					if (didAnyFinish) return
+
+					this.makeFakeEdit(null)
+				}),
+			])
+			didAnyFinish = true
 
 			await this.saveFile(app)
 		} else {
 			await this.saveFile(app)
+		}
+	}
+	protected makeFakeEdit(text: string | null) {
+		if (!text) {
+			this.editorInstance.trigger('automatic', 'undo', null)
+		} else {
+			this.editorInstance.pushUndoStop()
+			this.editorInstance?.executeEdits('automatic', [
+				{
+					forceMoveMarkers: false,
+					range: {
+						startLineNumber: 1,
+						endLineNumber: 1,
+						startColumn: 1,
+						endColumn: 1,
+					},
+					text,
+				},
+			])
+			this.editorInstance.pushUndoStop()
 		}
 	}
 	protected async saveFile(app: App) {
@@ -240,9 +260,9 @@ export class TextTab extends FileTab {
 		}
 	}
 
-	setReadOnly(val: boolean) {
-		this.isReadOnly = val
-		this.editorInstance?.updateOptions({ readOnly: val })
+	setReadOnly(val: TReadOnlyMode) {
+		this.readOnlyMode = val
+		this.editorInstance?.updateOptions({ readOnly: val !== 'off' })
 	}
 
 	async paste() {

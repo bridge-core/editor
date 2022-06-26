@@ -109,7 +109,8 @@ export class TabSystem extends MonacoHolder {
 			}
 		}
 		// Default tab type: Text editor
-		if (!tab) tab = new TextTab(this, fileHandle, isReadOnly)
+		if (!tab)
+			tab = new TextTab(this, fileHandle, isReadOnly ? 'forced' : 'off')
 
 		return await tab.fired
 	}
