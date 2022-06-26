@@ -135,13 +135,7 @@ export class ProjectManager extends Signal<void> {
 			bpAsRpDependency: false,
 			experimentalGameplay: {},
 			icon: null,
-			packs: [
-				'behaviorPack',
-				'resourcePack',
-				'skinPack',
-				'worldTemplate',
-				'.bridge',
-			],
+			packs: ['behaviorPack', '.bridge'],
 			rpAsBpDependency: false,
 			targetVersion: await getStableFormatVersion(this.app.dataLoader),
 			useLangForManifest: false,
@@ -153,9 +147,7 @@ export class ProjectManager extends Signal<void> {
 			},
 		}
 
-		await Promise.all(
-			['BP', 'RP', 'WT', 'SP'].map((folder) => fs.mkdir(folder))
-		)
+		await Promise.all(['BP', '.bridge'].map((folder) => fs.mkdir(folder)))
 
 		await new CreateConfig().create(fs, createOptions)
 
