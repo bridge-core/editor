@@ -10,7 +10,7 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '../../FileSystem/Types'
 import { markRaw } from '@vue/composition-api'
 import { loadMonaco, useMonaco } from '/@/utils/useMonaco'
-import { wait } from '/@/utils/wait'
+import { anyMonacoThemeLoaded } from '/@/components/Extensions/Themes/MonacoSubTheme'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -86,9 +86,9 @@ export class TextTab extends FileTab {
 		if (!loadMonaco.hasFired) {
 			this.isLoading = true
 			loadMonaco.dispatch()
-			// If we don't wait for a few ms here, the editor will flicker a bit
-			// Because the theme isn't loaded yet
-			await wait(100)
+			// If we don't wait here, the editor will flicker a bit
+			// because the theme isn't loaded yet
+			await anyMonacoThemeLoaded.fired
 		}
 
 		const { editor, Uri } = await useMonaco()
