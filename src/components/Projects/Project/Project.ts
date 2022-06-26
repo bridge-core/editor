@@ -29,6 +29,7 @@ import { DashCompiler } from '/@/components/Compiler/Compiler'
 import { proxy, Remote } from 'comlink'
 import { DashService } from '/@/components/Compiler/Worker/Service'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -99,10 +100,20 @@ export abstract class Project {
 		return this._compilerService
 	}
 	protected get watchModeActive() {
-		// Only update compilation results if the watch mode setting is active and the current project is not a virtual project
+		/**
+		 * Only update compilation results if the watch mode setting is active,
+		 * the current project is not a virtual project
+		 * ...and the filesystem polyfill is not active
+		 *
+		 * Explanation:
+		 * 	Devices that need the filesystem polyfill will not be able to export
+		 * 	the project to the com.mojang folder. This means that the only way to move over the project
+		 * 	is by exporting to .mcaddon and thus compiling to a non-accessible "builds/dev" folder makes no sense
+		 */
 		return (
 			(settingsState.compiler?.watchModeActive ?? true) &&
-			!this.isVirtualProject
+			!this.isVirtualProject &&
+			!isUsingFileSystemPolyfill.value
 		)
 	}
 	//#endregion
