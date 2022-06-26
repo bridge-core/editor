@@ -93,9 +93,10 @@ export class TextTab extends FileTab {
 		}
 
 		const { editor, Uri } = await useMonaco()
-		this.isLoading = false
 
 		await this.parent.fired //Make sure a monaco editor is loaded
+		await wait(1)
+		this.isLoading = false
 
 		if (!this.editorModel || this.editorModel.isDisposed()) {
 			const file = await this.fileHandle.getFile()
