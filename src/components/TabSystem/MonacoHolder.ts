@@ -14,6 +14,7 @@ import { showContextMenu } from '../ContextMenu/showContextMenu'
 import { TextTab } from '../Editors/Text/TextTab'
 import { useMonaco } from '/@/utils/useMonaco'
 import { registerTextSnippetProvider } from '../Snippets/Monaco'
+import { anyMonacoThemeLoaded } from '../Extensions/Themes/MonacoSubTheme'
 
 let configuredMonaco = false
 
@@ -66,6 +67,9 @@ export class MonacoHolder extends Signal<void> {
 
 	async createMonacoEditor(domElement: HTMLElement) {
 		const { KeyCode, KeyMod, editor } = await useMonaco()
+
+		// Don't mount editor before theme is loaded
+		await anyMonacoThemeLoaded.fired
 
 		this.dispose()
 		this._monacoEditor = markRaw(

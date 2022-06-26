@@ -7,9 +7,10 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { AnyFileHandle } from '../../FileSystem/Types'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { markRaw } from '@vue/composition-api'
 import { loadMonaco, useMonaco } from '/@/utils/useMonaco'
+import { anyMonacoThemeLoaded } from '/@/components/Extensions/Themes/MonacoSubTheme'
 import { wait } from '/@/utils/wait'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
@@ -86,9 +87,9 @@ export class TextTab extends FileTab {
 		if (!loadMonaco.hasFired) {
 			this.isLoading = true
 			loadMonaco.dispatch()
+
 			// Monaco theme isn't loaded yet
 			await this.parent.app.themeManager.applyMonacoTheme()
-			await wait(100)
 		}
 
 		const { editor, Uri } = await useMonaco()

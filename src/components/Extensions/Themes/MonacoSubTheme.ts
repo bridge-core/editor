@@ -1,7 +1,9 @@
 import { keyword } from 'color-convert'
+import { Signal } from '../../Common/Event/Signal'
 import { Theme } from './Theme'
 import { loadMonaco, useMonaco } from '/@/utils/useMonaco'
 
+export const anyMonacoThemeLoaded = new Signal<void>()
 export class MonacoSubTheme {
 	constructor(protected theme: Theme) {}
 
@@ -103,6 +105,7 @@ export class MonacoSubTheme {
 		})
 
 		editor.setTheme(`bridgeMonacoDefault`)
+		anyMonacoThemeLoaded.dispatch()
 	}
 
 	convertColor(color: string) {
