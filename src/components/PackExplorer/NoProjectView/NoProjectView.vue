@@ -8,89 +8,15 @@
 			<CreateProjectBtn />
 
 			<v-slide-y-transition class="py-0" group>
-				<BridgeSheet
+				<Project
 					v-for="project in projectData"
 					:key="`${project.name}//${project.requiresPermissions}`"
-					dark
-					class="d-flex align-center mb-2"
-					:style="{
-						overflow: 'hidden',
-						height: '5rem',
-						border: `2px solid ${
-							project.isFavorite
-								? 'var(--v-primary-base)'
-								: 'var(--v-background-base)'
-						}`,
-					}"
-					v-ripple
-					@click.native="
+					:project="project"
+					@click="
 						selectProject(project.name, project.requiresPermissions)
 					"
-				>
-					<img
-						v-if="project.icon"
-						:src="project.icon"
-						:alt="project.displayName"
-						class="rounded-lg"
-						:style="{
-							margin: '0 0.5rem',
-							width: '4rem',
-							'image-rendering': 'pixelated',
-						}"
-					/>
-					<div class="d-flex justify-center" v-else>
-						<v-icon
-							color="primary"
-							:style="{ 'font-size': '4rem' }"
-							size="xl"
-						>
-							mdi-alpha-{{
-								project.displayName[0].toLowerCase()
-							}}-box-outline
-						</v-icon>
-					</div>
-
-					<span
-						class="px-2"
-						:style="{
-							overflow: 'hidden',
-							'white-space': 'nowrap',
-							'text-overflow': 'ellipsis',
-						}"
-					>
-						{{ project.displayName }}
-					</span>
-
-					<v-spacer />
-					<BridgeSheet
-						class="px-1 d-flex align-center justify-center"
-						:style="{
-							marginRight: '0.5rem',
-							height: '4rem',
-						}"
-					>
-						<v-icon
-							v-if="!project.requiresPermissions"
-							color="accent"
-						>
-							mdi-lock-open-outline
-						</v-icon>
-
-						<!-- Star project button -->
-						<v-btn
-							icon
-							small
-							:color="project.isFavorite ? 'primary' : null"
-							@click.stop="onFavoriteProject(project)"
-						>
-							<v-icon>
-								mdi-pin{{
-									project.isFavorite ? '' : '-outline'
-								}}
-							</v-icon>
-						</v-btn>
-					</BridgeSheet>
-				</BridgeSheet>
+					@pin="onFavoriteProject(project)"
+				/>
 			</v-slide-y-transition>
 		</template>
 	</div>
@@ -98,17 +24,17 @@
 
 <script>
 import { App } from '/@/App'
-import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import CreateProjectBtn from './CreateProjectBtn.vue'
 import BridgeFolderBtn from './BridgeFolderBtn.vue'
 import NoProjects from './NoProjects.vue'
+import Project from './Project.vue'
 
 export default {
 	components: {
-		BridgeSheet,
 		CreateProjectBtn,
 		BridgeFolderBtn,
 		NoProjects,
+		Project,
 	},
 	mounted() {
 		this.loadProjects()
