@@ -98,7 +98,7 @@ export class TextTab extends FileTab {
 			this.initialVersionId = this.editorModel.getAlternativeVersionId()
 
 			this.modelLoaded.dispatch()
-			this.loadEditor()
+			this.loadEditor(false)
 		} else {
 			this.loadEditor()
 		}
@@ -141,13 +141,14 @@ export class TextTab extends FileTab {
 		this.editorInstance?.focus()
 	}
 
-	loadEditor() {
+	loadEditor(shouldFocus = true) {
 		if (this.editorModel && !this.editorModel.isDisposed())
 			this.editorInstance?.setModel(this.editorModel)
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
 
 		this.editorInstance?.updateOptions({ readOnly: this.isReadOnly })
+		if (shouldFocus) setTimeout(() => this.focus(), 10)
 	}
 
 	async save() {
