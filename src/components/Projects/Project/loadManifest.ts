@@ -3,8 +3,7 @@ import { App } from '/@/App'
 import { dashVersion } from '/@/utils/app/dashVersion'
 import { version as appVersion } from '/@/utils/app/version'
 
-export async function loadManifest(app: App, packPath: string) {
-	const manifestPath = `${packPath}/manifest.json`
+export async function loadManifest(app: App, manifestPath: string) {
 	let manifest = await app.fileSystem.readJSON(manifestPath)
 
 	let generatedWithBridge: string[] =
