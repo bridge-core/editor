@@ -9,6 +9,7 @@ import { get, set } from 'idb-keyval'
 import { BaseVirtualHandle } from '../FileSystem/Virtual/Handle'
 import {
 	get as getVirtualDirectory,
+	IDBWrapper,
 	set as setVirtualDirectory,
 } from '/@/components/FileSystem/Virtual/IDB'
 
@@ -53,20 +54,12 @@ export class DataLoader extends FileSystem {
 
 		// Create virtual filesystem
 		this._virtualFileSystem = new VirtualDirectoryHandle(
-			null,
+			new IDBWrapper('data-fs'),
 			'bridgeFolder',
 			savedAllDataInIdb ? undefined : new Map(),
 			mayClearDb
 		)
 		await this._virtualFileSystem.setupDone.fired
-
-		// bridgeFolder needs to contain 'data' folder
-		// TODO: This way only necessary to save a few users on the unstable nightly build; remove this snippet soon!
-		const bridgeFolder =
-			(await getVirtualDirectory<string[]>('bridgeFolder')) ?? []
-		if (!bridgeFolder.includes('data')) {
-			await setVirtualDirectory('bridgeFolder', [...bridgeFolder, 'data'])
-		}
 
 		// All current data is already downloaded & saved in IDB, no need to do it again
 		if (savedAllDataInIdb) {
@@ -101,8 +94,6 @@ export class DataLoader extends FileSystem {
 			'.': defaultHandle,
 		}
 
-		const inMemoryFiles = []
-
 		for (const path in unzipped) {
 			const name = basename(path)
 			const parentDir = dirname(path)
@@ -116,38 +107,21 @@ export class DataLoader extends FileSystem {
 				folders[path.slice(0, -1)] = handle
 			} else {
 				// Current entry is a file
-				const fileHandle = await folders[parentDir].getFileHandle(
-					name,
-					{
-						create: true,
-						initialData: unzipped[path],
-					}
-				)
-
-				if (fileHandle.isFileStoredInMemory)
-					inMemoryFiles.push(fileHandle)
+				await folders[parentDir].getFileHandle(name, {
+					create: true,
+					initialData: unzipped[path],
+				})
 			}
 		}
 
 		this.setup(this._virtualFileSystem)
 		console.timeEnd('[App] Data')
 
-		if (this.isMainLoader && supportsIdleCallback && !forceDataDownload) {
-			const allMemoryHandles: BaseVirtualHandle[] = [
-				...inMemoryFiles,
-				...Object.values(folders),
-				this._virtualFileSystem,
-			]
-			setTimeout(() => {
-				Promise.all(
-					allMemoryHandles.map((fileHandle) =>
-						whenIdle(() => fileHandle.moveToIdb())
-					)
-				).then(async () => {
-					console.log('[App] All data saved')
-					await set('savedAllDataInIdb', true)
-				})
-			}, 60_000)
+		if (this.isMainLoader && !forceDataDownload) {
+			whenIdle(async () => {
+				await this._virtualFileSystem!.moveToIdb()
+				await set('savedAllDataInIdb', true)
+			})
 		}
 	}
 }

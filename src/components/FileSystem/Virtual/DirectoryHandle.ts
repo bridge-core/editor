@@ -1,7 +1,7 @@
 import { VirtualHandle, BaseVirtualHandle } from './Handle'
 import { VirtualFileHandle } from './FileHandle'
 import { ISerializedDirectoryHandle } from './Comlink'
-import { clear, get, set, del, keys } from './IDB'
+import { IDBWrapper } from './IDB'
 
 /**
  * A class that implements a virtual folder
@@ -21,17 +21,43 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		return this.children !== undefined
 	}
 	async moveToIdb() {
+		const children = this.allInMemoryChildren()
+
+		this.idbWrapper.setMany(
+			children.map((child) => [child.idbKey, child.moveData()])
+		)
+	}
+	moveData() {
 		if (!this.children)
 			throw new Error(
 				`No directory data to move to IDB for directory "${this.name}"`
 			)
 
-		await set(this.idbKey, [...this.children.keys()])
+		const children = [...this.children.values()].map((child) => child.name)
 		this.children = undefined
+
+		return children
+	}
+	protected allInMemoryChildren() {
+		if (!this.children) return []
+
+		// Recursively get all in memory children
+		const children: BaseVirtualHandle[] = [this]
+
+		for (const child of this.children.values()) {
+			if (child instanceof VirtualDirectoryHandle) {
+				if (child.isDirectoryInMemory)
+					children.push(...child.allInMemoryChildren())
+			} else {
+				if (child.isFileStoredInMemory) children.push(child)
+			}
+		}
+
+		return children
 	}
 
 	constructor(
-		parent: VirtualDirectoryHandle | null,
+		parent: VirtualDirectoryHandle | IDBWrapper | null,
 		name: string,
 		protected children?: Map<string, VirtualHandle> | undefined,
 		clearDB = false,
@@ -42,21 +68,13 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		this.updateIdb(clearDB)
 	}
 
-	async updateIdb(deleteOld = false) {
-		if (deleteOld) {
-			const paths = await keys()
-
-			for (const path of paths) {
-				if (
-					typeof path === 'string' &&
-					path.startsWith('data/packages/')
-				)
-					await del(path)
-			}
+	async updateIdb(clearDB = false) {
+		if (clearDB) {
+			await this.idbWrapper.clear()
 		}
 
 		if (!this.children && !(await this.hasChildren()))
-			await set(this.idbKey, [])
+			await this.idbWrapper.set(this.idbKey, [])
 
 		this.setupDone.dispatch()
 	}
@@ -67,10 +85,14 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		}
 
 		if (this.children) this.children.set(child.name, child)
-		else await set(this.idbKey, [...(await this.fromIdb()), child.name])
+		else
+			await this.idbWrapper.set(this.idbKey, [
+				...(await this.fromIdb()),
+				child.name,
+			])
 	}
 	protected async fromIdb() {
-		return (await get<string[]>(this.idbKey)) ?? []
+		return (await this.idbWrapper.get<string[]>(this.idbKey)) ?? []
 	}
 
 	protected async getChildren() {
@@ -91,7 +113,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		if (this.children) return this.children.get(childName)
 
 		if (await this.has(childName)) {
-			const data = await get(this.getChildPath(childName))
+			const data = await this.idbWrapper.get(this.getChildPath(childName))
 
 			if (data instanceof Uint8Array) {
 				return new VirtualFileHandle(this, childName)
@@ -106,7 +128,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	async deleteChild(childName: string) {
 		if (this.children) this.children.delete(childName)
 		else
-			await set(
+			await this.idbWrapper.set(
 				this.idbKey,
 				(await this.fromIdb()).filter((name) => name !== childName)
 			)
@@ -260,7 +282,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			await child.removeSelf(false)
 		}
 
-		if (!this.children) await del(this.idbKey)
+		if (!this.children) await this.idbWrapper.del(this.idbKey)
 		if (this.parent && isFirst) this.parent.deleteChild(this.name)
 	}
 

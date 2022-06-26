@@ -2,8 +2,8 @@ import { BaseVirtualHandle } from './Handle'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
-import { get, set, del } from './IDB'
 import { markRaw } from '@vue/composition-api'
+import { IDBWrapper } from './IDB'
 
 /**
  * A class that implements a virtual file
@@ -24,18 +24,20 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	get isFileStoredInMemory() {
 		return this.fileData !== undefined
 	}
-	async moveToIdb() {
+	moveData() {
 		if (!this.fileData)
 			throw new Error(
 				`No file data to move to IDB for file "${this.name}"`
 			)
 
+		const data = this.fileData
+		this.fileData = undefined
 		this.inMemory = false
-		await this.updateIdb(this.fileData)
+		return data
 	}
 
 	constructor(
-		parent: VirtualDirectoryHandle | null,
+		parent: VirtualDirectoryHandle | IDBWrapper | null,
 		name: string,
 		data?: Uint8Array,
 		protected inMemory = false
@@ -51,7 +53,7 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		const isDataFile = this.path.join('/').startsWith('data/packages')
 
 		// This prevents an IndexedDB overload by saving too many small data files to the DB
-		if (this.inMemory || (isDataFile && fileData.length < 10_000)) {
+		if (this.inMemory || (isDataFile && fileData.length < 50_000)) {
 			this.inMemory = true
 			return this.setupDone.dispatch()
 		}
@@ -62,14 +64,14 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	}
 
 	protected async updateIdb(data: Uint8Array) {
-		await set(this.idbKey, data)
+		await this.idbWrapper.set(this.idbKey, data)
 		this.fileData = undefined
 	}
 
 	protected async loadFromIdb() {
 		if (this.fileData) return this.fileData
 
-		let storedData = await get(this.idbKey)
+		let storedData = await this.idbWrapper.get(this.idbKey)
 		if (storedData === undefined) {
 			console.log(this.parent)
 			throw new Error(`File not found: "${this.path.join('/')}"`)
@@ -86,7 +88,7 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	}
 
 	async removeSelf(isFirst = true) {
-		await del(this.idbKey)
+		await this.idbWrapper.del(this.idbKey)
 		if (this.parent && isFirst) this.parent.deleteChild(this.name)
 	}
 
