@@ -16,7 +16,7 @@ import { findAsync } from '/@/utils/array/findAsync'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { isMatch } from 'bridge-common-utils'
 import { getCacheScriptEnv } from '../PackIndexer/Worker/LightningCache/CacheEnv'
-import { useMonaco } from '/@/utils/useMonaco'
+import { useMonaco } from '../../utils/libs/useMonaco'
 
 export class DefinitionProvider {
 	async provideDefinition(
@@ -40,7 +40,7 @@ export class DefinitionProvider {
 		)
 			return
 
-		const location = getLocation(model, position)
+		const location = await getLocation(model, position)
 		const { definitionId, transformedWord } = await this.getDefinition(
 			word,
 			location,

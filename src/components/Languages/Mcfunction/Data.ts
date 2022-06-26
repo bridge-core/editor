@@ -8,7 +8,7 @@ import { strMatchArray } from './strMatch'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SelectorArguments } from './TargetSelector/SelectorArguments'
-import { useMonaco } from '/@/utils/useMonaco'
+import { useMonaco } from '../../../utils/libs/useMonaco'
 /**
  * An interface that describes a command
  */

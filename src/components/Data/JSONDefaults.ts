@@ -9,7 +9,7 @@ import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { Tab } from '../TabSystem/CommonTab'
 import { ComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/ComponentSchemas'
-import { loadMonaco, useMonaco } from '/@/utils/useMonaco'
+import { loadMonaco, useMonaco } from '../../utils/libs/useMonaco'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false

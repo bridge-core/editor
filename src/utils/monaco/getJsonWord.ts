@@ -1,5 +1,5 @@
 import type { editor, Position } from 'monaco-editor'
-import { useMonaco } from '../useMonaco'
+import { useMonaco } from '../libs/useMonaco'
 
 export async function getJsonWordAtPosition(
 	model: editor.ITextModel,

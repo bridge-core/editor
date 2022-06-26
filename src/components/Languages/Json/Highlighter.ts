@@ -5,7 +5,7 @@ import { IDisposable } from '/@/types/disposable'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { TreeTab } from '/@/components/Editors/TreeEditor/Tab'
 import type { Tab } from '/@/components/TabSystem/CommonTab'
-import { useMonaco } from '/@/utils/useMonaco'
+import { useMonaco } from '../../../utils/libs/useMonaco'
 
 export interface IKnownWords {
 	keywords: string[]

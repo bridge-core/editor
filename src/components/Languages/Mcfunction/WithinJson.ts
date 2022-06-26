@@ -6,7 +6,7 @@ import { tokenizeCommand } from 'bridge-common-utils'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
 import { isMatch } from 'bridge-common-utils'
-import { useMonaco } from '/@/utils/useMonaco'
+import { useMonaco } from '../../../utils/libs/useMonaco'
 
 export async function registerEmbeddedMcfunctionProvider() {
 	const { languages, Range } = await useMonaco()
@@ -21,7 +21,7 @@ export async function registerEmbeddedMcfunctionProvider() {
 			if (!(project instanceof BedrockProject)) return
 
 			const commandData = project.commandData
-			const location = getLocation(model, position)
+			const location = await getLocation(model, position)
 			const currentTab = app.project.tabSystem?.selectedTab
 			if (!currentTab) return
 

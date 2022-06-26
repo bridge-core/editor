@@ -9,7 +9,7 @@ import { debounce } from 'lodash'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { markRaw } from '@vue/composition-api'
-import { loadMonaco, useMonaco } from '/@/utils/useMonaco'
+import { loadMonaco, useMonaco } from '../../../utils/libs/useMonaco'
 import { anyMonacoThemeLoaded } from '/@/components/Extensions/Themes/MonacoSubTheme'
 import { wait } from '/@/utils/wait'
 

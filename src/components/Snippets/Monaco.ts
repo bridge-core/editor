@@ -4,7 +4,7 @@ import { App } from '/@/App'
 import { FileTab } from '../TabSystem/FileTab'
 import json5 from 'json5'
 import { getLatestFormatVersion } from '../Data/FormatVersions'
-import { useMonaco } from '/@/utils/useMonaco'
+import { useMonaco } from '../../utils/libs/useMonaco'
 
 export async function registerJsonSnippetProvider() {
 	const { languages } = await useMonaco()
@@ -16,7 +16,7 @@ export async function registerJsonSnippetProvider() {
 			position: Position
 		) => {
 			const app = await App.getApp()
-			const location = getLocation(model, position)
+			const location = await getLocation(model, position)
 			const currentTab = app.project.tabSystem?.selectedTab
 
 			if (!(currentTab instanceof FileTab)) return { suggestions: [] }

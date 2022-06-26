@@ -1,9 +1,9 @@
 import { App } from '/@/App'
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import FilePickerComponent from './FilePicker.vue'
-import { relative } from '/@/utils/path'
-import { QuickScore } from 'quick-score'
+import type { QuickScore } from 'quick-score'
 import { markRaw } from '@vue/composition-api'
+import { useQuickScore } from '/@/utils/libs/useQuickScore'
 
 export class FilePickerWindow extends BaseWindow {
 	protected packFiles: { value: string; text: string }[] = []
@@ -28,6 +28,8 @@ export class FilePickerWindow extends BaseWindow {
 
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
+
+		const { QuickScore } = await useQuickScore()
 
 		const packIndexer = app.project?.packIndexer
 		if (packIndexer) {

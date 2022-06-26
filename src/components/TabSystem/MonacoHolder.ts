@@ -12,7 +12,7 @@ import { debounce } from 'lodash-es'
 import { platform } from '/@/utils/os'
 import { showContextMenu } from '../ContextMenu/showContextMenu'
 import { TextTab } from '../Editors/Text/TextTab'
-import { useMonaco } from '/@/utils/useMonaco'
+import { useMonaco } from '../../utils/libs/useMonaco'
 import { registerTextSnippetProvider } from '../Snippets/Monaco'
 import { anyMonacoThemeLoaded } from '../Extensions/Themes/MonacoSubTheme'
 

@@ -14,7 +14,7 @@ import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
 import { FunctionValidator } from '/@/components/Languages/Mcfunction/Validation/Validator'
 import { proxy } from 'comlink'
-import { useMonaco } from '/@/utils/useMonaco'
+import { useMonaco } from '../../utils/libs/useMonaco'
 
 export const config: languages.LanguageConfiguration = {
 	wordPattern: /[aA-zZ]+/,

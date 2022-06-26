@@ -7,9 +7,34 @@ import { createStyleSheet } from '../Styles/createStyle'
 import { parseComponent } from 'vue-template-compiler'
 import Vue from 'vue'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-// @ts-ignore
-import * as VuetifyComponents from 'vuetify/lib/components'
+import {
+	VBtn,
+	VAlert,
+	VApp,
+	VToolbar,
+	VToolbarItems,
+	VAutocomplete,
+	VCombobox,
+	VSwitch,
+	VTextField,
+	VWindow,
+	VTooltip,
+} from 'vuetify/lib'
 import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
+
+const VuetifyComponents = {
+	VBtn,
+	VAlert,
+	VApp,
+	VToolbar,
+	VToolbarItems,
+	VAutocomplete,
+	VCombobox,
+	VSwitch,
+	VTextField,
+	VWindow,
+	VTooltip,
+}
 
 export async function loadUIComponents(
 	fileSystem: FileSystem,

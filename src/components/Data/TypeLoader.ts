@@ -7,7 +7,7 @@ import {
 	IRequirements,
 	RequiresMatcher,
 } from './RequiresMatcher/RequiresMatcher'
-import { useMonaco } from '/@/utils/useMonaco'
+import { useMonaco } from '../../utils/libs/useMonaco'
 
 const types = new Map<string, string>()
 

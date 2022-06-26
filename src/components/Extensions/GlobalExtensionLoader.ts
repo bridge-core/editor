@@ -6,7 +6,7 @@ export class GlobalExtensionLoader extends ExtensionLoader {
 	constructor(protected app: App) {
 		super(
 			app.fileSystem,
-			'extensions',
+			'~local/extensions',
 			'data/inactiveExtensions.json',
 			true
 		)
