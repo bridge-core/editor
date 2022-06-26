@@ -1,4 +1,3 @@
-import { TPackTypeId } from 'mc-project-core'
 import type { Project } from './Project'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
