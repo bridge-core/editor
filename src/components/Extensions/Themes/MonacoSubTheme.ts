@@ -7,6 +7,7 @@ export class MonacoSubTheme {
 
 	async apply() {
 		const { editor } = await useMonaco()
+		console.log('THEME APPLIED')
 
 		editor.defineTheme(`bridgeMonacoDefault`, {
 			base: this.theme.colorScheme === 'light' ? 'vs' : 'vs-dark',
@@ -99,6 +100,8 @@ export class MonacoSubTheme {
 					.filter(({ foreground }) => foreground !== undefined),
 			],
 		})
+
+		editor.setTheme(`bridgeMonacoDefault`)
 	}
 
 	convertColor(color: string) {

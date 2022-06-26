@@ -120,14 +120,16 @@ export class JsonDefaults extends EventDispatcher<void> {
 
 	async setJSONDefaults(validate = true) {
 		const schemas = Object.assign({}, globalSchemas, this.localSchemas)
-		const { languages } = await useMonaco()
 
-		languages.json.jsonDefaults.setDiagnosticsOptions({
-			enableSchemaRequest: false,
-			allowComments: true,
-			validate,
-			schemas: Object.values(schemas),
+		useMonaco().then(({ languages }) => {
+			languages.json.jsonDefaults.setDiagnosticsOptions({
+				enableSchemaRequest: false,
+				allowComments: true,
+				validate,
+				schemas: Object.values(schemas),
+			})
 		})
+
 		SchemaManager.setJSONDefaults(schemas)
 
 		this.dispatch()

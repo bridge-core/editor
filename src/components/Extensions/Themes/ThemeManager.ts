@@ -93,8 +93,8 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 		return this.mode
 	}
 
-	protected async applyTheme(theme?: Theme) {
-		await theme?.apply(this, this.vuetify)
+	protected applyTheme(theme?: Theme) {
+		theme?.apply(this, this.vuetify)
 	}
 	async updateTheme() {
 		const app = await App.getApp()

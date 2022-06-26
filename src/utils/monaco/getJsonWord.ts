@@ -1,4 +1,4 @@
-import type { editor, Position, Range } from 'monaco-editor'
+import type { editor, Position } from 'monaco-editor'
 import { useMonaco } from '../useMonaco'
 
 export async function getJsonWordAtPosition(
