@@ -9,7 +9,7 @@ import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { Tab } from '../TabSystem/CommonTab'
 import { ComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/ComponentSchemas'
-import { useMonaco } from '/@/utils/useMonaco'
+import { loadMonaco, useMonaco } from '/@/utils/useMonaco'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
@@ -121,14 +121,16 @@ export class JsonDefaults extends EventDispatcher<void> {
 	async setJSONDefaults(validate = true) {
 		const schemas = Object.assign({}, globalSchemas, this.localSchemas)
 
-		useMonaco().then(({ languages }) => {
+		if (loadMonaco.hasFired) {
+			const { languages } = await useMonaco()
+
 			languages.json.jsonDefaults.setDiagnosticsOptions({
 				enableSchemaRequest: false,
 				allowComments: true,
 				validate,
 				schemas: Object.values(schemas),
 			})
-		})
+		}
 
 		SchemaManager.setJSONDefaults(schemas)
 
