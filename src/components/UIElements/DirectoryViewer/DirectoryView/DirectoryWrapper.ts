@@ -21,6 +21,10 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 		super(parent, directoryHandle, options)
 	}
 
+	get icon() {
+		return this.isOpen.value ? 'mdi-folder-open' : 'mdi-folder'
+	}
+
 	protected async getChildren() {
 		const children = []
 
@@ -93,17 +97,23 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 		if (this.children.value) this.sortChildren(this.children.value)
 	}
 
-	async toggleOpen() {
+	async toggleOpen(deep = false) {
 		// Folder is open, close it
-		if (this.isOpen.value) {
-			this.isOpen.value = false
-			return
-		}
-
-		await this.open()
+		if (this.isOpen.value)  this.close(deep)
+		else await this.open(deep)
 	}
 
-	async open() {
+	async close(deep=false) {
+		this.isOpen.value = false
+
+		if (deep) {
+			this.children.value?.forEach((child) => {
+				if(child instanceof DirectoryWrapper)
+					child.close(true)
+			})
+		}
+	}
+	async open(deep=false) {
 		// Folder is closed, did we load folder contents already?
 		if (this.children.value) {
 			// Yes, open folder
@@ -116,6 +126,13 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 			this.isOpen.value = true
 			this.isLoading.value = false
 		}
+
+		if(deep) {
+			this.children.value?.forEach((child) => {
+				if(child instanceof DirectoryWrapper)
+					child.open(true)
+			})
+		}
 	}
 
 	protected _unselectAll() {
@@ -125,13 +142,23 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 			if (child.kind === 'directory') child._unselectAll()
 		})
 	}
-	unselectAll() {
+	override unselectAll() {
 		if (this.parent === null) return this._unselectAll()
 		this.parent.unselectAll()
 	}
 
-	onRightClick(event: MouseEvent) {
+	override _onRightClick(event: MouseEvent) {
 		showFolderContextMenu(event, this)
 		this.options.onFolderRightClick?.(event, this)
+	}
+	override _onClick(_: MouseEvent, forceClick: boolean): void {
+		// Click is a double click so we want to deep open/close the folder
+		if(forceClick) {
+			if(this.isOpen.value) this.open(true)
+			else this.close(true)
+		} else {
+			// Normal click; toggle folder open/close
+			this.toggleOpen(forceClick)
+		}
 	}
 }

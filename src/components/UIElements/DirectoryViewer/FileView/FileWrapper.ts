@@ -22,16 +22,30 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 		return App.fileType.get(path)?.icon ?? 'mdi-file-outline'
 	}
 
-	async openFile() {
+	async openFile(persistFile=false) {
 		const app = await App.getApp()
 
 		await app.project.openFile(this.handle, {
 			selectTab: true,
 			isReadOnly: this.options.isReadonly,
+			isTemporary: !persistFile,
 		})
 	}
 
-	onRightClick(event: MouseEvent) {
+	override _onRightClick(event: MouseEvent) {
 		this.options.onFileRightClick?.(event, this)
+	}
+	override async _onClick(event: MouseEvent, forceClick: boolean) {
+		if(forceClick) {
+			const app = await App.getApp()
+
+			const currentTab = app.project.tabSystem?.selectedTab
+			if (currentTab && currentTab.isTemporary)
+				currentTab.isTemporary = false
+		}
+		this.openFile()
+	}
+	override unselectAll(): void {
+		this.parent?.unselectAll()
 	}
 }

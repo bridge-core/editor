@@ -5,10 +5,12 @@ import type { IDirectoryViewerOptions } from '../DirectoryStore'
 import { moveHandle } from '/@/utils/file/moveHandle'
 import { ref } from '@vue/composition-api'
 import type { FileWrapper } from '../FileView/FileWrapper'
+import { platform } from '/@/utils/os'
 
 export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	public abstract readonly kind: 'file' | 'directory'
 	public readonly isSelected = ref(false)
+	public readonly isEditingName = ref(false)
 
 	constructor(
 		protected parent: DirectoryWrapper | null,
@@ -36,6 +38,45 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 
 	isSame(child: BaseWrapper<any>) {
 		return child.name === this.name && child.kind === this.kind
+	}
+
+	abstract readonly icon: string
+	abstract unselectAll(): void
+	abstract _onRightClick(
+		event: MouseEvent,
+		baseWrapper: BaseWrapper<any>
+	): void
+	abstract _onClick(event: MouseEvent, forceClick: boolean): void
+
+	onRightClick(event: MouseEvent, baseWrapper: BaseWrapper<any>) {
+		this._onRightClick(event, baseWrapper)
+
+		this.unselectAll()
+		this.isSelected.value = true
+	}
+	onClick(event: MouseEvent, forceClick: boolean = false) {
+		this._onClick(event, forceClick)
+
+		// Unselect other wrappers if multiselect key is not pressed
+		if (
+			(platform() === 'darwin' && !event.metaKey) ||
+			(platform() !== 'darwin' && !event.ctrlKey)
+		)
+			this.unselectAll()
+
+		this.isSelected.value = true
+
+		// Find first wrapper name component and focus it
+		const nameElement = <HTMLElement>(
+			event
+				.composedPath()
+				.find((el) =>
+					(<HTMLElement>el).classList.contains(
+						'directory-viewer-name'
+					)
+				)
+		)
+		if (nameElement) nameElement.focus()
 	}
 
 	async move(directoryWrapper: DirectoryWrapper) {
@@ -94,5 +135,12 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 
 		// Sort parent's children
 		directoryWrapper.sort()
+	}
+
+	startRename() {
+		this.isEditingName.value = true
+	}
+	async confirmRename() {
+		this.isEditingName.value = false
 	}
 }

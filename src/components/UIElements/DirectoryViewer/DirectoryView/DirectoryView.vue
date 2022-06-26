@@ -3,43 +3,12 @@
 		:is="renderDirectoryName ? 'details' : 'div'"
 		:open="directoryWrapper.isOpen.value"
 	>
-		<summary
+		<Name
 			v-if="renderDirectoryName"
-			v-ripple
-			tabindex="0"
-			class="px-1 rounded-lg d-flex"
-			:class="{ selected: directoryWrapper.isSelected.value }"
-			@click.prevent="onClick"
-			@click.right.prevent="directoryWrapper.onRightClick($event)"
-			@focus="isFocused = true"
-			@blur="isFocused = false"
-		>
-			<!-- Folder icon -->
-			<v-icon class="pr-1" :color="directoryWrapper.color" small>
-				{{
-					directoryWrapper.isOpen.value
-						? 'mdi-folder-open'
-						: 'mdi-folder'
-				}}
-			</v-icon>
-
-			<!-- Folder name -->
-			<span
-				:style="{
-					overflow: 'hidden',
-					whiteSpace: 'nowrap',
-					textOverflow: 'ellipsis',
-				}"
-			>
-				{{ directoryWrapper.name }}
-			</span>
-
-			<v-spacer />
-
-			<v-icon v-if="isFocused" :color="directoryWrapper.color">
-				mdi-circle-small
-			</v-icon>
-		</summary>
+			type="directory"
+			tagName="summary"
+			:baseWrapper="directoryWrapper"
+		/>
 
 		<!-- Render folder contents -->
 		<Draggable
@@ -79,11 +48,11 @@
 import { DirectoryWrapper } from './DirectoryWrapper'
 import FileView from '../FileView/FileView.vue'
 import Draggable from 'vuedraggable'
-import { platform } from '/@/utils/os'
+import Name from '../Common/Name.vue'
 
 export default {
 	name: 'DirectoryView',
-	components: { Draggable, FileView },
+	components: { Draggable, FileView, Name },
 	props: {
 		directoryWrapper: DirectoryWrapper,
 		renderDirectoryName: {
@@ -91,9 +60,6 @@ export default {
 			type: Boolean,
 		},
 	},
-	data: () => ({
-		isFocused: false,
-	}),
 	methods: {
 		draggedHandle(dragEvent) {
 			if (dragEvent.moved) {
@@ -109,37 +75,11 @@ export default {
 				movedWrapper.move(this.directoryWrapper)
 			}
 		},
-		onClick(event) {
-			this.directoryWrapper.toggleOpen()
-
-			// Unselect other wrappers if multiselect key is not pressed
-			if (
-				(platform() === 'darwin' && !event.metaKey) ||
-				(platform() !== 'darwin' && !event.ctrlKey)
-			)
-				this.directoryWrapper.unselectAll()
-			this.directoryWrapper.isSelected.value = true
-
-			// Find first summary and focus it
-			const firstSummary = event.path.find(
-				(el) => el.tagName === 'SUMMARY'
-			)
-			if (firstSummary) firstSummary.focus()
-		},
 	},
 }
 </script>
 
 <style scoped>
-summary {
-	outline: none;
-	cursor: pointer;
-	display: block;
-}
-summary.selected {
-	background: var(--v-background-base);
-}
-
 details[open] > summary > .open {
 	display: inline;
 }
