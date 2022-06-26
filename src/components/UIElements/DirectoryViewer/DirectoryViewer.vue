@@ -11,8 +11,8 @@
 <script>
 import { ref } from '@vue/composition-api'
 import { DirectoryStore } from './DirectoryStore'
-import DirectoryView from './DirectoryView.vue'
-import { DirectoryWrapper } from './DirectoryWrapper'
+import DirectoryView from './DirectoryView/DirectoryView.vue'
+import { DirectoryWrapper } from './DirectoryView/DirectoryWrapper'
 
 export default {
 	components: { DirectoryView },

@@ -10,7 +10,7 @@
 			class="px-1 rounded-lg d-flex"
 			:class="{ selected: directoryWrapper.isSelected.value }"
 			@click.prevent="onClick"
-			@click.right.prevent="directoryWrapper.onRightClick()"
+			@click.right.prevent="directoryWrapper.onRightClick($event)"
 			@focus="isFocused = true"
 			@blur="isFocused = false"
 		>
@@ -77,7 +77,7 @@
 
 <script>
 import { DirectoryWrapper } from './DirectoryWrapper'
-import FileView from './FileView.vue'
+import FileView from '../FileView/FileView.vue'
 import Draggable from 'vuedraggable'
 import { platform } from '/@/utils/os'
 

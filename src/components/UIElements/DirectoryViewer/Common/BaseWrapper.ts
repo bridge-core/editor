@@ -1,11 +1,10 @@
-import { AnyHandle } from '/@/components/FileSystem/Types'
-import type { DirectoryWrapper } from './DirectoryWrapper'
-import { VirtualHandle } from '../../FileSystem/Virtual/Handle'
+import type { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
+import { VirtualHandle } from '/@/components/FileSystem/Virtual/Handle'
 import { App } from '/@/App'
-import type { IDirectoryViewerOptions } from './DirectoryStore'
+import type { IDirectoryViewerOptions } from '../DirectoryStore'
 import { moveHandle } from '/@/utils/file/moveHandle'
 import { ref } from '@vue/composition-api'
-import type { FileWrapper } from './FileWrapper'
+import type { FileWrapper } from '../FileView/FileWrapper'
 
 export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	public abstract readonly kind: 'file' | 'directory'

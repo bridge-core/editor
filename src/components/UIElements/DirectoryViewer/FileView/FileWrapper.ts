@@ -1,7 +1,7 @@
-import { AnyFileHandle } from '../../FileSystem/Types'
-import { BaseWrapper } from './BaseWrapper'
-import type { IDirectoryViewerOptions } from './DirectoryStore'
-import type { DirectoryWrapper } from './DirectoryWrapper'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { BaseWrapper } from '../Common/BaseWrapper'
+import type { IDirectoryViewerOptions } from '../DirectoryStore'
+import type { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
 import { App } from '/@/App'
 
 export class FileWrapper extends BaseWrapper<AnyFileHandle> {
@@ -31,7 +31,7 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 		})
 	}
 
-	onRightClick() {
-		this.options.onFileRightClick?.(this)
+	onRightClick(event: MouseEvent) {
+		this.options.onFileRightClick?.(event, this)
 	}
 }

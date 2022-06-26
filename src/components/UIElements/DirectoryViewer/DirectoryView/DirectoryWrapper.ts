@@ -1,8 +1,9 @@
 import { Ref, ref } from '@vue/composition-api'
-import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
-import { BaseWrapper } from './BaseWrapper'
-import { IDirectoryViewerOptions } from './DirectoryStore'
-import { FileWrapper } from './FileWrapper'
+import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
+import { BaseWrapper } from '../Common/BaseWrapper'
+import { IDirectoryViewerOptions } from '../DirectoryStore'
+import { FileWrapper } from '../FileView/FileWrapper'
+import { showFolderContextMenu } from '../ContextMenu/Folder'
 
 const ignoreFiles = ['.DS_Store']
 
@@ -129,7 +130,8 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 		this.parent.unselectAll()
 	}
 
-	onRightClick() {
-		this.options.onFolderRightClick?.(this)
+	onRightClick(event: MouseEvent) {
+		showFolderContextMenu(event, this)
+		this.options.onFolderRightClick?.(event, this)
 	}
 }

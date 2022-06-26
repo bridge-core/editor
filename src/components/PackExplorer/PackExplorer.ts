@@ -24,7 +24,7 @@ import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnu
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
 import { platform } from '/@/utils/os'
 import { Project } from '../Projects/Project/Project'
-import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryWrapper'
+import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent

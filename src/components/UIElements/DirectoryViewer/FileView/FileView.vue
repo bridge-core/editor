@@ -5,7 +5,7 @@
 		class="file d-flex px-1 rounded-lg"
 		:class="{ selected: fileWrapper.isSelected.value }"
 		@click="onClick"
-		@click.right.prevent="directoryWrapper.onRightClick()"
+		@click.right.prevent="directoryWrapper.onRightClick($event)"
 		@focus="isFocused = true"
 		@blur="isFocused = false"
 		@keydown.space="onClick"
