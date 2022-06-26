@@ -13,6 +13,7 @@ export async function loadPacks(app: App, project: Project) {
 	const packs: IPackData[] = []
 	const config = project.config
 	const definedPacks = config.getAvailablePacks()
+	console.log(definedPacks)
 
 	for (const [packId, packPath] of Object.entries(definedPacks)) {
 		// Load pack manifest
@@ -23,6 +24,8 @@ export async function loadPacks(app: App, project: Project) {
 				config.resolvePackPath(<TPackTypeId>packId, 'manifest.json')
 			)
 		} catch {}
+
+		console.log(packId, App.packType.getFromId(<TPackTypeId>packId))
 
 		packs.push({
 			...App.packType.getFromId(<TPackTypeId>packId)!,
