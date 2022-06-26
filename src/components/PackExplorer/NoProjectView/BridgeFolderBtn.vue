@@ -1,16 +1,48 @@
 <template>
-	<v-btn @click="selectBridgeFolder" :color="color" class="mb-2" block>
-		<v-icon class="mr-1">mdi-folder-outline</v-icon>
-		{{
-			t(
-				`windows.packExplorer.noProjectView.${
-					hasDirectorySelected && !isBridgeFolderSelected
-						? 'accessBridgeFolder'
-						: 'chooseBridgeFolder'
-				}`
-			)
-		}}
-	</v-btn>
+	<v-tooltip
+		:disabled="availableWidth > 220"
+		:color="color ? color : 'tooltip'"
+		right
+	>
+		<template v-slot:activator="{ on }">
+			<v-btn
+				v-on="on"
+				@click="selectBridgeFolder"
+				:color="color"
+				class="mb-2"
+				block
+				max-width="100%"
+				ref="button"
+				:style="{
+					overflow: 'hidden',
+				}"
+			>
+				<v-icon class="mr-1">mdi-folder-outline</v-icon>
+				<span v-if="availableWidth > 220">
+					{{
+						t(
+							`windows.packExplorer.noProjectView.${
+								hasDirectorySelected && !isBridgeFolderSelected
+									? 'accessBridgeFolder'
+									: 'chooseBridgeFolder'
+							}`
+						)
+					}}
+				</span>
+			</v-btn>
+		</template>
+		<span>
+			{{
+				t(
+					`windows.packExplorer.noProjectView.${
+						hasDirectorySelected && !isBridgeFolderSelected
+							? 'accessBridgeFolder'
+							: 'chooseBridgeFolder'
+					}`
+				)
+			}}
+		</span>
+	</v-tooltip>
 </template>
 
 <script>
@@ -30,21 +62,28 @@ export default {
 		const app = await App.getApp()
 
 		this.hasDirectorySelected = (await get('bridgeBaseDir')) !== undefined
-		this.disposable = app.bridgeFolderSetup.once(() => {
-			this.isBridgeFolderSelected = true
-		})
+		this.disposables.push(
+			app.bridgeFolderSetup.once(() => {
+				this.isBridgeFolderSelected = true
+			}, true)
+		)
+
+		// Logic for updating the current available width
+		this.disposables.push(
+			app.windowResize.on(() => this.calculateAvailableWidth())
+		)
+		this.calculateAvailableWidth()
 	},
 	destroyed() {
-		if (this.disposable) {
-			this.disposable.dispose()
-			this.disposable = null
-		}
+		this.disposables.forEach((disposable) => disposable.dispose())
+		this.disposable = []
 	},
 	data() {
 		return {
 			hasDirectorySelected: false,
 			isBridgeFolderSelected: false,
-			disposable: null,
+			disposables: [],
+			availableWidth: 0,
 		}
 	},
 	methods: {
@@ -52,6 +91,9 @@ export default {
 			const app = await App.getApp()
 
 			await app.setupBridgeFolder(this.isBridgeFolderSelected)
+		},
+		calculateAvailableWidth() {
+			this.availableWidth = this.$refs.button.$el.getBoundingClientRect().width
 		},
 	},
 }

@@ -1,8 +1,37 @@
 <template>
-	<v-btn @click="createProject" :color="color" class="mb-2" block>
-		<v-icon class="mr-1">mdi-plus</v-icon>
-		{{ t('windows.packExplorer.noProjectView.createLocalProject') }}
-	</v-btn>
+	<v-tooltip
+		:disabled="availableWidth > 220"
+		:color="color ? color : 'tooltip'"
+		right
+	>
+		<template v-slot:activator="{ on }">
+			<v-btn
+				v-on="on"
+				@click="createProject"
+				:color="color"
+				class="mb-2"
+				block
+				max-width="100%"
+				ref="button"
+				:style="{
+					overflow: 'hidden',
+				}"
+			>
+				<v-icon class="mr-1">mdi-plus</v-icon>
+				<span v-if="availableWidth > 220">
+					{{
+						t(
+							'windows.packExplorer.noProjectView.createLocalProject'
+						)
+					}}
+				</span>
+			</v-btn>
+		</template>
+
+		<span>
+			{{ t('windows.packExplorer.noProjectView.createLocalProject') }}
+		</span>
+	</v-tooltip>
 </template>
 
 <script>
@@ -17,11 +46,31 @@ export default {
 			type: String,
 		},
 	},
+	async mounted() {
+		const app = await App.getApp()
+
+		// Logic for updating the current available width
+		this.disposables.push(
+			app.windowResize.on(() => this.calculateAvailableWidth())
+		)
+		this.calculateAvailableWidth()
+	},
+	destroyed() {
+		this.disposables.forEach((disposable) => disposable.dispose())
+		this.disposables = []
+	},
+	data: () => ({
+		availableWidth: 0,
+		disposables: [],
+	}),
 	methods: {
 		async createProject() {
 			const app = await App.getApp()
 
 			app.windows.createProject.open()
+		},
+		calculateAvailableWidth() {
+			this.availableWidth = this.$refs.button.$el.getBoundingClientRect().width
 		},
 	},
 }
