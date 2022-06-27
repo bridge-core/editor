@@ -8,8 +8,6 @@ export const openFileUrl: IStartAction = {
 	name: 'openFileUrl',
 
 	onTrigger: async (value: string) => {
-		console.log(value)
-
 		const resp = await fetch(value).catch(() => null)
 		if (!resp) return
 
