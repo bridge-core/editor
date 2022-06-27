@@ -1,10 +1,12 @@
 import { VirtualFileHandle } from '/@/components/FileSystem/Virtual/FileHandle'
 import { App } from '/@/App'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import type { IStartAction } from '../Manager'
 
 const textEncoder = new TextEncoder()
 
-export const openRawFileAction = {
+export const openRawFileAction: IStartAction = {
+	type: 'compressed',
 	name: 'openRawFile',
 	onTrigger: async (value: string) => {
 		const firstNewLine = value.indexOf('\n')
@@ -22,10 +24,7 @@ export const openRawFileAction = {
 		)
 		const app = await App.getApp()
 		await app.projectManager.projectReady.fired
-		await app.project.openFile(file, {
-			isTemporary: false,
-			selectTab: true,
-		})
+		await app.fileDropper.importFile(file)
 	},
 }
 
@@ -41,10 +40,12 @@ export async function shareFile(file: AnyFileHandle) {
 			compressToEncodedURIComponent(`${file.name}\n${fileContent}`)
 		)
 
-		await navigator.share({
-			title: 'Share file',
-			text: 'Share file',
-			url: url.href,
-		})
+		await navigator
+			.share({
+				title: 'Share file',
+				text: 'Share file',
+				url: url.href,
+			})
+			.catch(() => {})
 	}
 }
