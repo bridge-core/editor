@@ -5,7 +5,6 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { ExtensionStoreWindow } from './ExtensionStore'
 import { ExtensionTag } from './ExtensionTag'
 import { extensionActions } from './ExtensionActions'
-import { InformationWindow } from '../Common/Information/InformationWindow'
 import { ConfirmationWindow } from '../Common/Confirm/ConfirmWindow'
 import { compareVersions } from 'bridge-common-utils'
 import { version as appVersion } from '/@/utils/app/version'
@@ -54,6 +53,9 @@ export class ExtensionViewer {
 	}
 	get releaseTimestamp() {
 		return this.config.releaseTimestamp ?? Date.now()
+	}
+	get readme() {
+		return this.config.readme
 	}
 	//#endregion
 
