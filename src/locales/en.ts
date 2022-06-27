@@ -124,6 +124,10 @@ export default {
 	},
 	// Actions
 	actions: {
+		goHome: {
+			name: 'Go Home',
+			description: 'Go back to the home screen',
+		},
 		newProject: {
 			name: 'New Project',
 			description: 'Create a new bridge. project',
