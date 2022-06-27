@@ -4,8 +4,12 @@ import { v4 as uuid } from 'uuid'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { VirtualFileHandle } from '../FileSystem/Virtual/FileHandle'
 import { App } from '/@/App'
-import { isUsingSaveAsPolyfill } from '../FileSystem/Polyfill'
+import {
+	isUsingFileSystemPolyfill,
+	isUsingSaveAsPolyfill,
+} from '../FileSystem/Polyfill'
 import { download } from '../FileSystem/saveOrDownload'
+import { writableToUint8Array } from '/@/utils/file/writableToUint8Array'
 
 export type TReadOnlyMode = 'forced' | 'manual' | 'off'
 
@@ -113,6 +117,17 @@ export abstract class FileTab extends Tab {
 	}
 	protected abstract _save(): void | Promise<void>
 	async saveAs() {
+		// Download the file if the user is using a file system polyfill
+		if (isUsingSaveAsPolyfill) {
+			const file = await this.fileHandle.getFile()
+
+			download(
+				this.fileHandle.name,
+				new Uint8Array(await file.arrayBuffer())
+			)
+			return
+		}
+
 		const fileHandle = await self
 			.showSaveFilePicker({
 				// @ts-ignore The type package doesn't know about suggestedName yet
@@ -136,15 +151,44 @@ export abstract class FileTab extends Tab {
 
 		// Add tab with new path to openedFiles list
 		if (!this.isForeignFile) this.parent.openedFiles.add(this.getPath())
+	}
 
-		// Download the file if the user is using a file system polyfill
-		if (isUsingSaveAsPolyfill) {
-			const file = await this.fileHandle.getFile()
+	protected async writeFile(value: BufferSource | Blob | string) {
+		// Current file handle is a virtual file without parent
+		if (
+			this.fileHandle instanceof VirtualFileHandle &&
+			this.fileHandle.getParent() === null
+		) {
+			// Download the file if the user is using a file system polyfill
+			if (isUsingFileSystemPolyfill.value) {
+				download(
+					this.fileHandle.name,
+					await writableToUint8Array(value)
+				)
+			}
+			// Otherwise Prompt the user to choose a save location
+			else {
+				let fileHandle
+				try {
+					fileHandle = await window.showSaveFilePicker({
+						suggestedName: this.fileHandle.name,
+						// @ts-ignore The type package doesn't know about startIn yet
+						startIn: this.parent.app.fileSystem.baseDirectory,
+					})
+				} catch {}
 
-			download(
-				this.fileHandle.name,
-				new Uint8Array(await file.arrayBuffer())
-			)
+				if (!fileHandle) return
+				this.fileHandle = fileHandle
+				this.resetSignal()
+
+				// After updating the file handle, we need to re-setup the tab
+				await this.setup()
+			}
+
+			// We're done here
+			return
 		}
+
+		await this.parent.app.fileSystem.write(this.fileHandle, value)
 	}
 }

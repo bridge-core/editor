@@ -220,11 +220,9 @@ export class TextTab extends FileTab {
 				}),
 			])
 			didAnyFinish = true
-
-			await this.saveFile(app)
-		} else {
-			await this.saveFile(app)
 		}
+
+		await this.saveFile()
 	}
 	protected makeFakeEdit(text: string | null) {
 		if (!text) {
@@ -246,15 +244,12 @@ export class TextTab extends FileTab {
 			this.editorInstance.pushUndoStop()
 		}
 	}
-	protected async saveFile(app: App) {
+	protected async saveFile() {
 		if (this.editorModel && !this.editorModel.isDisposed()) {
 			this.setIsUnsaved(false)
 			this.initialVersionId = this.editorModel.getAlternativeVersionId()
 
-			await app.fileSystem.write(
-				this.fileHandle,
-				this.editorModel.getValue()
-			)
+			this.writeFile(this.editorModel.getValue())
 		} else {
 			console.error(`Cannot save file content without active editorModel`)
 		}
