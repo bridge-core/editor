@@ -79,13 +79,14 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 		}
 
 		// Add newly added files & folders
+		const newlyAdded = newChildren.filter(
+			(child) =>
+				!oldChildren.some((currentChild) =>
+					currentChild.isSame(child)
+				)
+		)
 		oldChildren.push(
-			...newChildren.filter(
-				(child) =>
-					!oldChildren.some((currentChild) =>
-						currentChild.isSame(child)
-					)
-			)
+			...newlyAdded
 		)
 
 		// Sort children

@@ -95,12 +95,6 @@ export class PackExplorer extends SidebarContent {
 				await app.fileSystem.getDirectoryHandle(pack.packPath),
 				{
 					startPath: pack.packPath,
-					onFileRightClick: () => {
-						console.log('RIGHT CLICK')
-					},
-					onDirectoryRightClick: () => {
-						console.log('RIGHT CLICK')
-					},
 				}
 			)
 			await wrapper.open()

@@ -39,6 +39,9 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 			'accent'
 		)
 	}
+	getParent() {
+		return this.parent
+	}
 
 	isSame(child: BaseWrapper<any>) {
 		return child.name === this.name && child.kind === this.kind

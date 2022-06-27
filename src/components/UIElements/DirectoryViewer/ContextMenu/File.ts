@@ -1,4 +1,5 @@
 import { FileWrapper } from '../FileView/FileWrapper'
+import { DeleteAction } from './Actions/Delete'
 import { RevealFilePathAction } from './Actions/RevealFilePath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
@@ -9,7 +10,20 @@ export async function showFileContextMenu(
 	event: MouseEvent,
 	fileWrapper: FileWrapper
 ) {
+	const mutatingActions = <const>[
+		DeleteAction(fileWrapper),
+		// {
+		// 	icon: 'mdi-pencil-outline',
+		// 	name: 'windows.packExplorer.fileActions.rename.name',
+		// 	onTrigger: () => {
+		// 		directoryWrapper.startRename()
+		// 	},
+		// },
+		{ type: 'divider' },
+	]
+
 	showContextMenu(event, [
+		...(fileWrapper.options.isReadOnly ? [] : mutatingActions),
 		{
 			icon: 'mdi-share',
 			name: 'general.shareFile',
@@ -56,25 +70,13 @@ export async function showFileContextMenu(
 				})
 			},
 		},
-		// 	{ type: 'divider' },
+		// { type: 'divider' },
 		// 	{
 		// 		icon: 'mdi-file-search-outline',
 		// 		name: 'Find in Folder',
 		// 		onTrigger: async () => {},
 		// 	},
-		// 	{ type: 'divider' },
-		// {
-		// 	icon: 'mdi-pencil-outline',
-		// 	name: 'windows.packExplorer.fileActions.rename.name',
-		// 	onTrigger: () => {
-		// 		directoryWrapper.startRename()
-		// 	},
-		// },
-		// 	{
-		// 		icon: 'mdi-delete-outline',
-		// 		name: 'Delete',
-		// 		onTrigger: async () => {},
-		// 	},
+
 		...(fileWrapper.options.provideFileContextMenu?.(fileWrapper) ?? []),
 	])
 }
