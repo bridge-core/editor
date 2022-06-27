@@ -2,6 +2,7 @@ import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { DirectoryWrapper } from './DirectoryView/DirectoryWrapper'
 import { markRaw } from '@vue/composition-api'
 import type { FileWrapper } from './FileView/FileWrapper'
+import { IActionConfig } from '/@/components/Actions/SimpleAction'
 
 export interface IDirectoryViewerOptions {
 	startPath?: string
@@ -16,11 +17,35 @@ export interface IDirectoryViewerOptions {
 		event: MouseEvent,
 		fileWrapper: FileWrapper
 	) => Promise<void> | void
-	onFolderRightClick?: (
+	onDirectoryRightClick?: (
 		event: MouseEvent,
 		directoryWrapper: DirectoryWrapper
 	) => Promise<void> | void
 	onHandleMoved?: (opts: IMoveOptions) => Promise<void> | void
+	/**
+	 * Add new items to the bottom of the file context menu
+	 */
+	provideFileContextMenu?: (
+		fileWrapper: FileWrapper
+	) => (
+		| IActionConfig
+		| {
+				type: 'divider'
+		  }
+		| null
+	)[]
+	/**
+	 * Add new items to the bottom of the directory context menu
+	 */
+	provideDirectoryContextMenu?: (
+		directoryWrapper: DirectoryWrapper
+	) => (
+		| IActionConfig
+		| {
+				type: 'divider'
+		  }
+		| null
+	)[]
 }
 
 interface IMoveOptions {

@@ -98,7 +98,7 @@ export class PackExplorer extends SidebarContent {
 					onFileRightClick: () => {
 						console.log('RIGHT CLICK')
 					},
-					onFolderRightClick: () => {
+					onDirectoryRightClick: () => {
 						console.log('RIGHT CLICK')
 					},
 				}

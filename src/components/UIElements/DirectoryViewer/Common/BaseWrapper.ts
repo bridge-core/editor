@@ -15,7 +15,7 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	constructor(
 		protected parent: DirectoryWrapper | null,
 		public readonly handle: T,
-		protected options: IDirectoryViewerOptions
+		public readonly options: IDirectoryViewerOptions
 	) {}
 
 	get name() {

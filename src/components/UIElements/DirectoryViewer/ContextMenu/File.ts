@@ -1,4 +1,5 @@
 import { FileWrapper } from '../FileView/FileWrapper'
+import { RevealFilePathAction } from './Actions/RevealFilePath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { shareFile } from '/@/components/StartParams/Action/openRawFile'
@@ -16,18 +17,7 @@ export async function showFileContextMenu(
 				await shareFile(fileWrapper.handle)
 			},
 		},
-		{
-			icon: 'mdi-eye-outline',
-			name: 'Reveal File Path',
-			onTrigger: async () => {
-				new InformationWindow({
-					name:
-						'windows.packExplorer.fileActions.revealFilePath.name',
-					description: `[${fileWrapper.path}]`,
-					isPersistent: false,
-				}).open()
-			},
-		},
+		RevealFilePathAction(fileWrapper),
 		{
 			icon: 'mdi-cogs',
 			name: 'windows.packExplorer.fileActions.viewCompilerOutput.name',
@@ -85,5 +75,6 @@ export async function showFileContextMenu(
 		// 		name: 'Delete',
 		// 		onTrigger: async () => {},
 		// 	},
+		...(fileWrapper.options.provideFileContextMenu?.(fileWrapper) ?? []),
 	])
 }

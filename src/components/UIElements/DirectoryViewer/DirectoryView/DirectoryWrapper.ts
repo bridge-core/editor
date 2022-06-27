@@ -149,7 +149,7 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 
 	override _onRightClick(event: MouseEvent) {
 		showFolderContextMenu(event, this)
-		this.options.onFolderRightClick?.(event, this)
+		this.options.onDirectoryRightClick?.(event, this)
 	}
 	override _onClick(_: MouseEvent, forceClick: boolean): void {
 		// Click is a double click so we want to deep open/close the folder

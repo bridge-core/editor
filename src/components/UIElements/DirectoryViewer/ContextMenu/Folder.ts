@@ -1,4 +1,5 @@
 import { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
+import { RevealFilePathAction } from './Actions/RevealFilePath'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 
 export async function showFolderContextMenu(
@@ -16,11 +17,7 @@ export async function showFolderContextMenu(
 		// 		name: 'New File',
 		// 		onTrigger: async () => {},
 		// 	},
-		// 	{
-		// 		icon: 'mdi-eye-outline',
-		// 		name: 'Reveal File Path',
-		// 		onTrigger: async () => {},
-		// 	},
+		RevealFilePathAction(directoryWrapper),
 		// 	{ type: 'divider' },
 		// 	{
 		// 		icon: 'mdi-file-search-outline',
@@ -40,5 +37,8 @@ export async function showFolderContextMenu(
 		// 		name: 'Delete',
 		// 		onTrigger: async () => {},
 		// 	},
+		...(directoryWrapper.options.provideDirectoryContextMenu?.(
+			directoryWrapper
+		) ?? []),
 	])
 }
