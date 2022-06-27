@@ -2,7 +2,10 @@ import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
-import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+} from '/@/components/FileSystem/Types'
 import {
 	isUsingFileSystemPolyfill,
 	isUsingOriginPrivateFs,
@@ -24,7 +27,6 @@ export function setupFileCategory(app: App) {
 			onTrigger: () => app.windows.createPreset.open(),
 		})
 	)
-	// There's no longer a pack explorer window. We should reuse the shortcut for something else...
 	file.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.openFile',
@@ -47,6 +49,29 @@ export function setupFileCategory(app: App) {
 
 					app.project.openFile(fileHandle, { isTemporary: false })
 				}
+			},
+		})
+	)
+	file.addItem(
+		app.actionManager.create({
+			id: 'bridge.action.openFolder',
+			icon: 'mdi-folder-open-outline',
+			name: 'actions.openFolder.name',
+			description: 'actions.openFolder.description',
+			keyBinding: 'Ctrl + Shift + O',
+			onTrigger: async () => {
+				const app = await App.getApp()
+				let directoryHandle: AnyDirectoryHandle
+				try {
+					directoryHandle = await window.showDirectoryPicker({
+						multiple: false,
+						mode: 'readwrite',
+					})
+				} catch {
+					return
+				}
+
+				await app.fileDropper.importFolder(directoryHandle)
 			},
 		})
 	)

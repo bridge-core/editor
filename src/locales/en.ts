@@ -138,7 +138,12 @@ export default {
 		},
 		openFile: {
 			name: 'Open File',
-			description: 'Open a file from the current project',
+			description: 'Open a file to edit it with bridge.',
+		},
+		openFolder: {
+			name: 'Open Folder',
+			description:
+				'Open a folder to edit it, set it as an output folder or trigger other actions',
 		},
 		searchFile: {
 			name: 'Search File',
