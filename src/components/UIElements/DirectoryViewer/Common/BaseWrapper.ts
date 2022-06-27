@@ -31,9 +31,13 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	}
 	get color() {
 		const path = this.path
-		if (!path) return 'accent'
+		if (!path) return this.options.defaultIconColor ?? 'accent'
 
-		return App.packType.get(path)?.color ?? 'accent'
+		return (
+			App.packType.get(path)?.color ??
+			this.options.defaultIconColor ??
+			'accent'
+		)
 	}
 
 	isSame(child: BaseWrapper<any>) {

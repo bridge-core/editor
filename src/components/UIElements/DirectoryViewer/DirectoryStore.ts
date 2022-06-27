@@ -6,6 +6,7 @@ import type { FileWrapper } from './FileView/FileWrapper'
 export interface IDirectoryViewerOptions {
 	startPath?: string
 	isReadonly?: boolean
+	defaultIconColor?: string
 
 	// TODO: mode for selecting files/folders
 	mode?: 'view-directory' // | 'select-file' | 'select-folder'
