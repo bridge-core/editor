@@ -7,6 +7,16 @@
 			<h3>{{ extension.name }}</h3>
 
 			<v-spacer />
+			<!-- Read more about extension -->
+			<v-btn
+				v-if="extension.readme"
+				class="mr-1"
+				icon
+				@click="openUrl(extension.readme)"
+			>
+				<v-icon>mdi-information-outline</v-icon>
+			</v-btn>
+
 			<!-- Share Extension -->
 			<v-btn
 				v-if="extension.canShare"
@@ -17,15 +27,6 @@
 				<v-icon>mdi-share</v-icon>
 			</v-btn>
 
-			<!-- Read more about extension -->
-			<v-btn
-				v-if="extension.readme"
-				class="mr-1"
-				icon
-				@click="openUrl(extension.readme)"
-			>
-				<v-icon>mdi-information-outline</v-icon>
-			</v-btn>
 			<v-btn
 				v-if="!extension.isInstalled"
 				@click="extension.download()"
