@@ -78,6 +78,7 @@ export default {
 						e.description.toLowerCase().includes(f) ||
 						e.author.toLowerCase().includes(f) ||
 						e.version.includes(f) ||
+						e.id === this.sidebar._filter ||
 						e.tags.some((tag) => tag.text.toLowerCase().includes(f))
 				)
 			}

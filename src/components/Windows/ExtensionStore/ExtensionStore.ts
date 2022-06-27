@@ -31,7 +31,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 		this.defineWindow()
 	}
 
-	async open() {
+	async open(filter?: string) {
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
@@ -90,6 +90,8 @@ export class ExtensionStoreWindow extends BaseWindow {
 		updateNotification?.dispose()
 
 		this.setupSidebar()
+
+		if (filter) this.sidebar.setFilter(filter)
 
 		app.windows.loadingWindow.close()
 		super.open()

@@ -181,6 +181,10 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 	get filter() {
 		return this._filter.toLowerCase()
 	}
+	setFilter(filter: string) {
+		this._filter = filter
+	}
+
 	get elements() {
 		const elements = this.sortSidebar(
 			this._elements

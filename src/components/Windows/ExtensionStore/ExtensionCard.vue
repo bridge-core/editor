@@ -8,6 +8,14 @@
 
 			<v-spacer />
 			<v-btn
+				v-if="extension.canShare"
+				class="mr-1"
+				icon
+				@click="extension.share()"
+			>
+				<v-icon>mdi-share</v-icon>
+			</v-btn>
+			<v-btn
 				v-if="!extension.isInstalled"
 				@click="extension.download()"
 				:loading="extension.isLoading"

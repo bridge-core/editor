@@ -248,4 +248,20 @@ export class ExtensionViewer {
 	closeActionMenu() {
 		this.showMenu = false
 	}
+
+	get canShare() {
+		return typeof navigator.share === 'function'
+	}
+	async share() {
+		if (!this.canShare) return
+
+		const url = new URL(window.location.href)
+		url.searchParams.set('viewExtension', encodeURIComponent(this.id))
+
+		await navigator.share({
+			title: this.name,
+			text: 'View this extension within bridge. v2',
+			url: url.href,
+		})
+	}
 }
