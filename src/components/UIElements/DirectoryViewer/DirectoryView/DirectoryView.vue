@@ -16,7 +16,7 @@
 			:class="{ 'ml-2': renderDirectoryName }"
 			v-model="directoryWrapper.children.value"
 			group="directory-view"
-			:disabled="directoryWrapper.options.isReadonly"
+			:disabled="directoryWrapper.options.isReadOnly"
 			@change="draggedHandle"
 		>
 			<template v-for="(entry, i) in directoryWrapper.children.value">
