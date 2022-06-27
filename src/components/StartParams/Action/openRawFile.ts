@@ -2,6 +2,7 @@ import { VirtualFileHandle } from '/@/components/FileSystem/Virtual/FileHandle'
 import { App } from '/@/App'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import type { IStartAction } from '../Manager'
+import { isContentVisible } from '../../Sidebar/state'
 
 const textEncoder = new TextEncoder()
 
@@ -35,6 +36,11 @@ export async function shareFile(file: AnyFileHandle) {
 
 	if (typeof navigator.share === 'function') {
 		const url = new URL(window.location.href)
+		// Also share the information to hide sidebar if it's hidden
+		console.log(isContentVisible.value)
+		if (!isContentVisible.value)
+			url.searchParams.set('setSidebarState', 'hidden')
+
 		url.searchParams.set(
 			'openRawFile',
 			compressToEncodedURIComponent(`${file.name}\n${fileContent}`)

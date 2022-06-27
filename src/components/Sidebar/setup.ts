@@ -30,7 +30,7 @@ export async function setupSidebar() {
 
 	App.getApp().then((app) => {
 		packExplorer.setSidebarContent(app.packExplorer)
-		packExplorer.click()
+		if (!SidebarState.forcedInitialState) packExplorer.click()
 	})
 
 	createSidebar({

@@ -4,6 +4,7 @@
 
 import { openFileUrl } from './Action/openFileUrl'
 import { openRawFileAction } from './Action/openRawFile'
+import { setSidebarState } from './Action/sidebarState'
 
 export interface IStartAction {
 	type: 'compressed' | 'encoded' | 'raw'
@@ -17,6 +18,7 @@ export class StartParamManager {
 		actions.forEach((action) => this.addStartAction(action))
 		this.addStartAction(openRawFileAction)
 		this.addStartAction(openFileUrl)
+		this.addStartAction(setSidebarState)
 
 		const urlParams = new URLSearchParams(window.location.search)
 
