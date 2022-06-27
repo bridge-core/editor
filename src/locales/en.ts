@@ -18,6 +18,7 @@ export default {
 		select: 'Select',
 		skip: 'Skip',
 		save: 'Save',
+		shareFile: 'Share File',
 		more: 'More...',
 		selectFolder: 'Select Folder',
 		fileName: 'File Name',

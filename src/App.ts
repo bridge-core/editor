@@ -44,6 +44,7 @@ import { virtualProjectName } from './components/Projects/Project/Project'
 import { AnyDirectoryHandle } from './components/FileSystem/Types'
 import { getStorageDirectory } from './utils/getStorageDirectory'
 import { FolderImportManager } from './components/ImportFolder/manager'
+import { StartParamManager } from './components/StartParams/Manager'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -168,6 +169,9 @@ export class App {
 				}
 			})
 		}
+
+		// App start params
+		new StartParamManager()
 	}
 
 	static openUrl(url: string, id?: string, openInBrowser = false) {

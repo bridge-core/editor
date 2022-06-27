@@ -3,6 +3,7 @@ import { BaseWrapper } from '../Common/BaseWrapper'
 import type { IDirectoryViewerOptions } from '../DirectoryStore'
 import type { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
 import { App } from '/@/App'
+import { showFileContextMenu } from '../ContextMenu/File'
 
 export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 	public readonly kind = 'file'
@@ -33,6 +34,8 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 	}
 
 	override _onRightClick(event: MouseEvent) {
+		showFileContextMenu(event, this)
+
 		this.options.onFileRightClick?.(event, this)
 	}
 	override async _onClick(event: MouseEvent, forceClick: boolean) {

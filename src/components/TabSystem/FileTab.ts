@@ -27,11 +27,20 @@ export abstract class FileTab extends Tab {
 
 	async setup() {
 		this.isForeignFile = false
-		this.path = await this.parent.app.fileSystem.pathTo(this.fileHandle)
+		if (
+			this.fileHandle instanceof VirtualFileHandle &&
+			this.fileHandle.getParent() === null
+		)
+			this.path = undefined
+		else
+			this.path = await this.parent.app.fileSystem.pathTo(this.fileHandle)
 
 		// If the resolve above failed, we are dealing with a file which doesn't belong to this project
 		if (!this.path || !this.parent.project.isFileWithinProject(this.path)) {
+			await App.fileType.ready.fired
+
 			this.isForeignFile = true
+
 			let guessedFolder =
 				(await App.fileType.guessFolder(this.fileHandle)) ?? uuid()
 			if (!guessedFolder.endsWith('/')) guessedFolder += '/'
