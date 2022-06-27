@@ -19,6 +19,7 @@ export default {
 	props: {
 		directoryHandle: [FileSystemDirectoryHandle, DirectoryWrapper],
 		renderTopLevelDirectory: Boolean,
+		options: Object,
 	},
 	setup(props) {
 		const directoryWrapper = ref(null)
@@ -26,11 +27,12 @@ export default {
 		if (props.directoryHandle instanceof DirectoryWrapper) {
 			directoryWrapper.value = props.directoryHandle
 		} else {
-			DirectoryStore.getDirectory(props.directoryHandle).then(
-				(wrapper) => {
-					directoryWrapper.value = wrapper
-				}
-			)
+			DirectoryStore.getDirectory(
+				props.directoryHandle,
+				props.options
+			).then((wrapper) => {
+				directoryWrapper.value = wrapper
+			})
 		}
 
 		return {
