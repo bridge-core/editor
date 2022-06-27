@@ -2,10 +2,14 @@ import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { IModuleConfig } from '../types'
 
-export const FSModule = ({}: IModuleConfig) => {
+export const FSModule = ({ disposables }: IModuleConfig) => {
 	return new Promise<FileSystem>((resolve) => {
 		App.ready.once((app) => {
-			const res: any = {}
+			const res: any = {
+				onBridgeFolderSetup: (cb: () => Promise<void> | void) => {
+					disposables.push(app.bridgeFolderSetup.once(cb, true))
+				},
+			}
 
 			// Extensions will destructure the fileSystem instance
 			// so we actually need to add its methods to a temp object
