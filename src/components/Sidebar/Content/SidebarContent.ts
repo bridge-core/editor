@@ -25,4 +25,6 @@ export abstract class SidebarContent {
 				action instanceof SelectableSidebarAction && action.isSelected
 		)
 	}
+
+	onContentRightClick(event: MouseEvent) {}
 }
