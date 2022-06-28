@@ -159,6 +159,7 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 			else this.close(true)
 		} else {
 			// Normal click; toggle folder open/close
+
 			this.toggleOpen(forceClick)
 		}
 	}

@@ -6,6 +6,8 @@ import { iterateDir } from '/@/utils/iterateDir'
 import { join, dirname, basename } from '/@/utils/path'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
 import { getStorageDirectory } from '/@/utils/getStorageDirectory'
+import { VirtualFileHandle } from './Virtual/FileHandle'
+import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 
 export class FileSystem extends Signal<void> {
 	protected _baseDirectory!: AnyDirectoryHandle
@@ -70,17 +72,24 @@ export class FileSystem extends Signal<void> {
 			throw new Error(`File does not exist: "${path}"`)
 		}
 	}
-	async pathTo(fileHandle: AnyFileHandle) {
+	async pathTo(handle: AnyHandle) {
 		const localHandle = await getStorageDirectory()
+		// We can only resolve paths to virtual files if the user uses the file system polyfill
+		if (
+			handle instanceof VirtualFileHandle &&
+			!(localHandle instanceof VirtualDirectoryHandle)
+		)
+			return
+
 		let path = await localHandle
-			.resolve(<any>fileHandle)
+			.resolve(<any>handle)
 			.then((path) => path?.join('/'))
 
 		if (path) {
 			path = '~local/' + path
 		} else {
 			path = await this.baseDirectory
-				.resolve(<any>fileHandle)
+				.resolve(<any>handle)
 				.then((path) => path?.join('/'))
 		}
 

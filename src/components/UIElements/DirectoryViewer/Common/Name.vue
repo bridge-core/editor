@@ -9,6 +9,7 @@
 		@click.prevent="onClick($event)"
 		@keydown.space.exact.prevent="isFocused ? onClick($event) : null"
 		@keydown.enter.prevent="onEnter"
+		@keydown.stop="onKeyDown"
 		@click.right.prevent="baseWrapper.onRightClick($event)"
 		@focus.exact="onFocus"
 		@blur="isFocused = false"
@@ -52,6 +53,8 @@
 </template>
 
 <script>
+import { CopyAction } from '../ContextMenu/Actions/Copy'
+import { PasteAction } from '../ContextMenu/Actions/Paste'
 import { BaseWrapper } from './BaseWrapper'
 import { useDoubleClick } from '/@/components/Composables/DoubleClick'
 import { platform } from '/@/utils/os'
@@ -86,17 +89,35 @@ export default {
 		},
 		onFocus() {
 			this.isFocused = true
+
+			if (this.baseWrapper.isSelected.value) return
 			this.baseWrapper.unselectAll()
 			this.baseWrapper.isSelected.value = true
 		},
-		onRightClick() {},
+		onKeyDown(event) {
+			if (platform() === 'darwin' && !event.metaKey) return
+			if (platform() !== 'darwin' && !event.ctrlKey) return
+
+			if (event.code === 'KeyC') {
+				CopyAction(this.baseWrapper).onTrigger()
+			} else if (event.code === 'KeyV') {
+				PasteAction(
+					this.baseWrapper.kind === 'directory'
+						? this.baseWrapper
+						: this.baseWrapper.getParent()
+				).onTrigger()
+			}
+		},
+		focus() {
+			if (this.$refs.name) this.$refs.name.focus()
+		},
 	},
 	watch: {
 		'baseWrapper.isEditingName.value'() {
 			if (this.baseWrapper.isEditingName.value) {
 				this.currentName = this.baseWrapper.name
 			} else {
-				if (this.$refs.name) this.$refs.name.focus()
+				this.focus()
 			}
 		},
 	},
@@ -106,6 +127,7 @@ export default {
 <style scoped>
 .directory-viewer-name {
 	cursor: pointer;
+	transition: background-color 0.2s ease-in-out;
 }
 .directory-viewer-name.selected {
 	background: var(--v-background-base);

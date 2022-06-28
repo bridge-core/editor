@@ -1,18 +1,24 @@
 import { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
+import { CopyAction } from './Actions/Copy'
 import { DeleteAction } from './Actions/Delete'
+import { PasteAction } from './Actions/Paste'
 import { RevealFilePathAction } from './Actions/RevealFilePath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 
+interface IFolderOptions {
+	hideDelete?: boolean
+}
 export async function showFolderContextMenu(
 	event: MouseEvent,
-	directoryWrapper: DirectoryWrapper
+	directoryWrapper: DirectoryWrapper,
+	options: IFolderOptions = {}
 ) {
 	const app = await App.getApp()
 	const path = directoryWrapper.path
 
-	const mutatingActions = <const>[
+	const mutatingActions = (<const>[
 		{
 			icon: 'mdi-file-plus-outline',
 			name: 'windows.packExplorer.fileActions.createFile.name',
@@ -62,7 +68,9 @@ export async function showFolderContextMenu(
 				directoryWrapper.refresh()
 			},
 		},
-		DeleteAction(directoryWrapper),
+		CopyAction(directoryWrapper),
+		PasteAction(directoryWrapper),
+		options.hideDelete ? null : DeleteAction(directoryWrapper),
 		// {
 		// 	icon: 'mdi-pencil-outline',
 		// 	name: 'windows.packExplorer.fileActions.rename.name',
@@ -71,10 +79,12 @@ export async function showFolderContextMenu(
 		// 	},
 		// },
 		{ type: 'divider' },
-	]
+	]).filter((action) => action !== null)
 
 	showContextMenu(event, [
-		...(directoryWrapper.options.isReadOnly ? [] : mutatingActions),
+		...(directoryWrapper.options.isReadOnly
+			? [CopyAction(directoryWrapper)]
+			: mutatingActions),
 
 		RevealFilePathAction(directoryWrapper),
 		// 	{

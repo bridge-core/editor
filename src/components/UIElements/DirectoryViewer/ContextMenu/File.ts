@@ -1,5 +1,7 @@
 import { FileWrapper } from '../FileView/FileWrapper'
+import { CopyAction } from './Actions/Copy'
 import { DeleteAction } from './Actions/Delete'
+import { PasteAction } from './Actions/Paste'
 import { RevealFilePathAction } from './Actions/RevealFilePath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
@@ -11,7 +13,10 @@ export async function showFileContextMenu(
 	fileWrapper: FileWrapper
 ) {
 	const mutatingActions = <const>[
+		CopyAction(fileWrapper),
+		PasteAction(fileWrapper.getParent()!),
 		DeleteAction(fileWrapper),
+
 		// {
 		// 	icon: 'mdi-pencil-outline',
 		// 	name: 'windows.packExplorer.fileActions.rename.name',
@@ -23,7 +28,9 @@ export async function showFileContextMenu(
 	]
 
 	showContextMenu(event, [
-		...(fileWrapper.options.isReadOnly ? [] : mutatingActions),
+		...(fileWrapper.options.isReadOnly
+			? [CopyAction(fileWrapper)]
+			: mutatingActions),
 		{
 			icon: 'mdi-share',
 			name: 'general.shareFile',

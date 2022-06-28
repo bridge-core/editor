@@ -17,6 +17,7 @@ import { TabActionProvider } from '/@/components/TabSystem/TabActions/Provider'
 import {
 	AnyDirectoryHandle,
 	AnyFileHandle,
+	AnyHandle,
 } from '/@/components/FileSystem/Types'
 import { markRaw, reactive, set } from '@vue/composition-api'
 import { SnippetLoader } from '/@/components/Snippets/Loader'
@@ -30,6 +31,7 @@ import { proxy, Remote } from 'comlink'
 import { DashService } from '/@/components/Compiler/Worker/Service'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import { iterateDir } from '/@/utils/iterateDir'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -360,6 +362,24 @@ export abstract class Project {
 		return relative(this.projectPath, filePath)
 	}
 
+	async updateHandle(handle: AnyHandle) {
+		const path = await this.app.fileSystem.pathTo(handle)
+		if (!path) return
+
+		if (handle.kind === 'file') return await this.updateFile(path)
+
+		const files: string[] = []
+		iterateDir(
+			handle,
+			(_, filePath) => {
+				files.push(filePath)
+			},
+			undefined,
+			path
+		)
+
+		await this.updateFiles(files)
+	}
 	async updateFile(filePath: string) {
 		// We already have a check for foreign files inside of the TabSystem.save(...) function
 		// but there are a lot of sources that call updateFile(...)
