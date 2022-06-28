@@ -68,6 +68,7 @@ export async function showFolderContextMenu(
 				directoryWrapper.refresh()
 			},
 		},
+		{ type: 'divider' },
 		CopyAction(directoryWrapper),
 		PasteAction(directoryWrapper),
 		options.hideDelete ? null : DeleteAction(directoryWrapper),
