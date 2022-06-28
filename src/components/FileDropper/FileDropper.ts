@@ -64,11 +64,15 @@ export class FileDropper {
 			const handle = <AnyHandle | null>await item.getAsFileSystemHandle()
 			if (!handle) return
 
-			if (handle.kind === 'directory') {
-				await this.importFolder(handle)
-			} else if (handle.kind === 'file') {
-				await this.importFile(handle)
-			}
+			await this.import(handle)
+		}
+	}
+
+	async import(handle: AnyHandle) {
+		if (handle.kind === 'directory') {
+			await this.importFolder(handle)
+		} else if (handle.kind === 'file') {
+			await this.importFile(handle)
 		}
 	}
 
