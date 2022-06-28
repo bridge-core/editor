@@ -369,7 +369,7 @@ export abstract class Project {
 		if (handle.kind === 'file') return await this.updateFile(path)
 
 		const files: string[] = []
-		iterateDir(
+		await iterateDir(
 			handle,
 			(_, filePath) => {
 				files.push(filePath)
@@ -415,10 +415,34 @@ export abstract class Project {
 
 		this.fileUnlinked.dispatch(filePath)
 
+		// Close tab if file is open
+		for (const tabSystem of this.tabSystems) {
+			tabSystem.forceCloseTabs((tab) => tab.getPath() === filePath)
+		}
+
 		// Reload dynamic schemas
 		const currentPath = this.tabSystem?.selectedTab?.getPath()
 		if (currentPath)
 			await this.jsonDefaults.updateDynamicSchemas(currentPath)
+	}
+	async unlinkHandle(handle: AnyHandle) {
+		const path = await this.app.fileSystem.pathTo(handle)
+		if (!path) return
+
+		if (handle.kind === 'file') return await this.unlinkFile(path)
+
+		const files: string[] = []
+		await iterateDir(
+			handle,
+			(_, filePath) => {
+				files.push(filePath)
+			},
+			undefined,
+			path
+		)
+
+		await Promise.allSettled(files.map((file) => this.unlinkFile(file)))
+		await this.app.fileSystem.unlink(path)
 	}
 	async renameFile(fromPath: string, toPath: string) {
 		await this.app.fileSystem.move(fromPath, toPath)

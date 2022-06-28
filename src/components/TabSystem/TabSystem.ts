@@ -290,6 +290,13 @@ export class TabSystem extends MonacoHolder {
 			if (predicate(tab)) tab.close()
 		}
 	}
+	forceCloseTabs(predicate: (tab: Tab) => boolean) {
+		const tabs = [...this.tabs].reverse()
+
+		for (const tab of tabs) {
+			if (predicate(tab)) this.remove(tab)
+		}
+	}
 	has(predicate: (tab: Tab) => boolean) {
 		for (const tab of this.tabs) {
 			if (predicate(tab)) return true
