@@ -10,6 +10,8 @@ export const PasteAction = (directoryWrapper: DirectoryWrapper) => ({
 	name: 'actions.paste.name',
 	description: 'actions.paste.description',
 	onTrigger: async () => {
+		if (directoryWrapper.options.isReadOnly) return
+
 		if (!clipboard.item) return
 		const handleToPaste = clipboard.item
 

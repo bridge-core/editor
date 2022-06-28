@@ -7,6 +7,8 @@ export const DeleteAction = (baseWrapper: BaseWrapper<any>) => ({
 	name: 'windows.packExplorer.fileActions.delete.name',
 	description: 'windows.packExplorer.fileActions.delete.description',
 	onTrigger: async () => {
+		if (baseWrapper.options.isReadOnly) return
+
 		const app = await App.getApp()
 		const t = (str: string) => app.locales.translate(str)
 
