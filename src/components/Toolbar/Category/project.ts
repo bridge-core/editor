@@ -23,7 +23,8 @@ export function setupProjectCategory(app: App) {
 			onTrigger: async () => {
 				const app = await App.getApp()
 				app.projectManager.selectProject(virtualProjectName)
-				SidebarState.sidebarElements.packExplorer.click()
+				if (!SidebarState.sidebarElements.packExplorer.isSelected)
+					SidebarState.sidebarElements.packExplorer.click()
 			},
 		})
 	)
