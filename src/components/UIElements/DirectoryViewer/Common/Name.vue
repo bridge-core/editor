@@ -54,6 +54,7 @@
 
 <script>
 import { CopyAction } from '../ContextMenu/Actions/Copy'
+import { DeleteAction } from '../ContextMenu/Actions/Delete'
 import { PasteAction } from '../ContextMenu/Actions/Paste'
 import { BaseWrapper } from './BaseWrapper'
 import { useDoubleClick } from '/@/components/Composables/DoubleClick'
@@ -98,14 +99,19 @@ export default {
 			if (platform() === 'darwin' && !event.metaKey) return
 			if (platform() !== 'darwin' && !event.ctrlKey) return
 
+			console.log(event.code)
 			if (event.code === 'KeyC') {
+				// Copy the file/folder
 				CopyAction(this.baseWrapper).onTrigger()
 			} else if (event.code === 'KeyV') {
+				// Paste the curent clipboard file/folder
 				PasteAction(
 					this.baseWrapper.kind === 'directory'
 						? this.baseWrapper
 						: this.baseWrapper.getParent()
 				).onTrigger()
+			} else if (event.code === 'Backspace') {
+				DeleteAction(this.baseWrapper).onTrigger()
 			}
 		},
 		focus() {
