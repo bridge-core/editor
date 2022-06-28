@@ -87,6 +87,12 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		}
 	}
 
+	override async isSameEntry(other: BaseVirtualHandle): Promise<boolean> {
+		if(this.parent === null) return false
+
+		return super.isSameEntry(other)
+	}
+
 	async removeSelf(isFirst = true) {
 		await this.idbWrapper.del(this.idbKey)
 		if (this.parent && isFirst) this.parent.deleteChild(this.name)
