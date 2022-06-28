@@ -16,7 +16,7 @@
 			contentClass: 'commandbar-menu',
 		}"
 		:items="actions"
-		:item-text="(item) => `${item.name}\n${item.description}`"
+		:item-text="(item) => `${t(item.name)}\n${t(item.description)}`"
 		:item-value="(item) => item"
 		:placeholder="t('general.search')"
 		auto-select-first
