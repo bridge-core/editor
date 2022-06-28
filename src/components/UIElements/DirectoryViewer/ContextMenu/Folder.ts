@@ -79,13 +79,13 @@ export async function showFolderContextMenu(
 		// 		directoryWrapper.startRename()
 		// 	},
 		// },
-		{ type: 'divider' },
 	]).filter((action) => action !== null)
 
 	showContextMenu(event, [
 		...(directoryWrapper.options.isReadOnly
 			? [CopyAction(directoryWrapper)]
 			: mutatingActions),
+		{ type: 'divider' },
 
 		RevealFilePathAction(directoryWrapper),
 		// 	{

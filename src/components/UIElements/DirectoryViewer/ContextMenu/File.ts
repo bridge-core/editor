@@ -24,13 +24,13 @@ export async function showFileContextMenu(
 		// 		directoryWrapper.startRename()
 		// 	},
 		// },
-		{ type: 'divider' },
 	]
 
 	showContextMenu(event, [
 		...(fileWrapper.options.isReadOnly
 			? [CopyAction(fileWrapper)]
 			: mutatingActions),
+		{ type: 'divider' },
 		{
 			icon: 'mdi-share',
 			name: 'general.shareFile',
