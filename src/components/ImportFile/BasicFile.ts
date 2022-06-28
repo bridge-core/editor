@@ -44,7 +44,7 @@ export class BasicFileImporter extends FileImporter {
 		const saveOrOpenWindow = new InformedChoiceWindow(
 			'fileDropper.importMethod.name',
 			{
-				isPersistent: true,
+				isPersistent: false,
 			}
 		)
 		const actionManager = await saveOrOpenWindow.actionManager
