@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="clickable">
 		<v-tooltip color="tooltip" right>
 			<template v-slot:activator="{ on }">
 				<BridgeSheet
