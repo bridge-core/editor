@@ -140,6 +140,8 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 			toHandle: this.parent.handle,
 		})
 
+		// TODO: Update compiler & ideally change open tabs to use correct handle
+
 		// Sort parent's children
 		directoryWrapper.sort()
 	}

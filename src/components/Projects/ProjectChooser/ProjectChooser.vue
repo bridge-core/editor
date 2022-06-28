@@ -18,7 +18,7 @@
 				:label="t('windows.projectChooser.searchProjects')"
 				hide-details
 				autofocus
-				v-model="sidebar._filter"
+				v-model.lazy.trim="sidebar._filter"
 				outlined
 				dense
 			/>

@@ -11,10 +11,10 @@
 				v-bind:selectedSidebar="selected"
 			/>
 
-			<template v-for="(element, i) in sidebarItems">
+			<template v-for="element in sidebarItems">
 				<SidebarItem
 					v-if="element.type === 'item'"
-					:key="`${element.text}.${i}`"
+					:key="`${element.text}`"
 					:icon="element.icon"
 					:color="element.color"
 					:text="element.text"
@@ -24,9 +24,10 @@
 					:compact="isMobile"
 					@click="onSidebarChanged(element.id)"
 				/>
+
 				<SidebarGroup
 					v-else
-					:key="`${element.text}.${i}.${element.isOpen}`"
+					:key="`${element.text}.${element.isOpen}`"
 					:isOpen="element.isOpen"
 					:items="element.getItems()"
 					:text="element.text"

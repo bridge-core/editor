@@ -16,7 +16,7 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.createPreset.searchPresets')"
-				v-model="sidebar._filter"
+				v-model.lazy.trim="sidebar._filter"
 				autocomplete="off"
 				autofocus
 				outlined

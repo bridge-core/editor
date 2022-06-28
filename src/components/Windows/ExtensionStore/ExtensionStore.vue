@@ -15,7 +15,7 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.extensionStore.searchExtensions')"
-				v-model="sidebar._filter"
+				v-model.lazy.trim="sidebar._filter"
 				autocomplete="off"
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
@@ -28,8 +28,8 @@
 			</div>
 			<template v-else>
 				<ExtensionCard
-					v-for="(extension, i) in currentExtensions"
-					:key="`${i}.${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`"
+					v-for="extension in currentExtensions"
+					:key="`${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`"
 					:extension="extension"
 					@search="(search) => (sidebar._filter = search)"
 					@select="(id) => ($data.selectedSidebar = id)"
