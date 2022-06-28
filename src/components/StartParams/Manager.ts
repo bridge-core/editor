@@ -22,32 +22,33 @@ export class StartParamManager {
 		this.addStartAction(setSidebarState)
 		this.addStartAction(viewExtension)
 
-		const urlParams = new URLSearchParams(window.location.search)
+		this.parse(window.location.href)
+	}
+
+	async parse(url: string) {
+		const urlParams = new URLSearchParams(url)
 
 		if ([...urlParams.keys()].length === 0) return
 
-		import('lz-string').then(({ decompressFromEncodedURIComponent }) => {
-			urlParams.forEach((value, name) => {
-				const action = this.startActions.get(name)
-				if (!action) return
+		const { decompressFromEncodedURIComponent } = await import('lz-string')
+		urlParams.forEach((value, name) => {
+			const action = this.startActions.get(name)
+			if (!action) return
 
-				let decoded: string
-				if (action.type === 'compressed') {
-					let tmp = decompressFromEncodedURIComponent(value)
-					if (!tmp) return
-					decoded = tmp
-				} else if (action.type === 'encoded') {
-					decoded = decodeURIComponent(value)
-				} else if (action.type === 'raw') {
-					decoded = value
-				} else {
-					throw new Error(
-						`Unknown start action type: "${action.type}"`
-					)
-				}
+			let decoded: string
+			if (action.type === 'compressed') {
+				let tmp = decompressFromEncodedURIComponent(value)
+				if (!tmp) return
+				decoded = tmp
+			} else if (action.type === 'encoded') {
+				decoded = decodeURIComponent(value)
+			} else if (action.type === 'raw') {
+				decoded = value
+			} else {
+				throw new Error(`Unknown start action type: "${action.type}"`)
+			}
 
-				action.onTrigger(decoded)
-			})
+			action.onTrigger(decoded)
 		})
 	}
 

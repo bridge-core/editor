@@ -36,8 +36,12 @@ App.main(vue)
 
 if ('launchQueue' in window) {
 	;(<any>window).launchQueue.setConsumer(async (launchParams: any) => {
-		if (!launchParams.files.length) return
 		const app = await App.getApp()
+
+		if (launchParams.targetURL)
+			await app.startParams.parse(launchParams.targetURL)
+
+		if (!launchParams.files.length) return
 
 		for (const fileHandle of launchParams.files) {
 			await app.fileDropper.importFile(fileHandle)

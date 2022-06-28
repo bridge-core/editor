@@ -91,6 +91,8 @@ export class App {
 	public readonly mobile: Mobile
 
 	public readonly languageManager = markRaw(new LanguageManager())
+	// App start params
+	public readonly startParams = new StartParamManager()
 
 	protected _windows: Windows
 	get windows() {
@@ -169,9 +171,6 @@ export class App {
 				}
 			})
 		}
-
-		// App start params
-		new StartParamManager()
 	}
 
 	static openUrl(url: string, id?: string, openInBrowser = false) {
