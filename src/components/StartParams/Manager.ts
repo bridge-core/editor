@@ -2,6 +2,7 @@
  * Start paramters are encoded within the URL's search query
  */
 
+import { strToU8, strFromU8, unzlibSync } from 'fflate'
 import { openFileUrl } from './Action/openFileUrl'
 import { openRawFileAction } from './Action/openRawFile'
 import { setSidebarState } from './Action/sidebarState'
@@ -22,24 +23,44 @@ export class StartParamManager {
 		this.addStartAction(setSidebarState)
 		this.addStartAction(viewExtension)
 
-		this.parse(window.location.href)
+		this.parseRaw(window.location.search)
 	}
 
 	async parse(url: string) {
-		const urlParams = new URLSearchParams(url)
+		// Get search query from url
+		const searchStr = url.split('?')[1]
+		if (!searchStr) return
+		// Parse search query
+		await this.parseRaw(searchStr)
+	}
+
+	protected async parseRaw(searchStr: string) {
+		const urlParams = new URLSearchParams(searchStr)
 
 		if ([...urlParams.keys()].length === 0) return
 
-		const { decompressFromEncodedURIComponent } = await import('lz-string')
-		urlParams.forEach((value, name) => {
+		urlParams.forEach(async (value, name) => {
+			console.log(name)
 			const action = this.startActions.get(name)
 			if (!action) return
 
 			let decoded: string
 			if (action.type === 'compressed') {
-				let tmp = decompressFromEncodedURIComponent(value)
-				if (!tmp) return
-				decoded = tmp
+				const binary = atob(value)
+
+				// Support old compressed data; this was only shortly within a nightly build
+				// So we should be able to remove this in the future
+				if (!binary.startsWith('\x78\xDA')) {
+					const { decompressFromEncodedURIComponent } = await import(
+						'lz-string'
+					)
+					const tmp = decompressFromEncodedURIComponent(value)
+					if (!tmp) return
+
+					decoded = tmp
+				}
+
+				decoded = strFromU8(unzlibSync(strToU8(binary, true)))
 			} else if (action.type === 'encoded') {
 				decoded = decodeURIComponent(value)
 			} else if (action.type === 'raw') {
@@ -48,6 +69,7 @@ export class StartParamManager {
 				throw new Error(`Unknown start action type: "${action.type}"`)
 			}
 
+			console.log(action.name, decoded)
 			action.onTrigger(decoded)
 		})
 	}

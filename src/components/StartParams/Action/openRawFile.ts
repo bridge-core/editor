@@ -3,6 +3,7 @@ import { App } from '/@/App'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import type { IStartAction } from '../Manager'
 import { isContentVisible } from '../../Sidebar/state'
+import { strFromU8, strToU8, zlibSync } from 'fflate'
 
 const textEncoder = new TextEncoder()
 
@@ -43,7 +44,14 @@ export async function shareFile(file: AnyFileHandle) {
 
 		url.searchParams.set(
 			'openRawFile',
-			compressToEncodedURIComponent(`${file.name}\n${fileContent}`)
+			btoa(
+				strFromU8(
+					zlibSync(strToU8(`${file.name}\n${fileContent}`), {
+						level: 9,
+					}),
+					true
+				)
+			)
 		)
 
 		await navigator
