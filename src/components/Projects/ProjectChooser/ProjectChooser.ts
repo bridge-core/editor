@@ -7,7 +7,6 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { v4 as uuid } from 'uuid'
 import { IExperimentalToggle } from '../CreateProject/CreateProject'
 import { importNewProject } from '../Import/ImportNew'
-import { markRaw } from '@vue/composition-api'
 
 export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])

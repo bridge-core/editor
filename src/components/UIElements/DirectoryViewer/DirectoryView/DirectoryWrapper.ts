@@ -1,4 +1,4 @@
-import { Ref, ref } from '@vue/composition-api'
+import { Ref, ref } from 'vue'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { BaseWrapper } from '../Common/BaseWrapper'
 import { IDirectoryViewerOptions } from '../DirectoryStore'

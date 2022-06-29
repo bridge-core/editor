@@ -1,7 +1,7 @@
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import AssetPreviewWindowComponent from './Window.vue'
 import { StandaloneModelViewer } from 'bridge-model-viewer'
-import { markRaw, set } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { Color } from 'three'
 
 export interface IAssetPreviewWindowConfig {
@@ -59,7 +59,7 @@ export class AssetPreviewWindow extends BaseWindow<IAssetPreviewConfig | null> {
 
 		// Initialize bone visibility map
 		for (const boneName of modelViewer.getModel().bones) {
-			set(this.bones, boneName, true)
+			this.bones[boneName] = true
 		}
 
 		// @ts-ignore
