@@ -12,6 +12,7 @@ import {
 } from '/@/components/FileSystem/Polyfill'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { download } from '/@/components/FileSystem/saveOrDownload'
+import { CommandBarState } from '../../CommandBar/State'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -82,7 +83,7 @@ export function setupFileCategory(app: App) {
 			name: 'actions.searchFile.name',
 			description: 'actions.searchFile.description',
 			keyBinding: 'Ctrl + P',
-			onTrigger: () => app.windows.filePicker.open(),
+			onTrigger: () => (CommandBarState.isWindowOpen = true),
 		})
 	)
 	file.addItem(

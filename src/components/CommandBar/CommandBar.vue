@@ -1,11 +1,11 @@
 <template>
 	<v-autocomplete
-		style="width: 100%"
 		prepend-inner-icon="mdi-magnify"
 		solo
 		rounded
 		hide-details
 		:append-icon="null"
+		class="commandbar-input elevation-1"
 		:menu-props="{
 			rounded: 'lg',
 			dense: true,
@@ -20,6 +20,7 @@
 		:item-value="(item) => item"
 		:placeholder="t('general.search')"
 		auto-select-first
+		:autofocus="autofocus"
 		v-model="currentItem"
 		@change="onSelectedAction"
 	>
@@ -53,6 +54,12 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 
 export default {
 	mixins: [TranslationMixin],
+	props: {
+		autofocus: {
+			type: Boolean,
+			default: false,
+		},
+	},
 	async mounted() {
 		const app = await App.getApp()
 
@@ -85,6 +92,7 @@ export default {
 		onSelectedAction(item) {
 			this.$nextTick(() => (this.currentItem = ''))
 			item.trigger()
+			this.$emit('actionSelected')
 		},
 		async loadFilesFromProject(project) {
 			if (!project || project.isVirtualProject) return
@@ -118,6 +126,10 @@ export default {
 </script>
 
 <style>
+.commandbar-input {
+	width: 50vw !important;
+	max-width: 500px !important;
+}
 .commandbar-menu {
 	width: 50vw;
 }
