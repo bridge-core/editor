@@ -25,6 +25,7 @@ import { ProjectModule } from './Modules/project'
 import { ThreeModule } from './Modules/Three'
 import { ModelViewerModule } from './Modules/ModelViewer'
 import { ImportModule } from './Modules/import'
+import { PersistentStorageModule } from './Modules/persistentStorage'
 
 const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/ui', UIModule],
@@ -50,6 +51,7 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/three', ThreeModule],
 	['@bridge/model-viewer', ModelViewerModule],
 	['@bridge/import', ImportModule],
+	['@bridge/persistent-storage', PersistentStorageModule],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
@@ -64,6 +66,7 @@ const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
 ])
 
 function createGenericEnv(
+	extensionId: string,
 	disposables: IDisposable[] = [],
 	uiStore?: TUIStore,
 	isGlobal: boolean = false,
@@ -71,21 +74,30 @@ function createGenericEnv(
 ) {
 	return async (importName: string) => {
 		const module = modules.get(importName)
-		if (module) return await module({ uiStore, disposables, isGlobal })
+		if (module)
+			return await module({ uiStore, disposables, isGlobal, extensionId })
 	}
 }
 
 export function createEnv(
+	extensionId: string,
 	disposables: IDisposable[] = [],
 	uiStore?: TUIStore,
 	isGlobal: boolean = false
 ) {
-	return createGenericEnv(disposables, uiStore, isGlobal)
+	return createGenericEnv(extensionId, disposables, uiStore, isGlobal)
 }
 export function createLimitedEnv(
+	extensionId: string,
 	disposables: IDisposable[] = [],
 	uiStore?: TUIStore,
 	isGlobal: boolean = false
 ) {
-	return createGenericEnv(disposables, uiStore, isGlobal, LimitedModules)
+	return createGenericEnv(
+		extensionId,
+		disposables,
+		uiStore,
+		isGlobal,
+		LimitedModules
+	)
 }

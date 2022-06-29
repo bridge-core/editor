@@ -12,6 +12,7 @@ import { iterateDir } from '/@/utils/iterateDir'
 import { loadFileDefinitions } from './FileDefinition/load'
 import { InstallFiles } from './InstallFiles'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
+import { idbExtensionStore } from './Scripts/Modules/persistentStorage'
 
 export class Extension {
 	protected disposables: IDisposable[] = []
@@ -130,7 +131,8 @@ export class Extension {
 							scriptHandle,
 							this.uiStore,
 							this.disposables,
-							this.isGlobal
+							this.isGlobal,
+							this.id
 					  )
 					: undefined
 			),
@@ -195,6 +197,7 @@ export class Extension {
 
 	async delete() {
 		this.deactivate()
+		await idbExtensionStore.del(this.id)
 		this.parent.deleteExtension(this.manifest.id)
 	}
 
