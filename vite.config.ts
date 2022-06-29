@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import { resolve, join } from 'path'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -40,6 +40,7 @@ export default defineConfig({
 			},
 		}),
 		vuetify({}),
+		splitVendorChunkPlugin(),
 		ViteEjsPlugin({
 			isNightly,
 			title: isNightly ? 'bridge Nightly' : 'bridge v2',
@@ -89,7 +90,7 @@ export default defineConfig({
 				background_color: '#0F0F0F',
 				// @ts-ignore
 				launch_handler: {
-					route_to: 'existing-client',
+					route_to: 'existing-client-retain',
 					navigate_existing_client: 'never',
 				},
 				file_handlers: [

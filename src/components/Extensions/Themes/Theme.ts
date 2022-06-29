@@ -38,7 +38,10 @@ export class Theme {
 		// TODO(Vue3): Implement v-theme-provider and change theme here
 
 		themeManager.setThemeColor(this.colorMap.get('toolbar') ?? 'red')
-		this.monacoSubTheme.apply()
+		this.applyMonacoTheme()
+	}
+	async applyMonacoTheme() {
+		await this.monacoSubTheme.apply()
 	}
 
 	getColor(colorName: TColorName) {

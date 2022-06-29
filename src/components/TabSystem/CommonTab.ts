@@ -7,6 +7,7 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { Component } from 'vue'
+import { shareFile } from '../StartParams/Action/openRawFile'
 
 export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	abstract component: Component
@@ -36,6 +37,10 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	async setup() {
 		this.dispatch(this)
 		this.isLoading = false
+	}
+
+	setIsLoading(val: boolean) {
+		this.isLoading = val
 	}
 
 	setIsUnsaved(val: boolean) {
@@ -162,6 +167,17 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 
 	async onContextMenu(event: MouseEvent) {
 		const additionalItems = []
+		// @ts-ignore
+		if (this.fileHandle)
+			additionalItems.push({
+				icon: 'mdi-share',
+				name: 'general.shareFile',
+				onTrigger: async () => {
+					// @ts-ignore
+					await shareFile(this.fileHandle)
+				},
+			})
+
 		// It makes no sense to move a file to the split-screen if the tab system only has one entry
 		if (this.isTemporary) {
 			additionalItems.push({

@@ -14,8 +14,13 @@ import { CreateConfig } from './Files/Config'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
-import { settingsState } from '../../Windows/Settings/SettingsState'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { CreateWorlds } from './Packs/worlds'
+import {
+	getFormatVersions,
+	getStableFormatVersion,
+} from '/@/components/Data/FormatVersions'
+import { Project } from '../Project/Project'
 
 export interface ICreateProjectOptions {
 	author: string | string[]
@@ -47,6 +52,7 @@ export class CreateProjectWindow extends BaseWindow {
 	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []
 	protected availableTargetVersionsLoading = true
+	protected stableVersion: string = ''
 	protected packs: Record<TPackTypeId | '.bridge' | 'worlds', CreatePack> = <
 		const
 	>{
@@ -62,7 +68,7 @@ export class CreateProjectWindow extends BaseWindow {
 	protected experimentalToggles: IExperimentalToggle[] = []
 	protected projectNameRules = [
 		(val: string) =>
-			val.match(/"|\\|\/|:|\||<|>|\*|\?/g) === null ||
+			val.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) === null ||
 			'windows.createProject.projectName.invalidLetters',
 		(val: string) =>
 			!val.endsWith('.') ||
@@ -95,13 +101,10 @@ export class CreateProjectWindow extends BaseWindow {
 
 		App.ready.once(async (app) => {
 			await app.dataLoader.fired
-			this.availableTargetVersions = (
-				await app.dataLoader.readJSON(
-					'data/packages/minecraftBedrock/formatVersions.json'
-				)
-			).reverse()
+			this.availableTargetVersions = await getFormatVersions()
 			// Set default version
-			this.createOptions.targetVersion = this.availableTargetVersions[0]
+			this.stableVersion = await getStableFormatVersion(app.dataLoader)
+			this.createOptions.targetVersion = this.stableVersion
 			this.availableTargetVersionsLoading = false
 
 			this.experimentalToggles = await app.dataLoader.readJSON(
@@ -113,7 +116,6 @@ export class CreateProjectWindow extends BaseWindow {
 		})
 
 		App.packType.ready.once(() => {
-			// TODO: Remove filter for world templates as soon as we support creating them
 			this.availablePackTypes = App.packType.all
 		})
 	}
@@ -179,10 +181,14 @@ export class CreateProjectWindow extends BaseWindow {
 		}
 
 		// Save previous project name to delete it later
-		let previousProject: string | undefined
-		if (!this.isFirstProject) previousProject = app.project.name
+		let previousProject: Project | undefined
+		if (!this.isFirstProject) previousProject = app.project
 
-		await app.projectManager.addProject(projectDir)
+		await app.projectManager.addProject(
+			projectDir,
+			true,
+			app.bridgeFolderSetup.hasFired
+		)
 		await app.extensionLoader.installFilesToCurrentProject()
 
 		if (isUsingFileSystemPolyfill.value && !this.isFirstProject)
@@ -190,8 +196,6 @@ export class CreateProjectWindow extends BaseWindow {
 
 		// Reset options
 		this.createOptions = this.getDefaultOptions()
-
-		await App.audioManager.playAudio('confirmation_002.ogg', 1)
 	}
 
 	static getDefaultOptions(): ICreateProjectOptions {
@@ -216,7 +220,7 @@ export class CreateProjectWindow extends BaseWindow {
 		return {
 			...CreateProjectWindow.getDefaultOptions(),
 			targetVersion: this.availableTargetVersions
-				? this.availableTargetVersions[0]
+				? this.stableVersion
 				: '',
 			experimentalGameplay: this.experimentalToggles
 				? Object.fromEntries(

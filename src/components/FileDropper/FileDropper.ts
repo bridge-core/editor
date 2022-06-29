@@ -3,8 +3,11 @@ import {
 	isUsingOriginPrivateFs,
 	isUsingFileSystemPolyfill,
 } from '/@/components/FileSystem/Polyfill'
-import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
-import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+	AnyHandle,
+} from '/@/components/FileSystem/Types'
 import { App } from '/@/App'
 import { extname } from '/@/utils/path'
 
@@ -25,11 +28,7 @@ export class FileDropper {
 		window.addEventListener('dragover', (event) => {
 			event.preventDefault()
 
-			if (
-				App.windowState.isAnyWindowVisible.value &&
-				InitialSetup.ready.hasFired
-			)
-				return
+			if (App.windowState.isAnyWindowVisible.value) return
 
 			// Moving tabs
 			if (event.dataTransfer?.effectAllowed === 'move') return
@@ -53,48 +52,27 @@ export class FileDropper {
 		window.addEventListener('drop', (event) => {
 			event.preventDefault()
 
-			if (
-				App.windowState.isAnyWindowVisible.value &&
-				InitialSetup.ready.hasFired
-			)
-				return
+			if (App.windowState.isAnyWindowVisible.value) return
 
 			this.onDrop([...(event.dataTransfer?.items ?? [])])
 			this.state.isHovering = false
 		})
-
-		if ('launchQueue' in window) {
-			;(<any>window).launchQueue.setConsumer(
-				async (launchParams: any) => {
-					if (!launchParams.files.length) return
-
-					for (const fileHandle of launchParams.files) {
-						await this.importFile(fileHandle)
-					}
-				}
-			)
-		}
 	}
 
 	protected async onDrop(dataTransferItems: DataTransferItem[]) {
 		for (const item of dataTransferItems) {
-			const fileHandle = <AnyHandle | null>(
-				await item.getAsFileSystemHandle()
-			)
-			if (!fileHandle) return
+			const handle = <AnyHandle | null>await item.getAsFileSystemHandle()
+			if (!handle) return
 
-			if (fileHandle.kind === 'directory') {
-				if (
-					!isUsingOriginPrivateFs &&
-					!isUsingFileSystemPolyfill.value &&
-					fileHandle.name === 'com.mojang'
-				)
-					this.app.comMojang.handleComMojangDrop(fileHandle)
+			await this.import(handle)
+		}
+	}
 
-				// TODO: Handle import of other folders
-			} else if (fileHandle.kind === 'file') {
-				await this.importFile(fileHandle)
-			}
+	async import(handle: AnyHandle) {
+		if (handle.kind === 'directory') {
+			await this.importFolder(handle)
+		} else if (handle.kind === 'file') {
+			await this.importFile(handle)
 		}
 	}
 
@@ -113,6 +91,10 @@ export class FileDropper {
 			return false
 		}
 		return true
+	}
+
+	async importFolder(directoryHandle: AnyDirectoryHandle) {
+		await this.app.folderImportManager.onImportFolder(directoryHandle)
 	}
 
 	addFileImporter(

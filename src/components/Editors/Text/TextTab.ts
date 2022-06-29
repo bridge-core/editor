@@ -1,14 +1,16 @@
-import { FileTab } from '/@/components/TabSystem/FileTab'
+import { FileTab, TReadOnlyMode } from '/@/components/TabSystem/FileTab'
 import TextTabComponent from './TextTab.vue'
-import { editor, Uri } from 'monaco-editor'
+import type { editor } from 'monaco-editor'
 import { IDisposable } from '/@/types/disposable'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { AnyFileHandle } from '../../FileSystem/Types'
 import { markRaw } from 'vue'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { loadMonaco, useMonaco } from '../../../utils/libs/useMonaco'
+import { wait } from '/@/utils/wait'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -49,9 +51,9 @@ export class TextTab extends FileTab {
 	constructor(
 		parent: TabSystem,
 		fileHandle: AnyFileHandle,
-		isReadOnly = false
+		readOnlyMode?: TReadOnlyMode
 	) {
-		super(parent, fileHandle, isReadOnly)
+		super(parent, fileHandle, readOnlyMode)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()
@@ -80,7 +82,20 @@ export class TextTab extends FileTab {
 		if (this.isActive) return
 		this.isActive = true
 
+		// Load monaco in
+		if (!loadMonaco.hasFired) {
+			this.isLoading = true
+			loadMonaco.dispatch()
+
+			// Monaco theme isn't loaded yet
+			await this.parent.app.themeManager.applyMonacoTheme()
+		}
+
+		const { editor, Uri } = await useMonaco()
+
 		await this.parent.fired //Make sure a monaco editor is loaded
+		await wait(1)
+		this.isLoading = false
 
 		if (!this.editorModel || this.editorModel.isDisposed()) {
 			const file = await this.fileHandle.getFile()
@@ -98,7 +113,7 @@ export class TextTab extends FileTab {
 			this.initialVersionId = this.editorModel.getAlternativeVersionId()
 
 			this.modelLoaded.dispatch()
-			this.loadEditor()
+			this.loadEditor(false)
 		} else {
 			this.loadEditor()
 		}
@@ -114,7 +129,6 @@ export class TextTab extends FileTab {
 			})
 		)
 
-		this.focus()
 		this.editorInstance?.layout()
 	}
 	onDeactivate() {
@@ -142,17 +156,17 @@ export class TextTab extends FileTab {
 		this.editorInstance?.focus()
 	}
 
-	loadEditor() {
+	loadEditor(shouldFocus = true) {
 		if (this.editorModel && !this.editorModel.isDisposed())
 			this.editorInstance?.setModel(this.editorModel)
 		if (this.editorViewState)
 			this.editorInstance?.restoreViewState(this.editorViewState)
 
 		this.editorInstance?.updateOptions({ readOnly: this.isReadOnly })
-		this.focus()
+		if (shouldFocus) setTimeout(() => this.focus(), 10)
 	}
 
-	async save() {
+	async _save() {
 		this.isTemporary = false
 
 		const app = await App.getApp()
@@ -176,21 +190,9 @@ export class TextTab extends FileTab {
 			// ...and that the current file type supports formatting
 			(fileType?.formatOnSaveCapable ?? true)
 		) {
-			app.windows.loadingWindow.open()
 			// This is a terrible hack because we need to make sure that the formatter triggers the "onDidChangeContent" event
 			// The promise returned by action.run() actually resolves before formatting is done so we need the "onDidChangeContent" event to tell when the formatter is done
-			this.editorInstance?.executeEdits('automatic', [
-				{
-					forceMoveMarkers: false,
-					range: {
-						startLineNumber: 0,
-						endLineNumber: 0,
-						startColumn: 0,
-						endColumn: 0,
-					},
-					text: '\t',
-				},
-			])
+			this.makeFakeEdit('\t')
 
 			const editPromise = new Promise<void>((resolve) => {
 				if (!this.editorModel || this.editorModel.isDisposed())
@@ -205,37 +207,62 @@ export class TextTab extends FileTab {
 
 			const actionPromise = action.run()
 
-			await Promise.all([editPromise, actionPromise])
+			let didAnyFinish = false
+			await Promise.race([
+				// Wait for the action to finish
+				Promise.all([editPromise, actionPromise]),
+				// But don't wait longer than 1.5s, action then likely failed for some weird reason
+				wait(1500).then(() => {
+					if (didAnyFinish) return
 
-			await this.saveFile(app)
-			app.windows.loadingWindow.close()
+					this.makeFakeEdit(null)
+				}),
+			])
+			didAnyFinish = true
+		}
+
+		await this.saveFile()
+	}
+	protected makeFakeEdit(text: string | null) {
+		if (!text) {
+			this.editorInstance.trigger('automatic', 'undo', null)
 		} else {
-			await this.saveFile(app)
+			this.editorInstance.pushUndoStop()
+			this.editorInstance?.executeEdits('automatic', [
+				{
+					forceMoveMarkers: false,
+					range: {
+						startLineNumber: 1,
+						endLineNumber: 1,
+						startColumn: 1,
+						endColumn: 1,
+					},
+					text,
+				},
+			])
+			this.editorInstance.pushUndoStop()
 		}
 	}
-	protected async saveFile(app: App) {
+	protected async saveFile() {
 		if (this.editorModel && !this.editorModel.isDisposed()) {
 			this.setIsUnsaved(false)
 			this.initialVersionId = this.editorModel.getAlternativeVersionId()
 
-			await app.fileSystem.write(
-				this.fileHandle,
-				this.editorModel.getValue()
-			)
+			this.writeFile(this.editorModel.getValue())
 		} else {
 			console.error(`Cannot save file content without active editorModel`)
 		}
 	}
 
-	setReadOnly(val: boolean) {
-		this.isReadOnly = val
-		this.editorInstance?.updateOptions({ readOnly: val })
+	setReadOnly(val: TReadOnlyMode) {
+		this.readOnlyMode = val
+		this.editorInstance?.updateOptions({ readOnly: val !== 'off' })
 	}
 
 	async paste() {
 		if (this.isReadOnly) return
 
-		this.editorInstance.focus()
+		this.focus()
 		this.editorInstance?.trigger('keyboard', 'paste', {
 			text: await navigator.clipboard.readText(),
 		})

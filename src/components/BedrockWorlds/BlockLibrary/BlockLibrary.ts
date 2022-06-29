@@ -26,7 +26,7 @@ interface IBlockLibEntry {
 
 export class BlockLibrary {
 	protected fileSystem: FileSystem
-	protected dataLoader = new DataLoader()
+	protected dataLoader: DataLoader
 	protected _missingTexture?: ImageBitmap
 	protected _tileMap?: HTMLCanvasElement
 
@@ -47,11 +47,11 @@ export class BlockLibrary {
 
 	constructor(baseDirectory: AnyDirectoryHandle) {
 		this.fileSystem = new FileSystem(baseDirectory)
-		this.dataLoader = new DataLoader(false)
+		this.dataLoader = new DataLoader()
 	}
 
 	async setup() {
-		await this.dataLoader.fired
+		if (!this.dataLoader.hasFired) await this.dataLoader.loadData()
 
 		this._missingTexture = await createImageBitmap(
 			await this.dataLoader.readFile(

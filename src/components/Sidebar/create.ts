@@ -13,6 +13,7 @@ export interface ISidebar {
 	isVisible?: boolean
 	component?: Component
 	sidebarContent?: SidebarContent
+	disabled?: () => boolean
 
 	onClick?: (sidebarElement: SidebarElement) => void
 }
@@ -72,6 +73,9 @@ export class SidebarElement {
 		)
 	}
 
+	get isDisabled() {
+		return this.config.disabled?.() ?? false
+	}
 	get icon() {
 		return this.config.icon
 	}
@@ -99,7 +103,6 @@ export class SidebarElement {
 	}
 
 	async click() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		this.isLoading = true
 
 		if (this.config.sidebarContent) toggle(this.config.sidebarContent)

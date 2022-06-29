@@ -31,8 +31,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 		this.defineWindow()
 	}
 
-	async open() {
-		App.audioManager.playAudio('click5.ogg', 1)
+	async open(filter?: string) {
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
@@ -92,12 +91,13 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 		this.setupSidebar()
 
+		if (filter) this.sidebar.setFilter(filter)
+
 		app.windows.loadingWindow.close()
 		super.open()
 	}
 
 	close() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		super.close()
 
 		if (this.updates.size > 0) {

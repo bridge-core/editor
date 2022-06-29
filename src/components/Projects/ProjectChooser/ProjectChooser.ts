@@ -7,6 +7,7 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { v4 as uuid } from 'uuid'
 import { IExperimentalToggle } from '../CreateProject/CreateProject'
 import { importNewProject } from '../Import/ImportNew'
+import { markRaw } from '@vue/composition-api'
 
 export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
@@ -14,6 +15,7 @@ export class ProjectChooserWindow extends BaseWindow {
 	protected experimentalToggles: (IExperimentalToggle & {
 		isActive: boolean
 	})[] = []
+	protected showLoadAllButton: boolean | 'isLoading' = false
 
 	constructor() {
 		super(ProjectChooserComponent, false, true)
@@ -42,6 +44,19 @@ export class ProjectChooserWindow extends BaseWindow {
 		)
 	}
 
+	async loadAllProjects() {
+		this.showLoadAllButton = 'isLoading'
+		const app = await App.getApp()
+
+		const wasSuccessful = await app.setupBridgeFolder()
+		if (wasSuccessful) {
+			await this.loadProjects()
+			this.showLoadAllButton = false
+		} else {
+			this.showLoadAllButton = true
+		}
+	}
+
 	addProject(id: string, name: string, project: Partial<IProjectData>) {
 		this.sidebar.addElement(
 			new SidebarItem({
@@ -59,8 +74,9 @@ export class ProjectChooserWindow extends BaseWindow {
 		this.sidebar.removeElements()
 		const app = await App.getApp()
 
-		const projects = await app.projectManager.getProjects()
+		this.showLoadAllButton = !app.bridgeFolderSetup.hasFired
 
+		const projects = await app.projectManager.getProjects()
 		const experimentalToggles = await app.dataLoader.readJSON(
 			'data/packages/minecraftBedrock/experimentalGameplay.json'
 		)
@@ -68,6 +84,7 @@ export class ProjectChooserWindow extends BaseWindow {
 		projects.forEach((project) =>
 			this.addProject(project.projectData.path!, project.name, {
 				...project.projectData,
+				isLocalProject: !project.requiresPermissions,
 				experimentalGameplay: experimentalToggles.map(
 					(toggle: IExperimentalToggle) => ({
 						isActive:
@@ -79,8 +96,15 @@ export class ProjectChooserWindow extends BaseWindow {
 				),
 			})
 		)
-		this.sidebar.setDefaultSelected(app.projectManager.selectedProject)
-		return app.projectManager.selectedProject
+
+		this.sidebar.setDefaultSelected(
+			app.isNoProjectSelected
+				? undefined
+				: app.projectManager.selectedProject
+		)
+		return app.isNoProjectSelected
+			? undefined
+			: app.projectManager.selectedProject
 	}
 
 	async open() {

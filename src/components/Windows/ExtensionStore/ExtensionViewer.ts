@@ -5,7 +5,6 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { ExtensionStoreWindow } from './ExtensionStore'
 import { ExtensionTag } from './ExtensionTag'
 import { extensionActions } from './ExtensionActions'
-import { InformationWindow } from '../Common/Information/InformationWindow'
 import { ConfirmationWindow } from '../Common/Confirm/ConfirmWindow'
 import { compareVersions } from 'bridge-common-utils'
 import { version as appVersion } from '/@/utils/app/version'
@@ -54,6 +53,9 @@ export class ExtensionViewer {
 	}
 	get releaseTimestamp() {
 		return this.config.releaseTimestamp ?? Date.now()
+	}
+	get readme() {
+		return this.config.readme
 	}
 	//#endregion
 
@@ -135,8 +137,8 @@ export class ExtensionViewer {
 		).then((response) => response.arrayBuffer())
 
 		const basePath = !isGlobalInstall
-			? `projects/${app.selectedProject}/.bridge/extensions`
-			: 'extensions'
+			? `${app.project.projectPath}/.bridge/extensions`
+			: '~local/extensions'
 		const extensionLoader = isGlobalInstall
 			? app.extensionLoader
 			: app.project.extensionLoader
@@ -207,8 +209,6 @@ export class ExtensionViewer {
 				})
 			}
 		}
-
-		App.audioManager.playAudio('confirmation_002.ogg', 1)
 	}
 
 	async update(notifyParent = true) {
@@ -241,7 +241,6 @@ export class ExtensionViewer {
 	}
 
 	setActive(value: boolean) {
-		App.audioManager.playAudio('click5.ogg', 1)
 		if (!this.connected)
 			throw new Error(`No extension connected to ExtensionViewer`)
 
@@ -249,7 +248,24 @@ export class ExtensionViewer {
 		this.isActive = value
 	}
 	closeActionMenu() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		this.showMenu = false
+	}
+
+	get canShare() {
+		return typeof navigator.share === 'function'
+	}
+	async share() {
+		if (!this.canShare) return
+
+		const url = new URL(window.location.href)
+		url.searchParams.set('viewExtension', encodeURIComponent(this.id))
+
+		await navigator
+			.share({
+				title: this.name,
+				text: 'View this extension within bridge. v2',
+				url: url.href,
+			})
+			.catch(() => {})
 	}
 }

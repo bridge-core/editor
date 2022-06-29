@@ -29,6 +29,7 @@
 				margin-top: 0;
 				padding-top: 0;
 			"
+			autofocus
 			v-model="editedPath"
 			:rules="Object.values(rules)"
 			dense
@@ -73,7 +74,7 @@ export default {
 	},
 	computed: {
 		path() {
-			return this.value.substring(0, this.value.length - 1)
+			return this.editedPath.substring(0, this.editedPath.length - 1)
 		},
 	},
 	methods: {

@@ -16,6 +16,8 @@ export class InstallFiles {
 	async execute(isGlobal: boolean) {
 		const app = App.instance
 
+		await app.projectManager.projectReady.fired
+
 		for (const [from, to] of Object.entries(this.contributeFiles)) {
 			const projects = isGlobal ? app.projects : [app.project]
 

@@ -7,13 +7,13 @@ export const ContextEnv: { value: any } = { value: {} }
 export const ENVModule = ({}: IModuleConfig) => ({
 	APP_VERSION: version,
 	getCurrentBP() {
-		return `projects/${App.instance.selectedProject}/BP`
+		return `${App.instance.project.projectPath}/BP`
 	},
 	getCurrentRP() {
-		return `projects/${App.instance.selectedProject}/RP`
+		return `${App.instance.project.projectPath}/RP`
 	},
 	getCurrentProject() {
-		return `projects/${App.instance.selectedProject}`
+		return App.instance.project.projectPath
 	},
 	getProjectPrefix() {
 		return App.getApp().then((app) => app.projectConfig.get().namespace)

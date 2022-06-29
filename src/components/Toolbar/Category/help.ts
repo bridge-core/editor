@@ -28,6 +28,15 @@ export function setupHelpCategory(app: App) {
 				),
 		})
 	)
+	help.addItem(
+		app.actionManager.create({
+			name: 'actions.twitter.name',
+			icon: 'mdi-twitter',
+			description: 'actions.twitter.description',
+			onTrigger: () =>
+				window.open('https://twitter.com/bridgeIDE', '_blank'),
+		})
+	)
 
 	help.addItem(new Divider())
 

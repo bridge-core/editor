@@ -144,6 +144,9 @@ export default {
 		entry: Object,
 		startPath: Array,
 	},
+	mounted() {
+		console.log(this.directoryEntry)
+	},
 
 	setup(_, { emit }) {
 		const isHoveringBtn = ref(false)
@@ -210,13 +213,8 @@ export default {
 				directoryEntry.parent = this.directoryEntry
 
 				// 2. Update actual file system
-				await app.project.fileSystem.move(oldPath, newPath)
+				await app.fileSystem.move(oldPath, newPath)
 				await app.project.updateChangedFiles()
-
-				// 3. Remove from recentFiles
-				await app.project.recentFiles.removeFile(
-					`projects/${app.project.name}/${oldPath}`
-				)
 			}
 
 			if (directoryEntry.parent) directoryEntry.parent.sortChildren()

@@ -15,7 +15,7 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.extensionStore.searchExtensions')"
-				v-model="sidebar._filter"
+				v-model.lazy.trim="sidebar._filter"
 				autocomplete="off"
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
@@ -78,6 +78,7 @@ export default {
 						e.description.toLowerCase().includes(f) ||
 						e.author.toLowerCase().includes(f) ||
 						e.version.includes(f) ||
+						e.id === this.sidebar._filter ||
 						e.tags.some((tag) => tag.text.toLowerCase().includes(f))
 				)
 			}

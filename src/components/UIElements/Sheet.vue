@@ -1,5 +1,9 @@
 <template>
-	<div class="rounded-lg" :class="{ 'bg-dark': dark, bg: !dark }">
+	<div
+		v-on="$listeners"
+		class="rounded-lg"
+		:class="{ 'bg-dark': dark, bg: !dark }"
+	>
 		<slot />
 	</div>
 </template>

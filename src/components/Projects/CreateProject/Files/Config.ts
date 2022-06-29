@@ -38,7 +38,14 @@ export class CreateConfig extends CreateFile {
 						'customBlockComponents',
 						'customCommands',
 						'moLang',
-						['simpleRewrite', { packName: createOptions.name }],
+						'formatVersionCorrection',
+						[
+							'simpleRewrite',
+							{
+								packName: createOptions.name,
+								groupFolder: 'bridge',
+							},
+						],
 					],
 				},
 			},

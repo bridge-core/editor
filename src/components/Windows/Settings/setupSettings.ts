@@ -6,7 +6,7 @@ import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
 import { BridgeConfigSelection } from './Controls/Selection/BridgeConfigSelection'
 import { Button } from './Controls/Button/Button'
-import { del } from 'idb-keyval'
+import { del, set } from 'idb-keyval'
 import { comMojangKey } from '../../FileSystem/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
 import {
@@ -206,25 +206,6 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 
-	settings.addControl(
-		new ButtonToggle({
-			category: 'developers',
-			name: 'windows.settings.developer.simulateOS.name',
-			description: 'windows.settings.developer.simulateOS.description',
-			key: 'simulateOS',
-			options: ['auto', 'win32', 'darwin', 'linux'],
-			default: 'auto',
-		})
-	)
-	settings.addControl(
-		new Toggle({
-			category: 'developers',
-			name: 'windows.settings.developer.devMode.name',
-			description: 'windows.settings.developer.devMode.description',
-			key: 'isDevMode',
-		})
-	)
-
 	const locales = await App.getApp().then((app) => app.locales)
 	settings.addControl(
 		new Selection({
@@ -295,17 +276,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
-	settings.addControl(
-		new Toggle({
-			category: 'general',
-			name:
-				'windows.settings.general.openProjectChooserOnAppStartup.name',
-			description:
-				'windows.settings.general.openProjectChooserOnAppStartup.description',
-			key: 'openProjectChooserOnAppStartup',
-			default: false,
-		})
-	)
 	if (!isUsingFileSystemPolyfill.value) {
 		settings.addControl(
 			new Button({
@@ -321,20 +291,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			})
 		)
 	}
-
-	//Audio
-	settings.addControl(
-		new Toggle({
-			category: 'audio',
-			name: 'windows.settings.audio.volume.name',
-			description: 'windows.settings.audio.volume.description',
-			key: 'playAudio',
-			default: false,
-			onChange: (val) => {
-				App.audioManager.isMuted = !val
-			},
-		})
-	)
 	// Editor
 	settings.addControl(
 		new Selection({
@@ -457,6 +413,16 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value,
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'projects',
+			name: 'windows.settings.projects.addGeneratedWith.name',
+			description:
+				'windows.settings.projects.addGeneratedWith.description',
+			key: 'addGeneratedWith',
+			default: true,
+		})
+	)
 
 	// Actions
 	const app = await App.getApp()
@@ -464,4 +430,76 @@ export async function setupSettings(settings: SettingsWindow) {
 		if (action.type === 'action')
 			settings.addControl(new ActionViewer(action))
 	})
+
+	if (import.meta.env.DEV) {
+		settings.addControl(
+			new ButtonToggle({
+				category: 'developers',
+				name: 'windows.settings.developer.simulateOS.name',
+				description:
+					'windows.settings.developer.simulateOS.description',
+				key: 'simulateOS',
+				options: ['auto', 'win32', 'darwin', 'linux'],
+				default: 'auto',
+			})
+		)
+		settings.addControl(
+			new Toggle({
+				category: 'developers',
+				name: 'windows.settings.developer.devMode.name',
+				description: 'windows.settings.developer.devMode.description',
+				key: 'isDevMode',
+			})
+		)
+		settings.addControl(
+			new Toggle({
+				category: 'developers',
+				name: 'windows.settings.developer.forceDataDownload.name',
+				description:
+					'windows.settings.developer.forceDataDownload.description',
+				key: 'forceDataDownload',
+				default: false,
+			})
+		)
+		settings.addControl(
+			new Button({
+				category: 'developers',
+				name: '[Reset local fs]',
+				description:
+					'[Reset the local fs (navigator.storage.getDirectory()) to be completely emtpy]',
+				onClick: async () => {
+					const app = await App.getApp()
+					await Promise.all([
+						app.fileSystem.unlink('~local/data'),
+						app.fileSystem.unlink('~local/projects'),
+						app.fileSystem.unlink('~local/extensions'),
+					])
+				},
+			})
+		)
+		settings.addControl(
+			new Button({
+				category: 'developers',
+				name: '[Clear app data]',
+				description:
+					'[Clear data from bridge-core/editor-packages repository]',
+				onClick: async () => {
+					const app = await App.getApp()
+					await set('savedAllDataInIdb', false)
+				},
+			})
+		)
+		settings.addControl(
+			new Button({
+				category: 'developers',
+				name: '[Reset initial setup]',
+				description: '[Resets editor type and com.mojang selection]',
+				onClick: async () => {
+					const app = await App.getApp()
+					await del('didChooseEditorType')
+					await del(comMojangKey)
+				},
+			})
+		)
+	}
 }

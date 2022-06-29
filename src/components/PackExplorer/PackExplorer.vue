@@ -1,6 +1,7 @@
 <template>
-	<FileDisplayer
-		v-if="sidebarContent.selectedAction"
+	<NoProjectView v-if="sidebarContent.showNoProjectView" />
+	<!-- <FileDisplayer
+		v-else-if="sidebarContent.selectedAction"
 		:key="sidebarContent.selectedAction.config.id"
 		:entry="
 			sidebarContent.directoryEntries[
@@ -8,12 +9,23 @@
 			]
 		"
 		@contextmenu="onContextMenu"
+	/> -->
+	<DirectoryViewer
+		v-else-if="sidebarContent.selectedAction"
+		:key="sidebarContent.selectedAction.config.id"
+		:directoryHandle="
+			sidebarContent.directoryEntries[
+				sidebarContent.selectedAction.config.id
+			]
+		"
 	/>
 </template>
 
 <script>
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import FileDisplayer from './FileDisplayer.vue'
+import NoProjectView from './NoProjectView/NoProjectView.vue'
+import DirectoryViewer from '/@/components/UIElements/DirectoryViewer/DirectoryViewer.vue'
 
 export default {
 	props: {
@@ -21,6 +33,8 @@ export default {
 	},
 	components: {
 		FileDisplayer,
+		NoProjectView,
+		DirectoryViewer,
 	},
 	methods: {
 		async onContextMenu(data) {
@@ -36,5 +50,3 @@ export default {
 	},
 }
 </script>
-
-<style></style>

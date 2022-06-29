@@ -39,12 +39,9 @@ export abstract class Control<T, K extends IControl<T> = IControl<T>> {
 	}
 
 	onChange = async (value: T) => {
-		App.audioManager.playAudio('click5.ogg', 1)
 		await (this.value = value)
 
 		if (typeof this.config.onChange === 'function')
 			await this.config.onChange(value)
-
-		App.audioManager.playAudio('click5.ogg', 1)
 	}
 }

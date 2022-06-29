@@ -10,16 +10,33 @@ import {
 export type { IConfigJson } from 'mc-project-core'
 export { defaultPackPaths } from 'mc-project-core'
 
+/**
+ * Internal config format versions
+ *
+ * Format version data:
+ * [bridge. v2.2.8] Unset or "0": Projects may not contain the formatVersionCorrection compiler plugin
+ * [bridge. v2.2.9] "1": Configs were upgraded to add the plugin
+ */
+
+export const latestFormatVersion = 1
+
 export class ProjectConfig extends BaseProjectConfig {
-	constructor(protected fileSystem: FileSystem, protected project?: Project) {
-		super(`projects/${fileSystem.baseDirectory.name}`)
+	constructor(
+		protected fileSystem: FileSystem,
+		projectPath: string,
+		protected project?: Project
+	) {
+		super(projectPath)
 
 		if (project) {
-			project.fileSave.on('config.json', () => {
-				this.refreshConfig()
-				this.project!.app.windows.createPreset.onPresetsChanged()
-				this.project!.compilerService.reloadPlugins()
-			})
+			project.fileSave.on(
+				this.resolvePackPath(undefined, 'config.json'),
+				() => {
+					this.refreshConfig()
+					this.project!.app.windows.createPreset.onPresetsChanged()
+					this.project!.compilerService.reloadPlugins()
+				}
+			)
 		}
 	}
 
@@ -74,6 +91,8 @@ export class ProjectConfig extends BaseProjectConfig {
 
 		await super.setup()
 
+		const formatVersion = this.data.bridge?.formatVersion ?? 0
+		if (!this.data.bridge) this.data.bridge = {}
 		let updatedConfig = false
 
 		// Running in main thread, so we can use the App object
@@ -125,6 +144,17 @@ export class ProjectConfig extends BaseProjectConfig {
 			updatedConfig = true
 		}
 
+		if (
+			upgradeConfig &&
+			formatVersion === 0 &&
+			this.data.compiler?.plugins &&
+			!this.data.compiler.plugins.includes('formatVersionCorrection')
+		) {
+			this.data.bridge.formatVersion = 1
+			this.data.compiler.plugins.push('formatVersionCorrection')
+			updatedConfig = true
+		}
+
 		if (updatedConfig) await this.writeConfig(this.data)
 	}
 
@@ -146,5 +176,16 @@ export class ProjectConfig extends BaseProjectConfig {
 				)
 			)
 		).flat()
+	}
+
+	getAuthorImage() {
+		const author = <{ logo: string; name: string } | undefined>(
+			this.get().authors?.find(
+				(author) => typeof author !== 'string' && author.logo
+			)
+		)
+		if (!author) return
+
+		return this.resolvePackPath(undefined, author.logo)
 	}
 }

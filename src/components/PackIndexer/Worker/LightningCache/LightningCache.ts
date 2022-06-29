@@ -303,6 +303,7 @@ export class LightningCache {
 
 		const isTemporaryUpdateCall = fileContent !== undefined
 		if (fileContent === undefined) fileContent = await file.text()
+		if (fileContent === '') fileContent = '{}'
 
 		// JSON API
 		let data: any

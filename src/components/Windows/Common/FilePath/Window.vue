@@ -1,17 +1,42 @@
 <template>
 	<BaseWindow
 		v-if="shouldRender"
-		windowTitle="windows.filePath.title"
+		:windowTitle="`[${t('windows.filePath.title')}${
+			this.hasFilePath ? `: ${this.fileName}${this.fileExt}` : ''
+		}]`"
 		:isVisible="isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:isPersistent="$data.isPersistent"
 		:hasCloseButton="false"
 		:width="440"
-		:height="140"
+		:height="170"
 		@closeWindow="onClose(true)"
 	>
 		<template #default>
+			<span v-if="hasFilePath" class="d-flex align-center">
+				<v-text-field
+					v-model="fileName"
+					dense
+					outlined
+					prepend-icon="mdi-pencil-outline"
+					:rules="[
+						(value) =>
+							!!value.match(/^[a-zA-Z0-9_\.]*$/) ||
+							t(
+								'windows.createPreset.validationRule.alphanumeric'
+							),
+						(value) =>
+							!!value ||
+							t('windows.createPreset.validationRule.required'),
+						(value) =>
+							value.toLowerCase() === value ||
+							t('windows.createPreset.validationRule.lowercase'),
+					]"
+				/>
+				<span class="ml-3 mb-6">{{ fileExt }}</span>
+			</span>
+
 			<PresetPath v-model="currentFilePath" />
 		</template>
 		<template #actions>
@@ -42,9 +67,7 @@ export default {
 	},
 	methods: {
 		onClose(skippedDialog) {
-			this.currentWindow.close(
-				skippedDialog ? null : this.currentFilePath
-			)
+			this.currentWindow.startCloseWindow(skippedDialog)
 		},
 	},
 }

@@ -843,13 +843,6 @@ export default {
 						'Schakel de ontwikkelaarsmodus in voor deze app',
 				},
 			},
-			audio: {
-				name: 'Audio',
-				volume: {
-					name: 'Audio Ingeschakeld',
-					description: 'Alle brige geluiden in- of uitschakelen',
-				},
-			},
 			actions: {
 				name: 'Acties',
 			},

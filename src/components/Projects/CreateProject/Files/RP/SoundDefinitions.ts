@@ -10,6 +10,7 @@ export class CreateSoundDefintions extends CreateFile {
 		await fs.writeJSON(
 			`RP/sounds/sound_definitions.json`,
 			{
+				format_version: '1.14.0',
 				sound_definitions: {},
 			},
 			true

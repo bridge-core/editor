@@ -7,6 +7,21 @@ import { createStyleSheet } from '../Styles/createStyle'
 import { compileTemplate, parse } from '@vue/compiler-sfc'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
+import { useVueTemplateCompiler } from '/@/utils/libs/useVueTemplateCompiler'
+
+const VuetifyComponents = {
+	// VBtn,
+	// VAlert,
+	// VApp,
+	// VToolbar,
+	// VToolbarItems,
+	// VAutocomplete,
+	// VCombobox,
+	// VSwitch,
+	// VTextField,
+	// VWindow,
+	// VTooltip,
+}
 
 export async function loadUIComponents(
 	fileSystem: FileSystem,
@@ -55,6 +70,8 @@ export async function loadUIComponent(
 		)
 		return
 	}
+
+	const { parseComponent } = await useVueTemplateCompiler()
 
 	const promise = new Promise(async (resolve, reject) => {
 		const { errors, descriptor } = parse(

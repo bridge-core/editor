@@ -12,6 +12,7 @@ import { iterateDir } from '/@/utils/iterateDir'
 import { loadFileDefinitions } from './FileDefinition/load'
 import { InstallFiles } from './InstallFiles'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
+import { idbExtensionStore } from './Scripts/Modules/persistentStorage'
 
 export class Extension {
 	protected disposables: IDisposable[] = []
@@ -40,6 +41,9 @@ export class Extension {
 	}
 	get isGlobal() {
 		return this._isGlobal
+	}
+	get id() {
+		return this.manifest.id
 	}
 
 	constructor(
@@ -127,7 +131,8 @@ export class Extension {
 							scriptHandle,
 							this.uiStore,
 							this.disposables,
-							this.isGlobal
+							this.isGlobal,
+							this.id
 					  )
 					: undefined
 			),
@@ -158,6 +163,14 @@ export class Extension {
 
 		App.eventSystem.dispatch('presetsChanged', null)
 
+		// Disable global extension with same ID if such an extension exists
+		if (!this.isGlobal) {
+			const globalExtensions = App.instance.extensionLoader
+
+			if (globalExtensions.has(this.id))
+				globalExtensions.deactivate(this.id)
+		}
+
 		if (await this.fileSystem.fileExists('.installed')) return
 
 		await this.installFiles.execute(this.isGlobal)
@@ -172,10 +185,19 @@ export class Extension {
 		App.eventSystem.dispatch('presetsChanged', null)
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.isLoaded = false
+
+		// Enable global extension with same ID if such an extension exists
+		if (!this.isGlobal) {
+			const globalExtensions = App.instance.extensionLoader
+
+			if (globalExtensions.has(this.id))
+				globalExtensions.activate(this.id)
+		}
 	}
 
 	async delete() {
 		this.deactivate()
+		await idbExtensionStore.del(this.id)
 		this.parent.deleteExtension(this.manifest.id)
 	}
 

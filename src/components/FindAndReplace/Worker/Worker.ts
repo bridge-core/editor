@@ -51,9 +51,12 @@ export class FindAndReplace {
 	protected matchedFiles = new Set<string>()
 	protected config: ProjectConfig
 
-	constructor(protected projectFolderHandle: AnyDirectoryHandle) {
+	constructor(
+		protected projectFolderHandle: AnyDirectoryHandle,
+		protected projectPath: string
+	) {
 		this.fileSystem = new FileSystem(projectFolderHandle)
-		this.config = new ProjectConfig(this.fileSystem)
+		this.config = new ProjectConfig(this.fileSystem, projectPath)
 	}
 
 	setMatchedFiles(matchedFiles: string[]) {
@@ -85,13 +88,13 @@ export class FindAndReplace {
 			includePaths = includePaths.map((includePath) =>
 				includePath.replace(
 					pack,
-					resolve(this.config.getPackRoot(packs[pack]))
+					resolve(this.config.getRelativePackRoot(packs[pack]))
 				)
 			)
 			excludePaths = excludePaths.map((excludePath) =>
 				excludePath.replace(
 					pack,
-					resolve(this.config.getPackRoot(packs[pack]))
+					resolve(this.config.getRelativePackRoot(packs[pack]))
 				)
 			)
 		}
@@ -194,10 +197,7 @@ export class FindAndReplace {
 				}
 
 				if (matches.length > 0) {
-					const absFilePath = join(
-						`projects/${this.projectFolderHandle.name}`,
-						filePath
-					)
+					const absFilePath = join(this.projectPath, filePath)
 					this.matchedFiles.add(absFilePath)
 					queryResults.push({ filePath: absFilePath, matches })
 				}
@@ -213,12 +213,7 @@ export class FindAndReplace {
 				const ext = extname(filePath)
 				if (
 					!knownTextFiles.has(ext) ||
-					!this.matchedFiles.has(
-						join(
-							`projects/${this.projectFolderHandle.name}`,
-							filePath
-						)
-					)
+					!this.matchedFiles.has(join(this.projectPath, filePath))
 				)
 					return
 

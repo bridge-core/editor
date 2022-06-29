@@ -2,8 +2,8 @@ import { BaseVirtualHandle } from './Handle'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
-import { get, set, del } from './IDB'
 import { markRaw } from 'vue'
+import { IDBWrapper } from './IDB'
 
 /**
  * A class that implements a virtual file
@@ -21,8 +21,23 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 
 	protected fileData?: Uint8Array
 
+	get isFileStoredInMemory() {
+		return this.fileData !== undefined
+	}
+	moveData() {
+		if (!this.fileData)
+			throw new Error(
+				`No file data to move to IDB for file "${this.name}"`
+			)
+
+		const data = this.fileData
+		this.fileData = undefined
+		this.inMemory = false
+		return data
+	}
+
 	constructor(
-		parent: VirtualDirectoryHandle | null,
+		parent: VirtualDirectoryHandle | IDBWrapper | null,
 		name: string,
 		data?: Uint8Array,
 		protected inMemory = false
@@ -38,8 +53,10 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		const isDataFile = this.path.join('/').startsWith('data/packages')
 
 		// This prevents an IndexedDB overload by saving too many small data files to the DB
-		if (this.inMemory || (isDataFile && fileData.length < 10_000))
+		if (this.inMemory || (isDataFile && fileData.length < 50_000)) {
+			this.inMemory = true
 			return this.setupDone.dispatch()
+		}
 
 		// We only need to write data files from the main thread, web workers can just load the already written data from the main thread
 		if (!isDataFile || globalThis.document) await this.updateIdb(fileData)
@@ -47,15 +64,15 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	}
 
 	protected async updateIdb(data: Uint8Array) {
-		await set(this.idbKey, data)
+		await this.idbWrapper.set(this.idbKey, data)
 		this.fileData = undefined
 	}
 
 	protected async loadFromIdb() {
 		if (this.fileData) return this.fileData
 
-		let storedData = await get(this.idbKey)
-		if (!storedData) {
+		let storedData = await this.idbWrapper.get(this.idbKey)
+		if (storedData === undefined) {
 			console.log(this.parent)
 			throw new Error(`File not found: "${this.path.join('/')}"`)
 		}
@@ -70,8 +87,15 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		}
 	}
 
-	async removeSelf() {
-		await del(this.idbKey)
+	override async isSameEntry(other: BaseVirtualHandle): Promise<boolean> {
+		if(this.parent === null) return false
+
+		return super.isSameEntry(other)
+	}
+
+	async removeSelf(isFirst = true) {
+		await this.idbWrapper.del(this.idbKey)
+		if (this.parent && isFirst) this.parent.deleteChild(this.name)
 	}
 
 	async getFile() {

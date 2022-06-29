@@ -130,7 +130,7 @@ import SearchType from './Controls/SearchType.vue'
 import Match from './Match.vue'
 import FilePath from './FilePath.vue'
 
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { createRegExp, processFileText } from './Utils.ts'
 import { pointerDevice } from '/@/utils/pointerDevice'

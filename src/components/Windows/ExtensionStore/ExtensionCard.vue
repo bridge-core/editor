@@ -7,6 +7,26 @@
 			<h3>{{ extension.name }}</h3>
 
 			<v-spacer />
+			<!-- Read more about extension -->
+			<v-btn
+				v-if="extension.readme"
+				class="mr-1"
+				icon
+				@click="openUrl(extension.readme)"
+			>
+				<v-icon>mdi-information-outline</v-icon>
+			</v-btn>
+
+			<!-- Share Extension -->
+			<v-btn
+				v-if="extension.canShare"
+				class="mr-1"
+				icon
+				@click="extension.share()"
+			>
+				<v-icon>mdi-share</v-icon>
+			</v-btn>
+
 			<v-btn
 				v-if="!extension.isInstalled"
 				@click="extension.download()"
@@ -150,6 +170,7 @@
 </template>
 
 <script>
+import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 
 export default {
@@ -181,6 +202,11 @@ export default {
 			return Object.keys(this.extension.connected.compilerPlugins)
 				.map((plugin) => `"${plugin}"`)
 				.join(', ')
+		},
+	},
+	methods: {
+		openUrl(url) {
+			App.openUrl(url)
 		},
 	},
 }

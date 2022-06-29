@@ -822,14 +822,6 @@ export default {
 					description: 'このアプリの開発者モードを有効にします',
 				},
 			},
-			audio: {
-				name: 'オーディオ',
-				volume: {
-					name: 'オーディオの有効化',
-					description:
-						'すべての bridge. サウンドを有効または無効にします',
-				},
-			},
 			actions: {
 				name: 'アクション',
 			},

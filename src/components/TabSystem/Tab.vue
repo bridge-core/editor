@@ -39,9 +39,22 @@
 			depressed
 			:dot="tab.isUnsaved && !tab.isReadOnly"
 		>
-			<v-icon class="mr-1" :color="tab.iconColor" small>
+			<v-icon
+				v-if="!tab.isLoading"
+				class="mr-1"
+				:color="tab.iconColor"
+				small
+			>
 				{{ tab.icon }}
 			</v-icon>
+			<v-progress-circular
+				v-else
+				indeterminate
+				:color="tab.iconColor"
+				class="mr-1"
+				size="16"
+				width="2"
+			/>
 		</v-badge>
 
 		<v-tooltip

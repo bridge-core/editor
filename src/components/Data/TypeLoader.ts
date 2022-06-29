@@ -1,11 +1,13 @@
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
-import { languages, Uri } from 'monaco-editor'
-import { compareVersions } from 'bridge-common-utils'
-import { getLatestFormatVersion } from './FormatVersions'
 import { DataLoader } from './DataLoader'
 import { Tab } from '../TabSystem/CommonTab'
 import { FileTab } from '../TabSystem/FileTab'
+import {
+	IRequirements,
+	RequiresMatcher,
+} from './RequiresMatcher/RequiresMatcher'
+import { useMonaco } from '../../utils/libs/useMonaco'
 
 const types = new Map<string, string>()
 
@@ -52,6 +54,8 @@ export class TypeLoader {
 	async setTypeEnv(filePath: string) {
 		if (filePath === this.currentTypeEnv) return
 
+		const { languages, Uri } = await useMonaco()
+
 		this.currentTypeEnv = filePath
 		this.typeDisposables.forEach((disposable) => disposable.dispose())
 		this.typeDisposables = []
@@ -64,25 +68,12 @@ export class TypeLoader {
 				if (typeof type === 'string')
 					return <const>[type, await this.load(type)]
 
-				const app = await App.getApp()
-				const [
-					typePath,
-					{
-						targetVersion: [operator, targetVersion],
-					},
-				] = type
-				const projectTargetVersion =
-					app.projectConfig.get().targetVersion ??
-					(await getLatestFormatVersion())
+				const { definition, requires } = type
+				const matcher = new RequiresMatcher(requires as IRequirements)
+				const valid = await matcher.isValid()
 
-				if (
-					compareVersions(
-						projectTargetVersion,
-						targetVersion,
-						operator
-					)
-				)
-					return <const>[typePath, await this.load(typePath)]
+				if (valid)
+					return <const>[definition, await this.load(definition)]
 			})
 		)
 		const filteredLibs = <(readonly [string, string])[]>(

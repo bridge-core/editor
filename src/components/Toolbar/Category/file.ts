@@ -2,13 +2,17 @@ import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
-import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+} from '/@/components/FileSystem/Types'
 import {
 	isUsingFileSystemPolyfill,
 	isUsingOriginPrivateFs,
 } from '/@/components/FileSystem/Polyfill'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { download } from '/@/components/FileSystem/saveOrDownload'
+import { CommandBarState } from '../../CommandBar/State'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -20,10 +24,10 @@ export function setupFileCategory(app: App) {
 			name: 'actions.newFile.name',
 			description: 'actions.newFile.description',
 			keyBinding: 'Ctrl + N',
+			isDisabled: () => app.isNoProjectSelected,
 			onTrigger: () => app.windows.createPreset.open(),
 		})
 	)
-	// There's no longer a pack explorer window. We should reuse the shortcut for something else...
 	file.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.openFile',
@@ -51,12 +55,35 @@ export function setupFileCategory(app: App) {
 	)
 	file.addItem(
 		app.actionManager.create({
+			id: 'bridge.action.openFolder',
+			icon: 'mdi-folder-open-outline',
+			name: 'actions.openFolder.name',
+			description: 'actions.openFolder.description',
+			keyBinding: 'Ctrl + Shift + O',
+			onTrigger: async () => {
+				const app = await App.getApp()
+				let directoryHandle: AnyDirectoryHandle
+				try {
+					directoryHandle = await window.showDirectoryPicker({
+						multiple: false,
+						mode: 'readwrite',
+					})
+				} catch {
+					return
+				}
+
+				await app.fileDropper.importFolder(directoryHandle)
+			},
+		})
+	)
+	file.addItem(
+		app.actionManager.create({
 			id: 'bridge.action.searchFile',
 			icon: 'mdi-magnify',
 			name: 'actions.searchFile.name',
 			description: 'actions.searchFile.description',
 			keyBinding: 'Ctrl + P',
-			onTrigger: () => app.windows.filePicker.open(),
+			onTrigger: () => (CommandBarState.isWindowOpen = true),
 		})
 	)
 	file.addItem(

@@ -17,7 +17,8 @@ import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
 import {
 	IRequirements,
 	RequiresMatcher,
-} from '/@/components/Data/RequiresMatcher'
+} from '/@/components/Data/RequiresMatcher/RequiresMatcher'
+import { createFailureMessage } from '/@/components/Data/RequiresMatcher/FailureMessage'
 
 export interface IPresetManifest {
 	name: string
@@ -77,6 +78,7 @@ export class CreatePresetWindow extends BaseWindow {
 			value.match(/^[a-zA-Z0-9_\.]*$/) !== null,
 		lowercase: (value: string) => value.toLowerCase() === value,
 		required: (value: string) => !!value,
+		numeric: (value: string) => !isNaN(Number(value)),
 	}
 
 	/**
@@ -101,9 +103,11 @@ export class CreatePresetWindow extends BaseWindow {
 		super(PresetWindowComponent)
 		this.defineWindow()
 
-		App.eventSystem.on('presetsChanged', () => {
-			this.onPresetsChanged()
-		})
+		const reloadEvents = ['presetsChanged', 'projectChanged']
+
+		reloadEvents.forEach((eventName) =>
+			App.eventSystem.on(eventName, () => this.onPresetsChanged())
+		)
 	}
 
 	onPresetsChanged() {
@@ -203,6 +207,14 @@ export class CreatePresetWindow extends BaseWindow {
 				? App.packType.get(presetPath + 'test.json')?.color ?? 'primary'
 				: 'primary'
 
+		let failureMessage: string | undefined
+		if (requiresMatcher.failures.length > 0) {
+			failureMessage = await createFailureMessage(
+				requiresMatcher.failures[0],
+				manifest.requires
+			)
+		}
+
 		category.addItem(
 			new PresetItem({
 				id,
@@ -210,12 +222,7 @@ export class CreatePresetWindow extends BaseWindow {
 				icon: manifest.icon,
 				color: iconColor,
 				isDisabled: !mayUsePreset,
-				disabledText:
-					requiresMatcher.failures.length > 0
-						? app.locales.translate(
-								`windows.createPreset.disabledPreset.${requiresMatcher.failures[0].type}`
-						  )
-						: undefined,
+				disabledText: failureMessage,
 				resetState,
 			})
 		)

@@ -31,6 +31,7 @@
 				:isLoading="sidebar.isLoading"
 				:isSelected="sidebar.isSelected"
 				:badge="sidebar.badge"
+				:disabled="sidebar.isDisabled"
 				@click="sidebar.click()"
 			/>
 		</v-list>

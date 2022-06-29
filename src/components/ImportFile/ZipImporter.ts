@@ -27,14 +27,16 @@ export class ZipImporter extends FileImporter {
 		await unzipper.unzip(data)
 
 		// If the "extensions", "projects", or "data" folders exist in the zip, assume it can be imported as a .brproject file
+		// If the "config.json" file exists in the zip, assume it can be imported as a .brproject file
 		// If there is a manifest in the project subfolder, assume it can be imported as a .mcaddon file
 		if (
-			(await fs.directoryExists('import/extensions')) ||
+			(await fs.fileExists('import/config.json')) ||
+			(await fs.directoryExists('import/data')) ||
 			(await fs.directoryExists('import/projects')) ||
-			(await fs.directoryExists('import/data'))
-		)
+			(await fs.directoryExists('import/extensions'))
+		) {
 			await importFromBrproject(fileHandle, false, false)
-		else {
+		} else {
 			for await (const pack of tmpHandle.values()) {
 				if (await fs.fileExists(`import/${pack.name}/manifest.json`)) {
 					await importFromMcaddon(fileHandle, false, false)

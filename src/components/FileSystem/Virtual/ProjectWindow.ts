@@ -4,7 +4,7 @@ import { App } from '/@/App'
 import { importNewProject } from '/@/components/Projects/Import/ImportNew'
 
 export async function createVirtualProjectWindow() {
-	// TODO: Prompt user whether to open new project or to save the current one
+	// Prompt user whether to open new project or to save the current one
 	const choiceWindow = new InformedChoiceWindow(
 		'windows.projectChooser.title',
 		{

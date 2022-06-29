@@ -23,11 +23,11 @@ export class SchemaScript {
 		let currentJson = {}
 		let failedFileLoad = true
 		if (this.filePath) {
-			const currentFile = await this.app.project.getFileFromDiskOrTab(
-				this.filePath
-			)
-
 			try {
+				const currentFile = await this.app.project.getFileFromDiskOrTab(
+					this.filePath
+				)
+
 				currentJson = json5.parse(await currentFile.text())
 				failedFileLoad = false
 			} catch {}
@@ -48,8 +48,9 @@ export class SchemaScript {
 						cacheKey?: string
 					) => {
 						const packIndexer = this.app.project.packIndexer
+						await packIndexer.fired
 
-						return packIndexer.service!.getCacheDataFor(
+						return packIndexer.service.getCacheDataFor(
 							fileType,
 							filePath,
 							cacheKey
@@ -60,8 +61,9 @@ export class SchemaScript {
 						sort?: boolean
 					) => {
 						const packIndexer = this.app.project.packIndexer
+						await packIndexer.fired
 
-						const paths = await packIndexer.service!.getAllFiles(
+						const paths = await packIndexer.service.getAllFiles(
 							fileType,
 							sort
 						)
@@ -101,24 +103,22 @@ export class SchemaScript {
 	}
 
 	async runSchemaScripts(localSchemas: any) {
-		const baseDirectory = await this.app.dataLoader.getDirectoryHandle(
-			'data/packages/minecraftBedrock/schemaScript'
+		const schemaScripts = await this.app.dataLoader.readJSON(
+			'data/packages/minecraftBedrock/schemaScripts.json'
 		)
 
-		await iterateDir(baseDirectory, async (fileHandle, filePath) => {
-			const file = await fileHandle.getFile()
-			const fileText = await file.text()
-
-			let schemaScript
-			if (file.name.endsWith('.js')) schemaScript = { script: fileText }
-			else schemaScript = json5.parse(fileText)
+		for (const [scriptPath, script] of Object.entries(schemaScripts)) {
+			let schemaScript: any
+			if (scriptPath.endsWith('.js')) schemaScript = { script }
+			else schemaScript = script
 
 			let scriptResult: any = await this.runScript(
-				filePath,
+				scriptPath,
 				schemaScript.script
 			)
+
 			if (scriptResult) {
-				if (file.name.endsWith('.js')) {
+				if (scriptPath.endsWith('.js')) {
 					if (scriptResult.keep) return
 
 					schemaScript = {
@@ -177,6 +177,6 @@ export class SchemaScript {
 					}
 				}
 			}
-		})
+		}
 	}
 }

@@ -1,7 +1,5 @@
 import { App } from '/@/App'
 import { IMonacoSchemaArrayEntry } from '/@/components/Data/FileType'
-import json5 from 'json5'
-import { languages } from 'monaco-editor'
 import { Project } from '../Projects/Project/Project'
 import { IDisposable } from '/@/types/disposable'
 import { FileTab } from '../TabSystem/FileTab'
@@ -11,6 +9,7 @@ import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { Tab } from '../TabSystem/CommonTab'
 import { ComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/ComponentSchemas'
+import { loadMonaco, useMonaco } from '../../utils/libs/useMonaco'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
@@ -53,7 +52,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		].filter((disposable) => disposable !== undefined)
 
 		await this.loadAllSchemas()
-		this.setJSONDefaults()
+		await this.setJSONDefaults()
 		console.timeEnd('[SETUP] JSONDefaults')
 	}
 
@@ -78,6 +77,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		const packages = await app.dataLoader.readdir('data/packages')
 		task.update(2)
 
+		// Static schemas
 		for (const packageName of packages) {
 			try {
 				await this.loadStaticSchemas(
@@ -94,9 +94,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		loadedGlobalSchemas = true
 		task.update(3)
 
-		this.addSchemas(await this.getDynamicSchemas())
-		task.update(4)
-
+		// Schema scripts
 		await this.runSchemaScripts(app)
 		task.update(5)
 		const tab = this.project.tabSystem?.selectedTab
@@ -111,19 +109,29 @@ export class JsonDefaults extends EventDispatcher<void> {
 			)
 		}
 
+		// Schemas generated from lightning cache
+		this.addSchemas(await this.getDynamicSchemas())
+		task.update(4)
+
 		this.loadedSchemas = true
 		task.update(6)
 		task.complete()
 	}
 
-	setJSONDefaults(validate = true) {
+	async setJSONDefaults(validate = true) {
 		const schemas = Object.assign({}, globalSchemas, this.localSchemas)
-		languages.json.jsonDefaults.setDiagnosticsOptions({
-			enableSchemaRequest: false,
-			allowComments: true,
-			validate,
-			schemas: Object.values(schemas),
-		})
+
+		if (loadMonaco.hasFired) {
+			const { languages } = await useMonaco()
+
+			languages.json.jsonDefaults.setDiagnosticsOptions({
+				enableSchemaRequest: false,
+				allowComments: true,
+				validate,
+				schemas: Object.values(schemas),
+			})
+		}
+
 		SchemaManager.setJSONDefaults(schemas)
 
 		this.dispatch()
@@ -149,7 +157,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 		this.addSchemas(await this.requestSchemaFor(fileType, filePath))
 		this.addSchemas(await this.requestSchemaFor(fileType))
 		await this.runSchemaScripts(app, filePath)
-		this.setJSONDefaults()
+		await this.setJSONDefaults()
 	}
 	async updateMultipleDynamicSchemas(filePaths: string[]) {
 		const app = await App.getApp()
@@ -165,7 +173,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 			updatedFileTypes.add(fileType)
 		}
 
-		this.setJSONDefaults()
+		await this.setJSONDefaults()
 	}
 
 	addSchemas(addSchemas: IMonacoSchemaArrayEntry[]) {
@@ -201,7 +209,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 	) {
 		if (!loadedGlobalSchemas) {
 			const file = await fileHandle.getFile()
-			const schemas = json5.parse(await file.text())
+			const schemas = JSON.parse(await file.text())
 
 			for (const uri in schemas) {
 				globalSchemas[uri] = { uri, schema: schemas[uri] }

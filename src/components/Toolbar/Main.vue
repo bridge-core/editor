@@ -34,14 +34,14 @@
 					:key="`button.${key}`"
 					:displayName="item.name"
 					:displayIcon="item.icon"
-					:disabled="isAnyWindowVisible"
+					:disabled="isAnyWindowVisible || item.isDisabled"
 					@click="() => item.trigger()"
 				/>
 				<MenuActivator
 					v-else-if="item.shouldRender"
 					:key="`activator.${key}`"
 					:item="item"
-					:disabled="isAnyWindowVisible"
+					:disabled="isAnyWindowVisible || item.isDisabled"
 				/>
 				<v-divider
 					:key="`divider.${key}`"

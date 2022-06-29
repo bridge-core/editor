@@ -60,7 +60,7 @@ export class TabSystem extends MonacoHolder {
 		this.openedFiles = new OpenedFiles(
 			this,
 			_project.app,
-			`projects/${_project.name}/.bridge/openedFiles_${id}.json`
+			`${_project.projectPath}/.bridge/openedFiles_${id}.json`
 		)
 	}
 
@@ -109,7 +109,8 @@ export class TabSystem extends MonacoHolder {
 			}
 		}
 		// Default tab type: Text editor
-		if (!tab) tab = new TextTab(this, fileHandle, isReadOnly)
+		if (!tab)
+			tab = new TextTab(this, fileHandle, isReadOnly ? 'forced' : 'off')
 
 		return await tab.fired
 	}
@@ -200,9 +201,7 @@ export class TabSystem extends MonacoHolder {
 	}
 	async save(tab = this.selectedTab) {
 		if (!tab || (tab instanceof FileTab && tab.isReadOnly)) return
-
-		const app = await App.getApp()
-		app.windows.loadingWindow.open()
+		tab?.setIsLoading(true)
 
 		// Save whether the tab was selected previously for use later
 		const tabWasActive = this.selectedTab === tab
@@ -219,13 +218,6 @@ export class TabSystem extends MonacoHolder {
 		if (!tab.isForeignFile && tab instanceof FileTab) {
 			await this.project.updateFile(tab.getPath())
 
-			await this.project.recentFiles.add({
-				path: tab.getPath(),
-				name: tab.name,
-				color: tab.iconColor,
-				icon: tab.icon,
-			})
-
 			this.project.fileSave.dispatch(tab.getPath(), await tab.getFile())
 
 			// Only refresh auto-completion content if tab is active
@@ -233,8 +225,8 @@ export class TabSystem extends MonacoHolder {
 				App.eventSystem.dispatch('refreshCurrentContext', tab.getPath())
 		}
 
-		app.windows.loadingWindow.close()
 		tab.focus()
+		tab?.setIsLoading(false)
 	}
 	async saveAs() {
 		if (this.selectedTab instanceof FileTab) await this.selectedTab.saveAs()
@@ -296,6 +288,13 @@ export class TabSystem extends MonacoHolder {
 
 		for (const tab of tabs) {
 			if (predicate(tab)) tab.close()
+		}
+	}
+	forceCloseTabs(predicate: (tab: Tab) => boolean) {
+		const tabs = [...this.tabs].reverse()
+
+		for (const tab of tabs) {
+			if (predicate(tab)) this.remove(tab)
 		}
 	}
 	has(predicate: (tab: Tab) => boolean) {

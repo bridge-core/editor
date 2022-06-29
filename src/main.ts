@@ -31,4 +31,21 @@ self.MonacoEnvironment = {
 	},
 }
 
+// @ts-ignore
+// TODO(Vue3): Add app component back
 App.main()
+
+if ('launchQueue' in window) {
+	;(<any>window).launchQueue.setConsumer(async (launchParams: any) => {
+		const app = await App.getApp()
+
+		if (launchParams.targetURL)
+			await app.startParams.parse(launchParams.targetURL)
+
+		if (!launchParams.files.length) return
+
+		for (const fileHandle of launchParams.files) {
+			await app.fileDropper.importFile(fileHandle)
+		}
+	})
+}

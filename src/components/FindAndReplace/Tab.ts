@@ -52,7 +52,8 @@ export class FindAndReplaceTab extends Tab {
 
 	async setup() {
 		this.findAndReplace = await new FindAndReplaceClass(
-			this.parent.projectRoot
+			this.parent.projectRoot,
+			this.parent.project.projectPath
 		)
 		await super.setup()
 		this.searchReady.dispatch()

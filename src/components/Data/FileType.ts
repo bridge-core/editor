@@ -35,20 +35,12 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 		if (this.fileTypes.length > 0) return
 		await dataLoader.fired
 
-		const basePath = 'data/packages/minecraftBedrock/fileDefinition'
-		const dirents = await dataLoader.getDirectoryHandle(basePath)
+		this.fileTypes = await dataLoader.readJSON(
+			'data/packages/minecraftBedrock/fileDefinitions.json'
+		)
 
-		for await (const dirent of dirents.values()) {
-			if (dirent.kind !== 'file') return
-
-			let json = await dataLoader
-				.readJSON(`${basePath}/${dirent.name}`)
-				.catch(() => null)
-			if (json) this.fileTypes.push(json)
-		}
-
-		await this.loadLightningCache(dataLoader)
-		await this.loadPackSpider(dataLoader)
+		this.loadLightningCache(dataLoader)
+		// this.loadPackSpider(dataLoader)
 
 		this.ready.dispatch()
 	}
@@ -74,7 +66,11 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 						Array.isArray(detect.matcher)
 							? [...detect.matcher]
 							: [detect.matcher]
-					).map((fileMatch) => encodeURI(fileMatch)),
+					).map((fileMatch) =>
+						encodeURI(fileMatch)
+							// Monaco doesn't like these characters in fileMatch
+							.replaceAll(/;|,|@|&|=|\+|\$|\.|!|'|\(|\)|#/g, '*')
+					),
 					uri: schema,
 				}
 			})
@@ -83,61 +79,78 @@ export class FileTypeLibrary extends FileType<DataLoader> {
 	}
 
 	protected lCacheFiles: Record<string, ILightningInstruction[] | string> = {}
+	protected lCacheFilesLoaded = new Signal<void>()
 	async loadLightningCache(dataLoader: DataLoader) {
+		const lightningCache = await dataLoader.readJSON(
+			`data/packages/minecraftBedrock/lightningCaches.json`
+		)
+
+		const findCacheFile = (fileName: string) =>
+			Object.entries(lightningCache).find(([filePath]) =>
+				filePath.endsWith(fileName)
+			)
+
 		for (const fileType of this.fileTypes) {
 			if (!fileType.lightningCache) continue
-			const filePath = `data/packages/minecraftBedrock/lightningCache/${fileType.lightningCache}`
 
-			if (fileType.lightningCache.endsWith('.json'))
-				this.lCacheFiles[
-					fileType.lightningCache
-				] = await dataLoader.readJSON(filePath)
-			else if (fileType.lightningCache.endsWith('.js'))
-				this.lCacheFiles[
-					fileType.lightningCache
-				] = await dataLoader
-					.readFile(filePath)
-					.then((file) => file.text())
-			else
+			const [filePath, cacheFile] =
+				findCacheFile(fileType.lightningCache) ?? []
+			if (!filePath) {
 				throw new Error(
-					`Invalid lightningCache file format: ${fileType.lightningCache}`
+					`Lightning cache file "${fileType.lightningCache}" for file type "${fileType.id}" not found`
 				)
+			}
+
+			this.lCacheFiles[fileType.lightningCache] = <
+				string | ILightningInstruction[]
+			>cacheFile
 		}
+		this.lCacheFilesLoaded.dispatch()
 	}
 
 	async getLightningCache(filePath: string) {
 		const { lightningCache } = this.get(filePath) ?? {}
 		if (!lightningCache) return []
 
+		await this.lCacheFilesLoaded.fired
+
 		return this.lCacheFiles[lightningCache] ?? []
 	}
 
-	protected packSpiderFiles: {
-		id: string
-		packSpider: IPackSpiderFile
-	}[] = []
-	async loadPackSpider(dataLoader: DataLoader) {
-		this.packSpiderFiles.push(
-			...(<{ id: string; packSpider: IPackSpiderFile }[]>(
-				await Promise.all(
-					this.fileTypes
-						.map(({ id, packSpider }) => {
-							if (!packSpider) return
-							return dataLoader
-								.readJSON(
-									`data/packages/minecraftBedrock/packSpider/${packSpider}`
-								)
-								.then((json) => ({
-									id,
-									packSpider: json,
-								}))
-						})
-						.filter((data) => data !== undefined)
-				)
-			))
-		)
-	}
-	async getPackSpiderData() {
-		return this.packSpiderFiles
-	}
+	// protected packSpiderFiles: {
+	// 	id: string
+	// 	packSpider: IPackSpiderFile
+	// }[] = []
+	// protected packSpiderFilesLoaded = new Signal<void>()
+	// async loadPackSpider(dataLoader: DataLoader) {
+	// 	const packSpiderFiles = await dataLoader.readJSON(
+	// 		`data/packages/minecraftBedrock/packSpiders.json`
+	// 	)
+
+	// 	this.packSpiderFiles.push(
+	// 		...(<{ id: string; packSpider: IPackSpiderFile }[]>(
+	// 			await Promise.all(
+	// 				this.fileTypes
+	// 					.map(({ id, packSpider }) => {
+	// 						if (!packSpider) return
+	// 						return dataLoader
+	// 							.readJSON(
+	// 								`data/packages/minecraftBedrock/packSpider/${packSpider}`
+	// 							)
+	// 							.then((json) => ({
+	// 								id,
+	// 								packSpider: json,
+	// 							}))
+	// 					})
+	// 					.filter((data) => data !== undefined)
+	// 			)
+	// 		))
+	// 	)
+	// 	this.packSpiderFilesLoaded.dispatch()
+	// }
+	// async getPackSpiderData() {
+	// 	await this.packSpiderFilesLoaded.fired
+
+	// 	return this.packSpiderFiles
+	// }
 }

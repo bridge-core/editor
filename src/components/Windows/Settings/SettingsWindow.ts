@@ -43,11 +43,6 @@ export class SettingsWindow extends BaseWindow {
 			locales.translate('windows.settings.actions.name'),
 			'mdi-keyboard-outline'
 		)
-		this.addCategory(
-			'audio',
-			locales.translate('windows.settings.audio.name'),
-			'mdi-volume-high'
-		)
 		// this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
 		this.addCategory(
 			'sidebar',
@@ -97,12 +92,15 @@ export class SettingsWindow extends BaseWindow {
 	static async saveSettings(app?: App) {
 		if (!app) app = await App.getApp()
 
-		await app.fileSystem.writeJSON('data/settings.json', settingsState)
+		await app.fileSystem.writeJSON(
+			'~local/data/settings.json',
+			settingsState
+		)
 	}
 	static async loadSettings(app: App) {
 		try {
 			setSettingsState(
-				await app.fileSystem.readJSON('data/settings.json')
+				await app.fileSystem.readJSON('~local/data/settings.json')
 			)
 		} catch {
 		} finally {
@@ -111,7 +109,6 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async open() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		if (this.isVisible) return
 
 		this.sidebar.removeElements()
@@ -121,7 +118,6 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async close() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		super.close()
 
 		const app = await App.getApp()

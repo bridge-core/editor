@@ -20,6 +20,7 @@ export interface IExtensionManifest {
 	id: string
 	description: string
 	link: string
+	readme: string
 	tags: string[]
 	dependencies: string[]
 	compiler: {
@@ -161,6 +162,7 @@ export class ExtensionLoader extends Signal<void> {
 				baseDirectory,
 				this.isGlobal
 			)
+
 			this._extensions.set(manifest.id, extension)
 			this.extensionPaths.set(
 				manifest.id,
@@ -179,10 +181,11 @@ export class ExtensionLoader extends Signal<void> {
 	}
 
 	async activate(id: string) {
-		const extension = await this.extensions.get(id)
+		const extension = this.extensions.get(id)
 
 		if (extension) {
-			if (!extension.isActive) await extension.activate()
+			if (extension.isActive) await extension.activate()
+
 			return true
 		} else {
 			createErrorNotification(
@@ -194,6 +197,24 @@ export class ExtensionLoader extends Signal<void> {
 		}
 	}
 
+	deactivate(id: string) {
+		const extension = this.extensions.get(id)
+
+		if (extension) {
+			extension.deactivate()
+			return true
+		} else {
+			createErrorNotification(
+				new Error(
+					`Failed to deactivate extension with ID "${id}": Extension not found`
+				)
+			)
+			return false
+		}
+	}
+	has(id: string) {
+		return this.extensions.has(id)
+	}
 	deactiveAll(dispose = false) {
 		for (const [key, ext] of this._extensions) {
 			ext.deactivate()

@@ -5,6 +5,9 @@ import type { IGetHandleConfig, IMkdirConfig } from './Common'
 import { iterateDir } from '/@/utils/iterateDir'
 import { join, dirname, basename } from '/@/utils/path'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
+import { getStorageDirectory } from '/@/utils/getStorageDirectory'
+import { VirtualFileHandle } from './Virtual/FileHandle'
+import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 
 export class FileSystem extends Signal<void> {
 	protected _baseDirectory!: AnyDirectoryHandle
@@ -32,6 +35,10 @@ export class FileSystem extends Signal<void> {
 		let current = this.baseDirectory
 		const pathArr = path.split(/\\|\//g)
 		if (pathArr[0] === '.') pathArr.shift()
+		if (pathArr[0] === '~local') {
+			current = await getStorageDirectory()
+			pathArr.shift()
+		}
 
 		for (const folder of pathArr) {
 			try {
@@ -65,10 +72,28 @@ export class FileSystem extends Signal<void> {
 			throw new Error(`File does not exist: "${path}"`)
 		}
 	}
-	pathTo(fileHandle: AnyFileHandle) {
-		return this.baseDirectory
-			.resolve(<any>fileHandle)
+	async pathTo(handle: AnyHandle) {
+		const localHandle = await getStorageDirectory()
+		// We can only resolve paths to virtual files if the user uses the file system polyfill
+		if (
+			handle instanceof VirtualFileHandle &&
+			!(localHandle instanceof VirtualDirectoryHandle)
+		)
+			return
+
+		let path = await localHandle
+			.resolve(<any>handle)
 			.then((path) => path?.join('/'))
+
+		if (path) {
+			path = '~local/' + path
+		} else {
+			path = await this.baseDirectory
+				.resolve(<any>handle)
+				.then((path) => path?.join('/'))
+		}
+
+		return path
 	}
 
 	async mkdir(path: string, { recursive }: Partial<IMkdirConfig> = {}) {
@@ -168,7 +193,9 @@ export class FileSystem extends Signal<void> {
 		// 	await handle.writable.getWriter().write(data)
 		// 	handle.close()
 		// } else {
-		const writable = await fileHandle.createWritable()
+		const writable = await fileHandle.createWritable({
+			keepExistingData: false,
+		})
 		await writable.write(data)
 		await writable.close()
 		// }
@@ -189,6 +216,9 @@ export class FileSystem extends Signal<void> {
 		)
 	}
 
+	// TODO: Use moveHandle() util function
+	// This function can utilize FileSystemHandle.move() where available
+	// and therefore is more efficient
 	async move(path: string, newPath: string) {
 		if (await this.fileExists(path)) {
 			await this.copyFile(path, newPath)
@@ -210,9 +240,8 @@ export class FileSystem extends Signal<void> {
 		originHandle: AnyFileHandle,
 		destHandle: AnyFileHandle
 	) {
-		const writable = await destHandle.createWritable()
-		await writable.write(await originHandle.getFile())
-		await writable.close()
+		await this.write(destHandle, await originHandle.getFile())
+
 		return destHandle
 	}
 	async copyFolder(originPath: string, destPath: string) {

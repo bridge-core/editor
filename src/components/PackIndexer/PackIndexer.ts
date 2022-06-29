@@ -49,6 +49,7 @@ export class PackIndexer extends WorkerManager<
 				noFullLightningCacheRefresh:
 					!forceRefreshCache &&
 					!settingsState?.general?.fullLightningCacheRefresh,
+				projectPath: this.project.projectPath,
 			}
 		)
 

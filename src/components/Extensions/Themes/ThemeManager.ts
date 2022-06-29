@@ -96,6 +96,9 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	protected applyTheme(theme?: Theme) {
 		theme?.apply(this, this.vuetify)
 	}
+	async applyMonacoTheme() {
+		this.themeMap.get(this.currentTheme)?.applyMonacoTheme()
+	}
 	async updateTheme() {
 		const app = await App.getApp()
 		let colorScheme = settingsState?.appearance?.colorScheme
@@ -133,12 +136,11 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	async loadDefaultThemes(app: App) {
 		await app.dataLoader.fired
 
-		await iterateDir(
-			await app.dataLoader.getDirectoryHandle(
-				'data/packages/common/themes'
-			),
-			(file) => this.loadTheme(file)
+		const themes = await app.dataLoader.readJSON(
+			'data/packages/common/themes.json'
 		)
+
+		themes.map((theme: any) => this.addTheme(theme, true))
 
 		this.updateTheme()
 	}

@@ -36,6 +36,7 @@
 				v-model="keyToAdd"
 				@change="onAdd"
 				@keydown.enter="mayTrigger"
+				@keydown.tab="mayTrigger"
 				:items="
 					isUsingBridgePredictions
 						? allSuggestions
@@ -46,6 +47,9 @@
 					maxHeight: 124,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
+					rounded: 'lg',
+					'nudge-top': -8,
+					transition: 'slide-y-transition',
 				}"
 				:label="
 					isUsingBridgePredictions
@@ -88,6 +92,7 @@
 				v-model="valueToAdd"
 				@change="(s) => onAdd(s, true)"
 				@keydown.enter="mayTrigger"
+				@keydown.tab="mayTrigger"
 				:disabled="isGlobal"
 				:items="valueSuggestions"
 				:item-value="(item) => item"
@@ -95,6 +100,9 @@
 					maxHeight: 124,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
+					rounded: 'lg',
+					'nudge-top': -8,
+					transition: 'slide-y-transition',
 				}"
 				:label="t('editors.treeEditor.addValue')"
 				class="mx-4"
@@ -119,16 +127,47 @@
 					</div>
 				</template>
 			</v-combobox>
-			<v-text-field
+			<v-combobox
 				ref="editValueInput"
-				:value="currentValue"
-				@change="onEdit"
+				:value="
+					currentValue === undefined ? undefined : `${currentValue}`
+				"
+				@change="(s) => onEdit(s)"
+				@keydown.enter="mayTrigger"
+				@keydown.tab="mayTrigger"
 				:disabled="isGlobal"
+				:items="editSuggestions"
+				:item-value="(item) => item"
+				:menu-props="{
+					maxHeight: 124,
+					top: false,
+					contentClass: 'json-editor-suggestions-menu',
+					rounded: 'lg',
+					'nudge-top': -8,
+					transition: 'slide-y-transition',
+				}"
 				:label="t('editors.treeEditor.edit')"
 				outlined
 				dense
 				hide-details
-			/>
+			>
+				<template v-slot:item="{ item }">
+					<div style="width: 100%" @click="mayTrigger">
+						<v-icon class="mr-1" color="primary" small>
+							{{ getIcon(item) }}
+						</v-icon>
+						<span
+							style="
+								font-size: 0.8125rem;
+								font-weight: 500;
+								line-height: 1rem;
+							"
+						>
+							{{ item.label }}
+						</span>
+					</div>
+				</template>
+			</v-combobox>
 		</div>
 	</div>
 </template>
@@ -157,11 +196,9 @@ export default {
 	}),
 	mounted() {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
-		this.focusEditor()
 	},
 	activated() {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
-		this.focusEditor()
 	},
 	computed: {
 		isUsingBridgePredictions() {
@@ -235,6 +272,12 @@ export default {
 				text: suggestion.value,
 			}))
 		},
+		editSuggestions() {
+			return this.treeEditor.editSuggestions.map((suggestion) => ({
+				...suggestion,
+				text: suggestion.value,
+			}))
+		},
 		allSuggestions() {
 			return this.propertySuggestions.concat(this.valueSuggestions)
 		},
@@ -243,8 +286,10 @@ export default {
 		focusEditor() {
 			if (this.$refs.editorContainer) this.$refs.editorContainer.focus()
 		},
-		onEdit(value) {
-			this.treeEditor.edit(value)
+		onEdit(suggestion) {
+			if (typeof suggestion !== 'string') suggestion = suggestion.value
+
+			this.treeEditor.edit(`${suggestion}`)
 		},
 		onAdd(suggestion, forceValue = false) {
 			if (this.triggerCooldown || !this.isUserControlledTrigger) {
@@ -266,34 +311,44 @@ export default {
 
 			if (forceValue) this.pressedShift = true
 			else if (typeof suggestion === 'string') {
-				// Logic for infering whether an unknown value should be treated as a key or a value
-				const castedValue = inferType(suggestion)
-				// Make sure we differentiate between a decimal number and an integer
-				const castedType =
-					typeof castedValue === 'number'
-						? suggestion.includes('.')
-							? 'number'
-							: 'integer'
-						: typeof castedValue
+				// 1. Can we find the new value inside of the suggestions?
+				const validSuggestion = this.allSuggestions.find(
+					({ label }) => label === suggestion
+				)
+				// Use the first valid suggestion if it exists
+				if (validSuggestion) {
+					suggestion = validSuggestion
+				} else {
+					// 2. No valid suggestion found, infer the suggestion type
+					// Logic for infering whether an unknown value should be treated as a key or a value
+					const castedValue = inferType(suggestion)
+					// Make sure we differentiate between a decimal number and an integer
+					const castedType =
+						typeof castedValue === 'number'
+							? suggestion.includes('.')
+								? 'number'
+								: 'integer'
+							: typeof castedValue
 
-				// Load current schemas
-				const schemas = this.treeEditor.getSchemas()
-				// Get valid value types for current schemas
-				const types = schemas.map((schema) => schema.types).flat()
+					// Load current schemas
+					const schemas = this.treeEditor.getSchemas()
+					// Get valid value types for current schemas
+					const types = schemas.map((schema) => schema.types).flat()
 
-				if (
-					// Is the current type a valid type...
-					types.includes(castedType) ||
-					// ...or can we cast it to a valid type?
-					mayCastTo[castedType].some((type) => {
-						if (types.includes(type)) {
-							forcedValueType = type
-							return true
-						}
-					})
-				) {
-					// Force add the input as a value
-					this.pressedShift = true
+					if (
+						// Is the current type a valid type...
+						types.includes(castedType) ||
+						// ...or can we cast it to a valid type?
+						mayCastTo[castedType].some((type) => {
+							if (types.includes(type)) {
+								forcedValueType = type
+								return true
+							}
+						})
+					) {
+						// Force add the input as a value
+						this.pressedShift = true
+					}
 				}
 			}
 			const {

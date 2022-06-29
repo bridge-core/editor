@@ -28,6 +28,11 @@ export class ActionManager {
 	getAction(actionId: string) {
 		return <Action | undefined>this.state[actionId]
 	}
+	getAllActions() {
+		return Object.values(this.state).filter(
+			(action) => action.type === 'action'
+		)
+	}
 
 	/**
 	 * This is used by some classes that use an action manager as an abstraction to render action lists.

@@ -1,4 +1,3 @@
-import { languages } from 'monaco-editor'
 import { TextTab } from '/@/components/Editors/Text/TextTab'
 import { ProjectConfig } from '../../Projects/Project/Config'
 import { App } from '/@/App'
@@ -6,6 +5,7 @@ import { IDisposable } from '/@/types/disposable'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { TreeTab } from '/@/components/Editors/TreeEditor/Tab'
 import type { Tab } from '/@/components/TabSystem/CommonTab'
+import { useMonaco } from '../../../utils/libs/useMonaco'
 
 export interface IKnownWords {
 	keywords: string[]
@@ -43,8 +43,9 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 
 			app.projectManager.onActiveProject((project) => {
 				this.updateKeywords(project.config)
-				project.fileSave.on('config.json', () =>
-					this.updateKeywords(project.config)
+				project.fileSave.on(
+					project.config.resolvePackPath(undefined, 'config.json'),
+					() => this.updateKeywords(project.config)
 				)
 			})
 		})
@@ -108,7 +109,9 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 		this.loadedFileType = 'unknown'
 	}
 
-	updateHighlighter() {
+	async updateHighlighter() {
+		const { languages } = await useMonaco()
+
 		const newLanguage = languages.setMonarchTokensProvider('json', <any>{
 			// Set defaultToken to invalid to see what you do not tokenize yet
 			defaultToken: 'invalid',

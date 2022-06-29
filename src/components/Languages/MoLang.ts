@@ -1,6 +1,7 @@
-import { editor, languages, MarkerSeverity } from 'monaco-editor'
+import type { editor, languages } from 'monaco-editor'
 import { Language } from './Language'
 import { CustomMoLang } from 'molang'
+import { useMonaco } from '../../utils/libs/useMonaco'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {
@@ -92,7 +93,9 @@ export class MoLangLanguage extends Language {
 		})
 	}
 
-	validate(model: editor.IModel) {
+	async validate(model: editor.IModel) {
+		const { editor, MarkerSeverity } = await useMonaco()
+
 		try {
 			this.molang.parse(model.getValue())
 			editor.setModelMarkers(model, this.id, [])

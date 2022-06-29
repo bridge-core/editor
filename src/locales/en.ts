@@ -18,6 +18,7 @@ export default {
 		select: 'Select',
 		skip: 'Skip',
 		save: 'Save',
+		shareFile: 'Share File',
 		more: 'More...',
 		selectFolder: 'Select Folder',
 		fileName: 'File Name',
@@ -27,6 +28,8 @@ export default {
 		later: 'Later',
 		clear: 'Clear',
 		reset: 'Reset',
+		readMore: 'Read More',
+		search: 'Search...',
 
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
@@ -122,6 +125,10 @@ export default {
 	},
 	// Actions
 	actions: {
+		goHome: {
+			name: 'Go Home',
+			description: 'Go back to the home screen',
+		},
 		newProject: {
 			name: 'New Project',
 			description: 'Create a new bridge. project',
@@ -132,7 +139,12 @@ export default {
 		},
 		openFile: {
 			name: 'Open File',
-			description: 'Open a file from the current project',
+			description: 'Open a file to edit it with bridge.',
+		},
+		openFolder: {
+			name: 'Open Folder',
+			description:
+				'Open a folder to edit it, set it as an output folder or trigger other actions',
 		},
 		searchFile: {
 			name: 'Search File',
@@ -187,6 +199,10 @@ export default {
 		bugReports: {
 			name: 'Bug Reports',
 			description: 'Report an issue with bridge.',
+		},
+		twitter: {
+			name: 'Twitter',
+			description: 'Follow bridge. on Twitter',
 		},
 		extensionAPI: {
 			name: 'Extension API',
@@ -385,14 +401,6 @@ export default {
 			updateExtensions: 'Update All Extensions',
 		},
 	},
-	// Welcome Screen
-	welcome: {
-		title: 'Welcome to bridge.',
-		subtitle: 'Creating Minecraft addons has never been more convenient!',
-		quickActions: 'Quick Actions',
-		recentFiles: 'Recent Files',
-		recentProjects: 'Recent Projects',
-	},
 	// Experimental gameplay toggles
 	experimentalGameplay: {
 		cavesAndCliffs: {
@@ -455,6 +463,14 @@ export default {
 			search: 'Search file...',
 			noData: 'No results...',
 		},
+		assetPreview: {
+			title: 'Asset Preview',
+			previewScale: 'Preview Scale',
+			assetName: 'Asset Name',
+			boneVisibility: 'Bone Visibility',
+			backgroundColor: 'Background Color',
+			outputResolution: 'Output Resolution',
+		},
 		createProject: {
 			welcome: 'Welcome to bridge.!',
 			welcomeDescription:
@@ -466,7 +482,7 @@ export default {
 			projectName: {
 				name: 'Project Name',
 				invalidLetters:
-					'Project name must not contain the following characters: "  \\ / : | < >  * ?',
+					'Project name must not contain the following characters: "  \\ / : | < >  * ? ~',
 				mustNotBeEmpty: 'You must enter a project name',
 				endsInPeriod: 'Project name cannot end with a period',
 			},
@@ -553,9 +569,11 @@ export default {
 			showAllPresets: 'Show all presets',
 			disabledPreset: {
 				experimentalGameplay:
-					'Required experimental gameplay not active',
-				packTypes: 'Required pack missing within project',
-				targetVersion: 'Required target version not specified',
+					'Required experimental gameplay toggle condition(s) not met',
+				packTypes: 'Required pack condition(s) not met',
+				targetVersion: 'Required target version not met',
+				manifestDependency:
+					'Required BP manifest dependencies are missing',
 			},
 		},
 		deleteProject: {
@@ -574,6 +592,12 @@ export default {
 			title: 'Choose Project',
 			description: 'Select the currently active project',
 			searchProjects: 'Search projects...',
+			loadAllProjects: 'Load All',
+			localProject: {
+				name: 'Local Project',
+				description:
+					'Local projects cannot be accessed outside of bridge.',
+			},
 			newProject: {
 				name: 'New Project',
 				description: 'Create a new bridge. project.',
@@ -632,6 +656,15 @@ export default {
 				name: 'Refresh Project',
 				description: 'Fetch the current project for newly added files',
 			},
+			noProjectView: {
+				noProjectsFound:
+					'It does not look like you have any projects yet!',
+				createLocalProject: 'Create Local Project',
+				chooseBridgeFolder: 'Choose bridge. Folder',
+				accessBridgeFolder: 'Access bridge. Folder',
+				projectNoLongerExists:
+					'It looks like this project no longer exists!',
+			},
 			restartWatchMode: {
 				name: 'Restart Watch Mode',
 				description:
@@ -671,12 +704,14 @@ export default {
 				delete: {
 					name: 'Delete',
 					description: 'Delete a file or folder',
-					confirmText:
-						"Are you sure that you want to delete this file? You won't be able to restore it later!",
+					confirmText: 'Are you sure that you want to delete ',
+					noRestoring: "You won't be able to restore it later!",
 				},
 				rename: {
 					name: 'Rename',
 					description: 'Rename a file',
+					sameName:
+						'Your new file name only differs in capitalization. This is not allowed on Windows.',
 				},
 				duplicate: {
 					name: 'Duplicate',
@@ -805,11 +840,6 @@ export default {
 					name: 'Select Root Folder',
 					description: 'Choose the main folder bridge. operates on',
 				},
-				openProjectChooserOnAppStartup: {
-					name: 'Open Project Chooser',
-					description:
-						'Automatically open the project chooser upon starting bridge.',
-				},
 			},
 			developer: {
 				name: 'Developer',
@@ -822,12 +852,10 @@ export default {
 					name: 'Developer Mode',
 					description: 'Enable the developer mode for this app',
 				},
-			},
-			audio: {
-				name: 'Audio',
-				volume: {
-					name: 'Audio Enabled',
-					description: 'Enable or disable all bridge sounds',
+				forceDataDownload: {
+					name: 'Force Data Download',
+					description:
+						'Ignore the cached app data and instead download the latest data',
 				},
 			},
 			actions: {
@@ -843,6 +871,11 @@ export default {
 					name: 'Increment Version',
 					description:
 						'Automatically increment the version number inside of your pack manifests when exporting a project',
+				},
+				addGeneratedWith: {
+					name: 'Add "generated_with"',
+					description:
+						'Add the "generated_with" metadata to your projects\' manifests',
 				},
 			},
 			editor: {
@@ -916,10 +949,10 @@ export default {
 			save: 'Save & Close',
 		},
 		browserUnsupported: {
-			title: 'Unsupported Browser',
+			title: 'Browser Warning',
 			description:
-				'Please use Chrome (Desktop, excluding Chrome 93/94) or Edge (Chromium) in order to get the best experience using bridge. v2! Your browser does not support saving files directly and syncing projects to your com.mojang folder.',
-			continue: 'Continue Anyways',
+				'In order to get the best experience with bridge., you need to use Chrome (excluding Chrome 93/94) or Edge (Chromium) on desktop. If you continue, you will not be able to save files directly and you will need to download your project in order to save it or test your changes in Minecraft.',
+			continue: 'Continue Anyway',
 		},
 		invalidJson: {
 			title: 'Invalid JSON',
@@ -964,10 +997,22 @@ export default {
 		importFiles: 'Drop files here to import them!',
 		importFailed: 'bridge. was unable to import the following files:',
 		andMore: '...and more!',
-		importMethod: 'Import Method',
+		importMethod: {
+			name: 'Import Method',
+			folder: {
+				output: {
+					name: 'Output Folder',
+					description: 'Sets this folder as a new output folder',
+				},
+				open: {
+					name: 'Open Folder',
+					description: "Opens this folder in bridge.'s file explorer",
+				},
+			},
+		},
 		mcaddon: {
 			missingManifests:
-				"bridge. was unable to load data from your .mcaddon file because it wasn't able to find pack manifest files inside of it.",
+				"bridge. was unable to load data from your .mcaddon or .mpack file because it wasn't able to find a pack manifest file inside of it.",
 		},
 		saveToProject: {
 			title: 'Save to Project',
@@ -1050,7 +1095,7 @@ export default {
 			installApp: {
 				name: 'Install bridge.',
 				description:
-					'For the best experience, install bridge. v2 as an app to your computer.',
+					'Click here to install bridge. v2 as an app to your device.',
 			},
 			bridge: {
 				name: 'bridge. Folder',
@@ -1073,7 +1118,7 @@ export default {
 			comMojang: {
 				name: 'com.mojang Folder',
 				description:
-					'Now drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.',
+					'Drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.',
 				extraDescription: 'Drag your com.mojang folder onto bridge.',
 			},
 			editorType: {

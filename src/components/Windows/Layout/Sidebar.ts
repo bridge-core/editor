@@ -52,7 +52,6 @@ export class SidebarCategory {
 	}
 
 	setOpen(val: boolean) {
-		App.audioManager.playAudio('click5.ogg', 1)
 		this.isOpen = val
 	}
 
@@ -182,6 +181,10 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 	get filter() {
 		return this._filter.toLowerCase()
 	}
+	setFilter(filter: string) {
+		this._filter = filter
+	}
+
 	get elements() {
 		const elements = this.sortSidebar(
 			this._elements
@@ -279,10 +282,6 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 		return this._selected
 	}
 	set selected(val) {
-		if (val) {
-			App.audioManager.playAudio('click5.ogg', 1)
-		}
-
 		if (this._selected !== val) {
 			this.dispatch(val)
 			this._selected = val

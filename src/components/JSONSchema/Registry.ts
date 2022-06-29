@@ -2,9 +2,13 @@ import { AdditionalPropertiesSchema } from './Schema/AdditionalProperties'
 import { AllOfSchema } from './Schema/AllOf'
 import { AnyOfSchema } from './Schema/AnyOf'
 import { ConstSchema } from './Schema/Const'
+import { DefaultSchema } from './Schema/Default'
+import { DoNotSuggestSchema } from './Schema/DoNotSuggest'
+import { ElseSchema } from './Schema/ElseSchema'
 import { EnumSchema } from './Schema/Enum'
 import { IfSchema } from './Schema/IfSchema'
 import { ItemsSchema } from './Schema/Items'
+import { NotSchema } from './Schema/Not'
 import { OneOfSchema } from './Schema/OneOf'
 import { PatternPropertiesSchema } from './Schema/PatternProperties'
 import { PropertiesSchema } from './Schema/Properties'
@@ -35,6 +39,10 @@ export const schemaRegistry = new Map<string, ISchemaConstructor>([
 	['required', RequiredSchema],
 	['then', ThenSchema],
 	['type', TypeSchema],
+	['default', DefaultSchema],
+	['else', ElseSchema],
+	['doNotSuggest', DoNotSuggestSchema],
+	['not', NotSchema],
 ])
 
 export const ignoreFields = new Set<string>([
@@ -48,12 +56,13 @@ export const ignoreFields = new Set<string>([
 	'pattern',
 	'min',
 	'max',
-	'doNotSuggest',
 	'maxItems',
 	'minItems',
 	'deprecationMessage',
 	'examples',
 	'minimum',
 	'maximum',
-	'default',
+	'format',
+	'maxLength',
+	'multipleOf',
 ])
