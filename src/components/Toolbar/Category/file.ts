@@ -12,7 +12,7 @@ import {
 } from '/@/components/FileSystem/Polyfill'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { download } from '/@/components/FileSystem/saveOrDownload'
-import { CommandBarState } from '../../CommandBar/State'
+import { CommandBarState } from '/@/components/CommandBar/State'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -169,13 +169,15 @@ export function setupFileCategory(app: App) {
 		})
 	)
 
-	const settingAction = app.actionManager.getAction(
-		'bridge.action.openSettings'
-	)
-	if (settingAction && app.mobile.isCurrentDevice()) {
-		file.addItem(new Divider())
-		file.addItem(settingAction)
-	}
+	app.didMount.once(() => {
+		const settingAction = app.actionManager.getAction(
+			'bridge.action.openSettings'
+		)
+		if (settingAction && app.mobile.isCurrentDevice()) {
+			file.addItem(new Divider())
+			file.addItem(settingAction)
+		}
+	})
 
 	App.toolbar.addCategory(file)
 }

@@ -1,10 +1,10 @@
 <template>
 	<v-autocomplete
 		prepend-inner-icon="mdi-magnify"
-		solo
-		rounded
+		variant="solo"
+		rounded="lg"
 		hide-details
-		:append-icon="null"
+		:menu-icon="null"
 		class="commandbar-input elevation-1"
 		:menu-props="{
 			rounded: 'lg',
@@ -18,7 +18,7 @@
 		:items="actions"
 		:item-text="(item) => `${t(item.name)}\n${t(item.description)}`"
 		:item-value="(item) => item"
-		:placeholder="t('general.search')"
+		:label="t('general.search')"
 		auto-select-first
 		:autofocus="autofocus"
 		v-model="currentItem"
@@ -40,10 +40,9 @@
 			>
 				<v-icon color="white">{{ item.icon }}</v-icon>
 			</v-list-item-avatar>
-			<v-list-item-content>
-				<v-list-item-title v-text="t(item.name)" />
-				<v-list-item-subtitle v-text="t(item.description)" />
-			</v-list-item-content>
+
+			<v-list-item-title v-text="t(item.name)" />
+			<v-list-item-subtitle v-text="t(item.description)" />
 		</template>
 	</v-autocomplete>
 </template>

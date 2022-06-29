@@ -27,7 +27,7 @@
 		<v-divider vertical />
 
 		<!-- App menu buttons -->
-		<v-toolbar-items class="px14-font">
+		<v-toolbar-items>
 			<template v-for="(item, key, i) in toolbar">
 				<MenuButton
 					v-if="item.type !== 'category'"
@@ -81,7 +81,7 @@ import MenuButton from './Menu/Button.vue'
 import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/utils/app/version.ts'
 import { platform } from '/@/utils/os.ts'
-import { reactive } from 'vue'
+import { watch, ref } from 'vue'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import Logo from '../UIElements/Logo.vue'
@@ -96,23 +96,25 @@ export default {
 		Logo,
 	},
 	setup() {
-		const setupObj = reactive({
-			title: 'bridge.',
-			isAnyWindowVisible: App.windowState.isAnyWindowVisible,
-		})
+		const title = ref('bridge.')
 
 		App.getApp().then((app) => {
-			setupObj.title = app.projectManager.title.current
+			title.value = app.projectManager.title.current.value
+
+			watch(app.projectManager.title.current, () => {
+				title.value = app.projectManager.title.current.value
+			})
 		})
 
-		return setupObj
-	},
-	data: () => ({
-		toolbar: App.toolbar.state,
-		isMacOS: platform() === 'darwin',
+		console.log(App.toolbar.state.value)
 
-		appVersion,
-	}),
+		return {
+			toolbar: App.toolbar.state.value,
+			isMacOS: platform() === 'darwin',
+			appVersion,
+			isAnyWindowVisible: App.windowState.isAnyWindowVisible,
+		}
+	},
 	methods: {
 		async openChangelogWindow() {
 			if (this.isAnyWindowVisible) return
@@ -129,6 +131,7 @@ export default {
 	app-region: drag;
 	-webkit-app-region: drag;
 	padding-right: 0;
+	font-size: 14px;
 }
 
 .toolbar-btn {

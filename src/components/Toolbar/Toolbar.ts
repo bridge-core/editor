@@ -1,13 +1,13 @@
 import { ToolbarCategory } from './ToolbarCategory'
-import { shallowReactive } from 'vue'
+import { ref } from 'vue'
 
 export class Toolbar {
-	protected state: Record<string, ToolbarCategory> = shallowReactive({})
+	protected state = ref<Record<string, ToolbarCategory>>({})
 
 	addCategory(category: ToolbarCategory) {
-		this.state[category.id] = category
+		this.state.value[category.id] = category
 	}
 	disposeCategory(category: ToolbarCategory) {
-		delete this.state[category.id]
+		delete this.state.value[category.id]
 	}
 }

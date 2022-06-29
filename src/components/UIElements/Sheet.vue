@@ -1,15 +1,12 @@
 <template>
-	<div
-		v-on="$listeners"
-		class="rounded-lg"
-		:class="{ 'bg-dark': dark, bg: !dark }"
-	>
+	<div class="rounded-lg" :class="{ 'bg-dark': dark, bg: !dark }">
 		<slot />
 	</div>
 </template>
 
 <script>
 export default {
+	inheritAttrs: true,
 	name: 'BridgeSheet',
 	props: {
 		dark: Boolean,

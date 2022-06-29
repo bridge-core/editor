@@ -71,7 +71,7 @@ export class App {
 	public readonly packExplorer = new PackExplorer()
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this.keyBindingManager)
-	public themeManager!: ThemeManager
+	public _themeManager?: ThemeManager
 	public readonly taskManager = new TaskManager()
 	public readonly dataLoader = markRaw(new DataLoader(true))
 	public readonly fileSystem = new FileSystem()
@@ -79,7 +79,7 @@ export class App {
 	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
 	public readonly contextMenu = new ContextMenu()
-	public locales!: Locales
+	public _locales?: Locales
 	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
 	public readonly folderImportManager = new FolderImportManager()
@@ -90,7 +90,7 @@ export class App {
 	public static readonly fileType = markRaw(new FileTypeLibrary())
 	public static readonly packType = markRaw(new PackTypeLibrary())
 
-	public mobile!: Mobile
+	public _mobile?: Mobile
 
 	public readonly languageManager = markRaw(new LanguageManager())
 	// App start params
@@ -138,6 +138,27 @@ export class App {
 			)
 		}
 	}
+	get themeManager() {
+		if (!this._themeManager)
+			throw new Error(
+				`Trying to access themeManager before it is defined. Make sure to await app.didMount.fired`
+			)
+		return this._themeManager
+	}
+	get locales() {
+		if (!this._locales)
+			throw new Error(
+				`Trying to access locales before it is defined. Make sure to await app.didMount.fired`
+			)
+		return this._locales
+	}
+	get mobile() {
+		if (!this._mobile)
+			throw new Error(
+				`Trying to access mobile before it is defined. Make sure to await app.didMount.fired`
+			)
+		return this._mobile
+	}
 
 	static get instance() {
 		return <App>this._instance
@@ -148,15 +169,10 @@ export class App {
 		)
 	}
 
-	// TODO(Vue3): update type
-	// @ts-ignore
-	constructor(appComponent: Vue) {
+	constructor() {
 		if (import.meta.env.PROD) this.dataLoader.loadData()
-		this.themeManager = new ThemeManager(appComponent.$vuetify)
-		this.locales = new Locales(appComponent.$vuetify)
-		this._windows = new Windows(this)
 
-		this.mobile = new Mobile(appComponent.$vuetify)
+		this._windows = new Windows(this)
 
 		// Prompt the user whether they really want to close bridge. when unsaved tabs are open
 		const saveWarning =
@@ -177,11 +193,10 @@ export class App {
 		}
 	}
 	mounted(vuetify: any) {
-		this.themeManager = new ThemeManager(vuetify)
-		this.locales = new Locales(vuetify)
-		this._windows = new Windows(this)
+		this._themeManager = new ThemeManager(vuetify)
+		this._locales = new Locales(vuetify)
+		this._mobile = new Mobile(vuetify)
 
-		this.mobile = new Mobile(vuetify)
 		this.didMount.dispatch()
 	}
 
@@ -194,12 +209,10 @@ export class App {
 	/**
 	 * Starts the app
 	 */
-	// TODO(Vue3): update type
-	// @ts-ignore
-	static async main(appComponent: Vue) {
+	static async main() {
 		console.time('[APP] Ready')
-		this._instance = markRaw(new App(appComponent))
-		this.instance.windows.loadingWindow.open()
+		this._instance = markRaw(new App())
+		this._instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
 
@@ -226,6 +239,7 @@ export class App {
 
 		settingsLoaded.then(async () => {
 			await this.instance.dataLoader.fired
+			await this.instance.didMount.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
 		})
 
@@ -234,7 +248,7 @@ export class App {
 		this.ready.dispatch(this.instance)
 		await this.instance.projectManager.selectLastProject()
 
-		this.instance.windows.loadingWindow.close()
+		this._instance.windows.loadingWindow.close()
 		console.timeEnd('[APP] Ready')
 	}
 
@@ -287,6 +301,8 @@ export class App {
 	 * Setup systems that need to access the fileSystem
 	 */
 	async startUp() {
+		await this.didMount.fired
+
 		console.time('[APP] startUp()')
 
 		this.locales.setDefaultLanguage()

@@ -31,8 +31,6 @@ self.MonacoEnvironment = {
 	},
 }
 
-// @ts-ignore
-// TODO(Vue3): Add app component back
 App.main()
 
 if ('launchQueue' in window) {

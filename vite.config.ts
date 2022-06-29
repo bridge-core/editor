@@ -39,7 +39,9 @@ export default defineConfig({
 				},
 			},
 		}),
-		vuetify({}),
+		vuetify({
+			autoImport: true,
+		}),
 		splitVendorChunkPlugin(),
 		ViteEjsPlugin({
 			isNightly,

@@ -1,9 +1,5 @@
 <template>
-	<v-app
-		theme="dark"
-		:style="{ fontFamily, height: '100vh' }"
-		@contextmenu="$event.preventDefault()"
-	>
+	<v-app theme="dark" @contextmenu="$event.preventDefault()">
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar />
@@ -212,6 +208,7 @@ export default {
 html {
 	overflow-y: hidden !important;
 	overscroll-behavior: none;
+	font-family: v-bind(fontFamily);
 }
 body {
 	overflow: unset;
@@ -264,6 +261,7 @@ summary::-webkit-details-marker {
 
 .v-application {
 	background: rgb(var(--v-theme-background)) !important;
+	height: 100vh;
 }
 
 .v-system-bar .v-icon {

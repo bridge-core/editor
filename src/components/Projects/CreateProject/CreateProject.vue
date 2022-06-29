@@ -101,13 +101,13 @@
 			<!-- Experimental Gameplay Toggles -->
 			<v-expansion-panels class="mb-6">
 				<v-expansion-panel>
-					<v-expansion-panel-header
+					<v-expansion-panel-title
 						color="expandedSidebar"
 						expand-icon="mdi-menu-down"
 					>
 						{{ t('general.experimentalGameplay') }}
-					</v-expansion-panel-header>
-					<v-expansion-panel-content color="expandedSidebar">
+					</v-expansion-panel-title>
+					<v-expansion-panel-text color="expandedSidebar">
 						<v-row dense>
 							<v-col
 								v-for="experiment in experimentalToggles"
@@ -129,7 +129,7 @@
 								/>
 							</v-col>
 						</v-row>
-					</v-expansion-panel-content>
+					</v-expansion-panel-text>
 				</v-expansion-panel>
 			</v-expansion-panels>
 
@@ -139,13 +139,13 @@
 				class="mb-6"
 			>
 				<v-expansion-panel>
-					<v-expansion-panel-header
+					<v-expansion-panel-title
 						color="expandedSidebar"
 						expand-icon="mdi-menu-down"
 					>
 						{{ t('windows.createProject.individualFiles.name') }}
-					</v-expansion-panel-header>
-					<v-expansion-panel-content color="expandedSidebar">
+					</v-expansion-panel-title>
+					<v-expansion-panel-text color="expandedSidebar">
 						<v-row dense>
 							<v-col
 								v-for="(file, i) in $data.packCreateFiles"
@@ -163,7 +163,7 @@
 								/>
 							</v-col>
 						</v-row>
-					</v-expansion-panel-content>
+					</v-expansion-panel-text>
 				</v-expansion-panel>
 			</v-expansion-panels>
 
