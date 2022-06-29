@@ -23,6 +23,7 @@
 		:autofocus="autofocus"
 		v-model="currentItem"
 		@change="onSelectedAction"
+		@blur="$emit('blur')"
 	>
 		<template v-slot:no-data>
 			<v-list-item>

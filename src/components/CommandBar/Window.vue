@@ -15,6 +15,7 @@
 			@blur="isWindowOpen = false"
 		/>
 		<div
+			@click="isWindowOpen = false"
 			:style="{
 				height: '80vh',
 			}"
