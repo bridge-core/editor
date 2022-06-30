@@ -1,101 +1,105 @@
 <template>
-	<v-app theme="dark" @contextmenu="$event.preventDefault()">
-		<!-- We need access to native menus in order to hide the custom one on MacOS -->
-		<!-- <Toolbar v-if="!isMacOs" /> -->
-		<Toolbar />
+	<v-locale-provider :locale="'en'">
+		<v-app theme="dark" @contextmenu="$event.preventDefault()">
+			<!-- We need access to native menus in order to hide the custom one on MacOS -->
+			<!-- <Toolbar v-if="!isMacOs" /> -->
+			<Toolbar />
 
-		<Sidebar app />
+			<Sidebar app />
 
-		<v-btn
-			v-if="!sidebarNavigationVisible"
-			small
-			fab
-			fixed
-			style="bottom: calc(env(safe-area-inset-bottom, 0) + 16px)"
-			:left="!isSidebarRight"
-			:right="isSidebarRight"
-			color="primary"
-			@click="openSidebar"
-		>
-			<v-icon>mdi-table-column</v-icon>
-		</v-btn>
-
-		<v-main :style="{ 'padding-top': appToolbarHeight }">
-			<WindowRenderer />
-
-			<v-row
-				no-gutters
-				class="d-flex fill-area"
-				:class="{ 'flex-row-reverse': isSidebarRight }"
+			<v-btn
+				v-if="!sidebarNavigationVisible"
+				small
+				fab
+				fixed
+				style="bottom: calc(env(safe-area-inset-bottom, 0) + 16px)"
+				:left="!isSidebarRight"
+				:right="isSidebarRight"
+				color="primary"
+				@click="openSidebar"
 			>
-				<v-col
-					v-if="isSidebarContentVisible"
-					:cols="isSidebarContentVisible ? 3 + sidebarSize : 0"
-				>
-					<SidebarContent />
-				</v-col>
+				<v-icon>mdi-table-column</v-icon>
+			</v-btn>
 
-				<v-col
-					:cols="isSidebarContentVisible ? 9 - sidebarSize : 12"
-					class="flex-grow-1"
+			<v-main :style="{ 'padding-top': appToolbarHeight }">
+				<WindowRenderer />
+
+				<v-row
+					no-gutters
+					class="d-flex fill-area"
+					:class="{ 'flex-row-reverse': isSidebarRight }"
 				>
-					<div
-						v-if="shouldRenderWelcomeScreen"
-						class="d-flex"
-						:class="{ 'flex-column': $vuetify.display.mobile }"
-						:style="{
-							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
-						}"
+					<v-col
+						v-if="isSidebarContentVisible"
+						:cols="isSidebarContentVisible ? 3 + sidebarSize : 0"
 					>
-						<v-divider
-							v-if="isSidebarContentVisible && !isSidebarRight"
-							style="z-index: 1"
-							vertical
-						/>
+						<SidebarContent />
+					</v-col>
 
-						<TabSystem
-							class="flex-grow-1"
-							:tabSystem="tabSystems[0]"
-							showWelcomeScreen
-						/>
-						<v-divider
-							v-if="
-								tabSystems[0].shouldRender &&
-								tabSystems[1].shouldRender
+					<v-col
+						:cols="isSidebarContentVisible ? 9 - sidebarSize : 12"
+						class="flex-grow-1"
+					>
+						<div
+							v-if="shouldRenderWelcomeScreen"
+							class="d-flex"
+							:class="{ 'flex-column': $vuetify.display.mobile }"
+							:style="{
+								height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
+							}"
+						>
+							<v-divider
+								v-if="
+									isSidebarContentVisible && !isSidebarRight
+								"
+								style="z-index: 1"
+								vertical
+							/>
+
+							<TabSystem
+								class="flex-grow-1"
+								:tabSystem="tabSystems[0]"
+								showWelcomeScreen
+							/>
+							<v-divider
+								v-if="
+									tabSystems[0].shouldRender &&
+									tabSystems[1].shouldRender
+								"
+								style="z-index: 1"
+								:vertical="!$vuetify.display.mobile"
+							/>
+							<TabSystem
+								class="flex-grow-1"
+								:tabSystem="tabSystems[1]"
+								:id="1"
+							/>
+
+							<v-divider
+								v-if="isSidebarContentVisible && isSidebarRight"
+								vertical
+							/>
+						</div>
+						<WelcomeScreen
+							v-else
+							:containerPadding="
+								isSidebarContentVisible
+									? isSidebarRight
+										? 'pl-2'
+										: 'pr-2'
+									: 'px-2'
 							"
-							style="z-index: 1"
-							:vertical="!$vuetify.display.mobile"
 						/>
-						<TabSystem
-							class="flex-grow-1"
-							:tabSystem="tabSystems[1]"
-							:id="1"
-						/>
+					</v-col>
+				</v-row>
 
-						<v-divider
-							v-if="isSidebarContentVisible && isSidebarRight"
-							vertical
-						/>
-					</div>
-					<WelcomeScreen
-						v-else
-						:containerPadding="
-							isSidebarContentVisible
-								? isSidebarRight
-									? 'pl-2'
-									: 'pr-2'
-								: 'px-2'
-						"
-					/>
-				</v-col>
-			</v-row>
+				<!--  -->
+			</v-main>
 
-			<!--  -->
-		</v-main>
-
-		<ContextMenu v-if="contextMenu" :contextMenu="contextMenu" />
-		<FileDropper />
-	</v-app>
+			<ContextMenu v-if="contextMenu" :contextMenu="contextMenu" />
+			<FileDropper />
+		</v-app>
+	</v-locale-provider>
 </template>
 
 <script>
@@ -113,7 +117,6 @@ import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
 import { isContentVisible, SidebarState } from './components/Sidebar/state'
 import { settingsState } from './components/Windows/Settings/SettingsState'
-import { useTheme } from 'vuetify/lib/framework.mjs'
 
 export default {
 	name: 'App',

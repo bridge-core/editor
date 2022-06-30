@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 export function translate(vuetify: any, translationKey?: string) {
@@ -20,6 +21,7 @@ export function translate(vuetify: any, translationKey?: string) {
 }
 
 export class Locales {
+	public readonly locale = ref('en')
 	constructor(protected vuetify: any) {}
 
 	translate(translationKey?: string) {
@@ -42,10 +44,7 @@ export class Locales {
 	}
 
 	selectLanguage(key: string) {
-		const lang = this.vuetify.lang
-		if (!(key in lang.locales))
-			throw new Error(`Undefined language: "${key}"`)
-		lang.current = key
+		this.locale.value = key
 	}
 
 	getLanguages() {
