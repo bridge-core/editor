@@ -17,7 +17,7 @@ import { DirectoryWrapper } from './DirectoryView/DirectoryWrapper'
 export default {
 	components: { DirectoryView },
 	props: {
-		directoryHandle: Object,
+		directoryHandle: Object | FileSystemDirectoryHandle,
 		renderTopLevelDirectory: Boolean,
 		options: Object,
 	},
