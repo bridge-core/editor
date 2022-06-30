@@ -17,7 +17,8 @@ import { DirectoryWrapper } from './DirectoryView/DirectoryWrapper'
 export default {
 	components: { DirectoryView },
 	props: {
-		directoryHandle: Object | FileSystemDirectoryHandle,
+		// Cannot  use "FileSystemDirectoryViewer" here because reference doesn't exist on Safari
+		directoryHandle: { required: true },
 		renderTopLevelDirectory: Boolean,
 		options: Object,
 	},
