@@ -16,9 +16,6 @@ export interface IDropState {
 }
 
 export class FileDropper {
-	public readonly state = reactive<IDropState>({
-		isHovering: false,
-	})
 	protected fileHandlers = new Map<
 		string,
 		(fileHandle: AnyFileHandle) => Promise<void> | void
@@ -27,26 +24,6 @@ export class FileDropper {
 	constructor(protected app: App) {
 		window.addEventListener('dragover', (event) => {
 			event.preventDefault()
-
-			if (App.windowState.isAnyWindowVisible.value) return
-
-			// Moving tabs
-			if (event.dataTransfer?.effectAllowed === 'move') return
-
-			this.state.isHovering = true
-		})
-
-		window.addEventListener('mouseout', (event) => {
-			event.preventDefault()
-
-			if (event.relatedTarget == null) {
-				this.state.isHovering = false
-			}
-		})
-
-		window.addEventListener('dragend', (event) => {
-			event.preventDefault()
-			this.state.isHovering = false
 		})
 
 		window.addEventListener('drop', (event) => {
@@ -55,7 +32,6 @@ export class FileDropper {
 			if (App.windowState.isAnyWindowVisible.value) return
 
 			this.onDrop([...(event.dataTransfer?.items ?? [])])
-			this.state.isHovering = false
 		})
 	}
 

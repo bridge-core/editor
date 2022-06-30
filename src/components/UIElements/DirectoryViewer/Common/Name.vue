@@ -67,7 +67,7 @@ export default {
 			default: 'file',
 		},
 		tagName: { type: String, default: 'div' },
-		baseWrapper: BaseWrapper,
+		baseWrapper: { type: BaseWrapper, required: true },
 	},
 	setup(props) {
 		const onClick = useDoubleClick((isDoubleClick, event) => {
@@ -81,6 +81,7 @@ export default {
 
 	data: () => ({
 		isFocused: false,
+
 		currentName: '',
 	}),
 	methods: {
@@ -92,8 +93,7 @@ export default {
 			this.isFocused = true
 
 			if (this.baseWrapper.isSelected.value) return
-			this.baseWrapper.unselectAll()
-			this.baseWrapper.isSelected.value = true
+			this.select()
 		},
 		onKeyDown(event) {
 			if (platform() === 'darwin' && !event.metaKey) return
@@ -114,8 +114,13 @@ export default {
 				DeleteAction(this.baseWrapper).onTrigger()
 			}
 		},
+
 		focus() {
 			if (this.$refs.name) this.$refs.name.focus()
+		},
+		select() {
+			this.baseWrapper.unselectAll()
+			this.baseWrapper.isSelected.value = true
 		},
 	},
 	watch: {

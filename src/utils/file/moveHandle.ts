@@ -13,7 +13,7 @@ import { dirExists } from './dirExists'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 
 interface IMoveOptions<T = FileSystemHandle | VirtualHandle> {
-	fromHandle: AnyDirectoryHandle
+	fromHandle?: AnyDirectoryHandle
 	toHandle: AnyDirectoryHandle
 	moveHandle: T
 }
@@ -70,7 +70,7 @@ async function moveFileHandle(
 	await writable.write(file)
 	await writable.close()
 	// 4. Delete old file
-	await fromHandle.removeEntry(moveHandle.name)
+	if (fromHandle) await fromHandle.removeEntry(moveHandle.name)
 
 	return {
 		type: type === 'overwrite' ? 'overwrite' : 'move',
@@ -135,7 +135,8 @@ async function moveDirectoryHandle({
 		moveHandle.name
 	)
 
-	await fromHandle.removeEntry(moveHandle.name, { recursive: true })
+	if (fromHandle)
+		await fromHandle.removeEntry(moveHandle.name, { recursive: true })
 	return {
 		type,
 		handle: newHandle,

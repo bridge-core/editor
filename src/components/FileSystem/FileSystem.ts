@@ -230,12 +230,14 @@ export class FileSystem extends Signal<void> {
 
 		await this.unlink(path)
 	}
+
 	async copyFile(originPath: string, destPath: string) {
 		const originHandle = await this.getFileHandle(originPath, false)
 		const destHandle = await this.getFileHandle(destPath, true)
 
 		return await this.copyFileHandle(originHandle, destHandle)
 	}
+
 	async copyFileHandle(
 		originHandle: AnyFileHandle,
 		destHandle: AnyFileHandle
