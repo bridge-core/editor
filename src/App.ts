@@ -197,6 +197,7 @@ export class App {
 		this._locales = new Locales(vuetify)
 		this._mobile = new Mobile(vuetify)
 
+		console.log(vuetify)
 		this.didMount.dispatch()
 	}
 
@@ -212,6 +213,7 @@ export class App {
 	static async main() {
 		console.time('[APP] Ready')
 		this._instance = markRaw(new App())
+		this._instanceReady.dispatch(this.instance)
 		this._instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
@@ -243,8 +245,11 @@ export class App {
 			this.instance.themeManager.loadDefaultThemes(this.instance)
 		})
 
+		console.log('START UP: START')
 		await this.instance.startUp()
+		console.log('START UP DONE')
 
+		await this.instance.didMount.fired
 		this.ready.dispatch(this.instance)
 		await this.instance.projectManager.selectLastProject()
 
@@ -301,11 +306,9 @@ export class App {
 	 * Setup systems that need to access the fileSystem
 	 */
 	async startUp() {
-		await this.didMount.fired
-
 		console.time('[APP] startUp()')
 
-		this.locales.setDefaultLanguage()
+		this.didMount.once(() => this.locales.setDefaultLanguage())
 
 		await Promise.all([
 			// Create default folders

@@ -15,10 +15,10 @@
 				:nudge-top="-8"
 				rounded="lg"
 			>
-				<template v-slot:activator="{ on }">
+				<template v-slot:activator="{ props }">
 					<v-list-item
 						dense
-						v-on="item.type === 'category' ? on : undefined"
+						v-bind="item.type === 'category' ? props : undefined"
 						@click="onClick(item)"
 						:disabled="item.isDisabled"
 					>

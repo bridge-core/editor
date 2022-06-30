@@ -49,10 +49,11 @@ export class PackExplorer extends SidebarContent {
 			else this.headerSlot = ProjectDisplayComponent
 		}
 
-		App.getApp().then((app) => {
+		App.getApp().then(async (app) => {
 			updateHeaderSlot()
 			this.updateTopPanel(app)
 
+			await app.didMount.fired
 			app.mobile.change.on(() => updateHeaderSlot())
 		})
 

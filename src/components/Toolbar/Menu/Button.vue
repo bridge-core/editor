@@ -51,7 +51,7 @@ export default {
 <style scoped>
 .toolbar-btn {
 	min-width: 0;
-	padding-left: 4px;
+	padding: 0 8px;
 }
 
 .btn-disabled {

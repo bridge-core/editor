@@ -113,6 +113,7 @@ import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
 import { isContentVisible, SidebarState } from './components/Sidebar/state'
 import { settingsState } from './components/Windows/Settings/SettingsState'
+import { useTheme } from 'vuetify/lib/framework.mjs'
 
 export default {
 	name: 'App',
@@ -140,19 +141,25 @@ export default {
 	data: () => ({
 		isMacOs: platform() === 'darwin',
 		contextMenu: null,
-		settingsState: settingsState,
+
 		windowSize: {
 			currentWidth: window.innerWidth,
 			currentHeight: window.innerHeight,
 		},
 	}),
+	setup() {
+		return {
+			settingsState,
+			sidebarState: SidebarState,
+		}
+	},
 
 	computed: {
 		isSidebarContentVisible() {
 			return this.sidebarNavigationVisible && isContentVisible.value
 		},
 		sidebarNavigationVisible() {
-			return SidebarState.isNavigationVisible
+			return this.sidebarState.isNavigationVisible
 		},
 		isSidebarRight() {
 			return (

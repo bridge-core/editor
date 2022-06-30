@@ -5,11 +5,12 @@
 		stateless
 		v-model="isNavigationVisible"
 		:app="app"
-		absolute
 		:right="isSidebarRight"
 		color="sidebarNavigation"
 		:height="`calc(100% - ${appToolbarHeight})`"
 		:style="{
+			marginTop: '0',
+			position: 'absolute',
 			maxHeight: `calc(100% - ${appToolbarHeight})`,
 			top: appToolbarHeight,
 		}"

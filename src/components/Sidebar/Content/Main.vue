@@ -55,13 +55,18 @@ export default {
 		InfoPanel,
 	},
 
+	setup() {
+		return {
+			SidebarState,
+		}
+	},
 	mounted() {
 		App.getApp().then((app) => {
 			this.windowDimensions = app.windowResize.state
 		})
 	},
+
 	data: () => ({
-		SidebarState,
 		windowDimensions: { currentHeight: window.innerHeight },
 	}),
 	computed: {

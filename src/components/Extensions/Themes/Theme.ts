@@ -1,5 +1,6 @@
 import { TColorName, IThemeDefinition, ThemeManager } from './ThemeManager'
 import { MonacoSubTheme } from './MonacoSubTheme'
+import { useTheme } from 'vuetify/lib/framework.mjs'
 
 export class Theme {
 	public readonly id: string
@@ -30,11 +31,12 @@ export class Theme {
 	}
 
 	apply(themeManager: ThemeManager, vuetify: any) {
-		const theme = vuetify.theme.getTheme(this.colorScheme)
-		vuetify.theme.setTheme(this.colorScheme, {
+		console.log(vuetify)
+		const theme = vuetify.theme.themes[this.colorScheme]
+		vuetify.theme.themes[this.colorScheme] = {
 			...theme,
 			colors: Object.fromEntries(this.colorMap.entries()),
-		})
+		}
 		// TODO(Vue3): Implement v-theme-provider and change theme here
 
 		themeManager.setThemeColor(this.colorMap.get('toolbar') ?? 'red')

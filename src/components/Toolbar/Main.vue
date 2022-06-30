@@ -5,11 +5,11 @@
 		app
 		clipped
 		padless
-		:height="appToolbarHeight"
 		:style="{
 			'padding-left': 0,
 			'margin-left': 'env(titlebar-area-x, 0)',
 			width: 'env(titlebar-area-width, 100%)',
+			height: appToolbarHeight,
 			'z-index': windowControlsOverlay ? 1000 : undefined,
 		}"
 	>
