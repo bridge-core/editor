@@ -38,6 +38,7 @@ const VuetifyComponents = {
 
 export async function loadUIComponents(
 	fileSystem: FileSystem,
+	extensionId: string,
 	uiStore: TUIStore,
 	disposables: IDisposable[],
 	basePath = 'ui'
@@ -53,12 +54,14 @@ export async function loadUIComponents(
 				return loadUIComponent(
 					fileSystem,
 					`${basePath}/${dirent.name}`,
+					extensionId,
 					uiStore,
 					disposables
 				)
 			else
 				return loadUIComponents(
 					fileSystem,
+					extensionId,
 					uiStore,
 					disposables,
 					`${basePath}/${dirent.name}`
@@ -70,6 +73,7 @@ export async function loadUIComponents(
 export async function loadUIComponent(
 	fileSystem: FileSystem,
 	componentPath: string,
+	extensionId: string,
 	uiStore: TUIStore,
 	disposables: IDisposable[]
 ) {
@@ -104,7 +108,7 @@ export async function loadUIComponent(
 			...(await (<any>(
 				executeScript(
 					script?.content?.replace('export default', 'return') ?? '',
-					{ uiStore, disposables }
+					{ uiStore, disposables, extensionId }
 				)
 			))),
 			...Vue.compile(

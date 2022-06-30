@@ -123,6 +123,7 @@ export class Extension {
 		await Promise.all([
 			loadUIComponents(
 				this.fileSystem,
+				this.id,
 				this.uiStore,
 				this.disposables
 			).then(async () =>
