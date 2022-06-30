@@ -52,6 +52,7 @@
 import { SimpleAction } from '../Actions/SimpleAction'
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { CommandBarExtensionItems } from '../Extensions/Scripts/Modules/CommandBar'
 
 export default {
 	mixins: [TranslationMixin],
@@ -65,6 +66,7 @@ export default {
 		const app = await App.getApp()
 
 		this.baseActions = app.actionManager.getAllActions()
+		this.extensionActions = [...CommandBarExtensionItems.values()]
 
 		if (!app.isNoProjectSelected) this.loadFilesFromProject(app.project)
 
@@ -82,11 +84,16 @@ export default {
 		currentItem: '',
 		baseActions: [],
 		fileActions: [],
+		extensionActions: [],
 		disposables: [],
 	}),
 	computed: {
 		actions() {
-			return [...this.baseActions, ...this.fileActions]
+			return [
+				...this.baseActions,
+				...this.fileActions,
+				...this.extensionActions,
+			]
 		},
 	},
 	methods: {
