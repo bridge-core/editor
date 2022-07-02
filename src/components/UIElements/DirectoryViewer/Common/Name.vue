@@ -102,7 +102,7 @@ export default {
 		},
 		onKeyDown(event) {
 			if (event.code === 'Enter') {
-				// Enter to rename on darwin platforms
+				// Enter to rename on darwin platforms or open on other platforms
 				this.onEnter(event)
 			} else if (platform() !== 'darwin' && event.code === 'F2') {
 				// F2 to start rename on non-darwin platforms
@@ -112,7 +112,6 @@ export default {
 			if (platform() === 'darwin' && !event.metaKey) return
 			if (platform() !== 'darwin' && !event.ctrlKey) return
 
-			console.log(event.code)
 			if (event.code === 'KeyC') {
 				// Copy the file/folder
 				CopyAction(this.baseWrapper).onTrigger()

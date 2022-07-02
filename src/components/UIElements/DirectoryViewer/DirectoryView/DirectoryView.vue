@@ -2,9 +2,9 @@
 	<component
 		:is="renderDirectoryName ? 'details' : 'div'"
 		:open="directoryWrapper.isOpen.value"
-		@dragenter.stop="onDragEnter"
-		@dragleave.stop="onDragLeave"
-		@drop.stop="onDrop"
+		@dragenter="onDragEnter"
+		@dragleave="onDragLeave"
+		@drop="onDrop"
 	>
 		<Name
 			v-if="renderDirectoryName"
@@ -20,6 +20,8 @@
 			v-model="directoryWrapper.children.value"
 			group="directory-view"
 			:disabled="isReadOnly"
+			@start="isDraggingWrapper = true"
+			@end="isDraggingWrapper = false"
 			@change="draggedHandle"
 		>
 			<template v-for="(entry, i) in directoryWrapper.children.value">
@@ -54,6 +56,7 @@ import Draggable from 'vuedraggable'
 import Name from '../Common/Name.vue'
 import { clipboard } from '../ContextMenu/Actions/Copy'
 import { PasteAction } from '../ContextMenu/Actions/Paste'
+import { isDraggingWrapper } from '../Common/DraggingWrapper'
 
 export default {
 	name: 'DirectoryView',
@@ -64,6 +67,11 @@ export default {
 			default: true,
 			type: Boolean,
 		},
+	},
+	setup() {
+		return {
+			isDraggingWrapper,
+		}
 	},
 	data: () => ({
 		selectedFromFileDrag: false,
@@ -76,9 +84,10 @@ export default {
 	},
 	methods: {
 		async onDragEnter(event) {
-			if (this.isReadOnly) return
+			if (this.isReadOnly || this.isDraggingWrapper) return
 
 			event.preventDefault()
+			event.stopPropagation()
 
 			this.select(true)
 			if (
@@ -90,7 +99,10 @@ export default {
 			}
 		},
 		async onDrop(event) {
-			if (this.isReadOnly) return
+			if (this.isReadOnly || this.isDraggingWrapper) return
+
+			event.preventDefault()
+			event.stopPropagation()
 
 			this.isOpenedFromFileDrag = false
 			this.selectedFromFileDrag = false
@@ -101,6 +113,7 @@ export default {
 			if (dataTransferItems.length === 0) return
 
 			event.preventDefault()
+			event.stopPropagation()
 
 			const pasteAction = PasteAction(this.directoryWrapper)
 			for (const item of dataTransferItems) {
@@ -114,8 +127,11 @@ export default {
 			await this.directoryWrapper.refresh()
 			clipboard.item = clipboardHandle
 		},
-		onDragLeave() {
-			if (this.isReadOnly) return
+		onDragLeave(event) {
+			if (this.isReadOnly || this.isDraggingWrapper) return
+
+			event.preventDefault()
+			event.stopPropagation()
 
 			if (this.selectedFromFileDrag)
 				this.directoryWrapper.isSelected.value = false

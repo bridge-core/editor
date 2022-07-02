@@ -163,218 +163,36 @@ export class PackExplorer extends SidebarContent {
 		const project = app.project
 
 		return [
-			...(type === 'file'
-				? [
-						(project.tabSystem?.tabs.length ?? 0) > 0
-							? {
-									icon: 'mdi-arrow-split-vertical',
-									name:
-										'windows.packExplorer.fileActions.openInSplitScreen.name',
-									description:
-										'windows.packExplorer.fileActions.openInSplitScreen.description',
-									onTrigger: async () => {
-										const handle = await app.fileSystem.getFileHandle(
-											path
-										)
-										project.openFile(handle, {
-											openInSplitScreen: true,
-										})
-									},
-							  }
-							: {
-									icon: 'mdi-plus',
-									name:
-										'windows.packExplorer.fileActions.open.name',
-									description:
-										'windows.packExplorer.fileActions.open.description',
-									onTrigger: async () => {
-										const handle = await app.fileSystem.getFileHandle(
-											entry.getPath()
-										)
-										project.openFile(handle)
-									},
-							  },
-						{
-							type: 'divider',
-						},
-				  ]
-				: []),
-
-			...(type === 'file'
-				? [
-						{
-							icon: 'mdi-pencil-outline',
-							name:
-								'windows.packExplorer.fileActions.rename.name',
-							description:
-								'windows.packExplorer.fileActions.rename.description',
-							onTrigger: async () => {
-								// Remove file extension from file name
-								const fileName = entry.name
-									.split('.')
-									.slice(0, -1)
-									.join('.')
-
-								const inputWindow = new InputWindow({
-									name:
-										'windows.packExplorer.fileActions.rename.name',
-									label: 'general.fileName',
-									default: fileName,
-									expandText: extname(path),
-								})
-								const newFileName = await inputWindow.fired
-								if (!newFileName) return
-
-								const newFilePath = join(
-									dirname(path),
-									newFileName
-								)
-
-								if (
-									path.toLowerCase() ===
-										newFilePath.toLowerCase() &&
-									platform() === 'win32'
-								) {
-									new InformationWindow({
-										description:
-											'windows.packExplorer.fileActions.rename.sameName',
-									})
-									return
-								}
-
-								// If file with same path already exists, confirm that it's ok to overwrite it
-								if (
-									await project.app.fileSystem.fileExists(
-										newFilePath
-									)
-								) {
-									const confirmWindow = new ConfirmationWindow(
-										{
-											description:
-												'general.confirmOverwriteFile',
-										}
-									)
-
-									if (!(await confirmWindow.fired)) return
-								}
-
-								// Update pack indexer & compiler
-								await Promise.all([
-									project.packIndexer.unlink(path),
-									project.compilerService.unlink(path),
-								])
-
-								// The rename action needs to happen after deleting the old file inside of the output directory
-								// because the compiler will fail to unlink it if the original file doesn't exist.
-								await project.app.fileSystem.move(
-									path,
-									newFilePath
-								)
-
-								// Let the compiler, pack indexer etc. process the renamed file
-								await project.updateFile(newFilePath)
-
-								// Refresh pack explorer
-								this.refresh()
-							},
-						},
-				  ]
-				: [
-						{
-							icon: 'mdi-pencil-outline',
-							name:
-								'windows.packExplorer.fileActions.rename.name',
-							description:
-								'windows.packExplorer.fileActions.rename.description',
-							onTrigger: async () => {
-								const inputWindow = new InputWindow({
-									name:
-										'windows.packExplorer.fileActions.rename.name',
-									label: 'general.folderName',
-									default: entry.name,
-								})
-								const newFolderName = await inputWindow.fired
-								if (!newFolderName) return
-
-								const newFolderPath = join(
-									dirname(path),
-									newFolderName
-								)
-
-								// If folder with same path already exists, confirm that it's ok to overwrite it
-								if (
-									await project.app.fileSystem.directoryExists(
-										newFolderPath
-									)
-								) {
-									const confirmWindow = new ConfirmationWindow(
-										{
-											description:
-												'general.confirmOverwriteFolder',
-										}
-									)
-
-									if (!(await confirmWindow.fired)) return
-								}
-
-								// Update pack indexer & compiler
-								await Promise.all([
-									project.packIndexer.unlink(path),
-									project.compilerService.unlink(path),
-								])
-
-								// The rename action needs to happen after deleting the old folder inside of the output directory
-								// because the compiler will fail to unlink it if the original folder doesn't exist.
-								await project.app.fileSystem.move(
-									path,
-									newFolderPath
-								)
-
-								// Let the compiler, pack indexer etc. process the renamed folder
-								let files = await project.app.fileSystem.readFilesFromDir(
-									newFolderPath
-								)
-								for (let file of files) {
-									await project.updateFile(file.path)
-								}
-
-								// Refresh pack explorer
-								this.refresh()
-							},
-						},
-
-						{
-							icon: 'mdi-file-search-outline',
-							name:
-								'windows.packExplorer.fileActions.findInFolder.name',
-							description:
-								'windows.packExplorer.fileActions.findInFolder.description',
-							onTrigger: () => {
-								const config = project.app.projectConfig
-								const packTypes: { [key: string]: string } = {
-									BP: config.resolvePackPath('behaviorPack'),
-									RP: config.resolvePackPath('resourcePack'),
-									SP: config.resolvePackPath('skinPack'),
-									WT: config.resolvePackPath('worldTemplate'),
-								}
-								let pathPackType = 'BP'
-								for (const packType of Object.keys(packTypes)) {
-									if (path.includes(packTypes[packType]))
-										pathPackType = packType
-								}
-								project.tabSystem?.add(
-									new FindAndReplaceTab(project.tabSystem!, {
-										searchType: ESearchType.matchCase,
-										includeFiles: path.replace(
-											packTypes[pathPackType],
-											pathPackType
-										),
-										excludeFiles: '',
-									})
-								)
-							},
-						},
-				  ]),
+			{
+				icon: 'mdi-file-search-outline',
+				name: 'windows.packExplorer.fileActions.findInFolder.name',
+				description:
+					'windows.packExplorer.fileActions.findInFolder.description',
+				onTrigger: () => {
+					const config = project.app.projectConfig
+					const packTypes: { [key: string]: string } = {
+						BP: config.resolvePackPath('behaviorPack'),
+						RP: config.resolvePackPath('resourcePack'),
+						SP: config.resolvePackPath('skinPack'),
+						WT: config.resolvePackPath('worldTemplate'),
+					}
+					let pathPackType = 'BP'
+					for (const packType of Object.keys(packTypes)) {
+						if (path.includes(packTypes[packType]))
+							pathPackType = packType
+					}
+					project.tabSystem?.add(
+						new FindAndReplaceTab(project.tabSystem!, {
+							searchType: ESearchType.matchCase,
+							includeFiles: path.replace(
+								packTypes[pathPackType],
+								pathPackType
+							),
+							excludeFiles: '',
+						})
+					)
+				},
+			},
 		]
 	}
 

@@ -24,7 +24,6 @@ interface IMoveResult {
 }
 
 export async function moveHandle(opts: IMoveOptions): Promise<IMoveResult> {
-	console.log('MOVE')
 	if (opts.moveHandle.kind === 'file')
 		return await moveFileHandle(<IMoveOptions<AnyFileHandle>>opts)
 	else if (opts.moveHandle.kind === 'directory')
@@ -120,7 +119,6 @@ async function moveDirectoryHandle({
 	await iterateDir(
 		moveHandle,
 		async (fileHandle, filePath, fromHandle) => {
-			console.log('moving', filePath)
 			await moveFileHandle(
 				{
 					moveHandle: fileHandle,

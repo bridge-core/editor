@@ -1,8 +1,7 @@
 import { DirectoryWrapper } from '../../DirectoryView/DirectoryWrapper'
 import { clipboard } from './Copy'
 import { App } from '/@/App'
-import { AnyDirectoryHandle, AnyHandle } from '/@/components/FileSystem/Types'
-import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/BaseWrapper'
+import { AnyHandle } from '/@/components/FileSystem/Types'
 import { basename, extname } from '/@/utils/path'
 
 export const PasteAction = (directoryWrapper: DirectoryWrapper) => ({
@@ -70,10 +69,10 @@ function findSuitableFileName(
 			newName = `${newName} copy`
 		} else {
 			// 2. Add a number to the end of the name
-			// Get the current name
+			// Get the number from the end of the name
 			const number = parseInt(newName.match(/copy (\d+)/)?.[1] ?? '1')
 			// Remove the last number and add the new one
-			newName = newName.replace(/ copy \d+$/, '') + ` copy ${number + 1}`
+			newName = newName.replace(/ \d+$/, '') + ` ${number + 1}`
 		}
 	}
 
@@ -87,14 +86,16 @@ function findSuitableFolderName(
 	let newName = name
 
 	while (children?.find((child) => child.name === newName)) {
-		if (!newName.endsWith(' copy')) {
+		console.log(newName)
+		if (!newName.includes(' copy')) {
 			// 1. Add "copy" to the end of the name
 			newName = `${newName} copy`
 		} else {
 			// 2. Add a number to the end of the name
-			const number = parseInt(newName.match(/copy (\d+)/)![1])
-			newName = `${newName} copy ${number + 1}`
+			const number = parseInt(newName.match(/copy (\d+)/)?.[1] ?? '1')
+			newName = newName.replace(/ \d+$/, '') + ` ${number + 1}`
 		}
+		console.log('After: ' + newName)
 	}
 
 	return newName
