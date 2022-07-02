@@ -6,6 +6,8 @@ import {
 } from '/@/components/Projects/Export/Extensions/Exporter'
 import { TPackTypeId } from '/@/components/Data/PackType'
 import { Project } from '/@/components/Projects/Project/Project'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { IOpenTabOptions } from '/@/components/TabSystem/TabSystem'
 
 export const ProjectModule = async ({
 	disposables,
@@ -59,6 +61,10 @@ export const ProjectModule = async ({
 			disposables.push(disposable)
 
 			return disposable
+		},
+
+		async openFile(fileHandle: AnyFileHandle, opts: IOpenTabOptions) {
+			await app.project.openFile(fileHandle, opts)
 		},
 	}
 }
