@@ -19,6 +19,7 @@ export async function iterateDir(
 
 		if (handle.kind === 'file') {
 			if (handle.name[0] === '.') continue
+
 			await callback(handle, currentPath, baseDirectory)
 		} else if (
 			handle.kind === 'directory' &&

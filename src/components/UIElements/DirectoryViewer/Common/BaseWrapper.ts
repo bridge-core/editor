@@ -6,6 +6,8 @@ import { moveHandle } from '/@/utils/file/moveHandle'
 import { ref } from '@vue/composition-api'
 import type { FileWrapper } from '../FileView/FileWrapper'
 import { platform } from '/@/utils/os'
+import { renameHandle } from '/@/utils/file/renameHandle'
+import { AnyHandle } from '/@/components/FileSystem/Types'
 
 export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	public abstract readonly kind: 'file' | 'directory'
@@ -43,8 +45,12 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 		return this.parent
 	}
 
-	isSame(child: BaseWrapper<any>) {
-		return child.name === this.name && child.kind === this.kind
+	async isSame(child: BaseWrapper<any>) {
+		try {
+			return await child.handle.isSameEntry(this.handle)
+		} catch {
+			return false
+		}
 	}
 
 	abstract readonly icon: string
@@ -145,11 +151,63 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 		// Sort parent's children
 		directoryWrapper.sort()
 	}
+	async rename(newName: string) {
+		// No rename actually happened
+		if (this.name === newName) return
+
+		// Store old path and old parent handle
+		const fromPath = this.path!
+		const fromParent = this.parent!
+
+		// Rename the file handle
+		const { type, handle: newHandle } = await renameHandle({
+			parentHandle: fromParent.handle,
+			renameHandle: this.handle,
+			newName,
+		})
+
+		if (newHandle) {
+			// If necessary, update the handle reference
+			// @ts-ignore This works because newHandle always has the same type as this.handle
+			this.handle = newHandle
+		}
+
+		if (type === 'cancel') return
+
+		if (type === 'overwrite') {
+			// We need to remove the duplicate FileWrapper
+			this.getParent()!.children.value = this.getParent()!.children.value!.filter(
+				(child) =>
+					child === <DirectoryWrapper | FileWrapper>(<unknown>this) ||
+					!child.isSame(
+						<DirectoryWrapper | FileWrapper>(<unknown>this)
+					)
+			)
+		}
+
+		// Call onHandleMoved
+		this.options.onHandleMoved?.({
+			fromHandle: fromParent.handle,
+			fromPath,
+			toPath: this.path!,
+			toHandle: this.parent!.handle,
+		})
+
+		// TODO: Update compiler & ideally change open tabs to use correct handle
+
+		await this.parent!.refresh()
+	}
 
 	startRename() {
+		if (this.options.isReadOnly) return
+
 		this.isEditingName.value = true
 	}
-	async confirmRename() {
+	async confirmRename(newName: string) {
+		if (!newName) return
+
 		this.isEditingName.value = false
+
+		await this.rename(newName)
 	}
 }

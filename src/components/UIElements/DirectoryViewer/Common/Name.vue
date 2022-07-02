@@ -7,8 +7,7 @@
 		class="directory-viewer-name d-flex justify-center align-center px-1 rounded-lg"
 		:class="{ selected: baseWrapper.isSelected.value }"
 		@click.prevent="onClick($event)"
-		@keydown.space.exact.prevent="isFocused ? onClick($event) : null"
-		@keydown.enter.prevent="onEnter"
+		@keydown.space.prevent="isFocused ? onClick($event) : null"
 		@keydown.stop="onKeyDown"
 		@click.right.prevent="baseWrapper.onRightClick($event)"
 		@focus.exact="onFocus"
@@ -39,9 +38,11 @@
 			dense
 			hide-details
 			height="20px"
-			@blur="baseWrapper.confirmRename()"
-			@keydown.enter.stop.prevent="baseWrapper.confirmRename()"
-			@keydown.space.prevent
+			@blur="cancelRename"
+			@keydown.enter.stop.prevent="confirmRename"
+			@keydown.esc.stop.prevent="cancelRename"
+			@keydown.space.prevent.stop.native
+			:rules="[rules.validName, rules.required]"
 		/>
 
 		<v-spacer />
@@ -83,6 +84,10 @@ export default {
 		isFocused: false,
 
 		currentName: '',
+		rules: {
+			required: (name) => !!name,
+			validName: (name) => /^[^\\/:*?"<>|]*$/.test(name),
+		},
 	}),
 	methods: {
 		onEnter(event) {
@@ -96,6 +101,14 @@ export default {
 			this.select()
 		},
 		onKeyDown(event) {
+			if (event.code === 'Enter') {
+				// Enter to rename on darwin platforms
+				this.onEnter(event)
+			} else if (platform() !== 'darwin' && event.code === 'F2') {
+				// F2 to start rename on non-darwin platforms
+				this.baseWrapper.startRename()
+			}
+
 			if (platform() === 'darwin' && !event.metaKey) return
 			if (platform() !== 'darwin' && !event.ctrlKey) return
 
@@ -113,6 +126,19 @@ export default {
 			} else if (event.code === 'Backspace') {
 				DeleteAction(this.baseWrapper).onTrigger()
 			}
+		},
+
+		cancelRename() {
+			this.baseWrapper.isEditingName.value = false
+		},
+		confirmRename() {
+			if (
+				!this.rules.validName(this.currentName) ||
+				this.currentName.length === 0
+			)
+				return
+
+			this.baseWrapper.confirmRename(this.currentName)
 		},
 
 		focus() {

@@ -24,6 +24,7 @@ interface IMoveResult {
 }
 
 export async function moveHandle(opts: IMoveOptions): Promise<IMoveResult> {
+	console.log('MOVE')
 	if (opts.moveHandle.kind === 'file')
 		return await moveFileHandle(<IMoveOptions<AnyFileHandle>>opts)
 	else if (opts.moveHandle.kind === 'directory')
@@ -34,7 +35,7 @@ export async function moveHandle(opts: IMoveOptions): Promise<IMoveResult> {
 	}
 }
 
-async function moveFileHandle(
+export async function moveFileHandle(
 	{ fromHandle, toHandle, moveHandle }: IMoveOptions<AnyFileHandle>,
 	forceWrite = false
 ): Promise<IMoveResult> {
@@ -45,10 +46,11 @@ async function moveFileHandle(
 			forceWrite,
 		})
 
-		return {
-			type: moveStatus,
-			handle: moveHandle,
-		}
+		if (moveStatus !== 'moveFailed')
+			return {
+				type: moveStatus,
+				handle: moveHandle,
+			}
 	}
 
 	// Move is not available, we need to copy over the file manually
@@ -83,18 +85,19 @@ async function moveDirectoryHandle({
 	toHandle,
 	moveHandle,
 }: IMoveOptions<AnyDirectoryHandle>): Promise<IMoveResult> {
-	try {
-		if (typeof (<any>moveHandle).move === 'function') {
-			const result = await tryMove({
-				moveHandle,
-				toDirectory: toHandle,
-			})
+	if (typeof (<any>moveHandle).move === 'function') {
+		const moveStatus = await tryMove({
+			moveHandle,
+			toDirectory: toHandle,
+		})
+		console.log(moveStatus)
+
+		if (moveStatus !== 'moveFailed')
 			return {
-				type: result,
+				type: moveStatus,
 				handle: moveHandle,
 			}
-		}
-	} catch {}
+	}
 
 	// Native move is not availble, we need to manually move over the folder
 	const destFs = new FileSystem(toHandle)
@@ -117,6 +120,7 @@ async function moveDirectoryHandle({
 	await iterateDir(
 		moveHandle,
 		async (fileHandle, filePath, fromHandle) => {
+			console.log('moving', filePath)
 			await moveFileHandle(
 				{
 					moveHandle: fileHandle,

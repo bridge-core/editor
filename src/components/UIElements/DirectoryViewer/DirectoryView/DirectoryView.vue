@@ -4,7 +4,7 @@
 		:open="directoryWrapper.isOpen.value"
 		@dragenter.stop="onDragEnter"
 		@dragleave.stop="onDragLeave"
-		@drop.stop.prevent="onDrop"
+		@drop.stop="onDrop"
 	>
 		<Name
 			v-if="renderDirectoryName"
@@ -98,6 +98,10 @@ export default {
 			const clipboardHandle = clipboard.item
 
 			const dataTransferItems = [...(event.dataTransfer?.items ?? [])]
+			if (dataTransferItems.length === 0) return
+
+			event.preventDefault()
+
 			const pasteAction = PasteAction(this.directoryWrapper)
 			for (const item of dataTransferItems) {
 				const handle = await item.getAsFileSystemHandle()
@@ -126,6 +130,7 @@ export default {
 			this.directoryWrapper.isSelected.value = true
 		},
 		draggedHandle(dragEvent) {
+			console.log(dragEvent)
 			if (dragEvent.moved) {
 				const { newIndex, oldIndex, element } = dragEvent.moved
 				this.directoryWrapper.children.value.splice(newIndex, 1)

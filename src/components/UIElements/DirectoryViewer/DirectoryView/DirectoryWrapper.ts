@@ -26,14 +26,19 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 	}
 
 	protected async getChildren() {
-		const children = []
+		const children: (DirectoryWrapper | FileWrapper)[] = []
 
-		for await (const entry of this.handle.values()) {
-			if (entry.kind === 'directory')
-				children.push(new DirectoryWrapper(this, entry, this.options))
-			else if (entry.kind === 'file' && !ignoreFiles.includes(entry.name))
-				children.push(new FileWrapper(this, entry, this.options))
+		try {
+			for await (const entry of this.handle.values()) {
+				if (entry.kind === 'directory')
+					children.push(new DirectoryWrapper(this, entry, this.options))
+				else if (entry.kind === 'file' && !ignoreFiles.includes(entry.name))
+					children.push(new FileWrapper(this, entry, this.options))
+			}
+		} catch(err) {
+			console.error("Trying to access non-existent directory", this.path)
 		}
+		
 
 		this.sortChildren(children)
 
@@ -60,39 +65,44 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 
 		this.children.value = await this.getChildren()
 	}
+	protected getOpenFolders(currentPath: string[] = []) {
+		const openFolders: string[][] = []
 
-	async refresh() {
-		const oldChildren = this.children.value ?? []
-		const newChildren = await this.getChildren()
-
-		for (let i = 0; i < oldChildren.length; i++) {
-			const currentChild = oldChildren[i]
-
-			if (newChildren.some((child) => child.isSame(currentChild))) {
-				// Refresh folders which still exist
-				if (currentChild.kind === 'directory')
-					await currentChild.refresh()
-			} else {
-				// Remove deleted folders/files
-				oldChildren.splice(i, 1)
-			}
+		if (this.isOpen.value && currentPath.length !== 0) {
+			openFolders.push(currentPath)
 		}
 
-		// Add newly added files & folders
-		const newlyAdded = newChildren.filter(
-			(child) =>
-				!oldChildren.some((currentChild) =>
-					currentChild.isSame(child)
-				)
-		)
-		oldChildren.push(
-			...newlyAdded
-		)
+		if (this.children.value) {
+			this.children.value.forEach((child) => {
+				if (child.kind === 'directory') {
+					openFolders.push(...child.getOpenFolders(currentPath ? [...currentPath, child.name] : [child.name]))
+				}
+			})
+		}
 
-		// Sort children
-		this.sortChildren(oldChildren)
+		return openFolders
+	}
+	protected async openFolderPaths(paths: string[][], children: (DirectoryWrapper | FileWrapper)[]) {
+		if (paths.length === 0) return
 
-		this.children.value = oldChildren
+		for(const path of paths) {
+			const folder = <DirectoryWrapper | undefined> children.find((child) => child.name === path[0] && child.kind === 'directory')
+
+			if (folder) {
+				await folder.open()
+				if(folder.children.value) await folder.openFolderPaths([path.slice(1)], folder.children.value)
+			}
+		}
+	}
+
+	async refresh() {
+		const openPaths = this.getOpenFolders([])
+
+		const newChildren = await this.getChildren()
+
+		await this.openFolderPaths(openPaths, newChildren)
+
+		this.children.value = newChildren
 	}
 	sort() {
 		if (this.children.value) this.sortChildren(this.children.value)
@@ -115,6 +125,8 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 		}
 	}
 	async open(deep=false) {
+		if(this.isOpen.value && !deep) return
+
 		// Folder is closed, did we load folder contents already?
 		if (this.children.value) {
 			// Yes, open folder
