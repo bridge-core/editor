@@ -21,7 +21,9 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	) {}
 
 	get name() {
-		return this.handle.name
+		return this.handle.name === ''
+			? this.options.startPath ?? ''
+			: this.handle.name
 	}
 	get path(): string | null {
 		if (!this.parent) return this.options.startPath ?? null

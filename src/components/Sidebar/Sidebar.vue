@@ -24,8 +24,8 @@
 
 		<v-list>
 			<SidebarButton
-				v-for="sidebar in sidebarElements"
-				:key="`${sidebar.uuid}`"
+				v-for="(sidebar, i) in sidebarElements"
+				:key="`${sidebar.uuid}//${i}`"
 				:displayName="sidebar.displayName"
 				:icon="sidebar.icon"
 				:isLoading="sidebar.isLoading"
@@ -114,6 +114,7 @@ export default {
 			},
 		},
 		sidebarElements() {
+			console.log(SidebarState.sidebarElements)
 			return Object.values(SidebarState.sidebarElements).filter(
 				(sidebar) => sidebar.isVisible
 			)

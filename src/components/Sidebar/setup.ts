@@ -60,8 +60,9 @@ export async function setupSidebar() {
 	})
 
 	SettingsWindow.loadedSettings.once((settingsState) => {
+		console.log(settingsState.sidebar.sidebarElements)
 		for (const sidebar of Object.values(SidebarState.sidebarElements)) {
-			sidebar.isVisible =
+			sidebar.isVisibleSetting =
 				settingsState?.sidebar?.sidebarElements?.[sidebar.uuid] ?? true
 		}
 	})

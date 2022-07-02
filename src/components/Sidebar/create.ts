@@ -2,15 +2,15 @@ import { SidebarState, toggle } from './state'
 import { v4 as uuid } from 'uuid'
 import { Component } from 'vue'
 import type { IDisposable } from '/@/types/disposable'
-import { App } from '/@/App'
 import { SidebarContent } from './Content/SidebarContent'
 import { del, set, watch, WatchStopHandle } from '@vue/composition-api'
+import { settingsState } from '../Windows/Settings/SettingsState'
 
 export interface ISidebar {
 	id?: string
 	icon?: string
 	displayName?: string
-	isVisible?: boolean
+	isVisible?: boolean | (() => boolean)
 	component?: Component
 	sidebarContent?: SidebarContent
 	disabled?: () => boolean
@@ -43,15 +43,14 @@ export interface IBadge {
 export class SidebarElement {
 	protected sidebarUUID: string
 	isLoading = false
-	isVisible = true
 	isSelected = false
 	stopHandle: WatchStopHandle | undefined
 	badge: IBadge | null = null
+	isVisibleSetting?: boolean = undefined
 
 	constructor(protected config: ISidebar) {
 		this.sidebarUUID = config.id ?? uuid()
 		set(SidebarState.sidebarElements, this.sidebarUUID, this)
-		if (config.isVisible) this.isVisible = config.isVisible
 
 		if (this.config.component) {
 			const component = this.config.component
@@ -75,6 +74,12 @@ export class SidebarElement {
 
 	get isDisabled() {
 		return this.config.disabled?.() ?? false
+	}
+	get isVisible() {
+		if (typeof this.config.isVisible === 'function')
+			return this.config.isVisible()
+
+		return this.config.isVisible ?? !!this.isVisibleSetting
 	}
 	get icon() {
 		return this.config.icon

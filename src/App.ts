@@ -45,6 +45,7 @@ import { AnyDirectoryHandle } from './components/FileSystem/Types'
 import { getStorageDirectory } from './utils/getStorageDirectory'
 import { FolderImportManager } from './components/ImportFolder/manager'
 import { StartParamManager } from './components/StartParams/Manager'
+import { ViewFolders } from './components/ViewFolders/ViewFolders'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -66,6 +67,7 @@ export class App {
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>
 
+	public readonly viewFolders = new ViewFolders()
 	public readonly packExplorer = new PackExplorer()
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this.keyBindingManager)

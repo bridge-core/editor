@@ -27,7 +27,19 @@ export class FolderImportManager {
 			icon: 'mdi-folder-open-outline',
 			name: 'fileDropper.importMethod.folder.open.name',
 			description: 'fileDropper.importMethod.folder.open.description',
-			onSelect: async (directoryHandle) => {},
+			onSelect: async (directoryHandle) => {
+				const app = await App.getApp()
+
+				try {
+					await directoryHandle.requestPermission({
+						mode: 'readwrite',
+					})
+				} catch {
+					return
+				}
+
+				app.viewFolders.addDirectoryHandle(directoryHandle)
+			},
 		})
 	}
 

@@ -3,7 +3,7 @@
 		<ActionViewer
 			v-for="(sidebar, id) in sidebarState"
 			:key="id"
-			:selected="sidebar.isVisible"
+			:selected="sidebar.isVisibleSetting"
 			:action="{ ...sidebar.config, name: sidebar.displayName }"
 			hideTriggerButton
 			v-ripple
@@ -26,14 +26,14 @@ export default {
 	},
 	methods: {
 		onClick(sidebar) {
-			sidebar.isVisible = !sidebar.isVisible
+			sidebar.isVisibleSetting = !sidebar.isVisibleSetting
 
 			if (!settingsState.sidebar) settingsState.sidebar = {}
 			if (!settingsState.sidebar.sidebarElements)
 				settingsState.sidebar.sidebarElements = {}
 
 			settingsState.sidebar.sidebarElements[sidebar.uuid] =
-				sidebar.isVisible
+				sidebar.isVisibleSetting
 		},
 	},
 }
