@@ -53,6 +53,7 @@ import { SimpleAction } from '../Actions/SimpleAction'
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { CommandBarExtensionItems } from '../Extensions/Scripts/Modules/CommandBar'
+import { getDefaultFileIcon } from '/@/utils/file/getIcon'
 
 export default {
 	mixins: [TranslationMixin],
@@ -116,7 +117,7 @@ export default {
 				return new SimpleAction({
 					name: `[${project.relativePath(filePath)}]`,
 					description: 'actions.openFile.name',
-					icon: fileType?.icon ?? 'mdi-file-outline',
+					icon: fileType?.icon ?? getDefaultFileIcon(filePath),
 					color: packType?.color ?? 'primary',
 
 					onTrigger: async () => {
