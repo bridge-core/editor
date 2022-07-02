@@ -50,6 +50,5 @@ export class ViewFolders extends SidebarContent {
 		this.directoryHandles.push({ handle: directoryHandle, startPath })
 
 		if (!this.sidebarElement.isSelected) this.sidebarElement.click()
-		console.log(this.directoryHandles)
 	}
 }
