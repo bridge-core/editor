@@ -7,6 +7,7 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { shareFile } from '../StartParams/Action/openRawFile'
+import { getDefaultFileIcon } from '/@/utils/file/getIcon'
 
 export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	abstract component: Vue.Component
@@ -90,7 +91,10 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		return this.path.split('/').slice(2).join('/')
 	}
 	get icon() {
-		return App.fileType.get(this.getPath())?.icon ?? 'mdi-file-outline'
+		return (
+			App.fileType.get(this.getPath())?.icon ??
+			getDefaultFileIcon(this.getPath())
+		)
 	}
 	get iconColor() {
 		return App.packType.get(this.getPath())?.color
