@@ -2,6 +2,7 @@ import { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
 import { CopyAction } from './Actions/Copy'
 import { DeleteAction } from './Actions/Delete'
 import { PasteAction } from './Actions/Paste'
+import { RenameAction } from './Actions/Rename'
 import { RevealFilePathAction } from './Actions/RevealFilePath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
@@ -9,6 +10,7 @@ import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 
 interface IFolderOptions {
 	hideDelete?: boolean
+	hideRename?: boolean
 }
 export async function showFolderContextMenu(
 	event: MouseEvent,
@@ -71,6 +73,7 @@ export async function showFolderContextMenu(
 		{ type: 'divider' },
 		CopyAction(directoryWrapper),
 		PasteAction(directoryWrapper),
+		options.hideRename ? null : RenameAction(directoryWrapper),
 		options.hideDelete ? null : DeleteAction(directoryWrapper),
 		// {
 		// 	icon: 'mdi-pencil-outline',

@@ -141,6 +141,7 @@ export class PackExplorer extends SidebarContent {
 
 		showFolderContextMenu(event, this.directoryEntries[selectedId], {
 			hideDelete: true,
+			hideRename: true,
 		})
 	}
 

@@ -2,6 +2,7 @@ import { FileWrapper } from '../FileView/FileWrapper'
 import { CopyAction } from './Actions/Copy'
 import { DeleteAction } from './Actions/Delete'
 import { PasteAction } from './Actions/Paste'
+import { RenameAction } from './Actions/Rename'
 import { RevealFilePathAction } from './Actions/RevealFilePath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
@@ -15,6 +16,7 @@ export async function showFileContextMenu(
 	const mutatingActions = <const>[
 		CopyAction(fileWrapper),
 		PasteAction(fileWrapper.getParent()!),
+		RenameAction(fileWrapper),
 		DeleteAction(fileWrapper),
 
 		// {
