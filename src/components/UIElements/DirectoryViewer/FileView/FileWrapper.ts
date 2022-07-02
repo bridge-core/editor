@@ -13,6 +13,7 @@ const extIconMap: Record<string, string[]> = {
 	'mdi-language-html5': ['.html'],
 	'mdi-language-typescript': ['.ts', '.tsx'],
 	'mdi-language-javascript': ['.js', '.jsx'],
+	'mdi-web': ['.lang']
 }
 
 export class FileWrapper extends BaseWrapper<AnyFileHandle> {
