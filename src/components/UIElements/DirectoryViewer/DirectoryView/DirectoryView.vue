@@ -19,7 +19,7 @@
 			:class="{ 'ml-2': renderDirectoryName }"
 			v-model="directoryWrapper.children.value"
 			group="directory-view"
-			:disabled="isReadOnly"
+			:disabled="isReadOnly || pointerDevice === 'touch'"
 			@start="isDraggingWrapper = true"
 			@end="isDraggingWrapper = false"
 			@change="draggedHandle"
@@ -57,6 +57,7 @@ import Name from '../Common/Name.vue'
 import { clipboard } from '../ContextMenu/Actions/Copy'
 import { PasteAction } from '../ContextMenu/Actions/Paste'
 import { isDraggingWrapper } from '../Common/DraggingWrapper'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'DirectoryView',
@@ -71,6 +72,7 @@ export default {
 	setup() {
 		return {
 			isDraggingWrapper,
+			pointerDevice,
 		}
 	},
 	data: () => ({

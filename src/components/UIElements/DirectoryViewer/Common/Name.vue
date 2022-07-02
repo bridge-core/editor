@@ -50,6 +50,17 @@
 		<v-icon v-if="isFocused" :color="baseWrapper.color">
 			mdi-circle-small
 		</v-icon>
+
+		<!-- Context menu button for touch -->
+		<v-btn
+			v-if="pointerDevice === 'touch'"
+			text
+			icon
+			small
+			@click="baseWrapper.onRightClick($event)"
+		>
+			<v-icon> mdi-dots-vertical-circle-outline </v-icon>
+		</v-btn>
 	</component>
 </template>
 
@@ -60,6 +71,7 @@ import { PasteAction } from '../ContextMenu/Actions/Paste'
 import { BaseWrapper } from './BaseWrapper'
 import { useDoubleClick } from '/@/components/Composables/DoubleClick'
 import { platform } from '/@/utils/os'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	props: {
@@ -77,6 +89,7 @@ export default {
 
 		return {
 			onClick,
+			pointerDevice,
 		}
 	},
 
