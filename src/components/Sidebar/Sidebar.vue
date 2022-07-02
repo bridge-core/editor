@@ -114,7 +114,6 @@ export default {
 			},
 		},
 		sidebarElements() {
-			console.log(SidebarState.sidebarElements)
 			return Object.values(SidebarState.sidebarElements).filter(
 				(sidebar) => sidebar.isVisible
 			)
