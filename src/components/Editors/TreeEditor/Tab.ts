@@ -39,7 +39,6 @@ export class TreeTab extends FileTab {
 		readOnlyMode?: TReadOnlyMode
 	) {
 		super(parent, fileHandle, readOnlyMode)
-		console.log(readOnlyMode)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()

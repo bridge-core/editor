@@ -6,11 +6,8 @@ import PackExplorerComponent from './PackExplorer.vue'
 import ProjectDisplayComponent from './ProjectDisplay.vue'
 import { DirectoryEntry } from './DirectoryEntry'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
-import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { markRaw, set } from '@vue/composition-api'
-import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
-import { dirname, extname, join } from '/@/utils/path'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 import { exportAsBrproject } from '/@/components/Projects/Export/AsBrproject'
@@ -22,10 +19,10 @@ import {
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
-import { platform } from '/@/utils/os'
 import { Project } from '../Projects/Project/Project'
 import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
 import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu/Folder'
+import { ViewCompilerOutput } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ViewCompilerOutput'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -96,6 +93,10 @@ export class PackExplorer extends SidebarContent {
 				await app.fileSystem.getDirectoryHandle(pack.packPath),
 				{
 					startPath: pack.packPath,
+
+					provideFileContextMenu: (fileWrapper) => [
+						ViewCompilerOutput(fileWrapper),
+					],
 				}
 			)
 			await wrapper.open()
