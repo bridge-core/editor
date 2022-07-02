@@ -11,7 +11,10 @@ export class ViewFolders extends SidebarContent {
 	actions: SidebarAction[] = []
 	directoryEntries: Record<string, AnyDirectoryHandle> = {}
 	topPanel: InfoPanel | undefined = undefined
-	protected directoryHandles: AnyDirectoryHandle[] = []
+	protected directoryHandles: {
+		handle: AnyDirectoryHandle
+		startPath?: string
+	}[] = []
 	protected sidebarElement: SidebarElement
 
 	constructor() {
@@ -40,8 +43,11 @@ export class ViewFolders extends SidebarContent {
 		)
 	}
 
-	addDirectoryHandle(directoryHandle: AnyDirectoryHandle) {
-		this.directoryHandles.push(directoryHandle)
+	addDirectoryHandle(
+		directoryHandle: AnyDirectoryHandle,
+		startPath?: string
+	) {
+		this.directoryHandles.push({ handle: directoryHandle, startPath })
 
 		if (!this.sidebarElement.isSelected) this.sidebarElement.click()
 		console.log(this.directoryHandles)

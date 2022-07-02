@@ -1,11 +1,16 @@
 <template>
 	<div class="my-1">
 		<DirectoryViewer
-			v-for="(dirHandle, i) in sidebarContent.directoryHandles"
+			v-for="(
+				{ handle, startPath }, i
+			) in sidebarContent.directoryHandles"
 			class="mb-2"
 			:key="i"
-			:directoryHandle="dirHandle"
+			:directoryHandle="handle"
 			:renderTopLevelDirectory="true"
+			:options="{
+				startPath,
+			}"
 		/>
 	</div>
 </template>

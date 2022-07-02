@@ -484,7 +484,6 @@ export async function setupSettings(settings: SettingsWindow) {
 				description:
 					'[Clear data from bridge-core/editor-packages repository]',
 				onClick: async () => {
-					const app = await App.getApp()
 					await set('savedAllDataInIdb', false)
 				},
 			})
@@ -495,9 +494,23 @@ export async function setupSettings(settings: SettingsWindow) {
 				name: '[Reset initial setup]',
 				description: '[Resets editor type and com.mojang selection]',
 				onClick: async () => {
-					const app = await App.getApp()
 					await del('didChooseEditorType')
 					await del(comMojangKey)
+				},
+			})
+		)
+		settings.addControl(
+			new Button({
+				category: 'developers',
+				name: '[Open local fs]',
+				description: '[Open the local fs within the editor]',
+				onClick: async () => {
+					const app = await App.getApp()
+
+					app.viewFolders.addDirectoryHandle(
+						await navigator.storage.getDirectory(),
+						'~local'
+					)
 				},
 			})
 		)
