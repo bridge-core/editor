@@ -73,7 +73,7 @@ export async function showFileContextMenu(
 				)
 				await project?.openFile(fileHandle, {
 					selectTab: true,
-					isReadOnly: true,
+					readOnlyMode: 'forced',
 				})
 			},
 		},

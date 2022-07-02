@@ -8,7 +8,7 @@ import { Project } from '../Projects/Project/Project'
 import { OpenedFiles } from './OpenedFiles'
 import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
-import { FileTab } from './FileTab'
+import { FileTab, TReadOnlyMode } from './FileTab'
 import { TabProvider } from './TabProvider'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { hide as hideSidebar } from '../Sidebar/state'
@@ -17,7 +17,7 @@ import { reactive } from '@vue/composition-api'
 export interface IOpenTabOptions {
 	selectTab?: boolean
 	isTemporary?: boolean
-	isReadOnly?: boolean
+	readOnlyMode?: TReadOnlyMode
 }
 
 export class TabSystem extends MonacoHolder {
@@ -81,11 +81,11 @@ export class TabSystem extends MonacoHolder {
 		fileHandle: AnyFileHandle,
 		{
 			selectTab = true,
-			isReadOnly = false,
+			readOnlyMode = 'off',
 			isTemporary = true,
 		}: IOpenTabOptions = {}
 	) {
-		const tab = await this.getTabFor(fileHandle, isReadOnly)
+		const tab = await this.getTabFor(fileHandle, readOnlyMode)
 
 		// Default value is true so we only need to update if the caller wants to create a permanent tab
 		if (!isTemporary) tab.isTemporary = false
@@ -99,18 +99,20 @@ export class TabSystem extends MonacoHolder {
 		return await this.open(fileHandle, options)
 	}
 
-	protected async getTabFor(fileHandle: AnyFileHandle, isReadOnly = false) {
+	protected async getTabFor(
+		fileHandle: AnyFileHandle,
+		readOnlyMode: TReadOnlyMode = 'off'
+	) {
 		let tab: Tab | undefined = undefined
 		for (const CurrentTab of this.tabTypes) {
 			if (await CurrentTab.is(fileHandle)) {
 				// @ts-ignore
-				tab = new CurrentTab(this, fileHandle, isReadOnly)
+				tab = new CurrentTab(this, fileHandle, readOnlyMode)
 				break
 			}
 		}
 		// Default tab type: Text editor
-		if (!tab)
-			tab = new TextTab(this, fileHandle, isReadOnly ? 'forced' : 'off')
+		if (!tab) tab = new TextTab(this, fileHandle, readOnlyMode)
 
 		return await tab.fired
 	}

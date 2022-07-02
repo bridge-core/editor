@@ -30,7 +30,7 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 
 		await app.project.openFile(this.handle, {
 			selectTab: true,
-			isReadOnly: this.options.isReadOnly,
+			readOnlyMode: this.options.isReadOnly ? 'forced' : 'off',
 			isTemporary: !persistFile,
 		})
 	}

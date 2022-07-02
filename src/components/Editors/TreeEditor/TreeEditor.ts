@@ -87,10 +87,6 @@ export class TreeEditor {
 	}
 
 	updateSuggestions = debounce(async () => {
-		this.propertySuggestions = []
-		this.valueSuggestions = []
-		this.editSuggestions = []
-
 		const currentFormatVersion: string =
 			(<any>this.tree.toJSON()).format_version ||
 			this.parent.project.config.get().targetVersion ||
@@ -146,8 +142,11 @@ export class TreeEditor {
 						suggestion.type === 'valueArray'
 				)
 			)
+		} else {
+			this.valueSuggestions = []
 		}
 
+		this.editSuggestions = []
 		// Support auto-completions for value edits
 		if (isValueSelection && tree instanceof PrimitiveTree) {
 			this.editSuggestions = filterDuplicates(
