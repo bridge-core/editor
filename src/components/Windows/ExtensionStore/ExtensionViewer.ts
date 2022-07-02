@@ -67,9 +67,6 @@ export class ExtensionViewer {
 	get isInstalled() {
 		return this._isInstalled
 	}
-	get displayVersion() {
-		return this.manifest.version
-	}
 	get actions() {
 		return extensionActions(this)
 	}
@@ -78,6 +75,9 @@ export class ExtensionViewer {
 	}
 	get isGlobal() {
 		return this.connected?.isGlobal ?? false
+	}
+	get onlineVersion() {
+		return this.config.version
 	}
 
 	hasTag(tag: ExtensionTag) {

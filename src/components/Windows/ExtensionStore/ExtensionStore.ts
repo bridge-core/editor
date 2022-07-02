@@ -75,7 +75,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 				if (
 					compareVersions(
 						installedExtension.version,
-						extension.version,
+						extension.onlineVersion,
 						'<'
 					)
 				) {

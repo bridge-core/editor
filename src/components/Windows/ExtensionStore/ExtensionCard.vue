@@ -186,7 +186,7 @@ export default {
 				},
 				{
 					icon: 'mdi-code-braces',
-					text: this.extension.displayVersion,
+					text: this.extension.onlineVersion,
 					type: 'search',
 				},
 			].concat(this.extension.tags)
