@@ -10,7 +10,6 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { markRaw } from '@vue/composition-api'
 import { loadMonaco, useMonaco } from '../../../utils/libs/useMonaco'
-import { anyMonacoThemeLoaded } from '/@/components/Extensions/Themes/MonacoSubTheme'
 import { wait } from '/@/utils/wait'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(

@@ -9,6 +9,8 @@ import { FunctionValidatorTab } from '../../Editors/FunctionValidator/Tab'
 import { BlockModelTab } from '/@/components/Editors/BlockModel/Tab'
 import { CommandData } from '/@/components/Languages/Mcfunction/Data'
 import { WorldTab } from '/@/components/BedrockWorlds/Render/Tab'
+import { FileTab } from '../../TabSystem/FileTab'
+import { HTMLPreviewTab } from '../../Editors/HTMLPreview/HTMLPreview'
 
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{
@@ -58,6 +60,27 @@ export class BedrockProject extends Project {
 		bedrockPreviews.forEach((tabPreview) =>
 			this.tabActionProvider.registerPreview(tabPreview)
 		)
+
+		this.tabActionProvider.register({
+			name: 'preview.name',
+			icon: 'mdi-play',
+			isFor: (tab) => {
+				return (
+					tab instanceof FileTab &&
+					tab.getFileHandle().name.endsWith('.html')
+				)
+			},
+			trigger: (tab) => {
+				const inactiveTabSystem = this.app.project.inactiveTabSystem
+				if (!inactiveTabSystem) return
+
+				inactiveTabSystem.add(
+					new HTMLPreviewTab(tab, inactiveTabSystem)
+				)
+				inactiveTabSystem.setActive(true)
+			},
+		})
+
 		this.commandData.loadCommandData('minecraftBedrock')
 	}
 

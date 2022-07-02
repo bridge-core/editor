@@ -293,4 +293,9 @@ summary::-webkit-details-marker {
 .theme--light .outlined {
 	border-color: #a4a4a4;
 }
+
+input,
+textarea {
+	color: var(--v-text-base);
+}
 </style>

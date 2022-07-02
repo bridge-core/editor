@@ -4,17 +4,8 @@ import type { IDirectoryViewerOptions } from '../DirectoryStore'
 import type { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
 import { App } from '/@/App'
 import { showFileContextMenu } from '../ContextMenu/File'
-import { extname } from '/@/utils/path'
+import { getDefaultFileIcon } from '/@/utils/file/getIcon'
 
-const extIconMap: Record<string, string[]> = {
-	'mdi-file-image-outline': ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.tga'],
-	'mdi-code-json': ['.json'],
-	'mdi-volume-high': ['.mp3', '.wav', '.fsb', '.ogg'],
-	'mdi-language-html5': ['.html'],
-	'mdi-language-typescript': ['.ts', '.tsx'],
-	'mdi-language-javascript': ['.js', '.jsx'],
-	'mdi-web': ['.lang']
-}
 
 export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 	public readonly kind = 'file'
@@ -29,20 +20,9 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 
 	get icon() {
 		const path = this.path
-		if (!path) return this.getDefaultIcon()
+		if (!path) return getDefaultFileIcon(this.handle.name)
 
-		return App.fileType.get(path)?.icon ?? this.getDefaultIcon()
-	}
-
-	getDefaultIcon() {
-		let name = this.handle.name
-
-		const ext = extname(name)
-		for (const [icon, exts] of Object.entries(extIconMap)) {
-			if (exts.includes(ext)) return icon
-		}
-
-		return 'mdi-file-outline'
+		return App.fileType.get(path)?.icon ?? getDefaultFileIcon(this.handle.name)
 	}
 
 	async openFile(persistFile=false) {
