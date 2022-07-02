@@ -34,28 +34,33 @@ export class ExtensionViewer {
 
 	//#region Config getters
 	get author() {
-		return this.config.author
+		return this.manifest.author
 	}
 	get name() {
-		return this.config.name
+		return this.manifest.name
 	}
 	get version() {
-		return this.config.version
+		return this.manifest.version
 	}
 	get description() {
-		return this.config.description
+		return this.manifest.description
 	}
 	get icon() {
-		return this.config.icon
+		return this.manifest.icon
 	}
 	get id() {
-		return this.config.id
+		return this.manifest.id
 	}
 	get releaseTimestamp() {
 		return this.config.releaseTimestamp ?? Date.now()
 	}
 	get readme() {
-		return this.config.readme
+		return this.manifest.readme
+	}
+	get manifest() {
+		if (this.isUpdateAvailable) return this.config
+
+		return this.connected?.manifest ?? this.config
 	}
 	//#endregion
 
@@ -63,7 +68,7 @@ export class ExtensionViewer {
 		return this._isInstalled
 	}
 	get displayVersion() {
-		return this.connected?.version ?? this.config.version
+		return this.manifest.version
 	}
 	get actions() {
 		return extensionActions(this)

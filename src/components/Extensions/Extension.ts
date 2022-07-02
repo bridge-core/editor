@@ -36,6 +36,9 @@ export class Extension {
 	get contributesCompilerPlugins() {
 		return Object.keys(this.manifest?.compiler?.plugins ?? {}).length > 0
 	}
+	get description() {
+		return this.manifest.description
+	}
 	get version() {
 		return this.manifest.version
 	}
@@ -45,17 +48,20 @@ export class Extension {
 	get id() {
 		return this.manifest.id
 	}
+	get manifest() {
+		return this._manifest
+	}
 
 	constructor(
 		protected parent: ExtensionLoader,
-		protected manifest: IExtensionManifest,
+		protected _manifest: IExtensionManifest,
 		protected baseDirectory: AnyDirectoryHandle,
 		protected _isGlobal = false
 	) {
 		this.fileSystem = new FileSystem(this.baseDirectory)
 		this.installFiles = new InstallFiles(
 			this.fileSystem,
-			manifest?.contributeFiles ?? {}
+			_manifest?.contributeFiles ?? {}
 		)
 	}
 
