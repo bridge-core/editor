@@ -54,8 +54,6 @@ export class FolderImportManager {
 	}
 
 	async onImportFolder(directoryHandle: AnyDirectoryHandle) {
-		console.log(this.folderHandler)
-
 		const informedChoiceWindow = new InformedChoiceWindow(
 			'fileDropper.importMethod.name',
 			{

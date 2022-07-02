@@ -73,15 +73,12 @@ export async function showFolderContextMenu(
 		{ type: 'divider' },
 		CopyAction(directoryWrapper),
 		PasteAction(directoryWrapper),
-		options.hideRename ? null : RenameAction(directoryWrapper),
-		options.hideDelete ? null : DeleteAction(directoryWrapper),
-		// {
-		// 	icon: 'mdi-pencil-outline',
-		// 	name: 'windows.packExplorer.fileActions.rename.name',
-		// 	onTrigger: () => {
-		// 		directoryWrapper.startRename()
-		// 	},
-		// },
+		options.hideRename || directoryWrapper.getParent() === null
+			? null
+			: RenameAction(directoryWrapper),
+		options.hideDelete || directoryWrapper.getParent() === null
+			? null
+			: DeleteAction(directoryWrapper),
 	]).filter((action) => action !== null)
 
 	showContextMenu(event, [

@@ -2,6 +2,7 @@
 	<div class="my-1">
 		<DirectoryViewer
 			v-for="(dirHandle, i) in sidebarContent.directoryHandles"
+			class="mb-2"
 			:key="i"
 			:directoryHandle="dirHandle"
 			:renderTopLevelDirectory="true"

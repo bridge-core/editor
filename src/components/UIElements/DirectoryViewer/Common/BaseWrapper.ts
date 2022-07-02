@@ -201,7 +201,7 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	}
 
 	startRename() {
-		if (this.options.isReadOnly) return
+		if (this.options.isReadOnly || this.parent === null) return
 
 		this.isEditingName.value = true
 	}

@@ -20,14 +20,6 @@ export async function showFileContextMenu(
 		PasteAction(fileWrapper.getParent()!),
 		RenameAction(fileWrapper),
 		DeleteAction(fileWrapper),
-
-		// {
-		// 	icon: 'mdi-pencil-outline',
-		// 	name: 'windows.packExplorer.fileActions.rename.name',
-		// 	onTrigger: () => {
-		// 		directoryWrapper.startRename()
-		// 	},
-		// },
 	]
 
 	showContextMenu(event, [
@@ -85,12 +77,6 @@ export async function showFileContextMenu(
 				})
 			},
 		},
-		// { type: 'divider' },
-		// 	{
-		// 		icon: 'mdi-file-search-outline',
-		// 		name: 'Find in Folder',
-		// 		onTrigger: async () => {},
-		// 	},
 
 		...(fileWrapper.options.provideFileContextMenu?.(fileWrapper) ?? []),
 	])
