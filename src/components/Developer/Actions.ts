@@ -55,7 +55,6 @@ const devActionConfigs: IActionConfig[] = [
 		onTrigger: async () => {
 			const app = await App.getApp()
 
-			console.log(app.comMojang.setup.hasFired)
 			if (!app.comMojang.setup.hasFired) return
 
 			app.viewFolders.addDirectoryHandle(
