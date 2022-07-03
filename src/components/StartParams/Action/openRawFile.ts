@@ -31,14 +31,11 @@ export const openRawFileAction: IStartAction = {
 }
 
 export async function shareFile(file: AnyFileHandle) {
-	const { compressToEncodedURIComponent } = await import('lz-string')
-
 	const fileContent = await file.getFile().then((file) => file.text())
 
 	if (typeof navigator.share === 'function') {
 		const url = new URL(window.location.href)
-		// Also share the information to hide sidebar if it's hidden
-		console.log(isContentVisible.value)
+
 		if (!isContentVisible.value)
 			url.searchParams.set('setSidebarState', 'hidden')
 

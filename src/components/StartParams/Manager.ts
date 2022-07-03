@@ -40,7 +40,6 @@ export class StartParamManager {
 		if ([...urlParams.keys()].length === 0) return
 
 		urlParams.forEach(async (value, name) => {
-			console.log(name)
 			const action = this.startActions.get(name)
 			if (!action) return
 
@@ -69,7 +68,6 @@ export class StartParamManager {
 				throw new Error(`Unknown start action type: "${action.type}"`)
 			}
 
-			console.log(action.name, decoded)
 			action.onTrigger(decoded)
 		})
 	}
