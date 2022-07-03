@@ -89,7 +89,6 @@ async function moveDirectoryHandle({
 			moveHandle,
 			toDirectory: toHandle,
 		})
-		console.log(moveStatus)
 
 		if (moveStatus !== 'moveFailed')
 			return {

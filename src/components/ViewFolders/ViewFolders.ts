@@ -23,7 +23,7 @@ export class ViewFolders extends SidebarContent {
 		this.actions.push(
 			new SidebarAction({
 				icon: 'mdi-close',
-				name: 'Close',
+				name: 'general.close',
 				color: 'error',
 				onTrigger: () => {
 					this.directoryHandles = []
@@ -36,7 +36,7 @@ export class ViewFolders extends SidebarContent {
 			new SidebarElement({
 				id: 'viewOpenedFolders',
 				sidebarContent: this,
-				displayName: 'Opened Folders',
+				displayName: 'sidebar.openedFolders.name',
 				icon: 'mdi-folder-open-outline',
 				isVisible: () => this.directoryHandles.length > 0,
 			})

@@ -347,6 +347,9 @@ export default {
 	},
 	// Sidebar tabs
 	sidebar: {
+		openedFolders: {
+			name: 'Opened Folders',
+		},
 		compiler: {
 			name: 'Compiler',
 			categories: {

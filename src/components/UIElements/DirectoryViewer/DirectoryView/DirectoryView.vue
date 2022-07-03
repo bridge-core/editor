@@ -148,7 +148,7 @@ export default {
 			this.directoryWrapper.isSelected.value = true
 		},
 		draggedHandle(dragEvent) {
-			console.log(dragEvent)
+			// console.log(dragEvent)
 			if (dragEvent.moved) {
 				const { newIndex, oldIndex, element } = dragEvent.moved
 				this.directoryWrapper.children.value.splice(newIndex, 1)
