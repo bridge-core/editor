@@ -43,12 +43,21 @@ export class ViewFolders extends SidebarContent {
 		)
 	}
 
-	addDirectoryHandle(
+	async addDirectoryHandle(
 		directoryHandle: AnyDirectoryHandle,
 		startPath?: string
 	) {
+		if (await this.hasDirectoryHandle(directoryHandle)) return
+
 		this.directoryHandles.push({ handle: directoryHandle, startPath })
 
 		if (!this.sidebarElement.isSelected) this.sidebarElement.click()
+	}
+	async hasDirectoryHandle(directoryHandle: AnyDirectoryHandle) {
+		for (const { handle } of this.directoryHandles) {
+			if (await handle.isSameEntry(<any>directoryHandle)) return true
+		}
+
+		return false
 	}
 }
