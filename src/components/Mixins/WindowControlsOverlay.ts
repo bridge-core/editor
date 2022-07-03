@@ -6,7 +6,7 @@ export const WindowControlsOverlayMixin = {
 			navigator.windowControlsOverlay &&
 			navigator.windowControlsOverlay.visible,
 	}),
-	mounted() {
+	created() {
 		if (navigator.windowControlsOverlay) {
 			navigator.windowControlsOverlay.addEventListener(
 				'geometrychange',
