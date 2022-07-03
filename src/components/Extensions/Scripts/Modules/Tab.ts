@@ -1,5 +1,6 @@
 import { IModuleConfig } from '../types'
 import { App } from '/@/App'
+import { IframeTab } from '/@/components/Editors/IframeTab/IframeTab'
 import { ThreePreviewTab } from '/@/components/Editors/ThreePreview/ThreePreviewTab'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { FileTab } from '/@/components/TabSystem/FileTab'
@@ -9,6 +10,7 @@ export const TabModule = async ({ disposables }: IModuleConfig) => ({
 	ContentTab: Tab,
 	FileTab,
 	ThreePreviewTab,
+	IframeTab,
 
 	/**
 	 * Register new FileTabs to be picked up by the isTabFor tab system method
@@ -25,6 +27,7 @@ export const TabModule = async ({ disposables }: IModuleConfig) => ({
 	/**
 	 * Useful for ContentTabs: Programmatically add the tab to the tab system
 	 * @param tab Tab to add to the tab system
+	 * @deprecated Use TabSystem.addTab(...) instead
 	 */
 	openTab: async (FileTabClass: typeof Tab, splitScreen = false) => {
 		const app = await App.getApp()
@@ -46,6 +49,18 @@ export const TabModule = async ({ disposables }: IModuleConfig) => ({
 
 			return tab
 		}
+	},
+	async addTab(tab: Tab) {
+		const app = await App.getApp()
+		const project = app.project
+
+		project.tabSystem?.add(tab, true)
+	},
+	async getCurrentTabSystem() {
+		const app = await App.getApp()
+		const project = app.project
+
+		return project.tabSystem
 	},
 
 	/**

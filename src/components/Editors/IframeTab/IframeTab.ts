@@ -3,10 +3,10 @@ import IframeTabComponent from './IframeTab.vue'
 import { Tab } from '../../TabSystem/CommonTab'
 
 interface IIframeTabOptions {
-	icon: string
-	name: string
+	icon?: string
+	name?: string
 	url: string
-	iconColor: string
+	iconColor?: string
 }
 
 export class IframeTab extends Tab {
@@ -53,19 +53,19 @@ export class IframeTab extends Tab {
 	}
 
 	get icon() {
-		return this.options.icon
+		return this.options.icon ?? 'mdi-web'
 	}
 	get iconColor() {
 		return this.options.iconColor
 	}
 	get name() {
-		return this.options.name
+		return this.options.name ?? 'Web'
 	}
 	get url() {
 		return this.options.url
 	}
 
-	async is(tab: Tab) {
+	async is(tab: Tab): Promise<boolean> {
 		return tab instanceof IframeTab && tab.url === this.url
 	}
 }
