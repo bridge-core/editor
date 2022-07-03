@@ -1,5 +1,5 @@
 <template>
-	<div class="pa-2" style="overflow: auto" v-html="tab.html"></div>
+	<iframe class="pa-2" style="overflow: auto" sandbox="" srcdoc="tab.html" />
 </template>
 
 <script>
@@ -10,3 +10,9 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+iframe {
+	border: 0;
+}
+</style>
