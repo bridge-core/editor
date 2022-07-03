@@ -87,33 +87,32 @@ export class PackExplorer extends SidebarContent {
 		}
 
 		this.unselectAllActions()
+		this.actions = []
 		for (const pack of app.project.projectData.contains ?? []) {
-			const wrapper = new DirectoryWrapper(
-				null,
-				await app.fileSystem.getDirectoryHandle(pack.packPath),
-				{
-					startPath: pack.packPath,
+			const handle = await app.fileSystem
+				.getDirectoryHandle(pack.packPath)
+				.catch(() => null)
+			if (!handle) continue
 
-					provideFileContextMenu: (fileWrapper) => [
-						ViewCompilerOutput(fileWrapper),
-					],
-				}
-			)
+			const wrapper = new DirectoryWrapper(null, handle, {
+				startPath: pack.packPath,
+
+				provideFileContextMenu: (fileWrapper) => [
+					ViewCompilerOutput(fileWrapper),
+				],
+			})
 			await wrapper.open()
 
 			set(this.directoryEntries, pack.packPath, markRaw(wrapper))
+			this.actions.push(
+				new SelectableSidebarAction(this, {
+					id: pack.packPath,
+					name: `packType.${pack.id}.name`,
+					icon: pack.icon,
+					color: pack.color,
+				})
+			)
 		}
-
-		this.actions =
-			app.project.projectData.contains?.map(
-				(pack) =>
-					new SelectableSidebarAction(this, {
-						id: pack.packPath,
-						name: `packType.${pack.id}.name`,
-						icon: pack.icon,
-						color: pack.color,
-					})
-			) ?? []
 
 		if (isUsingFileSystemPolyfill.value) {
 			this.actions.push(
