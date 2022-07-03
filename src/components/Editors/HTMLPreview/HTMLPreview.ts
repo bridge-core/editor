@@ -94,6 +94,7 @@ export class HTMLPreviewTab extends IframeTab {
 				})
 				window.addEventListener('message', ({ data: { type, scrollY } }) => {
 					if (type !== 'loadScrollPosition' || scrollY === undefined) return
+
 					window.scrollTo(0, scrollY)
 				})
 			</script>`
@@ -113,15 +114,31 @@ export class HTMLPreviewTab extends IframeTab {
 			background-color: ${themeManager.getColor('background')};
 			color: ${themeManager.getColor('text')};
 		}`
+
+		this.updateHtml()
 	}
 	updateScrollY(scrollY: number) {
 		this.scrollY = scrollY
 	}
 
+	updateHtml() {
+		this.iframe.srcdoc = this.html
+		this.iframe.addEventListener(
+			'load',
+			() => {
+				this.iframe.contentWindow?.postMessage(
+					{ type: 'loadScrollPosition', scrollY: this.scrollY },
+					'*'
+				)
+			},
+			{ once: true }
+		)
+	}
+
 	async load() {
 		this.rawHtml = await this.tab.getFile().then((file) => file.text())
 
-		this.iframe.srcdoc = this.html
+		this.updateHtml()
 	}
 
 	async is(tab: Tab): Promise<boolean> {
