@@ -62,6 +62,17 @@ export const ProjectModule = async ({
 
 			return disposable
 		},
+		onFileChanged(filePath: string, cb: (filePath: string) => any) {
+			const disposable = App.eventSystem.on(
+				'fileChange',
+				([currFilePath, file]) => {
+					if (currFilePath === filePath) cb(file)
+				}
+			)
+			disposables.push(disposable)
+
+			return disposable
+		},
 
 		async openFile(fileHandle: AnyFileHandle, opts: IOpenTabOptions) {
 			await app.project.openFile(fileHandle, opts)
