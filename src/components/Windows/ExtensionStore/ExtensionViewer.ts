@@ -132,7 +132,8 @@ export class ExtensionViewer {
 
 	protected async downloadExtension(
 		isGlobalInstall: boolean,
-		isUpdateDownload = false
+		isUpdateDownload = false,
+		shouldActivateExtension = true
 	) {
 		this.isLoading = true
 
@@ -170,7 +171,7 @@ export class ExtensionViewer {
 		const extension = await extensionLoader.loadExtension(
 			await app.fileSystem.getDirectoryHandle(basePath),
 			await app.fileSystem.getFileHandle(zipPath),
-			true
+			shouldActivateExtension
 		)
 
 		if (extension) this.setConnected(extension)
@@ -221,9 +222,14 @@ export class ExtensionViewer {
 
 		if (notifyParent) this.parent.updateInstalled(this)
 
+		const wasExtensionActive = this.connected.isActive
 		this.connected.deactivate()
 		await this.connected.resetInstalled()
-		await this.downloadExtension(this.connected.isGlobal, true)
+		await this.downloadExtension(
+			this.connected.isGlobal,
+			true,
+			wasExtensionActive
+		)
 	}
 	delete() {
 		if (!this.connected) return
