@@ -3,6 +3,7 @@ import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
 import { clearAllNotifications } from '/@/components/Notifications/create'
+import { IframeTab } from '../../Editors/IframeTab/IframeTab'
 
 export function setupToolsCategory(app: App) {
 	const tools = new ToolbarCategory(
@@ -15,7 +16,60 @@ export function setupToolsCategory(app: App) {
 			icon: 'mdi-book-open-page-variant',
 			name: 'actions.docs.name',
 			description: 'actions.docs.description',
-			onTrigger: () => App.openUrl('https://bedrock.dev', 'DocWindow'),
+			onTrigger: async () => {
+				const app = await App.getApp()
+				const tabSystem = app.tabSystem
+
+				if (!tabSystem) return
+
+				const tab = new IframeTab(tabSystem, {
+					icon: 'mdi-book-open-page-variant',
+					name: 'bedrock.dev',
+					url: 'https://bedrock.dev',
+					iconColor: '#00bcd4',
+				})
+				tabSystem.add(tab)
+			},
+		})
+	)
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-cube-outline',
+			name: '[Open Blockbench]',
+			onTrigger: async () => {
+				const app = await App.getApp()
+				const tabSystem = app.tabSystem
+
+				if (!tabSystem) return
+
+				const tab = new IframeTab(tabSystem, {
+					icon: 'mdi-cube-outline',
+					name: 'Blockbench',
+					url: 'https://web.blockbench.net',
+					iconColor: '#00bcd4',
+				})
+				tabSystem.add(tab)
+			},
+		})
+	)
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-snowflake',
+			name: '[Open Snowstorm]',
+			onTrigger: async () => {
+				const app = await App.getApp()
+				const tabSystem = app.tabSystem
+
+				if (!tabSystem) return
+
+				const tab = new IframeTab(tabSystem, {
+					icon: 'mdi-snowflake',
+					name: 'Snowstorm',
+					url: 'https://snowstorm.app/',
+					iconColor: '#00bcd4',
+				})
+				tabSystem.add(tab)
+			},
 		})
 	)
 

@@ -189,7 +189,7 @@ export default {
 			description: 'Paste clipboard content',
 		},
 		docs: {
-			name: 'Documentation',
+			name: 'Open bedrock.dev',
 			description: 'Opens the Minecraft Add-On documentation',
 		},
 		releases: {
