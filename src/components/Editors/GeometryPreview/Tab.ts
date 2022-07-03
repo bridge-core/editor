@@ -1,4 +1,4 @@
-import { Model } from 'bridge-model-viewer'
+import { Model, StandaloneModelViewer } from 'bridge-model-viewer'
 import { App } from '/@/App'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import { ThreePreviewTab } from '../ThreePreview/ThreePreviewTab'
@@ -6,7 +6,7 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { RenderDataContainer } from './Data/RenderContainer'
 import { DropdownWindow } from '/@/components/Windows/Common/Dropdown/DropdownWindow'
 import { MultiOptionsWindow } from '/@/components/Windows/Common/MultiOptions/Window'
-import Wintersky from 'wintersky'
+import type Wintersky from 'wintersky'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import { IDisposable } from '/@/types/disposable'
@@ -14,41 +14,48 @@ import { IOutlineBox } from './Data/EntityData'
 import { markRaw } from '@vue/composition-api'
 import { Box3, Vector3, Color } from 'three'
 import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
-import { StandaloneModelViewer } from 'bridge-model-viewer'
 import { wait } from '/@/utils/wait'
 import { AssetPreviewWindow } from './AssetPreview/Window'
+import { useWintersky } from '/@/utils/libs/useWintersky'
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
-	protected winterskyScene = markRaw(
-		Object.freeze(
-			new Wintersky.Scene({
-				fetchTexture: async (config) => {
-					const app = await App.getApp()
-
-					try {
-						return await loadAsDataURL(
-							config.particle_texture_path,
-							app.project.fileSystem
-						)
-					} catch (err) {
-						// Fallback to Wintersky's default handling of textures
-					}
-				},
-			})
-		)
-	)
+	protected winterskyScene!: Wintersky.Scene
 	protected model?: Model
 	protected _renderContainer?: RenderDataContainer
 	protected boxHelperDisposables: IDisposable[] = []
 
 	constructor(tab: FileTab, tabSystem: TabSystem) {
 		super(tab, tabSystem)
+	}
 
+	async setup() {
+		const { default: Wintersky } = await useWintersky()
+
+		this.winterskyScene = markRaw(
+			Object.freeze(
+				new Wintersky.Scene({
+					fetchTexture: async (config) => {
+						const app = await App.getApp()
+
+						try {
+							return await loadAsDataURL(
+								config.particle_texture_path,
+								app.project.fileSystem
+							)
+						} catch (err) {
+							// Fallback to Wintersky's default handling of textures
+						}
+					},
+				})
+			)
+		)
 		this.winterskyScene.global_options.loop_mode = 'once'
 		this.winterskyScene.global_options.tick_rate = 60
 		this.winterskyScene.global_options.max_emitter_particles = 1000
 		this.winterskyScene.global_options.scale = 16
 		this.setupComplete.once(() => this.scene.add(this.winterskyScene.space))
+
+		await super.setup()
 	}
 
 	get renderContainer() {
@@ -202,6 +209,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		this.scene.add(this.model.getGroup())
 		this.model.animator.setupWintersky(this.winterskyScene)
 
+		const { default: Wintersky } = await useWintersky()
 		this.renderContainer.particles.forEach(([shortName, json]) => {
 			if (!shortName) return
 

@@ -1,6 +1,5 @@
 import ThreePreviewTabComponent from './ThreePreviewTab.vue'
 import { IDisposable } from '/@/types/disposable'
-import { Model } from 'bridge-model-viewer'
 import { PreviewTab } from '/@/components/TabSystem/PreviewTab'
 import {
 	AmbientLight,
