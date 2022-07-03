@@ -15,6 +15,8 @@ import {
 } from '/@/components/FileSystem/Polyfill'
 import { platform } from '/@/utils/os'
 import { TextField } from './Controls/TextField/TextField'
+import { devActions } from '../../Developer/Actions'
+import { SimpleAction } from '../../Actions/SimpleAction'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -461,58 +463,9 @@ export async function setupSettings(settings: SettingsWindow) {
 				default: false,
 			})
 		)
-		settings.addControl(
-			new Button({
-				category: 'developers',
-				name: '[Reset local fs]',
-				description:
-					'[Reset the local fs (navigator.storage.getDirectory()) to be completely emtpy]',
-				onClick: async () => {
-					const app = await App.getApp()
-					await Promise.all([
-						app.fileSystem.unlink('~local/data'),
-						app.fileSystem.unlink('~local/projects'),
-						app.fileSystem.unlink('~local/extensions'),
-					])
-				},
-			})
-		)
-		settings.addControl(
-			new Button({
-				category: 'developers',
-				name: '[Clear app data]',
-				description:
-					'[Clear data from bridge-core/editor-packages repository]',
-				onClick: async () => {
-					await set('savedAllDataInIdb', false)
-				},
-			})
-		)
-		settings.addControl(
-			new Button({
-				category: 'developers',
-				name: '[Reset initial setup]',
-				description: '[Resets editor type and com.mojang selection]',
-				onClick: async () => {
-					await del('didChooseEditorType')
-					await del(comMojangKey)
-				},
-			})
-		)
-		settings.addControl(
-			new Button({
-				category: 'developers',
-				name: '[Open local fs]',
-				description: '[Open the local fs within the editor]',
-				onClick: async () => {
-					const app = await App.getApp()
 
-					app.viewFolders.addDirectoryHandle(
-						await navigator.storage.getDirectory(),
-						'~local'
-					)
-				},
-			})
-		)
+		devActions.forEach((action) => {
+			settings.addControl(new ActionViewer(action, 'developers'))
+		})
 	}
 }

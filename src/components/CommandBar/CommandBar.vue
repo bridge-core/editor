@@ -54,6 +54,7 @@ import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { CommandBarExtensionItems } from '../Extensions/Scripts/Modules/CommandBar'
 import { getDefaultFileIcon } from '/@/utils/file/getIcon'
+import { devActions } from '../Developer/Actions'
 
 export default {
 	mixins: [TranslationMixin],
@@ -67,6 +68,9 @@ export default {
 		const app = await App.getApp()
 
 		this.baseActions = app.actionManager.getAllActions()
+		if (import.meta.env.DEV) {
+			this.baseActions.push(...devActions)
+		}
 		this.extensionActions = [...CommandBarExtensionItems.values()]
 
 		if (!app.isNoProjectSelected) this.loadFilesFromProject(app.project)

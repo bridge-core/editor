@@ -2,7 +2,7 @@ import Vue from 'vue'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 export function translate(vuetify: any, translationKey?: string) {
-	if (!translationKey) return
+	if (!translationKey) return ''
 
 	const orginalKey = translationKey
 	if (orginalKey?.startsWith('[') && orginalKey.endsWith(']'))
