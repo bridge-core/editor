@@ -32,29 +32,32 @@ export const TabModule = async ({ disposables }: IModuleConfig) => ({
 	openTab: async (FileTabClass: typeof Tab, splitScreen = false) => {
 		const app = await App.getApp()
 		const project = app.project
+		const tabSystem = splitScreen
+			? project.inactiveTabSystem
+			: project.tabSystem
 
-		if (splitScreen) {
-			// @ts-ignore
-			const tab = new FileTabClass(project.inactiveTabSystem!)
+		if (!tabSystem) return
 
-			project.inactiveTabSystem?.add(tab, true)
-			project.inactiveTabSystem?.setActive(true)
+		// @ts-ignore
+		const tab = new FileTabClass(tabSystem)
 
-			return tab
-		} else {
-			// @ts-ignore
-			const tab = new FileTabClass(project.tabSystem!)
+		if (splitScreen) tabSystem.setActive(true)
 
-			project.tabSystem?.add(tab, true)
+		disposables.push({
+			dispose: () => tabSystem.remove(tab),
+		})
 
-			return tab
-		}
+		return tab
 	},
 	async addTab(tab: Tab) {
 		const app = await App.getApp()
 		const project = app.project
 
 		project.tabSystem?.add(tab, true)
+
+		disposables.push({
+			dispose: () => project.tabSystem?.remove(tab),
+		})
 	},
 	async getCurrentTabSystem() {
 		const app = await App.getApp()
