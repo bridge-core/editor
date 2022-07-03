@@ -1,4 +1,4 @@
-import { Model, StandaloneModelViewer } from 'bridge-model-viewer'
+import type { Model } from 'bridge-model-viewer'
 import { App } from '/@/App'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
 import { ThreePreviewTab } from '../ThreePreview/ThreePreviewTab'
@@ -17,6 +17,7 @@ import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
 import { wait } from '/@/utils/wait'
 import { AssetPreviewWindow } from './AssetPreview/Window'
 import { useWintersky } from '/@/utils/libs/useWintersky'
+import { useBridgeModelViewer } from '/@/utils/libs/useModelViewer'
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected winterskyScene!: Wintersky.Scene
@@ -182,6 +183,7 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		if (!this._renderContainer) return
 
 		const app = await App.getApp()
+		const { Model } = await useBridgeModelViewer()
 
 		if (this.model) {
 			this.scene?.remove(this.model.getGroup())
@@ -271,6 +273,8 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	async renderAssetPreview() {
 		if (!this._renderContainer || !this.renderContainer.currentTexturePath)
 			return
+
+		const { StandaloneModelViewer } = await useBridgeModelViewer()
 
 		const fileSystem = this.parent.app.fileSystem
 		const texture = await fileSystem.loadFileHandleAsDataUrl(
