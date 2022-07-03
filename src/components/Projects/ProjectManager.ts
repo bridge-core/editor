@@ -139,6 +139,7 @@ export class ProjectManager extends Signal<void> {
 			rpAsBpDependency: false,
 			targetVersion: await getStableFormatVersion(this.app.dataLoader),
 			useLangForManifest: false,
+			bdsProject: false,
 			uuids: {
 				data: uuid(),
 				resources: uuid(),

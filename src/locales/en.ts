@@ -499,6 +499,7 @@ export default {
 				'Register behavior pack as a resource pack dependency',
 			useLangForManifest:
 				'Add pack name/description directly to the manifest',
+			bdsProject: 'Set project for use with Bedrock Dedicated Servers',
 			create: 'Create',
 			saveCurrentProject:
 				'Do you want to save your current project before creating the new one? Any unsaved changes will get lost!',

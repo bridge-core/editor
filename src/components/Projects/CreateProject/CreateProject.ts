@@ -40,6 +40,7 @@ export interface ICreateProjectOptions {
 	}
 	useLangForManifest: boolean
 	experimentalGameplay: Record<string, boolean>
+	bdsProject: boolean
 }
 export interface IExperimentalToggle {
 	name: string
@@ -214,6 +215,7 @@ export class CreateProjectWindow extends BaseWindow {
 			useLangForManifest: false,
 			experimentalGameplay: {},
 			uuids: {},
+			bdsProject: false,
 		}
 	}
 	getDefaultOptions(): ICreateProjectOptions {
@@ -257,6 +259,7 @@ export class CreateProjectWindow extends BaseWindow {
 				bpAsRpDependency: false,
 				experimentalGameplay: config.experimentalGameplay ?? {},
 				uuids: {},
+				bdsProject: false,
 			}
 		} catch {
 			return this.getDefaultOptions()

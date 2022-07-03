@@ -29,10 +29,7 @@ export class CreateManifest extends CreateFile {
 		}
 	}
 
-	protected async transformTargetVersion(
-		fs: FileSystem,
-		targetVersion: string
-	) {
+	protected async transformTargetVersion(targetVersion: string) {
 		const app = await App.getApp()
 		const replaceTargetVersion: Record<
 			string,
@@ -78,7 +75,6 @@ export class CreateManifest extends CreateFile {
 					this.type === 'data' || 'resources'
 						? (
 								await this.transformTargetVersion(
-									fs,
 									createOptions.targetVersion
 								)
 						  )
@@ -128,11 +124,12 @@ export class CreateManifest extends CreateFile {
 			]
 		}
 
-		// Behavior pack modules
+		// GameTest manifest data
 		if (
 			this.type === 'data' &&
 			createOptions.experimentalGameplay.enableGameTestFramework
 		) {
+			// Main script module
 			if (compareVersions(createOptions.targetVersion, '1.19.0', '>='))
 				// New module format
 				manifest.modules.push({
@@ -149,6 +146,7 @@ export class CreateManifest extends CreateFile {
 					entry: 'scripts/main.js',
 					version: [1, 0, 0],
 				})
+			// GameTest dependencies
 			manifest.dependencies ??= []
 			manifest.dependencies.push(
 				{
@@ -168,6 +166,22 @@ export class CreateManifest extends CreateFile {
 					uuid: '2bd50a27-ab5f-4f40-a596-3641627c635e',
 					version: [0, 1, 0],
 				})
+			if (
+				compareVersions(createOptions.targetVersion, '1.19.0', '>=') &&
+				createOptions.bdsProject
+			)
+				manifest.dependencies.push(
+					{
+						// 'mojang-minecraft-server-admin' module
+						uuid: '53d7f2bf-bf9c-49c4-ad1f-7c803d947920',
+						version: [0, 1, 0],
+					},
+					{
+						// 'mojang-net' module
+						uuid: '777b1798-13a6-401c-9cba-0cf17e31a81b',
+						version: [0, 1, 0],
+					}
+				)
 		}
 
 		if (this.type === 'world_template') {

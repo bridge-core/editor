@@ -20,6 +20,7 @@ export class CreateConfig extends CreateFile {
 				targetVersion: createOptions.targetVersion,
 				description: createOptions.description,
 				experimentalGameplay: createOptions.experimentalGameplay,
+				bdsProject: createOptions.bdsProject,
 				packs: Object.fromEntries(
 					createOptions.packs
 						.filter((packId) => packId !== '.bridge')
