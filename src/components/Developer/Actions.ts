@@ -1,6 +1,7 @@
 import { del, set } from 'idb-keyval'
 import { SimpleAction, IActionConfig } from '../Actions/SimpleAction'
 import { comMojangKey } from '../FileSystem/ComMojang'
+import { ConfirmationWindow } from '../Windows/Common/Confirm/ConfirmWindow'
 import { App } from '/@/App'
 
 const devActionConfigs: IActionConfig[] = [
@@ -11,6 +12,15 @@ const devActionConfigs: IActionConfig[] = [
 			'[Reset the local fs (navigator.storage.getDirectory()) to be completely emtpy]',
 		onTrigger: async () => {
 			const app = await App.getApp()
+
+			const confirm = new ConfirmationWindow({
+				description: '[Are you sure you want to reset the local fs?]',
+			})
+			confirm.open()
+			const choice = await confirm.fired
+
+			if (!choice) return
+
 			await Promise.all([
 				app.fileSystem.unlink('~local/data'),
 				app.fileSystem.unlink('~local/projects'),
