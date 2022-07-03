@@ -67,6 +67,10 @@ export class IframeTab extends Tab {
 		return this.options.url
 	}
 
+	setUrl(url: string) {
+		this.iframe.src = url
+	}
+
 	async is(tab: Tab): Promise<boolean> {
 		return tab instanceof IframeTab && tab.url === this.url
 	}
