@@ -27,6 +27,7 @@ import { ModelViewerModule } from './Modules/ModelViewer'
 import { ImportModule } from './Modules/import'
 import { PersistentStorageModule } from './Modules/persistentStorage'
 import { CommandBarModule } from './Modules/CommandBar'
+import { FflateModule } from './Modules/fflate'
 
 const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/ui', UIModule],
@@ -54,6 +55,7 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/import', ImportModule],
 	['@bridge/persistent-storage', PersistentStorageModule],
 	['@bridge/command-bar', CommandBarModule],
+	['@bridge/fflate', FflateModule],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
