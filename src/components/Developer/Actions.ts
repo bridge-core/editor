@@ -48,6 +48,22 @@ const devActionConfigs: IActionConfig[] = [
 			)
 		},
 	},
+	{
+		icon: 'mdi-minecraft',
+		name: '[Dev: Open com.mojang]',
+		description: '[Open the com.mojang folder within the editor]',
+		onTrigger: async () => {
+			const app = await App.getApp()
+
+			console.log(app.comMojang.setup.hasFired)
+			if (!app.comMojang.setup.hasFired) return
+
+			app.viewFolders.addDirectoryHandle(
+				app.comMojang.fileSystem.baseDirectory,
+				'~local'
+			)
+		},
+	},
 ]
 
 export const devActions = devActionConfigs.map(
