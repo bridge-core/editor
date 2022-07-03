@@ -26,7 +26,7 @@ export function setupToolsCategory(app: App) {
 					icon: 'mdi-book-open-page-variant',
 					name: 'bedrock.dev',
 					url: 'https://bedrock.dev',
-					iconColor: '#00bcd4',
+					iconColor: 'primary',
 				})
 				tabSystem.add(tab)
 			},
@@ -46,7 +46,7 @@ export function setupToolsCategory(app: App) {
 					icon: 'mdi-cube-outline',
 					name: 'Blockbench',
 					url: 'https://web.blockbench.net',
-					iconColor: '#00bcd4',
+					iconColor: 'primary',
 				})
 				tabSystem.add(tab)
 			},
@@ -66,7 +66,7 @@ export function setupToolsCategory(app: App) {
 					icon: 'mdi-snowflake',
 					name: 'Snowstorm',
 					url: 'https://snowstorm.app/',
-					iconColor: '#00bcd4',
+					iconColor: 'primary',
 				})
 				tabSystem.add(tab)
 			},
