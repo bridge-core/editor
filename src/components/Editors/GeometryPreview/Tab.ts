@@ -66,10 +66,10 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	}
 
 	get icon() {
-		return 'mdi-cube-outline'
+		return this.tab.icon
 	}
 	get iconColor() {
-		return 'primary'
+		return this.tab.iconColor
 	}
 
 	async onActivate() {
