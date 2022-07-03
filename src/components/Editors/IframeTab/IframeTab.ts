@@ -5,7 +5,8 @@ import { Tab } from '../../TabSystem/CommonTab'
 interface IIframeTabOptions {
 	icon?: string
 	name?: string
-	url: string
+	url?: string
+	html?: string
 	iconColor?: string
 }
 
@@ -15,7 +16,7 @@ export class IframeTab extends Tab {
 	protected iframe = document.createElement('iframe')
 	protected loaded: Promise<void>
 
-	constructor(parent: TabSystem, protected options: IIframeTabOptions) {
+	constructor(parent: TabSystem, protected options: IIframeTabOptions = {}) {
 		super(parent)
 
 		this.isTemporary = false
@@ -26,7 +27,9 @@ export class IframeTab extends Tab {
 		this.loaded = new Promise<void>((resolve) =>
 			this.iframe.addEventListener('load', () => resolve())
 		)
-		this.iframe.src = this.url
+
+		if (this.url) this.iframe.src = this.url
+		if (this.options.html) this.iframe.srcdoc = this.options.html
 
 		this.iframe.width = '100%'
 		this.iframe.style.display = 'none'
@@ -34,7 +37,6 @@ export class IframeTab extends Tab {
 		this.iframe.classList.add('outlined')
 		this.iframe.style.borderRadius = '12px'
 		this.iframe.style.margin = '8px'
-		this.iframe.style.marginTop = '0'
 
 		document.body.appendChild(this.iframe)
 	}

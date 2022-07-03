@@ -28,7 +28,15 @@ export default {
 		disposable: null,
 	}),
 	methods: {
-		updateIframe() {
+		async updateIframe() {
+			await this.tab.fired
+			if (!this.$refs.container) return
+			// Node is not mounted yet
+			if (!this.$refs.container.isConnected) {
+				// Try again in 50ms
+				setTimeout(() => this.updateIframe(), 50)
+				return
+			}
 			const {
 				width,
 				height,
@@ -36,7 +44,7 @@ export default {
 				left,
 			} = this.$refs.container.getBoundingClientRect()
 
-			this.tab.iframe.height = `${height - 8}px`
+			this.tab.iframe.height = `${height - 16}px`
 			this.tab.iframe.width = `${width - 16}px`
 			this.tab.iframe.style.top = `${top}px`
 			this.tab.iframe.style.left = `${left}px`
@@ -44,7 +52,7 @@ export default {
 	},
 	watch: {
 		tab() {
-			this.updateIframe()
+			setTimeout(() => this.updateIframe(), 50)
 		},
 	},
 }
