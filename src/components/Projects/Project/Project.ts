@@ -499,6 +499,13 @@ export abstract class Project {
 			this.isFileWithinAnyPack(filePath)
 		)
 	}
+	isFileOpen(filePath: string) {
+		return this.tabSystems.some((tabSystem) =>
+			tabSystem.tabs.some(
+				(tab) => tab instanceof FileTab && tab.getPath() === filePath
+			)
+		)
+	}
 
 	async loadProject() {
 		await this.config.setup()

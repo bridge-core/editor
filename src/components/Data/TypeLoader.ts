@@ -7,25 +7,32 @@ import {
 	IRequirements,
 	RequiresMatcher,
 } from './RequiresMatcher/RequiresMatcher'
-import { useMonaco } from '../../utils/libs/useMonaco'
+import { useMonaco } from '/@/utils/libs/useMonaco'
+import type { editor } from 'monaco-editor'
 
 const types = new Map<string, string>()
 
 export class TypeLoader {
 	protected disposables: IDisposable[] = []
 	protected typeDisposables: IDisposable[] = []
+	protected userTypeDisposables: IDisposable[] = []
 	protected currentTypeEnv: string | null = null
 
 	constructor(protected dataLoader: DataLoader) {}
 
 	async activate(filePath?: string) {
 		this.disposables = <IDisposable[]>[
-			App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
-				if (!tab.isForeignFile && tab instanceof FileTab)
-					this.setTypeEnv(tab.getPath())
+			App.eventSystem.on('currentTabSwitched', async (tab: Tab) => {
+				if (!tab.isForeignFile && tab instanceof FileTab) {
+					await this.setTypeEnv(tab.getPath())
+
+					await this.loadUserTypes()
+				}
 			}),
 		]
 		if (filePath) await this.setTypeEnv(filePath)
+
+		await this.loadUserTypes()
 	}
 	deactivate() {
 		this.typeDisposables.forEach((disposable) => disposable.dispose())
@@ -91,7 +98,39 @@ export class TypeLoader {
 					lib,
 					uri.toString()
 				)
-				// editor.createModel(lib, 'typescript', uri)
+			)
+		}
+	}
+
+	async loadUserTypes() {
+		const app = await App.getApp()
+
+		await app.project.packIndexer.fired
+		const allFiles = await app.project.packIndexer.service.getAllFiles()
+
+		const typeScriptFiles = allFiles.filter((filePath) =>
+			filePath.endsWith('.ts')
+		)
+
+		const { languages, Uri } = await useMonaco()
+
+		this.userTypeDisposables.forEach((disposable) => {
+			disposable.dispose()
+		})
+		this.userTypeDisposables = []
+
+		for (const typeScriptFile of typeScriptFiles) {
+			const fileUri = Uri.file(typeScriptFile)
+			const file = await app.fileSystem
+				.readFile(typeScriptFile)
+				.catch(() => null)
+			if (!file) continue
+
+			this.userTypeDisposables.push(
+				languages.typescript.typescriptDefaults.addExtraLib(
+					await file.text(),
+					fileUri.toString()
+				)
 			)
 		}
 	}
