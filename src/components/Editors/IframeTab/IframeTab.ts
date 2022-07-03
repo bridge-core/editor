@@ -31,6 +31,10 @@ export class IframeTab extends Tab {
 		this.iframe.width = '100%'
 		this.iframe.style.display = 'none'
 		this.iframe.style.position = 'absolute'
+		this.iframe.classList.add('outlined')
+		this.iframe.style.borderRadius = '12px'
+		this.iframe.style.margin = '8px'
+		this.iframe.style.marginTop = '0'
 
 		document.body.appendChild(this.iframe)
 	}

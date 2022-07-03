@@ -36,8 +36,8 @@ export default {
 				left,
 			} = this.$refs.container.getBoundingClientRect()
 
-			this.tab.iframe.height = `${height}px`
-			this.tab.iframe.width = `${width}px`
+			this.tab.iframe.height = `${height - 8}px`
+			this.tab.iframe.width = `${width - 16}px`
 			this.tab.iframe.style.top = `${top}px`
 			this.tab.iframe.style.left = `${left}px`
 		},
