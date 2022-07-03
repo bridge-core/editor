@@ -22,7 +22,7 @@ export class IframeTab extends Tab {
 		this.isTemporary = false
 		this.iframe.setAttribute(
 			'sandbox',
-			'allow-scripts allow-same-origin allow-modals allow-popups allow-forms'
+			'allow-scripts allow-same-origin allow-modals allow-popups allow-forms allow-downloads'
 		)
 		this.loaded = new Promise<void>((resolve) =>
 			this.iframe.addEventListener('load', () => resolve())
