@@ -33,14 +33,16 @@ export class ComMojang extends Signal<void> {
 		get<AnyDirectoryHandle | undefined>(comMojangKey).then(
 			async (directoryHandle) => {
 				if (directoryHandle) {
-					await this.app.fileSystem.fired
-					await this.requestPermissions(directoryHandle).catch(() => {
-						// Permission request failed because user activation was too long ago
-						// -> Create window to get new activation
-						this.createPermissionWindow(directoryHandle)
-					})
+					await this.requestPermissions(directoryHandle).catch(
+						async () => {
+							// Permission request failed because user activation was too long ago
+							// -> Create window to get new activation
+							await this.createPermissionWindow(directoryHandle)
+						}
+					)
 					if (this._hasComMojang) this.setup.dispatch()
 				}
+
 				this.dispatch()
 			}
 		)
