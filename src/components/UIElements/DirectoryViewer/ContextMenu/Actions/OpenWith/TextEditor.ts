@@ -1,7 +1,7 @@
 import { FileWrapper } from '/@/components/UIElements/DirectoryViewer/FileView/FileWrapper'
 import { App } from '/@/App'
-import { TreeTab } from '/@/components/Editors/TreeEditor/Tab'
 import { extname } from '/@/utils/path'
+import { TextTab } from '/@/components/Editors/Text/TextTab'
 
 const textEditorNotAllowed = [
 	'.png',
@@ -26,7 +26,7 @@ export const TextEditorAction = (fileWrapper: FileWrapper) => {
 			if (!tabSystem) return
 
 			tabSystem.add(
-				new TreeTab(
+				new TextTab(
 					tabSystem,
 					fileWrapper.handle,
 					fileWrapper.options.isReadOnly ? 'forced' : 'off'
