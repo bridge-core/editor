@@ -14,9 +14,11 @@
 				rounded="lg"
 				close-delay="200"
 				transition="context-menu-transition"
+				close-on-click
 			>
 				<template v-slot:activator="{ on, attrs }">
 					<v-list-item
+						v-if="Object.keys(action.submenu.state).length > 0"
 						v-on="on"
 						v-bind="attrs"
 						:disabled="action.isDisabled"

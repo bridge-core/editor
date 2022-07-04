@@ -7,10 +7,8 @@ import { OpenWithAction } from './Actions/OpenWith'
 import { PasteAction } from './Actions/Paste'
 import { RenameAction } from './Actions/Rename'
 import { RevealFilePathAction } from './Actions/RevealFilePath'
-import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { shareFile } from '/@/components/StartParams/Action/openRawFile'
-import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 
 export async function showFileContextMenu(
 	event: MouseEvent,

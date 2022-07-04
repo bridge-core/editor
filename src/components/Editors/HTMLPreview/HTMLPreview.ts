@@ -2,9 +2,9 @@ import { TabSystem } from '../../TabSystem/TabSystem'
 import { IDisposable } from '/@/types/disposable'
 import type { ThemeManager } from '/@/components/Extensions/Themes/ThemeManager'
 import { IframeTab } from '../IframeTab/IframeTab'
-import { FileTab } from '../../TabSystem/FileTab'
 import { addDisposableEventListener } from '/@/utils/disposableListener'
 import { Tab } from '../../TabSystem/CommonTab'
+import { AnyFileHandle } from '../../FileSystem/Types'
 
 export class HTMLPreviewTab extends IframeTab {
 	public rawHtml = ''
@@ -14,7 +14,13 @@ export class HTMLPreviewTab extends IframeTab {
 	protected fileListener?: IDisposable
 	protected messageListener?: IDisposable
 	protected scrollY = 0
-	constructor(protected tab: FileTab, parent: TabSystem) {
+	constructor(
+		parent: TabSystem,
+		protected previewOptions: {
+			filePath: string
+			fileHandle: AnyFileHandle
+		}
+	) {
 		super(parent)
 
 		const themeManager = parent.app.themeManager
@@ -23,9 +29,9 @@ export class HTMLPreviewTab extends IframeTab {
 			this.updateDefaultStyles(themeManager)
 		)
 		this.fileListener = parent.app.project.fileChange.on(
-			tab.getPath(),
-			async () => {
-				await this.load()
+			previewOptions.filePath,
+			async (file) => {
+				await this.load(file)
 			}
 		)
 	}
@@ -77,7 +83,7 @@ export class HTMLPreviewTab extends IframeTab {
 		}`
 	}
 	get fileHandle() {
-		return this.tab.getFileHandle()
+		return this.previewOptions.fileHandle
 	}
 
 	get html() {
@@ -135,8 +141,9 @@ export class HTMLPreviewTab extends IframeTab {
 		)
 	}
 
-	async load() {
-		this.rawHtml = await this.tab.getFile().then((file) => file.text())
+	async load(file?: File) {
+		if (!file) file = await this.fileHandle.getFile()
+		this.rawHtml = await file.text()
 
 		this.updateHtml()
 	}

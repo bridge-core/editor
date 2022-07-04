@@ -1,6 +1,7 @@
 import { FileWrapper } from '/@/components/UIElements/DirectoryViewer/FileView/FileWrapper'
 import { App } from '/@/App'
 import { ISubmenuConfig } from '/@/components/ContextMenu/showContextMenu'
+import { HTMLPreviewerAction } from './OpenWith/HTMLPreviewer'
 
 export const OpenWithAction = (fileWrapper: FileWrapper) =>
 	<ISubmenuConfig>{
@@ -20,6 +21,7 @@ export const OpenWithAction = (fileWrapper: FileWrapper) =>
 				name: '[Tree Editor]',
 				onTrigger: async () => {},
 			},
+			HTMLPreviewerAction(fileWrapper),
 			{ type: 'divider' },
 			{
 				icon: 'mdi-snowflake',

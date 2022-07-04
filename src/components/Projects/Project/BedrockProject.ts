@@ -75,7 +75,10 @@ export class BedrockProject extends Project {
 				if (!inactiveTabSystem) return
 
 				inactiveTabSystem.add(
-					new HTMLPreviewTab(tab, inactiveTabSystem)
+					new HTMLPreviewTab(inactiveTabSystem, {
+						filePath: tab.getPath(),
+						fileHandle: tab.getFileHandle(),
+					})
 				)
 				inactiveTabSystem.setActive(true)
 			},
