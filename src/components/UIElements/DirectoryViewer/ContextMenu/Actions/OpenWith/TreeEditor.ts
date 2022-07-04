@@ -6,7 +6,7 @@ export const TreeEditorAction = (fileWrapper: FileWrapper) =>
 	fileWrapper.name.endsWith('.json')
 		? {
 				icon: 'mdi-file-tree-outline',
-				name: 'Tree Editor',
+				name: 'openWith.treeEditor',
 				onTrigger: async () => {
 					const app = await App.getApp()
 					const tabSystem = app.tabSystem

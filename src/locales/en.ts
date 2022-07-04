@@ -44,6 +44,13 @@ export default {
 		experimentalGameplay: 'Experimental Gameplay',
 		textureLocation: 'Texture Location',
 	},
+	openWith: {
+		snowstorm: 'Snowstorm',
+		textEditor: 'Text Editor',
+		treeEditor: 'Tree Editor',
+		htmlPreviewer: 'HTML Previewer',
+		blockbench: 'Blockbench',
+	},
 	packType: {
 		behaviorPack: {
 			name: 'Behavior Pack',

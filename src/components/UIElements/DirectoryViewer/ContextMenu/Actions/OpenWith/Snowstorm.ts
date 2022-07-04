@@ -14,7 +14,7 @@ export const SnowstormAction = (fileWrapper: FileWrapper) => {
 	)
 		return {
 			icon: 'mdi-snowflake',
-			name: 'Snowstorm',
+			name: 'openWith.snowstorm',
 			onTrigger: async () => {
 				const app = await App.getApp()
 				const tabSystem = app.tabSystem

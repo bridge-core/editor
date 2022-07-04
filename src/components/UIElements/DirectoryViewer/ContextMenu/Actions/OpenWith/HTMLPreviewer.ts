@@ -6,7 +6,7 @@ export const HTMLPreviewerAction = (fileWrapper: FileWrapper) =>
 	fileWrapper.name.endsWith('.html') && fileWrapper.path
 		? {
 				icon: 'mdi-language-html5',
-				name: 'HTML Previewer',
+				name: 'openWith.htmlPreviewer',
 				onTrigger: async () => {
 					const app = await App.getApp()
 					const tabSystem = app.tabSystem

@@ -19,7 +19,7 @@ export const TextEditorAction = (fileWrapper: FileWrapper) => {
 
 	return {
 		icon: 'mdi-pencil-outline',
-		name: 'Text Editor',
+		name: 'openWith.textEditor',
 		onTrigger: async () => {
 			const app = await App.getApp()
 			const tabSystem = app.tabSystem

@@ -15,7 +15,7 @@ export const OpenWithAction = (fileWrapper: FileWrapper) => {
 		SnowstormAction(fileWrapper),
 		{
 			icon: 'mdi-cube-outline',
-			name: '[Blockbench]',
+			name: 'openWith.blockbench',
 			onTrigger: async () => {},
 		},
 	].filter((action) => action !== null)
