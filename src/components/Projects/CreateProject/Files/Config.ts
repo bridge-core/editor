@@ -44,7 +44,6 @@ export class CreateConfig extends CreateFile {
 							'simpleRewrite',
 							{
 								packName: createOptions.name,
-								groupFolder: 'bridge',
 							},
 						],
 					],
