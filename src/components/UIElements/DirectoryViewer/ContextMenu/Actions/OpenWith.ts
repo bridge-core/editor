@@ -1,37 +1,37 @@
 import { FileWrapper } from '/@/components/UIElements/DirectoryViewer/FileView/FileWrapper'
-import { App } from '/@/App'
 import { ISubmenuConfig } from '/@/components/ContextMenu/showContextMenu'
 import { HTMLPreviewerAction } from './OpenWith/HTMLPreviewer'
+import { TreeEditorAction } from './OpenWith/TreeEditor'
+import { TextEditorAction } from './OpenWith/TextEditor'
+import { SnowstormAction } from './OpenWith/Snowstorm'
 
-export const OpenWithAction = (fileWrapper: FileWrapper) =>
-	<ISubmenuConfig>{
+export const OpenWithAction = (fileWrapper: FileWrapper) => {
+	const defaultActions = [
+		TextEditorAction(fileWrapper),
+		TreeEditorAction(fileWrapper),
+		HTMLPreviewerAction(fileWrapper),
+	].filter((action) => action !== null)
+	const externalActions = [
+		SnowstormAction(fileWrapper),
+		{
+			icon: 'mdi-cube-outline',
+			name: '[Blockbench]',
+			onTrigger: async () => {},
+		},
+	].filter((action) => action !== null)
+
+	return <ISubmenuConfig>{
 		type: 'submenu',
 		icon: 'mdi-open-in-app',
 		name: 'windows.packExplorer.fileActions.openWith.name',
 		description: 'windows.packExplorer.fileActions.openWith.description',
 
 		actions: [
-			{
-				icon: 'mdi-pencil-outline',
-				name: '[Text Editor]',
-				onTrigger: async () => {},
-			},
-			{
-				icon: 'mdi-file-tree-outline',
-				name: '[Tree Editor]',
-				onTrigger: async () => {},
-			},
-			HTMLPreviewerAction(fileWrapper),
-			{ type: 'divider' },
-			{
-				icon: 'mdi-snowflake',
-				name: '[Snowstorm]',
-				onTrigger: async () => {},
-			},
-			{
-				icon: 'mdi-cube-outline',
-				name: '[Blockbench]',
-				onTrigger: async () => {},
-			},
+			...defaultActions,
+			defaultActions.length > 0 && externalActions.length > 0
+				? { type: 'divider' }
+				: null,
+			...externalActions,
 		],
 	}
+}
