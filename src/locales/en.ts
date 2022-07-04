@@ -701,6 +701,10 @@ export default {
 					name: 'Open',
 					description: 'Open the file in the editor',
 				},
+				openWith: {
+					name: 'Open With',
+					description: 'Open the file in the editor',
+				},
 				openInSplitScreen: {
 					name: 'Open in Split Screen',
 					description: 'Open the file in split screen mode',

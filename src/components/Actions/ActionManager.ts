@@ -3,10 +3,20 @@ import { IActionConfig } from './SimpleAction'
 import { del, set, shallowReactive } from '@vue/composition-api'
 import type { KeyBindingManager } from './KeyBindingManager'
 import { v4 as uuid } from 'uuid'
+import { ISubmenuConfig } from '../ContextMenu/showContextMenu'
+
 export class ActionManager {
+	type = 'submenu'
 	public state: Record<
 		string,
-		Action | { type: 'divider' }
+		| Action
+		| { type: 'divider' }
+		| {
+				type: 'submenu'
+				icon: string
+				name: string
+				submenu: Submenu
+		  }
 	> = shallowReactive({})
 
 	constructor(public readonly _keyBindingManager?: KeyBindingManager) {}
@@ -41,6 +51,25 @@ export class ActionManager {
 	addDivider() {
 		this.state[uuid()] = { type: 'divider' }
 	}
+	addSubMenu(submenuConfig: ISubmenuConfig) {
+		const submenu = new Submenu()
+
+		submenuConfig.actions.forEach((action) => {
+			if (action === null) return
+
+			if (action.type === 'divider') {
+				submenu.addDivider()
+			} else {
+				submenu.create(action)
+			}
+		})
+		this.state[uuid()] = {
+			type: 'submenu',
+			icon: submenuConfig.icon,
+			name: submenuConfig.name,
+			submenu,
+		}
+	}
 	disposeAction(actionId: string) {
 		del(this.state, actionId)
 	}
@@ -59,4 +88,8 @@ export class ActionManager {
 		// This must be an action because of the check above
 		await (<Action>this.state[actionId]).trigger()
 	}
+}
+
+export class Submenu extends ActionManager {
+	type = 'submenu'
 }

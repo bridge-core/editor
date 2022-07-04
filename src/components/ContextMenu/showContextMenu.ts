@@ -3,14 +3,21 @@ import { IActionConfig } from '../Actions/SimpleAction'
 import { ActionManager } from '../Actions/ActionManager'
 import { IPosition } from './ContextMenu'
 
+export interface ISubmenuConfig {
+	type: 'submenu'
+	name: string
+	icon: string
+	actions: (IActionConfig | null | { type: 'divider' })[]
+}
+
 export async function showContextMenu(
 	event: MouseEvent | IPosition,
-	actions: (IActionConfig | { type: 'divider' } | null)[],
+	actions: (IActionConfig | ISubmenuConfig | { type: 'divider' } | null)[],
 	mayCloseOnClickOutside = true
 ) {
-	let filteredActions = <(IActionConfig | { type: 'divider' })[]>(
-		actions.filter((action) => action !== null)
-	)
+	let filteredActions = <
+		(IActionConfig | ISubmenuConfig | { type: 'divider' })[]
+	>actions.filter((action) => action !== null)
 
 	if (event instanceof MouseEvent) {
 		event.preventDefault()
@@ -21,11 +28,19 @@ export async function showContextMenu(
 	const app = await App.getApp()
 	const actionManager = new ActionManager()
 
-	filteredActions.forEach((action) =>
-		action.type === 'divider'
-			? actionManager.addDivider()
-			: actionManager.create(action)
-	)
+	filteredActions.forEach((action) => {
+		switch (action.type) {
+			case 'submenu':
+				actionManager.addSubMenu(action)
+				break
+			case 'divider':
+				actionManager.addDivider()
+				break
+			default:
+				actionManager.create(action)
+				break
+		}
+	})
 
 	// This is necessary so an old click outside event doesn't close the new menu
 	setTimeout(

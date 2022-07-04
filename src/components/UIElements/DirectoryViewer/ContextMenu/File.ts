@@ -3,6 +3,7 @@ import { CopyAction } from './Actions/Copy'
 import { DeleteAction } from './Actions/Delete'
 import { OpenAction } from './Actions/Open'
 import { OpenInSplitScreenAction } from './Actions/OpenInSplitScreen'
+import { OpenWithAction } from './Actions/OpenWith'
 import { PasteAction } from './Actions/Paste'
 import { RenameAction } from './Actions/Rename'
 import { RevealFilePathAction } from './Actions/RevealFilePath'
@@ -24,6 +25,7 @@ export async function showFileContextMenu(
 
 	showContextMenu(event, [
 		OpenAction(fileWrapper),
+		OpenWithAction(fileWrapper),
 		OpenInSplitScreenAction(fileWrapper),
 		{ type: 'divider' },
 
