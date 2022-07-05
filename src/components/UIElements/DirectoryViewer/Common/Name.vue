@@ -42,7 +42,7 @@
 			@keydown.enter.stop.prevent="confirmRename"
 			@keydown.esc.stop.prevent="cancelRename"
 			@keydown.space.prevent.stop.native
-			:rules="[rules.validName, rules.required]"
+			:rules="[rules.validName, rules.required, rules.notSameName]"
 		/>
 
 		<v-spacer />
@@ -93,15 +93,22 @@ export default {
 		}
 	},
 
-	data: () => ({
-		isFocused: false,
+	data() {
+		return {
+			isFocused: false,
 
-		currentName: '',
-		rules: {
-			required: (name) => !!name,
-			validName: (name) => /^[^\\/:*?"<>|]*$/.test(name),
-		},
-	}),
+			currentName: '',
+			rules: {
+				required: (name) => !!name,
+				validName: (name) => /^[^\\/:*?"<>|]*$/.test(name),
+				notSameName: (name) =>
+					platform() === 'win32'
+						? name.toUpperCase() !==
+						  this.baseWrapper.name.toUpperCase()
+						: name !== this.baseWrapper.name,
+			},
+		}
+	},
 	methods: {
 		onEnter(event) {
 			if (platform() === 'darwin') this.baseWrapper.startRename()
@@ -146,6 +153,7 @@ export default {
 		confirmRename() {
 			if (
 				!this.rules.validName(this.currentName) ||
+				!this.rules.notSameName(this.currentName) ||
 				this.currentName.length === 0
 			)
 				return
