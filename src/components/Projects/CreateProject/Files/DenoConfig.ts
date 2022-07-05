@@ -11,7 +11,7 @@ export class CreateDenoConfig extends CreateFile {
 			{
 				tasks: {
 					setup:
-						'deno install -A -n dash_compiler https://deno.land/x/dash_compiler/mod.ts',
+						'deno install -A --reload -f -n dash_compiler https://deno.land/x/dash_compiler/mod.ts',
 					watch:
 						'dash_compiler build --mode development && dash_compiler watch',
 					build: 'dash_compiler build',
