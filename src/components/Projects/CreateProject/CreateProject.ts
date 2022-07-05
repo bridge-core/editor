@@ -21,6 +21,7 @@ import {
 	getStableFormatVersion,
 } from '/@/components/Data/FormatVersions'
 import { Project } from '../Project/Project'
+import { CreateDenoConfig } from './Files/DenoConfig'
 
 export interface ICreateProjectOptions {
 	author: string | string[]
@@ -65,7 +66,11 @@ export class CreateProjectWindow extends BaseWindow {
 		worlds: new CreateWorlds(),
 	}
 	protected availablePackTypes: IPackType[] = []
-	protected createFiles = [new CreateGitIgnore(), new CreateConfig()]
+	protected createFiles = [
+		new CreateGitIgnore(),
+		new CreateConfig(),
+		new CreateDenoConfig(),
+	]
 	protected experimentalToggles: IExperimentalToggle[] = []
 	protected projectNameRules = [
 		(val: string) =>
