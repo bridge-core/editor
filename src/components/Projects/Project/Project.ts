@@ -527,6 +527,7 @@ export abstract class Project {
 	async recompile(forceStartIfActive = true) {
 		if (forceStartIfActive && this.isActiveProject) {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
+			await this.compilerReady
 			this.compilerService.build()
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
