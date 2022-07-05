@@ -54,23 +54,22 @@ export class ComMojang extends Signal<void> {
 		const informWindow = new InformationWindow({
 			name: 'comMojang.title',
 			description: 'comMojang.permissionRequest',
-			onClose: async () => {
-				await this.requestPermissions(directoryHandle)
-			},
 		})
 		informWindow.open()
 
 		await informWindow.fired
+		await this.requestPermissions(directoryHandle)
 	}
 
 	protected async requestPermissions(directoryHandle: AnyDirectoryHandle) {
 		const permission = await directoryHandle.requestPermission({
 			mode: 'readwrite',
 		})
+
 		if (permission !== 'granted') {
 			this._hasComMojang = false
 			this._permissionDenied = true
-			await this.app.projectManager.recompileAll()
+			this.app.projectManager.recompileAll()
 		} else {
 			this.fileSystem.setup(directoryHandle)
 			this._hasComMojang = true
