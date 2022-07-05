@@ -222,34 +222,41 @@ export class PackExplorer extends SidebarContent {
 			// Restart dev server
 			restartWatchModeConfig,
 			{ type: 'divider' },
-
-			// Export project as .brproject
 			{
+				type: 'submenu',
 				icon: 'mdi-export',
-				name: 'windows.packExplorer.exportAsBrproject.name',
-				onTrigger: () => exportAsBrproject(),
+				name: 'windows.packExplorer.exportAs.name',
+				actions: [
+					// Export project as .brproject
+					{
+						icon: 'mdi-folder-zip-outline',
+						name: 'windows.packExplorer.exportAs.brproject',
+						onTrigger: () => exportAsBrproject(),
+					},
+					// Export project as .mcaddon
+					{
+						icon: 'mdi-minecraft',
+						name: 'windows.packExplorer.exportAs.mcaddon',
+						onTrigger: () => exportAsMcaddon(),
+					},
+					// Export project as .mcworld
+					{
+						icon: 'mdi-earth-box',
+						name: 'windows.packExplorer.exportAs.mcworld',
+						isDisabled: !(await canExportMctemplate()),
+						onTrigger: () => exportAsMctemplate(true),
+					},
+					// Export project as .mctemplate
+					{
+						icon: 'mdi-earth-box-plus',
+						name: 'windows.packExplorer.exportAs.mctemplate',
+						isDisabled: !(await canExportMctemplate()),
+						onTrigger: () => exportAsMctemplate(),
+					},
+					...(await app.project.exportProvider.getExporters()),
+				],
 			},
-			// Export project as .mcaddon
-			{
-				icon: 'mdi-folder-zip-outline',
-				name: 'windows.packExplorer.exportAsMcaddon.name',
-				onTrigger: () => exportAsMcaddon(),
-			},
-			// Export project as .mcworld
-			{
-				icon: 'mdi-earth-box',
-				name: 'windows.packExplorer.exportAsMcworld.name',
-				isDisabled: !(await canExportMctemplate()),
-				onTrigger: () => exportAsMctemplate(true),
-			},
-			// Export project as .mctemplate
-			{
-				icon: 'mdi-earth-box-plus',
-				name: 'windows.packExplorer.exportAsMctemplate.name',
-				isDisabled: !(await canExportMctemplate()),
-				onTrigger: () => exportAsMctemplate(),
-			},
-			...(await app.project.exportProvider.getExporters()),
+
 			{ type: 'divider' },
 
 			// Project config
