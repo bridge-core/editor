@@ -35,12 +35,9 @@ export async function showFolderContextMenu(
 				const name = await inputWindow.fired
 				if (!name) return
 
-				const fileHandle = await app.fileSystem.writeFile(
-					`${path}/${name}`,
-					''
-				)
-
-				App.eventSystem.dispatch('fileAdded', undefined)
+				const filePath = `${path}/${name}`
+				const fileHandle = await app.fileSystem.writeFile(filePath, '')
+				app.project.updateFile(filePath)
 
 				// Open file in new tab
 				await app.project.openFile(fileHandle, {
