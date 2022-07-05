@@ -274,6 +274,15 @@ export class PackExplorer extends SidebarContent {
 					)
 				},
 			},
+			{
+				icon: 'mdi-folder-open-outline',
+				name: 'windows.packExplorer.openProjectFolder.name',
+				onTrigger: async () => {
+					app.viewFolders.addDirectoryHandle(
+						app.project.baseDirectory
+					)
+				},
+			},
 		])
 	}
 }

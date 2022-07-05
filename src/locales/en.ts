@@ -689,6 +689,9 @@ export default {
 				missing:
 					'It looks like this project has no config.json file. Every project needs a project config in order to work correctly.',
 			},
+			openProjectFolder: {
+				name: 'Open Project Folder',
+			},
 			exportAsMcaddon: {
 				name: 'Export as .mcaddon',
 			},
