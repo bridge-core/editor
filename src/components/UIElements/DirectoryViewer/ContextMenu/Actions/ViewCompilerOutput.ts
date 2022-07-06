@@ -1,19 +1,31 @@
 import { App } from '/@/App'
-import { FileWrapper } from '/@/components/UIElements/DirectoryViewer/FileView/FileWrapper'
+import { FileTab } from '/@/components/TabSystem/FileTab'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 
-export const ViewCompilerOutput = (fileWrapper: FileWrapper) => ({
+export const ViewCompilerOutput = (
+	filePath?: string | null,
+	addKeyBinding = false
+) => ({
 	icon: 'mdi-cogs',
 	name: 'windows.packExplorer.fileActions.viewCompilerOutput.name',
 	description:
 		'windows.packExplorer.fileActions.viewCompilerOutput.description',
+	keyBinding: addKeyBinding ? 'Ctrl + H' : undefined,
+
 	onTrigger: async () => {
 		const app = await App.getApp()
 		const project = app.project
-		if (!fileWrapper.path) return
+
+		if (filePath === undefined) {
+			const currentTab = app.project.tabSystem?.selectedTab
+			if (!(currentTab instanceof FileTab)) return
+
+			filePath = currentTab.getPath()
+		}
+		if (!filePath) return
 
 		const transformedPath = await project.compilerService.getCompilerOutputPath(
-			fileWrapper.path
+			filePath
 		)
 		const fileSystem = app.comMojang.hasComMojang
 			? app.comMojang.fileSystem
