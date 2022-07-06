@@ -13,11 +13,11 @@ export const OpenWithAction = (fileWrapper: FileWrapper) => {
 	].filter((action) => action !== null)
 	const externalActions = [
 		SnowstormAction(fileWrapper),
-		{
-			icon: 'mdi-cube-outline',
-			name: 'openWith.blockbench',
-			onTrigger: async () => {},
-		},
+		// {
+		// 	icon: 'mdi-cube-outline',
+		// 	name: 'openWith.blockbench',
+		// 	onTrigger: async () => {},
+		// },
 	].filter((action) => action !== null)
 
 	return <ISubmenuConfig>{
