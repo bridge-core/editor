@@ -1,11 +1,14 @@
 <template>
 	<component
 		:is="tagName"
-		v-ripple
+		v-ripple="!baseWrapper.isEditingName.value"
 		tabindex="0"
 		ref="name"
 		class="directory-viewer-name d-flex justify-center align-center px-1 rounded-lg"
-		:class="{ selected: baseWrapper.isSelected.value }"
+		:class="{
+			selected: baseWrapper.isSelected.value,
+			'drag-handle': !baseWrapper.isEditingName.value,
+		}"
 		@click.prevent="onClick($event)"
 		@keydown.space.prevent="isFocused ? onClick($event) : null"
 		@keydown.stop="onKeyDown"
@@ -42,6 +45,7 @@
 			@keydown.enter.stop.prevent="confirmRename"
 			@keydown.esc.stop.prevent="cancelRename"
 			@keydown.space.prevent.stop.native
+			@click.stop
 			:rules="[rules.validName, rules.required, rules.notSameName]"
 		/>
 

@@ -19,6 +19,7 @@
 			:class="{ 'ml-2': renderDirectoryName }"
 			v-model="directoryWrapper.children.value"
 			group="directory-view"
+			handle=".drag-handle"
 			:disabled="isReadOnly || pointerDevice === 'touch'"
 			@start="isDraggingWrapper = true"
 			@end="isDraggingWrapper = false"
