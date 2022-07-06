@@ -10,7 +10,7 @@ export const ViewCompilerOutput = (
 	name: 'windows.packExplorer.fileActions.viewCompilerOutput.name',
 	description:
 		'windows.packExplorer.fileActions.viewCompilerOutput.description',
-	keyBinding: addKeyBinding ? 'Ctrl + H' : undefined,
+	keyBinding: addKeyBinding ? 'Ctrl + Shift + D' : undefined,
 
 	onTrigger: async () => {
 		const app = await App.getApp()
