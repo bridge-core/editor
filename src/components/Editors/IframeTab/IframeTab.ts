@@ -1,6 +1,8 @@
 import { TabSystem } from '../../TabSystem/TabSystem'
 import IframeTabComponent from './IframeTab.vue'
 import { Tab } from '../../TabSystem/CommonTab'
+import { IframeApi } from './API/IframeApi'
+import { markRaw } from '@vue/composition-api'
 
 interface IIframeTabOptions {
 	icon?: string
@@ -13,8 +15,9 @@ interface IIframeTabOptions {
 export class IframeTab extends Tab {
 	component = IframeTabComponent
 
-	protected iframe = document.createElement('iframe')
+	private iframe = document.createElement('iframe')
 	protected loaded: Promise<void>
+	protected api = markRaw(new IframeApi(this.iframe))
 
 	constructor(parent: TabSystem, protected options: IIframeTabOptions = {}) {
 		super(parent)
@@ -28,7 +31,7 @@ export class IframeTab extends Tab {
 			this.iframe.addEventListener('load', () => resolve())
 		)
 
-		if (this.url) this.iframe.src = this.url
+		if (this.url) this.setUrl(this.url)
 		if (this.options.html) this.iframe.srcdoc = this.options.html
 
 		this.iframe.width = '100%'
@@ -65,6 +68,14 @@ export class IframeTab extends Tab {
 	}
 	get url() {
 		return this.options.url
+	}
+	set srcdoc(val: string) {
+		this.api.loaded.resetSignal()
+		this.iframe.srcdoc = val
+	}
+	set src(val: string) {
+		this.api.loaded.resetSignal()
+		this.iframe.src = val
 	}
 
 	setUrl(url: string) {

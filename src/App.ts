@@ -47,6 +47,7 @@ import { FolderImportManager } from './components/ImportFolder/manager'
 import { StartParamManager } from './components/StartParams/Manager'
 import { ViewFolders } from './components/ViewFolders/ViewFolders'
 import { SidebarManager } from './components/Sidebar/Manager'
+import { HTMLPreviewerAction } from './components/UIElements/DirectoryViewer/ContextMenu/Actions/OpenWith/HTMLPreviewer'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -291,10 +292,17 @@ export class App {
 		])
 
 		// Ensure that a project is selected
-		this.projectManager.projectReady.fired.then(async () =>
+		this.projectManager.projectReady.fired.then(async () => {
 			// Then load global extensions
 			this.extensionLoader.loadExtensions()
-		)
+
+			// TODO(@solvedDev): Remove this code, it's only for testing
+			HTMLPreviewerAction(
+				await this.fileSystem.getFileHandle(
+					'~local/projects/Local/BP/documentation/Addons.html'
+				)
+			)?.onTrigger()
+		})
 
 		console.timeEnd('[APP] startUp()')
 	}

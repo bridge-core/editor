@@ -13,6 +13,7 @@
 		"@types/lz-string": "^1.3.34",
 		"@vue/composition-api": "^1.0.5",
 		"bridge-common-utils": "^0.3.3",
+		"bridge-iframe-api": "^0.4.4",
 		"bridge-model-viewer": "^0.7.7",
 		"buffer": "^6.0.3",
 		"color-convert": "^2.0.1",

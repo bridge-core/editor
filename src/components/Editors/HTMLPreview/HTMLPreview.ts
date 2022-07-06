@@ -2,9 +2,9 @@ import { TabSystem } from '../../TabSystem/TabSystem'
 import { IDisposable } from '/@/types/disposable'
 import type { ThemeManager } from '/@/components/Extensions/Themes/ThemeManager'
 import { IframeTab } from '../IframeTab/IframeTab'
-import { addDisposableEventListener } from '/@/utils/disposableListener'
 import { Tab } from '../../TabSystem/CommonTab'
 import { AnyFileHandle } from '../../FileSystem/Types'
+import { iframeApiVersion } from '/@/utils/app/iframeApiVersion'
 
 export class HTMLPreviewTab extends IframeTab {
 	public rawHtml = ''
@@ -17,7 +17,7 @@ export class HTMLPreviewTab extends IframeTab {
 	constructor(
 		parent: TabSystem,
 		protected previewOptions: {
-			filePath: string
+			filePath?: string
 			fileHandle: AnyFileHandle
 		}
 	) {
@@ -28,12 +28,21 @@ export class HTMLPreviewTab extends IframeTab {
 		this.themeListener = themeManager.on(() =>
 			this.updateDefaultStyles(themeManager)
 		)
-		this.fileListener = parent.app.project.fileChange.on(
-			previewOptions.filePath,
-			async (file) => {
-				await this.load(file)
-			}
-		)
+
+		if (previewOptions.filePath)
+			this.fileListener = parent.app.project.fileChange.on(
+				previewOptions.filePath,
+				async (file) => {
+					await this.load(file)
+				}
+			)
+
+		this.api.readyToExtend.on(() => {
+			this.api.on('saveScrollPosition', (scrollY) => {
+				console.log('SAVE', scrollY)
+				if (scrollY !== 0) this.scrollY = scrollY
+			})
+		})
 	}
 
 	async setup() {
@@ -42,19 +51,9 @@ export class HTMLPreviewTab extends IframeTab {
 		await super.setup()
 	}
 	async onActivate() {
-		this.messageListener = addDisposableEventListener(
-			'message',
-			({ data: { type, scrollY } }) => {
-				if (type !== 'saveScrollPosition' || scrollY === undefined)
-					return
+		console.log(this.scrollY)
+		this.api.trigger('loadScrollPosition', this.scrollY)
 
-				this.updateScrollY(scrollY)
-			}
-		)
-		this.iframe.contentWindow?.postMessage(
-			{ type: 'loadScrollPosition', scrollY: this.scrollY },
-			'*'
-		)
 		await super.onActivate()
 	}
 	onDeactivate() {
@@ -94,15 +93,24 @@ export class HTMLPreviewTab extends IframeTab {
 				href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
 			/>` +
 			`<style>${this.defaultStyles}</style>` +
-			`<script>
-				window.addEventListener('scroll', () => {
-					window.top.postMessage({ type: 'saveScrollPosition', scrollY: window.scrollY }, '*')
-				})
-				window.addEventListener('message', ({ data: { type, scrollY } }) => {
-					if (type !== 'loadScrollPosition' || scrollY === undefined) return
+			`<script type="module">
+				import { Channel } from "https://unpkg.com/bridge-iframe-api@${iframeApiVersion}/dist/bridge-iframe-api.es.js"
 
+				const channel = new Channel()
+
+				await channel.connect()
+	
+				window.addEventListener('scroll', () => {
+					console.log('SCROLL')
+					channel.simpleTrigger('saveScrollPosition', window.scrollY)
+				})
+	
+	
+				channel.on('loadScrollPosition', (scrollY) => {
+					console.log('LOAD', scrollY)
 					window.scrollTo(0, scrollY)
 				})
+				
 			</script>`
 		)
 	}
@@ -115,30 +123,19 @@ export class HTMLPreviewTab extends IframeTab {
 		a {
 			color: ${themeManager.getColor('primary')};
 		}
-		
+	
 		textarea, input {
 			background-color: ${themeManager.getColor('background')};
 			color: ${themeManager.getColor('text')};
 		}`
 
-		this.updateHtml()
-	}
-	updateScrollY(scrollY: number) {
-		this.scrollY = scrollY
+		if (this.rawHtml !== '') this.updateHtml()
 	}
 
 	updateHtml() {
-		this.iframe.srcdoc = this.html
-		this.iframe.addEventListener(
-			'load',
-			() => {
-				this.iframe.contentWindow?.postMessage(
-					{ type: 'loadScrollPosition', scrollY: this.scrollY },
-					'*'
-				)
-			},
-			{ once: true }
-		)
+		this.srcdoc = this.html
+
+		this.api.trigger('loadScrollPosition', this.scrollY)
 	}
 
 	async load(file?: File) {

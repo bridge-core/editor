@@ -95,7 +95,6 @@ export default {
 	},
 
 	setup() {
-		console.log(App.sidebar)
 		return {
 			rawSidebarElements: App.sidebar.elements,
 			rawIsNavigationVisible: App.sidebar.isNavigationVisible,

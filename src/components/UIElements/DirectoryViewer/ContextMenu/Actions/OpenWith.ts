@@ -25,7 +25,7 @@ export const OpenWithAction = async (fileWrapper: FileWrapper) => {
 	const defaultActions = [
 		TextEditorAction(fileWrapper),
 		TreeEditorAction(fileWrapper),
-		HTMLPreviewerAction(fileWrapper),
+		HTMLPreviewerAction(fileWrapper.handle, fileWrapper.path ?? undefined),
 	].filter((action) => action !== null)
 
 	// Actions which open an external tool

@@ -1,9 +1,13 @@
 import { FileWrapper } from '/@/components/UIElements/DirectoryViewer/FileView/FileWrapper'
 import { App } from '/@/App'
 import { HTMLPreviewTab } from '/@/components/Editors/HTMLPreview/HTMLPreview'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
 
-export const HTMLPreviewerAction = (fileWrapper: FileWrapper) =>
-	fileWrapper.name.endsWith('.html') && fileWrapper.path
+export const HTMLPreviewerAction = (
+	fileHandle: AnyFileHandle,
+	filePath?: string
+) =>
+	fileHandle.name.endsWith('.html')
 		? {
 				icon: 'mdi-language-html5',
 				name: 'openWith.htmlPreviewer',
@@ -14,8 +18,8 @@ export const HTMLPreviewerAction = (fileWrapper: FileWrapper) =>
 
 					tabSystem.add(
 						new HTMLPreviewTab(tabSystem, {
-							fileHandle: fileWrapper.handle,
-							filePath: fileWrapper.path!,
+							fileHandle: fileHandle,
+							filePath: filePath ?? undefined,
 						})
 					)
 				},
