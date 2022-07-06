@@ -15,6 +15,7 @@ export interface IPluginOpenWithAction {
 	onOpen: (details: IOpenWithDetails) => Promise<void> | void
 }
 interface IOpenWithDetails {
+	isReadOnly?: boolean
 	fileHandle: AnyFileHandle
 	filePath: string | null
 }
@@ -40,6 +41,7 @@ export const OpenWithAction = async (fileWrapper: FileWrapper) => {
 	// Load actions provided by plugins
 	for (const action of pluginActionStore) {
 		const details = {
+			isReadOnly: fileWrapper.options.isReadOnly,
 			fileHandle: fileWrapper.handle,
 			filePath: fileWrapper.path,
 		}
