@@ -492,8 +492,8 @@ export class CommandData extends Signal<void> {
 		if (!kind) kind = languages.CompletionItemKind.Text
 
 		return strings.map((str) => ({
-			label: Array.isArray(str) ? str[0] : str,
-			insertText: Array.isArray(str) ? str[1] : str,
+			label: Array.isArray(str) ? `${str[0]}` : `${str}`,
+			insertText: Array.isArray(str) ? `${str[1]}` : `${str}`,
 			kind: kind!,
 			documentation,
 			insertTextRules: Array.isArray(str)
