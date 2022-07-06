@@ -1,11 +1,14 @@
 import { IModuleConfig } from '../types'
 import { version } from '/@/utils/app/version'
 import { App } from '/@/App'
+import { isNightly } from '/@/utils/app/isNightly'
 
 export const ContextEnv: { value: any } = { value: {} }
 
 export const ENVModule = ({}: IModuleConfig) => ({
 	APP_VERSION: version,
+	isNightlyBuild: isNightly,
+
 	getCurrentBP() {
 		return `${App.instance.project.projectPath}/BP`
 	},
