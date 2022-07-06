@@ -5,7 +5,6 @@ import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
 import { importNewProject } from '/@/components/Projects/Import/ImportNew'
 import { virtualProjectName } from '/@/components/Projects/Project/Project'
-import { SidebarState } from '/@/components/Sidebar/state'
 
 export function setupProjectCategory(app: App) {
 	const project = new ToolbarCategory(
@@ -23,8 +22,8 @@ export function setupProjectCategory(app: App) {
 			onTrigger: async () => {
 				const app = await App.getApp()
 				app.projectManager.selectProject(virtualProjectName)
-				if (!SidebarState.sidebarElements.packExplorer.isSelected)
-					SidebarState.sidebarElements.packExplorer.click()
+				if (!App.sidebar.elements.packExplorer.isSelected)
+					App.sidebar.elements.packExplorer.click()
 			},
 		})
 	)

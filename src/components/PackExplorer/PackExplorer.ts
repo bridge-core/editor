@@ -98,7 +98,7 @@ export class PackExplorer extends SidebarContent {
 				startPath: pack.packPath,
 
 				provideFileContextMenu: (fileWrapper) => [
-					ViewCompilerOutput(fileWrapper),
+					ViewCompilerOutput(fileWrapper.path),
 				],
 			})
 			await wrapper.open()

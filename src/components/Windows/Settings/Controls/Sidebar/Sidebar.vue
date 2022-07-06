@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<ActionViewer
-			v-for="(sidebar, id) in sidebarState"
+			v-for="(sidebar, id) in sidebarElements"
 			:key="id"
 			:selected="sidebar.isVisibleSetting"
 			:action="{ ...sidebar.config, name: sidebar.displayName }"
@@ -13,14 +13,16 @@
 </template>
 
 <script>
-import { SidebarState } from '/@/components/Sidebar/state.ts'
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { settingsState } from '../../SettingsState'
+import { App } from '/@/App'
 
 export default {
-	data: () => ({
-		sidebarState: SidebarState.sidebarElements,
-	}),
+	setup() {
+		return {
+			sidebarElements: App.sidebar.elements,
+		}
+	},
 	components: {
 		ActionViewer,
 	},

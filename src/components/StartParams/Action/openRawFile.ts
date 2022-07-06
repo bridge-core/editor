@@ -2,7 +2,6 @@ import { VirtualFileHandle } from '/@/components/FileSystem/Virtual/FileHandle'
 import { App } from '/@/App'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import type { IStartAction } from '../Manager'
-import { isContentVisible } from '../../Sidebar/state'
 import { strFromU8, strToU8, zlibSync } from 'fflate'
 
 const textEncoder = new TextEncoder()
@@ -36,7 +35,7 @@ export async function shareFile(file: AnyFileHandle) {
 	if (typeof navigator.share === 'function') {
 		const url = new URL(window.location.href)
 
-		if (!isContentVisible.value)
+		if (!App.sidebar.isContentVisible.value)
 			url.searchParams.set('setSidebarState', 'hidden')
 
 		url.searchParams.set(

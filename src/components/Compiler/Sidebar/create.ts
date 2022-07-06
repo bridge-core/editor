@@ -1,6 +1,6 @@
 import { proxy } from 'comlink'
 import { Project } from '/@/components/Projects/Project/Project'
-import { createSidebar } from '/@/components/Sidebar/create'
+import { createSidebar } from '../../Sidebar/SidebarElement'
 import { App } from '/@/App'
 
 const saveState = new Map<string, ISidebarState>()

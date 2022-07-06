@@ -345,6 +345,19 @@ export default {
 		edit: {
 			name: 'Edit',
 		},
+		view: {
+			name: 'View',
+
+			togglePackExplorer: {
+				name: 'Toggle Pack Explorer',
+				description:
+					"Toggle the pack explorer that appears inside of bridge.'s sidebar",
+			},
+			openFileSearch: {
+				name: 'Open Find & Replace',
+				description: 'Opens a new Find & Replace tab',
+			},
+		},
 		tools: {
 			name: 'Tools',
 		},

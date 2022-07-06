@@ -1,5 +1,4 @@
 import type { IStartAction } from '../Manager'
-import { SidebarState, toggle } from '../../Sidebar/state'
 import { App } from '/@/App'
 
 export const viewExtension: IStartAction = {

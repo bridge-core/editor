@@ -3,7 +3,7 @@ import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { InfoPanel } from '../InfoPanel/InfoPanel'
 import { SidebarAction } from '../Sidebar/Content/SidebarAction'
 import { SidebarContent } from '../Sidebar/Content/SidebarContent'
-import { SidebarElement } from '../Sidebar/create'
+import { SidebarElement } from '../Sidebar/SidebarElement'
 import ViewFolderComponent from './ViewFolders.vue'
 
 export class ViewFolders extends SidebarContent {

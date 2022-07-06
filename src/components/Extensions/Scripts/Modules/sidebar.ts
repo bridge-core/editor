@@ -1,5 +1,5 @@
 import { IModuleConfig } from '../types'
-import { createSidebar } from '/@/components/Sidebar/create'
+import { createSidebar } from '../../../Sidebar/SidebarElement'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { Component } from 'vue'
 import { SidebarContent } from '/@/components/Sidebar/Content/SidebarContent'

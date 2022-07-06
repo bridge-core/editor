@@ -1,8 +1,7 @@
 import { App } from '/@/App'
-import { createSidebar } from './create'
+import { createSidebar } from './SidebarElement'
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
-import { SidebarState } from './state'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
 import { createCompilerSidebar } from '../Compiler/Sidebar/create'
@@ -30,7 +29,7 @@ export async function setupSidebar() {
 
 	App.getApp().then((app) => {
 		packExplorer.setSidebarContent(app.packExplorer)
-		if (!SidebarState.forcedInitialState) packExplorer.click()
+		if (!App.sidebar.forcedInitialState.value) packExplorer.click()
 	})
 
 	createSidebar({
@@ -60,7 +59,7 @@ export async function setupSidebar() {
 	})
 
 	SettingsWindow.loadedSettings.once((settingsState) => {
-		for (const sidebar of Object.values(SidebarState.sidebarElements)) {
+		for (const sidebar of Object.values(App.sidebar.elements)) {
 			sidebar.isVisibleSetting =
 				settingsState?.sidebar?.sidebarElements?.[sidebar.uuid] ?? true
 		}

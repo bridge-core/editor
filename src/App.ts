@@ -32,7 +32,7 @@ import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/FileSystem/ComMojang'
 import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
-import { markRaw } from '@vue/composition-api'
+import { markRaw, reactive } from '@vue/composition-api'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
@@ -46,6 +46,7 @@ import { getStorageDirectory } from './utils/getStorageDirectory'
 import { FolderImportManager } from './components/ImportFolder/manager'
 import { StartParamManager } from './components/StartParams/Manager'
 import { ViewFolders } from './components/ViewFolders/ViewFolders'
+import { SidebarManager } from './components/Sidebar/Manager'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -89,6 +90,7 @@ export class App {
 	)
 	public static readonly fileType = markRaw(new FileTypeLibrary())
 	public static readonly packType = markRaw(new PackTypeLibrary())
+	public static readonly sidebar = new SidebarManager()
 
 	public readonly mobile: Mobile
 

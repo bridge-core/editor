@@ -112,7 +112,6 @@ import { App } from '/@/App.ts'
 import TabSystem from '/@/components/TabSystem/TabSystem.vue'
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
-import { isContentVisible, SidebarState } from './components/Sidebar/state'
 import { settingsState } from './components/Windows/Settings/SettingsState'
 
 export default {
@@ -148,10 +147,13 @@ export default {
 
 	computed: {
 		isSidebarContentVisible() {
-			return this.sidebarNavigationVisible && isContentVisible.value
+			return (
+				this.sidebarNavigationVisible &&
+				App.sidebar.isContentVisible.value
+			)
 		},
 		sidebarNavigationVisible() {
-			return SidebarState.isNavigationVisible
+			return App.sidebar.isNavigationVisible.value
 		},
 		isSidebarRight() {
 			return (
@@ -189,7 +191,7 @@ export default {
 	},
 	methods: {
 		openSidebar() {
-			SidebarState.isNavigationVisible = true
+			App.sidebar.isNavigationVisible.value = true
 		},
 	},
 	watch: {

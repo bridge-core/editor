@@ -79,10 +79,10 @@
 <script>
 import { settingsState } from '/@/components/Windows/Settings/SettingsState.ts'
 import SidebarButton from './Button.vue'
-import { SidebarState } from './state.ts'
 import { tasks } from '/@/components/TaskManager/TaskManager.ts'
 import { NotificationStore } from '/@/components/Notifications/state.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
+import { App } from '/@/App'
 
 export default {
 	name: 'Sidebar',
@@ -93,9 +93,16 @@ export default {
 	components: {
 		SidebarButton,
 	},
+
+	setup() {
+		console.log(App.sidebar)
+		return {
+			rawSidebarElements: App.sidebar.elements,
+			rawIsNavigationVisible: App.sidebar.isNavigationVisible,
+		}
+	},
 	data() {
 		return {
-			SidebarState,
 			settingsState,
 			tasks,
 			NotificationStore,
@@ -107,14 +114,14 @@ export default {
 		},
 		isNavigationVisible: {
 			get() {
-				return !this.isMobile || SidebarState.isNavigationVisible
+				return !this.isMobile || App.sidebar.isNavigationVisible.value
 			},
 			set(val) {
-				SidebarState.isNavigationVisible = val
+				App.sidebar.isNavigationVisible.value = val
 			},
 		},
 		sidebarElements() {
-			return Object.values(SidebarState.sidebarElements).filter(
+			return Object.values(this.rawSidebarElements).filter(
 				(sidebar) => sidebar.isVisible
 			)
 		},
@@ -133,7 +140,7 @@ export default {
 	},
 	methods: {
 		closeSidebar() {
-			SidebarState.isNavigationVisible = false
+			App.sidebar.isNavigationVisible.value = false
 		},
 	},
 }

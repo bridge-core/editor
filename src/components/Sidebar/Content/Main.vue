@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import { SidebarState } from '../state'
 import ActionBar from './ActionBar.vue'
 import { App } from '/@/App'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
@@ -61,12 +60,11 @@ export default {
 		})
 	},
 	data: () => ({
-		SidebarState,
 		windowDimensions: { currentHeight: window.innerHeight },
 	}),
 	computed: {
 		content() {
-			return this.SidebarState.currentState
+			return App.sidebar.currentState.value
 		},
 	},
 }

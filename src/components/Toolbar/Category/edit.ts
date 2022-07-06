@@ -86,27 +86,5 @@ export function setupEditCategory(app: App) {
 		})
 	)
 
-	edit.addItem(new Divider())
-
-	edit.addItem(
-		app.actionManager.create({
-			icon: 'mdi-pencil-outline',
-			name: 'actions.toggleReadOnly.name',
-			description: 'actions.toggleReadOnly.description',
-			onTrigger: () => {
-				const currentTab = app.tabSystem?.selectedTab
-				if (
-					!(currentTab instanceof FileTab) ||
-					currentTab.readOnlyMode === 'forced'
-				)
-					return
-
-				currentTab.setReadOnly(
-					currentTab.readOnlyMode === 'manual' ? 'off' : 'manual'
-				)
-			},
-		})
-	)
-
 	App.toolbar.addCategory(edit)
 }

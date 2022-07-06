@@ -11,7 +11,6 @@ import { MonacoHolder } from './MonacoHolder'
 import { FileTab, TReadOnlyMode } from './FileTab'
 import { TabProvider } from './TabProvider'
 import { AnyFileHandle } from '../FileSystem/Types'
-import { hide as hideSidebar } from '../Sidebar/state'
 import { reactive } from '@vue/composition-api'
 
 export interface IOpenTabOptions {
@@ -183,7 +182,7 @@ export class TabSystem extends MonacoHolder {
 	async select(tab?: Tab) {
 		if (this.isActive !== !!tab) this.setActive(!!tab)
 
-		if (this.app.mobile.isCurrentDevice()) hideSidebar()
+		if (this.app.mobile.isCurrentDevice()) App.sidebar.hide()
 		if (tab?.isSelected) return
 
 		this._selectedTab?.onDeactivate()

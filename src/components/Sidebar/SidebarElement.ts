@@ -1,10 +1,10 @@
-import { SidebarState, toggle } from './state'
 import { v4 as uuid } from 'uuid'
 import { Component } from 'vue'
 import type { IDisposable } from '/@/types/disposable'
 import { SidebarContent } from './Content/SidebarContent'
 import { del, set, watch, WatchStopHandle } from '@vue/composition-api'
 import { settingsState } from '../Windows/Settings/SettingsState'
+import { App } from '/@/App'
 
 export interface ISidebar {
 	id?: string
@@ -42,6 +42,7 @@ export interface IBadge {
 
 export class SidebarElement {
 	protected sidebarUUID: string
+	protected disposable: IDisposable
 	isLoading = false
 	isSelected = false
 	stopHandle: WatchStopHandle | undefined
@@ -50,7 +51,7 @@ export class SidebarElement {
 
 	constructor(protected config: ISidebar) {
 		this.sidebarUUID = config.id ?? uuid()
-		set(SidebarState.sidebarElements, this.sidebarUUID, this)
+		this.disposable = App.sidebar.addSidebarElement(this.sidebarUUID, this)
 
 		if (this.config.component) {
 			const component = this.config.component
@@ -62,11 +63,12 @@ export class SidebarElement {
 			})()
 		}
 		this.stopHandle = watch(
-			SidebarState,
+			App.sidebar.currentState,
 			() => {
 				this.isSelected =
-					(SidebarState.currentState ?? false) &&
-					SidebarState.currentState === this.config.sidebarContent
+					(App.sidebar.currentState.value ?? false) &&
+					App.sidebar.currentState.value ===
+						this.config.sidebarContent
 			},
 			{ deep: false }
 		)
@@ -94,7 +96,7 @@ export class SidebarElement {
 		return this.config.component
 	}
 	dispose() {
-		del(SidebarState.sidebarElements, this.sidebarUUID)
+		this.disposable.dispose()
 		this.stopHandle?.()
 		this.stopHandle = undefined
 	}
@@ -110,7 +112,8 @@ export class SidebarElement {
 	async click() {
 		this.isLoading = true
 
-		if (this.config.sidebarContent) toggle(this.config.sidebarContent)
+		if (this.config.sidebarContent)
+			App.sidebar.toggleSidebarContent(this.config.sidebarContent)
 
 		if (typeof this.config.onClick === 'function')
 			await this.config.onClick(this)
