@@ -23,7 +23,7 @@ export async function showFileContextMenu(
 
 	showContextMenu(event, [
 		OpenAction(fileWrapper),
-		OpenWithAction(fileWrapper),
+		await OpenWithAction(fileWrapper),
 		OpenInSplitScreenAction(fileWrapper),
 		{ type: 'divider' },
 

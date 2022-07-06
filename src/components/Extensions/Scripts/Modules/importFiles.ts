@@ -44,5 +44,7 @@ import { IModuleConfig } from '../types'
 // })
 
 export const ImportFileModule = ({ disposables }: IModuleConfig) => {
-	throw new Error(`Module not yet supported on bridge. v2`)
+	throw new Error(
+		`Module not yet supported on bridge. v2. Use "@bridge/import" instead.`
+	)
 }

@@ -4,13 +4,30 @@ import { HTMLPreviewerAction } from './OpenWith/HTMLPreviewer'
 import { TreeEditorAction } from './OpenWith/TreeEditor'
 import { TextEditorAction } from './OpenWith/TextEditor'
 import { SnowstormAction } from './OpenWith/Snowstorm'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
 
-export const OpenWithAction = (fileWrapper: FileWrapper) => {
+export const pluginActionStore = new Set<IPluginOpenWithAction>()
+
+export interface IPluginOpenWithAction {
+	icon: string
+	name: string
+	isAvailable?: (details: IOpenWithDetails) => Promise<boolean> | boolean
+	onOpen: (details: IOpenWithDetails) => Promise<void> | void
+}
+interface IOpenWithDetails {
+	fileHandle: AnyFileHandle
+	filePath: string | null
+}
+
+export const OpenWithAction = async (fileWrapper: FileWrapper) => {
+	// Default bridge. actions
 	const defaultActions = [
 		TextEditorAction(fileWrapper),
 		TreeEditorAction(fileWrapper),
 		HTMLPreviewerAction(fileWrapper),
 	].filter((action) => action !== null)
+
+	// Actions which open an external tool
 	const externalActions = [
 		SnowstormAction(fileWrapper),
 		// {
@@ -20,6 +37,24 @@ export const OpenWithAction = (fileWrapper: FileWrapper) => {
 		// },
 	].filter((action) => action !== null)
 
+	// Load actions provided by plugins
+	for (const action of pluginActionStore) {
+		const details = {
+			fileHandle: fileWrapper.handle,
+			filePath: fileWrapper.path,
+		}
+		if (!((await action.isAvailable?.(details)) ?? true)) continue
+
+		externalActions.push({
+			icon: action.icon,
+			name: action.name,
+			onTrigger: async () => {
+				await action.onOpen(details)
+			},
+		})
+	}
+
+	// Construct and return submenu
 	return <ISubmenuConfig>{
 		type: 'submenu',
 		icon: 'mdi-open-in-app',
