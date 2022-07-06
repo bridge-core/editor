@@ -189,6 +189,10 @@ export default {
 .directory-viewer-name {
 	cursor: pointer;
 	transition: background-color 0.2s ease-in-out;
+
+	/** New web thingy: https://web.dev/content-visibility/ */
+	content-visibility: auto;
+	contain-intrinsic-size: 24px;
 }
 .directory-viewer-name.selected {
 	background: var(--v-background-base);
