@@ -17,7 +17,7 @@ interface IBone {
 	reset?: boolean
 	material?: unknown
 	rotation?: Vector3D
-	pivot: Vector3D
+	pivot?: Vector3D
 	cubes?: ICube[]
 	locators?: {
 		[key: string]: ILocator
@@ -328,11 +328,13 @@ export class BBModelImporter extends FileImporter {
 		const bone: IBone = {
 			name: outlinerElement.name,
 			parent: parent?.name,
-			pivot: [
-				outlinerElement.origin[0] * -1,
-				outlinerElement.origin[1],
-				outlinerElement.origin[2],
-			],
+			pivot: outlinerElement.origin
+				? [
+						outlinerElement.origin[0] * -1,
+						outlinerElement.origin[1],
+						outlinerElement.origin[2],
+				  ]
+				: undefined,
 			rotation: outlinerElement.rotation
 				? [
 						outlinerElement.rotation[0] * -1,

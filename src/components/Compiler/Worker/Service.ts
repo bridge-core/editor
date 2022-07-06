@@ -147,6 +147,14 @@ export class DashService extends EventDispatcher<void> {
 
 		this.isDashFree.dispatch()
 	}
+	async unlinkMultiple(paths: string[]) {
+		await this.isDashFree.fired
+		this.isDashFree.resetSignal()
+
+		await this.dash.unlinkMultiple(paths)
+
+		this.isDashFree.dispatch()
+	}
 	async rename(oldPath: string, newPath: string) {
 		await this.isDashFree.fired
 		this.isDashFree.resetSignal()

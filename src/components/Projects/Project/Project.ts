@@ -408,26 +408,40 @@ export abstract class Project {
 		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 	async unlinkFile(filePath: string) {
-		await this.packIndexer.unlink(filePath)
+		await this.unlinkFiles([filePath])
+	}
+	async unlinkFiles(filePaths: string[]) {
+		await Promise.allSettled([
+			filePaths.map((filePath) => this.packIndexer.unlink(filePath)),
+			filePaths.map((filePath) => this.app.fileSystem.unlink(filePath)),
+		])
 
-		if (this.watchModeActive) await this.compilerService.unlink(filePath)
-		await this.app.fileSystem.unlink(filePath)
+		if (this.watchModeActive)
+			await this.compilerService.unlinkMultiple(filePaths)
 
-		this.fileUnlinked.dispatch(filePath)
+		filePaths.forEach((filePath) => {
+			this.fileUnlinked.dispatch(filePath)
 
-		// Close tab if file is open
-		for (const tabSystem of this.tabSystems) {
-			tabSystem.forceCloseTabs((tab) => tab.getPath() === filePath)
-		}
+			// Close tab if file is open
+			for (const tabSystem of this.tabSystems) {
+				tabSystem.forceCloseTabs((tab) => tab.getPath() === filePath)
+			}
+		})
 
 		// Reload dynamic schemas
 		const currentPath = this.tabSystem?.selectedTab?.getPath()
 		if (currentPath)
 			await this.jsonDefaults.updateDynamicSchemas(currentPath)
 	}
+
+	/**
+	 * Unlink a specific file handle from the project
+	 * @param handle
+	 * @returns Whether the file handle was successfully unlinked
+	 */
 	async unlinkHandle(handle: AnyHandle) {
 		const path = await this.app.fileSystem.pathTo(handle)
-		if (!path) return
+		if (!path) return false
 
 		if (handle.kind === 'file') return await this.unlinkFile(path)
 
@@ -441,8 +455,9 @@ export abstract class Project {
 			path
 		)
 
-		await Promise.allSettled(files.map((file) => this.unlinkFile(file)))
+		await this.unlinkFiles(files)
 		await this.app.fileSystem.unlink(path)
+		return true
 	}
 	async renameFile(fromPath: string, toPath: string) {
 		await this.app.fileSystem.move(fromPath, toPath)
