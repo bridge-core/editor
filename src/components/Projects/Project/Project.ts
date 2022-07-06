@@ -457,6 +457,7 @@ export abstract class Project {
 
 		await this.unlinkFiles(files)
 		await this.app.fileSystem.unlink(path)
+		return true
 	}
 	async renameFile(fromPath: string, toPath: string) {
 		await this.app.fileSystem.move(fromPath, toPath)
