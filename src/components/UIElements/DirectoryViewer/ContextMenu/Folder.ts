@@ -52,7 +52,7 @@ export async function showFolderContextMenu(
 			description: 'actions.createFolder.description',
 			onTrigger: async () => {
 				const inputWindow = new InputWindow({
-					name: 'actionscreateFolder.name',
+					name: 'actions.createFolder.name',
 					label: 'general.folderName',
 					default: '',
 				})
