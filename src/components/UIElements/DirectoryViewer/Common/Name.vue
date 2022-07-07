@@ -69,9 +69,9 @@
 </template>
 
 <script>
-import { CopyAction } from '../ContextMenu/Actions/Copy'
-import { DeleteAction } from '../ContextMenu/Actions/Delete'
-import { PasteAction } from '../ContextMenu/Actions/Paste'
+import { CopyAction } from '../ContextMenu/Actions/Edit/Copy'
+import { DeleteAction } from '../ContextMenu/Actions/Edit/Delete'
+import { PasteAction } from '../ContextMenu/Actions/Edit/Paste'
 import { BaseWrapper } from './BaseWrapper'
 import { useDoubleClick } from '/@/components/Composables/DoubleClick'
 import { platform } from '/@/utils/os'

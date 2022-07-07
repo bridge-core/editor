@@ -1,4 +1,4 @@
-import { DirectoryWrapper } from '../../DirectoryView/DirectoryWrapper'
+import { DirectoryWrapper } from '../../../DirectoryView/DirectoryWrapper'
 import { clipboard } from './Copy'
 import { App } from '/@/App'
 import { AnyHandle } from '/@/components/FileSystem/Types'

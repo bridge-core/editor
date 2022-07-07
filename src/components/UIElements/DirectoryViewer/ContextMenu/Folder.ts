@@ -1,9 +1,6 @@
 import { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
-import { CopyAction } from './Actions/Copy'
-import { DeleteAction } from './Actions/Delete'
-import { DuplicateAction } from './Actions/Duplicate'
-import { PasteAction } from './Actions/Paste'
-import { RenameAction } from './Actions/Rename'
+import { EditAction } from './Actions/Edit'
+import { CopyAction } from './Actions/Edit/Copy'
 import { RevealFilePathAction } from './Actions/RevealFilePath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
@@ -67,15 +64,7 @@ export async function showFolderContextMenu(
 			},
 		},
 		{ type: 'divider' },
-		CopyAction(directoryWrapper),
-		PasteAction(directoryWrapper),
-		DuplicateAction(directoryWrapper),
-		options.hideRename || directoryWrapper.getParent() === null
-			? null
-			: RenameAction(directoryWrapper),
-		options.hideDelete || directoryWrapper.getParent() === null
-			? null
-			: DeleteAction(directoryWrapper),
+		await EditAction(directoryWrapper, options),
 	]).filter((action) => action !== null)
 
 	showContextMenu(event, [

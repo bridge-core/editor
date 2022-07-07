@@ -144,6 +144,10 @@ export default {
 			name: 'Open in Split Screen',
 			description: 'Open the file in split screen mode',
 		},
+		edit: {
+			name: 'Edit',
+			description: 'Edit the file or folder',
+		},
 		delete: {
 			name: 'Delete',
 			description: 'Delete a file or folder',
