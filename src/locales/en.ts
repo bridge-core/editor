@@ -132,6 +132,55 @@ export default {
 	},
 	// Actions
 	actions: {
+		open: {
+			name: 'Open',
+			description: 'Open the file in the editor',
+		},
+		openWith: {
+			name: 'Open With',
+			description: 'Open the file in the editor',
+		},
+		openInSplitScreen: {
+			name: 'Open in Split Screen',
+			description: 'Open the file in split screen mode',
+		},
+		delete: {
+			name: 'Delete',
+			description: 'Delete a file or folder',
+			confirmText: 'Are you sure that you want to delete ',
+			noRestoring: "You won't be able to restore it later!",
+		},
+		rename: {
+			name: 'Rename',
+			description: 'Rename a file',
+			sameName:
+				'Your new file name only differs in capitalization. This is not allowed on Windows.',
+		},
+		duplicate: {
+			name: 'Duplicate',
+			description: 'Duplicate a file',
+		},
+		viewCompilerOutput: {
+			name: 'View Compiler Output',
+			description: 'View the current compiler output for this file',
+			fileMissing: "It doesn't look like this file was compiled yet.",
+		},
+		revealFilePath: {
+			name: 'Reveal File Path',
+			description: 'Reveals the location of a file or folder',
+		},
+		createFile: {
+			name: 'Create File',
+			description: 'Create a new file',
+		},
+		createFolder: {
+			name: 'Create Folder',
+			description: 'Create a new folder',
+		},
+		findInFolder: {
+			name: 'Find in Folder',
+			description: 'Search the contents of a folder',
+		},
 		goHome: {
 			name: 'Go Home',
 			description: 'Go back to the home screen',
@@ -711,59 +760,6 @@ export default {
 				brproject: '.brproject',
 				mcworld: '.mcworld',
 				mctemplate: '.mctemplate',
-			},
-			fileActions: {
-				open: {
-					name: 'Open',
-					description: 'Open the file in the editor',
-				},
-				openWith: {
-					name: 'Open With',
-					description: 'Open the file in the editor',
-				},
-				openInSplitScreen: {
-					name: 'Open in Split Screen',
-					description: 'Open the file in split screen mode',
-				},
-				delete: {
-					name: 'Delete',
-					description: 'Delete a file or folder',
-					confirmText: 'Are you sure that you want to delete ',
-					noRestoring: "You won't be able to restore it later!",
-				},
-				rename: {
-					name: 'Rename',
-					description: 'Rename a file',
-					sameName:
-						'Your new file name only differs in capitalization. This is not allowed on Windows.',
-				},
-				duplicate: {
-					name: 'Duplicate',
-					description: 'Duplicate a file',
-				},
-				viewCompilerOutput: {
-					name: 'View Compiler Output',
-					description:
-						'View the current compiler output for this file',
-					fileMissing:
-						"It doesn't look like this file was compiled yet.",
-				},
-				revealFilePath: {
-					name: 'Reveal File Path',
-					description: 'Reveals the location of a file or folder',
-				},
-				createFile: {
-					name: 'Create File',
-					description: 'Create a new file',
-				},
-				createFolder: {
-					name: 'Create Folder',
-					description: 'Create a new folder',
-				},
-				findInFolder: {
-					name: 'Find in Folder',
-					description: 'Search the contents of a folder',
-				},
 			},
 		},
 		settings: {

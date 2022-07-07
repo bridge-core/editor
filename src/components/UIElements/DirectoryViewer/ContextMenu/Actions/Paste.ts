@@ -52,6 +52,7 @@ export const PasteAction = (directoryWrapper: DirectoryWrapper) => ({
 
 		await directoryWrapper.refresh()
 		if (newHandle) await project.updateHandle(newHandle)
+		return newHandle
 	},
 })
 

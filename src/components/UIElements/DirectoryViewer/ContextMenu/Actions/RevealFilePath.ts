@@ -3,11 +3,11 @@ import { InformationWindow } from '/@/components/Windows/Common/Information/Info
 
 export const RevealFilePathAction = (baseWrapper: BaseWrapper<any>) => ({
 	icon: 'mdi-eye-outline',
-	name: 'windows.packExplorer.fileActions.revealFilePath.name',
-	description: 'windows.packExplorer.fileActions.revealFilePath.description',
+	name: 'actions.revealFilePath.name',
+	description: 'actions.revealFilePath.description',
 	onTrigger: async () => {
 		new InformationWindow({
-			name: 'windows.packExplorer.fileActions.revealFilePath.name',
+			name: 'actions.revealFilePath.name',
 			description: `[${baseWrapper.path}]`,
 			isPersistent: false,
 		}).open()

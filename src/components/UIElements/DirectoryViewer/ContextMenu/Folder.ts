@@ -1,6 +1,7 @@
 import { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
 import { CopyAction } from './Actions/Copy'
 import { DeleteAction } from './Actions/Delete'
+import { DuplicateAction } from './Actions/Duplicate'
 import { PasteAction } from './Actions/Paste'
 import { RenameAction } from './Actions/Rename'
 import { RevealFilePathAction } from './Actions/RevealFilePath'
@@ -23,12 +24,11 @@ export async function showFolderContextMenu(
 	const mutatingActions = (<const>[
 		{
 			icon: 'mdi-file-plus-outline',
-			name: 'windows.packExplorer.fileActions.createFile.name',
-			description:
-				'windows.packExplorer.fileActions.createFile.description',
+			name: 'actions.createFile.name',
+			description: 'actions.createFile.description',
 			onTrigger: async () => {
 				const inputWindow = new InputWindow({
-					name: 'windows.packExplorer.fileActions.createFile.name',
+					name: 'actionscreateFile.name',
 					label: 'general.fileName',
 					default: '',
 				})
@@ -48,12 +48,11 @@ export async function showFolderContextMenu(
 		},
 		{
 			icon: 'mdi-folder-plus-outline',
-			name: 'windows.packExplorer.fileActions.createFolder.name',
-			description:
-				'windows.packExplorer.fileActions.createFolder.description',
+			name: 'actions.createFolder.name',
+			description: 'actions.createFolder.description',
 			onTrigger: async () => {
 				const inputWindow = new InputWindow({
-					name: 'windows.packExplorer.fileActions.createFolder.name',
+					name: 'actionscreateFolder.name',
 					label: 'general.folderName',
 					default: '',
 				})
@@ -70,6 +69,7 @@ export async function showFolderContextMenu(
 		{ type: 'divider' },
 		CopyAction(directoryWrapper),
 		PasteAction(directoryWrapper),
+		DuplicateAction(directoryWrapper),
 		options.hideRename || directoryWrapper.getParent() === null
 			? null
 			: RenameAction(directoryWrapper),

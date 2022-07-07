@@ -4,8 +4,8 @@ import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/Confirm
 
 export const DeleteAction = (baseWrapper: BaseWrapper<any>) => ({
 	icon: 'mdi-delete-outline',
-	name: 'windows.packExplorer.fileActions.delete.name',
-	description: 'windows.packExplorer.fileActions.delete.description',
+	name: 'actions.delete.name',
+	description: 'actions.delete.description',
 	onTrigger: async () => {
 		const parent = baseWrapper.getParent()
 		if (baseWrapper.options.isReadOnly || parent === null) return
@@ -14,11 +14,9 @@ export const DeleteAction = (baseWrapper: BaseWrapper<any>) => ({
 		const t = (str: string) => app.locales.translate(str)
 
 		const confirmWindow = new ConfirmationWindow({
-			description: `[${t(
-				'windows.packExplorer.fileActions.delete.confirmText'
-			)} "${baseWrapper.path ?? baseWrapper.name}"? ${t(
-				'windows.packExplorer.fileActions.delete.noRestoring'
-			)}]`,
+			description: `[${t('actions.delete.confirmText')} "${
+				baseWrapper.path ?? baseWrapper.name
+			}"? ${t('actions.delete.noRestoring')}]`,
 		})
 
 		if (!(await confirmWindow.fired)) return

@@ -148,6 +148,12 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 		}
 	}
 
+	getChild(name: string) {
+		if(!this.children.value) 
+			throw new Error("Cannot use directoryWrapper.getChild(..) because children are not loaded yet")
+		return this.children.value?.find((child) => child.name === name)
+	}
+
 	protected _unselectAll() {
 		this.isSelected.value = false
 		this.children.value?.forEach((child) => {

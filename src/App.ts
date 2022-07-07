@@ -295,13 +295,6 @@ export class App {
 		this.projectManager.projectReady.fired.then(async () => {
 			// Then load global extensions
 			this.extensionLoader.loadExtensions()
-
-			// TODO(@solvedDev): Remove this code, it's only for testing
-			HTMLPreviewerAction(
-				await this.fileSystem.getFileHandle(
-					'~local/projects/Local/BP/documentation/Addons.html'
-				)
-			)?.onTrigger()
 		})
 
 		console.timeEnd('[APP] startUp()')

@@ -60,8 +60,8 @@ export const OpenWithAction = async (fileWrapper: FileWrapper) => {
 	return <ISubmenuConfig>{
 		type: 'submenu',
 		icon: 'mdi-open-in-app',
-		name: 'windows.packExplorer.fileActions.openWith.name',
-		description: 'windows.packExplorer.fileActions.openWith.description',
+		name: 'actions.openWith.name',
+		description: 'actions.openWith.description',
 
 		actions: [
 			...defaultActions,

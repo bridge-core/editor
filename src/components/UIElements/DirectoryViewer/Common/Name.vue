@@ -46,7 +46,7 @@
 			@keydown.esc.stop.prevent="cancelRename"
 			@keydown.space.prevent.stop.native
 			@click.stop
-			:rules="[rules.validName, rules.required, rules.notSameName]"
+			:rules="[rules.validName, rules.required]"
 		/>
 
 		<v-spacer />
@@ -155,9 +155,13 @@ export default {
 			this.baseWrapper.isEditingName.value = false
 		},
 		confirmRename() {
+			if (!this.rules.notSameName(this.currentName)) {
+				this.cancelRename()
+				return
+			}
+
 			if (
 				!this.rules.validName(this.currentName) ||
-				!this.rules.notSameName(this.currentName) ||
 				this.currentName.length === 0
 			)
 				return

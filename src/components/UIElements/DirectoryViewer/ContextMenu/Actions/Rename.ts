@@ -2,8 +2,8 @@ import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/Bas
 
 export const RenameAction = (baseWrapper: BaseWrapper<any>) => ({
 	icon: 'mdi-pencil-outline',
-	name: 'windows.packExplorer.fileActions.rename.name',
-	description: 'windows.packExplorer.fileActions.rename.description',
+	name: 'actions.rename.name',
+	description: 'actions.rename.description',
 	onTrigger: () => {
 		baseWrapper.isEditingName.value = true
 	},

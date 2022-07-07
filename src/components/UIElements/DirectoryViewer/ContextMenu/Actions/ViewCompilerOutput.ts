@@ -7,9 +7,8 @@ export const ViewCompilerOutput = (
 	addKeyBinding = false
 ) => ({
 	icon: 'mdi-cogs',
-	name: 'windows.packExplorer.fileActions.viewCompilerOutput.name',
-	description:
-		'windows.packExplorer.fileActions.viewCompilerOutput.description',
+	name: 'actions.viewCompilerOutput.name',
+	description: 'actions.viewCompilerOutput.description',
 	keyBinding: addKeyBinding ? 'Ctrl + Shift + D' : undefined,
 
 	onTrigger: async () => {
@@ -37,8 +36,7 @@ export const ViewCompilerOutput = (
 			!(await fileSystem.fileExists(transformedPath))
 		) {
 			new InformationWindow({
-				description:
-					'windows.packExplorer.fileActions.viewCompilerOutput.fileMissing',
+				description: 'actionsviewCompilerOutput.fileMissing',
 			})
 			return
 		}

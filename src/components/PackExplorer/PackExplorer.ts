@@ -165,9 +165,8 @@ export class PackExplorer extends SidebarContent {
 		return [
 			{
 				icon: 'mdi-file-search-outline',
-				name: 'windows.packExplorer.fileActions.findInFolder.name',
-				description:
-					'windows.packExplorer.fileActions.findInFolder.description',
+				name: 'actions.findInFolder.name',
+				description: 'actions.findInFolder.description',
 				onTrigger: () => {
 					const config = project.app.projectConfig
 					const packTypes: { [key: string]: string } = {

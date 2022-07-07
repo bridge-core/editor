@@ -1,6 +1,7 @@
 import { FileWrapper } from '../FileView/FileWrapper'
 import { CopyAction } from './Actions/Copy'
 import { DeleteAction } from './Actions/Delete'
+import { DuplicateAction } from './Actions/Duplicate'
 import { OpenAction } from './Actions/Open'
 import { OpenInSplitScreenAction } from './Actions/OpenInSplitScreen'
 import { OpenWithAction } from './Actions/OpenWith'
@@ -17,6 +18,7 @@ export async function showFileContextMenu(
 	const mutatingActions = <const>[
 		CopyAction(fileWrapper),
 		PasteAction(fileWrapper.getParent()!),
+		DuplicateAction(fileWrapper),
 		RenameAction(fileWrapper),
 		DeleteAction(fileWrapper),
 	]
