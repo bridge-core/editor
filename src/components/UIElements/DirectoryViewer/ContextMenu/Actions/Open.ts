@@ -7,6 +7,8 @@ export const OpenAction = (fileWrapper: FileWrapper) => ({
 	description: 'actions.open.description',
 	onTrigger: async () => {
 		const app = await App.getApp()
-		app.project.openFile(fileWrapper.handle)
+		app.project.openFile(fileWrapper.handle, {
+			readOnlyMode: fileWrapper.options.isReadOnly ? 'forced' : 'off',
+		})
 	},
 })

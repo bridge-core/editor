@@ -10,6 +10,7 @@ export const OpenInSplitScreenAction = (fileWrapper: FileWrapper) => ({
 
 		app.project.openFile(fileWrapper.handle, {
 			openInSplitScreen: true,
+			readOnlyMode: fileWrapper.options.isReadOnly ? 'forced' : 'off',
 		})
 	},
 })
