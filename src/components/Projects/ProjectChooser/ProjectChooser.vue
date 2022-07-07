@@ -65,9 +65,9 @@
 							dark
 							class="d-flex flex-column pa-2"
 						>
-							<v-icon color="primary"
-								>mdi-lock-open-outline</v-icon
-							>
+							<v-icon color="primary">
+								mdi-lock-open-outline
+							</v-icon>
 							{{ t('windows.projectChooser.localProject.name') }}
 						</BridgeSheet>
 					</template>
@@ -169,7 +169,7 @@
 				color="primary"
 				@click="onSelectProject"
 			>
-				<v-icon>mdi-folder-open-outline</v-icon>
+				<v-icon class="pr-1">mdi-folder-open-outline</v-icon>
 				{{ t('windows.projectChooser.openPacks') }}
 			</v-btn>
 			<v-btn
