@@ -5,6 +5,7 @@ import { SidebarAction } from '../Sidebar/Content/SidebarAction'
 import { SidebarContent } from '../Sidebar/Content/SidebarContent'
 import { SidebarElement } from '../Sidebar/SidebarElement'
 import ViewFolderComponent from './ViewFolders.vue'
+import { App } from '/@/App'
 
 export class ViewFolders extends SidebarContent {
 	component = ViewFolderComponent
@@ -27,7 +28,8 @@ export class ViewFolders extends SidebarContent {
 				color: 'error',
 				onTrigger: () => {
 					this.directoryHandles = []
-					this.sidebarElement.click()
+					// Unselect ViewFolders tab by selecting packExplorer instead
+					App.sidebar.elements.packExplorer.click()
 				},
 			})
 		)
