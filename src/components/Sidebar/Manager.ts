@@ -36,6 +36,10 @@ export class SidebarManager {
 
 		App.getApp().then((app) => app.windowResize.dispatch())
 	}
+	selectSidebarContent(content: SidebarContent | null) {
+		this.currentState.value = content
+		App.getApp().then((app) => app.windowResize.dispatch())
+	}
 	hide() {
 		this.isNavigationVisible.value = false
 		App.getApp().then((app) => app.windowResize.dispatch())

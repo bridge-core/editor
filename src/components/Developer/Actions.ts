@@ -1,6 +1,6 @@
 import { del, set } from 'idb-keyval'
 import { SimpleAction, IActionConfig } from '../Actions/SimpleAction'
-import { comMojangKey } from '../FileSystem/ComMojang'
+import { comMojangKey } from '/@/components/OutputFolders/ComMojang/ComMojang'
 import { ConfirmationWindow } from '../Windows/Common/Confirm/ConfirmWindow'
 import { App } from '/@/App'
 

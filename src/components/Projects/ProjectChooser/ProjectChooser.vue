@@ -53,15 +53,59 @@
 
 				<v-spacer />
 
-				<BridgeSheet
+				<!-- Show that project is local project -->
+				<v-tooltip
 					v-if="sidebar.currentState.isLocalProject"
-					dark
-					class="d-flex flex-column pa-2"
+					color="tooltip"
+					bottom
 				>
-					<v-icon color="primary">mdi-lock-open-outline</v-icon>
-					{{ t('windows.projectChooser.localProject.name') }}
-				</BridgeSheet>
+					<template v-slot:activator="{ on }">
+						<BridgeSheet
+							v-on="on"
+							dark
+							class="d-flex flex-column pa-2"
+						>
+							<v-icon color="primary"
+								>mdi-lock-open-outline</v-icon
+							>
+							{{ t('windows.projectChooser.localProject.name') }}
+						</BridgeSheet>
+					</template>
+
+					<span>
+						{{
+							t('windows.projectChooser.localProject.description')
+						}}
+					</span>
+				</v-tooltip>
+
+				<!-- Show that project is com.mojang project -->
+				<v-tooltip v-if="isComMojangProject" color="tooltip" bottom>
+					<template v-slot:activator="{ on }">
+						<BridgeSheet
+							v-on="on"
+							dark
+							class="d-flex flex-column pa-2"
+						>
+							<v-icon color="primary">mdi-minecraft</v-icon>
+							{{
+								t(
+									'windows.projectChooser.comMojangProject.name'
+								)
+							}}
+						</BridgeSheet>
+					</template>
+
+					<span>
+						{{
+							t(
+								'windows.projectChooser.comMojangProject.description'
+							)
+						}}
+					</span>
+				</v-tooltip>
 			</div>
+			<!-- Show available packs -->
 			<v-row class="mb-6" dense>
 				<v-col
 					v-for="packType in sidebar.currentState.contains"
@@ -71,30 +115,36 @@
 				</v-col>
 			</v-row>
 
-			<h2 class="subheader">{{ t('general.experimentalGameplay') }}</h2>
-			<v-row dense>
-				<v-col
-					v-for="experiment in sidebar.currentState
-						.experimentalGameplay"
-					:key="`${experiment.id}.${experiment.isActive}`"
-					xs="12"
-					sm="6"
-					md="4"
-					lg="3"
-					xl="2"
-				>
-					<ExperimentalGameplay
-						:experiment="experiment"
-						:isToggleable="false"
-						:value="experiment.isActive"
-						style="height: 100%"
-					/>
-				</v-col>
-			</v-row>
+			<template v-if="!isComMojangProject">
+				<!-- Show experimental gameplay -->
+				<h2 class="subheader">
+					{{ t('general.experimentalGameplay') }}
+				</h2>
+				<v-row dense>
+					<v-col
+						v-for="experiment in sidebar.currentState
+							.experimentalGameplay"
+						:key="`${experiment.id}.${experiment.isActive}`"
+						xs="12"
+						sm="6"
+						md="4"
+						lg="3"
+						xl="2"
+					>
+						<ExperimentalGameplay
+							:experiment="experiment"
+							:isToggleable="false"
+							:value="experiment.isActive"
+							style="height: 100%"
+						/>
+					</v-col>
+				</v-row>
+			</template>
 		</template>
 
 		<template #actions="{ selectedSidebar }">
 			<v-btn
+				v-if="!isComMojangProject"
 				color="primary"
 				:disabled="currentProject !== selectedSidebar"
 				@click="onAddPack"
@@ -105,6 +155,7 @@
 
 			<v-spacer />
 			<v-btn
+				v-if="!isComMojangProject"
 				color="error"
 				:disabled="currentProject === selectedSidebar"
 				@click="onDeleteProject(selectedSidebar)"
@@ -112,7 +163,17 @@
 				<v-icon>mdi-delete</v-icon>
 				{{ t('general.delete') }}
 			</v-btn>
+			<!-- Select Project -->
 			<v-btn
+				v-if="isComMojangProject"
+				color="primary"
+				@click="onSelectProject"
+			>
+				<v-icon>mdi-folder-open-outline</v-icon>
+				{{ t('windows.projectChooser.openPacks') }}
+			</v-btn>
+			<v-btn
+				v-else
 				color="primary"
 				:disabled="currentProject === selectedSidebar"
 				@click="onSelectProject"
@@ -134,6 +195,7 @@ import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow.ts'
 import { addPack } from './AddPack'
+import { virtualProjectName } from '../Project/Project'
 
 let formatter
 if ('ListFormat' in Intl) {
@@ -167,7 +229,15 @@ export default {
 		async onSelectProject() {
 			const app = await App.getApp()
 
-			app.projectManager.selectProject(this.sidebar.selected)
+			if (this.isComMojangProject) {
+				await app.projectManager.selectProject(virtualProjectName)
+				this.sidebar.currentState.openHandles.map((handle) =>
+					app.viewFolders.addDirectoryHandle(handle)
+				)
+			} else {
+				app.projectManager.selectProject(this.sidebar.selected)
+			}
+
 			this.currentWindow.close()
 		},
 		onDeleteProject(projectName) {
@@ -202,6 +272,9 @@ export default {
 					)
 				)
 			return authors
+		},
+		isComMojangProject() {
+			return this.sidebar.currentState.isComMojangProject
 		},
 	},
 }

@@ -1,10 +1,10 @@
 import { del, get, set } from 'idb-keyval'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
-import { FileSystem } from './FileSystem'
+import { FileSystem } from '../../FileSystem/FileSystem'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
-import { AnyDirectoryHandle } from './Types'
+import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
+import { AnyDirectoryHandle } from '../../FileSystem/Types'
 
 export const comMojangKey = 'comMojangDirectory'
 

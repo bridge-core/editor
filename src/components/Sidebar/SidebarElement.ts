@@ -119,4 +119,12 @@ export class SidebarElement {
 			await this.config.onClick(this)
 		this.isLoading = false
 	}
+	select() {
+		if (!this.config.sidebarContent)
+			throw new Error(
+				'Cannot select sidebar element without sidebar content'
+			)
+
+		App.sidebar.selectSidebarContent(this.config.sidebarContent)
+	}
 }

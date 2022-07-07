@@ -118,11 +118,16 @@ export abstract class Project {
 			!isUsingFileSystemPolyfill.value
 		)
 	}
-	//#endregion
 	get projectPath() {
 		if (this.requiresPermissions) return `projects/${this.name}`
 		return `~local/projects/${this.name}`
 	}
+	get bpUuid() {
+		return this.projectData.contains?.find(
+			(pack) => pack.id === 'behaviorPack'
+		)?.uuid
+	}
+	//#endregion
 
 	constructor(
 		protected parent: ProjectManager,

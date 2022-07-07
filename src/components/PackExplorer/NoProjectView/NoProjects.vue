@@ -89,7 +89,7 @@ import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { get, set } from 'idb-keyval'
-import { comMojangKey } from '../../FileSystem/ComMojang'
+import { comMojangKey } from '/@/components/OutputFolders/ComMojang/ComMojang'
 
 export default {
 	mixins: [TranslationMixin],

@@ -7,7 +7,8 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { v4 as uuid } from 'uuid'
 import { IExperimentalToggle } from '../CreateProject/CreateProject'
 import { importNewProject } from '../Import/ImportNew'
-import { markRaw } from '@vue/composition-api'
+import { IPackData } from '/@/components/Projects/Project/loadPacks'
+import { ComMojangProjectLoader } from '../../OutputFolders/ComMojang/ProjectLoader'
 
 export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
@@ -91,6 +92,44 @@ export class ProjectChooserWindow extends BaseWindow {
 							project.config.get().experimentalGameplay?.[
 								toggle.id
 							] ?? false,
+						...toggle,
+					})
+				),
+			})
+		)
+
+		const comMojangProjects = await new ComMojangProjectLoader(
+			app
+		).loadProjects()
+		comMojangProjects.forEach((project) =>
+			this.addProject(`comMojang/${project.name}`, project.name, {
+				name: project.name,
+				imgSrc:
+					project.packs.find((pack) => !!pack.packIcon)?.packIcon ??
+					undefined,
+				contains: <IPackData[]>project.packs
+					.map((pack) => {
+						const packType = App.packType.getFromId(pack.type)
+						if (!packType) return undefined
+
+						return <IPackData>{
+							...packType,
+							version: pack.manifest?.header?.version ?? [
+								1,
+								0,
+								0,
+							],
+							packPath: pack.packPath,
+							uuid: pack.uuid,
+						}
+					})
+					.filter((packType) => !!packType),
+				isLocalProject: false,
+				isComMojangProject: true,
+				openHandles: project.packs.map((pack) => pack.directoryHandle),
+				experimentalGameplay: experimentalToggles.map(
+					(toggle: IExperimentalToggle) => ({
+						isActive: false,
 						...toggle,
 					})
 				),

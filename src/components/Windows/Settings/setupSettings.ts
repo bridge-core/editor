@@ -7,7 +7,7 @@ import { Selection } from './Controls/Selection/Selection'
 import { BridgeConfigSelection } from './Controls/Selection/BridgeConfigSelection'
 import { Button } from './Controls/Button/Button'
 import { del, set } from 'idb-keyval'
-import { comMojangKey } from '../../FileSystem/ComMojang'
+import { comMojangKey } from '/@/components/OutputFolders/ComMojang/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
 import {
 	isUsingFileSystemPolyfill,
@@ -15,8 +15,7 @@ import {
 } from '/@/components/FileSystem/Polyfill'
 import { platform } from '/@/utils/os'
 import { TextField } from './Controls/TextField/TextField'
-import { devActions } from '../../Developer/Actions'
-import { SimpleAction } from '../../Actions/SimpleAction'
+import { devActions } from '/@/components/Developer/Actions'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(

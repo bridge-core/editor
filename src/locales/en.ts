@@ -670,10 +670,16 @@ export default {
 			description: 'Select the currently active project',
 			searchProjects: 'Search projects...',
 			loadAllProjects: 'Load All',
+			openPacks: 'Open Packs',
 			localProject: {
 				name: 'Local Project',
 				description:
 					'Local projects cannot be accessed outside of bridge.',
+			},
+			comMojangProject: {
+				name: 'com.mojang Project',
+				description:
+					'This project was loaded directly from your com.mojang folder',
 			},
 			newProject: {
 				name: 'New Project',

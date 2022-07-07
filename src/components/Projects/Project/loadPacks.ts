@@ -6,6 +6,7 @@ import type { Project } from './Project'
 export interface IPackData extends IPackType {
 	version: number[]
 	packPath: string
+	uuid?: string
 }
 
 export async function loadPacks(app: App, project: Project) {
@@ -13,7 +14,6 @@ export async function loadPacks(app: App, project: Project) {
 	const packs: IPackData[] = []
 	const config = project.config
 	const definedPacks = config.getAvailablePacks()
-	console.log(definedPacks)
 
 	for (const [packId, packPath] of Object.entries(definedPacks)) {
 		// Load pack manifest
@@ -25,12 +25,11 @@ export async function loadPacks(app: App, project: Project) {
 			)
 		} catch {}
 
-		console.log(packId, App.packType.getFromId(<TPackTypeId>packId))
-
 		packs.push({
 			...App.packType.getFromId(<TPackTypeId>packId)!,
 			packPath,
 			version: manifest?.header?.version ?? [1, 0, 0],
+			uuid: manifest?.header?.uuid,
 		})
 	}
 

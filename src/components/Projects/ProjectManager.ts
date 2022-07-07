@@ -217,6 +217,9 @@ export class ProjectManager extends Signal<void> {
 
 		return this.activatedProject.on(func)
 	}
+	someProject(func: (project: Project) => boolean) {
+		return Object.values(this.state).some(func)
+	}
 
 	async recompileAll(forceStartIfActive = true) {
 		for (const project of Object.values(this.state))
