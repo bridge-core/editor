@@ -19,7 +19,10 @@ export const EditAction = async (
 	// Construct and return submenu
 	return <ISubmenuConfig>{
 		type: 'submenu',
-		icon: 'mdi-file-edit-outline',
+		icon:
+			baseWrapper instanceof DirectoryWrapper
+				? 'mdi-folder-edit-outline'
+				: 'mdi-file-edit-outline',
 		name: 'actions.edit.name',
 		description: 'actions.edit.description',
 
