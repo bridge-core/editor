@@ -6,6 +6,7 @@
 		clipped
 		padless
 		:height="appToolbarHeight"
+		:class="{ 'd-flex align-center justify-center': hideToolbarItems }"
 		:style="{
 			'padding-left': 0,
 			'margin-left': 'env(titlebar-area-x, 0)',
@@ -13,64 +14,81 @@
 			'z-index': windowControlsOverlay ? 1000 : undefined,
 		}"
 	>
-		<Logo
-			v-if="!isMacOS || !windowControlsOverlay"
-			style="
-				height: 20px;
-				padding-right: 4px;
-				padding-left: calc(env(safe-area-inset-left) + 4px);
-			"
-			alt="Logo of bridge. v2"
-			draggable="false"
-		/>
+		<template v-if="hideToolbarItems && windowControlsOverlay">
+			<Logo
+				style="
+					height: 18px;
+					padding-right: 8px;
+					padding-left: calc(env(safe-area-inset-left) + 4px);
+				"
+				alt="Logo of bridge. v2"
+				draggable="false"
+			/>
+			<span>
+				{{ title }}
+			</span>
+		</template>
 
-		<v-divider vertical />
+		<template v-else>
+			<Logo
+				v-if="!isMacOS || !windowControlsOverlay"
+				style="
+					height: 20px;
+					padding-right: 4px;
+					padding-left: calc(env(safe-area-inset-left) + 4px);
+				"
+				alt="Logo of bridge. v2"
+				draggable="false"
+			/>
 
-		<!-- App menu buttons -->
-		<v-toolbar-items class="px14-font">
-			<template v-for="(item, key, i) in toolbar">
-				<MenuButton
-					v-if="item.type !== 'category'"
-					:key="`button.${key}`"
-					:displayName="item.name"
-					:displayIcon="item.icon"
-					:disabled="isAnyWindowVisible || item.isDisabled"
-					@click="() => item.trigger()"
-				/>
-				<MenuActivator
-					v-else-if="item.shouldRender"
-					:key="`activator.${key}`"
-					:item="item"
-					:disabled="isAnyWindowVisible || item.isDisabled"
-				/>
-				<v-divider
-					:key="`divider.${key}`"
-					v-if="
-						item.shouldRender &&
-						(windowControlsOverlay ||
-							i + 1 < Object.keys(toolbar).length)
-					"
-					vertical
-				/>
-			</template>
-		</v-toolbar-items>
+			<v-divider vertical />
 
-		<span v-if="windowControlsOverlay" class="pl-3">
-			{{ title }}
-		</span>
+			<!-- App menu buttons -->
+			<v-toolbar-items class="px14-font">
+				<template v-for="(item, key, i) in toolbar">
+					<MenuButton
+						v-if="item.type !== 'category'"
+						:key="`button.${key}`"
+						:displayName="item.name"
+						:displayIcon="item.icon"
+						:disabled="isAnyWindowVisible || item.isDisabled"
+						@click="() => item.trigger()"
+					/>
+					<MenuActivator
+						v-else-if="item.shouldRender"
+						:key="`activator.${key}`"
+						:item="item"
+						:disabled="isAnyWindowVisible || item.isDisabled"
+					/>
+					<v-divider
+						:key="`divider.${key}`"
+						v-if="
+							item.shouldRender &&
+							(windowControlsOverlay ||
+								i + 1 < Object.keys(toolbar).length)
+						"
+						vertical
+					/>
+				</template>
+			</v-toolbar-items>
 
-		<v-spacer />
-		<div
-			class="px-1 mx-1 rounded-lg app-version-display"
-			v-ripple="!isAnyWindowVisible"
-			:style="{
-				opacity: isAnyWindowVisible ? 0.4 : null,
-				'margin-right': 'env(safe-area-inset-right, 0)',
-			}"
-			@click="openChangelogWindow"
-		>
-			v{{ appVersion }}
-		</div>
+			<span v-if="windowControlsOverlay" class="pl-3">
+				{{ title }}
+			</span>
+
+			<v-spacer />
+			<div
+				class="px-1 mx-1 rounded-lg app-version-display"
+				v-ripple="!isAnyWindowVisible"
+				:style="{
+					opacity: isAnyWindowVisible ? 0.4 : null,
+					'margin-right': 'env(safe-area-inset-right, 0)',
+				}"
+				@click="openChangelogWindow"
+			>
+				v{{ appVersion }}
+			</div>
+		</template>
 	</v-system-bar>
 </template>
 
@@ -85,6 +103,7 @@ import { reactive } from '@vue/composition-api'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import Logo from '../UIElements/Logo.vue'
+import { settingsState } from '../Windows/Settings/SettingsState'
 
 export default {
 	name: 'Toolbar',
@@ -109,10 +128,17 @@ export default {
 	},
 	data: () => ({
 		toolbar: App.toolbar.state,
+		settingsState,
 		isMacOS: platform() === 'darwin',
 
 		appVersion,
 	}),
+	computed: {
+		hideToolbarItems() {
+			if (!this.settingsState.appearance) return false
+			return this.settingsState.appearance.hideToolbarItems ?? false
+		},
+	},
 	methods: {
 		async openChangelogWindow() {
 			if (this.isAnyWindowVisible) return

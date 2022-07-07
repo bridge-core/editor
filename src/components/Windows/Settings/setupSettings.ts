@@ -168,6 +168,16 @@ export async function setupSettings(settings: SettingsWindow) {
 	)
 	settings.addControl(
 		new Toggle({
+			category: 'appearance',
+			name: 'windows.settings.appearance.hideToolbarItems.name',
+			description:
+				'windows.settings.appearance.hideToolbarItems.description',
+			key: 'hideToolbarItems',
+			default: false,
+		})
+	)
+	settings.addControl(
+		new Toggle({
 			category: 'sidebar',
 			name: 'windows.settings.sidebar.sidebarRight.name',
 			description: 'windows.settings.sidebar.sidebarRight.description',

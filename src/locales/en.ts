@@ -829,6 +829,11 @@ export default {
 					description:
 						"Change the font that is used inside of bridge.'s user interface",
 				},
+				hideToolbarItems: {
+					name: 'Hide Toolbar Items',
+					description:
+						'Make bridge. feel at home on MacOS: Move all toolbar items into a new menu button',
+				},
 			},
 			general: {
 				name: 'General',
