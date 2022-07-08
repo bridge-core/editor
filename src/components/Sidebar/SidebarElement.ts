@@ -10,6 +10,7 @@ export interface ISidebar {
 	id?: string
 	icon?: string
 	displayName?: string
+	group?: string
 	isVisible?: boolean | (() => boolean)
 	component?: Component
 	sidebarContent?: SidebarContent
@@ -91,6 +92,9 @@ export class SidebarElement {
 	}
 	get displayName() {
 		return this.config.displayName
+	}
+	get group() {
+		return this.config.group
 	}
 	get component() {
 		return this.config.component

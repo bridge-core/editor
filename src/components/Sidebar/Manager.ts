@@ -9,13 +9,33 @@ export class SidebarManager {
 	currentState = ref<SidebarContent | null>(null)
 	isContentVisible = computed(() => this.currentState.value !== null)
 	forcedInitialState = ref(false)
+	groupOrder = ['projectChooser', 'packExplorer']
+
+	sortedElements = ref<SidebarElement[]>([])
+
+	protected updateSortedElements() {
+		this.sortedElements.value = Object.values(this.elements).sort(
+			(a, b) => {
+				if (!a.group && !b.group) return 0
+
+				if (!a.group) return 1
+				if (!b.group) return -1
+				return (
+					this.groupOrder.indexOf(a.group) -
+					this.groupOrder.indexOf(b.group)
+				)
+			}
+		)
+	}
 
 	addSidebarElement(uuid: string, element: SidebarElement) {
 		set(this.elements, uuid, element)
+		this.updateSortedElements()
 
 		return {
 			dispose: () => {
 				del(this.elements, uuid)
+				this.updateSortedElements()
 			},
 		}
 	}

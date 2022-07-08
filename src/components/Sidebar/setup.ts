@@ -9,6 +9,7 @@ import { createCompilerSidebar } from '../Compiler/Sidebar/create'
 export async function setupSidebar() {
 	createSidebar({
 		id: 'projects',
+		group: 'projectChooser',
 		displayName: 'windows.projectChooser.title',
 		icon: 'mdi-view-dashboard-outline',
 		disabled: () => App.instance.hasNoProjects,
@@ -23,6 +24,7 @@ export async function setupSidebar() {
 
 	const packExplorer = createSidebar({
 		id: 'packExplorer',
+		group: 'packExplorer',
 		displayName: 'windows.packExplorer.title',
 		icon: 'mdi-folder-outline',
 	})

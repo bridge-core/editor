@@ -4,13 +4,12 @@ import { InfoPanel } from '../InfoPanel/InfoPanel'
 import { SidebarAction } from '../Sidebar/Content/SidebarAction'
 import { SidebarContent } from '../Sidebar/Content/SidebarContent'
 import { SidebarElement } from '../Sidebar/SidebarElement'
+import { IDirectoryViewerOptions } from '../UIElements/DirectoryViewer/DirectoryStore'
 import ViewFolderComponent from './ViewFolders.vue'
 import { App } from '/@/App'
 
-export interface IViewHandleOptions {
+export interface IViewHandleOptions extends IDirectoryViewerOptions {
 	directoryHandle: AnyDirectoryHandle
-	startPath?: string
-	defaultIconColor?: string
 }
 export class ViewFolders extends SidebarContent {
 	component = ViewFolderComponent
@@ -39,6 +38,7 @@ export class ViewFolders extends SidebarContent {
 		this.sidebarElement = markRaw(
 			new SidebarElement({
 				id: 'viewOpenedFolders',
+				group: 'packExplorer',
 				sidebarContent: this,
 				displayName: 'sidebar.openedFolders.name',
 				icon: 'mdi-folder-open-outline',
@@ -58,9 +58,8 @@ export class ViewFolders extends SidebarContent {
 		if (!this.sidebarElement.isSelected) this.sidebarElement.select()
 	}
 	async hasDirectoryHandle(directoryHandle: AnyDirectoryHandle) {
-		for (const { directoryHandle } of this.directoryHandles) {
-			if (await directoryHandle.isSameEntry(<any>directoryHandle))
-				return true
+		for (const { directoryHandle: currHandle } of this.directoryHandles) {
+			if (await currHandle.isSameEntry(<any>directoryHandle)) return true
 		}
 
 		return false

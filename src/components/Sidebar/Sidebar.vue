@@ -96,7 +96,7 @@ export default {
 
 	setup() {
 		return {
-			rawSidebarElements: App.sidebar.elements,
+			rawSidebarElements: App.sidebar.sortedElements,
 			rawIsNavigationVisible: App.sidebar.isNavigationVisible,
 		}
 	},
@@ -120,7 +120,7 @@ export default {
 			},
 		},
 		sidebarElements() {
-			return Object.values(this.rawSidebarElements).filter(
+			return this.rawSidebarElements.filter(
 				(sidebar) => sidebar.isVisible
 			)
 		},
