@@ -107,7 +107,8 @@ export class ComMojangProjectLoader {
 	isV2Project(manifest: any) {
 		const uuid = manifest?.header?.uuid
 
-		const bridgeMajorVersion = manifest?.meta?.generated_with?.bridge?.[0]
+		const bridgeMajorVersion =
+			manifest?.metadata?.generated_with?.bridge?.[0]
 		if (bridgeMajorVersion && Number(bridgeMajorVersion) >= 2) return true
 
 		// Check whether BP is part of a v2 project
