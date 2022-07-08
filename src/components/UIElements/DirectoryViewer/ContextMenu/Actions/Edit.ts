@@ -10,6 +10,7 @@ import { DirectoryWrapper } from '../../DirectoryView/DirectoryWrapper'
 interface IEditOptions {
 	hideRename?: boolean
 	hideDelete?: boolean
+	hideDuplicate?: boolean
 }
 
 export const EditAction = async (
@@ -33,7 +34,7 @@ export const EditAction = async (
 					? baseWrapper
 					: baseWrapper.getParent()!
 			),
-			DuplicateAction(baseWrapper),
+			options.hideDuplicate ? null : DuplicateAction(baseWrapper),
 			options.hideRename ? null : RenameAction(baseWrapper),
 			options.hideDelete ? null : DeleteAction(baseWrapper),
 		],

@@ -167,7 +167,11 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 	}
 
 	override _onRightClick(event: MouseEvent) {
-		showFolderContextMenu(event, this)
+		showFolderContextMenu(event, this, {
+			hideDelete: this.parent === null,
+			hideRename: this.parent === null,
+			hideDuplicate: this.parent === null,
+		})
 		this.options.onDirectoryRightClick?.(event, this)
 	}
 	override _onClick(_: MouseEvent, forceClick: boolean): void {

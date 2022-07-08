@@ -9,6 +9,7 @@ import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 interface IFolderOptions {
 	hideDelete?: boolean
 	hideRename?: boolean
+	hideDuplicate?: boolean
 }
 export async function showFolderContextMenu(
 	event: MouseEvent,
