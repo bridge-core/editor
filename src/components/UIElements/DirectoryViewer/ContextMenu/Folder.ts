@@ -5,6 +5,7 @@ import { RevealFilePathAction } from './Actions/RevealFilePath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
+import { tryCreateFile } from '/@/utils/file/tryCreateFile'
 
 interface IFolderOptions {
 	hideDelete?: boolean
@@ -33,14 +34,21 @@ export async function showFolderContextMenu(
 				const name = await inputWindow.fired
 				if (!name) return
 
-				const filePath = `${path}/${name}`
-				const fileHandle = await app.fileSystem.writeFile(filePath, '')
-				app.project.updateFile(filePath)
-
-				// Open file in new tab
-				await app.project.openFile(fileHandle, {
-					selectTab: true,
+				const { type, handle } = await tryCreateFile({
+					directoryHandle: directoryWrapper.handle,
+					name,
 				})
+
+				if (type === 'cancel') return
+
+				if (handle) {
+					app.project.updateHandle(handle)
+					// Open file in new tab
+					await app.project.openFile(handle, {
+						selectTab: true,
+					})
+				}
+
 				directoryWrapper.refresh()
 			},
 		},

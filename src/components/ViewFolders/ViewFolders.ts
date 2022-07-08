@@ -1,6 +1,8 @@
 import { markRaw } from '@vue/composition-api'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { InfoPanel } from '../InfoPanel/InfoPanel'
+import { IComMojangProject } from '../OutputFolders/ComMojang/ProjectLoader'
+import { SelectableSidebarAction } from '../Sidebar/Content/SelectableSidebarAction'
 import { SidebarAction } from '../Sidebar/Content/SidebarAction'
 import { SidebarContent } from '../Sidebar/Content/SidebarContent'
 import { SidebarElement } from '../Sidebar/SidebarElement'
@@ -14,26 +16,29 @@ export interface IViewHandleOptions extends IDirectoryViewerOptions {
 export class ViewFolders extends SidebarContent {
 	component = ViewFolderComponent
 	actions: SidebarAction[] = []
-	directoryEntries: Record<string, AnyDirectoryHandle> = {}
 	topPanel: InfoPanel | undefined = undefined
+
 	protected directoryHandles: IViewHandleOptions[] = []
 	protected sidebarElement: SidebarElement
+	protected closeAction = new SidebarAction({
+		icon: 'mdi-close',
+		name: 'general.close',
+		color: 'error',
+		onTrigger: async () => {
+			this.directoryHandles = []
+
+			const app = await App.getApp()
+			// Unselect ViewFolders tab by selecting packExplorer/viewComMojangProject instead
+			if (app.viewComMojangProject.hasComMojangProjectLoaded)
+				App.sidebar.elements.viewComMojangProject.select()
+			else App.sidebar.elements.packExplorer.select()
+		},
+	})
 
 	constructor() {
 		super()
 
-		this.actions.push(
-			new SidebarAction({
-				icon: 'mdi-close',
-				name: 'general.close',
-				color: 'error',
-				onTrigger: () => {
-					this.directoryHandles = []
-					// Unselect ViewFolders tab by selecting packExplorer instead
-					App.sidebar.elements.packExplorer.click()
-				},
-			})
-		)
+		this.actions = [this.closeAction]
 
 		this.sidebarElement = markRaw(
 			new SidebarElement({

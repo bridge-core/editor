@@ -25,12 +25,16 @@ export async function setupSidebar() {
 	const packExplorer = createSidebar({
 		id: 'packExplorer',
 		group: 'packExplorer',
-		displayName: 'windows.packExplorer.title',
+		displayName: 'sidebar.packExplorer.name',
 		icon: 'mdi-folder-outline',
 	})
 
 	App.getApp().then((app) => {
 		packExplorer.setSidebarContent(app.packExplorer)
+		packExplorer.setIsVisible(
+			() => !app.viewComMojangProject.hasComMojangProjectLoaded
+		)
+
 		if (!App.sidebar.forcedInitialState.value) packExplorer.click()
 	})
 

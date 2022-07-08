@@ -9,6 +9,7 @@ import { IExperimentalToggle } from '../CreateProject/CreateProject'
 import { importNewProject } from '../Import/ImportNew'
 import { IPackData } from '/@/components/Projects/Project/loadPacks'
 import { ComMojangProjectLoader } from '../../OutputFolders/ComMojang/ProjectLoader'
+import { markRaw } from '@vue/composition-api'
 
 export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])
@@ -126,19 +127,7 @@ export class ProjectChooserWindow extends BaseWindow {
 					.filter((packType) => !!packType),
 				isLocalProject: false,
 				isComMojangProject: true,
-				openPacks: project.packs.map(
-					({ directoryHandle, type, packPath }) => ({
-						directoryHandle,
-						type: type,
-						packPath,
-					})
-				),
-				experimentalGameplay: experimentalToggles.map(
-					(toggle: IExperimentalToggle) => ({
-						isActive: false,
-						...toggle,
-					})
-				),
+				project: markRaw(project),
 			})
 		)
 

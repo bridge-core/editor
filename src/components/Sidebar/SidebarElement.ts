@@ -107,6 +107,9 @@ export class SidebarElement {
 	setSidebarContent(sidebarContent: SidebarContent) {
 		this.config.sidebarContent = sidebarContent
 	}
+	setIsVisible(isVisible: boolean | (() => boolean)) {
+		this.config.isVisible = isVisible
+	}
 	attachBadge(badge: IBadge | null) {
 		this.badge = badge
 

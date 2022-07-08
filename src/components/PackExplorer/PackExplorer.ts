@@ -30,6 +30,7 @@ export class PackExplorer extends SidebarContent {
 	directoryEntries: Record<string, DirectoryWrapper> = {}
 	topPanel: InfoPanel | undefined = undefined
 	showNoProjectView = false
+	headerHeight = '60px'
 
 	constructor() {
 		super()
@@ -57,8 +58,6 @@ export class PackExplorer extends SidebarContent {
 			updateHeaderSlot()
 			this.updateTopPanel(project.app)
 		})
-
-		this.headerHeight = '60px'
 	}
 
 	updateTopPanel(app: App) {

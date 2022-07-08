@@ -420,6 +420,9 @@ export default {
 	},
 	// Sidebar tabs
 	sidebar: {
+		packExplorer: {
+			name: 'Pack Explorer',
+		},
 		openedFolders: {
 			name: 'Opened Folders',
 		},
@@ -732,7 +735,6 @@ export default {
 			},
 		},
 		packExplorer: {
-			title: 'Pack Explorer',
 			searchFiles: 'Search files...',
 			categories: 'Categories',
 			refresh: {

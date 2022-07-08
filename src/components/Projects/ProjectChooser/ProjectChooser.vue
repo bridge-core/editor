@@ -163,17 +163,9 @@
 				<v-icon>mdi-delete</v-icon>
 				{{ t('general.delete') }}
 			</v-btn>
+
 			<!-- Select Project -->
 			<v-btn
-				v-if="isComMojangProject"
-				color="primary"
-				@click="onSelectProject"
-			>
-				<v-icon class="pr-1">mdi-folder-open-outline</v-icon>
-				{{ t('windows.projectChooser.openPacks') }}
-			</v-btn>
-			<v-btn
-				v-else
 				color="primary"
 				:disabled="currentProject === selectedSidebar"
 				@click="onSelectProject"
@@ -231,13 +223,8 @@ export default {
 
 			if (this.isComMojangProject) {
 				await app.projectManager.selectProject(virtualProjectName)
-				this.sidebar.currentState.openPacks.map(
-					({ directoryHandle, type, packPath }) =>
-						app.viewFolders.addDirectoryHandle({
-							directoryHandle,
-							defaultIconColor: type,
-							startPath: packPath,
-						})
+				app.viewComMojangProject.loadComMojangProject(
+					this.sidebar.currentState.project
 				)
 			} else {
 				app.projectManager.selectProject(this.sidebar.selected)

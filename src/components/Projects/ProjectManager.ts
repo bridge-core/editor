@@ -173,6 +173,8 @@ export class ProjectManager extends Signal<void> {
 		}
 
 		const app = await App.getApp()
+		// Clear current comMojangProject
+		app.viewComMojangProject.clearComMojangProject()
 
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName

@@ -1,15 +1,6 @@
 <template>
 	<NoProjectView v-if="sidebarContent.showNoProjectView" />
-	<!-- <FileDisplayer
-		v-else-if="sidebarContent.selectedAction"
-		:key="sidebarContent.selectedAction.config.id"
-		:entry="
-			sidebarContent.directoryEntries[
-				sidebarContent.selectedAction.config.id
-			]
-		"
-		@contextmenu="onContextMenu"
-	/> -->
+
 	<DirectoryViewer
 		v-else-if="sidebarContent.selectedAction"
 		:key="sidebarContent.selectedAction.config.id"
@@ -35,18 +26,6 @@ export default {
 		FileDisplayer,
 		NoProjectView,
 		DirectoryViewer,
-	},
-	methods: {
-		async onContextMenu(data) {
-			showContextMenu(
-				data,
-				await this.sidebarContent.getContextMenu(
-					data.type,
-					data.path,
-					data.entry
-				)
-			)
-		},
 	},
 }
 </script>

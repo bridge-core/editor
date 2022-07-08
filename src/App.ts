@@ -47,6 +47,7 @@ import { FolderImportManager } from '/@/components/ImportFolder/manager'
 import { StartParamManager } from '/@/components/StartParams/Manager'
 import { ViewFolders } from '/@/components/ViewFolders/ViewFolders'
 import { SidebarManager } from '/@/components/Sidebar/Manager'
+import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -69,6 +70,7 @@ export class App {
 	protected static _instance: Readonly<App>
 
 	public readonly viewFolders = new ViewFolders()
+	public readonly viewComMojangProject = new ViewComMojangProject()
 	public readonly packExplorer = new PackExplorer()
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this.keyBindingManager)
