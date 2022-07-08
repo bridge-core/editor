@@ -133,7 +133,7 @@ export class MonacoHolder extends Signal<void> {
 		const commentLineAction = this._monacoEditor.getAction(
 			'editor.action.commentLine'
 		)
-		this._monacoEditor?.addAction({
+		this._monacoEditor.addAction({
 			...commentLineAction,
 
 			keybindings: [KeyMod.CtrlCmd | KeyCode.Backslash],
@@ -168,7 +168,7 @@ export class MonacoHolder extends Signal<void> {
 			}
 		})
 
-		this._monacoEditor?.layout()
+		this._monacoEditor.layout()
 		this.disposables.push(
 			this._app.windowResize.on(() =>
 				setTimeout(() => this._monacoEditor?.layout())
@@ -194,6 +194,7 @@ export class MonacoHolder extends Signal<void> {
 		this.disposables.forEach((d) => d.dispose())
 		this.disposables = []
 		this._monacoEditor = undefined
+		this.resetSignal()
 	}
 
 	private onReadonlyCustomMonacoContextMenu() {
