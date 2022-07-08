@@ -77,13 +77,11 @@ export class ComMojangProjectLoader {
 				.readJSON(`${folderName}/${packHandle.name}/manifest.json`)
 				.catch(() => null)
 			if (!manifest) continue
+
 			const uuid = manifest?.header?.uuid
 
-			// Check whether BP is part of a v2 project
-			const isV2Project = this.app.projectManager.someProject(
-				(project) => !!project.bpUuid && project.bpUuid === uuid
-			)
-			if (isV2Project) continue
+			// Check whether BP/RP is part of a v2 project
+			if (this.isV2Project(manifest)) continue
 
 			const packIcon = await loadAsDataURL(
 				`${folderName}/${packHandle.name}/pack_icon.png`,
@@ -104,5 +102,18 @@ export class ComMojangProjectLoader {
 		}
 
 		return packs
+	}
+
+	isV2Project(manifest: any) {
+		const uuid = manifest?.header?.uuid
+
+		const bridgeMajorVersion = manifest?.meta?.generated_with?.bridge?.[0]
+		if (bridgeMajorVersion && Number(bridgeMajorVersion) >= 2) return true
+
+		// Check whether BP is part of a v2 project
+		const isV2Project = this.app.projectManager.someProject(
+			(project) => !!project.bpUuid && project.bpUuid === uuid
+		)
+		return isV2Project
 	}
 }
