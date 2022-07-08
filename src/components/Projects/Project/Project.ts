@@ -32,6 +32,7 @@ import { DashService } from '/@/components/Compiler/Worker/Service'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 import { iterateDir } from '/@/utils/iterateDir'
+import { Signal } from '../../Common/Event/Signal'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -49,7 +50,7 @@ export abstract class Project {
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
 	public _compilerService?: Remote<DashService>
-	public compilerReady: Promise<void>
+	public compilerReady = new Signal<void>()
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 
@@ -94,10 +95,15 @@ export abstract class Project {
 		return this.name === this.parent.selectedProject
 	}
 	get compilerService() {
-		if (!this._compilerService)
-			throw new Error(
-				`Trying to access compilerService before it was setup. Make sure to await compilerReady before accessing it.`
+		if (this._compilerService === undefined) {
+			console.log(
+				this._compilerService,
+				this._compilerService === undefined
 			)
+			throw new Error(
+				`Trying to access compilerService before it was setup. Make sure to await compilerReady.fired before accessing it.`
+			)
+		}
 
 		return this._compilerService
 	}
@@ -165,11 +171,10 @@ export abstract class Project {
 
 		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
 
-		this.compilerReady = this.createDashService('development').then(
-			(service) => {
-				this._compilerService = markRaw(service)
-			}
-		)
+		this.createDashService('development').then((service) => {
+			this._compilerService = markRaw(service)
+			this.compilerReady.dispatch()
+		})
 
 		setTimeout(() => this.onCreate(), 0)
 	}
@@ -226,7 +231,7 @@ export abstract class Project {
 
 		await this.fileTypeLibrary.setup(this.app.dataLoader)
 		// Wait for compilerService to be ready
-		await this.compilerReady
+		await this.compilerReady.fired
 
 		if (!isReload) {
 			for (const tabSystem of this.tabSystems) await tabSystem.activate()
@@ -547,7 +552,7 @@ export abstract class Project {
 	async recompile(forceStartIfActive = true) {
 		if (forceStartIfActive && this.isActiveProject) {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
-			await this.compilerReady
+			await this.compilerReady.fired
 			this.compilerService.build()
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')

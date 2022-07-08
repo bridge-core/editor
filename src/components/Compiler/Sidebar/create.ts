@@ -19,20 +19,20 @@ export function createCompilerSidebar() {
 	let selectedCategory: string | undefined = undefined
 	let isWindowOpen = false
 
-	const removeListeners = async () => {
-		const app = await App.getApp()
-		await app.project.compilerReady
-		app.project.compilerService.removeConsoleListeners()
+	const removeListeners = async (project: Project) => {
+		await project.compilerReady.fired
+		project.compilerService.removeConsoleListeners()
 	}
-	const listenForLogChanges = async (resetListeners = false) => {
-		const app = await App.getApp()
+	const listenForLogChanges = async (
+		project: Project,
+		resetListeners = false
+	) => {
+		if (resetListeners) await removeListeners(project)
 
-		if (resetListeners) await removeListeners()
-
-		await app.project.compilerReady
-		app.project.compilerService.onConsoleUpdate(
+		await project.compilerReady.fired
+		project.compilerService.onConsoleUpdate(
 			proxy(async () => {
-				let logs = await app.project.compilerService.getCompilerLogs()
+				let logs = await project.compilerService.getCompilerLogs()
 				logs = logs.filter(
 					([_, { type }]) => type === 'error' || type === 'warning'
 				)
@@ -79,10 +79,12 @@ export function createCompilerSidebar() {
 			 * which is triggered after the listener registration in this case
 			 */
 			compilerWindow.resetSignal()
-			compilerWindow.once(() => {
+			compilerWindow.once(async () => {
 				disposable.dispose()
 				isWindowOpen = false
-				listenForLogChanges()
+				listenForLogChanges(
+					await App.getApp().then((app) => app.project)
+				)
 			})
 
 			isWindowOpen = true
@@ -106,6 +108,6 @@ export function createCompilerSidebar() {
 		}
 		updateBadge()
 
-		await listenForLogChanges(true)
+		await listenForLogChanges(project, true)
 	})
 }
