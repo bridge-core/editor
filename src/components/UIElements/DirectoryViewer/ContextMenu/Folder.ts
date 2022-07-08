@@ -6,6 +6,7 @@ import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 import { tryCreateFile } from '/@/utils/file/tryCreateFile'
+import { tryCreateFolder } from '/@/utils/file/tryCreateFolder'
 
 interface IFolderOptions {
 	hideDelete?: boolean
@@ -65,9 +66,12 @@ export async function showFolderContextMenu(
 				const name = await inputWindow.fired
 				if (!name) return
 
-				await app.fileSystem.mkdir(`${path}/${name}`, {
-					recursive: true,
+				const { type } = await tryCreateFolder({
+					directoryHandle: directoryWrapper.handle,
+					name: name,
 				})
+				if (type === 'cancel') return
+
 				// Refresh pack explorer
 				directoryWrapper.refresh()
 			},
