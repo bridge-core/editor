@@ -26,9 +26,11 @@ export class ComMojangProjectLoader {
 	}
 
 	async loadProjects() {
-		await this.comMojang.setup.fired
-		await this.app.projectManager.projectReady.fired
-		if (!this.comMojang.status.hasComMojang) return []
+		if (
+			!this.comMojang.setup.hasFired ||
+			!this.comMojang.status.hasComMojang
+		)
+			return []
 
 		const behaviorPacks = await this.loadPacks('development_behavior_packs')
 		const resourcePacks = await this.loadPacks('development_resource_packs')
