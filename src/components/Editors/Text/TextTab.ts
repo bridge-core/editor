@@ -113,9 +113,9 @@ export class TextTab extends FileTab {
 			this.initialVersionId = this.editorModel.getAlternativeVersionId()
 
 			this.modelLoaded.dispatch()
-			this.loadEditor(false)
+			await this.loadEditor(false)
 		} else {
-			this.loadEditor()
+			await this.loadEditor()
 		}
 
 		this.disposables.push(
@@ -156,11 +156,13 @@ export class TextTab extends FileTab {
 		this.editorInstance?.focus()
 	}
 
-	loadEditor(shouldFocus = true) {
+	async loadEditor(shouldFocus = true) {
+		await this.parent.fired //Make sure a monaco editor is loaded
+
 		if (this.editorModel && !this.editorModel.isDisposed())
-			this.editorInstance?.setModel(this.editorModel)
+			this.editorInstance.setModel(this.editorModel)
 		if (this.editorViewState)
-			this.editorInstance?.restoreViewState(this.editorViewState)
+			this.editorInstance.restoreViewState(this.editorViewState)
 
 		this.editorInstance?.updateOptions({ readOnly: this.isReadOnly })
 		if (shouldFocus) setTimeout(() => this.focus(), 10)
