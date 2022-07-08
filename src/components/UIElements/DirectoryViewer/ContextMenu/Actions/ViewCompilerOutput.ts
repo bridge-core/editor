@@ -6,7 +6,7 @@ export const ViewCompilerOutput = (
 	filePath?: string | null,
 	addKeyBinding = false
 ) => ({
-	icon: 'mdi-cogs',
+	icon: 'mdi-file-cog-outline',
 	name: 'actions.viewCompilerOutput.name',
 	description: 'actions.viewCompilerOutput.description',
 	keyBinding: addKeyBinding ? 'Ctrl + Shift + D' : undefined,

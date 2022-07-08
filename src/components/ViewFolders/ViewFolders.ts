@@ -27,11 +27,7 @@ export class ViewFolders extends SidebarContent {
 		onTrigger: async () => {
 			this.directoryHandles = []
 
-			const app = await App.getApp()
-			// Unselect ViewFolders tab by selecting packExplorer/viewComMojangProject instead
-			if (app.viewComMojangProject.hasComMojangProjectLoaded)
-				App.sidebar.elements.viewComMojangProject.select()
-			else App.sidebar.elements.packExplorer.select()
+			this.updateVisibility()
 		},
 	})
 
@@ -52,15 +48,55 @@ export class ViewFolders extends SidebarContent {
 		)
 	}
 
+	async updateVisibility() {
+		if (this.directoryHandles.length > 0) return
+
+		const app = await App.getApp()
+		// Unselect ViewFolders tab by selecting packExplorer/viewComMojangProject instead
+		if (app.viewComMojangProject.hasComMojangProjectLoaded)
+			App.sidebar.elements.viewComMojangProject.select()
+		else App.sidebar.elements.packExplorer.select()
+	}
+
 	async addDirectoryHandle({
 		directoryHandle,
 		...other
 	}: IViewHandleOptions) {
 		if (await this.hasDirectoryHandle(directoryHandle)) return
 
-		this.directoryHandles.push({ directoryHandle, ...other })
+		this.directoryHandles.push({
+			directoryHandle,
+			...other,
+			provideDirectoryContextMenu: (directoryWrapper) => {
+				return [
+					directoryWrapper.getParent() === null
+						? {
+								name: 'sidebar.openedFolders.removeFolder',
+								icon: 'mdi-eye-off-outline',
+								onTrigger: async () => {
+									await this.removeDirectoryHandle(
+										directoryWrapper.handle
+									)
+									await this.updateVisibility()
+								},
+						  }
+						: null,
+				]
+			},
+		})
 
 		if (!this.sidebarElement.isSelected) this.sidebarElement.select()
+	}
+	async removeDirectoryHandle(directoryHandle: AnyDirectoryHandle) {
+		for (let i = 0; i < this.directoryHandles.length; i++) {
+			const curr = this.directoryHandles[i]
+			if (await curr.directoryHandle.isSameEntry(<any>directoryHandle)) {
+				this.directoryHandles.splice(i, 1)
+				return
+			}
+		}
+
+		throw new Error('directoryHandle to remove not found')
 	}
 	async hasDirectoryHandle(directoryHandle: AnyDirectoryHandle) {
 		for (const { directoryHandle: currHandle } of this.directoryHandles) {

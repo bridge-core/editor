@@ -2,12 +2,15 @@ import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/Bas
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 
 export const RevealFilePathAction = (baseWrapper: BaseWrapper<any>) => ({
-	icon: 'mdi-eye-outline',
-	name: 'actions.revealFilePath.name',
-	description: 'actions.revealFilePath.description',
+	icon:
+		baseWrapper.kind === 'directory'
+			? 'mdi-folder-marker-outline'
+			: 'mdi-file-marker-outline',
+	name: 'actions.revealPath.name',
+	description: 'actions.revealPath.description',
 	onTrigger: async () => {
 		new InformationWindow({
-			name: 'actions.revealFilePath.name',
+			name: 'actions.revealPath.name',
 			description: `[${baseWrapper.path}]`,
 			isPersistent: false,
 		}).open()

@@ -1,7 +1,7 @@
 import { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
 import { EditAction } from './Actions/Edit'
 import { CopyAction } from './Actions/Edit/Copy'
-import { RevealFilePathAction } from './Actions/RevealFilePath'
+import { RevealFilePathAction } from './Actions/RevealPath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'

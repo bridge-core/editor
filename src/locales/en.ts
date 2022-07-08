@@ -169,8 +169,8 @@ export default {
 			description: 'View the current compiler output for this file',
 			fileMissing: "It doesn't look like this file was compiled yet.",
 		},
-		revealFilePath: {
-			name: 'Reveal File Path',
+		revealPath: {
+			name: 'Reveal Path',
 			description: 'Reveals the location of a file or folder',
 		},
 		createFile: {
@@ -425,6 +425,7 @@ export default {
 		},
 		openedFolders: {
 			name: 'Opened Folders',
+			removeFolder: 'Remove From View',
 		},
 		compiler: {
 			name: 'Compiler',
