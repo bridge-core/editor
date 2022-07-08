@@ -74,7 +74,7 @@ async function renameFileHandle(
 	await writable.write(file)
 	await writable.close()
 	// 4. Delete old file
-	await parentHandle.removeEntry(newName)
+	await parentHandle.removeEntry(renameHandle.name)
 
 	return {
 		type: type === 'create' ? 'rename' : 'overwrite',
