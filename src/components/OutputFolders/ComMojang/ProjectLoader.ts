@@ -1,3 +1,4 @@
+import { compareVersions } from 'bridge-common-utils'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { App } from '/@/App'
 import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
@@ -107,9 +108,9 @@ export class ComMojangProjectLoader {
 	isV2Project(manifest: any) {
 		const uuid = manifest?.header?.uuid
 
-		const bridgeMajorVersion =
-			manifest?.metadata?.generated_with?.bridge?.[0]
-		if (bridgeMajorVersion && Number(bridgeMajorVersion) >= 2) return true
+		const bridgeVersion = manifest?.metadata?.generated_with?.bridge?.pop?.()
+		if (bridgeVersion && compareVersions(bridgeVersion, '2.0.0', '>='))
+			return true
 
 		// Check whether BP is part of a v2 project
 		const isV2Project = this.app.projectManager.someProject(
