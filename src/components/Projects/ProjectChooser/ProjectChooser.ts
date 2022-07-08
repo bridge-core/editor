@@ -126,7 +126,13 @@ export class ProjectChooserWindow extends BaseWindow {
 					.filter((packType) => !!packType),
 				isLocalProject: false,
 				isComMojangProject: true,
-				openHandles: project.packs.map((pack) => pack.directoryHandle),
+				openPacks: project.packs.map(
+					({ directoryHandle, type, packPath }) => ({
+						directoryHandle,
+						type: type,
+						packPath,
+					})
+				),
 				experimentalGameplay: experimentalToggles.map(
 					(toggle: IExperimentalToggle) => ({
 						isActive: false,

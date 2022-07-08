@@ -52,10 +52,10 @@ const devActionConfigs: IActionConfig[] = [
 		onTrigger: async () => {
 			const app = await App.getApp()
 
-			app.viewFolders.addDirectoryHandle(
-				await navigator.storage.getDirectory(),
-				'~local'
-			)
+			app.viewFolders.addDirectoryHandle({
+				directoryHandle: await navigator.storage.getDirectory(),
+				startPath: '~local',
+			})
 		},
 	},
 	{
@@ -67,10 +67,9 @@ const devActionConfigs: IActionConfig[] = [
 
 			if (!app.comMojang.setup.hasFired) return
 
-			app.viewFolders.addDirectoryHandle(
-				app.comMojang.fileSystem.baseDirectory,
-				'~local'
-			)
+			app.viewFolders.addDirectoryHandle({
+				directoryHandle: app.comMojang.fileSystem.baseDirectory,
+			})
 		},
 	},
 ]

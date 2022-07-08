@@ -2,14 +2,15 @@
 	<div class="my-1">
 		<DirectoryViewer
 			v-for="(
-				{ handle, startPath }, i
+				{ directoryHandle, startPath, defaultIconColor }, i
 			) in sidebarContent.directoryHandles"
 			class="mb-2"
 			:key="i"
-			:directoryHandle="handle"
+			:directoryHandle="directoryHandle"
 			:renderTopLevelDirectory="true"
 			:options="{
 				startPath,
+				defaultIconColor,
 			}"
 		/>
 	</div>

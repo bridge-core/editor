@@ -38,7 +38,7 @@ export class FolderImportManager {
 					return
 				}
 
-				app.viewFolders.addDirectoryHandle(directoryHandle)
+				app.viewFolders.addDirectoryHandle({ directoryHandle })
 			},
 		})
 	}

@@ -7,15 +7,17 @@ import { SidebarElement } from '../Sidebar/SidebarElement'
 import ViewFolderComponent from './ViewFolders.vue'
 import { App } from '/@/App'
 
+export interface IViewHandleOptions {
+	directoryHandle: AnyDirectoryHandle
+	startPath?: string
+	defaultIconColor?: string
+}
 export class ViewFolders extends SidebarContent {
 	component = ViewFolderComponent
 	actions: SidebarAction[] = []
 	directoryEntries: Record<string, AnyDirectoryHandle> = {}
 	topPanel: InfoPanel | undefined = undefined
-	protected directoryHandles: {
-		handle: AnyDirectoryHandle
-		startPath?: string
-	}[] = []
+	protected directoryHandles: IViewHandleOptions[] = []
 	protected sidebarElement: SidebarElement
 
 	constructor() {
@@ -45,19 +47,20 @@ export class ViewFolders extends SidebarContent {
 		)
 	}
 
-	async addDirectoryHandle(
-		directoryHandle: AnyDirectoryHandle,
-		startPath?: string
-	) {
+	async addDirectoryHandle({
+		directoryHandle,
+		...other
+	}: IViewHandleOptions) {
 		if (await this.hasDirectoryHandle(directoryHandle)) return
 
-		this.directoryHandles.push({ handle: directoryHandle, startPath })
+		this.directoryHandles.push({ directoryHandle, ...other })
 
 		if (!this.sidebarElement.isSelected) this.sidebarElement.select()
 	}
 	async hasDirectoryHandle(directoryHandle: AnyDirectoryHandle) {
-		for (const { handle } of this.directoryHandles) {
-			if (await handle.isSameEntry(<any>directoryHandle)) return true
+		for (const { directoryHandle } of this.directoryHandles) {
+			if (await directoryHandle.isSameEntry(<any>directoryHandle))
+				return true
 		}
 
 		return false

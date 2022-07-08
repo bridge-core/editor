@@ -231,8 +231,13 @@ export default {
 
 			if (this.isComMojangProject) {
 				await app.projectManager.selectProject(virtualProjectName)
-				this.sidebar.currentState.openHandles.map((handle) =>
-					app.viewFolders.addDirectoryHandle(handle)
+				this.sidebar.currentState.openPacks.map(
+					({ directoryHandle, type, packPath }) =>
+						app.viewFolders.addDirectoryHandle({
+							directoryHandle,
+							defaultIconColor: type,
+							startPath: packPath,
+						})
 				)
 			} else {
 				app.projectManager.selectProject(this.sidebar.selected)
