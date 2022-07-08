@@ -156,6 +156,8 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async selectProject(projectName: string, failGracefully = false) {
+		if (this._selectedProject === projectName) return
+
 		if (this.state[projectName] === undefined) {
 			if (failGracefully) {
 				new InformationWindow({
