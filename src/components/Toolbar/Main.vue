@@ -14,7 +14,7 @@
 			'z-index': windowControlsOverlay ? 1000 : undefined,
 		}"
 	>
-		<template v-if="hideToolbarItems && windowControlsOverlay">
+		<template v-if="hideToolbarItems">
 			<Logo
 				style="
 					height: 18px;
@@ -24,9 +24,19 @@
 				alt="Logo of bridge. v2"
 				draggable="false"
 			/>
-			<span>
-				{{ title }}
-			</span>
+
+			<div
+				v-ripple
+				@click="openCommandBar"
+				class="outlined rounded-lg d-flex align-center justify-center"
+				style="height: 20px"
+			>
+				<v-icon class="ml-1">mdi-magnify</v-icon>
+
+				<span class="mr-1">
+					{{ composedTitle }}
+				</span>
+			</div>
 		</template>
 
 		<template v-else>
@@ -73,7 +83,7 @@
 			</v-toolbar-items>
 
 			<span v-if="windowControlsOverlay" class="pl-3">
-				{{ title }}
+				{{ composedTitle }}
 			</span>
 
 			<v-spacer />
@@ -104,6 +114,7 @@ import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsO
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import Logo from '../UIElements/Logo.vue'
 import { settingsState } from '../Windows/Settings/SettingsState'
+import { CommandBarState } from '../CommandBar/State'
 
 export default {
 	name: 'Toolbar',
@@ -116,12 +127,14 @@ export default {
 	},
 	setup() {
 		const setupObj = reactive({
-			title: 'bridge.',
+			title: '',
+			appName: '',
 			isAnyWindowVisible: App.windowState.isAnyWindowVisible,
 		})
 
 		App.getApp().then((app) => {
 			setupObj.title = app.projectManager.title.current
+			setupObj.appName = app.projectManager.title.appName
 		})
 
 		return setupObj
@@ -138,6 +151,10 @@ export default {
 			if (!this.settingsState.appearance) return false
 			return this.settingsState.appearance.hideToolbarItems ?? false
 		},
+		composedTitle() {
+			if (!this.title) return this.appName
+			return `${this.appName} - ${this.title}`
+		},
 	},
 	methods: {
 		async openChangelogWindow() {
@@ -145,6 +162,11 @@ export default {
 
 			const app = await App.getApp()
 			await app.windows.changelogWindow.open()
+		},
+		async openCommandBar() {
+			if (this.isAnyWindowVisible) return
+
+			CommandBarState.isWindowOpen = true
 		},
 	},
 }
