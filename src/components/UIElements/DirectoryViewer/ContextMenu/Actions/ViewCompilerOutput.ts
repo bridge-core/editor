@@ -15,16 +15,17 @@ export const ViewCompilerOutput = (
 		const app = await App.getApp()
 		const project = app.project
 
-		if (filePath === undefined) {
+		let fileToView = filePath
+		if (fileToView === undefined) {
 			const currentTab = app.project.tabSystem?.selectedTab
 			if (!(currentTab instanceof FileTab)) return
 
-			filePath = currentTab.getPath()
+			fileToView = currentTab.getPath()
 		}
-		if (!filePath) return
+		if (!fileToView) return
 
 		const transformedPath = await project.compilerService.getCompilerOutputPath(
-			filePath
+			fileToView
 		)
 		const fileSystem = app.comMojang.hasComMojang
 			? app.comMojang.fileSystem
