@@ -52,6 +52,7 @@ export class ViewComMojangProject extends SidebarContent {
 	}
 
 	async loadComMojangProject(project: IComMojangProject) {
+		const app = await App.getApp()
 		this.hasComMojangProjectLoaded = true
 		this.actions = [this.closeAction]
 
@@ -82,14 +83,19 @@ export class ViewComMojangProject extends SidebarContent {
 			project.packs.find((p) => p.type === 'behaviorPack')?.packIcon ??
 			undefined
 
+		app.projectManager.title.setProject(this.projectName)
+
 		this.headerSlot = ProjectHeaderComponent
 		this.sidebarElement.select()
 	}
-	clearComMojangProject() {
+	async clearComMojangProject() {
+		const app = await App.getApp()
 		this.headerSlot = undefined
 		this.hasComMojangProjectLoaded = false
 		this.actions = [this.closeAction]
 		this.directoryEntries = {}
+
+		app.projectManager.title.setProject('')
 
 		// Unselect ViewFolders tab by selecting packExplorer instead
 		App.sidebar.elements.packExplorer.select()
