@@ -156,6 +156,10 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async selectProject(projectName: string, failGracefully = false) {
+		// Clear current comMojangProject
+		if (this.app.viewComMojangProject.hasComMojangProjectLoaded) {
+			await this.app.viewComMojangProject.clearComMojangProject()
+		}
 		if (this._selectedProject === projectName) return
 
 		if (this.state[projectName] === undefined) {
@@ -172,10 +176,6 @@ export class ProjectManager extends Signal<void> {
 			)
 		}
 
-		const app = await App.getApp()
-		// Clear current comMojangProject
-		app.viewComMojangProject.clearComMojangProject()
-
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName
 		App.eventSystem.dispatch('disableValidation', null)
@@ -183,7 +183,7 @@ export class ProjectManager extends Signal<void> {
 
 		await idbSet('selectedProject', projectName)
 
-		app.themeManager.updateTheme()
+		this.app.themeManager.updateTheme()
 		App.eventSystem.dispatch('projectChanged', this.currentProject!)
 
 		// Store projects in local storage fs
