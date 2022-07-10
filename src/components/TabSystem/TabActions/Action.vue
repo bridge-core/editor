@@ -22,7 +22,7 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 const { t } = useTranslations()
 
 const props = defineProps({
-	actions: {
+	action: {
 		type: SimpleAction,
 		required: true,
 	},
