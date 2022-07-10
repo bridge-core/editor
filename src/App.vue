@@ -56,24 +56,16 @@
 							vertical
 						/>
 
-						<TabSystem
-							class="flex-grow-1"
-							:tabSystem="tabSystems[0]"
-							showWelcomeScreen
-						/>
+						<TabSystem class="flex-grow-1" showWelcomeScreen />
 						<v-divider
 							v-if="
-								tabSystems[0].shouldRender &&
-								tabSystems[1].shouldRender
+								tabSystems[0].shouldRender.value &&
+								tabSystems[1].shouldRender.value
 							"
 							style="z-index: 1"
 							:vertical="!$vuetify.breakpoint.mobile"
 						/>
-						<TabSystem
-							class="flex-grow-1"
-							:tabSystem="tabSystems[1]"
-							:id="1"
-						/>
+						<TabSystem class="flex-grow-1" :id="1" />
 
 						<v-divider
 							v-if="isSidebarContentVisible && isSidebarRight"
@@ -105,7 +97,6 @@ import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import { platform } from './utils/os'
-import { TabSystemMixin } from '/@/components/Mixins/TabSystem.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import ContextMenu from '/@/components/ContextMenu/ContextMenu.vue'
 import { App } from '/@/App.ts'
@@ -113,10 +104,25 @@ import TabSystem from '/@/components/TabSystem/TabSystem.vue'
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
 import { settingsState } from './components/Windows/Settings/SettingsState'
+import { useTabSystem } from './components/Composables/UseTabSystem'
 
 export default {
 	name: 'App',
-	mixins: [TabSystemMixin, AppToolbarHeightMixin],
+	mixins: [AppToolbarHeightMixin],
+
+	setup() {
+		const {
+			tabSystem,
+			tabSystems,
+			shouldRenderWelcomeScreen,
+		} = useTabSystem()
+
+		return {
+			tabSystem,
+			tabSystems,
+			shouldRenderWelcomeScreen,
+		}
+	},
 
 	mounted() {
 		App.getApp().then((app) => {

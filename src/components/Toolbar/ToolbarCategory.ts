@@ -3,7 +3,7 @@ import { Action } from '/@/components/Actions/Action'
 import { IDisposable } from '/@/types/disposable'
 import { v4 as uuid } from 'uuid'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
-import { del, set, shallowReactive } from '@vue/composition-api'
+import { del, set, shallowReactive } from 'vue'
 import { Divider } from './Divider'
 
 export class ToolbarCategory extends EventDispatcher<void> {

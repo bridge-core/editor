@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { get, set } from 'idb-keyval'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
-import { ref } from '@vue/composition-api'
+import { ref } from 'vue'
 import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from './Types'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'

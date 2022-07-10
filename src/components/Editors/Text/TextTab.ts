@@ -8,7 +8,7 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { debounce } from 'lodash-es'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { loadMonaco, useMonaco } from '../../../utils/libs/useMonaco'
 import { wait } from '/@/utils/wait'
 

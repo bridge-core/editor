@@ -1,4 +1,4 @@
-import { set } from '@vue/composition-api'
+import { set } from 'vue'
 import { v4 as uuid } from 'uuid'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'

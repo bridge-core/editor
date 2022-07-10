@@ -1,23 +1,38 @@
-import { ref, shallowReactive, watch } from '@vue/composition-api'
+import { del, markRaw, ref, set, shallowReactive, watch } from 'vue'
+import { BaseWindow } from './BaseWindow'
 
 export class WindowState {
-	public state = shallowReactive<Record<string, any>>({})
+	public state = ref<Record<string, BaseWindow<any>>>({})
 	public isAnyWindowVisible = ref(true)
 
 	constructor() {
-		watch(
-			this.state,
-			() => {
-				for (const window of Object.values(this.state)) {
-					if (window.isVisible) {
-						this.isAnyWindowVisible.value = true
-						return
-					}
-				}
+		console.log(this.state)
+		watch(this.state, () => {
+			this.onWindowsChanged()
+		})
+	}
 
-				this.isAnyWindowVisible.value = false
-			},
-			{ deep: false }
-		)
+	addWindow(uuid: string, window: BaseWindow<any>) {
+		set(this.state.value, uuid, markRaw(window))
+
+		// watch(window.isVisible, () => this.onWindowsChanged())
+
+		// this.onWindowsChanged()
+	}
+	deleteWindow(uuid: string) {
+		del(this.state.value, uuid)
+
+		// this.onWindowsChanged()
+	}
+
+	onWindowsChanged() {
+		for (const window of Object.values(this.state.value)) {
+			if (window.isVisible) {
+				this.isAnyWindowVisible.value = true
+				return
+			}
+		}
+
+		this.isAnyWindowVisible.value = false
 	}
 }

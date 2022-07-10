@@ -1,5 +1,5 @@
 import { ToolbarCategory } from './ToolbarCategory'
-import { del, set, shallowReactive } from '@vue/composition-api'
+import { del, set, shallowReactive } from 'vue'
 
 export class Toolbar {
 	protected state: Record<string, ToolbarCategory> = shallowReactive({})

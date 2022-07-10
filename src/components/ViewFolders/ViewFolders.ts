@@ -1,4 +1,4 @@
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { InfoPanel } from '../InfoPanel/InfoPanel'
 import { IComMojangProject } from '../OutputFolders/ComMojang/ProjectLoader'

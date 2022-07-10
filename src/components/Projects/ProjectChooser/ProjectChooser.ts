@@ -9,7 +9,7 @@ import { IExperimentalToggle } from '../CreateProject/CreateProject'
 import { importNewProject } from '../Import/ImportNew'
 import { IPackData } from '/@/components/Projects/Project/loadPacks'
 import { ComMojangProjectLoader } from '../../OutputFolders/ComMojang/ProjectLoader'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 export class ProjectChooserWindow extends BaseWindow {
 	protected sidebar = new Sidebar([])

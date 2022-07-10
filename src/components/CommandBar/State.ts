@@ -1,4 +1,4 @@
-import { reactive } from '@vue/composition-api'
+import { reactive } from 'vue'
 
 export const CommandBarState = reactive({
 	isWindowOpen: false,

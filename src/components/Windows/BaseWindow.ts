@@ -1,14 +1,14 @@
-import { Component as VueComponent } from 'vue'
+import { Component as VueComponent, ref } from 'vue'
 import { v4 as uuid } from 'uuid'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { App } from '/@/App'
-import { del, markRaw, set } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 export abstract class BaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()
-	protected isVisible = false
-	protected shouldRender = false
+	public isVisible = ref(false)
+	protected shouldRender = ref(false)
 	protected actions: SimpleAction[] = []
 	protected component: VueComponent
 
@@ -23,29 +23,29 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 	}
 
 	defineWindow() {
-		set(App.windowState.state, this.windowUUID, this)
+		App.windowState.addWindow(this.windowUUID, this)
 	}
 	addAction(action: SimpleAction) {
 		this.actions.push(action)
 	}
 
 	close(data: T | null) {
-		this.isVisible = false
+		this.isVisible.value = false
 		if (data !== null) this.dispatch(data)
 
 		if (!this.keepAlive) {
 			setTimeout(() => {
-				this.shouldRender = false
+				this.shouldRender.value = false
 				if (this.disposeOnClose) this.dispose()
 			}, 600)
 		}
 	}
 	open() {
-		this.shouldRender = true
-		this.isVisible = true
+		this.shouldRender.value = true
+		this.isVisible.value = true
 		this.resetSignal()
 	}
 	dispose() {
-		del(App.windowState.state, this.windowUUID)
+		App.windowState.deleteWindow(this.windowUUID)
 	}
 }

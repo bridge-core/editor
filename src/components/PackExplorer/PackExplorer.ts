@@ -4,10 +4,9 @@ import { SelectableSidebarAction } from '/@/components/Sidebar/Content/Selectabl
 import { SidebarAction } from '/@/components/Sidebar/Content/SidebarAction'
 import PackExplorerComponent from './PackExplorer.vue'
 import ProjectDisplayComponent from './ProjectDisplay.vue'
-import { DirectoryEntry } from './DirectoryEntry'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
-import { markRaw, set } from '@vue/composition-api'
+import { markRaw, ref, set } from 'vue'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 import { exportAsBrproject } from '/@/components/Projects/Export/AsBrproject'
@@ -25,9 +24,9 @@ import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu
 import { ViewCompilerOutput } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ViewCompilerOutput'
 
 export class PackExplorer extends SidebarContent {
-	component = PackExplorerComponent
+	component = markRaw(PackExplorerComponent)
 	actions: SidebarAction[] = []
-	directoryEntries: Record<string, DirectoryWrapper> = {}
+	directoryEntries = ref<Record<string, DirectoryWrapper>>({})
 	topPanel: InfoPanel | undefined = undefined
 	showNoProjectView = false
 	headerHeight = '60px'
@@ -93,16 +92,18 @@ export class PackExplorer extends SidebarContent {
 				.catch(() => null)
 			if (!handle) continue
 
-			const wrapper = new DirectoryWrapper(null, handle, {
-				startPath: pack.packPath,
+			const wrapper = markRaw(
+				new DirectoryWrapper(null, handle, {
+					startPath: pack.packPath,
 
-				provideFileContextMenu: (fileWrapper) => [
-					ViewCompilerOutput(fileWrapper.path),
-				],
-			})
+					provideFileContextMenu: (fileWrapper) => [
+						ViewCompilerOutput(fileWrapper.path),
+					],
+				})
+			)
 			await wrapper.open()
 
-			set(this.directoryEntries, pack.packPath, markRaw(wrapper))
+			set(this.directoryEntries, pack.packPath, wrapper)
 			this.actions.push(
 				new SelectableSidebarAction(this, {
 					id: pack.packPath,
@@ -138,7 +139,7 @@ export class PackExplorer extends SidebarContent {
 		const selectedId = this.selectedAction?.getConfig().id
 		if (!selectedId) return
 
-		showFolderContextMenu(event, this.directoryEntries[selectedId], {
+		showFolderContextMenu(event, this.directoryEntries.value[selectedId], {
 			hideDelete: true,
 			hideRename: true,
 			hideDuplicate: true,
@@ -155,8 +156,7 @@ export class PackExplorer extends SidebarContent {
 
 	async getContextMenu(
 		type: 'file' | 'folder' | 'virtualFolder',
-		path: string,
-		entry: DirectoryEntry
+		path: string
 	) {
 		if (type === 'virtualFolder') return []
 		const app = await App.getApp()

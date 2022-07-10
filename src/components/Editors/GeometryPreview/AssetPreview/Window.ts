@@ -1,7 +1,7 @@
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import AssetPreviewWindowComponent from './Window.vue'
 import type { StandaloneModelViewer } from 'bridge-model-viewer'
-import { markRaw, set } from '@vue/composition-api'
+import { markRaw, set } from 'vue'
 import { Color } from 'three'
 import { useBridgeModelViewer } from '/@/utils/libs/useModelViewer'
 

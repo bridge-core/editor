@@ -110,8 +110,8 @@ export default {
 	},
 	props: {
 		isFullscreen: Boolean,
-		isVisible: Boolean,
-		shouldRender: Boolean,
+		isVisible: Object | Boolean,
+		shouldRender: Object | Boolean,
 		isPersistent: Boolean,
 		actions: Array,
 		sidebarWidth: {

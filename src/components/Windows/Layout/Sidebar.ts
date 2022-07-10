@@ -1,4 +1,4 @@
-import { reactive, set } from '@vue/composition-api'
+import { reactive, set } from 'vue'
 import { App } from '/@/App'
 import { v4 as uuid } from 'uuid'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'

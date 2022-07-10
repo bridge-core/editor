@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { get as idbGet, set as idbSet } from 'idb-keyval'
-import { shallowReactive, set, del } from '@vue/composition-api'
+import { shallowReactive, set, del } from 'vue'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { Project, virtualProjectName } from './Project/Project'
 import { Title } from '/@/components/Projects/Title'

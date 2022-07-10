@@ -2,7 +2,7 @@ import { BaseVirtualHandle } from './Handle'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { IDBWrapper } from './IDB'
 
 /**

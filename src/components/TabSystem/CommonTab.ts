@@ -58,7 +58,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		return this.parent
 	}
 	get isSharingScreen() {
-		return this.parent.isSharingScreen
+		return this.parent.isSharingScreen.value
 	}
 
 	abstract get name(): string
@@ -155,7 +155,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 				await from.openedFiles.remove(this.getPath())
 			}
 
-			if (wasSelected) await from.select(from.tabs[0])
+			if (wasSelected) await from.select(from.tabs.value[0])
 
 			await to.select(this)
 		}
@@ -192,7 +192,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 				},
 			})
 		}
-		if (this.parent.tabs.length > 1) {
+		if (this.parent.tabs.value.length > 1) {
 			additionalItems.push({
 				name: 'actions.moveToSplitScreen.name',
 				description: 'actions.moveToSplitScreen.description',

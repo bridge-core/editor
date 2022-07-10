@@ -2,7 +2,7 @@ import { TabSystem } from '../../TabSystem/TabSystem'
 import IframeTabComponent from './IframeTab.vue'
 import { Tab } from '../../TabSystem/CommonTab'
 import { IframeApi } from './API/IframeApi'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 interface IIframeTabOptions {
 	icon?: string

@@ -1,7 +1,7 @@
 import { platform } from '/@/utils/os'
 import { IKeyBindingConfig, KeyBinding } from './KeyBinding'
 import { toStrKeyCode } from './Utils'
-import { del, set, shallowReactive } from '@vue/composition-api'
+import { del, set, shallowReactive } from 'vue'
 
 const IGNORE_KEYS = ['Control', 'Alt', 'Meta']
 

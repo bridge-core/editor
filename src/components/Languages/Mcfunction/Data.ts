@@ -1,4 +1,4 @@
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { MoLang } from 'molang'
 import type { languages } from 'monaco-editor'
 import { generateCommandSchemas } from '../../Compiler/Worker/Plugins/CustomCommands/generateSchemas'

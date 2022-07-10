@@ -1,6 +1,6 @@
 import { settingsState } from '../SettingsState'
 import { App } from '/@/App'
-import { set } from '@vue/composition-api'
+import { set } from 'vue'
 
 export interface IControl<T> {
 	category: string

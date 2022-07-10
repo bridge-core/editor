@@ -32,7 +32,7 @@ import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/OutputFolders/ComMojang/ComMojang'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
-import { markRaw, reactive } from '@vue/composition-api'
+import { markRaw, reactive } from 'vue'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
@@ -190,7 +190,7 @@ export class App {
 	 */
 	static async main(appComponent: Vue) {
 		console.time('[APP] Ready')
-		this._instance = markRaw(Object.freeze(new App(appComponent)))
+		this._instance = markRaw(new App(appComponent))
 		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()

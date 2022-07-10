@@ -133,7 +133,7 @@ import FilePath from './FilePath.vue'
 import { debounce } from 'lodash-es'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { createRegExp, processFileText } from './Utils.ts'
-import { set } from '@vue/composition-api'
+import { set } from 'vue'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
@@ -191,7 +191,7 @@ export default {
 		hasLimitedSpace() {
 			return (
 				this.$vuetify.breakpoint.mobile ||
-				this.tab.parent.isSharingScreen
+				this.tab.parent.isSharingScreen.value
 			)
 		},
 	},

@@ -1,6 +1,6 @@
 import { NotificationStore } from './state'
 import { v4 as uuid } from 'uuid'
-import { del, set } from '@vue/composition-api'
+import { del, set } from 'vue'
 
 export interface INotificationConfig {
 	id?: string
