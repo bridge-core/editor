@@ -68,23 +68,20 @@
 	</v-list>
 </template>
 
-<script>
-import { TranslationMixin } from '../Mixins/TranslationMixin'
+<script setup>
+import { useTranslations } from '../Composables/useTranslations'
 
-export default {
-	name: 'ContextMenuList',
-	mixins: [TranslationMixin],
-	props: {
-		actions: {
-			type: Object,
-			required: true,
-		},
+const { t } = useTranslations()
+
+const props = defineProps({
+	actions: {
+		type: Object,
+		required: true,
 	},
-	methods: {
-		onClick(action) {
-			this.$emit('click')
-			action.trigger()
-		},
-	},
+})
+
+function onClick(action) {
+	this.$emit('click')
+	action.trigger()
 }
 </script>

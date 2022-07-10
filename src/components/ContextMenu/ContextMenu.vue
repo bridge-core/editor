@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { createSimpleTransition } from 'vuetify/lib/components/transitions/createTransition'
 import Vue from 'vue'
 import ContextMenuList from './List.vue'
@@ -25,7 +24,6 @@ Vue.component('context-menu-transition', contextMenuTransition)
 export default {
 	components: { ContextMenuList },
 	name: 'ContextMenu',
-	mixins: [TranslationMixin],
 	props: {
 		contextMenu: Object,
 	},

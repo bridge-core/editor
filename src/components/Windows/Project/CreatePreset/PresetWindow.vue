@@ -1,22 +1,22 @@
 <template>
 	<SidebarWindow
-		v-if="shouldRender"
+		v-if="window.shouldRender"
 		windowTitle="windows.createPreset.title"
-		:isVisible="isVisible"
+		:isVisible="window.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:percentageWidth="80"
 		:percentageHeight="80"
 		@closeWindow="onClose"
-		:sidebarItems="sidebar.elements"
-		v-model="sidebar.selected"
+		:sidebarItems="window.sidebar.elements"
+		v-model="window.sidebar.selected"
 	>
 		<template #sidebar>
 			<v-text-field
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.createPreset.searchPresets')"
-				v-model.lazy.trim="sidebar._filter"
+				v-model.lazy.trim="window.sidebar._filter"
 				autocomplete="off"
 				autofocus
 				outlined
@@ -25,7 +25,7 @@
 			/>
 			<v-switch
 				:label="t('windows.createPreset.showAllPresets')"
-				v-model="sidebar.showDisabled"
+				v-model="window.sidebar.showDisabled"
 			/>
 		</template>
 		<template #default>
@@ -149,22 +149,28 @@
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PresetPath from './PresetPath.vue'
 import { isFileAccepted } from '/@/utils/file/isAccepted.ts'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { toRefs } from 'vue'
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 
 export default {
 	name: 'CreatePresetWindow',
-	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,
 		PresetPath,
 	},
 	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
+	setup(props) {
+		const { currentWindow } = toRefs(props)
+		const { t } = useTranslations()
+
+		return {
+			window: currentWindow,
+			t,
+		}
 	},
 	computed: {
 		content() {
-			return this.sidebar.currentState
+			return this.window.sidebar.currentState
 		},
 		fieldsReady() {
 			return Object.values(this.content.fields || {}).every(

@@ -51,18 +51,24 @@
 <script>
 import { SimpleAction } from '../Actions/SimpleAction'
 import { App } from '/@/App'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 import { CommandBarExtensionItems } from '../Extensions/Scripts/Modules/CommandBar'
 import { getDefaultFileIcon } from '/@/utils/file/getIcon'
 import { devActions } from '../Developer/Actions'
 
 export default {
-	mixins: [TranslationMixin],
 	props: {
 		autofocus: {
 			type: Boolean,
 			default: false,
 		},
+	},
+	setup() {
+		const { t } = useTranslations()
+
+		return {
+			t,
+		}
 	},
 	async mounted() {
 		const app = await App.getApp()

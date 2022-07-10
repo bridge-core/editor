@@ -1,7 +1,8 @@
 import Vue from 'vue'
+import { vuetify } from '../components/App/Vuetify'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
-export function translate(vuetify: any, translationKey?: string) {
+export function translate(translationKey?: string) {
 	if (!translationKey) return ''
 
 	const orginalKey = translationKey
@@ -13,7 +14,7 @@ export function translate(vuetify: any, translationKey?: string) {
 
 	let translated: string
 	try {
-		translated = vuetify.lang.t(translationKey)
+		translated = vuetify.framework.lang.t(translationKey)
 	} catch {
 		return orginalKey ?? 'Unknown'
 	}
@@ -26,7 +27,7 @@ export class Locales {
 	constructor(protected vuetify: any) {}
 
 	translate(translationKey?: string) {
-		return translate(this.vuetify, translationKey)
+		return translate(translationKey)
 	}
 
 	addLanguage(key: string, obj: unknown, force = false) {

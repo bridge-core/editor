@@ -94,7 +94,7 @@
 
 <script>
 import { platform } from '/@/utils/os.ts'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 import WindowsToolbar from './Toolbar/Windows.vue'
 import MacToolbar from './Toolbar/Mac.vue'
 import MacWindowControls from './Toolbar/Mac/WindowControls.vue'
@@ -102,7 +102,6 @@ import { debounce } from 'lodash-es'
 
 export default {
 	name: 'BaseWindow',
-	mixins: [TranslationMixin],
 	components: {
 		WindowsToolbar,
 		MacToolbar,
@@ -154,6 +153,13 @@ export default {
 		maxPercentageHeight: Number,
 		maxPercentageWidth: Number,
 		isSmallPopup: Boolean,
+	},
+	setup() {
+		const { t } = useTranslations()
+
+		return {
+			t,
+		}
 	},
 	data() {
 		return {
