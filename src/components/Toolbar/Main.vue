@@ -9,17 +9,16 @@
 		:class="{ 'd-flex align-center justify-center': hideToolbarItems }"
 		:style="{
 			'padding-left': 0,
-			'margin-left': 'env(titlebar-area-x, 0)',
-			width: 'env(titlebar-area-width, 100%)',
+			'margin-left': hideToolbarItems ? 0 : 'env(titlebar-area-x, 0)',
+			width: hideToolbarItems ? '100%' : 'env(titlebar-area-width, 100%)',
 			'z-index': windowControlsOverlay ? 1000 : undefined,
 		}"
 	>
-		<template v-if="hideToolbarItems && windowControlsOverlay">
+		<template v-if="hideToolbarItems">
 			<Logo
 				style="
 					height: 18px;
 					padding-right: 8px;
-					padding-left: calc(env(safe-area-inset-left) + 4px);
 				"
 				alt="Logo of bridge. v2"
 				draggable="false"
@@ -147,9 +146,12 @@ export default {
 		appVersion,
 	}),
 	computed: {
-		hideToolbarItems() {
+		hideToolbarItemsSetting() {
 			if (!this.settingsState.appearance) return false
 			return this.settingsState.appearance.hideToolbarItems ?? false
+		},
+		hideToolbarItems() {
+			return this.hideToolbarItemsSetting && this.windowControlsOverlay
 		},
 		composedTitle() {
 			if (!this.title) return this.appName
