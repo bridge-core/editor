@@ -28,7 +28,7 @@
 			<div
 				v-ripple
 				@click="openCommandBar"
-				class="outlined rounded-lg d-flex align-center justify-center"
+				class="toolbar-clickable outlined rounded-lg d-flex align-center justify-center"
 				style="height: 20px"
 			>
 				<v-icon class="ml-1">mdi-magnify</v-icon>
@@ -183,6 +183,10 @@ export default {
 	app-region: no-drag;
 	-webkit-app-region: no-drag;
 	min-width: 0;
+}
+.toolbar-clickable {
+	app-region: no-drag;
+	-webkit-app-region: no-drag;
 }
 .app-version-display {
 	app-region: no-drag;
