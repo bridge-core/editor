@@ -2,19 +2,19 @@
 	<v-btn
 		@click="action.trigger()"
 		:style="platform() === 'darwin' ? `border-radius: 8px` : undefined"
-		:text="!minimalDisplay"
+		:text="!isMinimalDisplay"
 		small
-		:icon="minimalDisplay"
+		:icon="isMinimalDisplay"
 	>
 		<v-icon
 			:color="action.accent || 'accent'"
-			:class="{ 'mr-1': true, 'ml-1': minimalDisplay }"
+			:class="{ 'mr-1': true, 'ml-1': isMinimalDisplay }"
 			small
 		>
 			{{ action.icon }}
 		</v-icon>
 		<span
-			v-if="!minimalDisplay"
+			v-if="!isMinimalDisplay"
 			:style="{
 				'text-transform': 'none',
 				'font-weight': 'unset',
