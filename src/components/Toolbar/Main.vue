@@ -14,7 +14,7 @@
 			'z-index': windowControlsOverlay ? 1000 : undefined,
 		}"
 	>
-		<template v-if="hideToolbarItems">
+		<template v-if="hideToolbarItems && windowControlsOverlay">
 			<Logo
 				style="
 					height: 18px;
