@@ -55,6 +55,7 @@ export class IframeTab extends Tab {
 	}
 	onDestroy() {
 		document.body.removeChild(this.iframe)
+		this.api.dispose()
 	}
 
 	get icon() {

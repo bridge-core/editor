@@ -92,6 +92,9 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	getCurrentMode() {
 		return this.mode
 	}
+	getCurrentTheme() {
+		return this.themeMap.get(this.currentTheme)
+	}
 
 	protected applyTheme(theme?: Theme) {
 		theme?.apply(this, this.vuetify)

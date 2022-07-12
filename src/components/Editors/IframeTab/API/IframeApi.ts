@@ -1,4 +1,8 @@
 import { Channel } from 'bridge-iframe-api'
+import { GenericEvent } from './Events/GenericEvent'
+import { ThemeChangeEvent } from './Events/ThemeChange'
+import { GenericRequest } from './Requests/GenericRequest'
+import { ReadFileRequest } from './Requests/FileSystem/ReadFile'
 import { App } from '/@/App'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { Signal } from '/@/components/Common/Event/Signal'
@@ -11,7 +15,10 @@ export class IframeApi {
 	loaded = new Signal<void>()
 	protected disposables: IDisposable[] = []
 	protected _channel?: Channel
-	readyToExtend = new EventDispatcher<void>()
+	protected events: GenericEvent[] = [new ThemeChangeEvent(this)]
+	protected requests: GenericRequest<unknown, unknown>[] = [
+		new ReadFileRequest(this),
+	]
 
 	constructor(protected iframe: HTMLIFrameElement) {
 		this.iframe.addEventListener('load', async () => {
@@ -23,8 +30,6 @@ export class IframeApi {
 
 			this.onLoad()
 			this.loaded.dispatch()
-
-			this.setup()
 		})
 	}
 
@@ -36,18 +41,10 @@ export class IframeApi {
 		return this._channel
 	}
 
-	async on<T = any>(
-		event: string,
-		callback: (data: T, origin: string) => void
-	) {
-		await this.loaded.fired
-
-		const disposable = this.channel.on(event, callback)
-
-		this.disposables.push(disposable)
+	on<T = any>(event: string, callback: (data: T, origin: string) => void) {
+		return this.channel.on(event, callback)
 	}
-	async trigger<T = any>(event: string, data: T) {
-		await this.loaded.fired
+	trigger<T = any>(event: string, data: T) {
 		return this.channel.simpleTrigger<T>(event, data)
 	}
 
@@ -55,21 +52,16 @@ export class IframeApi {
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.disposables = []
 
-		this.trigger('bridgeReady', {
+		this.trigger('app.buildInfo', {
 			appVersion,
 			isNightlyBuild,
 		})
-		this.readyToExtend.dispatch()
 	}
 
-	setup() {
-		if (this.didSetup) return
-
-		this.on('readFile', async (data, origin) => {
-			const app = await App.getApp()
-			return await app.fileSystem.readFile(data.path)
-		})
-
-		this.didSetup = true
+	dispose() {
+		this.events.forEach((event) => event.dispose())
+		this.events = []
+		this.requests.forEach((request) => request.dispose())
+		this.requests = []
 	}
 }
