@@ -684,6 +684,8 @@ export default {
 				name: 'com.mojang Project',
 				description:
 					'This project was loaded directly from your com.mojang folder',
+				uninstallWarning:
+					'This project will be deleted if you uninstall Minecraft.',
 			},
 			newProject: {
 				name: 'New Project',

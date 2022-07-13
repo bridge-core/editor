@@ -140,6 +140,21 @@
 					</v-col>
 				</v-row>
 			</template>
+
+			<!-- Warn about uninstalling Minecraft -->
+			<BridgeSheet
+				v-if="isComMojangProject"
+				class="d-flex align-center justify-center pa-2"
+			>
+				<v-icon class="mr-1" color="error">
+					mdi-alert-circle-outline
+				</v-icon>
+				{{
+					t(
+						'windows.projectChooser.comMojangProject.uninstallWarning'
+					)
+				}}
+			</BridgeSheet>
 		</template>
 
 		<template #actions="{ selectedSidebar }">
