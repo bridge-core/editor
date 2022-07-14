@@ -17,11 +17,15 @@ export async function saveOrDownload(
 		message: 'general.successfulExport.title',
 		isVisible: true,
 		onClick: async () => {
-			if (isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value) {
+			const app = await App.getApp()
+
+			if (
+				app.project.isLocal ||
+				isUsingOriginPrivateFs ||
+				isUsingFileSystemPolyfill.value
+			) {
 				download(basename(filePath), fileData)
 			} else {
-				const app = await App.getApp()
-
 				new InformationWindow({
 					description: `[${app.locales.translate(
 						'general.successfulExport.description'

@@ -133,6 +133,9 @@ export abstract class Project {
 			(pack) => pack.id === 'behaviorPack'
 		)?.uuid
 	}
+	get isLocal() {
+		return !this.requiresPermissions
+	}
 	//#endregion
 
 	constructor(

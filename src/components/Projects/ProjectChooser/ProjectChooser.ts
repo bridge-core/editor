@@ -86,7 +86,7 @@ export class ProjectChooserWindow extends BaseWindow {
 		projects.forEach((project) =>
 			this.addProject(project.projectData.path!, project.name, {
 				...project.projectData,
-				isLocalProject: !project.requiresPermissions,
+				isLocalProject: project.isLocal,
 				experimentalGameplay: experimentalToggles.map(
 					(toggle: IExperimentalToggle) => ({
 						isActive:
