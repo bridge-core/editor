@@ -263,6 +263,11 @@ export class LightningStore {
 			}
 		}
 
+		// Remove duplicates from array using a set
+		for (const cacheKey in collectedData) {
+			collectedData[cacheKey] = [...new Set(collectedData[cacheKey])]
+		}
+
 		return collectedData
 	}
 
