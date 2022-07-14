@@ -205,7 +205,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 
 				string: [
 					[
-						/[^\"\:]+/,
+						/(\\"|[^\"\:])+/,
 						{
 							cases: {
 								'@keywords': 'keyword',
