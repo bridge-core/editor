@@ -1,4 +1,5 @@
 import { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
+import { DownloadAction } from './Actions/Download'
 import { EditAction } from './Actions/Edit'
 import { CopyAction } from './Actions/Edit/Copy'
 import { RevealFilePathAction } from './Actions/RevealPath'
@@ -85,7 +86,7 @@ export async function showFolderContextMenu(
 			? [CopyAction(directoryWrapper)]
 			: mutatingActions),
 		{ type: 'divider' },
-
+		DownloadAction(directoryWrapper),
 		RevealFilePathAction(directoryWrapper),
 		// 	{
 		// 		icon: 'mdi-file-search-outline',

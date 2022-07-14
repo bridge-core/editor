@@ -1,5 +1,6 @@
 import { BaseWrapper } from '../../Common/BaseWrapper'
 import { download } from '/@/components/FileSystem/saveOrDownload'
+import { ZipDirectory } from '/@/components/FileSystem/Zip/ZipDirectory'
 
 export const DownloadAction = (baseWrapper: BaseWrapper<any>) => ({
 	icon:
@@ -12,10 +13,10 @@ export const DownloadAction = (baseWrapper: BaseWrapper<any>) => ({
 		if (baseWrapper.kind === 'file') {
 			const file: File = await baseWrapper.handle.getFile()
 
-			download(file.name, new Uint8Array(await file.arrayBuffer()))
+			download(baseWrapper.name, new Uint8Array(await file.arrayBuffer()))
 		} else {
-			// TODO: Implement directory download (download as zip)
-			throw new Error(`Downloading directories is not implemented yet`)
+			const zip = new ZipDirectory(baseWrapper.handle)
+			download(`${baseWrapper.name}.zip`, await zip.package())
 		}
 	},
 })
