@@ -175,7 +175,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 				embeddedCommand: [
 					[/@escapes/, 'string.escape'],
 					[
-						/"/,
+						/[^\\]"/,
 						{
 							token: 'identifier',
 							next: '@pop',
