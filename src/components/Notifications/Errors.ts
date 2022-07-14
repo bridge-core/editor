@@ -22,6 +22,7 @@ export function createErrorNotification(error: Error): IDisposable {
 		short = message.length > 24 ? `${message.substr(0, 23)}...` : message
 
 	const notification = createNotification({
+		id: message,
 		icon: 'mdi-alert-circle-outline',
 		message: `[${short}]`,
 		color: 'error',
