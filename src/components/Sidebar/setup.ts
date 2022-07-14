@@ -25,7 +25,7 @@ export async function setupSidebar() {
 	const packExplorer = createSidebar({
 		id: 'packExplorer',
 		group: 'packExplorer',
-		displayName: 'sidebar.packExplorer.name',
+		displayName: 'packExplorer.name',
 		icon: 'mdi-folder-outline',
 	})
 

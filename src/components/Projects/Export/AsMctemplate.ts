@@ -33,7 +33,7 @@ export async function exportAsMctemplate(asMcworld = false) {
 	} else {
 		const optionsWindow = new DropdownWindow({
 			default: baseWorlds[0],
-			name: 'windows.packExplorer.exportAsMctemplate.chooseWorld',
+			name: 'packExplorer.exportAsMctemplate.chooseWorld',
 			options: baseWorlds,
 		})
 

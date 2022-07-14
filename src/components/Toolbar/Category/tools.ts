@@ -79,8 +79,8 @@ export function setupToolsCategory(app: App) {
 		app.actionManager.create({
 			id: 'bridge.action.refreshProject',
 			icon: 'mdi-folder-refresh-outline',
-			name: 'windows.packExplorer.refresh.name',
-			description: 'windows.packExplorer.refresh.description',
+			name: 'packExplorer.refresh.name',
+			description: 'packExplorer.refresh.description',
 			keyBinding:
 				platform() === 'win32' ? 'Ctrl + Alt + R' : 'Ctrl + Meta + R',
 			onTrigger: async () => {

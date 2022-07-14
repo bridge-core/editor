@@ -19,17 +19,13 @@
 			>
 				<v-icon class="mr-1">mdi-plus</v-icon>
 				<span v-if="availableWidth > 220">
-					{{
-						t(
-							'windows.packExplorer.noProjectView.createLocalProject'
-						)
-					}}
+					{{ t('packExplorer.noProjectView.createLocalProject') }}
 				</span>
 			</v-btn>
 		</template>
 
 		<span>
-			{{ t('windows.packExplorer.noProjectView.createLocalProject') }}
+			{{ t('packExplorer.noProjectView.createLocalProject') }}
 		</span>
 	</v-tooltip>
 </template>

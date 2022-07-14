@@ -9,12 +9,7 @@ import { FileTypeLibrary, IFileType } from '/@/components/Data/FileType'
 import { expose } from 'comlink'
 import { TaskService } from '/@/components/TaskManager/WorkerTask'
 import { LightningStore } from './LightningCache/LightningStore'
-import {
-	fileStore,
-	getCategoryDirectory,
-	getFileStoreDirectory,
-	PackSpider,
-} from './PackSpider/PackSpider'
+import { PackSpider } from './PackSpider/PackSpider'
 import { LightningCache } from './LightningCache/LightningCache'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { PackTypeLibrary } from '/@/components/Data/PackType'
@@ -144,29 +139,6 @@ export class PackIndexerService extends TaskService<
 		this.fileType.setPluginFileTypes(pluginFileTypes)
 	}
 
-	async readdir(path: string[]) {
-		// TODO(Dash): Re-enable pack spider
-		if (this.options.disablePackSpider || true) {
-			if (path.length > 0)
-				return (
-					await this.globalFileSystem.readdir(path.join('/'), {
-						withFileTypes: true,
-					})
-				).map((dirent) => ({
-					kind: dirent.kind,
-					name: dirent.name,
-					path: path.concat([dirent.name]),
-				}))
-
-			return []
-		}
-
-		if (path.length === 0) return []
-		if (path.length === 1) return getFileStoreDirectory(path[0])
-		if (path.length === 2) return getCategoryDirectory(path[0], path[1])
-		return fileStore[path[0]][path[1]][path[2]].toDirectory()
-	}
-
 	find(
 		findFileType: string,
 		whereCacheKey: string,
@@ -201,6 +173,9 @@ export class PackIndexerService extends TaskService<
 				.allFiles(fileType)
 				.sort((a, b) => a.localeCompare(b))
 		return this.lightningStore.allFiles(fileType)
+	}
+	getFileDiagnostics(filePath: string) {
+		return this.packSpider.getDiagnostics(filePath)
 	}
 
 	getSchemasFor(fileType: string, fromFilePath?: string) {

@@ -25,6 +25,12 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 		return App.fileType.get(path)?.icon ?? getDefaultFileIcon(this.handle.name)
 	}
 
+	async getFirstDiagnostic() {
+		const diagnostics = await this.options.provideFileDiagnostics?.(this)
+
+		return diagnostics?.[0]
+	}
+
 	async openFile(persistFile=false) {
 		const app = await App.getApp()
 

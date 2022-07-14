@@ -119,10 +119,4 @@ export class PackIndexer extends WorkerManager<
 
 		this.ready.dispatch()
 	}
-
-	async readdir(path: string[], ..._: any[]) {
-		await this.fired
-
-		return await this.service.readdir(path)
-	}
 }

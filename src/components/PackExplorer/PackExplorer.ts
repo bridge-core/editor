@@ -4,7 +4,6 @@ import { SelectableSidebarAction } from '/@/components/Sidebar/Content/Selectabl
 import { SidebarAction } from '/@/components/Sidebar/Content/SidebarAction'
 import PackExplorerComponent from './PackExplorer.vue'
 import ProjectDisplayComponent from './ProjectDisplay.vue'
-import { DirectoryEntry } from './DirectoryEntry'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { markRaw, set } from '@vue/composition-api'
@@ -99,6 +98,15 @@ export class PackExplorer extends SidebarContent {
 				provideFileContextMenu: (fileWrapper) => [
 					ViewCompilerOutput(fileWrapper.path),
 				],
+				provideFileDiagnostics: async (fileWrapper) => {
+					const packIndexer = app.project.packIndexer
+					await packIndexer.fired
+
+					const filePath = fileWrapper.path
+					if (!filePath) return []
+
+					return packIndexer.service.getFileDiagnostics(filePath)
+				},
 			})
 			await wrapper.open()
 
@@ -155,8 +163,7 @@ export class PackExplorer extends SidebarContent {
 
 	async getContextMenu(
 		type: 'file' | 'folder' | 'virtualFolder',
-		path: string,
-		entry: DirectoryEntry
+		path: string
 	) {
 		if (type === 'virtualFolder') return []
 		const app = await App.getApp()
@@ -204,7 +211,7 @@ export class PackExplorer extends SidebarContent {
 			// Add new file
 			{
 				icon: 'mdi-plus',
-				name: 'windows.packExplorer.createPreset',
+				name: 'packExplorer.createPreset',
 				onTrigger: async () => {
 					await app.windows.createPreset.open()
 				},
@@ -213,7 +220,7 @@ export class PackExplorer extends SidebarContent {
 			// Reload project
 			{
 				icon: 'mdi-refresh',
-				name: 'windows.packExplorer.refresh.name',
+				name: 'packExplorer.refresh.name',
 				onTrigger: async () => {
 					app.actionManager.trigger('bridge.action.refreshProject')
 				},
@@ -224,31 +231,31 @@ export class PackExplorer extends SidebarContent {
 			{
 				type: 'submenu',
 				icon: 'mdi-export',
-				name: 'windows.packExplorer.exportAs.name',
+				name: 'packExplorer.exportAs.name',
 				actions: [
 					// Export project as .brproject
 					{
 						icon: 'mdi-folder-zip-outline',
-						name: 'windows.packExplorer.exportAs.brproject',
+						name: 'packExplorer.exportAs.brproject',
 						onTrigger: () => exportAsBrproject(),
 					},
 					// Export project as .mcaddon
 					{
 						icon: 'mdi-minecraft',
-						name: 'windows.packExplorer.exportAs.mcaddon',
+						name: 'packExplorer.exportAs.mcaddon',
 						onTrigger: () => exportAsMcaddon(),
 					},
 					// Export project as .mcworld
 					{
 						icon: 'mdi-earth-box',
-						name: 'windows.packExplorer.exportAs.mcworld',
+						name: 'packExplorer.exportAs.mcworld',
 						isDisabled: !(await canExportMctemplate()),
 						onTrigger: () => exportAsMctemplate(true),
 					},
 					// Export project as .mctemplate
 					{
 						icon: 'mdi-earth-box-plus',
-						name: 'windows.packExplorer.exportAs.mctemplate',
+						name: 'packExplorer.exportAs.mctemplate',
 						isDisabled: !(await canExportMctemplate()),
 						onTrigger: () => exportAsMctemplate(),
 					},
@@ -261,15 +268,14 @@ export class PackExplorer extends SidebarContent {
 			// Project config
 			{
 				icon: 'mdi-cog-outline',
-				name: 'windows.packExplorer.projectConfig.name',
+				name: 'packExplorer.projectConfig.name',
 				onTrigger: async () => {
 					const project = app.project
 
 					// Test whether project config exists
 					if (!(await project.fileSystem.fileExists('config.json'))) {
 						new InformationWindow({
-							description:
-								'windows.packExplorer.projectConfig.missing',
+							description: 'packExplorer.projectConfig.missing',
 						})
 						return
 					}
@@ -282,7 +288,7 @@ export class PackExplorer extends SidebarContent {
 			},
 			{
 				icon: 'mdi-folder-open-outline',
-				name: 'windows.packExplorer.openProjectFolder.name',
+				name: 'packExplorer.openProjectFolder.name',
 				onTrigger: async () => {
 					app.viewFolders.addDirectoryHandle({
 						directoryHandle: app.project.baseDirectory,

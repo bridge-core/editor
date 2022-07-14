@@ -44,7 +44,7 @@ export class ViewComMojangProject extends SidebarContent {
 				id: 'viewComMojangProject',
 				group: 'packExplorer',
 				sidebarContent: this,
-				displayName: 'sidebar.packExplorer.name',
+				displayName: 'packExplorer.name',
 				icon: 'mdi-folder-outline',
 				isVisible: () => this.hasComMojangProjectLoaded,
 			})

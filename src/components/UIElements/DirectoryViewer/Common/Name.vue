@@ -16,22 +16,35 @@
 		@focus.exact="onFocus"
 		@blur="isFocused = false"
 	>
-		<v-icon class="pr-1" :color="baseWrapper.color" small>
-			{{ baseWrapper.icon }}
-		</v-icon>
-
-		<span
-			v-if="!baseWrapper.isEditingName.value"
-			:style="{
-				overflow: 'hidden',
-				whiteSpace: 'nowrap',
-				textOverflow: 'ellipsis',
-			}"
+		<v-tooltip
+			v-if="hasDiagnostic && !baseWrapper.isEditingName.value"
+			:color="diagnosticIconColor"
+			right
 		>
-			{{ baseWrapper.name }}
-		</span>
+			<template #activator="{ on }">
+				<BasicIconName
+					v-on="on"
+					:name="baseWrapper.name"
+					:icon="diagnosticIcon"
+					:color="diagnosticIconColor"
+					:opacity="diagnosticOpacity"
+					:showName="!baseWrapper.isEditingName.value"
+				/>
+			</template>
+
+			<span>{{ diagnostic ? t(diagnostic.text) : '' }}</span>
+		</v-tooltip>
+		<template v-else>
+			<BasicIconName
+				:name="baseWrapper.name"
+				:icon="baseWrapper.icon"
+				:color="baseWrapper.color"
+				:showName="!baseWrapper.isEditingName.value"
+			/>
+		</template>
+
 		<v-text-field
-			v-else
+			v-if="baseWrapper.isEditingName.value"
 			v-model="currentName"
 			:style="{
 				position: 'relative',
@@ -73,11 +86,15 @@ import { CopyAction } from '../ContextMenu/Actions/Edit/Copy'
 import { DeleteAction } from '../ContextMenu/Actions/Edit/Delete'
 import { PasteAction } from '../ContextMenu/Actions/Edit/Paste'
 import { BaseWrapper } from './BaseWrapper'
+import BasicIconName from './BasicIconName.vue'
 import { useDoubleClick } from '/@/components/Composables/DoubleClick'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { platform } from '/@/utils/os'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
+	components: { BasicIconName },
+	mixins: [TranslationMixin],
 	props: {
 		type: {
 			type: String,
@@ -85,6 +102,7 @@ export default {
 		},
 		tagName: { type: String, default: 'div' },
 		baseWrapper: { type: BaseWrapper, required: true },
+		diagnostic: Object,
 	},
 	setup(props) {
 		const onClick = useDoubleClick((isDoubleClick, event) => {
@@ -112,6 +130,29 @@ export default {
 						: name !== this.baseWrapper.name,
 			},
 		}
+	},
+	computed: {
+		diagnosticIcon() {
+			return this.diagnostic.icon || 'mdi-alert-circle'
+		},
+		diagnosticIconColor() {
+			switch (this.diagnostic.type) {
+				case 'info':
+					return 'info'
+				case 'warning':
+					return 'warning'
+				default:
+				case 'error':
+					return 'error'
+			}
+		},
+		diagnosticOpacity() {
+			if (!this.diagnostic) return 1
+			return this.diagnostic.opacity || 1
+		},
+		hasDiagnostic() {
+			return this.diagnostic !== undefined
+		},
 	},
 	methods: {
 		onEnter(event) {

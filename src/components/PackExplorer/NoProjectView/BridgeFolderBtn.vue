@@ -21,7 +21,7 @@
 				<span v-if="availableWidth > 220">
 					{{
 						t(
-							`windows.packExplorer.noProjectView.${
+							`packExplorer.noProjectView.${
 								hasDirectorySelected && !isBridgeFolderSelected
 									? 'accessBridgeFolder'
 									: 'chooseBridgeFolder'
@@ -34,7 +34,7 @@
 		<span>
 			{{
 				t(
-					`windows.packExplorer.noProjectView.${
+					`packExplorer.noProjectView.${
 						hasDirectorySelected && !isBridgeFolderSelected
 							? 'accessBridgeFolder'
 							: 'chooseBridgeFolder'

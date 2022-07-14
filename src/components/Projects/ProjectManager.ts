@@ -166,7 +166,7 @@ export class ProjectManager extends Signal<void> {
 			if (failGracefully) {
 				new InformationWindow({
 					description:
-						'windows.packExplorer.noProjectView.projectNoLongerExists',
+						'packExplorer.noProjectView.projectNoLongerExists',
 				})
 				return
 			}

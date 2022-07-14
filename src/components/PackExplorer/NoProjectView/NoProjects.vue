@@ -7,7 +7,7 @@
 			<v-icon style="font-size: 3rem" color="error" class="mb-4">
 				mdi-folder-open-outline
 			</v-icon>
-			{{ t('windows.packExplorer.noProjectView.noProjectsFound') }}
+			{{ t('packExplorer.noProjectView.noProjectsFound') }}
 		</BridgeSheet>
 
 		<BridgeSheet

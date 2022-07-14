@@ -1,5 +1,5 @@
 <template>
-	<Name :baseWrapper="fileWrapper" />
+	<Name :baseWrapper="fileWrapper" :diagnostic="diagnostic" />
 </template>
 
 <script>
@@ -12,8 +12,14 @@ export default {
 	props: {
 		fileWrapper: FileWrapper,
 	},
+	mounted() {
+		this.fileWrapper.getFirstDiagnostic().then((diagnostic) => {
+			this.diagnostic = diagnostic
+		})
+	},
 	data: () => ({
 		isFocused: false,
+		diagnostic: undefined,
 	}),
 }
 </script>

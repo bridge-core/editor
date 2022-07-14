@@ -4,12 +4,11 @@ import { SimpleAction } from '../../Actions/SimpleAction'
 
 export const restartWatchModeConfig = {
 	icon: 'mdi-restart-alert',
-	name: 'windows.packExplorer.restartWatchMode.name',
-	description: 'windows.packExplorer.restartWatchMode.description',
+	name: 'packExplorer.restartWatchMode.name',
+	description: 'packExplorer.restartWatchMode.description',
 	onTrigger: () => {
 		new ConfirmationWindow({
-			description:
-				'windows.packExplorer.restartWatchMode.confirmDescription',
+			description: 'packExplorer.restartWatchMode.confirmDescription',
 			height: 168,
 			onConfirm: async () => {
 				const app = await App.getApp()

@@ -422,11 +422,51 @@ export default {
 			name: 'Help',
 		},
 	},
+	packExplorer: {
+		name: 'Pack Explorer',
+		searchFiles: 'Search files...',
+		categories: 'Categories',
+		refresh: {
+			name: 'Refresh Project',
+			description: 'Fetch the current project for newly added files',
+		},
+		noProjectView: {
+			noProjectsFound: 'It does not look like you have any projects yet!',
+			createLocalProject: 'Create Local Project',
+			chooseBridgeFolder: 'Choose bridge. Folder',
+			accessBridgeFolder: 'Access bridge. Folder',
+			projectNoLongerExists:
+				'It looks like this project no longer exists!',
+		},
+		restartWatchMode: {
+			name: 'Restart Watch Mode',
+			description:
+				"Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
+			confirmDescription:
+				"Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
+		},
+		createPreset: 'New File',
+		projectConfig: {
+			name: 'Open Project Config',
+			missing:
+				'It looks like this project has no config.json file. Every project needs a project config in order to work correctly.',
+		},
+		openProjectFolder: {
+			name: 'Open Project Folder',
+		},
+		exportAs: {
+			name: 'Export As',
+			mcaddon: '.mcaddon',
+			brproject: '.brproject',
+			mcworld: '.mcworld',
+			mctemplate: '.mctemplate',
+		},
+		fileDiagnostics: {
+			fileUnused: 'This file is not used within your project',
+		},
+	},
 	// Sidebar tabs
 	sidebar: {
-		packExplorer: {
-			name: 'Pack Explorer',
-		},
 		openedFolders: {
 			name: 'Opened Folders',
 			removeFolder: 'Remove From View',
@@ -741,46 +781,7 @@ export default {
 				},
 			},
 		},
-		packExplorer: {
-			searchFiles: 'Search files...',
-			categories: 'Categories',
-			refresh: {
-				name: 'Refresh Project',
-				description: 'Fetch the current project for newly added files',
-			},
-			noProjectView: {
-				noProjectsFound:
-					'It does not look like you have any projects yet!',
-				createLocalProject: 'Create Local Project',
-				chooseBridgeFolder: 'Choose bridge. Folder',
-				accessBridgeFolder: 'Access bridge. Folder',
-				projectNoLongerExists:
-					'It looks like this project no longer exists!',
-			},
-			restartWatchMode: {
-				name: 'Restart Watch Mode',
-				description:
-					"Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
-				confirmDescription:
-					"Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
-			},
-			createPreset: 'New File',
-			projectConfig: {
-				name: 'Open Project Config',
-				missing:
-					'It looks like this project has no config.json file. Every project needs a project config in order to work correctly.',
-			},
-			openProjectFolder: {
-				name: 'Open Project Folder',
-			},
-			exportAs: {
-				name: 'Export As',
-				mcaddon: '.mcaddon',
-				brproject: '.brproject',
-				mcworld: '.mcworld',
-				mctemplate: '.mctemplate',
-			},
-		},
+
 		settings: {
 			title: 'Settings',
 			searchSettings: 'Search settings...',

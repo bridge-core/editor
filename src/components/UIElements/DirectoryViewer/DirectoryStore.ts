@@ -3,6 +3,7 @@ import { DirectoryWrapper } from './DirectoryView/DirectoryWrapper'
 import { markRaw } from '@vue/composition-api'
 import type { FileWrapper } from './FileView/FileWrapper'
 import { IActionConfig } from '/@/components/Actions/SimpleAction'
+import type { IFileDiagnostic } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 
 export interface IDirectoryViewerOptions {
 	startPath?: string
@@ -46,6 +47,13 @@ export interface IDirectoryViewerOptions {
 		  }
 		| null
 	)[]
+
+	/**
+	 * Show file diagnostics within the directory viewer
+	 */
+	provideFileDiagnostics?: (
+		fileWrapper: FileWrapper
+	) => Promise<IFileDiagnostic[]> | IFileDiagnostic[]
 }
 
 interface IMoveOptions {
