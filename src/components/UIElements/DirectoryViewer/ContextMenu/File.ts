@@ -7,6 +7,7 @@ import { RevealFilePathAction } from './Actions/RevealPath'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { shareFile } from '/@/components/StartParams/Action/openRawFile'
 import { EditAction } from './Actions/Edit'
+import { DownloadAction } from './Actions/Download'
 
 export async function showFileContextMenu(
 	event: MouseEvent,
@@ -29,6 +30,7 @@ export async function showFileContextMenu(
 				await shareFile(fileWrapper.handle)
 			},
 		},
+		DownloadAction(fileWrapper),
 		RevealFilePathAction(fileWrapper),
 
 		...(fileWrapper.options.provideFileContextMenu?.(fileWrapper) ?? []),

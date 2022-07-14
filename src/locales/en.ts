@@ -132,6 +132,10 @@ export default {
 	},
 	// Actions
 	actions: {
+		download: {
+			name: 'Download',
+			description: 'Download this file or folder',
+		},
 		open: {
 			name: 'Open',
 			description: 'Open the file in the editor',
