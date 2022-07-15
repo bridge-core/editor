@@ -27,6 +27,7 @@ export default {
 		later: 'あとで',
 		clear: 'クリア',
 		reset: 'リセット',
+		readMore: '続きを読む',
 
 		confirmOverwriteFile:
 			'このアクションは同名のファイルを上書きします。 続行しますか？',
@@ -186,6 +187,10 @@ export default {
 		bugReports: {
 			name: 'バグレポート',
 			description: 'bridge. の問題を報告する',
+		},
+		twitter: {
+			name: 'Twitter',
+			description: 'Twitter で bridge. をフォローする',
 		},
 		extensionAPI: {
 			name: '拡張機能 API',
@@ -451,6 +456,14 @@ export default {
 			search: 'ファイルの検索...',
 			noData: '見つかりませんでした...',
 		},
+		assetPreview: {
+			title: 'アセットプレビュー',
+			previewScale: 'プレビュースケール',
+			assetName: 'アセット名',
+			boneVisibility: 'ボーンの可視性',
+			backgroundColor: '背景色',
+			outputResolution: '解像度',
+		},
 		createProject: {
 			welcome: 'bridge. へようこそ!!',
 			welcomeDescription:
@@ -670,12 +683,14 @@ export default {
 				delete: {
 					name: '削除',
 					description: 'ファイルやフォルダーの削除',
-					confirmText:
-						'本当に削除しますか? 後からファイルを復元することはできません',
+					confirmText: '本当に削除しますか?',
+					noRestoring: '後からファイルを復元することはできません',
 				},
 				rename: {
 					name: '名前の変更',
 					description: 'ファイル名の変更',
+					sameName:
+						'新しいファイル名は大文字と小文字が異なるだけです。 Windowsではサポートされません。',
 				},
 				duplicate: {
 					name: '複製',
@@ -831,6 +846,16 @@ export default {
 					name: 'デフォルトの著者',
 					description:
 						'新しいプロジェクトのデフォルトの著者を設定します',
+				},
+				incrementVersionOnExport: {
+					name: 'バージョンのインクリメント',
+					description:
+						'プロジェクトのエクスポート時にパックマニフェスト内のバージョン番号を自動的にインクリメントします。',
+				},
+				addGeneratedWith: {
+					name: '"generated_with"の追加',
+					description:
+						'プロジェクトのマニフェストに "generated_with" メタデータを追加します',
 				},
 			},
 			editor: {
@@ -1111,7 +1136,7 @@ export default {
 				unexpectedOpenSquareBracket: '予期せぬ [ があります',
 				unexpectedCloseSquareBracket: '予期せぬ ] があります',
 			},
-			commands: {
+			command: {
 				empty: '空のコマンドはサポートされていません',
 				invalid: {
 					part1: "コマンド '",
