@@ -18,6 +18,7 @@ export default {
 		select: '選択',
 		skip: 'スキップ',
 		save: '保存',
+		shareFile: '共有',
 		more: 'もっと...',
 		selectFolder: 'フォルダーを選択',
 		fileName: 'ファイル名',
@@ -27,6 +28,8 @@ export default {
 		later: 'あとで',
 		clear: 'クリア',
 		reset: 'リセット',
+		readMore: '続きを読む',
+		search: '検索',
 
 		confirmOverwriteFile:
 			'このアクションは同名のファイルを上書きします。 続行しますか？',
@@ -41,6 +44,13 @@ export default {
 		},
 		experimentalGameplay: '実験的ゲームプレイ',
 		textureLocation: 'テクスチャの場所',
+	},
+	openWith: {
+		snowstorm: 'Snowstorm',
+		textEditor: 'Text Editor',
+		treeEditor: 'Tree Editor',
+		htmlPreviewer: 'HTML Previewer',
+		blockbench: 'Blockbench',
 	},
 	packType: {
 		behaviorPack: {
@@ -123,6 +133,67 @@ export default {
 	},
 	// Actions
 	actions: {
+		download: {
+			name: 'ダウンロード',
+			description: 'このファイルまたはフォルダーをダウンロードする',
+		},
+		open: {
+			name: '開く',
+			description: 'エディターでファイルを開く',
+		},
+		openWith: {
+			name: '開く...',
+			description: 'エディターでファイルを開く',
+		},
+		openInSplitScreen: {
+			name: '分割画面で開く',
+			description: 'ファイルを分割画面で開く',
+		},
+		edit: {
+			name: '編集',
+			description: 'ファイルまたはフォルダーを編集する',
+		},
+		delete: {
+			name: '削除',
+			description: 'ファイルやフォルダーを削除する',
+			confirmText: '本当に削除しますか?',
+			noRestoring: '後からファイルを復元することはできません',
+		},
+		rename: {
+			name: '名前の変更',
+			description: 'ファイル名の変更',
+			sameName:
+				'新しいファイル名は大文字と小文字が異なるだけです。 Windowsではサポートされません。',
+		},
+		duplicate: {
+			name: '複製',
+			description: 'ファイルを複製する',
+		},
+		viewCompilerOutput: {
+			name: 'コンパイラの出力表示',
+			description: 'このファイルのコンパイラ出力を表示する',
+			fileMissing: 'このファイルはまだコンパイルされていません',
+		},
+		revealPath: {
+			name: 'ファイルパスの表示',
+			description: 'ファイルやフォルダーの場所を表示する',
+		},
+		createFile: {
+			name: '新しいファイル',
+			description: '新規ファイル作成',
+		},
+		createFolder: {
+			name: '新しいフォルダー',
+			description: '新規フォルダー作成',
+		},
+		findInFolder: {
+			name: 'フォルダー内検索',
+			description: 'フォルダー内を検索する',
+		},
+		goHome: {
+			name: 'ホームへ戻る',
+			description: 'ホーム画面へ戻る',
+		},
 		newProject: {
 			name: '新規プロジェクト',
 			description: '新規 bridge. プロジェクトを作成します',
@@ -134,6 +205,11 @@ export default {
 		openFile: {
 			name: 'ファイルを開く',
 			description: '現在のプロジェクトからファイルを開く',
+		},
+		openFolder: {
+			name: 'フォルダを開く',
+			description:
+				'フォルダを開いて編集したり、出力フォルダとして設定したり、その他のアクションを起動することができます。',
 		},
 		searchFile: {
 			name: 'ファイルを探す',
@@ -186,6 +262,10 @@ export default {
 		bugReports: {
 			name: 'バグレポート',
 			description: 'bridge. の問題を報告する',
+		},
+		twitter: {
+			name: 'Twitter',
+			description: 'Twitter で bridge. をフォローする',
 		},
 		extensionAPI: {
 			name: '拡張機能 API',
@@ -319,6 +399,18 @@ export default {
 		edit: {
 			name: '編集',
 		},
+		view: {
+			name: '表示',
+
+			togglePackExplorer: {
+				name: 'パックエクスプローラー',
+				description: 'パックエクスプローラーの表示を切り替えます',
+			},
+			openFileSearch: {
+				name: '検索と置換',
+				description: '新しい検索と置換タブを開きます',
+			},
+		},
 		tools: {
 			name: 'ツール',
 		},
@@ -326,8 +418,55 @@ export default {
 			name: 'ヘルプ',
 		},
 	},
+	packExplorer: {
+		name: 'パックエクスプローラー',
+		searchFiles: 'ファイルの検索...',
+		categories: 'カテゴリー',
+		refresh: {
+			name: 'プロジェクトの再読み込み',
+			description:
+				'ファイル追加されました。現在のプロジェクトを再読み込みます。',
+		},
+		noProjectView: {
+			noProjectsFound: 'プロジェクトがありません',
+			createLocalProject: 'プロジェクトを作成する',
+			chooseBridgeFolder: 'bridge. フォルダーを選択',
+			accessBridgeFolder: 'bridge. フォルダーにアクセス',
+			projectNoLongerExists: 'このプロジェクトは存在しません',
+		},
+		restartWatchMode: {
+			name: 'ウォッチモードの再起動',
+			description:
+				'ウォッチモードを再起動し、プロジェクトで出力されたパックの削除と再コンパイルを行います。',
+			confirmDescription:
+				'本当にウォッチモードを再起動しますか？ プロジェクトの規模によっては時間がかかる場合があります。 コンパイラを再起動すると com.mojang フォルダからプロジェクトのアドオンが削除され、再コンパイルされます!',
+		},
+		createPreset: '新規ファイル',
+		projectConfig: {
+			name: 'プロジェクト設定を開く',
+			missing:
+				'このプロジェクトの config.json ファイルが見つかりませんでした。 すべてのプロジェクトが正常に動作するためにはプロジェクトのコンフィグファイルが必要です。',
+		},
+		openProjectFolder: {
+			name: 'プロジェクトフォルダを開く',
+		},
+		exportAs: {
+			name: 'エクスポート',
+			mcaddon: '.mcaddon',
+			brproject: '.brproject',
+			mcworld: '.mcworld',
+			mctemplate: '.mctemplate',
+		},
+		fileDiagnostics: {
+			fileUnused: 'このファイルはプロジェクト内で使用されていません',
+		},
+	},
 	// Sidebar tabs
 	sidebar: {
+		openedFolders: {
+			name: 'プロジェクトフォルダー',
+			removeFolder: 'ビューから削除する',
+		},
 		compiler: {
 			name: 'コンパイラ',
 			categories: {
@@ -381,14 +520,6 @@ export default {
 			},
 			updateExtensions: 'すべての拡張機能をアップデート',
 		},
-	},
-	// Welcome Screen
-	welcome: {
-		title: 'ようこそ bridge. へ',
-		subtitle: 'Minecraft のアドオンの作成がこれまで以上に便利になりました!',
-		quickActions: 'クイックアクション',
-		recentFiles: '最近のファイル',
-		recentProjects: '最近のプロジェクト',
 	},
 	// Experimental gameplay toggles
 	experimentalGameplay: {
@@ -451,6 +582,14 @@ export default {
 			search: 'ファイルの検索...',
 			noData: '見つかりませんでした...',
 		},
+		assetPreview: {
+			title: 'アセットプレビュー',
+			previewScale: 'プレビュースケール',
+			assetName: 'アセット名',
+			boneVisibility: 'ボーンの可視性',
+			backgroundColor: '背景色',
+			outputResolution: '解像度',
+		},
 		createProject: {
 			welcome: 'bridge. へようこそ!!',
 			welcomeDescription:
@@ -475,6 +614,8 @@ export default {
 			bpAsRpDependency:
 				'ビヘイビアーパックをリソースパックの依存関係として登録する',
 			useLangForManifest: 'マニフェストにパック名/説明文を直接追加する',
+			bdsProject:
+				'Bedrock Dedicated Server で使用するためのプロジェクトを設定する',
 			create: '作成',
 			saveCurrentProject:
 				'新しいプロジェクトを作成する前に現在のプロジェクトを保存しますか？ 保存されていない変更点は失われてしまいます',
@@ -553,6 +694,8 @@ export default {
 				packTypes: '要求されるパックがプロジェクトにありません',
 				targetVersion:
 					'要求されるターゲットバージョンが指定されていません',
+				manifestDependency:
+					'ビヘイビアパックの依存関係が指定されていません',
 			},
 		},
 		deleteProject: {
@@ -571,6 +714,20 @@ export default {
 			title: 'プロジェクトを選択',
 			description: '現在アクティブなプロジェクトを選択します',
 			searchProjects: 'プロジェクトの検索...',
+			loadAllProjects: '全て読み込む',
+			openPacks: 'パックを開く',
+			localProject: {
+				name: 'ローカルプロジェクト',
+				description:
+					'ローカルプロジェクトは bridge. 以外からアクセスすることはできません',
+			},
+			comMojangProject: {
+				name: 'com.mojang プロジェクト',
+				description:
+					'このプロジェクトは com.mojang フォルダから直接読み込まれました',
+				uninstallWarning:
+					'このプロジェクトは Minecraft をアンインストールすると削除されます',
+			},
 			newProject: {
 				name: '新規プロジェクト',
 				description: '新しい bridge. プロジェクトを作成します。',
@@ -622,88 +779,7 @@ export default {
 				},
 			},
 		},
-		packExplorer: {
-			title: 'パックエクスプローラー',
-			searchFiles: 'ファイルの検索...',
-			categories: 'カテゴリー',
-			refresh: {
-				name: 'プロジェクトの再読み込み',
-				description:
-					'ファイル追加されました。現在のプロジェクトを再読み込みます。',
-			},
-			restartWatchMode: {
-				name: 'ウォッチモードの再起動',
-				description:
-					'ウォッチモードを再起動し、プロジェクトで出力されたパックの削除と再コンパイルを行います。',
-				confirmDescription:
-					'本当にウォッチモードを再起動しますか？ プロジェクトの規模によっては時間がかかる場合があります。 コンパイラを再起動すると com.mojang フォルダからプロジェクトのアドオンが削除され、再コンパイルされます!',
-			},
-			createPreset: '新規ファイル',
-			projectConfig: {
-				name: 'プロジェクト設定を開く',
-				missing:
-					'このプロジェクトの config.json ファイルが見つかりませんでした。 すべてのプロジェクトが正常に動作するためにはプロジェクトのコンフィグファイルが必要です。',
-			},
-			exportAsMcaddon: {
-				name: '.mcaddon としてエクスポート',
-			},
-			exportAsMctemplate: {
-				name: '.mctemplate としてエクスポート',
-				chooseWorld: 'ワールドを選択',
-			},
-			exportAsMcworld: {
-				name: '.mcworld としてエクスポート',
-				chooseWorld: 'ワールドを選択',
-			},
-			exportAsBrproject: {
-				name: '.brproject としてエクスポート',
-			},
-			fileActions: {
-				open: {
-					name: '開く',
-					description: 'エディタでファイルを開く',
-				},
-				openInSplitScreen: {
-					name: '分割画面で開く',
-					description: '分割画面でファイルを開く',
-				},
-				delete: {
-					name: '削除',
-					description: 'ファイルやフォルダーの削除',
-					confirmText:
-						'本当に削除しますか? 後からファイルを復元することはできません',
-				},
-				rename: {
-					name: '名前の変更',
-					description: 'ファイル名の変更',
-				},
-				duplicate: {
-					name: '複製',
-					description: 'ファイルを複製する',
-				},
-				viewCompilerOutput: {
-					name: 'コンパイラの出力表示',
-					description: 'このファイルのコンパイラ出力を表示する',
-					fileMissing: 'このファイルはまだコンパイルされていません',
-				},
-				revealFilePath: {
-					name: 'ファイルパスの表示',
-					description: 'ファイルやフォルダーのパスを表示する',
-				},
-				createFile: {
-					name: '新しいファイル',
-					description: '新規ファイル作成',
-				},
-				createFolder: {
-					name: '新しいフォルダー',
-					description: '新規フォルダー作成',
-				},
-				findInFolder: {
-					name: 'フォルダー内検索',
-					description: 'フォルダー内を検索する',
-				},
-			},
-		},
+
 		settings: {
 			title: '設定',
 			searchSettings: '設定の検索...',
@@ -767,6 +843,11 @@ export default {
 					description:
 						'bridge. のユーザーインターフェース内で使用されているフォントを変更します',
 				},
+				hideToolbarItems: {
+					name: 'ツールバーの項目を非表示にする',
+					description:
+						'MacOS で bridge. を快適に利用するためにすべてのツールバーのアイテムを新しいメニューボタンに移動します',
+				},
 			},
 			general: {
 				name: '一般',
@@ -804,11 +885,6 @@ export default {
 					description:
 						'bridge. が動作するメインフォルダーを選択します',
 				},
-				openProjectChooserOnAppStartup: {
-					name: 'プロジェクトを選択を開く',
-					description:
-						'bridge. の起動時に自動的に「プロジェクトを選択」を開くようにします。',
-				},
 			},
 			developer: {
 				name: '開発者',
@@ -821,6 +897,11 @@ export default {
 					name: '開発者モード',
 					description: 'このアプリの開発者モードを有効にします',
 				},
+				forceDataDownload: {
+					name: '強制データダウンロード',
+					description:
+						'キャッシュされたアプリデータを無視し、代わりに最新のデータをダウンロードします',
+				},
 			},
 			actions: {
 				name: 'アクション',
@@ -831,6 +912,16 @@ export default {
 					name: 'デフォルトの著者',
 					description:
 						'新しいプロジェクトのデフォルトの著者を設定します',
+				},
+				incrementVersionOnExport: {
+					name: 'バージョンのインクリメント',
+					description:
+						'プロジェクトのエクスポート時にパックマニフェスト内のバージョン番号を自動的にインクリメントします。',
+				},
+				addGeneratedWith: {
+					name: '"generated_with"の追加',
+					description:
+						'プロジェクトのマニフェストに "generated_with" メタデータを追加します',
 				},
 			},
 			editor: {
@@ -951,7 +1042,21 @@ export default {
 		importFailed:
 			'bridge. はファイルをインポートすることができませんでした',
 		andMore: '...and more!',
-		importMethod: 'インポート方法',
+		importMethod: {
+			name: 'インポート方法',
+			folder: {
+				output: {
+					name: '出力フォルダ',
+					description:
+						'このフォルダを新しい出力フォルダとして設定する',
+				},
+				open: {
+					name: 'フォルダを開く',
+					description:
+						'このフォルダを bridge. のファイルエクスプローラで開きます',
+				},
+			},
+		},
 		mcaddon: {
 			missingManifests:
 				'.mcaddonファイル内のパックマニフェストが見つからなかったためデータをロードできませんでした',
@@ -1111,7 +1216,7 @@ export default {
 				unexpectedOpenSquareBracket: '予期せぬ [ があります',
 				unexpectedCloseSquareBracket: '予期せぬ ] があります',
 			},
-			commands: {
+			command: {
 				empty: '空のコマンドはサポートされていません',
 				invalid: {
 					part1: "コマンド '",
