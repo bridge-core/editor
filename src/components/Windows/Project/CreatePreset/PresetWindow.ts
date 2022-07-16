@@ -117,7 +117,11 @@ export class CreatePresetWindow extends BaseWindow {
 	}
 
 	protected requiresMatcher = markRaw(new RequiresMatcher())
-	protected async addPreset(manifestPath: string, manifest: IPresetManifest) {
+	protected async addPreset(
+		sidebar: Sidebar,
+		manifestPath: string,
+		manifest: IPresetManifest
+	) {
 		const app = await App.getApp()
 
 		// Presets need a category, presets without category are most likely incompatible v1 presets
@@ -130,7 +134,7 @@ export class CreatePresetWindow extends BaseWindow {
 		if (!mayUsePreset && manifest.showIfDisabled === false) return
 
 		let category = <SidebarCategory | undefined>(
-			this.sidebar.rawElements.find(
+			sidebar.rawElements.find(
 				(element) => element.getText() === manifest.category
 			)
 		)
@@ -140,7 +144,7 @@ export class CreatePresetWindow extends BaseWindow {
 				text: manifest.category,
 				items: [],
 			})
-			this.sidebar.addElement(category)
+			sidebar.addElement(category)
 		}
 
 		const id = uuid()
@@ -172,7 +176,7 @@ export class CreatePresetWindow extends BaseWindow {
 				}
 			)
 
-			this.sidebar.setState(id, {
+			sidebar.setState(id, {
 				...manifest,
 				presetPath: dirname(manifestPath),
 				models: {
@@ -224,6 +228,7 @@ export class CreatePresetWindow extends BaseWindow {
 	}
 
 	protected async loadPresets(
+		sidebar: Sidebar,
 		fs: FileSystem | DataLoader,
 		dirPath = 'data/packages/minecraftBedrock/preset'
 	) {
@@ -234,54 +239,74 @@ export class CreatePresetWindow extends BaseWindow {
 			dirents = await fs.readdir(dirPath, { withFileTypes: true })
 		} catch {}
 
+		const promises = []
 		for (const dirent of dirents) {
 			if (dirent.kind === 'directory')
-				await this.loadPresets(fs, `${dirPath}/${dirent.name}`)
-			else if (dirent.name === 'manifest.json')
-				return await this.addPreset(
-					`${dirPath}/${dirent.name}`,
-					json5.parse(
+				promises.push(
+					this.loadPresets(sidebar, fs, `${dirPath}/${dirent.name}`)
+				)
+			else if (dirent.name === 'manifest.json') {
+				let manifest
+				try {
+					manifest = json5.parse(
 						await dirent.getFile().then((file) => file.text())
 					)
+				} catch (originalError: any) {
+					const error = new Error(
+						`Failed to load JSON file "${dirPath}/${dirent.name}".`
+					)
+					error.cause = originalError
+
+					console.error(error)
+					continue
+				}
+
+				promises.push(
+					await this.addPreset(
+						sidebar,
+						`${dirPath}/${dirent.name}`,
+						manifest
+					)
 				)
+			}
 		}
+
+		await Promise.all(promises)
 	}
 
-	async loadDefaultPresets(dataLoader: DataLoader) {
-		// Reset requires matcher
-		this.requiresMatcher = markRaw(new RequiresMatcher())
-		await this.requiresMatcher.setup()
-
-		console.time('Read preset file')
+	async loadDefaultPresets(sidebar: Sidebar, dataLoader: DataLoader) {
 		const presets = await dataLoader.readJSON(
 			'data/packages/minecraftBedrock/presets.json'
 		)
-		console.timeEnd('Read preset file')
 
-		for (const presetPath in presets) {
-			await this.addPreset(presetPath, presets[presetPath])
-		}
+		await Promise.all(
+			Object.keys(presets).map((presetPath) =>
+				this.addPreset(sidebar, presetPath, presets[presetPath])
+			)
+		)
 	}
 
 	async open() {
-		console.time('PresetWindow: Open')
 		const app = await App.getApp()
 		const fs = app.fileSystem
 		app.windows.loadingWindow.open()
 
 		if (this.shouldReloadPresets) {
-			this.sidebar.removeElements()
+			const sidebar = new Sidebar([])
 
-			console.time('Load default presets')
-			await this.loadDefaultPresets(app.dataLoader)
-			console.timeEnd('Load default presets')
+			// Reset requires matcher
+			this.requiresMatcher = markRaw(new RequiresMatcher())
+			await this.requiresMatcher.setup()
 
-			console.time('Load extension presets')
-			for (const [_, loadPresetPath] of this.loadPresetPaths)
-				await this.loadPresets(fs, loadPresetPath)
-			console.timeEnd('Load extension presets')
+			await Promise.all([
+				this.loadDefaultPresets(sidebar, app.dataLoader),
+				...[...this.loadPresetPaths.values()].map((loadPresetPath) =>
+					this.loadPresets(sidebar, fs, loadPresetPath)
+				),
+			])
 
-			this.sidebar.setDefaultSelected()
+			sidebar.setDefaultSelected()
+			this.sidebar = sidebar
 			this.shouldReloadPresets = false
 		} else {
 			this.modelResetters.forEach((reset) => reset())
@@ -289,7 +314,6 @@ export class CreatePresetWindow extends BaseWindow {
 
 		app.windows.loadingWindow.close()
 		super.open()
-		console.timeEnd('PresetWindow: Open')
 	}
 	addPresets(folderPath: string) {
 		const id = uuid()

@@ -21,6 +21,7 @@ export class Extension {
 	protected _compilerPlugins: Record<string, string> = {}
 	protected isLoaded = false
 	protected installFiles: InstallFiles
+	protected hasPresets = false
 
 	get isActive() {
 		if (!this.parent.activeStatus)
@@ -96,9 +97,15 @@ export class Extension {
 			this._compilerPlugins[pluginId] = `${pluginPath}/${compilerPlugin}`
 		}
 
-		this.disposables.push(
-			app.windows.createPreset.addPresets(`${pluginPath}/presets`)
-		)
+		// If the extension has a presets folder, load it
+		if (await this.fileSystem.directoryExists('presets')) {
+			this.hasPresets = true
+			this.disposables.push(
+				app.windows.createPreset.addPresets(`${pluginPath}/presets`)
+			)
+
+			App.eventSystem.dispatch('presetsChanged', null)
+		}
 
 		try {
 			await iterateDir(
@@ -168,8 +175,6 @@ export class Extension {
 			}
 		}
 
-		App.eventSystem.dispatch('presetsChanged', null)
-
 		// Disable global extension with same ID if such an extension exists
 		if (!this.isGlobal) {
 			const globalExtensions = App.instance.extensionLoader
@@ -189,7 +194,7 @@ export class Extension {
 	}
 
 	deactivate() {
-		App.eventSystem.dispatch('presetsChanged', null)
+		if (this.hasPresets) App.eventSystem.dispatch('presetsChanged', null)
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.isLoaded = false
 
