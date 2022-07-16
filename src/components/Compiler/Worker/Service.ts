@@ -16,6 +16,7 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { dirname } from '/@/utils/path'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { ForeignConsole } from './Console'
+import { Mutex } from '../../Common/Mutex'
 
 export interface ICompilerOptions {
 	config: string
@@ -27,11 +28,14 @@ export interface ICompilerOptions {
 const dataLoader = new DataLoader()
 const consoles = new Map<string, ForeignConsole>()
 
+/**
+ * Dispatches an event whenever a task starts with progress steps
+ */
 export class DashService extends EventDispatcher<void> {
 	protected fileSystem: DashFileSystem
 	public fileType: FileTypeLibrary
 	protected dash: Dash<DataLoader>
-	public isDashFree = new Signal<void>()
+	public isDashFree = new Mutex()
 	protected projectDir: string
 	public isSetup = false
 	public completedStartUp = new Signal<void>()
@@ -85,15 +89,16 @@ export class DashService extends EventDispatcher<void> {
 	}
 
 	async compileFile(filePath: string, fileContent: Uint8Array) {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 
 		const [deps, data] = await this.dash.compileFile(filePath, fileContent)
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 		return <const>[deps, data ?? fileContent]
 	}
 
 	async start(changedFiles: string[], deletedFiles: string[]) {
+		await this.isDashFree.lock()
+
 		const fs = this.fileSystem.internal
 		if (
 			(await fs.fileExists(
@@ -119,69 +124,66 @@ export class DashService extends EventDispatcher<void> {
 		}
 
 		this.completedStartUp.dispatch()
+		this.isDashFree.unlock()
 	}
 
 	async build() {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 		this.dispatch()
 
 		await this.dash.build()
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 	}
 	async updateFiles(filePaths: string[]) {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 		this.dispatch()
 
 		await this.dash.updateFiles(filePaths)
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 	}
 	async unlink(path: string, updateDashFile = true) {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 
 		await this.dash.unlink(path, updateDashFile)
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 	}
 	async unlinkMultiple(paths: string[]) {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 
 		await this.dash.unlinkMultiple(paths)
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 	}
 	async rename(oldPath: string, newPath: string) {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 		this.dispatch()
 
 		await this.dash.rename(oldPath, newPath)
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 	}
 	getCompilerOutputPath(filePath: string) {
 		return this.dash.getCompilerOutputPath(filePath)
 	}
 
 	async setup() {
+		await this.isDashFree.lock()
+
 		if (!dataLoader.hasFired) await dataLoader.loadData()
 		await this.dash.setup(dataLoader)
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 		this.isSetup = true
 	}
 	async reloadPlugins() {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 
 		await this.dash.reload()
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 	}
 
 	onProgress(cb: (progress: number) => void) {
