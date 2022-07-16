@@ -4,9 +4,9 @@ import { proxy } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import type { PackIndexerService } from './Worker/Main'
 import PackIndexerWorker from './Worker/Main?worker'
-import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import type { Project } from '/@/components/Projects/Project/Project'
+import { Mutex } from '../Common/Mutex'
 
 export class PackIndexer extends WorkerManager<
 	typeof PackIndexerService,
@@ -14,7 +14,7 @@ export class PackIndexer extends WorkerManager<
 	boolean,
 	readonly [string[], string[]]
 > {
-	protected ready = new Signal<void>()
+	protected isPackIndexerFree = new Mutex()
 	constructor(
 		protected project: Project,
 		protected baseDirectory: AnyDirectoryHandle
@@ -36,6 +36,7 @@ export class PackIndexer extends WorkerManager<
 
 	protected async start(forceRefreshCache: boolean) {
 		console.time('[TASK] Indexing Packs (Total)')
+		await this.isPackIndexerFree.lock()
 
 		// Instaniate the worker TaskService
 		this._service = await new this.workerClass!(
@@ -66,7 +67,7 @@ export class PackIndexer extends WorkerManager<
 			forceRefreshCache
 		)
 		await this.service.disposeListeners()
-		this.ready.dispatch()
+		this.isPackIndexerFree.unlock()
 		console.timeEnd('[TASK] Indexing Packs (Total)')
 		return <const>[changedFiles, deletedFiles]
 	}
@@ -77,8 +78,7 @@ export class PackIndexer extends WorkerManager<
 		isForeignFile = false,
 		hotUpdate = false
 	) {
-		await this.ready.fired
-		this.ready.resetSignal()
+		await this.isPackIndexerFree.lock()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
 		await this.service.updateFile(
@@ -88,35 +88,32 @@ export class PackIndexer extends WorkerManager<
 			hotUpdate
 		)
 
-		this.ready.dispatch()
+		this.isPackIndexerFree.unlock()
 	}
 	async hasFile(filePath: string) {
-		await this.ready.fired
-		this.ready.resetSignal()
+		await this.isPackIndexerFree.lock()
 
 		const res = await this.service.hasFile(filePath)
 
-		this.ready.dispatch()
+		this.isPackIndexerFree.unlock()
 
 		return res
 	}
 	async updateFiles(filePaths: string[], hotUpdate = false) {
-		await this.ready.fired
-		this.ready.resetSignal()
+		await this.isPackIndexerFree.lock()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
 		await this.service.updateFiles(filePaths, hotUpdate)
 
-		this.ready.dispatch()
+		this.isPackIndexerFree.unlock()
 	}
 	async unlink(path: string) {
-		await this.ready.fired
-		this.ready.resetSignal()
+		await this.isPackIndexerFree.lock()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
 
 		await this.service.unlink(path)
 
-		this.ready.dispatch()
+		this.isPackIndexerFree.unlock()
 	}
 }
