@@ -19,6 +19,8 @@ import {
 	RequiresMatcher,
 } from '/@/components/Data/RequiresMatcher/RequiresMatcher'
 import { createFailureMessage } from '/@/components/Data/RequiresMatcher/FailureMessage'
+import json5 from 'json5'
+import { markRaw } from '@vue/composition-api'
 
 export interface IPresetManifest {
 	name: string
@@ -114,18 +116,9 @@ export class CreatePresetWindow extends BaseWindow {
 		this.shouldReloadPresets = true
 	}
 
-	protected async addPreset(
-		fs: FileSystem | DataLoader,
-		manifestPath: string
-	) {
+	protected requiresMatcher = markRaw(new RequiresMatcher())
+	protected async addPreset(manifestPath: string, manifest: IPresetManifest) {
 		const app = await App.getApp()
-		// Load manifest
-		let manifest: IPresetManifest
-		try {
-			manifest = <IPresetManifest>await fs.readJSON(manifestPath)
-		} catch (err) {
-			return
-		}
 
 		// Presets need a category, presets without category are most likely incompatible v1 presets
 		if (!manifest.category)
@@ -133,8 +126,7 @@ export class CreatePresetWindow extends BaseWindow {
 				`Error loading ${manifestPath}: Missing preset category`
 			)
 
-		const requiresMatcher = new RequiresMatcher(manifest.requires)
-		const mayUsePreset = await requiresMatcher.isValid()
+		const mayUsePreset = this.requiresMatcher.isValid(manifest.requires)
 		if (!mayUsePreset && manifest.showIfDisabled === false) return
 
 		let category = <SidebarCategory | undefined>(
@@ -208,9 +200,9 @@ export class CreatePresetWindow extends BaseWindow {
 				: 'primary'
 
 		let failureMessage: string | undefined
-		if (requiresMatcher.failures.length > 0) {
+		if (this.requiresMatcher.failures.length > 0) {
 			failureMessage = await createFailureMessage(
-				requiresMatcher.failures[0],
+				this.requiresMatcher.failures[0],
 				manifest.requires
 			)
 		}
@@ -246,11 +238,33 @@ export class CreatePresetWindow extends BaseWindow {
 			if (dirent.kind === 'directory')
 				await this.loadPresets(fs, `${dirPath}/${dirent.name}`)
 			else if (dirent.name === 'manifest.json')
-				return await this.addPreset(fs, `${dirPath}/${dirent.name}`)
+				return await this.addPreset(
+					`${dirPath}/${dirent.name}`,
+					json5.parse(
+						await dirent.getFile().then((file) => file.text())
+					)
+				)
+		}
+	}
+
+	async loadDefaultPresets(dataLoader: DataLoader) {
+		// Reset requires matcher
+		this.requiresMatcher = markRaw(new RequiresMatcher())
+		await this.requiresMatcher.setup()
+
+		console.time('Read preset file')
+		const presets = await dataLoader.readJSON(
+			'data/packages/minecraftBedrock/presets.json'
+		)
+		console.timeEnd('Read preset file')
+
+		for (const presetPath in presets) {
+			await this.addPreset(presetPath, presets[presetPath])
 		}
 	}
 
 	async open() {
+		console.time('PresetWindow: Open')
 		const app = await App.getApp()
 		const fs = app.fileSystem
 		app.windows.loadingWindow.open()
@@ -258,9 +272,14 @@ export class CreatePresetWindow extends BaseWindow {
 		if (this.shouldReloadPresets) {
 			this.sidebar.removeElements()
 
-			await this.loadPresets(app.dataLoader)
+			console.time('Load default presets')
+			await this.loadDefaultPresets(app.dataLoader)
+			console.timeEnd('Load default presets')
+
+			console.time('Load extension presets')
 			for (const [_, loadPresetPath] of this.loadPresetPaths)
 				await this.loadPresets(fs, loadPresetPath)
+			console.timeEnd('Load extension presets')
 
 			this.sidebar.setDefaultSelected()
 			this.shouldReloadPresets = false
@@ -270,6 +289,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 		app.windows.loadingWindow.close()
 		super.open()
+		console.timeEnd('PresetWindow: Open')
 	}
 	addPresets(folderPath: string) {
 		const id = uuid()

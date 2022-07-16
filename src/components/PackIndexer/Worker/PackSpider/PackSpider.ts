@@ -139,7 +139,6 @@ export class PackSpiderFile {
 		for (let { if: ifCondition, ...diagnostic } of this.instructions
 			.provideDiagnostics ?? []) {
 			const matches = this.loadConnected([ifCondition])
-			console.log(this.filePath, matches)
 
 			if (ifCondition.not) {
 				if (matches.size > 0) continue

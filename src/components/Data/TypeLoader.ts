@@ -70,14 +70,17 @@ export class TypeLoader {
 		await App.fileType.ready.fired
 		const { types = [] } = App.fileType.get(filePath) ?? {}
 
+		const matcher = new RequiresMatcher()
+		await matcher.setup()
+
 		const libs = await Promise.all(
 			types.map(async (type) => {
 				if (typeof type === 'string')
 					return <const>[type, await this.load(type)]
 
 				const { definition, requires } = type
-				const matcher = new RequiresMatcher(requires as IRequirements)
-				const valid = await matcher.isValid()
+
+				const valid = matcher.isValid(requires as IRequirements)
 
 				if (valid)
 					return <const>[definition, await this.load(definition)]
