@@ -18,6 +18,7 @@ export default {
 		select: 'Selecteren',
 		skip: 'Overslaan',
 		save: 'Opslaan',
+		shareFile: 'Bestand Delen',
 		more: 'Meer...',
 		selectFolder: 'Selecteer Map',
 		fileName: 'Bestandsnaam',
@@ -27,6 +28,8 @@ export default {
 		later: 'Later',
 		clear: 'Leegmaken',
 		reset: 'Reset',
+		readMore: 'Lees Verder',
+		search: 'Zoeken...',
 
 		confirmOverwriteFile:
 			'Er bestaat al een bestand met deze naam. Wil je het overschrijven?',
@@ -41,6 +44,13 @@ export default {
 		experimentalGameplay: 'Experimental Gameplay',
 		textureLocation: 'Texture Locatie',
 	},
+	openWith: {
+		snowstorm: 'Snowstorm',
+		textEditor: 'Tekst Bewerker',
+		treeEditor: 'Tree Bewerker',
+		htmlPreviewer: 'HTML Previewer',
+		blockbench: 'Blockbench',
+	},
 	packType: {
 		behaviorPack: {
 			name: 'Gedragspakket',
@@ -49,8 +59,7 @@ export default {
 		},
 		resourcePack: {
 			name: 'Resourcepakket',
-			description:
-				"Wordt gebruikt voor het veranderen van Minecraft's uiterlijk en geluid",
+			description: "Wordt gebruikt voor het veranderen van Minecraft's uiterlijk en geluid",
 		},
 		skinPack: {
 			name: 'Skin Pakket',
@@ -59,7 +68,8 @@ export default {
 		},
 		worldTemplate: {
 			name: 'Wereldsjabloon',
-			description: 'Geef spelers een wereld om te verkennen',
+			description:
+				'Geef spelers een wereld om te verkennen',
 		},
 	},
 	// File Type display names
@@ -122,6 +132,67 @@ export default {
 	},
 	// Actions
 	actions: {
+		download: {
+			name: 'Downloaden',
+			description: 'Download dit bestand of deze map',
+		},
+		open: {
+			name: 'Open',
+			description: 'Open het bestand in de editor',
+		},
+		openWith: {
+			name: 'Openen Met',
+			description: 'Open het bestand in de editor',
+		},
+		openInSplitScreen: {
+			name: 'Openen in gesplitst scherm',
+			description: 'Open het bestand in de modus voor gesplitst scherm',
+		},
+		edit: {
+			name: 'Bewerk',
+			description: 'Bewerk het bestand of de map',
+		},
+		delete: {
+			name: 'Verwijderen',
+			description: 'Een bestand of map verwijderen',
+			confirmText: 'Weet je zeker dat je dit wilt verwijderen? ',
+			noRestoring: "U kunt het later niet meer herstellen!",
+		},
+		rename: {
+			name: 'Hernoemen',
+			description: 'Hernoem een bestand',
+			sameName:
+				'Uw nieuwe bestandsnaam verschilt alleen in hoofdletters. Dit is niet toegestaan op Windows.',
+		},
+		duplicate: {
+			name: 'Dupliceer',
+			description: 'Dupliceer een bestand',
+		},
+		viewCompilerOutput: {
+			name: 'Uitvoer van compiler bekijken',
+			description: 'Bekijk de huidige compiler-output voor dit bestand',
+			fileMissing: 'Het lijkt erop dat dit bestand nog niet is gecompileerd.',
+		},
+		revealPath: {
+			name: 'Onthul Pad',
+			description: 'Onthult de locatie van een bestand of map',
+		},
+		createFile: {
+			name: 'Bestand Maken',
+			description: 'Een nieuw bestand maken',
+		},
+		createFolder: {
+			name: 'Map Maken',
+			description: 'Maak een nieuwe map',
+		},
+		findInFolder: {
+			name: 'Zoek in Map',
+			description: 'Doorzoek de inhoud van een map',
+		},
+		goHome: {
+			name: 'Ga naar Startscherm',
+			description: 'Ga terug naar het startscherm',
+		},
 		newProject: {
 			name: 'Nieuw Project',
 			description: 'Maak een nieuw bridge. project',
@@ -133,6 +204,11 @@ export default {
 		openFile: {
 			name: 'Open Bestand',
 			description: 'Zoek en open een bestand in het huidige project',
+		},
+		openFolder: {
+			name: 'Open Map',
+			description:
+				'Open een map om deze te bewerken, stel deze in als uitvoermap of activeer andere acties',
 		},
 		searchFile: {
 			name: 'Zoek Bestand',
@@ -188,9 +264,13 @@ export default {
 			name: 'Foutmeldingen',
 			description: 'Meld een probleem met bridge.',
 		},
-		pluginAPI: {
-			name: 'Plugin API',
-			description: 'Lees meer over de plugin API van bridge',
+		twitter: {
+			name: 'Twitter',
+			description: 'Volg bridge. op Twitter',
+		},
+		extensionAPI: {
+			name: 'Extensie API',
+			description: 'Lees meer over de extensie API van bridge.',
 		},
 		gettingStarted: {
 			name: 'Beginnen',
@@ -203,8 +283,7 @@ export default {
 		},
 		reloadAutoCompletions: {
 			name: 'Herlaad automatische aanvullingen',
-			description:
-				'Herlaadt alle gegevens voor automatisch aanvullen opnieuw',
+			description: 'Herlaadt alle gegevens voor automatisch aanvullen opnieuw',
 		},
 		reloadExtensions: {
 			name: 'Herlaad Extensies',
@@ -212,8 +291,7 @@ export default {
 		},
 		moveToSplitScreen: {
 			name: 'Verplaats naar gesplitst scherm',
-			description:
-				'Opent een gesplitste schermweergave en verplaatst dit tabblad ernaar',
+			description: 'Opent een gesplitste schermweergave en verplaatst dit tabblad ernaar',
 		},
 		closeTab: {
 			name: 'Sluit Tab',
@@ -225,8 +303,7 @@ export default {
 		},
 		closeTabsToRight: {
 			name: 'Sluit tabbladen aan de rechterkant',
-			description:
-				'Sluit alle tabbladen aan de rechterkant van dit tabblad',
+			description: 'Sluit alle tabbladen aan de rechterkant van dit tabblad',
 		},
 		closeAllSaved: {
 			name: 'Sluit alle opgeslagen',
@@ -264,8 +341,7 @@ export default {
 		},
 		toggleReadOnly: {
 			name: 'Schakel Alleen-Lezen Modus',
-			description:
-				'Schakel alleen-lezen modus voor het momenteel geopende bestand',
+			description: 'Schakel alleen-lezen modus voor het momenteel geopende bestand',
 		},
 		keepInTabSystem: {
 			name: 'Houd in Tab Systeem',
@@ -293,8 +369,7 @@ export default {
 		},
 		goToSymbol: {
 			name: 'Ga naar Symbool',
-			description:
-				'Opent een dialoogvenster om een symbool te selecteren om naar toe te gaan',
+			description: 'Opent een dialoogvenster om een symbool te selecteren om naar toe te gaan',
 		},
 		formatDocument: {
 			name: 'Document Opmaken',
@@ -327,6 +402,19 @@ export default {
 		edit: {
 			name: 'Bewerk',
 		},
+		view: {
+			name: 'Bekijk',
+
+			togglePackExplorer: {
+				name: 'Schakel Pakketverkenner',
+				description:
+					"Schakel de pakketverkenner die in de zijbalk van bridge. verschijnt",
+			},
+			openFileSearch: {
+				name: 'Open Find & Replace',
+				description: 'Opens a new Find & Replace tab',
+			},
+		},
 		tools: {
 			name: 'Hulpmiddelen',
 		},
@@ -334,8 +422,55 @@ export default {
 			name: 'Help',
 		},
 	},
+	packExplorer: {
+		name: 'Pakketverkenner',
+		searchFiles: 'Zoek bestanden...',
+		categories: 'Categorieën',
+		refresh: {
+			name: 'Vernieuw Project',
+			description: 'Haal het huidige project op voor nieuw toegevoegde bestanden',
+		},
+		noProjectView: {
+			noProjectsFound: 'Het lijkt erop dat je nog geen projecten hebt!',
+			createLocalProject: 'Creëer Lokaal Project',
+			chooseBridgeFolder: 'Kies bridge. Map',
+			accessBridgeFolder: 'Toegang tot bridge. Map',
+			projectNoLongerExists:
+				'Het lijkt erop dat dit project niet meer bestaat!',
+		},
+		restartWatchMode: {
+			name: 'Herstart Kijkmodus',
+			description:
+				'Start de kijkmodus van de compiler opnieuw om de huidige build output te verwijderen, het volledige project opnieuw op te bouwen en te kijken naar verdere wijzigingen.',
+			confirmDescription:
+				'Weet u zeker dat u de kijkmodus van de compiler opnieuw wilt starten? Dit kan enige tijd duren, afhankelijk van de grootte van uw project. Als u de compiler opnieuw start, wordt uw add-on uit de com.mojang map verwijderd en opnieuw gecompileerd op basis van uw bridge. map!',
+		},
+		createPreset: 'Nieuw Bestand',
+		projectConfig: {
+			name: 'Projectconfiguratie Openen',
+			missing:
+				'Het lijkt erop dat dit project geen config.json bestand heeft. Elk project heeft een projectconfiguratie nodig om correct te kunnen werken.',
+		},
+		openProjectFolder: {
+			name: 'Projectmap Openen',
+		},
+		exportAs: {
+			name: 'Exporteren als',
+			mcaddon: '.mcaddon',
+			brproject: '.brproject',
+			mcworld: '.mcworld',
+			mctemplate: '.mctemplate',
+		},
+		fileDiagnostics: {
+			fileUnused: 'Dit bestand wordt niet gebruikt binnen uw project',
+		},
+	},
 	// Sidebar tabs
 	sidebar: {
+		openedFolders: {
+			name: 'Geopende Mappen',
+			removeFolder: 'Uit Weergave Verwijderen',
+		},
 		compiler: {
 			name: 'Compiler',
 			categories: {
@@ -358,8 +493,7 @@ export default {
 				outputFolders: 'Uitvoermappen',
 				logs: {
 					name: 'Logboeken',
-					noLogs:
-						'Dash heeft nog geen logs geproduceerd om te tonen.',
+					noLogs: 'Dash heeft nog geen logs geproduceerd om te tonen.',
 				},
 			},
 			default: {
@@ -390,15 +524,6 @@ export default {
 			},
 			updateExtensions: 'Werk alle extensies bij',
 		},
-	},
-	// Welcome Screen
-	welcome: {
-		title: 'Welkom bij bridge.',
-		subtitle:
-			'Het maken van Minecraft addons is nog nooit zo gemakkelijk geweest!',
-		quickActions: 'Snelle Acties',
-		recentFiles: 'Recente Bestanden',
-		recentProjects: 'Recente Projecten',
 	},
 	// Experimental gameplay toggles
 	experimentalGameplay: {
@@ -462,6 +587,14 @@ export default {
 			search: 'Zoek bestand...',
 			noData: 'Geen resultaten...',
 		},
+		assetPreview: {
+			title: 'Asset Voorbeeld',
+			previewScale: 'Voorbeeld Schaal',
+			assetName: 'Asset Naam',
+			boneVisibility: 'Bone Zichtbaarheid',
+			backgroundColor: 'Achtergrond Kleur',
+			outputResolution: 'Uitvoer Resolutie',
+		},
 		createProject: {
 			welcome: 'Welkom bij bridge.!',
 			welcomeDescription:
@@ -487,6 +620,7 @@ export default {
 				'Registreer gedragspakket als afhankelijkheid van resourcepakket',
 			useLangForManifest:
 				'Voeg de naam/beschrijving van het pakket rechtstreeks toe aan het manifest',
+			bdsProject: 'Project instellen voor gebruik met Dedicated Servers van Bedrock',
 			create: 'Creëer!',
 			saveCurrentProject:
 				'Wilt u uw huidige project opslaan voordat u een nieuwe maakt? Alle niet-opgeslagen wijzigingen gaan verloren!',
@@ -495,8 +629,7 @@ export default {
 				file: {
 					player: {
 						name: 'player.json',
-						description:
-							'Bewerk hoe de standaardspeler zich gedraagt',
+						description: 'Bewerk hoe de standaardspeler zich gedraagt',
 					},
 					tick: {
 						name: 'tick.json',
@@ -514,18 +647,15 @@ export default {
 					},
 					terrainTexture: {
 						name: 'terrain_texture.json',
-						description:
-							'Wordt gebruikt om texturen toe te wijzen aan de vlakken van een blok',
+						description: 'Wordt gebruikt om texturen toe te wijzen aan de vlakken van een blok',
 					},
 					itemTexture: {
 						name: 'item_texture.json',
-						description:
-							'Wordt gebruikt om texturen aan items toe te wijzen',
+						description: 'Wordt gebruikt om texturen aan items toe te wijzen',
 					},
 					flipbookTextures: {
 						name: 'flipbook_textures.json',
-						description:
-							'Gebruikt voor het animeren van blok texturen',
+						description: 'Gebruikt voor het animeren van blok texturen',
 					},
 					biomesClient: {
 						name: 'biomes_client.json',
@@ -567,6 +697,8 @@ export default {
 					'Vereiste experimentele gameplay niet actief',
 				packTypes: 'Vereist pakket ontbreekt in project',
 				targetVersion: 'Vereiste doelversie niet gespecificeerd',
+				manifestDependency:
+					'Vereiste BP manifest afhankelijkheden ontbreken',
 			},
 		},
 		deleteProject: {
@@ -585,6 +717,20 @@ export default {
 			title: 'Projecten',
 			description: 'Selecteer het momenteel actieve project',
 			searchProjects: 'Zoek Projecten...',
+			loadAllProjects: 'Alles Laden',
+			openPacks: 'Open Pakketten',
+			localProject: {
+				name: 'Lokaal Project',
+				description:
+					'Lokale projecten zijn niet toegankelijk buiten bridge.',
+			},
+			comMojangProject: {
+				name: 'com.mojang Project',
+				description:
+					'Dit project is rechtstreeks vanuit uw com.mojang map geladen',
+				uninstallWarning:
+					'Dit project wordt verwijderd als u Minecraft verwijdert.',
+			},
 			newProject: {
 				name: 'Nieuw Project',
 				description: 'Maak een nieuw bridge. project.',
@@ -614,8 +760,7 @@ export default {
 				name: 'Herhaal Opties',
 				amount: {
 					name: 'Herhaal',
-					description:
-						'Herhaal de buittabel een bepaald aantal keren',
+					description: 'Herhaal de buittabel een bepaald aantal keren',
 				},
 				itemFound: {
 					name: 'Item Identifier',
@@ -636,91 +781,7 @@ export default {
 				},
 			},
 		},
-		packExplorer: {
-			title: 'Pack Explorer',
-			searchFiles: 'Zoek bestanden...',
-			categories: 'Categorieën',
-			refresh: {
-				name: 'Vernieuw Project',
-				description:
-					'Haal het huidige project op voor nieuw toegevoegde bestanden',
-			},
-			restartDevServer: {
-				name: 'Herstart Dev Server',
-				description:
-					'Herstart de kijkmodus van de compiler opnieuw om de huidige build-output te verwijderen, het volledige project opnieuw op te bouwen en te kijken naar verdere wijzigingen.',
-				confirmDescription:
-					'Weet u zeker dat u de kijkmodus van de compiler opnieuw wilt starten? Dit kan enige tijd duren, afhankelijk van de grootte van uw project. Als u de compiler opnieuw start, wordt uw add-on uit de map com.mojang verwijderd en opnieuw gecompileerd op basis van uw bridge. map!',
-			},
-			createPreset: 'Nieuw Bestand',
-			projectConfig: {
-				name: 'Projectconfiguratie openen',
-				missing:
-					'Het lijkt erop dat dit project geen config.json bestand heeft. Elk project heeft een projectconfiguratie nodig om correct te kunnen werken.',
-			},
-			exportAsMcaddon: {
-				name: 'Exporteer als .mcaddon',
-			},
-			exportAsMctemplate: {
-				name: 'Exporteer als .mctemplate',
-				chooseWorld: 'Kies een wereld',
-			},
-			exportAsMcworld: {
-				name: 'Exporteer als .mcworld',
-				chooseWorld: 'Kies een wereld',
-			},
-			exportAsBrproject: {
-				name: 'Exporteer als .brproject',
-			},
-			fileActions: {
-				open: {
-					name: 'Open',
-					description: 'Open het bestand in de editor',
-				},
-				openInSplitScreen: {
-					name: 'Openen in Gesplitst Scherm',
-					description:
-						'Open het bestand in de modus voor gesplitst scherm',
-				},
-				delete: {
-					name: 'Verwijderen',
-					description: 'Verwijder een bestand of map',
-					confirmText:
-						'Weet u zeker dat u dit bestand wilt verwijderen? U kunt het later niet meer herstellen!',
-				},
-				rename: {
-					name: 'Hernoemen',
-					description: 'Een bestand hernoemen',
-				},
-				duplicate: {
-					name: 'Dupliceren',
-					description: 'Een bestand dupliceren',
-				},
-				viewCompilerOutput: {
-					name: 'Uitvoer van compiler bekijken',
-					description:
-						'Bekijk de huidige compiler output voor dit bestand',
-					fileMissing:
-						'Het lijkt erop dat dit bestand nog niet is gecompileerd.',
-				},
-				revealFilePath: {
-					name: 'Bestandspad onthullen',
-					description: 'Geeft de locatie van een bestand of map weer',
-				},
-				createFile: {
-					name: 'Bestand aanmaken',
-					description: 'Maak een nieuw bestand',
-				},
-				createFolder: {
-					name: 'Map aanmaken',
-					description: 'Maak een nieuwe map',
-				},
-				findInFolder: {
-					name: 'Zoek in Map',
-					description: 'Doorzoek de inhoud van een map',
-				},
-			},
-		},
+
 		settings: {
 			title: 'Instellingen',
 			searchSettings: 'Zoek instellingen...',
@@ -746,18 +807,15 @@ export default {
 				name: 'Uiterlijk',
 				colorScheme: {
 					name: 'Kleurenschema',
-					description:
-						'Kies het kleurenschema voor de gebruikersinterface van bridge.',
+					description: 'Kies het kleurenschema voor de gebruikersinterface van bridge.',
 				},
 				darkTheme: {
 					name: 'Donker Thema',
-					description:
-						'Selecteer het standaard donkere thema dat door bridge. wordt gebruikt',
+					description: 'Selecteer het standaard donkere thema dat door bridge. wordt gebruikt',
 				},
 				lightTheme: {
 					name: 'Licht Thema',
-					description:
-						'Selecteer het standaard lichte thema dat door bridge. wordt gebruikt',
+					description: 'Selecteer het standaard lichte thema dat door bridge. wordt gebruikt',
 				},
 				localDarkTheme: {
 					name: 'Lokaal Donker Thema',
@@ -771,8 +829,7 @@ export default {
 				},
 				fontSize: {
 					name: 'Lettergrootte',
-					description:
-						'Wijzig de lettergrootte van de tekst van bridge.',
+					description: 'Wijzig de lettergrootte van de tekst van bridge.',
 				},
 				editorFontSize: {
 					name: 'Code Lettergrootte',
@@ -781,13 +838,17 @@ export default {
 				},
 				editorFont: {
 					name: 'Code Lettertype',
-					description:
-						'Wijzig het lettertype van de code editor van bridge.',
+					description: 'Wijzig het lettertype van de code editor van bridge.',
 				},
 				font: {
 					name: 'Lettertype',
 					description:
 						'Wijzig het lettertype dat in de gebruikersinterface van bridge. wordt gebruikt',
+				},
+				hideToolbarItems: {
+					name: 'Werkbalkitems Verbergen',
+					description:
+						'Laat bridge. zich thuis voelen op MacOS: verplaats alle werkbalkitems naar een nieuwe menuknop',
 				},
 			},
 			general: {
@@ -824,11 +885,6 @@ export default {
 					name: 'Selecteer Werkmap',
 					description: 'Kies de hoofdmap waarop bridge. werkt',
 				},
-				openProjectChooserOnAppStartup: {
-					name: 'Projectkiezer openen',
-					description:
-						'Open automatisch de projectkiezer bij het starten van bridge.',
-				},
 			},
 			developer: {
 				name: 'Ontwikkelaar',
@@ -839,8 +895,12 @@ export default {
 				},
 				devMode: {
 					name: 'Ontwikkelaarsmodus',
+					description: 'Schakel de ontwikkelaarsmodus in voor deze app',
+				},
+				forceDataDownload: {
+					name: 'Gegevens Downloaden Forceren',
 					description:
-						'Schakel de ontwikkelaarsmodus in voor deze app',
+						'Negeer de app-gegevens in de cache en download in plaats daarvan de nieuwste gegevens',
 				},
 			},
 			actions: {
@@ -851,6 +911,16 @@ export default {
 				defaultAuthor: {
 					name: 'Standaard Auteur',
 					description: 'De standaard auteur voor nieuwe projecten',
+				},
+				incrementVersionOnExport: {
+					name: 'Verhoog Versie',
+					description:
+						'Verhoog automatisch het versienummer in uw pakket manifesten bij het exporteren van een project',
+				},
+				addGeneratedWith: {
+					name: 'Voeg "generated_with" toe',
+					description:
+						'Voeg de "generated_with" metadata toe aan de manifesten van uw projecten',
 				},
 			},
 			editor: {
@@ -869,8 +939,7 @@ export default {
 				},
 				wordWrap: {
 					name: 'Woordomloop',
-					description:
-						'Wikkel woorden om horizontaal scrollen uit te schakelen',
+					description: 'Wikkel woorden om horizontaal scrollen uit te schakelen',
 				},
 				wordWrapColumns: {
 					name: 'Woordomloop Kolommen',
@@ -960,8 +1029,7 @@ export default {
 			},
 			unzipper: {
 				name: 'ZIP uitpakken',
-				description:
-					'bridge. is momenteel bezig met het uitpakken van een ZIP-bestand.',
+				description: 'bridge. is momenteel bezig met het uitpakken van een ZIP-bestand.',
 			},
 			loadingSchemas: {
 				name: 'Automatische Aanvullingen Laden',
@@ -974,7 +1042,19 @@ export default {
 		importFiles: 'Zet bestanden hier neer om ze te importeren!',
 		importFailed: 'bridge. kon de volgende bestanden niet importeren:',
 		andMore: '...en meer!',
-		importMethod: 'Importeer Methode',
+		importMethod: {
+			name: 'Importeer Methode',
+			folder: {
+				output: {
+					name: 'Uitvoermap',
+					description: 'Stelt deze map in als een nieuwe uitvoermap',
+				},
+				open: {
+					name: 'Open Map',
+					description: 'Opent deze map in de bestandsverkenner van bridge.',
+				},
+			},
+		},
 		mcaddon: {
 			missingManifests:
 				'bridge. kon geen gegevens uit uw .mcaddon bestand laden omdat het daarin geen manifest bestanden kon vinden.',
@@ -997,8 +1077,7 @@ export default {
 		permissionRequest:
 			'bridge. heeft toegang nodig tot uw "com.mojang" map om er projecten naar te kunnen compileren.',
 		status: {
-			sucess:
-				'Het synchroniseren van uw projecten met com.mojang is correct ingesteld.',
+			sucess: 'Het synchroniseren van uw projecten met com.mojang is correct ingesteld.',
 			deniedPermission:
 				'U heeft com.mojang synchronisatie ingesteld, maar u heeft bridge. geen toestemming verleend voor de map.',
 			notSetup:
@@ -1169,8 +1248,7 @@ export default {
 				},
 				multipleInstancesNegated: {
 					part1: "Selector attribuut: '",
-					part2:
-						"' ondersteunt alleen meerdere instanties wanneer deze worden genegeerd!",
+					part2: "' ondersteunt alleen meerdere instanties wanneer deze worden genegeerd!",
 				},
 				valueNotValid: {
 					part1: "Selector attribuut ondersteunt waarde '",
