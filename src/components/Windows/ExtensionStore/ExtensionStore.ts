@@ -159,13 +159,9 @@ export class ExtensionStoreWindow extends BaseWindow {
 	}
 
 	protected getExtensions(findTag?: ExtensionTag) {
-		return [...new Set([...this.extensions, ...this.installedExtensions])]
-			.filter(
-				(ext) => !ext.isLocalOnly && (!findTag || ext.hasTag(findTag))
-			)
-			.sort(
-				({ releaseTimestamp: tA }, { releaseTimestamp: tB }) => tB - tA
-			)
+		return [
+			...new Set([...this.extensions, ...this.installedExtensions]),
+		].filter((ext) => !ext.isLocalOnly && (!findTag || ext.hasTag(findTag)))
 	}
 	protected getExtensionsByTag(findTag: ExtensionTag) {
 		return this.getExtensions(findTag)

@@ -97,8 +97,18 @@ export class Extension {
 			this._compilerPlugins[pluginId] = `${pluginPath}/${compilerPlugin}`
 		}
 
-		// If the extension has a presets folder, load it
-		if (await this.fileSystem.directoryExists('presets')) {
+		// If the extension has a presets.json file, add this file to the preset store
+		if (await this.fileSystem.fileExists('presets.json')) {
+			this.hasPresets = true
+			App.eventSystem.dispatch('presetsChanged', null)
+			this.disposables.push(
+				app.windows.createPreset.addPresets(
+					`${pluginPath}/presets.json`
+				)
+			)
+		}
+		// Otherwise if the extension has a presets folder, add this folder to the preset store
+		else if (await this.fileSystem.directoryExists('presets')) {
 			this.hasPresets = true
 			this.disposables.push(
 				app.windows.createPreset.addPresets(`${pluginPath}/presets`)

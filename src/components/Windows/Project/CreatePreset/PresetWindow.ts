@@ -66,7 +66,7 @@ export interface IPermissions {
 }
 
 export class CreatePresetWindow extends BaseWindow {
-	protected loadPresetPaths = new Map<string, string>()
+	protected loadPresetPaths = new Set<string>()
 	protected sidebar = new Sidebar([])
 	protected shouldReloadPresets = true
 	protected modelResetters: (() => void)[] = []
@@ -234,6 +234,25 @@ export class CreatePresetWindow extends BaseWindow {
 	) {
 		await fs.fired
 
+		// Use shortcut presets.json file if available
+		if (
+			dirPath.endsWith('presets.json') &&
+			(await fs.fileExists(dirPath))
+		) {
+			const presets = await fs.readJSON(dirPath)
+
+			await Promise.all(
+				Object.entries<any>(presets).map(([presetPath, manifest]) =>
+					this.addPreset(
+						sidebar,
+						`${dirname(dirPath)}/${presetPath}`,
+						manifest
+					)
+				)
+			)
+			return
+		}
+
 		let dirents: AnyHandle[] = []
 		try {
 			dirents = await fs.readdir(dirPath, { withFileTypes: true })
@@ -255,6 +274,7 @@ export class CreatePresetWindow extends BaseWindow {
 					const error = new Error(
 						`Failed to load JSON file "${dirPath}/${dirent.name}".`
 					)
+					// @ts-ignore TypeScript doesn't know about error.cause yet
 					error.cause = originalError
 
 					console.error(error)
@@ -280,8 +300,8 @@ export class CreatePresetWindow extends BaseWindow {
 		)
 
 		await Promise.all(
-			Object.keys(presets).map((presetPath) =>
-				this.addPreset(sidebar, presetPath, presets[presetPath])
+			Object.entries<any>(presets).map(([presetPath, manifest]) =>
+				this.addPreset(sidebar, presetPath, manifest)
 			)
 		)
 	}
@@ -300,7 +320,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 			await Promise.all([
 				this.loadDefaultPresets(sidebar, app.dataLoader),
-				...[...this.loadPresetPaths.values()].map((loadPresetPath) =>
+				...[...this.loadPresetPaths].map((loadPresetPath) =>
 					this.loadPresets(sidebar, fs, loadPresetPath)
 				),
 			])
@@ -316,11 +336,10 @@ export class CreatePresetWindow extends BaseWindow {
 		super.open()
 	}
 	addPresets(folderPath: string) {
-		const id = uuid()
-		this.loadPresetPaths.set(id, folderPath)
+		this.loadPresetPaths.add(folderPath)
 
 		return {
-			dispose: () => this.loadPresetPaths.delete(id),
+			dispose: () => this.loadPresetPaths.delete(folderPath),
 		}
 	}
 
