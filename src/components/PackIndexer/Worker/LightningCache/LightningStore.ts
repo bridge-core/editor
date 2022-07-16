@@ -234,11 +234,17 @@ export class LightningStore {
 
 		if (searchFileType && this.store) {
 			for (const filePath in this.store[searchFileType]) {
+				// Exclude foreign files from result
+				if (this.store[searchFileType][filePath].isForeignFile) continue
+
 				filePaths.push(filePath)
 			}
 		} else {
 			for (const fileType in this.store) {
 				for (const filePath in this.store[fileType]) {
+					// Exclude foreign files from result
+					if (this.store[fileType][filePath].isForeignFile) continue
+
 					filePaths.push(filePath)
 				}
 			}

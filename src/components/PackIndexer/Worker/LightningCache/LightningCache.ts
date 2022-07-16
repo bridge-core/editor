@@ -270,7 +270,7 @@ export class LightningCache {
 
 		this.lightningStore.add(
 			filePath,
-			{ lastModified: file.lastModified },
+			{ lastModified: file.lastModified, isForeignFile },
 			fileType
 		)
 	}
@@ -295,6 +295,7 @@ export class LightningCache {
 				filePath,
 				{
 					lastModified: file.lastModified,
+					isForeignFile,
 				},
 				fileType
 			)
