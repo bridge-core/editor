@@ -1,8 +1,5 @@
-const unlocked = 0
-const locked = 1
-
 /**
- * A JavaScript mutex implementation using Atomics.wait(...)
+ * An instance of the Mutex class ensures that calls to specific APIs happen sequentially instead of in parallel.
  */
 export class Mutex {
 	protected listeners: (() => void)[] = []
@@ -29,12 +26,12 @@ export class Mutex {
 			throw new Error('Trying to unlock a mutex that is not locked')
 		}
 
+		this.isLocked = false
+
 		if (this.listeners.length > 0) {
 			const listener = this.listeners.shift()!
-			this.isLocked = false
+
 			listener()
-		} else {
-			this.isLocked = false
 		}
 	}
 }
