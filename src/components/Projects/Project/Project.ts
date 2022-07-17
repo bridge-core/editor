@@ -174,9 +174,11 @@ export abstract class Project {
 
 		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
 
-		this.createDashService('development').then((service) => {
-			this._compilerService = markRaw(service)
-			this.compilerReady.dispatch()
+		this.app.comMojang.on(() => {
+			this.createDashService('development').then((service) => {
+				this._compilerService = markRaw(service)
+				this.compilerReady.dispatch()
+			})
 		})
 
 		setTimeout(() => this.onCreate(), 0)
@@ -553,10 +555,14 @@ export abstract class Project {
 	}
 
 	async recompile(forceStartIfActive = true) {
+		this._compilerService = markRaw(
+			await this.createDashService('development')
+		)
+
 		if (forceStartIfActive && this.isActiveProject) {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
 			await this.compilerReady.fired
-			this.compilerService.build()
+			await this.compilerService.start([], [])
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
 		}
