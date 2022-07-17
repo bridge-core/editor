@@ -35,7 +35,7 @@ export class DashService extends EventDispatcher<void> {
 	protected fileSystem: DashFileSystem
 	public fileType: FileTypeLibrary
 	protected dash: Dash<DataLoader>
-	public isDashFree = new Mutex()
+	public isDashFree = new Mutex(true)
 	protected projectDir: string
 	public isSetup = false
 	public completedStartUp = new Signal<void>()
@@ -110,38 +110,38 @@ export class DashService extends EventDispatcher<void> {
 			))
 		) {
 			await Promise.all([
-				this.build().catch((err) => console.error(err)),
+				this.build(false).catch((err) => console.error(err)),
 				fs
 					.unlink(`${this.projectDir}/.bridge/.restartWatchMode`)
 					.catch((err) => console.error(err)),
 			])
 		} else {
-			await Promise.all([
-				...deletedFiles.map((f) => this.unlink(f, false)),
-			])
+			if (deletedFiles.length > 0)
+				await this.unlinkMultiple(deletedFiles, false)
 
-			if (changedFiles.length > 0) await this.updateFiles(changedFiles)
+			if (changedFiles.length > 0)
+				await this.updateFiles(changedFiles, false)
 		}
 
 		this.completedStartUp.dispatch()
 		this.isDashFree.unlock()
 	}
 
-	async build() {
-		await this.isDashFree.lock()
+	async build(acquireLock = true) {
+		if (acquireLock) await this.isDashFree.lock()
 		this.dispatch()
 
 		await this.dash.build()
 
-		this.isDashFree.unlock()
+		if (acquireLock) this.isDashFree.unlock()
 	}
-	async updateFiles(filePaths: string[]) {
-		await this.isDashFree.lock()
+	async updateFiles(filePaths: string[], acquireLock = true) {
+		if (acquireLock) await this.isDashFree.lock()
 		this.dispatch()
 
 		await this.dash.updateFiles(filePaths)
 
-		this.isDashFree.unlock()
+		if (acquireLock) this.isDashFree.unlock()
 	}
 	async unlink(path: string, updateDashFile = true) {
 		await this.isDashFree.lock()
@@ -150,12 +150,12 @@ export class DashService extends EventDispatcher<void> {
 
 		this.isDashFree.unlock()
 	}
-	async unlinkMultiple(paths: string[]) {
-		await this.isDashFree.lock()
+	async unlinkMultiple(paths: string[], acquireLock = true) {
+		if (acquireLock) await this.isDashFree.lock()
 
 		await this.dash.unlinkMultiple(paths)
 
-		this.isDashFree.unlock()
+		if (acquireLock) this.isDashFree.unlock()
 	}
 	async rename(oldPath: string, newPath: string) {
 		await this.isDashFree.lock()
