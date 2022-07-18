@@ -190,14 +190,18 @@ export class ProjectConfig extends BaseProjectConfig {
 		return this.resolvePackPath(undefined, author.logo)
 	}
 
-	async toggleExperiment(app: App, experiment: string) {
-		app.windows.loadingWindow.open()
+	async toggleExperiment(project: Project, experiment: string) {
+		project.app.windows.loadingWindow.open()
 
-		let config = await this.readConfig()
-		config.experimentalGameplay[experiment] = !config.experimentalGameplay[experiment]
-		await this.writeConfig(config)
-		await app.project.refresh()
+		const experimentalGameplay = this.get()?.experimentalGameplay ?? {}
+		// Modify experimental gameplay
+		experimentalGameplay[experiment] = !experimentalGameplay[experiment]
+		// Save config
+		await this.save()
 
-		app.windows.loadingWindow.close()
+		// Only refresh project if it's active
+		if (project.isActiveProject) await project.refresh()
+
+		project.app.windows.loadingWindow.close()
 	}
 }

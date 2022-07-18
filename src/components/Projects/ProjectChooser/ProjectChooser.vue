@@ -271,7 +271,11 @@ export default {
 		},
 		async onToggleExperiment(experiment) {
 			const app = await App.getApp()
-			await app.projectConfig.toggleExperiment(app, experiment.id)
+			const project = app.projectManager.getProject(
+				this.sidebar.currentState.name
+			)
+
+			await project.config.toggleExperiment(project, experiment.id)
 		},
 	},
 	computed: {

@@ -43,6 +43,9 @@ export class ProjectManager extends Signal<void> {
 		await this.fired
 		return Object.values(this.state).filter((p) => !p.isVirtualProject)
 	}
+	getProject(projectName: string): Project | undefined {
+		return this.state[projectName]
+	}
 	async addProject(
 		projectDir: AnyDirectoryHandle,
 		isNewProject = true,
