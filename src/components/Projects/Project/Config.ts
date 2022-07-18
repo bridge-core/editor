@@ -6,6 +6,7 @@ import {
 	IConfigJson,
 	ProjectConfig as BaseProjectConfig,
 } from 'mc-project-core'
+import { App } from '/@/App'
 
 export type { IConfigJson } from 'mc-project-core'
 export { defaultPackPaths } from 'mc-project-core'
@@ -187,5 +188,16 @@ export class ProjectConfig extends BaseProjectConfig {
 		if (!author) return
 
 		return this.resolvePackPath(undefined, author.logo)
+	}
+
+	async toggleExperiment(app: App, experiment: string) {
+		app.windows.loadingWindow.open()
+
+		let config = await this.readConfig()
+		config.experimentalGameplay[experiment] = !config.experimentalGameplay[experiment]
+		await this.writeConfig(config)
+		await app.project.refresh()
+
+		app.windows.loadingWindow.close()
 	}
 }

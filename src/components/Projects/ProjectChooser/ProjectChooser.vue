@@ -133,8 +133,9 @@
 					>
 						<ExperimentalGameplay
 							:experiment="experiment"
-							:isToggleable="false"
+							:isToggleable="true"
 							:value="experiment.isActive"
+							@click.native="onToggleExperiment(experiment)"
 							style="height: 100%"
 						/>
 					</v-col>
@@ -267,6 +268,10 @@ export default {
 		},
 		onLoadAllProjects() {
 			this.currentWindow.loadAllProjects()
+		},
+		async onToggleExperiment(experiment) {
+			const app = await App.getApp()
+			await app.projectConfig.toggleExperiment(app, experiment.id)
 		},
 	},
 	computed: {
