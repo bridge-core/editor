@@ -35,6 +35,30 @@ export default defineConfig({
 			isNightly,
 			title: isNightly ? 'bridge Nightly' : 'bridge v2',
 		}),
+
+		/**
+		 * VS Code's JSON language files has an issue with large JSON files
+		 * This is caused by Array.prototype.push.apply(...) throws a maximum call stack size exceeded error
+		 * with sufficiently large arrays
+		 *
+		 * https://github.com/bridge-core/editor/issues/447
+		 */
+		{
+			name: 'fix-vscode-json-language-service-bug',
+			transform: (source, id) => {
+				if (
+					id.includes('json.worker.js') &&
+					id.includes('node_modules/monaco-editor/')
+				)
+					return source.replace(
+						'Array.prototype.push.apply(this.schemas, other.schemas);',
+						'this.schemas = this.schemas.concat(other.schemas);'
+					)
+
+				return source
+			},
+		},
+
 		VitePWA({
 			filename: 'service-worker.js',
 			registerType: 'prompt',
