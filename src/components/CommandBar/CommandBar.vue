@@ -4,6 +4,7 @@
 		solo
 		rounded
 		hide-details
+		background-color="expandedSidebar"
 		:append-icon="null"
 		class="commandbar-input elevation-1"
 		:menu-props="{
