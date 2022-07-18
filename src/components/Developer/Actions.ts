@@ -29,6 +29,14 @@ const devActionConfigs: IActionConfig[] = [
 		},
 	},
 	{
+		icon: 'mdi-delete',
+		name: "[Dev: Reset 'com.mojang' folder]",
+		description: "[Remove the 'com.mojang' folder from local storage]",
+		onTrigger: async () => {
+			del(comMojangKey)
+		},
+	},
+	{
 		icon: 'mdi-cancel',
 		name: '[Dev: Clear app data]',
 		description: '[Clear data from bridge-core/editor-packages repository]',
