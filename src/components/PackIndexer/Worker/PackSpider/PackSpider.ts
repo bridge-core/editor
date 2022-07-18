@@ -78,7 +78,7 @@ export class PackSpider {
 		const packSpiderFile = this.packSpiderFiles.get(filePath)
 		if (!packSpiderFile) return []
 
-		return [...packSpiderFile.loadConnected()]
+		return [...packSpiderFile.loadAllConnected()]
 	}
 
 	async updateFile(filePath: string) {
@@ -114,6 +114,23 @@ export class PackSpiderFile {
 
 	get cacheData() {
 		return this.lightningStore.get(this.filePath).data ?? {}
+	}
+
+	loadAllConnected() {
+		return new Set([
+			...this.loadConnected(),
+			...this.loadDirectReferences(),
+		])
+	}
+
+	loadDirectReferences() {
+		return new Set(
+			<string[]>this.instructions.includeFiles
+				?.map((cacheKey) => {
+					if (cacheKey) return this.cacheData[cacheKey] ?? []
+				})
+				.flat() ?? []
+		)
 	}
 
 	loadConnected(connect = this.instructions.connect) {
