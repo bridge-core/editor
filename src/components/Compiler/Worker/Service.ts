@@ -35,7 +35,7 @@ export class DashService extends EventDispatcher<void> {
 	protected fileSystem: DashFileSystem
 	public fileType: FileTypeLibrary
 	protected dash: Dash<DataLoader>
-	public isDashFree = new Mutex(true)
+	public isDashFree = new Mutex()
 	protected projectDir: string
 	public isSetup = false
 	public completedStartUp = new Signal<void>()
