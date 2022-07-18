@@ -474,11 +474,8 @@ export abstract class Project {
 		await this.app.fileSystem.unlink(path)
 		return true
 	}
-	async renameFile(fromPath: string, toPath: string) {
-		await this.app.fileSystem.move(fromPath, toPath)
-
-		await this.unlinkFile(fromPath)
-		await this.updateFile(toPath)
+	async onMovedFile(fromPath: string, toPath: string) {
+		await this.compilerService.rename(fromPath, toPath)
 	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()

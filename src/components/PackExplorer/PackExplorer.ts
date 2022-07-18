@@ -22,6 +22,7 @@ import { Project } from '../Projects/Project/Project'
 import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
 import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu/Folder'
 import { ViewCompilerOutput } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ViewCompilerOutput'
+import { IHandleMovedOptions } from '../UIElements/DirectoryViewer/DirectoryStore'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -107,6 +108,7 @@ export class PackExplorer extends SidebarContent {
 
 					return packIndexer.service.getFileDiagnostics(filePath)
 				},
+				onHandleMoved: (opts) => this.onHandleMoved(opts),
 			})
 			await wrapper.open()
 
@@ -140,6 +142,11 @@ export class PackExplorer extends SidebarContent {
 				},
 			})
 		)
+	}
+
+	async onHandleMoved({ fromPath, toPath }: IHandleMovedOptions) {
+		const app = await App.getApp()
+		await app.project.onMovedFile(fromPath, toPath)
 	}
 
 	onContentRightClick(event: MouseEvent): void {

@@ -23,7 +23,7 @@ export interface IDirectoryViewerOptions {
 		event: MouseEvent,
 		directoryWrapper: DirectoryWrapper
 	) => Promise<void> | void
-	onHandleMoved?: (opts: IMoveOptions) => Promise<void> | void
+	onHandleMoved?: (opts: IHandleMovedOptions) => Promise<void> | void
 	/**
 	 * Add new items to the bottom of the file context menu
 	 */
@@ -57,7 +57,7 @@ export interface IDirectoryViewerOptions {
 	) => Promise<IFileDiagnostic[]> | IFileDiagnostic[]
 }
 
-interface IMoveOptions {
+export interface IHandleMovedOptions {
 	fromPath: string
 	toPath: string
 	movedHandled: FileSystemHandle | VirtualHandle
