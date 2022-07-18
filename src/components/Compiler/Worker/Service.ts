@@ -168,6 +168,9 @@ export class DashService extends EventDispatcher<void> {
 	getCompilerOutputPath(filePath: string) {
 		return this.dash.getCompilerOutputPath(filePath)
 	}
+	getFileDependencies(filePath: string) {
+		return this.dash.getFileDependencies(filePath)
+	}
 
 	async setup() {
 		await this.isDashFree.lock()

@@ -8,13 +8,39 @@ export const ViewConnectedFiles = async (fileWrapper: FileWrapper) => {
 	if (!fileWrapper.path) return null
 	const app = await App.getApp()
 
-	const connectedFiles = await app.project.packIndexer.service.getConnectedFiles(
+	const connectedFiles = createSimpleActions(
+		await app.project.packIndexer.service.getConnectedFiles(
+			fileWrapper.path
+		)
+	)
+
+	const compilerFiles = await app.project.compilerService.getFileDependencies(
 		fileWrapper.path
 	)
-	const connectedFilesActions = connectedFiles.map((filePath) => {
+	const compilerFileActions = [
+		ViewCompilerOutput(fileWrapper.path, false, false),
+	].concat(createSimpleActions(compilerFiles))
+
+	return connectedFiles.length === 0 && compilerFileActions.length === 1
+		? ViewCompilerOutput(fileWrapper.path)
+		: <ISubmenuConfig>{
+				type: 'submenu',
+				icon: 'mdi-spider-web',
+				name: 'actions.viewConnectedFiles.name',
+				description: 'actions.viewConnectedFiles.description',
+
+				actions: [
+					...compilerFileActions,
+					connectedFiles.length > 0 ? { type: 'divider' } : null,
+					...connectedFiles,
+				],
+		  }
+}
+
+function createSimpleActions(filePaths: string[]) {
+	return filePaths.map((filePath) => {
 		const fileType = App.fileType.get(filePath)
 		const packType = App.packType.get(filePath)
-		console.log(packType)
 
 		return {
 			icon: fileType?.icon ?? 'mdi-file-outline',
@@ -22,25 +48,12 @@ export const ViewConnectedFiles = async (fileWrapper: FileWrapper) => {
 			name: `[${basename(filePath)}]`,
 			description: fileType ? `fileType.${fileType.id}` : undefined,
 			onTrigger: async () => {
+				const app = await App.getApp()
+
 				await app.project.openFile(
 					await app.fileSystem.getFileHandle(filePath)
 				)
 			},
 		}
 	})
-
-	return connectedFilesActions.length > 0
-		? <ISubmenuConfig>{
-				type: 'submenu',
-				icon: 'mdi-spider-web',
-				name: 'actions.viewConnectedFiles.name',
-				description: 'actions.viewConnectedFiles.description',
-
-				actions: [
-					ViewCompilerOutput(fileWrapper.path, false, false),
-					{ type: 'divider' },
-					...connectedFilesActions,
-				],
-		  }
-		: ViewCompilerOutput(fileWrapper.path)
 }
