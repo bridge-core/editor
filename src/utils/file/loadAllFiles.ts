@@ -12,15 +12,16 @@ export async function loadAllFiles(
 	const files: { handle: AnyFileHandle; path: string }[] = []
 
 	for await (const handle of directoryHandle.values()) {
-		if (handle.kind === 'file')
+		if (handle.kind === 'file' && handle.name !== '.DS_Store') {
 			files.push({
 				handle,
 				path: `${path}/${handle.name}`,
 			})
-		else
+		} else if (handle.kind === 'directory') {
 			files.push(
 				...(await loadAllFiles(handle, `${path}/${handle.name}`))
 			)
+		}
 	}
 
 	return files

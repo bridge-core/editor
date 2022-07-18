@@ -6,15 +6,17 @@ import { IDisposable } from '/@/types/disposable'
 import { loadAllFiles } from '/@/utils/file/loadAllFiles'
 
 export async function addFilesToCommandBar(
-	directoryHandle: AnyDirectoryHandle
+	directoryHandle: AnyDirectoryHandle,
+	color?: string
 ) {
 	const files = await loadAllFiles(directoryHandle)
 	let disposables: IDisposable[] = []
 
 	for (const file of files) {
 		const action = new SimpleAction({
-			name: `[${file.path}]`,
 			icon: 'mdi-file-outline',
+			color,
+			name: `[${file.path}]`,
 			description: 'actions.openFile.name',
 			onTrigger: async () => {
 				const app = await App.getApp()

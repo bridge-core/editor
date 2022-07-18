@@ -11,6 +11,8 @@ import ViewProjectComponent from './ViewProject.vue'
 import ProjectHeaderComponent from './ProjectHeader.vue'
 import { showFolderContextMenu } from '/@/components/UIElements/DirectoryViewer/ContextMenu/Folder'
 import { DirectoryWrapper } from '/@/components/UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
+import { IDisposable } from '/@/types/disposable'
+import { addFilesToCommandBar } from '/@/components/CommandBar/AddFiles'
 
 export class ViewComMojangProject extends SidebarContent {
 	component = ViewProjectComponent
@@ -22,6 +24,7 @@ export class ViewComMojangProject extends SidebarContent {
 
 	projectIcon?: string = undefined
 	projectName?: string = undefined
+	disposables: IDisposable[] = []
 
 	protected sidebarElement: SidebarElement
 	protected directoryEntries: Record<string, DirectoryWrapper> = {}
@@ -74,6 +77,13 @@ export class ViewComMojangProject extends SidebarContent {
 			})
 			await wrapper.open()
 
+			addFilesToCommandBar(wrapper.handle, packType.color).then(
+				(disposable) => {
+					if (!this.hasComMojangProjectLoaded) disposable.dispose()
+					else this.disposables.push(disposable)
+				}
+			)
+
 			this.directoryEntries[pack.type] = markRaw(wrapper)
 			if (pack.type === 'behaviorPack') action.select()
 		}
@@ -99,6 +109,9 @@ export class ViewComMojangProject extends SidebarContent {
 
 		// Unselect ViewFolders tab by selecting packExplorer instead
 		App.sidebar.elements.packExplorer.select()
+
+		this.disposables.forEach((d) => d.dispose())
+		this.disposables = []
 	}
 
 	onContentRightClick(event: MouseEvent): void {
