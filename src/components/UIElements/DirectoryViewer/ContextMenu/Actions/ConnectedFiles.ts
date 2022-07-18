@@ -29,16 +29,18 @@ export const ViewConnectedFiles = async (fileWrapper: FileWrapper) => {
 		}
 	})
 
-	return <ISubmenuConfig>{
-		type: 'submenu',
-		icon: 'mdi-spider-web',
-		name: 'actions.viewConnectedFiles.name',
-		description: 'actions.viewConnectedFiles.description',
+	return connectedFilesActions.length > 0
+		? <ISubmenuConfig>{
+				type: 'submenu',
+				icon: 'mdi-spider-web',
+				name: 'actions.viewConnectedFiles.name',
+				description: 'actions.viewConnectedFiles.description',
 
-		actions: [
-			ViewCompilerOutput(fileWrapper.path),
-			{ type: 'divider' },
-			...connectedFilesActions,
-		],
-	}
+				actions: [
+					ViewCompilerOutput(fileWrapper.path, false, false),
+					{ type: 'divider' },
+					...connectedFilesActions,
+				],
+		  }
+		: ViewCompilerOutput(fileWrapper.path)
 }

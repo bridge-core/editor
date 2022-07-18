@@ -4,10 +4,11 @@ import { InformationWindow } from '/@/components/Windows/Common/Information/Info
 
 export const ViewCompilerOutput = (
 	filePath?: string | null,
-	addKeyBinding = false
+	addKeyBinding = false,
+	addViewBeforeName = true
 ) => ({
 	icon: 'mdi-file-cog-outline',
-	name: 'actions.viewCompilerOutput.name',
+	name: `actions.viewCompilerOutput.${addViewBeforeName ? 'view' : 'name'}`,
 	keyBinding: addKeyBinding ? 'Ctrl + Shift + D' : undefined,
 
 	onTrigger: async () => {

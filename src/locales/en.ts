@@ -174,6 +174,7 @@ export default {
 		},
 		viewCompilerOutput: {
 			name: 'Compiler Output',
+			view: 'View Compiler Output',
 			description: 'View the current compiler output for this file',
 			fileMissing: 'It does not look like this file was compiled yet.',
 		},
