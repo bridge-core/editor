@@ -177,6 +177,9 @@ export class PackIndexerService extends TaskService<
 	getFileDiagnostics(filePath: string) {
 		return this.packSpider.getDiagnostics(filePath)
 	}
+	getConnectedFiles(filePath: string) {
+		return this.packSpider.getConnectedFiles(filePath)
+	}
 
 	getSchemasFor(fileType: string, fromFilePath?: string) {
 		return this.lightningStore.getSchemasFor(fileType, fromFilePath)

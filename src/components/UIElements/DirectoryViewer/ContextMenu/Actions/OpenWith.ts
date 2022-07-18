@@ -61,7 +61,6 @@ export const OpenWithAction = async (fileWrapper: FileWrapper) => {
 		type: 'submenu',
 		icon: 'mdi-open-in-app',
 		name: 'actions.openWith.name',
-		description: 'actions.openWith.description',
 
 		actions: [
 			...defaultActions,

@@ -136,6 +136,10 @@ export default {
 			name: 'Download',
 			description: 'Download this file or folder',
 		},
+		viewConnectedFiles: {
+			name: 'View Connected Files',
+			description: 'View all files connected to this file',
+		},
 		open: {
 			name: 'Open',
 			description: 'Open the file in the editor',
@@ -169,9 +173,9 @@ export default {
 			description: 'Duplicate a file',
 		},
 		viewCompilerOutput: {
-			name: 'View Compiler Output',
+			name: 'Compiler Output',
 			description: 'View the current compiler output for this file',
-			fileMissing: "It doesn't look like this file was compiled yet.",
+			fileMissing: 'It does not look like this file was compiled yet.',
 		},
 		revealPath: {
 			name: 'Reveal Path',

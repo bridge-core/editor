@@ -13,6 +13,10 @@ export async function showFileContextMenu(
 	event: MouseEvent,
 	fileWrapper: FileWrapper
 ) {
+	const additionalActions = await fileWrapper.options.provideFileContextMenu?.(
+		fileWrapper
+	)
+
 	showContextMenu(event, [
 		OpenAction(fileWrapper),
 		await OpenWithAction(fileWrapper),
@@ -33,6 +37,6 @@ export async function showFileContextMenu(
 		DownloadAction(fileWrapper),
 		RevealFilePathAction(fileWrapper),
 
-		...(fileWrapper.options.provideFileContextMenu?.(fileWrapper) ?? []),
+		...(additionalActions ?? []),
 	])
 }

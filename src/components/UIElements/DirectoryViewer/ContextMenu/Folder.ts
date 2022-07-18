@@ -26,7 +26,7 @@ export async function showFolderContextMenu(
 		{
 			icon: 'mdi-file-plus-outline',
 			name: 'actions.createFile.name',
-			description: 'actions.createFile.description',
+
 			onTrigger: async () => {
 				const inputWindow = new InputWindow({
 					name: 'actions.createFile.name',
@@ -57,7 +57,7 @@ export async function showFolderContextMenu(
 		{
 			icon: 'mdi-folder-plus-outline',
 			name: 'actions.createFolder.name',
-			description: 'actions.createFolder.description',
+
 			onTrigger: async () => {
 				const inputWindow = new InputWindow({
 					name: 'actions.createFolder.name',
@@ -81,6 +81,10 @@ export async function showFolderContextMenu(
 		await EditAction(directoryWrapper, options),
 	]).filter((action) => action !== null)
 
+	const additionalActions = await directoryWrapper.options.provideDirectoryContextMenu?.(
+		directoryWrapper
+	)
+
 	showContextMenu(event, [
 		...(directoryWrapper.options.isReadOnly
 			? [CopyAction(directoryWrapper)]
@@ -93,8 +97,6 @@ export async function showFolderContextMenu(
 		// 		name: 'Find in Folder',
 		// 		onTrigger: async () => {},
 		// 	},
-		...(directoryWrapper.options.provideDirectoryContextMenu?.(
-			directoryWrapper
-		) ?? []),
+		...(additionalActions ?? []),
 	])
 }

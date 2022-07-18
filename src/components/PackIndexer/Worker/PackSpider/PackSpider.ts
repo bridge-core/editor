@@ -74,6 +74,12 @@ export class PackSpider {
 
 		return packSpiderFile.provideDiagnostics()
 	}
+	getConnectedFiles(filePath: string) {
+		const packSpiderFile = this.packSpiderFiles.get(filePath)
+		if (!packSpiderFile) return []
+
+		return [...packSpiderFile.loadConnected()]
+	}
 
 	async updateFile(filePath: string) {
 		// TODO(Dash): Re-enable pack spider

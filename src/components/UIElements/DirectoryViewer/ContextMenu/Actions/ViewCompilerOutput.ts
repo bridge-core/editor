@@ -8,7 +8,6 @@ export const ViewCompilerOutput = (
 ) => ({
 	icon: 'mdi-file-cog-outline',
 	name: 'actions.viewCompilerOutput.name',
-	description: 'actions.viewCompilerOutput.description',
 	keyBinding: addKeyBinding ? 'Ctrl + Shift + D' : undefined,
 
 	onTrigger: async () => {

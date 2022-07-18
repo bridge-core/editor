@@ -29,12 +29,22 @@
 							}"
 							class="mr-2"
 						>
-							<v-icon color="accent">
+							<v-icon :color="action.color || 'accent'">
 								{{ action.icon }}
 							</v-icon>
 						</v-list-item-icon>
-						<v-list-item-action class="ma-0">
-							{{ t(action.name) }}
+						<v-list-item-action
+							:style="{ alignItems: 'flex-start' }"
+							class="ma-0"
+						>
+							<v-list-item-title
+								:style="{ alignSelf: 'flex-start' }"
+								v-text="t(action.name)"
+							/>
+							<v-list-item-subtitle
+								v-if="action.description"
+								v-text="t(action.description)"
+							/>
 						</v-list-item-action>
 						<v-spacer />
 						<v-icon color="accent">mdi-chevron-right</v-icon>
@@ -58,10 +68,22 @@
 					:style="{ opacity: action.isDisabled ? '38%' : null }"
 					class="mr-2"
 				>
-					<v-icon color="primary">{{ action.icon }}</v-icon>
+					<v-icon :color="action.color || 'accent'">
+						{{ action.icon }}
+					</v-icon>
 				</v-list-item-icon>
-				<v-list-item-action class="ma-0">
-					{{ t(action.name) }}
+				<v-list-item-action
+					:style="{ alignItems: 'flex-start' }"
+					class="ma-0"
+				>
+					<v-list-item-title
+						:style="{ alignSelf: 'flex-start' }"
+						v-text="t(action.name)"
+					/>
+					<v-list-item-subtitle
+						v-if="action.description"
+						v-text="t(action.description)"
+					/>
 				</v-list-item-action>
 			</v-list-item>
 		</template>

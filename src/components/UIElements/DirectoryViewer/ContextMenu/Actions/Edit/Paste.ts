@@ -7,7 +7,7 @@ import { basename, extname } from '/@/utils/path'
 export const PasteAction = (directoryWrapper: DirectoryWrapper) => ({
 	icon: 'mdi-content-paste',
 	name: 'actions.paste.name',
-	description: 'actions.paste.description',
+
 	onTrigger: async () => {
 		if (directoryWrapper.options.isReadOnly) return
 

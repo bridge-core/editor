@@ -8,7 +8,6 @@ export const DownloadAction = (baseWrapper: BaseWrapper<any>) => ({
 			? 'mdi-folder-download-outline'
 			: 'mdi-file-download-outline',
 	name: 'actions.download.name',
-	description: 'actions.download.description',
 	onTrigger: async () => {
 		if (baseWrapper.kind === 'file') {
 			const file: File = await baseWrapper.handle.getFile()

@@ -49,9 +49,11 @@ interface IAnimation {
 	blend_weight?: string
 	start_delay?: string
 	loop_delay?: string
-	bones?: {
-		[key: string]: object
-	} | undefined
+	bones?:
+		| {
+				[key: string]: object
+		  }
+		| undefined
 	sound_effects?: {
 		[key: string]: object
 	}
@@ -121,7 +123,7 @@ export class BBModelImporter extends FileImporter {
 				'textures',
 				folder,
 				texture.folder,
-				`${texture.name}.${extension}`,
+				`${texture.name}.${extension}`
 			)
 
 			// Check whether file already exists
@@ -138,7 +140,7 @@ export class BBModelImporter extends FileImporter {
 
 			const destHandle = await app.project.fileSystem.writeFile(
 				filePath,
-				imageData,
+				imageData
 			)
 			App.eventSystem.dispatch('fileAdded', undefined)
 
@@ -184,7 +186,7 @@ export class BBModelImporter extends FileImporter {
 
 		const destHandle = await app.project.fileSystem.getFileHandle(
 			filePath,
-			true,
+			true
 		)
 
 		await app.project.fileSystem.writeJSON(filePath, entityFile, true)
@@ -214,19 +216,19 @@ export class BBModelImporter extends FileImporter {
 			const cube: ICube = {
 				origin: element.from ? <Vector3D>[...element.from] : undefined,
 				size: element.to.map(
-					(v: number, i: number) => v - element.from[i],
+					(v: number, i: number) => v - element.from[i]
 				),
 				rotation: isRotatedCube
 					? element.rotation.map((rot: number, i: number) =>
-						i === 2 ? rot : -rot,
-					)
+							i === 2 ? rot : -rot
+					  )
 					: undefined,
 				pivot: isRotatedCube
 					? [
-						element.origin[0] * -1,
-						element.origin[1],
-						element.origin[2],
-					]
+							element.origin[0] * -1,
+							element.origin[1],
+							element.origin[2],
+					  ]
 					: undefined,
 				inflate: element.inflate,
 			}
@@ -242,7 +244,7 @@ export class BBModelImporter extends FileImporter {
 				cube.uv = {}
 
 				for (const [faceName, face] of Object.entries<any>(
-					element.faces,
+					element.faces
 				)) {
 					if (face.texture !== null) {
 						cube.uv[faceName] = {
@@ -322,7 +324,7 @@ export class BBModelImporter extends FileImporter {
 	createBones(
 		data: any,
 		cubes: Map<string, ICube>,
-		locators: Map<string, ILocator>,
+		locators: Map<string, ILocator>
 	) {
 		const bones = new Map<string, IBone>()
 
@@ -332,8 +334,8 @@ export class BBModelImporter extends FileImporter {
 					outlinerElement,
 					bones,
 					cubes,
-					locators,
-				),
+					locators
+				)
 			)
 
 		return bones
@@ -353,24 +355,24 @@ export class BBModelImporter extends FileImporter {
 		bones: Map<string, IBone>,
 		cubes: Map<string, ICube>,
 		locators: Map<string, ILocator>,
-		parent?: IBone,
+		parent?: IBone
 	) {
 		const bone: IBone = {
 			name: outlinerElement.name,
 			parent: parent?.name,
 			pivot: outlinerElement.origin
 				? [
-					outlinerElement.origin[0] * -1,
-					outlinerElement.origin[1],
-					outlinerElement.origin[2],
-				]
+						outlinerElement.origin[0] * -1,
+						outlinerElement.origin[1],
+						outlinerElement.origin[2],
+				  ]
 				: undefined,
 			rotation: outlinerElement.rotation
 				? [
-					outlinerElement.rotation[0] * -1,
-					outlinerElement.rotation[1] * -1,
-					outlinerElement.rotation[2],
-				]
+						outlinerElement.rotation[0] * -1,
+						outlinerElement.rotation[1] * -1,
+						outlinerElement.rotation[2],
+				  ]
 				: undefined,
 			binding: outlinerElement.bedrock_binding,
 			mirror: outlinerElement.mirror_uv,
@@ -383,7 +385,7 @@ export class BBModelImporter extends FileImporter {
 			locators: Object.fromEntries(
 				outlinerElement.children
 					.filter(
-						(locatorName: any) => typeof locatorName === 'string',
+						(locatorName: any) => typeof locatorName === 'string'
 					)
 					.map((locatorName: string) => [
 						locatorName,
@@ -392,9 +394,9 @@ export class BBModelImporter extends FileImporter {
 					.filter(
 						([locatorName, locator]: [
 							string,
-								ILocator | undefined
-						]) => locator !== undefined,
-					),
+							ILocator | undefined
+						]) => locator !== undefined
+					)
 			),
 		}
 
@@ -422,18 +424,34 @@ export class BBModelImporter extends FileImporter {
 			let loop = undefined
 			if (animation.loop === 'hold') {
 				loop = 'hold_on_last_frame'
-			} else if (animation.loop === 'loop' || this.getAnimationLength(animation) == 0) {
+			} else if (
+				animation.loop === 'loop' ||
+				this.getAnimationLength(animation) == 0
+			) {
 				loop = true
 			}
 
 			const anim: IAnimation = {
 				loop: loop,
-				animation_length: animation.length ? animation.length : undefined,
-				override_previous_animation: animation.override ? true : undefined,
-				anim_time_update: animation.anim_time_update ? animation.anim_time_update.replace(/\n/g, '') : undefined,
-				blend_weight: animation.blend_weight ? animation.blend_weight.replace(/\n/g, '') : undefined,
-				start_delay: animation.start_delay ? animation.start_delay.replace(/\n/g, '') : undefined,
-				loop_delay: animation.loop_delay && loop ? animation.loop_delay.replace(/\n/g, '') : undefined,
+				animation_length: animation.length
+					? animation.length
+					: undefined,
+				override_previous_animation: animation.override
+					? true
+					: undefined,
+				anim_time_update: animation.anim_time_update
+					? animation.anim_time_update.replace(/\n/g, '')
+					: undefined,
+				blend_weight: animation.blend_weight
+					? animation.blend_weight.replace(/\n/g, '')
+					: undefined,
+				start_delay: animation.start_delay
+					? animation.start_delay.replace(/\n/g, '')
+					: undefined,
+				loop_delay:
+					animation.loop_delay && loop
+						? animation.loop_delay.replace(/\n/g, '')
+						: undefined,
 				bones: <any>{},
 				sound_effects: <any>{},
 				particle_effects: <any>{},
@@ -444,17 +462,32 @@ export class BBModelImporter extends FileImporter {
 				let animator = animation.animators[uuid]
 				if (!animator.keyframes.length) continue
 				if (animator.type === 'effect') {
-					animator.keyframes.filter((kf: any) => kf.channel === 'sound').sort((kf1: any, kf2: any) => (kf1.time - kf2.time)).forEach((kf: any) => {
-						anim.sound_effects![this.getTimecodeString(kf.time)] = this.compileBedrockKeyframe(kf, animator)
-					})
-					animator.keyframes.filter((kf: any) => kf.channel === 'particle').sort((kf1: any, kf2: any) => (kf1.time - kf2.time)).forEach((kf: any) => {
-						anim.particle_effects![this.getTimecodeString(kf.time)] = this.compileBedrockKeyframe(kf, animator)
-					})
-					animator.keyframes.filter((kf: any) => kf.channel === 'timeline').sort((kf1: any, kf2: any) => (kf1.time - kf2.time)).forEach((kf: any) => {
-						anim.timeline![this.getTimecodeString(kf.time)] = this.compileBedrockKeyframe(kf, animator)
-					})
+					animator.keyframes
+						.filter((kf: any) => kf.channel === 'sound')
+						.sort((kf1: any, kf2: any) => kf1.time - kf2.time)
+						.forEach((kf: any) => {
+							anim.sound_effects![
+								this.getTimecodeString(kf.time)
+							] = this.compileBedrockKeyframe(kf, animator)
+						})
+					animator.keyframes
+						.filter((kf: any) => kf.channel === 'particle')
+						.sort((kf1: any, kf2: any) => kf1.time - kf2.time)
+						.forEach((kf: any) => {
+							anim.particle_effects![
+								this.getTimecodeString(kf.time)
+							] = this.compileBedrockKeyframe(kf, animator)
+						})
+					animator.keyframes
+						.filter((kf: any) => kf.channel === 'timeline')
+						.sort((kf1: any, kf2: any) => kf1.time - kf2.time)
+						.forEach((kf: any) => {
+							anim.timeline![
+								this.getTimecodeString(kf.time)
+							] = this.compileBedrockKeyframe(kf, animator)
+						})
 				} else if (animator.type === 'bone') {
-					let bone_tag: any = anim.bones![animator.name] = {}
+					let bone_tag: any = (anim.bones![animator.name] = {})
 					let channels: any = {}
 
 					animator.keyframes.forEach((kf: any) => {
@@ -462,28 +495,56 @@ export class BBModelImporter extends FileImporter {
 							channels[kf.channel] = {}
 						}
 						let timecode = this.getTimecodeString(kf.time)
-						channels[kf.channel][timecode] = this.compileBedrockKeyframe(kf, animator)
+						channels[kf.channel][
+							timecode
+						] = this.compileBedrockKeyframe(kf, animator)
 					})
 
 					//Sorting
-					for (let channel of ['rotation', 'position', 'scale', 'particle', 'sound', 'timeline']) {
+					for (let channel of [
+						'rotation',
+						'position',
+						'scale',
+						'particle',
+						'sound',
+						'timeline',
+					]) {
 						if (channels[channel]) {
 							let timecodes = Object.keys(channels[channel])
-							if (timecodes.length === 1 && animator.keyframes[0].data_points.length == 1 && animator.keyframes[0].interpolation != 'catmullrom') {
-								bone_tag[channel] = channels[channel][timecodes[0]]
-								if (channel === 'scale' &&
-									channels[channel][timecodes[0]] instanceof Array &&
-									channels[channel][timecodes[0]].every((a: any) => a !== channels[channel][timecodes[0]][0])
+							if (
+								timecodes.length === 1 &&
+								animator.keyframes[0].data_points.length == 1 &&
+								animator.keyframes[0].interpolation !=
+									'catmullrom'
+							) {
+								bone_tag[channel] =
+									channels[channel][timecodes[0]]
+								if (
+									channel === 'scale' &&
+									channels[channel][timecodes[0]] instanceof
+										Array &&
+									channels[channel][timecodes[0]].every(
+										(a: any) =>
+											a !==
+											channels[channel][timecodes[0]][0]
+									)
 								) {
-									bone_tag[channel] = channels[channel][timecodes[0]][0]
+									bone_tag[channel] =
+										channels[channel][timecodes[0]][0]
 								}
 							} else {
-								timecodes.sort((a: string, b: string) => parseFloat(a) - parseFloat(b)).forEach((timecode: string) => {
-									if (!bone_tag[channel]) {
-										bone_tag[channel] = {}
-									}
-									bone_tag[channel][timecode] = channels[channel][timecode]
-								})
+								timecodes
+									.sort(
+										(a: string, b: string) =>
+											parseFloat(a) - parseFloat(b)
+									)
+									.forEach((timecode: string) => {
+										if (!bone_tag[channel]) {
+											bone_tag[channel] = {}
+										}
+										bone_tag[channel][timecode] =
+											channels[channel][timecode]
+									})
 							}
 						}
 					}
@@ -505,7 +566,11 @@ export class BBModelImporter extends FileImporter {
 
 			animationFile.animations[animation.name] = anim
 		}
-		const filePath = join('RP', 'animations', model_name + '.animation.json')
+		const filePath = join(
+			'RP',
+			'animations',
+			model_name + '.animation.json'
+		)
 
 		const fileExists = await app.project.fileSystem.fileExists(filePath)
 		if (fileExists) {
@@ -520,7 +585,7 @@ export class BBModelImporter extends FileImporter {
 
 		const destHandle = await app.project.fileSystem.getFileHandle(
 			filePath,
-			true,
+			true
 		)
 
 		await app.project.fileSystem.writeJSON(filePath, animationFile, true)
@@ -538,12 +603,20 @@ export class BBModelImporter extends FileImporter {
 	 * @returns compiled keyframe
 	 */
 	compileBedrockKeyframe(kf: any, animator: any) {
-		if (kf.channel === 'rotation' || kf.channel === 'position' || kf.channel === 'scale') {
+		if (
+			kf.channel === 'rotation' ||
+			kf.channel === 'position' ||
+			kf.channel === 'scale'
+		) {
 			if (kf.interpolation != 'linear' && kf.interpolation != 'step') {
 				let previous = this.getPreviousKeyframe(kf, animator)
-				let include_pre = (!previous && kf.time > 0) || (previous && previous.interpolation == 'catmullrom')
+				let include_pre =
+					(!previous && kf.time > 0) ||
+					(previous && previous.interpolation == 'catmullrom')
 				return {
-					pre: include_pre ? this.getTransformArray(kf, 0) : undefined,
+					pre: include_pre
+						? this.getTransformArray(kf, 0)
+						: undefined,
 					post: this.getTransformArray(kf, include_pre ? 1 : 0),
 					lerp_mode: kf.interpolation,
 				}
@@ -570,14 +643,17 @@ export class BBModelImporter extends FileImporter {
 					scripts.push(...data_point.script.split('\n'))
 				}
 			})
-			scripts = scripts.filter(script => !!script.replace(/[\n\s;.]+/g, ''))
+			scripts = scripts.filter(
+				(script) => !!script.replace(/[\n\s;.]+/g, '')
+			)
 			return scripts.length <= 1 ? scripts[0] : scripts
 		} else {
 			let points: any[] = []
 			kf.data_points.forEach((data_point: any) => {
 				if (data_point.effect) {
 					let script = data_point.script || undefined
-					if (script && !script.replace(/[\n\s;.]+/g, '')) script = undefined
+					if (script && !script.replace(/[\n\s;.]+/g, ''))
+						script = undefined
 					if (script && !script.match(/;$/)) script += ';'
 					points.push({
 						effect: data_point.effect,
@@ -598,7 +674,10 @@ export class BBModelImporter extends FileImporter {
 	 * @returns previous keyframe
 	 */
 	getPreviousKeyframe(kf: any, animator: any) {
-		let keyframes = animator.keyframes.filter((filter: any) => filter.time < kf.time && filter.channel == kf.channel)
+		let keyframes = animator.keyframes.filter(
+			(filter: any) =>
+				filter.time < kf.time && filter.channel == kf.channel
+		)
 		keyframes.sort((a: any, b: any) => b.time - a.time)
 		return keyframes[0]
 	}
@@ -612,7 +691,8 @@ export class BBModelImporter extends FileImporter {
 	 */
 	getTransformArray(kf: any, data_point: number = 0) {
 		function getAxis(kf: any, axis: string, data_point: any) {
-			if (data_point) data_point = clamp(data_point, 0, kf.data_points.length - 1)
+			if (data_point)
+				data_point = clamp(data_point, 0, kf.data_points.length - 1)
 			data_point = kf.data_points[data_point]
 			if (!data_point || !data_point[axis]) {
 				return 0
@@ -647,11 +727,19 @@ export class BBModelImporter extends FileImporter {
 		for (let uuid in animation.animators) {
 			let bone = animation.animators[uuid]
 			let keyframes = bone.keyframes
-			if (keyframes.find((kf: any) => kf.interpolation === 'catmullrom')) {
-				keyframes = keyframes.slice().sort((a: any, b: any) => a.time - b.time)
+			if (
+				keyframes.find((kf: any) => kf.interpolation === 'catmullrom')
+			) {
+				keyframes = keyframes
+					.slice()
+					.sort((a: any, b: any) => a.time - b.time)
 			}
 			keyframes.forEach((kf: any, i: number) => {
-				if (kf.interpolation === 'catmullrom' && i == keyframes.length - 1) return
+				if (
+					kf.interpolation === 'catmullrom' &&
+					i == keyframes.length - 1
+				)
+					return
 				length = Math.max(length, keyframes[i].time)
 			})
 		}
@@ -683,7 +771,7 @@ export class BBModelImporter extends FileImporter {
 		let string = number.toFixed(4)
 		//First regex removes all '0' at the end | Second regex removes the dot at the end if any
 		string = string.replace(/0+$/g, '').replace(/\.$/g, '')
-		if (string === -0) return 0
+		if (string === '-0') return 0
 		return string
 	}
 }

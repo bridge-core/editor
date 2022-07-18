@@ -7,7 +7,6 @@ export const RevealFilePathAction = (baseWrapper: BaseWrapper<any>) => ({
 			? 'mdi-folder-marker-outline'
 			: 'mdi-file-marker-outline',
 	name: 'actions.revealPath.name',
-	description: 'actions.revealPath.description',
 	onTrigger: async () => {
 		new InformationWindow({
 			name: 'actions.revealPath.name',

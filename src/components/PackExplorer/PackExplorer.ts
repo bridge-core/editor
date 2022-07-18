@@ -23,6 +23,7 @@ import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/Di
 import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu/Folder'
 import { ViewCompilerOutput } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ViewCompilerOutput'
 import { IHandleMovedOptions } from '../UIElements/DirectoryViewer/DirectoryStore'
+import { ViewConnectedFiles } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ConnectedFiles'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -96,8 +97,8 @@ export class PackExplorer extends SidebarContent {
 			const wrapper = new DirectoryWrapper(null, handle, {
 				startPath: pack.packPath,
 
-				provideFileContextMenu: (fileWrapper) => [
-					ViewCompilerOutput(fileWrapper.path),
+				provideFileContextMenu: async (fileWrapper) => [
+					await ViewConnectedFiles(fileWrapper),
 				],
 				provideFileDiagnostics: async (fileWrapper) => {
 					const packIndexer = app.project.packIndexer

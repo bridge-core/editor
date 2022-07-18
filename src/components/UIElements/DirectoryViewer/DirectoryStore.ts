@@ -1,10 +1,10 @@
-import { AnyDirectoryHandle, AnyHandle } from '/@/components/FileSystem/Types'
+import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { DirectoryWrapper } from './DirectoryView/DirectoryWrapper'
 import { markRaw } from '@vue/composition-api'
 import type { FileWrapper } from './FileView/FileWrapper'
-import { IActionConfig } from '/@/components/Actions/SimpleAction'
 import type { IFileDiagnostic } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import { VirtualHandle } from '/@/components/FileSystem/Virtual/Handle'
+import { TActionConfig } from '../../ContextMenu/showContextMenu'
 
 export interface IDirectoryViewerOptions {
 	startPath?: string
@@ -29,25 +29,13 @@ export interface IDirectoryViewerOptions {
 	 */
 	provideFileContextMenu?: (
 		fileWrapper: FileWrapper
-	) => (
-		| IActionConfig
-		| {
-				type: 'divider'
-		  }
-		| null
-	)[]
+	) => Promise<TActionConfig[]> | TActionConfig[]
 	/**
 	 * Add new items to the bottom of the directory context menu
 	 */
 	provideDirectoryContextMenu?: (
 		directoryWrapper: DirectoryWrapper
-	) => (
-		| IActionConfig
-		| {
-				type: 'divider'
-		  }
-		| null
-	)[]
+	) => Promise<TActionConfig[]> | TActionConfig[]
 
 	/**
 	 * Show file diagnostics within the directory viewer
