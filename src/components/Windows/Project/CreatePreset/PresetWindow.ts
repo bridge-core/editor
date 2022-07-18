@@ -352,7 +352,7 @@ export class CreatePresetWindow extends BaseWindow {
 
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
-		const fs = app.project!.fileSystem
+		const projectFs = app.project!.fileSystem
 
 		const createdFiles: AnyFileHandle[] = []
 		const permissions: IPermissions = {
@@ -369,7 +369,7 @@ export class CreatePresetWindow extends BaseWindow {
 				createFile[2]?.inject ?? [],
 				this.sidebar.currentState.models
 			)
-			if (await fs.fileExists(filePath)) {
+			if (await projectFs.fileExists(filePath)) {
 				const confirmWindow = new ConfirmationWindow({
 					description: 'windows.createPreset.overwriteFiles',
 					confirmText: 'windows.createPreset.overwriteFilesConfirm',
