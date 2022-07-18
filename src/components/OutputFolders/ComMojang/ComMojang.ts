@@ -1,10 +1,11 @@
 import { del, get, set } from 'idb-keyval'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
-import { FileSystem } from '../../FileSystem/FileSystem'
+import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
-import { AnyDirectoryHandle } from '../../FileSystem/Types'
+import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
+import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
+import { Project } from '/@/components/Projects/Project/Project'
 
 export const comMojangKey = 'comMojangDirectory'
 
@@ -30,22 +31,35 @@ export class ComMojang extends Signal<void> {
 	constructor(protected app: App) {
 		super()
 
-		get<AnyDirectoryHandle | undefined>(comMojangKey).then(
-			async (directoryHandle) => {
-				if (directoryHandle) {
-					await this.requestPermissions(directoryHandle).catch(
-						async () => {
-							// Permission request failed because user activation was too long ago
-							// -> Create window to get new activation
-							await this.createPermissionWindow(directoryHandle)
-						}
-					)
-					if (this._hasComMojang) this.setup.dispatch()
-				}
+		App.eventSystem.on('projectChanged', (project: Project) => {
+			if (project.isVirtualProject) return
 
-				this.dispatch()
-			}
+			this.setupComMojang()
+		})
+	}
+	async setupComMojang() {
+		if (this._hasComMojang) return false
+
+		const directoryHandle = await get<AnyDirectoryHandle | undefined>(
+			comMojangKey
 		)
+
+		if (directoryHandle) {
+			await this.requestPermissions(directoryHandle).catch(async () => {
+				// Permission request failed because user activation was too long ago
+				// -> Create window to get new activation
+				await this.createPermissionWindow(directoryHandle)
+			})
+
+			if (this._hasComMojang) {
+				this.setup.dispatch()
+				this.dispatch()
+				return true
+			}
+		}
+
+		this.dispatch()
+		return false
 	}
 
 	protected async createPermissionWindow(

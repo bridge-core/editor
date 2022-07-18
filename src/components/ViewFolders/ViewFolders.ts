@@ -13,8 +13,8 @@ import { IDisposable } from '/@/types/disposable'
 export interface IViewHandleOptions extends IDirectoryViewerOptions {
 	directoryHandle: AnyDirectoryHandle
 	isDisposed?: boolean
-	disposable: IDisposable | null
-	onDispose: () => void
+	disposable?: IDisposable | null
+	onDispose?: () => void
 }
 export class ViewFolders extends SidebarContent {
 	component = ViewFolderComponent
@@ -28,7 +28,7 @@ export class ViewFolders extends SidebarContent {
 		name: 'general.close',
 		color: 'error',
 		onTrigger: async () => {
-			this.directoryHandles.forEach((handle) => handle.onDispose())
+			this.directoryHandles.forEach((handle) => handle.onDispose?.())
 			this.directoryHandles = []
 
 			this.updateVisibility()
@@ -112,7 +112,7 @@ export class ViewFolders extends SidebarContent {
 			const curr = this.directoryHandles[i]
 			if (await curr.directoryHandle.isSameEntry(<any>directoryHandle)) {
 				this.directoryHandles.splice(i, 1)
-				curr.onDispose()
+				curr.onDispose?.()
 				return
 			}
 		}

@@ -174,11 +174,9 @@ export abstract class Project {
 
 		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
 
-		this.app.comMojang.on(() => {
-			this.createDashService('development').then((service) => {
-				this._compilerService = markRaw(service)
-				this.compilerReady.dispatch()
-			})
+		this.createDashService('development').then((service) => {
+			this._compilerService = markRaw(service)
+			this.compilerReady.dispatch()
 		})
 
 		setTimeout(() => this.onCreate(), 0)
