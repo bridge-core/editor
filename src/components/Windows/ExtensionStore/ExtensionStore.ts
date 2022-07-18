@@ -46,17 +46,18 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 		let extensions: IExtensionManifest[]
 		try {
-			extensions = await fetch(
-				`${this.baseUrl}/extensions.json`
-			).then((resp) => resp.json())
+			extensions = navigator.onLine
+				? await fetch(`${this.baseUrl}/extensions.json`).then((resp) =>
+						resp.json()
+				  )
+				: [...installedExtensions.values()].map((ext) => ext.manifest)
 		} catch {
-			this.close()
-			app.windows.loadingWindow.close()
-			new InformationWindow({
-				description: 'windows.extensionStore.offlineError',
-			})
-			return
+			return this.createOfflineWindow()
 		}
+
+		// User doesn't have local extensions and is offline
+		if (extensions.length === 0 && !navigator.onLine)
+			return this.createOfflineWindow()
 
 		this.extensions = extensions.map(
 			(extension) => new ExtensionViewer(this, extension)
@@ -95,6 +96,15 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 		app.windows.loadingWindow.close()
 		super.open()
+	}
+
+	async createOfflineWindow() {
+		const app = await App.getApp()
+
+		app.windows.loadingWindow.close()
+		new InformationWindow({
+			description: 'windows.extensionStore.offlineError',
+		})
 	}
 
 	close() {
