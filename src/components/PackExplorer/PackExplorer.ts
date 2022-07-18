@@ -213,8 +213,6 @@ export class PackExplorer extends SidebarContent {
 	async showMoreMenu(event: MouseEvent) {
 		const app = await App.getApp()
 
-		const packPath = this.selectedAction?.getConfig()?.id
-
 		showContextMenu(event, [
 			// Add new file
 			{
@@ -234,7 +232,7 @@ export class PackExplorer extends SidebarContent {
 				},
 			},
 			// Restart dev server
-			restartWatchModeConfig,
+			restartWatchModeConfig(false),
 			{ type: 'divider' },
 			{
 				type: 'submenu',

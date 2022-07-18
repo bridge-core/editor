@@ -185,7 +185,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		if (this.isTemporary) {
 			additionalItems.push({
 				name: 'actions.keepInTabSystem.name',
-				description: 'actions.keepInTabSystem.description',
 				icon: 'mdi-pin-outline',
 				onTrigger: () => {
 					this.isTemporary = false
@@ -195,7 +194,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		if (this.parent.tabs.length > 1) {
 			additionalItems.push({
 				name: 'actions.moveToSplitScreen.name',
-				description: 'actions.moveToSplitScreen.description',
 				icon: 'mdi-arrow-split-vertical',
 				onTrigger: async () => {
 					this.toOtherTabSystem()
@@ -210,7 +208,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			...additionalItems,
 			{
 				name: 'actions.closeTab.name',
-				description: 'actions.closeTab.description',
 				icon: 'mdi-close',
 				onTrigger: () => {
 					this.close()
@@ -218,7 +215,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			},
 			{
 				name: 'actions.closeAll.name',
-				description: 'actions.closeAll.description',
 				icon: 'mdi-table-row',
 				onTrigger: () => {
 					this.parent.closeTabs(() => true)
@@ -226,7 +222,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			},
 			{
 				name: 'actions.closeTabsToRight.name',
-				description: 'actions.closeTabsToRight.description',
 				icon: 'mdi-chevron-right',
 				onTrigger: () => {
 					let closeTabs = true
@@ -238,7 +233,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			},
 			{
 				name: 'actions.closeAllSaved.name',
-				description: 'actions.closeAllSaved.description',
 				icon: 'mdi-content-save-outline',
 				onTrigger: () => {
 					this.parent.closeTabs((tab) => !tab.isUnsaved)
@@ -246,7 +240,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			},
 			{
 				name: 'actions.closeOtherTabs.name',
-				description: 'actions.closeOtherTabs.description',
 				icon: 'mdi-unfold-more-vertical',
 				onTrigger: () => {
 					this.parent.closeTabs((tab) => tab !== this)
