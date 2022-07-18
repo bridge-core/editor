@@ -1,9 +1,10 @@
-import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
+import { AnyDirectoryHandle, AnyHandle } from '/@/components/FileSystem/Types'
 import { DirectoryWrapper } from './DirectoryView/DirectoryWrapper'
 import { markRaw } from '@vue/composition-api'
 import type { FileWrapper } from './FileView/FileWrapper'
 import { IActionConfig } from '/@/components/Actions/SimpleAction'
 import type { IFileDiagnostic } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
+import { VirtualHandle } from '/@/components/FileSystem/Virtual/Handle'
 
 export interface IDirectoryViewerOptions {
 	startPath?: string
@@ -59,6 +60,7 @@ export interface IDirectoryViewerOptions {
 interface IMoveOptions {
 	fromPath: string
 	toPath: string
+	movedHandled: FileSystemHandle | VirtualHandle
 	fromHandle: AnyDirectoryHandle
 	toHandle: AnyDirectoryHandle
 }

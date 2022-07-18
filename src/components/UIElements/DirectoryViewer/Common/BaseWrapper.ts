@@ -142,6 +142,7 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 
 		// Call onHandleMoved
 		this.options.onHandleMoved?.({
+			movedHandled: this.handle,
 			fromHandle: this.parent.handle,
 			fromPath,
 			toPath: this.path!,
@@ -189,6 +190,7 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 
 		// Call onHandleMoved
 		this.options.onHandleMoved?.({
+			movedHandled: this.handle,
 			fromHandle: fromParent.handle,
 			fromPath,
 			toPath: this.path!,
