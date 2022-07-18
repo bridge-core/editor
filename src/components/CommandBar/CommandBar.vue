@@ -56,6 +56,7 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { CommandBarExtensionItems } from '../Extensions/Scripts/Modules/CommandBar'
 import { getDefaultFileIcon } from '/@/utils/file/getIcon'
 import { devActions } from '../Developer/Actions'
+import { getCommandBarActions } from './State'
 
 export default {
 	mixins: [TranslationMixin],
@@ -99,6 +100,7 @@ export default {
 				...this.baseActions,
 				...this.fileActions,
 				...this.extensionActions,
+				...getCommandBarActions(),
 			]
 		},
 	},
