@@ -59,6 +59,18 @@ const devActionConfigs: IActionConfig[] = [
 		},
 	},
 	{
+		icon: 'mdi-database-outline',
+		name: '[Dev: Open data directory]',
+		description: '[Open the data directory within the editor]',
+		onTrigger: async () => {
+			const app = await App.getApp()
+
+			app.viewFolders.addDirectoryHandle({
+				directoryHandle: app.dataLoader.baseDirectory,
+			})
+		},
+	},
+	{
 		icon: 'mdi-minecraft',
 		name: '[Dev: Open com.mojang]',
 		description: '[Open the com.mojang folder within the editor]',
