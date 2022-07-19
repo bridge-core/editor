@@ -9,6 +9,7 @@ import { IDirectoryViewerOptions } from '../UIElements/DirectoryViewer/Directory
 import ViewFolderComponent from './ViewFolders.vue'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
+import { isSameEntry } from '/@/utils/file/isSameEntry'
 
 export interface IViewHandleOptions extends IDirectoryViewerOptions {
 	directoryHandle: AnyDirectoryHandle
@@ -121,7 +122,7 @@ export class ViewFolders extends SidebarContent {
 	}
 	async hasDirectoryHandle(directoryHandle: AnyDirectoryHandle) {
 		for (const { directoryHandle: currHandle } of this.directoryHandles) {
-			if (await currHandle.isSameEntry(<any>directoryHandle)) return true
+			if (await isSameEntry(currHandle, directoryHandle)) return true
 		}
 
 		return false
