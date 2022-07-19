@@ -1,5 +1,6 @@
 <template>
 	<v-tooltip
+		v-if="!isUsingFileSystemPolyfill"
 		:disabled="availableWidth > 220"
 		:color="color ? color : 'tooltip'"
 		right
@@ -49,6 +50,7 @@
 import { get } from 'idb-keyval'
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 
 export default {
 	mixins: [TranslationMixin],
@@ -57,6 +59,9 @@ export default {
 			default: 'primary',
 			type: String,
 		},
+	},
+	setup() {
+		return { isUsingFileSystemPolyfill }
 	},
 	async mounted() {
 		const app = await App.getApp()

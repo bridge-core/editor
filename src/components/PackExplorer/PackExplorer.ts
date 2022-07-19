@@ -21,7 +21,6 @@ import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
 import { Project } from '../Projects/Project/Project'
 import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
 import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu/Folder'
-import { ViewCompilerOutput } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ViewCompilerOutput'
 import { IHandleMovedOptions } from '../UIElements/DirectoryViewer/DirectoryStore'
 import { ViewConnectedFiles } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ConnectedFiles'
 

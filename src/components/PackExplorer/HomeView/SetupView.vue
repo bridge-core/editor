@@ -1,6 +1,6 @@
 <template>
 	<div style="overflow: hidden">
-		<BridgeFolderBtn v-if="!isUsingFileSystemPolyfill" />
+		<BridgeFolderBtn />
 		<CreateProjectBtn color="success" />
 
 		<BridgeSheet dark class="pa-2 mb-2 d-flex flex-column">

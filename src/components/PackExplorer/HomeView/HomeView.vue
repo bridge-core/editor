@@ -1,10 +1,10 @@
 <template>
 	<div class="pa-2">
 		<v-progress-linear v-if="isLoading" indeterminate />
-		<NoProjects v-else-if="projectData.length === 0" />
+		<SetupView v-else-if="projectData.length === 0" />
 
 		<template v-else>
-			<BridgeFolderBtn v-if="!isUsingFileSystemPolyfill" />
+			<BridgeFolderBtn />
 			<CreateProjectBtn />
 
 			<v-slide-y-transition class="py-0" group>
@@ -26,7 +26,7 @@
 import { App } from '/@/App'
 import CreateProjectBtn from './CreateProjectBtn.vue'
 import BridgeFolderBtn from './BridgeFolderBtn.vue'
-import NoProjects from './NoProjects.vue'
+import SetupView from './SetupView.vue'
 import Project from './Project.vue'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 
@@ -34,7 +34,7 @@ export default {
 	components: {
 		CreateProjectBtn,
 		BridgeFolderBtn,
-		NoProjects,
+		SetupView,
 		Project,
 	},
 	setup() {
