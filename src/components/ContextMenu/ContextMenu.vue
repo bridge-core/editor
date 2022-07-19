@@ -10,6 +10,7 @@
 		transition="context-menu-transition"
 		:offset-overflow="false"
 		:close-on-click="contextMenu.mayCloseOnClickOutside"
+		:close-on-content-click="false"
 	>
 		<ContextMenuList @click="isVisible = false" :actions="actions" />
 	</v-menu>

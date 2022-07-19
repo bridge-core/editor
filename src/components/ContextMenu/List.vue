@@ -57,7 +57,11 @@
 				/>
 			</v-menu>
 
-			<v-list-item v-else-if="action.type === 'header'" :key="id">
+			<v-list-item
+				v-else-if="action.type === 'section'"
+				:key="id"
+				@click="toggleSection(id)"
+			>
 				<v-list-item-icon
 					:style="{ opacity: action.isDisabled ? '38%' : null }"
 					class="mr-2"
@@ -67,6 +71,14 @@
 					</v-icon>
 				</v-list-item-icon>
 				<v-list-item-title v-text="t(action.name)" />
+				<v-spacer />
+				<v-icon small>
+					{{
+						id === openSection
+							? 'mdi-chevron-down'
+							: 'mdi-chevron-right'
+					}}
+				</v-icon>
 			</v-list-item>
 
 			<!-- Normal menu item -->
@@ -118,6 +130,9 @@ export default {
 			required: true,
 		},
 	},
+	data: () => ({
+		openSection: null,
+	}),
 	setup() {
 		return {
 			pointerDevice,
@@ -138,18 +153,19 @@ export default {
 
 				entries.push([
 					key,
-					{ type: 'header', icon: action.icon, name: action.name },
+					{ type: 'section', icon: action.icon, name: action.name },
 				])
-				entries.push(
-					...Object.entries(
-						action.submenu.state
-					).map(([key, action]) => [
-						key,
-						action.type === 'action'
-							? action.withPadding()
-							: action,
-					])
-				)
+				if (this.openSection === key)
+					entries.push(
+						...Object.entries(
+							action.submenu.state
+						).map(([key, action]) => [
+							key,
+							action.type === 'action'
+								? action.withPadding()
+								: action,
+						])
+					)
 			}
 
 			return Object.fromEntries(entries)
@@ -159,6 +175,10 @@ export default {
 		onClick(action) {
 			this.$emit('click')
 			action.trigger()
+		},
+		toggleSection(id) {
+			if (this.openSection === id) this.openSection = null
+			else this.openSection = id
 		},
 	},
 }
