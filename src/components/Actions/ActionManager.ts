@@ -43,6 +43,9 @@ export class ActionManager {
 			(action) => action.type === 'action'
 		)
 	}
+	getAllElements() {
+		return Object.values(this.state)
+	}
 
 	/**
 	 * This is used by some classes that use an action manager as an abstraction to render action lists.

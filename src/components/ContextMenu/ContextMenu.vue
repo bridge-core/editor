@@ -1,12 +1,14 @@
 <template>
 	<v-menu
 		v-model="isVisible"
-		:position-x="contextMenu.position.x"
-		:position-y="contextMenu.position.y"
+		ref="menu"
+		:position-x="x"
+		:position-y="y"
 		rounded="lg"
 		absolute
 		offset-y
 		transition="context-menu-transition"
+		:offset-overflow="false"
 		:close-on-click="contextMenu.mayCloseOnClickOutside"
 	>
 		<ContextMenuList @click="isVisible = false" :actions="actions" />
@@ -28,12 +30,26 @@ export default {
 	mixins: [TranslationMixin],
 	props: {
 		contextMenu: Object,
+		windowHeight: Number,
 	},
 	data: () => ({
 		shouldRender: false,
 		timeoutId: null,
 	}),
 	computed: {
+		x() {
+			return this.contextMenu.position.x
+		},
+		y() {
+			const lowestY =
+				this.contextMenu.position.y + this.contextMenu.menuHeight
+			if (lowestY > this.windowHeight) {
+				const offset = this.windowHeight - lowestY
+
+				return this.contextMenu.position.y - offset
+			}
+			return this.contextMenu.position.y
+		},
 		isVisible: {
 			set(val) {
 				this.contextMenu.isVisible = val

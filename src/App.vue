@@ -96,7 +96,11 @@
 			<!--  -->
 		</v-main>
 
-		<ContextMenu v-if="contextMenu" :contextMenu="contextMenu" />
+		<ContextMenu
+			v-if="contextMenu"
+			:contextMenu="contextMenu"
+			:windowHeight="windowSize.currentHeight"
+		/>
 	</v-app>
 </template>
 
