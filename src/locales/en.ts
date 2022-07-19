@@ -261,6 +261,10 @@ export default {
 			name: 'Open bedrock.dev',
 			description: 'Opens the Minecraft Add-On documentation',
 		},
+		minecraftDocs: {
+			name: 'Open Minecraft Documentation',
+			description: 'Opens the Minecraft Bedrock Add-On documentation',
+		},
 		releases: {
 			name: 'Releases',
 			description: 'View the latest bridge. releases',
