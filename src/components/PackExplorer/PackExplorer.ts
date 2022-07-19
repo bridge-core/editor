@@ -283,6 +283,9 @@ export class PackExplorer extends SidebarContent {
 				onTrigger: async () => {
 					app.viewFolders.addDirectoryHandle({
 						directoryHandle: app.project.baseDirectory,
+						startPath: app.project.projectPath,
+
+						onHandleMoved: (options) => this.onHandleMoved(options),
 					})
 				},
 			},
