@@ -16,7 +16,7 @@ import {
 	exportAsMctemplate,
 } from '/@/components/Projects/Export/AsMctemplate'
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
-import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
+import { searchType } from '../FindAndReplace/Controls/searchType'
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
 import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
 import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu/Folder'
@@ -168,26 +168,9 @@ export class PackExplorer extends SidebarContent {
 				name: 'actions.findInFolder.name',
 				description: 'actions.findInFolder.description',
 				onTrigger: () => {
-					const config = project.app.projectConfig
-					const packTypes: { [key: string]: string } = {
-						BP: config.resolvePackPath('behaviorPack'),
-						RP: config.resolvePackPath('resourcePack'),
-						SP: config.resolvePackPath('skinPack'),
-						WT: config.resolvePackPath('worldTemplate'),
-					}
-					let pathPackType = 'BP'
-					for (const packType of Object.keys(packTypes)) {
-						if (path.includes(packTypes[packType]))
-							pathPackType = packType
-					}
 					project.tabSystem?.add(
-						new FindAndReplaceTab(project.tabSystem!, {
-							searchType: ESearchType.matchCase,
-							includeFiles: path.replace(
-								packTypes[pathPackType],
-								pathPackType
-							),
-							excludeFiles: '',
+						new FindAndReplaceTab(project.tabSystem!, undefined, {
+							searchType: searchType.matchCase,
 						})
 					)
 				},

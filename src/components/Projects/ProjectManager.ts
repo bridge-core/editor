@@ -180,6 +180,8 @@ export class ProjectManager extends Signal<void> {
 			)
 		}
 
+		if (!this.app.comMojang.hasFired) this.app.comMojang.setupComMojang()
+
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName
 		App.eventSystem.dispatch('disableValidation', null)
@@ -197,10 +199,10 @@ export class ProjectManager extends Signal<void> {
 	}
 	async selectLastProject() {
 		await this.fired
-		if (isUsingFileSystemPolyfill.value) {
+		if (isUsingFileSystemPolyfill.value || import.meta.env.DEV) {
 			const selectedProject = await idbGet('selectedProject')
 			if (typeof selectedProject === 'string')
-				return await this.selectProject(selectedProject, true)
+				return this.selectProject(selectedProject, true)
 		}
 		await this.selectProject(virtualProjectName)
 	}

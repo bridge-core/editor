@@ -157,7 +157,7 @@ export abstract class FileTab extends Tab {
 		// Current file handle is a virtual file without parent
 		if (
 			this.fileHandle instanceof VirtualFileHandle &&
-			this.fileHandle.getParent() === null
+			!this.fileHandle.hasParentContext
 		) {
 			// Download the file if the user is using a file system polyfill
 			if (isUsingFileSystemPolyfill.value) {

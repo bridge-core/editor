@@ -2,6 +2,7 @@ import { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
 import { DownloadAction } from './Actions/Download'
 import { EditAction } from './Actions/Edit'
 import { CopyAction } from './Actions/Edit/Copy'
+import { FindInFolderAction } from './Actions/FindInFolder'
 import { RevealFilePathAction } from './Actions/RevealPath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
@@ -77,6 +78,7 @@ export async function showFolderContextMenu(
 				directoryWrapper.refresh()
 			},
 		},
+		FindInFolderAction(directoryWrapper),
 		{ type: 'divider' },
 		await EditAction(directoryWrapper, options),
 	]).filter((action) => action !== null)
@@ -87,7 +89,10 @@ export async function showFolderContextMenu(
 
 	showContextMenu(event, [
 		...(directoryWrapper.options.isReadOnly
-			? [CopyAction(directoryWrapper)]
+			? [
+					FindInFolderAction(directoryWrapper),
+					CopyAction(directoryWrapper),
+			  ]
 			: mutatingActions),
 		{ type: 'divider' },
 		DownloadAction(directoryWrapper),

@@ -112,9 +112,7 @@ export class PackIndexer extends WorkerManager<
 		return res
 	}
 	async updateFiles(filePaths: string[], hotUpdate = false) {
-		console.log('Scheduling file update')
 		await this.isPackIndexerFree.lock()
-		console.log('Updating file')
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
 		const anyFileChanged = await this.service.updateFiles(

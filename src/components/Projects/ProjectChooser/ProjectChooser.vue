@@ -237,8 +237,6 @@ export default {
 		async onSelectProject() {
 			const app = await App.getApp()
 
-			if (!app.comMojang.hasFired) app.comMojang.setupComMojang()
-
 			if (this.isComMojangProject) {
 				await app.projectManager.selectProject(virtualProjectName)
 				app.viewComMojangProject.loadComMojangProject(

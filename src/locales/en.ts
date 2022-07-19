@@ -1102,6 +1102,7 @@ export default {
 	},
 	findAndReplace: {
 		name: 'Find & Replace',
+		findOnly: 'Find',
 		search: 'Search',
 		replace: 'Replace',
 		replaceAll: 'Replace All',

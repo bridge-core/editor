@@ -144,6 +144,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	}
 	serialize(): ISerializedDirectoryHandle {
 		return {
+			idbWrapper: this.idbWrapper.storeName,
 			kind: 'directory',
 			name: this.name,
 			path: this.path,
@@ -159,7 +160,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		parent: VirtualDirectoryHandle | null = null
 	) {
 		const dir = new VirtualDirectoryHandle(
-			parent,
+			!parent ? new IDBWrapper(data.idbWrapper) : parent,
 			data.name,
 			undefined,
 			false,

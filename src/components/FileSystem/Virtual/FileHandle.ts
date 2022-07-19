@@ -40,9 +40,10 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		parent: VirtualDirectoryHandle | IDBWrapper | null,
 		name: string,
 		data?: Uint8Array,
-		protected inMemory = false
+		protected inMemory = false,
+		path?: string[]
 	) {
-		super(parent, name)
+		super(parent, name, path)
 		if (data) this.setup(data)
 		else this.setupDone.dispatch()
 	}
@@ -81,10 +82,21 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	}
 	serialize(): ISerializedFileHandle {
 		return {
+			idbWrapper: this.idbWrapper.storeName,
 			kind: 'file',
 			name: this.name,
+			path: this.path,
 			fileData: this.fileData,
 		}
+	}
+	static deserialize(data: ISerializedFileHandle) {
+		return new VirtualFileHandle(
+			data.idbWrapper ? new IDBWrapper(data.idbWrapper) : null,
+			data.name,
+			data.fileData,
+			data.fileData !== undefined,
+			data.path
+		)
 	}
 
 	override async isSameEntry(other: BaseVirtualHandle): Promise<boolean> {

@@ -105,8 +105,6 @@ export default {
 				if (!wasSuccessful) return
 			}
 
-			if (!app.comMojang.hasFired) app.comMojang.setupComMojang()
-
 			await app.projectManager.selectProject(name, true)
 		},
 
