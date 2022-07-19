@@ -1,6 +1,6 @@
 <template>
 	<v-list color="menu" dense>
-		<template v-for="(action, id) in actions">
+		<template v-for="(action, id) in renderActions">
 			<!-- Divider -->
 			<v-divider v-if="action.type === 'divider'" :key="id" />
 
@@ -57,11 +57,26 @@
 				/>
 			</v-menu>
 
+			<v-list-item v-else-if="action.type === 'header'" :key="id">
+				<v-list-item-icon
+					:style="{ opacity: action.isDisabled ? '38%' : null }"
+					class="mr-2"
+				>
+					<v-icon :color="action.color || 'accent'">
+						{{ action.icon }}
+					</v-icon>
+				</v-list-item-icon>
+				<v-list-item-title v-text="t(action.name)" />
+			</v-list-item>
+
 			<!-- Normal menu item -->
 			<v-list-item
 				v-else
 				:key="id"
 				:disabled="action.isDisabled"
+				:class="{
+					'pl-6': action.addPadding,
+				}"
 				@click="onClick(action)"
 			>
 				<v-list-item-icon
@@ -92,6 +107,7 @@
 
 <script>
 import { TranslationMixin } from '../Mixins/TranslationMixin'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
 	name: 'ContextMenuList',
@@ -100,6 +116,44 @@ export default {
 		actions: {
 			type: Object,
 			required: true,
+		},
+	},
+	setup() {
+		return {
+			pointerDevice,
+		}
+	},
+	computed: {
+		renderActions() {
+			console.log(this.actions, this.pointerDevice)
+			const entries = []
+
+			for (const [key, action] of Object.entries(this.actions)) {
+				if (
+					action.type !== 'submenu' ||
+					this.pointerDevice !== 'touch'
+				) {
+					entries.push([key, action])
+					continue
+				}
+
+				entries.push([
+					key,
+					{ type: 'header', icon: action.icon, name: action.name },
+				])
+				entries.push(
+					...Object.entries(
+						action.submenu.state
+					).map(([key, action]) => [
+						key,
+						action.type === 'action'
+							? action.withPadding()
+							: action,
+					])
+				)
+			}
+
+			return Object.fromEntries(entries)
 		},
 	},
 	methods: {

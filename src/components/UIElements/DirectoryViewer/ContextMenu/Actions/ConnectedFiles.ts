@@ -7,16 +7,19 @@ import { basename } from '/@/utils/path'
 export const ViewConnectedFiles = async (fileWrapper: FileWrapper) => {
 	if (!fileWrapper.path) return null
 	const app = await App.getApp()
+	const packIndexer = app.project.packIndexer
 
 	const connectedFiles = createSimpleActions(
-		await app.project.packIndexer.service.getConnectedFiles(
-			fileWrapper.path
-		)
+		packIndexer.hasFired
+			? await packIndexer.service.getConnectedFiles(fileWrapper.path)
+			: []
 	)
 
-	const compilerFiles = await app.project.compilerService.getFileDependencies(
-		fileWrapper.path
-	)
+	const compilerFiles = app.project.compilerReady.hasFired
+		? await app.project.compilerService.getFileDependencies(
+				fileWrapper.path
+		  )
+		: []
 	const compilerFileActions = [
 		ViewCompilerOutput(fileWrapper.path, false, false),
 	].concat(createSimpleActions(compilerFiles))
