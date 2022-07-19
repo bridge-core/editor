@@ -123,7 +123,11 @@ export class PackSpiderFile {
 		])
 	}
 
-	loadDirectReferences() {
+	/**
+	 * Load direct references from the cache to files such as loot table or texture path
+	 * @returns Set<string>
+	 */
+	protected loadDirectReferences() {
 		return new Set(
 			<string[]>this.instructions.includeFiles
 				?.map((cacheKey) => {
@@ -133,7 +137,13 @@ export class PackSpiderFile {
 		)
 	}
 
-	loadConnected(connect = this.instructions.connect) {
+	/**
+	 * Load files that can be connected to this file via a matching cache value
+	 * Examples: Client entity identifier <-> server entity identifier
+	 * @param connect Instructions on which files to connect
+	 * @returns Set<string>
+	 */
+	protected loadConnected(connect = this.instructions.connect) {
 		const connectedFiles = new Set<string>()
 
 		for (let { find, where, matches, shouldFindMultiple } of connect ??

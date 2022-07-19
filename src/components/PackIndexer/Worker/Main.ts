@@ -119,20 +119,36 @@ export class PackIndexerService extends TaskService<
 			if (!hotUpdate) await this.lightningStore.saveStore(false)
 			await this.packSpider.updateFile(filePath)
 		}
+
+		return fileDidChange
 	}
 	async updateFiles(filePaths: string[], hotUpdate = false) {
+		console.log('Update: ', filePaths.join(', '))
+		let anyFileChanged = false
 		for (let i = 0; i < filePaths.length; i++) {
-			await this.updateFile(filePaths[i], undefined, false, false)
+			const fileDidChange = await this.updateFile(
+				filePaths[i],
+				undefined,
+				false,
+				false
+			)
+			if (fileDidChange) anyFileChanged = true
 		}
 
-		if (!hotUpdate) await this.lightningStore.saveStore(false)
+		if (!hotUpdate && anyFileChanged)
+			await this.lightningStore.saveStore(false)
+
+		return anyFileChanged
 	}
 	hasFile(filePath: string) {
 		return this.lightningStore.has(filePath)
 	}
 
-	unlink(path: string) {
-		return this.lightningCache.unlink(path)
+	unlinkFile(path: string, saveCache = true) {
+		return this.lightningCache.unlinkFile(path, saveCache)
+	}
+	saveCache() {
+		return this.lightningStore.saveStore(false)
 	}
 
 	updatePlugins(pluginFileTypes: IFileType[]) {

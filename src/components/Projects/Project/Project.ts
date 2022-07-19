@@ -394,42 +394,39 @@ export abstract class Project {
 		await this.updateFiles(files)
 	}
 	async updateFile(filePath: string) {
-		// We already have a check for foreign files inside of the TabSystem.save(...) function
-		// but there are a lot of sources that call updateFile(...)
-		try {
-			await this.app.fileSystem.getFileHandle(filePath)
-		} catch {
-			// This is a foreign file, don't process it
-			return
-		}
-
-		await Promise.all([
+		const [anyFileChanged] = await Promise.all([
 			this.packIndexer.updateFile(filePath),
 			this.watchModeActive
 				? this.compilerService.updateFiles([filePath])
 				: Promise.resolve(),
 		])
 
-		await this.jsonDefaults.updateDynamicSchemas(filePath)
+		if (anyFileChanged)
+			await this.jsonDefaults.updateDynamicSchemas(filePath)
 	}
 	async updateFiles(filePaths: string[]) {
-		await this.packIndexer.updateFiles(filePaths)
+		const anyFileChanged = await this.packIndexer.updateFiles(filePaths)
 
 		if (this.watchModeActive)
 			await this.compilerService.updateFiles(filePaths)
 
-		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
+		if (anyFileChanged)
+			await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 	async unlinkFile(filePath: string) {
 		await this.unlinkFiles([filePath])
 	}
 	async unlinkFiles(filePaths: string[]) {
 		await Promise.allSettled([
-			...filePaths.map((filePath) => this.packIndexer.unlink(filePath)),
+			...filePaths.map((filePath) =>
+				this.packIndexer.unlinkFile(filePath, false)
+			),
 			...filePaths.map((filePath) =>
 				this.app.fileSystem.unlink(filePath)
 			),
 		])
+
+		await this.packIndexer.saveCache()
 
 		if (this.watchModeActive)
 			await this.compilerService.unlinkMultiple(filePaths)
@@ -475,7 +472,12 @@ export abstract class Project {
 		return true
 	}
 	async onMovedFile(fromPath: string, toPath: string) {
-		await this.compilerService.rename(fromPath, toPath)
+		await Promise.all([
+			this.compilerService.rename(fromPath, toPath),
+			this.packIndexer.rename(fromPath, toPath),
+		])
+
+		await this.jsonDefaults.updateDynamicSchemas(toPath)
 	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()

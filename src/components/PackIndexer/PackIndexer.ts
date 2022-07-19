@@ -81,12 +81,24 @@ export class PackIndexer extends WorkerManager<
 		await this.isPackIndexerFree.lock()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
-		await this.service.updateFile(
+		const anyFileChanged = await this.service.updateFile(
 			filePath,
 			fileContent,
 			isForeignFile,
 			hotUpdate
 		)
+
+		this.isPackIndexerFree.unlock()
+		return anyFileChanged
+	}
+	async rename(fromPath: string, toPath: string) {
+		await this.isPackIndexerFree.lock()
+
+		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
+
+		await this.service.unlinkFile(fromPath, false)
+		await this.service.updateFile(toPath, undefined, undefined, true)
+		await this.service.saveCache()
 
 		this.isPackIndexerFree.unlock()
 	}
@@ -100,19 +112,32 @@ export class PackIndexer extends WorkerManager<
 		return res
 	}
 	async updateFiles(filePaths: string[], hotUpdate = false) {
+		console.log('Scheduling file update')
+		await this.isPackIndexerFree.lock()
+		console.log('Updating file')
+
+		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
+		const anyFileChanged = await this.service.updateFiles(
+			filePaths,
+			hotUpdate
+		)
+
+		this.isPackIndexerFree.unlock()
+		return anyFileChanged
+	}
+	async unlinkFile(path: string, saveCache = true) {
 		await this.isPackIndexerFree.lock()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
-		await this.service.updateFiles(filePaths, hotUpdate)
+
+		await this.service.unlinkFile(path, saveCache)
 
 		this.isPackIndexerFree.unlock()
 	}
-	async unlink(path: string) {
+	async saveCache() {
 		await this.isPackIndexerFree.lock()
 
-		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
-
-		await this.service.unlink(path)
+		await this.service.saveCache()
 
 		this.isPackIndexerFree.unlock()
 	}

@@ -142,6 +142,7 @@ export class LightningStore {
 
 		delete this.store![fileType][filePath]
 	}
+
 	setVisited(
 		filePath: string,
 		visited: boolean,
