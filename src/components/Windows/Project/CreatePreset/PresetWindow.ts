@@ -479,7 +479,7 @@ export class CreatePresetWindow extends BaseWindow {
 				})
 		}
 
-		await app.project.updateFiles(filePaths)
+		app.project.updateFiles(filePaths)
 
 		// Reset preset inputs
 		if (this.sidebar.currentElement instanceof PresetItem)
