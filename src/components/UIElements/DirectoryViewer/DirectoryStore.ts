@@ -5,6 +5,7 @@ import type { FileWrapper } from './FileView/FileWrapper'
 import type { IFileDiagnostic } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import { VirtualHandle } from '/@/components/FileSystem/Virtual/Handle'
 import { TActionConfig } from '../../ContextMenu/showContextMenu'
+import { isSameEntry } from '/@/utils/file/isSameEntry'
 
 export interface IDirectoryViewerOptions {
 	startPath?: string
@@ -60,8 +61,7 @@ export class DirectoryStore {
 		directoryHandle: AnyDirectoryHandle
 	) {
 		for (const [currDirhandle, currWrapper] of this.cache.entries()) {
-			// @ts-ignore
-			if (await currDirhandle.isSameEntry(directoryHandle)) {
+			if (await isSameEntry(currDirhandle, directoryHandle)) {
 				await currWrapper.refresh()
 				return currWrapper
 			}
