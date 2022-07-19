@@ -135,6 +135,8 @@ export class TabSystem extends MonacoHolder {
 			}
 		}
 
+		if (!tab.hasFired) await tab.fired
+
 		this.tabs = [...this.tabs, tab]
 		if (!tab.isForeignFile && !(tab instanceof FileTab && tab.isReadOnly))
 			await this.openedFiles.add(tab.getPath())

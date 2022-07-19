@@ -97,6 +97,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		)
 	}
 	get iconColor() {
+		if (!this.hasFired) return 'accent'
 		return App.packType.get(this.getPath())?.color
 	}
 
