@@ -12,9 +12,11 @@
 			tabindex="-1"
 			@pointerdown="onTouchStart($event)"
 			@pointerup="onTouchEnd"
+			@pointermove="onTouchEnd"
+			@pointercancel="onTouchEnd"
 		>
 			<v-icon
-				class="mr-1"
+				class="mr-1 open-state-icon"
 				:style="{
 					position: 'relative',
 					opacity: tree.hasChildren ? null : '60%',
@@ -89,15 +91,16 @@ export default {
 	setup(props) {
 		const { onTouchStart, onTouchEnd } = useLongPress(
 			(event) => {
-				if (pointerDevice.value === 'touch')
-					props.treeEditor.onContextMenu(event, props.tree)
+				// if (pointerDevice.value === 'touch')
+				props.treeEditor.onContextMenu(event, props.tree)
 			},
 			null,
 			() => {
 				props.treeEditor.parent.app.contextMenu.setMayCloseOnClickOutside(
 					true
 				)
-			}
+			},
+			800
 		)
 
 		return {
@@ -144,13 +147,13 @@ export default {
 	display: inline-block;
 	outline: none;
 }
-.common-tree-key .v-icon {
+.common-tree-key .open-state-icon {
 	position: relative;
 	top: -2px;
 	transition: transform 0.1s ease-in-out;
 	transform: rotate(0deg);
 }
-.common-tree-key.open .v-icon {
+.common-tree-key.open .open-state-icon {
 	transform: rotate(90deg);
 }
 </style>

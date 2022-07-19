@@ -52,6 +52,8 @@
 			"
 			@pointerdown.native="onTouchStart($event)"
 			@pointerup.native="onTouchEnd"
+			@pointermove="onTouchEnd"
+			@pointercancel="onTouchEnd"
 		>
 			{{ treeValue }}
 		</Highlight>
