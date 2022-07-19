@@ -200,7 +200,7 @@ export class ProjectManager extends Signal<void> {
 		if (isUsingFileSystemPolyfill.value) {
 			const selectedProject = await idbGet('selectedProject')
 			if (typeof selectedProject === 'string')
-				return await this.selectProject(selectedProject)
+				return await this.selectProject(selectedProject, true)
 		}
 		await this.selectProject(virtualProjectName)
 	}
