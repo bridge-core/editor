@@ -425,8 +425,10 @@ export abstract class Project {
 	}
 	async unlinkFiles(filePaths: string[]) {
 		await Promise.allSettled([
-			filePaths.map((filePath) => this.packIndexer.unlink(filePath)),
-			filePaths.map((filePath) => this.app.fileSystem.unlink(filePath)),
+			...filePaths.map((filePath) => this.packIndexer.unlink(filePath)),
+			...filePaths.map((filePath) =>
+				this.app.fileSystem.unlink(filePath)
+			),
 		])
 
 		if (this.watchModeActive)
