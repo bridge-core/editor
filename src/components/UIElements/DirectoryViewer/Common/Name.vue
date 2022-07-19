@@ -74,7 +74,7 @@
 			text
 			icon
 			small
-			@click="baseWrapper.onRightClick($event)"
+			@click.stop="baseWrapper.onRightClick($event)"
 		>
 			<v-icon> mdi-dots-vertical-circle-outline </v-icon>
 		</v-btn>
