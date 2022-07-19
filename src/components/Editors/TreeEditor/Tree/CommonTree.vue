@@ -1,10 +1,5 @@
 <template>
-	<details
-		v-if="$slots.default"
-		:style="tree.styles"
-		:open="tree.isOpen"
-		tabindex="-1"
-	>
+	<details v-if="$slots.default" :open="tree.isOpen" tabindex="-1">
 		<summary
 			:class="{
 				'common-tree-key': true,
@@ -32,8 +27,8 @@
 			</v-icon>
 			<span v-if="tree.parent.type === 'object'">
 				<!-- Debugging helper -->
-				<span v-if="isDevMode"
-					>s: {{ tree.type }} p: {{ tree.parent.type }}
+				<span v-if="isDevMode">
+					s: {{ tree.type }} p: {{ tree.parent.type }}
 				</span>
 
 				<span @dblclick="tree.toggleOpen()"> <slot /> </span>:</span

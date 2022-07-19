@@ -1,14 +1,19 @@
 <template>
-	<span v-if="value === undefined" :style="toStyle(def)"><slot /></span>
+	<span v-if="value === undefined" :style="toStyle(def)">
+		<slot />
+	</span>
+	<span v-else v-intersect="onIntersect">
+		<span v-if="skipRender">"{{ value }}"</span>
 
-	<span v-else
-		>"<template v-for="({ text, def }, i) in tokens">
-			<span :key="text" :style="toStyle(def)">{{ text }}</span
-			><span :key="`${text}.colon`">{{
-				tokens.length > i + 1 ? ':' : ''
-			}}</span> </template
-		>"</span
-	>
+		<span v-else
+			>"<template v-for="({ text, def }, i) in tokens">
+				<span :key="text" :style="toStyle(def)">{{ text }}</span
+				><span :key="`${text}.colon`">{{
+					tokens.length > i + 1 ? ':' : ''
+				}}</span> </template
+			>"</span
+		>
+	</span>
 </template>
 
 <script>
@@ -56,6 +61,9 @@ export default {
 			knownWords,
 		}
 	},
+	data: () => ({
+		skipRender: false,
+	}),
 	computed: {
 		tokens() {
 			return this.value.split(':').map((token) => ({
@@ -88,6 +96,9 @@ export default {
 				backgroundColor: def ? def.background : null,
 				textDecoration: this.getTextDecoration(def),
 			}
+		},
+		onIntersect(entries) {
+			// this.skipRender = !entries[0].isIntersecting
 		},
 	},
 }

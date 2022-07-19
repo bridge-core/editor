@@ -17,14 +17,6 @@ export abstract class Tree<T> {
 	protected abstract _value: T
 	abstract toJSON(): T
 
-	get styles() {
-		return {
-			outline: 'none',
-			contentVisibility: 'auto',
-			containIntrinsicSize: `${this.height}px`,
-		}
-	}
-
 	constructor(protected parent: ObjectTree | ArrayTree | null) {}
 
 	get value() {
