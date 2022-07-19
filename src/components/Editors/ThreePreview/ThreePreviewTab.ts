@@ -82,6 +82,8 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		)
 
 		this.onResize()
+
+		await this.fired
 		this.setupComplete.dispatch()
 	}
 	async onActivate() {
@@ -107,18 +109,20 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		super.onDeactivate()
 	}
 
+	/**
+	 * @internal Do not call directly
+	 */
 	protected render() {
 		this.controls?.update()
 		this.renderer?.render(this.scene, this.camera)
 		this.renderingRequested = false
 	}
 
-	requestRendering(immediate = false) {
-		if (immediate) return this.render()
-
+	async requestRendering() {
 		if (this.renderingRequested) return
 
 		this.renderingRequested = true
+		await this.setupComplete.fired
 		requestAnimationFrame(() => this.render())
 	}
 	protected onResize() {
