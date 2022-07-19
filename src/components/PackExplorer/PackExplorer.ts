@@ -18,7 +18,6 @@ import {
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
 import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
-import { Project } from '../Projects/Project/Project'
 import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
 import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu/Folder'
 import { IHandleMovedOptions } from '../UIElements/DirectoryViewer/DirectoryStore'
@@ -49,26 +48,13 @@ export class PackExplorer extends SidebarContent {
 
 		App.getApp().then((app) => {
 			updateHeaderSlot()
-			this.updateTopPanel(app)
 
 			app.mobile.change.on(() => updateHeaderSlot())
 		})
 
-		App.eventSystem.on('projectChanged', (project: Project) => {
+		App.eventSystem.on('projectChanged', () => {
 			updateHeaderSlot()
-			this.updateTopPanel(project.app)
 		})
-	}
-
-	updateTopPanel(app: App) {
-		this.topPanel =
-			isUsingFileSystemPolyfill.value && !app.isNoProjectSelected
-				? new InfoPanel({
-						type: 'warning',
-						text: 'general.fileSystemPolyfill',
-						isDismissible: true,
-				  })
-				: undefined
 	}
 
 	async setup() {

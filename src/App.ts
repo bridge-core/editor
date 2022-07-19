@@ -48,6 +48,7 @@ import { StartParamManager } from '/@/components/StartParams/Manager'
 import { ViewFolders } from '/@/components/ViewFolders/ViewFolders'
 import { SidebarManager } from '/@/components/Sidebar/Manager'
 import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
+import { InformationWindow } from './components/Windows/Common/Information/InformationWindow'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -266,6 +267,24 @@ export class App {
 						'https://bridge-core.github.io/editor-docs/getting-started/'
 					)
 					gettingStarted.dispose()
+				},
+			})
+		}
+
+		// Warn about saving projects
+		if (isUsingFileSystemPolyfill.value) {
+			const saveWarning = new PersistentNotification({
+				id: 'bridge-save-warning',
+				icon: 'mdi-alert-circle-outline',
+				message: 'general.fileSystemPolyfill.name',
+				color: 'warning',
+				textColor: 'white',
+				onClick: () => {
+					new InformationWindow({
+						title: 'general.fileSystemPolyfill.name',
+						description: 'general.fileSystemPolyfill.description',
+					})
+					saveWarning.dispose()
 				},
 			})
 		}
