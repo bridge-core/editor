@@ -125,7 +125,6 @@ export default {
 	},
 	computed: {
 		renderActions() {
-			console.log(this.actions, this.pointerDevice)
 			const entries = []
 
 			for (const [key, action] of Object.entries(this.actions)) {
