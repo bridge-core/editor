@@ -6,6 +6,7 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { TreeTab } from '/@/components/Editors/TreeEditor/Tab'
 import type { Tab } from '/@/components/TabSystem/CommonTab'
 import { useMonaco } from '../../../utils/libs/useMonaco'
+import { supportsLookbehind } from './supportsLookbehind'
 
 export interface IKnownWords {
 	keywords: string[]
@@ -175,7 +176,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 				embeddedCommand: [
 					[/@escapes/, 'string.escape'],
 					[
-						/(?<!\\)"/,
+						supportsLookbehind() ? new RegExp('(?<!\\\\)"') : /"/,
 						{
 							token: 'identifier',
 							next: '@pop',
