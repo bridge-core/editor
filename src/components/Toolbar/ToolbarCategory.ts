@@ -60,7 +60,7 @@ export class ToolbarCategory extends EventDispatcher<void> {
 					return <const>{ type: 'divider' }
 				}
 
-				throw new Error(`Unknown toolbar item type: `, item)
+				throw new Error(`Unknown toolbar item type: ${item}`)
 			}),
 		}
 	}
