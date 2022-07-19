@@ -1,6 +1,6 @@
 <template>
 	<div style="overflow: hidden">
-		<BridgeFolderBtn />
+		<BridgeFolderBtn v-if="!isUsingFileSystemPolyfill" />
 		<CreateProjectBtn color="success" />
 
 		<BridgeSheet dark class="pa-2 mb-2 d-flex flex-column">
@@ -24,7 +24,7 @@
 		</BridgeSheet>
 
 		<BridgeSheet
-			v-if="!hasComMojangSetup"
+			v-if="!hasComMojangSetup && !isUsingFileSystemPolyfill"
 			dark
 			class="pa-2 mb-2 d-flex flex-column"
 		>
@@ -55,6 +55,7 @@
 		</div>
 		<div
 			v-if="
+				!isUsingFileSystemPolyfill &&
 				setupStepCount === 2 &&
 				(!didChooseEditorType || !hasComMojangSetup)
 			"
@@ -90,6 +91,7 @@ import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { get, set } from 'idb-keyval'
 import { comMojangKey } from '/@/components/OutputFolders/ComMojang/ComMojang'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 
 export default {
 	mixins: [TranslationMixin],
@@ -98,6 +100,11 @@ export default {
 		CreateProjectBtn,
 		BridgeFolderBtn,
 		ActionViewer,
+	},
+	setup() {
+		return {
+			isUsingFileSystemPolyfill,
+		}
 	},
 	async mounted() {
 		this.hasComMojangSetup = (await get(comMojangKey)) !== undefined

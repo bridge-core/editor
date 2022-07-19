@@ -4,7 +4,7 @@
 		<NoProjects v-else-if="projectData.length === 0" />
 
 		<template v-else>
-			<BridgeFolderBtn />
+			<BridgeFolderBtn v-if="!isUsingFileSystemPolyfill" />
 			<CreateProjectBtn />
 
 			<v-slide-y-transition class="py-0" group>
@@ -28,6 +28,7 @@ import CreateProjectBtn from './CreateProjectBtn.vue'
 import BridgeFolderBtn from './BridgeFolderBtn.vue'
 import NoProjects from './NoProjects.vue'
 import Project from './Project.vue'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 
 export default {
 	components: {
@@ -35,6 +36,11 @@ export default {
 		BridgeFolderBtn,
 		NoProjects,
 		Project,
+	},
+	setup() {
+		return {
+			isUsingFileSystemPolyfill,
+		}
 	},
 	mounted() {
 		this.loadProjects()
@@ -99,7 +105,7 @@ export default {
 				if (!wasSuccessful) return
 			}
 
-			app.comMojang.setupComMojang()
+			if (!app.comMojang.hasFired) app.comMojang.setupComMojang()
 
 			await app.projectManager.selectProject(name, true)
 		},

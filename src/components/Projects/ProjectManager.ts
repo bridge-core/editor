@@ -14,6 +14,7 @@ import { getStableFormatVersion } from '../Data/FormatVersions'
 import { v4 as uuid } from 'uuid'
 import { ICreateProjectOptions } from './CreateProject/CreateProject'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -196,6 +197,11 @@ export class ProjectManager extends Signal<void> {
 	}
 	async selectLastProject() {
 		await this.fired
+		if (isUsingFileSystemPolyfill.value) {
+			const selectedProject = await idbGet('selectedProject')
+			if (typeof selectedProject === 'string')
+				return await this.selectProject(selectedProject)
+		}
 		await this.selectProject(virtualProjectName)
 	}
 

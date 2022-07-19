@@ -7,7 +7,7 @@
 		<template v-slot:activator="{ on }">
 			<v-btn
 				v-on="on"
-				@click="createProject"
+				@click.stop="createProject"
 				:color="color"
 				class="mb-2"
 				block
@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 
@@ -41,6 +42,9 @@ export default {
 			default: 'background',
 			type: String,
 		},
+	},
+	setup() {
+		return { isUsingFileSystemPolyfill }
 	},
 	async mounted() {
 		const app = await App.getApp()
