@@ -152,15 +152,27 @@ export class CreateProjectWindow extends BaseWindow {
 	async createProject() {
 		const app = await App.getApp()
 
+		const removeOldProject =
+			isUsingFileSystemPolyfill.value &&
+			!app.hasNoProjects &&
+			!this.isFirstProject
+
+		// Save previous project name to delete it later
+		let previousProject: Project | undefined
+		if (!this.isFirstProject)
+			previousProject = app.isNoProjectSelected
+				? app.projects[0]
+				: app.project
+
 		// Ask user whether we should save the current project
-		if (isUsingFileSystemPolyfill.value && !this.isFirstProject) {
+		if (removeOldProject) {
 			const confirmWindow = new ConfirmationWindow({
 				description: 'windows.createProject.saveCurrentProject',
 				cancelText: 'general.no',
 				confirmText: 'general.yes',
 			})
 			if (await confirmWindow.fired) {
-				await exportAsBrproject()
+				await exportAsBrproject(previousProject?.name)
 			}
 		}
 
@@ -186,10 +198,6 @@ export class CreateProjectWindow extends BaseWindow {
 			await this.packs[pack].create(scopedFs, this.createOptions)
 		}
 
-		// Save previous project name to delete it later
-		let previousProject: Project | undefined
-		if (!this.isFirstProject) previousProject = app.project
-
 		await app.projectManager.addProject(
 			projectDir,
 			true,
@@ -197,7 +205,7 @@ export class CreateProjectWindow extends BaseWindow {
 		)
 		await app.extensionLoader.installFilesToCurrentProject()
 
-		if (isUsingFileSystemPolyfill.value && !this.isFirstProject)
+		if (removeOldProject)
 			await app.projectManager.removeProject(previousProject!)
 
 		// Reset options

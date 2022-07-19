@@ -132,7 +132,9 @@ export class App {
 		return this.projectManager.currentProject
 	}
 	get projects() {
-		return Object.values(this.projectManager.state)
+		return Object.values(this.projectManager.state).filter(
+			(project) => !project.isVirtualProject
+		)
 	}
 	get projectConfig() {
 		try {
