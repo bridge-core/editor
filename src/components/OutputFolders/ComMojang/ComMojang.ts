@@ -30,12 +30,6 @@ export class ComMojang extends Signal<void> {
 
 	constructor(protected app: App) {
 		super()
-
-		App.eventSystem.on('projectChanged', (project: Project) => {
-			if (project.isVirtualProject) return
-
-			this.setupComMojang()
-		})
 	}
 	async setupComMojang() {
 		if (this._hasComMojang) return false

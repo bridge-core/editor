@@ -99,6 +99,8 @@ export default {
 				if (!wasSuccessful) return
 			}
 
+			app.comMojang.setupComMojang()
+
 			await app.projectManager.selectProject(name, true)
 		},
 
