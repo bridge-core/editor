@@ -45,6 +45,10 @@ export class SimpleAction extends EventDispatcher<void> {
 	}
 	//#endregion
 
+	getConfig() {
+		return this.config
+	}
+
 	async trigger() {
 		if (this.isDisabled) return
 		this.dispatch()

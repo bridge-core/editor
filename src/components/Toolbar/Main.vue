@@ -16,10 +16,7 @@
 	>
 		<template v-if="hideToolbarItems">
 			<Logo
-				style="
-					height: 18px;
-					padding-right: 8px;
-				"
+				style="height: 18px; padding-right: 8px"
 				alt="Logo of bridge. v2"
 				draggable="false"
 			/>
@@ -54,6 +51,13 @@
 
 			<!-- App menu buttons -->
 			<v-toolbar-items class="px14-font">
+				<MenuButton
+					v-if="isMobile"
+					displayName="actions.name"
+					displayIcon="mdi-menu"
+					@click="showMobileMenu"
+				/>
+
 				<template v-for="(item, key, i) in toolbar">
 					<MenuButton
 						v-if="item.type !== 'category'"
@@ -146,6 +150,9 @@ export default {
 		appVersion,
 	}),
 	computed: {
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
+		},
 		hideToolbarItemsSetting() {
 			if (!this.settingsState.appearance) return false
 			return this.settingsState.appearance.hideToolbarItems ?? false
@@ -169,6 +176,9 @@ export default {
 			if (this.isAnyWindowVisible) return
 
 			CommandBarState.isWindowOpen = true
+		},
+		showMobileMenu(event) {
+			App.toolbar.showMobileMenu(event)
 		},
 	},
 }

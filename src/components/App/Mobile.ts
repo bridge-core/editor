@@ -1,6 +1,7 @@
 import { watch } from '@vue/composition-api'
 import { Framework } from 'vuetify'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { App } from '/@/App'
 
 export class Mobile {
 	public readonly change = new EventDispatcher<boolean>()
@@ -10,7 +11,12 @@ export class Mobile {
 			this.change.dispatch(vuetify.breakpoint.mobile)
 		})
 
-		this.change.dispatch(vuetify.breakpoint.mobile)
+		App.getApp().then(() => {
+			setTimeout(
+				() => this.change.dispatch(vuetify.breakpoint.mobile),
+				10
+			)
+		})
 	}
 
 	isCurrentDevice() {

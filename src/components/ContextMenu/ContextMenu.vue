@@ -11,6 +11,7 @@
 		:offset-overflow="false"
 		:close-on-click="contextMenu.mayCloseOnClickOutside"
 		:close-on-content-click="false"
+		min-width="200px"
 	>
 		<ContextMenuList @click="isVisible = false" :actions="actions" />
 	</v-menu>

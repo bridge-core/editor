@@ -145,7 +145,7 @@ export default {
 			for (const [key, action] of Object.entries(this.actions)) {
 				if (
 					action.type !== 'submenu' ||
-					this.pointerDevice !== 'touch'
+					this.pointerDevice === 'touch'
 				) {
 					entries.push([key, action])
 					continue

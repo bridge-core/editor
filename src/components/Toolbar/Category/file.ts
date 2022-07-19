@@ -169,13 +169,5 @@ export function setupFileCategory(app: App) {
 		})
 	)
 
-	const settingAction = app.actionManager.getAction(
-		'bridge.action.openSettings'
-	)
-	if (settingAction && app.mobile.isCurrentDevice()) {
-		file.addItem(new Divider())
-		file.addItem(settingAction)
-	}
-
 	App.toolbar.addCategory(file)
 }

@@ -136,6 +136,7 @@ export default {
 	},
 	// Actions
 	actions: {
+		name: 'Actions',
 		download: {
 			name: 'Download',
 			description: 'Download this file or folder',
