@@ -47,7 +47,7 @@
 							/>
 						</v-list-item-action>
 						<v-spacer />
-						<v-icon color="accent">mdi-chevron-right</v-icon>
+						<v-icon small>mdi-chevron-right</v-icon>
 					</v-list-item>
 				</template>
 
