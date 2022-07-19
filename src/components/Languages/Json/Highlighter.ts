@@ -176,6 +176,11 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 				embeddedCommand: [
 					[/@escapes/, 'string.escape'],
 					[
+						/**
+						 * This makes sure that we don't match escaped closing brackets to terminate the embedded lamguage
+						 * However, as negative lookbehinds aren't supported by Safari yet, we first test for this feature
+						 * and then fallback to a normal quote matcher if necessary
+						 */
 						supportsLookbehind() ? new RegExp('(?<!\\\\)"') : /"/,
 						{
 							token: 'identifier',
