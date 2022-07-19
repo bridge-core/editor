@@ -61,8 +61,10 @@ export class DirectoryStore {
 	) {
 		for (const [currDirhandle, currWrapper] of this.cache.entries()) {
 			// @ts-ignore
-			if (await currDirhandle.isSameEntry(directoryHandle))
+			if (await currDirhandle.isSameEntry(directoryHandle)) {
+				await currWrapper.refresh()
 				return currWrapper
+			}
 		}
 
 		return null
