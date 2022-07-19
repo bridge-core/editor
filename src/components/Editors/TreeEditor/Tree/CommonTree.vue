@@ -124,8 +124,12 @@ export default {
 	methods: {
 		onClickKey(event) {
 			this.$emit('setActive')
-			if (settingsState.editor?.automaticallyOpenTreeNodes ?? true)
-				this.tree.toggleOpen()
+
+			if (settingsState.editor?.automaticallyOpenTreeNodes ?? true) {
+				// Only close a tree if it's already selected
+				if (!this.tree.isOpen || this.tree.isSelected)
+					this.tree.toggleOpen()
+			}
 
 			if (event.altKey) this.treeEditor.toggleSelection(this.tree)
 			else this.treeEditor.setSelection(this.tree)
