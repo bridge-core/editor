@@ -88,8 +88,9 @@ export class MonacoHolder extends Signal<void> {
 				'bracketPairColorization.enabled':
 					settingsState?.editor?.bracketPairColorization ?? false,
 				fontFamily:
-					<string>settingsState?.appearance?.editorFont ??
-					(platform() === 'darwin' ? 'Menlo' : 'Consolas'),
+					(<string>settingsState?.appearance?.editorFont ??
+						(platform() === 'darwin' ? 'Menlo' : 'Consolas')) +
+					', monospace',
 				...this.getMobileOptions(this._app.mobile.isCurrentDevice()),
 				contextmenu: false,
 				// fontFamily: this.fontFamily,

@@ -215,8 +215,8 @@ export default {
 			return settingsState &&
 				settingsState.appearance &&
 				settingsState.appearance.editorFont
-				? `${settingsState.appearance.editorFont} !important`
-				: 'Menlo !important'
+				? `${settingsState.appearance.editorFont}, monospace !important`
+				: 'Menlo, monospace !important'
 		},
 		fontFamily() {
 			return this.settingsState &&
