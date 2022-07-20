@@ -13,7 +13,8 @@ import { loadFileDefinitions } from './FileDefinition/load'
 import { InstallFiles } from './InstallFiles'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { idbExtensionStore } from './Scripts/Modules/persistentStorage'
-
+import { compareVersions } from 'bridge-common-utils'
+import { version as appVersion } from '/@/utils/app/version'
 export class Extension {
 	protected disposables: IDisposable[] = []
 	protected uiStore = createUIStore()
@@ -66,9 +67,33 @@ export class Extension {
 		)
 	}
 
+	isCompatibleAppEnv() {
+		if (!this.manifest.compatibleAppVersions) return true
+
+		return (
+			((this.manifest.compatibleAppVersions.min &&
+				compareVersions(
+					appVersion,
+					this.manifest.compatibleAppVersions.min,
+					'>='
+				)) ||
+				!this.manifest.compatibleAppVersions.min) &&
+			((this.manifest.compatibleAppVersions.max &&
+				compareVersions(
+					appVersion,
+					this.manifest.compatibleAppVersions.max,
+					'<='
+				)) ||
+				!this.manifest.compatibleAppVersions.max)
+		)
+	}
+
 	async activate() {
-		// Make sure we load an extension only once
-		if (this.isLoaded) return
+		/**
+		 * Make sure we load an extension only once
+		 * and that the bridge. app version is compatible
+		 */
+		if (this.isLoaded || !this.isCompatibleAppEnv()) return
 
 		this.isLoaded = true
 		const app = await App.getApp()
