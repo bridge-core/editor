@@ -164,7 +164,7 @@ export class ProjectManager extends Signal<void> {
 		if (this.app.viewComMojangProject.hasComMojangProjectLoaded) {
 			await this.app.viewComMojangProject.clearComMojangProject()
 		}
-		if (this._selectedProject === projectName) return
+		if (this._selectedProject === projectName) return true
 
 		if (this.state[projectName] === undefined) {
 			if (failGracefully) {
@@ -172,7 +172,7 @@ export class ProjectManager extends Signal<void> {
 					description:
 						'packExplorer.noProjectView.projectNoLongerExists',
 				})
-				return
+				return false
 			}
 
 			throw new Error(
@@ -196,13 +196,20 @@ export class ProjectManager extends Signal<void> {
 		await this.storeProjects()
 
 		if (!this.projectReady.hasFired) this.projectReady.dispatch()
+		return true
 	}
 	async selectLastProject() {
 		await this.fired
 		if (isUsingFileSystemPolyfill.value || import.meta.env.DEV) {
 			const selectedProject = await idbGet('selectedProject')
+			let didSelectProject = false
 			if (typeof selectedProject === 'string')
-				return this.selectProject(selectedProject, true)
+				didSelectProject = await this.selectProject(
+					selectedProject,
+					true
+				)
+
+			if (didSelectProject) return
 		}
 		await this.selectProject(virtualProjectName)
 	}
