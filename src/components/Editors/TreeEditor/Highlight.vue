@@ -2,7 +2,7 @@
 	<span v-if="value === undefined" :style="toStyle(def)">
 		<slot />
 	</span>
-	<span v-else v-intersect="onIntersect">
+	<span v-else v-intersect="onIntersect" style="white-space: nowrap">
 		<span v-if="skipRender">"{{ value }}"</span>
 
 		<span v-else

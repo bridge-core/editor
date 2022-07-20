@@ -2,7 +2,8 @@
 	<div
 		tabindex="-1"
 		:style="{
-			...tree.styles,
+			display: 'inline',
+			whiteSpace: 'nowrap',
 			height: pointerDevice === 'touch' ? '26px' : null,
 		}"
 	>
