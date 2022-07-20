@@ -151,7 +151,7 @@ export default {
 			return this.diagnostic.opacity || 1
 		},
 		hasDiagnostic() {
-			return this.diagnostic !== undefined
+			return this.diagnostic !== undefined && this.diagnostic !== null
 		},
 	},
 	methods: {
