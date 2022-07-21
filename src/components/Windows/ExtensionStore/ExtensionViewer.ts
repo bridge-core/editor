@@ -98,7 +98,7 @@ export class ExtensionViewer {
 					compareVersions(
 						appVersion,
 						this.config.compatibleAppVersions.max,
-						'<='
+						'<'
 					)) ||
 					!this.config.compatibleAppVersions.max))
 		)

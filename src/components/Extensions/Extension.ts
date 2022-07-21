@@ -82,7 +82,7 @@ export class Extension {
 				compareVersions(
 					appVersion,
 					this.manifest.compatibleAppVersions.max,
-					'<='
+					'<'
 				)) ||
 				!this.manifest.compatibleAppVersions.max)
 		)
