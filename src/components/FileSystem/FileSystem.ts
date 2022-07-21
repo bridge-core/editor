@@ -35,6 +35,11 @@ export class FileSystem extends Signal<void> {
 		let current = this.baseDirectory
 		const pathArr = path.split(/\\|\//g)
 		if (pathArr[0] === '.') pathArr.shift()
+		// Dash loads global extensions from "extensions/" but this folder is no longer used for bridge. projects
+		if (pathArr[0] === 'extensions') {
+			pathArr[0] = '~local'
+			pathArr.splice(1, 0, 'extensions')
+		}
 		if (pathArr[0] === '~local') {
 			current = await getStorageDirectory()
 			pathArr.shift()
