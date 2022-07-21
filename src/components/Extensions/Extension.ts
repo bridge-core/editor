@@ -179,7 +179,6 @@ export class Extension {
 				await this.baseDirectory.getDirectoryHandle('ui', {
 					create: true,
 				}),
-				this.id,
 				this.uiStore,
 				this.disposables
 			).then(async () =>

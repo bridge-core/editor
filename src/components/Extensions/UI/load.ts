@@ -41,17 +41,14 @@ const VuetifyComponents = {
 export async function loadUIComponents(
 	jsRuntime: JsRuntime,
 	baseDirectory: AnyDirectoryHandle,
-	extensionId: string,
 	uiStore: TUIStore,
-	disposables: IDisposable[],
-	basePath = 'ui'
+	disposables: IDisposable[]
 ) {
 	await iterateDir(baseDirectory, async (fileHandle, filePath) => {
 		return loadUIComponent(
 			jsRuntime,
 			filePath,
 			await fileHandle.getFile().then((file) => file.text()),
-			extensionId,
 			uiStore,
 			disposables
 		)
@@ -62,7 +59,6 @@ export async function loadUIComponent(
 	jsRuntime: JsRuntime,
 	componentPath: string,
 	fileContent: string,
-	extensionId: string,
 	uiStore: TUIStore,
 	disposables: IDisposable[]
 ) {
@@ -90,11 +86,18 @@ export async function loadUIComponent(
 			return reject(errors[0])
 		}
 
+		const { __default__: componentDef } = script?.content
+			? await jsRuntime.run(
+					componentPath,
+					undefined,
+					script?.content ?? ''
+			  )
+			: { __default__: {} }
+		console.log(componentPath, componentDef)
+
 		const component = {
 			name: basename(componentPath),
-			...(await (<any>(
-				executeScript(jsRuntime, componentPath, script?.content ?? '')
-			))),
+			...componentDef,
 			...Vue.compile(
 				template?.content ?? `<p color="red">NO TEMPLATE DEFINED</p>`
 			),
