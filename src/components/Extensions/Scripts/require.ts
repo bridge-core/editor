@@ -8,7 +8,6 @@ import { NotificationModule } from './Modules/notifications'
 import { FSModule } from './Modules/fs'
 import { ENVModule } from './Modules/env'
 import { UtilsModule } from './Modules/utils'
-import { ImportFileModule } from './Modules/importFiles'
 import { PathModule } from './Modules/path'
 import { FetchDefinitionModule } from './Modules/fetchDefinition'
 import { WindowModule } from './Modules/windows'
@@ -29,7 +28,10 @@ import { PersistentStorageModule } from './Modules/persistentStorage'
 import { CommandBarModule } from './Modules/CommandBar'
 import { FflateModule } from './Modules/fflate'
 
-const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
+export const BuiltInModules = new Map<
+	string,
+	(config: IModuleConfig) => unknown
+>([
 	['@bridge/ui', UIModule],
 	['@bridge/sidebar', SidebarModule],
 	['@bridge/notification', NotificationModule],
@@ -39,7 +41,6 @@ const BuiltInModules = new Map<string, (config: IModuleConfig) => unknown>([
 	['@bridge/project', ProjectModule],
 	['@bridge/globals', GlobalsModule],
 	['@bridge/utils', UtilsModule],
-	['@bridge/file-importer', ImportFileModule],
 	['@bridge/fetch-definition', FetchDefinitionModule],
 	['@bridge/windows', WindowModule],
 	['@bridge/toolbar', ToolbarModule],
@@ -76,11 +77,12 @@ function createGenericEnv(
 	isGlobal: boolean = false,
 	modules = BuiltInModules
 ) {
-	return async (importName: string) => {
-		const module = modules.get(importName)
-		if (module)
-			return await module({ uiStore, disposables, isGlobal, extensionId })
-	}
+	return <[string, any][]>(
+		[...modules.entries()].map(([name, module]) => [
+			name,
+			module({ uiStore, disposables, isGlobal, extensionId }),
+		])
+	)
 }
 
 export function createEnv(

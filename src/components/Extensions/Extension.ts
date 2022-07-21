@@ -15,6 +15,8 @@ import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { idbExtensionStore } from './Scripts/Modules/persistentStorage'
 import { compareVersions } from 'bridge-common-utils'
 import { version as appVersion } from '/@/utils/app/version'
+import { JsRuntime } from './Scripts/JsRuntime'
+import { createEnv } from './Scripts/require'
 export class Extension {
 	protected disposables: IDisposable[] = []
 	protected uiStore = createUIStore()
@@ -23,6 +25,9 @@ export class Extension {
 	protected isLoaded = false
 	protected installFiles: InstallFiles
 	protected hasPresets = false
+	public readonly jsRuntime = new JsRuntime(
+		createEnv(this.id, this.disposables, this.uiStore, this.isGlobal)
+	)
 
 	get isActive() {
 		if (!this.parent.activeStatus)
@@ -170,19 +175,16 @@ export class Extension {
 
 		await Promise.all([
 			loadUIComponents(
-				this.fileSystem,
+				this.jsRuntime,
+				await this.baseDirectory.getDirectoryHandle('ui', {
+					create: true,
+				}),
 				this.id,
 				this.uiStore,
 				this.disposables
 			).then(async () =>
 				scriptHandle
-					? await loadScripts(
-							scriptHandle,
-							this.uiStore,
-							this.disposables,
-							this.isGlobal,
-							this.id
-					  )
+					? await loadScripts(this.jsRuntime, scriptHandle)
 					: undefined
 			),
 		])
@@ -231,6 +233,7 @@ export class Extension {
 	deactivate() {
 		if (this.hasPresets) App.eventSystem.dispatch('presetsChanged', null)
 		this.disposables.forEach((disposable) => disposable.dispose())
+		this.jsRuntime.clearCache()
 		this.isLoaded = false
 
 		// Enable global extension with same ID if such an extension exists
