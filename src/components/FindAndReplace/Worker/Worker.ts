@@ -41,6 +41,7 @@ const knownTextFiles = new Set([
 	'.lang',
 	'.mcfunction',
 	'.txt',
+	'.md',
 	'.molang',
 	'.json',
 	'.html',
