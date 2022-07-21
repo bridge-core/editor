@@ -29,13 +29,17 @@
 			<v-row
 				no-gutters
 				class="d-flex fill-area"
-				:class="{ 'flex-row-reverse': isSidebarRight }"
+				:class="{
+					'ml-2': !isSidebarContentVisible && isSidebarRight,
+					'mr-2': !isSidebarContentVisible && !isSidebarRight,
+					'flex-row-reverse': isSidebarRight,
+				}"
 			>
 				<v-col
 					v-if="isSidebarContentVisible"
 					:cols="isSidebarContentVisible ? 3 + sidebarSize : 0"
 				>
-					<SidebarContent />
+					<SidebarContent :isSidebarRight="isSidebarRight" />
 				</v-col>
 
 				<v-col
@@ -50,11 +54,11 @@
 							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
 						}"
 					>
-						<v-divider
+						<!-- <v-divider
 							v-if="isSidebarContentVisible && !isSidebarRight"
 							style="z-index: 1"
 							vertical
-						/>
+						/> -->
 
 						<TabSystem
 							class="flex-grow-1"
@@ -75,10 +79,10 @@
 							:id="1"
 						/>
 
-						<v-divider
+						<!-- <v-divider
 							v-if="isSidebarContentVisible && isSidebarRight"
 							vertical
-						/>
+						/> -->
 					</div>
 					<WelcomeScreen
 						v-else
@@ -92,8 +96,6 @@
 					/>
 				</v-col>
 			</v-row>
-
-			<!--  -->
 		</v-main>
 
 		<ContextMenu

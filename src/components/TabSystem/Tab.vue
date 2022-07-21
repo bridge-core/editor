@@ -1,12 +1,16 @@
 <template>
 	<div
-		class="px-3 py-2 cursor-pointer"
+		class="cursor-pointer"
 		:class="{
 			selected: tab.isSelected,
 			'default-tab-style': true,
 			'd-flex': true,
 			'align-center': true,
 			inactive: !isActive,
+			'rounded-lg': true,
+			'px-3 py-2': tab.isSelected,
+			'px-2 pb-1 mx-1 mt-2 my-1': !tab.isSelected,
+			'ml-0 pl-3': isFirstTab,
 		}"
 		style="position: relative"
 		ref="tabElement"
@@ -125,6 +129,7 @@ export default {
 	props: {
 		tab: Tab,
 		isActive: Boolean,
+		isFirstTab: Boolean,
 	},
 	data: () => ({
 		hoveringBtn: false,

@@ -6,11 +6,17 @@
 		v-model="isNavigationVisible"
 		:app="app"
 		absolute
+		floating
 		:right="isSidebarRight"
 		color="sidebarNavigation"
 		:height="`calc(100% - ${appToolbarHeight})`"
+		:class="{
+			'rounded-r-lg': !isSidebarRight,
+			'rounded-l-lg': isSidebarRight,
+		}"
+		class="my-2"
 		:style="{
-			maxHeight: `calc(100% - ${appToolbarHeight})`,
+			maxHeight: `calc(100% - ${appToolbarHeight} - 16px)`,
 			top: appToolbarHeight,
 		}"
 	>
