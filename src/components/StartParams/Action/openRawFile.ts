@@ -52,8 +52,8 @@ export async function shareFile(file: AnyFileHandle) {
 
 		await navigator
 			.share({
-				title: file.name,
-				text: 'Edit this file with bridge. v2',
+				title: `View File: ${file.name}`,
+				text: `Edit the file "${file.name}" file with bridge.!`,
 				url: url.href,
 			})
 			.catch(() => {})

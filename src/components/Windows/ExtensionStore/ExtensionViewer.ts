@@ -274,7 +274,7 @@ export class ExtensionViewer {
 		await navigator
 			.share({
 				title: `Extension: ${this.name}`,
-				text: `View the extension "${this.name}" within bridge. v2!`,
+				text: `View the extension "${this.name}" within bridge.!`,
 				url: url.href,
 			})
 			.catch(() => {})
