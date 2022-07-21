@@ -17,6 +17,8 @@ import { compareVersions } from 'bridge-common-utils'
 import { version as appVersion } from '/@/utils/app/version'
 import { JsRuntime } from './Scripts/JsRuntime'
 import { createEnv } from './Scripts/require'
+import { UIModule } from './Scripts/Modules/ui'
+
 export class Extension {
 	protected disposables: IDisposable[] = []
 	protected uiStore = createUIStore()
@@ -166,27 +168,38 @@ export class Extension {
 			)
 		} catch {}
 
-		let scriptHandle: AnyDirectoryHandle
+		let scriptHandle: AnyDirectoryHandle | null = null
 		try {
 			scriptHandle = await this.baseDirectory.getDirectoryHandle(
 				'scripts'
 			)
 		} catch {}
 
-		await Promise.all([
-			loadUIComponents(
+		let uiHandle: AnyDirectoryHandle | null = null
+		try {
+			uiHandle = await this.baseDirectory.getDirectoryHandle('ui')
+		} catch {}
+
+		if (uiHandle)
+			await loadUIComponents(
 				this.jsRuntime,
-				await this.baseDirectory.getDirectoryHandle('ui', {
-					create: true,
-				}),
+				uiHandle,
 				this.uiStore,
 				this.disposables
-			).then(async () =>
-				scriptHandle
-					? await loadScripts(this.jsRuntime, scriptHandle)
-					: undefined
-			),
-		])
+			)
+		// We need to refresh the JS UI module here because it needs to be instantiated after the UI components are loaded
+		// TODO: Remove UI module in favor of direct .vue imports
+		this.jsRuntime.registerModule(
+			'@bridge/ui',
+			UIModule({
+				uiStore: this.uiStore,
+				disposables: this.disposables,
+				extensionId: this.id,
+				isGlobal: this.isGlobal,
+			})
+		)
+
+		if (scriptHandle) await loadScripts(this.jsRuntime, scriptHandle)
 
 		// Loading snippets
 		if (await this.fileSystem.directoryExists('snippets')) {

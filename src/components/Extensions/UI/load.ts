@@ -2,10 +2,8 @@ import { extname, basename } from '/@/utils/path'
 import { createErrorNotification } from '/@/components/Notifications/Errors'
 import { TUIStore } from './store'
 import { IDisposable } from '/@/types/disposable'
-import { executeScript } from '../Scripts/loadScripts'
 import { createStyleSheet } from '../Styles/createStyle'
 import Vue from 'vue'
-import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import {
 	VBtn,
 	VAlert,
@@ -19,7 +17,7 @@ import {
 	VWindow,
 	VTooltip,
 } from 'vuetify/lib'
-import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
+import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { useVueTemplateCompiler } from '/@/utils/libs/useVueTemplateCompiler'
 import { iterateDir } from '/@/utils/iterateDir'
 import { JsRuntime } from '../Scripts/JsRuntime'
@@ -44,15 +42,20 @@ export async function loadUIComponents(
 	uiStore: TUIStore,
 	disposables: IDisposable[]
 ) {
-	await iterateDir(baseDirectory, async (fileHandle, filePath) => {
-		return loadUIComponent(
-			jsRuntime,
-			filePath,
-			await fileHandle.getFile().then((file) => file.text()),
-			uiStore,
-			disposables
-		)
-	})
+	await iterateDir(
+		baseDirectory,
+		async (fileHandle, filePath) => {
+			await loadUIComponent(
+				jsRuntime,
+				filePath,
+				await fileHandle.getFile().then((file) => file.text()),
+				uiStore,
+				disposables
+			)
+		},
+		undefined,
+		'ui'
+	)
 }
 
 export async function loadUIComponent(
@@ -93,7 +96,6 @@ export async function loadUIComponent(
 					script?.content ?? ''
 			  )
 			: { __default__: {} }
-		console.log(componentPath, componentDef)
 
 		const component = {
 			name: basename(componentPath),

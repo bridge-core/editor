@@ -51,7 +51,7 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
-	name: 'PackExplorerWindow',
+	name: 'SettingsWindow',
 	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,

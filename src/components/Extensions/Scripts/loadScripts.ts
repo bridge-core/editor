@@ -9,12 +9,17 @@ export async function loadScripts(
 	jsRuntime: JsRuntime,
 	baseDirectory: AnyDirectoryHandle
 ) {
-	await iterateDir(baseDirectory, async (fileHandle, filePath) => {
-		const fileContent = await fileHandle
-			.getFile()
-			.then((file) => file.text())
-		await jsRuntime.run(filePath, undefined, fileContent)
-	})
+	await iterateDir(
+		baseDirectory,
+		async (fileHandle, filePath) => {
+			const fileContent = await fileHandle
+				.getFile()
+				.then((file) => file.text())
+			await jsRuntime.run(filePath, undefined, fileContent)
+		},
+		undefined,
+		'scripts'
+	)
 }
 
 export interface IScriptContext {
