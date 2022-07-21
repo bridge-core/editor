@@ -200,7 +200,7 @@ export class ProjectManager extends Signal<void> {
 	}
 	async selectLastProject() {
 		await this.fired
-		if (isUsingFileSystemPolyfill.value || import.meta.env.DEV) {
+		if (isUsingFileSystemPolyfill.value) {
 			const selectedProject = await idbGet('selectedProject')
 			let didSelectProject = false
 			if (typeof selectedProject === 'string')
