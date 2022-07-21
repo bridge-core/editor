@@ -965,6 +965,11 @@ export default {
 					description:
 						'Display tabs inside of the tab system in a more compact way',
 				},
+				keepTabsOpen: {
+					name: 'Keep Tabs Open',
+					description:
+						'By default, opening a new tab closes the previously opened tab if it was not interacted with',
+				},
 				automaticallyOpenTreeNodes: {
 					name: 'Automatically Open Tree Nodes',
 					description:

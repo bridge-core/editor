@@ -386,6 +386,15 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'editor',
+			name: 'windows.settings.editor.keepTabsOpen.name',
+			description: 'windows.settings.editor.keepTabsOpen.description',
+			key: 'keepTabsOpen',
+			default: false,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
 			name: 'windows.settings.editor.automaticallyOpenTreeNodes.name',
 			description:
 				'windows.settings.editor.automaticallyOpenTreeNodes.description',

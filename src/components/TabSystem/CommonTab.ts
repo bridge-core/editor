@@ -8,6 +8,7 @@ import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { shareFile } from '../StartParams/Action/openRawFile'
 import { getDefaultFileIcon } from '/@/utils/file/getIcon'
+import { settingsState } from '../Windows/Settings/SettingsState'
 
 export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	abstract component: Vue.Component
@@ -16,7 +17,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	protected _isUnsaved = false
 	public isForeignFile = true
 	public connectedTabs: Tab[] = []
-	public isTemporary = true
+	public isTemporary = !settingsState?.editor?.keepTabsOpen ?? true
 	public readonly onClose = new EventDispatcher<void>()
 
 	protected path?: string
