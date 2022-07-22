@@ -28,10 +28,7 @@ import { PersistentStorageModule } from './Modules/persistentStorage'
 import { CommandBarModule } from './Modules/CommandBar'
 import { FflateModule } from './Modules/fflate'
 
-export const BuiltInModules = new Map<
-	string,
-	(config: IModuleConfig) => unknown
->([
+export const BuiltInModules = new Map<string, (config: IModuleConfig) => any>([
 	['@bridge/ui', UIModule],
 	['@bridge/sidebar', SidebarModule],
 	['@bridge/notification', NotificationModule],
@@ -59,7 +56,7 @@ export const BuiltInModules = new Map<
 	['@bridge/fflate', FflateModule],
 ])
 //For usage inside of custom commands, components etc.
-const LimitedModules = new Map<string, (config: IModuleConfig) => unknown>([
+const LimitedModules = new Map<string, (config: IModuleConfig) => any>([
 	['@bridge/notification', NotificationModule],
 	['@bridge/fs', FSModule],
 	['@bridge/path', PathModule],
@@ -77,11 +74,17 @@ function createGenericEnv(
 	isGlobal: boolean = false,
 	modules = BuiltInModules
 ) {
-	return <[string, any][]>(
-		[...modules.entries()].map(([name, module]) => [
-			name,
-			module({ uiStore, disposables, isGlobal, extensionId }),
-		])
+	return <[string, any][]>[...modules.entries()].map(
+		([moduleName, module]) => [
+			moduleName,
+			() =>
+				module({
+					extensionId,
+					disposables,
+					uiStore,
+					isGlobal,
+				}),
+		]
 	)
 }
 

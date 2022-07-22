@@ -122,13 +122,13 @@ export function setupToolsCategory(app: App) {
 			description: 'actions.reloadExtensions.description',
 			onTrigger: async () => {
 				// Global extensions
-				app.extensionLoader.deactiveAll(true)
+				app.extensionLoader.disposeAll()
 				app.extensionLoader.loadExtensions()
 
 				await app.projectManager.projectReady.fired
 
 				// Local extensions
-				app.project.extensionLoader.deactiveAll(true)
+				app.project.extensionLoader.disposeAll()
 				app.project.extensionLoader.loadExtensions()
 			},
 		})

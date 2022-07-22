@@ -27,7 +27,7 @@ export class Extension {
 	protected isLoaded = false
 	protected installFiles: InstallFiles
 	protected hasPresets = false
-	public readonly jsRuntime = new JsRuntime(
+	public jsRuntime = new JsRuntime(
 		createEnv(this.id, this.disposables, this.uiStore, this.isGlobal)
 	)
 
@@ -187,17 +187,6 @@ export class Extension {
 				this.uiStore,
 				this.disposables
 			)
-		// We need to refresh the JS UI module here because it needs to be instantiated after the UI components are loaded
-		// TODO: Remove UI module in favor of direct .vue imports
-		this.jsRuntime.registerModule(
-			'@bridge/ui',
-			UIModule({
-				uiStore: this.uiStore,
-				disposables: this.disposables,
-				extensionId: this.id,
-				isGlobal: this.isGlobal,
-			})
-		)
 
 		if (scriptHandle) await loadScripts(this.jsRuntime, scriptHandle)
 

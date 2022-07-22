@@ -111,8 +111,8 @@ export class TypeLoader {
 		await app.project.packIndexer.fired
 		const allFiles = await app.project.packIndexer.service.getAllFiles()
 
-		const typeScriptFiles = allFiles.filter((filePath) =>
-			filePath.endsWith('.ts')
+		const typeScriptFiles = allFiles.filter(
+			(filePath) => filePath.endsWith('.ts') || filePath.endsWith('.js')
 		)
 
 		const { languages, Uri } = await useMonaco()
