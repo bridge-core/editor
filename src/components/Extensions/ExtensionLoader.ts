@@ -19,6 +19,7 @@ export interface IExtensionManifest {
 	version: string
 	id: string
 	description: string
+	link: string
 	readme: string
 	tags: string[]
 	dependencies: string[]
