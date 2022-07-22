@@ -7,9 +7,8 @@
 			'd-flex': true,
 			'align-center': true,
 			inactive: !isActive,
-			'rounded-lg': true,
-			'px-3 py-2': tab.isSelected,
-			'px-2 pb-1 mx-1 mt-2 my-1': !tab.isSelected,
+			'px-3 py-2': tab.isSelected || isMobile,
+			'px-2 pb-1 mx-1 mt-2 my-1 rounded-lg': !tab.isSelected && !isMobile,
 			'ml-0 pl-3': isFirstTab,
 		}"
 		style="position: relative"
@@ -149,6 +148,9 @@ export default {
 		}
 	},
 	computed: {
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
+		},
 		compactDesign() {
 			if (!settingsState.editor) return true
 			if (settingsState.editor.compactTabDesign === undefined) return true
