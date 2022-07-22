@@ -7,8 +7,8 @@
 			'd-flex': true,
 			'align-center': true,
 			inactive: !isActive,
-			'px-3 py-2': tab.isSelected || isMobile,
-			'px-2 pb-1 mx-1 mt-2 my-1 rounded-lg': !tab.isSelected && !isMobile,
+			'px-3 py-2': !floatingTabDesign,
+			'px-2 pb-1 mx-1 mt-2 my-1 rounded-lg': floatingTabDesign,
 			'ml-0 pl-3': isFirstTab,
 		}"
 		style="position: relative"
@@ -81,17 +81,19 @@
 						v-if="tab.folderName"
 						style="
 							position: absolute;
-							top: 22px;
 							left: 32px;
 							font-size: 12px;
 							overflow: hidden;
 							text-overflow: ellipsis;
 						"
 						:style="{
+							top: floatingTabDesign ? '14px' : '22px',
 							left:
 								tab.isSelected && pointerDevice === 'touch'
 									? '60px'
-									: '32px',
+									: !floatingTabDesign || isFirstTab
+									? '32px'
+									: '28px',
 							width:
 								tab.isSelected && pointerDevice === 'touch'
 									? 'calc(100% - 76px)'
@@ -156,6 +158,9 @@ export default {
 			if (settingsState.editor.compactTabDesign === undefined) return true
 
 			return settingsState.editor.compactTabDesign
+		},
+		floatingTabDesign() {
+			return !this.tab.isSelected && !this.isMobile
 		},
 		isSelected() {
 			return this.tab.isSelected
