@@ -5,10 +5,10 @@ import { createFromGeometry } from '/@/components/Editors/EntityModel/create/fro
 import { createFromClientEntity } from '/@/components/Editors/EntityModel/create/fromClientEntity'
 import { createFromEntity } from '/@/components/Editors/EntityModel/create/fromEntity'
 import { ParticlePreviewTab } from '/@/components/Editors/ParticlePreview/ParticlePreview'
-import { FunctionValidatorTab } from '../../Editors/FunctionValidator/Tab'
+// import { FunctionValidatorTab } from '../../Editors/FunctionValidator/Tab'
 import { BlockModelTab } from '/@/components/Editors/BlockModel/Tab'
 import { CommandData } from '/@/components/Languages/Mcfunction/Data'
-import { WorldTab } from '/@/components/BedrockWorlds/Render/Tab'
+// import { WorldTab } from '/@/components/BedrockWorlds/Render/Tab'
 import { FileTab } from '../../TabSystem/FileTab'
 import { HTMLPreviewTab } from '../../Editors/HTMLPreview/HTMLPreview'
 

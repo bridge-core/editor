@@ -60,9 +60,9 @@
 		"prettier": "^2.2.1",
 		"sass": "^1.19.0",
 		"typescript": "^4.4.3",
-		"vite": "^2.9.0",
+		"vite": "^3.0.2",
 		"vite-plugin-ejs": "^1.4.3",
-		"vite-plugin-pwa": "^0.11.12",
-		"vite-plugin-vue2": "^1.8.0"
+		"vite-plugin-pwa": "^0.12.3",
+		"vite-plugin-vue2": "^2.0.2"
 	}
 }
