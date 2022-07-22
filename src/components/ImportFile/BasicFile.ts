@@ -27,7 +27,8 @@ export class BasicFileImporter extends FileImporter {
 				'.mp3',
 				'.fsb',
 			],
-			fileDropper
+			fileDropper,
+			true
 		)
 	}
 
