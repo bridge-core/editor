@@ -177,7 +177,7 @@ export abstract class FileTab extends Tab {
 					})
 				} catch {}
 
-				if (!fileHandle) return
+				if (!fileHandle) return false
 				this.fileHandle = fileHandle
 				this.resetSignal()
 
@@ -186,9 +186,12 @@ export abstract class FileTab extends Tab {
 			}
 
 			// We're done here
-			return
+			return true
 		}
 
-		await this.parent.app.fileSystem.write(this.fileHandle, value)
+		return await this.parent.app.fileSystem
+			.write(this.fileHandle, value)
+			.then(() => true)
+			.catch(() => false)
 	}
 }
