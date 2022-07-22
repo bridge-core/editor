@@ -9,7 +9,7 @@ import { expose } from 'comlink'
 import { FileTypeLibrary, IFileType } from '/@/components/Data/FileType'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import type { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
-import { Dash } from 'dash-compiler'
+import { Dash, initRuntimes } from 'dash-compiler'
 import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { DashFileSystem } from './FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
@@ -17,6 +17,9 @@ import { dirname } from '/@/utils/path'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { ForeignConsole } from './Console'
 import { Mutex } from '../../Common/Mutex'
+import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+
+initRuntimes(wasmUrl)
 
 export interface ICompilerOptions {
 	config: string
