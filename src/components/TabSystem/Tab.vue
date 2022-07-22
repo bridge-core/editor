@@ -63,7 +63,7 @@
 		<v-tooltip
 			color="tooltip"
 			open-delay="1500"
-			:disabled="pointerDevice === 'touch' || !tab.projectPath"
+			:disabled="pointerDevice === 'touch' || !tab.path"
 			bottom
 		>
 			<template v-slot:activator="{ on }">
@@ -102,7 +102,7 @@
 					</span>
 				</span>
 			</template>
-			<span>{{ tab.projectPath }}</span>
+			<span>{{ tab.path }}</span>
 		</v-tooltip>
 
 		<v-btn

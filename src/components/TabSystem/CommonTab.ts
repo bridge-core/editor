@@ -20,7 +20,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	public isTemporary = !settingsState?.editor?.keepTabsOpen ?? true
 	public readonly onClose = new EventDispatcher<void>()
 
-	protected path?: string
+	protected path?: string = undefined
 	protected folderName: string | null = null
 	protected actions: SimpleAction[] = []
 	protected isActive = false
