@@ -42,12 +42,12 @@ export class SidebarManager {
 
 	toggleSidebarContent(content: SidebarContent | null) {
 		if (content === null) {
-			this.currentState.value = null
+			this.hideSidebarContent()
 			return
 		}
 
 		if (content === this.currentState.value) {
-			this.currentState.value = null
+			this.hideSidebarContent(false)
 		} else {
 			this.currentState.value = content
 			if (!this.isNavigationVisible.value)
@@ -55,6 +55,15 @@ export class SidebarManager {
 		}
 
 		App.getApp().then((app) => app.windowResize.dispatch())
+	}
+	async hideSidebarContent(hideNavigation = true) {
+		const app = await App.getApp()
+
+		if (app.mobile.isCurrentDevice()) {
+			if (hideNavigation) this.isNavigationVisible.value = false
+		} else {
+			this.currentState.value = null
+		}
 	}
 	selectSidebarContent(content: SidebarContent | null) {
 		this.currentState.value = content
