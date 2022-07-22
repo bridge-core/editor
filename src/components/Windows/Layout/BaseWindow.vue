@@ -12,7 +12,7 @@
 			height="100%"
 			width="100%"
 			color="background"
-			:rounded="platform === 'darwin' ? 'lg' : undefined"
+			rounded="lg"
 			ref="card"
 		>
 			<component
@@ -38,6 +38,7 @@
 				clipped
 				stateless
 				color="expandedSidebar"
+				class="rounded-l-lg"
 				style="visibility: visible; transform: translateX(0)"
 			>
 				<MacWindowControls
