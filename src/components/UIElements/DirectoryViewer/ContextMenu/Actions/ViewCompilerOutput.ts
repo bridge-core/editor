@@ -41,7 +41,7 @@ export const ViewCompilerOutput = (
 				!(await fileSystem.fileExists(transformedPath))
 			) {
 				new InformationWindow({
-					description: 'actionsviewCompilerOutput.fileMissing',
+					description: 'actions.viewCompilerOutput.fileMissing',
 				})
 				return
 			}
