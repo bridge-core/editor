@@ -28,8 +28,8 @@
 			</div>
 			<template v-else>
 				<ExtensionCard
-					v-for="(extension, i) in currentExtensions"
-					:key="`${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}.${i}`"
+					v-for="extension in currentExtensions"
+					:key="`${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`"
 					:extension="extension"
 					@search="(search) => (sidebar._filter = search)"
 					@select="(id) => ($data.selectedSidebar = id)"
