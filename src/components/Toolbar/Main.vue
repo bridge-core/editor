@@ -16,7 +16,8 @@
 	>
 		<template v-if="hideToolbarItems">
 			<Logo
-				style="height: 18px; padding-right: 8px"
+				height="18px"
+				style="padding-right: 8px"
 				alt="Logo of bridge. v2"
 				draggable="false"
 			/>
@@ -38,8 +39,8 @@
 		<template v-else>
 			<Logo
 				v-if="!isMacOS || !windowControlsOverlay"
+				height="20px"
 				style="
-					height: 20px;
 					padding-right: 4px;
 					padding-left: calc(env(safe-area-inset-left) + 4px);
 				"
