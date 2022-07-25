@@ -21,7 +21,7 @@ export class ElseSchema extends Schema {
 		this.ifSchema = ifSchema
 	}
 
-	getSchemasFor(obj: unknown, location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number | undefined)[]) {
 		if (!this.ifSchema.isTrue(obj))
 			return this.rootSchema.getSchemasFor(obj, [...location])
 		return []

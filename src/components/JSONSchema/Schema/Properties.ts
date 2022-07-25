@@ -1,6 +1,5 @@
-import { DoNotSuggestSchema } from './DoNotSuggest'
 import { RootSchema } from './Root'
-import { IDiagnostic, Schema } from './Schema'
+import { ICompletionItem, IDiagnostic, Schema } from './Schema'
 
 export class PropertiesSchema extends Schema {
 	protected children: Record<string, RootSchema> = {}
@@ -27,7 +26,7 @@ export class PropertiesSchema extends Schema {
 		)
 	}
 
-	getSchemasFor(obj: unknown, location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number | undefined)[]) {
 		const key = location.shift()
 
 		if (key === undefined) return Object.values(this.children)
@@ -50,14 +49,34 @@ export class PropertiesSchema extends Schema {
 					!propertyContext.includes(propertyName) &&
 					!schema.hasDoNotSuggest
 			)
-			.map(
-				([propertyName]) =>
-					<const>{
+			.map(([propertyName, schema]) => {
+				const types = new Set(schema.types)
+				const completionItems: ICompletionItem[] = []
+
+				const isOfTypeArray = types.has('array')
+
+				if (isOfTypeArray)
+					completionItems.push({
+						type: 'array',
+						label: `${propertyName}`,
+						value: propertyName,
+					})
+
+				/**
+				 * Only push the suggestion item of type 'object' if
+				 * the schema is not of type 'array' or if we have at
+				 * least one other type within the array
+				 */
+				if (!isOfTypeArray || types.size > 1)
+					completionItems.push({
 						type: 'object',
 						label: `${propertyName}`,
 						value: propertyName,
-					}
-			)
+					})
+
+				return completionItems
+			})
+			.flat()
 	}
 
 	validate(obj: unknown) {
