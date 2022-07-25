@@ -393,8 +393,11 @@ export default {
 		forceValue() {
 			this.$refs.addKeyInput.blur()
 
-			this.isUserControlledTrigger = true
-			this.onAdd(this.keyToAdd, true)
+			// keyToAdd model only updates after input being blurred
+			this.$nextTick(() => {
+				this.isUserControlledTrigger = true
+				this.onAdd(this.keyToAdd, true)
+			})
 		},
 		onScroll(event) {
 			this.treeEditor.scrollTop = event.target.scrollTop
