@@ -8,7 +8,6 @@ import {
 	RequiresMatcher,
 } from './RequiresMatcher/RequiresMatcher'
 import { useMonaco } from '/@/utils/libs/useMonaco'
-import type { editor } from 'monaco-editor'
 
 const types = new Map<string, string>()
 
@@ -80,7 +79,9 @@ export class TypeLoader {
 
 				const { definition, requires } = type
 
-				const valid = matcher.isValid(requires as IRequirements)
+				const valid = !requires
+					? true
+					: matcher.isValid(requires as IRequirements)
 
 				if (valid)
 					return <const>[definition, await this.load(definition)]
