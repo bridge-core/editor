@@ -2,7 +2,11 @@
 	<span v-if="value === undefined" :style="toStyle(def)">
 		<slot />
 	</span>
-	<span v-else v-intersect="onIntersect" style="white-space: nowrap">
+	<span
+		v-else
+		v-intersect="skipRender ? onIntersect : null"
+		style="white-space: nowrap"
+	>
 		<span v-if="skipRender">"{{ value }}"</span>
 
 		<span v-else
@@ -62,7 +66,7 @@ export default {
 		}
 	},
 	data: () => ({
-		skipRender: false,
+		skipRender: true,
 	}),
 	computed: {
 		tokens() {
@@ -98,7 +102,12 @@ export default {
 			}
 		},
 		onIntersect(entries) {
-			// this.skipRender = !entries[0].isIntersecting
+			// Once we have rendered a highlight once, we no longer revert to the unhighlighted text
+			// TODO: Maybe this logic can be improved? (e.g. a timeout to revert to the unhighlighted text)
+			if (!this.skipRender) return
+
+			const isIntersecting = !entries[0].isIntersecting
+			this.skipRender = isIntersecting
 		},
 	},
 }
