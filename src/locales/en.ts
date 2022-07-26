@@ -440,6 +440,10 @@ export default {
 		name: 'Pack Explorer',
 		searchFiles: 'Search files...',
 		categories: 'Categories',
+		move: {
+			toLocal: 'Move to Local Folder',
+			toBridgeFolder: 'Move to bridge. Folder',
+		},
 		refresh: {
 			name: 'Refresh Project',
 			description: 'Fetch the current project for newly added files',
@@ -1296,12 +1300,10 @@ export default {
 				noneValid: {
 					part1: 'No valid command variations found! Argument ',
 					part2: " may be invalid! It is of type '",
-					part3:
-						"' but that type is not supported in the current variation tree.",
+					part3: "' but that type is not supported in the current variation tree.",
 				},
 				noneValidEnd: {
-					part1:
-						'No valid command variations found! You may be missing some arguments or argument ',
+					part1: 'No valid command variations found! You may be missing some arguments or argument ',
 					part2: ' may be invalid!',
 				},
 			},
@@ -1310,23 +1312,19 @@ export default {
 			schema: {
 				familyNotFound: {
 					part1: "Could not find family '",
-					part2:
-						"'. This could either be a mistake or the family is from another addon.",
+					part2: "'. This could either be a mistake or the family is from another addon.",
 				},
 				typeNotFound: {
 					part1: "Could not find type '",
-					part2:
-						"'. This could either be a mistake or the type is from another addon.",
+					part2: "'. This could either be a mistake or the type is from another addon.",
 				},
 				tagNotFound: {
 					part1: "Could not find tag '",
-					part2:
-						"'. This could either be a mistake or the tag is from another addon.",
+					part2: "'. This could either be a mistake or the tag is from another addon.",
 				},
 				schemaValueNotFound: {
 					part1: "Could not find schema value '",
-					part2:
-						"'. This could either be a mistake or the schema value is from another addon.",
+					part2: "'. This could either be a mistake or the schema value is from another addon.",
 				},
 			},
 			data: {

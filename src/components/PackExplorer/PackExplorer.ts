@@ -22,6 +22,8 @@ import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/Di
 import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu/Folder'
 import { IHandleMovedOptions } from '../UIElements/DirectoryViewer/DirectoryStore'
 import { ViewConnectedFiles } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ConnectedFiles'
+import { ToLocalProjectAction } from './Actions/ToLocalProject'
+import { ToBridgeFolderProjectAction } from './Actions/ToBridgeFolderProject'
 
 export class PackExplorer extends SidebarContent {
 	component = PackExplorerComponent
@@ -181,6 +183,10 @@ export class PackExplorer extends SidebarContent {
 	async showMoreMenu(event: MouseEvent) {
 		const app = await App.getApp()
 
+		const moveAction = app.project.isLocal
+			? ToBridgeFolderProjectAction(app.project)
+			: ToLocalProjectAction(app.project)
+
 		showContextMenu(event, [
 			// Add new file
 			{
@@ -190,6 +196,8 @@ export class PackExplorer extends SidebarContent {
 					await app.windows.createPreset.open()
 				},
 			},
+
+			isUsingFileSystemPolyfill.value ? null : moveAction,
 			{ type: 'divider' },
 			// Reload project
 			{

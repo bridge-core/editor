@@ -33,6 +33,7 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 import { iterateDir } from '/@/utils/iterateDir'
 import { Signal } from '../../Common/Event/Signal'
+import { moveHandle } from '/@/utils/file/moveHandle'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -565,6 +566,33 @@ export abstract class Project {
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
 		}
+	}
+
+	/**
+	 * Switches between a local and regular project
+	 */
+	async switchProjectType() {
+		this.app.windows.loadingWindow.open()
+
+		const fromDir = this.requiresPermissions
+			? 'projects'
+			: '~local/projects'
+		const toDir = this.requiresPermissions ? '~local/projects' : 'projects'
+
+		const { type, handle } = await moveHandle({
+			moveHandle: this.baseDirectory,
+			fromHandle: await this.app.fileSystem.getDirectoryHandle(fromDir),
+			toHandle: await this.app.fileSystem.getDirectoryHandle(toDir),
+		})
+		if (type === 'cancel' || !handle || handle.kind !== 'directory') {
+			this.app.windows.loadingWindow.close()
+			return
+		}
+
+		await this.parent.removeProject(this, false)
+		await this.parent.addProject(handle, true, !this.requiresPermissions)
+
+		this.app.windows.loadingWindow.close()
 	}
 
 	abstract getCurrentDataPackage(): Promise<AnyDirectoryHandle>

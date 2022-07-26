@@ -66,12 +66,13 @@ export class ProjectManager extends Signal<void> {
 
 		return project
 	}
-	async removeProject(project: Project) {
+	async removeProject(project: Project, unlinkProject = true) {
 		if (!this.state[project.name])
 			throw new Error('Project to delete not found')
 
+		this._selectedProject = undefined
 		del(this.state, project.name)
-		await this.app.fileSystem.unlink(project.projectPath)
+		if (unlinkProject) await this.app.fileSystem.unlink(project.projectPath)
 
 		await this.storeProjects(project.name)
 	}
@@ -91,10 +92,10 @@ export class ProjectManager extends Signal<void> {
 			'projects',
 			{ create: true }
 		)
-		const localDirectoryHandle = await this.app.fileSystem.getDirectoryHandle(
-			'~local/projects',
-			{ create: true }
-		)
+		const localDirectoryHandle =
+			await this.app.fileSystem.getDirectoryHandle('~local/projects', {
+				create: true,
+			})
 
 		const isBridgeFolderSetup = this.app.bridgeFolderSetup.hasFired
 
