@@ -6,13 +6,15 @@ export class GlobalExtensionLoader extends ExtensionLoader {
 	constructor(protected app: App) {
 		super(
 			app.fileSystem,
-			'extensions',
+			'~local/extensions',
 			'data/inactiveExtensions.json',
 			true
 		)
 	}
 
 	async getInstalledExtensions() {
+		await this.app.projectManager.projectReady.fired
+
 		return new Map([
 			...(await super.getInstalledExtensions()).entries(),
 			...(

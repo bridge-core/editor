@@ -29,13 +29,17 @@
 			<v-row
 				no-gutters
 				class="d-flex fill-area"
-				:class="{ 'flex-row-reverse': isSidebarRight }"
+				:class="{
+					'ml-2': !isSidebarContentVisible && isSidebarRight,
+					'mr-2': !isSidebarContentVisible && !isSidebarRight,
+					'flex-row-reverse': isSidebarRight,
+				}"
 			>
 				<v-col
 					v-if="isSidebarContentVisible"
 					:cols="isSidebarContentVisible ? 3 + sidebarSize : 0"
 				>
-					<SidebarContent />
+					<SidebarContent :isSidebarRight="isSidebarRight" />
 				</v-col>
 
 				<v-col
@@ -50,11 +54,11 @@
 							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
 						}"
 					>
-						<v-divider
+						<!-- <v-divider
 							v-if="isSidebarContentVisible && !isSidebarRight"
 							style="z-index: 1"
 							vertical
-						/>
+						/> -->
 
 						<TabSystem
 							class="flex-grow-1"
@@ -75,10 +79,10 @@
 							:id="1"
 						/>
 
-						<v-divider
+						<!-- <v-divider
 							v-if="isSidebarContentVisible && isSidebarRight"
 							vertical
-						/>
+						/> -->
 					</div>
 					<WelcomeScreen
 						v-else
@@ -92,13 +96,13 @@
 					/>
 				</v-col>
 			</v-row>
-
-			<!--  -->
 		</v-main>
 
-		<InitialSetupDialog />
-		<ContextMenu v-if="contextMenu" :contextMenu="contextMenu" />
-		<FileDropper />
+		<ContextMenu
+			v-if="contextMenu"
+			:contextMenu="contextMenu"
+			:windowHeight="windowSize.currentHeight"
+		/>
 	</v-app>
 </template>
 
@@ -113,10 +117,7 @@ import ContextMenu from '/@/components/ContextMenu/ContextMenu.vue'
 import { App } from '/@/App.ts'
 import TabSystem from '/@/components/TabSystem/TabSystem.vue'
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
-import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
-import InitialSetupDialog from '/@/components/InitialSetup/Dialog.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
-import { isContentVisible, SidebarState } from './components/Sidebar/state'
 import { settingsState } from './components/Windows/Settings/SettingsState'
 
 export default {
@@ -137,8 +138,6 @@ export default {
 		ContextMenu,
 		TabSystem,
 		WelcomeScreen,
-		FileDropper,
-		InitialSetupDialog,
 		SidebarContent,
 	},
 
@@ -154,10 +153,13 @@ export default {
 
 	computed: {
 		isSidebarContentVisible() {
-			return this.sidebarNavigationVisible && isContentVisible.value
+			return (
+				this.sidebarNavigationVisible &&
+				App.sidebar.isContentVisible.value
+			)
 		},
 		sidebarNavigationVisible() {
-			return SidebarState.isNavigationVisible
+			return App.sidebar.isNavigationVisible.value
 		},
 		isSidebarRight() {
 			return (
@@ -195,7 +197,7 @@ export default {
 	},
 	methods: {
 		openSidebar() {
-			SidebarState.isNavigationVisible = true
+			App.sidebar.isNavigationVisible.value = true
 		},
 	},
 	watch: {
@@ -298,5 +300,10 @@ summary::-webkit-details-marker {
 }
 .theme--light .outlined {
 	border-color: #a4a4a4;
+}
+
+input,
+textarea {
+	color: var(--v-text-base);
 }
 </style>

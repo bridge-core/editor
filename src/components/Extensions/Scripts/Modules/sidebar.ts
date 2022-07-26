@@ -1,12 +1,15 @@
 import { IModuleConfig } from '../types'
-import { createSidebar } from '/@/components/Sidebar/create'
-import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { createSidebar } from '../../../Sidebar/SidebarElement'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { Component } from 'vue'
 import { SidebarContent } from '/@/components/Sidebar/Content/SidebarContent'
+import { SidebarAction } from '/@/components/Sidebar/Content/SidebarAction'
+import { SelectableSidebarAction } from '/@/components/Sidebar/Content/SelectableSidebarAction'
 
-export const SidebarModule = ({ disposables }: IModuleConfig) => ({
+export const SidebarModule = ({ disposables, extensionId }: IModuleConfig) => ({
 	SidebarContent,
+	SidebarAction,
+	SelectableSidebarAction,
 
 	create(config: {
 		id?: string
@@ -14,17 +17,15 @@ export const SidebarModule = ({ disposables }: IModuleConfig) => ({
 		component: Component
 		icon: string
 	}) {
-		const sidebar = createSidebar({
-			...config,
-			isVisible: config.id
-				? (<any>settingsState)?.sidebar?.sidebarElements?.[config.id] ??
-				  true
-				: true,
-		})
+		if (!config.id) {
+			console.error('SidebarModule: config.id is required')
+			config.id = `${extensionId}//${config.displayName}`
+		}
+		const sidebar = createSidebar(config)
 
 		if (config.id) {
 			SettingsWindow.loadedSettings.once((settingsState) => {
-				sidebar.isVisible =
+				sidebar.isVisibleSetting =
 					(<any>settingsState)?.sidebar?.sidebarElements?.[
 						config.id!
 					] ?? true

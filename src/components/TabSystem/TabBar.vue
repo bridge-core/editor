@@ -12,10 +12,11 @@
 			:style="`display: flex; overflow-x: scroll; white-space: nowrap; width: 100%; height: 48px;`"
 		>
 			<TabSystemTab
-				v-for="tab in tabSystem.tabs"
+				v-for="(tab, i) in tabSystem.tabs"
 				:key="tab.uuid"
 				:tab="tab"
 				:isActive="tabSystem.isActive"
+				:isFirstTab="i === 0"
 			/>
 		</Draggable>
 		<ActionBar
@@ -69,9 +70,9 @@ export default {
 	background-color: var(--v-background-base);
 }
 *::-webkit-scrollbar-thumb {
-	border-radius: 0;
+	border: none !important;
+	background-color: var(--v-tabInactive-base);
 }
-
 .inactive-action-bar {
 	opacity: 0.5;
 }

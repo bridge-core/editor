@@ -1,6 +1,10 @@
-import { Model, StandaloneModelViewer } from 'bridge-model-viewer'
+import { useBridgeModelViewer } from '/@/utils/libs/useModelViewer'
 
-export const ModelViewerModule = () => ({
-	Model,
-	StandaloneModelViewer,
-})
+export const ModelViewerModule = async () => {
+	const { Model, StandaloneModelViewer } = await useBridgeModelViewer()
+
+	return {
+		Model,
+		StandaloneModelViewer,
+	}
+}

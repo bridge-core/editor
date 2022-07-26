@@ -133,27 +133,10 @@ export class LightningCache {
 		return [filePaths, changedFiles, deletedFiles]
 	}
 
-	async unlink(path: string) {
-		let handle: AnyHandle | undefined
-		try {
-			handle = await this.service.fileSystem.getFileHandle(path)
-		} catch {
-			try {
-				handle = await this.service.fileSystem.getDirectoryHandle(path)
-			} catch {}
-		}
+	async unlinkFile(path: string, saveCache = true) {
+		this.lightningStore.remove(path)
 
-		if (!handle) return
-		else if (handle.kind === 'file') this.lightningStore.remove(path)
-		else if (handle.kind === 'directory')
-			await iterateDir(
-				handle,
-				(_, filePath) => this.lightningStore.remove(filePath),
-				undefined,
-				path
-			)
-
-		await this.lightningStore.saveStore(false)
+		if (saveCache) await this.lightningStore.saveStore(false)
 	}
 
 	protected async iterateDir(
@@ -270,7 +253,7 @@ export class LightningCache {
 
 		this.lightningStore.add(
 			filePath,
-			{ lastModified: file.lastModified },
+			{ lastModified: file.lastModified, isForeignFile },
 			fileType
 		)
 	}
@@ -295,6 +278,7 @@ export class LightningCache {
 				filePath,
 				{
 					lastModified: file.lastModified,
+					isForeignFile,
 				},
 				fileType
 			)

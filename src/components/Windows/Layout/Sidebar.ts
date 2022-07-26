@@ -129,7 +129,7 @@ export class SidebarItem {
 }
 
 export class Sidebar extends EventDispatcher<string | undefined> {
-	protected _selected?: string
+	protected _selected?: string = ''
 	protected _filter: string = ''
 	/**
 	 * Stores the last _filter value that we have already selected a new element for
@@ -181,6 +181,10 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 	get filter() {
 		return this._filter.toLowerCase()
 	}
+	setFilter(filter: string) {
+		this._filter = filter
+	}
+
 	get elements() {
 		const elements = this.sortSidebar(
 			this._elements

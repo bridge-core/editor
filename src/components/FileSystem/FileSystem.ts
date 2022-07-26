@@ -5,6 +5,9 @@ import type { IGetHandleConfig, IMkdirConfig } from './Common'
 import { iterateDir } from '/@/utils/iterateDir'
 import { join, dirname, basename } from '/@/utils/path'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
+import { getStorageDirectory } from '/@/utils/getStorageDirectory'
+import { VirtualFileHandle } from './Virtual/FileHandle'
+import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 
 export class FileSystem extends Signal<void> {
 	protected _baseDirectory!: AnyDirectoryHandle
@@ -32,6 +35,15 @@ export class FileSystem extends Signal<void> {
 		let current = this.baseDirectory
 		const pathArr = path.split(/\\|\//g)
 		if (pathArr[0] === '.') pathArr.shift()
+		// Dash loads global extensions from "extensions/" but this folder is no longer used for bridge. projects
+		if (pathArr[0] === 'extensions') {
+			pathArr[0] = '~local'
+			pathArr.splice(1, 0, 'extensions')
+		}
+		if (pathArr[0] === '~local') {
+			current = await getStorageDirectory()
+			pathArr.shift()
+		}
 
 		for (const folder of pathArr) {
 			try {
@@ -65,10 +77,28 @@ export class FileSystem extends Signal<void> {
 			throw new Error(`File does not exist: "${path}"`)
 		}
 	}
-	pathTo(fileHandle: AnyFileHandle) {
-		return this.baseDirectory
-			.resolve(<any>fileHandle)
+	async pathTo(handle: AnyHandle) {
+		const localHandle = await getStorageDirectory()
+		// We can only resolve paths to virtual files if the user uses the file system polyfill
+		if (
+			handle instanceof VirtualFileHandle &&
+			!(localHandle instanceof VirtualDirectoryHandle)
+		)
+			return
+
+		let path = await localHandle
+			.resolve(<any>handle)
 			.then((path) => path?.join('/'))
+
+		if (path) {
+			path = '~local/' + path
+		} else {
+			path = await this.baseDirectory
+				.resolve(<any>handle)
+				.then((path) => path?.join('/'))
+		}
+
+		return path
 	}
 
 	async mkdir(path: string, { recursive }: Partial<IMkdirConfig> = {}) {
@@ -191,6 +221,9 @@ export class FileSystem extends Signal<void> {
 		)
 	}
 
+	// TODO: Use moveHandle() util function
+	// This function can utilize FileSystemHandle.move() where available
+	// and therefore become more efficient
 	async move(path: string, newPath: string) {
 		if (await this.fileExists(path)) {
 			await this.copyFile(path, newPath)
@@ -202,12 +235,14 @@ export class FileSystem extends Signal<void> {
 
 		await this.unlink(path)
 	}
+
 	async copyFile(originPath: string, destPath: string) {
 		const originHandle = await this.getFileHandle(originPath, false)
 		const destHandle = await this.getFileHandle(destPath, true)
 
 		return await this.copyFileHandle(originHandle, destHandle)
 	}
+
 	async copyFileHandle(
 		originHandle: AnyFileHandle,
 		destHandle: AnyFileHandle

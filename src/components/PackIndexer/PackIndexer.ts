@@ -4,9 +4,9 @@ import { proxy } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import type { PackIndexerService } from './Worker/Main'
 import PackIndexerWorker from './Worker/Main?worker'
-import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import type { Project } from '/@/components/Projects/Project/Project'
+import { Mutex } from '../Common/Mutex'
 
 export class PackIndexer extends WorkerManager<
 	typeof PackIndexerService,
@@ -14,7 +14,7 @@ export class PackIndexer extends WorkerManager<
 	boolean,
 	readonly [string[], string[]]
 > {
-	protected ready = new Signal<void>()
+	protected isPackIndexerFree = new Mutex()
 	constructor(
 		protected project: Project,
 		protected baseDirectory: AnyDirectoryHandle
@@ -36,6 +36,7 @@ export class PackIndexer extends WorkerManager<
 
 	protected async start(forceRefreshCache: boolean) {
 		console.time('[TASK] Indexing Packs (Total)')
+		await this.isPackIndexerFree.lock()
 
 		// Instaniate the worker TaskService
 		this._service = await new this.workerClass!(
@@ -49,6 +50,7 @@ export class PackIndexer extends WorkerManager<
 				noFullLightningCacheRefresh:
 					!forceRefreshCache &&
 					!settingsState?.general?.fullLightningCacheRefresh,
+				projectPath: this.project.projectPath,
 			}
 		)
 
@@ -65,7 +67,7 @@ export class PackIndexer extends WorkerManager<
 			forceRefreshCache
 		)
 		await this.service.disposeListeners()
-		this.ready.dispatch()
+		this.isPackIndexerFree.unlock()
 		console.timeEnd('[TASK] Indexing Packs (Total)')
 		return <const>[changedFiles, deletedFiles]
 	}
@@ -76,52 +78,65 @@ export class PackIndexer extends WorkerManager<
 		isForeignFile = false,
 		hotUpdate = false
 	) {
-		await this.ready.fired
-		this.ready.resetSignal()
+		await this.isPackIndexerFree.lock()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
-		await this.service.updateFile(
+		const anyFileChanged = await this.service.updateFile(
 			filePath,
 			fileContent,
 			isForeignFile,
 			hotUpdate
 		)
 
-		this.ready.dispatch()
+		this.isPackIndexerFree.unlock()
+		return anyFileChanged
+	}
+	async rename(fromPath: string, toPath: string) {
+		await this.isPackIndexerFree.lock()
+
+		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
+
+		await this.service.unlinkFile(fromPath, false)
+		await this.service.updateFile(toPath, undefined, undefined, true)
+		await this.service.saveCache()
+
+		this.isPackIndexerFree.unlock()
 	}
 	async hasFile(filePath: string) {
-		await this.ready.fired
-		this.ready.resetSignal()
+		await this.isPackIndexerFree.lock()
 
 		const res = await this.service.hasFile(filePath)
 
-		this.ready.dispatch()
+		this.isPackIndexerFree.unlock()
 
 		return res
 	}
 	async updateFiles(filePaths: string[], hotUpdate = false) {
-		await this.ready.fired
-		this.ready.resetSignal()
+		await this.isPackIndexerFree.lock()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
-		await this.service.updateFiles(filePaths, hotUpdate)
+		const anyFileChanged = await this.service.updateFiles(
+			filePaths,
+			hotUpdate
+		)
 
-		this.ready.dispatch()
+		this.isPackIndexerFree.unlock()
+		return anyFileChanged
 	}
-	async unlink(path: string) {
-		await this.ready.fired
-		this.ready.resetSignal()
+	async unlinkFile(path: string, saveCache = true) {
+		await this.isPackIndexerFree.lock()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
 
-		await this.service.unlink(path)
+		await this.service.unlinkFile(path, saveCache)
 
-		this.ready.dispatch()
+		this.isPackIndexerFree.unlock()
 	}
+	async saveCache() {
+		await this.isPackIndexerFree.lock()
 
-	async readdir(path: string[], ..._: any[]) {
-		await this.fired
+		await this.service.saveCache()
 
-		return await this.service.readdir(path)
+		this.isPackIndexerFree.unlock()
 	}
 }

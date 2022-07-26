@@ -24,7 +24,7 @@ export class PatternPropertiesSchema extends Schema {
 		)
 	}
 
-	getSchemasFor(obj: unknown, location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number | undefined)[]) {
 		const key = location.shift()
 
 		let schemas: Schema[] = []

@@ -2,7 +2,7 @@
 	<div v-if="data.length > 0">
 		<Sheet
 			v-for="([msg, { type }], i) in data"
-			:key="i"
+			:key="`${type}//${msg}//${i}`"
 			class="pa-2 mb-2 d-flex"
 		>
 			<v-icon

@@ -8,16 +8,15 @@ import { Project } from '../Projects/Project/Project'
 import { OpenedFiles } from './OpenedFiles'
 import { v4 as uuid } from 'uuid'
 import { MonacoHolder } from './MonacoHolder'
-import { FileTab } from './FileTab'
+import { FileTab, TReadOnlyMode } from './FileTab'
 import { TabProvider } from './TabProvider'
 import { AnyFileHandle } from '../FileSystem/Types'
-import { hide as hideSidebar } from '../Sidebar/state'
 import { reactive } from '@vue/composition-api'
 
 export interface IOpenTabOptions {
 	selectTab?: boolean
 	isTemporary?: boolean
-	isReadOnly?: boolean
+	readOnlyMode?: TReadOnlyMode
 }
 
 export class TabSystem extends MonacoHolder {
@@ -60,7 +59,7 @@ export class TabSystem extends MonacoHolder {
 		this.openedFiles = new OpenedFiles(
 			this,
 			_project.app,
-			`projects/${_project.name}/.bridge/openedFiles_${id}.json`
+			`${_project.projectPath}/.bridge/openedFiles_${id}.json`
 		)
 	}
 
@@ -81,11 +80,11 @@ export class TabSystem extends MonacoHolder {
 		fileHandle: AnyFileHandle,
 		{
 			selectTab = true,
-			isReadOnly = false,
+			readOnlyMode = 'off',
 			isTemporary = true,
 		}: IOpenTabOptions = {}
 	) {
-		const tab = await this.getTabFor(fileHandle, isReadOnly)
+		const tab = await this.getTabFor(fileHandle, readOnlyMode)
 
 		// Default value is true so we only need to update if the caller wants to create a permanent tab
 		if (!isTemporary) tab.isTemporary = false
@@ -99,17 +98,20 @@ export class TabSystem extends MonacoHolder {
 		return await this.open(fileHandle, options)
 	}
 
-	protected async getTabFor(fileHandle: AnyFileHandle, isReadOnly = false) {
+	protected async getTabFor(
+		fileHandle: AnyFileHandle,
+		readOnlyMode: TReadOnlyMode = 'off'
+	) {
 		let tab: Tab | undefined = undefined
 		for (const CurrentTab of this.tabTypes) {
 			if (await CurrentTab.is(fileHandle)) {
 				// @ts-ignore
-				tab = new CurrentTab(this, fileHandle, isReadOnly)
+				tab = new CurrentTab(this, fileHandle, readOnlyMode)
 				break
 			}
 		}
 		// Default tab type: Text editor
-		if (!tab) tab = new TextTab(this, fileHandle, isReadOnly)
+		if (!tab) tab = new TextTab(this, fileHandle, readOnlyMode)
 
 		return await tab.fired
 	}
@@ -180,7 +182,7 @@ export class TabSystem extends MonacoHolder {
 	async select(tab?: Tab) {
 		if (this.isActive !== !!tab) this.setActive(!!tab)
 
-		if (this.app.mobile.isCurrentDevice()) hideSidebar()
+		if (this.app.mobile.isCurrentDevice()) App.sidebar.hide()
 		if (tab?.isSelected) return
 
 		this._selectedTab?.onDeactivate()
@@ -200,9 +202,7 @@ export class TabSystem extends MonacoHolder {
 	}
 	async save(tab = this.selectedTab) {
 		if (!tab || (tab instanceof FileTab && tab.isReadOnly)) return
-
-		const app = await App.getApp()
-		app.windows.loadingWindow.open()
+		tab?.setIsLoading(true)
 
 		// Save whether the tab was selected previously for use later
 		const tabWasActive = this.selectedTab === tab
@@ -219,13 +219,6 @@ export class TabSystem extends MonacoHolder {
 		if (!tab.isForeignFile && tab instanceof FileTab) {
 			await this.project.updateFile(tab.getPath())
 
-			await this.project.recentFiles.add({
-				path: tab.getPath(),
-				name: tab.name,
-				color: tab.iconColor,
-				icon: tab.icon,
-			})
-
 			this.project.fileSave.dispatch(tab.getPath(), await tab.getFile())
 
 			// Only refresh auto-completion content if tab is active
@@ -233,8 +226,8 @@ export class TabSystem extends MonacoHolder {
 				App.eventSystem.dispatch('refreshCurrentContext', tab.getPath())
 		}
 
-		app.windows.loadingWindow.close()
 		tab.focus()
+		tab?.setIsLoading(false)
 	}
 	async saveAs() {
 		if (this.selectedTab instanceof FileTab) await this.selectedTab.saveAs()
@@ -296,6 +289,13 @@ export class TabSystem extends MonacoHolder {
 
 		for (const tab of tabs) {
 			if (predicate(tab)) tab.close()
+		}
+	}
+	forceCloseTabs(predicate: (tab: Tab) => boolean) {
+		const tabs = [...this.tabs].reverse()
+
+		for (const tab of tabs) {
+			if (predicate(tab)) this.remove(tab)
 		}
 	}
 	has(predicate: (tab: Tab) => boolean) {

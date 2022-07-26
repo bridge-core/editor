@@ -1,8 +1,9 @@
 import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import AssetPreviewWindowComponent from './Window.vue'
-import { StandaloneModelViewer } from 'bridge-model-viewer'
+import type { StandaloneModelViewer } from 'bridge-model-viewer'
 import { markRaw, set } from '@vue/composition-api'
 import { Color } from 'three'
+import { useBridgeModelViewer } from '/@/utils/libs/useModelViewer'
 
 export interface IAssetPreviewWindowConfig {
 	assetName: string
@@ -44,6 +45,8 @@ export class AssetPreviewWindow extends BaseWindow<IAssetPreviewConfig | null> {
 	}
 
 	async receiveCanvas(canvas: HTMLCanvasElement) {
+		const { StandaloneModelViewer } = await useBridgeModelViewer()
+
 		const modelViewer = new StandaloneModelViewer(
 			canvas,
 			this.modelData,

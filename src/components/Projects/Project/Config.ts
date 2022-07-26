@@ -6,15 +6,13 @@ import {
 	IConfigJson,
 	ProjectConfig as BaseProjectConfig,
 } from 'mc-project-core'
-import { get } from 'idb-keyval'
+import { App } from '/@/App'
 
 export type { IConfigJson } from 'mc-project-core'
 export { defaultPackPaths } from 'mc-project-core'
 
 /**
  * Internal config format versions
- * We use an IDB key to store the config version because some changes we need to make automatically
- * don't make sense as a format version that is stored inside of the file
  *
  * Format version data:
  * [bridge. v2.2.8] Unset or "0": Projects may not contain the formatVersionCorrection compiler plugin
@@ -24,8 +22,12 @@ export { defaultPackPaths } from 'mc-project-core'
 export const latestFormatVersion = 1
 
 export class ProjectConfig extends BaseProjectConfig {
-	constructor(protected fileSystem: FileSystem, protected project?: Project) {
-		super(`projects/${fileSystem.baseDirectory.name}`)
+	constructor(
+		protected fileSystem: FileSystem,
+		projectPath: string,
+		protected project?: Project
+	) {
+		super(projectPath)
 
 		if (project) {
 			project.fileSave.on(
@@ -47,8 +49,6 @@ export class ProjectConfig extends BaseProjectConfig {
 	}
 
 	async setup(upgradeConfig = true) {
-		const formatVersion = (await get(`projectConfigFormatVersion`)) ?? 0
-
 		// Load legacy project config & transform it to new format specified here: https://github.com/bridge-core/project-config-standard
 		if (
 			upgradeConfig &&
@@ -92,6 +92,8 @@ export class ProjectConfig extends BaseProjectConfig {
 
 		await super.setup()
 
+		const formatVersion = this.data.bridge?.formatVersion ?? 0
+		if (!this.data.bridge) this.data.bridge = {}
 		let updatedConfig = false
 
 		// Running in main thread, so we can use the App object
@@ -149,6 +151,7 @@ export class ProjectConfig extends BaseProjectConfig {
 			this.data.compiler?.plugins &&
 			!this.data.compiler.plugins.includes('formatVersionCorrection')
 		) {
+			this.data.bridge.formatVersion = 1
 			this.data.compiler.plugins.push('formatVersionCorrection')
 			updatedConfig = true
 		}
@@ -185,5 +188,20 @@ export class ProjectConfig extends BaseProjectConfig {
 		if (!author) return
 
 		return this.resolvePackPath(undefined, author.logo)
+	}
+
+	async toggleExperiment(project: Project, experiment: string) {
+		project.app.windows.loadingWindow.open()
+
+		const experimentalGameplay = this.get()?.experimentalGameplay ?? {}
+		// Modify experimental gameplay
+		experimentalGameplay[experiment] = !experimentalGameplay[experiment]
+		// Save config
+		await this.save()
+
+		// Only refresh project if it's active
+		if (project.isActiveProject) await project.refresh()
+
+		project.app.windows.loadingWindow.close()
 	}
 }

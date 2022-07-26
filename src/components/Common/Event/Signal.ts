@@ -10,7 +10,7 @@ export class Signal<T> extends EventDispatcher<T> {
 	}
 
 	get fired() {
-		return new Promise<T>((resolve) => this.once(resolve))
+		return new Promise<T>((resolve) => this.once(resolve, false))
 	}
 	get hasFired() {
 		return this.firedTimes >= this.needsToFireAmount

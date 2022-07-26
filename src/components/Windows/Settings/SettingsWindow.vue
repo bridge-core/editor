@@ -15,7 +15,7 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.settings.searchSettings')"
-				v-model.trim="sidebar._filter"
+				v-model.lazy.trim="sidebar._filter"
 				autocomplete="off"
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
@@ -51,7 +51,7 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
-	name: 'PackExplorerWindow',
+	name: 'SettingsWindow',
 	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,

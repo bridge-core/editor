@@ -5,7 +5,11 @@ import {
 
 export async function iterateDir(
 	baseDirectory: AnyDirectoryHandle,
-	callback: (fileHandle: AnyFileHandle, path: string) => Promise<void> | void,
+	callback: (
+		fileHandle: AnyFileHandle,
+		path: string,
+		fromDirectory: AnyDirectoryHandle
+	) => Promise<void> | void,
 	ignoreFolders: Set<string> = new Set(),
 	path = ''
 ) {
@@ -15,7 +19,8 @@ export async function iterateDir(
 
 		if (handle.kind === 'file') {
 			if (handle.name[0] === '.') continue
-			await callback(handle, currentPath)
+
+			await callback(handle, currentPath, baseDirectory)
 		} else if (
 			handle.kind === 'directory' &&
 			!ignoreFolders.has(currentPath)

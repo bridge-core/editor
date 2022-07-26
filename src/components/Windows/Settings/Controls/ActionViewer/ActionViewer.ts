@@ -1,16 +1,16 @@
 import { Control } from '../Control'
 import ActionViewerComponent from './ActionViewer.vue'
-import { Action } from '/@/components/Actions/Action'
 import { shallowReactive } from '@vue/composition-api'
+import { SimpleAction } from '/@/components/Actions/SimpleAction'
 
 export class ActionViewer extends Control<any> {
 	config: any = shallowReactive({ category: 'actions', action: {} })
 
-	constructor(action: Action) {
+	constructor(action: SimpleAction, category = 'actions') {
 		super(
 			ActionViewerComponent,
 			{
-				category: 'actions',
+				category,
 				action: {},
 				description: action.description ?? 'No description provided',
 				key: action.id,
@@ -18,6 +18,7 @@ export class ActionViewer extends Control<any> {
 			},
 			undefined
 		)
+		this.config.category = category
 		this.config.action = action
 	}
 

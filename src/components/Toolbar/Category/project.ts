@@ -3,20 +3,38 @@ import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
-import { importNewProject } from '../../Projects/Import/ImportNew'
+import { importNewProject } from '/@/components/Projects/Import/ImportNew'
+import { virtualProjectName } from '/@/components/Projects/Project/Project'
 
 export function setupProjectCategory(app: App) {
 	const project = new ToolbarCategory(
 		'mdi-view-dashboard-outline',
 		'toolbar.project.name'
 	)
-	app.mobile.change.on((isMobile) => project.setShouldRender(!isMobile))
 
+	project.addItem(
+		app.actionManager.create({
+			icon: 'mdi-home-outline',
+			name: 'actions.goHome.name',
+			description: 'actions.goHome.description',
+			isDisabled: () =>
+				app.isNoProjectSelected &&
+				!app.viewComMojangProject.hasComMojangProjectLoaded,
+			onTrigger: async () => {
+				const app = await App.getApp()
+				app.projectManager.selectProject(virtualProjectName)
+
+				if (!App.sidebar.elements.packExplorer.isSelected)
+					App.sidebar.elements.packExplorer.click()
+			},
+		})
+	)
 	project.addItem(
 		app.actionManager.create({
 			icon: 'mdi-folder-open-outline',
 			name: 'windows.projectChooser.title',
 			description: 'windows.projectChooser.description',
+			isDisabled: () => app.hasNoProjects,
 			onTrigger: () => {
 				if (isUsingFileSystemPolyfill.value) {
 					createVirtualProjectWindow()

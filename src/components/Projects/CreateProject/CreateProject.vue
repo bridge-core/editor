@@ -229,16 +229,21 @@
 					v-model="createOptions.targetVersion"
 					:label="t('windows.createProject.projectTargetVersion')"
 					autocomplete="off"
+					:menu-props="{
+						maxHeight: 220,
+						rounded: 'lg',
+						'nudge-top': -8,
+						transition: 'slide-y-transition',
+					}"
 					:items="availableTargetVersions"
 					:loading="availableTargetVersionsLoading"
 					class="ml-2"
 					outlined
 					dense
-					:menu-props="{ maxHeight: 220 }"
 				/>
 			</div>
 
-			<div class="d-flex">
+			<div class="d-flex flex-column">
 				<v-switch
 					inset
 					dense
@@ -247,7 +252,15 @@
 					@click.stop.native="
 						createOptions.useLangForManifest = !createOptions.useLangForManifest
 					"
-					class="ma-3"
+				></v-switch>
+				<v-switch
+					inset
+					dense
+					:label="t('windows.createProject.bdsProject')"
+					:value="createOptions.bdsProject"
+					@click.stop.native="
+						createOptions.bdsProject = !createOptions.bdsProject
+					"
 				></v-switch>
 			</div>
 		</template>

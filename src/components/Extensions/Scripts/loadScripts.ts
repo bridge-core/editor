@@ -1,49 +1,40 @@
 import { IDisposable } from '/@/types/disposable'
 import { TUIStore } from '../UI/store'
-import { createEnv } from './require'
-import { run } from './run'
+
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
+import { JsRuntime } from './JsRuntime'
+import { iterateDir } from '/@/utils/iterateDir'
 
 export async function loadScripts(
-	baseDirectory: AnyDirectoryHandle,
-	uiStore: TUIStore,
-	disposables: IDisposable[],
-	isGlobal = false
+	jsRuntime: JsRuntime,
+	baseDirectory: AnyDirectoryHandle
 ) {
-	for await (const entry of baseDirectory.values()) {
-		if (entry.kind === 'directory') {
-			await loadScripts(entry, uiStore, disposables, isGlobal)
-		} else if (entry.kind === 'file') {
-			const file = await entry.getFile()
-			await executeScript(await file.text(), {
-				uiStore,
-				disposables,
-				isGlobal,
-				language: entry.name.endsWith('.ts')
-					? 'typeScript'
-					: 'javaScript',
-			})
-		}
-	}
+	await iterateDir(
+		baseDirectory,
+		async (fileHandle, filePath) => {
+			const fileContent = await fileHandle
+				.getFile()
+				.then((file) => file.text())
+			await jsRuntime.run(filePath, undefined, fileContent)
+		},
+		undefined,
+		'scripts'
+	)
 }
 
 export interface IScriptContext {
+	jsRuntime?: JsRuntime
 	uiStore: TUIStore
 	disposables: IDisposable[]
+	extensionId: string
 	language?: 'javaScript' | 'typeScript'
 	isGlobal?: boolean
 }
 
 export function executeScript(
-	code: string,
-	{ uiStore, disposables, language, isGlobal = false }: IScriptContext
+	jsRuntime: JsRuntime,
+	filePath: string,
+	code: string
 ) {
-	return run({
-		async: true,
-		script: code,
-		language,
-		env: {
-			require: createEnv(disposables, uiStore, isGlobal),
-		},
-	})
+	return jsRuntime.run(filePath, undefined, code)
 }

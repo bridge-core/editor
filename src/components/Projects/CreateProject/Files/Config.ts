@@ -20,6 +20,7 @@ export class CreateConfig extends CreateFile {
 				targetVersion: createOptions.targetVersion,
 				description: createOptions.description,
 				experimentalGameplay: createOptions.experimentalGameplay,
+				bdsProject: createOptions.bdsProject,
 				packs: Object.fromEntries(
 					createOptions.packs
 						.filter((packId) => packId !== '.bridge')
@@ -31,6 +32,7 @@ export class CreateConfig extends CreateFile {
 				worlds: ['./worlds/*'],
 				compiler: {
 					plugins: [
+						'generatorScripts',
 						'typeScript',
 						'entityIdentifierAlias',
 						'customEntityComponents',
@@ -39,7 +41,12 @@ export class CreateConfig extends CreateFile {
 						'customCommands',
 						'moLang',
 						'formatVersionCorrection',
-						['simpleRewrite', { packName: createOptions.name }],
+						[
+							'simpleRewrite',
+							{
+								packName: createOptions.name,
+							},
+						],
 					],
 				},
 			},

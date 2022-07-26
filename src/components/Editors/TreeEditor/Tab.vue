@@ -36,6 +36,7 @@
 				v-model="keyToAdd"
 				@change="onAdd"
 				@keydown.enter="mayTrigger"
+				@keydown.tab="mayTrigger"
 				:items="
 					isUsingBridgePredictions
 						? allSuggestions
@@ -46,6 +47,9 @@
 					maxHeight: 124,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
+					rounded: 'lg',
+					'nudge-top': -8,
+					transition: 'slide-y-transition',
 				}"
 				:label="
 					isUsingBridgePredictions
@@ -88,6 +92,7 @@
 				v-model="valueToAdd"
 				@change="(s) => onAdd(s, true)"
 				@keydown.enter="mayTrigger"
+				@keydown.tab="mayTrigger"
 				:disabled="isGlobal"
 				:items="valueSuggestions"
 				:item-value="(item) => item"
@@ -95,6 +100,9 @@
 					maxHeight: 124,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
+					rounded: 'lg',
+					'nudge-top': -8,
+					transition: 'slide-y-transition',
 				}"
 				:label="t('editors.treeEditor.addValue')"
 				class="mx-4"
@@ -126,6 +134,7 @@
 				"
 				@change="(s) => onEdit(s)"
 				@keydown.enter="mayTrigger"
+				@keydown.tab="mayTrigger"
 				:disabled="isGlobal"
 				:items="editSuggestions"
 				:item-value="(item) => item"
@@ -133,6 +142,9 @@
 					maxHeight: 124,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
+					rounded: 'lg',
+					'nudge-top': -8,
+					transition: 'slide-y-transition',
 				}"
 				:label="t('editors.treeEditor.edit')"
 				outlined
@@ -184,11 +196,9 @@ export default {
 	}),
 	mounted() {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
-		this.focusEditor()
 	},
 	activated() {
 		this.treeEditor.receiveContainer(this.$refs.editorContainer)
-		this.focusEditor()
 	},
 	computed: {
 		isUsingBridgePredictions() {
@@ -205,8 +215,8 @@ export default {
 			return settingsState &&
 				settingsState.appearance &&
 				settingsState.appearance.editorFont
-				? `${settingsState.appearance.editorFont} !important`
-				: 'Menlo !important'
+				? `${settingsState.appearance.editorFont}, monospace !important`
+				: 'Menlo, monospace !important'
 		},
 		fontFamily() {
 			return this.settingsState &&
@@ -320,17 +330,15 @@ export default {
 								: 'integer'
 							: typeof castedValue
 
-					// Load current schemas
-					const schemas = this.treeEditor.getSchemas()
 					// Get valid value types for current schemas
-					const types = schemas.map((schema) => schema.types).flat()
+					const types = this.treeEditor.getSchemaTypes()
 
 					if (
 						// Is the current type a valid type...
-						types.includes(castedType) ||
+						types.has(castedType) ||
 						// ...or can we cast it to a valid type?
 						mayCastTo[castedType].some((type) => {
-							if (types.includes(type)) {
+							if (types.has(type)) {
 								forcedValueType = type
 								return true
 							}
@@ -385,8 +393,11 @@ export default {
 		forceValue() {
 			this.$refs.addKeyInput.blur()
 
-			this.isUserControlledTrigger = true
-			this.onAdd(this.keyToAdd, true)
+			// keyToAdd model only updates after input being blurred
+			this.$nextTick(() => {
+				this.isUserControlledTrigger = true
+				this.onAdd(this.keyToAdd, true)
+			})
 		},
 		onScroll(event) {
 			this.treeEditor.scrollTop = event.target.scrollTop
@@ -397,9 +408,12 @@ export default {
 					return 'mdi-code-json'
 				case 'array':
 					return 'mdi-code-brackets'
+
 				case 'value':
 					return 'mdi-alphabetical'
 				case 'arrayValue':
+					return 'mdi-link-variant'
+				case 'objectArray':
 					return 'mdi-link-variant'
 				case 'snippet':
 					return 'mdi-attachment'

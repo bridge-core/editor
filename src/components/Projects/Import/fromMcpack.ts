@@ -2,7 +2,6 @@ import { App } from '/@/App'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { Unzipper } from '/@/components/FileSystem/Zip/Unzipper'
-import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { TPackTypeId } from '/@/components/Data/PackType'
@@ -95,16 +94,14 @@ export async function importFromMcpack(
 	await fs.mkdir(`projects/${projectName}/.bridge/compiler`)
 
 	// Add new project
-	if (InitialSetup.ready.hasFired) {
-		await app.projectManager.addProject(
-			await fs.getDirectoryHandle(`projects/${projectName}`),
-			true
-		)
-	}
+	await app.projectManager.addProject(
+		await fs.getDirectoryHandle(`projects/${projectName}`),
+		true
+	)
 
 	if (isUsingFileSystemPolyfill.value && !isFirstImport)
 		// Remove old project if browser is using fileSystem polyfill
-		await app.projectManager.removeProject(app.project.name)
+		await app.projectManager.removeProject(app.project)
 
 	await fs.unlink('import')
 }

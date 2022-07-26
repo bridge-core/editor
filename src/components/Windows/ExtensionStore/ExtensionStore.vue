@@ -15,7 +15,7 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.extensionStore.searchExtensions')"
-				v-model="sidebar._filter"
+				v-model.lazy.trim="sidebar._filter"
 				autocomplete="off"
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
@@ -28,8 +28,8 @@
 			</div>
 			<template v-else>
 				<ExtensionCard
-					v-for="(extension, i) in currentExtensions"
-					:key="`${i}.${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`"
+					v-for="extension in currentExtensions"
+					:key="`${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`"
 					:extension="extension"
 					@search="(search) => (sidebar._filter = search)"
 					@select="(id) => ($data.selectedSidebar = id)"
@@ -46,7 +46,7 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
-	name: 'CreatePresetWindow',
+	name: 'ExtensionStore',
 	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,
@@ -63,6 +63,10 @@ export default {
 		title() {
 			if (!this.sidebar.currentElement)
 				return 'windows.extensionStore.title'
+			else if (this.currentExtensions.length === 1)
+				return `[${this.currentExtensions[0].name} - ${this.t(
+					'windows.extensionStore.title'
+				)}]`
 			else
 				return `[${
 					this.sidebar._filter || this.sidebar.currentElement.text
@@ -78,6 +82,7 @@ export default {
 						e.description.toLowerCase().includes(f) ||
 						e.author.toLowerCase().includes(f) ||
 						e.version.includes(f) ||
+						e.id === this.sidebar._filter ||
 						e.tags.some((tag) => tag.text.toLowerCase().includes(f))
 				)
 			}

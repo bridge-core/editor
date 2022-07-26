@@ -24,7 +24,7 @@ export abstract class ParentSchema extends Schema {
 			.flat()
 	}
 
-	getSchemasFor(obj: unknown, location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number | undefined)[]) {
 		return this.children
 			.map((child) => child.getSchemasFor(obj, [...location]))
 			.flat()

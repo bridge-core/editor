@@ -20,6 +20,10 @@ export class ToolbarCategory extends EventDispatcher<void> {
 
 	constructor(protected icon: string, protected name: string) {
 		super()
+
+		App.getApp().then((app) => {
+			app.mobile.change.on((isMobile) => this.setShouldRender(!isMobile))
+		})
 	}
 
 	setShouldRender(shouldRender: boolean) {
@@ -36,6 +40,29 @@ export class ToolbarCategory extends EventDispatcher<void> {
 		this.disposables[item.id]?.dispose()
 
 		this.disposables[item.id] = undefined
+	}
+
+	toNestedMenu() {
+		return <const>{
+			type: 'submenu',
+			icon: this.icon,
+			name: this.name,
+			actions: Object.values(this.state).map((item) => {
+				if (item instanceof Action) {
+					return {
+						...item.getConfig(),
+						description: undefined,
+						keyBinding: undefined,
+					}
+				} else if (item instanceof ToolbarCategory) {
+					return null
+				} else if (item instanceof Divider) {
+					return <const>{ type: 'divider' }
+				}
+
+				throw new Error(`Unknown toolbar item type: ${item}`)
+			}),
+		}
 	}
 
 	trigger() {

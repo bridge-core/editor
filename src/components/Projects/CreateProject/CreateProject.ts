@@ -20,6 +20,8 @@ import {
 	getFormatVersions,
 	getStableFormatVersion,
 } from '/@/components/Data/FormatVersions'
+import { Project } from '../Project/Project'
+import { CreateDenoConfig } from './Files/DenoConfig'
 
 export interface ICreateProjectOptions {
 	author: string | string[]
@@ -39,6 +41,7 @@ export interface ICreateProjectOptions {
 	}
 	useLangForManifest: boolean
 	experimentalGameplay: Record<string, boolean>
+	bdsProject: boolean
 }
 export interface IExperimentalToggle {
 	name: string
@@ -63,7 +66,11 @@ export class CreateProjectWindow extends BaseWindow {
 		worlds: new CreateWorlds(),
 	}
 	protected availablePackTypes: IPackType[] = []
-	protected createFiles = [new CreateGitIgnore(), new CreateConfig()]
+	protected createFiles = [
+		new CreateGitIgnore(),
+		new CreateConfig(),
+		new CreateDenoConfig(),
+	]
 	protected experimentalToggles: IExperimentalToggle[] = []
 	protected projectNameRules = [
 		(val: string) =>
@@ -102,7 +109,7 @@ export class CreateProjectWindow extends BaseWindow {
 			await app.dataLoader.fired
 			this.availableTargetVersions = await getFormatVersions()
 			// Set default version
-			this.stableVersion = await getStableFormatVersion()
+			this.stableVersion = await getStableFormatVersion(app.dataLoader)
 			this.createOptions.targetVersion = this.stableVersion
 			this.availableTargetVersionsLoading = false
 
@@ -145,15 +152,27 @@ export class CreateProjectWindow extends BaseWindow {
 	async createProject() {
 		const app = await App.getApp()
 
+		const removeOldProject =
+			isUsingFileSystemPolyfill.value &&
+			!app.hasNoProjects &&
+			!this.isFirstProject
+
+		// Save previous project name to delete it later
+		let previousProject: Project | undefined
+		if (!this.isFirstProject)
+			previousProject = app.isNoProjectSelected
+				? app.projects[0]
+				: app.project
+
 		// Ask user whether we should save the current project
-		if (isUsingFileSystemPolyfill.value && !this.isFirstProject) {
+		if (removeOldProject) {
 			const confirmWindow = new ConfirmationWindow({
 				description: 'windows.createProject.saveCurrentProject',
 				cancelText: 'general.no',
 				confirmText: 'general.yes',
 			})
 			if (await confirmWindow.fired) {
-				await exportAsBrproject()
+				await exportAsBrproject(previousProject?.name)
 			}
 		}
 
@@ -179,14 +198,14 @@ export class CreateProjectWindow extends BaseWindow {
 			await this.packs[pack].create(scopedFs, this.createOptions)
 		}
 
-		// Save previous project name to delete it later
-		let previousProject: string | undefined
-		if (!this.isFirstProject) previousProject = app.project.name
-
-		await app.projectManager.addProject(projectDir)
+		await app.projectManager.addProject(
+			projectDir,
+			true,
+			app.bridgeFolderSetup.hasFired
+		)
 		await app.extensionLoader.installFilesToCurrentProject()
 
-		if (isUsingFileSystemPolyfill.value && !this.isFirstProject)
+		if (removeOldProject)
 			await app.projectManager.removeProject(previousProject!)
 
 		// Reset options
@@ -209,6 +228,7 @@ export class CreateProjectWindow extends BaseWindow {
 			useLangForManifest: false,
 			experimentalGameplay: {},
 			uuids: {},
+			bdsProject: false,
 		}
 	}
 	getDefaultOptions(): ICreateProjectOptions {
@@ -252,6 +272,7 @@ export class CreateProjectWindow extends BaseWindow {
 				bpAsRpDependency: false,
 				experimentalGameplay: config.experimentalGameplay ?? {},
 				uuids: {},
+				bdsProject: false,
 			}
 		} catch {
 			return this.getDefaultOptions()

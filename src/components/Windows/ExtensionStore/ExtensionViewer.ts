@@ -5,7 +5,6 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { ExtensionStoreWindow } from './ExtensionStore'
 import { ExtensionTag } from './ExtensionTag'
 import { extensionActions } from './ExtensionActions'
-import { InformationWindow } from '../Common/Information/InformationWindow'
 import { ConfirmationWindow } from '../Common/Confirm/ConfirmWindow'
 import { compareVersions } from 'bridge-common-utils'
 import { version as appVersion } from '/@/utils/app/version'
@@ -35,33 +34,38 @@ export class ExtensionViewer {
 
 	//#region Config getters
 	get author() {
-		return this.config.author
+		return this.manifest.author
 	}
 	get name() {
-		return this.config.name
+		return this.manifest.name
 	}
 	get version() {
-		return this.config.version
+		return this.manifest.version
 	}
 	get description() {
-		return this.config.description
+		return this.manifest.description
 	}
 	get icon() {
-		return this.config.icon
+		return this.manifest.icon
 	}
 	get id() {
-		return this.config.id
+		return this.manifest.id
 	}
 	get releaseTimestamp() {
 		return this.config.releaseTimestamp ?? Date.now()
+	}
+	get readme() {
+		return this.manifest.readme
+	}
+	get manifest() {
+		if (this.isUpdateAvailable) return this.config
+
+		return this.connected?.manifest ?? this.config
 	}
 	//#endregion
 
 	get isInstalled() {
 		return this._isInstalled
-	}
-	get displayVersion() {
-		return this.connected?.version ?? this.config.version
 	}
 	get actions() {
 		return extensionActions(this)
@@ -71,6 +75,9 @@ export class ExtensionViewer {
 	}
 	get isGlobal() {
 		return this.connected?.isGlobal ?? false
+	}
+	get onlineVersion() {
+		return this.config.version
 	}
 
 	hasTag(tag: ExtensionTag) {
@@ -91,7 +98,7 @@ export class ExtensionViewer {
 					compareVersions(
 						appVersion,
 						this.config.compatibleAppVersions.max,
-						'<='
+						'<'
 					)) ||
 					!this.config.compatibleAppVersions.max))
 		)
@@ -125,7 +132,8 @@ export class ExtensionViewer {
 
 	protected async downloadExtension(
 		isGlobalInstall: boolean,
-		isUpdateDownload = false
+		isUpdateDownload = false,
+		shouldActivateExtension = true
 	) {
 		this.isLoading = true
 
@@ -135,8 +143,8 @@ export class ExtensionViewer {
 		).then((response) => response.arrayBuffer())
 
 		const basePath = !isGlobalInstall
-			? `projects/${app.selectedProject}/.bridge/extensions`
-			: 'extensions'
+			? `${app.project.projectPath}/.bridge/extensions`
+			: '~local/extensions'
 		const extensionLoader = isGlobalInstall
 			? app.extensionLoader
 			: app.project.extensionLoader
@@ -163,7 +171,7 @@ export class ExtensionViewer {
 		const extension = await extensionLoader.loadExtension(
 			await app.fileSystem.getDirectoryHandle(basePath),
 			await app.fileSystem.getFileHandle(zipPath),
-			true
+			shouldActivateExtension
 		)
 
 		if (extension) this.setConnected(extension)
@@ -214,9 +222,14 @@ export class ExtensionViewer {
 
 		if (notifyParent) this.parent.updateInstalled(this)
 
+		const wasExtensionActive = this.connected.isActive
 		this.connected.deactivate()
 		await this.connected.resetInstalled()
-		await this.downloadExtension(this.connected.isGlobal, true)
+		await this.downloadExtension(
+			this.connected.isGlobal,
+			true,
+			wasExtensionActive
+		)
 	}
 	delete() {
 		if (!this.connected) return
@@ -247,5 +260,23 @@ export class ExtensionViewer {
 	}
 	closeActionMenu() {
 		this.showMenu = false
+	}
+
+	get canShare() {
+		return typeof navigator.share === 'function'
+	}
+	async share() {
+		if (!this.canShare) return
+
+		const url = new URL(window.location.href)
+		url.searchParams.set('viewExtension', encodeURIComponent(this.id))
+
+		await navigator
+			.share({
+				title: `Extension: ${this.name}`,
+				text: `View the extension "${this.name}" within bridge.!`,
+				url: url.href,
+			})
+			.catch(() => {})
 	}
 }

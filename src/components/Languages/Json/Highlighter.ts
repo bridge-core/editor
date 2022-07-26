@@ -1,4 +1,3 @@
-import { languages } from 'monaco-editor'
 import { TextTab } from '/@/components/Editors/Text/TextTab'
 import { ProjectConfig } from '../../Projects/Project/Config'
 import { App } from '/@/App'
@@ -6,6 +5,8 @@ import { IDisposable } from '/@/types/disposable'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { TreeTab } from '/@/components/Editors/TreeEditor/Tab'
 import type { Tab } from '/@/components/TabSystem/CommonTab'
+import { useMonaco } from '../../../utils/libs/useMonaco'
+import { supportsLookbehind } from './supportsLookbehind'
 
 export interface IKnownWords {
 	keywords: string[]
@@ -109,7 +110,9 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 		this.loadedFileType = 'unknown'
 	}
 
-	updateHighlighter() {
+	async updateHighlighter() {
+		const { languages } = await useMonaco()
+
 		const newLanguage = languages.setMonarchTokensProvider('json', <any>{
 			// Set defaultToken to invalid to see what you do not tokenize yet
 			defaultToken: 'invalid',
@@ -173,7 +176,12 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 				embeddedCommand: [
 					[/@escapes/, 'string.escape'],
 					[
-						/"/,
+						/**
+						 * This makes sure that we don't match escaped closing brackets to terminate the embedded lamguage
+						 * However, as negative lookbehinds aren't supported by Safari yet, we first test for this feature
+						 * and then fallback to a normal quote matcher if necessary
+						 */
+						supportsLookbehind() ? new RegExp('(?<!\\\\)"') : /"/,
 						{
 							token: 'identifier',
 							next: '@pop',
@@ -203,7 +211,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 
 				string: [
 					[
-						/[^\"\:]+/,
+						/(\\"|[^\"\:])+/,
 						{
 							cases: {
 								'@keywords': 'keyword',

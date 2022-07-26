@@ -30,17 +30,25 @@ import { get, set } from 'idb-keyval'
 import { GlobalExtensionLoader } from '/@/components/Extensions/GlobalExtensionLoader'
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
-import { ComMojang } from './components/FileSystem/ComMojang'
-import { isUsingFileSystemPolyfill } from './components/FileSystem/Polyfill'
-import { markRaw } from '@vue/composition-api'
+import { ComMojang } from './components/OutputFolders/ComMojang/ComMojang'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import { markRaw, reactive } from '@vue/composition-api'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
 import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { PersistentNotification } from '/@/components/Notifications/PersistentNotification'
-import { createVirtualProjectWindow } from './components/FileSystem/Virtual/ProjectWindow'
-import { version as appVersion } from './utils/app/version'
-import { platform } from './utils/os'
+import { version as appVersion } from '/@/utils/app/version'
+import { platform } from '/@/utils/os'
+import { virtualProjectName } from '/@/components/Projects/Project/Project'
+import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
+import { getStorageDirectory } from '/@/utils/getStorageDirectory'
+import { FolderImportManager } from '/@/components/ImportFolder/Manager'
+import { StartParamManager } from '/@/components/StartParams/Manager'
+import { ViewFolders } from '/@/components/ViewFolders/ViewFolders'
+import { SidebarManager } from '/@/components/Sidebar/Manager'
+import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
+import { InformationWindow } from './components/Windows/Common/Information/InformationWindow'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -57,10 +65,13 @@ export class App {
 		'fileSave',
 		'fileUnlinked',
 		'presetsChanged',
+		'availableProjectsFileChanged',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>
 
+	public readonly viewFolders = new ViewFolders()
+	public readonly viewComMojangProject = new ViewComMojangProject()
 	public readonly packExplorer = new PackExplorer()
 	public readonly keyBindingManager = new KeyBindingManager()
 	public readonly actionManager = new ActionManager(this.keyBindingManager)
@@ -75,16 +86,20 @@ export class App {
 	public readonly locales: Locales
 	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
+	public readonly folderImportManager = new FolderImportManager()
 	public readonly comMojang = new ComMojang(this)
 	public readonly configuredJsonLanguage = markRaw(
 		new ConfiguredJsonLanguage()
 	)
 	public static readonly fileType = markRaw(new FileTypeLibrary())
 	public static readonly packType = markRaw(new PackTypeLibrary())
+	public static readonly sidebar = new SidebarManager()
 
 	public readonly mobile: Mobile
 
 	public readonly languageManager = markRaw(new LanguageManager())
+	// App start params
+	public readonly startParams = new StartParamManager()
 
 	protected _windows: Windows
 	get windows() {
@@ -97,6 +112,18 @@ export class App {
 	get selectedProject() {
 		return this.projectManager.selectedProject
 	}
+
+	get isNoProjectSelected() {
+		return (
+			this.projectManager.currentProject === null ||
+			this.projectManager.currentProject.isVirtualProject
+		)
+	}
+	get hasNoProjects() {
+		return (
+			this.isNoProjectSelected && this.projectManager.totalProjects <= 1
+		)
+	}
 	get project() {
 		if (!this.projectManager.currentProject)
 			throw new Error(
@@ -105,10 +132,18 @@ export class App {
 		return this.projectManager.currentProject
 	}
 	get projects() {
-		return Object.values(this.projectManager.state)
+		return Object.values(this.projectManager.state).filter(
+			(project) => !project.isVirtualProject
+		)
 	}
 	get projectConfig() {
-		return this.project.config
+		try {
+			return this.project.config
+		} catch {
+			throw new Error(
+				`Trying to access projectConfig before project is defined. Make sure to await app.projectManager.projectReady.fired`
+			)
+		}
 	}
 
 	static get instance() {
@@ -121,6 +156,7 @@ export class App {
 	}
 
 	constructor(appComponent: Vue) {
+		if (import.meta.env.PROD) this.dataLoader.loadData()
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
 		this.locales = new Locales(appComponent.$vuetify)
 		this._windows = new Windows(this)
@@ -144,20 +180,6 @@ export class App {
 				}
 			})
 		}
-
-		// Once the settings are loaded...
-		SettingsWindow.loadedSettings.once((state) => {
-			// ...take a look at whether we are supposed to open the project chooser...
-			if (state?.general?.openProjectChooserOnAppStartup ?? false)
-				this.projectManager.projectReady.once(() => {
-					// ...then open it if necessary
-					if (isUsingFileSystemPolyfill.value) {
-						createVirtualProjectWindow()
-					} else {
-						App.instance.windows.projectChooser.open()
-					}
-				})
-		})
 	}
 
 	static openUrl(url: string, id?: string, openInBrowser = false) {
@@ -170,18 +192,14 @@ export class App {
 	 * Starts the app
 	 */
 	static async main(appComponent: Vue) {
+		console.time('[APP] Ready')
 		this._instance = markRaw(Object.freeze(new App(appComponent)))
 		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
 
-		// Try setting up the file system
-		const fileHandle = await this.fileSystemSetup.setupFileSystem(
-			this.instance
-		)
-		if (!fileHandle) return this.instance.windows.loadingWindow.close()
-
-		this.instance.fileSystem.setup(fileHandle)
+		this.instance.fileSystem.setup(await getStorageDirectory())
+		await this.instance.fileSystem.unlink(`projects/${virtualProjectName}`)
 
 		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {
@@ -190,7 +208,16 @@ export class App {
 		}
 
 		// Load settings
-		await SettingsWindow.loadSettings(this.instance).then(async () => {
+		const settingsLoaded = SettingsWindow.loadSettings(this.instance)
+		await settingsLoaded
+
+		// Force data download
+		if (import.meta.env.DEV)
+			this.instance.dataLoader.loadData(
+				<boolean>settingsState?.developers?.forceDataDownload ?? false
+			)
+
+		settingsLoaded.then(async () => {
 			await this.instance.dataLoader.fired
 			this.instance.themeManager.loadDefaultThemes(this.instance)
 		})
@@ -198,9 +225,10 @@ export class App {
 		await this.instance.startUp()
 
 		this.ready.dispatch(this.instance)
-		await this.instance.projectManager.selectLastProject(this.instance)
+		await this.instance.projectManager.selectLastProject()
 
 		this.instance.windows.loadingWindow.close()
+		console.timeEnd('[APP] Ready')
 	}
 
 	/**
@@ -245,6 +273,24 @@ export class App {
 			})
 		}
 
+		// Warn about saving projects
+		if (isUsingFileSystemPolyfill.value) {
+			const saveWarning = new PersistentNotification({
+				id: 'bridge-save-warning',
+				icon: 'mdi-alert-circle-outline',
+				message: 'general.fileSystemPolyfill.name',
+				color: 'warning',
+				textColor: 'white',
+				onClick: () => {
+					new InformationWindow({
+						title: 'general.fileSystemPolyfill.name',
+						description: 'general.fileSystemPolyfill.description',
+					})
+					saveWarning.dispose()
+				},
+			})
+		}
+
 		console.timeEnd('[APP] beforeStartUp()')
 	}
 
@@ -268,11 +314,54 @@ export class App {
 		])
 
 		// Ensure that a project is selected
-		this.projectManager.projectReady.fired.then(async () =>
+		this.projectManager.projectReady.fired.then(async () => {
 			// Then load global extensions
 			this.extensionLoader.loadExtensions()
-		)
+		})
 
 		console.timeEnd('[APP] startUp()')
+	}
+
+	public readonly bridgeFolderSetup = new Signal<void>()
+	async setupBridgeFolder(forceReselect = false) {
+		let fileHandle = await get<AnyDirectoryHandle | undefined>(
+			'bridgeBaseDir'
+		)
+
+		if (fileHandle && !forceReselect) {
+			const permissionState = await fileHandle.requestPermission({
+				mode: 'readwrite',
+			})
+			if (permissionState !== 'granted') return false
+		} else {
+			try {
+				fileHandle = await window.showDirectoryPicker({
+					mode: 'readwrite',
+				})
+			} catch {
+				return false
+			}
+
+			await set('bridgeBaseDir', fileHandle)
+		}
+
+		this.fileSystem.setup(fileHandle)
+
+		// Migrate old settings over to ~local/data/settings.json
+		if (await this.fileSystem.fileExists('data/settings.json')) {
+			await this.fileSystem.copyFile(
+				'data/settings.json',
+				'~local/data/settings.json'
+			)
+			await this.fileSystem.unlink('data/settings.json')
+			await SettingsWindow.loadSettings(this).then(async () => {
+				this.themeManager.loadDefaultThemes(this)
+			})
+		}
+
+		this.bridgeFolderSetup.dispatch()
+		await this.projectManager.loadProjects(true)
+
+		return true
 	}
 }

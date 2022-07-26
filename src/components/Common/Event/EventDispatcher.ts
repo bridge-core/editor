@@ -33,12 +33,12 @@ export class EventDispatcher<T> {
 		this.listeners.delete(listener)
 	}
 
-	once(listener: (data: T) => void) {
+	once(listener: (data: T) => void, getDisposable = false) {
 		const callback = (data: T) => {
 			listener(data)
 			this.off(callback)
 		}
-		this.on(callback)
+		return this.on(callback, getDisposable)
 	}
 
 	disposeListeners() {

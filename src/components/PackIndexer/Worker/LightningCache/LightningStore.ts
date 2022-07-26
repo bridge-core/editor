@@ -21,7 +21,11 @@ export class LightningStore {
 	protected fs: FileSystem
 	protected _visitedFiles = 0
 	protected _totalFiles = 0
-	constructor(fs: FileSystem, protected fileType: FileTypeLibrary) {
+	constructor(
+		fs: FileSystem,
+		protected fileType: FileTypeLibrary,
+		protected projectPath: string
+	) {
 		this.fs = fs
 	}
 
@@ -57,7 +61,7 @@ export class LightningStore {
 			loadStore.shift()
 		}
 
-		const projectPrefix = `projects/${this.fs.baseDirectory.name}`
+		const projectPrefix = this.projectPath
 
 		let currentFileType = 'unknown'
 		for (const definition of loadStore) {
@@ -138,6 +142,7 @@ export class LightningStore {
 
 		delete this.store![fileType][filePath]
 	}
+
 	setVisited(
 		filePath: string,
 		visited: boolean,
@@ -230,11 +235,17 @@ export class LightningStore {
 
 		if (searchFileType && this.store) {
 			for (const filePath in this.store[searchFileType]) {
+				// Exclude foreign files from result
+				if (this.store[searchFileType][filePath].isForeignFile) continue
+
 				filePaths.push(filePath)
 			}
 		} else {
 			for (const fileType in this.store) {
 				for (const filePath in this.store[fileType]) {
+					// Exclude foreign files from result
+					if (this.store[fileType][filePath].isForeignFile) continue
+
 					filePaths.push(filePath)
 				}
 			}
@@ -257,6 +268,11 @@ export class LightningStore {
 					collectedData[cacheKey].push(...cachedData[cacheKey])
 				else collectedData[cacheKey] = [...cachedData[cacheKey]]
 			}
+		}
+
+		// Remove duplicates from array using a set
+		for (const cacheKey in collectedData) {
+			collectedData[cacheKey] = [...new Set(collectedData[cacheKey])]
 		}
 
 		return collectedData

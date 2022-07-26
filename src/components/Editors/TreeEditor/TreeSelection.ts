@@ -49,7 +49,7 @@ export class TreeSelection {
 		return new EditPropertyEntry(parent, key, value)
 	}
 
-	addKey(key: string, type: 'array' | 'object') {
+	addKey(key: string, type: 'array' | 'objectArray' | 'object') {
 		if (this.tree instanceof PrimitiveTree) return
 
 		const index = this.tree.children.length
@@ -57,7 +57,8 @@ export class TreeSelection {
 
 		this.tree.setOpen(true, true)
 
-		if (type === 'array' && this.tree instanceof ObjectTree) {
+		// We want to add a property to an array, transform tree into ArrayTree if necessary
+		if (type === 'objectArray' && this.tree instanceof ObjectTree) {
 			this.dispose()
 			const arrayTree = new ArrayTree(this.tree.getParent(), [])
 			this.tree.replace(arrayTree)
@@ -67,22 +68,27 @@ export class TreeSelection {
 			this.tree = arrayTree
 		}
 
-		const newTree = new ObjectTree(this.tree, {})
+		const newTree =
+			type === 'object'
+				? new ObjectTree(this.tree, {})
+				: new ArrayTree(this.tree, [])
 
 		if (this.tree instanceof ArrayTree) {
 			this.tree.children.push(newTree)
 
 			// Pushing a key to an array should add it inside of an object
 			const keyTree = new ObjectTree(newTree, {})
-			newTree.children.push([key, keyTree])
+			if (newTree.type === 'array') newTree.children.push(keyTree)
+			else newTree.children.push([key, keyTree])
 
 			this.parent.setSelection(keyTree)
 			newTree.setOpen(true)
-			this.tree.setOpen(true)
 		} else {
 			this.tree.children.push([key, newTree])
 			this.parent.setSelection(newTree)
 		}
+
+		this.tree.setOpen(true)
 
 		historyEntries.push(new DeleteEntry(newTree, index, key))
 
@@ -113,6 +119,8 @@ export class TreeSelection {
 			historyEntries.push(
 				new DeleteEntry(newTree, this.tree.children.length - 1)
 			)
+
+			this.tree.setOpen(true)
 		} else if (
 			this.tree instanceof PrimitiveTree ||
 			this.tree.children.length === 0

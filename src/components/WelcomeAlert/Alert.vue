@@ -2,10 +2,9 @@
 	<v-alert
 		v-if="title"
 		:value="!!title"
-		width="100%"
-		class="mt-2 mb-12 pa-3"
+		class="mt-2 mb-8 pa-3"
 		color="purple"
-		:style="`color: ${textColor}`"
+		:style="`color: ${textColor}; width: calc(100% - 8px); position: absolute; top: 0; left: 0;`"
 		border="bottom"
 		rounded="lg"
 	>
@@ -47,11 +46,13 @@ export default {
 			textColor = 'white',
 			color,
 			link,
-		} = await fetch(
-			'https://raw.githubusercontent.com/bridge-core/editor-packages/main/remote/welcomeAlert.json'
-		)
-			.then((res) => res.json())
-			.catch(() => ({}))
+		} = navigator.onLine
+			? await fetch(
+					'https://raw.githubusercontent.com/bridge-core/editor-packages/main/remote/welcomeAlert.json'
+			  )
+					.catch(() => null)
+					.then((res) => (res ? res.json() : {}))
+			: {}
 
 		this.icon = icon
 		this.title = title

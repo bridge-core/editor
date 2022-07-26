@@ -8,11 +8,6 @@
 		}"
 	>
 		<TabBar :tabSystem="tabSystem" />
-		<v-progress-linear
-			v-if="tabSystem.selectedTab && tabSystem.selectedTab.isLoading"
-			absolute
-			indeterminate
-		/>
 		<keep-alive>
 			<component
 				:is="tabSystem.currentComponent"

@@ -18,6 +18,7 @@ export default {
 		select: 'Select',
 		skip: 'Skip',
 		save: 'Save',
+		shareFile: 'Share File',
 		more: 'More...',
 		selectFolder: 'Select Folder',
 		fileName: 'File Name',
@@ -28,19 +29,31 @@ export default {
 		clear: 'Clear',
 		reset: 'Reset',
 		readMore: 'Read More',
+		search: 'Search...',
 
 		confirmOverwriteFile:
 			'This action overwrites a file with the same name. Do you want to continue?',
 		confirmOverwriteFolder:
 			'This action overwrites a folder with the same name. Do you want to continue?',
-		fileSystemPolyfill:
-			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome (excluding Chrome 93/94) or Edge!',
+		fileSystemPolyfill: {
+			name: 'Save Your Projects!',
+			description:
+				'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome (excluding Chrome 93/94) or Edge!',
+		},
+
 		successfulExport: {
 			title: 'Export Successful',
 			description: 'You can find the exported package here',
 		},
 		experimentalGameplay: 'Experimental Gameplay',
 		textureLocation: 'Texture Location',
+	},
+	openWith: {
+		snowstorm: 'Snowstorm',
+		textEditor: 'Text Editor',
+		treeEditor: 'Tree Editor',
+		htmlPreviewer: 'HTML Previewer',
+		blockbench: 'Blockbench',
 	},
 	packType: {
 		behaviorPack: {
@@ -123,6 +136,73 @@ export default {
 	},
 	// Actions
 	actions: {
+		name: 'Actions',
+		download: {
+			name: 'Download',
+			description: 'Download this file or folder',
+		},
+		viewConnectedFiles: {
+			name: 'View Connected Files',
+			description: 'View all files connected to this file',
+		},
+		open: {
+			name: 'Open',
+			description: 'Open the file in the editor',
+		},
+		openWith: {
+			name: 'Open With',
+			description: 'Open the file in the editor',
+		},
+		openInSplitScreen: {
+			name: 'Open in Split Screen',
+			description: 'Open the file in split screen mode',
+		},
+		edit: {
+			name: 'Edit',
+			description: 'Edit the file or folder',
+		},
+		delete: {
+			name: 'Delete',
+			description: 'Delete a file or folder',
+			confirmText: 'Are you sure that you want to delete ',
+			noRestoring: "You won't be able to restore it later!",
+		},
+		rename: {
+			name: 'Rename',
+			description: 'Rename a file',
+			sameName:
+				'Your new file name only differs in capitalization. This is not allowed on Windows.',
+		},
+		duplicate: {
+			name: 'Duplicate',
+			description: 'Duplicate a file',
+		},
+		viewCompilerOutput: {
+			name: 'Compiler Output',
+			view: 'View Compiler Output',
+			description: 'View the current compiler output for this file',
+			fileMissing: 'It does not look like this file was compiled yet.',
+		},
+		revealPath: {
+			name: 'Reveal Path',
+			description: 'Reveals the location of a file or folder',
+		},
+		createFile: {
+			name: 'Create File',
+			description: 'Create a new file',
+		},
+		createFolder: {
+			name: 'Create Folder',
+			description: 'Create a new folder',
+		},
+		findInFolder: {
+			name: 'Find in Folder',
+			description: 'Search the contents of a folder',
+		},
+		goHome: {
+			name: 'Go Home',
+			description: 'Go back to the home screen',
+		},
 		newProject: {
 			name: 'New Project',
 			description: 'Create a new bridge. project',
@@ -133,7 +213,12 @@ export default {
 		},
 		openFile: {
 			name: 'Open File',
-			description: 'Open a file from the current project',
+			description: 'Open a file to edit it with bridge.',
+		},
+		openFolder: {
+			name: 'Open Folder',
+			description:
+				'Open a folder to edit it, set it as an output folder or trigger other actions',
 		},
 		searchFile: {
 			name: 'Search File',
@@ -178,8 +263,12 @@ export default {
 			description: 'Paste clipboard content',
 		},
 		docs: {
-			name: 'Documentation',
+			name: 'Open bedrock.dev',
 			description: 'Opens the Minecraft Add-On documentation',
+		},
+		minecraftDocs: {
+			name: 'Open Minecraft Documentation',
+			description: 'Opens the Minecraft Bedrock Add-On documentation',
 		},
 		releases: {
 			name: 'Releases',
@@ -327,6 +416,19 @@ export default {
 		edit: {
 			name: 'Edit',
 		},
+		view: {
+			name: 'View',
+
+			togglePackExplorer: {
+				name: 'Toggle Pack Explorer',
+				description:
+					"Toggle the pack explorer that appears inside of bridge.'s sidebar",
+			},
+			openFileSearch: {
+				name: 'Open Find & Replace',
+				description: 'Opens a new Find & Replace tab',
+			},
+		},
 		tools: {
 			name: 'Tools',
 		},
@@ -334,8 +436,59 @@ export default {
 			name: 'Help',
 		},
 	},
+	packExplorer: {
+		name: 'Pack Explorer',
+		searchFiles: 'Search files...',
+		categories: 'Categories',
+		move: {
+			toLocal: 'Move to Local Folder',
+			toBridgeFolder: 'Move to bridge. Folder',
+		},
+		refresh: {
+			name: 'Refresh Project',
+			description: 'Fetch the current project for newly added files',
+		},
+		noProjectView: {
+			noProjectsFound: 'It does not look like you have any projects yet!',
+			createLocalProject: 'Create Local Project',
+			chooseBridgeFolder: 'Choose bridge. Folder',
+			accessBridgeFolder: 'Access bridge. Folder',
+			projectNoLongerExists:
+				'It looks like this project no longer exists!',
+		},
+		restartWatchMode: {
+			name: 'Restart Watch Mode',
+			description:
+				"Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
+			confirmDescription:
+				"Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
+		},
+		createPreset: 'New File',
+		projectConfig: {
+			name: 'Open Project Config',
+			missing:
+				'It looks like this project has no config.json file. Every project needs a project config in order to work correctly.',
+		},
+		openProjectFolder: {
+			name: 'Open Project Folder',
+		},
+		exportAs: {
+			name: 'Export As',
+			mcaddon: '.mcaddon',
+			brproject: '.brproject',
+			mcworld: '.mcworld',
+			mctemplate: '.mctemplate',
+		},
+		fileDiagnostics: {
+			fileUnused: 'This file is not used within your project',
+		},
+	},
 	// Sidebar tabs
 	sidebar: {
+		openedFolders: {
+			name: 'Opened Folders',
+			removeFolder: 'Remove From View',
+		},
 		compiler: {
 			name: 'Compiler',
 			categories: {
@@ -389,14 +542,6 @@ export default {
 			},
 			updateExtensions: 'Update All Extensions',
 		},
-	},
-	// Welcome Screen
-	welcome: {
-		title: 'Welcome to bridge.',
-		subtitle: 'Creating Minecraft addons has never been more convenient!',
-		quickActions: 'Quick Actions',
-		recentFiles: 'Recent Files',
-		recentProjects: 'Recent Projects',
 	},
 	// Experimental gameplay toggles
 	experimentalGameplay: {
@@ -493,6 +638,7 @@ export default {
 				'Register behavior pack as a resource pack dependency',
 			useLangForManifest:
 				'Add pack name/description directly to the manifest',
+			bdsProject: 'Set project for use with Bedrock Dedicated Servers',
 			create: 'Create',
 			saveCurrentProject:
 				'Do you want to save your current project before creating the new one? Any unsaved changes will get lost!',
@@ -566,9 +712,11 @@ export default {
 			showAllPresets: 'Show all presets',
 			disabledPreset: {
 				experimentalGameplay:
-					'Required experimental gameplay not active',
-				packTypes: 'Required pack missing within project',
-				targetVersion: 'Required target version not specified',
+					'Required experimental gameplay toggle condition(s) not met',
+				packTypes: 'Required pack condition(s) not met',
+				targetVersion: 'Required target version not met',
+				manifestDependency:
+					'Required BP manifest dependencies are missing',
 			},
 		},
 		deleteProject: {
@@ -587,6 +735,20 @@ export default {
 			title: 'Choose Project',
 			description: 'Select the currently active project',
 			searchProjects: 'Search projects...',
+			loadAllProjects: 'Load All',
+			openPacks: 'Open Packs',
+			localProject: {
+				name: 'Local Project',
+				description:
+					'Local projects cannot be accessed outside of bridge.',
+			},
+			comMojangProject: {
+				name: 'com.mojang Project',
+				description:
+					'This project was loaded directly from your com.mojang folder',
+				uninstallWarning:
+					'This project will be deleted if you uninstall Minecraft.',
+			},
 			newProject: {
 				name: 'New Project',
 				description: 'Create a new bridge. project.',
@@ -637,91 +799,7 @@ export default {
 				},
 			},
 		},
-		packExplorer: {
-			title: 'Pack Explorer',
-			searchFiles: 'Search files...',
-			categories: 'Categories',
-			refresh: {
-				name: 'Refresh Project',
-				description: 'Fetch the current project for newly added files',
-			},
-			restartWatchMode: {
-				name: 'Restart Watch Mode',
-				description:
-					"Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
-				confirmDescription:
-					"Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
-			},
-			createPreset: 'New File',
-			projectConfig: {
-				name: 'Open Project Config',
-				missing:
-					'It looks like this project has no config.json file. Every project needs a project config in order to work correctly.',
-			},
-			exportAsMcaddon: {
-				name: 'Export as .mcaddon',
-			},
-			exportAsMctemplate: {
-				name: 'Export as .mctemplate',
-				chooseWorld: 'Choose a World',
-			},
-			exportAsMcworld: {
-				name: 'Export as .mcworld',
-				chooseWorld: 'Choose a World',
-			},
-			exportAsBrproject: {
-				name: 'Export as .brproject',
-			},
-			fileActions: {
-				open: {
-					name: 'Open',
-					description: 'Open the file in the editor',
-				},
-				openInSplitScreen: {
-					name: 'Open in Split Screen',
-					description: 'Open the file in split screen mode',
-				},
-				delete: {
-					name: 'Delete',
-					description: 'Delete a file or folder',
-					confirmText: 'Are you sure that you want to delete ',
-					noRestoring: "You won't be able to restore it later!",
-				},
-				rename: {
-					name: 'Rename',
-					description: 'Rename a file',
-					sameName:
-						'Your new file name only differs in capitalization. This is not allowed on Windows.',
-				},
-				duplicate: {
-					name: 'Duplicate',
-					description: 'Duplicate a file',
-				},
-				viewCompilerOutput: {
-					name: 'View Compiler Output',
-					description:
-						'View the current compiler output for this file',
-					fileMissing:
-						"It doesn't look like this file was compiled yet.",
-				},
-				revealFilePath: {
-					name: 'Reveal File Path',
-					description: 'Reveals the location of a file or folder',
-				},
-				createFile: {
-					name: 'Create File',
-					description: 'Create a new file',
-				},
-				createFolder: {
-					name: 'Create Folder',
-					description: 'Create a new folder',
-				},
-				findInFolder: {
-					name: 'Find in Folder',
-					description: 'Search the contents of a folder',
-				},
-			},
-		},
+
 		settings: {
 			title: 'Settings',
 			searchSettings: 'Search settings...',
@@ -785,6 +863,11 @@ export default {
 					description:
 						"Change the font that is used inside of bridge.'s user interface",
 				},
+				hideToolbarItems: {
+					name: 'Hide Toolbar Items',
+					description:
+						'Make bridge. feel at home on MacOS: Move all toolbar items into a new menu button',
+				},
 			},
 			general: {
 				name: 'General',
@@ -820,11 +903,6 @@ export default {
 					name: 'Select Root Folder',
 					description: 'Choose the main folder bridge. operates on',
 				},
-				openProjectChooserOnAppStartup: {
-					name: 'Open Project Chooser',
-					description:
-						'Automatically open the project chooser upon starting bridge.',
-				},
 			},
 			developer: {
 				name: 'Developer',
@@ -836,6 +914,11 @@ export default {
 				devMode: {
 					name: 'Developer Mode',
 					description: 'Enable the developer mode for this app',
+				},
+				forceDataDownload: {
+					name: 'Force Data Download',
+					description:
+						'Ignore the cached app data and instead download the latest data',
 				},
 			},
 			actions: {
@@ -885,6 +968,11 @@ export default {
 					name: 'Compact Tab Design',
 					description:
 						'Display tabs inside of the tab system in a more compact way',
+				},
+				keepTabsOpen: {
+					name: 'Keep Tabs Open',
+					description:
+						'By default, opening a new tab closes the previously opened tab if it was not interacted with',
 				},
 				automaticallyOpenTreeNodes: {
 					name: 'Automatically Open Tree Nodes',
@@ -977,7 +1065,19 @@ export default {
 		importFiles: 'Drop files here to import them!',
 		importFailed: 'bridge. was unable to import the following files:',
 		andMore: '...and more!',
-		importMethod: 'Import Method',
+		importMethod: {
+			name: 'Import Method',
+			folder: {
+				output: {
+					name: 'Output Folder',
+					description: 'Sets this folder as a new output folder',
+				},
+				open: {
+					name: 'Open Folder',
+					description: "Opens this folder in bridge.'s file explorer",
+				},
+			},
+		},
 		mcaddon: {
 			missingManifests:
 				"bridge. was unable to load data from your .mcaddon or .mpack file because it wasn't able to find a pack manifest file inside of it.",
@@ -1011,6 +1111,7 @@ export default {
 	},
 	findAndReplace: {
 		name: 'Find & Replace',
+		findOnly: 'Find',
 		search: 'Search',
 		replace: 'Replace',
 		replaceAll: 'Replace All',
@@ -1063,7 +1164,7 @@ export default {
 			installApp: {
 				name: 'Install bridge.',
 				description:
-					'For the best experience, install bridge. v2 as an app to your computer.',
+					'Click here to install bridge. v2 as an app to your device.',
 			},
 			bridge: {
 				name: 'bridge. Folder',
@@ -1086,7 +1187,7 @@ export default {
 			comMojang: {
 				name: 'com.mojang Folder',
 				description:
-					'Now drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.',
+					'Drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.',
 				extraDescription: 'Drag your com.mojang folder onto bridge.',
 			},
 			editorType: {
@@ -1199,12 +1300,10 @@ export default {
 				noneValid: {
 					part1: 'No valid command variations found! Argument ',
 					part2: " may be invalid! It is of type '",
-					part3:
-						"' but that type is not supported in the current variation tree.",
+					part3: "' but that type is not supported in the current variation tree.",
 				},
 				noneValidEnd: {
-					part1:
-						'No valid command variations found! You may be missing some arguments or argument ',
+					part1: 'No valid command variations found! You may be missing some arguments or argument ',
 					part2: ' may be invalid!',
 				},
 			},
@@ -1213,23 +1312,19 @@ export default {
 			schema: {
 				familyNotFound: {
 					part1: "Could not find family '",
-					part2:
-						"'. This could either be a mistake or the family is from another addon.",
+					part2: "'. This could either be a mistake or the family is from another addon.",
 				},
 				typeNotFound: {
 					part1: "Could not find type '",
-					part2:
-						"'. This could either be a mistake or the type is from another addon.",
+					part2: "'. This could either be a mistake or the type is from another addon.",
 				},
 				tagNotFound: {
 					part1: "Could not find tag '",
-					part2:
-						"'. This could either be a mistake or the tag is from another addon.",
+					part2: "'. This could either be a mistake or the tag is from another addon.",
 				},
 				schemaValueNotFound: {
 					part1: "Could not find schema value '",
-					part2:
-						"'. This could either be a mistake or the schema value is from another addon.",
+					part2: "'. This could either be a mistake or the schema value is from another addon.",
 				},
 			},
 			data: {

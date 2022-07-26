@@ -1,4 +1,5 @@
-import Wintersky, { Emitter, Config } from 'wintersky'
+import type Wintersky from 'wintersky'
+import type { Emitter, Config } from 'wintersky'
 import { ThreePreviewTab } from '../ThreePreview/ThreePreviewTab'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import json5 from 'json5'
@@ -11,6 +12,7 @@ import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { FileTab } from '../../TabSystem/FileTab'
 import { markRaw } from '@vue/composition-api'
+import { useWintersky } from '/@/utils/libs/useWintersky'
 
 export class ParticlePreviewTab extends ThreePreviewTab {
 	protected emitter?: Emitter
@@ -18,26 +20,7 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	protected fileWatcher?: FileWatcher
 	protected isReloadingDone = new Signal<void>()
 
-	protected wintersky = markRaw(
-		new Wintersky.Scene({
-			fetchTexture: async (config) => {
-				const app = await App.getApp()
-				const projectConfig = app.project.config
-
-				try {
-					return await loadAsDataURL(
-						projectConfig.resolvePackPath(
-							'resourcePack',
-							`${config.particle_texture_path}.png`
-						),
-						app.fileSystem
-					)
-				} catch (err) {
-					// Fallback to Wintersky's default handling of textures
-				}
-			},
-		})
-	)
+	protected wintersky!: Wintersky.Scene
 
 	constructor(tab: FileTab, tabSystem: TabSystem) {
 		super(tab, tabSystem)
@@ -51,6 +34,33 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 			// this.scene.add(new GridHelper(64, 64))
 		})
 		this.isReloadingDone.dispatch()
+	}
+
+	async setup() {
+		const { default: Wintersky } = await useWintersky()
+
+		this.wintersky = markRaw(
+			new Wintersky.Scene({
+				fetchTexture: async (config) => {
+					const app = await App.getApp()
+					const projectConfig = app.project.config
+
+					try {
+						return await loadAsDataURL(
+							projectConfig.resolvePackPath(
+								'resourcePack',
+								`${config.particle_texture_path}.png`
+							),
+							app.fileSystem
+						)
+					} catch (err) {
+						// Fallback to Wintersky's default handling of textures
+					}
+				},
+			})
+		)
+
+		await super.setup()
 	}
 
 	async onActivate() {
@@ -99,6 +109,8 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 		} catch {
 			return
 		}
+
+		const { default: Wintersky } = await useWintersky()
 
 		this.emitter?.delete()
 		if (!this.scene.children.includes(this.wintersky.space))
@@ -152,9 +164,9 @@ export class ParticlePreviewTab extends ThreePreviewTab {
 	}
 
 	get icon() {
-		return 'mdi-cube-outline'
+		return this.tab.icon
 	}
 	get iconColor() {
-		return 'primary'
+		return this.tab.iconColor
 	}
 }

@@ -6,8 +6,8 @@ import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
 import { BridgeConfigSelection } from './Controls/Selection/BridgeConfigSelection'
 import { Button } from './Controls/Button/Button'
-import { del } from 'idb-keyval'
-import { comMojangKey } from '../../FileSystem/ComMojang'
+import { del, set } from 'idb-keyval'
+import { comMojangKey } from '/@/components/OutputFolders/ComMojang/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
 import {
 	isUsingFileSystemPolyfill,
@@ -15,6 +15,7 @@ import {
 } from '/@/components/FileSystem/Polyfill'
 import { platform } from '/@/utils/os'
 import { TextField } from './Controls/TextField/TextField'
+import { devActions } from '/@/components/Developer/Actions'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -166,6 +167,16 @@ export async function setupSettings(settings: SettingsWindow) {
 	)
 	settings.addControl(
 		new Toggle({
+			category: 'appearance',
+			name: 'windows.settings.appearance.hideToolbarItems.name',
+			description:
+				'windows.settings.appearance.hideToolbarItems.description',
+			key: 'hideToolbarItems',
+			default: false,
+		})
+	)
+	settings.addControl(
+		new Toggle({
 			category: 'sidebar',
 			name: 'windows.settings.sidebar.sidebarRight.name',
 			description: 'windows.settings.sidebar.sidebarRight.description',
@@ -203,25 +214,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			description:
 				'windows.settings.sidebar.shrinkSidebarElements.description',
 			key: 'hideElements',
-		})
-	)
-
-	settings.addControl(
-		new ButtonToggle({
-			category: 'developers',
-			name: 'windows.settings.developer.simulateOS.name',
-			description: 'windows.settings.developer.simulateOS.description',
-			key: 'simulateOS',
-			options: ['auto', 'win32', 'darwin', 'linux'],
-			default: 'auto',
-		})
-	)
-	settings.addControl(
-		new Toggle({
-			category: 'developers',
-			name: 'windows.settings.developer.devMode.name',
-			description: 'windows.settings.developer.devMode.description',
-			key: 'isDevMode',
 		})
 	)
 
@@ -293,17 +285,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.general.restoreTabs.description',
 			key: 'restoreTabs',
 			default: true,
-		})
-	)
-	settings.addControl(
-		new Toggle({
-			category: 'general',
-			name:
-				'windows.settings.general.openProjectChooserOnAppStartup.name',
-			description:
-				'windows.settings.general.openProjectChooserOnAppStartup.description',
-			key: 'openProjectChooserOnAppStartup',
-			default: false,
 		})
 	)
 	if (!isUsingFileSystemPolyfill.value) {
@@ -405,6 +386,15 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'editor',
+			name: 'windows.settings.editor.keepTabsOpen.name',
+			description: 'windows.settings.editor.keepTabsOpen.description',
+			key: 'keepTabsOpen',
+			default: false,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
 			name: 'windows.settings.editor.automaticallyOpenTreeNodes.name',
 			description:
 				'windows.settings.editor.automaticallyOpenTreeNodes.description',
@@ -460,4 +450,40 @@ export async function setupSettings(settings: SettingsWindow) {
 		if (action.type === 'action')
 			settings.addControl(new ActionViewer(action))
 	})
+
+	if (import.meta.env.DEV) {
+		settings.addControl(
+			new ButtonToggle({
+				category: 'developers',
+				name: 'windows.settings.developer.simulateOS.name',
+				description:
+					'windows.settings.developer.simulateOS.description',
+				key: 'simulateOS',
+				options: ['auto', 'win32', 'darwin', 'linux'],
+				default: 'auto',
+			})
+		)
+		settings.addControl(
+			new Toggle({
+				category: 'developers',
+				name: 'windows.settings.developer.devMode.name',
+				description: 'windows.settings.developer.devMode.description',
+				key: 'isDevMode',
+			})
+		)
+		settings.addControl(
+			new Toggle({
+				category: 'developers',
+				name: 'windows.settings.developer.forceDataDownload.name',
+				description:
+					'windows.settings.developer.forceDataDownload.description',
+				key: 'forceDataDownload',
+				default: false,
+			})
+		)
+
+		devActions.forEach((action) => {
+			settings.addControl(new ActionViewer(action, 'developers'))
+		})
+	}
 }
