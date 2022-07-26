@@ -306,4 +306,11 @@ input,
 textarea {
 	color: var(--v-text-base);
 }
+
+.suggest-details .header {
+	font-size: unset !important;
+	font-weight: unset !important;
+	letter-spacing: unset !important;
+	line-height: unset !important;
+}
 </style>

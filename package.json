@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite",
+		"dev:force": "vite --force",
 		"serve": "vite preview",
 		"check": "tsc --project tsconfig.json --noEmit",
 		"build": "node ./scripts/build.mjs && node ./scripts/buildApp.mjs",
