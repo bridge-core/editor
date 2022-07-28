@@ -90,6 +90,7 @@ export default {
 		featureRule: 'Feature Rule',
 		functionTick: 'Function Tick',
 		function: 'Function',
+		generatorScript: 'Generator Script',
 		item: 'Item',
 		lootTable: 'Loot Table',
 		recipe: 'Recipe',
