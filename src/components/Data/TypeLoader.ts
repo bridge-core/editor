@@ -34,6 +34,7 @@ export class TypeLoader {
 		await this.loadUserTypes()
 	}
 	deactivate() {
+		this.currentTypeEnv = null
 		this.typeDisposables.forEach((disposable) => disposable.dispose())
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.typeDisposables = []
