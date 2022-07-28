@@ -10,6 +10,9 @@
 					outlined
 					:value="value_"
 					@change="onChange"
+					@click.native="
+						config.onClick ? config.onClick() : undefined
+					"
 					:items="config.options"
 					hide-details
 					:menu-props="{
