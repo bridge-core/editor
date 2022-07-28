@@ -78,9 +78,9 @@ export class BBModelImporter extends FileImporter {
 
 		app.windows.loadingWindow.open()
 
-		await this.exportImages(app, data.textures)
-		await this.exportModel(app, data)
-		await this.exportAnimations(app, data.animations, data.name)
+		if (data.textures) await this.exportImages(app, data.textures)
+		if (data.elements && data.outliner) await this.exportModel(app, data)
+		if (data.animations) await this.exportAnimations(app, data.animations, data.name)
 
 		app.windows.loadingWindow.close()
 	}
@@ -122,7 +122,6 @@ export class BBModelImporter extends FileImporter {
 				'RP',
 				'textures',
 				folder,
-				texture.folder,
 				extname(texture.name) === ''
 					? `${texture.name}.${extension}`
 					: texture.name
