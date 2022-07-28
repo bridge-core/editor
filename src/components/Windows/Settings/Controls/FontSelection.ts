@@ -7,14 +7,15 @@ export class FontSelection extends Selection {
 
 		config.onClick = () => this.onClick()
 
-		// Try to load fonts if permission was already granted
-		navigator.permissions
-			// @ts-ignore
-			.query({ name: 'local-fonts' })
-			.then(({ state }) => {
-				if (state === 'granted') this.onClick()
-			})
-			.catch(() => {})
+		if (typeof navigator?.permissions?.query === 'function')
+			// Try to load fonts if permission was already granted
+			navigator.permissions
+				// @ts-ignore
+				.query({ name: 'local-fonts' })
+				.then(({ state }) => {
+					if (state === 'granted') this.onClick()
+				})
+				.catch(() => {})
 	}
 
 	async onClick() {
