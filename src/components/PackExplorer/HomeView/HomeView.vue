@@ -12,10 +12,9 @@
 					v-for="project in projectData"
 					:key="`${project.name}//${project.requiresPermissions}`"
 					:project="project"
-					@click="
-						selectProject(project.name, project.requiresPermissions)
-					"
+					@click="selectProject(project)"
 					@pin="onFavoriteProject(project)"
+					:isLoading="project.isLoading"
 				/>
 			</v-slide-y-transition>
 		</template>
@@ -76,6 +75,7 @@ export default {
 				return {
 					...project,
 					isFavorite: project.isFavorite ?? false,
+					isLoading: false,
 				}
 			})
 			this.sortProjects()
@@ -93,19 +93,27 @@ export default {
 			const app = await App.getApp()
 			await app.fileSystem.writeJSON(
 				'~local/data/projects.json',
-				this.projectData
+				this.projectData.map((project) => ({
+					...project,
+					isLoading: undefined,
+				}))
 			)
 		},
 
-		async selectProject(name, requiresPermissions) {
+		async selectProject(project) {
+			project.isLoading = true
 			const app = await App.getApp()
 
-			if (requiresPermissions) {
+			if (project.requiresPermissions) {
 				const wasSuccessful = await app.setupBridgeFolder()
-				if (!wasSuccessful) return
+				if (!wasSuccessful) {
+					project.isLoading = false
+					return
+				}
 			}
 
-			await app.projectManager.selectProject(name, true)
+			await app.projectManager.selectProject(project.name, true)
+			project.isLoading = false
 		},
 
 		async onFavoriteProject(project) {
