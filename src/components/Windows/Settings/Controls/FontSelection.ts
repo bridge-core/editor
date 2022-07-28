@@ -6,12 +6,21 @@ export class FontSelection extends Selection {
 		super(config)
 
 		config.onClick = () => this.onClick()
+
+		// Try to load fonts if permission was already granted
+		navigator.permissions
+			// @ts-ignore
+			.query({ name: 'local-fonts' })
+			.then(({ state }) => {
+				if (state === 'granted') this.onClick()
+			})
+			.catch(() => {})
 	}
 
-	onClick() {
+	async onClick() {
 		if (!window.queryLocalFonts || this.didLoadFonts) return
 
-		window
+		await window
 			.queryLocalFonts()
 			.then((fonts) => {
 				this.didLoadFonts = true

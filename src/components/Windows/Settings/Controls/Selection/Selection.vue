@@ -10,9 +10,7 @@
 					outlined
 					:value="value_"
 					@change="onChange"
-					@click.native="
-						config.onClick ? config.onClick() : undefined
-					"
+					@click.native="onClick"
 					:items="config.options"
 					hide-details
 					:menu-props="{
@@ -41,12 +39,15 @@ export default {
 	data: () => ({
 		value_: undefined,
 	}),
-	async created() {
+	async mounted() {
 		this.value_ = (await this.value) || this.config.default
 	},
 	methods: {
 		onChange(val) {
 			this.$nextTick(() => this.$emit('change', val))
+		},
+		async onClick() {
+			if (this.config.onClick) await this.config.onClick()
 		},
 	},
 }
