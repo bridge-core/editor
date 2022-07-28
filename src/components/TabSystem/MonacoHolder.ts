@@ -34,6 +34,15 @@ export class MonacoHolder extends Signal<void> {
 					noLib: true,
 					alwaysStrict: true,
 				})
+				languages.typescript.typescriptDefaults.setCompilerOptions({
+					target: languages.typescript.ScriptTarget.ESNext,
+					allowNonTsExtensions: true,
+					noLib: true,
+					alwaysStrict: true,
+					moduleResolution:
+						languages.typescript.ModuleResolutionKind.NodeJs,
+					module: languages.typescript.ModuleKind.ESNext,
+				})
 
 				languages.registerDefinitionProvider(
 					'json',
