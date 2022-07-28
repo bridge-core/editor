@@ -3,7 +3,7 @@ import { FileImporter } from '/@/components/ImportFile/Importer'
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
-import { join } from '/@/utils/path'
+import { extname, join } from '/@/utils/path'
 import json5 from 'json5'
 import { DropdownWindow } from '../Windows/Common/Dropdown/DropdownWindow'
 import { clamp } from '/@/utils/math/clamp'
@@ -123,7 +123,9 @@ export class BBModelImporter extends FileImporter {
 				'textures',
 				folder,
 				texture.folder,
-				`${texture.name}.${extension}`
+				extname(texture.name) === ''
+					? `${texture.name}.${extension}`
+					: texture.name
 			)
 
 			// Check whether file already exists
@@ -144,7 +146,7 @@ export class BBModelImporter extends FileImporter {
 			)
 			App.eventSystem.dispatch('fileAdded', undefined)
 
-			await app.project.updateFile(filePath)
+			await app.project.updateFile(app.project.absolutePath(filePath))
 			await app.project.openFile(destHandle, { isTemporary: false })
 		}
 	}
@@ -192,7 +194,7 @@ export class BBModelImporter extends FileImporter {
 		await app.project.fileSystem.writeJSON(filePath, entityFile, true)
 		App.eventSystem.dispatch('fileAdded', undefined)
 
-		await app.project.updateFile(filePath)
+		await app.project.updateFile(app.project.absolutePath(filePath))
 		await app.project.openFile(destHandle, { isTemporary: false })
 	}
 
@@ -482,9 +484,8 @@ export class BBModelImporter extends FileImporter {
 						.filter((kf: any) => kf.channel === 'timeline')
 						.sort((kf1: any, kf2: any) => kf1.time - kf2.time)
 						.forEach((kf: any) => {
-							anim.timeline![
-								this.getTimecodeString(kf.time)
-							] = this.compileBedrockKeyframe(kf, animator)
+							anim.timeline![this.getTimecodeString(kf.time)] =
+								this.compileBedrockKeyframe(kf, animator)
 						})
 				} else if (animator.type === 'bone') {
 					let bone_tag: any = (anim.bones![animator.name] = {})
@@ -495,9 +496,8 @@ export class BBModelImporter extends FileImporter {
 							channels[kf.channel] = {}
 						}
 						let timecode = this.getTimecodeString(kf.time)
-						channels[kf.channel][
-							timecode
-						] = this.compileBedrockKeyframe(kf, animator)
+						channels[kf.channel][timecode] =
+							this.compileBedrockKeyframe(kf, animator)
 					})
 
 					//Sorting
@@ -591,7 +591,7 @@ export class BBModelImporter extends FileImporter {
 		await app.project.fileSystem.writeJSON(filePath, animationFile, true)
 		App.eventSystem.dispatch('fileAdded', undefined)
 
-		await app.project.updateFile(filePath)
+		await app.project.updateFile(app.project.absolutePath(filePath))
 		await app.project.openFile(destHandle, { isTemporary: false })
 	}
 
