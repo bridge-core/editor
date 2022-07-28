@@ -3,18 +3,22 @@ import { v4 as uuid } from 'uuid'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { App } from '/@/App'
-import { del, markRaw, set } from '@vue/composition-api'
+import { del, markRaw, reactive, set } from '@vue/composition-api'
 
-/**
- * @deprecated Transition window to NewBaseWindow with dedicated window state
- */
-export abstract class BaseWindow<T = void> extends Signal<T> {
+interface IWindowState {
+	isVisible: boolean
+	shouldRender: boolean
+	actions: SimpleAction[]
+}
+export abstract class NewBaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()
-	protected isVisible = false
-	protected shouldRender = false
-	protected actions: SimpleAction[] = []
 	protected component: VueComponent
 	protected closeTimeout: number | null = null
+	protected state = reactive<IWindowState>({
+		isVisible: false,
+		shouldRender: false,
+		actions: [],
+	})
 
 	constructor(
 		component: VueComponent,
@@ -30,24 +34,24 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 		set(App.windowState.state, this.windowUUID, this)
 	}
 	addAction(action: SimpleAction) {
-		this.actions.push(action)
+		this.state.actions.push(action)
 	}
 
 	close(data: T | null) {
-		this.isVisible = false
+		this.state.isVisible = false
 		if (data !== null) this.dispatch(data)
 
 		if (!this.keepAlive) {
 			this.closeTimeout = window.setTimeout(() => {
-				this.shouldRender = false
+				this.state.shouldRender = false
 				this.closeTimeout = null
 				if (this.disposeOnClose) this.dispose()
 			}, 600)
 		}
 	}
 	open() {
-		this.shouldRender = true
-		this.isVisible = true
+		this.state.shouldRender = true
+		this.state.isVisible = true
 		this.resetSignal()
 		if (this.closeTimeout !== null) {
 			window.clearTimeout(this.closeTimeout)

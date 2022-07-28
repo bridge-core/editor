@@ -1,21 +1,12 @@
 import { Signal } from '../Common/Event/Signal'
 import { DataLoader } from './DataLoader'
-import { PackType as BasePackType, ProjectConfig } from 'mc-project-core'
+import {
+	PackType as BasePackType,
+	ProjectConfig,
+	type IPackType,
+} from 'mc-project-core'
 
-/**
- * Describes the structure of a pack definition
- */
-export interface IPackType {
-	id: TPackTypeId
-	matcher: string | string[]
-	color: string
-	icon: string
-}
-export type TPackTypeId =
-	| 'behaviorPack'
-	| 'resourcePack'
-	| 'skinPack'
-	| 'worldTemplate'
+export type { IPackType, TPackTypeId } from 'mc-project-core'
 
 /**
  * Utilities around bridge.'s pack definitions
