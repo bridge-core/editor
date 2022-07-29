@@ -32,6 +32,7 @@ export class MonacoHolder extends Signal<void> {
 					target: languages.typescript.ScriptTarget.ESNext,
 					allowNonTsExtensions: true,
 					alwaysStrict: true,
+					checkJs: true,
 				})
 				languages.typescript.typescriptDefaults.setCompilerOptions({
 					target: languages.typescript.ScriptTarget.ESNext,

@@ -122,6 +122,14 @@ export class Extension {
 			}
 		}
 
+		// Disable global extension with same ID if such an extension exists
+		if (!this.isGlobal) {
+			const globalExtensions = App.instance.extensionLoader
+
+			if (globalExtensions.has(this.id))
+				globalExtensions.deactivate(this.id)
+		}
+
 		// Compiler plugins
 		for (const [pluginId, compilerPlugin] of Object.entries(
 			this.manifest.compiler?.plugins ?? {}
@@ -211,14 +219,6 @@ export class Extension {
 					...(await app.project.snippetLoader.loadFrom(snippetDir))
 				)
 			}
-		}
-
-		// Disable global extension with same ID if such an extension exists
-		if (!this.isGlobal) {
-			const globalExtensions = App.instance.extensionLoader
-
-			if (globalExtensions.has(this.id))
-				globalExtensions.deactivate(this.id)
 		}
 
 		if (await this.fileSystem.fileExists('.installed')) return

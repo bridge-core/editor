@@ -20,4 +20,16 @@ export const extensionActions = (extension: ExtensionViewer) => [
 			extension.closeActionMenu()
 		},
 	}),
+	!extension.isInstalledLocallyAndGlobally
+		? new SimpleAction({
+				name: `windows.extensionStore.${
+					extension.isGlobal ? 'installLocal' : 'installGlobal'
+				}`,
+				icon: 'mdi-download',
+				onTrigger: () => {
+					extension.download(!extension.isGlobal)
+					extension.closeActionMenu()
+				},
+		  })
+		: null,
 ]

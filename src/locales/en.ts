@@ -998,6 +998,8 @@ export default {
 			deleteExtension: 'Delete Extension',
 			activateExtension: 'Activate Extension',
 			deactivateExtension: 'Deactivate Extension',
+			installLocal: 'Install Local',
+			installGlobal: 'Install Global',
 			offlineError:
 				'Failed to load extensions. Please confirm that your device has an active network connection.',
 			incompatibleVersion: 'Incompatible bridge. version',

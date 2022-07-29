@@ -42,7 +42,8 @@ export class ExtensionStoreWindow extends BaseWindow {
 			'data/packages/common/extensionTags.json'
 		)
 
-		const installedExtensions = await app.extensionLoader.getInstalledExtensions()
+		const installedExtensions =
+			await app.extensionLoader.getInstalledExtensions()
 
 		let extensions: IExtensionManifest[]
 		try {
@@ -65,8 +66,11 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 		this.updates.clear()
 
-		installedExtensions.forEach((installedExtension, id) => {
-			const extension = this.extensions.find((ext) => ext.id === id)
+		console.log(installedExtensions)
+		installedExtensions.forEach((installedExtension) => {
+			const extension = this.extensions.find(
+				(ext) => ext.id === installedExtension.id
+			)
 
 			if (extension) {
 				extension.setInstalled()

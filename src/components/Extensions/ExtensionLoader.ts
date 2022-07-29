@@ -62,7 +62,7 @@ export class ExtensionLoader extends Signal<void> {
 
 	async getInstalledExtensions() {
 		await this.fired
-		return new Map(this.extensions.entries())
+		return new Set(this.extensions.values())
 	}
 
 	async loadExtensions(path: string = this.loadExtensionsFrom) {
