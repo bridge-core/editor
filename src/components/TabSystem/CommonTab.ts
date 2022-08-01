@@ -39,6 +39,9 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		this.dispatch(this)
 		this.isLoading = false
 	}
+	get project() {
+		return this.parent.project
+	}
 
 	setIsLoading(val: boolean) {
 		this.isLoading = val

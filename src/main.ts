@@ -14,6 +14,7 @@ import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker.js?worker
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker.js?worker'
 import { initRuntimes } from 'bridge-js-runtime'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+import { whenIdle } from './utils/whenIdle'
 
 // @ts-ignore
 self.MonacoEnvironment = {
@@ -34,7 +35,9 @@ self.MonacoEnvironment = {
 	},
 }
 
-initRuntimes(wasmUrl)
+whenIdle(() => {
+	initRuntimes(wasmUrl)
+})
 
 App.main(vue)
 

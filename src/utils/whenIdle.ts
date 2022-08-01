@@ -8,15 +8,17 @@ declare const cancelIdleCallback: ((handle: number) => void) | undefined
 export const supportsIdleCallback = typeof requestIdleCallback === 'function'
 
 export function whenIdle(cb: () => Promise<void> | void) {
-	return new Promise<void>(async (resolve) => {
+	return new Promise<void>((resolve) => {
 		if (typeof requestIdleCallback === 'function') {
 			requestIdleCallback(async () => {
 				await cb()
 				resolve()
 			})
 		} else {
-			await cb()
-			resolve()
+			setTimeout(async () => {
+				await cb()
+				resolve()
+			}, 10)
 		}
 	})
 }

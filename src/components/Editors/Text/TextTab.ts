@@ -253,7 +253,8 @@ export class TextTab extends FileTab {
 
 			if (writeWorked) {
 				this.setIsUnsaved(false)
-				this.initialVersionId = this.editorModel.getAlternativeVersionId()
+				this.initialVersionId =
+					this.editorModel.getAlternativeVersionId()
 			}
 		} else {
 			console.error(`Cannot save file content without active editorModel`)
