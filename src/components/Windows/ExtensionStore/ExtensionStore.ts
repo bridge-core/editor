@@ -66,7 +66,6 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 		this.updates.clear()
 
-		console.log(installedExtensions)
 		installedExtensions.forEach((installedExtension) => {
 			const extension = this.extensions.find(
 				(ext) => ext.id === installedExtension.id
