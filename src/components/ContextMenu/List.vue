@@ -127,11 +127,12 @@ const props = defineProps({
 		required: true,
 	},
 })
+const emit = defineEmits(['click'])
 
 const openSection = ref(null)
 
 function onClick(action) {
-	this.$emit('click')
+	emit('click')
 	action.trigger()
 }
 function toggleSection(id) {
