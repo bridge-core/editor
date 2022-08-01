@@ -35,9 +35,7 @@ self.MonacoEnvironment = {
 	},
 }
 
-whenIdle(() => {
-	initRuntimes(wasmUrl)
-})
+initRuntimes(wasmUrl)
 
 App.main(vue)
 
