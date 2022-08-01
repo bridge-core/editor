@@ -19,8 +19,8 @@
 						}`,
 					}"
 					ref="sheet"
-					v-ripple
-					@click.native="onClick"
+					:isLoading="isLoading"
+					@click="onClick"
 				>
 					<!-- Project icon -->
 					<img
@@ -117,11 +117,11 @@ export default {
 	},
 	props: {
 		project: Object,
+		isLoading: Boolean,
 	},
 
 	async mounted() {
 		const app = await App.getApp()
-		this.didClick = false
 
 		// Logic for updating the current available width
 		this.disposables.push(
@@ -137,7 +137,6 @@ export default {
 	data: () => ({
 		disposables: [],
 		availableWidth: 0,
-		didClick: false,
 	}),
 	computed: {
 		miniLayout() {
@@ -147,12 +146,10 @@ export default {
 	methods: {
 		calculateAvailableWidth() {
 			if (this.$refs.sheet)
-				this.availableWidth = this.$refs.sheet.$el.getBoundingClientRect().width
+				this.availableWidth =
+					this.$refs.sheet.$el.getBoundingClientRect().width
 		},
 		onClick() {
-			if (this.didClick) return
-
-			this.didClick = true
 			this.$emit('click')
 		},
 	},

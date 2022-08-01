@@ -6,6 +6,7 @@ import {
 	IConfigJson,
 	ProjectConfig as BaseProjectConfig,
 } from 'mc-project-core'
+import { App } from '/@/App'
 
 export type { IConfigJson } from 'mc-project-core'
 export { defaultPackPaths } from 'mc-project-core'
@@ -187,5 +188,20 @@ export class ProjectConfig extends BaseProjectConfig {
 		if (!author) return
 
 		return this.resolvePackPath(undefined, author.logo)
+	}
+
+	async toggleExperiment(project: Project, experiment: string) {
+		project.app.windows.loadingWindow.open()
+
+		const experimentalGameplay = this.get()?.experimentalGameplay ?? {}
+		// Modify experimental gameplay
+		experimentalGameplay[experiment] = !experimentalGameplay[experiment]
+		// Save config
+		await this.save()
+
+		// Only refresh project if it's active
+		if (project.isActiveProject) await project.refresh()
+
+		project.app.windows.loadingWindow.close()
 	}
 }

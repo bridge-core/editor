@@ -13,6 +13,11 @@ import { loadFileDefinitions } from './FileDefinition/load'
 import { InstallFiles } from './InstallFiles'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { idbExtensionStore } from './Scripts/Modules/persistentStorage'
+import { compareVersions } from 'bridge-common-utils'
+import { version as appVersion } from '/@/utils/app/version'
+import { JsRuntime } from './Scripts/JsRuntime'
+import { createEnv } from './Scripts/require'
+import { UIModule } from './Scripts/Modules/ui'
 
 export class Extension {
 	protected disposables: IDisposable[] = []
@@ -21,6 +26,10 @@ export class Extension {
 	protected _compilerPlugins: Record<string, string> = {}
 	protected isLoaded = false
 	protected installFiles: InstallFiles
+	protected hasPresets = false
+	public jsRuntime = new JsRuntime(
+		createEnv(this.id, this.disposables, this.uiStore, this.isGlobal)
+	)
 
 	get isActive() {
 		if (!this.parent.activeStatus)
@@ -65,9 +74,33 @@ export class Extension {
 		)
 	}
 
+	isCompatibleAppEnv() {
+		if (!this.manifest.compatibleAppVersions) return true
+
+		return (
+			((this.manifest.compatibleAppVersions.min &&
+				compareVersions(
+					appVersion,
+					this.manifest.compatibleAppVersions.min,
+					'>='
+				)) ||
+				!this.manifest.compatibleAppVersions.min) &&
+			((this.manifest.compatibleAppVersions.max &&
+				compareVersions(
+					appVersion,
+					this.manifest.compatibleAppVersions.max,
+					'<'
+				)) ||
+				!this.manifest.compatibleAppVersions.max)
+		)
+	}
+
 	async activate() {
-		// Make sure we load an extension only once
-		if (this.isLoaded) return
+		/**
+		 * Make sure we load an extension only once
+		 * and that the bridge. app version is compatible
+		 */
+		if (this.isLoaded || !this.isCompatibleAppEnv()) return
 
 		this.isLoaded = true
 		const app = await App.getApp()
@@ -89,6 +122,14 @@ export class Extension {
 			}
 		}
 
+		// Disable global extension with same ID if such an extension exists
+		if (!this.isGlobal) {
+			const globalExtensions = App.instance.extensionLoader
+
+			if (globalExtensions.has(this.id))
+				globalExtensions.deactivate(this.id)
+		}
+
 		// Compiler plugins
 		for (const [pluginId, compilerPlugin] of Object.entries(
 			this.manifest.compiler?.plugins ?? {}
@@ -96,9 +137,25 @@ export class Extension {
 			this._compilerPlugins[pluginId] = `${pluginPath}/${compilerPlugin}`
 		}
 
-		this.disposables.push(
-			app.windows.createPreset.addPresets(`${pluginPath}/presets`)
-		)
+		// If the extension has a presets.json file, add this file to the preset store
+		if (await this.fileSystem.fileExists('presets.json')) {
+			this.hasPresets = true
+			App.eventSystem.dispatch('presetsChanged', null)
+			this.disposables.push(
+				app.windows.createPreset.addPresets(
+					`${pluginPath}/presets.json`
+				)
+			)
+		}
+		// Otherwise if the extension has a presets folder, add this folder to the preset store
+		else if (await this.fileSystem.directoryExists('presets')) {
+			this.hasPresets = true
+			this.disposables.push(
+				app.windows.createPreset.addPresets(`${pluginPath}/presets`)
+			)
+
+			App.eventSystem.dispatch('presetsChanged', null)
+		}
 
 		try {
 			await iterateDir(
@@ -119,31 +176,27 @@ export class Extension {
 			)
 		} catch {}
 
-		let scriptHandle: AnyDirectoryHandle
+		let scriptHandle: AnyDirectoryHandle | null = null
 		try {
 			scriptHandle = await this.baseDirectory.getDirectoryHandle(
 				'scripts'
 			)
 		} catch {}
 
-		await Promise.all([
-			loadUIComponents(
-				this.fileSystem,
-				this.id,
+		let uiHandle: AnyDirectoryHandle | null = null
+		try {
+			uiHandle = await this.baseDirectory.getDirectoryHandle('ui')
+		} catch {}
+
+		if (uiHandle)
+			await loadUIComponents(
+				this.jsRuntime,
+				uiHandle,
 				this.uiStore,
 				this.disposables
-			).then(async () =>
-				scriptHandle
-					? await loadScripts(
-							scriptHandle,
-							this.uiStore,
-							this.disposables,
-							this.isGlobal,
-							this.id
-					  )
-					: undefined
-			),
-		])
+			)
+
+		if (scriptHandle) await loadScripts(this.jsRuntime, scriptHandle)
 
 		// Loading snippets
 		if (await this.fileSystem.directoryExists('snippets')) {
@@ -168,16 +221,6 @@ export class Extension {
 			}
 		}
 
-		App.eventSystem.dispatch('presetsChanged', null)
-
-		// Disable global extension with same ID if such an extension exists
-		if (!this.isGlobal) {
-			const globalExtensions = App.instance.extensionLoader
-
-			if (globalExtensions.has(this.id))
-				globalExtensions.deactivate(this.id)
-		}
-
 		if (await this.fileSystem.fileExists('.installed')) return
 
 		await this.installFiles.execute(this.isGlobal)
@@ -189,8 +232,9 @@ export class Extension {
 	}
 
 	deactivate() {
-		App.eventSystem.dispatch('presetsChanged', null)
+		if (this.hasPresets) App.eventSystem.dispatch('presetsChanged', null)
 		this.disposables.forEach((disposable) => disposable.dispose())
+		this.jsRuntime.clearCache()
 		this.isLoaded = false
 
 		// Enable global extension with same ID if such an extension exists

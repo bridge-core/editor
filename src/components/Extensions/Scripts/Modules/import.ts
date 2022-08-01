@@ -1,7 +1,7 @@
 import { IModuleConfig } from '../types'
 import { App } from '/@/App'
 import { AnyHandle } from '/@/components/FileSystem/Types'
-import { IFolderHandler } from '/@/components/ImportFolder/manager'
+import { IFolderHandler } from '/@/components/ImportFolder/Manager'
 import {
 	IPluginOpenWithAction,
 	pluginActionStore,

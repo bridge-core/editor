@@ -43,11 +43,12 @@ import { platform } from '/@/utils/os'
 import { virtualProjectName } from '/@/components/Projects/Project/Project'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { getStorageDirectory } from '/@/utils/getStorageDirectory'
-import { FolderImportManager } from '/@/components/ImportFolder/manager'
+import { FolderImportManager } from '/@/components/ImportFolder/Manager'
 import { StartParamManager } from '/@/components/StartParams/Manager'
 import { ViewFolders } from '/@/components/ViewFolders/ViewFolders'
 import { SidebarManager } from '/@/components/Sidebar/Manager'
 import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
+import { InformationWindow } from './components/Windows/Common/Information/InformationWindow'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -81,7 +82,7 @@ export class App {
 	public readonly projectManager = new ProjectManager(this)
 	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
-	public readonly contextMenu = new ContextMenu()
+	public readonly contextMenu = markRaw(new ContextMenu())
 	public readonly locales: Locales
 	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
@@ -131,7 +132,9 @@ export class App {
 		return this.projectManager.currentProject
 	}
 	get projects() {
-		return Object.values(this.projectManager.state)
+		return Object.values(this.projectManager.state).filter(
+			(project) => !project.isVirtualProject
+		)
 	}
 	get projectConfig() {
 		try {
@@ -266,6 +269,24 @@ export class App {
 						'https://bridge-core.github.io/editor-docs/getting-started/'
 					)
 					gettingStarted.dispose()
+				},
+			})
+		}
+
+		// Warn about saving projects
+		if (isUsingFileSystemPolyfill.value) {
+			const saveWarning = new PersistentNotification({
+				id: 'bridge-save-warning',
+				icon: 'mdi-alert-circle-outline',
+				message: 'general.fileSystemPolyfill.name',
+				color: 'warning',
+				textColor: 'white',
+				onClick: () => {
+					new InformationWindow({
+						title: 'general.fileSystemPolyfill.name',
+						description: 'general.fileSystemPolyfill.description',
+					})
+					saveWarning.dispose()
 				},
 			})
 		}

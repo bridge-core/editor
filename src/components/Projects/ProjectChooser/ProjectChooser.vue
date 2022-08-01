@@ -133,13 +133,29 @@
 					>
 						<ExperimentalGameplay
 							:experiment="experiment"
-							:isToggleable="false"
+							:isToggleable="true"
 							:value="experiment.isActive"
+							@click.native="onToggleExperiment(experiment)"
 							style="height: 100%"
 						/>
 					</v-col>
 				</v-row>
 			</template>
+
+			<!-- Warn about uninstalling Minecraft -->
+			<BridgeSheet
+				v-if="isComMojangProject"
+				class="d-flex align-center justify-center pa-2"
+			>
+				<v-icon class="mr-1" color="error">
+					mdi-alert-circle-outline
+				</v-icon>
+				{{
+					t(
+						'windows.projectChooser.comMojangProject.uninstallWarning'
+					)
+				}}
+			</BridgeSheet>
 		</template>
 
 		<template #actions="{ selectedSidebar }">
@@ -252,6 +268,14 @@ export default {
 		},
 		onLoadAllProjects() {
 			this.currentWindow.loadAllProjects()
+		},
+		async onToggleExperiment(experiment) {
+			const app = await App.getApp()
+			const project = app.projectManager.getProject(
+				this.sidebar.currentState.name
+			)
+
+			await project.config.toggleExperiment(project, experiment.id)
 		},
 	},
 	computed: {

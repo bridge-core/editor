@@ -157,7 +157,7 @@ export abstract class FileTab extends Tab {
 		// Current file handle is a virtual file without parent
 		if (
 			this.fileHandle instanceof VirtualFileHandle &&
-			this.fileHandle.getParent() === null
+			!this.fileHandle.hasParentContext
 		) {
 			// Download the file if the user is using a file system polyfill
 			if (isUsingFileSystemPolyfill.value) {
@@ -177,7 +177,7 @@ export abstract class FileTab extends Tab {
 					})
 				} catch {}
 
-				if (!fileHandle) return
+				if (!fileHandle) return false
 				this.fileHandle = fileHandle
 				this.resetSignal()
 
@@ -186,9 +186,12 @@ export abstract class FileTab extends Tab {
 			}
 
 			// We're done here
-			return
+			return true
 		}
 
-		await this.parent.app.fileSystem.write(this.fileHandle, value)
+		return await this.parent.app.fileSystem
+			.write(this.fileHandle, value)
+			.then(() => true)
+			.catch(() => false)
 	}
 }

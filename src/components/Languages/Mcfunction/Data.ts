@@ -118,9 +118,12 @@ export class CommandData extends Signal<void> {
 			throw new Error(`Acessing commandData before it was loaded.`)
 
 		const validEntries: any[] = []
+		const requiresMatcher = new RequiresMatcher()
+		await requiresMatcher.setup()
+
 		for await (const entry of this._data.vanilla) {
-			const requiresMatcher = new RequiresMatcher(entry.requires)
-			if (await requiresMatcher.isValid()) validEntries.push(entry)
+			if (requiresMatcher.isValid(entry.requires))
+				validEntries.push(entry)
 			else if (!entry.requires) validEntries.push(entry)
 		}
 

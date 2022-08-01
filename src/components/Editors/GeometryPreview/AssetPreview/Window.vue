@@ -56,7 +56,7 @@
 						mode="hexa"
 					/>
 
-					<h2 class="mt-8">
+					<h2 v-if="bones.length > 0" class="mt-8">
 						{{ t('windows.assetPreview.boneVisibility') }}
 					</h2>
 
@@ -105,8 +105,8 @@ export default {
 		PresetPath,
 	},
 	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
+	setup(props) {
+		return props.currentWindow.state
 	},
 	mounted() {
 		this.currentWindow.receiveCanvas(this.$refs.canvas)

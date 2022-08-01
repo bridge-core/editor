@@ -8,22 +8,31 @@ export interface IDiagnostic {
 }
 
 export interface ICompletionItem {
-	type: 'object' | 'array' | 'value' | 'valueArray' | 'snippet'
+	type:
+		| 'object'
+		| 'array'
+		| 'objectArray'
+		| 'valueArray'
+		| 'value'
+		| 'snippet'
 	label: string
 	value: unknown
 }
 
+export type TSchemaType =
+	| 'object'
+	| 'array'
+	| 'string'
+	| 'integer'
+	| 'number'
+	| 'boolean'
+	| 'null'
+
+export const pathWildCard = '-!<bridge:any-schema>!-'
+
 export abstract class Schema {
 	public readonly schemaType?: 'ifSchema' | 'refSchema'
-	public abstract readonly types: (
-		| 'object'
-		| 'array'
-		| 'string'
-		| 'integer'
-		| 'number'
-		| 'boolean'
-		| 'null'
-	)[]
+	public abstract readonly types: TSchemaType[]
 	constructor(
 		protected location: string,
 		protected key: string,
@@ -40,6 +49,6 @@ export abstract class Schema {
 	abstract getCompletionItems(obj: unknown): ICompletionItem[]
 	abstract getSchemasFor(
 		obj: unknown,
-		location: (string | number)[]
+		location: (string | number | undefined)[]
 	): Schema[]
 }

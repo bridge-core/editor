@@ -1,4 +1,4 @@
-import { Zippable, zipSync } from 'fflate'
+import { zip, Zippable, zipSync } from 'fflate'
 import { AnyDirectoryHandle } from '../Types'
 import { iterateDir } from '/@/utils/iterateDir'
 
@@ -14,6 +14,15 @@ export class ZipDirectory {
 			)
 		})
 
-		return zipSync(directoryContents)
+		return new Promise<Uint8Array>((resolve, reject) =>
+			zip(directoryContents, { level: 6 }, (error, data) => {
+				if (error) {
+					reject(error)
+					return
+				}
+
+				resolve(data)
+			})
+		)
 	}
 }

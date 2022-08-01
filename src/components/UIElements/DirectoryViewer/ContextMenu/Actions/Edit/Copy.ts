@@ -12,7 +12,7 @@ export const clipboard: IClipboard = {
 export const CopyAction = (baseWrapper: BaseWrapper<any>) => ({
 	icon: 'mdi-content-copy',
 	name: 'actions.copy.name',
-	description: 'actions.copy.description',
+
 	onTrigger: async () => {
 		clipboard.item = baseWrapper.handle
 	},

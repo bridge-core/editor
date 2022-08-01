@@ -16,12 +16,14 @@ import {
 	exportAsMctemplate,
 } from '/@/components/Projects/Export/AsMctemplate'
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
-import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
+import { searchType } from '../FindAndReplace/Controls/searchType'
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
-import { Project } from '../Projects/Project/Project'
 import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
 import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu/Folder'
-import { ViewCompilerOutput } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ViewCompilerOutput'
+import { IHandleMovedOptions } from '../UIElements/DirectoryViewer/DirectoryStore'
+import { ViewConnectedFiles } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ConnectedFiles'
+import { ToLocalProjectAction } from './Actions/ToLocalProject'
+import { ToBridgeFolderProjectAction } from './Actions/ToBridgeFolderProject'
 
 export class PackExplorer extends SidebarContent {
 	component = markRaw(PackExplorerComponent)
@@ -48,26 +50,13 @@ export class PackExplorer extends SidebarContent {
 
 		App.getApp().then((app) => {
 			updateHeaderSlot()
-			this.updateTopPanel(app)
 
 			app.mobile.change.on(() => updateHeaderSlot())
 		})
 
-		App.eventSystem.on('projectChanged', (project: Project) => {
+		App.eventSystem.on('projectChanged', () => {
 			updateHeaderSlot()
-			this.updateTopPanel(project.app)
 		})
-	}
-
-	updateTopPanel(app: App) {
-		this.topPanel =
-			isUsingFileSystemPolyfill.value && !app.isNoProjectSelected
-				? new InfoPanel({
-						type: 'warning',
-						text: 'general.fileSystemPolyfill',
-						isDismissible: true,
-				  })
-				: undefined
 	}
 
 	async setup() {
@@ -96,9 +85,19 @@ export class PackExplorer extends SidebarContent {
 				new DirectoryWrapper(null, handle, {
 					startPath: pack.packPath,
 
-					provideFileContextMenu: (fileWrapper) => [
-						ViewCompilerOutput(fileWrapper.path),
+					provideFileContextMenu: async (fileWrapper) => [
+						await ViewConnectedFiles(fileWrapper),
 					],
+					provideFileDiagnostics: async (fileWrapper) => {
+						const packIndexer = app.project.packIndexer
+						await packIndexer.fired
+
+						const filePath = fileWrapper.path
+						if (!filePath) return []
+
+						return packIndexer.service.getFileDiagnostics(filePath)
+					},
+					onHandleMoved: (opts) => this.onHandleMoved(opts),
 				})
 			)
 			await wrapper.open()
@@ -135,6 +134,11 @@ export class PackExplorer extends SidebarContent {
 		)
 	}
 
+	async onHandleMoved({ fromPath, toPath }: IHandleMovedOptions) {
+		const app = await App.getApp()
+		await app.project.onMovedFile(fromPath, toPath)
+	}
+
 	onContentRightClick(event: MouseEvent): void {
 		const selectedId = this.selectedAction?.getConfig().id
 		if (!selectedId) return
@@ -168,26 +172,9 @@ export class PackExplorer extends SidebarContent {
 				name: 'actions.findInFolder.name',
 				description: 'actions.findInFolder.description',
 				onTrigger: () => {
-					const config = project.app.projectConfig
-					const packTypes: { [key: string]: string } = {
-						BP: config.resolvePackPath('behaviorPack'),
-						RP: config.resolvePackPath('resourcePack'),
-						SP: config.resolvePackPath('skinPack'),
-						WT: config.resolvePackPath('worldTemplate'),
-					}
-					let pathPackType = 'BP'
-					for (const packType of Object.keys(packTypes)) {
-						if (path.includes(packTypes[packType]))
-							pathPackType = packType
-					}
 					project.tabSystem?.add(
-						new FindAndReplaceTab(project.tabSystem!, {
-							searchType: ESearchType.matchCase,
-							includeFiles: path.replace(
-								packTypes[pathPackType],
-								pathPackType
-							),
-							excludeFiles: '',
+						new FindAndReplaceTab(project.tabSystem!, undefined, {
+							searchType: searchType.matchCase,
 						})
 					)
 				},
@@ -198,57 +185,61 @@ export class PackExplorer extends SidebarContent {
 	async showMoreMenu(event: MouseEvent) {
 		const app = await App.getApp()
 
-		const packPath = this.selectedAction?.getConfig()?.id
+		const moveAction = app.project.isLocal
+			? ToBridgeFolderProjectAction(app.project)
+			: ToLocalProjectAction(app.project)
 
 		showContextMenu(event, [
 			// Add new file
 			{
 				icon: 'mdi-plus',
-				name: 'windows.packExplorer.createPreset',
+				name: 'packExplorer.createPreset',
 				onTrigger: async () => {
 					await app.windows.createPreset.open()
 				},
 			},
+
+			isUsingFileSystemPolyfill.value ? null : moveAction,
 			{ type: 'divider' },
 			// Reload project
 			{
 				icon: 'mdi-refresh',
-				name: 'windows.packExplorer.refresh.name',
+				name: 'packExplorer.refresh.name',
 				onTrigger: async () => {
 					app.actionManager.trigger('bridge.action.refreshProject')
 				},
 			},
 			// Restart dev server
-			restartWatchModeConfig,
+			restartWatchModeConfig(false),
 			{ type: 'divider' },
 			{
 				type: 'submenu',
 				icon: 'mdi-export',
-				name: 'windows.packExplorer.exportAs.name',
+				name: 'packExplorer.exportAs.name',
 				actions: [
 					// Export project as .brproject
 					{
 						icon: 'mdi-folder-zip-outline',
-						name: 'windows.packExplorer.exportAs.brproject',
+						name: 'packExplorer.exportAs.brproject',
 						onTrigger: () => exportAsBrproject(),
 					},
 					// Export project as .mcaddon
 					{
 						icon: 'mdi-minecraft',
-						name: 'windows.packExplorer.exportAs.mcaddon',
+						name: 'packExplorer.exportAs.mcaddon',
 						onTrigger: () => exportAsMcaddon(),
 					},
 					// Export project as .mcworld
 					{
 						icon: 'mdi-earth-box',
-						name: 'windows.packExplorer.exportAs.mcworld',
+						name: 'packExplorer.exportAs.mcworld',
 						isDisabled: !(await canExportMctemplate()),
 						onTrigger: () => exportAsMctemplate(true),
 					},
 					// Export project as .mctemplate
 					{
 						icon: 'mdi-earth-box-plus',
-						name: 'windows.packExplorer.exportAs.mctemplate',
+						name: 'packExplorer.exportAs.mctemplate',
 						isDisabled: !(await canExportMctemplate()),
 						onTrigger: () => exportAsMctemplate(),
 					},
@@ -261,15 +252,14 @@ export class PackExplorer extends SidebarContent {
 			// Project config
 			{
 				icon: 'mdi-cog-outline',
-				name: 'windows.packExplorer.projectConfig.name',
+				name: 'packExplorer.projectConfig.name',
 				onTrigger: async () => {
 					const project = app.project
 
 					// Test whether project config exists
 					if (!(await project.fileSystem.fileExists('config.json'))) {
 						new InformationWindow({
-							description:
-								'windows.packExplorer.projectConfig.missing',
+							description: 'packExplorer.projectConfig.missing',
 						})
 						return
 					}
@@ -282,10 +272,13 @@ export class PackExplorer extends SidebarContent {
 			},
 			{
 				icon: 'mdi-folder-open-outline',
-				name: 'windows.packExplorer.openProjectFolder.name',
+				name: 'packExplorer.openProjectFolder.name',
 				onTrigger: async () => {
 					app.viewFolders.addDirectoryHandle({
 						directoryHandle: app.project.baseDirectory,
+						startPath: app.project.projectPath,
+
+						onHandleMoved: (options) => this.onHandleMoved(options),
 					})
 				},
 			},

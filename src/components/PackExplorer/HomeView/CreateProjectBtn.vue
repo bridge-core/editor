@@ -7,7 +7,7 @@
 		<template v-slot:activator="{ on }">
 			<v-btn
 				v-on="on"
-				@click="createProject"
+				@click.stop="createProject"
 				:color="color"
 				class="mb-2"
 				block
@@ -19,22 +19,19 @@
 			>
 				<v-icon class="mr-1">mdi-plus</v-icon>
 				<span v-if="availableWidth > 220">
-					{{
-						t(
-							'windows.packExplorer.noProjectView.createLocalProject'
-						)
-					}}
+					{{ t('packExplorer.noProjectView.createLocalProject') }}
 				</span>
 			</v-btn>
 		</template>
 
 		<span>
-			{{ t('windows.packExplorer.noProjectView.createLocalProject') }}
+			{{ t('packExplorer.noProjectView.createLocalProject') }}
 		</span>
 	</v-tooltip>
 </template>
 
 <script>
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 
@@ -45,6 +42,9 @@ export default {
 			default: 'background',
 			type: String,
 		},
+	},
+	setup() {
+		return { isUsingFileSystemPolyfill }
 	},
 	async mounted() {
 		const app = await App.getApp()

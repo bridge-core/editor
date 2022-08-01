@@ -1,6 +1,6 @@
 <template>
 	<v-list color="menu" dense>
-		<template v-for="(action, id) in actions">
+		<template v-for="(action, id) in renderActions">
 			<!-- Divider -->
 			<v-divider v-if="action.type === 'divider'" :key="id" />
 
@@ -29,39 +29,85 @@
 							}"
 							class="mr-2"
 						>
-							<v-icon color="accent">
+							<v-icon :color="action.color || 'accent'">
 								{{ action.icon }}
 							</v-icon>
 						</v-list-item-icon>
-						<v-list-item-action class="ma-0">
-							{{ t(action.name) }}
+						<v-list-item-action
+							:style="{ alignItems: 'flex-start' }"
+							class="ma-0"
+						>
+							<v-list-item-title
+								:style="{ alignSelf: 'flex-start' }"
+								v-text="t(action.name)"
+							/>
+							<v-list-item-subtitle
+								v-if="action.description"
+								v-text="t(action.description)"
+							/>
 						</v-list-item-action>
 						<v-spacer />
-						<v-icon color="accent">mdi-chevron-right</v-icon>
+						<v-icon small>mdi-chevron-right</v-icon>
 					</v-list-item>
 				</template>
 
-				<ContextMenuList
-					@click="$emit('click')"
-					:actions="action.submenu.state"
-				/>
+				<List @click="$emit('click')" :actions="action.submenu.state" />
 			</v-menu>
+
+			<v-list-item
+				v-else-if="action.type === 'section'"
+				:key="id"
+				@click="toggleSection(id)"
+			>
+				<v-list-item-icon
+					:style="{ opacity: action.isDisabled ? '38%' : null }"
+					class="mr-2"
+				>
+					<v-icon :color="action.color || 'accent'">
+						{{ action.icon }}
+					</v-icon>
+				</v-list-item-icon>
+				<v-list-item-title v-text="t(action.name)" />
+				<v-spacer />
+				<v-icon small>
+					{{
+						id === openSection
+							? 'mdi-chevron-down'
+							: 'mdi-chevron-right'
+					}}
+				</v-icon>
+			</v-list-item>
 
 			<!-- Normal menu item -->
 			<v-list-item
 				v-else
 				:key="id"
 				:disabled="action.isDisabled"
+				:class="{
+					'pl-6': action.addPadding,
+				}"
 				@click="onClick(action)"
 			>
 				<v-list-item-icon
 					:style="{ opacity: action.isDisabled ? '38%' : null }"
 					class="mr-2"
 				>
-					<v-icon color="primary">{{ action.icon }}</v-icon>
+					<v-icon :color="action.color || 'accent'">
+						{{ action.icon }}
+					</v-icon>
 				</v-list-item-icon>
-				<v-list-item-action class="ma-0">
-					{{ t(action.name) }}
+				<v-list-item-action
+					:style="{ alignItems: 'flex-start' }"
+					class="ma-0"
+				>
+					<v-list-item-title
+						:style="{ alignSelf: 'flex-start' }"
+						v-text="t(action.name)"
+					/>
+					<v-list-item-subtitle
+						v-if="action.description"
+						v-text="t(action.description)"
+					/>
 				</v-list-item-action>
 			</v-list-item>
 		</template>
@@ -69,7 +115,9 @@
 </template>
 
 <script setup>
+import { computed, ref } from 'vue'
 import { useTranslations } from '../Composables/useTranslations'
+import { pointerDevice } from '/@/utils/pointerDevice'
 
 const { t } = useTranslations()
 
@@ -80,8 +128,39 @@ const props = defineProps({
 	},
 })
 
+const openSection = ref(null)
+
 function onClick(action) {
 	this.$emit('click')
 	action.trigger()
 }
+function toggleSection(id) {
+	if (openSection.value === id) openSection.value = null
+	else openSection.value = id
+}
+
+const renderActions = computed(() => {
+	const entries = []
+
+	for (const [key, action] of Object.entries(props.actions)) {
+		if (action.type !== 'submenu' || pointerDevice.value !== 'touch') {
+			entries.push([key, action])
+			continue
+		}
+
+		entries.push([
+			key,
+			{ type: 'section', icon: action.icon, name: action.name },
+		])
+		if (this.openSection === key)
+			entries.push(
+				...Object.entries(action.submenu.state).map(([key, action]) => [
+					key,
+					action.type === 'action' ? action.withPadding() : action,
+				])
+			)
+	}
+
+	return Object.fromEntries(entries)
+})
 </script>

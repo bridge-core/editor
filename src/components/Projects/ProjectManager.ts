@@ -14,6 +14,7 @@ import { getStableFormatVersion } from '../Data/FormatVersions'
 import { v4 as uuid } from 'uuid'
 import { ICreateProjectOptions } from './CreateProject/CreateProject'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -43,6 +44,9 @@ export class ProjectManager extends Signal<void> {
 		await this.fired
 		return Object.values(this.state).filter((p) => !p.isVirtualProject)
 	}
+	getProject(projectName: string): Project | undefined {
+		return this.state[projectName]
+	}
 	async addProject(
 		projectDir: AnyDirectoryHandle,
 		isNewProject = true,
@@ -62,12 +66,13 @@ export class ProjectManager extends Signal<void> {
 
 		return project
 	}
-	async removeProject(project: Project) {
+	async removeProject(project: Project, unlinkProject = true) {
 		if (!this.state[project.name])
 			throw new Error('Project to delete not found')
 
+		this._selectedProject = undefined
 		del(this.state, project.name)
-		await this.app.fileSystem.unlink(project.projectPath)
+		if (unlinkProject) await this.app.fileSystem.unlink(project.projectPath)
 
 		await this.storeProjects(project.name)
 	}
@@ -87,10 +92,10 @@ export class ProjectManager extends Signal<void> {
 			'projects',
 			{ create: true }
 		)
-		const localDirectoryHandle = await this.app.fileSystem.getDirectoryHandle(
-			'~local/projects',
-			{ create: true }
-		)
+		const localDirectoryHandle =
+			await this.app.fileSystem.getDirectoryHandle('~local/projects', {
+				create: true,
+			})
 
 		const isBridgeFolderSetup = this.app.bridgeFolderSetup.hasFired
 
@@ -160,21 +165,23 @@ export class ProjectManager extends Signal<void> {
 		if (this.app.viewComMojangProject.hasComMojangProjectLoaded) {
 			await this.app.viewComMojangProject.clearComMojangProject()
 		}
-		if (this._selectedProject === projectName) return
+		if (this._selectedProject === projectName) return true
 
 		if (this.state[projectName] === undefined) {
 			if (failGracefully) {
 				new InformationWindow({
 					description:
-						'windows.packExplorer.noProjectView.projectNoLongerExists',
+						'packExplorer.noProjectView.projectNoLongerExists',
 				})
-				return
+				return false
 			}
 
 			throw new Error(
 				`Cannot select project "${projectName}" because it no longer exists`
 			)
 		}
+
+		if (!this.app.comMojang.hasFired) this.app.comMojang.setupComMojang()
 
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName
@@ -190,9 +197,21 @@ export class ProjectManager extends Signal<void> {
 		await this.storeProjects()
 
 		if (!this.projectReady.hasFired) this.projectReady.dispatch()
+		return true
 	}
 	async selectLastProject() {
 		await this.fired
+		if (isUsingFileSystemPolyfill.value) {
+			const selectedProject = await idbGet('selectedProject')
+			let didSelectProject = false
+			if (typeof selectedProject === 'string')
+				didSelectProject = await this.selectProject(
+					selectedProject,
+					true
+				)
+
+			if (didSelectProject) return
+		}
 		await this.selectProject(virtualProjectName)
 	}
 

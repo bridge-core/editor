@@ -9,18 +9,16 @@
 		:class="{ 'd-flex align-center justify-center': hideToolbarItems }"
 		:style="{
 			'padding-left': 0,
-			'margin-left': 'env(titlebar-area-x, 0)',
-			width: 'env(titlebar-area-width, 100%)',
+			'margin-left': hideToolbarItems ? 0 : 'env(titlebar-area-x, 0)',
+			width: hideToolbarItems ? '100%' : 'env(titlebar-area-width, 100%)',
 			'z-index': windowControlsOverlay ? 1000 : undefined,
 		}"
 	>
 		<template v-if="hideToolbarItems">
 			<Logo
-				style="
-					height: 18px;
-					padding-right: 8px;
-					padding-left: calc(env(safe-area-inset-left) + 4px);
-				"
+				height="22px"
+				width="22px"
+				style="padding-right: 8px"
 				alt="Logo of bridge. v2"
 				draggable="false"
 			/>
@@ -28,7 +26,7 @@
 			<div
 				v-ripple
 				@click="openCommandBar"
-				class="outlined rounded-lg d-flex align-center justify-center"
+				class="toolbar-clickable outlined rounded-lg d-flex align-center justify-center"
 				style="height: 20px"
 			>
 				<v-icon class="ml-1">mdi-magnify</v-icon>
@@ -42,8 +40,9 @@
 		<template v-else>
 			<Logo
 				v-if="!isMacOS || !windowControlsOverlay"
+				height="24px"
+				width="24px"
 				style="
-					height: 20px;
 					padding-right: 4px;
 					padding-left: calc(env(safe-area-inset-left) + 4px);
 				"
@@ -55,6 +54,13 @@
 
 			<!-- App menu buttons -->
 			<v-toolbar-items class="px14-font">
+				<MenuButton
+					v-if="isMobile"
+					displayName="actions.name"
+					displayIcon="mdi-menu"
+					@click="showMobileMenu"
+				/>
+
 				<template v-for="(item, key, i) in toolbar">
 					<MenuButton
 						v-if="item.type !== 'category'"
@@ -147,9 +153,15 @@ export default {
 		appVersion,
 	}),
 	computed: {
-		hideToolbarItems() {
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
+		},
+		hideToolbarItemsSetting() {
 			if (!this.settingsState.appearance) return false
 			return this.settingsState.appearance.hideToolbarItems ?? false
+		},
+		hideToolbarItems() {
+			return this.hideToolbarItemsSetting && this.windowControlsOverlay
 		},
 		composedTitle() {
 			if (!this.title) return this.appName
@@ -168,6 +180,9 @@ export default {
 
 			CommandBarState.isWindowOpen = true
 		},
+		showMobileMenu(event) {
+			App.toolbar.showMobileMenu(event)
+		},
 	},
 }
 </script>
@@ -183,6 +198,10 @@ export default {
 	app-region: no-drag;
 	-webkit-app-region: no-drag;
 	min-width: 0;
+}
+.toolbar-clickable {
+	app-region: no-drag;
+	-webkit-app-region: no-drag;
 }
 .app-version-display {
 	app-region: no-drag;

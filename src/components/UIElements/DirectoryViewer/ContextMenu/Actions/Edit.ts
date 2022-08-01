@@ -25,7 +25,6 @@ export const EditAction = async (
 				? 'mdi-folder-edit-outline'
 				: 'mdi-file-edit-outline',
 		name: 'actions.edit.name',
-		description: 'actions.edit.description',
 
 		actions: [
 			CopyAction(baseWrapper),

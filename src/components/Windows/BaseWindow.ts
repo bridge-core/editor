@@ -5,12 +5,16 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { App } from '/@/App'
 import { markRaw } from 'vue'
 
+/**
+ * @deprecated Transition window to NewBaseWindow with dedicated window state
+ */
 export abstract class BaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()
 	public isVisible = ref(false)
 	protected shouldRender = ref(false)
 	protected actions: SimpleAction[] = []
 	protected component: VueComponent
+	protected closeTimeout: number | null = null
 
 	constructor(
 		component: VueComponent,
@@ -34,8 +38,9 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 		if (data !== null) this.dispatch(data)
 
 		if (!this.keepAlive) {
-			setTimeout(() => {
+			this.closeTimeout = window.setTimeout(() => {
 				this.shouldRender.value = false
+				this.closeTimeout = null
 				if (this.disposeOnClose) this.dispose()
 			}, 600)
 		}
@@ -44,6 +49,10 @@ export abstract class BaseWindow<T = void> extends Signal<T> {
 		this.shouldRender.value = true
 		this.isVisible.value = true
 		this.resetSignal()
+		if (this.closeTimeout !== null) {
+			window.clearTimeout(this.closeTimeout)
+			this.closeTimeout = null
+		}
 	}
 	dispose() {
 		App.windowState.deleteWindow(this.windowUUID)

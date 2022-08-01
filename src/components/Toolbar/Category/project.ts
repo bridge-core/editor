@@ -11,7 +11,6 @@ export function setupProjectCategory(app: App) {
 		'mdi-view-dashboard-outline',
 		'toolbar.project.name'
 	)
-	app.mobile.change.on((isMobile) => project.setShouldRender(!isMobile))
 
 	project.addItem(
 		app.actionManager.create({

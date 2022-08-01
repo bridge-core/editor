@@ -1,17 +1,21 @@
 import { markRaw } from 'vue'
+import { addFilesToCommandBar } from '../CommandBar/AddFiles'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { InfoPanel } from '../InfoPanel/InfoPanel'
-import { IComMojangProject } from '../OutputFolders/ComMojang/ProjectLoader'
-import { SelectableSidebarAction } from '../Sidebar/Content/SelectableSidebarAction'
 import { SidebarAction } from '../Sidebar/Content/SidebarAction'
 import { SidebarContent } from '../Sidebar/Content/SidebarContent'
 import { SidebarElement } from '../Sidebar/SidebarElement'
 import { IDirectoryViewerOptions } from '../UIElements/DirectoryViewer/DirectoryStore'
 import ViewFolderComponent from './ViewFolders.vue'
 import { App } from '/@/App'
+import { IDisposable } from '/@/types/disposable'
+import { isSameEntry } from '/@/utils/file/isSameEntry'
 
 export interface IViewHandleOptions extends IDirectoryViewerOptions {
 	directoryHandle: AnyDirectoryHandle
+	isDisposed?: boolean
+	disposable?: IDisposable | null
+	onDispose?: () => void
 }
 export class ViewFolders extends SidebarContent {
 	component = ViewFolderComponent
@@ -25,6 +29,7 @@ export class ViewFolders extends SidebarContent {
 		name: 'general.close',
 		color: 'error',
 		onTrigger: async () => {
+			this.directoryHandles.forEach((handle) => handle.onDispose?.())
 			this.directoryHandles = []
 
 			this.updateVisibility()
@@ -64,7 +69,7 @@ export class ViewFolders extends SidebarContent {
 	}: IViewHandleOptions) {
 		if (await this.hasDirectoryHandle(directoryHandle)) return
 
-		this.directoryHandles.push({
+		const viewHandle: IViewHandleOptions = {
 			directoryHandle,
 			...other,
 			provideDirectoryContextMenu: (directoryWrapper) => {
@@ -83,7 +88,23 @@ export class ViewFolders extends SidebarContent {
 						: null,
 				]
 			},
+			isDisposed: false,
+			disposable: null,
+			onDispose() {
+				// When folder gets removed from ViewFolders, remove its actions from CommandBar
+				this.disposable?.dispose()
+				this.isDisposed = true
+			},
+		}
+
+		// Add files from this folder to CommandBar
+		addFilesToCommandBar(viewHandle.directoryHandle).then((disposable) => {
+			// Folder was already removed, so immediately dispose actions added to CommandBar again
+			if (viewHandle.isDisposed) disposable.dispose()
+			// Else, store disposable to remove actions later
+			else viewHandle.disposable = disposable
 		})
+		this.directoryHandles.push(viewHandle)
 
 		if (!this.sidebarElement.isSelected) this.sidebarElement.select()
 	}
@@ -92,6 +113,7 @@ export class ViewFolders extends SidebarContent {
 			const curr = this.directoryHandles[i]
 			if (await curr.directoryHandle.isSameEntry(<any>directoryHandle)) {
 				this.directoryHandles.splice(i, 1)
+				curr.onDispose?.()
 				return
 			}
 		}
@@ -100,7 +122,7 @@ export class ViewFolders extends SidebarContent {
 	}
 	async hasDirectoryHandle(directoryHandle: AnyDirectoryHandle) {
 		for (const { directoryHandle: currHandle } of this.directoryHandles) {
-			if (await currHandle.isSameEntry(<any>directoryHandle)) return true
+			if (await isSameEntry(currHandle, directoryHandle)) return true
 		}
 
 		return false

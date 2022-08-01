@@ -16,6 +16,7 @@
 					v-model="searchFor"
 				/>
 				<v-text-field
+					v-if="!queryOptions.isReadOnly"
 					class="mb-2"
 					prepend-inner-icon="mdi-file-replace-outline"
 					outlined
@@ -24,30 +25,11 @@
 					:label="t('findAndReplace.replace')"
 					v-model="replaceWith"
 				/>
-				<SearchType class="mb-2" v-model="queryOptions.searchType" />
-				<v-text-field
-					class="mb-2"
-					prepend-inner-icon="mdi-folder-plus-outline"
-					outlined
-					dense
-					hide-details
-					:label="t('findAndReplace.includeFiles')"
-					placeholder="e.g. BP/**/*.json, RP/entity"
-					v-model="queryOptions.includeFiles"
-				/>
-				<v-text-field
-					class="mb-2"
-					prepend-inner-icon="mdi-folder-remove-outline"
-					outlined
-					dense
-					hide-details
-					:label="t('findAndReplace.excludeFiles')"
-					placeholder="e.g. BP/**/*.json, RP/entity"
-					v-model="queryOptions.excludeFiles"
-				/>
 				<v-btn
+					v-if="!queryOptions.isReadOnly"
 					color="primary"
 					class="mb-2"
+					block
 					:disabled="replaceWith === '' || searchFor === ''"
 					:loading="tab.isLoading"
 					@click="onReplaceAll()"
@@ -55,6 +37,7 @@
 					<v-icon class="mr-1" small>mdi-file-replace-outline</v-icon>
 					{{ t('findAndReplace.replaceAll') }}
 				</v-btn>
+				<SearchType class="mb-2" v-model="queryOptions.searchType" />
 			</v-col>
 			<v-col
 				:cols="hasLimitedSpace ? 12 : 9"
@@ -91,21 +74,31 @@
 					>
 						<template v-slot:default="{ item }">
 							<div
-								v-if="typeof item === 'string'"
+								v-if="item.filePath"
 								style="
 									display: inline-flex;
 									width: calc(100% - 8px);
 								"
 							>
-								<FilePath :filePath="item" />
+								<FilePath
+									:filePath="item.filePath"
+									:displayFilePath="item.displayFilePath"
+									:fileHandle="item.fileHandle"
+								/>
 								<v-spacer />
 
 								<v-btn
+									v-if="!queryOptions.isReadOnly"
 									style="position: relative; top: 3px"
 									icon
 									x-small
 									:disabled="replaceWith === ''"
-									@click="onReplaceSingleFile(item)"
+									@click="
+										onReplaceSingleFile(
+											item.filePath,
+											item.fileHandle
+										)
+									"
 								>
 									<v-icon>mdi-file-replace-outline</v-icon>
 								</v-btn>
@@ -168,7 +161,7 @@ export default {
 	methods: {
 		updateQuery: debounce(async function () {
 			await this.tab.updateQuery()
-		}, 750),
+		}, 250),
 
 		onScroll(event) {
 			this.scrollTop = event.target.scrollTop
@@ -183,8 +176,8 @@ export default {
 				this.replaceWith
 			)
 		},
-		onReplaceSingleFile(filePath) {
-			this.tab.executeSingleQuery(filePath)
+		onReplaceSingleFile(filePath, fileHandle) {
+			this.tab.executeSingleQuery(filePath, fileHandle)
 		},
 	},
 	computed: {

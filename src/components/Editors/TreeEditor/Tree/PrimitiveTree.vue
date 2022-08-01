@@ -2,7 +2,8 @@
 	<div
 		tabindex="-1"
 		:style="{
-			...tree.styles,
+			display: 'block',
+			whiteSpace: 'nowrap',
 			height: pointerDevice === 'touch' ? '26px' : null,
 		}"
 	>
@@ -52,6 +53,8 @@
 			"
 			@pointerdown.native="onTouchStart($event)"
 			@pointerup.native="onTouchEnd"
+			@pointermove="onTouchEnd"
+			@pointercancel="onTouchEnd"
 		>
 			{{ treeValue }}
 		</Highlight>
@@ -87,21 +90,19 @@ export default {
 			}
 		)
 
-		const {
-			onTouchStart: onKeyTouchStart,
-			onTouchEnd: onKeyTouchEnd,
-		} = useLongPress(
-			(event) => {
-				if (pointerDevice.value === 'touch')
-					props.treeEditor.onContextMenu(event, props.tree)
-			},
-			null,
-			() => {
-				props.treeEditor.parent.app.contextMenu.setMayCloseOnClickOutside(
-					true
-				)
-			}
-		)
+		const { onTouchStart: onKeyTouchStart, onTouchEnd: onKeyTouchEnd } =
+			useLongPress(
+				(event) => {
+					if (pointerDevice.value === 'touch')
+						props.treeEditor.onContextMenu(event, props.tree)
+				},
+				null,
+				() => {
+					props.treeEditor.parent.app.contextMenu.setMayCloseOnClickOutside(
+						true
+					)
+				}
+			)
 
 		return {
 			onTouchStart,

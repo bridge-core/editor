@@ -62,7 +62,6 @@ export const TabModule = async ({ disposables }: IModuleConfig) => {
 			})
 		},
 		getCurrentTabSystem() {
-			console.log(project().tabSystem)
 			return project().tabSystem
 		},
 

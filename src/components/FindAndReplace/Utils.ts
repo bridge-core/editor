@@ -1,5 +1,5 @@
 import escapeRegExpString from 'escape-string-regexp'
-import { ESearchType } from './Controls/SearchTypeEnum'
+import { searchType } from './Controls/searchType'
 
 export function processFileText(
 	fileText: string,
@@ -17,14 +17,14 @@ export function processFileText(
 	})
 }
 
-export function createRegExp(searchFor: string, searchType: ESearchType) {
+export function createRegExp(searchFor: string, type: number) {
 	let regExp: RegExp
 	try {
 		regExp = new RegExp(
-			searchType === ESearchType.useRegExp
+			type === searchType.useRegExp
 				? searchFor
 				: escapeRegExpString(searchFor),
-			`g${searchType === ESearchType.ignoreCase ? 'i' : ''}`
+			`g${type === searchType.ignoreCase ? 'i' : ''}`
 		)
 	} catch {
 		return

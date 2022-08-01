@@ -40,14 +40,16 @@ export class IframeTab extends Tab {
 		this.iframe.classList.add('outlined')
 		this.iframe.style.borderRadius = '12px'
 		this.iframe.style.margin = '8px'
-
 		document.body.appendChild(this.iframe)
 	}
 	async setup() {
-		await this.loaded
 		await super.setup()
 	}
 	async onActivate() {
+		this.isLoading = true
+		await this.loaded
+		this.isLoading = false
+
 		this.iframe.style.display = 'block'
 	}
 	onDeactivate() {
@@ -55,6 +57,7 @@ export class IframeTab extends Tab {
 	}
 	onDestroy() {
 		document.body.removeChild(this.iframe)
+		this.api.dispose()
 	}
 
 	get icon() {

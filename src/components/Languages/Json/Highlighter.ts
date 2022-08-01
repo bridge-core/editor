@@ -6,6 +6,7 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { TreeTab } from '/@/components/Editors/TreeEditor/Tab'
 import type { Tab } from '/@/components/TabSystem/CommonTab'
 import { useMonaco } from '../../../utils/libs/useMonaco'
+import { supportsLookbehind } from './supportsLookbehind'
 
 export interface IKnownWords {
 	keywords: string[]
@@ -175,7 +176,12 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 				embeddedCommand: [
 					[/@escapes/, 'string.escape'],
 					[
-						/"/,
+						/**
+						 * This makes sure that we don't match escaped closing brackets to terminate the embedded lamguage
+						 * However, as negative lookbehinds aren't supported by Safari yet, we first test for this feature
+						 * and then fallback to a normal quote matcher if necessary
+						 */
+						supportsLookbehind() ? new RegExp('(?<!\\\\)"') : /"/,
 						{
 							token: 'identifier',
 							next: '@pop',
@@ -205,7 +211,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 
 				string: [
 					[
-						/[^\"\:]+/,
+						/(\\"|[^\"\:])+/,
 						{
 							cases: {
 								'@keywords': 'keyword',

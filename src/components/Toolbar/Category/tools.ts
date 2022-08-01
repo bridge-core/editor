@@ -34,6 +34,18 @@ export function setupToolsCategory(app: App) {
 	)
 	tools.addItem(
 		app.actionManager.create({
+			icon: 'mdi-minecraft',
+			name: 'actions.minecraftDocs.name',
+			description: 'actions.minecraftDocs.description',
+			onTrigger: () => {
+				App.openUrl(
+					'https://docs.microsoft.com/en-us/minecraft/creator/'
+				)
+			},
+		})
+	)
+	tools.addItem(
+		app.actionManager.create({
 			icon: 'mdi-cube-outline',
 			name: '[Open Blockbench]',
 			onTrigger: async () => {
@@ -79,8 +91,8 @@ export function setupToolsCategory(app: App) {
 		app.actionManager.create({
 			id: 'bridge.action.refreshProject',
 			icon: 'mdi-folder-refresh-outline',
-			name: 'windows.packExplorer.refresh.name',
-			description: 'windows.packExplorer.refresh.description',
+			name: 'packExplorer.refresh.name',
+			description: 'packExplorer.refresh.description',
 			keyBinding:
 				platform() === 'win32' ? 'Ctrl + Alt + R' : 'Ctrl + Meta + R',
 			onTrigger: async () => {
@@ -110,13 +122,13 @@ export function setupToolsCategory(app: App) {
 			description: 'actions.reloadExtensions.description',
 			onTrigger: async () => {
 				// Global extensions
-				app.extensionLoader.deactiveAll(true)
+				app.extensionLoader.disposeAll()
 				app.extensionLoader.loadExtensions()
 
 				await app.projectManager.projectReady.fired
 
 				// Local extensions
-				app.project.extensionLoader.deactiveAll(true)
+				app.project.extensionLoader.disposeAll()
 				app.project.extensionLoader.loadExtensions()
 			},
 		})

@@ -5,7 +5,7 @@ import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/Confirm
 export const DeleteAction = (baseWrapper: BaseWrapper<any>) => ({
 	icon: 'mdi-delete-outline',
 	name: 'actions.delete.name',
-	description: 'actions.delete.description',
+
 	onTrigger: async () => {
 		const parent = baseWrapper.getParent()
 		if (baseWrapper.options.isReadOnly || parent === null) return

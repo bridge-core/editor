@@ -2,10 +2,10 @@ import { createTree } from './createTree'
 import { Tree, treeElementHeight } from './Tree'
 import ObjecTreeComponent from './CommonTree.vue'
 import type { ArrayTree } from './ArrayTree'
-import { set, del } from 'vue'
+import { set, del, markRaw } from 'vue'
 
 export class ObjectTree extends Tree<object> {
-	public component = ObjecTreeComponent
+	public component = markRaw(ObjecTreeComponent)
 	public _isOpen = false
 	public readonly type = 'object'
 	protected _children: [string, Tree<unknown>][]

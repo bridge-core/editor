@@ -1,5 +1,5 @@
 <template>
-	<NoProjectView v-if="sidebarContent.showNoProjectView" />
+	<HomeView v-if="sidebarContent.showNoProjectView" />
 
 	<DirectoryViewer
 		v-else-if="sidebarContent.selectedAction"
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import NoProjectView from './NoProjectView/NoProjectView.vue'
+import HomeView from './HomeView/HomeView.vue'
 import DirectoryViewer from '/@/components/UIElements/DirectoryViewer/DirectoryViewer.vue'
 
 export default {
@@ -21,7 +21,7 @@ export default {
 		sidebarContent: Object,
 	},
 	components: {
-		NoProjectView,
+		HomeView,
 		DirectoryViewer,
 	},
 }

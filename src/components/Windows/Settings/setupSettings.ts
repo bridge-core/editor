@@ -16,6 +16,8 @@ import {
 import { platform } from '/@/utils/os'
 import { TextField } from './Controls/TextField/TextField'
 import { devActions } from '/@/components/Developer/Actions'
+import { FontSelection } from './Controls/FontSelection'
+import { shallowReactive } from 'vue'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -104,13 +106,13 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
-		new Selection({
+		new FontSelection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.font.name',
 			description: 'windows.settings.appearance.font.description',
 			key: 'font',
 			default: 'Roboto',
-			options: [
+			options: shallowReactive([
 				'Roboto',
 				'Arial',
 				'Verdana',
@@ -121,17 +123,17 @@ export async function setupSettings(settings: SettingsWindow) {
 				'Monaco',
 				'Courier New',
 				'monospace',
-			],
+			]),
 		})
 	)
 	settings.addControl(
-		new Selection({
+		new FontSelection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.editorFont.name',
 			description: 'windows.settings.appearance.editorFont.description',
 			key: 'editorFont',
 			default: platform() === 'darwin' ? 'Menlo' : 'Consolas',
-			options: [
+			options: shallowReactive([
 				'Roboto',
 				'Arial',
 				'Consolas',
@@ -139,7 +141,7 @@ export async function setupSettings(settings: SettingsWindow) {
 				'Monaco',
 				'"Courier New"',
 				'monospace',
-			],
+			]),
 			onChange: async (val) => {
 				const app = await App.getApp()
 				app.projectManager.updateAllEditorOptions({
@@ -381,6 +383,15 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.editor.compactTabDesign.description',
 			key: 'compactTabDesign',
 			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.keepTabsOpen.name',
+			description: 'windows.settings.editor.keepTabsOpen.description',
+			key: 'keepTabsOpen',
+			default: false,
 		})
 	)
 	settings.addControl(

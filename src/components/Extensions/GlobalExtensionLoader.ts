@@ -15,11 +15,11 @@ export class GlobalExtensionLoader extends ExtensionLoader {
 	async getInstalledExtensions() {
 		await this.app.projectManager.projectReady.fired
 
-		return new Map([
-			...(await super.getInstalledExtensions()).entries(),
+		return new Set([
+			...(await super.getInstalledExtensions()).values(),
 			...(
 				await this.app.project.extensionLoader.getInstalledExtensions()
-			).entries(),
+			).values(),
 		])
 	}
 

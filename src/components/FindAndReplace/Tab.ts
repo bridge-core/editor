@@ -1,16 +1,19 @@
-import { reactive } from 'vue'
+import { reactive, markRaw } from 'vue'
 import { Remote, wrap } from 'comlink'
 import { Signal } from '../Common/Event/Signal'
-import { ESearchType } from './Controls/SearchTypeEnum'
+import { searchType } from './Controls/searchType'
 import FindAndReplaceComponent from './Tab.vue'
 import type {
 	FindAndReplace,
+	IDirectory,
 	IQueryOptions,
 	IQueryResult,
 } from './Worker/Worker'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import Worker from './Worker/Worker?worker'
 import { TabSystem } from '../TabSystem/TabSystem'
+import { Mutex } from '../Common/Mutex'
+import { AnyFileHandle } from '../FileSystem/Types'
 
 const FindAndReplaceClass = wrap<typeof FindAndReplace>(new Worker())
 
@@ -23,81 +26,113 @@ interface ITabState {
 }
 
 export class FindAndReplaceTab extends Tab {
-	component = FindAndReplaceComponent
+	component = markRaw(FindAndReplaceComponent)
 	findAndReplace!: Remote<FindAndReplace>
-	state = reactive<ITabState>({
+	directories = <IDirectory[]>markRaw([])
+	state = <ITabState>reactive({
 		scrollTop: 0,
 		searchFor: '',
 		replaceWith: '',
 		queryOptions: {
-			searchType: ESearchType.matchCase,
-			includeFiles: '',
-			excludeFiles: '',
+			isReadOnly: false,
+			searchType: searchType.matchCase,
 		},
 		queryResults: [],
 	})
-	searchReady = new Signal<void>()
+	shouldLoadPackDirs = false
+	isSearchFree = new Mutex()
 
-	constructor(protected parent: TabSystem, queryOptions?: IQueryOptions) {
+	constructor(
+		protected parent: TabSystem,
+		directories?: IDirectory[],
+		queryOptions?: IQueryOptions
+	) {
 		super(parent)
 		// Support setting queryOptions on tab creation
 		if (queryOptions) this.state.queryOptions = queryOptions
+
+		if (directories) this.directories = markRaw(directories)
+		else this.shouldLoadPackDirs = true
 	}
 
 	get displayQueryResults() {
 		return this.state.queryResults
-			.map(({ filePath, matches }) => [filePath, ...matches])
+			.map(({ matches, ...other }) => [other, ...matches])
 			.flat()
 	}
 
 	async setup() {
+		await this.isSearchFree.lock()
+
+		if (this.shouldLoadPackDirs) {
+			this.shouldLoadPackDirs = false
+			const app = this.parent.app
+			const project = app.project
+
+			const packs = project.getPacks()
+			for (const packId of packs) {
+				const path = project.config.resolvePackPath(packId)
+				const directory = await app.fileSystem
+					.getDirectoryHandle(path)
+					.catch(() => null)
+
+				if (directory)
+					this.directories.push({
+						directory,
+						path,
+					})
+			}
+		}
+
 		this.findAndReplace = await new FindAndReplaceClass(
 			this.parent.projectRoot,
 			this.parent.project.projectPath
 		)
 		await super.setup()
-		this.searchReady.dispatch()
+
+		this.isSearchFree.unlock()
 	}
 
 	async updateQuery() {
 		this.isTemporary = false
-		await this.searchReady.fired
-		this.searchReady.resetSignal()
+		await this.isSearchFree.lock()
 
 		this.isLoading = true
 		this.state.queryResults = await this.findAndReplace.createQuery(
+			this.directories,
 			this.state.searchFor,
 			this.state.queryOptions
 		)
 		this.isLoading = false
 		this.state.scrollTop = 0
 
-		this.searchReady.dispatch()
+		this.isSearchFree.unlock()
 	}
 	async executeQuery() {
-		await this.searchReady.fired
-		this.searchReady.resetSignal()
+		await this.isSearchFree.lock()
 		this.isLoading = true
 
 		await this.findAndReplace.executeQuery(
+			this.directories,
 			this.state.searchFor,
 			this.state.replaceWith,
 			this.state.queryOptions
 		)
 
-		await this.parent.app.project.updateFiles(
-			this.state.queryResults.map(({ filePath }) => filePath)
+		await Promise.all(
+			this.state.queryResults.map(({ fileHandle }) =>
+				this.parent.app.project.updateHandle(fileHandle)
+			)
 		)
 
 		this.state.queryResults = []
 		this.state.scrollTop = 0
 
 		this.isLoading = false
-		this.searchReady.dispatch()
+		this.isSearchFree.unlock()
 	}
-	async executeSingleQuery(filePath: string) {
-		await this.searchReady.fired
-		this.searchReady.resetSignal()
+	async executeSingleQuery(filePath: string, fileHandle: AnyFileHandle) {
+		await this.isSearchFree.lock()
 		this.isLoading = true
 
 		const oldMatchedFiles = await this.findAndReplace.setMatchedFiles([
@@ -105,6 +140,7 @@ export class FindAndReplaceTab extends Tab {
 		])
 
 		await this.findAndReplace.executeQuery(
+			this.directories,
 			this.state.searchFor,
 			this.state.replaceWith,
 			this.state.queryOptions
@@ -116,14 +152,14 @@ export class FindAndReplaceTab extends Tab {
 			)
 		)
 
-		await this.parent.app.project.updateFile(filePath)
+		await this.parent.app.project.updateHandle(fileHandle)
 
 		this.state.queryResults = this.state.queryResults.filter(
 			(queryResult) => queryResult.filePath !== filePath
 		)
 
 		this.isLoading = false
-		this.searchReady.dispatch()
+		this.isSearchFree.unlock()
 	}
 
 	static is() {
@@ -142,7 +178,16 @@ export class FindAndReplaceTab extends Tab {
 		return 'success'
 	}
 	get name() {
-		return this.parent.app.locales.translate('findAndReplace.name')
+		const t = (key: string) => this.parent.app.locales.translate(key)
+
+		return (
+			(this.state.queryOptions.isReadOnly
+				? t('findAndReplace.findOnly')
+				: t('findAndReplace.name')) +
+			(this.directories.length === 1
+				? `: "${this.directories[0].directory.name}"`
+				: '')
+		)
 	}
 
 	save() {}

@@ -10,9 +10,15 @@ export interface ISubmenuConfig {
 	actions: (IActionConfig | null | { type: 'divider' })[]
 }
 
+export type TActionConfig =
+	| IActionConfig
+	| ISubmenuConfig
+	| { type: 'divider' }
+	| null
+
 export async function showContextMenu(
 	event: MouseEvent | IPosition,
-	actions: (IActionConfig | ISubmenuConfig | { type: 'divider' } | null)[],
+	actions: TActionConfig[],
 	mayCloseOnClickOutside = true
 ) {
 	let filteredActions = <

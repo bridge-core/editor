@@ -142,6 +142,7 @@ export class LightningStore {
 
 		delete this.store![fileType][filePath]
 	}
+
 	setVisited(
 		filePath: string,
 		visited: boolean,
@@ -234,11 +235,17 @@ export class LightningStore {
 
 		if (searchFileType && this.store) {
 			for (const filePath in this.store[searchFileType]) {
+				// Exclude foreign files from result
+				if (this.store[searchFileType][filePath].isForeignFile) continue
+
 				filePaths.push(filePath)
 			}
 		} else {
 			for (const fileType in this.store) {
 				for (const filePath in this.store[fileType]) {
+					// Exclude foreign files from result
+					if (this.store[fileType][filePath].isForeignFile) continue
+
 					filePaths.push(filePath)
 				}
 			}
@@ -261,6 +268,11 @@ export class LightningStore {
 					collectedData[cacheKey].push(...cachedData[cacheKey])
 				else collectedData[cacheKey] = [...cachedData[cacheKey]]
 			}
+		}
+
+		// Remove duplicates from array using a set
+		for (const cacheKey in collectedData) {
+			collectedData[cacheKey] = [...new Set(collectedData[cacheKey])]
 		}
 
 		return collectedData

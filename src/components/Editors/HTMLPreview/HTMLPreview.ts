@@ -37,7 +37,7 @@ export class HTMLPreviewTab extends IframeTab {
 				}
 			)
 
-		this.api.readyToExtend.on(() => {
+		this.api.loaded.once(() => {
 			this.api.on('saveScrollPosition', (scrollY) => {
 				console.log('SAVE', scrollY)
 				if (scrollY !== 0) this.scrollY = scrollY

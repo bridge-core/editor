@@ -11,12 +11,7 @@
 			'px-1': $vuetify.breakpoint.mobile,
 		}"
 	>
-		<v-icon
-			v-if="displayIcon"
-			color="accent"
-			:x-small="$vuetify.breakpoint.mobile"
-			:class="{ 'pr-1': !$vuetify.breakpoint.mobile }"
-		>
+		<v-icon v-if="displayIcon" color="accent" class="pr-1">
 			{{ displayIcon }}
 		</v-icon>
 

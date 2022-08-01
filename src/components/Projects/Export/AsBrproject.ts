@@ -3,7 +3,7 @@ import { ZipDirectory } from '/@/components/FileSystem/Zip/ZipDirectory'
 import { App } from '/@/App'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 
-export async function exportAsBrproject() {
+export async function exportAsBrproject(name?: string) {
 	const app = App.instance
 	app.windows.loadingWindow.open()
 
@@ -17,7 +17,9 @@ export async function exportAsBrproject() {
 			? app.fileSystem.baseDirectory
 			: app.project.baseDirectory
 	)
-	const savePath = `${app.project.projectPath}/builds/${app.project.name}.brproject`
+	const savePath = `${app.project.projectPath}/builds/${
+		name ?? app.project.name
+	}.brproject`
 
 	try {
 		await saveOrDownload(

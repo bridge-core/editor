@@ -8,8 +8,9 @@
 			height="44px"
 			:alt="`Pack Icon of ${name}`"
 		/>
+
 		<h1
-			class="header ml-2"
+			class="project-display-header ml-2"
 			style="
 				opacity: 0.7;
 				display: block;
@@ -56,7 +57,7 @@ export default {
 </script>
 
 <style scoped>
-.header {
+.project-display-header {
 	font-size: 2.125rem !important;
 	font-weight: 400;
 	line-height: 2.5rem;

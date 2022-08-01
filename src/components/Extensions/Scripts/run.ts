@@ -1,5 +1,3 @@
-import { transpile } from 'typescript'
-
 export interface IScriptContext {
 	script: string
 	env: Record<string, unknown>
@@ -20,10 +18,9 @@ export function createRunner({
 	async = false,
 }: IScriptContext) {
 	if (language === 'typeScript')
-		script = transpile(script, {
-			target: 99,
-			isolatedModules: true,
-		})
+		throw new Error(
+			`bridge.'s legacy script runner no longer supports TypeScript. Use "bridge-js-runner" instead.`
+		)
 	let transformedScript = transformScript(script)
 
 	// Helper which allows for quickly setting up importable modules

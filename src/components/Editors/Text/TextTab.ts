@@ -247,10 +247,15 @@ export class TextTab extends FileTab {
 	}
 	protected async saveFile() {
 		if (this.editorModel && !this.editorModel.isDisposed()) {
-			this.setIsUnsaved(false)
-			this.initialVersionId = this.editorModel.getAlternativeVersionId()
+			const writeWorked = await this.writeFile(
+				this.editorModel.getValue()
+			)
 
-			this.writeFile(this.editorModel.getValue())
+			if (writeWorked) {
+				this.setIsUnsaved(false)
+				this.initialVersionId =
+					this.editorModel.getAlternativeVersionId()
+			}
 		} else {
 			console.error(`Cannot save file content without active editorModel`)
 		}

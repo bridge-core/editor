@@ -116,8 +116,8 @@ export class TreeTab extends FileTab {
 
 		const fileContent = this.treeEditor.toJsonString(true)
 
-		await this.writeFile(fileContent)
-		this.treeEditor.saveState()
+		const writeWorked = await this.writeFile(fileContent)
+		if (writeWorked) this.treeEditor.saveState()
 	}
 
 	async paste() {

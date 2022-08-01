@@ -1,5 +1,6 @@
 import { Component, DefaultConsole } from 'dash-compiler'
 import { App } from '/@/App'
+import { JsRuntime } from '/@/components/Extensions/Scripts/JsRuntime'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { IDisposable } from '/@/types/disposable'
 import { iterateDir } from '/@/utils/iterateDir'
@@ -28,6 +29,7 @@ export class ComponentSchemas {
 				async ([filePath, file]: [string, File]) => {
 					const app = await App.getApp()
 					const project = app.project
+
 					const componentPath = project.config.resolvePackPath(
 						'behaviorPack',
 						'components'
@@ -36,36 +38,39 @@ export class ComponentSchemas {
 					const v1CompatMode =
 						project.config.get().bridge?.v1CompatMode ?? false
 
-					if (filePath.startsWith(componentPath)) {
-						const fileType = filePath
-							.replace(componentPath + '/', '')
-							.split('/')[0] as TComponentFileType
-						const isSupportedFileType = supportsCustomComponents.includes(
-							fileType
-						)
+					if (!filePath.startsWith(componentPath)) return
+					const jsRuntime = new JsRuntime()
 
-						if (!isSupportedFileType && v1CompatMode) {
-							// This is not a supported file type but v1CompatMode is enabled,
-							// meaning that we emulate v1's behavior where components could be placed anywhere
-							await Promise.all(
-								supportsCustomComponents.map((fileType) =>
-									this.evalComponentSchema(
-										fileType,
-										filePath,
-										file,
-										true
-									)
+					const fileType = filePath
+						.replace(componentPath + '/', '')
+						.split('/')[0] as TComponentFileType
+					const isSupportedFileType = supportsCustomComponents.includes(
+						fileType
+					)
+
+					if (!isSupportedFileType && v1CompatMode) {
+						// This is not a supported file type but v1CompatMode is enabled,
+						// meaning that we emulate v1's behavior where components could be placed anywhere
+						await Promise.all(
+							supportsCustomComponents.map((fileType) =>
+								this.evalComponentSchema(
+									jsRuntime,
+									fileType,
+									filePath,
+									file,
+									true
 								)
 							)
-						} else if (isSupportedFileType) {
-							// No v1CompatMode but a valid file type which supports custom components to work with
-							await this.evalComponentSchema(
-								fileType,
-								filePath,
-								file,
-								v1CompatMode
-							)
-						}
+						)
+					} else if (isSupportedFileType) {
+						// No v1CompatMode but a valid file type which supports custom components to work with
+						await this.evalComponentSchema(
+							jsRuntime,
+							fileType,
+							filePath,
+							file,
+							v1CompatMode
+						)
 					}
 				}
 			),
@@ -79,9 +84,11 @@ export class ComponentSchemas {
 			}),
 		]
 
+		const jsRuntime = new JsRuntime()
+
 		await Promise.all(
 			supportsCustomComponents.map((fileType) =>
-				this.generateComponentSchemas(fileType)
+				this.generateComponentSchemas(jsRuntime, fileType)
 			)
 		)
 	}
@@ -91,7 +98,10 @@ export class ComponentSchemas {
 		this.disposables = undefined
 	}
 
-	protected async generateComponentSchemas(fileType: TComponentFileType) {
+	protected async generateComponentSchemas(
+		jsRuntime: JsRuntime,
+		fileType: TComponentFileType
+	) {
 		const app = await App.getApp()
 		const project = app.project
 		await (await project.compilerService.completedStartUp).fired
@@ -119,6 +129,7 @@ export class ComponentSchemas {
 			baseDir,
 			async (fileHandle, filePath) => {
 				await this.evalComponentSchema(
+					jsRuntime,
 					fileType,
 					filePath,
 					await fileHandle.getFile(),
@@ -131,6 +142,7 @@ export class ComponentSchemas {
 	}
 
 	protected async evalComponentSchema(
+		jsRuntime: JsRuntime,
 		fileType: TComponentFileType,
 		filePath: string,
 		file: File,
@@ -153,7 +165,11 @@ export class ComponentSchemas {
 			v1CompatMode
 		)
 
-		const loadedCorrectly = await component.load('client')
+		const loadedCorrectly = await component.load(
+			jsRuntime,
+			filePath,
+			'client'
+		)
 
 		if (loadedCorrectly && component.name) {
 			this.schemas[fileType][component.name] = component.getSchema()

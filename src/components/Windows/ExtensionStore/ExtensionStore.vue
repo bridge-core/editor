@@ -46,7 +46,7 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
-	name: 'CreatePresetWindow',
+	name: 'ExtensionStore',
 	mixins: [TranslationMixin],
 	components: {
 		SidebarWindow,
@@ -63,6 +63,10 @@ export default {
 		title() {
 			if (!this.sidebar.currentElement)
 				return 'windows.extensionStore.title'
+			else if (this.currentExtensions.length === 1)
+				return `[${this.currentExtensions[0].name} - ${this.t(
+					'windows.extensionStore.title'
+				)}]`
 			else
 				return `[${
 					this.sidebar._filter || this.sidebar.currentElement.text

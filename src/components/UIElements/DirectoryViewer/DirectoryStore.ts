@@ -2,7 +2,10 @@ import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { DirectoryWrapper } from './DirectoryView/DirectoryWrapper'
 import { markRaw } from 'vue'
 import type { FileWrapper } from './FileView/FileWrapper'
-import { IActionConfig } from '/@/components/Actions/SimpleAction'
+import type { IFileDiagnostic } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
+import { VirtualHandle } from '/@/components/FileSystem/Virtual/Handle'
+import { TActionConfig } from '../../ContextMenu/showContextMenu'
+import { isSameEntry } from '/@/utils/file/isSameEntry'
 
 export interface IDirectoryViewerOptions {
 	startPath?: string
@@ -21,36 +24,32 @@ export interface IDirectoryViewerOptions {
 		event: MouseEvent,
 		directoryWrapper: DirectoryWrapper
 	) => Promise<void> | void
-	onHandleMoved?: (opts: IMoveOptions) => Promise<void> | void
+	onHandleMoved?: (opts: IHandleMovedOptions) => Promise<void> | void
 	/**
 	 * Add new items to the bottom of the file context menu
 	 */
 	provideFileContextMenu?: (
 		fileWrapper: FileWrapper
-	) => (
-		| IActionConfig
-		| {
-				type: 'divider'
-		  }
-		| null
-	)[]
+	) => Promise<TActionConfig[]> | TActionConfig[]
 	/**
 	 * Add new items to the bottom of the directory context menu
 	 */
 	provideDirectoryContextMenu?: (
 		directoryWrapper: DirectoryWrapper
-	) => (
-		| IActionConfig
-		| {
-				type: 'divider'
-		  }
-		| null
-	)[]
+	) => Promise<TActionConfig[]> | TActionConfig[]
+
+	/**
+	 * Show file diagnostics within the directory viewer
+	 */
+	provideFileDiagnostics?: (
+		fileWrapper: FileWrapper
+	) => Promise<IFileDiagnostic[]> | IFileDiagnostic[]
 }
 
-interface IMoveOptions {
+export interface IHandleMovedOptions {
 	fromPath: string
 	toPath: string
+	movedHandled: FileSystemHandle | VirtualHandle
 	fromHandle: AnyDirectoryHandle
 	toHandle: AnyDirectoryHandle
 }
@@ -62,9 +61,10 @@ export class DirectoryStore {
 		directoryHandle: AnyDirectoryHandle
 	) {
 		for (const [currDirhandle, currWrapper] of this.cache.entries()) {
-			// @ts-ignore
-			if (await currDirhandle.isSameEntry(directoryHandle))
+			if (await isSameEntry(currDirhandle, directoryHandle)) {
+				await currWrapper.refresh()
 				return currWrapper
+			}
 		}
 
 		return null

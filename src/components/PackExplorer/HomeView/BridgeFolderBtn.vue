@@ -1,5 +1,6 @@
 <template>
 	<v-tooltip
+		v-if="!isUsingFileSystemPolyfill"
 		:disabled="availableWidth > 220"
 		:color="color ? color : 'tooltip'"
 		right
@@ -21,7 +22,7 @@
 				<span v-if="availableWidth > 220">
 					{{
 						t(
-							`windows.packExplorer.noProjectView.${
+							`packExplorer.noProjectView.${
 								hasDirectorySelected && !isBridgeFolderSelected
 									? 'accessBridgeFolder'
 									: 'chooseBridgeFolder'
@@ -34,7 +35,7 @@
 		<span>
 			{{
 				t(
-					`windows.packExplorer.noProjectView.${
+					`packExplorer.noProjectView.${
 						hasDirectorySelected && !isBridgeFolderSelected
 							? 'accessBridgeFolder'
 							: 'chooseBridgeFolder'
@@ -49,6 +50,7 @@
 import { get } from 'idb-keyval'
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 
 export default {
 	mixins: [TranslationMixin],
@@ -57,6 +59,9 @@ export default {
 			default: 'primary',
 			type: String,
 		},
+	},
+	setup() {
+		return { isUsingFileSystemPolyfill }
 	},
 	async mounted() {
 		const app = await App.getApp()

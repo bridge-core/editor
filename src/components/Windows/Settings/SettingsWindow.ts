@@ -66,6 +66,7 @@ export class SettingsWindow extends BaseWindow {
 
 	addCategory(id: string, name: string, icon: string) {
 		if (settingsState[id] === undefined) settingsState[id] = {}
+
 		this.sidebar.addElement(
 			new SidebarItem({
 				color: 'primary',

@@ -8,7 +8,6 @@ import {
 	RequiresMatcher,
 } from './RequiresMatcher/RequiresMatcher'
 import { useMonaco } from '/@/utils/libs/useMonaco'
-import type { editor } from 'monaco-editor'
 
 const types = new Map<string, string>()
 
@@ -35,6 +34,7 @@ export class TypeLoader {
 		await this.loadUserTypes()
 	}
 	deactivate() {
+		this.currentTypeEnv = null
 		this.typeDisposables.forEach((disposable) => disposable.dispose())
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.typeDisposables = []
@@ -70,14 +70,19 @@ export class TypeLoader {
 		await App.fileType.ready.fired
 		const { types = [] } = App.fileType.get(filePath) ?? {}
 
+		const matcher = new RequiresMatcher()
+		await matcher.setup()
+
 		const libs = await Promise.all(
 			types.map(async (type) => {
 				if (typeof type === 'string')
 					return <const>[type, await this.load(type)]
 
 				const { definition, requires } = type
-				const matcher = new RequiresMatcher(requires as IRequirements)
-				const valid = await matcher.isValid()
+
+				const valid = !requires
+					? true
+					: matcher.isValid(requires as IRequirements)
 
 				if (valid)
 					return <const>[definition, await this.load(definition)]
@@ -108,8 +113,8 @@ export class TypeLoader {
 		await app.project.packIndexer.fired
 		const allFiles = await app.project.packIndexer.service.getAllFiles()
 
-		const typeScriptFiles = allFiles.filter((filePath) =>
-			filePath.endsWith('.ts')
+		const typeScriptFiles = allFiles.filter(
+			(filePath) => filePath.endsWith('.ts') || filePath.endsWith('.js')
 		)
 
 		const { languages, Uri } = await useMonaco()

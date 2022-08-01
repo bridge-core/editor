@@ -51,9 +51,11 @@ export class ProjectChooserWindow extends BaseWindow {
 		const app = await App.getApp()
 
 		const wasSuccessful = await app.setupBridgeFolder()
-		if (wasSuccessful) {
+		const wasComMojangSuccesful = await app.comMojang.setupComMojang()
+
+		if (wasSuccessful || wasComMojangSuccesful) {
 			await this.loadProjects()
-			this.showLoadAllButton = false
+			this.showLoadAllButton = !wasSuccessful || !wasComMojangSuccesful
 		} else {
 			this.showLoadAllButton = true
 		}
@@ -86,7 +88,7 @@ export class ProjectChooserWindow extends BaseWindow {
 		projects.forEach((project) =>
 			this.addProject(project.projectData.path!, project.name, {
 				...project.projectData,
-				isLocalProject: !project.requiresPermissions,
+				isLocalProject: project.isLocal,
 				experimentalGameplay: experimentalToggles.map(
 					(toggle: IExperimentalToggle) => ({
 						isActive:
@@ -116,9 +118,7 @@ export class ProjectChooserWindow extends BaseWindow {
 						return <IPackData>{
 							...packType,
 							version: pack.manifest?.header?.version ?? [
-								1,
-								0,
-								0,
+								1, 0, 0,
 							],
 							packPath: pack.packPath,
 							uuid: pack.uuid,

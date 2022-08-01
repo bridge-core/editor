@@ -8,6 +8,7 @@ import type { FileWrapper } from '../FileView/FileWrapper'
 import { platform } from '/@/utils/os'
 import { renameHandle } from '/@/utils/file/renameHandle'
 import { AnyHandle } from '/@/components/FileSystem/Types'
+import { isSameEntry } from '/@/utils/file/isSameEntry'
 
 export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	public abstract readonly kind: 'file' | 'directory'
@@ -48,11 +49,7 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	}
 
 	async isSame(child: BaseWrapper<any>) {
-		try {
-			return await child.handle.isSameEntry(this.handle)
-		} catch {
-			return false
-		}
+		return await isSameEntry(child.handle, this.handle)
 	}
 
 	abstract readonly icon: string
@@ -142,6 +139,7 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 
 		// Call onHandleMoved
 		this.options.onHandleMoved?.({
+			movedHandled: this.handle,
 			fromHandle: this.parent.handle,
 			fromPath,
 			toPath: this.path!,
@@ -189,6 +187,7 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 
 		// Call onHandleMoved
 		this.options.onHandleMoved?.({
+			movedHandled: this.handle,
 			fromHandle: fromParent.handle,
 			fromPath,
 			toPath: this.path!,

@@ -35,8 +35,12 @@ export default {
 			'This action overwrites a file with the same name. Do you want to continue?',
 		confirmOverwriteFolder:
 			'This action overwrites a folder with the same name. Do you want to continue?',
-		fileSystemPolyfill:
-			'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome (excluding Chrome 93/94) or Edge!',
+		fileSystemPolyfill: {
+			name: 'Save Your Projects!',
+			description:
+				'Due to the browser you are using, you need to download your projects in order to actually save your progress. This is not necessary if you are using Chrome (excluding Chrome 93/94) or Edge!',
+		},
+
 		successfulExport: {
 			title: 'Export Successful',
 			description: 'You can find the exported package here',
@@ -86,6 +90,7 @@ export default {
 		featureRule: 'Feature Rule',
 		functionTick: 'Function Tick',
 		function: 'Function',
+		generatorScript: 'Generator Script',
 		item: 'Item',
 		lootTable: 'Loot Table',
 		recipe: 'Recipe',
@@ -132,6 +137,15 @@ export default {
 	},
 	// Actions
 	actions: {
+		name: 'Actions',
+		download: {
+			name: 'Download',
+			description: 'Download this file or folder',
+		},
+		viewConnectedFiles: {
+			name: 'View Connected Files',
+			description: 'View all files connected to this file',
+		},
 		open: {
 			name: 'Open',
 			description: 'Open the file in the editor',
@@ -165,9 +179,10 @@ export default {
 			description: 'Duplicate a file',
 		},
 		viewCompilerOutput: {
-			name: 'View Compiler Output',
+			name: 'Compiler Output',
+			view: 'View Compiler Output',
 			description: 'View the current compiler output for this file',
-			fileMissing: "It doesn't look like this file was compiled yet.",
+			fileMissing: 'It does not look like this file was compiled yet.',
 		},
 		revealPath: {
 			name: 'Reveal Path',
@@ -251,6 +266,10 @@ export default {
 		docs: {
 			name: 'Open bedrock.dev',
 			description: 'Opens the Minecraft Add-On documentation',
+		},
+		minecraftDocs: {
+			name: 'Open Minecraft Documentation',
+			description: 'Opens the Minecraft Bedrock Add-On documentation',
 		},
 		releases: {
 			name: 'Releases',
@@ -418,11 +437,55 @@ export default {
 			name: 'Help',
 		},
 	},
+	packExplorer: {
+		name: 'Pack Explorer',
+		searchFiles: 'Search files...',
+		categories: 'Categories',
+		move: {
+			toLocal: 'Move to Local Folder',
+			toBridgeFolder: 'Move to bridge. Folder',
+		},
+		refresh: {
+			name: 'Refresh Project',
+			description: 'Fetch the current project for newly added files',
+		},
+		noProjectView: {
+			noProjectsFound: 'It does not look like you have any projects yet!',
+			createLocalProject: 'Create Local Project',
+			chooseBridgeFolder: 'Choose bridge. Folder',
+			accessBridgeFolder: 'Access bridge. Folder',
+			projectNoLongerExists:
+				'It looks like this project no longer exists!',
+		},
+		restartWatchMode: {
+			name: 'Restart Watch Mode',
+			description:
+				"Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
+			confirmDescription:
+				"Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
+		},
+		createPreset: 'New File',
+		projectConfig: {
+			name: 'Open Project Config',
+			missing:
+				'It looks like this project has no config.json file. Every project needs a project config in order to work correctly.',
+		},
+		openProjectFolder: {
+			name: 'Open Project Folder',
+		},
+		exportAs: {
+			name: 'Export As',
+			mcaddon: '.mcaddon',
+			brproject: '.brproject',
+			mcworld: '.mcworld',
+			mctemplate: '.mctemplate',
+		},
+		fileDiagnostics: {
+			fileUnused: 'This file is not used within your project',
+		},
+	},
 	// Sidebar tabs
 	sidebar: {
-		packExplorer: {
-			name: 'Pack Explorer',
-		},
 		openedFolders: {
 			name: 'Opened Folders',
 			removeFolder: 'Remove From View',
@@ -684,6 +747,8 @@ export default {
 				name: 'com.mojang Project',
 				description:
 					'This project was loaded directly from your com.mojang folder',
+				uninstallWarning:
+					'This project will be deleted if you uninstall Minecraft.',
 			},
 			newProject: {
 				name: 'New Project',
@@ -735,46 +800,7 @@ export default {
 				},
 			},
 		},
-		packExplorer: {
-			searchFiles: 'Search files...',
-			categories: 'Categories',
-			refresh: {
-				name: 'Refresh Project',
-				description: 'Fetch the current project for newly added files',
-			},
-			noProjectView: {
-				noProjectsFound:
-					'It does not look like you have any projects yet!',
-				createLocalProject: 'Create Local Project',
-				chooseBridgeFolder: 'Choose bridge. Folder',
-				accessBridgeFolder: 'Access bridge. Folder',
-				projectNoLongerExists:
-					'It looks like this project no longer exists!',
-			},
-			restartWatchMode: {
-				name: 'Restart Watch Mode',
-				description:
-					"Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
-				confirmDescription:
-					"Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!",
-			},
-			createPreset: 'New File',
-			projectConfig: {
-				name: 'Open Project Config',
-				missing:
-					'It looks like this project has no config.json file. Every project needs a project config in order to work correctly.',
-			},
-			openProjectFolder: {
-				name: 'Open Project Folder',
-			},
-			exportAs: {
-				name: 'Export As',
-				mcaddon: '.mcaddon',
-				brproject: '.brproject',
-				mcworld: '.mcworld',
-				mctemplate: '.mctemplate',
-			},
-		},
+
 		settings: {
 			title: 'Settings',
 			searchSettings: 'Search settings...',
@@ -944,6 +970,11 @@ export default {
 					description:
 						'Display tabs inside of the tab system in a more compact way',
 				},
+				keepTabsOpen: {
+					name: 'Keep Tabs Open',
+					description:
+						'By default, opening a new tab closes the previously opened tab if it was not interacted with',
+				},
 				automaticallyOpenTreeNodes: {
 					name: 'Automatically Open Tree Nodes',
 					description:
@@ -967,6 +998,8 @@ export default {
 			deleteExtension: 'Delete Extension',
 			activateExtension: 'Activate Extension',
 			deactivateExtension: 'Deactivate Extension',
+			installLocal: 'Install Local',
+			installGlobal: 'Install Global',
 			offlineError:
 				'Failed to load extensions. Please confirm that your device has an active network connection.',
 			incompatibleVersion: 'Incompatible bridge. version',
@@ -1081,6 +1114,7 @@ export default {
 	},
 	findAndReplace: {
 		name: 'Find & Replace',
+		findOnly: 'Find',
 		search: 'Search',
 		replace: 'Replace',
 		replaceAll: 'Replace All',
@@ -1269,12 +1303,10 @@ export default {
 				noneValid: {
 					part1: 'No valid command variations found! Argument ',
 					part2: " may be invalid! It is of type '",
-					part3:
-						"' but that type is not supported in the current variation tree.",
+					part3: "' but that type is not supported in the current variation tree.",
 				},
 				noneValidEnd: {
-					part1:
-						'No valid command variations found! You may be missing some arguments or argument ',
+					part1: 'No valid command variations found! You may be missing some arguments or argument ',
 					part2: ' may be invalid!',
 				},
 			},
@@ -1283,23 +1315,19 @@ export default {
 			schema: {
 				familyNotFound: {
 					part1: "Could not find family '",
-					part2:
-						"'. This could either be a mistake or the family is from another addon.",
+					part2: "'. This could either be a mistake or the family is from another addon.",
 				},
 				typeNotFound: {
 					part1: "Could not find type '",
-					part2:
-						"'. This could either be a mistake or the type is from another addon.",
+					part2: "'. This could either be a mistake or the type is from another addon.",
 				},
 				tagNotFound: {
 					part1: "Could not find tag '",
-					part2:
-						"'. This could either be a mistake or the tag is from another addon.",
+					part2: "'. This could either be a mistake or the tag is from another addon.",
 				},
 				schemaValueNotFound: {
 					part1: "Could not find schema value '",
-					part2:
-						"'. This could either be a mistake or the schema value is from another addon.",
+					part2: "'. This could either be a mistake or the schema value is from another addon.",
 				},
 			},
 			data: {

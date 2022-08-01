@@ -1,11 +1,13 @@
 import { Command, DefaultConsole } from 'dash-compiler'
 import { App } from '/@/App'
+import { JsRuntime } from '/@/components/Extensions/Scripts/JsRuntime'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { iterateDir } from '/@/utils/iterateDir'
 
 export async function generateCommandSchemas() {
 	const app = await App.getApp()
 	const project = app.project
+	const jsRuntime = new JsRuntime()
 	await (await project.compilerService.completedStartUp).fired
 
 	const v1CompatMode = project.config.get().bridge?.v1CompatMode ?? false
@@ -42,7 +44,7 @@ export async function generateCommandSchemas() {
 				v1CompatMode
 			)
 
-			await command.load('client')
+			await command.load(jsRuntime, filePath, 'client')
 
 			schemas.push(...command.getSchema())
 		},

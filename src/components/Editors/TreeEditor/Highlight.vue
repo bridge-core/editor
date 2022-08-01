@@ -1,14 +1,23 @@
 <template>
-	<span v-if="value === undefined" :style="toStyle(def)"><slot /></span>
-
-	<span v-else
-		>"<template v-for="({ text, def }, i) in tokens">
-			<span :key="text" :style="toStyle(def)">{{ text }}</span
-			><span :key="`${text}.colon`">{{
-				tokens.length > i + 1 ? ':' : ''
-			}}</span> </template
-		>"</span
+	<span v-if="value === undefined" :style="toStyle(def)">
+		<slot />
+	</span>
+	<span
+		v-else
+		v-intersect="skipRender ? onIntersect : null"
+		style="white-space: nowrap"
 	>
+		<span v-if="skipRender">"{{ value }}"</span>
+
+		<span v-else
+			>"<template v-for="({ text, def }, i) in tokens">
+				<span :key="text" :style="toStyle(def)">{{ text }}</span
+				><span :key="`${text}.colon`">{{
+					tokens.length > i + 1 ? ':' : ''
+				}}</span> </template
+			>"</span
+		>
+	</span>
 </template>
 
 <script>
@@ -56,6 +65,9 @@ export default {
 			knownWords,
 		}
 	},
+	data: () => ({
+		skipRender: true,
+	}),
 	computed: {
 		tokens() {
 			return this.value.split(':').map((token) => ({
@@ -88,6 +100,14 @@ export default {
 				backgroundColor: def ? def.background : null,
 				textDecoration: this.getTextDecoration(def),
 			}
+		},
+		onIntersect(entries) {
+			// Once we have rendered a highlight once, we no longer revert to the unhighlighted text
+			// TODO: Maybe this logic can be improved? (e.g. a timeout to revert to the unhighlighted text)
+			if (!this.skipRender) return
+
+			const isIntersecting = !entries[0].isIntersecting
+			this.skipRender = isIntersecting
 		},
 	},
 }
