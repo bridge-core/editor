@@ -14,6 +14,7 @@ import Worker from './Worker/Worker?worker'
 import { TabSystem } from '../TabSystem/TabSystem'
 import { Mutex } from '../Common/Mutex'
 import { AnyFileHandle } from '../FileSystem/Types'
+import { translate } from '../Locales/Manager'
 
 const FindAndReplaceClass = wrap<typeof FindAndReplace>(new Worker())
 
@@ -178,7 +179,7 @@ export class FindAndReplaceTab extends Tab {
 		return 'success'
 	}
 	get name() {
-		const t = (key: string) => this.parent.app.locales.translate(key)
+		const t = (key: string) => translate(key)
 
 		return (
 			(this.state.queryOptions.isReadOnly

@@ -1,16 +1,6 @@
 import Vuetify from 'vuetify'
-import en from '/@/locales/en'
-import de from '/@/locales/de'
-import nl from '/@/locales/nl'
-import ko from '/@/locales/ko'
-import zhCN from '/@/locales/zhCN'
-import zhTW from '/@/locales/zhTW'
-import ja from '/@/locales/ja'
 
 export const vuetify = new Vuetify({
-	lang: {
-		locales: { nl, de, en, ko, zhCN, zhTW, ja },
-	},
 	breakpoint: {
 		mobileBreakpoint: 'xs',
 	},

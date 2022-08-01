@@ -117,11 +117,8 @@ export default {
 	mixins: [AppToolbarHeightMixin],
 
 	setup() {
-		const {
-			tabSystem,
-			tabSystems,
-			shouldRenderWelcomeScreen,
-		} = useTabSystem()
+		const { tabSystem, tabSystems, shouldRenderWelcomeScreen } =
+			useTabSystem()
 
 		return {
 			tabSystem,
@@ -135,6 +132,7 @@ export default {
 			this.contextMenu = app.contextMenu
 			this.windowSize = app.windowResize.state
 		})
+		console.log(this.$vuetify)
 	},
 
 	components: {

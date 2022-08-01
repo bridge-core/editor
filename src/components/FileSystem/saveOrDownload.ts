@@ -1,3 +1,4 @@
+import { translate } from '../Locales/Manager'
 import { createNotification } from '../Notifications/create'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { FileSystem } from './FileSystem'
@@ -27,7 +28,7 @@ export async function saveOrDownload(
 				download(basename(filePath), fileData)
 			} else {
 				new InformationWindow({
-					description: `[${app.locales.translate(
+					description: `[${translate(
 						'general.successfulExport.description'
 					)}: "${filePath}"]`,
 				})

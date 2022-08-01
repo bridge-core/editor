@@ -21,6 +21,7 @@ import {
 import { createFailureMessage } from '/@/components/Data/RequiresMatcher/FailureMessage'
 import json5 from 'json5'
 import { markRaw } from 'vue'
+import { translate } from '/@/components/Locales/Manager'
 
 export interface IPresetManifest {
 	name: string
@@ -94,9 +95,7 @@ export class CreatePresetWindow extends BaseWindow {
 				key,
 				(value: string) =>
 					func(value) ||
-					App.instance.locales.translate(
-						`windows.createPreset.validationRule.${key}`
-					),
+					translate(`windows.createPreset.validationRule.${key}`),
 			])
 		)
 	}

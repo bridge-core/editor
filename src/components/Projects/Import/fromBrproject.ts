@@ -7,6 +7,7 @@ import { exportAsBrproject } from '../Export/AsBrproject'
 import { App } from '/@/App'
 import { basename } from '/@/utils/path'
 import { Project } from '../Project/Project'
+import { LocaleManager } from '../../Locales/Manager'
 
 export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
@@ -46,7 +47,7 @@ export async function importFromBrproject(
 			// Reload settings & extensions
 			await SettingsWindow.loadSettings(app)
 			await app.extensionLoader.reload()
-			app.locales.setDefaultLanguage()
+			LocaleManager.setDefaultLanguage()
 		}
 
 		// Get project from projects/ folder

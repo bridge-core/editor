@@ -18,6 +18,7 @@ import { TextField } from './Controls/TextField/TextField'
 import { devActions } from '/@/components/Developer/Actions'
 import { FontSelection } from './Controls/FontSelection'
 import { shallowReactive } from 'vue'
+import { LocaleManager } from '../../Locales/Manager'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -218,8 +219,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			key: 'hideElements',
 		})
 	)
-
-	const locales = await App.getApp().then((app) => app.locales)
 	settings.addControl(
 		new Selection({
 			category: 'general',
@@ -227,14 +226,11 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.general.language.description',
 			key: 'locale',
 			get options() {
-				return locales.getLanguages().map((lang) => ({
-					text: lang[1],
-					value: lang[0],
-				}))
+				return LocaleManager.getAvailableLanguages()
 			},
-			default: locales.getCurrentLanguage(),
+			default: LocaleManager.getCurrentLanguageId(),
 			onChange: (val) => {
-				locales.selectLanguage(val)
+				LocaleManager.applyLanguage(val)
 			},
 		})
 	)

@@ -5,6 +5,7 @@ import { IframeTab } from '../IframeTab/IframeTab'
 import { Tab } from '../../TabSystem/CommonTab'
 import { AnyFileHandle } from '../../FileSystem/Types'
 import { iframeApiVersion } from '/@/utils/app/iframeApiVersion'
+import { translate } from '../../Locales/Manager'
 
 export class HTMLPreviewTab extends IframeTab {
 	public rawHtml = ''
@@ -77,9 +78,7 @@ export class HTMLPreviewTab extends IframeTab {
 		return 'behaviorPack'
 	}
 	get name() {
-		return `${this.parent.app.locales.translate('preview.name')}: ${
-			this.fileHandle.name
-		}`
+		return `${translate('preview.name')}: ${this.fileHandle.name}`
 	}
 	get fileHandle() {
 		return this.previewOptions.fileHandle

@@ -1,3 +1,4 @@
+import { translate } from '../Locales/Manager'
 import { Tab } from './CommonTab'
 import { FileTab } from './FileTab'
 import { TabSystem } from './TabSystem'
@@ -20,9 +21,7 @@ export abstract class PreviewTab extends Tab {
 	}
 
 	get name() {
-		return `${this.parent.app.locales.translate('preview.name')}: ${
-			this.tab.name
-		}`
+		return `${translate('preview.name')}: ${this.tab.name}`
 	}
 
 	abstract onChange(): Promise<void> | void

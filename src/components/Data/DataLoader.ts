@@ -4,14 +4,9 @@ import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
 import { basename, dirname } from '/@/utils/path'
 import { FileSystem } from '../FileSystem/FileSystem'
 import { zipSize } from '/@/utils/app/dataPackage'
-import { supportsIdleCallback, whenIdle } from '/@/utils/whenIdle'
+import { whenIdle } from '/@/utils/whenIdle'
 import { get, set } from 'idb-keyval'
-import { BaseVirtualHandle } from '../FileSystem/Virtual/Handle'
-import {
-	get as getVirtualDirectory,
-	IDBWrapper,
-	set as setVirtualDirectory,
-} from '/@/components/FileSystem/Virtual/IDB'
+import { IDBWrapper } from '/@/components/FileSystem/Virtual/IDB'
 
 export class DataLoader extends FileSystem {
 	_virtualFileSystem?: VirtualDirectoryHandle

@@ -12,7 +12,6 @@ import { FileSystemSetup } from '/@/components/FileSystem/Setup'
 import { setupSidebar } from '/@/components/Sidebar/setup'
 import { TaskManager } from '/@/components/TaskManager/TaskManager'
 import { setupDefaultMenus } from '/@/components/Toolbar/setupDefaults'
-import { Locales } from '/@/utils/locales'
 import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
@@ -49,6 +48,7 @@ import { ViewFolders } from '/@/components/ViewFolders/ViewFolders'
 import { SidebarManager } from '/@/components/Sidebar/Manager'
 import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
 import { InformationWindow } from './components/Windows/Common/Information/InformationWindow'
+import { LocaleManager } from './components/Locales/Manager'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -83,7 +83,6 @@ export class App {
 	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
 	public readonly contextMenu = markRaw(new ContextMenu())
-	public readonly locales: Locales
 	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
 	public readonly folderImportManager = new FolderImportManager()
@@ -158,7 +157,6 @@ export class App {
 	constructor(appComponent: Vue) {
 		if (import.meta.env.PROD) this.dataLoader.loadData()
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
-		this.locales = new Locales(appComponent.$vuetify)
 		this._windows = new Windows(this)
 
 		this.mobile = new Mobile(appComponent.$vuetify)
@@ -300,7 +298,7 @@ export class App {
 	async startUp() {
 		console.time('[APP] startUp()')
 
-		this.locales.setDefaultLanguage()
+		LocaleManager.setDefaultLanguage()
 
 		await Promise.all([
 			// Create default folders

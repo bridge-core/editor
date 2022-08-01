@@ -15,6 +15,7 @@ import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { restartWatchModeAction } from '../Actions/RestartWatchMode'
 import { SettingsWindow } from '../../Windows/Settings/SettingsWindow'
+import { LocaleManager } from '../../Locales/Manager'
 
 export class CompilerWindow extends BaseWindow {
 	protected sidebar = new Sidebar([], false)
@@ -98,13 +99,11 @@ export class CompilerWindow extends BaseWindow {
 		// Close this window whenever the watch mode is restarted
 		restartWatchModeAction.on(() => this.close())
 
-		App.getApp().then((app) => {
-			const loc = app.locales
-
+		App.getApp().then(() => {
 			this.sidebar.addElement(
 				new SidebarItem({
 					id: 'watchMode',
-					text: loc.translate(
+					text: LocaleManager.translate(
 						'sidebar.compiler.categories.watchMode.name'
 					),
 					color: 'primary',
@@ -114,7 +113,9 @@ export class CompilerWindow extends BaseWindow {
 			this.sidebar.addElement(
 				new SidebarItem({
 					id: 'buildProfiles',
-					text: loc.translate('sidebar.compiler.categories.profiles'),
+					text: LocaleManager.translate(
+						'sidebar.compiler.categories.profiles'
+					),
 					color: 'primary',
 					icon: 'mdi-motion-play-outline',
 				})
@@ -122,7 +123,7 @@ export class CompilerWindow extends BaseWindow {
 			this.sidebar.addElement(
 				new SidebarItem({
 					id: 'outputFolders',
-					text: loc.translate(
+					text: LocaleManager.translate(
 						'sidebar.compiler.categories.outputFolders'
 					),
 					color: 'primary',
@@ -132,7 +133,7 @@ export class CompilerWindow extends BaseWindow {
 			this.sidebar.addElement(
 				new SidebarItem({
 					id: 'logs',
-					text: loc.translate(
+					text: LocaleManager.translate(
 						'sidebar.compiler.categories.logs.name'
 					),
 					color: 'primary',
@@ -147,8 +148,10 @@ export class CompilerWindow extends BaseWindow {
 		const app = await App.getApp()
 
 		this.categories.buildProfiles.data.value = await this.loadProfiles()
-		this.categories.logs.data.value = await app.project.compilerService.getCompilerLogs()
-		this.categories.outputFolders.data.value = await this.loadOutputFolders()
+		this.categories.logs.data.value =
+			await app.project.compilerService.getCompilerLogs()
+		this.categories.outputFolders.data.value =
+			await this.loadOutputFolders()
 	}
 	async open() {
 		const app = await App.getApp()
@@ -156,7 +159,8 @@ export class CompilerWindow extends BaseWindow {
 		await this.reload()
 		await app.project.compilerService.onConsoleUpdate(
 			proxy(async () => {
-				this.categories.logs.data.value = await app.project.compilerService.getCompilerLogs()
+				this.categories.logs.data.value =
+					await app.project.compilerService.getCompilerLogs()
 			})
 		)
 

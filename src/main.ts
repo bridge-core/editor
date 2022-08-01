@@ -3,7 +3,6 @@ import '/@/components/FileSystem/Virtual/Comlink'
 import { App } from './App'
 import { vue } from '/@/components/App/Vue'
 import '@mdi/font/css/materialdesignicons.min.css'
-import '/@/utils/locales'
 
 // Disable until we move back to vite
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker'
@@ -13,7 +12,6 @@ import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker.js?worker
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker.js?worker'
 import { initRuntimes } from 'bridge-js-runtime'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
-import { whenIdle } from './utils/whenIdle'
 
 // @ts-ignore
 self.MonacoEnvironment = {

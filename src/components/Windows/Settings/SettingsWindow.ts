@@ -7,6 +7,7 @@ import { SettingsSidebar } from './SettingsSidebar'
 import { setSettingsState, settingsState } from './SettingsState'
 import { BaseWindow } from '../BaseWindow'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { translate } from '../../Locales/Manager'
 
 export class SettingsWindow extends BaseWindow {
 	public static readonly loadedSettings = new Signal<any>()
@@ -23,40 +24,38 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async setup() {
-		const locales = await App.getApp().then((app) => app.locales)
-
 		// this.sidebar.addElement(this.bridgeCategory)
 
 		this.addCategory(
 			'general',
-			locales.translate('windows.settings.general.name'),
+			translate('windows.settings.general.name'),
 			'mdi-circle-outline'
 		)
 		this.addCategory(
 			'appearance',
-			locales.translate('windows.settings.appearance.name'),
+			translate('windows.settings.appearance.name'),
 			'mdi-palette-outline'
 		)
 		this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
 		this.addCategory(
 			'actions',
-			locales.translate('windows.settings.actions.name'),
+			translate('windows.settings.actions.name'),
 			'mdi-keyboard-outline'
 		)
 		// this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
 		this.addCategory(
 			'sidebar',
-			locales.translate('windows.settings.sidebar.name'),
+			translate('windows.settings.sidebar.name'),
 			'mdi-table-column'
 		)
 		this.addCategory(
 			'developers',
-			locales.translate('windows.settings.developer.name'),
+			translate('windows.settings.developer.name'),
 			'mdi-wrench-outline'
 		)
 		this.addCategory(
 			'projects',
-			locales.translate('windows.settings.projects.name'),
+			translate('windows.settings.projects.name'),
 			'mdi-folder-open-outline'
 		)
 

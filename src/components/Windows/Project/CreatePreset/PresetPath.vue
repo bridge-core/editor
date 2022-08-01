@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { App } from '/@/App'
+import { translate } from '/@/components/Locales/Manager'
 
 const validationRules = {
 	alphanumeric: (value) => value.match(/^[a-zA-Z0-9_\/]*$/) !== null,
@@ -61,9 +61,7 @@ export default {
 				key,
 				(value) =>
 					func(value) ||
-					App.instance.locales.translate(
-						`windows.createPreset.validationRule.${key}`
-					),
+					translate(`windows.createPreset.validationRule.${key}`),
 			])
 		),
 	}),

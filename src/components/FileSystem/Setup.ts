@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { get, set } from 'idb-keyval'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
-import { ref } from 'vue'
+import { markRaw, ref } from 'vue'
 import { Signal } from '../Common/Event/Signal'
 import { AnyDirectoryHandle } from './Types'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
@@ -72,10 +72,8 @@ export class FileSystemSetup {
 
 			// Only create virtual folder if we are not migrating away from the virtual file system
 			if (!isUpgradingVirtualFs) {
-				fileHandle = new VirtualDirectoryHandle(
-					null,
-					'bridgeFolder',
-					undefined
+				fileHandle = markRaw(
+					new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
 				)
 				await fileHandle.setupDone.fired
 			}
@@ -110,10 +108,8 @@ export class FileSystemSetup {
 
 		// Migrate virtual projects over
 		if (isUpgradingVirtualFs) {
-			const virtualFolder = new VirtualDirectoryHandle(
-				null,
-				'bridgeFolder',
-				undefined
+			const virtualFolder = markRaw(
+				new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
 			)
 			await virtualFolder.setupDone.fired
 			const virtualFs = new FileSystem(virtualFolder)

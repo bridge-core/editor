@@ -7,6 +7,7 @@ import Warning from './Warning.vue'
 import Vue from 'vue'
 import { FunctionValidator } from '/@/components/Languages/Mcfunction/Validation/Validator'
 import { App } from '/@/App'
+import { translate } from '../../Locales/Manager'
 
 export class FunctionValidatorTab extends Tab {
 	protected fileTab: FileTab | undefined
@@ -23,7 +24,7 @@ export class FunctionValidatorTab extends Tab {
 	}
 
 	get name(): string {
-		return this.parent.app.locales.translate('functionValidator.tabName')
+		return translate('functionValidator.tabName')
 	}
 
 	isFor(fileHandle: FileSystemFileHandle): Promise<boolean> {
@@ -51,15 +52,11 @@ export class FunctionValidatorTab extends Tab {
 	}
 
 	protected translateError(errorName: string) {
-		return this.parent.app.locales.translate(
-			'functionValidator.errors.' + errorName
-		)
+		return translate('functionValidator.errors.' + errorName)
 	}
 
 	protected translateWarning(errorName: string) {
-		return this.parent.app.locales.translate(
-			'functionValidator.warnings.' + errorName
-		)
+		return translate('functionValidator.warnings.' + errorName)
 	}
 
 	protected async UpdateLoadedState() {
@@ -138,9 +135,10 @@ export class FunctionValidatorTab extends Tab {
 				) {
 					docsElement.textContent = 'No documentation.'
 				} else {
-					let data = await this.app!.languageManager.mcfunction.validator.ValidateCommand(
-						fullCommand
-					)
+					let data =
+						await this.app!.languageManager.mcfunction.validator.ValidateCommand(
+							fullCommand
+						)
 
 					let currentErrorLines = []
 
@@ -160,9 +158,8 @@ export class FunctionValidatorTab extends Tab {
 								console.log(data[0][i].value[j].startsWith('$'))
 
 								if (data[0][i].value[j].startsWith('$')) {
-									translated += data[0][i].value[j].substring(
-										1
-									)
+									translated +=
+										data[0][i].value[j].substring(1)
 								} else {
 									translated += this.translateError(
 										data[0][i].value[j]
@@ -199,9 +196,8 @@ export class FunctionValidatorTab extends Tab {
 						} else {
 							for (let j = 0; j < data[1][i].value.length; j++) {
 								if (data[1][i].value[j].startsWith('$')) {
-									translated += data[1][i].value[j].substring(
-										1
-									)
+									translated +=
+										data[1][i].value[j].substring(1)
 								} else {
 									translated += this.translateWarning(
 										data[1][i].value[j]
@@ -320,9 +316,10 @@ export class FunctionValidatorTab extends Tab {
 						}
 					}
 
-					docsElement.textContent = await this.app!.languageManager.mcfunction.validator.GetDocs(
-						command
-					)
+					docsElement.textContent =
+						await this.app!.languageManager.mcfunction.validator.GetDocs(
+							command
+						)
 
 					if (data[0].length > 0) {
 						return true
