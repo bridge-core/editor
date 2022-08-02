@@ -1,8 +1,8 @@
 <template>
 	<BaseWindow
-		v-if="shouldRender"
+		v-if="state.shouldRender"
 		windowTitle="windows.browserUnsupported.title"
-		:isVisible="isVisible"
+		:isVisible="state.isVisible"
 		:isPersistent="true"
 		:hasCloseButton="false"
 		:width="420"
@@ -29,32 +29,21 @@
 	</BaseWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
 import { set } from 'idb-keyval'
 import BaseWindow from '../Layout/BaseWindow.vue'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { useTranslations } from '../../Composables/useTranslations'
 
-export default {
-	name: 'Discord',
-	mixins: [TranslationMixin],
-	components: {
-		BaseWindow,
-	},
-	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
-	},
+const { t } = useTranslations()
 
-	methods: {
-		onClose() {
-			this.currentWindow.close()
-		},
-		async onContinue() {
-			await set('confirmedUnsupportedBrowser', true)
-			this.onClose()
-		},
-	},
+const props = defineProps(['window'])
+const state = props.window.getState()
+
+function onClose() {
+	props.window.close()
+}
+async function onContinue() {
+	await set('confirmedUnsupportedBrowser', true)
+	onClose()
 }
 </script>
-
-<style></style>
