@@ -1,11 +1,11 @@
 <template>
 	<BaseWindow
-		v-if="shouldRender"
-		:windowTitle="$data.name"
-		:isVisible="isVisible"
+		v-if="state.shouldRender"
+		:windowTitle="window.name"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
-		:isPersistent="!$data.isClosable"
+		:isPersistent="!window.isClosable"
 		:hasCloseButton="false"
 		:width="440"
 		:height="400"
@@ -13,7 +13,7 @@
 	>
 		<template #default>
 			<v-checkbox
-				v-for="(option, i) in $data.options"
+				v-for="(option, i) in window.options"
 				:key="i"
 				v-model="option.isSelected"
 				:label="option.name"
@@ -30,30 +30,19 @@
 	</BaseWindow>
 </template>
 
-<script>
-import PresetPath from '/@/components/Windows/Project/CreatePreset/PresetPath.vue'
+<script lang="ts" setup>
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { useTranslations } from '/@/components/Composables/useTranslations'
 
-export default {
-	name: 'FilePathWindow',
-	mixins: [TranslationMixin],
-	components: {
-		BaseWindow,
-		PresetPath,
-	},
-	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close(
-				this.$data.options
-					.filter(({ isSelected }) => isSelected)
-					.map(({ name }) => name)
-			)
-		},
-	},
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.getState()
+
+function onClose() {
+	props.window.close(
+		props.window.options
+			.filter(({ isSelected }: any) => isSelected)
+			.map(({ name }: any) => name)
+	)
 }
 </script>
