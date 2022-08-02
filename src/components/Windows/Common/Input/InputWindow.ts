@@ -1,4 +1,6 @@
+import { reactive } from 'vue'
 import { BaseWindow } from '../../BaseWindow'
+import { NewBaseWindow } from '../../NewBaseWindow'
 import InputWindowComponent from './Input.vue'
 import { App } from '/@/App'
 
@@ -10,12 +12,15 @@ export interface IInputWindowOpts {
 	onConfirm?: (input: string) => Promise<void> | void
 }
 
-export class InputWindow extends BaseWindow<string | null> {
-	protected inputValue: string
+export class InputWindow extends NewBaseWindow<string | null> {
+	protected state = reactive({
+		...super.state,
+		inputValue: '',
+	})
 
 	constructor(protected opts: IInputWindowOpts) {
 		super(InputWindowComponent, true, false)
-		this.inputValue = opts.default ?? ''
+		this.state.inputValue = opts.default ?? ''
 		super.defineWindow()
 		super.open()
 	}
@@ -31,7 +36,7 @@ export class InputWindow extends BaseWindow<string | null> {
 	}
 
 	async confirm() {
-		const finalInput = this.inputValue + (this.expandText ?? '')
+		const finalInput = this.state.inputValue + (this.expandText ?? '')
 
 		if (typeof this.opts.onConfirm === 'function')
 			await this.opts.onConfirm(finalInput)
