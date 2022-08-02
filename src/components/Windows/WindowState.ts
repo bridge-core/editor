@@ -6,12 +6,7 @@ export class WindowState {
 	public state = ref<Record<string, BaseWindow<any>>>({})
 	public isAnyWindowVisible = ref(true)
 
-	constructor() {
-		console.log(this.state)
-		watch(this.state, () => {
-			this.onWindowsChanged()
-		})
-	}
+	constructor() {}
 
 	addWindow(uuid: string, window: BaseWindow<any> | NewBaseWindow<any>) {
 		set(this.state.value, uuid, markRaw(window))
