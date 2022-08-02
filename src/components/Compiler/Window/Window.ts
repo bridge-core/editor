@@ -16,8 +16,9 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { restartWatchModeAction } from '../Actions/RestartWatchMode'
 import { SettingsWindow } from '../../Windows/Settings/SettingsWindow'
 import { LocaleManager } from '../../Locales/Manager'
+import { NewBaseWindow } from '../../Windows/NewBaseWindow'
 
-export class CompilerWindow extends BaseWindow {
+export class CompilerWindow extends NewBaseWindow {
 	protected sidebar = new Sidebar([], false)
 	protected categories = markRaw<
 		Record<string, { component: any; data: any }>
@@ -70,7 +71,7 @@ export class CompilerWindow extends BaseWindow {
 				this.reload()
 			},
 		})
-		this.actions.push(reloadAction)
+		this.state.actions.push(reloadAction)
 
 		const clearConsoleAction = new SimpleAction({
 			icon: 'mdi-close-circle-outline',
@@ -86,13 +87,13 @@ export class CompilerWindow extends BaseWindow {
 			this.activeCategoryChanged.dispatch(selected)
 
 			if (selected === 'logs')
-				this.actions.splice(
-					this.actions.indexOf(reloadAction),
+				this.state.actions.splice(
+					this.state.actions.indexOf(reloadAction),
 					0,
 					clearConsoleAction
 				)
 			else
-				this.actions = this.actions.filter(
+				this.state.actions = this.state.actions.filter(
 					(a) => a !== clearConsoleAction
 				)
 		})
@@ -165,7 +166,7 @@ export class CompilerWindow extends BaseWindow {
 		)
 
 		if (this.lastUsedBuildProfile)
-			this.actions.unshift(this.runLastProfileAction)
+			this.state.actions.unshift(this.runLastProfileAction)
 
 		super.open()
 	}
@@ -173,7 +174,7 @@ export class CompilerWindow extends BaseWindow {
 		const app = await App.getApp()
 		await app.project.compilerService.removeConsoleListeners()
 
-		this.actions = this.actions.filter(
+		this.state.actions = this.state.actions.filter(
 			(a) => a !== this.runLastProfileAction
 		)
 
