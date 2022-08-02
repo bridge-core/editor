@@ -1,17 +1,26 @@
 import { deepMerge } from 'bridge-common-utils'
 import { reactive } from 'vue'
 import { settingsState } from '../Windows/Settings/SettingsState'
-import enLang from '/@/locales/en.json'
+import enLangRaw from '/@/locales/en.json?raw'
 import allLanguages from '/@/locales/languages.json'
 
 const languages = Object.fromEntries(
-	Object.entries(import.meta.glob('../../locales/*.json')).map(
-		([key, val]) => [key.split('/').pop(), val]
-	)
+	Object.entries(
+		import.meta.glob(
+			[
+				'../../locales/*.json',
+				'!../../locales/en.json',
+				'!../../locales/languages.json',
+			],
+			{ as: 'raw' }
+		)
+	).map(([key, val]) => [key.split('/').pop(), val])
 )
+console.log(languages)
+const enLang = JSON.parse(enLangRaw)
 
 export class LocaleManager {
-	protected static currentLanguage = reactive<any>(enLang)
+	protected static currentLanguage: any = enLang
 	protected static currentLanuageId = 'english'
 
 	static getAvailableLanguages() {
@@ -43,27 +52,29 @@ export class LocaleManager {
 	}
 
 	static async applyLanguage(id: string) {
-		console.log(id)
+		if (id === this.currentLanuageId) return
+
+		if (id === 'english') {
+			this.currentLanguage = reactive(structuredClone(enLang))
+			this.currentLanuageId = id
+			return
+		}
+
 		const fetchName = allLanguages.find((l) => l.id === id)?.file
 		if (!fetchName)
 			throw new Error(`[Locales] Language with id "${id}" not found`)
 
-		const language = await languages[fetchName]()
+		const language = JSON.parse(await languages[fetchName]())
 		if (!language)
 			throw new Error(
 				`[Locales] Language with id "${id}" not found: File "${fetchName}" does not exist`
 			)
 
-		console.log(language)
-		this.currentLanguage = reactive(
-			id === 'english'
-				? structuredClone(enLang)
-				: deepMerge(
-						structuredClone(enLang),
-						structuredClone({ ...language })
-				  )
+		this.currentLanguage = deepMerge(
+			structuredClone(enLang),
+			structuredClone({ ...language })
 		)
-		console.log(this.currentLanguage)
+
 		this.currentLanuageId = id
 	}
 
