@@ -27,9 +27,10 @@ const props = defineProps({
 		required: true,
 	},
 })
+const emit = defineEmits(['click'])
 
 function onClick() {
-	this.$emit('click')
+	emit('click')
 	props.action.trigger()
 }
 </script>

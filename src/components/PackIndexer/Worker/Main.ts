@@ -89,11 +89,8 @@ export class PackIndexerService extends TaskService<
 		console.timeEnd('[WORKER] SETUP')
 
 		console.time('[WORKER] LightningCache')
-		const [
-			filePaths,
-			changedFiles,
-			deletedFiles,
-		] = await this.lightningCache.start(forceRefresh)
+		const [filePaths, changedFiles, deletedFiles] =
+			await this.lightningCache.start(forceRefresh)
 		console.timeEnd('[WORKER] LightningCache')
 
 		console.time('[WORKER] PackSpider')
@@ -123,7 +120,6 @@ export class PackIndexerService extends TaskService<
 		return fileDidChange
 	}
 	async updateFiles(filePaths: string[], hotUpdate = false) {
-		console.log('Update: ', filePaths.join(', '))
 		let anyFileChanged = false
 		for (let i = 0; i < filePaths.length; i++) {
 			const fileDidChange = await this.updateFile(

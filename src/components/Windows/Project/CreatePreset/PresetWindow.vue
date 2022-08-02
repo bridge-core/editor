@@ -1,8 +1,8 @@
 <template>
 	<SidebarWindow
-		v-if="window.shouldRender"
+		v-if="state.shouldRender"
 		windowTitle="windows.createPreset.title"
-		:isVisible="window.isVisible"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:percentageWidth="80"
@@ -16,7 +16,7 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.createPreset.searchPresets')"
-				v-model.lazy.trim="window.sidebar._filter"
+				v-model.lazy.trim="window.sidebar.filter"
 				autocomplete="off"
 				autofocus
 				outlined
@@ -55,7 +55,7 @@
 					:rules="
 						opts.validate
 							? opts.validate.map(
-									(rule) => $data.validationRules[rule]
+									(rule) => window.validationRules[rule]
 							  )
 							: []
 					"
@@ -145,75 +145,60 @@
 	</SidebarWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PresetPath from './PresetPath.vue'
-import { isFileAccepted } from '/@/utils/file/isAccepted.ts'
-import { toRefs } from 'vue'
-import { useTranslations } from '/@/components/Composables/useTranslations.ts'
+import { isFileAccepted } from '/@/utils/file/isAccepted'
+import { computed, toRefs } from 'vue'
+import { useTranslations } from '/@/components/Composables/useTranslations'
+import type { CreatePresetWindow } from './PresetWindow'
 
-export default {
-	name: 'CreatePresetWindow',
-	components: {
-		SidebarWindow,
-		PresetPath,
-	},
-	props: ['currentWindow'],
-	setup(props) {
-		const { currentWindow } = toRefs(props)
-		const { t } = useTranslations()
+const props = defineProps<{
+	window: CreatePresetWindow
+}>()
 
-		return {
-			window: currentWindow,
-			t,
-		}
-	},
-	computed: {
-		content() {
-			return this.window.sidebar.currentState
-		},
-		fieldsReady() {
-			return Object.values(this.content.fields || {}).every(
-				([_, id, opts = {}]) => {
-					if (
-						opts.validate &&
-						opts.validate.some(
-							(rule) =>
-								this.$data.validationRules[rule](
-									this.content.models[id]
-								) !== true
-						)
-					)
-						return false
+const { t } = useTranslations()
 
-					return !!this.content.models[id] || opts.optional
-				}
+const state = props.window.getState()
+const content = computed(() => props.window.sidebar.currentState)
+const fieldsReady = computed(() => {
+	return (<[string, string, any][]>(
+		Object.values(content.value.fields || {})
+	)).every(([_, id, opts = {}]) => {
+		if (
+			opts.validate &&
+			opts.validate.some(
+				(rule: any) =>
+					props.window.validationRules[rule](
+						content.value.models[id]
+					) !== true
 			)
-		},
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close()
-		},
-		onCreatePreset() {
-			if (this.fieldsReady) this.currentWindow.createPreset(this.content)
-		},
-		onDropFile(id, opts, event) {
-			const { accept, multiple } = opts
-			const acceptedFiles = [...event.dataTransfer.files].filter((file) =>
-				isFileAccepted(file, accept)
-			)
-			if (acceptedFiles.length === 0) return
+		)
+			return false
 
-			if (multiple) {
-				if (!this.content.models[id])
-					this.content.models[id] = [...acceptedFiles]
-				else this.content.models[id].push(...acceptedFiles)
-			} else {
-				this.content.models[id] =
-					acceptedFiles[acceptedFiles.length - 1]
-			}
-		},
-	},
+		return !!content.value.models[id] || opts.optional
+	})
+})
+
+function onClose() {
+	props.window.close()
+}
+function onCreatePreset() {
+	if (fieldsReady.value) props.window.createPreset(content.value)
+}
+function onDropFile(id: string, opts: any, event: DragEvent) {
+	const { accept, multiple } = opts
+	const acceptedFiles = [...(event.dataTransfer?.files ?? [])].filter(
+		(file) => isFileAccepted(file, accept)
+	)
+	if (acceptedFiles.length === 0) return
+
+	if (multiple) {
+		if (!content.value.models[id])
+			content.value.models[id] = [...acceptedFiles]
+		else content.value.models[id].push(...acceptedFiles)
+	} else {
+		content.value.models[id] = acceptedFiles[acceptedFiles.length - 1]
+	}
 }
 </script>

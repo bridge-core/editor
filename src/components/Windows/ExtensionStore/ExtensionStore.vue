@@ -15,7 +15,7 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.extensionStore.searchExtensions')"
-				v-model.lazy.trim="sidebar._filter"
+				v-model.lazy.trim="sidebar.filter"
 				autocomplete="off"
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
@@ -74,7 +74,7 @@ export default {
 		},
 		currentExtensions() {
 			if (this.sidebar._filter !== '') {
-				const f = this.sidebar._filter.toLowerCase()
+				const f = this.sidebar.filter.toLowerCase()
 
 				return this.extensions.filter(
 					(e) =>

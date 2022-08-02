@@ -230,7 +230,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 			default: LocaleManager.getCurrentLanguageId(),
 			onChange: (val) => {
-				LocaleManager.applyLanguage(val)
+				set('language', val)
 			},
 		})
 	)

@@ -20,8 +20,9 @@ import {
 } from '/@/components/Data/RequiresMatcher/RequiresMatcher'
 import { createFailureMessage } from '/@/components/Data/RequiresMatcher/FailureMessage'
 import json5 from 'json5'
-import { markRaw } from 'vue'
+import { markRaw, reactive } from 'vue'
 import { translate } from '/@/components/Locales/Manager'
+import { NewBaseWindow } from '../../NewBaseWindow'
 
 export interface IPresetManifest {
 	name: string
@@ -66,9 +67,9 @@ export interface IPermissions {
 	mayOverwriteUnsavedChanges?: boolean
 }
 
-export class CreatePresetWindow extends BaseWindow {
+export class CreatePresetWindow extends NewBaseWindow {
 	protected loadPresetPaths = new Set<string>()
-	protected sidebar = new Sidebar([])
+	public sidebar = new Sidebar([])
 	protected shouldReloadPresets = true
 	protected modelResetters: (() => void)[] = []
 

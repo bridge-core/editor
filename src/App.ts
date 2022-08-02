@@ -31,7 +31,7 @@ import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/OutputFolders/ComMojang/ComMojang'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
-import { markRaw, reactive } from 'vue'
+import { markRaw } from 'vue'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
@@ -48,7 +48,6 @@ import { ViewFolders } from '/@/components/ViewFolders/ViewFolders'
 import { SidebarManager } from '/@/components/Sidebar/Manager'
 import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
 import { InformationWindow } from './components/Windows/Common/Information/InformationWindow'
-import { LocaleManager } from './components/Locales/Manager'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -297,8 +296,6 @@ export class App {
 	 */
 	async startUp() {
 		console.time('[APP] startUp()')
-
-		LocaleManager.setDefaultLanguage()
 
 		await Promise.all([
 			// Create default folders

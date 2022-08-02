@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { get as idbGet, set as idbSet } from 'idb-keyval'
-import { shallowReactive, set, del } from 'vue'
+import { shallowReactive, set, del, markRaw } from 'vue'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { Project, virtualProjectName } from './Project/Project'
 import { Title } from '/@/components/Projects/Title'
@@ -20,7 +20,7 @@ export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
 	public readonly activatedProject = new EventDispatcher<Project>()
 	public readonly state: Record<string, Project> = shallowReactive({})
-	public readonly title = Object.freeze(new Title())
+	public readonly title = markRaw(new Title())
 	protected _selectedProject?: string = undefined
 	public readonly projectReady = new Signal<void>()
 

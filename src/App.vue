@@ -132,7 +132,6 @@ export default {
 			this.contextMenu = app.contextMenu
 			this.windowSize = app.windowResize.state
 		})
-		console.log(this.$vuetify)
 	},
 
 	components: {

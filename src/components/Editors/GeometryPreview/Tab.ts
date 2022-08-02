@@ -33,22 +33,20 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		const { default: Wintersky } = await useWintersky()
 
 		this.winterskyScene = markRaw(
-			Object.freeze(
-				new Wintersky.Scene({
-					fetchTexture: async (config) => {
-						const app = await App.getApp()
+			new Wintersky.Scene({
+				fetchTexture: async (config) => {
+					const app = await App.getApp()
 
-						try {
-							return await loadAsDataURL(
-								config.particle_texture_path,
-								app.project.fileSystem
-							)
-						} catch (err) {
-							// Fallback to Wintersky's default handling of textures
-						}
-					},
-				})
-			)
+					try {
+						return await loadAsDataURL(
+							config.particle_texture_path,
+							app.project.fileSystem
+						)
+					} catch (err) {
+						// Fallback to Wintersky's default handling of textures
+					}
+				},
+			})
 		)
 		this.winterskyScene.global_options.loop_mode = 'once'
 		this.winterskyScene.global_options.tick_rate = 60
@@ -146,9 +144,10 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 						name: 'fileType.clientAnimation',
 						options: animations.map(([animId]) => ({
 							name: animId,
-							isSelected: this.renderContainer.runningAnimations.has(
-								animId
-							),
+							isSelected:
+								this.renderContainer.runningAnimations.has(
+									animId
+								),
 						})),
 					})
 					const choices = await chooseAnimation.fired
@@ -364,15 +363,14 @@ export abstract class GeometryPreviewTab extends ThreePreviewTab {
 		// Load textures
 		const authorImagePath = this.parent.project.config.getAuthorImage()
 
-		const [
-			entityTexture,
-			authorImageUrl,
-			...modelRenders
-		] = await Promise.all([
-			this.loadImageFromDisk(this.renderContainer.currentTexturePath),
-			authorImagePath ? this.loadImageFromDisk(authorImagePath) : null,
-			...urls.map((url) => this.loadImage(url)),
-		])
+		const [entityTexture, authorImageUrl, ...modelRenders] =
+			await Promise.all([
+				this.loadImageFromDisk(this.renderContainer.currentTexturePath),
+				authorImagePath
+					? this.loadImageFromDisk(authorImagePath)
+					: null,
+				...urls.map((url) => this.loadImage(url)),
+			])
 
 		resultCtx.fillStyle = backgroundColor
 		resultCtx.fillRect(0, 0, resultCanvas.width, resultCanvas.height)

@@ -1,5 +1,6 @@
 import { del, markRaw, ref, set, shallowReactive, watch } from 'vue'
 import { BaseWindow } from './BaseWindow'
+import { NewBaseWindow } from './NewBaseWindow'
 
 export class WindowState {
 	public state = ref<Record<string, BaseWindow<any>>>({})
@@ -12,7 +13,7 @@ export class WindowState {
 		})
 	}
 
-	addWindow(uuid: string, window: BaseWindow<any>) {
+	addWindow(uuid: string, window: BaseWindow<any> | NewBaseWindow<any>) {
 		set(this.state.value, uuid, markRaw(window))
 
 		// watch(window.isVisible, () => this.onWindowsChanged())

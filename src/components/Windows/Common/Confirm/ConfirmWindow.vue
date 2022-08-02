@@ -1,8 +1,8 @@
 <template>
 	<BaseWindow
-		v-if="window.shouldRender"
+		v-if="state.shouldRender"
 		:windowTitle="window.title"
-		:isVisible="window.isVisible"
+		:isVisible="state.isVisible"
 		:isPersistent="true"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -28,17 +28,19 @@
 	</BaseWindow>
 </template>
 
-<script setup>
-import { useTranslations } from '/@/components/Composables/useTranslations.ts'
+<script lang="ts" setup>
+import { computed, toRefs } from 'vue'
+import { useTranslations } from '/@/components/Composables/useTranslations'
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 
 const { t } = useTranslations()
-const { currentWindow: window } = defineProps(['currentWindow'])
+const props = defineProps(['window'])
+const state = props.window.getState()
 
 function onCancel() {
-	this.currentWindow.onCancel()
+	props.window.onCancel()
 }
 function onConfirm() {
-	this.currentWindow.onConfirm()
+	props.window.onConfirm()
 }
 </script>

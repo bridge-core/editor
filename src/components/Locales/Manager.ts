@@ -1,4 +1,5 @@
 import { deepMerge } from 'bridge-common-utils'
+import { get } from 'idb-keyval'
 import { reactive } from 'vue'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import enLangRaw from '/@/locales/en.json?raw'
@@ -33,11 +34,13 @@ export class LocaleManager {
 		return this.currentLanuageId
 	}
 
-	static setDefaultLanguage() {
+	static async setDefaultLanguage() {
+		const language = await get<string>('language')
+
 		// Set language based on bridge. setting
-		if (typeof settingsState?.general?.locale === 'string')
-			this.applyLanguage(settingsState?.general?.locale)
-		else {
+		if (language) {
+			await this.applyLanguage(language)
+		} else {
 			// Set language based on browser language
 			for (const langCode of navigator.languages) {
 				const lang = allLanguages.find(({ codes }) =>
@@ -45,7 +48,7 @@ export class LocaleManager {
 				)
 				if (!lang) continue
 
-				this.applyLanguage(lang.id)
+				await this.applyLanguage(lang.id)
 				break
 			}
 		}

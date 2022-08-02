@@ -20,6 +20,10 @@ export abstract class NewBaseWindow<T = void> extends Signal<T> {
 		actions: [],
 	})
 
+	getState() {
+		return this.state
+	}
+
 	constructor(
 		component: VueComponent,
 		protected disposeOnClose = false,
@@ -31,7 +35,7 @@ export abstract class NewBaseWindow<T = void> extends Signal<T> {
 	}
 
 	defineWindow() {
-		set(App.windowState.state, this.windowUUID, this)
+		App.windowState.addWindow(this.windowUUID, this)
 	}
 	addAction(action: SimpleAction) {
 		this.state.actions.push(action)
@@ -59,6 +63,6 @@ export abstract class NewBaseWindow<T = void> extends Signal<T> {
 		}
 	}
 	dispose() {
-		del(App.windowState.state, this.windowUUID)
+		App.windowState.deleteWindow(this.windowUUID)
 	}
 }
