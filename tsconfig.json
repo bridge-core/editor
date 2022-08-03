@@ -21,7 +21,8 @@
 		"paths": {
 			"/@/*": ["src/*"]
 		},
-		"lib": ["esnext", "dom", "dom.iterable", "scripthost", "WebWorker"]
+		"lib": ["esnext", "dom", "dom.iterable", "scripthost", "WebWorker"],
+		"forceConsistentCasingInFileNames": true
 	},
 	"include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
 	"exclude": ["node_modules"]
