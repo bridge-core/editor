@@ -30,7 +30,7 @@ import TabBar from '/@/components/TabSystem/TabBar.vue'
 import { App } from '/@/App'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight'
 import { useTabSystem } from '../Composables/UseTabSystem'
-import { computed, toRefs, watch } from 'vue'
+import { toRefs, watch } from 'vue'
 
 export default {
 	name: 'TabSystem',
@@ -44,6 +44,14 @@ export default {
 	setup(props) {
 		const { id } = toRefs(props)
 		const { tabSystem } = useTabSystem(id)
+
+		watch(tabSystem, () => {
+			if (!tabSystem.value) return
+
+			watch(tabSystem.value.shouldRender, () => {
+				App.getApp().then((app) => app.windowResize.dispatch())
+			})
+		})
 
 		return {
 			tabSystem,
@@ -62,6 +70,7 @@ export default {
 	async destroyed() {
 		const app = await App.getApp()
 		app.windowResize.off(this.updateWindowHeight)
+		app.windowResize.dispatch()
 	},
 	computed: {
 		tabBarHeight() {
@@ -86,11 +95,6 @@ export default {
 	methods: {
 		updateWindowHeight() {
 			this.windowHeight = window.innerHeight
-		},
-	},
-	watch: {
-		'tabSystem.shouldRender'() {
-			App.getApp().then((app) => app.windowResize.dispatch())
 		},
 	},
 }
