@@ -8,13 +8,9 @@ import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
 import { Notification } from '/@/components/Notifications/Notification'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { IWindowState, NewBaseWindow } from '../NewBaseWindow'
-import { reactive } from 'vue'
 
 let updateNotification: Notification | undefined = undefined
 
-interface IExtensionStoreState extends IWindowState {
-	extensions: ExtensionViewer[]
-}
 export class ExtensionStoreWindow extends NewBaseWindow {
 	protected baseUrl =
 		'https://raw.githubusercontent.com/bridge-core/plugins/master'
@@ -23,12 +19,7 @@ export class ExtensionStoreWindow extends NewBaseWindow {
 	protected installedExtensions: ExtensionViewer[] = []
 	public readonly tags: Record<string, ExtensionTag> = {}
 	protected updates = new Set<ExtensionViewer>()
-	// TODO: Why TypeScript + Vue?! If we don't cast to any first, it will complain about a missing method
-	// because it unwraps the SimpleAction class instances for some weird reason
-	protected state: IExtensionStoreState = <any>reactive({
-		...super.state,
-		extensions: [],
-	})
+	protected extensions: ExtensionViewer[] = []
 
 	constructor() {
 		super(ExtensionStoreComponent)
@@ -70,14 +61,14 @@ export class ExtensionStoreWindow extends NewBaseWindow {
 		if (extensions.length === 0 && !navigator.onLine)
 			return this.createOfflineWindow()
 
-		this.state.extensions = extensions.map(
+		this.extensions = extensions.map(
 			(extension) => new ExtensionViewer(this, extension)
 		)
 
 		this.updates.clear()
 
 		installedExtensions.forEach((installedExtension) => {
-			const extension = this.state.extensions.find(
+			const extension = this.extensions.find(
 				(ext) => ext.id === installedExtension.id
 			)
 
@@ -97,7 +88,7 @@ export class ExtensionStoreWindow extends NewBaseWindow {
 					this.updates.add(extension)
 				}
 			} else {
-				this.state.extensions.push(installedExtension.forStore(this))
+				this.extensions.push(installedExtension.forStore(this))
 			}
 		})
 
@@ -148,7 +139,7 @@ export class ExtensionStoreWindow extends NewBaseWindow {
 		this.installedExtensions.splice(index, 1)
 
 		if (extension.isLocalOnly)
-			this.state.extensions = this.state.extensions.filter(
+			this.extensions = this.extensions.filter(
 				(e) => e.id !== extension.id
 			)
 	}
@@ -183,7 +174,7 @@ export class ExtensionStoreWindow extends NewBaseWindow {
 
 	protected getExtensions(findTag?: ExtensionTag) {
 		return [
-			...new Set([...this.state.extensions, ...this.installedExtensions]),
+			...new Set([...this.extensions, ...this.installedExtensions]),
 		].filter((ext) => !ext.isLocalOnly && (!findTag || ext.hasTag(findTag)))
 	}
 	protected getExtensionsByTag(findTag: ExtensionTag) {

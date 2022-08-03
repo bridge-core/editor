@@ -67,7 +67,7 @@ const currentExtensions = computed(() => {
 	if (sidebar.filter !== '') {
 		const f = sidebar.filter.toLowerCase()
 
-		return state.extensions.filter(
+		return props.window.extensions.filter(
 			(e: any) =>
 				e.name.toLowerCase().includes(f) ||
 				e.description.toLowerCase().includes(f) ||
