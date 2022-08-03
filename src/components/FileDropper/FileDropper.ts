@@ -6,10 +6,6 @@ import {
 import { App } from '/@/App'
 import { extname } from '/@/utils/path'
 
-export interface IDropState {
-	isHovering: boolean
-}
-
 export class FileDropper {
 	protected fileHandlers = new Map<
 		string,
