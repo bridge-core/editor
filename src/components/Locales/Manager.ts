@@ -24,10 +24,12 @@ export class LocaleManager {
 	protected static currentLanuageId = 'english'
 
 	static getAvailableLanguages() {
-		return allLanguages.map((l) => ({
-			text: l.name,
-			value: l.id,
-		}))
+		return allLanguages
+			.sort((a, b) => a.name.localeCompare(b.name))
+			.map((l) => ({
+				text: l.name,
+				value: l.id,
+			}))
 	}
 	static getCurrentLanguageId() {
 		return this.currentLanuageId
