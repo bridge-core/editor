@@ -1,14 +1,14 @@
 <template>
 	<SidebarWindow
 		windowTitle="windows.projectChooser.title"
-		:isVisible="isVisible"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:percentageWidth="80"
 		:percentageHeight="80"
 		@closeWindow="onClose"
 		:sidebarItems="sidebar.elements"
-		:actions="actions"
+		:actions="state.actions"
 		v-model="sidebar.selected"
 	>
 		<template #sidebar>
@@ -18,13 +18,13 @@
 				:label="t('windows.projectChooser.searchProjects')"
 				hide-details
 				autofocus
-				v-model.lazy.trim="sidebar._filter"
+				v-model.lazy.trim="sidebar.filter"
 				outlined
 				dense
 			/>
 			<v-btn
-				v-if="showLoadAllButton"
-				:loading="showLoadAllButton === 'isLoading'"
+				v-if="state.showLoadAllButton"
+				:loading="state.showLoadAllButton === 'isLoading'"
 				@click="onLoadAllProjects"
 				class="mb-2"
 				block
@@ -162,7 +162,7 @@
 			<v-btn
 				v-if="!isComMojangProject"
 				color="primary"
-				:disabled="currentProject !== selectedSidebar"
+				:disabled="state.currentProject !== selectedSidebar"
 				@click="onAddPack"
 			>
 				<v-icon class="mr-1">mdi-plus-box</v-icon>
@@ -173,7 +173,7 @@
 			<v-btn
 				v-if="!isComMojangProject"
 				color="error"
-				:disabled="currentProject === selectedSidebar"
+				:disabled="state.currentProject === selectedSidebar"
 				@click="onDeleteProject(selectedSidebar)"
 			>
 				<v-icon>mdi-delete</v-icon>
@@ -183,7 +183,7 @@
 			<!-- Select Project -->
 			<v-btn
 				color="primary"
-				:disabled="currentProject === selectedSidebar"
+				:disabled="state.currentProject === selectedSidebar"
 				@click="onSelectProject"
 			>
 				<v-icon>mdi-check</v-icon>
@@ -193,20 +193,22 @@
 	</SidebarWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 import ExperimentalGameplay from '/@/components/Projects/CreateProject/ExperimentalGameplay.vue'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 
 import { App } from '/@/App'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
-import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow.ts'
+import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { addPack } from './AddPack'
 import { virtualProjectName } from '../Project/Project'
+import { useTranslations } from '../../Composables/useTranslations'
+import { computed } from 'vue'
 
-let formatter
+let formatter: { format: (arr: string[]) => string }
 if ('ListFormat' in Intl) {
+	// @ts-ignore
 	formatter = new Intl.ListFormat('en', {
 		style: 'long',
 		type: 'conjunction',
@@ -217,82 +219,70 @@ if ('ListFormat' in Intl) {
 	}
 }
 
-export default {
-	name: 'ProjectChooserWindow',
-	mixins: [TranslationMixin],
-	components: {
-		SidebarWindow,
-		PackTypeViewer,
-		ExperimentalGameplay,
-		BridgeSheet,
-	},
-	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close()
-		},
-		async onSelectProject() {
-			const app = await App.getApp()
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.getState()
+const sidebar = props.window.sidebar
 
-			if (this.isComMojangProject) {
-				await app.projectManager.selectProject(virtualProjectName)
-				app.viewComMojangProject.loadComMojangProject(
-					this.sidebar.currentState.project
-				)
-			} else {
-				app.projectManager.selectProject(this.sidebar.selected)
-			}
-
-			this.currentWindow.close()
-		},
-		onDeleteProject(projectName) {
-			new ConfirmationWindow({
-				description: 'windows.deleteProject.description',
-				confirmText: 'windows.deleteProject.confirm',
-				cancelText: 'general.cancel',
-				onConfirm: async () => {
-					const app = await App.getApp()
-					await app.projectManager.removeProjectWithName(projectName)
-
-					if (app.hasNoProjects) this.onClose()
-					else await this.currentWindow.loadProjects()
-				},
-			})
-		},
-		onAddPack() {
-			addPack()
-			this.currentWindow.close()
-		},
-		onLoadAllProjects() {
-			this.currentWindow.loadAllProjects()
-		},
-		async onToggleExperiment(experiment) {
-			const app = await App.getApp()
-			const project = app.projectManager.getProject(
-				this.sidebar.currentState.name
+const isComMojangProject = computed(
+	() => sidebar.currentState.isComMojangProject
+)
+const authors = computed(() => {
+	const authors = sidebar.currentState.authors || 'Unknown'
+	if (Array.isArray(authors))
+		return formatter.format(
+			authors.map((author) =>
+				typeof author === 'string' ? author : author.name
 			)
+		)
+	return authors
+})
 
-			await project.config.toggleExperiment(project, experiment.id)
+function onClose() {
+	props.window.close()
+}
+async function onSelectProject() {
+	const app = await App.getApp()
+
+	if (isComMojangProject.value) {
+		await app.projectManager.selectProject(virtualProjectName)
+		app.viewComMojangProject.loadComMojangProject(
+			sidebar.currentState.project
+		)
+	} else {
+		app.projectManager.selectProject(sidebar.selected)
+	}
+
+	props.window.close()
+}
+
+function onDeleteProject(projectName: string) {
+	new ConfirmationWindow({
+		description: 'windows.deleteProject.description',
+		confirmText: 'windows.deleteProject.confirm',
+		cancelText: 'general.cancel',
+		onConfirm: async () => {
+			const app = await App.getApp()
+			await app.projectManager.removeProjectWithName(projectName)
+
+			if (app.hasNoProjects) onClose()
+			else await props.window.loadProjects()
 		},
-	},
-	computed: {
-		authors() {
-			const authors = this.sidebar.currentState.authors || 'Unknown'
-			if (Array.isArray(authors))
-				return formatter.format(
-					authors.map((author) =>
-						typeof author === 'string' ? author : author.name
-					)
-				)
-			return authors
-		},
-		isComMojangProject() {
-			return this.sidebar.currentState.isComMojangProject
-		},
-	},
+	})
+}
+function onAddPack() {
+	addPack()
+	props.window.close()
+}
+function onLoadAllProjects() {
+	props.window.loadAllProjects()
+}
+async function onToggleExperiment(experiment: any) {
+	const app = await App.getApp()
+	const project = app.projectManager.getProject(sidebar.currentState.name)
+	if (!project) return
+
+	await project.config.toggleExperiment(project, experiment.id)
 }
 </script>
 

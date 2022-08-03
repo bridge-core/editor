@@ -2,7 +2,6 @@ import { BaseVirtualHandle } from './Handle'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
-import { markRaw } from '@vue/composition-api'
 import { IDBWrapper } from './IDB'
 
 /**
@@ -49,7 +48,7 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	}
 	protected async setup(fileData: Uint8Array) {
 		// Composition API isn't available within web workers (and usage of markRaw isn't necessary there) so we can omit the markRaw call
-		this.fileData = globalThis.document ? markRaw(fileData) : fileData
+		this.fileData = fileData
 
 		const isDataFile = this.path.join('/').startsWith('data/packages')
 
@@ -100,7 +99,7 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	}
 
 	override async isSameEntry(other: BaseVirtualHandle): Promise<boolean> {
-		if(this.parent === null) return false
+		if (this.parent === null) return false
 
 		return super.isSameEntry(other)
 	}

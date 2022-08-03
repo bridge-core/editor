@@ -1,3 +1,4 @@
+import { markRaw, reactive, ref } from 'vue'
 import { ActionManager } from '../Actions/ActionManager'
 
 export interface IPosition {
@@ -7,12 +8,12 @@ export interface IPosition {
 
 export class ContextMenu {
 	protected mayCloseOnClickOutside = true
-	protected isVisible = false
-	protected actionManager: ActionManager | undefined = undefined
-	protected position = {
+	protected isVisible = ref(false)
+	protected actionManager = ref<ActionManager | undefined>()
+	protected position = reactive({
 		x: 0,
 		y: 0,
-	}
+	})
 	protected menuHeight = 0
 
 	show(
@@ -22,12 +23,12 @@ export class ContextMenu {
 	) {
 		this.position.x = event.clientX
 		this.position.y = event.clientY
-		this.actionManager = actionManager
+		this.actionManager.value = markRaw(actionManager)
 		this.mayCloseOnClickOutside = mayCloseOnClickOutside
 
 		// Add up size of each context menu element + top/bottom padding
 		this.menuHeight =
-			this.actionManager
+			this.actionManager.value
 				.getAllElements()
 				.reduce<number>((result, action) => {
 					switch (action.type) {
@@ -40,7 +41,7 @@ export class ContextMenu {
 							return result + 40
 					}
 				}, 0) + 16
-		this.isVisible = true
+		this.isVisible.value = true
 	}
 
 	setMayCloseOnClickOutside(mayCloseOnClickOutside: boolean) {

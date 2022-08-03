@@ -6,7 +6,7 @@ import PackExplorerComponent from './PackExplorer.vue'
 import ProjectDisplayComponent from './ProjectDisplay.vue'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
-import { markRaw, set } from '@vue/composition-api'
+import { markRaw, ref, set } from 'vue'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 import { exportAsBrproject } from '/@/components/Projects/Export/AsBrproject'
@@ -26,7 +26,7 @@ import { ToLocalProjectAction } from './Actions/ToLocalProject'
 import { ToBridgeFolderProjectAction } from './Actions/ToBridgeFolderProject'
 
 export class PackExplorer extends SidebarContent {
-	component = PackExplorerComponent
+	component = markRaw(PackExplorerComponent)
 	actions: SidebarAction[] = []
 	directoryEntries: Record<string, DirectoryWrapper> = {}
 	topPanel: InfoPanel | undefined = undefined
@@ -81,26 +81,28 @@ export class PackExplorer extends SidebarContent {
 				.catch(() => null)
 			if (!handle) continue
 
-			const wrapper = new DirectoryWrapper(null, handle, {
-				startPath: pack.packPath,
+			const wrapper = markRaw(
+				new DirectoryWrapper(null, handle, {
+					startPath: pack.packPath,
 
-				provideFileContextMenu: async (fileWrapper) => [
-					await ViewConnectedFiles(fileWrapper),
-				],
-				provideFileDiagnostics: async (fileWrapper) => {
-					const packIndexer = app.project.packIndexer
-					await packIndexer.fired
+					provideFileContextMenu: async (fileWrapper) => [
+						await ViewConnectedFiles(fileWrapper),
+					],
+					provideFileDiagnostics: async (fileWrapper) => {
+						const packIndexer = app.project.packIndexer
+						await packIndexer.fired
 
-					const filePath = fileWrapper.path
-					if (!filePath) return []
+						const filePath = fileWrapper.path
+						if (!filePath) return []
 
-					return packIndexer.service.getFileDiagnostics(filePath)
-				},
-				onHandleMoved: (opts) => this.onHandleMoved(opts),
-			})
+						return packIndexer.service.getFileDiagnostics(filePath)
+					},
+					onHandleMoved: (opts) => this.onHandleMoved(opts),
+				})
+			)
 			await wrapper.open()
 
-			set(this.directoryEntries, pack.packPath, markRaw(wrapper))
+			set(this.directoryEntries, pack.packPath, wrapper)
 			this.actions.push(
 				new SelectableSidebarAction(this, {
 					id: pack.packPath,

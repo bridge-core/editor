@@ -23,7 +23,7 @@
 <script>
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 import { App } from '/@/App'
-import { reactive } from '@vue/composition-api'
+import { reactive } from 'vue'
 
 const knownWords = new reactive({
 	keywords: [],

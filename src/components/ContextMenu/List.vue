@@ -51,10 +51,7 @@
 					</v-list-item>
 				</template>
 
-				<ContextMenuList
-					@click="$emit('click')"
-					:actions="action.submenu.state"
-				/>
+				<List @click="$emit('click')" :actions="action.submenu.state" />
 			</v-menu>
 
 			<v-list-item
@@ -117,69 +114,54 @@
 	</v-list>
 </template>
 
-<script>
-import { TranslationMixin } from '../Mixins/TranslationMixin'
+<script setup>
+import { computed, ref } from 'vue'
+import { useTranslations } from '../Composables/useTranslations'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
-export default {
-	name: 'ContextMenuList',
-	mixins: [TranslationMixin],
-	props: {
-		actions: {
-			type: Object,
-			required: true,
-		},
-	},
-	data: () => ({
-		openSection: null,
-	}),
-	setup() {
-		return {
-			pointerDevice,
-		}
-	},
-	computed: {
-		renderActions() {
-			const entries = []
+const { t } = useTranslations()
 
-			for (const [key, action] of Object.entries(this.actions)) {
-				if (
-					action.type !== 'submenu' ||
-					this.pointerDevice !== 'touch'
-				) {
-					entries.push([key, action])
-					continue
-				}
-
-				entries.push([
-					key,
-					{ type: 'section', icon: action.icon, name: action.name },
-				])
-				if (this.openSection === key)
-					entries.push(
-						...Object.entries(
-							action.submenu.state
-						).map(([key, action]) => [
-							key,
-							action.type === 'action'
-								? action.withPadding()
-								: action,
-						])
-					)
-			}
-
-			return Object.fromEntries(entries)
-		},
+const props = defineProps({
+	actions: {
+		type: Object,
+		required: true,
 	},
-	methods: {
-		onClick(action) {
-			this.$emit('click')
-			action.trigger()
-		},
-		toggleSection(id) {
-			if (this.openSection === id) this.openSection = null
-			else this.openSection = id
-		},
-	},
+})
+const emit = defineEmits(['click'])
+
+const openSection = ref(null)
+
+function onClick(action) {
+	emit('click')
+	action.trigger()
 }
+function toggleSection(id) {
+	if (openSection.value === id) openSection.value = null
+	else openSection.value = id
+}
+
+const renderActions = computed(() => {
+	const entries = []
+
+	for (const [key, action] of Object.entries(props.actions)) {
+		if (action.type !== 'submenu' || pointerDevice.value !== 'touch') {
+			entries.push([key, action])
+			continue
+		}
+
+		entries.push([
+			key,
+			{ type: 'section', icon: action.icon, name: action.name },
+		])
+		if (this.openSection === key)
+			entries.push(
+				...Object.entries(action.submenu.state).map(([key, action]) => [
+					key,
+					action.type === 'action' ? action.withPadding() : action,
+				])
+			)
+	}
+
+	return Object.fromEntries(entries)
+})
 </script>

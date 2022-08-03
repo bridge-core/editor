@@ -1,9 +1,9 @@
 import { ToolbarCategory } from './ToolbarCategory'
-import { del, set, shallowReactive } from '@vue/composition-api'
+import { del, reactive, set } from 'vue'
 import { showContextMenu } from '../ContextMenu/showContextMenu'
 
 export class Toolbar {
-	protected state: Record<string, ToolbarCategory> = shallowReactive({})
+	protected state: Record<string, ToolbarCategory> = reactive({})
 
 	addCategory(category: ToolbarCategory) {
 		set(this.state, category.id, category)

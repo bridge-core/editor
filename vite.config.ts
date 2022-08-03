@@ -1,6 +1,6 @@
 import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import { resolve, join } from 'path'
-import { createVuePlugin } from 'vite-plugin-vue2'
+import Vue from '@vitejs/plugin-vue2'
 import { VitePWA } from 'vite-plugin-pwa'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
 const isNightly = process.argv[2] === '--nightly'
@@ -30,7 +30,7 @@ export default defineConfig({
 	},
 	plugins: [
 		splitVendorChunkPlugin(),
-		createVuePlugin(),
+		Vue({}),
 		ViteEjsPlugin({
 			isNightly,
 			title: isNightly ? 'bridge Nightly' : 'bridge v2',

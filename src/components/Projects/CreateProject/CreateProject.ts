@@ -1,6 +1,5 @@
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import CreateProjectComponent from './CreateProject.vue'
 import { CreatePack } from './Packs/Pack'
 import { CreateBP } from './Packs/BP'
@@ -22,6 +21,8 @@ import {
 } from '/@/components/Data/FormatVersions'
 import { Project } from '../Project/Project'
 import { CreateDenoConfig } from './Files/DenoConfig'
+import { IWindowState, NewBaseWindow } from '../../Windows/NewBaseWindow'
+import { reactive } from 'vue'
 
 export interface ICreateProjectOptions {
 	author: string | string[]
@@ -48,12 +49,15 @@ export interface IExperimentalToggle {
 	id: string
 	description: string
 }
-export class CreateProjectWindow extends BaseWindow {
+
+export interface ICreateProjectState extends IWindowState {
+	isCreatingProject: boolean
+	createOptions: ICreateProjectOptions
+	availableTargetVersionsLoading: boolean
+}
+export class CreateProjectWindow extends NewBaseWindow {
 	protected isFirstProject = false
-	protected createOptions: ICreateProjectOptions = this.getDefaultOptions()
-	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []
-	protected availableTargetVersionsLoading = true
 	protected stableVersion: string = ''
 	protected packs: Record<TPackTypeId | '.bridge' | 'worlds', CreatePack> = <
 		const
@@ -84,6 +88,17 @@ export class CreateProjectWindow extends BaseWindow {
 			'windows.createProject.projectName.mustNotBeEmpty',
 	]
 
+	protected state: ICreateProjectState = reactive<any>({
+		...super.getState(),
+		isCreatingProject: false,
+		createOptions: this.getDefaultOptions(),
+		availableTargetVersionsLoading: true,
+	})
+
+	get createOptions() {
+		return this.state.createOptions
+	}
+
 	get packCreateFiles() {
 		return Object.entries(this.packs)
 			.map(([packId, pack]) => {
@@ -111,7 +126,7 @@ export class CreateProjectWindow extends BaseWindow {
 			// Set default version
 			this.stableVersion = await getStableFormatVersion(app.dataLoader)
 			this.createOptions.targetVersion = this.stableVersion
-			this.availableTargetVersionsLoading = false
+			this.state.availableTargetVersionsLoading = false
 
 			this.experimentalToggles = await app.dataLoader.readJSON(
 				'data/packages/minecraftBedrock/experimentalGameplay.json'
@@ -139,7 +154,7 @@ export class CreateProjectWindow extends BaseWindow {
 	}
 
 	open(isFirstProject = false) {
-		this.createOptions = this.getDefaultOptions()
+		this.state.createOptions = this.getDefaultOptions()
 
 		this.isFirstProject = isFirstProject
 		this.packCreateFiles.forEach(
@@ -209,7 +224,7 @@ export class CreateProjectWindow extends BaseWindow {
 			await app.projectManager.removeProject(previousProject!)
 
 		// Reset options
-		this.createOptions = this.getDefaultOptions()
+		this.state.createOptions = this.getDefaultOptions()
 	}
 
 	static getDefaultOptions(): ICreateProjectOptions {

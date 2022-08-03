@@ -1,6 +1,5 @@
 import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import ExtensionStoreComponent from './ExtensionStore.vue'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { App } from '/@/App'
 import { compareVersions } from 'bridge-common-utils'
 import { ExtensionTag } from './ExtensionTag'
@@ -8,17 +7,19 @@ import { ExtensionViewer } from './ExtensionViewer'
 import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
 import { Notification } from '/@/components/Notifications/Notification'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
+import { IWindowState, NewBaseWindow } from '../NewBaseWindow'
 
 let updateNotification: Notification | undefined = undefined
-export class ExtensionStoreWindow extends BaseWindow {
+
+export class ExtensionStoreWindow extends NewBaseWindow {
 	protected baseUrl =
 		'https://raw.githubusercontent.com/bridge-core/plugins/master'
 	protected sidebar = new Sidebar([])
-	protected extensions: ExtensionViewer[] = []
 	protected extensionTags!: Record<string, { icon: string; color?: string }>
 	protected installedExtensions: ExtensionViewer[] = []
 	public readonly tags: Record<string, ExtensionTag> = {}
 	protected updates = new Set<ExtensionViewer>()
+	protected extensions: ExtensionViewer[] = []
 
 	constructor() {
 		super(ExtensionStoreComponent)

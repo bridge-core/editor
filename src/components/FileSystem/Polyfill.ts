@@ -1,4 +1,4 @@
-import { ref } from '@vue/composition-api'
+import { ref, markRaw } from 'vue'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 import { VirtualFileHandle } from './Virtual/FileHandle'
 
@@ -55,7 +55,7 @@ if (
 
 		window.showDirectoryPicker = async () =>
 			// @ts-ignore Typescript doesn't like our polyfill
-			new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
+			markRaw(new VirtualDirectoryHandle(null, 'bridgeFolder', undefined))
 	}
 }
 
@@ -86,8 +86,8 @@ if (isUnsupportedBrowser() || typeof window.showOpenFilePicker !== 'function') {
 					resolve(
 						// @ts-ignore
 						await Promise.all(
-							files.map(
-								async (file) =>
+							files.map(async (file) =>
+								markRaw(
 									new VirtualFileHandle(
 										null,
 										file.name,
@@ -96,6 +96,7 @@ if (isUnsupportedBrowser() || typeof window.showOpenFilePicker !== 'function') {
 										),
 										true
 									)
+								)
 							)
 						)
 					)
@@ -158,7 +159,7 @@ if (
 				true
 			)
 		} else if (this.kind === 'directory') {
-			return new VirtualDirectoryHandle(null, 'unknown')
+			return markRaw(new VirtualDirectoryHandle(null, 'unknown'))
 		}
 
 		return null

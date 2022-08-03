@@ -12,7 +12,6 @@ import { FileSystemSetup } from '/@/components/FileSystem/Setup'
 import { setupSidebar } from '/@/components/Sidebar/setup'
 import { TaskManager } from '/@/components/TaskManager/TaskManager'
 import { setupDefaultMenus } from '/@/components/Toolbar/setupDefaults'
-import { Locales } from '/@/utils/locales'
 import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
@@ -32,7 +31,7 @@ import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/OutputFolders/ComMojang/ComMojang'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
-import { markRaw, reactive } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
@@ -82,8 +81,7 @@ export class App {
 	public readonly projectManager = new ProjectManager(this)
 	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
-	public readonly contextMenu = new ContextMenu()
-	public readonly locales: Locales
+	public readonly contextMenu = markRaw(new ContextMenu())
 	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
 	public readonly folderImportManager = new FolderImportManager()
@@ -158,7 +156,6 @@ export class App {
 	constructor(appComponent: Vue) {
 		if (import.meta.env.PROD) this.dataLoader.loadData()
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
-		this.locales = new Locales(appComponent.$vuetify)
 		this._windows = new Windows(this)
 
 		this.mobile = new Mobile(appComponent.$vuetify)
@@ -193,7 +190,7 @@ export class App {
 	 */
 	static async main(appComponent: Vue) {
 		console.time('[APP] Ready')
-		this._instance = markRaw(Object.freeze(new App(appComponent)))
+		this._instance = markRaw(new App(appComponent))
 		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
@@ -299,8 +296,6 @@ export class App {
 	 */
 	async startUp() {
 		console.time('[APP] startUp()')
-
-		this.locales.setDefaultLanguage()
 
 		await Promise.all([
 			// Create default folders

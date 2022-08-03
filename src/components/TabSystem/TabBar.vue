@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<Draggable
-			v-if="tabSystem.shouldRender"
-			v-model="tabSystem.tabs"
+			v-if="tabSystem && tabSystem.shouldRender"
+			v-model="tabSystem.tabs.value"
 			:group="{
 				name: 'tabSystemTabRow',
 			}"
@@ -12,7 +12,7 @@
 			:style="`display: flex; overflow-x: scroll; white-space: nowrap; width: 100%; height: 48px;`"
 		>
 			<TabSystemTab
-				v-for="(tab, i) in tabSystem.tabs"
+				v-for="(tab, i) in tabSystem.tabs.value"
 				:key="tab.uuid"
 				:tab="tab"
 				:isActive="tabSystem.isActive"
@@ -21,6 +21,7 @@
 		</Draggable>
 		<ActionBar
 			v-if="
+				tabSystem &&
 				tabSystem.selectedTab &&
 				tabSystem.selectedTab.actions.length > 0
 			"
@@ -36,6 +37,8 @@ import TabSystemTab from './Tab.vue'
 import ActionBar from './TabActions/ActionBar.vue'
 import Draggable from 'vuedraggable'
 import { pointerDevice } from '/@/utils/pointerDevice'
+import { useTabSystem } from '../Composables/UseTabSystem'
+import { toRefs } from 'vue'
 
 export default {
 	components: {
@@ -44,10 +47,15 @@ export default {
 		Draggable,
 	},
 	props: {
-		tabSystem: Object,
+		id: Number,
 	},
-	setup() {
+	setup(props) {
+		const { id } = toRefs(props)
+
+		const { tabSystem } = useTabSystem(id)
+
 		return {
+			tabSystem,
 			pointerDevice,
 		}
 	},

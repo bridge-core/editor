@@ -1,4 +1,4 @@
-import { reactive, ref, del, set, computed } from '@vue/composition-api'
+import { reactive, ref, del, set, computed } from 'vue'
 import { SidebarContent } from './Content/SidebarContent'
 import { SidebarElement } from './SidebarElement'
 import { App } from '/@/App'

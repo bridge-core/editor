@@ -7,6 +7,7 @@
 			:key="uuid"
 			:is="window.component"
 			:currentWindow="window"
+			:window="window"
 		/>
 	</div>
 </template>

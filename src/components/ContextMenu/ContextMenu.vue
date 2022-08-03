@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { createSimpleTransition } from 'vuetify/lib/components/transitions/createTransition'
 import Vue from 'vue'
 import ContextMenuList from './List.vue'
@@ -29,7 +28,6 @@ Vue.component('context-menu-transition', contextMenuTransition)
 export default {
 	components: { ContextMenuList },
 	name: 'ContextMenu',
-	mixins: [TranslationMixin],
 	props: {
 		contextMenu: Object,
 		windowHeight: Number,
@@ -54,15 +52,16 @@ export default {
 		},
 		isVisible: {
 			set(val) {
-				this.contextMenu.isVisible = val
+				this.contextMenu.isVisible.value = val
 			},
 			get() {
-				return this.contextMenu.isVisible
+				return this.contextMenu.isVisible.value
 			},
 		},
 		actions() {
-			if (!this.contextMenu || !this.contextMenu.actionManager) return {}
-			return this.contextMenu.actionManager.state
+			if (!this.contextMenu || !this.contextMenu.actionManager.value)
+				return {}
+			return this.contextMenu.actionManager.value.state
 		},
 	},
 	watch: {

@@ -1,4 +1,4 @@
-import { reactive, set } from '@vue/composition-api'
+import { reactive, set } from 'vue'
 
 export let settingsState: Record<string, Record<string, unknown>> = reactive({})
 

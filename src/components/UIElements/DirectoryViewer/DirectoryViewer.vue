@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { ref } from '@vue/composition-api'
+import { ref } from 'vue'
 import { DirectoryStore } from './DirectoryStore'
 import DirectoryView from './DirectoryView/DirectoryView.vue'
 import { DirectoryWrapper } from './DirectoryView/DirectoryWrapper'

@@ -19,7 +19,7 @@ import {
 	AnyFileHandle,
 	AnyHandle,
 } from '/@/components/FileSystem/Types'
-import { markRaw, reactive, set } from '@vue/composition-api'
+import { markRaw, reactive, set } from 'vue'
 import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
@@ -173,7 +173,10 @@ export abstract class Project {
 			App.eventSystem.dispatch('fileUnlinked', data[0])
 		)
 
-		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
+		this.tabSystems = <const>[
+			markRaw(new TabSystem(this)),
+			markRaw(new TabSystem(this, 1)),
+		]
 
 		this.createDashService('development').then((service) => {
 			this._compilerService = markRaw(service)
@@ -345,7 +348,7 @@ export abstract class Project {
 	updateTabFolders() {
 		const nameMap: Record<string, Tab[]> = {}
 		for (const tabSystem of this.tabSystems) {
-			tabSystem.tabs.forEach((tab) => {
+			tabSystem.tabs.value.forEach((tab) => {
 				if (!(tab instanceof FileTab)) return
 
 				const name = tab.name
@@ -531,7 +534,7 @@ export abstract class Project {
 	}
 	isFileOpen(filePath: string) {
 		return this.tabSystems.some((tabSystem) =>
-			tabSystem.tabs.some(
+			tabSystem.tabs.value.some(
 				(tab) => tab instanceof FileTab && tab.getPath() === filePath
 			)
 		)

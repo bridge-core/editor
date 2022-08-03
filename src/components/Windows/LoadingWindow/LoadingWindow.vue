@@ -1,7 +1,7 @@
 <template>
 	<BaseWindow
-		:windowTitle="$data.message || 'windows.loadingWindow.titles.loading'"
-		:isVisible="isVisible"
+		:windowTitle="window.message || 'windows.loadingWindow.titles.loading'"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:hasCloseButton="false"
 		:isPersistent="true"
@@ -17,22 +17,13 @@
 	</BaseWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 
-export default {
-	name: 'LoadingWindow',
-	components: {
-		BaseWindow,
-	},
-	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close()
-		},
-	},
+const props = defineProps(['window'])
+const state = props.window.getState()
+
+function onClose() {
+	props.window.close()
 }
 </script>

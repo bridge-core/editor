@@ -1,4 +1,4 @@
-import { ref } from '@vue/composition-api'
+import { ref } from 'vue'
 import { virtualProjectName } from './Project/Project'
 import { isNightly } from '/@/utils/app/isNightly'
 

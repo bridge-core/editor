@@ -1,4 +1,4 @@
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { IComMojangProject } from '../ProjectLoader'
 import { App } from '/@/App'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'

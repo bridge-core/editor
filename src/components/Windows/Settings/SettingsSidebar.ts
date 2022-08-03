@@ -7,7 +7,7 @@ export class SettingsSidebar extends Sidebar {
 	get elements() {
 		let selectSidebar: string | undefined = undefined
 
-		const elements = this._elements.filter((element) => {
+		const elements = this._elements.value.filter((element) => {
 			if (element.type === 'category') return true
 
 			const controls = <Control<any>[]>this.getState(element.id)
@@ -30,8 +30,8 @@ export class SettingsSidebar extends Sidebar {
 
 	get currentState() {
 		if (!this.selected) return []
-		return (
-			<Control<any>[]>this.state[this.selected] ?? []
-		).filter((control) => control.matches(this.filter))
+		return (<Control<any>[]>this.state[this.selected] ?? []).filter(
+			(control) => control.matches(this.filter)
+		)
 	}
 }

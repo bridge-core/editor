@@ -6,6 +6,7 @@ import { FilePathWindow } from '/@/components/Windows/Common/FilePath/Window'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { join } from '/@/utils/path'
+import { translate } from '../Locales/Manager'
 
 export class BasicFileImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
@@ -34,7 +35,7 @@ export class BasicFileImporter extends FileImporter {
 
 	async onImport(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
-		const t = app.locales.translate.bind(app.locales)
+		const t = translate
 
 		// If current project is virtual project, simply open the file
 		await app.projectManager.projectReady.fired

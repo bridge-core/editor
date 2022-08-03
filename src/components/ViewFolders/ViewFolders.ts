@@ -1,4 +1,4 @@
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { addFilesToCommandBar } from '../CommandBar/AddFiles'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import { InfoPanel } from '../InfoPanel/InfoPanel'

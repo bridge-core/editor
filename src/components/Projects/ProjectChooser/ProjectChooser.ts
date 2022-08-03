@@ -1,6 +1,5 @@
 import { App } from '/@/App'
 import { IProjectData } from '/@/components/Projects/Project/Project'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import ProjectChooserComponent from './ProjectChooser.vue'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
@@ -9,21 +8,30 @@ import { IExperimentalToggle } from '../CreateProject/CreateProject'
 import { importNewProject } from '../Import/ImportNew'
 import { IPackData } from '/@/components/Projects/Project/loadPacks'
 import { ComMojangProjectLoader } from '../../OutputFolders/ComMojang/ProjectLoader'
-import { markRaw, isRaw } from '@vue/composition-api'
+import { markRaw, reactive } from 'vue'
+import { IWindowState, NewBaseWindow } from '../../Windows/NewBaseWindow'
 
-export class ProjectChooserWindow extends BaseWindow {
+export interface IProjectChooserState extends IWindowState {
+	showLoadAllButton: 'isLoading' | boolean
+	currentProject?: string
+}
+
+export class ProjectChooserWindow extends NewBaseWindow {
 	protected sidebar = new Sidebar([])
-	protected currentProject?: string = undefined
 	protected experimentalToggles: (IExperimentalToggle & {
 		isActive: boolean
 	})[] = []
-	protected showLoadAllButton: boolean | 'isLoading' = false
+
+	protected state: IProjectChooserState = reactive<any>({
+		...super.getState(),
+		showLoadAllButton: false,
+		currentProject: undefined,
+	})
 
 	constructor() {
 		super(ProjectChooserComponent, false, true)
-		this.defineWindow()
 
-		this.actions.push(
+		this.state.actions.push(
 			new SimpleAction({
 				icon: 'mdi-import',
 				name: 'actions.importBrproject.name',
@@ -44,10 +52,12 @@ export class ProjectChooserWindow extends BaseWindow {
 				},
 			})
 		)
+
+		this.defineWindow()
 	}
 
 	async loadAllProjects() {
-		this.showLoadAllButton = 'isLoading'
+		this.state.showLoadAllButton = 'isLoading'
 		const app = await App.getApp()
 
 		const wasSuccessful = await app.setupBridgeFolder()
@@ -55,9 +65,10 @@ export class ProjectChooserWindow extends BaseWindow {
 
 		if (wasSuccessful || wasComMojangSuccesful) {
 			await this.loadProjects()
-			this.showLoadAllButton = !wasSuccessful || !wasComMojangSuccesful
+			this.state.showLoadAllButton =
+				!wasSuccessful || !wasComMojangSuccesful
 		} else {
-			this.showLoadAllButton = true
+			this.state.showLoadAllButton = true
 		}
 	}
 
@@ -78,7 +89,7 @@ export class ProjectChooserWindow extends BaseWindow {
 		this.sidebar.removeElements()
 		const app = await App.getApp()
 
-		this.showLoadAllButton = !app.bridgeFolderSetup.hasFired
+		this.state.showLoadAllButton = !app.bridgeFolderSetup.hasFired
 
 		const projects = await app.projectManager.getProjects()
 		const experimentalToggles = await app.dataLoader.readJSON(
@@ -118,9 +129,7 @@ export class ProjectChooserWindow extends BaseWindow {
 						return <IPackData>{
 							...packType,
 							version: pack.manifest?.header?.version ?? [
-								1,
-								0,
-								0,
+								1, 0, 0,
 							],
 							packPath: pack.packPath,
 							uuid: pack.uuid,
@@ -144,7 +153,7 @@ export class ProjectChooserWindow extends BaseWindow {
 	}
 
 	async open() {
-		this.currentProject = await this.loadProjects()
+		this.state.currentProject = await this.loadProjects()
 		super.open()
 	}
 }

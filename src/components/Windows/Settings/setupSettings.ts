@@ -17,7 +17,7 @@ import { platform } from '/@/utils/os'
 import { TextField } from './Controls/TextField/TextField'
 import { devActions } from '/@/components/Developer/Actions'
 import { FontSelection } from './Controls/FontSelection'
-import { shallowReactive } from '@vue/composition-api'
+import { LocaleManager } from '../../Locales/Manager'
 
 export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
@@ -112,7 +112,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.appearance.font.description',
 			key: 'font',
 			default: 'Roboto',
-			options: shallowReactive([
+			options: [
 				'Roboto',
 				'Arial',
 				'Verdana',
@@ -123,7 +123,7 @@ export async function setupSettings(settings: SettingsWindow) {
 				'Monaco',
 				'Courier New',
 				'monospace',
-			]),
+			],
 		})
 	)
 	settings.addControl(
@@ -133,7 +133,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.appearance.editorFont.description',
 			key: 'editorFont',
 			default: platform() === 'darwin' ? 'Menlo' : 'Consolas',
-			options: shallowReactive([
+			options: [
 				'Roboto',
 				'Arial',
 				'Consolas',
@@ -141,7 +141,7 @@ export async function setupSettings(settings: SettingsWindow) {
 				'Monaco',
 				'"Courier New"',
 				'monospace',
-			]),
+			],
 			onChange: async (val) => {
 				const app = await App.getApp()
 				app.projectManager.updateAllEditorOptions({
@@ -218,23 +218,18 @@ export async function setupSettings(settings: SettingsWindow) {
 			key: 'hideElements',
 		})
 	)
-
-	const locales = await App.getApp().then((app) => app.locales)
 	settings.addControl(
 		new Selection({
+			omitFromSaveFile: true,
 			category: 'general',
 			name: 'windows.settings.general.language.name',
 			description: 'windows.settings.general.language.description',
 			key: 'locale',
-			get options() {
-				return locales.getLanguages().map((lang) => ({
-					text: lang[1],
-					value: lang[0],
-				}))
-			},
-			default: locales.getCurrentLanguage(),
+			options: LocaleManager.getAvailableLanguages(),
+			default: LocaleManager.getCurrentLanguageId(),
 			onChange: (val) => {
-				locales.selectLanguage(val)
+				;(<any>settings.getState()).reloadRequired = true
+				set('language', val)
 			},
 		})
 	)

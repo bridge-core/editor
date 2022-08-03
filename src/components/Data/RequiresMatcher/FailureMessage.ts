@@ -1,3 +1,4 @@
+import { translate } from '../../Locales/Manager'
 import { IFailure, IRequirements } from './RequiresMatcher'
 import { App } from '/@/App'
 
@@ -7,7 +8,7 @@ export async function createFailureMessage(
 ) {
 	const app = await App.getApp()
 
-	const failureMessageHeader = app.locales.translate(
+	const failureMessageHeader = translate(
 		`windows.createPreset.disabledPreset.${failure.type}`
 	)
 	let failureMessageDetails
@@ -19,9 +20,9 @@ export async function createFailureMessage(
 						(exp) =>
 							`${
 								exp.startsWith('!')
-									? app.locales.translate('general.no')
+									? translate('general.no')
 									: ''
-							} ${app.locales.translate(
+							} ${translate(
 								`experimentalGameplay.${exp.replace(
 									'!',
 									''
@@ -38,9 +39,9 @@ export async function createFailureMessage(
 						(packType) =>
 							`${
 								packType.startsWith('!')
-									? app.locales.translate('general.no')
+									? translate('general.no')
 									: ''
-							} ${app.locales.translate(
+							} ${translate(
 								`packType.${packType.replace('!', '')}.name`
 							)}`
 					)

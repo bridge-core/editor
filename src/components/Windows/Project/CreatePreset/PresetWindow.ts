@@ -1,6 +1,5 @@
 import { Sidebar, SidebarCategory } from '/@/components/Windows/Layout/Sidebar'
 import PresetWindowComponent from './PresetWindow.vue'
-import { BaseWindow } from '../../BaseWindow'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { App } from '/@/App'
 import { v4 as uuid } from 'uuid'
@@ -20,7 +19,9 @@ import {
 } from '/@/components/Data/RequiresMatcher/RequiresMatcher'
 import { createFailureMessage } from '/@/components/Data/RequiresMatcher/FailureMessage'
 import json5 from 'json5'
-import { markRaw } from '@vue/composition-api'
+import { markRaw, reactive } from 'vue'
+import { translate } from '/@/components/Locales/Manager'
+import { NewBaseWindow } from '../../NewBaseWindow'
 
 export interface IPresetManifest {
 	name: string
@@ -65,9 +66,9 @@ export interface IPermissions {
 	mayOverwriteUnsavedChanges?: boolean
 }
 
-export class CreatePresetWindow extends BaseWindow {
+export class CreatePresetWindow extends NewBaseWindow {
 	protected loadPresetPaths = new Set<string>()
-	protected sidebar = new Sidebar([])
+	public sidebar = new Sidebar([])
 	protected shouldReloadPresets = true
 	protected modelResetters: (() => void)[] = []
 
@@ -94,9 +95,7 @@ export class CreatePresetWindow extends BaseWindow {
 				key,
 				(value: string) =>
 					func(value) ||
-					App.instance.locales.translate(
-						`windows.createPreset.validationRule.${key}`
-					),
+					translate(`windows.createPreset.validationRule.${key}`),
 			])
 		)
 	}
@@ -164,11 +163,12 @@ export class CreatePresetWindow extends BaseWindow {
 					fieldOpts.options = []
 					fieldOpts.isLoading = true
 					app.project.packIndexer.once(async () => {
-						const options = await app.project.packIndexer.service.getCacheDataFor(
-							fileType,
-							undefined,
-							cacheKey
-						)
+						const options =
+							await app.project.packIndexer.service.getCacheDataFor(
+								fileType,
+								undefined,
+								cacheKey
+							)
 
 						fieldOpts.options = options ?? []
 						fieldOpts.isLoading = false

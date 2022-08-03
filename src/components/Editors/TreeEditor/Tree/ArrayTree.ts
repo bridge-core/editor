@@ -2,7 +2,7 @@ import { createTree } from './createTree'
 import { Tree, treeElementHeight } from './Tree'
 import ArrayTreeComponent from './CommonTree.vue'
 import type { ObjectTree } from './ObjectTree'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 export class ArrayTree extends Tree<Array<unknown>> {
 	public component = markRaw(ArrayTreeComponent)

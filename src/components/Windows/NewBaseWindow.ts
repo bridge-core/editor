@@ -3,9 +3,9 @@ import { v4 as uuid } from 'uuid'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { App } from '/@/App'
-import { del, markRaw, reactive, set } from '@vue/composition-api'
+import { markRaw, reactive } from 'vue'
 
-interface IWindowState {
+export interface IWindowState {
 	isVisible: boolean
 	shouldRender: boolean
 	actions: SimpleAction[]
@@ -14,11 +14,15 @@ export abstract class NewBaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()
 	protected component: VueComponent
 	protected closeTimeout: number | null = null
-	protected state = reactive<IWindowState>({
+	protected state: IWindowState = reactive({
 		isVisible: false,
 		shouldRender: false,
 		actions: [],
 	})
+
+	getState() {
+		return this.state
+	}
 
 	constructor(
 		component: VueComponent,
@@ -31,7 +35,7 @@ export abstract class NewBaseWindow<T = void> extends Signal<T> {
 	}
 
 	defineWindow() {
-		set(App.windowState.state, this.windowUUID, this)
+		App.windowState.addWindow(this.windowUUID, this)
 	}
 	addAction(action: SimpleAction) {
 		this.state.actions.push(action)
@@ -59,6 +63,6 @@ export abstract class NewBaseWindow<T = void> extends Signal<T> {
 		}
 	}
 	dispose() {
-		del(App.windowState.state, this.windowUUID)
+		App.windowState.deleteWindow(this.windowUUID)
 	}
 }

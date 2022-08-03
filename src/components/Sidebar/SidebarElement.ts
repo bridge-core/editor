@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 import { Component } from 'vue'
 import type { IDisposable } from '/@/types/disposable'
 import { SidebarContent } from './Content/SidebarContent'
-import { del, set, watch, WatchStopHandle } from '@vue/composition-api'
+import { del, set, watch, WatchStopHandle } from 'vue'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'
 

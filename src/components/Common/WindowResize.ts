@@ -1,6 +1,6 @@
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { debounce } from 'lodash-es'
-import { reactive } from '@vue/composition-api'
+import { reactive } from 'vue'
 import { App } from '/@/App'
 
 export class WindowResize extends EventDispatcher<[number, number]> {

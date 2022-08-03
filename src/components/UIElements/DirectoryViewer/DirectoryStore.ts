@@ -1,6 +1,6 @@
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { DirectoryWrapper } from './DirectoryView/DirectoryWrapper'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import type { FileWrapper } from './FileView/FileWrapper'
 import type { IFileDiagnostic } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import { VirtualHandle } from '/@/components/FileSystem/Virtual/Handle'

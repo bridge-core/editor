@@ -1,4 +1,4 @@
-import { Ref, ref } from '@vue/composition-api'
+import { markRaw, Ref, ref } from 'vue'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { BaseWrapper } from '../Common/BaseWrapper'
 import { IDirectoryViewerOptions } from '../DirectoryStore'
@@ -31,9 +31,9 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 		try {
 			for await (const entry of this.handle.values()) {
 				if (entry.kind === 'directory')
-					children.push(new DirectoryWrapper(this, entry, this.options))
+					children.push(markRaw((new DirectoryWrapper(this, entry, this.options))))
 				else if (entry.kind === 'file' && !ignoreFiles.includes(entry.name))
-					children.push(new FileWrapper(this, entry, this.options))
+					children.push(markRaw(new FileWrapper(this, entry, this.options)))
 			}
 		} catch(err) {
 			console.error("Trying to access non-existent directory", this.path)

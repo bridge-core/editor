@@ -3,7 +3,7 @@ import { SmartWarning } from './Warning'
 import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
 import { Token } from './Token'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
 import { App } from '/@/App'
 

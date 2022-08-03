@@ -1,13 +1,13 @@
 <template>
 	<div
-		v-if="tabSystem.shouldRender"
+		v-if="tabSystem && tabSystem.shouldRender.value"
 		:style="{
 			'margin-right': '1px',
 			width: isMobile ? '100%' : 'calc(50% - 100px)',
 			height: isMobile ? '50%' : '100%',
 		}"
 	>
-		<TabBar :tabSystem="tabSystem" />
+		<TabBar :id="id" />
 		<keep-alive>
 			<component
 				:is="tabSystem.currentComponent"
@@ -29,16 +29,33 @@
 import TabBar from '/@/components/TabSystem/TabBar.vue'
 import { App } from '/@/App'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight'
+import { useTabSystem } from '../Composables/UseTabSystem'
+import { toRefs, watch } from 'vue'
 
 export default {
 	name: 'TabSystem',
 	mixins: [AppToolbarHeightMixin],
 	props: {
-		tabSystem: Object,
 		id: {
 			type: Number,
 			default: 0,
 		},
+	},
+	setup(props) {
+		const { id } = toRefs(props)
+		const { tabSystem } = useTabSystem(id)
+
+		watch(tabSystem, () => {
+			if (!tabSystem.value) return
+
+			watch(tabSystem.value.shouldRender, () => {
+				App.getApp().then((app) => app.windowResize.dispatch())
+			})
+		})
+
+		return {
+			tabSystem,
+		}
 	},
 	components: {
 		TabBar,
@@ -53,6 +70,7 @@ export default {
 	async destroyed() {
 		const app = await App.getApp()
 		app.windowResize.off(this.updateWindowHeight)
+		app.windowResize.dispatch()
 	},
 	computed: {
 		tabBarHeight() {
@@ -64,7 +82,9 @@ export default {
 		tabHeight() {
 			return (
 				(this.windowHeight - this.appToolbarHeightNumber) /
-					(this.tabSystem.isSharingScreen && this.isMobile ? 2 : 1) -
+					(this.tabSystem.isSharingScreen.value && this.isMobile
+						? 2
+						: 1) -
 				this.tabBarHeight
 			)
 		},
@@ -75,11 +95,6 @@ export default {
 	methods: {
 		updateWindowHeight() {
 			this.windowHeight = window.innerHeight
-		},
-	},
-	watch: {
-		'tabSystem.shouldRender'() {
-			App.getApp().then((app) => app.windowResize.dispatch())
 		},
 	},
 }
