@@ -13,6 +13,7 @@
 					position: 'relative',
 					transform: isSelected ? 'scale(1.1)' : undefined,
 					cursor: canInteractWith ? 'pointer' : undefined,
+					height: smallerSidebarElements ? `34px` : `40px`,
 				}"
 				:class="{
 					loading: isLoading,
