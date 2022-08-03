@@ -1,5 +1,4 @@
 import { reactive } from 'vue'
-import { BaseWindow } from '../../BaseWindow'
 import { NewBaseWindow } from '../../NewBaseWindow'
 import InputWindowComponent from './Input.vue'
 import { App } from '/@/App'
@@ -13,8 +12,8 @@ export interface IInputWindowOpts {
 }
 
 export class InputWindow extends NewBaseWindow<string | null> {
-	protected state = reactive({
-		...super.state,
+	protected state = reactive<any>({
+		...super.getState(),
 		inputValue: '',
 	})
 

@@ -1,6 +1,5 @@
 import { Sidebar, SidebarCategory } from '/@/components/Windows/Layout/Sidebar'
 import PresetWindowComponent from './PresetWindow.vue'
-import { BaseWindow } from '../../BaseWindow'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { App } from '/@/App'
 import { v4 as uuid } from 'uuid'

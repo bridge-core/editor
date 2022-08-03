@@ -59,7 +59,7 @@ export class LocaleManager {
 		if (id === this.currentLanuageId) return
 
 		if (id === 'english') {
-			this.currentLanguage = reactive(structuredClone(enLang))
+			this.currentLanguage = clone(enLang)
 			this.currentLanuageId = id
 			return
 		}
@@ -74,10 +74,7 @@ export class LocaleManager {
 				`[Locales] Language with id "${id}" not found: File "${fetchName}" does not exist`
 			)
 
-		this.currentLanguage = deepMerge(
-			structuredClone(enLang),
-			structuredClone({ ...language })
-		)
+		this.currentLanguage = deepMerge(clone(enLang), clone({ ...language }))
 
 		this.currentLanuageId = id
 	}
@@ -112,4 +109,11 @@ export class LocaleManager {
 
 export function translate(key?: string) {
 	return LocaleManager.translate(key)
+}
+
+function clone(obj: any) {
+	if (typeof window.structuredClone === 'function')
+		return window.structuredClone(obj)
+
+	return JSON.parse(JSON.stringify(obj))
 }
