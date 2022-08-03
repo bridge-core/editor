@@ -12,7 +12,7 @@
 		@click.prevent="onClick($event)"
 		@keydown.space.prevent="isFocused ? onClick($event) : null"
 		@keydown.stop="onKeyDown"
-		@click.right.prevent="baseWrapper.onRightClick($event)"
+		@click.right.prevent.stop="baseWrapper.onRightClick($event)"
 		@focus.exact="onFocus"
 		@blur="isFocused = false"
 	>

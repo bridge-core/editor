@@ -28,7 +28,7 @@ import { ToBridgeFolderProjectAction } from './Actions/ToBridgeFolderProject'
 export class PackExplorer extends SidebarContent {
 	component = markRaw(PackExplorerComponent)
 	actions: SidebarAction[] = []
-	directoryEntries = ref<Record<string, DirectoryWrapper>>({})
+	directoryEntries: Record<string, DirectoryWrapper> = {}
 	topPanel: InfoPanel | undefined = undefined
 	showNoProjectView = false
 	headerHeight = '60px'
@@ -143,7 +143,7 @@ export class PackExplorer extends SidebarContent {
 		const selectedId = this.selectedAction?.getConfig().id
 		if (!selectedId) return
 
-		showFolderContextMenu(event, this.directoryEntries.value[selectedId], {
+		showFolderContextMenu(event, this.directoryEntries[selectedId], {
 			hideDelete: true,
 			hideRename: true,
 			hideDuplicate: true,
