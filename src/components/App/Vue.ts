@@ -7,10 +7,11 @@ import AppComponent from '/@/App.vue'
 Vue.use(Vuetify)
 Vue.config.productionTip = false
 
-await LocaleManager.setDefaultLanguage()
-
 export const vue = new Vue({
 	vuetify,
 	render: (h) => h(AppComponent),
 })
-vue.$mount('#app')
+
+LocaleManager.setDefaultLanguage().then(() => {
+	vue.$mount('#app')
+})
