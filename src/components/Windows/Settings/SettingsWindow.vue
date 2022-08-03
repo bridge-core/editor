@@ -23,6 +23,17 @@
 			/>
 		</template>
 		<template #default="{ selectedSidebar }">
+			<v-alert v-if="state.reloadRequired" border="bottom" type="info">
+				<div class="d-flex align-center">
+					<span>{{ t('windows.settings.reloadRequired') }}</span>
+					<v-spacer />
+					<v-btn @click="onReload" text dense>
+						<v-icon small class="pr-1"> mdi-refresh </v-icon>
+						{{ t('general.reload') }}
+					</v-btn>
+				</div>
+			</v-alert>
+
 			<span
 				v-if="
 					sidebar.currentState.length === 0 && sidebar.filter !== ''
@@ -66,5 +77,8 @@ const title = computed(() => {
 
 function onClose() {
 	props.window.close()
+}
+function onReload() {
+	location.reload()
 }
 </script>

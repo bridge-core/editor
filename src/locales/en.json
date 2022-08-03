@@ -729,6 +729,7 @@
 		"settings": {
 			"title": "Settings",
 			"searchSettings": "Search settings...",
+			"reloadRequired": "You need to reload bridge. in order to apply the changes made to the settings.",
 			"sidebar": {
 				"name": "Sidebar",
 				"sidebarRight": {

@@ -8,6 +8,7 @@ import { setSettingsState, settingsState } from './SettingsState'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { translate } from '../../Locales/Manager'
 import { NewBaseWindow } from '../NewBaseWindow'
+import { reactive } from 'vue'
 
 export class SettingsWindow extends NewBaseWindow {
 	public static readonly loadedSettings = new Signal<any>()
@@ -16,6 +17,11 @@ export class SettingsWindow extends NewBaseWindow {
 	protected bridgeCategory = new SidebarCategory({
 		items: [],
 		text: 'bridge.',
+	})
+
+	protected state = reactive<any>({
+		...super.getState(),
+		reloadRequired: false,
 	})
 
 	constructor(public parent: App) {

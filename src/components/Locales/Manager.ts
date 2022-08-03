@@ -17,7 +17,6 @@ const languages = Object.fromEntries(
 		)
 	).map(([key, val]) => [key.split('/').pop(), val])
 )
-console.log(languages)
 const enLang = JSON.parse(enLangRaw)
 
 export class LocaleManager {

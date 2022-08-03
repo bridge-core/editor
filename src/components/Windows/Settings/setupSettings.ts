@@ -220,15 +220,15 @@ export async function setupSettings(settings: SettingsWindow) {
 	)
 	settings.addControl(
 		new Selection({
+			omitFromSaveFile: true,
 			category: 'general',
 			name: 'windows.settings.general.language.name',
 			description: 'windows.settings.general.language.description',
 			key: 'locale',
-			get options() {
-				return LocaleManager.getAvailableLanguages()
-			},
+			options: LocaleManager.getAvailableLanguages(),
 			default: LocaleManager.getCurrentLanguageId(),
 			onChange: (val) => {
+				;(<any>settings.getState()).reloadRequired = true
 				set('language', val)
 			},
 		})
