@@ -1,6 +1,5 @@
 import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import ExtensionStoreComponent from './ExtensionStore.vue'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { App } from '/@/App'
 import { compareVersions } from 'bridge-common-utils'
 import { ExtensionTag } from './ExtensionTag'
@@ -8,17 +7,28 @@ import { ExtensionViewer } from './ExtensionViewer'
 import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
 import { Notification } from '/@/components/Notifications/Notification'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
+import { IWindowState, NewBaseWindow } from '../NewBaseWindow'
+import { reactive } from 'vue'
 
 let updateNotification: Notification | undefined = undefined
-export class ExtensionStoreWindow extends BaseWindow {
+
+interface IExtensionStoreState extends IWindowState {
+	extensions: ExtensionViewer[]
+}
+export class ExtensionStoreWindow extends NewBaseWindow {
 	protected baseUrl =
 		'https://raw.githubusercontent.com/bridge-core/plugins/master'
 	protected sidebar = new Sidebar([])
-	protected extensions: ExtensionViewer[] = []
 	protected extensionTags!: Record<string, { icon: string; color?: string }>
 	protected installedExtensions: ExtensionViewer[] = []
 	public readonly tags: Record<string, ExtensionTag> = {}
 	protected updates = new Set<ExtensionViewer>()
+	// TODO: Why TypeScript + Vue?! If we don't cast to any first, it will complain about a missing method
+	// because it unwraps the SimpleAction class instances for some weird reason
+	protected state: IExtensionStoreState = <any>reactive({
+		...super.state,
+		extensions: [],
+	})
 
 	constructor() {
 		super(ExtensionStoreComponent)
@@ -60,14 +70,14 @@ export class ExtensionStoreWindow extends BaseWindow {
 		if (extensions.length === 0 && !navigator.onLine)
 			return this.createOfflineWindow()
 
-		this.extensions = extensions.map(
+		this.state.extensions = extensions.map(
 			(extension) => new ExtensionViewer(this, extension)
 		)
 
 		this.updates.clear()
 
 		installedExtensions.forEach((installedExtension) => {
-			const extension = this.extensions.find(
+			const extension = this.state.extensions.find(
 				(ext) => ext.id === installedExtension.id
 			)
 
@@ -87,7 +97,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 					this.updates.add(extension)
 				}
 			} else {
-				this.extensions.push(installedExtension.forStore(this))
+				this.state.extensions.push(installedExtension.forStore(this))
 			}
 		})
 
@@ -138,7 +148,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 		this.installedExtensions.splice(index, 1)
 
 		if (extension.isLocalOnly)
-			this.extensions = this.extensions.filter(
+			this.state.extensions = this.state.extensions.filter(
 				(e) => e.id !== extension.id
 			)
 	}
@@ -173,7 +183,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 	protected getExtensions(findTag?: ExtensionTag) {
 		return [
-			...new Set([...this.extensions, ...this.installedExtensions]),
+			...new Set([...this.state.extensions, ...this.installedExtensions]),
 		].filter((ext) => !ext.isLocalOnly && (!findTag || ext.hasTag(findTag)))
 	}
 	protected getExtensionsByTag(findTag: ExtensionTag) {

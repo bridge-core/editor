@@ -3,9 +3,9 @@ import { v4 as uuid } from 'uuid'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { App } from '/@/App'
-import { del, markRaw, reactive, set } from 'vue'
+import { markRaw, reactive } from 'vue'
 
-interface IWindowState {
+export interface IWindowState {
 	isVisible: boolean
 	shouldRender: boolean
 	actions: SimpleAction[]
@@ -14,7 +14,7 @@ export abstract class NewBaseWindow<T = void> extends Signal<T> {
 	protected windowUUID = uuid()
 	protected component: VueComponent
 	protected closeTimeout: number | null = null
-	protected state = reactive<IWindowState>({
+	protected state: IWindowState = reactive({
 		isVisible: false,
 		shouldRender: false,
 		actions: [],

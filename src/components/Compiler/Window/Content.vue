@@ -25,7 +25,6 @@
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 
 const props = defineProps(['window'])
-console.log(props.window)
 const state = props.window.getState()
 const sidebar = props.window.sidebar
 const categories = props.window.categories
