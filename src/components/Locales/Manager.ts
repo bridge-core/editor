@@ -1,23 +1,17 @@
 import { deepMerge } from 'bridge-common-utils'
 import { get } from 'idb-keyval'
-import { reactive } from 'vue'
-import { settingsState } from '../Windows/Settings/SettingsState'
-import enLangRaw from '/@/locales/en.json?raw'
+import enLang from '/@/locales/en.json'
 import allLanguages from '/@/locales/languages.json'
 
 const languages = Object.fromEntries(
 	Object.entries(
-		import.meta.glob(
-			[
-				'../../locales/*.json',
-				'!../../locales/en.json',
-				'!../../locales/languages.json',
-			],
-			{ as: 'raw' }
-		)
+		import.meta.glob([
+			'../../locales/*.json',
+			'!../../locales/en.json',
+			'!../../locales/languages.json',
+		])
 	).map(([key, val]) => [key.split('/').pop(), val])
 )
-const enLang = JSON.parse(enLangRaw)
 
 export class LocaleManager {
 	protected static currentLanguage: any = enLang
@@ -68,7 +62,7 @@ export class LocaleManager {
 		if (!fetchName)
 			throw new Error(`[Locales] Language with id "${id}" not found`)
 
-		const language = JSON.parse(await languages[fetchName]())
+		const language = (await languages[fetchName]()).default
 		if (!language)
 			throw new Error(
 				`[Locales] Language with id "${id}" not found: File "${fetchName}" does not exist`

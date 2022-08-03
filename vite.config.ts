@@ -13,6 +13,9 @@ export default defineConfig({
 	server: {
 		port: 8080,
 	},
+	json: {
+		stringify: true,
+	},
 	resolve: {
 		alias: {
 			'/@': join(__dirname, 'src'),
