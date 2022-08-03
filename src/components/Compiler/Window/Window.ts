@@ -1,5 +1,4 @@
 import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import Content from './Content.vue'
 import BuildProfiles from './BuildProfiles.vue'
 import Logs from './Logs.vue'
