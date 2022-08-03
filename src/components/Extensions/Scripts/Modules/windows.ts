@@ -8,7 +8,7 @@ import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 import { NewBaseWindow } from '/@/components/Windows/NewBaseWindow'
 
 export const WindowModule = ({}: IModuleConfig) => ({
-	NewBaseWindow,
+	BaseWindow: NewBaseWindow,
 	createWindow: (
 		vueComponent: VueComponent,
 		state: Record<string, unknown>
