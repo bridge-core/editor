@@ -12,8 +12,18 @@ export async function setupSidebar() {
 		group: 'projectChooser',
 		displayName: 'windows.projectChooser.title',
 		icon: 'mdi-view-dashboard-outline',
-		disabled: () => App.instance.hasNoProjects,
+		disabled: () =>
+			App.instance.hasNoProjects &&
+			App.instance.bridgeFolderSetup.hasFired,
 		onClick: async () => {
+			if (
+				App.instance.hasNoProjects &&
+				!App.instance.bridgeFolderSetup.hasFired
+			) {
+				const didSetup = await App.instance.setupBridgeFolder()
+				if (!didSetup) return
+			}
+
 			if (isUsingFileSystemPolyfill.value) {
 				createVirtualProjectWindow()
 			} else {
