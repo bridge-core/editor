@@ -17,7 +17,6 @@ import { platform } from '/@/utils/os'
 import { TextField } from './Controls/TextField/TextField'
 import { devActions } from '/@/components/Developer/Actions'
 import { FontSelection } from './Controls/FontSelection'
-import { shallowReactive } from 'vue'
 import { LocaleManager } from '../../Locales/Manager'
 
 export async function setupSettings(settings: SettingsWindow) {
@@ -113,7 +112,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.appearance.font.description',
 			key: 'font',
 			default: 'Roboto',
-			options: shallowReactive([
+			options: [
 				'Roboto',
 				'Arial',
 				'Verdana',
@@ -124,7 +123,7 @@ export async function setupSettings(settings: SettingsWindow) {
 				'Monaco',
 				'Courier New',
 				'monospace',
-			]),
+			],
 		})
 	)
 	settings.addControl(
@@ -134,7 +133,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.appearance.editorFont.description',
 			key: 'editorFont',
 			default: platform() === 'darwin' ? 'Menlo' : 'Consolas',
-			options: shallowReactive([
+			options: [
 				'Roboto',
 				'Arial',
 				'Consolas',
@@ -142,7 +141,7 @@ export async function setupSettings(settings: SettingsWindow) {
 				'Monaco',
 				'"Courier New"',
 				'monospace',
-			]),
+			],
 			onChange: async (val) => {
 				const app = await App.getApp()
 				app.projectManager.updateAllEditorOptions({

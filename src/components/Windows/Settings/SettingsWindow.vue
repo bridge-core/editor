@@ -1,7 +1,7 @@
 <template>
 	<SidebarWindow
 		:windowTitle="title"
-		:isVisible="isVisible"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:percentageWidth="80"
@@ -45,39 +45,26 @@
 	</SidebarWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { pointerDevice } from '/@/utils/pointerDevice'
+import { useTranslations } from '../../Composables/useTranslations'
+import { computed } from 'vue'
 
-export default {
-	name: 'SettingsWindow',
-	mixins: [TranslationMixin],
-	components: {
-		SidebarWindow,
-	},
-	props: ['currentWindow'],
-	setup() {
-		return { pointerDevice }
-	},
-	data() {
-		return this.currentWindow
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close()
-		},
-	},
-	computed: {
-		title() {
-			if (!this.sidebar.currentElement) return 'windows.settings.title'
-			else
-				return `[${this.sidebar.currentElement.text} - ${this.t(
-					'windows.settings.title'
-				)}]`
-		},
-	},
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.getState()
+const sidebar = props.window.sidebar
+
+const title = computed(() => {
+	if (!sidebar.currentElement) return 'windows.settings.title'
+	else
+		return `[${sidebar.currentElement.text} - ${t(
+			'windows.settings.title'
+		)}]`
+})
+
+function onClose() {
+	props.window.close()
 }
 </script>
-
-<style></style>

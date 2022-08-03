@@ -5,11 +5,11 @@ import { setupSettings } from './setupSettings'
 import { App } from '/@/App'
 import { SettingsSidebar } from './SettingsSidebar'
 import { setSettingsState, settingsState } from './SettingsState'
-import { BaseWindow } from '../BaseWindow'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { translate } from '../../Locales/Manager'
+import { NewBaseWindow } from '../NewBaseWindow'
 
-export class SettingsWindow extends BaseWindow {
+export class SettingsWindow extends NewBaseWindow {
 	public static readonly loadedSettings = new Signal<any>()
 
 	protected sidebar = new SettingsSidebar([])
@@ -109,7 +109,7 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async open() {
-		if (this.isVisible) return
+		if (this.state.isVisible) return
 
 		this.sidebar.removeElements()
 		await this.setup()
