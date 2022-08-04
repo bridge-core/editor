@@ -56,12 +56,6 @@ export class FindAndReplaceTab extends Tab {
 		else this.shouldLoadPackDirs = true
 	}
 
-	get displayQueryResults() {
-		return this.state.queryResults
-			.map(({ matches, ...other }) => [other, ...matches])
-			.flat()
-	}
-
 	async setup() {
 		await this.isSearchFree.lock()
 

@@ -13,31 +13,36 @@
 					hide-details
 					:autofocus="pointerDevice === 'mouse'"
 					:label="t('findAndReplace.search')"
-					v-model="searchFor"
+					v-model="state.searchFor"
 				/>
 				<v-text-field
-					v-if="!queryOptions.isReadOnly"
+					v-if="!state.queryOptions.isReadOnly"
 					class="mb-2"
 					prepend-inner-icon="mdi-file-replace-outline"
 					outlined
 					dense
 					hide-details
 					:label="t('findAndReplace.replace')"
-					v-model="replaceWith"
+					v-model="state.replaceWith"
 				/>
 				<v-btn
-					v-if="!queryOptions.isReadOnly"
+					v-if="!state.queryOptions.isReadOnly"
 					color="primary"
 					class="mb-2"
 					block
-					:disabled="replaceWith === '' || searchFor === ''"
+					:disabled="
+						state.replaceWith === '' || state.searchFor === ''
+					"
 					:loading="tab.isLoading"
 					@click="onReplaceAll()"
 				>
 					<v-icon class="mr-1" small>mdi-file-replace-outline</v-icon>
 					{{ t('findAndReplace.replaceAll') }}
 				</v-btn>
-				<SearchType class="mb-2" v-model="queryOptions.searchType" />
+				<SearchType
+					class="mb-2"
+					v-model="state.queryOptions.searchType"
+				/>
 			</v-col>
 			<v-col
 				:cols="hasLimitedSpace ? 12 : 9"
@@ -53,20 +58,22 @@
 					rounded
 				>
 					<p
-						v-if="queryResults.length === 0"
+						v-if="state.queryResults.length === 0"
 						style="white-space: normal"
 					>
 						{{
 							t(
 								`findAndReplace.no${
-									searchFor === '' ? 'Search' : 'Results'
+									state.searchFor === ''
+										? 'Search'
+										: 'Results'
 								}`
 							)
 						}}
 					</p>
 					<v-virtual-scroll
 						ref="virtualScroller"
-						:items="tab.displayQueryResults"
+						:items="displayQueryResults"
 						:height="(hasLimitedSpace ? 400 : height) - 40"
 						:bench="30"
 						item-height="22"
@@ -88,11 +95,11 @@
 								<v-spacer />
 
 								<v-btn
-									v-if="!queryOptions.isReadOnly"
+									v-if="!state.queryOptions.isReadOnly"
 									style="position: relative; top: 3px"
 									icon
 									x-small
-									:disabled="replaceWith === ''"
+									:disabled="state.replaceWith === ''"
 									@click="
 										onReplaceSingleFile(
 											item.filePath,
@@ -106,7 +113,7 @@
 
 							<Match
 								v-else
-								:showReplaceWith="!!replaceWith"
+								:showReplaceWith="!!state.replaceWith"
 								:replaceWith="processReplaceWith(item.match)"
 								:item="item"
 							/>
@@ -118,98 +125,93 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import SearchType from './Controls/SearchType.vue'
 import Match from './Match.vue'
 import FilePath from './FilePath.vue'
 
 import { debounce } from 'lodash-es'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
-import { createRegExp, processFileText } from './Utils.ts'
-import { set } from 'vue'
+import { createRegExp, processFileText } from './Utils'
+import {
+	computed,
+	onActivated,
+	onMounted,
+	ref,
+	set,
+	watch,
+	watchEffect,
+} from 'vue'
 import { pointerDevice } from '/@/utils/pointerDevice'
+import { useTranslations } from '../Composables/useTranslations'
+import { Component } from 'vue/types/umd'
+import { Event } from 'three'
+import { AnyFileHandle } from '../FileSystem/Types'
+import { App } from '/@/App'
 
-export default {
-	name: 'FindAndReplaceTab',
-	mixins: [TranslationMixin],
-	components: {
-		SearchType,
-		Match,
-		FilePath,
-	},
-
-	props: {
-		tab: Object,
-		height: Number,
+const { t } = useTranslations()
+const props = defineProps({
+	tab: {
+		type: Object,
+		required: true,
 	},
 
-	setup() {
-		return {
-			pointerDevice,
-		}
-	},
-	mounted() {
-		this.$refs.virtualScroller.$el.scrollTop = this.scrollTop
-	},
-	activated() {
-		this.$refs.virtualScroller.$el.scrollTop = this.scrollTop
-	},
-	data() {
-		return this.tab.state
-	},
+	height: Number,
+})
 
-	methods: {
-		updateQuery: debounce(async function () {
-			await this.tab.updateQuery()
-		}, 250),
+const state = computed(() => props.tab.state)
+const hasLimitedSpace = computed(
+	() => App.instance.mobile.is.value || props.tab.parent.isSharingScreen.value
+)
+const displayQueryResults = computed(() => {
+	return state.value.queryResults
+		.map(({ matches, ...other }: any) => [other, ...matches])
+		.flat()
+})
 
-		onScroll(event) {
-			this.scrollTop = event.target.scrollTop
-		},
-		onReplaceAll() {
-			this.tab.executeQuery()
-		},
-		processReplaceWith(match) {
-			return processFileText(
-				match,
-				createRegExp(this.searchFor, this.queryOptions.searchType),
-				this.replaceWith
-			)
-		},
-		onReplaceSingleFile(filePath, fileHandle) {
-			this.tab.executeSingleQuery(filePath, fileHandle)
-		},
-	},
-	computed: {
-		hasLimitedSpace() {
-			return (
-				this.$vuetify.breakpoint.mobile ||
-				this.tab.parent.isSharingScreen.value
-			)
-		},
-	},
+const virtualScroller = ref<any | null>(null)
+onMounted(() => {
+	if (virtualScroller.value)
+		virtualScroller.value.$el.scrollTop = state.value.scrollTop
+})
+onActivated(() => {
+	if (virtualScroller.value)
+		virtualScroller.value.$el.scrollTop = state.value.scrollTop
+})
 
-	watch: {
-		'tab.uuid'() {
-			for (const key in this.tab.state) {
-				set(this, key, this.tab.state[key])
-			}
-		},
-		searchFor() {
-			this.updateQuery()
-		},
-		'queryOptions.searchType'() {
-			this.updateQuery()
-		},
-		'queryOptions.includeFiles'() {
-			this.updateQuery()
-		},
-		'queryOptions.excludeFiles'() {
-			this.updateQuery()
-		},
-		scrollTop() {
-			this.$refs.virtualScroller.$el.scrollTop = this.scrollTop
-		},
-	},
+const updateQuery = debounce(async function () {
+	await props.tab.updateQuery()
+}, 250)
+
+function onScroll(event: Event) {
+	state.value.scrollTop = event.target.scrollTop
 }
+function onReplaceAll() {
+	props.tab.executeQuery()
+}
+function processReplaceWith(match: string) {
+	return processFileText(
+		match,
+		createRegExp(
+			state.value.searchFor,
+			state.value.queryOptions.searchType
+		)!,
+		state.value.replaceWith
+	)
+}
+function onReplaceSingleFile(filePath: string, fileHandle: AnyFileHandle) {
+	props.tab.executeSingleQuery(filePath, fileHandle)
+}
+
+let lastSearchQuery = ''
+let lastSearchType = 0
+watchEffect(() => {
+	if (
+		state.value.searchFor !== lastSearchQuery ||
+		state.value.queryOptions.searchType !== lastSearchType
+	) {
+		lastSearchQuery = state.value.searchFor
+		lastSearchType = state.value.queryOptions.searchType
+		updateQuery()
+	}
+})
 </script>
