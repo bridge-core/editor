@@ -153,7 +153,7 @@ const renderActions = computed(() => {
 			key,
 			{ type: 'section', icon: action.icon, name: action.name },
 		])
-		if (this.openSection === key)
+		if (openSection.value === key)
 			entries.push(
 				...Object.entries(action.submenu.state).map(([key, action]) => [
 					key,
