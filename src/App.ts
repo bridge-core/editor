@@ -190,13 +190,13 @@ export class App {
 	 */
 	static async main(appComponent: Vue) {
 		console.time('[APP] Ready')
+
 		this._instance = markRaw(new App(appComponent))
 		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
 
 		this.instance.fileSystem.setup(await getStorageDirectory())
-		await this.instance.fileSystem.unlink(`projects/${virtualProjectName}`)
 
 		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {

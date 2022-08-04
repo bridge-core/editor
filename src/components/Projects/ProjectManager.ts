@@ -124,6 +124,9 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async createVirtualProject() {
+		// Ensure that we first unlink the previous virtual project
+		await this.app.fileSystem.unlink(`projects/${virtualProjectName}`)
+
 		const handle = await this.app.fileSystem.getDirectoryHandle(
 			`projects/${virtualProjectName}`,
 			{
