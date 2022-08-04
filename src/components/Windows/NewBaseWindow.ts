@@ -4,6 +4,7 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { App } from '/@/App'
 import { markRaw, reactive } from 'vue'
+import { Sidebar } from './Layout/Sidebar'
 
 export interface IWindowState {
 	isVisible: boolean
@@ -19,6 +20,7 @@ export abstract class NewBaseWindow<T = void> extends Signal<T> {
 		shouldRender: false,
 		actions: [],
 	})
+	protected sidebar?: Sidebar
 
 	getState() {
 		return this.state
@@ -42,6 +44,8 @@ export abstract class NewBaseWindow<T = void> extends Signal<T> {
 	}
 
 	close(data: T | null) {
+		this.sidebar?.setFilter('')
+
 		this.state.isVisible = false
 		if (data !== null) this.dispatch(data)
 

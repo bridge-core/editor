@@ -7,7 +7,7 @@ import { ExtensionViewer } from './ExtensionViewer'
 import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
 import { Notification } from '/@/components/Notifications/Notification'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
-import { IWindowState, NewBaseWindow } from '../NewBaseWindow'
+import { NewBaseWindow } from '../NewBaseWindow'
 
 let updateNotification: Notification | undefined = undefined
 
