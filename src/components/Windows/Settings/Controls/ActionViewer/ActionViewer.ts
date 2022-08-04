@@ -25,7 +25,7 @@ export class ActionViewer extends Control<any> {
 	matches(filter: string) {
 		return (
 			this.config.action.name.includes(filter) ||
-			this.config.action.description.includes(filter)
+			this.config.action.description?.includes(filter)
 		)
 	}
 	onChange = async () => {}
