@@ -18,7 +18,7 @@ export interface IRequirements {
 	 */
 	packTypes?: TPackTypeId[]
 	/**
-	 * Check for manifest dependency uuids to be present in the pack.
+	 * Check for manifest dependencies to be present in the pack.
 	 */
 	dependencies?: string[]
 	/**
@@ -123,7 +123,27 @@ export class RequiresMatcher {
 			)
 		// Manifest dependencies
 		const dependencies: string[] | undefined =
-			this.bpManifest?.dependencies?.map((dep: any) => dep.uuid ?? '')
+			this.bpManifest?.dependencies?.map((dep: any) => {
+				if (dep?.module_name) {
+					return dep.module_name
+				} else {
+					switch (dep.uuid ?? '') {
+						case 'b26a4d4c-afdf-4690-88f8-931846312678':
+							return 'mojang-minecraft'
+						case '6f4b6893-1bb6-42fd-b458-7fa3d0c89616':
+							return 'mojang-gametest'
+						case '2bd50a27-ab5f-4f40-a596-3641627c635e':
+							return 'mojang-minecraft-ui'
+						case '53d7f2bf-bf9c-49c4-ad1f-7c803d947920':
+							return 'mojang-minecraft-server-admin'
+						case '777b1798-13a6-401c-9cba-0cf17e31a81b':
+							return 'mojang-net'
+						default:
+							return ''
+					}
+				}
+			})
+		console.log(dependencies, requires.dependencies)
 		const matchesManifestDependency =
 			!requires.dependencies ||
 			!dependencies ||
