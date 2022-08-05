@@ -472,6 +472,10 @@ export class CommandData extends Signal<void> {
 					subcommands.map((subcommand) => subcommand.commandName)
 				)
 			}
+			case 'integerRange':
+				return /^([\d]*)?([.]{2})?([\d]*)?$/.test(testStr)
+					? 'full'
+					: 'none'
 			default:
 				return 'none'
 		}
@@ -576,6 +580,11 @@ export class CommandData extends Signal<void> {
 								(command) => command.commandName
 						  )
 						: []
+				)
+			case 'integerRange':
+				return this.toCompletionItem(
+					['0', '1', '2', '3', '..0', '0..', '0..1'],
+					commandArgument.description
 				)
 		}
 
