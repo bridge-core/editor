@@ -20,7 +20,11 @@ export interface IRequirements {
 	/**
 	 * Check for manifest dependency uuids to be present in the pack.
 	 */
-	dependencies: string[]
+	dependencies?: string[]
+	/**
+	 * Whether all conditions must be met. If set to false, any condition met makes the matcher valid.
+	 */
+	matchAll?: boolean
 }
 
 export interface IFailure {
@@ -82,6 +86,7 @@ export class RequiresMatcher {
 			throw new Error(
 				'RequiresMatcher is not setup. Make sure to call setup() before isValid().'
 			)
+		requires.matchAll ??= true
 
 		// Pack type
 		const matchesPackTypes = this.app.project.hasPacks(
@@ -117,11 +122,8 @@ export class RequiresMatcher {
 					: this.experimentalGameplay[experimentalFeature]
 			)
 		// Manifest dependencies
-		const dependencies:
-			| string[]
-			| undefined = this.bpManifest?.dependencies?.map(
-			(dep: any) => dep.uuid ?? ''
-		)
+		const dependencies: string[] | undefined =
+			this.bpManifest?.dependencies?.map((dep: any) => dep.uuid ?? '')
 		const matchesManifestDependency =
 			!requires.dependencies ||
 			!dependencies ||
@@ -134,11 +136,15 @@ export class RequiresMatcher {
 		if (!matchesManifestDependency)
 			this.failures.push({ type: 'manifestDependency' })
 
-		return (
-			matchesPackTypes &&
-			matchesExperimentalGameplay &&
-			matchesTargetVersion &&
-			matchesManifestDependency
-		)
+		return requires.matchAll
+			? matchesPackTypes &&
+					matchesExperimentalGameplay &&
+					matchesTargetVersion &&
+					matchesManifestDependency
+			: (matchesPackTypes && requires.packTypes) ||
+					(matchesExperimentalGameplay &&
+						requires.experimentalGameplay) ||
+					(matchesTargetVersion && requires.targetVersion) ||
+					(matchesManifestDependency && requires.dependencies)
 	}
 }
