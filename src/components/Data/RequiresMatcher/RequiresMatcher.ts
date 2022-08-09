@@ -143,7 +143,7 @@ export class RequiresMatcher {
 					}
 				}
 			})
-		console.log(dependencies, requires.dependencies)
+
 		const matchesManifestDependency =
 			!requires.dependencies ||
 			!dependencies ||
