@@ -25,9 +25,10 @@ export default {
 		async onProjectChanged() {
 			const app = await App.getApp()
 			await app.projectManager.projectReady.fired
-			const projectData = app.project.projectData
+			const project = app.project
+			const projectData = project.projectData
 
-			this.name = projectData.name
+			this.name = project.displayName
 			this.imgSrc = projectData.imgSrc
 		},
 	},

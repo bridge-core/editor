@@ -14,7 +14,7 @@
 			<template v-for="element in sidebarItems">
 				<SidebarItem
 					v-if="element.type === 'item'"
-					:key="`${element.text}`"
+					:key="`${element.id}`"
 					:icon="element.icon"
 					:color="element.color"
 					:text="element.text"
@@ -27,7 +27,7 @@
 
 				<SidebarGroup
 					v-else
-					:key="`${element.text}.${element.isOpen}`"
+					:key="`${element.id}.${element.isOpen}`"
 					:isOpen="element.isOpen"
 					:items="element.getItems()"
 					:text="element.text"

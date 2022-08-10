@@ -97,7 +97,8 @@ export class ProjectChooserWindow extends NewBaseWindow {
 		)
 
 		projects.forEach((project) =>
-			this.addProject(project.projectData.path!, project.name, {
+			this.addProject(project.projectData.path!, project.displayName, {
+				displayName: project.displayName,
 				...project.projectData,
 				isLocalProject: project.isLocal,
 				experimentalGameplay: experimentalToggles.map(
@@ -118,6 +119,7 @@ export class ProjectChooserWindow extends NewBaseWindow {
 		comMojangProjects.forEach((project) =>
 			this.addProject(`comMojang/${project.name}`, project.name, {
 				name: project.name,
+				displayName: project.name,
 				imgSrc:
 					project.packs.find((pack) => !!pack.packIcon)?.packIcon ??
 					undefined,

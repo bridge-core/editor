@@ -45,7 +45,7 @@
 					/>
 					<div>
 						<h1 style="overflow-wrap: anywhere">
-							{{ sidebar.currentState.name }}
+							{{ sidebar.currentState.displayName }}
 						</h1>
 						<h2 class="subheader">by {{ authors }}</h2>
 					</div>

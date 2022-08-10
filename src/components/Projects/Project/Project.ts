@@ -78,6 +78,9 @@ export abstract class Project {
 	get name() {
 		return this.baseDirectory.name
 	}
+	get displayName() {
+		return this.config.get().name ?? this.name
+	}
 	get tabSystem() {
 		if (this.tabSystems[0].isActive) return this.tabSystems[0]
 		if (this.tabSystems[1].isActive) return this.tabSystems[1]
