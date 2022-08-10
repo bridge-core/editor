@@ -40,7 +40,6 @@ export class HTMLPreviewTab extends IframeTab {
 
 		this.api.loaded.once(() => {
 			this.api.on('saveScrollPosition', (scrollY) => {
-				console.log('SAVE', scrollY)
 				if (scrollY !== 0) this.scrollY = scrollY
 			})
 		})
@@ -52,7 +51,7 @@ export class HTMLPreviewTab extends IframeTab {
 		await super.setup()
 	}
 	async onActivate() {
-		console.log(this.scrollY)
+		await this.api.loaded.fired
 		this.api.trigger('loadScrollPosition', this.scrollY)
 
 		await super.onActivate()
@@ -100,13 +99,11 @@ export class HTMLPreviewTab extends IframeTab {
 				await channel.connect()
 	
 				window.addEventListener('scroll', () => {
-					console.log('SCROLL')
 					channel.simpleTrigger('saveScrollPosition', window.scrollY)
 				})
 	
 	
 				channel.on('loadScrollPosition', (scrollY) => {
-					console.log('LOAD', scrollY)
 					window.scrollTo(0, scrollY)
 				})
 				
@@ -131,9 +128,10 @@ export class HTMLPreviewTab extends IframeTab {
 		if (this.rawHtml !== '') this.updateHtml()
 	}
 
-	updateHtml() {
+	async updateHtml() {
 		this.srcdoc = this.html
 
+		await this.api.loaded.fired
 		this.api.trigger('loadScrollPosition', this.scrollY)
 	}
 
