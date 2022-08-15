@@ -1,6 +1,6 @@
 import { IframeApi } from '../../IframeApi'
 import { GenericRequest } from '../GenericRequest'
-import { App } from '/@/App'
+import { resolveFileReference } from './ResolveFileReference'
 
 export class ReadFileRequest extends GenericRequest<string, Uint8Array> {
 	constructor(api: IframeApi) {
@@ -8,8 +8,8 @@ export class ReadFileRequest extends GenericRequest<string, Uint8Array> {
 	}
 
 	async handle(filePath: string, origin: string): Promise<Uint8Array> {
-		const app = await App.getApp()
-		const file = await app.fileSystem.readFile(filePath)
+		const fileHandle = await resolveFileReference(filePath, this.api)
+		const file = await fileHandle.getFile()
 
 		return new Uint8Array(await file.arrayBuffer())
 	}

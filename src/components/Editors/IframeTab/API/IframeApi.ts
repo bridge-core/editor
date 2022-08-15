@@ -7,13 +7,11 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { IDisposable } from '/@/types/disposable'
 import { isNightly as isNightlyBuild } from '/@/utils/app/isNightly'
 import { version as appVersion } from '/@/utils/app/version'
-import {
-	openedFileReferenceName,
-	WriteFileRequest,
-} from './Requests/FileSystem/WriteFile'
+import { WriteFileRequest } from './Requests/FileSystem/WriteFile'
 import { ReadTextFileRequest } from './Requests/FileSystem/ReadTextFile'
 import { IframeTab } from '../IframeTab'
 import { OpenFileEvent } from './Events/Tab/OpenFile'
+import { openedFileReferenceName } from './Requests/FileSystem/ResolveFileReference'
 
 export class IframeApi {
 	didSetup = false
@@ -45,15 +43,16 @@ export class IframeApi {
 		})
 	}
 
+	get app() {
+		return this.tab.project.app
+	}
+
 	get openWithPayload() {
 		const payload = this.tab.getOptions().openWithPayload ?? {}
 
 		return {
 			filePath: payload.filePath,
 			fileReference: openedFileReferenceName,
-			data: this.openedFileHandle
-				?.getFile()
-				?.then((file) => file.arrayBuffer()),
 			isReadOnly: payload.isReadOnly ?? false,
 		}
 	}

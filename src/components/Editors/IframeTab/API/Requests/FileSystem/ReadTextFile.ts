@@ -1,6 +1,6 @@
 import { IframeApi } from '../../IframeApi'
 import { GenericRequest } from '../GenericRequest'
-import { App } from '/@/App'
+import { resolveFileReference } from './ResolveFileReference'
 
 export class ReadTextFileRequest extends GenericRequest<string, string> {
 	constructor(api: IframeApi) {
@@ -8,8 +8,8 @@ export class ReadTextFileRequest extends GenericRequest<string, string> {
 	}
 
 	async handle(filePath: string, origin: string): Promise<string> {
-		const app = await App.getApp()
-		const file = await app.fileSystem.readFile(filePath)
+		const fileHandle = await resolveFileReference(filePath, this.api)
+		const file = await fileHandle.getFile()
 
 		return await file.text()
 	}
