@@ -19,7 +19,7 @@ import {
 } from '/@/components/Data/RequiresMatcher/RequiresMatcher'
 import { createFailureMessage } from '/@/components/Data/RequiresMatcher/FailureMessage'
 import json5 from 'json5'
-import { markRaw, reactive } from 'vue'
+import { markRaw, reactive, Ref, ref } from 'vue'
 import { translate } from '/@/components/Locales/Manager'
 import { NewBaseWindow } from '../../NewBaseWindow'
 
@@ -116,11 +116,7 @@ export class CreatePresetWindow extends NewBaseWindow {
 	}
 
 	protected requiresMatcher = markRaw(new RequiresMatcher())
-	protected async addPreset(
-		sidebar: Sidebar,
-		manifestPath: string,
-		manifest: IPresetManifest
-	) {
+	protected async addPreset(manifestPath: string, manifest: IPresetManifest) {
 		const app = await App.getApp()
 
 		// Presets need a category, presets without category are most likely incompatible v1 presets
@@ -133,7 +129,7 @@ export class CreatePresetWindow extends NewBaseWindow {
 		if (!mayUsePreset && manifest.showIfDisabled === false) return
 
 		let category = <SidebarCategory | undefined>(
-			sidebar.rawElements.find(
+			this.sidebar.rawElements.find(
 				(element) => element.getText() === manifest.category
 			)
 		)
@@ -143,7 +139,7 @@ export class CreatePresetWindow extends NewBaseWindow {
 				text: manifest.category,
 				items: [],
 			})
-			sidebar.addElement(category)
+			this.sidebar.addElement(category)
 		}
 
 		const id = uuid()
@@ -176,7 +172,7 @@ export class CreatePresetWindow extends NewBaseWindow {
 				}
 			)
 
-			sidebar.setState(id, {
+			this.sidebar.setState(id, {
 				...manifest,
 				presetPath: dirname(manifestPath),
 				models: {
@@ -228,7 +224,6 @@ export class CreatePresetWindow extends NewBaseWindow {
 	}
 
 	protected async loadPresets(
-		sidebar: Sidebar,
 		fs: FileSystem | DataLoader,
 		dirPath = 'data/packages/minecraftBedrock/preset'
 	) {
@@ -244,7 +239,6 @@ export class CreatePresetWindow extends NewBaseWindow {
 			await Promise.all(
 				Object.entries<any>(presets).map(([presetPath, manifest]) =>
 					this.addPreset(
-						sidebar,
 						`${dirname(dirPath)}/${presetPath}`,
 						manifest
 					)
@@ -261,9 +255,7 @@ export class CreatePresetWindow extends NewBaseWindow {
 		const promises = []
 		for (const dirent of dirents) {
 			if (dirent.kind === 'directory')
-				promises.push(
-					this.loadPresets(sidebar, fs, `${dirPath}/${dirent.name}`)
-				)
+				promises.push(this.loadPresets(fs, `${dirPath}/${dirent.name}`))
 			else if (dirent.name === 'manifest.json') {
 				let manifest
 				try {
@@ -282,11 +274,7 @@ export class CreatePresetWindow extends NewBaseWindow {
 				}
 
 				promises.push(
-					await this.addPreset(
-						sidebar,
-						`${dirPath}/${dirent.name}`,
-						manifest
-					)
+					await this.addPreset(`${dirPath}/${dirent.name}`, manifest)
 				)
 			}
 		}
@@ -294,14 +282,14 @@ export class CreatePresetWindow extends NewBaseWindow {
 		await Promise.all(promises)
 	}
 
-	async loadDefaultPresets(sidebar: Sidebar, dataLoader: DataLoader) {
+	async loadDefaultPresets(dataLoader: DataLoader) {
 		const presets = await dataLoader.readJSON(
 			'data/packages/minecraftBedrock/presets.json'
 		)
 
 		await Promise.all(
 			Object.entries<any>(presets).map(([presetPath, manifest]) =>
-				this.addPreset(sidebar, presetPath, manifest)
+				this.addPreset(presetPath, manifest)
 			)
 		)
 	}
@@ -312,21 +300,20 @@ export class CreatePresetWindow extends NewBaseWindow {
 		app.windows.loadingWindow.open()
 
 		if (this.shouldReloadPresets) {
-			const sidebar = new Sidebar([])
+			this.sidebar.removeElements()
 
 			// Reset requires matcher
 			this.requiresMatcher = markRaw(new RequiresMatcher())
 			await this.requiresMatcher.setup()
 
 			await Promise.all([
-				this.loadDefaultPresets(sidebar, app.dataLoader),
+				this.loadDefaultPresets(app.dataLoader),
 				...[...this.loadPresetPaths].map((loadPresetPath) =>
-					this.loadPresets(sidebar, fs, loadPresetPath)
+					this.loadPresets(fs, loadPresetPath)
 				),
 			])
 
-			sidebar.setDefaultSelected()
-			this.sidebar = sidebar
+			this.sidebar.setDefaultSelected()
 			this.shouldReloadPresets = false
 		} else {
 			this.modelResetters.forEach((reset) => reset())

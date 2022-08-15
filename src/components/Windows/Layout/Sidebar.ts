@@ -1,4 +1,4 @@
-import { reactive, Ref, ref, set } from 'vue'
+import { del, reactive, Ref, ref, set } from 'vue'
 import { v4 as uuid } from 'uuid'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 
@@ -180,6 +180,10 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 	}
 	removeElements() {
 		this._elements.value = []
+
+		for (const key in this.state) {
+			del(this.state, key)
+		}
 	}
 
 	get filter() {
