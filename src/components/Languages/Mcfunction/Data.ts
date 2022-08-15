@@ -362,15 +362,21 @@ export class CommandData extends Signal<void> {
 				}
 
 				console.log(isMatch, stopArgIndex)
-				const subcommand = subcommands.find(
+				const validSubcommands = subcommands.filter(
 					(subcommand) => subcommand.commandName === path[i]
 				)
-				if (!subcommand) return []
+				if (validSubcommands.length === 0) return []
 
-				const nextArgs = await this.getNextCommandArgument(
-					subcommand,
-					path.slice(i + 1, stopArgIndex)
-				)
+				const nextArgs = (
+					await Promise.all(
+						validSubcommands.map((validSubcommand) =>
+							this.getNextCommandArgument(
+								validSubcommand,
+								path.slice(i + 1, stopArgIndex)
+							)
+						)
+					)
+				).flat()
 				console.log(
 					nextArgs,
 					nextArgs.length === 0 && args[argumentIndex].allowMultiple,
