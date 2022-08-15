@@ -70,7 +70,8 @@ export class ProjectManager extends Signal<void> {
 		if (!this.state[project.name])
 			throw new Error('Project to delete not found')
 
-		this._selectedProject = undefined
+		if (this._selectedProject === project.name)
+			this._selectedProject = virtualProjectName
 		del(this.state, project.name)
 		if (unlinkProject) await this.app.fileSystem.unlink(project.projectPath)
 

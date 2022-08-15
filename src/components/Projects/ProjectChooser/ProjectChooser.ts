@@ -144,14 +144,10 @@ export class ProjectChooserWindow extends NewBaseWindow {
 			})
 		)
 
-		this.sidebar.setDefaultSelected(
-			app.isNoProjectSelected
-				? undefined
-				: app.projectManager.selectedProject
-		)
-		return app.isNoProjectSelected
-			? undefined
-			: app.projectManager.selectedProject
+		if (app.isNoProjectSelected) this.sidebar.setDefaultSelected()
+		else this.sidebar.setDefaultSelected(app.projectManager.selectedProject)
+
+		return app.projectManager.selectedProject
 	}
 
 	async open() {
