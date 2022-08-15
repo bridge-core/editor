@@ -9,6 +9,7 @@ import { Signal } from '/@/components/Common/Event/Signal'
 import { IDisposable } from '/@/types/disposable'
 import { isNightly as isNightlyBuild } from '/@/utils/app/isNightly'
 import { version as appVersion } from '/@/utils/app/version'
+import { WriteFileRequest } from './Requests/FileSystem/WriteFile'
 
 export class IframeApi {
 	didSetup = false
@@ -18,6 +19,7 @@ export class IframeApi {
 	protected events: GenericEvent[] = [new ThemeChangeEvent(this)]
 	protected requests: GenericRequest<unknown, unknown>[] = [
 		new ReadFileRequest(this),
+		new WriteFileRequest(this),
 	]
 
 	constructor(protected iframe: HTMLIFrameElement) {
