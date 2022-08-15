@@ -14,6 +14,7 @@ import { WriteFileRequest } from './Requests/FileSystem/WriteFile'
 export class IframeApi {
 	didSetup = false
 	loaded = new Signal<void>()
+	channelSetup = new Signal<void>()
 	protected disposables: IDisposable[] = []
 	protected _channel?: Channel
 	protected events: GenericEvent[] = [new ThemeChangeEvent(this)]
@@ -27,11 +28,12 @@ export class IframeApi {
 			if (!iframe.src && !iframe.srcdoc) return
 
 			this._channel = new Channel(this.iframe.contentWindow)
+			this.channelSetup.dispatch()
 
 			await this.channel.open()
 
-			this.onLoad()
 			this.loaded.dispatch()
+			this.onLoad()
 		})
 	}
 

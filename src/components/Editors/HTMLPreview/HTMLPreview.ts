@@ -101,12 +101,16 @@ export class HTMLPreviewTab extends IframeTab {
 				window.addEventListener('scroll', () => {
 					channel.simpleTrigger('saveScrollPosition', window.scrollY)
 				})
-	
-	
+			
+			
 				channel.on('loadScrollPosition', (scrollY) => {
 					window.scrollTo(0, scrollY)
 				})
-				
+				channel.on('app.buildInfo', console.log)
+		
+				console.log('Request config file')
+				const file = await channel.trigger('fs.readFile', 'projects/BridgeTests/config.json')
+				console.log(file)
 			</script>`
 		)
 	}

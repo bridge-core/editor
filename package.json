@@ -15,7 +15,7 @@
 		"@mdi/font": "^6.9.96",
 		"@types/lz-string": "^1.3.34",
 		"bridge-common-utils": "^0.3.3",
-		"bridge-iframe-api": "^0.4.6",
+		"bridge-iframe-api": "^0.4.7",
 		"bridge-js-runtime": "^0.3.4",
 		"bridge-model-viewer": "^0.7.7",
 		"buffer": "^6.0.3",
