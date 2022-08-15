@@ -307,6 +307,7 @@ export class CommandData extends Signal<void> {
 
 		const args = currentCommand.arguments ?? []
 		let argumentIndex = 0
+		let subcommandStopArg = null
 		let shouldProposeStopArg = false
 
 		for (let i = 0; i < path.length; i++) {
@@ -353,7 +354,7 @@ export class CommandData extends Signal<void> {
 				)
 
 				// Try to find stop argument within path
-				const subcommandStopArg = args[argumentIndex + 1] ?? null
+				subcommandStopArg = args[argumentIndex + 1] ?? null
 				let foundStopArg = false
 				let stopArgIndex = i
 				while (
@@ -423,7 +424,11 @@ export class CommandData extends Signal<void> {
 			return new ResolvedCommandArguments([], path.length - 1)
 		// If we are here, we are at the next argument, return it
 		return new ResolvedCommandArguments(
-			[args[argumentIndex]],
+			[args[argumentIndex]].concat(
+				subcommandStopArg && shouldProposeStopArg
+					? [subcommandStopArg]
+					: []
+			),
 			path.length - 1
 		)
 	}
