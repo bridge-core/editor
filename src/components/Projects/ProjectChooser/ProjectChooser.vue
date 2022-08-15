@@ -173,7 +173,7 @@
 			<v-btn
 				v-if="!isComMojangProject"
 				color="error"
-				:disabled="state.currentProject === selectedSidebar"
+				:loading="deletePending"
 				@click="onDeleteProject(selectedSidebar)"
 			>
 				<v-icon>mdi-delete</v-icon>
@@ -204,7 +204,7 @@ import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/Confirm
 import { addPack } from './AddPack'
 import { virtualProjectName } from '../Project/Project'
 import { useTranslations } from '../../Composables/useTranslations'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 let formatter: { format: (arr: string[]) => string }
 if ('ListFormat' in Intl) {
@@ -256,7 +256,10 @@ async function onSelectProject() {
 	props.window.close()
 }
 
+const deletePending = ref(false)
 function onDeleteProject(projectName: string) {
+	deletePending.value = true
+
 	new ConfirmationWindow({
 		description: 'windows.deleteProject.description',
 		confirmText: 'windows.deleteProject.confirm',
@@ -267,6 +270,11 @@ function onDeleteProject(projectName: string) {
 
 			if (app.hasNoProjects) onClose()
 			else await props.window.loadProjects()
+
+			deletePending.value = false
+		},
+		onCancel: () => {
+			deletePending.value = false
 		},
 	})
 }

@@ -144,6 +144,8 @@ export class ProjectChooserWindow extends NewBaseWindow {
 			})
 		)
 
+		console.log(app.isNoProjectSelected)
+		this.sidebar.resetSelected()
 		if (app.isNoProjectSelected) this.sidebar.setDefaultSelected()
 		else this.sidebar.setDefaultSelected(app.projectManager.selectedProject)
 

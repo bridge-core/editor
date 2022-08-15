@@ -6,7 +6,6 @@ import {
 	IConfigJson,
 	ProjectConfig as BaseProjectConfig,
 } from 'mc-project-core'
-import { App } from '/@/App'
 
 export type { IConfigJson } from 'mc-project-core'
 export { defaultPackPaths } from 'mc-project-core'
@@ -99,20 +98,19 @@ export class ProjectConfig extends BaseProjectConfig {
 		// Running in main thread, so we can use the App object
 		if (upgradeConfig && this.project && this.data.capabilities) {
 			// Transform old "capabilities" format to "experimentalGameplay"
-			const experimentalToggles: IExperimentalToggle[] = await this.project.app.dataLoader.readJSON(
-				'data/packages/minecraftBedrock/experimentalGameplay.json'
-			)
+			const experimentalToggles: IExperimentalToggle[] =
+				await this.project.app.dataLoader.readJSON(
+					'data/packages/minecraftBedrock/experimentalGameplay.json'
+				)
 			const experimentalGameplay: Record<string, boolean> =
 				this.data.experimentalGameplay ?? {}
 			const capabilities: string[] = this.data.capabilities ?? []
 
 			// Update scripting API/GameTest API toggles based on the old "capabilities" field
-			experimentalGameplay[
-				'enableGameTestFramework'
-			] = capabilities.includes('gameTestAPI')
-			experimentalGameplay[
-				'additionalModdingCapabilities'
-			] = capabilities.includes('scriptingAPI')
+			experimentalGameplay['enableGameTestFramework'] =
+				capabilities.includes('gameTestAPI')
+			experimentalGameplay['additionalModdingCapabilities'] =
+				capabilities.includes('scriptingAPI')
 
 			for (const toggle of experimentalToggles) {
 				// Set all missing experimental toggles to true by default
