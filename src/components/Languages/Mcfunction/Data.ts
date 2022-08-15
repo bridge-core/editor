@@ -303,10 +303,11 @@ export class CommandData extends Signal<void> {
 		path: string[]
 	): Promise<ResolvedCommandArguments> {
 		if (!currentCommand.arguments || currentCommand.arguments.length === 0)
-			return new ResolvedCommandArguments()
+			return new ResolvedCommandArguments([], 0, false)
 
 		const args = currentCommand.arguments ?? []
 		let argumentIndex = 0
+		let shouldProposeStopArg = false
 
 		for (let i = 0; i < path.length; i++) {
 			const currentStr = path[i]
@@ -319,7 +320,8 @@ export class CommandData extends Signal<void> {
 				currentCommand.commandName
 			)
 
-			if (matchType === 'none') return new ResolvedCommandArguments([], i)
+			if (matchType === 'none')
+				return new ResolvedCommandArguments([], i, false)
 			else if (matchType === 'partial')
 				return new ResolvedCommandArguments(
 					path.length === i + 1 ? [args[argumentIndex]] : [],
@@ -350,6 +352,7 @@ export class CommandData extends Signal<void> {
 					currentCommand.commandName
 				)
 
+				// Try to find stop argument within path
 				const subcommandStopArg = args[argumentIndex + 1] ?? null
 				let foundStopArg = false
 				let stopArgIndex = i
@@ -392,16 +395,14 @@ export class CommandData extends Signal<void> {
 				)
 				const nextArgs = resolvedArgs.arguments
 
-				console.log(
-					nextArgs,
-					nextArgs.length === 0 && args[argumentIndex].allowMultiple,
-					i
-				)
-
+				// We have no more arguments for the subcommand
 				if (nextArgs.length === 0) {
+					// If multiple subcommands are valid, we should propose the next subcommand
 					if (args[argumentIndex].allowMultiple) {
-						i = resolvedArgs.lastParsedIndex
+						i += resolvedArgs.lastParsedIndex + 1
+						shouldProposeStopArg = true
 					} else {
+						// If only one subcommand is valid, we should propose the next argument
 						argumentIndex++
 					}
 
