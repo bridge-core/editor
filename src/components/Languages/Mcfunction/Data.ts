@@ -9,6 +9,7 @@ import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SelectorArguments } from './TargetSelector/SelectorArguments'
 import { useMonaco } from '../../../utils/libs/useMonaco'
+import { ResolvedCommandArguments } from './ResolvedCommandArguments'
 /**
  * An interface that describes a command
  */
@@ -260,10 +261,11 @@ export class CommandData extends Signal<void> {
 			await Promise.all(
 				currentCommands.map(async (currentCommand: ICommand) => {
 					// Get command argument
-					const args = await this.getNextCommandArgument(
-						currentCommand,
-						[...path]
-					)
+					const args = (
+						await this.getNextCommandArgument(currentCommand, [
+							...path,
+						])
+					).arguments
 					if (args.length === 0) return []
 
 					// Return possible completion items for the argument
@@ -299,9 +301,9 @@ export class CommandData extends Signal<void> {
 	protected async getNextCommandArgument(
 		currentCommand: ICommand,
 		path: string[]
-	): Promise<ICommandArgument[]> {
+	): Promise<ResolvedCommandArguments> {
 		if (!currentCommand.arguments || currentCommand.arguments.length === 0)
-			return []
+			return new ResolvedCommandArguments()
 
 		const args = currentCommand.arguments ?? []
 		let argumentIndex = 0
@@ -317,96 +319,112 @@ export class CommandData extends Signal<void> {
 				currentCommand.commandName
 			)
 
-			if (matchType === 'none') return []
+			if (matchType === 'none') return new ResolvedCommandArguments([], i)
 			else if (matchType === 'partial')
-				return path.length === i + 1 ? [args[argumentIndex]] : []
+				return new ResolvedCommandArguments(
+					path.length === i + 1 ? [args[argumentIndex]] : [],
+					i
+				)
 
 			// Propose arguments from nested command when necessary
 			if (args[argumentIndex].type === 'command' && i + 1 < path.length) {
-				return (
-					await Promise.all(
-						(
-							await this.getCommandDefinitions(
-								currentStr,
-								await this.shouldIgnoreCustomCommands
-							)
-						).map((command) =>
-							this.getNextCommandArgument(
-								command,
-								path.slice(i + 1)
+				return ResolvedCommandArguments.from(
+					(
+						await Promise.all(
+							(
+								await this.getCommandDefinitions(
+									currentStr,
+									await this.shouldIgnoreCustomCommands
+								)
+							).map((command) =>
+								this.getNextCommandArgument(
+									command,
+									path.slice(i + 1)
+								)
 							)
 						)
-					)
-				).flat()
+					).flat()
+				)
 			} else if (args[argumentIndex].type === 'subcommand') {
 				const subcommands = await this.getSubcommands(
 					currentCommand.commandName
 				)
-				console.log(subcommands)
 
 				const subcommandStopArg = args[argumentIndex + 1] ?? null
-				let isMatch = false
-				let stopArgIndex = i + 1
+				let foundStopArg = false
+				let stopArgIndex = i
 				while (
 					subcommandStopArg &&
-					!isMatch &&
+					!foundStopArg &&
 					stopArgIndex < path.length
 				) {
-					isMatch =
+					stopArgIndex++
+					foundStopArg =
 						(await this.isArgumentType(
 							path[stopArgIndex],
 							subcommandStopArg,
 							currentCommand.commandName
-						)) !== 'none'
-					stopArgIndex++
+						)) === 'full'
 				}
 
-				console.log(isMatch, stopArgIndex)
+				// Stop argument was entered, skip to next argument after stop argument
+				if (foundStopArg) {
+					argumentIndex += 2
+					i = stopArgIndex
+					continue
+				}
+
 				const validSubcommands = subcommands.filter(
 					(subcommand) => subcommand.commandName === path[i]
 				)
-				if (validSubcommands.length === 0) return []
+				if (validSubcommands.length === 0)
+					return new ResolvedCommandArguments([], i)
 
-				const nextArgs = (
+				const resolvedArgs = ResolvedCommandArguments.from(
 					await Promise.all(
 						validSubcommands.map((validSubcommand) =>
 							this.getNextCommandArgument(
 								validSubcommand,
-								path.slice(i + 1, stopArgIndex)
+								path.slice(i + 1)
 							)
 						)
 					)
-				).flat()
+				)
+				const nextArgs = resolvedArgs.arguments
+
 				console.log(
 					nextArgs,
 					nextArgs.length === 0 && args[argumentIndex].allowMultiple,
-					i,
-					stopArgIndex
+					i
 				)
 
-				if (nextArgs.length === 0 || i > stopArgIndex) {
+				if (nextArgs.length === 0) {
 					if (args[argumentIndex].allowMultiple) {
-						i = stopArgIndex - 1
-					} else if (isMatch) {
+						i = resolvedArgs.lastParsedIndex
+					} else {
 						argumentIndex++
-						i++
 					}
 
 					continue
-				} else {
-					return nextArgs
 				}
+
+				return resolvedArgs
 			}
 
 			// Check next argument
 			argumentIndex++
 			// If argumentIndex to large, return
-			if (argumentIndex >= args.length) return []
+			if (argumentIndex >= args.length)
+				return new ResolvedCommandArguments([], i)
 		}
 
-		if (!args[argumentIndex]) return []
+		if (!args[argumentIndex])
+			return new ResolvedCommandArguments([], path.length - 1)
 		// If we are here, we are at the next argument, return it
-		return [args[argumentIndex]]
+		return new ResolvedCommandArguments(
+			[args[argumentIndex]],
+			path.length - 1
+		)
 	}
 
 	/**
