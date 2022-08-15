@@ -3,6 +3,7 @@ import IframeTabComponent from './IframeTab.vue'
 import { Tab } from '../../TabSystem/CommonTab'
 import { IframeApi } from './API/IframeApi'
 import { markRaw } from 'vue'
+import { AnyFileHandle } from '../../FileSystem/Types'
 
 interface IIframeTabOptions {
 	icon?: string
@@ -10,6 +11,11 @@ interface IIframeTabOptions {
 	url?: string
 	html?: string
 	iconColor?: string
+	openWithPayload?: {
+		filePath?: string
+		fileHandle?: AnyFileHandle
+		isReadOnly?: boolean
+	}
 }
 
 export class IframeTab extends Tab {
@@ -17,7 +23,7 @@ export class IframeTab extends Tab {
 
 	private iframe = document.createElement('iframe')
 	protected loaded: Promise<void>
-	protected api = markRaw(new IframeApi(this.iframe))
+	protected api = markRaw(new IframeApi(this, this.iframe))
 
 	constructor(parent: TabSystem, protected options: IIframeTabOptions = {}) {
 		super(parent)
@@ -42,6 +48,11 @@ export class IframeTab extends Tab {
 		this.iframe.style.margin = '8px'
 		document.body.appendChild(this.iframe)
 	}
+
+	getOptions() {
+		return this.options
+	}
+
 	async setup() {
 		await super.setup()
 	}

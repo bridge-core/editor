@@ -3,13 +3,17 @@ import { GenericEvent } from './Events/GenericEvent'
 import { ThemeChangeEvent } from './Events/ThemeChange'
 import { GenericRequest } from './Requests/GenericRequest'
 import { ReadFileRequest } from './Requests/FileSystem/ReadFile'
-import { App } from '/@/App'
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { IDisposable } from '/@/types/disposable'
 import { isNightly as isNightlyBuild } from '/@/utils/app/isNightly'
 import { version as appVersion } from '/@/utils/app/version'
-import { WriteFileRequest } from './Requests/FileSystem/WriteFile'
+import {
+	openedFileReferenceName,
+	WriteFileRequest,
+} from './Requests/FileSystem/WriteFile'
+import { ReadTextFileRequest } from './Requests/FileSystem/ReadTextFile'
+import { IframeTab } from '../IframeTab'
+import { OpenFileEvent } from './Events/Tab/OpenFile'
 
 export class IframeApi {
 	didSetup = false
@@ -17,13 +21,17 @@ export class IframeApi {
 	channelSetup = new Signal<void>()
 	protected disposables: IDisposable[] = []
 	protected _channel?: Channel
-	protected events: GenericEvent[] = [new ThemeChangeEvent(this)]
+	protected events: GenericEvent[] = [
+		new ThemeChangeEvent(this),
+		new OpenFileEvent(this),
+	]
 	protected requests: GenericRequest<unknown, unknown>[] = [
 		new ReadFileRequest(this),
+		new ReadTextFileRequest(this),
 		new WriteFileRequest(this),
 	]
 
-	constructor(protected iframe: HTMLIFrameElement) {
+	constructor(protected tab: IframeTab, protected iframe: HTMLIFrameElement) {
 		this.iframe.addEventListener('load', async () => {
 			if (!iframe.src && !iframe.srcdoc) return
 
@@ -35,6 +43,22 @@ export class IframeApi {
 			this.loaded.dispatch()
 			this.onLoad()
 		})
+	}
+
+	get openWithPayload() {
+		const payload = this.tab.getOptions().openWithPayload ?? {}
+
+		return {
+			filePath: payload.filePath,
+			fileReference: openedFileReferenceName,
+			data: this.openedFileHandle
+				?.getFile()
+				?.then((file) => file.arrayBuffer()),
+			isReadOnly: payload.isReadOnly ?? false,
+		}
+	}
+	get openedFileHandle() {
+		return this.tab.getOptions().openWithPayload?.fileHandle ?? null
 	}
 
 	get channel() {

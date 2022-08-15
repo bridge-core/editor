@@ -7,6 +7,8 @@ export interface IWriteFilePayload {
 	data: Uint8Array | string
 }
 
+export const openedFileReferenceName = '~bridge://OPENED-FILE'
+
 export class WriteFileRequest extends GenericRequest<IWriteFilePayload, void> {
 	constructor(api: IframeApi) {
 		super('fs.writeFile', api)
@@ -17,6 +19,15 @@ export class WriteFileRequest extends GenericRequest<IWriteFilePayload, void> {
 		origin: string
 	): Promise<void> {
 		const app = await App.getApp()
+
+		if (filePath === openedFileReferenceName) {
+			const fileHandle = this.api.openedFileHandle
+
+			if (!fileHandle) throw new Error(`No opened file to write to!`)
+			await app.fileSystem.write(fileHandle, data)
+
+			return
+		}
 
 		await app.fileSystem.writeFile(filePath, data)
 	}
