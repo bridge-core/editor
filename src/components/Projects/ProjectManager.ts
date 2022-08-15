@@ -50,7 +50,7 @@ export class ProjectManager extends Signal<void> {
 	async addProject(
 		projectDir: AnyDirectoryHandle,
 		isNewProject = true,
-		requiresPermissions = false
+		requiresPermissions = this.app.bridgeFolderSetup.hasFired
 	) {
 		const project = new BedrockProject(this, this.app, projectDir, {
 			requiresPermissions,
