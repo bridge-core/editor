@@ -1,26 +1,185 @@
+<p>bridge. v2.3.0 - &quot;Elytra&quot; marks another milestone release for our team. For this update, we focused on making nearly every aspect of bridge. significantly faster and more reliable. Together with v2.3.0, we also ship <a href="https://bridge-core.app/">new documentation for our webpage</a> with updated guides and articles on using bridge.</p>
+<p>Thanks to everyone who helped make this release possible!</p>
+<p>You can try out <a href="https://editor.bridge-core.app/">bridge. v2.3.0 here</a>.</p>
 <h2>Features:</h2>
+<h3>Instant Data Loading</h3>
+<p>Data updates are now applied instantly. Downloading a data update now only takes marginally longer than our normal data loading procedure.</p>
+<h3>Instant Development Environments</h3>
+<p>We spent weeks of work making bridge. start a lot faster. This work includes delaying permission prompts until they are necessary and heavy optimizations on every aspect of the work we do before bridge. can be used.</p>
+<h3>New Setup Experience</h3>
+<p>bridge. no longer requires setup before using it. We have therefore removed the old &quot;initial setup dialog&quot; and now instead display recommended actions within the pack explorer.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/185384637-15afeffe-fc2d-4553-bdee-662a4ec5c89a.png" alt="Bildschirmfoto 2022-08-18 um 13 30 26"></p>
+<h3>New Welcome Screen</h3>
+<p>We have simplified the welcome screen to only include the command bar and bridge.'s logo.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/185378397-00d27473-fa3b-45d3-8269-392ba30d69fc.png" alt="Bildschirmfoto 2022-08-18 um 12 53 22"></p>
+<h3>Command Bar</h3>
+<p>The new command bar can be found on bridge.'s new welcome screen and it also replaces the old file picker which opened when pressing &quot;Ctrl + P&quot;. You can use the command bar to open any file within your project or to trigger quick actions such as creating a new file.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/185378507-c2a561a2-5b13-42bf-a57c-908c7bd626fe.png" alt="Bildschirmfoto 2022-08-18 um 12 53 57"></p>
+<h3>New Directory Viewer (#477)</h3>
+<p>For bridge. v2.3.0, we built a new directory viewer which now powers the default pack explorer and which can be easily reused across our user interfaces.</p>
 <ul>
-<li><strong>Tree Editor:</strong> Added support for &quot;not&quot; and &quot;doNotSuggest&quot; schema properties</li>
-<li>Loading file definitions is now significantly faster</li>
-<li>Loading JSON schemas is now significantly faster</li>
-<li>Loading lightning cache files is now significantly faster</li>
-<li>Improved file system migration process and prompt criteria</li>
-<li>Bone name auto-completions within part_visibility (#468)</li>
+<li>Displaying directories is now notably faster</li>
+<li>Copy &amp; Paste is now supported (with keybindings)</li>
+<li>Support for keyboard navigation with tab</li>
+<li>Support for inline renaming</li>
+<li>Improved file/folder duplication</li>
+<li>Added option to download any file or folder</li>
+<li>Support for creating global files and folders (#321)</li>
+<li>Support for dragging files and folders into the pack explorer (b2898abe9ac8479752a1a678ec20fa2e02c58730)</li>
+<li>&quot;Open With ...&quot; to choose the way you want to open a file (1868507fe022b02dfa0b36ece98956cfc863dd95)</li>
+</ul>
+<p><img src="https://user-images.githubusercontent.com/33347616/185379003-e6a0b32a-9036-4eb4-83f3-f447306c1263.png" alt="Bildschirmfoto 2022-08-18 um 12 56 05"></p>
+<h3>View Folder (08e189ad8660d1924f376b1da566efe8787c90ba)</h3>
+<p>You can now use bridge. to open arbitrary folders and edit the files within them. Any folder opened with bridge. will appear within a new sidebar tab and makes use of our new directory viewer.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/185379017-5496592e-f557-456d-ad50-eaa28721c7e3.png" alt="Bildschirmfoto 2022-08-18 um 12 56 58"></p>
+<h3>Open Project Folder (d317f736a7d1612a8f9e356ac274ea627eee8d63)</h3>
+<p>You can now use the new &quot;Open Project Folder&quot; action to open the whole project folder within the &quot;View Folder&quot; sidebar.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/185379144-90ba0699-b066-4ca3-8043-4634707b20ba.png" alt="Bildschirmfoto 2022-08-18 um 12 57 52"></p>
+<h3>File Sharing (7bc6631d137cd26d38b1847347f53b28275d88a8)</h3>
+<p>bridge. now supports sharing files with other users.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/185379876-3d6f0aa2-44a3-4c48-ae5c-eaada8231297.png" alt="Bildschirmfoto 2022-08-18 um 13 02 05"></p>
+<h3>Tab Loading (1d26797864e80126476e7c975821d6a1cdc10d07, 1d26797864e80126476e7c975821d6a1cdc10d07)</h3>
+<p>bridge. now has a new tab loading indicator that is used to display progress connected to a specific tab. Additionally, the new indicator is now used instead of the loading window upon saving files.</p>
+<h3>Updated GameTest Support</h3>
+<p>We now support the &quot;mojang-net&quot; and &quot;mojang-minecraft-server-admin&quot; modules within bridge. In order to use them, set your project as a behavior pack that is intended to be run on the server within the &quot;Create Project&quot; window or directly within the project config.</p>
+<h3>HTML Previewer (4579a95ba141f45519afef2df97ade8ec793c6af)</h3>
+<p>You can now use bridge. to preview HTML files.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/185379528-04392d5e-2b00-43db-865f-914264de6ed3.png" alt="Bildschirmfoto 2022-08-18 um 13 00 08"></p>
+<h3>Improved TypeScript/JavaScript Experience (#481)</h3>
+<p>bridge. now loads all JavaScript and TypeScript files from your project to provide you within import auto-completions and rich type imports where applicable.</p>
+<h3>&quot;com.mojang&quot; Projects (a5ae29ddd2b160dc00d545916fec469b453be885)</h3>
+<p>bridge. v2.3.0 can once again load projects directly from your &quot;com.mojang&quot; folder.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/185381144-902fb8e8-4efb-45ba-b756-06f8024829d3.png" alt="Bildschirmfoto 2022-08-18 um 13 09 16"></p>
+<h3>Toggleable Experimental Gameplay (#404)</h3>
+<p>It is now possible to toggle experimental gameplay features within bridge.'s project chooser. Thanks to @pascal541 for working on this feature!</p>
+<h3>New Execute Support (#450)</h3>
+<p>bridge. now supports auto-completions for the new &quot;/execute&quot; command syntax.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/185381482-19367d1d-fe30-4d4f-84f1-7d3e308d5932.png" alt="Bildschirmfoto 2022-08-18 um 13 11 42"></p>
+<h3>Updated Data</h3>
+<p>We have updated our JSON schemas to support the latest Minecraft Preview and stable Minecraft release.</p>
+<h3>Particle Improvements (39cd02a0f9103e7af73df63c926b48ae62a89635)</h3>
+<ul>
+<li>Support for dynamic particle event auto-completions</li>
+<li>Better auto-completions for timeline events</li>
+<li>Support for versioning particle files</li>
+<li>Support for &quot;bezier_chain&quot; particle curve</li>
+</ul>
+<h3>Rich Deprecation Information (0fe55c9193fb8848e9464d4ededa39be1f2bb033)</h3>
+<p>bridge. now shows rich deprecation information for renamed and removed components.</p>
+<p><img src="https://user-images.githubusercontent.com/33347616/185381882-d34fcded-7bc1-4d22-8c47-e4b6010e9147.png" alt="Bildschirmfoto 2022-08-18 um 13 13 54"></p>
+<h3>Generator Scripts (#132)</h3>
+<p>You can now use JavaScript and TypeScript files to generate any file within your project. <a href="https://bridge-core.app/guide/advanced/generator-scripts/">You can learn more about them here</a>.</p>
+<h3>Extensions</h3>
+<p>Extensions become even more powerful on bridge. v2.3.0 - &quot;Elytra&quot;:</p>
+<ul>
+<li>Added new &quot;Import Folder&quot; API (3e63d476eec6745d3ad48ad14ed51b5f3b5e1cbb)</li>
+<li>Exposed SidebarAction and SelectableSidebarAction classes</li>
+<li>Exposed DirectoryViewer component</li>
+<li>It is now possible to link to extensions inside of bridge.'s extension store (595270cf2a1254c5195d0c5d66adb0a0639d0170)</li>
+<li>Extensions can once again link to a README file (c78e3d85240d173ba543373069247a5cc28e21eb)</li>
+<li>API to import a file with bridge.'s default import handlers (77771136ee55911bea2377d7233d81b8e96bc761)</li>
+<li>New API for persistently storing data (6a9b5df0bcdda101aff7fb741fc114284b21918f)</li>
+<li>API to add new actions to the command bar (04710fb09aa47a4bcf32f5dd6bc22bc32788c26b)</li>
+<li>API to open files (5f6300a6f6c98948f9c529cd13b449adc30644eb)</li>
+<li>Extensions not matching specified app versions no longer execute</li>
+<li>The extension store now always shows the data of the most recent extension version (in case of a local &lt;&gt; online mismatch; 2e1e70eeeb61e9f6b962b5f0512c6b3b3323ec9f)</li>
+<li>Exposed &quot;fflate&quot; to extensions (f7e6baaf88d27de593591ca9bb64ae07daa3f706)</li>
+<li>&quot;onFileChanged&quot; API (e3408467661a979dc841e3baa0fc2a3f1a436050)</li>
+<li>API to add new &quot;Open With ...&quot; handlers to directory viewer (e87957969924072bd0e059251bb929aaadcb7f93)</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Updated game test types to latest 1.19.0 release</li>
-<li>Cache event references from new 1.19.0 components</li>
-<li><strong>Initial Setup:</strong> Some browsers will now only show one permission prompt per selected folder (instead of previously two for read &amp; write permissions)</li>
-<li>Added &quot;onProjectChanged(...)&quot; extension API</li>
-<li>Updated geode and ore feature schemas (Thanks to @KekeCreations; bridge-core/editor-packages#25)</li>
-<li>Updated data to latest Minecraft Preview</li>
+<li>Tweaks to how bridge. displays preset requirements for disabled presets</li>
+<li>Better developer actions</li>
+<li>Dramatically improved app start-up times</li>
+<li>Started work on further minifying JSON schemas (f45fd9d716191bcfd576067636e411817e286bc7)</li>
+<li>GameTest scripts are now created within the &quot;scripts/&quot; folder by default (previously was &quot;scripts/gametest/&quot;; 054f8eda9ea65705c5ea5a5e3c4d8e26b9f22ac2)</li>
+<li>New menu design (6acafac56cbfc7ec5bb9d45daeb74100cad555fc)</li>
+<li>New design for tabs and the sidebar (300195cda4f9732e1ea5edaf116a1fd8086170c8)</li>
+<li>Themes now load faster</li>
+<li>We have reduced the initial JavaScript payload of our website from ~2200KiB down to ~500KiB. We aim to further reduce this number with future updates.</li>
+<li>Optimized project pack &amp; icon loading (cf30f68d20f23e746f079a4e4042447af8d9043f, e7bee96a1ec605a9c5ecc0020f44002cc8cd600a)</li>
+<li>Watch Mode is now disabled by default on mobile (#480)</li>
+<li>There is now a toolbar item for opening a folder (#380)</li>
+<li>Better handling of virtual files (92e861bf9c145c97b2ddddde778a96de0735965a)</li>
+<li>Removed &quot;theWildUpdate&quot; experimental gameplay toggle (da9042d10259d5af0e6850c13e75604c6483287b)</li>
+<li>Made search inputs lazy by default (4ee39fedbf6a391d186415af0d0eec1f2cc53a43)</li>
+<li>Improved recipe file detection</li>
+<li>Support for submenus within context menus</li>
+<li>bridge. now creates a &quot;deno.json&quot; file upon creating your project. It is used to easily run the standalone version of our built-in compiler Dash.</li>
+<li>Added a new &quot;View&quot; toolbar item (3b28a037f0019fdde461ba2f109c799f8d71c9db)</li>
+<li>Sidebar: Support for grouping elements (411ee4bb637a86fa02fd7e4e2a262018d534ef3a)</li>
+<li>Improved ZipDirectory performance (c90c835fb8e7cd1ceba5930453b88aa107c88ce5)</li>
+<li>bridge. now correctly caches entity tags and scoreboard objectives from JSON files</li>
+<li>Updated Japanese translations (#516; Thanks to @toka7290)</li>
+<li>Updated Dutch translations (255ecfa2914904f722259edd2b58ebe431ad4007; Thanks to @pascal541)</li>
+<li>Improved performance of preset window (#515, 7938af0909d374812262a027103ed7e8fd39b391)</li>
+<li>&quot;.bbmodel&quot; imports now support animations (#171; Thanks to @pascal541)</li>
+<li>Added more modification operations to UI schema (fc2fa40af695284c8bf45ecbc2dbcacd3fcd73f6; Thanks to @pascal541)</li>
+<li>Updated extension store to work offline (2dc3c8ee796bfab60a97ee2269a972bf2bee6b16)</li>
+<li>Added link to Minecraft documentation to bridge.'s toolbar (#525)</li>
+<li>Made context menu sections toggleable on mobile</li>
+<li>Improved mobile toolbar</li>
+<li>Rewritten &quot;Find &amp; Replace&quot; tab (#232)</li>
+<li>Improved tree editor performance (#522, #487)</li>
+<li>Improved tree editor selection &amp; open logic (8e052988ac687e91511f3778a9b21f39d7edf93f)</li>
+<li>New logic for running JavaScript and TypeScript files (5c3e455b11bccacb92a0f8476edf96078e7b673a)</li>
+<li>New setting to disable tabs opening in a temporary mode (254f12b98a8e1ef4966b2a25990444e1a415ce8c)</li>
+<li>Better handling of foreign files: bridge. no longer throws an error when the write request fails and it will correctly keep the unsaved status  (2af4983357006ad68f6c7dcd88d84e72e4d14bc1)</li>
+<li>Made windows rounded on all platforms (2889fb7cb36eb60b6df44c6902fa8cef1c09cf1d)</li>
+<li>Tree Editor: Further improvements to bridge. predictions (45300fcd425a65c2bb6b61d01280213a032fdfca)</li>
+<li>Improved block presets (bridge-core/editor-packages#26; Thanks to @outercloudstudio)</li>
+<li>Better font selection on supported browsers (#326)</li>
+<li>Lang file auto-completions (#492)</li>
+<li>Support for installing extensions globally and locally (#56)</li>
+<li>Upgraded bridge. to use Vue 2.7</li>
+<li>Auto-completions for built-in compiler plugins (#537)</li>
+<li>Support for new gametest dependency format (d6757e88dde2bc3aee0ab71364d0c10cbbbd6c76)</li>
+<li>Project names are now loaded from the project config instead of using the project folder name (412eb04704f83890d1a656a9fc8abc79f9cdc783)</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed component data not being cached from entity permutations</li>
-<li>Fixed entity permutations using incorrect component auto-completions</li>
-<li>Fixed tree editor not handling escaped characters correctly (#465)</li>
-<li>Fixed sidebar icons within tasks not scrolling correctly</li>
-<li>Fixed WelcomeScreen top margin for logo without alert</li>
+<li>Fixed error upon evaluating preset scripts</li>
+<li>Fixed validation error when identifier is item and block identifier within recipes</li>
+<li>Fixed error upon loading projects</li>
+<li>Block identifiers now show within loot table correctly</li>
+<li>Fixed tree editor not allowing selection of completion item with tab</li>
+<li>Fixed infinite loading upon saving files (#403)</li>
+<li>Deleting files/folders now closes corresponding tabs (1ad3c4d70172f4a8e658fc8719d36fab6862fba8)</li>
+<li>Fixed VirtualFileHandle.isSameEntry() method (ed8491b68675688865020cc90a68d470d7b1e435)</li>
+<li>Fixed initial boot screen showing above app content (0af87e0f67cd56b053ba99261ad44ca86237a0ac)</li>
+<li>Deactivating an extension now removes tabs connected to it (06acd21731a5b882d7117e152bebde759212e6d0)</li>
+<li>Fixed extension updates incorrectly activating inactive extensions (6a79157830e80da400f3542844eb1c0f93ac47cf)</li>
+<li>Fixed &quot;/playsound&quot;, &quot;/stopsound&quot; and &quot;/playanimation&quot; command auto-completions (9bfdd9eb58b2385e0f78d8d87315e11b085027b5)</li>
+<li>Fixed error upon creating &quot;/playanimation&quot; command auto-completions (2678f57c5c92d21c87139559878ec5681ab967f4)</li>
+<li>Fixed &quot;.bbmodel&quot; import (ffef6ab95dc8f6248a30c4cc45fc0693782e038f)</li>
+<li>Fixed folder creation being able to overwrite folder without warning (b9908bb880e43d9aea98007aad6812ab600ea7cc)</li>
+<li>Fixed error upon importing &quot;.mcpack&quot; file (9cc605feaeb23ced2ca1d806b3c51dd2fc104efb)</li>
+<li>Fixed &quot;trigger&quot; event reponse (#500)</li>
+<li>Added damage types: &quot;fatal&quot;, &quot;attack&quot; &amp; &quot;any&quot; (370ff413d9584a5d47d812d4c13138fa68555d5c, eb3beea8334f07d96fbf9bbe32b3571810e80e3c)</li>
+<li>Correctly remove duplicates from automatically generated schemas (37443986f8eeec12c3a62768c4f3dbb15ee6249d)</li>
+<li>Fixed &quot;minecraft:rideable&quot; &gt; &quot;interact_text&quot; description (3f5fecccbc6edd030707679efda3d3d8a2b539c5)</li>
+<li>Fixed JSON highlighter: Now handles escaped quotes within strings correctly (a43b7679d122c0e013ed312fabec46fd00b07fbb, 1d4108d38a61dcb43d4fa59a36a64ca90de4301e, 1b0157791d7e468a899984ae674fbc7482a7001a)</li>
+<li>Command highlighter: Support for &quot;initiator&quot; selector (1c5588ab4eaf1a25b43edc219f23e1b7866210eb)</li>
+<li>Fixed incorrect molang query (#514)</li>
+<li>Correctly exclude foreign files from &quot;lightningStore.allFiles(...)&quot; API (#517)</li>
+<li>Fixed deadlock upon running Dash (e09e844f8d906007898020b7a14cec162e207d8e)</li>
+<li>Fixed deadlock upon running pack indexer (071f2c29f28cfa3dd851d89a97cd9b424a1a3e6d)</li>
+<li>Fixed error upon using text editor (#447)</li>
+<li>Fixed &quot;for_each&quot; MoLang stringification (55a066c72131c6ba28606d42646c1c872b5969af)</li>
+<li>Fixed window opening not working correctly (d668821483935449b9c6843eb6b5ad858c2c6a4a)</li>
+<li>Fixed sound path auto-completions (3479d1e1dba5baa9b401600e83bd7a4593080320)</li>
+<li>Added fallback font for code (106df829d77a07debb1cc5859e860610476298e9)</li>
+<li>Fixed tree editor overflow behavior (#305)</li>
+<li>Fixed hover tab to view file path not working (bc8e56c44f914513b9763abddea0448e8e7d1ad6)</li>
+<li>Fixed client animation controller sound effect auto-completions (f1f28bc7dfa4c451ba52e7cd0054e32d2f2ff20f)</li>
+<li>Fixed sound effect caching within client entities (e38e1f6aa4cef6fe4874f46fee3b7400b9480bf0)</li>
+<li>Fixed identifier auto-completions within &quot;entity_placer&quot; &gt; &quot;entity&quot; item component (9e70d6fc10cbe1d37fa23b0b04c2585e058be62e)</li>
+<li>Fixed empty strings being casted to 0 (#535)</li>
+<li>Fixed tree editor primitive value display (54cb8ad833b7a7e06493e14fbb1e6d6c32aa3c89)</li>
+<li>Fixed forced value not working (#483)</li>
+<li>Fixed &quot;suggest-details&quot; header being too large (c6163f460d6d845b6ef32bc3e5dcc1280951d3e2)</li>
+<li>Fixed skin pack creation (89c429fedfaedda3d273cc1870bed28d80813900; Thanks to @Gekocaretaker)</li>
+<li>Fixed file type guessing (b4f48bf41b896cd5f52b5185ba1a7ec36f119e6f)</li>
+<li>Fixed asset preview window (#540)</li>
 </ul>
