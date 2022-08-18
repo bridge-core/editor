@@ -188,7 +188,8 @@ export class ProjectManager extends Signal<void> {
 			)
 		}
 
-		if (!this.app.comMojang.hasFired) this.app.comMojang.setupComMojang()
+		if (!this.app.comMojang.hasFired && projectName !== virtualProjectName)
+			this.app.comMojang.setupComMojang()
 
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName
