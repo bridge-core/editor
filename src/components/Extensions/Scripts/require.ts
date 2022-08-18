@@ -27,6 +27,7 @@ import { ImportModule } from './Modules/import'
 import { PersistentStorageModule } from './Modules/persistentStorage'
 import { CommandBarModule } from './Modules/CommandBar'
 import { FflateModule } from './Modules/fflate'
+import { ReactivityModule } from './Modules/reactivity'
 
 export const BuiltInModules = new Map<string, (config: IModuleConfig) => any>([
 	['@bridge/ui', UIModule],
@@ -54,6 +55,7 @@ export const BuiltInModules = new Map<string, (config: IModuleConfig) => any>([
 	['@bridge/persistent-storage', PersistentStorageModule],
 	['@bridge/command-bar', CommandBarModule],
 	['@bridge/fflate', FflateModule],
+	['@bridge/reactivity', ReactivityModule],
 ])
 //For usage inside of custom commands, components etc.
 const LimitedModules = new Map<string, (config: IModuleConfig) => any>([
