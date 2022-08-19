@@ -77,6 +77,9 @@ export default defineConfig({
 			manifest: {
 				name: isNightly ? 'bridge Nightly' : 'bridge v2',
 				short_name: isNightly ? 'bridge Nightly' : 'bridge v2',
+				description:
+					'bridge. is a powerful IDE for Minecraft Bedrock Add-Ons.',
+				categories: ['development', 'utilities', 'productivity'],
 				theme_color: '#1778D2',
 				icons: [
 					{
@@ -130,9 +133,19 @@ export default defineConfig({
 				display_override: ['window-controls-overlay', 'standalone'],
 				screenshots: [
 					{
-						src: './img/social-preview.png',
+						src: './img/install-screenshots/screenshot-1.png',
 						type: 'image/png',
-						sizes: '1200x630',
+						sizes: '375x667',
+					},
+					{
+						src: './img/install-screenshots/screenshot-2.png',
+						type: 'image/png',
+						sizes: '375x667',
+					},
+					{
+						src: './img/install-screenshots/screenshot-3.png',
+						type: 'image/png',
+						sizes: '375x667',
 					},
 				],
 			},
