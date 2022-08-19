@@ -133,19 +133,35 @@ export default defineConfig({
 				display_override: ['window-controls-overlay', 'standalone'],
 				screenshots: [
 					{
-						src: './img/install-screenshots/screenshot-1.png',
+						src: './img/install-screenshots/narrow/screenshot-1.png',
 						type: 'image/png',
 						sizes: '540x720',
+						platform: 'narrow',
 					},
 					{
-						src: './img/install-screenshots/screenshot-2.png',
+						src: './img/install-screenshots/narrow/screenshot-2.png',
 						type: 'image/png',
 						sizes: '540x720',
+						platform: 'narrow',
 					},
 					{
-						src: './img/install-screenshots/screenshot-3.png',
+						src: './img/install-screenshots/narrow/screenshot-3.png',
 						type: 'image/png',
 						sizes: '540x720',
+						platform: 'narrow',
+					},
+
+					{
+						src: './img/install-screenshots/wide/screenshot-1.png',
+						type: 'image/png',
+						sizes: '1080x720',
+						platform: 'wide',
+					},
+					{
+						src: './img/install-screenshots/wide/screenshot-2.png',
+						type: 'image/png',
+						sizes: '1080x720',
+						platform: 'wide',
 					},
 				],
 			},
