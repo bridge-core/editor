@@ -128,6 +128,13 @@ export default defineConfig({
 					},
 				],
 				display_override: ['window-controls-overlay', 'standalone'],
+				screenshots: [
+					{
+						src: './img/social-preview.png',
+						type: 'image/png',
+						sizes: '1200x630',
+					},
+				],
 			},
 		}),
 	],
