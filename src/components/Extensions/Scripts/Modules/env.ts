@@ -32,10 +32,7 @@ export const ENVModule = ({}: IModuleConfig) => ({
 	getProjectAuthor() {
 		return App.getApp().then((app) => app.projectConfig.get().author)
 	},
-	resolvePackPath(
-		packId?: TPackTypeId | undefined,
-		filePath?: string | undefined
-	) {
+	resolvePackPath(packId?: TPackTypeId, filePath?: string) {
 		return App.getApp().then((app) =>
 			app.projectConfig.resolvePackPath(packId, filePath)
 		)
