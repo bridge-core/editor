@@ -135,17 +135,17 @@ export default defineConfig({
 					{
 						src: './img/install-screenshots/screenshot-1.png',
 						type: 'image/png',
-						sizes: '375x667',
+						sizes: '540x720',
 					},
 					{
 						src: './img/install-screenshots/screenshot-2.png',
 						type: 'image/png',
-						sizes: '375x667',
+						sizes: '540x720',
 					},
 					{
 						src: './img/install-screenshots/screenshot-3.png',
 						type: 'image/png',
-						sizes: '375x667',
+						sizes: '540x720',
 					},
 				],
 			},
