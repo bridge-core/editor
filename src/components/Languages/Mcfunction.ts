@@ -12,7 +12,6 @@ import './Mcfunction/WithinJson'
 import { tokenProvider } from './Mcfunction/TokenProvider'
 import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
-import { FunctionValidator } from '/@/components/Languages/Mcfunction/Validation/Validator'
 import { proxy } from 'comlink'
 import { useMonaco } from '../../utils/libs/useMonaco'
 
@@ -162,15 +161,14 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 	)
 	tokenProvider.keywords = commands.map((command) => command)
 
-	const targetSelectorArguments = await project.commandData.allSelectorArguments()
+	const targetSelectorArguments =
+		await project.commandData.allSelectorArguments()
 	tokenProvider.targetSelectorArguments = targetSelectorArguments
 
 	lang.updateTokenProvider(tokenProvider)
 }
 
 export class McfunctionLanguage extends Language {
-	public validator = new FunctionValidator()
-
 	constructor() {
 		super({
 			id: 'mcfunction',
