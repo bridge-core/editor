@@ -176,7 +176,11 @@ const fieldsReady = computed(() => {
 		)
 			return false
 
-		return !!content.value.models[id] || opts.optional
+		return (
+			!!content.value.models[id] ||
+			opts.optional ||
+			opts.type === 'switch'
+		)
 	})
 })
 
