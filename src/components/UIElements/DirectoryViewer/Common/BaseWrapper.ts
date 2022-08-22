@@ -118,28 +118,32 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 		if (type === 'cancel') {
 			// Move was cancelled
 			this.parent = fromParent
-			directoryWrapper.children.value = directoryWrapper.children.value!.filter(
-				(child) =>
-					child !== <DirectoryWrapper | FileWrapper>(<unknown>this)
-			)
+			directoryWrapper.children.value =
+				directoryWrapper.children.value!.filter(
+					(child) =>
+						child !==
+						<DirectoryWrapper | FileWrapper>(<unknown>this)
+				)
 			fromParent.children.value!.push(
 				<DirectoryWrapper | FileWrapper>(<unknown>this)
 			)
 			fromParent.sort()
 		} else if (type === 'overwrite') {
 			// We need to remove the duplicate FileWrapper
-			directoryWrapper.children.value = directoryWrapper.children.value!.filter(
-				(child) =>
-					child === <DirectoryWrapper | FileWrapper>(<unknown>this) ||
-					!child.isSame(
-						<DirectoryWrapper | FileWrapper>(<unknown>this)
-					)
-			)
+			directoryWrapper.children.value =
+				directoryWrapper.children.value!.filter(
+					(child) =>
+						child ===
+							<DirectoryWrapper | FileWrapper>(<unknown>this) ||
+						!child.isSame(
+							<DirectoryWrapper | FileWrapper>(<unknown>this)
+						)
+				)
 		}
 
 		// Call onHandleMoved
 		this.options.onHandleMoved?.({
-			movedHandled: this.handle,
+			movedHandle: this.handle,
 			fromHandle: this.parent.handle,
 			fromPath,
 			toPath: this.path!,
@@ -176,18 +180,20 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 
 		if (type === 'overwrite') {
 			// We need to remove the duplicate FileWrapper
-			this.getParent()!.children.value = this.getParent()!.children.value!.filter(
-				(child) =>
-					child === <DirectoryWrapper | FileWrapper>(<unknown>this) ||
-					!child.isSame(
-						<DirectoryWrapper | FileWrapper>(<unknown>this)
-					)
-			)
+			this.getParent()!.children.value =
+				this.getParent()!.children.value!.filter(
+					(child) =>
+						child ===
+							<DirectoryWrapper | FileWrapper>(<unknown>this) ||
+						!child.isSame(
+							<DirectoryWrapper | FileWrapper>(<unknown>this)
+						)
+				)
 		}
 
 		// Call onHandleMoved
 		this.options.onHandleMoved?.({
-			movedHandled: this.handle,
+			movedHandle: this.handle,
 			fromHandle: fromParent.handle,
 			fromPath,
 			toPath: this.path!,

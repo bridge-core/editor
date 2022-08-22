@@ -2,6 +2,7 @@ import { IModuleConfig } from '../types'
 import { version } from '/@/utils/app/version'
 import { App } from '/@/App'
 import { isNightly } from '/@/utils/app/isNightly'
+import { TPackTypeId } from 'mc-project-core'
 
 export const ContextEnv: { value: any } = { value: {} }
 
@@ -10,10 +11,14 @@ export const ENVModule = ({}: IModuleConfig) => ({
 	isNightlyBuild: isNightly,
 
 	getCurrentBP() {
-		return `${App.instance.project.projectPath}/BP`
+		return App.getApp().then((app) =>
+			app.projectConfig.resolvePackPath('behaviorPack')
+		)
 	},
 	getCurrentRP() {
-		return `${App.instance.project.projectPath}/RP`
+		return App.getApp().then((app) =>
+			app.projectConfig.resolvePackPath('resourcePack')
+		)
 	},
 	getCurrentProject() {
 		return App.instance.project.projectPath
@@ -27,6 +32,12 @@ export const ENVModule = ({}: IModuleConfig) => ({
 	getProjectAuthor() {
 		return App.getApp().then((app) => app.projectConfig.get().author)
 	},
+	resolvePackPath(packId?: TPackTypeId, filePath?: string) {
+		return App.getApp().then((app) =>
+			app.projectConfig.resolvePackPath(packId, filePath)
+		)
+	},
+
 	getContext() {
 		console.warn('This API is deprecated!')
 		return {}

@@ -53,29 +53,31 @@ export function setupFileCategory(app: App) {
 			},
 		})
 	)
-	file.addItem(
-		app.actionManager.create({
-			id: 'bridge.action.openFolder',
-			icon: 'mdi-folder-open-outline',
-			name: 'actions.openFolder.name',
-			description: 'actions.openFolder.description',
-			keyBinding: 'Ctrl + Shift + O',
-			onTrigger: async () => {
-				const app = await App.getApp()
-				let directoryHandle: AnyDirectoryHandle
-				try {
-					directoryHandle = await window.showDirectoryPicker({
-						multiple: false,
-						mode: 'readwrite',
-					})
-				} catch {
-					return
-				}
+	// Doesn't make sense to show this option fs polyfill browsers
+	if (!isUsingFileSystemPolyfill.value)
+		file.addItem(
+			app.actionManager.create({
+				id: 'bridge.action.openFolder',
+				icon: 'mdi-folder-open-outline',
+				name: 'actions.openFolder.name',
+				description: 'actions.openFolder.description',
+				keyBinding: 'Ctrl + Shift + O',
+				onTrigger: async () => {
+					const app = await App.getApp()
+					let directoryHandle: AnyDirectoryHandle
+					try {
+						directoryHandle = await window.showDirectoryPicker({
+							multiple: false,
+							mode: 'readwrite',
+						})
+					} catch {
+						return
+					}
 
-				await app.fileDropper.importFolder(directoryHandle)
-			},
-		})
-	)
+					await app.fileDropper.importFolder(directoryHandle)
+				},
+			})
+		)
 	file.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.searchFile',
@@ -121,18 +123,16 @@ export function setupFileCategory(app: App) {
 					const currentTab = app.project.tabSystem?.selectedTab
 					if (!(currentTab instanceof FileTab)) return
 
-					const [
-						_,
-						compiled,
-					] = await app.project.compilerService.compileFile(
-						currentTab.getPath(),
-						await currentTab
-							.getFile()
-							.then(
-								async (file) =>
-									new Uint8Array(await file.arrayBuffer())
-							)
-					)
+					const [_, compiled] =
+						await app.project.compilerService.compileFile(
+							currentTab.getPath(),
+							await currentTab
+								.getFile()
+								.then(
+									async (file) =>
+										new Uint8Array(await file.arrayBuffer())
+								)
+						)
 
 					let uint8arr: Uint8Array
 					if (typeof compiled === 'string')

@@ -91,17 +91,16 @@ export class PackIndexer extends WorkerManager<
 		this.isPackIndexerFree.unlock()
 		return anyFileChanged
 	}
-	async rename(fromPath: string, toPath: string) {
+	async rename(fromPath: string, toPath: string, saveStore = true) {
 		await this.isPackIndexerFree.lock()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
 
-		await this.service.unlinkFile(fromPath, false)
-		await this.service.updateFile(toPath, undefined, undefined, true)
-		await this.service.saveCache()
+		await this.service.rename(fromPath, toPath, saveStore)
 
 		this.isPackIndexerFree.unlock()
 	}
+
 	async hasFile(filePath: string) {
 		await this.isPackIndexerFree.lock()
 

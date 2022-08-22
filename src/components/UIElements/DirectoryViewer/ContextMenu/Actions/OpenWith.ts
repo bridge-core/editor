@@ -56,18 +56,22 @@ export const OpenWithAction = async (fileWrapper: FileWrapper) => {
 		})
 	}
 
+	const actions = [
+		...defaultActions,
+		defaultActions.length > 0 && externalActions.length > 0
+			? { type: 'divider' }
+			: null,
+		...externalActions,
+	].filter((action) => action !== null)
+
+	if (actions.length <= 1) return null
+
 	// Construct and return submenu
 	return <ISubmenuConfig>{
 		type: 'submenu',
 		icon: 'mdi-open-in-app',
 		name: 'actions.openWith.name',
 
-		actions: [
-			...defaultActions,
-			defaultActions.length > 0 && externalActions.length > 0
-				? { type: 'divider' }
-				: null,
-			...externalActions,
-		],
+		actions,
 	}
 }

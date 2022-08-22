@@ -49,7 +49,7 @@ export interface IDirectoryViewerOptions {
 export interface IHandleMovedOptions {
 	fromPath: string
 	toPath: string
-	movedHandled: FileSystemHandle | VirtualHandle
+	movedHandle: FileSystemHandle | VirtualHandle
 	fromHandle: AnyDirectoryHandle
 	toHandle: AnyDirectoryHandle
 }

@@ -168,6 +168,11 @@ export class DashService extends EventDispatcher<void> {
 
 		this.isDashFree.unlock()
 	}
+	async renameMultiple(renamePaths: [string, string][]) {
+		for (const [oldPath, newPath] of renamePaths) {
+			await this.dash.rename(oldPath, newPath)
+		}
+	}
 	getCompilerOutputPath(filePath: string) {
 		return this.dash.getCompilerOutputPath(filePath)
 	}

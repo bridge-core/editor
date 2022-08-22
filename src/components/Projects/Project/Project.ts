@@ -462,7 +462,10 @@ export abstract class Project {
 		const path = await this.app.fileSystem.pathTo(handle)
 		if (!path) return false
 
-		if (handle.kind === 'file') return await this.unlinkFile(path)
+		if (handle.kind === 'file') {
+			await this.unlinkFile(path)
+			return true
+		}
 
 		const files: string[] = []
 		await iterateDir(
@@ -481,6 +484,24 @@ export abstract class Project {
 	async onMovedFile(fromPath: string, toPath: string) {
 		await Promise.all([
 			this.compilerService.rename(fromPath, toPath),
+			this.packIndexer.rename(fromPath, toPath),
+		])
+
+		await this.jsonDefaults.updateDynamicSchemas(toPath)
+	}
+	async onMovedFolder(fromPath: string, toPath: string) {
+		const handle = await this.app.fileSystem.getDirectoryHandle(toPath)
+
+		const renamePaths: [string, string][] = []
+
+		await iterateDir(handle, async (_, filePath) => {
+			const from = `${fromPath}/${filePath}`
+			const to = `${toPath}/${filePath}`
+			renamePaths.push([from, to])
+		})
+
+		await Promise.all([
+			this.compilerService.renameMultiple(renamePaths),
 			this.packIndexer.rename(fromPath, toPath),
 		])
 

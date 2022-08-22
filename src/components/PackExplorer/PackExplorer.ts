@@ -134,9 +134,15 @@ export class PackExplorer extends SidebarContent {
 		)
 	}
 
-	async onHandleMoved({ fromPath, toPath }: IHandleMovedOptions) {
+	async onHandleMoved({
+		fromPath,
+		toPath,
+		movedHandle,
+	}: IHandleMovedOptions) {
 		const app = await App.getApp()
-		await app.project.onMovedFile(fromPath, toPath)
+		if (movedHandle.kind === 'file')
+			await app.project.onMovedFile(fromPath, toPath)
+		else await app.project.onMovedFolder(fromPath, toPath)
 	}
 
 	onContentRightClick(event: MouseEvent): void {
