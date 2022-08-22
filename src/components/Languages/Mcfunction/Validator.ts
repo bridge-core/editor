@@ -35,6 +35,7 @@ export class CommandValidator {
 
 		for (let i = 0; i < lines.length; i++) {
 			const line = lines[i]
+			if (line[0] == '#') continue
 
 			let { tokens } = tokenizeCommand(line)
 
