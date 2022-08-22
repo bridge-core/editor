@@ -462,7 +462,10 @@ export abstract class Project {
 		const path = await this.app.fileSystem.pathTo(handle)
 		if (!path) return false
 
-		if (handle.kind === 'file') return await this.unlinkFile(path)
+		if (handle.kind === 'file') {
+			await this.unlinkFile(path)
+			return true
+		}
 
 		const files: string[] = []
 		await iterateDir(
