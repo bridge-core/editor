@@ -237,25 +237,10 @@ export class McfunctionLanguage extends Language {
 	async validate(model: editor.IModel) {
 		if (this.validator == undefined) return
 
-		const { editor, MarkerSeverity } = await useMonaco()
+		const { editor } = await useMonaco()
 
-		try {
-			await this.validator.parse(model.getValue())
+		const diagnostics = await this.validator.parse(model.getValue())
 
-			editor.setModelMarkers(model, this.id, [])
-		} catch (err: any) {
-			console.log(err)
-
-			editor.setModelMarkers(model, this.id, [
-				{
-					startColumn: err.start + 1,
-					endColumn: err.end + 1,
-					startLineNumber: err.line + 1,
-					endLineNumber: err.line + 1,
-					message: err.message,
-					severity: MarkerSeverity.Error,
-				},
-			])
-		}
+		editor.setModelMarkers(model, this.id, diagnostics)
 	}
 }
