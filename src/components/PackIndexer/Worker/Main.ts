@@ -140,6 +140,11 @@ export class PackIndexerService extends TaskService<
 		return this.lightningStore.has(filePath)
 	}
 
+	async rename(fromPath: string, toPath: string, saveStore = true) {
+		this.lightningStore.rename(fromPath, toPath)
+		if (saveStore) await this.lightningStore.saveStore(false)
+	}
+
 	unlinkFile(path: string, saveCache = true) {
 		return this.lightningCache.unlinkFile(path, saveCache)
 	}

@@ -489,6 +489,24 @@ export abstract class Project {
 
 		await this.jsonDefaults.updateDynamicSchemas(toPath)
 	}
+	async onMovedFolder(fromPath: string, toPath: string) {
+		const handle = await this.app.fileSystem.getDirectoryHandle(toPath)
+
+		const renamePaths: [string, string][] = []
+
+		await iterateDir(handle, async (_, filePath) => {
+			const from = `${fromPath}/${filePath}`
+			const to = `${toPath}/${filePath}`
+			renamePaths.push([from, to])
+		})
+
+		await Promise.all([
+			this.compilerService.renameMultiple(renamePaths),
+			this.packIndexer.rename(fromPath, toPath),
+		])
+
+		await this.jsonDefaults.updateDynamicSchemas(toPath)
+	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()
 
