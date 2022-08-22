@@ -199,6 +199,7 @@ export class ProjectConfig extends BaseProjectConfig {
 
 		// Only refresh project if it's active
 		if (project.isActiveProject) await project.refresh()
+		this.project!.app.windows.createPreset.onPresetsChanged()
 
 		project.app.windows.loadingWindow.close()
 	}
