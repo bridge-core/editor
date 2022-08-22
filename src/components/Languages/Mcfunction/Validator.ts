@@ -51,12 +51,15 @@ export class CommandValidator {
 			) {
 				diagnostics.push({
 					severity: MarkerSeverity.Error,
-					message: `Command ${commandName.word} not found`,
+					message: `Command "${commandName.word}" does not exist`,
 					startLineNumber: i + 1,
 					startColumn: commandName.startColumn + 1,
 					endLineNumber: i + 1,
 					endColumn: commandName.endColumn + 1,
 				})
+
+				// The command is not valid; it makes no sense to continue validating this line
+				continue
 			}
 
 			let definitions = await this.commandData.getCommandDefinitions(
@@ -76,7 +79,7 @@ export class CommandValidator {
 			) {
 				diagnostics.push({
 					severity: MarkerSeverity.Error,
-					message: `Too many arguments for command ${commandName.word}`,
+					message: `Too many arguments for command "${commandName.word}"`,
 					startLineNumber: i + 1,
 					startColumn: commandName.startColumn + 1,
 					endLineNumber: i + 1,
@@ -114,7 +117,7 @@ export class CommandValidator {
 				if (definitions.length == 0) {
 					diagnostics.push({
 						severity: MarkerSeverity.Error,
-						message: `Argument ${argument.word} not valid here`,
+						message: `Argument "${argument.word}" is not valid here`,
 						startLineNumber: i + 1,
 						startColumn: argument.startColumn + 1,
 						endLineNumber: i + 1,
