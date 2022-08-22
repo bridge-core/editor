@@ -14,6 +14,7 @@ import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
 import { proxy } from 'comlink'
 import { useMonaco } from '../../utils/libs/useMonaco'
+import { CommandValidator } from './Mcfunction/Validator'
 
 export const config: languages.LanguageConfiguration = {
 	wordPattern: /[aA-zZ]+/,
@@ -169,6 +170,8 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 }
 
 export class McfunctionLanguage extends Language {
+	protected validator: CommandValidator | undefined
+
 	constructor() {
 		super({
 			id: 'mcfunction',
@@ -214,6 +217,11 @@ export class McfunctionLanguage extends Language {
 				}),
 				disposable
 			)
+
+			const project = app.project
+			if (!(project instanceof BedrockProject)) return
+
+			this.validator = new CommandValidator(project.commandData)
 		})
 	}
 
@@ -226,5 +234,28 @@ export class McfunctionLanguage extends Language {
 		return true
 	}
 
-	validate() {}
+	async validate(model: editor.IModel) {
+		if (this.validator == undefined) return
+
+		const { editor, MarkerSeverity } = await useMonaco()
+
+		try {
+			await this.validator.parse(model.getValue())
+
+			editor.setModelMarkers(model, this.id, [])
+		} catch (err: any) {
+			console.log(err)
+
+			editor.setModelMarkers(model, this.id, [
+				{
+					startColumn: err.start + 1,
+					endColumn: err.end + 1,
+					startLineNumber: err.line + 1,
+					endLineNumber: err.line + 1,
+					message: err.message,
+					severity: MarkerSeverity.Error,
+				},
+			])
+		}
+	}
 }

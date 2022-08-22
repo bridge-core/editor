@@ -436,7 +436,7 @@ export class CommandData extends Signal<void> {
 	/**
 	 * Given an argument type, test whether a string matches the type
 	 */
-	protected async isArgumentType(
+	async isArgumentType(
 		testStr: string,
 		commandArgument: ICommandArgument,
 		commandName?: string
