@@ -36,6 +36,22 @@ export function setupViewCategory(app: App) {
 
 	view.addItem(
 		app.actionManager.create({
+			icon: 'mdi-puzzle-outline',
+			name: 'actions.viewExtensionsFolder.name',
+			description: 'actions.viewExtensionsFolder.description',
+			onTrigger: async () => {
+				const extensionsFolder =
+					await app.fileSystem.getDirectoryHandle('~local/extensions')
+
+				app.viewFolders.addDirectoryHandle({
+					directoryHandle: extensionsFolder,
+				})
+			},
+		})
+	)
+
+	view.addItem(
+		app.actionManager.create({
 			icon: 'mdi-pencil-outline',
 			name: 'actions.toggleReadOnly.name',
 			description: 'actions.toggleReadOnly.description',

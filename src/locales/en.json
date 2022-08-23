@@ -131,6 +131,10 @@
 			"name": "View Connected Files",
 			"description": "View all files connected to this file"
 		},
+		"viewExtensionsFolder": {
+			"name": "View Extensions Folder",
+			"description": "View the folder where bridge. stores global extensions"
+		},
 		"open": {
 			"name": "Open",
 			"description": "Open the file in the editor"
