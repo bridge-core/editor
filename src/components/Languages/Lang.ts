@@ -169,5 +169,22 @@ export class LangLanguage extends Language {
 		})
 	}
 
-	validate(model: editor.IModel) {}
+	async validate(model: editor.IModel) {
+		const { editor, MarkerSeverity } = await useMonaco()
+
+		const markers: editor.IMarkerData[] = []
+		for (let l = 1; l <= model.getLineCount(); l++) {
+			const line = model.getLineContent(l)
+			if (line && !line.includes('=') && !line.startsWith('##'))
+				markers.push({
+					startColumn: 1,
+					endColumn: line.length + 1,
+					startLineNumber: l,
+					endLineNumber: l,
+					message: 'Language keys must be assigned a value.',
+					severity: MarkerSeverity.Error,
+				})
+		}
+		editor.setModelMarkers(model, this.id, markers)
+	}
 }
