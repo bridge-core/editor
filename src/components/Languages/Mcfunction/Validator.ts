@@ -49,7 +49,7 @@ export class CommandValidator {
 			console.log(leftTokens.length)
 			console.log(definition.arguments.length)
 
-			if (leftTokens.length - 1 < definition.arguments.length) {
+			if (leftTokens.length - 1 <= definition.arguments.length) {
 				continue
 			}
 
@@ -93,6 +93,7 @@ export class CommandValidator {
 			}
 		} else {
 			console.log('Subcommand: Fully passed!')
+			console.log(passedSubcommandDefinition)
 
 			return {
 				passed: true,
@@ -173,7 +174,9 @@ export class CommandValidator {
 				// Loop over every token that is not the command name
 				let targetArgumentIndex = 0
 				for (let k = 1; k < tokens.length; k++) {
-					if (definitions[j].arguments.length < targetArgumentIndex) {
+					if (
+						definitions[j].arguments.length <= targetArgumentIndex
+					) {
 						console.warn(
 							'Failed cause less arguments than target argument index'
 						)
@@ -194,12 +197,17 @@ export class CommandValidator {
 					const targetArgument =
 						definitions[j].arguments[targetArgumentIndex]
 
+					console.log(definitions[j].arguments.length)
+					console.log(targetArgumentIndex)
+					console.log(
+						JSON.parse(JSON.stringify(definitions[j].arguments))
+					)
+					console.log(targetArgument)
 					console.log(
 						`Checking ${argument.word} against ${targetArgument.type}`
 					)
 
 					if (targetArgument.type == 'subcommand') {
-						// TODO: Implement Subcommands
 						const result = await this.parseSubcommand(
 							commandName.word,
 							tokens.slice(k, tokens.length)
@@ -210,6 +218,35 @@ export class CommandValidator {
 
 						if (result.passed) {
 							k += result.argumentsConsumedCount!
+
+							if (targetArgument.allowMultiple) {
+								let nextResult: {
+									passed: boolean
+									argumentsConsumedCount?: number
+								} = {
+									passed: true,
+									argumentsConsumedCount: 0,
+								}
+
+								while (nextResult.passed) {
+									nextResult = await this.parseSubcommand(
+										commandName.word,
+										tokens.slice(k + 1, tokens.length)
+									)
+
+									if (nextResult.passed) {
+										const origK = k
+
+										k +=
+											nextResult.argumentsConsumedCount! +
+											1
+
+										console.log(
+											`Extra subcommand pushed k to ${k} from ${origK} or ${tokens[k].word} from ${tokens[origK].word}`
+										)
+									}
+								}
+							}
 
 							targetArgumentIndex++
 
