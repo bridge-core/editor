@@ -119,6 +119,8 @@ const codeActionProvider: languages.CodeActionProvider = {
 		range: Range,
 		context: languages.CodeActionContext
 	) => {
+		const { Range } = await useMonaco()
+
 		const actions: languages.CodeAction[] = []
 		for (const marker of context.markers) {
 			const line = model.getLineContent(marker.startLineNumber)
@@ -133,7 +135,12 @@ const codeActionProvider: languages.CodeActionProvider = {
 						{
 							resource: model.uri,
 							edit: {
-								range,
+								range: new Range(
+									marker.startLineNumber,
+									marker.startColumn,
+									marker.endLineNumber,
+									marker.endColumn
+								),
 								text: `${line}=${val}`,
 							},
 						},
