@@ -9,6 +9,7 @@ export interface IAddLanguageOptions {
 	config: languages.LanguageConfiguration
 	tokenProvider: any
 	completionItemProvider?: languages.CompletionItemProvider
+	codeActionProvider?: languages.CodeActionProvider
 }
 
 export abstract class Language {
@@ -23,6 +24,7 @@ export abstract class Language {
 		config,
 		tokenProvider,
 		completionItemProvider,
+		codeActionProvider,
 	}: IAddLanguageOptions) {
 		this.id = id
 
@@ -48,6 +50,10 @@ export abstract class Language {
 						id,
 						completionItemProvider
 					)
+				)
+			if (codeActionProvider)
+				this.disposables.push(
+					languages.registerCodeActionProvider(id, codeActionProvider)
 				)
 		})
 	}
