@@ -44,6 +44,15 @@ export class CommandValidator {
 
 			let failed = false
 
+			// Fail if there is not enought tokens to satisfy the definition
+			console.log('Length check?')
+			console.log(leftTokens.length)
+			console.log(definition.arguments.length)
+
+			if (leftTokens.length - 1 < definition.arguments.length) {
+				continue
+			}
+
 			for (let j = 0; j < definition.arguments.length; j++) {
 				const argument = leftTokens[j + 1]
 				const targetArgument = definition.arguments[j]
@@ -56,6 +65,7 @@ export class CommandValidator {
 					targetArgument
 				)
 
+				// Fail if type does not match
 				if (argumentType != 'full') {
 					console.warn(
 						`Subcommand: Check against ${argument.word} and ${targetArgument.type} failed!`
@@ -132,6 +142,20 @@ export class CommandValidator {
 			// Remove empty tokens as to not confuse the argument checker
 			tokens = tokens.filter((token) => token.word != '')
 
+			if (tokens.length < 2) {
+				diagnostics.push({
+					severity: MarkerSeverity.Error,
+					message: `Command "${commandName.word}" needs parameters`,
+					startLineNumber: i + 1,
+					startColumn: commandName.startColumn + 1,
+					endLineNumber: i + 1,
+					endColumn: commandName.endColumn + 1,
+				})
+
+				// The command is not valid; it makes no sense to continue validating this line
+				continue
+			}
+
 			let definitions = await this.commandData.getCommandDefinitions(
 				commandName.word,
 				false
@@ -144,15 +168,23 @@ export class CommandValidator {
 
 			// Loop over every definition and test for validness
 			for (let j = 0; j < definitions.length; j++) {
+				let failed = false
+
 				// Loop over every token that is not the command name
 				let targetArgumentIndex = 0
 				for (let k = 1; k < tokens.length; k++) {
 					if (definitions[j].arguments.length < targetArgumentIndex) {
+						console.warn(
+							'Failed cause less arguments than target argument index'
+						)
+
 						definitions.splice(j, 1)
 
 						j--
 
 						if (lastTokenError < k) lastTokenError = k
+
+						failed = true
 
 						break
 					}
@@ -162,9 +194,13 @@ export class CommandValidator {
 					const targetArgument =
 						definitions[j].arguments[targetArgumentIndex]
 
+					console.log(
+						`Checking ${argument.word} against ${targetArgument.type}`
+					)
+
 					if (targetArgument.type == 'subcommand') {
 						// TODO: Implement Subcommands
-						/*const result = await this.parseSubcommand(
+						const result = await this.parseSubcommand(
 							commandName.word,
 							tokens.slice(k, tokens.length)
 						)
@@ -173,6 +209,10 @@ export class CommandValidator {
 						console.log(result)
 
 						if (result.passed) {
+							k += result.argumentsConsumedCount!
+
+							targetArgumentIndex++
+
 							continue
 						} else {
 							// Fail because subcommand doesn't match any definitions
@@ -184,8 +224,12 @@ export class CommandValidator {
 
 							j--
 
-							continue
-						}*/
+							if (lastTokenError < k) lastTokenError = k
+
+							failed = true
+
+							break
+						}
 					}
 
 					const argumentType = await this.commandData.isArgumentType(
@@ -205,6 +249,8 @@ export class CommandValidator {
 						j--
 
 						if (lastTokenError < k) lastTokenError = k
+
+						failed = true
 
 						break
 					}
@@ -229,10 +275,27 @@ export class CommandValidator {
 
 						if (lastTokenError < k) lastTokenError = k
 
+						failed = true
+
 						break
 					}
 
 					targetArgumentIndex++
+				}
+
+				if (failed) continue
+
+				if (targetArgumentIndex < definitions[j].arguments.length) {
+					console.warn(
+						'Failed because not argument is less than definition argument count'
+					)
+
+					definitions.splice(j, 1)
+
+					j--
+
+					if (lastTokenError < tokens.length - 1)
+						lastTokenError = tokens.length - 1
 				}
 			}
 
