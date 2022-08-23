@@ -11,6 +11,7 @@ import { CommandData } from '/@/components/Languages/Mcfunction/Data'
 // import { WorldTab } from '/@/components/BedrockWorlds/Render/Tab'
 import { FileTab } from '../../TabSystem/FileTab'
 import { HTMLPreviewTab } from '../../Editors/HTMLPreview/HTMLPreview'
+import { LangData } from '/@/components/Languages/Lang/Data'
 
 const bedrockPreviews: ITabPreviewConfig[] = [
 	{
@@ -55,6 +56,7 @@ const bedrockPreviews: ITabPreviewConfig[] = [
 
 export class BedrockProject extends Project {
 	commandData = new CommandData()
+	langData = new LangData()
 
 	onCreate() {
 		bedrockPreviews.forEach((tabPreview) =>
@@ -85,6 +87,7 @@ export class BedrockProject extends Project {
 		})
 
 		this.commandData.loadCommandData('minecraftBedrock')
+		this.langData.loadLangData('minecraftBedrock')
 	}
 
 	getCurrentDataPackage() {
