@@ -1101,7 +1101,7 @@
 			"edit": "Edit"
 		},
 		"langValidation": {
-			"noKey": {
+			"noValue": {
 				"errorMessage": "Language keys must be assigned a value",
 				"quickFix": "Add a value to this key"
 			}

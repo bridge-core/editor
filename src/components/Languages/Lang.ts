@@ -124,7 +124,7 @@ const codeActionProvider: languages.CodeActionProvider = {
 			const val = await guessValue(line)
 
 			actions.push({
-				title: translate('editors.langValidation.noKey.quickFix'),
+				title: translate('editors.langValidation.noValue.quickFix'),
 				diagnostics: [marker],
 				kind: 'quickfix',
 				edit: {
@@ -192,7 +192,7 @@ export class LangLanguage extends Language {
 					startLineNumber: l,
 					endLineNumber: l,
 					message: translate(
-						'editors.langValidation.noKey.errorMessage'
+						'editors.langValidation.noValue.errorMessage'
 					),
 					severity: MarkerSeverity.Error,
 				})
