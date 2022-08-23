@@ -168,6 +168,8 @@ export default {
 			this.select()
 		},
 		onKeyDown(event) {
+			if (event.target.tagName === 'INPUT') return
+
 			if (event.code === 'Enter') {
 				// Enter to rename on darwin platforms or open on other platforms
 				this.onEnter(event)
