@@ -152,7 +152,8 @@ export class CommandData extends Signal<void> {
 				(selectorArgument: unknown) => selectorArgument !== undefined
 			)
 	}
-	protected async getSubcommands(commandName: string): Promise<ICommand[]> {
+
+	async getSubcommands(commandName: string): Promise<ICommand[]> {
 		const schemas = await this.getSchema()
 
 		return schemas
