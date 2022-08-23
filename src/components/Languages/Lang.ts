@@ -5,6 +5,7 @@ import { Language } from './Language'
 import { App } from '/@/App'
 import { useMonaco } from '/@/utils/libs/useMonaco'
 import { guessValue } from './Lang/guessValue'
+import { translate } from '/@/components/Locales/Manager'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {
@@ -123,7 +124,7 @@ const codeActionProvider: languages.CodeActionProvider = {
 			const val = await guessValue(line)
 
 			actions.push({
-				title: 'Add value to key',
+				title: translate('editors.langValidation.noKey.quickFix'),
 				diagnostics: [marker],
 				kind: 'quickfix',
 				edit: {
@@ -190,7 +191,9 @@ export class LangLanguage extends Language {
 					endColumn: line.length + 1,
 					startLineNumber: l,
 					endLineNumber: l,
-					message: 'Language keys must be assigned a value.',
+					message: translate(
+						'editors.langValidation.noKey.errorMessage'
+					),
 					severity: MarkerSeverity.Error,
 				})
 		}
