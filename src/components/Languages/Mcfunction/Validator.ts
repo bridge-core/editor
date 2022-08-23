@@ -129,6 +129,9 @@ export class CommandValidator {
 				continue
 			}
 
+			// Remove empty tokens as to not confuse the argument checker
+			tokens = tokens.filter((token) => token.word != '')
+
 			let definitions = await this.commandData.getCommandDefinitions(
 				commandName.word,
 				false
@@ -136,51 +139,32 @@ export class CommandValidator {
 
 			console.log(JSON.parse(JSON.stringify(definitions)))
 
-			// Remove empty tokens as to not confuse the argument checker
-			tokens = tokens.filter((token) => token.word != '')
+			// We only need to record the error of the most farthest in token because that is the most likely variation the user was attempting to type
+			let lastTokenError = 0
 
-			// If there are too many arguments for all available definitions, throw an error  but only if there is not definition that includes subcommands
-			if (
-				definitions.find(
-					(definition) =>
-						definition.arguments.length >= tokens.length - 1
-				) == undefined &&
-				definitions.find(
-					(definition) =>
-						definition.arguments.find(
-							(argument) => argument.type == 'subcommand'
-						) != undefined
-				) == undefined
-			) {
-				diagnostics.push({
-					severity: MarkerSeverity.Error,
-					message: `Too many arguments for command "${commandName.word}"`,
-					startLineNumber: i + 1,
-					startColumn: commandName.startColumn + 1,
-					endLineNumber: i + 1,
-					endColumn: tokens.at(-1)?.endColumn ?? 1,
-				})
-			}
-
-			// Check for a valid command definition
-			for (let k = 1; k < tokens.length; k++) {
-				const argument = tokens[k]
-
-				for (let j = 0; j < definitions.length; j++) {
-					if (definitions[j].arguments.length < k) {
+			// Loop over every definition and test for validness
+			for (let j = 0; j < definitions.length; j++) {
+				// Loop over every token that is not the command name
+				let targetArgumentIndex = 0
+				for (let k = 1; k < tokens.length; k++) {
+					if (definitions[j].arguments.length < targetArgumentIndex) {
 						definitions.splice(j, 1)
 
 						j--
 
-						continue
+						if (lastTokenError < k) lastTokenError = k
+
+						break
 					}
 
-					const targetArgument = definitions[j].arguments[k - 1]
+					const argument = tokens[k]
+
+					const targetArgument =
+						definitions[j].arguments[targetArgumentIndex]
 
 					if (targetArgument.type == 'subcommand') {
 						// TODO: Implement Subcommands
-
-						const result = await this.parseSubcommand(
+						/*const result = await this.parseSubcommand(
 							commandName.word,
 							tokens.slice(k, tokens.length)
 						)
@@ -201,7 +185,7 @@ export class CommandValidator {
 							j--
 
 							continue
-						}
+						}*/
 					}
 
 					const argumentType = await this.commandData.isArgumentType(
@@ -220,7 +204,9 @@ export class CommandValidator {
 
 						j--
 
-						continue
+						if (lastTokenError < k) lastTokenError = k
+
+						break
 					}
 
 					// Fail if there are additional values that are not met
@@ -241,22 +227,24 @@ export class CommandValidator {
 
 						j--
 
-						continue
+						if (lastTokenError < k) lastTokenError = k
+
+						break
 					}
-				}
 
-				if (definitions.length == 0) {
-					diagnostics.push({
-						severity: MarkerSeverity.Error,
-						message: `Argument "${argument.word}" is not valid here`,
-						startLineNumber: i + 1,
-						startColumn: argument.startColumn + 1,
-						endLineNumber: i + 1,
-						endColumn: argument.endColumn + 1,
-					})
-
-					break
+					targetArgumentIndex++
 				}
+			}
+
+			if (definitions.length == 0) {
+				diagnostics.push({
+					severity: MarkerSeverity.Error,
+					message: `Argument "${tokens[lastTokenError].word}" is not valid here`,
+					startLineNumber: i + 1,
+					startColumn: tokens[lastTokenError].startColumn + 1,
+					endLineNumber: i + 1,
+					endColumn: tokens[lastTokenError].endColumn + 1,
+				})
 			}
 		}
 
