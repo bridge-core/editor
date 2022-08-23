@@ -6,6 +6,7 @@ import { App } from '/@/App'
 import { useMonaco } from '/@/utils/libs/useMonaco'
 import { guessValue } from './Lang/guessValue'
 import { translate } from '/@/components/Locales/Manager'
+import { Project } from '../Projects/Project/Project'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {
@@ -160,23 +161,25 @@ export class LangLanguage extends Language {
 		})
 
 		// Highlight namespaces
-		App.getApp().then(async (app) => {
-			await app.projectManager.projectReady.fired
-			const tokenizer = {
-				root: [
-					...new Set(
-						[
-							'minecraft',
-							'bridge',
-							app.projectConfig.get().namespace,
-						].filter((k) => k !== undefined)
-					),
-				]
-					.map((word) => [word, 'keyword'])
-					.concat(<any>tokenProvider.tokenizer.root),
-			}
-			this.updateTokenProvider({ tokenizer })
-		})
+		this.disposables.push(
+			App.eventSystem.on('projectChanged', (project: Project) => {
+				const tokenizer = {
+					root: [
+						...new Set(
+							[
+								'minecraft',
+								'bridge',
+								project.config.get().namespace,
+							].filter((k) => k !== undefined)
+						),
+					]
+						.map((word) => [word, 'keyword'])
+						.concat(<any>tokenProvider.tokenizer.root),
+				}
+
+				this.updateTokenProvider({ tokenizer })
+			})
+		)
 	}
 
 	async validate(model: editor.IModel) {
