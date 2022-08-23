@@ -152,22 +152,20 @@ export class LangLanguage extends Language {
 		// Highlight namespaces
 		App.getApp().then(async (app) => {
 			await app.projectManager.projectReady.fired
-			this.updateTokenProvider({
-				tokenizer: {
-					root: [
-						...tokenProvider.tokenizer.root,
-						...new Set(
-							[
-								'minecraft',
-								'bridge',
-								app.projectConfig.get().namespace,
-							]
-								.filter((k) => k !== undefined)
-								.map((word) => [word, 'keyword'])
-						),
-					],
-				},
-			})
+			const tokenizer = {
+				root: [
+					...new Set(
+						[
+							'minecraft',
+							'bridge',
+							app.projectConfig.get().namespace,
+						].filter((k) => k !== undefined)
+					),
+				]
+					.map((word) => [word, 'keyword'])
+					.concat(<any>tokenProvider.tokenizer.root),
+			}
+			this.updateTokenProvider({ tokenizer })
 		})
 	}
 
