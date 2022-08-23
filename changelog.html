@@ -1,8 +1,24 @@
 <h2>Features:</h2>
 <ul>
-<li>Added a new &quot;@bridge/reactivity&quot; module</li>
+<li>Automatically select file/folder name upon renaming (6bff646e6ceab7cef79c15341e7daeae67961561)</li>
+<li>Better installation dialog on some browsers (14df3223440cf26a8a7fad4aad402f804c9470b6)</li>
+<li>Exposed &quot;resolvePackPath&quot; function to extensions (b44f80de932104e20012d85fe29f7c542416edc3)</li>
+<li>New &quot;View Extensions Folder&quot; action (#565)</li>
+</ul>
+<h2>Changes:</h2>
+<ul>
+<li>Only show &quot;Open With&quot; action if there's more than one action (3af63ec63a584cb35d56e343e3eb442497e81a22)</li>
+<li>Hide &quot;Open Folder&quot; on unsupported browsers (13a288052e1bbafaa1b391eb41b7f5ae4c4a2c14)</li>
+<li>Changed &quot;GameTest&quot; preset to &quot;Script&quot; preset (60bcbc0a7bb1991cedc7122c7cc965971faaefdf)</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>&quot;com.mojang&quot; prompt now gets properly delayed</li>
+<li>Fixed reference error within attachables (3f8b5076a2659b94eec3740f14b9f3139009144f)</li>
+<li>Fixed steve skin preset icon (127085d9e667da5b5ba9f75e827705dde17cd48b)</li>
+<li>Fixed preset not being usable when switch input is off (76892a763fe3de3c358fcda7c9e48bde79f15740)</li>
+<li>Fixed error upon deleting file (#580)</li>
+<li>Fixed error upon renaming folder (#573)</li>
+<li>Correctly update presets after toggling experimental gameplay (59c452dcb42398eefef4fca9165cd0311bc1b9f7)</li>
+<li>Fixed error upon running generator script (https://github.com/bridge-core/dash-compiler/commit/f1ca8e6592f2c2f3d6a31d4f8a5c33ab5980cfb1)</li>
+<li>Fixed wrong file extension being used for executed generator script (#581)</li>
 </ul>
