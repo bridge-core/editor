@@ -22,9 +22,6 @@ export class CommandValidator {
 			word: string
 		}[]
 	) {
-		console.log('Subcommand:')
-		console.log(leftTokens)
-
 		const subcommandName = leftTokens[0]
 
 		let subcommandDefinitions = (
@@ -38,27 +35,19 @@ export class CommandValidator {
 
 		let passedSubcommandDefinition = undefined
 
+		// Loop over every subcommand definition to check for a matching one
 		for (const definition of subcommandDefinitions) {
-			console.log('Validating Subcommand Definition')
-			console.log(definition)
-
 			let failed = false
 
 			// Fail if there is not enought tokens to satisfy the definition
-			console.log('Length check?')
-			console.log(leftTokens.length)
-			console.log(definition.arguments.length)
-
 			if (leftTokens.length - 1 <= definition.arguments.length) {
 				continue
 			}
 
+			// Loop over every argument
 			for (let j = 0; j < definition.arguments.length; j++) {
 				const argument = leftTokens[j + 1]
 				const targetArgument = definition.arguments[j]
-
-				console.log(argument)
-				console.log(targetArgument)
 
 				const argumentType = await this.commandData.isArgumentType(
 					argument.word,
@@ -80,21 +69,15 @@ export class CommandValidator {
 			}
 
 			if (!failed) {
-				console.log(`Subcommand: definition passed!`)
 				passedSubcommandDefinition = definition
 			}
 		}
 
 		if (passedSubcommandDefinition == undefined) {
-			console.warn('Subcommand: no definition passed!')
-
 			return {
 				passed: false,
 			}
 		} else {
-			console.log('Subcommand: Fully passed!')
-			console.log(passedSubcommandDefinition)
-
 			return {
 				passed: true,
 				argumentsConsumedCount:
@@ -174,13 +157,10 @@ export class CommandValidator {
 				// Loop over every token that is not the command name
 				let targetArgumentIndex = 0
 				for (let k = 1; k < tokens.length; k++) {
+					// Fail if there are not enough arguments in definition
 					if (
 						definitions[j].arguments.length <= targetArgumentIndex
 					) {
-						console.warn(
-							'Failed cause less arguments than target argument index'
-						)
-
 						definitions.splice(j, 1)
 
 						j--
@@ -197,28 +177,17 @@ export class CommandValidator {
 					const targetArgument =
 						definitions[j].arguments[targetArgumentIndex]
 
-					console.log(definitions[j].arguments.length)
-					console.log(targetArgumentIndex)
-					console.log(
-						JSON.parse(JSON.stringify(definitions[j].arguments))
-					)
-					console.log(targetArgument)
-					console.log(
-						`Checking ${argument.word} against ${targetArgument.type}`
-					)
-
 					if (targetArgument.type == 'subcommand') {
 						const result = await this.parseSubcommand(
 							commandName.word,
 							tokens.slice(k, tokens.length)
 						)
 
-						console.log('Subcommand result!')
-						console.log(result)
-
 						if (result.passed) {
+							// Skip over tokens consumed in the subcommand validation
 							k += result.argumentsConsumedCount!
 
+							// If there allows multiple subcommands keep going untill a subcommand fails
 							if (targetArgument.allowMultiple) {
 								let nextResult: {
 									passed: boolean
@@ -253,10 +222,6 @@ export class CommandValidator {
 							continue
 						} else {
 							// Fail because subcommand doesn't match any definitions
-							console.warn(
-								`Check for subcommand ${argument.word} failed!`
-							)
-
 							definitions.splice(j, 1)
 
 							j--
@@ -277,10 +242,6 @@ export class CommandValidator {
 
 					// Fail if type does not match
 					if (argumentType != 'full') {
-						console.warn(
-							`Check against ${argument.word} and ${targetArgument.type} failed!`
-						)
-
 						definitions.splice(j, 1)
 
 						j--
@@ -300,12 +261,6 @@ export class CommandValidator {
 							argument.word
 						)
 					) {
-						console.warn(
-							`Invalid value ${argument.word} of ${JSON.stringify(
-								targetArgument.additionalData.values
-							)}!`
-						)
-
 						definitions.splice(j, 1)
 
 						j--
@@ -320,13 +275,11 @@ export class CommandValidator {
 					targetArgumentIndex++
 				}
 
+				// Skip if already failed in case this leaves an undefined reference
 				if (failed) continue
 
+				// Fail if there are not enough tokens to satisfy definition
 				if (targetArgumentIndex < definitions[j].arguments.length) {
-					console.warn(
-						'Failed because not argument is less than definition argument count'
-					)
-
 					definitions.splice(j, 1)
 
 					j--
