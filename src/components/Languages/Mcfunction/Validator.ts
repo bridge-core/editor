@@ -153,6 +153,7 @@ export class CommandValidator {
 		const { MarkerSeverity } = await useMonaco()
 
 		let diagnostics: editor.IMarkerData[] = []
+		let warnings: editor.IMarkerData[] = []
 
 		if (line != undefined) tokens = tokenizeCommand(line).tokens
 
@@ -204,11 +205,16 @@ export class CommandValidator {
 		// We only need to record the error of the most farthest in token because that is the most likely variation the user was attempting to type
 		let lastTokenError = 0
 
+		let longestPassLength = -1
+
 		// Loop over every definition and test for validness
 		for (let j = 0; j < definitions.length; j++) {
+			console.log(`---- New Definition ---- ${commandName.word}`)
+
 			let failed = false
 
-			let warnings: editor.IMarkerData[] = []
+			let definitionWarnings: editor.IMarkerData[] = []
+			let definitionDiagnostics: editor.IMarkerData[] = []
 
 			// Loop over every token that is not the command name
 			let targetArgumentIndex = 0
@@ -241,7 +247,9 @@ export class CommandValidator {
 						tokens.slice(k, tokens.length)
 					)
 
-					warnings = warnings.concat(result.warnings)
+					definitionWarnings = definitionWarnings.concat(
+						result.warnings
+					)
 
 					if (result.passed) {
 						// Skip over tokens consumed in the subcommand validation
@@ -266,9 +274,10 @@ export class CommandValidator {
 								)
 
 								if (nextResult.passed) {
-									warnings = warnings.concat(
-										nextResult.warnings
-									)
+									definitionWarnings =
+										definitionWarnings.concat(
+											nextResult.warnings
+										)
 
 									k += nextResult.argumentsConsumedCount! + 1
 								}
@@ -303,13 +312,11 @@ export class CommandValidator {
 						offset + targetArgumentIndex
 					)
 
-					diagnostics = diagnostics.concat(result)
+					definitionDiagnostics = definitionDiagnostics.concat(result)
 
-					for (const warning of warnings) {
-						diagnostics.push(warning)
-					}
+					targetArgumentIndex++
 
-					return diagnostics
+					break
 				}
 
 				const argumentType = await this.commandData.isArgumentType(
@@ -369,7 +376,7 @@ export class CommandValidator {
 								(reference) => reference.value == argument.word
 							) == undefined
 						) {
-							warnings.push({
+							definitionWarnings.push({
 								severity: MarkerSeverity.Warning,
 								message: `Unkown schema value "${argument.word}"`,
 								startLineNumber: -1,
@@ -400,9 +407,12 @@ export class CommandValidator {
 				continue
 			}
 
-			for (const warning of warnings) {
-				diagnostics.push(warning)
-			}
+			if (targetArgumentIndex < longestPassLength) break
+
+			longestPassLength = targetArgumentIndex
+
+			diagnostics = definitionDiagnostics
+			warnings = definitionWarnings
 		}
 
 		if (definitions.length == 0) {
@@ -414,9 +424,12 @@ export class CommandValidator {
 				endLineNumber: -1,
 				endColumn: tokens[lastTokenError].endColumn + 1,
 			})
+
+			// Return here since we don't want warnings added
+			return diagnostics
 		}
 
-		return diagnostics
+		return diagnostics.concat(warnings)
 	}
 
 	async parse(content: string) {
