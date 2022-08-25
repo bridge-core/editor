@@ -14,7 +14,7 @@ export class CommandValidator {
 		this.commandData = commandData
 	}
 
-	async parseSubcommand(
+	protected async parseSubcommand(
 		baseCommandName: string,
 		leftTokens: {
 			startColumn: number
@@ -56,10 +56,6 @@ export class CommandValidator {
 
 				// Fail if type does not match
 				if (argumentType != 'full') {
-					console.warn(
-						`Subcommand: Check against ${argument.word} and ${targetArgument.type} failed!`
-					)
-
 					failed = true
 
 					break
@@ -86,218 +82,245 @@ export class CommandValidator {
 		}
 	}
 
+	protected async parseCommand(
+		line: string | undefined,
+		tokens: any[],
+		offset: number
+	): Promise<editor.IMarkerData[]> {
+		const { MarkerSeverity } = await useMonaco()
+		let diagnostics: editor.IMarkerData[] = []
+
+		if (line != undefined) tokens = tokenizeCommand(line).tokens
+
+		const commandName = tokens[0]
+
+		// If first word is emtpy then this is an empty line
+		if (commandName.word == '') return diagnostics
+
+		if (
+			!(await this.commandData.allCommands()).includes(commandName.word)
+		) {
+			diagnostics.push({
+				severity: MarkerSeverity.Error,
+				message: `Command "${commandName.word}" does not exist`,
+				startLineNumber: -1,
+				startColumn: commandName.startColumn + 1,
+				endLineNumber: -1,
+				endColumn: commandName.endColumn + 1,
+			})
+
+			// The command is not valid; it makes no sense to continue validating this line
+			return diagnostics
+		}
+
+		console.log(`Validating command ${commandName.word}!`)
+
+		// Remove empty tokens as to not confuse the argument checker
+		tokens = tokens.filter((token) => token.word != '')
+
+		if (tokens.length < 2) {
+			diagnostics.push({
+				severity: MarkerSeverity.Error,
+				message: `Command "${commandName.word}" needs parameters`,
+				startLineNumber: -1,
+				startColumn: commandName.startColumn + 1,
+				endLineNumber: -1,
+				endColumn: commandName.endColumn + 1,
+			})
+
+			// The command is not valid; it makes no sense to continue validating this line
+			return diagnostics
+		}
+
+		let definitions = await this.commandData.getCommandDefinitions(
+			commandName.word,
+			false
+		)
+
+		// We only need to record the error of the most farthest in token because that is the most likely variation the user was attempting to type
+		let lastTokenError = 0
+
+		// Loop over every definition and test for validness
+		for (let j = 0; j < definitions.length; j++) {
+			let failed = false
+
+			// Loop over every token that is not the command name
+			let targetArgumentIndex = 0
+			for (let k = 1; k < tokens.length; k++) {
+				// Fail if there are not enough arguments in definition
+				if (definitions[j].arguments.length <= targetArgumentIndex) {
+					definitions.splice(j, 1)
+
+					j--
+
+					if (lastTokenError < k) lastTokenError = k
+
+					failed = true
+
+					break
+				}
+
+				const argument = tokens[k]
+
+				const targetArgument =
+					definitions[j].arguments[targetArgumentIndex]
+
+				console.log(
+					`Validating agument of type ${targetArgument.type} onto ${argument.word}!`
+				)
+
+				if (targetArgument.type == 'subcommand') {
+					const result = await this.parseSubcommand(
+						commandName.word,
+						tokens.slice(k, tokens.length)
+					)
+
+					if (result.passed) {
+						// Skip over tokens consumed in the subcommand validation
+						k += result.argumentsConsumedCount!
+
+						// If there allows multiple subcommands keep going untill a subcommand fails
+						if (targetArgument.allowMultiple) {
+							let nextResult: {
+								passed: boolean
+								argumentsConsumedCount?: number
+							} = {
+								passed: true,
+								argumentsConsumedCount: 0,
+							}
+
+							while (nextResult.passed) {
+								nextResult = await this.parseSubcommand(
+									commandName.word,
+									tokens.slice(k + 1, tokens.length)
+								)
+
+								if (nextResult.passed) {
+									const origK = k
+
+									k += nextResult.argumentsConsumedCount! + 1
+								}
+							}
+						}
+
+						targetArgumentIndex++
+
+						continue
+					} else {
+						// Fail because subcommand doesn't match any definitions
+						definitions.splice(j, 1)
+
+						j--
+
+						if (lastTokenError < k) lastTokenError = k
+
+						failed = true
+
+						break
+					}
+				}
+
+				if (targetArgument.type == 'command') {
+					const leftTokens = tokens.slice(k, tokens.length)
+
+					const result = await this.parseCommand(
+						undefined,
+						leftTokens,
+						offset + targetArgumentIndex
+					)
+
+					diagnostics = diagnostics.concat(result)
+
+					return diagnostics
+				}
+
+				const argumentType = await this.commandData.isArgumentType(
+					argument.word,
+					targetArgument,
+					commandName.word
+				)
+
+				// Fail if type does not match
+				if (argumentType != 'full') {
+					definitions.splice(j, 1)
+
+					j--
+
+					if (lastTokenError < k) lastTokenError = k
+
+					failed = true
+
+					break
+				}
+
+				// Fail if there are additional values that are not met
+				if (
+					targetArgument.additionalData != undefined &&
+					targetArgument.additionalData.values != undefined &&
+					!targetArgument.additionalData.values.includes(
+						argument.word
+					)
+				) {
+					definitions.splice(j, 1)
+
+					j--
+
+					if (lastTokenError < k) lastTokenError = k
+
+					failed = true
+
+					break
+				}
+
+				targetArgumentIndex++
+			}
+
+			// Skip if already failed in case this leaves an undefined reference
+			if (failed) continue
+
+			// Fail if there are not enough tokens to satisfy definition
+			if (targetArgumentIndex < definitions[j].arguments.length) {
+				definitions.splice(j, 1)
+
+				j--
+
+				if (lastTokenError < tokens.length - 1)
+					lastTokenError = tokens.length - 1
+			}
+		}
+
+		if (definitions.length == 0) {
+			diagnostics.push({
+				severity: MarkerSeverity.Error,
+				message: `Argument "${tokens[lastTokenError].word}" is not valid here`,
+				startLineNumber: -1,
+				startColumn: tokens[lastTokenError].startColumn + 1,
+				endLineNumber: -1,
+				endColumn: tokens[lastTokenError].endColumn + 1,
+			})
+		}
+
+		return diagnostics
+	}
+
 	async parse(content: string) {
 		console.log('Validating!')
 
 		// Split content into lines
 		const lines = content.split('\n')
 		const diagnostics: editor.IMarkerData[] = []
-		const { MarkerSeverity } = await useMonaco()
 
 		for (let i = 0; i < lines.length; i++) {
 			const line = lines[i]
 			if (line[0] == '#') continue
 
-			let { tokens } = tokenizeCommand(line)
+			const results = await this.parseCommand(line, [], 0)
 
-			const commandName = tokens[0]
+			for (const diagnostic of results) {
+				diagnostic.startLineNumber = i + 1
+				diagnostic.endLineNumber = i + 1
 
-			// If first word is emtpy then this is an empty line
-			if (commandName.word == '') continue
-
-			if (
-				!(await this.commandData.allCommands()).includes(
-					commandName.word
-				)
-			) {
-				diagnostics.push({
-					severity: MarkerSeverity.Error,
-					message: `Command "${commandName.word}" does not exist`,
-					startLineNumber: i + 1,
-					startColumn: commandName.startColumn + 1,
-					endLineNumber: i + 1,
-					endColumn: commandName.endColumn + 1,
-				})
-
-				// The command is not valid; it makes no sense to continue validating this line
-				continue
-			}
-
-			// Remove empty tokens as to not confuse the argument checker
-			tokens = tokens.filter((token) => token.word != '')
-
-			if (tokens.length < 2) {
-				diagnostics.push({
-					severity: MarkerSeverity.Error,
-					message: `Command "${commandName.word}" needs parameters`,
-					startLineNumber: i + 1,
-					startColumn: commandName.startColumn + 1,
-					endLineNumber: i + 1,
-					endColumn: commandName.endColumn + 1,
-				})
-
-				// The command is not valid; it makes no sense to continue validating this line
-				continue
-			}
-
-			let definitions = await this.commandData.getCommandDefinitions(
-				commandName.word,
-				false
-			)
-
-			console.log(JSON.parse(JSON.stringify(definitions)))
-
-			// We only need to record the error of the most farthest in token because that is the most likely variation the user was attempting to type
-			let lastTokenError = 0
-
-			// Loop over every definition and test for validness
-			for (let j = 0; j < definitions.length; j++) {
-				let failed = false
-
-				// Loop over every token that is not the command name
-				let targetArgumentIndex = 0
-				for (let k = 1; k < tokens.length; k++) {
-					// Fail if there are not enough arguments in definition
-					if (
-						definitions[j].arguments.length <= targetArgumentIndex
-					) {
-						definitions.splice(j, 1)
-
-						j--
-
-						if (lastTokenError < k) lastTokenError = k
-
-						failed = true
-
-						break
-					}
-
-					const argument = tokens[k]
-
-					const targetArgument =
-						definitions[j].arguments[targetArgumentIndex]
-
-					if (targetArgument.type == 'subcommand') {
-						const result = await this.parseSubcommand(
-							commandName.word,
-							tokens.slice(k, tokens.length)
-						)
-
-						if (result.passed) {
-							// Skip over tokens consumed in the subcommand validation
-							k += result.argumentsConsumedCount!
-
-							// If there allows multiple subcommands keep going untill a subcommand fails
-							if (targetArgument.allowMultiple) {
-								let nextResult: {
-									passed: boolean
-									argumentsConsumedCount?: number
-								} = {
-									passed: true,
-									argumentsConsumedCount: 0,
-								}
-
-								while (nextResult.passed) {
-									nextResult = await this.parseSubcommand(
-										commandName.word,
-										tokens.slice(k + 1, tokens.length)
-									)
-
-									if (nextResult.passed) {
-										const origK = k
-
-										k +=
-											nextResult.argumentsConsumedCount! +
-											1
-
-										console.log(
-											`Extra subcommand pushed k to ${k} from ${origK} or ${tokens[k].word} from ${tokens[origK].word}`
-										)
-									}
-								}
-							}
-
-							targetArgumentIndex++
-
-							continue
-						} else {
-							// Fail because subcommand doesn't match any definitions
-							definitions.splice(j, 1)
-
-							j--
-
-							if (lastTokenError < k) lastTokenError = k
-
-							failed = true
-
-							break
-						}
-					}
-
-					const argumentType = await this.commandData.isArgumentType(
-						argument.word,
-						targetArgument,
-						commandName.word
-					)
-
-					// Fail if type does not match
-					if (argumentType != 'full') {
-						definitions.splice(j, 1)
-
-						j--
-
-						if (lastTokenError < k) lastTokenError = k
-
-						failed = true
-
-						break
-					}
-
-					// Fail if there are additional values that are not met
-					if (
-						targetArgument.additionalData != undefined &&
-						targetArgument.additionalData.values != undefined &&
-						!targetArgument.additionalData.values.includes(
-							argument.word
-						)
-					) {
-						definitions.splice(j, 1)
-
-						j--
-
-						if (lastTokenError < k) lastTokenError = k
-
-						failed = true
-
-						break
-					}
-
-					targetArgumentIndex++
-				}
-
-				// Skip if already failed in case this leaves an undefined reference
-				if (failed) continue
-
-				// Fail if there are not enough tokens to satisfy definition
-				if (targetArgumentIndex < definitions[j].arguments.length) {
-					definitions.splice(j, 1)
-
-					j--
-
-					if (lastTokenError < tokens.length - 1)
-						lastTokenError = tokens.length - 1
-				}
-			}
-
-			if (definitions.length == 0) {
-				diagnostics.push({
-					severity: MarkerSeverity.Error,
-					message: `Argument "${tokens[lastTokenError].word}" is not valid here`,
-					startLineNumber: i + 1,
-					startColumn: tokens[lastTokenError].startColumn + 1,
-					endLineNumber: i + 1,
-					endColumn: tokens[lastTokenError].endColumn + 1,
-				})
+				diagnostics.push(diagnostic)
 			}
 		}
 
