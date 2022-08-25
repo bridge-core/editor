@@ -6,6 +6,7 @@ import {
 import { CommandData, ICommandArgument } from './Data'
 import type { editor } from 'monaco-editor'
 import { useMonaco } from '/@/utils/libs/useMonaco'
+import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
 
 export class CommandValidator {
 	protected commandData: CommandData
@@ -21,7 +22,13 @@ export class CommandValidator {
 			endColumn: number
 			word: string
 		}[]
-	) {
+	): Promise<{
+		passed: boolean
+		argumentsConsumedCount?: number | undefined
+		warnings: editor.IMarkerData[]
+	}> {
+		const { MarkerSeverity } = await useMonaco()
+
 		const subcommandName = leftTokens[0]
 
 		let subcommandDefinitions = (
@@ -31,12 +38,17 @@ export class CommandValidator {
 		if (subcommandDefinitions.length == 0)
 			return {
 				passed: false,
+				warnings: [],
 			}
 
 		let passedSubcommandDefinition = undefined
 
+		let warnings: editor.IMarkerData[] = []
+
 		// Loop over every subcommand definition to check for a matching one
 		for (const definition of subcommandDefinitions) {
+			let definitionWarnings = []
+
 			let failed = false
 
 			// Fail if there is not enought tokens to satisfy the definition
@@ -61,8 +73,8 @@ export class CommandValidator {
 					break
 				}
 
-				// Fail if there are additional values that are not met
 				if (targetArgument.additionalData != undefined) {
+					// Fail if there are additional values that are not met
 					if (
 						targetArgument.additionalData.values != undefined &&
 						!targetArgument.additionalData.values.includes(
@@ -73,23 +85,62 @@ export class CommandValidator {
 
 						break
 					}
+
+					// Warn if unkown schema value
+					if (
+						targetArgument.additionalData.schemaReference !=
+						undefined
+					) {
+						const referencePath =
+							targetArgument.additionalData.schemaReference
+
+						const schemaReference = new RefSchema(
+							referencePath,
+							'$ref',
+							referencePath
+						).getCompletionItems({})
+
+						if (
+							schemaReference.find(
+								(reference) => reference.value == argument.word
+							) == undefined
+						) {
+							definitionWarnings.push({
+								severity: MarkerSeverity.Warning,
+								message: `Unkown schema value "${argument.word}"`,
+								startLineNumber: -1,
+								startColumn: argument.startColumn + 1,
+								endLineNumber: -1,
+								endColumn: argument.endColumn + 1,
+							})
+						}
+					}
 				}
 			}
 
-			if (!failed) {
+			// Only add definition if it is longer since it's the most likely correct one
+			if (
+				!failed &&
+				(passedSubcommandDefinition == undefined ||
+					passedSubcommandDefinition.arguments.length <
+						definition.arguments.length)
+			) {
 				passedSubcommandDefinition = definition
+				warnings = definitionWarnings
 			}
 		}
 
 		if (passedSubcommandDefinition == undefined) {
 			return {
 				passed: false,
+				warnings: [],
 			}
 		} else {
 			return {
 				passed: true,
 				argumentsConsumedCount:
 					passedSubcommandDefinition.arguments.length,
+				warnings,
 			}
 		}
 	}
@@ -100,6 +151,7 @@ export class CommandValidator {
 		offset: number
 	): Promise<editor.IMarkerData[]> {
 		const { MarkerSeverity } = await useMonaco()
+
 		let diagnostics: editor.IMarkerData[] = []
 
 		if (line != undefined) tokens = tokenizeCommand(line).tokens
@@ -156,6 +208,8 @@ export class CommandValidator {
 		for (let j = 0; j < definitions.length; j++) {
 			let failed = false
 
+			let warnings: editor.IMarkerData[] = []
+
 			// Loop over every token that is not the command name
 			let targetArgumentIndex = 0
 			for (let k = 1; k < tokens.length; k++) {
@@ -187,6 +241,8 @@ export class CommandValidator {
 						tokens.slice(k, tokens.length)
 					)
 
+					warnings = warnings.concat(result.warnings)
+
 					if (result.passed) {
 						// Skip over tokens consumed in the subcommand validation
 						k += result.argumentsConsumedCount!
@@ -196,9 +252,11 @@ export class CommandValidator {
 							let nextResult: {
 								passed: boolean
 								argumentsConsumedCount?: number
+								warnings: editor.IMarkerData[]
 							} = {
 								passed: true,
 								argumentsConsumedCount: 0,
+								warnings: [],
 							}
 
 							while (nextResult.passed) {
@@ -208,7 +266,9 @@ export class CommandValidator {
 								)
 
 								if (nextResult.passed) {
-									const origK = k
+									warnings = warnings.concat(
+										nextResult.warnings
+									)
 
 									k += nextResult.argumentsConsumedCount! + 1
 								}
@@ -245,6 +305,10 @@ export class CommandValidator {
 
 					diagnostics = diagnostics.concat(result)
 
+					for (const warning of warnings) {
+						diagnostics.push(warning)
+					}
+
 					return diagnostics
 				}
 
@@ -267,8 +331,8 @@ export class CommandValidator {
 					break
 				}
 
-				// Fail if there are additional values that are not met
 				if (targetArgument.additionalData != undefined) {
+					// Fail if there are additional values that are not met
 					if (
 						targetArgument.additionalData.values != undefined &&
 						!targetArgument.additionalData.values.includes(
@@ -284,6 +348,36 @@ export class CommandValidator {
 						failed = true
 
 						break
+					}
+
+					// Warn if unkown schema value
+					if (
+						targetArgument.additionalData.schemaReference !=
+						undefined
+					) {
+						const referencePath =
+							targetArgument.additionalData.schemaReference
+
+						const schemaReference = new RefSchema(
+							referencePath,
+							'$ref',
+							referencePath
+						).getCompletionItems({})
+
+						if (
+							schemaReference.find(
+								(reference) => reference.value == argument.word
+							) == undefined
+						) {
+							warnings.push({
+								severity: MarkerSeverity.Warning,
+								message: `Unkown schema value "${argument.word}"`,
+								startLineNumber: -1,
+								startColumn: argument.startColumn + 1,
+								endLineNumber: -1,
+								endColumn: argument.endColumn + 1,
+							})
+						}
 					}
 				}
 
@@ -301,6 +395,13 @@ export class CommandValidator {
 
 				if (lastTokenError < tokens.length - 1)
 					lastTokenError = tokens.length - 1
+
+				// Continue to not add warnings to the diagnostics
+				continue
+			}
+
+			for (const warning of warnings) {
+				diagnostics.push(warning)
 			}
 		}
 
