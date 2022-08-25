@@ -53,7 +53,6 @@ export default {
 	mixins: [
 		HighlighterMixin([
 			'string',
-			'number',
 			'variable',
 			'definition',
 			'keyword',

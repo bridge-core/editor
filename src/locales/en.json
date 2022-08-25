@@ -892,6 +892,14 @@
 				"dragAndDropTreeNodes": {
 					"name": "Drag and Drop Tree Nodes",
 					"description": "Disable/enable drag & drop for tree nodes inside of bridge.'s tree editor"
+				},
+				"showArrayIndices": {
+					"name": "Show Array Indices",
+					"description": "Show indices for array elements inside of bridge.'s tree editor"
+				},
+				"hideBracketsWithinTreeEditor": {
+					"name": "Hide Brackets",
+					"description": "Hide brackets within bridge.'s tree editor"
 				}
 			}
 		},
