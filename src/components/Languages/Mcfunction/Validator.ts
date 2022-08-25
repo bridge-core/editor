@@ -61,7 +61,19 @@ export class CommandValidator {
 					break
 				}
 
-				// TODO: Check extra conditions
+				// Fail if there are additional values that are not met
+				if (targetArgument.additionalData != undefined) {
+					if (
+						targetArgument.additionalData.values != undefined &&
+						!targetArgument.additionalData.values.includes(
+							argument.word
+						)
+					) {
+						failed = true
+
+						break
+					}
+				}
 			}
 
 			if (!failed) {
@@ -220,6 +232,8 @@ export class CommandValidator {
 					}
 				}
 
+				// If need to validate a command we just validate all the other tokens and returns because we won't
+				// need to check any more tokens as they will be consumed within the new command
 				if (targetArgument.type == 'command') {
 					const leftTokens = tokens.slice(k, tokens.length)
 
@@ -254,22 +268,23 @@ export class CommandValidator {
 				}
 
 				// Fail if there are additional values that are not met
-				if (
-					targetArgument.additionalData != undefined &&
-					targetArgument.additionalData.values != undefined &&
-					!targetArgument.additionalData.values.includes(
-						argument.word
-					)
-				) {
-					definitions.splice(j, 1)
+				if (targetArgument.additionalData != undefined) {
+					if (
+						targetArgument.additionalData.values != undefined &&
+						!targetArgument.additionalData.values.includes(
+							argument.word
+						)
+					) {
+						definitions.splice(j, 1)
 
-					j--
+						j--
 
-					if (lastTokenError < k) lastTokenError = k
+						if (lastTokenError < k) lastTokenError = k
 
-					failed = true
+						failed = true
 
-					break
+						break
+					}
 				}
 
 				targetArgumentIndex++
