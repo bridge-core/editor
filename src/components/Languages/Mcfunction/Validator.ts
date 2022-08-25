@@ -211,6 +211,19 @@ export class CommandValidator {
 		for (let j = 0; j < definitions.length; j++) {
 			console.log(`---- New Definition ---- ${commandName.word}`)
 
+			let requiredArgurmentsCount = 0
+
+			for (
+				requiredArgurmentsCount = 0;
+				requiredArgurmentsCount < definitions[j].arguments.length;
+				requiredArgurmentsCount++
+			) {
+				if (
+					definitions[j].arguments[requiredArgurmentsCount].isOptional
+				)
+					break
+			}
+
 			let failed = false
 
 			let definitionWarnings: editor.IMarkerData[] = []
@@ -289,6 +302,12 @@ export class CommandValidator {
 						continue
 					} else {
 						// Fail because subcommand doesn't match any definitions
+						if (targetArgument.isOptional) {
+							targetArgumentIndex++
+
+							break
+						}
+
 						definitions.splice(j, 1)
 
 						j--
@@ -301,7 +320,7 @@ export class CommandValidator {
 					}
 				}
 
-				// If need to validate a command we just validate all the other tokens and returns because we won't
+				// If we need to validate a command we just validate all the other tokens and returns because we won't
 				// need to check any more tokens as they will be consumed within the new command
 				if (targetArgument.type == 'command') {
 					const leftTokens = tokens.slice(k, tokens.length)
@@ -327,6 +346,12 @@ export class CommandValidator {
 
 				// Fail if type does not match
 				if (argumentType != 'full') {
+					if (targetArgument.isOptional) {
+						targetArgumentIndex++
+
+						break
+					}
+
 					definitions.splice(j, 1)
 
 					j--
@@ -346,6 +371,12 @@ export class CommandValidator {
 							argument.word
 						)
 					) {
+						if (targetArgument.isOptional) {
+							targetArgumentIndex++
+
+							break
+						}
+
 						definitions.splice(j, 1)
 
 						j--
@@ -395,7 +426,7 @@ export class CommandValidator {
 			if (failed) continue
 
 			// Fail if there are not enough tokens to satisfy definition
-			if (targetArgumentIndex < definitions[j].arguments.length) {
+			if (targetArgumentIndex < requiredArgurmentsCount) {
 				definitions.splice(j, 1)
 
 				j--

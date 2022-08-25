@@ -57,6 +57,7 @@ export interface ICommandArgument {
 		schemaReference?: string
 		values?: string[]
 	}
+	isOptional: boolean
 }
 
 export interface ICompletionItem {
