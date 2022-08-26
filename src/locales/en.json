@@ -1096,5 +1096,25 @@
 			"forceValue": "Force Value",
 			"edit": "Edit"
 		}
+	},
+	"validation": {
+		"mcfunction": {
+			"invalid_argument": {
+				"part1": "Command \"",
+				"part2": "\" needs parameters"
+			},
+			"unkown_command": {
+				"part1": "Command \"",
+				"part2": "\" does not exist"
+			},
+			"missing_parameters": {
+				"part1": "Command \"",
+				"part2": "\" needs parameters"
+			},
+			"unknown_schema": {
+				"part1": "Unkown schema value \"",
+				"part2": "\""
+			}
+		}
 	}
 }

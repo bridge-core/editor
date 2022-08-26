@@ -7,6 +7,7 @@ import { CommandData, ICommandArgument } from './Data'
 import type { editor } from 'monaco-editor'
 import { useMonaco } from '/@/utils/libs/useMonaco'
 import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
+import { LocaleManager } from '/@/components/Locales/Manager'
 
 export class CommandValidator {
 	protected commandData: CommandData
@@ -107,7 +108,14 @@ export class CommandValidator {
 						) {
 							definitionWarnings.push({
 								severity: MarkerSeverity.Warning,
-								message: `Unkown schema value "${argument.word}"`,
+								message:
+									LocaleManager.translate(
+										'validation.mcfunction.unkown_schema.part1'
+									) +
+									argument.word +
+									LocaleManager.translate(
+										'validation.mcfunction.unkown_schema.part2'
+									),
 								startLineNumber: -1,
 								startColumn: argument.startColumn + 1,
 								endLineNumber: -1,
@@ -167,7 +175,14 @@ export class CommandValidator {
 		) {
 			diagnostics.push({
 				severity: MarkerSeverity.Error,
-				message: `Command "${commandName.word}" does not exist`,
+				message:
+					LocaleManager.translate(
+						'validation.mcfunction.unknown_command.part1'
+					) +
+					commandName.word +
+					LocaleManager.translate(
+						'validation.mcfunction.unknown_command.part2'
+					),
 				startLineNumber: -1,
 				startColumn: commandName.startColumn + 1,
 				endLineNumber: -1,
@@ -186,7 +201,14 @@ export class CommandValidator {
 		if (tokens.length < 2) {
 			diagnostics.push({
 				severity: MarkerSeverity.Error,
-				message: `Command "${commandName.word}" needs parameters`,
+				message:
+					LocaleManager.translate(
+						'validation.mcfunction.missing_parameters.part1'
+					) +
+					commandName.word +
+					LocaleManager.translate(
+						'validation.mcfunction.missing_parameters.part2'
+					),
 				startLineNumber: -1,
 				startColumn: commandName.startColumn + 1,
 				endLineNumber: -1,
@@ -391,7 +413,14 @@ export class CommandValidator {
 						) {
 							definitionWarnings.push({
 								severity: MarkerSeverity.Warning,
-								message: `Unkown schema value "${argument.word}"`,
+								message:
+									LocaleManager.translate(
+										'validation.mcfunction.unkown_schema.part1'
+									) +
+									argument.word +
+									LocaleManager.translate(
+										'validation.mcfunction.unkown_schema.part2'
+									),
 								startLineNumber: -1,
 								startColumn: argument.startColumn + 1,
 								endLineNumber: -1,
@@ -431,7 +460,14 @@ export class CommandValidator {
 		if (definitions.length == 0) {
 			diagnostics.push({
 				severity: MarkerSeverity.Error,
-				message: `Argument "${tokens[lastTokenError].word}" is not valid here`,
+				message:
+					LocaleManager.translate(
+						'validation.mcfunction.invalid_argument.part1'
+					) +
+					tokens[lastTokenError].word +
+					LocaleManager.translate(
+						'validation.mcfunction.invalid_argument.part2'
+					),
 				startLineNumber: -1,
 				startColumn: tokens[lastTokenError].startColumn + 1,
 				endLineNumber: -1,
