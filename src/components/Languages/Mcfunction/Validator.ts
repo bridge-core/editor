@@ -162,8 +162,6 @@ export class CommandValidator {
 		diagnostic?: editor.IMarkerData
 		warnings: editor.IMarkerData[]
 	}> {
-		console.warn(`Parsing Selector ${selectorToken.word}`)
-
 		const { MarkerSeverity } = await useMonaco()
 
 		let warnings: editor.IMarkerData[] = []
@@ -267,8 +265,6 @@ export class CommandValidator {
 		let canNotUseNames = []
 
 		for (const argument of selectorArguments) {
-			console.log(`Validating command argument ${argument}`)
-
 			// Fail if there is for somereason multiple =
 			if (argument.split('=').length - 1 != 1)
 				return {
@@ -481,6 +477,48 @@ export class CommandValidator {
 		let warnings: editor.IMarkerData[] = []
 
 		if (line != undefined) tokens = tokenizeCommand(line).tokens
+
+		console.warn('Tokens!')
+		console.log(JSON.parse(JSON.stringify(tokens)))
+
+		// Reconstruct JSON because tokenizer doesn't handle this well
+		for (let i = 0; i < tokens.length; i++) {
+			if (tokens[i - 1] != undefined) {
+				// if we get a case where tokens are like "property", :"value" then we combine them
+				if (
+					tokens[i].word.startsWith(':') &&
+					tokens[i - 1].word[tokens[i - 1].word.length - 1] == '"'
+				) {
+					tokens.splice(i - 1, 2, {
+						startColumn: tokens[i - 1].startColumn,
+						endColumn: tokens[i].endColumn,
+						word: tokens[i - 1].word + tokens[i].word,
+					})
+
+					i--
+
+					continue
+				}
+
+				if (
+					tokens[i].word == '}' &&
+					tokens[i - 1].word.startsWith('{')
+				) {
+					tokens.splice(i - 1, 2, {
+						startColumn: tokens[i - 1].startColumn,
+						endColumn: tokens[i].endColumn,
+						word: tokens[i - 1].word + tokens[i].word,
+					})
+
+					i--
+
+					continue
+				}
+			}
+		}
+
+		console.warn('Tokens Restructured!')
+		console.log(JSON.parse(JSON.stringify(tokens)))
 
 		const commandName = tokens[0]
 
@@ -706,8 +744,6 @@ export class CommandValidator {
 				// Validate selector but don't completely fail if selector fail so rest of command can validate as well
 				if (targetArgument.type == 'selector') {
 					const result = await this.parseSelector(argument)
-
-					console.log(result)
 
 					if (result.diagnostic != undefined)
 						definitionDiagnostics.push(result.diagnostic)
