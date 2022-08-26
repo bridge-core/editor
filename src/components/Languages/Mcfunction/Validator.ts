@@ -153,6 +153,323 @@ export class CommandValidator {
 		}
 	}
 
+	protected async parseSelector(selectorToken: {
+		startColumn: number
+		endColumn: number
+		word: string
+	}): Promise<{
+		passed: boolean
+		diagnostic?: editor.IMarkerData
+		warnings: editor.IMarkerData[]
+	}> {
+		console.warn(`Parsing Selector ${selectorToken.word}`)
+
+		const { MarkerSeverity } = await useMonaco()
+
+		let warnings: editor.IMarkerData[] = []
+
+		let baseSelector = selectorToken.word.substring(0, 2)
+
+		// Check for base selector, we later check @i to be @initiator
+		if (!['@a', '@p', '@r', '@e', '@s', '@i'].includes(baseSelector))
+			return {
+				passed: false,
+				diagnostic: {
+					severity: MarkerSeverity.Error,
+					message: `Invalid selector base "${baseSelector}"`,
+					startLineNumber: -1,
+					startColumn: selectorToken.startColumn + 1,
+					endLineNumber: -1,
+					endColumn: selectorToken.endColumn + 1,
+				},
+				warnings: [],
+			}
+
+		if (
+			baseSelector == '@i' &&
+			selectorToken.word.substring(0, '@initiator'.length) != '@initiator'
+		)
+			return {
+				passed: false,
+				diagnostic: {
+					severity: MarkerSeverity.Error,
+					message: `Invalid selector base "${baseSelector}"`,
+					startLineNumber: -1,
+					startColumn: selectorToken.startColumn + 1,
+					endLineNumber: -1,
+					endColumn: selectorToken.endColumn + 1,
+				},
+				warnings: [],
+			}
+
+		// If the selector is merely the base we can just pass
+		if (baseSelector == selectorToken.word)
+			return {
+				passed: true,
+				warnings: [],
+			}
+
+		if (selectorToken.word[baseSelector.length] != '[')
+			return {
+				passed: false,
+				diagnostic: {
+					severity: MarkerSeverity.Error,
+					message: `Unexpected symbol "${
+						selectorToken.word[baseSelector.length]
+					}". Expected "["`,
+					startLineNumber: -1,
+					startColumn: selectorToken.startColumn + 1,
+					endLineNumber: -1,
+					endColumn: selectorToken.endColumn + 1,
+				},
+				warnings: [],
+			}
+
+		if (!selectorToken.word.endsWith(']'))
+			return {
+				passed: false,
+				diagnostic: {
+					severity: MarkerSeverity.Error,
+					message: `Unexpected symbol "${
+						selectorToken.word[selectorToken.word.length - 1]
+					}". Expected "]"`,
+					startLineNumber: -1,
+					startColumn: selectorToken.startColumn + 1,
+					endLineNumber: -1,
+					endColumn: selectorToken.endColumn + 1,
+				},
+				warnings: [],
+			}
+
+		let selectorArguments = selectorToken.word
+			.substring(baseSelector.length + 1, selectorToken.word.length - 1)
+			.split(',')
+
+		// Check for weird comma syntax ex: ,,
+		if (selectorArguments.find((argument) => argument == '') != undefined)
+			return {
+				passed: false,
+				diagnostic: {
+					severity: MarkerSeverity.Error,
+					message: `Unexpected symbol ",". Expected a selector argument`,
+					startLineNumber: -1,
+					startColumn: selectorToken.startColumn + 1,
+					endLineNumber: -1,
+					endColumn: selectorToken.endColumn + 1,
+				},
+				warnings: [],
+			}
+
+		const selectorArgumentsSchema =
+			await this.commandData.getSelectorArgumentsSchema()
+
+		// Store argument names that can't be used multiple times or where not negated when they need to be
+		let canNotUseNames = []
+
+		for (const argument of selectorArguments) {
+			console.log(`Validating command argument ${argument}`)
+
+			// Fail if there is for somereason multiple =
+			if (argument.split('=').length - 1 != 1)
+				return {
+					passed: false,
+					diagnostic: {
+						severity: MarkerSeverity.Error,
+						message: `Expected 1 symbol "=". Got ${
+							argument.split('=').length - 1
+						}`,
+						startLineNumber: -1,
+						startColumn: selectorToken.startColumn + 1,
+						endLineNumber: -1,
+						endColumn: selectorToken.endColumn + 1,
+					},
+					warnings: [],
+				}
+
+			let argumentName = argument.split('=')[0]
+			let argumentValue = argument.split('=')[1]
+
+			const argumentSchema = selectorArgumentsSchema.find(
+				(schema) => schema.argumentName == argumentName
+			)
+
+			if (argumentSchema == undefined)
+				return {
+					passed: false,
+					diagnostic: {
+						severity: MarkerSeverity.Error,
+						message: `Invalid selector argument "${argumentName}"`,
+						startLineNumber: -1,
+						startColumn: selectorToken.startColumn + 1,
+						endLineNumber: -1,
+						endColumn: selectorToken.endColumn + 1,
+					},
+					warnings: [],
+				}
+
+			const negated = argumentValue.startsWith('!')
+			const canNotUse = canNotUseNames.includes(argumentName)
+
+			// Fail if negated and shouldn't be
+			if (
+				negated &&
+				(argumentSchema.additionalData == undefined ||
+					!argumentSchema.additionalData.supportsNegation)
+			)
+				return {
+					passed: false,
+					diagnostic: {
+						severity: MarkerSeverity.Error,
+						message: `Argument "${argumentName}" does not support negation`,
+						startLineNumber: -1,
+						startColumn: selectorToken.startColumn + 1,
+						endLineNumber: -1,
+						endColumn: selectorToken.endColumn + 1,
+					},
+					warnings: [],
+				}
+
+			// Check if this type should not be used again
+			if (canNotUse) {
+				if (argumentSchema.additionalData == undefined)
+					return {
+						passed: false,
+						diagnostic: {
+							severity: MarkerSeverity.Error,
+							message: `Argument "${argumentName}" does not support multiple instances`,
+							startLineNumber: -1,
+							startColumn: selectorToken.startColumn + 1,
+							endLineNumber: -1,
+							endColumn: selectorToken.endColumn + 1,
+						},
+						warnings: [],
+					}
+
+				if (
+					argumentSchema.additionalData.multipleInstancesAllowed ==
+					'whenNegated'
+				) {
+					return {
+						passed: false,
+						diagnostic: {
+							severity: MarkerSeverity.Error,
+							message: `Argument "${argumentName}" does not support multiple instances when not all negated`,
+							startLineNumber: -1,
+							startColumn: selectorToken.startColumn + 1,
+							endLineNumber: -1,
+							endColumn: selectorToken.endColumn + 1,
+						},
+						warnings: [],
+					}
+				}
+
+				return {
+					passed: false,
+					diagnostic: {
+						severity: MarkerSeverity.Error,
+						message: `Argument "${argumentName}" does not support multiple instances`,
+						startLineNumber: -1,
+						startColumn: selectorToken.startColumn + 1,
+						endLineNumber: -1,
+						endColumn: selectorToken.endColumn + 1,
+					},
+					warnings: [],
+				}
+			}
+
+			const argumentType = await this.commandData.isArgumentType(
+				argumentValue,
+				argumentSchema
+			)
+
+			// Fail if type does not match, NOTE: Should check scoredata in future when implemented
+			if (argumentType != 'full') {
+				return {
+					passed: false,
+					diagnostic: {
+						severity: MarkerSeverity.Error,
+						message: `Invalid selector argument value "${argumentValue}" for argument "${argumentName}"`,
+						startLineNumber: -1,
+						startColumn: selectorToken.startColumn + 1,
+						endLineNumber: -1,
+						endColumn: selectorToken.endColumn + 1,
+					},
+					warnings: [],
+				}
+			}
+
+			if (argumentSchema.additionalData != undefined) {
+				// Fail if there are additional values that are not met
+				if (
+					argumentSchema.additionalData.values != undefined &&
+					!argumentSchema.additionalData.values.includes(
+						argumentValue
+					)
+				) {
+					return {
+						passed: false,
+						diagnostic: {
+							severity: MarkerSeverity.Error,
+							message: `Invalid selector argument value "${argumentValue}" for argument "${argumentName}"`,
+							startLineNumber: -1,
+							startColumn: selectorToken.startColumn + 1,
+							endLineNumber: -1,
+							endColumn: selectorToken.endColumn + 1,
+						},
+						warnings: [],
+					}
+				}
+
+				// Warn if unkown schema value
+				if (
+					argumentSchema.additionalData.schemaReference != undefined
+				) {
+					const referencePath =
+						argumentSchema.additionalData.schemaReference
+
+					const schemaReference = new RefSchema(
+						referencePath,
+						'$ref',
+						referencePath
+					).getCompletionItems({})
+
+					if (
+						schemaReference.find(
+							(reference) => reference.value == argumentValue
+						) == undefined
+					) {
+						warnings.push({
+							severity: MarkerSeverity.Warning,
+							message: `Unkown schema value "${argumentValue}" for argument "${argumentName}"`,
+							startLineNumber: -1,
+							startColumn: selectorToken.startColumn + 1,
+							endLineNumber: -1,
+							endColumn: selectorToken.endColumn + 1,
+						})
+					}
+				}
+			}
+
+			if (
+				argumentSchema.additionalData == undefined ||
+				argumentSchema.additionalData.multipleInstancesAllowed ==
+					undefined ||
+				argumentSchema.additionalData.multipleInstancesAllowed ==
+					'never' ||
+				(argumentSchema.additionalData.multipleInstancesAllowed ==
+					'whenNegated' &&
+					!negated)
+			) {
+				canNotUseNames.push(argumentName)
+			}
+		}
+
+		return {
+			passed: true,
+			warnings,
+		}
+	}
+
 	protected async parseCommand(
 		line: string | undefined,
 		tokens: any[],
@@ -247,6 +564,7 @@ export class CommandValidator {
 			}
 
 			let failed = false
+			let failedLongest = false
 
 			let definitionWarnings: editor.IMarkerData[] = []
 			let definitionDiagnostics: editor.IMarkerData[] = []
@@ -260,7 +578,11 @@ export class CommandValidator {
 
 					j--
 
-					if (lastTokenError < k) lastTokenError = k
+					if (lastTokenError < k) {
+						failedLongest = true
+
+						lastTokenError = k
+					}
 
 					failed = true
 
@@ -328,7 +650,11 @@ export class CommandValidator {
 
 						j--
 
-						if (lastTokenError < k) lastTokenError = k
+						if (lastTokenError < k) {
+							failedLongest = true
+
+							lastTokenError = k
+						}
 
 						failed = true
 
@@ -366,11 +692,29 @@ export class CommandValidator {
 
 					j--
 
-					if (lastTokenError < k) lastTokenError = k
+					if (lastTokenError < k) {
+						failedLongest = true
+
+						lastTokenError = k
+					}
 
 					failed = true
 
 					break
+				}
+
+				// Validate selector but don't completely fail if selector fail so rest of command can validate as well
+				if (targetArgument.type == 'selector') {
+					const result = await this.parseSelector(argument)
+
+					console.log(result)
+
+					if (result.diagnostic != undefined)
+						definitionDiagnostics.push(result.diagnostic)
+
+					definitionWarnings = definitionWarnings.concat(
+						result.warnings
+					)
 				}
 
 				if (targetArgument.additionalData != undefined) {
@@ -385,7 +729,11 @@ export class CommandValidator {
 
 						j--
 
-						if (lastTokenError < k) lastTokenError = k
+						if (lastTokenError < k) {
+							failedLongest = true
+
+							lastTokenError = k
+						}
 
 						failed = true
 
@@ -434,7 +782,11 @@ export class CommandValidator {
 			}
 
 			// Skip if already failed in case this leaves an undefined reference
-			if (failed) continue
+			if (failed) {
+				if (failedLongest) diagnostics = definitionDiagnostics
+
+				continue
+			}
 
 			// Fail if there are not enough tokens to satisfy definition
 			if (targetArgumentIndex < requiredArgurmentsCount) {
