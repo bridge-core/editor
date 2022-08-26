@@ -1100,8 +1100,8 @@
 	"validation": {
 		"mcfunction": {
 			"invalid_argument": {
-				"part1": "Command \"",
-				"part2": "\" needs parameters"
+				"part1": "Argument \"",
+				"part2": "\" is not valid here"
 			},
 			"unkown_command": {
 				"part1": "Command \"",
