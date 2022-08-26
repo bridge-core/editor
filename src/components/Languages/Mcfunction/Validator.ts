@@ -302,12 +302,6 @@ export class CommandValidator {
 						continue
 					} else {
 						// Fail because subcommand doesn't match any definitions
-						if (targetArgument.isOptional) {
-							targetArgumentIndex++
-
-							break
-						}
-
 						definitions.splice(j, 1)
 
 						j--
@@ -346,12 +340,6 @@ export class CommandValidator {
 
 				// Fail if type does not match
 				if (argumentType != 'full') {
-					if (targetArgument.isOptional) {
-						targetArgumentIndex++
-
-						break
-					}
-
 					definitions.splice(j, 1)
 
 					j--
@@ -371,12 +359,6 @@ export class CommandValidator {
 							argument.word
 						)
 					) {
-						if (targetArgument.isOptional) {
-							targetArgumentIndex++
-
-							break
-						}
-
 						definitions.splice(j, 1)
 
 						j--
