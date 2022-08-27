@@ -43,6 +43,7 @@ export type TArgumentType =
 	| 'command'
 	| 'scoreData'
 	| 'subcommand'
+	| 'integerRange'
 	| `$${string}`
 
 /**

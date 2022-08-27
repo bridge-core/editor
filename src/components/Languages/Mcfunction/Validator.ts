@@ -153,6 +153,38 @@ export class CommandValidator {
 		}
 	}
 
+	protected async parseScoreData(token: string): Promise<boolean> {
+		if (!token.startsWith('{')) return false
+
+		if (!token.endsWith('}')) return false
+
+		let pieces = token.substring(1, token.length - 1).split(',')
+
+		// Check for weird comma syntax ex: ,,
+		if (pieces.find((argument) => argument == '') != undefined) return false
+
+		for (const piece of pieces) {
+			const scoreName = piece.split('=')[0]
+			const scoreValue = piece.split('=').slice(1).join('=')
+
+			if (scoreValue == undefined) return false
+
+			let argumentType = await this.commandData.isArgumentType(
+				scoreValue,
+				{
+					argumentName: 'scoreData',
+					description: 'scoreDataParser',
+					type: 'integerRange',
+					isOptional: false,
+				}
+			)
+
+			if (argumentType != 'full') return false
+		}
+
+		return true
+	}
+
 	protected async parseSelector(selectorToken: {
 		startColumn: number
 		endColumn: number
@@ -265,15 +297,13 @@ export class CommandValidator {
 		let canNotUseNames = []
 
 		for (const argument of selectorArguments) {
-			// Fail if there is for somereason multiple =
-			if (argument.split('=').length - 1 != 1)
+			// Fail if there is for somereason no =
+			if (argument.split('=').length - 1 < 1)
 				return {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Expected 1 symbol "=". Got ${
-							argument.split('=').length - 1
-						}`,
+						message: `Expected symbol "="`,
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -283,7 +313,7 @@ export class CommandValidator {
 				}
 
 			let argumentName = argument.split('=')[0]
-			let argumentValue = argument.split('=')[1]
+			let argumentValue = argument.split('=').slice(1).join('=')
 
 			const argumentSchema = selectorArgumentsSchema.find(
 				(schema) => schema.argumentName == argumentName
@@ -373,10 +403,17 @@ export class CommandValidator {
 				}
 			}
 
-			const argumentType = await this.commandData.isArgumentType(
+			let argumentType = await this.commandData.isArgumentType(
 				argumentValue,
 				argumentSchema
 			)
+
+			// We need to parse scoreData on its own because the normal argument type checker seems to not work on it
+			if (
+				argumentSchema.type == 'scoreData' &&
+				(await this.parseScoreData(argumentValue))
+			)
+				argumentType = 'full'
 
 			// Fail if type does not match, NOTE: Should check scoredata in future when implemented
 			if (argumentType != 'full') {
@@ -500,6 +537,7 @@ export class CommandValidator {
 					continue
 				}
 
+				// add the beginning and ending of a json data together
 				if (
 					tokens[i].word == '}' &&
 					tokens[i - 1].word.startsWith('{')
