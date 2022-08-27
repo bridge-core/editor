@@ -13,7 +13,37 @@ export class Color {
 		)}${toTwoDigitHex(this.colorInfo.blue * 255)}`
 	}
 
-	toRgbArray() {}
+	/**
+	 * Formats the color as #RRGGBBAA
+	 */
+	toHexA() {
+		return `#${toTwoDigitHex(this.colorInfo.red * 255)}${toTwoDigitHex(
+			this.colorInfo.green * 255
+		)}${toTwoDigitHex(this.colorInfo.blue * 255)}${toTwoDigitHex(
+			this.colorInfo.alpha * 255
+		)}`
+	}
 
-	toRgbaArray() {}
+	/**
+	 * Formats the color as [r, g, b]
+	 */
+	toRgbArray() {
+		return [
+			this.colorInfo.red.toFixed(5),
+			this.colorInfo.green.toFixed(5),
+			this.colorInfo.blue.toFixed(5),
+		]
+	}
+
+	/**
+	 * Formats the color as [r, g, b, a]
+	 */
+	toRgbaArray() {
+		return [
+			this.colorInfo.red.toFixed(5),
+			this.colorInfo.green.toFixed(5),
+			this.colorInfo.blue.toFixed(5),
+			this.colorInfo.alpha,
+		]
+	}
 }
