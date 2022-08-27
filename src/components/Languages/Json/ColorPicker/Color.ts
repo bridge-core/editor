@@ -25,6 +25,17 @@ export class Color {
 	}
 
 	/**
+	 * Formats the color as #AARRGGBB
+	 */
+	toAHex() {
+		return `#${toTwoDigitHex(
+			Math.round(this.colorInfo.alpha * 255)
+		)}${toTwoDigitHex(this.colorInfo.red * 255)}${toTwoDigitHex(
+			this.colorInfo.green * 255
+		)}${toTwoDigitHex(this.colorInfo.blue * 255)}`
+	}
+
+	/**
 	 * Formats the color as [r, g, b], 0-1
 	 */
 	toDecRgbArray() {
