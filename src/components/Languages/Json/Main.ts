@@ -2,7 +2,7 @@ import { registerJsonSnippetProvider } from '/@/components/Snippets/Monaco'
 import { registerEmbeddedMcfunctionProvider } from '/@/components/Languages/Mcfunction/WithinJson'
 import { ConfiguredJsonHighlighter } from './Highlighter'
 import { useMonaco } from '../../../utils/libs/useMonaco'
-import { registerColorPicker } from './ColorPicker'
+import { registerColorPicker } from './ColorPicker/ColorPicker'
 
 export class ConfiguredJsonLanguage {
 	protected highlighter = new ConfiguredJsonHighlighter()
