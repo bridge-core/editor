@@ -25,13 +25,23 @@ export class Color {
 	}
 
 	/**
-	 * Formats the color as [r, g, b]
+	 * Formats the color as [r, g, b], 0-255
 	 */
 	toRgbArray() {
 		return [
 			+this.colorInfo.red.toFixed(5),
 			+this.colorInfo.green.toFixed(5),
 			+this.colorInfo.blue.toFixed(5),
+		]
+	}
+	/**
+	 * Formats the color as [r, g, b], 0-1
+	 */
+	toDecRgbArray() {
+		return [
+			Math.round(this.colorInfo.red * 255),
+			Math.round(this.colorInfo.green * 255),
+			Math.round(this.colorInfo.blue * 255),
 		]
 	}
 
@@ -44,6 +54,17 @@ export class Color {
 			+this.colorInfo.green.toFixed(5),
 			+this.colorInfo.blue.toFixed(5),
 			this.colorInfo.alpha,
+		]
+	}
+	/**
+	 * Formats the color as [r, g, b, a], 0-1
+	 */
+	toDecRgbaArray() {
+		return [
+			Math.round(this.colorInfo.red * 255),
+			Math.round(this.colorInfo.green * 255),
+			Math.round(this.colorInfo.blue * 255),
+			Math.round(this.colorInfo.alpha * 255),
 		]
 	}
 }
