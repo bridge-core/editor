@@ -29,9 +29,9 @@ export class Color {
 	 */
 	toRgbArray() {
 		return [
-			this.colorInfo.red.toFixed(5),
-			this.colorInfo.green.toFixed(5),
-			this.colorInfo.blue.toFixed(5),
+			+this.colorInfo.red.toFixed(5),
+			+this.colorInfo.green.toFixed(5),
+			+this.colorInfo.blue.toFixed(5),
 		]
 	}
 
@@ -40,9 +40,9 @@ export class Color {
 	 */
 	toRgbaArray() {
 		return [
-			this.colorInfo.red.toFixed(5),
-			this.colorInfo.green.toFixed(5),
-			this.colorInfo.blue.toFixed(5),
+			+this.colorInfo.red.toFixed(5),
+			+this.colorInfo.green.toFixed(5),
+			+this.colorInfo.blue.toFixed(5),
 			this.colorInfo.alpha,
 		]
 	}
