@@ -20,7 +20,7 @@ export class Color {
 		return `#${toTwoDigitHex(this.colorInfo.red * 255)}${toTwoDigitHex(
 			this.colorInfo.green * 255
 		)}${toTwoDigitHex(this.colorInfo.blue * 255)}${toTwoDigitHex(
-			this.colorInfo.alpha * 255
+			Math.round(this.colorInfo.alpha * 255)
 		)}`
 	}
 
