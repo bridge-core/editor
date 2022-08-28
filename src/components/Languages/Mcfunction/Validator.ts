@@ -193,8 +193,6 @@ export class CommandValidator {
 	}
 
 	protected async parseBlockState(token: string): Promise<boolean> {
-		console.warn('BlockState!')
-
 		if (!token.startsWith('[')) return false
 
 		if (!token.endsWith(']')) return false
@@ -231,11 +229,6 @@ export class CommandValidator {
 					type: 'number',
 					isOptional: false,
 				})) == 'full'
-
-			console.warn(scoreValue)
-			console.log(isString)
-			console.log(isNumber)
-
 			if (!isString && !isNumber) return false
 		}
 
@@ -572,9 +565,6 @@ export class CommandValidator {
 
 		if (line != undefined) tokens = tokenizeCommand(line).tokens
 
-		console.warn('Tokens!')
-		console.log(JSON.parse(JSON.stringify(tokens)))
-
 		// Reconstruct JSON because tokenizer doesn't handle this well
 		for (let i = 0; i < tokens.length; i++) {
 			if (tokens[i - 1] != undefined) {
@@ -630,9 +620,6 @@ export class CommandValidator {
 			}
 		}
 
-		console.warn('Tokens Restructured!')
-		console.log(JSON.parse(JSON.stringify(tokens)))
-
 		const commandName = tokens[0]
 
 		// If first word is emtpy then this is an empty line
@@ -660,8 +647,6 @@ export class CommandValidator {
 			// The command is not valid; it makes no sense to continue validating this line
 			return diagnostics
 		}
-
-		console.log(`Validating command ${commandName.word}!`)
 
 		// Remove empty tokens as to not confuse the argument checker
 		tokens = tokens.filter((token) => token.word != '')
@@ -699,8 +684,6 @@ export class CommandValidator {
 
 		// Loop over every definition and test for validness
 		for (let j = 0; j < definitions.length; j++) {
-			console.log(`---- New Definition ---- ${commandName.word}`)
-
 			let requiredArgurmentsCount = 0
 
 			for (
@@ -744,10 +727,6 @@ export class CommandValidator {
 
 				const targetArgument =
 					definitions[j].arguments[targetArgumentIndex]
-
-				console.log(
-					`Validating agument of type ${targetArgument.type} onto ${argument.word}!`
-				)
 
 				if (targetArgument.type == 'subcommand') {
 					const result = await this.parseSubcommand(
@@ -836,8 +815,6 @@ export class CommandValidator {
 					targetArgument,
 					commandName.word
 				)
-
-				console.log(argumentType)
 
 				if (
 					targetArgument.type == 'blockState' &&
@@ -992,8 +969,6 @@ export class CommandValidator {
 	}
 
 	async parse(content: string) {
-		console.log('Validating!')
-
 		// Split content into lines
 		const lines = content.split('\n')
 		const diagnostics: editor.IMarkerData[] = []
