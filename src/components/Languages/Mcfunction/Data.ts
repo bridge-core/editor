@@ -548,7 +548,8 @@ export class CommandData extends Signal<void> {
 			case 'selector':
 				return this.toCompletionItem(
 					['@a', '@e', '@p', '@s', '@r', '@initiator'],
-					commandArgument.description
+					commandArgument.description,
+					languages.CompletionItemKind.TypeParameter
 				)
 			case 'boolean':
 				return this.toCompletionItem(
@@ -572,7 +573,8 @@ export class CommandData extends Signal<void> {
 				if (commandArgument.additionalData?.values)
 					return this.toCompletionItem(
 						commandArgument.additionalData.values,
-						commandArgument.description
+						commandArgument.description,
+						languages.CompletionItemKind.Constant
 					)
 				else if (commandArgument.additionalData?.schemaReference)
 					return this.toCompletionItem(
@@ -581,7 +583,8 @@ export class CommandData extends Signal<void> {
 								commandArgument.additionalData.schemaReference
 							).map(({ value }) => value)
 						),
-						commandArgument.description
+						commandArgument.description,
+						languages.CompletionItemKind.Constant
 					)
 				else return []
 			}
@@ -609,12 +612,15 @@ export class CommandData extends Signal<void> {
 						? (await this.getSubcommands(commandName)).map(
 								(command) => command.commandName
 						  )
-						: []
+						: [],
+					undefined,
+					languages.CompletionItemKind.Constant
 				)
 			case 'integerRange':
 				return this.toCompletionItem(
 					['0', '1', '2', '3', '..0', '0..', '0..1'],
-					commandArgument.description
+					commandArgument.description,
+					languages.CompletionItemKind.Value
 				)
 		}
 
