@@ -62,10 +62,17 @@ export class CommandValidator {
 				const argument = leftTokens[j + 1]
 				const targetArgument = definition.arguments[j]
 
-				const argumentType = await this.commandData.isArgumentType(
+				let argumentType = await this.commandData.isArgumentType(
 					argument.word,
 					targetArgument
 				)
+
+				if (
+					targetArgument.type == 'blockState' &&
+					argumentType == 'full' &&
+					!(await this.parseBlockState(argument.word))
+				)
+					argumentType = 'none'
 
 				// Fail if type does not match
 				if (argumentType != 'full') {
@@ -180,6 +187,56 @@ export class CommandValidator {
 			)
 
 			if (argumentType != 'full') return false
+		}
+
+		return true
+	}
+
+	protected async parseBlockState(token: string): Promise<boolean> {
+		console.warn('BlockState!')
+
+		if (!token.startsWith('[')) return false
+
+		if (!token.endsWith(']')) return false
+
+		const pieces = token.substring(1, token.length - 1).split(',')
+
+		// Check for weird comma syntax ex: ,,
+		if (pieces.find((argument) => argument == '') != undefined) return false
+
+		for (const piece of pieces) {
+			const scoreName = piece.split(':')[0]
+			const scoreValue = piece.split(':').slice(1).join(':')
+
+			if (scoreValue == undefined) return false
+
+			const isString =
+				(await this.commandData.isArgumentType(scoreValue, {
+					argumentName: 'scoreData',
+					description: 'scoreDataParser',
+					type: 'string',
+					isOptional: false,
+				})) == 'full' &&
+				(/([a-zA-Z])/.test(scoreValue) || scoreValue == '""') &&
+				((scoreValue.startsWith('"') && scoreValue.endsWith('"')) ||
+					(!scoreValue.startsWith('"') &&
+						!scoreValue.endsWith('"'))) &&
+				(scoreValue.split('"').length - 1 == 2 ||
+					scoreValue.split('"').length - 1 == 0)
+
+			const isNumber =
+				(await this.commandData.isArgumentType(scoreValue, {
+					argumentName: 'scoreData',
+					description: 'scoreDataParser',
+					type: 'number',
+					isOptional: false,
+				})) == 'full'
+
+			console.warn(scoreValue)
+			console.log(isString)
+			console.log(isNumber)
+
+			if (!isString && !isNumber) return false
 		}
 
 		return true
@@ -537,10 +594,28 @@ export class CommandValidator {
 					continue
 				}
 
-				// add the beginning and ending of a json data together
+				// if we get a case where tokens are like ["state":"a","state":"b" then we combine them
 				if (
-					tokens[i].word == '}' &&
-					tokens[i - 1].word.startsWith('{')
+					tokens[i].word.startsWith(',') &&
+					tokens[i - 1].word[tokens[i - 1].word.length - 1] == '"'
+				) {
+					tokens.splice(i - 1, 2, {
+						startColumn: tokens[i - 1].startColumn,
+						endColumn: tokens[i].endColumn,
+						word: tokens[i - 1].word + tokens[i].word,
+					})
+
+					i--
+
+					continue
+				}
+
+				// add the beginning and ending of a json data or scoreData together
+				if (
+					(tokens[i].word == '}' &&
+						tokens[i - 1].word.startsWith('{')) ||
+					(tokens[i].word == ']' &&
+						tokens[i - 1].word.startsWith('['))
 				) {
 					tokens.splice(i - 1, 2, {
 						startColumn: tokens[i - 1].startColumn,
@@ -756,11 +831,20 @@ export class CommandValidator {
 					break
 				}
 
-				const argumentType = await this.commandData.isArgumentType(
+				let argumentType = await this.commandData.isArgumentType(
 					argument.word,
 					targetArgument,
 					commandName.word
 				)
+
+				console.log(argumentType)
+
+				if (
+					targetArgument.type == 'blockState' &&
+					argumentType == 'full' &&
+					!(await this.parseBlockState(argument.word))
+				)
+					argumentType = 'none'
 
 				// Fail if type does not match
 				if (argumentType != 'full') {
