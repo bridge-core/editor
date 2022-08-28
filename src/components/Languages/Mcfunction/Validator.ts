@@ -7,7 +7,10 @@ import { CommandData, ICommandArgument } from './Data'
 import type { editor } from 'monaco-editor'
 import { useMonaco } from '/@/utils/libs/useMonaco'
 import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
-import { LocaleManager } from '/@/components/Locales/Manager'
+import {
+	translateWithInsertions as twi,
+	translate as t,
+} from '/@/components/Locales/Manager'
 
 export class CommandValidator {
 	protected commandData: CommandData
@@ -115,14 +118,10 @@ export class CommandValidator {
 						) {
 							definitionWarnings.push({
 								severity: MarkerSeverity.Warning,
-								message:
-									LocaleManager.translate(
-										'validation.mcfunction.unkown_schema.part1'
-									) +
-									argument.word +
-									LocaleManager.translate(
-										'validation.mcfunction.unkown_schema.part2'
-									),
+								message: twi(
+									'validation.mcfunction.unknownSchema.name',
+									[`"${argument.word}"`]
+								),
 								startLineNumber: -1,
 								startColumn: argument.startColumn + 1,
 								endLineNumber: -1,
@@ -256,7 +255,10 @@ export class CommandValidator {
 				passed: false,
 				diagnostic: {
 					severity: MarkerSeverity.Error,
-					message: `Invalid selector base "${baseSelector}"`,
+					message: twi(
+						'validation.mcfunction.invalidSelectorBase.name',
+						[`"${baseSelector}"`]
+					),
 					startLineNumber: -1,
 					startColumn: selectorToken.startColumn + 1,
 					endLineNumber: -1,
@@ -273,7 +275,10 @@ export class CommandValidator {
 				passed: false,
 				diagnostic: {
 					severity: MarkerSeverity.Error,
-					message: `Invalid selector base "${baseSelector}"`,
+					message: twi(
+						'validation.mcfunction.invalidSelectorBase.name',
+						[`"${baseSelector}"`]
+					),
 					startLineNumber: -1,
 					startColumn: selectorToken.startColumn + 1,
 					endLineNumber: -1,
@@ -294,9 +299,10 @@ export class CommandValidator {
 				passed: false,
 				diagnostic: {
 					severity: MarkerSeverity.Error,
-					message: `Unexpected symbol "${
-						selectorToken.word[baseSelector.length]
-					}". Expected "["`,
+					message: twi(
+						'validation.mcfunction.unexpectedSymbol.name',
+						[`"${selectorToken.word[baseSelector.length]}"`, '"["']
+					),
 					startLineNumber: -1,
 					startColumn: selectorToken.startColumn + 1,
 					endLineNumber: -1,
@@ -310,9 +316,10 @@ export class CommandValidator {
 				passed: false,
 				diagnostic: {
 					severity: MarkerSeverity.Error,
-					message: `Unexpected symbol "${
-						selectorToken.word[selectorToken.word.length - 1]
-					}". Expected "]"`,
+					message: twi(
+						'validation.mcfunction.unexpectedSymbol.name',
+						[`"${selectorToken.word[baseSelector.length]}"`, '"]"']
+					),
 					startLineNumber: -1,
 					startColumn: selectorToken.startColumn + 1,
 					endLineNumber: -1,
@@ -331,7 +338,15 @@ export class CommandValidator {
 				passed: false,
 				diagnostic: {
 					severity: MarkerSeverity.Error,
-					message: `Unexpected symbol ",". Expected a selector argument`,
+					message: twi(
+						'validation.mcfunction.unexpectedSymbol.name',
+						[
+							`"${selectorToken.word[baseSelector.length]}"`,
+							`"${t(
+								'validation.mcfunction.tokens.selectorArgument'
+							)}"`,
+						]
+					),
 					startLineNumber: -1,
 					startColumn: selectorToken.startColumn + 1,
 					endLineNumber: -1,
@@ -353,7 +368,10 @@ export class CommandValidator {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Expected symbol "="`,
+						message: twi(
+							'validation.mcfunction.unexpectedSymbol.name',
+							[`"${argument}"`, `"="`]
+						),
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -374,7 +392,10 @@ export class CommandValidator {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Invalid selector argument "${argumentName}"`,
+						message: twi(
+							'validation.mcfunction.invalidSelectorArgument.name',
+							[`"${argumentName}"`]
+						),
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -396,7 +417,13 @@ export class CommandValidator {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Argument "${argumentName}" does not support negation`,
+						message: twi(
+							'validation.mcfunction.argumentNoSupport.name',
+							[
+								`"${argumentName}"`,
+								t('validation.mcfunction.conditions.negation'),
+							]
+						),
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -412,7 +439,15 @@ export class CommandValidator {
 						passed: false,
 						diagnostic: {
 							severity: MarkerSeverity.Error,
-							message: `Argument "${argumentName}" does not support multiple instances`,
+							message: twi(
+								'validation.mcfunction.argumentNoSupport.name',
+								[
+									`"${argumentName}"`,
+									t(
+										'validation.mcfunction.conditions.multipleInstances'
+									),
+								]
+							),
 							startLineNumber: -1,
 							startColumn: selectorToken.startColumn + 1,
 							endLineNumber: -1,
@@ -429,7 +464,10 @@ export class CommandValidator {
 						passed: false,
 						diagnostic: {
 							severity: MarkerSeverity.Error,
-							message: `Argument "${argumentName}" does not support multiple instances when not all negated`,
+							message: twi(
+								'validation.mcfunction.argumentNoSupport.bothConditions',
+								[`"${argumentName}"`]
+							),
 							startLineNumber: -1,
 							startColumn: selectorToken.startColumn + 1,
 							endLineNumber: -1,
@@ -443,7 +481,15 @@ export class CommandValidator {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Argument "${argumentName}" does not support multiple instances`,
+						message: twi(
+							'validation.mcfunction.argumentNoSupport.name',
+							[
+								`"${argumentName}"`,
+								t(
+									'validation.mcfunction.conditions.multipleInstances'
+								),
+							]
+						),
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -471,7 +517,10 @@ export class CommandValidator {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Invalid selector argument value "${argumentValue}" for argument "${argumentName}"`,
+						message: twi(
+							'validation.mcfunction.invalidSelectorArgumentValue.name',
+							[`"${argumentValue}"`, `"${argumentName}"`]
+						),
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -493,7 +542,10 @@ export class CommandValidator {
 						passed: false,
 						diagnostic: {
 							severity: MarkerSeverity.Error,
-							message: `Invalid selector argument value "${argumentValue}" for argument "${argumentName}"`,
+							message: twi(
+								'validation.mcfunction.invalidSelectorArgumentValue.name',
+								[`"${argumentValue}"`, `"${argumentName}"`]
+							),
 							startLineNumber: -1,
 							startColumn: selectorToken.startColumn + 1,
 							endLineNumber: -1,
@@ -523,7 +575,10 @@ export class CommandValidator {
 					) {
 						warnings.push({
 							severity: MarkerSeverity.Warning,
-							message: `Unkown schema value "${argumentValue}" for argument "${argumentName}"`,
+							message: twi(
+								'validation.mcfunction.unknownSchemaInArgument.name',
+								[`"${argumentValue}"`, `"${argumentName}"`]
+							),
 							startLineNumber: -1,
 							startColumn: selectorToken.startColumn + 1,
 							endLineNumber: -1,
@@ -630,14 +685,9 @@ export class CommandValidator {
 		) {
 			diagnostics.push({
 				severity: MarkerSeverity.Error,
-				message:
-					LocaleManager.translate(
-						'validation.mcfunction.unknown_command.part1'
-					) +
-					commandName.word +
-					LocaleManager.translate(
-						'validation.mcfunction.unknown_command.part2'
-					),
+				message: twi('validation.mcfunction.unknownCommand.name', [
+					`"${commandName.word}"`,
+				]),
 				startLineNumber: -1,
 				startColumn: commandName.startColumn + 1,
 				endLineNumber: -1,
@@ -654,14 +704,9 @@ export class CommandValidator {
 		if (tokens.length < 2) {
 			diagnostics.push({
 				severity: MarkerSeverity.Error,
-				message:
-					LocaleManager.translate(
-						'validation.mcfunction.missing_parameters.part1'
-					) +
-					commandName.word +
-					LocaleManager.translate(
-						'validation.mcfunction.missing_parameters.part2'
-					),
+				message: twi('validation.mcfunction.missingArguments.name', [
+					`"${commandName.word}"`,
+				]),
 				startLineNumber: -1,
 				startColumn: commandName.startColumn + 1,
 				endLineNumber: -1,
@@ -896,14 +941,10 @@ export class CommandValidator {
 						) {
 							definitionWarnings.push({
 								severity: MarkerSeverity.Warning,
-								message:
-									LocaleManager.translate(
-										'validation.mcfunction.unkown_schema.part1'
-									) +
-									argument.word +
-									LocaleManager.translate(
-										'validation.mcfunction.unkown_schema.part2'
-									),
+								message: twi(
+									'validation.mcfunction.unknownSchema.name',
+									[`"${commandName.word}"`]
+								),
 								startLineNumber: -1,
 								startColumn: argument.startColumn + 1,
 								endLineNumber: -1,
@@ -947,14 +988,9 @@ export class CommandValidator {
 		if (definitions.length == 0) {
 			diagnostics.push({
 				severity: MarkerSeverity.Error,
-				message:
-					LocaleManager.translate(
-						'validation.mcfunction.invalid_argument.part1'
-					) +
-					tokens[lastTokenError].word +
-					LocaleManager.translate(
-						'validation.mcfunction.invalid_argument.part2'
-					),
+				message: twi('validation.mcfunction.invalidArgument.name', [
+					`"${tokens[lastTokenError].word}"`,
+				]),
 				startLineNumber: -1,
 				startColumn: tokens[lastTokenError].startColumn + 1,
 				endLineNumber: -1,

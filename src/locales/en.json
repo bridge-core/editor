@@ -1099,21 +1099,43 @@
 	},
 	"validation": {
 		"mcfunction": {
-			"invalid_argument": {
-				"part1": "Argument \"",
-				"part2": "\" is not valid here"
+			"invalidArgument": {
+				"name": "Argument {{$1}} is not valid here"
 			},
-			"unkown_command": {
-				"part1": "Command \"",
-				"part2": "\" does not exist"
+			"unknownCommand": {
+				"name": "Command {{$1}} does not exist"
 			},
-			"missing_parameters": {
-				"part1": "Command \"",
-				"part2": "\" needs parameters"
+			"missingArguments": {
+				"name": "Command {{$1}} requires more arguments"
 			},
-			"unknown_schema": {
-				"part1": "Unkown schema value \"",
-				"part2": "\""
+			"unknownSchema": {
+				"name": "Unknown schema value {{$1}}"
+			},
+			"unknownSchemaInArgument": {
+				"name": "Unknown schema value {{$1}} for argument {{$2}}"
+			},
+			"invalidSelectorBase": {
+				"name": "Invalid target selector base {{$1}}"
+			},
+			"unexpectedSymbol": {
+				"name": "Unexpected symbol {{$1}}. Expected {{$2}}"
+			},
+			"invalidSelectorArgument": {
+				"name": "Invalid selector argument {{$1}}"
+			},
+			"argumentNoSupport": {
+				"name": "Argument {{$1}} doesn not support {{$2}}",
+				"bothConditions": "Argument {{$1}} does not support multiple instances when not all negated"
+			},
+			"invalidSelectorArgumentValue": {
+				"name": "Invalid selector argument value {{$1}} for argument {{$2}}"
+			},
+			"conditions": {
+				"negation": "negation",
+				"multipleInstances": "multiple instances"
+			},
+			"tokens": {
+				"selectorArgument": "selector argument"
 			}
 		}
 	}
