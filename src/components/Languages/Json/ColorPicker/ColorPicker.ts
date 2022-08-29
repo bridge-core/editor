@@ -27,16 +27,19 @@ export async function registerColorPicker() {
 
 					const position = new Position(
 						i + 1,
-						line.indexOf(string) + 3
+						line.indexOf(string) + 2
 					)
 
-					let { range } = await getJsonWordAtPosition(model, position)
+					const { range } = await getJsonWordAtPosition(
+						model,
+						position
+					)
 					colorInfo.push({
 						range: new Range(
 							range.startLineNumber,
-							range.startColumn + 1,
+							range.startColumn,
 							range.endLineNumber,
-							range.endColumn + 1
+							range.endColumn + 2
 						),
 						color: color.colorInfo,
 					})
@@ -52,7 +55,7 @@ export async function registerColorPicker() {
 			const color = new Color(colorInfo.color)
 			return [
 				{
-					label: color.toHex().toUpperCase(),
+					label: `"${color.toHex().toUpperCase()}"`,
 				},
 			]
 		},
