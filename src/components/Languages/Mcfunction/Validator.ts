@@ -722,6 +722,7 @@ export class CommandValidator {
 
 		// We only need to record the error of the most farthest in token because that is the most likely variation the user was attempting to type
 		let lastTokenError = 0
+		let lastTokenErrorReason = ''
 
 		let longestPassLength = -1
 
@@ -759,6 +760,11 @@ export class CommandValidator {
 						failedLongest = true
 
 						lastTokenError = k
+
+						lastTokenErrorReason = twi(
+							'validation.mcfunction.invalidArgument.name',
+							[`"${tokens[k].word}"`]
+						)
 					}
 
 					failed = true
@@ -827,6 +833,11 @@ export class CommandValidator {
 							failedLongest = true
 
 							lastTokenError = k
+
+							lastTokenErrorReason = twi(
+								'validation.mcfunction.invalidArgument.name',
+								[`"${tokens[k].word}"`]
+							)
 						}
 
 						failed = true
@@ -876,6 +887,11 @@ export class CommandValidator {
 						failedLongest = true
 
 						lastTokenError = k
+
+						lastTokenErrorReason = twi(
+							'validation.mcfunction.invalidArgument.name',
+							[`"${tokens[k].word}"`]
+						)
 					}
 
 					failed = true
@@ -911,6 +927,11 @@ export class CommandValidator {
 							failedLongest = true
 
 							lastTokenError = k
+
+							lastTokenErrorReason = twi(
+								'validation.mcfunction.invalidArgument.name',
+								[`"${tokens[k].word}"`]
+							)
 						}
 
 						failed = true
@@ -938,7 +959,7 @@ export class CommandValidator {
 								severity: MarkerSeverity.Warning,
 								message: twi(
 									'validation.mcfunction.unknownSchema.name',
-									[`"${commandName.word}"`]
+									[`"${tokens[k].word}"`]
 								),
 								startLineNumber: -1,
 								startColumn: argument.startColumn + 1,
@@ -965,8 +986,14 @@ export class CommandValidator {
 
 				j--
 
-				if (lastTokenError < tokens.length - 1)
+				if (lastTokenError < tokens.length - 1) {
 					lastTokenError = tokens.length - 1
+
+					lastTokenErrorReason = twi(
+						'validation.mcfunction.missingArguments.name',
+						[`"${commandName.word}"`]
+					)
+				}
 
 				// Continue to not add warnings to the diagnostics
 				continue
@@ -983,9 +1010,7 @@ export class CommandValidator {
 		if (definitions.length == 0) {
 			diagnostics.push({
 				severity: MarkerSeverity.Error,
-				message: twi('validation.mcfunction.invalidArgument.name', [
-					`"${tokens[lastTokenError].word}"`,
-				]),
+				message: lastTokenErrorReason,
 				startLineNumber: -1,
 				startColumn: tokens[lastTokenError].startColumn + 1,
 				endLineNumber: -1,
