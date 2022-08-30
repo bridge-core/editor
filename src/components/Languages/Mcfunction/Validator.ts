@@ -715,6 +715,9 @@ export class CommandValidator {
 			return diagnostics
 		}
 
+		// If this is a say command we ignore validating arguments since they are all strings
+		if (commandName.word == 'say') return diagnostics.concat(warnings)
+
 		let definitions = await this.commandData.getCommandDefinitions(
 			commandName.word,
 			false
