@@ -405,6 +405,10 @@ export class CommandValidator {
 					warnings: [],
 				}
 
+			// Remove ! at the beginning
+			if (negated)
+				argumentValue = argumentValue.substring(1, argumentValue.length)
+
 			// Check if this type should not be used again
 			if (canNotUse) {
 				if (argumentSchema.additionalData == undefined)
