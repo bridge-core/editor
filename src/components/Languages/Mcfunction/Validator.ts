@@ -7,7 +7,10 @@ import { CommandData, ICommandArgument } from './Data'
 import type { editor } from 'monaco-editor'
 import { useMonaco } from '/@/utils/libs/useMonaco'
 import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
-import { LocaleManager } from '/@/components/Locales/Manager'
+import {
+	translateWithInsertions as twi,
+	translate as t,
+} from '/@/components/Locales/Manager'
 
 export class CommandValidator {
 	protected commandData: CommandData
@@ -25,7 +28,7 @@ export class CommandValidator {
 		}[]
 	): Promise<{
 		passed: boolean
-		argumentsConsumedCount?: number | undefined
+		argumentsConsumedCount?: number
 		warnings: editor.IMarkerData[]
 	}> {
 		const { MarkerSeverity } = await useMonaco()
@@ -42,7 +45,7 @@ export class CommandValidator {
 				warnings: [],
 			}
 
-		let passedSubcommandDefinition = undefined
+		let passedSubcommandDefinition
 
 		let warnings: editor.IMarkerData[] = []
 
@@ -81,10 +84,10 @@ export class CommandValidator {
 					break
 				}
 
-				if (targetArgument.additionalData != undefined) {
+				if (targetArgument.additionalData) {
 					// Fail if there are additional values that are not met
 					if (
-						targetArgument.additionalData.values != undefined &&
+						targetArgument.additionalData.values &&
 						!targetArgument.additionalData.values.includes(
 							argument.word
 						)
@@ -94,11 +97,8 @@ export class CommandValidator {
 						break
 					}
 
-					// Warn if unkown schema value
-					if (
-						targetArgument.additionalData.schemaReference !=
-						undefined
-					) {
+					// Warn if unknown schema value
+					if (targetArgument.additionalData.schemaReference) {
 						const referencePath =
 							targetArgument.additionalData.schemaReference
 
@@ -109,20 +109,16 @@ export class CommandValidator {
 						).getCompletionItems({})
 
 						if (
-							schemaReference.find(
+							!schemaReference.find(
 								(reference) => reference.value == argument.word
-							) == undefined
+							)
 						) {
 							definitionWarnings.push({
 								severity: MarkerSeverity.Warning,
-								message:
-									LocaleManager.translate(
-										'validation.mcfunction.unkown_schema.part1'
-									) +
-									argument.word +
-									LocaleManager.translate(
-										'validation.mcfunction.unkown_schema.part2'
-									),
+								message: twi(
+									'validation.mcfunction.unknownSchema.name',
+									[`"${argument.word}"`]
+								),
 								startLineNumber: -1,
 								startColumn: argument.startColumn + 1,
 								endLineNumber: -1,
@@ -136,7 +132,7 @@ export class CommandValidator {
 			// Only add definition if it is longer since it's the most likely correct one
 			if (
 				!failed &&
-				(passedSubcommandDefinition == undefined ||
+				(!passedSubcommandDefinition ||
 					passedSubcommandDefinition.arguments.length <
 						definition.arguments.length)
 			) {
@@ -145,7 +141,7 @@ export class CommandValidator {
 			}
 		}
 
-		if (passedSubcommandDefinition == undefined) {
+		if (!passedSubcommandDefinition) {
 			return {
 				passed: false,
 				warnings: [],
@@ -168,13 +164,13 @@ export class CommandValidator {
 		let pieces = token.substring(1, token.length - 1).split(',')
 
 		// Check for weird comma syntax ex: ,,
-		if (pieces.find((argument) => argument == '') != undefined) return false
+		if (pieces.find((argument) => argument == '')) return false
 
 		for (const piece of pieces) {
 			const scoreName = piece.split('=')[0]
 			const scoreValue = piece.split('=').slice(1).join('=')
 
-			if (scoreValue == undefined) return false
+			if (!scoreValue) return false
 
 			let argumentType = await this.commandData.isArgumentType(
 				scoreValue,
@@ -200,13 +196,13 @@ export class CommandValidator {
 		const pieces = token.substring(1, token.length - 1).split(',')
 
 		// Check for weird comma syntax ex: ,,
-		if (pieces.find((argument) => argument == '') != undefined) return false
+		if (pieces.find((argument) => argument == '')) return false
 
 		for (const piece of pieces) {
 			const scoreName = piece.split(':')[0]
 			const scoreValue = piece.split(':').slice(1).join(':')
 
-			if (scoreValue == undefined) return false
+			if (!scoreValue) return false
 
 			const isString =
 				(await this.commandData.isArgumentType(scoreValue, {
@@ -256,7 +252,10 @@ export class CommandValidator {
 				passed: false,
 				diagnostic: {
 					severity: MarkerSeverity.Error,
-					message: `Invalid selector base "${baseSelector}"`,
+					message: twi(
+						'validation.mcfunction.invalidSelectorBase.name',
+						[`"${baseSelector}"`]
+					),
 					startLineNumber: -1,
 					startColumn: selectorToken.startColumn + 1,
 					endLineNumber: -1,
@@ -273,7 +272,10 @@ export class CommandValidator {
 				passed: false,
 				diagnostic: {
 					severity: MarkerSeverity.Error,
-					message: `Invalid selector base "${baseSelector}"`,
+					message: twi(
+						'validation.mcfunction.invalidSelectorBase.name',
+						[`"${baseSelector}"`]
+					),
 					startLineNumber: -1,
 					startColumn: selectorToken.startColumn + 1,
 					endLineNumber: -1,
@@ -294,9 +296,10 @@ export class CommandValidator {
 				passed: false,
 				diagnostic: {
 					severity: MarkerSeverity.Error,
-					message: `Unexpected symbol "${
-						selectorToken.word[baseSelector.length]
-					}". Expected "["`,
+					message: twi(
+						'validation.mcfunction.unexpectedSymbol.name',
+						[`"${selectorToken.word[baseSelector.length]}"`, '"["']
+					),
 					startLineNumber: -1,
 					startColumn: selectorToken.startColumn + 1,
 					endLineNumber: -1,
@@ -310,9 +313,10 @@ export class CommandValidator {
 				passed: false,
 				diagnostic: {
 					severity: MarkerSeverity.Error,
-					message: `Unexpected symbol "${
-						selectorToken.word[selectorToken.word.length - 1]
-					}". Expected "]"`,
+					message: twi(
+						'validation.mcfunction.unexpectedSymbol.name',
+						[`"${selectorToken.word[baseSelector.length]}"`, '"]"']
+					),
 					startLineNumber: -1,
 					startColumn: selectorToken.startColumn + 1,
 					endLineNumber: -1,
@@ -326,12 +330,20 @@ export class CommandValidator {
 			.split(',')
 
 		// Check for weird comma syntax ex: ,,
-		if (selectorArguments.find((argument) => argument == '') != undefined)
+		if (selectorArguments.find((argument) => argument == ''))
 			return {
 				passed: false,
 				diagnostic: {
 					severity: MarkerSeverity.Error,
-					message: `Unexpected symbol ",". Expected a selector argument`,
+					message: twi(
+						'validation.mcfunction.unexpectedSymbol.name',
+						[
+							`"${selectorToken.word[baseSelector.length]}"`,
+							`"${t(
+								'validation.mcfunction.tokens.selectorArgument'
+							)}"`,
+						]
+					),
 					startLineNumber: -1,
 					startColumn: selectorToken.startColumn + 1,
 					endLineNumber: -1,
@@ -353,7 +365,10 @@ export class CommandValidator {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Expected symbol "="`,
+						message: twi(
+							'validation.mcfunction.unexpectedSymbol.name',
+							[`"${argument}"`, `"="`]
+						),
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -369,12 +384,15 @@ export class CommandValidator {
 				(schema) => schema.argumentName == argumentName
 			)
 
-			if (argumentSchema == undefined)
+			if (!argumentSchema)
 				return {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Invalid selector argument "${argumentName}"`,
+						message: twi(
+							'validation.mcfunction.invalidSelectorArgument.name',
+							[`"${argumentName}"`]
+						),
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -389,14 +407,20 @@ export class CommandValidator {
 			// Fail if negated and shouldn't be
 			if (
 				negated &&
-				(argumentSchema.additionalData == undefined ||
+				(!argumentSchema.additionalData ||
 					!argumentSchema.additionalData.supportsNegation)
 			)
 				return {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Argument "${argumentName}" does not support negation`,
+						message: twi(
+							'validation.mcfunction.argumentNoSupport.name',
+							[
+								`"${argumentName}"`,
+								t('validation.mcfunction.conditions.negation'),
+							]
+						),
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -411,12 +435,20 @@ export class CommandValidator {
 
 			// Check if this type should not be used again
 			if (canNotUse) {
-				if (argumentSchema.additionalData == undefined)
+				if (!argumentSchema.additionalData)
 					return {
 						passed: false,
 						diagnostic: {
 							severity: MarkerSeverity.Error,
-							message: `Argument "${argumentName}" does not support multiple instances`,
+							message: twi(
+								'validation.mcfunction.argumentNoSupport.name',
+								[
+									`"${argumentName}"`,
+									t(
+										'validation.mcfunction.conditions.multipleInstances'
+									),
+								]
+							),
 							startLineNumber: -1,
 							startColumn: selectorToken.startColumn + 1,
 							endLineNumber: -1,
@@ -433,7 +465,10 @@ export class CommandValidator {
 						passed: false,
 						diagnostic: {
 							severity: MarkerSeverity.Error,
-							message: `Argument "${argumentName}" does not support multiple instances when not all negated`,
+							message: twi(
+								'validation.mcfunction.argumentNoSupport.bothConditions',
+								[`"${argumentName}"`]
+							),
 							startLineNumber: -1,
 							startColumn: selectorToken.startColumn + 1,
 							endLineNumber: -1,
@@ -447,7 +482,15 @@ export class CommandValidator {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Argument "${argumentName}" does not support multiple instances`,
+						message: twi(
+							'validation.mcfunction.argumentNoSupport.name',
+							[
+								`"${argumentName}"`,
+								t(
+									'validation.mcfunction.conditions.multipleInstances'
+								),
+							]
+						),
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -475,7 +518,10 @@ export class CommandValidator {
 					passed: false,
 					diagnostic: {
 						severity: MarkerSeverity.Error,
-						message: `Invalid selector argument value "${argumentValue}" for argument "${argumentName}"`,
+						message: twi(
+							'validation.mcfunction.invalidSelectorArgumentValue.name',
+							[`"${argumentValue}"`, `"${argumentName}"`]
+						),
 						startLineNumber: -1,
 						startColumn: selectorToken.startColumn + 1,
 						endLineNumber: -1,
@@ -485,10 +531,10 @@ export class CommandValidator {
 				}
 			}
 
-			if (argumentSchema.additionalData != undefined) {
+			if (argumentSchema.additionalData) {
 				// Fail if there are additional values that are not met
 				if (
-					argumentSchema.additionalData.values != undefined &&
+					argumentSchema.additionalData.values &&
 					!argumentSchema.additionalData.values.includes(
 						argumentValue
 					)
@@ -497,7 +543,10 @@ export class CommandValidator {
 						passed: false,
 						diagnostic: {
 							severity: MarkerSeverity.Error,
-							message: `Invalid selector argument value "${argumentValue}" for argument "${argumentName}"`,
+							message: twi(
+								'validation.mcfunction.invalidSelectorArgumentValue.name',
+								[`"${argumentValue}"`, `"${argumentName}"`]
+							),
 							startLineNumber: -1,
 							startColumn: selectorToken.startColumn + 1,
 							endLineNumber: -1,
@@ -507,10 +556,8 @@ export class CommandValidator {
 					}
 				}
 
-				// Warn if unkown schema value
-				if (
-					argumentSchema.additionalData.schemaReference != undefined
-				) {
+				// Warn if unknown schema value
+				if (argumentSchema.additionalData.schemaReference) {
 					const referencePath =
 						argumentSchema.additionalData.schemaReference
 
@@ -521,13 +568,16 @@ export class CommandValidator {
 					).getCompletionItems({})
 
 					if (
-						schemaReference.find(
+						!schemaReference.find(
 							(reference) => reference.value == argumentValue
-						) == undefined
+						)
 					) {
 						warnings.push({
 							severity: MarkerSeverity.Warning,
-							message: `Unkown schema value "${argumentValue}" for argument "${argumentName}"`,
+							message: twi(
+								'validation.mcfunction.unknownSchemaInArgument.name',
+								[`"${argumentValue}"`, `"${argumentName}"`]
+							),
 							startLineNumber: -1,
 							startColumn: selectorToken.startColumn + 1,
 							endLineNumber: -1,
@@ -538,9 +588,8 @@ export class CommandValidator {
 			}
 
 			if (
-				argumentSchema.additionalData == undefined ||
-				argumentSchema.additionalData.multipleInstancesAllowed ==
-					undefined ||
+				!argumentSchema.additionalData ||
+				!argumentSchema.additionalData.multipleInstancesAllowed ||
 				argumentSchema.additionalData.multipleInstancesAllowed ==
 					'never' ||
 				(argumentSchema.additionalData.multipleInstancesAllowed ==
@@ -567,11 +616,11 @@ export class CommandValidator {
 		let diagnostics: editor.IMarkerData[] = []
 		let warnings: editor.IMarkerData[] = []
 
-		if (line != undefined) tokens = tokenizeCommand(line).tokens
+		if (line) tokens = tokenizeCommand(line).tokens
 
 		// Reconstruct JSON because tokenizer doesn't handle this well
 		for (let i = 0; i < tokens.length; i++) {
-			if (tokens[i - 1] != undefined) {
+			if (tokens[i - 1]) {
 				// if we get a case where tokens are like "property", :"value" then we combine them
 				if (
 					tokens[i].word.startsWith(':') &&
@@ -626,22 +675,17 @@ export class CommandValidator {
 
 		const commandName = tokens[0]
 
-		// If first word is emtpy then this is an empty line
-		if (commandName.word == '') return diagnostics
+		// If first word is empty then this is an empty line
+		if (!commandName || commandName.word == '') return diagnostics
 
 		if (
 			!(await this.commandData.allCommands()).includes(commandName.word)
 		) {
 			diagnostics.push({
 				severity: MarkerSeverity.Error,
-				message:
-					LocaleManager.translate(
-						'validation.mcfunction.unknown_command.part1'
-					) +
-					commandName.word +
-					LocaleManager.translate(
-						'validation.mcfunction.unknown_command.part2'
-					),
+				message: twi('validation.mcfunction.unknownCommand.name', [
+					`"${commandName.word}"`,
+				]),
 				startLineNumber: -1,
 				startColumn: commandName.startColumn + 1,
 				endLineNumber: -1,
@@ -658,14 +702,9 @@ export class CommandValidator {
 		if (tokens.length < 2) {
 			diagnostics.push({
 				severity: MarkerSeverity.Error,
-				message:
-					LocaleManager.translate(
-						'validation.mcfunction.missing_parameters.part1'
-					) +
-					commandName.word +
-					LocaleManager.translate(
-						'validation.mcfunction.missing_parameters.part2'
-					),
+				message: twi('validation.mcfunction.missingArguments.name', [
+					`"${commandName.word}"`,
+				]),
 				startLineNumber: -1,
 				startColumn: commandName.startColumn + 1,
 				endLineNumber: -1,
@@ -848,7 +887,7 @@ export class CommandValidator {
 				if (targetArgument.type == 'selector') {
 					const result = await this.parseSelector(argument)
 
-					if (result.diagnostic != undefined)
+					if (result.diagnostic)
 						definitionDiagnostics.push(result.diagnostic)
 
 					definitionWarnings = definitionWarnings.concat(
@@ -856,10 +895,10 @@ export class CommandValidator {
 					)
 				}
 
-				if (targetArgument.additionalData != undefined) {
+				if (targetArgument.additionalData) {
 					// Fail if there are additional values that are not met
 					if (
-						targetArgument.additionalData.values != undefined &&
+						targetArgument.additionalData.values &&
 						!targetArgument.additionalData.values.includes(
 							argument.word
 						)
@@ -879,11 +918,8 @@ export class CommandValidator {
 						break
 					}
 
-					// Warn if unkown schema value
-					if (
-						targetArgument.additionalData.schemaReference !=
-						undefined
-					) {
+					// Warn if unknown schema value
+					if (targetArgument.additionalData.schemaReference) {
 						const referencePath =
 							targetArgument.additionalData.schemaReference
 
@@ -894,20 +930,16 @@ export class CommandValidator {
 						).getCompletionItems({})
 
 						if (
-							schemaReference.find(
+							!schemaReference.find(
 								(reference) => reference.value == argument.word
-							) == undefined
+							)
 						) {
 							definitionWarnings.push({
 								severity: MarkerSeverity.Warning,
-								message:
-									LocaleManager.translate(
-										'validation.mcfunction.unkown_schema.part1'
-									) +
-									argument.word +
-									LocaleManager.translate(
-										'validation.mcfunction.unkown_schema.part2'
-									),
+								message: twi(
+									'validation.mcfunction.unknownSchema.name',
+									[`"${commandName.word}"`]
+								),
 								startLineNumber: -1,
 								startColumn: argument.startColumn + 1,
 								endLineNumber: -1,
@@ -951,14 +983,9 @@ export class CommandValidator {
 		if (definitions.length == 0) {
 			diagnostics.push({
 				severity: MarkerSeverity.Error,
-				message:
-					LocaleManager.translate(
-						'validation.mcfunction.invalid_argument.part1'
-					) +
-					tokens[lastTokenError].word +
-					LocaleManager.translate(
-						'validation.mcfunction.invalid_argument.part2'
-					),
+				message: twi('validation.mcfunction.invalidArgument.name', [
+					`"${tokens[lastTokenError].word}"`,
+				]),
 				startLineNumber: -1,
 				startColumn: tokens[lastTokenError].startColumn + 1,
 				endLineNumber: -1,
