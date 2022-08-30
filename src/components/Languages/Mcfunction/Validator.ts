@@ -264,25 +264,30 @@ export class CommandValidator {
 				warnings: [],
 			}
 
-		if (
-			baseSelector == '@i' &&
-			selectorToken.word.substring(0, '@initiator'.length) != '@initiator'
-		)
-			return {
-				passed: false,
-				diagnostic: {
-					severity: MarkerSeverity.Error,
-					message: twi(
-						'validation.mcfunction.invalidSelectorBase.name',
-						[`"${baseSelector}"`]
-					),
-					startLineNumber: -1,
-					startColumn: selectorToken.startColumn + 1,
-					endLineNumber: -1,
-					endColumn: selectorToken.endColumn + 1,
-				},
-				warnings: [],
+		if (baseSelector == '@i') {
+			if (
+				selectorToken.word.substring(0, '@initiator'.length) !=
+				'@initiator'
+			) {
+				return {
+					passed: false,
+					diagnostic: {
+						severity: MarkerSeverity.Error,
+						message: twi(
+							'validation.mcfunction.invalidSelectorBase.name',
+							[`"${baseSelector}"`]
+						),
+						startLineNumber: -1,
+						startColumn: selectorToken.startColumn + 1,
+						endLineNumber: -1,
+						endColumn: selectorToken.endColumn + 1,
+					},
+					warnings: [],
+				}
 			}
+
+			baseSelector = '@initiator'
+		}
 
 		// If the selector is merely the base we can just pass
 		if (baseSelector == selectorToken.word)
