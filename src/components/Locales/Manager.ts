@@ -105,17 +105,6 @@ export function translate(key?: string) {
 	return LocaleManager.translate(key)
 }
 
-export function translateWithInsertions(key?: string, insert?: string[]) {
-	let translation = LocaleManager.translate(key)
-	if (!insert) return translation
-
-	for (let i = 0; i <= insert.length; i++) {
-		translation = translation?.replace(`{{$${i + 1}}}`, insert[i])
-	}
-
-	return translation
-}
-
 function clone(obj: any) {
 	if (typeof window.structuredClone === 'function')
 		return window.structuredClone(obj)
