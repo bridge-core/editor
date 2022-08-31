@@ -43,6 +43,7 @@ export type TArgumentType =
 	| 'command'
 	| 'scoreData'
 	| 'subcommand'
+	| 'integerRange'
 	| `$${string}`
 
 /**
@@ -57,6 +58,7 @@ export interface ICommandArgument {
 		schemaReference?: string
 		values?: string[]
 	}
+	isOptional: boolean
 }
 
 export interface ICompletionItem {
@@ -152,7 +154,8 @@ export class CommandData extends Signal<void> {
 				(selectorArgument: unknown) => selectorArgument !== undefined
 			)
 	}
-	protected async getSubcommands(commandName: string): Promise<ICommand[]> {
+
+	async getSubcommands(commandName: string): Promise<ICommand[]> {
 		const schemas = await this.getSchema()
 
 		return schemas
@@ -436,7 +439,7 @@ export class CommandData extends Signal<void> {
 	/**
 	 * Given an argument type, test whether a string matches the type
 	 */
-	protected async isArgumentType(
+	async isArgumentType(
 		testStr: string,
 		commandArgument: ICommandArgument,
 		commandName?: string
