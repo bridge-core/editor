@@ -43,6 +43,7 @@ export type TArgumentType =
 	| 'command'
 	| 'scoreData'
 	| 'subcommand'
+	| 'integerRange'
 	| `$${string}`
 
 /**
@@ -57,6 +58,7 @@ export interface ICommandArgument {
 		schemaReference?: string
 		values?: string[]
 	}
+	isOptional: boolean
 }
 
 export interface ICompletionItem {
@@ -152,7 +154,8 @@ export class CommandData extends Signal<void> {
 				(selectorArgument: unknown) => selectorArgument !== undefined
 			)
 	}
-	protected async getSubcommands(commandName: string): Promise<ICommand[]> {
+
+	async getSubcommands(commandName: string): Promise<ICommand[]> {
 		const schemas = await this.getSchema()
 
 		return schemas
@@ -436,7 +439,7 @@ export class CommandData extends Signal<void> {
 	/**
 	 * Given an argument type, test whether a string matches the type
 	 */
-	protected async isArgumentType(
+	async isArgumentType(
 		testStr: string,
 		commandArgument: ICommandArgument,
 		commandName?: string
@@ -548,7 +551,8 @@ export class CommandData extends Signal<void> {
 			case 'selector':
 				return this.toCompletionItem(
 					['@a', '@e', '@p', '@s', '@r', '@initiator'],
-					commandArgument.description
+					commandArgument.description,
+					languages.CompletionItemKind.TypeParameter
 				)
 			case 'boolean':
 				return this.toCompletionItem(
@@ -572,7 +576,8 @@ export class CommandData extends Signal<void> {
 				if (commandArgument.additionalData?.values)
 					return this.toCompletionItem(
 						commandArgument.additionalData.values,
-						commandArgument.description
+						commandArgument.description,
+						languages.CompletionItemKind.Constant
 					)
 				else if (commandArgument.additionalData?.schemaReference)
 					return this.toCompletionItem(
@@ -581,7 +586,8 @@ export class CommandData extends Signal<void> {
 								commandArgument.additionalData.schemaReference
 							).map(({ value }) => value)
 						),
-						commandArgument.description
+						commandArgument.description,
+						languages.CompletionItemKind.Constant
 					)
 				else return []
 			}
@@ -609,12 +615,15 @@ export class CommandData extends Signal<void> {
 						? (await this.getSubcommands(commandName)).map(
 								(command) => command.commandName
 						  )
-						: []
+						: [],
+					undefined,
+					languages.CompletionItemKind.Constant
 				)
 			case 'integerRange':
 				return this.toCompletionItem(
 					['0', '1', '2', '3', '..0', '0..', '0..1'],
-					commandArgument.description
+					commandArgument.description,
+					languages.CompletionItemKind.Value
 				)
 		}
 
