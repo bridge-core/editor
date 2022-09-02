@@ -1,5 +1,5 @@
 import type { languages } from 'monaco-editor'
-import { toTwoDigitHex } from './format'
+import { toTwoDigitHex } from './parse/hex'
 
 export class Color {
 	constructor(public colorInfo: languages.IColor) {}

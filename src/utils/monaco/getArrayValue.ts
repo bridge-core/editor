@@ -1,7 +1,7 @@
-import type { editor, Position } from 'monaco-editor'
+import type { editor } from 'monaco-editor'
 import { useMonaco } from '../libs/useMonaco'
 
-export async function getArrayValueAtPosition(
+export async function getArrayValueAtOffset(
 	model: editor.ITextModel,
 	offset: number
 ) {

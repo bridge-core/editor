@@ -1,13 +1,12 @@
 import { isMatch } from 'bridge-common-utils'
 import type { JSONPath } from 'jsonc-parser'
 import type { editor, languages } from 'monaco-editor'
-import { parseColor } from './format'
-import { App } from '/@/App'
 import { useJsoncParser } from '/@/utils/libs/useJsoncParser'
 import { useMonaco } from '/@/utils/libs/useMonaco'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
-import { getArrayValueAtPosition } from '/@/utils/monaco/getArrayValue'
+import { getArrayValueAtOffset } from '/@/utils/monaco/getArrayValue'
 import { loadValidColors } from './loadValidColors'
+import { parseColor } from './parse/main'
 
 /**
  * Takes a text model and detects the locations of colors in the file
@@ -46,12 +45,16 @@ export async function findColors(model: editor.ITextModel) {
 				if (isValidColor) {
 					colorInfo.push(
 						new Promise<any>(async (resolve) => {
-							const color = parseColor(format, value)
+							const position = model.getPositionAt(offset + 2)
+							const { color } = await parseColor(value, {
+								model,
+								position,
+							})
+							const { range } = await getJsonWordAtPosition(
+								model,
+								position
+							)
 							if (color) {
-								const { range } = await getJsonWordAtPosition(
-									model,
-									model.getPositionAt(offset + 2)
-								)
 								resolve({
 									color: color.colorInfo,
 									range: new Range(
@@ -64,6 +67,7 @@ export async function findColors(model: editor.ITextModel) {
 							} else resolve({})
 						})
 					)
+					break
 				}
 			}
 		},
@@ -89,9 +93,14 @@ export async function findColors(model: editor.ITextModel) {
 				if (isValidColor) {
 					colorInfo.push(
 						new Promise<any>(async (resolve) => {
-							const { range, word } =
-								await getArrayValueAtPosition(model, offset)
-							const color = parseColor(format, word)
+							const { range, word } = await getArrayValueAtOffset(
+								model,
+								offset
+							)
+							const { color } = await parseColor(word, {
+								model,
+								position: model.getPositionAt(offset),
+							})
 							if (color) {
 								resolve({
 									color: color.colorInfo,
@@ -105,6 +114,7 @@ export async function findColors(model: editor.ITextModel) {
 							} else resolve({})
 						})
 					)
+					break
 				}
 			}
 		},
