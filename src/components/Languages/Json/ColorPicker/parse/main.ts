@@ -19,7 +19,6 @@ export async function parseColor(
 	}
 ): Promise<{ format: string; color?: Color }> {
 	// Hex formats #RGB and #RGBA exist but don't appear in Minecraft, so we don't support parsing them
-	// + #AARRGGBB is same format as #RRGGBBAA so can't be figured out here, instead this will be checked with validColor data at another stage
 
 	// We should expect the value to have either no quotes or surrounding quotes
 	if (

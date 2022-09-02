@@ -84,7 +84,7 @@ export async function findColors(model: editor.ITextModel) {
 			const path = pathSupplier().join('/')
 
 			// Iterate each color format for this file type
-			for (const format of ['rgb', 'rgba']) {
+			for (const format of ['rgb', 'rgba', 'rgbDec', 'rgbaDec']) {
 				// Check whether the value at this JSON path matches a pattern in the valid colors file
 				if (!locationPatterns[format]) continue
 				const isValidColor = isMatch(path, locationPatterns[format])
