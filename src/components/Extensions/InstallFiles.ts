@@ -45,10 +45,11 @@ export class InstallFiles {
 								to.pack,
 								to.path
 							)
-							const newFileHandle = await app.fileSystem.getFileHandle(
-								join(target, filePath),
-								true
-							)
+							const newFileHandle =
+								await app.fileSystem.getFileHandle(
+									join(target, filePath),
+									true
+								)
 							await app.fileSystem.copyFileHandle(
 								fileHandle,
 								newFileHandle
@@ -63,5 +64,8 @@ export class InstallFiles {
 				continue
 			}
 		}
+
+		// Refresh the pack explorer once files have been added
+		app.actionManager.trigger('bridge.action.refreshProject')
 	}
 }
