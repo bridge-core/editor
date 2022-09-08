@@ -51,10 +51,10 @@ export class HTMLPreviewTab extends IframeTab {
 		await super.setup()
 	}
 	async onActivate() {
-		await this.api.loaded.fired
-		this.api.trigger('loadScrollPosition', this.scrollY)
-
 		await super.onActivate()
+		await this.api.loaded.fired
+
+		this.api.trigger('loadScrollPosition', this.scrollY)
 	}
 	onDeactivate() {
 		this.messageListener?.dispose()

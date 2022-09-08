@@ -57,13 +57,17 @@ export class IframeTab extends Tab {
 		await super.setup()
 	}
 	async onActivate() {
+		await super.onActivate()
+
 		this.isLoading = true
 		await this.loaded
 		this.isLoading = false
 
-		this.iframe.style.display = 'block'
+		// Only show iframe if tab is still active
+		if (this.isActive) this.iframe.style.display = 'block'
 	}
 	onDeactivate() {
+		super.onDeactivate()
 		this.iframe.style.display = 'none'
 	}
 	onDestroy() {
