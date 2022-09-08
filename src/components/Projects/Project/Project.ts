@@ -585,10 +585,10 @@ export abstract class Project {
 		this._compilerService = markRaw(
 			await this.createDashService('development')
 		)
+		await this._compilerService.setup()
 
 		if (forceStartIfActive && this.isActiveProject) {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
-			await this.compilerReady.fired
 			await this.compilerService.start([], [])
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
