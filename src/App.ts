@@ -319,6 +319,8 @@ export class App {
 
 	public readonly bridgeFolderSetup = new Signal<void>()
 	async setupBridgeFolder(forceReselect = false) {
+		if (!forceReselect && this.bridgeFolderSetup.hasFired) return true
+
 		let fileHandle = await get<AnyDirectoryHandle | undefined>(
 			'bridgeBaseDir'
 		)
