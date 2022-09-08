@@ -582,6 +582,8 @@ export abstract class Project {
 	}
 
 	async recompile(forceStartIfActive = true) {
+		if (this.isVirtualProject) return
+
 		this._compilerService = markRaw(
 			await this.createDashService('development')
 		)
