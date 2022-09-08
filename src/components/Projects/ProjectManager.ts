@@ -127,8 +127,8 @@ export class ProjectManager extends Signal<void> {
 
 		await Promise.allSettled(promises)
 
-		// Update stored projects
-		if (isBridgeFolderSetup) await this.storeProjects(undefined, true)
+		// Update stored projects in the background (don't await it)
+		if (isBridgeFolderSetup) this.storeProjects(undefined, true)
 		// Create a placeholder project (virtual project)
 		else await this.createVirtualProject()
 
@@ -283,8 +283,8 @@ export class ProjectManager extends Signal<void> {
 			isFavorite?: boolean
 		}[] = await this.loadAvailableProjects(exceptProject)
 
-		let newData: any[] = forceRefresh ? [] : data
-		this.forEachProject((project) => {
+		let newData: any[] = forceRefresh ? [] : [...data]
+		Object.values(this.state).forEach((project) => {
 			if (project.isVirtualProject) return
 
 			const storedData = data.find(
