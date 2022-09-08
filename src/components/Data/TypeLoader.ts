@@ -111,7 +111,13 @@ export class TypeLoader {
 		const app = await App.getApp()
 
 		await app.project.packIndexer.fired
-		const allFiles = await app.project.packIndexer.service.getAllFiles()
+		let allFiles
+		try {
+			allFiles = await app.project.packIndexer.service.getAllFiles()
+		} catch {
+			// We failed to access the pack indexer service -> fail silently
+			return
+		}
 
 		const typeScriptFiles = allFiles.filter(
 			(filePath) => filePath.endsWith('.ts') || filePath.endsWith('.js')
