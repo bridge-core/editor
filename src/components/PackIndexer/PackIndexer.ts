@@ -61,7 +61,7 @@ export class PackIndexer extends Signal<[string[], string[]]> {
 		)
 
 		// Listen to task progress and update UI
-		await this.service.on(
+		await this._service?.on(
 			proxy(([current, total]) => {
 				this.task?.update(current, total)
 			}),
@@ -69,20 +69,22 @@ export class PackIndexer extends Signal<[string[], string[]]> {
 		)
 
 		// Start service
-		const [changedFiles, deletedFiles] = await this.service.start(
+		const [changedFiles, deletedFiles] = await this._service?.start(
 			forceRefreshCache
 		)
-		await this.service.disposeListeners()
+		await this._service?.disposeListeners()
 		this.task.complete()
 		this.isPackIndexerFree.unlock()
 
 		console.timeEnd('[TASK] Indexing Packs (Total)')
 
-		this.dispatch([changedFiles, deletedFiles])
+		// Only dispatch signal if service wasn't disposed in the meantime
+		if (this._service) this.dispatch([changedFiles, deletedFiles])
 		return <const>[changedFiles, deletedFiles]
 	}
 
 	async deactivate() {
+		this.resetSignal()
 		await this._service?.disposeListeners()
 		this._service = null
 		this.task?.complete()
