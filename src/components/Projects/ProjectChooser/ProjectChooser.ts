@@ -21,6 +21,7 @@ export class ProjectChooserWindow extends NewBaseWindow {
 	protected experimentalToggles: (IExperimentalToggle & {
 		isActive: boolean
 	})[] = []
+	protected comMojangProjectLoader
 
 	protected state: IProjectChooserState = reactive<any>({
 		...super.getState(),
@@ -28,7 +29,7 @@ export class ProjectChooserWindow extends NewBaseWindow {
 		currentProject: undefined,
 	})
 
-	constructor() {
+	constructor(app: App) {
 		super(ProjectChooserComponent, false, true)
 
 		this.state.actions.push(
@@ -52,6 +53,7 @@ export class ProjectChooserWindow extends NewBaseWindow {
 				},
 			})
 		)
+		this.comMojangProjectLoader = markRaw(new ComMojangProjectLoader(app))
 
 		this.defineWindow()
 	}
@@ -114,9 +116,8 @@ export class ProjectChooserWindow extends NewBaseWindow {
 		)
 
 		console.time('Load com.mojang projects')
-		const comMojangProjects = await new ComMojangProjectLoader(
-			app
-		).loadProjects()
+		const comMojangProjects =
+			await this.comMojangProjectLoader.loadProjects()
 		comMojangProjects.forEach((project) =>
 			this.addProject(`comMojang/${project.name}`, project.name, {
 				name: project.name,

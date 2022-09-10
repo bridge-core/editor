@@ -1,7 +1,7 @@
 import { compareVersions } from 'bridge-common-utils'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { App } from '/@/App'
-import { loadAsDataURL, loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
+import { loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
 
 export interface IComMojangPack {
 	type: 'behaviorPack' | 'resourcePack'
@@ -17,6 +17,8 @@ export interface IComMojangProject {
 }
 
 export class ComMojangProjectLoader {
+	protected cachedProjects: IComMojangProject[] | null = null
+
 	constructor(protected app: App) {}
 
 	get comMojang() {
@@ -26,7 +28,14 @@ export class ComMojangProjectLoader {
 		return this.app.comMojang.fileSystem
 	}
 
+	async reload() {
+		this.cachedProjects = null
+		await this.loadProjects()
+	}
+
 	async loadProjects() {
+		if (this.cachedProjects) return this.cachedProjects
+
 		if (
 			!this.comMojang.setup.hasFired ||
 			!this.comMojang.status.hasComMojang
@@ -39,7 +48,6 @@ export class ComMojangProjectLoader {
 		if (behaviorPacks.size === 0) return []
 		const resourcePacks = await this.loadPacks('development_resource_packs')
 
-		console.log(behaviorPacks)
 		const projects: IComMojangProject[] = []
 		for (const behaviorPack of behaviorPacks.values()) {
 			const dependencies = behaviorPack.manifest?.dependencies
@@ -64,6 +72,7 @@ export class ComMojangProjectLoader {
 			})
 		}
 
+		this.cachedProjects = projects
 		return projects
 	}
 
