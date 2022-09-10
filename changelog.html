@@ -1,24 +1,49 @@
-<h2>Features:</h2>
+<h2>Features</h2>
+<h3>Improved <code>.lang</code> file support</h3>
 <ul>
-<li>Automatically select file/folder name upon renaming (6bff646e6ceab7cef79c15341e7daeae67961561)</li>
-<li>Better installation dialog on some browsers (14df3223440cf26a8a7fad4aad402f804c9470b6)</li>
-<li>Exposed &quot;resolvePackPath&quot; function to extensions (b44f80de932104e20012d85fe29f7c542416edc3)</li>
-<li>New &quot;View Extensions Folder&quot; action (#565)</li>
+<li>Dynamic auto-completions are now data driven and values are guessed based off of the key (8bcc57b4f2052ae14c69e2655fe659cc3cd98586)</li>
+<li>Syntax highlighting for project namespace</li>
+<li>Validation and quick fix options (c9dbe1a7ef8b4aac7e336bec6d210d254986ab9e, 59cb43e7587f5d651323a52978e475ea47bf6408)
+<img src="https://user-images.githubusercontent.com/64587014/189486739-20497bab-f928-497c-84a6-c96daf7f41b8.png" alt="lang-support"></li>
 </ul>
-<h2>Changes:</h2>
+<h3>New tree editor display mode (d5da20057dd7018d7cf49ab62058b339ab7c0061)</h3>
 <ul>
-<li>Only show &quot;Open With&quot; action if there's more than one action (3af63ec63a584cb35d56e343e3eb442497e81a22)</li>
-<li>Hide &quot;Open Folder&quot; on unsupported browsers (13a288052e1bbafaa1b391eb41b7f5ae4c4a2c14)</li>
-<li>Changed &quot;GameTest&quot; preset to &quot;Script&quot; preset (60bcbc0a7bb1991cedc7122c7cc965971faaefdf)</li>
+<li>Added the option to enable a more 'bridge. v1 like' tree editor with numbered arrays, hidden brackets and more!
+<img src="https://user-images.githubusercontent.com/64587014/189485213-af07bdd7-f48b-49d2-868d-49482bfbb242.png" alt="tree_editor_display"></li>
 </ul>
-<h2>Fixes:</h2>
+<h3><code>.mcfunction</code> file validation (https://github.com/bridge-core/editor/pull/591)</h3>
 <ul>
-<li>Fixed reference error within attachables (3f8b5076a2659b94eec3740f14b9f3139009144f)</li>
-<li>Fixed steve skin preset icon (127085d9e667da5b5ba9f75e827705dde17cd48b)</li>
-<li>Fixed preset not being usable when switch input is off (76892a763fe3de3c358fcda7c9e48bde79f15740)</li>
-<li>Fixed error upon deleting file (#580)</li>
-<li>Fixed error upon renaming folder (#573)</li>
-<li>Correctly update presets after toggling experimental gameplay (59c452dcb42398eefef4fca9165cd0311bc1b9f7)</li>
-<li>Fixed error upon running generator script (https://github.com/bridge-core/dash-compiler/commit/f1ca8e6592f2c2f3d6a31d4f8a5c33ab5980cfb1)</li>
-<li>Fixed wrong file extension being used for executed generator script (#581)</li>
+<li>Function files are now validated against our command schemas (Thanks to @outercloudstudio!)</li>
+<li>This includes warnings and errors for target selectors and the general shape of a command to help you catch issues before testing in Minecraft
+<img src="https://user-images.githubusercontent.com/64587014/189486722-acbc4e0f-b3c1-492b-97d1-1e30b1dc35a0.png" alt="function-validation"></li>
+</ul>
+<h3>Project chooser enhancements</h3>
+<ul>
+<li>Internal API for loading window state (0ce193a0ddebf5011404293bb38546d9d83c80af)</li>
+<li>Option to reload the project chooser window (f801bd994fbddd4fdb6dd2375530b2cb573f5280)</li>
+</ul>
+<h2>Changes</h2>
+<ul>
+<li>Updated data to latest Minecraft preview (https://github.com/bridge-core/editor-packages/commit/4d85cb2a7d9a6f129bef8ce1b1da895eb4ae5cc5)</li>
+<li>Added missing loot command arguments (db5a44f74e68fbad239a78d81b09f9c34ec5c0bf)</li>
+<li>Changed the icons in command auto-completion lists (d07d7268f50e0ac26ebec45f36a06fc2c64c31a9)</li>
+<li>The pack explorer is now refreshed when files are added to a project from an extension with <code>&quot;contributeFiles&quot;</code> (9f9ff1abc8c413f90ed04e970a3d9b4c65067599)</li>
+<li>Optimised project loading to be up to 3x faster (a655429fe340d351ff6123bb08f2c388b642b018</li>
+<li>Optimised <code>com.mojang</code> project loading and cache them to make subsequent loads faster (dd3415042cd1e5a3e72f8c0ddf949090d3595554, ebb1db5054bba0b6abb62fb86396f1e7490fdb3e)</li>
+<li>Support RGB color arrays in the <code>&quot;minecraft:map_color&quot;</code> block component (https://github.com/bridge-core/editor-packages/commit/3af0d8db0b6ee963f0210319cecf529e52fc249f)</li>
+<li>In file syntax highlighting, color the entire word up until <code>§r</code> is now colored (e9a1a1c4d8c719f6cddcb45dd7b7baf6063a3bb9)</li>
+<li>Updated sword and snowball presets (bridge-core/editor-packages#28, Thanks to @Chikorita-Lover)</li>
+</ul>
+<h2>Fixes</h2>
+<ul>
+<li>Fixed the usage of <code>Ctrl + V</code> in the file rename input (64c73b9a2ab051c8d962122a755e71f8a8652be8)</li>
+<li>Fixed incorrect custom command types (https://github.com/bridge-core/editor-packages/commit/29ce9a4d1ce25ccc1ddc52360d8744e2e370f3fb)</li>
+<li>Fixed iframe tab being visible after tab is closed (#592)</li>
+<li>Fixed <code>openTab</code> extension API (#595)</li>
+<li>Fixed <code>compileProject</code> extension API (0a7ce3216651f7cad8bbadefdf66710777ebea0a)</li>
+<li>Fixed <code>com.mojang</code> folder linking (#597)</li>
+<li>Fixed an error that could occur when quickly switching projects (868aee24684c4a2fbdf77893659af6776450c3a0)</li>
+<li>Prevent recompilation of virtual projects (51c6ce106651a177bf23dee42f02fd9f1cb03148)</li>
+<li>Fixed error when loading extensions (1738f9a43c5b95b532972e75ea25487cdbafd48a)</li>
+<li>Fixed error when the dash cache file is missing (https://github.com/bridge-core/dash-compiler/commit/5d9e77130202da3bc584ba677d1580cf2d18dd53)</li>
 </ul>
