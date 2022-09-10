@@ -113,6 +113,7 @@ export class ProjectChooserWindow extends NewBaseWindow {
 			})
 		)
 
+		console.time('Load com.mojang projects')
 		const comMojangProjects = await new ComMojangProjectLoader(
 			app
 		).loadProjects()
@@ -143,6 +144,7 @@ export class ProjectChooserWindow extends NewBaseWindow {
 				project: markRaw(project),
 			})
 		)
+		console.timeEnd('Load com.mojang projects')
 
 		this.sidebar.resetSelected()
 		if (app.isNoProjectSelected) this.sidebar.setDefaultSelected()
@@ -152,7 +154,9 @@ export class ProjectChooserWindow extends NewBaseWindow {
 	}
 
 	async open() {
+		console.time('Load projects')
 		this.state.currentProject = await this.loadProjects()
+		console.timeEnd('Load projects')
 		super.open()
 	}
 }
