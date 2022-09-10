@@ -277,29 +277,27 @@ export abstract class Project {
 
 		this.snippetLoader.activate()
 	}
-	deactivate(isReload = false) {
+	async deactivate(isReload = false) {
 		if (!isReload)
 			this.tabSystems.forEach((tabSystem) => tabSystem.deactivate())
 
 		this.typeLoader.deactivate()
-		this.packIndexer.deactivate()
 		this.jsonDefaults.deactivate()
 		this.extensionLoader.disposeAll()
-		this.snippetLoader.deactivate()
-	}
-	disposeWorkers() {
-		this.packIndexer.dispose()
+
+		await Promise.all([
+			this.packIndexer.deactivate(),
+			this.snippetLoader.deactivate(),
+		])
 	}
 	dispose() {
-		this.disposeWorkers()
 		this.tabSystems.forEach((tabSystem) => tabSystem.dispose())
 		this.extensionLoader.disposeAll()
 	}
 
 	async refresh() {
 		this.app.packExplorer.refresh()
-		this.deactivate(true)
-		this.disposeWorkers()
+		await this.deactivate(true)
 		await this.activate(true)
 	}
 
