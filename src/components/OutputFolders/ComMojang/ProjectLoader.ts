@@ -1,7 +1,7 @@
 import { compareVersions } from 'bridge-common-utils'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { App } from '/@/App'
-import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
+import { loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
 
 export interface IComMojangPack {
 	type: 'behaviorPack' | 'resourcePack'
@@ -17,6 +17,8 @@ export interface IComMojangProject {
 }
 
 export class ComMojangProjectLoader {
+	protected cachedProjects: IComMojangProject[] | null = null
+
 	constructor(protected app: App) {}
 
 	get comMojang() {
@@ -26,7 +28,13 @@ export class ComMojangProjectLoader {
 		return this.app.comMojang.fileSystem
 	}
 
+	clearCache() {
+		this.cachedProjects = null
+	}
+
 	async loadProjects() {
+		if (this.cachedProjects) return this.cachedProjects
+
 		if (
 			!this.comMojang.setup.hasFired ||
 			!this.comMojang.status.hasComMojang
@@ -34,10 +42,13 @@ export class ComMojangProjectLoader {
 			return []
 
 		const behaviorPacks = await this.loadPacks('development_behavior_packs')
+
+		// Fast path: No need to load resource packs if there are no behavior packs
+		if (behaviorPacks.size === 0) return []
 		const resourcePacks = await this.loadPacks('development_resource_packs')
 
 		const projects: IComMojangProject[] = []
-		for (const behaviorPack of behaviorPacks) {
+		for (const behaviorPack of behaviorPacks.values()) {
 			const dependencies = behaviorPack.manifest?.dependencies
 			if (!dependencies) {
 				projects.push({
@@ -47,11 +58,12 @@ export class ComMojangProjectLoader {
 				continue
 			}
 
-			const matchingRp = resourcePacks.find(({ uuid: rpUuuid }) =>
-				dependencies.find(
-					({ uuid: depUuid }: any) => !!depUuid && depUuid === rpUuuid
-				)
-			)
+			let matchingRp
+			for (const dep of dependencies) {
+				matchingRp = resourcePacks.get(dep.uuid)
+				if (matchingRp) break
+			}
+
 			if (!matchingRp) continue
 			projects.push({
 				name: behaviorPack.directoryHandle.name,
@@ -59,23 +71,28 @@ export class ComMojangProjectLoader {
 			})
 		}
 
+		this.cachedProjects = projects
 		return projects
 	}
 
 	async loadPacks(
 		folderName: 'development_behavior_packs' | 'development_resource_packs'
 	) {
+		const packs = new Map<string, IComMojangPack>()
 		const storePackDir = await this.fileSystem
 			.getDirectoryHandle(folderName)
 			.catch(() => null)
-		if (!storePackDir) return []
 
-		const packs: IComMojangPack[] = []
+		if (!storePackDir) return packs
 
 		for await (const packHandle of storePackDir.values()) {
 			if (packHandle.kind === 'file') continue
-			const manifest = await this.fileSystem
-				.readJSON(`${folderName}/${packHandle.name}/manifest.json`)
+
+			const manifest = await packHandle
+				.getFileHandle('manifest.json')
+				.then((fileHandle) =>
+					this.fileSystem.readJsonHandle(fileHandle)
+				)
 				.catch(() => null)
 			if (!manifest) continue
 
@@ -84,12 +101,12 @@ export class ComMojangProjectLoader {
 			// Check whether BP/RP is part of a v2 project
 			if (this.isV2Project(manifest)) continue
 
-			const packIcon = await loadAsDataURL(
-				`${folderName}/${packHandle.name}/pack_icon.png`,
-				this.fileSystem
-			).catch(() => null)
+			const packIcon = await packHandle
+				.getFileHandle('pack_icon.png')
+				.then((fileHandle) => loadHandleAsDataURL(fileHandle))
+				.catch(() => null)
 
-			packs.push({
+			packs.set(uuid, {
 				type:
 					folderName === 'development_behavior_packs'
 						? 'behaviorPack'
@@ -108,7 +125,8 @@ export class ComMojangProjectLoader {
 	isV2Project(manifest: any) {
 		const uuid = manifest?.header?.uuid
 
-		const bridgeVersion = manifest?.metadata?.generated_with?.bridge?.pop?.()
+		const bridgeVersion =
+			manifest?.metadata?.generated_with?.bridge?.pop?.()
 		if (bridgeVersion && compareVersions(bridgeVersion, '2.0.0', '>='))
 			return true
 

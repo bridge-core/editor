@@ -13,7 +13,7 @@ import { CompilerWindow } from '../Compiler/Window/Window'
 export class Windows {
 	settings: SettingsWindow
 	socialsWindow = new SocialsWindow()
-	projectChooser = new ProjectChooserWindow()
+	projectChooser: ProjectChooserWindow
 	createProject = new CreateProjectWindow()
 	loadingWindow = new LoadingWindow()
 	createPreset = new CreatePresetWindow()
@@ -24,5 +24,6 @@ export class Windows {
 
 	constructor(protected app: App) {
 		this.settings = new SettingsWindow(app)
+		this.projectChooser = new ProjectChooserWindow(app)
 	}
 }

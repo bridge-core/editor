@@ -27,7 +27,7 @@ export async function setupSidebar() {
 			if (isUsingFileSystemPolyfill.value) {
 				createVirtualProjectWindow()
 			} else {
-				App.instance.windows.projectChooser.open()
+				await App.instance.windows.projectChooser.open()
 			}
 		},
 	})

@@ -44,6 +44,7 @@ export const TabModule = async ({ disposables }: IModuleConfig) => {
 			const tab = new FileTabClass(tabSystem)
 
 			if (splitScreen) tabSystem.setActive(true)
+			tabSystem.add(tab, true)
 
 			disposables.push({
 				dispose: () => tabSystem.remove(tab),

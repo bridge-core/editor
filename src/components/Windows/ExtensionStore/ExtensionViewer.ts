@@ -58,9 +58,9 @@ export class ExtensionViewer {
 		return this.manifest.readme
 	}
 	get manifest() {
-		if (this.isUpdateAvailable) return this.config
+		if (this.isUpdateAvailable) return this.config ?? {}
 
-		return this.extension?.manifest ?? this.config
+		return this.extension?.manifest ?? this.config ?? {}
 	}
 	//#endregion
 

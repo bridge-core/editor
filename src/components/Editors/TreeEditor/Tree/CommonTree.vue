@@ -27,21 +27,22 @@
 			>
 				mdi-chevron-right
 			</v-icon>
-			<span v-if="tree.parent.type === 'object'">
+			<span v-if="showArrayIndices || tree.parent.type === 'object'">
 				<!-- Debugging helper -->
 				<span v-if="isDevMode">
 					s: {{ tree.type }} p: {{ tree.parent.type }}
 				</span>
 
-				<span @dblclick="tree.toggleOpen()"> <slot /> </span>:</span
+				<span @dblclick="tree.toggleOpen()"> <slot /> </span
+				>{{ hideBracketsWithinTreeEditor ? undefined : ':' }}</span
 			>
 			<!-- Spacer to make array objects easier to select -->
 			<span
+				v-else-if="!showArrayIndices"
 				:class="{
 					'mx-2': pointerDevice !== 'touch',
 					'mx-6': pointerDevice === 'touch',
 				}"
-				v-else
 			/>
 
 			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">
@@ -110,7 +111,18 @@ export default {
 		}
 	},
 	computed: {
+		hideBracketsWithinTreeEditor() {
+			if (!settingsState.editor) return false
+			return settingsState.editor.hideBracketsWithinTreeEditor || false
+		},
+		showArrayIndices() {
+			if (!settingsState.editor) return false
+			return settingsState.editor.showArrayIndices || false
+		},
+
 		openingBracket() {
+			if (this.hideBracketsWithinTreeEditor) return
+
 			if (this.tree.isOpen) return brackets[this.tree.type][0]
 			else if (Object.keys(this.tree.children).length > 0)
 				return `${brackets[this.tree.type][0]}...${
@@ -121,6 +133,8 @@ export default {
 			}`
 		},
 		closingBracket() {
+			if (this.hideBracketsWithinTreeEditor) return
+
 			return this.tree.isOpen ? brackets[this.tree.type][1] : undefined
 		},
 	},

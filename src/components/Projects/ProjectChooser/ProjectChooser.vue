@@ -9,6 +9,7 @@
 		@closeWindow="onClose"
 		:sidebarItems="sidebar.elements"
 		:actions="state.actions"
+		:isLoading="state.isLoading"
 		v-model="sidebar.selected"
 	>
 		<template #sidebar>
@@ -162,7 +163,9 @@
 			<v-btn
 				v-if="!isComMojangProject"
 				color="primary"
-				:disabled="state.currentProject !== selectedSidebar"
+				:disabled="
+					state.currentProject !== selectedSidebar || state.isLoading
+				"
 				@click="onAddPack"
 			>
 				<v-icon class="mr-1">mdi-plus-box</v-icon>
@@ -174,6 +177,7 @@
 				v-if="!isComMojangProject"
 				color="error"
 				:loading="deletePending"
+				:disabled="state.isLoading"
 				@click="onDeleteProject(selectedSidebar)"
 			>
 				<v-icon>mdi-delete</v-icon>
@@ -183,7 +187,9 @@
 			<!-- Select Project -->
 			<v-btn
 				color="primary"
-				:disabled="state.currentProject === selectedSidebar"
+				:disabled="
+					state.currentProject === selectedSidebar || state.isLoading
+				"
 				@click="onSelectProject"
 			>
 				<v-icon>mdi-check</v-icon>

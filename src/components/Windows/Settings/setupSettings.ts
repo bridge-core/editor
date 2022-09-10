@@ -409,6 +409,25 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.showArrayIndices.name',
+			description: 'windows.settings.editor.showArrayIndices.description',
+			key: 'showArrayIndices',
+			default: false,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.hideBracketsWithinTreeEditor.name',
+			description:
+				'windows.settings.editor.hideBracketsWithinTreeEditor.description',
+			key: 'hideBracketsWithinTreeEditor',
+			default: false,
+		})
+	)
 
 	// Projects
 	settings.addControl(

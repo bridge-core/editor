@@ -96,31 +96,39 @@ export class ProjectManager extends Signal<void> {
 			'projects',
 			{ create: true }
 		)
-		const localDirectoryHandle =
-			await this.app.fileSystem.getDirectoryHandle('~local/projects', {
-				create: true,
-			})
 
 		const isBridgeFolderSetup = this.app.bridgeFolderSetup.hasFired
+
+		const promises = []
 
 		// Load existing projects
 		for await (const handle of directoryHandle.values()) {
 			if (handle.kind !== 'directory') continue
 
-			await this.addProject(handle, false, requiresPermissions)
+			promises.push(this.addProject(handle, false, requiresPermissions))
 		}
 
 		if (isBridgeFolderSetup) {
+			const localDirectoryHandle =
+				await this.app.fileSystem.getDirectoryHandle(
+					'~local/projects',
+					{
+						create: true,
+					}
+				)
+
 			// Load local projects as well
 			for await (const handle of localDirectoryHandle.values()) {
 				if (handle.kind !== 'directory') continue
 
-				await this.addProject(handle, false, false)
+				promises.push(this.addProject(handle, false, false))
 			}
 		}
 
-		// Update stored projects
-		if (isBridgeFolderSetup) await this.storeProjects(undefined, true)
+		await Promise.allSettled(promises)
+
+		// Update stored projects in the background (don't await it)
+		if (isBridgeFolderSetup) this.storeProjects(undefined, true)
 		// Create a placeholder project (virtual project)
 		else await this.createVirtualProject()
 
@@ -275,8 +283,8 @@ export class ProjectManager extends Signal<void> {
 			isFavorite?: boolean
 		}[] = await this.loadAvailableProjects(exceptProject)
 
-		let newData: any[] = forceRefresh ? [] : data
-		this.forEachProject((project) => {
+		let newData: any[] = forceRefresh ? [] : [...data]
+		Object.values(this.state).forEach((project) => {
 			if (project.isVirtualProject) return
 
 			const storedData = data.find(

@@ -21,6 +21,7 @@ export class ProjectChooserWindow extends NewBaseWindow {
 	protected experimentalToggles: (IExperimentalToggle & {
 		isActive: boolean
 	})[] = []
+	protected comMojangProjectLoader
 
 	protected state: IProjectChooserState = reactive<any>({
 		...super.getState(),
@@ -28,10 +29,19 @@ export class ProjectChooserWindow extends NewBaseWindow {
 		currentProject: undefined,
 	})
 
-	constructor() {
+	constructor(app: App) {
 		super(ProjectChooserComponent, false, true)
 
 		this.state.actions.push(
+			new SimpleAction({
+				icon: 'mdi-refresh',
+				name: 'general.reload',
+				color: 'accent',
+				isDisabled: () => this.state.isLoading,
+				onTrigger: () => {
+					this.reload()
+				},
+			}),
 			new SimpleAction({
 				icon: 'mdi-import',
 				name: 'actions.importBrproject.name',
@@ -52,6 +62,7 @@ export class ProjectChooserWindow extends NewBaseWindow {
 				},
 			})
 		)
+		this.comMojangProjectLoader = markRaw(new ComMojangProjectLoader(app))
 
 		this.defineWindow()
 	}
@@ -113,9 +124,9 @@ export class ProjectChooserWindow extends NewBaseWindow {
 			})
 		)
 
-		const comMojangProjects = await new ComMojangProjectLoader(
-			app
-		).loadProjects()
+		console.time('Load com.mojang projects')
+		const comMojangProjects =
+			await this.comMojangProjectLoader.loadProjects()
 		comMojangProjects.forEach((project) =>
 			this.addProject(`comMojang/${project.name}`, project.name, {
 				name: project.name,
@@ -143,6 +154,7 @@ export class ProjectChooserWindow extends NewBaseWindow {
 				project: markRaw(project),
 			})
 		)
+		console.timeEnd('Load com.mojang projects')
 
 		this.sidebar.resetSelected()
 		if (app.isNoProjectSelected) this.sidebar.setDefaultSelected()
@@ -151,8 +163,22 @@ export class ProjectChooserWindow extends NewBaseWindow {
 		return app.projectManager.selectedProject
 	}
 
+	async reload() {
+		this.state.isLoading = true
+
+		this.comMojangProjectLoader.clearCache()
+		await this.loadProjects()
+
+		this.state.isLoading = false
+	}
+
 	async open() {
-		this.state.currentProject = await this.loadProjects()
 		super.open()
+
+		this.state.isLoading = true
+		console.time('Load projects')
+		this.state.currentProject = await this.loadProjects()
+		console.timeEnd('Load projects')
+		this.state.isLoading = false
 	}
 }
