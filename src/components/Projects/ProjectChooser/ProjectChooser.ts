@@ -34,6 +34,15 @@ export class ProjectChooserWindow extends NewBaseWindow {
 
 		this.state.actions.push(
 			new SimpleAction({
+				icon: 'mdi-refresh',
+				name: 'general.reload',
+				color: 'accent',
+				isDisabled: () => this.state.isLoading,
+				onTrigger: () => {
+					this.reload()
+				},
+			}),
+			new SimpleAction({
 				icon: 'mdi-import',
 				name: 'actions.importBrproject.name',
 				color: 'accent',
@@ -154,10 +163,22 @@ export class ProjectChooserWindow extends NewBaseWindow {
 		return app.projectManager.selectedProject
 	}
 
+	async reload() {
+		this.state.isLoading = true
+
+		this.comMojangProjectLoader.clearCache()
+		await this.loadProjects()
+
+		this.state.isLoading = false
+	}
+
 	async open() {
+		super.open()
+
+		this.state.isLoading = true
 		console.time('Load projects')
 		this.state.currentProject = await this.loadProjects()
 		console.timeEnd('Load projects')
-		super.open()
+		this.state.isLoading = false
 	}
 }

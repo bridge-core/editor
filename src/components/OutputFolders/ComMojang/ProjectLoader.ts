@@ -28,9 +28,8 @@ export class ComMojangProjectLoader {
 		return this.app.comMojang.fileSystem
 	}
 
-	async reload() {
+	clearCache() {
 		this.cachedProjects = null
-		await this.loadProjects()
 	}
 
 	async loadProjects() {
