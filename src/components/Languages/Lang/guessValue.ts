@@ -18,6 +18,8 @@ export async function guessValue(line: string) {
 	}
 
 	// 4. Hopefully there is only one part left now, if there isn't, the first value will be used. If the value is a namespace (contains a colon), remove the namespace, then capitalise and propose
+	if (!uniqueParts[0]) return ''
+
 	if (uniqueParts[0].includes(':'))
 		uniqueParts[0] = uniqueParts[0].split(':').pop() ?? ''
 	const translation = `${isSpawnEgg ? 'Spawn ' : ''}${uniqueParts[0]
