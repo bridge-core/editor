@@ -30,6 +30,7 @@ export class CommandValidator {
 		passed: boolean
 		argumentsConsumedCount?: number
 		warnings: editor.IMarkerData[]
+		diagnostics: editor.IMarkerData[]
 	}> {
 		const { MarkerSeverity } = await useMonaco()
 
@@ -43,15 +44,18 @@ export class CommandValidator {
 			return {
 				passed: false,
 				warnings: [],
+				diagnostics: [],
 			}
 
 		let passedSubcommandDefinition
 
 		let warnings: editor.IMarkerData[] = []
+		let diagnostics: editor.IMarkerData[] = []
 
 		// Loop over every subcommand definition to check for a matching one
 		for (const definition of subcommandDefinitions) {
-			let definitionWarnings = []
+			let definitionDiagnostics: editor.IMarkerData[] = []
+			let definitionWarnings: editor.IMarkerData[] = []
 
 			let failed = false
 
@@ -82,6 +86,18 @@ export class CommandValidator {
 					failed = true
 
 					break
+				}
+
+				// Validate selector but don't completely fail if selector fail so rest of command can validate as well
+				if (targetArgument.type == 'selector') {
+					const result = await this.parseSelector(argument)
+
+					if (result.diagnostic)
+						definitionDiagnostics.push(result.diagnostic)
+
+					definitionWarnings = definitionWarnings.concat(
+						result.warnings
+					)
 				}
 
 				if (targetArgument.additionalData) {
@@ -138,6 +154,7 @@ export class CommandValidator {
 			) {
 				passedSubcommandDefinition = definition
 				warnings = definitionWarnings
+				diagnostics = definitionDiagnostics
 			}
 		}
 
@@ -145,6 +162,7 @@ export class CommandValidator {
 			return {
 				passed: false,
 				warnings: [],
+				diagnostics: [],
 			}
 		} else {
 			return {
@@ -152,6 +170,7 @@ export class CommandValidator {
 				argumentsConsumedCount:
 					passedSubcommandDefinition.arguments.length,
 				warnings,
+				diagnostics,
 			}
 		}
 	}
@@ -240,6 +259,9 @@ export class CommandValidator {
 		diagnostic?: editor.IMarkerData
 		warnings: editor.IMarkerData[]
 	}> {
+		console.log(`Parsing Selector!`)
+		console.log(selectorToken)
+
 		const { MarkerSeverity } = await useMonaco()
 
 		let warnings: editor.IMarkerData[] = []
@@ -517,7 +539,6 @@ export class CommandValidator {
 			)
 				argumentType = 'full'
 
-			// Fail if type does not match, NOTE: Should check scoredata in future when implemented
 			if (argumentType != 'full') {
 				return {
 					passed: false,
@@ -791,11 +812,15 @@ export class CommandValidator {
 						tokens.slice(k, tokens.length)
 					)
 
-					definitionWarnings = definitionWarnings.concat(
-						result.warnings
+					definitionDiagnostics = definitionDiagnostics.concat(
+						result.diagnostics
 					)
 
 					if (result.passed) {
+						definitionWarnings = definitionWarnings.concat(
+							result.warnings
+						)
+
 						// Skip over tokens consumed in the subcommand validation
 						k += result.argumentsConsumedCount!
 
@@ -805,10 +830,12 @@ export class CommandValidator {
 								passed: boolean
 								argumentsConsumedCount?: number
 								warnings: editor.IMarkerData[]
+								diagnostics: editor.IMarkerData[]
 							} = {
 								passed: true,
 								argumentsConsumedCount: 0,
 								warnings: [],
+								diagnostics: [],
 							}
 
 							while (nextResult.passed) {
@@ -816,6 +843,11 @@ export class CommandValidator {
 									commandName.word,
 									tokens.slice(k + 1, tokens.length)
 								)
+
+								definitionDiagnostics =
+									definitionDiagnostics.concat(
+										nextResult.diagnostics
+									)
 
 								if (nextResult.passed) {
 									definitionWarnings =
