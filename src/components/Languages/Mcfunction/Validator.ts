@@ -263,9 +263,6 @@ export class CommandValidator {
 		diagnostic?: editor.IMarkerData
 		warnings: editor.IMarkerData[]
 	}> {
-		console.log(`Parsing Selector!`)
-		console.log(selectorToken)
-
 		const { MarkerSeverity } = await useMonaco()
 
 		let warnings: editor.IMarkerData[] = []
@@ -685,9 +682,9 @@ export class CommandValidator {
 
 				// add the beginning and ending of a json data or scoreData together
 				if (
-					(tokens[i].word == '}' &&
+					(tokens[i].word.startsWith('}') &&
 						tokens[i - 1].word.startsWith('{')) ||
-					(tokens[i].word == ']' &&
+					(tokens[i].word.startsWith(']') &&
 						tokens[i - 1].word.startsWith('['))
 				) {
 					tokens.splice(i - 1, 2, {
@@ -744,9 +741,6 @@ export class CommandValidator {
 			// The command is not valid; it makes no sense to continue validating this line
 			return diagnostics
 		}
-
-		// If this is a say command we ignore validating arguments since they are all strings
-		if (commandName.word == 'say') return diagnostics.concat(warnings)
 
 		let definitions = await this.commandData.getCommandDefinitions(
 			commandName.word,
@@ -1014,6 +1008,9 @@ export class CommandValidator {
 					}
 				}
 
+				// Skip back if allow multiple
+				if (targetArgument.allowMultiple) targetArgumentIndex--
+
 				targetArgumentIndex++
 			}
 
@@ -1025,7 +1022,11 @@ export class CommandValidator {
 			}
 
 			// Fail if there are not enough tokens to satisfy definition
-			if (targetArgumentIndex < requiredArgurmentsCount) {
+			if (
+				targetArgumentIndex < requiredArgurmentsCount &&
+				!definitions[j].arguments[targetArgumentIndex].allowMultiple &&
+				targetArgumentIndex < requiredArgurmentsCount - 1
+			) {
 				definitions.splice(j, 1)
 
 				j--
