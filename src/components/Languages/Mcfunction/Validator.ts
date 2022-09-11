@@ -187,9 +187,13 @@ export class CommandValidator {
 
 		for (const piece of pieces) {
 			const scoreName = piece.split('=')[0]
-			const scoreValue = piece.split('=').slice(1).join('=')
+			let scoreValue = piece.split('=').slice(1).join('=')
 
 			if (!scoreValue) return false
+
+			//Value is negated so remove negation
+			if (scoreValue.startsWith('!'))
+				scoreValue = scoreValue.substring(1, scoreValue.length)
 
 			let argumentType = await this.commandData.isArgumentType(
 				scoreValue,
