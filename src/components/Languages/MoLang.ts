@@ -1,7 +1,15 @@
-import type { editor, languages } from 'monaco-editor'
+import type {
+	CancellationToken,
+	editor,
+	languages,
+	Position,
+} from 'monaco-editor'
 import { Language } from './Language'
 import { CustomMoLang } from 'molang'
-import { useMonaco } from '../../utils/libs/useMonaco'
+import { useMonaco } from '/@/utils/libs/useMonaco'
+import { tokenProvider } from './Molang/TokenProvider'
+import { App } from '/@/App'
+import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {
@@ -32,53 +40,44 @@ export const config: languages.LanguageConfiguration = {
 	],
 }
 
-export const tokenProvider = {
-	ignoreCase: true,
-	brackets: [
-		['(', ')', 'delimiter.parenthesis'],
-		['[', ']', 'delimiter.square'],
-		['{', '}', 'delimiter.curly'],
-	],
-	keywords: [
-		'return',
-		'loop',
-		'for_each',
-		'break',
-		'continue',
-		'this',
-		'function',
-	],
-	identifiers: [
-		'v',
-		't',
-		'c',
-		'q',
-		'f',
-		'a',
-		'arg',
-		'variable',
-		'temp',
-		'context',
-		'query',
-	],
-	tokenizer: {
-		root: [
-			[/#.*/, 'comment'],
-			[/'[^']'/, 'string'],
-			[/[0-9]+(\.[0-9]+)?/, 'number'],
-			[/true|false/, 'number'],
-			[/\=|\,|\!|%=|\*=|\+=|-=|\/=|<|=|>|<>/, 'definition'],
-			[
-				/[a-z_$][\w$]*/,
-				{
-					cases: {
-						'@keywords': 'keyword',
-						'@identifiers': 'type.identifier',
-						'@default': 'identifier',
-					},
-				},
-			],
-		],
+// TODO - dynamic completions for custom molang functions
+const completionItemProvider: languages.CompletionItemProvider = {
+	triggerCharacters: ['.', '(', ',', "'"],
+	provideCompletionItems: async (
+		model: editor.ITextModel,
+		position: Position,
+		context: languages.CompletionContext,
+		token: CancellationToken
+	) => {
+		const project = await App.getApp().then((app) => app.project)
+		if (!(project instanceof BedrockProject)) return
+
+		const molangData = project.molangData
+		await molangData.fired
+
+		// Get the entire line
+		const line = model.getLineContent(position.lineNumber)
+		// Attempt to look behind the cursor to get context on what to propose
+		const lineUntilCursor = line.slice(0, position.column - 1)
+
+		// Auto-completions for global instances
+		const { Range } = await useMonaco()
+
+		return {
+			suggestions: (await molangData.getGlobalSuggestions()).map(
+				(suggestion) => {
+					return <languages.CompletionItem>{
+						...suggestion,
+						range: new Range(
+							position.lineNumber,
+							position.column,
+							position.lineNumber,
+							position.column
+						),
+					}
+				}
+			),
+		}
 	},
 }
 
@@ -90,6 +89,7 @@ export class MoLangLanguage extends Language {
 			extensions: ['molang'],
 			config,
 			tokenProvider,
+			completionItemProvider,
 		})
 	}
 
