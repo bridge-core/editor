@@ -263,10 +263,6 @@ export class CommandValidator {
 		endColumn: number
 		word: string
 	}) {
-		console.warn('Parsing Selector')
-		console.log(token.word.startsWith('@'))
-		console.log(/[a-zA-Z_0-9]{3,16}/.test(token.word))
-
 		if (!token.word.startsWith('@')) {
 			if (!/[a-zA-Z_0-9]{3,16}/.test(token.word)) return false
 		}
@@ -676,25 +672,13 @@ export class CommandValidator {
 		for (let i = 0; i < tokens.length; i++) {
 			if (tokens[i - 1]) {
 				// if we get a case where tokens are like "property", :"value" then we combine them
+				// or if we get a case where tokens are like ["state":"a","state":"b" then we combine them
+				// or if we get a case where tokens are like @e[name="Test"] then we combine them
 				if (
-					tokens[i].word.startsWith(':') &&
-					tokens[i - 1].word[tokens[i - 1].word.length - 1] == '"'
-				) {
-					tokens.splice(i - 1, 2, {
-						startColumn: tokens[i - 1].startColumn,
-						endColumn: tokens[i].endColumn,
-						word: tokens[i - 1].word + tokens[i].word,
-					})
-
-					i--
-
-					continue
-				}
-
-				// if we get a case where tokens are like ["state":"a","state":"b" then we combine them
-				if (
-					tokens[i].word.startsWith(',') &&
-					tokens[i - 1].word[tokens[i - 1].word.length - 1] == '"'
+					(tokens[i].word.startsWith(':') ||
+						tokens[i].word.startsWith(',') ||
+						tokens[i].word.startsWith(']')) &&
+					tokens[i - 1].word.endsWith('"')
 				) {
 					tokens.splice(i - 1, 2, {
 						startColumn: tokens[i - 1].startColumn,
