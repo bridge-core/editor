@@ -82,7 +82,11 @@ export class CommandValidator {
 					argumentType = 'none'
 
 				// Fail if type does not match
-				if (argumentType != 'full') {
+				if (
+					argumentType != 'full' &&
+					(targetArgument.type != 'selector' ||
+						!this.parsePlayerName(argument))
+				) {
 					failed = true
 
 					break
@@ -254,6 +258,22 @@ export class CommandValidator {
 		return true
 	}
 
+	protected parsePlayerName(token: {
+		startColumn: number
+		endColumn: number
+		word: string
+	}) {
+		console.warn('Parsing Selector')
+		console.log(token.word.startsWith('@'))
+		console.log(/[a-zA-Z_0-9]{3,16}/.test(token.word))
+
+		if (!token.word.startsWith('@')) {
+			if (!/[a-zA-Z_0-9]{3,16}/.test(token.word)) return false
+		}
+
+		return true
+	}
+
 	protected async parseSelector(selectorToken: {
 		startColumn: number
 		endColumn: number
@@ -266,6 +286,13 @@ export class CommandValidator {
 		const { MarkerSeverity } = await useMonaco()
 
 		let warnings: editor.IMarkerData[] = []
+
+		if (this.parsePlayerName(selectorToken)) {
+			return {
+				passed: true,
+				warnings,
+			}
+		}
 
 		let baseSelector = selectorToken.word.substring(0, 2)
 
@@ -916,7 +943,11 @@ export class CommandValidator {
 					argumentType = 'none'
 
 				// Fail if type does not match
-				if (argumentType != 'full') {
+				if (
+					argumentType != 'full' &&
+					(targetArgument.type != 'selector' ||
+						!this.parsePlayerName(argument))
+				) {
 					definitions.splice(j, 1)
 
 					j--
