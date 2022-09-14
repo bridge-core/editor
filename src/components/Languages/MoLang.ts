@@ -64,21 +64,27 @@ const completionItemProvider: languages.CompletionItemProvider = {
 		const { Range } = await useMonaco()
 
 		return {
-			suggestions: (await molangData.getGlobalSuggestions()).map(
-				(suggestion) => {
-					return <languages.CompletionItem>{
-						...suggestion,
-						range: new Range(
-							position.lineNumber,
-							position.column,
-							position.lineNumber,
-							position.column
-						),
-					}
-				}
-			),
+			suggestions: [],
 		}
 	},
+}
+
+const loadValues = async (lang: MoLangLanguage) => {
+	const app = await App.getApp()
+	await app.projectManager.fired
+
+	const project = app.project
+	if (!(project instanceof BedrockProject)) return
+
+	await project.molangData.fired
+
+	const values = await project.molangData.allValues()
+	tokenProvider.root = values
+		.map((value) => [value, 'variable'])
+		.concat(<any>tokenProvider.tokenizer.root)
+
+	// TODO - not working?
+	lang.updateTokenProvider(tokenProvider)
 }
 
 export class MoLangLanguage extends Language {
@@ -91,6 +97,15 @@ export class MoLangLanguage extends Language {
 			tokenProvider,
 			completionItemProvider,
 		})
+	}
+
+	onModelAdded(model: editor.ITextModel) {
+		const isLangFor = super.onModelAdded(model)
+		if (!isLangFor) return false
+
+		loadValues(this)
+
+		return true
 	}
 
 	async validate(model: editor.IModel) {

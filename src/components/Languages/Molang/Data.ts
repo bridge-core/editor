@@ -58,34 +58,47 @@ export class MolangData extends Signal<void> {
 		this.dispatch()
 	}
 
-	async getSchemaForFileType(fileType?: string) {
+	async getSchema(fileType?: string) {
 		if (!this._baseData)
-			throw new Error(`Acessing molangData before it was loaded.`)
+			throw new Error(`Acessing base molangData before it was loaded.`)
 
-		let validEntries: MolangValueDefinition[] = []
+		let validEntries: MolangDefinition[] = []
 		const requiresMatcher = new RequiresMatcher()
 		await requiresMatcher.setup()
 
-		const contextData = (
-			this._contextData?.contexts as MolangContextDefinition[]
-		).find((entry) => entry.fileType === fileType)?.data
+		// Get file type specific schemas if needed
+		let contextData
+		if (fileType) contextData = this.getContextSchema(fileType)
 
+		// Combine the context schemas with the base schemas
 		const allDefinitions: MolangDefinition[] = (
 			this._baseData?.vanilla as MolangDefinition[]
 		).concat(contextData ?? [])
 
+		// Validate each schema by "requires" property and return valid entries
 		for (const entry of allDefinitions) {
 			if (!entry.requires || requiresMatcher.isValid(entry.requires))
-				validEntries = validEntries.concat(entry.values)
+				validEntries = validEntries.concat(entry)
 		}
 
 		return validEntries
 	}
 
-	/**
-	 * Suggestions that should be made available anywhere in a Molang context
-	 */
-	async getGlobalSuggestions(): Promise<Partial<languages.CompletionItem>[]> {
+	getContextSchema(fileType?: string) {
+		if (!this._contextData)
+			throw new Error(`Acessing context molangData before it was loaded.`)
+
+		// Find context schema for the specified file type, or return all context schemas if no file type is defined
+		const contextData = (
+			this._contextData?.contexts as MolangContextDefinition[]
+		).find((entry) => (fileType ? entry.fileType === fileType : true))
+
+		return contextData?.data ?? []
+	}
+
+	async getNamespaceSuggestions(): Promise<
+		Partial<languages.CompletionItem>[]
+	> {
 		const { languages } = await useMonaco()
 
 		return [
@@ -135,5 +148,22 @@ export class MolangData extends Signal<void> {
 				insertText: 't',
 			},
 		]
+	}
+
+	/**
+	 * Returns a list of all keywords from the schema value names
+	 */
+	async allValues() {
+		return this.getSchema().then((schema) =>
+			[
+				...new Set(
+					schema
+						.concat(this.getContextSchema())
+						.map((def) => def.values)
+				),
+			]
+				.map((def) => def.map((def) => def.valueName))
+				.flat()
+		)
 	}
 }

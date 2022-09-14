@@ -1,4 +1,4 @@
-export const tokenProvider = {
+export const tokenProvider: any = {
 	ignoreCase: true,
 	brackets: [
 		['(', ')', 'delimiter.parenthesis'],
@@ -26,6 +26,7 @@ export const tokenProvider = {
 		'temp',
 		'context',
 		'query',
+		'math',
 	],
 	tokenizer: {
 		root: [
