@@ -29,8 +29,8 @@ export const ENVModule = ({}: IModuleConfig) => ({
 	getProjectTargetVersion() {
 		return App.getApp().then((app) => app.projectConfig.get().targetVersion)
 	},
-	getProjectAuthor() {
-		return App.getApp().then((app) => app.projectConfig.get().author)
+	getProjectAuthors() {
+		return App.getApp().then((app) => app.projectConfig.get().authors)
 	},
 	resolvePackPath(packId?: TPackTypeId, filePath?: string) {
 		return App.getApp().then((app) =>
