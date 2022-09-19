@@ -4,7 +4,6 @@ import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { extname, join } from '/@/utils/path'
-import json5 from 'json5'
 import { DropdownWindow } from '../Windows/Common/Dropdown/DropdownWindow'
 import { clamp } from '/@/utils/math/clamp'
 
@@ -163,7 +162,7 @@ export class BBModelImporter extends FileImporter {
 	async exportModel(app: App, data: any) {
 		const entityModel = <any>{
 			description: {
-				identifier: 'geometry.' + (data.geometry_name || 'unknown'),
+				identifier: 'geometry.' + (data.model_identifier || 'unknown'),
 				texture_width: data.resolution.width || 16,
 				texture_height: data.resolution.height || 16,
 				visible_bounds_width: data.visible_box?.[0] ?? 0,
