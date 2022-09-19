@@ -41,7 +41,7 @@ const devActionConfigs: IActionConfig[] = [
 		name: '[Dev: Clear app data]',
 		description: '[Clear data from bridge-core/editor-packages repository]',
 		onTrigger: async () => {
-			await set('savedAllDataInIdb', false)
+			await del('savedDataForVersion')
 		},
 	},
 	{
