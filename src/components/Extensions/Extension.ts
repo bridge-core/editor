@@ -27,9 +27,7 @@ export class Extension {
 	protected isLoaded = false
 	protected installFiles: InstallFiles
 	protected hasPresets = false
-	public jsRuntime = new JsRuntime(
-		createEnv(this.id, this.disposables, this.uiStore, this.isGlobal)
-	)
+	public jsRuntime: JsRuntime
 
 	get isActive() {
 		if (!this.parent.activeStatus)
@@ -71,6 +69,10 @@ export class Extension {
 		this.installFiles = new InstallFiles(
 			this.fileSystem,
 			_manifest?.contributeFiles ?? {}
+		)
+
+		this.jsRuntime = new JsRuntime(
+			createEnv(this.id, this.disposables, this.uiStore, this.isGlobal)
 		)
 	}
 
