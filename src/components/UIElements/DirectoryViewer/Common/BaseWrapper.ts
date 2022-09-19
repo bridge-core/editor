@@ -7,7 +7,6 @@ import { ref } from 'vue'
 import type { FileWrapper } from '../FileView/FileWrapper'
 import { platform } from '/@/utils/os'
 import { renameHandle } from '/@/utils/file/renameHandle'
-import { AnyHandle } from '/@/components/FileSystem/Types'
 import { isSameEntry } from '/@/utils/file/isSameEntry'
 
 export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
@@ -150,8 +149,6 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 			toHandle: this.parent.handle,
 		})
 
-		// TODO: Update compiler & ideally change open tabs to use correct handle
-
 		// Sort parent's children
 		directoryWrapper.sort()
 	}
@@ -200,8 +197,6 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 			toHandle: this.parent!.handle,
 		})
 
-		// TODO: Update compiler & ideally change open tabs to use correct handle
-
 		await this.parent!.refresh()
 	}
 
@@ -216,5 +211,9 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 		this.isEditingName.value = false
 
 		await this.rename(newName)
+	}
+
+	async onFilesAdded(filePaths: string[]) {
+		await this.options.onFilesAdded?.(filePaths)
 	}
 }
