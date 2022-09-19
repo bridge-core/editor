@@ -74,13 +74,24 @@ export class BBModelImporter extends FileImporter {
 		const app = await App.getApp()
 
 		const file = await fileHandle.getFile()
-		const data = json5.parse(await file.text())
+		const data = JSON.parse(await file.text())
 
 		app.windows.loadingWindow.open()
 
-		if (data.textures) await this.exportImages(app, data.textures)
-		if (data.elements && data.outliner) await this.exportModel(app, data)
-		if (data.animations) await this.exportAnimations(app, data.animations, data.name)
+		const promises = []
+
+		if (data.textures) promises.push(this.exportImages(app, data.textures))
+		if (data.elements && data.outliner)
+			promises.push(this.exportModel(app, data))
+		if (data.animations)
+			promises.push(
+				this.exportAnimations(app, data.animations, data.name)
+			)
+
+		if (promises.length > 0) {
+			await Promise.allSettled(promises)
+			App.eventSystem.dispatch('fileAdded', undefined)
+		}
 
 		app.windows.loadingWindow.close()
 	}
@@ -143,9 +154,8 @@ export class BBModelImporter extends FileImporter {
 				filePath,
 				imageData
 			)
-			App.eventSystem.dispatch('fileAdded', undefined)
 
-			await app.project.updateFile(app.project.absolutePath(filePath))
+			app.project.updateFile(app.project.absolutePath(filePath))
 			await app.project.openFile(destHandle, { isTemporary: false })
 		}
 	}
@@ -191,9 +201,8 @@ export class BBModelImporter extends FileImporter {
 		)
 
 		await app.project.fileSystem.writeJSON(filePath, entityFile, true)
-		App.eventSystem.dispatch('fileAdded', undefined)
 
-		await app.project.updateFile(app.project.absolutePath(filePath))
+		app.project.updateFile(app.project.absolutePath(filePath))
 		await app.project.openFile(destHandle, { isTemporary: false })
 	}
 
@@ -588,9 +597,8 @@ export class BBModelImporter extends FileImporter {
 		)
 
 		await app.project.fileSystem.writeJSON(filePath, animationFile, true)
-		App.eventSystem.dispatch('fileAdded', undefined)
 
-		await app.project.updateFile(app.project.absolutePath(filePath))
+		app.project.updateFile(app.project.absolutePath(filePath))
 		await app.project.openFile(destHandle, { isTemporary: false })
 	}
 
