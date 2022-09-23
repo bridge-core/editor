@@ -16,7 +16,7 @@ export class JsRuntime extends Runtime {
 		return super.run(
 			filePath,
 			Object.assign(env, {
-				require: (x: string) => this.require(x, dirname(filePath)),
+				require: (x: string) => this.require(x, env, dirname(filePath)),
 			}),
 			fileContent
 		)
