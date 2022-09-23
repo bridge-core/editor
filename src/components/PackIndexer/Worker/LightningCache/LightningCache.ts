@@ -5,7 +5,6 @@ import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'
 import { runScript } from './Script'
 import { basename, extname, join } from '/@/utils/path'
-import { iterateDir } from '/@/utils/iterateDir'
 import {
 	AnyDirectoryHandle,
 	AnyFileHandle,
