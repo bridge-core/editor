@@ -2,6 +2,9 @@
 globalThis.process = {
 	cwd: () => '',
 	env: {},
+	release: {
+		name: 'browser',
+	},
 }
 
 import '/@/components/FileSystem/Virtual/Comlink'
@@ -72,6 +75,7 @@ export class DashService extends EventDispatcher<void> {
 			mode: options.mode,
 			fileType: this.fileType,
 			packType: new PackTypeLibrary(),
+			verbose: true,
 			requestJsonData: (path) => dataLoader.readJSON(path),
 		})
 
