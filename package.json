@@ -44,7 +44,7 @@
 		"vue": "^2.7.8",
 		"vue-template-compiler": "^2.7.8",
 		"vuedraggable": "^2.24.3",
-		"vuetify": "^2.6.7",
+		"vuetify": "^2.6.10",
 		"wintersky": "^1.1.0"
 	},
 	"devDependencies": {
