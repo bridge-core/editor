@@ -40,7 +40,7 @@ const consoles = new Map<string, ForeignConsole>()
 export class DashService extends EventDispatcher<void> {
 	protected fileSystem: DashFileSystem
 	public fileType: FileTypeLibrary
-	protected dash: Dash<DataLoader>
+	protected readonly dash: Dash<DataLoader>
 	public isDashFree = new Mutex()
 	protected projectDir: string
 	public isSetup = false
