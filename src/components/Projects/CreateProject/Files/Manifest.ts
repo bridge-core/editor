@@ -148,31 +148,65 @@ export class CreateManifest extends CreateFile {
 			manifest.dependencies ??= []
 			// New 1.19.30+ format of dependencies
 			if (compareVersions(createOptions.targetVersion, '1.19.30', '>=')) {
-				manifest.dependencies.push(
-					{
-						module_name: 'mojang-minecraft',
-						version: '1.0.0-beta',
-					},
-					{
-						module_name: 'mojang-gametest',
-						version: '1.0.0-beta',
-					},
-					{
-						module_name: 'mojang-minecraft-ui',
-						version: '1.0.0-beta',
-					}
-				)
-				if (createOptions.bdsProject)
+				if (
+					compareVersions(
+						createOptions.targetVersion,
+						'1.19.40',
+						'>='
+					)
+				) {
 					manifest.dependencies.push(
 						{
-							module_name: 'mojang-minecraft-server-admin',
+							module_name: '@minecraft/server',
 							version: '1.0.0-beta',
 						},
 						{
-							module_name: 'mojang-net',
+							module_name: '@minecraft/server-gametest',
+							version: '1.0.0-beta',
+						},
+						{
+							module_name: '@minecraft/server-ui',
 							version: '1.0.0-beta',
 						}
 					)
+					if (createOptions.bdsProject)
+						manifest.dependencies.push(
+							{
+								module_name: '@minecraft/server-admin',
+								version: '1.0.0-beta',
+							},
+							{
+								module_name: '@minecraft/server-net',
+								version: '1.0.0-beta',
+							}
+						)
+				} else {
+					manifest.dependencies.push(
+						{
+							module_name: 'mojang-minecraft',
+							version: '1.0.0-beta',
+						},
+						{
+							module_name: 'mojang-gametest',
+							version: '1.0.0-beta',
+						},
+						{
+							module_name: 'mojang-minecraft-ui',
+							version: '1.0.0-beta',
+						}
+					)
+					if (createOptions.bdsProject)
+						manifest.dependencies.push(
+							{
+								module_name: 'mojang-minecraft-server-admin',
+								version: '1.0.0-beta',
+							},
+							{
+								module_name: 'mojang-net',
+								version: '1.0.0-beta',
+							}
+						)
+				}
 			} else {
 				// Old dependency format
 				manifest.dependencies.push(
