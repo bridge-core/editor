@@ -538,8 +538,8 @@
 			"description": "Enables the creation of fog volume files and provides auto-completions for entity properties."
 		},
 		"enableGameTestFramework": {
-			"name": "Enable GameTest Framework",
-			"description": "Enables the GameTest related modules in the manifest and allows you to create GameTest scripts with auto-completions."
+			"name": "Beta APIs",
+			"description": "Enables the beta level script API related modules in the manifest and allows you to create scripts with auto-completions."
 		},
 		"experimentalMolangFeatures": {
 			"name": "Experimental Molang Features",
