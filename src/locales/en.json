@@ -1145,7 +1145,7 @@
 				"name": "Invalid selector argument {{$1}}"
 			},
 			"argumentNoSupport": {
-				"name": "Argument {{$1}} doesn not support {{$2}}",
+				"name": "Argument {{$1}} does not support {{$2}}",
 				"bothConditions": "Argument {{$1}} does not support multiple instances when not all negated"
 			},
 			"invalidSelectorArgumentValue": {
