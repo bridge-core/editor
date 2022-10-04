@@ -192,11 +192,12 @@ export class CreatePresetWindow extends NewBaseWindow {
 			})
 		}
 
-		const presetPath = manifest.additionalModels?.PRESET_PATH
 		const iconColor =
-			typeof presetPath === 'string' &&
-			manifest.category === 'fileType.simpleFile'
-				? App.packType.get(presetPath + 'test.json')?.color ?? 'primary'
+			manifest.category === 'fileType.simpleFile' &&
+			manifest.requires?.packTypes &&
+			manifest.requires.packTypes.length > 0
+				? App.packType.getFromId(manifest.requires.packTypes[0])
+						?.color ?? 'primary'
 				: 'primary'
 
 		let failureMessage: string | undefined
