@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { TranslationMixin } from '/@/components/mixins/TranslationMixin.ts'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
 export default {
 	name: 'SidebarItem',
