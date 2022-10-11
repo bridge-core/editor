@@ -64,6 +64,12 @@ export class ExtensionViewer {
 	}
 	//#endregion
 
+	get compilerPlugins() {
+		const ext = this.extension
+		if(ext) return Object.keys(ext.compilerPlugins ?? {})
+
+		return Object.keys(this.config?.compiler?.plugins ?? {})
+	}
 	get isInstalled() {
 		return this._isInstalled
 	}
