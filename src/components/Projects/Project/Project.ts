@@ -191,8 +191,6 @@ export abstract class Project {
 	) {
 		if (!this.isVirtualProject) await this.app.comMojang.fired
 
-		await this.app.comMojang.fired
-
 		const compiler = await new DashCompiler(
 			this.app.fileSystem.baseDirectory,
 			this.app.comMojang.hasComMojang
