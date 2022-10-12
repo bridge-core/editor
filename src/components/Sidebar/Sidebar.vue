@@ -20,13 +20,20 @@
 			top: appToolbarHeight,
 		}"
 	>
-		<SidebarButton
-			v-if="isMobile"
-			displayName="general.close"
-			icon="mdi-close"
-			color="error"
-			@click="closeSidebar"
-		/>
+		<template v-if="isMobile">
+			<SidebarButton
+				displayName="general.close"
+				icon="mdi-close"
+				color="error"
+				@click="closeSidebar"
+			/>
+			<SidebarButton
+				v-if="isMobile"
+				displayName="actions.name"
+				icon="mdi-menu"
+				@click="showMobileMenu"
+			/>
+		</template>
 
 		<v-list>
 			<SidebarButton
@@ -146,6 +153,9 @@ export default {
 	methods: {
 		closeSidebar() {
 			App.sidebar.isNavigationVisible.value = false
+		},
+		showMobileMenu(event) {
+			App.toolbar.showMobileMenu(event)
 		},
 	},
 }

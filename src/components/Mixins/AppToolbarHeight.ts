@@ -7,13 +7,13 @@ export const AppToolbarHeightMixin = {
 	computed: {
 		appToolbarHeight() {
 			return `env(titlebar-area-height, ${
-				this.$vuetify.breakpoint.mobile ? 32 : 24
+				this.$vuetify.breakpoint.mobile ? 0 : 24
 			}px)`
 		},
 		appToolbarHeightNumber() {
 			if (this.windowControlsOverlay) return 33
 
-			return this.$vuetify.breakpoint.mobile ? 32 : 24
+			return this.$vuetify.breakpoint.mobile ? 0 : 24
 		},
 	},
 }
