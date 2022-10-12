@@ -850,6 +850,10 @@
 					"name": "Default Author",
 					"description": "The default author for new projects"
 				},
+				"loadComMojangProjects": {
+					"name": "Load com.mojang Projects",
+					"description": "Automatically load projects from the com.mojang folder"
+				},
 				"incrementVersionOnExport": {
 					"name": "Increment Version",
 					"description": "Automatically increment the version number inside of your pack manifests when exporting a project"
