@@ -21,6 +21,10 @@
 		}"
 	>
 		<template v-if="isMobile">
+			<div class="d-flex align-center justify-center mt-3 mb-2">
+				<BridgeLogo :height="32" />
+			</div>
+
 			<SidebarButton
 				displayName="general.close"
 				icon="mdi-close"
@@ -86,16 +90,35 @@
 				/>
 			</SidebarButton>
 		</v-list>
+
+		<div v-if="isMobile" class="py-2" />
+
+		<div
+			v-if="isMobile"
+			class="pr-1 font-weight-light"
+			style="
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				text-align: center;
+				font-size: 14px;
+				z-index: -1;
+			"
+		>
+			v{{ appVersion }}
+		</div>
 	</v-navigation-drawer>
 </template>
 
 <script>
+import BridgeLogo from '/@/components/UIElements/Logo.vue'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState.ts'
 import SidebarButton from './Button.vue'
 import { tasks } from '/@/components/TaskManager/TaskManager.ts'
 import { NotificationStore } from '/@/components/Notifications/state.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import { App } from '/@/App'
+import { version as appVersion } from '/@/utils/app/version'
 
 export default {
 	name: 'Sidebar',
@@ -105,12 +128,14 @@ export default {
 	},
 	components: {
 		SidebarButton,
+		BridgeLogo,
 	},
 
 	setup() {
 		return {
 			rawSidebarElements: App.sidebar.sortedElements,
 			rawIsNavigationVisible: App.sidebar.isNavigationVisible,
+			appVersion,
 		}
 	},
 	data() {
