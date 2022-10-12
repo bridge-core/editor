@@ -1,9 +1,7 @@
 # bridge. v2
 
-<img alt="Version" src="https://img.shields.io/github/v/release/bridge-core/editor?style=flat&height=40&label=Version&message=Test&color=121212&labelColor=005bc9" height="20" >
-<img alt="License" src="https://img.shields.io/static/v1?style=flat&height=40&label=License&message=GPL-3.0&color=121212&labelColor=005bc9" height="20" >
-<a href="https://pr.new/github.com/bridge-core/editor/tree/dev">
-    <img alt="Open in Codeflow" src="https://developer.stackblitz.com/img/open_in_codeflow_small.svg" >
+<img alt="Version" src="https://img.shields.io/github/v/release/bridge-core/editor?style=flat&height=40&label=Version&message=Test&color=121212&labelColor=005bc9" height="20" > <img alt="License" src="https://img.shields.io/static/v1?style=flat&height=40&label=License&message=GPL-3.0&color=121212&labelColor=005bc9" height="20" > <a href="https://pr.new/github.com/bridge-core/editor/tree/dev">
+<img alt="Open in Codeflow" src="https://developer.stackblitz.com/img/open_in_codeflow_small.svg" >
 </a>
 
 <a href="https://editor.bridge-core.app/">
