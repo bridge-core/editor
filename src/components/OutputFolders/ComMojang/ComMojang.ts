@@ -5,7 +5,6 @@ import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
-import { Project } from '/@/components/Projects/Project/Project'
 
 export const comMojangKey = 'comMojangDirectory'
 
@@ -17,9 +16,13 @@ export class ComMojang extends Signal<void> {
 	public readonly setup = new Signal<void>()
 	protected _hasComMojang = false
 	protected _permissionDenied = false
+	protected _hasComMojangHandle = false
 
 	get hasComMojang() {
 		return this._hasComMojang
+	}
+	get hasComMojangHandle() {
+		return this._hasComMojangHandle
 	}
 	get status() {
 		return {
@@ -37,6 +40,8 @@ export class ComMojang extends Signal<void> {
 		const directoryHandle = await get<AnyDirectoryHandle | undefined>(
 			comMojangKey
 		)
+
+		this._hasComMojangHandle = directoryHandle !== undefined
 
 		if (directoryHandle) {
 			await this.requestPermissions(directoryHandle).catch(async () => {
