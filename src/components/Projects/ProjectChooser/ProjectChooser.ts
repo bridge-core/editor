@@ -74,8 +74,10 @@ export class ProjectChooserWindow extends NewBaseWindow {
 		// Only request permission if the user didn't already grant it
 		const wasSuccessful =
 			app.bridgeFolderSetup.hasFired || (await app.setupBridgeFolder())
-		const wasComMojangSuccesful =
-			app.comMojang.hasFired || (await app.comMojang.setupComMojang())
+		// For the com.mojang folder, we additionally check that bridge. already has its handle stored in IDB
+		const wasComMojangSuccesful = app.comMojang.hasComMojangHandle
+			? app.comMojang.hasFired || (await app.comMojang.setupComMojang())
+			: true
 
 		if (wasSuccessful || wasComMojangSuccesful) {
 			await this.loadProjects()
@@ -105,7 +107,8 @@ export class ProjectChooserWindow extends NewBaseWindow {
 
 		// Show the loadAllButton if the user didn't grant permissions to bridge folder or comMojang folder yet
 		this.state.showLoadAllButton =
-			!app.bridgeFolderSetup.hasFired || !app.comMojang.setup.hasFired
+			!app.bridgeFolderSetup.hasFired ||
+			(!app.comMojang.setup.hasFired && app.comMojang.hasComMojangHandle)
 
 		const projects = await app.projectManager.getProjects()
 		const experimentalToggles = await app.dataLoader.readJSON(
