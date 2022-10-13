@@ -446,7 +446,6 @@
 		}
 	},
 	"comMojang": {
-		"folderDropped": "是否將這個資料夾設為預設的com.mojang資料夾?",
 		"permissionRequest": "bridge.必須存取你的com.mojang資料夾才能編譯專案。"
 	},
 	"findAndReplace": {

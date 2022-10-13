@@ -1005,7 +1005,6 @@
 		}
 	},
 	"comMojang": {
-		"folderDropped": "Wilt u deze map instellen als uw standaard com.mojang map?",
 		"title": "Toegang tot map \"com.mojang\"",
 		"permissionRequest": "bridge. heeft toegang nodig tot uw \"com.mojang\" map om er projecten naar te kunnen compileren.",
 		"status": {
