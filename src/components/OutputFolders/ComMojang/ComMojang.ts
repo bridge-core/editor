@@ -94,6 +94,7 @@ export class ComMojang extends Signal<void> {
 		await this.requestPermissions(directoryHandle)
 		if (this._hasComMojang) this.setup.dispatch()
 
+		this._hasComMojangHandle = true
 		this.dispatch()
 	}
 
