@@ -88,6 +88,8 @@ export class ComMojang extends Signal<void> {
 		set(comMojangKey, directoryHandle)
 		await this.requestPermissions(directoryHandle)
 		if (this._hasComMojang) this.setup.dispatch()
+
+		this.dispatch()
 	}
 
 	async handleComMojangDrop(directoryHandle: AnyDirectoryHandle) {
