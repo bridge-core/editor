@@ -442,6 +442,16 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'projects',
+			name: 'windows.settings.projects.loadComMojangProjects.name',
+			description:
+				'windows.settings.projects.loadComMojangProjects.description',
+			key: 'loadComMojangProjects',
+			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'projects',
 			name: 'windows.settings.projects.incrementVersionOnExport.name',
 			description:
 				'windows.settings.projects.incrementVersionOnExport.description',

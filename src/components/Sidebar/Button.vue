@@ -139,11 +139,11 @@ export default {
 		},
 	},
 	methods: {
-		onClick() {
+		onClick(event) {
 			if (this.disabled) return
 
 			if (this.alwaysAllowClick || !this.isLoading) {
-				this.$emit('click')
+				this.$emit('click', event)
 
 				// Otherwise the tooltip can get stuck until the user hovers over the button again
 				this.hasClicked = true

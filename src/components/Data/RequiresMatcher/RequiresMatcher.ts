@@ -67,10 +67,11 @@ export class RequiresMatcher {
 		const config = this.app.project.config.get()
 
 		this.experimentalGameplay = config.experimentalGameplay ?? {}
+
+		this.latestFormatVersion = latestFormatVersion
 		this.projectTargetVersion =
 			config.targetVersion ?? this.latestFormatVersion
 
-		this.latestFormatVersion = latestFormatVersion
 		this.bpManifest = bpManifest
 		this.isSetup = true
 	}

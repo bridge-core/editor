@@ -1,5 +1,6 @@
 <template>
 	<v-system-bar
+		v-if="!isMobile"
 		color="toolbar"
 		fixed
 		app
@@ -54,13 +55,6 @@
 
 			<!-- App menu buttons -->
 			<v-toolbar-items class="px14-font">
-				<MenuButton
-					v-if="isMobile"
-					displayName="actions.name"
-					displayIcon="mdi-menu"
-					@click="showMobileMenu"
-				/>
-
 				<template v-for="(item, key, i) in toolbar">
 					<MenuButton
 						v-if="item.type !== 'category'"
@@ -179,9 +173,6 @@ export default {
 			if (this.isAnyWindowVisible) return
 
 			CommandBarState.isWindowOpen = true
-		},
-		showMobileMenu(event) {
-			App.toolbar.showMobileMenu(event)
 		},
 	},
 }
