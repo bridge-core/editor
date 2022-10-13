@@ -21,8 +21,11 @@
 		}"
 	>
 		<template v-if="isMobile">
-			<div class="d-flex align-center justify-center mt-3 mb-2">
-				<BridgeLogo :height="32" />
+			<div
+				class="d-flex align-center justify-center mt-3 mb-2 mx-1 rounded-lg"
+				v-ripple
+			>
+				<BridgeLogo :height="32" @click.native="openChangelogWindow" />
 			</div>
 
 			<SidebarButton
@@ -90,23 +93,6 @@
 				/>
 			</SidebarButton>
 		</v-list>
-
-		<div v-if="isMobile" class="py-2" />
-
-		<div
-			v-if="isMobile"
-			class="pr-1 font-weight-light"
-			style="
-				position: absolute;
-				bottom: 0;
-				width: 100%;
-				text-align: center;
-				font-size: 14px;
-				z-index: -1;
-			"
-		>
-			v{{ appVersion }}
-		</div>
 	</v-navigation-drawer>
 </template>
 
@@ -181,6 +167,10 @@ export default {
 		},
 		showMobileMenu(event) {
 			App.toolbar.showMobileMenu(event)
+		},
+		async openChangelogWindow() {
+			const app = await App.getApp()
+			await app.windows.changelogWindow.open()
 		},
 	},
 }
