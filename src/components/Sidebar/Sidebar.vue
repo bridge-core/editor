@@ -35,7 +35,6 @@
 				@click="closeSidebar"
 			/>
 			<SidebarButton
-				v-if="isMobile"
 				displayName="actions.name"
 				icon="mdi-menu"
 				@click="showMobileMenu"
