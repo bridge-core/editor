@@ -10,6 +10,7 @@ export interface IAddLanguageOptions {
 	tokenProvider: any
 	completionItemProvider?: languages.CompletionItemProvider
 	codeActionProvider?: languages.CodeActionProvider
+	signatureHelpProvider?: languages.SignatureHelpProvider
 }
 
 export abstract class Language {
@@ -25,6 +26,7 @@ export abstract class Language {
 		tokenProvider,
 		completionItemProvider,
 		codeActionProvider,
+		signatureHelpProvider,
 	}: IAddLanguageOptions) {
 		this.id = id
 
@@ -54,6 +56,13 @@ export abstract class Language {
 			if (codeActionProvider)
 				this.disposables.push(
 					languages.registerCodeActionProvider(id, codeActionProvider)
+				)
+			if (signatureHelpProvider)
+				this.disposables.push(
+					languages.registerSignatureHelpProvider(
+						id,
+						signatureHelpProvider
+					)
 				)
 		})
 	}
