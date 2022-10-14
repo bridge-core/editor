@@ -137,6 +137,9 @@ export abstract class FileTab extends Tab {
 
 	// Logic for auto-saving
 	async tryAutoSave() {
+		// File handle has no parent context -> Auto-saving would have undesirable consequences such as constant file downloads
+		if (this.fileHandleWithoutParentContext()) return
+
 		// Check whether we should auto save and that the file has been changed
 		if ((await shouldAutoSave()) && this.isUnsaved) {
 			await this.save()
@@ -191,12 +194,21 @@ export abstract class FileTab extends Tab {
 		if (!this.isForeignFile) this.parent.openedFiles.add(this.getPath())
 	}
 
-	protected async writeFile(value: BufferSource | Blob | string) {
-		// Current file handle is a virtual file without parent
-		if (
+	/**
+	 * Check whether the given file handle has no parent context -> Save by "Save As" or file download
+	 * @param fileHandle
+	 * @returns boolean
+	 */
+	protected fileHandleWithoutParentContext() {
+		return (
 			this.fileHandle instanceof VirtualFileHandle &&
 			!this.fileHandle.hasParentContext
-		) {
+		)
+	}
+
+	protected async writeFile(value: BufferSource | Blob | string) {
+		// Current file handle is a virtual file without parent
+		if (this.fileHandleWithoutParentContext()) {
 			// Download the file if the user is using a file system polyfill
 			if (isUsingFileSystemPolyfill.value) {
 				download(
