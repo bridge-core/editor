@@ -15,20 +15,18 @@ import { debounce } from 'lodash-es'
 
 export type TReadOnlyMode = 'forced' | 'manual' | 'off'
 
+const shouldAutoSave = async () => {
+	const app = await App.getApp()
+
+	// Check that either the auto save setting is enabled or fallback to activating it by default on mobile
+	return (
+		settingsState?.editor?.autoSaveChanges ?? app.mobile.isCurrentDevice()
+	)
+}
+
 const throttledFileDidChange = debounce<(tab: FileTab) => Promise<void> | void>(
 	async (tab) => {
-		const app = await App.getApp()
-
-		// Logic for auto-saving
-		// Check that either the auto save setting is enabled or fallback to activating it by default on mobile
-		if (
-			settingsState?.editor?.autoSaveChanges ??
-			app.mobile.isCurrentDevice()
-		) {
-			if (!tab.isUnsaved) return // There are no unsaved changes
-
-			tab.save()
-		}
+		tab.tryAutoSave()
 	},
 	3000 // 3s delay for fileDidChange
 )
@@ -92,6 +90,11 @@ export abstract class FileTab extends Tab {
 
 		await super.setup()
 	}
+	async onDeactivate() {
+		await this.tryAutoSave()
+
+		super.onDeactivate()
+	}
 
 	get name() {
 		return this.fileHandle.name
@@ -130,6 +133,14 @@ export abstract class FileTab extends Tab {
 	 */
 	fileDidChange() {
 		throttledFileDidChange(this)
+	}
+
+	// Logic for auto-saving
+	async tryAutoSave() {
+		// Check whether we should auto save and that the file has been changed
+		if ((await shouldAutoSave()) && this.isUnsaved) {
+			await this.save()
+		}
 	}
 
 	async save() {

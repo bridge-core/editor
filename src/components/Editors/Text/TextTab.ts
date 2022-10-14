@@ -14,9 +14,6 @@ import { wait } from '/@/utils/wait'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
-		// Updates the isUnsaved status of the tab
-		tab.updateUnsavedStatus()
-
 		if (!tab.editorModel || tab.editorModel.isDisposed()) return
 
 		const fileContent = tab.editorModel?.getValue()
@@ -78,6 +75,13 @@ export class TextTab extends FileTab {
 		)
 	}
 
+	fileDidChange() {
+		// Updates the isUnsaved status of the tab
+		this.updateUnsavedStatus()
+
+		super.fileDidChange()
+	}
+
 	async onActivate() {
 		if (this.isActive) return
 		this.isActive = true
@@ -132,7 +136,9 @@ export class TextTab extends FileTab {
 
 		this.editorInstance?.layout()
 	}
-	onDeactivate() {
+	async onDeactivate() {
+		await super.onDeactivate()
+
 		// MonacoEditor is defined
 		if (this.tabSystem.hasFired) {
 			const viewState = this.editorInstance.saveViewState()
