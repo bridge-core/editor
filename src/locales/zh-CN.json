@@ -931,7 +931,6 @@
 		}
 	},
 	"comMojang": {
-		"folderDropped": "你想将此文件夹设置为默认的com.mojang文件夹吗？",
 		"title": "访问文件夹“com.mojang”",
 		"permissionRequest": "bridge.需要访问你的“com.mojang”文件夹才能将项目编译到其中。",
 		"status": {
