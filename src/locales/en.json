@@ -409,6 +409,14 @@
 			"openFileSearch": {
 				"name": "Open Find & Replace",
 				"description": "Opens a new Find & Replace tab"
+			},
+			"nextTab": {
+				"name": "Next Tab",
+				"description": "Switch to the next tab"
+			},
+			"previousTab": {
+				"name": "Previous Tab",
+				"description": "Switch to the previous tab"
 			}
 		},
 		"tools": {
