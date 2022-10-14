@@ -121,6 +121,7 @@ export class TextTab extends FileTab {
 		this.disposables.push(
 			this.editorModel?.onDidChangeContent(() => {
 				throttledCacheUpdate(this)
+				this.fileDidChange()
 			})
 		)
 		this.disposables.push(

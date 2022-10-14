@@ -868,10 +868,7 @@
 					"name": "JSON Editor",
 					"description": "Choose how you want to edit JSON files"
 				},
-				"bridgePredictions": {
-					"name": "bridge. Predictions",
-					"description": "Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly"
-				},
+
 				"bracketPairColorization": {
 					"name": "Bracket Pair Colorization",
 					"description": "Give matching brackets an unique color"
@@ -891,6 +888,14 @@
 				"keepTabsOpen": {
 					"name": "Keep Tabs Open",
 					"description": "By default, opening a new tab closes the previously opened tab if it was not interacted with"
+				},
+				"autoSaveChanges": {
+					"name": "Auto Save Changes",
+					"description": "Automatically save changes to files after a short delay"
+				},
+				"bridgePredictions": {
+					"name": "bridge. Predictions",
+					"description": "Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly"
 				},
 				"automaticallyOpenTreeNodes": {
 					"name": "Automatically Open Tree Nodes",

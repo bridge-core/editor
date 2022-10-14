@@ -10,8 +10,28 @@ import {
 } from '../FileSystem/Polyfill'
 import { download } from '../FileSystem/saveOrDownload'
 import { writableToUint8Array } from '/@/utils/file/writableToUint8Array'
+import { settingsState } from '../Windows/Settings/SettingsState'
+import { debounce } from 'lodash-es'
 
 export type TReadOnlyMode = 'forced' | 'manual' | 'off'
+
+const throttledFileDidChange = debounce<(tab: FileTab) => Promise<void> | void>(
+	async (tab) => {
+		const app = await App.getApp()
+
+		// Logic for auto-saving
+		// Check that either the auto save setting is enabled or fallback to activating it by default on mobile
+		if (
+			settingsState?.editor?.autoSaveChanges ??
+			app.mobile.isCurrentDevice()
+		) {
+			if (!tab.isUnsaved) return // There are no unsaved changes
+
+			tab.save()
+		}
+	},
+	3000 // 3s delay for fileDidChange
+)
 
 export abstract class FileTab extends Tab {
 	public isForeignFile = false
@@ -104,6 +124,13 @@ export abstract class FileTab extends Tab {
 	}
 
 	abstract setReadOnly(readonly: TReadOnlyMode): Promise<void> | void
+
+	/**
+	 * **Important:** This function needs to be called when appropriate by the tabs implementing this class
+	 */
+	fileDidChange() {
+		throttledFileDidChange(this)
+	}
 
 	async save() {
 		if (this.isSaving) return
