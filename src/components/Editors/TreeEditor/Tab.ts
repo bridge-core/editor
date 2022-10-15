@@ -99,7 +99,9 @@ export class TreeTab extends FileTab {
 	async onActivate() {
 		this.treeEditor.activate()
 	}
-	onDeactivate() {
+	async onDeactivate() {
+		await super.onDeactivate()
+
 		this._treeEditor?.deactivate()
 	}
 
