@@ -4,34 +4,48 @@
 		windowTitle="windows.createProject.title"
 		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
-		:hasCloseButton="!window.isFirstProject"
+		:hasCloseButton="true"
 		:isFullscreen="false"
-		:isPersistent="state.isCreatingProject || window.isFirstProject"
+		:isPersistent="state.isCreatingProject"
 		:percentageWidth="80"
 		:percentageHeight="80"
 		@closeWindow="close"
 	>
 		<template #default>
-			<!-- Welcome text for users getting started with bridge. -->
+			<h2 class="mb-2">Project Type</h2>
 
-			<BridgeSheet class="pa-3 mb-2" v-if="window.isFirstProject">
-				<h1>
-					{{ t('windows.createProject.welcome') }}
-				</h1>
-				<span>
-					{{ t('windows.createProject.welcomeDescription') }}
-				</span>
-			</BridgeSheet>
+			<v-row class="mb-6" dense>
+				<v-col
+					v-for="{ type, icon } in projectTypes"
+					:key="`${type}#${state.createOptions.projectType}`"
+					cols="12"
+					xs="12"
+					sm="12"
+					md="4"
+					lg="4"
+					xl="4"
+				>
+					<ProjectTypeViewer
+						style="height: 100%"
+						:icon="icon"
+						:type="type"
+						:selected="state.createOptions.projectType === type"
+						@input="state.createOptions.projectType = type"
+					/>
+				</v-col>
+			</v-row>
 
+			<h2 class="mb-2">Packs</h2>
 			<v-row class="mb-6" dense>
 				<v-col
 					v-for="packType in window.availablePackTypes"
 					:key="packType.id"
+					cols="12"
 					xs="12"
 					sm="6"
-					md="4"
+					md="6"
 					lg="3"
-					xl="2"
+					xl="3"
 				>
 					<PackTypeViewer
 						:packType="packType"
@@ -287,9 +301,11 @@ import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 import ExperimentalGameplay from './ExperimentalGameplay.vue'
 import CreateFile from './CreateFile.vue'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
+import ProjectTypeViewer from './ProjectTypeViewer.vue'
 import { isFileAccepted } from '/@/utils/file/isAccepted'
 import { useTranslations } from '../../Composables/useTranslations'
 import { computed } from 'vue'
+import { projectTypes } from './projectTypes'
 
 const { t } = useTranslations()
 const props = defineProps(['window'])
