@@ -180,6 +180,9 @@
 			"name": "Create File",
 			"description": "Create a new file"
 		},
+		"importFile": {
+			"name": "Import File"
+		},
 		"createFolder": {
 			"name": "Create Folder",
 			"description": "Create a new folder"
@@ -406,6 +409,14 @@
 			"openFileSearch": {
 				"name": "Open Find & Replace",
 				"description": "Opens a new Find & Replace tab"
+			},
+			"nextTab": {
+				"name": "Next Tab",
+				"description": "Switch to the next tab"
+			},
+			"previousTab": {
+				"name": "Previous Tab",
+				"description": "Switch to the previous tab"
 			}
 		},
 		"tools": {
@@ -535,8 +546,8 @@
 			"description": "Enables the creation of fog volume files and provides auto-completions for entity properties."
 		},
 		"enableGameTestFramework": {
-			"name": "Enable GameTest Framework",
-			"description": "Enables the GameTest related modules in the manifest and allows you to create GameTest scripts with auto-completions."
+			"name": "Beta APIs",
+			"description": "Enables the beta level script API related modules in the manifest and allows you to create scripts with auto-completions."
 		},
 		"experimentalMolangFeatures": {
 			"name": "Experimental Molang Features",
@@ -847,6 +858,10 @@
 					"name": "Default Author",
 					"description": "The default author for new projects"
 				},
+				"loadComMojangProjects": {
+					"name": "Load com.mojang Projects",
+					"description": "Automatically load projects from the com.mojang folder"
+				},
 				"incrementVersionOnExport": {
 					"name": "Increment Version",
 					"description": "Automatically increment the version number inside of your pack manifests when exporting a project"
@@ -861,10 +876,7 @@
 					"name": "JSON Editor",
 					"description": "Choose how you want to edit JSON files"
 				},
-				"bridgePredictions": {
-					"name": "bridge. Predictions",
-					"description": "Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly"
-				},
+
 				"bracketPairColorization": {
 					"name": "Bracket Pair Colorization",
 					"description": "Give matching brackets an unique color"
@@ -884,6 +896,14 @@
 				"keepTabsOpen": {
 					"name": "Keep Tabs Open",
 					"description": "By default, opening a new tab closes the previously opened tab if it was not interacted with"
+				},
+				"autoSaveChanges": {
+					"name": "Auto Save Changes",
+					"description": "Automatically save changes to files after a short delay"
+				},
+				"bridgePredictions": {
+					"name": "bridge. Predictions",
+					"description": "Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly"
 				},
 				"automaticallyOpenTreeNodes": {
 					"name": "Automatically Open Tree Nodes",
@@ -1002,7 +1022,6 @@
 		}
 	},
 	"comMojang": {
-		"folderDropped": "Do you want to set this folder as your default com.mojang folder?",
 		"title": "Access to folder \"com.mojang\"",
 		"permissionRequest": "bridge. needs access to your \"com.mojang\" folder in order to compile projects to it.",
 		"status": {
@@ -1142,7 +1161,7 @@
 				"name": "Invalid selector argument {{$1}}"
 			},
 			"argumentNoSupport": {
-				"name": "Argument {{$1}} doesn not support {{$2}}",
+				"name": "Argument {{$1}} does not support {{$2}}",
 				"bothConditions": "Argument {{$1}} does not support multiple instances when not all negated"
 			},
 			"invalidSelectorArgumentValue": {

@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid'
+import { Signal } from '../../Common/Event/Signal'
 import { basename, extname } from '/@/utils/path'
 
 export type TUIStore = ReturnType<typeof createUIStore>
@@ -10,6 +11,7 @@ export function createUIStore() {
 		get UI() {
 			return UI
 		},
+		allLoaded: new Signal<void>(),
 		set(path: string[], component: () => Promise<unknown>) {
 			let current = UI
 

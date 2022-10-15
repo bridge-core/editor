@@ -194,8 +194,8 @@ export default {
 			return this.settingsState &&
 				this.settingsState.appearance &&
 				this.settingsState.appearance.font
-				? `${this.settingsState.appearance.font} !important`
-				: 'Roboto !important'
+				? `${this.settingsState.appearance.font}, system-ui !important`
+				: `Roboto, system-ui !important`
 		},
 	},
 	methods: {

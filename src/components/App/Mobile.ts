@@ -22,6 +22,6 @@ export class Mobile {
 	}
 
 	isCurrentDevice() {
-		return this.vuetify.breakpoint.mobile
+		return this.vuetify?.breakpoint?.mobile
 	}
 }

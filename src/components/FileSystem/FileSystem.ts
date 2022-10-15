@@ -136,6 +136,7 @@ export class FileSystem extends Signal<void> {
 		dirHandle = await dirHandle
 
 		const files: { name: string; path: string; kind: string }[] = []
+		const promises = []
 
 		for await (const handle of dirHandle.values()) {
 			if (handle.kind === 'file' && handle.name === '.DS_Store') continue
@@ -146,14 +147,17 @@ export class FileSystem extends Signal<void> {
 					kind: handle.kind,
 					path: `${path}/${handle.name}`,
 				})
-			else if (handle.kind === 'directory')
-				files.push(
-					...(await this.readFilesFromDir(
+			else if (handle.kind === 'directory') {
+				promises.push(
+					this.readFilesFromDir(
 						`${path}/${handle.name}`,
 						handle
-					))
+					).then((subFiles) => files.push(...subFiles))
 				)
+			}
 		}
+
+		await Promise.allSettled(promises)
 
 		return files
 	}

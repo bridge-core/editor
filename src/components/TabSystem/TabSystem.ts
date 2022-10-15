@@ -176,6 +176,38 @@ export class TabSystem extends MonacoHolder {
 		const tab = await this.getTab(fileHandle)
 		if (tab) this.close(tab)
 	}
+
+	/**
+	 * Select next tab
+	 */
+	async selectNextTab() {
+		const tabs = this.tabs.value
+		if (tabs.length === 0) return
+
+		const selectedTab = this.selectedTab
+		if (!selectedTab) return
+
+		const index = tabs.indexOf(selectedTab)
+		const nextTab = tabs[index + 1] ?? tabs[0]
+
+		await nextTab.select()
+	}
+	/**
+	 * Select previous tab
+	 */
+	async selectPreviousTab() {
+		const tabs = this.tabs.value
+		if (tabs.length === 0) return
+
+		const selectedTab = this.selectedTab
+		if (!selectedTab) return
+
+		const index = tabs.indexOf(selectedTab)
+		const previousTab = tabs[index - 1] ?? tabs[tabs.length - 1]
+
+		await previousTab.select()
+	}
+
 	async select(tab?: Tab) {
 		if (this.isActive !== !!tab) this.setActive(!!tab)
 

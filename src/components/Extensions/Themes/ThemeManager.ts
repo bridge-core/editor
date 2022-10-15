@@ -2,13 +2,11 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { App } from '/@/App'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { iterateDir } from '/@/utils/iterateDir'
 import { IDisposable } from '/@/types/disposable'
 import json5 from 'json5'
 import { deepMerge } from 'bridge-common-utils'
 import { bridgeDark, bridgeLight } from './Default'
 import { Theme } from './Theme'
-import { VirtualFileHandle } from '../../FileSystem/Virtual/FileHandle'
 import { AnyFileHandle } from '../../FileSystem/Types'
 
 const colorNames = [

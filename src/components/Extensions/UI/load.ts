@@ -56,6 +56,8 @@ export async function loadUIComponents(
 		undefined,
 		'ui'
 	)
+
+	uiStore.allLoaded.dispatch()
 }
 
 export async function loadUIComponent(

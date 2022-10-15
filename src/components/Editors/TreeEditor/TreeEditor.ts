@@ -73,6 +73,7 @@ export class TreeEditor {
 			this.valueSuggestions = []
 
 			this.parent.updateCache()
+			this.parent.fileDidChange()
 		})
 
 		App.getApp().then(async (app) => {

@@ -72,6 +72,7 @@
 		<!-- Context menu button for touch -->
 		<v-btn
 			v-if="pointerDevice === 'touch'"
+			v-ripple="false"
 			text
 			icon
 			small

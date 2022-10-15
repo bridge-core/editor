@@ -98,6 +98,7 @@ export class PackExplorer extends SidebarContent {
 						return packIndexer.service.getFileDiagnostics(filePath)
 					},
 					onHandleMoved: (opts) => this.onHandleMoved(opts),
+					onFilesAdded: (filePaths) => this.onFilesAdded(filePaths),
 				})
 			)
 			await wrapper.open()
@@ -143,6 +144,11 @@ export class PackExplorer extends SidebarContent {
 		if (movedHandle.kind === 'file')
 			await app.project.onMovedFile(fromPath, toPath)
 		else await app.project.onMovedFolder(fromPath, toPath)
+	}
+	async onFilesAdded(filePaths: string[]) {
+		const app = await App.getApp()
+
+		await app.project.updateFiles(filePaths)
 	}
 
 	onContentRightClick(event: MouseEvent): void {
@@ -285,6 +291,8 @@ export class PackExplorer extends SidebarContent {
 						startPath: app.project.projectPath,
 
 						onHandleMoved: (options) => this.onHandleMoved(options),
+						onFilesAdded: (filePaths) =>
+							this.onFilesAdded(filePaths),
 					})
 				},
 			},

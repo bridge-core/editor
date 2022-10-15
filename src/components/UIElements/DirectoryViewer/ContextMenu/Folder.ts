@@ -3,6 +3,7 @@ import { DownloadAction } from './Actions/Download'
 import { EditAction } from './Actions/Edit'
 import { CopyAction } from './Actions/Edit/Copy'
 import { FindInFolderAction } from './Actions/FindInFolder'
+import { ImportFileAction } from './Actions/ImportFile'
 import { RevealFilePathAction } from './Actions/RevealPath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
@@ -78,14 +79,16 @@ export async function showFolderContextMenu(
 				directoryWrapper.refresh()
 			},
 		},
+		ImportFileAction(directoryWrapper),
 		FindInFolderAction(directoryWrapper),
 		{ type: 'divider' },
 		await EditAction(directoryWrapper, options),
 	]).filter((action) => action !== null)
 
-	const additionalActions = await directoryWrapper.options.provideDirectoryContextMenu?.(
-		directoryWrapper
-	)
+	const additionalActions =
+		await directoryWrapper.options.provideDirectoryContextMenu?.(
+			directoryWrapper
+		)
 
 	showContextMenu(event, [
 		...(directoryWrapper.options.isReadOnly
