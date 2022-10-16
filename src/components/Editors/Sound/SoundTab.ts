@@ -24,7 +24,7 @@ export class SoundTab extends FileTab {
 		return 'mdi-file-music-outline'
 	}
 	get iconColor() {
-		return 'primary'
+		return 'resourcePack'
 	}
 
 	_save() {}
