@@ -70,10 +70,15 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 		this.updateIdb(clearDB)
 	}
-
+	/**
+	 * Acquire exclusive access to this directory
+	 */
 	async lockAccess() {
 		await globalMutex.lock(this.idbKey)
 	}
+	/**
+	 * Release exclusive access to this directory
+	 */
 	unlockAccess() {
 		globalMutex.unlock(this.idbKey)
 	}
@@ -134,6 +139,12 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		}
 	}
 
+	/**
+	 * @deprecated THIS IS NOT A PUBLIC API
+	 *
+	 * @param childName
+	 * @param lockMutex
+	 */
 	async deleteChild(childName: string, lockMutex = true) {
 		if (lockMutex) await this.lockAccess()
 
