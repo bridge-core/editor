@@ -1,61 +1,17 @@
-<p>Thanks to @Joelant05, @outercloudstudio, @MiemieMethod and @pascal541 for working on this release!</p>
 <h2>Features:</h2>
 <ul>
-<li>Made importing &quot;.bbmodel&quot; files significantly faster (https://github.com/bridge-core/editor/pull/638/commits/b267525c3c4d0e700d4a081c1c1640a911bad081)</li>
-<li>Made pack indexing significantly faster (https://github.com/bridge-core/editor/pull/638/commits/da3068861022a1f3bb42122f21079e8ee6bdfb98)</li>
-<li>Made Dash up to 2x faster (https://github.com/bridge-core/editor/pull/638/commits/a511e368cd9fa139f3219185fcc1ea76e91958fe)</li>
-<li>Made installation of files from extensions faster (https://github.com/bridge-core/editor/pull/638/commits/baaa77bc16499562f67551860a116f77b5bf5c04)</li>
-<li>New &quot;Import File&quot; action within the directory viewer (https://github.com/bridge-core/editor/pull/638/commits/b70d92988d05de580e414b25b731da06964c8a34)</li>
-<li>Update bridge.'s data to latest Minecraft Preview (https://github.com/bridge-core/editor/pull/638/commits/4bc6be4066874d149633d01bd9bbfc8d57c2785c)</li>
-<li>New &quot;project.getItemPreview&quot; API for our rich iframe integrations (https://github.com/bridge-core/editor/pull/638/commits/68b73bd0de54cbbfce0e1b21b750428e4192f948)</li>
-<li>Added a new setting to enable/disable &quot;com.mojang&quot; project loading (https://github.com/bridge-core/editor/pull/638/commits/8954dcdcf3878acfeefb562409776d569a838a6f)</li>
-<li>Always show available compiler plugin names (#636)</li>
-<li>Small redesign of our mobile app (#640)</li>
-<li>Added quick actions for switching tabs (#646)</li>
-<li>Added a new auto save setting (#645)</li>
+<li>Infer file path for imported sound files correctly (bridge-core/editor-packages#29)</li>
+<li>Ability to refresh folder within the  directory viewer (#659)</li>
 </ul>
 <h2>Changes:</h2>
 <ul>
-<li>Added more &quot;title&quot; fields to schemas (https://github.com/bridge-core/editor/pull/638/commits/93a74841ed7541d21bba67ec125a30ba0646d2a7)</li>
-<li>Changed custom geometry block preset to create full 16x16 block (#536)</li>
-<li>Formatted preset files (https://github.com/bridge-core/editor/pull/638/commits/4fbc39a475ea627061bfafb9376d9573cd246100)</li>
-<li>Added &quot;allowMultiple&quot; property to function schema (https://github.com/bridge-core/editor/pull/638/commits/2517ea6e09efb64c49a17c2fbebd73fd7d48fb39)</li>
-<li>Added currently unused schema for molang language (https://github.com/bridge-core/editor/pull/638/commits/85083bcbbdd1297a5a931fac3d3a3d56bbcb03f6)</li>
-<li>Updated &quot;zh_CN&quot; locales to v2.3.3 latest version (#613)</li>
-<li>Bumped Vite to latest version (https://github.com/bridge-core/editor/pull/638/commits/5d7f69bf1d6fca024c701b444aacdada41ec9aab)</li>
-<li>Better fallback font when Roboto fails to load (https://github.com/bridge-core/editor/pull/638/commits/4695753825ebbe87f0c842f48bb139713545d51a)</li>
-<li>Updated latest stable Minecraft version (https://github.com/bridge-core/editor/pull/638/commits/8f57f1559b530b14365695c1bd8fa3954a4f64fd)</li>
-<li>Introduced versioning for recipe schemas (#357)</li>
-<li>Updated Dutch translations (https://github.com/bridge-core/editor/pull/638/commits/5cb3df2c457d4fd0e81aa436bec3416c9f9ca3a3)</li>
-<li>Removed double prompt for setting up &quot;com.mojang&quot; output folder (#644)</li>
-<li>Only allow global installations on HomeView (#647)</li>
+<li>Added &quot;1.19.50&quot; format version (https://github.com/bridge-core/editor/pull/658/commits/ea61a76b33e0a908c638ef212ba8d07f86eb47bf)</li>
+<li>Optimized directory copying (#650)</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Support decimal values in block ticking component range (https://github.com/bridge-core/editor/pull/638/commits/0a269bb70366262fd4d452cbc9b003ea46affa95)</li>
-<li>Fixed subcommands not parsing selectors (https://github.com/bridge-core/editor/pull/638/commits/25174732b16a622b66c7ccea1299d490f4847ed2)</li>
-<li>Fixed validation of negated score data (https://github.com/bridge-core/editor/pull/638/commits/e7c42f77dbdebd0ce12fe4739bd828f450a4367d)</li>
-<li>Fixed &quot;allowMultiple&quot; arguments (https://github.com/bridge-core/editor/pull/638/commits/2608f0cae95336d4844ff66898bd6603433eb5dd)</li>
-<li>Fixed json data command argument not being reconstructed (https://github.com/bridge-core/editor/pull/638/commits/2608f0cae95336d4844ff66898bd6603433eb5dd)</li>
-<li>Fixed file downloads from tree editor (https://github.com/bridge-core/editor/pull/638/commits/77d4b372d78ae6a271ee2a75a1211c5d89fab327)</li>
-<li>Fixed &quot;tickingarea&quot; command argument radius with wrong type (https://github.com/bridge-core/editor/pull/638/commits/c9ca434a81b920d986c03c0551ff31ece90023b3)</li>
-<li>Allow usernames within in selectors (https://github.com/bridge-core/editor/pull/638/commits/8b981366759641002ced0ac01d799df9d301f0d4)</li>
-<li>Fixed clone command destination and end arguments (https://github.com/bridge-core/editor/pull/638/commits/353b9c6369dfb76514ff7011d10c3a712c9e94d5)</li>
-<li>Fixed &quot;[]&quot; with &quot;@&quot; in front not being properly constructed (https://github.com/bridge-core/editor/pull/638/commits/6474f5a8593e8a9391323fdf8a8ab20badb560ef)</li>
-<li>Fixed issue with importing UI components from other UI components (#595)</li>
-<li>Fixed error when sometimes opening directory viewer context menu on touch devices (https://github.com/bridge-core/editor/pull/638/commits/84d474def378f1596f263a24d38b394aa5573991)</li>
-<li>Fixed &quot;getProjectAuthors&quot; extension API (https://github.com/bridge-core/editor/pull/638/commits/ef01614a064502b40ac824ac62667a07ef09b64f)</li>
-<li>Fixed issue where data sometimes wasn't properly refreshed after an update (#620)
-closes</li>
-<li>Fixed error upon choosing texture location for &quot;.bbmodel&quot; file (#615)</li>
-<li>Fixed &quot;.bbmodel&quot; file using incorrect identifier for models (https://github.com/bridge-core/editor/pull/638/commits/933c51cc51b998b16a783ca1f76c8bb01c2128df)</li>
-<li>Removed unused imports (https://github.com/bridge-core/editor/pull/638/commits/464f0bc958392d6d9a88d8034a370a71a53fbc30)</li>
-<li>Await &quot;com.mojang&quot; folder being available before creating dash service (https://github.com/bridge-core/editor/pull/638/commits/cc13984781f1cbd52b9fea6ae7f75893dbf97a73)</li>
-<li>Remove &quot;generated_with&quot; from manifest if disabled (https://github.com/bridge-core/editor/pull/638/commits/5023d2f783d192293175d3c8181d481f409ba3a6)</li>
-<li>Fixed preset window icon colors (#622)</li>
-<li>Fixed file import folder name (#634)</li>
-<li>Fixed virtual project activation</li>
-<li>Fixed error upon opening &quot;New File&quot; window (#637)</li>
-<li>Load all projects button now also works for &quot;com.mojang&quot; projects (#641)</li>
-<li>Fixed infinite loading after first setting up &quot;com.mojang&quot; folder (https://github.com/bridge-core/editor/pull/638/commits/37360174a7fdaadd5e28b3021cf5c845c7400fc4)</li>
+<li>Fixed wrong file extension being appended upon exporting project on Android (#655)</li>
+<li>Fixed wrong icon color for ImageTab (#657)</li>
+<li>Removed rounded window corners on mobile (#652)</li>
+<li>Fixed project exports on mobile devices (#661)</li>
 </ul>
