@@ -2,7 +2,7 @@
 import { Signal } from '../Common/Event/Signal'
 import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
-import { iterateDir } from '/@/utils/iterateDir'
+import { iterateDirParallel } from '/@/utils/iterateDir'
 import { join, dirname, basename } from '/@/utils/path'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
 import { getStorageDirectory } from '/@/utils/getStorageDirectory'
@@ -269,7 +269,7 @@ export class FileSystem extends Signal<void> {
 			create: false,
 		})
 
-		await iterateDir(originHandle, async (fileHandle, filePath) => {
+		await iterateDirParallel(originHandle, async (fileHandle, filePath) => {
 			await this.copyFileHandle(
 				fileHandle,
 				await this.getFileHandle(join(destPath, filePath), true)
@@ -282,7 +282,7 @@ export class FileSystem extends Signal<void> {
 	) {
 		const destFs = new FileSystem(destHandle)
 
-		await iterateDir(originHandle, async (fileHandle, filePath) => {
+		await iterateDirParallel(originHandle, async (fileHandle, filePath) => {
 			await this.copyFileHandle(
 				fileHandle,
 				await destFs.getFileHandle(filePath, true)
