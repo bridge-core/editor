@@ -100,10 +100,6 @@ export abstract class Project {
 	}
 	get compilerService() {
 		if (this._compilerService === undefined) {
-			console.log(
-				this._compilerService,
-				this._compilerService === undefined
-			)
 			throw new Error(
 				`Trying to access compilerService before it was setup. Make sure to await compilerReady.fired before accessing it.`
 			)

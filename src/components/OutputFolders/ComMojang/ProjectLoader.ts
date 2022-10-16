@@ -1,5 +1,6 @@
 import { compareVersions } from 'bridge-common-utils'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
+import { settingsState } from '../../Windows/Settings/SettingsState'
 import { App } from '/@/App'
 import { loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
 
@@ -33,7 +34,11 @@ export class ComMojangProjectLoader {
 	}
 
 	async loadProjects() {
-		if (this.cachedProjects) return this.cachedProjects
+		if (!(settingsState?.projects?.loadComMojangProjects ?? true)) {
+			this.clearCache()
+			return []
+		}
+		if (this.cachedProjects !== null) return this.cachedProjects
 
 		if (
 			!this.comMojang.setup.hasFired ||

@@ -5,7 +5,6 @@ import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
-import { Project } from '/@/components/Projects/Project/Project'
 
 export const comMojangKey = 'comMojangDirectory'
 
@@ -17,9 +16,13 @@ export class ComMojang extends Signal<void> {
 	public readonly setup = new Signal<void>()
 	protected _hasComMojang = false
 	protected _permissionDenied = false
+	protected _hasComMojangHandle = false
 
 	get hasComMojang() {
 		return this._hasComMojang
+	}
+	get hasComMojangHandle() {
+		return this._hasComMojangHandle
 	}
 	get status() {
 		return {
@@ -37,6 +40,8 @@ export class ComMojang extends Signal<void> {
 		const directoryHandle = await get<AnyDirectoryHandle | undefined>(
 			comMojangKey
 		)
+
+		this._hasComMojangHandle = directoryHandle !== undefined
 
 		if (directoryHandle) {
 			await this.requestPermissions(directoryHandle).catch(async () => {
@@ -88,20 +93,15 @@ export class ComMojang extends Signal<void> {
 		set(comMojangKey, directoryHandle)
 		await this.requestPermissions(directoryHandle)
 		if (this._hasComMojang) this.setup.dispatch()
+
+		this._hasComMojangHandle = true
+		this.dispatch()
 	}
 
 	async handleComMojangDrop(directoryHandle: AnyDirectoryHandle) {
-		const confirmWindow = new ConfirmationWindow({
-			description: 'comMojang.folderDropped',
-			confirmText: 'general.yes',
-			cancelText: 'general.no',
-		})
-
 		// User wants to set default com.mojang folder
-		if (await confirmWindow.fired) {
-			await this.set(directoryHandle)
-			await this.app.projectManager.recompileAll()
-		}
+		await this.set(directoryHandle)
+		if (this._hasComMojang) await this.app.projectManager.recompileAll()
 	}
 
 	async unlink() {

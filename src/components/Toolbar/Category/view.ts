@@ -3,6 +3,7 @@ import { ToolbarCategory } from '../ToolbarCategory'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { ViewCompilerOutput } from '../../UIElements/DirectoryViewer/ContextMenu/Actions/ViewCompilerOutput'
 import { Divider } from '../Divider'
+import { platform } from '/@/utils/os'
 
 export function setupViewCategory(app: App) {
 	const view = new ToolbarCategory('mdi-eye-outline', 'toolbar.view.name')
@@ -26,6 +27,34 @@ export function setupViewCategory(app: App) {
 			keyBinding: 'Ctrl + Shift + F',
 			onTrigger: () => {
 				App.sidebar.elements.fileSearch.click()
+			},
+		})
+	)
+
+	view.addItem(new Divider())
+
+	view.addItem(
+		app.actionManager.create({
+			icon: 'mdi-chevron-right',
+			name: 'toolbar.view.nextTab.name',
+			description: 'toolbar.view.nextTab.description',
+			keyBinding: platform() === 'darwin' ? 'Meta + Tab' : 'Ctrl + Tab',
+			onTrigger: () => {
+				app.tabSystem?.selectNextTab()
+			},
+		})
+	)
+	view.addItem(
+		app.actionManager.create({
+			icon: 'mdi-chevron-left',
+			name: 'toolbar.view.previousTab.name',
+			description: 'toolbar.view.previousTab.description',
+			keyBinding:
+				platform() === 'darwin'
+					? 'Meta + Shift + Tab'
+					: 'Ctrl + Shift + Tab',
+			onTrigger: () => {
+				app.tabSystem?.selectPreviousTab()
 			},
 		})
 	)

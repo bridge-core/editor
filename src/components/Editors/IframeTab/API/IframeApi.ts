@@ -12,6 +12,7 @@ import { ReadTextFileRequest } from './Requests/FileSystem/ReadTextFile'
 import { IframeTab } from '../IframeTab'
 import { OpenFileEvent } from './Events/Tab/OpenFile'
 import { openedFileReferenceName } from './Requests/FileSystem/ResolveFileReference'
+import { GetItemPreviewRequest } from './Requests/Project/GetItemPreview'
 
 export class IframeApi {
 	didSetup = false
@@ -24,9 +25,13 @@ export class IframeApi {
 		new OpenFileEvent(this),
 	]
 	protected requests: GenericRequest<unknown, unknown>[] = [
+		// FileSystem
 		new ReadFileRequest(this),
 		new ReadTextFileRequest(this),
 		new WriteFileRequest(this),
+
+		// Project
+		new GetItemPreviewRequest(this),
 	]
 
 	constructor(protected tab: IframeTab, protected iframe: HTMLIFrameElement) {

@@ -64,6 +64,12 @@ export class ExtensionViewer {
 	}
 	//#endregion
 
+	get compilerPlugins() {
+		const ext = this.extension
+		if (ext) return Object.keys(ext.compilerPlugins ?? {})
+
+		return Object.keys(this.config?.compiler?.plugins ?? {})
+	}
 	get isInstalled() {
 		return this._isInstalled
 	}
@@ -113,8 +119,12 @@ export class ExtensionViewer {
 	}
 
 	async download(isGlobalInstall?: boolean) {
+		const app = await App.getApp()
 		if (isGlobalInstall !== undefined)
 			return this.downloadExtension(isGlobalInstall)
+
+		// If the user is on the HomeView, only allow global extension installations
+		if (app.isNoProjectSelected) return this.downloadExtension(true)
 
 		const installLocationChoiceWindow = new InformedChoiceWindow(
 			'windows.pluginInstallLocation.title'

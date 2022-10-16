@@ -901,7 +901,6 @@
 		}
 	},
 	"comMojang": {
-		"folderDropped": "このフォルダーをデフォルトの com.mojang フォルダーとして設定しますか？",
 		"title": "com.mojang フォルダーへのアクセス",
 		"permissionRequest": "プロジェクトをコンパイルするには com.mojang フォルダーにアクセスする必要があります",
 		"status": {

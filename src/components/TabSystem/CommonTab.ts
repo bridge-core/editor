@@ -108,8 +108,8 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	get isSelected(): boolean {
 		return this.parent.selectedTab === this
 	}
-	select() {
-		this.parent.select(this)
+	async select() {
+		await this.parent.select(this)
 		return this
 	}
 	/**

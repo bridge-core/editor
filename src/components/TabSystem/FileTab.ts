@@ -10,8 +10,26 @@ import {
 } from '../FileSystem/Polyfill'
 import { download } from '../FileSystem/saveOrDownload'
 import { writableToUint8Array } from '/@/utils/file/writableToUint8Array'
+import { settingsState } from '../Windows/Settings/SettingsState'
+import { debounce } from 'lodash-es'
 
 export type TReadOnlyMode = 'forced' | 'manual' | 'off'
+
+const shouldAutoSave = async () => {
+	const app = await App.getApp()
+
+	// Check that either the auto save setting is enabled or fallback to activating it by default on mobile
+	return (
+		settingsState?.editor?.autoSaveChanges ?? app.mobile.isCurrentDevice()
+	)
+}
+
+const throttledFileDidChange = debounce<(tab: FileTab) => Promise<void> | void>(
+	async (tab) => {
+		tab.tryAutoSave()
+	},
+	3000 // 3s delay for fileDidChange
+)
 
 export abstract class FileTab extends Tab {
 	public isForeignFile = false
@@ -72,6 +90,11 @@ export abstract class FileTab extends Tab {
 
 		await super.setup()
 	}
+	async onDeactivate() {
+		await this.tryAutoSave()
+
+		super.onDeactivate()
+	}
 
 	get name() {
 		return this.fileHandle.name
@@ -104,6 +127,24 @@ export abstract class FileTab extends Tab {
 	}
 
 	abstract setReadOnly(readonly: TReadOnlyMode): Promise<void> | void
+
+	/**
+	 * **Important:** This function needs to be called when appropriate by the tabs implementing this class
+	 */
+	fileDidChange() {
+		throttledFileDidChange(this)
+	}
+
+	// Logic for auto-saving
+	async tryAutoSave() {
+		// File handle has no parent context -> Auto-saving would have undesirable consequences such as constant file downloads
+		if (this.fileHandleWithoutParentContext()) return
+
+		// Check whether we should auto save and that the file has been changed
+		if ((await shouldAutoSave()) && this.isUnsaved) {
+			await this.save()
+		}
+	}
 
 	async save() {
 		if (this.isSaving) return
@@ -153,12 +194,21 @@ export abstract class FileTab extends Tab {
 		if (!this.isForeignFile) this.parent.openedFiles.add(this.getPath())
 	}
 
-	protected async writeFile(value: BufferSource | Blob | string) {
-		// Current file handle is a virtual file without parent
-		if (
+	/**
+	 * Check whether the given file handle has no parent context -> Save by "Save As" or file download
+	 * @param fileHandle
+	 * @returns boolean
+	 */
+	protected fileHandleWithoutParentContext() {
+		return (
 			this.fileHandle instanceof VirtualFileHandle &&
 			!this.fileHandle.hasParentContext
-		) {
+		)
+	}
+
+	protected async writeFile(value: BufferSource | Blob | string) {
+		// Current file handle is a virtual file without parent
+		if (this.fileHandleWithoutParentContext()) {
 			// Download the file if the user is using a file system polyfill
 			if (isUsingFileSystemPolyfill.value) {
 				download(

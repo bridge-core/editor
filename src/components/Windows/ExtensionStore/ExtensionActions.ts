@@ -1,5 +1,6 @@
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { ExtensionViewer } from './ExtensionViewer'
+import { App } from '/@/App'
 
 export const extensionActions = (extension: ExtensionViewer) => [
 	new SimpleAction({
@@ -20,7 +21,10 @@ export const extensionActions = (extension: ExtensionViewer) => [
 			extension.closeActionMenu()
 		},
 	}),
-	!extension.isInstalledLocallyAndGlobally
+	// Only show "Install Local"/"Install Global" action if the extension isn't installed locally and globally yet
+	// ...and if the user is not currently on the "Home View"
+	!extension.isInstalledLocallyAndGlobally &&
+	!App.instance.isNoProjectSelected
 		? new SimpleAction({
 				name: `windows.extensionStore.${
 					extension.isGlobal ? 'installLocal' : 'installGlobal'

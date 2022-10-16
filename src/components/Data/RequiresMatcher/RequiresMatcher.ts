@@ -67,10 +67,11 @@ export class RequiresMatcher {
 		const config = this.app.project.config.get()
 
 		this.experimentalGameplay = config.experimentalGameplay ?? {}
+
+		this.latestFormatVersion = latestFormatVersion
 		this.projectTargetVersion =
 			config.targetVersion ?? this.latestFormatVersion
 
-		this.latestFormatVersion = latestFormatVersion
 		this.bpManifest = bpManifest
 		this.isSetup = true
 	}
@@ -125,19 +126,33 @@ export class RequiresMatcher {
 		const dependencies: string[] | undefined =
 			this.bpManifest?.dependencies?.map((dep: any) => {
 				if (dep?.module_name) {
-					return dep.module_name
+					// Convert old module names to new naming convention
+					switch (dep.module_name) {
+						case 'mojang-minecraft':
+							return '@minecraft/server'
+						case 'mojang-gametest':
+							return '@minecraft/server-gametest'
+						case 'mojang-minecraft-server-ui':
+							return '@minecraft/server-ui'
+						case 'mojang-minecraft-server-admin':
+							return '@minecraft/server-admin'
+						case 'mojang-net':
+							return '@minecraft/server-net'
+						default:
+							return dep.module_name
+					}
 				} else {
 					switch (dep.uuid ?? '') {
 						case 'b26a4d4c-afdf-4690-88f8-931846312678':
-							return 'mojang-minecraft'
+							return '@minecraft/server'
 						case '6f4b6893-1bb6-42fd-b458-7fa3d0c89616':
-							return 'mojang-gametest'
+							return '@minecraft/server-gametest'
 						case '2bd50a27-ab5f-4f40-a596-3641627c635e':
-							return 'mojang-minecraft-ui'
+							return '@minecraft/server-ui'
 						case '53d7f2bf-bf9c-49c4-ad1f-7c803d947920':
-							return 'mojang-minecraft-server-admin'
+							return '@minecraft/server-admin'
 						case '777b1798-13a6-401c-9cba-0cf17e31a81b':
-							return 'mojang-net'
+							return '@minecraft/server-net'
 						default:
 							return ''
 					}

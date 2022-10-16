@@ -27,7 +27,10 @@
 		"search": "Zoeken...",
 		"confirmOverwriteFile": "Er bestaat al een bestand met deze naam. Wil je het overschrijven?",
 		"confirmOverwriteFolder": "Er bestaat al een map met deze naam. Wil je het overschrijven?",
-		"fileSystemPolyfill": "Vanwege de browser die u gebruikt, moet u uw projecten downloaden om uw voortgang daadwerkelijk op te slaan. Dit is niet nodig als u Chrome of Edge gebruikt!",
+		"fileSystemPolyfill": {
+			"name": "Bewaar uw projecten!",
+			"description": "Vanwege de browser die u gebruikt, moet u uw projecten downloaden om uw voortgang daadwerkelijk op te slaan. Dit is niet nodig als u Chrome of Edge gebruikt!"
+		},
 		"successfulExport": {
 			"title": "Exporteren succesvol",
 			"description": "U kunt het geëxporteerde pakket hier vinden"
@@ -73,6 +76,7 @@
 		"featureRule": "Feature Rule",
 		"functionTick": "Function Tick",
 		"function": "Function",
+		"generatorScript": "Generator Script",
 		"item": "Item",
 		"lootTable": "Loot Table",
 		"recipe": "Recipe",
@@ -118,9 +122,18 @@
 		"worldManifest": "World Manifest"
 	},
 	"actions": {
+		"name": "Acties",
 		"download": {
 			"name": "Downloaden",
 			"description": "Download dit bestand of deze map"
+		},
+		"viewConnectedFiles": {
+			"name": "Bekijk Verbonden Bestanden",
+			"description": "Bekijk alle bestanden die aan dit bestand zijn verbonden"
+		},
+		"viewExtensionsFolder": {
+			"name": "Bekijk Extensie Map",
+			"description": "Bekijk de map waarin bridge. globale extensies opslaat"
 		},
 		"open": {
 			"name": "Open",
@@ -154,8 +167,9 @@
 			"description": "Dupliceer een bestand"
 		},
 		"viewCompilerOutput": {
-			"name": "Uitvoer van compiler bekijken",
-			"description": "Bekijk de huidige compiler-output voor dit bestand",
+			"name": "Compiler Uitvoer",
+			"view": "Uitvoer van compiler bekijken",
+			"description": "Bekijk de huidige compiler output voor dit bestand",
 			"fileMissing": "Het lijkt erop dat dit bestand nog niet is gecompileerd."
 		},
 		"revealPath": {
@@ -165,6 +179,9 @@
 		"createFile": {
 			"name": "Bestand Maken",
 			"description": "Een nieuw bestand maken"
+		},
+		"importFile": {
+			"name": "Importeer Bestand"
 		},
 		"createFolder": {
 			"name": "Map Maken",
@@ -238,6 +255,10 @@
 			"name": "Documentatie",
 			"description": "Opent de Minecraft Add-On documentatie"
 		},
+		"minecraftDocs": {
+			"name": "Open Minecraft Documentatie",
+			"description": "Opent de Minecraft Bedrock Add-On documentatie"
+		},
 		"releases": {
 			"name": "Releases",
 			"description": "Bekijk de nieuwste bridge. releases"
@@ -274,7 +295,10 @@
 			"name": "Verplaats naar gesplitst scherm",
 			"description": "Opent een gesplitste schermweergave en verplaatst dit tabblad ernaar"
 		},
-		"closeTab": { "name": "Sluit Tab", "description": "Sluit dit tabblad" },
+		"closeTab": {
+			"name": "Sluit Tab",
+			"description": "Sluit dit tabblad"
+		},
 		"closeAll": {
 			"name": "Sluit Alles",
 			"description": "Sluit alle tabbladen"
@@ -305,8 +329,12 @@
 				"description": "Lokale extensies zijn alleen toegankelijk binnen de projecten waaraan u ze toevoegt"
 			}
 		},
-		"toObject": { "name": "Transformeren naar Object" },
-		"toArray": { "name": "Transformeren naar Reeks" },
+		"toObject": {
+			"name": "Transformeren naar Object"
+		},
+		"toArray": {
+			"name": "Transformeren naar Reeks"
+		},
 		"documentationLookup": {
 			"name": "Documentatie bekijken",
 			"noDocumentation": "Geen documentatie beschikbaar voor"
@@ -351,16 +379,27 @@
 			"name": "Alle Exemplaren Wijzigen",
 			"description": "Alle exemplaren van de geselecteerde tekst wijzigen"
 		},
-		"tgaMaskToggle": { "name": "Alfamasker tonen/verbergen" },
+		"tgaMaskToggle": {
+			"name": "Alfamasker tonen/verbergen"
+		},
 		"recompileChanges": {
 			"name": "Wijzigingen Compileren",
 			"description": "Compileer alle bestanden die zijn bewerkt zonder bridge. Hiermee worden geen wijzigingen gecompileerd die in de editor zelf zijn gemaakt na het uitschakelen van de kijkmodus"
 		}
 	},
 	"toolbar": {
-		"project": { "name": "Project" },
-		"file": { "name": "Bestand", "preferences": { "name": "Voorkeuren" } },
-		"edit": { "name": "Bewerk" },
+		"project": {
+			"name": "Project"
+		},
+		"file": {
+			"name": "Bestand",
+			"preferences": {
+				"name": "Voorkeuren"
+			}
+		},
+		"edit": {
+			"name": "Bewerk"
+		},
 		"view": {
 			"name": "Bekijk",
 			"togglePackExplorer": {
@@ -372,13 +411,21 @@
 				"description": "Opens a new Find & Replace tab"
 			}
 		},
-		"tools": { "name": "Hulpmiddelen" },
-		"help": { "name": "Help" }
+		"tools": {
+			"name": "Hulpmiddelen"
+		},
+		"help": {
+			"name": "Help"
+		}
 	},
 	"packExplorer": {
 		"name": "Pakketverkenner",
 		"searchFiles": "Zoek bestanden...",
 		"categories": "Categorieën",
+		"move": {
+			"toLocal": "Verplaats naar Lokale Map",
+			"toBridgeFolder": "Verplaats naar bridge. Map"
+		},
 		"refresh": {
 			"name": "Vernieuw Project",
 			"description": "Haal het huidige project op voor nieuw toegevoegde bestanden"
@@ -400,7 +447,9 @@
 			"name": "Projectconfiguratie Openen",
 			"missing": "Het lijkt erop dat dit project geen config.json bestand heeft. Elk project heeft een projectconfiguratie nodig om correct te kunnen werken."
 		},
-		"openProjectFolder": { "name": "Projectmap Openen" },
+		"openProjectFolder": {
+			"name": "Projectmap Openen"
+		},
 		"exportAs": {
 			"name": "Exporteren als",
 			"mcaddon": ".mcaddon",
@@ -444,14 +493,26 @@
 				"name": "Standaardconfiguratie",
 				"description": "Voer bridge.'s compiler uit met de standaard compilerconfiguratie die deel uitmaakt van het \"config.json\" bestand van uw project."
 			},
-			"actions": { "runLastProfile": "Laatste Profiel Uitvoeren" }
+			"actions": {
+				"runLastProfile": "Laatste Profiel Uitvoeren"
+			}
 		},
-		"extensions": { "name": "Extensies" },
+		"extensions": {
+			"name": "Extensies"
+		},
 		"notifications": {
-			"discord": { "message": "Discord Server" },
-			"gettingStarted": { "message": "Beginnen" },
-			"installApp": { "message": "Installeer App" },
-			"updateAvailable": { "message": "Update Beschikbaar" },
+			"discord": {
+				"message": "Discord Server"
+			},
+			"gettingStarted": {
+				"message": "Beginnen"
+			},
+			"installApp": {
+				"message": "Installeer App"
+			},
+			"updateAvailable": {
+				"message": "Update Beschikbaar"
+			},
 			"updateExtensions": "Werk alle extensies bij"
 		}
 	},
@@ -494,8 +555,12 @@
 		}
 	},
 	"windows": {
-		"sidebar": { "disabledItem": "Dit item is uitgeschakeld" },
-		"changelogWindow": { "title": "Wat is er nieuw?" },
+		"sidebar": {
+			"disabledItem": "Dit item is uitgeschakeld"
+		},
+		"changelogWindow": {
+			"title": "Wat is er nieuw?"
+		},
 		"openFile": {
 			"title": "Openen",
 			"search": "Zoek bestand...",
@@ -641,7 +706,9 @@
 			"wrongFileType": "Project moet een .brproject bestand zijn",
 			"addPack": "Pakket Toevoegen"
 		},
-		"filePath": { "title": "Kies Bestandspad" },
+		"filePath": {
+			"title": "Kies Bestandspad"
+		},
 		"lootSimulatorSettings": {
 			"title": "Simulatorinstellingen",
 			"repeat": {
@@ -669,6 +736,7 @@
 		"settings": {
 			"title": "Instellingen",
 			"searchSettings": "Zoek instellingen...",
+			"reloadRequired": "U moet bridge. opnieuw laden om de wijzigingen in de instellingen toe te passen.",
 			"sidebar": {
 				"name": "Zijbalk",
 				"sidebarRight": {
@@ -773,7 +841,9 @@
 					"description": "Negeer de app-gegevens in de cache en download in plaats daarvan de nieuwste gegevens"
 				}
 			},
-			"actions": { "name": "Acties" },
+			"actions": {
+				"name": "Acties"
+			},
 			"projects": {
 				"name": "Projecten",
 				"defaultAuthor": {
@@ -814,6 +884,10 @@
 					"name": "Compact tabbladontwerp",
 					"description": "Toon tabbladen in het tabbladsysteem op een compactere manier"
 				},
+				"keepTabsOpen": {
+					"name": "Houd Tabbladen Open",
+					"description": "Als u een nieuw tabblad opent, wordt standaard het eerder geopende tabblad gesloten als er geen interactie mee is geweest"
+				},
 				"automaticallyOpenTreeNodes": {
 					"name": "Automatisch Tree Nodes Openen",
 					"description": "Binnen in bridge.'s tree editor, open automatisch nodes wanneer je ze selecteert"
@@ -821,6 +895,14 @@
 				"dragAndDropTreeNodes": {
 					"name": "Tree Nodes Slepen en Neerzetten",
 					"description": "Schakel tussen slepen & neerzetten voor tree nodes in bridge.'s tree editor"
+				},
+				"showArrayIndices": {
+					"name": "Array Indexen Weergeven",
+					"description": "Toon indexen voor array elementen in de tree editor van bridge."
+				},
+				"hideBracketsWithinTreeEditor": {
+					"name": "Verberg Haakjes",
+					"description": "Verberg haakjes in de tree editor van bridge."
 				}
 			}
 		},
@@ -834,6 +916,8 @@
 			"deleteExtension": "Extensie Verwijderen",
 			"activateExtension": "Extensie Activeren",
 			"deactivateExtension": "Extensie Deactiveren",
+			"installLocal": "Lokaal Installeren",
+			"installGlobal": "Globaal Installeren",
 			"offlineError": "Kan extensies niet laden. Controleer of uw apparaat een actieve netwerkverbinding heeft.",
 			"incompatibleVersion": "Incompatibele bridge. versie",
 			"compilerPluginDownload": {
@@ -843,7 +927,9 @@
 				"openConfig": "Configuratie Openen"
 			}
 		},
-		"pluginInstallLocation": { "title": "Kies Installatielocatie" },
+		"pluginInstallLocation": {
+			"title": "Kies Installatielocatie"
+		},
 		"unsavedFile": {
 			"description": "Wilt u uw wijzigingen in dit bestand opslaan voordat u het sluit?",
 			"save": "Opslaan & Afsluiten"
@@ -857,7 +943,11 @@
 			"title": "Ongeldige JSON",
 			"description": "bridge.'s tree editor kan geen bestanden openen die ongeldige JSON bevatten. U kunt binnen de instellingen overschakelen naar het editortype \"Onbewerkte Tekst\" om het probleem handmatig op te lossen."
 		},
-		"loadingWindow": { "titles": { "loading": "Bezig met laden..." } },
+		"loadingWindow": {
+			"titles": {
+				"loading": "Bezig met laden..."
+			}
+		},
 		"upgradeFs": {
 			"title": "Bestandssysteem Upgraden?",
 			"description": "Uw browser ondersteunt nu het rechtstreeks opslaan van bestanden op uw computer. Wil je nu upgraden?"
@@ -915,7 +1005,6 @@
 		}
 	},
 	"comMojang": {
-		"folderDropped": "Wilt u deze map instellen als uw standaard com.mojang map?",
 		"title": "Toegang tot map \"com.mojang\"",
 		"permissionRequest": "bridge. heeft toegang nodig tot uw \"com.mojang\" map om er projecten naar te kunnen compileren.",
 		"status": {
@@ -927,6 +1016,7 @@
 	},
 	"findAndReplace": {
 		"name": "Zoek & Vervang",
+		"findOnly": "Vinden",
 		"search": "Zoeken",
 		"replace": "Vervangen",
 		"replaceAll": "Vervang Alles",
@@ -1019,6 +1109,54 @@
 			"addValue": "Waarde Toevoegen",
 			"forceValue": "Forceer Waarde",
 			"edit": "Bewerk"
+		},
+		"langValidation": {
+			"noValue": {
+				"errorMessage": "Aan taal reeksen moet een waarde worden toegewezen",
+				"quickFix": "Voeg een waarde toe aan deze reeks"
+			}
+		}
+	},
+	"validation": {
+		"mcfunction": {
+			"invalidArgument": {
+				"name": "Argument {{$1}} is hier niet geldig"
+			},
+			"unknownCommand": {
+				"name": "Commando {{$1}} bestaat niet"
+			},
+			"missingArguments": {
+				"name": "Commando {{$1}} vereist meer argumenten"
+			},
+			"unknownSchema": {
+				"name": "Onbekende schemawaarde {{$1}}"
+			},
+			"unknownSchemaInArgument": {
+				"name": "Onbekende schemawaarde {{$1}} voor argument {{$2}}"
+			},
+			"invalidSelectorBase": {
+				"name": "Ongeldige doel selector basis {{$1}}"
+			},
+			"unexpectedSymbol": {
+				"name": "Onverwacht symbool {{$1}}. Verwachtte {{$2}}"
+			},
+			"invalidSelectorArgument": {
+				"name": "Ongeldig selectorargument {{$1}}"
+			},
+			"argumentNoSupport": {
+				"name": "Argument {{$1}} ondersteunt {{$2}} niet",
+				"bothConditions": "Argument {{$1}} ondersteunt niet meerdere instanties als ze niet allemaal worden genegeerd"
+			},
+			"invalidSelectorArgumentValue": {
+				"name": "Ongeldige selector argument waarde {{$1}} voor argument {{$2}}"
+			},
+			"conditions": {
+				"negation": "weigering",
+				"multipleInstances": "meerdere instanties"
+			},
+			"tokens": {
+				"selectorArgument": "selector argument"
+			}
 		}
 	}
 }
