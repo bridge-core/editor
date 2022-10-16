@@ -38,7 +38,7 @@
 				clipped
 				stateless
 				color="expandedSidebar"
-				class="rounded-l-lg"
+				:class="isFullScreenOrMobile ? null : 'rounded-l-lg'"
 				style="visibility: visible; transform: translateX(0)"
 			>
 				<MacWindowControls
