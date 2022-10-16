@@ -4,6 +4,7 @@ import { EditAction } from './Actions/Edit'
 import { CopyAction } from './Actions/Edit/Copy'
 import { FindInFolderAction } from './Actions/FindInFolder'
 import { ImportFileAction } from './Actions/ImportFile'
+import { RefreshAction } from './Actions/Refresh'
 import { RevealFilePathAction } from './Actions/RevealPath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
@@ -98,6 +99,7 @@ export async function showFolderContextMenu(
 			  ]
 			: mutatingActions),
 		{ type: 'divider' },
+		RefreshAction(directoryWrapper),
 		DownloadAction(directoryWrapper),
 		RevealFilePathAction(directoryWrapper),
 		// 	{
