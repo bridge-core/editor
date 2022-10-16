@@ -1,11 +1,16 @@
 import { Mutex } from './Mutex'
 
 /**
- * An instance of the Mutex class ensures that calls to specific APIs happen sequentially instead of in parallel.
+ * A global mutex manages multiple different, keyed mutexes.
  */
 export class GlobalMutex {
 	protected mutexMap = new Map<string, Mutex>()
 
+	/**
+	 * Lock the mutex with the given key. Creates the mutex if it does not exist.
+	 *
+	 * @param key Mutex to lock
+	 */
 	async lock(key: string) {
 		let mutex = this.mutexMap.get(key)
 		if (!mutex) {
@@ -16,6 +21,12 @@ export class GlobalMutex {
 		await mutex.lock()
 	}
 
+	/**
+	 * Unlock the mutex with the given key.
+	 *
+	 * @throws If the mutex does not exist.
+	 * @param key
+	 */
 	unlock(key: string) {
 		const mutex = this.mutexMap.get(key)
 		if (!mutex) {
