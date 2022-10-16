@@ -43,21 +43,24 @@ export async function saveOrDownload(
 	}
 }
 
-const knownZipExtensions = new Set([
+const knownExtensions = new Set([
 	'.mcpack',
 	'.mcaddon',
 	'.mcworld',
 	'.mctemplate',
 	'.brproject',
+
+	'.mcfunction',
+	'.lang',
+	'.material',
 ])
-const knownTxtExtensions = new Set(['.mcfunction', '.lang', '.material'])
 
 export function download(fileName: string, fileData: Uint8Array) {
 	const extension = extname(fileName)
 	let type: string | undefined = undefined
 
-	if (knownZipExtensions.has(extension)) type = 'application/zip'
-	else if (knownTxtExtensions.has(extension)) type = 'text/plain'
+	// Maintain the extension from the fileName, if the file that is being downloaded has a known extension
+	if (knownExtensions.has(extension)) type = 'application/file-export'
 
 	const url = URL.createObjectURL(new Blob([fileData], { type }))
 	const a = document.createElement('a')
