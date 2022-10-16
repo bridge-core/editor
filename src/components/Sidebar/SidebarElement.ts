@@ -12,6 +12,10 @@ export interface ISidebar {
 	displayName?: string
 	group?: string
 	isVisible?: boolean | (() => boolean)
+	/**
+	 * Change the default visibility setting of the sidebar element
+	 */
+	defaultVisibility?: boolean
 	component?: Component
 	sidebarContent?: SidebarContent
 	disabled?: () => boolean
@@ -83,6 +87,9 @@ export class SidebarElement {
 			return this.config.isVisible()
 
 		return this.config.isVisible ?? !!this.isVisibleSetting
+	}
+	get defaultVisibility() {
+		return this.config.defaultVisibility ?? true
 	}
 	get icon() {
 		return this.config.icon

@@ -12,7 +12,7 @@ export async function saveOrDownload(
 	fileSystem: FileSystem
 ) {
 	const notification = createNotification({
-		icon: 'mdi-export',
+		icon: 'mdi-download',
 		color: 'success',
 		textColor: 'white',
 		message: 'general.successfulExport.title',
