@@ -4,7 +4,7 @@ import { InformationWindow } from '../Windows/Common/Information/InformationWind
 import { FileSystem } from './FileSystem'
 import { isUsingFileSystemPolyfill, isUsingOriginPrivateFs } from './Polyfill'
 import { App } from '/@/App'
-import { basename } from '/@/utils/path'
+import { basename, extname } from '/@/utils/path'
 
 export async function saveOrDownload(
 	filePath: string,
@@ -43,8 +43,23 @@ export async function saveOrDownload(
 	}
 }
 
+const knownZipExtensions = new Set([
+	'.mcpack',
+	'.mcaddon',
+	'.mcworld',
+	'.mctemplate',
+	'.brproject',
+])
+const knownTxtExtensions = new Set(['.mcfunction', '.lang', '.material'])
+
 export function download(fileName: string, fileData: Uint8Array) {
-	const url = URL.createObjectURL(new Blob([fileData]))
+	const extension = extname(fileName)
+	let type: string | undefined = undefined
+
+	if (knownZipExtensions.has(extension)) type = 'application/zip'
+	else if (knownTxtExtensions.has(extension)) type = 'text/plain'
+
+	const url = URL.createObjectURL(new Blob([fileData], { type }))
 	const a = document.createElement('a')
 	a.download = fileName
 	a.href = url
