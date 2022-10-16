@@ -7,6 +7,11 @@ export class Mutex {
 
 	constructor() {}
 
+	/**
+	 * Lock the mutex. If it is already locked, the function will wait until it is unlocked.
+	 *
+	 * @returns When the mutex is unlocked
+	 */
 	lock() {
 		return new Promise<void>(async (resolve, reject) => {
 			if (this.isLocked) {
@@ -21,6 +26,11 @@ export class Mutex {
 		})
 	}
 
+	/**
+	 * Unlock the mutex.
+	 *
+	 * @throws If the mutex is not locked.
+	 */
 	unlock() {
 		if (!this.isLocked) {
 			throw new Error('Trying to unlock a mutex that is not locked')
