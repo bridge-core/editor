@@ -9,7 +9,6 @@ import type { languages } from 'monaco-editor'
 import { useMonaco } from '/@/utils/libs/useMonaco'
 
 export interface MolangValueDefinition {
-	type: 'math' | 'query' | 'variable' | 'context'
 	valueName: string
 	description?: string
 	isProperty?: boolean
@@ -20,6 +19,7 @@ export interface MolangValueDefinition {
 
 export interface MolangDefinition {
 	requires?: IRequirements
+	namespace: string[]
 	values: MolangValueDefinition[]
 }
 
@@ -96,15 +96,28 @@ export class MolangData extends Signal<void> {
 		return contextData?.data ?? []
 	}
 
-	async getNamespaceSuggestions(): Promise<
-		Partial<languages.CompletionItem>[]
-	> {
+	async getCompletionItemFromValues(values: MolangValueDefinition[]) {
 		const { languages } = await useMonaco()
+		return values
+			.filter((value) => !value.isDeprecated)
+			.map((value) => {
+				return {
+					insertText: value.valueName,
+					kind: value.isProperty
+						? languages.CompletionItemKind.Variable
+						: languages.CompletionItemKind.Function,
+					label: value.valueName,
+					documentation: value.description,
+				}
+			})
+	}
 
+	async getNamespaceSuggestions() {
+		const { languages } = await useMonaco()
 		return [
 			{
 				label: 'math',
-				kind: languages.CompletionItemKind.Function,
+				kind: languages.CompletionItemKind.Variable,
 				insertText: 'math',
 			},
 			{
@@ -129,12 +142,12 @@ export class MolangData extends Signal<void> {
 			},
 			{
 				label: 'query',
-				kind: languages.CompletionItemKind.Function,
+				kind: languages.CompletionItemKind.Variable,
 				insertText: 'query',
 			},
 			{
 				label: 'q',
-				kind: languages.CompletionItemKind.Function,
+				kind: languages.CompletionItemKind.Variable,
 				insertText: 'q',
 			},
 			{

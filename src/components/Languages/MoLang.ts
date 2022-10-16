@@ -49,22 +49,64 @@ const completionItemProvider: languages.CompletionItemProvider = {
 		context: languages.CompletionContext,
 		token: CancellationToken
 	) => {
+		const { Range } = await useMonaco()
+
 		const project = await App.getApp().then((app) => app.project)
 		if (!(project instanceof BedrockProject)) return
 
 		const molangData = project.molangData
 		await molangData.fired
 
+		let completionItems: languages.CompletionItem[] = []
+
 		// Get the entire line
 		const line = model.getLineContent(position.lineNumber)
 		// Attempt to look behind the cursor to get context on what to propose
 		const lineUntilCursor = line.slice(0, position.column - 1)
 
-		// Auto-completions for global instances
-		const { Range } = await useMonaco()
+		// Namespace property auto-compeltions
+		if (lineUntilCursor.endsWith('.')) {
+			const strippedLine = lineUntilCursor.slice(0, -1)
+			const schema = await molangData.getSchema()
+			for (const entry of schema) {
+				if (
+					entry.namespace.some((namespace) =>
+						strippedLine.endsWith(namespace)
+					)
+				)
+					completionItems = completionItems.concat(
+						(
+							await molangData.getCompletionItemFromValues(
+								entry.values
+							)
+						).map((suggestion) => ({
+							...suggestion,
+							range: new Range(
+								position.lineNumber,
+								position.column,
+								position.lineNumber,
+								position.column
+							),
+						}))
+					)
+			}
+		}
+
+		// Global instance namespace auto-completions
+		completionItems = completionItems.concat(
+			(await molangData.getNamespaceSuggestions()).map((suggestion) => ({
+				...suggestion,
+				range: new Range(
+					position.lineNumber,
+					position.column,
+					position.lineNumber,
+					position.column
+				),
+			}))
+		)
 
 		return {
-			suggestions: [],
+			suggestions: completionItems,
 		}
 	},
 }
