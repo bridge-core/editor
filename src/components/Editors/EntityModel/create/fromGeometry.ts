@@ -55,6 +55,7 @@ export async function createFromGeometry(tabSystem: TabSystem, tab: FileTab) {
 		const block = await packIndexer.find('block', 'geometryIdentifier', [
 			choice,
 		])
+		// Connected block found
 		if (block.length > 0) {
 			const previewTab = new BlockModelTab(block[0], tab, tabSystem)
 			previewTab.setPreviewOptions({ loadComponents: false })
@@ -62,6 +63,11 @@ export async function createFromGeometry(tabSystem: TabSystem, tab: FileTab) {
 		}
 	}
 
+	/**
+	 *  If we reach this point either...
+	 *  - ...a connected client entity was found (clientEntity.length > 0)...
+	 * 	- ...or no connected client entity and no connected block was found -> Fallback to geometry preview in this case.
+	 */
 	return new EntityModelTab(
 		{
 			clientEntityFilePath: clientEntity[0],

@@ -191,6 +191,7 @@ export class EntityModelTab extends GeometryPreviewTab {
 
 		const app = await App.getApp()
 
+		// Helper method for loading all textures from a specific textures/ subfolder
 		const loadTextures = (location: 'entity' | 'blocks') =>
 			app.fileSystem
 				.readdir(
@@ -210,6 +211,7 @@ export class EntityModelTab extends GeometryPreviewTab {
 				)
 				.catch(() => <{ text: string; value: string }[]>[])
 
+		// Load all textures from the entity and blocks folders
 		const textures = (await loadTextures('entity')).concat(
 			await loadTextures('blocks')
 		)
@@ -220,8 +222,10 @@ export class EntityModelTab extends GeometryPreviewTab {
 			name: 'preview.chooseTexture',
 		})
 
+		// Get selected texture
 		const selectedTexture = await choiceWindow.fired
 
+		// Create fallback render container
 		this._renderContainer = markRaw(
 			new RenderDataContainer(app, {
 				identifier: this.geometryIdentifier,
