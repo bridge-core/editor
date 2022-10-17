@@ -411,6 +411,14 @@
 				"name": "Open Find & Replace",
 				"description": "Opens a new Find & Replace tab"
 			},
+			"cursorUndo": {
+				"name": "Cursor Undo",
+				"description": "Undo the last cursor position change"
+			},
+			"cursorRedo": {
+				"name": "Cursor Redo",
+				"description": "Redo the last cursor position change"
+			},
 			"nextTab": {
 				"name": "Next Tab",
 				"description": "Switch to the next tab"
