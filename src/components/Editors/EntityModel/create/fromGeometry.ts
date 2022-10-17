@@ -60,12 +60,15 @@ export async function createFromGeometry(tabSystem: TabSystem, tab: FileTab) {
 			previewTab.setPreviewOptions({ loadComponents: false })
 			return previewTab
 		}
-
-		new InformationWindow({
-			description: 'preview.failedClientEntityLoad',
-		})
-		return
 	}
 
-	return new EntityModelTab(clientEntity[0], tab, tabSystem)
+	return new EntityModelTab(
+		{
+			clientEntityFilePath: clientEntity[0],
+			geometryFilePath: tab.getPath(),
+			geometryIdentifier: choice,
+		},
+		tab,
+		tabSystem
+	)
 }
