@@ -471,6 +471,9 @@
 		}
 	},
 	"sidebar": {
+		"quickExport": {
+			"name": "Quick Export"
+		},
 		"openedFolders": {
 			"name": "Opened Folders",
 			"removeFolder": "Remove From View"
