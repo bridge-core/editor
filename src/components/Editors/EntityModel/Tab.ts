@@ -208,9 +208,11 @@ export class EntityModelTab extends GeometryPreviewTab {
 						),
 					}))
 				)
-				.catch(() => [])
+				.catch(() => <{ text: string; value: string }[]>[])
 
-		const textures = await loadTextures('entity')
+		const textures = (await loadTextures('entity')).concat(
+			await loadTextures('blocks')
+		)
 
 		// Prompt user to select a texture
 		const choiceWindow = new DropdownWindow({
