@@ -11,7 +11,6 @@ import { LocaleManager } from '../../Locales/Manager'
 
 export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
-	isFirstImport = false,
 	unzip = true
 ) {
 	const app = await App.getApp()
@@ -20,7 +19,7 @@ export async function importFromBrproject(
 		create: true,
 	})
 
-	if (!isFirstImport) await app.projectManager.projectReady.fired
+	await app.projectManager.projectReady.fired
 
 	// Unzip .brproject file, do not unzip if already unzipped
 	if (unzip) {
@@ -60,7 +59,7 @@ export async function importFromBrproject(
 	}
 
 	// Ask user whether he wants to save the current project if we are going to delete it later in the import process
-	if (isUsingFileSystemPolyfill.value && !isFirstImport) {
+	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects) {
 		const confirmWindow = new ConfirmationWindow({
 			description:
 				'windows.projectChooser.openNewProject.saveCurrentProject',
@@ -82,17 +81,17 @@ export async function importFromBrproject(
 
 	// Get current project name
 	let currentProject: Project | undefined
-	if (!isFirstImport) currentProject = app.project
+	if (!app.hasNoProjects) currentProject = app.project
+
+	// Remove old project if browser is using fileSystem polyfill
+	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects)
+		await app.projectManager.removeProject(currentProject!)
 
 	// Add new project
 	await app.projectManager.addProject(
 		await fs.getDirectoryHandle(importProject),
 		true
 	)
-
-	// Remove old project if browser is using fileSystem polyfill
-	if (isUsingFileSystemPolyfill.value && !isFirstImport)
-		await app.projectManager.removeProject(currentProject!)
 
 	await fs.unlink('import')
 }
