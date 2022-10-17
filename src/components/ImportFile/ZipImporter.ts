@@ -35,11 +35,11 @@ export class ZipImporter extends FileImporter {
 			(await fs.directoryExists('import/projects')) ||
 			(await fs.directoryExists('import/extensions'))
 		) {
-			await importFromBrproject(fileHandle, false, false)
+			await importFromBrproject(fileHandle, false)
 		} else {
 			for await (const pack of tmpHandle.values()) {
 				if (await fs.fileExists(`import/${pack.name}/manifest.json`)) {
-					await importFromMcaddon(fileHandle, false, false)
+					await importFromMcaddon(fileHandle, false)
 					break
 				}
 			}
