@@ -395,7 +395,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			description:
 				'windows.settings.editor.bridgePredictions.description',
 			key: 'bridgePredictions',
-			default: true,
+			default: false,
 		})
 	)
 	settings.addControl(
