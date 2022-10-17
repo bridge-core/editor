@@ -5,12 +5,22 @@ import { del, set, shallowReactive } from 'vue'
 
 const IGNORE_KEYS = ['Control', 'Alt', 'Meta']
 
+interface IKeyEvent {
+	key: string
+	altKey: boolean
+	ctrlKey: boolean
+	shiftKey: boolean
+	metaKey: boolean
+	target: EventTarget | null
+	preventDefault: () => void
+	stopImmediatePropagation: () => void
+}
 export class KeyBindingManager {
 	protected state: Record<string, KeyBinding> = shallowReactive({})
 	protected lastTimeStamp = 0
 
-	protected onKeydown = (event: KeyboardEvent) => {
-		const { key, ctrlKey, altKey, metaKey, shiftKey, code } = event
+	protected onKeydown = (event: IKeyEvent) => {
+		const { key, ctrlKey, altKey, metaKey, shiftKey } = event
 		if (IGNORE_KEYS.includes(key)) return
 
 		const keyCode = toStrKeyCode({
@@ -32,10 +42,43 @@ export class KeyBindingManager {
 			keyBinding.trigger()
 		}
 	}
+	protected onMouseDown = (event: MouseEvent) => {
+		const { button, ...other } = event
+
+		let buttonName = null
+		switch (button) {
+			case 0:
+				buttonName = 'Left'
+				break
+			case 1:
+				buttonName = 'Middle'
+				break
+			case 2:
+				buttonName = 'Right'
+				break
+			case 3:
+				buttonName = 'Back'
+				break
+			case 4:
+				buttonName = 'Forward'
+				break
+			default:
+				console.error(`Unknown mouse button: ${button}`)
+		}
+		if (!buttonName) return
+
+		this.onKeydown({
+			key: `mouse${buttonName}`,
+			...other,
+		})
+	}
 
 	constructor(protected element: HTMLDivElement | Document = document) {
 		// @ts-ignore TypeScript isn't smart enough to understand that the type "KeyboardEvent" is correct
 		element.addEventListener('keydown', this.onKeydown)
+
+		// @ts-ignore TypeScript isn't smart enough to understand that the type "MouseEvent" is correct
+		element.addEventListener('mousedown', this.onMouseDown)
 	}
 
 	create(keyBindingConfig: IKeyBindingConfig) {
