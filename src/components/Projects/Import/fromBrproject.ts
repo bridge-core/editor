@@ -8,6 +8,7 @@ import { App } from '/@/App'
 import { basename } from '/@/utils/path'
 import { Project } from '../Project/Project'
 import { LocaleManager } from '../../Locales/Manager'
+import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
 
 export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
@@ -71,10 +72,15 @@ export async function importFromBrproject(
 		}
 	}
 
+	const projectName = await findSuitableFolderName(
+		basename(fileHandle.name, '.brproject'),
+		await fs.getDirectoryHandle('projects')
+	)
+
 	// Get the new project path
 	const importProject =
 		importFrom === 'import'
-			? `projects/${basename(fileHandle.name, '.brproject')}`
+			? `projects/${projectName}`
 			: importFrom.replace('import/', '')
 	// Move imported project to the user's project directory
 	await fs.move(importFrom, importProject)

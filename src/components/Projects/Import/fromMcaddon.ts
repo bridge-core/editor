@@ -13,6 +13,7 @@ import { defaultPackPaths } from '../Project/Config'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 import { basename } from '/@/utils/path'
 import { getPackId, IManifestModule } from '/@/utils/manifest/getPackId'
+import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
 
 export async function importFromMcaddon(
 	fileHandle: AnyFileHandle,
@@ -34,9 +35,10 @@ export async function importFromMcaddon(
 		unzipper.createTask(app.taskManager)
 		await unzipper.unzip(data)
 	}
-	const projectName = fileHandle.name
-		.replace('.mcaddon', '')
-		.replace('.zip', '')
+	const projectName = await findSuitableFolderName(
+		fileHandle.name.replace('.mcaddon', '').replace('.zip', ''),
+		await fs.getDirectoryHandle('projects')
+	)
 
 	// Ask user whether they want to save the current project if we are going to delete it later in the import process
 	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects) {
