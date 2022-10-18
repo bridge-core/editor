@@ -181,6 +181,10 @@ export class EntityModelTab extends GeometryPreviewTab {
 	}
 
 	/**
+	 * Store chosen fallback texture to avoid showing the texture picker again upon reload
+	 */
+	protected chosenFallbackTexturePath?: string
+	/**
 	 * This function enables bridge. to display models without a client entity.
 	 * By default, bridge. will use the geometry file path and identifier as the geometry source and
 	 * the user is prompted to choose any entity/block texture file for the model
@@ -211,25 +215,27 @@ export class EntityModelTab extends GeometryPreviewTab {
 				)
 				.catch(() => <{ text: string; value: string }[]>[])
 
-		// Load all textures from the entity and blocks folders
-		const textures = (await loadTextures('entity')).concat(
-			await loadTextures('blocks')
-		)
+		if (this.chosenFallbackTexturePath === undefined) {
+			// Load all textures from the entity and blocks folders
+			const textures = (await loadTextures('entity')).concat(
+				await loadTextures('blocks')
+			)
 
-		// Prompt user to select a texture
-		const choiceWindow = new DropdownWindow({
-			options: textures,
-			name: 'preview.chooseTexture',
-		})
+			// Prompt user to select a texture
+			const choiceWindow = new DropdownWindow({
+				options: textures,
+				name: 'preview.chooseTexture',
+			})
 
-		// Get selected texture
-		const selectedTexture = await choiceWindow.fired
+			// Get selected texture
+			this.chosenFallbackTexturePath = await choiceWindow.fired
+		}
 
 		// Create fallback render container
 		this._renderContainer = markRaw(
 			new RenderDataContainer(app, {
 				identifier: this.geometryIdentifier,
-				texturePaths: [selectedTexture],
+				texturePaths: [this.chosenFallbackTexturePath],
 				connectedAnimations: new Set(),
 			})
 		)
