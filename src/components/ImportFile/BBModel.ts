@@ -496,7 +496,7 @@ export class BBModelImporter extends FileImporter {
 						})
 				} else if (
 					animator.type === 'bone' ||
-					animator.type === undefined
+					animator.type === undefined // No defined type: Default is type "bone"
 				) {
 					let bone_tag: any = (anim.bones![animator.name] = {})
 					let channels: any = {}
