@@ -494,7 +494,10 @@ export class BBModelImporter extends FileImporter {
 							anim.timeline![this.getTimecodeString(kf.time)] =
 								this.compileBedrockKeyframe(kf, animator)
 						})
-				} else if (animator.type === 'bone') {
+				} else if (
+					animator.type === 'bone' ||
+					animator.type === undefined
+				) {
 					let bone_tag: any = (anim.bones![animator.name] = {})
 					let channels: any = {}
 
