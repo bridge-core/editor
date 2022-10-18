@@ -194,6 +194,7 @@ export class EntityModelTab extends GeometryPreviewTab {
 		if (!this.geometryFilePath || !this.geometryIdentifier) return
 
 		const app = await App.getApp()
+		const packIndexer = app.project.packIndexer.service
 
 		// Helper method for loading all textures from a specific textures/ subfolder
 		const loadTextures = (location: 'entity' | 'blocks') =>
@@ -231,16 +232,29 @@ export class EntityModelTab extends GeometryPreviewTab {
 			this.chosenFallbackTexturePath = await choiceWindow.fired
 		}
 
+		// Load all available animations (file paths & identifiers)
+		const allAnimations = await packIndexer.getAllFiles('clientAnimation')
+		const allAnimationIdentifiers = await packIndexer.getCacheDataFor(
+			'clientAnimation',
+			undefined,
+			'identifier'
+		)
+
 		// Create fallback render container
 		this._renderContainer = markRaw(
 			new RenderDataContainer(app, {
 				identifier: this.geometryIdentifier,
 				texturePaths: [this.chosenFallbackTexturePath],
-				connectedAnimations: new Set(),
+				connectedAnimations: new Set(allAnimationIdentifiers),
 			})
 		)
 
 		this._renderContainer.createGeometry(this.geometryFilePath)
+
+		// Create animations so they are ready to be used within the render container
+		allAnimations.forEach((filePath) =>
+			this._renderContainer!.createAnimation(filePath)
+		)
 
 		// Once the renderContainer is ready loading, create the initial model...
 		this.renderContainer.ready.then(() => {
