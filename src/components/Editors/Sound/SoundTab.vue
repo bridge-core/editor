@@ -3,13 +3,6 @@
 		class="d-flex align-center justify-center"
 		@click="tab.parent.setActive(true)"
 	>
-		<audio
-			ref="audio"
-			preload="metadata"
-			:src="tab.dataUrl"
-			:loop="audioShouldLoop"
-		/>
-
 		<BridgeSheet
 			v-if="audio"
 			class="pa-3 d-flex flex-column"
@@ -27,8 +20,8 @@
 
 				<v-btn
 					icon
-					:color="audioShouldLoop ? 'primary' : null"
-					@click="audioShouldLoop = !audioShouldLoop"
+					:color="tab.audioShouldLoop ? 'primary' : null"
+					@click="tab.toggleAudioLoop()"
 				>
 					<v-icon>mdi-all-inclusive</v-icon>
 				</v-btn>
@@ -55,21 +48,23 @@
 					x-large
 					icon
 					outlined
-					@click="isPlaying ? audio.pause() : audio.play()"
+					@click="tab.isPlaying ? audio.pause() : audio.play()"
 				>
-					<v-icon>{{ isPlaying ? 'mdi-pause' : 'mdi-play' }}</v-icon>
+					<v-icon>
+						{{ tab.isPlaying ? 'mdi-pause' : 'mdi-play' }}
+					</v-icon>
 				</v-btn>
 			</div>
 
 			<!-- Track progress -->
 			<div class="d-flex align-center">
-				<span v-if="loadedAudioMetadata" class="text--secondary">
+				<span v-if="tab.loadedAudioMetadata" class="text--secondary">
 					{{ roundedCurrentTime }} / {{ roundedTotalTime }}
 				</span>
 
 				<v-slider
-					:value="currentTime"
-					@input="setCurrentTime"
+					:value="tab.currentTime"
+					@input="(n) => tab.setCurrentTime(n)"
 					:min="0"
 					:max="audio.duration"
 					step="0.01"
@@ -91,64 +86,19 @@ export default {
 	props: {
 		tab: Object,
 	},
-	mounted() {
-		this.audio = this.$refs.audio
-		this.intervalId = setInterval(this.updateCurrentTime, 100)
 
-		this.audio.addEventListener('play', this.onPlay)
-		this.audio.addEventListener('pause', this.onPause)
-		this.audio.addEventListener('loadedmetadata', this.onLoadedMetadata)
-	},
-	destroyed() {
-		clearInterval(this.intervalId)
-		this.intervalId = null
-
-		this.audio.removeEventListener('play', this.onPlay)
-		this.audio.removeEventListener('pause', this.onPause)
-		this.audio.removeEventListener('loadedmetadata', this.onLoadedMetadata)
-	},
-	data: () => ({
-		audio: null,
-		intervalId: null,
-		currentTime: 0,
-		timeTriggeredManually: false,
-		isPlaying: false,
-		loadedAudioMetadata: false,
-		audioShouldLoop: false,
-	}),
 	computed: {
+		audio() {
+			return this.tab.audio
+		},
 		extension() {
 			return this.tab.name.split('.').pop().toUpperCase()
 		},
 		roundedCurrentTime() {
-			return (Math.round(this.currentTime * 100) / 100).toFixed(2)
+			return (Math.round(this.tab.currentTime * 100) / 100).toFixed(2)
 		},
 		roundedTotalTime() {
 			return (Math.round(this.audio.duration * 100) / 100).toFixed(2)
-		},
-	},
-	methods: {
-		updateCurrentTime() {
-			this.timeTriggeredManually = false
-			this.currentTime = this.audio.currentTime
-		},
-		setCurrentTime(time) {
-			if (!this.timeTriggeredManually) {
-				this.timeTriggeredManually = true
-				return
-			}
-			if (Number.isNaN(time)) return
-
-			this.audio.currentTime = Math.round(time * 100) / 100
-		},
-		onPlay() {
-			this.isPlaying = true
-		},
-		onPause() {
-			this.isPlaying = false
-		},
-		onLoadedMetadata() {
-			this.loadedAudioMetadata = true
 		},
 	},
 }
