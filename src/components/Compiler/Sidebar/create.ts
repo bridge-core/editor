@@ -58,6 +58,13 @@ export function createCompilerSidebar() {
 		displayName: 'sidebar.compiler.name',
 		icon: 'mdi-cogs',
 		disabled: () => App.instance.isNoProjectSelected,
+		/**
+		 * The compiler window is doing more harm than good on mobile (confusion with app settings) so
+		 * we are now disabling it by default.
+		 * Additionally, manual production builds are also pretty much useless as they are internal to bridge. and can only be
+		 * accessed over the "Open Project Folder" button within the project explorer context menu
+		 */
+		defaultVisibility: !App.instance.mobile.isCurrentDevice(),
 		onClick: async () => {
 			const app = await App.getApp()
 			const compilerWindow = app.windows.compilerWindow

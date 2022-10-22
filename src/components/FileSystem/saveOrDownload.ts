@@ -4,7 +4,7 @@ import { InformationWindow } from '../Windows/Common/Information/InformationWind
 import { FileSystem } from './FileSystem'
 import { isUsingFileSystemPolyfill, isUsingOriginPrivateFs } from './Polyfill'
 import { App } from '/@/App'
-import { basename } from '/@/utils/path'
+import { basename, extname } from '/@/utils/path'
 
 export async function saveOrDownload(
 	filePath: string,
@@ -12,7 +12,7 @@ export async function saveOrDownload(
 	fileSystem: FileSystem
 ) {
 	const notification = createNotification({
-		icon: 'mdi-export',
+		icon: 'mdi-download',
 		color: 'success',
 		textColor: 'white',
 		message: 'general.successfulExport.title',
@@ -43,8 +43,26 @@ export async function saveOrDownload(
 	}
 }
 
+const knownExtensions = new Set([
+	'.mcpack',
+	'.mcaddon',
+	'.mcworld',
+	'.mctemplate',
+	'.brproject',
+
+	'.mcfunction',
+	'.lang',
+	'.material',
+])
+
 export function download(fileName: string, fileData: Uint8Array) {
-	const url = URL.createObjectURL(new Blob([fileData]))
+	const extension = extname(fileName)
+	let type: string | undefined = undefined
+
+	// Maintain the extension from the fileName, if the file that is being downloaded has a known extension
+	if (knownExtensions.has(extension)) type = 'application/file-export'
+
+	const url = URL.createObjectURL(new Blob([fileData], { type }))
 	const a = document.createElement('a')
 	a.download = fileName
 	a.href = url

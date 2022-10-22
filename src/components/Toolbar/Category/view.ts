@@ -59,6 +59,47 @@ export function setupViewCategory(app: App) {
 		})
 	)
 
+	view.addItem(
+		app.actionManager.create({
+			icon: 'mdi-arrow-u-left-bottom',
+			name: 'toolbar.view.cursorUndo.name',
+			description: 'toolbar.view.cursorUndo.description',
+			keyBinding: 'ctrl + mouseBack',
+			onTrigger: async () => {
+				const tabSystem = app.project.tabSystem
+				if (!tabSystem) return
+
+				// Await monacoEditor being created
+				await tabSystem.fired
+				tabSystem?.monacoEditor?.trigger(
+					'keybinding',
+					'cursorUndo',
+					null
+				)
+			},
+		})
+	)
+	view.addItem(
+		app.actionManager.create({
+			icon: 'mdi-arrow-u-right-top',
+			name: 'toolbar.view.cursorRedo.name',
+			description: 'toolbar.view.cursorRedo.description',
+			keyBinding: 'mouseForward',
+			onTrigger: async () => {
+				const tabSystem = app.project.tabSystem
+				if (!tabSystem) return
+
+				// Await monacoEditor being created
+				await tabSystem.fired
+				tabSystem?.monacoEditor?.trigger(
+					'keybinding',
+					'cursorRedo',
+					null
+				)
+			},
+		})
+	)
+
 	view.addItem(new Divider())
 
 	view.addItem(app.actionManager.create(ViewCompilerOutput(undefined, true)))

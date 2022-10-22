@@ -28,7 +28,7 @@ export class ImageTab extends FileTab {
 		return 'mdi-file-image-outline'
 	}
 	get iconColor() {
-		return 'primary'
+		return 'resourcePack'
 	}
 
 	_save() {}
