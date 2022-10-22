@@ -2,13 +2,17 @@ import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
-import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import {
+	AnyDirectoryHandle,
+	AnyFileHandle,
+} from '/@/components/FileSystem/Types'
 import {
 	isUsingFileSystemPolyfill,
 	isUsingOriginPrivateFs,
 } from '/@/components/FileSystem/Polyfill'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { download } from '/@/components/FileSystem/saveOrDownload'
+import { CommandBarState } from '../../CommandBar/State'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -20,10 +24,10 @@ export function setupFileCategory(app: App) {
 			name: 'actions.newFile.name',
 			description: 'actions.newFile.description',
 			keyBinding: 'Ctrl + N',
+			isDisabled: () => app.isNoProjectSelected,
 			onTrigger: () => app.windows.createPreset.open(),
 		})
 	)
-	// There's no longer a pack explorer window. We should reuse the shortcut for something else...
 	file.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.openFile',
@@ -49,6 +53,31 @@ export function setupFileCategory(app: App) {
 			},
 		})
 	)
+	// Doesn't make sense to show this option fs polyfill browsers
+	if (!isUsingFileSystemPolyfill.value)
+		file.addItem(
+			app.actionManager.create({
+				id: 'bridge.action.openFolder',
+				icon: 'mdi-folder-open-outline',
+				name: 'actions.openFolder.name',
+				description: 'actions.openFolder.description',
+				keyBinding: 'Ctrl + Shift + O',
+				onTrigger: async () => {
+					const app = await App.getApp()
+					let directoryHandle: AnyDirectoryHandle
+					try {
+						directoryHandle = await window.showDirectoryPicker({
+							multiple: false,
+							mode: 'readwrite',
+						})
+					} catch {
+						return
+					}
+
+					await app.fileDropper.importFolder(directoryHandle)
+				},
+			})
+		)
 	file.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.searchFile',
@@ -56,7 +85,7 @@ export function setupFileCategory(app: App) {
 			name: 'actions.searchFile.name',
 			description: 'actions.searchFile.description',
 			keyBinding: 'Ctrl + P',
-			onTrigger: () => app.windows.filePicker.open(),
+			onTrigger: () => (CommandBarState.isWindowOpen = true),
 		})
 	)
 	file.addItem(
@@ -94,18 +123,16 @@ export function setupFileCategory(app: App) {
 					const currentTab = app.project.tabSystem?.selectedTab
 					if (!(currentTab instanceof FileTab)) return
 
-					const [
-						_,
-						compiled,
-					] = await app.project.compilerService.compileFile(
-						currentTab.getPath(),
-						await currentTab
-							.getFile()
-							.then(
-								async (file) =>
-									new Uint8Array(await file.arrayBuffer())
-							)
-					)
+					const [_, compiled] =
+						await app.project.compilerService.compileFile(
+							currentTab.getPath(),
+							await currentTab
+								.getFile()
+								.then(
+									async (file) =>
+										new Uint8Array(await file.arrayBuffer())
+								)
+						)
 
 					let uint8arr: Uint8Array
 					if (typeof compiled === 'string')
@@ -141,14 +168,6 @@ export function setupFileCategory(app: App) {
 			onTrigger: () => App.ready.once((app) => app.tabSystem?.saveAll()),
 		})
 	)
-
-	const settingAction = app.actionManager.getAction(
-		'bridge.action.openSettings'
-	)
-	if (settingAction && app.mobile.isCurrentDevice()) {
-		file.addItem(new Divider())
-		file.addItem(settingAction)
-	}
 
 	App.toolbar.addCategory(file)
 }

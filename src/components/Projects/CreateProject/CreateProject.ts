@@ -1,6 +1,5 @@
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import CreateProjectComponent from './CreateProject.vue'
 import { CreatePack } from './Packs/Pack'
 import { CreateBP } from './Packs/BP'
@@ -14,8 +13,16 @@ import { CreateConfig } from './Files/Config'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
-import { settingsState } from '../../Windows/Settings/SettingsState'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { CreateWorlds } from './Packs/worlds'
+import {
+	getFormatVersions,
+	getStableFormatVersion,
+} from '/@/components/Data/FormatVersions'
+import { Project } from '../Project/Project'
+import { CreateDenoConfig } from './Files/DenoConfig'
+import { IWindowState, NewBaseWindow } from '../../Windows/NewBaseWindow'
+import { reactive } from 'vue'
 
 export interface ICreateProjectOptions {
 	author: string | string[]
@@ -35,18 +42,23 @@ export interface ICreateProjectOptions {
 	}
 	useLangForManifest: boolean
 	experimentalGameplay: Record<string, boolean>
+	bdsProject: boolean
 }
 export interface IExperimentalToggle {
 	name: string
 	id: string
 	description: string
 }
-export class CreateProjectWindow extends BaseWindow {
+
+export interface ICreateProjectState extends IWindowState {
+	isCreatingProject: boolean
+	createOptions: ICreateProjectOptions
+	availableTargetVersionsLoading: boolean
+}
+export class CreateProjectWindow extends NewBaseWindow {
 	protected isFirstProject = false
-	protected createOptions: ICreateProjectOptions = this.getDefaultOptions()
-	protected isCreatingProject = false
 	protected availableTargetVersions: string[] = []
-	protected availableTargetVersionsLoading = true
+	protected stableVersion: string = ''
 	protected packs: Record<TPackTypeId | '.bridge' | 'worlds', CreatePack> = <
 		const
 	>{
@@ -58,7 +70,11 @@ export class CreateProjectWindow extends BaseWindow {
 		worlds: new CreateWorlds(),
 	}
 	protected availablePackTypes: IPackType[] = []
-	protected createFiles = [new CreateGitIgnore(), new CreateConfig()]
+	protected createFiles = [
+		new CreateGitIgnore(),
+		new CreateConfig(),
+		new CreateDenoConfig(),
+	]
 	protected experimentalToggles: IExperimentalToggle[] = []
 	protected projectNameRules = [
 		(val: string) =>
@@ -71,6 +87,17 @@ export class CreateProjectWindow extends BaseWindow {
 			val.trim() !== '' ||
 			'windows.createProject.projectName.mustNotBeEmpty',
 	]
+
+	protected state: ICreateProjectState = reactive<any>({
+		...super.getState(),
+		isCreatingProject: false,
+		createOptions: this.getDefaultOptions(),
+		availableTargetVersionsLoading: true,
+	})
+
+	get createOptions() {
+		return this.state.createOptions
+	}
 
 	get packCreateFiles() {
 		return Object.entries(this.packs)
@@ -95,14 +122,11 @@ export class CreateProjectWindow extends BaseWindow {
 
 		App.ready.once(async (app) => {
 			await app.dataLoader.fired
-			this.availableTargetVersions = (
-				await app.dataLoader.readJSON(
-					'data/packages/minecraftBedrock/formatVersions.json'
-				)
-			).reverse()
+			this.availableTargetVersions = await getFormatVersions()
 			// Set default version
-			this.createOptions.targetVersion = this.availableTargetVersions[0]
-			this.availableTargetVersionsLoading = false
+			this.stableVersion = await getStableFormatVersion(app.dataLoader)
+			this.createOptions.targetVersion = this.stableVersion
+			this.state.availableTargetVersionsLoading = false
 
 			this.experimentalToggles = await app.dataLoader.readJSON(
 				'data/packages/minecraftBedrock/experimentalGameplay.json'
@@ -113,7 +137,6 @@ export class CreateProjectWindow extends BaseWindow {
 		})
 
 		App.packType.ready.once(() => {
-			// TODO: Remove filter for world templates as soon as we support creating them
 			this.availablePackTypes = App.packType.all
 		})
 	}
@@ -131,7 +154,7 @@ export class CreateProjectWindow extends BaseWindow {
 	}
 
 	open(isFirstProject = false) {
-		this.createOptions = this.getDefaultOptions()
+		this.state.createOptions = this.getDefaultOptions()
 
 		this.isFirstProject = isFirstProject
 		this.packCreateFiles.forEach(
@@ -144,15 +167,27 @@ export class CreateProjectWindow extends BaseWindow {
 	async createProject() {
 		const app = await App.getApp()
 
+		const removeOldProject =
+			isUsingFileSystemPolyfill.value &&
+			!app.hasNoProjects &&
+			!this.isFirstProject
+
+		// Save previous project name to delete it later
+		let previousProject: Project | undefined
+		if (!this.isFirstProject)
+			previousProject = app.isNoProjectSelected
+				? app.projects[0]
+				: app.project
+
 		// Ask user whether we should save the current project
-		if (isUsingFileSystemPolyfill.value && !this.isFirstProject) {
+		if (removeOldProject) {
 			const confirmWindow = new ConfirmationWindow({
 				description: 'windows.createProject.saveCurrentProject',
 				cancelText: 'general.no',
 				confirmText: 'general.yes',
 			})
 			if (await confirmWindow.fired) {
-				await exportAsBrproject()
+				await exportAsBrproject(previousProject?.name)
 			}
 		}
 
@@ -178,20 +213,18 @@ export class CreateProjectWindow extends BaseWindow {
 			await this.packs[pack].create(scopedFs, this.createOptions)
 		}
 
-		// Save previous project name to delete it later
-		let previousProject: string | undefined
-		if (!this.isFirstProject) previousProject = app.project.name
-
-		await app.projectManager.addProject(projectDir)
+		await app.projectManager.addProject(
+			projectDir,
+			true,
+			app.bridgeFolderSetup.hasFired
+		)
 		await app.extensionLoader.installFilesToCurrentProject()
 
-		if (isUsingFileSystemPolyfill.value && !this.isFirstProject)
+		if (removeOldProject)
 			await app.projectManager.removeProject(previousProject!)
 
 		// Reset options
-		this.createOptions = this.getDefaultOptions()
-
-		await App.audioManager.playAudio('confirmation_002.ogg', 1)
+		this.state.createOptions = this.getDefaultOptions()
 	}
 
 	static getDefaultOptions(): ICreateProjectOptions {
@@ -210,13 +243,14 @@ export class CreateProjectWindow extends BaseWindow {
 			useLangForManifest: false,
 			experimentalGameplay: {},
 			uuids: {},
+			bdsProject: false,
 		}
 	}
 	getDefaultOptions(): ICreateProjectOptions {
 		return {
 			...CreateProjectWindow.getDefaultOptions(),
 			targetVersion: this.availableTargetVersions
-				? this.availableTargetVersions[0]
+				? this.stableVersion
 				: '',
 			experimentalGameplay: this.experimentalToggles
 				? Object.fromEntries(
@@ -253,6 +287,7 @@ export class CreateProjectWindow extends BaseWindow {
 				bpAsRpDependency: false,
 				experimentalGameplay: config.experimentalGameplay ?? {},
 				uuids: {},
+				bdsProject: false,
 			}
 		} catch {
 			return this.getDefaultOptions()

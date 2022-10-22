@@ -7,7 +7,7 @@ export const tokenProvider: any = {
 		['{', '}', 'delimiter.curly'],
 	],
 	keywords: [],
-	selectors: ['@a', '@e', '@p', '@r', '@s'],
+	selectors: ['@a', '@e', '@p', '@r', '@s', '@initiator'],
 	targetSelectorArguments: [],
 
 	tokenizer: {
@@ -43,7 +43,7 @@ export const tokenProvider: any = {
 				},
 			],
 			[
-				/@[a|p|r|e|s]/,
+				/(@[a-z]+)/,
 				{
 					cases: {
 						'@selectors': 'type.identifier',
@@ -54,10 +54,10 @@ export const tokenProvider: any = {
 		],
 
 		common: [
-			[/"[^"]*"|'[^']*'/, 'string'],
+			[/(\\)?"[^"]*"|'[^']*'/, 'string'],
 			[/\=|\,|\!|%=|\*=|\+=|-=|\/=|<|=|>|<>/, 'definition'],
 			[/true|false/, 'number'],
-			[/-?([0-9]+(\.[0-9]+)?)|(\~|\^-?([0-9]+(\.[0-9]+)?)?)/, 'number'],
+			[/-?([0-9]+(\.[0-9]+)?)|((\~|\^)-?([0-9]+(\.[0-9]+)?)?)/, 'number'],
 		],
 
 		embeddedJson: [

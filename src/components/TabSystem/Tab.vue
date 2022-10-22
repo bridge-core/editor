@@ -1,12 +1,15 @@
 <template>
 	<div
-		class="px-3 py-2 cursor-pointer"
+		class="cursor-pointer"
 		:class="{
 			selected: tab.isSelected,
 			'default-tab-style': true,
 			'd-flex': true,
 			'align-center': true,
 			inactive: !isActive,
+			'px-3 py-2': !floatingTabDesign,
+			'px-2 pb-1 mx-1 mt-2 my-1 rounded-lg': floatingTabDesign,
+			'ml-0 pl-3': isFirstTab,
 		}"
 		style="position: relative"
 		ref="tabElement"
@@ -39,15 +42,28 @@
 			depressed
 			:dot="tab.isUnsaved && !tab.isReadOnly"
 		>
-			<v-icon class="mr-1" :color="tab.iconColor" small>
+			<v-icon
+				v-if="!tab.isLoading"
+				class="mr-1"
+				:color="tab.iconColor"
+				small
+			>
 				{{ tab.icon }}
 			</v-icon>
+			<v-progress-circular
+				v-else
+				indeterminate
+				:color="tab.iconColor"
+				class="mr-1"
+				size="16"
+				width="2"
+			/>
 		</v-badge>
 
 		<v-tooltip
 			color="tooltip"
 			open-delay="1500"
-			:disabled="pointerDevice === 'touch' || !tab.projectPath"
+			:disabled="pointerDevice === 'touch' || !tab.path"
 			bottom
 		>
 			<template v-slot:activator="{ on }">
@@ -65,17 +81,19 @@
 						v-if="tab.folderName"
 						style="
 							position: absolute;
-							top: 22px;
 							left: 32px;
 							font-size: 12px;
 							overflow: hidden;
 							text-overflow: ellipsis;
 						"
 						:style="{
+							top: floatingTabDesign ? '14px' : '22px',
 							left:
 								tab.isSelected && pointerDevice === 'touch'
 									? '60px'
-									: '32px',
+									: !floatingTabDesign || isFirstTab
+									? '32px'
+									: '28px',
 							width:
 								tab.isSelected && pointerDevice === 'touch'
 									? 'calc(100% - 76px)'
@@ -86,7 +104,7 @@
 					</span>
 				</span>
 			</template>
-			<span>{{ tab.projectPath }}</span>
+			<span>{{ tab.path }}</span>
 		</v-tooltip>
 
 		<v-btn
@@ -112,6 +130,7 @@ export default {
 	props: {
 		tab: Tab,
 		isActive: Boolean,
+		isFirstTab: Boolean,
 	},
 	data: () => ({
 		hoveringBtn: false,
@@ -131,11 +150,17 @@ export default {
 		}
 	},
 	computed: {
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
+		},
 		compactDesign() {
 			if (!settingsState.editor) return true
 			if (settingsState.editor.compactTabDesign === undefined) return true
 
 			return settingsState.editor.compactTabDesign
+		},
+		floatingTabDesign() {
+			return !this.tab.isSelected && !this.isMobile
 		},
 		isSelected() {
 			return this.tab.isSelected

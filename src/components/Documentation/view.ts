@@ -1,10 +1,10 @@
+import { translate } from '../Locales/Manager'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { App } from '/@/App'
 
 export async function viewDocumentation(filePath: string, word?: string) {
 	await App.fileType.ready.fired
-	const app = await App.getApp()
-	const t = (str: string) => app.locales.translate(str)
+	const t = (str: string) => translate(str)
 
 	const { id, documentation } = App.fileType.get(filePath) ?? {}
 

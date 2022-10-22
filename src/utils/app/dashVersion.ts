@@ -1,6 +1,6 @@
-import { dependencies } from '../../../package.json'
+import packageConfig from '../../../package.json'
 
-let version = dependencies['dash-compiler']
+let version = packageConfig.dependencies['dash-compiler']
 
 if (
 	version.startsWith('^') ||

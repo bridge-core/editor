@@ -1,70 +1,67 @@
 <template>
 	<v-menu
 		v-model="isVisible"
-		:position-x="contextMenu.position.x"
-		:position-y="contextMenu.position.y"
+		ref="menu"
+		:position-x="x"
+		:position-y="y"
 		rounded="lg"
 		absolute
 		offset-y
 		transition="context-menu-transition"
+		:offset-overflow="false"
 		:close-on-click="contextMenu.mayCloseOnClickOutside"
+		:close-on-content-click="false"
+		min-width="200px"
 	>
-		<v-list color="menu" dense>
-			<template v-for="(action, id) in actions">
-				<v-divider v-if="action.type === 'divider'" :key="id" />
-				<v-list-item
-					v-else
-					:key="id"
-					origin="center center"
-					transition="scale-transition"
-					:disabled="action.isDisabled"
-					@click="action.trigger()"
-				>
-					<v-list-item-icon
-						:style="{ opacity: action.isDisabled ? '38%' : null }"
-						class="mr-2"
-					>
-						<v-icon color="primary">{{ action.icon }}</v-icon>
-					</v-list-item-icon>
-					<v-list-item-action class="ma-0">
-						{{ t(action.name) }}
-					</v-list-item-action>
-				</v-list-item>
-			</template>
-		</v-list>
+		<ContextMenuList @click="isVisible = false" :actions="actions" />
 	</v-menu>
 </template>
 
 <script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { createSimpleTransition } from 'vuetify/lib/components/transitions/createTransition'
 import Vue from 'vue'
+import ContextMenuList from './List.vue'
 const contextMenuTransition = createSimpleTransition('context-menu-transition')
 
 Vue.component('context-menu-transition', contextMenuTransition)
 
 export default {
+	components: { ContextMenuList },
 	name: 'ContextMenu',
-	mixins: [TranslationMixin],
 	props: {
 		contextMenu: Object,
+		windowHeight: Number,
 	},
 	data: () => ({
 		shouldRender: false,
 		timeoutId: null,
 	}),
 	computed: {
+		x() {
+			return this.contextMenu.position.x
+		},
+		y() {
+			const lowestY =
+				this.contextMenu.position.y + this.contextMenu.menuHeight
+			if (lowestY > this.windowHeight) {
+				const offset = this.windowHeight - lowestY
+
+				return this.contextMenu.position.y - offset
+			}
+			return this.contextMenu.position.y
+		},
 		isVisible: {
 			set(val) {
-				this.contextMenu.isVisible = val
+				this.contextMenu.isVisible.value = val
 			},
 			get() {
-				return this.contextMenu.isVisible
+				return this.contextMenu.isVisible.value
 			},
 		},
 		actions() {
-			if (!this.contextMenu || !this.contextMenu.actionManager) return []
-			return this.contextMenu.actionManager.state
+			if (!this.contextMenu || !this.contextMenu.actionManager.value)
+				return {}
+			return this.contextMenu.actionManager.value.state
 		},
 	},
 	watch: {

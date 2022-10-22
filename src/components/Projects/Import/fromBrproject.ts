@@ -5,12 +5,13 @@ import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/Confirm
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { App } from '/@/App'
-import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { basename } from '/@/utils/path'
+import { Project } from '../Project/Project'
+import { LocaleManager } from '../../Locales/Manager'
+import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
 
 export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
-	isFirstImport = false,
 	unzip = true
 ) {
 	const app = await App.getApp()
@@ -19,7 +20,7 @@ export async function importFromBrproject(
 		create: true,
 	})
 
-	if (!isFirstImport) await app.projectManager.projectReady.fired
+	await app.projectManager.projectReady.fired
 
 	// Unzip .brproject file, do not unzip if already unzipped
 	if (unzip) {
@@ -46,7 +47,7 @@ export async function importFromBrproject(
 			// Reload settings & extensions
 			await SettingsWindow.loadSettings(app)
 			await app.extensionLoader.reload()
-			app.locales.setDefaultLanguage()
+			LocaleManager.setDefaultLanguage()
 		}
 
 		// Get project from projects/ folder
@@ -59,7 +60,7 @@ export async function importFromBrproject(
 	}
 
 	// Ask user whether he wants to save the current project if we are going to delete it later in the import process
-	if (isUsingFileSystemPolyfill.value && !isFirstImport) {
+	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects) {
 		const confirmWindow = new ConfirmationWindow({
 			description:
 				'windows.projectChooser.openNewProject.saveCurrentProject',
@@ -71,29 +72,32 @@ export async function importFromBrproject(
 		}
 	}
 
+	const projectName = await findSuitableFolderName(
+		basename(fileHandle.name, '.brproject'),
+		await fs.getDirectoryHandle('projects')
+	)
+
 	// Get the new project path
 	const importProject =
 		importFrom === 'import'
-			? `projects/${basename(fileHandle.name, '.brproject')}`
+			? `projects/${projectName}`
 			: importFrom.replace('import/', '')
 	// Move imported project to the user's project directory
 	await fs.move(importFrom, importProject)
 
 	// Get current project name
-	let currentProjectName: string | undefined
-	if (!isFirstImport) currentProjectName = app.project.name
-
-	// Add new project
-	if (InitialSetup.ready.hasFired) {
-		await app.projectManager.addProject(
-			await fs.getDirectoryHandle(importProject),
-			true
-		)
-	}
+	let currentProject: Project | undefined
+	if (!app.hasNoProjects) currentProject = app.project
 
 	// Remove old project if browser is using fileSystem polyfill
-	if (isUsingFileSystemPolyfill.value && !isFirstImport)
-		await app.projectManager.removeProject(currentProjectName!)
+	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects)
+		await app.projectManager.removeProject(currentProject!)
+
+	// Add new project
+	await app.projectManager.addProject(
+		await fs.getDirectoryHandle(importProject),
+		true
+	)
 
 	await fs.unlink('import')
 }

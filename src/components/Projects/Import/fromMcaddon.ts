@@ -2,7 +2,6 @@ import { App } from '/@/App'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { Unzipper } from '/@/components/FileSystem/Zip/Unzipper'
-import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { TPackTypeId } from '/@/components/Data/PackType'
@@ -14,10 +13,10 @@ import { defaultPackPaths } from '../Project/Config'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 import { basename } from '/@/utils/path'
 import { getPackId, IManifestModule } from '/@/utils/manifest/getPackId'
+import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
 
 export async function importFromMcaddon(
 	fileHandle: AnyFileHandle,
-	isFirstImport = false,
 	unzip = true
 ) {
 	const app = await App.getApp()
@@ -26,7 +25,7 @@ export async function importFromMcaddon(
 		create: true,
 	})
 
-	if (!isFirstImport) await app.projectManager.projectReady.fired
+	await app.projectManager.projectReady.fired
 
 	// Unzip .mcaddon file
 	if (unzip) {
@@ -36,12 +35,13 @@ export async function importFromMcaddon(
 		unzipper.createTask(app.taskManager)
 		await unzipper.unzip(data)
 	}
-	const projectName = fileHandle.name
-		.replace('.mcaddon', '')
-		.replace('.zip', '')
+	const projectName = await findSuitableFolderName(
+		fileHandle.name.replace('.mcaddon', '').replace('.zip', ''),
+		await fs.getDirectoryHandle('projects')
+	)
 
 	// Ask user whether they want to save the current project if we are going to delete it later in the import process
-	if (isUsingFileSystemPolyfill.value && !isFirstImport) {
+	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects) {
 		const confirmWindow = new ConfirmationWindow({
 			description:
 				'windows.projectChooser.openNewProject.saveCurrentProject',
@@ -125,17 +125,15 @@ export async function importFromMcaddon(
 	await fs.mkdir(`projects/${projectName}/.bridge/extensions`)
 	await fs.mkdir(`projects/${projectName}/.bridge/compiler`)
 
-	// Add new project
-	if (InitialSetup.ready.hasFired) {
-		await app.projectManager.addProject(
-			await fs.getDirectoryHandle(`projects/${projectName}`),
-			true
-		)
-	}
-
 	// Remove old project if browser is using fileSystem polyfill
-	if (isUsingFileSystemPolyfill.value && !isFirstImport)
-		await app.projectManager.removeProject(app.project.name!)
+	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects)
+		await app.projectManager.removeProject(app.project)
+
+	// Add new project
+	await app.projectManager.addProject(
+		await fs.getDirectoryHandle(`projects/${projectName}`),
+		true
+	)
 
 	await fs.unlink('import')
 }

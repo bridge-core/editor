@@ -1,4 +1,4 @@
-import { editor, Position, Range } from 'monaco-editor'
+import type { editor, Position, Range } from 'monaco-editor'
 
 export function isWithinQuotes(model: editor.ITextModel, position: Position) {
 	let line: string

@@ -1,5 +1,4 @@
-import { reactive, set } from '@vue/composition-api'
-import { App } from '/@/App'
+import { del, reactive, Ref, ref, set } from 'vue'
 import { v4 as uuid } from 'uuid'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 
@@ -52,7 +51,6 @@ export class SidebarCategory {
 	}
 
 	setOpen(val: boolean) {
-		App.audioManager.playAudio('click5.ogg', 1)
 		this.isOpen = val
 	}
 
@@ -66,6 +64,8 @@ export class SidebarCategory {
 		)
 	}
 	hasFilterMatches(filter: string) {
+		if (filter === '') return this.items.length > 0
+
 		return (
 			this.items.find((item) => item.getSearchText().includes(filter)) !==
 			undefined
@@ -130,17 +130,18 @@ export class SidebarItem {
 }
 
 export class Sidebar extends EventDispatcher<string | undefined> {
-	protected _selected?: string
-	protected _filter: string = ''
+	public readonly _selected = ref<string | undefined>('')
+	protected _filter = ref('')
 	/**
 	 * Stores the last _filter value that we have already selected a new element for
 	 */
 	protected reselectedForFilter = ''
-	public readonly state: Record<string, any> = {}
-	protected _showDisabled = false
+	public readonly state: Record<string, any> = reactive({})
+	protected _showDisabled = ref(false)
+	protected _elements = <Ref<TSidebarElement[]>>ref([])
 
 	constructor(
-		protected _elements: TSidebarElement[],
+		_elements: TSidebarElement[],
 		protected readonly shouldSortSidebar = true
 	) {
 		super()
@@ -148,10 +149,10 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 	}
 
 	get showDisabled() {
-		return this._showDisabled
+		return this._showDisabled.value
 	}
 	set showDisabled(val: boolean) {
-		this._showDisabled = val
+		this._showDisabled.value = val
 
 		this.rawElements.forEach((e) => {
 			if (e.type === 'category') e.showDisabled = val
@@ -160,31 +161,44 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 
 	addElement(element: TSidebarElement, additionalData?: unknown) {
 		if (element.type === 'item' && additionalData)
-			this.state[element.id] = additionalData
+			set(this.state, element.id, additionalData)
 
 		if (this.has(element)) this.replace(element)
-		else this._elements.push(element)
+		else this._elements.value.push(element)
 	}
 	has(element: TSidebarElement) {
-		return this._elements.find((e) => e.id === element.id) !== undefined
+		return (
+			this._elements.value.find((e) => e.id === element.id) !== undefined
+		)
 	}
 	replace(element: TSidebarElement) {
-		this._elements = this._elements.map((e) => {
+		this._elements.value = this._elements.value.map((e) => {
 			if (e.id === element.id) return element
 
 			return e
 		})
 	}
 	removeElements() {
-		this._elements = []
+		this._elements.value = []
+
+		for (const key in this.state) {
+			del(this.state, key)
+		}
 	}
 
 	get filter() {
-		return this._filter.toLowerCase()
+		return this._filter.value.toLowerCase()
 	}
+	set filter(val) {
+		this._filter.value = val.toLowerCase()
+	}
+	setFilter(filter: string) {
+		this._filter.value = filter.toLowerCase()
+	}
+
 	get elements() {
 		const elements = this.sortSidebar(
-			this._elements
+			this._elements.value
 				.filter((e) => {
 					if (!this.showDisabled && e.isDisabled) return false
 
@@ -214,13 +228,13 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 		return elements
 	}
 	get rawElements() {
-		return this._elements
+		return this._elements.value
 	}
 
 	get currentElement() {
 		if (!this.selected) return
 
-		for (const element of this._elements) {
+		for (const element of this._elements.value) {
 			if (element.type === 'item') {
 				if (element.id === this.selected) return element
 				else continue
@@ -273,19 +287,15 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 	}
 
 	clearFilter() {
-		this._filter = ''
+		this._filter.value = ''
 	}
 	get selected() {
-		return this._selected
+		return this._selected.value
 	}
 	set selected(val) {
-		if (val) {
-			App.audioManager.playAudio('click5.ogg', 1)
-		}
-
-		if (this._selected !== val) {
+		if (this._selected.value !== val) {
 			this.dispatch(val)
-			this._selected = val
+			this._selected.value = val
 		}
 	}
 }

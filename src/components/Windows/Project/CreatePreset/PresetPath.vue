@@ -29,6 +29,7 @@
 				margin-top: 0;
 				padding-top: 0;
 			"
+			autofocus
 			v-model="editedPath"
 			:rules="Object.values(rules)"
 			dense
@@ -39,7 +40,7 @@
 </template>
 
 <script>
-import { App } from '/@/App'
+import { translate } from '/@/components/Locales/Manager'
 
 const validationRules = {
 	alphanumeric: (value) => value.match(/^[a-zA-Z0-9_\/]*$/) !== null,
@@ -60,9 +61,7 @@ export default {
 				key,
 				(value) =>
 					func(value) ||
-					App.instance.locales.translate(
-						`windows.createPreset.validationRule.${key}`
-					),
+					translate(`windows.createPreset.validationRule.${key}`),
 			])
 		),
 	}),
@@ -73,7 +72,7 @@ export default {
 	},
 	computed: {
 		path() {
-			return this.value.substring(0, this.value.length - 1)
+			return this.editedPath.substring(0, this.editedPath.length - 1)
 		},
 	},
 	methods: {

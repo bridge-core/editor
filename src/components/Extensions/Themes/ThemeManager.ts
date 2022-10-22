@@ -2,13 +2,11 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { App } from '/@/App'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { iterateDir } from '/@/utils/iterateDir'
 import { IDisposable } from '/@/types/disposable'
 import json5 from 'json5'
 import { deepMerge } from 'bridge-common-utils'
 import { bridgeDark, bridgeLight } from './Default'
 import { Theme } from './Theme'
-import { VirtualFileHandle } from '../../FileSystem/Virtual/FileHandle'
 import { AnyFileHandle } from '../../FileSystem/Types'
 
 const colorNames = [
@@ -92,9 +90,15 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	getCurrentMode() {
 		return this.mode
 	}
+	getCurrentTheme() {
+		return this.themeMap.get(this.currentTheme)
+	}
 
 	protected applyTheme(theme?: Theme) {
 		theme?.apply(this, this.vuetify)
+	}
+	async applyMonacoTheme() {
+		this.themeMap.get(this.currentTheme)?.applyMonacoTheme()
 	}
 	async updateTheme() {
 		const app = await App.getApp()
@@ -133,12 +137,11 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	async loadDefaultThemes(app: App) {
 		await app.dataLoader.fired
 
-		await iterateDir(
-			await app.dataLoader.getDirectoryHandle(
-				'data/packages/common/themes'
-			),
-			(file) => this.loadTheme(file)
+		const themes = await app.dataLoader.readJSON(
+			'data/packages/common/themes.json'
 		)
+
+		themes.map((theme: any) => this.addTheme(theme, true))
 
 		this.updateTheme()
 	}

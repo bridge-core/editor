@@ -1,110 +1,58 @@
-import { reactive } from '@vue/composition-api'
 import {
-	isUsingOriginPrivateFs,
-	isUsingFileSystemPolyfill,
-} from '/@/components/FileSystem/Polyfill'
-import { AnyFileHandle, AnyHandle } from '/@/components/FileSystem/Types'
-import { InitialSetup } from '/@/components/InitialSetup/InitialSetup'
+	AnyDirectoryHandle,
+	AnyFileHandle,
+	AnyHandle,
+} from '/@/components/FileSystem/Types'
 import { App } from '/@/App'
 import { extname } from '/@/utils/path'
 
-export interface IDropState {
-	isHovering: boolean
-}
-
 export class FileDropper {
-	public readonly state = reactive<IDropState>({
-		isHovering: false,
-	})
 	protected fileHandlers = new Map<
 		string,
 		(fileHandle: AnyFileHandle) => Promise<void> | void
 	>()
+	protected defaultImporter?: (
+		fileHandle: AnyFileHandle
+	) => Promise<void> | void
 
 	constructor(protected app: App) {
 		window.addEventListener('dragover', (event) => {
 			event.preventDefault()
-
-			if (
-				App.windowState.isAnyWindowVisible.value &&
-				InitialSetup.ready.hasFired
-			)
-				return
-
-			// Moving tabs
-			if (event.dataTransfer?.effectAllowed === 'move') return
-
-			this.state.isHovering = true
-		})
-
-		window.addEventListener('mouseout', (event) => {
-			event.preventDefault()
-
-			if (event.relatedTarget == null) {
-				this.state.isHovering = false
-			}
-		})
-
-		window.addEventListener('dragend', (event) => {
-			event.preventDefault()
-			this.state.isHovering = false
 		})
 
 		window.addEventListener('drop', (event) => {
 			event.preventDefault()
 
-			if (
-				App.windowState.isAnyWindowVisible.value &&
-				InitialSetup.ready.hasFired
-			)
-				return
+			if (App.windowState.isAnyWindowVisible.value) return
 
 			this.onDrop([...(event.dataTransfer?.items ?? [])])
-			this.state.isHovering = false
 		})
-
-		if ('launchQueue' in window) {
-			;(<any>window).launchQueue.setConsumer(
-				async (launchParams: any) => {
-					if (!launchParams.files.length) return
-
-					for (const fileHandle of launchParams.files) {
-						await this.importFile(fileHandle)
-					}
-				}
-			)
-		}
 	}
 
 	protected async onDrop(dataTransferItems: DataTransferItem[]) {
 		for (const item of dataTransferItems) {
-			const fileHandle = <AnyHandle | null>(
-				await item.getAsFileSystemHandle()
-			)
-			if (!fileHandle) return
+			const handle = <AnyHandle | null>await item.getAsFileSystemHandle()
+			if (!handle) return
 
-			if (fileHandle.kind === 'directory') {
-				if (
-					!isUsingOriginPrivateFs &&
-					!isUsingFileSystemPolyfill.value &&
-					fileHandle.name === 'com.mojang'
-				)
-					this.app.comMojang.handleComMojangDrop(fileHandle)
+			await this.import(handle)
+		}
+	}
 
-				// TODO: Handle import of other folders
-			} else if (fileHandle.kind === 'file') {
-				await this.importFile(fileHandle)
-			}
+	async import(handle: AnyHandle) {
+		if (handle.kind === 'directory') {
+			await this.importFolder(handle)
+		} else if (handle.kind === 'file') {
+			await this.importFile(handle)
 		}
 	}
 
 	async importFile(fileHandle: AnyFileHandle) {
-		const ext = extname(fileHandle.name)
-		const handler = this.fileHandlers.get(ext)
+		await this.app.projectManager.projectReady.fired
 
-		if (!handler) {
-			return false
-		}
+		const ext = extname(fileHandle.name)
+		let handler = this.fileHandlers.get(ext) ?? this.defaultImporter
+
+		if (!handler) return false
 
 		try {
 			await handler(fileHandle)
@@ -113,6 +61,10 @@ export class FileDropper {
 			return false
 		}
 		return true
+	}
+
+	async importFolder(directoryHandle: AnyDirectoryHandle) {
+		await this.app.folderImportManager.onImportFolder(directoryHandle)
 	}
 
 	addFileImporter(
@@ -126,6 +78,15 @@ export class FileDropper {
 
 		return {
 			dispose: () => this.fileHandlers.delete(ext),
+		}
+	}
+	setDefaultFileImporter(
+		importHandler: (fileHandle: AnyFileHandle) => Promise<void> | void
+	) {
+		this.defaultImporter = importHandler
+
+		return {
+			dispose: () => (this.defaultImporter = undefined),
 		}
 	}
 }

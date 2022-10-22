@@ -5,10 +5,12 @@ import { setupSettings } from './setupSettings'
 import { App } from '/@/App'
 import { SettingsSidebar } from './SettingsSidebar'
 import { setSettingsState, settingsState } from './SettingsState'
-import { BaseWindow } from '../BaseWindow'
 import { Signal } from '/@/components/Common/Event/Signal'
+import { translate } from '../../Locales/Manager'
+import { NewBaseWindow } from '../NewBaseWindow'
+import { reactive } from 'vue'
 
-export class SettingsWindow extends BaseWindow {
+export class SettingsWindow extends NewBaseWindow {
 	public static readonly loadedSettings = new Signal<any>()
 
 	protected sidebar = new SettingsSidebar([])
@@ -17,51 +19,49 @@ export class SettingsWindow extends BaseWindow {
 		text: 'bridge.',
 	})
 
+	protected state = reactive<any>({
+		...super.getState(),
+		reloadRequired: false,
+	})
+
 	constructor(public parent: App) {
 		super(SettingsWindowComponent, false, true)
 		this.defineWindow()
 	}
 
 	async setup() {
-		const locales = await App.getApp().then((app) => app.locales)
-
 		// this.sidebar.addElement(this.bridgeCategory)
 
 		this.addCategory(
 			'general',
-			locales.translate('windows.settings.general.name'),
+			translate('windows.settings.general.name'),
 			'mdi-circle-outline'
 		)
 		this.addCategory(
 			'appearance',
-			locales.translate('windows.settings.appearance.name'),
+			translate('windows.settings.appearance.name'),
 			'mdi-palette-outline'
 		)
 		this.addCategory('editor', 'Editor', 'mdi-pencil-outline')
 		this.addCategory(
 			'actions',
-			locales.translate('windows.settings.actions.name'),
+			translate('windows.settings.actions.name'),
 			'mdi-keyboard-outline'
-		)
-		this.addCategory(
-			'audio',
-			locales.translate('windows.settings.audio.name'),
-			'mdi-volume-high'
 		)
 		// this.addCategory('extensions', 'Extensions', 'mdi-puzzle-outline')
 		this.addCategory(
 			'sidebar',
-			locales.translate('windows.settings.sidebar.name'),
+			translate('windows.settings.sidebar.name'),
 			'mdi-table-column'
 		)
 		this.addCategory(
 			'developers',
-			locales.translate('windows.settings.developer.name'),
+			translate('windows.settings.developer.name'),
 			'mdi-wrench-outline'
 		)
 		this.addCategory(
 			'projects',
-			locales.translate('windows.settings.projects.name'),
+			translate('windows.settings.projects.name'),
 			'mdi-folder-open-outline'
 		)
 
@@ -71,6 +71,7 @@ export class SettingsWindow extends BaseWindow {
 
 	addCategory(id: string, name: string, icon: string) {
 		if (settingsState[id] === undefined) settingsState[id] = {}
+
 		this.sidebar.addElement(
 			new SidebarItem({
 				color: 'primary',
@@ -97,12 +98,15 @@ export class SettingsWindow extends BaseWindow {
 	static async saveSettings(app?: App) {
 		if (!app) app = await App.getApp()
 
-		await app.fileSystem.writeJSON('data/settings.json', settingsState)
+		await app.fileSystem.writeJSON(
+			'~local/data/settings.json',
+			settingsState
+		)
 	}
 	static async loadSettings(app: App) {
 		try {
 			setSettingsState(
-				await app.fileSystem.readJSON('data/settings.json')
+				await app.fileSystem.readJSON('~local/data/settings.json')
 			)
 		} catch {
 		} finally {
@@ -111,8 +115,7 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async open() {
-		App.audioManager.playAudio('click5.ogg', 1)
-		if (this.isVisible) return
+		if (this.state.isVisible) return
 
 		this.sidebar.removeElements()
 		await this.setup()
@@ -121,7 +124,6 @@ export class SettingsWindow extends BaseWindow {
 	}
 
 	async close() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		super.close()
 
 		const app = await App.getApp()

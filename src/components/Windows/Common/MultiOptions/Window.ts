@@ -1,5 +1,5 @@
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import MultiWindowComponent from './Window.vue'
+import { NewBaseWindow } from '../../NewBaseWindow'
 
 export interface IOption {
 	name: string
@@ -11,7 +11,7 @@ export interface IMultiOptionsWindowConfig {
 	isClosable?: boolean
 }
 
-export class MultiOptionsWindow extends BaseWindow<string[]> {
+export class MultiOptionsWindow extends NewBaseWindow<string[]> {
 	constructor(protected config: IMultiOptionsWindowConfig) {
 		super(MultiWindowComponent, true, false)
 

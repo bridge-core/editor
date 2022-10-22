@@ -1,5 +1,4 @@
 import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import Content from './Content.vue'
 import BuildProfiles from './BuildProfiles.vue'
 import Logs from './Logs.vue'
@@ -7,7 +6,7 @@ import OutputFolders from './OutputFolders.vue'
 import WatchMode from './WatchMode.vue'
 import { IActionConfig, SimpleAction } from '/@/components/Actions/SimpleAction'
 import { App } from '/@/App'
-import { markRaw, ref } from '@vue/composition-api'
+import { markRaw, ref } from 'vue'
 import json5 from 'json5'
 import { proxy } from 'comlink'
 import { InfoPanel, IPanelOptions } from '/@/components/InfoPanel/InfoPanel'
@@ -15,8 +14,10 @@ import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { restartWatchModeAction } from '../Actions/RestartWatchMode'
 import { SettingsWindow } from '../../Windows/Settings/SettingsWindow'
+import { LocaleManager } from '../../Locales/Manager'
+import { NewBaseWindow } from '../../Windows/NewBaseWindow'
 
-export class CompilerWindow extends BaseWindow {
+export class CompilerWindow extends NewBaseWindow {
 	protected sidebar = new Sidebar([], false)
 	protected categories = markRaw<
 		Record<string, { component: any; data: any }>
@@ -69,7 +70,7 @@ export class CompilerWindow extends BaseWindow {
 				this.reload()
 			},
 		})
-		this.actions.push(reloadAction)
+		this.state.actions.push(reloadAction)
 
 		const clearConsoleAction = new SimpleAction({
 			icon: 'mdi-close-circle-outline',
@@ -85,26 +86,24 @@ export class CompilerWindow extends BaseWindow {
 			this.activeCategoryChanged.dispatch(selected)
 
 			if (selected === 'logs')
-				this.actions.splice(
-					this.actions.indexOf(reloadAction),
+				this.state.actions.splice(
+					this.state.actions.indexOf(reloadAction),
 					0,
 					clearConsoleAction
 				)
 			else
-				this.actions = this.actions.filter(
+				this.state.actions = this.state.actions.filter(
 					(a) => a !== clearConsoleAction
 				)
 		})
 		// Close this window whenever the watch mode is restarted
 		restartWatchModeAction.on(() => this.close())
 
-		App.getApp().then((app) => {
-			const loc = app.locales
-
+		App.getApp().then(() => {
 			this.sidebar.addElement(
 				new SidebarItem({
 					id: 'watchMode',
-					text: loc.translate(
+					text: LocaleManager.translate(
 						'sidebar.compiler.categories.watchMode.name'
 					),
 					color: 'primary',
@@ -114,7 +113,9 @@ export class CompilerWindow extends BaseWindow {
 			this.sidebar.addElement(
 				new SidebarItem({
 					id: 'buildProfiles',
-					text: loc.translate('sidebar.compiler.categories.profiles'),
+					text: LocaleManager.translate(
+						'sidebar.compiler.categories.profiles'
+					),
 					color: 'primary',
 					icon: 'mdi-motion-play-outline',
 				})
@@ -122,7 +123,7 @@ export class CompilerWindow extends BaseWindow {
 			this.sidebar.addElement(
 				new SidebarItem({
 					id: 'outputFolders',
-					text: loc.translate(
+					text: LocaleManager.translate(
 						'sidebar.compiler.categories.outputFolders'
 					),
 					color: 'primary',
@@ -132,7 +133,7 @@ export class CompilerWindow extends BaseWindow {
 			this.sidebar.addElement(
 				new SidebarItem({
 					id: 'logs',
-					text: loc.translate(
+					text: LocaleManager.translate(
 						'sidebar.compiler.categories.logs.name'
 					),
 					color: 'primary',
@@ -147,8 +148,10 @@ export class CompilerWindow extends BaseWindow {
 		const app = await App.getApp()
 
 		this.categories.buildProfiles.data.value = await this.loadProfiles()
-		this.categories.logs.data.value = await app.project.compilerService.getCompilerLogs()
-		this.categories.outputFolders.data.value = await this.loadOutputFolders()
+		this.categories.logs.data.value =
+			await app.project.compilerService.getCompilerLogs()
+		this.categories.outputFolders.data.value =
+			await this.loadOutputFolders()
 	}
 	async open() {
 		const app = await App.getApp()
@@ -156,12 +159,13 @@ export class CompilerWindow extends BaseWindow {
 		await this.reload()
 		await app.project.compilerService.onConsoleUpdate(
 			proxy(async () => {
-				this.categories.logs.data.value = await app.project.compilerService.getCompilerLogs()
+				this.categories.logs.data.value =
+					await app.project.compilerService.getCompilerLogs()
 			})
 		)
 
 		if (this.lastUsedBuildProfile)
-			this.actions.unshift(this.runLastProfileAction)
+			this.state.actions.unshift(this.runLastProfileAction)
 
 		super.open()
 	}
@@ -169,7 +173,7 @@ export class CompilerWindow extends BaseWindow {
 		const app = await App.getApp()
 		await app.project.compilerService.removeConsoleListeners()
 
-		this.actions = this.actions.filter(
+		this.state.actions = this.state.actions.filter(
 			(a) => a !== this.runLastProfileAction
 		)
 
@@ -234,7 +238,7 @@ export class CompilerWindow extends BaseWindow {
 
 					const service = await project.createDashService(
 						'production',
-						`projects/${project.name}/.bridge/compiler/${entry.name}`
+						`${project.projectPath}/.bridge/compiler/${entry.name}`
 					)
 					await service.setup()
 					await service.build()

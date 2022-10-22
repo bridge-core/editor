@@ -6,15 +6,12 @@ import {
 	IConfigJson,
 	ProjectConfig as BaseProjectConfig,
 } from 'mc-project-core'
-import { get } from 'idb-keyval'
 
 export type { IConfigJson } from 'mc-project-core'
 export { defaultPackPaths } from 'mc-project-core'
 
 /**
  * Internal config format versions
- * We use an IDB key to store the config version because some changes we need to make automatically
- * don't make sense as a format version that is stored inside of the file
  *
  * Format version data:
  * [bridge. v2.2.8] Unset or "0": Projects may not contain the formatVersionCorrection compiler plugin
@@ -24,15 +21,22 @@ export { defaultPackPaths } from 'mc-project-core'
 export const latestFormatVersion = 1
 
 export class ProjectConfig extends BaseProjectConfig {
-	constructor(protected fileSystem: FileSystem, protected project?: Project) {
-		super(`projects/${fileSystem.baseDirectory.name}`)
+	constructor(
+		protected fileSystem: FileSystem,
+		projectPath: string,
+		protected project?: Project
+	) {
+		super(projectPath)
 
 		if (project) {
-			project.fileSave.on('config.json', () => {
-				this.refreshConfig()
-				this.project!.app.windows.createPreset.onPresetsChanged()
-				this.project!.compilerService.reloadPlugins()
-			})
+			project.fileSave.on(
+				this.resolvePackPath(undefined, 'config.json'),
+				() => {
+					this.refreshConfig()
+					this.project!.app.windows.createPreset.onPresetsChanged()
+					this.project!.compilerService.reloadPlugins()
+				}
+			)
 		}
 	}
 
@@ -44,8 +48,6 @@ export class ProjectConfig extends BaseProjectConfig {
 	}
 
 	async setup(upgradeConfig = true) {
-		const formatVersion = (await get(`projectConfigFormatVersion`)) ?? 0
-
 		// Load legacy project config & transform it to new format specified here: https://github.com/bridge-core/project-config-standard
 		if (
 			upgradeConfig &&
@@ -89,25 +91,26 @@ export class ProjectConfig extends BaseProjectConfig {
 
 		await super.setup()
 
+		const formatVersion = this.data.bridge?.formatVersion ?? 0
+		if (!this.data.bridge) this.data.bridge = {}
 		let updatedConfig = false
 
 		// Running in main thread, so we can use the App object
 		if (upgradeConfig && this.project && this.data.capabilities) {
 			// Transform old "capabilities" format to "experimentalGameplay"
-			const experimentalToggles: IExperimentalToggle[] = await this.project.app.dataLoader.readJSON(
-				'data/packages/minecraftBedrock/experimentalGameplay.json'
-			)
+			const experimentalToggles: IExperimentalToggle[] =
+				await this.project.app.dataLoader.readJSON(
+					'data/packages/minecraftBedrock/experimentalGameplay.json'
+				)
 			const experimentalGameplay: Record<string, boolean> =
 				this.data.experimentalGameplay ?? {}
 			const capabilities: string[] = this.data.capabilities ?? []
 
 			// Update scripting API/GameTest API toggles based on the old "capabilities" field
-			experimentalGameplay[
-				'enableGameTestFramework'
-			] = capabilities.includes('gameTestAPI')
-			experimentalGameplay[
-				'additionalModdingCapabilities'
-			] = capabilities.includes('scriptingAPI')
+			experimentalGameplay['enableGameTestFramework'] =
+				capabilities.includes('gameTestAPI')
+			experimentalGameplay['additionalModdingCapabilities'] =
+				capabilities.includes('scriptingAPI')
 
 			for (const toggle of experimentalToggles) {
 				// Set all missing experimental toggles to true by default
@@ -146,6 +149,7 @@ export class ProjectConfig extends BaseProjectConfig {
 			this.data.compiler?.plugins &&
 			!this.data.compiler.plugins.includes('formatVersionCorrection')
 		) {
+			this.data.bridge.formatVersion = 1
 			this.data.compiler.plugins.push('formatVersionCorrection')
 			updatedConfig = true
 		}
@@ -182,5 +186,21 @@ export class ProjectConfig extends BaseProjectConfig {
 		if (!author) return
 
 		return this.resolvePackPath(undefined, author.logo)
+	}
+
+	async toggleExperiment(project: Project, experiment: string) {
+		project.app.windows.loadingWindow.open()
+
+		const experimentalGameplay = this.get()?.experimentalGameplay ?? {}
+		// Modify experimental gameplay
+		experimentalGameplay[experiment] = !experimentalGameplay[experiment]
+		// Save config
+		await this.save()
+
+		// Only refresh project if it's active
+		if (project.isActiveProject) await project.refresh()
+		this.project!.app.windows.createPreset.onPresetsChanged()
+
+		project.app.windows.loadingWindow.close()
 	}
 }

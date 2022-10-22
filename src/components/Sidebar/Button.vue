@@ -10,7 +10,10 @@
 				class="rounded-lg ma-2 d-flex justify-center sidebar-button"
 				:style="{
 					'background-color': computedColor,
+					position: 'relative',
 					transform: isSelected ? 'scale(1.1)' : undefined,
+					cursor: canInteractWith ? 'pointer' : undefined,
+					height: smallerSidebarElements ? `34px` : `40px`,
 				}"
 				:class="{
 					loading: isLoading,
@@ -21,7 +24,7 @@
 				v-on="on"
 				@click="onClick"
 				@click.middle="onMiddleClick"
-				v-ripple="alwaysAllowClick || !isLoading"
+				v-ripple="canInteractWith"
 			>
 				<v-badge
 					:value="badge && !isLoading ? badge.count : 0"
@@ -40,6 +43,9 @@
 					<v-icon
 						:color="isLoading || isSelected ? 'white' : iconColor"
 						:small="isLoading"
+						:style="{
+							opacity: disabled ? 0.4 : undefined,
+						}"
 					>
 						{{ icon }}
 					</v-icon>
@@ -62,17 +68,20 @@
 
 <script>
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 
 export default {
 	name: 'SidebarButton',
-	mixins: [TranslationMixin],
 	props: {
 		displayName: String,
 		icon: String,
 		iconColor: String,
 		color: String,
 
+		disabled: {
+			type: Boolean,
+			default: false,
+		},
 		isLoading: {
 			type: Boolean,
 			default: false,
@@ -90,6 +99,12 @@ export default {
 			default: 1,
 		},
 		badge: Object,
+	},
+	setup() {
+		const { t } = useTranslations()
+		return {
+			t,
+		}
 	},
 	data: () => ({
 		settingsState,
@@ -119,11 +134,16 @@ export default {
 				? `var(--v-primary-base)`
 				: `var(--v-sidebarSelection-base)`
 		},
+		canInteractWith() {
+			return !this.disabled && (this.alwaysAllowClick || !this.isLoading)
+		},
 	},
 	methods: {
-		onClick() {
+		onClick(event) {
+			if (this.disabled) return
+
 			if (this.alwaysAllowClick || !this.isLoading) {
-				this.$emit('click')
+				this.$emit('click', event)
 
 				// Otherwise the tooltip can get stuck until the user hovers over the button again
 				this.hasClicked = true
@@ -145,7 +165,6 @@ export default {
 
 <style scoped>
 .sidebar-button {
-	cursor: pointer;
 	transition: all 0.1s ease-in-out;
 }
 </style>

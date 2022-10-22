@@ -2,28 +2,33 @@
 globalThis.process = {
 	cwd: () => '',
 	env: {},
+	release: {
+		name: 'browser',
+	},
 }
 
 import '/@/components/FileSystem/Virtual/Comlink'
 import { expose } from 'comlink'
 import { FileSystem } from '../../FileSystem/FileSystem'
-import { ESearchType } from '../Controls/SearchTypeEnum'
 import { iterateDir } from '/@/utils/iterateDir'
-import { extname, join, resolve } from '/@/utils/path'
+import { extname, join, relative } from '/@/utils/path'
 
 import { createRegExp, processFileText } from '../Utils'
-import { AnyDirectoryHandle } from '../../FileSystem/Types'
-import { isMatch } from 'bridge-common-utils'
+import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
 import { ProjectConfig } from '../../Projects/Project/Config'
-import { TPackTypeId } from '../../Data/PackType'
 
 export interface IQueryOptions {
-	searchType: ESearchType
-	includeFiles: string
-	excludeFiles: string
+	searchType: number
+	isReadOnly?: boolean
+}
+export interface IDirectory {
+	directory: AnyDirectoryHandle
+	path: string
 }
 export interface IQueryResult {
+	fileHandle: AnyFileHandle
 	filePath: string
+	displayFilePath: string
 	matches: IMatch[]
 }
 export interface IMatch {
@@ -39,6 +44,7 @@ const knownTextFiles = new Set([
 	'.lang',
 	'.mcfunction',
 	'.txt',
+	'.md',
 	'.molang',
 	'.json',
 	'.html',
@@ -51,9 +57,12 @@ export class FindAndReplace {
 	protected matchedFiles = new Set<string>()
 	protected config: ProjectConfig
 
-	constructor(protected projectFolderHandle: AnyDirectoryHandle) {
+	constructor(
+		protected projectFolderHandle: AnyDirectoryHandle,
+		protected projectPath: string
+	) {
 		this.fileSystem = new FileSystem(projectFolderHandle)
-		this.config = new ProjectConfig(this.fileSystem)
+		this.config = new ProjectConfig(this.fileSystem, projectPath)
 	}
 
 	setMatchedFiles(matchedFiles: string[]) {
@@ -63,56 +72,10 @@ export class FindAndReplace {
 		return [...oldFiles]
 	}
 
-	protected matchFolder(path: string, include: string, exclude: string) {
-		// fast path
-		if (include === '' && exclude === '') return true
-
-		let matchesInclude: boolean | undefined =
-			include.length === 0 ? true : undefined
-		let matchesExclude: boolean | undefined =
-			exclude.length === 0 ? true : undefined
-		// Convert include/exclude to array
-		let includePaths: string[] = include.replaceAll(' ', '').split(',')
-		let excludePaths: string[] = exclude.replaceAll(' ', '').split(',')
-		// Resolve pack path in the user input
-		const packs: { [key: string]: TPackTypeId } = {
-			BP: 'behaviorPack',
-			RP: 'resourcePack',
-			SP: 'skinPack',
-			WT: 'worldTemplate',
-		}
-		for (const pack of Object.keys(packs)) {
-			includePaths = includePaths.map((includePath) =>
-				includePath.replace(
-					pack,
-					resolve(this.config.getPackRoot(packs[pack]))
-				)
-			)
-			excludePaths = excludePaths.map((excludePath) =>
-				excludePath.replace(
-					pack,
-					resolve(this.config.getPackRoot(packs[pack]))
-				)
-			)
-		}
-		// Check whether both conditions match or not
-		const match = (path: string, toMatch: string) => {
-			if (toMatch.includes('*')) return isMatch(path, toMatch)
-			else return path.startsWith(toMatch)
-		}
-		matchesInclude ??= includePaths.some((includePath) =>
-			match(path, includePath)
-		)
-		matchesExclude ??= !excludePaths.some((excludePath) =>
-			match(path, excludePath)
-		)
-
-		return matchesInclude && matchesExclude
-	}
-
 	async createQuery(
+		directories: IDirectory[],
 		searchFor: string,
-		{ searchType, includeFiles, excludeFiles }: IQueryOptions
+		{ searchType }: IQueryOptions
 	) {
 		this.matchedFiles.clear()
 
@@ -122,17 +85,19 @@ export class FindAndReplace {
 		const regExp = createRegExp(searchFor, searchType)
 		if (!regExp) return []
 
-		await this.iterateProject(
-			regExp,
-			queryResults,
-			includeFiles,
-			excludeFiles
-		)
+		const promises = []
+		for (const directory of directories) {
+			promises.push(
+				this.iterateDirectory(directory, regExp, queryResults)
+			)
+		}
+		await Promise.all(promises)
 
 		return queryResults
 	}
 
 	async executeQuery(
+		directories: IDirectory[],
 		searchFor: string,
 		replaceWith: string,
 		{ searchType }: IQueryOptions
@@ -142,24 +107,23 @@ export class FindAndReplace {
 		const regExp = createRegExp(searchFor, searchType)
 		if (!regExp) return []
 
-		await this.replaceAll(regExp, replaceWith)
+		const promises = []
+		for (const directory of directories) {
+			promises.push(this.replaceAll(directory, regExp, replaceWith))
+		}
+		await Promise.all(promises)
 	}
 
-	protected async iterateProject(
+	protected async iterateDirectory(
+		{ directory, path }: IDirectory,
 		regExp: RegExp,
-		queryResults: IQueryResult[],
-		includeFiles: string,
-		excludeFiles: string
+		queryResults: IQueryResult[]
 	) {
 		await iterateDir(
-			this.projectFolderHandle,
+			directory,
 			async (fileHandle, filePath) => {
 				const ext = extname(filePath)
-				if (
-					!knownTextFiles.has(ext) ||
-					!this.matchFolder(filePath, includeFiles, excludeFiles)
-				)
-					return
+				if (!knownTextFiles.has(ext)) return
 
 				const matches: IMatch[] = []
 				const fileText = await fileHandle
@@ -194,31 +158,35 @@ export class FindAndReplace {
 				}
 
 				if (matches.length > 0) {
-					const absFilePath = join(
-						`projects/${this.projectFolderHandle.name}`,
-						filePath
-					)
-					this.matchedFiles.add(absFilePath)
-					queryResults.push({ filePath: absFilePath, matches })
+					this.matchedFiles.add(filePath)
+					queryResults.push({
+						filePath,
+						displayFilePath: join(
+							`./${directory.name}`,
+							relative(path, filePath)
+						),
+						fileHandle,
+						matches,
+					})
 				}
 			},
-			ignoreFolders
+			ignoreFolders,
+			path
 		)
 	}
 
-	protected async replaceAll(regExp: RegExp, replaceWith: string) {
+	protected async replaceAll(
+		{ directory, path }: IDirectory,
+		regExp: RegExp,
+		replaceWith: string
+	) {
 		await iterateDir(
-			this.projectFolderHandle,
+			directory,
 			async (fileHandle, filePath) => {
 				const ext = extname(filePath)
 				if (
 					!knownTextFiles.has(ext) ||
-					!this.matchedFiles.has(
-						join(
-							`projects/${this.projectFolderHandle.name}`,
-							filePath
-						)
-					)
+					!this.matchedFiles.has(filePath)
 				)
 					return
 
@@ -235,10 +203,10 @@ export class FindAndReplace {
 				if (fileText !== newFileText)
 					await this.fileSystem.write(fileHandle, newFileText)
 			},
-			ignoreFolders
+			ignoreFolders,
+			path
 		)
 	}
-	protected async replaceInFile(regExp: RegExp, replaceWith: string) {}
 }
 
 expose(FindAndReplace)

@@ -17,6 +17,8 @@ export class CombinedFileSystem extends FileSystem {
 	getDirectoryHandle(path: string, opts: IGetHandleConfig) {
 		if (path.startsWith('data/packages/'))
 			return this.dataLoader.getDirectoryHandle(path, opts)
+		else if (path.startsWith('file:///data/packages/'))
+			return this.dataLoader.getDirectoryHandle(path.slice(8), opts)
 		else return super.getDirectoryHandle(path, opts)
 	}
 }

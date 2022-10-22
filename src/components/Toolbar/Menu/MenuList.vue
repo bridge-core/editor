@@ -11,14 +11,16 @@
 				:key="`menu.${i}.${Math.random()}`"
 				open-on-hover
 				offset-x
-				tile
 				z-index="11"
+				:nudge-top="-8"
+				rounded="lg"
 			>
 				<template v-slot:activator="{ on }">
 					<v-list-item
 						dense
 						v-on="item.type === 'category' ? on : undefined"
 						@click="onClick(item)"
+						:disabled="item.isDisabled"
 					>
 						<v-list-item-icon v-if="item.icon">
 							<v-icon color="accent" small>{{
@@ -56,20 +58,16 @@
 	</v-list>
 </template>
 
-<script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+<script setup>
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 
-export default {
-	name: 'MenuList',
-	mixins: [TranslationMixin],
-	props: {
-		elements: Object,
-	},
+const { t } = useTranslations()
 
-	methods: {
-		onClick(item) {
-			item.trigger()
-		},
-	},
+defineProps({
+	elements: Object,
+})
+
+function onClick(item) {
+	item.trigger()
 }
 </script>

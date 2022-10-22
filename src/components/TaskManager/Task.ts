@@ -34,7 +34,7 @@ export class Task {
 		this.dispose()
 	}
 
-	dispose() {
+	protected dispose() {
 		this.taskManager?.delete(this)
 	}
 

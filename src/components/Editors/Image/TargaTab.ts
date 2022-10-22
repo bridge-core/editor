@@ -48,7 +48,7 @@ export class TargaTab extends ImageTab {
 		await this.applyUnmaskedImageUrl()
 	}
 
-	save() {
+	_save() {
 		/// TODO: Save `this.dataUrl` value to `${this.fileHandle.name}.png` file
 	}
 

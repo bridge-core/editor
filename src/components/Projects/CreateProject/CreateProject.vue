@@ -1,12 +1,12 @@
 <template>
 	<BaseWindow
-		v-if="shouldRender"
+		v-if="state.shouldRender"
 		windowTitle="windows.createProject.title"
-		:isVisible="isVisible"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
-		:hasCloseButton="!isFirstProject"
+		:hasCloseButton="!window.isFirstProject"
 		:isFullscreen="false"
-		:isPersistent="isCreatingProject || isFirstProject"
+		:isPersistent="state.isCreatingProject || window.isFirstProject"
 		:percentageWidth="80"
 		:percentageHeight="80"
 		@closeWindow="close"
@@ -14,7 +14,7 @@
 		<template #default>
 			<!-- Welcome text for users getting started with bridge. -->
 
-			<BridgeSheet class="pa-3 mb-2" v-if="isFirstProject">
+			<BridgeSheet class="pa-3 mb-2" v-if="window.isFirstProject">
 				<h1>
 					{{ t('windows.createProject.welcome') }}
 				</h1>
@@ -25,7 +25,7 @@
 
 			<v-row class="mb-6" dense>
 				<v-col
-					v-for="packType in availablePackTypes"
+					v-for="packType in window.availablePackTypes"
 					:key="packType.id"
 					xs="12"
 					sm="6"
@@ -37,7 +37,9 @@
 						:packType="packType"
 						isSelectable
 						style="height: 100%"
-						:selected="createOptions.packs.includes(packType.id)"
+						:selected="
+							state.createOptions.packs.includes(packType.id)
+						"
 						@click="togglePack(packType.id)"
 					>
 						<template
@@ -52,15 +54,18 @@
 									t('windows.createProject.bpAsRpDependency')
 								"
 								:value="
-									createOptions.rpAsBpDependency ||
-									createOptions.packs.includes('resourcePack')
+									state.createOptions.rpAsBpDependency ||
+									state.createOptions.packs.includes(
+										'resourcePack'
+									)
 								"
 								@click.stop.native="
-									createOptions.bpAsRpDependency = !createOptions.bpAsRpDependency
+									state.createOptions.bpAsRpDependency =
+										!state.createOptions.bpAsRpDependency
 								"
 								:disabled="
 									!selected ||
-									!createOptions.packs.includes(
+									!state.createOptions.packs.includes(
 										'resourcePack'
 									)
 								"
@@ -79,15 +84,18 @@
 									t('windows.createProject.rpAsBpDependency')
 								"
 								:value="
-									createOptions.rpAsBpDependency ||
-									createOptions.packs.includes('behaviorPack')
+									state.createOptions.rpAsBpDependency ||
+									state.createOptions.packs.includes(
+										'behaviorPack'
+									)
 								"
 								@click.stop.native="
-									createOptions.rpAsBpDependency = !createOptions.rpAsBpDependency
+									state.createOptions.rpAsBpDependency =
+										!state.createOptions.rpAsBpDependency
 								"
 								:disabled="
 									!selected ||
-									!createOptions.packs.includes(
+									!state.createOptions.packs.includes(
 										'behaviorPack'
 									)
 								"
@@ -110,7 +118,7 @@
 					<v-expansion-panel-content color="expandedSidebar">
 						<v-row dense>
 							<v-col
-								v-for="experiment in experimentalToggles"
+								v-for="experiment in window.experimentalToggles"
 								:key="experiment.id"
 								xs="12"
 								sm="6"
@@ -121,9 +129,8 @@
 								<ExperimentalGameplay
 									:experiment="experiment"
 									v-model="
-										createOptions.experimentalGameplay[
-											experiment.id
-										]
+										state.createOptions
+											.experimentalGameplay[experiment.id]
 									"
 									style="height: 100%"
 								/>
@@ -135,7 +142,7 @@
 
 			<!-- Toggle Creation of individual files -->
 			<v-expansion-panels
-				v-if="$data.packCreateFiles.length > 0"
+				v-if="window.packCreateFiles.length > 0"
 				class="mb-6"
 			>
 				<v-expansion-panel>
@@ -148,7 +155,7 @@
 					<v-expansion-panel-content color="expandedSidebar">
 						<v-row dense>
 							<v-col
-								v-for="(file, i) in $data.packCreateFiles"
+								v-for="(file, i) in window.packCreateFiles"
 								:key="`${i}-${file.id}`"
 								xs="12"
 								sm="6"
@@ -174,7 +181,7 @@
 					@dragover.prevent.stop
 				>
 					<v-file-input
-						v-model="createOptions.icon"
+						v-model="state.createOptions.icon"
 						:label="t('windows.createProject.packIcon')"
 						:prepend-icon="null"
 						prepend-inner-icon="mdi-image-outline"
@@ -186,7 +193,7 @@
 				</div>
 
 				<v-text-field
-					v-model="createOptions.name"
+					v-model="state.createOptions.name"
 					:label="t('windows.createProject.projectName.name')"
 					:rules="nameRules"
 					autocomplete="off"
@@ -197,7 +204,7 @@
 			</div>
 
 			<v-textarea
-				v-model="createOptions.description"
+				v-model="state.createOptions.description"
 				:label="t('windows.createProject.projectDescription')"
 				autocomplete="off"
 				auto-grow
@@ -209,7 +216,7 @@
 
 			<div class="d-flex">
 				<v-text-field
-					v-model="createOptions.namespace"
+					v-model="state.createOptions.namespace"
 					:label="t('windows.createProject.projectPrefix')"
 					autocomplete="off"
 					class="mr-2"
@@ -217,7 +224,7 @@
 					dense
 				/>
 				<v-text-field
-					v-model="createOptions.author"
+					v-model="state.createOptions.author"
 					:label="t('windows.createProject.projectAuthor')"
 					autocomplete="off"
 					class="mx-2"
@@ -226,28 +233,35 @@
 				/>
 
 				<v-autocomplete
-					v-model="createOptions.targetVersion"
+					v-model="state.createOptions.targetVersion"
 					:label="t('windows.createProject.projectTargetVersion')"
 					autocomplete="off"
-					:items="availableTargetVersions"
-					:loading="availableTargetVersionsLoading"
+					:menu-props="{
+						maxHeight: 220,
+						rounded: 'lg',
+						'nudge-top': -8,
+						transition: 'slide-y-transition',
+					}"
+					:items="window.availableTargetVersions"
+					:loading="state.availableTargetVersionsLoading"
 					class="ml-2"
 					outlined
 					dense
-					:menu-props="{ maxHeight: 220 }"
 				/>
 			</div>
 
-			<div class="d-flex">
+			<div class="d-flex flex-column">
 				<v-switch
 					inset
 					dense
 					:label="t('windows.createProject.useLangForManifest')"
-					:value="createOptions.useLangForManifest"
-					@click.stop.native="
-						createOptions.useLangForManifest = !createOptions.useLangForManifest
-					"
-					class="ma-3"
+					v-model="state.createOptions.useLangForManifest"
+				></v-switch>
+				<v-switch
+					inset
+					dense
+					:label="t('windows.createProject.bdsProject')"
+					v-model="state.createOptions.bdsProject"
 				></v-switch>
 			</div>
 		</template>
@@ -256,8 +270,8 @@
 			<v-spacer />
 			<v-btn
 				color="primary"
-				:disabled="!currentWindow.hasRequiredData || isCreatingProject"
-				:loading="shouldLoad"
+				:disabled="!window.hasRequiredData || state.isCreatingProject"
+				:loading="state.isCreatingProject"
 				@click="createProject"
 			>
 				<v-icon class="pr-2">mdi-plus</v-icon>
@@ -267,73 +281,52 @@
 	</BaseWindow>
 </template>
 
-<script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+<script lang="ts" setup>
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 import ExperimentalGameplay from './ExperimentalGameplay.vue'
 import CreateFile from './CreateFile.vue'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
-import { isFileAccepted } from '/@/utils/file/isAccepted.ts'
+import { isFileAccepted } from '/@/utils/file/isAccepted'
+import { useTranslations } from '../../Composables/useTranslations'
+import { computed } from 'vue'
 
-export default {
-	name: 'CreateProjectWindow',
-	mixins: [TranslationMixin],
-	components: {
-		BaseWindow,
-		PackTypeViewer,
-		BridgeSheet,
-		ExperimentalGameplay,
-		CreateFile,
-	},
-	props: ['currentWindow'],
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.state
 
-	data() {
-		return this.currentWindow
-	},
-	computed: {
-		shouldLoad() {
-			// If this is the first project, only show a spinner while creating the spinner
-			if (this.isFirstProject) return this.isCreatingProject
-			// Otherwise check that the compiler & pack indexer are done too
-			return this.isCreatingProject
-		},
-		nameRules() {
-			return this.projectNameRules.map((rule) => (val) => {
-				const res = rule(val)
-				if (res === true) return true
+const nameRules = computed(() => {
+	return props.window.projectNameRules.map((rule: any) => (val: any) => {
+		const res = rule(val)
+		if (res === true) return true
 
-				return this.t(res)
-			})
-		},
-	},
-	methods: {
-		close() {
-			this.currentWindow.close()
-		},
-		async createProject() {
-			this.isCreatingProject = true
-			await this.currentWindow.createProject()
-			this.isCreatingProject = false
-			this.currentWindow.close()
-		},
-		togglePack(packPath) {
-			const packs = this.createOptions.packs
-			const index = packs.indexOf(packPath)
+		return t(res)
+	})
+})
 
-			if (index > -1) packs.splice(index, 1)
-			else packs.push(packPath)
-		},
-		setModel(key, val) {
-			this.createOptions[key] = val
-		},
-		onDropFile(event) {
-			const file = event.dataTransfer.files[0]
-			if (!isFileAccepted(file, 'image/png')) return
+async function createProject() {
+	state.isCreatingProject = true
+	await props.window.createProject()
+	state.isCreatingProject = false
+	props.window.close()
+}
+function close() {
+	props.window.close()
+}
 
-			this.createOptions.icon = file
-		},
-	},
+function togglePack(packPath: string) {
+	const packs = state.createOptions.packs
+	const index = packs.indexOf(packPath)
+
+	if (index > -1) packs.splice(index, 1)
+	else packs.push(packPath)
+}
+
+function onDropFile(event: DragEvent) {
+	const file = event.dataTransfer?.files[0]
+	if (!file || !isFileAccepted(file, 'image/png')) return
+
+	state.createOptions.icon = file
 }
 </script>
 

@@ -4,13 +4,9 @@ import { SelectableSidebarAction } from '/@/components/Sidebar/Content/Selectabl
 import { SidebarAction } from '/@/components/Sidebar/Content/SidebarAction'
 import PackExplorerComponent from './PackExplorer.vue'
 import ProjectDisplayComponent from './ProjectDisplay.vue'
-import { DirectoryEntry } from './DirectoryEntry'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
-import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
-import { set } from '@vue/composition-api'
-import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
-import { dirname, extname, join } from '/@/utils/path'
+import { markRaw, ref, set } from 'vue'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 import { exportAsBrproject } from '/@/components/Projects/Export/AsBrproject'
@@ -20,21 +16,22 @@ import {
 	exportAsMctemplate,
 } from '/@/components/Projects/Export/AsMctemplate'
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
-import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
+import { searchType } from '../FindAndReplace/Controls/searchType'
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
-import { platform } from '/@/utils/os'
+import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
+import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu/Folder'
+import { IHandleMovedOptions } from '../UIElements/DirectoryViewer/DirectoryStore'
+import { ViewConnectedFiles } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ConnectedFiles'
+import { ToLocalProjectAction } from './Actions/ToLocalProject'
+import { ToBridgeFolderProjectAction } from './Actions/ToBridgeFolderProject'
 
 export class PackExplorer extends SidebarContent {
-	component = PackExplorerComponent
+	component = markRaw(PackExplorerComponent)
 	actions: SidebarAction[] = []
-	directoryEntries: Record<string, DirectoryEntry> = {}
-	topPanel = isUsingFileSystemPolyfill.value
-		? new InfoPanel({
-				type: 'warning',
-				text: 'general.fileSystemPolyfill',
-				isDismissible: true,
-		  })
-		: undefined
+	directoryEntries: Record<string, DirectoryWrapper> = {}
+	topPanel: InfoPanel | undefined = undefined
+	showNoProjectView = false
+	headerHeight = '60px'
 
 	constructor() {
 		super()
@@ -42,39 +39,80 @@ export class PackExplorer extends SidebarContent {
 		App.eventSystem.on('projectChanged', () => this.setup())
 		App.eventSystem.on('fileAdded', () => this.refresh())
 
-		App.getApp().then((app) => {
-			if (!app.mobile.isCurrentDevice())
-				this.headerSlot = ProjectDisplayComponent
+		const updateHeaderSlot = async () => {
+			const app = await App.getApp()
+			await app.projectManager.projectReady.fired
 
-			app.mobile.change.on((isMobile) => {
-				this.headerSlot = isMobile ? undefined : ProjectDisplayComponent
-			})
+			if (app.mobile.isCurrentDevice() || app.isNoProjectSelected)
+				this.headerSlot = undefined
+			else this.headerSlot = ProjectDisplayComponent
+		}
+
+		App.getApp().then((app) => {
+			updateHeaderSlot()
+
+			app.mobile.change.on(() => updateHeaderSlot())
 		})
-		this.headerHeight = '60px'
+
+		App.eventSystem.on('projectChanged', () => {
+			updateHeaderSlot()
+		})
 	}
 
 	async setup() {
 		const app = await App.getApp()
+		await app.projectManager.projectReady.fired
 
-		this.unselectAllActions()
-		for (const pack of app.project.projectData.contains ?? []) {
-			set(
-				this.directoryEntries,
-				pack.packPath,
-				await DirectoryEntry.create([pack.packPath])
-			)
+		this.actions = []
+		// Show select bridge. folder & create project buttons
+		if (app.isNoProjectSelected) {
+			this.showNoProjectView = true
+
+			return
+		} else {
+			this.showNoProjectView = false
 		}
 
-		this.actions =
-			app.project.projectData.contains?.map(
-				(pack) =>
-					new SelectableSidebarAction(this, {
-						id: pack.packPath,
-						name: `packType.${pack.id}.name`,
-						icon: pack.icon,
-						color: pack.color,
-					})
-			) ?? []
+		this.unselectAllActions()
+		this.actions = []
+		for (const pack of app.project.projectData.contains ?? []) {
+			const handle = await app.fileSystem
+				.getDirectoryHandle(pack.packPath)
+				.catch(() => null)
+			if (!handle) continue
+
+			const wrapper = markRaw(
+				new DirectoryWrapper(null, handle, {
+					startPath: pack.packPath,
+
+					provideFileContextMenu: async (fileWrapper) => [
+						await ViewConnectedFiles(fileWrapper),
+					],
+					provideFileDiagnostics: async (fileWrapper) => {
+						const packIndexer = app.project.packIndexer
+						await packIndexer.fired
+
+						const filePath = fileWrapper.path
+						if (!filePath) return []
+
+						return packIndexer.service.getFileDiagnostics(filePath)
+					},
+					onHandleMoved: (opts) => this.onHandleMoved(opts),
+					onFilesAdded: (filePaths) => this.onFilesAdded(filePaths),
+				})
+			)
+			await wrapper.open()
+
+			set(this.directoryEntries, pack.packPath, wrapper)
+			this.actions.push(
+				new SelectableSidebarAction(this, {
+					id: pack.packPath,
+					name: `packType.${pack.id}.name`,
+					icon: pack.icon,
+					color: pack.color,
+				})
+			)
+		}
 
 		if (isUsingFileSystemPolyfill.value) {
 			this.actions.push(
@@ -97,6 +135,33 @@ export class PackExplorer extends SidebarContent {
 		)
 	}
 
+	async onHandleMoved({
+		fromPath,
+		toPath,
+		movedHandle,
+	}: IHandleMovedOptions) {
+		const app = await App.getApp()
+		if (movedHandle.kind === 'file')
+			await app.project.onMovedFile(fromPath, toPath)
+		else await app.project.onMovedFolder(fromPath, toPath)
+	}
+	async onFilesAdded(filePaths: string[]) {
+		const app = await App.getApp()
+
+		await app.project.updateFiles(filePaths)
+	}
+
+	onContentRightClick(event: MouseEvent): void {
+		const selectedId = this.selectedAction?.getConfig().id
+		if (!selectedId) return
+
+		showFolderContextMenu(event, this.directoryEntries[selectedId], {
+			hideDelete: true,
+			hideRename: true,
+			hideDuplicate: true,
+		})
+	}
+
 	async refresh() {
 		await Promise.all(
 			Object.values(this.directoryEntries).map((dirent) =>
@@ -107,408 +172,24 @@ export class PackExplorer extends SidebarContent {
 
 	async getContextMenu(
 		type: 'file' | 'folder' | 'virtualFolder',
-		path: string,
-		entry: DirectoryEntry
+		path: string
 	) {
 		if (type === 'virtualFolder') return []
 		const app = await App.getApp()
 		const project = app.project
 
 		return [
-			...(type === 'file'
-				? [
-						(project.tabSystem?.tabs.length ?? 0) > 0
-							? {
-									icon: 'mdi-arrow-split-vertical',
-									name:
-										'windows.packExplorer.fileActions.openInSplitScreen.name',
-									description:
-										'windows.packExplorer.fileActions.openInSplitScreen.description',
-									onTrigger: async () => {
-										const handle = await app.fileSystem.getFileHandle(
-											path
-										)
-										project.openFile(handle, {
-											openInSplitScreen: true,
-										})
-									},
-							  }
-							: {
-									icon: 'mdi-plus',
-									name:
-										'windows.packExplorer.fileActions.open.name',
-									description:
-										'windows.packExplorer.fileActions.open.description',
-									onTrigger: async () => {
-										const handle = await app.fileSystem.getFileHandle(
-											entry.getPath()
-										)
-										project.openFile(handle)
-									},
-							  },
-						{
-							type: 'divider',
-						},
-				  ]
-				: []),
 			{
-				icon: 'mdi-delete-outline',
-				name: 'windows.packExplorer.fileActions.delete.name',
-				description:
-					'windows.packExplorer.fileActions.delete.description',
-				onTrigger: async () => {
-					const confirmWindow = new ConfirmationWindow({
-						description:
-							'windows.packExplorer.fileActions.delete.confirmText',
-					})
-
-					if (!(await confirmWindow.fired)) return
-
-					entry.remove()
-
-					await project.unlinkFile(path)
+				icon: 'mdi-file-search-outline',
+				name: 'actions.findInFolder.name',
+				description: 'actions.findInFolder.description',
+				onTrigger: () => {
+					project.tabSystem?.add(
+						new FindAndReplaceTab(project.tabSystem!, undefined, {
+							searchType: searchType.matchCase,
+						})
+					)
 				},
-			},
-
-			...(type === 'file'
-				? [
-						{
-							icon: 'mdi-pencil-outline',
-							name:
-								'windows.packExplorer.fileActions.rename.name',
-							description:
-								'windows.packExplorer.fileActions.rename.description',
-							onTrigger: async () => {
-								// Remove file extension from file name
-								const fileName = entry.name
-									.split('.')
-									.slice(0, -1)
-									.join('.')
-
-								const inputWindow = new InputWindow({
-									name:
-										'windows.packExplorer.fileActions.rename.name',
-									label: 'general.fileName',
-									default: fileName,
-									expandText: extname(path),
-								})
-								const newFileName = await inputWindow.fired
-								if (!newFileName) return
-
-								const newFilePath = join(
-									dirname(path),
-									newFileName
-								)
-
-								if (
-									path.toLowerCase() ===
-										newFilePath.toLowerCase() &&
-									platform() === 'win32'
-								) {
-									new InformationWindow({
-										description:
-											'windows.packExplorer.fileActions.rename.sameName',
-									})
-									return
-								}
-
-								// If file with same path already exists, confirm that it's ok to overwrite it
-								if (
-									await project.app.fileSystem.fileExists(
-										newFilePath
-									)
-								) {
-									const confirmWindow = new ConfirmationWindow(
-										{
-											description:
-												'general.confirmOverwriteFile',
-										}
-									)
-
-									if (!(await confirmWindow.fired)) return
-								}
-
-								// Update pack indexer & compiler
-								await Promise.all([
-									project.packIndexer.unlink(path),
-									project.compilerService.unlink(path),
-								])
-
-								// The rename action needs to happen after deleting the old file inside of the output directory
-								// because the compiler will fail to unlink it if the original file doesn't exist.
-								await project.app.fileSystem.move(
-									path,
-									newFilePath
-								)
-
-								// Let the compiler, pack indexer etc. process the renamed file
-								await project.updateFile(newFilePath)
-
-								// Remove from recent files
-								await project.recentFiles.removeFile(path)
-
-								// Refresh pack explorer
-								this.refresh()
-							},
-						},
-						{
-							icon: 'mdi-content-duplicate',
-							name:
-								'windows.packExplorer.fileActions.duplicate.name',
-							description:
-								'windows.packExplorer.fileActions.duplicate.description',
-							onTrigger: async () => {
-								// Remove file extension from file name
-								const fileName = entry.name
-									.split('.')
-									.slice(0, -1)
-									.join('.')
-
-								const inputWindow = new InputWindow({
-									name:
-										'windows.packExplorer.fileActions.duplicate.name',
-									label: 'general.fileName',
-									default: fileName,
-									expandText: extname(path),
-								})
-								const newFileName = await inputWindow.fired
-								if (!newFileName) return
-
-								const newFilePath = join(
-									dirname(path),
-									newFileName
-								)
-
-								// If file with same path already exists, confirm that it's ok to overwrite it
-								if (
-									await project.app.fileSystem.fileExists(
-										newFilePath
-									)
-								) {
-									const confirmWindow = new ConfirmationWindow(
-										{
-											description:
-												'general.confirmOverwriteFile',
-										}
-									)
-
-									if (!(await confirmWindow.fired)) return
-								}
-
-								await project.app.fileSystem.copyFile(
-									path,
-									newFilePath
-								)
-								await project.updateFile(newFilePath)
-								App.eventSystem.dispatch('fileAdded', undefined)
-							},
-						},
-						{
-							type: 'divider',
-						},
-						{
-							icon: 'mdi-cogs',
-							name:
-								'windows.packExplorer.fileActions.viewCompilerOutput.name',
-							description:
-								'windows.packExplorer.fileActions.viewCompilerOutput.description',
-							onTrigger: async () => {
-								const app = project.app
-								const transformedPath = await project.compilerService.getCompilerOutputPath(
-									path
-								)
-								const fileSystem = app.comMojang.hasComMojang
-									? app.comMojang.fileSystem
-									: app.fileSystem
-
-								// Information when file does not exist
-								if (
-									!transformedPath ||
-									!(await fileSystem.fileExists(
-										transformedPath
-									))
-								) {
-									new InformationWindow({
-										description:
-											'windows.packExplorer.fileActions.viewCompilerOutput.fileMissing',
-									})
-									return
-								}
-
-								const fileHandle = await fileSystem.getFileHandle(
-									transformedPath
-								)
-								await project?.openFile(fileHandle, {
-									selectTab: true,
-									isReadOnly: true,
-								})
-							},
-						},
-				  ]
-				: [
-						{
-							icon: 'mdi-pencil-outline',
-							name:
-								'windows.packExplorer.fileActions.rename.name',
-							description:
-								'windows.packExplorer.fileActions.rename.description',
-							onTrigger: async () => {
-								const inputWindow = new InputWindow({
-									name:
-										'windows.packExplorer.fileActions.rename.name',
-									label: 'general.folderName',
-									default: entry.name,
-								})
-								const newFolderName = await inputWindow.fired
-								if (!newFolderName) return
-
-								const newFolderPath = join(
-									dirname(path),
-									newFolderName
-								)
-
-								// If folder with same path already exists, confirm that it's ok to overwrite it
-								if (
-									await project.app.fileSystem.directoryExists(
-										newFolderPath
-									)
-								) {
-									const confirmWindow = new ConfirmationWindow(
-										{
-											description:
-												'general.confirmOverwriteFolder',
-										}
-									)
-
-									if (!(await confirmWindow.fired)) return
-								}
-
-								// Update pack indexer & compiler
-								await Promise.all([
-									project.packIndexer.unlink(path),
-									project.compilerService.unlink(path),
-								])
-
-								// The rename action needs to happen after deleting the old folder inside of the output directory
-								// because the compiler will fail to unlink it if the original folder doesn't exist.
-								await project.app.fileSystem.move(
-									path,
-									newFolderPath
-								)
-
-								// Let the compiler, pack indexer etc. process the renamed folder
-								let files = await project.app.fileSystem.readFilesFromDir(
-									newFolderPath
-								)
-								for (let file of files) {
-									await project.updateFile(file.path)
-								}
-
-								// Refresh pack explorer
-								this.refresh()
-							},
-						},
-						{
-							icon: 'mdi-file-plus-outline',
-							name:
-								'windows.packExplorer.fileActions.createFile.name',
-							description:
-								'windows.packExplorer.fileActions.createFile.description',
-							onTrigger: async () => {
-								const inputWindow = new InputWindow({
-									name:
-										'windows.packExplorer.fileActions.createFile.name',
-									label: 'general.fileName',
-									default: '',
-								})
-								const name = await inputWindow.fired
-								if (!name) return
-
-								const fileHandle = await project.app.fileSystem.writeFile(
-									`${path}/${name}`,
-									''
-								)
-
-								App.eventSystem.dispatch('fileAdded', undefined)
-
-								// Open file in new tab
-								await project.openFile(fileHandle, {
-									selectTab: true,
-								})
-								project.updateChangedFiles()
-							},
-						},
-						{
-							icon: 'mdi-folder-plus-outline',
-							name:
-								'windows.packExplorer.fileActions.createFolder.name',
-							description:
-								'windows.packExplorer.fileActions.createFolder.description',
-							onTrigger: async () => {
-								const inputWindow = new InputWindow({
-									name:
-										'windows.packExplorer.fileActions.createFolder.name',
-									label: 'general.folderName',
-									default: '',
-								})
-								const name = await inputWindow.fired
-								if (!name) return
-
-								await project.app.fileSystem.mkdir(
-									`${path}/${name}`,
-									{ recursive: true }
-								)
-								// Refresh pack explorer
-								this.refresh()
-							},
-						},
-						{
-							type: 'divider',
-						},
-						{
-							icon: 'mdi-file-search-outline',
-							name:
-								'windows.packExplorer.fileActions.findInFolder.name',
-							description:
-								'windows.packExplorer.fileActions.findInFolder.description',
-							onTrigger: () => {
-								const config = project.app.projectConfig
-								const packTypes: { [key: string]: string } = {
-									BP: config.resolvePackPath('behaviorPack'),
-									RP: config.resolvePackPath('resourcePack'),
-									SP: config.resolvePackPath('skinPack'),
-									WT: config.resolvePackPath('worldTemplate'),
-								}
-								let pathPackType = 'BP'
-								for (const packType of Object.keys(packTypes)) {
-									if (path.includes(packTypes[packType]))
-										pathPackType = packType
-								}
-								project.tabSystem?.add(
-									new FindAndReplaceTab(project.tabSystem!, {
-										searchType: ESearchType.matchCase,
-										includeFiles: path.replace(
-											packTypes[pathPackType],
-											pathPackType
-										),
-										excludeFiles: '',
-									})
-								)
-							},
-						},
-				  ]),
-			{
-				icon: 'mdi-folder-outline',
-				name: 'windows.packExplorer.fileActions.revealFilePath.name',
-				description:
-					'windows.packExplorer.fileActions.revealFilePath.description',
-				onTrigger: () =>
-					new InformationWindow({
-						name:
-							'windows.packExplorer.fileActions.revealFilePath.name',
-						description: `[${path}]`,
-						isPersistent: false,
-					}).open(),
 			},
 		]
 	}
@@ -516,108 +197,103 @@ export class PackExplorer extends SidebarContent {
 	async showMoreMenu(event: MouseEvent) {
 		const app = await App.getApp()
 
-		const packPath = this.selectedAction?.getConfig()?.id
+		const moveAction = app.project.isLocal
+			? ToBridgeFolderProjectAction(app.project)
+			: ToLocalProjectAction(app.project)
 
 		showContextMenu(event, [
 			// Add new file
 			{
 				icon: 'mdi-plus',
-				name: 'windows.packExplorer.createPreset',
+				name: 'packExplorer.createPreset',
 				onTrigger: async () => {
 					await app.windows.createPreset.open()
 				},
 			},
-			// Create a new top-level folder
-			...(packPath
-				? [
-						{
-							icon: 'mdi-folder-plus-outline',
-							name:
-								'windows.packExplorer.fileActions.createFolder.name',
-							description:
-								'windows.packExplorer.fileActions.createFolder.description',
-							onTrigger: async () => {
-								const inputWindow = new InputWindow({
-									name:
-										'windows.packExplorer.fileActions.createFolder.name',
-									label: 'general.fileName',
-									default: '',
-								})
-								const name = await inputWindow.fired
-								if (!name) return
 
-								await app.fileSystem.mkdir(
-									`${packPath}/${name}`,
-									{ recursive: true }
-								)
-								// Refresh pack explorer
-								this.refresh()
-							},
-						},
-				  ]
-				: []),
+			isUsingFileSystemPolyfill.value ? null : moveAction,
 			{ type: 'divider' },
 			// Reload project
 			{
 				icon: 'mdi-refresh',
-				name: 'windows.packExplorer.refresh.name',
+				name: 'packExplorer.refresh.name',
 				onTrigger: async () => {
 					app.actionManager.trigger('bridge.action.refreshProject')
 				},
 			},
 			// Restart dev server
-			restartWatchModeConfig,
+			restartWatchModeConfig(false),
 			{ type: 'divider' },
-
-			// Export project as .brproject
 			{
+				type: 'submenu',
 				icon: 'mdi-export',
-				name: 'windows.packExplorer.exportAsBrproject.name',
-				onTrigger: () => exportAsBrproject(),
+				name: 'packExplorer.exportAs.name',
+				actions: [
+					// Export project as .brproject
+					{
+						icon: 'mdi-folder-zip-outline',
+						name: 'packExplorer.exportAs.brproject',
+						onTrigger: () => exportAsBrproject(),
+					},
+					// Export project as .mcaddon
+					{
+						icon: 'mdi-minecraft',
+						name: 'packExplorer.exportAs.mcaddon',
+						onTrigger: () => exportAsMcaddon(),
+					},
+					// Export project as .mcworld
+					{
+						icon: 'mdi-earth-box',
+						name: 'packExplorer.exportAs.mcworld',
+						isDisabled: !(await canExportMctemplate()),
+						onTrigger: () => exportAsMctemplate(true),
+					},
+					// Export project as .mctemplate
+					{
+						icon: 'mdi-earth-box-plus',
+						name: 'packExplorer.exportAs.mctemplate',
+						isDisabled: !(await canExportMctemplate()),
+						onTrigger: () => exportAsMctemplate(),
+					},
+					...(await app.project.exportProvider.getExporters()),
+				],
 			},
-			// Export project as .mcaddon
-			{
-				icon: 'mdi-folder-zip-outline',
-				name: 'windows.packExplorer.exportAsMcaddon.name',
-				onTrigger: () => exportAsMcaddon(),
-			},
-			// Export project as .mcworld
-			{
-				icon: 'mdi-earth-box',
-				name: 'windows.packExplorer.exportAsMcworld.name',
-				isDisabled: !(await canExportMctemplate()),
-				onTrigger: () => exportAsMctemplate(true),
-			},
-			// Export project as .mctemplate
-			{
-				icon: 'mdi-earth-box-plus',
-				name: 'windows.packExplorer.exportAsMctemplate.name',
-				isDisabled: !(await canExportMctemplate()),
-				onTrigger: () => exportAsMctemplate(),
-			},
-			...(await app.project.exportProvider.getExporters()),
+
 			{ type: 'divider' },
 
 			// Project config
 			{
 				icon: 'mdi-cog-outline',
-				name: 'windows.packExplorer.projectConfig.name',
+				name: 'packExplorer.projectConfig.name',
 				onTrigger: async () => {
 					const project = app.project
 
 					// Test whether project config exists
 					if (!(await project.fileSystem.fileExists('config.json'))) {
 						new InformationWindow({
-							description:
-								'windows.packExplorer.projectConfig.missing',
+							description: 'packExplorer.projectConfig.missing',
 						})
 						return
 					}
 
 					// Open project config
 					await project.tabSystem?.openPath(
-						`projects/${project.name}/config.json`
+						`${project.projectPath}/config.json`
 					)
+				},
+			},
+			{
+				icon: 'mdi-folder-open-outline',
+				name: 'packExplorer.openProjectFolder.name',
+				onTrigger: async () => {
+					app.viewFolders.addDirectoryHandle({
+						directoryHandle: app.project.baseDirectory,
+						startPath: app.project.projectPath,
+
+						onHandleMoved: (options) => this.onHandleMoved(options),
+						onFilesAdded: (filePaths) =>
+							this.onFilesAdded(filePaths),
+					})
 				},
 			},
 		])

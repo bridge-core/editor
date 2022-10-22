@@ -112,7 +112,8 @@ export async function runPresetScript(
 		const fileHandle = await fs.getFileHandle(resolvedFilePath, true)
 		createdFiles.push(fileHandle)
 		if (openFile) openFiles.push(fileHandle)
-		fs.write(
+
+		await fs.write(
 			fileHandle,
 			typeof data === 'string'
 				? transformString(data, inject, models)

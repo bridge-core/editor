@@ -1,31 +1,40 @@
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
-import { languages, Uri } from 'monaco-editor'
-import { compareVersions } from 'bridge-common-utils'
-import { getLatestFormatVersion } from './FormatVersions'
 import { DataLoader } from './DataLoader'
 import { Tab } from '../TabSystem/CommonTab'
 import { FileTab } from '../TabSystem/FileTab'
+import {
+	IRequirements,
+	RequiresMatcher,
+} from './RequiresMatcher/RequiresMatcher'
+import { useMonaco } from '/@/utils/libs/useMonaco'
 
 const types = new Map<string, string>()
 
 export class TypeLoader {
 	protected disposables: IDisposable[] = []
 	protected typeDisposables: IDisposable[] = []
+	protected userTypeDisposables: IDisposable[] = []
 	protected currentTypeEnv: string | null = null
 
 	constructor(protected dataLoader: DataLoader) {}
 
 	async activate(filePath?: string) {
 		this.disposables = <IDisposable[]>[
-			App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
-				if (!tab.isForeignFile && tab instanceof FileTab)
-					this.setTypeEnv(tab.getPath())
+			App.eventSystem.on('currentTabSwitched', async (tab: Tab) => {
+				if (!tab.isForeignFile && tab instanceof FileTab) {
+					await this.setTypeEnv(tab.getPath())
+
+					await this.loadUserTypes()
+				}
 			}),
 		]
 		if (filePath) await this.setTypeEnv(filePath)
+
+		await this.loadUserTypes()
 	}
 	deactivate() {
+		this.currentTypeEnv = null
 		this.typeDisposables.forEach((disposable) => disposable.dispose())
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.typeDisposables = []
@@ -52,6 +61,8 @@ export class TypeLoader {
 	async setTypeEnv(filePath: string) {
 		if (filePath === this.currentTypeEnv) return
 
+		const { languages, Uri } = await useMonaco()
+
 		this.currentTypeEnv = filePath
 		this.typeDisposables.forEach((disposable) => disposable.dispose())
 		this.typeDisposables = []
@@ -59,30 +70,22 @@ export class TypeLoader {
 		await App.fileType.ready.fired
 		const { types = [] } = App.fileType.get(filePath) ?? {}
 
+		const matcher = new RequiresMatcher()
+		await matcher.setup()
+
 		const libs = await Promise.all(
 			types.map(async (type) => {
 				if (typeof type === 'string')
 					return <const>[type, await this.load(type)]
 
-				const app = await App.getApp()
-				const [
-					typePath,
-					{
-						targetVersion: [operator, targetVersion],
-					},
-				] = type
-				const projectTargetVersion =
-					app.projectConfig.get().targetVersion ??
-					(await getLatestFormatVersion())
+				const { definition, requires } = type
 
-				if (
-					compareVersions(
-						projectTargetVersion,
-						targetVersion,
-						operator
-					)
-				)
-					return <const>[typePath, await this.load(typePath)]
+				const valid = !requires
+					? true
+					: matcher.isValid(requires as IRequirements)
+
+				if (valid)
+					return <const>[definition, await this.load(definition)]
 			})
 		)
 		const filteredLibs = <(readonly [string, string])[]>(
@@ -100,7 +103,45 @@ export class TypeLoader {
 					lib,
 					uri.toString()
 				)
-				// editor.createModel(lib, 'typescript', uri)
+			)
+		}
+	}
+
+	async loadUserTypes() {
+		const app = await App.getApp()
+
+		await app.project.packIndexer.fired
+		let allFiles
+		try {
+			allFiles = await app.project.packIndexer.service.getAllFiles()
+		} catch {
+			// We failed to access the pack indexer service -> fail silently
+			return
+		}
+
+		const typeScriptFiles = allFiles.filter(
+			(filePath) => filePath.endsWith('.ts') || filePath.endsWith('.js')
+		)
+
+		const { languages, Uri } = await useMonaco()
+
+		this.userTypeDisposables.forEach((disposable) => {
+			disposable.dispose()
+		})
+		this.userTypeDisposables = []
+
+		for (const typeScriptFile of typeScriptFiles) {
+			const fileUri = Uri.file(typeScriptFile)
+			const file = await app.fileSystem
+				.readFile(typeScriptFile)
+				.catch(() => null)
+			if (!file) continue
+
+			this.userTypeDisposables.push(
+				languages.typescript.typescriptDefaults.addExtraLib(
+					await file.text(),
+					fileUri.toString()
+				)
 			)
 		}
 	}

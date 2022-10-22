@@ -1,15 +1,16 @@
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import InformationWindowComponent from './Information.vue'
-import { App } from '/@/App'
+import { NewBaseWindow } from '../../NewBaseWindow'
 
 export interface IConfirmWindowOpts {
+	title?: string
+	/** @deprecated Use "title" instead */
 	name?: string
 	description: string
 	isPersistent?: boolean
 	onClose?: () => Promise<void> | void
 }
 
-export class InformationWindow extends BaseWindow<void> {
+export class InformationWindow extends NewBaseWindow<void> {
 	constructor(protected opts: IConfirmWindowOpts) {
 		super(InformationWindowComponent, true, false)
 		this.defineWindow()
@@ -20,14 +21,13 @@ export class InformationWindow extends BaseWindow<void> {
 		return this.opts.description
 	}
 	get title() {
-		return this.opts.name ?? 'general.information'
+		return this.opts.title ?? this.opts.name ?? 'general.information'
 	}
 	get isPersistent() {
 		return this.opts.isPersistent ?? true
 	}
 
 	async close() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		super.close(null)
 		if (typeof this.opts.onClose === 'function') await this.opts.onClose()
 		this.dispatch()

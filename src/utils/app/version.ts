@@ -1,1 +1,3 @@
-export { version } from '../../../package.json'
+import packageConfig from '../../../package.json'
+
+export const version = packageConfig.version

@@ -1,7 +1,7 @@
 <template>
 	<SidebarWindow
 		:windowTitle="title"
-		:isVisible="isVisible"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:percentageWidth="80"
@@ -15,7 +15,7 @@
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.settings.searchSettings')"
-				v-model.trim="sidebar._filter"
+				v-model.lazy.trim="sidebar.filter"
 				autocomplete="off"
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
@@ -23,6 +23,17 @@
 			/>
 		</template>
 		<template #default="{ selectedSidebar }">
+			<v-alert v-if="state.reloadRequired" border="bottom" type="info">
+				<div class="d-flex align-center">
+					<span>{{ t('windows.settings.reloadRequired') }}</span>
+					<v-spacer />
+					<v-btn @click="onReload" text dense>
+						<v-icon small class="pr-1"> mdi-refresh </v-icon>
+						{{ t('general.reload') }}
+					</v-btn>
+				</div>
+			</v-alert>
+
 			<span
 				v-if="
 					sidebar.currentState.length === 0 && sidebar.filter !== ''
@@ -45,39 +56,29 @@
 	</SidebarWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { pointerDevice } from '/@/utils/pointerDevice'
+import { useTranslations } from '../../Composables/useTranslations'
+import { computed } from 'vue'
 
-export default {
-	name: 'PackExplorerWindow',
-	mixins: [TranslationMixin],
-	components: {
-		SidebarWindow,
-	},
-	props: ['currentWindow'],
-	setup() {
-		return { pointerDevice }
-	},
-	data() {
-		return this.currentWindow
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close()
-		},
-	},
-	computed: {
-		title() {
-			if (!this.sidebar.currentElement) return 'windows.settings.title'
-			else
-				return `[${this.sidebar.currentElement.text} - ${this.t(
-					'windows.settings.title'
-				)}]`
-		},
-	},
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.getState()
+const sidebar = props.window.sidebar
+
+const title = computed(() => {
+	if (!sidebar.currentElement) return 'windows.settings.title'
+	else
+		return `[${sidebar.currentElement.text} - ${t(
+			'windows.settings.title'
+		)}]`
+})
+
+function onClose() {
+	props.window.close()
+}
+function onReload() {
+	location.reload()
 }
 </script>
-
-<style></style>

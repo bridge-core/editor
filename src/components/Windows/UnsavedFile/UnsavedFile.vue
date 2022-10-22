@@ -1,8 +1,8 @@
 <template>
 	<BaseWindow
-		v-if="shouldRender"
+		v-if="state.shouldRender"
 		windowTitle="general.confirm"
-		:isVisible="isVisible"
+		:isVisible="state.isVisible"
 		:isPersistent="false"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
@@ -29,32 +29,21 @@
 	</BaseWindow>
 </template>
 
-<script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+<script lang="ts" setup>
 import BaseWindow from '../Layout/BaseWindow.vue'
+import { useTranslations } from '../../Composables/useTranslations'
 
-export default {
-	name: 'Confirm',
-	mixins: [TranslationMixin],
-	components: {
-		BaseWindow,
-	},
-	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
-	},
-	methods: {
-		onCancel() {
-			this.currentWindow.cancel()
-		},
-		onNoSave() {
-			this.currentWindow.noSave()
-		},
-		onSave() {
-			this.currentWindow.save()
-		},
-	},
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.getState()
+
+function onCancel() {
+	props.window.cancel()
+}
+function onNoSave() {
+	props.window.noSave()
+}
+function onSave() {
+	props.window.save()
 }
 </script>
-
-<style></style>

@@ -1,23 +1,25 @@
 import InformedChoiceComponent from './InformedChoice.vue'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
-import { App } from '/@/App'
 import { ActionManager } from '/@/components/Actions/ActionManager'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
+import { NewBaseWindow } from '../NewBaseWindow'
+import { reactive } from 'vue'
 
 interface IInformedChoiceWindowOpts {
 	isPersistent?: boolean
 }
 
-export class InformedChoiceWindow extends BaseWindow {
-	protected _actionManager!: ActionManager
+export class InformedChoiceWindow extends NewBaseWindow {
 	protected _ready = new Signal<ActionManager>()
 	protected topPanel?: InfoPanel
 
+	protected state = reactive<any>({
+		...super.state,
+		actionManager: new ActionManager(),
+	})
+
 	get actionManager() {
-		return new Promise<ActionManager>((resolve) =>
-			this._ready.once(resolve)
-		)
+		return this.state.actionManager
 	}
 
 	constructor(
@@ -26,24 +28,16 @@ export class InformedChoiceWindow extends BaseWindow {
 	) {
 		super(InformedChoiceComponent, true)
 
-		this.setup()
-	}
-
-	async setup() {
-		this._actionManager = new ActionManager()
-		this._ready.dispatch(this._actionManager)
 		this.defineWindow()
 		this.open()
 	}
 
 	async open() {
-		App.audioManager.playAudio('click5.ogg', 1)
-		await this.actionManager
 		super.open()
 	}
 
 	dispose() {
 		super.dispose()
-		this._actionManager.dispose()
+		this.actionManager.dispose()
 	}
 }

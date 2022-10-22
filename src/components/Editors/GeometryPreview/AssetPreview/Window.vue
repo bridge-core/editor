@@ -1,8 +1,8 @@
 <template>
 	<BaseWindow
-		v-if="shouldRender"
+		v-if="state.shouldRender"
 		windowTitle="windows.assetPreview.title"
-		:isVisible="isVisible"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:isPersistent="false"
@@ -15,14 +15,14 @@
 			<div class="d-flex">
 				<div style="width: 200px">
 					<v-text-field
-						v-model="assetName"
+						v-model="state.assetName"
 						outlined
 						dense
 						:label="t('windows.assetPreview.assetName')"
 					/>
 
 					<v-slider
-						v-model="previewScale"
+						v-model="state.previewScale"
 						min="1"
 						max="4"
 						step="0.1"
@@ -33,7 +33,7 @@
 						:label="t('windows.assetPreview.previewScale')"
 					/>
 					<v-slider
-						v-model="outputResolution"
+						v-model="state.outputResolution"
 						min="1"
 						max="10"
 						step="1"
@@ -49,22 +49,22 @@
 					</h2>
 
 					<v-color-picker
-						v-model="backgroundColor"
+						v-model="state.backgroundColor"
 						width="220px"
 						hide-mode-switch
 						elevation="2"
 						mode="hexa"
 					/>
 
-					<h2 class="mt-8">
+					<h2 v-if="state.bones.length > 0" class="mt-8">
 						{{ t('windows.assetPreview.boneVisibility') }}
 					</h2>
 
 					<v-checkbox
-						v-for="(isVisible, boneName) in bones"
+						v-for="(isVisible, boneName) in state.bones"
 						:key="boneName"
 						:label="boneName"
-						v-model="bones[boneName]"
+						v-model="state.bones[boneName]"
 						@change="
 							(isVisible) =>
 								onBoneVisibilityChange(boneName, isVisible)
@@ -91,51 +91,41 @@
 	</BaseWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
 import PresetPath from '/@/components/Windows/Project/CreatePreset/PresetPath.vue'
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { Color } from 'three'
+import { useTranslations } from '/@/components/Composables/useTranslations'
+import { onMounted, ref, watch, watchEffect } from 'vue'
 
-export default {
-	name: 'FilePathWindow',
-	mixins: [TranslationMixin],
-	components: {
-		BaseWindow,
-		PresetPath,
-	},
-	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
-	},
-	mounted() {
-		this.currentWindow.receiveCanvas(this.$refs.canvas)
-	},
-	methods: {
-		onClose(wasCancelled) {
-			this.currentWindow.startClosing(wasCancelled)
-		},
-		onBoneVisibilityChange(boneName, isVisible) {
-			if (!this.modelViewer) return
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.getState()
+const window = props.window
 
-			if (isVisible) this.modelViewer.getModel().showBone(boneName)
-			else this.modelViewer.getModel().hideBone(boneName)
+const canvas = ref<HTMLCanvasElement | null>(null)
 
-			this.modelViewer.requestRendering()
-		},
-	},
-	watch: {
-		previewScale() {
-			if (!this.modelViewer) return
-
-			this.modelViewer.positionCamera(this.previewScale)
-		},
-		backgroundColor() {
-			if (!this.modelViewer) return
-
-			this.modelViewer.scene.background = new Color(this.backgroundColor)
-			this.modelViewer.requestRendering()
-		},
-	},
+function onClose(wasCancelled: boolean) {
+	props.window.startClosing(wasCancelled)
 }
+function onBoneVisibilityChange(boneName: string, isVisible: boolean) {
+	if (!window.modelViewer) return
+
+	if (isVisible) window.modelViewer.getModel().showBone(boneName)
+	else window.modelViewer.getModel().hideBone(boneName)
+
+	window.modelViewer.requestRendering()
+}
+onMounted(async () => {
+	await props.window.receiveCanvas(canvas.value)
+
+	watchEffect(() => {
+		window.modelViewer.positionCamera(state.previewScale)
+	})
+
+	watchEffect(() => {
+		window.modelViewer.scene.background = new Color(state.backgroundColor)
+		window.modelViewer.requestRendering()
+	})
+})
 </script>

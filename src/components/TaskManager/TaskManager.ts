@@ -1,19 +1,19 @@
 import { ITaskDetails, Task } from './Task'
-import { reactive } from '@vue/composition-api'
+import { ref } from 'vue'
 
-export const tasks: Task[] = reactive([])
+export const tasks = ref<Task[]>([])
 
 export class TaskManager {
 	create(taskDetails: ITaskDetails) {
 		const task = new Task(this, taskDetails)
-		tasks.push(task)
+		tasks.value.push(task)
 		return task
 	}
 	delete(task: Task) {
-		tasks.splice(tasks.indexOf(task), 1)
+		tasks.value = tasks.value.filter((t) => t !== task)
 	}
 
 	get hasRunningTasks() {
-		return tasks.length > 0
+		return tasks.value.length > 0
 	}
 }

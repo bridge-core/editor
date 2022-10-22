@@ -16,7 +16,9 @@ export interface IActionConfig {
 }
 
 export class SimpleAction extends EventDispatcher<void> {
+	public readonly type = 'action'
 	id: string
+	protected addPadding = false
 
 	constructor(protected config: IActionConfig) {
 		super()
@@ -43,9 +45,19 @@ export class SimpleAction extends EventDispatcher<void> {
 	}
 	//#endregion
 
+	getConfig() {
+		return this.config
+	}
+
 	async trigger() {
 		if (this.isDisabled) return
 		this.dispatch()
 		return await this.config.onTrigger(this)
+	}
+
+	withPadding() {
+		const action = new SimpleAction(this.config)
+		action.addPadding = true
+		return action
 	}
 }

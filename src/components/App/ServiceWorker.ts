@@ -11,17 +11,13 @@ const updateSW = registerSW({
 
 		await set('firstStartAfterUpdate', true)
 
-		if (App.fileSystemSetup.status === 'waiting') {
-			updateSW()
-		} else {
-			createNotification({
-				icon: 'mdi-update',
-				color: 'primary',
-				message: 'sidebar.notifications.updateAvailable.message',
-				textColor: 'white',
-				onClick: () => updateSW(),
-			})
-		}
+		createNotification({
+			icon: 'mdi-update',
+			color: 'primary',
+			message: 'sidebar.notifications.updateAvailable.message',
+			textColor: 'white',
+			onClick: () => updateSW(),
+		})
 	},
 	onOfflineReady() {
 		// bridge. is ready to work offline

@@ -1,0 +1,44 @@
+[
+	{
+		"id": "english",
+		"name": "English",
+		"file": "en.json",
+		"codes": ["en-US", "en-UK"]
+	},
+	{
+		"id": "german",
+		"name": "Deutsch",
+		"file": "de.json",
+		"codes": ["de-DE"]
+	},
+	{
+		"id": "japanese",
+		"name": "日本語",
+		"file": "ja.json",
+		"codes": ["ja-JP"]
+	},
+	{
+		"id": "korean",
+		"name": "한국어",
+		"file": "ko.json",
+		"codes": ["ko-KR"]
+	},
+	{
+		"id": "chineseCN",
+		"name": "中文",
+		"file": "zh-CN.json",
+		"codes": ["zh-CN"]
+	},
+	{
+		"id": "chineseTW",
+		"name": "中文(臺灣)",
+		"file": "zh-TW.json",
+		"codes": ["zh-TW"]
+	},
+	{
+		"id": "netherlands",
+		"name": "Nederlands",
+		"file": "nl.json",
+		"codes": ["nl-NL"]
+	}
+]

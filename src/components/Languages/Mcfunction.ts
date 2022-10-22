@@ -1,9 +1,8 @@
-import {
+import type {
 	CancellationToken,
 	editor,
 	languages,
 	Position,
-	Range,
 } from 'monaco-editor'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 import { Language } from './Language'
@@ -13,8 +12,9 @@ import './Mcfunction/WithinJson'
 import { tokenProvider } from './Mcfunction/TokenProvider'
 import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
-import { FunctionValidator } from '/@/components/Languages/Mcfunction/Validation/Validator'
 import { proxy } from 'comlink'
+import { useMonaco } from '../../utils/libs/useMonaco'
+import { CommandValidator } from './Mcfunction/Validator'
 
 export const config: languages.LanguageConfiguration = {
 	wordPattern: /[aA-zZ]+/,
@@ -56,6 +56,8 @@ const completionItemProvider: languages.CompletionItemProvider = {
 	) {
 		const project = await App.getApp().then((app) => app.project)
 		if (!(project instanceof BedrockProject)) return
+
+		const { Range } = await useMonaco()
 		const commandData = project.commandData
 		await commandData.fired
 
@@ -152,7 +154,7 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 	if (!(project instanceof BedrockProject)) return
 
 	await project.commandData.fired
-	await project.compilerReady
+	await project.compilerReady.fired
 
 	const commands = await project.commandData.allCommands(
 		undefined,
@@ -160,14 +162,15 @@ const loadCommands = async (lang: McfunctionLanguage) => {
 	)
 	tokenProvider.keywords = commands.map((command) => command)
 
-	const targetSelectorArguments = await project.commandData.allSelectorArguments()
+	const targetSelectorArguments =
+		await project.commandData.allSelectorArguments()
 	tokenProvider.targetSelectorArguments = targetSelectorArguments
 
 	lang.updateTokenProvider(tokenProvider)
 }
 
 export class McfunctionLanguage extends Language {
-	public validator = new FunctionValidator()
+	protected validator: CommandValidator | undefined
 
 	constructor() {
 		super({
@@ -185,7 +188,7 @@ export class McfunctionLanguage extends Language {
 				loadedProject = project
 				loadCommands(this)
 
-				await project.compilerReady
+				await project.compilerReady.fired
 
 				await project.compilerService.once(
 					proxy(() => {
@@ -214,6 +217,11 @@ export class McfunctionLanguage extends Language {
 				}),
 				disposable
 			)
+
+			const project = app.project
+			if (!(project instanceof BedrockProject)) return
+
+			this.validator = new CommandValidator(project.commandData)
 		})
 	}
 
@@ -226,5 +234,13 @@ export class McfunctionLanguage extends Language {
 		return true
 	}
 
-	validate() {}
+	async validate(model: editor.IModel) {
+		if (this.validator == undefined) return
+
+		const { editor } = await useMonaco()
+
+		const diagnostics = await this.validator.parse(model.getValue())
+
+		editor.setModelMarkers(model, this.id, diagnostics)
+	}
 }

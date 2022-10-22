@@ -1,11 +1,13 @@
-export function addListener<K extends keyof DocumentEventMap>(
-	type: K,
-	listener: (this: Document, ev: DocumentEventMap[K]) => any,
+export function addDisposableEventListener(
+	event: string,
+	listener: (event: any) => void,
 	options?: boolean | AddEventListenerOptions
 ) {
-	document.addEventListener(type, listener, options)
+	window.addEventListener(event, listener, options)
 
 	return {
-		dispose: () => document.removeEventListener(type, listener),
+		dispose: () => {
+			window.removeEventListener(event, listener)
+		},
 	}
 }

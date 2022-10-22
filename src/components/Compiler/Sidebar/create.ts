@@ -1,6 +1,6 @@
 import { proxy } from 'comlink'
 import { Project } from '/@/components/Projects/Project/Project'
-import { createSidebar } from '/@/components/Sidebar/create'
+import { createSidebar } from '../../Sidebar/SidebarElement'
 import { App } from '/@/App'
 
 const saveState = new Map<string, ISidebarState>()
@@ -19,20 +19,20 @@ export function createCompilerSidebar() {
 	let selectedCategory: string | undefined = undefined
 	let isWindowOpen = false
 
-	const removeListeners = async () => {
-		const app = await App.getApp()
-		await app.project.compilerReady
-		app.project.compilerService.removeConsoleListeners()
+	const removeListeners = async (project: Project) => {
+		await project.compilerReady.fired
+		project.compilerService.removeConsoleListeners()
 	}
-	const listenForLogChanges = async (resetListeners = false) => {
-		const app = await App.getApp()
+	const listenForLogChanges = async (
+		project: Project,
+		resetListeners = false
+	) => {
+		if (resetListeners) await removeListeners(project)
 
-		if (resetListeners) await removeListeners()
-
-		await app.project.compilerReady
-		app.project.compilerService.onConsoleUpdate(
+		await project.compilerReady.fired
+		project.compilerService.onConsoleUpdate(
 			proxy(async () => {
-				let logs = await app.project.compilerService.getCompilerLogs()
+				let logs = await project.compilerService.getCompilerLogs()
 				logs = logs.filter(
 					([_, { type }]) => type === 'error' || type === 'warning'
 				)
@@ -57,6 +57,14 @@ export function createCompilerSidebar() {
 		id: 'compiler',
 		displayName: 'sidebar.compiler.name',
 		icon: 'mdi-cogs',
+		disabled: () => App.instance.isNoProjectSelected,
+		/**
+		 * The compiler window is doing more harm than good on mobile (confusion with app settings) so
+		 * we are now disabling it by default.
+		 * Additionally, manual production builds are also pretty much useless as they are internal to bridge. and can only be
+		 * accessed over the "Open Project Folder" button within the project explorer context menu
+		 */
+		defaultVisibility: !App.instance.mobile.isCurrentDevice(),
 		onClick: async () => {
 			const app = await App.getApp()
 			const compilerWindow = app.windows.compilerWindow
@@ -78,10 +86,12 @@ export function createCompilerSidebar() {
 			 * which is triggered after the listener registration in this case
 			 */
 			compilerWindow.resetSignal()
-			compilerWindow.once(() => {
+			compilerWindow.once(async () => {
 				disposable.dispose()
 				isWindowOpen = false
-				listenForLogChanges()
+				listenForLogChanges(
+					await App.getApp().then((app) => app.project)
+				)
 			})
 
 			isWindowOpen = true
@@ -105,6 +115,6 @@ export function createCompilerSidebar() {
 		}
 		updateBadge()
 
-		await listenForLogChanges(true)
+		await listenForLogChanges(project, true)
 	})
 }

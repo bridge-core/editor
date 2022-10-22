@@ -7,6 +7,26 @@
 			<h3>{{ extension.name }}</h3>
 
 			<v-spacer />
+			<!-- Read more about extension -->
+			<v-btn
+				v-if="extension.readme"
+				class="mr-1"
+				icon
+				@click="openUrl(extension.readme)"
+			>
+				<v-icon>mdi-information-outline</v-icon>
+			</v-btn>
+
+			<!-- Share Extension -->
+			<v-btn
+				v-if="extension.canShare"
+				class="mr-1"
+				icon
+				@click="extension.share()"
+			>
+				<v-icon>mdi-share</v-icon>
+			</v-btn>
+
 			<v-btn
 				v-if="!extension.isInstalled"
 				@click="extension.download()"
@@ -106,46 +126,46 @@
 
 		<span>{{ extension.description }}</span>
 
-		<template
+		<v-divider
 			v-if="
-				(extension.connected &&
-					extension.connected.contributesCompilerPlugins) ||
+				extension.compilerPlugins.length > 0 ||
 				!extension.isCompatibleVersion()
 			"
+			class="my-2"
+		/>
+
+		<div
+			class="d-flex align-center"
+			v-if="extension.compilerPlugins.length > 0"
 		>
-			<v-divider class="my-2" />
+			<v-icon class="pr-1" color="secondary">mdi-cogs</v-icon>
+			<span class="font-weight-bold">
+				{{
+					t(
+						'windows.extensionStore.compilerPluginDownload.compilerPlugins'
+					)
+				}}:&nbsp;
+			</span>
 
-			<div
-				v-if="
-					extension.connected &&
-					extension.connected.contributesCompilerPlugins
-				"
+			<span>
+				{{ compilerPlugins }}
+			</span>
+		</div>
+
+		<div
+			v-if="!extension.isCompatibleVersion()"
+			class="d-flex align-center pt-1"
+		>
+			<v-icon class="pr-1" color="error">mdi-alert-circle</v-icon>
+			<span class="font-weight-bold">
+				{{ t('windows.extensionStore.incompatibleVersion') }}</span
 			>
-				<v-icon color="secondary">mdi-format-list-bulleted</v-icon>
-				<span class="font-weight-bold">
-					{{
-						t(
-							'windows.extensionStore.compilerPluginDownload.compilerPlugins'
-						)
-					}}:
-				</span>
-
-				<span>
-					{{ compilerPlugins }}
-				</span>
-			</div>
-
-			<div v-if="!extension.isCompatibleVersion()" class="pt-1">
-				<span class="font-weight-bold">
-					<v-icon color="error">mdi-alert-circle</v-icon>
-					{{ t('windows.extensionStore.incompatibleVersion') }}</span
-				>
-			</div>
-		</template>
+		</div>
 	</div>
 </template>
 
 <script>
+import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 
 export default {
@@ -165,7 +185,7 @@ export default {
 				},
 				{
 					icon: 'mdi-code-braces',
-					text: this.extension.displayVersion,
+					text: this.extension.onlineVersion,
 					type: 'search',
 				},
 			].concat(this.extension.tags)
@@ -174,9 +194,14 @@ export default {
 			return this.$vuetify.breakpoint.mobile
 		},
 		compilerPlugins() {
-			return Object.keys(this.extension.connected.compilerPlugins)
+			return this.extension.compilerPlugins
 				.map((plugin) => `"${plugin}"`)
 				.join(', ')
+		},
+	},
+	methods: {
+		openUrl(url) {
+			App.openUrl(url)
 		},
 	},
 }

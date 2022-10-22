@@ -1,10 +1,5 @@
 <template>
-	<details
-		v-if="$slots.default"
-		:style="tree.styles"
-		:open="tree.isOpen"
-		tabindex="-1"
-	>
+	<details v-if="$slots.default" :open="tree.isOpen" tabindex="-1">
 		<summary
 			:class="{
 				'common-tree-key': true,
@@ -17,9 +12,11 @@
 			tabindex="-1"
 			@pointerdown="onTouchStart($event)"
 			@pointerup="onTouchEnd"
+			@pointermove="onTouchEnd"
+			@pointercancel="onTouchEnd"
 		>
 			<v-icon
-				class="mr-1"
+				class="mr-1 open-state-icon"
 				:style="{
 					position: 'relative',
 					opacity: tree.hasChildren ? null : '60%',
@@ -30,21 +27,22 @@
 			>
 				mdi-chevron-right
 			</v-icon>
-			<span v-if="tree.parent.type === 'object'">
+			<span v-if="showArrayIndices || tree.parent.type === 'object'">
 				<!-- Debugging helper -->
-				<span v-if="isDevMode"
-					>s: {{ tree.type }} p: {{ tree.parent.type }}
+				<span v-if="isDevMode">
+					s: {{ tree.type }} p: {{ tree.parent.type }}
 				</span>
 
-				<span @dblclick="tree.toggleOpen()"> <slot /> </span>:</span
+				<span @dblclick="tree.toggleOpen()"> <slot /> </span
+				>{{ hideBracketsWithinTreeEditor ? undefined : ':' }}</span
 			>
 			<!-- Spacer to make array objects easier to select -->
 			<span
+				v-else-if="!showArrayIndices"
 				:class="{
 					'mx-2': pointerDevice !== 'touch',
 					'mx-6': pointerDevice === 'touch',
 				}"
-				v-else
 			/>
 
 			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">
@@ -94,15 +92,16 @@ export default {
 	setup(props) {
 		const { onTouchStart, onTouchEnd } = useLongPress(
 			(event) => {
-				if (pointerDevice.value === 'touch')
-					props.treeEditor.onContextMenu(event, props.tree)
+				// if (pointerDevice.value === 'touch')
+				props.treeEditor.onContextMenu(event, props.tree)
 			},
 			null,
 			() => {
 				props.treeEditor.parent.app.contextMenu.setMayCloseOnClickOutside(
 					true
 				)
-			}
+			},
+			800
 		)
 
 		return {
@@ -112,7 +111,18 @@ export default {
 		}
 	},
 	computed: {
+		hideBracketsWithinTreeEditor() {
+			if (!settingsState.editor) return false
+			return settingsState.editor.hideBracketsWithinTreeEditor || false
+		},
+		showArrayIndices() {
+			if (!settingsState.editor) return false
+			return settingsState.editor.showArrayIndices || false
+		},
+
 		openingBracket() {
+			if (this.hideBracketsWithinTreeEditor) return
+
 			if (this.tree.isOpen) return brackets[this.tree.type][0]
 			else if (Object.keys(this.tree.children).length > 0)
 				return `${brackets[this.tree.type][0]}...${
@@ -123,14 +133,20 @@ export default {
 			}`
 		},
 		closingBracket() {
+			if (this.hideBracketsWithinTreeEditor) return
+
 			return this.tree.isOpen ? brackets[this.tree.type][1] : undefined
 		},
 	},
 	methods: {
 		onClickKey(event) {
 			this.$emit('setActive')
-			if (settingsState.editor?.automaticallyOpenTreeNodes ?? true)
-				this.tree.toggleOpen()
+
+			if (settingsState.editor?.automaticallyOpenTreeNodes ?? true) {
+				// Only close a tree if it's already selected
+				if (!this.tree.isOpen || this.tree.isSelected)
+					this.tree.toggleOpen()
+			}
 
 			if (event.altKey) this.treeEditor.toggleSelection(this.tree)
 			else this.treeEditor.setSelection(this.tree)
@@ -145,13 +161,13 @@ export default {
 	display: inline-block;
 	outline: none;
 }
-.common-tree-key .v-icon {
+.common-tree-key .open-state-icon {
 	position: relative;
 	top: -2px;
 	transition: transform 0.1s ease-in-out;
 	transform: rotate(0deg);
 }
-.common-tree-key.open .v-icon {
+.common-tree-key.open .open-state-icon {
 	transform: rotate(90deg);
 }
 </style>

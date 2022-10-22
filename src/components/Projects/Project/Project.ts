@@ -17,8 +17,9 @@ import { TabActionProvider } from '/@/components/TabSystem/TabActions/Provider'
 import {
 	AnyDirectoryHandle,
 	AnyFileHandle,
+	AnyHandle,
 } from '/@/components/FileSystem/Types'
-import { markRaw, reactive, set } from '@vue/composition-api'
+import { markRaw, reactive, set } from 'vue'
 import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
@@ -29,6 +30,10 @@ import { DashCompiler } from '/@/components/Compiler/Compiler'
 import { proxy, Remote } from 'comlink'
 import { DashService } from '/@/components/Compiler/Worker/Service'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import { iterateDir } from '/@/utils/iterateDir'
+import { Signal } from '../../Common/Event/Signal'
+import { moveHandle } from '/@/utils/file/moveHandle'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -37,18 +42,25 @@ export interface IProjectData extends IConfigJson {
 	contains: IPackData[]
 }
 
+export const virtualProjectName = 'bridge-temp-project'
+
 export abstract class Project {
-	public readonly recentFiles!: RecentFiles
 	public readonly tabSystems: readonly [TabSystem, TabSystem]
 	protected _projectData!: Partial<IProjectData>
 	// Not directly assigned so they're not responsive
 	public readonly packIndexer: PackIndexer
 	protected _fileSystem: FileSystem
 	public _compilerService?: Remote<DashService>
-	public compilerReady: Promise<void>
+	public compilerReady = new Signal<void>()
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 
+	/**
+	 * A virtual project is a project with the exact name of "virtualProjectName"
+	 * We use it as a placeholder project to skip the previously mandatory bridge folder selection dialog
+	 */
+	public readonly isVirtualProject: boolean
+	public readonly requiresPermissions: boolean
 	public readonly config: ProjectConfig
 	public readonly fileTypeLibrary: FileTypeLibrary
 	public readonly extensionLoader: ExtensionLoader
@@ -65,6 +77,9 @@ export abstract class Project {
 	}
 	get name() {
 		return this.baseDirectory.name
+	}
+	get displayName() {
+		return this.config.get().name ?? this.name
 	}
 	get tabSystem() {
 		if (this.tabSystems[0].isActive) return this.tabSystems[0]
@@ -84,41 +99,68 @@ export abstract class Project {
 		return this.name === this.parent.selectedProject
 	}
 	get compilerService() {
-		if (!this._compilerService)
+		if (this._compilerService === undefined) {
 			throw new Error(
-				`Trying to access compilerService before it was setup. Make sure to await compilerReady before accessing it.`
+				`Trying to access compilerService before it was setup. Make sure to await compilerReady.fired before accessing it.`
 			)
+		}
 
 		return this._compilerService
+	}
+	protected get watchModeActive() {
+		/**
+		 * Only update compilation results if the watch mode setting is active,
+		 * the current project is not a virtual project
+		 * ...and the filesystem polyfill is not active
+		 *
+		 * Explanation:
+		 * 	Devices that need the filesystem polyfill will not be able to export
+		 * 	the project to the com.mojang folder. This means that the only way to move over the project
+		 * 	is by exporting to .mcaddon and thus compiling to a non-accessible "builds/dev" folder makes no sense
+		 */
+		return (
+			(settingsState.compiler?.watchModeActive ?? true) &&
+			!this.isVirtualProject &&
+			!isUsingFileSystemPolyfill.value
+		)
+	}
+	get projectPath() {
+		if (this.requiresPermissions) return `projects/${this.name}`
+		return `~local/projects/${this.name}`
+	}
+	get bpUuid() {
+		return this.projectData.contains?.find(
+			(pack) => pack.id === 'behaviorPack'
+		)?.uuid
+	}
+	get isLocal() {
+		return !this.requiresPermissions
 	}
 	//#endregion
 
 	constructor(
 		protected parent: ProjectManager,
 		public readonly app: App,
-		protected _baseDirectory: AnyDirectoryHandle
+		protected _baseDirectory: AnyDirectoryHandle,
+		{ requiresPermissions }: { requiresPermissions?: boolean } = {}
 	) {
+		this.isVirtualProject = virtualProjectName === this.name
+		this.requiresPermissions = requiresPermissions ?? false
+
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
-		this.config = markRaw(new ProjectConfig(this._fileSystem, this))
+		this.config = markRaw(
+			new ProjectConfig(this._fileSystem, this.projectPath, this)
+		)
 		this.fileTypeLibrary = markRaw(new FileTypeLibrary(this.config))
 		this.packIndexer = markRaw(new PackIndexer(this, _baseDirectory))
 		this.extensionLoader = markRaw(
 			new ExtensionLoader(
 				app.fileSystem,
-				`projects/${this.name}/.bridge/extensions`,
-				`projects/${this.name}/.bridge/inactiveExtensions.json`
+				`${this.projectPath}/.bridge/extensions`,
+				`${this.projectPath}/.bridge/inactiveExtensions.json`
 			)
 		)
 		this.typeLoader = markRaw(new TypeLoader(this.app.dataLoader))
-
-		this.recentFiles = <RecentFiles>(
-			reactive(
-				new RecentFiles(
-					app,
-					`projects/${this.name}/.bridge/recentFiles.json`
-				)
-			)
-		)
 
 		this.fileChange.any.on((data) =>
 			App.eventSystem.dispatch('fileChange', data)
@@ -130,13 +172,15 @@ export abstract class Project {
 			App.eventSystem.dispatch('fileUnlinked', data[0])
 		)
 
-		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
+		this.tabSystems = <const>[
+			markRaw(new TabSystem(this)),
+			markRaw(new TabSystem(this, 1)),
+		]
 
-		this.compilerReady = this.createDashService('development').then(
-			(service) => {
-				this._compilerService = markRaw(service)
-			}
-		)
+		this.createDashService('development').then((service) => {
+			this._compilerService = markRaw(service)
+			this.compilerReady.dispatch()
+		})
 
 		setTimeout(() => this.onCreate(), 0)
 	}
@@ -145,7 +189,7 @@ export abstract class Project {
 		mode: 'development' | 'production',
 		compilerConfig?: string
 	) {
-		await this.app.comMojang.fired
+		if (!this.isVirtualProject) await this.app.comMojang.fired
 
 		const compiler = await new DashCompiler(
 			this.app.fileSystem.baseDirectory,
@@ -153,7 +197,7 @@ export abstract class Project {
 				? this.app.comMojang.fileSystem.baseDirectory
 				: undefined,
 			{
-				config: `projects/${this.name}/config.json`,
+				config: `${this.projectPath}/config.json`,
 				compilerConfig,
 				mode,
 				projectName: this.name,
@@ -193,7 +237,7 @@ export abstract class Project {
 
 		await this.fileTypeLibrary.setup(this.app.dataLoader)
 		// Wait for compilerService to be ready
-		await this.compilerReady
+		await this.compilerReady.fired
 
 		if (!isReload) {
 			for (const tabSystem of this.tabSystems) await tabSystem.activate()
@@ -215,8 +259,10 @@ export abstract class Project {
 		])
 		const [changedFiles, deletedFiles] = await this.packIndexer.fired
 
+		// Only recompile changed files if the setting is active and the project is not a virtual project
 		const autoFetchChangedFiles =
-			settingsState.compiler?.autoFetchChangedFiles ?? true
+			(settingsState.compiler?.autoFetchChangedFiles ?? true) &&
+			!this.isVirtualProject
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
@@ -227,29 +273,27 @@ export abstract class Project {
 
 		this.snippetLoader.activate()
 	}
-	deactivate(isReload = false) {
+	async deactivate(isReload = false) {
 		if (!isReload)
 			this.tabSystems.forEach((tabSystem) => tabSystem.deactivate())
 
 		this.typeLoader.deactivate()
-		this.packIndexer.deactivate()
 		this.jsonDefaults.deactivate()
 		this.extensionLoader.disposeAll()
-		this.snippetLoader.deactivate()
-	}
-	disposeWorkers() {
-		this.packIndexer.dispose()
+
+		await Promise.all([
+			this.packIndexer.deactivate(),
+			this.snippetLoader.deactivate(),
+		])
 	}
 	dispose() {
-		this.disposeWorkers()
 		this.tabSystems.forEach((tabSystem) => tabSystem.dispose())
 		this.extensionLoader.disposeAll()
 	}
 
 	async refresh() {
 		this.app.packExplorer.refresh()
-		this.deactivate(true)
-		this.disposeWorkers()
+		await this.deactivate(true)
 		await this.activate(true)
 	}
 
@@ -301,7 +345,7 @@ export abstract class Project {
 	updateTabFolders() {
 		const nameMap: Record<string, Tab[]> = {}
 		for (const tabSystem of this.tabSystems) {
-			tabSystem.tabs.forEach((tab) => {
+			tabSystem.tabs.value.forEach((tab) => {
 				if (!(tab instanceof FileTab)) return
 
 				const name = tab.name
@@ -326,63 +370,136 @@ export abstract class Project {
 	}
 
 	absolutePath(filePath: string) {
-		return `projects/${this.name}/${filePath}`
+		return `${this.projectPath}/${filePath}`
 	}
 	relativePath(filePath: string) {
-		return relative(`projects/${this.name}`, filePath)
+		return relative(this.projectPath, filePath)
 	}
 
+	async updateHandle(handle: AnyHandle) {
+		const path = await this.app.fileSystem.pathTo(handle)
+		if (!path) return
+
+		if (handle.kind === 'file') return await this.updateFile(path)
+
+		const files: string[] = []
+		await iterateDir(
+			handle,
+			(_, filePath) => {
+				files.push(filePath)
+			},
+			undefined,
+			path
+		)
+
+		await this.updateFiles(files)
+	}
 	async updateFile(filePath: string) {
-		// We already have a check for foreign files inside of the TabSystem.save(...) function
-		// but there are a lot of sources that call updateFile(...)
-		try {
-			await this.app.fileSystem.getFileHandle(filePath)
-		} catch {
-			// This is a foreign file, don't process it
-			return
-		}
-
-		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
-
-		await Promise.all([
+		const [anyFileChanged] = await Promise.all([
 			this.packIndexer.updateFile(filePath),
-			watchModeActive
+			this.watchModeActive
 				? this.compilerService.updateFiles([filePath])
 				: Promise.resolve(),
 		])
 
-		await this.jsonDefaults.updateDynamicSchemas(filePath)
+		if (anyFileChanged)
+			await this.jsonDefaults.updateDynamicSchemas(filePath)
 	}
 	async updateFiles(filePaths: string[]) {
-		await this.packIndexer.updateFiles(filePaths)
+		const anyFileChanged = await this.packIndexer.updateFiles(filePaths)
 
-		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
+		if (this.watchModeActive)
+			await this.compilerService.updateFiles(filePaths)
 
-		if (watchModeActive) await this.compilerService.updateFiles(filePaths)
-
-		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
+		if (anyFileChanged)
+			await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 	async unlinkFile(filePath: string) {
-		await this.packIndexer.unlink(filePath)
+		await this.unlinkFiles([filePath])
+	}
+	async unlinkFiles(filePaths: string[]) {
+		await Promise.allSettled([
+			...filePaths.map((filePath) =>
+				this.packIndexer.unlinkFile(filePath, false)
+			),
+			...filePaths.map((filePath) =>
+				this.app.fileSystem.unlink(filePath)
+			),
+		])
 
-		const watchModeActive = settingsState.compiler?.watchModeActive ?? true
+		await this.packIndexer.saveCache()
 
-		if (watchModeActive) await this.compilerService.unlink(filePath)
-		await this.app.fileSystem.unlink(filePath)
-		await this.recentFiles.removeFile(filePath)
+		if (this.watchModeActive)
+			await this.compilerService.unlinkMultiple(filePaths)
 
-		this.fileUnlinked.dispatch(filePath)
+		filePaths.forEach((filePath) => {
+			this.fileUnlinked.dispatch(filePath)
+
+			// Close tab if file is open
+			for (const tabSystem of this.tabSystems) {
+				tabSystem.forceCloseTabs((tab) => tab.getPath() === filePath)
+			}
+		})
 
 		// Reload dynamic schemas
 		const currentPath = this.tabSystem?.selectedTab?.getPath()
 		if (currentPath)
 			await this.jsonDefaults.updateDynamicSchemas(currentPath)
 	}
-	async renameFile(fromPath: string, toPath: string) {
-		await this.app.fileSystem.move(fromPath, toPath)
 
-		await this.unlinkFile(fromPath)
-		await this.updateFile(toPath)
+	/**
+	 * Unlink a specific file handle from the project
+	 * @param handle
+	 * @returns Whether the file handle was successfully unlinked
+	 */
+	async unlinkHandle(handle: AnyHandle) {
+		const path = await this.app.fileSystem.pathTo(handle)
+		if (!path) return false
+
+		if (handle.kind === 'file') {
+			await this.unlinkFile(path)
+			return true
+		}
+
+		const files: string[] = []
+		await iterateDir(
+			handle,
+			(_, filePath) => {
+				files.push(filePath)
+			},
+			undefined,
+			path
+		)
+
+		await this.unlinkFiles(files)
+		await this.app.fileSystem.unlink(path)
+		return true
+	}
+	async onMovedFile(fromPath: string, toPath: string) {
+		await Promise.all([
+			this.compilerService.rename(fromPath, toPath),
+			this.packIndexer.rename(fromPath, toPath),
+		])
+
+		await this.jsonDefaults.updateDynamicSchemas(toPath)
+	}
+	async onMovedFolder(fromPath: string, toPath: string) {
+		const handle = await this.app.fileSystem.getDirectoryHandle(toPath)
+
+		const renamePaths: [string, string][] = []
+
+		await iterateDir(handle, async (_, filePath) => {
+			const from = `${fromPath}/${filePath}`
+			const to = `${toPath}/${filePath}`
+			renamePaths.push([from, to])
+		})
+
+		await Promise.all([
+			this.compilerService.renameMultiple(renamePaths),
+			this.packIndexer.rename(fromPath, toPath),
+		])
+
+		await this.jsonDefaults.updateDynamicSchemas(toPath)
 	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()
@@ -429,37 +546,76 @@ export abstract class Project {
 	}
 	isFileWithinProject(filePath: string) {
 		return (
-			filePath.startsWith(`projects/${this.name}/`) ||
+			filePath.startsWith(`${this.projectPath}/`) ||
 			this.isFileWithinAnyPack(filePath)
+		)
+	}
+	isFileOpen(filePath: string) {
+		return this.tabSystems.some((tabSystem) =>
+			tabSystem.tabs.value.some(
+				(tab) => tab instanceof FileTab && tab.getPath() === filePath
+			)
 		)
 	}
 
 	async loadProject() {
 		await this.config.setup()
 
+		const [iconUrl, packs] = await Promise.all([
+			loadIcon(this, this.app.fileSystem),
+			loadPacks(this.app, this),
+		])
+
 		set(this, '_projectData', {
 			...this.config.get(),
 			path: this.name,
 			name: this.name,
-			imgSrc: await loadIcon(this, this.app.fileSystem),
-			contains: [],
+			imgSrc: iconUrl,
+			contains: packs.sort((a, b) => a.id.localeCompare(b.id)),
 		})
-		await loadPacks(this.app, this).then((packs) =>
-			set(
-				this._projectData,
-				'contains',
-				packs.sort((a, b) => a.id.localeCompare(b.id))
-			)
-		)
 	}
 
 	async recompile(forceStartIfActive = true) {
+		if (this.isVirtualProject) return
+
+		this._compilerService = markRaw(
+			await this.createDashService('development')
+		)
+		await this._compilerService.setup()
+
 		if (forceStartIfActive && this.isActiveProject) {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
-			this.compilerService.build()
+			await this.compilerService.start([], [])
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
 		}
+	}
+
+	/**
+	 * Switches between a local and regular project
+	 */
+	async switchProjectType() {
+		this.app.windows.loadingWindow.open()
+
+		const fromDir = this.requiresPermissions
+			? 'projects'
+			: '~local/projects'
+		const toDir = this.requiresPermissions ? '~local/projects' : 'projects'
+
+		const { type, handle } = await moveHandle({
+			moveHandle: this.baseDirectory,
+			fromHandle: await this.app.fileSystem.getDirectoryHandle(fromDir),
+			toHandle: await this.app.fileSystem.getDirectoryHandle(toDir),
+		})
+		if (type === 'cancel' || !handle || handle.kind !== 'directory') {
+			this.app.windows.loadingWindow.close()
+			return
+		}
+
+		await this.parent.removeProject(this, false)
+		await this.parent.addProject(handle, true, !this.requiresPermissions)
+
+		this.app.windows.loadingWindow.close()
 	}
 
 	abstract getCurrentDataPackage(): Promise<AnyDirectoryHandle>

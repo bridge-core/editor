@@ -1,3 +1,4 @@
+import { DoNotSuggestSchema } from './DoNotSuggest'
 import { Schema } from './Schema'
 
 export abstract class ParentSchema extends Schema {
@@ -7,13 +8,21 @@ export abstract class ParentSchema extends Schema {
 		return this.children.map((child) => child.types).flat()
 	}
 
+	get hasDoNotSuggest() {
+		return this.children.some(
+			(child) => child instanceof DoNotSuggestSchema
+		)
+	}
+
 	getCompletionItems(obj: unknown) {
+		if (this.hasDoNotSuggest) return []
+
 		return this.children
 			.map((child) => child.getCompletionItems(obj))
 			.flat()
 	}
 
-	getSchemasFor(obj: unknown, location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number | undefined)[]) {
 		return this.children
 			.map((child) => child.getSchemasFor(obj, [...location]))
 			.flat()

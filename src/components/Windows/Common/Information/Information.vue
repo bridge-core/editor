@@ -1,18 +1,18 @@
 <template>
 	<BaseWindow
-		v-if="shouldRender"
-		:windowTitle="$data.title"
-		:isVisible="isVisible"
+		v-if="state.shouldRender"
+		:windowTitle="window.title"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:width="440"
-		:height="120"
+		:height="124"
 		:hasCloseButton="false"
-		:isPersistent="$data.isPersistent"
+		:isPersistent="window.isPersistent"
 		:isSmallPopup="true"
 	>
 		<template #default>
-			<p class="mt-2">{{ t($data.description) }}</p>
+			<p class="mt-2">{{ t(window.description) }}</p>
 		</template>
 		<template #actions>
 			<v-spacer />
@@ -24,26 +24,15 @@
 	</BaseWindow>
 </template>
 
-<script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+<script lang="ts" setup>
+import { useTranslations } from '/@/components/Composables/useTranslations'
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 
-export default {
-	name: 'Information',
-	mixins: [TranslationMixin],
-	components: {
-		BaseWindow,
-	},
-	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
-	},
-	methods: {
-		close() {
-			this.currentWindow.close()
-		},
-	},
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.getState()
+
+function close() {
+	props.window.close()
 }
 </script>
-
-<style></style>

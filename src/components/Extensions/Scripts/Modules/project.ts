@@ -5,6 +5,9 @@ import {
 	IExporter,
 } from '/@/components/Projects/Export/Extensions/Exporter'
 import { TPackTypeId } from '/@/components/Data/PackType'
+import { Project } from '/@/components/Projects/Project/Project'
+import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { IOpenTabOptions } from '/@/components/TabSystem/TabSystem'
 
 export const ProjectModule = async ({
 	disposables,
@@ -36,8 +39,9 @@ export const ProjectModule = async ({
 				'production',
 				configFile === 'default'
 					? undefined
-					: `projects/${app.project.name}/.bridge/compiler/${configFile}`
+					: `${app.project.projectPath}/.bridge/compiler/${configFile}`
 			)
+			await service.setup()
 
 			await service.build()
 		},
@@ -48,6 +52,31 @@ export const ProjectModule = async ({
 
 		async unlinkFile(path: string) {
 			await app.project.unlinkFile(path)
+		},
+
+		onProjectChanged(cb: (projectName: string) => any) {
+			const disposable = App.eventSystem.on(
+				'projectChanged',
+				(project: Project) => cb(project.name)
+			)
+			disposables.push(disposable)
+
+			return disposable
+		},
+		onFileChanged(filePath: string, cb: (filePath: string) => any) {
+			const disposable = App.eventSystem.on(
+				'fileChange',
+				([currFilePath, file]) => {
+					if (currFilePath === filePath) cb(file)
+				}
+			)
+			disposables.push(disposable)
+
+			return disposable
+		},
+
+		async openFile(fileHandle: AnyFileHandle, opts: IOpenTabOptions) {
+			await app.project.openFile(fileHandle, opts)
 		},
 	}
 }

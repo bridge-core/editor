@@ -17,6 +17,7 @@ export abstract class SidebarContent {
 				? action.unselect()
 				: undefined
 		)
+		this.selectedAction = undefined
 	}
 	getSelectedAction() {
 		return this.actions?.find(
@@ -24,4 +25,6 @@ export abstract class SidebarContent {
 				action instanceof SelectableSidebarAction && action.isSelected
 		)
 	}
+
+	onContentRightClick(event: MouseEvent) {}
 }

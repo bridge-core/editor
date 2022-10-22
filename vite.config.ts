@@ -1,6 +1,6 @@
 import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import { resolve, join } from 'path'
-import { createVuePlugin } from 'vite-plugin-vue2'
+import Vue from '@vitejs/plugin-vue2'
 import { VitePWA } from 'vite-plugin-pwa'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
 const isNightly = process.argv[2] === '--nightly'
@@ -12,6 +12,9 @@ export default defineConfig({
 	base: '/',
 	server: {
 		port: 8080,
+	},
+	json: {
+		stringify: true,
 	},
 	resolve: {
 		alias: {
@@ -30,11 +33,35 @@ export default defineConfig({
 	},
 	plugins: [
 		splitVendorChunkPlugin(),
-		createVuePlugin(),
+		Vue({}),
 		ViteEjsPlugin({
 			isNightly,
 			title: isNightly ? 'bridge Nightly' : 'bridge v2',
 		}),
+
+		/**
+		 * VS Code's JSON language files has an issue with large JSON files
+		 * This is caused by Array.prototype.push.apply(...) throws a maximum call stack size exceeded error
+		 * with sufficiently large arrays
+		 *
+		 * https://github.com/bridge-core/editor/issues/447
+		 */
+		{
+			name: 'fix-vscode-json-language-service-bug',
+			transform: (source, id) => {
+				if (
+					id.includes('json.worker.js') &&
+					id.includes('node_modules/monaco-editor/')
+				)
+					return source.replace(
+						'Array.prototype.push.apply(this.schemas, other.schemas);',
+						'this.schemas = this.schemas.concat(other.schemas);'
+					)
+
+				return source
+			},
+		},
+
 		VitePWA({
 			filename: 'service-worker.js',
 			registerType: 'prompt',
@@ -50,6 +77,9 @@ export default defineConfig({
 			manifest: {
 				name: isNightly ? 'bridge Nightly' : 'bridge v2',
 				short_name: isNightly ? 'bridge Nightly' : 'bridge v2',
+				description:
+					'bridge. is a powerful IDE for Minecraft Bedrock Add-Ons.',
+				categories: ['development', 'utilities', 'productivity'],
 				theme_color: '#1778D2',
 				icons: [
 					{
@@ -80,7 +110,7 @@ export default defineConfig({
 				background_color: '#0F0F0F',
 				// @ts-ignore
 				launch_handler: {
-					route_to: 'existing-client',
+					route_to: 'existing-client-retain',
 					navigate_existing_client: 'never',
 				},
 				file_handlers: [
@@ -101,6 +131,39 @@ export default defineConfig({
 					},
 				],
 				display_override: ['window-controls-overlay', 'standalone'],
+				screenshots: [
+					{
+						src: './img/install-screenshots/narrow/screenshot-1.png',
+						type: 'image/png',
+						sizes: '540x720',
+						platform: 'narrow',
+					},
+					{
+						src: './img/install-screenshots/narrow/screenshot-2.png',
+						type: 'image/png',
+						sizes: '540x720',
+						platform: 'narrow',
+					},
+					{
+						src: './img/install-screenshots/narrow/screenshot-3.png',
+						type: 'image/png',
+						sizes: '540x720',
+						platform: 'narrow',
+					},
+
+					{
+						src: './img/install-screenshots/wide/screenshot-1.png',
+						type: 'image/png',
+						sizes: '1080x720',
+						platform: 'wide',
+					},
+					{
+						src: './img/install-screenshots/wide/screenshot-2.png',
+						type: 'image/png',
+						sizes: '1080x720',
+						platform: 'wide',
+					},
+				],
 			},
 		}),
 	],

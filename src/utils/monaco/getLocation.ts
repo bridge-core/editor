@@ -1,10 +1,11 @@
-import { editor, Position } from 'monaco-editor'
-import { getLocation as jsoncGetLocation } from 'jsonc-parser'
+import type { editor, Position } from 'monaco-editor'
+import { useJsoncParser } from '../libs/useJsoncParser'
 
-export function getLocation(
+export async function getLocation(
 	model: editor.ITextModel,
 	position: Position
-): string {
+): Promise<string> {
+	const { getLocation: jsoncGetLocation } = await useJsoncParser()
 	const locationArr = jsoncGetLocation(
 		model.getValue(),
 		model.getOffsetAt(position)

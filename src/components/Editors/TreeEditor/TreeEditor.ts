@@ -3,7 +3,11 @@ import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
 import { RootSchema } from '/@/components/JSONSchema/Schema/Root'
-import { ICompletionItem } from '/@/components/JSONSchema/Schema/Schema'
+import {
+	ICompletionItem,
+	pathWildCard,
+	TSchemaType,
+} from '/@/components/JSONSchema/Schema/Schema'
 import { DeleteEntry, UndoDeleteEntry } from './History/DeleteEntry'
 import { EditorHistory } from './History/EditorHistory'
 import { HistoryEntry } from './History/HistoryEntry'
@@ -28,6 +32,7 @@ import { inferType } from '/@/utils/inferType'
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
 	public valueSuggestions: ICompletionItem[] = []
+	public editSuggestions: ICompletionItem[] = []
 
 	protected tree: Tree<unknown>
 	protected selections: (TreeSelection | TreeValueSelection)[] = []
@@ -68,6 +73,7 @@ export class TreeEditor {
 			this.valueSuggestions = []
 
 			this.parent.updateCache()
+			this.parent.fileDidChange()
 		})
 
 		App.getApp().then(async (app) => {
@@ -86,29 +92,21 @@ export class TreeEditor {
 	}
 
 	updateSuggestions = debounce(async () => {
-		this.propertySuggestions = []
-		this.valueSuggestions = []
-
 		const currentFormatVersion: string =
 			(<any>this.tree.toJSON()).format_version ||
 			this.parent.project.config.get().targetVersion ||
 			(await getLatestFormatVersion())
 
-		const tree = this.getSelectedTree()
-		const json = tree?.toJSON()
+		const { tree, isValueSelection } = this.getSelectedTree()
 
-		const schemas = this.getSchemas()
-		let suggestions = schemas
-			.filter((schema) => schema !== undefined)
-			.map((schema) => schema.getCompletionItems(json))
-			.flat()
+		const suggestions = this.getSuggestions(tree)
+		// console.log(suggestions)
 
 		this.propertySuggestions = filterDuplicates(
 			suggestions
 				.filter(
 					(suggestion) =>
-						(suggestion.type === 'object' ||
-							suggestion.type === 'array') &&
+						['object', 'array'].includes(suggestion.type) &&
 						!(<any>(tree ?? this.tree)).children?.find(
 							(test: any) => {
 								if (test.type === 'array') return false
@@ -149,6 +147,24 @@ export class TreeEditor {
 						suggestion.type === 'valueArray'
 				)
 			)
+		} else {
+			this.valueSuggestions = []
+		}
+
+		this.editSuggestions = []
+		// Support auto-completions for value edits
+		if (isValueSelection && tree instanceof PrimitiveTree) {
+			this.editSuggestions = filterDuplicates(
+				suggestions.filter((suggestion) => suggestion.type === 'value')
+			)
+		}
+		// Support auto-completions for property edits
+		if (tree instanceof ObjectTree) {
+			this.editSuggestions = filterDuplicates(
+				this.getSuggestions(tree.getParent() ?? undefined).filter(
+					(suggestion) => suggestion.type === 'object'
+				)
+			)
 		}
 	}, 50)
 
@@ -166,24 +182,56 @@ export class TreeEditor {
 		this.updateSuggestions()
 	}
 
-	getSchemas() {
-		const tree = this.getSelectedTree()
-
+	getSchemas(tree: Tree<unknown> | undefined, next = false) {
 		if (this.selections.length === 0 || tree === this.tree) {
 			return this.schemaRoot ? [this.schemaRoot] : []
 		} else if (tree) {
 			return (
-				this.schemaRoot?.getSchemasFor(this.tree.toJSON(), tree.path) ??
-				[]
+				this.schemaRoot?.getSchemasFor(
+					this.tree.toJSON(),
+					next ? [...tree.path, undefined] : tree.path
+				) ?? []
 			)
 		}
 
 		return []
 	}
-	getSelectedTree() {
-		return <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
-			this.selections[0]?.getTree()
+	getSuggestions(tree: Tree<unknown> | undefined) {
+		const json = tree?.toJSON()
+
+		const schemas = this.getSchemas(tree)
+		return schemas
+			.filter((schema) => schema !== undefined)
+			.map((schema) => schema.getCompletionItems(json))
+			.flat()
+	}
+	getSchemaTypes(next?: boolean) {
+		const { tree, isValueSelection } = this.getSelectedTree()
+		if (isValueSelection) return new Set()
+
+		// We need to skip the items schema property for correct array item types
+		if (next === undefined) next = tree instanceof ArrayTree
+
+		const schemas = this.getSchemas(tree, next)
+		if (schemas.length === 0) return new Set()
+
+		return new Set(
+			schemas.reduce<TSchemaType[]>((types, schema) => {
+				return types.concat(schema.types)
+			}, [])
 		)
+	}
+	getSelectedTree() {
+		if (this.selections.length === 0)
+			return { tree: this.tree, isValueSelection: false }
+
+		const selection = this.selections[0]
+		return {
+			tree: <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
+				selection?.getTree()
+			),
+			isValueSelection: selection instanceof TreeValueSelection,
+		}
 	}
 
 	receiveContainer(container: HTMLDivElement) {
@@ -267,6 +315,13 @@ export class TreeEditor {
 	toJSON() {
 		return this.tree.toJSON()
 	}
+	toJsonString(beautify = false) {
+		return JSON.stringify(
+			this.toJSON(),
+			null,
+			beautify ? '\t' : undefined
+		).replaceAll('\\\\', '\\')
+	}
 
 	forEachSelection(
 		cb: (selection: TreeSelection | TreeValueSelection) => void
@@ -326,7 +381,7 @@ export class TreeEditor {
 		this.selectionChange.dispatch()
 	}
 
-	addKey(value: string, type: 'array' | 'object') {
+	addKey(value: string, type: 'array' | 'objectArray' | 'object') {
 		const entries: HistoryEntry[] = []
 
 		this.forEachSelection((selection) => {
