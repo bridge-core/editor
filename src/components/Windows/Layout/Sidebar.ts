@@ -282,6 +282,36 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 		if (value) this.selected = value
 		else if (!this.selected) this.selected = this.findDefaultSelected()
 	}
+	/**
+	 * Select the next element in the sidebar
+	 */
+	selectNext() {
+		const current = this.currentElement
+
+		// No current element, select the first one
+		if (!current) {
+			this.setDefaultSelected()
+			return
+		}
+
+		const allElements = this.sortSidebar(this.elements)
+			.map((e) => (e.type === 'item' ? e : e.getItems(false)))
+			.flat()
+
+		const currentIndex = allElements.findIndex((e) => e.id === current.id)
+
+		// Current element not found, select the first one
+		if (currentIndex === -1) {
+			this.setDefaultSelected()
+			return
+		}
+
+		// Get the next element
+		const next = allElements[(currentIndex + 1) % allElements.length]
+
+		// Select the next element
+		this.selected = next.id
+	}
 	resetSelected() {
 		this.selected = undefined
 	}

@@ -21,7 +21,12 @@
 		</template>
 
 		<template #actions>
+			<v-btn color="primary" @click="sidebar.selectNext()">
+				Next
+				<v-icon>mdi-chevron-right</v-icon>
+			</v-btn>
 			<v-spacer />
+
 			<v-btn
 				color="primary"
 				:disabled="!window.hasRequiredData || state.isCreatingProject"
@@ -38,7 +43,6 @@
 <script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import { useTranslations } from '../../Composables/useTranslations'
-import { computed } from 'vue'
 import { createCategories } from './CreateCategories'
 
 const { t } = useTranslations()
