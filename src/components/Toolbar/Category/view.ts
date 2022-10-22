@@ -64,9 +64,14 @@ export function setupViewCategory(app: App) {
 			icon: 'mdi-arrow-u-left-bottom',
 			name: 'toolbar.view.cursorUndo.name',
 			description: 'toolbar.view.cursorUndo.description',
-			keyBinding: 'mouseBack',
-			onTrigger: () => {
-				app.project.tabSystem?.monacoEditor?.trigger(
+			keyBinding: 'ctrl + mouseBack',
+			onTrigger: async () => {
+				const tabSystem = app.project.tabSystem
+				if (!tabSystem) return
+
+				// Await monacoEditor being created
+				await tabSystem.fired
+				tabSystem?.monacoEditor?.trigger(
 					'keybinding',
 					'cursorUndo',
 					null
@@ -80,8 +85,13 @@ export function setupViewCategory(app: App) {
 			name: 'toolbar.view.cursorRedo.name',
 			description: 'toolbar.view.cursorRedo.description',
 			keyBinding: 'mouseForward',
-			onTrigger: () => {
-				app.project.tabSystem?.monacoEditor?.trigger(
+			onTrigger: async () => {
+				const tabSystem = app.project.tabSystem
+				if (!tabSystem) return
+
+				// Await monacoEditor being created
+				await tabSystem.fired
+				tabSystem?.monacoEditor?.trigger(
 					'keybinding',
 					'cursorRedo',
 					null
