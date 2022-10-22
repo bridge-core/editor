@@ -43,10 +43,8 @@ export class KeyBindingManager {
 		}
 	}
 	protected onMouseDown = (event: MouseEvent) => {
-		const { button, ...other } = event
-
 		let buttonName = null
-		switch (button) {
+		switch (event.button) {
 			case 0:
 				buttonName = 'Left'
 				break
@@ -63,13 +61,19 @@ export class KeyBindingManager {
 				buttonName = 'Forward'
 				break
 			default:
-				console.error(`Unknown mouse button: ${button}`)
+				console.error(`Unknown mouse button: ${event.button}`)
 		}
 		if (!buttonName) return
 
 		this.onKeydown({
 			key: `mouse${buttonName}`,
-			...other,
+			ctrlKey: event.ctrlKey,
+			altKey: event.altKey,
+			metaKey: event.metaKey,
+			shiftKey: event.shiftKey,
+			target: event.target,
+			preventDefault: () => event.preventDefault(),
+			stopImmediatePropagation: () => event.stopImmediatePropagation(),
 		})
 	}
 
