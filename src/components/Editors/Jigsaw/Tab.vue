@@ -135,7 +135,7 @@ import JigsawNode from './JigsawNode.vue'
 import EventLine from './EventLine.vue'
 import ComponentLib from './ComponentLib/ComponentLib.vue'
 import Grid from './FlowArea/Grid.vue'
-import { addListener } from '/@/utils/disposableListener'
+import { addDisposableEventListener } from '/@/utils/disposableListener'
 
 export default {
 	mixins: [TranslationMixin],
@@ -166,8 +166,8 @@ export default {
 			}
 			this.cursorStyle = 'grabbing'
 			this.disposables = [
-				addListener('mousemove', this.onMouseMove),
-				addListener('mouseup', this.onMouseUp),
+				addDisposableEventListener('mousemove', this.onMouseMove),
+				addDisposableEventListener('mouseup', this.onMouseUp),
 			]
 		},
 		onMouseMove(event) {

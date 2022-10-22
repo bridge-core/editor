@@ -30,7 +30,7 @@
 <script>
 import GridElement from './FlowArea/GridElement.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
-import { addListener } from '/@/utils/disposableListener'
+import { addDisposableEventListener } from '/@/utils/disposableListener'
 import { disposableTimeout } from '/@/utils/disposableTimeout'
 
 export default {
@@ -116,8 +116,8 @@ export default {
 			}, 200)
 
 			this.disposables = [
-				addListener('mousemove', this.onMouseMove),
-				addListener('mouseup', this.onDragEnd),
+				addDisposableEventListener('mousemove', this.onMouseMove),
+				addDisposableEventListener('mouseup', this.onDragEnd),
 			]
 		},
 		onDrag(event) {
