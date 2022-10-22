@@ -1,4 +1,4 @@
-import { FileTab } from '/@/components/TabSystem/FileTab'
+import { FileTab, TReadOnlyMode } from '/@/components/TabSystem/FileTab'
 import JigsawTabComponent from './Tab.vue'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
@@ -38,9 +38,9 @@ export class JigsawTab extends FileTab {
 	constructor(
 		parent: TabSystem,
 		fileHandle: AnyFileHandle,
-		isReadOnly = false
+		readonlyMode?: TReadOnlyMode
 	) {
-		super(parent, fileHandle, isReadOnly)
+		super(parent, fileHandle, readonlyMode)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()
@@ -96,11 +96,11 @@ export class JigsawTab extends FileTab {
 	}
 
 	async onActivate() {}
-	onDeactivate() {}
+	async onDeactivate() {}
 
 	loadEditor() {}
-	setReadOnly(val: boolean) {
-		this.isReadOnly = val
+	setReadOnly(val: TReadOnlyMode) {
+		this.readOnlyMode = val
 	}
 
 	async save() {
@@ -139,4 +139,6 @@ export class JigsawTab extends FileTab {
 
 		return didClose
 	}
+
+	protected _save(): void | Promise<void> {}
 }
