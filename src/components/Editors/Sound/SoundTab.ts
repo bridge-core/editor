@@ -36,7 +36,6 @@ export class SoundTab extends FileTab {
 
 	// Tab events
 	async setup() {
-		console.log(this)
 		this.dataUrl = await loadHandleAsDataURL(this.fileHandle)
 		this.audio = document.createElement('audio')
 		if (!this.audio) return
