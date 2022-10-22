@@ -23,6 +23,9 @@ import { Project } from '../Project/Project'
 import { CreateDenoConfig } from './Files/DenoConfig'
 import { IWindowState, NewBaseWindow } from '../../Windows/NewBaseWindow'
 import { reactive } from 'vue'
+import { Sidebar, SidebarItem } from '../../Windows/Layout/Sidebar'
+import { translate } from '../../Locales/Manager'
+import { createCategories } from './CreateCategories'
 
 export interface ICreateProjectOptions {
 	projectType: 'bridgeFolder' | 'local' | 'comMojang'
@@ -56,7 +59,9 @@ export interface ICreateProjectState extends IWindowState {
 	createOptions: ICreateProjectOptions
 	availableTargetVersionsLoading: boolean
 }
+
 export class CreateProjectWindow extends NewBaseWindow {
+	protected sidebar = new Sidebar([], false)
 	protected availableTargetVersions: string[] = []
 	protected stableVersion: string = ''
 	protected packs: Record<TPackTypeId | '.bridge' | 'worlds', CreatePack> = <
@@ -139,6 +144,19 @@ export class CreateProjectWindow extends NewBaseWindow {
 		App.packType.ready.once(() => {
 			this.availablePackTypes = App.packType.all
 		})
+
+		createCategories.forEach((category) => {
+			this.sidebar.addElement(
+				new SidebarItem({
+					icon: category.icon,
+					id: category.id,
+					color: 'accent',
+					text: translate(
+						'windows.createProject.categories.' + category.id
+					),
+				})
+			)
+		})
 	}
 
 	get hasRequiredData() {
@@ -155,6 +173,7 @@ export class CreateProjectWindow extends NewBaseWindow {
 
 	open() {
 		this.state.createOptions = this.getDefaultOptions()
+		this.sidebar.setDefaultSelected()
 
 		this.packCreateFiles.forEach(
 			(createFile) => (createFile.isActive = true)

@@ -202,7 +202,7 @@
 <script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
-import ExperimentalGameplay from '/@/components/Projects/CreateProject/ExperimentalGameplay.vue'
+import ExperimentalGameplay from '../CreateProject/Tabs/ExperimentalGameplay.vue'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 
 import { App } from '/@/App'

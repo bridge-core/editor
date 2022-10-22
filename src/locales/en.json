@@ -594,11 +594,15 @@
 			"outputResolution": "Output Resolution"
 		},
 		"createProject": {
-			"welcome": "Welcome to bridge.!",
-			"welcomeDescription": "Please create your first project in order to get started.",
-			"omitPack": "Omit",
-			"selectedPack": "Selected",
 			"title": "Create Project",
+
+			"categories": {
+				"general": "General",
+				"files": "Files",
+				"experimentalGameplay": "Experimental Gameplay",
+				"projectType": "Project Type"
+			},
+
 			"packIcon": "Project Icon (optional)",
 			"projectName": {
 				"name": "Project Name",

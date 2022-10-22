@@ -2,7 +2,7 @@
 	<ToggleSheet
 		:value="value"
 		@input="$emit('input', $event)"
-		:dark="true"
+		:dark="dark"
 		:isToggleable="isToggleable"
 	>
 		<template #default="{ value }">
@@ -38,6 +38,10 @@ export default {
 		SelectedStatus,
 	},
 	props: {
+		dark: {
+			type: Boolean,
+			default: true,
+		},
 		experiment: {
 			type: Object,
 			required: true,
