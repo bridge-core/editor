@@ -13,6 +13,18 @@
 		v-model="sidebar.selected"
 		@closeWindow="close"
 	>
+		<template #sidebar>
+			<v-progress-linear
+				class="mt-1 mb-3"
+				rounded="lg"
+				:value="
+					(sidebar.currentSelectionIndex /
+						sidebar.maxSelectionIndex) *
+					100
+				"
+			/>
+		</template>
+
 		<template #default>
 			<component
 				:is="getCurrentComponent(sidebar.selected)"

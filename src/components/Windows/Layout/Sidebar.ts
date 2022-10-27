@@ -328,4 +328,20 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 			this._selected.value = val
 		}
 	}
+	get currentSelectionIndex() {
+		if (!this.selected) return -1
+
+		const allElements = this.sortSidebar(this.elements)
+			.map((e) => (e.type === 'item' ? e : e.getItems(false)))
+			.flat()
+
+		return allElements.findIndex((e) => e.id === this.selected)
+	}
+	get maxSelectionIndex() {
+		const allElements = this.sortSidebar(this.elements)
+			.map((e) => (e.type === 'item' ? e : e.getItems(false)))
+			.flat()
+
+		return allElements.length - 1
+	}
 }
