@@ -12,10 +12,10 @@ import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { defaultPackPaths } from '../Project/Config'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 import { getPackId, IManifestModule } from '/@/utils/manifest/getPackId'
+import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
 
 export async function importFromMcpack(
 	fileHandle: AnyFileHandle,
-	isFirstImport = false,
 	unzip = true
 ) {
 	const app = await App.getApp()
@@ -24,7 +24,7 @@ export async function importFromMcpack(
 		create: true,
 	})
 
-	if (!isFirstImport) await app.projectManager.projectReady.fired
+	await app.projectManager.projectReady.fired
 
 	// Unzip .mcpack file
 	if (unzip) {
@@ -34,12 +34,14 @@ export async function importFromMcpack(
 		unzipper.createTask(app.taskManager)
 		await unzipper.unzip(data)
 	}
-	const projectName = fileHandle.name
-		.replace('.mcpack', '')
-		.replace('.zip', '')
+	// Make sure that we don't replace an existing project
+	const projectName = await findSuitableFolderName(
+		fileHandle.name.replace('.mcpack', '').replace('.zip', ''),
+		await fs.getDirectoryHandle('projects')
+	)
 
 	// Ask user whether they want to save the current project if we are going to delete it later in the import process
-	if (isUsingFileSystemPolyfill.value && !isFirstImport) {
+	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects) {
 		const confirmWindow = new ConfirmationWindow({
 			description:
 				'windows.projectChooser.openNewProject.saveCurrentProject',
@@ -93,15 +95,15 @@ export async function importFromMcpack(
 	await fs.mkdir(`projects/${projectName}/.bridge/extensions`)
 	await fs.mkdir(`projects/${projectName}/.bridge/compiler`)
 
+	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects)
+		// Remove old project if browser is using fileSystem polyfill
+		await app.projectManager.removeProject(app.project)
+
 	// Add new project
 	await app.projectManager.addProject(
 		await fs.getDirectoryHandle(`projects/${projectName}`),
 		true
 	)
-
-	if (isUsingFileSystemPolyfill.value && !isFirstImport)
-		// Remove old project if browser is using fileSystem polyfill
-		await app.projectManager.removeProject(app.project)
 
 	await fs.unlink('import')
 }
