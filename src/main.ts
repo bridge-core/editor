@@ -13,6 +13,8 @@ import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker.js?work
 import { initRuntimes } from 'bridge-js-runtime'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
 
+import '/@/components/Blockbench/PluginCompat/Load'
+
 // @ts-ignore
 self.MonacoEnvironment = {
 	getWorker(_: unknown, label: string) {

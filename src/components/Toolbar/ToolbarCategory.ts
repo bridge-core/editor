@@ -33,6 +33,10 @@ export class ToolbarCategory extends EventDispatcher<void> {
 		this.disposables[item.id] = item.on(() => this.trigger())
 		return this
 	}
+	removeItem(item: Action | ToolbarCategory | Divider) {
+		del(this.state, item.id)
+		return this
+	}
 	disposeItem(item: Action | ToolbarCategory | Divider) {
 		del(this.state, item.id)
 		this.disposables[item.id]?.dispose()
