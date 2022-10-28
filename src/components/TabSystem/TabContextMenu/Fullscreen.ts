@@ -5,6 +5,9 @@ let fullScreenElement: HTMLElement | null = null
 export function setFullscreenElement(el: HTMLElement) {
 	fullScreenElement = el
 }
+export function getFullScreenElement() {
+	return fullScreenElement
+}
 export function useFullScreen() {
 	return {
 		isInFullScreen,
