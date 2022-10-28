@@ -13,6 +13,7 @@ import { IframeTab } from '../IframeTab'
 import { OpenFileEvent } from './Events/Tab/OpenFile'
 import { openedFileReferenceName } from './Requests/FileSystem/ResolveFileReference'
 import { GetItemPreviewRequest } from './Requests/Project/GetItemPreview'
+import { ReadAsDataUrlRequest } from './Requests/FileSystem/ReadAsDataUrl'
 
 export class IframeApi {
 	didSetup = false
@@ -28,6 +29,7 @@ export class IframeApi {
 		// FileSystem
 		new ReadFileRequest(this),
 		new ReadTextFileRequest(this),
+		new ReadAsDataUrlRequest(this),
 		new WriteFileRequest(this),
 
 		// Project
