@@ -34,7 +34,7 @@ export function setupViewCategory(app: App) {
 
 	view.addItem(new Divider())
 
-	view.addItem(app.actionManager.create(fullScreenAction))
+	view.addItem(app.actionManager.create(fullScreenAction()))
 
 	view.addItem(
 		app.actionManager.create({

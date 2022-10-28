@@ -5,16 +5,19 @@ let fullScreenElement: HTMLElement | null = null
 export function setFullscreenElement(el: HTMLElement) {
 	fullScreenElement = el
 }
+export function getFullScreenElement() {
+	return fullScreenElement
+}
 export function useFullScreen() {
 	return {
 		isInFullScreen,
 	}
 }
 
-export const fullScreenAction = {
+export const fullScreenAction = (addDescription = true) => ({
 	icon: 'mdi-fullscreen',
 	name: 'actions.fullscreen.name',
-	description: 'actions.fullscreen.description',
+	description: addDescription ? 'actions.fullscreen.description' : undefined,
 	onTrigger: () => {
 		if (!fullScreenElement) return
 
@@ -39,4 +42,4 @@ export const fullScreenAction = {
 			document.addEventListener('fullscreenchange', onFullScreenChange)
 		}
 	},
-}
+})

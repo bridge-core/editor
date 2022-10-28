@@ -4,6 +4,7 @@ import { Tab } from '../../TabSystem/CommonTab'
 import { IframeApi } from './API/IframeApi'
 import { markRaw } from 'vue'
 import { AnyFileHandle } from '../../FileSystem/Types'
+import { getFullScreenElement } from '../../TabSystem/TabContextMenu/Fullscreen'
 
 interface IIframeTabOptions {
 	icon?: string
@@ -46,7 +47,7 @@ export class IframeTab extends Tab {
 		this.iframe.classList.add('outlined')
 		this.iframe.style.borderRadius = '12px'
 		this.iframe.style.margin = '8px'
-		document.body.appendChild(this.iframe)
+		getFullScreenElement()?.appendChild(this.iframe)
 	}
 
 	getOptions() {
