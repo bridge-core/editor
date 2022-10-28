@@ -211,7 +211,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			additionalItems.push(<const>{ type: 'divider' })
 
 		await showContextMenu(event, [
-			fullScreenAction,
+			fullScreenAction(false),
 			...additionalItems,
 			{
 				name: 'actions.closeTab.name',

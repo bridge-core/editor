@@ -11,10 +11,10 @@ export function useFullScreen() {
 	}
 }
 
-export const fullScreenAction = {
+export const fullScreenAction = (addDescription = true) => ({
 	icon: 'mdi-fullscreen',
 	name: 'actions.fullscreen.name',
-	description: 'actions.fullscreen.description',
+	description: addDescription ? 'actions.fullscreen.description' : undefined,
 	onTrigger: () => {
 		if (!fullScreenElement) return
 
@@ -39,4 +39,4 @@ export const fullScreenAction = {
 			document.addEventListener('fullscreenchange', onFullScreenChange)
 		}
 	},
-}
+})
