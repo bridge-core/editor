@@ -14,6 +14,8 @@ import { OpenFileEvent } from './Events/Tab/OpenFile'
 import { openedFileReferenceName } from './Requests/FileSystem/ResolveFileReference'
 import { GetItemPreviewRequest } from './Requests/Project/GetItemPreview'
 import { ReadAsDataUrlRequest } from './Requests/FileSystem/ReadAsDataUrl'
+import { FindRequest } from './Requests/PackIndexer/Find'
+import { GetFileRequest } from './Requests/PackIndexer/GetFile'
 
 export class IframeApi {
 	didSetup = false
@@ -34,6 +36,10 @@ export class IframeApi {
 
 		// Project
 		new GetItemPreviewRequest(this),
+
+		// PackIndexer,
+		new FindRequest(this),
+		new GetFileRequest(this),
 	]
 
 	constructor(protected tab: IframeTab, protected iframe: HTMLIFrameElement) {
