@@ -1,8 +1,5 @@
 <template>
-	<div
-		class="d-inline-flex mb-1"
-		style="height: 21px; width: 100%; overflow-x: auto; overflow-y: hidden"
-	>
+	<div class="d-inline-flex mb-1 tab-action-bar" style="">
 		<Action
 			v-for="action in actions"
 			:key="action.id"
@@ -22,3 +19,12 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+.tab-action-bar {
+	height: 21px;
+	width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+</style>

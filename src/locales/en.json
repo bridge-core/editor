@@ -128,6 +128,10 @@
 			"name": "Download",
 			"description": "Download this file or folder"
 		},
+		"fullscreen": {
+			"name": "Fullscreen",
+			"description": "Toggle fullscreen mode"
+		},
 		"viewConnectedFiles": {
 			"name": "View Connected Files",
 			"description": "View all files connected to this file"
