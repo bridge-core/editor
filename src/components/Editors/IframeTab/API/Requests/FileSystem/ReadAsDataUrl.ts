@@ -9,9 +9,7 @@ export class ReadAsDataUrlRequest extends GenericRequest<string, string> {
 	}
 
 	async handle(filePath: string, origin: string): Promise<string> {
-		console.log('READ AS DATA URL')
 		const fileHandle = await resolveFileReference(filePath, this.api)
-		console.log(fileHandle)
 
 		return await loadHandleAsDataURL(fileHandle)
 	}
