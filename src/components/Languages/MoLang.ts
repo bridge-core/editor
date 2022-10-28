@@ -64,7 +64,12 @@ const completionItemProvider: languages.CompletionItemProvider = {
 		// Attempt to look behind the cursor to get context on what to propose
 		const lineUntilCursor = line.slice(0, position.column - 1)
 
+		// Function argument auto-completions
+		// const withinBrackets
+
 		// Namespace property auto-compeltions
+		// TODO - place cursor in brackets after inserting text
+		let isAccessingNamespace = false
 		if (lineUntilCursor.endsWith('.')) {
 			const strippedLine = lineUntilCursor.slice(0, -1)
 			const schema = await molangData.getSchema()
@@ -73,7 +78,8 @@ const completionItemProvider: languages.CompletionItemProvider = {
 					entry.namespace.some((namespace) =>
 						strippedLine.endsWith(namespace)
 					)
-				)
+				) {
+					isAccessingNamespace = true
 					completionItems = completionItems.concat(
 						(
 							await molangData.getCompletionItemFromValues(
@@ -89,21 +95,25 @@ const completionItemProvider: languages.CompletionItemProvider = {
 							),
 						}))
 					)
+				}
 			}
 		}
 
 		// Global instance namespace auto-completions
-		completionItems = completionItems.concat(
-			(await molangData.getNamespaceSuggestions()).map((suggestion) => ({
-				...suggestion,
-				range: new Range(
-					position.lineNumber,
-					position.column,
-					position.lineNumber,
-					position.column
-				),
-			}))
-		)
+		if (!isAccessingNamespace)
+			completionItems = completionItems.concat(
+				(await molangData.getNamespaceSuggestions()).map(
+					(suggestion) => ({
+						...suggestion,
+						range: new Range(
+							position.lineNumber,
+							position.column,
+							position.lineNumber,
+							position.column
+						),
+					})
+				)
+			)
 
 		return {
 			suggestions: completionItems,
