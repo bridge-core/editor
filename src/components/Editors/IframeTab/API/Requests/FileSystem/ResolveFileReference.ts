@@ -4,7 +4,8 @@ export const openedFileReferenceName = '~bridge://OPENED-FILE'
 
 export async function resolveFileReference(
 	fileReference: string,
-	api: IframeApi
+	api: IframeApi,
+	createFile = false
 ) {
 	if (fileReference === openedFileReferenceName) {
 		const fileHandle = api.openedFileHandle
@@ -14,5 +15,5 @@ export async function resolveFileReference(
 		return fileHandle
 	}
 
-	return await api.app.fileSystem.getFileHandle(fileReference)
+	return await api.app.fileSystem.getFileHandle(fileReference, createFile)
 }
