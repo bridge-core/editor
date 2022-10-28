@@ -102,7 +102,9 @@ export class MolangData extends Signal<void> {
 			.filter((value) => !value.isDeprecated)
 			.map((value) => {
 				return {
-					insertText: value.valueName,
+					insertText: `${value.valueName}${
+						value.isProperty ? '' : '()'
+					}`,
 					kind: value.isProperty
 						? languages.CompletionItemKind.Variable
 						: languages.CompletionItemKind.Function,
