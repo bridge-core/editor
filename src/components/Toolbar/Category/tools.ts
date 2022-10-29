@@ -3,7 +3,8 @@ import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
 import { clearAllNotifications } from '/@/components/Notifications/create'
-import { IframeTab } from '../../Editors/IframeTab/IframeTab'
+import { IframeTab } from '/@/components/Editors/IframeTab/IframeTab'
+import { blockbenchUrl } from '/@/components/UIElements/DirectoryViewer/ContextMenu/Actions/OpenWith/Blockbench'
 
 export function setupToolsCategory(app: App) {
 	const tools = new ToolbarCategory(
@@ -57,7 +58,7 @@ export function setupToolsCategory(app: App) {
 				const tab = new IframeTab(tabSystem, {
 					icon: 'mdi-cube-outline',
 					name: 'Blockbench',
-					url: 'https://web.blockbench.net',
+					url: blockbenchUrl,
 					iconColor: 'primary',
 				})
 				tabSystem.add(tab)
