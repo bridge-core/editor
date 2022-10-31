@@ -1,10 +1,7 @@
 import { FileWrapper } from '../../../FileView/FileWrapper'
 import { App } from '/@/App'
+import { BlockbenchTab } from '/@/components/Editors/Blockbench/BlockbenchTab'
 import { IframeTab } from '/@/components/Editors/IframeTab/IframeTab'
-
-export const blockbenchUrl = import.meta.env.DEV
-	? 'http://localhost:5173'
-	: 'https://blockbench.bridge-core.app'
 
 export const BlockbenchAction = (fileWrapper: FileWrapper) => {
 	return fileWrapper.path?.includes('/models/')
@@ -17,11 +14,7 @@ export const BlockbenchAction = (fileWrapper: FileWrapper) => {
 
 					if (!tabSystem) return
 
-					const tab = new IframeTab(tabSystem, {
-						icon: '$blockbench',
-						name: 'Blockbench',
-						url: blockbenchUrl,
-						iconColor: 'primary',
+					const tab = new BlockbenchTab(tabSystem, {
 						openWithPayload: {
 							fileHandle: fileWrapper.handle,
 							filePath: fileWrapper.path ?? undefined,
