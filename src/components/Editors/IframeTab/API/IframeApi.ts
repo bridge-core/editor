@@ -13,6 +13,7 @@ import { IframeTab } from '../IframeTab'
 import { OpenFileEvent } from './Events/Tab/OpenFile'
 import { openedFileReferenceName } from './Requests/FileSystem/ResolveFileReference'
 import { GetItemPreviewRequest } from './Requests/Project/GetItemPreview'
+import { wait } from '/@/utils/wait'
 
 export class IframeApi {
 	didSetup = false
@@ -41,6 +42,7 @@ export class IframeApi {
 			this._channel = new Channel(this.iframe.contentWindow)
 			this.channelSetup.dispatch()
 
+			await wait(20)
 			await this.channel.open()
 
 			this.loaded.dispatch()
