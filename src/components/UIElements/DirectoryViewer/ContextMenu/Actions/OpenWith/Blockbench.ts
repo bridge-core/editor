@@ -9,7 +9,7 @@ export const blockbenchUrl = import.meta.env.DEV
 export const BlockbenchAction = (fileWrapper: FileWrapper) => {
 	return fileWrapper.path?.includes('/models/')
 		? {
-				icon: 'mdi-cube-outline',
+				icon: '$blockbench',
 				name: 'openWith.blockbench',
 				onTrigger: async () => {
 					const app = await App.getApp()
@@ -18,7 +18,7 @@ export const BlockbenchAction = (fileWrapper: FileWrapper) => {
 					if (!tabSystem) return
 
 					const tab = new IframeTab(tabSystem, {
-						icon: 'mdi-cube-outline',
+						icon: '$blockbench',
 						name: 'Blockbench',
 						url: blockbenchUrl,
 						iconColor: 'primary',
