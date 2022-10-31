@@ -47,7 +47,7 @@ export function setupToolsCategory(app: App) {
 	)
 	tools.addItem(
 		app.actionManager.create({
-			icon: 'mdi-cube-outline',
+			icon: '$blockbench',
 			name: '[Open Blockbench]',
 			onTrigger: async () => {
 				const app = await App.getApp()
@@ -56,7 +56,7 @@ export function setupToolsCategory(app: App) {
 				if (!tabSystem) return
 
 				const tab = new IframeTab(tabSystem, {
-					icon: 'mdi-cube-outline',
+					icon: '$blockbench',
 					name: 'Blockbench',
 					url: blockbenchUrl,
 					iconColor: 'primary',
