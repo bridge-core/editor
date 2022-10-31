@@ -16,7 +16,7 @@
 		<template #sidebar>
 			<v-progress-linear
 				class="mt-1 mb-3"
-				rounded="lg"
+				rounded
 				:value="
 					(sidebar.currentSelectionIndex /
 						sidebar.maxSelectionIndex) *
