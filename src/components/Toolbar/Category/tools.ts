@@ -4,7 +4,7 @@ import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
 import { clearAllNotifications } from '/@/components/Notifications/create'
 import { IframeTab } from '/@/components/Editors/IframeTab/IframeTab'
-import { blockbenchUrl } from '/@/components/UIElements/DirectoryViewer/ContextMenu/Actions/OpenWith/Blockbench'
+import { BlockbenchTab } from '../../Editors/Blockbench/BlockbenchTab'
 
 export function setupToolsCategory(app: App) {
 	const tools = new ToolbarCategory(
@@ -55,12 +55,7 @@ export function setupToolsCategory(app: App) {
 
 				if (!tabSystem) return
 
-				const tab = new IframeTab(tabSystem, {
-					icon: '$blockbench',
-					name: 'Blockbench',
-					url: blockbenchUrl,
-					iconColor: 'primary',
-				})
+				const tab = new BlockbenchTab(tabSystem)
 				tabSystem.add(tab)
 			},
 		})
