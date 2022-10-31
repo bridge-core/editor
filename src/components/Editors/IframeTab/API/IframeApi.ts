@@ -23,10 +23,8 @@ export class IframeApi {
 	channelSetup = new Signal<void>()
 	protected disposables: IDisposable[] = []
 	protected _channel?: Channel
-	protected events: GenericEvent[] = [
-		new ThemeChangeEvent(this),
-		new OpenFileEvent(this),
-	]
+	protected openFileEvent = new OpenFileEvent(this)
+	protected events: GenericEvent[] = [new ThemeChangeEvent(this)]
 	protected requests: GenericRequest<unknown, unknown>[] = [
 		// FileSystem
 		new ReadFileRequest(this),
@@ -48,7 +46,6 @@ export class IframeApi {
 
 			this._channel = new Channel(this.iframe.contentWindow)
 			this.channelSetup.dispatch()
-
 			await this.channel.open()
 
 			this.loaded.dispatch()
@@ -97,11 +94,16 @@ export class IframeApi {
 			isNightlyBuild,
 		})
 	}
+	// The underlying tab is supposed to open a new file
+	triggerOpenWith() {
+		this.openFileEvent.setup()
+	}
 
 	dispose() {
 		this.events.forEach((event) => event.dispose())
 		this.events = []
 		this.requests.forEach((request) => request.dispose())
 		this.requests = []
+		this.openFileEvent.dispose()
 	}
 }
