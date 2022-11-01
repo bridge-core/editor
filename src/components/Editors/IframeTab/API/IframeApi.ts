@@ -16,6 +16,7 @@ import { GetItemPreviewRequest } from './Requests/Project/GetItemPreview'
 import { ReadAsDataUrlRequest } from './Requests/FileSystem/ReadAsDataUrl'
 import { FindRequest } from './Requests/PackIndexer/Find'
 import { GetFileRequest } from './Requests/PackIndexer/GetFile'
+import { SetIsUnsavedRequest } from './Requests/Tab/SetIsUnsaved'
 
 export class IframeApi {
 	didSetup = false
@@ -35,12 +36,18 @@ export class IframeApi {
 		// Project
 		new GetItemPreviewRequest(this),
 
+		// Tab
+		new SetIsUnsavedRequest(this),
+
 		// PackIndexer,
 		new FindRequest(this),
 		new GetFileRequest(this),
 	]
 
-	constructor(protected tab: IframeTab, protected iframe: HTMLIFrameElement) {
+	constructor(
+		public readonly tab: IframeTab,
+		protected iframe: HTMLIFrameElement
+	) {
 		this.iframe.addEventListener('load', async () => {
 			if (!iframe.src && !iframe.srcdoc) return
 
