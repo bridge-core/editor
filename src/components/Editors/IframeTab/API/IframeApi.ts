@@ -16,6 +16,7 @@ import { GetItemPreviewRequest } from './Requests/Project/GetItemPreview'
 import { ReadAsDataUrlRequest } from './Requests/FileSystem/ReadAsDataUrl'
 import { FindRequest } from './Requests/PackIndexer/Find'
 import { GetFileRequest } from './Requests/PackIndexer/GetFile'
+import { wait } from '/@/utils/wait'
 
 export class IframeApi {
 	didSetup = false
@@ -49,6 +50,7 @@ export class IframeApi {
 			this._channel = new Channel(this.iframe.contentWindow)
 			this.channelSetup.dispatch()
 
+			await wait(20)
 			await this.channel.open()
 
 			this.loaded.dispatch()
