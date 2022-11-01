@@ -31,7 +31,7 @@ export async function exportAsBrproject(name?: string) {
 	try {
 		await saveOrDownload(
 			savePath,
-			await zipFolder.package(),
+			await zipFolder.package(new Set(['builds'])),
 			app.fileSystem
 		)
 	} catch (err) {
