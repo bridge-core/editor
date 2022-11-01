@@ -19,6 +19,7 @@ import { GetFileRequest } from './Requests/PackIndexer/GetFile'
 import { SetIsUnsavedRequest } from './Requests/Tab/SetIsUnsaved'
 import { PlatformRequest } from './Requests/Util/Platform'
 import { UpdateFileRequest } from './Requests/Dash/UpdateFile'
+import { SetIsLoadingRequest } from './Requests/Tab/SetIsLoading'
 
 export class IframeApi {
 	didSetup = false
@@ -40,6 +41,7 @@ export class IframeApi {
 
 		// Tab
 		new SetIsUnsavedRequest(this),
+		new SetIsLoadingRequest(this),
 
 		// PackIndexer,
 		new FindRequest(this),
