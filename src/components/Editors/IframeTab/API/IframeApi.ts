@@ -13,6 +13,9 @@ import { IframeTab } from '../IframeTab'
 import { OpenFileEvent } from './Events/Tab/OpenFile'
 import { openedFileReferenceName } from './Requests/FileSystem/ResolveFileReference'
 import { GetItemPreviewRequest } from './Requests/Project/GetItemPreview'
+import { ReadAsDataUrlRequest } from './Requests/FileSystem/ReadAsDataUrl'
+import { FindRequest } from './Requests/PackIndexer/Find'
+import { GetFileRequest } from './Requests/PackIndexer/GetFile'
 import { wait } from '/@/utils/wait'
 
 export class IframeApi {
@@ -29,10 +32,15 @@ export class IframeApi {
 		// FileSystem
 		new ReadFileRequest(this),
 		new ReadTextFileRequest(this),
+		new ReadAsDataUrlRequest(this),
 		new WriteFileRequest(this),
 
 		// Project
 		new GetItemPreviewRequest(this),
+
+		// PackIndexer,
+		new FindRequest(this),
+		new GetFileRequest(this),
 	]
 
 	constructor(protected tab: IframeTab, protected iframe: HTMLIFrameElement) {
