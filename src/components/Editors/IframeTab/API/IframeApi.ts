@@ -20,6 +20,7 @@ import { SetIsUnsavedRequest } from './Requests/Tab/SetIsUnsaved'
 import { PlatformRequest } from './Requests/Util/Platform'
 import { UpdateFileRequest } from './Requests/Dash/UpdateFile'
 import { SetIsLoadingRequest } from './Requests/Tab/SetIsLoading'
+import { wait } from '/@/utils/wait'
 
 export class IframeApi {
 	didSetup = false
@@ -63,6 +64,8 @@ export class IframeApi {
 
 			this._channel = new Channel(this.iframe.contentWindow)
 			this.channelSetup.dispatch()
+
+			await wait(20)
 			await this.channel.open()
 
 			this.loaded.dispatch()
