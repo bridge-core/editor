@@ -12,12 +12,6 @@ export async function exportAsBrproject(name?: string) {
 	}.brproject`
 
 	/**
-	 * Make sure to delete old export so the .brproject file doesn't include itself
-	 * This would cause an issue where the ZIP package keeps growing with every export
-	 */
-	await app.fileSystem.unlink(savePath)
-
-	/**
 	 * .brproject files come in two variants:
 	 * - Complete global package including the data/ & extensions/ folder for browsers using the file system polyfill
 	 * - Package only including the project files (no data/ & extensions/) for other browsers
