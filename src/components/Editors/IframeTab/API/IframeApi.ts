@@ -17,6 +17,8 @@ import { ReadAsDataUrlRequest } from './Requests/FileSystem/ReadAsDataUrl'
 import { FindRequest } from './Requests/PackIndexer/Find'
 import { GetFileRequest } from './Requests/PackIndexer/GetFile'
 import { SetIsUnsavedRequest } from './Requests/Tab/SetIsUnsaved'
+import { PlatformRequest } from './Requests/Util/Platform'
+import { UpdateFileRequest } from './Requests/Dash/UpdateFile'
 
 export class IframeApi {
 	didSetup = false
@@ -42,6 +44,12 @@ export class IframeApi {
 		// PackIndexer,
 		new FindRequest(this),
 		new GetFileRequest(this),
+
+		// Dash
+		new UpdateFileRequest(this),
+
+		// Util
+		new PlatformRequest(this),
 	]
 
 	constructor(
@@ -75,6 +83,9 @@ export class IframeApi {
 	}
 	get openedFileHandle() {
 		return this.tab.getOptions().openWithPayload?.fileHandle ?? null
+	}
+	get openedFilePath() {
+		return this.tab.getOptions().openWithPayload?.filePath ?? null
 	}
 
 	get channel() {
