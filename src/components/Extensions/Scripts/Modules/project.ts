@@ -41,6 +41,7 @@ export const ProjectModule = async ({
 					? undefined
 					: `${app.project.projectPath}/.bridge/compiler/${configFile}`
 			)
+			await service.setup()
 
 			await service.build()
 		},

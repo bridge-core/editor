@@ -1,11 +1,26 @@
 <h2>Features:</h2>
-<h3>Bracket Pair Colorization</h3>
-<p>You can now let bridge. colorize matching brackets to make it easier to identify them. There is a new setting to enable bracket pair colorization.</p>
-<p><img src="https://user-images.githubusercontent.com/33347616/135835136-5eaac40f-c20b-4d19-b00b-ad5021ec04a7.png" alt="Bildschirmfoto_2021-09-30_um_18 09 56"></p>
+<ul>
+<li><strong>Tree Editor:</strong> Added support for &quot;not&quot; and &quot;doNotSuggest&quot; schema properties</li>
+<li>Loading file definitions is now significantly faster</li>
+<li>Loading JSON schemas is now significantly faster</li>
+<li>Loading lightning cache files is now significantly faster</li>
+<li>Improved file system migration process and prompt criteria</li>
+<li>Bone name auto-completions within part_visibility (#468)</li>
+</ul>
+<h2>Changes:</h2>
+<ul>
+<li>Updated game test types to latest 1.19.0 release</li>
+<li>Cache event references from new 1.19.0 components</li>
+<li><strong>Initial Setup:</strong> Some browsers will now only show one permission prompt per selected folder (instead of previously two for read &amp; write permissions)</li>
+<li>Added &quot;onProjectChanged(...)&quot; extension API</li>
+<li>Updated geode and ore feature schemas (Thanks to @KekeCreations; bridge-core/editor-packages#25)</li>
+<li>Updated data to latest Minecraft Preview</li>
+</ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed project export options on mobile</li>
-<li>Fixed &quot;Refresh Project&quot; action taking long</li>
-<li>Fixed terrain_texture.json JSON schema</li>
-<li>Fixed error upon using some actions from the &quot;Tools&quot; toolbar item</li>
+<li>Fixed component data not being cached from entity permutations</li>
+<li>Fixed entity permutations using incorrect component auto-completions</li>
+<li>Fixed tree editor not handling escaped characters correctly (#465)</li>
+<li>Fixed sidebar icons within tasks not scrolling correctly</li>
+<li>Fixed WelcomeScreen top margin for logo without alert</li>
 </ul>

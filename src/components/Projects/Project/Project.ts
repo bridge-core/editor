@@ -19,7 +19,7 @@ import {
 	AnyFileHandle,
 	AnyHandle,
 } from '/@/components/FileSystem/Types'
-import { markRaw, reactive, set } from '@vue/composition-api'
+import { markRaw, reactive, set } from 'vue'
 import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
@@ -33,6 +33,7 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 import { iterateDir } from '/@/utils/iterateDir'
 import { Signal } from '../../Common/Event/Signal'
+import { moveHandle } from '/@/utils/file/moveHandle'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -77,6 +78,9 @@ export abstract class Project {
 	get name() {
 		return this.baseDirectory.name
 	}
+	get displayName() {
+		return this.config.get().name ?? this.name
+	}
 	get tabSystem() {
 		if (this.tabSystems[0].isActive) return this.tabSystems[0]
 		if (this.tabSystems[1].isActive) return this.tabSystems[1]
@@ -96,10 +100,6 @@ export abstract class Project {
 	}
 	get compilerService() {
 		if (this._compilerService === undefined) {
-			console.log(
-				this._compilerService,
-				this._compilerService === undefined
-			)
 			throw new Error(
 				`Trying to access compilerService before it was setup. Make sure to await compilerReady.fired before accessing it.`
 			)
@@ -172,7 +172,10 @@ export abstract class Project {
 			App.eventSystem.dispatch('fileUnlinked', data[0])
 		)
 
-		this.tabSystems = <const>[new TabSystem(this), new TabSystem(this, 1)]
+		this.tabSystems = <const>[
+			markRaw(new TabSystem(this)),
+			markRaw(new TabSystem(this, 1)),
+		]
 
 		this.createDashService('development').then((service) => {
 			this._compilerService = markRaw(service)
@@ -186,7 +189,7 @@ export abstract class Project {
 		mode: 'development' | 'production',
 		compilerConfig?: string
 	) {
-		await this.app.comMojang.fired
+		if (!this.isVirtualProject) await this.app.comMojang.fired
 
 		const compiler = await new DashCompiler(
 			this.app.fileSystem.baseDirectory,
@@ -270,29 +273,27 @@ export abstract class Project {
 
 		this.snippetLoader.activate()
 	}
-	deactivate(isReload = false) {
+	async deactivate(isReload = false) {
 		if (!isReload)
 			this.tabSystems.forEach((tabSystem) => tabSystem.deactivate())
 
 		this.typeLoader.deactivate()
-		this.packIndexer.deactivate()
 		this.jsonDefaults.deactivate()
 		this.extensionLoader.disposeAll()
-		this.snippetLoader.deactivate()
-	}
-	disposeWorkers() {
-		this.packIndexer.dispose()
+
+		await Promise.all([
+			this.packIndexer.deactivate(),
+			this.snippetLoader.deactivate(),
+		])
 	}
 	dispose() {
-		this.disposeWorkers()
 		this.tabSystems.forEach((tabSystem) => tabSystem.dispose())
 		this.extensionLoader.disposeAll()
 	}
 
 	async refresh() {
 		this.app.packExplorer.refresh()
-		this.deactivate(true)
-		this.disposeWorkers()
+		await this.deactivate(true)
 		await this.activate(true)
 	}
 
@@ -344,7 +345,7 @@ export abstract class Project {
 	updateTabFolders() {
 		const nameMap: Record<string, Tab[]> = {}
 		for (const tabSystem of this.tabSystems) {
-			tabSystem.tabs.forEach((tab) => {
+			tabSystem.tabs.value.forEach((tab) => {
 				if (!(tab instanceof FileTab)) return
 
 				const name = tab.name
@@ -394,40 +395,39 @@ export abstract class Project {
 		await this.updateFiles(files)
 	}
 	async updateFile(filePath: string) {
-		// We already have a check for foreign files inside of the TabSystem.save(...) function
-		// but there are a lot of sources that call updateFile(...)
-		try {
-			await this.app.fileSystem.getFileHandle(filePath)
-		} catch {
-			// This is a foreign file, don't process it
-			return
-		}
-
-		await Promise.all([
+		const [anyFileChanged] = await Promise.all([
 			this.packIndexer.updateFile(filePath),
 			this.watchModeActive
 				? this.compilerService.updateFiles([filePath])
 				: Promise.resolve(),
 		])
 
-		await this.jsonDefaults.updateDynamicSchemas(filePath)
+		if (anyFileChanged)
+			await this.jsonDefaults.updateDynamicSchemas(filePath)
 	}
 	async updateFiles(filePaths: string[]) {
-		await this.packIndexer.updateFiles(filePaths)
+		const anyFileChanged = await this.packIndexer.updateFiles(filePaths)
 
 		if (this.watchModeActive)
 			await this.compilerService.updateFiles(filePaths)
 
-		await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
+		if (anyFileChanged)
+			await this.jsonDefaults.updateMultipleDynamicSchemas(filePaths)
 	}
 	async unlinkFile(filePath: string) {
 		await this.unlinkFiles([filePath])
 	}
 	async unlinkFiles(filePaths: string[]) {
 		await Promise.allSettled([
-			filePaths.map((filePath) => this.packIndexer.unlink(filePath)),
-			filePaths.map((filePath) => this.app.fileSystem.unlink(filePath)),
+			...filePaths.map((filePath) =>
+				this.packIndexer.unlinkFile(filePath, false)
+			),
+			...filePaths.map((filePath) =>
+				this.app.fileSystem.unlink(filePath)
+			),
 		])
+
+		await this.packIndexer.saveCache()
 
 		if (this.watchModeActive)
 			await this.compilerService.unlinkMultiple(filePaths)
@@ -456,7 +456,10 @@ export abstract class Project {
 		const path = await this.app.fileSystem.pathTo(handle)
 		if (!path) return false
 
-		if (handle.kind === 'file') return await this.unlinkFile(path)
+		if (handle.kind === 'file') {
+			await this.unlinkFile(path)
+			return true
+		}
 
 		const files: string[] = []
 		await iterateDir(
@@ -472,11 +475,31 @@ export abstract class Project {
 		await this.app.fileSystem.unlink(path)
 		return true
 	}
-	async renameFile(fromPath: string, toPath: string) {
-		await this.app.fileSystem.move(fromPath, toPath)
+	async onMovedFile(fromPath: string, toPath: string) {
+		await Promise.all([
+			this.compilerService.rename(fromPath, toPath),
+			this.packIndexer.rename(fromPath, toPath),
+		])
 
-		await this.unlinkFile(fromPath)
-		await this.updateFile(toPath)
+		await this.jsonDefaults.updateDynamicSchemas(toPath)
+	}
+	async onMovedFolder(fromPath: string, toPath: string) {
+		const handle = await this.app.fileSystem.getDirectoryHandle(toPath)
+
+		const renamePaths: [string, string][] = []
+
+		await iterateDir(handle, async (_, filePath) => {
+			const from = `${fromPath}/${filePath}`
+			const to = `${toPath}/${filePath}`
+			renamePaths.push([from, to])
+		})
+
+		await Promise.all([
+			this.compilerService.renameMultiple(renamePaths),
+			this.packIndexer.rename(fromPath, toPath),
+		])
+
+		await this.jsonDefaults.updateDynamicSchemas(toPath)
 	}
 	async updateChangedFiles() {
 		this.packIndexer.deactivate()
@@ -529,7 +552,7 @@ export abstract class Project {
 	}
 	isFileOpen(filePath: string) {
 		return this.tabSystems.some((tabSystem) =>
-			tabSystem.tabs.some(
+			tabSystem.tabs.value.some(
 				(tab) => tab instanceof FileTab && tab.getPath() === filePath
 			)
 		)
@@ -553,13 +576,46 @@ export abstract class Project {
 	}
 
 	async recompile(forceStartIfActive = true) {
+		if (this.isVirtualProject) return
+
+		this._compilerService = markRaw(
+			await this.createDashService('development')
+		)
+		await this._compilerService.setup()
+
 		if (forceStartIfActive && this.isActiveProject) {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
-			await this.compilerReady.fired
-			this.compilerService.build()
+			await this.compilerService.start([], [])
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
 		}
+	}
+
+	/**
+	 * Switches between a local and regular project
+	 */
+	async switchProjectType() {
+		this.app.windows.loadingWindow.open()
+
+		const fromDir = this.requiresPermissions
+			? 'projects'
+			: '~local/projects'
+		const toDir = this.requiresPermissions ? '~local/projects' : 'projects'
+
+		const { type, handle } = await moveHandle({
+			moveHandle: this.baseDirectory,
+			fromHandle: await this.app.fileSystem.getDirectoryHandle(fromDir),
+			toHandle: await this.app.fileSystem.getDirectoryHandle(toDir),
+		})
+		if (type === 'cancel' || !handle || handle.kind !== 'directory') {
+			this.app.windows.loadingWindow.close()
+			return
+		}
+
+		await this.parent.removeProject(this, false)
+		await this.parent.addProject(handle, true, !this.requiresPermissions)
+
+		this.app.windows.loadingWindow.close()
 	}
 
 	abstract getCurrentDataPackage(): Promise<AnyDirectoryHandle>

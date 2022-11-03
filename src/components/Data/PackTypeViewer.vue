@@ -12,7 +12,7 @@
 				{{ packType.icon }}
 			</v-icon>
 
-			<h1 class="header">
+			<h1 class="pack-type-header">
 				{{ t(`packType.${packType.id}.name`) }}
 			</h1>
 		</div>
@@ -56,7 +56,7 @@ export default {
 .content-area.selected {
 	border: 2px solid var(--v-primary-base);
 }
-.header {
+.pack-type-header {
 	font-size: 1.25rem !important;
 	font-weight: 500;
 	letter-spacing: 0.0125em !important;

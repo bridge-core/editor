@@ -12,7 +12,6 @@ import { FileSystemSetup } from '/@/components/FileSystem/Setup'
 import { setupSidebar } from '/@/components/Sidebar/setup'
 import { TaskManager } from '/@/components/TaskManager/TaskManager'
 import { setupDefaultMenus } from '/@/components/Toolbar/setupDefaults'
-import { Locales } from '/@/utils/locales'
 import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { Windows } from '/@/components/Windows/Windows'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
@@ -32,7 +31,7 @@ import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { FileImportManager } from '/@/components/ImportFile/Manager'
 import { ComMojang } from './components/OutputFolders/ComMojang/ComMojang'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
-import { markRaw, reactive } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { ConfiguredJsonLanguage } from '/@/components/Languages/Json/Main'
 import { WindowState } from '/@/components/Windows/WindowState'
 import { Mobile } from '/@/components/App/Mobile'
@@ -43,11 +42,12 @@ import { platform } from '/@/utils/os'
 import { virtualProjectName } from '/@/components/Projects/Project/Project'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { getStorageDirectory } from '/@/utils/getStorageDirectory'
-import { FolderImportManager } from '/@/components/ImportFolder/manager'
+import { FolderImportManager } from '/@/components/ImportFolder/Manager'
 import { StartParamManager } from '/@/components/StartParams/Manager'
 import { ViewFolders } from '/@/components/ViewFolders/ViewFolders'
 import { SidebarManager } from '/@/components/Sidebar/Manager'
 import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
+import { InformationWindow } from './components/Windows/Common/Information/InformationWindow'
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -81,8 +81,7 @@ export class App {
 	public readonly projectManager = new ProjectManager(this)
 	public readonly extensionLoader = new GlobalExtensionLoader(this)
 	public readonly windowResize = new WindowResize()
-	public readonly contextMenu = new ContextMenu()
-	public readonly locales: Locales
+	public readonly contextMenu = markRaw(new ContextMenu())
 	public readonly fileDropper = new FileDropper(this)
 	public readonly fileImportManager = new FileImportManager(this.fileDropper)
 	public readonly folderImportManager = new FolderImportManager()
@@ -131,7 +130,9 @@ export class App {
 		return this.projectManager.currentProject
 	}
 	get projects() {
-		return Object.values(this.projectManager.state)
+		return Object.values(this.projectManager.state).filter(
+			(project) => !project.isVirtualProject
+		)
 	}
 	get projectConfig() {
 		try {
@@ -155,7 +156,6 @@ export class App {
 	constructor(appComponent: Vue) {
 		if (import.meta.env.PROD) this.dataLoader.loadData()
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
-		this.locales = new Locales(appComponent.$vuetify)
 		this._windows = new Windows(this)
 
 		this.mobile = new Mobile(appComponent.$vuetify)
@@ -190,13 +190,13 @@ export class App {
 	 */
 	static async main(appComponent: Vue) {
 		console.time('[APP] Ready')
-		this._instance = markRaw(Object.freeze(new App(appComponent)))
+
+		this._instance = markRaw(new App(appComponent))
 		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
 
 		this.instance.fileSystem.setup(await getStorageDirectory())
-		await this.instance.fileSystem.unlink(`projects/${virtualProjectName}`)
 
 		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {
@@ -270,6 +270,24 @@ export class App {
 			})
 		}
 
+		// Warn about saving projects
+		if (isUsingFileSystemPolyfill.value) {
+			const saveWarning = new PersistentNotification({
+				id: 'bridge-save-warning',
+				icon: 'mdi-alert-circle-outline',
+				message: 'general.fileSystemPolyfill.name',
+				color: 'warning',
+				textColor: 'white',
+				onClick: () => {
+					new InformationWindow({
+						title: 'general.fileSystemPolyfill.name',
+						description: 'general.fileSystemPolyfill.description',
+					})
+					saveWarning.dispose()
+				},
+			})
+		}
+
 		console.timeEnd('[APP] beforeStartUp()')
 	}
 
@@ -278,8 +296,6 @@ export class App {
 	 */
 	async startUp() {
 		console.time('[APP] startUp()')
-
-		this.locales.setDefaultLanguage()
 
 		await Promise.all([
 			// Create default folders
@@ -303,6 +319,8 @@ export class App {
 
 	public readonly bridgeFolderSetup = new Signal<void>()
 	async setupBridgeFolder(forceReselect = false) {
+		if (!forceReselect && this.bridgeFolderSetup.hasFired) return true
+
 		let fileHandle = await get<AnyDirectoryHandle | undefined>(
 			'bridgeBaseDir'
 		)

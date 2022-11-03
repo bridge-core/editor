@@ -13,6 +13,7 @@
 					position: 'relative',
 					transform: isSelected ? 'scale(1.1)' : undefined,
 					cursor: canInteractWith ? 'pointer' : undefined,
+					height: smallerSidebarElements ? `34px` : `40px`,
 				}"
 				:class="{
 					loading: isLoading,
@@ -67,11 +68,10 @@
 
 <script>
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 
 export default {
 	name: 'SidebarButton',
-	mixins: [TranslationMixin],
 	props: {
 		displayName: String,
 		icon: String,
@@ -99,6 +99,12 @@ export default {
 			default: 1,
 		},
 		badge: Object,
+	},
+	setup() {
+		const { t } = useTranslations()
+		return {
+			t,
+		}
 	},
 	data: () => ({
 		settingsState,
@@ -133,11 +139,11 @@ export default {
 		},
 	},
 	methods: {
-		onClick() {
+		onClick(event) {
 			if (this.disabled) return
 
 			if (this.alwaysAllowClick || !this.isLoading) {
-				this.$emit('click')
+				this.$emit('click', event)
 
 				// Otherwise the tooltip can get stuck until the user hovers over the button again
 				this.hasClicked = true

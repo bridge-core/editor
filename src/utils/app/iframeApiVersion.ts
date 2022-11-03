@@ -1,6 +1,6 @@
-import { dependencies } from '../../../package.json'
+import packageConfig from '../../../package.json'
 
-let version = dependencies['bridge-iframe-api']
+let version = packageConfig.dependencies['bridge-iframe-api']
 
 if (
 	version.startsWith('^') ||

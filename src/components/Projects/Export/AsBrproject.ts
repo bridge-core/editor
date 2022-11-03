@@ -3,9 +3,19 @@ import { ZipDirectory } from '/@/components/FileSystem/Zip/ZipDirectory'
 import { App } from '/@/App'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 
-export async function exportAsBrproject() {
+export async function exportAsBrproject(name?: string) {
 	const app = App.instance
 	app.windows.loadingWindow.open()
+
+	const savePath = `${app.project.projectPath}/builds/${
+		name ?? app.project.name
+	}.brproject`
+
+	/**
+	 * Make sure to delete old export so the .brproject file doesn't include itself
+	 * This would cause an issue where the ZIP package keeps growing with every export
+	 */
+	await app.fileSystem.unlink(savePath)
 
 	/**
 	 * .brproject files come in two variants:
@@ -17,7 +27,6 @@ export async function exportAsBrproject() {
 			? app.fileSystem.baseDirectory
 			: app.project.baseDirectory
 	)
-	const savePath = `${app.project.projectPath}/builds/${app.project.name}.brproject`
 
 	try {
 		await saveOrDownload(

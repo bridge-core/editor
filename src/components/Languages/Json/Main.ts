@@ -1,5 +1,5 @@
 import { registerJsonSnippetProvider } from '/@/components/Snippets/Monaco'
-import { registerEmbeddedMcfunctionProvider } from '/@/components/languages/Mcfunction/WithinJson'
+import { registerEmbeddedMcfunctionProvider } from '/@/components/Languages/Mcfunction/WithinJson'
 import { ConfiguredJsonHighlighter } from './Highlighter'
 import { useMonaco } from '../../../utils/libs/useMonaco'
 

@@ -58,20 +58,16 @@
 	</v-list>
 </template>
 
-<script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+<script setup>
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 
-export default {
-	name: 'MenuList',
-	mixins: [TranslationMixin],
-	props: {
-		elements: Object,
-	},
+const { t } = useTranslations()
 
-	methods: {
-		onClick(item) {
-			item.trigger()
-		},
-	},
+defineProps({
+	elements: Object,
+})
+
+function onClick(item) {
+	item.trigger()
 }
 </script>

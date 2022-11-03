@@ -33,6 +33,14 @@ export abstract class BaseVirtualHandle {
 	protected get path(): string[] {
 		return this.parent ? this.parent.path.concat(this.name) : this.basePath
 	}
+	/**
+	 * Returns whether a handle has parent context
+	 *
+	 * e.g. whether a FileHandle is backed by an IDB entry
+	 */
+	get hasParentContext() {
+		return this.path.length > 1
+	}
 	get idbKey() {
 		if (this.path.length === 0) return this._name
 		return this.path.join('/')

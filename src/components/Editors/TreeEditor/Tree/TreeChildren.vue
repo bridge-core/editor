@@ -16,7 +16,10 @@
 				:treeEditor="treeEditor"
 				@setActive="$emit('setActive')"
 			>
-				<Highlight :value="key" />
+				<span v-if="tree.type === 'array'" :style="numberDef">{{
+					key
+				}}</span>
+				<Highlight v-else :value="key" />
 			</component>
 		</Draggable>
 	</div>
@@ -29,9 +32,11 @@ import { pointerDevice } from '/@/utils/pointerDevice.ts'
 import Draggable from 'vuedraggable'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState.ts'
 import { MoveEntry } from '../History/MoveEntry.ts'
+import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 
 export default {
 	name: 'TreeChildren',
+	mixins: [HighlighterMixin(['number'])],
 	components: {
 		Highlight,
 		Draggable,

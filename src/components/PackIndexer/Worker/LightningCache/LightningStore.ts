@@ -142,6 +142,28 @@ export class LightningStore {
 
 		delete this.store![fileType][filePath]
 	}
+	rename(fromPath: string, toPath: string) {
+		// Store whether fromPath is a file path (ends with extension)
+		const isFilePath = /\.\w+$/.test(fromPath)
+
+		for (const fileType in this.store) {
+			for (const filePath in this.store[fileType]) {
+				if (
+					(isFilePath && filePath === fromPath) ||
+					(!isFilePath && filePath.startsWith(fromPath))
+				) {
+					const composedNewPath = filePath.replace(fromPath, toPath)
+					const newFileType = this.fileType.getId(composedNewPath)
+
+					this.store[newFileType][composedNewPath] =
+						this.store[fileType][filePath]
+
+					delete this.store[fileType][filePath]
+				}
+			}
+		}
+	}
+
 	setVisited(
 		filePath: string,
 		visited: boolean,
@@ -234,11 +256,17 @@ export class LightningStore {
 
 		if (searchFileType && this.store) {
 			for (const filePath in this.store[searchFileType]) {
+				// Exclude foreign files from result
+				if (this.store[searchFileType][filePath].isForeignFile) continue
+
 				filePaths.push(filePath)
 			}
 		} else {
 			for (const fileType in this.store) {
 				for (const filePath in this.store[fileType]) {
+					// Exclude foreign files from result
+					if (this.store[fileType][filePath].isForeignFile) continue
+
 					filePaths.push(filePath)
 				}
 			}

@@ -3,7 +3,11 @@ import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
 import { RootSchema } from '/@/components/JSONSchema/Schema/Root'
-import { ICompletionItem } from '/@/components/JSONSchema/Schema/Schema'
+import {
+	ICompletionItem,
+	pathWildCard,
+	TSchemaType,
+} from '/@/components/JSONSchema/Schema/Schema'
 import { DeleteEntry, UndoDeleteEntry } from './History/DeleteEntry'
 import { EditorHistory } from './History/EditorHistory'
 import { HistoryEntry } from './History/HistoryEntry'
@@ -69,6 +73,7 @@ export class TreeEditor {
 			this.valueSuggestions = []
 
 			this.parent.updateCache()
+			this.parent.fileDidChange()
 		})
 
 		App.getApp().then(async (app) => {
@@ -95,13 +100,13 @@ export class TreeEditor {
 		const { tree, isValueSelection } = this.getSelectedTree()
 
 		const suggestions = this.getSuggestions(tree)
+		// console.log(suggestions)
 
 		this.propertySuggestions = filterDuplicates(
 			suggestions
 				.filter(
 					(suggestion) =>
-						(suggestion.type === 'object' ||
-							suggestion.type === 'array') &&
+						['object', 'array'].includes(suggestion.type) &&
 						!(<any>(tree ?? this.tree)).children?.find(
 							(test: any) => {
 								if (test.type === 'array') return false
@@ -177,13 +182,15 @@ export class TreeEditor {
 		this.updateSuggestions()
 	}
 
-	getSchemas(tree: Tree<unknown> | undefined) {
+	getSchemas(tree: Tree<unknown> | undefined, next = false) {
 		if (this.selections.length === 0 || tree === this.tree) {
 			return this.schemaRoot ? [this.schemaRoot] : []
 		} else if (tree) {
 			return (
-				this.schemaRoot?.getSchemasFor(this.tree.toJSON(), tree.path) ??
-				[]
+				this.schemaRoot?.getSchemasFor(
+					this.tree.toJSON(),
+					next ? [...tree.path, undefined] : tree.path
+				) ?? []
 			)
 		}
 
@@ -198,7 +205,26 @@ export class TreeEditor {
 			.map((schema) => schema.getCompletionItems(json))
 			.flat()
 	}
+	getSchemaTypes(next?: boolean) {
+		const { tree, isValueSelection } = this.getSelectedTree()
+		if (isValueSelection) return new Set()
+
+		// We need to skip the items schema property for correct array item types
+		if (next === undefined) next = tree instanceof ArrayTree
+
+		const schemas = this.getSchemas(tree, next)
+		if (schemas.length === 0) return new Set()
+
+		return new Set(
+			schemas.reduce<TSchemaType[]>((types, schema) => {
+				return types.concat(schema.types)
+			}, [])
+		)
+	}
 	getSelectedTree() {
+		if (this.selections.length === 0)
+			return { tree: this.tree, isValueSelection: false }
+
 		const selection = this.selections[0]
 		return {
 			tree: <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
@@ -355,7 +381,7 @@ export class TreeEditor {
 		this.selectionChange.dispatch()
 	}
 
-	addKey(value: string, type: 'array' | 'object') {
+	addKey(value: string, type: 'array' | 'objectArray' | 'object') {
 		const entries: HistoryEntry[] = []
 
 		this.forEachSelection((selection) => {

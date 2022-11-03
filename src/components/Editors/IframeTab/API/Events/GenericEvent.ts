@@ -5,8 +5,8 @@ export abstract class GenericEvent {
 	protected disposables: IDisposable[] = []
 	constructor(protected api: IframeApi) {
 		this.disposables.push(
-			this.api.loaded.on(() => this.onApiLoaded()),
-			this.api.loaded.once(() => this.setup())!
+			this.api.loaded.on(() => this.onApiLoaded(), true),
+			this.api.loaded.once(() => this.setup(), true)!
 		)
 	}
 

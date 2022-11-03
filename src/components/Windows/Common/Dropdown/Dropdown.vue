@@ -1,23 +1,23 @@
 <template>
 	<BaseWindow
-		v-if="shouldRender"
-		:windowTitle="$data.title"
-		:isVisible="isVisible"
+		v-if="state.shouldRender"
+		:windowTitle="window.title"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
-		:isPersistent="!$data.isClosable"
+		:isPersistent="!window.isClosable"
 		:hasCloseButton="false"
 		:width="440"
 		:height="140"
 		@closeWindow="onClose"
 	>
 		<template #default>
-			<v-select
+			<v-autocomplete
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
 				dense
-				v-model="$data.currentSelection"
-				:items="$data.options"
+				v-model="state.currentSelection"
+				:items="window.options"
 				background-color="background"
 				class="mt-4"
 			/>
@@ -27,7 +27,7 @@
 			<v-btn
 				color="primary"
 				@click="onConfirm"
-				:disabled="$data.currentSelection === ''"
+				:disabled="!state.currentSelection"
 			>
 				<v-icon>mdi-check</v-icon>
 				<span>{{ t('general.confirm') }}</span>
@@ -36,33 +36,19 @@
 	</BaseWindow>
 </template>
 
-<script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+<script lang="ts" setup>
+import { useTranslations } from '/@/components/Composables/useTranslations'
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
-export default {
-	name: 'Dropdown',
-	mixins: [TranslationMixin],
-	components: {
-		BaseWindow,
-	},
-	props: ['currentWindow'],
-	setup() {
-		return {
-			pointerDevice,
-		}
-	},
-	data() {
-		return this.currentWindow
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close()
-		},
-		onConfirm() {
-			this.currentWindow.confirm()
-		},
-	},
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.getState()
+
+function onClose() {
+	props.window.close(null)
+}
+function onConfirm() {
+	props.window.confirm()
 }
 </script>

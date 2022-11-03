@@ -46,11 +46,13 @@ export default {
 			textColor = 'white',
 			color,
 			link,
-		} = await fetch(
-			'https://raw.githubusercontent.com/bridge-core/editor-packages/main/remote/welcomeAlert.json'
-		)
-			.then((res) => res.json())
-			.catch(() => ({}))
+		} = navigator.onLine
+			? await fetch(
+					'https://raw.githubusercontent.com/bridge-core/editor-packages/main/remote/welcomeAlert.json'
+			  )
+					.catch(() => null)
+					.then((res) => (res ? res.json() : {}))
+			: {}
 
 		this.icon = icon
 		this.title = title

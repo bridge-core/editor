@@ -5,6 +5,7 @@ import { IframeTab } from '../IframeTab/IframeTab'
 import { Tab } from '../../TabSystem/CommonTab'
 import { AnyFileHandle } from '../../FileSystem/Types'
 import { iframeApiVersion } from '/@/utils/app/iframeApiVersion'
+import { translate } from '../../Locales/Manager'
 
 export class HTMLPreviewTab extends IframeTab {
 	public rawHtml = ''
@@ -39,7 +40,6 @@ export class HTMLPreviewTab extends IframeTab {
 
 		this.api.loaded.once(() => {
 			this.api.on('saveScrollPosition', (scrollY) => {
-				console.log('SAVE', scrollY)
 				if (scrollY !== 0) this.scrollY = scrollY
 			})
 		})
@@ -51,10 +51,10 @@ export class HTMLPreviewTab extends IframeTab {
 		await super.setup()
 	}
 	async onActivate() {
-		console.log(this.scrollY)
-		this.api.trigger('loadScrollPosition', this.scrollY)
-
 		await super.onActivate()
+		await this.api.loaded.fired
+
+		this.api.trigger('loadScrollPosition', this.scrollY)
 	}
 	onDeactivate() {
 		this.messageListener?.dispose()
@@ -77,9 +77,7 @@ export class HTMLPreviewTab extends IframeTab {
 		return 'behaviorPack'
 	}
 	get name() {
-		return `${this.parent.app.locales.translate('preview.name')}: ${
-			this.fileHandle.name
-		}`
+		return `${translate('preview.name')}: ${this.fileHandle.name}`
 	}
 	get fileHandle() {
 		return this.previewOptions.fileHandle
@@ -101,16 +99,12 @@ export class HTMLPreviewTab extends IframeTab {
 				await channel.connect()
 	
 				window.addEventListener('scroll', () => {
-					console.log('SCROLL')
 					channel.simpleTrigger('saveScrollPosition', window.scrollY)
 				})
-	
-	
+			
 				channel.on('loadScrollPosition', (scrollY) => {
-					console.log('LOAD', scrollY)
 					window.scrollTo(0, scrollY)
 				})
-				
 			</script>`
 		)
 	}
@@ -132,9 +126,10 @@ export class HTMLPreviewTab extends IframeTab {
 		if (this.rawHtml !== '') this.updateHtml()
 	}
 
-	updateHtml() {
+	async updateHtml() {
 		this.srcdoc = this.html
 
+		await this.api.loaded.fired
 		this.api.trigger('loadScrollPosition', this.scrollY)
 	}
 

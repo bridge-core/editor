@@ -1,20 +1,20 @@
 <template>
 	<v-btn
 		@click="action.trigger()"
-		:style="platform === 'darwin' ? `border-radius: 8px` : undefined"
-		:text="!minimalDisplay"
+		:style="platform() === 'darwin' ? `border-radius: 8px` : undefined"
+		:text="!isMinimalDisplay"
 		small
-		:icon="minimalDisplay"
+		:icon="isMinimalDisplay"
 	>
 		<v-icon
 			:color="action.accent || 'accent'"
-			:class="{ 'mr-1': true, 'ml-1': minimalDisplay }"
+			:class="{ 'mr-1': true, 'ml-1': isMinimalDisplay }"
 			small
 		>
 			{{ action.icon }}
 		</v-icon>
 		<span
-			v-if="!minimalDisplay"
+			v-if="!isMinimalDisplay"
 			:style="{
 				'text-transform': 'none',
 				'font-weight': 'unset',
@@ -28,28 +28,22 @@
 	</v-btn>
 </template>
 
-<script>
+<script setup>
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { platform } from '/@/utils/os'
+import { useDarkMode } from '/@/components/Composables/useDarkMode'
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
+import { useDisplay } from '/@/components/Composables/Display/useDisplay.ts'
 
-export default {
-	mixins: [TranslationMixin],
-	props: {
-		action: SimpleAction,
+const { t } = useTranslations()
+
+defineProps({
+	action: {
+		type: SimpleAction,
+		required: true,
 	},
-	data: () => ({
-		platform: platform(),
-	}),
-	computed: {
-		minimalDisplay() {
-			return !this.$vuetify.breakpoint.mdAndUp
-		},
-		isDarkMode() {
-			return this.$vuetify.theme.dark
-		},
-	},
-}
+})
+
+const { isDarkMode } = useDarkMode()
+const { isMinimalDisplay } = useDisplay()
 </script>
-
-<style></style>

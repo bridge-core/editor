@@ -4,14 +4,11 @@ import { VirtualDirectoryHandle } from '../FileSystem/Virtual/DirectoryHandle'
 import { basename, dirname } from '/@/utils/path'
 import { FileSystem } from '../FileSystem/FileSystem'
 import { zipSize } from '/@/utils/app/dataPackage'
-import { supportsIdleCallback, whenIdle } from '/@/utils/whenIdle'
+import { whenIdle } from '/@/utils/whenIdle'
 import { get, set } from 'idb-keyval'
-import { BaseVirtualHandle } from '../FileSystem/Virtual/Handle'
-import {
-	get as getVirtualDirectory,
-	IDBWrapper,
-	set as setVirtualDirectory,
-} from '/@/components/FileSystem/Virtual/IDB'
+import { IDBWrapper } from '/@/components/FileSystem/Virtual/IDB'
+import { compareVersions } from 'bridge-common-utils'
+import { version as appVersion } from '/@/utils/app/version'
 
 export class DataLoader extends FileSystem {
 	_virtualFileSystem?: VirtualDirectoryHandle
@@ -34,19 +31,22 @@ export class DataLoader extends FileSystem {
 			return
 		}
 
-		let savedAllDataInIdb = await get<boolean | undefined>(
-			'savedAllDataInIdb'
+		let savedDataForVersion = await get<string | undefined>(
+			'savedDataForVersion'
 		)
 		if (forceDataDownload) {
-			savedAllDataInIdb = false
-			await set('savedAllDataInIdb', false)
+			savedDataForVersion = undefined
+			await set('savedDataForVersion', undefined)
 		}
+		const savedAllDataInIdb = savedDataForVersion
+			? compareVersions(appVersion, savedDataForVersion, '=')
+			: false
 
 		if (this.isMainLoader)
 			console.log(
 				savedAllDataInIdb
 					? '[APP] Data saved; restoring from cache...'
-					: '[APP] Data not saved; fetching now...'
+					: `[APP] Latest data not saved; fetching now...`
 			)
 
 		console.time('[App] Data')
@@ -120,7 +120,7 @@ export class DataLoader extends FileSystem {
 		if (this.isMainLoader && !forceDataDownload) {
 			whenIdle(async () => {
 				await this._virtualFileSystem!.moveToIdb()
-				await set('savedAllDataInIdb', true)
+				await set('savedDataForVersion', appVersion)
 			})
 		}
 	}

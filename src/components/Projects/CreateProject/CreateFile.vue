@@ -7,10 +7,9 @@
 	>
 		<template #default="{ value }">
 			<div class="d-flex align-center">
-				<v-icon color="primary" class="mr-1">
-					{{ file.icon }}
-				</v-icon>
-				<h1 class="header">
+				<v-icon color="primary" class="mr-1"> {{ file.icon }} </v-icon>
+
+				<h1 class="individual-file-header">
 					{{
 						t(
 							`windows.createProject.individualFiles.file.${file.id}.name`
@@ -18,9 +17,11 @@
 					}}
 				</h1>
 			</div>
+
 			<h2 class="text-normal font-weight-light">
 				{{ t(`packType.${file.packId}.name`) }}
 			</h2>
+
 			<SelectedStatus :selected="value" />
 
 			<p>
@@ -61,7 +62,7 @@ export default {
 </script>
 
 <style scoped>
-.header {
+.individual-file-header {
 	font-size: 1.25rem !important;
 	font-weight: 500;
 	letter-spacing: 0.0125em !important;

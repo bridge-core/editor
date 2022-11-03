@@ -215,8 +215,8 @@ export default {
 			return settingsState &&
 				settingsState.appearance &&
 				settingsState.appearance.editorFont
-				? `${settingsState.appearance.editorFont} !important`
-				: 'Menlo !important'
+				? `${settingsState.appearance.editorFont}, monospace !important`
+				: 'Menlo, monospace !important'
 		},
 		fontFamily() {
 			return this.settingsState &&
@@ -330,17 +330,15 @@ export default {
 								: 'integer'
 							: typeof castedValue
 
-					// Load current schemas
-					const schemas = this.treeEditor.getSchemas()
 					// Get valid value types for current schemas
-					const types = schemas.map((schema) => schema.types).flat()
+					const types = this.treeEditor.getSchemaTypes()
 
 					if (
 						// Is the current type a valid type...
-						types.includes(castedType) ||
+						types.has(castedType) ||
 						// ...or can we cast it to a valid type?
 						mayCastTo[castedType].some((type) => {
-							if (types.includes(type)) {
+							if (types.has(type)) {
 								forcedValueType = type
 								return true
 							}
@@ -395,8 +393,11 @@ export default {
 		forceValue() {
 			this.$refs.addKeyInput.blur()
 
-			this.isUserControlledTrigger = true
-			this.onAdd(this.keyToAdd, true)
+			// keyToAdd model only updates after input being blurred
+			this.$nextTick(() => {
+				this.isUserControlledTrigger = true
+				this.onAdd(this.keyToAdd, true)
+			})
 		},
 		onScroll(event) {
 			this.treeEditor.scrollTop = event.target.scrollTop
@@ -407,9 +408,12 @@ export default {
 					return 'mdi-code-json'
 				case 'array':
 					return 'mdi-code-brackets'
+
 				case 'value':
 					return 'mdi-alphabetical'
 				case 'arrayValue':
+					return 'mdi-link-variant'
+				case 'objectArray':
 					return 'mdi-link-variant'
 				case 'snippet':
 					return 'mdi-attachment'

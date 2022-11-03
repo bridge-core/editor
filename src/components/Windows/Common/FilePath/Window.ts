@@ -1,6 +1,7 @@
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import FilePathWindowComponent from './Window.vue'
 import { basename, extname } from '/@/utils/path'
+import { NewBaseWindow } from '../../NewBaseWindow'
+import { reactive } from 'vue'
 
 export interface IFilePathWinConfig {
 	fileName?: string
@@ -12,12 +13,16 @@ export interface IChangedFileData {
 	fileName?: string
 }
 
-export class FilePathWindow extends BaseWindow<IChangedFileData | null> {
-	protected fileName?: string
+export class FilePathWindow extends NewBaseWindow<IChangedFileData | null> {
 	protected fileExt?: string
-	protected currentFilePath: string
 	protected isPersistent = false
 	protected hasFilePath = false
+
+	protected state = reactive<any>({
+		...super.state,
+		fileName: '',
+		currentFilePath: '',
+	})
 
 	constructor({
 		fileName,
@@ -25,13 +30,13 @@ export class FilePathWindow extends BaseWindow<IChangedFileData | null> {
 		isPersistent = false,
 	}: IFilePathWinConfig) {
 		super(FilePathWindowComponent, true, false)
-		this.currentFilePath = startPath
+		this.state.currentFilePath = startPath
 		this.isPersistent = isPersistent
 
 		if (fileName) {
 			this.hasFilePath = true
 			this.fileExt = extname(fileName)
-			this.fileName = basename(fileName, this.fileExt)
+			this.state.fileName = basename(fileName, this.fileExt)
 		}
 
 		this.defineWindow()
@@ -43,9 +48,9 @@ export class FilePathWindow extends BaseWindow<IChangedFileData | null> {
 			skippedDialog
 				? null
 				: {
-						filePath: this.currentFilePath,
+						filePath: this.state.currentFilePath,
 						fileName: this.hasFilePath
-							? `${this.fileName}${this.fileExt}`
+							? `${this.state.fileName}${this.fileExt}`
 							: undefined,
 				  }
 		)

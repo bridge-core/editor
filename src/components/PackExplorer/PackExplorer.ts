@@ -6,7 +6,7 @@ import PackExplorerComponent from './PackExplorer.vue'
 import ProjectDisplayComponent from './ProjectDisplay.vue'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
-import { markRaw, set } from '@vue/composition-api'
+import { markRaw, ref, set } from 'vue'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 import { exportAsBrproject } from '/@/components/Projects/Export/AsBrproject'
@@ -16,15 +16,17 @@ import {
 	exportAsMctemplate,
 } from '/@/components/Projects/Export/AsMctemplate'
 import { FindAndReplaceTab } from '/@/components/FindAndReplace/Tab'
-import { ESearchType } from '/@/components/FindAndReplace/Controls/SearchTypeEnum'
+import { searchType } from '../FindAndReplace/Controls/searchType'
 import { restartWatchModeConfig } from '../Compiler/Actions/RestartWatchMode'
-import { Project } from '../Projects/Project/Project'
 import { DirectoryWrapper } from '../UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
 import { showFolderContextMenu } from '../UIElements/DirectoryViewer/ContextMenu/Folder'
-import { ViewCompilerOutput } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ViewCompilerOutput'
+import { IHandleMovedOptions } from '../UIElements/DirectoryViewer/DirectoryStore'
+import { ViewConnectedFiles } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ConnectedFiles'
+import { ToLocalProjectAction } from './Actions/ToLocalProject'
+import { ToBridgeFolderProjectAction } from './Actions/ToBridgeFolderProject'
 
 export class PackExplorer extends SidebarContent {
-	component = PackExplorerComponent
+	component = markRaw(PackExplorerComponent)
 	actions: SidebarAction[] = []
 	directoryEntries: Record<string, DirectoryWrapper> = {}
 	topPanel: InfoPanel | undefined = undefined
@@ -48,26 +50,13 @@ export class PackExplorer extends SidebarContent {
 
 		App.getApp().then((app) => {
 			updateHeaderSlot()
-			this.updateTopPanel(app)
 
 			app.mobile.change.on(() => updateHeaderSlot())
 		})
 
-		App.eventSystem.on('projectChanged', (project: Project) => {
+		App.eventSystem.on('projectChanged', () => {
 			updateHeaderSlot()
-			this.updateTopPanel(project.app)
 		})
-	}
-
-	updateTopPanel(app: App) {
-		this.topPanel =
-			isUsingFileSystemPolyfill.value && !app.isNoProjectSelected
-				? new InfoPanel({
-						type: 'warning',
-						text: 'general.fileSystemPolyfill',
-						isDismissible: true,
-				  })
-				: undefined
 	}
 
 	async setup() {
@@ -92,25 +81,29 @@ export class PackExplorer extends SidebarContent {
 				.catch(() => null)
 			if (!handle) continue
 
-			const wrapper = new DirectoryWrapper(null, handle, {
-				startPath: pack.packPath,
+			const wrapper = markRaw(
+				new DirectoryWrapper(null, handle, {
+					startPath: pack.packPath,
 
-				provideFileContextMenu: (fileWrapper) => [
-					ViewCompilerOutput(fileWrapper.path),
-				],
-				provideFileDiagnostics: async (fileWrapper) => {
-					const packIndexer = app.project.packIndexer
-					await packIndexer.fired
+					provideFileContextMenu: async (fileWrapper) => [
+						await ViewConnectedFiles(fileWrapper),
+					],
+					provideFileDiagnostics: async (fileWrapper) => {
+						const packIndexer = app.project.packIndexer
+						await packIndexer.fired
 
-					const filePath = fileWrapper.path
-					if (!filePath) return []
+						const filePath = fileWrapper.path
+						if (!filePath) return []
 
-					return packIndexer.service.getFileDiagnostics(filePath)
-				},
-			})
+						return packIndexer.service.getFileDiagnostics(filePath)
+					},
+					onHandleMoved: (opts) => this.onHandleMoved(opts),
+					onFilesAdded: (filePaths) => this.onFilesAdded(filePaths),
+				})
+			)
 			await wrapper.open()
 
-			set(this.directoryEntries, pack.packPath, markRaw(wrapper))
+			set(this.directoryEntries, pack.packPath, wrapper)
 			this.actions.push(
 				new SelectableSidebarAction(this, {
 					id: pack.packPath,
@@ -140,6 +133,22 @@ export class PackExplorer extends SidebarContent {
 				},
 			})
 		)
+	}
+
+	async onHandleMoved({
+		fromPath,
+		toPath,
+		movedHandle,
+	}: IHandleMovedOptions) {
+		const app = await App.getApp()
+		if (movedHandle.kind === 'file')
+			await app.project.onMovedFile(fromPath, toPath)
+		else await app.project.onMovedFolder(fromPath, toPath)
+	}
+	async onFilesAdded(filePaths: string[]) {
+		const app = await App.getApp()
+
+		await app.project.updateFiles(filePaths)
 	}
 
 	onContentRightClick(event: MouseEvent): void {
@@ -175,26 +184,9 @@ export class PackExplorer extends SidebarContent {
 				name: 'actions.findInFolder.name',
 				description: 'actions.findInFolder.description',
 				onTrigger: () => {
-					const config = project.app.projectConfig
-					const packTypes: { [key: string]: string } = {
-						BP: config.resolvePackPath('behaviorPack'),
-						RP: config.resolvePackPath('resourcePack'),
-						SP: config.resolvePackPath('skinPack'),
-						WT: config.resolvePackPath('worldTemplate'),
-					}
-					let pathPackType = 'BP'
-					for (const packType of Object.keys(packTypes)) {
-						if (path.includes(packTypes[packType]))
-							pathPackType = packType
-					}
 					project.tabSystem?.add(
-						new FindAndReplaceTab(project.tabSystem!, {
-							searchType: ESearchType.matchCase,
-							includeFiles: path.replace(
-								packTypes[pathPackType],
-								pathPackType
-							),
-							excludeFiles: '',
+						new FindAndReplaceTab(project.tabSystem!, undefined, {
+							searchType: searchType.matchCase,
 						})
 					)
 				},
@@ -205,7 +197,9 @@ export class PackExplorer extends SidebarContent {
 	async showMoreMenu(event: MouseEvent) {
 		const app = await App.getApp()
 
-		const packPath = this.selectedAction?.getConfig()?.id
+		const moveAction = app.project.isLocal
+			? ToBridgeFolderProjectAction(app.project)
+			: ToLocalProjectAction(app.project)
 
 		showContextMenu(event, [
 			// Add new file
@@ -216,6 +210,8 @@ export class PackExplorer extends SidebarContent {
 					await app.windows.createPreset.open()
 				},
 			},
+
+			isUsingFileSystemPolyfill.value ? null : moveAction,
 			{ type: 'divider' },
 			// Reload project
 			{
@@ -226,7 +222,7 @@ export class PackExplorer extends SidebarContent {
 				},
 			},
 			// Restart dev server
-			restartWatchModeConfig,
+			restartWatchModeConfig(false),
 			{ type: 'divider' },
 			{
 				type: 'submenu',
@@ -292,6 +288,11 @@ export class PackExplorer extends SidebarContent {
 				onTrigger: async () => {
 					app.viewFolders.addDirectoryHandle({
 						directoryHandle: app.project.baseDirectory,
+						startPath: app.project.projectPath,
+
+						onHandleMoved: (options) => this.onHandleMoved(options),
+						onFilesAdded: (filePaths) =>
+							this.onFilesAdded(filePaths),
 					})
 				},
 			},

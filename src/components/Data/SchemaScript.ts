@@ -2,7 +2,6 @@ import json5 from 'json5'
 import { run } from '../Extensions/Scripts/run'
 import { getFilteredFormatVersions } from './FormatVersions'
 import { App } from '/@/App'
-import { iterateDir } from '/@/utils/iterateDir'
 import { walkObject } from 'bridge-common-utils'
 import { v4 as uuid } from 'uuid'
 import { compareVersions } from 'bridge-common-utils'
@@ -119,7 +118,7 @@ export class SchemaScript {
 
 			if (scriptResult) {
 				if (scriptPath.endsWith('.js')) {
-					if (scriptResult.keep) return
+					if (scriptResult.keep) continue
 
 					schemaScript = {
 						...schemaScript,

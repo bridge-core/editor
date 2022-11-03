@@ -29,11 +29,19 @@ const devActionConfigs: IActionConfig[] = [
 		},
 	},
 	{
+		icon: 'mdi-delete',
+		name: "[Dev: Reset 'com.mojang' folder]",
+		description: "[Remove the 'com.mojang' folder from local storage]",
+		onTrigger: async () => {
+			del(comMojangKey)
+		},
+	},
+	{
 		icon: 'mdi-cancel',
 		name: '[Dev: Clear app data]',
 		description: '[Clear data from bridge-core/editor-packages repository]',
 		onTrigger: async () => {
-			await set('savedAllDataInIdb', false)
+			await del('savedDataForVersion')
 		},
 	},
 	{
@@ -55,6 +63,18 @@ const devActionConfigs: IActionConfig[] = [
 			app.viewFolders.addDirectoryHandle({
 				directoryHandle: await navigator.storage.getDirectory(),
 				startPath: '~local',
+			})
+		},
+	},
+	{
+		icon: 'mdi-database-outline',
+		name: '[Dev: Open data directory]',
+		description: '[Open the data directory within the editor]',
+		onTrigger: async () => {
+			const app = await App.getApp()
+
+			app.viewFolders.addDirectoryHandle({
+				directoryHandle: app.dataLoader.baseDirectory,
 			})
 		},
 	},

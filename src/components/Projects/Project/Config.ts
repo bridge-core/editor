@@ -98,20 +98,19 @@ export class ProjectConfig extends BaseProjectConfig {
 		// Running in main thread, so we can use the App object
 		if (upgradeConfig && this.project && this.data.capabilities) {
 			// Transform old "capabilities" format to "experimentalGameplay"
-			const experimentalToggles: IExperimentalToggle[] = await this.project.app.dataLoader.readJSON(
-				'data/packages/minecraftBedrock/experimentalGameplay.json'
-			)
+			const experimentalToggles: IExperimentalToggle[] =
+				await this.project.app.dataLoader.readJSON(
+					'data/packages/minecraftBedrock/experimentalGameplay.json'
+				)
 			const experimentalGameplay: Record<string, boolean> =
 				this.data.experimentalGameplay ?? {}
 			const capabilities: string[] = this.data.capabilities ?? []
 
 			// Update scripting API/GameTest API toggles based on the old "capabilities" field
-			experimentalGameplay[
-				'enableGameTestFramework'
-			] = capabilities.includes('gameTestAPI')
-			experimentalGameplay[
-				'additionalModdingCapabilities'
-			] = capabilities.includes('scriptingAPI')
+			experimentalGameplay['enableGameTestFramework'] =
+				capabilities.includes('gameTestAPI')
+			experimentalGameplay['additionalModdingCapabilities'] =
+				capabilities.includes('scriptingAPI')
 
 			for (const toggle of experimentalToggles) {
 				// Set all missing experimental toggles to true by default
@@ -187,5 +186,21 @@ export class ProjectConfig extends BaseProjectConfig {
 		if (!author) return
 
 		return this.resolvePackPath(undefined, author.logo)
+	}
+
+	async toggleExperiment(project: Project, experiment: string) {
+		project.app.windows.loadingWindow.open()
+
+		const experimentalGameplay = this.get()?.experimentalGameplay ?? {}
+		// Modify experimental gameplay
+		experimentalGameplay[experiment] = !experimentalGameplay[experiment]
+		// Save config
+		await this.save()
+
+		// Only refresh project if it's active
+		if (project.isActiveProject) await project.refresh()
+		this.project!.app.windows.createPreset.onPresetsChanged()
+
+		project.app.windows.loadingWindow.close()
 	}
 }

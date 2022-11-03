@@ -2,7 +2,6 @@ import { BaseVirtualHandle } from './Handle'
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
-import { markRaw } from '@vue/composition-api'
 import { IDBWrapper } from './IDB'
 
 /**
@@ -40,15 +39,16 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		parent: VirtualDirectoryHandle | IDBWrapper | null,
 		name: string,
 		data?: Uint8Array,
-		protected inMemory = false
+		protected inMemory = false,
+		path?: string[]
 	) {
-		super(parent, name)
+		super(parent, name, path)
 		if (data) this.setup(data)
 		else this.setupDone.dispatch()
 	}
 	protected async setup(fileData: Uint8Array) {
 		// Composition API isn't available within web workers (and usage of markRaw isn't necessary there) so we can omit the markRaw call
-		this.fileData = globalThis.document ? markRaw(fileData) : fileData
+		this.fileData = fileData
 
 		const isDataFile = this.path.join('/').startsWith('data/packages')
 
@@ -81,14 +81,25 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	}
 	serialize(): ISerializedFileHandle {
 		return {
+			idbWrapper: this.idbWrapper.storeName,
 			kind: 'file',
 			name: this.name,
+			path: this.path,
 			fileData: this.fileData,
 		}
 	}
+	static deserialize(data: ISerializedFileHandle) {
+		return new VirtualFileHandle(
+			data.idbWrapper ? new IDBWrapper(data.idbWrapper) : null,
+			data.name,
+			data.fileData,
+			data.fileData !== undefined,
+			data.path
+		)
+	}
 
 	override async isSameEntry(other: BaseVirtualHandle): Promise<boolean> {
-		if(this.parent === null) return false
+		if (this.parent === null) return false
 
 		return super.isSameEntry(other)
 	}
@@ -102,6 +113,7 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		const fileData = await this.loadFromIdb()
 		// console.log(this.path.join('/'), this.fileData, fileData)
 
+		// TODO: Support lastModified timestamp so lightning cache can make use of its optimizations
 		return new File([fileData], this.name)
 	}
 	async createWritable() {

@@ -15,21 +15,23 @@
 	</div>
 </template>
 
-<script>
-import { TranslationMixin } from '../../Mixins/TranslationMixin'
+<script setup>
+import { useTranslations } from '../../Composables/useTranslations.ts'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 
-export default {
-	props: {
-		action: SimpleAction,
+const { t } = useTranslations()
+
+const props = defineProps({
+	action: {
+		type: SimpleAction,
+		required: true,
 	},
-	mixins: [TranslationMixin],
-	methods: {
-		onClick() {
-			this.$emit('click')
-			this.action.trigger()
-		},
-	},
+})
+const emit = defineEmits(['click'])
+
+function onClick() {
+	emit('click')
+	props.action.trigger()
 }
 </script>
 

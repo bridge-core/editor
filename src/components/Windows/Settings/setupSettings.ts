@@ -16,8 +16,12 @@ import {
 import { platform } from '/@/utils/os'
 import { TextField } from './Controls/TextField/TextField'
 import { devActions } from '/@/components/Developer/Actions'
+import { FontSelection } from './Controls/FontSelection'
+import { LocaleManager } from '../../Locales/Manager'
 
 export async function setupSettings(settings: SettingsWindow) {
+	const app = await App.getApp()
+
 	settings.addControl(
 		new ButtonToggle({
 			category: 'appearance',
@@ -27,7 +31,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			options: ['auto', 'dark', 'light'],
 			default: 'auto',
 			onChange: () => {
-				App.getApp().then((app) => app.themeManager.updateTheme())
+				app.themeManager.updateTheme()
 			},
 		})
 	)
@@ -44,7 +48,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 			default: 'bridge.default.dark',
 			onChange: () => {
-				App.getApp().then((app) => app.themeManager.updateTheme())
+				app.themeManager.updateTheme()
 			},
 		})
 	)
@@ -61,7 +65,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 			default: 'bridge.default.light',
 			onChange: () => {
-				App.getApp().then((app) => app.themeManager.updateTheme())
+				app.themeManager.updateTheme()
 			},
 		})
 	)
@@ -80,7 +84,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 			default: 'bridge.noSelection',
 			onChange: () => {
-				App.getApp().then((app) => app.themeManager.updateTheme())
+				app.themeManager.updateTheme()
 			},
 		})
 	)
@@ -99,12 +103,12 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 			default: 'bridge.noSelection',
 			onChange: () => {
-				App.getApp().then((app) => app.themeManager.updateTheme())
+				app.themeManager.updateTheme()
 			},
 		})
 	)
 	settings.addControl(
-		new Selection({
+		new FontSelection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.font.name',
 			description: 'windows.settings.appearance.font.description',
@@ -125,7 +129,7 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
-		new Selection({
+		new FontSelection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.editorFont.name',
 			description: 'windows.settings.appearance.editorFont.description',
@@ -141,7 +145,6 @@ export async function setupSettings(settings: SettingsWindow) {
 				'monospace',
 			],
 			onChange: async (val) => {
-				const app = await App.getApp()
 				app.projectManager.updateAllEditorOptions({
 					fontFamily: val,
 				})
@@ -158,7 +161,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: '14px',
 			options: ['8px', '10px', '12px', '14px', '16px', '18px', '20px'],
 			onChange: async (val) => {
-				const app = await App.getApp()
 				app.projectManager.updateAllEditorOptions({
 					fontSize: Number(val.replace('px', '')),
 				})
@@ -203,7 +205,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			options: ['tiny', 'small', 'normal', 'large'],
 			default: 'normal',
 			onChange: () => {
-				App.getApp().then((app) => app.windowResize.dispatch())
+				app.windowResize.dispatch()
 			},
 		})
 	)
@@ -216,23 +218,18 @@ export async function setupSettings(settings: SettingsWindow) {
 			key: 'hideElements',
 		})
 	)
-
-	const locales = await App.getApp().then((app) => app.locales)
 	settings.addControl(
 		new Selection({
+			omitFromSaveFile: true,
 			category: 'general',
 			name: 'windows.settings.general.language.name',
 			description: 'windows.settings.general.language.description',
 			key: 'locale',
-			get options() {
-				return locales.getLanguages().map((lang) => ({
-					text: lang[1],
-					value: lang[0],
-				}))
-			},
-			default: locales.getCurrentLanguage(),
+			options: LocaleManager.getAvailableLanguages(),
+			default: LocaleManager.getCurrentLanguageId(),
 			onChange: (val) => {
-				locales.selectLanguage(val)
+				;(<any>settings.getState()).reloadRequired = true
+				set('language', val)
 			},
 		})
 	)
@@ -316,16 +313,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: 'rawText',
 		})
 	)
-	settings.addControl(
-		new Toggle({
-			category: 'editor',
-			name: 'windows.settings.editor.bridgePredictions.name',
-			description:
-				'windows.settings.editor.bridgePredictions.description',
-			key: 'bridgePredictions',
-			default: true,
-		})
-	)
+
 	settings.addControl(
 		new Toggle({
 			category: 'editor',
@@ -335,7 +323,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			key: 'bracketPairColorization',
 			default: false,
 			onChange: async (val) => {
-				const app = await App.getApp()
 				app.projectManager.updateAllEditorOptions({
 					// @ts-expect-error The monaco team did not update the types yet
 					'bracketPairColorization.enabled': val,
@@ -351,7 +338,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			key: 'wordWrap',
 			default: false,
 			onChange: async (val) => {
-				const app = await App.getApp()
 				app.projectManager.updateAllEditorOptions({
 					wordWrap: val ? 'bounded' : 'off',
 				})
@@ -367,7 +353,6 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: '80',
 			options: ['40', '60', '80', '100', '120', '140', '160'],
 			onChange: async (val) => {
-				const app = await App.getApp()
 				app.projectManager.updateAllEditorOptions({
 					wordWrapColumn: Number(val),
 				})
@@ -381,6 +366,36 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.editor.compactTabDesign.description',
 			key: 'compactTabDesign',
 			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.keepTabsOpen.name',
+			description: 'windows.settings.editor.keepTabsOpen.description',
+			key: 'keepTabsOpen',
+			default: false,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.autoSaveChanges.name',
+			description: 'windows.settings.editor.autoSaveChanges.description',
+			key: 'autoSaveChanges',
+			default: app.mobile.isCurrentDevice(), // Auto save should be on by default on mobile
+		})
+	)
+
+	// Tree Editor specific settings
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.bridgePredictions.name',
+			description:
+				'windows.settings.editor.bridgePredictions.description',
+			key: 'bridgePredictions',
+			default: false,
 		})
 	)
 	settings.addControl(
@@ -403,6 +418,25 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.showArrayIndices.name',
+			description: 'windows.settings.editor.showArrayIndices.description',
+			key: 'showArrayIndices',
+			default: false,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.hideBracketsWithinTreeEditor.name',
+			description:
+				'windows.settings.editor.hideBracketsWithinTreeEditor.description',
+			key: 'hideBracketsWithinTreeEditor',
+			default: false,
+		})
+	)
 
 	// Projects
 	settings.addControl(
@@ -412,6 +446,16 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.projects.defaultAuthor.description',
 			key: 'defaultAuthor',
 			default: '',
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'projects',
+			name: 'windows.settings.projects.loadComMojangProjects.name',
+			description:
+				'windows.settings.projects.loadComMojangProjects.description',
+			key: 'loadComMojangProjects',
+			default: true,
 		})
 	)
 	settings.addControl(
@@ -436,7 +480,6 @@ export async function setupSettings(settings: SettingsWindow) {
 	)
 
 	// Actions
-	const app = await App.getApp()
 	Object.values(app.actionManager.state).forEach((action) => {
 		if (action.type === 'action')
 			settings.addControl(new ActionViewer(action))

@@ -3,11 +3,11 @@ import { VirtualHandle } from '/@/components/FileSystem/Virtual/Handle'
 import { App } from '/@/App'
 import type { IDirectoryViewerOptions } from '../DirectoryStore'
 import { moveHandle } from '/@/utils/file/moveHandle'
-import { ref } from '@vue/composition-api'
+import { ref } from 'vue'
 import type { FileWrapper } from '../FileView/FileWrapper'
 import { platform } from '/@/utils/os'
 import { renameHandle } from '/@/utils/file/renameHandle'
-import { AnyHandle } from '/@/components/FileSystem/Types'
+import { isSameEntry } from '/@/utils/file/isSameEntry'
 
 export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	public abstract readonly kind: 'file' | 'directory'
@@ -48,11 +48,7 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	}
 
 	async isSame(child: BaseWrapper<any>) {
-		try {
-			return await child.handle.isSameEntry(this.handle)
-		} catch {
-			return false
-		}
+		return await isSameEntry(child.handle, this.handle)
 	}
 
 	abstract readonly icon: string
@@ -121,34 +117,37 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 		if (type === 'cancel') {
 			// Move was cancelled
 			this.parent = fromParent
-			directoryWrapper.children.value = directoryWrapper.children.value!.filter(
-				(child) =>
-					child !== <DirectoryWrapper | FileWrapper>(<unknown>this)
-			)
+			directoryWrapper.children.value =
+				directoryWrapper.children.value!.filter(
+					(child) =>
+						child !==
+						<DirectoryWrapper | FileWrapper>(<unknown>this)
+				)
 			fromParent.children.value!.push(
 				<DirectoryWrapper | FileWrapper>(<unknown>this)
 			)
 			fromParent.sort()
 		} else if (type === 'overwrite') {
 			// We need to remove the duplicate FileWrapper
-			directoryWrapper.children.value = directoryWrapper.children.value!.filter(
-				(child) =>
-					child === <DirectoryWrapper | FileWrapper>(<unknown>this) ||
-					!child.isSame(
-						<DirectoryWrapper | FileWrapper>(<unknown>this)
-					)
-			)
+			directoryWrapper.children.value =
+				directoryWrapper.children.value!.filter(
+					(child) =>
+						child ===
+							<DirectoryWrapper | FileWrapper>(<unknown>this) ||
+						!child.isSame(
+							<DirectoryWrapper | FileWrapper>(<unknown>this)
+						)
+				)
 		}
 
 		// Call onHandleMoved
 		this.options.onHandleMoved?.({
+			movedHandle: this.handle,
 			fromHandle: this.parent.handle,
 			fromPath,
 			toPath: this.path!,
 			toHandle: this.parent.handle,
 		})
-
-		// TODO: Update compiler & ideally change open tabs to use correct handle
 
 		// Sort parent's children
 		directoryWrapper.sort()
@@ -178,24 +177,25 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 
 		if (type === 'overwrite') {
 			// We need to remove the duplicate FileWrapper
-			this.getParent()!.children.value = this.getParent()!.children.value!.filter(
-				(child) =>
-					child === <DirectoryWrapper | FileWrapper>(<unknown>this) ||
-					!child.isSame(
-						<DirectoryWrapper | FileWrapper>(<unknown>this)
-					)
-			)
+			this.getParent()!.children.value =
+				this.getParent()!.children.value!.filter(
+					(child) =>
+						child ===
+							<DirectoryWrapper | FileWrapper>(<unknown>this) ||
+						!child.isSame(
+							<DirectoryWrapper | FileWrapper>(<unknown>this)
+						)
+				)
 		}
 
 		// Call onHandleMoved
 		this.options.onHandleMoved?.({
+			movedHandle: this.handle,
 			fromHandle: fromParent.handle,
 			fromPath,
 			toPath: this.path!,
 			toHandle: this.parent!.handle,
 		})
-
-		// TODO: Update compiler & ideally change open tabs to use correct handle
 
 		await this.parent!.refresh()
 	}
@@ -211,5 +211,9 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 		this.isEditingName.value = false
 
 		await this.rename(newName)
+	}
+
+	async onFilesAdded(filePaths: string[]) {
+		await this.options.onFilesAdded?.(filePaths)
 	}
 }

@@ -1,5 +1,6 @@
 import { IframeApi } from '../../IframeApi'
 import { GenericRequest } from '../GenericRequest'
+import { resolveFileReference } from './ResolveFileReference'
 import { App } from '/@/App'
 
 export interface IWriteFilePayload {
@@ -18,6 +19,8 @@ export class WriteFileRequest extends GenericRequest<IWriteFilePayload, void> {
 	): Promise<void> {
 		const app = await App.getApp()
 
-		await app.fileSystem.writeFile(filePath, data)
+		const fileHandle = await resolveFileReference(filePath, this.api, true)
+
+		await app.fileSystem.write(fileHandle, data)
 	}
 }

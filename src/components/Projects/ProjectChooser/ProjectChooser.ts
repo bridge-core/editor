@@ -1,6 +1,5 @@
 import { App } from '/@/App'
 import { IProjectData } from '/@/components/Projects/Project/Project'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import ProjectChooserComponent from './ProjectChooser.vue'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
@@ -9,21 +8,40 @@ import { IExperimentalToggle } from '../CreateProject/CreateProject'
 import { importNewProject } from '../Import/ImportNew'
 import { IPackData } from '/@/components/Projects/Project/loadPacks'
 import { ComMojangProjectLoader } from '../../OutputFolders/ComMojang/ProjectLoader'
-import { markRaw } from '@vue/composition-api'
+import { markRaw, reactive } from 'vue'
+import { IWindowState, NewBaseWindow } from '../../Windows/NewBaseWindow'
 
-export class ProjectChooserWindow extends BaseWindow {
+export interface IProjectChooserState extends IWindowState {
+	showLoadAllButton: 'isLoading' | boolean
+	currentProject?: string
+}
+
+export class ProjectChooserWindow extends NewBaseWindow {
 	protected sidebar = new Sidebar([])
-	protected currentProject?: string = undefined
 	protected experimentalToggles: (IExperimentalToggle & {
 		isActive: boolean
 	})[] = []
-	protected showLoadAllButton: boolean | 'isLoading' = false
+	protected comMojangProjectLoader
 
-	constructor() {
+	protected state: IProjectChooserState = reactive<any>({
+		...super.getState(),
+		showLoadAllButton: false,
+		currentProject: undefined,
+	})
+
+	constructor(app: App) {
 		super(ProjectChooserComponent, false, true)
-		this.defineWindow()
 
-		this.actions.push(
+		this.state.actions.push(
+			new SimpleAction({
+				icon: 'mdi-refresh',
+				name: 'general.reload',
+				color: 'accent',
+				isDisabled: () => this.state.isLoading,
+				onTrigger: () => {
+					this.reload()
+				},
+			}),
 			new SimpleAction({
 				icon: 'mdi-import',
 				name: 'actions.importBrproject.name',
@@ -44,18 +62,29 @@ export class ProjectChooserWindow extends BaseWindow {
 				},
 			})
 		)
+		this.comMojangProjectLoader = markRaw(new ComMojangProjectLoader(app))
+
+		this.defineWindow()
 	}
 
 	async loadAllProjects() {
-		this.showLoadAllButton = 'isLoading'
+		this.state.showLoadAllButton = 'isLoading'
 		const app = await App.getApp()
 
-		const wasSuccessful = await app.setupBridgeFolder()
-		if (wasSuccessful) {
+		// Only request permission if the user didn't already grant it
+		const wasSuccessful =
+			app.bridgeFolderSetup.hasFired || (await app.setupBridgeFolder())
+		// For the com.mojang folder, we additionally check that bridge. already has its handle stored in IDB
+		const wasComMojangSuccesful = app.comMojang.hasComMojangHandle
+			? app.comMojang.hasFired || (await app.comMojang.setupComMojang())
+			: true
+
+		if (wasSuccessful || wasComMojangSuccesful) {
 			await this.loadProjects()
-			this.showLoadAllButton = false
+			this.state.showLoadAllButton =
+				!wasSuccessful || !wasComMojangSuccesful
 		} else {
-			this.showLoadAllButton = true
+			this.state.showLoadAllButton = true
 		}
 	}
 
@@ -76,7 +105,10 @@ export class ProjectChooserWindow extends BaseWindow {
 		this.sidebar.removeElements()
 		const app = await App.getApp()
 
-		this.showLoadAllButton = !app.bridgeFolderSetup.hasFired
+		// Show the loadAllButton if the user didn't grant permissions to bridge folder or comMojang folder yet
+		this.state.showLoadAllButton =
+			!app.bridgeFolderSetup.hasFired ||
+			(!app.comMojang.setup.hasFired && app.comMojang.hasComMojangHandle)
 
 		const projects = await app.projectManager.getProjects()
 		const experimentalToggles = await app.dataLoader.readJSON(
@@ -84,7 +116,8 @@ export class ProjectChooserWindow extends BaseWindow {
 		)
 
 		projects.forEach((project) =>
-			this.addProject(project.projectData.path!, project.name, {
+			this.addProject(project.projectData.path!, project.displayName, {
+				displayName: project.displayName,
 				...project.projectData,
 				isLocalProject: project.isLocal,
 				experimentalGameplay: experimentalToggles.map(
@@ -99,12 +132,13 @@ export class ProjectChooserWindow extends BaseWindow {
 			})
 		)
 
-		const comMojangProjects = await new ComMojangProjectLoader(
-			app
-		).loadProjects()
+		console.time('Load com.mojang projects')
+		const comMojangProjects =
+			await this.comMojangProjectLoader.loadProjects()
 		comMojangProjects.forEach((project) =>
 			this.addProject(`comMojang/${project.name}`, project.name, {
 				name: project.name,
+				displayName: project.name,
 				imgSrc:
 					project.packs.find((pack) => !!pack.packIcon)?.packIcon ??
 					undefined,
@@ -116,9 +150,7 @@ export class ProjectChooserWindow extends BaseWindow {
 						return <IPackData>{
 							...packType,
 							version: pack.manifest?.header?.version ?? [
-								1,
-								0,
-								0,
+								1, 0, 0,
 							],
 							packPath: pack.packPath,
 							uuid: pack.uuid,
@@ -130,19 +162,31 @@ export class ProjectChooserWindow extends BaseWindow {
 				project: markRaw(project),
 			})
 		)
+		console.timeEnd('Load com.mojang projects')
 
-		this.sidebar.setDefaultSelected(
-			app.isNoProjectSelected
-				? undefined
-				: app.projectManager.selectedProject
-		)
-		return app.isNoProjectSelected
-			? undefined
-			: app.projectManager.selectedProject
+		this.sidebar.resetSelected()
+		if (app.isNoProjectSelected) this.sidebar.setDefaultSelected()
+		else this.sidebar.setDefaultSelected(app.projectManager.selectedProject)
+
+		return app.projectManager.selectedProject
+	}
+
+	async reload() {
+		this.state.isLoading = true
+
+		this.comMojangProjectLoader.clearCache()
+		await this.loadProjects()
+
+		this.state.isLoading = false
 	}
 
 	async open() {
-		this.currentProject = await this.loadProjects()
 		super.open()
+
+		this.state.isLoading = true
+		console.time('Load projects')
+		this.state.currentProject = await this.loadProjects()
+		console.timeEnd('Load projects')
+		this.state.isLoading = false
 	}
 }

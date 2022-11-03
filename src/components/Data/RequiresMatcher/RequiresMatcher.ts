@@ -18,9 +18,13 @@ export interface IRequirements {
 	 */
 	packTypes?: TPackTypeId[]
 	/**
-	 * Check for manifest dependency uuids to be present in the pack.
+	 * Check for manifest dependencies to be present in the pack.
 	 */
-	dependencies: string[]
+	dependencies?: string[]
+	/**
+	 * Whether all conditions must be met. If set to false, any condition met makes the matcher valid.
+	 */
+	matchAll?: boolean
 }
 
 export interface IFailure {
@@ -35,47 +39,83 @@ export class RequiresMatcher {
 	protected experimentalGameplay: Record<string, boolean> = {}
 	protected projectTargetVersion: string = ''
 	public failures: IFailure[] = []
+	// The following properties will only be defined after calling setup()
+	protected latestFormatVersion!: string
+	protected bpManifest: any
+	protected isSetup = false
+	protected app!: App
 
-	constructor(protected requires?: IRequirements) {}
+	constructor() {}
 
-	async isValid() {
-		if (!this.requires) return true
+	async setup() {
+		if (this.isSetup) return
 
-		const app = await App.getApp()
-		await app.projectManager.projectReady.fired
-		const config = app.project.config.get()
+		this.app = await App.getApp()
+		const [_, latestFormatVersion, bpManifest] = await Promise.all([
+			this.app.projectManager.projectReady.fired,
+			getLatestFormatVersion(),
+			this.app.fileSystem
+				.readJSON(
+					this.app.project.config.resolvePackPath(
+						'behaviorPack',
+						'manifest.json'
+					)
+				)
+				.catch(() => null),
+		])
+
+		const config = this.app.project.config.get()
 
 		this.experimentalGameplay = config.experimentalGameplay ?? {}
+
+		this.latestFormatVersion = latestFormatVersion
 		this.projectTargetVersion =
-			config.targetVersion ?? (await getLatestFormatVersion())
+			config.targetVersion ?? this.latestFormatVersion
+
+		this.bpManifest = bpManifest
+		this.isSetup = true
+	}
+	protected resetFailures() {
+		this.failures = []
+	}
+
+	isValid(requires?: IRequirements) {
+		this.resetFailures()
+
+		if (!requires) return true
+		if (!this.isSetup)
+			throw new Error(
+				'RequiresMatcher is not setup. Make sure to call setup() before isValid().'
+			)
+		requires.matchAll ??= true
 
 		// Pack type
-		const matchesPackTypes = app.project.hasPacks(
-			this.requires.packTypes ?? []
+		const matchesPackTypes = this.app.project.hasPacks(
+			requires.packTypes ?? []
 		)
 		// Target version
 		const matchesTargetVersion =
-			!this.requires.targetVersion ||
-			(!Array.isArray(this.requires.targetVersion)
+			!requires.targetVersion ||
+			(!Array.isArray(requires.targetVersion)
 				? compareVersions(
 						this.projectTargetVersion,
-						this.requires.targetVersion?.min ?? '1.8.0',
+						requires.targetVersion?.min ?? '1.8.0',
 						'>='
 				  ) &&
 				  compareVersions(
 						this.projectTargetVersion,
-						this.requires.targetVersion?.max ?? '1.18.0',
+						requires.targetVersion?.max ?? '1.18.0',
 						'<='
 				  )
 				: compareVersions(
 						this.projectTargetVersion,
-						this.requires.targetVersion[1],
-						this.requires.targetVersion[0]
+						requires.targetVersion[1],
+						requires.targetVersion[0]
 				  ))
 		// Experimental gameplay
 		const matchesExperimentalGameplay =
-			!this.requires.experimentalGameplay ||
-			this.requires.experimentalGameplay.some((experimentalFeature) =>
+			!requires.experimentalGameplay ||
+			requires.experimentalGameplay.some((experimentalFeature) =>
 				experimentalFeature.startsWith('!')
 					? !this.experimentalGameplay[
 							experimentalFeature.replace('!', '')
@@ -83,25 +123,46 @@ export class RequiresMatcher {
 					: this.experimentalGameplay[experimentalFeature]
 			)
 		// Manifest dependencies
-		let manifest
-		try {
-			const file = await app.fileSystem.readFile(
-				app.project.config.resolvePackPath(
-					'behaviorPack',
-					'manifest.json'
-				)
-			)
-			manifest = json5.parse(await file.text())
-		} catch {}
-		const dependencies: string[] | undefined = manifest?.dependencies?.map(
-			(dep: any) => dep.uuid ?? ''
-		)
+		const dependencies: string[] | undefined =
+			this.bpManifest?.dependencies?.map((dep: any) => {
+				if (dep?.module_name) {
+					// Convert old module names to new naming convention
+					switch (dep.module_name) {
+						case 'mojang-minecraft':
+							return '@minecraft/server'
+						case 'mojang-gametest':
+							return '@minecraft/server-gametest'
+						case 'mojang-minecraft-server-ui':
+							return '@minecraft/server-ui'
+						case 'mojang-minecraft-server-admin':
+							return '@minecraft/server-admin'
+						case 'mojang-net':
+							return '@minecraft/server-net'
+						default:
+							return dep.module_name
+					}
+				} else {
+					switch (dep.uuid ?? '') {
+						case 'b26a4d4c-afdf-4690-88f8-931846312678':
+							return '@minecraft/server'
+						case '6f4b6893-1bb6-42fd-b458-7fa3d0c89616':
+							return '@minecraft/server-gametest'
+						case '2bd50a27-ab5f-4f40-a596-3641627c635e':
+							return '@minecraft/server-ui'
+						case '53d7f2bf-bf9c-49c4-ad1f-7c803d947920':
+							return '@minecraft/server-admin'
+						case '777b1798-13a6-401c-9cba-0cf17e31a81b':
+							return '@minecraft/server-net'
+						default:
+							return ''
+					}
+				}
+			})
+
 		const matchesManifestDependency =
-			!this.requires.dependencies ||
+			!requires.dependencies ||
 			!dependencies ||
-			this.requires?.dependencies.every((dep) =>
-				dependencies.includes(dep)
-			)
+			requires?.dependencies.every((dep) => dependencies.includes(dep))
 
 		if (!matchesPackTypes) this.failures.push({ type: 'packTypes' })
 		if (!matchesTargetVersion) this.failures.push({ type: 'targetVersion' })
@@ -110,11 +171,15 @@ export class RequiresMatcher {
 		if (!matchesManifestDependency)
 			this.failures.push({ type: 'manifestDependency' })
 
-		return (
-			matchesPackTypes &&
-			matchesExperimentalGameplay &&
-			matchesTargetVersion &&
-			matchesManifestDependency
-		)
+		return requires.matchAll
+			? matchesPackTypes &&
+					matchesExperimentalGameplay &&
+					matchesTargetVersion &&
+					matchesManifestDependency
+			: (matchesPackTypes && requires.packTypes) ||
+					(matchesExperimentalGameplay &&
+						requires.experimentalGameplay) ||
+					(matchesTargetVersion && requires.targetVersion) ||
+					(matchesManifestDependency && requires.dependencies)
 	}
 }

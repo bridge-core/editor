@@ -1,4 +1,3 @@
-import { textChangeRangeIsUnchanged } from 'typescript'
 import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
 import { BytewiseComparator } from './Comparators/Bytewise'
 import { FileMetaData } from './FileMetaData'

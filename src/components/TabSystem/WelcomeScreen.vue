@@ -21,15 +21,12 @@
 </template>
 
 <script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
-import { ProjectMixin } from '/@/components/Mixins/Project.ts'
 import Logo from '../UIElements/Logo.vue'
 import WelcomeAlert from '../WelcomeAlert/Alert.vue'
 import CommandBar from '../CommandBar/CommandBar.vue'
 
 export default {
 	name: 'welcome-screen',
-	mixins: [TranslationMixin, ProjectMixin],
 	components: {
 		Logo,
 		WelcomeAlert,

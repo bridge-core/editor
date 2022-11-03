@@ -1,14 +1,14 @@
 import { IModuleConfig } from '../types'
 import { createWindow } from '/@/components/Windows/create'
 import { Component as VueComponent } from 'vue'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { DropdownWindow } from '/@/components/Windows/Common/Dropdown/DropdownWindow'
 import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
+import { NewBaseWindow } from '/@/components/Windows/NewBaseWindow'
 
 export const WindowModule = ({}: IModuleConfig) => ({
-	BaseWindow,
+	BaseWindow: NewBaseWindow,
 	createWindow: (
 		vueComponent: VueComponent,
 		state: Record<string, unknown>

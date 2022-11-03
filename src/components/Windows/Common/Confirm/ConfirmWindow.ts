@@ -1,6 +1,5 @@
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import ConfirmWindowComponent from './ConfirmWindow.vue'
-import { App } from '/@/App'
+import { NewBaseWindow } from '../../NewBaseWindow'
 
 export interface IConfirmWindowOpts {
 	title?: string
@@ -12,7 +11,7 @@ export interface IConfirmWindowOpts {
 	height?: number
 }
 
-export class ConfirmationWindow extends BaseWindow<boolean> {
+export class ConfirmationWindow extends NewBaseWindow<boolean> {
 	constructor(protected opts: IConfirmWindowOpts) {
 		super(ConfirmWindowComponent, true, false)
 		this.defineWindow()

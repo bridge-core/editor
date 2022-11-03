@@ -1,17 +1,18 @@
 import { App } from '/@/App'
 import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/BaseWrapper'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
+import { translate } from '/@/components/Locales/Manager'
 
 export const DeleteAction = (baseWrapper: BaseWrapper<any>) => ({
 	icon: 'mdi-delete-outline',
 	name: 'actions.delete.name',
-	description: 'actions.delete.description',
+
 	onTrigger: async () => {
 		const parent = baseWrapper.getParent()
 		if (baseWrapper.options.isReadOnly || parent === null) return
 
 		const app = await App.getApp()
-		const t = (str: string) => app.locales.translate(str)
+		const t = (str: string) => translate(str)
 
 		const confirmWindow = new ConfirmationWindow({
 			description: `[${t('actions.delete.confirmText')} "${

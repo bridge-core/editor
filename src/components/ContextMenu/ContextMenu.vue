@@ -1,20 +1,23 @@
 <template>
 	<v-menu
 		v-model="isVisible"
-		:position-x="contextMenu.position.x"
-		:position-y="contextMenu.position.y"
+		ref="menu"
+		:position-x="x"
+		:position-y="y"
 		rounded="lg"
 		absolute
 		offset-y
 		transition="context-menu-transition"
+		:offset-overflow="false"
 		:close-on-click="contextMenu.mayCloseOnClickOutside"
+		:close-on-content-click="false"
+		min-width="200px"
 	>
 		<ContextMenuList @click="isVisible = false" :actions="actions" />
 	</v-menu>
 </template>
 
 <script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { createSimpleTransition } from 'vuetify/lib/components/transitions/createTransition'
 import Vue from 'vue'
 import ContextMenuList from './List.vue'
@@ -25,26 +28,40 @@ Vue.component('context-menu-transition', contextMenuTransition)
 export default {
 	components: { ContextMenuList },
 	name: 'ContextMenu',
-	mixins: [TranslationMixin],
 	props: {
 		contextMenu: Object,
+		windowHeight: Number,
 	},
 	data: () => ({
 		shouldRender: false,
 		timeoutId: null,
 	}),
 	computed: {
+		x() {
+			return this.contextMenu.position.x
+		},
+		y() {
+			const lowestY =
+				this.contextMenu.position.y + this.contextMenu.menuHeight
+			if (lowestY > this.windowHeight) {
+				const offset = this.windowHeight - lowestY
+
+				return this.contextMenu.position.y - offset
+			}
+			return this.contextMenu.position.y
+		},
 		isVisible: {
 			set(val) {
-				this.contextMenu.isVisible = val
+				this.contextMenu.isVisible.value = val
 			},
 			get() {
-				return this.contextMenu.isVisible
+				return this.contextMenu.isVisible.value
 			},
 		},
 		actions() {
-			if (!this.contextMenu || !this.contextMenu.actionManager) return {}
-			return this.contextMenu.actionManager.state
+			if (!this.contextMenu || !this.contextMenu.actionManager.value)
+				return {}
+			return this.contextMenu.actionManager.value.state
 		},
 	},
 	watch: {

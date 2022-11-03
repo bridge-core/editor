@@ -8,15 +8,12 @@ import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { debounce } from 'lodash-es'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { loadMonaco, useMonaco } from '../../../utils/libs/useMonaco'
 import { wait } from '/@/utils/wait'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
-		// Updates the isUnsaved status of the tab
-		tab.updateUnsavedStatus()
-
 		if (!tab.editorModel || tab.editorModel.isDisposed()) return
 
 		const fileContent = tab.editorModel?.getValue()
@@ -78,6 +75,13 @@ export class TextTab extends FileTab {
 		)
 	}
 
+	fileDidChange() {
+		// Updates the isUnsaved status of the tab
+		this.updateUnsavedStatus()
+
+		super.fileDidChange()
+	}
+
 	async onActivate() {
 		if (this.isActive) return
 		this.isActive = true
@@ -121,6 +125,7 @@ export class TextTab extends FileTab {
 		this.disposables.push(
 			this.editorModel?.onDidChangeContent(() => {
 				throttledCacheUpdate(this)
+				this.fileDidChange()
 			})
 		)
 		this.disposables.push(
@@ -131,7 +136,9 @@ export class TextTab extends FileTab {
 
 		this.editorInstance?.layout()
 	}
-	onDeactivate() {
+	async onDeactivate() {
+		await super.onDeactivate()
+
 		// MonacoEditor is defined
 		if (this.tabSystem.hasFired) {
 			const viewState = this.editorInstance.saveViewState()
@@ -247,10 +254,15 @@ export class TextTab extends FileTab {
 	}
 	protected async saveFile() {
 		if (this.editorModel && !this.editorModel.isDisposed()) {
-			this.setIsUnsaved(false)
-			this.initialVersionId = this.editorModel.getAlternativeVersionId()
+			const writeWorked = await this.writeFile(
+				this.editorModel.getValue()
+			)
 
-			this.writeFile(this.editorModel.getValue())
+			if (writeWorked) {
+				this.setIsUnsaved(false)
+				this.initialVersionId =
+					this.editorModel.getAlternativeVersionId()
+			}
 		} else {
 			console.error(`Cannot save file content without active editorModel`)
 		}

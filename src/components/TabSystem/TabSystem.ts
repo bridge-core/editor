@@ -1,7 +1,7 @@
 import { Tab } from './CommonTab'
 import WelcomeScreen from './WelcomeScreen.vue'
 import { TextTab } from '../Editors/Text/TextTab'
-import Vue from 'vue'
+import Vue, { computed, Ref, ref } from 'vue'
 import { App } from '/@/App'
 import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
 import { Project } from '../Projects/Project/Project'
@@ -11,7 +11,6 @@ import { MonacoHolder } from './MonacoHolder'
 import { FileTab, TReadOnlyMode } from './FileTab'
 import { TabProvider } from './TabProvider'
 import { AnyFileHandle } from '../FileSystem/Types'
-import { reactive } from '@vue/composition-api'
 
 export interface IOpenTabOptions {
 	selectTab?: boolean
@@ -21,8 +20,8 @@ export interface IOpenTabOptions {
 
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
-	public tabs: Tab[] = reactive([])
-	protected _selectedTab: Tab | undefined = undefined
+	public tabs = <Ref<Tab[]>>ref([])
+	protected _selectedTab = <Ref<Tab | undefined>>ref(undefined)
 	protected get tabTypes() {
 		return TabProvider.tabs
 	}
@@ -32,9 +31,14 @@ export class TabSystem extends MonacoHolder {
 	get isActive() {
 		return this._isActive
 	}
-	get shouldRender() {
-		return this.tabs.length > 0
-	}
+	public readonly shouldRender = computed(() => this.tabs.value.length > 0)
+	public readonly isSharingScreen = computed(() => {
+		const other = this.project.tabSystems.find(
+			(tabSystem) => tabSystem !== this
+		)
+
+		return other?.shouldRender.value ?? false
+	})
 	get app() {
 		return this._app
 	}
@@ -42,15 +46,8 @@ export class TabSystem extends MonacoHolder {
 		return this._project
 	}
 
-	get isSharingScreen() {
-		const other = this.project.tabSystems.find(
-			(tabSystem) => tabSystem !== this
-		)
-
-		return other?.shouldRender
-	}
 	get hasUnsavedTabs() {
-		return this.tabs.some((tab) => tab.isUnsaved)
+		return this.tabs.value.some((tab) => tab.isUnsaved)
 	}
 
 	constructor(protected _project: Project, id = 0) {
@@ -64,10 +61,10 @@ export class TabSystem extends MonacoHolder {
 	}
 
 	get selectedTab() {
-		return this._selectedTab
+		return this._selectedTab.value
 	}
 	get currentComponent() {
-		return this._selectedTab?.component ?? WelcomeScreen
+		return this._selectedTab.value?.component ?? WelcomeScreen
 	}
 	get projectRoot() {
 		return this.project.baseDirectory
@@ -116,7 +113,7 @@ export class TabSystem extends MonacoHolder {
 		return await tab.fired
 	}
 	async hasTab(tab: Tab) {
-		for (const currentTab of this.tabs) {
+		for (const currentTab of this.tabs.value) {
 			if (await currentTab.is(tab)) return true
 		}
 
@@ -127,7 +124,7 @@ export class TabSystem extends MonacoHolder {
 		this.closeAllTemporary()
 
 		if (!noTabExistanceCheck) {
-			for (const currentTab of this.tabs) {
+			for (const currentTab of this.tabs.value) {
 				if (await currentTab.is(tab)) {
 					tab.onDeactivate()
 					return selectTab ? currentTab.select() : currentTab
@@ -137,7 +134,7 @@ export class TabSystem extends MonacoHolder {
 
 		if (!tab.hasFired) await tab.fired
 
-		this.tabs = [...this.tabs, tab]
+		this.tabs.value = [...this.tabs.value, tab]
 		if (!tab.isForeignFile && !(tab instanceof FileTab && tab.isReadOnly))
 			await this.openedFiles.add(tab.getPath())
 
@@ -149,14 +146,14 @@ export class TabSystem extends MonacoHolder {
 	}
 	remove(tab: Tab, destroyEditor = true, selectNewTab = true) {
 		tab.onDeactivate()
-		const tabIndex = this.tabs.findIndex((current) => current === tab)
+		const tabIndex = this.tabs.value.findIndex((current) => current === tab)
 		if (tabIndex === -1) return
 
-		this.tabs.splice(tabIndex, 1)
+		this.tabs.value.splice(tabIndex, 1)
 		if (destroyEditor) tab.onDestroy()
 
-		if (selectNewTab && tab === this._selectedTab)
-			this.select(this.tabs[tabIndex === 0 ? 0 : tabIndex - 1])
+		if (selectNewTab && tab === this.selectedTab)
+			this.select(this.tabs.value[tabIndex === 0 ? 0 : tabIndex - 1])
 		if (!tab.isForeignFile) this.openedFiles.remove(tab.getPath())
 
 		this.project.updateTabFolders()
@@ -179,22 +176,54 @@ export class TabSystem extends MonacoHolder {
 		const tab = await this.getTab(fileHandle)
 		if (tab) this.close(tab)
 	}
+
+	/**
+	 * Select next tab
+	 */
+	async selectNextTab() {
+		const tabs = this.tabs.value
+		if (tabs.length === 0) return
+
+		const selectedTab = this.selectedTab
+		if (!selectedTab) return
+
+		const index = tabs.indexOf(selectedTab)
+		const nextTab = tabs[index + 1] ?? tabs[0]
+
+		await nextTab.select()
+	}
+	/**
+	 * Select previous tab
+	 */
+	async selectPreviousTab() {
+		const tabs = this.tabs.value
+		if (tabs.length === 0) return
+
+		const selectedTab = this.selectedTab
+		if (!selectedTab) return
+
+		const index = tabs.indexOf(selectedTab)
+		const previousTab = tabs[index - 1] ?? tabs[tabs.length - 1]
+
+		await previousTab.select()
+	}
+
 	async select(tab?: Tab) {
 		if (this.isActive !== !!tab) this.setActive(!!tab)
 
 		if (this.app.mobile.isCurrentDevice()) App.sidebar.hide()
 		if (tab?.isSelected) return
 
-		this._selectedTab?.onDeactivate()
-		if (tab && tab !== this._selectedTab && this.project.isActiveProject) {
+		this.selectedTab?.onDeactivate()
+		if (tab && tab !== this.selectedTab && this.project.isActiveProject) {
 			App.eventSystem.dispatch('currentTabSwitched', tab)
 		}
-		this._selectedTab = tab
+		this._selectedTab.value = tab
 
 		// Next steps don't need to be done if we simply unselect tab
 		if (!tab) return
 
-		await this._selectedTab?.onActivate()
+		await this.selectedTab?.onActivate()
 
 		Vue.nextTick(async () => {
 			this._monacoEditor?.layout()
@@ -236,14 +265,14 @@ export class TabSystem extends MonacoHolder {
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 
-		for (const tab of this.tabs) {
+		for (const tab of this.tabs.value) {
 			if (tab.isUnsaved) await this.save(tab)
 		}
 
 		app.windows.loadingWindow.close()
 	}
 	closeAllTemporary() {
-		for (const tab of [...this.tabs]) {
+		for (const tab of [...this.tabs.value]) {
 			if (!tab.isTemporary) continue
 
 			this.remove(tab, true, false)
@@ -253,9 +282,10 @@ export class TabSystem extends MonacoHolder {
 	async activate() {
 		await this.openedFiles.restoreTabs()
 
-		if (this.tabs.length > 0) this.setActive(true)
+		if (this.tabs.value.length > 0) this.setActive(true)
 
-		if (!this.selectedTab && this.tabs.length > 0) this.tabs[0].select()
+		if (!this.selectedTab && this.tabs.value.length > 0)
+			this.tabs.value[0].select()
 
 		await this.selectedTab?.onActivate()
 	}
@@ -276,7 +306,7 @@ export class TabSystem extends MonacoHolder {
 	}
 
 	async getTab(fileHandle: AnyFileHandle) {
-		for (const tab of this.tabs) {
+		for (const tab of this.tabs.value) {
 			if (
 				tab instanceof FileTab &&
 				(await tab.isForFileHandle(fileHandle))
@@ -285,27 +315,27 @@ export class TabSystem extends MonacoHolder {
 		}
 	}
 	closeTabs(predicate: (tab: Tab) => boolean) {
-		const tabs = [...this.tabs].reverse()
+		const tabs = [...this.tabs.value].reverse()
 
 		for (const tab of tabs) {
 			if (predicate(tab)) tab.close()
 		}
 	}
 	forceCloseTabs(predicate: (tab: Tab) => boolean) {
-		const tabs = [...this.tabs].reverse()
+		const tabs = [...this.tabs.value].reverse()
 
 		for (const tab of tabs) {
 			if (predicate(tab)) this.remove(tab)
 		}
 	}
 	has(predicate: (tab: Tab) => boolean) {
-		for (const tab of this.tabs) {
+		for (const tab of this.tabs.value) {
 			if (predicate(tab)) return true
 		}
 		return true
 	}
 	get(predicate: (tab: Tab) => boolean) {
-		for (const tab of this.tabs) {
+		for (const tab of this.tabs.value) {
 			if (predicate(tab)) return tab
 		}
 	}

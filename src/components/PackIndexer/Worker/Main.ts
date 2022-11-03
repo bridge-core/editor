@@ -2,6 +2,9 @@
 globalThis.process = {
 	cwd: () => '',
 	env: {},
+	release: {
+		name: 'browser',
+	},
 }
 
 import '/@/components/FileSystem/Virtual/Comlink'
@@ -89,11 +92,8 @@ export class PackIndexerService extends TaskService<
 		console.timeEnd('[WORKER] SETUP')
 
 		console.time('[WORKER] LightningCache')
-		const [
-			filePaths,
-			changedFiles,
-			deletedFiles,
-		] = await this.lightningCache.start(forceRefresh)
+		const [filePaths, changedFiles, deletedFiles] =
+			await this.lightningCache.start(forceRefresh)
 		console.timeEnd('[WORKER] LightningCache')
 
 		console.time('[WORKER] PackSpider')
@@ -119,20 +119,40 @@ export class PackIndexerService extends TaskService<
 			if (!hotUpdate) await this.lightningStore.saveStore(false)
 			await this.packSpider.updateFile(filePath)
 		}
+
+		return fileDidChange
 	}
 	async updateFiles(filePaths: string[], hotUpdate = false) {
+		let anyFileChanged = false
 		for (let i = 0; i < filePaths.length; i++) {
-			await this.updateFile(filePaths[i], undefined, false, false)
+			const fileDidChange = await this.updateFile(
+				filePaths[i],
+				undefined,
+				false,
+				false
+			)
+			if (fileDidChange) anyFileChanged = true
 		}
 
-		if (!hotUpdate) await this.lightningStore.saveStore(false)
+		if (!hotUpdate && anyFileChanged)
+			await this.lightningStore.saveStore(false)
+
+		return anyFileChanged
 	}
 	hasFile(filePath: string) {
 		return this.lightningStore.has(filePath)
 	}
 
-	unlink(path: string) {
-		return this.lightningCache.unlink(path)
+	async rename(fromPath: string, toPath: string, saveStore = true) {
+		this.lightningStore.rename(fromPath, toPath)
+		if (saveStore) await this.lightningStore.saveStore(false)
+	}
+
+	unlinkFile(path: string, saveCache = true) {
+		return this.lightningCache.unlinkFile(path, saveCache)
+	}
+	saveCache() {
+		return this.lightningStore.saveStore(false)
 	}
 
 	updatePlugins(pluginFileTypes: IFileType[]) {
@@ -176,6 +196,9 @@ export class PackIndexerService extends TaskService<
 	}
 	getFileDiagnostics(filePath: string) {
 		return this.packSpider.getDiagnostics(filePath)
+	}
+	getConnectedFiles(filePath: string) {
+		return this.packSpider.getConnectedFiles(filePath)
 	}
 
 	getSchemasFor(fileType: string, fromFilePath?: string) {

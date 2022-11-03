@@ -12,9 +12,9 @@ export const GlobalsModule = async ({}: IModuleConfig) => {
 		if (cachedGlobals === undefined) {
 			return new Promise<Record<string, unknown>>((resolve) => {
 				App.ready.once(async (app) => {
-					cachedGlobals = await app.fileSystem.readJSON(
-						`${app.project.projectPath}/globals.json`
-					)
+					cachedGlobals = await app.fileSystem
+						.readJSON(`${app.project.projectPath}/globals.json`)
+						.catch(() => {})
 					resolve(cachedGlobals!)
 				})
 			})

@@ -1,8 +1,8 @@
 <template>
 	<BaseWindow
-		v-if="shouldRender"
-		:windowTitle="$data.title"
-		:isVisible="isVisible"
+		v-if="state.shouldRender"
+		:windowTitle="window.title"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:width="440"
@@ -12,8 +12,8 @@
 		<template #default>
 			<div class="d-flex justify-center align-center">
 				<v-text-field
-					:label="t($data.label)"
-					v-model="$data.inputValue"
+					:label="t(window.label)"
+					v-model="state.inputValue"
 					@keydown.enter.native="onConfirm"
 					class="mr-2"
 					outlined
@@ -23,9 +23,9 @@
 				/>
 				<span
 					class="expand-text text--secondary"
-					v-if="$data.expandText !== ''"
+					v-if="window.expandText !== ''"
 				>
-					{{ $data.expandText }}
+					{{ window.expandText }}
 				</span>
 			</div>
 		</template>
@@ -34,7 +34,7 @@
 			<v-btn
 				color="primary"
 				@click="onConfirm"
-				:disabled="$data.inputValue === ''"
+				:disabled="state.inputValue === ''"
 			>
 				<v-icon>mdi-check</v-icon>
 				<span>{{ t('general.confirm') }}</span>
@@ -43,33 +43,21 @@
 	</BaseWindow>
 </template>
 
-<script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+<script lang="ts" setup>
 import BaseWindow from '../../Layout/BaseWindow.vue'
+import { useTranslations } from '/@/components/Composables/useTranslations'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
-export default {
-	name: 'Input',
-	mixins: [TranslationMixin],
-	components: {
-		BaseWindow,
-	},
-	props: ['currentWindow'],
-	setup() {
-		return { pointerDevice }
-	},
-	data() {
-		return this.currentWindow
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close(null)
-			this.currentWindow.inputValue = ''
-		},
-		onConfirm() {
-			this.currentWindow.confirm()
-			this.currentWindow.inputValue = ''
-		},
-	},
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.getState()
+
+function onClose() {
+	props.window.close(null)
+	state.inputValue = ''
+}
+function onConfirm() {
+	props.window.confirm()
+	state.inputValue = ''
 }
 </script>

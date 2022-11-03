@@ -1,6 +1,6 @@
 import { Action } from './Action'
 import { IActionConfig } from './SimpleAction'
-import { del, set, shallowReactive } from '@vue/composition-api'
+import { del, set, shallowReactive } from 'vue'
 import type { KeyBindingManager } from './KeyBindingManager'
 import { v4 as uuid } from 'uuid'
 import { ISubmenuConfig } from '../ContextMenu/showContextMenu'
@@ -42,6 +42,9 @@ export class ActionManager {
 		return Object.values(this.state).filter(
 			(action) => action.type === 'action'
 		)
+	}
+	getAllElements() {
+		return Object.values(this.state)
 	}
 
 	/**

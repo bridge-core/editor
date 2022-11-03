@@ -1,5 +1,5 @@
 <template>
-	<span v-on="$listeners" :style="{ opacity }">
+	<span v-on="$listeners" class="icon-name" :style="{ opacity }">
 		<v-icon class="pr-1" :color="color" small>
 			{{ icon }}
 		</v-icon>
@@ -31,3 +31,11 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+.icon-name {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+</style>

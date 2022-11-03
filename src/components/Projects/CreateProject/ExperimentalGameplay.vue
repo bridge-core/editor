@@ -10,10 +10,12 @@
 				<v-icon color="primary" class="mr-1">
 					{{ experiment.icon }}
 				</v-icon>
-				<h1 class="header">
+
+				<h1 class="experimental-gameplay-header">
 					{{ t(`experimentalGameplay.${experiment.id}.name`) }}
 				</h1>
 			</div>
+
 			<SelectedStatus :selected="value" />
 
 			<p v-if="!dense">
@@ -51,7 +53,7 @@ export default {
 </script>
 
 <style scoped>
-.header {
+.experimental-gameplay-header {
 	font-size: 1.25rem !important;
 	font-weight: 500;
 	letter-spacing: 0.0125em !important;

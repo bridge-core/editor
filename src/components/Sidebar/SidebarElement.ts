@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 import { Component } from 'vue'
 import type { IDisposable } from '/@/types/disposable'
 import { SidebarContent } from './Content/SidebarContent'
-import { del, set, watch, WatchStopHandle } from '@vue/composition-api'
+import { del, set, watch, WatchStopHandle } from 'vue'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'
 
@@ -12,6 +12,10 @@ export interface ISidebar {
 	displayName?: string
 	group?: string
 	isVisible?: boolean | (() => boolean)
+	/**
+	 * Change the default visibility setting of the sidebar element
+	 */
+	defaultVisibility?: boolean
 	component?: Component
 	sidebarContent?: SidebarContent
 	disabled?: () => boolean
@@ -83,6 +87,9 @@ export class SidebarElement {
 			return this.config.isVisible()
 
 		return this.config.isVisible ?? !!this.isVisibleSetting
+	}
+	get defaultVisibility() {
+		return this.config.defaultVisibility ?? true
 	}
 	get icon() {
 		return this.config.icon

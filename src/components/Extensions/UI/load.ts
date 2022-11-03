@@ -2,10 +2,8 @@ import { extname, basename } from '/@/utils/path'
 import { createErrorNotification } from '/@/components/Notifications/Errors'
 import { TUIStore } from './store'
 import { IDisposable } from '/@/types/disposable'
-import { executeScript } from '../Scripts/loadScripts'
 import { createStyleSheet } from '../Styles/createStyle'
 import Vue from 'vue'
-import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import {
 	VBtn,
 	VAlert,
@@ -19,8 +17,10 @@ import {
 	VWindow,
 	VTooltip,
 } from 'vuetify/lib'
-import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'
+import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { useVueTemplateCompiler } from '/@/utils/libs/useVueTemplateCompiler'
+import { iterateDir } from '/@/utils/iterateDir'
+import { JsRuntime } from '../Scripts/JsRuntime'
 
 const VuetifyComponents = {
 	VBtn,
@@ -37,43 +37,33 @@ const VuetifyComponents = {
 }
 
 export async function loadUIComponents(
-	fileSystem: FileSystem,
-	extensionId: string,
+	jsRuntime: JsRuntime,
+	baseDirectory: AnyDirectoryHandle,
 	uiStore: TUIStore,
-	disposables: IDisposable[],
-	basePath = 'ui'
+	disposables: IDisposable[]
 ) {
-	let dirents: (AnyDirectoryHandle | AnyFileHandle)[] = []
-	try {
-		dirents = await fileSystem.readdir(basePath, { withFileTypes: true })
-	} catch {}
-
-	await Promise.all(
-		dirents.map((dirent) => {
-			if (dirent.kind === 'file')
-				return loadUIComponent(
-					fileSystem,
-					`${basePath}/${dirent.name}`,
-					extensionId,
-					uiStore,
-					disposables
-				)
-			else
-				return loadUIComponents(
-					fileSystem,
-					extensionId,
-					uiStore,
-					disposables,
-					`${basePath}/${dirent.name}`
-				)
-		})
+	await iterateDir(
+		baseDirectory,
+		async (fileHandle, filePath) => {
+			await loadUIComponent(
+				jsRuntime,
+				filePath,
+				await fileHandle.getFile().then((file) => file.text()),
+				uiStore,
+				disposables
+			)
+		},
+		undefined,
+		'ui'
 	)
+
+	uiStore.allLoaded.dispatch()
 }
 
 export async function loadUIComponent(
-	fileSystem: FileSystem,
+	jsRuntime: JsRuntime,
 	componentPath: string,
-	extensionId: string,
+	fileContent: string,
 	uiStore: TUIStore,
 	disposables: IDisposable[]
 ) {
@@ -92,9 +82,7 @@ export async function loadUIComponent(
 
 	const promise = new Promise(async (resolve, reject) => {
 		//@ts-expect-error "errors" is not defined in .d.ts file
-		const { template, script, styles, errors } = parseComponent(
-			await (await fileSystem.readFile(componentPath)).text()
-		)
+		const { template, script, styles, errors } = parseComponent(fileContent)
 
 		if (errors.length > 0) {
 			;(errors as Error[]).forEach((error) =>
@@ -103,14 +91,17 @@ export async function loadUIComponent(
 			return reject(errors[0])
 		}
 
+		const { __default__: componentDef } = script?.content
+			? await jsRuntime.run(
+					componentPath,
+					undefined,
+					script?.content ?? ''
+			  )
+			: { __default__: {} }
+
 		const component = {
 			name: basename(componentPath),
-			...(await (<any>(
-				executeScript(
-					script?.content?.replace('export default', 'return') ?? '',
-					{ uiStore, disposables, extensionId }
-				)
-			))),
+			...componentDef,
 			...Vue.compile(
 				template?.content ?? `<p color="red">NO TEMPLATE DEFINED</p>`
 			),

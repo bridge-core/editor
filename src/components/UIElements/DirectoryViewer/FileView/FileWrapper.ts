@@ -26,9 +26,11 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 	}
 
 	async getFirstDiagnostic() {
-		const diagnostics = await this.options.provideFileDiagnostics?.(this)
+		// TODO: Disabled until we find time to polish the feature
+		return null
+		// const diagnostics = await this.options.provideFileDiagnostics?.(this)
 
-		return diagnostics?.[0]
+		// return diagnostics?.[0]
 	}
 
 	async openFile(persistFile=false) {

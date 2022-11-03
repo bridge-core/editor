@@ -12,7 +12,7 @@
 		@click.prevent="onClick($event)"
 		@keydown.space.prevent="isFocused ? onClick($event) : null"
 		@keydown.stop="onKeyDown"
-		@click.right.prevent="baseWrapper.onRightClick($event)"
+		@click.right.prevent.stop="baseWrapper.onRightClick($event)"
 		@focus.exact="onFocus"
 		@blur="isFocused = false"
 	>
@@ -54,6 +54,7 @@
 			dense
 			hide-details
 			height="20px"
+			ref="renameInput"
 			@blur="cancelRename"
 			@keydown.enter.stop.prevent="confirmRename"
 			@keydown.esc.stop.prevent="cancelRename"
@@ -71,10 +72,11 @@
 		<!-- Context menu button for touch -->
 		<v-btn
 			v-if="pointerDevice === 'touch'"
+			v-ripple="false"
 			text
 			icon
 			small
-			@click="baseWrapper.onRightClick($event)"
+			@click.stop="baseWrapper.onRightClick($event)"
 		>
 			<v-icon> mdi-dots-vertical-circle-outline </v-icon>
 		</v-btn>
@@ -91,6 +93,7 @@ import { useDoubleClick } from '/@/components/Composables/DoubleClick'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { platform } from '/@/utils/os'
 import { pointerDevice } from '/@/utils/pointerDevice'
+import { extname } from '/@/utils/path'
 
 export default {
 	components: { BasicIconName },
@@ -151,7 +154,7 @@ export default {
 			return this.diagnostic.opacity || 1
 		},
 		hasDiagnostic() {
-			return this.diagnostic !== undefined
+			return this.diagnostic !== undefined && this.diagnostic !== null
 		},
 	},
 	methods: {
@@ -166,6 +169,8 @@ export default {
 			this.select()
 		},
 		onKeyDown(event) {
+			if (event.target.tagName === 'INPUT') return
+
 			if (event.code === 'Enter') {
 				// Enter to rename on darwin platforms or open on other platforms
 				this.onEnter(event)
@@ -222,6 +227,23 @@ export default {
 		'baseWrapper.isEditingName.value'() {
 			if (this.baseWrapper.isEditingName.value) {
 				this.currentName = this.baseWrapper.name
+
+				// Set cursor position, in next tick so that input has been rendered
+				this.$nextTick(() => {
+					const input =
+						this.$refs.renameInput.$el.getElementsByTagName(
+							'input'
+						)[0]
+					if (input) {
+						const extension = extname(this.currentName)
+						const end = extension
+							? this.currentName.indexOf(
+									extname(this.currentName)
+							  )
+							: input.value.length
+						input.setSelectionRange(0, end)
+					}
+				})
 			} else {
 				this.focus()
 			}

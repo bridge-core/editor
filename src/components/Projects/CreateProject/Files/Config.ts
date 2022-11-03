@@ -32,6 +32,7 @@ export class CreateConfig extends CreateFile {
 				worlds: ['./worlds/*'],
 				compiler: {
 					plugins: [
+						'generatorScripts',
 						'typeScript',
 						'entityIdentifierAlias',
 						'customEntityComponents',

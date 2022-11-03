@@ -1,7 +1,7 @@
 import { Component as VueComponent } from 'vue'
 import { v4 as uuid } from 'uuid'
 import { App } from '/@/App'
-import { shallowReactive, del, set } from '@vue/composition-api'
+import { shallowReactive, del, set } from 'vue'
 
 export function createWindow(
 	vueComponent: VueComponent,

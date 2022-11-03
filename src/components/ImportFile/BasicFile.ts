@@ -6,6 +6,7 @@ import { FilePathWindow } from '/@/components/Windows/Common/FilePath/Window'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { join } from '/@/utils/path'
+import { translate } from '../Locales/Manager'
 
 export class BasicFileImporter extends FileImporter {
 	constructor(fileDropper: FileDropper) {
@@ -27,13 +28,14 @@ export class BasicFileImporter extends FileImporter {
 				'.mp3',
 				'.fsb',
 			],
-			fileDropper
+			fileDropper,
+			true
 		)
 	}
 
 	async onImport(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
-		const t = app.locales.translate.bind(app.locales)
+		const t = translate
 
 		// If current project is virtual project, simply open the file
 		await app.projectManager.projectReady.fired
@@ -71,12 +73,15 @@ export class BasicFileImporter extends FileImporter {
 
 	protected async onSave(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
+
+		const guessedFolder = await App.fileType.guessFolder(fileHandle)
+
 		// Allow user to change file path that the file is saved to
 		const filePathWindow = new FilePathWindow({
 			fileName: fileHandle.name,
-			startPath: app.project.relativePath(
-				(await App.fileType.guessFolder(fileHandle)) ?? ''
-			),
+			startPath: guessedFolder
+				? app.project.relativePath(guessedFolder)
+				: '',
 			isPersistent: false,
 		})
 		filePathWindow.open()

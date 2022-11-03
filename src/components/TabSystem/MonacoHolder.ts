@@ -7,7 +7,7 @@ import { DefinitionProvider } from '../Definitions/GoTo'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { viewDocumentation } from '../Documentation/view'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { debounce } from 'lodash-es'
 import { platform } from '/@/utils/os'
 import { showContextMenu } from '../ContextMenu/showContextMenu'
@@ -31,8 +31,16 @@ export class MonacoHolder extends Signal<void> {
 				languages.typescript.javascriptDefaults.setCompilerOptions({
 					target: languages.typescript.ScriptTarget.ESNext,
 					allowNonTsExtensions: true,
-					noLib: true,
 					alwaysStrict: true,
+					checkJs: true,
+				})
+				languages.typescript.typescriptDefaults.setCompilerOptions({
+					target: languages.typescript.ScriptTarget.ESNext,
+					allowNonTsExtensions: true,
+					alwaysStrict: true,
+					moduleResolution:
+						languages.typescript.ModuleResolutionKind.NodeJs,
+					module: languages.typescript.ModuleKind.ESNext,
 				})
 
 				languages.registerDefinitionProvider(
@@ -88,8 +96,9 @@ export class MonacoHolder extends Signal<void> {
 				'bracketPairColorization.enabled':
 					settingsState?.editor?.bracketPairColorization ?? false,
 				fontFamily:
-					<string>settingsState?.appearance?.editorFont ??
-					(platform() === 'darwin' ? 'Menlo' : 'Consolas'),
+					(<string>settingsState?.appearance?.editorFont ??
+						(platform() === 'darwin' ? 'Menlo' : 'Consolas')) +
+					', monospace',
 				...this.getMobileOptions(this._app.mobile.isCurrentDevice()),
 				contextmenu: false,
 				// fontFamily: this.fontFamily,

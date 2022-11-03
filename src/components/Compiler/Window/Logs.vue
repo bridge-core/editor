@@ -1,9 +1,10 @@
 <template>
 	<div v-if="data.length > 0">
 		<Sheet
-			v-for="[msg, { type }] in data"
-			:key="`${type}//${msg}`"
+			v-for="([msg, { type }], i) in data"
+			:key="`${type}//${msg}//${i}`"
 			class="pa-2 mb-2 d-flex"
+			style="overflow: auto"
 		>
 			<v-icon
 				v-if="getIconData(type)"

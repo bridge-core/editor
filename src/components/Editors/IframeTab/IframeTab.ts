@@ -2,7 +2,9 @@ import { TabSystem } from '../../TabSystem/TabSystem'
 import IframeTabComponent from './IframeTab.vue'
 import { Tab } from '../../TabSystem/CommonTab'
 import { IframeApi } from './API/IframeApi'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
+import { AnyFileHandle } from '../../FileSystem/Types'
+import { getFullScreenElement } from '../../TabSystem/TabContextMenu/Fullscreen'
 
 interface IIframeTabOptions {
 	icon?: string
@@ -10,6 +12,11 @@ interface IIframeTabOptions {
 	url?: string
 	html?: string
 	iconColor?: string
+	openWithPayload?: {
+		filePath?: string
+		fileHandle?: AnyFileHandle
+		isReadOnly?: boolean
+	}
 }
 
 export class IframeTab extends Tab {
@@ -17,7 +24,7 @@ export class IframeTab extends Tab {
 
 	private iframe = document.createElement('iframe')
 	protected loaded: Promise<void>
-	protected api = markRaw(new IframeApi(this.iframe))
+	protected api = markRaw(new IframeApi(this, this.iframe))
 
 	constructor(parent: TabSystem, protected options: IIframeTabOptions = {}) {
 		super(parent)
@@ -40,21 +47,32 @@ export class IframeTab extends Tab {
 		this.iframe.classList.add('outlined')
 		this.iframe.style.borderRadius = '12px'
 		this.iframe.style.margin = '8px'
-
-		document.body.appendChild(this.iframe)
+		getFullScreenElement()?.appendChild(this.iframe)
 	}
+
+	getOptions() {
+		return this.options
+	}
+
 	async setup() {
-		await this.loaded
 		await super.setup()
 	}
 	async onActivate() {
-		this.iframe.style.display = 'block'
+		await super.onActivate()
+
+		this.isLoading = true
+		await this.loaded
+		this.isLoading = false
+
+		// Only show iframe if tab is still active
+		if (this.isActive) this.iframe.style.display = 'block'
 	}
 	onDeactivate() {
+		super.onDeactivate()
 		this.iframe.style.display = 'none'
 	}
 	onDestroy() {
-		document.body.removeChild(this.iframe)
+		getFullScreenElement()?.removeChild(this.iframe)
 		this.api.dispose()
 	}
 

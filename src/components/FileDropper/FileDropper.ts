@@ -1,8 +1,3 @@
-import { reactive } from '@vue/composition-api'
-import {
-	isUsingOriginPrivateFs,
-	isUsingFileSystemPolyfill,
-} from '/@/components/FileSystem/Polyfill'
 import {
 	AnyDirectoryHandle,
 	AnyFileHandle,
@@ -11,15 +6,14 @@ import {
 import { App } from '/@/App'
 import { extname } from '/@/utils/path'
 
-export interface IDropState {
-	isHovering: boolean
-}
-
 export class FileDropper {
 	protected fileHandlers = new Map<
 		string,
 		(fileHandle: AnyFileHandle) => Promise<void> | void
 	>()
+	protected defaultImporter?: (
+		fileHandle: AnyFileHandle
+	) => Promise<void> | void
 
 	constructor(protected app: App) {
 		window.addEventListener('dragover', (event) => {
@@ -56,11 +50,9 @@ export class FileDropper {
 		await this.app.projectManager.projectReady.fired
 
 		const ext = extname(fileHandle.name)
-		const handler = this.fileHandlers.get(ext)
+		let handler = this.fileHandlers.get(ext) ?? this.defaultImporter
 
-		if (!handler) {
-			return false
-		}
+		if (!handler) return false
 
 		try {
 			await handler(fileHandle)
@@ -86,6 +78,15 @@ export class FileDropper {
 
 		return {
 			dispose: () => this.fileHandlers.delete(ext),
+		}
+	}
+	setDefaultFileImporter(
+		importHandler: (fileHandle: AnyFileHandle) => Promise<void> | void
+	) {
+		this.defaultImporter = importHandler
+
+		return {
+			dispose: () => (this.defaultImporter = undefined),
 		}
 	}
 }

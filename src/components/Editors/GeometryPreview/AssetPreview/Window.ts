@@ -1,9 +1,9 @@
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import AssetPreviewWindowComponent from './Window.vue'
 import type { StandaloneModelViewer } from 'bridge-model-viewer'
-import { markRaw, set } from '@vue/composition-api'
+import { markRaw, reactive } from 'vue'
 import { Color } from 'three'
 import { useBridgeModelViewer } from '/@/utils/libs/useModelViewer'
+import { NewBaseWindow } from '/@/components/Windows/NewBaseWindow'
 
 export interface IAssetPreviewWindowConfig {
 	assetName: string
@@ -19,15 +19,18 @@ interface IAssetPreviewConfig {
 	backgroundColor: string
 }
 
-export class AssetPreviewWindow extends BaseWindow<IAssetPreviewConfig | null> {
-	protected assetName: string
+export class AssetPreviewWindow extends NewBaseWindow<IAssetPreviewConfig | null> {
 	protected textureUrl: string
 	protected modelData: any
-	protected previewScale = 1.5
-	protected outputResolution = 4
-	protected backgroundColor = '#121212'
 	protected modelViewer?: StandaloneModelViewer
-	protected bones: Record<string, boolean> = {}
+	protected state = reactive<any>({
+		...super.state,
+		bones: {},
+		assetName: '',
+		backgroundColor: '#121212',
+		previewScale: 1.5,
+		outputResolution: 4,
+	})
 
 	constructor({
 		assetName,
@@ -36,7 +39,7 @@ export class AssetPreviewWindow extends BaseWindow<IAssetPreviewConfig | null> {
 	}: IAssetPreviewWindowConfig) {
 		super(AssetPreviewWindowComponent, true, false)
 
-		this.assetName = assetName
+		this.state.assetName = assetName
 		this.textureUrl = textureUrl
 		this.modelData = markRaw(modelData)
 
@@ -61,17 +64,16 @@ export class AssetPreviewWindow extends BaseWindow<IAssetPreviewConfig | null> {
 		await modelViewer.loadedModel
 
 		// Initialize bone visibility map
-		for (const boneName of modelViewer.getModel().bones) {
-			set(this.bones, boneName, true)
-		}
+		this.state.bones = Object.fromEntries(
+			modelViewer.getModel().bones.map((boneName) => [boneName, true])
+		)
 
 		// @ts-ignore
-		modelViewer.scene.background = new Color(this.backgroundColor)
+		modelViewer.scene.background = new Color(this.state.backgroundColor)
 
-		modelViewer.positionCamera(this.previewScale)
+		modelViewer.positionCamera(this.state.previewScale)
 
-		this.modelViewer = modelViewer
-		console.log(this)
+		this.modelViewer = markRaw(modelViewer)
 	}
 
 	startClosing(wasCancelled: boolean) {
@@ -79,11 +81,11 @@ export class AssetPreviewWindow extends BaseWindow<IAssetPreviewConfig | null> {
 			wasCancelled
 				? null
 				: {
-						assetName: this.assetName,
-						previewScale: this.previewScale,
-						boneVisibility: this.bones,
-						backgroundColor: this.backgroundColor,
-						outputResolution: this.outputResolution,
+						assetName: this.state.assetName,
+						previewScale: this.state.previewScale,
+						boneVisibility: this.state.bones,
+						backgroundColor: this.state.backgroundColor,
+						outputResolution: this.state.outputResolution,
 				  }
 		)
 	}

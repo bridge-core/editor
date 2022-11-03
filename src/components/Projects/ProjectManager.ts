@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { get as idbGet, set as idbSet } from 'idb-keyval'
-import { shallowReactive, set, del } from '@vue/composition-api'
+import { shallowReactive, set, del, markRaw } from 'vue'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { Project, virtualProjectName } from './Project/Project'
 import { Title } from '/@/components/Projects/Title'
@@ -14,12 +14,13 @@ import { getStableFormatVersion } from '../Data/FormatVersions'
 import { v4 as uuid } from 'uuid'
 import { ICreateProjectOptions } from './CreateProject/CreateProject'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
+import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
 	public readonly activatedProject = new EventDispatcher<Project>()
 	public readonly state: Record<string, Project> = shallowReactive({})
-	public readonly title = Object.freeze(new Title())
+	public readonly title = markRaw(new Title())
 	protected _selectedProject?: string = undefined
 	public readonly projectReady = new Signal<void>()
 
@@ -43,10 +44,13 @@ export class ProjectManager extends Signal<void> {
 		await this.fired
 		return Object.values(this.state).filter((p) => !p.isVirtualProject)
 	}
+	getProject(projectName: string): Project | undefined {
+		return this.state[projectName]
+	}
 	async addProject(
 		projectDir: AnyDirectoryHandle,
 		isNewProject = true,
-		requiresPermissions = false
+		requiresPermissions = this.app.bridgeFolderSetup.hasFired
 	) {
 		const project = new BedrockProject(this, this.app, projectDir, {
 			requiresPermissions,
@@ -62,12 +66,17 @@ export class ProjectManager extends Signal<void> {
 
 		return project
 	}
-	async removeProject(project: Project) {
+	async removeProject(project: Project, unlinkProject = true) {
 		if (!this.state[project.name])
 			throw new Error('Project to delete not found')
 
+		if (this._selectedProject === project.name) {
+			await this.selectProject(virtualProjectName)
+			project.dispose()
+		}
+
 		del(this.state, project.name)
-		await this.app.fileSystem.unlink(project.projectPath)
+		if (unlinkProject) await this.app.fileSystem.unlink(project.projectPath)
 
 		await this.storeProjects(project.name)
 	}
@@ -87,31 +96,39 @@ export class ProjectManager extends Signal<void> {
 			'projects',
 			{ create: true }
 		)
-		const localDirectoryHandle = await this.app.fileSystem.getDirectoryHandle(
-			'~local/projects',
-			{ create: true }
-		)
 
 		const isBridgeFolderSetup = this.app.bridgeFolderSetup.hasFired
+
+		const promises = []
 
 		// Load existing projects
 		for await (const handle of directoryHandle.values()) {
 			if (handle.kind !== 'directory') continue
 
-			await this.addProject(handle, false, requiresPermissions)
+			promises.push(this.addProject(handle, false, requiresPermissions))
 		}
 
 		if (isBridgeFolderSetup) {
+			const localDirectoryHandle =
+				await this.app.fileSystem.getDirectoryHandle(
+					'~local/projects',
+					{
+						create: true,
+					}
+				)
+
 			// Load local projects as well
 			for await (const handle of localDirectoryHandle.values()) {
 				if (handle.kind !== 'directory') continue
 
-				await this.addProject(handle, false, false)
+				promises.push(this.addProject(handle, false, false))
 			}
 		}
 
-		// Update stored projects
-		if (isBridgeFolderSetup) await this.storeProjects(undefined, true)
+		await Promise.allSettled(promises)
+
+		// Update stored projects in the background (don't await it)
+		if (isBridgeFolderSetup) this.storeProjects(undefined, true)
 		// Create a placeholder project (virtual project)
 		else await this.createVirtualProject()
 
@@ -119,6 +136,9 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async createVirtualProject() {
+		// Ensure that we first unlink the previous virtual project
+		await this.app.fileSystem.unlink(`projects/${virtualProjectName}`)
+
 		const handle = await this.app.fileSystem.getDirectoryHandle(
 			`projects/${virtualProjectName}`,
 			{
@@ -160,7 +180,7 @@ export class ProjectManager extends Signal<void> {
 		if (this.app.viewComMojangProject.hasComMojangProjectLoaded) {
 			await this.app.viewComMojangProject.clearComMojangProject()
 		}
-		if (this._selectedProject === projectName) return
+		if (this._selectedProject === projectName) return true
 
 		if (this.state[projectName] === undefined) {
 			if (failGracefully) {
@@ -168,13 +188,16 @@ export class ProjectManager extends Signal<void> {
 					description:
 						'packExplorer.noProjectView.projectNoLongerExists',
 				})
-				return
+				return false
 			}
 
 			throw new Error(
 				`Cannot select project "${projectName}" because it no longer exists`
 			)
 		}
+
+		if (!this.app.comMojang.hasFired && projectName !== virtualProjectName)
+			this.app.comMojang.setupComMojang()
 
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName
@@ -190,9 +213,21 @@ export class ProjectManager extends Signal<void> {
 		await this.storeProjects()
 
 		if (!this.projectReady.hasFired) this.projectReady.dispatch()
+		return true
 	}
 	async selectLastProject() {
 		await this.fired
+		if (isUsingFileSystemPolyfill.value) {
+			const selectedProject = await idbGet('selectedProject')
+			let didSelectProject = false
+			if (typeof selectedProject === 'string')
+				didSelectProject = await this.selectProject(
+					selectedProject,
+					true
+				)
+
+			if (didSelectProject) return
+		}
 		await this.selectProject(virtualProjectName)
 	}
 
@@ -248,8 +283,8 @@ export class ProjectManager extends Signal<void> {
 			isFavorite?: boolean
 		}[] = await this.loadAvailableProjects(exceptProject)
 
-		let newData: any[] = forceRefresh ? [] : data
-		this.forEachProject((project) => {
+		let newData: any[] = forceRefresh ? [] : [...data]
+		Object.values(this.state).forEach((project) => {
 			if (project.isVirtualProject) return
 
 			const storedData = data.find(

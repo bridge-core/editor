@@ -2,10 +2,12 @@ import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/Confirm
 import { App } from '/@/App'
 import { SimpleAction } from '../../Actions/SimpleAction'
 
-export const restartWatchModeConfig = {
+export const restartWatchModeConfig = (includeDescription = true) => ({
 	icon: 'mdi-restart-alert',
 	name: 'packExplorer.restartWatchMode.name',
-	description: 'packExplorer.restartWatchMode.description',
+	description: includeDescription
+		? 'packExplorer.restartWatchMode.description'
+		: undefined,
 	onTrigger: () => {
 		new ConfirmationWindow({
 			description: 'packExplorer.restartWatchMode.confirmDescription',
@@ -26,6 +28,6 @@ export const restartWatchModeConfig = {
 			},
 		})
 	},
-}
+})
 
-export const restartWatchModeAction = new SimpleAction(restartWatchModeConfig)
+export const restartWatchModeAction = new SimpleAction(restartWatchModeConfig())

@@ -8,6 +8,8 @@ import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { shareFile } from '../StartParams/Action/openRawFile'
 import { getDefaultFileIcon } from '/@/utils/file/getIcon'
+import { settingsState } from '../Windows/Settings/SettingsState'
+import { fullScreenAction } from './TabContextMenu/Fullscreen'
 
 export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	abstract component: Vue.Component
@@ -16,10 +18,10 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	protected _isUnsaved = false
 	public isForeignFile = true
 	public connectedTabs: Tab[] = []
-	public isTemporary = true
+	public isTemporary = !settingsState?.editor?.keepTabsOpen ?? true
 	public readonly onClose = new EventDispatcher<void>()
 
-	protected path?: string
+	protected path?: string = undefined
 	protected folderName: string | null = null
 	protected actions: SimpleAction[] = []
 	protected isActive = false
@@ -37,6 +39,9 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	async setup() {
 		this.dispatch(this)
 		this.isLoading = false
+	}
+	get project() {
+		return this.parent.project
 	}
 
 	setIsLoading(val: boolean) {
@@ -58,7 +63,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		return this.parent
 	}
 	get isSharingScreen() {
-		return this.parent.isSharingScreen
+		return this.parent.isSharingScreen.value
 	}
 
 	abstract get name(): string
@@ -97,14 +102,15 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		)
 	}
 	get iconColor() {
-		return App.packType.get(this.getPath())?.color
+		if (!this.hasFired) return 'accent'
+		return App.packType.get(this.getPath(), true)?.color
 	}
 
 	get isSelected(): boolean {
 		return this.parent.selectedTab === this
 	}
-	select() {
-		this.parent.select(this)
+	async select() {
+		await this.parent.select(this)
 		return this
 	}
 	/**
@@ -155,7 +161,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 				await from.openedFiles.remove(this.getPath())
 			}
 
-			if (wasSelected) await from.select(from.tabs[0])
+			if (wasSelected) await from.select(from.tabs.value[0])
 
 			await to.select(this)
 		}
@@ -185,17 +191,15 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 		if (this.isTemporary) {
 			additionalItems.push({
 				name: 'actions.keepInTabSystem.name',
-				description: 'actions.keepInTabSystem.description',
 				icon: 'mdi-pin-outline',
 				onTrigger: () => {
 					this.isTemporary = false
 				},
 			})
 		}
-		if (this.parent.tabs.length > 1) {
+		if (this.parent.tabs.value.length > 1) {
 			additionalItems.push({
 				name: 'actions.moveToSplitScreen.name',
-				description: 'actions.moveToSplitScreen.description',
 				icon: 'mdi-arrow-split-vertical',
 				onTrigger: async () => {
 					this.toOtherTabSystem()
@@ -207,10 +211,10 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			additionalItems.push(<const>{ type: 'divider' })
 
 		await showContextMenu(event, [
+			fullScreenAction(false),
 			...additionalItems,
 			{
 				name: 'actions.closeTab.name',
-				description: 'actions.closeTab.description',
 				icon: 'mdi-close',
 				onTrigger: () => {
 					this.close()
@@ -218,7 +222,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			},
 			{
 				name: 'actions.closeAll.name',
-				description: 'actions.closeAll.description',
 				icon: 'mdi-table-row',
 				onTrigger: () => {
 					this.parent.closeTabs(() => true)
@@ -226,7 +229,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			},
 			{
 				name: 'actions.closeTabsToRight.name',
-				description: 'actions.closeTabsToRight.description',
 				icon: 'mdi-chevron-right',
 				onTrigger: () => {
 					let closeTabs = true
@@ -238,7 +240,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			},
 			{
 				name: 'actions.closeAllSaved.name',
-				description: 'actions.closeAllSaved.description',
 				icon: 'mdi-content-save-outline',
 				onTrigger: () => {
 					this.parent.closeTabs((tab) => !tab.isUnsaved)
@@ -246,7 +247,6 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			},
 			{
 				name: 'actions.closeOtherTabs.name',
-				description: 'actions.closeOtherTabs.description',
 				icon: 'mdi-unfold-more-vertical',
 				onTrigger: () => {
 					this.parent.closeTabs((tab) => tab !== this)

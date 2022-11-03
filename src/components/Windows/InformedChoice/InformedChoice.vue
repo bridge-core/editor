@@ -1,24 +1,24 @@
 <template>
 	<BaseWindow
-		:windowTitle="title"
-		:isVisible="isVisible"
-		:hasCloseButton="!opts.isPersistent"
+		:windowTitle="window.title"
+		:isVisible="state.isVisible"
+		:hasCloseButton="!window.opts.isPersistent"
 		:hasMaximizeButton="false"
 		:percentageWidth="50"
 		:maxPercentageHeight="80"
-		:isPersistent="opts.isPersistent"
+		:isPersistent="window.opts.isPersistent"
 		heightUnset
 		@closeWindow="onClose"
 	>
 		<template #default>
 			<InfoPanel
-				v-if="currentWindow.topPanel"
+				v-if="window.topPanel"
 				class="mb-2"
-				:infoPanel="currentWindow.topPanel"
+				:infoPanel="window.topPanel"
 			/>
 
 			<ActionViewer
-				v-for="(action, id) in $data._actionManager.state"
+				v-for="(action, id) in state.actionManager.state"
 				:key="id"
 				:action="action"
 				:hideTriggerButton="true"
@@ -30,32 +30,20 @@
 	</BaseWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
 import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import InfoPanel from '/@/components/InfoPanel/InfoPanel.vue'
+import type { SimpleAction } from '../../Actions/SimpleAction'
 
-export default {
-	name: 'InformedChoiceWindow',
-	mixins: [TranslationMixin],
-	components: {
-		BaseWindow,
-		ActionViewer,
-		InfoPanel,
-	},
-	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close()
-		},
-		onClick(action) {
-			action.trigger()
-			this.currentWindow.close()
-		},
-	},
+const props = defineProps(['window'])
+const state = props.window.getState()
+
+function onClose() {
+	props.window.close()
+}
+function onClick(action: SimpleAction) {
+	action.trigger()
+	props.window.close()
 }
 </script>

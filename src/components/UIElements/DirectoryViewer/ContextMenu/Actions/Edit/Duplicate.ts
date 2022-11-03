@@ -5,7 +5,7 @@ import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/Bas
 export const DuplicateAction = (baseWrapper: BaseWrapper<any>) => ({
 	icon: 'mdi-content-duplicate',
 	name: 'actions.duplicate.name',
-	description: 'actions.duplicate.description',
+
 	onTrigger: async () => {
 		const parent = baseWrapper.getParent()
 		if (!parent) return

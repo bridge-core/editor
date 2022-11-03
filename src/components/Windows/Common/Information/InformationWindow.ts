@@ -1,6 +1,5 @@
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import InformationWindowComponent from './Information.vue'
-import { App } from '/@/App'
+import { NewBaseWindow } from '../../NewBaseWindow'
 
 export interface IConfirmWindowOpts {
 	title?: string
@@ -11,7 +10,7 @@ export interface IConfirmWindowOpts {
 	onClose?: () => Promise<void> | void
 }
 
-export class InformationWindow extends BaseWindow<void> {
+export class InformationWindow extends NewBaseWindow<void> {
 	constructor(protected opts: IConfirmWindowOpts) {
 		super(InformationWindowComponent, true, false)
 		this.defineWindow()

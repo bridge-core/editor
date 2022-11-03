@@ -1,6 +1,6 @@
 import { Control } from '../Control'
 import ActionViewerComponent from './ActionViewer.vue'
-import { shallowReactive } from '@vue/composition-api'
+import { shallowReactive } from 'vue'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 
 export class ActionViewer extends Control<any> {
@@ -25,7 +25,7 @@ export class ActionViewer extends Control<any> {
 	matches(filter: string) {
 		return (
 			this.config.action.name.includes(filter) ||
-			this.config.action.description.includes(filter)
+			this.config.action.description?.includes(filter)
 		)
 	}
 	onChange = async () => {}

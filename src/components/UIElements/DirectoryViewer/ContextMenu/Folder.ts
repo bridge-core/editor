@@ -2,6 +2,9 @@ import { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
 import { DownloadAction } from './Actions/Download'
 import { EditAction } from './Actions/Edit'
 import { CopyAction } from './Actions/Edit/Copy'
+import { FindInFolderAction } from './Actions/FindInFolder'
+import { ImportFileAction } from './Actions/ImportFile'
+import { RefreshAction } from './Actions/Refresh'
 import { RevealFilePathAction } from './Actions/RevealPath'
 import { App } from '/@/App'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
@@ -26,7 +29,7 @@ export async function showFolderContextMenu(
 		{
 			icon: 'mdi-file-plus-outline',
 			name: 'actions.createFile.name',
-			description: 'actions.createFile.description',
+
 			onTrigger: async () => {
 				const inputWindow = new InputWindow({
 					name: 'actions.createFile.name',
@@ -57,7 +60,7 @@ export async function showFolderContextMenu(
 		{
 			icon: 'mdi-folder-plus-outline',
 			name: 'actions.createFolder.name',
-			description: 'actions.createFolder.description',
+
 			onTrigger: async () => {
 				const inputWindow = new InputWindow({
 					name: 'actions.createFolder.name',
@@ -77,15 +80,26 @@ export async function showFolderContextMenu(
 				directoryWrapper.refresh()
 			},
 		},
+		ImportFileAction(directoryWrapper),
+		FindInFolderAction(directoryWrapper),
 		{ type: 'divider' },
 		await EditAction(directoryWrapper, options),
 	]).filter((action) => action !== null)
 
+	const additionalActions =
+		await directoryWrapper.options.provideDirectoryContextMenu?.(
+			directoryWrapper
+		)
+
 	showContextMenu(event, [
 		...(directoryWrapper.options.isReadOnly
-			? [CopyAction(directoryWrapper)]
+			? [
+					FindInFolderAction(directoryWrapper),
+					CopyAction(directoryWrapper),
+			  ]
 			: mutatingActions),
 		{ type: 'divider' },
+		RefreshAction(directoryWrapper),
 		DownloadAction(directoryWrapper),
 		RevealFilePathAction(directoryWrapper),
 		// 	{
@@ -93,8 +107,6 @@ export async function showFolderContextMenu(
 		// 		name: 'Find in Folder',
 		// 		onTrigger: async () => {},
 		// 	},
-		...(directoryWrapper.options.provideDirectoryContextMenu?.(
-			directoryWrapper
-		) ?? []),
+		...(additionalActions ?? []),
 	])
 }

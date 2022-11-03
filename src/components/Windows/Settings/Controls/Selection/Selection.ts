@@ -3,6 +3,7 @@ import SelectionComponent from './Selection.vue'
 
 export interface ISelectionControl<T> extends IControl<T> {
 	options: (string | { text: string; value: string })[]
+	onClick?: () => Promise<void> | void
 }
 
 export class Selection<T = string> extends Control<T, ISelectionControl<T>> {

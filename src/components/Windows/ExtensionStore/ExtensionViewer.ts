@@ -14,7 +14,7 @@ export class ExtensionViewer {
 	protected isLoading = false
 	protected _isInstalled = false
 	protected isUpdateAvailable = false
-	protected connected?: Extension
+	protected connected: Extension[] = []
 	protected showMenu = false
 	public isActive = true
 
@@ -58,26 +58,40 @@ export class ExtensionViewer {
 		return this.manifest.readme
 	}
 	get manifest() {
-		if (this.isUpdateAvailable) return this.config
+		if (this.isUpdateAvailable) return this.config ?? {}
 
-		return this.connected?.manifest ?? this.config
+		return this.extension?.manifest ?? this.config ?? {}
 	}
 	//#endregion
 
+	get compilerPlugins() {
+		const ext = this.extension
+		if (ext) return Object.keys(ext.compilerPlugins ?? {})
+
+		return Object.keys(this.config?.compiler?.plugins ?? {})
+	}
 	get isInstalled() {
 		return this._isInstalled
 	}
 	get actions() {
-		return extensionActions(this)
+		return extensionActions(this).filter((action) => action !== null)
 	}
-	get extension() {
-		return this.connected
-	}
+
 	get isGlobal() {
-		return this.connected?.isGlobal ?? false
+		return this.extension?.isGlobal ?? false
 	}
 	get onlineVersion() {
 		return this.config.version
+	}
+	get isInstalledLocallyAndGlobally() {
+		return this.connected.length === 2
+	}
+	get extension() {
+		if (this.connected.length === 0) return null
+		const localExtension = this.connected.find((ext) => !ext.isGlobal)
+		if (localExtension) return localExtension
+
+		return this.connected[0]
 	}
 
 	hasTag(tag: ExtensionTag) {
@@ -98,15 +112,19 @@ export class ExtensionViewer {
 					compareVersions(
 						appVersion,
 						this.config.compatibleAppVersions.max,
-						'<='
+						'<'
 					)) ||
 					!this.config.compatibleAppVersions.max))
 		)
 	}
 
 	async download(isGlobalInstall?: boolean) {
+		const app = await App.getApp()
 		if (isGlobalInstall !== undefined)
 			return this.downloadExtension(isGlobalInstall)
+
+		// If the user is on the HomeView, only allow global extension installations
+		if (app.isNoProjectSelected) return this.downloadExtension(true)
 
 		const installLocationChoiceWindow = new InformedChoiceWindow(
 			'windows.pluginInstallLocation.title'
@@ -163,7 +181,7 @@ export class ExtensionViewer {
 				if (!extension.isInstalled)
 					await extension.downloadExtension(isGlobalInstall)
 				else if (!extension.isActive && extension.connected)
-					extension.connected?.activate()
+					extension.connected.forEach((ext) => ext.activate())
 			}
 		}
 
@@ -171,7 +189,9 @@ export class ExtensionViewer {
 		const extension = await extensionLoader.loadExtension(
 			await app.fileSystem.getDirectoryHandle(basePath),
 			await app.fileSystem.getFileHandle(zipPath),
-			shouldActivateExtension
+			// Only activate extension if we're supposed to and the currently connected extension is global
+			shouldActivateExtension &&
+				(this.connected.length === 0 || this.extension?.isGlobal)
 		)
 
 		if (extension) this.setConnected(extension)
@@ -183,8 +203,7 @@ export class ExtensionViewer {
 		if (!isUpdateDownload) {
 			if (extension?.contributesCompilerPlugins) {
 				new ConfirmationWindow({
-					title:
-						'windows.extensionStore.compilerPluginDownload.title',
+					title: 'windows.extensionStore.compilerPluginDownload.title',
 					description:
 						'windows.extensionStore.compilerPluginDownload.description',
 					cancelText: 'general.later',
@@ -218,25 +237,36 @@ export class ExtensionViewer {
 	}
 
 	async update(notifyParent = true) {
-		if (!this.connected) return
+		if (this.connected.length === 0) return
 
 		if (notifyParent) this.parent.updateInstalled(this)
 
-		const wasExtensionActive = this.connected.isActive
-		this.connected.deactivate()
-		await this.connected.resetInstalled()
-		await this.downloadExtension(
-			this.connected.isGlobal,
-			true,
-			wasExtensionActive
+		const wasExtensionActive = this.connected.map((ext) => ext.isActive)
+
+		this.connected.forEach((ext) => ext.deactivate())
+		await Promise.all(
+			this.connected.map(async (ext, i) => {
+				await ext.resetInstalled()
+
+				await this.downloadExtension(
+					ext.isGlobal,
+					true,
+					wasExtensionActive[i]
+				)
+			})
 		)
 	}
 	delete() {
-		if (!this.connected) return
+		if (this.connected.length === 0) return
 
-		this.connected?.delete()
-		this.parent.delete(this)
-		this._isInstalled = false
+		this.extension?.delete()
+
+		this.connected = this.connected.filter((ext) => ext !== this.extension)
+
+		if (this.connected.length === 0) {
+			this.parent.delete(this)
+			this._isInstalled = false
+		}
 	}
 
 	setInstalled() {
@@ -247,15 +277,20 @@ export class ExtensionViewer {
 		this.isUpdateAvailable = true
 	}
 	setConnected(ext: Extension) {
-		this.connected = ext
-		this.isActive = this.connected?.isActive
+		this.connected.push(ext)
+
+		this.isActive = this.extension?.isActive ?? false
 	}
 
 	setActive(value: boolean) {
 		if (!this.connected)
 			throw new Error(`No extension connected to ExtensionViewer`)
 
-		this.connected.setActive(value)
+		// Deactivate all connected extensions
+		if (!value) this.connected.forEach((ext) => ext.setActive(value))
+		// But only activate the current extension
+		else this.extension?.setActive(value)
+
 		this.isActive = value
 	}
 	closeActionMenu() {
@@ -273,8 +308,8 @@ export class ExtensionViewer {
 
 		await navigator
 			.share({
-				title: this.name,
-				text: 'View this extension within bridge. v2',
+				title: `Extension: ${this.name}`,
+				text: `View the extension "${this.name}" within bridge.!`,
 				url: url.href,
 			})
 			.catch(() => {})

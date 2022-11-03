@@ -2,6 +2,9 @@
 globalThis.process = {
 	cwd: () => '',
 	env: {},
+	release: {
+		name: 'browser',
+	},
 }
 
 import '/@/components/FileSystem/Virtual/Comlink'
@@ -9,13 +12,17 @@ import { expose } from 'comlink'
 import { FileTypeLibrary, IFileType } from '/@/components/Data/FileType'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import type { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
-import { Dash } from 'dash-compiler'
+import { Dash, initRuntimes } from 'dash-compiler'
 import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { DashFileSystem } from './FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { dirname } from '/@/utils/path'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { ForeignConsole } from './Console'
+import { Mutex } from '../../Common/Mutex'
+import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+
+initRuntimes(wasmUrl)
 
 export interface ICompilerOptions {
 	config: string
@@ -27,11 +34,14 @@ export interface ICompilerOptions {
 const dataLoader = new DataLoader()
 const consoles = new Map<string, ForeignConsole>()
 
+/**
+ * Dispatches an event whenever a task starts with progress steps
+ */
 export class DashService extends EventDispatcher<void> {
 	protected fileSystem: DashFileSystem
 	public fileType: FileTypeLibrary
-	protected dash: Dash<DataLoader>
-	public isDashFree = new Signal<void>()
+	protected readonly dash: Dash<DataLoader>
+	public isDashFree = new Mutex()
 	protected projectDir: string
 	public isSetup = false
 	public completedStartUp = new Signal<void>()
@@ -65,6 +75,7 @@ export class DashService extends EventDispatcher<void> {
 			mode: options.mode,
 			fileType: this.fileType,
 			packType: new PackTypeLibrary(),
+			verbose: true,
 			requestJsonData: (path) => dataLoader.readJSON(path),
 		})
 
@@ -85,15 +96,16 @@ export class DashService extends EventDispatcher<void> {
 	}
 
 	async compileFile(filePath: string, fileContent: Uint8Array) {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 
 		const [deps, data] = await this.dash.compileFile(filePath, fileContent)
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 		return <const>[deps, data ?? fileContent]
 	}
 
 	async start(changedFiles: string[], deletedFiles: string[]) {
+		await this.isDashFree.lock()
+
 		const fs = this.fileSystem.internal
 		if (
 			(await fs.fileExists(
@@ -105,83 +117,88 @@ export class DashService extends EventDispatcher<void> {
 			))
 		) {
 			await Promise.all([
-				this.build().catch((err) => console.error(err)),
+				this.build(false).catch((err) => console.error(err)),
 				fs
 					.unlink(`${this.projectDir}/.bridge/.restartWatchMode`)
 					.catch((err) => console.error(err)),
 			])
 		} else {
-			await Promise.all([
-				...deletedFiles.map((f) => this.unlink(f, false)),
-			])
+			if (deletedFiles.length > 0)
+				await this.unlinkMultiple(deletedFiles, false)
 
-			if (changedFiles.length > 0) await this.updateFiles(changedFiles)
+			if (changedFiles.length > 0)
+				await this.updateFiles(changedFiles, false)
 		}
 
 		this.completedStartUp.dispatch()
+		this.isDashFree.unlock()
 	}
 
-	async build() {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+	async build(acquireLock = true) {
+		if (acquireLock) await this.isDashFree.lock()
 		this.dispatch()
 
 		await this.dash.build()
 
-		this.isDashFree.dispatch()
+		if (acquireLock) this.isDashFree.unlock()
 	}
-	async updateFiles(filePaths: string[]) {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+	async updateFiles(filePaths: string[], acquireLock = true) {
+		if (acquireLock) await this.isDashFree.lock()
 		this.dispatch()
 
 		await this.dash.updateFiles(filePaths)
 
-		this.isDashFree.dispatch()
+		if (acquireLock) this.isDashFree.unlock()
 	}
 	async unlink(path: string, updateDashFile = true) {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 
 		await this.dash.unlink(path, updateDashFile)
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 	}
-	async unlinkMultiple(paths: string[]) {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+	async unlinkMultiple(paths: string[], acquireLock = true) {
+		if (acquireLock) await this.isDashFree.lock()
 
 		await this.dash.unlinkMultiple(paths)
 
-		this.isDashFree.dispatch()
+		if (acquireLock) this.isDashFree.unlock()
 	}
 	async rename(oldPath: string, newPath: string) {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 		this.dispatch()
 
 		await this.dash.rename(oldPath, newPath)
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
+	}
+	async renameMultiple(renamePaths: [string, string][]) {
+		for (const [oldPath, newPath] of renamePaths) {
+			await this.dash.rename(oldPath, newPath)
+		}
 	}
 	getCompilerOutputPath(filePath: string) {
 		return this.dash.getCompilerOutputPath(filePath)
 	}
+	getFileDependencies(filePath: string) {
+		return this.dash.getFileDependencies(filePath)
+	}
 
 	async setup() {
+		await this.isDashFree.lock()
+
 		if (!dataLoader.hasFired) await dataLoader.loadData()
 		await this.dash.setup(dataLoader)
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 		this.isSetup = true
 	}
 	async reloadPlugins() {
-		await this.isDashFree.fired
-		this.isDashFree.resetSignal()
+		await this.isDashFree.lock()
 
 		await this.dash.reload()
 
-		this.isDashFree.dispatch()
+		this.isDashFree.unlock()
 	}
 
 	onProgress(cb: (progress: number) => void) {

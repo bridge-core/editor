@@ -27,7 +27,7 @@ export class ItemsSchema extends Schema {
 		return Array.isArray(this.children) ? this.children : [this.children]
 	}
 
-	getSchemasFor(obj: unknown, location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number | undefined)[]) {
 		const key = location.shift()
 
 		if (typeof key === 'string') return []
@@ -55,7 +55,9 @@ export class ItemsSchema extends Schema {
 					(item) =>
 						<const>{
 							type:
-								item.type === 'object' ? 'array' : 'valueArray',
+								item.type === 'object'
+									? 'objectArray'
+									: 'valueArray',
 							label: `${item.value}`,
 							value: item.value,
 						}

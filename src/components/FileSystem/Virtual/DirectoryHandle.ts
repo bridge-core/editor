@@ -2,6 +2,9 @@ import { VirtualHandle, BaseVirtualHandle } from './Handle'
 import { VirtualFileHandle } from './FileHandle'
 import { ISerializedDirectoryHandle } from './Comlink'
 import { IDBWrapper } from './IDB'
+import { GlobalMutex } from '/@/components/Common/GlobalMutex'
+
+const globalMutex = new GlobalMutex()
 
 /**
  * A class that implements a virtual folder
@@ -67,8 +70,21 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 		this.updateIdb(clearDB)
 	}
+	/**
+	 * Acquire exclusive access to this directory
+	 */
+	async lockAccess() {
+		await globalMutex.lock(this.idbKey)
+	}
+	/**
+	 * Release exclusive access to this directory
+	 */
+	unlockAccess() {
+		globalMutex.unlock(this.idbKey)
+	}
 
 	async updateIdb(clearDB = false) {
+		await this.lockAccess()
 		if (clearDB) {
 			await this.idbWrapper.clear()
 		}
@@ -77,18 +93,14 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			await this.idbWrapper.set(this.idbKey, [])
 
 		this.setupDone.dispatch()
+		this.unlockAccess()
 	}
 
 	protected async addChild(child: VirtualHandle) {
-		if (await this.has(child.name)) {
-			return
-		}
-
 		if (this.children) this.children.set(child.name, child)
 		else
 			await this.idbWrapper.set(this.idbKey, [
-				...(await this.fromIdb()),
-				child.name,
+				...new Set([...(await this.fromIdb()), child.name]),
 			])
 	}
 	protected async fromIdb() {
@@ -99,11 +111,13 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		if (this.children) return [...this.children.values()]
 		else
 			return <VirtualHandle[]>(
-				await Promise.all(
-					(await this.fromIdb())
-						.map((name) => this.getChild(name))
-						.filter((child) => child !== undefined)
-				)
+				(
+					await Promise.all(
+						(
+							await this.fromIdb()
+						).map((name) => this.getChild(name))
+					)
+				).filter((child) => child !== undefined)
 			)
 	}
 	protected getChildPath(childName: string) {
@@ -125,13 +139,23 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		}
 	}
 
-	async deleteChild(childName: string) {
+	/**
+	 * @deprecated THIS IS NOT A PUBLIC API
+	 *
+	 * @param childName
+	 * @param lockMutex
+	 */
+	async deleteChild(childName: string, lockMutex = true) {
+		if (lockMutex) await this.lockAccess()
+
 		if (this.children) this.children.delete(childName)
 		else
 			await this.idbWrapper.set(
 				this.idbKey,
 				(await this.fromIdb()).filter((name) => name !== childName)
 			)
+
+		if (lockMutex) this.unlockAccess()
 	}
 
 	protected async hasChildren() {
@@ -144,6 +168,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	}
 	serialize(): ISerializedDirectoryHandle {
 		return {
+			idbWrapper: this.idbWrapper.storeName,
 			kind: 'directory',
 			name: this.name,
 			path: this.path,
@@ -159,7 +184,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		parent: VirtualDirectoryHandle | null = null
 	) {
 		const dir = new VirtualDirectoryHandle(
-			parent,
+			!parent ? new IDBWrapper(data.idbWrapper) : parent,
 			data.name,
 			undefined,
 			false,
@@ -182,9 +207,12 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		name: string,
 		{ create }: { create?: boolean } = {}
 	) {
+		await this.lockAccess()
+
 		let entry = await this.getChild(name)
 
 		if (entry && entry.kind === 'file') {
+			this.unlockAccess()
 			throw new Error(
 				`TypeMismatch: Expected directory with name "${name}", found file`
 			)
@@ -199,11 +227,14 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 				await this.addChild(entry)
 			} else {
+				this.unlockAccess()
 				throw new Error(
 					`No file with the name ${name} exists in this folder`
 				)
 			}
 		}
+
+		this.unlockAccess()
 
 		return <VirtualDirectoryHandle>entry
 	}
@@ -214,9 +245,11 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			initialData,
 		}: { create?: boolean; initialData?: Uint8Array } = {}
 	) {
+		await this.lockAccess()
 		let entry = await this.getChild(name)
 
 		if (entry && entry.kind === 'directory') {
+			this.unlockAccess()
 			throw new Error(
 				`TypeMismatch: Expected file with name "${name}", found directory`
 			)
@@ -231,11 +264,14 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 				await this.addChild(entry)
 			} else {
+				this.unlockAccess()
 				throw new Error(
 					`No file with the name ${name} exists in this folder`
 				)
 			}
 		}
+
+		this.unlockAccess()
 
 		return <VirtualFileHandle>entry
 	}
@@ -243,9 +279,12 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		name: string,
 		{ recursive }: { recursive?: boolean } = {}
 	) {
+		await this.lockAccess()
+
 		const entry = await this.getChild(name)
 
 		if (!entry) {
+			this.unlockAccess()
 			throw new Error(
 				`No entry with the name ${name} exists in this folder`
 			)
@@ -254,14 +293,16 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			!recursive &&
 			(await (<VirtualDirectoryHandle>entry).hasChildren())
 		) {
+			this.unlockAccess()
 			throw new Error(
 				`Cannot remove directory with children without "recursive" option being set to true`
 			)
 		}
 
-		await entry.removeSelf()
+		await entry.removeSelf(true, false)
 
-		await this.deleteChild(name)
+		await this.deleteChild(name, false)
+		this.unlockAccess()
 	}
 	async resolve(possibleDescendant: VirtualHandle) {
 		const path: string[] = [possibleDescendant.name]
@@ -275,7 +316,9 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		if (current === null) return null
 		return path
 	}
-	async removeSelf(isFirst = true) {
+	async removeSelf(isFirst = true, lockMutex = true) {
+		if (lockMutex) await this.lockAccess()
+
 		const children = await this.getChildren()
 
 		for (const child of children) {
@@ -284,6 +327,8 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 		if (!this.children) await this.idbWrapper.del(this.idbKey)
 		if (this.parent && isFirst) this.parent.deleteChild(this.name)
+
+		if (lockMutex) this.unlockAccess()
 	}
 
 	[Symbol.asyncIterator]() {

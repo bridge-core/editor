@@ -4,6 +4,7 @@
 		solo
 		rounded
 		hide-details
+		background-color="expandedSidebar"
 		:append-icon="null"
 		class="commandbar-input elevation-1"
 		:menu-props="{
@@ -23,6 +24,7 @@
 		:autofocus="autofocus"
 		v-model="currentItem"
 		@change="onSelectedAction"
+		@focus="updateActions"
 		@blur="$emit('blur')"
 	>
 		<template v-slot:no-data>
@@ -51,33 +53,32 @@
 <script>
 import { SimpleAction } from '../Actions/SimpleAction'
 import { App } from '/@/App'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 import { CommandBarExtensionItems } from '../Extensions/Scripts/Modules/CommandBar'
 import { getDefaultFileIcon } from '/@/utils/file/getIcon'
 import { devActions } from '../Developer/Actions'
+import { getCommandBarActions } from './State'
 
 export default {
-	mixins: [TranslationMixin],
 	props: {
 		autofocus: {
 			type: Boolean,
 			default: false,
 		},
 	},
-	async mounted() {
-		const app = await App.getApp()
+	setup() {
+		const { t } = useTranslations()
 
-		this.baseActions = app.actionManager.getAllActions()
-		if (import.meta.env.DEV) {
-			this.baseActions.push(...devActions)
+		return {
+			t,
 		}
-		this.extensionActions = [...CommandBarExtensionItems.values()]
-
-		if (!app.isNoProjectSelected) this.loadFilesFromProject(app.project)
+	},
+	async mounted() {
+		this.updateActions()
 
 		this.disposables.push(
-			App.eventSystem.on('projectChanged', async (project) =>
-				this.loadFilesFromProject(project)
+			App.eventSystem.on('projectChanged', async () =>
+				this.updateActions()
 			)
 		)
 	},
@@ -87,21 +88,28 @@ export default {
 	},
 	data: () => ({
 		currentItem: '',
-		baseActions: [],
-		fileActions: [],
-		extensionActions: [],
+		actions: [],
 		disposables: [],
 	}),
-	computed: {
-		actions() {
-			return [
-				...this.baseActions,
-				...this.fileActions,
-				...this.extensionActions,
+	methods: {
+		async updateActions() {
+			const app = await App.getApp()
+
+			const baseActions = app.actionManager.getAllActions()
+			if (import.meta.env.DEV) {
+				baseActions.push(...devActions)
+			}
+			const extensionActions = [...CommandBarExtensionItems.values()]
+
+			this.actions = [
+				...baseActions,
+				...(app.isNoProjectSelected
+					? []
+					: await this.loadFilesFromProject(app.project)),
+				...extensionActions,
+				...getCommandBarActions(),
 			]
 		},
-	},
-	methods: {
 		onSelectedAction(item) {
 			this.$nextTick(() => (this.currentItem = ''))
 			item.trigger()
@@ -114,7 +122,7 @@ export default {
 			const files =
 				(await project.packIndexer?.service.getAllFiles()) ?? []
 
-			this.fileActions = files.map((filePath) => {
+			return files.map((filePath) => {
 				const packType = App.packType.get(filePath)
 				const fileType = App.fileType.get(filePath)
 
@@ -125,9 +133,8 @@ export default {
 					color: packType?.color ?? 'primary',
 
 					onTrigger: async () => {
-						const fileHandle = await project.app.fileSystem.getFileHandle(
-							filePath
-						)
+						const fileHandle =
+							await project.app.fileSystem.getFileHandle(filePath)
 
 						project.openFile(fileHandle)
 					},

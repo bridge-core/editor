@@ -20,7 +20,7 @@ export class AdditionalPropertiesSchema extends Schema {
 	getCompletionItems(obj: unknown) {
 		return []
 	}
-	getSchemasFor(obj: any, location: (string | number)[]) {
+	getSchemasFor(obj: any, location: (string | number | undefined)[]) {
 		if (location.length === 0) return []
 		else if (location.length === 1)
 			return this.rootSchema ? [this.rootSchema] : []

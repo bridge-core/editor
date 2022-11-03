@@ -67,7 +67,7 @@ export class RefSchema extends Schema {
 	validate(obj: string) {
 		return this.rootSchema.validate(obj)
 	}
-	getSchemasFor(obj: unknown, location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number | undefined)[]) {
 		return this.rootSchema.getSchemasFor(obj, [...location])
 	}
 

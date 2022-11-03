@@ -25,7 +25,7 @@ export const keys = () => rawKeys(virtualFs)
 export class IDBWrapper {
 	protected store: UseStore
 
-	constructor(storeName: string = 'virtual-fs') {
+	constructor(public readonly storeName: string = 'virtual-fs') {
 		this.store = createStore(storeName, `${storeName}-store`)
 	}
 

@@ -1,5 +1,6 @@
 <template>
 	<v-system-bar
+		v-if="!isMobile"
 		color="toolbar"
 		fixed
 		app
@@ -16,10 +17,9 @@
 	>
 		<template v-if="hideToolbarItems">
 			<Logo
-				style="
-					height: 18px;
-					padding-right: 8px;
-				"
+				height="22px"
+				width="22px"
+				style="padding-right: 8px"
 				alt="Logo of bridge. v2"
 				draggable="false"
 			/>
@@ -41,8 +41,9 @@
 		<template v-else>
 			<Logo
 				v-if="!isMacOS || !windowControlsOverlay"
+				height="24px"
+				width="24px"
 				style="
-					height: 20px;
 					padding-right: 4px;
 					padding-left: calc(env(safe-area-inset-left) + 4px);
 				"
@@ -108,7 +109,7 @@ import MenuButton from './Menu/Button.vue'
 import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/utils/app/version.ts'
 import { platform } from '/@/utils/os.ts'
-import { reactive } from '@vue/composition-api'
+import { reactive } from 'vue'
 import { WindowControlsOverlayMixin } from '/@/components/Mixins/WindowControlsOverlay.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import Logo from '../UIElements/Logo.vue'
@@ -146,6 +147,9 @@ export default {
 		appVersion,
 	}),
 	computed: {
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
+		},
 		hideToolbarItemsSetting() {
 			if (!this.settingsState.appearance) return false
 			return this.settingsState.appearance.hideToolbarItems ?? false

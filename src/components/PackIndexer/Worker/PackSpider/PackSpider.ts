@@ -74,6 +74,12 @@ export class PackSpider {
 
 		return packSpiderFile.provideDiagnostics()
 	}
+	getConnectedFiles(filePath: string) {
+		const packSpiderFile = this.packSpiderFiles.get(filePath)
+		if (!packSpiderFile) return []
+
+		return [...packSpiderFile.loadAllConnected()]
+	}
 
 	async updateFile(filePath: string) {
 		// TODO(Dash): Re-enable pack spider
@@ -110,7 +116,34 @@ export class PackSpiderFile {
 		return this.lightningStore.get(this.filePath).data ?? {}
 	}
 
-	loadConnected(connect = this.instructions.connect) {
+	loadAllConnected() {
+		return new Set([
+			...this.loadConnected(),
+			...this.loadDirectReferences(),
+		])
+	}
+
+	/**
+	 * Load direct references from the cache to files such as loot table or texture path
+	 * @returns Set<string>
+	 */
+	protected loadDirectReferences() {
+		return new Set(
+			<string[]>this.instructions.includeFiles
+				?.map((cacheKey) => {
+					if (cacheKey) return this.cacheData[cacheKey] ?? []
+				})
+				.flat() ?? []
+		)
+	}
+
+	/**
+	 * Load files that can be connected to this file via a matching cache value
+	 * Examples: Client entity identifier <-> server entity identifier
+	 * @param connect Instructions on which files to connect
+	 * @returns Set<string>
+	 */
+	protected loadConnected(connect = this.instructions.connect) {
 		const connectedFiles = new Set<string>()
 
 		for (let { find, where, matches, shouldFindMultiple } of connect ??
@@ -139,7 +172,6 @@ export class PackSpiderFile {
 		for (let { if: ifCondition, ...diagnostic } of this.instructions
 			.provideDiagnostics ?? []) {
 			const matches = this.loadConnected([ifCondition])
-			console.log(this.filePath, matches)
 
 			if (ifCondition.not) {
 				if (matches.size > 0) continue

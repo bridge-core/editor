@@ -2,7 +2,7 @@
 import { Signal } from '../Common/Event/Signal'
 import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
-import { iterateDir } from '/@/utils/iterateDir'
+import { iterateDirParallel } from '/@/utils/iterateDir'
 import { join, dirname, basename } from '/@/utils/path'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
 import { getStorageDirectory } from '/@/utils/getStorageDirectory'
@@ -35,6 +35,11 @@ export class FileSystem extends Signal<void> {
 		let current = this.baseDirectory
 		const pathArr = path.split(/\\|\//g)
 		if (pathArr[0] === '.') pathArr.shift()
+		// Dash loads global extensions from "extensions/" but this folder is no longer used for bridge. projects
+		if (pathArr[0] === 'extensions') {
+			pathArr[0] = '~local'
+			pathArr.splice(1, 0, 'extensions')
+		}
 		if (pathArr[0] === '~local') {
 			current = await getStorageDirectory()
 			pathArr.shift()
@@ -131,6 +136,7 @@ export class FileSystem extends Signal<void> {
 		dirHandle = await dirHandle
 
 		const files: { name: string; path: string; kind: string }[] = []
+		const promises = []
 
 		for await (const handle of dirHandle.values()) {
 			if (handle.kind === 'file' && handle.name === '.DS_Store') continue
@@ -141,14 +147,17 @@ export class FileSystem extends Signal<void> {
 					kind: handle.kind,
 					path: `${path}/${handle.name}`,
 				})
-			else if (handle.kind === 'directory')
-				files.push(
-					...(await this.readFilesFromDir(
+			else if (handle.kind === 'directory') {
+				promises.push(
+					this.readFilesFromDir(
 						`${path}/${handle.name}`,
 						handle
-					))
+					).then((subFiles) => files.push(...subFiles))
 				)
+			}
 		}
+
+		await Promise.allSettled(promises)
 
 		return files
 	}
@@ -209,6 +218,15 @@ export class FileSystem extends Signal<void> {
 			throw new Error(`Invalid JSON: ${path}`)
 		}
 	}
+	async readJsonHandle(fileHandle: AnyFileHandle) {
+		const file = await fileHandle.getFile()
+
+		try {
+			return await json5.parse(await file.text())
+		} catch {
+			throw new Error(`Invalid JSON: ${fileHandle.name}`)
+		}
+	}
 	writeJSON(path: string, data: any, beautify = false) {
 		return this.writeFile(
 			path,
@@ -218,7 +236,7 @@ export class FileSystem extends Signal<void> {
 
 	// TODO: Use moveHandle() util function
 	// This function can utilize FileSystemHandle.move() where available
-	// and therefore is more efficient
+	// and therefore become more efficient
 	async move(path: string, newPath: string) {
 		if (await this.fileExists(path)) {
 			await this.copyFile(path, newPath)
@@ -251,7 +269,7 @@ export class FileSystem extends Signal<void> {
 			create: false,
 		})
 
-		await iterateDir(originHandle, async (fileHandle, filePath) => {
+		await iterateDirParallel(originHandle, async (fileHandle, filePath) => {
 			await this.copyFileHandle(
 				fileHandle,
 				await this.getFileHandle(join(destPath, filePath), true)
@@ -264,7 +282,7 @@ export class FileSystem extends Signal<void> {
 	) {
 		const destFs = new FileSystem(destHandle)
 
-		await iterateDir(originHandle, async (fileHandle, filePath) => {
+		await iterateDirParallel(originHandle, async (fileHandle, filePath) => {
 			await this.copyFileHandle(
 				fileHandle,
 				await destFs.getFileHandle(filePath, true)
