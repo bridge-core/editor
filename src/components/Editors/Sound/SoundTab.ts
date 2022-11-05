@@ -71,6 +71,8 @@ export class SoundTab extends FileTab {
 
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.disposables = []
+
+		this.audio?.pause()
 		this.audio = null
 	}
 
