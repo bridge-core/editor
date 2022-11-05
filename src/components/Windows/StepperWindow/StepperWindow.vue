@@ -1,7 +1,7 @@
 <template>
 	<SidebarWindow
 		v-if="state.shouldRender"
-		windowTitle="windows.createProject.title"
+		:windowTitle="state.windowTitle"
 		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:hasCloseButton="true"
@@ -39,7 +39,7 @@
 			</v-btn>
 			<v-spacer />
 
-			<v-btn
+			<!-- <v-btn
 				color="primary"
 				:disabled="!window.hasRequiredData || state.isCreatingProject"
 				:loading="state.isCreatingProject"
@@ -47,7 +47,7 @@
 			>
 				<v-icon class="pr-2">mdi-plus</v-icon>
 				<span>{{ t('windows.createProject.create') }}</span>
-			</v-btn>
+			</v-btn> -->
 		</template>
 	</SidebarWindow>
 </template>
@@ -55,25 +55,19 @@
 <script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import { useTranslations } from '../../Composables/useTranslations'
-import { createCategories } from './CreateCategories'
+import { IStep } from './Step'
 
 const { t } = useTranslations()
 const props = defineProps(['window'])
 const state = props.window.state
 const sidebar = props.window.sidebar
 
-async function createProject() {
-	state.isCreatingProject = true
-	await props.window.createProject()
-	state.isCreatingProject = false
-	props.window.close()
-}
 function close() {
 	props.window.close()
 }
 
 function getCurrentComponent(id: string) {
-	return createCategories.find((category) => category.id === id)?.component
+	return state.steps.find((step: IStep) => step.id === id)?.component
 }
 </script>
 
