@@ -9,6 +9,7 @@ import { basename } from '/@/utils/path'
 import { Project } from '../Project/Project'
 import { LocaleManager } from '../../Locales/Manager'
 import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
+import { StreamingUnzipper } from '../../FileSystem/Zip/StreamingUnzipper'
 
 export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
@@ -16,6 +17,7 @@ export async function importFromBrproject(
 ) {
 	const app = await App.getApp()
 	const fs = app.fileSystem
+	await fs.unlink('import')
 	const tmpHandle = await fs.getDirectoryHandle('import', {
 		create: true,
 	})
@@ -24,7 +26,7 @@ export async function importFromBrproject(
 
 	// Unzip .brproject file, do not unzip if already unzipped
 	if (unzip) {
-		const unzipper = new Unzipper(tmpHandle)
+		const unzipper = new StreamingUnzipper(tmpHandle)
 		const file = await fileHandle.getFile()
 		const data = new Uint8Array(await file.arrayBuffer())
 		unzipper.createTask(app.taskManager)
