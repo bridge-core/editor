@@ -133,9 +133,8 @@ export default {
 					color: packType?.color ?? 'primary',
 
 					onTrigger: async () => {
-						const fileHandle = await project.app.fileSystem.getFileHandle(
-							filePath
-						)
+						const fileHandle =
+							await project.app.fileSystem.getFileHandle(filePath)
 
 						project.openFile(fileHandle)
 					},
