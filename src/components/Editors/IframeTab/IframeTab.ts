@@ -12,11 +12,13 @@ interface IIframeTabOptions {
 	url?: string
 	html?: string
 	iconColor?: string
-	openWithPayload?: {
-		filePath?: string
-		fileHandle?: AnyFileHandle
-		isReadOnly?: boolean
-	}
+	openWithPayload?: IOpenWithPayload
+}
+
+export interface IOpenWithPayload {
+	filePath?: string
+	fileHandle?: AnyFileHandle
+	isReadOnly?: boolean
 }
 
 export class IframeTab extends Tab {
@@ -52,6 +54,10 @@ export class IframeTab extends Tab {
 
 	getOptions() {
 		return this.options
+	}
+	setOpenWithPayload(payload?: IOpenWithPayload) {
+		this.options.openWithPayload = payload
+		if (payload) this.api.triggerOpenWith()
 	}
 
 	async setup() {

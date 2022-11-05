@@ -16,6 +16,10 @@ import { GetItemPreviewRequest } from './Requests/Project/GetItemPreview'
 import { ReadAsDataUrlRequest } from './Requests/FileSystem/ReadAsDataUrl'
 import { FindRequest } from './Requests/PackIndexer/Find'
 import { GetFileRequest } from './Requests/PackIndexer/GetFile'
+import { SetIsUnsavedRequest } from './Requests/Tab/SetIsUnsaved'
+import { PlatformRequest } from './Requests/Util/Platform'
+import { UpdateFileRequest } from './Requests/Dash/UpdateFile'
+import { SetIsLoadingRequest } from './Requests/Tab/SetIsLoading'
 import { wait } from '/@/utils/wait'
 
 export class IframeApi {
@@ -24,10 +28,8 @@ export class IframeApi {
 	channelSetup = new Signal<void>()
 	protected disposables: IDisposable[] = []
 	protected _channel?: Channel
-	protected events: GenericEvent[] = [
-		new ThemeChangeEvent(this),
-		new OpenFileEvent(this),
-	]
+	protected openFileEvent = new OpenFileEvent(this)
+	protected events: GenericEvent[] = [new ThemeChangeEvent(this)]
 	protected requests: GenericRequest<unknown, unknown>[] = [
 		// FileSystem
 		new ReadFileRequest(this),
@@ -38,12 +40,25 @@ export class IframeApi {
 		// Project
 		new GetItemPreviewRequest(this),
 
+		// Tab
+		new SetIsUnsavedRequest(this),
+		new SetIsLoadingRequest(this),
+
 		// PackIndexer,
 		new FindRequest(this),
 		new GetFileRequest(this),
+
+		// Dash
+		new UpdateFileRequest(this),
+
+		// Util
+		new PlatformRequest(this),
 	]
 
-	constructor(protected tab: IframeTab, protected iframe: HTMLIFrameElement) {
+	constructor(
+		public readonly tab: IframeTab,
+		protected iframe: HTMLIFrameElement
+	) {
 		this.iframe.addEventListener('load', async () => {
 			if (!iframe.src && !iframe.srcdoc) return
 
@@ -74,6 +89,9 @@ export class IframeApi {
 	get openedFileHandle() {
 		return this.tab.getOptions().openWithPayload?.fileHandle ?? null
 	}
+	get openedFilePath() {
+		return this.tab.getOptions().openWithPayload?.filePath ?? null
+	}
 
 	get channel() {
 		if (!this._channel)
@@ -99,11 +117,16 @@ export class IframeApi {
 			isNightlyBuild,
 		})
 	}
+	// The underlying tab is supposed to open a new file
+	triggerOpenWith() {
+		this.openFileEvent.setup()
+	}
 
 	dispose() {
 		this.events.forEach((event) => event.dispose())
 		this.events = []
 		this.requests.forEach((request) => request.dispose())
 		this.requests = []
+		this.openFileEvent.dispose()
 	}
 }
