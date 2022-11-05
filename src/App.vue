@@ -331,4 +331,9 @@ textarea {
 	letter-spacing: unset !important;
 	line-height: unset !important;
 }
+
+/* Properly center custom icons (e.g. blockbench) within lists  */
+.v-list-item__icon {
+	align-items: center;
+}
 </style>
