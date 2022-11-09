@@ -14,13 +14,14 @@
 		min-width="200px"
 		max-width="500px"
 	>
-		<v-card>
+		<v-card color="menu">
 			<v-card-title v-if="contextMenu.card.title">
 				{{ contextMenu.card.title }}
 			</v-card-title>
 			<v-card-text v-if="contextMenu.card.text">
 				{{ contextMenu.card.text }}
 			</v-card-text>
+			<v-divider v-if="contextMenu.card.text || contextMenu.card.title" />
 			<ContextMenuList @click="isVisible = false" :actions="actions" />
 		</v-card>
 	</v-menu>
