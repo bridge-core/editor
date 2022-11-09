@@ -377,7 +377,7 @@ export class TreeEditor {
 		this.selectionChange.dispatch()
 	}
 
-	addKey(value: string, type: 'array' | 'objectArray' | 'object') {
+	addKey(value: string, type: 'array' | 'object') {
 		const entries: HistoryEntry[] = []
 
 		this.forEachSelection((selection) => {

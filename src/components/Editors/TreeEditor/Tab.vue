@@ -413,8 +413,6 @@ export default {
 					return 'mdi-alphabetical'
 				case 'arrayValue':
 					return 'mdi-link-variant'
-				case 'objectArray':
-					return 'mdi-link-variant'
 				case 'snippet':
 					return 'mdi-attachment'
 				default:
