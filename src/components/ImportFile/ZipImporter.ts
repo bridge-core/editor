@@ -1,6 +1,6 @@
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
-import { Unzipper } from '/@/components/FileSystem/Zip/Unzipper'
+import { StreamingUnzipper } from '/@/components/FileSystem/Zip/StreamingUnzipper'
 import { FileImporter } from './Importer'
 import { App } from '/@/App'
 import { importFromBrproject } from '/@/components/Projects/Import/fromBrproject'
@@ -19,7 +19,7 @@ export class ZipImporter extends FileImporter {
 		})
 
 		// Unzip to figure out how to handle the file
-		const unzipper = new Unzipper(tmpHandle)
+		const unzipper = new StreamingUnzipper(tmpHandle)
 
 		const file = await fileHandle.getFile()
 		const data = new Uint8Array(await file.arrayBuffer())
