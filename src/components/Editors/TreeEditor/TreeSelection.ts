@@ -95,19 +95,9 @@ export class TreeSelection {
 		return new CollectedEntry(historyEntries)
 	}
 
-	addValue(value: TPrimitiveTree, type: 'value' | 'valueArray') {
+	addValue(value: TPrimitiveTree, type: 'value') {
 		const historyEntries: HistoryEntry[] = []
 		if (this.tree instanceof PrimitiveTree && !this.tree.isEmpty()) return
-
-		if (type === 'valueArray' && this.tree instanceof ObjectTree) {
-			this.dispose()
-			const arrayTree = new ArrayTree(this.tree.getParent(), [])
-			arrayTree.setOpen(true, true)
-			this.tree.replace(arrayTree)
-
-			historyEntries.push(new ReplaceTreeEntry(this.tree, arrayTree))
-			this.tree = arrayTree
-		}
 
 		if (this.tree.type === 'array') {
 			// Push primitive trees into array trees

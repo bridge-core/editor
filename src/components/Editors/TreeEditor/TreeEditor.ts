@@ -141,11 +141,7 @@ export class TreeEditor {
 			(tree instanceof PrimitiveTree && tree.isEmpty())
 		) {
 			this.valueSuggestions = filterDuplicates(
-				suggestions.filter(
-					(suggestion) =>
-						suggestion.type === 'value' ||
-						suggestion.type === 'valueArray'
-				)
+				suggestions.filter((suggestion) => suggestion.type === 'value')
 			)
 		} else {
 			this.valueSuggestions = []
@@ -396,7 +392,7 @@ export class TreeEditor {
 
 	addValue(
 		value: string,
-		type: 'value' | 'valueArray',
+		type: 'value',
 		forcedValueType?: 'number' | 'string' | 'null' | 'boolean' | 'integer'
 	) {
 		let transformedValue: TPrimitiveTree = inferType(value)

@@ -359,7 +359,7 @@ export default {
 				this.treeEditor.addFromJSON(value[1])
 			} else if (type === 'object' || type === 'array') {
 				this.treeEditor.addKey(value, type)
-			} else if (type === 'value' || type === 'valueArray') {
+			} else if (type === 'value') {
 				this.treeEditor.addValue(value, type, forcedValueType)
 			} else {
 				console.error(`Unknown suggestion type: "${type}"`)
