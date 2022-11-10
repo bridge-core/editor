@@ -2,7 +2,15 @@ import { AsyncUnzipInflate, Unzip, UnzipFile } from 'fflate'
 import { GenericUnzipper } from './GenericUnzipper'
 import { FileSystem } from '../FileSystem'
 
+/**
+ * Streaming variant of the Unzipper class. It is slightly faster and consumes less memory.
+ */
 export class StreamingUnzipper extends GenericUnzipper<Uint8Array> {
+	/**
+	 * Unzip the given data
+	 * @param data Data to unzip
+	 * @returns Promise<void>
+	 */
 	unzip(data: Uint8Array) {
 		const fs = new FileSystem(this.directory)
 
@@ -31,7 +39,10 @@ export class StreamingUnzipper extends GenericUnzipper<Uint8Array> {
 		})
 	}
 
-	async streamFile(fs: FileSystem, stream: UnzipFile) {
+	/**
+	 * Handle a single streamed file
+	 */
+	protected async streamFile(fs: FileSystem, stream: UnzipFile) {
 		const fileHandle = await fs.getFileHandle(stream.name, true)
 		const writable = await fileHandle.createWritable()
 		let writeIndex = 0

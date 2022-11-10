@@ -1,6 +1,5 @@
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
-import { Unzipper } from '/@/components/FileSystem/Zip/Unzipper'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
