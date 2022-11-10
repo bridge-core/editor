@@ -7,6 +7,7 @@
 		tabindex="-1"
 	>
 		<div
+			v-if="currentSelectionPath.length > 1"
 			class="tree-editor-navigation lineHighlightBackground rounded px-1 mx-3 mb-2"
 		>
 			<template v-for="(pathPart, i) in currentSelectionPath">
