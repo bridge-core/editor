@@ -78,6 +78,7 @@
 				outlined
 				dense
 				hide-details
+				enterkeyhint="enter"
 			>
 				<template v-slot:item="{ item }">
 					<div style="width: 100%" @click="mayTrigger">
@@ -128,6 +129,7 @@
 				outlined
 				dense
 				hide-details
+				enterkeyhint="enter"
 			>
 				<template v-slot:item="{ item }">
 					<div style="width: 100%" @click="mayTrigger">
@@ -169,6 +171,7 @@
 				outlined
 				dense
 				hide-details
+				enterkeyhint="enter"
 			>
 				<template v-slot:item="{ item }">
 					<div style="width: 100%" @click="mayTrigger">
