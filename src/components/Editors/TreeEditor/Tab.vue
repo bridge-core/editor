@@ -6,9 +6,12 @@
 		@click="tab.parent.setActive(true)"
 		tabindex="-1"
 	>
-		<div class="px-4">
+		<div
+			class="tree-editor-navigation lineHighlightBackground rounded px-1 mx-3 mb-2"
+		>
 			<template v-for="(pathPart, i) in currentSelectionPath">
 				<Highlight
+					class="cursor-pointer"
 					@click.native="
 						selectTreePath(currentSelectionPath.slice(0, i + 1))
 					"
@@ -18,11 +21,11 @@
 				<v-icon
 					v-if="i + 1 < currentSelectionPath.length"
 					:key="`next-icon-${i}`"
+					small
 				>
 					mdi-chevron-right
 				</v-icon>
 			</template>
-			<v-divider />
 		</div>
 
 		<div
@@ -309,7 +312,7 @@ export default {
 		},
 		currentSelectionPath() {
 			const selection = this.treeEditor.selections[0]
-			if (!selection) return ['Global']
+			if (!selection) return []
 
 			return selection.getTree().path
 		},
@@ -515,6 +518,26 @@ export default {
 </script>
 
 <style>
+/* Base tree editor navigation styles */
+.tree-editor-navigation {
+	white-space: nowrap;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	opacity: 0.4;
+	transition: opacity 0.2s ease-in-out;
+}
+/* Increase opacity when hovering */
+.tree-editor-navigation:hover {
+	opacity: 0.9;
+}
+/* Hide scrollbar without active hover state */
+.tree-editor-navigation::-webkit-scrollbar {
+	height: 0px;
+}
+/* Show scrollbar when hovering */
+.tree-editor-navigation:hover::-webkit-scrollbar {
+	height: 5px;
+}
 .tree-editor-selection {
 	border-radius: 4px;
 	background: var(--v-lineHighlightBackground-base);
