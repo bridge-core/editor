@@ -522,7 +522,7 @@ export default {
 /* Base tree editor navigation styles */
 .tree-editor-navigation {
 	white-space: nowrap;
-	overflow-x: scroll;
+	overflow-x: auto;
 	overflow-y: hidden;
 	opacity: 0.4;
 	transition: opacity 0.2s ease-in-out;
