@@ -34,6 +34,11 @@ jobs:
                   node-version: 16
                   cache: 'npm'
 
+            - name: Install and Build 🔧
+              run: |
+                  npm install
+                  NODE_OPTIONS=--max_old_space_size=4096 npm run build
+
             - name: Upload artifact ⬆️
               uses: actions/upload-pages-artifact@v1
               with:
