@@ -6,6 +6,25 @@
 		@click="tab.parent.setActive(true)"
 		tabindex="-1"
 	>
+		<div class="px-4">
+			<template v-for="(pathPart, i) in currentSelectionPath">
+				<Highlight
+					@click.native="
+						selectTreePath(currentSelectionPath.slice(0, i + 1))
+					"
+					:value="`${pathPart}`"
+					:key="i"
+				/>
+				<v-icon
+					v-if="i + 1 < currentSelectionPath.length"
+					:key="`next-icon-${i}`"
+				>
+					mdi-chevron-right
+				</v-icon>
+			</template>
+			<v-divider />
+		</div>
+
 		<div
 			class="pr-4"
 			:style="`height: ${
@@ -179,10 +198,14 @@ import { TreeValueSelection } from './TreeSelection'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
 import { inferType } from '/@/utils/inferType'
 import { mayCastTo } from './mayCastTo'
+import Highlight from './Highlight.vue'
 
 export default {
 	name: 'TreeTab',
 	mixins: [TranslationMixin],
+	components: {
+		Highlight,
+	},
 	props: {
 		tab: Object,
 		height: Number,
@@ -280,6 +303,12 @@ export default {
 		},
 		allSuggestions() {
 			return this.propertySuggestions.concat(this.valueSuggestions)
+		},
+		currentSelectionPath() {
+			const selection = this.treeEditor.selections[0]
+			if (!selection) return ['Global']
+
+			return selection.getTree().path
 		},
 	},
 	methods: {
@@ -420,6 +449,21 @@ export default {
 				default:
 					return 'mdi-text'
 			}
+		},
+
+		selectTreePath(path) {
+			const tree = this.treeEditor.tree.get(path)
+			if (!tree) return
+
+			this.treeEditor.setSelection(tree)
+
+			setTimeout(() => {
+				document
+					.getElementsByClassName('tree-editor-selection')[0]
+					.scrollIntoView({
+						behavior: 'smooth',
+					})
+			}, 100)
 		},
 	},
 	watch: {

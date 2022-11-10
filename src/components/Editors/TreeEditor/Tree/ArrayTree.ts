@@ -37,6 +37,19 @@ export class ArrayTree extends Tree<Array<unknown>> {
 		return this._isOpen
 	}
 
+	get(path: (string | number)[]) {
+		if (path.length === 0) return this
+
+		const currentKey = path.shift()
+		if (typeof currentKey !== 'number') return null
+
+		const child = this.children[currentKey]
+
+		if (!child) return null
+
+		return child.get(path)
+	}
+
 	hasChild(child: Tree<unknown>) {
 		return this.children.includes(child)
 	}

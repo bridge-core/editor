@@ -40,6 +40,19 @@ export class ObjectTree extends Tree<object> {
 		return this._isOpen
 	}
 
+	get(path: (string | number)[]) {
+		if (path.length === 0) return this
+
+		const currentKey = path.shift()
+
+		const [_, child] =
+			this.children.find(([key]) => key === currentKey) ?? []
+
+		if (!child) return null
+
+		return child.get(path)
+	}
+
 	hasChild(child: Tree<unknown>) {
 		return this.children.some(([_, currChild]) => currChild === child)
 	}

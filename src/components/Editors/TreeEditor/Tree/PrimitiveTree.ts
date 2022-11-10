@@ -31,6 +31,11 @@ export class PrimitiveTree extends Tree<TPrimitiveTree> {
 		return this.value
 	}
 
+	get(path: (string | number)[]) {
+		if (path.length === 0) return this
+		return null
+	}
+
 	edit(value: string) {
 		if (value === 'true' || value === 'false')
 			this.setValue(value === 'true')

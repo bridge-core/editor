@@ -33,6 +33,8 @@ export abstract class Tree<T> {
 		else return [...this.parent.path, this.key]
 	}
 
+	abstract get(path: (string | number)[]): Tree<unknown> | null
+
 	findParentIndex() {
 		if (!this.parent)
 			throw new Error(`Cannot findParentIndex for tree without parent`)
