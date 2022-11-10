@@ -482,6 +482,29 @@ export class TreeEditor {
 		this.history.push(new ReplaceTreeEntry(tree, newTree))
 	}
 
+	/**
+	 * Get description and title for a given tree
+	 * @param tree
+	 */
+	getDocumentation(tree: Tree<unknown>) {
+		const schemas = <RootSchema[]>(
+			this.getSchemas(tree).filter(
+				(schema) => schema instanceof RootSchema
+			)
+		)
+
+		if (schemas.length === 0) return
+
+		const title =
+			schemas.find((schema) => schema.title !== undefined)?.title ?? ''
+		const description = schemas
+			.filter((schema) => schema.description !== undefined)
+			.map((schema) => schema.description)
+			.join('\n')
+
+		return { title, text: description }
+	}
+
 	onPasteMenu(event?: MouseEvent, tree = this.tree) {
 		const pasteMenu = [
 			{
@@ -495,7 +518,9 @@ export class TreeEditor {
 		]
 
 		if (event && !this.parent.isReadOnly)
-			showContextMenu(event, pasteMenu, false)
+			showContextMenu(event, pasteMenu, {
+				card: this.getDocumentation(tree),
+			})
 
 		return pasteMenu
 	}
@@ -522,7 +547,10 @@ export class TreeEditor {
 			},
 		]
 
-		if (event) showContextMenu(event, readOnlyMenu, false)
+		if (event)
+			showContextMenu(event, readOnlyMenu, {
+				card: this.getDocumentation(tree),
+			})
 
 		return readOnlyMenu
 	}
@@ -604,7 +632,10 @@ export class TreeEditor {
 			})
 		}
 
-		showContextMenu(event, contextMenu, false)
+		showContextMenu(event, contextMenu, {
+			card: this.getDocumentation(tree),
+			mayCloseOnClickOutside: true,
+		})
 	}
 	undo() {
 		this.history.undo()
