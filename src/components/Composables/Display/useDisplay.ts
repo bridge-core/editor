@@ -3,9 +3,9 @@ import { vuetify } from '../../App/Vuetify'
 
 export function useDisplay() {
 	return {
-		isMobile: computed(() => vuetify.framework.breakpoint.mobile),
+		isMobile: computed(() => vuetify.framework.display.mobile),
 		isMinimalDisplay: computed(() => {
-			return !vuetify.framework.breakpoint.mdAndUp
+			return !vuetify.framework.display.mdAndUp
 		}),
 	}
 }

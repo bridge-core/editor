@@ -151,7 +151,7 @@ export default {
 	},
 	computed: {
 		isMobile() {
-			return this.$vuetify.breakpoint.mobile
+			return this.$vuetify.display.mobile
 		},
 		compactDesign() {
 			if (!settingsState.editor) return true

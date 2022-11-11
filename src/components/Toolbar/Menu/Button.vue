@@ -8,7 +8,7 @@
 		:class="{
 			'btn-enabled': !disabled,
 			'btn-disabled': disabled,
-			'px-1': $vuetify.breakpoint.mobile,
+			'px-1': $vuetify.display.mobile,
 		}"
 	>
 		<v-icon v-if="displayIcon" color="accent" class="pr-1">

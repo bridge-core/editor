@@ -148,7 +148,7 @@ export default {
 	}),
 	computed: {
 		isMobile() {
-			return this.$vuetify.breakpoint.mobile
+			return this.$vuetify.display.mobile
 		},
 		hideToolbarItemsSetting() {
 			if (!this.settingsState.appearance) return false

@@ -10,14 +10,14 @@ export const AppToolbarHeightMixin = {
 			if (isInFullScreen.value) return `0px`
 
 			return `env(titlebar-area-height, ${
-				this.$vuetify.breakpoint.mobile ? 0 : 24
+				this.$vuetify.display.mobile ? 0 : 24
 			}px)`
 		},
 		appToolbarHeightNumber() {
 			if (isInFullScreen.value) return 0
 			if (this.windowControlsOverlay) return 33
 
-			return this.$vuetify.breakpoint.mobile ? 0 : 24
+			return this.$vuetify.display.mobile ? 0 : 24
 		},
 	},
 }

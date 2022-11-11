@@ -1,5 +1,4 @@
 import { ref, watch } from 'vue'
-import { Framework } from 'vuetify'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { App } from '/@/App'
 
@@ -7,17 +6,15 @@ export class Mobile {
 	public readonly change = new EventDispatcher<boolean>()
 	public readonly is = ref(this.isCurrentDevice())
 
-	constructor(protected vuetify: Framework) {
-		watch(vuetify.breakpoint, () => {
+	constructor(protected vuetify: any) {
+		console.log(vuetify)
+		watch(vuetify.display, () => {
 			this.is.value = this.isCurrentDevice()
-			this.change.dispatch(vuetify.breakpoint.mobile)
+			this.change.dispatch(vuetify.display.mobile)
 		})
 
 		App.getApp().then(() => {
-			setTimeout(
-				() => this.change.dispatch(vuetify.breakpoint.mobile),
-				10
-			)
+			setTimeout(() => this.change.dispatch(vuetify.display.mobile), 10)
 		})
 	}
 
