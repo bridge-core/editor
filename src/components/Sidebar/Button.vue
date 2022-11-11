@@ -27,6 +27,7 @@
 				v-ripple="canInteractWith"
 			>
 				<v-badge
+					:model-value="badge && !isLoading && badge.count > 0"
 					:value="badge && !isLoading ? badge.count : 0"
 					:content="badge && !badge.icon ? badge.count : 0"
 					:color="badge ? badge.color : null"
