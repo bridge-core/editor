@@ -1,7 +1,6 @@
 <template>
 	<v-autocomplete
 		prepend-inner-icon="mdi-magnify"
-		solo
 		rounded
 		hide-details
 		background-color="expandedSidebar"
@@ -10,11 +9,12 @@
 		:menu-props="{
 			rounded: 'lg',
 			dense: true,
-			'nudge-top': -12,
+			offset: [12, 0],
 			'min-width': 'unset',
 			'max-width': '500px',
 			transition: 'slide-y-transition',
 			contentClass: 'commandbar-menu',
+			'max-height': '300px',
 		}"
 		:items="actions"
 		:item-text="(item) => `${t(item.name)}\n${t(item.description)}`"
@@ -22,8 +22,8 @@
 		:placeholder="t('general.search')"
 		auto-select-first
 		:autofocus="autofocus"
-		v-model="currentItem"
-		@change="onSelectedAction"
+		:model-value="currentItem"
+		@update:modelValue="onSelectedAction"
 		@focus="updateActions"
 		@blur="$emit('blur')"
 	>
@@ -35,14 +35,20 @@
 			</v-list-item>
 		</template>
 
-		<template v-slot:item="{ item }">
-			<v-list-item :title="item.name" :subtitle="item.description">
+		<template v-slot:item="{ props, item: { raw: action } }">
+			<v-list-item
+				v-bind="props"
+				:title="t(action.name)"
+				:subtitle="t(action.description)"
+			>
 				<template v-slot:prepend>
 					<v-avatar
-						:color="item.color || 'warning'"
+						:color="action.color || 'warning'"
 						class="text-h5 font-weight-light white--text"
 					>
-						<v-icon color="white">{{ item.icon }}</v-icon>
+						<v-icon size="x-small" color="white">
+							{{ action.icon }}
+						</v-icon>
 					</v-avatar>
 				</template>
 			</v-list-item>
@@ -60,6 +66,7 @@ import { devActions } from '../Developer/Actions'
 import { getCommandBarActions } from './State'
 
 export default {
+	emits: ['actionSelected', 'blur'],
 	props: {
 		autofocus: {
 			type: Boolean,
@@ -111,9 +118,10 @@ export default {
 			]
 		},
 		onSelectedAction(item) {
-			this.$nextTick(() => (this.currentItem = ''))
 			item.trigger()
 			this.$emit('actionSelected')
+			this.currentItem = ''
+			setTimeout(() => document.activeElement.blur(), 10)
 		},
 		async loadFilesFromProject(project) {
 			if (!project || project.isVirtualProject) return
