@@ -35,9 +35,9 @@ export default {
 
 <style scoped>
 .bg {
-	background: var(--v-expandedSidebar-base);
+	background: rgb(var(--v-theme-expandedSidebar));
 }
 .bg-dark {
-	background: var(--v-background-base);
+	background: rgb(var(--v-theme-background));
 }
 </style>

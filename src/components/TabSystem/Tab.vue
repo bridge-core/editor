@@ -192,7 +192,7 @@ export default {
 
 <style scoped>
 .default-tab-style {
-	background-color: var(--v-tabInactive-base);
+	background-color: rgb(var(--v-theme-tabInactive));
 	display: inline;
 	width: fit-content;
 }
@@ -206,7 +206,7 @@ export default {
 	opacity: 0.9;
 }
 .selected {
-	background-color: var(--v-tabActive-base);
+	background-color: rgb(var(--v-theme-tabActive));
 }
 .inactive {
 	opacity: 0.3;

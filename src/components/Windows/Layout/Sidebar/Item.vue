@@ -53,7 +53,7 @@ export default {
 
 <style scoped>
 .selected {
-	background-color: var(--v-sidebarSelection-base);
+	background-color: rgb(var(--v-theme-sidebarSelection));
 }
 .category:not(.selected):not(.is-disabled) {
 	opacity: 0.7;

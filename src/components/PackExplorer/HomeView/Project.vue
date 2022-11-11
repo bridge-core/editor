@@ -14,8 +14,8 @@
 						height: miniLayout ? undefined : '5rem',
 						border: `2px solid ${
 							project.isFavorite
-								? 'var(--v-primary-base)'
-								: 'var(--v-background-base)'
+								? 'rgb(var(--v-theme-primary))'
+								: 'rgb(var(--v-theme-background))'
 						}`,
 					}"
 					ref="sheet"

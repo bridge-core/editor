@@ -257,7 +257,7 @@ body {
 }
 *::-webkit-scrollbar-thumb {
 	border-radius: 24px;
-	background-color: var(--v-scrollbarThumb-base);
+	background-color: rgb(var(--v-theme-scrollbarThumb));
 	border: thin solid rgba(0, 0, 0, 0.3);
 	opacity: 0.8;
 }
@@ -287,7 +287,7 @@ summary::-webkit-details-marker {
 }
 
 .v-application {
-	background: var(--v-background-base) !important;
+	background: rgb(var(--v-theme-background)) !important;
 }
 
 .v-system-bar .v-icon {
@@ -298,7 +298,7 @@ summary::-webkit-details-marker {
 }
 
 .v-select-list {
-	background-color: var(--v-menu-base) !important;
+	background-color: rgb(var(--v-theme-menu)) !important;
 }
 .fill-area {
 	width: 100%;
@@ -325,7 +325,7 @@ summary::-webkit-details-marker {
 
 input,
 textarea {
-	color: var(--v-text-base);
+	color: rgb(var(--v-theme-text));
 }
 
 .suggest-details .header {

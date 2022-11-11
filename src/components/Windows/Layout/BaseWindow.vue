@@ -46,7 +46,7 @@
 					class="pl-3 pt-1"
 					style="
 						width: calc(100% - 1px);
-						background-color: var(--v-expandedSidebar-base);
+						background-color: rgb(var(--v-theme-expandedSidebar));
 					"
 					:hasMaximizeButton="hasMaximizeButton"
 					:hasCloseButton="hasCloseButton"

@@ -130,10 +130,10 @@ export default {
 			if (this.color)
 				return this.color.startsWith('#')
 					? this.color
-					: `var(--v-${this.color}-base)`
+					: `rgb(var(--v-theme-${this.color}))`
 			return this.isLoading || this.isSelected
-				? `var(--v-primary-base)`
-				: `var(--v-sidebarSelection-base)`
+				? `rgb(var(--v-theme-primary))`
+				: `rgb(var(--v-theme-sidebarSelection))`
 		},
 		canInteractWith() {
 			return !this.disabled && (this.alwaysAllowClick || !this.isLoading)

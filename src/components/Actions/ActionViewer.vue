@@ -62,14 +62,14 @@ export default {
 
 <style scoped>
 .control-bg {
-	background-color: var(--v-sidebarNavigation-base);
-	border: 1px solid var(--v-sidebarNavigation-base);
+	background-color: rgb(var(--v-theme-sidebarNavigation));
+	border: 1px solid rgb(var(--v-theme-sidebarNavigation));
 }
 .dark {
-	background-color: var(--v-background-base);
-	border: 1px solid var(--v-background-base);
+	background-color: rgb(var(--v-theme-background));
+	border: 1px solid rgb(var(--v-theme-background));
 }
 .selected {
-	border: 1px solid var(--v-primary-base);
+	border: 1px solid rgb(var(--v-theme-primary));
 }
 </style>

@@ -305,7 +305,7 @@ async function onToggleExperiment(experiment: any) {
 	image-rendering: pixelated;
 }
 .content-area {
-	background-color: var(--v-sidebarNavigation-base);
+	background-color: rgb(var(--v-theme-sidebarNavigation));
 }
 .subheader {
 	font-size: 1.25rem !important;

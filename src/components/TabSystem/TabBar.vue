@@ -75,16 +75,16 @@ export default {
 }
 *::-webkit-scrollbar-track {
 	border-radius: 0;
-	background-color: var(--v-background-base);
+	background-color: rgb(var(--v-theme-background));
 }
 *::-webkit-scrollbar-thumb {
 	border: none !important;
-	background-color: var(--v-tabInactive-base);
+	background-color: rgb(var(--v-theme-tabInactive));
 }
 .inactive-action-bar {
 	opacity: 0.5;
 }
 .tab-bar {
-	background: var(--v-background-base);
+	background: rgb(var(--v-theme-background));
 }
 </style>

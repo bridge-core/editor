@@ -36,7 +36,7 @@ export default {
 .action-bar {
 	position: sticky;
 	top: 0;
-	background: var(--v-expandedSidebar-base);
+	background: rgb(var(--v-theme-expandedSidebar));
 	z-index: 1;
 }
 </style>

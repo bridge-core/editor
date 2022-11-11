@@ -262,7 +262,7 @@ export default {
 	contain-intrinsic-size: 24px;
 }
 .directory-viewer-name.selected {
-	background: var(--v-background-base);
+	background: rgb(var(--v-theme-background));
 	outline: none;
 }
 .directory-viewer-name:focus {
