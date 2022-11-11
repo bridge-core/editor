@@ -1,9 +1,5 @@
 <template>
-	<v-app
-		ref="appContainer"
-		:style="{ fontFamily }"
-		@contextmenu="$event.preventDefault()"
-	>
+	<v-app ref="appContainer" @contextmenu="$event.preventDefault()">
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar v-if="!isInFullScreen" />
@@ -236,6 +232,7 @@ export default {
 html {
 	overflow: hidden;
 	overscroll-behavior: none;
+	font-family: v-bind(fontFamily);
 }
 body {
 	overflow: unset;
