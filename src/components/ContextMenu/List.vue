@@ -1,14 +1,13 @@
 <template>
 	<v-list color="menu" dense>
-		<template v-for="(action, id) in renderActions">
+		<template v-for="(action, id) in renderActions" :key="id">
 			<!-- Divider -->
-			<v-divider v-if="action.type === 'divider'" :key="id" />
+			<v-divider v-if="action.type === 'divider'" />
 
 			<!-- Nested menu -->
 			<v-menu
 				v-else-if="action.type === 'submenu'"
 				open-on-hover
-				:key="id"
 				offset-x
 				nudge-right="8px"
 				rounded="lg"
@@ -56,7 +55,6 @@
 
 			<v-list-item
 				v-else-if="action.type === 'section'"
-				:key="id"
 				@click="toggleSection(id)"
 			>
 				<v-list-item-icon
@@ -81,7 +79,6 @@
 			<!-- Normal menu item -->
 			<v-list-item
 				v-else
-				:key="id"
 				:disabled="action.isDisabled"
 				:class="{
 					'pl-6': action.addPadding,
