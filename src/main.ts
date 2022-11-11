@@ -1,8 +1,7 @@
 import '/@/components/FileSystem/Polyfill'
 import '/@/components/FileSystem/Virtual/Comlink'
 import { App } from './App'
-import { vue } from '/@/components/App/Vue'
-import '@mdi/font/css/materialdesignicons.min.css'
+import '/@/components/App/Vue'
 
 // Disable until we move back to vite
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker'
@@ -33,8 +32,6 @@ self.MonacoEnvironment = {
 }
 
 initRuntimes(wasmUrl)
-
-App.main(vue)
 
 if ('launchQueue' in window) {
 	;(<any>window).launchQueue.setConsumer(async (launchParams: any) => {

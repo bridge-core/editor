@@ -54,7 +54,7 @@
 					<div
 						v-if="shouldRenderWelcomeScreen"
 						class="d-flex"
-						:class="{ 'flex-column': $vuetify.breakpoint.mobile }"
+						:class="{ 'flex-column': $vuetify.display.mobile }"
 						:style="{
 							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
 						}"
@@ -72,7 +72,7 @@
 								tabSystems[1].shouldRender.value
 							"
 							style="z-index: 1"
-							:vertical="!$vuetify.breakpoint.mobile"
+							:vertical="!$vuetify.display.mobile"
 						/>
 						<TabSystem class="flex-grow-1" :id="1" />
 
@@ -137,6 +137,9 @@ export default {
 			isInFullScreen,
 		}
 	},
+	created() {
+		App.main(this)
+	},
 
 	mounted() {
 		App.getApp().then((app) => {
@@ -192,7 +195,7 @@ export default {
 					? this.settingsState.sidebar.sidebarSize
 					: undefined
 			if (!size) size = 'normal'
-			if (this.$vuetify.breakpoint.mobile) return 9
+			if (this.$vuetify.display.mobile) return 9
 
 			switch (size) {
 				case 'tiny':
@@ -219,7 +222,7 @@ export default {
 		},
 	},
 	watch: {
-		'$vuetify.breakpoint.mobile'() {
+		'$vuetify.display.mobile'() {
 			this.$nextTick(() => {
 				App.getApp().then((app) => app.windowResize.dispatch())
 			})

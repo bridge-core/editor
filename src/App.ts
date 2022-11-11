@@ -2,7 +2,7 @@ import '/@/components/Notifications/Errors'
 import '/@/components/Languages/LanguageManager'
 import '/@/components/App/ServiceWorker'
 
-import Vue from 'vue'
+import { Component } from 'vue'
 import { EventSystem } from '/@/components/Common/Event/EventSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { FileTypeLibrary } from '/@/components/Data/FileType'
@@ -153,7 +153,7 @@ export class App {
 		)
 	}
 
-	constructor(appComponent: Vue) {
+	constructor(appComponent: any) {
 		if (import.meta.env.PROD) this.dataLoader.loadData()
 		this.themeManager = new ThemeManager(appComponent.$vuetify)
 		this._windows = new Windows(this)
@@ -188,7 +188,7 @@ export class App {
 	/**
 	 * Starts the app
 	 */
-	static async main(appComponent: Vue) {
+	static async main(appComponent: Component) {
 		console.time('[APP] Ready')
 
 		this._instance = markRaw(new App(appComponent))
