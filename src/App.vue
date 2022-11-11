@@ -1,5 +1,9 @@
 <template>
-	<v-app ref="appContainer" @contextmenu="$event.preventDefault()">
+	<v-app
+		:style="{ fontFamily }"
+		ref="appContainer"
+		@contextmenu="$event.preventDefault()"
+	>
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar v-if="!isInFullScreen" />
@@ -7,7 +11,7 @@
 		<Sidebar v-if="!isInFullScreen" app />
 
 		<v-btn
-			v-if="!sidebarNavigationVisible"
+			v-if="!isSidebarNavigationVisible"
 			small
 			fab
 			fixed
@@ -156,10 +160,15 @@ export default {
 		SidebarContent,
 	},
 
+	setup() {
+		return {
+			settingsState,
+		}
+	},
+
 	data: () => ({
 		isMacOs: platform() === 'darwin',
 		contextMenu: null,
-		settingsState: settingsState,
 		windowSize: {
 			currentWidth: window.innerWidth,
 			currentHeight: window.innerHeight,
@@ -171,11 +180,11 @@ export default {
 			if (this.isInFullScreen) return false
 
 			return (
-				this.sidebarNavigationVisible &&
+				App.sidebar.isNavigationVisible.value &&
 				App.sidebar.isContentVisible.value
 			)
 		},
-		sidebarNavigationVisible() {
+		isSidebarNavigationVisible() {
 			return App.sidebar.isNavigationVisible.value
 		},
 		isSidebarRight() {
@@ -214,7 +223,7 @@ export default {
 	},
 	methods: {
 		openSidebar() {
-			App.sidebar.isNavigationVisible.value = true
+			this.sidebar.isNavigationVisible.value = true
 		},
 	},
 	watch: {
@@ -230,9 +239,8 @@ export default {
 <style>
 /** Reset vuetify's scrolling */
 html {
-	overflow: hidden;
+	overflow-y: hidden !important;
 	overscroll-behavior: none;
-	font-family: v-bind(fontFamily);
 }
 body {
 	overflow: unset;
