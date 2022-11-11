@@ -61,11 +61,17 @@
 				:color="extension.isActive ? 'success' : 'error'"
 				right
 			>
-				<template v-slot:activator="{ on }">
-					<v-icon v-if="extension.isActive" color="success" v-on="on">
+				<template v-slot:activator="{ props }">
+					<v-icon
+						v-if="extension.isActive"
+						color="success"
+						v-bind="props"
+					>
 						mdi-check
 					</v-icon>
-					<v-icon v-else color="error" v-on="on">mdi-close</v-icon>
+					<v-icon v-else color="error" v-bind="props">
+						mdi-close
+					</v-icon>
 				</template>
 
 				<span>
@@ -84,8 +90,8 @@
 				offset-x
 				rounded="lg"
 			>
-				<template v-slot:activator="{ on, attrs }">
-					<v-btn v-bind="attrs" v-on="on" small icon>
+				<template v-slot:activator="{ props }">
+					<v-btn v-bind="props" small icon>
 						<v-icon>mdi-dots-vertical</v-icon>
 					</v-btn>
 				</template>

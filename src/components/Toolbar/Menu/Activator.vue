@@ -7,9 +7,9 @@
 		:nudge-top="-8"
 		rounded="lg"
 	>
-		<template v-slot:activator="{ on }">
+		<template v-slot:activator="{ props }">
 			<MenuButton
-				v-on="on"
+				v-bind="props"
 				:disabled="disabled || item.isDisabled"
 				:displayIcon="item.icon"
 				:displayName="item.name"

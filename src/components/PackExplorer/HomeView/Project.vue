@@ -1,9 +1,9 @@
 <template>
 	<div class="clickable">
 		<v-tooltip color="tooltip" right>
-			<template v-slot:activator="{ on }">
+			<template v-slot:activator="{ props }">
 				<BridgeSheet
-					v-on="on"
+					v-bind="props"
 					dark
 					class="d-flex align-center justify-center mb-2"
 					:class="{

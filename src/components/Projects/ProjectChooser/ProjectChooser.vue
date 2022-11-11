@@ -60,9 +60,9 @@
 					color="tooltip"
 					bottom
 				>
-					<template v-slot:activator="{ on }">
+					<template v-slot:activator="{ props }">
 						<BridgeSheet
-							v-on="on"
+							v-bind="props"
 							dark
 							class="d-flex flex-column pa-2"
 						>
@@ -82,9 +82,9 @@
 
 				<!-- Show that project is com.mojang project -->
 				<v-tooltip v-if="isComMojangProject" color="tooltip" bottom>
-					<template v-slot:activator="{ on }">
+					<template v-slot:activator="{ props }">
 						<BridgeSheet
-							v-on="on"
+							v-bind="props"
 							dark
 							class="d-flex flex-column pa-2"
 						>

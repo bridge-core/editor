@@ -6,10 +6,10 @@
 		@click="!isDisabled ? $emit('click') : undefined"
 	>
 		<v-tooltip :disabled="!isDisabled" right color="tooltip">
-			<template v-slot:activator="{ on }">
+			<template v-slot:activator="{ props }">
 				<!-- Flexbox doesn't work directly on summaries in Safari -->
 				<span
-					v-on="on"
+					v-bind="props"
 					class="d-flex align-center"
 					:class="{ 'justify-center': compact }"
 				>

@@ -15,11 +15,10 @@
 				transition="context-menu-transition"
 				close-on-click
 			>
-				<template v-slot:activator="{ on, attrs }">
+				<template v-slot:activator="{ props }">
 					<v-list-item
 						v-if="Object.keys(action.submenu.state).length > 0"
-						v-bind="attrs"
-						v-on="on"
+						v-bind="props"
 						:disabled="action.isDisabled"
 					>
 						<v-list-item-icon

@@ -66,8 +66,8 @@
 			:disabled="pointerDevice === 'touch' || !tab.path"
 			bottom
 		>
-			<template v-slot:activator="{ on }">
-				<span v-on="on">
+			<template v-slot:activator="{ props }">
+				<span v-bind="props">
 					<span
 						:style="{
 							'font-style': tab.isTemporary ? 'italic' : null,

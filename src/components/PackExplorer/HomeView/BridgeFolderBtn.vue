@@ -5,9 +5,9 @@
 		:color="color ? color : 'tooltip'"
 		right
 	>
-		<template v-slot:activator="{ on }">
+		<template v-slot:activator="{ props }">
 			<v-btn
-				v-on="on"
+				v-bind="props"
 				@click="selectBridgeFolder"
 				:color="color"
 				class="mb-2"
@@ -99,7 +99,8 @@ export default {
 		},
 		calculateAvailableWidth() {
 			if (this.$refs.button)
-				this.availableWidth = this.$refs.button.$el.getBoundingClientRect().width
+				this.availableWidth =
+					this.$refs.button.$el.getBoundingClientRect().width
 		},
 	},
 }

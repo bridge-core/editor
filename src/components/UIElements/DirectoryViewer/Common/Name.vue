@@ -21,9 +21,9 @@
 			:color="diagnosticIconColor"
 			right
 		>
-			<template #activator="{ on }">
+			<template #activator="{ props }">
 				<BasicIconName
-					v-on="on"
+					v-bind="props"
 					:name="baseWrapper.name"
 					:icon="diagnosticIcon"
 					:color="diagnosticIconColor"
