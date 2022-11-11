@@ -28,10 +28,11 @@
 </template>
 
 <script>
-import { createSimpleTransition } from 'vuetify/lib/components/transitions/createTransition'
 import Vue from 'vue'
 import ContextMenuList from './List.vue'
-const contextMenuTransition = createSimpleTransition('context-menu-transition')
+// TODO(Vue3): Bring back context menu transition
+// import { createSimpleTransition } from 'vuetify/lib/components/transitions/createTransition'
+// const contextMenuTransition = createSimpleTransition('context-menu-transition')
 
 Vue.component('context-menu-transition', contextMenuTransition)
 
