@@ -2,10 +2,10 @@ import { createTree } from './createTree'
 import { Tree, treeElementHeight } from './Tree'
 import ObjecTreeComponent from './CommonTree.vue'
 import type { ArrayTree } from './ArrayTree'
-import { set, del } from '@vue/composition-api'
+import { set, del, markRaw } from 'vue'
 
 export class ObjectTree extends Tree<object> {
-	public component = ObjecTreeComponent
+	public component = markRaw(ObjecTreeComponent)
 	public _isOpen = false
 	public readonly type = 'object'
 	protected _children: [string, Tree<unknown>][]
@@ -38,6 +38,19 @@ export class ObjectTree extends Tree<object> {
 	get isOpen() {
 		if (!this.hasChildren) return false
 		return this._isOpen
+	}
+
+	get(path: (string | number)[]): Tree<unknown> | null {
+		if (path.length === 0) return this
+
+		const currentKey = path.shift()
+
+		const [_, child] =
+			this.children.find(([key]) => key === currentKey) ?? []
+
+		if (!child) return null
+
+		return child.get(path)
 	}
 
 	hasChild(child: Tree<unknown>) {

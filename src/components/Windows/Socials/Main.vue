@@ -1,8 +1,8 @@
 <template>
 	<BaseWindow
-		v-if="shouldRender"
+		v-if="state.shouldRender"
 		windowTitle="windows.socials.title"
-		:isVisible="isVisible"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:width="420"
@@ -37,36 +37,25 @@
 	</BaseWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { useTranslations } from '../../Composables/useTranslations'
 import BaseWindow from '../Layout/BaseWindow.vue'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 
-export default {
-	name: 'Socials',
-	mixins: [TranslationMixin],
-	components: {
-		BaseWindow,
-	},
+const { t } = useTranslations()
 
-	data() {
-		return this.currentWindow
-	},
-	props: ['currentWindow'],
-	methods: {
-		close() {
-			this.currentWindow.close()
-		},
-		openDiscord() {
-			window.open('https://discord.gg/jj2PmqU', '_blank')
-		},
-		openTwitter() {
-			window.open('https://twitter.com/bridgeEditor', '_blank')
-		},
-		openGithub() {
-			window.open('https://github.com/bridge-core', '_blank')
-		},
-	},
+const props = defineProps(['window'])
+const state = props.window.getState()
+
+function close() {
+	props.window.close()
+}
+function openDiscord() {
+	window.open('https://discord.gg/jj2PmqU', '_blank')
+}
+function openTwitter() {
+	window.open('https://twitter.com/bridgeIDE', '_blank')
+}
+function openGithub() {
+	window.open('https://github.com/bridge-core', '_blank')
 }
 </script>
-
-<style></style>

@@ -1,6 +1,5 @@
 import ThreePreviewTabComponent from './ThreePreviewTab.vue'
 import { IDisposable } from '/@/types/disposable'
-import { Model } from 'bridge-model-viewer/lib/main'
 import { PreviewTab } from '/@/components/TabSystem/PreviewTab'
 import {
 	AmbientLight,
@@ -12,7 +11,7 @@ import {
 import { Signal } from '/@/components/Common/Event/Signal'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { App } from '/@/App'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 
 export abstract class ThreePreviewTab extends PreviewTab {
 	public component = ThreePreviewTabComponent
@@ -49,7 +48,7 @@ export abstract class ThreePreviewTab extends PreviewTab {
 
 		this.renderer = markRaw(
 			new WebGLRenderer({
-				antialias: false,
+				antialias: true,
 				canvas,
 			})
 		)
@@ -83,6 +82,8 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		)
 
 		this.onResize()
+
+		await this.fired
 		this.setupComplete.dispatch()
 	}
 	async onActivate() {
@@ -108,18 +109,20 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		super.onDeactivate()
 	}
 
+	/**
+	 * @internal Do not call directly
+	 */
 	protected render() {
 		this.controls?.update()
 		this.renderer?.render(this.scene, this.camera)
 		this.renderingRequested = false
 	}
 
-	requestRendering(immediate = false) {
-		if (immediate) return this.render()
-
+	async requestRendering() {
 		if (this.renderingRequested) return
 
 		this.renderingRequested = true
+		await this.setupComplete.fired
 		requestAnimationFrame(() => this.render())
 	}
 	protected onResize() {

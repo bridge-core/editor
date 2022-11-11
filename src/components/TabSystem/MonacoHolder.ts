@@ -1,4 +1,4 @@
-import { editor, KeyCode, KeyMod, languages } from 'monaco-editor'
+import type { editor, KeyCode, KeyMod } from 'monaco-editor'
 import { Signal } from '../Common/Event/Signal'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'
@@ -7,20 +7,16 @@ import { DefinitionProvider } from '../Definitions/GoTo'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { viewDocumentation } from '../Documentation/view'
 import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { debounce } from 'lodash-es'
 import { platform } from '/@/utils/os'
 import { showContextMenu } from '../ContextMenu/showContextMenu'
 import { TextTab } from '../Editors/Text/TextTab'
+import { useMonaco } from '../../utils/libs/useMonaco'
+import { registerTextSnippetProvider } from '../Snippets/Monaco'
+import { anyMonacoThemeLoaded } from '../Extensions/Themes/MonacoSubTheme'
 
-languages.typescript.javascriptDefaults.setCompilerOptions({
-	target: languages.typescript.ScriptTarget.ESNext,
-	allowNonTsExtensions: true,
-	noLib: true,
-	alwaysStrict: true,
-})
-
-languages.registerDefinitionProvider('json', new DefinitionProvider())
+let configuredMonaco = false
 
 export class MonacoHolder extends Signal<void> {
 	protected _monacoEditor?: editor.IStandaloneCodeEditor
@@ -28,6 +24,33 @@ export class MonacoHolder extends Signal<void> {
 
 	constructor(protected _app: App) {
 		super()
+
+		if (!configuredMonaco) {
+			configuredMonaco = true
+			useMonaco().then(({ languages }) => {
+				languages.typescript.javascriptDefaults.setCompilerOptions({
+					target: languages.typescript.ScriptTarget.ESNext,
+					allowNonTsExtensions: true,
+					alwaysStrict: true,
+					checkJs: true,
+				})
+				languages.typescript.typescriptDefaults.setCompilerOptions({
+					target: languages.typescript.ScriptTarget.ESNext,
+					allowNonTsExtensions: true,
+					alwaysStrict: true,
+					moduleResolution:
+						languages.typescript.ModuleResolutionKind.NodeJs,
+					module: languages.typescript.ModuleKind.ESNext,
+				})
+
+				languages.registerDefinitionProvider(
+					'json',
+					new DefinitionProvider()
+				)
+
+				registerTextSnippetProvider()
+			})
+		}
 	}
 
 	get monacoEditor() {
@@ -50,7 +73,12 @@ export class MonacoHolder extends Signal<void> {
 		}
 	}
 
-	createMonacoEditor(domElement: HTMLElement) {
+	async createMonacoEditor(domElement: HTMLElement) {
+		const { KeyCode, KeyMod, editor } = await useMonaco()
+
+		// Don't mount editor before theme is loaded
+		await anyMonacoThemeLoaded.fired
+
 		this.dispose()
 		this._monacoEditor = markRaw(
 			editor.create(domElement, {
@@ -68,8 +96,9 @@ export class MonacoHolder extends Signal<void> {
 				'bracketPairColorization.enabled':
 					settingsState?.editor?.bracketPairColorization ?? false,
 				fontFamily:
-					<string>settingsState?.appearance?.editorFont ??
-					(platform() === 'darwin' ? 'Menlo' : 'Consolas'),
+					(<string>settingsState?.appearance?.editorFont ??
+						(platform() === 'darwin' ? 'Menlo' : 'Consolas')) +
+					', monospace',
 				...this.getMobileOptions(this._app.mobile.isCurrentDevice()),
 				contextmenu: false,
 				// fontFamily: this.fontFamily,
@@ -113,10 +142,10 @@ export class MonacoHolder extends Signal<void> {
 		const commentLineAction = this._monacoEditor.getAction(
 			'editor.action.commentLine'
 		)
-		this._monacoEditor?.addAction({
+		this._monacoEditor.addAction({
 			...commentLineAction,
 
-			keybindings: [KeyMod.CtrlCmd | KeyCode.US_BACKSLASH],
+			keybindings: [KeyMod.CtrlCmd | KeyCode.Backslash],
 			run(...args: any[]) {
 				// @ts-ignore
 				this._run(...args)
@@ -148,7 +177,7 @@ export class MonacoHolder extends Signal<void> {
 			}
 		})
 
-		this._monacoEditor?.layout()
+		this._monacoEditor.layout()
 		this.disposables.push(
 			this._app.windowResize.on(() =>
 				setTimeout(() => this._monacoEditor?.layout())
@@ -174,6 +203,7 @@ export class MonacoHolder extends Signal<void> {
 		this.disposables.forEach((d) => d.dispose())
 		this.disposables = []
 		this._monacoEditor = undefined
+		this.resetSignal()
 	}
 
 	private onReadonlyCustomMonacoContextMenu() {
@@ -181,7 +211,7 @@ export class MonacoHolder extends Signal<void> {
 			{
 				name: 'actions.documentationLookup.name',
 				icon: 'mdi-book-open-outline',
-				onTrigger: () => {
+				onTrigger: async () => {
 					const currentModel = this._monacoEditor?.getModel()
 					const selection = this._monacoEditor?.getSelection()
 					if (!currentModel || !selection) return
@@ -191,10 +221,10 @@ export class MonacoHolder extends Signal<void> {
 
 					let word: string | undefined
 					if (App.fileType.isJsonFile(filePath))
-						word = getJsonWordAtPosition(
+						word = await getJsonWordAtPosition(
 							currentModel,
 							selection.getPosition()
-						).word
+						).then((res) => res.word)
 					else
 						word = currentModel.getWordAtPosition(
 							selection.getPosition()

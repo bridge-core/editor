@@ -6,30 +6,51 @@
 		v-model="isNavigationVisible"
 		:app="app"
 		absolute
+		floating
 		:right="isSidebarRight"
 		color="sidebarNavigation"
 		:height="`calc(100% - ${appToolbarHeight})`"
+		:class="{
+			'rounded-r-lg': !isSidebarRight,
+			'rounded-l-lg': isSidebarRight,
+		}"
+		class="my-2"
 		:style="{
-			maxHeight: `calc(100% - ${appToolbarHeight})`,
+			maxHeight: `calc(100% - ${appToolbarHeight} - 16px)`,
 			top: appToolbarHeight,
 		}"
 	>
-		<SidebarButton
-			v-if="isMobile"
-			displayName="general.close"
-			icon="mdi-close"
-			color="error"
-			@click="closeSidebar"
-		/>
+		<template v-if="isMobile">
+			<div
+				class="d-flex align-center justify-center mt-3 mb-2 mx-1 rounded-lg"
+				v-ripple
+			>
+				<BridgeLogo :height="32" @click.native="openChangelogWindow" />
+			</div>
+
+			<SidebarButton
+				displayName="general.close"
+				icon="mdi-close"
+				color="error"
+				@click="closeSidebar"
+			/>
+			<SidebarButton
+				displayName="actions.name"
+				icon="mdi-menu"
+				@click="showMobileMenu"
+			/>
+		</template>
 
 		<v-list>
 			<SidebarButton
-				v-for="sidebar in sidebarElements"
-				:key="`${sidebar.uuid}`"
+				v-for="(sidebar, i) in sidebarElements"
+				:key="`${sidebar.uuid}//${i}`"
 				:displayName="sidebar.displayName"
 				:icon="sidebar.icon"
 				:isLoading="sidebar.isLoading"
 				:isSelected="sidebar.isSelected"
+				:badge="sidebar.badge"
+				:disabled="sidebar.isDisabled"
 				@click="sidebar.click()"
 			/>
 		</v-list>
@@ -75,12 +96,14 @@
 </template>
 
 <script>
+import BridgeLogo from '/@/components/UIElements/Logo.vue'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState.ts'
 import SidebarButton from './Button.vue'
-import { SidebarState } from './state.ts'
 import { tasks } from '/@/components/TaskManager/TaskManager.ts'
 import { NotificationStore } from '/@/components/Notifications/state.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
+import { App } from '/@/App'
+import { version as appVersion } from '/@/utils/app/version'
 
 export default {
 	name: 'Sidebar',
@@ -90,10 +113,18 @@ export default {
 	},
 	components: {
 		SidebarButton,
+		BridgeLogo,
+	},
+
+	setup() {
+		return {
+			rawSidebarElements: App.sidebar.sortedElements,
+			rawIsNavigationVisible: App.sidebar.isNavigationVisible,
+			appVersion,
+		}
 	},
 	data() {
 		return {
-			SidebarState,
 			settingsState,
 			tasks,
 			NotificationStore,
@@ -105,14 +136,14 @@ export default {
 		},
 		isNavigationVisible: {
 			get() {
-				return !this.isMobile || SidebarState.isNavigationVisible
+				return !this.isMobile || App.sidebar.isNavigationVisible.value
 			},
 			set(val) {
-				SidebarState.isNavigationVisible = val
+				App.sidebar.isNavigationVisible.value = val
 			},
 		},
 		sidebarElements() {
-			return Object.values(SidebarState.sidebarElements).filter(
+			return this.rawSidebarElements.filter(
 				(sidebar) => sidebar.isVisible
 			)
 		},
@@ -131,7 +162,14 @@ export default {
 	},
 	methods: {
 		closeSidebar() {
-			SidebarState.isNavigationVisible = false
+			App.sidebar.isNavigationVisible.value = false
+		},
+		showMobileMenu(event) {
+			App.toolbar.showMobileMenu(event)
+		},
+		async openChangelogWindow() {
+			const app = await App.getApp()
+			await app.windows.changelogWindow.open()
 		},
 	},
 }

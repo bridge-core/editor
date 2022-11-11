@@ -3,7 +3,7 @@ import { transformString } from './TransformString'
 import { App } from '/@/App'
 import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
-import { deepMerge } from '/@/utils/deepmerge'
+import { deepMerge } from 'bridge-common-utils'
 import { extname, dirname } from '/@/utils/path'
 
 export type TExpandFile = [string, string, IPresetFileOpts?]
@@ -30,7 +30,8 @@ export async function expandFile(
 
 	let fileHandle: AnyFileHandle
 	if (ext === '.json') {
-		const json = await fs.readJSON(fullOriginPath)
+		const originFile = await fs.readFile(fullOriginPath)
+		const jsonStr = transformString(await originFile.text(), inject, models)
 
 		let destJson: any
 		try {
@@ -41,11 +42,7 @@ export async function expandFile(
 
 		fileHandle = await fs.writeFile(
 			fullDestPath,
-			transformString(
-				JSON.stringify(deepMerge(destJson, json), null, '\t'),
-				inject,
-				models
-			)
+			JSON.stringify(deepMerge(destJson, JSON.parse(jsonStr)), null, '\t')
 		)
 	} else {
 		const file = await fs.readFile(fullOriginPath)

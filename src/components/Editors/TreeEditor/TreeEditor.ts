@@ -3,7 +3,11 @@ import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
 import { RootSchema } from '/@/components/JSONSchema/Schema/Root'
-import { ICompletionItem } from '/@/components/JSONSchema/Schema/Schema'
+import {
+	ICompletionItem,
+	pathWildCard,
+	TSchemaType,
+} from '/@/components/JSONSchema/Schema/Schema'
 import { DeleteEntry, UndoDeleteEntry } from './History/DeleteEntry'
 import { EditorHistory } from './History/EditorHistory'
 import { HistoryEntry } from './History/HistoryEntry'
@@ -23,10 +27,12 @@ import { viewDocumentation } from '/@/components/Documentation/view'
 import { platformRedoBinding } from '/@/utils/constants'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { filterDuplicates } from './CompletionItems/FilterDuplicates'
+import { inferType } from '/@/utils/inferType'
 
 export class TreeEditor {
 	public propertySuggestions: ICompletionItem[] = []
 	public valueSuggestions: ICompletionItem[] = []
+	public editSuggestions: ICompletionItem[] = []
 
 	protected tree: Tree<unknown>
 	protected selections: (TreeSelection | TreeValueSelection)[] = []
@@ -67,6 +73,7 @@ export class TreeEditor {
 			this.valueSuggestions = []
 
 			this.parent.updateCache()
+			this.parent.fileDidChange()
 		})
 
 		App.getApp().then(async (app) => {
@@ -85,41 +92,21 @@ export class TreeEditor {
 	}
 
 	updateSuggestions = debounce(async () => {
-		this.propertySuggestions = []
-		this.valueSuggestions = []
-
 		const currentFormatVersion: string =
 			(<any>this.tree.toJSON()).format_version ||
 			this.parent.project.config.get().targetVersion ||
 			(await getLatestFormatVersion())
 
-		const tree = <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
-			this.selections[0]?.getTree()
-		)
-		const json = tree?.toJSON()
+		const { tree, isValueSelection } = this.getSelectedTree()
 
-		let suggestions: ICompletionItem[] = []
-		if (this.selections.length === 0 || tree === this.tree) {
-			suggestions = this.schemaRoot?.getCompletionItems(json) ?? []
-		} else if (tree) {
-			const treePath = tree.path
-			const schemas =
-				this.schemaRoot?.getSchemasFor(this.tree.toJSON(), treePath) ??
-				[]
-
-			if (schemas)
-				suggestions = schemas
-					.filter((schema) => schema !== undefined)
-					.map((schema) => schema.getCompletionItems(json))
-					.flat()
-		}
+		const suggestions = this.getSuggestions(tree)
+		// console.log(suggestions)
 
 		this.propertySuggestions = filterDuplicates(
 			suggestions
 				.filter(
 					(suggestion) =>
-						(suggestion.type === 'object' ||
-							suggestion.type === 'array') &&
+						['object', 'array'].includes(suggestion.type) &&
 						!(<any>(tree ?? this.tree)).children?.find(
 							(test: any) => {
 								if (test.type === 'array') return false
@@ -154,10 +141,24 @@ export class TreeEditor {
 			(tree instanceof PrimitiveTree && tree.isEmpty())
 		) {
 			this.valueSuggestions = filterDuplicates(
-				suggestions.filter(
-					(suggestion) =>
-						suggestion.type === 'value' ||
-						suggestion.type === 'valueArray'
+				suggestions.filter((suggestion) => suggestion.type === 'value')
+			)
+		} else {
+			this.valueSuggestions = []
+		}
+
+		this.editSuggestions = []
+		// Support auto-completions for value edits
+		if (isValueSelection && tree instanceof PrimitiveTree) {
+			this.editSuggestions = filterDuplicates(
+				suggestions.filter((suggestion) => suggestion.type === 'value')
+			)
+		}
+		// Support auto-completions for property edits
+		if (tree instanceof ObjectTree) {
+			this.editSuggestions = filterDuplicates(
+				this.getSuggestions(tree.getParent() ?? undefined).filter(
+					(suggestion) => suggestion.type === 'object'
 				)
 			)
 		}
@@ -175,6 +176,58 @@ export class TreeEditor {
 				)
 			)
 		this.updateSuggestions()
+	}
+
+	getSchemas(tree: Tree<unknown> | undefined, next = false) {
+		if (this.selections.length === 0 || tree === this.tree) {
+			return this.schemaRoot ? [this.schemaRoot] : []
+		} else if (tree) {
+			return (
+				this.schemaRoot?.getSchemasFor(
+					this.tree.toJSON(),
+					next ? [...tree.path, undefined] : tree.path
+				) ?? []
+			)
+		}
+
+		return []
+	}
+	getSuggestions(tree: Tree<unknown> | undefined) {
+		const json = tree?.toJSON()
+
+		const schemas = this.getSchemas(tree)
+		return schemas
+			.filter((schema) => schema !== undefined)
+			.map((schema) => schema.getCompletionItems(json))
+			.flat()
+	}
+	getSchemaTypes(next?: boolean) {
+		const { tree, isValueSelection } = this.getSelectedTree()
+		if (isValueSelection) return new Set()
+
+		// We need to skip the items schema property for correct array item types
+		if (next === undefined) next = tree instanceof ArrayTree
+
+		const schemas = this.getSchemas(tree, next)
+		if (schemas.length === 0) return new Set()
+
+		return new Set(
+			schemas.reduce<TSchemaType[]>((types, schema) => {
+				return types.concat(schema.types)
+			}, [])
+		)
+	}
+	getSelectedTree() {
+		if (this.selections.length === 0)
+			return { tree: this.tree, isValueSelection: false }
+
+		const selection = this.selections[0]
+		return {
+			tree: <ArrayTree | ObjectTree | PrimitiveTree | undefined>(
+				selection?.getTree()
+			),
+			isValueSelection: selection instanceof TreeValueSelection,
+		}
 	}
 
 	receiveContainer(container: HTMLDivElement) {
@@ -258,6 +311,13 @@ export class TreeEditor {
 	toJSON() {
 		return this.tree.toJSON()
 	}
+	toJsonString(beautify = false) {
+		return JSON.stringify(
+			this.toJSON(),
+			null,
+			beautify ? '\t' : undefined
+		).replaceAll('\\\\', '\\')
+	}
 
 	forEachSelection(
 		cb: (selection: TreeSelection | TreeValueSelection) => void
@@ -330,13 +390,24 @@ export class TreeEditor {
 		this.history.pushAll(entries)
 	}
 
-	addValue(value: string, type: 'value' | 'valueArray') {
-		let transformedValue: TPrimitiveTree = value
-		if (typeof value === 'boolean' || value === 'true' || value === 'false')
-			transformedValue =
-				typeof value === 'boolean' ? value : value === 'true'
-		else if (!Number.isNaN(Number(value))) transformedValue = Number(value)
-		else if (value === 'null' || value === null) transformedValue = null
+	addValue(
+		value: string,
+		type: 'value',
+		forcedValueType?: 'number' | 'string' | 'null' | 'boolean' | 'integer'
+	) {
+		let transformedValue: TPrimitiveTree = inferType(value)
+
+		// Force values for bridge. prediction schema type hints
+		if (forcedValueType) {
+			if (forcedValueType === 'string') transformedValue = value
+			else if (forcedValueType === 'integer')
+				transformedValue = parseInt(value)
+			else if (forcedValueType === 'number')
+				transformedValue = parseFloat(value)
+			else if (forcedValueType === 'boolean')
+				transformedValue = value === 'true'
+			else if (forcedValueType === 'null') transformedValue = null
+		}
 
 		const entries: HistoryEntry[] = []
 
@@ -411,6 +482,29 @@ export class TreeEditor {
 		this.history.push(new ReplaceTreeEntry(tree, newTree))
 	}
 
+	/**
+	 * Get description and title for a given tree
+	 * @param tree
+	 */
+	getDocumentation(tree: Tree<unknown>) {
+		const schemas = <RootSchema[]>(
+			this.getSchemas(tree).filter(
+				(schema) => schema instanceof RootSchema
+			)
+		)
+
+		if (schemas.length === 0) return
+
+		const title =
+			schemas.find((schema) => schema.title !== undefined)?.title ?? ''
+		const description = schemas
+			.filter((schema) => schema.description !== undefined)
+			.map((schema) => schema.description)
+			.join('\n')
+
+		return { title, text: description }
+	}
+
 	onPasteMenu(event?: MouseEvent, tree = this.tree) {
 		const pasteMenu = [
 			{
@@ -424,7 +518,9 @@ export class TreeEditor {
 		]
 
 		if (event && !this.parent.isReadOnly)
-			showContextMenu(event, pasteMenu, false)
+			showContextMenu(event, pasteMenu, {
+				card: this.getDocumentation(tree),
+			})
 
 		return pasteMenu
 	}
@@ -451,7 +547,10 @@ export class TreeEditor {
 			},
 		]
 
-		if (event) showContextMenu(event, readOnlyMenu, false)
+		if (event)
+			showContextMenu(event, readOnlyMenu, {
+				card: this.getDocumentation(tree),
+			})
 
 		return readOnlyMenu
 	}
@@ -533,7 +632,10 @@ export class TreeEditor {
 			})
 		}
 
-		showContextMenu(event, contextMenu, false)
+		showContextMenu(event, contextMenu, {
+			card: this.getDocumentation(tree),
+			mayCloseOnClickOutside: true,
+		})
 	}
 	undo() {
 		this.history.undo()

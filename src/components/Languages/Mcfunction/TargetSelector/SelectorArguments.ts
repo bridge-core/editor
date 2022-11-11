@@ -1,5 +1,5 @@
-import { languages } from 'monaco-editor'
 import type { CommandData, ICompletionItem } from '../Data'
+import { useMonaco } from '../../../../utils/libs/useMonaco'
 
 export class SelectorArguments {
 	constructor(protected commandData: CommandData) {}
@@ -30,15 +30,17 @@ export class SelectorArguments {
 		return args.find((arg) => arg.argumentName === word)
 	}
 
-	getArgumentNameCompletions(): Promise<ICompletionItem[]> {
-		return this.getSchema().then((args) =>
-			args.map((arg) => ({
-				label: arg.argumentName,
-				insertText: arg.argumentName,
-				kind: languages.CompletionItemKind.Property,
-				documentation: arg.description,
-			}))
-		)
+	async getArgumentNameCompletions(): Promise<ICompletionItem[]> {
+		const { languages } = await useMonaco()
+
+		const args = await this.getSchema()
+
+		return args.map((arg) => ({
+			label: arg.argumentName,
+			insertText: arg.argumentName,
+			kind: languages.CompletionItemKind.Property,
+			documentation: arg.description,
+		}))
 	}
 
 	async getArgumentTypeCompletions(argumentName: string) {

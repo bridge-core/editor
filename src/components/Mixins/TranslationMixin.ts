@@ -1,9 +1,9 @@
-import { translate } from '/@/utils/locales'
+import { translate } from '../Locales/Manager'
 
 export const TranslationMixin = {
 	methods: {
 		t(translationKey?: string) {
-			return translate((<any>this).$vuetify, translationKey)
+			return translate(translationKey)
 		},
 	},
 }

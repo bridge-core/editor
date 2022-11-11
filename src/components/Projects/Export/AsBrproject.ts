@@ -2,12 +2,14 @@ import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
 import { ZipDirectory } from '/@/components/FileSystem/Zip/ZipDirectory'
 import { App } from '/@/App'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
-import { createNotification } from '/@/components/Notifications/create'
-import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 
-export async function exportAsBrproject() {
-	const app = await App.getApp()
+export async function exportAsBrproject(name?: string) {
+	const app = App.instance
 	app.windows.loadingWindow.open()
+
+	const savePath = `${app.project.projectPath}/builds/${
+		name ?? app.project.name
+	}.brproject`
 
 	/**
 	 * .brproject files come in two variants:
@@ -15,16 +17,15 @@ export async function exportAsBrproject() {
 	 * - Package only including the project files (no data/ & extensions/) for other browsers
 	 */
 	const zipFolder = new ZipDirectory(
-		isUsingFileSystemPolyfill
+		isUsingFileSystemPolyfill.value
 			? app.fileSystem.baseDirectory
 			: app.project.baseDirectory
 	)
-	const savePath = `projects/${app.project.name}/builds/${app.project.name}.brproject`
 
 	try {
 		await saveOrDownload(
 			savePath,
-			await zipFolder.package(),
+			await zipFolder.package(new Set(['builds'])),
 			app.fileSystem
 		)
 	} catch (err) {

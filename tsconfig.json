@@ -15,22 +15,15 @@
 		"types": [
 			"@types/wicg-file-system-access",
 			"node",
-			"jest",
 			"vite/client",
 			"vite-plugin-pwa/client"
 		],
 		"paths": {
 			"/@/*": ["src/*"]
 		},
-		"lib": ["esnext", "dom", "dom.iterable", "scripthost", "WebWorker"]
+		"lib": ["esnext", "dom", "dom.iterable", "scripthost", "WebWorker"],
+		"forceConsistentCasingInFileNames": true
 	},
-	"include": [
-		"src/**/*.ts",
-		"src/**/*.tsx",
-		"src/**/*.vue",
-		"tests/**/*.ts",
-		"tests/**/*.tsx",
-		"src/utils/glob/picomatch.js"
-	],
+	"include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
 	"exclude": ["node_modules"]
 }

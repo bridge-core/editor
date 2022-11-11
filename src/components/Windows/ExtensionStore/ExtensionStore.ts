@@ -1,25 +1,25 @@
 import { Sidebar, SidebarItem } from '/@/components/Windows/Layout/Sidebar'
 import ExtensionStoreComponent from './ExtensionStore.vue'
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import { App } from '/@/App'
-import { compare } from 'compare-versions'
-import { getFileSystem } from '/@/utils/fs'
+import { compareVersions } from 'bridge-common-utils'
 import { ExtensionTag } from './ExtensionTag'
 import { ExtensionViewer } from './ExtensionViewer'
 import { IExtensionManifest } from '/@/components/Extensions/ExtensionLoader'
 import { Notification } from '/@/components/Notifications/Notification'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
+import { NewBaseWindow } from '../NewBaseWindow'
 
 let updateNotification: Notification | undefined = undefined
-export class ExtensionStoreWindow extends BaseWindow {
+
+export class ExtensionStoreWindow extends NewBaseWindow {
 	protected baseUrl =
 		'https://raw.githubusercontent.com/bridge-core/plugins/master'
 	protected sidebar = new Sidebar([])
-	protected extensions: ExtensionViewer[] = []
 	protected extensionTags!: Record<string, { icon: string; color?: string }>
 	protected installedExtensions: ExtensionViewer[] = []
 	public readonly tags: Record<string, ExtensionTag> = {}
 	protected updates = new Set<ExtensionViewer>()
+	protected extensions: ExtensionViewer[] = []
 
 	constructor() {
 		super(ExtensionStoreComponent)
@@ -32,8 +32,7 @@ export class ExtensionStoreWindow extends BaseWindow {
 		this.defineWindow()
 	}
 
-	async open() {
-		App.audioManager.playAudio('click5.ogg', 1)
+	async open(filter?: string) {
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 		this.sidebar.removeElements()
@@ -44,30 +43,34 @@ export class ExtensionStoreWindow extends BaseWindow {
 			'data/packages/common/extensionTags.json'
 		)
 
-		const installedExtensions = await app.extensionLoader.getInstalledExtensions()
+		const installedExtensions =
+			await app.extensionLoader.getInstalledExtensions()
 
 		let extensions: IExtensionManifest[]
 		try {
-			extensions = await fetch(
-				`${this.baseUrl}/extensions.json`
-			).then((resp) => resp.json())
+			extensions = navigator.onLine
+				? await fetch(`${this.baseUrl}/extensions.json`).then((resp) =>
+						resp.json()
+				  )
+				: [...installedExtensions.values()].map((ext) => ext.manifest)
 		} catch {
-			this.close()
-			app.windows.loadingWindow.close()
-			new InformationWindow({
-				description: 'windows.extensionStore.offlineError',
-			})
-			return
+			return this.createOfflineWindow()
 		}
 
+		// User doesn't have local extensions and is offline
+		if (extensions.length === 0 && !navigator.onLine)
+			return this.createOfflineWindow()
+
 		this.extensions = extensions.map(
-			(plugin) => new ExtensionViewer(this, plugin)
+			(extension) => new ExtensionViewer(this, extension)
 		)
 
 		this.updates.clear()
 
-		installedExtensions.forEach((installedExtension, id) => {
-			const extension = this.extensions.find((ext) => ext.id === id)
+		installedExtensions.forEach((installedExtension) => {
+			const extension = this.extensions.find(
+				(ext) => ext.id === installedExtension.id
+			)
 
 			if (extension) {
 				extension.setInstalled()
@@ -75,7 +78,11 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 				// Update for extension is available
 				if (
-					compare(installedExtension.version, extension.version, '<')
+					compareVersions(
+						installedExtension.version,
+						extension.onlineVersion,
+						'<'
+					)
 				) {
 					extension.setIsUpdateAvailable()
 					this.updates.add(extension)
@@ -89,12 +96,22 @@ export class ExtensionStoreWindow extends BaseWindow {
 
 		this.setupSidebar()
 
+		if (filter) this.sidebar.setFilter(filter)
+
 		app.windows.loadingWindow.close()
 		super.open()
 	}
 
+	async createOfflineWindow() {
+		const app = await App.getApp()
+
+		app.windows.loadingWindow.close()
+		new InformationWindow({
+			description: 'windows.extensionStore.offlineError',
+		})
+	}
+
 	close() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		super.close()
 
 		if (this.updates.size > 0) {
@@ -156,13 +173,9 @@ export class ExtensionStoreWindow extends BaseWindow {
 	}
 
 	protected getExtensions(findTag?: ExtensionTag) {
-		return [...new Set([...this.extensions, ...this.installedExtensions])]
-			.filter(
-				(ext) => !ext.isLocalOnly && (!findTag || ext.hasTag(findTag))
-			)
-			.sort(
-				({ releaseTimestamp: tA }, { releaseTimestamp: tB }) => tB - tA
-			)
+		return [
+			...new Set([...this.extensions, ...this.installedExtensions]),
+		].filter((ext) => !ext.isLocalOnly && (!findTag || ext.hasTag(findTag)))
 	}
 	protected getExtensionsByTag(findTag: ExtensionTag) {
 		return this.getExtensions(findTag)

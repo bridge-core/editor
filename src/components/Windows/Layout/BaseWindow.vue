@@ -12,7 +12,7 @@
 			height="100%"
 			width="100%"
 			color="background"
-			:rounded="platform === 'darwin' ? 'lg' : undefined"
+			:rounded="isFullScreenOrMobile ? null : 'lg'"
 			ref="card"
 		>
 			<component
@@ -38,6 +38,7 @@
 				clipped
 				stateless
 				color="expandedSidebar"
+				:class="isFullScreenOrMobile ? null : 'rounded-l-lg'"
 				style="visibility: visible; transform: translateX(0)"
 			>
 				<MacWindowControls
@@ -59,6 +60,9 @@
 
 			<v-card-text
 				style="overflow-y: auto"
+				:class="{
+					'd-flex align-center justify-center': isLoading,
+				}"
 				:style="{
 					height: heightUnset
 						? undefined
@@ -74,7 +78,13 @@
 						: undefined,
 				}"
 			>
-				<slot name="default" />
+				<v-progress-circular
+					v-if="isLoading"
+					indeterminate
+					color="accent"
+					size="42"
+				/>
+				<slot v-else name="default" />
 			</v-card-text>
 
 			<v-card-actions
@@ -94,7 +104,7 @@
 
 <script>
 import { platform } from '/@/utils/os.ts'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 import WindowsToolbar from './Toolbar/Windows.vue'
 import MacToolbar from './Toolbar/Mac.vue'
 import MacWindowControls from './Toolbar/Mac/WindowControls.vue'
@@ -102,7 +112,6 @@ import { debounce } from 'lodash-es'
 
 export default {
 	name: 'BaseWindow',
-	mixins: [TranslationMixin],
 	components: {
 		WindowsToolbar,
 		MacToolbar,
@@ -110,8 +119,9 @@ export default {
 	},
 	props: {
 		isFullscreen: Boolean,
-		isVisible: Boolean,
-		shouldRender: Boolean,
+		isLoading: Boolean,
+		isVisible: Object | Boolean,
+		shouldRender: Object | Boolean,
 		isPersistent: Boolean,
 		actions: Array,
 		sidebarWidth: {
@@ -154,6 +164,13 @@ export default {
 		maxPercentageHeight: Number,
 		maxPercentageWidth: Number,
 		isSmallPopup: Boolean,
+	},
+	setup() {
+		const { t } = useTranslations()
+
+		return {
+			t,
+		}
 	},
 	data() {
 		return {

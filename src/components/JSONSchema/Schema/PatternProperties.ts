@@ -4,6 +4,10 @@ import { IDiagnostic, Schema } from './Schema'
 export class PatternPropertiesSchema extends Schema {
 	protected children: Record<string, Schema> = {}
 
+	get types() {
+		return [<const>'object']
+	}
+
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
 
@@ -20,10 +24,12 @@ export class PatternPropertiesSchema extends Schema {
 		)
 	}
 
-	getSchemasFor(obj: unknown, location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number | undefined)[]) {
 		const key = location.shift()
+
 		let schemas: Schema[] = []
 		if (typeof key === 'number' || key === undefined) return schemas
+		if (Array.isArray((<any>obj)[key])) return []
 
 		for (const [pattern, child] of Object.entries(this.children)) {
 			if (key.match(new RegExp(pattern)) !== null) schemas.push(child)

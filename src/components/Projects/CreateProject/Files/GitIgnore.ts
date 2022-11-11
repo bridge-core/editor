@@ -14,7 +14,6 @@ export class CreateGitIgnore extends CreateFile {
 .bridge/*
 !.bridge/compiler/
 !.bridge/extensions
-!.bridge/config.json
 builds`
 		)
 	}

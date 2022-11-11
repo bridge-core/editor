@@ -2,7 +2,11 @@ import { RootSchema } from './Root'
 import { IDiagnostic, Schema } from './Schema'
 
 export class ItemsSchema extends Schema {
-	protected children: Schema | Schema[]
+	protected children: RootSchema | RootSchema[]
+
+	get types() {
+		return [<const>'array']
+	}
 
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
@@ -23,7 +27,7 @@ export class ItemsSchema extends Schema {
 		return Array.isArray(this.children) ? this.children : [this.children]
 	}
 
-	getSchemasFor(obj: unknown, location: (string | number)[]) {
+	getSchemasFor(obj: unknown, location: (string | number | undefined)[]) {
 		const key = location.shift()
 
 		if (typeof key === 'string') return []
@@ -45,17 +49,8 @@ export class ItemsSchema extends Schema {
 
 	getCompletionItems(obj: unknown) {
 		return this.arrayChildren
-			.map((child) =>
-				child.getCompletionItems(obj).map(
-					(item) =>
-						<const>{
-							type:
-								item.type === 'object' ? 'array' : 'valueArray',
-							label: `${item.value}`,
-							value: item.value,
-						}
-				)
-			)
+			.filter((child) => !child.hasDoNotSuggest)
+			.map((child) => child.getCompletionItems(obj))
 			.flat()
 	}
 

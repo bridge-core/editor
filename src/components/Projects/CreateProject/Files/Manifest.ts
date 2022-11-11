@@ -3,8 +3,10 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
 import { CreateFile } from './CreateFile'
 import { v4 as uuid } from 'uuid'
-import { version as appVersion } from '/@/appVersion.json'
+import { version as appVersion } from '/@/utils/app/version'
 import { App } from '/@/App'
+import { dashVersion } from '/@/utils/app/dashVersion'
+import { compareVersions } from 'bridge-common-utils'
 
 export class CreateManifest extends CreateFile {
 	public readonly id = 'packManifest'
@@ -27,17 +29,12 @@ export class CreateManifest extends CreateFile {
 		}
 	}
 
-	protected async transformTargetVersion(
-		fs: FileSystem,
-		targetVersion: string
-	) {
+	protected async transformTargetVersion(targetVersion: string) {
 		const app = await App.getApp()
-		const replaceTargetVersion: Record<
-			string,
-			string
-		> = await app.dataLoader.readJSON(
-			'data/packages/minecraftBedrock/minEngineVersionMap.json'
-		)
+		const replaceTargetVersion: Record<string, string> =
+			await app.dataLoader.readJSON(
+				'data/packages/minecraftBedrock/minEngineVersionMap.json'
+			)
 
 		return replaceTargetVersion[targetVersion] ?? targetVersion
 	}
@@ -62,6 +59,7 @@ export class CreateManifest extends CreateFile {
 					: [createOptions.author],
 				generated_with: {
 					bridge: [appVersion],
+					dash: [dashVersion],
 				},
 			},
 			header: {
@@ -75,7 +73,6 @@ export class CreateManifest extends CreateFile {
 					this.type === 'data' || 'resources'
 						? (
 								await this.transformTargetVersion(
-									fs,
 									createOptions.targetVersion
 								)
 						  )
@@ -125,47 +122,145 @@ export class CreateManifest extends CreateFile {
 			]
 		}
 
-		// Behavior pack modules
-		if (
-			this.type === 'data' &&
-			createOptions.experimentalGameplay.additionalModdingCapabilities
-		) {
-			manifest.modules.push({
-				type: 'client_data',
-				uuid: uuid(),
-				version: [1, 0, 0],
-			})
-		}
+		// GameTest
 		if (
 			this.type === 'data' &&
 			createOptions.experimentalGameplay.enableGameTestFramework
 		) {
-			manifest.modules.push({
-				type: 'javascript',
-				uuid: uuid(),
-				entry: 'scripts/main.js',
-				version: [1, 0, 0],
-			})
+			// Add module to enable GameTest in the project, make sure to add the correct format by version.
+			if (compareVersions(createOptions.targetVersion, '1.19.0', '>='))
+				manifest.modules.push({
+					type: 'script',
+					language: 'javascript',
+					uuid: uuid(),
+					entry: 'scripts/main.js',
+					version: [1, 0, 0],
+				})
+			else
+				manifest.modules.push({
+					type: 'javascript',
+					uuid: uuid(),
+					entry: 'scripts/main.js',
+					version: [1, 0, 0],
+				})
+
+			// Add the necessary GameTest dependencies to the manifest
 			manifest.dependencies ??= []
-			manifest.dependencies.push(
-				{
-					// Minecraft native module
-					uuid: 'b26a4d4c-afdf-4690-88f8-931846312678',
-					version: [0, 1, 0],
-				},
-				{
-					// GameTest native module
-					uuid: '6f4b6893-1bb6-42fd-b458-7fa3d0c89616',
-					version: [0, 1, 0],
+			// New 1.19.30+ format of dependencies
+			if (compareVersions(createOptions.targetVersion, '1.19.30', '>=')) {
+				if (
+					compareVersions(
+						createOptions.targetVersion,
+						'1.19.40',
+						'>='
+					)
+				) {
+					manifest.dependencies.push(
+						{
+							module_name: '@minecraft/server',
+							version: '1.0.0-beta',
+						},
+						{
+							module_name: '@minecraft/server-gametest',
+							version: '1.0.0-beta',
+						},
+						{
+							module_name: '@minecraft/server-ui',
+							version: '1.0.0-beta',
+						}
+					)
+					if (createOptions.bdsProject)
+						manifest.dependencies.push(
+							{
+								module_name: '@minecraft/server-admin',
+								version: '1.0.0-beta',
+							},
+							{
+								module_name: '@minecraft/server-net',
+								version: '1.0.0-beta',
+							}
+						)
+				} else {
+					manifest.dependencies.push(
+						{
+							module_name: 'mojang-minecraft',
+							version: '1.0.0-beta',
+						},
+						{
+							module_name: 'mojang-gametest',
+							version: '1.0.0-beta',
+						},
+						{
+							module_name: 'mojang-minecraft-ui',
+							version: '1.0.0-beta',
+						}
+					)
+					if (createOptions.bdsProject)
+						manifest.dependencies.push(
+							{
+								module_name: 'mojang-minecraft-server-admin',
+								version: '1.0.0-beta',
+							},
+							{
+								module_name: 'mojang-net',
+								version: '1.0.0-beta',
+							}
+						)
 				}
-			)
+			} else {
+				// Old dependency format
+				manifest.dependencies.push(
+					{
+						// 'mojang-minecraft' module
+						uuid: 'b26a4d4c-afdf-4690-88f8-931846312678',
+						version: [0, 1, 0],
+					},
+					{
+						// 'mojang-gametest' module
+						uuid: '6f4b6893-1bb6-42fd-b458-7fa3d0c89616',
+						version: [0, 1, 0],
+					}
+				)
+				if (
+					compareVersions(
+						createOptions.targetVersion,
+						'1.18.20',
+						'>='
+					)
+				)
+					manifest.dependencies.push({
+						// 'mojang-minecraft-ui' module
+						uuid: '2bd50a27-ab5f-4f40-a596-3641627c635e',
+						version: [0, 1, 0],
+					})
+				if (
+					compareVersions(
+						createOptions.targetVersion,
+						'1.19.0',
+						'>='
+					) &&
+					createOptions.bdsProject
+				)
+					manifest.dependencies.push(
+						{
+							// 'mojang-minecraft-server-admin' module
+							uuid: '53d7f2bf-bf9c-49c4-ad1f-7c803d947920',
+							version: [0, 1, 0],
+						},
+						{
+							// 'mojang-net' module
+							uuid: '777b1798-13a6-401c-9cba-0cf17e31a81b',
+							version: [0, 1, 0],
+						}
+					)
+			}
 		}
 
 		if (this.type === 'world_template') {
 			manifest.header.lock_template_options = true
 			manifest.header.base_game_version = createOptions.targetVersion
 				.split('.')
-				.map((n) => Number(n))
+				.map((str) => Number(str))
 		}
 
 		await fs.writeJSON(`${this.pack}/manifest.json`, manifest, true)

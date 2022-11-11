@@ -1,13 +1,15 @@
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
 import { MoLang } from 'molang'
-import { languages } from 'monaco-editor'
+import type { languages } from 'monaco-editor'
 import { generateCommandSchemas } from '../../Compiler/Worker/Plugins/CustomCommands/generateSchemas'
-import { RequiresMatcher } from '../../Data/RequiresMatcher'
+import { RequiresMatcher } from '../../Data/RequiresMatcher/RequiresMatcher'
 import { RefSchema } from '../../JSONSchema/Schema/Ref'
 import { strMatchArray } from './strMatch'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { SelectorArguments } from './TargetSelector/SelectorArguments'
+import { useMonaco } from '../../../utils/libs/useMonaco'
+import { ResolvedCommandArguments } from './ResolvedCommandArguments'
 /**
  * An interface that describes a command
  */
@@ -40,6 +42,8 @@ export type TArgumentType =
 	| 'coordinate'
 	| 'command'
 	| 'scoreData'
+	| 'subcommand'
+	| 'integerRange'
 	| `$${string}`
 
 /**
@@ -49,10 +53,12 @@ export interface ICommandArgument {
 	argumentName: string
 	description: string
 	type: TArgumentType
+	allowMultiple?: boolean
 	additionalData?: {
 		schemaReference?: string
 		values?: string[]
 	}
+	isOptional: boolean
 }
 
 export interface ICompletionItem {
@@ -82,8 +88,11 @@ export class CommandData extends Signal<void> {
 		const customTypes: Record<string, ICommandArgument[]> =
 			this._data.$customTypes ?? {}
 
-		for (const { commands } of this._data.vanilla) {
-			for (const command of commands) {
+		for (const { commands = [], subcommands = [] } of this._data.vanilla) {
+			const allCommands = commands.concat(
+				subcommands.map((subcommand: any) => subcommand.commands).flat()
+			)
+			for (const command of allCommands) {
 				if (!command.arguments) continue
 
 				command.arguments = command.arguments
@@ -117,9 +126,12 @@ export class CommandData extends Signal<void> {
 			throw new Error(`Acessing commandData before it was loaded.`)
 
 		const validEntries: any[] = []
+		const requiresMatcher = new RequiresMatcher()
+		await requiresMatcher.setup()
+
 		for await (const entry of this._data.vanilla) {
-			const requiresMatcher = new RequiresMatcher(entry.requires)
-			if (await requiresMatcher.isValid()) validEntries.push(entry)
+			if (requiresMatcher.isValid(entry.requires))
+				validEntries.push(entry)
 			else if (!entry.requires) validEntries.push(entry)
 		}
 
@@ -141,6 +153,22 @@ export class CommandData extends Signal<void> {
 			.filter(
 				(selectorArgument: unknown) => selectorArgument !== undefined
 			)
+	}
+
+	async getSubcommands(commandName: string): Promise<ICommand[]> {
+		const schemas = await this.getSchema()
+
+		return schemas
+			.map(
+				(schema) =>
+					schema.subcommands?.filter(
+						(subcommand: any) =>
+							subcommand.commandName === commandName
+					) ?? []
+			)
+			.flat(1)
+			.map((subcommands) => subcommands.commands)
+			.flat(1)
 	}
 
 	allCommands(query?: string, ignoreCustomCommands = false) {
@@ -165,33 +193,37 @@ export class CommandData extends Signal<void> {
 		])
 	}
 
-	getCommandCompletionItems(query?: string, ignoreCustomCommands = false) {
-		return this.getCommandsSchema(ignoreCustomCommands).then((schema) => {
-			const completionItems: ICompletionItem[] = []
+	async getCommandCompletionItems(
+		query?: string,
+		ignoreCustomCommands = false
+	) {
+		const { languages } = await useMonaco()
 
-			schema
-				.filter(
-					(command: ICommand) =>
-						!query || command.commandName?.includes(query)
-				)
-				.forEach((command) => {
-					if (
-						completionItems.some(
-							(item) => item.label === command.commandName
-						)
+		const schema = await this.getCommandsSchema(ignoreCustomCommands)
+		const completionItems: ICompletionItem[] = []
+
+		schema
+			.filter(
+				(command: ICommand) =>
+					!query || command.commandName?.includes(query)
+			)
+			.forEach((command) => {
+				if (
+					completionItems.some(
+						(item) => item.label === command.commandName
 					)
-						return
+				)
+					return
 
-					completionItems.push({
-						insertText: command.commandName,
-						label: command.commandName,
-						documentation: command.description,
-						kind: languages.CompletionItemKind.Method,
-					})
+				completionItems.push({
+					insertText: command.commandName,
+					label: command.commandName,
+					documentation: command.description,
+					kind: languages.CompletionItemKind.Method,
 				})
+			})
 
-			return completionItems
-		})
+		return completionItems
 	}
 
 	/**
@@ -232,16 +264,20 @@ export class CommandData extends Signal<void> {
 			await Promise.all(
 				currentCommands.map(async (currentCommand: ICommand) => {
 					// Get command argument
-					const args = await this.getNextCommandArgument(
-						currentCommand,
-						[...path]
-					)
+					const args = (
+						await this.getNextCommandArgument(currentCommand, [
+							...path,
+						])
+					).arguments
 					if (args.length === 0) return []
 
 					// Return possible completion items for the argument
 					return await Promise.all(
 						args.map((arg) =>
-							this.getCompletionItemsForArgument(arg)
+							this.getCompletionItemsForArgument(
+								arg,
+								currentCommand.commandName
+							)
 						)
 					)
 				})
@@ -268,12 +304,14 @@ export class CommandData extends Signal<void> {
 	protected async getNextCommandArgument(
 		currentCommand: ICommand,
 		path: string[]
-	): Promise<ICommandArgument[]> {
+	): Promise<ResolvedCommandArguments> {
 		if (!currentCommand.arguments || currentCommand.arguments.length === 0)
-			return []
+			return new ResolvedCommandArguments([], 0, false)
 
 		const args = currentCommand.arguments ?? []
 		let argumentIndex = 0
+		let subcommandStopArg = null
+		let shouldProposeStopArg = false
 
 		for (let i = 0; i < path.length; i++) {
 			const currentStr = path[i]
@@ -282,49 +320,129 @@ export class CommandData extends Signal<void> {
 
 			const matchType = await this.isArgumentType(
 				currentStr,
-				args[argumentIndex]
+				args[argumentIndex],
+				currentCommand.commandName
 			)
 
-			if (matchType === 'none') return []
+			if (matchType === 'none')
+				return new ResolvedCommandArguments([], i, false)
 			else if (matchType === 'partial')
-				return path.length === i + 1 ? [args[argumentIndex]] : []
+				return new ResolvedCommandArguments(
+					path.length === i + 1 ? [args[argumentIndex]] : [],
+					i
+				)
 
 			// Propose arguments from nested command when necessary
 			if (args[argumentIndex].type === 'command' && i + 1 < path.length) {
-				return (
-					await Promise.all(
-						(
-							await this.getCommandDefinitions(
-								currentStr,
-								await this.shouldIgnoreCustomCommands
+				return ResolvedCommandArguments.from(
+					(
+						await Promise.all(
+							(
+								await this.getCommandDefinitions(
+									currentStr,
+									await this.shouldIgnoreCustomCommands
+								)
+							).map((command) =>
+								this.getNextCommandArgument(
+									command,
+									path.slice(i + 1)
+								)
 							)
-						).map((command) =>
+						)
+					).flat()
+				)
+			} else if (args[argumentIndex].type === 'subcommand') {
+				const subcommands = await this.getSubcommands(
+					currentCommand.commandName
+				)
+
+				// Try to find stop argument within path
+				subcommandStopArg = args[argumentIndex + 1] ?? null
+				let foundStopArg = false
+				let stopArgIndex = i
+				while (
+					subcommandStopArg &&
+					!foundStopArg &&
+					stopArgIndex < path.length
+				) {
+					stopArgIndex++
+					foundStopArg =
+						(await this.isArgumentType(
+							path[stopArgIndex],
+							subcommandStopArg,
+							currentCommand.commandName
+						)) === 'full'
+				}
+
+				// Stop argument was entered, skip to next argument after stop argument
+				if (foundStopArg) {
+					argumentIndex += 2
+					i = stopArgIndex
+					continue
+				}
+
+				const validSubcommands = subcommands.filter(
+					(subcommand) => subcommand.commandName === path[i]
+				)
+				if (validSubcommands.length === 0)
+					return new ResolvedCommandArguments([], i)
+
+				const resolvedArgs = ResolvedCommandArguments.from(
+					await Promise.all(
+						validSubcommands.map((validSubcommand) =>
 							this.getNextCommandArgument(
-								command,
+								validSubcommand,
 								path.slice(i + 1)
 							)
 						)
 					)
-				).flat()
+				)
+				const nextArgs = resolvedArgs.arguments
+
+				// We have no more arguments for the subcommand
+				if (nextArgs.length === 0) {
+					// If multiple subcommands are valid, we should propose the next subcommand
+					if (args[argumentIndex].allowMultiple) {
+						i += resolvedArgs.lastParsedIndex + 1
+						shouldProposeStopArg = true
+					} else {
+						// If only one subcommand is valid, we should propose the next argument
+						argumentIndex++
+					}
+
+					continue
+				}
+
+				return resolvedArgs
 			}
 
 			// Check next argument
 			argumentIndex++
 			// If argumentIndex to large, return
-			if (argumentIndex >= args.length) return []
+			if (argumentIndex >= args.length)
+				return new ResolvedCommandArguments([], i)
 		}
 
-		if (!args[argumentIndex]) return []
+		if (!args[argumentIndex])
+			return new ResolvedCommandArguments([], path.length - 1)
 		// If we are here, we are at the next argument, return it
-		return [args[argumentIndex]]
+		return new ResolvedCommandArguments(
+			[args[argumentIndex]].concat(
+				subcommandStopArg && shouldProposeStopArg
+					? [subcommandStopArg]
+					: []
+			),
+			path.length - 1
+		)
 	}
 
 	/**
 	 * Given an argument type, test whether a string matches the type
 	 */
-	protected async isArgumentType(
+	async isArgumentType(
 		testStr: string,
-		commandArgument: ICommandArgument
+		commandArgument: ICommandArgument,
+		commandName?: string
 	): Promise<'none' | 'partial' | 'full'> {
 		switch (commandArgument.type) {
 			case 'string': {
@@ -344,9 +462,7 @@ export class CommandData extends Signal<void> {
 					testStr,
 					await this.allCommands(
 						undefined,
-						await App.getApp().then(
-							(app) => app.projectManager.hasFired
-						)
+						await this.shouldIgnoreCustomCommands
 					)
 				)
 			}
@@ -380,6 +496,19 @@ export class CommandData extends Signal<void> {
 
 				return 'full'
 			}
+			case 'subcommand': {
+				const subcommands = commandName
+					? await this.getSubcommands(commandName)
+					: []
+				return strMatchArray(
+					testStr,
+					subcommands.map((subcommand) => subcommand.commandName)
+				)
+			}
+			case 'integerRange':
+				return /^([\d]*)?([.]{2})?([\d]*)?$/.test(testStr)
+					? 'full'
+					: 'none'
 			default:
 				return 'none'
 		}
@@ -389,8 +518,11 @@ export class CommandData extends Signal<void> {
 	 * Given a commandArgument, return completion items for it
 	 */
 	async getCompletionItemsForArgument(
-		commandArgument: ICommandArgument
+		commandArgument: ICommandArgument,
+		commandName?: string
 	): Promise<ICompletionItem[]> {
+		const { languages } = await useMonaco()
+
 		// Test whether argument type is defined
 		if (!commandArgument.type) {
 			// If additionalData is defined, return its values
@@ -419,7 +551,8 @@ export class CommandData extends Signal<void> {
 			case 'selector':
 				return this.toCompletionItem(
 					['@a', '@e', '@p', '@s', '@r', '@initiator'],
-					commandArgument.description
+					commandArgument.description,
+					languages.CompletionItemKind.TypeParameter
 				)
 			case 'boolean':
 				return this.toCompletionItem(
@@ -443,7 +576,8 @@ export class CommandData extends Signal<void> {
 				if (commandArgument.additionalData?.values)
 					return this.toCompletionItem(
 						commandArgument.additionalData.values,
-						commandArgument.description
+						commandArgument.description,
+						languages.CompletionItemKind.Constant
 					)
 				else if (commandArgument.additionalData?.schemaReference)
 					return this.toCompletionItem(
@@ -452,7 +586,8 @@ export class CommandData extends Signal<void> {
 								commandArgument.additionalData.schemaReference
 							).map(({ value }) => value)
 						),
-						commandArgument.description
+						commandArgument.description,
+						languages.CompletionItemKind.Constant
 					)
 				else return []
 			}
@@ -474,19 +609,38 @@ export class CommandData extends Signal<void> {
 					commandArgument.description,
 					languages.CompletionItemKind.Struct
 				)
+			case 'subcommand':
+				return this.toCompletionItem(
+					commandName
+						? (await this.getSubcommands(commandName)).map(
+								(command) => command.commandName
+						  )
+						: [],
+					undefined,
+					languages.CompletionItemKind.Constant
+				)
+			case 'integerRange':
+				return this.toCompletionItem(
+					['0', '1', '2', '3', '..0', '0..', '0..1'],
+					commandArgument.description,
+					languages.CompletionItemKind.Value
+				)
 		}
 
 		return []
 	}
-	toCompletionItem(
+	async toCompletionItem(
 		strings: (string | [string, string])[],
 		documentation?: string,
-		kind = languages.CompletionItemKind.Text
-	): ICompletionItem[] {
+		kind?: languages.CompletionItemKind
+	): Promise<ICompletionItem[]> {
+		const { languages } = await useMonaco()
+		if (!kind) kind = languages.CompletionItemKind.Text
+
 		return strings.map((str) => ({
-			label: Array.isArray(str) ? str[0] : str,
-			insertText: Array.isArray(str) ? str[1] : str,
-			kind,
+			label: Array.isArray(str) ? `${str[0]}` : `${str}`,
+			insertText: Array.isArray(str) ? `${str[1]}` : `${str}`,
+			kind: kind!,
 			documentation,
 			insertTextRules: Array.isArray(str)
 				? languages.CompletionItemInsertTextRule.InsertAsSnippet

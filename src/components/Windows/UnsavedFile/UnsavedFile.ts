@@ -1,14 +1,21 @@
 import UnsavedFileComponent from './UnsavedFile.vue'
 import { App } from '/@/App'
-import { BaseWindow } from '../BaseWindow'
 import { Tab } from '/@/components/TabSystem/CommonTab'
+import { NewBaseWindow } from '../NewBaseWindow'
+import { FileTab } from '../../TabSystem/FileTab'
 
 const tabs = new WeakMap<UnsavedFileWindow, Tab>()
 
-export class UnsavedFileWindow extends BaseWindow<'cancel' | 'close' | 'save'> {
+export class UnsavedFileWindow extends NewBaseWindow<
+	'cancel' | 'close' | 'save'
+> {
+	protected canSaveTab = false
+
 	constructor(tab: Tab) {
 		super(UnsavedFileComponent, true, false)
 		tabs.set(this, tab)
+		this.canSaveTab = tab instanceof FileTab
+
 		this.defineWindow()
 		this.open()
 	}
@@ -24,7 +31,6 @@ export class UnsavedFileWindow extends BaseWindow<'cancel' | 'close' | 'save'> {
 		await app.tabSystem?.close(this.tab, false)
 	}
 	async save() {
-		App.audioManager.playAudio('confirmation_002.ogg', 1)
 		this.close('save')
 
 		const app = await App.getApp()

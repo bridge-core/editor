@@ -11,12 +11,7 @@
 			'px-1': $vuetify.breakpoint.mobile,
 		}"
 	>
-		<v-icon
-			v-if="displayIcon"
-			color="accent"
-			:x-small="$vuetify.breakpoint.mobile"
-			:class="{ 'pr-1': !$vuetify.breakpoint.mobile }"
-		>
+		<v-icon v-if="displayIcon" color="accent" class="pr-1">
 			{{ displayIcon }}
 		</v-icon>
 
@@ -24,20 +19,18 @@
 	</v-btn>
 </template>
 
-<script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+<script setup>
+import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 
-export default {
-	name: 'MenuButton',
-	mixins: [TranslationMixin],
-	props: {
-		displayName: String,
-		displayIcon: String,
-		disabled: {
-			type: Boolean,
-		},
+const { t } = useTranslations()
+
+defineProps({
+	displayName: String,
+	displayIcon: String,
+	disabled: {
+		type: Boolean,
 	},
-}
+})
 </script>
 
 <style scoped>

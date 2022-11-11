@@ -1,4 +1,3 @@
-import { languages } from 'monaco-editor'
 import { TextTab } from '/@/components/Editors/Text/TextTab'
 import { ProjectConfig } from '../../Projects/Project/Config'
 import { App } from '/@/App'
@@ -6,6 +5,8 @@ import { IDisposable } from '/@/types/disposable'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { TreeTab } from '/@/components/Editors/TreeEditor/Tab'
 import type { Tab } from '/@/components/TabSystem/CommonTab'
+import { useMonaco } from '../../../utils/libs/useMonaco'
+import { supportsLookbehind } from './supportsLookbehind'
 
 export interface IKnownWords {
 	keywords: string[]
@@ -43,15 +44,16 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 
 			app.projectManager.onActiveProject((project) => {
 				this.updateKeywords(project.config)
-				project.fileSave.on('config.json', () =>
-					this.updateKeywords(project.config)
+				project.fileSave.on(
+					project.config.resolvePackPath(undefined, 'config.json'),
+					() => this.updateKeywords(project.config)
 				)
 			})
 		})
 
-		App.eventSystem.on('currentTabSwitched', (tab: Tab) =>
+		App.eventSystem.on('currentTabSwitched', (tab: Tab) => {
 			this.loadWords(tab)
-		)
+		})
 		this.loadWords()
 	}
 
@@ -77,34 +79,40 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 		const tab = tabArg ?? app.project.tabSystem?.selectedTab
 		if (!(tab instanceof TextTab) && !(tab instanceof TreeTab)) return
 
-		const { id, highlighterConfiguration = {} } =
+		const { id, highlighterConfiguration = {}, type } =
 			App.fileType.get(tab.getPath()) ?? {}
 
 		// We have already loaded the needed file type
-		if (!id) return this.resetWords(tab)
-		if (id === this.loadedFileType) return
+		if (!id) return this.resetWords()
+		if (
+			id === this.loadedFileType ||
+			(type !== undefined && type !== 'json')
+		)
+			return
 
 		this.dynamicKeywords = highlighterConfiguration.keywords ?? []
 		this.typeIdentifiers = highlighterConfiguration.typeIdentifiers ?? []
 		this.variables = highlighterConfiguration.variables ?? []
 		this.definitions = highlighterConfiguration.definitions ?? []
 
-		if (tab instanceof TextTab) this.updateHighlighter()
-		else if (tab instanceof TreeTab) this.dispatch(this.knownWords)
+		this.updateHighlighter()
+		this.dispatch(this.knownWords)
 		this.loadedFileType = id
 	}
-	resetWords(tab: TreeTab | TextTab) {
+	resetWords() {
 		this.dynamicKeywords = []
 		this.typeIdentifiers = []
 		this.variables = []
 		this.definitions = []
 
-		if (tab instanceof TextTab) this.updateHighlighter()
-		else if (tab instanceof TreeTab) this.dispatch(this.knownWords)
+		this.updateHighlighter()
+		this.dispatch(this.knownWords)
 		this.loadedFileType = 'unknown'
 	}
 
-	updateHighlighter() {
+	async updateHighlighter() {
+		const { languages } = await useMonaco()
+
 		const newLanguage = languages.setMonarchTokensProvider('json', <any>{
 			// Set defaultToken to invalid to see what you do not tokenize yet
 			defaultToken: 'invalid',
@@ -168,7 +176,12 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 				embeddedCommand: [
 					[/@escapes/, 'string.escape'],
 					[
-						/"/,
+						/**
+						 * This makes sure that we don't match escaped closing brackets to terminate the embedded lamguage
+						 * However, as negative lookbehinds aren't supported by Safari yet, we first test for this feature
+						 * and then fallback to a normal quote matcher if necessary
+						 */
+						supportsLookbehind() ? new RegExp('(?<!\\\\)"') : /"/,
 						{
 							token: 'identifier',
 							next: '@pop',
@@ -198,7 +211,7 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 
 				string: [
 					[
-						/[^\"\:]+/,
+						/(\\"|[^\"\:])+/,
 						{
 							cases: {
 								'@keywords': 'keyword',

@@ -1,8 +1,5 @@
 <template>
-	<div
-		class="text-normal pa-4 mb-2 rounded-lg control-bg"
-		:class="{ selected }"
-	>
+	<div class="pa-4 mb-2 rounded-lg control-bg" :class="{ selected, dark }">
 		<div class="d-flex align-center">
 			<v-icon
 				v-if="action.icon"
@@ -17,7 +14,12 @@
 			<span v-if="action.keyBinding">
 				{{ action.keyBinding.toStrKeyCode() }}
 			</span>
-			<v-btn v-if="!hideTriggerButton" color="primary" small icon>
+			<v-btn
+				v-if="!hideTriggerButton"
+				:color="action.color || 'accent'"
+				small
+				icon
+			>
 				<v-icon @click="onTrigger">mdi-play</v-icon>
 			</v-btn>
 			<v-icon v-if="selected !== undefined">
@@ -29,9 +31,9 @@
 			</v-icon>
 		</div>
 
-		<span v-if="!dense && action.description">
+		<p v-if="!dense && action.description">
 			{{ t(action.description) }}
-		</span>
+		</p>
 	</div>
 </template>
 
@@ -43,6 +45,7 @@ export default {
 		action: Object,
 		hideTriggerButton: Boolean,
 		dense: Boolean,
+		dark: Boolean,
 		selected: {
 			type: Boolean,
 			default: undefined,
@@ -61,6 +64,10 @@ export default {
 .control-bg {
 	background-color: var(--v-sidebarNavigation-base);
 	border: 1px solid var(--v-sidebarNavigation-base);
+}
+.dark {
+	background-color: var(--v-background-base);
+	border: 1px solid var(--v-background-base);
 }
 .selected {
 	border: 1px solid var(--v-primary-base);

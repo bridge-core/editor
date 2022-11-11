@@ -1,23 +1,25 @@
-import { BaseWindow } from '../../BaseWindow'
+import { reactive } from 'vue'
+import { NewBaseWindow } from '../../NewBaseWindow'
 import DropdownWindowComponent from './Dropdown.vue'
-import { App } from '/@/App'
-import { AudioManager } from '/@/components/Audio/AudioManager'
 
 export interface IDropdownWindowOpts {
 	name: string
 	isClosable?: boolean
 	placeholder?: string
-	options: Array<string>
-	default: string
+	options: string[] | { text: string; value: string }[]
+	default?: string
 	onConfirm?: (selection: string) => Promise<void> | void
 }
 
-export class DropdownWindow extends BaseWindow<string> {
-	protected currentSelection: string
+export class DropdownWindow extends NewBaseWindow<string> {
+	protected state = reactive<any>({
+		...super.state,
+		currentSelection: undefined,
+	})
 
 	constructor(protected opts: IDropdownWindowOpts) {
 		super(DropdownWindowComponent, true, false)
-		this.currentSelection = opts.default
+		this.state.currentSelection = opts.default ?? opts.options[0]
 		this.defineWindow()
 		this.open()
 	}
@@ -36,9 +38,13 @@ export class DropdownWindow extends BaseWindow<string> {
 	}
 
 	async confirm() {
-		App.audioManager.playAudio('click5.ogg', 1)
+		const selection =
+			typeof this.state.currentSelection === 'object'
+				? this.state.currentSelection.value
+				: this.state.currentSelection
+
 		if (typeof this.opts.onConfirm === 'function')
-			await this.opts.onConfirm(this.currentSelection)
-		super.close(this.currentSelection ?? null)
+			await this.opts.onConfirm(selection)
+		super.close(selection ?? null)
 	}
 }

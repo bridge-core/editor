@@ -1,4 +1,4 @@
-import { FileTab } from '/@/components/TabSystem/FileTab'
+import { FileTab, TReadOnlyMode } from '/@/components/TabSystem/FileTab'
 import TreeTabComponent from './Tab.vue'
 import { App } from '/@/App'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
@@ -13,16 +13,18 @@ import { AnyFileHandle } from '../../FileSystem/Types'
 
 const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {
-		const fileContent = JSON.stringify(tab.treeEditor.toJSON())
+		const fileContent = tab.treeEditor.toJsonString()
 		const app = await App.getApp()
+
+		app.project.fileChange.dispatch(tab.getPath(), await tab.getFile())
+
 		await app.project.packIndexer.updateFile(
 			tab.getPath(),
 			fileContent,
-			tab.isForeignFile
+			tab.isForeignFile,
+			true
 		)
 		await app.project.jsonDefaults.updateDynamicSchemas(tab.getPath())
-
-		app.project.fileChange.dispatch(tab.getPath(), await tab.getFile())
 	},
 	600
 )
@@ -34,9 +36,9 @@ export class TreeTab extends FileTab {
 	constructor(
 		parent: TabSystem,
 		fileHandle: AnyFileHandle,
-		isReadOnly = false
+		readOnlyMode?: TReadOnlyMode
 	) {
-		super(parent, fileHandle, isReadOnly)
+		super(parent, fileHandle, readOnlyMode)
 
 		this.fired.then(async () => {
 			const app = await App.getApp()
@@ -67,9 +69,12 @@ export class TreeTab extends FileTab {
 	async setup() {
 		let json: unknown
 		try {
-			json = json5.parse(
-				await this.fileHandle.getFile().then((file) => file.text())
-			)
+			const fileStr = await this.fileHandle
+				.getFile()
+				.then((file) => file.text())
+
+			if (fileStr === '') json = {}
+			else json = json5.parse(fileStr.replaceAll('\\n', '\\\\n'))
 		} catch {
 			new InformationWindow({
 				name: 'windows.invalidJson.title',
@@ -84,7 +89,7 @@ export class TreeTab extends FileTab {
 		await super.setup()
 	}
 	async getFile() {
-		return new File([JSON.stringify(this.treeEditor.toJSON())], this.name)
+		return new File([this.treeEditor.toJsonString()], this.name)
 	}
 
 	updateCache() {
@@ -94,23 +99,24 @@ export class TreeTab extends FileTab {
 	async onActivate() {
 		this.treeEditor.activate()
 	}
-	onDeactivate() {
+	async onDeactivate() {
+		await super.onDeactivate()
+
 		this._treeEditor?.deactivate()
 	}
 
 	loadEditor() {}
-	setReadOnly(val: boolean) {
-		this.isReadOnly = val
+	setReadOnly(val: TReadOnlyMode) {
+		this.readOnlyMode = val
 	}
 
-	async save() {
+	async _save() {
 		this.isTemporary = false
 
-		const app = await App.getApp()
-		const fileContent = JSON.stringify(this.treeEditor.toJSON(), null, '\t')
+		const fileContent = this.treeEditor.toJsonString(true)
 
-		await app.fileSystem.write(this.fileHandle, fileContent)
-		this.treeEditor.saveState()
+		const writeWorked = await this.writeFile(fileContent)
+		if (writeWorked) this.treeEditor.saveState()
 	}
 
 	async paste() {

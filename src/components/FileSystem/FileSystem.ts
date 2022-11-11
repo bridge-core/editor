@@ -2,9 +2,12 @@
 import { Signal } from '../Common/Event/Signal'
 import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
-import { iterateDir } from '/@/utils/iterateDir'
+import { iterateDirParallel } from '/@/utils/iterateDir'
 import { join, dirname, basename } from '/@/utils/path'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
+import { getStorageDirectory } from '/@/utils/getStorageDirectory'
+import { VirtualFileHandle } from './Virtual/FileHandle'
+import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 
 export class FileSystem extends Signal<void> {
 	protected _baseDirectory!: AnyDirectoryHandle
@@ -31,6 +34,16 @@ export class FileSystem extends Signal<void> {
 
 		let current = this.baseDirectory
 		const pathArr = path.split(/\\|\//g)
+		if (pathArr[0] === '.') pathArr.shift()
+		// Dash loads global extensions from "extensions/" but this folder is no longer used for bridge. projects
+		if (pathArr[0] === 'extensions') {
+			pathArr[0] = '~local'
+			pathArr.splice(1, 0, 'extensions')
+		}
+		if (pathArr[0] === '~local') {
+			current = await getStorageDirectory()
+			pathArr.shift()
+		}
 
 		for (const folder of pathArr) {
 			try {
@@ -64,10 +77,28 @@ export class FileSystem extends Signal<void> {
 			throw new Error(`File does not exist: "${path}"`)
 		}
 	}
-	pathTo(fileHandle: AnyFileHandle) {
-		return this.baseDirectory
-			.resolve(<any>fileHandle)
+	async pathTo(handle: AnyHandle) {
+		const localHandle = await getStorageDirectory()
+		// We can only resolve paths to virtual files if the user uses the file system polyfill
+		if (
+			handle instanceof VirtualFileHandle &&
+			!(localHandle instanceof VirtualDirectoryHandle)
+		)
+			return
+
+		let path = await localHandle
+			.resolve(<any>handle)
 			.then((path) => path?.join('/'))
+
+		if (path) {
+			path = '~local/' + path
+		} else {
+			path = await this.baseDirectory
+				.resolve(<any>handle)
+				.then((path) => path?.join('/'))
+		}
+
+		return path
 	}
 
 	async mkdir(path: string, { recursive }: Partial<IMkdirConfig> = {}) {
@@ -105,6 +136,7 @@ export class FileSystem extends Signal<void> {
 		dirHandle = await dirHandle
 
 		const files: { name: string; path: string; kind: string }[] = []
+		const promises = []
 
 		for await (const handle of dirHandle.values()) {
 			if (handle.kind === 'file' && handle.name === '.DS_Store') continue
@@ -115,14 +147,17 @@ export class FileSystem extends Signal<void> {
 					kind: handle.kind,
 					path: `${path}/${handle.name}`,
 				})
-			else if (handle.kind === 'directory')
-				files.push(
-					...(await this.readFilesFromDir(
+			else if (handle.kind === 'directory') {
+				promises.push(
+					this.readFilesFromDir(
 						`${path}/${handle.name}`,
 						handle
-					))
+					).then((subFiles) => files.push(...subFiles))
 				)
+			}
 		}
+
+		await Promise.allSettled(promises)
 
 		return files
 	}
@@ -167,7 +202,9 @@ export class FileSystem extends Signal<void> {
 		// 	await handle.writable.getWriter().write(data)
 		// 	handle.close()
 		// } else {
-		const writable = await fileHandle.createWritable()
+		const writable = await fileHandle.createWritable({
+			keepExistingData: false,
+		})
 		await writable.write(data)
 		await writable.close()
 		// }
@@ -181,6 +218,15 @@ export class FileSystem extends Signal<void> {
 			throw new Error(`Invalid JSON: ${path}`)
 		}
 	}
+	async readJsonHandle(fileHandle: AnyFileHandle) {
+		const file = await fileHandle.getFile()
+
+		try {
+			return await json5.parse(await file.text())
+		} catch {
+			throw new Error(`Invalid JSON: ${fileHandle.name}`)
+		}
+	}
 	writeJSON(path: string, data: any, beautify = false) {
 		return this.writeFile(
 			path,
@@ -188,6 +234,9 @@ export class FileSystem extends Signal<void> {
 		)
 	}
 
+	// TODO: Use moveHandle() util function
+	// This function can utilize FileSystemHandle.move() where available
+	// and therefore become more efficient
 	async move(path: string, newPath: string) {
 		if (await this.fileExists(path)) {
 			await this.copyFile(path, newPath)
@@ -199,19 +248,20 @@ export class FileSystem extends Signal<void> {
 
 		await this.unlink(path)
 	}
+
 	async copyFile(originPath: string, destPath: string) {
 		const originHandle = await this.getFileHandle(originPath, false)
 		const destHandle = await this.getFileHandle(destPath, true)
 
 		return await this.copyFileHandle(originHandle, destHandle)
 	}
+
 	async copyFileHandle(
 		originHandle: AnyFileHandle,
 		destHandle: AnyFileHandle
 	) {
-		const writable = await destHandle.createWritable()
-		await writable.write(await originHandle.getFile())
-		await writable.close()
+		await this.write(destHandle, await originHandle.getFile())
+
 		return destHandle
 	}
 	async copyFolder(originPath: string, destPath: string) {
@@ -219,7 +269,7 @@ export class FileSystem extends Signal<void> {
 			create: false,
 		})
 
-		await iterateDir(originHandle, async (fileHandle, filePath) => {
+		await iterateDirParallel(originHandle, async (fileHandle, filePath) => {
 			await this.copyFileHandle(
 				fileHandle,
 				await this.getFileHandle(join(destPath, filePath), true)
@@ -232,7 +282,7 @@ export class FileSystem extends Signal<void> {
 	) {
 		const destFs = new FileSystem(destHandle)
 
-		await iterateDir(originHandle, async (fileHandle, filePath) => {
+		await iterateDirParallel(originHandle, async (fileHandle, filePath) => {
 			await this.copyFileHandle(
 				fileHandle,
 				await destFs.getFileHandle(filePath, true)
@@ -274,5 +324,42 @@ export class FileSystem extends Signal<void> {
 		} catch {
 			return false
 		}
+	}
+
+	async getDirectoryHandlesFromGlob(glob: string, startPath = '.') {
+		const globParts = glob.split(/\/|\\/g)
+		const handles = new Set<AnyDirectoryHandle>([
+			await this.getDirectoryHandle(startPath),
+		])
+
+		for (const part of globParts) {
+			if (part === '*') {
+				for (const current of [...handles.values()]) {
+					handles.delete(current)
+
+					for await (const child of current.values()) {
+						if (child.kind === 'directory') {
+							handles.add(child)
+						}
+					}
+				}
+			} else if (part === '**') {
+				console.warn('"**" is not supported yet')
+				return []
+			} else {
+				for (const current of [...handles.values()]) {
+					handles.delete(current)
+
+					try {
+						handles.add(await current.getDirectoryHandle(part))
+					} catch (err) {}
+				}
+			}
+
+			// If there are no more handles, we're done
+			if (handles.size === 0) return []
+		}
+
+		return [...handles.values()]
 	}
 }

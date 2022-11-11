@@ -1,13 +1,14 @@
 <template>
 	<v-app
+		ref="appContainer"
 		:style="{ fontFamily }"
 		@contextmenu.native="$event.preventDefault()"
 	>
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
-		<Toolbar />
+		<Toolbar v-if="!isInFullScreen" />
 
-		<Sidebar app />
+		<Sidebar v-if="!isInFullScreen" app />
 
 		<v-btn
 			v-if="!sidebarNavigationVisible"
@@ -23,19 +24,27 @@
 			<v-icon>mdi-table-column</v-icon>
 		</v-btn>
 
-		<v-main :style="{ 'padding-top': appToolbarHeight }">
+		<v-main
+			:style="{
+				'padding-top': isInFullScreen ? 0 : appToolbarHeight,
+			}"
+		>
 			<WindowRenderer />
 
 			<v-row
 				no-gutters
 				class="d-flex fill-area"
-				:class="{ 'flex-row-reverse': isSidebarRight }"
+				:class="{
+					'ml-2': !isSidebarContentVisible && isSidebarRight,
+					'mr-2': !isSidebarContentVisible && !isSidebarRight,
+					'flex-row-reverse': isSidebarRight,
+				}"
 			>
 				<v-col
 					v-if="isSidebarContentVisible"
 					:cols="isSidebarContentVisible ? 3 + sidebarSize : 0"
 				>
-					<SidebarContent />
+					<SidebarContent :isSidebarRight="isSidebarRight" />
 				</v-col>
 
 				<v-col
@@ -50,46 +59,47 @@
 							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
 						}"
 					>
-						<v-divider
+						<!-- <v-divider
 							v-if="isSidebarContentVisible && !isSidebarRight"
 							style="z-index: 1"
 							vertical
-						/>
+						/> -->
 
-						<TabSystem
-							class="flex-grow-1"
-							:tabSystem="tabSystems[0]"
-							showWelcomeScreen
-						/>
+						<TabSystem class="flex-grow-1" showWelcomeScreen />
 						<v-divider
 							v-if="
-								tabSystems[0].shouldRender &&
-								tabSystems[1].shouldRender
+								tabSystems[0].shouldRender.value &&
+								tabSystems[1].shouldRender.value
 							"
 							style="z-index: 1"
 							:vertical="!$vuetify.breakpoint.mobile"
 						/>
-						<TabSystem
-							class="flex-grow-1"
-							:tabSystem="tabSystems[1]"
-							:id="1"
-						/>
+						<TabSystem class="flex-grow-1" :id="1" />
 
-						<v-divider
+						<!-- <v-divider
 							v-if="isSidebarContentVisible && isSidebarRight"
 							vertical
-						/>
+						/> -->
 					</div>
-					<WelcomeScreen v-else />
+					<WelcomeScreen
+						v-else
+						:containerPadding="
+							isSidebarContentVisible
+								? isSidebarRight
+									? 'pl-2'
+									: 'pr-2'
+								: 'px-2'
+						"
+					/>
 				</v-col>
 			</v-row>
-
-			<!--  -->
 		</v-main>
 
-		<InitialSetupDialog />
-		<ContextMenu v-if="contextMenu" :contextMenu="contextMenu" />
-		<FileDropper />
+		<ContextMenu
+			v-if="contextMenu"
+			:contextMenu="contextMenu"
+			:windowHeight="windowSize.currentHeight"
+		/>
 	</v-app>
 </template>
 
@@ -98,27 +108,43 @@ import Sidebar from './components/Sidebar/Sidebar.vue'
 import Toolbar from './components/Toolbar/Main.vue'
 import WindowRenderer from './components/Windows/Collect.vue'
 import { platform } from './utils/os'
-import { TabSystemMixin } from '/@/components/Mixins/TabSystem.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import ContextMenu from '/@/components/ContextMenu/ContextMenu.vue'
 import { App } from '/@/App.ts'
 import TabSystem from '/@/components/TabSystem/TabSystem.vue'
 import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
-import FileDropper from '/@/components/FileDropper/FileDropperUI.vue'
-import InitialSetupDialog from '/@/components/InitialSetup/Dialog.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
-import { isContentVisible, SidebarState } from './components/Sidebar/state'
 import { settingsState } from './components/Windows/Settings/SettingsState'
+import { useTabSystem } from './components/Composables/UseTabSystem'
+import {
+	setFullscreenElement,
+	useFullScreen,
+} from './components/TabSystem/TabContextMenu/Fullscreen'
 
 export default {
 	name: 'App',
-	mixins: [TabSystemMixin, AppToolbarHeightMixin],
+	mixins: [AppToolbarHeightMixin],
+
+	setup() {
+		const { tabSystem, tabSystems, shouldRenderWelcomeScreen } =
+			useTabSystem()
+		const { isInFullScreen } = useFullScreen()
+
+		return {
+			tabSystem,
+			tabSystems,
+			shouldRenderWelcomeScreen,
+			isInFullScreen,
+		}
+	},
 
 	mounted() {
 		App.getApp().then((app) => {
 			this.contextMenu = app.contextMenu
 			this.windowSize = app.windowResize.state
 		})
+
+		setFullscreenElement(this.$refs.appContainer.$el)
 	},
 
 	components: {
@@ -128,8 +154,6 @@ export default {
 		ContextMenu,
 		TabSystem,
 		WelcomeScreen,
-		FileDropper,
-		InitialSetupDialog,
 		SidebarContent,
 	},
 
@@ -145,10 +169,15 @@ export default {
 
 	computed: {
 		isSidebarContentVisible() {
-			return this.sidebarNavigationVisible && isContentVisible.value
+			if (this.isInFullScreen) return false
+
+			return (
+				this.sidebarNavigationVisible &&
+				App.sidebar.isContentVisible.value
+			)
 		},
 		sidebarNavigationVisible() {
-			return SidebarState.isNavigationVisible
+			return App.sidebar.isNavigationVisible.value
 		},
 		isSidebarRight() {
 			return (
@@ -180,13 +209,13 @@ export default {
 			return this.settingsState &&
 				this.settingsState.appearance &&
 				this.settingsState.appearance.font
-				? `${this.settingsState.appearance.font} !important`
-				: 'Roboto !important'
+				? `${this.settingsState.appearance.font}, system-ui !important`
+				: `Roboto, system-ui !important`
 		},
 	},
 	methods: {
 		openSidebar() {
-			SidebarState.isNavigationVisible = true
+			App.sidebar.isNavigationVisible.value = true
 		},
 	},
 	watch: {
@@ -281,5 +310,30 @@ summary::-webkit-details-marker {
 }
 .cursor-pointer {
 	cursor: pointer;
+}
+.outlined {
+	border-width: thin;
+	border-color: #555555;
+	border-style: solid;
+}
+.theme--light .outlined {
+	border-color: #a4a4a4;
+}
+
+input,
+textarea {
+	color: var(--v-text-base);
+}
+
+.suggest-details .header {
+	font-size: unset !important;
+	font-weight: unset !important;
+	letter-spacing: unset !important;
+	line-height: unset !important;
+}
+
+/* Properly center custom icons (e.g. blockbench) within lists  */
+.v-list-item__icon {
+	align-items: center;
 }
 </style>

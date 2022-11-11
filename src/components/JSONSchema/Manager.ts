@@ -4,7 +4,8 @@ import type { IfSchema } from './Schema/IfSchema'
 import type { RootSchema } from './Schema/Root'
 import type { Schema } from './Schema/Schema'
 import type { ThenSchema } from './Schema/ThenSchema'
-import { walkObject } from '/@/utils/walkObject'
+import { walkObject } from 'bridge-common-utils'
+import { ElseSchema } from './Schema/ElseSchema'
 
 export class SchemaManager {
 	protected static lib: Record<string, any> = {}
@@ -48,10 +49,14 @@ export class SchemaManager {
 	static createSchemas(location: string, obj: any) {
 		if (typeof obj !== 'object') {
 			console.warn(`Unexpected schema type "${typeof obj}" @ ${location}`)
-			return [new ConstSchema(location, '', obj)]
+			return { schemas: [new ConstSchema(location, '', obj)] }
 		}
 
-		let schemas: Schema[] = []
+		const schemas: Schema[] = []
+		// Parse out description and title of the current schema
+		const description =
+			typeof obj.description === 'string' ? obj.description : undefined
+		const title = typeof obj.title === 'string' ? obj.title : undefined
 
 		for (const [key, value] of Object.entries(obj)) {
 			if (value === undefined) continue
@@ -69,12 +74,12 @@ export class SchemaManager {
 
 			const schema = new Class(location, key, value)
 
-			if (key === 'then') {
+			if (key === 'then' || key === 'else') {
 				let ifSchemas = <IfSchema[]>schemas
 					.reverse()
 					.map((schema) => {
-						if (schema.type === 'ifSchema') return schema
-						else if (schema.type === 'refSchema')
+						if (schema.schemaType === 'ifSchema') return schema
+						else if (schema.schemaType === 'refSchema')
 							return (<RootSchema>schema).getFreeIfSchema()
 					})
 					.filter((schema) => schema !== undefined)
@@ -83,18 +88,22 @@ export class SchemaManager {
 				let lastIfSchema = ifSchemas[0]
 
 				if (!lastIfSchema) {
-					console.warn(`"then" schema without "if" @ ${location}`)
+					console.warn(`"${key}" schema without "if" @ ${location}`)
 					lastIfSchema = <IfSchema>(
 						new (schemaRegistry.get('if')!)(location, 'if', true)
 					)
 				}
 
-				;(<ThenSchema>schema).receiveIfSchema(lastIfSchema)
+				;(<ThenSchema | ElseSchema>schema).receiveIfSchema(lastIfSchema)
 			}
 
 			schemas.push(schema)
 		}
 
-		return schemas
+		return {
+			schemas,
+			description,
+			title,
+		}
 	}
 }

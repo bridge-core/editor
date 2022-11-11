@@ -6,6 +6,8 @@ import { ThenSchema } from './ThenSchema'
 
 export class RootSchema extends ParentSchema {
 	protected children!: Schema[]
+	public description?: string
+	public title?: string
 
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
@@ -13,7 +15,16 @@ export class RootSchema extends ParentSchema {
 		if (key === '$global' || key === '$ref')
 			SchemaManager.addRootSchema(location, this)
 
-		this.children = SchemaManager.createSchemas(this.location, value)
+		const { schemas, description, title } = SchemaManager.createSchemas(
+			this.location,
+			value
+		)
+		// Set main schema children
+		this.children = schemas
+		// Set description and title for root schema
+		this.description = description
+		this.title = title
+
 		// console.log(this.children)
 	}
 

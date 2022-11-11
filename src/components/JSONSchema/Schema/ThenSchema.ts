@@ -6,6 +6,11 @@ export class ThenSchema extends Schema {
 	protected ifSchema!: IfSchema
 	protected rootSchema!: RootSchema
 
+	get types() {
+		if (this.ifSchema.isTrue(this.value)) return this.rootSchema.types
+		return []
+	}
+
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
 

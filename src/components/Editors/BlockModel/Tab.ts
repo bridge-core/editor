@@ -6,17 +6,45 @@ import { TabSystem } from '/@/components/TabSystem/TabSystem'
 import json5 from 'json5'
 import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
-import { walkObject } from '/@/utils/walkObject'
+import { walkObject } from 'bridge-common-utils'
 import { isValidPositionArray } from '/@/utils/minecraft/validPositionArray'
-import { markRaw } from '@vue/composition-api'
+import { markRaw } from 'vue'
+import { IOutlineBox } from '../GeometryPreview/Data/EntityData'
+import { compare as compareVersions } from 'compare-versions'
 
 export interface IBlockPreviewOptions {
 	loadComponents?: boolean
 }
 
+const collisionComponents = {
+	'1.16.100': [
+		{ name: 'minecraft:entity_collision', color: '#ffff00' },
+		{ name: 'minecraft:pick_collision', color: '#0000ff' },
+	],
+	// Our auto-completions version this name change as '1.18.10' but the formatVersionCorrection plugin changes it to 1.18.0
+	'1.18.0': [
+		{ name: 'minecraft:block_collision', color: '#ffff00' },
+		{ name: 'minecraft:aim_collision', color: '#0000ff' },
+	],
+	'1.19.10': [
+		{ name: 'minecraft:collision_box', color: '#ffff00' },
+		{ name: 'minecraft:aim_collision', color: '#0000ff' },
+	],
+}
+function loadCollisionComponents(formatVersion = '1.16.100') {
+	for (const [currFormatVersion, components] of Object.entries(
+		collisionComponents
+	)) {
+		if (compareVersions(currFormatVersion, formatVersion, '<')) continue
+
+		return components
+	}
+}
+
 export class BlockModelTab extends GeometryPreviewTab {
 	protected blockWatcher: FileWatcher
 	protected blockJson: any = {}
+	protected formatVersion = '1.16.100'
 	protected previewOptions: IBlockPreviewOptions = {}
 
 	constructor(
@@ -58,15 +86,19 @@ export class BlockModelTab extends GeometryPreviewTab {
 
 		await app.project.packIndexer.fired
 		const packIndexer = app.project.packIndexer.service
+		const config = app.project.config
 		if (!packIndexer) return
 
+		let rawJsonData: any = undefined
 		try {
-			this.blockJson = Object.freeze(
-				json5.parse(await file.text())?.['minecraft:block'] ?? {}
-			)
-		} catch {
+			rawJsonData = json5.parse(await file.text())
+		} catch (err) {
+			console.error(`Invalid JSON within block file`)
 			return
 		}
+
+		this.blockJson = markRaw(rawJsonData?.['minecraft:block'] ?? {})
+		this.formatVersion = rawJsonData?.format_version ?? '1.16.100'
 
 		const blockCacheData = await packIndexer.getCacheDataFor(
 			'block',
@@ -80,11 +112,15 @@ export class BlockModelTab extends GeometryPreviewTab {
 				json5.parse(
 					await app.project
 						.getFileFromDiskOrTab(
-							'RP/textures/terrain_texture.json'
+							config.resolvePackPath(
+								'resourcePack',
+								'textures/terrain_texture.json'
+							)
 						)
 						.then((file) => file.text())
 				)?.['texture_data'] ?? {}
-		} catch {
+		} catch (err) {
+			console.error(`Invalid JSON within terrain_texture.json file`)
 			return
 		}
 		const connectedTextures = await Promise.all(
@@ -93,8 +129,8 @@ export class BlockModelTab extends GeometryPreviewTab {
 				.flat()
 				.map((texturePath) =>
 					findFileExtension(
-						app.project.fileSystem,
-						`RP/${texturePath}`,
+						app.fileSystem,
+						config.resolvePackPath('resourcePack', texturePath),
 						['.tga', '.png', '.jpg', '.jpeg']
 					)
 				)
@@ -134,11 +170,15 @@ export class BlockModelTab extends GeometryPreviewTab {
 	async createModel() {
 		await super.createModel()
 
-		if (this.previewOptions.loadComponents)
-			this.createOutlineBoxes([
-				...this.loadCollisionBoxes('entity'),
-				...this.loadCollisionBoxes('pick'),
-			])
+		if (this.previewOptions.loadComponents) {
+			const collisionComponents =
+				loadCollisionComponents(this.formatVersion) ?? []
+			const outlineBoxes = collisionComponents
+				.map(({ name, color }) => this.loadCollisionBoxes(name, color))
+				.flat()
+
+			this.createOutlineBoxes(outlineBoxes)
+		}
 	}
 
 	findComponents(blockJson: any, id: string) {
@@ -152,11 +192,8 @@ export class BlockModelTab extends GeometryPreviewTab {
 
 		return components
 	}
-	loadCollisionBoxes(type: 'pick' | 'entity') {
-		return this.findComponents(
-			this.blockJson,
-			`minecraft:${type}_collision`
-		)
+	loadCollisionBoxes(componentName: string, color: string) {
+		return this.findComponents(this.blockJson, componentName)
 			.filter(
 				(collisionBox) =>
 					isValidPositionArray(collisionBox.origin) &&
@@ -164,8 +201,8 @@ export class BlockModelTab extends GeometryPreviewTab {
 			)
 			.map(
 				({ origin, size }) =>
-					<const>{
-						color: type === 'entity' ? '#ffff00' : '#0000ff',
+					<IOutlineBox>{
+						color,
 						position: {
 							x: origin[0] + size[0] / 2,
 							y: origin[1],

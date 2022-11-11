@@ -1,9 +1,9 @@
 <template>
 	<div>
 		<ActionViewer
-			v-for="(sidebar, id) in sidebarState"
+			v-for="(sidebar, id) in sidebarElements"
 			:key="id"
-			:selected="sidebar.isVisible"
+			:selected="sidebar.isVisibleSetting"
 			:action="{ ...sidebar.config, name: sidebar.displayName }"
 			hideTriggerButton
 			v-ripple
@@ -13,27 +13,29 @@
 </template>
 
 <script>
-import { SidebarState } from '/@/components/Sidebar/state.ts'
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { settingsState } from '../../SettingsState'
+import { App } from '/@/App'
 
 export default {
-	data: () => ({
-		sidebarState: SidebarState.sidebarElements,
-	}),
+	setup() {
+		return {
+			sidebarElements: App.sidebar.elements,
+		}
+	},
 	components: {
 		ActionViewer,
 	},
 	methods: {
 		onClick(sidebar) {
-			sidebar.isVisible = !sidebar.isVisible
+			sidebar.isVisibleSetting = !sidebar.isVisibleSetting
 
 			if (!settingsState.sidebar) settingsState.sidebar = {}
 			if (!settingsState.sidebar.sidebarElements)
 				settingsState.sidebar.sidebarElements = {}
 
 			settingsState.sidebar.sidebarElements[sidebar.uuid] =
-				sidebar.isVisible
+				sidebar.isVisibleSetting
 		},
 	},
 }

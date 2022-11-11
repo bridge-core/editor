@@ -1,63 +1,82 @@
 import { IModuleConfig } from '../types'
 import { App } from '/@/App'
+import { IframeTab } from '/@/components/Editors/IframeTab/IframeTab'
 import { ThreePreviewTab } from '/@/components/Editors/ThreePreview/ThreePreviewTab'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { TabProvider } from '/@/components/TabSystem/TabProvider'
 
-export const TabModule = async ({ disposables }: IModuleConfig) => ({
-	ContentTab: Tab,
-	FileTab,
-	ThreePreviewTab,
+export const TabModule = async ({ disposables }: IModuleConfig) => {
+	const app = await App.getApp()
+	const project = () => app.project
 
-	/**
-	 * Register new FileTabs to be picked up by the isTabFor tab system method
-	 * @param FileTabClass FileTab class
-	 */
-	register: (FileTabClass: typeof FileTab) => {
-		const disposable = TabProvider.register(FileTabClass)
+	return {
+		ContentTab: Tab,
+		FileTab,
+		ThreePreviewTab,
+		IframeTab,
 
-		disposables.push(disposable)
+		/**
+		 * Register new FileTabs to be picked up by the isTabFor tab system method
+		 * @param FileTabClass FileTab class
+		 */
+		register: (FileTabClass: typeof FileTab) => {
+			const disposable = TabProvider.register(FileTabClass)
 
-		return disposable
-	},
+			disposables.push(disposable)
 
-	/**
-	 * Useful for ContentTabs: Programmatically add the tab to the tab system
-	 * @param tab Tab to add to the tab system
-	 */
-	openTab: async (FileTabClass: typeof Tab, splitScreen = false) => {
-		const app = await App.getApp()
-		const project = app.project
+			return disposable
+		},
 
-		if (splitScreen) {
+		/**
+		 * Useful for ContentTabs: Programmatically add the tab to the tab system
+		 * @param tab Tab to add to the tab system
+		 * @deprecated Use TabSystem.addTab(...) instead
+		 */
+		openTab: async (FileTabClass: typeof Tab, splitScreen = false) => {
+			const tabSystem = splitScreen
+				? project().inactiveTabSystem
+				: project().tabSystem
+
+			if (!tabSystem) return
+
 			// @ts-ignore
-			const tab = new FileTabClass(project.inactiveTabSystem!)
+			const tab = new FileTabClass(tabSystem)
 
-			project.inactiveTabSystem?.add(tab, true)
-			project.inactiveTabSystem?.setActive(true)
+			if (splitScreen) tabSystem.setActive(true)
+			tabSystem.add(tab, true)
+
+			disposables.push({
+				dispose: () => tabSystem.remove(tab),
+			})
 
 			return tab
-		} else {
-			// @ts-ignore
-			const tab = new FileTabClass(project.tabSystem!)
+		},
+		addTab(tab: Tab) {
+			const tabSystem = project().tabSystem
+			if (!tabSystem) return
 
-			project.tabSystem?.add(tab, true)
+			tabSystem.add(tab, true)
 
-			return tab
-		}
-	},
+			disposables.push({
+				dispose: () => tabSystem.remove(tab),
+			})
+		},
+		getCurrentTabSystem() {
+			return project().tabSystem
+		},
 
-	/**
-	 * Given a file path relative to the project root, open the corresponding file inside of bridge.'s tab system
-	 * @param filePath File to open
-	 * @param selectTab Whether to automatically select the tab
-	 */
-	openFilePath: async (filePath: string, selectTab = false) => {
-		const app = await App.getApp()
-		const project = app.project
-		const fileHandle = await project.fileSystem.getFileHandle(filePath)
+		/**
+		 * Given a file path relative to the project root, open the corresponding file inside of bridge.'s tab system
+		 * @param filePath File to open
+		 * @param selectTab Whether to automatically select the tab
+		 */
+		openFilePath: async (filePath: string, selectTab = false) => {
+			const fileHandle = await project().fileSystem.getFileHandle(
+				filePath
+			)
 
-		await project.openFile(fileHandle, { selectTab })
-	},
-})
+			await project().openFile(fileHandle, { selectTab })
+		},
+	}
+}

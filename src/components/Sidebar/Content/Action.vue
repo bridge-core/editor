@@ -30,22 +30,21 @@
 	</v-tooltip>
 </template>
 
-<script>
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+<script setup>
+import { useTranslations } from '/@/components/Composables/useTranslations'
 
-export default {
-	mixins: [TranslationMixin],
-	props: {
-		color: String,
-		icon: String,
-		name: String,
-		isSelected: Boolean,
-		isSelectable: {
-			type: Boolean,
-			default: true,
-		},
+defineProps({
+	color: String,
+	icon: String,
+	name: String,
+	isSelected: Boolean,
+	isSelectable: {
+		type: Boolean,
+		default: true,
 	},
-}
+})
+
+const { t } = useTranslations()
 </script>
 
 <style scoped>

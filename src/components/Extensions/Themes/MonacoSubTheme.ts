@@ -1,12 +1,18 @@
-import { editor as Editor } from 'monaco-editor'
 import { keyword } from 'color-convert'
+import { Signal } from '../../Common/Event/Signal'
 import { Theme } from './Theme'
+import { loadMonaco, useMonaco } from '../../../utils/libs/useMonaco'
 
+export const anyMonacoThemeLoaded = new Signal<void>()
 export class MonacoSubTheme {
 	constructor(protected theme: Theme) {}
 
-	apply() {
-		Editor.defineTheme(`bridgeMonacoDefault`, {
+	async apply() {
+		if (!loadMonaco.hasFired) return
+
+		const { editor } = await useMonaco()
+
+		editor.defineTheme(`bridgeMonacoDefault`, {
 			base: this.theme.colorScheme === 'light' ? 'vs' : 'vs-dark',
 			inherit: false,
 			colors: {
@@ -97,6 +103,9 @@ export class MonacoSubTheme {
 					.filter(({ foreground }) => foreground !== undefined),
 			],
 		})
+
+		editor.setTheme(`bridgeMonacoDefault`)
+		anyMonacoThemeLoaded.dispatch()
 	}
 
 	convertColor(color: string) {

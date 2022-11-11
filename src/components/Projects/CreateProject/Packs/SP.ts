@@ -1,6 +1,6 @@
 import { CreatePack } from './Pack'
 import { CreateManifest } from '../Files/Manifest'
-import { CreateLang } from '../Files/Lang'
+import { CreateLang } from '../Files/SP/Lang'
 import { CreatePackIcon } from '../Files/PackIcon'
 import { CreateSkins } from '../Files/SP/Skins'
 

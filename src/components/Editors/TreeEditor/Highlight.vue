@@ -1,19 +1,49 @@
 <template>
-	<span v-if="value === undefined" :style="toStyle(def)"><slot /></span>
-
-	<span v-else
-		>"<template v-for="({ text, def }, i) in tokens">
-			<span :key="text" :style="toStyle(def)">{{ text }}</span
-			><span :key="`${text}.colon`">{{
-				tokens.length > i + 1 ? ':' : ''
-			}}</span> </template
-		>"</span
+	<span v-if="value === undefined" :style="toStyle(def)">
+		<slot />
+	</span>
+	<span
+		v-else
+		v-intersect="skipRender ? onIntersect : null"
+		style="white-space: nowrap"
 	>
+		<span v-if="skipRender">"{{ value }}"</span>
+
+		<span v-else
+			>"<template v-for="({ text, def }, i) in tokens">
+				<span :key="text" :style="toStyle(def)">{{ text }}</span
+				><span :key="`${text}.colon`">{{
+					tokens.length > i + 1 ? ':' : ''
+				}}</span> </template
+			>"</span
+		>
+	</span>
 </template>
 
 <script>
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 import { App } from '/@/App'
+import { reactive } from 'vue'
+
+const knownWords = new reactive({
+	keywords: [],
+	typeIdentifiers: [],
+	variables: [],
+	definitions: [],
+})
+
+setTimeout(() => {
+	App.getApp().then((app) =>
+		app.configuredJsonLanguage
+			.getHighlighter()
+			.on(({ keywords, typeIdentifiers, variables, definitions }) => {
+				knownWords.keywords = keywords
+				knownWords.typeIdentifiers = typeIdentifiers
+				knownWords.variables = variables
+				knownWords.definitions = definitions
+			})
+	)
+})
 
 export default {
 	props: {
@@ -23,30 +53,20 @@ export default {
 	mixins: [
 		HighlighterMixin([
 			'string',
-			'number',
 			'variable',
 			'definition',
 			'keyword',
 			'type',
 		]),
 	],
+	setup() {
+		return {
+			knownWords,
+		}
+	},
 	data: () => ({
-		keywords: [],
-		typeIdentifiers: [],
-		variables: [],
-		definitions: [],
+		skipRender: true,
 	}),
-	async mounted() {
-		const app = await App.getApp()
-		app.configuredJsonLanguage.getHighlighter().on(this.updateKnownWords)
-		this.updateKnownWords(
-			app.configuredJsonLanguage.getHighlighter().knownWords
-		)
-	},
-	async destroyed() {
-		const app = await App.getApp()
-		app.configuredJsonLanguage.getHighlighter().on(this.updateKnownWords)
-	},
 	computed: {
 		tokens() {
 			return this.value.split(':').map((token) => ({
@@ -56,23 +76,14 @@ export default {
 		},
 	},
 	methods: {
-		updateKnownWords({
-			keywords,
-			typeIdentifiers,
-			variables,
-			definitions,
-		}) {
-			this.keywords = keywords
-			this.typeIdentifiers = typeIdentifiers
-			this.variables = variables
-			this.definitions = definitions
-		},
-
 		getDefinition(text) {
-			if (this.keywords.includes(text)) return this.keywordDef
-			else if (this.typeIdentifiers.includes(text)) return this.typeDef
-			else if (this.variables.includes(text)) return this.variableDef
-			else if (this.definitions.includes(text)) return this.definitionDef
+			if (this.knownWords.keywords.includes(text)) return this.keywordDef
+			else if (this.knownWords.typeIdentifiers.includes(text))
+				return this.typeDef
+			else if (this.knownWords.variables.includes(text))
+				return this.variableDef
+			else if (this.knownWords.definitions.includes(text))
+				return this.definitionDef
 			else return this.stringDef
 		},
 		getTextDecoration(def) {
@@ -88,6 +99,14 @@ export default {
 				backgroundColor: def ? def.background : null,
 				textDecoration: this.getTextDecoration(def),
 			}
+		},
+		onIntersect(entries) {
+			// Once we have rendered a highlight once, we no longer revert to the unhighlighted text
+			// TODO: Maybe this logic can be improved? (e.g. a timeout to revert to the unhighlighted text)
+			if (!this.skipRender) return
+
+			const isIntersecting = !entries[0].isIntersecting
+			this.skipRender = isIntersecting
 		},
 	},
 }

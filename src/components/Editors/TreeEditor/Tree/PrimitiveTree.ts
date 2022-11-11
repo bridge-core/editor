@@ -2,9 +2,10 @@ import { Tree, TPrimitiveTree, treeElementHeight } from './Tree'
 import PrimitiveTreeComponent from './PrimitiveTree.vue'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'
+import { markRaw } from 'vue'
 
 export class PrimitiveTree extends Tree<TPrimitiveTree> {
-	public component = PrimitiveTreeComponent
+	public component = markRaw(PrimitiveTreeComponent)
 	public isValueSelected = false
 
 	constructor(
@@ -28,6 +29,11 @@ export class PrimitiveTree extends Tree<TPrimitiveTree> {
 
 	toJSON() {
 		return this.value
+	}
+
+	get(path: (string | number)[]) {
+		if (path.length === 0) return this
+		return null
 	}
 
 	edit(value: string) {

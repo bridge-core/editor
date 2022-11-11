@@ -1,10 +1,10 @@
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import ChangelogComponent from './Changelog.vue'
 import { App } from '/@/App'
 import { baseUrl } from '/@/utils/baseUrl'
-import { version } from '/@/appVersion.json'
+import { version } from '/@/utils/app/version'
+import { NewBaseWindow } from '../NewBaseWindow'
 
-export class ChangelogWindow extends BaseWindow {
+export class ChangelogWindow extends NewBaseWindow {
 	changelog: string | undefined
 	version: string | undefined
 
@@ -14,7 +14,6 @@ export class ChangelogWindow extends BaseWindow {
 	}
 
 	async open() {
-		App.audioManager.playAudio('click5.ogg', 1)
 		const app = await App.getApp()
 		app.windows.loadingWindow.open()
 

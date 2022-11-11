@@ -2,9 +2,13 @@ import { AdditionalPropertiesSchema } from './Schema/AdditionalProperties'
 import { AllOfSchema } from './Schema/AllOf'
 import { AnyOfSchema } from './Schema/AnyOf'
 import { ConstSchema } from './Schema/Const'
+import { DefaultSchema } from './Schema/Default'
+import { DoNotSuggestSchema } from './Schema/DoNotSuggest'
+import { ElseSchema } from './Schema/ElseSchema'
 import { EnumSchema } from './Schema/Enum'
 import { IfSchema } from './Schema/IfSchema'
 import { ItemsSchema } from './Schema/Items'
+import { NotSchema } from './Schema/Not'
 import { OneOfSchema } from './Schema/OneOf'
 import { PatternPropertiesSchema } from './Schema/PatternProperties'
 import { PropertiesSchema } from './Schema/Properties'
@@ -35,25 +39,30 @@ export const schemaRegistry = new Map<string, ISchemaConstructor>([
 	['required', RequiredSchema],
 	['then', ThenSchema],
 	['type', TypeSchema],
+	['default', DefaultSchema],
+	['else', ElseSchema],
+	['doNotSuggest', DoNotSuggestSchema],
+	['not', NotSchema],
 ])
 
 export const ignoreFields = new Set<string>([
 	'$schema',
 	'$id',
-	'description', // TODO: Use description for hover text
-	'title',
+	'description', // Uses special parsing. Description is used for context menu information
+	'title', // Uses special parsing. Title is used for context menu information
 	'definitions',
 
 	//TODO: Proper implementation of the following fields instead of ignoring them
 	'pattern',
 	'min',
 	'max',
-	'doNotSuggest',
 	'maxItems',
 	'minItems',
 	'deprecationMessage',
 	'examples',
 	'minimum',
 	'maximum',
-	'default',
+	'format',
+	'maxLength',
+	'multipleOf',
 ])

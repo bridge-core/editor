@@ -1,16 +1,5 @@
 <template>
-	<img
-		v-if="isNightly"
-		draggable="false"
-		src="/@/_assets/nightly/logo.svg"
-		alt="Logo of bridge. v2"
-	/>
-	<img
-		v-else
-		draggable="false"
-		src="/@/_assets/logo.svg"
-		alt="Logo of bridge. v2"
-	/>
+	<img draggable="false" :src="logoPath" alt="Logo of bridge. v2" />
 </template>
 
 <script>
@@ -19,7 +8,9 @@ import { isNightly } from '/@/utils/app/isNightly'
 export default {
 	setup() {
 		return {
-			isNightly: isNightly,
+			logoPath: isNightly
+				? `/img/icons/nightly/favicon.svg`
+				: `/img/icons/favicon.svg`,
 		}
 	},
 }

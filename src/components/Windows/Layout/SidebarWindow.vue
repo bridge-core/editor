@@ -1,39 +1,45 @@
 <template>
-	<BaseWindow v-bind="$attrs" v-on="$listeners">
+	<BaseWindow v-bind="$attrs" :isLoading="isLoading" v-on="$listeners">
 		<template #toolbar>
 			<slot name="toolbar" v-bind:selectedTab="selected" />
 		</template>
 
 		<template #sidebar>
-			<slot
-				name="sidebar"
-				v-if="!isMobile"
-				v-bind:selectedSidebar="selected"
-			/>
+			<template v-if="!isLoading">
+				<slot
+					name="sidebar"
+					v-if="!isMobile"
+					v-bind:selectedSidebar="selected"
+				/>
 
-			<template v-for="(element, i) in sidebarItems">
-				<SidebarItem
-					v-if="element.type === 'item'"
-					:key="`${element.text}.${i}`"
-					:icon="element.icon"
-					:color="element.color"
-					:text="element.text"
-					:isSelected="selected === element.id"
-					:compact="isMobile"
-					@click="onSidebarChanged(element.id)"
-				/>
-				<SidebarGroup
-					v-else
-					:key="`${element.text}.${i}.${element.isOpen}`"
-					:isOpen="element.isOpen"
-					:items="element.items"
-					:text="element.text"
-					:selected="selected"
-					:compact="isMobile"
-					@toggleOpen="toggleOpenCategory(element)"
-					@click="onSidebarChanged"
-				/>
+				<template v-for="element in sidebarItems">
+					<SidebarItem
+						v-if="element.type === 'item'"
+						:key="`${element.id}`"
+						:icon="element.icon"
+						:color="element.color"
+						:text="element.text"
+						:isSelected="selected === element.id"
+						:isDisabled="element.isDisabled"
+						:disabledText="element.disabledText"
+						:compact="isMobile"
+						@click="onSidebarChanged(element.id)"
+					/>
+
+					<SidebarGroup
+						v-else
+						:key="`${element.id}.${element.isOpen}`"
+						:isOpen="element.isOpen"
+						:items="element.getItems()"
+						:text="element.text"
+						:selected="selected"
+						:compact="isMobile"
+						@toggleOpen="toggleOpenCategory(element)"
+						@click="onSidebarChanged"
+					/>
+				</template>
 			</template>
+			<v-progress-linear indeterminate v-else />
 		</template>
 
 		<template #default>
@@ -60,6 +66,7 @@ export default {
 	},
 	props: {
 		sidebarItems: Array,
+		isLoading: Boolean,
 		value: {
 			type: String,
 			default: undefined,

@@ -1,5 +1,5 @@
-import { compare } from 'compare-versions'
+import { compareVersions } from 'bridge-common-utils'
 
 export const CompareVersions = () => ({
-	compare,
+	compare: compareVersions,
 })

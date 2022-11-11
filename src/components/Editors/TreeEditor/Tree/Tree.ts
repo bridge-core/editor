@@ -1,4 +1,4 @@
-import { set } from '@vue/composition-api'
+import { set } from 'vue'
 import { v4 as uuid } from 'uuid'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'
@@ -17,14 +17,6 @@ export abstract class Tree<T> {
 	protected abstract _value: T
 	abstract toJSON(): T
 
-	get styles() {
-		return {
-			outline: 'none',
-			contentVisibility: 'auto',
-			containIntrinsicSize: `${this.height}px`,
-		}
-	}
-
 	constructor(protected parent: ObjectTree | ArrayTree | null) {}
 
 	get value() {
@@ -40,6 +32,8 @@ export abstract class Tree<T> {
 		if (!this.parent) return []
 		else return [...this.parent.path, this.key]
 	}
+
+	abstract get(path: (string | number)[]): Tree<unknown> | null
 
 	findParentIndex() {
 		if (!this.parent)

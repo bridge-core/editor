@@ -1,26 +1,31 @@
 <template>
 	<SidebarWindow
-		v-if="shouldRender"
+		v-if="state.shouldRender"
 		windowTitle="windows.createPreset.title"
-		:isVisible="isVisible"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:percentageWidth="80"
 		:percentageHeight="80"
 		@closeWindow="onClose"
-		:sidebarItems="sidebar.elements"
-		v-model="sidebar.selected"
+		:sidebarItems="window.sidebar.elements"
+		v-model="window.sidebar.selected"
 	>
 		<template #sidebar>
 			<v-text-field
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.createPreset.searchPresets')"
-				v-model="sidebar._filter"
+				v-model.lazy.trim="window.sidebar.filter"
 				autocomplete="off"
 				autofocus
 				outlined
 				dense
+				hide-details
+			/>
+			<v-switch
+				:label="t('windows.createPreset.showAllPresets')"
+				v-model="window.sidebar.showDisabled"
 			/>
 		</template>
 		<template #default>
@@ -50,7 +55,7 @@
 					:rules="
 						opts.validate
 							? opts.validate.map(
-									(rule) => $data.validationRules[rule]
+									(rule) => window.validationRules[rule]
 							  )
 							: []
 					"
@@ -91,7 +96,12 @@
 					:disabled="opts.isLoading"
 					v-model="content.models[id]"
 					:items="opts.options"
-					:menu-props="{ maxHeight: 220 }"
+					:menu-props="{
+						maxHeight: 220,
+						rounded: 'lg',
+						'nudge-top': -8,
+						transition: 'slide-y-transition',
+					}"
 					:label="name"
 					autocomplete="off"
 					outlined
@@ -135,69 +145,64 @@
 	</SidebarWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PresetPath from './PresetPath.vue'
-import { isFileAccepted } from '/@/utils/file/isAccepted.ts'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
+import { isFileAccepted } from '/@/utils/file/isAccepted'
+import { computed, toRefs } from 'vue'
+import { useTranslations } from '/@/components/Composables/useTranslations'
+import type { CreatePresetWindow } from './PresetWindow'
 
-export default {
-	name: 'CreatePresetWindow',
-	mixins: [TranslationMixin],
-	components: {
-		SidebarWindow,
-		PresetPath,
-	},
-	props: ['currentWindow'],
-	data() {
-		return this.currentWindow
-	},
-	computed: {
-		content() {
-			return this.sidebar.currentState
-		},
-		fieldsReady() {
-			return Object.values(this.content.fields || {}).every(
-				([_, id, opts = {}]) => {
-					if (
-						opts.validate &&
-						opts.validate.some(
-							(rule) =>
-								this.$data.validationRules[rule](
-									this.content.models[id]
-								) !== true
-						)
-					)
-						return false
+const props = defineProps<{
+	window: CreatePresetWindow
+}>()
 
-					return !!this.content.models[id] || opts.optional
-				}
+const { t } = useTranslations()
+
+const state = props.window.getState()
+const content = computed(() => props.window.sidebar.currentState)
+const fieldsReady = computed(() => {
+	return (<[string, string, any][]>(
+		Object.values(content.value.fields || {})
+	)).every(([_, id, opts = {}]) => {
+		if (
+			opts.validate &&
+			opts.validate.some(
+				(rule: any) =>
+					props.window.validationRules[rule](
+						content.value.models[id]
+					) !== true
 			)
-		},
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close()
-		},
-		onCreatePreset() {
-			if (this.fieldsReady) this.currentWindow.createPreset(this.content)
-		},
-		onDropFile(id, opts, event) {
-			const { accept, multiple } = opts
-			const acceptedFiles = [...event.dataTransfer.files].filter((file) =>
-				isFileAccepted(file, accept)
-			)
-			if (acceptedFiles.length === 0) return
+		)
+			return false
 
-			if (multiple) {
-				if (!this.content.models[id])
-					this.content.models[id] = [...acceptedFiles]
-				else this.content.models[id].push(...acceptedFiles)
-			} else {
-				this.content.models[id] =
-					acceptedFiles[acceptedFiles.length - 1]
-			}
-		},
-	},
+		return (
+			!!content.value.models[id] ||
+			opts.optional ||
+			opts.type === 'switch'
+		)
+	})
+})
+
+function onClose() {
+	props.window.close()
+}
+function onCreatePreset() {
+	if (fieldsReady.value) props.window.createPreset(content.value)
+}
+function onDropFile(id: string, opts: any, event: DragEvent) {
+	const { accept, multiple } = opts
+	const acceptedFiles = [...(event.dataTransfer?.files ?? [])].filter(
+		(file) => isFileAccepted(file, accept)
+	)
+	if (acceptedFiles.length === 0) return
+
+	if (multiple) {
+		if (!content.value.models[id])
+			content.value.models[id] = [...acceptedFiles]
+		else content.value.models[id].push(...acceptedFiles)
+	} else {
+		content.value.models[id] = acceptedFiles[acceptedFiles.length - 1]
+	}
 }
 </script>

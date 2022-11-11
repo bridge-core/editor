@@ -21,16 +21,14 @@ export function createErrorNotification(error: Error): IDisposable {
 	if (short.length > 24)
 		short = message.length > 24 ? `${message.substr(0, 23)}...` : message
 
-	// App?.audioManager?.playAudio('error_002.ogg', 1)
-
 	const notification = createNotification({
+		id: message,
 		icon: 'mdi-alert-circle-outline',
 		message: `[${short}]`,
 		color: 'error',
 		textColor: 'white',
 		disposeOnMiddleClick: true,
 		onClick: () => {
-			App.audioManager.playAudio('click5.ogg', 1)
 			new InformationWindow({
 				name: `[ERROR: ${short}]`,
 				description: `[${error.message} (${getStackTrace(error)})]`,

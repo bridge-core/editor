@@ -1,21 +1,21 @@
 <template>
 	<SidebarWindow
 		:windowTitle="title"
-		:isVisible="isVisible"
+		:isVisible="state.isVisible"
 		:hasMaximizeButton="false"
 		:isFullscreen="false"
 		:percentageWidth="80"
 		:percentageHeight="80"
 		@closeWindow="onClose"
 		:sidebarItems="sidebar.elements"
-		v-model="$data.selectedSidebar"
+		v-model.trim.lazy="window.selectedSidebar"
 	>
 		<template #sidebar>
 			<v-text-field
 				class="pt-2"
 				prepend-inner-icon="mdi-magnify"
 				:label="t('windows.extensionStore.searchExtensions')"
-				v-model="sidebar._filter"
+				v-model.lazy.trim="sidebar.filter"
 				autocomplete="off"
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
@@ -31,64 +31,57 @@
 					v-for="extension in currentExtensions"
 					:key="`${extension.id}.${extension.isInstalled}.${extension.isUpdateAvailable}`"
 					:extension="extension"
-					@search="(search) => (sidebar._filter = search)"
-					@select="(id) => ($data.selectedSidebar = id)"
+					@search="(search) => (sidebar.filter = search)"
+					@select="(id) => (window.selectedSidebar = id)"
 				/>
 			</template>
 		</template>
 	</SidebarWindow>
 </template>
 
-<script>
+<script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import ExtensionCard from './ExtensionCard.vue'
-import { TranslationMixin } from '/@/components/Mixins/TranslationMixin.ts'
 import { pointerDevice } from '/@/utils/pointerDevice'
+import { useTranslations } from '../../Composables/useTranslations'
+import { computed } from 'vue'
 
-export default {
-	name: 'CreatePresetWindow',
-	mixins: [TranslationMixin],
-	components: {
-		SidebarWindow,
-		ExtensionCard,
-	},
-	props: ['currentWindow'],
-	setup() {
-		return { pointerDevice }
-	},
-	data() {
-		return this.currentWindow
-	},
-	computed: {
-		title() {
-			if (!this.sidebar.currentElement)
-				return 'windows.extensionStore.title'
-			else
-				return `[${
-					this.sidebar._filter || this.sidebar.currentElement.text
-				} - ${this.t('windows.extensionStore.title')}]`
-		},
-		currentExtensions() {
-			if (this.sidebar._filter !== '') {
-				const f = this.sidebar._filter.toLowerCase()
+const { t } = useTranslations()
+const props = defineProps(['window'])
+const state = props.window.getState()
+const sidebar = props.window.sidebar
 
-				return this.extensions.filter(
-					(e) =>
-						e.name.toLowerCase().includes(f) ||
-						e.description.toLowerCase().includes(f) ||
-						e.author.toLowerCase().includes(f) ||
-						e.version.includes(f) ||
-						e.tags.some((tag) => tag.text.toLowerCase().includes(f))
-				)
-			}
+const title = computed(() => {
+	if (!sidebar.currentElement) return 'windows.extensionStore.title'
+	else if (currentExtensions.value.length === 1)
+		return `[${currentExtensions.value[0].name} - ${t(
+			'windows.extensionStore.title'
+		)}]`
+	else
+		return `[${sidebar.filter || sidebar.currentElement.text} - ${t(
+			'windows.extensionStore.title'
+		)}]`
+})
 
-			return this.sidebar.currentState
-		},
-	},
-	methods: {
-		onClose() {
-			this.currentWindow.close()
-		},
-	},
+const currentExtensions = computed(() => {
+	if (sidebar.filter !== '') {
+		const f = sidebar.filter.toLowerCase()
+
+		return props.window.extensions.filter(
+			(e: any) =>
+				e.name.toLowerCase().includes(f) ||
+				e.description.toLowerCase().includes(f) ||
+				e.author.toLowerCase().includes(f) ||
+				e.version.includes(f) ||
+				e.id === sidebar.filter ||
+				e.tags.some((tag: any) => tag.text.toLowerCase().includes(f))
+		)
+	}
+
+	return sidebar.currentState
+})
+
+function onClose() {
+	props.window.close()
 }
 </script>

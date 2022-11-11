@@ -1,7 +1,7 @@
-import { BaseWindow } from '/@/components/Windows/BaseWindow'
 import LoadingWindowComponent from './LoadingWindow.vue'
+import { NewBaseWindow } from '../NewBaseWindow'
 
-export class LoadingWindow extends BaseWindow {
+export class LoadingWindow extends NewBaseWindow {
 	protected virtualWindows = 0
 	protected loadingMessages: (string | undefined)[] = []
 
@@ -17,7 +17,7 @@ export class LoadingWindow extends BaseWindow {
 	open(message?: string) {
 		this.virtualWindows++
 		this.loadingMessages.push(message)
-		if (!this.isVisible) super.open()
+		if (!this.state.isVisible) super.open()
 	}
 	close() {
 		this.virtualWindows--
