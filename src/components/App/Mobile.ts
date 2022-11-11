@@ -7,7 +7,6 @@ export class Mobile {
 	public readonly is = ref(this.isCurrentDevice())
 
 	constructor(protected vuetify: any) {
-		console.log(vuetify)
 		watch(vuetify.display, () => {
 			this.is.value = this.isCurrentDevice()
 			this.change.dispatch(vuetify.display.mobile)
