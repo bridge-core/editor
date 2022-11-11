@@ -33,7 +33,7 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { platform } from '/@/utils/os'
 import { useDarkMode } from '/@/components/Composables/useDarkMode'
 import { useTranslations } from '/@/components/Composables/useTranslations.ts'
-import { useDisplay } from '/@/components/Composables/Display/useDisplay.ts'
+import { useDisplay } from 'vuetify'
 
 const { t } = useTranslations()
 
@@ -45,5 +45,5 @@ defineProps({
 })
 
 const { isDarkMode } = useDarkMode()
-const { isMinimalDisplay } = useDisplay()
+const { mdAndDown: isMinimalDisplay } = useDisplay()
 </script>
