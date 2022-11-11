@@ -4,36 +4,37 @@ import { TUIStore } from './store'
 import { IDisposable } from '/@/types/disposable'
 import { createStyleSheet } from '../Styles/createStyle'
 import Vue from 'vue'
-import {
-	VBtn,
-	VAlert,
-	VApp,
-	VToolbar,
-	VToolbarItems,
-	VAutocomplete,
-	VCombobox,
-	VSwitch,
-	VTextField,
-	VWindow,
-	VTooltip,
-} from 'vuetify/lib'
+// import {
+// 	VBtn,
+// 	VAlert,
+// 	VApp,
+// 	VToolbar,
+// 	VToolbarItems,
+// 	VAutocomplete,
+// 	VCombobox,
+// 	VSwitch,
+// 	VTextField,
+// 	VWindow,
+// 	VTooltip,
+// } from 'vuetify'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { useVueTemplateCompiler } from '/@/utils/libs/useVueTemplateCompiler'
 import { iterateDir } from '/@/utils/iterateDir'
 import { JsRuntime } from '../Scripts/JsRuntime'
 
 const VuetifyComponents = {
-	VBtn,
-	VAlert,
-	VApp,
-	VToolbar,
-	VToolbarItems,
-	VAutocomplete,
-	VCombobox,
-	VSwitch,
-	VTextField,
-	VWindow,
-	VTooltip,
+	// TODO(Vue3): Add back Vuetify components
+	// VBtn,
+	// VAlert,
+	// VApp,
+	// VToolbar,
+	// VToolbarItems,
+	// VAutocomplete,
+	// VCombobox,
+	// VSwitch,
+	// VTextField,
+	// VWindow,
+	// VTooltip,
 }
 
 export async function loadUIComponents(
