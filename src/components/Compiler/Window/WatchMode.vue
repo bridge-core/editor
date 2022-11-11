@@ -39,13 +39,11 @@
 					</div>
 				</template>
 
-				<template>
-					{{
-						t(
-							`sidebar.compiler.categories.watchMode.settings.${id}.description`
-						)
-					}}
-				</template>
+				{{
+					t(
+						`sidebar.compiler.categories.watchMode.settings.${id}.description`
+					)
+				}}
 			</SettingSheet>
 		</v-col>
 	</v-row>
