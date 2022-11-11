@@ -131,6 +131,7 @@ export default {
 		const { isInFullScreen } = useFullScreen()
 
 		return {
+			settingsState,
 			tabSystem,
 			tabSystems,
 			shouldRenderWelcomeScreen,
@@ -158,12 +159,6 @@ export default {
 		TabSystem,
 		WelcomeScreen,
 		SidebarContent,
-	},
-
-	setup() {
-		return {
-			settingsState,
-		}
 	},
 
 	data: () => ({
