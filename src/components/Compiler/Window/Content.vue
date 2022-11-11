@@ -9,7 +9,7 @@
 		@closeWindow="onClose"
 		:sidebarItems="sidebar.elements"
 		:actions="state.actions"
-		v-model="sidebar.selected"
+		v-model:sidebarSelection="sidebar.selected"
 	>
 		<template #default="{ selectedSidebar }">
 			<component

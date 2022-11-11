@@ -10,7 +10,7 @@
 		:sidebarItems="sidebar.elements"
 		:actions="state.actions"
 		:isLoading="state.isLoading"
-		v-model="sidebar.selected"
+		v-model:sidebarSelection="sidebar.selected"
 	>
 		<template #sidebar>
 			<v-text-field

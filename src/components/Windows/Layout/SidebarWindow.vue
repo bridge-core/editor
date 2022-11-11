@@ -68,14 +68,14 @@ export default {
 	props: {
 		sidebarItems: Array,
 		isLoading: Boolean,
-		value: {
+		sidebarSelection: {
 			type: String,
 			default: undefined,
 		},
 	},
 	computed: {
 		selected() {
-			return this.value
+			return this.sidebarSelection
 		},
 		isMobile() {
 			return this.$vuetify.display.mobile
@@ -83,7 +83,7 @@ export default {
 	},
 	methods: {
 		onSidebarChanged(id) {
-			this.$emit('input', id)
+			this.$emit('update:sidebarSelection', id)
 		},
 		toggleOpenCategory(element) {
 			element.isOpen = !element.isOpen

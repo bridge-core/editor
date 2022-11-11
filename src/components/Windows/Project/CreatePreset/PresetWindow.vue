@@ -9,7 +9,7 @@
 		:percentageHeight="80"
 		@closeWindow="onClose"
 		:sidebarItems="window.sidebar.elements"
-		v-model="window.sidebar.selected"
+		v-model:sidebarSelection="window.sidebar.selected"
 	>
 		<template #sidebar>
 			<v-text-field
