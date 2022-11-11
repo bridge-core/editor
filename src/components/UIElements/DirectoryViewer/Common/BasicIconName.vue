@@ -1,5 +1,5 @@
 <template>
-	<span v-on="$listeners" class="icon-name" :style="{ opacity }">
+	<span class="icon-name" :style="{ opacity }">
 		<v-icon class="pr-1" :color="color" small>
 			{{ icon }}
 		</v-icon>

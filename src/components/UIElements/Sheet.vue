@@ -1,6 +1,5 @@
 <template>
 	<div
-		v-on="nonClickListeners"
 		class="rounded-lg"
 		:class="{ 'bg-dark': dark, bg: !dark }"
 		@click="isLoading ? null : $emit('click')"
@@ -17,17 +16,11 @@ export default {
 	props: {
 		dark: Boolean,
 		isLoading: Boolean,
+		onClick: Function,
 	},
 	computed: {
-		nonClickListeners() {
-			return Object.fromEntries(
-				Object.entries(this.$listeners).filter(
-					([key, value]) => key !== 'click'
-				)
-			)
-		},
 		hasClickListener() {
-			return !!this.$listeners.click
+			return !!this.onClick
 		},
 	},
 }

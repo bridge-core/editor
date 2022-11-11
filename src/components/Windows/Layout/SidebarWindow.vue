@@ -1,5 +1,5 @@
 <template>
-	<BaseWindow v-bind="$attrs" :isLoading="isLoading" v-on="$listeners">
+	<BaseWindow v-bind="$attrs" :isLoading="isLoading">
 		<template #toolbar>
 			<slot name="toolbar" v-bind:selectedTab="selected" />
 		</template>

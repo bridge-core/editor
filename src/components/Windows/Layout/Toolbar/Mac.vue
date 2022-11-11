@@ -17,7 +17,7 @@
 				:hasCloseButton="hasCloseButton"
 				:hasMaximizeButton="hasMaximizeButton"
 				:hasMinimizeButton="hasMinimizeButton"
-				v-on="$listeners"
+				v-bind="$attrs"
 			/>
 		</div>
 		<v-spacer />
