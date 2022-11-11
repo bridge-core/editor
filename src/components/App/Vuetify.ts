@@ -1,49 +1,35 @@
-import Vuetify from 'vuetify'
+import { TorusGeometry } from 'three'
+import { createVuetify } from 'vuetify'
+import { bridgeDark } from '../Extensions/Themes/Default'
 import { iconMap } from './Icon/IconMap'
 
-export const vuetify = new Vuetify({
-	breakpoint: {
+export const vuetify = createVuetify({
+	display: {
 		mobileBreakpoint: 'xs',
 	},
 	icons: {
-		iconfont: 'mdi',
-		values: Object.fromEntries(
-			Object.entries(iconMap).map(([name, icon]) => [
-				name,
-				{ component: icon },
-			])
-		),
+		defaultSet: 'mdi',
+		sets: {},
+		// TODO(Vue3): Add blockbench icon back: https://next.vuetifyjs.com/en/features/icon-fonts/#creating-a-custom-icon-set
+		// values: Object.fromEntries(
+		// 	Object.entries(iconMap).map(([name, icon]) => [
+		// 		name,
+		// 		{ component: icon },
+		// 	])
+		// ),
 	},
 	theme: {
-		dark: true,
-		options: {
-			customProperties: true,
-			variations: false,
-		},
+		defaultTheme: 'dark',
+		variations: false,
+
 		themes: {
 			dark: {
-				primary: '#0073FF',
-				secondary: '#0073FF',
-				accent: '#0073FF',
-
-				background: '#121212',
-				sidebarNavigation: '#1F1F1F',
-				expandedSidebar: '#1F1F1F',
-				menu: '#424242',
-				footer: '#111111',
-				tooltip: '#1F1F1F',
+				dark: true,
+				colors: bridgeDark.colors,
 			},
 			light: {
-				primary: '#0073FF',
-				secondary: '#0073FF',
-				accent: '#0073FF',
-
-				background: '#fafafa',
-				sidebarNavigation: '#FFFFFF',
-				expandedSidebar: '#FFFFFF',
-				tooltip: '#424242',
-				toolbar: '#e0e0e0',
-				footer: '#f5f5f5',
+				dark: false,
+				colors: bridgeDark.colors,
 			},
 		},
 	},
