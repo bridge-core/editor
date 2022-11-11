@@ -10,6 +10,9 @@ export const vuetify = createVuetify({
 	},
 	icons: {
 		defaultSet: 'mdi',
+		aliases: {
+			blockbench: 'mdi-cube-outline',
+		},
 		sets: {},
 		// TODO(Vue3): Add blockbench icon back: https://next.vuetifyjs.com/en/features/icon-fonts/#creating-a-custom-icon-set
 		// values: Object.fromEntries(
@@ -18,6 +21,11 @@ export const vuetify = createVuetify({
 		// 		{ component: icon },
 		// 	])
 		// ),
+	},
+	defaults: {
+		VAutocomplete: {
+			variant: 'solo',
+		},
 	},
 	theme: {
 		defaultTheme: 'dark',
