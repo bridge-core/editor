@@ -14,7 +14,7 @@
 			<template v-for="(pathPart, i) in currentSelectionPath">
 				<Highlight
 					class="cursor-pointer"
-					@click.native="
+					@click="
 						selectTreePath(currentSelectionPath.slice(0, i + 1))
 					"
 					:value="`${pathPart}`"

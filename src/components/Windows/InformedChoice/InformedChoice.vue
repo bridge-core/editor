@@ -23,7 +23,7 @@
 				:action="action"
 				:hideTriggerButton="true"
 				v-ripple
-				@click.native="onClick(action)"
+				@click="onClick(action)"
 				style="cursor: pointer"
 			/>
 		</template>

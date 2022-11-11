@@ -4,7 +4,7 @@
 			<ActionViewer
 				v-ripple
 				style="margin-bottom: 0 !important; height: 100%"
-				@click.native="restartWatchModeAction.trigger()"
+				@click="restartWatchModeAction.trigger()"
 				:action="restartWatchModeAction"
 				:hideTriggerButton="true"
 			/>
@@ -13,7 +13,7 @@
 			<ActionViewer
 				v-ripple
 				style="margin-bottom: 0 !important; height: 100%"
-				@click.native="recompileChangesAction.trigger()"
+				@click="recompileChangesAction.trigger()"
 				:action="recompileChangesAction"
 				:hideTriggerButton="true"
 			/>

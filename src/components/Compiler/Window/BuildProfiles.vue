@@ -6,7 +6,7 @@
 			:action="action"
 			:hideTriggerButton="true"
 			v-ripple
-			@click.native="action.trigger()"
+			@click="action.trigger()"
 			style="cursor: pointer"
 		/>
 	</div>

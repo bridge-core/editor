@@ -7,7 +7,7 @@
 			:action="{ ...sidebar.config, name: sidebar.displayName }"
 			hideTriggerButton
 			v-ripple
-			@click.native="onClick(sidebar)"
+			@click="onClick(sidebar)"
 		/>
 	</div>
 </template>

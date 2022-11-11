@@ -21,7 +21,7 @@
 					: '100%',
 				overflow: 'auto',
 			}"
-			@click.right.native="content.onContentRightClick($event)"
+			@click.right="content.onContentRightClick($event)"
 		>
 			<InfoPanel
 				v-if="content.topPanel"

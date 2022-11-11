@@ -47,12 +47,10 @@
 				'tree-editor-selection': tree.isValueSelected,
 				'px-1': true,
 			}"
-			@click.stop.prevent.native="onClickKey($event, true)"
-			@contextmenu.prevent.native="
-				treeEditor.onContextMenu($event, tree, false)
-			"
-			@pointerdown.native="onTouchStart($event)"
-			@pointerup.native="onTouchEnd"
+			@click.stop.prevent="onClickKey($event, true)"
+			@contextmenu.prevent="treeEditor.onContextMenu($event, tree, false)"
+			@pointerdown="onTouchStart($event)"
+			@pointerup="onTouchEnd"
 			@pointermove="onTouchEnd"
 			@pointercancel="onTouchEnd"
 		>

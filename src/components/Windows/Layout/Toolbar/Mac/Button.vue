@@ -8,9 +8,9 @@
 				: color
 		"
 		small
-		@click.native.stop="$emit('click')"
+		@click.stop="$emit('click')"
 		v-ripple="!disabled"
-		style="font-size: 15px;"
+		style="font-size: 15px"
 		class="mr-1"
 	>
 		mdi-checkbox-blank-circle

@@ -136,7 +136,7 @@
 							:experiment="experiment"
 							:isToggleable="true"
 							:value="experiment.isActive"
-							@click.native="onToggleExperiment(experiment)"
+							@click="onToggleExperiment(experiment)"
 							style="height: 100%"
 						/>
 					</v-col>

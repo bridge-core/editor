@@ -25,7 +25,7 @@
 				class="d-flex align-center justify-center mt-3 mb-2 mx-1 rounded-lg"
 				v-ripple
 			>
-				<BridgeLogo :height="32" @click.native="openChangelogWindow" />
+				<BridgeLogo :height="32" @click="openChangelogWindow" />
 			</div>
 
 			<SidebarButton

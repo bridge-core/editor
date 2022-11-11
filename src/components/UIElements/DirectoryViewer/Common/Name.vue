@@ -58,7 +58,7 @@
 			@blur="cancelRename"
 			@keydown.enter.stop.prevent="confirmRename"
 			@keydown.esc.stop.prevent="cancelRename"
-			@keydown.space.prevent.stop.native
+			@keydown.space.prevent.stop
 			@click.stop
 			:rules="[rules.validName, rules.required]"
 		/>

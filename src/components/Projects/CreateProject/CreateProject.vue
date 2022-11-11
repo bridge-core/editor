@@ -59,7 +59,7 @@
 										'resourcePack'
 									)
 								"
-								@click.stop.native="
+								@click.stop="
 									state.createOptions.bpAsRpDependency =
 										!state.createOptions.bpAsRpDependency
 								"
@@ -89,7 +89,7 @@
 										'behaviorPack'
 									)
 								"
-								@click.stop.native="
+								@click.stop="
 									state.createOptions.rpAsBpDependency =
 										!state.createOptions.rpAsBpDependency
 								"

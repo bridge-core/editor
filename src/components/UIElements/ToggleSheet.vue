@@ -6,7 +6,7 @@
 			selected: internalValue,
 		}"
 		v-ripple="isToggleable"
-		@click.native="onClick"
+		@click="onClick"
 	>
 		<slot :value="internalValue" />
 	</BridgeSheet>

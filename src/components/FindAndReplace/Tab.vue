@@ -77,7 +77,7 @@
 						:height="(hasLimitedSpace ? 400 : height) - 40"
 						:bench="30"
 						item-height="22"
-						@scroll.native="onScroll"
+						@scroll="onScroll"
 					>
 						<template v-slot:default="{ item }">
 							<div

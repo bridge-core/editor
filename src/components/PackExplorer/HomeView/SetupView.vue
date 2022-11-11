@@ -15,7 +15,7 @@
 			dark
 			class="pa-2 mb-2 d-flex flex-column clickable"
 			v-ripple
-			@click.native="installApp"
+			@click="installApp"
 		>
 			<v-icon style="font-size: 3rem" color="primary" class="mb-4">
 				mdi-download
@@ -50,7 +50,7 @@
 				:action="action"
 				hideTriggerButton
 				v-ripple
-				@click.native="action.trigger()"
+				@click="action.trigger()"
 			/>
 		</div>
 		<div
