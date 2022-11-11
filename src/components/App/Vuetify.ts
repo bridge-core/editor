@@ -1,4 +1,5 @@
-import { TorusGeometry } from 'three'
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import { bridgeDark } from '../Extensions/Themes/Default'
 import { iconMap } from './Icon/IconMap'
