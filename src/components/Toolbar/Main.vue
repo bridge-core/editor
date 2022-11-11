@@ -55,10 +55,12 @@
 
 			<!-- App menu buttons -->
 			<v-toolbar-items class="px14-font">
-				<template v-for="(item, key, i) in toolbar">
+				<template
+					v-for="(item, key, i) in toolbar"
+					:key="`${item.type}.${key}`"
+				>
 					<MenuButton
 						v-if="item.type !== 'category'"
-						:key="`button.${key}`"
 						:displayName="item.name"
 						:displayIcon="item.icon"
 						:disabled="isAnyWindowVisible || item.isDisabled"
@@ -66,12 +68,10 @@
 					/>
 					<MenuActivator
 						v-else-if="item.shouldRender"
-						:key="`activator.${key}`"
 						:item="item"
 						:disabled="isAnyWindowVisible || item.isDisabled"
 					/>
 					<v-divider
-						:key="`divider.${key}`"
 						v-if="
 							item.shouldRender &&
 							(windowControlsOverlay ||

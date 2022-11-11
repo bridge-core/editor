@@ -10,11 +10,9 @@
 		<span v-if="skipRender">"{{ value }}"</span>
 
 		<span v-else
-			>"<template v-for="({ text, def }, i) in tokens">
-				<span :key="text" :style="toStyle(def)">{{ text }}</span
-				><span :key="`${text}.colon`">{{
-					tokens.length > i + 1 ? ':' : ''
-				}}</span> </template
+			>"<template v-for="({ text, def }, i) in tokens" :key="text">
+				<span :style="toStyle(def)">{{ text }}</span
+				><span>{{ tokens.length > i + 1 ? ':' : '' }}</span> </template
 			>"</span
 		>
 	</span>

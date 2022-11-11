@@ -25,21 +25,22 @@
 			@end="isDraggingWrapper = false"
 			@change="draggedHandle"
 		>
-			<template v-for="(entry, i) in directoryWrapper.children.value">
+			<template
+				v-for="(entry, i) in directoryWrapper.children.value"
+				:key="`${i}//${entry.name}`"
+			>
 				<DirectoryView
 					v-if="entry.kind === 'directory'"
 					:directoryWrapper="entry"
-					:key="`${i}//${entry.name}`"
 				/>
 
 				<FileView
 					v-else-if="entry.kind === 'file'"
-					:key="`${i}//${entry.name}`"
 					:fileWrapper="entry"
 				/>
 
 				<!-- Error: unknown entry kind -->
-				<div v-else :key="`${i}//${entry.name}`">
+				<div v-else>
 					<v-icon color="error" small>
 						mdi-alert-circle-outline
 					</v-icon>

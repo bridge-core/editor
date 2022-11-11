@@ -1,14 +1,13 @@
 <template>
 	<!-- "tile" prop doesn't work on nested lists -> set border radius directly -->
 	<v-list class="app-menu" color="menu" style="border-radius: 0">
-		<template v-for="(item, key, i) in elements">
-			<v-divider
-				v-if="item.type === 'divider'"
-				:key="`menu.${i}.${Math.random()}`"
-			/>
+		<template
+			v-for="(item, key, i) in elements"
+			:key="`menu.${i}.${Math.random()}`"
+		>
+			<v-divider v-if="item.type === 'divider'" />
 			<v-menu
 				v-else
-				:key="`menu.${i}.${Math.random()}`"
 				open-on-hover
 				offset-x
 				z-index="11"

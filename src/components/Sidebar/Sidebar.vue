@@ -57,10 +57,12 @@
 
 		<v-list v-if="hasVisibleNotifications">
 			<v-divider class="mx-3 mb-6" />
-			<template v-for="notification in NotificationStore">
+			<template
+				v-for="notification in NotificationStore"
+				:key="notification.id"
+			>
 				<SidebarButton
 					v-if="notification.isVisible"
-					:key="notification.id"
 					:displayName="notification.message"
 					:icon="notification.icon"
 					:color="notification.color"

@@ -11,14 +11,13 @@
 			v-if="shouldShowLocationBar && currentSelectionPath.length > 1"
 			class="tree-editor-navigation lineHighlightBackground rounded px-1 mx-3 mt-1 mb-2"
 		>
-			<template v-for="(pathPart, i) in currentSelectionPath">
+			<template v-for="(pathPart, i) in currentSelectionPath" :key="i">
 				<Highlight
 					class="cursor-pointer"
 					@click="
 						selectTreePath(currentSelectionPath.slice(0, i + 1))
 					"
 					:value="`${pathPart}`"
-					:key="i"
 				/>
 				<v-icon
 					v-if="i + 1 < currentSelectionPath.length"
