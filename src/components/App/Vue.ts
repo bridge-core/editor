@@ -1,17 +1,12 @@
-import Vue from 'vue'
-import Vuetify from 'vuetify'
+import { createApp } from 'vue'
 import { LocaleManager } from '../Locales/Manager'
 import { vuetify } from './Vuetify'
 import AppComponent from '/@/App.vue'
 
-Vue.use(Vuetify)
-Vue.config.productionTip = false
+const app = createApp(AppComponent)
 
-export const vue = new Vue({
-	vuetify,
-	render: (h) => h(AppComponent),
-})
+app.use(vuetify)
 
 LocaleManager.setDefaultLanguage().then(() => {
-	vue.$mount('#app')
+	app.mount('#app')
 })
