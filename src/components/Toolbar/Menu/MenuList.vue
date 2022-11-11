@@ -25,11 +25,7 @@
 							}}</v-icon>
 						</template>
 
-						<span
-							class="text-high-emphasis"
-							style="font-size: 13px"
-							>{{ t(item.name) }}</span
-						>
+						<span style="font-size: 13px">{{ t(item.name) }}</span>
 
 						<template v-slot:append>
 							<span
