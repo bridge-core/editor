@@ -36,16 +36,16 @@
 		</template>
 
 		<template v-slot:item="{ item }">
-			<v-list-item-avatar
-				:color="item.color || 'warning'"
-				class="text-h5 font-weight-light white--text"
-			>
-				<v-icon color="white">{{ item.icon }}</v-icon>
-			</v-list-item-avatar>
-			<v-list-item-content>
-				<v-list-item-title v-text="t(item.name)" />
-				<v-list-item-subtitle v-text="t(item.description)" />
-			</v-list-item-content>
+			<v-list-item :title="item.name" :subtitle="item.description">
+				<template v-slot:prepend>
+					<v-avatar
+						:color="item.color || 'warning'"
+						class="text-h5 font-weight-light white--text"
+					>
+						<v-icon color="white">{{ item.icon }}</v-icon>
+					</v-avatar>
+				</template>
+			</v-list-item>
 		</template>
 	</v-autocomplete>
 </template>
