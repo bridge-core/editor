@@ -6,9 +6,10 @@
 		@click="tab.parent.setActive(true)"
 		tabindex="-1"
 	>
+		<!-- Bar showing the current location of a user within the file -->
 		<div
-			v-if="currentSelectionPath.length > 1"
-			class="tree-editor-navigation lineHighlightBackground rounded px-1 mx-3 mb-2"
+			v-if="shouldShowLocationBar && currentSelectionPath.length > 1"
+			class="tree-editor-navigation lineHighlightBackground rounded px-1 mx-3 mt-1 mb-2"
 		>
 			<template v-for="(pathPart, i) in currentSelectionPath">
 				<Highlight
@@ -316,6 +317,15 @@ export default {
 			if (!selection) return []
 
 			return selection.getTree().path
+		},
+		shouldShowLocationBar() {
+			if (
+				!settingsState ||
+				!settingsState.editor ||
+				settingsState.editor.showTreeEditorLocationBar === undefined
+			)
+				return true //Default value for setting is "true"
+			return settingsState.editor.showTreeEditorLocationBar
 		},
 	},
 	methods: {

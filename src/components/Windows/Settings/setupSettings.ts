@@ -391,6 +391,16 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'editor',
+			name: 'windows.settings.editor.showTreeEditorLocationBar.name',
+			description:
+				'windows.settings.editor.showTreeEditorLocationBar.description',
+			key: 'showTreeEditorLocationBar',
+			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
 			name: 'windows.settings.editor.bridgePredictions.name',
 			description:
 				'windows.settings.editor.bridgePredictions.description',
