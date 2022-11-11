@@ -1,7 +1,7 @@
 <template>
 	<v-navigation-drawer
-		mini-variant
-		mini-variant-width="60"
+		rail
+		rail-width="60"
 		stateless
 		v-model="isNavigationVisible"
 		:app="app"
@@ -11,8 +11,8 @@
 		color="sidebarNavigation"
 		:height="`calc(100% - ${appToolbarHeight})`"
 		:class="{
-			'rounded-r-lg': !isSidebarRight,
-			'rounded-l-lg': isSidebarRight,
+			'rounded-e-lg': !isSidebarRight,
+			'rounded-s-lg': isSidebarRight,
 		}"
 		class="my-2"
 		:style="{
