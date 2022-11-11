@@ -40,7 +40,7 @@ export class ObjectTree extends Tree<object> {
 		return this._isOpen
 	}
 
-	get(path: (string | number)[]) {
+	get(path: (string | number)[]): Tree<unknown> | null {
 		if (path.length === 0) return this
 
 		const currentKey = path.shift()
