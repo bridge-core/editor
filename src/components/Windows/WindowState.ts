@@ -1,4 +1,4 @@
-import { del, markRaw, ref, set, shallowReactive, watch } from 'vue'
+import { markRaw, ref, shallowReactive, watch } from 'vue'
 import { NewBaseWindow } from './NewBaseWindow'
 
 export class WindowState {
@@ -9,7 +9,7 @@ export class WindowState {
 	constructor() {}
 
 	addWindow(uuid: string, window: NewBaseWindow<any>) {
-		set(this.state.value, uuid, markRaw(window))
+		this.state.value[uuid] = markRaw(window)
 
 		this.watchStop.set(
 			uuid,
@@ -19,7 +19,7 @@ export class WindowState {
 		this.onWindowsChanged()
 	}
 	deleteWindow(uuid: string) {
-		del(this.state.value, uuid)
+		delete this.state.value[uuid]
 
 		const watchStop = this.watchStop.get(uuid)
 		if (watchStop) watchStop()

@@ -1,4 +1,4 @@
-import { del, reactive, Ref, ref, set } from 'vue'
+import { reactive, Ref, ref } from 'vue'
 import { v4 as uuid } from 'uuid'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 
@@ -161,7 +161,7 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 
 	addElement(element: TSidebarElement, additionalData?: unknown) {
 		if (element.type === 'item' && additionalData)
-			set(this.state, element.id, additionalData)
+			this.state[element.id] = additionalData
 
 		if (this.has(element)) this.replace(element)
 		else this._elements.value.push(element)
@@ -182,7 +182,7 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 		this._elements.value = []
 
 		for (const key in this.state) {
-			del(this.state, key)
+			delete this.state[key]
 		}
 	}
 
@@ -254,7 +254,7 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 		return this.state[id] ?? {}
 	}
 	setState(id: string, data: any) {
-		set(this.state, id, data)
+		this.state[id] = data
 	}
 
 	protected sortSidebar(elements: TSidebarElement[]) {

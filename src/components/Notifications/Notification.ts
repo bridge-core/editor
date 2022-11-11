@@ -1,6 +1,5 @@
 import { NotificationStore } from './state'
 import { v4 as uuid } from 'uuid'
-import { del, set } from 'vue'
 
 export interface INotificationConfig {
 	id?: string
@@ -22,7 +21,7 @@ export class Notification {
 	constructor(protected config: INotificationConfig) {
 		this.id = config.id ?? uuid()
 
-		set(NotificationStore, this.id, this)
+		NotificationStore[this.id] = this
 
 		if (this.config.isVisible ?? true) this.show()
 	}
@@ -50,7 +49,7 @@ export class Notification {
 	}
 	onMiddleClick() {
 		this.config.onMiddleClick?.()
-		if (this.config.disposeOnMiddleClick) del(NotificationStore, this.id)
+		if (this.config.disposeOnMiddleClick) this.dispose()
 	}
 
 	addClickHandler(cb: () => void) {
@@ -63,7 +62,7 @@ export class Notification {
 	}
 
 	dispose() {
-		del(NotificationStore, this.id)
+		delete NotificationStore[this.id]
 
 		this.updateAppBadge()
 	}

@@ -1,7 +1,4 @@
 import { NotificationStore } from './state'
-import { v4 as uuid } from 'uuid'
-import Vue from 'vue'
-import { IDisposable } from '/@/types/disposable'
 import { INotificationConfig, Notification } from './Notification'
 
 /**
@@ -16,7 +13,7 @@ export function clearAllNotifications() {
 	// @ts-expect-error
 	if (typeof navigator.clearAppBadge === 'function') navigator.clearAppBadge()
 
-	for (const [key] of Object.entries(NotificationStore)) {
-		Vue.delete(NotificationStore, key)
+	for (const key of Object.keys(NotificationStore)) {
+		delete NotificationStore[key]
 	}
 }

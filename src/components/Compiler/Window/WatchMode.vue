@@ -56,7 +56,6 @@ import { recompileChangesAction } from '../Actions/RecompileChanges'
 import SettingSheet from './WatchMode/SettingSheet.vue'
 import { TranslationMixin } from '../../Mixins/TranslationMixin'
 import { settingsState } from '../../Windows/Settings/SettingsState'
-import { set } from 'vue'
 
 export default {
 	components: {
@@ -75,10 +74,10 @@ export default {
 	}),
 	setup() {
 		if (!settingsState.compiler) {
-			set(settingsState, 'compiler', {
+			settingsState.compiler = {
 				watchModeActive: true,
 				autoFetchChangedFiles: true,
-			})
+			}
 		}
 
 		return {

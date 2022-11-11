@@ -1,7 +1,7 @@
 import { Tab } from './CommonTab'
 import WelcomeScreen from './WelcomeScreen.vue'
 import { TextTab } from '../Editors/Text/TextTab'
-import Vue, { computed, Ref, ref } from 'vue'
+import { nextTick, computed, Ref, ref } from 'vue'
 import { App } from '/@/App'
 import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
 import { Project } from '../Projects/Project/Project'
@@ -236,7 +236,7 @@ export class TabSystem extends MonacoHolder {
 
 		await this.selectedTab?.onActivate()
 
-		Vue.nextTick(async () => {
+		nextTick(async () => {
 			this._monacoEditor?.layout()
 		})
 	}

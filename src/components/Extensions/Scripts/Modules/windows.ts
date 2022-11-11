@@ -1,5 +1,4 @@
 import { IModuleConfig } from '../types'
-import { createWindow } from '/@/components/Windows/create'
 import { Component as VueComponent } from 'vue'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
@@ -13,11 +12,9 @@ export const WindowModule = ({}: IModuleConfig) => ({
 		vueComponent: VueComponent,
 		state: Record<string, unknown>
 	) => {
-		console.warn(
+		console.error(
 			'[@bridge/windows] Calling "createWindow" is deprecated. Please replace direct function calls by defining a class based window instead.'
 		)
-
-		return createWindow(vueComponent, state)
 	},
 	createInformationWindow: (displayName: string, displayContent: string) =>
 		new InformationWindow({

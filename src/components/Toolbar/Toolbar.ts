@@ -1,15 +1,15 @@
 import { ToolbarCategory } from './ToolbarCategory'
-import { del, reactive, set } from 'vue'
+import { reactive } from 'vue'
 import { showContextMenu } from '../ContextMenu/showContextMenu'
 
 export class Toolbar {
 	protected state: Record<string, ToolbarCategory> = reactive({})
 
 	addCategory(category: ToolbarCategory) {
-		set(this.state, category.id, category)
+		this.state[category.id] = category
 	}
 	disposeCategory(category: ToolbarCategory) {
-		del(this.state, category.id)
+		delete this.state[category.id]
 	}
 
 	showMobileMenu(event: MouseEvent) {

@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { Signal } from './Event/Signal'
 import { Queue } from './Queue'
-import { set, markRaw } from 'vue'
+import { markRaw } from 'vue'
 import { dirname } from '/@/utils/path'
 
 export class PersistentQueue<T> extends Signal<Queue<T>> {
@@ -15,7 +15,8 @@ export class PersistentQueue<T> extends Signal<Queue<T>> {
 		callSetup = true
 	) {
 		super()
-		set(this, 'queue', new Queue<T>(maxSize))
+
+		this.queue = new Queue<T>(maxSize)
 		this.app = markRaw(app)
 
 		if (callSetup) this.setup()

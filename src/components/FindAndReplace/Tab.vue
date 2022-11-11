@@ -132,15 +132,7 @@ import FilePath from './FilePath.vue'
 
 import { debounce } from 'lodash-es'
 import { createRegExp, processFileText } from './Utils'
-import {
-	computed,
-	onActivated,
-	onMounted,
-	ref,
-	set,
-	watch,
-	watchEffect,
-} from 'vue'
+import { computed, onActivated, onMounted, ref, watch, watchEffect } from 'vue'
 import { pointerDevice } from '/@/utils/pointerDevice'
 import { useTranslations } from '../Composables/useTranslations'
 import { Event } from 'three'

@@ -1,4 +1,4 @@
-import { set } from 'vue'
+import { Component } from 'vue'
 import { v4 as uuid } from 'uuid'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'
@@ -10,7 +10,7 @@ export const treeElementHeight = pointerDevice.value === 'mouse' ? 19 : 26
 
 export abstract class Tree<T> {
 	public readonly uuid = uuid()
-	public abstract readonly component: Vue.Component
+	public abstract readonly component: Component
 	protected isSelected: boolean = false
 	public abstract type: TTree
 	public abstract height: number
@@ -81,11 +81,8 @@ export abstract class Tree<T> {
 
 		const index = this.findParentIndex()
 
-		set(
-			this.parent.children,
-			index,
-			this.parent.type === 'array' ? tree : [this.key, tree]
-		)
+		this.parent.children[index] =
+			this.parent.type === 'array' ? tree : [<string>this.key, tree]
 	}
 
 	delete() {

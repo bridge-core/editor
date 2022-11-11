@@ -1,11 +1,9 @@
 import {
 	computed,
-	del,
 	markRaw,
 	reactive,
 	readonly,
 	ref,
-	set,
 	shallowReactive,
 	shallowReadonly,
 	watch,
@@ -29,7 +27,5 @@ export const ReactivityModule = () => {
 		markRaw,
 		watch,
 		watchEffect,
-		del,
-		set,
 	}
 }

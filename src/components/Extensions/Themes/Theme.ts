@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import { TColorName, IThemeDefinition, ThemeManager } from './ThemeManager'
 import { MonacoSubTheme } from './MonacoSubTheme'
 
@@ -31,12 +30,13 @@ export class Theme {
 	}
 
 	apply(themeManager: ThemeManager, vuetify: any) {
-		Vue.set(
-			vuetify.theme.themes,
-			this.colorScheme,
-			Object.fromEntries(this.colorMap.entries())
-		)
-		Vue.set(vuetify.theme, 'dark', this.colorScheme === 'dark')
+		// TODO(Vue3): Re-enable theme support
+		// Vue.set(
+		// 	vuetify.theme.themes,
+		// 	this.colorScheme,
+		// 	Object.fromEntries(this.colorMap.entries())
+		// )
+		// Vue.set(vuetify.theme, 'dark', this.colorScheme === 'dark')
 
 		themeManager.setThemeColor(this.colorMap.get('toolbar') ?? 'red')
 		this.applyMonacoTheme()

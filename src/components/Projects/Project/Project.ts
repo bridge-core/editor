@@ -2,7 +2,6 @@ import { App } from '/@/App'
 import { IOpenTabOptions, TabSystem } from '/@/components/TabSystem/TabSystem'
 import { TPackTypeId } from '/@/components/Data/PackType'
 import { ProjectConfig, IConfigJson } from './Config'
-import { RecentFiles } from '../RecentFiles'
 import { loadIcon } from './loadIcon'
 import { IPackData, loadPacks } from './loadPacks'
 import { PackIndexer } from '/@/components/PackIndexer/PackIndexer'
@@ -19,7 +18,7 @@ import {
 	AnyFileHandle,
 	AnyHandle,
 } from '/@/components/FileSystem/Types'
-import { markRaw, reactive, set } from 'vue'
+import { markRaw } from 'vue'
 import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
@@ -566,13 +565,13 @@ export abstract class Project {
 			loadPacks(this.app, this),
 		])
 
-		set(this, '_projectData', {
+		this._projectData = {
 			...this.config.get(),
 			path: this.name,
 			name: this.name,
 			imgSrc: iconUrl,
 			contains: packs.sort((a, b) => a.id.localeCompare(b.id)),
-		})
+		}
 	}
 
 	async recompile(forceStartIfActive = true) {

@@ -1,6 +1,6 @@
 import { Action } from './Action'
 import { IActionConfig } from './SimpleAction'
-import { del, set, shallowReactive } from 'vue'
+import { shallowReactive } from 'vue'
 import type { KeyBindingManager } from './KeyBindingManager'
 import { v4 as uuid } from 'uuid'
 import { ISubmenuConfig } from '../ContextMenu/showContextMenu'
@@ -32,7 +32,7 @@ export class ActionManager {
 
 	create(actionConfig: IActionConfig) {
 		const action = new Action(this, actionConfig)
-		set(this.state, action.id, action)
+		this.state[action.id] = action
 		return action
 	}
 	getAction(actionId: string) {
@@ -74,7 +74,7 @@ export class ActionManager {
 		}
 	}
 	disposeAction(actionId: string) {
-		del(this.state, actionId)
+		delete this.state[actionId]
 	}
 	dispose() {
 		Object.values(this.state).forEach((action) =>

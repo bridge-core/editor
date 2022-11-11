@@ -1,4 +1,4 @@
-import { reactive, ref, del, set, computed } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { SidebarContent } from './Content/SidebarContent'
 import { SidebarElement } from './SidebarElement'
 import { App } from '/@/App'
@@ -29,12 +29,12 @@ export class SidebarManager {
 	}
 
 	addSidebarElement(uuid: string, element: SidebarElement) {
-		set(this.elements, uuid, element)
+		this.elements[uuid] = element
 		this.updateSortedElements()
 
 		return {
 			dispose: () => {
-				del(this.elements, uuid)
+				delete this.elements[uuid]
 				this.updateSortedElements()
 			},
 		}

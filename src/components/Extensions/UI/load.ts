@@ -3,7 +3,7 @@ import { createErrorNotification } from '/@/components/Notifications/Errors'
 import { TUIStore } from './store'
 import { IDisposable } from '/@/types/disposable'
 import { createStyleSheet } from '../Styles/createStyle'
-import Vue from 'vue'
+// import Vue from 'vue'
 // import {
 // 	VBtn,
 // 	VAlert,
@@ -103,9 +103,10 @@ export async function loadUIComponent(
 		const component = {
 			name: basename(componentPath),
 			...componentDef,
-			...Vue.compile(
-				template?.content ?? `<p color="red">NO TEMPLATE DEFINED</p>`
-			),
+			// TODO(Vue3): Add back Vue template support
+			// ...Vue.compile(
+			// 	template?.content ?? `<p color="red">NO TEMPLATE DEFINED</p>`
+			// ),
 		}
 		// Add vuetify components in
 		component.components = Object.assign(

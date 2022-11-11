@@ -6,7 +6,7 @@ import PackExplorerComponent from './PackExplorer.vue'
 import ProjectDisplayComponent from './ProjectDisplay.vue'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
-import { markRaw, ref, set } from 'vue'
+import { markRaw, ref } from 'vue'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 import { exportAsBrproject } from '/@/components/Projects/Export/AsBrproject'
@@ -103,7 +103,7 @@ export class PackExplorer extends SidebarContent {
 			)
 			await wrapper.open()
 
-			set(this.directoryEntries, pack.packPath, wrapper)
+			this.directoryEntries[pack.packPath] = wrapper
 			this.actions.push(
 				new SelectableSidebarAction(this, {
 					id: pack.packPath,

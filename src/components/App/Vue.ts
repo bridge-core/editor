@@ -10,3 +10,5 @@ app.use(vuetify)
 LocaleManager.setDefaultLanguage().then(() => {
 	app.mount('#app')
 })
+
+export { app as vue }

@@ -1,6 +1,6 @@
 import { App } from '/@/App'
 import { get as idbGet, set as idbSet } from 'idb-keyval'
-import { shallowReactive, set, del, markRaw } from 'vue'
+import { shallowReactive, markRaw } from 'vue'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { Project, virtualProjectName } from './Project/Project'
 import { Title } from '/@/components/Projects/Title'
@@ -57,7 +57,7 @@ export class ProjectManager extends Signal<void> {
 		})
 		await project.loadProject()
 
-		set(this.state, project.name, project)
+		this.state[project.name] = project
 
 		if (isNewProject) {
 			await this.selectProject(project.name)
@@ -75,7 +75,7 @@ export class ProjectManager extends Signal<void> {
 			project.dispose()
 		}
 
-		del(this.state, project.name)
+		delete this.state[project.name]
 		if (unlinkProject) await this.app.fileSystem.unlink(project.projectPath)
 
 		await this.storeProjects(project.name)

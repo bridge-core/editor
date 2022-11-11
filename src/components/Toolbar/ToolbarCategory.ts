@@ -3,7 +3,7 @@ import { Action } from '/@/components/Actions/Action'
 import { IDisposable } from '/@/types/disposable'
 import { v4 as uuid } from 'uuid'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
-import { del, reactive, set, shallowReactive } from 'vue'
+import { reactive, shallowReactive } from 'vue'
 import { Divider } from './Divider'
 
 export class ToolbarCategory extends EventDispatcher<void> {
@@ -29,12 +29,12 @@ export class ToolbarCategory extends EventDispatcher<void> {
 	}
 
 	addItem(item: Action | ToolbarCategory | Divider) {
-		set(this.state, item.id, item)
+		this.state[item.id] = item
 		this.disposables[item.id] = item.on(() => this.trigger())
 		return this
 	}
 	disposeItem(item: Action | ToolbarCategory | Divider) {
-		del(this.state, item.id)
+		delete this.state[item.id]
 		this.disposables[item.id]?.dispose()
 
 		this.disposables[item.id] = undefined

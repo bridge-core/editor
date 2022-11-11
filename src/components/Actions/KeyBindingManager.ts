@@ -1,7 +1,7 @@
 import { platform } from '/@/utils/os'
 import { IKeyBindingConfig, KeyBinding } from './KeyBinding'
 import { toStrKeyCode } from './Utils'
-import { del, set, shallowReactive } from 'vue'
+import { shallowReactive } from 'vue'
 
 const IGNORE_KEYS = ['Control', 'Alt', 'Meta']
 
@@ -94,11 +94,11 @@ export class KeyBindingManager {
 				`KeyBinding with keyCode "${keyCode}" already exists!`
 			)
 
-		set(this.state, keyCode, keyBinding)
+		this.state[keyCode] = keyBinding
 		return keyBinding
 	}
 	disposeKeyBinding(keyCode: string) {
-		del(this.state, keyCode)
+		delete this.state[keyCode]
 	}
 
 	dispose() {
