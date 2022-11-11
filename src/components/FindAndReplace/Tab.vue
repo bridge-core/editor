@@ -143,7 +143,6 @@ import {
 } from 'vue'
 import { pointerDevice } from '/@/utils/pointerDevice'
 import { useTranslations } from '../Composables/useTranslations'
-import { Component } from 'vue/types/umd'
 import { Event } from 'three'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { App } from '/@/App'
