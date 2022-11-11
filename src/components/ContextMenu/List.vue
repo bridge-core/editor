@@ -19,8 +19,8 @@
 				<template v-slot:activator="{ on, attrs }">
 					<v-list-item
 						v-if="Object.keys(action.submenu.state).length > 0"
-						v-on="on"
 						v-bind="attrs"
+						v-on="on"
 						:disabled="action.isDisabled"
 					>
 						<v-list-item-icon

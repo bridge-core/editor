@@ -85,7 +85,7 @@
 				rounded="lg"
 			>
 				<template v-slot:activator="{ on, attrs }">
-					<v-btn v-on="on" v-bind="attrs" small icon>
+					<v-btn v-bind="attrs" v-on="on" small icon>
 						<v-icon>mdi-dots-vertical</v-icon>
 					</v-btn>
 				</template>

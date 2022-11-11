@@ -15,8 +15,8 @@
 					transform: isSelected ? 'scale(1.05)' : null,
 				}"
 				@click="$emit('click', $event)"
-				v-on="on"
 				v-bind="attrs"
+				v-on="on"
 			>
 				<v-icon :color="isSelected ? 'white' : color">
 					{{ icon }}
