@@ -6,6 +6,7 @@
 		<template v-else>
 			<BridgeFolderBtn />
 			<CreateProjectBtn />
+			<GitHubLogin class="mb-2" block />
 
 			<v-slide-y-transition class="py-0" group>
 				<Project
@@ -25,6 +26,7 @@
 import { App } from '/@/App'
 import CreateProjectBtn from './CreateProjectBtn.vue'
 import BridgeFolderBtn from './BridgeFolderBtn.vue'
+import GitHubLogin from '/@/components/UIElements/Button/GitHubLogin.vue'
 import SetupView from './SetupView.vue'
 import Project from './Project.vue'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
@@ -33,6 +35,7 @@ export default {
 	components: {
 		CreateProjectBtn,
 		BridgeFolderBtn,
+		GitHubLogin,
 		SetupView,
 		Project,
 	},

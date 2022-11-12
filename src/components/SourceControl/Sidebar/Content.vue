@@ -1,5 +1,13 @@
 <template>
-	<div class="pa-1 pt-0">
+	<div v-if="!isLoggedIn" class="pa-2">
+		<GitHubLogin block />
+
+		<p class="mt-2">
+			{{ t('sourceControl.loginRequired') }}
+		</p>
+	</div>
+
+	<div v-else class="pa-1 pt-0">
 		<v-row
 			class="align-center"
 			no-gutters
@@ -30,9 +38,9 @@
 					height="38px"
 					color="primary"
 				>
-					<v-icon :small="$vuetify.breakpoint.mdOnly"
-						>mdi-check</v-icon
-					>
+					<v-icon :small="$vuetify.breakpoint.mdOnly">
+						mdi-check
+					</v-icon>
 				</v-btn>
 			</v-col>
 		</v-row>
@@ -62,11 +70,19 @@
 <script>
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import File from '/@/components/FileSystem/UI/File.vue'
+import { OauthToken } from '../OAuth/Token'
+import GitHubLogin from '/@/components/UIElements/Button/GitHubLogin.vue'
 
 export default {
 	mixins: [TranslationMixin],
-	components: { File },
+	components: { File, GitHubLogin },
+	mounted() {
+		OauthToken.setup.once(() => {
+			this.isLoggedIn = true
+		})
+	},
 	data: () => ({
+		isLoggedIn: false,
 		files: [
 			{
 				filePath: 'projects/BridgeTests/BP/entities/blaze.json',

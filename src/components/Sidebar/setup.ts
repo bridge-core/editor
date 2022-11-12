@@ -52,8 +52,10 @@ export async function setupSidebar() {
 
 	createSidebar({
 		id: 'sourceControl',
+		group: 'packExplorer',
 		displayName: 'sourceControl.name',
 		icon: 'mdi-source-branch',
+		isVisible: () => !App.instance.isNoProjectSelected,
 		sidebarContent: new SourceControl(),
 	})
 

@@ -70,6 +70,8 @@ export class StartParamManager {
 
 			action.onTrigger(decoded)
 		})
+
+		window.history.replaceState({}, '', '/')
 	}
 
 	addStartAction(action: IStartAction) {

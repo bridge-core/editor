@@ -39,6 +39,9 @@
 		"experimentalGameplay": "Experimental Gameplay",
 		"textureLocation": "Texture Location"
 	},
+	"login": {
+		"withGitHub": "Login with GitHub"
+	},
 	"openWith": {
 		"snowstorm": "Snowstorm",
 		"textEditor": "Text Editor",
@@ -1199,6 +1202,7 @@
 	},
 	"sourceControl": {
 		"name": "Source Control",
+		"loginRequired": "You need to login to GitHub to use source control features.",
 		"commitMessage": "Commit Message",
 		"actions": {
 			"fetch": "Fetch Remote Changes",

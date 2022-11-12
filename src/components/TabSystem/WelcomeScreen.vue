@@ -17,6 +17,13 @@
 
 			<CommandBar />
 		</div>
+
+		<div v-if="user">
+			<v-avatar size="32">
+				<img :src="user.avatarUrl" :alt="user.login" />
+			</v-avatar>
+			<span>{{ user.login }}</span>
+		</div>
 	</div>
 </template>
 
@@ -24,6 +31,7 @@
 import Logo from '../UIElements/Logo.vue'
 import WelcomeAlert from '../WelcomeAlert/Alert.vue'
 import CommandBar from '../CommandBar/CommandBar.vue'
+import { getFromGithub } from '../SourceControl/Backend/Get'
 
 export default {
 	name: 'welcome-screen',
@@ -34,6 +42,17 @@ export default {
 	},
 	props: {
 		containerPadding: String,
+	},
+	data: () => ({
+		user: null,
+	}),
+	async created() {
+		const user = await getFromGithub('user')
+
+		this.user = {
+			login: user.login,
+			avatarUrl: user.avatar_url,
+		}
 	},
 }
 </script>
