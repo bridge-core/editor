@@ -771,6 +771,10 @@
 					"name": "Sidebar Size",
 					"description": "Changes the width of the expanded sidebar area."
 				},
+				"packExplorerFolderIndentation": {
+					"name": "Folder Indentation",
+					"description": "Changes the indentation of folders in the pack explorer."
+				},
 				"shrinkSidebarElements": {
 					"name": "Shrink Sidebar Elements",
 					"description": "Shrink the size of bridge.'s sidebar elements"
