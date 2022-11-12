@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
-import { Unzipper } from '/@/components/FileSystem/Zip/Unzipper'
+import { StreamingUnzipper } from '/@/components/FileSystem/Zip/StreamingUnzipper'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { TPackTypeId } from '/@/components/Data/PackType'
@@ -29,7 +29,7 @@ export async function importFromMcaddon(
 
 	// Unzip .mcaddon file
 	if (unzip) {
-		const unzipper = new Unzipper(tmpHandle)
+		const unzipper = new StreamingUnzipper(tmpHandle)
 		const file = await fileHandle.getFile()
 		const data = new Uint8Array(await file.arrayBuffer())
 		unzipper.createTask(app.taskManager)
@@ -67,7 +67,7 @@ export async function importFromMcaddon(
 				}
 			)
 
-			const unzipper = new Unzipper(directory)
+			const unzipper = new StreamingUnzipper(directory)
 			const file = await pack.getFile()
 			const data = new Uint8Array(await file.arrayBuffer())
 			unzipper.createTask(app.taskManager)

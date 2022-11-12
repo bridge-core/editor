@@ -1,9 +1,11 @@
 import { unzip } from 'fflate'
-import { basename, dirname } from '/@/utils/path'
+import { basename } from '/@/utils/path'
 import { GenericUnzipper } from './GenericUnzipper'
-import { AnyDirectoryHandle } from '../Types'
 import { FileSystem } from '../FileSystem'
 
+/**
+ * @deprecated Use StreamingUnzipper where possible. It is slightly faster and consumes less memory.
+ */
 export class Unzipper extends GenericUnzipper<Uint8Array> {
 	unzip(data: Uint8Array) {
 		return new Promise<void>(async (resolve, reject) => {
