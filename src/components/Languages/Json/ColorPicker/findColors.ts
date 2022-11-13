@@ -5,8 +5,9 @@ import { useJsoncParser } from '/@/utils/libs/useJsoncParser'
 import { useMonaco } from '/@/utils/libs/useMonaco'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { getArrayValueAtOffset } from '/@/utils/monaco/getArrayValue'
-import { loadValidColors } from './loadValidColors'
 import { parseColor } from './parse/main'
+import { App } from '/@/App'
+import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
 
 /**
  * Takes a text model and detects the locations of colors in the file
@@ -17,7 +18,11 @@ export async function findColors(model: editor.ITextModel) {
 
 	const content = model.getValue()
 
-	const locationPatterns = (await loadValidColors()) ?? {}
+	const app = await App.getApp()
+	const project = app.project
+	if (!(project instanceof BedrockProject)) return
+
+	const locationPatterns = await project.colorData.getDataForCurrentTab()
 
 	// Walk through the json file
 	const colorInfo: Promise<languages.IColorInformation>[] = []
