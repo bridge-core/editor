@@ -44,7 +44,8 @@ export async function parseColor(
 				if (validColors) {
 					const location = await getLocation(
 						context.model,
-						context.position
+						context.position,
+						false
 					)
 					// Check if hexa is valid at this location
 					if (
