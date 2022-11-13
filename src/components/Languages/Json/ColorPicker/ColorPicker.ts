@@ -2,9 +2,6 @@ import { useMonaco } from '/@/utils/libs/useMonaco'
 import type { editor, CancellationToken, languages } from 'monaco-editor'
 import { Color } from './Color'
 import { findColors } from './findColors'
-import { getLocation } from '/@/utils/monaco/getLocation'
-import { loadValidColors } from './loadValidColors'
-import { isMatch } from 'bridge-common-utils'
 import { parseColor } from './parse/main'
 
 export async function registerColorPicker() {
