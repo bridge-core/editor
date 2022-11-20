@@ -7,6 +7,10 @@ export async function exportAsBrproject(name?: string) {
 	const app = App.instance
 	app.windows.loadingWindow.open()
 
+	const savePath = `${app.project.projectPath}/builds/${
+		name ?? app.project.name
+	}.brproject`
+
 	/**
 	 * .brproject files come in two variants:
 	 * - Complete global package including the data/ & extensions/ folder for browsers using the file system polyfill
@@ -17,14 +21,11 @@ export async function exportAsBrproject(name?: string) {
 			? app.fileSystem.baseDirectory
 			: app.project.baseDirectory
 	)
-	const savePath = `${app.project.projectPath}/builds/${
-		name ?? app.project.name
-	}.brproject`
 
 	try {
 		await saveOrDownload(
 			savePath,
-			await zipFolder.package(),
+			await zipFolder.package(new Set(['builds'])),
 			app.fileSystem
 		)
 	} catch (err) {

@@ -6,7 +6,8 @@
 		"confirm": "確認",
 		"cancel": "キャンセル",
 		"close": "閉じる",
-		"reload": "再読み込み",
+		"reload": "リロード",
+		"refresh": "再読み込み",
 		"information": "インフォメーション",
 		"continue": "続行",
 		"delete": "削除",
@@ -27,7 +28,10 @@
 		"search": "検索",
 		"confirmOverwriteFile": "このアクションは同名のファイルを上書きします。 続行しますか？",
 		"confirmOverwriteFolder": "このアクションは同名のフォルダを上書きします。 続行しますか？",
-		"fileSystemPolyfill": "お使いのブラウザは進捗状況を保存するためにプロジェクトをダウンロードする必要があります。 Chrome や Edge を使用している場合はその必要はありません。",
+		"fileSystemPolyfill": {
+			"name": "プロジェクトの保存",
+			"description": "お使いのブラウザは進捗状況を保存するためにプロジェクトをダウンロードする必要があります。 デスクトップ版 Chrome や Edge などこの必要がないブラウザを使用することをお勧めします。"
+		},
 		"successfulExport": {
 			"title": "エクスポート成功",
 			"description": "エクスポートされたパッケージはこちらでご覧いただけます。"
@@ -73,6 +77,7 @@
 		"featureRule": "フィーチャールール",
 		"functionTick": "ファンクションティック",
 		"function": "ファンクション",
+		"generatorScript": "Generator Script",
 		"item": "アイテム",
 		"lootTable": "ルートテーブル",
 		"recipe": "レシピ",
@@ -118,11 +123,27 @@
 		"worldManifest": "ワールドマニフェスト"
 	},
 	"actions": {
+		"name": "アクション",
 		"download": {
 			"name": "ダウンロード",
 			"description": "このファイルまたはフォルダーをダウンロードする"
 		},
-		"open": { "name": "開く", "description": "エディターでファイルを開く" },
+		"fullscreen": {
+			"name": "全画面表示",
+			"description": "全画面表示を切替ます"
+		},
+		"viewConnectedFiles": {
+			"name": "ファイル内のコンテンツを見る",
+			"description": "ファイル内のコンテンツをすべて見る"
+		},
+		"viewExtensionsFolder": {
+			"name": "拡張機能フォルダを表示する",
+			"description": "bridge. がグローバル拡張機能を保存しているフォルダを表示します。"
+		},
+		"open": {
+			"name": "開く",
+			"description": "エディターでファイルを開く"
+		},
 		"openWith": {
 			"name": "開く...",
 			"description": "エディターでファイルを開く"
@@ -146,9 +167,13 @@
 			"description": "ファイル名の変更",
 			"sameName": "新しいファイル名は大文字と小文字が異なるだけです。 Windowsではサポートされません。"
 		},
-		"duplicate": { "name": "複製", "description": "ファイルを複製する" },
+		"duplicate": {
+			"name": "複製",
+			"description": "ファイルを複製する"
+		},
 		"viewCompilerOutput": {
 			"name": "コンパイラの出力表示",
+			"view": "コンパイラの出力を見る",
 			"description": "このファイルのコンパイラ出力を表示する",
 			"fileMissing": "このファイルはまだコンパイルされていません"
 		},
@@ -160,6 +185,9 @@
 			"name": "新しいファイル",
 			"description": "新規ファイル作成"
 		},
+		"importFile": {
+			"name": "ファイルのインポート"
+		},
 		"createFolder": {
 			"name": "新しいフォルダー",
 			"description": "新規フォルダー作成"
@@ -168,7 +196,10 @@
 			"name": "フォルダー内検索",
 			"description": "フォルダー内を検索する"
 		},
-		"goHome": { "name": "ホームへ戻る", "description": "ホーム画面へ戻る" },
+		"goHome": {
+			"name": "ホームへ戻る",
+			"description": "ホーム画面へ戻る"
+		},
 		"newProject": {
 			"name": "新規プロジェクト",
 			"description": "新規 bridge. プロジェクトを作成します"
@@ -228,6 +259,10 @@
 		"docs": {
 			"name": "ドキュメント",
 			"description": "Minecraft アドオンのドキュメントを開く"
+		},
+		"minecraftDocs": {
+			"name": "Minecraft ドキュメント",
+			"description": "Minecraft Bedrock Add-Onのドキュメントを開く"
 		},
 		"releases": {
 			"name": "リリース",
@@ -299,8 +334,12 @@
 				"description": "追加したプロジェクトの中でのみ利用可能にします"
 			}
 		},
-		"toObject": { "name": "オブジェクトに変換" },
-		"toArray": { "name": "配列に変換" },
+		"toObject": {
+			"name": "オブジェクトに変換"
+		},
+		"toArray": {
+			"name": "配列に変換"
+		},
 		"documentationLookup": {
 			"name": "ドキュメントの表示",
 			"noDocumentation": "このドキュメントはありません: "
@@ -321,8 +360,14 @@
 			"name": "ファイルをダウンロード",
 			"description": "現在開いているファイルをダウンロードする"
 		},
-		"undo": { "name": "元に戻す", "description": "直前の操作を元に戻す" },
-		"redo": { "name": "やり直し", "description": "直前の操作をやり直す" },
+		"undo": {
+			"name": "元に戻す",
+			"description": "直前の操作を元に戻す"
+		},
+		"redo": {
+			"name": "やり直し",
+			"description": "直前の操作をやり直す"
+		},
 		"goToDefinition": {
 			"name": "定義へ移動",
 			"description": "選択したシンボルの定義に移動"
@@ -339,16 +384,27 @@
 			"name": "すべての出現個所を変更",
 			"description": "選択されたテキストのすべての出現箇所を変更する"
 		},
-		"tgaMaskToggle": { "name": "Alphaチャンネルの切替" },
+		"tgaMaskToggle": {
+			"name": "Alphaチャンネルの切替"
+		},
 		"recompileChanges": {
 			"name": "変更時にコンパイルする",
 			"description": "bridge. なしで編集されたすべてのファイルをコンパイルします ウォッチモードを無効にした後エディター自体で行われた変更はコンパイルされません"
 		}
 	},
 	"toolbar": {
-		"project": { "name": "プロジェクト" },
-		"file": { "name": "ファイル", "preferences": { "name": "設定" } },
-		"edit": { "name": "編集" },
+		"project": {
+			"name": "プロジェクト"
+		},
+		"file": {
+			"name": "ファイル",
+			"preferences": {
+				"name": "設定"
+			}
+		},
+		"edit": {
+			"name": "編集"
+		},
 		"view": {
 			"name": "表示",
 			"togglePackExplorer": {
@@ -358,15 +414,39 @@
 			"openFileSearch": {
 				"name": "検索と置換",
 				"description": "新しい検索と置換タブを開きます"
+			},
+			"cursorUndo": {
+				"name": "カーソール位置を元に戻す",
+				"description": "最後に行ったカーソル位置の変更を元に戻す"
+			},
+			"cursorRedo": {
+				"name": "カーソール位置をやり直し",
+				"description": "前回のカーソル位置変更のやり直し"
+			},
+			"nextTab": {
+				"name": "次のタブ",
+				"description": "次のタブに切り替える"
+			},
+			"previousTab": {
+				"name": "前のタブ",
+				"description": "前のタブに切り替える"
 			}
 		},
-		"tools": { "name": "ツール" },
-		"help": { "name": "ヘルプ" }
+		"tools": {
+			"name": "ツール"
+		},
+		"help": {
+			"name": "ヘルプ"
+		}
 	},
 	"packExplorer": {
 		"name": "パックエクスプローラー",
 		"searchFiles": "ファイルの検索...",
 		"categories": "カテゴリー",
+		"move": {
+			"toLocal": "ローカルフォルダーへ移動",
+			"toBridgeFolder": "bridge. フォルダへ移動"
+		},
 		"refresh": {
 			"name": "プロジェクトの再読み込み",
 			"description": "ファイル追加されました。現在のプロジェクトを再読み込みます。"
@@ -388,7 +468,9 @@
 			"name": "プロジェクト設定を開く",
 			"missing": "このプロジェクトの config.json ファイルが見つかりませんでした。 すべてのプロジェクトが正常に動作するためにはプロジェクトのコンフィグファイルが必要です。"
 		},
-		"openProjectFolder": { "name": "プロジェクトフォルダを開く" },
+		"openProjectFolder": {
+			"name": "プロジェクトフォルダを開く"
+		},
 		"exportAs": {
 			"name": "エクスポート",
 			"mcaddon": ".mcaddon",
@@ -401,6 +483,9 @@
 		}
 	},
 	"sidebar": {
+		"quickExport": {
+			"name": "クイックエクスポート"
+		},
 		"openedFolders": {
 			"name": "プロジェクトフォルダー",
 			"removeFolder": "ビューから削除する"
@@ -423,20 +508,35 @@
 				},
 				"profiles": "ビルドプロファイル",
 				"outputFolders": "出力先フォルダー",
-				"logs": { "name": "ログ", "noLogs": "ログはまだありません" }
+				"logs": {
+					"name": "ログ",
+					"noLogs": "ログはまだありません"
+				}
 			},
 			"default": {
 				"name": "デフォルト設定",
 				"description": "プロジェクト設定(config.json)内にあるデフォルトのコンパイラ設定でコンパイルします"
 			},
-			"actions": { "runLastProfile": "最新のプロファイルを実行する" }
+			"actions": {
+				"runLastProfile": "最新のプロファイルを実行する"
+			}
 		},
-		"extensions": { "name": "拡張機能" },
+		"extensions": {
+			"name": "拡張機能"
+		},
 		"notifications": {
-			"socials": { "message": "ソーシャル" },
-			"gettingStarted": { "message": "はじめに" },
-			"installApp": { "message": "アプリのインストール" },
-			"updateAvailable": { "message": "アップデート可能" },
+			"socials": {
+				"message": "ソーシャル"
+			},
+			"gettingStarted": {
+				"message": "はじめに"
+			},
+			"installApp": {
+				"message": "アプリのインストール"
+			},
+			"updateAvailable": {
+				"message": "アップデート可能"
+			},
 			"updateExtensions": "すべての拡張機能をアップデート"
 		}
 	},
@@ -479,8 +579,12 @@
 		}
 	},
 	"windows": {
-		"sidebar": { "disabledItem": "このアイテムは無効です" },
-		"changelogWindow": { "title": "What's new?" },
+		"sidebar": {
+			"disabledItem": "このアイテムは無効です"
+		},
+		"changelogWindow": {
+			"title": "What's new?"
+		},
 		"openFile": {
 			"title": "開く",
 			"search": "ファイルの検索...",
@@ -626,7 +730,9 @@
 			"wrongFileType": "プロジェクトは .brproject または .mcaddon ファイルでなければなりません。",
 			"addPack": "パックの追加"
 		},
-		"filePath": { "title": "ファイルパスの選択" },
+		"filePath": {
+			"title": "ファイルパスの選択"
+		},
 		"lootSimulatorSettings": {
 			"title": "シミュレーター設定",
 			"repeat": {
@@ -654,6 +760,7 @@
 		"settings": {
 			"title": "設定",
 			"searchSettings": "設定の検索...",
+			"reloadRequired": "設定した変更を適用するには、 bridge. を再読み込みする必要があります。",
 			"sidebar": {
 				"name": "サイドバー",
 				"sidebarRight": {
@@ -758,12 +865,18 @@
 					"description": "キャッシュされたアプリデータを無視し、代わりに最新のデータをダウンロードします"
 				}
 			},
-			"actions": { "name": "アクション" },
+			"actions": {
+				"name": "アクション"
+			},
 			"projects": {
 				"name": "プロジェクト",
 				"defaultAuthor": {
 					"name": "デフォルトの著者",
 					"description": "新しいプロジェクトのデフォルトの著者を設定します"
+				},
+				"loadComMojangProjects": {
+					"name": "com.mojang プロジェクトの読み込み",
+					"description": "com.mojang フォルダからプロジェクトを自動で読み込む"
 				},
 				"incrementVersionOnExport": {
 					"name": "バージョンのインクリメント",
@@ -780,10 +893,7 @@
 					"name": "JSON エディタ",
 					"description": "JSONファイルの編集方法を選択します"
 				},
-				"bridgePredictions": {
-					"name": "bridge. 予測機能",
-					"description": "bridge. のツリーエディタ内で値やオブジェクトを追加するかどうかをアプリがインテリジェントに判断できるようにします。 これによりJSONの編集が大幅に簡素化されます。"
-				},
+
 				"bracketPairColorization": {
 					"name": "ブラケットペアのカラーリング",
 					"description": "対になっているブラケットに色をつけます"
@@ -800,13 +910,33 @@
 					"name": "コンパクトなタブ",
 					"description": "タブをよりコンパクトに表示します"
 				},
+				"keepTabsOpen": {
+					"name": "タブを開いたままにする",
+					"description": "デフォルトでは新しいタブを開くと、それまで開いていたタブが操作されていない場合閉じられます"
+				},
+				"autoSaveChanges": {
+					"name": "変更を自動保存",
+					"description": "ファイルへの変更した場合、しばらくすると自動的に保存します"
+				},
+				"bridgePredictions": {
+					"name": "bridge. 予測機能",
+					"description": "ツリーエディタ内で値やオブジェクトを追加するかどうかをアプリがインテリジェントに判断できるようにします。 これによりJSONの編集が大幅に簡素化されます。"
+				},
 				"automaticallyOpenTreeNodes": {
 					"name": "ツリーのノードを自動的に開く",
-					"description": "bridge. のツリーエディタでノードを選択すると自動的にノードを開きます"
+					"description": "ツリーエディタでノードを選択すると自動的にノードを開きます"
 				},
 				"dragAndDropTreeNodes": {
 					"name": "ツリーノードのドラッグ＆ドロップ",
-					"description": "bridge. のツリーエディタ内でのツリーノードのドラッグ＆ドロップを有効または無効にします"
+					"description": "ツリーエディタ内でのツリーノードのドラッグ＆ドロップを有効または無効にします"
+				},
+				"showArrayIndices": {
+					"name": "配列のインデックスを表示する",
+					"description": "ツリーエディターで配列要素のインデックスを表示する"
+				},
+				"hideBracketsWithinTreeEditor": {
+					"name": "ブラケットを隠す",
+					"description": "ツリーエディターでブラケットを非表示にする"
 				}
 			}
 		},
@@ -820,6 +950,8 @@
 			"deleteExtension": "拡張機能を削除",
 			"activateExtension": "拡張機能の有効化",
 			"deactivateExtension": "拡張機能の無効化",
+			"installLocal": "ローカルにインストール",
+			"installGlobal": "グローバルにインストール",
 			"offlineError": "拡張機能の読み込みに失敗しました。 お使いの機器がネットワークに接続されていることを確認してください。",
 			"incompatibleVersion": "現在のバージョンと互換性がありません",
 			"compilerPluginDownload": {
@@ -829,7 +961,9 @@
 				"openConfig": "コンフィグを開く"
 			}
 		},
-		"pluginInstallLocation": { "title": "インストール先の選択" },
+		"pluginInstallLocation": {
+			"title": "インストール先の選択"
+		},
 		"unsavedFile": {
 			"description": "このファイルを閉じる前に変更内容を保存しますか？",
 			"save": "保存して閉じる"
@@ -843,7 +977,11 @@
 			"title": "無効な JSON",
 			"description": "bridge. のツリーエディタで無効な JSON ファイルを開くことはできません。 この問題を解決するには設定で JSON エディタタイプを「Raw Text」に切り替えて手動で修正してください。"
 		},
-		"loadingWindow": { "titles": { "loading": "読み込み中..." } },
+		"loadingWindow": {
+			"titles": {
+				"loading": "読み込み中..."
+			}
+		},
 		"upgradeFs": {
 			"title": "ファイルシステムのアップグレード",
 			"description": "お使いのブラウザがファイルを直接コンピュータに保存する機能に対応しました。今すぐアップグレードしますか？"
@@ -912,6 +1050,7 @@
 	},
 	"findAndReplace": {
 		"name": "検索と置換",
+		"findOnly": "見つける",
 		"search": "検索",
 		"replace": "置換",
 		"replaceAll": "すべて置換",
@@ -931,6 +1070,7 @@
 		"failedClientEntityLoad": "接続されているクライアントエンティティの読み込みに失敗しました",
 		"invalidEntity": "無効な JSON を持つエンティティのプレビューを開くことができません。 ファイル内の JSON エラーを修正してから再度お試しください。",
 		"chooseGeometry": "ジオメトリの選択",
+		"chooseTexture": "テクスチャの選択",
 		"noGeometry": "このファイル内に有効なジオメトリが見つかりません。 JSON が有効であること、ファイル構造が正しいこと、および指定された識別子を持つジオメトリが存在することを確認してください。",
 		"lootTableSimulator": {
 			"emptyLootOutput": "出力が空です。実行して結果を出力してください。",
@@ -1004,6 +1144,54 @@
 			"addValue": "値の追加",
 			"forceValue": "必須",
 			"edit": "編集"
+		},
+		"langValidation": {
+			"noValue": {
+				"errorMessage": "Language keys must be assigned a value",
+				"quickFix": "Add a value to this key"
+			}
+		}
+	},
+	"validation": {
+		"mcfunction": {
+			"invalidArgument": {
+				"name": "引数 {{$1}} は無効な値です"
+			},
+			"unknownCommand": {
+				"name": "コマンド {{$1}} は存在しません"
+			},
+			"missingArguments": {
+				"name": "コマンド {{$1}} の引数が足りません"
+			},
+			"unknownSchema": {
+				"name": "不明なスキーマ値 {{$1}}"
+			},
+			"unknownSchemaInArgument": {
+				"name": "引数 {{$2}} のスキーマ値 {{$1}} が不明です"
+			},
+			"invalidSelectorBase": {
+				"name": "{{$1}} は無効なターゲットセレクタです"
+			},
+			"unexpectedSymbol": {
+				"name": "予期しない記号 {{$1}} があります 予測: {{$2}}"
+			},
+			"invalidSelectorArgument": {
+				"name": "{{$1}} は無効なセレクター引数です"
+			},
+			"argumentNoSupport": {
+				"name": "引数 {{$1}} は {{$2}}をサポートしていません",
+				"bothConditions": "引数 {{$1}} はすべてが否定されない場合、複数のインスタンスをサポートしません"
+			},
+			"invalidSelectorArgumentValue": {
+				"name": "引数 {{$2}} の無効なセレクタ引数値 {{$1}}"
+			},
+			"conditions": {
+				"negation": "否定",
+				"multipleInstances": "複数のインスタンス"
+			},
+			"tokens": {
+				"selectorArgument": "セレクター引数"
+			}
 		}
 	}
 }

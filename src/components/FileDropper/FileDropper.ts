@@ -23,8 +23,6 @@ export class FileDropper {
 		window.addEventListener('drop', (event) => {
 			event.preventDefault()
 
-			if (App.windowState.isAnyWindowVisible.value) return
-
 			this.onDrop([...(event.dataTransfer?.items ?? [])])
 		})
 	}

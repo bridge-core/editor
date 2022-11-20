@@ -6,8 +6,8 @@ export interface IDropdownWindowOpts {
 	name: string
 	isClosable?: boolean
 	placeholder?: string
-	options: Array<string>
-	default: string
+	options: string[] | { text: string; value: string }[]
+	default?: string
 	onConfirm?: (selection: string) => Promise<void> | void
 }
 
@@ -19,7 +19,7 @@ export class DropdownWindow extends NewBaseWindow<string> {
 
 	constructor(protected opts: IDropdownWindowOpts) {
 		super(DropdownWindowComponent, true, false)
-		this.state.currentSelection = opts.default ?? undefined
+		this.state.currentSelection = opts.default ?? opts.options[0]
 		this.defineWindow()
 		this.open()
 	}
@@ -38,8 +38,13 @@ export class DropdownWindow extends NewBaseWindow<string> {
 	}
 
 	async confirm() {
+		const selection =
+			typeof this.state.currentSelection === 'object'
+				? this.state.currentSelection.value
+				: this.state.currentSelection
+
 		if (typeof this.opts.onConfirm === 'function')
-			await this.opts.onConfirm(this.state.currentSelection)
-		super.close(this.state.currentSelection ?? null)
+			await this.opts.onConfirm(selection)
+		super.close(selection ?? null)
 	}
 }

@@ -11,6 +11,7 @@ import { MonacoHolder } from './MonacoHolder'
 import { FileTab, TReadOnlyMode } from './FileTab'
 import { TabProvider } from './TabProvider'
 import { AnyFileHandle } from '../FileSystem/Types'
+import { IframeTab } from '../Editors/IframeTab/IframeTab'
 
 export interface IOpenTabOptions {
 	selectTab?: boolean
@@ -126,6 +127,16 @@ export class TabSystem extends MonacoHolder {
 		if (!noTabExistanceCheck) {
 			for (const currentTab of this.tabs.value) {
 				if (await currentTab.is(tab)) {
+					// Trigger openWith event again for iframe tabs
+					if (
+						tab instanceof IframeTab &&
+						currentTab instanceof IframeTab
+					) {
+						currentTab.setOpenWithPayload(
+							tab.getOptions().openWithPayload
+						)
+					}
+
 					tab.onDeactivate()
 					return selectTab ? currentTab.select() : currentTab
 				}

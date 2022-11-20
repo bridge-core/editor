@@ -2,15 +2,20 @@ import UnsavedFileComponent from './UnsavedFile.vue'
 import { App } from '/@/App'
 import { Tab } from '/@/components/TabSystem/CommonTab'
 import { NewBaseWindow } from '../NewBaseWindow'
+import { FileTab } from '../../TabSystem/FileTab'
 
 const tabs = new WeakMap<UnsavedFileWindow, Tab>()
 
 export class UnsavedFileWindow extends NewBaseWindow<
 	'cancel' | 'close' | 'save'
 > {
+	protected canSaveTab = false
+
 	constructor(tab: Tab) {
 		super(UnsavedFileComponent, true, false)
 		tabs.set(this, tab)
+		this.canSaveTab = tab instanceof FileTab
+
 		this.defineWindow()
 		this.open()
 	}

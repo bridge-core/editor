@@ -4,6 +4,7 @@ import { Tab } from '../../TabSystem/CommonTab'
 import { IframeApi } from './API/IframeApi'
 import { markRaw } from 'vue'
 import { AnyFileHandle } from '../../FileSystem/Types'
+import { getFullScreenElement } from '../../TabSystem/TabContextMenu/Fullscreen'
 
 interface IIframeTabOptions {
 	icon?: string
@@ -11,11 +12,13 @@ interface IIframeTabOptions {
 	url?: string
 	html?: string
 	iconColor?: string
-	openWithPayload?: {
-		filePath?: string
-		fileHandle?: AnyFileHandle
-		isReadOnly?: boolean
-	}
+	openWithPayload?: IOpenWithPayload
+}
+
+export interface IOpenWithPayload {
+	filePath?: string
+	fileHandle?: AnyFileHandle
+	isReadOnly?: boolean
 }
 
 export class IframeTab extends Tab {
@@ -46,11 +49,15 @@ export class IframeTab extends Tab {
 		this.iframe.classList.add('outlined')
 		this.iframe.style.borderRadius = '12px'
 		this.iframe.style.margin = '8px'
-		document.body.appendChild(this.iframe)
+		getFullScreenElement()?.appendChild(this.iframe)
 	}
 
 	getOptions() {
 		return this.options
+	}
+	setOpenWithPayload(payload?: IOpenWithPayload) {
+		this.options.openWithPayload = payload
+		if (payload) this.api.triggerOpenWith()
 	}
 
 	async setup() {
@@ -71,7 +78,7 @@ export class IframeTab extends Tab {
 		this.iframe.style.display = 'none'
 	}
 	onDestroy() {
-		document.body.removeChild(this.iframe)
+		getFullScreenElement()?.removeChild(this.iframe)
 		this.api.dispose()
 	}
 

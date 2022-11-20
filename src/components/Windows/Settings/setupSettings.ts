@@ -210,6 +210,17 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
+		new ButtonToggle({
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.packExplorerFolderIndentation.name',
+			description:
+				'windows.settings.sidebar.packExplorerFolderIndentation.description',
+			key: 'packExplorerFolderIndentation',
+			options: ['small', 'normal', 'large', 'x-large'],
+			default: 'normal',
+		})
+	)
+	settings.addControl(
 		new Sidebar({
 			category: 'sidebar',
 			name: 'windows.settings.sidebar.shrinkSidebarElements.name',
@@ -388,6 +399,16 @@ export async function setupSettings(settings: SettingsWindow) {
 	)
 
 	// Tree Editor specific settings
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.showTreeEditorLocationBar.name',
+			description:
+				'windows.settings.editor.showTreeEditorLocationBar.description',
+			key: 'showTreeEditorLocationBar',
+			default: true,
+		})
+	)
 	settings.addControl(
 		new Toggle({
 			category: 'editor',

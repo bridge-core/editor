@@ -128,6 +128,10 @@
 			"name": "Download",
 			"description": "Download this file or folder"
 		},
+		"fullscreen": {
+			"name": "Fullscreen",
+			"description": "Toggle fullscreen mode"
+		},
 		"viewConnectedFiles": {
 			"name": "View Connected Files",
 			"description": "View all files connected to this file"
@@ -411,6 +415,14 @@
 				"name": "Open Find & Replace",
 				"description": "Opens a new Find & Replace tab"
 			},
+			"cursorUndo": {
+				"name": "Cursor Undo",
+				"description": "Undo the last cursor position change"
+			},
+			"cursorRedo": {
+				"name": "Cursor Redo",
+				"description": "Redo the last cursor position change"
+			},
 			"nextTab": {
 				"name": "Next Tab",
 				"description": "Switch to the next tab"
@@ -471,6 +483,9 @@
 		}
 	},
 	"sidebar": {
+		"quickExport": {
+			"name": "Quick Export"
+		},
 		"openedFolders": {
 			"name": "Opened Folders",
 			"removeFolder": "Remove From View"
@@ -756,6 +771,10 @@
 					"name": "Sidebar Size",
 					"description": "Changes the width of the expanded sidebar area."
 				},
+				"packExplorerFolderIndentation": {
+					"name": "Folder Indentation",
+					"description": "Changes the indentation of folders in the pack explorer."
+				},
 				"shrinkSidebarElements": {
 					"name": "Shrink Sidebar Elements",
 					"description": "Shrink the size of bridge.'s sidebar elements"
@@ -901,6 +920,10 @@
 				"autoSaveChanges": {
 					"name": "Auto Save Changes",
 					"description": "Automatically save changes to files after a short delay"
+				},
+				"showTreeEditorLocationBar": {
+					"name": "Show Tree Editor Location Bar",
+					"description": "Allows you to quickly navigate your JSON file within the tree editor by displaying your current location above the editor."
 				},
 				"bridgePredictions": {
 					"name": "bridge. Predictions",
@@ -1054,6 +1077,7 @@
 		"failedClientEntityLoad": "Failed to load connected client entity",
 		"invalidEntity": "Cannot open preview for an entity with invalid JSON. Please fix JSON errors inside of the file and try again.",
 		"chooseGeometry": "Choose Geometry",
+		"chooseTexture": "Choose Texture",
 		"noGeometry": "No valid geometry found inside of this file. Make sure that your JSON is valid, that the file structure is correct and that a geometry with the provided identifier exists.",
 		"lootTableSimulator": {
 			"emptyLootOutput": "Output is empty, try running the loot table to collect results.",

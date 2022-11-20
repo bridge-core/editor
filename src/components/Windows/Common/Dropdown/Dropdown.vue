@@ -12,7 +12,7 @@
 		@closeWindow="onClose"
 	>
 		<template #default>
-			<v-select
+			<v-autocomplete
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
 				dense

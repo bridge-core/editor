@@ -5,6 +5,7 @@ import { TreeEditorAction } from './OpenWith/TreeEditor'
 import { TextEditorAction } from './OpenWith/TextEditor'
 import { SnowstormAction } from './OpenWith/Snowstorm'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
+import { BlockbenchAction } from './OpenWith/Blockbench'
 
 export const pluginActionStore = new Set<IPluginOpenWithAction>()
 
@@ -31,11 +32,7 @@ export const OpenWithAction = async (fileWrapper: FileWrapper) => {
 	// Actions which open an external tool
 	const externalActions = [
 		SnowstormAction(fileWrapper),
-		// {
-		// 	icon: 'mdi-cube-outline',
-		// 	name: 'openWith.blockbench',
-		// 	onTrigger: async () => {},
-		// },
+		BlockbenchAction(fileWrapper),
 	].filter((action) => action !== null)
 
 	// Load actions provided by plugins
