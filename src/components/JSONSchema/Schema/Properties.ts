@@ -1,4 +1,5 @@
 import { RootSchema } from './Root'
+import { InterfaceType } from '../ToTypes/Interface'
 import { ICompletionItem, IDiagnostic, Schema } from './Schema'
 
 export class PropertiesSchema extends Schema {
@@ -99,5 +100,20 @@ export class PropertiesSchema extends Schema {
 		}
 
 		return diagnostics
+	}
+
+	override toTypeDefinition(hoisted: Set<Schema>) {
+		const interfaceType = new InterfaceType()
+
+		for (const [propertyName, child] of Object.entries(this.children)) {
+			if (child.hasDoNotSuggest) continue
+
+			const type = child.toTypeDefinition(hoisted)
+			if (type === null) continue
+
+			interfaceType.addProperty(propertyName, type)
+		}
+
+		return interfaceType
 	}
 }

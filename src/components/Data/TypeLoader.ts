@@ -3,6 +3,7 @@ import { IDisposable } from '/@/types/disposable'
 import { DataLoader } from './DataLoader'
 import { Tab } from '../TabSystem/CommonTab'
 import { FileTab } from '../TabSystem/FileTab'
+import { toTypeDefinition } from '../JSONSchema/ToTypes/main'
 import {
 	IRequirements,
 	RequiresMatcher,
@@ -70,6 +71,13 @@ export class TypeLoader {
 		await App.fileType.ready.fired
 		const { types = [] } = App.fileType.get(filePath) ?? {}
 
+		// console.log(
+		// 	...toTypeDefinition(
+		// 		App.fileType.all.filter(
+		// 			(fileType) => fileType.id === 'lootTable'
+		// 		)[0]?.schema
+		// 	)
+		// )
 		const matcher = new RequiresMatcher()
 		await matcher.setup()
 

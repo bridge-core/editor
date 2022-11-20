@@ -1,3 +1,4 @@
+import { LiteralType } from '../ToTypes/Literal'
 import { Schema } from './Schema'
 
 export class ConstSchema extends Schema {
@@ -20,5 +21,9 @@ export class ConstSchema extends Schema {
 				},
 			]
 		return []
+	}
+
+	override toTypeDefinition() {
+		return new LiteralType(<string | number | boolean>this.value)
 	}
 }
