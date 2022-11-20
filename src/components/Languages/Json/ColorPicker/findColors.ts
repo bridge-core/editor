@@ -46,7 +46,7 @@ export async function findColors(model: editor.ITextModel) {
 				if (!locationPatterns[format]) continue
 				const isValidColor = isMatch(path, locationPatterns[format])
 
-				// If this is a valid color, create a promise that will reolve when the color has been parsed and the range has been determined
+				// If this is a valid color, create a promise that will resolve when the color has been parsed and the range has been determined
 				if (isValidColor) {
 					colorInfo.push(
 						new Promise<any>(async (resolve) => {
@@ -94,7 +94,7 @@ export async function findColors(model: editor.ITextModel) {
 				if (!locationPatterns[format]) continue
 				const isValidColor = isMatch(path, locationPatterns[format])
 
-				// If this is a valid color, create a promise that will reolve when the color has been parsed and the range has been determined
+				// If this is a valid color, create a promise that will resolve when the color has been parsed and the range has been determined
 				if (isValidColor) {
 					colorInfo.push(
 						new Promise<any>(async (resolve) => {
