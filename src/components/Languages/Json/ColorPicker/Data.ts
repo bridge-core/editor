@@ -26,9 +26,7 @@ export class ColorData extends Signal<void> {
 		if (!currentTab) return {}
 
 		// Get the file definition id of the currently opened tab
-		const { id } = App.fileType.get(currentTab.getPath()) ?? {
-			id: 'unknown',
-		}
+		const id = App.fileType.getId(currentTab.getPath())
 
 		// Get the color locations for this file type
 		return this._data[id]
