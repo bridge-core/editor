@@ -59,17 +59,17 @@ export async function findColors(model: editor.ITextModel) {
 								model,
 								position
 							)
-							if (color) {
-								resolve({
-									color: color.colorInfo,
-									range: new Range(
-										range.startLineNumber,
-										range.startColumn,
-										range.endLineNumber,
-										range.endColumn + 2
-									),
-								})
-							} else resolve({})
+							if (!color) return resolve({})
+
+							resolve({
+								color: color.colorInfo,
+								range: new Range(
+									range.startLineNumber,
+									range.startColumn,
+									range.endLineNumber,
+									range.endColumn + 2
+								),
+							})
 						})
 					)
 					break
@@ -106,17 +106,17 @@ export async function findColors(model: editor.ITextModel) {
 								model,
 								position: model.getPositionAt(offset),
 							})
-							if (color) {
-								resolve({
-									color: color.colorInfo,
-									range: new Range(
-										range.startLineNumber,
-										range.startColumn,
-										range.endLineNumber,
-										range.endColumn
-									),
-								})
-							} else resolve({})
+							if (!color) return resolve({})
+
+							resolve({
+								color: color.colorInfo,
+								range: new Range(
+									range.startLineNumber,
+									range.startColumn,
+									range.endLineNumber,
+									range.endColumn
+								),
+							})
 						})
 					)
 					break
