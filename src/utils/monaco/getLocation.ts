@@ -3,7 +3,8 @@ import { useJsoncParser } from '../libs/useJsoncParser'
 
 export async function getLocation(
 	model: editor.ITextModel,
-	position: Position
+	position: Position,
+	removeFinalIndex = true
 ): Promise<string> {
 	const { getLocation: jsoncGetLocation } = await useJsoncParser()
 	const locationArr = jsoncGetLocation(
@@ -12,7 +13,10 @@ export async function getLocation(
 	).path
 
 	// Lightning cache definition implicitly indexes arrays so we need to remove indexes if they are at the last path position
-	if (!isNaN(Number(locationArr[locationArr.length - 1]))) {
+	if (
+		removeFinalIndex &&
+		!isNaN(Number(locationArr[locationArr.length - 1]))
+	) {
 		locationArr.pop()
 	}
 
