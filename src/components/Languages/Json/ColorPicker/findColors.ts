@@ -25,7 +25,7 @@ export async function findColors(model: editor.ITextModel) {
 	const locationPatterns = await project.colorData.getDataForCurrentTab()
 
 	// Walk through the json file
-	const colorInfo: Promise<languages.IColorInformation>[] = []
+	const colorInfo: Promise<languages.IColorInformation | null>[] = []
 	visit(content, {
 		// When we reach any literal value, e.g. a string, ...
 		onLiteralValue: async (
@@ -59,7 +59,7 @@ export async function findColors(model: editor.ITextModel) {
 								model,
 								position
 							)
-							if (!color) return resolve({})
+							if (!color) return resolve(null)
 
 							resolve({
 								color: color.colorInfo,
@@ -106,7 +106,7 @@ export async function findColors(model: editor.ITextModel) {
 								model,
 								position: model.getPositionAt(offset),
 							})
-							if (!color) return resolve({})
+							if (!color) return resolve(null)
 
 							resolve({
 								color: color.colorInfo,
@@ -126,7 +126,7 @@ export async function findColors(model: editor.ITextModel) {
 	})
 
 	// Await all promises for the color info and filter to ensure each color info contains the correct data
-	return (await Promise.all(colorInfo)).filter(
-		(info) => info.color && info.range
+	return <languages.IColorInformation[]>(
+		(await Promise.all(colorInfo)).filter((info) => info !== null)
 	)
 }
