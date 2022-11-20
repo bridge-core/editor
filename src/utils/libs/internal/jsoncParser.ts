@@ -1,1 +1,1 @@
-export { getLocation } from 'jsonc-parser'
+export { getLocation, visit } from 'jsonc-parser'
