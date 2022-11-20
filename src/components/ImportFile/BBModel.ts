@@ -4,7 +4,6 @@ import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { extname, join } from '/@/utils/path'
-import json5 from 'json5'
 import { DropdownWindow } from '../Windows/Common/Dropdown/DropdownWindow'
 import { clamp } from '/@/utils/math/clamp'
 
@@ -74,13 +73,24 @@ export class BBModelImporter extends FileImporter {
 		const app = await App.getApp()
 
 		const file = await fileHandle.getFile()
-		const data = json5.parse(await file.text())
+		const data = JSON.parse(await file.text())
 
 		app.windows.loadingWindow.open()
 
-		if (data.textures) await this.exportImages(app, data.textures)
-		if (data.elements && data.outliner) await this.exportModel(app, data)
-		if (data.animations) await this.exportAnimations(app, data.animations, data.name)
+		const promises = []
+
+		if (data.textures) promises.push(this.exportImages(app, data.textures))
+		if (data.elements && data.outliner)
+			promises.push(this.exportModel(app, data))
+		if (data.animations)
+			promises.push(
+				this.exportAnimations(app, data.animations, data.name)
+			)
+
+		if (promises.length > 0) {
+			await Promise.allSettled(promises)
+			App.eventSystem.dispatch('fileAdded', undefined)
+		}
 
 		app.windows.loadingWindow.close()
 	}
@@ -143,9 +153,8 @@ export class BBModelImporter extends FileImporter {
 				filePath,
 				imageData
 			)
-			App.eventSystem.dispatch('fileAdded', undefined)
 
-			await app.project.updateFile(app.project.absolutePath(filePath))
+			app.project.updateFile(app.project.absolutePath(filePath))
 			await app.project.openFile(destHandle, { isTemporary: false })
 		}
 	}
@@ -153,7 +162,7 @@ export class BBModelImporter extends FileImporter {
 	async exportModel(app: App, data: any) {
 		const entityModel = <any>{
 			description: {
-				identifier: 'geometry.' + (data.geometry_name || 'unknown'),
+				identifier: 'geometry.' + (data.model_identifier || 'unknown'),
 				texture_width: data.resolution.width || 16,
 				texture_height: data.resolution.height || 16,
 				visible_bounds_width: data.visible_box?.[0] ?? 0,
@@ -191,9 +200,8 @@ export class BBModelImporter extends FileImporter {
 		)
 
 		await app.project.fileSystem.writeJSON(filePath, entityFile, true)
-		App.eventSystem.dispatch('fileAdded', undefined)
 
-		await app.project.updateFile(app.project.absolutePath(filePath))
+		app.project.updateFile(app.project.absolutePath(filePath))
 		await app.project.openFile(destHandle, { isTemporary: false })
 	}
 
@@ -486,7 +494,10 @@ export class BBModelImporter extends FileImporter {
 							anim.timeline![this.getTimecodeString(kf.time)] =
 								this.compileBedrockKeyframe(kf, animator)
 						})
-				} else if (animator.type === 'bone') {
+				} else if (
+					animator.type === 'bone' ||
+					animator.type === undefined // No defined type: Default is type "bone"
+				) {
 					let bone_tag: any = (anim.bones![animator.name] = {})
 					let channels: any = {}
 
@@ -588,9 +599,8 @@ export class BBModelImporter extends FileImporter {
 		)
 
 		await app.project.fileSystem.writeJSON(filePath, animationFile, true)
-		App.eventSystem.dispatch('fileAdded', undefined)
 
-		await app.project.updateFile(app.project.absolutePath(filePath))
+		app.project.updateFile(app.project.absolutePath(filePath))
 		await app.project.openFile(destHandle, { isTemporary: false })
 	}
 

@@ -7,6 +7,7 @@
 		"cancel": "Cancel",
 		"close": "Close",
 		"reload": "Reload",
+		"refresh": "Refresh",
 		"information": "Information",
 		"continue": "Continue",
 		"delete": "Delete",
@@ -127,6 +128,10 @@
 			"name": "Download",
 			"description": "Download this file or folder"
 		},
+		"fullscreen": {
+			"name": "Fullscreen",
+			"description": "Toggle fullscreen mode"
+		},
 		"viewConnectedFiles": {
 			"name": "View Connected Files",
 			"description": "View all files connected to this file"
@@ -179,6 +184,9 @@
 		"createFile": {
 			"name": "Create File",
 			"description": "Create a new file"
+		},
+		"importFile": {
+			"name": "Import File"
 		},
 		"createFolder": {
 			"name": "Create Folder",
@@ -406,6 +414,22 @@
 			"openFileSearch": {
 				"name": "Open Find & Replace",
 				"description": "Opens a new Find & Replace tab"
+			},
+			"cursorUndo": {
+				"name": "Cursor Undo",
+				"description": "Undo the last cursor position change"
+			},
+			"cursorRedo": {
+				"name": "Cursor Redo",
+				"description": "Redo the last cursor position change"
+			},
+			"nextTab": {
+				"name": "Next Tab",
+				"description": "Switch to the next tab"
+			},
+			"previousTab": {
+				"name": "Previous Tab",
+				"description": "Switch to the previous tab"
 			}
 		},
 		"tools": {
@@ -459,6 +483,9 @@
 		}
 	},
 	"sidebar": {
+		"quickExport": {
+			"name": "Quick Export"
+		},
 		"openedFolders": {
 			"name": "Opened Folders",
 			"removeFolder": "Remove From View"
@@ -535,8 +562,8 @@
 			"description": "Enables the creation of fog volume files and provides auto-completions for entity properties."
 		},
 		"enableGameTestFramework": {
-			"name": "Enable GameTest Framework",
-			"description": "Enables the GameTest related modules in the manifest and allows you to create GameTest scripts with auto-completions."
+			"name": "Beta APIs",
+			"description": "Enables the beta level script API related modules in the manifest and allows you to create scripts with auto-completions."
 		},
 		"experimentalMolangFeatures": {
 			"name": "Experimental Molang Features",
@@ -744,6 +771,10 @@
 					"name": "Sidebar Size",
 					"description": "Changes the width of the expanded sidebar area."
 				},
+				"packExplorerFolderIndentation": {
+					"name": "Folder Indentation",
+					"description": "Changes the indentation of folders in the pack explorer."
+				},
 				"shrinkSidebarElements": {
 					"name": "Shrink Sidebar Elements",
 					"description": "Shrink the size of bridge.'s sidebar elements"
@@ -847,6 +878,10 @@
 					"name": "Default Author",
 					"description": "The default author for new projects"
 				},
+				"loadComMojangProjects": {
+					"name": "Load com.mojang Projects",
+					"description": "Automatically load projects from the com.mojang folder"
+				},
 				"incrementVersionOnExport": {
 					"name": "Increment Version",
 					"description": "Automatically increment the version number inside of your pack manifests when exporting a project"
@@ -861,10 +896,7 @@
 					"name": "JSON Editor",
 					"description": "Choose how you want to edit JSON files"
 				},
-				"bridgePredictions": {
-					"name": "bridge. Predictions",
-					"description": "Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly"
-				},
+
 				"bracketPairColorization": {
 					"name": "Bracket Pair Colorization",
 					"description": "Give matching brackets an unique color"
@@ -884,6 +916,18 @@
 				"keepTabsOpen": {
 					"name": "Keep Tabs Open",
 					"description": "By default, opening a new tab closes the previously opened tab if it was not interacted with"
+				},
+				"autoSaveChanges": {
+					"name": "Auto Save Changes",
+					"description": "Automatically save changes to files after a short delay"
+				},
+				"showTreeEditorLocationBar": {
+					"name": "Show Tree Editor Location Bar",
+					"description": "Allows you to quickly navigate your JSON file within the tree editor by displaying your current location above the editor."
+				},
+				"bridgePredictions": {
+					"name": "bridge. Predictions",
+					"description": "Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly"
 				},
 				"automaticallyOpenTreeNodes": {
 					"name": "Automatically Open Tree Nodes",
@@ -1002,7 +1046,6 @@
 		}
 	},
 	"comMojang": {
-		"folderDropped": "Do you want to set this folder as your default com.mojang folder?",
 		"title": "Access to folder \"com.mojang\"",
 		"permissionRequest": "bridge. needs access to your \"com.mojang\" folder in order to compile projects to it.",
 		"status": {
@@ -1034,6 +1077,7 @@
 		"failedClientEntityLoad": "Failed to load connected client entity",
 		"invalidEntity": "Cannot open preview for an entity with invalid JSON. Please fix JSON errors inside of the file and try again.",
 		"chooseGeometry": "Choose Geometry",
+		"chooseTexture": "Choose Texture",
 		"noGeometry": "No valid geometry found inside of this file. Make sure that your JSON is valid, that the file structure is correct and that a geometry with the provided identifier exists.",
 		"lootTableSimulator": {
 			"emptyLootOutput": "Output is empty, try running the loot table to collect results.",
@@ -1142,7 +1186,7 @@
 				"name": "Invalid selector argument {{$1}}"
 			},
 			"argumentNoSupport": {
-				"name": "Argument {{$1}} doesn not support {{$2}}",
+				"name": "Argument {{$1}} does not support {{$2}}",
 				"bothConditions": "Argument {{$1}} does not support multiple instances when not all negated"
 			},
 			"invalidSelectorArgumentValue": {

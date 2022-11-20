@@ -5,6 +5,7 @@ import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
 import { createCompilerSidebar } from '../Compiler/Sidebar/create'
+import { exportAsMcaddon } from '../Projects/Export/AsMcaddon'
 
 export async function setupSidebar() {
 	createSidebar({
@@ -27,7 +28,7 @@ export async function setupSidebar() {
 			if (isUsingFileSystemPolyfill.value) {
 				createVirtualProjectWindow()
 			} else {
-				App.instance.windows.projectChooser.open()
+				await App.instance.windows.projectChooser.open()
 			}
 		},
 	})
@@ -64,6 +65,23 @@ export async function setupSidebar() {
 
 	createCompilerSidebar()
 
+	/**
+	 * Enable one click exports of projects on mobile
+	 * This should help users export projects faster
+	 */
+	createSidebar({
+		id: 'quickExport',
+		displayName: 'sidebar.quickExport.name',
+		icon: 'mdi-export',
+		// Only show quick export option for devices on which com.mojang syncing is not available
+		defaultVisibility: isUsingFileSystemPolyfill.value,
+		disabled: () => App.instance.isNoProjectSelected,
+
+		onClick: () => {
+			exportAsMcaddon()
+		},
+	})
+
 	createSidebar({
 		id: 'extensions',
 		displayName: 'sidebar.extensions.name',
@@ -77,7 +95,8 @@ export async function setupSidebar() {
 	SettingsWindow.loadedSettings.once((settingsState) => {
 		for (const sidebar of Object.values(App.sidebar.elements)) {
 			sidebar.isVisibleSetting =
-				settingsState?.sidebar?.sidebarElements?.[sidebar.uuid] ?? true
+				settingsState?.sidebar?.sidebarElements?.[sidebar.uuid] ??
+				sidebar.defaultVisibility
 		}
 	})
 }

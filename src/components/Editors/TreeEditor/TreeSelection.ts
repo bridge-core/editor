@@ -7,7 +7,7 @@ import { ReplaceTreeEntry } from './History/ReplaceTree'
 import { ArrayTree } from './Tree/ArrayTree'
 import { ObjectTree } from './Tree/ObjectTree'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
-import { TPrimitiveTree } from './Tree/Tree'
+import type { TPrimitiveTree } from './Tree/Tree'
 import type { TreeEditor } from './TreeEditor'
 
 export class TreeSelection {
@@ -49,7 +49,7 @@ export class TreeSelection {
 		return new EditPropertyEntry(parent, key, value)
 	}
 
-	addKey(key: string, type: 'array' | 'objectArray' | 'object') {
+	addKey(key: string, type: 'array' | 'object') {
 		if (this.tree instanceof PrimitiveTree) return
 
 		const index = this.tree.children.length
@@ -57,57 +57,40 @@ export class TreeSelection {
 
 		this.tree.setOpen(true, true)
 
-		// We want to add a property to an array, transform tree into ArrayTree if necessary
-		if (type === 'objectArray' && this.tree instanceof ObjectTree) {
-			this.dispose()
-			const arrayTree = new ArrayTree(this.tree.getParent(), [])
-			this.tree.replace(arrayTree)
-			arrayTree.setOpen(true, true)
-
-			historyEntries.push(new ReplaceTreeEntry(this.tree, arrayTree))
-			this.tree = arrayTree
-		}
-
+		let addToTree = <ObjectTree>this.tree
 		const newTree =
 			type === 'object'
-				? new ObjectTree(this.tree, {})
-				: new ArrayTree(this.tree, [])
+				? new ObjectTree(addToTree, {})
+				: new ArrayTree(addToTree, [])
 
 		if (this.tree instanceof ArrayTree) {
-			this.tree.children.push(newTree)
-
 			// Pushing a key to an array should add it inside of an object
-			const keyTree = new ObjectTree(newTree, {})
-			if (newTree.type === 'array') newTree.children.push(keyTree)
-			else newTree.children.push([key, keyTree])
+			addToTree = new ObjectTree(this.tree, {})
+			// Make sure to update parent reference before adding tree as child
+			newTree.setParent(addToTree)
 
-			this.parent.setSelection(keyTree)
-			newTree.setOpen(true)
-		} else {
-			this.tree.children.push([key, newTree])
-			this.parent.setSelection(newTree)
+			this.tree.children.push(addToTree)
+			addToTree.setOpen(true, true)
 		}
 
-		this.tree.setOpen(true)
+		addToTree.children.push([key, newTree])
+		this.parent.setSelection(newTree)
 
-		historyEntries.push(new DeleteEntry(newTree, index, key))
+		this.tree.setOpen(true, true)
+		newTree.setOpen(true, true)
+
+		if (this.tree instanceof ArrayTree) {
+			historyEntries.push(new DeleteEntry(addToTree, index))
+		} else {
+			historyEntries.push(new DeleteEntry(newTree, index, key))
+		}
 
 		return new CollectedEntry(historyEntries)
 	}
 
-	addValue(value: TPrimitiveTree, type: 'value' | 'valueArray') {
+	addValue(value: TPrimitiveTree, type: 'value') {
 		const historyEntries: HistoryEntry[] = []
 		if (this.tree instanceof PrimitiveTree && !this.tree.isEmpty()) return
-
-		if (type === 'valueArray' && this.tree instanceof ObjectTree) {
-			this.dispose()
-			const arrayTree = new ArrayTree(this.tree.getParent(), [])
-			arrayTree.setOpen(true, true)
-			this.tree.replace(arrayTree)
-
-			historyEntries.push(new ReplaceTreeEntry(this.tree, arrayTree))
-			this.tree = arrayTree
-		}
 
 		if (this.tree.type === 'array') {
 			// Push primitive trees into array trees

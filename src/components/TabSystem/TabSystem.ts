@@ -11,6 +11,7 @@ import { MonacoHolder } from './MonacoHolder'
 import { FileTab, TReadOnlyMode } from './FileTab'
 import { TabProvider } from './TabProvider'
 import { AnyFileHandle } from '../FileSystem/Types'
+import { IframeTab } from '../Editors/IframeTab/IframeTab'
 
 export interface IOpenTabOptions {
 	selectTab?: boolean
@@ -126,6 +127,16 @@ export class TabSystem extends MonacoHolder {
 		if (!noTabExistanceCheck) {
 			for (const currentTab of this.tabs.value) {
 				if (await currentTab.is(tab)) {
+					// Trigger openWith event again for iframe tabs
+					if (
+						tab instanceof IframeTab &&
+						currentTab instanceof IframeTab
+					) {
+						currentTab.setOpenWithPayload(
+							tab.getOptions().openWithPayload
+						)
+					}
+
 					tab.onDeactivate()
 					return selectTab ? currentTab.select() : currentTab
 				}
@@ -176,6 +187,38 @@ export class TabSystem extends MonacoHolder {
 		const tab = await this.getTab(fileHandle)
 		if (tab) this.close(tab)
 	}
+
+	/**
+	 * Select next tab
+	 */
+	async selectNextTab() {
+		const tabs = this.tabs.value
+		if (tabs.length === 0) return
+
+		const selectedTab = this.selectedTab
+		if (!selectedTab) return
+
+		const index = tabs.indexOf(selectedTab)
+		const nextTab = tabs[index + 1] ?? tabs[0]
+
+		await nextTab.select()
+	}
+	/**
+	 * Select previous tab
+	 */
+	async selectPreviousTab() {
+		const tabs = this.tabs.value
+		if (tabs.length === 0) return
+
+		const selectedTab = this.selectedTab
+		if (!selectedTab) return
+
+		const index = tabs.indexOf(selectedTab)
+		const previousTab = tabs[index - 1] ?? tabs[tabs.length - 1]
+
+		await previousTab.select()
+	}
+
 	async select(tab?: Tab) {
 		if (this.isActive !== !!tab) this.setActive(!!tab)
 

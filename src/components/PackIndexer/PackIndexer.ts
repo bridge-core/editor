@@ -1,45 +1,51 @@
 import { App } from '/@/App'
-import { WorkerManager } from '/@/components/Worker/Manager'
-import { proxy } from 'comlink'
+import { proxy, Remote, wrap } from 'comlink'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import type { PackIndexerService } from './Worker/Main'
+import { PackIndexerService as TPackIndexerService } from './Worker/Main'
 import PackIndexerWorker from './Worker/Main?worker'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import type { Project } from '/@/components/Projects/Project/Project'
 import { Mutex } from '../Common/Mutex'
+import { Signal } from '../Common/Event/Signal'
+import { Task } from '../TaskManager/Task'
 
-export class PackIndexer extends WorkerManager<
-	typeof PackIndexerService,
-	PackIndexerService,
-	boolean,
-	readonly [string[], string[]]
-> {
+const PackIndexerService = wrap<typeof TPackIndexerService>(
+	new PackIndexerWorker()
+)
+
+const taskOptions = {
+	icon: 'mdi-flash-outline',
+	name: 'taskManager.tasks.packIndexing.title',
+	description: 'taskManager.tasks.packIndexing.description',
+}
+
+export class PackIndexer extends Signal<[string[], string[]]> {
 	protected isPackIndexerFree = new Mutex()
+	protected _service: Remote<TPackIndexerService> | null = null
+	protected task?: Task
+
 	constructor(
 		protected project: Project,
 		protected baseDirectory: AnyDirectoryHandle
 	) {
-		super({
-			icon: 'mdi-flash-outline',
-			name: 'taskManager.tasks.packIndexing.title',
-			description: 'taskManager.tasks.packIndexing.description',
-		})
+		super()
 	}
 
-	createWorker() {
-		this.worker = new PackIndexerWorker()
+	get service() {
+		if (!this._service)
+			throw new Error(`Accessing service without service being defined`)
+		return this._service
 	}
 
-	deactivate() {
-		super.deactivate()
-	}
-
-	protected async start(forceRefreshCache: boolean) {
+	async activate(forceRefreshCache: boolean) {
 		console.time('[TASK] Indexing Packs (Total)')
-		await this.isPackIndexerFree.lock()
+
+		this.isPackIndexerFree.lock()
+		const app = this.project.app
+		this.task = app.taskManager.create(taskOptions)
 
 		// Instaniate the worker TaskService
-		this._service = await new this.workerClass!(
+		this._service = await new PackIndexerService(
 			this.baseDirectory,
 			this.project.app.fileSystem.baseDirectory,
 			{
@@ -55,7 +61,7 @@ export class PackIndexer extends WorkerManager<
 		)
 
 		// Listen to task progress and update UI
-		await this.service.on(
+		await this._service?.on(
 			proxy(([current, total]) => {
 				this.task?.update(current, total)
 			}),
@@ -63,13 +69,25 @@ export class PackIndexer extends WorkerManager<
 		)
 
 		// Start service
-		const [changedFiles, deletedFiles] = await this.service.start(
+		const [changedFiles, deletedFiles] = await this._service?.start(
 			forceRefreshCache
 		)
-		await this.service.disposeListeners()
+		await this._service?.disposeListeners()
+		this.task.complete()
 		this.isPackIndexerFree.unlock()
+
 		console.timeEnd('[TASK] Indexing Packs (Total)')
+
+		// Only dispatch signal if service wasn't disposed in the meantime
+		if (this._service) this.dispatch([changedFiles, deletedFiles])
 		return <const>[changedFiles, deletedFiles]
+	}
+
+	async deactivate() {
+		this.resetSignal()
+		await this._service?.disposeListeners()
+		this._service = null
+		this.task?.complete()
 	}
 
 	async updateFile(

@@ -100,10 +100,6 @@ export abstract class Project {
 	}
 	get compilerService() {
 		if (this._compilerService === undefined) {
-			console.log(
-				this._compilerService,
-				this._compilerService === undefined
-			)
 			throw new Error(
 				`Trying to access compilerService before it was setup. Make sure to await compilerReady.fired before accessing it.`
 			)
@@ -277,29 +273,27 @@ export abstract class Project {
 
 		this.snippetLoader.activate()
 	}
-	deactivate(isReload = false) {
+	async deactivate(isReload = false) {
 		if (!isReload)
 			this.tabSystems.forEach((tabSystem) => tabSystem.deactivate())
 
 		this.typeLoader.deactivate()
-		this.packIndexer.deactivate()
 		this.jsonDefaults.deactivate()
 		this.extensionLoader.disposeAll()
-		this.snippetLoader.deactivate()
-	}
-	disposeWorkers() {
-		this.packIndexer.dispose()
+
+		await Promise.all([
+			this.packIndexer.deactivate(),
+			this.snippetLoader.deactivate(),
+		])
 	}
 	dispose() {
-		this.disposeWorkers()
 		this.tabSystems.forEach((tabSystem) => tabSystem.dispose())
 		this.extensionLoader.disposeAll()
 	}
 
 	async refresh() {
 		this.app.packExplorer.refresh()
-		this.deactivate(true)
-		this.disposeWorkers()
+		await this.deactivate(true)
 		await this.activate(true)
 	}
 
@@ -582,13 +576,15 @@ export abstract class Project {
 	}
 
 	async recompile(forceStartIfActive = true) {
+		if (this.isVirtualProject) return
+
 		this._compilerService = markRaw(
 			await this.createDashService('development')
 		)
+		await this._compilerService.setup()
 
 		if (forceStartIfActive && this.isActiveProject) {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')
-			await this.compilerReady.fired
 			await this.compilerService.start([], [])
 		} else {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')

@@ -25,6 +25,8 @@ export interface IDirectoryViewerOptions {
 		directoryWrapper: DirectoryWrapper
 	) => Promise<void> | void
 	onHandleMoved?: (opts: IHandleMovedOptions) => Promise<void> | void
+	onFilesAdded?: (filePaths: string[]) => Promise<void> | void
+
 	/**
 	 * Add new items to the bottom of the file context menu
 	 */

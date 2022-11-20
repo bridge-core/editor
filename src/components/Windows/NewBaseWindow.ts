@@ -8,6 +8,7 @@ import { Sidebar } from './Layout/Sidebar'
 
 export interface IWindowState {
 	isVisible: boolean
+	isLoading: boolean
 	shouldRender: boolean
 	actions: SimpleAction[]
 }
@@ -18,6 +19,7 @@ export abstract class NewBaseWindow<T = void> extends Signal<T> {
 	protected state: IWindowState = reactive({
 		isVisible: false,
 		shouldRender: false,
+		isLoading: true,
 		actions: [],
 	})
 	protected sidebar?: Sidebar

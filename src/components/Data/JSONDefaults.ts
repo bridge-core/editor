@@ -10,6 +10,7 @@ import { AnyFileHandle } from '../FileSystem/Types'
 import { Tab } from '../TabSystem/CommonTab'
 import { ComponentSchemas } from '../Compiler/Worker/Plugins/CustomComponent/ComponentSchemas'
 import { loadMonaco, useMonaco } from '../../utils/libs/useMonaco'
+import { Task } from '../TaskManager/Task'
 
 let globalSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 let loadedGlobalSchemas = false
@@ -19,6 +20,7 @@ export class JsonDefaults extends EventDispatcher<void> {
 	protected localSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 	protected disposables: IDisposable[] = []
 	public readonly componentSchemas = new ComponentSchemas()
+	protected task: Task | null = null
 
 	constructor(protected project: Project) {
 		super()
@@ -60,12 +62,14 @@ export class JsonDefaults extends EventDispatcher<void> {
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.componentSchemas.dispose()
 		this.disposables = []
+		this.task?.complete()
+		this.task = null
 	}
 
 	async loadAllSchemas() {
 		this.localSchemas = {}
 		const app = await App.getApp()
-		const task = app.taskManager.create({
+		this.task = app.taskManager.create({
 			icon: 'mdi-book-open-outline',
 			name: 'taskManager.tasks.loadingSchemas.name',
 			description: 'taskManager.tasks.loadingSchemas.description',
@@ -73,9 +77,9 @@ export class JsonDefaults extends EventDispatcher<void> {
 		})
 
 		await app.dataLoader.fired
-		task.update(1)
+		this.task?.update(1)
 		const packages = await app.dataLoader.readdir('data/packages')
-		task.update(2)
+		this.task?.update(2)
 
 		// Static schemas
 		for (const packageName of packages) {
@@ -92,11 +96,11 @@ export class JsonDefaults extends EventDispatcher<void> {
 			}
 		}
 		loadedGlobalSchemas = true
-		task.update(3)
+		this.task?.update(3)
 
 		// Schema scripts
 		await this.runSchemaScripts(app)
-		task.update(5)
+		this.task?.update(5)
 		const tab = this.project.tabSystem?.selectedTab
 		if (tab && tab instanceof FileTab) {
 			const fileType = App.fileType.getId(tab.getPath())
@@ -111,11 +115,11 @@ export class JsonDefaults extends EventDispatcher<void> {
 
 		// Schemas generated from lightning cache
 		this.addSchemas(await this.getDynamicSchemas())
-		task.update(4)
+		this.task?.update(4)
 
 		this.loadedSchemas = true
-		task.update(6)
-		task.complete()
+		this.task?.update(6)
+		this.task?.complete()
 	}
 
 	async setJSONDefaults(validate = true) {

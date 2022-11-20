@@ -5,7 +5,6 @@ import type { PackIndexerService } from '../Main'
 import type { LightningStore } from './LightningStore'
 import { runScript } from './Script'
 import { basename, extname, join } from '/@/utils/path'
-import { iterateDir } from '/@/utils/iterateDir'
 import {
 	AnyDirectoryHandle,
 	AnyFileHandle,
@@ -147,18 +146,22 @@ export class LightningCache {
 		) => void | Promise<void>,
 		fullPath = ''
 	) {
+		const promises = []
+
 		for await (const [fileName, entry] of baseDir.entries()) {
 			const currentFullPath =
 				fullPath.length === 0 ? fileName : `${fullPath}/${fileName}`
 
 			if (entry.kind === 'directory') {
 				if (this.folderIgnoreList.has(currentFullPath)) continue
-				await this.iterateDir(entry, callback, currentFullPath)
+				promises.push(this.iterateDir(entry, callback, currentFullPath))
 			} else if (fileName[0] !== '.') {
 				this.service.progress.addToTotal(2)
-				await callback(<AnyFileHandle>entry, currentFullPath)
+				promises.push(callback(<AnyFileHandle>entry, currentFullPath))
 			}
 		}
+
+		await Promise.allSettled(promises)
 	}
 
 	/**
@@ -313,53 +316,50 @@ export class LightningCache {
 
 		// console.log(instructions)
 		const collectedData: Record<string, string[]> = {}
-		const asyncOnReceiveData = (
-			key: string,
-			filter?: string[],
-			mapFunc?: string
-		) => async (data: any) => {
-			let readyData: string[]
-			if (Array.isArray(data)) readyData = data
-			else if (typeof data === 'object')
-				readyData = Object.keys(data ?? {})
-			else readyData = [data]
+		const asyncOnReceiveData =
+			(key: string, filter?: string[], mapFunc?: string) =>
+			async (data: any) => {
+				let readyData: string[]
+				if (Array.isArray(data)) readyData = data
+				else if (typeof data === 'object')
+					readyData = Object.keys(data ?? {})
+				else readyData = [data]
 
-			if (filter) readyData = readyData.filter((d) => !filter.includes(d))
-			if (mapFunc) {
-				const ctx = {
-					config: this.service.config,
-					fileSystem: this.service.fileSystem,
+				if (filter)
+					readyData = readyData.filter((d) => !filter.includes(d))
+				if (mapFunc) {
+					const ctx = {
+						config: this.service.config,
+						fileSystem: this.service.fileSystem,
+					}
+
+					readyData = (
+						await Promise.all(
+							readyData.map((value) =>
+								run({
+									async: true,
+									script: mapFunc,
+									env: {
+										...getCacheScriptEnv(value, ctx),
+									},
+								})
+							)
+						)
+					).filter((value) => value !== undefined)
 				}
 
-				readyData = (
-					await Promise.all(
-						readyData.map((value) =>
-							run({
-								async: true,
-								script: mapFunc,
-								env: {
-									...getCacheScriptEnv(value, ctx),
-								},
-							})
-						)
-					)
-				).filter((value) => value !== undefined)
+				if (!collectedData[key]) collectedData[key] = readyData
+				else
+					collectedData[key] = [
+						...new Set(collectedData[key].concat(readyData)),
+					]
 			}
-
-			if (!collectedData[key]) collectedData[key] = readyData
-			else
-				collectedData[key] = [
-					...new Set(collectedData[key].concat(readyData)),
-				]
-		}
 		const promises: Promise<unknown>[] = []
-		const onReceiveData = (
-			key: string,
-			filter?: string[],
-			mapFunc?: string
-		) => (data: any) => {
-			promises.push(asyncOnReceiveData(key, filter, mapFunc)(data))
-		}
+		const onReceiveData =
+			(key: string, filter?: string[], mapFunc?: string) =>
+			(data: any) => {
+				promises.push(asyncOnReceiveData(key, filter, mapFunc)(data))
+			}
 
 		for (const instruction of instructions) {
 			const key = instruction.cacheKey

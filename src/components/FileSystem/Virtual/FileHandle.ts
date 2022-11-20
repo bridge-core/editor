@@ -113,6 +113,7 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		const fileData = await this.loadFromIdb()
 		// console.log(this.path.join('/'), this.fileData, fileData)
 
+		// TODO: Support lastModified timestamp so lightning cache can make use of its optimizations
 		return new File([fileData], this.name)
 	}
 	async createWritable() {

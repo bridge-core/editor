@@ -22,7 +22,7 @@
 			<v-btn color="error" @click="onNoSave">
 				<span>{{ t('general.close') }}</span>
 			</v-btn>
-			<v-btn color="primary" @click="onSave">
+			<v-btn v-if="window.canSaveTab" color="primary" @click="onSave">
 				<span>{{ t('windows.unsavedFile.save') }}</span>
 			</v-btn>
 		</template>

@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="tab-bar">
 		<Draggable
 			v-if="tabSystem && tabSystem.shouldRender"
 			v-model="tabSystem.tabs.value"
@@ -83,5 +83,8 @@ export default {
 }
 .inactive-action-bar {
 	opacity: 0.5;
+}
+.tab-bar {
+	background: var(--v-background-base);
 }
 </style>

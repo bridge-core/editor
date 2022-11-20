@@ -89,10 +89,7 @@ export class TreeTab extends FileTab {
 		await super.setup()
 	}
 	async getFile() {
-		return new File(
-			[JSON.stringify(this.treeEditor.toJsonString())],
-			this.name
-		)
+		return new File([this.treeEditor.toJsonString()], this.name)
 	}
 
 	updateCache() {
@@ -102,7 +99,9 @@ export class TreeTab extends FileTab {
 	async onActivate() {
 		this.treeEditor.activate()
 	}
-	onDeactivate() {
+	async onDeactivate() {
+		await super.onDeactivate()
+
 		this._treeEditor?.deactivate()
 	}
 

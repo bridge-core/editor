@@ -9,6 +9,7 @@ import { AnyFileHandle } from '../FileSystem/Types'
 import { shareFile } from '../StartParams/Action/openRawFile'
 import { getDefaultFileIcon } from '/@/utils/file/getIcon'
 import { settingsState } from '../Windows/Settings/SettingsState'
+import { fullScreenAction } from './TabContextMenu/Fullscreen'
 
 export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	abstract component: Vue.Component
@@ -102,14 +103,14 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 	}
 	get iconColor() {
 		if (!this.hasFired) return 'accent'
-		return App.packType.get(this.getPath())?.color
+		return App.packType.get(this.getPath(), true)?.color
 	}
 
 	get isSelected(): boolean {
 		return this.parent.selectedTab === this
 	}
-	select() {
-		this.parent.select(this)
+	async select() {
+		await this.parent.select(this)
 		return this
 	}
 	/**
@@ -210,6 +211,7 @@ export abstract class Tab<TRestoreData = any> extends Signal<Tab> {
 			additionalItems.push(<const>{ type: 'divider' })
 
 		await showContextMenu(event, [
+			fullScreenAction(false),
 			...additionalItems,
 			{
 				name: 'actions.closeTab.name',

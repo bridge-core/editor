@@ -7,16 +7,15 @@ export class JsRuntime extends Runtime {
 		const app = await App.getApp()
 
 		const file = await app.fileSystem.readFile(filePath)
-		const fileContent = await file.text()
 
-		return fileContent
+		return file
 	}
 
 	run(filePath: string, env: any = {}, fileContent?: string) {
 		return super.run(
 			filePath,
 			Object.assign(env, {
-				require: (x: string) => this.require(x, dirname(filePath)),
+				require: (x: string) => this.require(x, dirname(filePath), env),
 			}),
 			fileContent
 		)

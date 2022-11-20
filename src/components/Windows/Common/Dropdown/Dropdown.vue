@@ -12,7 +12,7 @@
 		@closeWindow="onClose"
 	>
 		<template #default>
-			<v-select
+			<v-autocomplete
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
 				dense
@@ -46,9 +46,9 @@ const props = defineProps(['window'])
 const state = props.window.getState()
 
 function onClose() {
-	props.window.close()
+	props.window.close(null)
 }
 function onConfirm() {
-	props.window.close()
+	props.window.confirm()
 }
 </script>

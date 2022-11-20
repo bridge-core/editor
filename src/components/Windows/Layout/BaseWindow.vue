@@ -12,7 +12,7 @@
 			height="100%"
 			width="100%"
 			color="background"
-			rounded="lg"
+			:rounded="isFullScreenOrMobile ? null : 'lg'"
 			ref="card"
 		>
 			<component
@@ -38,7 +38,7 @@
 				clipped
 				stateless
 				color="expandedSidebar"
-				class="rounded-l-lg"
+				:class="isFullScreenOrMobile ? null : 'rounded-l-lg'"
 				style="visibility: visible; transform: translateX(0)"
 			>
 				<MacWindowControls
@@ -60,6 +60,9 @@
 
 			<v-card-text
 				style="overflow-y: auto"
+				:class="{
+					'd-flex align-center justify-center': isLoading,
+				}"
 				:style="{
 					height: heightUnset
 						? undefined
@@ -75,7 +78,13 @@
 						: undefined,
 				}"
 			>
-				<slot name="default" />
+				<v-progress-circular
+					v-if="isLoading"
+					indeterminate
+					color="accent"
+					size="42"
+				/>
+				<slot v-else name="default" />
 			</v-card-text>
 
 			<v-card-actions
@@ -110,6 +119,7 @@ export default {
 	},
 	props: {
 		isFullscreen: Boolean,
+		isLoading: Boolean,
 		isVisible: Object | Boolean,
 		shouldRender: Object | Boolean,
 		isPersistent: Boolean,

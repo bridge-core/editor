@@ -20,13 +20,26 @@
 			top: appToolbarHeight,
 		}"
 	>
-		<SidebarButton
-			v-if="isMobile"
-			displayName="general.close"
-			icon="mdi-close"
-			color="error"
-			@click="closeSidebar"
-		/>
+		<template v-if="isMobile">
+			<div
+				class="d-flex align-center justify-center mt-3 mb-2 mx-1 rounded-lg"
+				v-ripple
+			>
+				<BridgeLogo :height="32" @click.native="openChangelogWindow" />
+			</div>
+
+			<SidebarButton
+				displayName="general.close"
+				icon="mdi-close"
+				color="error"
+				@click="closeSidebar"
+			/>
+			<SidebarButton
+				displayName="actions.name"
+				icon="mdi-menu"
+				@click="showMobileMenu"
+			/>
+		</template>
 
 		<v-list>
 			<SidebarButton
@@ -83,12 +96,14 @@
 </template>
 
 <script>
+import BridgeLogo from '/@/components/UIElements/Logo.vue'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState.ts'
 import SidebarButton from './Button.vue'
 import { tasks } from '/@/components/TaskManager/TaskManager.ts'
 import { NotificationStore } from '/@/components/Notifications/state.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import { App } from '/@/App'
+import { version as appVersion } from '/@/utils/app/version'
 
 export default {
 	name: 'Sidebar',
@@ -98,12 +113,14 @@ export default {
 	},
 	components: {
 		SidebarButton,
+		BridgeLogo,
 	},
 
 	setup() {
 		return {
 			rawSidebarElements: App.sidebar.sortedElements,
 			rawIsNavigationVisible: App.sidebar.isNavigationVisible,
+			appVersion,
 		}
 	},
 	data() {
@@ -146,6 +163,13 @@ export default {
 	methods: {
 		closeSidebar() {
 			App.sidebar.isNavigationVisible.value = false
+		},
+		showMobileMenu(event) {
+			App.toolbar.showMobileMenu(event)
+		},
+		async openChangelogWindow() {
+			const app = await App.getApp()
+			await app.windows.changelogWindow.open()
 		},
 	},
 }

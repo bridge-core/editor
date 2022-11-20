@@ -27,6 +27,20 @@ export class DashFileSystem extends FileSystem {
 	async writeFile(path: string, content: string | Uint8Array) {
 		await this.internalFs.writeFile(path, content)
 	}
+	// async copyFile(from: string, to: string, outputFs = this) {
+	// 	const [fromHandle, toHandle] = await Promise.all([
+	// 		this.internalFs.getFileHandle(from),
+	// 		outputFs.internalFs.getFileHandle(to, true),
+	// 	])
+
+	// 	const [writable, fromFile] = await Promise.all([
+	// 		toHandle.createWritable({ keepExistingData: true }),
+	// 		fromHandle.getFile(),
+	// 	])
+
+	// 	await writable.write(fromFile)
+	// 	await writable.close()
+	// }
 
 	mkdir(path: string) {
 		return this.internalFs.mkdir(path)

@@ -1,13 +1,14 @@
 <template>
 	<v-app
+		ref="appContainer"
 		:style="{ fontFamily }"
 		@contextmenu.native="$event.preventDefault()"
 	>
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
-		<Toolbar />
+		<Toolbar v-if="!isInFullScreen" />
 
-		<Sidebar app />
+		<Sidebar v-if="!isInFullScreen" app />
 
 		<v-btn
 			v-if="!sidebarNavigationVisible"
@@ -23,7 +24,11 @@
 			<v-icon>mdi-table-column</v-icon>
 		</v-btn>
 
-		<v-main :style="{ 'padding-top': appToolbarHeight }">
+		<v-main
+			:style="{
+				'padding-top': isInFullScreen ? 0 : appToolbarHeight,
+			}"
+		>
 			<WindowRenderer />
 
 			<v-row
@@ -111,6 +116,10 @@ import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
 import { settingsState } from './components/Windows/Settings/SettingsState'
 import { useTabSystem } from './components/Composables/UseTabSystem'
+import {
+	setFullscreenElement,
+	useFullScreen,
+} from './components/TabSystem/TabContextMenu/Fullscreen'
 
 export default {
 	name: 'App',
@@ -119,11 +128,13 @@ export default {
 	setup() {
 		const { tabSystem, tabSystems, shouldRenderWelcomeScreen } =
 			useTabSystem()
+		const { isInFullScreen } = useFullScreen()
 
 		return {
 			tabSystem,
 			tabSystems,
 			shouldRenderWelcomeScreen,
+			isInFullScreen,
 		}
 	},
 
@@ -132,6 +143,8 @@ export default {
 			this.contextMenu = app.contextMenu
 			this.windowSize = app.windowResize.state
 		})
+
+		setFullscreenElement(this.$refs.appContainer.$el)
 	},
 
 	components: {
@@ -156,6 +169,8 @@ export default {
 
 	computed: {
 		isSidebarContentVisible() {
+			if (this.isInFullScreen) return false
+
 			return (
 				this.sidebarNavigationVisible &&
 				App.sidebar.isContentVisible.value
@@ -194,8 +209,8 @@ export default {
 			return this.settingsState &&
 				this.settingsState.appearance &&
 				this.settingsState.appearance.font
-				? `${this.settingsState.appearance.font} !important`
-				: 'Roboto !important'
+				? `${this.settingsState.appearance.font}, system-ui !important`
+				: `Roboto, system-ui !important`
 		},
 	},
 	methods: {
@@ -315,5 +330,10 @@ textarea {
 	font-weight: unset !important;
 	letter-spacing: unset !important;
 	line-height: unset !important;
+}
+
+/* Properly center custom icons (e.g. blockbench) within lists  */
+.v-list-item__icon {
+	align-items: center;
 }
 </style>

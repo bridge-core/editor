@@ -6,6 +6,30 @@
 		@click="tab.parent.setActive(true)"
 		tabindex="-1"
 	>
+		<!-- Bar showing the current location of a user within the file -->
+		<div
+			v-if="shouldShowLocationBar && currentSelectionPath.length > 1"
+			class="tree-editor-navigation lineHighlightBackground rounded px-1 mx-3 mt-1 mb-2"
+		>
+			<template v-for="(pathPart, i) in currentSelectionPath">
+				<Highlight
+					class="cursor-pointer"
+					@click.native="
+						selectTreePath(currentSelectionPath.slice(0, i + 1))
+					"
+					:value="`${pathPart}`"
+					:key="i"
+				/>
+				<v-icon
+					v-if="i + 1 < currentSelectionPath.length"
+					:key="`next-icon-${i}`"
+					small
+				>
+					mdi-chevron-right
+				</v-icon>
+			</template>
+		</div>
+
 		<div
 			class="pr-4"
 			:style="`height: ${
@@ -59,6 +83,7 @@
 				outlined
 				dense
 				hide-details
+				enterkeyhint="enter"
 			>
 				<template v-slot:item="{ item }">
 					<div style="width: 100%" @click="mayTrigger">
@@ -109,6 +134,7 @@
 				outlined
 				dense
 				hide-details
+				enterkeyhint="enter"
 			>
 				<template v-slot:item="{ item }">
 					<div style="width: 100%" @click="mayTrigger">
@@ -150,6 +176,7 @@
 				outlined
 				dense
 				hide-details
+				enterkeyhint="enter"
 			>
 				<template v-slot:item="{ item }">
 					<div style="width: 100%" @click="mayTrigger">
@@ -179,10 +206,14 @@ import { TreeValueSelection } from './TreeSelection'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
 import { inferType } from '/@/utils/inferType'
 import { mayCastTo } from './mayCastTo'
+import Highlight from './Highlight.vue'
 
 export default {
 	name: 'TreeTab',
 	mixins: [TranslationMixin],
+	components: {
+		Highlight,
+	},
 	props: {
 		tab: Object,
 		height: Number,
@@ -281,6 +312,21 @@ export default {
 		allSuggestions() {
 			return this.propertySuggestions.concat(this.valueSuggestions)
 		},
+		currentSelectionPath() {
+			const selection = this.treeEditor.selections[0]
+			if (!selection) return []
+
+			return selection.getTree().path
+		},
+		shouldShowLocationBar() {
+			if (
+				!settingsState ||
+				!settingsState.editor ||
+				settingsState.editor.showTreeEditorLocationBar === undefined
+			)
+				return true //Default value for setting is "true"
+			return settingsState.editor.showTreeEditorLocationBar
+		},
 	},
 	methods: {
 		focusEditor() {
@@ -359,7 +405,7 @@ export default {
 				this.treeEditor.addFromJSON(value[1])
 			} else if (type === 'object' || type === 'array') {
 				this.treeEditor.addKey(value, type)
-			} else if (type === 'value' || type === 'valueArray') {
+			} else if (type === 'value') {
 				this.treeEditor.addValue(value, type, forcedValueType)
 			} else {
 				console.error(`Unknown suggestion type: "${type}"`)
@@ -413,13 +459,26 @@ export default {
 					return 'mdi-alphabetical'
 				case 'arrayValue':
 					return 'mdi-link-variant'
-				case 'objectArray':
-					return 'mdi-link-variant'
 				case 'snippet':
 					return 'mdi-attachment'
 				default:
 					return 'mdi-text'
 			}
+		},
+
+		selectTreePath(path) {
+			const tree = this.treeEditor.tree.get(path)
+			if (!tree) return
+
+			this.treeEditor.setSelection(tree)
+
+			setTimeout(() => {
+				document
+					.getElementsByClassName('tree-editor-selection')[0]
+					.scrollIntoView({
+						behavior: 'smooth',
+					})
+			}, 100)
 		},
 	},
 	watch: {
@@ -468,6 +527,26 @@ export default {
 </script>
 
 <style>
+/* Base tree editor navigation styles */
+.tree-editor-navigation {
+	white-space: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+	opacity: 0.4;
+	transition: opacity 0.2s ease-in-out;
+}
+/* Increase opacity when hovering */
+.tree-editor-navigation:hover {
+	opacity: 0.9;
+}
+/* Hide scrollbar without active hover state */
+.tree-editor-navigation::-webkit-scrollbar {
+	height: 0px;
+}
+/* Show scrollbar when hovering */
+.tree-editor-navigation:hover::-webkit-scrollbar {
+	height: 5px;
+}
 .tree-editor-selection {
 	border-radius: 4px;
 	background: var(--v-lineHighlightBackground-base);

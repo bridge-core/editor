@@ -6,6 +6,7 @@ import { version as appVersion } from '/@/utils/app/version'
 export async function loadManifest(app: App, manifestPath: string) {
 	let manifest = await app.fileSystem.readJSON(manifestPath)
 
+	let addGeneratedWith = settingsState?.projects?.addGeneratedWith ?? true
 	let generatedWithBridge: string[] =
 		manifest?.metadata?.generated_with?.bridge ?? []
 	let generatedWithDash: string[] =
@@ -13,7 +14,7 @@ export async function loadManifest(app: App, manifestPath: string) {
 
 	let updatedManifest = false
 	// Check that the user wants to add the generated_with section
-	if (settingsState?.projects?.addGeneratedWith ?? true) {
+	if (addGeneratedWith) {
 		// Update generated_with bridge. version
 		if (
 			!generatedWithBridge.includes(appVersion) ||
@@ -31,6 +32,10 @@ export async function loadManifest(app: App, manifestPath: string) {
 			generatedWithDash = [dashVersion]
 			updatedManifest = true
 		}
+	} else {
+		if (manifest?.metadata?.generated_with) {
+			updatedManifest = true
+		}
 	}
 
 	// If the manifest changed, save changes to disk
@@ -39,10 +44,12 @@ export async function loadManifest(app: App, manifestPath: string) {
 			...(manifest ?? {}),
 			metadata: {
 				...(manifest?.metadata ?? {}),
-				generated_with: {
-					...(manifest?.metadata?.generated_with ?? {}),
-					...{ bridge: [appVersion], dash: [dashVersion] },
-				},
+				generated_with: addGeneratedWith
+					? {
+						...(manifest?.metadata?.generated_with ?? {}),
+						...{ bridge: generatedWithBridge, dash: generatedWithDash },
+					}
+					: undefined,
 			},
 		}
 

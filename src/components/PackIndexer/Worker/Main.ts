@@ -2,6 +2,9 @@
 globalThis.process = {
 	cwd: () => '',
 	env: {},
+	release: {
+		name: 'browser',
+	},
 }
 
 import '/@/components/FileSystem/Virtual/Comlink'

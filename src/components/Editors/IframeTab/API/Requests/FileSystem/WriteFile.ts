@@ -19,7 +19,7 @@ export class WriteFileRequest extends GenericRequest<IWriteFilePayload, void> {
 	): Promise<void> {
 		const app = await App.getApp()
 
-		const fileHandle = await resolveFileReference(filePath, this.api)
+		const fileHandle = await resolveFileReference(filePath, this.api, true)
 
 		await app.fileSystem.write(fileHandle, data)
 	}
