@@ -23,9 +23,11 @@ export async function findColors(model: editor.ITextModel) {
 	if (!(project instanceof BedrockProject)) return
 
 	const locationPatterns = await project.colorData.getDataForCurrentTab()
+	const colorInfo: Promise<languages.IColorInformation | null>[] = []
+
+	if (!locationPatterns) return []
 
 	// Walk through the json file
-	const colorInfo: Promise<languages.IColorInformation | null>[] = []
 	visit(content, {
 		// When we reach any literal value, e.g. a string, ...
 		onLiteralValue: async (
