@@ -18,8 +18,7 @@ export class ColorData extends Signal<void> {
 	}
 
 	async getDataForCurrentTab() {
-		if (!this._data)
-			throw new Error(`Acessing colorData before it was loaded.`)
+		await this.fired
 
 		const app = await App.getApp()
 
