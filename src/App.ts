@@ -1,6 +1,5 @@
 import '/@/components/Notifications/Errors'
 import '/@/components/Languages/LanguageManager'
-import '/@/components/App/ServiceWorker'
 
 import Vue from 'vue'
 import { EventSystem } from '/@/components/Common/Event/EventSystem'
@@ -49,6 +48,10 @@ import { SidebarManager } from '/@/components/Sidebar/Manager'
 import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
 import { InformationWindow } from './components/Windows/Common/Information/InformationWindow'
 
+// Only import service worker for non-Tauri builds
+if (!import.meta.env.VITE_IS_TAURI_APP) {
+	import('/@/components/App/ServiceWorker')
+}
 export class App {
 	public static readonly windowState = new WindowState()
 	public static readonly installApp = new InstallApp()
