@@ -50,5 +50,3 @@ if ('launchQueue' in window) {
 		}
 	})
 }
-
-console.log(import.meta.env.VITE_IS_TAURI)
