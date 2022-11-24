@@ -8,7 +8,7 @@
 	},
 	"package": {
 		"productName": "bridge v2",
-		"version": "0.0.11"
+		"version": "../package.json"
 	},
 	"tauri": {
 		"allowlist": {
