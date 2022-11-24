@@ -7,7 +7,7 @@
 		"withGlobalTauri": true
 	},
 	"package": {
-		"productName": "bridge v2",
+		"productName": "bridge",
 		"version": "../package.json"
 	},
 	"tauri": {
