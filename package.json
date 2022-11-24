@@ -9,7 +9,8 @@
 		"serve": "vite preview",
 		"check": "tsc --project tsconfig.json --noEmit",
 		"build": "node ./scripts/build.mjs && node ./scripts/buildApp.mjs",
-		"build:nightly": "node ./scripts/build.mjs && node ./scripts/buildApp.mjs --nightly"
+		"build:nightly": "node ./scripts/build.mjs && node ./scripts/buildApp.mjs --nightly",
+		"build:tauri": "node ./scripts/build.mjs && node ./scripts/buildApp.mjs --tauri"
 	},
 	"dependencies": {
 		"@mdi/font": "^6.9.96",

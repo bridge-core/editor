@@ -1,13 +1,13 @@
 {
 	"build": {
 		"beforeDevCommand": "VITE_IS_TAURI_APP=true npm run dev",
-		"beforeBuildCommand": "VITE_IS_TAURI_APP=true npm run build",
+		"beforeBuildCommand": "npm run build:tauri",
 		"devPath": "http://localhost:8080/",
 		"distDir": "../dist",
 		"withGlobalTauri": true
 	},
 	"package": {
-		"productName": "bridge. v2",
+		"productName": "bridge v2",
 		"version": "0.0.11"
 	},
 	"tauri": {
