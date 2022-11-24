@@ -1,0 +1,71 @@
+name: Release
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
+
+jobs:
+    release:
+        strategy:
+            fail-fast: false
+            matrix:
+                platform: [macos-latest, ubuntu-latest, windows-latest]
+
+        runs-on: ${{ matrix.platform }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Node.js setup
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16
+                  cache: 'npm'
+
+            - name: Rust setup
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: stable
+
+            - name: Install dependencies (ubuntu only)
+              if: matrix.platform == 'ubuntu-latest'
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
+
+            - name: Install app dependencies
+              run: npm i
+
+            # - name: Add aarch64 target
+            #   if: matrix.platform == 'macos-latest'
+            #   run: rustup target add aarch64-apple-darwin
+
+            # - name: Build the app (Apple Silicon)
+            #   uses: solvedDev/tauri-action@dev
+            #   if: matrix.platform == 'macos-latest'
+
+            #   env:
+            #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #       TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+            #       TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+
+            #   with:
+            #       tagName: v__VERSION__ # tauri-action replaces \_\_VERSION\_\_ with the app version
+            #       releaseName: 'v__VERSION__'
+            #       releaseDraft: true
+            #       prerelease: false
+            #       args: --target aarch64-apple-darwin
+
+            - name: Build the app
+              uses: solvedDev/tauri-action@dev
+
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+                  TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+
+              with:
+                  tagName: v__VERSION__ # tauri-action replaces \_\_VERSION\_\_ with the app version
+                  releaseName: 'v__VERSION__'
+                  releaseDraft: true
+                  prerelease: false

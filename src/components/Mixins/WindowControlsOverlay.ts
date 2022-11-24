@@ -7,7 +7,9 @@ export const WindowControlsOverlayMixin = {
 			navigator.windowControlsOverlay.visible,
 	}),
 	created() {
-		if (navigator.windowControlsOverlay) {
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			this.windowControlsOverlay = true
+		} else if (navigator.windowControlsOverlay) {
 			navigator.windowControlsOverlay.addEventListener(
 				'geometrychange',
 				(event) => {

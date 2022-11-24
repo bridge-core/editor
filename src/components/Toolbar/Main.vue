@@ -6,10 +6,11 @@
 		app
 		clipped
 		padless
+		data-tauri-drag-region
 		:height="appToolbarHeight"
 		:class="{ 'd-flex align-center justify-center': hideToolbarItems }"
 		:style="{
-			'padding-left': 0,
+			'padding-left': toolbarPaddingLeft,
 			'margin-left': hideToolbarItems ? 0 : 'env(titlebar-area-x, 0)',
 			width: hideToolbarItems ? '100%' : 'env(titlebar-area-width, 100%)',
 			'z-index': windowControlsOverlay ? 1000 : undefined,
