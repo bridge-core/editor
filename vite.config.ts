@@ -11,8 +11,10 @@ const iconPath = (filePath: string) =>
 export default defineConfig({
 	base: '/',
 	server: {
+		strictPort: true,
 		port: 8080,
 	},
+	envPrefix: ['VITE_', 'TAURI_'],
 	json: {
 		stringify: true,
 	},
