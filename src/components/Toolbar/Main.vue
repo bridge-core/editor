@@ -83,7 +83,7 @@
 				</template>
 			</v-toolbar-items>
 
-			<span v-if="windowControlsOverlay" class="pl-3">
+			<span v-if="windowControlsOverlay" class="pl-3 no-pointer-events">
 				{{ composedTitle }}
 			</span>
 
