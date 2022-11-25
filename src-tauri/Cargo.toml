@@ -1,7 +1,7 @@
 [package]
-name = "bridge-test-app"
+name = "bridge"
 version = "0.0.0"
-description = "A Tauri App"
+description = "The IDE for Minecraft Add-Ons"
 authors = ["you"]
 license = ""
 repository = ""

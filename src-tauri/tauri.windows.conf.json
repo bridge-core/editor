@@ -1,0 +1,18 @@
+{
+	"build": {
+		"beforeDevCommand": "SET VITE_IS_TAURI_APP=true && npm run dev",
+		"beforeBuildCommand": "SET VITE_IS_TAURI_APP=true && npm run build"
+	},
+	"tauri": {
+		"windows": [
+			{
+				"fullscreen": false,
+				"height": 900,
+				"resizable": true,
+				"title": "",
+				"width": 1200,
+				"decorations": false
+			}
+		]
+	}
+}

@@ -1,7 +1,7 @@
 {
 	"build": {
 		"beforeDevCommand": "VITE_IS_TAURI_APP=true npm run dev",
-		"beforeBuildCommand": "npm run build:tauri",
+		"beforeBuildCommand": "VITE_IS_TAURI_APP=true npm run build",
 		"devPath": "http://localhost:8080/",
 		"distDir": "../dist",
 		"withGlobalTauri": true
@@ -65,7 +65,8 @@
 				"resizable": true,
 				"title": "",
 				"width": 1200,
-				"titleBarStyle": "Overlay"
+				"titleBarStyle": "Overlay",
+				"acceptFirstMouse": true
 			}
 		]
 	}

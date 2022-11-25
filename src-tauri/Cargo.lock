@@ -118,7 +118,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "bridge-test-app"
+name = "bridge"
 version = "0.0.0"
 dependencies = [
  "serde",
