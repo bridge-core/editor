@@ -48,10 +48,14 @@ import { SidebarManager } from '/@/components/Sidebar/Manager'
 import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
 import { InformationWindow } from './components/Windows/Common/Information/InformationWindow'
 
-// Only import service worker for non-Tauri builds
-if (!import.meta.env.VITE_IS_TAURI_APP) {
+if (import.meta.env.VITE_IS_TAURI_APP) {
+	// Import Tauri updater for native builds
+	import('/@/components/App/TauriUpdater')
+} else {
+	// Only import service worker for non-Tauri builds
 	import('/@/components/App/ServiceWorker')
 }
+
 export class App {
 	public static readonly windowState = new WindowState()
 	public static readonly installApp = new InstallApp()
