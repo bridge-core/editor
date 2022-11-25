@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-// use tauri::{Menu};
+use tauri::{Menu};
 
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -13,10 +13,10 @@ fn greet(name: &str) -> String {
 }
 
 fn main() {
-    // let menu = Menu::new();
+    let menu = Menu::os_default(&"bridge. v2");
 
     tauri::Builder::default()
-        // .menu(menu)
+        .menu(menu)
         .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
