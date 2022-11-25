@@ -52,7 +52,7 @@
 		},
 		"updater": {
 			"active": true,
-			"dialog": true,
+			"dialog": false,
 			"endpoints": [
 				"https://github.com/solvedDev/editor/releases/latest/download/latest.json"
 			],
