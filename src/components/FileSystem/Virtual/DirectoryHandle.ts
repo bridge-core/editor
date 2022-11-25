@@ -258,7 +258,8 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 				entry = new VirtualFileHandle(
 					this,
 					name,
-					initialData ?? new Uint8Array()
+					initialData ?? new Uint8Array(),
+					this.children !== undefined
 				)
 				await entry.setupDone.fired
 
