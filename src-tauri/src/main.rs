@@ -19,7 +19,7 @@ fn main() {
 
     tauri::Builder::default()
         .setup(|app| {
-            // `main` here is the window label; it is defined on the window creation or under `tauri.conf.json`
+            // `main` here is the window label; it is defined under `tauri.conf.json`
             let main_window = app.get_window("main").unwrap();
 
             // Try to set Discord rich presence
@@ -63,7 +63,7 @@ fn set_rich_presence() -> Result<DiscordIpcClient, Box<dyn std::error::Error>> {
         )
         .buttons(vec![
             activity::Button::new("Open Editor", "https://editor.bridge-core.app/"),
-            // activity::Button::new("Website", "https://bridge-core.app/"),
+            // activity::Button::new("Read More...", "https://bridge-core.app/"),
         ])
     )?;
 
