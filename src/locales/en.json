@@ -37,7 +37,11 @@
 			"description": "You can find the exported package here"
 		},
 		"experimentalGameplay": "Experimental Gameplay",
-		"textureLocation": "Texture Location"
+		"textureLocation": "Texture Location",
+		"reloadBridge": {
+			"title": "Reload bridge.",
+			"description": "Restart bridge. Any unsaved changes will be lost."
+		}
 	},
 	"openWith": {
 		"snowstorm": "Snowstorm",

@@ -82,7 +82,17 @@ export function setupToolsCategory(app: App) {
 	)
 
 	tools.addItem(new Divider())
-
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-folder-refresh-outline',
+			name: 'general.reloadBridge',
+			description: 'general.reloadBridge',
+			keyBinding: 'Ctrl + R',
+			onTrigger: () => {
+				location.reload()
+			},
+		})
+	)
 	tools.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.refreshProject',
