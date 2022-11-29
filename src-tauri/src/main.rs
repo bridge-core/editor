@@ -67,7 +67,7 @@ fn set_rich_presence() -> Result<DiscordIpcClient, Box<dyn std::error::Error>> {
     client.set_activity(activity::Activity::new()
         .state("Developing add-ons...")
         .assets(activity::Assets::new()
-            .large_image("logo_normal")
+            .large_image("logo_tile")
             .large_text("bridge. v2")
         )
         .timestamps(activity::Timestamps::new()
