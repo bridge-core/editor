@@ -5,16 +5,28 @@
 
 use tauri::{Menu, Manager};
 use discord_rich_presence::{activity, DiscordIpc, DiscordIpcClient};
+use std::process::Command;
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+async fn show_in_file_explorer(path: &str) -> Result<(), String> {
+    if cfg!(target_os = "windows") {
+        Command::new("explorer")
+            .args(["/select,", path]) // The comma after select is not a typo
+            .spawn()
+            .expect("Failed to open file explorer");
+    } else if cfg!(target_os = "macos") {
+        Command::new( "open" )
+            .args(["-R", path])
+            .spawn()
+            .expect("Failed to open finder");
+    } else {
+        panic!("Unsupported OS");
+    }
+
+    Ok(())
 }
 
 fn main() {
-    
-    
     let menu = Menu::os_default(&"bridge. v2");
 
     tauri::Builder::default()
@@ -41,7 +53,7 @@ fn main() {
             Ok(())
         })
         .menu(menu)
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![show_in_file_explorer])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
