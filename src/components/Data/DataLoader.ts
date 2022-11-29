@@ -6,9 +6,10 @@ import { FileSystem } from '../FileSystem/FileSystem'
 import { zipSize } from '/@/utils/app/dataPackage'
 import { whenIdle } from '/@/utils/whenIdle'
 import { get, set } from 'idb-keyval'
-import { IDBWrapper } from '/@/components/FileSystem/Virtual/IDB'
 import { compareVersions } from 'bridge-common-utils'
 import { version as appVersion } from '/@/utils/app/version'
+import { IndexedDbStore } from '../FileSystem/Virtual/Stores/IndexedDb'
+import { MemoryStore } from '../FileSystem/Virtual/Stores/Memory'
 
 export class DataLoader extends FileSystem {
 	_virtualFileSystem?: VirtualDirectoryHandle
@@ -54,9 +55,10 @@ export class DataLoader extends FileSystem {
 
 		// Create virtual filesystem
 		this._virtualFileSystem = new VirtualDirectoryHandle(
-			new IDBWrapper('data-fs'),
+			savedAllDataInIdb
+				? new IndexedDbStore('data-fs')
+				: new MemoryStore('data-fs'),
 			'bridgeFolder',
-			savedAllDataInIdb ? undefined : new Map(),
 			mayClearDb
 		)
 		await this._virtualFileSystem.setupDone.fired
@@ -119,7 +121,7 @@ export class DataLoader extends FileSystem {
 
 		if (this.isMainLoader && !forceDataDownload) {
 			whenIdle(async () => {
-				await this._virtualFileSystem!.moveToIdb()
+				// await this._virtualFileSystem!.moveToIdb()
 				await set('savedDataForVersion', appVersion)
 			})
 		}

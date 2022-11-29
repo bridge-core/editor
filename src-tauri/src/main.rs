@@ -63,9 +63,11 @@ fn main() {
 fn set_rich_presence() -> Result<DiscordIpcClient, Box<dyn std::error::Error>> {
     let mut client = DiscordIpcClient::new("1045743881393815552")?;
     
+    let state_str = "Developing add-ons...";
+
     client.connect()?;
     client.set_activity(activity::Activity::new()
-        .state("Developing add-ons...")
+        .state(state_str)
         .assets(activity::Assets::new()
             .large_image("logo_tile")
             .large_text("bridge. v2")

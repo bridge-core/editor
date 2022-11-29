@@ -44,4 +44,8 @@ export class Mutex {
 			listener()
 		}
 	}
+
+	hasListeners() {
+		return this.listeners.length > 0
+	}
 }

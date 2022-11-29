@@ -13,6 +13,7 @@ import {
 import { ConfirmationWindow } from '../Windows/Common/Confirm/ConfirmWindow'
 import { FileSystem } from './FileSystem'
 import { VirtualFileHandle } from './Virtual/FileHandle'
+import { IndexedDbStore } from './Virtual/Stores/IndexedDb'
 
 type TFileSystemSetupStatus = 'waiting' | 'userInteracted' | 'done'
 
@@ -73,7 +74,10 @@ export class FileSystemSetup {
 			// Only create virtual folder if we are not migrating away from the virtual file system
 			if (!isUpgradingVirtualFs) {
 				fileHandle = markRaw(
-					new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
+					new VirtualDirectoryHandle(
+						new IndexedDbStore(),
+						'bridgeFolder'
+					)
 				)
 				await fileHandle.setupDone.fired
 			}

@@ -1,4 +1,5 @@
 import { VirtualDirectoryHandle } from '../components/FileSystem/Virtual/DirectoryHandle'
+import { IndexedDbStore } from '../components/FileSystem/Virtual/Stores/IndexedDb'
 
 async function doesSupportWritable() {
 	const dirHandle = await navigator.storage.getDirectory()
@@ -21,7 +22,7 @@ export async function getStorageDirectory() {
 		typeof navigator.storage?.getDirectory !== 'function' ||
 		!(await doesSupportWritable())
 	) {
-		return new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
+		return new VirtualDirectoryHandle(new IndexedDbStore(), 'bridgeFolder')
 	}
 
 	return await navigator.storage.getDirectory()

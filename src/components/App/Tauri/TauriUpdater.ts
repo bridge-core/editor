@@ -1,4 +1,4 @@
-import { createNotification } from '../Notifications/create'
+import { createNotification } from '../../Notifications/create'
 import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
 import { relaunch } from '@tauri-apps/api/process'
 
@@ -22,6 +22,6 @@ checkUpdate()
 		}
 	})
 	.catch((err: any) => {
-		console.error(`Failed to check for update: ${err}`)
+		console.error(`[TauriUpdater] ${err}`)
 		return null
 	})

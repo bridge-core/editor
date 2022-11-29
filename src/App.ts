@@ -50,7 +50,7 @@ import { InformationWindow } from './components/Windows/Common/Information/Infor
 
 if (import.meta.env.VITE_IS_TAURI_APP) {
 	// Import Tauri updater for native builds
-	import('/@/components/App/TauriUpdater')
+	import('./components/App/Tauri/TauriUpdater')
 } else {
 	// Only import service worker for non-Tauri builds
 	import('/@/components/App/ServiceWorker')
@@ -197,6 +197,11 @@ export class App {
 	 */
 	static async main(appComponent: Vue) {
 		console.time('[APP] Ready')
+
+		// Tauri specific setup
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			await import('/@/components/App/Tauri/TauriSetup')
+		}
 
 		this._instance = markRaw(new App(appComponent))
 		this.instance.windows.loadingWindow.open()

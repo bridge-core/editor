@@ -2,32 +2,35 @@ import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import type { VirtualFileHandle } from './FileHandle'
 import { v4 as v4Uuid } from 'uuid'
 import { Signal } from '../../Common/Event/Signal'
-import { IDBWrapper } from './IDB'
+import { BaseStore } from './Stores/BaseStore'
+import { MemoryStore } from './Stores/Memory'
 
 export type VirtualHandle = VirtualDirectoryHandle | VirtualFileHandle
 
 export abstract class BaseVirtualHandle {
-	protected _idbWrapper: IDBWrapper | null = null
+	protected _baseStore: BaseStore | null = null
 	protected parent: VirtualDirectoryHandle | null = null
 	public readonly isVirtual = true
 	public abstract readonly kind: 'directory' | 'file'
 	public readonly setupDone = new Signal<void>()
 
-	abstract moveData(): any
-
 	constructor(
-		parent: VirtualDirectoryHandle | IDBWrapper | null,
+		parent: VirtualDirectoryHandle | BaseStore | null,
 		protected _name: string,
 		protected basePath: string[] = [],
 		public readonly uuid = v4Uuid()
 	) {
 		if (parent === null) {
-			this._idbWrapper = new IDBWrapper()
-		} else if (parent instanceof IDBWrapper) {
-			this._idbWrapper = parent
+			this._baseStore = new MemoryStore()
+		} else if (parent instanceof BaseStore) {
+			this._baseStore = parent
 		} else {
 			this.parent = parent
 		}
+	}
+
+	async setupStore() {
+		if (this._baseStore) await this._baseStore.setup()
 	}
 
 	protected get path(): string[] {
@@ -45,11 +48,11 @@ export abstract class BaseVirtualHandle {
 		if (this.path.length === 0) return this._name
 		return this.path.join('/')
 	}
-	protected get idbWrapper(): IDBWrapper {
-		if (this._idbWrapper === null) {
-			return this.parent!.idbWrapper
+	protected get baseStore(): BaseStore {
+		if (this._baseStore === null) {
+			return this.parent!.baseStore
 		}
-		return this._idbWrapper
+		return this._baseStore
 	}
 	abstract removeSelf(): Promise<void>
 

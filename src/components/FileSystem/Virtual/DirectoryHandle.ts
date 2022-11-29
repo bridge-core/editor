@@ -1,10 +1,9 @@
 import { VirtualHandle, BaseVirtualHandle } from './Handle'
 import { VirtualFileHandle } from './FileHandle'
 import { ISerializedDirectoryHandle } from './Comlink'
-import { IDBWrapper } from './IDB'
-import { GlobalMutex } from '/@/components/Common/GlobalMutex'
-
-const globalMutex = new GlobalMutex()
+import { BaseStore } from './Stores/BaseStore'
+import { IndexedDbStore } from './Stores/IndexedDb'
+import { MemoryStore } from './Stores/Memory'
 
 /**
  * A class that implements a virtual folder
@@ -20,163 +19,84 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	 */
 	public readonly isFile = false
 
-	get isDirectoryInMemory() {
-		return this.children !== undefined
-	}
 	async moveToIdb() {
-		const children = this.allInMemoryChildren()
+		if (!this._baseStore)
+			throw new Error(`Must call method on top-level directory`)
+		if (!(this._baseStore instanceof MemoryStore))
+			throw new Error(`Must call method on memory store`)
 
-		this.idbWrapper.setMany(
-			children.map((child) => [child.idbKey, child.moveData()])
-		)
-	}
-	moveData() {
-		if (!this.children)
-			throw new Error(
-				`No directory data to move to IDB for directory "${this.name}"`
-			)
-
-		const children = [...this.children.values()].map((child) => child.name)
-		this.children = undefined
-
-		return children
-	}
-	protected allInMemoryChildren() {
-		if (!this.children) return []
-
-		// Recursively get all in memory children
-		const children: BaseVirtualHandle[] = [this]
-
-		for (const child of this.children.values()) {
-			if (child instanceof VirtualDirectoryHandle) {
-				if (child.isDirectoryInMemory)
-					children.push(...child.allInMemoryChildren())
-			} else {
-				if (child.isFileStoredInMemory) children.push(child)
-			}
-		}
-
-		return children
+		this._baseStore = await this._baseStore.toIdb()
 	}
 
 	constructor(
-		parent: VirtualDirectoryHandle | IDBWrapper | null,
+		parent: VirtualDirectoryHandle | BaseStore | null,
 		name: string,
-		protected children?: Map<string, VirtualHandle> | undefined,
 		clearDB = false,
 		path: string[] = []
 	) {
 		super(parent, name, path)
 
-		this.updateIdb(clearDB)
-	}
-	/**
-	 * Acquire exclusive access to this directory
-	 */
-	async lockAccess() {
-		await globalMutex.lock(this.idbKey)
-	}
-	/**
-	 * Release exclusive access to this directory
-	 */
-	unlockAccess() {
-		globalMutex.unlock(this.idbKey)
+		this.setup(clearDB)
 	}
 
-	async updateIdb(clearDB = false) {
-		await this.lockAccess()
+	async setup(clearDB = false) {
+		await this.setupStore()
+
 		if (clearDB) {
-			await this.idbWrapper.clear()
+			if (!(this.baseStore instanceof IndexedDbStore))
+				throw new Error('Cannot clear DB for non-IDB store')
+
+			await this.baseStore.clear()
 		}
 
-		if (!this.children && !(await this.hasChildren()))
-			await this.idbWrapper.set(this.idbKey, [])
+		await this.baseStore.createDirectory(this.idbKey)
 
 		this.setupDone.dispatch()
-		this.unlockAccess()
 	}
 
-	protected async addChild(child: VirtualHandle) {
-		if (this.children) this.children.set(child.name, child)
-		else
-			await this.idbWrapper.set(this.idbKey, [
-				...new Set([...(await this.fromIdb()), child.name]),
-			])
-	}
-	protected async fromIdb() {
-		return (await this.idbWrapper.get<string[]>(this.idbKey)) ?? []
+	protected async fromStore() {
+		return (await this.baseStore.getDirectoryEntries(this.idbKey)) ?? []
 	}
 
 	protected async getChildren() {
-		if (this.children) return [...this.children.values()]
-		else
-			return <VirtualHandle[]>(
-				(
-					await Promise.all(
-						(
-							await this.fromIdb()
-						).map((name) => this.getChild(name))
-					)
-				).filter((child) => child !== undefined)
-			)
+		return <VirtualHandle[]>(
+			(
+				await Promise.all(
+					(await this.fromStore()).map((name) => this.getChild(name))
+				)
+			).filter((child) => child !== undefined)
+		)
 	}
 	protected getChildPath(childName: string) {
 		return this.path.concat(childName).join('/')
 	}
 	protected async getChild(childName: string) {
-		if (this.children) return this.children.get(childName)
+		const type = await this.baseStore.typeOf(this.getChildPath(childName))
 
-		if (await this.has(childName)) {
-			const data = await this.idbWrapper.get(this.getChildPath(childName))
-
-			if (data instanceof Uint8Array) {
-				return new VirtualFileHandle(this, childName)
-			} else if (Array.isArray(data)) {
-				return new VirtualDirectoryHandle(this, childName)
-			} else {
-				// File/folder was deleted
-			}
+		if (type === 'file') {
+			return new VirtualFileHandle(this, childName)
+		} else if (type === 'directory') {
+			return new VirtualDirectoryHandle(this, childName)
+		} else if (type === null) {
+			return undefined
+		} else {
+			throw new Error(`Unknown type ${type}`)
 		}
 	}
 
-	/**
-	 * @deprecated THIS IS NOT A PUBLIC API
-	 *
-	 * @param childName
-	 * @param lockMutex
-	 */
-	async deleteChild(childName: string, lockMutex = true) {
-		if (lockMutex) await this.lockAccess()
-
-		if (this.children) this.children.delete(childName)
-		else
-			await this.idbWrapper.set(
-				this.idbKey,
-				(await this.fromIdb()).filter((name) => name !== childName)
-			)
-
-		if (lockMutex) this.unlockAccess()
-	}
-
 	protected async hasChildren() {
-		if (this.children) return this.children.size > 0
-		else return (await this.fromIdb()).length > 0
+		return (await this.fromStore()).length > 0
 	}
 	protected async has(childName: string) {
-		if (this.children) return this.children.has(childName)
-		else return (await this.fromIdb()).includes(childName)
+		return (await this.fromStore()).includes(childName)
 	}
 	serialize(): ISerializedDirectoryHandle {
 		return {
-			idbWrapper: this.idbWrapper.storeName,
+			// TODO: Serializing base store
+			// idbWrapper: this.idbWrapper.storeName,
 			kind: 'directory',
 			name: this.name,
 			path: this.path,
-			children: this.children
-				? [...this.children.values()].map((child: VirtualHandle) =>
-						child.serialize()
-				  )
-				: undefined,
 		}
 	}
 	static deserialize(
@@ -184,21 +104,23 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		parent: VirtualDirectoryHandle | null = null
 	) {
 		const dir = new VirtualDirectoryHandle(
-			!parent ? new IDBWrapper(data.idbWrapper) : parent,
+			// TODO: Deserializing base store
+			// !parent ? new IDBWrapper(data.idbWrapper) : parent,
+			null,
 			data.name,
-			undefined,
 			false,
 			data.path
 		)
 
-		for (const child of data.children ?? []) {
-			if (child.kind === 'directory')
-				dir.addChild(VirtualDirectoryHandle.deserialize(child, dir))
-			else
-				dir.addChild(
-					new VirtualFileHandle(dir, child.name, child.fileData)
-				)
-		}
+		// TODO: Deserialize children if necessary
+		// for (const child of data.children ?? []) {
+		// 	if (child.kind === 'directory')
+		// 		dir.addChild(VirtualDirectoryHandle.deserialize(child, dir))
+		// 	else
+		// 		dir.addChild(
+		// 			new VirtualFileHandle(dir, child.name, child.fileData)
+		// 		)
+		// }
 
 		return dir
 	}
@@ -207,34 +129,22 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		name: string,
 		{ create }: { create?: boolean } = {}
 	) {
-		await this.lockAccess()
-
 		let entry = await this.getChild(name)
 
 		if (entry && entry.kind === 'file') {
-			this.unlockAccess()
 			throw new Error(
 				`TypeMismatch: Expected directory with name "${name}", found file`
 			)
 		} else if (!entry) {
 			if (create) {
-				entry = new VirtualDirectoryHandle(
-					this,
-					name,
-					this.children ? new Map() : undefined
-				)
+				entry = new VirtualDirectoryHandle(this, name)
 				await entry.setupDone.fired
-
-				await this.addChild(entry)
 			} else {
-				this.unlockAccess()
 				throw new Error(
-					`No file with the name ${name} exists in this folder`
+					`No directory with the name ${name} exists in this folder`
 				)
 			}
 		}
-
-		this.unlockAccess()
 
 		return <VirtualDirectoryHandle>entry
 	}
@@ -245,11 +155,9 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			initialData,
 		}: { create?: boolean; initialData?: Uint8Array } = {}
 	) {
-		await this.lockAccess()
 		let entry = await this.getChild(name)
 
 		if (entry && entry.kind === 'directory') {
-			this.unlockAccess()
 			throw new Error(
 				`TypeMismatch: Expected file with name "${name}", found directory`
 			)
@@ -258,21 +166,15 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 				entry = new VirtualFileHandle(
 					this,
 					name,
-					initialData ?? new Uint8Array(),
-					this.children !== undefined
+					initialData ?? new Uint8Array()
 				)
 				await entry.setupDone.fired
-
-				await this.addChild(entry)
 			} else {
-				this.unlockAccess()
 				throw new Error(
 					`No file with the name ${name} exists in this folder`
 				)
 			}
 		}
-
-		this.unlockAccess()
 
 		return <VirtualFileHandle>entry
 	}
@@ -280,12 +182,9 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		name: string,
 		{ recursive }: { recursive?: boolean } = {}
 	) {
-		await this.lockAccess()
-
 		const entry = await this.getChild(name)
 
 		if (!entry) {
-			this.unlockAccess()
 			throw new Error(
 				`No entry with the name ${name} exists in this folder`
 			)
@@ -294,16 +193,12 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			!recursive &&
 			(await (<VirtualDirectoryHandle>entry).hasChildren())
 		) {
-			this.unlockAccess()
 			throw new Error(
 				`Cannot remove directory with children without "recursive" option being set to true`
 			)
 		}
 
-		await entry.removeSelf(true, false)
-
-		await this.deleteChild(name, false)
-		this.unlockAccess()
+		await entry.removeSelf()
 	}
 	async resolve(possibleDescendant: VirtualHandle) {
 		const path: string[] = [possibleDescendant.name]
@@ -317,19 +212,14 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		if (current === null) return null
 		return path
 	}
-	async removeSelf(isFirst = true, lockMutex = true) {
-		if (lockMutex) await this.lockAccess()
-
+	async removeSelf() {
 		const children = await this.getChildren()
 
 		for (const child of children) {
-			await child.removeSelf(false)
+			await child.removeSelf()
 		}
 
-		if (!this.children) await this.idbWrapper.del(this.idbKey)
-		if (this.parent && isFirst) this.parent.deleteChild(this.name)
-
-		if (lockMutex) this.unlockAccess()
+		await this.baseStore.unlink(this.idbKey)
 	}
 
 	[Symbol.asyncIterator]() {
@@ -337,10 +227,8 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	}
 
 	keys() {
-		if (this.children) return this.children.keys()
-
 		return {
-			childNamesPromise: this.fromIdb(),
+			childNamesPromise: this.fromStore(),
 
 			[Symbol.asyncIterator]() {
 				return <
@@ -367,8 +255,6 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		}
 	}
 	entries() {
-		if (this.children) return this.children.entries()
-
 		return {
 			childrenPromise: this.getChildren(),
 
@@ -400,8 +286,6 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		}
 	}
 	values() {
-		if (this.children) return this.children.values()
-
 		return {
 			childrenPromise: this.getChildren(),
 

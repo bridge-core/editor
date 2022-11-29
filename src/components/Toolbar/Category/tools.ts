@@ -85,8 +85,8 @@ export function setupToolsCategory(app: App) {
 	tools.addItem(
 		app.actionManager.create({
 			icon: 'mdi-folder-refresh-outline',
-			name: 'general.reloadBridge',
-			description: 'general.reloadBridge',
+			name: 'general.reloadBridge.name',
+			description: 'general.reloadBridge.description',
 			keyBinding: 'Ctrl + R',
 			onTrigger: () => {
 				location.reload()

@@ -39,7 +39,7 @@
 		"experimentalGameplay": "Experimental Gameplay",
 		"textureLocation": "Texture Location",
 		"reloadBridge": {
-			"title": "Reload bridge.",
+			"name": "Reload bridge.",
 			"description": "Restart bridge. Any unsaved changes will be lost."
 		}
 	},
