@@ -121,7 +121,7 @@ export class DataLoader extends FileSystem {
 
 		if (this.isMainLoader && !forceDataDownload) {
 			whenIdle(async () => {
-				// await this._virtualFileSystem!.moveToIdb()
+				await this._virtualFileSystem!.moveToIdb()
 				await set('savedDataForVersion', appVersion)
 			})
 		}

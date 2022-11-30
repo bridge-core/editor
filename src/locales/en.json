@@ -185,6 +185,10 @@
 			"name": "Reveal Path",
 			"description": "Reveals the location of a file or folder"
 		},
+		"revealInFileExplorer": {
+			"name": "Reveal in File Explorer",
+			"description": "Reveals the location of a file or folder in the file explorer"
+		},
 		"createFile": {
 			"name": "Create File",
 			"description": "Create a new file"

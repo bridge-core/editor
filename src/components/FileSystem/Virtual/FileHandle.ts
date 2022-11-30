@@ -4,6 +4,7 @@ import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
 import { BaseStore } from './Stores/BaseStore'
 import { deserializeStore } from './Stores/Deserialize'
+import { IndexedDbStore } from './Stores/IndexedDb'
 
 /**
  * A class that implements a virtual file
@@ -27,23 +28,25 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	) {
 		super(parent, name, path)
 
-		if (data) this.setup(data)
-		else this.setupDone.dispatch()
+		this.setup(data)
 	}
-	protected async setup(fileData: Uint8Array) {
+	protected async setup(fileData?: Uint8Array) {
 		await this.setupStore()
 
 		// We only need to write data files from the main thread, web workers can just load the already written data from the main thread
-		if (!globalThis.document) return
+		if (!globalThis.document && this.baseStore instanceof IndexedDbStore) {
+			this.setupDone.dispatch()
+			return
+		}
 
-		await this.baseStore.writeFile(this.idbKey, fileData)
+		if (fileData) await this.baseStore.writeFile(this.idbKey, fileData)
 
 		this.setupDone.dispatch()
 	}
 
 	serialize(): ISerializedFileHandle {
 		let baseStore: BaseStore | undefined = undefined
-		if (this._baseStore) baseStore = this._baseStore.serialize()
+		if (this.baseStore) baseStore = this.baseStore.serialize()
 
 		return {
 			baseStore,

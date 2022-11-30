@@ -5,6 +5,7 @@ import { BaseStore } from './Stores/BaseStore'
 import { IndexedDbStore } from './Stores/IndexedDb'
 import { MemoryStore } from './Stores/Memory'
 import { deserializeStore } from './Stores/Deserialize'
+import { TauriFsStore } from './Stores/TauriFs'
 
 /**
  * A class that implements a virtual folder
@@ -50,7 +51,11 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			await this.baseStore.clear()
 		}
 
-		await this.baseStore.createDirectory(this.idbKey)
+		/**
+		 * TauriFsStore should not create the base directory because that'll lead to duplicated directories
+		 */
+		if (this.idbKey !== '')
+			await this.baseStore.createDirectory(this.idbKey)
 
 		this.setupDone.dispatch()
 	}
@@ -92,19 +97,17 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		return (await this.fromStore()).includes(childName)
 	}
 	serialize(): ISerializedDirectoryHandle {
+		let baseStore: BaseStore | undefined = undefined
+		if (this.baseStore) baseStore = this.baseStore.serialize()
+
 		return {
-			baseStore: this._baseStore
-				? this._baseStore.serialize()
-				: undefined,
+			baseStore,
 			kind: 'directory',
 			name: this.name,
 			path: this.path,
 		}
 	}
-	static deserialize(
-		data: ISerializedDirectoryHandle,
-		parent: VirtualDirectoryHandle | null = null
-	) {
+	static deserialize(data: ISerializedDirectoryHandle) {
 		let baseStore: BaseStore | null = null
 
 		if (data.baseStore) baseStore = deserializeStore(data.baseStore)
@@ -115,16 +118,6 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			false,
 			data.path
 		)
-
-		// TODO: Deserialize children if necessary
-		// for (const child of data.children ?? []) {
-		// 	if (child.kind === 'directory')
-		// 		dir.addChild(VirtualDirectoryHandle.deserialize(child, dir))
-		// 	else
-		// 		dir.addChild(
-		// 			new VirtualFileHandle(dir, child.name, child.fileData)
-		// 		)
-		// }
 
 		return dir
 	}
@@ -145,7 +138,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 				await entry.setupDone.fired
 			} else {
 				throw new Error(
-					`No directory with the name ${name} exists in this folder`
+					`No directory with the name "${name}" exists in this folder`
 				)
 			}
 		}
@@ -175,7 +168,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 				await entry.setupDone.fired
 			} else {
 				throw new Error(
-					`No file with the name ${name} exists in this folder`
+					`No file with the name "${name}" exists in this folder`
 				)
 			}
 		}
@@ -190,7 +183,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 		if (!entry) {
 			throw new Error(
-				`No entry with the name ${name} exists in this folder`
+				`No entry with the name "${name}" exists in this folder`
 			)
 		} else if (
 			entry.kind === 'directory' &&

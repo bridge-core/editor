@@ -50,9 +50,9 @@ export class FileSystem extends Signal<void> {
 				current = await current.getDirectoryHandle(folder, {
 					create: createOnce || create,
 				})
-			} catch {
+			} catch (err) {
 				throw new Error(
-					`Failed to access "${path}": Directory does not exist`
+					`Failed to access "${path}": Directory does not exist: ${err}`
 				)
 			}
 

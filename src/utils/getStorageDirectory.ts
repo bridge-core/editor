@@ -18,6 +18,18 @@ async function doesSupportWritable() {
 }
 
 export async function getStorageDirectory() {
+	if (import.meta.env.VITE_IS_TAURI_APP) {
+		const { TauriFsStore } = await import(
+			'/@/components/FileSystem/Virtual/Stores/TauriFs'
+		)
+
+		return new VirtualDirectoryHandle(
+			new TauriFsStore('bridge'),
+			'bridge',
+			false
+		)
+	}
+
 	if (
 		typeof navigator.storage?.getDirectory !== 'function' ||
 		!(await doesSupportWritable())

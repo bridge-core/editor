@@ -130,7 +130,7 @@ export class ProjectManager extends Signal<void> {
 		// Update stored projects in the background (don't await it)
 		if (isBridgeFolderSetup) this.storeProjects(undefined, true)
 		// Create a placeholder project (virtual project)
-		else await this.createVirtualProject()
+		await this.createVirtualProject()
 
 		this.dispatch()
 	}
@@ -217,7 +217,18 @@ export class ProjectManager extends Signal<void> {
 	}
 	async selectLastProject() {
 		await this.fired
-		if (isUsingFileSystemPolyfill.value) {
+		/**
+		 * We can select the last selected project if the user is...
+		 *
+		 * 1. Not using a Tauri native build
+		 * 2. Using our file system polyfill
+		 *
+		 * This is because this variant of bridge. only supports loading one project at once
+		 */
+		if (
+			!import.meta.env.VITE_IS_TAURI_APP &&
+			isUsingFileSystemPolyfill.value
+		) {
 			const selectedProject = await idbGet('selectedProject')
 			let didSelectProject = false
 			if (typeof selectedProject === 'string')

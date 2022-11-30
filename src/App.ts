@@ -38,7 +38,6 @@ import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { PersistentNotification } from '/@/components/Notifications/PersistentNotification'
 import { version as appVersion } from '/@/utils/app/version'
 import { platform } from '/@/utils/os'
-import { virtualProjectName } from '/@/components/Projects/Project/Project'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { getStorageDirectory } from '/@/utils/getStorageDirectory'
 import { FolderImportManager } from '/@/components/ImportFolder/Manager'
@@ -209,6 +208,9 @@ export class App {
 		await this.instance.beforeStartUp()
 
 		this.instance.fileSystem.setup(await getStorageDirectory())
+		// TauriFs env -> bridge. folder is the same as getStorageDirectory()
+		if (import.meta.env.VITE_IS_TAURI_APP)
+			this.instance.bridgeFolderSetup.dispatch()
 
 		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {

@@ -51,12 +51,16 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 			parentChilds = []
 		}
 
-		await this.idb.set(parentDir, [...parentChilds, childName])
+		await this.idb.set(parentDir, [
+			...new Set([...parentChilds, childName]),
+		])
 
 		this.unlockAccess(parentDir)
 	}
 
 	async createDirectory(path: string) {
+		if (path === '') return
+
 		const dirExists = await this.idb.has(path)
 		if (dirExists) return // No work to do, directory already exists
 

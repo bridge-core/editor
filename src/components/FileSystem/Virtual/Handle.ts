@@ -4,6 +4,7 @@ import { v4 as v4Uuid } from 'uuid'
 import { Signal } from '../../Common/Event/Signal'
 import { BaseStore } from './Stores/BaseStore'
 import { MemoryStore } from './Stores/Memory'
+import { TauriFsStore } from './Stores/TauriFs'
 
 export type VirtualHandle = VirtualDirectoryHandle | VirtualFileHandle
 
@@ -13,12 +14,12 @@ export abstract class BaseVirtualHandle {
 	public readonly isVirtual = true
 	public abstract readonly kind: 'directory' | 'file'
 	public readonly setupDone = new Signal<void>()
+	protected includeSelfInPath = true
 
 	constructor(
 		parent: VirtualDirectoryHandle | BaseStore | null,
 		protected _name: string,
-		protected basePath: string[] = [],
-		public readonly uuid = v4Uuid()
+		protected basePath: string[] = []
 	) {
 		if (parent === null) {
 			this._baseStore = new MemoryStore()
@@ -26,6 +27,12 @@ export abstract class BaseVirtualHandle {
 			this._baseStore = parent
 		} else {
 			this.parent = parent
+		}
+
+		/**
+		 * TauriFs should not include self in path for top-level directory handle
+		 */ if (this._baseStore instanceof TauriFsStore) {
+			this.includeSelfInPath = false
 		}
 	}
 
@@ -45,7 +52,8 @@ export abstract class BaseVirtualHandle {
 		return this.path.length > 1
 	}
 	get idbKey() {
-		if (this.path.length === 0) return this._name
+		if (this.path.length === 0)
+			return this.includeSelfInPath ? this.name : ''
 		return this.path.join('/')
 	}
 	protected get baseStore(): BaseStore {

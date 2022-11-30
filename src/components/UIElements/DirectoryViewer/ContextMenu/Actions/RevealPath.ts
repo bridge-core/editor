@@ -3,7 +3,7 @@ import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/Bas
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 
 export const RevealFilePathAction = (baseWrapper: BaseWrapper<any>) =>
-	isUsingFileSystemPolyfill.value
+	isUsingFileSystemPolyfill.value || import.meta.env.VITE_IS_TAURI_APP
 		? null
 		: {
 				icon:

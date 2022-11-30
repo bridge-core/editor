@@ -38,7 +38,9 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 
 	async setup() {
 		if (this.baseDirectory)
-			await createDir(this.baseDirectory, { dir: this.dir })
+			await createDir(this.baseDirectory, { dir: this.dir }).catch(() => {
+				// Ignore error if directory already exists
+			})
 	}
 
 	resolvePath(path: string) {
@@ -81,11 +83,11 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 		try {
 			await readDir(this.resolvePath(path), { dir: this.dir })
 			return 'directory'
-		} catch {
+		} catch (err) {
 			try {
 				await readBinaryFile(this.resolvePath(path), { dir: this.dir })
 				return 'file'
-			} catch {
+			} catch (err) {
 				return null
 			}
 		}

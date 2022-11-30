@@ -8,7 +8,7 @@ use discord_rich_presence::{activity, DiscordIpc, DiscordIpcClient};
 use std::process::Command;
 
 #[tauri::command]
-async fn show_in_file_explorer(path: &str) -> Result<(), String> {
+async fn reveal_in_file_explorer(path: &str) -> Result<(), String> {
     if cfg!(target_os = "windows") {
         Command::new("explorer")
             .args(["/select,", path]) // The comma after select is not a typo
@@ -53,7 +53,7 @@ fn main() {
             Ok(())
         })
         .menu(menu)
-        .invoke_handler(tauri::generate_handler![show_in_file_explorer])
+        .invoke_handler(tauri::generate_handler![reveal_in_file_explorer])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
