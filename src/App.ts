@@ -285,7 +285,10 @@ export class App {
 		}
 
 		// Warn about saving projects
-		if (isUsingFileSystemPolyfill.value) {
+		if (
+			isUsingFileSystemPolyfill.value &&
+			!import.meta.env.VITE_IS_TAURI_APP
+		) {
 			const saveWarning = new PersistentNotification({
 				id: 'bridge-save-warning',
 				icon: 'mdi-alert-circle-outline',
