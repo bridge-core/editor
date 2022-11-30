@@ -3,6 +3,7 @@ import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
 import { BaseStore } from './Stores/BaseStore'
+import { deserializeStore } from './Stores/Deserialize'
 
 /**
  * A class that implements a virtual file
@@ -41,19 +42,22 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 	}
 
 	serialize(): ISerializedFileHandle {
+		let baseStore: BaseStore | undefined = undefined
+		if (this._baseStore) baseStore = this._baseStore.serialize()
+
 		return {
-			// TODO: Serialize base store
-			// idbWrapper: this.idbWrapper.storeName,
+			baseStore,
 			kind: 'file',
 			name: this.name,
 			path: this.path,
 		}
 	}
 	static deserialize(data: ISerializedFileHandle) {
+		let baseStore: BaseStore | null = null
+		if (data.baseStore) baseStore = deserializeStore(data.baseStore)
+
 		return new VirtualFileHandle(
-			// TODO: Deserialize base store
-			// data.idbWrapper ? new IDBWrapper(data.idbWrapper) : null,
-			null,
+			baseStore,
 			data.name,
 			data.fileData,
 			data.path

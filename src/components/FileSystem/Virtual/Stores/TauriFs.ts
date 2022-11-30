@@ -8,14 +8,32 @@ import {
 	BaseDirectory,
 } from '@tauri-apps/api/fs'
 import { join } from '/@/utils/path'
-import { BaseStore } from './BaseStore'
+import { BaseStore, type TStoreType } from './BaseStore'
 
-export class TauriFsStore extends BaseStore {
+export interface ITauriFsSerializedData {
+	baseDirectory?: string
+	dir: BaseDirectory
+}
+
+export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
+	public readonly type = 'tauriFsStore'
+
 	constructor(
 		protected baseDirectory?: string,
 		protected dir = BaseDirectory.AppLocalData
 	) {
 		super()
+	}
+
+	serialize() {
+		return <const>{
+			type: this.type,
+			baseDirectory: this.baseDirectory,
+			dir: this.dir,
+		}
+	}
+	static deserialize(data: ITauriFsSerializedData & { type: TStoreType }) {
+		return new TauriFsStore(data.baseDirectory, data.dir)
 	}
 
 	async setup() {

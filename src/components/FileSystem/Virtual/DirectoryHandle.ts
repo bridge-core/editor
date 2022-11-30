@@ -4,6 +4,7 @@ import { ISerializedDirectoryHandle } from './Comlink'
 import { BaseStore } from './Stores/BaseStore'
 import { IndexedDbStore } from './Stores/IndexedDb'
 import { MemoryStore } from './Stores/Memory'
+import { deserializeStore } from './Stores/Deserialize'
 
 /**
  * A class that implements a virtual folder
@@ -92,8 +93,9 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	}
 	serialize(): ISerializedDirectoryHandle {
 		return {
-			// TODO: Serializing base store
-			// idbWrapper: this.idbWrapper.storeName,
+			baseStore: this._baseStore
+				? this._baseStore.serialize()
+				: undefined,
 			kind: 'directory',
 			name: this.name,
 			path: this.path,
@@ -103,10 +105,12 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		data: ISerializedDirectoryHandle,
 		parent: VirtualDirectoryHandle | null = null
 	) {
+		let baseStore: BaseStore | null = null
+
+		if (data.baseStore) baseStore = deserializeStore(data.baseStore)
+
 		const dir = new VirtualDirectoryHandle(
-			// TODO: Deserializing base store
-			// !parent ? new IDBWrapper(data.idbWrapper) : parent,
-			null,
+			baseStore,
 			data.name,
 			false,
 			data.path

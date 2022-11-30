@@ -3,14 +3,23 @@ export interface IFileData {
 	data: Uint8Array
 }
 
+export type TStoreType = 'idbStore' | 'memoryStore' | 'tauriFsStore'
+
 /**
  * Base implementation of a file system backing store that can be used by our file system access polyfill
  */
-export abstract class BaseStore {
+export abstract class BaseStore<T = any> {
+	public abstract readonly type: TStoreType
+
 	/**
 	 * Any async setup that needs to be done before the store can be used
 	 */
 	async setup() {}
+
+	abstract serialize(): T & { type: TStoreType }
+	static deserialize(data: any & { type: TStoreType }): BaseStore {
+		throw new Error('BaseStore deserialization not implemented')
+	}
 
 	/**
 	 * Create directory

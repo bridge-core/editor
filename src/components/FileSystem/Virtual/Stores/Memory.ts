@@ -1,11 +1,18 @@
 import { IDBWrapper } from '../IDB'
-import { IndexedDbStore } from './IndexedDb'
+import { TStoreType } from './BaseStore'
+import { IIndexedDbSerializedData, IndexedDbStore } from './IndexedDb'
 
 export class MemoryDb extends IDBWrapper {
-	protected _store = new Map<IDBValidKey, any>()
+	public readonly type = 'memoryStore'
+	protected _store: Map<IDBValidKey, any>
 
-	constructor(public readonly storeName: string = 'virtual-fs') {
+	constructor(
+		public readonly storeName: string = 'virtual-fs',
+		mapData?: [IDBValidKey, any][]
+	) {
 		super(storeName)
+
+		this._store = new Map(mapData)
 	}
 
 	async set(key: IDBValidKey, value: any) {
@@ -38,6 +45,9 @@ export class MemoryDb extends IDBWrapper {
 	async keys() {
 		return [...this._store.keys()]
 	}
+	entries() {
+		return this._store.entries()
+	}
 
 	async toIdb() {
 		await super.setMany([...this._store.entries()])
@@ -48,9 +58,20 @@ export class MemoryDb extends IDBWrapper {
 export class MemoryStore extends IndexedDbStore {
 	protected idb: MemoryDb
 
-	constructor(storeName?: string) {
+	constructor(storeName?: string, mapData?: [IDBValidKey, any][]) {
 		super(storeName)
-		this.idb = new MemoryDb(storeName)
+		this.idb = new MemoryDb(storeName, mapData)
+	}
+
+	serialize() {
+		return <const>{
+			type: this.type,
+			storeName: this.idb.storeName,
+			mapData: [...this.idb.entries()],
+		}
+	}
+	static deserialize(data: IIndexedDbSerializedData & { type: TStoreType }) {
+		return new MemoryStore(data.storeName, data.mapData)
 	}
 
 	toIdb() {

@@ -1,14 +1,30 @@
 import { IDBWrapper } from '../IDB'
-import { BaseStore, IFileData } from './BaseStore'
+import { BaseStore, IFileData, TStoreType } from './BaseStore'
 import { GlobalMutex } from '/@/components/Common/GlobalMutex'
 
-export class IndexedDbStore extends BaseStore {
+export interface IIndexedDbSerializedData {
+	storeName?: string
+	mapData?: [string, any][]
+}
+
+export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
+	public readonly type = 'idbStore'
 	protected idb: IDBWrapper
 	protected globalMutex = new GlobalMutex()
 
 	constructor(storeName?: string) {
 		super()
 		this.idb = new IDBWrapper(storeName)
+	}
+
+	serialize() {
+		return <const>{
+			type: this.type,
+			storeName: this.idb.storeName,
+		}
+	}
+	static deserialize(data: IIndexedDbSerializedData & { type: TStoreType }) {
+		return new IndexedDbStore(data.storeName)
 	}
 
 	lockAccess(path: string) {
@@ -22,7 +38,7 @@ export class IndexedDbStore extends BaseStore {
 		return this.idb.clear()
 	}
 
-	async addChild(parentDir: string, childName: string) {
+	protected async addChild(parentDir: string, childName: string) {
 		// If parent directory is root directory, we don't need to manually add a child entry
 		if (parentDir === '') return
 
