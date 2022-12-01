@@ -12,6 +12,11 @@
 			<v-icon class="mr-2">mdi-folder-sync-outline</v-icon>
 			{{ t('comMojang.linkFolder') }}
 		</v-btn>
+
+		<!-- TODO: Remove debug display -->
+		<span v-if="isTauriBuild">
+			{{ path }}
+		</span>
 	</div>
 </template>
 
@@ -32,7 +37,17 @@ export default {
 	data: () => ({
 		isTauriBuild: import.meta.env.VITE_IS_TAURI_APP,
 		isLoading: false,
+		path: null,
 	}),
+	mounted() {
+		if (!import.meta.env.VITE_IS_TAURI_APP) return
+
+		App.getApp().then((app) => {
+			this.path = app.comMojang.fileSystem.baseDirectory
+				.getBaseStore()
+				.getBaseDirectory()
+		})
+	},
 	methods: {
 		async setOutputFolder() {
 			this.isLoading = true
