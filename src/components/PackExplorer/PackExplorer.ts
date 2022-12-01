@@ -114,7 +114,10 @@ export class PackExplorer extends SidebarContent {
 			)
 		}
 
-		if (isUsingFileSystemPolyfill.value) {
+		if (
+			!import.meta.env.VITE_IS_TAURI_APP &&
+			isUsingFileSystemPolyfill.value
+		) {
 			this.actions.push(
 				new SidebarAction({
 					icon: 'mdi-content-save-outline',
