@@ -2,11 +2,15 @@
 
 import { WindowControlsOverlayMixin } from './WindowControlsOverlay'
 import { isInFullScreen } from '/@/components/TabSystem/TabContextMenu/Fullscreen'
+import { platform } from '/@/utils/os'
 
 export const AppToolbarHeightMixin = {
 	mixins: [WindowControlsOverlayMixin],
 	data: () => ({
-		toolbarPaddingLeft: import.meta.env.VITE_IS_TAURI_APP ? `70px` : `0px`,
+		toolbarPaddingLeft:
+			import.meta.env.VITE_IS_TAURI_APP && platform() === 'darwin'
+				? `70px`
+				: `0px`,
 	}),
 	computed: {
 		appToolbarHeight() {
