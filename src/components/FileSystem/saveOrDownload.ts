@@ -4,13 +4,22 @@ import { InformationWindow } from '../Windows/Common/Information/InformationWind
 import { FileSystem } from './FileSystem'
 import { isUsingFileSystemPolyfill, isUsingOriginPrivateFs } from './Polyfill'
 import { App } from '/@/App'
-import { basename, extname } from '/@/utils/path'
+import { basename, extname, join } from '/@/utils/path'
+import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
 
 export async function saveOrDownload(
 	filePath: string,
 	fileData: Uint8Array,
 	fileSystem: FileSystem
 ) {
+	if (
+		import.meta.env.VITE_IS_TAURI_APP ||
+		!isUsingOriginPrivateFs ||
+		isUsingFileSystemPolyfill.value
+	) {
+		await fileSystem.writeFile(filePath, fileData)
+	}
+
 	const notification = createNotification({
 		icon: 'mdi-download',
 		color: 'success',
@@ -20,7 +29,13 @@ export async function saveOrDownload(
 		onClick: async () => {
 			const app = await App.getApp()
 
-			if (
+			if (import.meta.env.VITE_IS_TAURI_APP) {
+				const { appLocalDataDir } = await import('@tauri-apps/api/path')
+
+				revealInFileExplorer(
+					join(await appLocalDataDir(), 'bridge', filePath)
+				)
+			} else if (
 				app.project.isLocal ||
 				isUsingOriginPrivateFs ||
 				isUsingFileSystemPolyfill.value
@@ -37,10 +52,6 @@ export async function saveOrDownload(
 			notification.dispose()
 		},
 	})
-
-	if (!isUsingOriginPrivateFs || isUsingFileSystemPolyfill.value) {
-		await fileSystem.writeFile(filePath, fileData)
-	}
 }
 
 const knownExtensions = new Set([
