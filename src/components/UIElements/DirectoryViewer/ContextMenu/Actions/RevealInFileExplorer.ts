@@ -1,29 +1,20 @@
-import { invoke } from '@tauri-apps/api'
 import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/BaseWrapper'
-import { join } from '/@/utils/path'
-import { appLocalDataDir } from '@tauri-apps/api/path'
+import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
 
-export const RevealInFileExplorer = (baseWrapper: BaseWrapper<any>) =>
-	import.meta.env.VITE_IS_TAURI_APP
-		? {
-				icon:
-					baseWrapper.kind === 'directory'
-						? 'mdi-folder-marker-outline'
-						: 'mdi-file-marker-outline',
-				name: 'actions.revealInFileExplorer.name',
-				onTrigger: async () => {
-					let path = baseWrapper.path
-					if (!path) return
+export const RevealInFileExplorer = (baseWrapper: BaseWrapper<any>) => {
+	if (!import.meta.env.VITE_IS_TAURI_APP) return null
 
-					path = join(
-						await appLocalDataDir(),
-						'bridge',
-						path.replace('~local/', '')
-					)
+	return {
+		icon:
+			baseWrapper.kind === 'directory'
+				? 'mdi-folder-marker-outline'
+				: 'mdi-file-marker-outline',
+		name: 'actions.revealInFileExplorer.name',
+		onTrigger: async () => {
+			let path = baseWrapper.path
+			if (!path) return
 
-					invoke('reveal_in_file_explorer', {
-						path,
-					})
-				},
-		  }
-		: null
+			revealInFileExplorer(path)
+		},
+	}
+}
