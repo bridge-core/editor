@@ -25,7 +25,11 @@ export async function setupSidebar() {
 				if (!didSetup) return
 			}
 
-			if (isUsingFileSystemPolyfill.value) {
+			// Show limited project chooser if current build is a PWA build using our file system polyfill
+			if (
+				!import.meta.env.VITE_IS_TAURI_APP &&
+				isUsingFileSystemPolyfill.value
+			) {
 				createVirtualProjectWindow()
 			} else {
 				await App.instance.windows.projectChooser.open()
