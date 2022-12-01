@@ -206,7 +206,6 @@ export class CompilerWindow extends NewBaseWindow {
 					const service = await project.createDashService(
 						'production'
 					)
-					await service.setup()
 					await service.build()
 				},
 			},
@@ -240,7 +239,6 @@ export class CompilerWindow extends NewBaseWindow {
 						'production',
 						`${project.projectPath}/.bridge/compiler/${entry.name}`
 					)
-					await service.setup()
 					await service.build()
 				},
 			})

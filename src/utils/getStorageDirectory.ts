@@ -1,5 +1,7 @@
+import { appLocalDataDir } from '@tauri-apps/api/path'
 import { VirtualDirectoryHandle } from '../components/FileSystem/Virtual/DirectoryHandle'
 import { IndexedDbStore } from '../components/FileSystem/Virtual/Stores/IndexedDb'
+import { join } from './path'
 
 async function doesSupportWritable() {
 	const dirHandle = await navigator.storage.getDirectory()
@@ -24,7 +26,7 @@ export async function getStorageDirectory() {
 		)
 
 		return new VirtualDirectoryHandle(
-			new TauriFsStore('bridge'),
+			new TauriFsStore(join(await appLocalDataDir(), 'bridge')),
 			'bridge',
 			false
 		)

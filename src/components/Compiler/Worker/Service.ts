@@ -5,7 +5,7 @@ import { expose } from 'comlink'
 import { FileTypeLibrary, IFileType } from '/@/components/Data/FileType'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import type { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
-import { Dash, initRuntimes } from 'dash-compiler'
+import { Dash, initRuntimes, FileSystem } from 'dash-compiler'
 import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { DashFileSystem } from './FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
@@ -14,6 +14,8 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { ForeignConsole } from './Console'
 import { Mutex } from '../../Common/Mutex'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+import { VirtualDirectoryHandle } from '../../FileSystem/Virtual/DirectoryHandle'
+import { TauriFsStore } from '../../FileSystem/Virtual/Stores/TauriFs'
 
 initRuntimes(wasmUrl)
 
@@ -31,48 +33,95 @@ const consoles = new Map<string, ForeignConsole>()
  * Dispatches an event whenever a task starts with progress steps
  */
 export class DashService extends EventDispatcher<void> {
-	protected fileSystem: DashFileSystem
-	public fileType: FileTypeLibrary
-	protected readonly dash: Dash<DataLoader>
+	protected _fileSystem?: FileSystem
+	public _fileType?: FileTypeLibrary
+	protected _dash?: Dash<DataLoader>
 	public isDashFree = new Mutex()
-	protected projectDir: string
+	protected _projectDir?: string
 	public isSetup = false
 	public completedStartUp = new Signal<void>()
-	protected console: ForeignConsole
+	protected _console?: ForeignConsole
 
-	constructor(
+	constructor() {
+		super()
+	}
+
+	async setup(
 		baseDirectory: AnyDirectoryHandle,
 		comMojangDirectory: AnyDirectoryHandle | undefined,
 		options: ICompilerOptions
 	) {
-		super()
-		this.fileSystem = new DashFileSystem(baseDirectory)
+		await this.isDashFree.lock()
+
+		if (!dataLoader.hasFired) await dataLoader.loadData()
+
+		this._fileSystem = await this.createFileSystem(baseDirectory)
 		const outputFileSystem =
 			comMojangDirectory && options.mode === 'development'
-				? new DashFileSystem(comMojangDirectory)
+				? await this.createFileSystem(comMojangDirectory)
 				: undefined
-		this.fileType = new FileTypeLibrary()
-		this.fileType.setPluginFileTypes(options.pluginFileTypes)
+		this._fileType = new FileTypeLibrary()
+		this._fileType.setPluginFileTypes(options.pluginFileTypes)
 
 		let console = consoles.get(options.projectName)
 		if (!console) {
 			console = new ForeignConsole()
 			consoles.set(options.projectName, console)
 		}
-		this.console = console
+		this._console = console
 
-		this.dash = new Dash<DataLoader>(this.fileSystem, outputFileSystem, {
+		this._projectDir = dirname(options.config)
+
+		this._dash = new Dash<DataLoader>(this._fileSystem, outputFileSystem, {
 			config: options.config,
 			compilerConfig: options.compilerConfig,
 			console,
 			mode: options.mode,
-			fileType: this.fileType,
+			fileType: this._fileType,
 			packType: new PackTypeLibrary(),
 			verbose: true,
 			requestJsonData: (path) => dataLoader.readJSON(path),
 		})
+		await this.dash.setup(dataLoader)
 
-		this.projectDir = dirname(options.config)
+		this.isDashFree.unlock()
+		this.isSetup = true
+	}
+	protected async createFileSystem(directoryHandle: AnyDirectoryHandle) {
+		// Default file system on PWA builds
+		if (!import.meta.env.VITE_IS_TAURI_APP)
+			return new DashFileSystem(directoryHandle)
+
+		if (!(directoryHandle instanceof VirtualDirectoryHandle))
+			throw new Error(
+				`Expected directoryHandle to be a virtual directory handle`
+			)
+		const baseStore = directoryHandle.getBaseStore()
+		if (!(baseStore instanceof TauriFsStore))
+			throw new Error(
+				`Expected virtual directory to be backed by TauriFsStore`
+			)
+
+		const { TauriBasedDashFileSystem } = await import('./TauriFs')
+		return new TauriBasedDashFileSystem(baseStore.getBaseDirectory())
+	}
+
+	get dash() {
+		if (!this._dash) throw new Error('Dash not initialized')
+		return this._dash
+	}
+	get fileSystem() {
+		if (!this._fileSystem) throw new Error('File system not initialized')
+		return this._fileSystem
+	}
+	get console() {
+		if (!this._console) throw new Error('Console not initialized')
+		return this._console
+	}
+	get projectDir() {
+		if (!this._projectDir)
+			throw new Error('Project directory not initialized')
+		return this._projectDir
 	}
 
 	getCompilerLogs() {
@@ -99,19 +148,24 @@ export class DashService extends EventDispatcher<void> {
 	async start(changedFiles: string[], deletedFiles: string[]) {
 		await this.isDashFree.lock()
 
-		const fs = this.fileSystem.internal
+		const fileExists = (path: string) =>
+			this.fileSystem
+				.readFile(path)
+				.then(() => true)
+				.catch(() => false)
+
 		if (
-			(await fs.fileExists(
+			(await fileExists(
 				`${this.projectDir}/.bridge/.restartWatchMode`
 			)) ||
-			!(await fs.fileExists(
+			!(await fileExists(
 				// TODO(Dash): Replace with call to "this.dash.dashFilePath" once the accessor is no longer protected
 				`${this.projectDir}/.bridge/.dash.${this.dash.getMode()}.json`
 			))
 		) {
 			await Promise.all([
 				this.build(false).catch((err) => console.error(err)),
-				fs
+				this.fileSystem
 					.unlink(`${this.projectDir}/.bridge/.restartWatchMode`)
 					.catch((err) => console.error(err)),
 			])
@@ -177,15 +231,6 @@ export class DashService extends EventDispatcher<void> {
 		return this.dash.getFileDependencies(filePath)
 	}
 
-	async setup() {
-		await this.isDashFree.lock()
-
-		if (!dataLoader.hasFired) await dataLoader.loadData()
-		await this.dash.setup(dataLoader)
-
-		this.isDashFree.unlock()
-		this.isSetup = true
-	}
 	async reloadPlugins() {
 		await this.isDashFree.lock()
 

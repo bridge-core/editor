@@ -39,6 +39,9 @@ export abstract class BaseVirtualHandle {
 	async setupStore() {
 		if (this._baseStore) await this._baseStore.setup()
 	}
+	getBaseStore() {
+		return this.baseStore
+	}
 
 	protected get path(): string[] {
 		return this.parent ? this.parent.path.concat(this.name) : this.basePath

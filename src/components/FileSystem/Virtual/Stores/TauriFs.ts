@@ -12,33 +12,32 @@ import { BaseStore, type TStoreType } from './BaseStore'
 
 export interface ITauriFsSerializedData {
 	baseDirectory?: string
-	dir: BaseDirectory
 }
 
 export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 	public readonly type = 'tauriFsStore'
 
-	constructor(
-		protected baseDirectory?: string,
-		protected dir = BaseDirectory.AppLocalData
-	) {
+	constructor(protected baseDirectory?: string) {
 		super()
+	}
+
+	getBaseDirectory() {
+		return this.baseDirectory
 	}
 
 	serialize() {
 		return <const>{
 			type: this.type,
 			baseDirectory: this.baseDirectory,
-			dir: this.dir,
 		}
 	}
 	static deserialize(data: ITauriFsSerializedData & { type: TStoreType }) {
-		return new TauriFsStore(data.baseDirectory, data.dir)
+		return new TauriFsStore(data.baseDirectory)
 	}
 
 	async setup() {
 		if (this.baseDirectory)
-			await createDir(this.baseDirectory, { dir: this.dir }).catch(() => {
+			await createDir(this.baseDirectory).catch(() => {
 				// Ignore error if directory already exists
 			})
 	}
@@ -49,22 +48,22 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 	}
 
 	async createDirectory(path: string) {
-		await createDir(this.resolvePath(path), { dir: this.dir }).catch(() => {
+		await createDir(this.resolvePath(path)).catch(() => {
 			// Ignore error if directory already exists
 		})
 	}
 
 	async getDirectoryEntries(path: string) {
-		const entries = await readDir(this.resolvePath(path), { dir: this.dir })
+		const entries = await readDir(this.resolvePath(path))
 		return <string[]>entries.map((entry) => entry.name)
 	}
 
 	async writeFile(path: string, data: Uint8Array) {
-		await writeBinaryFile(this.resolvePath(path), data, { dir: this.dir })
+		await writeBinaryFile(this.resolvePath(path), data)
 	}
 
 	async readFile(path: string) {
-		return await readBinaryFile(this.resolvePath(path), { dir: this.dir })
+		return await readBinaryFile(this.resolvePath(path))
 	}
 
 	async unlink(path: string) {
@@ -73,19 +72,19 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 		if (type === null) return
 
 		if (type === 'file') {
-			await removeFile(this.resolvePath(path), { dir: this.dir })
+			await removeFile(this.resolvePath(path))
 		} else {
-			await removeDir(this.resolvePath(path), { dir: this.dir })
+			await removeDir(this.resolvePath(path))
 		}
 	}
 
 	async typeOf(path: string) {
 		try {
-			await readDir(this.resolvePath(path), { dir: this.dir })
+			await readDir(this.resolvePath(path))
 			return 'directory'
 		} catch (err) {
 			try {
-				await readBinaryFile(this.resolvePath(path), { dir: this.dir })
+				await readBinaryFile(this.resolvePath(path))
 				return 'file'
 			} catch (err) {
 				return null

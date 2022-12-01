@@ -208,9 +208,13 @@ export class App {
 		await this.instance.beforeStartUp()
 
 		this.instance.fileSystem.setup(await getStorageDirectory())
-		// TauriFs env -> bridge. folder is the same as getStorageDirectory()
-		if (import.meta.env.VITE_IS_TAURI_APP)
+
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			// TauriFs env -> bridge. folder is the same as getStorageDirectory()
 			this.instance.bridgeFolderSetup.dispatch()
+			// Load projects
+			this.instance.projectManager.loadProjects(true)
+		}
 
 		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {

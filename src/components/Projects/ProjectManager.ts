@@ -26,7 +26,8 @@ export class ProjectManager extends Signal<void> {
 
 	constructor(protected app: App) {
 		super()
-		this.loadProjects()
+		// Only load local projects on PWA builds
+		if (!import.meta.env.VITE_IS_TAURI_APP) this.loadProjects()
 	}
 
 	get currentProject() {
@@ -108,7 +109,8 @@ export class ProjectManager extends Signal<void> {
 			promises.push(this.addProject(handle, false, requiresPermissions))
 		}
 
-		if (isBridgeFolderSetup) {
+		// Only load local projects separately on PWA builds and when the bridge folder was setup
+		if (!import.meta.env.VITE_IS_TAURI_APP && isBridgeFolderSetup) {
 			const localDirectoryHandle =
 				await this.app.fileSystem.getDirectoryHandle(
 					'~local/projects',

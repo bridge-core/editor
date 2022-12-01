@@ -191,7 +191,9 @@ export abstract class Project {
 	) {
 		if (!this.isVirtualProject) await this.app.comMojang.fired
 
-		const compiler = await new DashCompiler(
+		const compiler = await new DashCompiler()
+
+		await compiler.setup(
 			this.app.fileSystem.baseDirectory,
 			this.app.comMojang.hasComMojang
 				? this.app.comMojang.fileSystem.baseDirectory
@@ -253,10 +255,7 @@ export abstract class Project {
 		// Data needs to be loaded into IndexedDB before the PackIndexer can be used
 		await this.app.dataLoader.fired
 
-		await Promise.all([
-			this.packIndexer.activate(isReload),
-			this.compilerService.setup(),
-		])
+		await this.packIndexer.activate(isReload)
 		const [changedFiles, deletedFiles] = await this.packIndexer.fired
 
 		// Only recompile changed files if the setting is active and the project is not a virtual project
@@ -581,7 +580,6 @@ export abstract class Project {
 		this._compilerService = markRaw(
 			await this.createDashService('development')
 		)
-		await this._compilerService.setup()
 
 		if (forceStartIfActive && this.isActiveProject) {
 			await this.fileSystem.writeFile('.bridge/.restartWatchMode', '')

@@ -111,10 +111,8 @@ export class LightningStore {
 				else saveStore += '\n'
 			}
 		}
-		console.log(this.fs.baseDirectory)
-		console.log(this.store)
+
 		await this.fs.writeFile('.bridge/.lightningCache', saveStore)
-		console.log('FILE WRITTEN')
 
 		return deletedFiles
 	}
