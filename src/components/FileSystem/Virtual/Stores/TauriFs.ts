@@ -36,6 +36,8 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 	}
 
 	async setup() {
+		if (this.isReadOnly) return
+
 		if (this.baseDirectory)
 			await createDir(this.baseDirectory).catch(() => {
 				// Ignore error if directory already exists
@@ -48,6 +50,8 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 	}
 
 	async createDirectory(path: string) {
+		if (this.isReadOnly) return
+
 		await createDir(this.resolvePath(path)).catch(() => {
 			// Ignore error if directory already exists
 		})
@@ -59,6 +63,8 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 	}
 
 	async writeFile(path: string, data: Uint8Array) {
+		if (this.isReadOnly) return
+
 		await writeBinaryFile(this.resolvePath(path), data)
 	}
 
@@ -67,6 +73,8 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 	}
 
 	async unlink(path: string) {
+		if (this.isReadOnly) return
+
 		const type = await this.typeOf(path)
 		// Path does not exist, nothing to unlink
 		if (type === null) return

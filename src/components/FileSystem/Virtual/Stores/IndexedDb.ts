@@ -1,6 +1,7 @@
 import { IDBWrapper } from '../IDB'
 import { BaseStore, IFileData, TStoreType } from './BaseStore'
 import { GlobalMutex } from '/@/components/Common/GlobalMutex'
+import { basename, dirname } from '/@/utils/path'
 
 export interface IIndexedDbSerializedData {
 	storeName?: string
@@ -12,8 +13,8 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 	protected idb: IDBWrapper
 	protected globalMutex = new GlobalMutex()
 
-	constructor(storeName?: string) {
-		super()
+	constructor(storeName?: string, isReadOnly = false) {
+		super(isReadOnly)
 		this.idb = new IDBWrapper(storeName)
 	}
 
@@ -35,12 +36,14 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 	}
 
 	clear() {
+		if (this.isReadOnly) return
+
 		return this.idb.clear()
 	}
 
 	protected async addChild(parentDir: string, childName: string) {
 		// If parent directory is root directory, we don't need to manually add a child entry
-		if (parentDir === '') return
+		if (parentDir === '' || parentDir === '.') return
 
 		await this.lockAccess(parentDir)
 
@@ -59,14 +62,14 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 	}
 
 	async createDirectory(path: string) {
-		if (path === '') return
+		if (this.isReadOnly) return
+		if (path === '' || path === '.') return
 
 		const dirExists = await this.idb.has(path)
 		if (dirExists) return // No work to do, directory already exists
 
-		const splitPath = path.split('/')
-		const parentDir = splitPath.slice(0, -1).join('/')
-		const dirName = splitPath[splitPath.length - 1]
+		const parentDir = dirname(path)
+		const dirName = basename(path)
 
 		await this.addChild(parentDir, dirName)
 		await this.idb.set(path, [])
@@ -84,9 +87,10 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 	}
 
 	async writeFile(path: string, data: Uint8Array) {
-		const splitPath = path.split('/')
-		const parentDir = splitPath.slice(0, -1).join('/')
-		const fileName = splitPath[splitPath.length - 1]
+		if (this.isReadOnly) return
+
+		const parentDir = dirname(path)
+		const fileName = basename(path)
 
 		await this.addChild(parentDir, fileName)
 
@@ -115,9 +119,10 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 	}
 
 	async unlink(path: string) {
-		const splitPath = path.split('/')
-		const parentDir = splitPath.slice(0, -1).join('/')
-		const fileName = splitPath[splitPath.length - 1]
+		if (this.isReadOnly) return
+
+		const parentDir = dirname(path)
+		const fileName = basename(path)
 
 		await this.lockAccess(parentDir)
 

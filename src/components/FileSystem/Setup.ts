@@ -113,7 +113,7 @@ export class FileSystemSetup {
 		// Migrate virtual projects over
 		if (isUpgradingVirtualFs) {
 			const virtualFolder = markRaw(
-				new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
+				new VirtualDirectoryHandle(null, 'bridgeFolder')
 			)
 			await virtualFolder.setupDone.fired
 			const virtualFs = new FileSystem(virtualFolder)

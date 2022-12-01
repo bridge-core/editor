@@ -27,29 +27,24 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		if (!(this._baseStore instanceof MemoryStore))
 			throw new Error(`Must call method on memory store`)
 
-		this._baseStore = await this._baseStore.toIdb()
+		this._baseStore = await this._baseStore.toIdb(
+			// Do not allow writes to data-fs
+			true
+		)
 	}
 
 	constructor(
 		parent: VirtualDirectoryHandle | BaseStore | null,
 		name: string,
-		clearDB = false,
 		path: string[] = []
 	) {
 		super(parent, name, path)
 
-		this.setup(clearDB)
+		this.setup()
 	}
 
-	async setup(clearDB = false) {
+	async setup() {
 		await this.setupStore()
-
-		if (clearDB) {
-			if (!(this.baseStore instanceof IndexedDbStore))
-				throw new Error('Cannot clear DB for non-IDB store')
-
-			await this.baseStore.clear()
-		}
 
 		/**
 		 * TauriFsStore should not create the base directory because that'll lead to duplicated directories
@@ -112,12 +107,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 		if (data.baseStore) baseStore = deserializeStore(data.baseStore)
 
-		const dir = new VirtualDirectoryHandle(
-			baseStore,
-			data.name,
-			false,
-			data.path
-		)
+		const dir = new VirtualDirectoryHandle(baseStore, data.name, data.path)
 
 		return dir
 	}

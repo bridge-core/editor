@@ -66,8 +66,7 @@ export class ComMojang extends Signal<void> {
 			const dirName = basename(directoryHandle)
 			directoryHandle = new VirtualDirectoryHandle(
 				new TauriFsStore(directoryHandle),
-				dirName,
-				false
+				dirName
 			)
 		}
 

@@ -27,8 +27,7 @@ export async function getStorageDirectory() {
 
 		return new VirtualDirectoryHandle(
 			new TauriFsStore(join(await appLocalDataDir(), 'bridge')),
-			'bridge',
-			false
+			'bridge'
 		)
 	}
 

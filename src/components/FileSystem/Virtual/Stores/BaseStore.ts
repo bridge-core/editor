@@ -11,6 +11,8 @@ export type TStoreType = 'idbStore' | 'memoryStore' | 'tauriFsStore'
 export abstract class BaseStore<T = any> {
 	public abstract readonly type: TStoreType
 
+	constructor(protected isReadOnly = false) {}
+
 	/**
 	 * Any async setup that needs to be done before the store can be used
 	 */

@@ -51,15 +51,20 @@ export class DataLoader extends FileSystem {
 			)
 
 		console.time('[App] Data')
+
+		const indexedDbStore = new IndexedDbStore(
+			'data-fs',
+			// Do not allow writes to data-fs
+			true
+		)
+		// Clear data-fs if the version has changed
 		const mayClearDb = this.isMainLoader && !savedAllDataInIdb
+		if (mayClearDb) await indexedDbStore.clear()
 
 		// Create virtual filesystem
 		this._virtualFileSystem = new VirtualDirectoryHandle(
-			savedAllDataInIdb
-				? new IndexedDbStore('data-fs')
-				: new MemoryStore('data-fs'),
-			'bridgeFolder',
-			mayClearDb
+			savedAllDataInIdb ? indexedDbStore : new MemoryStore('data-fs'),
+			'bridgeFolder'
 		)
 		await this._virtualFileSystem.setupDone.fired
 
@@ -116,14 +121,12 @@ export class DataLoader extends FileSystem {
 			}
 		}
 
+		if (this.isMainLoader && !forceDataDownload) {
+			await this._virtualFileSystem!.moveToIdb()
+			await set('savedDataForVersion', appVersion)
+		}
+
 		this.setup(this._virtualFileSystem)
 		console.timeEnd('[App] Data')
-
-		if (this.isMainLoader && !forceDataDownload) {
-			whenIdle(async () => {
-				await this._virtualFileSystem!.moveToIdb()
-				await set('savedDataForVersion', appVersion)
-			})
-		}
 	}
 }

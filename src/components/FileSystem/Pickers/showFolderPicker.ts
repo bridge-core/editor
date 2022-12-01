@@ -23,7 +23,6 @@ export async function showFolderPicker({ defaultPath }: IOpenFolderOpts = {}) {
 
 	return new VirtualDirectoryHandle(
 		new TauriFsStore(selectedPath),
-		basename(selectedPath),
-		false
+		basename(selectedPath)
 	)
 }

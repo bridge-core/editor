@@ -18,7 +18,7 @@ export class MemoryDb extends IDBWrapper {
 	async set(key: IDBValidKey, value: any) {
 		this._store.set(key, value)
 	}
-	get<T = any>(key: IDBValidKey) {
+	async get<T = any>(key: IDBValidKey) {
 		return <T>this._store.get(key)
 	}
 	async del(key: IDBValidKey) {
@@ -49,9 +49,9 @@ export class MemoryDb extends IDBWrapper {
 		return this._store.entries()
 	}
 
-	async toIdb() {
+	async toIdb(isReadOnly = false) {
 		await super.setMany([...this._store.entries()])
-		return new IndexedDbStore(this.storeName)
+		return new IndexedDbStore(this.storeName, isReadOnly)
 	}
 }
 
@@ -74,7 +74,9 @@ export class MemoryStore extends IndexedDbStore {
 		return new MemoryStore(data.storeName, data.mapData)
 	}
 
-	toIdb() {
-		return this.idb.toIdb()
+	toIdb(isReadOnly = false) {
+		// @ts-ignore
+		console.log([...this.idb._store.entries()])
+		return this.idb.toIdb(isReadOnly)
 	}
 }
