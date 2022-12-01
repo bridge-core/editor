@@ -1,5 +1,4 @@
 import { del, get, set } from 'idb-keyval'
-import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
@@ -123,7 +122,18 @@ export class ComMojang extends Signal<void> {
 	}
 
 	async set(directoryHandle: AnyDirectoryHandle) {
-		set(comMojangKey, directoryHandle)
+		if (directoryHandle instanceof VirtualDirectoryHandle) {
+			const store = directoryHandle.getBaseStore()
+			if (!(store instanceof TauriFsStore))
+				throw new Error(
+					'Cannot set com.mojang directoryHandle to non-tauri-backed store'
+				)
+
+			set(comMojangKey, store.getBaseDirectory())
+		} else {
+			set(comMojangKey, directoryHandle)
+		}
+
 		await this.requestPermissions(directoryHandle)
 		if (this._hasComMojang) this.setup.dispatch()
 

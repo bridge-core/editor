@@ -1057,10 +1057,11 @@
 		"title": "Access to folder \"com.mojang\"",
 		"permissionRequest": "bridge. needs access to your \"com.mojang\" folder in order to compile projects to it.",
 		"status": {
-			"sucess": "Syncing your projects to com.mojang is setup correctly.",
-			"deniedPermission": "You setup com.mojang syncing but you did not grant bridge. permission to the folder.",
-			"notSetup": "You have not setup com.mojang syncing yet. Drag your com.mojang folder onto bridge. to do so.",
-			"notAvailable": "Syncing projects to the com.mojang folder is only available for Chrome and Edge users."
+			"sucess": "Syncing your projects to your \"com.mojang\" folder is setup correctly.",
+			"deniedPermission": "You setup \"com.mojang\" syncing but you did not grant bridge. permission to the folder.",
+			"notSetup": "You have not setup \"com.mojang\" syncing yet. Drag your \"com.mojang\" folder onto bridge. to do so.",
+			"notSetupTauri": "You have not setup \"com.mojang\" syncing yet. Click the \"Link Folder\" button to do so.",
+			"notAvailable": "Syncing projects to the \"com.mojang\" folder is only available for Chrome and Edge users."
 		}
 	},
 	"findAndReplace": {
