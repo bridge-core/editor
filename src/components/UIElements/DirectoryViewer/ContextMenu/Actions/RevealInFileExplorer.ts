@@ -1,4 +1,6 @@
+import { appLocalDataDir } from '@tauri-apps/api/path'
 import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/BaseWrapper'
+import { join } from '/@/utils/path'
 import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
 
 export const RevealInFileExplorer = (baseWrapper: BaseWrapper<any>) => {
@@ -14,7 +16,7 @@ export const RevealInFileExplorer = (baseWrapper: BaseWrapper<any>) => {
 			let path = baseWrapper.path
 			if (!path) return
 
-			revealInFileExplorer(path)
+			revealInFileExplorer(join(await appLocalDataDir(), 'bridge', path))
 		},
 	}
 }
