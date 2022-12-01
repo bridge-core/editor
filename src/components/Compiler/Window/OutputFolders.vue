@@ -10,7 +10,7 @@
 			:loading="isLoading"
 		>
 			<v-icon class="mr-2">mdi-folder-sync-outline</v-icon>
-			Link Folder
+			{{ t('comMojang.linkFolder') }}
 		</v-btn>
 	</div>
 </template>
@@ -19,8 +19,10 @@
 import InfoPanel from '/@/components/InfoPanel/InfoPanel.vue'
 import { showFolderPicker } from '/@/components/FileSystem/Pickers/showFolderPicker'
 import { App } from '/@/App'
+import { TranslationMixin } from '../../Mixins/TranslationMixin'
 
 export default {
+	mixins: [TranslationMixin],
 	props: {
 		data: Object,
 	},
