@@ -20,7 +20,7 @@ async fn reveal_in_file_explorer(path: &str) -> Result<(), String> {
             .spawn()
             .expect("Failed to open finder");
     } else {
-        panic!("Unsupported OS");
+        // TODO: Linux
     }
 
     Ok(())
