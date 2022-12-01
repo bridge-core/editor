@@ -27,7 +27,11 @@ async fn reveal_in_file_explorer(path: &str) -> Result<(), String> {
 }
 
 fn main() {
-    let menu = Menu::os_default(&"bridge. v2");
+    let mut menu = Menu::os_default(&"bridge. v2");
+
+    if cfg!(target_os = "windows") {
+        menu = Menu::new()
+    }
 
     tauri::Builder::default()
         .setup(|app| {
