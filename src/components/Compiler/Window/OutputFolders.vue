@@ -41,6 +41,7 @@ export default {
 
 			const app = await App.getApp()
 			app.comMojang.handleComMojangDrop(directoryHandle)
+			this.$emit('closeWindow')
 		},
 	},
 }
