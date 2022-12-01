@@ -41,7 +41,7 @@
 
 		<template v-else>
 			<Logo
-				v-if="!isMacOS || !windowControlsOverlay"
+				v-if="showLogo"
 				height="24px"
 				width="24px"
 				style="
@@ -52,7 +52,7 @@
 				draggable="false"
 			/>
 
-			<v-divider vertical />
+			<v-divider v-if="showLogo || isMacOS" vertical />
 
 			<!-- App menu buttons -->
 			<v-toolbar-items class="px14-font">
@@ -148,6 +148,18 @@ export default {
 		appVersion,
 	}),
 	computed: {
+		showLogo() {
+			// On MacOS, only show logo if windowControlsOverlay is inactive
+			if (this.isMacOS) return !this.windowControlsOverlay
+			// On Windows, show logo if windowControlsOverlay is inactive and if we're not running a Tauri build
+			if (platform() === 'win32')
+				return (
+					!this.windowControlsOverlay &&
+					!import.meta.env.VITE_IS_TAURI_APP
+				)
+
+			return false
+		},
 		isMobile() {
 			return this.$vuetify.breakpoint.mobile
 		},
