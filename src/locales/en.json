@@ -1057,6 +1057,7 @@
 		"title": "Access to folder \"com.mojang\"",
 		"permissionRequest": "bridge. needs access to your \"com.mojang\" folder in order to compile projects to it.",
 		"linkFolder": "Link Folder",
+		"linkedFolder": "Linked Folder",
 		"status": {
 			"sucess": "Syncing your projects to your \"com.mojang\" folder is setup correctly.",
 			"deniedPermission": "You setup \"com.mojang\" syncing but you did not grant bridge. permission to the folder.",

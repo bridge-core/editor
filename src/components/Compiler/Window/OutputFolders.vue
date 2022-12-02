@@ -13,7 +13,9 @@
 			{{ t('comMojang.linkFolder') }}
 		</v-btn>
 
-		<!-- TODO: Remove debug display -->
+		<h2 v-if="isTauriBuild && path" class="mt-4 mb-1">
+			{{ t('comMojang.linkedFolder') }}:
+		</h2>
 		<span v-if="isTauriBuild">
 			{{ path }}
 		</span>
@@ -42,7 +44,8 @@ export default {
 	mounted() {
 		if (!import.meta.env.VITE_IS_TAURI_APP) return
 
-		App.getApp().then((app) => {
+		App.getApp().then(async (app) => {
+			await app.comMojang.setup.fired
 			this.path = app.comMojang.fileSystem.baseDirectory
 				.getBaseStore()
 				.getBaseDirectory()
