@@ -19,11 +19,13 @@ export class JsonDefaults extends EventDispatcher<void> {
 	protected loadedSchemas = false
 	protected localSchemas: Record<string, IMonacoSchemaArrayEntry> = {}
 	protected disposables: IDisposable[] = []
-	public readonly componentSchemas = new ComponentSchemas()
+	public readonly componentSchemas: ComponentSchemas
 	protected task: Task | null = null
 
 	constructor(protected project: Project) {
 		super()
+
+		this.componentSchemas = new ComponentSchemas(project)
 	}
 
 	get isReady() {
@@ -34,7 +36,8 @@ export class JsonDefaults extends EventDispatcher<void> {
 		console.time('[SETUP] JSONDefaults')
 		await this.project.app.project.packIndexer.fired
 
-		await this.componentSchemas.activate()
+		// Don't await to start loading schemas as soon as possible
+		this.componentSchemas.activate()
 
 		this.disposables = <IDisposable[]>[
 			// Updating currentContext/ references
