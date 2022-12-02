@@ -48,8 +48,10 @@
 					padding-right: 4px;
 					padding-left: calc(env(safe-area-inset-left) + 4px);
 				"
+				class="cursor-pointer"
 				alt="Logo of bridge. v2"
 				draggable="false"
+				@click.native="openChangelogWindow"
 			/>
 
 			<v-divider v-if="showLogo || isMacOS" vertical />
@@ -89,6 +91,7 @@
 
 			<v-spacer />
 			<div
+				v-if="!isTauriBuild"
 				class="px-1 mx-1 rounded-lg app-version-display"
 				v-ripple="!isAnyWindowVisible"
 				:style="{
@@ -99,6 +102,7 @@
 			>
 				v{{ appVersion }}
 			</div>
+			<WindowControls v-else />
 		</template>
 	</v-system-bar>
 </template>
@@ -107,6 +111,7 @@
 import WindowAction from './WindowAction.vue'
 import MenuActivator from './Menu/Activator.vue'
 import MenuButton from './Menu/Button.vue'
+import WindowControls from './WindowControls.vue'
 import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/utils/app/version.ts'
 import { platform } from '/@/utils/os.ts'
@@ -125,6 +130,7 @@ export default {
 		MenuActivator,
 		MenuButton,
 		Logo,
+		WindowControls,
 	},
 	setup() {
 		const setupObj = reactive({
@@ -144,6 +150,7 @@ export default {
 		toolbar: App.toolbar.state,
 		settingsState,
 		isMacOS: platform() === 'darwin',
+		isTauriBuild: import.meta.env.VITE_IS_TAURI_APP,
 
 		appVersion,
 	}),
@@ -151,14 +158,9 @@ export default {
 		showLogo() {
 			// On MacOS, only show logo if windowControlsOverlay is inactive
 			if (this.isMacOS) return !this.windowControlsOverlay
-			// On Windows, show logo if windowControlsOverlay is inactive and if we're not running a Tauri build
-			if (platform() === 'win32')
-				return (
-					!this.windowControlsOverlay &&
-					!import.meta.env.VITE_IS_TAURI_APP
-				)
 
-			return false
+			// On other platforms, always show logo
+			return true
 		},
 		isMobile() {
 			return this.$vuetify.breakpoint.mobile

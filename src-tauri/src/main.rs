@@ -6,6 +6,7 @@
 use tauri::{Menu, Manager};
 use discord_rich_presence::{activity, DiscordIpc, DiscordIpcClient};
 use std::process::Command;
+use window_shadows::set_shadow;
 
 #[tauri::command]
 async fn reveal_in_file_explorer(path: &str) -> Result<(), String> {
@@ -37,6 +38,10 @@ fn main() {
         .setup(|app| {
             // `main` here is the window label; it is defined under `tauri.conf.json`
             let main_window = app.get_window("main").unwrap();
+
+            if cfg!(target_os = "windows") {
+                set_shadow(&main_window, true).expect("Unable to set window shadow");
+            }
 
             // Try to set Discord rich presence
             match set_rich_presence() {

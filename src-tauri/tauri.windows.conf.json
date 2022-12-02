@@ -7,6 +7,7 @@
 		"windows": [
 			{
 				"label": "main",
+				"decorations": false,
 				"fullscreen": false,
 				"height": 900,
 				"resizable": true,

@@ -19,6 +19,7 @@ serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.1", features = ["api-all", "updater"] }
 discord-rich-presence = "0.2.3"
 chrono = "0.4.23"
+window-shadows = "0.2.0"
 
 [features]
 # by default Tauri runs in production mode
