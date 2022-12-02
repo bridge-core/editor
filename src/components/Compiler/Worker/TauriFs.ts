@@ -12,22 +12,29 @@ import {
 	FileEntry,
 	copyFile,
 } from '@tauri-apps/api/fs'
-import { join, basename, dirname, isAbsolute, relative } from '/@/utils/path'
+import { join, basename, dirname, isAbsolute, sep } from '@tauri-apps/api/path'
 import json5 from 'json5'
 
 export class TauriBasedDashFileSystem extends FileSystem {
-	constructor(protected baseDirectory?: string) {
+	protected baseDirectory?: string
+	constructor(baseDirectory?: string) {
 		super()
+
+		if (baseDirectory)
+			this.baseDirectory = baseDirectory.replaceAll(/\\|\//g, sep)
 	}
 
-	resolvePath(path: string) {
-		if (!this.baseDirectory || isAbsolute(path)) return path
+	async resolvePath(path: string) {
+		path = path.replaceAll(/\\|\//g, sep)
+		if (!this.baseDirectory || (await isAbsolute(path))) return path
 
 		return join(this.baseDirectory, path)
 	}
 	relative(path: string) {
 		if (!this.baseDirectory) return path
-		return relative(this.baseDirectory, path)
+
+		path = path.replaceAll(/\\|\//g, sep)
+		return path.replace(`${this.baseDirectory}${sep}`, '')
 	}
 
 	async readJson(path: string) {
@@ -42,31 +49,31 @@ export class TauriBasedDashFileSystem extends FileSystem {
 		)
 	}
 	async readFile(path: string): Promise<File> {
-		const binaryData = await readBinaryFile(this.resolvePath(path))
+		const binaryData = await readBinaryFile(await this.resolvePath(path))
 
-		return new File([binaryData], basename(path))
+		return new File([binaryData], await basename(path))
 	}
 	async writeFile(path: string, content: string | Uint8Array) {
-		const resolvedPath = this.resolvePath(path)
-		await createDir(dirname(resolvedPath), { recursive: true })
+		const resolvedPath = await this.resolvePath(path)
+		await createDir(await dirname(resolvedPath), { recursive: true })
 
 		if (typeof content === 'string') await writeFile(resolvedPath, content)
 		else await writeBinaryFile(resolvedPath, content)
 	}
 	async copyFile(from: string, to: string, outputFs = this) {
-		const outputPath = outputFs.resolvePath(to)
-		await createDir(dirname(outputPath), { recursive: true }).catch(
+		const outputPath = await outputFs.resolvePath(to)
+		await createDir(await dirname(outputPath), { recursive: true }).catch(
 			() => {}
 		)
 
-		await copyFile(this.resolvePath(from), outputPath)
+		await copyFile(await this.resolvePath(from), outputPath)
 	}
 
 	async mkdir(path: string) {
-		await createDir(this.resolvePath(path), { recursive: true })
+		await createDir(await this.resolvePath(path), { recursive: true })
 	}
 	async unlink(path: string) {
-		const resolvedPath = this.resolvePath(path)
+		const resolvedPath = await this.resolvePath(path)
 
 		await Promise.all([
 			removeDir(resolvedPath, { recursive: true }).catch(() => {}),
@@ -74,7 +81,7 @@ export class TauriBasedDashFileSystem extends FileSystem {
 		])
 	}
 	async allFiles(path: string) {
-		const entries = await readDir(this.resolvePath(path), {
+		const entries = await readDir(await this.resolvePath(path), {
 			recursive: true,
 		})
 
@@ -95,7 +102,7 @@ export class TauriBasedDashFileSystem extends FileSystem {
 		return files
 	}
 	async readdir(path: string): Promise<IDirEntry[]> {
-		const entries = await readDir(this.resolvePath(path))
+		const entries = await readDir(await this.resolvePath(path))
 
 		return entries.map((entry) => ({
 			name: entry.name!,

@@ -7,7 +7,7 @@ import {
 	removeFile,
 	BaseDirectory,
 } from '@tauri-apps/api/fs'
-import { join } from '/@/utils/path'
+import { join, sep } from '@tauri-apps/api/path'
 import { BaseStore, type TStoreType } from './BaseStore'
 
 export interface ITauriFsSerializedData {
@@ -16,9 +16,13 @@ export interface ITauriFsSerializedData {
 
 export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 	public readonly type = 'tauriFsStore'
+	protected baseDirectory?: string
 
-	constructor(protected baseDirectory?: string) {
+	constructor(baseDirectory?: string) {
 		super()
+
+		if (baseDirectory)
+			this.baseDirectory = baseDirectory.replaceAll(/\\|\//g, sep)
 	}
 
 	getBaseDirectory() {
@@ -44,32 +48,33 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 			})
 	}
 
-	resolvePath(path: string) {
+	async resolvePath(path: string) {
+		path = path.replaceAll(/\\|\//g, sep)
 		if (!this.baseDirectory) return path
-		return join(this.baseDirectory, path)
+		return await join(this.baseDirectory, path)
 	}
 
 	async createDirectory(path: string) {
 		if (this.isReadOnly) return
 
-		await createDir(this.resolvePath(path)).catch(() => {
+		await createDir(await this.resolvePath(path)).catch(() => {
 			// Ignore error if directory already exists
 		})
 	}
 
 	async getDirectoryEntries(path: string) {
-		const entries = await readDir(this.resolvePath(path))
+		const entries = await readDir(await this.resolvePath(path))
 		return <string[]>entries.map((entry) => entry.name)
 	}
 
 	async writeFile(path: string, data: Uint8Array) {
 		if (this.isReadOnly) return
 
-		await writeBinaryFile(this.resolvePath(path), data)
+		await writeBinaryFile(await this.resolvePath(path), data)
 	}
 
 	async readFile(path: string) {
-		return await readBinaryFile(this.resolvePath(path))
+		return await readBinaryFile(await this.resolvePath(path))
 	}
 
 	async unlink(path: string) {
@@ -80,19 +85,21 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 		if (type === null) return
 
 		if (type === 'file') {
-			await removeFile(this.resolvePath(path))
+			await removeFile(await this.resolvePath(path))
 		} else {
-			await removeDir(this.resolvePath(path))
+			await removeDir(await this.resolvePath(path))
 		}
 	}
 
 	async typeOf(path: string) {
+		const resolvedPath = await this.resolvePath(path)
+
 		try {
-			await readDir(this.resolvePath(path))
+			await readDir(resolvedPath)
 			return 'directory'
 		} catch (err) {
 			try {
-				await readBinaryFile(this.resolvePath(path))
+				await readBinaryFile(resolvedPath)
 				return 'file'
 			} catch (err) {
 				return null
