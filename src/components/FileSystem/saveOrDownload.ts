@@ -72,6 +72,12 @@ export function download(fileName: string, fileData: Uint8Array) {
 	const extension = extname(fileName)
 	let type: string | undefined = undefined
 
+	// File downloads are not working on Tauri atm
+	if (import.meta.env.VITE_IS_TAURI_APP) {
+		tauriDownload(fileName, fileData)
+		return
+	}
+
 	// Maintain the extension from the fileName, if the file that is being downloaded has a known extension
 	if (knownExtensions.has(extension)) type = 'application/file-export'
 
@@ -82,4 +88,25 @@ export function download(fileName: string, fileData: Uint8Array) {
 	a.click()
 
 	URL.revokeObjectURL(url)
+}
+
+async function tauriDownload(fileName: string, fileData: Uint8Array) {
+	const { writeBinaryFile, exists } = await import('@tauri-apps/api/fs')
+	const { downloadDir, join } = await import('@tauri-apps/api/path')
+
+	let freeFileName = fileName
+	let i = 1
+	while (await exists(await join(await downloadDir(), freeFileName))) {
+		const extension = extname(freeFileName)
+		// Remove extension and counter (i) from the file name
+		const name = basename(freeFileName, extension).replace(/ \(\d+\)$/, '')
+		freeFileName = `${name} (${i})${extension}`
+		i++
+	}
+
+	await writeBinaryFile(
+		await join(await downloadDir(), freeFileName),
+		fileData
+	)
+	await revealInFileExplorer(await join(await downloadDir(), freeFileName))
 }
