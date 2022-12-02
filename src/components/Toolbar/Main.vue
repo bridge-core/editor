@@ -90,8 +90,9 @@
 			</span>
 
 			<v-spacer />
+			<WindowControls v-if="isTauriBuild && isWindows" />
 			<div
-				v-if="!isTauriBuild"
+				v-else
 				class="px-1 mx-1 rounded-lg app-version-display"
 				v-ripple="!isAnyWindowVisible"
 				:style="{
@@ -102,7 +103,6 @@
 			>
 				v{{ appVersion }}
 			</div>
-			<WindowControls v-else />
 		</template>
 	</v-system-bar>
 </template>
@@ -150,6 +150,7 @@ export default {
 		toolbar: App.toolbar.state,
 		settingsState,
 		isMacOS: platform() === 'darwin',
+		isWindows: platform() === 'win32',
 		isTauriBuild: import.meta.env.VITE_IS_TAURI_APP,
 
 		appVersion,
