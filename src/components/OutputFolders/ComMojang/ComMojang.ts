@@ -8,7 +8,6 @@ import { VirtualDirectoryHandle } from '../../FileSystem/Virtual/DirectoryHandle
 import { TauriFsStore } from '../../FileSystem/Virtual/Stores/TauriFs'
 import { basename, join } from '/@/utils/path'
 import { platform } from '/@/utils/os'
-import { localDataDir } from '@tauri-apps/api/path'
 
 export const comMojangKey = 'comMojangDirectory'
 
@@ -51,6 +50,8 @@ export class ComMojang extends Signal<void> {
 			directoryHandle === undefined &&
 			platform() === 'win32'
 		) {
+			const { localDataDir } = await import('@tauri-apps/api/path')
+
 			directoryHandle = join(
 				await localDataDir(),
 				'Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/LocalState/games/com.mojang'
