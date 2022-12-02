@@ -50,9 +50,9 @@ export class ComMojang extends Signal<void> {
 			directoryHandle === undefined &&
 			platform() === 'win32'
 		) {
-			const { localDataDir } = await import('@tauri-apps/api/path')
+			const { join, localDataDir } = await import('@tauri-apps/api/path')
 
-			directoryHandle = join(
+			directoryHandle = await join(
 				await localDataDir(),
 				'Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/LocalState/games/com.mojang'
 			)

@@ -4,7 +4,7 @@ import { InformationWindow } from '../Windows/Common/Information/InformationWind
 import { FileSystem } from './FileSystem'
 import { isUsingFileSystemPolyfill, isUsingOriginPrivateFs } from './Polyfill'
 import { App } from '/@/App'
-import { basename, extname, join } from '/@/utils/path'
+import { basename, extname } from '/@/utils/path'
 import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
 
 export async function saveOrDownload(
@@ -30,10 +30,12 @@ export async function saveOrDownload(
 			const app = await App.getApp()
 
 			if (import.meta.env.VITE_IS_TAURI_APP) {
-				const { appLocalDataDir } = await import('@tauri-apps/api/path')
+				const { join, appLocalDataDir } = await import(
+					'@tauri-apps/api/path'
+				)
 
 				revealInFileExplorer(
-					join(await appLocalDataDir(), 'bridge', filePath)
+					await join(await appLocalDataDir(), 'bridge', filePath)
 				)
 			} else if (
 				app.project.isLocal ||
