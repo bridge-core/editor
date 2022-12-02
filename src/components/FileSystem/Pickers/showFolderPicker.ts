@@ -8,7 +8,7 @@ interface IOpenFolderOpts {
 export async function showFolderPicker({ defaultPath }: IOpenFolderOpts = {}) {
 	if (!import.meta.env.VITE_IS_TAURI_APP)
 		return await window
-			.showDirectoryPicker({ mode: 'readwrite' })
+			.showDirectoryPicker({ multiple: false, mode: 'readwrite' })
 			.catch(() => null)
 
 	const { open } = await import('@tauri-apps/api/dialog')
