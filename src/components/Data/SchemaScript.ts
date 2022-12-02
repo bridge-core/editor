@@ -100,82 +100,91 @@ export class SchemaScript {
 			)
 		}
 	}
+	protected processScriptResult(
+		scriptPath: string,
+		schemaScript: any,
+		scriptResult: any,
+		localSchemas: any
+	) {
+		if (!scriptResult) return
+		if (scriptPath.endsWith('.js')) {
+			if (scriptResult.keep) return
+
+			schemaScript = {
+				...schemaScript,
+				type: scriptResult.type,
+				generateFile: scriptResult.generateFile,
+			}
+			scriptResult = scriptResult.data
+		}
+
+		if (
+			schemaScript.type === 'object' &&
+			!Array.isArray(scriptResult) &&
+			typeof scriptResult === 'object'
+		) {
+			localSchemas[
+				`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
+			] = {
+				uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
+				schema: {
+					type: 'object',
+					properties: scriptResult,
+				},
+			}
+		} else if (schemaScript.type === 'custom') {
+			localSchemas[
+				`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
+			] = {
+				uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
+				schema: scriptResult,
+			}
+		} else {
+			localSchemas[
+				`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
+			] = {
+				uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
+				schema: {
+					type: schemaScript.type === 'enum' ? 'string' : 'object',
+					enum:
+						schemaScript.type === 'enum' ? scriptResult : undefined,
+					properties:
+						schemaScript.type === 'properties'
+							? Object.fromEntries(
+									scriptResult.map((res: string) => [res, {}])
+							  )
+							: undefined,
+				},
+			}
+		}
+	}
 
 	async runSchemaScripts(localSchemas: any) {
 		const schemaScripts = await this.app.dataLoader.readJSON(
 			'data/packages/minecraftBedrock/schemaScripts.json'
 		)
 
+		const promises = []
+
 		for (const [scriptPath, script] of Object.entries(schemaScripts)) {
 			let schemaScript: any
 			if (scriptPath.endsWith('.js')) schemaScript = { script }
 			else schemaScript = script
 
-			let scriptResult: any = await this.runScript(
-				scriptPath,
-				schemaScript.script
+			promises.push(
+				this.runScript(scriptPath, schemaScript.script).then(
+					(scriptResult) => {
+						this.processScriptResult(
+							scriptPath,
+							schemaScript,
+							scriptResult,
+							localSchemas
+						)
+					}
+				)
 			)
-
-			if (scriptResult) {
-				if (scriptPath.endsWith('.js')) {
-					if (scriptResult.keep) continue
-
-					schemaScript = {
-						...schemaScript,
-						type: scriptResult.type,
-						generateFile: scriptResult.generateFile,
-					}
-					scriptResult = scriptResult.data
-				}
-
-				if (
-					schemaScript.type === 'object' &&
-					!Array.isArray(scriptResult) &&
-					typeof scriptResult === 'object'
-				) {
-					localSchemas[
-						`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
-					] = {
-						uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
-						schema: {
-							type: 'object',
-							properties: scriptResult,
-						},
-					}
-				} else if (schemaScript.type === 'custom') {
-					localSchemas[
-						`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
-					] = {
-						uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
-						schema: scriptResult,
-					}
-				} else {
-					localSchemas[
-						`file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`
-					] = {
-						uri: `file:///data/packages/minecraftBedrock/schema/${schemaScript.generateFile}`,
-						schema: {
-							type:
-								schemaScript.type === 'enum'
-									? 'string'
-									: 'object',
-							enum:
-								schemaScript.type === 'enum'
-									? scriptResult
-									: undefined,
-							properties:
-								schemaScript.type === 'properties'
-									? Object.fromEntries(
-											scriptResult.map((res: string) => [
-												res,
-												{},
-											])
-									  )
-									: undefined,
-						},
-					}
-				}
-			}
 		}
+
+		await Promise.all(promises)
 	}
 }
