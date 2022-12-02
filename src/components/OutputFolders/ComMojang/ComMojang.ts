@@ -54,7 +54,7 @@ export class ComMojang extends Signal<void> {
 
 			directoryHandle = await join(
 				await localDataDir(),
-				'Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/LocalState/games/com.mojang'
+				'Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang'
 			)
 		}
 

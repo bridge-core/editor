@@ -5,7 +5,6 @@ import {
 	readBinaryFile,
 	removeDir,
 	removeFile,
-	BaseDirectory,
 } from '@tauri-apps/api/fs'
 import { join, sep } from '@tauri-apps/api/path'
 import { BaseStore, type TStoreType } from './BaseStore'
@@ -16,13 +15,9 @@ export interface ITauriFsSerializedData {
 
 export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 	public readonly type = 'tauriFsStore'
-	protected baseDirectory?: string
 
-	constructor(baseDirectory?: string) {
+	constructor(protected baseDirectory?: string) {
 		super()
-
-		if (baseDirectory)
-			this.baseDirectory = baseDirectory.replaceAll(/\\|\//g, sep)
 	}
 
 	getBaseDirectory() {

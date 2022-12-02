@@ -1,6 +1,5 @@
 import { VirtualDirectoryHandle } from '../Virtual/DirectoryHandle'
 import { TauriFsStore } from '../Virtual/Stores/TauriFs'
-import { basename } from '/@/utils/path'
 
 interface IOpenFolderOpts {
 	defaultPath?: string
@@ -13,6 +12,7 @@ export async function showFolderPicker({ defaultPath }: IOpenFolderOpts = {}) {
 			.catch(() => null)
 
 	const { open } = await import('@tauri-apps/api/dialog')
+	const { basename } = await import('@tauri-apps/api/path')
 
 	const selectedPath = await open({
 		directory: true,
@@ -23,6 +23,6 @@ export async function showFolderPicker({ defaultPath }: IOpenFolderOpts = {}) {
 
 	return new VirtualDirectoryHandle(
 		new TauriFsStore(selectedPath),
-		basename(selectedPath)
+		await basename(selectedPath)
 	)
 }

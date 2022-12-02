@@ -16,12 +16,8 @@ import { join, basename, dirname, isAbsolute, sep } from '@tauri-apps/api/path'
 import json5 from 'json5'
 
 export class TauriBasedDashFileSystem extends FileSystem {
-	protected baseDirectory?: string
-	constructor(baseDirectory?: string) {
+	constructor(protected baseDirectory?: string) {
 		super()
-
-		if (baseDirectory)
-			this.baseDirectory = baseDirectory.replaceAll(/\\|\//g, sep)
 	}
 
 	async resolvePath(path: string) {
@@ -29,12 +25,6 @@ export class TauriBasedDashFileSystem extends FileSystem {
 		if (!this.baseDirectory || (await isAbsolute(path))) return path
 
 		return join(this.baseDirectory, path)
-	}
-	relative(path: string) {
-		if (!this.baseDirectory) return path
-
-		path = path.replaceAll(/\\|\//g, sep)
-		return path.replace(`${this.baseDirectory}${sep}`, '')
 	}
 
 	async readJson(path: string) {
@@ -86,6 +76,13 @@ export class TauriBasedDashFileSystem extends FileSystem {
 		})
 
 		return this.flattenEntries(entries)
+	}
+	protected relative(path: string) {
+		if (!this.baseDirectory) return path
+
+		return path
+			.replace(`${this.baseDirectory}${sep}`, '')
+			.replaceAll('\\', '/') // Dash expects forward slashes
 	}
 	protected flattenEntries(entries: FileEntry[]) {
 		const files: string[] = []
