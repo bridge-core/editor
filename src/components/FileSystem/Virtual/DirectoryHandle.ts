@@ -1,11 +1,9 @@
 import { VirtualHandle, BaseVirtualHandle } from './Handle'
 import { VirtualFileHandle } from './FileHandle'
 import { ISerializedDirectoryHandle } from './Comlink'
-import { BaseStore } from './Stores/BaseStore'
-import { IndexedDbStore } from './Stores/IndexedDb'
+import { BaseStore, FsKindEnum, IDirEntry } from './Stores/BaseStore'
 import { MemoryStore } from './Stores/Memory'
 import { deserializeStore } from './Stores/Deserialize'
-import { TauriFsStore } from './Stores/TauriFs'
 
 /**
  * A class that implements a virtual folder
@@ -68,11 +66,19 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			).filter((child) => child !== undefined)
 		)
 	}
-	protected getChildPath(childName: string) {
+	protected getChildPath(child: IDirEntry | string) {
+		const childName = typeof child === 'string' ? child : child.name
+
 		return this.path.concat(childName).join('/')
 	}
-	protected async getChild(childName: string) {
-		const type = await this.baseStore.typeOf(this.getChildPath(childName))
+	protected async getChild(child: IDirEntry | string) {
+		const childName = typeof child === 'string' ? child : child.name
+		const type =
+			typeof child === 'string'
+				? await this.baseStore.typeOf(this.getChildPath(child))
+				: child.kind === FsKindEnum.Directory
+				? 'directory'
+				: 'file'
 
 		if (type === 'file') {
 			return new VirtualFileHandle(this, childName)
@@ -87,9 +93,6 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 
 	protected async hasChildren() {
 		return (await this.fromStore()).length > 0
-	}
-	protected async has(childName: string) {
-		return (await this.fromStore()).includes(childName)
 	}
 	serialize(): ISerializedDirectoryHandle {
 		let baseStore: BaseStore | undefined = undefined

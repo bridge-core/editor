@@ -7,7 +7,7 @@ import {
 	removeFile,
 } from '@tauri-apps/api/fs'
 import { join, sep } from '@tauri-apps/api/path'
-import { BaseStore, type TStoreType } from './BaseStore'
+import { BaseStore, FsKindEnum, type TStoreType } from './BaseStore'
 
 export interface ITauriFsSerializedData {
 	baseDirectory?: string
@@ -59,7 +59,11 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 
 	async getDirectoryEntries(path: string) {
 		const entries = await readDir(await this.resolvePath(path))
-		return <string[]>entries.map((entry) => entry.name)
+
+		return entries.map((entry) => ({
+			kind: entry.children ? FsKindEnum.Directory : FsKindEnum.File,
+			name: entry.name!,
+		}))
 	}
 
 	async writeFile(path: string, data: Uint8Array) {

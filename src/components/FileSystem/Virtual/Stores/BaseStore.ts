@@ -1,6 +1,22 @@
-export interface IFileData {
+export const FsKindEnum = <const>{
+	Directory: 0,
+	File: 1,
+}
+export type TFsKind = typeof FsKindEnum['Directory' | 'File']
+export interface IFsEntry<T> {
+	kind: TFsKind
+	data: T
+}
+export interface IFileData extends IFsEntry<Uint8Array> {
+	kind: typeof FsKindEnum.File
 	lastModified: number
-	data: Uint8Array
+}
+export interface IDirectoryData extends IFsEntry<IDirEntry[]> {
+	kind: typeof FsKindEnum.Directory
+}
+export interface IDirEntry {
+	kind: TFsKind
+	name: string
 }
 
 export type TStoreType = 'idbStore' | 'memoryStore' | 'tauriFsStore'
@@ -31,7 +47,7 @@ export abstract class BaseStore<T = any> {
 	/**
 	 * Get directory entries
 	 */
-	abstract getDirectoryEntries(path: string): Promise<string[]>
+	abstract getDirectoryEntries(path: string): Promise<(IDirEntry | string)[]>
 
 	/**
 	 * Write file
