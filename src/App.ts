@@ -172,17 +172,25 @@ export class App {
 		// Only prompt in prod mode so we can use HMR in dev mode
 		if (import.meta.env.PROD) {
 			window.addEventListener('beforeunload', (event) => {
-				if (
-					this.tabSystem?.hasUnsavedTabs ||
-					this.taskManager.hasRunningTasks ||
-					isUsingFileSystemPolyfill.value
-				) {
+				if (this.shouldWarnBeforeClose) {
 					event.preventDefault()
 					event.returnValue = saveWarning
 					return saveWarning
 				}
 			})
 		}
+	}
+
+	get shouldWarnBeforeClose() {
+		if (
+			!import.meta.env.VITE_IS_TAURI_APP &&
+			isUsingFileSystemPolyfill.value
+		)
+			return true
+
+		return (
+			this.tabSystem?.hasUnsavedTabs || this.taskManager.hasRunningTasks
+		)
 	}
 
 	static openUrl(url: string, id?: string, openInBrowser = false) {

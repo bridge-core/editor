@@ -41,6 +41,10 @@
 		"reloadBridge": {
 			"name": "Reload bridge.",
 			"description": "Restart bridge. Any unsaved changes will be lost."
+		},
+		"warnBeforeClosing": {
+			"title": "Unsaved Changes",
+			"description": "Are you sure you want to close this window? Any unsaved changes will be lost."
 		}
 	},
 	"openWith": {

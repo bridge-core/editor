@@ -16,6 +16,8 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { ConfirmationWindow } from '../Windows/Common/Confirm/ConfirmWindow'
+import { App } from '/@/App'
 
 async function useAppWindow() {
 	const { appWindow } = await import('@tauri-apps/api/window')
@@ -45,7 +47,14 @@ async function onMaximize() {
 }
 async function onClose() {
 	const appWindow = await useAppWindow()
+	const app = await App.getApp()
 
-	appWindow.close()
+	if (!app.shouldWarnBeforeClose) return appWindow.close()
+
+	new ConfirmationWindow({
+		title: 'general.warnBeforeClosing.title',
+		description: 'general.warnBeforeClosing.description',
+		onConfirm: () => appWindow.close(),
+	})
 }
 </script>
