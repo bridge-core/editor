@@ -111,7 +111,7 @@ export abstract class Project {
 		/**
 		 * Only update compilation results if the watch mode setting is active,
 		 * the current project is not a virtual project
-		 * ...and the filesystem polyfill is not active
+		 * ...and the filesystem polyfill is not active (it's also inactive if we're on a Tauri build)
 		 *
 		 * Explanation:
 		 * 	Devices that need the filesystem polyfill will not be able to export
@@ -121,7 +121,8 @@ export abstract class Project {
 		return (
 			(settingsState.compiler?.watchModeActive ?? true) &&
 			!this.isVirtualProject &&
-			!isUsingFileSystemPolyfill.value
+			(!isUsingFileSystemPolyfill.value ||
+				import.meta.env.VITE_IS_TAURI_APP)
 		)
 	}
 	get projectPath() {
