@@ -778,6 +778,10 @@
 					"name": "Sidebar Size",
 					"description": "Changes the width of the expanded sidebar area."
 				},
+				"packExplorerFolderIndentation": {
+					"name": "Folder Indentation",
+					"description": "Changes the indentation of folders in the pack explorer."
+				},
 				"shrinkSidebarElements": {
 					"name": "Shrink Sidebar Elements",
 					"description": "Shrink the size of bridge.'s sidebar elements"
@@ -923,6 +927,10 @@
 				"autoSaveChanges": {
 					"name": "Auto Save Changes",
 					"description": "Automatically save changes to files after a short delay"
+				},
+				"showTreeEditorLocationBar": {
+					"name": "Show Tree Editor Location Bar",
+					"description": "Allows you to quickly navigate your JSON file within the tree editor by displaying your current location above the editor."
 				},
 				"bridgePredictions": {
 					"name": "bridge. Predictions",

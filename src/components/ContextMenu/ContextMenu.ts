@@ -6,6 +6,19 @@ export interface IPosition {
 	clientY: number
 }
 
+interface ICard {
+	title: string
+	text: string
+}
+
+export interface IContextMenuOptions {
+	/**
+	 * Context menu cards appear above the regular action list
+	 */
+	card?: ICard
+	mayCloseOnClickOutside?: boolean
+}
+
 export class ContextMenu {
 	protected mayCloseOnClickOutside = true
 	protected isVisible = ref(false)
@@ -15,16 +28,24 @@ export class ContextMenu {
 		y: 0,
 	})
 	protected menuHeight = 0
+	protected card: ICard = {
+		title: '',
+		text: '',
+	}
 
 	show(
 		event: IPosition,
 		actionManager: ActionManager,
-		mayCloseOnClickOutside = true
+		{
+			card = { title: '', text: '' },
+			mayCloseOnClickOutside = true,
+		}: IContextMenuOptions
 	) {
 		this.position.x = event.clientX
 		this.position.y = event.clientY
 		this.actionManager.value = markRaw(actionManager)
 		this.mayCloseOnClickOutside = mayCloseOnClickOutside
+		this.card = Object.assign(this.card, card)
 
 		// Add up size of each context menu element + top/bottom padding
 		this.menuHeight =

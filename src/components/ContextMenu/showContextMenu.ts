@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { IActionConfig } from '../Actions/SimpleAction'
 import { ActionManager } from '../Actions/ActionManager'
-import { IPosition } from './ContextMenu'
+import { IContextMenuOptions, IPosition } from './ContextMenu'
 
 export interface ISubmenuConfig {
 	type: 'submenu'
@@ -19,7 +19,7 @@ export type TActionConfig =
 export async function showContextMenu(
 	event: MouseEvent | IPosition,
 	actions: TActionConfig[],
-	mayCloseOnClickOutside = true
+	options: IContextMenuOptions = {}
 ) {
 	let filteredActions = <
 		(IActionConfig | ISubmenuConfig | { type: 'divider' })[]
@@ -49,9 +49,5 @@ export async function showContextMenu(
 	})
 
 	// This is necessary so an old click outside event doesn't close the new menu
-	setTimeout(
-		() =>
-			app.contextMenu.show(event, actionManager, mayCloseOnClickOutside),
-		60
-	)
+	setTimeout(() => app.contextMenu.show(event, actionManager, options), 60)
 }

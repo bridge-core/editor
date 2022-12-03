@@ -16,7 +16,7 @@
 		<!-- Render folder contents -->
 		<Draggable
 			v-if="directoryWrapper.isOpen.value"
-			:class="{ 'ml-2': renderDirectoryName }"
+			:class="{ [`ml-${folderIndentation}`]: renderDirectoryName }"
 			v-model="directoryWrapper.children.value"
 			group="directory-view"
 			handle=".drag-handle"
@@ -59,6 +59,7 @@ import { clipboard } from '../ContextMenu/Actions/Edit/Copy'
 import { PasteAction } from '../ContextMenu/Actions/Edit/Paste'
 import { isDraggingWrapper } from '../Common/DraggingWrapper'
 import { pointerDevice } from '/@/utils/pointerDevice'
+import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 
 export default {
 	name: 'DirectoryView',
@@ -83,6 +84,30 @@ export default {
 	computed: {
 		isReadOnly() {
 			return this.directoryWrapper.options.isReadOnly
+		},
+		folderIndentation() {
+			const defaultIndentation = 'normal'
+			let indentationSetting =
+				settingsState && settingsState.sidebar
+					? settingsState.sidebar.packExplorerFolderIndentation
+					: undefined
+			if (!indentationSetting) indentationSetting = defaultIndentation
+
+			// Turn the setting into a number
+			switch (indentationSetting) {
+				case 'small':
+					return 1
+				case 'normal':
+					return 2
+				case 'large':
+					return 4
+				case 'x-large':
+					return 6
+				default:
+					throw new Error(
+						`Invalid folder indentation setting: ${indentationSetting}`
+					)
+			}
 		},
 	},
 	methods: {
