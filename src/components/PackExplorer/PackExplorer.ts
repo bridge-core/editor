@@ -214,7 +214,9 @@ export class PackExplorer extends SidebarContent {
 				},
 			},
 
-			isUsingFileSystemPolyfill.value ? null : moveAction,
+			import.meta.env.VITE_IS_TAURI_APP || isUsingFileSystemPolyfill.value
+				? null
+				: moveAction,
 			{ type: 'divider' },
 			// Reload project
 			{
