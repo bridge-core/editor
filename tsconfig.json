@@ -16,7 +16,6 @@
 		"types": [
 			"@types/wicg-file-system-access",
 			"node",
-			"vite/client",
 			"vite-plugin-pwa/client"
 		],
 		"paths": {

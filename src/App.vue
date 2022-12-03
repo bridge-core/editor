@@ -311,6 +311,9 @@ summary::-webkit-details-marker {
 .cursor-pointer {
 	cursor: pointer;
 }
+.no-pointer-events {
+	pointer-events: none;
+}
 .outlined {
 	border-width: thin;
 	border-color: #555555;

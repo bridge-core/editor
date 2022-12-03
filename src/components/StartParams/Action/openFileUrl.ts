@@ -14,8 +14,7 @@ export const openFileUrl: IStartAction = {
 		const file = new VirtualFileHandle(
 			null,
 			basename(value),
-			new Uint8Array(await resp.arrayBuffer()),
-			true
+			new Uint8Array(await resp.arrayBuffer())
 		)
 
 		const app = await App.getApp()

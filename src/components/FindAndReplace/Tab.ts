@@ -1,6 +1,5 @@
 import { reactive, markRaw } from 'vue'
 import { Remote, wrap } from 'comlink'
-import { Signal } from '../Common/Event/Signal'
 import { searchType } from './Controls/searchType'
 import FindAndReplaceComponent from './Tab.vue'
 import type {
@@ -15,8 +14,11 @@ import { TabSystem } from '../TabSystem/TabSystem'
 import { Mutex } from '../Common/Mutex'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { translate } from '../Locales/Manager'
+import { setupWorker } from '/@/utils/worker/setup'
 
-const FindAndReplaceClass = wrap<typeof FindAndReplace>(new Worker())
+const worker = new Worker()
+const FindAndReplaceClass = wrap<typeof FindAndReplace>(worker)
+setupWorker(worker)
 
 interface ITabState {
 	scrollTop: number

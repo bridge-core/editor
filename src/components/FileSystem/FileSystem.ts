@@ -50,9 +50,9 @@ export class FileSystem extends Signal<void> {
 				current = await current.getDirectoryHandle(folder, {
 					create: createOnce || create,
 				})
-			} catch {
+			} catch (err) {
 				throw new Error(
-					`Failed to access "${path}": Directory does not exist`
+					`Failed to access "${path}": Directory does not exist: ${err}`
 				)
 			}
 
@@ -91,7 +91,8 @@ export class FileSystem extends Signal<void> {
 			.then((path) => path?.join('/'))
 
 		if (path) {
-			path = '~local/' + path
+			// Local projects don't exist for Tauri builds
+			if (!import.meta.env.VITE_IS_TAURI_APP) path = '~local/' + path
 		} else {
 			path = await this.baseDirectory
 				.resolve(<any>handle)

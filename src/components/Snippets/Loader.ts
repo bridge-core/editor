@@ -15,10 +15,11 @@ export class SnippetLoader {
 	async activate() {
 		const app = await App.getApp()
 		const packageHandle = await app.project.getCurrentDataPackage()
-		const snippetHandle = await packageHandle.getDirectoryHandle(
-			'snippet',
-			{ create: true }
-		)
+		const snippetHandle = await packageHandle
+			.getDirectoryHandle('snippet')
+			.catch(() => null)
+
+		if (!snippetHandle) return
 
 		await this.loadFrom(snippetHandle)
 	}
