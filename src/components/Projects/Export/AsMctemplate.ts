@@ -12,7 +12,6 @@ export async function exportAsMctemplate(asMcworld = false) {
 	app.windows.loadingWindow.open()
 
 	const service = await app.project.createDashService('production')
-	await service.setup()
 	await service.build()
 
 	let baseWorlds: string[] = []

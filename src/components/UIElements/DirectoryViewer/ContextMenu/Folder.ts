@@ -7,7 +7,10 @@ import { ImportFileAction } from './Actions/ImportFile'
 import { RefreshAction } from './Actions/Refresh'
 import { RevealFilePathAction } from './Actions/RevealPath'
 import { App } from '/@/App'
-import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
+import {
+	showContextMenu,
+	TActionConfig,
+} from '/@/components/ContextMenu/showContextMenu'
 import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
 import { tryCreateFile } from '/@/utils/file/tryCreateFile'
 import { tryCreateFolder } from '/@/utils/file/tryCreateFolder'
@@ -91,6 +94,17 @@ export async function showFolderContextMenu(
 			directoryWrapper
 		)
 
+	let revealAction: TActionConfig | null = null
+	if (import.meta.env.VITE_IS_TAURI_APP) {
+		const { RevealInFileExplorer } = await import(
+			'/@/components/UIElements/DirectoryViewer/ContextMenu/Actions/RevealInFileExplorer'
+		)
+
+		revealAction = RevealInFileExplorer(directoryWrapper)
+	} else {
+		revealAction = RevealFilePathAction(directoryWrapper)
+	}
+
 	showContextMenu(event, [
 		...(directoryWrapper.options.isReadOnly
 			? [
@@ -101,12 +115,8 @@ export async function showFolderContextMenu(
 		{ type: 'divider' },
 		RefreshAction(directoryWrapper),
 		DownloadAction(directoryWrapper),
-		RevealFilePathAction(directoryWrapper),
-		// 	{
-		// 		icon: 'mdi-file-search-outline',
-		// 		name: 'Find in Folder',
-		// 		onTrigger: async () => {},
-		// 	},
+		revealAction,
+
 		...(additionalActions ?? []),
 	])
 }

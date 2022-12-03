@@ -129,6 +129,7 @@ export class LightningCache {
 			this.lightningStore.visitedFiles !== this.lightningStore.totalFiles
 		)
 			deletedFiles = await this.lightningStore.saveStore()
+
 		return [filePaths, changedFiles, deletedFiles]
 	}
 

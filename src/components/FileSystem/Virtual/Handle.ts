@@ -2,32 +2,45 @@ import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import type { VirtualFileHandle } from './FileHandle'
 import { v4 as v4Uuid } from 'uuid'
 import { Signal } from '../../Common/Event/Signal'
-import { IDBWrapper } from './IDB'
+import { BaseStore } from './Stores/BaseStore'
+import { MemoryStore } from './Stores/Memory'
+import { TauriFsStore } from './Stores/TauriFs'
 
 export type VirtualHandle = VirtualDirectoryHandle | VirtualFileHandle
 
 export abstract class BaseVirtualHandle {
-	protected _idbWrapper: IDBWrapper | null = null
+	protected _baseStore: BaseStore | null = null
 	protected parent: VirtualDirectoryHandle | null = null
 	public readonly isVirtual = true
 	public abstract readonly kind: 'directory' | 'file'
 	public readonly setupDone = new Signal<void>()
-
-	abstract moveData(): any
+	protected includeSelfInPath = true
 
 	constructor(
-		parent: VirtualDirectoryHandle | IDBWrapper | null,
+		parent: VirtualDirectoryHandle | BaseStore | null,
 		protected _name: string,
-		protected basePath: string[] = [],
-		public readonly uuid = v4Uuid()
+		protected basePath: string[] = []
 	) {
 		if (parent === null) {
-			this._idbWrapper = new IDBWrapper()
-		} else if (parent instanceof IDBWrapper) {
-			this._idbWrapper = parent
+			this._baseStore = new MemoryStore()
+		} else if (parent instanceof BaseStore) {
+			this._baseStore = parent
 		} else {
 			this.parent = parent
 		}
+
+		/**
+		 * TauriFs should not include self in path for top-level directory handle
+		 */ if (this._baseStore instanceof TauriFsStore) {
+			this.includeSelfInPath = false
+		}
+	}
+
+	async setupStore() {
+		if (this._baseStore) await this._baseStore.setup()
+	}
+	getBaseStore() {
+		return this.baseStore
 	}
 
 	protected get path(): string[] {
@@ -42,14 +55,15 @@ export abstract class BaseVirtualHandle {
 		return this.path.length > 1
 	}
 	get idbKey() {
-		if (this.path.length === 0) return this._name
+		if (this.path.length === 0)
+			return this.includeSelfInPath ? this.name : ''
 		return this.path.join('/')
 	}
-	protected get idbWrapper(): IDBWrapper {
-		if (this._idbWrapper === null) {
-			return this.parent!.idbWrapper
+	protected get baseStore(): BaseStore {
+		if (this._baseStore === null) {
+			return this.parent!.baseStore
 		}
-		return this._idbWrapper
+		return this._baseStore
 	}
 	abstract removeSelf(): Promise<void>
 

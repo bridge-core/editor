@@ -11,8 +11,13 @@ const iconPath = (filePath: string) =>
 export default defineConfig({
 	base: '/',
 	server: {
+		strictPort: true,
 		port: 8080,
+		watch: {
+			ignored: ['**/src-tauri/**/*'],
+		},
 	},
+	envPrefix: ['VITE_', 'TAURI_'],
 	json: {
 		stringify: true,
 	},
@@ -30,6 +35,9 @@ export default defineConfig({
 				// nested: resolve(__dirname, 'nested/index.html'),
 			},
 		},
+	},
+	worker: {
+		format: 'es',
 	},
 	plugins: [
 		splitVendorChunkPlugin(),

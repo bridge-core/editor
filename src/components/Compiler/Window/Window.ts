@@ -206,7 +206,6 @@ export class CompilerWindow extends NewBaseWindow {
 					const service = await project.createDashService(
 						'production'
 					)
-					await service.setup()
 					await service.build()
 				},
 			},
@@ -240,7 +239,6 @@ export class CompilerWindow extends NewBaseWindow {
 						'production',
 						`${project.projectPath}/.bridge/compiler/${entry.name}`
 					)
-					await service.setup()
 					await service.build()
 				},
 			})
@@ -256,7 +254,10 @@ export class CompilerWindow extends NewBaseWindow {
 		const { hasComMojang, didDenyPermission } = comMojang.status
 		let panelConfig: IPanelOptions
 
-		if (isUsingFileSystemPolyfill.value) {
+		if (
+			!import.meta.env.VITE_IS_TAURI_APP &&
+			isUsingFileSystemPolyfill.value
+		) {
 			panelConfig = {
 				text: 'comMojang.status.notAvailable',
 				type: 'error',
@@ -276,7 +277,9 @@ export class CompilerWindow extends NewBaseWindow {
 			}
 		} else if (!hasComMojang) {
 			panelConfig = {
-				text: 'comMojang.status.notSetup',
+				text: import.meta.env.VITE_IS_TAURI_APP
+					? 'comMojang.status.notSetupTauri'
+					: 'comMojang.status.notSetup',
 				type: 'error',
 				isDismissible: false,
 			}

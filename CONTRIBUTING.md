@@ -7,6 +7,11 @@ In order to get started testing the application, you need to install [NodeJS](ht
 Open the terminal, cd to the directory you have cloned "bridge." to and run `npm i`. Afterwards, you can use `npm run dev` and `npm run build`
 to start the development environment and build versions of "bridge.".
 
+### Native Builds
+
+We use [Tauri](https://tauri.app/) to build native versions of bridge. v2. If you want to run the native app in development mode, follow the steps described [here](https://tauri.app/v1/guides/getting-started/prerequisites). Afterwards, run `cargo install tauri-cli` to install the Tauri CLI.
+You can now run `cargo tauri dev` to start the native app in development mode.
+
 ## Code Rules
 
 ### Verified as working

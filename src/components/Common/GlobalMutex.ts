@@ -33,6 +33,14 @@ export class GlobalMutex {
 			throw new Error('Trying to unlock a mutex that does not exist')
 		}
 
+		// Store whether mutex still has listeners
+		const hasListeners = mutex.hasListeners()
+
 		mutex.unlock()
+
+		// Clean up map if no more listeners
+		if (!hasListeners) {
+			this.mutexMap.delete(key)
+		}
 	}
 }

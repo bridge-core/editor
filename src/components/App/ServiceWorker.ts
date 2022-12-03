@@ -2,7 +2,6 @@
 
 import { registerSW } from 'virtual:pwa-register'
 import { createNotification } from '/@/components/Notifications/create'
-import { App } from '/@/App'
 import { set } from 'idb-keyval'
 
 const updateSW = registerSW({

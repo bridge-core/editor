@@ -9,7 +9,7 @@ export interface ISerializedFileHandle {
 	name: string
 	path: string[]
 	fileData?: Uint8Array
-	idbWrapper?: string
+	baseStore?: any
 }
 
 transferHandlers.set('VirtualFileHandle', <
@@ -27,7 +27,7 @@ export interface ISerializedDirectoryHandle {
 	kind: 'directory'
 	name: string
 	path: string[]
-	idbWrapper?: string
+	baseStore?: any
 	children?: (ISerializedFileHandle | ISerializedDirectoryHandle)[]
 }
 

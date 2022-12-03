@@ -37,7 +37,15 @@
 			"description": "You can find the exported package here"
 		},
 		"experimentalGameplay": "Experimental Gameplay",
-		"textureLocation": "Texture Location"
+		"textureLocation": "Texture Location",
+		"reloadBridge": {
+			"name": "Reload bridge.",
+			"description": "Restart bridge. Any unsaved changes will be lost."
+		},
+		"warnBeforeClosing": {
+			"title": "Unsaved Changes",
+			"description": "Are you sure you want to close this window? Any unsaved changes will be lost."
+		}
 	},
 	"openWith": {
 		"snowstorm": "Snowstorm",
@@ -180,6 +188,10 @@
 		"revealPath": {
 			"name": "Reveal Path",
 			"description": "Reveals the location of a file or folder"
+		},
+		"revealInFileExplorer": {
+			"name": "Reveal in File Explorer",
+			"description": "Reveals the location of a file or folder in the file explorer"
 		},
 		"createFile": {
 			"name": "Create File",
@@ -1048,11 +1060,14 @@
 	"comMojang": {
 		"title": "Access to folder \"com.mojang\"",
 		"permissionRequest": "bridge. needs access to your \"com.mojang\" folder in order to compile projects to it.",
+		"linkFolder": "Link Folder",
+		"linkedFolder": "Linked Folder",
 		"status": {
-			"sucess": "Syncing your projects to com.mojang is setup correctly.",
-			"deniedPermission": "You setup com.mojang syncing but you did not grant bridge. permission to the folder.",
-			"notSetup": "You have not setup com.mojang syncing yet. Drag your com.mojang folder onto bridge. to do so.",
-			"notAvailable": "Syncing projects to the com.mojang folder is only available for Chrome and Edge users."
+			"sucess": "Syncing your projects to your \"com.mojang\" folder is setup correctly.",
+			"deniedPermission": "You setup \"com.mojang\" syncing but you did not grant bridge. permission to the folder.",
+			"notSetup": "You have not setup \"com.mojang\" syncing yet. Drag your \"com.mojang\" folder onto bridge. to do so.",
+			"notSetupTauri": "You have not setup \"com.mojang\" syncing yet. Click the \"Link Folder\" button to do so.",
+			"notAvailable": "Syncing projects to the \"com.mojang\" folder is only available for Chrome and Edge users."
 		}
 	},
 	"findAndReplace": {
