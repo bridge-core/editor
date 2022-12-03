@@ -28,33 +28,37 @@ export const openRawFileAction: IStartAction = {
 	},
 }
 
+/**
+ * Share a file with other users
+ * @param file A file handle representing the file to share
+ */
 export async function shareFile(file: AnyFileHandle) {
 	const fileContent = await file.getFile().then((file) => file.text())
 
-	if (typeof navigator.share === 'function') {
-		const url = new URL(window.location.href)
+	if (typeof navigator.share !== 'function') return
 
-		if (!App.sidebar.isContentVisible.value)
-			url.searchParams.set('setSidebarState', 'hidden')
+	const url = new URL(window.location.href)
 
-		url.searchParams.set(
-			'openRawFile',
-			btoa(
-				strFromU8(
-					zlibSync(strToU8(`${file.name}\n${fileContent}`), {
-						level: 9,
-					}),
-					true
-				)
+	if (!App.sidebar.isContentVisible.value)
+		url.searchParams.set('setSidebarState', 'hidden')
+
+	url.searchParams.set(
+		'openRawFile',
+		btoa(
+			strFromU8(
+				zlibSync(strToU8(`${file.name}\n${fileContent}`), {
+					level: 9,
+				}),
+				true
 			)
 		)
+	)
 
-		await navigator
-			.share({
-				title: `View File: ${file.name}`,
-				text: `Edit the file "${file.name}" file with bridge.!`,
-				url: url.href,
-			})
-			.catch(() => {})
-	}
+	await navigator
+		.share({
+			title: `View File: ${file.name}`,
+			text: `Edit the file "${file.name}" file with bridge.!`,
+			url: url.href,
+		})
+		.catch(() => {})
 }
