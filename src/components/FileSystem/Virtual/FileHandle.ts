@@ -4,7 +4,7 @@ import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
 import { BaseStore } from './Stores/BaseStore'
 import { deserializeStore } from './Stores/Deserialize'
-import { IndexedDbStore } from './Stores/IndexedDb'
+import { MemoryStore } from './Stores/Memory'
 
 /**
  * A class that implements a virtual file
@@ -34,7 +34,8 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 		await this.setupStore()
 
 		// We only need to write data files from the main thread, web workers can just load the already written data from the main thread
-		if (!globalThis.document && this.baseStore instanceof IndexedDbStore) {
+		// Since MemoryStore extends IndexedDBStore, we cannot use instanceof on the IndexedDBStore directly
+		if (!globalThis.document && !(this.baseStore instanceof MemoryStore)) {
 			this.setupDone.dispatch()
 			return
 		}
