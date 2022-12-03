@@ -1,8 +1,8 @@
-export interface IStep {
+export interface IStep<T = any> {
 	id: string
 	name: string
 	icon: string
 	color?: string
-	state?: any
+	state?: T
 	component: any
 }

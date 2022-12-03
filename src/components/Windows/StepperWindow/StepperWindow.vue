@@ -29,6 +29,7 @@
 			<component
 				:is="getCurrentComponent(sidebar.selected)"
 				:window="window"
+				:state="state"
 			/>
 		</template>
 
@@ -68,6 +69,9 @@ function close() {
 
 function getCurrentComponent(id: string) {
 	return state.steps.find((step: IStep) => step.id === id)?.component
+}
+function getCurrentState(id: string) {
+	return state.steps.find((step: IStep) => step.id === id)?.state
 }
 </script>
 

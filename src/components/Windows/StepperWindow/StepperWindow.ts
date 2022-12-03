@@ -21,7 +21,7 @@ export class StepperWindow extends NewBaseWindow {
 		actions: [],
 		windowTitle: '[Unknown]',
 	})
-	protected sidebar = new Sidebar([])
+	protected sidebar = new Sidebar([], false)
 
 	constructor({
 		windowTitle,
