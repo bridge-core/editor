@@ -1,5 +1,5 @@
 import { IDBWrapper } from '../IDB'
-import { TStoreType } from './BaseStore'
+import { TFsKind, TStoreType } from './BaseStore'
 import { IIndexedDbSerializedData, IndexedDbStore } from './IndexedDb'
 
 export class MemoryDb extends IDBWrapper {
@@ -40,7 +40,7 @@ export class MemoryDb extends IDBWrapper {
 		return this._store.clear()
 	}
 	async has(key: IDBValidKey) {
-		return (await this.get(key)) !== undefined
+		return this._store.has(key)
 	}
 	async keys() {
 		return [...this._store.keys()]
@@ -75,8 +75,6 @@ export class MemoryStore extends IndexedDbStore {
 	}
 
 	toIdb(isReadOnly = false) {
-		// @ts-ignore
-		console.log([...this.idb._store.entries()])
 		return this.idb.toIdb(isReadOnly)
 	}
 }
