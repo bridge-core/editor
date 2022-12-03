@@ -13,6 +13,9 @@ export default defineConfig({
 	server: {
 		strictPort: true,
 		port: 8080,
+		watch: {
+			ignored: ['**/src-tauri/**/*'],
+		},
 	},
 	envPrefix: ['VITE_', 'TAURI_'],
 	json: {
