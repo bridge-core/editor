@@ -24,6 +24,8 @@ import { IHandleMovedOptions } from '../UIElements/DirectoryViewer/DirectoryStor
 import { ViewConnectedFiles } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ConnectedFiles'
 import { ToLocalProjectAction } from './Actions/ToLocalProject'
 import { ToBridgeFolderProjectAction } from './Actions/ToBridgeFolderProject'
+import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
+import { pathFromHandle } from '../FileSystem/Virtual/pathFromHandle'
 
 export class PackExplorer extends SidebarContent {
 	component = markRaw(PackExplorerComponent)
@@ -291,6 +293,13 @@ export class PackExplorer extends SidebarContent {
 				icon: 'mdi-folder-open-outline',
 				name: 'packExplorer.openProjectFolder.name',
 				onTrigger: async () => {
+					if (import.meta.env.VITE_IS_TAURI_APP) {
+						await revealInFileExplorer(
+							await pathFromHandle(app.project.baseDirectory)
+						)
+						return
+					}
+
 					app.viewFolders.addDirectoryHandle({
 						directoryHandle: app.project.baseDirectory,
 						startPath: app.project.projectPath,
