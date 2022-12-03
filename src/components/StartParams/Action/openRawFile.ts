@@ -20,8 +20,7 @@ export const openRawFileAction: IStartAction = {
 		const file = new VirtualFileHandle(
 			null,
 			fileName,
-			textEncoder.encode(fileData),
-			true
+			textEncoder.encode(fileData)
 		)
 		const app = await App.getApp()
 		await app.projectManager.projectReady.fired
