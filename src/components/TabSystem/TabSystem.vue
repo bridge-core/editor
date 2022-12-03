@@ -13,8 +13,8 @@
 				:is="tabSystem.currentComponent"
 				:key="`${tabSystem.uuid}.${
 					tabSystem.currentComponent.name ||
-					tabSystem.selectedTab.type ||
-					tabSystem.selectedTab.name
+					(tabSystem.selectedTab || {}).type ||
+					(tabSystem.selectedTab || {}).name
 				}`"
 				:style="`height: ${tabHeight}px; width: 100%;`"
 				:height="tabHeight"

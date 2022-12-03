@@ -16,26 +16,21 @@
 			/>
 
 			<CommandBar />
+			<SolidView :component="MySolidComponent" />
 		</div>
 	</div>
 </template>
 
-<script>
+<script setup>
 import Logo from '../UIElements/Logo.vue'
 import WelcomeAlert from '../WelcomeAlert/Alert.vue'
 import CommandBar from '../CommandBar/CommandBar.vue'
+import SolidView from '/@/components/UIElements/SolidView.vue'
+import { MySolidComponent } from './SolidTest.tsx'
 
-export default {
-	name: 'welcome-screen',
-	components: {
-		Logo,
-		WelcomeAlert,
-		CommandBar,
-	},
-	props: {
-		containerPadding: String,
-	},
-}
+defineProps({
+	containerPadding: String,
+})
 </script>
 
 <style scoped>
