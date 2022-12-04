@@ -23,10 +23,7 @@ let dispose: (() => void) | null = null
 onMounted(() => {
 	if (!mountRef.value) return
 
-	dispose = render(
-		() => props.component(props.props),
-		mountRef.value.parentElement!
-	)
+	dispose = render(() => props.component(props.props), mountRef.value)
 })
 
 onBeforeUnmount(() => {
@@ -35,5 +32,5 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div ref="mountRef"></div>
+	<div v-once ref="mountRef"></div>
 </template>
