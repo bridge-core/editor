@@ -73,7 +73,7 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 
 			// Filter out childName from parentChilds
 			parentChilds = parentChilds
-				.filter((child) => typeof child === 'string')
+				.filter((child) => typeof child === 'string') // This filter call is only there to fix already duplicated entries in the database. Can be removed in a future update
 				.filter((child) => child !== childName)
 
 			// Push new child entry
