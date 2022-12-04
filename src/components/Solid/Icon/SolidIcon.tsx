@@ -24,7 +24,9 @@ export function SolidIcon(props: SolidIconProps) {
 	}
 
 	const classList = () => ({
-		[`mdi mdi-${props.icon}`]: true,
+		[`mdi ${
+			props.icon.startsWith('mdi-') ? props.icon : `mdi-${props.icon}`
+		}`]: true,
 		'cursor-pointer': !!props.onClick,
 		[`${props.color}--text`]: !!props.color,
 	})

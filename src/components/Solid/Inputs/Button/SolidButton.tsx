@@ -7,5 +7,5 @@ interface SolidButtonProps {
 }
 
 export function SolidButton(props: SolidButtonProps) {
-	return <button>{props.children}</button>
+	return <button onClick={props.onClick}>{props.children}</button>
 }
