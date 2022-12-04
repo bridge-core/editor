@@ -14,6 +14,10 @@
 	opacity: 0.4;
 }
 
+.theme--light .solid-ripple {
+	background: #000;
+}
+
 @keyframes solid-ripple-anim {
 	to {
 		transform: translate(50%, 50%) scale(1);
