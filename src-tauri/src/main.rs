@@ -7,6 +7,7 @@ use tauri::{Menu, Manager};
 use discord_rich_presence::{activity, DiscordIpc, DiscordIpcClient};
 use std::process::Command;
 use window_shadows::set_shadow;
+mod terminal;
 
 #[tauri::command]
 async fn reveal_in_file_explorer(path: &str) -> Result<(), String> {
@@ -63,6 +64,7 @@ fn main() {
         })
         .menu(menu)
         .invoke_handler(tauri::generate_handler![reveal_in_file_explorer])
+        .invoke_handler(tauri::generate_handler![terminal::execute_command])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
