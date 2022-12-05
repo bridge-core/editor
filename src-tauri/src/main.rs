@@ -73,8 +73,7 @@ fn main() {
             Ok(())
         })
         .menu(menu)
-        .invoke_handler(tauri::generate_handler![reveal_in_file_explorer])
-        .invoke_handler(tauri::generate_handler![get_file_data])
+        .invoke_handler(tauri::generate_handler![reveal_in_file_explorer, get_file_data])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
