@@ -10,7 +10,7 @@ export const PanelContent: Component = (props) => {
 	const [tabs] = toSignal(App.bottomPanel.tabs)
 
 	return (
-		<div class="bottom-panel-content pa-2">
+		<div class="bottom-panel-content pa-2 pb-0">
 			<Show when={tabs().length > 1}>
 				<TabBar />
 			</Show>
