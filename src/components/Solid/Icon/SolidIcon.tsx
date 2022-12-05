@@ -20,11 +20,11 @@ export const SolidIcon: Component<SolidIconProps> = (props) => {
 			case 'sm':
 				return '1rem'
 			case 'md':
-				return '2rem'
+				return '1.4rem'
 			case 'lg':
-				return '3rem'
+				return '2rem'
 			default:
-				return undefined
+				return '1.4rem'
 		}
 	}
 

@@ -71,11 +71,14 @@ export async function setupSidebar() {
 
 	createCompilerSidebar()
 
-	createSidebar({
+	const terminal = createSidebar({
 		id: 'terminal',
 		displayName: 'terminal.name',
 		icon: 'mdi-console-line',
 		sidebarContent: markRaw(new Terminal()),
+	})
+	App.getApp().then(() => {
+		setTimeout(() => terminal.select(), 10)
 	})
 
 	/**

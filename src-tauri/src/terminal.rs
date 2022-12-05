@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use async_process::Command;
 
 #[tauri::command]
-pub async fn execute_command(cwd: String, command: String) -> Result<String, String> {
+pub async fn execute_command(cwd: String, command: String) -> Result<(String, String), String> {
     // Set the current working directory
     let cwd_path = PathBuf::from(cwd);
 
@@ -31,7 +31,10 @@ pub async fn execute_command(cwd: String, command: String) -> Result<String, Str
     };
 
 
-    let output_string = String::from_utf8(output.stdout).expect("Failed to convert output to string");
+    let output_string = String::from_utf8(output.stdout)
+        .expect("Failed to convert output to string");
+    let stderr_string = String::from_utf8(output.stderr)
+        .expect("Failed to convert stderr to string");
 
-    Ok(output_string)
+    Ok((output_string, stderr_string))
 }
