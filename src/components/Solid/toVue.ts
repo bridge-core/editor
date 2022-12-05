@@ -26,7 +26,10 @@ export function toVue<T>(component: Component<T>): VueComponent {
 			onMounted(() => {
 				if (!mountRef.value) return
 
-				dispose = render(() => component(attrs as T), mountRef.value)
+				dispose = render(
+					() => component(attrs as unknown as T),
+					mountRef.value
+				)
 			})
 
 			onBeforeUnmount(() => {
