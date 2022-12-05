@@ -1,5 +1,6 @@
 import { Dynamic, Show, Switch, Match, For } from 'solid-js/web'
 import { toSignal } from '../toSignal'
+import { toVue } from '../toVue'
 import { Name } from './Common/Name'
 import { DirectoryWrapper } from '/@/components/UIElements/DirectoryViewer/DirectoryView/DirectoryWrapper'
 
@@ -47,3 +48,5 @@ export function DirectoryView(props: DirectoryViewProps) {
 		</Dynamic>
 	)
 }
+
+export const VDirectoryView = toVue(DirectoryView)

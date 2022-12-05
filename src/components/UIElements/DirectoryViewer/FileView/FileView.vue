@@ -1,30 +1,16 @@
 <template>
-	<!-- <Name :baseWrapper="fileWrapper" :diagnostic="diagnostic" /> -->
-	<SolidView
-		:component="SolidName"
-		:props="{
-			tagName: 'div',
-			baseWrapper: fileWrapper,
-		}"
-	/>
+	<Name :baseWrapper="fileWrapper" :diagnostic="diagnostic" />
 </template>
 
 <script>
 import Name from '../Common/Name.vue'
-import SolidView from '/@/components/UIElements/SolidView.vue'
 import { FileWrapper } from './FileWrapper'
-import { Name as SolidName } from '/@/components/Solid/DirectoryViewer/Common/Name.tsx'
 
 export default {
-	components: { Name, SolidView },
+	components: { Name },
 	name: 'FileView',
 	props: {
 		fileWrapper: FileWrapper,
-	},
-	setup() {
-		return {
-			SolidName,
-		}
 	},
 	mounted() {
 		this.fileWrapper.getFirstDiagnostic().then((diagnostic) => {

@@ -1,15 +1,11 @@
 <template>
-	<SolidView
-		v-if="false"
-		:component="DirectoryView"
-		:props="{
-			hideDirectoryName: true,
-			directoryWrapper,
-		}"
-	/>
+	<!-- <VDirectoryView
+		v-if="true"
+		:hideDirectoryName="true"
+		:directoryWrapper="directoryWrapper"
+	/> -->
 
 	<component
-		v-else
 		:is="renderDirectoryName ? 'details' : 'div'"
 		:open="directoryWrapper.isOpen.value"
 		@dragenter="onDragEnter"
@@ -63,7 +59,6 @@
 <script>
 import { DirectoryWrapper } from './DirectoryWrapper'
 import FileView from '../FileView/FileView.vue'
-import SolidView from '/@/components/UIElements/SolidView.vue'
 import Draggable from 'vuedraggable'
 import Name from '../Common/Name.vue'
 import { clipboard } from '../ContextMenu/Actions/Edit/Copy'
@@ -71,11 +66,11 @@ import { PasteAction } from '../ContextMenu/Actions/Edit/Paste'
 import { isDraggingWrapper } from '../Common/DraggingWrapper'
 import { pointerDevice } from '/@/utils/pointerDevice'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { DirectoryView } from '/@/components/Solid/DirectoryViewer/DirectoryView.tsx'
+// import { VDirectoryView } from '/@/components/Solid/DirectoryViewer/DirectoryView.tsx'
 
 export default {
 	name: 'DirectoryView',
-	components: { Draggable, FileView, Name, SolidView },
+	components: { Draggable, FileView, Name /**, VDirectoryView */ },
 	props: {
 		directoryWrapper: DirectoryWrapper,
 		renderDirectoryName: {
@@ -87,7 +82,6 @@ export default {
 		return {
 			isDraggingWrapper,
 			pointerDevice,
-			DirectoryView,
 		}
 	},
 	data: () => ({
