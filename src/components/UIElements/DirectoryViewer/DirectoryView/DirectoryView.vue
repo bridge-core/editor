@@ -1,4 +1,10 @@
 <template>
+	<!-- <VDirectoryView
+		v-if="true"
+		:hideDirectoryName="true"
+		:directoryWrapper="directoryWrapper"
+	/> -->
+
 	<component
 		:is="renderDirectoryName ? 'details' : 'div'"
 		:open="directoryWrapper.isOpen.value"
@@ -60,10 +66,11 @@ import { PasteAction } from '../ContextMenu/Actions/Edit/Paste'
 import { isDraggingWrapper } from '../Common/DraggingWrapper'
 import { pointerDevice } from '/@/utils/pointerDevice'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
+// import { VDirectoryView } from '/@/components/Solid/DirectoryViewer/DirectoryView.tsx'
 
 export default {
 	name: 'DirectoryView',
-	components: { Draggable, FileView, Name },
+	components: { Draggable, FileView, Name /**, VDirectoryView */ },
 	props: {
 		directoryWrapper: DirectoryWrapper,
 		renderDirectoryName: {

@@ -68,32 +68,37 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 			parentChilds = []
 		}
 
-		// Old format where we stored dir entries as strings
 		if (Array.isArray(parentChilds)) {
-			await this.idb.set(parentDir, [
-				...new Set([
-					...parentChilds,
-					{
-						name: childName,
-						kind: childKind,
-					},
-				]),
-			])
+			// Old format where we stored dir entries as strings
+
+			// Filter out childName from parentChilds
+			parentChilds = parentChilds
+				.filter((child) => typeof child === 'string') // This filter call is only there to fix already duplicated entries in the database. Can be removed in a future update
+				.filter((child) => child !== childName)
+
+			// Push new child entry
+			parentChilds.push(childName)
 		} else {
 			// New format where we store dir entries as objects
-			await this.idb.set(parentDir, {
+
+			// Filter out childName from parentChilds
+			parentChilds = {
 				kind: FsKindEnum.Directory,
-				data: [
-					...new Set([
-						...parentChilds.data,
-						{
-							name: childName,
-							kind: childKind,
-						},
-					]),
-				],
+				data: parentChilds.data.filter((child) =>
+					typeof child === 'string'
+						? child !== childName
+						: child.name !== childName
+				),
+			}
+
+			// Push new child entry
+			parentChilds.data.push({
+				kind: childKind,
+				name: childName,
 			})
 		}
+
+		await this.idb.set(parentDir, parentChilds)
 
 		this.unlockAccess(parentDir)
 	}
@@ -148,11 +153,11 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 		let data: Uint8Array
 		let lastModified = Date.now()
 		// Old format where we stored Uint8Array directly
-		if (Array.isArray(rawData)) {
-			data = <Uint8Array>rawData
+		if (rawData instanceof Uint8Array) {
+			data = rawData
 		} else {
-			data = (<IFileData>rawData).data ?? new Uint8Array()
 			lastModified = (<IFileData>rawData).lastModified ?? Date.now()
+			data = rawData.data ?? new Uint8Array()
 		}
 
 		return new File([data], basename(path), { lastModified })
@@ -184,6 +189,7 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 				})
 			}
 		}
+		// TODO: Fix directory unlinking
 
 		await this.idb.del(path)
 
