@@ -52,7 +52,7 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	}
 
 	abstract readonly icon: string
-	abstract useIcon(): string
+	// abstract useIcon(): string
 	abstract unselectAll(): void
 	abstract _onRightClick(event: MouseEvent): void
 	abstract _onClick(event: MouseEvent, forceClick: boolean): void

@@ -4,8 +4,7 @@ import { BaseWrapper } from '../Common/BaseWrapper'
 import { IDirectoryViewerOptions } from '../DirectoryStore'
 import { FileWrapper } from '../FileView/FileWrapper'
 import { showFolderContextMenu } from '../ContextMenu/Folder'
-import { toSignal } from '/@/components/Solid/toSignal'
-import { whenIdle } from '/@/utils/whenIdle'
+// import { toSignal } from '/@/components/Solid/toSignal'
 
 const ignoreFiles = ['.DS_Store']
 
@@ -26,11 +25,11 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 	get icon() {
 		return this.isOpen.value ? 'mdi-folder-open' : 'mdi-folder'
 	}
-	useIcon() {
-		const [isOpen] = toSignal(this.isOpen)
+	// useIcon() {
+	// 	const [isOpen] = toSignal(this.isOpen)
 
-		return isOpen() ? 'mdi-folder-open' : 'mdi-folder'
-	}
+	// 	return isOpen() ? 'mdi-folder-open' : 'mdi-folder'
+	// }
 
 	protected async getChildren() {
 		const children: (DirectoryWrapper | FileWrapper)[] = []

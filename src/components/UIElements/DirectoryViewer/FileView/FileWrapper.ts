@@ -25,9 +25,9 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 			App.fileType.get(path)?.icon ?? getDefaultFileIcon(this.handle.name)
 		)
 	}
-	useIcon() {
-		return this.icon
-	}
+	// useIcon() {
+	// 	return this.icon
+	// }
 
 	async getFirstDiagnostic() {
 		// TODO: Disabled until we find time to polish the feature
