@@ -152,10 +152,10 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 
 		let data: Uint8Array
 		// Old format where we stored Uint8Array directly
-		if (Array.isArray(rawData)) {
-			data = <Uint8Array>rawData
+		if (rawData instanceof Uint8Array) {
+			data = rawData
 		} else {
-			data = (<IFileData>rawData).data ?? new Uint8Array()
+			data = rawData.data ?? new Uint8Array()
 		}
 
 		return data
