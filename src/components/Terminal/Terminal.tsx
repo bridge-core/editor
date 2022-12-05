@@ -1,15 +1,18 @@
 import { SidebarContent } from '/@/components/Sidebar/Content/SidebarContent'
 import { SidebarAction } from '/@/components/Sidebar/Content/SidebarAction'
 import { markRaw, ref } from 'vue'
-import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 import { invoke } from '@tauri-apps/api/tauri'
 import { pathFromHandle } from '../FileSystem/Virtual/pathFromHandle'
 import { App } from '/@/App'
-import { For, Component, createSignal, createEffect } from 'solid-js'
+import { For, Component, createSignal, Show } from 'solid-js'
 import { toVue } from '../Solid/toVue'
 import { TextField } from '../Solid/Inputs/TextField/TextField'
 import { toSignal } from '../Solid/toSignal'
 import './Terminal.css'
+import { Signal } from '../Common/Event/Signal'
+import { appLocalDataDir, isAbsolute, join } from '@tauri-apps/api/path'
+import { SolidIcon } from '../Solid/Icon/SolidIcon'
+import { exists } from '@tauri-apps/api/fs'
 
 interface ICommand {
 	// Format HH:MM:SS
@@ -26,6 +29,9 @@ export class Terminal extends SidebarContent {
 	headerHeight = '58px'
 	output = ref<ICommand[]>([])
 	hasRunningTask = ref(false)
+	baseCwd = ''
+	cwd = ref('')
+	setupDone = markRaw(new Signal<void>())
 
 	constructor() {
 		super()
@@ -34,21 +40,60 @@ export class Terminal extends SidebarContent {
 	}
 
 	async setup() {
-		// this.actions.push(
-		// 	new SidebarAction({
-		// 		icon: 'mdi-dots-vertical',
-		// 		name: 'general.more',
-		// 		onTrigger: (event) => {},
-		// 	})
-		// )
+		const app = await App.getApp()
+		await app.projectManager.projectReady.fired
+
+		this.baseCwd = await join(await appLocalDataDir(), 'bridge')
+
+		if (this.cwd.value === '') this.cwd.value = this.baseCwd
+
+		this.setupDone.dispatch()
+	}
+
+	protected async handleCdCommand(command: string) {
+		const path = command.substring(3)
+		const stderr: string[] = []
+
+		const prevCwd = this.cwd.value
+
+		if (await isAbsolute(path)) {
+			this.cwd.value = path
+		} else {
+			this.cwd.value = await join(this.cwd.value, path)
+		}
+
+		// Confirm that the path exists
+		if (!(await exists(this.cwd.value))) {
+			this.cwd.value = prevCwd
+			stderr.push(`cd: no such directory: ${path}`)
+		}
+
+		// Ensure that cwd doesn't leave the baseCwd
+		if (!this.cwd.value.startsWith(this.baseCwd)) {
+			this.cwd.value = prevCwd
+			stderr.push('cd: Permission denied')
+		}
+
+		this.output.value.unshift({
+			time: new Date().toLocaleTimeString(),
+			command,
+			stdout: [],
+			stderr,
+		})
 	}
 
 	async executeCommand(command: string) {
+		if (command.startsWith('cd ')) {
+			await this.handleCdCommand(command)
+			return
+		}
+
 		this.hasRunningTask.value = true
 
-		const app = await App.getApp()
+		await this.setupDone.fired
+
 		const [stdout, stderr] = await invoke<string>('execute_command', {
-			cwd: await pathFromHandle(app.project.baseDirectory),
+			cwd: this.cwd.value,
 			command,
 		})
 
@@ -90,9 +135,28 @@ const TerminalComponent: Component<{
 	sidebarContent: Terminal
 }> = (props) => {
 	const [output] = toSignal(props.sidebarContent.output)
+	const [cwd] = toSignal(props.sidebarContent.cwd)
+
+	const prettyCwd = () => {
+		const tmp = cwd()
+			.replace(props.sidebarContent.baseCwd, '')
+			.replace(/\\/g, '/')
+		if (tmp === '') return 'bridge'
+		return `bridge${tmp}`
+	}
 
 	return (
 		<div class="ma-2">
+			{/* Show current cwd */}
+			<span class="terminal-line d-flex align-center font-weight-medium primary--text">
+				<Show when={prettyCwd() !== ''}>
+					<SolidIcon icon="mdi-folder-open-outline" class="mr-1" />
+				</Show>
+
+				{prettyCwd()}
+			</span>
+
+			{/* Render terminal output */}
 			<For each={output()}>
 				{({ command, time, stdout, stderr }) => (
 					<div class="mb-2">

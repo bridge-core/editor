@@ -3,6 +3,7 @@ import { toVue } from '../toVue'
 
 interface SolidIconProps {
 	icon: string
+	class?: string
 	size?: 'sm' | 'md' | 'lg' | number
 	color?: string
 	opacity?: number
@@ -38,6 +39,7 @@ export const SolidIcon: Component<SolidIconProps> = (props) => {
 		<i
 			style={{ 'font-size': iconSize(), opacity: props.opacity ?? 1 }}
 			translate="no"
+			class={props.class}
 			classList={classList()}
 			onClick={props.onClick}
 		/>
