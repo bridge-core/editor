@@ -6,7 +6,6 @@ import { App } from '/@/App'
 import { showFileContextMenu } from '../ContextMenu/File'
 import { getDefaultFileIcon } from '/@/utils/file/getIcon'
 
-
 export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 	public readonly kind = 'file'
 
@@ -22,8 +21,13 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 		const path = this.path
 		if (!path) return getDefaultFileIcon(this.handle.name)
 
-		return App.fileType.get(path)?.icon ?? getDefaultFileIcon(this.handle.name)
+		return (
+			App.fileType.get(path)?.icon ?? getDefaultFileIcon(this.handle.name)
+		)
 	}
+	// useIcon() {
+	// 	return this.icon
+	// }
 
 	async getFirstDiagnostic() {
 		// TODO: Disabled until we find time to polish the feature
@@ -33,7 +37,7 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 		// return diagnostics?.[0]
 	}
 
-	async openFile(persistFile=false) {
+	async openFile(persistFile = false) {
 		const app = await App.getApp()
 
 		await app.project.openFile(this.handle, {
@@ -49,7 +53,7 @@ export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 		this.options.onFileRightClick?.(event, this)
 	}
 	override async _onClick(event: MouseEvent, forceClick: boolean) {
-		if(forceClick) {
+		if (forceClick) {
 			const app = await App.getApp()
 
 			const currentTab = app.project.tabSystem?.selectedTab
