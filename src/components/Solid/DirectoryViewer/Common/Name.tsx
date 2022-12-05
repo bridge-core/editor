@@ -46,7 +46,7 @@ export function Name(props: NameProps) {
 			onBlur={() => setIsFocused(false)}
 		>
 			<IconText
-				icon={props.baseWrapper.useIcon()}
+				icon={'mdi-folder' /** props.baseWrapper.useIcon() */}
 				color={props.baseWrapper.color}
 				text={props.baseWrapper.name}
 			/>

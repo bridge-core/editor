@@ -2,9 +2,6 @@ import { Component } from 'solid-js'
 import { useRipple } from '../Directives/Ripple'
 import { SolidIcon } from './SolidIcon'
 
-/**
- * A component that displays text with an icon next to it
- */
 interface IconTextProps {
 	icon: string
 	text: string
@@ -12,6 +9,9 @@ interface IconTextProps {
 	color?: string
 }
 
+/**
+ * A component that displays text with an icon next to it
+ */
 export const IconText: Component<IconTextProps> = (props) => {
 	const ripple = useRipple()
 	const styles = {
