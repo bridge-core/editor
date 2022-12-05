@@ -9,7 +9,7 @@ import { SetupContext } from 'vue'
 export function toVue<T>(component: Component<T>): VueComponent {
 	const vueWrapper: VueComponent = {
 		inheritAttrs: false,
-		template: `<div v-once ref="mountRef"></div>`,
+		template: `<div style="width: 100%; height: 100%; overflow: hidden;" v-once ref="mountRef"></div>`,
 		setup(_: any, { slots, attrs }: SetupContext) {
 			const mountRef = ref<HTMLElement | null>(null)
 

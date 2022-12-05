@@ -52,7 +52,6 @@
 					class="flex-grow-1"
 				>
 					<div
-						v-if="shouldRenderWelcomeScreen"
 						class="d-flex"
 						:class="{ 'flex-column': $vuetify.breakpoint.mobile }"
 						:style="{
@@ -68,6 +67,7 @@
 						<TabSystem class="flex-grow-1" showWelcomeScreen />
 						<v-divider
 							v-if="
+								tabSystems &&
 								tabSystems[0].shouldRender.value &&
 								tabSystems[1].shouldRender.value
 							"
@@ -82,7 +82,6 @@
 						/> -->
 					</div>
 					<WelcomeScreen
-						v-else
 						:containerPadding="
 							isSidebarContentVisible
 								? isSidebarRight

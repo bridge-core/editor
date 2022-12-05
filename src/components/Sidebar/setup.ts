@@ -6,8 +6,6 @@ import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
 import { createCompilerSidebar } from '../Compiler/Sidebar/create'
 import { exportAsMcaddon } from '../Projects/Export/AsMcaddon'
-import { Terminal } from '../Terminal/Terminal'
-import { markRaw } from 'vue'
 
 export async function setupSidebar() {
 	createSidebar({
@@ -70,16 +68,6 @@ export async function setupSidebar() {
 	})
 
 	createCompilerSidebar()
-
-	const terminal = createSidebar({
-		id: 'terminal',
-		displayName: 'terminal.name',
-		icon: 'mdi-console-line',
-		sidebarContent: markRaw(new Terminal()),
-	})
-	App.getApp().then(() => {
-		setTimeout(() => terminal.select(), 10)
-	})
 
 	/**
 	 * Enable one click exports of projects on mobile

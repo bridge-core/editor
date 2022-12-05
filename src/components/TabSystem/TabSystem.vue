@@ -22,20 +22,35 @@
 				:id="id"
 			/>
 		</keep-alive>
+
+		<BottomPanel />
+	</div>
+
+	<div v-else-if="showWelcomeScreen">
+		<WelcomeScreen
+			:style="`height: ${tabHeight}px; width: 100%;`"
+			:containerPadding="'px-2'"
+		/>
+
+		<BottomPanel />
 	</div>
 </template>
 
 <script>
+import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
+
 import TabBar from '/@/components/TabSystem/TabBar.vue'
 import { App } from '/@/App'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight'
 import { useTabSystem } from '../Composables/UseTabSystem'
 import { toRefs, watch } from 'vue'
+import BottomPanel from '/@/components/BottomPanel/BottomPanel.vue'
 
 export default {
 	name: 'TabSystem',
 	mixins: [AppToolbarHeightMixin],
 	props: {
+		showWelcomeScreen: Boolean,
 		id: {
 			type: Number,
 			default: 0,
@@ -59,6 +74,8 @@ export default {
 	},
 	components: {
 		TabBar,
+		WelcomeScreen,
+		BottomPanel,
 	},
 	data: () => ({
 		windowHeight: window.innerHeight,
@@ -74,18 +91,19 @@ export default {
 	},
 	computed: {
 		tabBarHeight() {
-			return this.tabSystem.selectedTab &&
-				this.tabSystem.selectedTab.actions.length > 0
-				? 48 + 25
-				: 48
+			if (!this.tabSystem?.selectedTab) return 0
+			return this.tabSystem?.selectedTab.actions.length > 0 ? 48 + 25 : 48
 		},
 		tabHeight() {
 			return (
 				(this.windowHeight - this.appToolbarHeightNumber) /
-					(this.tabSystem.isSharingScreen.value && this.isMobile
+					(this.tabSystem?.isSharingScreen.value && this.isMobile
 						? 2
 						: 1) -
-				this.tabBarHeight
+				this.tabBarHeight -
+				(App.bottomPanel.isVisible.value
+					? App.bottomPanel.height.value
+					: 0)
 			)
 		},
 		isMobile() {

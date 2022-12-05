@@ -7,7 +7,7 @@ interface SolidIconProps {
 	size?: 'sm' | 'md' | 'lg' | number
 	color?: string
 	opacity?: number
-	onClick?: () => void
+	onClick?: () => unknown
 	children?: string // Compat with Vuetify's v-icon which allows passing icon id as slot content
 }
 

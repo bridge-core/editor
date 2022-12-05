@@ -1,0 +1,38 @@
+.bottom-panel-tab {
+	display: flex;
+	align-items: center;
+	font-size: 12px;
+	font-weight: 500;
+	letter-spacing: 1.25px;
+
+	cursor: pointer;
+	padding: 1px 8px;
+	border-radius: 8px;
+	border-bottom: 2px solid rgba(0, 0, 0, 0);
+	background: var(--v-sidebarSelection-base);
+	text-transform: uppercase;
+}
+
+.bottom-panel-tab i {
+	font-size: 18px !important;
+}
+
+.bottom-panel-tab-active {
+	cursor: default;
+	background: var(--v-primary-base);
+	transform: scale(1.1);
+}
+
+.bottom-panel-content {
+	height: 100%;
+}
+
+.bottom-panel-content-container {
+	/* Full height - tab bar height - tab bar padding - vertical padding */
+	height: calc(100% - 39px);
+	overflow-y: auto;
+}
+
+.bottom-panel-content-container-full-height {
+	height: 100%;
+}
