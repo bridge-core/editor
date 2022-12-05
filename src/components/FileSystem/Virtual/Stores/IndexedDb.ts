@@ -156,7 +156,7 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 		if (rawData instanceof Uint8Array) {
 			data = rawData
 		} else {
-			lastModified = (<IFileData>rawData).lastModified ?? Date.now()
+			lastModified = rawData.lastModified ?? Date.now()
 			data = rawData.data ?? new Uint8Array()
 		}
 
