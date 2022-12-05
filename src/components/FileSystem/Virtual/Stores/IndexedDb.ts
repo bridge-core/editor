@@ -151,14 +151,16 @@ export class IndexedDbStore extends BaseStore<IIndexedDbSerializedData> {
 		}
 
 		let data: Uint8Array
+		let lastModified = Date.now()
 		// Old format where we stored Uint8Array directly
 		if (rawData instanceof Uint8Array) {
 			data = rawData
 		} else {
+			lastModified = rawData.lastModified ?? Date.now()
 			data = rawData.data ?? new Uint8Array()
 		}
 
-		return data
+		return new File([data], basename(path), { lastModified })
 	}
 
 	async unlink(path: string) {

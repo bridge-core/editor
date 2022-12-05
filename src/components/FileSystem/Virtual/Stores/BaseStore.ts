@@ -57,7 +57,7 @@ export abstract class BaseStore<T = any> {
 	/**
 	 * Read file
 	 */
-	abstract readFile(path: string): Promise<Uint8Array>
+	abstract readFile(path: string): Promise<File>
 
 	/**
 	 * Unlink a file or directory

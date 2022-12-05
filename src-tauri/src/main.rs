@@ -26,6 +26,17 @@ async fn reveal_in_file_explorer(path: &str) -> Result<(), String> {
 
     Ok(())
 }
+/**
+ * A function that returns when a file was last modified and its file data
+ */
+#[tauri::command]
+async fn get_file_data(path: &str) -> Result<(u64, Vec<u8>), String> {
+    let metadata = std::fs::metadata(path).expect("Failed to get file metadata");
+    let modified = metadata.modified().expect("Failed to get file modified time").duration_since(std::time::UNIX_EPOCH).expect("Time went backwards").as_secs();
+    let data = std::fs::read(path).expect("Failed to read file");
+
+    Ok((modified, data))
+}
 
 fn main() {
     let mut menu = Menu::os_default(&"bridge. v2");
@@ -62,7 +73,7 @@ fn main() {
             Ok(())
         })
         .menu(menu)
-        .invoke_handler(tauri::generate_handler![reveal_in_file_explorer])
+        .invoke_handler(tauri::generate_handler![reveal_in_file_explorer, get_file_data])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
