@@ -23,7 +23,7 @@ export class BottomPanel {
 			icon: 'mdi-bug',
 			name: 'Problems',
 			component: () => (
-				<div class="mx-2 text--disabled">
+				<div class="text--disabled">
 					We are still working on displaying problems with your
 					project here...
 				</div>

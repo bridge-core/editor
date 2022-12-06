@@ -18,7 +18,7 @@ export const TerminalOutput: Component<{
 	}
 
 	return (
-		<div class="ma-2">
+		<div class="my-2">
 			{/* Show current cwd */}
 			<span class="terminal-line d-flex align-center font-weight-medium primary--text">
 				<Show when={prettyCwd() !== ''}>

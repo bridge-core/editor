@@ -22,7 +22,7 @@ export const LogPanel: Component<{
 	return (
 		<>
 			<Show when={!log() || log().length === 0}>
-				<div class="mx-2 text--disabled">No logs to show...</div>
+				<div class="text--disabled">No logs to show...</div>
 			</Show>
 
 			<For each={log()}>

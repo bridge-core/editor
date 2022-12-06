@@ -16,7 +16,7 @@ export const TerminalInput: Component<{
 
 	return (
 		<TextField
-			class="ma-2"
+			class="my-2"
 			prependIcon="mdi-chevron-right"
 			placeholder="Enter command..."
 			model={[input, setInput]}
