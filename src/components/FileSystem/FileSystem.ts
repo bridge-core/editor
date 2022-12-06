@@ -279,16 +279,21 @@ export class FileSystem extends Signal<void> {
 	}
 	async copyFolderByHandle(
 		originHandle: AnyDirectoryHandle,
-		destHandle: AnyDirectoryHandle
+		destHandle: AnyDirectoryHandle,
+		ignoreFolders?: Set<string>
 	) {
 		const destFs = new FileSystem(destHandle)
 
-		await iterateDirParallel(originHandle, async (fileHandle, filePath) => {
-			await this.copyFileHandle(
-				fileHandle,
-				await destFs.getFileHandle(filePath, true)
-			)
-		})
+		await iterateDirParallel(
+			originHandle,
+			async (fileHandle, filePath) => {
+				await this.copyFileHandle(
+					fileHandle,
+					await destFs.getFileHandle(filePath, true)
+				)
+			},
+			ignoreFolders
+		)
 	}
 
 	loadFileHandleAsDataUrl(fileHandle: AnyFileHandle) {
