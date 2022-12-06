@@ -2,7 +2,7 @@
 	<div
 		class="py-2 pr-2"
 		:class="{
-			'pl-2': true,
+			'pl-2': false,
 		}"
 		:style="{
 			height: `${height}px`,
