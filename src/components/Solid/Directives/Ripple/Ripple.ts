@@ -4,14 +4,16 @@ import './Ripple.css'
 declare module 'solid-js' {
 	namespace JSX {
 		interface Directives {
-			ripple: true
+			ripple: any
 		}
 	}
 }
 
-function rippleDirective(el: HTMLElement) {
+function rippleDirective(el: HTMLElement, value: () => boolean) {
 	let spans = new Set<HTMLSpanElement>()
 	const onClick = (event: MouseEvent) => {
+		if (typeof value === 'function' && !value()) return
+
 		el.classList.add('solid-ripple-container')
 		const bounds = el.getBoundingClientRect()
 		const x = event.pageX
