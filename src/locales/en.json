@@ -478,7 +478,7 @@
 		"restartWatchMode": {
 			"name": "Restart Watch Mode",
 			"description": "Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
-			"confirmOverwrite": "Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!"
+			"confirmDescription": "Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!"
 		},
 		"createPreset": "New File",
 		"projectConfig": {
