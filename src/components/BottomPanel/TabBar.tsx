@@ -1,4 +1,5 @@
 import { Component, For } from 'solid-js'
+import { useTranslations } from '../Composables/useTranslations'
 import { useRipple } from '../Solid/Directives/Ripple/Ripple'
 import { SolidIcon } from '../Solid/Icon/SolidIcon'
 import { SolidIconButton } from '../Solid/Inputs/IconButton/IconButton'
@@ -8,6 +9,7 @@ import { App } from '/@/App'
 
 export const TabBar: Component = (props) => {
 	const ripple = useRipple()
+	const { t } = useTranslations()
 	const [tabs] = toSignal(App.bottomPanel.tabs)
 	const [activeTab] = toSignal(App.bottomPanel.activeTab)
 	const [_, setIsVisible] = toSignal(App.bottomPanel.isVisible)
@@ -28,7 +30,7 @@ export const TabBar: Component = (props) => {
 							onClick={() => App.bottomPanel.selectTab(tab)}
 						>
 							<SolidIcon icon={tab.icon} class="mr-1" />
-							{tab.name}
+							{t(tab.name)}
 						</div>
 					)}
 				</For>

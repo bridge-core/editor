@@ -1,11 +1,13 @@
 import { Component, createSignal } from 'solid-js'
-import { TextField } from '../Solid/Inputs/TextField/TextField'
-import { toSignal } from '../Solid/toSignal'
+import { useTranslations } from '../../Composables/useTranslations'
+import { TextField } from '../../Solid/Inputs/TextField/TextField'
+import { toSignal } from '../../Solid/toSignal'
 import type { Terminal } from './Terminal'
 
 export const TerminalInput: Component<{
 	terminal: Terminal
 }> = (props) => {
+	const { t } = useTranslations()
 	const [input, setInput] = createSignal('')
 	const [hasRunningTask] = toSignal(props.terminal.hasRunningTask)
 
@@ -18,7 +20,7 @@ export const TerminalInput: Component<{
 		<TextField
 			class="my-2"
 			prependIcon="mdi-chevron-right"
-			placeholder="Enter command..."
+			placeholder={t('bottomPanel.terminal.inputPlaceholder')}
 			model={[input, setInput]}
 			onEnter={onEnter}
 			disabled={hasRunningTask()}

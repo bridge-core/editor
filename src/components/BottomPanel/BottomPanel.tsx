@@ -21,7 +21,7 @@ export class BottomPanel {
 
 		this.addTab({
 			icon: 'mdi-bug',
-			name: 'Problems',
+			name: 'bottomPanel.problems.name',
 			component: () => (
 				<div class="text--disabled">
 					We are still working on displaying problems with your
@@ -34,7 +34,7 @@ export class BottomPanel {
 			App.getApp().then((app) => {
 				this.addTab({
 					icon: 'mdi-cogs',
-					name: 'Compiler',
+					name: 'bottomPanel.compiler.name',
 					component: () =>
 						LogPanel({
 							compilerWindow: app.windows.compilerWindow,
@@ -46,16 +46,16 @@ export class BottomPanel {
 
 	async setupTerminal() {
 		if (!import.meta.env.VITE_IS_TAURI_APP) return
-		const { Terminal } = await import('/@/components/Terminal/Terminal')
-		const { TerminalInput } = await import('/@/components/Terminal/Input')
-		const { TerminalOutput } = await import('/@/components/Terminal/Output')
+		const { Terminal } = await import('./Terminal/Terminal')
+		const { TerminalInput } = await import('./Terminal/Input')
+		const { TerminalOutput } = await import('./Terminal/Output')
 
 		const terminal = new Terminal()
 
 		this.addTab(
 			{
 				icon: 'mdi-console-line',
-				name: 'Terminal',
+				name: 'bottomPanel.terminal.name',
 				component: () => (
 					<>
 						<TerminalInput terminal={terminal} />

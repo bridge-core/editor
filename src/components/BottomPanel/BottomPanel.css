@@ -34,6 +34,7 @@
 }
 .bottom-panel-tab-active {
 	cursor: default;
+	z-index: 1;
 	background: var(--v-primary-base);
 	transform: scale(1.1);
 }

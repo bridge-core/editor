@@ -1,6 +1,6 @@
 import { Component, For, Show } from 'solid-js'
-import { SolidIcon } from '../Solid/Icon/SolidIcon'
-import { toSignal } from '../Solid/toSignal'
+import { SolidIcon } from '../../Solid/Icon/SolidIcon'
+import { toSignal } from '../../Solid/toSignal'
 import type { Terminal } from './Terminal'
 
 export const TerminalOutput: Component<{

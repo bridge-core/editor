@@ -1,4 +1,5 @@
 import { Component, For, Show } from 'solid-js'
+import { useTranslations } from '../../Composables/useTranslations'
 import { SolidIcon } from '../../Solid/Icon/SolidIcon'
 import { toSignal } from '../../Solid/toSignal'
 import { CompilerWindow } from '../Window/Window'
@@ -7,6 +8,7 @@ import { ILogData } from '../Worker/Console'
 export const LogPanel: Component<{
 	compilerWindow: CompilerWindow
 }> = (props) => {
+	const { t } = useTranslations()
 	const [log] = toSignal<[string, ILogData][]>(
 		props.compilerWindow.getCategories().logs.data
 	)
@@ -22,7 +24,9 @@ export const LogPanel: Component<{
 	return (
 		<>
 			<Show when={!log() || log().length === 0}>
-				<div class="text--disabled">No logs to show...</div>
+				<div class="text--disabled">
+					{t('bottomPanel.compiler.noLogs')}
+				</div>
 			</Show>
 
 			<For each={log()}>
