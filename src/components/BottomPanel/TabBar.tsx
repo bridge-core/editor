@@ -14,15 +14,12 @@ export const TabBar: Component = (props) => {
 
 	return (
 		<div class="d-flex align-center ma-1">
-			<div
-				class="bottom-panel-tab-bar d-flex align-center mr-1"
-				classList={{ 'pl-2': tabs()[0] === activeTab() }}
-			>
+			<div class="bottom-panel-tab-bar d-flex align-center mr-1 pl-2">
 				<For each={tabs()}>
 					{(tab, i) => (
 						<div
 							use:ripple={tab !== activeTab()}
-							class="bottom-panel-tab"
+							class="bottom-panel-tab flex-shrink-0"
 							classList={{
 								'bottom-panel-tab-active elevation-2 white--text':
 									tab === activeTab(),
