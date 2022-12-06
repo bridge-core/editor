@@ -24,9 +24,10 @@
 	cursor: pointer;
 	padding: 1px 8px;
 	border-radius: 8px;
-	border-bottom: 2px solid rgba(0, 0, 0, 0);
 	background: var(--v-sidebarSelection-base);
 	text-transform: uppercase;
+
+	transition: transform 0.1s ease-in-out;
 }
 .bottom-panel-tab i {
 	font-size: 18px !important;
