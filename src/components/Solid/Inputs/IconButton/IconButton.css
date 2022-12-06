@@ -1,0 +1,11 @@
+.solid-icon-button {
+	width: 2em;
+	height: 2em;
+
+	transition: transform 0.2s ease-in-out;
+}
+
+/* Hover state */
+.solid-icon-button:hover {
+	transform: scale(1.1);
+}

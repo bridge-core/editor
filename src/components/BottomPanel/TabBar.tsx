@@ -1,6 +1,7 @@
 import { Component, For } from 'solid-js'
 import { useRipple } from '../Solid/Directives/Ripple/Ripple'
 import { SolidIcon } from '../Solid/Icon/SolidIcon'
+import { SolidIconButton } from '../Solid/Inputs/IconButton/IconButton'
 import { SolidSpacer } from '../Solid/SolidSpacer'
 import { toSignal } from '../Solid/toSignal'
 import { App } from '/@/App'
@@ -38,7 +39,10 @@ export const TabBar: Component = (props) => {
 
 			<SolidSpacer />
 
-			<SolidIcon icon="mdi-close" onClick={() => setIsVisible(false)} />
+			<SolidIconButton
+				icon="mdi-close"
+				onClick={() => setIsVisible(false)}
+			/>
 		</div>
 	)
 }

@@ -10,7 +10,7 @@
 	transform: translate(50%, 50%) scale(0);
 
 	pointer-events: none;
-	animation: solid-ripple-anim 0.3s ease-in-out;
+	animation: solid-ripple-anim 0.4s ease-in-out;
 	opacity: 0.6;
 }
 
