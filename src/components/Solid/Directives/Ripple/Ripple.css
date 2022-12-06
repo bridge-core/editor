@@ -11,7 +11,7 @@
 
 	pointer-events: none;
 	animation: solid-ripple-anim 0.3s ease-in-out;
-	opacity: 0.4;
+	opacity: 0.6;
 }
 
 .theme--light .solid-ripple {
