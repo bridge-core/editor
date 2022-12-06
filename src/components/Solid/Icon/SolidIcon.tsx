@@ -5,6 +5,7 @@ interface SolidIconProps {
 	icon: string
 	class?: string
 	size?: 'sm' | 'md' | 'lg' | number
+	offsetY?: number
 	color?: string
 	opacity?: number
 	onClick?: () => unknown
@@ -25,7 +26,7 @@ export const SolidIcon: Component<SolidIconProps> = (props) => {
 			case 'lg':
 				return '2rem'
 			default:
-				return '1.4rem'
+				return props.size ? `${props.size}rem` : '1.4rem'
 		}
 	}
 
@@ -37,7 +38,13 @@ export const SolidIcon: Component<SolidIconProps> = (props) => {
 
 	return (
 		<i
-			style={{ 'font-size': iconSize(), opacity: props.opacity ?? 1 }}
+			style={{
+				'font-size': iconSize(),
+				opacity: props.opacity ?? 1,
+				transform: props.offsetY
+					? `translate(0, ${props.offsetY}em)`
+					: undefined,
+			}}
 			translate="no"
 			class={props.class}
 			classList={classList()}

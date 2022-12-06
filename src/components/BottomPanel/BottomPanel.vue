@@ -1,6 +1,9 @@
 <template>
 	<div
 		class="py-2 pr-2"
+		:class="{
+			'pl-2': true,
+		}"
 		:style="{
 			height: `${height}px`,
 			width: '100%',
@@ -35,6 +38,7 @@ import { watch } from 'vue'
 import { App } from '/@/App'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import { VuePanelContent } from './PanelContent'
+import { settingsState } from '../Windows/Settings/SettingsState'
 
 const height = App.bottomPanel.height
 const isVisible = App.bottomPanel.isVisible
