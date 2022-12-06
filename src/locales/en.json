@@ -464,7 +464,7 @@
 			"description": "Fetch the current project for newly added files"
 		},
 		"noProjectView": {
-			"noProjectsFound": "It does not look like you have any projects yet!",
+			"noProjectsFound": "It does not look like you have any projects yet. Get started by creating a new project!",
 			"createLocalProject": "Create Local Project",
 			"chooseBridgeFolder": "Choose bridge. Folder",
 			"accessBridgeFolder": "Access bridge. Folder",
