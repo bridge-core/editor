@@ -16,7 +16,7 @@ export const PanelContent: Component = (props) => {
 			</Show>
 
 			<div
-				class="bottom-panel-content-container mx-2"
+				class="bottom-panel-content-container px-2"
 				classList={{
 					'bottom-panel-content-container-full-height':
 						tabs().length <= 1,
