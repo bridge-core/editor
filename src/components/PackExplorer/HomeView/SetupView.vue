@@ -1,6 +1,7 @@
 <template>
 	<div style="overflow: hidden">
 		<BridgeFolderBtn />
+		<ImportOldProjects />
 		<CreateProjectBtn color="success" />
 
 		<BridgeSheet dark class="pa-2 mb-2 d-flex flex-column">
@@ -85,6 +86,7 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import CreateProjectBtn from './CreateProjectBtn.vue'
 import BridgeFolderBtn from './BridgeFolderBtn.vue'
+import ImportOldProjects from './ImportOldProjects.vue'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import ActionViewer from '/@/components/Actions/ActionViewer.vue'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
@@ -100,6 +102,7 @@ export default {
 		CreateProjectBtn,
 		BridgeFolderBtn,
 		ActionViewer,
+		ImportOldProjects,
 	},
 	setup() {
 		return {
