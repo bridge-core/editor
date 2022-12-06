@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import { get } from 'idb-keyval'
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { ConfirmationWindow } from '../../Windows/Common/Confirm/ConfirmWindow'
