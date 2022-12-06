@@ -24,7 +24,7 @@
 		</BridgeSheet>
 
 		<BridgeSheet
-			v-if="!hasComMojangSetup && !isUsingFileSystemPolyfill"
+			v-if="mayShowComMojangSetupPanel"
 			dark
 			class="pa-2 mb-2 d-flex flex-column"
 		>
@@ -171,6 +171,15 @@ export default {
 				}),
 			],
 		}
+	},
+	computed: {
+		mayShowComMojangSetupPanel() {
+			return (
+				!import.meta.env.VITE_IS_TAURI_APP &&
+				!this.hasComMojangSetup &&
+				!this.isUsingFileSystemPolyfill
+			)
+		},
 	},
 	methods: {
 		async setJsonEditor(val) {
