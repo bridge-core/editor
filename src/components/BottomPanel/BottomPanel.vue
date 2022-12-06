@@ -3,6 +3,7 @@
 		class="py-2 pr-2"
 		:style="{
 			height: `${height}px`,
+			width: '100%',
 		}"
 	>
 		<!-- Floating button to open/close bottom panel -->
@@ -23,7 +24,7 @@
 			</v-btn>
 		</div>
 
-		<BridgeSheet v-if="isVisible" style="height: 100%">
+		<BridgeSheet v-if="isVisible" style="height: 100%; width: 100%">
 			<VuePanelContent />
 		</BridgeSheet>
 	</div>

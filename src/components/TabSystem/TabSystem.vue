@@ -26,7 +26,14 @@
 		<BottomPanel />
 	</div>
 
-	<div v-else-if="showWelcomeScreen">
+	<div
+		v-else-if="showWelcomeScreen"
+		:style="{
+			'margin-right': '1px',
+			width: isMobile ? '100%' : 'calc(50% - 100px)',
+			height: isMobile ? '50%' : '100%',
+		}"
+	>
 		<WelcomeScreen
 			:style="`height: ${tabHeight}px; width: 100%;`"
 			:containerPadding="'px-2'"

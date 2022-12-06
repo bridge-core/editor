@@ -1,3 +1,19 @@
+.bottom-panel-content {
+	height: 100%;
+}
+
+/* Tab bar */
+.bottom-panel-tab-bar {
+	width: 100%;
+	overflow-x: auto;
+	overflow-y: visible;
+	padding: 4px 0;
+}
+.bottom-panel-tab-bar::-webkit-scrollbar {
+	display: none;
+}
+
+/* Tabs */
 .bottom-panel-tab {
 	display: flex;
 	align-items: center;
@@ -12,27 +28,21 @@
 	background: var(--v-sidebarSelection-base);
 	text-transform: uppercase;
 }
-
 .bottom-panel-tab i {
 	font-size: 18px !important;
 }
-
 .bottom-panel-tab-active {
 	cursor: default;
 	background: var(--v-primary-base);
 	transform: scale(1.1);
 }
 
-.bottom-panel-content {
-	height: 100%;
-}
-
+/* Panel content */
 .bottom-panel-content-container {
 	/* Full height - tab bar height - tab bar padding - vertical padding */
-	height: calc(100% - 39px);
+	height: calc(100% - 39px - 8px);
 	overflow-y: auto;
 }
-
 .bottom-panel-content-container-full-height {
 	height: 100%;
 }
