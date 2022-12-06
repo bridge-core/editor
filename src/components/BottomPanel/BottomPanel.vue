@@ -11,9 +11,9 @@
 			class="d-flex justify-center align-center rounded-r-lg"
 			:style="{
 				background: 'var(--v-expandedSidebar-base)',
-				position: 'absolute',
-				left: '-60px',
-				top: `${windowSize.currentHeight - 64}px`,
+				position: 'fixed',
+				left: 0,
+				bottom: '8px',
 				height: '28px',
 				width: '60px',
 			}"
@@ -38,8 +38,6 @@ import { VuePanelContent } from './PanelContent'
 
 const height = App.bottomPanel.height
 const isVisible = App.bottomPanel.isVisible
-
-const windowSize = App.instance.windowResize.state
 
 // Dispatch window resize event when bottom panel is shown/hidden
 watch(isVisible, () => {
