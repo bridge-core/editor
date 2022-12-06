@@ -4,6 +4,8 @@ import './BottomPanel.css'
 import { Terminal } from '../Terminal/Terminal'
 import { TerminalOutput } from '../Terminal/Output'
 import { TerminalInput } from '../Terminal/Input'
+import { LogPanel } from '../Compiler/LogPanel/Panel'
+import { App } from '/@/App'
 
 interface ITab {
 	name: string
@@ -34,11 +36,18 @@ export class BottomPanel {
 			})
 		}
 
-		// this.addTab({
-		// 	icon: 'mdi-cogs',
-		// 	name: 'Compiler',
-		// 	component: () => <div>Compiler</div>,
-		// })
+		setTimeout(() => {
+			App.getApp().then((app) => {
+				this.addTab({
+					icon: 'mdi-cogs',
+					name: 'Compiler',
+					component: () =>
+						LogPanel({
+							compilerWindow: app.windows.compilerWindow,
+						}),
+				})
+			})
+		})
 	}
 
 	selectTab(tab: ITab) {
