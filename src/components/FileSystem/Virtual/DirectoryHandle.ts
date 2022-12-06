@@ -4,6 +4,7 @@ import { ISerializedDirectoryHandle } from './Comlink'
 import { BaseStore, FsKindEnum, IDirEntry } from './Stores/BaseStore'
 import { MemoryStore } from './Stores/Memory'
 import { deserializeStore } from './Stores/Deserialize'
+import { getParent } from './getParent'
 
 /**
  * A class that implements a virtual folder
@@ -34,20 +35,21 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 	constructor(
 		parent: VirtualDirectoryHandle | BaseStore | null,
 		name: string,
-		path: string[] = []
+		path: string[] = [],
+		create = false
 	) {
 		super(parent, name, path)
 
-		this.setup()
+		this.setup(create)
 	}
 
-	async setup() {
+	async setup(create: boolean) {
 		await this.setupStore()
 
 		/**
 		 * TauriFsStore should not create the base directory because that'll lead to duplicated directories
 		 */
-		if (this.idbKey !== '')
+		if (this.idbKey !== '' && create)
 			await this.baseStore.createDirectory(this.idbKey)
 
 		this.setupDone.dispatch()
@@ -127,7 +129,7 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 			)
 		} else if (!entry) {
 			if (create) {
-				entry = new VirtualDirectoryHandle(this, name)
+				entry = new VirtualDirectoryHandle(this, name, [], true)
 				await entry.setupDone.fired
 			} else {
 				throw new Error(
@@ -210,6 +212,13 @@ export class VirtualDirectoryHandle extends BaseVirtualHandle {
 		}
 
 		await this.baseStore.unlink(this.idbKey)
+	}
+	getParent() {
+		// We don't have a parent but we do have a base path -> We can traverse path backwards to create parent handle
+		if (this.parent === null && this.basePath.length > 0) {
+			this.parent = getParent(this.baseStore, this.basePath)
+		}
+		return this.parent
 	}
 
 	[Symbol.asyncIterator]() {
