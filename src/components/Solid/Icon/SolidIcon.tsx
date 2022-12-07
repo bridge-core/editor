@@ -4,7 +4,7 @@ import { toVue } from '../toVue'
 interface SolidIconProps {
 	icon: string
 	class?: string
-	size?: 'sm' | 'md' | 'lg' | number
+	size?: 'small' | 'medium' | 'large' | number
 	offsetY?: number
 	color?: string
 	opacity?: number
@@ -19,11 +19,11 @@ export const SolidIcon: Component<SolidIconProps> = (props) => {
 	const icon = () => props.children?.trim() ?? props.icon
 	const iconSize = () => {
 		switch (props.size) {
-			case 'sm':
+			case 'small':
 				return '1rem'
-			case 'md':
+			case 'medium':
 				return '1.4rem'
-			case 'lg':
+			case 'large':
 				return '2rem'
 			default:
 				return props.size ? `${props.size}rem` : '1.4rem'

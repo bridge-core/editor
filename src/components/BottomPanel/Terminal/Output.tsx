@@ -30,28 +30,18 @@ export const TerminalOutput: Component<{
 
 			{/* Render terminal output */}
 			<For each={output()}>
-				{({ command, time, stdout, stderr }, i) => (
-					<div classList={{ 'mb-2': i() + 1 !== output().length }}>
-						<span class="font-weight-medium terminal-line">
-							<span class="text--disabled mr-1">[{time}]</span>
-							{command}
+				{({ kind, time, msg }, i) => (
+					<div
+						class="font-weight-medium terminal-line"
+						classList={{ 'mb-2': i() + 1 !== output().length }}
+					>
+						<span class="text--disabled mr-1">[{time}]</span>
+						<span
+							class="terminal-line"
+							classList={{ 'error--text': kind === 'stderr' }}
+						>
+							{msg}
 						</span>
-
-						<div class="ml-4">
-							<For each={stdout}>
-								{(line) => (
-									<div class="terminal-line">{line}</div>
-								)}
-							</For>
-
-							<For each={stderr}>
-								{(line) => (
-									<div class="terminal-line error--text">
-										{line}
-									</div>
-								)}
-							</For>
-						</div>
 					</div>
 				)}
 			</For>

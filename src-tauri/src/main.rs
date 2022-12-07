@@ -50,7 +50,8 @@ fn main() {
             fs_extra::reveal_in_file_explorer,
             fs_extra::get_file_data,
             fs_extra::copy_directory,
-            terminal::execute_command
+            terminal::execute_command,
+            terminal::kill_command,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

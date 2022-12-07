@@ -5,6 +5,7 @@ import './TextField.css'
 
 interface TextFieldProps {
 	class?: string
+	classList?: Record<string, boolean>
 	disabled?: boolean
 	model?: [Accessor<string>, Setter<string>]
 	prependIcon?: string
@@ -26,6 +27,7 @@ export const TextField: Component<TextFieldProps> = (props) => {
 			class="solid-text-field"
 			classList={{
 				['' + props.class]: !!props.class,
+				...(props.classList ?? {}),
 			}}
 		>
 			<Show when={props.prependIcon}>

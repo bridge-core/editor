@@ -2,10 +2,18 @@
 	width: 2em;
 	height: 2em;
 
-	transition: transform 0.2s ease-in-out;
+	transition: transform, opacity 0.2s ease-in-out;
+}
+
+.solid-icon-button-disabled {
+	opacity: 0.5;
+	cursor: default;
 }
 
 /* Hover state */
 .solid-icon-button:hover {
 	transform: scale(1.1);
+}
+.solid-icon-button-disabled:hover {
+	transform: scale(1);
 }

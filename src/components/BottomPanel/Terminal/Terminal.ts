@@ -4,18 +4,24 @@ import { App } from '/@/App'
 import { Signal } from '../../Common/Event/Signal'
 import { appLocalDataDir, isAbsolute, join } from '@tauri-apps/api/path'
 import { exists } from '@tauri-apps/api/fs'
+import { listen, Event } from '@tauri-apps/api/event'
 import './Terminal.css'
 
-interface ICommand {
+type TMessageKind = 'stdout' | 'stderr' | 'stdin'
+
+interface IMessage {
 	// Format HH:MM:SS
 	time: string
-	command: string
-	stdout: string[]
-	stderr: string[]
+	kind: TMessageKind
+	msg: string
+}
+
+interface IMessagePayload {
+	message: string
 }
 
 export class Terminal {
-	output = ref<ICommand[]>([])
+	output = ref<IMessage[]>([])
 	hasRunningTask = ref(false)
 	baseCwd = ''
 	cwd = ref('')
@@ -23,6 +29,16 @@ export class Terminal {
 
 	constructor() {
 		setTimeout(() => this.setup())
+
+		listen('onStdoutMessage', ({ payload }: Event<IMessagePayload>) => {
+			this.addToOutput(payload.message, 'stdout')
+		})
+		listen('onStderrMessage', ({ payload }: Event<IMessagePayload>) => {
+			this.addToOutput(payload.message, 'stderr')
+		})
+		listen('onCommandDone', () => {
+			this.hasRunningTask.value = false
+		})
 	}
 
 	async setup() {
@@ -36,10 +52,16 @@ export class Terminal {
 		this.setupDone.dispatch()
 	}
 
+	addToOutput(msg: string, kind: TMessageKind) {
+		this.output.value.unshift({
+			kind,
+			msg,
+			time: new Date().toLocaleTimeString(),
+		})
+	}
+
 	protected async handleCdCommand(command: string) {
 		const path = command.substring(3)
-		const stderr: string[] = []
-
 		const prevCwd = this.cwd.value
 
 		if (await isAbsolute(path)) {
@@ -51,24 +73,19 @@ export class Terminal {
 		// Confirm that the path exists
 		if (!(await exists(this.cwd.value))) {
 			this.cwd.value = prevCwd
-			stderr.push(`cd: no such directory: ${path}`)
+			this.addToOutput(`cd: no such directory`, 'stderr')
 		}
 
 		// Ensure that cwd doesn't leave the baseCwd
 		if (!this.cwd.value.startsWith(this.baseCwd)) {
 			this.cwd.value = prevCwd
-			stderr.push('cd: Permission denied')
+			this.addToOutput(`cd: Permission denied`, 'stderr')
 		}
-
-		this.output.value.unshift({
-			time: new Date().toLocaleTimeString(),
-			command,
-			stdout: [],
-			stderr,
-		})
 	}
 
 	async executeCommand(command: string) {
+		this.addToOutput(command, 'stdin')
+
 		if (command.startsWith('cd ')) {
 			await this.handleCdCommand(command)
 			return
@@ -78,18 +95,13 @@ export class Terminal {
 
 		await this.setupDone.fired
 
-		const [stdout, stderr] = await invoke<string>('execute_command', {
+		await invoke<string>('execute_command', {
 			cwd: this.cwd.value,
 			command,
 		})
+	}
 
-		this.output.value.unshift({
-			time: new Date().toLocaleTimeString(),
-			command,
-			stdout: stdout.split('\n'),
-			stderr: stderr.split('\n'),
-		})
-
-		this.hasRunningTask.value = false
+	async killCommand() {
+		await invoke('kill_command')
 	}
 }
