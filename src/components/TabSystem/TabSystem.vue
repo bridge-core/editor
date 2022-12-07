@@ -26,8 +26,6 @@
 </template>
 
 <script>
-import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
-
 import TabBar from '/@/components/TabSystem/TabBar.vue'
 import { App } from '/@/App'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight'
@@ -61,7 +59,6 @@ export default {
 	},
 	components: {
 		TabBar,
-		WelcomeScreen,
 	},
 	data: () => ({
 		windowHeight: window.innerHeight,
