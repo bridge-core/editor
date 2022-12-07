@@ -54,7 +54,7 @@ export default {
 	methods: {
 		async setOutputFolder() {
 			this.isLoading = true
-			const directoryHandle = await showFolderPicker()
+			const [directoryHandle] = (await showFolderPicker()) ?? []
 			this.isLoading = false
 
 			if (!directoryHandle) return

@@ -54,7 +54,7 @@ export function setupFileCategory(app: App) {
 			},
 		})
 	)
-	// Doesn't make sense to show this option fs polyfill browsers
+	// Doesn't make sense to show this option on fs polyfill browsers
 	if (import.meta.env.VITE_IS_TAURI_APP || !isUsingFileSystemPolyfill.value)
 		file.addItem(
 			app.actionManager.create({
@@ -65,7 +65,7 @@ export function setupFileCategory(app: App) {
 				keyBinding: 'Ctrl + Shift + O',
 				onTrigger: async () => {
 					const app = await App.getApp()
-					const directoryHandle = await showFolderPicker()
+					const [directoryHandle] = (await showFolderPicker()) ?? []
 					if (!directoryHandle) return
 
 					await app.fileDropper.importFolder(directoryHandle)
