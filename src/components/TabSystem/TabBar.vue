@@ -15,7 +15,7 @@
 				v-for="(tab, i) in tabSystem.tabs.value"
 				:key="tab.uuid"
 				:tab="tab"
-				:isActive="tabSystem.isActive"
+				:isActive="tabSystem.isActive.value"
 				:isFirstTab="i === 0"
 			/>
 		</Draggable>
