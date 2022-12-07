@@ -20,12 +20,12 @@
 			>
 				<v-icon class="mr-1">mdi-import</v-icon>
 				<span v-if="availableWidth > 220">
-					{{ t(`packExplorer.noProjectView.importOldProject.name`) }}
+					{{ t(`packExplorer.noProjectView.importOldProjects.name`) }}
 				</span>
 			</v-btn>
 		</template>
 		<span>
-			{{ t(`packExplorer.noProjectView.importOldProject.name`) }}
+			{{ t(`packExplorer.noProjectView.importOldProjects.name`) }}
 		</span>
 	</v-tooltip>
 </template>
@@ -33,11 +33,7 @@
 <script>
 import { App } from '/@/App'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
-import { ConfirmationWindow } from '../../Windows/Common/Confirm/ConfirmWindow'
-import { virtualProjectName } from '../../Projects/Project/Project'
-import { showFolderPicker } from '../../FileSystem/Pickers/showFolderPicker'
-import { FileSystem } from '../../FileSystem/FileSystem'
-import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
+import { importProjects } from '/@/components/ImportFolder/ImportProjects'
 
 export default {
 	mixins: [TranslationMixin],
@@ -72,59 +68,8 @@ export default {
 		}
 	},
 	methods: {
-		async onImportOldProjects() {
-			const app = await App.getApp()
-
-			// Show warning if the user has projects already
-			const projects = (await app.fileSystem.readdir('projects')).filter(
-				(projectName) => projectName !== virtualProjectName
-			)
-
-			if (projects.length > 0) {
-				const confirmWindow = new ConfirmationWindow({
-					description:
-						'packExplorer.noProjectView.importOldProject.confirmOverwrite',
-				})
-				const choice = await confirmWindow.fired
-
-				if (!choice) return
-			}
-
-			app.windows.loadingWindow.open()
-
-			const bridgeProject = await showFolderPicker()
-
-			if (!bridgeProject) {
-				app.windows.loadingWindow.close()
-				return
-			}
-
-			const bridgeProjectFs = new FileSystem(bridgeProject)
-			// Ensure that the folder is a bridge project by checking for the config.json fike
-			if (!(await bridgeProjectFs.fileExists('config.json'))) {
-				app.windows.loadingWindow.close()
-
-				new InformationWindow({
-					description:
-						'packExplorer.noProjectView.importOldProject.notABridgeProject',
-				})
-				return
-			}
-
-			const newProjectDir = await app.fileSystem.getDirectoryHandle(
-				`projects/${bridgeProject.name}`,
-				{ create: true }
-			)
-			await app.fileSystem.copyFolderByHandle(
-				bridgeProject,
-				newProjectDir,
-				new Set(['builds', '.git'])
-			)
-
-			// Load projects
-			app.projectManager.addProject(bridgeProject, true, true)
-
-			app.windows.loadingWindow.close()
+		onImportOldProjects() {
+			importProjects()
 		},
 		calculateAvailableWidth() {
 			if (this.$refs.button)

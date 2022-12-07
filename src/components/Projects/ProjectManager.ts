@@ -51,7 +51,8 @@ export class ProjectManager extends Signal<void> {
 	async addProject(
 		projectDir: AnyDirectoryHandle,
 		isNewProject = true,
-		requiresPermissions = this.app.bridgeFolderSetup.hasFired
+		requiresPermissions = this.app.bridgeFolderSetup.hasFired,
+		select = true
 	) {
 		const project = new BedrockProject(this, this.app, projectDir, {
 			requiresPermissions,
@@ -61,7 +62,7 @@ export class ProjectManager extends Signal<void> {
 		set(this.state, project.name, project)
 
 		if (isNewProject) {
-			await this.selectProject(project.name)
+			if (select) await this.selectProject(project.name)
 			this.addedProject.dispatch(project)
 		}
 

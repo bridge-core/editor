@@ -468,10 +468,10 @@
 			"createLocalProject": "Create Local Project",
 			"chooseBridgeFolder": "Choose bridge. Folder",
 			"accessBridgeFolder": "Access bridge. Folder",
-			"importOldProject": {
-				"name": "Import Project",
+			"importOldProjects": {
+				"name": "Import Projects",
 				"confirmOverwrite": "Your bridge. folder already contains projects. Importing old projects may overwrite existing projects with the same name. Do you want to continue?",
-				"notABridgeProject": "It looks like this project is not a bridge. project. Please make sure that you have selected the correct folder."
+				"notABridgeProject": "It looks like this project is not a bridge. project as the folder does not contain a project config.json file. Please make sure that you have selected the correct folder."
 			},
 			"projectNoLongerExists": "It looks like this project no longer exists!"
 		},
