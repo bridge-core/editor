@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { JSX } from 'solid-js/types'
 import './BottomPanel.css'
 import { LogPanel } from '../Compiler/LogPanel/Panel'
@@ -15,6 +15,9 @@ export class BottomPanel {
 	public readonly height = ref(300)
 	public readonly tabs = ref<ITab[]>([])
 	public readonly activeTab = ref<ITab | null>(null)
+	public readonly currentHeight = computed(() =>
+		this.isVisible.value ? this.height.value : 0
+	)
 
 	constructor() {
 		this.setupTerminal()

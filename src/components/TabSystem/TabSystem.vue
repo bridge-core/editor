@@ -22,24 +22,6 @@
 				:id="id"
 			/>
 		</keep-alive>
-
-		<BottomPanel />
-	</div>
-
-	<div
-		v-else-if="showWelcomeScreen"
-		:style="{
-			'margin-right': '1px',
-			width: isMobile ? '100%' : 'calc(50% - 100px)',
-			height: isMobile ? '50%' : '100%',
-		}"
-	>
-		<WelcomeScreen
-			:style="`height: ${tabHeight}px; width: 100%;`"
-			:containerPadding="'px-2'"
-		/>
-
-		<BottomPanel />
 	</div>
 </template>
 
@@ -57,7 +39,6 @@ export default {
 	name: 'TabSystem',
 	mixins: [AppToolbarHeightMixin],
 	props: {
-		showWelcomeScreen: Boolean,
 		id: {
 			type: Number,
 			default: 0,
@@ -108,9 +89,7 @@ export default {
 						? 2
 						: 1) -
 				this.tabBarHeight -
-				(App.bottomPanel.isVisible.value
-					? App.bottomPanel.height.value
-					: 0)
+				App.bottomPanel.currentHeight.value
 			)
 		},
 		isMobile() {

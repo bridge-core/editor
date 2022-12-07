@@ -1,7 +1,8 @@
 <template>
 	<div
-		:class="`d-flex flex-column justify-center align-center ${containerPadding}`"
-		:style="`position: relative; height: 80vh;`"
+		:class="`pb-16 d-flex flex-column justify-center align-center ${containerPadding}`"
+		:style="{ height: height + 'px' }"
+		style="position: relative"
 	>
 		<WelcomeAlert />
 
@@ -27,6 +28,7 @@ import CommandBar from '../CommandBar/CommandBar.vue'
 
 defineProps({
 	containerPadding: String,
+	height: Number,
 })
 </script>
 

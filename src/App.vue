@@ -52,10 +52,11 @@
 					class="flex-grow-1"
 				>
 					<div
+						v-if="shouldRenderWelcomeScreen"
 						class="d-flex"
 						:class="{ 'flex-column': $vuetify.breakpoint.mobile }"
 						:style="{
-							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
+							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight} - ${bottomPanelHeight}px)`,
 						}"
 					>
 						<!-- <v-divider
@@ -64,10 +65,9 @@
 							vertical
 						/> -->
 
-						<TabSystem class="flex-grow-1" showWelcomeScreen />
+						<TabSystem class="flex-grow-1" />
 						<v-divider
 							v-if="
-								tabSystems &&
 								tabSystems[0].shouldRender.value &&
 								tabSystems[1].shouldRender.value
 							"
@@ -82,6 +82,12 @@
 						/> -->
 					</div>
 					<WelcomeScreen
+						v-else
+						:height="
+							windowSize.currentHeight -
+							appToolbarHeightNumber -
+							bottomPanelHeight
+						"
 						:containerPadding="
 							isSidebarContentVisible
 								? isSidebarRight
@@ -90,6 +96,8 @@
 								: 'px-2'
 						"
 					/>
+
+					<BottomPanel />
 				</v-col>
 			</v-row>
 		</v-main>
@@ -119,6 +127,7 @@ import {
 	setFullscreenElement,
 	useFullScreen,
 } from './components/TabSystem/TabContextMenu/Fullscreen'
+import BottomPanel from './components/BottomPanel/BottomPanel.vue'
 
 export default {
 	name: 'App',
@@ -154,6 +163,7 @@ export default {
 		TabSystem,
 		WelcomeScreen,
 		SidebarContent,
+		BottomPanel,
 	},
 
 	data: () => ({
@@ -210,6 +220,9 @@ export default {
 				this.settingsState.appearance.font
 				? `${this.settingsState.appearance.font}, system-ui !important`
 				: `Roboto, system-ui !important`
+		},
+		bottomPanelHeight() {
+			return App.bottomPanel.currentHeight.value
 		},
 	},
 	methods: {
