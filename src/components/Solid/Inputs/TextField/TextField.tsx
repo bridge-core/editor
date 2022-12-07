@@ -26,6 +26,7 @@ export const TextField: Component<TextFieldProps> = (props) => {
 		<div
 			class="solid-text-field"
 			classList={{
+				'solid-text-field-disabled': props.disabled,
 				['' + props.class]: !!props.class,
 				...(props.classList ?? {}),
 			}}
