@@ -8,7 +8,10 @@ import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
 import { getStorageDirectory } from '/@/utils/getStorageDirectory'
 import { VirtualFileHandle } from './Virtual/FileHandle'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
-import { getDirectoryHandle } from './Fast/getDirectoryHandle'
+import {
+	getDirectoryHandleIndexedDb,
+	getDirectoryHandleTauri,
+} from './Fast/getDirectoryHandle'
 
 export class FileSystem extends Signal<void> {
 	protected _baseDirectory!: AnyDirectoryHandle
@@ -46,18 +49,31 @@ export class FileSystem extends Signal<void> {
 			pathArr.shift()
 		}
 
-		/**
-		 * Fast path for native app
-		 * Every path segment costs at least 1 syscall on the slow path, whereas the fast path costs 1 syscall for the entire path
-		 * Therefore, switch to the fast path if the path has more than 1 segment
-		 */
-		if (import.meta.env.VITE_IS_TAURI_APP && pathArr.length > 1) {
-			const fastCallResult = await getDirectoryHandle(
+		// Cannot apply fast path if baseDirectory is not a virtual directory
+		if (this.baseDirectory instanceof VirtualDirectoryHandle) {
+			/**
+			 * Fast path for native app
+			 * Every path segment costs at least 1 syscall on the slow path, whereas the fast path costs 1 syscall for the entire path
+			 * Therefore, switch to the fast path if the path has more than 1 segment
+			 */
+			if (import.meta.env.VITE_IS_TAURI_APP && pathArr.length > 1) {
+				const fastCallResult = await getDirectoryHandleTauri(
+					this.baseDirectory,
+					pathArr,
+					{ create, createOnce }
+				)
+				// Returns false if the fast call failed
+				if (fastCallResult) return fastCallResult
+			}
+
+			/**
+			 * Fast path for IndexedDB backed file systems
+			 */
+			const fastCallResult = await getDirectoryHandleIndexedDb(
 				this.baseDirectory,
 				pathArr,
 				{ create, createOnce }
 			)
-			// Returns false if the fast call failed
 			if (fastCallResult) return fastCallResult
 		}
 
