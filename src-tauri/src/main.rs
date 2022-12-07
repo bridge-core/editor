@@ -8,6 +8,7 @@ use std::process::Command;
 use tauri::{Manager, Menu};
 use terminal::AllTerminals;
 use window_shadows::set_shadow;
+mod fs_extra;
 mod terminal;
 
 #[tauri::command]
@@ -84,7 +85,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             reveal_in_file_explorer,
             get_file_data,
-            terminal::execute_command
+            terminal::execute_command,
+            fs_extra::copy_directory
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

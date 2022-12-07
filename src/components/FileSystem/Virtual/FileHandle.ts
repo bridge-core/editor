@@ -1,10 +1,11 @@
 import { BaseVirtualHandle } from './Handle'
-import type { VirtualDirectoryHandle } from './DirectoryHandle'
+import { VirtualDirectoryHandle } from './DirectoryHandle'
 import { VirtualWritable, writeMethodSymbol } from './VirtualWritable'
 import { ISerializedFileHandle } from './Comlink'
 import { BaseStore } from './Stores/BaseStore'
 import { deserializeStore } from './Stores/Deserialize'
 import { MemoryStore } from './Stores/Memory'
+import { getParent } from './getParent'
 
 /**
  * A class that implements a virtual file
@@ -66,6 +67,14 @@ export class VirtualFileHandle extends BaseVirtualHandle {
 			data.fileData,
 			data.path
 		)
+	}
+
+	getParent() {
+		// We don't have a parent but we do have a base path -> We can traverse path backwards to create parent handle
+		if (this.parent === null && this.basePath.length > 0) {
+			this.parent = getParent(this.baseStore, this.basePath)
+		}
+		return this.parent
 	}
 
 	override async isSameEntry(other: BaseVirtualHandle): Promise<boolean> {

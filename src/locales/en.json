@@ -464,10 +464,15 @@
 			"description": "Fetch the current project for newly added files"
 		},
 		"noProjectView": {
-			"noProjectsFound": "It does not look like you have any projects yet!",
+			"noProjectsFound": "It does not look like you have any projects yet. Get started by creating a new project!",
 			"createLocalProject": "Create Local Project",
 			"chooseBridgeFolder": "Choose bridge. Folder",
 			"accessBridgeFolder": "Access bridge. Folder",
+			"importOldProject": {
+				"name": "Import Project",
+				"confirmOverwrite": "Your bridge. folder already contains projects. Importing old projects may overwrite existing projects with the same name. Do you want to continue?",
+				"notABridgeProject": "It looks like this project is not a bridge. project. Please make sure that you have selected the correct folder."
+			},
 			"projectNoLongerExists": "It looks like this project no longer exists!"
 		},
 		"restartWatchMode": {
