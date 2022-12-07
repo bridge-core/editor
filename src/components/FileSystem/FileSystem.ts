@@ -8,6 +8,7 @@ import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
 import { getStorageDirectory } from '/@/utils/getStorageDirectory'
 import { VirtualFileHandle } from './Virtual/FileHandle'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
+import { pathFromHandle } from './Virtual/pathFromHandle'
 
 export class FileSystem extends Signal<void> {
 	protected _baseDirectory!: AnyDirectoryHandle
@@ -282,6 +283,21 @@ export class FileSystem extends Signal<void> {
 		destHandle: AnyDirectoryHandle,
 		ignoreFolders?: Set<string>
 	) {
+		// Tauri build: Both handles are virtual -> Elligible for fast path
+		if (
+			import.meta.env.VITE_IS_TAURI_APP &&
+			originHandle instanceof VirtualDirectoryHandle &&
+			destHandle instanceof VirtualDirectoryHandle
+		) {
+			const src = await pathFromHandle(originHandle)
+			const dest = await pathFromHandle(destHandle)
+
+			const { invoke } = await import('@tauri-apps/api')
+			await invoke('copy_directory', { src, dest })
+
+			return
+		}
+
 		const destFs = new FileSystem(destHandle)
 
 		await iterateDirParallel(

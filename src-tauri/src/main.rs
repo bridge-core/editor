@@ -7,6 +7,7 @@ use tauri::{Menu, Manager};
 use discord_rich_presence::{activity, DiscordIpc, DiscordIpcClient};
 use std::process::Command;
 use window_shadows::set_shadow;
+mod fs_extra;
 
 #[tauri::command]
 async fn reveal_in_file_explorer(path: &str) -> Result<(), String> {
@@ -73,7 +74,7 @@ fn main() {
             Ok(())
         })
         .menu(menu)
-        .invoke_handler(tauri::generate_handler![reveal_in_file_explorer, get_file_data])
+        .invoke_handler(tauri::generate_handler![reveal_in_file_explorer, get_file_data, fs_extra::copy_directory])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
