@@ -25,7 +25,7 @@
 				tabSystem.selectedTab &&
 				tabSystem.selectedTab.actions.length > 0
 			"
-			:class="{ 'inactive-action-bar': !tabSystem.isActive }"
+			:class="{ 'inactive-action-bar': !tabSystem.isActive.value }"
 			:actions="tabSystem.selectedTab.actions"
 			@click="tabSystem.setActive(true)"
 		/>
