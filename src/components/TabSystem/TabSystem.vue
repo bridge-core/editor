@@ -33,7 +33,6 @@ import { App } from '/@/App'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight'
 import { useTabSystem } from '../Composables/UseTabSystem'
 import { toRefs, watch } from 'vue'
-import BottomPanel from '/@/components/BottomPanel/BottomPanel.vue'
 
 export default {
 	name: 'TabSystem',
@@ -63,7 +62,6 @@ export default {
 	components: {
 		TabBar,
 		WelcomeScreen,
-		BottomPanel,
 	},
 	data: () => ({
 		windowHeight: window.innerHeight,
