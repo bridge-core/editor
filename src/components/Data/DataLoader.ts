@@ -64,7 +64,7 @@ export class DataLoader extends FileSystem {
 		// Create virtual filesystem
 		this._virtualFileSystem = new VirtualDirectoryHandle(
 			savedAllDataInIdb ? indexedDbStore : new MemoryStore('data-fs'),
-			'bridgeFolder'
+			''
 		)
 		await this._virtualFileSystem.setupDone.fired
 

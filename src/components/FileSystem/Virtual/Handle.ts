@@ -44,7 +44,9 @@ export abstract class BaseVirtualHandle {
 	}
 
 	protected get path(): string[] {
-		return this.parent ? this.parent.path.concat(this.name) : this.basePath
+		return this.parent
+			? [...this.parent.path.concat(this.name)]
+			: [...this.basePath]
 	}
 	/**
 	 * Returns whether a handle has parent context
@@ -70,9 +72,7 @@ export abstract class BaseVirtualHandle {
 	get name() {
 		return this._name
 	}
-	getParent() {
-		return this.parent
-	}
+	abstract getParent(): VirtualDirectoryHandle | null
 	abstract serialize(): unknown
 
 	async isSameEntry(other: BaseVirtualHandle) {
