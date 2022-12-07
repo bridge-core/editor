@@ -2,7 +2,7 @@ import { markRaw, ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
 import { App } from '/@/App'
 import { Signal } from '../../Common/Event/Signal'
-import { appLocalDataDir, isAbsolute, join } from '@tauri-apps/api/path'
+import { appLocalDataDir, isAbsolute, join, sep } from '@tauri-apps/api/path'
 import { exists } from '@tauri-apps/api/fs'
 import { listen, Event } from '@tauri-apps/api/event'
 import './Terminal.css'
@@ -13,6 +13,7 @@ interface IMessage {
 	// Format HH:MM:SS
 	time: string
 	kind: TMessageKind
+	currentCwdName: string
 	msg: string
 }
 
@@ -54,9 +55,10 @@ export class Terminal {
 
 	addToOutput(msg: string, kind: TMessageKind) {
 		this.output.value.unshift({
-			kind,
-			msg,
 			time: new Date().toLocaleTimeString(),
+			kind,
+			currentCwdName: this.cwd.value.split(sep).pop()!,
+			msg,
 		})
 	}
 

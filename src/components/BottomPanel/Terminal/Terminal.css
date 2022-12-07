@@ -1,3 +1,11 @@
 .terminal-line {
 	line-break: normal;
 }
+
+.terminal-output-container {
+	/* full height - terminal input bar height - cwd display height */
+	height: calc(100% - 58px - 33px);
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column-reverse;
+}

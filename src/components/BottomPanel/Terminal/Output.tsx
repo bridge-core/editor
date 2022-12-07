@@ -18,7 +18,7 @@ export const TerminalOutput: Component<{
 	}
 
 	return (
-		<div class="my-2">
+		<>
 			{/* Show current cwd */}
 			<span class="terminal-line d-flex align-center font-weight-medium primary--text">
 				<Show when={prettyCwd() !== ''}>
@@ -29,22 +29,31 @@ export const TerminalOutput: Component<{
 			</span>
 
 			{/* Render terminal output */}
-			<For each={output()}>
-				{({ kind, time, msg }, i) => (
-					<div
-						class="font-weight-medium terminal-line"
-						classList={{ 'mb-2': i() + 1 !== output().length }}
-					>
-						<span class="text--disabled mr-1">[{time}]</span>
-						<span
+			<div class="terminal-output-container pb-2">
+				<For each={output()}>
+					{({ kind, time, currentCwdName, msg }, i) => (
+						<div
 							class="terminal-line"
-							classList={{ 'error--text': kind === 'stderr' }}
+							classList={{ 'mb-0': i() + 1 !== output().length }}
 						>
-							{msg}
-						</span>
-					</div>
-				)}
-			</For>
-		</div>
+							<span class="text--disabled mr-1">[{time}]</span>
+							<span
+								class="terminal-line"
+								classList={{
+									'error--text': kind === 'stderr',
+									'text--secondary': kind === 'stdout',
+									'font-weight-medium': kind === 'stdin',
+								}}
+							>
+								<Show when={kind === 'stdin'}>
+									{currentCwdName}&nbsp;&#62;&nbsp;
+								</Show>
+								{msg}
+							</span>
+						</div>
+					)}
+				</For>
+			</div>
+		</>
 	)
 }

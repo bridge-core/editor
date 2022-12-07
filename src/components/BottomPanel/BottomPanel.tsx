@@ -12,7 +12,7 @@ interface ITab {
 
 export class BottomPanel {
 	public readonly isVisible = ref(true)
-	public readonly height = ref(300)
+	public readonly height = ref(400)
 	public readonly tabs = ref<ITab[]>([])
 	public readonly activeTab = ref<ITab | null>(null)
 	public readonly currentHeight = computed(() =>
@@ -61,8 +61,8 @@ export class BottomPanel {
 				name: 'bottomPanel.terminal.name',
 				component: () => (
 					<>
-						<TerminalInput terminal={terminal} />
 						<TerminalOutput terminal={terminal} />
+						<TerminalInput terminal={terminal} />
 					</>
 				),
 			},
