@@ -30,17 +30,19 @@ export const SnowstormAction = (fileWrapper: FileWrapper) => {
 				const rawParticle = new Uint8Array(await file.arrayBuffer())
 
 				// Get texture path from particle json
-				const texturePath =
-					particleJson.particle_effect.description
-						.basic_render_parameters.texture
-				const fullTexturePath = await findFileExtension(
-					app.fileSystem,
-					app.projectConfig.resolvePackPath(
-						'resourcePack',
-						texturePath
-					),
-					['.tga', '.png', '.jpg', '.jpeg']
-				)
+				const texturePath: string | undefined =
+					particleJson?.particle_effect?.description
+						?.basic_render_parameters?.texture
+				const fullTexturePath = texturePath
+					? await findFileExtension(
+							app.fileSystem,
+							app.projectConfig.resolvePackPath(
+								'resourcePack',
+								texturePath
+							),
+							['.tga', '.png', '.jpg', '.jpeg']
+					  )
+					: undefined
 				let rawTextureData: Uint8Array | null = null
 				if (fullTexturePath) {
 					rawTextureData = await app.fileSystem
