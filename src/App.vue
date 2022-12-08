@@ -35,8 +35,6 @@
 				no-gutters
 				class="d-flex fill-area"
 				:class="{
-					'ml-2': !isSidebarContentVisible && isSidebarRight,
-					'mr-2': !isSidebarContentVisible && !isSidebarRight,
 					'flex-row-reverse': isSidebarRight,
 				}"
 			>
@@ -128,6 +126,7 @@ import {
 	useFullScreen,
 } from './components/TabSystem/TabContextMenu/Fullscreen'
 import BottomPanel from './components/BottomPanel/BottomPanel.vue'
+import { useSidebarState } from './components/Composables/Sidebar/useSidebarState'
 
 export default {
 	name: 'App',
@@ -137,12 +136,17 @@ export default {
 		const { tabSystem, tabSystems, shouldRenderWelcomeScreen } =
 			useTabSystem()
 		const { isInFullScreen } = useFullScreen()
+		const { isNavVisible, isContentVisible, isAttachedRight } =
+			useSidebarState()
 
 		return {
 			tabSystem,
 			tabSystems,
 			shouldRenderWelcomeScreen,
 			isInFullScreen,
+			sidebarNavigationVisible: isNavVisible,
+			isSidebarContentVisible: isContentVisible,
+			isSidebarRight: isAttachedRight,
 		}
 	},
 
@@ -177,24 +181,6 @@ export default {
 	}),
 
 	computed: {
-		isSidebarContentVisible() {
-			if (this.isInFullScreen) return false
-
-			return (
-				this.sidebarNavigationVisible &&
-				App.sidebar.isContentVisible.value
-			)
-		},
-		sidebarNavigationVisible() {
-			return App.sidebar.isNavigationVisible.value
-		},
-		isSidebarRight() {
-			return (
-				this.settingsState &&
-				this.settingsState.sidebar &&
-				this.settingsState.sidebar.isSidebarRight
-			)
-		},
 		sidebarSize() {
 			let size =
 				this.settingsState && this.settingsState.sidebar
