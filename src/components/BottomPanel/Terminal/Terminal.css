@@ -3,8 +3,8 @@
 }
 
 .terminal-output-container {
-	/* full height - terminal input bar height - cwd display height */
-	height: calc(100% - 58px - 33px);
+	/* full height - terminal input bar height - cwd display height - a few pixels to prevents scrollbar */
+	height: calc(100% - 58px - 33px - 2px);
 	overflow-y: auto;
 	display: flex;
 	flex-direction: column-reverse;
