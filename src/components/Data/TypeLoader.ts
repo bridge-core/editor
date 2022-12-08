@@ -165,12 +165,7 @@ export class TypeLoader {
 				.map((type) => {
 					if (typeof type === 'string') return [type]
 
-					// TODO - update mc-project-core FileType
-					const { definition, requires, moduleName } = type as {
-						definition: string
-						moduleName?: string
-						requires: IRequirements
-					}
+					const { definition, requires, moduleName } = type
 
 					if (!requires || matcher.isValid(requires as IRequirements))
 						return [definition, moduleName]
