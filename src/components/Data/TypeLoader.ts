@@ -10,6 +10,9 @@ import {
 import { useMonaco } from '/@/utils/libs/useMonaco'
 import { v4 as uuid } from 'uuid'
 
+/**
+ * A map of type locations to type defintions that have been loaded
+ */
 const types = new Map<string, string>()
 
 export class TypeLoader {
@@ -17,6 +20,7 @@ export class TypeLoader {
 	protected typeDisposables: IDisposable[] = []
 	protected userTypeDisposables: IDisposable[] = []
 	protected currentTypeEnv: string | null = null
+	protected isLoading: boolean = false
 
 	constructor(protected dataLoader: DataLoader) {}
 
@@ -24,7 +28,6 @@ export class TypeLoader {
 		this.disposables = <IDisposable[]>[
 			App.eventSystem.on('currentTabSwitched', async (tab: Tab) => {
 				if (!tab.isForeignFile && tab instanceof FileTab) {
-					console.log('switch', tab.name)
 					await this.setTypeEnv(tab.getPath())
 
 					await this.loadUserTypes()
@@ -43,88 +46,103 @@ export class TypeLoader {
 		this.disposables = []
 	}
 
-	protected async load(typeLocation: string, moduleName?: string) {
-		console.time(`LOAD TYPES: ${typeLocation}`)
-		// Check whether we have already loaded types
-		let src = types.get(typeLocation)
-		if (src)
-			return <const>[
-				typeLocation,
-				this.wrapTypesInModule(src ?? '', moduleName),
-			]
+	protected async load(typeLocations: [string, string?][]) {
+		// Ignore if we are already loading types (e.g. if a tab has been switched while loading)
+		if (this.isLoading) return []
+		this.isLoading = true
 
-		// Decide whether the type is being loaded from data or needs to be fetched externally
-		const isFromData = typeLocation.startsWith('types/')
+		const app = await App.getApp()
 
-		const originalTypeLocation = typeLocation
-
-		if (isFromData) {
-			await this.dataLoader.fired
-
-			// Load types from file
-			const file = await this.dataLoader.readFile(
-				`data/packages/minecraftBedrock/${typeLocation}`
+		// Load the cache index which maps the urls to the location of the files in cache
+		let cacheIndex: Record<string, string> = {}
+		try {
+			cacheIndex = await app.fileSystem.readJSON(
+				`~local/data/cache/types/index.json`
 			)
-			src = await file.text()
-			types.set(typeLocation, this.wrapTypesInModule(src, moduleName))
-		} else {
-			const app = await App.getApp()
+		} catch {}
 
-			// The cache index maps the urls to the files in cache
-			let cacheIndex: Record<string, string> = {}
-			try {
-				cacheIndex = await app.fileSystem.readJSON(
-					`~local/data/cache/types/index.json`
+		// Create promises for loading each type definition. Once this resolves, the types will be cached appropriately
+		const toCache = await Promise.all(
+			typeLocations.map(([typeLocation, moduleName]) => {
+				return new Promise<[string, string, boolean, string?]>(
+					async (resolve) => {
+						// Before we try to load anything, make sure the type definition hasn't already been loaded and set in the type map
+						let src = types.get(typeLocation)
+						if (src) resolve([typeLocation, src, false, moduleName])
+
+						// Decide whether the type is being loaded from data or needs to be fetched externally
+						const isFromData = typeLocation.startsWith('types/')
+						if (isFromData) {
+							// Load types directly from bridge.'s data
+							await this.dataLoader.fired
+
+							const file = await this.dataLoader.readFile(
+								`data/packages/minecraftBedrock/${typeLocation}`
+							)
+							src = await file.text()
+							resolve([typeLocation, src, false, moduleName])
+						} else {
+							// First check cache to see if we have already cached the file, if so resolve with the file from cache
+							try {
+								const cacheLocation = cacheIndex[typeLocation]
+								if (cacheLocation) {
+									const file = await app.fileSystem.readFile(
+										cacheLocation
+									)
+									src = await file.text()
+
+									resolve([
+										typeLocation,
+										src,
+										false,
+										moduleName,
+									])
+								} else throw {}
+							} catch {
+								// The file couldn't be fetched from cache (because it is not in index or at the path specified)
+								// So we need to fetch it
+								const res = await fetch(typeLocation)
+								const text = await res.text()
+
+								resolve([typeLocation, text, true, moduleName])
+							}
+						}
+					}
 				)
-			} catch {}
+			})
+		)
 
-			// First check cache to see if we have already cached the file
-			try {
-				const cacheLocation = cacheIndex[typeLocation]
-				if (cacheLocation) {
-					typeLocation = `~local/data/cache/types/${cacheLocation}`
+		for (const [typeLocation, definition, updateCache] of toCache) {
+			// First, save types to 'types' map
+			types.set(typeLocation, definition)
 
-					const file = await app.fileSystem.readFile(typeLocation)
-					src = await file.text()
-
-					types.set(
-						originalTypeLocation,
-						this.wrapTypesInModule(src, moduleName)
-					)
-				} else throw {}
-			} catch {
-				// If we fail to get the types from cache, fetch them and save to cache
-				const res = await fetch(typeLocation)
-				const text = await res.text()
-
-				const cacheFileName = `${uuid()}.d.ts`
+			// Then if we need to, update the cache index
+			if (updateCache) {
+				// Create a random file name for the file to be stored in cache under. We can't use the location since it is a url and contains illegal file name characters
+				const cacheFile = `~local/data/cache/types/${uuid()}.d.ts`
 				cacheIndex = {
 					...cacheIndex,
-					[typeLocation]: cacheFileName,
+					[typeLocation]: cacheFile,
 				}
-				console.log('Write Cache', cacheFileName, typeLocation)
-				typeLocation = `~local/data/cache/types/${cacheFileName}`
-
-				await Promise.all([
-					app.fileSystem.writeFile(typeLocation, text),
-					app.fileSystem.writeJSON(
-						'~local/data/cache/types/index.json',
-						cacheIndex
-					),
-				])
-
-				types.set(
-					originalTypeLocation,
-					this.wrapTypesInModule(text, moduleName)
-				)
+				// Write the actual type definition in cache
+				await app.fileSystem.writeFile(cacheFile, definition)
 			}
 		}
-		console.timeEnd(`LOAD TYPES: ${originalTypeLocation}`)
 
-		return <const>[
-			typeLocation,
-			this.wrapTypesInModule(src ?? '', moduleName),
-		]
+		// Update the cache index
+		await app.fileSystem.writeJSON(
+			'~local/data/cache/types/index.json',
+			cacheIndex
+		)
+
+		this.isLoading = false
+
+		return toCache.map(
+			([typeLocation, definition, updateCache, moduleName]) => [
+				typeLocation,
+				this.wrapTypesInModule(definition, moduleName),
+			]
+		)
 	}
 
 	async setTypeEnv(filePath: string) {
@@ -142,29 +160,27 @@ export class TypeLoader {
 		const matcher = new RequiresMatcher()
 		await matcher.setup()
 
-		const libs = await Promise.all(
-			types.map(async (type) => {
-				if (typeof type === 'string') return await this.load(type)
+		const libs = await this.load(
+			types
+				.map((type) => {
+					if (typeof type === 'string') return [type]
 
-				// TODO - update mc-project-core FileType
-				const { definition, requires, moduleName } = type as {
-					definition: string
-					moduleName?: string
-					requires: IRequirements
-				}
+					// TODO - update mc-project-core FileType
+					const { definition, requires, moduleName } = type as {
+						definition: string
+						moduleName?: string
+						requires: IRequirements
+					}
 
-				const valid = !requires
-					? true
-					: matcher.isValid(requires as IRequirements)
+					if (!requires || matcher.isValid(requires as IRequirements))
+						return [definition, moduleName]
 
-				if (valid) return await this.load(definition, moduleName)
-			})
-		)
-		const filteredLibs = <(readonly [string, string])[]>(
-			libs.filter((lib) => lib !== undefined)
+					return []
+				})
+				.filter((type) => type[0]) as [string, string?][]
 		)
 
-		for (const [typePath, lib] of filteredLibs) {
+		for (const [typePath, lib] of libs) {
 			const uri = Uri.file(typePath)
 			this.typeDisposables.push(
 				languages.typescript.javascriptDefaults.addExtraLib(
