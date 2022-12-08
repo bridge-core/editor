@@ -58,7 +58,8 @@ export class Terminal {
 			time: new Date().toLocaleTimeString(),
 			kind,
 			currentCwdName: this.cwd.value.split(sep).pop()!,
-			msg,
+			// Replace ANSI escape codes
+			msg: msg.replace(/\x1b\[[0-9;]*m/g, ''),
 		})
 	}
 
