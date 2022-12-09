@@ -40,6 +40,7 @@
 <script lang="ts" setup>
 import { useTranslations } from '../../Composables/useTranslations'
 import BaseWindow from '../Layout/BaseWindow.vue'
+import { App } from '/@/App'
 
 const { t } = useTranslations()
 
@@ -50,12 +51,12 @@ function close() {
 	props.window.close()
 }
 function openDiscord() {
-	window.open('https://discord.gg/jj2PmqU', '_blank')
+	App.openUrl('https://discord.gg/jj2PmqU', undefined, true)
 }
 function openTwitter() {
-	window.open('https://twitter.com/bridgeIDE', '_blank')
+	App.openUrl('https://twitter.com/bridgeIDE', undefined, true)
 }
 function openGithub() {
-	window.open('https://github.com/bridge-core', '_blank')
+	App.openUrl('https://github.com/bridge-core', undefined, true)
 }
 </script>
