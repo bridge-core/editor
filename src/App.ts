@@ -199,7 +199,7 @@ export class App {
 		if (import.meta.env.VITE_IS_TAURI_APP) {
 			const { open } = await import('@tauri-apps/api/shell')
 
-			open(url)
+			return open(url)
 		}
 
 		if (settingsState?.general?.openLinksInBrowser || openInBrowser)
