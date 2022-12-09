@@ -144,6 +144,10 @@ export class CompilerWindow extends NewBaseWindow {
 		})
 	}
 
+	getCategories() {
+		return this.categories
+	}
+
 	async reload() {
 		const app = await App.getApp()
 

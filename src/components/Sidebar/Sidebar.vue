@@ -1,4 +1,5 @@
 <template>
+	<!-- Height: 100% - app toolbar height - bottom banel button height -->
 	<v-navigation-drawer
 		mini-variant
 		mini-variant-width="60"
@@ -9,7 +10,7 @@
 		floating
 		:right="isSidebarRight"
 		color="sidebarNavigation"
-		:height="`calc(100% - ${appToolbarHeight})`"
+		:height="`calc(100% - ${appToolbarHeight}${isMobile ? '' : ' - 50px'})`"
 		:class="{
 			'rounded-r-lg': !isSidebarRight,
 			'rounded-l-lg': isSidebarRight,

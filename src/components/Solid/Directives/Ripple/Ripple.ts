@@ -4,15 +4,18 @@ import './Ripple.css'
 declare module 'solid-js' {
 	namespace JSX {
 		interface Directives {
-			ripple: true
+			ripple: any
 		}
 	}
 }
 
-function rippleDirective(el: HTMLElement) {
+function rippleDirective(el: HTMLElement, value: () => boolean) {
+	el.classList.add('solid-ripple-container')
+
 	let spans = new Set<HTMLSpanElement>()
 	const onClick = (event: MouseEvent) => {
-		el.classList.add('solid-ripple-container')
+		if (typeof value === 'function' && !value()) return
+
 		const bounds = el.getBoundingClientRect()
 		const x = event.pageX
 		const y = event.pageY
@@ -40,8 +43,6 @@ function rippleDirective(el: HTMLElement) {
 			if (!spans.has(span)) return
 			span.remove()
 			spans.delete(span)
-
-			if (spans.size === 0) el.classList.remove('solid-ripple-container')
 		})
 	}
 

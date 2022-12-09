@@ -1,0 +1,29 @@
+.solid-text-field {
+	display: flex;
+	align-items: center;
+	border: 1px solid #bbb;
+	border-radius: 8px;
+	width: auto;
+	caret-color: var(--v-primary-base);
+
+	transition: border, color 0.1s ease-in-out;
+}
+
+.solid-text-field:focus-within {
+	border: 1px solid var(--v-primary-base);
+	/* Box shadow to increase border-radius */
+	box-shadow: 0 0 0 1px var(--v-primary-base);
+	color: var(--v-primary-base);
+}
+
+.solid-text-field input {
+	width: 100%;
+	padding: 8px;
+	border-radius: 8px;
+	outline: none;
+	margin: 0;
+}
+
+.solid-text-field-disabled {
+	opacity: 0.5;
+}

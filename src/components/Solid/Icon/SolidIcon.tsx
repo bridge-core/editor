@@ -3,10 +3,12 @@ import { toVue } from '../toVue'
 
 interface SolidIconProps {
 	icon: string
-	size?: 'sm' | 'md' | 'lg' | number
+	class?: string
+	size?: 'small' | 'medium' | 'large' | number
+	offsetY?: number
 	color?: string
 	opacity?: number
-	onClick?: () => void
+	onClick?: () => unknown
 	children?: string // Compat with Vuetify's v-icon which allows passing icon id as slot content
 }
 
@@ -17,14 +19,14 @@ export const SolidIcon: Component<SolidIconProps> = (props) => {
 	const icon = () => props.children?.trim() ?? props.icon
 	const iconSize = () => {
 		switch (props.size) {
-			case 'sm':
+			case 'small':
 				return '1rem'
-			case 'md':
+			case 'medium':
+				return '1.4rem'
+			case 'large':
 				return '2rem'
-			case 'lg':
-				return '3rem'
 			default:
-				return undefined
+				return props.size ? `${props.size}rem` : '1.4rem'
 		}
 	}
 
@@ -36,8 +38,15 @@ export const SolidIcon: Component<SolidIconProps> = (props) => {
 
 	return (
 		<i
-			style={{ 'font-size': iconSize(), opacity: props.opacity ?? 1 }}
+			style={{
+				'font-size': iconSize(),
+				opacity: props.opacity ?? 1,
+				transform: props.offsetY
+					? `translate(0, ${props.offsetY}em)`
+					: undefined,
+			}}
 			translate="no"
+			class={props.class}
 			classList={classList()}
 			onClick={props.onClick}
 		/>

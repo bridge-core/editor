@@ -44,8 +44,9 @@ import { FolderImportManager } from '/@/components/ImportFolder/Manager'
 import { StartParamManager } from '/@/components/StartParams/Manager'
 import { ViewFolders } from '/@/components/ViewFolders/ViewFolders'
 import { SidebarManager } from '/@/components/Sidebar/Manager'
-import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
-import { InformationWindow } from './components/Windows/Common/Information/InformationWindow'
+import { ViewComMojangProject } from '/@/components/OutputFolders/ComMojang/Sidebar/ViewProject'
+import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
+import { BottomPanel } from '/@/components/BottomPanel/BottomPanel'
 
 if (import.meta.env.VITE_IS_TAURI_APP) {
 	// Import Tauri updater for native builds
@@ -98,6 +99,7 @@ export class App {
 	public static readonly fileType = markRaw(new FileTypeLibrary())
 	public static readonly packType = markRaw(new PackTypeLibrary())
 	public static readonly sidebar = new SidebarManager()
+	public static readonly bottomPanel = markRaw(new BottomPanel())
 
 	public readonly mobile: Mobile
 

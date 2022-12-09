@@ -32,10 +32,14 @@ export function createCompilerSidebar() {
 		await project.compilerReady.fired
 		project.compilerService.onConsoleUpdate(
 			proxy(async () => {
-				let logs = await project.compilerService.getCompilerLogs()
-				logs = logs.filter(
+				const allLogs = await project.compilerService.getCompilerLogs()
+				const logs = allLogs.filter(
 					([_, { type }]) => type === 'error' || type === 'warning'
 				)
+
+				const app = await App.getApp()
+				app.windows.compilerWindow.getCategories().logs.data.value =
+					allLogs
 
 				state.currentCount = logs.length
 

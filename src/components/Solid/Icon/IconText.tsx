@@ -1,5 +1,5 @@
 import { Component } from 'solid-js'
-import { useRipple } from '../Directives/Ripple'
+import { useRipple } from '../Directives/Ripple/Ripple'
 import { SolidIcon } from './SolidIcon'
 
 interface IconTextProps {

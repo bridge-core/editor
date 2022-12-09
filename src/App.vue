@@ -35,8 +35,6 @@
 				no-gutters
 				class="d-flex fill-area"
 				:class="{
-					'ml-2': !isSidebarContentVisible && isSidebarRight,
-					'mr-2': !isSidebarContentVisible && !isSidebarRight,
 					'flex-row-reverse': isSidebarRight,
 				}"
 			>
@@ -56,7 +54,7 @@
 						class="d-flex"
 						:class="{ 'flex-column': $vuetify.breakpoint.mobile }"
 						:style="{
-							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
+							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight} - ${bottomPanelHeight}px)`,
 						}"
 					>
 						<!-- <v-divider
@@ -65,7 +63,7 @@
 							vertical
 						/> -->
 
-						<TabSystem class="flex-grow-1" showWelcomeScreen />
+						<TabSystem class="flex-grow-1" />
 						<v-divider
 							v-if="
 								tabSystems[0].shouldRender.value &&
@@ -83,6 +81,11 @@
 					</div>
 					<WelcomeScreen
 						v-else
+						:height="
+							windowSize.currentHeight -
+							appToolbarHeightNumber -
+							bottomPanelHeight
+						"
 						:containerPadding="
 							isSidebarContentVisible
 								? isSidebarRight
@@ -91,6 +94,8 @@
 								: 'px-2'
 						"
 					/>
+
+					<BottomPanel />
 				</v-col>
 			</v-row>
 		</v-main>
@@ -120,6 +125,8 @@ import {
 	setFullscreenElement,
 	useFullScreen,
 } from './components/TabSystem/TabContextMenu/Fullscreen'
+import BottomPanel from './components/BottomPanel/BottomPanel.vue'
+import { useSidebarState } from './components/Composables/Sidebar/useSidebarState'
 
 export default {
 	name: 'App',
@@ -129,12 +136,17 @@ export default {
 		const { tabSystem, tabSystems, shouldRenderWelcomeScreen } =
 			useTabSystem()
 		const { isInFullScreen } = useFullScreen()
+		const { isNavVisible, isContentVisible, isAttachedRight } =
+			useSidebarState()
 
 		return {
 			tabSystem,
 			tabSystems,
 			shouldRenderWelcomeScreen,
 			isInFullScreen,
+			sidebarNavigationVisible: isNavVisible,
+			isSidebarContentVisible: isContentVisible,
+			isSidebarRight: isAttachedRight,
 		}
 	},
 
@@ -155,6 +167,7 @@ export default {
 		TabSystem,
 		WelcomeScreen,
 		SidebarContent,
+		BottomPanel,
 	},
 
 	data: () => ({
@@ -168,24 +181,6 @@ export default {
 	}),
 
 	computed: {
-		isSidebarContentVisible() {
-			if (this.isInFullScreen) return false
-
-			return (
-				this.sidebarNavigationVisible &&
-				App.sidebar.isContentVisible.value
-			)
-		},
-		sidebarNavigationVisible() {
-			return App.sidebar.isNavigationVisible.value
-		},
-		isSidebarRight() {
-			return (
-				this.settingsState &&
-				this.settingsState.sidebar &&
-				this.settingsState.sidebar.isSidebarRight
-			)
-		},
 		sidebarSize() {
 			let size =
 				this.settingsState && this.settingsState.sidebar
@@ -211,6 +206,9 @@ export default {
 				this.settingsState.appearance.font
 				? `${this.settingsState.appearance.font}, system-ui !important`
 				: `Roboto, system-ui !important`
+		},
+		bottomPanelHeight() {
+			return App.bottomPanel.currentHeight.value
 		},
 	},
 	methods: {

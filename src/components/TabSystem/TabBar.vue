@@ -1,5 +1,12 @@
 <template>
-	<div class="tab-bar">
+	<div
+		class="tab-bar"
+		:class="{
+			'mx-2': !isSidebarContentVisible,
+			'ml-2': isSidebarContentVisible && isSidebarRight,
+			'mr-2': isSidebarContentVisible && !isSidebarRight,
+		}"
+	>
 		<Draggable
 			v-if="tabSystem && tabSystem.shouldRender"
 			v-model="tabSystem.tabs.value"
@@ -39,6 +46,7 @@ import Draggable from 'vuedraggable'
 import { pointerDevice } from '/@/utils/pointerDevice'
 import { useTabSystem } from '../Composables/UseTabSystem'
 import { toRefs } from 'vue'
+import { useSidebarState } from '../Composables/Sidebar/useSidebarState'
 
 export default {
 	components: {
@@ -53,10 +61,16 @@ export default {
 		const { id } = toRefs(props)
 
 		const { tabSystem } = useTabSystem(id)
+		const {
+			isContentVisible: isSidebarContentVisible,
+			isAttachedRight: isSidebarRight,
+		} = useSidebarState()
 
 		return {
 			tabSystem,
 			pointerDevice,
+			isSidebarContentVisible,
+			isSidebarRight,
 		}
 	},
 	methods: {

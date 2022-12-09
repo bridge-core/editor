@@ -4,7 +4,7 @@ import { reactive } from 'vue'
 import { App } from '/@/App'
 
 export class WindowResize extends EventDispatcher<[number, number]> {
-	protected state = reactive({
+	public readonly state = reactive({
 		currentHeight: window.innerHeight,
 		currentWidth: window.innerWidth,
 	})
