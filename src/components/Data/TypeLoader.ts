@@ -81,32 +81,37 @@ export class TypeLoader {
 							)
 							src = await file.text()
 							resolve([typeLocation, src, false, moduleName])
-						} else {
-							// First check cache to see if we have already cached the file, if so resolve with the file from cache
-							try {
-								const cacheLocation = cacheIndex[typeLocation]
-								if (cacheLocation) {
-									const file = await app.fileSystem.readFile(
-										cacheLocation
-									)
-									src = await file.text()
-
-									resolve([
-										typeLocation,
-										src,
-										false,
-										moduleName,
-									])
-								} else throw {}
-							} catch {
-								// The file couldn't be fetched from cache (because it is not in index or at the path specified)
-								// So we need to fetch it
-								const res = await fetch(typeLocation)
-								const text = await res.text()
-
-								resolve([typeLocation, text, true, moduleName])
-							}
+							return
 						}
+
+						// First check cache to see if we have already cached the file, if so resolve with the file from cache
+						const cacheLocation = cacheIndex[typeLocation]
+						const file = cacheLocation
+							? await app.fileSystem
+									.readFile(cacheLocation)
+									.catch(() => null)
+							: null
+
+						// File is cached, so resolve with the file from cache
+						if (file) {
+							resolve([
+								typeLocation,
+								await file.text(),
+								false,
+								moduleName,
+							])
+							return
+						}
+
+						// The file couldn't be fetched from cache (because it is not in index or at the path specified)
+						// So we need to fetch it
+						const res = await fetch(typeLocation).catch(() => null)
+						// TODO: Maybe set a variable (failedToFetchAtLeastOnce) to later open an information window that tells the user that some types couldn't be fetched
+
+						// If the fetch failed, resolve with an empty string but don't cache it
+						const text = res ? await res.text() : ''
+
+						resolve([typeLocation, text, text !== '', moduleName])
 					}
 				)
 			})
@@ -116,17 +121,17 @@ export class TypeLoader {
 			// First, save types to 'types' map
 			types.set(typeLocation, definition)
 
-			// Then if we need to, update the cache index
-			if (updateCache) {
-				// Create a random file name for the file to be stored in cache under. We can't use the location since it is a url and contains illegal file name characters
-				const cacheFile = `~local/data/cache/types/${uuid()}.d.ts`
-				cacheIndex = {
-					...cacheIndex,
-					[typeLocation]: cacheFile,
-				}
-				// Write the actual type definition in cache
-				await app.fileSystem.writeFile(cacheFile, definition)
+			// Then if don't need to update cache, continue processing the next type
+			if (!updateCache) continue
+
+			// Create a random file name for the file to be stored in cache under. We can't use the location since it is a url and contains illegal file name characters
+			const cacheFile = `~local/data/cache/types/${uuid()}.d.ts`
+			cacheIndex = {
+				...cacheIndex,
+				[typeLocation]: cacheFile,
 			}
+			// Write the actual type definition in cache
+			await app.fileSystem.writeFile(cacheFile, definition)
 		}
 
 		// Update the cache index
