@@ -3,7 +3,7 @@
 }
 
 .terminal-output-container {
-	/* full height - terminal input bar height - cwd display height - a few pixels to prevents scrollbar */
+	/* full height - terminal input bar height - cwd display height - a few pixels to prevent double scrollbar */
 	height: calc(100% - 58px - 33px - 2px);
 	overflow-y: auto;
 	display: flex;
