@@ -3,6 +3,7 @@
 		"yes": "Yes",
 		"no": "No",
 		"okay": "Okay",
+		"setup": "Setup",
 		"confirm": "Confirm",
 		"cancel": "Cancel",
 		"close": "Close",
@@ -1146,12 +1147,11 @@
 			},
 			"comMojang": {
 				"name": "com.mojang Folder",
-				"description": "Drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.",
-				"extraDescription": "Drag your com.mojang folder onto bridge."
+				"description": "In order to sync your projects to Minecraft automatically, please install our native app."
 			},
 			"editorType": {
 				"name": "Choose Editor Type",
-				"description": "How do you want to edit JSON files? You can change your choice inside of bridge.'s settings later!",
+				"description": "Choose how you want to edit your JSON files. You can change this later in the settings.",
 				"rawText": {
 					"name": "Raw Text",
 					"description": "Edit JSON as raw text. Ideal for intermediate to advanced developers. Comes with advanced auto-completions and JSON validation."

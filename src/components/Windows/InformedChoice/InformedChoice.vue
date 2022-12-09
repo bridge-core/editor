@@ -43,7 +43,7 @@ function onClose() {
 	props.window.close()
 }
 function onClick(action: SimpleAction) {
-	action.trigger()
 	props.window.close()
+	action.trigger()
 }
 </script>
