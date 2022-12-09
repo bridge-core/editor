@@ -1,9 +1,8 @@
 import { reactive, set } from 'vue'
 
-export let settingsState: Record<string, Record<string, unknown> | null> =
-	reactive({
-		sidebar: null,
-	})
+export let settingsState: Record<string, Record<string, unknown>> = reactive({
+	sidebar: {},
+})
 
 export function setSettingsState(
 	state: Record<string, Record<string, unknown>>
