@@ -33,7 +33,7 @@
 		"jsonc-parser": "^3.2.0",
 		"lodash-es": "^4.17.20",
 		"lz-string": "^1.4.4",
-		"mc-project-core": "^0.3.22",
+		"mc-project-core": "^0.3.23",
 		"molang": "^1.13.11",
 		"monaco-editor": "^0.33.0",
 		"path-browserify": "^1.0.1",
