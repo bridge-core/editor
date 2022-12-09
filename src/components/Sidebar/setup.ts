@@ -25,7 +25,11 @@ export async function setupSidebar() {
 				if (!didSetup) return
 			}
 
-			if (isUsingFileSystemPolyfill.value) {
+			// Show limited project chooser if current build is a PWA build using our file system polyfill
+			if (
+				!import.meta.env.VITE_IS_TAURI_APP &&
+				isUsingFileSystemPolyfill.value
+			) {
 				createVirtualProjectWindow()
 			} else {
 				await App.instance.windows.projectChooser.open()
@@ -74,7 +78,9 @@ export async function setupSidebar() {
 		displayName: 'sidebar.quickExport.name',
 		icon: 'mdi-export',
 		// Only show quick export option for devices on which com.mojang syncing is not available
-		defaultVisibility: isUsingFileSystemPolyfill.value,
+		defaultVisibility:
+			!import.meta.env.VITE_IS_TAURI_APP &&
+			isUsingFileSystemPolyfill.value,
 		disabled: () => App.instance.isNoProjectSelected,
 
 		onClick: () => {

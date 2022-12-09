@@ -13,16 +13,24 @@ export class FolderImportManager {
 	protected readonly folderHandler = new Set<IFolderHandler>()
 
 	constructor() {
-		this.addImporter({
-			icon: 'mdi-minecraft',
-			name: 'fileDropper.importMethod.folder.output.name',
-			description: 'fileDropper.importMethod.folder.output.description',
-			onSelect: async (directoryHandle) => {
-				const app = await App.getApp()
+		/**
+		 * Setting the output folder isn't possible on Tauri builds
+		 * We don't want a browser directory handle, we want our custom virtual directory handle
+		 */
+		if (!import.meta.env.VITE_IS_TAURI_APP) {
+			this.addImporter({
+				icon: 'mdi-minecraft',
+				name: 'fileDropper.importMethod.folder.output.name',
+				description:
+					'fileDropper.importMethod.folder.output.description',
+				onSelect: async (directoryHandle) => {
+					const app = await App.getApp()
 
-				await app.comMojang.handleComMojangDrop(directoryHandle)
-			},
-		})
+					await app.comMojang.handleComMojangDrop(directoryHandle)
+				},
+			})
+		}
+
 		this.addImporter({
 			icon: 'mdi-folder-open-outline',
 			name: 'fileDropper.importMethod.folder.open.name',
@@ -54,6 +62,16 @@ export class FolderImportManager {
 	}
 
 	async onImportFolder(directoryHandle: AnyDirectoryHandle) {
+		/**
+		 * If there is only one handler, use it without prompting the user for a choice
+		 */
+		if (this.folderHandler.size === 1) {
+			const handler = [...this.folderHandler][0]
+			await handler.onSelect(directoryHandle)
+
+			return
+		}
+
 		const informedChoiceWindow = new InformedChoiceWindow(
 			'fileDropper.importMethod.name',
 			{

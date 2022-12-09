@@ -13,8 +13,8 @@
 				:is="tabSystem.currentComponent"
 				:key="`${tabSystem.uuid}.${
 					tabSystem.currentComponent.name ||
-					tabSystem.selectedTab.type ||
-					tabSystem.selectedTab.name
+					(tabSystem.selectedTab || {}).type ||
+					(tabSystem.selectedTab || {}).name
 				}`"
 				:style="`height: ${tabHeight}px; width: 100%;`"
 				:height="tabHeight"
@@ -74,18 +74,17 @@ export default {
 	},
 	computed: {
 		tabBarHeight() {
-			return this.tabSystem.selectedTab &&
-				this.tabSystem.selectedTab.actions.length > 0
-				? 48 + 25
-				: 48
+			if (!this.tabSystem?.selectedTab) return 0
+			return this.tabSystem?.selectedTab.actions.length > 0 ? 48 + 25 : 48
 		},
 		tabHeight() {
 			return (
 				(this.windowHeight - this.appToolbarHeightNumber) /
-					(this.tabSystem.isSharingScreen.value && this.isMobile
+					(this.tabSystem?.isSharingScreen.value && this.isMobile
 						? 2
 						: 1) -
-				this.tabBarHeight
+				this.tabBarHeight -
+				App.bottomPanel.currentHeight.value
 			)
 		},
 		isMobile() {

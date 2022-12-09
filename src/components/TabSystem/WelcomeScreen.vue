@@ -1,7 +1,8 @@
 <template>
 	<div
-		:class="`d-flex flex-column justify-center align-center ${containerPadding}`"
-		:style="`position: relative; height: 80vh;`"
+		:class="`pb-16 d-flex flex-column justify-center align-center ${containerPadding}`"
+		:style="{ height: height + 'px' }"
+		style="position: relative"
 	>
 		<WelcomeAlert />
 
@@ -20,22 +21,15 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import Logo from '../UIElements/Logo.vue'
 import WelcomeAlert from '../WelcomeAlert/Alert.vue'
 import CommandBar from '../CommandBar/CommandBar.vue'
 
-export default {
-	name: 'welcome-screen',
-	components: {
-		Logo,
-		WelcomeAlert,
-		CommandBar,
-	},
-	props: {
-		containerPadding: String,
-	},
-}
+defineProps({
+	containerPadding: String,
+	height: Number,
+})
 </script>
 
 <style scoped>

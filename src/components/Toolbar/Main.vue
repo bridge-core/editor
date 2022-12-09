@@ -6,10 +6,11 @@
 		app
 		clipped
 		padless
+		data-tauri-drag-region
 		:height="appToolbarHeight"
 		:class="{ 'd-flex align-center justify-center': hideToolbarItems }"
 		:style="{
-			'padding-left': 0,
+			'padding-left': toolbarPaddingLeft,
 			'margin-left': hideToolbarItems ? 0 : 'env(titlebar-area-x, 0)',
 			width: hideToolbarItems ? '100%' : 'env(titlebar-area-width, 100%)',
 			'z-index': windowControlsOverlay ? 1000 : undefined,
@@ -40,18 +41,20 @@
 
 		<template v-else>
 			<Logo
-				v-if="!isMacOS || !windowControlsOverlay"
+				v-if="showLogo"
 				height="24px"
 				width="24px"
 				style="
 					padding-right: 4px;
 					padding-left: calc(env(safe-area-inset-left) + 4px);
 				"
+				class="cursor-pointer"
 				alt="Logo of bridge. v2"
 				draggable="false"
+				@click.native="openChangelogWindow"
 			/>
 
-			<v-divider vertical />
+			<v-divider v-if="showLogo || isMacOS" vertical />
 
 			<!-- App menu buttons -->
 			<v-toolbar-items class="px14-font">
@@ -82,12 +85,14 @@
 				</template>
 			</v-toolbar-items>
 
-			<span v-if="windowControlsOverlay" class="pl-3">
+			<span v-if="windowControlsOverlay" class="pl-3 no-pointer-events">
 				{{ composedTitle }}
 			</span>
 
 			<v-spacer />
+			<WindowControls v-if="isTauriBuild && isWindows" />
 			<div
+				v-else
 				class="px-1 mx-1 rounded-lg app-version-display"
 				v-ripple="!isAnyWindowVisible"
 				:style="{
@@ -106,6 +111,7 @@
 import WindowAction from './WindowAction.vue'
 import MenuActivator from './Menu/Activator.vue'
 import MenuButton from './Menu/Button.vue'
+import WindowControls from './WindowControls.vue'
 import { App } from '/@/App.ts'
 import { version as appVersion } from '/@/utils/app/version.ts'
 import { platform } from '/@/utils/os.ts'
@@ -124,6 +130,7 @@ export default {
 		MenuActivator,
 		MenuButton,
 		Logo,
+		WindowControls,
 	},
 	setup() {
 		const setupObj = reactive({
@@ -143,10 +150,19 @@ export default {
 		toolbar: App.toolbar.state,
 		settingsState,
 		isMacOS: platform() === 'darwin',
+		isWindows: platform() === 'win32',
+		isTauriBuild: import.meta.env.VITE_IS_TAURI_APP,
 
 		appVersion,
 	}),
 	computed: {
+		showLogo() {
+			// On MacOS, only show logo if windowControlsOverlay is inactive
+			if (this.isMacOS) return !this.windowControlsOverlay
+
+			// On other platforms, always show logo
+			return true
+		},
 		isMobile() {
 			return this.$vuetify.breakpoint.mobile
 		},

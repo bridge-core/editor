@@ -14,7 +14,7 @@
 			'min-width': 'unset',
 			'max-width': '500px',
 			transition: 'slide-y-transition',
-			contentClass: 'commandbar-menu',
+			contentClass: 'commandbar-menu elevation-4',
 		}"
 		:items="actions"
 		:item-text="(item) => `${t(item.name)}\n${t(item.description)}`"

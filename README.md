@@ -4,7 +4,7 @@
 <img alt="Open in Codeflow" src="https://developer.stackblitz.com/img/open_in_codeflow_small.svg" >
 </a>
 
-<a style="border-radius: 4px" href="https://bridge-core.app/">
+<a href="https://bridge-core.app/">
     <img src="./public/img/social-preview-rounded.png">
 </a>
 

@@ -65,7 +65,7 @@ export abstract class ThreePreviewTab extends PreviewTab {
 		this.controls = markRaw(new OrbitControls(this.camera, canvas))
 		this.controls.addEventListener('change', () => {
 			this.requestRendering()
-			if (!this.parent.isActive) this.parent.setActive(true)
+			if (!this.parent.isActive.value) this.parent.setActive(true)
 		})
 
 		if (!this._scene) {

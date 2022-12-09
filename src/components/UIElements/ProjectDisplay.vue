@@ -46,7 +46,10 @@ export default {
 		async onClick() {
 			const app = await App.getApp()
 
-			if (isUsingFileSystemPolyfill.value) {
+			if (
+				!import.meta.env.VITE_IS_TAURI_APP &&
+				isUsingFileSystemPolyfill.value
+			) {
 				createVirtualProjectWindow()
 			} else {
 				app.windows.projectChooser.open()

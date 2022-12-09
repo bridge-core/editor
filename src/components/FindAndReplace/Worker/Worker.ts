@@ -1,11 +1,5 @@
 // @ts-ignore Make "path" work on this worker
-globalThis.process = {
-	cwd: () => '',
-	env: {},
-	release: {
-		name: 'browser',
-	},
-}
+import '/@/utils/worker/inject'
 
 import '/@/components/FileSystem/Virtual/Comlink'
 import { expose } from 'comlink'
