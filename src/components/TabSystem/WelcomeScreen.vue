@@ -18,7 +18,11 @@
 
 			<CommandBar />
 
-			<BridgeSheet @click="openDownloadPage" class="px-2 py-1 mt-4">
+			<BridgeSheet
+				v-if="nativeBuildAvailable"
+				@click="openDownloadPage"
+				class="px-2 py-1 mt-4 text-center"
+			>
 				<v-icon color="primary">mdi-download</v-icon>
 				{{ t('general.downloadNativeApp') }}
 			</BridgeSheet>
@@ -33,8 +37,13 @@ import CommandBar from '../CommandBar/CommandBar.vue'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import { App } from '/@/App'
 import { useTranslations } from '../Composables/useTranslations'
+import { computed } from 'vue'
 
 const { t } = useTranslations()
+
+const nativeBuildAvailable = computed(() => {
+	return !import.meta.env.VITE_IS_TAURI_APP && !App.instance.mobile.is.value
+})
 
 defineProps({
 	containerPadding: String,
