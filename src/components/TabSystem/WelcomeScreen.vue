@@ -1,6 +1,10 @@
 <template>
 	<div
-		:class="`pb-16 d-flex flex-column justify-center align-center ${containerPadding}`"
+		:class="{
+			'pb-16 d-flex flex-column justify-center align-center mx-2': true,
+			'ml-0': isContentVisible && !isAttachedRight,
+			'mr-0': isContentVisible && isAttachedRight,
+		}"
 		:style="{ height: height + 'px' }"
 		style="position: relative"
 	>
@@ -38,15 +42,16 @@ import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import { App } from '/@/App'
 import { useTranslations } from '../Composables/useTranslations'
 import { computed } from 'vue'
+import { useSidebarState } from '../Composables/Sidebar/useSidebarState'
 
 const { t } = useTranslations()
+const { isContentVisible, isAttachedRight } = useSidebarState()
 
 const nativeBuildAvailable = computed(() => {
 	return !import.meta.env.VITE_IS_TAURI_APP && !App.instance.mobile.is.value
 })
 
 defineProps({
-	containerPadding: String,
 	height: Number,
 })
 
