@@ -86,13 +86,6 @@
 							appToolbarHeightNumber -
 							bottomPanelHeight
 						"
-						:containerPadding="
-							isSidebarContentVisible
-								? isSidebarRight
-									? 'pl-2'
-									: 'pr-2'
-								: 'px-2'
-						"
 					/>
 
 					<BottomPanel v-if="!$vuetify.breakpoint.mobile" />
