@@ -52,7 +52,6 @@ const nativeBuildAvailable = computed(() => {
 })
 
 defineProps({
-	containerPadding: String,
 	height: Number,
 })
 
