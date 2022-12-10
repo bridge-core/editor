@@ -26,6 +26,7 @@
 		"reset": "Reset",
 		"readMore": "Read More",
 		"search": "Search...",
+		"downloadNativeApp": "Download Native App",
 		"confirmOverwriteFile": "This action overwrites a file with the same name. Do you want to continue?",
 		"confirmOverwriteFolder": "This action overwrites a folder with the same name. Do you want to continue?",
 		"fileSystemPolyfill": {
@@ -616,8 +617,6 @@
 			"outputResolution": "Output Resolution"
 		},
 		"createProject": {
-			"welcome": "Welcome to bridge.!",
-			"welcomeDescription": "Please create your first project in order to get started.",
 			"omitPack": "Omit",
 			"selectedPack": "Selected",
 			"title": "Create Project",
