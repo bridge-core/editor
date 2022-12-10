@@ -5,7 +5,7 @@ import { App } from '/@/App'
 export function useSidebarState() {
 	const isNavVisible = computed(() => App.sidebar.isNavigationVisible.value)
 	const isContentVisible = computed(
-		() => isNavVisible && App.sidebar.isContentVisible.value
+		() => isNavVisible.value && App.sidebar.isContentVisible.value
 	)
 	const isAttachedRight = computed(
 		() => settingsState.sidebar && settingsState.sidebar.isSidebarRight

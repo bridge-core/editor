@@ -195,7 +195,13 @@ export class App {
 		)
 	}
 
-	static openUrl(url: string, id?: string, openInBrowser = false) {
+	static async openUrl(url: string, id?: string, openInBrowser = false) {
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			const { open } = await import('@tauri-apps/api/shell')
+
+			return open(url)
+		}
+
 		if (settingsState?.general?.openLinksInBrowser || openInBrowser)
 			return window.open(url, '_blank')
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')

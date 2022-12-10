@@ -95,7 +95,7 @@
 						"
 					/>
 
-					<BottomPanel />
+					<BottomPanel v-if="!$vuetify.breakpoint.mobile" />
 				</v-col>
 			</v-row>
 		</v-main>
