@@ -17,6 +17,11 @@
 			/>
 
 			<CommandBar />
+
+			<BridgeSheet @click="openDownloadPage" class="px-2 py-1 mt-4">
+				<v-icon color="primary">mdi-download</v-icon>
+				{{ t('general.downloadNativeApp') }}
+			</BridgeSheet>
 		</div>
 	</div>
 </template>
@@ -25,11 +30,20 @@
 import Logo from '../UIElements/Logo.vue'
 import WelcomeAlert from '../WelcomeAlert/Alert.vue'
 import CommandBar from '../CommandBar/CommandBar.vue'
+import BridgeSheet from '/@/components/UIElements/Sheet.vue'
+import { App } from '/@/App'
+import { useTranslations } from '../Composables/useTranslations'
+
+const { t } = useTranslations()
 
 defineProps({
 	containerPadding: String,
 	height: Number,
 })
+
+function openDownloadPage() {
+	App.openUrl('https://bridge-core.app/guide/download/')
+}
 </script>
 
 <style scoped>
