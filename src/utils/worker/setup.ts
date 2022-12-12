@@ -1,4 +1,7 @@
 export function setupWorker(worker: Worker) {
+	// This Tauri IPC workaround is only needed for the Tauri app
+	if (!import.meta.env.VITE_IS_TAURI_APP) return
+
 	worker.addEventListener('message', (e) => {
 		if (e.data.type === 'ipc') {
 			// @ts-ignore
