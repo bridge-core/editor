@@ -8,7 +8,12 @@ globalThis.process = {
 }
 
 // This Tauri IPC workaround is only needed for the Tauri app
-if (import.meta.env.VITE_IS_TAURI_APP) {
+if (
+	import.meta.env.VITE_IS_TAURI_APP &&
+	!(<any>globalThis)._didSetupTauriWorkaround
+) {
+	;(<any>globalThis)._didSetupTauriWorkaround = true
+
 	// @ts-ignore
 	globalThis.window = globalThis
 	// @ts-ignore
