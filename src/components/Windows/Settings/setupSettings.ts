@@ -295,7 +295,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
-	if (!isUsingFileSystemPolyfill.value) {
+	if (import.meta.env.VITE_IS_TAURI_APP || !isUsingFileSystemPolyfill.value) {
 		settings.addControl(
 			new Button({
 				category: 'general',
