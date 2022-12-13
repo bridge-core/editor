@@ -104,7 +104,10 @@ export function setupFileCategory(app: App) {
 		})
 	)
 
-	if (isUsingFileSystemPolyfill.value || isUsingOriginPrivateFs) {
+	if (
+		!import.meta.env.VITE_IS_TAURI_APP &&
+		(isUsingFileSystemPolyfill.value || isUsingOriginPrivateFs)
+	) {
 		file.addItem(
 			app.actionManager.create({
 				icon: 'mdi-file-download-outline',

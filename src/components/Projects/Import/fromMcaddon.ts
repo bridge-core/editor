@@ -41,7 +41,11 @@ export async function importFromMcaddon(
 	)
 
 	// Ask user whether they want to save the current project if we are going to delete it later in the import process
-	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects) {
+	if (
+		!import.meta.env.VITE_IS_TAURI_APP &&
+		isUsingFileSystemPolyfill.value &&
+		!app.hasNoProjects
+	) {
 		const confirmWindow = new ConfirmationWindow({
 			description:
 				'windows.projectChooser.openNewProject.saveCurrentProject',
@@ -126,7 +130,11 @@ export async function importFromMcaddon(
 	await fs.mkdir(`projects/${projectName}/.bridge/compiler`)
 
 	// Remove old project if browser is using fileSystem polyfill
-	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects)
+	if (
+		!import.meta.env.VITE_IS_TAURI_APP &&
+		isUsingFileSystemPolyfill.value &&
+		!app.hasNoProjects
+	)
 		await app.projectManager.removeProject(app.project)
 
 	// Add new project
