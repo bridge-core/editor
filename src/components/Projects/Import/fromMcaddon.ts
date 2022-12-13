@@ -11,7 +11,7 @@ import { CreateConfig } from '../CreateProject/Files/Config'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { defaultPackPaths } from '../Project/Config'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
-import { basename } from '/@/utils/path'
+import { basename, join } from '/@/utils/path'
 import { getPackId, IManifestModule } from '/@/utils/manifest/getPackId'
 import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
 
@@ -99,10 +99,11 @@ export async function importFromMcaddon(
 
 			packs.push(packId)
 			const packPath = defaultPackPaths[packId]
+
 			// Move the pack to the correct location
 			await fs.move(
 				`import/${pack.name}`,
-				`projects/${projectName}/${packPath}`
+				join('projects', projectName, packPath)
 			)
 		}
 	}
