@@ -6,7 +6,7 @@ import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
 import { BridgeConfigSelection } from './Controls/Selection/BridgeConfigSelection'
 import { Button } from './Controls/Button/Button'
-import { del, set } from 'idb-keyval'
+import { del, get, set } from 'idb-keyval'
 import { comMojangKey } from '/@/components/OutputFolders/ComMojang/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
 import {
@@ -18,6 +18,8 @@ import { TextField } from './Controls/TextField/TextField'
 import { devActions } from '/@/components/Developer/Actions'
 import { FontSelection } from './Controls/FontSelection'
 import { LocaleManager } from '../../Locales/Manager'
+import { showFolderPicker } from '../../FileSystem/Pickers/showFolderPicker'
+import { pathFromHandle } from '../../FileSystem/Virtual/pathFromHandle'
 
 export async function setupSettings(settings: SettingsWindow) {
 	const app = await App.getApp()
@@ -239,7 +241,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			options: LocaleManager.getAvailableLanguages(),
 			default: LocaleManager.getCurrentLanguageId(),
 			onChange: (val) => {
-				;(<any>settings.getState()).reloadRequired = true
+				settings.addReloadHint()
 				set('language', val)
 			},
 		})
@@ -299,17 +301,49 @@ export async function setupSettings(settings: SettingsWindow) {
 		settings.addControl(
 			new Button({
 				category: 'general',
-				name: 'windows.settings.general.resetBridgeFolder.name',
+				name: 'windows.settings.general.selectBridgeFolder.name',
 				description:
-					'windows.settings.general.resetBridgeFolder.description',
+					'windows.settings.general.selectBridgeFolder.description',
 				onClick: async () => {
-					await del('bridgeBaseDir')
-					await del(comMojangKey)
-					location.reload()
+					if (import.meta.env.VITE_IS_TAURI_APP) {
+						// Native app
+						const [folderHandle] =
+							(await showFolderPicker({ multiple: false })) ?? []
+						if (!folderHandle) return
+
+						const folderPath = await pathFromHandle(folderHandle)
+						set('bridgeFolderPath', folderPath)
+
+						settings.addReloadHint()
+					} else {
+						// PWA
+						await del('bridgeBaseDir')
+						await del(comMojangKey)
+						location.reload()
+					}
 				},
 			})
 		)
 	}
+	// Only show reset bridge folder on native app if a different bridge folder is set
+	if (
+		import.meta.env.VITE_IS_TAURI_APP &&
+		(await get<string | undefined>('bridgeFolderPath')) !== undefined
+	) {
+		settings.addControl(
+			new Button({
+				category: 'general',
+				name: 'windows.settings.general.resetBridgeFolder.name',
+				description:
+					'windows.settings.general.resetBridgeFolder.description',
+				onClick: async () => {
+					set('bridgeFolderPath', undefined)
+					settings.addReloadHint()
+				},
+			})
+		)
+	}
+
 	// Editor
 	settings.addControl(
 		new Selection({
