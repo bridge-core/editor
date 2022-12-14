@@ -6,7 +6,6 @@ export async function getBridgeFolderPath() {
 		throw new Error(`This function is only available in Tauri apps.`)
 
 	const configuredPath = await get<string | undefined>('bridgeFolderPath')
-	console.log(configuredPath)
 	if (configuredPath) return configuredPath
 
 	return await join(await appLocalDataDir(), 'bridge')
