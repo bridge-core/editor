@@ -30,12 +30,13 @@ export async function saveOrDownload(
 			const app = await App.getApp()
 
 			if (import.meta.env.VITE_IS_TAURI_APP) {
-				const { join, appLocalDataDir } = await import(
-					'@tauri-apps/api/path'
+				const { join } = await import('@tauri-apps/api/path')
+				const { getBridgeFolderPath } = await import(
+					'/@/utils/getBridgeFolderPath'
 				)
 
 				revealInFileExplorer(
-					await join(await appLocalDataDir(), 'bridge', filePath)
+					await join(await getBridgeFolderPath(), filePath)
 				)
 			} else if (
 				app.project.isLocal ||

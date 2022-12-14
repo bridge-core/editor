@@ -866,9 +866,13 @@
 					"name": "Restore Tabs",
 					"description": "Restore your tabs from when you last used bridge. upon opening the app"
 				},
-				"resetBridgeFolder": {
+				"selectBridgeFolder": {
 					"name": "Select Root Folder",
 					"description": "Choose the main folder bridge. operates on"
+				},
+				"resetBridgeFolder": {
+					"name": "Reset Root Folder",
+					"description": "Reset the app to use bridge. v2's default root folder again"
 				}
 			},
 			"developer": {

@@ -2,10 +2,11 @@ import { markRaw, ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
 import { App } from '/@/App'
 import { Signal } from '../../Common/Event/Signal'
-import { appLocalDataDir, isAbsolute, join, sep } from '@tauri-apps/api/path'
+import { isAbsolute, join, sep } from '@tauri-apps/api/path'
 import { exists } from '@tauri-apps/api/fs'
 import { listen, Event } from '@tauri-apps/api/event'
 import './Terminal.css'
+import { getBridgeFolderPath } from '/@/utils/getBridgeFolderPath'
 
 type TMessageKind = 'stdout' | 'stderr' | 'stdin'
 
@@ -46,7 +47,7 @@ export class Terminal {
 		const app = await App.getApp()
 		await app.projectManager.projectReady.fired
 
-		this.baseCwd = await join(await appLocalDataDir(), 'bridge')
+		this.baseCwd = await getBridgeFolderPath()
 
 		if (this.cwd.value === '') this.cwd.value = this.baseCwd
 
