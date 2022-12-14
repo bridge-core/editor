@@ -1,6 +1,7 @@
 import { AsyncUnzipInflate, Unzip, UnzipFile } from 'fflate'
 import { GenericUnzipper } from './GenericUnzipper'
 import { FileSystem } from '../FileSystem'
+import { wait } from '/@/utils/wait'
 
 /**
  * Streaming variant of the Unzipper class. It is slightly faster and consumes less memory.
@@ -11,17 +12,24 @@ export class StreamingUnzipper extends GenericUnzipper<Uint8Array> {
 	 * @param data Data to unzip
 	 * @returns Promise<void>
 	 */
-	unzip(data: Uint8Array) {
+	async unzip(data: Uint8Array) {
 		const fs = new FileSystem(this.directory)
 
 		this.task?.update(0, data.length)
 		let streamedBytes = 0
 		let totalFiles = 0
 		let currentFileCount = 0
-		return new Promise<void>(async (resolve, reject) => {
+
+		const unzipStream = new Promise<void>(async (resolve, reject) => {
 			const unzip = new Unzip(async (stream) => {
 				totalFiles++
-				await this.streamFile(fs, stream).catch((err) => reject(err))
+
+				// Skip directories
+				if (!stream.name.endsWith('/')) {
+					await this.streamFile(fs, stream).catch((err) =>
+						reject(err)
+					)
+				}
 
 				streamedBytes += stream.size ?? 0
 				this.task?.update(streamedBytes)
@@ -37,6 +45,13 @@ export class StreamingUnzipper extends GenericUnzipper<Uint8Array> {
 			unzip.register(AsyncUnzipInflate)
 			unzip.push(data, true)
 		})
+
+		await unzipStream
+
+		// For some reason, Chromium doesn't transfer all files upon calling writable.close() at the desired time.
+		// This means that some files are imported incorrectly if we don't wait a bit.
+		// (Data would still be within .crswap files)
+		await wait(100)
 	}
 
 	/**

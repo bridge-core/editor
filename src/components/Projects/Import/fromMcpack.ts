@@ -13,6 +13,7 @@ import { defaultPackPaths } from '../Project/Config'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 import { getPackId, IManifestModule } from '/@/utils/manifest/getPackId'
 import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
+import { join } from '/@/utils/path'
 
 export async function importFromMcpack(
 	fileHandle: AnyFileHandle,
@@ -74,7 +75,7 @@ export async function importFromMcpack(
 		packs.push(packId)
 		const packPath = defaultPackPaths[packId]
 		// Move the pack to the correct location
-		await fs.move(`import`, `projects/${projectName}/${packPath}`)
+		await fs.move(`import`, join('projects', projectName, packPath))
 	} else {
 		new InformationWindow({
 			description: 'fileDropper.mcaddon.missingManifests',
