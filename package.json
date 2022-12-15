@@ -68,6 +68,6 @@
 		"vite": "^4.0.0",
 		"vite-plugin-ejs": "^1.4.3",
 		"vite-plugin-pwa": "^0.14.0",
-		"vite-plugin-solid": "^2.4.0"
+		"vite-plugin-solid": "^2.5.0"
 	}
 }
