@@ -26,10 +26,16 @@ export async function getStorageDirectory() {
 			'/@/utils/getBridgeFolderPath'
 		)
 
-		return new VirtualDirectoryHandle(
+		const directoryHandle = new VirtualDirectoryHandle(
 			new TauriFsStore(await getBridgeFolderPath()),
-			'bridge'
+			'bridge',
+			undefined,
+			true
 		)
+
+		await directoryHandle.setupDone.fired
+
+		return directoryHandle
 	}
 
 	if (
