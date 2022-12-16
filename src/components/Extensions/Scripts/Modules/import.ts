@@ -37,6 +37,6 @@ export const ImportModule = ({ disposables }: IModuleConfig) => ({
 	},
 
 	showDirectoryPicker: async (opts: IPickDirectoryOptions) => {
-		await showFolderPicker(opts)
+		return await showFolderPicker(opts)
 	},
 })
