@@ -22,12 +22,20 @@ export async function getStorageDirectory() {
 		const { TauriFsStore } = await import(
 			'/@/components/FileSystem/Virtual/Stores/TauriFs'
 		)
-		const { join, appLocalDataDir } = await import('@tauri-apps/api/path')
-
-		return new VirtualDirectoryHandle(
-			new TauriFsStore(await join(await appLocalDataDir(), 'bridge')),
-			'bridge'
+		const { getBridgeFolderPath } = await import(
+			'/@/utils/getBridgeFolderPath'
 		)
+
+		const directoryHandle = new VirtualDirectoryHandle(
+			new TauriFsStore(await getBridgeFolderPath()),
+			'bridge',
+			undefined,
+			true
+		)
+
+		await directoryHandle.setupDone.fired
+
+		return directoryHandle
 	}
 
 	if (

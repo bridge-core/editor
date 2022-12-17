@@ -18,7 +18,8 @@ export async function iterateDir(
 			path.length === 0 ? handle.name : `${path}/${handle.name}`
 
 		if (handle.kind === 'file') {
-			if (handle.name[0] === '.') continue
+			if (handle.name[0] === '.' || handle.name.endsWith('.crswap'))
+				continue
 
 			await callback(handle, currentPath, baseDirectory)
 		} else if (
@@ -47,7 +48,8 @@ export async function iterateDirParallel(
 			path.length === 0 ? handle.name : `${path}/${handle.name}`
 
 		if (handle.kind === 'file') {
-			if (handle.name[0] === '.') continue
+			if (handle.name[0] === '.' || handle.name.endsWith('.crswap'))
+				continue
 
 			promises.push(callback(handle, currentPath, baseDirectory))
 		} else if (

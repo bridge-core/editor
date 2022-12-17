@@ -36,7 +36,10 @@ export function setupProjectCategory(app: App) {
 			description: 'windows.projectChooser.description',
 			isDisabled: () => app.hasNoProjects,
 			onTrigger: () => {
-				if (isUsingFileSystemPolyfill.value) {
+				if (
+					!import.meta.env.VITE_IS_TAURI_APP &&
+					isUsingFileSystemPolyfill.value
+				) {
 					createVirtualProjectWindow()
 				} else {
 					App.instance.windows.projectChooser.open()

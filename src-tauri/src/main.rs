@@ -27,6 +27,11 @@ fn main() {
                 set_shadow(&main_window, true).expect("Unable to set window shadow");
             }
 
+            #[cfg(debug_assertions)] // only include this code on debug builds
+            {
+                main_window.open_devtools();
+            }
+
             // Try to set Discord rich presence
             match set_rich_presence() {
                 Ok(mut discord_client) => {

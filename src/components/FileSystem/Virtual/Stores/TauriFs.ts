@@ -39,9 +39,11 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 		if (this.isReadOnly) return
 
 		if (this.baseDirectory)
-			await createDir(this.baseDirectory).catch(() => {
-				// Ignore error if directory already exists
-			})
+			await createDir(this.baseDirectory, { recursive: true }).catch(
+				() => {
+					// Ignore error if directory already exists
+				}
+			)
 	}
 
 	async resolvePath(path: string) {

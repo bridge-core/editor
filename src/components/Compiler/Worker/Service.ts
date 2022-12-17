@@ -185,6 +185,8 @@ export class DashService extends EventDispatcher<void> {
 		if (acquireLock) await this.isDashFree.lock()
 		this.dispatch()
 
+		// Reload plugins so we can be sure that e.g. custom commands/components get discovered correctly
+		await this.dash.reload()
 		await this.dash.build()
 
 		if (acquireLock) this.isDashFree.unlock()
@@ -193,6 +195,8 @@ export class DashService extends EventDispatcher<void> {
 		if (acquireLock) await this.isDashFree.lock()
 		this.dispatch()
 
+		// Reload plugins so we can be sure that e.g. custom commands/components get discovered correctly
+		await this.dash.reload()
 		await this.dash.updateFiles(filePaths)
 
 		if (acquireLock) this.isDashFree.unlock()
