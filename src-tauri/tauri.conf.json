@@ -70,7 +70,8 @@
 				"title": "",
 				"width": 1200,
 				"titleBarStyle": "Overlay",
-				"acceptFirstMouse": true
+				"acceptFirstMouse": true,
+				"fileDropEnabled": false
 			}
 		]
 	}
