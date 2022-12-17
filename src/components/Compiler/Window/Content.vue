@@ -16,6 +16,7 @@
 				v-if="categories[selectedSidebar]"
 				:is="categories[selectedSidebar].component"
 				:data="categories[selectedSidebar].data.value"
+				@closeWindow="onClose"
 			/>
 		</template>
 	</SidebarWindow>

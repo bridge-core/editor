@@ -1,13 +1,14 @@
 <template>
 	<v-app
+		ref="appContainer"
 		:style="{ fontFamily }"
 		@contextmenu.native="$event.preventDefault()"
 	>
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
-		<Toolbar />
+		<Toolbar v-if="!isInFullScreen" />
 
-		<Sidebar app />
+		<Sidebar v-if="!isInFullScreen" app />
 
 		<v-btn
 			v-if="!sidebarNavigationVisible"
@@ -23,15 +24,17 @@
 			<v-icon>mdi-table-column</v-icon>
 		</v-btn>
 
-		<v-main :style="{ 'padding-top': appToolbarHeight }">
+		<v-main
+			:style="{
+				'padding-top': isInFullScreen ? 0 : appToolbarHeight,
+			}"
+		>
 			<WindowRenderer />
 
 			<v-row
 				no-gutters
 				class="d-flex fill-area"
 				:class="{
-					'ml-2': !isSidebarContentVisible && isSidebarRight,
-					'mr-2': !isSidebarContentVisible && !isSidebarRight,
 					'flex-row-reverse': isSidebarRight,
 				}"
 			>
@@ -51,7 +54,7 @@
 						class="d-flex"
 						:class="{ 'flex-column': $vuetify.breakpoint.mobile }"
 						:style="{
-							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight})`,
+							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight} - ${bottomPanelHeight}px)`,
 						}"
 					>
 						<!-- <v-divider
@@ -60,7 +63,7 @@
 							vertical
 						/> -->
 
-						<TabSystem class="flex-grow-1" showWelcomeScreen />
+						<TabSystem class="flex-grow-1" />
 						<v-divider
 							v-if="
 								tabSystems[0].shouldRender.value &&
@@ -78,14 +81,14 @@
 					</div>
 					<WelcomeScreen
 						v-else
-						:containerPadding="
-							isSidebarContentVisible
-								? isSidebarRight
-									? 'pl-2'
-									: 'pr-2'
-								: 'px-2'
+						:height="
+							windowSize.currentHeight -
+							appToolbarHeightNumber -
+							bottomPanelHeight
 						"
 					/>
+
+					<BottomPanel v-if="!$vuetify.breakpoint.mobile" />
 				</v-col>
 			</v-row>
 		</v-main>
@@ -111,6 +114,12 @@ import WelcomeScreen from '/@/components/TabSystem/WelcomeScreen.vue'
 import SidebarContent from './components/Sidebar/Content/Main.vue'
 import { settingsState } from './components/Windows/Settings/SettingsState'
 import { useTabSystem } from './components/Composables/UseTabSystem'
+import {
+	setFullscreenElement,
+	useFullScreen,
+} from './components/TabSystem/TabContextMenu/Fullscreen'
+import BottomPanel from './components/BottomPanel/BottomPanel.vue'
+import { useSidebarState } from './components/Composables/Sidebar/useSidebarState'
 
 export default {
 	name: 'App',
@@ -119,11 +128,18 @@ export default {
 	setup() {
 		const { tabSystem, tabSystems, shouldRenderWelcomeScreen } =
 			useTabSystem()
+		const { isInFullScreen } = useFullScreen()
+		const { isNavVisible, isContentVisible, isAttachedRight } =
+			useSidebarState()
 
 		return {
 			tabSystem,
 			tabSystems,
 			shouldRenderWelcomeScreen,
+			isInFullScreen,
+			sidebarNavigationVisible: isNavVisible,
+			isSidebarContentVisible: isContentVisible,
+			isSidebarRight: isAttachedRight,
 		}
 	},
 
@@ -132,6 +148,8 @@ export default {
 			this.contextMenu = app.contextMenu
 			this.windowSize = app.windowResize.state
 		})
+
+		setFullscreenElement(this.$refs.appContainer.$el)
 	},
 
 	components: {
@@ -142,6 +160,7 @@ export default {
 		TabSystem,
 		WelcomeScreen,
 		SidebarContent,
+		BottomPanel,
 	},
 
 	data: () => ({
@@ -155,22 +174,6 @@ export default {
 	}),
 
 	computed: {
-		isSidebarContentVisible() {
-			return (
-				this.sidebarNavigationVisible &&
-				App.sidebar.isContentVisible.value
-			)
-		},
-		sidebarNavigationVisible() {
-			return App.sidebar.isNavigationVisible.value
-		},
-		isSidebarRight() {
-			return (
-				this.settingsState &&
-				this.settingsState.sidebar &&
-				this.settingsState.sidebar.isSidebarRight
-			)
-		},
 		sidebarSize() {
 			let size =
 				this.settingsState && this.settingsState.sidebar
@@ -196,6 +199,9 @@ export default {
 				this.settingsState.appearance.font
 				? `${this.settingsState.appearance.font}, system-ui !important`
 				: `Roboto, system-ui !important`
+		},
+		bottomPanelHeight() {
+			return App.bottomPanel.currentHeight.value
 		},
 	},
 	methods: {
@@ -296,6 +302,9 @@ summary::-webkit-details-marker {
 .cursor-pointer {
 	cursor: pointer;
 }
+.no-pointer-events {
+	pointer-events: none;
+}
 .outlined {
 	border-width: thin;
 	border-color: #555555;
@@ -315,5 +324,10 @@ textarea {
 	font-weight: unset !important;
 	letter-spacing: unset !important;
 	line-height: unset !important;
+}
+
+/* Properly center custom icons (e.g. blockbench) within lists  */
+.v-list-item__icon {
+	align-items: center;
 }
 </style>

@@ -1,7 +1,12 @@
 <template>
 	<div
-		:class="`d-flex flex-column justify-center align-center ${containerPadding}`"
-		:style="`position: relative; height: 80vh;`"
+		:class="{
+			'pb-16 d-flex flex-column justify-center align-center mx-2': true,
+			'ml-0': isContentVisible && !isAttachedRight,
+			'mr-0': isContentVisible && isAttachedRight,
+		}"
+		:style="{ height: height + 'px' }"
+		style="position: relative"
 	>
 		<WelcomeAlert />
 
@@ -16,25 +21,42 @@
 			/>
 
 			<CommandBar />
+
+			<BridgeSheet
+				v-if="nativeBuildAvailable"
+				@click="openDownloadPage"
+				class="px-2 py-1 mt-4 text-center"
+			>
+				<v-icon color="primary">mdi-download</v-icon>
+				{{ t('general.downloadNativeApp') }}
+			</BridgeSheet>
 		</div>
 	</div>
 </template>
 
-<script>
+<script setup>
 import Logo from '../UIElements/Logo.vue'
 import WelcomeAlert from '../WelcomeAlert/Alert.vue'
 import CommandBar from '../CommandBar/CommandBar.vue'
+import BridgeSheet from '/@/components/UIElements/Sheet.vue'
+import { App } from '/@/App'
+import { useTranslations } from '../Composables/useTranslations'
+import { computed } from 'vue'
+import { useSidebarState } from '../Composables/Sidebar/useSidebarState'
 
-export default {
-	name: 'welcome-screen',
-	components: {
-		Logo,
-		WelcomeAlert,
-		CommandBar,
-	},
-	props: {
-		containerPadding: String,
-	},
+const { t } = useTranslations()
+const { isContentVisible, isAttachedRight } = useSidebarState()
+
+const nativeBuildAvailable = computed(() => {
+	return !import.meta.env.VITE_IS_TAURI_APP && !App.instance.mobile.is.value
+})
+
+defineProps({
+	height: Number,
+})
+
+function openDownloadPage() {
+	App.openUrl('https://bridge-core.app/guide/download/')
 }
 </script>
 

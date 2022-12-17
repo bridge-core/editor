@@ -4,6 +4,7 @@ import { FileTab } from '/@/components/TabSystem/FileTab'
 import { ViewCompilerOutput } from '../../UIElements/DirectoryViewer/ContextMenu/Actions/ViewCompilerOutput'
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
+import { fullScreenAction } from '../../TabSystem/TabContextMenu/Fullscreen'
 
 export function setupViewCategory(app: App) {
 	const view = new ToolbarCategory('mdi-eye-outline', 'toolbar.view.name')
@@ -32,6 +33,10 @@ export function setupViewCategory(app: App) {
 	)
 
 	view.addItem(new Divider())
+
+	const fullscreenAction = fullScreenAction()
+	if (fullscreenAction)
+		view.addItem(app.actionManager.create(fullscreenAction))
 
 	view.addItem(
 		app.actionManager.create({

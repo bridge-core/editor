@@ -1,6 +1,7 @@
 import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import { resolve, join } from 'path'
 import Vue from '@vitejs/plugin-vue2'
+import solidPlugin from 'vite-plugin-solid'
 import { VitePWA } from 'vite-plugin-pwa'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
 const isNightly = process.argv[2] === '--nightly'
@@ -11,8 +12,13 @@ const iconPath = (filePath: string) =>
 export default defineConfig({
 	base: '/',
 	server: {
+		strictPort: true,
 		port: 8080,
+		watch: {
+			ignored: ['**/src-tauri/**/*'],
+		},
 	},
+	envPrefix: ['VITE_', 'TAURI_'],
 	json: {
 		stringify: true,
 	},
@@ -31,8 +37,12 @@ export default defineConfig({
 			},
 		},
 	},
+	worker: {
+		format: 'es',
+	},
 	plugins: [
 		splitVendorChunkPlugin(),
+		solidPlugin(),
 		Vue({}),
 		ViteEjsPlugin({
 			isNightly,
@@ -66,12 +76,12 @@ export default defineConfig({
 			filename: 'service-worker.js',
 			registerType: 'prompt',
 			includeAssets: [
-				'./img/**/*.png',
-				'./img/**/*.svg',
-				'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900',
-				'./packages.zip',
+				'https://fonts.bunny.net/css?family=Roboto:100,300,400,500,700,900',
 			],
 			workbox: {
+				globPatterns: [
+					'**/*.{js,css,html,png,svg,woff2,woff,ttf,wasm,zip}',
+				],
 				maximumFileSizeToCacheInBytes: Number.MAX_SAFE_INTEGER,
 			},
 			manifest: {

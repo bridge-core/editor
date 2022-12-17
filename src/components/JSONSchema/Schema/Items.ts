@@ -50,19 +50,7 @@ export class ItemsSchema extends Schema {
 	getCompletionItems(obj: unknown) {
 		return this.arrayChildren
 			.filter((child) => !child.hasDoNotSuggest)
-			.map((child) =>
-				child.getCompletionItems(obj).map(
-					(item) =>
-						<const>{
-							type:
-								item.type === 'object'
-									? 'objectArray'
-									: 'valueArray',
-							label: `${item.value}`,
-							value: item.value,
-						}
-				)
-			)
+			.map((child) => child.getCompletionItems(obj))
 			.flat()
 	}
 

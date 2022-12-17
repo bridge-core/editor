@@ -12,28 +12,18 @@ export async function exportAsBrproject(name?: string) {
 	}.brproject`
 
 	/**
-	 * Make sure to delete old export so the .brproject file doesn't include itself
-	 * This would cause an issue where the ZIP package keeps growing with every export
-	 */
-	await app.fileSystem.unlink(savePath)
-
-	/**
 	 * .brproject files come in two variants:
 	 * - Complete global package including the data/ & extensions/ folder for browsers using the file system polyfill
 	 * - Package only including the project files (no data/ & extensions/) for other browsers
+	 *
+	 * The global package variant is deprecated now because we persist settings and extensions in the browser's local storage
 	 */
-	const zipFolder = new ZipDirectory(
-		isUsingFileSystemPolyfill.value
-			? app.fileSystem.baseDirectory
-			: app.project.baseDirectory
-	)
+	const zipFolder = new ZipDirectory(app.project.baseDirectory)
+
+	const zipFile = await zipFolder.package(new Set(['builds']))
 
 	try {
-		await saveOrDownload(
-			savePath,
-			await zipFolder.package(),
-			app.fileSystem
-		)
+		await saveOrDownload(savePath, zipFile, app.fileSystem)
 	} catch (err) {
 		console.error(err)
 	}

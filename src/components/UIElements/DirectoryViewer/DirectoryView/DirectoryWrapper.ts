@@ -4,6 +4,7 @@ import { BaseWrapper } from '../Common/BaseWrapper'
 import { IDirectoryViewerOptions } from '../DirectoryStore'
 import { FileWrapper } from '../FileView/FileWrapper'
 import { showFolderContextMenu } from '../ContextMenu/Folder'
+// import { toSignal } from '/@/components/Solid/toSignal'
 
 const ignoreFiles = ['.DS_Store']
 
@@ -24,6 +25,11 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 	get icon() {
 		return this.isOpen.value ? 'mdi-folder-open' : 'mdi-folder'
 	}
+	// useIcon() {
+	// 	const [isOpen] = toSignal(this.isOpen)
+
+	// 	return isOpen() ? 'mdi-folder-open' : 'mdi-folder'
+	// }
 
 	protected async getChildren() {
 		const children: (DirectoryWrapper | FileWrapper)[] = []
@@ -31,14 +37,20 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 		try {
 			for await (const entry of this.handle.values()) {
 				if (entry.kind === 'directory')
-					children.push(markRaw((new DirectoryWrapper(this, entry, this.options))))
-				else if (entry.kind === 'file' && !ignoreFiles.includes(entry.name))
-					children.push(markRaw(new FileWrapper(this, entry, this.options)))
+					children.push(
+						markRaw(new DirectoryWrapper(this, entry, this.options))
+					)
+				else if (
+					entry.kind === 'file' &&
+					!ignoreFiles.includes(entry.name)
+				)
+					children.push(
+						markRaw(new FileWrapper(this, entry, this.options))
+					)
 			}
-		} catch(err) {
-			console.error("Trying to access non-existent directory", this.path)
+		} catch (err) {
+			console.error('Trying to access non-existent directory', this.path)
 		}
-		
 
 		this.sortChildren(children)
 
@@ -75,22 +87,40 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 		if (this.children.value) {
 			this.children.value.forEach((child) => {
 				if (child.kind === 'directory') {
-					openFolders.push(...child.getOpenFolders(currentPath ? [...currentPath, child.name] : [child.name]))
+					openFolders.push(
+						...child.getOpenFolders(
+							currentPath
+								? [...currentPath, child.name]
+								: [child.name]
+						)
+					)
 				}
 			})
 		}
 
 		return openFolders
 	}
-	protected async openFolderPaths(paths: string[][], children: (DirectoryWrapper | FileWrapper)[]) {
+	protected async openFolderPaths(
+		paths: string[][],
+		children: (DirectoryWrapper | FileWrapper)[]
+	) {
 		if (paths.length === 0) return
 
-		for(const path of paths) {
-			const folder = <DirectoryWrapper | undefined> children.find((child) => child.name === path[0] && child.kind === 'directory')
+		for (const path of paths) {
+			const folder = <DirectoryWrapper | undefined>(
+				children.find(
+					(child) =>
+						child.name === path[0] && child.kind === 'directory'
+				)
+			)
 
 			if (folder) {
 				await folder.open()
-				if(folder.children.value) await folder.openFolderPaths([path.slice(1)], folder.children.value)
+				if (folder.children.value)
+					await folder.openFolderPaths(
+						[path.slice(1)],
+						folder.children.value
+					)
 			}
 		}
 	}
@@ -110,22 +140,21 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 
 	async toggleOpen(deep = false) {
 		// Folder is open, close it
-		if (this.isOpen.value)  this.close(deep)
+		if (this.isOpen.value) this.close(deep)
 		else await this.open(deep)
 	}
 
-	async close(deep=false) {
+	async close(deep = false) {
 		this.isOpen.value = false
 
 		if (deep) {
 			this.children.value?.forEach((child) => {
-				if(child instanceof DirectoryWrapper)
-					child.close(true)
+				if (child instanceof DirectoryWrapper) child.close(true)
 			})
 		}
 	}
-	async open(deep=false) {
-		if(this.isOpen.value && !deep) return
+	async open(deep = false) {
+		if (this.isOpen.value && !deep) return
 
 		// Folder is closed, did we load folder contents already?
 		if (this.children.value) {
@@ -140,17 +169,18 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 			this.isLoading.value = false
 		}
 
-		if(deep) {
+		if (deep) {
 			this.children.value?.forEach((child) => {
-				if(child instanceof DirectoryWrapper)
-					child.open(true)
+				if (child instanceof DirectoryWrapper) child.open(true)
 			})
 		}
 	}
 
 	getChild(name: string) {
-		if(!this.children.value) 
-			throw new Error("Cannot use directoryWrapper.getChild(..) because children are not loaded yet")
+		if (!this.children.value)
+			throw new Error(
+				'Cannot use directoryWrapper.getChild(..) because children are not loaded yet'
+			)
 		return this.children.value?.find((child) => child.name === name)
 	}
 
@@ -176,8 +206,8 @@ export class DirectoryWrapper extends BaseWrapper<AnyDirectoryHandle> {
 	}
 	override _onClick(_: MouseEvent, forceClick: boolean): void {
 		// Click is a double click so we want to deep open/close the folder
-		if(forceClick) {
-			if(this.isOpen.value) this.open(true)
+		if (forceClick) {
+			if (this.isOpen.value) this.open(true)
 			else this.close(true)
 		} else {
 			// Normal click; toggle folder open/close

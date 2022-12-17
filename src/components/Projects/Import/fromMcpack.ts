@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
-import { Unzipper } from '/@/components/FileSystem/Zip/Unzipper'
+import { StreamingUnzipper } from '/@/components/FileSystem/Zip/StreamingUnzipper'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { TPackTypeId } from '/@/components/Data/PackType'
@@ -13,6 +13,7 @@ import { defaultPackPaths } from '../Project/Config'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 import { getPackId, IManifestModule } from '/@/utils/manifest/getPackId'
 import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
+import { join } from '/@/utils/path'
 
 export async function importFromMcpack(
 	fileHandle: AnyFileHandle,
@@ -28,7 +29,7 @@ export async function importFromMcpack(
 
 	// Unzip .mcpack file
 	if (unzip) {
-		const unzipper = new Unzipper(tmpHandle)
+		const unzipper = new StreamingUnzipper(tmpHandle)
 		const file = await fileHandle.getFile()
 		const data = new Uint8Array(await file.arrayBuffer())
 		unzipper.createTask(app.taskManager)
@@ -41,7 +42,11 @@ export async function importFromMcpack(
 	)
 
 	// Ask user whether they want to save the current project if we are going to delete it later in the import process
-	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects) {
+	if (
+		!import.meta.env.VITE_IS_TAURI_APP &&
+		isUsingFileSystemPolyfill.value &&
+		!app.hasNoProjects
+	) {
 		const confirmWindow = new ConfirmationWindow({
 			description:
 				'windows.projectChooser.openNewProject.saveCurrentProject',
@@ -70,7 +75,7 @@ export async function importFromMcpack(
 		packs.push(packId)
 		const packPath = defaultPackPaths[packId]
 		// Move the pack to the correct location
-		await fs.move(`import`, `projects/${projectName}/${packPath}`)
+		await fs.move(`import`, join('projects', projectName, packPath))
 	} else {
 		new InformationWindow({
 			description: 'fileDropper.mcaddon.missingManifests',
@@ -95,7 +100,11 @@ export async function importFromMcpack(
 	await fs.mkdir(`projects/${projectName}/.bridge/extensions`)
 	await fs.mkdir(`projects/${projectName}/.bridge/compiler`)
 
-	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects)
+	if (
+		!import.meta.env.VITE_IS_TAURI_APP &&
+		isUsingFileSystemPolyfill.value &&
+		!app.hasNoProjects
+	)
 		// Remove old project if browser is using fileSystem polyfill
 		await app.projectManager.removeProject(app.project)
 

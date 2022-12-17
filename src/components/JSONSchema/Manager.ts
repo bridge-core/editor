@@ -49,10 +49,14 @@ export class SchemaManager {
 	static createSchemas(location: string, obj: any) {
 		if (typeof obj !== 'object') {
 			console.warn(`Unexpected schema type "${typeof obj}" @ ${location}`)
-			return [new ConstSchema(location, '', obj)]
+			return { schemas: [new ConstSchema(location, '', obj)] }
 		}
 
-		let schemas: Schema[] = []
+		const schemas: Schema[] = []
+		// Parse out description and title of the current schema
+		const description =
+			typeof obj.description === 'string' ? obj.description : undefined
+		const title = typeof obj.title === 'string' ? obj.title : undefined
 
 		for (const [key, value] of Object.entries(obj)) {
 			if (value === undefined) continue
@@ -96,6 +100,10 @@ export class SchemaManager {
 			schemas.push(schema)
 		}
 
-		return schemas
+		return {
+			schemas,
+			description,
+			title,
+		}
 	}
 }

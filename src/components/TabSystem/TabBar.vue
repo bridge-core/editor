@@ -1,5 +1,12 @@
 <template>
-	<div>
+	<div
+		class="tab-bar"
+		:class="{
+			'mx-2': !isSidebarContentVisible,
+			'ml-2': isSidebarContentVisible && isSidebarRight,
+			'mr-2': isSidebarContentVisible && !isSidebarRight,
+		}"
+	>
 		<Draggable
 			v-if="tabSystem && tabSystem.shouldRender"
 			v-model="tabSystem.tabs.value"
@@ -15,7 +22,7 @@
 				v-for="(tab, i) in tabSystem.tabs.value"
 				:key="tab.uuid"
 				:tab="tab"
-				:isActive="tabSystem.isActive"
+				:isActive="tabSystem.isActive.value"
 				:isFirstTab="i === 0"
 			/>
 		</Draggable>
@@ -25,7 +32,7 @@
 				tabSystem.selectedTab &&
 				tabSystem.selectedTab.actions.length > 0
 			"
-			:class="{ 'inactive-action-bar': !tabSystem.isActive }"
+			:class="{ 'inactive-action-bar': !tabSystem.isActive.value }"
 			:actions="tabSystem.selectedTab.actions"
 			@click="tabSystem.setActive(true)"
 		/>
@@ -39,6 +46,7 @@ import Draggable from 'vuedraggable'
 import { pointerDevice } from '/@/utils/pointerDevice'
 import { useTabSystem } from '../Composables/UseTabSystem'
 import { toRefs } from 'vue'
+import { useSidebarState } from '../Composables/Sidebar/useSidebarState'
 
 export default {
 	components: {
@@ -53,10 +61,16 @@ export default {
 		const { id } = toRefs(props)
 
 		const { tabSystem } = useTabSystem(id)
+		const {
+			isContentVisible: isSidebarContentVisible,
+			isAttachedRight: isSidebarRight,
+		} = useSidebarState()
 
 		return {
 			tabSystem,
 			pointerDevice,
+			isSidebarContentVisible,
+			isSidebarRight,
 		}
 	},
 	methods: {
@@ -83,5 +97,8 @@ export default {
 }
 .inactive-action-bar {
 	opacity: 0.5;
+}
+.tab-bar {
+	background: var(--v-background-base);
 }
 </style>

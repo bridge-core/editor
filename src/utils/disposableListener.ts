@@ -1,13 +1,13 @@
 export function addDisposableEventListener(
 	event: string,
 	listener: (event: any) => void,
-	options?: boolean | AddEventListenerOptions
+	eventTarget: EventTarget = window
 ) {
-	window.addEventListener(event, listener, options)
+	eventTarget.addEventListener(event, listener)
 
 	return {
 		dispose: () => {
-			window.removeEventListener(event, listener)
+			eventTarget.removeEventListener(event, listener)
 		},
 	}
 }

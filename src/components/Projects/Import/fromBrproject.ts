@@ -1,6 +1,5 @@
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
-import { Unzipper } from '/@/components/FileSystem/Zip/Unzipper'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
@@ -9,6 +8,7 @@ import { basename } from '/@/utils/path'
 import { Project } from '../Project/Project'
 import { LocaleManager } from '../../Locales/Manager'
 import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
+import { StreamingUnzipper } from '../../FileSystem/Zip/StreamingUnzipper'
 
 export async function importFromBrproject(
 	fileHandle: AnyFileHandle,
@@ -16,6 +16,7 @@ export async function importFromBrproject(
 ) {
 	const app = await App.getApp()
 	const fs = app.fileSystem
+	await fs.unlink('import')
 	const tmpHandle = await fs.getDirectoryHandle('import', {
 		create: true,
 	})
@@ -24,7 +25,7 @@ export async function importFromBrproject(
 
 	// Unzip .brproject file, do not unzip if already unzipped
 	if (unzip) {
-		const unzipper = new Unzipper(tmpHandle)
+		const unzipper = new StreamingUnzipper(tmpHandle)
 		const file = await fileHandle.getFile()
 		const data = new Uint8Array(await file.arrayBuffer())
 		unzipper.createTask(app.taskManager)
@@ -35,7 +36,10 @@ export async function importFromBrproject(
 	if (!(await fs.fileExists('import/config.json'))) {
 		// The .brproject file contains data/, projects/ & extensions/ folder
 		// We need to change the folder structure to process it correctly
-		if (isUsingFileSystemPolyfill.value) {
+		if (
+			!import.meta.env.VITE_IS_TAURI_APP &&
+			isUsingFileSystemPolyfill.value
+		) {
 			// Only load settings & extension if using the polyfill
 			try {
 				await fs.move('import/data', 'data')
@@ -60,7 +64,11 @@ export async function importFromBrproject(
 	}
 
 	// Ask user whether he wants to save the current project if we are going to delete it later in the import process
-	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects) {
+	if (
+		!import.meta.env.VITE_IS_TAURI_APP &&
+		isUsingFileSystemPolyfill.value &&
+		!app.hasNoProjects
+	) {
 		const confirmWindow = new ConfirmationWindow({
 			description:
 				'windows.projectChooser.openNewProject.saveCurrentProject',
@@ -90,7 +98,11 @@ export async function importFromBrproject(
 	if (!app.hasNoProjects) currentProject = app.project
 
 	// Remove old project if browser is using fileSystem polyfill
-	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects)
+	if (
+		!import.meta.env.VITE_IS_TAURI_APP &&
+		isUsingFileSystemPolyfill.value &&
+		!app.hasNoProjects
+	)
 		await app.projectManager.removeProject(currentProject!)
 
 	// Add new project

@@ -3,6 +3,7 @@
 		"yes": "Yes",
 		"no": "No",
 		"okay": "Okay",
+		"setup": "Setup",
 		"confirm": "Confirm",
 		"cancel": "Cancel",
 		"close": "Close",
@@ -26,6 +27,7 @@
 		"reset": "Reset",
 		"readMore": "Read More",
 		"search": "Search...",
+		"downloadNativeApp": "Download Native App",
 		"confirmOverwriteFile": "This action overwrites a file with the same name. Do you want to continue?",
 		"confirmOverwriteFolder": "This action overwrites a folder with the same name. Do you want to continue?",
 		"fileSystemPolyfill": {
@@ -37,7 +39,15 @@
 			"description": "You can find the exported package here"
 		},
 		"experimentalGameplay": "Experimental Gameplay",
-		"textureLocation": "Texture Location"
+		"textureLocation": "Texture Location",
+		"reloadBridge": {
+			"name": "Reload bridge.",
+			"description": "Restart bridge. Any unsaved changes will be lost."
+		},
+		"warnBeforeClosing": {
+			"title": "Unsaved Changes",
+			"description": "Are you sure you want to close this window? Any unsaved changes will be lost."
+		}
 	},
 	"openWith": {
 		"snowstorm": "Snowstorm",
@@ -128,6 +138,10 @@
 			"name": "Download",
 			"description": "Download this file or folder"
 		},
+		"fullscreen": {
+			"name": "Fullscreen",
+			"description": "Toggle fullscreen mode"
+		},
 		"viewConnectedFiles": {
 			"name": "View Connected Files",
 			"description": "View all files connected to this file"
@@ -176,6 +190,10 @@
 		"revealPath": {
 			"name": "Reveal Path",
 			"description": "Reveals the location of a file or folder"
+		},
+		"revealInFileExplorer": {
+			"name": "Reveal in File Explorer",
+			"description": "Reveals the location of a file or folder in the file explorer"
 		},
 		"createFile": {
 			"name": "Create File",
@@ -448,10 +466,15 @@
 			"description": "Fetch the current project for newly added files"
 		},
 		"noProjectView": {
-			"noProjectsFound": "It does not look like you have any projects yet!",
+			"noProjectsFound": "It does not look like you have any projects yet. Get started by creating a new project!",
 			"createLocalProject": "Create Local Project",
 			"chooseBridgeFolder": "Choose bridge. Folder",
 			"accessBridgeFolder": "Access bridge. Folder",
+			"importOldProjects": {
+				"name": "Import Projects",
+				"confirmOverwrite": "Your bridge. folder already contains projects. Importing old projects may overwrite existing projects with the same name. Do you want to continue?",
+				"notABridgeProject": "It looks like this project is not a bridge. project as the folder does not contain a project config.json file. Please make sure that you have selected the correct folder."
+			},
 			"projectNoLongerExists": "It looks like this project no longer exists!"
 		},
 		"restartWatchMode": {
@@ -595,8 +618,6 @@
 			"outputResolution": "Output Resolution"
 		},
 		"createProject": {
-			"welcome": "Welcome to bridge.!",
-			"welcomeDescription": "Please create your first project in order to get started.",
 			"omitPack": "Omit",
 			"selectedPack": "Selected",
 			"title": "Create Project",
@@ -767,6 +788,10 @@
 					"name": "Sidebar Size",
 					"description": "Changes the width of the expanded sidebar area."
 				},
+				"packExplorerFolderIndentation": {
+					"name": "Folder Indentation",
+					"description": "Changes the indentation of folders in the pack explorer."
+				},
 				"shrinkSidebarElements": {
 					"name": "Shrink Sidebar Elements",
 					"description": "Shrink the size of bridge.'s sidebar elements"
@@ -841,9 +866,13 @@
 					"name": "Restore Tabs",
 					"description": "Restore your tabs from when you last used bridge. upon opening the app"
 				},
-				"resetBridgeFolder": {
+				"selectBridgeFolder": {
 					"name": "Select Root Folder",
 					"description": "Choose the main folder bridge. operates on"
+				},
+				"resetBridgeFolder": {
+					"name": "Reset Root Folder",
+					"description": "Reset the app to use bridge. v2's default root folder again"
 				}
 			},
 			"developer": {
@@ -912,6 +941,10 @@
 				"autoSaveChanges": {
 					"name": "Auto Save Changes",
 					"description": "Automatically save changes to files after a short delay"
+				},
+				"showTreeEditorLocationBar": {
+					"name": "Show Tree Editor Location Bar",
+					"description": "Allows you to quickly navigate your JSON file within the tree editor by displaying your current location above the editor."
 				},
 				"bridgePredictions": {
 					"name": "bridge. Predictions",
@@ -1036,11 +1069,14 @@
 	"comMojang": {
 		"title": "Access to folder \"com.mojang\"",
 		"permissionRequest": "bridge. needs access to your \"com.mojang\" folder in order to compile projects to it.",
+		"linkFolder": "Link Folder",
+		"linkedFolder": "Linked Folder",
 		"status": {
-			"sucess": "Syncing your projects to com.mojang is setup correctly.",
-			"deniedPermission": "You setup com.mojang syncing but you did not grant bridge. permission to the folder.",
-			"notSetup": "You have not setup com.mojang syncing yet. Drag your com.mojang folder onto bridge. to do so.",
-			"notAvailable": "Syncing projects to the com.mojang folder is only available for Chrome and Edge users."
+			"sucess": "Syncing your projects to your \"com.mojang\" folder is setup correctly.",
+			"deniedPermission": "You setup \"com.mojang\" syncing but you did not grant bridge. permission to the folder.",
+			"notSetup": "You have not setup \"com.mojang\" syncing yet. Drag your \"com.mojang\" folder onto bridge. to do so.",
+			"notSetupTauri": "You have not setup \"com.mojang\" syncing yet. Click the \"Link Folder\" button to do so.",
+			"notAvailable": "Syncing projects to the \"com.mojang\" folder is only available for Chrome and Edge users."
 		}
 	},
 	"findAndReplace": {
@@ -1065,6 +1101,7 @@
 		"failedClientEntityLoad": "Failed to load connected client entity",
 		"invalidEntity": "Cannot open preview for an entity with invalid JSON. Please fix JSON errors inside of the file and try again.",
 		"chooseGeometry": "Choose Geometry",
+		"chooseTexture": "Choose Texture",
 		"noGeometry": "No valid geometry found inside of this file. Make sure that your JSON is valid, that the file structure is correct and that a geometry with the provided identifier exists.",
 		"lootTableSimulator": {
 			"emptyLootOutput": "Output is empty, try running the loot table to collect results.",
@@ -1113,12 +1150,11 @@
 			},
 			"comMojang": {
 				"name": "com.mojang Folder",
-				"description": "Drag your com.mojang folder onto bridge. to setup syncing of projects to this folder. This makes your add-ons accessible inside of Minecraft for Windows 10 automatically. Setting up com.mojang syncing can be done at any point in time while bridge. is open.",
-				"extraDescription": "Drag your com.mojang folder onto bridge."
+				"description": "In order to sync your projects to Minecraft automatically, please install our native app."
 			},
 			"editorType": {
 				"name": "Choose Editor Type",
-				"description": "How do you want to edit JSON files? You can change your choice inside of bridge.'s settings later!",
+				"description": "Choose how you want to edit your JSON files. You can change this later in the settings.",
 				"rawText": {
 					"name": "Raw Text",
 					"description": "Edit JSON as raw text. Ideal for intermediate to advanced developers. Comes with advanced auto-completions and JSON validation."
@@ -1186,6 +1222,19 @@
 			"tokens": {
 				"selectorArgument": "selector argument"
 			}
+		}
+	},
+	"bottomPanel": {
+		"terminal": {
+			"name": "Terminal",
+			"inputPlaceholder": "Enter a command..."
+		},
+		"problems": {
+			"name": "Problems"
+		},
+		"compiler": {
+			"name": "Compiler",
+			"noLogs": "No logs to show..."
 		}
 	}
 }

@@ -48,8 +48,8 @@ export const schemaRegistry = new Map<string, ISchemaConstructor>([
 export const ignoreFields = new Set<string>([
 	'$schema',
 	'$id',
-	'description', // TODO: Use description for hover text
-	'title',
+	'description', // Uses special parsing. Description is used for context menu information
+	'title', // Uses special parsing. Title is used for context menu information
 	'definitions',
 
 	//TODO: Proper implementation of the following fields instead of ignoring them

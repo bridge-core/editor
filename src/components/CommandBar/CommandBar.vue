@@ -14,7 +14,7 @@
 			'min-width': 'unset',
 			'max-width': '500px',
 			transition: 'slide-y-transition',
-			contentClass: 'commandbar-menu',
+			contentClass: 'commandbar-menu elevation-4',
 		}"
 		:items="actions"
 		:item-text="(item) => `${t(item.name)}\n${t(item.description)}`"
@@ -133,9 +133,8 @@ export default {
 					color: packType?.color ?? 'primary',
 
 					onTrigger: async () => {
-						const fileHandle = await project.app.fileSystem.getFileHandle(
-							filePath
-						)
+						const fileHandle =
+							await project.app.fileSystem.getFileHandle(filePath)
 
 						project.openFile(fileHandle)
 					},
