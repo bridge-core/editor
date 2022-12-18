@@ -1,19 +1,18 @@
 import { FileSystem } from 'dash-compiler'
 import { IDirEntry } from 'dash-compiler/dist/FileSystem/FileSystem'
-import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import {
 	writeFile,
 	writeBinaryFile,
 	createDir,
 	removeDir,
 	removeFile,
-	readBinaryFile,
 	readDir,
 	FileEntry,
 	copyFile,
 } from '@tauri-apps/api/fs'
 import { join, basename, dirname, isAbsolute, sep } from '@tauri-apps/api/path'
 import json5 from 'json5'
+import { invoke } from '@tauri-apps/api'
 
 export class TauriBasedDashFileSystem extends FileSystem {
 	constructor(protected baseDirectory?: string) {
@@ -39,7 +38,12 @@ export class TauriBasedDashFileSystem extends FileSystem {
 		)
 	}
 	async readFile(path: string): Promise<File> {
-		const binaryData = await readBinaryFile(await this.resolvePath(path))
+		const resolvedPath = await this.resolvePath(path)
+		const binaryData = new Uint8Array(
+			await invoke<Array<number>>('read_file', {
+				path: resolvedPath,
+			})
+		)
 
 		return new File([binaryData], await basename(path))
 	}
