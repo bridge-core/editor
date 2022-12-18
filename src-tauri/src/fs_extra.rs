@@ -68,6 +68,22 @@ pub async fn get_file_data(path: &str) -> Result<(u64, Vec<u8>), String> {
 }
 
 /**
+ * A function that returns when a file was last modified
+ */
+#[tauri::command]
+pub async fn get_file_last_modified(path: &str) -> Result<u64, String> {
+    let metadata = fs::metadata(path).expect("Failed to get file metadata");
+    let modified = metadata
+        .modified()
+        .expect("Failed to get file modified time")
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("Time went backwards")
+        .as_secs();
+
+    Ok(modified)
+}
+
+/**
  * A faster way to read a binary file compared to Tauri's built-in read_file
  */
 #[tauri::command]
