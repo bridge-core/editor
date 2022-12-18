@@ -12,7 +12,8 @@
 				"height": 900,
 				"resizable": true,
 				"title": "",
-				"width": 1200
+				"width": 1200,
+				"fileDropEnabled": false
 			}
 		]
 	}
