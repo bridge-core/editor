@@ -60,6 +60,21 @@ export abstract class BaseStore<T = any> {
 	abstract readFile(path: string): Promise<File>
 
 	/**
+	 * Return when a file was last modified
+	 */
+	lastModified(path: string) {
+		return this.readFile(path).then((file) => file.lastModified)
+	}
+	/**
+	 * Return the content of a file as a Uint8Array
+	 */
+	read(path: string) {
+		return this.readFile(path)
+			.then((file) => file.arrayBuffer())
+			.then((buffer) => new Uint8Array(buffer))
+	}
+
+	/**
 	 * Unlink a file or directory
 	 */
 	abstract unlink(path: string): Promise<void>
