@@ -87,23 +87,3 @@ pub async fn read_file(path: &str) -> Result<Vec<u8>, String> {
     Ok(contents)
 }
 
-/**
- * A faster way to read a binary file compared to Tauri's built-in read_file
- */
-#[tauri::command]
-pub async fn read_file(path: &str) -> Result<Vec<u8>, String> {
-    let file_result = File::open(path).await;
-    if file_result.is_err() {
-        return Err(file_result.err().unwrap().to_string());
-    }
-    let mut file = file_result.unwrap();
-
-    let mut contents = vec![];
-    let read_result = file.read_to_end(&mut contents).await;
-
-    if read_result.is_err() {
-        return Err(read_result.err().unwrap().to_string());
-    }
-
-    Ok(contents)
-}
