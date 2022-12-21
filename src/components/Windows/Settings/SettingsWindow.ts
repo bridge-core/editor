@@ -114,6 +114,10 @@ export class SettingsWindow extends NewBaseWindow {
 		}
 	}
 
+	addReloadHint() {
+		this.state.reloadRequired = true
+	}
+
 	async open() {
 		if (this.state.isVisible) return
 

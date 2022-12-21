@@ -1,26 +1,17 @@
 <h2>Features:</h2>
-<ul>
-<li><strong>Tree Editor:</strong> Added support for &quot;not&quot; and &quot;doNotSuggest&quot; schema properties</li>
-<li>Loading file definitions is now significantly faster</li>
-<li>Loading JSON schemas is now significantly faster</li>
-<li>Loading lightning cache files is now significantly faster</li>
-<li>Improved file system migration process and prompt criteria</li>
-<li>Bone name auto-completions within part_visibility (#468)</li>
-</ul>
+<h3>Color Picker &amp; Preview (#614)</h3>
+<p>bridge. now supports previewing colors within JSON files inline and editing them conveniently with a color picker.</p>
+<p><img src="https://user-images.githubusercontent.com/64587014/189728421-9216f0a5-14bc-405a-a0f6-05739939d827.png" alt="image"></p>
 <h2>Changes:</h2>
 <ul>
-<li>Updated game test types to latest 1.19.0 release</li>
-<li>Cache event references from new 1.19.0 components</li>
-<li><strong>Initial Setup:</strong> Some browsers will now only show one permission prompt per selected folder (instead of previously two for read &amp; write permissions)</li>
-<li>Added &quot;onProjectChanged(...)&quot; extension API</li>
-<li>Updated geode and ore feature schemas (Thanks to @KekeCreations; bridge-core/editor-packages#25)</li>
-<li>Updated data to latest Minecraft Preview</li>
+<li>Ability to configure folder indentation (#730)</li>
 </ul>
 <h2>Fixes:</h2>
 <ul>
-<li>Fixed component data not being cached from entity permutations</li>
-<li>Fixed entity permutations using incorrect component auto-completions</li>
-<li>Fixed tree editor not handling escaped characters correctly (#465)</li>
-<li>Fixed sidebar icons within tasks not scrolling correctly</li>
-<li>Fixed WelcomeScreen top margin for logo without alert</li>
+<li>Fixed transformFiles compilation step overwriting files in rare cases (https://github.com/bridge-core/dash-compiler/commit/8178e1d3700b805e7ab57148b96b6f6bffe05541)</li>
+<li>Fixed &quot;molang&quot; plugin no longer transforming Molang statements (#732)</li>
+<li>Fixed custom item components using the player API (#489)</li>
+<li>Dash now creates a default hooks map upon loading cache file (https://github.com/bridge-core/dash-compiler/commit/4741b9272e9d4148ae29f8403dbadfb62f5e38a5)</li>
+<li>Fixed generator scripts generating files to wrong output location (#735)</li>
+<li>&quot;useTemplate&quot; within generator scripts now works reliably (https://github.com/bridge-core/dash-compiler/commit/7a26aff5b970946507f4194abd16ac68e2ff01b1)</li>
 </ul>

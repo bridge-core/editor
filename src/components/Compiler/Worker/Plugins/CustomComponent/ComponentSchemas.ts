@@ -1,9 +1,12 @@
+import { Remote } from 'comlink'
 import { Component, DefaultConsole } from 'dash-compiler'
+import { DashService } from '../../Service'
 import { App } from '/@/App'
 import { JsRuntime } from '/@/components/Extensions/Scripts/JsRuntime'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
+import { Project } from '/@/components/Projects/Project/Project'
 import { IDisposable } from '/@/types/disposable'
-import { iterateDir } from '/@/utils/iterateDir'
+import { iterateDir, iterateDirParallel } from '/@/utils/iterateDir'
 
 export const supportsCustomComponents = <const>['block', 'item', 'entity']
 export type TComponentFileType = typeof supportsCustomComponents[number]
@@ -15,14 +18,17 @@ export class ComponentSchemas {
 	}
 	protected schemaLookup = new Map<string, [TComponentFileType, string]>()
 	protected disposables?: IDisposable[]
+	protected dash?: Remote<DashService>
 
-	constructor() {}
+	constructor(protected project: Project) {}
 
 	get(fileType: TComponentFileType) {
 		return this.schemas[fileType]
 	}
 
 	async activate() {
+		this.dash = await this.project.createDashService('development')
+
 		this.disposables = [
 			App.eventSystem.on(
 				'fileSave',
@@ -44,9 +50,8 @@ export class ComponentSchemas {
 					const fileType = filePath
 						.replace(componentPath + '/', '')
 						.split('/')[0] as TComponentFileType
-					const isSupportedFileType = supportsCustomComponents.includes(
-						fileType
-					)
+					const isSupportedFileType =
+						supportsCustomComponents.includes(fileType)
 
 					if (!isSupportedFileType && v1CompatMode) {
 						// This is not a supported file type but v1CompatMode is enabled,
@@ -102,22 +107,21 @@ export class ComponentSchemas {
 		jsRuntime: JsRuntime,
 		fileType: TComponentFileType
 	) {
-		const app = await App.getApp()
-		const project = app.project
-		await (await project.compilerService.completedStartUp).fired
-
-		const v1CompatMode = project.config.get().bridge?.v1CompatMode ?? false
+		const v1CompatMode =
+			this.project.config.get().bridge?.v1CompatMode ?? false
 
 		const fromFilePath = v1CompatMode
-			? project.config.resolvePackPath('behaviorPack', 'components')
-			: project.config.resolvePackPath(
+			? this.project.config.resolvePackPath('behaviorPack', 'components')
+			: this.project.config.resolvePackPath(
 					'behaviorPack',
 					`components/${fileType}`
 			  )
 
 		let baseDir: AnyDirectoryHandle
 		try {
-			baseDir = await app.fileSystem.getDirectoryHandle(fromFilePath)
+			baseDir = await this.project.app.fileSystem.getDirectoryHandle(
+				fromFilePath
+			)
 		} catch {
 			return {}
 		}
@@ -125,7 +129,7 @@ export class ComponentSchemas {
 		// Reset schemas
 		this.schemas[fileType] = {}
 
-		await iterateDir(
+		await iterateDirParallel(
 			baseDir,
 			async (fileHandle, filePath) => {
 				await this.evalComponentSchema(
@@ -148,14 +152,14 @@ export class ComponentSchemas {
 		file: File,
 		v1CompatMode: boolean
 	) {
-		const app = await App.getApp()
-		const project = app.project
-		await (await project.compilerService.completedStartUp).fired
+		let fileContent = new Uint8Array(await file.arrayBuffer())
 
-		const [_, fileContent] = await project.compilerService.compileFile(
-			filePath,
-			new Uint8Array(await file.arrayBuffer())
-		)
+		if (filePath.endsWith('.ts')) {
+			fileContent = (
+				await this.dash!.compileFile(filePath, fileContent)
+			)[1]
+		}
+
 		const transformedFile = new File([fileContent], file.name)
 		const component = new Component(
 			new DefaultConsole(),

@@ -1,6 +1,7 @@
 import { ref, markRaw } from 'vue'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 import { VirtualFileHandle } from './Virtual/FileHandle'
+import { IndexedDbStore } from './Virtual/Stores/IndexedDb'
 
 /**
  * Chrome 93 and 94 crash when we try to call createWritable on a file handle inside of a web worker
@@ -55,7 +56,9 @@ if (
 
 		window.showDirectoryPicker = async () =>
 			// @ts-ignore Typescript doesn't like our polyfill
-			markRaw(new VirtualDirectoryHandle(null, 'bridgeFolder', undefined))
+			markRaw(
+				new VirtualDirectoryHandle(new IndexedDbStore(), 'bridgeFolder')
+			)
 	}
 }
 
@@ -91,10 +94,7 @@ if (isUnsupportedBrowser() || typeof window.showOpenFilePicker !== 'function') {
 									new VirtualFileHandle(
 										null,
 										file.name,
-										new Uint8Array(
-											await file.arrayBuffer()
-										),
-										true
+										new Uint8Array(await file.arrayBuffer())
 									)
 								)
 							)
@@ -135,13 +135,18 @@ if (isUnsupportedBrowser() || typeof window.showSaveFilePicker !== 'function') {
 		return new VirtualFileHandle(
 			null,
 			options.suggestedName ?? 'newFile.txt',
-			new Uint8Array(),
-			true
+			new Uint8Array()
 		)
 	}
 }
 
+/**
+ * In order to support drag and drop of files on our native Windows build,
+ * we need to polyfill the DataTransferItem.getAsFileSystemHandle method
+ * to also use a VirtualFileHandle (just like the base file system)
+ */
 if (
+	import.meta.env.VITE_IS_TAURI_APP ||
 	isUnsupportedBrowser() ||
 	(globalThis.DataTransferItem &&
 		!DataTransferItem.prototype.getAsFileSystemHandle)
@@ -155,8 +160,7 @@ if (
 			return new VirtualFileHandle(
 				null,
 				file.name,
-				new Uint8Array(await file.arrayBuffer()),
-				true
+				new Uint8Array(await file.arrayBuffer())
 			)
 		} else if (this.kind === 'directory') {
 			return markRaw(new VirtualDirectoryHandle(null, 'unknown'))

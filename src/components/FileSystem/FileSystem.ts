@@ -8,6 +8,11 @@ import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
 import { getStorageDirectory } from '/@/utils/getStorageDirectory'
 import { VirtualFileHandle } from './Virtual/FileHandle'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
+import {
+	getDirectoryHandleIndexedDb,
+	getDirectoryHandleTauri,
+} from './Fast/getDirectoryHandle'
+import { pathFromHandle } from './Virtual/pathFromHandle'
 
 export class FileSystem extends Signal<void> {
 	protected _baseDirectory!: AnyDirectoryHandle
@@ -45,14 +50,42 @@ export class FileSystem extends Signal<void> {
 			pathArr.shift()
 		}
 
+		// Cannot apply fast path if baseDirectory is not a virtual directory
+		if (this.baseDirectory instanceof VirtualDirectoryHandle) {
+			/**
+			 * Fast path for native app
+			 * Every path segment costs at least 1 syscall on the slow path, whereas the fast path costs 1 syscall for the entire path
+			 * Therefore, switch to the fast path if the path has more than 1 segment
+			 */
+			if (import.meta.env.VITE_IS_TAURI_APP && pathArr.length > 1) {
+				const fastCallResult = await getDirectoryHandleTauri(
+					this.baseDirectory,
+					pathArr,
+					{ create, createOnce }
+				)
+				// Returns false if the fast call failed
+				if (fastCallResult) return fastCallResult
+			}
+
+			/**
+			 * Fast path for IndexedDB backed file systems
+			 */
+			const fastCallResult = await getDirectoryHandleIndexedDb(
+				this.baseDirectory,
+				pathArr,
+				{ create, createOnce }
+			)
+			if (fastCallResult) return fastCallResult
+		}
+
 		for (const folder of pathArr) {
 			try {
 				current = await current.getDirectoryHandle(folder, {
 					create: createOnce || create,
 				})
-			} catch {
+			} catch (err) {
 				throw new Error(
-					`Failed to access "${path}": Directory does not exist`
+					`Failed to access "${path}": Directory does not exist: ${err}`
 				)
 			}
 
@@ -91,7 +124,8 @@ export class FileSystem extends Signal<void> {
 			.then((path) => path?.join('/'))
 
 		if (path) {
-			path = '~local/' + path
+			// Local projects don't exist for Tauri builds
+			if (!import.meta.env.VITE_IS_TAURI_APP) path = '~local/' + path
 		} else {
 			path = await this.baseDirectory
 				.resolve(<any>handle)
@@ -268,26 +302,44 @@ export class FileSystem extends Signal<void> {
 		const originHandle = await this.getDirectoryHandle(originPath, {
 			create: false,
 		})
-
-		await iterateDirParallel(originHandle, async (fileHandle, filePath) => {
-			await this.copyFileHandle(
-				fileHandle,
-				await this.getFileHandle(join(destPath, filePath), true)
-			)
+		const destHandle = await this.getDirectoryHandle(destPath, {
+			create: true,
 		})
+
+		await this.copyFolderByHandle(originHandle, destHandle)
 	}
 	async copyFolderByHandle(
 		originHandle: AnyDirectoryHandle,
-		destHandle: AnyDirectoryHandle
+		destHandle: AnyDirectoryHandle,
+		ignoreFolders?: Set<string>
 	) {
+		// Tauri build: Both handles are virtual -> Elligible for fast path
+		if (
+			import.meta.env.VITE_IS_TAURI_APP &&
+			originHandle instanceof VirtualDirectoryHandle &&
+			destHandle instanceof VirtualDirectoryHandle
+		) {
+			const src = await pathFromHandle(originHandle)
+			const dest = await pathFromHandle(destHandle)
+
+			const { invoke } = await import('@tauri-apps/api')
+			await invoke('copy_directory', { src, dest })
+
+			return
+		}
+
 		const destFs = new FileSystem(destHandle)
 
-		await iterateDirParallel(originHandle, async (fileHandle, filePath) => {
-			await this.copyFileHandle(
-				fileHandle,
-				await destFs.getFileHandle(filePath, true)
-			)
-		})
+		await iterateDirParallel(
+			originHandle,
+			async (fileHandle, filePath) => {
+				await this.copyFileHandle(
+					fileHandle,
+					await destFs.getFileHandle(filePath, true)
+				)
+			},
+			ignoreFolders
+		)
 	}
 
 	loadFileHandleAsDataUrl(fileHandle: AnyFileHandle) {

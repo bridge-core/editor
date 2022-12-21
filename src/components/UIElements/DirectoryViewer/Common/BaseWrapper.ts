@@ -52,20 +52,19 @@ export abstract class BaseWrapper<T extends FileSystemHandle | VirtualHandle> {
 	}
 
 	abstract readonly icon: string
+	// abstract useIcon(): string
 	abstract unselectAll(): void
-	abstract _onRightClick(
-		event: MouseEvent,
-		baseWrapper: BaseWrapper<any>
-	): void
+	abstract _onRightClick(event: MouseEvent): void
 	abstract _onClick(event: MouseEvent, forceClick: boolean): void
 
-	onRightClick(event: MouseEvent, baseWrapper: BaseWrapper<any>) {
-		this._onRightClick(event, baseWrapper)
+	onRightClick(event: MouseEvent) {
+		this._onRightClick(event)
 
 		this.unselectAll()
 		this.isSelected.value = true
 	}
 	onClick(event: MouseEvent, forceClick: boolean = false) {
+		event.preventDefault()
 		this._onClick(event, forceClick)
 
 		// Unselect other wrappers if multiselect key is not pressed

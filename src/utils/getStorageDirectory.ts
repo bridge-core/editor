@@ -1,4 +1,5 @@
 import { VirtualDirectoryHandle } from '../components/FileSystem/Virtual/DirectoryHandle'
+import { IndexedDbStore } from '../components/FileSystem/Virtual/Stores/IndexedDb'
 
 async function doesSupportWritable() {
 	const dirHandle = await navigator.storage.getDirectory()
@@ -17,11 +18,31 @@ async function doesSupportWritable() {
 }
 
 export async function getStorageDirectory() {
+	if (import.meta.env.VITE_IS_TAURI_APP) {
+		const { TauriFsStore } = await import(
+			'/@/components/FileSystem/Virtual/Stores/TauriFs'
+		)
+		const { getBridgeFolderPath } = await import(
+			'/@/utils/getBridgeFolderPath'
+		)
+
+		const directoryHandle = new VirtualDirectoryHandle(
+			new TauriFsStore(await getBridgeFolderPath()),
+			'bridge',
+			undefined,
+			true
+		)
+
+		await directoryHandle.setupDone.fired
+
+		return directoryHandle
+	}
+
 	if (
 		typeof navigator.storage?.getDirectory !== 'function' ||
 		!(await doesSupportWritable())
 	) {
-		return new VirtualDirectoryHandle(null, 'bridgeFolder', undefined)
+		return new VirtualDirectoryHandle(new IndexedDbStore(), 'bridgeFolder')
 	}
 
 	return await navigator.storage.getDirectory()

@@ -5,6 +5,7 @@
 
 		<template v-else>
 			<BridgeFolderBtn />
+			<ImportOldProjects />
 			<CreateProjectBtn />
 
 			<v-slide-y-transition class="py-0" group>
@@ -28,6 +29,7 @@ import BridgeFolderBtn from './BridgeFolderBtn.vue'
 import SetupView from './SetupView.vue'
 import Project from './Project.vue'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import ImportOldProjects from './ImportOldProjects.vue'
 
 export default {
 	components: {
@@ -35,6 +37,7 @@ export default {
 		BridgeFolderBtn,
 		SetupView,
 		Project,
+		ImportOldProjects,
 	},
 	setup() {
 		return {

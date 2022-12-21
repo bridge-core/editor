@@ -12,7 +12,8 @@ import {
 } from '/@/components/FileSystem/Polyfill'
 import { FileTab } from '/@/components/TabSystem/FileTab'
 import { download } from '/@/components/FileSystem/saveOrDownload'
-import { CommandBarState } from '../../CommandBar/State'
+import { CommandBarState } from '/@/components/CommandBar/State'
+import { showFolderPicker } from '/@/components/FileSystem/Pickers/showFolderPicker'
 
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
@@ -53,8 +54,8 @@ export function setupFileCategory(app: App) {
 			},
 		})
 	)
-	// Doesn't make sense to show this option fs polyfill browsers
-	if (!isUsingFileSystemPolyfill.value)
+	// Doesn't make sense to show this option on fs polyfill browsers
+	if (import.meta.env.VITE_IS_TAURI_APP || !isUsingFileSystemPolyfill.value)
 		file.addItem(
 			app.actionManager.create({
 				id: 'bridge.action.openFolder',
@@ -64,15 +65,8 @@ export function setupFileCategory(app: App) {
 				keyBinding: 'Ctrl + Shift + O',
 				onTrigger: async () => {
 					const app = await App.getApp()
-					let directoryHandle: AnyDirectoryHandle
-					try {
-						directoryHandle = await window.showDirectoryPicker({
-							multiple: false,
-							mode: 'readwrite',
-						})
-					} catch {
-						return
-					}
+					const [directoryHandle] = (await showFolderPicker()) ?? []
+					if (!directoryHandle) return
 
 					await app.fileDropper.importFolder(directoryHandle)
 				},
@@ -110,7 +104,10 @@ export function setupFileCategory(app: App) {
 		})
 	)
 
-	if (isUsingFileSystemPolyfill.value || isUsingOriginPrivateFs) {
+	if (
+		!import.meta.env.VITE_IS_TAURI_APP &&
+		(isUsingFileSystemPolyfill.value || isUsingOriginPrivateFs)
+	) {
 		file.addItem(
 			app.actionManager.create({
 				icon: 'mdi-file-download-outline',

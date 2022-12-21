@@ -132,7 +132,9 @@
 				z-index: 10000;
 
 				width: 100vw;
-				height: calc(100vh - 50px);
+				height: 100vh;
+				app-region: drag;
+				-webkit-app-region: drag;
 			}
 			.initial-boot img {
 				place-self: center;
@@ -192,16 +194,18 @@
 		<div id="app"></div>
 
 		<!-- Initial boot screen -->
-		<div class="initial-boot">
+		<div data-tauri-drag-region class="initial-boot">
 			<% if(isNightly) { %>
 			<img
 				src="/img/icons/nightly/android-chrome-192x192.png"
+				data-tauri-drag-region
 				draggable="false"
 				alt="bridge Nightly"
 			/>
 			<% } else { %>
 			<img
 				src="/img/icons/android-chrome-192x192.png"
+				data-tauri-drag-region
 				draggable="false"
 				alt="bridge"
 			/>

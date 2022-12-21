@@ -1,6 +1,5 @@
 import '/@/components/Notifications/Errors'
 import '/@/components/Languages/LanguageManager'
-import '/@/components/App/ServiceWorker'
 
 import Vue from 'vue'
 import { EventSystem } from '/@/components/Common/Event/EventSystem'
@@ -39,15 +38,23 @@ import { PackExplorer } from '/@/components/PackExplorer/PackExplorer'
 import { PersistentNotification } from '/@/components/Notifications/PersistentNotification'
 import { version as appVersion } from '/@/utils/app/version'
 import { platform } from '/@/utils/os'
-import { virtualProjectName } from '/@/components/Projects/Project/Project'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { getStorageDirectory } from '/@/utils/getStorageDirectory'
 import { FolderImportManager } from '/@/components/ImportFolder/Manager'
 import { StartParamManager } from '/@/components/StartParams/Manager'
 import { ViewFolders } from '/@/components/ViewFolders/ViewFolders'
 import { SidebarManager } from '/@/components/Sidebar/Manager'
-import { ViewComMojangProject } from './components/OutputFolders/ComMojang/Sidebar/ViewProject'
-import { InformationWindow } from './components/Windows/Common/Information/InformationWindow'
+import { ViewComMojangProject } from '/@/components/OutputFolders/ComMojang/Sidebar/ViewProject'
+import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
+import { BottomPanel } from '/@/components/BottomPanel/BottomPanel'
+
+if (import.meta.env.VITE_IS_TAURI_APP) {
+	// Import Tauri updater for native builds
+	import('./components/App/Tauri/TauriUpdater')
+} else {
+	// Only import service worker for non-Tauri builds
+	import('/@/components/App/ServiceWorker')
+}
 
 export class App {
 	public static readonly windowState = new WindowState()
@@ -92,6 +99,7 @@ export class App {
 	public static readonly fileType = markRaw(new FileTypeLibrary())
 	public static readonly packType = markRaw(new PackTypeLibrary())
 	public static readonly sidebar = new SidebarManager()
+	public static readonly bottomPanel = markRaw(new BottomPanel())
 
 	public readonly mobile: Mobile
 
@@ -166,11 +174,7 @@ export class App {
 		// Only prompt in prod mode so we can use HMR in dev mode
 		if (import.meta.env.PROD) {
 			window.addEventListener('beforeunload', (event) => {
-				if (
-					this.tabSystem?.hasUnsavedTabs ||
-					this.taskManager.hasRunningTasks ||
-					isUsingFileSystemPolyfill.value
-				) {
+				if (this.shouldWarnBeforeClose) {
 					event.preventDefault()
 					event.returnValue = saveWarning
 					return saveWarning
@@ -179,7 +183,25 @@ export class App {
 		}
 	}
 
-	static openUrl(url: string, id?: string, openInBrowser = false) {
+	get shouldWarnBeforeClose() {
+		if (
+			!import.meta.env.VITE_IS_TAURI_APP &&
+			isUsingFileSystemPolyfill.value
+		)
+			return true
+
+		return (
+			this.tabSystem?.hasUnsavedTabs || this.taskManager.hasRunningTasks
+		)
+	}
+
+	static async openUrl(url: string, id?: string, openInBrowser = false) {
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			const { open } = await import('@tauri-apps/api/shell')
+
+			return open(url)
+		}
+
 		if (settingsState?.general?.openLinksInBrowser || openInBrowser)
 			return window.open(url, '_blank')
 		return window.open(url, id, 'toolbar=no,menubar=no,status=no')
@@ -197,6 +219,13 @@ export class App {
 		await this.instance.beforeStartUp()
 
 		this.instance.fileSystem.setup(await getStorageDirectory())
+
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			// TauriFs env -> bridge. folder is the same as getStorageDirectory()
+			this.instance.bridgeFolderSetup.dispatch()
+			// Load projects
+			this.instance.projectManager.loadProjects(true)
+		}
 
 		// Show changelog after an update
 		if (await get<boolean>('firstStartAfterUpdate')) {
@@ -271,7 +300,10 @@ export class App {
 		}
 
 		// Warn about saving projects
-		if (isUsingFileSystemPolyfill.value) {
+		if (
+			isUsingFileSystemPolyfill.value &&
+			!import.meta.env.VITE_IS_TAURI_APP
+		) {
 			const saveWarning = new PersistentNotification({
 				id: 'bridge-save-warning',
 				icon: 'mdi-alert-circle-outline',

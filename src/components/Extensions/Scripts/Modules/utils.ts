@@ -1,5 +1,6 @@
 import { IModuleConfig } from '../types'
+import { App } from '/@/App'
 
 export const UtilsModule = ({}: IModuleConfig) => ({
-	openExternal: (url: string) => window.open(url, '_blank'),
+	openExternal: (url: string) => App.openUrl(url, undefined, true),
 })

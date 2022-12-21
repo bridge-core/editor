@@ -1,6 +1,8 @@
 import { Console } from 'dash-compiler'
 
-interface ILogData {
+export interface ILogData {
+	// Format: HH:MM:SS
+	time: string
 	type?: 'info' | 'error' | 'warning'
 }
 
@@ -12,7 +14,10 @@ export class ForeignConsole extends Console {
 		return this.logs
 	}
 
-	protected basicLog(message: any, { type }: ILogData = {}) {
+	protected basicLog(
+		message: any,
+		{ type }: { type?: 'info' | 'error' | 'warning' } = {}
+	) {
 		switch (type) {
 			case 'warning':
 				console.warn(message)
@@ -31,7 +36,7 @@ export class ForeignConsole extends Console {
 
 		this.logs.unshift([
 			typeof message === 'string' ? message : JSON.stringify(message),
-			{ type },
+			{ time: new Date().toLocaleTimeString(), type },
 		])
 		this.logsChanged()
 	}

@@ -4,6 +4,7 @@
 		"module": "esnext",
 		"strict": true,
 		"jsx": "preserve",
+		"jsxImportSource": "solid-js",
 		"importHelpers": true,
 		"moduleResolution": "node",
 		"skipLibCheck": true,
@@ -15,7 +16,6 @@
 		"types": [
 			"@types/wicg-file-system-access",
 			"node",
-			"vite/client",
 			"vite-plugin-pwa/client"
 		],
 		"paths": {
