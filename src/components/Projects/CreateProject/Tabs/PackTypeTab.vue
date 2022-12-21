@@ -1,28 +1,6 @@
 <template>
 	<div>
-		<h2 class="mb-2">Project Type</h2>
-
-		<v-row class="mb-6" dense>
-			<v-col
-				v-for="{ type, icon } in projectTypes"
-				:key="`${type}#${state.createOptions.projectType}`"
-				cols="12"
-				xs="12"
-				sm="12"
-				md="4"
-				lg="4"
-				xl="4"
-			>
-				<ProjectTypeViewer
-					style="height: 100%"
-					:icon="icon"
-					:type="type"
-					:selected="state.createOptions.projectType === type"
-					@input="state.createOptions.projectType = type"
-				/>
-			</v-col>
-		</v-row>
-
+		<!--TODO: make translatable-->
 		<h2 class="mb-2">Packs</h2>
 		<v-row class="mb-6" dense>
 			<v-col
@@ -106,9 +84,7 @@
 
 <script lang="ts" setup>
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
-import ProjectTypeViewer from './ProjectTypeViewer.vue'
 import { useTranslations } from '/@/components/Composables/useTranslations'
-import { projectTypes } from '../ProjectTypes'
 
 const { t } = useTranslations()
 const props = defineProps(['window'])

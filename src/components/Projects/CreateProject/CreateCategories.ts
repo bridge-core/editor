@@ -1,7 +1,8 @@
 import GeneralTab from './Tabs/GeneralTab.vue'
 import FilesTab from './Tabs/FilesTab.vue'
-import ExperimentalGameplayTab from './Tabs/ExperimentalGameplayTab.vue'
-import ProjectTypeTab from './Tabs/ProjectTypeTab.vue'
+import ExperimentalGameplayTab from './Tabs/ExperimentalGameplay/Tab.vue'
+import ProjectTypeTab from './Tabs/ProjectType/Tab.vue'
+import PackTypeTab from './Tabs/PackTypeTab.vue'
 
 interface ICreateCategory {
 	icon: string
@@ -19,6 +20,11 @@ export const createCategories: ICreateCategory[] = [
 		icon: 'mdi-package-variant-closed',
 		id: 'projectType',
 		component: ProjectTypeTab,
+	},
+	{
+		icon: 'mdi-wrench',
+		id: 'packType',
+		component: PackTypeTab,
 	},
 	{
 		icon: 'mdi-test-tube',

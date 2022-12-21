@@ -626,7 +626,8 @@
 				"general": "General",
 				"files": "Files",
 				"experimentalGameplay": "Experimental Gameplay",
-				"projectType": "Project Type"
+				"projectType": "Project Type",
+				"packType": "Pack Type"
 			},
 
 			"packIcon": "Project Icon (optional)",

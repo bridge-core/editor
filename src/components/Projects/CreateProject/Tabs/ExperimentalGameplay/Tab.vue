@@ -1,22 +1,23 @@
-<!-- Toggle Creation of individual files -->
 <template>
 	<div>
 		<!--TODO: make translatable-->
-		<h2 class="mb-2">Creation of Individual Files</h2>
+		<h2 class="mb-2">Experimental Gameplay Toggles</h2>
 
 		<v-row dense>
 			<v-col
-				v-for="(file, i) in window.packCreateFiles"
-				:key="`${i}-${file.id}`"
+				v-for="experiment in window.experimentalToggles"
+				:key="experiment.id"
 				xs="12"
 				sm="6"
 				md="4"
 				lg="3"
-				xl="3"
+				xl="2"
 			>
-				<CreateFile
-					:file="file"
-					v-model="file.isActive"
+				<ExperimentalGameplay
+					:experiment="experiment"
+					v-model="
+						state.createOptions.experimentalGameplay[experiment.id]
+					"
 					style="height: 100%"
 					:dark="false"
 				/>
@@ -26,7 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-import CreateFile from './CreateFile.vue'
+import ExperimentalGameplay from './Toggle.vue'
 
 const props = defineProps(['window'])
 const state = props.window.state
