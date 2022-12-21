@@ -1,7 +1,8 @@
 <template>
 	<div>
-		<!--TODO: make translatable-->
-		<h2 class="mb-2">General</h2>
+		<h2 class="mb-2">
+			{{ t('windows.createProject.categories.general') }}
+		</h2>
 
 		<div class="d-flex">
 			<div

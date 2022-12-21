@@ -1,5 +1,5 @@
 import GeneralTab from './Tabs/GeneralTab.vue'
-import FilesTab from './Tabs/FilesTab.vue'
+import FilesTab from './Tabs/CreateFile/Tab.vue'
 import ExperimentalGameplayTab from './Tabs/ExperimentalGameplay/Tab.vue'
 import ProjectTypeTab from './Tabs/ProjectType/Tab.vue'
 import PackTypeTab from './Tabs/PackTypeTab.vue'

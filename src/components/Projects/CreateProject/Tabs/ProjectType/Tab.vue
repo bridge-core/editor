@@ -1,9 +1,11 @@
 <template>
 	<div>
-		<!--TODO: make translatable-->
-		<h2 class="mb-2">Project Type</h2>
+		<h2 class="mb-2">
+			{{ t('windows.createProject.categories.projectType') }}
+		</h2>
 
 		<v-row class="mb-6" dense>
+			<!--TODO: grey out options that aren't available for the user-->
 			<v-col
 				v-for="{ type, icon } in projectTypes"
 				:key="`${type}#${state.createOptions.projectType}`"
