@@ -3,6 +3,10 @@
     windows_subsystem = "windows"
 )]
 
+// #[cfg(target_os = "macos")]
+// #[macro_use]
+// extern crate objc;
+
 use discord_rich_presence::{activity, DiscordIpc, DiscordIpcClient};
 use tauri::{Manager, Menu};
 use terminal::AllTerminals;
@@ -22,6 +26,27 @@ fn main() {
         .setup(|app| {
             // `main` here is the window label; it is defined under `tauri.conf.json`
             let main_window = app.get_window("main").unwrap();
+            // TODO: Implement zoom events
+            // main_window.with_webview(|webview| {
+            //     #[cfg(target_os = "linux")]
+            //     {
+            //         // see https://docs.rs/webkit2gtk/latest/webkit2gtk/struct.WebView.html
+            //         // and https://docs.rs/webkit2gtk/latest/webkit2gtk/trait.WebViewExt.html
+            //         use webkit2gtk::traits::WebViewExt;
+            //         webview.inner().set_zoom_level(1);
+            //     }
+
+            //     #[cfg(windows)]
+            //     unsafe {
+            //         // see https://docs.rs/webview2-com/0.17.0/webview2_com/Microsoft/Web/WebView2/Win32/struct.ICoreWebView2Controller.html
+            //         webview.controller().SetZoomFactor(1).unwrap();
+            //     }
+
+            //     #[cfg(target_os = "macos")]
+            //     unsafe {
+            //         let _: () = msg_send![webview.inner(), setPageZoom: 1];
+            //     }
+            // });
 
             if cfg!(target_os = "windows") {
                 set_shadow(&main_window, true).expect("Unable to set window shadow");

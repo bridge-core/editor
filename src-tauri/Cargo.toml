@@ -21,6 +21,7 @@ discord-rich-presence = "0.2.3"
 chrono = "0.4.23"
 window-shadows = "0.2.0"
 tokio = { version = "1.23", features = ["process", "io-util", "sync"] }
+objc = "0.2.7"
 
 [features]
 # by default Tauri runs in production mode

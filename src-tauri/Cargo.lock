@@ -126,6 +126,7 @@ version = "0.0.0"
 dependencies = [
  "chrono",
  "discord-rich-presence",
+ "objc",
  "serde",
  "serde_json",
  "tauri",
