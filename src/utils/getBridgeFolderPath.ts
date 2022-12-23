@@ -1,12 +1,19 @@
 import { appLocalDataDir, join } from '@tauri-apps/api/path'
 import { get } from 'idb-keyval'
 
+let cachedPath: string | undefined = undefined
+
 export async function getBridgeFolderPath() {
 	if (!import.meta.env.VITE_IS_TAURI_APP)
 		throw new Error(`This function is only available in Tauri apps.`)
+	if (cachedPath) return cachedPath
 
 	const configuredPath = await get<string | undefined>('bridgeFolderPath')
-	if (configuredPath) return configuredPath
+	if (configuredPath) {
+		cachedPath = configuredPath
+		return cachedPath
+	}
 
-	return await join(await appLocalDataDir(), 'bridge')
+	cachedPath = await join(await appLocalDataDir(), 'bridge')
+	return cachedPath
 }

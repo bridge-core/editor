@@ -53,8 +53,9 @@ fn main() {
         .menu(menu)
         .invoke_handler(tauri::generate_handler![
             fs_extra::reveal_in_file_explorer,
-            fs_extra::get_file_data,
+            fs_extra::get_file_last_modified,
             fs_extra::copy_directory,
+            fs_extra::read_file,
             terminal::execute_command,
             terminal::kill_command,
         ])

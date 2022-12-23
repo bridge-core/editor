@@ -6,8 +6,9 @@ import {
 	removeDir,
 	removeFile,
 } from '@tauri-apps/api/fs'
-import { basename, join, sep } from '@tauri-apps/api/path'
+import { join, sep } from '@tauri-apps/api/path'
 import { invoke } from '@tauri-apps/api/tauri'
+import { VirtualFile } from '../File'
 import { BaseStore, FsKindEnum, type TStoreType } from './BaseStore'
 
 export interface ITauriFsSerializedData {
@@ -75,15 +76,22 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 		await writeBinaryFile(await this.resolvePath(path), data)
 	}
 
-	async readFile(path: string) {
-		const [lastModified, data] = (await invoke('get_file_data', {
-			path: await this.resolvePath(path),
-		})) as [number, number[]]
+	async readFile(path: string): Promise<File> {
+		return await VirtualFile.for(this, path)
+	}
 
-		return new File([new Uint8Array(data)], await basename(path), {
-			// Rust returns a unix timestamp in seconds but File expects milliseconds
-			lastModified: lastModified * 1000,
+	async lastModified(path: string) {
+		return (await invoke('get_file_last_modified', {
+			path: await this.resolvePath(path),
+		})) as number
+	}
+
+	async read(path: string) {
+		const rawArray = await invoke<Array<number>>('read_file', {
+			path: await this.resolvePath(path),
 		})
+
+		return new Uint8Array(rawArray)
 	}
 
 	async unlink(path: string) {

@@ -115,7 +115,7 @@ export class RequiresMatcher {
 		// Experimental gameplay
 		const matchesExperimentalGameplay =
 			!requires.experimentalGameplay ||
-			requires.experimentalGameplay.some((experimentalFeature) =>
+			requires.experimentalGameplay.every((experimentalFeature) =>
 				experimentalFeature.startsWith('!')
 					? !this.experimentalGameplay[
 							experimentalFeature.replace('!', '')

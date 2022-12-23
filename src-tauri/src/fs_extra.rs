@@ -1,6 +1,8 @@
 use std::path::Path;
 use std::process::Command;
 use std::{fs, io};
+use tokio::fs::File;
+use tokio::io::AsyncReadExt;
 
 pub fn copy_dir_all(src: impl AsRef<Path>, dest: impl AsRef<Path>) -> io::Result<()> {
     fs::create_dir_all(&dest)?;
@@ -49,10 +51,10 @@ pub async fn reveal_in_file_explorer(path: &str) -> Result<(), String> {
 }
 
 /**
- * A function that returns when a file was last modified and its file data
+ * A function that returns when a file was last modified
  */
 #[tauri::command]
-pub async fn get_file_data(path: &str) -> Result<(u64, Vec<u8>), String> {
+pub async fn get_file_last_modified(path: &str) -> Result<u64, String> {
     let metadata = fs::metadata(path).expect("Failed to get file metadata");
     let modified = metadata
         .modified()
@@ -60,7 +62,28 @@ pub async fn get_file_data(path: &str) -> Result<(u64, Vec<u8>), String> {
         .duration_since(std::time::UNIX_EPOCH)
         .expect("Time went backwards")
         .as_secs();
-    let data = fs::read(path).expect("Failed to read file");
 
-    Ok((modified, data))
+    Ok(modified)
 }
+
+/**
+ * A faster way to read a binary file compared to Tauri's built-in read_file
+ */
+#[tauri::command]
+pub async fn read_file(path: &str) -> Result<Vec<u8>, String> {
+    let file_result = File::open(path).await;
+    if file_result.is_err() {
+        return Err(file_result.err().unwrap().to_string());
+    }
+    let mut file = file_result.unwrap();
+
+    let mut contents = vec![];
+    let read_result = file.read_to_end(&mut contents).await;
+
+    if read_result.is_err() {
+        return Err(read_result.err().unwrap().to_string());
+    }
+
+    Ok(contents)
+}
+

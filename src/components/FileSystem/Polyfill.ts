@@ -140,7 +140,13 @@ if (isUnsupportedBrowser() || typeof window.showSaveFilePicker !== 'function') {
 	}
 }
 
+/**
+ * In order to support drag and drop of files on our native Windows build,
+ * we need to polyfill the DataTransferItem.getAsFileSystemHandle method
+ * to also use a VirtualFileHandle (just like the base file system)
+ */
 if (
+	import.meta.env.VITE_IS_TAURI_APP ||
 	isUnsupportedBrowser() ||
 	(globalThis.DataTransferItem &&
 		!DataTransferItem.prototype.getAsFileSystemHandle)
