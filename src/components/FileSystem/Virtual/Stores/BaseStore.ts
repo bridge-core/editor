@@ -60,10 +60,14 @@ export abstract class BaseStore<T = any> {
 	abstract readFile(path: string): Promise<File>
 
 	/**
-	 * Return when a file was last modified
+	 * Return when a file was last modified and its size
+	 *
+	 * @returns [size, lastModified]
 	 */
-	lastModified(path: string) {
-		return this.readFile(path).then((file) => file.lastModified)
+	metadata(path: string) {
+		return this.readFile(path).then(
+			(file) => <const>[file.size, file.lastModified, file.type]
+		)
 	}
 	/**
 	 * Return the content of a file as a Uint8Array

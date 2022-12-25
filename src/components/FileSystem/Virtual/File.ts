@@ -2,30 +2,30 @@ import { BaseStore } from './Stores/BaseStore'
 
 const textDecoder = new TextDecoder()
 
-export class VirtualFile {
+export class VirtualFile implements File {
+	public readonly type: string
+	public readonly lastModified: number
+	public readonly size: number
+	protected _cachedBuffer: ArrayBuffer | null = null
+
 	constructor(
 		protected baseStore: BaseStore,
 		protected readonly path: string,
-		public readonly lastModified: number
-	) {}
+		[size, lastModified, type]: readonly [number, number, string]
+	) {
+		this.type = type
+		this.size = size
+		this.lastModified = lastModified
+	}
 
 	static async for(baseStore: BaseStore, path: string): Promise<File> {
-		const lastModified = await baseStore.lastModified(path)
-
-		return new VirtualFile(baseStore, path, lastModified)
-	}
-
-	get size(): number {
-		throw new Error('Not implemented')
-	}
-	get type(): string {
-		throw new Error('Not implemented')
+		return new VirtualFile(baseStore, path, await baseStore.metadata(path))
 	}
 	get webkitRelativePath(): string {
-		throw new Error('Not implemented')
+		throw new Error('Method not implemented')
 	}
-	slice(): VirtualFile {
-		throw new Error('Not implemented')
+	slice(): Blob {
+		throw new Error('Method not implemented')
 	}
 
 	get name() {
@@ -33,7 +33,13 @@ export class VirtualFile {
 	}
 
 	async arrayBuffer() {
-		return typedArrayToBuffer(await this.baseStore.read(this.path))
+		if (this._cachedBuffer) return this._cachedBuffer
+
+		this._cachedBuffer = typedArrayToBuffer(
+			await this.baseStore.read(this.path)
+		)
+
+		return this._cachedBuffer
 	}
 
 	async text() {
@@ -42,13 +48,17 @@ export class VirtualFile {
 
 	stream() {
 		return new ReadableStream({
-			start: async (controller) => {
-				const arrayBuffer = await this.arrayBuffer()
-
-				controller.enqueue(arrayBuffer)
-				controller.close()
+			start: (controller) => {
+				this.arrayBuffer().then((arrayBuffer) => {
+					controller.enqueue(new Uint8Array(arrayBuffer))
+					controller.close()
+				})
 			},
 		})
+	}
+
+	async toBlob() {
+		return new Blob([await this.arrayBuffer()], { type: this.type })
 	}
 }
 

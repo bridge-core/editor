@@ -80,10 +80,13 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 		return await VirtualFile.for(this, path)
 	}
 
-	async lastModified(path: string) {
-		return (await invoke('get_file_last_modified', {
-			path: await this.resolvePath(path),
-		})) as number
+	async metadata(path: string) {
+		return await invoke<readonly [number, number, string]>(
+			'get_file_metadata',
+			{
+				path: await this.resolvePath(path),
+			}
+		)
 	}
 
 	async read(path: string) {

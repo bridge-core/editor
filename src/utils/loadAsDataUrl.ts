@@ -1,5 +1,6 @@
 import { FileSystem } from '../components/FileSystem/FileSystem'
 import { AnyFileHandle } from '../components/FileSystem/Types'
+import { VirtualFile } from '../components/FileSystem/Virtual/File'
 import { App } from '/@/App'
 
 export async function loadAsDataURL(filePath: string, fileSystem?: FileSystem) {
@@ -19,7 +20,9 @@ export async function loadAsDataURL(filePath: string, fileSystem?: FileSystem) {
 				resolve(<string>reader.result)
 			})
 			reader.addEventListener('error', reject)
-			reader.readAsDataURL(file)
+			reader.readAsDataURL(
+				file instanceof VirtualFile ? await file.toBlob() : file
+			)
 		} catch {
 			reject(`File does not exist: "${filePath}"`)
 		}
@@ -37,7 +40,10 @@ export function loadHandleAsDataURL(fileHandle: AnyFileHandle) {
 				resolve(<string>reader.result)
 			})
 			reader.addEventListener('error', reject)
-			reader.readAsDataURL(file)
+
+			reader.readAsDataURL(
+				file instanceof VirtualFile ? await file.toBlob() : file
+			)
 		} catch {
 			reject(`File does not exist: "${fileHandle.name}"`)
 		}

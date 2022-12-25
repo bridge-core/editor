@@ -54,8 +54,8 @@ pub async fn reveal_in_file_explorer(path: &str) -> Result<(), String> {
  * A function that returns when a file was last modified
  */
 #[tauri::command]
-pub async fn get_file_last_modified(path: &str) -> Result<u64, String> {
-    let metadata = fs::metadata(path).expect("Failed to get file metadata");
+pub async fn get_file_metadata(path: &str) -> Result<(u64, u64, String), String> {
+    let metadata = fs::metadata(path).expect(&format!("Failed to get file metadata for {}", path));
     let modified = metadata
         .modified()
         .expect("Failed to get file modified time")
@@ -63,7 +63,11 @@ pub async fn get_file_last_modified(path: &str) -> Result<u64, String> {
         .expect("Time went backwards")
         .as_secs();
 
-    Ok(modified)
+    let size = metadata.len();
+    let mime_guess = mime_guess::from_path(&path).first_or_text_plain();
+    let mime_type = mime_guess.to_string();
+
+    Ok((size, modified, mime_type))
 }
 
 /**
@@ -86,4 +90,3 @@ pub async fn read_file(path: &str) -> Result<Vec<u8>, String> {
 
     Ok(contents)
 }
-
