@@ -50,8 +50,8 @@ export default {
 			? await fetch(
 					'https://raw.githubusercontent.com/bridge-core/editor-packages/main/remote/welcomeAlert.json'
 			  )
-					.catch(() => null)
-					.then((res) => (res ? res.json() : {}))
+					.then((res) => res.json())
+					.catch(() => ({}))
 			: {}
 
 		this.icon = icon
