@@ -3,6 +3,8 @@ import { JSX } from 'solid-js/types'
 import './BottomPanel.css'
 import { LogPanel } from '../Compiler/LogPanel/Panel'
 import { App } from '/@/App'
+import { SolidButton } from '../Solid/Inputs/Button/SolidButton'
+import { SolidIcon } from '../Solid/Icon/SolidIcon'
 
 interface ITab {
 	name: string
@@ -11,7 +13,7 @@ interface ITab {
 }
 
 export class BottomPanel {
-	public readonly isVisible = ref(false)
+	public readonly isVisible = ref(true)
 	public readonly height = ref(400)
 	public readonly tabs = ref<ITab[]>([])
 	public readonly activeTab = ref<ITab | null>(null)
@@ -26,10 +28,17 @@ export class BottomPanel {
 			icon: 'mdi-bug',
 			name: 'bottomPanel.problems.name',
 			component: () => (
-				<div class="text--disabled">
-					We are still working on displaying problems with your
-					project here...
-				</div>
+				<>
+					<div class="text--disabled">
+						We are still working on displaying problems with your
+						project here...
+					</div>
+
+					<SolidButton onClick={() => console.log('HEY')}>
+						<SolidIcon icon="mdi-test-tube" />
+						Test
+					</SolidButton>
+				</>
 			),
 		})
 

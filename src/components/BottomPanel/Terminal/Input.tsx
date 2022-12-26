@@ -1,5 +1,7 @@
 import { Component, createSignal, Show } from 'solid-js'
 import { useTranslations } from '../../Composables/useTranslations'
+import { SolidIcon } from '../../Solid/Icon/SolidIcon'
+import { SolidButton } from '../../Solid/Inputs/Button/SolidButton'
 import { SolidIconButton } from '../../Solid/Inputs/IconButton/IconButton'
 import { TextField } from '../../Solid/Inputs/TextField/TextField'
 import { toSignal } from '../../Solid/toSignal'
@@ -17,6 +19,11 @@ export const TerminalInput: Component<{
 		props.terminal.executeCommand(input())
 		setInput('')
 	}
+	const clearOutput = () => {
+		console.log('CLICK')
+		setOutput([])
+	}
+	const hasOutput = () => output().length === 0
 
 	return (
 		<div class="d-flex align-center">
@@ -28,6 +35,10 @@ export const TerminalInput: Component<{
 				onEnter={onEnter}
 				disabled={hasRunningTask()}
 			/>
+			<SolidButton onClick={() => console.log('HEY')}>
+				<SolidIcon icon="mdi-test-tube" />
+				Test
+			</SolidButton>
 
 			<SolidIconButton
 				disabled={!hasRunningTask()}
@@ -37,10 +48,10 @@ export const TerminalInput: Component<{
 			/>
 
 			<SolidIconButton
-				disabled={output().length === 0}
+				disabled={hasOutput()}
 				icon="mdi-text-box-remove-outline"
 				size={1.7}
-				onClick={() => setOutput([])}
+				onClick={() => clearOutput()}
 			/>
 		</div>
 	)
