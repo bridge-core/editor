@@ -37,6 +37,7 @@
 
 		<template #actions>
 			<!--Next button-->
+			<!--TODO: translate this-->
 			<v-btn color="primary" @click="sidebar.selectNext()">
 				Next
 				<v-icon>mdi-chevron-right</v-icon>
@@ -44,15 +45,16 @@
 			<v-spacer />
 
 			<!--Confirm button-->
-			<!-- <v-btn
-				color="primary"
-				:disabled="!window.hasRequiredData || state.isCreatingProject"
-				:loading="state.isCreatingProject"
-				@click="createProject"
+			<v-btn
+				:color="state.confirm.color ?? 'primary'"
+				:disabled="state.confirm.isDisabled.value"
+				@click="state.confirm.onConfirm()"
 			>
-				<v-icon class="pr-2">mdi-plus</v-icon>
-				<span>{{ t('windows.createProject.create') }}</span>
-			</v-btn> -->
+				<v-icon v-if="state.confirm.icon" class="pr-2">{{
+					state.confirm.icon
+				}}</v-icon>
+				<span>{{ state.confirm.name }}</span>
+			</v-btn>
 		</template>
 	</SidebarWindow>
 </template>
@@ -64,7 +66,7 @@ import { IStep } from './Step'
 
 const { t } = useTranslations()
 const props = defineProps(['window'])
-const state = props.window.state
+const state = props.window.getState()
 const sidebar = props.window.sidebar
 
 function close() {

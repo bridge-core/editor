@@ -1,6 +1,5 @@
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import CreateProjectComponent from './CreateProject.vue'
 import { CreatePack } from './Packs/Pack'
 import { CreateBP } from './Packs/BP'
 import { CreateRP } from './Packs/RP'
@@ -19,10 +18,8 @@ import {
 	getFormatVersions,
 	getStableFormatVersion,
 } from '/@/components/Data/FormatVersions'
-import { Project } from '../Project/Project'
 import { CreateDenoConfig } from './Files/DenoConfig'
-import { IWindowState, NewBaseWindow } from '../../Windows/NewBaseWindow'
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { translate } from '../../Locales/Manager'
 import { createCategories } from './CreateCategories'
 import {
@@ -58,7 +55,6 @@ export interface IExperimentalToggle {
 }
 
 export interface ICreateProjectState extends IStepperWindowState {
-	isCreatingProject: boolean
 	createOptions: ICreateProjectOptions
 	availableTargetVersionsLoading: boolean
 }
@@ -97,7 +93,6 @@ export class CreateProjectWindow extends StepperWindow {
 
 	protected state: ICreateProjectState = reactive<any>({
 		...super.getState(),
-		isCreatingProject: false,
 		createOptions: this.getDefaultOptions(),
 		availableTargetVersionsLoading: true,
 		windowTitle: 'windows.createProject.title',
@@ -125,7 +120,7 @@ export class CreateProjectWindow extends StepperWindow {
 	}
 
 	constructor() {
-		super({})
+		super({ keepAlive: true })
 		this.defineWindow()
 
 		App.ready.once(async (app) => {
@@ -148,17 +143,7 @@ export class CreateProjectWindow extends StepperWindow {
 			this.availablePackTypes = App.packType.all
 		})
 
-		createCategories.forEach((category) => {
-			this.addStep({
-				icon: category.icon,
-				id: category.id,
-				color: 'accent',
-				name: translate(
-					'windows.createProject.categories.' + category.id
-				),
-				component: category.component,
-			})
-		})
+		this.setupWindow()
 	}
 
 	get hasRequiredData() {
@@ -171,6 +156,34 @@ export class CreateProjectWindow extends StepperWindow {
 			this.createOptions.author.length > 0 &&
 			this.createOptions.targetVersion.length > 0
 		)
+	}
+
+	/**
+	 * Sets up the steps for the stepper window and the confirm button
+	 */
+	setupWindow() {
+		createCategories.forEach((category) => {
+			this.addStep({
+				icon: category.icon,
+				id: category.id,
+				color: 'accent',
+				name: translate(
+					'windows.createProject.categories.' + category.id
+				),
+				component: category.component,
+			})
+		})
+
+		this.state.confirm = {
+			name: translate('windows.createProject.create'),
+			color: 'primary',
+			icon: 'mdi-plus',
+			isDisabled: computed(() => !this.hasRequiredData),
+			onConfirm: async () => {
+				await this.createProject()
+				this.close()
+			},
+		}
 	}
 
 	open() {
