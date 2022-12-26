@@ -6,9 +6,10 @@ import StepperWindowComponent from './StepperWindow.vue'
 
 interface IStepperConfirmConfig {
 	name: string
-	color: string
-	icon: string
+	color?: string
+	icon?: string
 	isDisabled: ComputedRef<boolean>
+	isLoading: boolean
 	onConfirm: () => void
 }
 

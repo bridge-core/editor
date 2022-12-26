@@ -179,8 +179,14 @@ export class CreateProjectWindow extends StepperWindow {
 			color: 'primary',
 			icon: 'mdi-plus',
 			isDisabled: computed(() => !this.hasRequiredData),
+			isLoading: false,
 			onConfirm: async () => {
+				if (!this.state.confirm) return
+
+				this.state.confirm.isLoading = true
 				await this.createProject()
+				this.state.confirm.isLoading = false
+
 				this.close()
 			},
 		}
