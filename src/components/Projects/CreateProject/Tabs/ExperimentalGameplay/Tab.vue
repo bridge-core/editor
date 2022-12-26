@@ -1,9 +1,5 @@
 <template>
 	<div>
-		<h2 class="mb-2">
-			{{ t('windows.createProject.categories.experimentalGameplay') }}
-		</h2>
-
 		<v-row dense>
 			<v-col
 				v-for="experiment in window.experimentalToggles"
@@ -28,11 +24,8 @@
 </template>
 
 <script lang="ts" setup>
-import { useTranslations } from '/@/components/Composables/useTranslations'
 import ExperimentalGameplay from './Toggle.vue'
 
 const props = defineProps(['window'])
 const state = props.window.state
-
-const { t } = useTranslations()
 </script>

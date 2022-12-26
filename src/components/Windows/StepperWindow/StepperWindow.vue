@@ -7,8 +7,8 @@
 		:hasCloseButton="true"
 		:isFullscreen="false"
 		:isPersistent="state.isCreatingProject"
-		:percentageWidth="80"
-		:percentageHeight="80"
+		:percentageWidth="90"
+		:percentageHeight="90"
 		:sidebarItems="sidebar.elements"
 		v-model="sidebar.selected"
 		@closeWindow="close"
@@ -26,20 +26,24 @@
 		</template>
 
 		<template #default>
+			<h1>{{ getCurrentStep().name }}</h1>
+			<v-divider class="my-3" />
 			<component
-				:is="getCurrentComponent(sidebar.selected)"
+				:is="getCurrentStep().component"
 				:window="window"
 				:state="state"
 			/>
 		</template>
 
 		<template #actions>
+			<!--Next button-->
 			<v-btn color="primary" @click="sidebar.selectNext()">
 				Next
 				<v-icon>mdi-chevron-right</v-icon>
 			</v-btn>
 			<v-spacer />
 
+			<!--Confirm button-->
 			<!-- <v-btn
 				color="primary"
 				:disabled="!window.hasRequiredData || state.isCreatingProject"
@@ -67,11 +71,8 @@ function close() {
 	props.window.close()
 }
 
-function getCurrentComponent(id: string) {
-	return state.steps.find((step: IStep) => step.id === id)?.component
-}
-function getCurrentState(id: string) {
-	return state.steps.find((step: IStep) => step.id === id)?.state
+function getCurrentStep() {
+	return state.steps.find((step: IStep) => step.id === sidebar.selected)
 }
 </script>
 

@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<h2 class="mb-2">
-			{{ t('windows.createProject.categories.packType') }}
-		</h2>
 		<v-row class="mb-6" dense>
 			<v-col
 				v-for="packType in window.availablePackTypes"

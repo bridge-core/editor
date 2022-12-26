@@ -4,24 +4,28 @@ import { IWindowState, NewBaseWindow } from '../NewBaseWindow'
 import { IStep } from './Step'
 import StepperWindowComponent from './StepperWindow.vue'
 
-interface IStepperWindowState extends IWindowState {
+export interface IStepperWindowState extends IWindowState {
 	steps: IStep[]
 	windowTitle: string
 }
 export interface IStepperWindowOptions {
-	windowTitle: string
+	windowTitle?: string
 	disposeOnClose?: boolean
 	keepAlive?: boolean
 }
 
 export class StepperWindow extends NewBaseWindow {
 	protected state: IStepperWindowState = reactive({
-		...super.state,
+		...super.getState(),
 		steps: [],
 		actions: [],
 		windowTitle: '[Unknown]',
 	})
 	protected sidebar = new Sidebar([], false)
+
+	getState() {
+		return this.state
+	}
 
 	constructor({
 		windowTitle,
@@ -29,7 +33,7 @@ export class StepperWindow extends NewBaseWindow {
 		keepAlive,
 	}: IStepperWindowOptions) {
 		super(StepperWindowComponent, disposeOnClose, keepAlive)
-		this.state.windowTitle = windowTitle
+		if (windowTitle) this.state.windowTitle = windowTitle
 	}
 
 	addStep(step: IStep) {

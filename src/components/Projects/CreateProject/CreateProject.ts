@@ -23,9 +23,12 @@ import { Project } from '../Project/Project'
 import { CreateDenoConfig } from './Files/DenoConfig'
 import { IWindowState, NewBaseWindow } from '../../Windows/NewBaseWindow'
 import { reactive } from 'vue'
-import { Sidebar, SidebarItem } from '../../Windows/Layout/Sidebar'
 import { translate } from '../../Locales/Manager'
 import { createCategories } from './CreateCategories'
+import {
+	IStepperWindowState,
+	StepperWindow,
+} from '../../Windows/StepperWindow/StepperWindow'
 
 export interface ICreateProjectOptions {
 	projectType: 'bridgeFolder' | 'local' | 'comMojang'
@@ -54,14 +57,13 @@ export interface IExperimentalToggle {
 	description: string
 }
 
-export interface ICreateProjectState extends IWindowState {
+export interface ICreateProjectState extends IStepperWindowState {
 	isCreatingProject: boolean
 	createOptions: ICreateProjectOptions
 	availableTargetVersionsLoading: boolean
 }
 
-export class CreateProjectWindow extends NewBaseWindow {
-	protected sidebar = new Sidebar([], false)
+export class CreateProjectWindow extends StepperWindow {
 	protected availableTargetVersions: string[] = []
 	protected stableVersion: string = ''
 	protected packs: Record<TPackTypeId | '.bridge' | 'worlds', CreatePack> = <
@@ -98,6 +100,7 @@ export class CreateProjectWindow extends NewBaseWindow {
 		isCreatingProject: false,
 		createOptions: this.getDefaultOptions(),
 		availableTargetVersionsLoading: true,
+		windowTitle: 'windows.createProject.title',
 	})
 
 	get createOptions() {
@@ -122,7 +125,7 @@ export class CreateProjectWindow extends NewBaseWindow {
 	}
 
 	constructor() {
-		super(CreateProjectComponent, false)
+		super({})
 		this.defineWindow()
 
 		App.ready.once(async (app) => {
@@ -146,16 +149,15 @@ export class CreateProjectWindow extends NewBaseWindow {
 		})
 
 		createCategories.forEach((category) => {
-			this.sidebar.addElement(
-				new SidebarItem({
-					icon: category.icon,
-					id: category.id,
-					color: 'accent',
-					text: translate(
-						'windows.createProject.categories.' + category.id
-					),
-				})
-			)
+			this.addStep({
+				icon: category.icon,
+				id: category.id,
+				color: 'accent',
+				name: translate(
+					'windows.createProject.categories.' + category.id
+				),
+				component: category.component,
+			})
 		})
 	}
 
