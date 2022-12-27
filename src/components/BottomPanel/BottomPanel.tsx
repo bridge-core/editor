@@ -5,6 +5,7 @@ import { LogPanel } from '../Compiler/LogPanel/Panel'
 import { App } from '/@/App'
 import { SolidButton } from '../Solid/Inputs/Button/SolidButton'
 import { SolidIcon } from '../Solid/Icon/SolidIcon'
+import { SolidWindow } from '../Solid/Window/Window'
 
 interface ITab {
 	name: string
@@ -33,6 +34,10 @@ export class BottomPanel {
 						We are still working on displaying problems with your
 						project here...
 					</div>
+					<SolidButton onClick={() => new SolidWindow()}>
+						<SolidIcon icon="mdi-test-tube" />
+						Test
+					</SolidButton>
 				</>
 			),
 		})

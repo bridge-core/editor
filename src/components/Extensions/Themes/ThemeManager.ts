@@ -95,7 +95,14 @@ export class ThemeManager extends EventDispatcher<'light' | 'dark'> {
 	}
 
 	protected applyTheme(theme?: Theme) {
-		theme?.apply(this, this.vuetify)
+		if (!theme) return
+
+		theme.apply(this, this.vuetify)
+		if (theme.colorScheme === 'dark') {
+			document.body.classList.add('dark')
+		} else {
+			document.body.classList.remove('dark')
+		}
 	}
 	async applyMonacoTheme() {
 		this.themeMap.get(this.currentTheme)?.applyMonacoTheme()
