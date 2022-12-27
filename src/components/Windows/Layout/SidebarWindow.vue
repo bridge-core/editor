@@ -21,7 +21,7 @@
 						:text="element.text"
 						:isSelected="selected === element.id"
 						:isDisabled="element.isDisabled"
-						:disabledText="element.disabledText"
+						:status="element.status"
 						:compact="isMobile"
 						@click="onSidebarChanged(element.id)"
 					/>

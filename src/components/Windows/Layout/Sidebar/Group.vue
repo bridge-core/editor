@@ -16,16 +16,14 @@
 		</summary>
 
 		<SidebarItem
-			v-for="(
-				{ text, icon, color, id, isDisabled, disabledText }, i
-			) in items"
+			v-for="({ text, icon, color, id, isDisabled, status }, i) in items"
 			:key="`${text}.${i}`"
 			:icon="icon"
 			:color="color"
 			:text="text"
 			:isSelected="selected === id"
 			:isDisabled="isDisabled"
-			:disabledText="disabledText"
+			:status="status"
 			:compact="compact"
 			@click="$emit('click', id)"
 		/>

@@ -215,7 +215,10 @@ export class CreatePresetWindow extends NewBaseWindow {
 				icon: manifest.icon,
 				color: iconColor,
 				isDisabled: !mayUsePreset,
-				disabledText: failureMessage,
+				status: {
+					showStatus: !mayUsePreset,
+					message: failureMessage,
+				},
 				resetState,
 			})
 		)
