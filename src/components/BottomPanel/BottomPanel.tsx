@@ -33,11 +33,6 @@ export class BottomPanel {
 						We are still working on displaying problems with your
 						project here...
 					</div>
-
-					<SolidButton onClick={() => console.log('HEY')}>
-						<SolidIcon icon="mdi-test-tube" />
-						Test
-					</SolidButton>
 				</>
 			),
 		})

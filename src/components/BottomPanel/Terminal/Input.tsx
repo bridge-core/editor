@@ -19,11 +19,6 @@ export const TerminalInput: Component<{
 		props.terminal.executeCommand(input())
 		setInput('')
 	}
-	const clearOutput = () => {
-		console.log('CLICK')
-		setOutput([])
-	}
-	const hasOutput = () => output().length === 0
 
 	return (
 		<div class="d-flex align-center">
@@ -35,10 +30,6 @@ export const TerminalInput: Component<{
 				onEnter={onEnter}
 				disabled={hasRunningTask()}
 			/>
-			<SolidButton onClick={() => console.log('HEY')}>
-				<SolidIcon icon="mdi-test-tube" />
-				Test
-			</SolidButton>
 
 			<SolidIconButton
 				disabled={!hasRunningTask()}
@@ -48,10 +39,10 @@ export const TerminalInput: Component<{
 			/>
 
 			<SolidIconButton
-				disabled={hasOutput()}
+				disabled={output().length === 0}
 				icon="mdi-text-box-remove-outline"
 				size={1.7}
-				onClick={() => clearOutput()}
+				onClick={() => setOutput([])}
 			/>
 		</div>
 	)
