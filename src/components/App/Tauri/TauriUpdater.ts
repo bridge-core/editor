@@ -48,7 +48,7 @@ checkUpdate()
 			})
 		}
 	})
-	.catch(async (err: any) => {
+	.catch((err: any) => {
 		console.error(`[TauriUpdater] ${err}`)
 
 		return null
