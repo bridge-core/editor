@@ -6,6 +6,7 @@ export interface ITaskDetails {
 	name: string
 	description: string
 	totalTaskSteps?: number
+	indeterminate?: boolean
 }
 
 export class Task {
@@ -51,6 +52,8 @@ export class Task {
 		return this.taskDetails.icon
 	}
 	get progress() {
+		if (this.taskDetails.indeterminate) return undefined
+
 		return Math.round((this.currentStepCount / this.totalStepCount) * 100)
 	}
 }
