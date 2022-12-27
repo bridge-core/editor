@@ -76,7 +76,7 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 		await writeBinaryFile(await this.resolvePath(path), data)
 	}
 
-	async readFile(path: string): Promise<File> {
+	async readFile(path: string): Promise<File | VirtualFile> {
 		return await VirtualFile.for(this, path)
 	}
 

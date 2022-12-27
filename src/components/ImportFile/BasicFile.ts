@@ -74,7 +74,11 @@ export class BasicFileImporter extends FileImporter {
 	protected async onSave(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
 
-		const guessedFolder = await App.fileType.guessFolder(fileHandle)
+		// Convince TypeScript that fileHandle is a FileSystemFileHandle
+		// We do that because our VirtualFileHandle's getFile method always returns a File object that is sufficient for the guessFolder method
+		const guessedFolder = await App.fileType.guessFolder(
+			<FileSystemFileHandle>fileHandle
+		)
 
 		// Allow user to change file path that the file is saved to
 		const filePathWindow = new FilePathWindow({

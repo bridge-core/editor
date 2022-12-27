@@ -12,6 +12,7 @@ import {
 } from '/@/components/FileSystem/Types'
 import { TPackTypeId } from '/@/components/Data/PackType'
 import { getCacheScriptEnv } from './CacheEnv'
+import type { VirtualFile } from '/@/components/FileSystem/Virtual/File'
 
 const knownTextFiles = new Set([
 	'.js',
@@ -224,7 +225,7 @@ export class LightningCache {
 	async processText(
 		filePath: string,
 		fileType: string,
-		file: File,
+		file: File | VirtualFile,
 		isForeignFile?: boolean
 	) {
 		const instructions = await this.fileType.getLightningCache(filePath)
@@ -269,7 +270,7 @@ export class LightningCache {
 	async processJSON(
 		filePath: string,
 		fileType: string,
-		file: File,
+		file: File | VirtualFile,
 		fileContent?: string,
 		isForeignFile?: boolean
 	) {

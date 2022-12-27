@@ -21,7 +21,7 @@ export async function loadAsDataURL(filePath: string, fileSystem?: FileSystem) {
 			})
 			reader.addEventListener('error', reject)
 			reader.readAsDataURL(
-				file instanceof VirtualFile ? await file.toBlob() : file
+				file instanceof VirtualFile ? await file.toBlobFile() : file
 			)
 		} catch {
 			reject(`File does not exist: "${filePath}"`)
@@ -42,7 +42,7 @@ export function loadHandleAsDataURL(fileHandle: AnyFileHandle) {
 			reader.addEventListener('error', reject)
 
 			reader.readAsDataURL(
-				file instanceof VirtualFile ? await file.toBlob() : file
+				file instanceof VirtualFile ? await file.toBlobFile() : file
 			)
 		} catch {
 			reject(`File does not exist: "${fileHandle.name}"`)

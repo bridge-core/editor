@@ -6,7 +6,9 @@ export class JsRuntime extends Runtime {
 	async readFile(filePath: string) {
 		const app = await App.getApp()
 
-		const file = await app.fileSystem.readFile(filePath)
+		// Convince TypeScript that this is a real "File" and not a "VirtualFile"
+		// Because our VirtualFile implements all File methods the JS runtime needs
+		const file = <File>await app.fileSystem.readFile(filePath)
 
 		return file
 	}

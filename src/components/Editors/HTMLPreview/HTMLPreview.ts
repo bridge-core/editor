@@ -6,6 +6,7 @@ import { Tab } from '../../TabSystem/CommonTab'
 import { AnyFileHandle } from '../../FileSystem/Types'
 import { iframeApiVersion } from '/@/utils/app/iframeApiVersion'
 import { translate } from '../../Locales/Manager'
+import { VirtualFile } from '../../FileSystem/Virtual/File'
 
 export class HTMLPreviewTab extends IframeTab {
 	public rawHtml = ''
@@ -133,7 +134,7 @@ export class HTMLPreviewTab extends IframeTab {
 		this.api.trigger('loadScrollPosition', this.scrollY)
 	}
 
-	async load(file?: File) {
+	async load(file?: File | VirtualFile) {
 		if (!file) file = await this.fileHandle.getFile()
 		this.rawHtml = await file.text()
 

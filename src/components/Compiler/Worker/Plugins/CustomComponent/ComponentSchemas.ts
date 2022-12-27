@@ -4,6 +4,7 @@ import { DashService } from '../../Service'
 import { App } from '/@/App'
 import { JsRuntime } from '/@/components/Extensions/Scripts/JsRuntime'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
+import { VirtualFile } from '/@/components/FileSystem/Virtual/File'
 import { Project } from '/@/components/Projects/Project/Project'
 import { IDisposable } from '/@/types/disposable'
 import { iterateDir, iterateDirParallel } from '/@/utils/iterateDir'
@@ -149,7 +150,7 @@ export class ComponentSchemas {
 		jsRuntime: JsRuntime,
 		fileType: TComponentFileType,
 		filePath: string,
-		file: File,
+		file: File | VirtualFile,
 		v1CompatMode: boolean
 	) {
 		let fileContent = new Uint8Array(await file.arrayBuffer())

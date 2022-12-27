@@ -64,7 +64,11 @@ export abstract class FileTab extends Tab {
 			this.isForeignFile = true
 
 			let guessedFolder =
-				(await App.fileType.guessFolder(this.fileHandle)) ?? uuid()
+				// Convince TypeScript that this is a FileSystemFileHandle
+				// We can do this because the VirtualFileHandle is sufficient for the guessFolder function
+				(await App.fileType.guessFolder(
+					<FileSystemFileHandle>this.fileHandle
+				)) ?? uuid()
 			if (!guessedFolder.endsWith('/')) guessedFolder += '/'
 
 			this.path = `${guessedFolder}${uuid()}/${this.fileHandle.name}`

@@ -53,10 +53,12 @@ export class BlockLibrary {
 	async setup() {
 		if (!this.dataLoader.hasFired) await this.dataLoader.loadData()
 
+		const file = await this.dataLoader.readFile(
+			'data/packages/minecraftBedrock/vanilla/missing_tile.png'
+		)
+
 		this._missingTexture = await createImageBitmap(
-			await this.dataLoader.readFile(
-				'data/packages/minecraftBedrock/vanilla/missing_tile.png'
-			)
+			file.isVirtual ? await file.toBlobFile() : file
 		)
 
 		const blocksJson = Object.assign(
@@ -160,8 +162,8 @@ export class BlockLibrary {
 				blockData.faces[dir as TDirection] = {
 					...blockData.faces[dir as TDirection],
 					uvOffset: [x, y],
-					texturePath: blockData.faces[dir as TDirection]
-						?.texturePath!,
+					texturePath:
+						blockData.faces[dir as TDirection]?.texturePath!,
 				}
 				currentUVOffset++
 			}

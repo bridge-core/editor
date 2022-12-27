@@ -11,5 +11,9 @@ export async function loadImage(fileSystem: FileSystem, filePath: string) {
 
 	if (!realPath) return null
 
-	return await createImageBitmap(await fileSystem.readFile(realPath))
+	const file = await fileSystem.readFile(realPath)
+
+	return await createImageBitmap(
+		file.isVirtual ? await file.toBlobFile() : file
+	)
 }

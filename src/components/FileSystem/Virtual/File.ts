@@ -2,7 +2,8 @@ import { BaseStore } from './Stores/BaseStore'
 
 const textDecoder = new TextDecoder()
 
-export class VirtualFile implements File {
+export class VirtualFile {
+	public readonly isVirtual = true
 	public readonly type: string
 	public readonly lastModified: number
 	public readonly size: number
@@ -18,14 +19,8 @@ export class VirtualFile implements File {
 		this.lastModified = lastModified
 	}
 
-	static async for(baseStore: BaseStore, path: string): Promise<File> {
+	static async for(baseStore: BaseStore, path: string): Promise<VirtualFile> {
 		return new VirtualFile(baseStore, path, await baseStore.metadata(path))
-	}
-	get webkitRelativePath(): string {
-		throw new Error('Method not implemented')
-	}
-	slice(): Blob {
-		throw new Error('Method not implemented')
 	}
 
 	get name() {
@@ -57,8 +52,10 @@ export class VirtualFile implements File {
 		})
 	}
 
-	async toBlob() {
-		return new Blob([await this.arrayBuffer()], { type: this.type })
+	async toBlobFile() {
+		return new File([await this.arrayBuffer()], this.name, {
+			type: this.type,
+		})
 	}
 }
 
@@ -68,3 +65,11 @@ function typedArrayToBuffer(array: Uint8Array): ArrayBuffer {
 		array.byteLength + array.byteOffset
 	)
 }
+
+declare global {
+	interface File {
+		isVirtual: false
+	}
+}
+
+File.prototype.isVirtual = false
