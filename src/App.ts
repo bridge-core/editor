@@ -184,6 +184,12 @@ export class App {
 				}
 			})
 		}
+
+		setTimeout(() => {
+			throw new Error(
+				`Oops! Something went very wrong! Sorry about that!`
+			)
+		}, 100)
 	}
 
 	get shouldWarnBeforeClose() {

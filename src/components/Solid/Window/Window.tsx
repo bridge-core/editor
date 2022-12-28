@@ -5,7 +5,7 @@ import { App } from '/@/App'
 
 export const WindowComponent: Component<{
 	children: JSX.Element
-	currentWindow: SolidWindow
+	currentWindow: SolidWindow<any>
 }> = (props) => {
 	const window = () => props.currentWindow
 	let dialog: HTMLDialogElement | undefined = undefined
@@ -97,20 +97,23 @@ export const WindowComponent: Component<{
 	)
 }
 
-export class SolidWindow {
+export class SolidWindow<T = {}> {
 	public readonly isOpen = createRef(true)
 	public openEvent = new Signal<void>()
 	public closeEvent = new Signal<void>()
 	protected _disposeSelf: (() => void) | null = null
 
-	constructor(protected component: Component) {
+	constructor(
+		protected component: Component<T>,
+		protected props: T = {} as T
+	) {
 		this.open()
 	}
 
 	get windowComponent(): Component {
 		return () => (
 			<WindowComponent currentWindow={this}>
-				{this.component({})}
+				{this.component(this.props)}
 			</WindowComponent>
 		)
 	}
