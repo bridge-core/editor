@@ -6,8 +6,13 @@
 			v-ripple
 		>
 			<!-- Flexbox doesn't work directly on summaries in Safari -->
-			<span class="d-flex" :class="{ 'justify-center': compact }">
-				<h2 v-if="!compact" class="d-inline">{{ t(text) }}</h2>
+			<span
+				class="flex items-center"
+				:class="{ 'justify-center': compact }"
+			>
+				<h2 v-if="!compact" class="inline text-xl font-semibold">
+					{{ t(text) }}
+				</h2>
 				<v-spacer v-if="!compact" />
 				<v-icon color="primary" large>
 					{{ isOpen ? 'mdi-chevron-down' : 'mdi-chevron-right' }}

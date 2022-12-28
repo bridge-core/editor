@@ -44,7 +44,10 @@
 						draggable="false"
 					/>
 					<div>
-						<h1 style="overflow-wrap: anywhere">
+						<h1
+							class="text-3xl font-semibold"
+							style="overflow-wrap: anywhere"
+						>
 							{{ sidebar.currentState.displayName }}
 						</h1>
 						<h2 class="subheader">by {{ authors }}</h2>

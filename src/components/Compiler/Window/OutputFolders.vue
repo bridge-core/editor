@@ -13,7 +13,7 @@
 			{{ t('comMojang.linkFolder') }}
 		</v-btn>
 
-		<h2 v-if="isTauriBuild && path" class="mt-4 mb-1">
+		<h2 v-if="isTauriBuild && path" class="text-xl font-semibold mt-4 mb-1">
 			{{ t('comMojang.linkedFolder') }}:
 		</h2>
 		<span v-if="isTauriBuild">
