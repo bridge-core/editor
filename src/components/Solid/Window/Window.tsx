@@ -49,9 +49,11 @@ export const WindowComponent: Component<{
 
 	onMount(() => {
 		window().openEvent.on(() => {
+			// @ts-ignore
 			dialog?.showModal()
 		})
 		window().closeEvent.on(() => {
+			// @ts-ignore
 			dialog?.close()
 		})
 
