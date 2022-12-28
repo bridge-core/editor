@@ -31,7 +31,7 @@
 			<component
 				:is="getCurrentStep().component"
 				:window="window"
-				:state="state"
+				:state="getCurrentStep().state"
 			/>
 		</template>
 
