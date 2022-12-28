@@ -89,6 +89,7 @@
 					size="24"
 					width="2"
 					color="white"
+					:indeterminate="task.progress === undefined"
 					:value="task.progress"
 				/>
 			</SidebarButton>

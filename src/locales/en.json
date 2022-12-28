@@ -556,6 +556,13 @@
 			"updateAvailable": {
 				"message": "Update Available"
 			},
+			"installingUpdate": {
+				"name": "Installing Update",
+				"description": "bridge. is currently installing an update in the background."
+			},
+			"restartToApplyUpdate": {
+				"message": "Restart to Update"
+			},
 			"updateExtensions": "Update All Extensions"
 		}
 	},
