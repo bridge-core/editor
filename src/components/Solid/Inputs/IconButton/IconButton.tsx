@@ -17,7 +17,7 @@ export const SolidIconButton: Component<IconButtonProps> = (props) => {
 	return (
 		<button
 			use:ripple={!isDisabled()}
-			class="w-10 h-10 rounded-full shadow-lg transition-transform ease-in-out duration-200"
+			class="w-10 h-10 rounded-full focus:outline-none hover:scale-110 transition-transform ease-in-out duration-200"
 			classList={{
 				'opacity-50 cursor-default': isDisabled(),
 				'active:scale-[.95]': !isDisabled(),

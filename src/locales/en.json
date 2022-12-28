@@ -134,6 +134,10 @@
 	},
 	"actions": {
 		"name": "Actions",
+		"about": {
+			"name": "About",
+			"description": "About bridge."
+		},
 		"download": {
 			"name": "Download",
 			"description": "Download this file or folder"

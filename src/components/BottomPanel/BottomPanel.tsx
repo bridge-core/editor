@@ -25,6 +25,20 @@ export class BottomPanel {
 	constructor() {
 		this.setupTerminal()
 
+		const onClick = () => {
+			new SolidWindow(() => (
+				<>
+					<p>This is a test solid window</p>
+					<form method="dialog">
+						<SolidButton onClick={() => {}}>
+							<SolidIcon icon="mdi-test-tube" />
+							Test
+						</SolidButton>
+					</form>
+				</>
+			))
+		}
+
 		this.addTab({
 			icon: 'mdi-bug',
 			name: 'bottomPanel.problems.name',
@@ -34,7 +48,7 @@ export class BottomPanel {
 						We are still working on displaying problems with your
 						project here...
 					</div>
-					<SolidButton onClick={() => new SolidWindow()}>
+					<SolidButton onClick={onClick}>
 						<SolidIcon icon="mdi-test-tube" />
 						Test
 					</SolidButton>

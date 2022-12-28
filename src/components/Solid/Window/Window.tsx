@@ -1,17 +1,51 @@
-import { Component, createSignal, onMount } from 'solid-js'
-import { EventDispatcher } from '../../Common/Event/EventDispatcher'
+import { Component, createSignal, onMount, JSX, onCleanup } from 'solid-js'
 import { Signal } from '../../Common/Event/Signal'
-import { SolidIcon } from '../Icon/SolidIcon'
-import { SolidButton } from '../Inputs/Button/SolidButton'
 import { createRef } from '../SolidRef'
 import { App } from '/@/App'
 
-export const WindowComponent: Component<{ currentWindow: SolidWindow }> = (
-	props
-) => {
+export const WindowComponent: Component<{
+	children: JSX.Element
+	currentWindow: SolidWindow
+}> = (props) => {
 	const window = () => props.currentWindow
 	let dialog: HTMLDialogElement | undefined = undefined
 	const [shouldClose, setShouldClose] = createSignal(false)
+
+	let delayedClose = false
+	const onClose = (event?: Event) => {
+		if (delayedClose) return
+
+		// Prevent closing from ESC to show our close animation first
+		if (event) event.preventDefault()
+		setShouldClose(true)
+
+		dialog?.addEventListener(
+			'animationend',
+			() => {
+				setShouldClose(false)
+				delayedClose = true
+				window().close()
+			},
+			{ once: true }
+		)
+	}
+	const onClickOutside = (event: any) => {
+		if (event.target.tagName !== 'DIALOG')
+			//This prevents issues with forms
+			return
+
+		const rect = event.target.getBoundingClientRect()
+
+		const clickedInDialog =
+			rect.top <= event.clientY &&
+			event.clientY <= rect.top + rect.height &&
+			rect.left <= event.clientX &&
+			event.clientX <= rect.left + rect.width
+
+		if (clickedInDialog === false) {
+			onClose()
+		}
+	}
 
 	onMount(() => {
 		window().openEvent.on(() => {
@@ -21,23 +55,15 @@ export const WindowComponent: Component<{ currentWindow: SolidWindow }> = (
 			dialog?.close()
 		})
 
-		let delayedClose = false
-		dialog?.addEventListener('close', () => {
-			if (delayedClose) return
+		dialog?.addEventListener('cancel', onClose)
+		dialog?.addEventListener('click', onClickOutside)
+	})
 
-			dialog?.showModal()
-			setShouldClose(true)
-
-			dialog?.addEventListener(
-				'animationend',
-				() => {
-					setShouldClose(false)
-					delayedClose = true
-					window().close()
-				},
-				{ once: true }
-			)
-		})
+	onCleanup(() => {
+		dialog?.removeEventListener('cancel', onClose)
+		dialog?.removeEventListener('click', onClickOutside)
+		window().openEvent.disposeListeners()
+		window().closeEvent.disposeListeners()
 	})
 
 	return (
@@ -45,7 +71,6 @@ export const WindowComponent: Component<{ currentWindow: SolidWindow }> = (
 			<dialog
 				class="
                     m-auto
-                    p-2
                     rounded-lg
                     shadow-xl
                     backdrop:bg-neutral-700/25
@@ -54,7 +79,7 @@ export const WindowComponent: Component<{ currentWindow: SolidWindow }> = (
                     align-middle
                     dark:bg-neutral-900
                     dark:text-neutral-300
-                    
+                    select-none
                 "
 				classList={{
 					'open:animate-fade-in-and-scale-up open:backdrop:animate-fade-in':
@@ -64,13 +89,7 @@ export const WindowComponent: Component<{ currentWindow: SolidWindow }> = (
 				}}
 				ref={dialog}
 			>
-				<p>This is a test solid window</p>
-				<form method="dialog">
-					<SolidButton onClick={() => {}}>
-						<SolidIcon icon="mdi-test-tube" />
-						Test
-					</SolidButton>
-				</form>
+				{props.children}
 			</dialog>
 		</>
 	)
@@ -80,25 +99,30 @@ export class SolidWindow {
 	public readonly isOpen = createRef(true)
 	public openEvent = new Signal<void>()
 	public closeEvent = new Signal<void>()
-	protected _disposeSelf: () => void
+	protected _disposeSelf: (() => void) | null = null
 
-	constructor() {
-		this._disposeSelf = App.solidWindows.addWindow(this).dispose
-
+	constructor(protected component: Component) {
 		this.open()
 	}
 
-	get component(): Component {
-		return () => <WindowComponent currentWindow={this} />
+	get windowComponent(): Component {
+		return () => (
+			<WindowComponent currentWindow={this}>
+				{this.component({})}
+			</WindowComponent>
+		)
 	}
 
 	open() {
+		this._disposeSelf = App.solidWindows.addWindow(this).dispose
+
 		this.openEvent.dispatch()
 		this.closeEvent.resetSignal()
 	}
 	close() {
 		this.closeEvent.dispatch()
 		this.openEvent.resetSignal()
-		this._disposeSelf()
+		this._disposeSelf?.()
+		this._disposeSelf = null
 	}
 }

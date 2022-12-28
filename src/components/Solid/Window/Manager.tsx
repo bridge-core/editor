@@ -28,7 +28,7 @@ export class SolidWindowManager {
 		return () => (
 			<>
 				<For each={this.readState()}>
-					{(window) => <Dynamic component={window.component} />}
+					{(window) => <Dynamic component={window.windowComponent} />}
 				</For>
 			</>
 		)
