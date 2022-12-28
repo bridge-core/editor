@@ -56,7 +56,6 @@ export interface ICreateProjectState extends IWindowState {
 	availableTargetVersionsLoading: boolean
 }
 export class CreateProjectWindow extends NewBaseWindow {
-	protected isFirstProject = false
 	protected availableTargetVersions: string[] = []
 	protected stableVersion: string = ''
 	protected packs: Record<TPackTypeId | '.bridge' | 'worlds', CreatePack> = <
@@ -153,10 +152,9 @@ export class CreateProjectWindow extends NewBaseWindow {
 		)
 	}
 
-	open(isFirstProject = false) {
+	open() {
 		this.state.createOptions = this.getDefaultOptions()
 
-		this.isFirstProject = isFirstProject
 		this.packCreateFiles.forEach(
 			(createFile) => (createFile.isActive = true)
 		)
@@ -168,16 +166,12 @@ export class CreateProjectWindow extends NewBaseWindow {
 		const app = await App.getApp()
 
 		const removeOldProject =
-			isUsingFileSystemPolyfill.value &&
-			!app.hasNoProjects &&
-			!this.isFirstProject
+			isUsingFileSystemPolyfill.value && !app.hasNoProjects
 
 		// Save previous project name to delete it later
-		let previousProject: Project | undefined
-		if (!this.isFirstProject)
-			previousProject = app.isNoProjectSelected
-				? app.projects[0]
-				: app.project
+		let previousProject = app.isNoProjectSelected
+			? app.projects[0]
+			: app.project
 
 		// Ask user whether we should save the current project
 		if (removeOldProject) {
