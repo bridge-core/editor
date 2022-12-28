@@ -11,7 +11,7 @@ interface ITab {
 }
 
 export class BottomPanel {
-	public readonly isVisible = ref(true)
+	public readonly isVisible = ref(false)
 	public readonly height = ref(400)
 	public readonly tabs = ref<ITab[]>([])
 	public readonly activeTab = ref<ITab | null>(null)
