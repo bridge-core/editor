@@ -98,6 +98,7 @@
 			:contextMenu="contextMenu"
 			:windowHeight="windowSize.currentHeight"
 		/>
+		<SolidWindows />
 	</v-app>
 </template>
 
@@ -161,6 +162,7 @@ export default {
 		WelcomeScreen,
 		SidebarContent,
 		BottomPanel,
+		SolidWindows: App.solidWindows.getVueComponent(),
 	},
 
 	data: () => ({

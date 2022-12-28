@@ -1,5 +1,7 @@
 import { Component, createSignal, Show } from 'solid-js'
 import { useTranslations } from '../../Composables/useTranslations'
+import { SolidIcon } from '../../Solid/Icon/SolidIcon'
+import { SolidButton } from '../../Solid/Inputs/Button/SolidButton'
 import { SolidIconButton } from '../../Solid/Inputs/IconButton/IconButton'
 import { TextField } from '../../Solid/Inputs/TextField/TextField'
 import { toSignal } from '../../Solid/toSignal'

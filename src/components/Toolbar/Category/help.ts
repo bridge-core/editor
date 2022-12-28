@@ -1,9 +1,18 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
+import { openAboutWindow } from '../../Windows/About/AboutWindow'
 
 export function setupHelpCategory(app: App) {
 	const help = new ToolbarCategory('mdi-help', 'toolbar.help.name')
+	help.addItem(
+		app.actionManager.create({
+			name: 'actions.about.name',
+			icon: 'mdi-information-outline',
+			description: 'actions.about.description',
+			onTrigger: () => openAboutWindow(),
+		})
+	)
 	help.addItem(
 		app.actionManager.create({
 			name: 'actions.releases.name',
