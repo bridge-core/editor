@@ -3,9 +3,6 @@ import { JSX } from 'solid-js/types'
 import './BottomPanel.css'
 import { LogPanel } from '../Compiler/LogPanel/Panel'
 import { App } from '/@/App'
-import { SolidButton } from '../Solid/Inputs/Button/SolidButton'
-import { SolidIcon } from '../Solid/Icon/SolidIcon'
-import { SolidWindow } from '../Solid/Window/Window'
 
 interface ITab {
 	name: string
@@ -25,20 +22,6 @@ export class BottomPanel {
 	constructor() {
 		this.setupTerminal()
 
-		const onClick = () => {
-			new SolidWindow(() => (
-				<>
-					<p>This is a test solid window</p>
-					<form method="dialog">
-						<SolidButton onClick={() => {}}>
-							<SolidIcon icon="mdi-test-tube" />
-							Test
-						</SolidButton>
-					</form>
-				</>
-			))
-		}
-
 		this.addTab({
 			icon: 'mdi-bug',
 			name: 'bottomPanel.problems.name',
@@ -48,10 +31,6 @@ export class BottomPanel {
 						We are still working on displaying problems with your
 						project here...
 					</div>
-					<SolidButton onClick={onClick}>
-						<SolidIcon icon="mdi-test-tube" />
-						Test
-					</SolidButton>
 				</>
 			),
 		})
