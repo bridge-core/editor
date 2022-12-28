@@ -5,7 +5,7 @@
 		v-ripple="!isSelected && !isDisabled"
 		@click="!isDisabled ? $emit('click') : undefined"
 	>
-		<v-tooltip :disabled="!isDisabled" right color="tooltip">
+		<v-tooltip :disabled="!status.showStatus" right color="tooltip">
 			<template v-slot:activator="{ on }">
 				<!-- Flexbox doesn't work directly on summaries in Safari -->
 				<span
@@ -21,13 +21,15 @@
 						{{ icon }}
 					</v-icon>
 					<span v-if="!compact">{{ text }}</span>
-					<v-spacer v-if="isDisabled" />
-					<v-icon v-if="isDisabled" small color="error">
-						mdi-alert-circle-outline
+					<v-spacer v-if="status.showStatus" />
+					<v-icon v-if="status.showStatus" small color="error">
+						{{ status.icon ?? 'mdi-alert-circle-outline' }}
 					</v-icon>
 				</span>
 			</template>
-			<span>{{ disabledText || t('windows.sidebar.disabledItem') }}</span>
+			<span>{{
+				status.message || t('windows.sidebar.disabledItem')
+			}}</span>
 		</v-tooltip>
 	</div>
 </template>
@@ -42,7 +44,7 @@ export default {
 	props: {
 		isSelected: Boolean,
 		isDisabled: Boolean,
-		disabledText: String,
+		status: Object,
 		text: String,
 		icon: String,
 		color: String,

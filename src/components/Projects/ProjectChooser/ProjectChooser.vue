@@ -201,14 +201,14 @@
 <script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
-import ExperimentalGameplay from '/@/components/Projects/CreateProject/ExperimentalGameplay.vue'
+import ExperimentalGameplay from '/@/components/Projects/CreateProject/Tabs/ExperimentalGameplay/Toggle.vue'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 
 import { App } from '/@/App'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { addPack } from './AddPack'
 import { virtualProjectName } from '../Project/Project'
-import { useTranslations } from '../../Composables/useTranslations'
+import { useTranslations } from '/@/components/Composables/useTranslations'
 import { computed, ref } from 'vue'
 
 let formatter: { format: (arr: string[]) => string }

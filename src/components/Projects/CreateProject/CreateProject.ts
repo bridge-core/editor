@@ -1,6 +1,5 @@
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import CreateProjectComponent from './CreateProject.vue'
 import { CreatePack } from './Packs/Pack'
 import { CreateBP } from './Packs/BP'
 import { CreateRP } from './Packs/RP'
@@ -19,12 +18,17 @@ import {
 	getFormatVersions,
 	getStableFormatVersion,
 } from '/@/components/Data/FormatVersions'
-import { Project } from '../Project/Project'
 import { CreateDenoConfig } from './Files/DenoConfig'
-import { IWindowState, NewBaseWindow } from '../../Windows/NewBaseWindow'
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
+import { translate } from '../../Locales/Manager'
+import { createCategories } from './CreateCategories'
+import {
+	IStepperWindowState,
+	StepperWindow,
+} from '../../Windows/StepperWindow/StepperWindow'
 
 export interface ICreateProjectOptions {
+	projectType: 'bridgeFolder' | 'local' | 'comMojang'
 	author: string | string[]
 	description: string
 	icon: File | null
@@ -50,13 +54,12 @@ export interface IExperimentalToggle {
 	description: string
 }
 
-export interface ICreateProjectState extends IWindowState {
-	isCreatingProject: boolean
+export interface ICreateProjectState extends IStepperWindowState {
 	createOptions: ICreateProjectOptions
 	availableTargetVersionsLoading: boolean
 }
-export class CreateProjectWindow extends NewBaseWindow {
-	protected isFirstProject = false
+
+export class CreateProjectWindow extends StepperWindow {
 	protected availableTargetVersions: string[] = []
 	protected stableVersion: string = ''
 	protected packs: Record<TPackTypeId | '.bridge' | 'worlds', CreatePack> = <
@@ -90,9 +93,9 @@ export class CreateProjectWindow extends NewBaseWindow {
 
 	protected state: ICreateProjectState = reactive<any>({
 		...super.getState(),
-		isCreatingProject: false,
 		createOptions: this.getDefaultOptions(),
 		availableTargetVersionsLoading: true,
+		windowTitle: 'windows.createProject.title',
 	})
 
 	get createOptions() {
@@ -117,7 +120,7 @@ export class CreateProjectWindow extends NewBaseWindow {
 	}
 
 	constructor() {
-		super(CreateProjectComponent, false)
+		super({ keepAlive: true })
 		this.defineWindow()
 
 		App.ready.once(async (app) => {
@@ -139,6 +142,8 @@ export class CreateProjectWindow extends NewBaseWindow {
 		App.packType.ready.once(() => {
 			this.availablePackTypes = App.packType.all
 		})
+
+		this.setupWindow()
 	}
 
 	get hasRequiredData() {
@@ -153,10 +158,44 @@ export class CreateProjectWindow extends NewBaseWindow {
 		)
 	}
 
-	open(isFirstProject = false) {
-		this.state.createOptions = this.getDefaultOptions()
+	/**
+	 * Sets up the steps for the stepper window and the confirm button
+	 */
+	setupWindow() {
+		createCategories.forEach((category) => {
+			this.addStep({
+				icon: category.icon,
+				id: category.id,
+				color: 'accent',
+				name: translate(
+					'windows.createProject.categories.' + category.id
+				),
+				component: category.component,
+			})
+		})
 
-		this.isFirstProject = isFirstProject
+		this.state.confirm = {
+			name: translate('windows.createProject.create'),
+			color: 'primary',
+			icon: 'mdi-plus',
+			isDisabled: computed(() => !this.hasRequiredData),
+			isLoading: false,
+			onConfirm: async () => {
+				if (!this.state.confirm) return
+
+				this.state.confirm.isLoading = true
+				await this.createProject()
+				this.state.confirm.isLoading = false
+
+				this.close()
+			},
+		}
+	}
+
+	open() {
+		this.state.createOptions = this.getDefaultOptions()
+		this.sidebar.setDefaultSelected()
+
 		this.packCreateFiles.forEach(
 			(createFile) => (createFile.isActive = true)
 		)
@@ -168,16 +207,12 @@ export class CreateProjectWindow extends NewBaseWindow {
 		const app = await App.getApp()
 
 		const removeOldProject =
-			isUsingFileSystemPolyfill.value &&
-			!app.hasNoProjects &&
-			!this.isFirstProject
+			isUsingFileSystemPolyfill.value && !app.hasNoProjects
 
 		// Save previous project name to delete it later
-		let previousProject: Project | undefined
-		if (!this.isFirstProject)
-			previousProject = app.isNoProjectSelected
-				? app.projects[0]
-				: app.project
+		let previousProject = app.isNoProjectSelected
+			? app.projects[0]
+			: app.project
 
 		// Ask user whether we should save the current project
 		if (removeOldProject) {
@@ -229,6 +264,7 @@ export class CreateProjectWindow extends NewBaseWindow {
 
 	static getDefaultOptions(): ICreateProjectOptions {
 		return {
+			projectType: 'local',
 			author:
 				<string | undefined>settingsState?.projects?.defaultAuthor ??
 				'',
@@ -271,6 +307,7 @@ export class CreateProjectWindow extends NewBaseWindow {
 			config = await app.project.fileSystem.readJSON('config.json')
 
 			return {
+				projectType: 'local',
 				author: config.author ?? '',
 				description: config.description ?? '',
 				icon: null,

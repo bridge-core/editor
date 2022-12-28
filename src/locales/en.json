@@ -632,6 +632,15 @@
 			"omitPack": "Omit",
 			"selectedPack": "Selected",
 			"title": "Create Project",
+
+			"categories": {
+				"general": "General",
+				"files": "Files",
+				"experimentalGameplay": "Experimental Gameplay",
+				"projectType": "Project Type",
+				"packType": "Pack Type"
+			},
+
 			"packIcon": "Project Icon (optional)",
 			"projectName": {
 				"name": "Project Name",
@@ -739,8 +748,12 @@
 			},
 			"comMojangProject": {
 				"name": "com.mojang Project",
-				"description": "This project was loaded directly from your com.mojang folder",
+				"description": "com.mojang projects are stored directly within Minecraft's game files.",
 				"uninstallWarning": "This project will be deleted if you uninstall Minecraft."
+			},
+			"bridgeFolderProject": {
+				"name": "Normal Project",
+				"description": "Normal projects are stored within your bridge. folder."
 			},
 			"newProject": {
 				"name": "New Project",

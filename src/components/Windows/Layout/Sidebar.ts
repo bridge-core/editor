@@ -88,13 +88,46 @@ export class SidebarCategory {
 	}
 }
 
-export interface ISidebarItemConfig {
-	id: string
-	text: string
+export interface ISidebarItemStatus {
+	/**
+	 * Whether to show the status icon and tooltip
+	 */
+	showStatus?: boolean
+	/**
+	 * An alternative status icon to show to the right of the item text. Defaults to 'mdi-alert-circle-outline'
+	 */
 	icon?: string
+	/**
+	 * A message to show in a tooltip when hovering over the status icon
+	 */
+	message?: string
+}
+
+export interface ISidebarItemConfig {
+	/**
+	 * Unique id of the sidebar item
+	 */
+	id: string
+	/**
+	 * The text to display in the sidebar for this item
+	 */
+	text: string
+	/**
+	 * An icon to show to the left of the text
+	 */
+	icon?: string
+	/**
+	 * The color of this sidebar item
+	 */
 	color?: string
+	/**
+	 * Whether this item is disabled. If so, it will not emit a click event
+	 */
 	isDisabled?: boolean
-	disabledText?: string
+	/**
+	 * The status of the sidebar item
+	 */
+	status?: ISidebarItemStatus
 }
 export class SidebarItem {
 	readonly type = 'item'
@@ -102,8 +135,8 @@ export class SidebarItem {
 	protected text: string
 	protected icon?: string
 	protected color?: string
+	public status: ISidebarItemStatus
 	public isDisabled: boolean
-	public disabledText?: string
 
 	constructor({
 		id,
@@ -111,14 +144,14 @@ export class SidebarItem {
 		icon,
 		color,
 		isDisabled,
-		disabledText,
+		status,
 	}: ISidebarItemConfig) {
 		this.id = id
 		this.text = text
 		this.icon = icon
 		this.color = color
 		this.isDisabled = isDisabled ?? false
-		this.disabledText = disabledText
+		this.status = { showStatus: false, ...status }
 	}
 
 	getText() {
@@ -146,6 +179,7 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 	) {
 		super()
 		this.selected = this.findDefaultSelected()
+		console.log(this._elements)
 	}
 
 	get showDisabled() {
@@ -282,6 +316,36 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 		if (value) this.selected = value
 		else if (!this.selected) this.selected = this.findDefaultSelected()
 	}
+	/**
+	 * Select the next element in the sidebar
+	 */
+	selectNext() {
+		const current = this.currentElement
+
+		// No current element, select the first one
+		if (!current) {
+			this.setDefaultSelected()
+			return
+		}
+
+		const allElements = this.sortSidebar(this.elements)
+			.map((e) => (e.type === 'item' ? e : e.getItems(false)))
+			.flat()
+
+		const currentIndex = allElements.findIndex((e) => e.id === current.id)
+
+		// Current element not found, select the first one
+		if (currentIndex === -1) {
+			this.setDefaultSelected()
+			return
+		}
+
+		// Get the next element
+		const next = allElements[(currentIndex + 1) % allElements.length]
+
+		// Select the next element
+		this.selected = next.id
+	}
 	resetSelected() {
 		this.selected = undefined
 	}
@@ -297,5 +361,21 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 			this.dispatch(val)
 			this._selected.value = val
 		}
+	}
+	get currentSelectionIndex() {
+		if (!this.selected) return -1
+
+		const allElements = this.sortSidebar(this.elements)
+			.map((e) => (e.type === 'item' ? e : e.getItems(false)))
+			.flat()
+
+		return allElements.findIndex((e) => e.id === this.selected)
+	}
+	get maxSelectionIndex() {
+		const allElements = this.sortSidebar(this.elements)
+			.map((e) => (e.type === 'item' ? e : e.getItems(false)))
+			.flat()
+
+		return allElements.length - 1
 	}
 }

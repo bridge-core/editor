@@ -19,13 +19,13 @@
 			>
 				<v-icon class="mr-1">mdi-plus</v-icon>
 				<span v-if="availableWidth > 220">
-					{{ t('packExplorer.noProjectView.createLocalProject') }}
+					{{ t('windows.createProject.title') }}
 				</span>
 			</v-btn>
 		</template>
 
 		<span>
-			{{ t('packExplorer.noProjectView.createLocalProject') }}
+			{{ t('windows.createProject.title') }}
 		</span>
 	</v-tooltip>
 </template>
@@ -71,7 +71,8 @@ export default {
 		},
 		calculateAvailableWidth() {
 			if (this.$refs.button)
-				this.availableWidth = this.$refs.button.$el.getBoundingClientRect().width
+				this.availableWidth =
+					this.$refs.button.$el.getBoundingClientRect().width
 		},
 	},
 }
