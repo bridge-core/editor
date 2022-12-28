@@ -21,8 +21,9 @@ export class DashFileSystem extends FileSystem {
 	async writeJson(path: string, content: any, beautify?: boolean) {
 		await this.internalFs.writeJSON(path, content, beautify)
 	}
-	readFile(path: string): Promise<File> {
-		return this.internalFs.readFile(path)
+	async readFile(path: string): Promise<File> {
+		const file = await this.internalFs.readFile(path)
+		return file.isVirtual ? await file.toBlobFile() : file
 	}
 	async writeFile(path: string, content: string | Uint8Array) {
 		await this.internalFs.writeFile(path, content)
