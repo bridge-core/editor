@@ -1,7 +1,6 @@
 import { Accessor, Component, Setter, Show } from 'solid-js'
 import { useModel } from '../../Directives/Model/Model'
 import { SolidIcon } from '../../Icon/SolidIcon'
-import './TextField.css'
 
 interface TextFieldProps {
 	class?: string
@@ -24,9 +23,23 @@ export const TextField: Component<TextFieldProps> = (props) => {
 
 	return (
 		<div
-			class="solid-text-field"
+			class="
+				flex
+				rounded-lg
+				items-center
+				border
+				border-[#bbb]
+				focus-within:border-primary
+				focus-within:text-primary
+				focus-within:ring-1
+				focus-within:ring-primary
+				caret-primary
+				transition-colors
+				ease-in-out
+				duration-100
+			"
 			classList={{
-				'solid-text-field-disabled': props.disabled,
+				'opacity-50': props.disabled,
 				['' + props.class]: !!props.class,
 				...(props.classList ?? {}),
 			}}
@@ -36,6 +49,7 @@ export const TextField: Component<TextFieldProps> = (props) => {
 			</Show>
 
 			<input
+				class="flex-1 outline-none p-2"
 				use:model={props.model}
 				placeholder={props.placeholder}
 				onKeyDown={onKeyDown}

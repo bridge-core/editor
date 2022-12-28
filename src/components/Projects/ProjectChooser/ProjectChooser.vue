@@ -39,8 +39,7 @@
 			<div class="d-flex align-center mb-4 rounded-lg content-area pa-4">
 				<div class="d-flex align-center">
 					<img
-						class="mr-2 project-logo rounded-lg"
-						height="64"
+						class="mr-2 h-16 project-logo rounded-lg"
 						:src="sidebar.currentState.imgSrc"
 						draggable="false"
 					/>
