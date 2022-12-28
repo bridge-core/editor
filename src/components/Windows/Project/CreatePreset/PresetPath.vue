@@ -1,5 +1,5 @@
 <template>
-	<div class="mb-6 flex justify-center align-start path-container">
+	<div class="path-container mb-6 flex align-center">
 		<v-icon x-large color="primary" class="mr-1">mdi-folder-outline</v-icon>
 
 		<template v-if="mode === 'view'">
