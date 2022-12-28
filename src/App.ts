@@ -47,6 +47,7 @@ import { SidebarManager } from '/@/components/Sidebar/Manager'
 import { ViewComMojangProject } from '/@/components/OutputFolders/ComMojang/Sidebar/ViewProject'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { BottomPanel } from '/@/components/BottomPanel/BottomPanel'
+import { setRichPresence } from './utils/setRichPresence'
 
 if (import.meta.env.VITE_IS_TAURI_APP) {
 	// Import Tauri updater for native builds

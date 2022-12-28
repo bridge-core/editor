@@ -135,6 +135,7 @@ export class TextTab extends FileTab {
 		)
 
 		this.editorInstance?.layout()
+		super.onActivate()
 	}
 	async onDeactivate() {
 		await super.onDeactivate()

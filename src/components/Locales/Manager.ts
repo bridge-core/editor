@@ -73,7 +73,7 @@ export class LocaleManager {
 		this.currentLanuageId = id
 	}
 
-	static translate(key?: string) {
+	static translate(key?: string, lang = this.currentLanguage) {
 		if (!key) return ''
 
 		if (key.startsWith('[') && key.endsWith(']')) {
@@ -82,7 +82,7 @@ export class LocaleManager {
 
 		const parts = key.split('.')
 
-		let current = this.currentLanguage
+		let current = lang
 		for (const part of parts) {
 			current = current[part]
 
@@ -101,8 +101,11 @@ export class LocaleManager {
 	}
 }
 
-export function translate(key?: string) {
-	return LocaleManager.translate(key)
+export function translate(key?: string, langId?: 'en') {
+	let lang = undefined
+	if (langId === 'en') lang = enLang
+
+	return LocaleManager.translate(key, lang)
 }
 
 export function translateWithInsertions(key?: string, insert?: string[]) {
