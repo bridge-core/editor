@@ -33,7 +33,7 @@ export const WindowComponent: Component<{ currentWindow: SolidWindow }> = (
 				() => {
 					setShouldClose(false)
 					delayedClose = true
-					dialog?.close()
+					window().close()
 				},
 				{ once: true }
 			)
@@ -80,9 +80,10 @@ export class SolidWindow {
 	public readonly isOpen = createRef(true)
 	public openEvent = new Signal<void>()
 	public closeEvent = new Signal<void>()
+	protected _disposeSelf: () => void
 
 	constructor() {
-		App.solidWindows.addWindow(this)
+		this._disposeSelf = App.solidWindows.addWindow(this).dispose
 
 		this.open()
 	}
@@ -98,5 +99,6 @@ export class SolidWindow {
 	close() {
 		this.closeEvent.dispatch()
 		this.openEvent.resetSignal()
+		this._disposeSelf()
 	}
 }
