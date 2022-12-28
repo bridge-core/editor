@@ -14,7 +14,7 @@
 		min-width="200px"
 		max-width="500px"
 	>
-		<v-card color="menu">
+		<v-card :height="`${18 + actionHeight}px`" color="menu">
 			<v-card-title v-if="contextMenu.card.title">
 				{{ contextMenu.card.title }}
 			</v-card-title>
@@ -72,6 +72,11 @@ export default {
 			if (!this.contextMenu || !this.contextMenu.actionManager.value)
 				return {}
 			return this.contextMenu.actionManager.value.state
+		},
+		actionHeight() {
+			return Object.values(this.actions)
+				.map((action) => (action.type === 'divider' ? 1 : 40))
+				.reduce((prev, curr) => prev + curr, 0)
 		},
 	},
 	watch: {
