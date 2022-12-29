@@ -4,14 +4,14 @@ import { toVue } from '../toVue'
 import { SolidWindow } from './Window'
 
 export class SolidWindowManager {
-	protected readState: () => SolidWindow[]
-	protected writeState: (val: SolidWindow[]) => void
+	protected readState: () => SolidWindow<any>[]
+	protected writeState: (val: SolidWindow<any>[]) => void
 
 	constructor() {
 		;[this.readState, this.writeState] = createSignal([])
 	}
 
-	addWindow(window: SolidWindow) {
+	addWindow(window: SolidWindow<any>) {
 		this.writeState([...this.readState(), window])
 
 		return {

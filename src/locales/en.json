@@ -47,7 +47,9 @@
 		"warnBeforeClosing": {
 			"title": "Unsaved Changes",
 			"description": "Are you sure you want to close this window? Any unsaved changes will be lost."
-		}
+		},
+		"error": "Error",
+		"reportBug": "Report Bug"
 	},
 	"openWith": {
 		"snowstorm": "Snowstorm",
@@ -611,6 +613,9 @@
 	"windows": {
 		"sidebar": {
 			"disabledItem": "This item is disabled"
+		},
+		"error": {
+			"explanation": "bridge. encountered the following error:"
 		},
 		"changelogWindow": {
 			"title": "What's new?"
