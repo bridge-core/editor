@@ -63,8 +63,10 @@ export class TreeEditor {
 	}
 
 	constructor(protected parent: TreeTab, protected json: unknown) {
-		this.tree = createTree(this, json)
-		this.setSelection(this.tree)
+		const tree = createTree(this, json)
+		tree.validate()
+		this.setSelection(tree)
+		this.tree = tree
 
 		this.history.on((isUnsaved) => {
 			this.parent.setIsUnsaved(isUnsaved)

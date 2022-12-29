@@ -21,15 +21,17 @@ export class EnumSchema extends Schema {
 	}
 
 	validate(val: unknown) {
-		if (!(<unknown[]>this.value).includes(val))
+		if (!(<unknown[]>this.value).includes(val)) {
+			// console.log(<unknown[]>this.value)
 			return [
 				<const>{
-					severity: 'error',
+					severity: 'warning',
 					message: `Found ${val}; expected one of ${(<unknown[]>(
 						this.value
 					)).join(', ')}`,
 				},
 			]
+		}
 		return []
 	}
 }

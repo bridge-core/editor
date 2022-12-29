@@ -17,7 +17,7 @@ export class RequiredSchema extends Schema {
 		if (typeof obj !== 'object' || Array.isArray(obj))
 			return [
 				<const>{
-					severity: 'error',
+					severity: 'warning',
 					message: `Required properties missing: ${values.join(
 						', '
 					)}`,
@@ -28,7 +28,7 @@ export class RequiredSchema extends Schema {
 			if ((<any>obj)[value] === undefined || (<any>obj)[value] === null)
 				return [
 					<const>{
-						severity: 'error',
+						severity: 'warning',
 						message: `Missing required property: ${value}`,
 					},
 				]

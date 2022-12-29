@@ -81,4 +81,25 @@ export class ArrayTree extends Tree<Array<unknown>> {
 			},
 		}
 	}
+
+	validate() {
+		this._cachedChildHasDiagnostics = null
+		this.children.forEach((child) => child.validate())
+
+		super.validate()
+	}
+
+	protected _cachedChildHasDiagnostics: boolean | null = null
+	get childHasDiagnostics() {
+		if (this._cachedChildHasDiagnostics !== null)
+			return this._cachedChildHasDiagnostics
+
+		this._cachedChildHasDiagnostics = this.children.some((child) => {
+			if (child.type === 'array' || child.type === 'object')
+				return (<ArrayTree | ObjectTree>child).childHasDiagnostics
+			return child.highestSeverityDiagnostic !== null
+		})
+
+		return this._cachedChildHasDiagnostics
+	}
 }

@@ -83,22 +83,13 @@ export class PropertiesSchema extends Schema {
 		if (typeof obj !== 'object' || Array.isArray(obj))
 			return [
 				<const>{
-					severity: 'error',
+					severity: 'warning',
 					message: `Invalid type: Expected "object", received "${
 						Array.isArray(obj) ? 'array' : typeof obj
 					}"`,
 				},
 			]
 
-		const diagnostics: IDiagnostic[] = []
-
-		for (const key in obj) {
-			if (this.children[key])
-				diagnostics.push(
-					...this.children[key].validate((<any>obj)[key])
-				)
-		}
-
-		return diagnostics
+		return []
 	}
 }

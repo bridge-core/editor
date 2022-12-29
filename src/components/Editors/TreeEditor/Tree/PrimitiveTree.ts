@@ -44,8 +44,8 @@ export class PrimitiveTree extends Tree<TPrimitiveTree> {
 		else if (value === 'null') this.setValue(null)
 		else this.setValue(value)
 
-		this.requestValidation()
-		console.log(this)
+		// We need to update the parent because an if schema could potentially be affected
+		this.parent?.requestValidation()
 	}
 
 	isEmpty() {

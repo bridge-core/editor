@@ -52,23 +52,13 @@ export class PatternPropertiesSchema extends Schema {
 		if (typeof obj !== 'object' || Array.isArray(obj))
 			return [
 				<const>{
-					severity: 'error',
+					severity: 'warning',
 					message: `Invalid type: Expected "object", received "${
 						Array.isArray(obj) ? 'array' : typeof obj
 					}"`,
 				},
 			]
 
-		const diagnostics: IDiagnostic[] = []
-
-		for (const key in obj) {
-			for (const [pattern, child] of Object.entries(this.children)) {
-				if (key.match(new RegExp(pattern)) === null) {
-					diagnostics.push(...child.validate((<any>obj)[key]))
-				}
-			}
-		}
-
-		return diagnostics
+		return []
 	}
 }

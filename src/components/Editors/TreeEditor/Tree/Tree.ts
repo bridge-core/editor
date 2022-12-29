@@ -40,6 +40,8 @@ export abstract class Tree<T> {
 	}
 	setParent(parent: ObjectTree | ArrayTree | null) {
 		this.parent = parent
+
+		this.parent?.requestValidation()
 	}
 	get treeEditor(): TreeEditor {
 		if (this._treeEditor) return this._treeEditor
@@ -104,6 +106,8 @@ export abstract class Tree<T> {
 			index,
 			this.parent.type === 'array' ? tree : [this.key, tree]
 		)
+
+		this.parent.requestValidation()
 	}
 
 	delete() {
@@ -132,10 +136,14 @@ export abstract class Tree<T> {
 
 		const [deleted] = this.parent.children.splice(index, 1)
 
+		this.parent.requestValidation()
+
 		return <const>[index, Array.isArray(deleted) ? deleted[0] : '']
 	}
 
 	validate() {
+		this._cachedHighestSeverityDiagnostic = null
+
 		this.diagnostics = this.treeEditor
 			.getSchemas(this)
 			.map((schema) => schema.validate(this.toJSON()))
@@ -145,12 +153,18 @@ export abstract class Tree<T> {
 		whenIdle(() => this.validate())
 	}
 
+	protected _cachedHighestSeverityDiagnostic: IDiagnostic | null = null
 	get highestSeverityDiagnostic() {
+		if (this._cachedHighestSeverityDiagnostic !== null)
+			return this._cachedHighestSeverityDiagnostic
+
 		let highestSeverity: IDiagnostic | null = null
 
 		for (const diagnostic of this.diagnostics) {
-			if (diagnostic.severity === 'error') return diagnostic
-			else if (
+			if (diagnostic.severity === 'error') {
+				this._cachedHighestSeverityDiagnostic = diagnostic
+				return diagnostic
+			} else if (
 				diagnostic.severity === 'warning' &&
 				(!highestSeverity || highestSeverity.severity === 'info')
 			)
@@ -158,6 +172,7 @@ export abstract class Tree<T> {
 			else if (!highestSeverity) highestSeverity = diagnostic
 		}
 
+		this._cachedHighestSeverityDiagnostic = highestSeverity
 		return highestSeverity
 	}
 }

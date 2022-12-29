@@ -33,7 +33,9 @@ export class MoveEntry extends HistoryEntry {
 		else
 			this.oldParent.children.splice(this.index, 0, [this.key, this.tree])
 
+		this.tree.getParent()?.requestValidation()
 		this.tree.setParent(this.oldParent)
+		this.oldParent.requestValidation()
 
 		return new MoveEntry(parent, this.tree, oldIndex, this.key)
 	}

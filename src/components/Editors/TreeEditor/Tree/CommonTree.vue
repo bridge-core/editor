@@ -27,6 +27,16 @@
 			>
 				mdi-chevron-right
 			</v-icon>
+
+			<v-icon
+				v-if="!tree.isOpen && tree.childHasDiagnostics"
+				small
+				color="warning"
+				class="mr-1"
+			>
+				mdi-alert-circle-outline
+			</v-icon>
+
 			<span v-if="showArrayIndices || tree.parent.type === 'object'">
 				<!-- Debugging helper -->
 				<span v-if="isDevMode">

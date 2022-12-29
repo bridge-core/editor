@@ -42,6 +42,12 @@ export class OneOfSchema extends ParentSchema {
 				},
 			]
 		else if (matchedOne) return []
-		else return allDiagnostics
+		else
+			return [
+				<const>{
+					severity: 'warning',
+					message: `JSON did not match any schema, expected exactly one match`,
+				},
+			]
 	}
 }

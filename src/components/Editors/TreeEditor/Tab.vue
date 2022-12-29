@@ -33,7 +33,7 @@
 		<div
 			class="pr-4"
 			:style="`height: ${
-				height - !tab.isReadOnly * 194
+				height - !tab.isReadOnly * 230
 			}px; overflow: auto;`"
 			@blur="focusEditor"
 			@scroll="onScroll"
@@ -68,7 +68,7 @@
 				"
 				:item-value="(item) => item"
 				:menu-props="{
-					maxHeight: 124,
+					maxHeight: 120,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
 					rounded: 'lg',
@@ -84,9 +84,15 @@
 				dense
 				hide-details
 				enterkeyhint="enter"
+				aria-autocomplete="false"
+				spellcheck="false"
+				auto-select-first
 			>
 				<template v-slot:item="{ item }">
-					<div style="width: 100%" @click="mayTrigger">
+					<div
+						style="width: 100%; white-space: nowrap"
+						@click="mayTrigger"
+					>
 						<v-icon class="mr-1" color="primary" small>
 							{{ getIcon(item) }}
 						</v-icon>
@@ -122,7 +128,7 @@
 				:items="valueSuggestions"
 				:item-value="(item) => item"
 				:menu-props="{
-					maxHeight: 124,
+					maxHeight: 120,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
 					rounded: 'lg',
@@ -135,9 +141,15 @@
 				dense
 				hide-details
 				enterkeyhint="enter"
+				aria-autocomplete="false"
+				spellcheck="false"
+				auto-select-first
 			>
 				<template v-slot:item="{ item }">
-					<div style="width: 100%" @click="mayTrigger">
+					<div
+						style="width: 100%; white-space: nowrap"
+						@click="mayTrigger"
+					>
 						<v-icon class="mr-1" color="primary" small>
 							{{ getIcon(item) }}
 						</v-icon>
@@ -165,7 +177,7 @@
 				:items="editSuggestions"
 				:item-value="(item) => item"
 				:menu-props="{
-					maxHeight: 124,
+					maxHeight: 120,
 					top: false,
 					contentClass: 'json-editor-suggestions-menu',
 					rounded: 'lg',
@@ -177,9 +189,15 @@
 				dense
 				hide-details
 				enterkeyhint="enter"
+				aria-autocomplete="false"
+				spellcheck="false"
+				auto-select-first
 			>
 				<template v-slot:item="{ item }">
-					<div style="width: 100%" @click="mayTrigger">
+					<div
+						style="width: 100%; white-space: nowrap"
+						@click="mayTrigger"
+					>
 						<v-icon class="mr-1" color="primary" small>
 							{{ getIcon(item) }}
 						</v-icon>

@@ -20,8 +20,6 @@ export class ObjectTree extends Tree<object> {
 			key,
 			createTree(this, val),
 		])
-
-		this.requestValidation()
 	}
 
 	get height() {
@@ -94,12 +92,28 @@ export class ObjectTree extends Tree<object> {
 		}
 
 		set(this.children, oldIndex, [newName, oldTree])
-		this.requestValidation()
+		// We need to update the parent because an if schema could potentially be affected
+		this.parent?.requestValidation()
 	}
 
 	validate() {
+		this._cachedChildHasDiagnostics = null
 		this.children.forEach(([, child]) => child.validate())
 
 		super.validate()
+	}
+
+	protected _cachedChildHasDiagnostics: boolean | null = null
+	get childHasDiagnostics() {
+		if (this._cachedChildHasDiagnostics !== null)
+			return this._cachedChildHasDiagnostics
+
+		this._cachedChildHasDiagnostics = this.children.some(([, child]) => {
+			if (child.type === 'array' || child.type === 'object')
+				return (<ArrayTree | ObjectTree>child).childHasDiagnostics
+			return child.highestSeverityDiagnostic !== null
+		})
+
+		return this._cachedChildHasDiagnostics
 	}
 }
