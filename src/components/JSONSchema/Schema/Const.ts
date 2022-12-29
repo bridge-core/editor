@@ -15,7 +15,8 @@ export class ConstSchema extends Schema {
 	validate(val: unknown) {
 		if (this.value !== val)
 			return [
-				{
+				<const>{
+					severity: 'error',
 					message: `Found ${val}; expected ${this.value}`,
 				},
 			]

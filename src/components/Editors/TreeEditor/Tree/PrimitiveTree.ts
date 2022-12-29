@@ -3,13 +3,14 @@ import PrimitiveTreeComponent from './PrimitiveTree.vue'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'
 import { markRaw } from 'vue'
+import { TreeEditor } from '../TreeEditor'
 
 export class PrimitiveTree extends Tree<TPrimitiveTree> {
 	public component = markRaw(PrimitiveTreeComponent)
 	public isValueSelected = false
 
 	constructor(
-		parent: ObjectTree | ArrayTree | null,
+		parent: ObjectTree | ArrayTree | TreeEditor | null,
 		protected _value: TPrimitiveTree
 	) {
 		super(parent)
@@ -42,6 +43,9 @@ export class PrimitiveTree extends Tree<TPrimitiveTree> {
 		else if (!Number.isNaN(Number(value))) this.setValue(Number(value))
 		else if (value === 'null') this.setValue(null)
 		else this.setValue(value)
+
+		this.requestValidation()
+		console.log(this)
 	}
 
 	isEmpty() {

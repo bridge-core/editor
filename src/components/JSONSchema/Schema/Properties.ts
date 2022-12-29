@@ -82,7 +82,8 @@ export class PropertiesSchema extends Schema {
 	validate(obj: unknown) {
 		if (typeof obj !== 'object' || Array.isArray(obj))
 			return [
-				{
+				<const>{
+					severity: 'error',
 					message: `Invalid type: Expected "object", received "${
 						Array.isArray(obj) ? 'array' : typeof obj
 					}"`,

@@ -3,6 +3,7 @@ import { Tree, treeElementHeight } from './Tree'
 import ObjecTreeComponent from './CommonTree.vue'
 import type { ArrayTree } from './ArrayTree'
 import { set, del, markRaw } from 'vue'
+import { TreeEditor } from '../TreeEditor'
 
 export class ObjectTree extends Tree<object> {
 	public component = markRaw(ObjecTreeComponent)
@@ -11,7 +12,7 @@ export class ObjectTree extends Tree<object> {
 	protected _children: [string, Tree<unknown>][]
 
 	constructor(
-		parent: ObjectTree | ArrayTree | null,
+		parent: ObjectTree | ArrayTree | TreeEditor | null,
 		protected _value: object
 	) {
 		super(parent)
@@ -19,6 +20,8 @@ export class ObjectTree extends Tree<object> {
 			key,
 			createTree(this, val),
 		])
+
+		this.requestValidation()
 	}
 
 	get height() {
@@ -91,5 +94,12 @@ export class ObjectTree extends Tree<object> {
 		}
 
 		set(this.children, oldIndex, [newName, oldTree])
+		this.requestValidation()
+	}
+
+	validate() {
+		this.children.forEach(([, child]) => child.validate())
+
+		super.validate()
 	}
 }

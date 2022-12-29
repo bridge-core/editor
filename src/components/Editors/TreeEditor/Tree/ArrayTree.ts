@@ -3,6 +3,7 @@ import { Tree, treeElementHeight } from './Tree'
 import ArrayTreeComponent from './CommonTree.vue'
 import type { ObjectTree } from './ObjectTree'
 import { markRaw } from 'vue'
+import { TreeEditor } from '../TreeEditor'
 
 export class ArrayTree extends Tree<Array<unknown>> {
 	public component = markRaw(ArrayTreeComponent)
@@ -11,7 +12,7 @@ export class ArrayTree extends Tree<Array<unknown>> {
 	protected _children: Tree<unknown>[]
 
 	constructor(
-		parent: ObjectTree | ArrayTree | null,
+		parent: ObjectTree | ArrayTree | TreeEditor | null,
 		protected _value: Array<unknown>
 	) {
 		super(parent)

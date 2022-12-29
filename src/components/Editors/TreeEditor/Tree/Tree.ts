@@ -3,6 +3,9 @@ import { v4 as uuid } from 'uuid'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'
 import { pointerDevice } from '/@/utils/pointerDevice'
+import type { TreeEditor } from '../TreeEditor'
+import { IDiagnostic } from '/@/components/JSONSchema/Schema/Schema'
+import { whenIdle } from '/@/utils/whenIdle'
 export type TPrimitiveTree = string | number | boolean | null
 export type TTree = TPrimitiveTree | Object | Array<unknown>
 
@@ -16,8 +19,18 @@ export abstract class Tree<T> {
 	public abstract height: number
 	protected abstract _value: T
 	abstract toJSON(): T
+	protected parent: ObjectTree | ArrayTree | null = null
+	protected _treeEditor: TreeEditor | null = null
+	protected diagnostics: IDiagnostic[] = []
 
-	constructor(protected parent: ObjectTree | ArrayTree | null) {}
+	constructor(parent: ObjectTree | ArrayTree | TreeEditor | null) {
+		if (parent?.type === 'treeEditor') {
+			this.parent = null
+			this._treeEditor = parent
+		} else {
+			this.parent = <ObjectTree | ArrayTree | null>parent
+		}
+	}
 
 	get value() {
 		return this._value
@@ -27,6 +40,11 @@ export abstract class Tree<T> {
 	}
 	setParent(parent: ObjectTree | ArrayTree | null) {
 		this.parent = parent
+	}
+	get treeEditor(): TreeEditor {
+		if (this._treeEditor) return this._treeEditor
+		if (!this.parent) throw new Error(`Tree has no parent or treeEditor`)
+		return this.parent.treeEditor
 	}
 	get path(): (string | number)[] {
 		if (!this.parent) return []
@@ -115,5 +133,31 @@ export abstract class Tree<T> {
 		const [deleted] = this.parent.children.splice(index, 1)
 
 		return <const>[index, Array.isArray(deleted) ? deleted[0] : '']
+	}
+
+	validate() {
+		this.diagnostics = this.treeEditor
+			.getSchemas(this)
+			.map((schema) => schema.validate(this.toJSON()))
+			.flat()
+	}
+	requestValidation() {
+		whenIdle(() => this.validate())
+	}
+
+	get highestSeverityDiagnostic() {
+		let highestSeverity: IDiagnostic | null = null
+
+		for (const diagnostic of this.diagnostics) {
+			if (diagnostic.severity === 'error') return diagnostic
+			else if (
+				diagnostic.severity === 'warning' &&
+				(!highestSeverity || highestSeverity.severity === 'info')
+			)
+				highestSeverity = diagnostic
+			else if (!highestSeverity) highestSeverity = diagnostic
+		}
+
+		return highestSeverity
 	}
 }

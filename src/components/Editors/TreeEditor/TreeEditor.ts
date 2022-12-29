@@ -30,6 +30,7 @@ import { filterDuplicates } from './CompletionItems/FilterDuplicates'
 import { inferType } from '/@/utils/inferType'
 
 export class TreeEditor {
+	public type = 'treeEditor'
 	public propertySuggestions: ICompletionItem[] = []
 	public valueSuggestions: ICompletionItem[] = []
 	public editSuggestions: ICompletionItem[] = []
@@ -62,7 +63,7 @@ export class TreeEditor {
 	}
 
 	constructor(protected parent: TreeTab, protected json: unknown) {
-		this.tree = createTree(null, json)
+		this.tree = createTree(this, json)
 		this.setSelection(this.tree)
 
 		this.history.on((isUnsaved) => {

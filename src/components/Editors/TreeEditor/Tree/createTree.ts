@@ -2,9 +2,10 @@ import { ObjectTree } from './ObjectTree'
 import { Tree } from './Tree'
 import { ArrayTree } from './ArrayTree'
 import { PrimitiveTree } from './PrimitiveTree'
+import { TreeEditor } from '../TreeEditor'
 
 export function createTree(
-	parent: ObjectTree | ArrayTree | null,
+	parent: ObjectTree | ArrayTree | TreeEditor,
 	value: unknown
 ): Tree<unknown> {
 	if (value === null) return new PrimitiveTree(parent, null)

@@ -10,6 +10,7 @@
 		<div
 			style="display: inline-block"
 			:class="{
+				'cursor-pointer': true,
 				'tree-editor-selection':
 					tree.type !== 'object' &&
 					tree.type !== 'array' &&
@@ -27,7 +28,21 @@
 				mdi-chevron-right
 			</v-icon>
 			<span v-if="tree.parent.type === 'object'">
-				<span @click.stop.prevent="onClickKey"><slot /></span>:</span
+				<span
+					class="decoration-wavy"
+					:class="{
+						underline: diagnostic,
+						'decoration-error':
+							diagnostic && diagnostic.severity === 'error',
+						'decoration-warning':
+							diagnostic && diagnostic.severity === 'warning',
+						'decoration-info':
+							diagnostic && diagnostic.severity === 'info',
+					}"
+					:title="diagnostic?.message"
+					@click.stop.prevent="onClickKey"
+					><slot /></span
+				>:</span
 			>
 		</div>
 
@@ -46,6 +61,7 @@
 			:class="{
 				'tree-editor-selection': tree.isValueSelected,
 				'px-1': true,
+				'cursor-pointer': true,
 			}"
 			@click.stop.prevent.native="onClickKey($event, true)"
 			@contextmenu.prevent.native="
@@ -144,6 +160,9 @@ export default {
 			if (this.highlighterInfo.isItalic)
 				this.highlighterInfo.textDecoration += ' italic'
 			return this.highlighterInfo.textDecoration
+		},
+		diagnostic() {
+			return this.tree.highestSeverityDiagnostic
 		},
 	},
 	methods: {

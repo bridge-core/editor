@@ -51,7 +51,8 @@ export class TypeSchema extends Schema {
 
 		if (!values.includes(getTypeOf(val)))
 			return [
-				{
+				<const>{
+					severity: 'error',
 					message: `Invalid type: Found ${getTypeOf(
 						val
 					)}; expected ${values.join(', ')}`,

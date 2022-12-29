@@ -36,7 +36,8 @@ export class OneOfSchema extends ParentSchema {
 
 		if (hasTooManyMatches)
 			return [
-				{
+				<const>{
+					severity: 'warning',
 					message: `JSON matched more than one schema, expected exactly one match`,
 				},
 			]

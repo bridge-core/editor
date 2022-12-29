@@ -23,7 +23,8 @@ export class EnumSchema extends Schema {
 	validate(val: unknown) {
 		if (!(<unknown[]>this.value).includes(val))
 			return [
-				{
+				<const>{
+					severity: 'error',
 					message: `Found ${val}; expected one of ${(<unknown[]>(
 						this.value
 					)).join(', ')}`,
