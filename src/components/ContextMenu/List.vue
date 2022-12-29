@@ -1,5 +1,5 @@
 <template>
-	<v-list color="menu" dense>
+	<v-list :height="height" color="menu" dense>
 		<template v-for="(action, id) in renderActions">
 			<!-- Divider -->
 			<v-divider v-if="action.type === 'divider'" :key="id" />
@@ -122,6 +122,7 @@ import { pointerDevice } from '/@/utils/pointerDevice'
 const { t } = useTranslations()
 
 const props = defineProps({
+	height: String,
 	actions: {
 		type: Object,
 		required: true,
