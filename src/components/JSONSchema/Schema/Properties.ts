@@ -92,4 +92,20 @@ export class PropertiesSchema extends Schema {
 
 		return []
 	}
+	isValid(obj: unknown) {
+		console.log(
+			this.location,
+			obj,
+			super.isValid(obj) &&
+				Object.entries(this.children).every(([key, child]) =>
+					child.isValid((<any>obj)[key])
+				)
+		)
+		return (
+			super.isValid(obj) &&
+			Object.entries(this.children).every(([key, child]) =>
+				child.isValid((<any>obj)[key])
+			)
+		)
+	}
 }

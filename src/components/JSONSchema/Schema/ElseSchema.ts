@@ -35,7 +35,17 @@ export class ElseSchema extends Schema {
 	}
 
 	validate(obj: unknown) {
-		if (!this.ifSchema.isTrue(obj)) return this.rootSchema.validate(obj)
+		if (!this.ifSchema.isTrue(obj)) {
+			const diagnostics = this.rootSchema.validate(obj)
+
+			if (diagnostics.length > 0)
+				return [
+					<const>{
+						severity: 'warning',
+						message: `Invalid "else" schema`,
+					},
+				]
+		}
 		return []
 	}
 }

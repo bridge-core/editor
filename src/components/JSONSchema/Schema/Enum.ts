@@ -21,14 +21,24 @@ export class EnumSchema extends Schema {
 	}
 
 	validate(val: unknown) {
-		if (!(<unknown[]>this.value).includes(val)) {
+		const values = <unknown[]>this.value
+		if (!values.includes(val)) {
+			if (values.length === 0) {
+				return [
+					<const>{
+						severity: 'warning',
+						message: `Found "${val}"; but no values are valid`,
+					},
+				]
+			}
+
 			// console.log(<unknown[]>this.value)
 			return [
 				<const>{
 					severity: 'warning',
-					message: `Found ${val}; expected one of ${(<unknown[]>(
-						this.value
-					)).join(', ')}`,
+					message: `Found "${val}"; expected one of ${values
+						.map((v) => `"${v}"`)
+						.join(', ')}`,
 				},
 			]
 		}

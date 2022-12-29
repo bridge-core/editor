@@ -143,6 +143,13 @@ export abstract class Tree<T> {
 
 	validate() {
 		this._cachedHighestSeverityDiagnostic = null
+		if (this.value === 'bridge:test')
+			console.log(
+				this.treeEditor.getSchemas(this),
+				this.treeEditor
+					.getSchemas(this)
+					.map((schema) => schema.validate(this.toJSON()))
+			)
 
 		this.diagnostics = this.treeEditor
 			.getSchemas(this)

@@ -185,12 +185,14 @@ export class TreeEditor {
 		if (this.selections.length === 0 || tree === this.tree) {
 			return this.schemaRoot ? [this.schemaRoot] : []
 		} else if (tree) {
-			return (
-				this.schemaRoot?.getSchemasFor(
-					this.tree.toJSON(),
-					next ? [...tree.path, undefined] : tree.path
-				) ?? []
-			)
+			return [
+				...new Set(
+					this.schemaRoot?.getSchemasFor(
+						this.tree.toJSON(),
+						next ? [...tree.path, undefined] : tree.path
+					) ?? []
+				),
+			]
 		}
 
 		return []

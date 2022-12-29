@@ -61,4 +61,22 @@ export class PatternPropertiesSchema extends Schema {
 
 		return []
 	}
+	isValid(obj: unknown) {
+		const isOwnValid = super.isValid(obj)
+		if (!isOwnValid) return false
+
+		for (const [pattern, child] of Object.entries(this.children)) {
+			const regExp = new RegExp(pattern)
+
+			for (const key in <any>obj) {
+				if (key.match(regExp) !== null) {
+					if (!child.isValid((<any>obj)[key])) return false
+				}
+			}
+
+			regExp.lastIndex = 0
+		}
+
+		return true
+	}
 }
