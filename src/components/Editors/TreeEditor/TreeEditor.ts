@@ -500,10 +500,9 @@ export class TreeEditor {
 
 		const title =
 			schemas.find((schema) => schema.title !== undefined)?.title ?? ''
-		const description = schemas
-			.filter((schema) => schema.description !== undefined)
-			.map((schema) => schema.description)
-			.join('\n')
+		const description =
+			schemas.filter((schema) => schema.description !== undefined)?.[0]
+				?.description ?? ''
 
 		return { title, text: description }
 	}
