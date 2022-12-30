@@ -25,7 +25,7 @@
 		</BridgeSheet>
 
 		<BridgeSheet
-			v-if="!isTauriBuild"
+			v-if="!isMobile && !isTauriBuild"
 			dark
 			class="pa-2 mb-2 d-flex flex-column"
 			@click="openDownloadPage"
@@ -111,6 +111,11 @@ export default {
 			disposables: [],
 			actions: [],
 		}
+	},
+	computed: {
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
+		},
 	},
 	methods: {
 		async chooseEditor() {
