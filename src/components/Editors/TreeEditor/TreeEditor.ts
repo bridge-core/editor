@@ -187,7 +187,10 @@ export class TreeEditor {
 	}
 
 	getSchemas(tree: Tree<unknown> | undefined, next = false) {
-		if (this.selections.length === 0 || tree === this.tree) {
+		if (
+			(this.selections.length === 0 && tree === undefined) ||
+			tree === this.tree
+		) {
 			return this.schemaRoot ? [this.schemaRoot] : []
 		} else if (tree) {
 			let path = null
@@ -273,20 +276,6 @@ export class TreeEditor {
 			keyBinding: ['ESCAPE'],
 			onTrigger: () => {
 				this.setSelection(this.tree)
-			},
-		})
-
-		this.actions.create({
-			keyBinding: ['CTRL + Z'],
-			onTrigger: () => {
-				this.undo()
-			},
-		})
-
-		this.actions.create({
-			keyBinding: [platformRedoBinding],
-			onTrigger: () => {
-				this.redo()
 			},
 		})
 	}

@@ -84,9 +84,9 @@ export class PropertiesSchema extends Schema {
 			return [
 				<const>{
 					severity: 'warning',
-					message: `This node is of type "${
+					message: `This node is of type ${
 						Array.isArray(obj) ? 'array' : typeof obj
-					}"; expected object`,
+					}; expected object`,
 				},
 			]
 
