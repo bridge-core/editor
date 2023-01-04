@@ -10,7 +10,7 @@
 		>
 			<template v-for="[key, child] in children">
 				<InlineDiagnostic
-					v-if="child.highestSeverityDiagnostic"
+					v-if="showDiagnostics && child.highestSeverityDiagnostic"
 					:diagnostic="child.highestSeverityDiagnostic"
 					:key="`diagnostic.${child.uuid}`"
 				/>
@@ -80,6 +80,9 @@ export default {
 	computed: {
 		dragAndDropEnabled() {
 			return settingsState.editor?.dragAndDropTreeNodes ?? true
+		},
+		showDiagnostics() {
+			return settingsState.editor?.inlineTreeEditorDiagnostics ?? true
 		},
 		children: {
 			get() {

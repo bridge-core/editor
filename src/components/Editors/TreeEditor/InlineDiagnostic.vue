@@ -1,7 +1,7 @@
 <template>
 	<span
 		v-if="diagnostic"
-		class="ml-4 d-inline-flex items-center font-thin text-xs opacity-50"
+		class="ml-4 d-inline-flex items-center font-thin text-xs opacity-50 cursor-default"
 		:class="{
 			'text-error': diagnostic.severity === 'error',
 			'text-warning': diagnostic.severity === 'warning',

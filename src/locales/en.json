@@ -962,6 +962,10 @@
 					"name": "Show Tree Editor Location Bar",
 					"description": "Allows you to quickly navigate your JSON file within the tree editor by displaying your current location above the editor."
 				},
+				"inlineTreeEditorDiagnostics": {
+					"name": "Inline Diagnostics",
+					"description": "Show diagnostic messages above the affected tree editor node"
+				},
 				"bridgePredictions": {
 					"name": "bridge. Predictions",
 					"description": "Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly"
