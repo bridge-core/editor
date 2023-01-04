@@ -191,7 +191,6 @@
 				enterkeyhint="enter"
 				aria-autocomplete="false"
 				spellcheck="false"
-				auto-select-first
 			>
 				<template v-slot:item="{ item }">
 					<div

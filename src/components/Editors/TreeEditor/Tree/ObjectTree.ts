@@ -59,9 +59,6 @@ export class ObjectTree extends Tree<object> {
 	}
 	addChild(key: string, child: Tree<unknown>) {
 		this._children.push([key, child])
-
-		// We need to update the parent because an if schema could potentially be affected
-		this.parent?.requestValidation()
 	}
 
 	setOpen(val: boolean, force = false) {
@@ -95,8 +92,6 @@ export class ObjectTree extends Tree<object> {
 		}
 
 		set(this.children, oldIndex, [newName, oldTree])
-		// We need to update the parent because an if schema could potentially be affected
-		this.parent?.requestValidation()
 	}
 
 	validate() {

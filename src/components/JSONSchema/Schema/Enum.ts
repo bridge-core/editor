@@ -26,6 +26,7 @@ export class EnumSchema extends Schema {
 			if (values.length === 0) {
 				return [
 					<const>{
+						priority: 0,
 						severity: 'warning',
 						message: `Found "${val}"; but no values are valid`,
 					},
@@ -33,12 +34,15 @@ export class EnumSchema extends Schema {
 			}
 
 			// console.log(<unknown[]>this.value)
+			const exampleValues = values.slice(0, 3).map((v) => `"${v}"`)
+			if (values.length > 3) exampleValues.push('...')
 			return [
 				<const>{
+					priority: 1,
 					severity: 'warning',
-					message: `Found "${val}"; expected one of ${values
-						.map((v) => `"${v}"`)
-						.join(', ')}`,
+					message: `Found "${val}"; expected one of ${exampleValues.join(
+						', '
+					)}`,
 				},
 			]
 		}

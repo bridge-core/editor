@@ -25,8 +25,6 @@ export class UndoDeleteEntry extends HistoryEntry {
 			parent.children.splice(this.index, 0, this.tree)
 		else parent.children.splice(this.index, 0, [this.key, this.tree])
 
-		parent.requestValidation()
-
 		return new DeleteEntry(this.tree, this.index, this.key)
 	}
 }
@@ -52,7 +50,6 @@ export class DeleteEntry extends HistoryEntry {
 			)
 
 		parent.children.splice(this.index, 1)
-		parent.requestValidation()
 
 		return new UndoDeleteEntry(this.tree, this.index, this.key)
 	}

@@ -3,6 +3,7 @@ export interface ISchemaResult {
 }
 
 export interface IDiagnostic {
+	priority?: number
 	severity: 'error' | 'warning' | 'info'
 	message: string
 	// location: string

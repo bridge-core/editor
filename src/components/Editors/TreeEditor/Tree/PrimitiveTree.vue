@@ -74,10 +74,13 @@
 		>
 			{{ treeValue }}
 		</Highlight>
+
+		<InlineDiagnostic v-if="diagnostic" :diagnostic="diagnostic" />
 	</div>
 </template>
 
 <script>
+import InlineDiagnostic from '../InlineDiagnostic.vue'
 import Highlight from '../Highlight.vue'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
@@ -85,7 +88,7 @@ import { useLongPress } from '/@/components/Composables/LongPress'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
 export default {
-	components: { Highlight },
+	components: { Highlight, InlineDiagnostic },
 	name: 'PrimitiveTree',
 	mixins: [HighlighterMixin(['atom', 'string', 'number']), DevModeMixin],
 	props: {

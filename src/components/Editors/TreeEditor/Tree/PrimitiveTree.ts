@@ -43,9 +43,6 @@ export class PrimitiveTree extends Tree<TPrimitiveTree> {
 		else if (!Number.isNaN(Number(value))) this.setValue(Number(value))
 		else if (value === 'null') this.setValue(null)
 		else this.setValue(value)
-
-		// We need to update the parent because an if schema could potentially be affected
-		this.parent?.requestValidation()
 	}
 
 	isEmpty() {

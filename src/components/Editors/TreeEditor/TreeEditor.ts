@@ -78,14 +78,6 @@ export class TreeEditor {
 			this.parent.fileDidChange()
 		})
 
-		// Once schemas are loaded, validate files once
-		let didInitialValidation = false
-		const runInitialValidation = () => {
-			if (didInitialValidation) return
-			didInitialValidation = true
-			tree.requestValidation()
-		}
-
 		App.getApp().then(async (app) => {
 			await app.projectManager.projectReady.fired
 
@@ -93,14 +85,14 @@ export class TreeEditor {
 				if (!app.project.jsonDefaults.isReady) return
 
 				this.createSchemaRoot()
-				runInitialValidation()
+				if (this.parent.isSelected) tree.requestValidation()
 			})
 
 			app.project.jsonDefaults.on(() => {
 				if (!this.parent.hasFired) return
 
 				this.createSchemaRoot()
-				runInitialValidation()
+				if (this.parent.isSelected) tree.requestValidation()
 			})
 		})
 

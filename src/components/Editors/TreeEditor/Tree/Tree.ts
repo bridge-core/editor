@@ -40,8 +40,6 @@ export abstract class Tree<T> {
 	}
 	setParent(parent: ObjectTree | ArrayTree | null) {
 		this.parent = parent
-
-		this.parent?.requestValidation()
 	}
 	get treeEditor(): TreeEditor {
 		if (this._treeEditor) return this._treeEditor
@@ -106,8 +104,6 @@ export abstract class Tree<T> {
 			index,
 			this.parent.type === 'array' ? tree : [this.key, tree]
 		)
-
-		this.parent.requestValidation()
 	}
 
 	delete() {
@@ -136,8 +132,6 @@ export abstract class Tree<T> {
 
 		const [deleted] = this.parent.children.splice(index, 1)
 
-		this.parent.requestValidation()
-
 		return <const>[index, Array.isArray(deleted) ? deleted[0] : '']
 	}
 
@@ -148,7 +142,12 @@ export abstract class Tree<T> {
 			.getSchemas(this)
 			.map((schema) => schema.validate(this.toJSON()))
 			.flat()
-			.reverse()
+			// Sort by optional priority number
+			.sort((a, b) => {
+				if (a.priority === undefined) return 1
+				if (b.priority === undefined) return -1
+				return a.priority - b.priority
+			})
 
 		// There are two cases in which we need to clear the parent's cache:
 		// 1. We had diagnostics and now we don't
