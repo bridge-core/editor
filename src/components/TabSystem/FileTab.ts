@@ -113,7 +113,7 @@ export abstract class FileTab extends Tab {
 
 		setRichPresence({
 			details: 'Developing add-ons...',
-			state: `Editing ${a} ${fileTypeName.toLowerCase()}`,
+			state: `Editing ${a} ${fileTypeName} file`,
 		})
 		await super.onActivate()
 	}
