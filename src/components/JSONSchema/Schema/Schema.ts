@@ -28,6 +28,11 @@ export const pathWildCard = '-!<bridge:any-schema>!-'
 export abstract class Schema {
 	public readonly schemaType?: 'ifSchema' | 'refSchema'
 	public abstract readonly types: TSchemaType[]
+
+	public get hasDoNotSuggest() {
+		return false
+	}
+
 	constructor(
 		protected location: string,
 		protected key: string,
