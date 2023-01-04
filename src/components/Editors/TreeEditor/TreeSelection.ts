@@ -1,5 +1,5 @@
 import { CollectedEntry } from './History/CollectedEntry'
-import { DeleteEntry } from './History/DeleteEntry'
+import { DeleteEntry, UndoDeleteEntry } from './History/DeleteEntry'
 import { EditPropertyEntry } from './History/EditPropertyEntry'
 import { EditValueEntry } from './History/EditValueEntry'
 import type { HistoryEntry } from './History/HistoryEntry'
@@ -120,6 +120,17 @@ export class TreeSelection {
 
 		return new CollectedEntry(historyEntries)
 	}
+
+	delete() {
+		const parent = this.tree.getParent()
+		if (!parent) return
+
+		this.parent.toggleSelection(parent)
+
+		const [index, key] = this.tree.delete()
+
+		return new UndoDeleteEntry(this.tree, index, key)
+	}
 }
 
 export class TreeValueSelection {
@@ -145,5 +156,26 @@ export class TreeValueSelection {
 		this.tree.edit(value)
 
 		return new EditValueEntry(this.tree, oldValue)
+	}
+
+	delete() {
+		const parent = this.tree.getParent()
+		if (!parent) return
+
+		if (parent.type === 'object') {
+			// A delete action on a primitive value replaces the PrimitiveTree with an emtpy ObjectTree
+			const newTree = new ObjectTree(parent, {})
+			this.parent.setSelection(newTree)
+
+			this.tree.replace(newTree)
+
+			return new ReplaceTreeEntry(this.tree, newTree)
+		} else {
+			this.parent.toggleSelection(parent)
+
+			const [index, key] = this.tree.delete()
+
+			return new UndoDeleteEntry(this.tree, index, key)
+		}
 	}
 }

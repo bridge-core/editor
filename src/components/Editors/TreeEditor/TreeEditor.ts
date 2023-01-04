@@ -259,29 +259,10 @@ export class TreeEditor {
 				const entries: HistoryEntry[] = []
 
 				this.forEachSelection((sel) => {
-					const tree = sel.getTree()
-					if (!tree.getParent()) return // May not delete global tree
-
 					sel.dispose()
 
-					if (
-						sel instanceof TreeValueSelection &&
-						tree.getParent()!.type === 'object'
-					) {
-						// A delete action on a primitive value replaces the PrimitiveTree with an emtpy ObjectTree
-						const newTree = new ObjectTree(tree.getParent(), {})
-						this.setSelection(newTree)
-
-						tree.replace(newTree)
-
-						entries.push(new ReplaceTreeEntry(tree, newTree))
-					} else {
-						this.toggleSelection(tree.getParent()!)
-
-						const [index, key] = tree.delete()
-
-						entries.push(new UndoDeleteEntry(tree, index, key))
-					}
+					const entry = sel.delete()
+					if (entry) entries.push(entry)
 				})
 
 				this.history.pushAll(entries)
@@ -518,6 +499,13 @@ export class TreeEditor {
 				?.description ?? ''
 
 		return { title, text: description }
+	}
+
+	pushHistoryEntry(entry: HistoryEntry) {
+		this.history.push(entry)
+	}
+	pushAllHistoryEntries(entries: HistoryEntry[]) {
+		this.history.pushAll(entries)
 	}
 
 	onPasteMenu(event?: MouseEvent, tree = this.tree) {
