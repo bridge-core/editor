@@ -148,6 +148,7 @@ export abstract class Tree<T> {
 			.getSchemas(this)
 			.map((schema) => schema.validate(this.toJSON()))
 			.flat()
+			.reverse()
 
 		// There are two cases in which we need to clear the parent's cache:
 		// 1. We had diagnostics and now we don't
