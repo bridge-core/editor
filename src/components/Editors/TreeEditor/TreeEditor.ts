@@ -181,10 +181,6 @@ export class TreeEditor {
 	}, 50)
 
 	createSchemaRoot() {
-		console.log(
-			this.parent.getPath(),
-			App.fileType.get(this.parent.getPath())
-		)
 		const schemaUri = App.fileType.get(this.parent.getPath())?.schema
 		if (schemaUri)
 			this.schemaRoot = SchemaManager.addRootSchema(
