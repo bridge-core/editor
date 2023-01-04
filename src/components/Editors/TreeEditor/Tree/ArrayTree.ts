@@ -56,6 +56,9 @@ export class ArrayTree extends Tree<Array<unknown>> {
 	}
 	addChild(child: Tree<unknown>) {
 		this._children.push(child)
+
+		// We need to update the parent because an if schema could potentially be affected
+		this.parent?.requestValidation()
 	}
 
 	setOpen(val: boolean, force = false) {
@@ -73,6 +76,9 @@ export class ArrayTree extends Tree<Array<unknown>> {
 		let newTree = this.children[newIndex]
 		this.children[newIndex] = oldTree
 		delete this.children[oldIndex]
+
+		// We need to update the parent because an if schema could potentially be affected
+		this.parent?.requestValidation()
 
 		return {
 			undo: () => {

@@ -69,11 +69,11 @@ export class TreeSelection {
 			// Make sure to update parent reference before adding tree as child
 			newTree.setParent(addToTree)
 
-			this.tree.children.push(addToTree)
+			this.tree.addChild(addToTree)
 			addToTree.setOpen(true, true)
 		}
 
-		addToTree.children.push([key, newTree])
+		addToTree.addChild(key, newTree)
 		this.parent.setSelection(newTree)
 
 		this.tree.setOpen(true, true)
