@@ -5,7 +5,6 @@ import { SolidButton } from '../../Solid/Inputs/Button/SolidButton'
 import { SolidSpacer } from '../../Solid/SolidSpacer'
 import { SolidWindow } from '../../Solid/Window/Window'
 import { App } from '/@/App'
-import { version } from '/@/utils/app/version'
 
 const ErrorWindow: Component<{
 	error: Error
