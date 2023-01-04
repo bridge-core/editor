@@ -60,7 +60,7 @@ export class TypeSchema extends Schema {
 			return [
 				<const>{
 					severity: 'warning',
-					message: `Invalid type: Found ${valType}; expected ${values.join(
+					message: `This node is of type ${valType}; expected ${values.join(
 						', '
 					)}`,
 				},

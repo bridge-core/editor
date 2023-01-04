@@ -8,19 +8,25 @@
 			:disabled="!dragAndDropEnabled || pointerDevice === 'touch'"
 			@change="onChange"
 		>
-			<component
-				v-for="[key, child] in children"
-				:key="child.uuid"
-				:is="child.component"
-				:tree="child"
-				:treeEditor="treeEditor"
-				@setActive="$emit('setActive')"
-			>
-				<span v-if="tree.type === 'array'" :style="numberDef">{{
-					key
-				}}</span>
-				<Highlight v-else :value="key" />
-			</component>
+			<template v-for="[key, child] in children">
+				<InlineDiagnostic
+					v-if="child.highestSeverityDiagnostic"
+					:diagnostic="child.highestSeverityDiagnostic"
+					:key="`diagnostic.${child.uuid}`"
+				/>
+				<component
+					:key="child.uuid"
+					:is="child.component"
+					:tree="child"
+					:treeEditor="treeEditor"
+					@setActive="$emit('setActive')"
+				>
+					<span v-if="tree.type === 'array'" :style="numberDef">{{
+						key
+					}}</span>
+					<Highlight v-else :value="key" />
+				</component>
+			</template>
 		</Draggable>
 	</div>
 </template>
@@ -33,6 +39,7 @@ import Draggable from 'vuedraggable'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState.ts'
 import { MoveEntry } from '../History/MoveEntry.ts'
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
+import InlineDiagnostic from '../InlineDiagnostic.vue'
 
 export default {
 	name: 'TreeChildren',
@@ -40,6 +47,7 @@ export default {
 	components: {
 		Highlight,
 		Draggable,
+		InlineDiagnostic,
 	},
 	props: {
 		tree: Object,

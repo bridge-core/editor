@@ -71,8 +71,6 @@
 			>
 				mdi-alert-circle-outline
 			</v-icon>
-
-			<InlineDiagnostic v-if="diagnostic" :diagnostic="diagnostic" />
 		</summary>
 
 		<TreeChildren
@@ -93,7 +91,6 @@
 
 <script>
 import TreeChildren from './TreeChildren.vue'
-import InlineDiagnostic from '../InlineDiagnostic.vue'
 import { useLongPress } from '/@/components/Composables/LongPress'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
@@ -108,7 +105,6 @@ export default {
 	name: 'ObjectTree',
 	components: {
 		TreeChildren,
-		InlineDiagnostic,
 	},
 	mixins: [DevModeMixin],
 	props: {
