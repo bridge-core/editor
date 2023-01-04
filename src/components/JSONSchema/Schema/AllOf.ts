@@ -26,4 +26,7 @@ export class AllOfSchema extends ParentSchema {
 		if (allDiagnostics.length === 0) return []
 		return allDiagnostics
 	}
+	isValid(obj: unknown) {
+		return this.children.every((child) => child.isValid(obj))
+	}
 }

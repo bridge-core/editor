@@ -50,4 +50,15 @@ export class OneOfSchema extends ParentSchema {
 				},
 			]
 	}
+	isValid(obj: unknown) {
+		let matchedOne = false
+		for (const child of this.children) {
+			if (child.isValid(obj)) {
+				if (matchedOne) return false
+				matchedOne = true
+			}
+		}
+
+		return matchedOne
+	}
 }

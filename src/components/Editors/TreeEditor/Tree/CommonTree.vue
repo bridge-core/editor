@@ -28,15 +28,6 @@
 				mdi-chevron-right
 			</v-icon>
 
-			<v-icon
-				v-if="!tree.isOpen && tree.childHasDiagnostics"
-				small
-				color="warning"
-				class="mr-1"
-			>
-				mdi-alert-circle-outline
-			</v-icon>
-
 			<span v-if="showArrayIndices || tree.parent.type === 'object'">
 				<!-- Debugging helper -->
 				<span v-if="isDevMode">
@@ -64,14 +55,22 @@
 			<span
 				v-else-if="!showArrayIndices"
 				:class="{
-					'mx-2': pointerDevice !== 'touch',
+					'mx-1': pointerDevice !== 'touch',
 					'mx-6': pointerDevice === 'touch',
 				}"
 			/>
 
-			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">
+			<span class="pl-1" @click.stop.prevent="tree.toggleOpen()">
 				{{ openingBracket }}
 			</span>
+
+			<v-icon
+				v-if="!tree.isOpen && tree.childHasDiagnostics"
+				small
+				color="warning"
+			>
+				mdi-alert-circle-outline
+			</v-icon>
 		</summary>
 
 		<TreeChildren

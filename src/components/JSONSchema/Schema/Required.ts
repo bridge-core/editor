@@ -14,7 +14,7 @@ export class RequiredSchema extends Schema {
 	validate(obj: unknown) {
 		const values = Array.isArray(this.value) ? this.value : [this.value]
 
-		if (typeof obj !== 'object' || Array.isArray(obj))
+		if (Array.isArray(obj)) {
 			return [
 				<const>{
 					severity: 'warning',
@@ -23,6 +23,24 @@ export class RequiredSchema extends Schema {
 					)}`,
 				},
 			]
+		}
+
+		/**
+		 * @TODO - Support for passing down parent object so we can validate the parent object in the case described below.
+		 *
+		 * Case for key existence checks like this one:
+		 *
+		 * properties: {
+		 *   name: {
+		 *     required: ['name']
+		 *   }
+		 * }
+		 *
+		 * -> If typeof obj !== 'object, the validation should pass because we have no way to validate the parent object yet.
+		 */
+		if (typeof obj !== 'object') {
+			return []
+		}
 
 		for (const value of values) {
 			if ((<any>obj)[value] === undefined || (<any>obj)[value] === null)

@@ -97,10 +97,9 @@ export class ObjectTree extends Tree<object> {
 	}
 
 	validate() {
-		this._cachedChildHasDiagnostics = null
-		this.children.forEach(([, child]) => child.validate())
-
 		super.validate()
+
+		this.children.forEach(([, child]) => child.requestValidation())
 	}
 
 	protected _cachedChildHasDiagnostics: boolean | null = null
@@ -115,5 +114,9 @@ export class ObjectTree extends Tree<object> {
 		})
 
 		return this._cachedChildHasDiagnostics
+	}
+	clearDiagnosticsCache() {
+		super.clearDiagnosticsCache()
+		this._cachedChildHasDiagnostics = null
 	}
 }

@@ -141,8 +141,10 @@ export abstract class Tree<T> {
 		return <const>[index, Array.isArray(deleted) ? deleted[0] : '']
 	}
 
-	validate() {
-		this._cachedHighestSeverityDiagnostic = null
+	validate(first = true) {
+		if (first) this.clearParentDiagnosticCache()
+		else this.clearDiagnosticsCache()
+
 		if (this.value === 'bridge:test')
 			console.log(
 				this.treeEditor.getSchemas(this),
@@ -181,5 +183,13 @@ export abstract class Tree<T> {
 
 		this._cachedHighestSeverityDiagnostic = highestSeverity
 		return highestSeverity
+	}
+
+	clearDiagnosticsCache() {
+		this._cachedHighestSeverityDiagnostic = null
+	}
+	clearParentDiagnosticCache() {
+		this.clearDiagnosticsCache()
+		this.parent?.clearParentDiagnosticCache()
 	}
 }
