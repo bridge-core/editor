@@ -142,14 +142,6 @@ export abstract class Tree<T> {
 	}
 
 	validate() {
-		if (this.value === 'bridge:test')
-			console.log(
-				this.treeEditor.getSchemas(this),
-				this.treeEditor
-					.getSchemas(this)
-					.map((schema) => schema.validate(this.toJSON()))
-			)
-
 		let hadDiagnostics = this.diagnostics.length > 0
 
 		this.diagnostics = this.treeEditor

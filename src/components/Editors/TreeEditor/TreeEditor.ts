@@ -64,7 +64,6 @@ export class TreeEditor {
 
 	constructor(protected parent: TreeTab, protected json: unknown) {
 		const tree = createTree(this, json)
-		tree.validate()
 		this.setSelection(tree)
 		this.tree = tree
 
@@ -79,15 +78,29 @@ export class TreeEditor {
 			this.parent.fileDidChange()
 		})
 
+		// Once schemas are loaded, validate files once
+		let didInitialValidation = false
+		const runInitialValidation = () => {
+			if (didInitialValidation) return
+			didInitialValidation = true
+			tree.requestValidation()
+		}
+
 		App.getApp().then(async (app) => {
 			await app.projectManager.projectReady.fired
 
 			this.parent.once(() => {
-				if (app.project.jsonDefaults.isReady) this.createSchemaRoot()
+				if (!app.project.jsonDefaults.isReady) return
+
+				this.createSchemaRoot()
+				runInitialValidation()
 			})
 
 			app.project.jsonDefaults.on(() => {
-				if (this.parent.hasFired) this.createSchemaRoot()
+				if (!this.parent.hasFired) return
+
+				this.createSchemaRoot()
+				runInitialValidation()
 			})
 		})
 
@@ -168,6 +181,10 @@ export class TreeEditor {
 	}, 50)
 
 	createSchemaRoot() {
+		console.log(
+			this.parent.getPath(),
+			App.fileType.get(this.parent.getPath())
+		)
 		const schemaUri = App.fileType.get(this.parent.getPath())?.schema
 		if (schemaUri)
 			this.schemaRoot = SchemaManager.addRootSchema(
