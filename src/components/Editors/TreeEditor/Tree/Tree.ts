@@ -141,10 +141,7 @@ export abstract class Tree<T> {
 		return <const>[index, Array.isArray(deleted) ? deleted[0] : '']
 	}
 
-	validate(first = true) {
-		if (first) this.clearParentDiagnosticCache()
-		else this.clearDiagnosticsCache()
-
+	validate() {
 		if (this.value === 'bridge:test')
 			console.log(
 				this.treeEditor.getSchemas(this),
@@ -153,21 +150,37 @@ export abstract class Tree<T> {
 					.map((schema) => schema.validate(this.toJSON()))
 			)
 
+		let hadDiagnostics = this.diagnostics.length > 0
+
 		this.diagnostics = this.treeEditor
 			.getSchemas(this)
 			.map((schema) => schema.validate(this.toJSON()))
 			.flat()
+
+		// There are two cases in which we need to clear the parent's cache:
+		// 1. We had diagnostics and now we don't
+		// 2. We didn't have diagnostics and now we do
+		if (
+			(!hadDiagnostics && this.diagnostics.length > 0) ||
+			(hadDiagnostics && this.diagnostics.length === 0)
+		) {
+			this.clearParentDiagnosticsCache()
+		} else {
+			// Otherwise, we can just clear our own cache
+			this.clearDiagnosticsCache()
+		}
 	}
 	requestValidation() {
 		whenIdle(() => this.validate())
 	}
 
-	protected _cachedHighestSeverityDiagnostic: IDiagnostic | null = null
+	protected _cachedHighestSeverityDiagnostic: IDiagnostic | undefined | null =
+		null
 	get highestSeverityDiagnostic() {
 		if (this._cachedHighestSeverityDiagnostic !== null)
 			return this._cachedHighestSeverityDiagnostic
 
-		let highestSeverity: IDiagnostic | null = null
+		let highestSeverity: IDiagnostic | undefined = undefined
 
 		for (const diagnostic of this.diagnostics) {
 			if (diagnostic.severity === 'error') {
@@ -188,8 +201,8 @@ export abstract class Tree<T> {
 	clearDiagnosticsCache() {
 		this._cachedHighestSeverityDiagnostic = null
 	}
-	clearParentDiagnosticCache() {
+	clearParentDiagnosticsCache() {
 		this.clearDiagnosticsCache()
-		this.parent?.clearParentDiagnosticCache()
+		this.parent?.clearParentDiagnosticsCache()
 	}
 }

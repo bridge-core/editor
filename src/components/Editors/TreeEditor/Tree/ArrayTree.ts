@@ -95,8 +95,11 @@ export class ArrayTree extends Tree<Array<unknown>> {
 
 		this._cachedChildHasDiagnostics = this.children.some((child) => {
 			if (child.type === 'array' || child.type === 'object')
-				return (<ArrayTree | ObjectTree>child).childHasDiagnostics
-			return child.highestSeverityDiagnostic !== null
+				return (
+					!!child.highestSeverityDiagnostic ||
+					(<ArrayTree | ObjectTree>child).childHasDiagnostics
+				)
+			return !!child.highestSeverityDiagnostic
 		})
 
 		return this._cachedChildHasDiagnostics
