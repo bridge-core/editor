@@ -1,6 +1,7 @@
 import { IKeyBindingConfig } from './KeyBinding'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { v4 as uuid } from 'uuid'
+import { translate } from '../Locales/Manager'
 
 export interface IActionConfig {
 	type?: 'action'
@@ -44,6 +45,13 @@ export class SimpleAction extends EventDispatcher<void> {
 		return this.config.isDisabled ?? false
 	}
 	//#endregion
+
+	get translatedName() {
+		return translate(this.name)
+	}
+	get translatedDescription() {
+		return translate(this.description)
+	}
 
 	getConfig() {
 		return this.config
