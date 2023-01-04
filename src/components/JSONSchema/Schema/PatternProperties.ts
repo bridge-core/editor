@@ -53,9 +53,9 @@ export class PatternPropertiesSchema extends Schema {
 			return [
 				<const>{
 					severity: 'warning',
-					message: `Invalid type: Expected "object", received "${
+					message: `This node is of type "${
 						Array.isArray(obj) ? 'array' : typeof obj
-					}"`,
+					}"; expected object`,
 				},
 			]
 

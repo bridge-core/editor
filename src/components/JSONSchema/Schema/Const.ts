@@ -17,7 +17,7 @@ export class ConstSchema extends Schema {
 			return [
 				<const>{
 					severity: 'warning',
-					message: `Found ${val}; expected ${this.value}`,
+					message: `Found "${val}" here; expected "${this.value}"`,
 				},
 			]
 		return []

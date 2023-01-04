@@ -42,13 +42,7 @@ export class OneOfSchema extends ParentSchema {
 				},
 			]
 		else if (matchedOne) return []
-		else
-			return [
-				<const>{
-					severity: 'warning',
-					message: `JSON did not match any schema, expected exactly one match`,
-				},
-			]
+		else return allDiagnostics
 	}
 	isValid(obj: unknown) {
 		let matchedOne = false

@@ -38,13 +38,7 @@ export class ElseSchema extends Schema {
 		if (!this.ifSchema.isTrue(obj)) {
 			const diagnostics = this.rootSchema.validate(obj)
 
-			if (diagnostics.length > 0)
-				return [
-					<const>{
-						severity: 'warning',
-						message: `Invalid "else" schema`,
-					},
-				]
+			return diagnostics
 		}
 		return []
 	}
