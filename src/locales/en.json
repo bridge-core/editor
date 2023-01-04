@@ -1193,7 +1193,8 @@
 			"addArray": "Add Array",
 			"addValue": "Add Value",
 			"forceValue": "Force Value",
-			"edit": "Edit"
+			"edit": "Edit",
+			"childHasError": "One or more children have diagnostics"
 		},
 		"langValidation": {
 			"noValue": {

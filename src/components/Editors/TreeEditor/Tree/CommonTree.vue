@@ -64,13 +64,20 @@
 				{{ openingBracket }}
 			</span>
 
-			<v-icon
-				v-if="!tree.isOpen && tree.childHasDiagnostics"
-				small
-				color="warning"
-			>
-				mdi-alert-circle-outline
-			</v-icon>
+			<!-- Error icon + tooltip -->
+			<v-tooltip color="warning" right>
+				<template v-slot:activator="{ on }">
+					<v-icon
+						v-if="!tree.isOpen && tree.childHasDiagnostics"
+						v-on="on"
+						small
+						color="warning"
+					>
+						mdi-alert-circle-outline
+					</v-icon>
+				</template>
+				<span>{{ t('editors.treeEditor.childHasError') }}</span>
+			</v-tooltip>
 		</summary>
 
 		<TreeChildren
@@ -93,6 +100,7 @@
 import TreeChildren from './TreeChildren.vue'
 import { useLongPress } from '/@/components/Composables/LongPress'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
@@ -106,7 +114,7 @@ export default {
 	components: {
 		TreeChildren,
 	},
-	mixins: [DevModeMixin],
+	mixins: [DevModeMixin, TranslationMixin],
 	props: {
 		tree: Object,
 		treeKey: String,
