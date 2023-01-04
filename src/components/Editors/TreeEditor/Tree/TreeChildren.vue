@@ -66,6 +66,7 @@ export default {
 				)
 			} else if (event.added) {
 				event.added.element[1].parent = this.tree
+				this.tree.requestValidation()
 			}
 		},
 	},
