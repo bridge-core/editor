@@ -198,12 +198,18 @@ export class TreeEditor {
 		if (this.selections.length === 0 || tree === this.tree) {
 			return this.schemaRoot ? [this.schemaRoot] : []
 		} else if (tree) {
+			let path = null
+			try {
+				path = next ? [...tree.path, undefined] : tree.path
+			} catch {
+				// An error may occur if the tree was deleted while a suggestion update was still scheduled
+				return []
+			}
+
 			return [
 				...new Set(
-					this.schemaRoot?.getSchemasFor(
-						this.tree.toJSON(),
-						next ? [...tree.path, undefined] : tree.path
-					) ?? []
+					this.schemaRoot?.getSchemasFor(this.tree.toJSON(), path) ??
+						[]
 				),
 			]
 		}
