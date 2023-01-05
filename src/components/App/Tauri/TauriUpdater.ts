@@ -36,8 +36,6 @@ async function installTauriUpdate() {
 
 checkUpdate()
 	.then(async (update) => {
-		console.log(update.manifest)
-
 		if (!update.shouldUpdate) return
 
 		const notification = createNotification({
