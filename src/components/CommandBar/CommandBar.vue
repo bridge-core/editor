@@ -16,16 +16,20 @@
 			transition: 'slide-y-transition',
 			contentClass: 'commandbar-menu elevation-4',
 		}"
-		:items="actions"
+		:items="processedActions"
 		:item-text="(item) => `${t(item.name)}\n${t(item.description)}`"
 		:item-value="(item) => item"
 		:placeholder="t('general.search')"
+		:filter="filter"
+		:cache-items="false"
 		auto-select-first
 		:autofocus="autofocus"
-		v-model="currentItem"
+		:value="currentItem"
 		@change="onSelectedAction"
 		@focus="updateActions"
 		@blur="$emit('blur')"
+		@update:search-input="onUpdateSearchInput"
+		spellcheck="false"
 	>
 		<template v-slot:no-data>
 			<v-list-item>
@@ -58,6 +62,8 @@ import { CommandBarExtensionItems } from '../Extensions/Scripts/Modules/CommandB
 import { getDefaultFileIcon } from '/@/utils/file/getIcon'
 import { devActions } from '../Developer/Actions'
 import { getCommandBarActions } from './State'
+import { QuickScore } from 'quick-score'
+import { markRaw } from 'vue'
 
 export default {
 	props: {
@@ -71,6 +77,7 @@ export default {
 
 		return {
 			t,
+			quickScore: null,
 		}
 	},
 	async mounted() {
@@ -89,6 +96,7 @@ export default {
 	data: () => ({
 		currentItem: '',
 		actions: [],
+		processedActions: [],
 		disposables: [],
 	}),
 	methods: {
@@ -109,6 +117,33 @@ export default {
 				...extensionActions,
 				...getCommandBarActions(),
 			]
+			this.quickScore = markRaw(new QuickScore(this.actions))
+			this.processedActions = this.actions
+		},
+		onUpdateSearchInput(searchInput) {
+			console.log(searchInput, this.quickScore)
+			if (!this.quickScore) return
+
+			if (searchInput === null || searchInput === '') {
+				this.processedActions = this.actions
+				return
+			}
+
+			this.processedActions = this.quickScore
+				.search(searchInput, [
+					'translatedName',
+					'translatedDescription',
+				])
+				.map(({ item }) => item)
+			console.log(this.processedActions)
+
+			this.$nextTick(() => {
+				this.currentItem = searchInput
+				console.log(this.currentItem)
+			})
+		},
+		filter() {
+			return 1
 		},
 		onSelectedAction(item) {
 			this.$nextTick(() => (this.currentItem = ''))
