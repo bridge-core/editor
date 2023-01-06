@@ -65,15 +65,13 @@
 			</span>
 
 			<!-- Error icon + tooltip -->
-			<v-tooltip color="warning" right>
+			<v-tooltip
+				v-if="!tree.isOpen && tree.childHasDiagnostics"
+				color="warning"
+				right
+			>
 				<template v-slot:activator="{ on }">
-					<v-icon
-						v-if="!tree.isOpen && tree.childHasDiagnostics"
-						v-on="on"
-						small
-						color="warning"
-						@click.stop
-					>
+					<v-icon v-on="on" small color="warning" @click.stop>
 						mdi-alert-circle-outline
 					</v-icon>
 				</template>
