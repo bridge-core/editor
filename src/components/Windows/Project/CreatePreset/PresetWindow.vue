@@ -18,6 +18,7 @@
 				:label="t('windows.createPreset.searchPresets')"
 				v-model.lazy.trim="window.sidebar.filter"
 				autocomplete="off"
+				spellcheck="false"
 				autofocus
 				outlined
 				dense
@@ -62,6 +63,7 @@
 					autocomplete="off"
 					outlined
 					dense
+					spellcheck="false"
 					@keypress.enter="onCreatePreset"
 				/>
 				<span
@@ -104,6 +106,7 @@
 					}"
 					:label="name"
 					autocomplete="off"
+					spellcheck="false"
 					outlined
 					dense
 				/>

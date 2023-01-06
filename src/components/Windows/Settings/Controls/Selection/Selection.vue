@@ -8,6 +8,7 @@
 					dense
 					mandatory
 					outlined
+					spellcheck="false"
 					:value="value_"
 					@change="onChange"
 					@click.native="onClick"

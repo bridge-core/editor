@@ -33,6 +33,7 @@
 			v-model="editedPath"
 			:rules="Object.values(rules)"
 			dense
+			spellcheck="false"
 			@keydown.enter="tryToViewMode()"
 			@blur="tryToViewMode()"
 		/>

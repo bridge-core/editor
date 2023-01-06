@@ -18,6 +18,7 @@
 						v-model="state.assetName"
 						outlined
 						dense
+						spellcheck="false"
 						:label="t('windows.assetPreview.assetName')"
 					/>
 

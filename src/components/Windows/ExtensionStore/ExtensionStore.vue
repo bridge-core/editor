@@ -20,6 +20,7 @@
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
 				dense
+				spellcheck="false"
 			/>
 		</template>
 		<template #default>

@@ -20,6 +20,7 @@
 					dense
 					outlined
 					prepend-icon="mdi-pencil-outline"
+					spellcheck="false"
 					:rules="[
 						(value) =>
 							!!value.match(/^[a-zA-Z0-9_\.]*$/) ||

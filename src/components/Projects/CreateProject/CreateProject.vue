@@ -186,6 +186,7 @@
 					:label="t('windows.createProject.projectName.name')"
 					:rules="nameRules"
 					autocomplete="off"
+					spellcheck="false"
 					class="ml-2"
 					outlined
 					dense
@@ -208,6 +209,7 @@
 					v-model="state.createOptions.namespace"
 					:label="t('windows.createProject.projectPrefix')"
 					autocomplete="off"
+					spellcheck="false"
 					class="mr-2"
 					outlined
 					dense
@@ -216,6 +218,7 @@
 					v-model="state.createOptions.author"
 					:label="t('windows.createProject.projectAuthor')"
 					autocomplete="off"
+					spellcheck="false"
 					class="mx-2"
 					outlined
 					dense
@@ -225,6 +228,7 @@
 					v-model="state.createOptions.targetVersion"
 					:label="t('windows.createProject.projectTargetVersion')"
 					autocomplete="off"
+					spellcheck="false"
 					:menu-props="{
 						maxHeight: 220,
 						rounded: 'lg',

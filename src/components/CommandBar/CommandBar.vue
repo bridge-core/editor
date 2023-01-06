@@ -26,6 +26,7 @@
 		@change="onSelectedAction"
 		@focus="updateActions"
 		@blur="$emit('blur')"
+		spellcheck="false"
 	>
 		<template v-slot:no-data>
 			<v-list-item>

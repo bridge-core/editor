@@ -22,6 +22,7 @@
 				v-model.lazy.trim="sidebar.filter"
 				outlined
 				dense
+				spellcheck="false"
 			/>
 			<v-btn
 				v-if="state.showLoadAllButton"

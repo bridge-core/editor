@@ -62,6 +62,7 @@
 			@click.stop
 			:rules="[rules.validName, rules.required]"
 			enterkeyhint="enter"
+			spellcheck="false"
 		/>
 
 		<v-spacer />

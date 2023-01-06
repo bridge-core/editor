@@ -13,6 +13,7 @@
 					:items="config.options"
 					hide-details
 					:menu-props="{ maxHeight: 220 }"
+					spellcheck="false"
 				/>
 			</div>
 
