@@ -72,6 +72,7 @@
 						v-on="on"
 						small
 						color="warning"
+						@click.stop
 					>
 						mdi-alert-circle-outline
 					</v-icon>
