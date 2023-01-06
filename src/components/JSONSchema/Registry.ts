@@ -65,4 +65,5 @@ export const ignoreFields = new Set<string>([
 	'format',
 	'maxLength',
 	'multipleOf',
+	'markdownDescription',
 ])
