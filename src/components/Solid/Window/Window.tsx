@@ -79,8 +79,8 @@ export const WindowComponent: Component<{
                     backdrop:backdrop-blur-xs
                     
                     align-middle
-                    dark:bg-neutral-900
-                    dark:text-neutral-300
+                    bg-surface
+                    dark:text-neutral-100
                     select-none
                 "
 				classList={{

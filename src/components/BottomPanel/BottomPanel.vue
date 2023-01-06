@@ -18,7 +18,7 @@
 				'rounded-r-lg': !isAttachedRight,
 			}"
 			:style="{
-				background: 'var(--v-expandedSidebar-base)',
+				background: 'var(--v-sidebarNavigation-base)',
 				position: 'fixed',
 				left: isAttachedRight ? null : 0,
 				right: isAttachedRight ? 0 : null,
@@ -44,7 +44,6 @@ import { watch } from 'vue'
 import { App } from '/@/App'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import { VuePanelContent } from './PanelContent'
-import { settingsState } from '../Windows/Settings/SettingsState'
 import { useSidebarState } from '../Composables/Sidebar/useSidebarState'
 
 const height = App.bottomPanel.height

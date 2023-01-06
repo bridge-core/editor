@@ -33,7 +33,7 @@ export function SolidButton(props: SolidButtonProps) {
 			"
 			classList={{
 				[props.class!]: !!props.class,
-				[`text-white`]: props.color === 'primary',
+				[`text-neutral-100`]: props.color === 'primary',
 			}}
 			style={{
 				'background-color': `var(--v-${props.color ?? 'toolbar'}-base)`,
