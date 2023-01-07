@@ -1004,6 +1004,11 @@
 				"title": "Downloaded Compiler Plugin",
 				"description": "You have just downloaded a new compiler plugin. Make sure to add it to your compiler config file or otherwise it won't have an effect.",
 				"openConfig": "Open Config"
+			},
+			"failedExtensionLoad": {
+				"title": "failed to load",
+				"description1": "The extension manifest",
+				"description2": "is invalid. Please consider contacting the extension author to fix this issue."
 			}
 		},
 		"pluginInstallLocation": {
