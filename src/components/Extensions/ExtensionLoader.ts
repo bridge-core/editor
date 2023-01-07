@@ -10,6 +10,8 @@ import {
 	AnyHandle,
 } from '../FileSystem/Types'
 import { TPackTypeId } from '../Data/PackType'
+import { emitWarning } from '../Notifications/warn'
+import { translate } from '../Locales/Manager'
 
 export interface IExtensionManifest {
 	icon?: string
@@ -151,9 +153,28 @@ export class ExtensionLoader extends Signal<void> {
 		}
 
 		const manifestFile = await manifestHandle.getFile()
-		const manifest: Partial<IExtensionManifest> = await manifestFile
+		const manifest: Partial<IExtensionManifest> | null = await manifestFile
 			.text()
 			.then((str) => JSON.parse(str))
+			.catch(() => {
+				// Invalid JSON
+				// Show message informing that an extension failed to load
+				emitWarning(
+					`${baseDirectory.name} ${translate(
+						'windows.extensionStore.failedExtensionLoad.title'
+					)}`,
+					`[${translate(
+						'windows.extensionStore.failedExtensionLoad.description1'
+					)} "${baseDirectory.name}/manifest.json" ${translate(
+						'windows.extensionStore.failedExtensionLoad.description2'
+					)}]`
+				)
+
+				// Return null to indicate that the extension failed to load
+				return null
+			})
+
+		if (manifest === null) return
 
 		if (manifest.id) {
 			const extension = new Extension(
