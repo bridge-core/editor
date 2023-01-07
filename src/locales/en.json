@@ -137,6 +137,10 @@
 	},
 	"actions": {
 		"name": "Actions",
+		"viewBridgeFolder": {
+			"name": "View bridge. Folder",
+			"description": "View the folder where bridge. stores your projects"
+		},
 		"about": {
 			"name": "About",
 			"description": "About bridge."
