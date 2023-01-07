@@ -14,8 +14,15 @@ export async function setupSidebar() {
 		displayName: 'windows.projectChooser.title',
 		icon: 'mdi-view-dashboard-outline',
 		disabled: () =>
+			// Disable the projects chooser if...
+			// - We have no projects
 			App.instance.hasNoProjects &&
-			App.instance.bridgeFolderSetup.hasFired,
+			// - We have already setup the bridge folder
+			App.instance.bridgeFolderSetup.hasFired &&
+			// - We do not have com.mojang projects
+			!App.instance.windows.projectChooser.comMojangProjectLoader
+				.hasProjects.value,
+
 		onClick: async () => {
 			if (
 				App.instance.hasNoProjects &&

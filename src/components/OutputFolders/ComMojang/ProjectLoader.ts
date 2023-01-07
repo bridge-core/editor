@@ -1,4 +1,5 @@
 import { compareVersions } from 'bridge-common-utils'
+import { computed, Ref, ref } from 'vue'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { settingsState } from '../../Windows/Settings/SettingsState'
 import { App } from '/@/App'
@@ -18,28 +19,37 @@ export interface IComMojangProject {
 }
 
 export class ComMojangProjectLoader {
-	protected cachedProjects: IComMojangProject[] | null = null
+	protected cachedProjects = <Ref<IComMojangProject[] | null>>ref(null)
+	public readonly hasProjects = computed(
+		() => (this.cachedProjects.value?.length ?? 0) > 0
+	)
+	protected initialLoadPromise?: Promise<IComMojangProject[]>
 
-	constructor(protected app: App) {}
+	constructor(protected app: App) {
+		this.initialLoadPromise = this.loadProjects()
+	}
 
-	get comMojang() {
+	protected get comMojang() {
 		return this.app.comMojang
 	}
-	get fileSystem() {
+	protected get fileSystem() {
 		return this.app.comMojang.fileSystem
 	}
 
 	clearCache() {
-		this.cachedProjects = null
+		this.cachedProjects.value = null
 	}
 
 	async loadProjects() {
+		if (this.initialLoadPromise) await this.initialLoadPromise
+
 		if (!(settingsState?.projects?.loadComMojangProjects ?? true)) {
 			this.clearCache()
 			return []
 		}
-		if (this.cachedProjects !== null) return this.cachedProjects
+		if (this.cachedProjects.value !== null) return this.cachedProjects.value
 
+		await this.comMojang.fired
 		if (
 			!this.comMojang.setup.hasFired ||
 			!this.comMojang.status.hasComMojang
@@ -76,11 +86,11 @@ export class ComMojangProjectLoader {
 			})
 		}
 
-		this.cachedProjects = projects
+		this.cachedProjects.value = projects
 		return projects
 	}
 
-	async loadPacks(
+	protected async loadPacks(
 		folderName: 'development_behavior_packs' | 'development_resource_packs'
 	) {
 		const packs = new Map<string, IComMojangPack>()
@@ -127,7 +137,7 @@ export class ComMojangProjectLoader {
 		return packs
 	}
 
-	isV2Project(manifest: any) {
+	protected isV2Project(manifest: any) {
 		const uuid = manifest?.header?.uuid
 
 		const bridgeVersion =

@@ -199,6 +199,7 @@ export class ProjectManager extends Signal<void> {
 			)
 		}
 
+		// Setup com.mojang folder if necessary
 		if (!this.app.comMojang.hasFired && projectName !== virtualProjectName)
 			this.app.comMojang.setupComMojang()
 
