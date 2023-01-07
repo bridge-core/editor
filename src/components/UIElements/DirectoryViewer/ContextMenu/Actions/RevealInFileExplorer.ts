@@ -1,9 +1,12 @@
-import { join } from '@tauri-apps/api/path'
+import { VirtualDirectoryHandle } from '/@/components/FileSystem/Virtual/DirectoryHandle'
+import { VirtualFileHandle } from '/@/components/FileSystem/Virtual/FileHandle'
+import { TauriFsStore } from '/@/components/FileSystem/Virtual/Stores/TauriFs'
 import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/BaseWrapper'
-import { getBridgeFolderPath } from '/@/utils/getBridgeFolderPath'
 import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
 
-export const RevealInFileExplorer = (baseWrapper: BaseWrapper<any>) => {
+export const RevealInFileExplorer = (
+	baseWrapper: BaseWrapper<VirtualDirectoryHandle | VirtualFileHandle>
+) => {
 	if (!import.meta.env.VITE_IS_TAURI_APP) return null
 
 	return {
@@ -14,9 +17,10 @@ export const RevealInFileExplorer = (baseWrapper: BaseWrapper<any>) => {
 		name: 'actions.revealInFileExplorer.name',
 		onTrigger: async () => {
 			let path = baseWrapper.path
-			if (!path) return
+			const baseStore = baseWrapper.handle.getBaseStore()
+			if (!(baseStore instanceof TauriFsStore) || !path) return
 
-			revealInFileExplorer(await join(await getBridgeFolderPath(), path))
+			revealInFileExplorer(await baseStore.resolvePath(path))
 		},
 	}
 }
