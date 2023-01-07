@@ -47,6 +47,17 @@ export function setupProjectCategory(app: App) {
 			},
 		})
 	)
+	project.addItem(
+		app.actionManager.create({
+			icon: 'mdi-minecraft',
+			name: 'actions.launchMinecraft.name',
+			description: 'actions.launchMinecraft.description',
+			keyBinding: 'F5',
+			onTrigger: () => {
+				App.openUrl('minecraft:')
+			},
+		})
+	)
 	project.addItem(new Divider())
 
 	project.addItem(

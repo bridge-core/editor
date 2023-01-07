@@ -141,6 +141,10 @@
 			"name": "About",
 			"description": "About bridge."
 		},
+		"launchMinecraft": {
+			"name": "Launch Minecraft",
+			"description": "Launch Minecraft to test your projects"
+		},
 		"download": {
 			"name": "Download",
 			"description": "Download this file or folder"
