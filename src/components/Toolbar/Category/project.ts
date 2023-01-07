@@ -5,6 +5,8 @@ import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
 import { importNewProject } from '/@/components/Projects/Import/ImportNew'
 import { virtualProjectName } from '/@/components/Projects/Project/Project'
+import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
+import { getBridgeFolderPath } from '/@/utils/getBridgeFolderPath'
 
 export function setupProjectCategory(app: App) {
 	const project = new ToolbarCategory(
@@ -66,6 +68,18 @@ export function setupProjectCategory(app: App) {
 			onTrigger: () => importNewProject(),
 		})
 	)
+	if (import.meta.env.VITE_IS_TAURI_APP) {
+		project.addItem(
+			app.actionManager.create({
+				icon: 'mdi-folder-search-outline',
+				name: 'actions.viewBridgeFolder.name',
+				description: 'actions.viewBridgeFolder.description',
+				onTrigger: async () => {
+					revealInFileExplorer(await getBridgeFolderPath())
+				},
+			})
+		)
+	}
 	project.addItem(new Divider())
 
 	project.addItem(
