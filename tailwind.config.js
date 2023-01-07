@@ -38,6 +38,9 @@ module.exports = {
 			},
 			colors: {
 				primary: 'var(--v-primary-base)',
+				error: 'var(--v-error-base)',
+				warning: 'var(--v-warning-base)',
+				info: 'var(--v-info-base)',
 			},
 		},
 	},

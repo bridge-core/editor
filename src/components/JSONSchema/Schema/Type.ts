@@ -49,12 +49,20 @@ export class TypeSchema extends Schema {
 	validate(val: unknown) {
 		const values = Array.isArray(this.value) ? this.value : [this.value]
 
-		if (!values.includes(getTypeOf(val)))
+		// Every number is also an integer
+		if (values.includes('number') && !values.includes('integer')) {
+			values.push('integer')
+		}
+
+		let valType = getTypeOf(val)
+
+		if (!values.includes(valType))
 			return [
-				{
-					message: `Invalid type: Found ${getTypeOf(
-						val
-					)}; expected ${values.join(', ')}`,
+				<const>{
+					severity: 'warning',
+					message: `This node is of type ${valType}; expected ${values.join(
+						', '
+					)}`,
 				},
 			]
 

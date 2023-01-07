@@ -820,6 +820,10 @@
 					"name": "Color Scheme",
 					"description": "Choose the color scheme of bridge.'s UI"
 				},
+				"highContrast": {
+					"name": "High Contrast",
+					"description": "Enable high contrast mode"
+				},
 				"darkTheme": {
 					"name": "Dark Theme",
 					"description": "Select the default dark theme bridge. uses"
@@ -962,6 +966,10 @@
 				"showTreeEditorLocationBar": {
 					"name": "Show Tree Editor Location Bar",
 					"description": "Allows you to quickly navigate your JSON file within the tree editor by displaying your current location above the editor."
+				},
+				"inlineTreeEditorDiagnostics": {
+					"name": "Inline Diagnostics",
+					"description": "Show diagnostic messages above the affected tree editor node"
 				},
 				"bridgePredictions": {
 					"name": "bridge. Predictions",
@@ -1190,7 +1198,8 @@
 			"addArray": "Add Array",
 			"addValue": "Add Value",
 			"forceValue": "Force Value",
-			"edit": "Edit"
+			"edit": "Edit",
+			"childHasError": "One or more children have diagnostics"
 		},
 		"langValidation": {
 			"noValue": {

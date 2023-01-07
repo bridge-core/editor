@@ -26,10 +26,19 @@ export class NotSchema extends Schema {
 	}
 
 	validate(obj: unknown) {
+		if (this.rootSchema.isValid(obj)) {
+			return [
+				<const>{
+					severity: 'warning',
+					message: 'Expected schema to be invalid',
+				},
+			]
+		}
+
 		return []
 	}
 
 	isValid(obj: unknown) {
-		return this.rootSchema.validate(obj).length > 0
+		return !this.rootSchema.isValid(obj)
 	}
 }

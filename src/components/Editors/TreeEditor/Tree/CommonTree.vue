@@ -27,27 +27,56 @@
 			>
 				mdi-chevron-right
 			</v-icon>
+
 			<span v-if="showArrayIndices || tree.parent.type === 'object'">
 				<!-- Debugging helper -->
 				<span v-if="isDevMode">
 					s: {{ tree.type }} p: {{ tree.parent.type }}
 				</span>
 
-				<span @dblclick="tree.toggleOpen()"> <slot /> </span
+				<span
+					class="decoration-wavy"
+					:class="{
+						underline: diagnostic,
+						'decoration-error':
+							diagnostic && diagnostic.severity === 'error',
+						'decoration-warning':
+							diagnostic && diagnostic.severity === 'warning',
+						'decoration-info':
+							diagnostic && diagnostic.severity === 'info',
+					}"
+					:title="diagnostic?.message"
+					@dblclick="tree.toggleOpen()"
+				>
+					<slot /> </span
 				>{{ hideBracketsWithinTreeEditor ? undefined : ':' }}</span
 			>
 			<!-- Spacer to make array objects easier to select -->
 			<span
 				v-else-if="!showArrayIndices"
 				:class="{
-					'mx-2': pointerDevice !== 'touch',
+					'mx-1': pointerDevice !== 'touch',
 					'mx-6': pointerDevice === 'touch',
 				}"
 			/>
 
-			<span class="px-1" @click.stop.prevent="tree.toggleOpen()">
+			<span class="pl-1" @click.stop.prevent="tree.toggleOpen()">
 				{{ openingBracket }}
 			</span>
+
+			<!-- Error icon + tooltip -->
+			<v-tooltip
+				v-if="!tree.isOpen && tree.childHasDiagnostics"
+				color="warning"
+				right
+			>
+				<template v-slot:activator="{ on }">
+					<v-icon v-on="on" small color="warning" @click.stop>
+						mdi-alert-circle-outline
+					</v-icon>
+				</template>
+				<span>{{ t('editors.treeEditor.childHasError') }}</span>
+			</v-tooltip>
 		</summary>
 
 		<TreeChildren
@@ -70,6 +99,7 @@
 import TreeChildren from './TreeChildren.vue'
 import { useLongPress } from '/@/components/Composables/LongPress'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
+import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { pointerDevice } from '/@/utils/pointerDevice'
 
@@ -83,7 +113,7 @@ export default {
 	components: {
 		TreeChildren,
 	},
-	mixins: [DevModeMixin],
+	mixins: [DevModeMixin, TranslationMixin],
 	props: {
 		tree: Object,
 		treeKey: String,
@@ -137,6 +167,9 @@ export default {
 
 			return this.tree.isOpen ? brackets[this.tree.type][1] : undefined
 		},
+		diagnostic() {
+			return this.tree.highestSeverityDiagnostic
+		},
 	},
 	methods: {
 		onClickKey(event) {
@@ -157,6 +190,7 @@ export default {
 
 <style scoped>
 .common-tree-key {
+	cursor: pointer;
 	list-style-type: none;
 	display: inline-block;
 	outline: none;

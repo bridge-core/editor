@@ -3,6 +3,7 @@ import { Tree, treeElementHeight } from './Tree'
 import ArrayTreeComponent from './CommonTree.vue'
 import type { ObjectTree } from './ObjectTree'
 import { markRaw } from 'vue'
+import { TreeEditor } from '../TreeEditor'
 
 export class ArrayTree extends Tree<Array<unknown>> {
 	public component = markRaw(ArrayTreeComponent)
@@ -11,7 +12,7 @@ export class ArrayTree extends Tree<Array<unknown>> {
 	protected _children: Tree<unknown>[]
 
 	constructor(
-		parent: ObjectTree | ArrayTree | null,
+		parent: ObjectTree | ArrayTree | TreeEditor | null,
 		protected _value: Array<unknown>
 	) {
 		super(parent)
@@ -79,5 +80,33 @@ export class ArrayTree extends Tree<Array<unknown>> {
 				this.children[newIndex] = newTree
 			},
 		}
+	}
+
+	validate() {
+		super.validate()
+
+		this.children.forEach((child) => child.requestValidation())
+	}
+
+	protected _cachedChildHasDiagnostics: boolean | null = null
+	get childHasDiagnostics() {
+		if (this._cachedChildHasDiagnostics !== null)
+			return this._cachedChildHasDiagnostics
+
+		this._cachedChildHasDiagnostics = this.children.some((child) => {
+			if (child.type === 'array' || child.type === 'object')
+				return (
+					!!child.highestSeverityDiagnostic ||
+					(<ArrayTree | ObjectTree>child).childHasDiagnostics
+				)
+			return !!child.highestSeverityDiagnostic
+		})
+
+		return this._cachedChildHasDiagnostics
+	}
+
+	clearDiagnosticsCache() {
+		super.clearDiagnosticsCache()
+		this._cachedChildHasDiagnostics = null
 	}
 }

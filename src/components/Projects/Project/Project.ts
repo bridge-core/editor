@@ -34,6 +34,7 @@ import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
 import { iterateDir } from '/@/utils/iterateDir'
 import { Signal } from '../../Common/Event/Signal'
 import { moveHandle } from '/@/utils/file/moveHandle'
+import { TreeTab } from '../../Editors/TreeEditor/Tab'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -510,7 +511,9 @@ export abstract class Project {
 
 	async getFileFromDiskOrTab(filePath: string) {
 		const tab = await this.getFileTabWithPath(filePath)
-		if (tab && tab instanceof FileTab) return await tab.getFile()
+
+		if (tab instanceof FileTab || tab instanceof TreeTab)
+			return await tab.getFile()
 
 		return await this.app.fileSystem.readFile(filePath)
 	}

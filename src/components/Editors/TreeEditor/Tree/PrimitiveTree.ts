@@ -3,13 +3,14 @@ import PrimitiveTreeComponent from './PrimitiveTree.vue'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'
 import { markRaw } from 'vue'
+import { TreeEditor } from '../TreeEditor'
 
 export class PrimitiveTree extends Tree<TPrimitiveTree> {
 	public component = markRaw(PrimitiveTreeComponent)
 	public isValueSelected = false
 
 	constructor(
-		parent: ObjectTree | ArrayTree | null,
+		parent: ObjectTree | ArrayTree | TreeEditor | null,
 		protected _value: TPrimitiveTree
 	) {
 		super(parent)
