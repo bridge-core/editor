@@ -68,7 +68,7 @@ export async function moveFileHandle(
 
 	// 3. Write file content to new file
 	const writable = await newHandle.createWritable()
-	await writable.write(file)
+	await writable.write(file.isVirtual ? await file.toBlobFile() : file)
 	await writable.close()
 	// 4. Delete old file
 	if (fromHandle) await fromHandle.removeEntry(moveHandle.name)

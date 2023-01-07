@@ -1,7 +1,6 @@
 import { Component } from 'solid-js'
 import { useRipple } from '../../Directives/Ripple/Ripple'
 import { SolidIcon } from '../../Icon/SolidIcon'
-import './IconButton.css'
 
 interface IconButtonProps {
 	icon: string
@@ -13,14 +12,31 @@ interface IconButtonProps {
 export const SolidIconButton: Component<IconButtonProps> = (props) => {
 	const ripple = useRipple()
 
+	const isDisabled = () => props.disabled ?? false
+
 	return (
 		<button
-			use:ripple={!props.disabled}
-			class="solid-icon-button d-flex align-center justify-center rounded-circle"
-			classList={{ 'solid-icon-button-disabled': props.disabled }}
-			onClick={props.onClick}
+			use:ripple={!isDisabled()}
+			class="
+				w-10
+				h-10
+				rounded-full
+				focus:outline-none
+				transition-transform
+				ease-in-out
+				duration-200
+				disabled:opacity-50
+				disabled:cursor-default
+				enabled:active:scale-[.95]
+				enabled:focus:scale-110
+				enabled:hover:scale-110
+			"
+			disabled={isDisabled()}
+			onClick={() => (props.disabled ? undefined : props.onClick())}
 		>
-			<SolidIcon icon={props.icon} size={props.size} />
+			<span class="flex items-center justify-center">
+				<SolidIcon icon={props.icon} size={props.size} />
+			</span>
 		</button>
 	)
 }

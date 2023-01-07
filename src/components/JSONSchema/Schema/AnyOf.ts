@@ -31,4 +31,7 @@ export class AnyOfSchema extends ParentSchema {
 
 		return allDiagnostics
 	}
+	isValid(obj: unknown) {
+		return this.children.some((child) => child.isValid(obj))
+	}
 }

@@ -38,6 +38,15 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
+		new Toggle({
+			category: 'appearance',
+			name: 'windows.settings.appearance.highContrast.name',
+			description: 'windows.settings.appearance.highContrast.description',
+			key: 'highContrast',
+			default: false,
+		})
+	)
+	settings.addControl(
 		new Selection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.darkTheme.name',
@@ -450,6 +459,16 @@ export async function setupSettings(settings: SettingsWindow) {
 			description:
 				'windows.settings.editor.bridgePredictions.description',
 			key: 'bridgePredictions',
+			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
+			description:
+				'windows.settings.editor.inlineTreeEditorDiagnostics.description',
+			key: 'inlineTreeEditorDiagnostics',
 			default: true,
 		})
 	)

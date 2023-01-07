@@ -26,7 +26,7 @@
 				class="d-flex align-center justify-center mt-3 mb-2 mx-1 rounded-lg"
 				v-ripple
 			>
-				<BridgeLogo :height="32" @click.native="openChangelogWindow" />
+				<BridgeLogo class="h-10" @click.native="openAboutWindow" />
 			</div>
 
 			<SidebarButton
@@ -89,6 +89,7 @@
 					size="24"
 					width="2"
 					color="white"
+					:indeterminate="task.progress === undefined"
 					:value="task.progress"
 				/>
 			</SidebarButton>
@@ -105,6 +106,7 @@ import { NotificationStore } from '/@/components/Notifications/state.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import { App } from '/@/App'
 import { version as appVersion } from '/@/utils/app/version'
+import { openAboutWindow } from '../Windows/About/AboutWindow'
 
 export default {
 	name: 'Sidebar',
@@ -168,9 +170,8 @@ export default {
 		showMobileMenu(event) {
 			App.toolbar.showMobileMenu(event)
 		},
-		async openChangelogWindow() {
-			const app = await App.getApp()
-			await app.windows.changelogWindow.open()
+		async openAboutWindow() {
+			openAboutWindow()
 		},
 	},
 }

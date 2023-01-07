@@ -10,6 +10,7 @@ import { InformationWindow } from '../../Windows/Common/Information/InformationW
 import { TreeValueSelection } from './TreeSelection'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
 import { AnyFileHandle } from '../../FileSystem/Types'
+import { HistoryEntry } from './History/HistoryEntry'
 
 const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {
@@ -97,6 +98,8 @@ export class TreeTab extends FileTab {
 	}
 
 	async onActivate() {
+		await super.onActivate()
+
 		this.treeEditor.activate()
 	}
 	async onDeactivate() {
@@ -168,9 +171,14 @@ export class TreeTab extends FileTab {
 		if (this.isReadOnly) return
 
 		await this.copy()
-		this.treeEditor.forEachSelection((sel) =>
-			this.treeEditor.delete(sel.getTree())
-		)
+		const entries: HistoryEntry[] = []
+		this.treeEditor.forEachSelection((sel) => {
+			sel.dispose()
+			const entry = sel.delete()
+			if (entry) entries.push(entry)
+		})
+
+		this.treeEditor.pushAllHistoryEntries(entries)
 	}
 
 	async close() {

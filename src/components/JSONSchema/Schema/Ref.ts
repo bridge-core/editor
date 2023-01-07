@@ -11,6 +11,10 @@ export class RefSchema extends Schema {
 		return this.rootSchema.types
 	}
 
+	get hasDoNotSuggest() {
+		return this.rootSchema.hasDoNotSuggest
+	}
+
 	constructor(location: string, key: string, value: unknown) {
 		super(location, key, value)
 

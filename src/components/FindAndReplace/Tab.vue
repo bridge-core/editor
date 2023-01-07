@@ -13,6 +13,7 @@
 					hide-details
 					:autofocus="pointerDevice === 'mouse'"
 					:label="t('findAndReplace.search')"
+					spellcheck="false"
 					v-model="state.searchFor"
 				/>
 				<v-text-field
@@ -23,6 +24,7 @@
 					dense
 					hide-details
 					:label="t('findAndReplace.replace')"
+					spellcheck="false"
 					v-model="state.replaceWith"
 				/>
 				<v-btn

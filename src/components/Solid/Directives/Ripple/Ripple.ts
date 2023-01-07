@@ -12,8 +12,11 @@ declare module 'solid-js' {
 function rippleDirective(el: HTMLElement, value: () => boolean) {
 	el.classList.add('solid-ripple-container')
 
-	let spans = new Set<HTMLSpanElement>()
-	const onClick = (event: MouseEvent) => {
+	let span: HTMLElement | null = null
+	const onPointerDown = (event: MouseEvent) => {
+		if (span) {
+			reset()
+		}
 		if (typeof value === 'function' && !value()) return
 
 		const bounds = el.getBoundingClientRect()
@@ -26,40 +29,65 @@ function rippleDirective(el: HTMLElement, value: () => boolean) {
 		const fromRight = bounds.width - fromLeft
 
 		const rippleDimension =
-			Math.ceil(Math.max(fromRight, fromLeft, fromTop, fromBottom)) * 2
+			Math.ceil(Math.max(fromRight, fromLeft, fromTop, fromBottom)) * 2.3
 
-		const span = generateRipple(
+		span = generateRipple(
 			fromLeft - rippleDimension,
 			fromTop - rippleDimension,
 			rippleDimension
 		)
 
 		el.appendChild(span)
-
-		// Logic for cleaning up the span outside of normal lifecycle
-		spans.add(span)
-
-		el.addEventListener('animationend', () => {
-			if (!spans.has(span)) return
-			span.remove()
-			spans.delete(span)
-		})
 	}
 
-	el.addEventListener('click', onClick)
+	let mayStartFadeOut = false
+	let pointerAlreadyUp = false
+	const onPointerUp = (event: MouseEvent) => {
+		if (!span) return
+
+		if (mayStartFadeOut) {
+			span.classList.add('solid-ripple-fade-out')
+		} else {
+			pointerAlreadyUp = true
+		}
+	}
+
+	const reset = () => {
+		span?.remove()
+		span = null
+		mayStartFadeOut = false
+		pointerAlreadyUp = false
+	}
+
+	el.addEventListener('animationend', (event) => {
+		if (!span) return
+
+		if (event.animationName === 'solid-ripple-scale-up') {
+			mayStartFadeOut = true
+
+			if (pointerAlreadyUp) {
+				span.classList.add('solid-ripple-fade-out')
+			}
+		} else if (event.animationName === 'solid-ripple-fade-out') {
+			reset()
+		}
+	})
+
+	el.addEventListener('pointerdown', onPointerDown)
+	window.addEventListener('pointerup', onPointerUp)
 
 	onCleanup(() => {
-		el.removeEventListener('click', onClick)
+		el.removeEventListener('click', onPointerDown)
+		window.removeEventListener('pointerup', onPointerUp)
 		el.classList.remove('solid-ripple-container')
 
-		spans.forEach((span) => span.remove())
-		spans = new Set()
+		reset()
 	})
 }
 
 function generateRipple(x: number, y: number, rippleDimensions: number) {
 	const span = document.createElement('span')
-	span.classList.add('solid-ripple')
+	span.classList.add('solid-ripple', 'solid-ripple-active')
 
 	span.style.width = `${rippleDimensions}px`
 	span.style.height = `${rippleDimensions}px`

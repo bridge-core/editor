@@ -20,6 +20,7 @@
 					dense
 					:autofocus="pointerDevice === 'mouse'"
 					hide-details
+					spellcheck="false"
 				/>
 				<span
 					class="expand-text text--secondary"

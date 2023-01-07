@@ -1,9 +1,12 @@
-import { join } from '@tauri-apps/api/path'
-import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/BaseWrapper'
-import { getBridgeFolderPath } from '/@/utils/getBridgeFolderPath'
+import { DirectoryWrapper } from '../../DirectoryView/DirectoryWrapper'
+import { FileWrapper } from '../../FileView/FileWrapper'
+import { BaseVirtualHandle } from '/@/components/FileSystem/Virtual/Handle'
+import { TauriFsStore } from '/@/components/FileSystem/Virtual/Stores/TauriFs'
 import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
 
-export const RevealInFileExplorer = (baseWrapper: BaseWrapper<any>) => {
+export const RevealInFileExplorer = (
+	baseWrapper: FileWrapper | DirectoryWrapper
+) => {
 	if (!import.meta.env.VITE_IS_TAURI_APP) return null
 
 	return {
@@ -13,10 +16,14 @@ export const RevealInFileExplorer = (baseWrapper: BaseWrapper<any>) => {
 				: 'mdi-file-marker-outline',
 		name: 'actions.revealInFileExplorer.name',
 		onTrigger: async () => {
-			let path = baseWrapper.path
-			if (!path) return
+			const handle = baseWrapper.handle
+			if (!(handle instanceof BaseVirtualHandle)) return
 
-			revealInFileExplorer(await join(await getBridgeFolderPath(), path))
+			let path = baseWrapper.path
+			const baseStore = handle.getBaseStore()
+			if (!(baseStore instanceof TauriFsStore) || !path) return
+
+			revealInFileExplorer(await baseStore.resolvePath(path))
 		},
 	}
 }

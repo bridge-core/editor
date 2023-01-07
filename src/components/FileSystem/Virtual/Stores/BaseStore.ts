@@ -1,3 +1,5 @@
+import { VirtualFile } from '../File'
+
 export const FsKindEnum = <const>{
 	Directory: 0,
 	File: 1,
@@ -57,7 +59,7 @@ export abstract class BaseStore<T = any> {
 	/**
 	 * Read file
 	 */
-	abstract readFile(path: string): Promise<File>
+	abstract readFile(path: string): Promise<File | VirtualFile>
 
 	/**
 	 * Return when a file was last modified and its size

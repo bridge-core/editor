@@ -294,7 +294,11 @@ export class FileSystem extends Signal<void> {
 		originHandle: AnyFileHandle,
 		destHandle: AnyFileHandle
 	) {
-		await this.write(destHandle, await originHandle.getFile())
+		const file = await originHandle.getFile()
+		await this.write(
+			destHandle,
+			file.isVirtual ? await file.toBlobFile() : file
+		)
 
 		return destHandle
 	}
@@ -353,7 +357,9 @@ export class FileSystem extends Signal<void> {
 					resolve(<string>reader.result)
 				})
 				reader.addEventListener('error', reject)
-				reader.readAsDataURL(file)
+				reader.readAsDataURL(
+					file.isVirtual ? await file.toBlobFile() : file
+				)
 			} catch {
 				reject(`File does not exist: "${fileHandle.name}"`)
 			}

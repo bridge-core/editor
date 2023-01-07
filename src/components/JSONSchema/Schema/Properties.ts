@@ -82,22 +82,22 @@ export class PropertiesSchema extends Schema {
 	validate(obj: unknown) {
 		if (typeof obj !== 'object' || Array.isArray(obj))
 			return [
-				{
-					message: `Invalid type: Expected "object", received "${
+				<const>{
+					severity: 'warning',
+					message: `This node is of type ${
 						Array.isArray(obj) ? 'array' : typeof obj
-					}"`,
+					}; expected object`,
 				},
 			]
 
-		const diagnostics: IDiagnostic[] = []
-
-		for (const key in obj) {
-			if (this.children[key])
-				diagnostics.push(
-					...this.children[key].validate((<any>obj)[key])
-				)
-		}
-
-		return diagnostics
+		return []
+	}
+	isValid(obj: unknown) {
+		return (
+			super.isValid(obj) &&
+			Object.entries(this.children).every(([key, child]) =>
+				child.isValid((<any>obj)[key])
+			)
+		)
 	}
 }

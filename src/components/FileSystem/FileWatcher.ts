@@ -2,6 +2,7 @@ import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { IDisposable } from '/@/types/disposable'
+import { VirtualFile } from './Virtual/File'
 
 export class FileWatcher extends EventDispatcher<File> {
 	protected fileContent: any
@@ -20,7 +21,7 @@ export class FileWatcher extends EventDispatcher<File> {
 		})
 	}
 
-	async setup(file: File) {}
+	async setup(file: File | VirtualFile) {}
 
 	async activate() {
 		if (this.disposable !== undefined) return
@@ -30,7 +31,7 @@ export class FileWatcher extends EventDispatcher<File> {
 			(file) => this.onFileChange(file)
 		)
 	}
-	async requestFile(file: File) {
+	async requestFile(file: File | VirtualFile) {
 		await this.onFileChange(file)
 
 		return new Promise<File>((resolve) => {
@@ -38,14 +39,12 @@ export class FileWatcher extends EventDispatcher<File> {
 		})
 	}
 
-	async compileFile(file: File) {
-		const [
-			dependencies,
-			compiled,
-		] = await this.app.project.compilerService.compileFile(
-			this.filePath,
-			new Uint8Array(await file.arrayBuffer())
-		)
+	async compileFile(file: File | VirtualFile) {
+		const [dependencies, compiled] =
+			await this.app.project.compilerService.compileFile(
+				this.filePath,
+				new Uint8Array(await file.arrayBuffer())
+			)
 
 		this.children.forEach((child) => child.dispose())
 		this.children = []
@@ -59,7 +58,7 @@ export class FileWatcher extends EventDispatcher<File> {
 		return new File([compiled], file.name)
 	}
 
-	protected async onFileChange(file: File) {
+	protected async onFileChange(file: File | VirtualFile) {
 		this.dispatch(await this.compileFile(file))
 	}
 	async getFile() {
@@ -90,7 +89,7 @@ export class ChildFileWatcher extends EventDispatcher<void> {
 		)
 	}
 
-	protected async onFileChange(data: File) {
+	protected async onFileChange(data: File | VirtualFile) {
 		this.dispatch()
 	}
 	dispose() {

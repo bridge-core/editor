@@ -10,7 +10,8 @@ export abstract class ParentSchema extends Schema {
 
 	get hasDoNotSuggest() {
 		return this.children.some(
-			(child) => child instanceof DoNotSuggestSchema
+			(child) =>
+				child instanceof DoNotSuggestSchema || child.hasDoNotSuggest
 		)
 	}
 

@@ -18,6 +18,7 @@
 				:label="t('windows.createPreset.searchPresets')"
 				v-model.lazy.trim="window.sidebar.filter"
 				autocomplete="off"
+				spellcheck="false"
 				autofocus
 				outlined
 				dense
@@ -30,7 +31,7 @@
 		</template>
 		<template #default>
 			<h1
-				class="mt-2 d-flex align-center"
+				class="text-2xl font-semibold mt-2 d-flex align-center"
 				:class="{ 'mb-6': !content.description }"
 			>
 				<v-icon class="mr-1" large>{{ content.icon }}</v-icon>
@@ -62,6 +63,7 @@
 					autocomplete="off"
 					outlined
 					dense
+					spellcheck="false"
 					@keypress.enter="onCreatePreset"
 				/>
 				<span
@@ -104,6 +106,7 @@
 					}"
 					:label="name"
 					autocomplete="off"
+					spellcheck="false"
 					outlined
 					dense
 				/>

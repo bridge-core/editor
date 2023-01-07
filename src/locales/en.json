@@ -47,7 +47,10 @@
 		"warnBeforeClosing": {
 			"title": "Unsaved Changes",
 			"description": "Are you sure you want to close this window? Any unsaved changes will be lost."
-		}
+		},
+		"error": "Error",
+		"reportBug": "Report Bug",
+		"installNow": "Install Now"
 	},
 	"openWith": {
 		"snowstorm": "Snowstorm",
@@ -134,6 +137,18 @@
 	},
 	"actions": {
 		"name": "Actions",
+		"viewBridgeFolder": {
+			"name": "View bridge. Folder",
+			"description": "View the folder where bridge. stores your projects"
+		},
+		"about": {
+			"name": "About",
+			"description": "About bridge."
+		},
+		"launchMinecraft": {
+			"name": "Launch Minecraft",
+			"description": "Launch Minecraft to test your projects"
+		},
 		"download": {
 			"name": "Download",
 			"description": "Download this file or folder"
@@ -556,6 +571,13 @@
 			"updateAvailable": {
 				"message": "Update Available"
 			},
+			"installingUpdate": {
+				"name": "Installing Update",
+				"description": "bridge. is currently installing an update in the background."
+			},
+			"restartToApplyUpdate": {
+				"message": "Restart to Update"
+			},
 			"updateExtensions": "Update All Extensions"
 		}
 	},
@@ -600,6 +622,9 @@
 	"windows": {
 		"sidebar": {
 			"disabledItem": "This item is disabled"
+		},
+		"error": {
+			"explanation": "bridge. encountered the following error:"
 		},
 		"changelogWindow": {
 			"title": "What's new?"
@@ -803,6 +828,10 @@
 					"name": "Color Scheme",
 					"description": "Choose the color scheme of bridge.'s UI"
 				},
+				"highContrast": {
+					"name": "High Contrast",
+					"description": "Enable high contrast mode"
+				},
 				"darkTheme": {
 					"name": "Dark Theme",
 					"description": "Select the default dark theme bridge. uses"
@@ -946,6 +975,10 @@
 					"name": "Show Tree Editor Location Bar",
 					"description": "Allows you to quickly navigate your JSON file within the tree editor by displaying your current location above the editor."
 				},
+				"inlineTreeEditorDiagnostics": {
+					"name": "Inline Diagnostics",
+					"description": "Show diagnostic messages above the affected tree editor node"
+				},
 				"bridgePredictions": {
 					"name": "bridge. Predictions",
 					"description": "Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly"
@@ -987,6 +1020,11 @@
 				"title": "Downloaded Compiler Plugin",
 				"description": "You have just downloaded a new compiler plugin. Make sure to add it to your compiler config file or otherwise it won't have an effect.",
 				"openConfig": "Open Config"
+			},
+			"failedExtensionLoad": {
+				"title": "failed to load",
+				"description1": "The extension manifest",
+				"description2": "is invalid. Please consider contacting the extension author to fix this issue."
 			}
 		},
 		"pluginInstallLocation": {
@@ -1173,7 +1211,8 @@
 			"addArray": "Add Array",
 			"addValue": "Add Value",
 			"forceValue": "Force Value",
-			"edit": "Edit"
+			"edit": "Edit",
+			"childHasError": "One or more children have diagnostics"
 		},
 		"langValidation": {
 			"noValue": {

@@ -17,6 +17,7 @@
 				:label="t('windows.settings.searchSettings')"
 				v-model.lazy.trim="sidebar.filter"
 				autocomplete="off"
+				spellcheck="false"
 				:autofocus="pointerDevice === 'mouse'"
 				outlined
 				dense
