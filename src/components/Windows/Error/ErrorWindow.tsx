@@ -39,7 +39,7 @@ const ErrorWindow: Component<{
 				{t('windows.error.explanation')}
 			</p>
 
-			<div class="text-sm opacity-60 text-center">
+			<div class="text-sm opacity-80 text-center">
 				{props.error.message}
 			</div>
 

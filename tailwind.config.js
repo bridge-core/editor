@@ -37,6 +37,8 @@ module.exports = {
 				xs: '2px',
 			},
 			colors: {
+				'surface-dark': 'var(--v-toolbar-base)',
+				surface: 'var(--v-background-base)',
 				primary: 'var(--v-primary-base)',
 				error: 'var(--v-error-base)',
 				warning: 'var(--v-warning-base)',
