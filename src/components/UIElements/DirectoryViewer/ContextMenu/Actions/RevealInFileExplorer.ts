@@ -1,10 +1,7 @@
 import { DirectoryWrapper } from '../../DirectoryView/DirectoryWrapper'
 import { FileWrapper } from '../../FileView/FileWrapper'
-import { VirtualDirectoryHandle } from '/@/components/FileSystem/Virtual/DirectoryHandle'
-import { VirtualFileHandle } from '/@/components/FileSystem/Virtual/FileHandle'
 import { BaseVirtualHandle } from '/@/components/FileSystem/Virtual/Handle'
 import { TauriFsStore } from '/@/components/FileSystem/Virtual/Stores/TauriFs'
-import { BaseWrapper } from '/@/components/UIElements/DirectoryViewer/Common/BaseWrapper'
 import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
 
 export const RevealInFileExplorer = (
