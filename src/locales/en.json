@@ -819,6 +819,10 @@
 					"name": "Color Scheme",
 					"description": "Choose the color scheme of bridge.'s UI"
 				},
+				"highContrast": {
+					"name": "High Contrast",
+					"description": "Enable high contrast mode"
+				},
 				"darkTheme": {
 					"name": "Dark Theme",
 					"description": "Select the default dark theme bridge. uses"

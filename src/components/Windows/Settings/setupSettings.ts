@@ -38,6 +38,15 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
+		new Toggle({
+			category: 'appearance',
+			name: 'windows.settings.appearance.highContrast.name',
+			description: 'windows.settings.appearance.highContrast.description',
+			key: 'highContrast',
+			default: false,
+		})
+	)
+	settings.addControl(
 		new Selection({
 			category: 'appearance',
 			name: 'windows.settings.appearance.darkTheme.name',
