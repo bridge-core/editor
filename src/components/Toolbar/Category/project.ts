@@ -56,7 +56,7 @@ export function setupProjectCategory(app: App) {
 			description: 'actions.launchMinecraft.description',
 			keyBinding: 'F5',
 			onTrigger: () => {
-				App.openUrl('minecraft:')
+				App.openUrl('minecraft:', undefined, true)
 			},
 		})
 	)
