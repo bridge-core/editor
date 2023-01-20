@@ -5,6 +5,8 @@ import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
 import { importNewProject } from '/@/components/Projects/Import/ImportNew'
 import { virtualProjectName } from '/@/components/Projects/Project/Project'
+import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
+import { getBridgeFolderPath } from '/@/utils/getBridgeFolderPath'
 
 export function setupProjectCategory(app: App) {
 	const project = new ToolbarCategory(
@@ -36,11 +38,25 @@ export function setupProjectCategory(app: App) {
 			description: 'windows.projectChooser.description',
 			isDisabled: () => app.hasNoProjects,
 			onTrigger: () => {
-				if (isUsingFileSystemPolyfill.value) {
+				if (
+					!import.meta.env.VITE_IS_TAURI_APP &&
+					isUsingFileSystemPolyfill.value
+				) {
 					createVirtualProjectWindow()
 				} else {
 					App.instance.windows.projectChooser.open()
 				}
+			},
+		})
+	)
+	project.addItem(
+		app.actionManager.create({
+			icon: 'mdi-minecraft',
+			name: 'actions.launchMinecraft.name',
+			description: 'actions.launchMinecraft.description',
+			keyBinding: 'F5',
+			onTrigger: () => {
+				App.openUrl('minecraft:', undefined, true)
 			},
 		})
 	)
@@ -63,6 +79,18 @@ export function setupProjectCategory(app: App) {
 			onTrigger: () => importNewProject(),
 		})
 	)
+	if (import.meta.env.VITE_IS_TAURI_APP) {
+		project.addItem(
+			app.actionManager.create({
+				icon: 'mdi-folder-search-outline',
+				name: 'actions.viewBridgeFolder.name',
+				description: 'actions.viewBridgeFolder.description',
+				onTrigger: async () => {
+					revealInFileExplorer(await getBridgeFolderPath())
+				},
+			})
+		)
+	}
 	project.addItem(new Divider())
 
 	project.addItem(

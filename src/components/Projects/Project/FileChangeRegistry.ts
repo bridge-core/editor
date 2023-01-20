@@ -1,6 +1,7 @@
+import { VirtualFile } from '../../FileSystem/Virtual/File'
 import { EventSystem } from '/@/components/Common/Event/EventSystem'
 
-export class FileChangeRegistry<T = File> extends EventSystem<T> {
+export class FileChangeRegistry<T = File | VirtualFile> extends EventSystem<T> {
 	constructor() {
 		super([], true)
 	}

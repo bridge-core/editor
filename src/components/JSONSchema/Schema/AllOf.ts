@@ -19,6 +19,14 @@ export class AllOfSchema extends ParentSchema {
 	}
 
 	validate(obj: unknown) {
-		return this.children.map((child) => child.validate(obj)).flat()
+		const allDiagnostics = this.children
+			.map((child) => child.validate(obj))
+			.flat()
+
+		if (allDiagnostics.length === 0) return []
+		return allDiagnostics
+	}
+	isValid(obj: unknown) {
+		return this.children.every((child) => child.isValid(obj))
 	}
 }

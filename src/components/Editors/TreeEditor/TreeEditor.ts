@@ -30,6 +30,7 @@ import { filterDuplicates } from './CompletionItems/FilterDuplicates'
 import { inferType } from '/@/utils/inferType'
 
 export class TreeEditor {
+	public type = 'treeEditor'
 	public propertySuggestions: ICompletionItem[] = []
 	public valueSuggestions: ICompletionItem[] = []
 	public editSuggestions: ICompletionItem[] = []
@@ -62,8 +63,9 @@ export class TreeEditor {
 	}
 
 	constructor(protected parent: TreeTab, protected json: unknown) {
-		this.tree = createTree(null, json)
-		this.setSelection(this.tree)
+		const tree = createTree(this, json)
+		this.setSelection(tree)
+		this.tree = tree
 
 		this.history.on((isUnsaved) => {
 			this.parent.setIsUnsaved(isUnsaved)
@@ -80,11 +82,17 @@ export class TreeEditor {
 			await app.projectManager.projectReady.fired
 
 			this.parent.once(() => {
-				if (app.project.jsonDefaults.isReady) this.createSchemaRoot()
+				if (!app.project.jsonDefaults.isReady) return
+
+				this.createSchemaRoot()
+				if (this.parent.isSelected) tree.requestValidation()
 			})
 
 			app.project.jsonDefaults.on(() => {
-				if (this.parent.hasFired) this.createSchemaRoot()
+				if (!this.parent.hasFired) return
+
+				this.createSchemaRoot()
+				if (this.parent.isSelected) tree.requestValidation()
 			})
 		})
 
@@ -179,15 +187,26 @@ export class TreeEditor {
 	}
 
 	getSchemas(tree: Tree<unknown> | undefined, next = false) {
-		if (this.selections.length === 0 || tree === this.tree) {
+		if (
+			(this.selections.length === 0 && tree === undefined) ||
+			tree === this.tree
+		) {
 			return this.schemaRoot ? [this.schemaRoot] : []
 		} else if (tree) {
-			return (
-				this.schemaRoot?.getSchemasFor(
-					this.tree.toJSON(),
-					next ? [...tree.path, undefined] : tree.path
-				) ?? []
-			)
+			let path = null
+			try {
+				path = next ? [...tree.path, undefined] : tree.path
+			} catch {
+				// An error may occur if the tree was deleted while a suggestion update was still scheduled
+				return []
+			}
+
+			return [
+				...new Set(
+					this.schemaRoot?.getSchemasFor(this.tree.toJSON(), path) ??
+						[]
+				),
+			]
 		}
 
 		return []
@@ -243,29 +262,10 @@ export class TreeEditor {
 				const entries: HistoryEntry[] = []
 
 				this.forEachSelection((sel) => {
-					const tree = sel.getTree()
-					if (!tree.getParent()) return // May not delete global tree
-
 					sel.dispose()
 
-					if (
-						sel instanceof TreeValueSelection &&
-						tree.getParent()!.type === 'object'
-					) {
-						// A delete action on a primitive value replaces the PrimitiveTree with an emtpy ObjectTree
-						const newTree = new ObjectTree(tree.getParent(), {})
-						this.setSelection(newTree)
-
-						tree.replace(newTree)
-
-						entries.push(new ReplaceTreeEntry(tree, newTree))
-					} else {
-						this.toggleSelection(tree.getParent()!)
-
-						const [index, key] = tree.delete()
-
-						entries.push(new UndoDeleteEntry(tree, index, key))
-					}
+					const entry = sel.delete()
+					if (entry) entries.push(entry)
 				})
 
 				this.history.pushAll(entries)
@@ -276,20 +276,6 @@ export class TreeEditor {
 			keyBinding: ['ESCAPE'],
 			onTrigger: () => {
 				this.setSelection(this.tree)
-			},
-		})
-
-		this.actions.create({
-			keyBinding: ['CTRL + Z'],
-			onTrigger: () => {
-				this.undo()
-			},
-		})
-
-		this.actions.create({
-			keyBinding: [platformRedoBinding],
-			onTrigger: () => {
-				this.redo()
 			},
 		})
 	}
@@ -497,12 +483,18 @@ export class TreeEditor {
 
 		const title =
 			schemas.find((schema) => schema.title !== undefined)?.title ?? ''
-		const description = schemas
-			.filter((schema) => schema.description !== undefined)
-			.map((schema) => schema.description)
-			.join('\n')
+		const description =
+			schemas.filter((schema) => schema.description !== undefined)?.[0]
+				?.description ?? ''
 
 		return { title, text: description }
+	}
+
+	pushHistoryEntry(entry: HistoryEntry) {
+		this.history.push(entry)
+	}
+	pushAllHistoryEntries(entries: HistoryEntry[]) {
+		this.history.pushAll(entries)
 	}
 
 	onPasteMenu(event?: MouseEvent, tree = this.tree) {

@@ -12,6 +12,8 @@ import { download } from '../FileSystem/saveOrDownload'
 import { writableToUint8Array } from '/@/utils/file/writableToUint8Array'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { debounce } from 'lodash-es'
+import { setRichPresence } from '/@/utils/setRichPresence'
+import { translate } from '../Locales/Manager'
 
 export type TReadOnlyMode = 'forced' | 'manual' | 'off'
 
@@ -64,7 +66,11 @@ export abstract class FileTab extends Tab {
 			this.isForeignFile = true
 
 			let guessedFolder =
-				(await App.fileType.guessFolder(this.fileHandle)) ?? uuid()
+				// Convince TypeScript that this is a FileSystemFileHandle
+				// We can do this because the VirtualFileHandle is sufficient for the guessFolder function
+				(await App.fileType.guessFolder(
+					<FileSystemFileHandle>this.fileHandle
+				)) ?? uuid()
 			if (!guessedFolder.endsWith('/')) guessedFolder += '/'
 
 			this.path = `${guessedFolder}${uuid()}/${this.fileHandle.name}`
@@ -94,6 +100,22 @@ export abstract class FileTab extends Tab {
 		await this.tryAutoSave()
 
 		super.onDeactivate()
+	}
+	async onActivate() {
+		const fileTypeName = translate(
+			'fileType.' + this.getFileType(),
+			'en'
+		).toLowerCase()
+
+		let a = 'a'
+		// Append "n" to the beginning of the file type name if it starts with a vowel
+		if (['a', 'e', 'i', 'o', 'u'].includes(fileTypeName.charAt(0))) a = 'an'
+
+		setRichPresence({
+			details: 'Developing add-ons...',
+			state: `Editing ${a} ${fileTypeName} file`,
+		})
+		await super.onActivate()
 	}
 
 	get name() {

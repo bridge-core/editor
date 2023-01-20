@@ -61,6 +61,8 @@
 			@keydown.space.prevent.stop.native
 			@click.stop
 			:rules="[rules.validName, rules.required]"
+			enterkeyhint="enter"
+			spellcheck="false"
 		/>
 
 		<v-spacer />

@@ -9,7 +9,7 @@ export class ReplaceTreeEntry extends HistoryEntry {
 		protected newTree: Tree<unknown>
 	) {
 		super()
-		this.unselectTrees = [newTree]
+		this.unselectTrees = [newTree, oldTree]
 	}
 
 	undo() {

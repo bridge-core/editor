@@ -5,6 +5,7 @@
 
 		<template v-else>
 			<BridgeFolderBtn />
+			<ImportOldProjects />
 			<CreateProjectBtn />
 			<GitHubLogin class="mb-2" block />
 
@@ -30,6 +31,7 @@ import GitHubLogin from '/@/components/UIElements/Button/GitHubLogin.vue'
 import SetupView from './SetupView.vue'
 import Project from './Project.vue'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import ImportOldProjects from './ImportOldProjects.vue'
 
 export default {
 	components: {
@@ -38,6 +40,7 @@ export default {
 		GitHubLogin,
 		SetupView,
 		Project,
+		ImportOldProjects,
 	},
 	setup() {
 		return {

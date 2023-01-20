@@ -35,7 +35,11 @@ export class ThenSchema extends Schema {
 	}
 
 	validate(obj: unknown) {
-		if (this.ifSchema.isTrue(obj)) return this.rootSchema.validate(obj)
+		if (this.ifSchema.isTrue(obj)) {
+			const diagnostics = this.rootSchema.validate(obj)
+
+			return diagnostics
+		}
 		return []
 	}
 }

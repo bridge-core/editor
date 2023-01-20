@@ -36,11 +36,23 @@ export class OneOfSchema extends ParentSchema {
 
 		if (hasTooManyMatches)
 			return [
-				{
+				<const>{
+					severity: 'warning',
 					message: `JSON matched more than one schema, expected exactly one match`,
 				},
 			]
 		else if (matchedOne) return []
 		else return allDiagnostics
+	}
+	isValid(obj: unknown) {
+		let matchedOne = false
+		for (const child of this.children) {
+			if (child.isValid(obj)) {
+				if (matchedOne) return false
+				matchedOne = true
+			}
+		}
+
+		return matchedOne
 	}
 }

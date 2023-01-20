@@ -20,6 +20,7 @@
 				:items="window.options"
 				background-color="background"
 				class="mt-4"
+				spellcheck="false"
 			/>
 		</template>
 		<template #actions>

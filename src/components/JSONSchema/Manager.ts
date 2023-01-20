@@ -39,6 +39,9 @@ export class SchemaManager {
 		}
 	}
 	static addRootSchema(location: string, rootSchema: RootSchema) {
+		// Do not cache dynamic schemas
+		if (location.includes('/dynamic/')) return
+
 		this.rootSchemas.set(location, rootSchema)
 		return rootSchema
 	}

@@ -21,7 +21,7 @@ export class ProjectChooserWindow extends NewBaseWindow {
 	protected experimentalToggles: (IExperimentalToggle & {
 		isActive: boolean
 	})[] = []
-	protected comMojangProjectLoader
+	public readonly comMojangProjectLoader
 
 	protected state: IProjectChooserState = reactive<any>({
 		...super.getState(),

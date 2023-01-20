@@ -3,9 +3,8 @@
 		<img
 			:src="imgSrc"
 			style="image-rendering: pixelated"
-			class="rounded-lg"
+			class="rounded-lg h-11"
 			draggable="false"
-			height="44px"
 			:alt="`Pack Icon of ${name}`"
 		/>
 
@@ -46,7 +45,10 @@ export default {
 		async onClick() {
 			const app = await App.getApp()
 
-			if (isUsingFileSystemPolyfill.value) {
+			if (
+				!import.meta.env.VITE_IS_TAURI_APP &&
+				isUsingFileSystemPolyfill.value
+			) {
 				createVirtualProjectWindow()
 			} else {
 				app.windows.projectChooser.open()

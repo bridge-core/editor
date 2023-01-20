@@ -51,23 +51,32 @@ export class PatternPropertiesSchema extends Schema {
 	validate(obj: unknown) {
 		if (typeof obj !== 'object' || Array.isArray(obj))
 			return [
-				{
-					message: `Invalid type: Expected "object", received "${
+				<const>{
+					severity: 'warning',
+					message: `This node is of type ${
 						Array.isArray(obj) ? 'array' : typeof obj
-					}"`,
+					}; expected object`,
 				},
 			]
 
-		const diagnostics: IDiagnostic[] = []
+		return []
+	}
+	isValid(obj: unknown) {
+		const isOwnValid = super.isValid(obj)
+		if (!isOwnValid) return false
 
-		for (const key in obj) {
-			for (const [pattern, child] of Object.entries(this.children)) {
-				if (key.match(new RegExp(pattern)) === null) {
-					diagnostics.push(...child.validate((<any>obj)[key]))
+		for (const [pattern, child] of Object.entries(this.children)) {
+			const regExp = new RegExp(pattern)
+
+			for (const key in <any>obj) {
+				if (key.match(regExp) !== null) {
+					if (!child.isValid((<any>obj)[key])) return false
 				}
 			}
+
+			regExp.lastIndex = 0
 		}
 
-		return diagnostics
+		return true
 	}
 }

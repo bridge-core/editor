@@ -31,6 +31,9 @@ export class RootSchema extends ParentSchema {
 	validate(obj: unknown) {
 		return this.children.map((child) => child.validate(obj)).flat()
 	}
+	isValid(obj: unknown): boolean {
+		return this.children.every((child) => child.isValid(obj))
+	}
 
 	getFreeIfSchema(): IfSchema | undefined {
 		let isIfOccupied = false

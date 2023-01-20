@@ -36,7 +36,10 @@ export async function importFromBrproject(
 	if (!(await fs.fileExists('import/config.json'))) {
 		// The .brproject file contains data/, projects/ & extensions/ folder
 		// We need to change the folder structure to process it correctly
-		if (isUsingFileSystemPolyfill.value) {
+		if (
+			!import.meta.env.VITE_IS_TAURI_APP &&
+			isUsingFileSystemPolyfill.value
+		) {
 			// Only load settings & extension if using the polyfill
 			try {
 				await fs.move('import/data', 'data')
@@ -61,7 +64,11 @@ export async function importFromBrproject(
 	}
 
 	// Ask user whether he wants to save the current project if we are going to delete it later in the import process
-	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects) {
+	if (
+		!import.meta.env.VITE_IS_TAURI_APP &&
+		isUsingFileSystemPolyfill.value &&
+		!app.hasNoProjects
+	) {
 		const confirmWindow = new ConfirmationWindow({
 			description:
 				'windows.projectChooser.openNewProject.saveCurrentProject',
@@ -91,7 +98,11 @@ export async function importFromBrproject(
 	if (!app.hasNoProjects) currentProject = app.project
 
 	// Remove old project if browser is using fileSystem polyfill
-	if (isUsingFileSystemPolyfill.value && !app.hasNoProjects)
+	if (
+		!import.meta.env.VITE_IS_TAURI_APP &&
+		isUsingFileSystemPolyfill.value &&
+		!app.hasNoProjects
+	)
 		await app.projectManager.removeProject(currentProject!)
 
 	// Add new project

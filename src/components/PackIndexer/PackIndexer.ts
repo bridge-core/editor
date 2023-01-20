@@ -8,10 +8,11 @@ import type { Project } from '/@/components/Projects/Project/Project'
 import { Mutex } from '../Common/Mutex'
 import { Signal } from '../Common/Event/Signal'
 import { Task } from '../TaskManager/Task'
+import { setupWorker } from '/@/utils/worker/setup'
 
-const PackIndexerService = wrap<typeof TPackIndexerService>(
-	new PackIndexerWorker()
-)
+const worker = new PackIndexerWorker()
+const PackIndexerService = wrap<typeof TPackIndexerService>(worker)
+setupWorker(worker)
 
 const taskOptions = {
 	icon: 'mdi-flash-outline',

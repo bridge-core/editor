@@ -1,6 +1,7 @@
 <template>
 	<div style="overflow: hidden">
 		<BridgeFolderBtn />
+		<ImportOldProjects />
 		<CreateProjectBtn color="success" />
 
 		<BridgeSheet dark class="pa-2 mb-2 d-flex flex-column">
@@ -24,58 +25,32 @@
 		</BridgeSheet>
 
 		<BridgeSheet
-			v-if="!hasComMojangSetup && !isUsingFileSystemPolyfill"
+			v-if="!isMobile && !isTauriBuild"
 			dark
 			class="pa-2 mb-2 d-flex flex-column"
+			@click="openDownloadPage"
 		>
 			<v-icon style="font-size: 3rem" color="success" class="mb-4">
 				mdi-minecraft
 			</v-icon>
 			{{ t('initialSetup.step.comMojang.description') }}
+
+			<SetupHint />
 		</BridgeSheet>
 
-		<div v-else-if="!didChooseEditorType">
-			<BridgeSheet dark class="pa-2 mb-2 d-flex flex-column">
-				<v-icon style="font-size: 3rem" color="success" class="mb-4">
-					mdi-pencil-outline
-				</v-icon>
-				{{ t('initialSetup.step.editorType.description') }}
-			</BridgeSheet>
-
-			<ActionViewer
-				v-for="(action, i) in actions"
-				:key="i"
-				dark
-				class="clickable"
-				:action="action"
-				hideTriggerButton
-				v-ripple
-				@click.native="action.trigger()"
-			/>
-		</div>
-		<div
-			v-if="
-				!isUsingFileSystemPolyfill &&
-				setupStepCount === 2 &&
-				(!didChooseEditorType || !hasComMojangSetup)
-			"
-			class="d-flex justify-center"
+		<BridgeSheet
+			v-if="!didChooseEditorType"
+			dark
+			class="pa-2 mb-2 d-flex flex-column"
+			@click="chooseEditor"
 		>
-			<span>
-				<v-icon color="primary" class="mr-1" small>mdi-cog</v-icon>
-				<strong>Setup Step:</strong> {{ !hasComMojangSetup ? 1 : 2 }} /
-				2
-			</span>
-			<v-spacer />
-			<v-btn
-				v-if="!hasComMojangSetup"
-				icon
-				@click="hasComMojangSetup = true"
-				small
-			>
-				<v-icon>mdi-chevron-right</v-icon>
-			</v-btn>
-		</div>
+			<v-icon style="font-size: 3rem" color="success" class="mb-4">
+				mdi-pencil-outline
+			</v-icon>
+			{{ t('initialSetup.step.editorType.description') }}
+
+			<SetupHint />
+		</BridgeSheet>
 	</div>
 </template>
 
@@ -85,13 +60,13 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import CreateProjectBtn from './CreateProjectBtn.vue'
 import BridgeFolderBtn from './BridgeFolderBtn.vue'
-import { SimpleAction } from '/@/components/Actions/SimpleAction'
-import ActionViewer from '/@/components/Actions/ActionViewer.vue'
+import ImportOldProjects from './ImportOldProjects.vue'
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { get, set } from 'idb-keyval'
-import { comMojangKey } from '/@/components/OutputFolders/ComMojang/ComMojang'
 import { isUsingFileSystemPolyfill } from '../../FileSystem/Polyfill'
+import { InformedChoiceWindow } from '../../Windows/InformedChoice/InformedChoice'
+import SetupHint from './SetupHint.vue'
 
 export default {
 	mixins: [TranslationMixin],
@@ -99,26 +74,20 @@ export default {
 		BridgeSheet,
 		CreateProjectBtn,
 		BridgeFolderBtn,
-		ActionViewer,
+		ImportOldProjects,
+		SetupHint,
 	},
 	setup() {
 		return {
+			downloadAppUrl: 'https://bridge-core.app/guide/download',
+			isTauriBuild: import.meta.env.VITE_IS_TAURI_APP,
 			isUsingFileSystemPolyfill,
 		}
 	},
 	async mounted() {
-		this.hasComMojangSetup = (await get(comMojangKey)) !== undefined
 		this.didChooseEditorType = (await get('didChooseEditorType')) ?? false
-		this.setupStepCount =
-			Number(!this.hasComMojangSetup) + Number(!this.didChooseEditorType)
 
 		const app = await App.getApp()
-		this.disposables.push(
-			app.comMojang.setup.once(() => {
-				console.log(this.hasComMojangSetup)
-				this.hasComMojangSetup = true
-			}, true)
-		)
 		this.disposables.push(
 			App.installApp.isInstallable.once(
 				() => (this.showInstallAppButton = true),
@@ -137,42 +106,50 @@ export default {
 	},
 	data() {
 		return {
-			hasComMojangSetup: true,
 			didChooseEditorType: false,
 			showInstallAppButton: false,
-			setupStepCount: 0,
 			disposables: [],
-			actions: [
-				new SimpleAction({
+			actions: [],
+		}
+	},
+	computed: {
+		isMobile() {
+			return this.$vuetify.breakpoint.mobile
+		},
+	},
+	methods: {
+		async chooseEditor() {
+			const editors = [
+				{
 					icon: 'mdi-text',
 					name: 'initialSetup.step.editorType.rawText.name',
 					description:
 						'initialSetup.step.editorType.rawText.description',
-					onTrigger: async () => {
-						if (this.isLoading) return
-
-						this.isLoading = true
-						await this.setJsonEditor('rawText')
-						this.$emit('next')
+					onTrigger: () => {
+						this.setJsonEditor('rawText')
 					},
-				}),
-				new SimpleAction({
+				},
+				{
 					icon: 'mdi-file-tree',
 					name: 'initialSetup.step.editorType.treeEditor.name',
 					description:
 						'initialSetup.step.editorType.treeEditor.description',
-					onTrigger: async () => {
-						if (this.isLoading) return
-
-						this.isLoading = true
-						await this.setJsonEditor('treeEditor')
-						this.$emit('next')
+					onTrigger: () => {
+						this.setJsonEditor('treeEditor')
 					},
-				}),
-			],
-		}
-	},
-	methods: {
+				},
+			]
+
+			const choiceWindow = new InformedChoiceWindow(
+				'initialSetup.step.editorType.name'
+			)
+			editors.forEach((editor) =>
+				choiceWindow.actionManager.create(editor)
+			)
+
+			choiceWindow.open()
+		},
+
 		async setJsonEditor(val) {
 			await SettingsWindow.loadSettings(App.instance)
 			if (!settingsState.editor) settingsState.editor = {}
@@ -184,6 +161,9 @@ export default {
 		},
 		installApp() {
 			App.installApp.prompt()
+		},
+		openDownloadPage() {
+			App.openUrl(this.downloadAppUrl)
 		},
 	},
 }

@@ -26,7 +26,8 @@ export class ProjectManager extends Signal<void> {
 
 	constructor(protected app: App) {
 		super()
-		this.loadProjects()
+		// Only load local projects on PWA builds
+		if (!import.meta.env.VITE_IS_TAURI_APP) this.loadProjects()
 	}
 
 	get currentProject() {
@@ -50,7 +51,8 @@ export class ProjectManager extends Signal<void> {
 	async addProject(
 		projectDir: AnyDirectoryHandle,
 		isNewProject = true,
-		requiresPermissions = this.app.bridgeFolderSetup.hasFired
+		requiresPermissions = this.app.bridgeFolderSetup.hasFired,
+		select = true
 	) {
 		const project = new BedrockProject(this, this.app, projectDir, {
 			requiresPermissions,
@@ -60,7 +62,7 @@ export class ProjectManager extends Signal<void> {
 		set(this.state, project.name, project)
 
 		if (isNewProject) {
-			await this.selectProject(project.name)
+			if (select) await this.selectProject(project.name)
 			this.addedProject.dispatch(project)
 		}
 
@@ -108,7 +110,8 @@ export class ProjectManager extends Signal<void> {
 			promises.push(this.addProject(handle, false, requiresPermissions))
 		}
 
-		if (isBridgeFolderSetup) {
+		// Only load local projects separately on PWA builds and when the bridge folder was setup
+		if (!import.meta.env.VITE_IS_TAURI_APP && isBridgeFolderSetup) {
 			const localDirectoryHandle =
 				await this.app.fileSystem.getDirectoryHandle(
 					'~local/projects',
@@ -130,7 +133,7 @@ export class ProjectManager extends Signal<void> {
 		// Update stored projects in the background (don't await it)
 		if (isBridgeFolderSetup) this.storeProjects(undefined, true)
 		// Create a placeholder project (virtual project)
-		else await this.createVirtualProject()
+		await this.createVirtualProject()
 
 		this.dispatch()
 	}
@@ -196,6 +199,7 @@ export class ProjectManager extends Signal<void> {
 			)
 		}
 
+		// Setup com.mojang folder if necessary
 		if (!this.app.comMojang.hasFired && projectName !== virtualProjectName)
 			this.app.comMojang.setupComMojang()
 
@@ -217,7 +221,18 @@ export class ProjectManager extends Signal<void> {
 	}
 	async selectLastProject() {
 		await this.fired
-		if (isUsingFileSystemPolyfill.value) {
+		/**
+		 * We can select the last selected project if the user is...
+		 *
+		 * 1. Not using a Tauri native build
+		 * 2. Using our file system polyfill
+		 *
+		 * This is because this variant of bridge. only supports loading one project at once
+		 */
+		if (
+			!import.meta.env.VITE_IS_TAURI_APP &&
+			isUsingFileSystemPolyfill.value
+		) {
 			const selectedProject = await idbGet('selectedProject')
 			let didSelectProject = false
 			if (typeof selectedProject === 'string')

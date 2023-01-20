@@ -6,7 +6,7 @@ import { ActionViewer } from './Controls/ActionViewer/ActionViewer'
 import { Selection } from './Controls/Selection/Selection'
 import { BridgeConfigSelection } from './Controls/Selection/BridgeConfigSelection'
 import { Button } from './Controls/Button/Button'
-import { del, set } from 'idb-keyval'
+import { del, get, set } from 'idb-keyval'
 import { comMojangKey } from '/@/components/OutputFolders/ComMojang/ComMojang'
 import { Sidebar } from './Controls/Sidebar/Sidebar'
 import {
@@ -18,6 +18,8 @@ import { TextField } from './Controls/TextField/TextField'
 import { devActions } from '/@/components/Developer/Actions'
 import { FontSelection } from './Controls/FontSelection'
 import { LocaleManager } from '../../Locales/Manager'
+import { showFolderPicker } from '../../FileSystem/Pickers/showFolderPicker'
+import { pathFromHandle } from '../../FileSystem/Virtual/pathFromHandle'
 
 export async function setupSettings(settings: SettingsWindow) {
 	const app = await App.getApp()
@@ -33,6 +35,15 @@ export async function setupSettings(settings: SettingsWindow) {
 			onChange: () => {
 				app.themeManager.updateTheme()
 			},
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'appearance',
+			name: 'windows.settings.appearance.highContrast.name',
+			description: 'windows.settings.appearance.highContrast.description',
+			key: 'highContrast',
+			default: false,
 		})
 	)
 	settings.addControl(
@@ -210,6 +221,17 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
+		new ButtonToggle({
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.packExplorerFolderIndentation.name',
+			description:
+				'windows.settings.sidebar.packExplorerFolderIndentation.description',
+			key: 'packExplorerFolderIndentation',
+			options: ['small', 'normal', 'large', 'x-large'],
+			default: 'normal',
+		})
+	)
+	settings.addControl(
 		new Sidebar({
 			category: 'sidebar',
 			name: 'windows.settings.sidebar.shrinkSidebarElements.name',
@@ -228,7 +250,7 @@ export async function setupSettings(settings: SettingsWindow) {
 			options: LocaleManager.getAvailableLanguages(),
 			default: LocaleManager.getCurrentLanguageId(),
 			onChange: (val) => {
-				;(<any>settings.getState()).reloadRequired = true
+				settings.addReloadHint()
 				set('language', val)
 			},
 		})
@@ -284,7 +306,39 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
-	if (!isUsingFileSystemPolyfill.value) {
+	if (import.meta.env.VITE_IS_TAURI_APP || !isUsingFileSystemPolyfill.value) {
+		settings.addControl(
+			new Button({
+				category: 'general',
+				name: 'windows.settings.general.selectBridgeFolder.name',
+				description:
+					'windows.settings.general.selectBridgeFolder.description',
+				onClick: async () => {
+					if (import.meta.env.VITE_IS_TAURI_APP) {
+						// Native app
+						const [folderHandle] =
+							(await showFolderPicker({ multiple: false })) ?? []
+						if (!folderHandle) return
+
+						const folderPath = await pathFromHandle(folderHandle)
+						set('bridgeFolderPath', folderPath)
+
+						settings.addReloadHint()
+					} else {
+						// PWA
+						await del('bridgeBaseDir')
+						await del(comMojangKey)
+						location.reload()
+					}
+				},
+			})
+		)
+	}
+	// Only show reset bridge folder on native app if a different bridge folder is set
+	if (
+		import.meta.env.VITE_IS_TAURI_APP &&
+		(await get<string | undefined>('bridgeFolderPath')) !== undefined
+	) {
 		settings.addControl(
 			new Button({
 				category: 'general',
@@ -292,13 +346,13 @@ export async function setupSettings(settings: SettingsWindow) {
 				description:
 					'windows.settings.general.resetBridgeFolder.description',
 				onClick: async () => {
-					await del('bridgeBaseDir')
-					await del(comMojangKey)
-					location.reload()
+					set('bridgeFolderPath', undefined)
+					settings.addReloadHint()
 				},
 			})
 		)
 	}
+
 	// Editor
 	settings.addControl(
 		new Selection({
@@ -405,6 +459,16 @@ export async function setupSettings(settings: SettingsWindow) {
 			description:
 				'windows.settings.editor.bridgePredictions.description',
 			key: 'bridgePredictions',
+			default: true,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'editor',
+			name: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
+			description:
+				'windows.settings.editor.inlineTreeEditorDiagnostics.description',
+			key: 'inlineTreeEditorDiagnostics',
 			default: true,
 		})
 	)

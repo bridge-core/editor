@@ -1,4 +1,5 @@
 import { Schema } from './Schema'
+import { closestMatch } from '/@/utils/string/closestMatch'
 
 export class EnumSchema extends Schema {
 	public readonly types = []
@@ -21,14 +22,34 @@ export class EnumSchema extends Schema {
 	}
 
 	validate(val: unknown) {
-		if (!(<unknown[]>this.value).includes(val))
+		const values = <unknown[]>this.value
+		if (!values.includes(val)) {
+			if (values.length === 0) {
+				return [
+					<const>{
+						priority: 0,
+						severity: 'warning',
+						message: `Found "${val}"; but no values are valid`,
+					},
+				]
+			}
+
+			// console.log(<unknown[]>this.value)
+			const bestMatch = closestMatch(
+				`${val}`,
+				values.map((v) => `${v}`),
+				0.6
+			)
 			return [
-				{
-					message: `Found ${val}; expected one of ${(<unknown[]>(
-						this.value
-					)).join(', ')}`,
+				<const>{
+					priority: 1,
+					severity: 'warning',
+					message: bestMatch
+						? `"${val}" not valid here. Did you mean "${bestMatch}"?`
+						: `"${val}" not valid here`,
 				},
 			]
+		}
 		return []
 	}
 }

@@ -15,8 +15,15 @@ export async function setupSidebar() {
 		displayName: 'windows.projectChooser.title',
 		icon: 'mdi-view-dashboard-outline',
 		disabled: () =>
+			// Disable the projects chooser if...
+			// - We have no projects
 			App.instance.hasNoProjects &&
-			App.instance.bridgeFolderSetup.hasFired,
+			// - We have already setup the bridge folder
+			App.instance.bridgeFolderSetup.hasFired &&
+			// - We do not have com.mojang projects
+			!App.instance.windows.projectChooser.comMojangProjectLoader
+				.hasProjects.value,
+
 		onClick: async () => {
 			if (
 				App.instance.hasNoProjects &&
@@ -26,7 +33,11 @@ export async function setupSidebar() {
 				if (!didSetup) return
 			}
 
-			if (isUsingFileSystemPolyfill.value) {
+			// Show limited project chooser if current build is a PWA build using our file system polyfill
+			if (
+				!import.meta.env.VITE_IS_TAURI_APP &&
+				isUsingFileSystemPolyfill.value
+			) {
 				createVirtualProjectWindow()
 			} else {
 				await App.instance.windows.projectChooser.open()
@@ -84,7 +95,9 @@ export async function setupSidebar() {
 		displayName: 'sidebar.quickExport.name',
 		icon: 'mdi-export',
 		// Only show quick export option for devices on which com.mojang syncing is not available
-		defaultVisibility: isUsingFileSystemPolyfill.value,
+		defaultVisibility:
+			!import.meta.env.VITE_IS_TAURI_APP &&
+			isUsingFileSystemPolyfill.value,
 		disabled: () => App.instance.isNoProjectSelected,
 
 		onClick: () => {

@@ -2,7 +2,11 @@
 	<div
 		v-on="nonClickListeners"
 		class="rounded-lg"
-		:class="{ 'bg-dark': dark, bg: !dark }"
+		:class="{
+			'bg-dark': dark,
+			bg: !dark,
+			'cursor-pointer': hasClickListener && !isLoading,
+		}"
 		@click="isLoading ? null : $emit('click')"
 		v-ripple="hasClickListener && !isLoading"
 	>

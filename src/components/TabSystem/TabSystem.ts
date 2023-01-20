@@ -26,7 +26,7 @@ export class TabSystem extends MonacoHolder {
 	protected get tabTypes() {
 		return TabProvider.tabs
 	}
-	protected _isActive = true
+	protected _isActive = ref(true)
 	public readonly openedFiles: OpenedFiles
 
 	get isActive() {
@@ -220,7 +220,7 @@ export class TabSystem extends MonacoHolder {
 	}
 
 	async select(tab?: Tab) {
-		if (this.isActive !== !!tab) this.setActive(!!tab)
+		if (this.isActive.value !== !!tab) this.setActive(!!tab)
 
 		if (this.app.mobile.isCurrentDevice()) App.sidebar.hide()
 		if (tab?.isSelected) return
@@ -307,9 +307,9 @@ export class TabSystem extends MonacoHolder {
 
 	setActive(isActive: boolean, updateProject = true) {
 		if (updateProject) this.project.setActiveTabSystem(this, !isActive)
-		if (isActive === this._isActive) return
+		if (isActive === this._isActive.value) return
 
-		this._isActive = isActive
+		this._isActive.value = isActive
 
 		if (isActive && this._selectedTab && this.project.isActiveProject) {
 			App.eventSystem.dispatch('currentTabSwitched', this._selectedTab)

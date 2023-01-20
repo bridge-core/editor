@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h3>{{ t(config.name) }}</h3>
+		<h3 class="text-normal font-medium">{{ t(config.name) }}</h3>
 		<div class="d-flex align-center">
 			<div>
 				<v-text-field
@@ -13,6 +13,7 @@
 					:items="config.options"
 					hide-details
 					:menu-props="{ maxHeight: 220 }"
+					spellcheck="false"
 				/>
 			</div>
 

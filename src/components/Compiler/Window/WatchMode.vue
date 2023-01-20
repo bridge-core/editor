@@ -29,7 +29,7 @@
 						<v-icon color="accent" class="mr-1">
 							{{ icon }}
 						</v-icon>
-						<h3>
+						<h3 class="text-lg font-medium">
 							{{
 								t(
 									`sidebar.compiler.categories.watchMode.settings.${id}.name`

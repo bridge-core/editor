@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build Web App
 on:
     release:
         types: [published]
@@ -35,6 +35,8 @@ jobs:
                   cache: 'npm'
 
             - name: Install and Build 🔧
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                   npm install
                   NODE_OPTIONS=--max_old_space_size=4096 npm run build

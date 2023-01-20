@@ -8,7 +8,7 @@ export async function buildChangelog() {
 
 	if (GITHUB_TOKEN !== undefined) {
 		headers = {
-			Authorization: `token ${GITHUB_TOKEN}`,
+			Authorization: `Bearer ${GITHUB_TOKEN}`,
 		}
 	}
 
@@ -16,7 +16,7 @@ export async function buildChangelog() {
 		'https://api.github.com/repos/bridge-core/editor/releases',
 		{
 			headers: headers,
-		},
+		}
 	)
 		.then((response) => response.json())
 		.then((data) => new MarkdownIt().render(data[0].body))

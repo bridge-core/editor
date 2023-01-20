@@ -1,18 +1,28 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
+import { openAboutWindow } from '../../Windows/About/AboutWindow'
 
 export function setupHelpCategory(app: App) {
 	const help = new ToolbarCategory('mdi-help', 'toolbar.help.name')
+	help.addItem(
+		app.actionManager.create({
+			name: 'actions.about.name',
+			icon: 'mdi-information-outline',
+			description: 'actions.about.description',
+			onTrigger: () => openAboutWindow(),
+		})
+	)
 	help.addItem(
 		app.actionManager.create({
 			name: 'actions.releases.name',
 			icon: 'mdi-alert-decagram',
 			description: 'actions.releases.description',
 			onTrigger: () =>
-				window.open(
+				App.openUrl(
 					'https://github.com/bridge-core/editor/releases',
-					'_blank'
+					undefined,
+					true
 				),
 		})
 	)
@@ -22,9 +32,10 @@ export function setupHelpCategory(app: App) {
 			icon: 'mdi-bug-outline',
 			description: 'actions.bugReports.description',
 			onTrigger: () =>
-				window.open(
+				App.openUrl(
 					'https://github.com/bridge-core/editor/issues/new/choose',
-					'_blank'
+					undefined,
+					true
 				),
 		})
 	)
@@ -34,7 +45,7 @@ export function setupHelpCategory(app: App) {
 			icon: 'mdi-twitter',
 			description: 'actions.twitter.description',
 			onTrigger: () =>
-				window.open('https://twitter.com/bridgeIDE', '_blank'),
+				App.openUrl('https://twitter.com/bridgeIDE', undefined, true),
 		})
 	)
 
@@ -48,7 +59,8 @@ export function setupHelpCategory(app: App) {
 			onTrigger: () =>
 				App.openUrl(
 					'https://bridge-core.github.io/extension-docs/',
-					'_blank'
+					undefined,
+					true
 				),
 		})
 	)
@@ -60,7 +72,8 @@ export function setupHelpCategory(app: App) {
 			onTrigger: () =>
 				App.openUrl(
 					'https://bridge-core.github.io/editor-docs/getting-started/',
-					'_blank'
+					undefined,
+					true
 				),
 		})
 	)
@@ -72,7 +85,8 @@ export function setupHelpCategory(app: App) {
 			onTrigger: () =>
 				App.openUrl(
 					'https://bridge-core.github.io/editor-docs/faq/',
-					'_blank'
+					undefined,
+					true
 				),
 		})
 	)

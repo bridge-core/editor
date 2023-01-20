@@ -8,7 +8,7 @@
 			>
 				{{ action.icon }}
 			</v-icon>
-			<h3>{{ t(action.name) }}</h3>
+			<h3 class="text-lg font-medium">{{ t(action.name) }}</h3>
 
 			<v-spacer />
 			<span v-if="action.keyBinding">

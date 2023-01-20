@@ -18,6 +18,7 @@
 						v-model="state.assetName"
 						outlined
 						dense
+						spellcheck="false"
 						:label="t('windows.assetPreview.assetName')"
 					/>
 
@@ -44,7 +45,7 @@
 						:label="t('windows.assetPreview.outputResolution')"
 					/>
 
-					<h2 class="mt-8 mb-3">
+					<h2 class="text-lg font-medium mt-8 mb-3">
 						{{ t('windows.assetPreview.backgroundColor') }}
 					</h2>
 
@@ -56,7 +57,10 @@
 						mode="hexa"
 					/>
 
-					<h2 v-if="state.bones.length > 0" class="mt-8">
+					<h2
+						v-if="Object.keys(state.bones).length > 0"
+						class="text-lg font-medium mt-8"
+					>
 						{{ t('windows.assetPreview.boneVisibility') }}
 					</h2>
 
@@ -70,6 +74,7 @@
 								onBoneVisibilityChange(boneName, isVisible)
 						"
 						hide-details
+						dense
 					/>
 				</div>
 				<canvas

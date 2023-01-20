@@ -3,8 +3,8 @@
 		v-if="title"
 		:value="!!title"
 		class="mt-2 mb-8 pa-3"
-		color="purple"
-		:style="`color: ${textColor}; width: calc(100% - 8px); position: absolute; top: 0; left: 0;`"
+		:color="color"
+		:style="`color: ${textColor}; width: 100%; position: absolute; top: 0; left: 0;`"
 		border="bottom"
 		rounded="lg"
 	>
@@ -50,8 +50,8 @@ export default {
 			? await fetch(
 					'https://raw.githubusercontent.com/bridge-core/editor-packages/main/remote/welcomeAlert.json'
 			  )
-					.catch(() => null)
-					.then((res) => (res ? res.json() : {}))
+					.then((res) => res.json())
+					.catch(() => ({}))
 			: {}
 
 		this.icon = icon

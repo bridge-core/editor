@@ -11,7 +11,7 @@
 			class="mb-2"
 			:style="{ height: content.headerHeight, overflow: 'auto' }"
 		>
-			<component :is="content.headerSlot" />
+			<component :is="content.headerSlot" :sidebarContent="content" />
 		</BridgeSheet>
 
 		<BridgeSheet

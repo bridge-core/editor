@@ -1,6 +1,6 @@
 <template>
 	<v-tooltip
-		v-if="!isUsingFileSystemPolyfill"
+		v-if="!isUsingFileSystemPolyfill && !isTauriBuild"
 		:disabled="availableWidth > 220"
 		:color="color ? color : 'tooltip'"
 		right
@@ -61,7 +61,10 @@ export default {
 		},
 	},
 	setup() {
-		return { isUsingFileSystemPolyfill }
+		return {
+			isUsingFileSystemPolyfill,
+			isTauriBuild: import.meta.env.VITE_IS_TAURI_APP,
+		}
 	},
 	async mounted() {
 		const app = await App.getApp()
@@ -99,7 +102,8 @@ export default {
 		},
 		calculateAvailableWidth() {
 			if (this.$refs.button)
-				this.availableWidth = this.$refs.button.$el.getBoundingClientRect().width
+				this.availableWidth =
+					this.$refs.button.$el.getBoundingClientRect().width
 		},
 	},
 }

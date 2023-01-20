@@ -4,7 +4,7 @@
 			<v-icon v-if="extension.icon" color="accent" class="mr-1">
 				{{ extension.icon }}
 			</v-icon>
-			<h3>{{ extension.name }}</h3>
+			<h3 class="text-lg font-medium">{{ extension.name }}</h3>
 
 			<v-spacer />
 			<!-- Read more about extension -->
