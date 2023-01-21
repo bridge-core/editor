@@ -26,6 +26,7 @@
 				class="ml-2"
 				outlined
 				dense
+				@input="updateStatus"
 			/>
 		</div>
 
@@ -48,6 +49,7 @@
 				class="mr-2"
 				outlined
 				dense
+				@input="updateStatus"
 			/>
 			<v-text-field
 				v-model="state.createOptions.author"
@@ -56,6 +58,7 @@
 				class="mx-2"
 				outlined
 				dense
+				@input="updateStatus"
 			/>
 
 			<v-autocomplete
@@ -73,6 +76,7 @@
 				class="ml-2"
 				outlined
 				dense
+				@change="updateStatus"
 			/>
 		</div>
 
@@ -101,6 +105,7 @@ import { computed } from 'vue'
 const { t } = useTranslations()
 const props = defineProps(['window'])
 const state = props.window.state
+const sidebarStatus = props.window.sidebar.currentElement.status
 
 const nameRules = computed(() => {
 	return props.window.projectNameRules.map((rule: any) => (val: any) => {
@@ -117,4 +122,10 @@ function onDropFile(event: DragEvent) {
 
 	state.createOptions.icon = file
 }
+
+function updateStatus() {
+	sidebarStatus.showStatus = !props.window.tabHasRequiredData('general')
+}
+
+updateStatus()
 </script>

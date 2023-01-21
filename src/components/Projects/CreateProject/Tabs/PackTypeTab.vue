@@ -87,6 +87,7 @@ import { useTranslations } from '/@/components/Composables/useTranslations'
 const { t } = useTranslations()
 const props = defineProps(['window'])
 const state = props.window.state
+const sidebarStatus = props.window.sidebar.currentElement.status
 
 function togglePack(packPath: string) {
 	const packs = state.createOptions.packs
@@ -94,5 +95,12 @@ function togglePack(packPath: string) {
 
 	if (index > -1) packs.splice(index, 1)
 	else packs.push(packPath)
+
+	updateStatus()
 }
+
+function updateStatus() {
+	sidebarStatus.showStatus = !props.window.tabHasRequiredData('packType')
+}
+updateStatus()
 </script>

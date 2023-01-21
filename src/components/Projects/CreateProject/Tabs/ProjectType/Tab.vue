@@ -30,12 +30,4 @@ import { projectTypes } from '../../ProjectTypes'
 
 const props = defineProps(['window'])
 const state = props.window.state
-
-function togglePack(packPath: string) {
-	const packs = state.createOptions.packs
-	const index = packs.indexOf(packPath)
-
-	if (index > -1) packs.splice(index, 1)
-	else packs.push(packPath)
-}
 </script>

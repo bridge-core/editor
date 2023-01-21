@@ -147,15 +147,26 @@ export class CreateProjectWindow extends StepperWindow {
 	}
 
 	get hasRequiredData() {
-		return (
-			this.createOptions.packs.length > 1 &&
-			this.projectNameRules.every(
-				(rule) => rule(this.createOptions.name) === true
-			) &&
-			this.createOptions.namespace.length > 0 &&
-			this.createOptions.author.length > 0 &&
-			this.createOptions.targetVersion.length > 0
-		)
+		return createCategories.every(({ id }) => this.tabHasRequiredData(id))
+	}
+
+	tabHasRequiredData(tabId: string) {
+		switch (tabId) {
+			case 'general':
+				return (
+					this.projectNameRules.every(
+						(rule) => rule(this.createOptions.name) === true
+					) &&
+					this.createOptions.namespace.length > 0 &&
+					this.createOptions.author.length > 0 &&
+					this.createOptions.targetVersion.length > 0
+				)
+			case 'packType':
+				return this.createOptions.packs.length > 1
+
+			default:
+				return true
+		}
 	}
 
 	/**
@@ -184,7 +195,11 @@ export class CreateProjectWindow extends StepperWindow {
 				if (!this.state.confirm) return
 
 				this.state.confirm.isLoading = true
-				await this.createProject()
+				// TODO remove test code
+				// await this.createProject()
+				await new Promise<void>((resolve) => {
+					setTimeout(() => resolve(), 1000)
+				})
 				this.state.confirm.isLoading = false
 
 				this.close()

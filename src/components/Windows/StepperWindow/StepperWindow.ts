@@ -58,6 +58,11 @@ export class StepperWindow extends NewBaseWindow {
 				id: step.id,
 				color: step.color ?? 'accent',
 				text: step.name,
+				status: reactive({
+					showStatus: false,
+					// TODO - translate
+					message: 'This step has incomplete data!',
+				}),
 			})
 		)
 	}
