@@ -179,7 +179,6 @@ export class Sidebar extends EventDispatcher<string | undefined> {
 	) {
 		super()
 		this.selected = this.findDefaultSelected()
-		console.log(this._elements)
 	}
 
 	get showDisabled() {
