@@ -19,7 +19,7 @@ import {
 	getStableFormatVersion,
 } from '/@/components/Data/FormatVersions'
 import { CreateDenoConfig } from './Files/DenoConfig'
-import { reactive, computed } from 'vue'
+import { reactive, watch } from 'vue'
 import { translate } from '../../Locales/Manager'
 import { createCategories } from './CreateCategories'
 import {
@@ -185,11 +185,11 @@ export class CreateProjectWindow extends StepperWindow {
 			})
 		})
 
-		this.state.confirm = {
+		this.updateConfirmState({
 			name: translate('windows.createProject.create'),
 			color: 'primary',
 			icon: 'mdi-plus',
-			isDisabled: computed(() => !this.hasRequiredData),
+			isDisabled: true,
 			isLoading: false,
 			onConfirm: async () => {
 				if (!this.state.confirm) return
@@ -204,7 +204,12 @@ export class CreateProjectWindow extends StepperWindow {
 
 				this.close()
 			},
-		}
+		})
+
+		watch(
+			() => this.hasRequiredData,
+			() => (this.state.confirm.isDisabled = !this.hasRequiredData)
+		)
 	}
 
 	open() {

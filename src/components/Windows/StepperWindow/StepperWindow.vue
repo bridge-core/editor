@@ -46,8 +46,8 @@
 
 			<!--Confirm button-->
 			<v-btn
-				:color="state.confirm.color ?? 'primary'"
-				:disabled="state.confirm.isDisabled.value"
+				:color="state.confirm.color"
+				:disabled="state.confirm.isDisabled"
 				:loading="state.confirm.isLoading"
 				@click="state.confirm.onConfirm()"
 			>
