@@ -42,12 +42,15 @@
 </template>
 
 <script setup>
+import Logo from '../UIElements/Logo.vue'
+import CommandBar from '../CommandBar/CommandBar.vue'
+import WelcomeAlert from '/@/components/WelcomeAlert/Alert.vue'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import { App } from '/@/App'
 import { useTranslations } from '../Composables/useTranslations'
 import { computed } from 'vue'
 import { useSidebarState } from '../Composables/Sidebar/useSidebarState'
-import { getFromGithub } from '../SourceControl/Backend/Get'
+import { getFromGithub } from '../Backend/Get'
 import { ref } from 'vue'
 
 const user = ref(null)

@@ -6,7 +6,7 @@ import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
 import { createCompilerSidebar } from '../Compiler/Sidebar/create'
 import { exportAsMcaddon } from '../Projects/Export/AsMcaddon'
-import { SourceControl } from '../SourceControl/Sidebar/SourceControl'
+import { SourceControl } from '../SourceControl/SourceControl'
 
 export async function setupSidebar() {
 	createSidebar({

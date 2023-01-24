@@ -1,12 +1,13 @@
-import { OauthToken } from '../OAuth/Token'
+import { App } from '/@/App'
 import { version as appVersion } from '/@/utils/app/version'
 
 export async function getFromGithub(
 	endpoint: string,
 	ctx?: Record<string, string>
 ) {
-	await OauthToken.setup.fired
-	const token = OauthToken.get()
+	const app = await App.getApp()
+	const token = await app.oAuth.token.fired
+	console.log(token)
 
 	// Base github api url
 	const url = `https://api.github.com/${endpoint}`

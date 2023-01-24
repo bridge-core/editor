@@ -1,7 +1,7 @@
 import { SidebarContent } from '/@/components/Sidebar/Content/SidebarContent'
 import ContentComponent from './Content.vue'
 import { SidebarAction } from '/@/components/Sidebar/Content/SidebarAction'
-import { OauthToken } from '../OAuth/Token'
+import { App } from '/@/App'
 
 export class SourceControl extends SidebarContent {
 	component = ContentComponent
@@ -11,8 +11,10 @@ export class SourceControl extends SidebarContent {
 		super()
 
 		// Source control actions should only show once user is logged in
-		OauthToken.setup.once(() => {
-			this.createActions()
+		App.getApp().then((app) => {
+			app.oAuth.token.fired.then(() => {
+				this.createActions()
+			})
 		})
 	}
 

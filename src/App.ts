@@ -48,6 +48,7 @@ import { ViewComMojangProject } from '/@/components/OutputFolders/ComMojang/Side
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { BottomPanel } from '/@/components/BottomPanel/BottomPanel'
 import { SolidWindowManager } from './components/Solid/Window/Manager'
+import { OAuth } from './components/Backend/OAuth'
 
 if (import.meta.env.VITE_IS_TAURI_APP) {
 	// Import Tauri updater for native builds
@@ -97,6 +98,7 @@ export class App {
 	public readonly configuredJsonLanguage = markRaw(
 		new ConfiguredJsonLanguage()
 	)
+	public readonly oAuth = markRaw(new OAuth())
 	public static readonly fileType = markRaw(new FileTypeLibrary())
 	public static readonly packType = markRaw(new PackTypeLibrary())
 	public static readonly sidebar = new SidebarManager()

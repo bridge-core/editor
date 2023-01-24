@@ -70,15 +70,17 @@
 <script>
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import File from '/@/components/FileSystem/UI/File.vue'
-import { OauthToken } from '../OAuth/Token'
 import GitHubLogin from '/@/components/UIElements/Button/GitHubLogin.vue'
+import { App } from '/@/App'
 
 export default {
 	mixins: [TranslationMixin],
 	components: { File, GitHubLogin },
 	mounted() {
-		OauthToken.setup.once(() => {
-			this.isLoggedIn = true
+		App.getApp().then((app) => {
+			app.oAuth.token.once(() => {
+				this.isLoggedIn = true
+			})
 		})
 	},
 	data: () => ({

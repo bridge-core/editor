@@ -14,26 +14,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useTranslations } from '../../Composables/useTranslations'
-import { OauthToken } from '../../SourceControl/OAuth/Token'
 import { App } from '/@/App'
 
 const { t } = useTranslations()
 
 const isLoggedIn = ref(false)
 
-OauthToken.setup.once(() => {
-	isLoggedIn.value = true
+App.getApp().then((app) => {
+	app.oAuth.token.once(() => {
+		isLoggedIn.value = true
+	})
 })
 
 defineProps({
 	block: Boolean,
 })
 
-function onLogin() {
-	App.openUrl(
-		'https://bridge-editor.deno.dev/login?to=http://localhost:8080/callback.html',
-		'login',
-		false
-	)
+async function onLogin() {
+	const app = await App.getApp()
+	app.oAuth.login()
 }
 </script>
