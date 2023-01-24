@@ -5,6 +5,8 @@ import { ViewCompilerOutput } from '../../UIElements/DirectoryViewer/ContextMenu
 import { Divider } from '../Divider'
 import { platform } from '/@/utils/os'
 import { fullScreenAction } from '../../TabSystem/TabContextMenu/Fullscreen'
+import { TextTab } from '../../Editors/Text/TextTab'
+import { TreeTab } from '../../Editors/TreeEditor/Tab'
 
 export function setupViewCategory(app: App) {
 	const view = new ToolbarCategory('mdi-eye-outline', 'toolbar.view.name')
@@ -141,6 +143,27 @@ export function setupViewCategory(app: App) {
 				currentTab.setReadOnly(
 					currentTab.readOnlyMode === 'manual' ? 'off' : 'manual'
 				)
+			},
+		})
+	)
+	view.addItem(
+		app.actionManager.create({
+			icon: 'mdi-pencil-outline',
+			name: 'actions.switchEditorMode.name',
+			description: 'actions.switchEditorMode.description',
+			onTrigger: async () => {
+				const currentTab = app.tabSystem?.selectedTab
+				if (
+					!(currentTab instanceof TextTab) &&
+					!(currentTab instanceof TreeTab)
+				)
+					return
+
+				const newTab =
+					currentTab instanceof TextTab
+						? TreeTab.from(currentTab)
+						: TextTab.from(currentTab)
+				currentTab.tabSystem.replaceCurrent(newTab)
 			},
 		})
 	)
