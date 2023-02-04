@@ -192,8 +192,6 @@ export class CreateProjectWindow extends StepperWindow {
 			isDisabled: true,
 			isLoading: false,
 			onConfirm: async () => {
-				if (!this.state.confirm) return
-
 				this.state.confirm.isLoading = true
 				// TODO remove test code
 				// await this.createProject()
