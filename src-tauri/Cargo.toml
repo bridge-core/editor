@@ -20,7 +20,7 @@ tauri = { version = "1.2.2", features = ["api-all", "updater"] }
 discord-rich-presence = "0.2.3"
 chrono = "0.4.23"
 window-shadows = "0.2.0"
-tokio = { version = "1.23", features = ["process", "io-util", "sync"] }
+tokio = { version = "1.24", features = ["process", "io-util", "sync"] }
 mime_guess = "2.0.4"
 
 [features]
