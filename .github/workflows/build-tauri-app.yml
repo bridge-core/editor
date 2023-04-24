@@ -9,7 +9,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                platform: [macos-latest, ubuntu-latest, windows-latest]
+                platform: [windows-latest]
 
         runs-on: ${{ matrix.platform }}
         steps:
@@ -36,33 +36,11 @@ jobs:
             - name: Install npm packages 🔧
               run: npm i
 
-            # - name: Add aarch64 target
-            #   if: matrix.platform == 'macos-latest'
-            #   run: rustup target add aarch64-apple-darwin
-
-            # - name: Build the app (Apple Silicon)
-            #   uses: solvedDev/tauri-action@dev
-            #   if: matrix.platform == 'macos-latest'
-
-            #   env:
-            #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            #       TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-            #       TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-
-            #   with:
-            #       tagName: v__VERSION__ # tauri-action replaces \_\_VERSION\_\_ with the app version
-            #       releaseName: 'v__VERSION__'
-            #       releaseDraft: true
-            #       prerelease: false
-            #       args: --target aarch64-apple-darwin
-
             - name: Build the app 💻
-              uses: solvedDev/tauri-action@dev
+              uses: tauri-apps/tauri-action@dev
 
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-                  TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+                  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
                   VITE_IS_TAURI_APP: true
 
               with:
