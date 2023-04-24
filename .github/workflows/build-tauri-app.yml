@@ -41,6 +41,8 @@ jobs:
 
               env:
                   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+                  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+                  TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
                   VITE_IS_TAURI_APP: true
 
               with:
