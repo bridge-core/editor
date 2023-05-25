@@ -9,7 +9,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                platform: [windows-latest]
+                platform: [windows-latest, ubuntu-latest, macos-latest]
 
         runs-on: ${{ matrix.platform }}
         steps:
@@ -19,7 +19,7 @@ jobs:
             - name: Install Node 🧰
               uses: actions/setup-node@v2
               with:
-                  node-version: 16
+                  node-version: 18
                   cache: 'npm'
 
             - name: Install Rust 🦀

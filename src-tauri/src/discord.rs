@@ -31,19 +31,12 @@ pub fn set_rich_presence(window: &tauri::Window) -> Result<(), Box<dyn std::erro
                             .assets(
                                 activity::Assets::new()
                                     .large_image("logo_tile")
-                                    .large_text("bridge. v2"),
+                                    .large_text("Bridge. v2.6.3"),
                             )
                             .timestamps(
                                 activity::Timestamps::new()
                                     .start(chrono::Utc::now().timestamp_millis()),
-                            )
-                            .buttons(vec![
-                                activity::Button::new(
-                                    "Open Editor",
-                                    "https://editor.bridge-core.app/",
-                                ),
-                                // activity::Button::new("Read More...", "https://bridge-core.app/"),
-                            ]),
+                            ),
                     );
                 }
                 Err(e) => {
