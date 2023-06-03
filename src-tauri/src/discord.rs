@@ -8,7 +8,7 @@ struct RichPresencePayload {
 }
 
 pub fn set_rich_presence(window: &tauri::Window) -> Result<(), Box<dyn std::error::Error>> {
-    let client = Arc::new(Mutex::new(DiscordIpcClient::new("1045743881393815552")?));
+    let client = Arc::new(Mutex::new(DiscordIpcClient::new("1114466767981523076")?));
 
     let success = client.lock().unwrap().connect();
 
