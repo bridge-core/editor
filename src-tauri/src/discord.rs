@@ -31,7 +31,7 @@ pub fn set_rich_presence(window: &tauri::Window) -> Result<(), Box<dyn std::erro
                             .assets(
                                 activity::Assets::new()
                                     .large_image("logo_tile")
-                                    .large_text("Bridge. v2.6.3"),
+                                    .large_text("Bridge. v2"),
                             )
                             .timestamps(
                                 activity::Timestamps::new()
