@@ -8,7 +8,7 @@ struct RichPresencePayload {
 }
 
 pub fn set_rich_presence(window: &tauri::Window) -> Result<(), Box<dyn std::error::Error>> {
-    let client = Arc::new(Mutex::new(DiscordIpcClient::new("1045743881393815552")?));
+    let client = Arc::new(Mutex::new(DiscordIpcClient::new("1114466767981523076")?));
 
     let success = client.lock().unwrap().connect();
 
@@ -31,19 +31,12 @@ pub fn set_rich_presence(window: &tauri::Window) -> Result<(), Box<dyn std::erro
                             .assets(
                                 activity::Assets::new()
                                     .large_image("logo_tile")
-                                    .large_text("bridge. v2"),
+                                    .large_text("Bridge. v2"),
                             )
                             .timestamps(
                                 activity::Timestamps::new()
                                     .start(chrono::Utc::now().timestamp_millis()),
-                            )
-                            .buttons(vec![
-                                activity::Button::new(
-                                    "Open Editor",
-                                    "https://editor.bridge-core.app/",
-                                ),
-                                // activity::Button::new("Read More...", "https://bridge-core.app/"),
-                            ]),
+                            ),
                     );
                 }
                 Err(e) => {
