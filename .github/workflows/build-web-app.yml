@@ -19,7 +19,7 @@ jobs:
     build-and-deploy:
         environment:
             name: github-pages
-            url: "https://nguyenduck.github.io"
+            url: ${{ steps.deployment.outputs.page_url }}
         runs-on: ubuntu-latest
         steps:
             - name: Checkout 🛎️
