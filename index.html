@@ -220,12 +220,14 @@
 		</div>
 		<script>
 			window.addEventListener('load', () => {
-				document
-					.querySelector('.initial-boot')
-					.classList.add('complete')
-
 				setTimeout(() => {
-					document.querySelector('.initial-boot').remove()
+					document
+						.querySelector('.initial-boot')
+						.classList.add('complete')
+
+					setTimeout(() => {
+						document.querySelector('.initial-boot').remove()
+					}, 200)
 				}, 200)
 			})
 		</script>
