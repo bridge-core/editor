@@ -28,9 +28,24 @@ export class FileDropper {
 	}
 
 	protected async onDrop(dataTransferItems: DataTransferItem[]) {
+		const handles: Promise<AnyHandle | null>[] = []
+
+		console.log(dataTransferItems)
+
 		for (const item of dataTransferItems) {
-			const handle = <AnyHandle | null>await item.getAsFileSystemHandle()
-			if (!handle) return
+			handles.push(
+				<Promise<AnyHandle | null>>item.getAsFileSystemHandle()
+			)
+		}
+
+		console.log(handles)
+
+		for (const handlePromise of handles) {
+			const handle = await handlePromise
+
+			console.log(handle)
+
+			if (handle === null) continue
 
 			await this.import(handle)
 		}
