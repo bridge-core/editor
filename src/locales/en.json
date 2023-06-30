@@ -1141,6 +1141,7 @@
 		"chooseGeometry": "Choose Geometry",
 		"chooseTexture": "Choose Texture",
 		"noGeometry": "No valid geometry found inside of this file. Make sure that your JSON is valid, that the file structure is correct and that a geometry with the provided identifier exists.",
+		"noTextures": "No valid texture found for this file. Make sure that your JSON is valid, that the file structure is correct and that a texture is linked to this geometry.",
 		"lootTableSimulator": {
 			"emptyLootOutput": "Output is empty, try running the loot table to collect results.",
 			"data": {
