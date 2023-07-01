@@ -6,7 +6,7 @@ import {
 	removeDir,
 	removeFile,
 } from '@tauri-apps/api/fs'
-import { join, sep } from '@tauri-apps/api/path'
+import { isAbsolute, join, sep } from '@tauri-apps/api/path'
 import { invoke } from '@tauri-apps/api/tauri'
 import { VirtualFile } from '../File'
 import { BaseStore, FsKindEnum, type TStoreType } from './BaseStore'
@@ -50,6 +50,7 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 	async resolvePath(path: string) {
 		path = path.replaceAll(/\\|\//g, sep)
 		if (!this.baseDirectory) return path
+		if (await isAbsolute(path)) return path
 		return await join(this.baseDirectory, path)
 	}
 
@@ -115,12 +116,12 @@ export class TauriFsStore extends BaseStore<ITauriFsSerializedData> {
 		const resolvedPath = await this.resolvePath(path)
 
 		try {
-			await readDir(resolvedPath)
-			return 'directory'
+			await readBinaryFile(resolvedPath)
+			return 'file'
 		} catch (err) {
 			try {
-				await readBinaryFile(resolvedPath)
-				return 'file'
+				await readDir(resolvedPath)
+				return 'directory'
 			} catch (err) {
 				return null
 			}
