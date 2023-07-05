@@ -222,6 +222,14 @@ export class EntityModelTab extends GeometryPreviewTab {
 				await loadTextures('blocks')
 			)
 
+			if (textures.length === 0) {
+				new InformationWindow({
+					description: 'preview.noTextures',
+				})
+
+				return
+			}
+
 			// Prompt user to select a texture
 			const choiceWindow = new DropdownWindow({
 				options: textures,
