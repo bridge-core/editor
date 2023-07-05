@@ -114,13 +114,13 @@
 		<style>
 			body {
 				margin: 0;
+				overflow: hidden;
 			}
 			#app {
 				height: 100vh;
 				width: 100vw;
 			}
 			.initial-boot {
-				padding-bottom: 50px;
 				background-color: #ececec;
 				display: grid;
 				grid-template-columns: 1fr;
@@ -135,6 +135,11 @@
 				height: 100vh;
 				app-region: drag;
 				-webkit-app-region: drag;
+				opacity: 1;
+				transition: opacity 200ms ease;
+			}
+			.initial-boot.complete {
+				opacity: 0;
 			}
 			.initial-boot img {
 				place-self: center;
@@ -146,12 +151,13 @@
 				border-radius: 50%;
 				width: 50px;
 				height: 50px;
+				box-sizing: content-box;
 			}
 			.loader {
 				margin: 60px auto;
 				font-size: 10px;
 				position: relative;
-				top: -30em;
+				top: -40em;
 				text-indent: -9999em;
 				border: 0.5em solid rgba(0, 0, 0, 0.1);
 				border-left: 0.5em solid #131313;
@@ -214,7 +220,15 @@
 		</div>
 		<script>
 			window.addEventListener('load', () => {
-				document.querySelector('.initial-boot').remove()
+				setTimeout(() => {
+					document
+						.querySelector('.initial-boot')
+						.classList.add('complete')
+
+					setTimeout(() => {
+						document.querySelector('.initial-boot').remove()
+					}, 200)
+				}, 200)
 			})
 		</script>
 

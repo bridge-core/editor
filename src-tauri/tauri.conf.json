@@ -71,7 +71,8 @@
 				"width": 1200,
 				"titleBarStyle": "Overlay",
 				"acceptFirstMouse": true,
-				"fileDropEnabled": false
+				"fileDropEnabled": true,
+				"maximized": true
 			}
 		]
 	}
