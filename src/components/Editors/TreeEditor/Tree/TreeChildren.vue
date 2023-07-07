@@ -9,23 +9,25 @@
 			@change="onChange"
 		>
 			<template v-for="[key, child] in children">
-				<InlineDiagnostic
-					v-if="showDiagnostics && child.highestSeverityDiagnostic"
-					:diagnostic="child.highestSeverityDiagnostic"
-					:key="`diagnostic.${child.uuid}`"
-				/>
-				<component
-					:key="child.uuid"
-					:is="child.component"
-					:tree="child"
-					:treeEditor="treeEditor"
-					@setActive="$emit('setActive')"
-				>
-					<span v-if="tree.type === 'array'" :style="numberDef">{{
-						key
-					}}</span>
-					<Highlight v-else :value="key" />
-				</component>
+				<div :key="child.uuid">
+					<InlineDiagnostic
+						v-if="
+							showDiagnostics && child.highestSeverityDiagnostic
+						"
+						:diagnostic="child.highestSeverityDiagnostic"
+					/>
+					<component
+						:is="child.component"
+						:tree="child"
+						:treeEditor="treeEditor"
+						@setActive="$emit('setActive')"
+					>
+						<span v-if="tree.type === 'array'" :style="numberDef">{{
+							key
+						}}</span>
+						<Highlight v-else :value="key" />
+					</component>
+				</div>
 			</template>
 		</Draggable>
 	</div>

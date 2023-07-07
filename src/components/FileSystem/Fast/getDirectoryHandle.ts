@@ -1,3 +1,4 @@
+import { isAbsolute } from '@tauri-apps/api/path'
 import { IGetHandleConfig } from '../Common'
 import { VirtualDirectoryHandle } from '../Virtual/DirectoryHandle'
 import { pathFromHandle } from '../Virtual/pathFromHandle'
@@ -18,7 +19,11 @@ export async function getDirectoryHandleTauri(
 
 	const { createDir, exists } = await import('@tauri-apps/api/fs')
 	const { join, basename, sep } = await import('@tauri-apps/api/path')
-	const fullPath = await join(await pathFromHandle(baseDirectory), ...pathArr)
+
+	const path = await join(...pathArr)
+	const fullPath = (await isAbsolute(path))
+		? path
+		: await join(await pathFromHandle(baseDirectory), path)
 
 	if (create) {
 		await createDir(fullPath, { recursive: !createOnce }).catch((err) => {

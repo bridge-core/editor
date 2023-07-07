@@ -18,7 +18,7 @@ export const SidebarModule = ({ disposables, extensionId }: IModuleConfig) => ({
 		icon: string
 	}) {
 		if (!config.id) {
-			console.error('SidebarModule: config.id is required')
+			console.warn('SidebarModule: config.id is required')
 			config.id = `${extensionId}//${config.displayName}`
 		}
 		const sidebar = createSidebar(config)
