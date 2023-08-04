@@ -49,12 +49,3 @@ jobs:
             - name: Deploy to GitHub Pages 🚀
               id: deployment
               uses: actions/deploy-pages@v1
-
-            # - name: Build & Publish Compiler Plugin Types 📝
-            #   env:
-            #       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-            #   run: |
-            #       npm run build-compiler-types
-            #       cd ./compilerTypes
-            #       npm publish
-            #       cd ..

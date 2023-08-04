@@ -57,9 +57,9 @@
 			"active": true,
 			"dialog": false,
 			"endpoints": [
-				"https://github.com/bridge-core/editor/releases/latest/download/latest.json"
+				"https://github.com/NguyenDuck/editor/releases/latest/download/latest.json"
 			],
-			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJFQkNGOUQ2REIzMUU5MDQKUldRRTZUSGIxdm04TGtiQzFEaE1GdVBPbUJYUjJDc25rQjg3RjlyKzdya2RUZVN1RkZ1azVBVmcK"
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEY5Njc2NDE0RUQxMzg2N0IKUldSN2hoUHRGR1JuK1JodXFXbXF4QXJRTHRodGoySlA4TE9HNitXZkQrRWYxQkdsY2Qvdis0aGcK"
 		},
 		"windows": [
 			{

@@ -112,7 +112,7 @@ export abstract class FileTab extends Tab {
 		if (['a', 'e', 'i', 'o', 'u'].includes(fileTypeName.charAt(0))) a = 'an'
 
 		setRichPresence({
-			details: 'Developing add-ons...',
+			details: this.parent.app.project.displayName,
 			state: `Editing ${a} ${fileTypeName} file`,
 		})
 		await super.onActivate()
