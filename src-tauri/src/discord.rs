@@ -25,7 +25,7 @@ pub fn set_rich_presence(window: &tauri::Window) -> Result<(), Box<dyn std::erro
             let payload = serde_json::from_str::<RichPresencePayload>(maybe_payload.unwrap());
             match payload {
                 Ok(payload) => {
-                    if enabled {
+                    if &payload.enabled {
                         let _ = client.clone().lock().unwrap().set_activity(
                             activity::Activity::new()
                                 .state(&payload.state)
