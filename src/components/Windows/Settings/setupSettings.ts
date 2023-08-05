@@ -553,6 +553,21 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 
+	// Privacy (Native build only)
+	if (import.meta.env.VITE_IS_TAURI_APP) {
+		settings.addControl(
+			new Toggle({
+				category: 'privacy',
+				name: 'windows.settings.privacy.discordRpc.name',
+				description:
+					'windows.settings.privacy.discordRpc.description',
+				key: 'discordRpc',
+				default: true,
+			})
+		)
+	}
+	
+
 	// Actions
 	Object.values(app.actionManager.state).forEach((action) => {
 		if (action.type === 'action')

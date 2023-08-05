@@ -999,6 +999,13 @@
 					"name": "Hide Brackets",
 					"description": "Hide brackets within bridge.'s tree editor"
 				}
+			},
+			"privacy": {
+				"name": "Privacy",
+				"discordRpc": {
+					"name": "Discord RPC",
+					"description": "Toggle Discord RPC"
+				}
 			}
 		},
 		"projectFolder": {

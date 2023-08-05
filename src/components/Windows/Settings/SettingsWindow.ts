@@ -64,6 +64,13 @@ export class SettingsWindow extends NewBaseWindow {
 			translate('windows.settings.projects.name'),
 			'mdi-folder-open-outline'
 		)
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			this.addCategory(
+				'privacy',
+				translate('windows.settings.privacy.name'),
+				'mdi-key'
+			)
+		}
 
 		await setupSettings(this)
 		this.sidebar.setDefaultSelected()

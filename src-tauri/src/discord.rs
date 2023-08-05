@@ -3,6 +3,7 @@ use std::sync::{Arc, Mutex};
 
 #[derive(Clone, serde::Deserialize)]
 struct RichPresencePayload {
+    enabled: Boolean,
     state: String,
     details: String,
 }
@@ -24,20 +25,24 @@ pub fn set_rich_presence(window: &tauri::Window) -> Result<(), Box<dyn std::erro
             let payload = serde_json::from_str::<RichPresencePayload>(maybe_payload.unwrap());
             match payload {
                 Ok(payload) => {
-                    let _ = client.clone().lock().unwrap().set_activity(
-                        activity::Activity::new()
-                            .state(&payload.state)
-                            .details(&payload.details)
-                            .assets(
-                                activity::Assets::new()
-                                    .large_image("logo_tile")
-                                    .large_text("Bridge. v2"),
-                            )
-                            .timestamps(
-                                activity::Timestamps::new()
-                                    .start(chrono::Utc::now().timestamp_millis()),
-                            ),
-                    );
+                    if (enabled) {
+                        let _ = client.clone().lock().unwrap().set_activity(
+                            activity::Activity::new()
+                                .state(&payload.state)
+                                .details(&payload.details)
+                                .assets(
+                                    activity::Assets::new()
+                                        .large_image("logo_tile")
+                                        .large_text("Bridge. v2"),
+                                )
+                                .timestamps(
+                                    activity::Timestamps::new()
+                                        .start(chrono::Utc::now().timestamp_millis()),
+                                ),
+                        );
+                    } else {
+                        let _ = client.clone().lock().unwrap().clear_activity();
+                    }
                 }
                 Err(e) => {
                     println!("Error parsing rich presence payload: {}", e);
