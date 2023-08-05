@@ -3,7 +3,7 @@ use std::sync::{Arc, Mutex};
 
 #[derive(Clone, serde::Deserialize)]
 struct RichPresencePayload {
-    enabled: Boolean,
+    enabled: Bool,
     state: String,
     details: String,
 }
