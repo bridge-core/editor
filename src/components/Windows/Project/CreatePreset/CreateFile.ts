@@ -44,21 +44,10 @@ export async function createFile(
 		const file = await fs.readFile(fullOriginPath)
 		const fileText = await file.text()
 
-		try {
-			if (ext !== '.json') throw new Error("Can't format non JSON files!")
-
-			const formattedText = JSON.stringify(JSON.parse(fileText), null, 2)
-
-			fileHandle = await fs.writeFile(
-				fullDestPath,
-				transformString(formattedText, inject, models)
-			)
-		} catch {
-			fileHandle = await fs.writeFile(
-				fullDestPath,
-				transformString(fileText, inject, models)
-			)
-		}
+		fileHandle = await fs.writeFile(
+			fullDestPath,
+			transformString(fileText, inject, models)
+		)
 	}
 
 	return fileHandle
