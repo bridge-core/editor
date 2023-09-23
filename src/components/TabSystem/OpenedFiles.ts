@@ -1,4 +1,3 @@
-import { Signal } from '/@/components/Common/Event/Signal'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { App } from '/@/App'
 import { PersistentQueue } from '/@/components/Common/PersistentQueue'
@@ -13,11 +12,11 @@ export class OpenedFiles extends PersistentQueue<string> {
 		if (settingsState?.general?.restoreTabs ?? true) {
 			await this.fired
 
-			for (let i = this.queue.elements.length - 1; i >= 0; i--) {
+			for (const file of this.queue.elements.reverse()) {
 				try {
 					// Try to restore tab
-					await this.tabSystem.openPath(this.queue.elements[i], {
-						selectTab: i === 0,
+					await this.tabSystem.openPath(file, {
+						selectTab: file == this.queue.elements[0],
 						isTemporary: false,
 					})
 				} catch {}
