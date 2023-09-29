@@ -13,7 +13,7 @@
 				"resizable": true,
 				"title": "",
 				"width": 1200,
-				"fileDropEnabled": true,
+				"fileDropEnabled": false,
 				"maximized": true
 			}
 		]

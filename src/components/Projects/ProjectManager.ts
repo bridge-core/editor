@@ -59,6 +59,11 @@ export class ProjectManager extends Signal<void> {
 		})
 		await project.loadProject()
 
+		if (this.state[project.name] !== undefined) {
+			this.state[project.name].deactivate()
+			this.state[project.name].dispose()
+		}
+
 		set(this.state, project.name, project)
 
 		if (isNewProject) {
