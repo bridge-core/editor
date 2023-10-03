@@ -157,6 +157,22 @@ if (
 			const file = this.getAsFile()
 
 			if (!file) return null
+
+			// We need to use this to differentiate between file and folder on Tauri build
+			if (import.meta.env.VITE_IS_TAURI_APP) {
+				const entry = <FileSystemEntry | null>this.webkitGetAsEntry()
+
+				if (entry !== null && entry.isDirectory) {
+					return markRaw(
+						createVirtualDirectoryFromFileSystemDirectoryEntry(
+							<FileSystemDirectoryEntry>entry,
+							null,
+							[entry.name]
+						)
+					)
+				}
+			}
+
 			return new VirtualFileHandle(
 				null,
 				file.name,
@@ -168,4 +184,56 @@ if (
 
 		return null
 	}
+}
+
+async function createVirtualDirectoryFromFileSystemDirectoryEntry(
+	directoryEntry: FileSystemDirectoryEntry,
+	parent: VirtualDirectoryHandle | null,
+	path: string[]
+): Promise<VirtualDirectoryHandle> {
+	const virtualDirectory = new VirtualDirectoryHandle(
+		parent,
+		directoryEntry.name,
+		path,
+		true
+	)
+	await virtualDirectory.setupDone.fired
+
+	const reader = directoryEntry.createReader()
+
+	await new Promise<void>((res) => {
+		reader.readEntries(async (results) => {
+			for (const entry of results) {
+				if (entry.isDirectory) {
+					createVirtualDirectoryFromFileSystemDirectoryEntry(
+						<FileSystemDirectoryEntry>entry,
+						virtualDirectory,
+						[...path, entry.name]
+					)
+				}
+
+				if (entry.isFile) {
+					const file = await new Promise<File>((res) => {
+						;(<FileSystemFileEntry>entry).file((file) => {
+							res(file)
+						})
+					})
+
+					const virtualFileHandle =
+						await virtualDirectory.getFileHandle(entry.name, {
+							create: true,
+							initialData: new Uint8Array(
+								await file.arrayBuffer()
+							),
+						})
+
+					await virtualFileHandle.setupDone.fired
+				}
+			}
+
+			res()
+		})
+	})
+
+	return virtualDirectory
 }
