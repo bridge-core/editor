@@ -145,14 +145,23 @@ export default {
 			const clipboardHandle = clipboard.item
 
 			const dataTransferItems = [...(event.dataTransfer?.items ?? [])]
+
 			if (dataTransferItems.length === 0) return
 
 			event.preventDefault()
 			event.stopPropagation()
 
 			const pasteAction = PasteAction(this.directoryWrapper)
+
+			const handlePromises = []
+
 			for (const item of dataTransferItems) {
-				const handle = await item.getAsFileSystemHandle()
+				handlePromises.push(item.getAsFileSystemHandle())
+			}
+
+			const handles = await Promise.all(handlePromises)
+
+			for (const handle of handles) {
 				if (!handle) continue
 
 				clipboard.item = handle
@@ -181,7 +190,6 @@ export default {
 			this.directoryWrapper.isSelected.value = true
 		},
 		draggedHandle(dragEvent) {
-			// console.log(dragEvent)
 			if (dragEvent.moved) {
 				const { newIndex, oldIndex, element } = dragEvent.moved
 				this.directoryWrapper.children.value.splice(newIndex, 1)

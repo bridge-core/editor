@@ -323,13 +323,21 @@ export class FileSystem extends Signal<void> {
 			originHandle instanceof VirtualDirectoryHandle &&
 			destHandle instanceof VirtualDirectoryHandle
 		) {
-			const src = await pathFromHandle(originHandle)
-			const dest = await pathFromHandle(destHandle)
+			let src = null
 
-			const { invoke } = await import('@tauri-apps/api')
-			await invoke('copy_directory', { src, dest })
+			// Due to #964, the virtual file will not have a path, so instead we need to just read it from the virtual file handle
+			try {
+				await pathFromHandle(originHandle)
+			} catch {}
 
-			return
+			if (src !== null) {
+				const dest = await pathFromHandle(destHandle)
+
+				const { invoke } = await import('@tauri-apps/api')
+				await invoke('copy_directory', { src, dest })
+
+				return
+			}
 		}
 
 		const destFs = new FileSystem(destHandle)
