@@ -20,6 +20,15 @@ export class FileSystem extends Signal<void> {
 		return this._baseDirectory
 	}
 
+	// To prevent multiple files from saving to the same file at once, we will delay saving until all previous save calls are finished
+	protected savingQueue: Map<
+		string,
+		{
+			currentSaveID: number
+			lastSaveID: number
+		}
+	> = new Map()
+
 	constructor(baseDirectory?: AnyDirectoryHandle) {
 		super()
 		if (baseDirectory) this.setup(baseDirectory)
@@ -236,11 +245,31 @@ export class FileSystem extends Signal<void> {
 		// 	await handle.writable.getWriter().write(data)
 		// 	handle.close()
 		// } else {
+		if (!this.savingQueue.has(fileHandle.name))
+			this.savingQueue.set(fileHandle.name, {
+				currentSaveID: 0,
+				lastSaveID: 0,
+			})
+
+		const savingQueueEntry = this.savingQueue.get(fileHandle.name)!
+		const currentSaveID = savingQueueEntry.lastSaveID
+		savingQueueEntry.lastSaveID++
+
+		while (savingQueueEntry.currentSaveID !== currentSaveID) {
+			await new Promise<void>((resolve) => setTimeout(resolve, 1))
+		}
+
 		const writable = await fileHandle.createWritable({
 			keepExistingData: false,
 		})
+
 		await writable.write(data)
 		await writable.close()
+
+		savingQueueEntry.currentSaveID++
+
+		if (savingQueueEntry.currentSaveID === savingQueueEntry.lastSaveID)
+			this.savingQueue.delete(fileHandle.name)
 		// }
 	}
 

@@ -122,7 +122,7 @@ export class TabSystem extends MonacoHolder {
 	}
 
 	async add(tab: Tab, selectTab = true, noTabExistanceCheck = false) {
-		this.closeAllTemporary()
+		await this.closeAllTemporary()
 
 		if (!noTabExistanceCheck) {
 			for (const currentTab of this.tabs.value) {
@@ -155,7 +155,7 @@ export class TabSystem extends MonacoHolder {
 
 		return tab
 	}
-	remove(tab: Tab, destroyEditor = true, selectNewTab = true) {
+	async remove(tab: Tab, destroyEditor = true, selectNewTab = true) {
 		tab.onDeactivate()
 		const tabIndex = this.tabs.value.findIndex((current) => current === tab)
 		if (tabIndex === -1) return
@@ -165,7 +165,7 @@ export class TabSystem extends MonacoHolder {
 
 		if (selectNewTab && tab === this.selectedTab)
 			this.select(this.tabs.value[tabIndex === 0 ? 0 : tabIndex - 1])
-		if (!tab.isForeignFile) this.openedFiles.remove(tab.getPath())
+		if (!tab.isForeignFile) await this.openedFiles.remove(tab.getPath())
 
 		this.project.updateTabFolders()
 
@@ -179,7 +179,7 @@ export class TabSystem extends MonacoHolder {
 
 			return (await unsavedWin.fired) !== 'cancel'
 		} else {
-			this.remove(tab)
+			await this.remove(tab)
 			return true
 		}
 	}
@@ -282,11 +282,11 @@ export class TabSystem extends MonacoHolder {
 
 		app.windows.loadingWindow.close()
 	}
-	closeAllTemporary() {
+	async closeAllTemporary() {
 		for (const tab of [...this.tabs.value]) {
 			if (!tab.isTemporary) continue
 
-			this.remove(tab, true, false)
+			await this.remove(tab, true, false)
 		}
 	}
 
