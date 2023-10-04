@@ -219,7 +219,10 @@ export class TypeLoader {
 		this.userTypeDisposables = []
 
 		for (const typeScriptFile of typeScriptFiles) {
-			const fileUri = Uri.file(typeScriptFile)
+			const fileUri = Uri.file(
+				// This for some reason fixes monaco suggesting the wrong path for quickfixes #932
+				typeScriptFile.replace('/BP/', '/bp/')
+			)
 			const file = await app.fileSystem
 				.readFile(typeScriptFile)
 				.catch(() => null)
