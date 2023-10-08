@@ -83,10 +83,8 @@ export async function showFolderContextMenu(
 				directoryWrapper.refresh()
 			},
 		},
-		ImportFileAction(directoryWrapper),
-		FindInFolderAction(directoryWrapper),
+		...(await EditAction(directoryWrapper, options)),
 		{ type: 'divider' },
-		await EditAction(directoryWrapper, options),
 	]).filter((action) => action !== null)
 
 	const additionalActions =
@@ -112,10 +110,25 @@ export async function showFolderContextMenu(
 					CopyAction(directoryWrapper),
 			  ]
 			: mutatingActions),
-		{ type: 'divider' },
-		RefreshAction(directoryWrapper),
-		DownloadAction(directoryWrapper),
-		revealAction,
+
+		{
+			type: 'submenu',
+			icon: 'mdi-dots-horizontal',
+			name: 'actions.more.name',
+
+			actions: [
+				...(directoryWrapper.options.isReadOnly
+					? []
+					: [
+							ImportFileAction(directoryWrapper),
+							FindInFolderAction(directoryWrapper),
+					  ]),
+
+				RefreshAction(directoryWrapper),
+				DownloadAction(directoryWrapper),
+				revealAction,
+			],
+		},
 
 		...(additionalActions ?? []),
 	])
