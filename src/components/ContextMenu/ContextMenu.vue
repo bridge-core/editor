@@ -102,7 +102,6 @@ export default {
 <style>
 .context-menu-transition-enter-active,
 .context-menu-transition-leave-active {
-	transition: opacity 0.08s;
 }
 .context-menu-transition-enter,
 .context-menu-transition-leave-to {
