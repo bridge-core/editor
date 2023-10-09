@@ -44,7 +44,10 @@ pub async fn reveal_in_file_explorer(path: &str) -> Result<(), String> {
             .spawn()
             .expect("Failed to open finder");
     } else {
-        // TODO: Linux
+        Command::new("xdg-open")
+            .args([path])
+            .spawn()
+            .expect("Failed to open file explorer");
     }
 
     Ok(())
