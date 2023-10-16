@@ -105,7 +105,12 @@ export class TextTab extends FileTab {
 			const file = await this.fileHandle.getFile()
 			const fileContent = await file.text()
 			// This for some reason fixes monaco suggesting the wrong path for quickfixes #932
-			const uri = Uri.file(this.getPath().replace('/BP/', '/bp/'))
+			const filePath = this.getPath()
+			const uri = Uri.file(
+				filePath.endsWith('.ts')
+					? filePath.replace('/BP/', '/bp/')
+					: filePath
+			)
 
 			this.editorModel = markRaw(
 				editor.getModel(uri) ??
