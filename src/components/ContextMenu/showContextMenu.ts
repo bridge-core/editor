@@ -48,6 +48,5 @@ export async function showContextMenu(
 		}
 	})
 
-	// This is necessary so an old click outside event doesn't close the new menu
-	setTimeout(() => app.contextMenu.show(event, actionManager, options), 60)
+	app.contextMenu.show(event, actionManager, options)
 }

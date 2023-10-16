@@ -1,6 +1,5 @@
 import { FileWrapper } from '../FileView/FileWrapper'
 import { CopyAction } from './Actions/Edit/Copy'
-import { OpenAction } from './Actions/Open'
 import { OpenInSplitScreenAction } from './Actions/OpenInSplitScreen'
 import { OpenWithAction } from './Actions/OpenWith'
 import { RevealFilePathAction } from './Actions/RevealPath'
@@ -31,24 +30,33 @@ export async function showFileContextMenu(
 	}
 
 	showContextMenu(event, [
-		OpenAction(fileWrapper),
-		await OpenWithAction(fileWrapper),
-		OpenInSplitScreenAction(fileWrapper),
+		...(fileWrapper.options.isReadOnly
+			? [CopyAction(fileWrapper)]
+			: await EditAction(fileWrapper)),
 		{ type: 'divider' },
 
-		fileWrapper.options.isReadOnly
-			? CopyAction(fileWrapper)
-			: await EditAction(fileWrapper),
+		OpenInSplitScreenAction(fileWrapper),
+		await OpenWithAction(fileWrapper),
+
 		{ type: 'divider' },
+
 		{
-			icon: 'mdi-share',
-			name: 'general.shareFile',
-			onTrigger: async () => {
-				await shareFile(fileWrapper.handle)
-			},
+			type: 'submenu',
+			icon: 'mdi-dots-horizontal',
+			name: 'actions.more.name',
+
+			actions: [
+				{
+					icon: 'mdi-share',
+					name: 'general.shareFile',
+					onTrigger: async () => {
+						await shareFile(fileWrapper.handle)
+					},
+				},
+				DownloadAction(fileWrapper),
+				revealAction,
+			],
 		},
-		DownloadAction(fileWrapper),
-		revealAction,
 
 		...(additionalActions ?? []),
 	])

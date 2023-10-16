@@ -17,25 +17,19 @@ export const EditAction = async (
 	baseWrapper: BaseWrapper<any>,
 	options: IEditOptions = {}
 ) => {
-	// Construct and return submenu
-	return <ISubmenuConfig>{
-		type: 'submenu',
-		icon:
-			baseWrapper instanceof DirectoryWrapper
-				? 'mdi-folder-edit-outline'
-				: 'mdi-file-edit-outline',
-		name: 'actions.edit.name',
+	return [
+		options.hideRename ? null : RenameAction(baseWrapper),
+		options.hideDelete ? null : DeleteAction(baseWrapper),
+		options.hideDuplicate ? null : DuplicateAction(baseWrapper),
+		// options.hideRename && options.hideDelete && options.hideDuplicate
+		// 	? null
+		// 	: { type: 'divider' },
 
-		actions: [
-			CopyAction(baseWrapper),
-			PasteAction(
-				baseWrapper instanceof DirectoryWrapper
-					? baseWrapper
-					: baseWrapper.getParent()!
-			),
-			options.hideDuplicate ? null : DuplicateAction(baseWrapper),
-			options.hideRename ? null : RenameAction(baseWrapper),
-			options.hideDelete ? null : DeleteAction(baseWrapper),
-		],
-	}
+		CopyAction(baseWrapper),
+		PasteAction(
+			baseWrapper instanceof DirectoryWrapper
+				? baseWrapper
+				: baseWrapper.getParent()!
+		),
+	]
 }

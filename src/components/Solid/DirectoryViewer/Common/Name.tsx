@@ -25,7 +25,7 @@ export function Name(props: NameProps) {
 		props.baseWrapper.unselectAll()
 		props.baseWrapper.isSelected.value = true
 	}
-	const onClick = (event: MouseEvent) => {
+	const onMouseDown = (event: MouseEvent) => {
 		// Left click
 		if (event.button === 0) {
 			props.baseWrapper.onClick(event)
@@ -41,7 +41,7 @@ export function Name(props: NameProps) {
 			classList={{
 				selected: isSelected(),
 			}}
-			onClick={onClick}
+			onMouseDown={onMouseDown}
 			onFocus={(event: FocusEvent) => onFocus(event)}
 			onBlur={() => setIsFocused(false)}
 		>
