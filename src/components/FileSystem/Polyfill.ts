@@ -85,7 +85,9 @@ if (isUnsupportedBrowser() || typeof window.showOpenFilePicker !== 'function') {
 					isLocked = true
 					const files = [...(input.files ?? [])]
 
-					document.body.removeChild(input)
+					if (document.body.contains(input))
+						document.body.removeChild(input)
+
 					resolve(
 						// @ts-ignore
 						await Promise.all(
@@ -110,7 +112,8 @@ if (isUnsupportedBrowser() || typeof window.showOpenFilePicker !== 'function') {
 						if (isLocked) return
 
 						reject('User aborted selecting file')
-						document.body.removeChild(input)
+						if (document.body.contains(input))
+							document.body.removeChild(input)
 					}, 300)
 				},
 				{ once: true }
