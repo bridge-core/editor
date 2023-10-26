@@ -78,7 +78,9 @@ export class IframeTab extends Tab {
 		this.iframe.style.display = 'none'
 	}
 	onDestroy() {
-		getFullScreenElement()?.removeChild(this.iframe)
+		if (getFullScreenElement()?.contains(this.iframe))
+			getFullScreenElement()?.removeChild(this.iframe)
+
 		this.api.dispose()
 	}
 

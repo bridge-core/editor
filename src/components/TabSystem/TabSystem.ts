@@ -22,6 +22,7 @@ export interface IOpenTabOptions {
 export class TabSystem extends MonacoHolder {
 	protected uuid = uuid()
 	public tabs = <Ref<Tab[]>>ref([])
+	protected _recentSelectedTab = <Ref<Tab | undefined>>ref(undefined)
 	protected _selectedTab = <Ref<Tab | undefined>>ref(undefined)
 	protected get tabTypes() {
 		return TabProvider.tabs
@@ -59,6 +60,10 @@ export class TabSystem extends MonacoHolder {
 			_project.app,
 			`${_project.projectPath}/.bridge/openedFiles_${id}.json`
 		)
+	}
+
+	get recentSelectedTab() {
+		return this._recentSelectedTab.value
 	}
 
 	get selectedTab() {
@@ -219,6 +224,24 @@ export class TabSystem extends MonacoHolder {
 		await previousTab.select()
 	}
 
+	async hasRecentTab() {
+		return this.recentSelectedTab !== undefined
+	}
+
+	async selectRecentTab() {
+		const tabs = this.tabs.value
+		if (tabs.length === 0) return
+
+		const recentTab = this.recentSelectedTab
+		if (!recentTab) return
+
+		await recentTab.select()
+	}
+
+	async saveRecentTab(tab?: Tab) {
+		this._recentSelectedTab.value = tab
+	}
+
 	async select(tab?: Tab) {
 		if (this.isActive.value !== !!tab) this.setActive(!!tab)
 
@@ -229,6 +252,8 @@ export class TabSystem extends MonacoHolder {
 		if (tab && tab !== this.selectedTab && this.project.isActiveProject) {
 			App.eventSystem.dispatch('currentTabSwitched', tab)
 		}
+
+		this.saveRecentTab(this.selectedTab)
 		this._selectedTab.value = tab
 
 		// Next steps don't need to be done if we simply unselect tab
