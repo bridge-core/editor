@@ -45,7 +45,11 @@ export function setupViewCategory(app: App) {
 			description: 'toolbar.view.nextTab.description',
 			keyBinding: platform() === 'darwin' ? 'Meta + Tab' : 'Ctrl + Tab',
 			onTrigger: () => {
-				app.tabSystem?.selectNextTab()
+				if (app.tabSystem?.hasRecentTab()) {
+					app.tabSystem?.selectRecentTab()
+				} else {
+					app.tabSystem?.selectNextTab()
+				}
 			},
 		})
 	)
