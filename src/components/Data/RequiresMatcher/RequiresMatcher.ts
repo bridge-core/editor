@@ -20,7 +20,7 @@ export interface IRequirements {
 	/**
 	 * Check for manifest dependencies to be present in the pack.
 	 */
-	dependencies?: { module_name: string; version: string }[]
+	dependencies?: { module_name: string; version?: string }[]
 	/**
 	 * Whether all conditions must be met. If set to false, any condition met makes the matcher valid.
 	 */
@@ -125,7 +125,7 @@ export class RequiresMatcher {
 		// Manifest dependencies
 
 		const dependencies:
-			| { module_name: string; version: string }[]
+			| { module_name: string; version?: string }[]
 			| undefined = this.bpManifest?.dependencies?.map((dep: any) => {
 			if (dep?.module_name) {
 				// Convert old module names to new naming convention
@@ -203,7 +203,11 @@ export class RequiresMatcher {
 			requires?.dependencies.every((dep) => {
 				for (const dependency of dependencies) {
 					if (dependency.module_name !== dep.module_name) continue
-					if (dependency.version !== dep.version) continue
+					if (
+						dependency.version &&
+						dependency.version !== dep.version
+					)
+						continue
 
 					return true
 				}
