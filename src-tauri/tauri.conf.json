@@ -14,7 +14,8 @@
 		"allowlist": {
 			"all": true,
 			"fs": {
-				"scope": ["**/*"]
+				"scope": ["**/*"],
+				"requireLiteralLeadingDot": false
 			}
 		},
 		"bundle": {
