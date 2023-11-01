@@ -22,6 +22,7 @@ chrono = "0.4.23"
 window-shadows = "0.2.0"
 tokio = { version = "1.24", features = ["process", "io-util", "sync"] }
 mime_guess = "2.0.4"
+zip = "0.6"
 
 [features]
 # by default Tauri runs in production mode

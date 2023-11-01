@@ -9,6 +9,7 @@ use window_shadows::set_shadow;
 mod discord;
 mod fs_extra;
 mod terminal;
+mod zip;
 
 fn main() {
     let mut menu = Menu::os_default(&"bridge. v2");
@@ -52,6 +53,7 @@ fn main() {
             fs_extra::read_file,
             terminal::execute_command,
             terminal::kill_command,
+            zip::unzip_command,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
