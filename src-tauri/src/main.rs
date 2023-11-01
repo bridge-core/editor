@@ -54,6 +54,7 @@ fn main() {
             terminal::execute_command,
             terminal::kill_command,
             zip::unzip_command,
+            zip::zip_command,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
