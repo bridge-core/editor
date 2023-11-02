@@ -54,7 +54,8 @@ export class FileDropper {
 	}
 
 	async importFile(fileHandle: AnyFileHandle) {
-		await this.app.projectManager.projectReady.fired
+		if (!this.app.isNoProjectSelected)
+			await this.app.projectManager.projectReady.fired
 
 		const ext = extname(fileHandle.name)
 		let handler = this.fileHandlers.get(ext) ?? this.defaultImporter

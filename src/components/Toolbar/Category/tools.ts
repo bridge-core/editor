@@ -102,6 +102,7 @@ export function setupToolsCategory(app: App) {
 			keyBinding:
 				platform() === 'win32' ? 'Ctrl + Alt + R' : 'Ctrl + Meta + R',
 			onTrigger: async () => {
+				if (app.isNoProjectSelected) return
 				await app.projectManager.projectReady.fired
 
 				await app.project.refresh()
@@ -115,6 +116,7 @@ export function setupToolsCategory(app: App) {
 			description: 'actions.reloadAutoCompletions.description',
 			keyBinding: 'Ctrl + Shift + R',
 			onTrigger: async () => {
+				if (app.isNoProjectSelected) return
 				await app.projectManager.projectReady.fired
 
 				app.project.jsonDefaults.reload()
@@ -131,6 +133,7 @@ export function setupToolsCategory(app: App) {
 				app.extensionLoader.disposeAll()
 				app.extensionLoader.loadExtensions()
 
+				if (app.isNoProjectSelected) return
 				await app.projectManager.projectReady.fired
 
 				// Local extensions

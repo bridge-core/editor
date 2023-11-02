@@ -25,7 +25,7 @@ export async function importFromMcaddon(
 		create: true,
 	})
 
-	await app.projectManager.projectReady.fired
+	if (!app.isNoProjectSelected) await app.projectManager.projectReady.fired
 
 	// Unzip .mcaddon file
 	if (unzip) {
