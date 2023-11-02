@@ -1,6 +1,6 @@
 import { zip, Zippable, zipSync } from 'fflate'
 import { AnyDirectoryHandle } from '../Types'
-import { iterateDir, iterateDirParallel } from '/@/utils/iterateDir'
+import { iterateDirParallel } from '/@/utils/iterateDir'
 import { invoke } from '@tauri-apps/api/tauri'
 
 export class ZipDirectory {
