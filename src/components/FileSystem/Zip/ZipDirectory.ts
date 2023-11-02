@@ -21,7 +21,7 @@ export class ZipDirectory {
 				ignoreFolders
 			)
 
-			return invoke('zip_command', { files })
+			return new Uint8Array(await invoke('zip_command', { files }))
 		}
 
 		let directoryContents: Zippable = {}
