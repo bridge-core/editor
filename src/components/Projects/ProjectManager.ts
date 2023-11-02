@@ -137,50 +137,8 @@ export class ProjectManager extends Signal<void> {
 
 		// Update stored projects in the background (don't await it)
 		if (isBridgeFolderSetup) this.storeProjects(undefined, true)
-		// Create a placeholder project (virtual project)
-		await this.createVirtualProject()
 
 		this.dispatch()
-	}
-
-	async createVirtualProject() {
-		// Ensure that we first unlink the previous virtual project
-		await this.app.fileSystem.unlink(`projects/${virtualProjectName}`)
-
-		const handle = await this.app.fileSystem.getDirectoryHandle(
-			`projects/${virtualProjectName}`,
-			{
-				create: true,
-			}
-		)
-		const fs = new FileSystem(handle)
-
-		const createOptions: ICreateProjectOptions = {
-			name: 'bridge',
-			namespace: 'bridge',
-			author: [],
-			description: '',
-			bpAsRpDependency: false,
-			experimentalGameplay: {},
-			icon: null,
-			packs: ['behaviorPack', '.bridge'],
-			rpAsBpDependency: false,
-			targetVersion: await getStableFormatVersion(this.app.dataLoader),
-			useLangForManifest: false,
-			bdsProject: false,
-			uuids: {
-				data: uuid(),
-				resources: uuid(),
-				skin_pack: uuid(),
-				world_template: uuid(),
-			},
-		}
-
-		await Promise.all(['BP', '.bridge'].map((folder) => fs.mkdir(folder)))
-
-		await new CreateConfig().create(fs, createOptions)
-
-		await this.addProject(handle, false)
 	}
 
 	async selectProject(projectName: string, failGracefully = false) {
@@ -248,7 +206,6 @@ export class ProjectManager extends Signal<void> {
 
 			if (didSelectProject) return
 		}
-		await this.selectProject(virtualProjectName)
 	}
 
 	updateAllEditorOptions(options: editor.IEditorConstructionOptions) {
