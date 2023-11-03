@@ -33,8 +33,6 @@
 					'padding-top': isInFullScreen ? 0 : appToolbarHeight,
 				}"
 			>
-				<WindowRenderer />
-
 				<v-row
 					no-gutters
 					class="d-flex fill-area"
@@ -106,6 +104,8 @@
 			/>
 			<SolidWindows />
 		</div>
+
+		<WindowRenderer />
 	</v-app>
 </template>
 
