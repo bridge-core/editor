@@ -48,6 +48,18 @@ export class TreeTab extends FileTab {
 			app.project.tabActionProvider.addTabActions(this)
 		})
 	}
+	static from(fileTab: FileTab) {
+		const tab = new TreeTab(
+			fileTab.tabSystem,
+			fileTab.getFileHandle(),
+			fileTab.readOnlyMode
+		)
+
+		tab.isTemporary = fileTab.isTemporary
+		tab.setReadOnly(fileTab.readOnlyMode)
+
+		return tab
+	}
 
 	get app() {
 		return this.parent.app

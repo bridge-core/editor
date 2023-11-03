@@ -176,6 +176,25 @@ export class TabSystem extends MonacoHolder {
 
 		return tab
 	}
+
+	async replaceCurrent(newTab: Tab) {
+		const currentTab = this.selectedTab
+		if (!currentTab) return
+
+		currentTab.onDeactivate()
+		currentTab.onDestroy()
+
+		const tabIndex = this.tabs.value.findIndex(
+			(current) => current === currentTab
+		)
+		if (tabIndex === -1) throw new Error('Tab not found')
+
+		this.tabs.value.splice(tabIndex, 1, newTab)
+
+		if (!newTab.hasFired) await newTab.fired
+		newTab.select()
+	}
+
 	async close(tab = this.selectedTab, checkUnsaved = true) {
 		if (!tab) return false
 

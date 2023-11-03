@@ -59,6 +59,20 @@ export class TextTab extends FileTab {
 			app.project.tabActionProvider.addTabActions(this)
 		})
 	}
+
+	static from(fileTab: FileTab) {
+		const tab = new TextTab(
+			fileTab.tabSystem,
+			fileTab.getFileHandle(),
+			fileTab.readOnlyMode
+		)
+
+		tab.isTemporary = fileTab.isTemporary
+		tab.setReadOnly(fileTab.readOnlyMode)
+
+		return tab
+	}
+
 	async getFile() {
 		if (!this.editorModel || this.editorModel.isDisposed())
 			return await super.getFile()
@@ -277,7 +291,10 @@ export class TextTab extends FileTab {
 
 	setReadOnly(val: TReadOnlyMode) {
 		this.readOnlyMode = val
-		this.editorInstance?.updateOptions({ readOnly: val !== 'off' })
+
+		// Only update options immediately if Monaco is already loaded
+		if (this.parent.hasFired)
+			this.editorInstance.updateOptions({ readOnly: val !== 'off' })
 	}
 
 	async paste() {
