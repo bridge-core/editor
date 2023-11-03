@@ -1,6 +1,11 @@
 <template>
 	<main>
 		<div class="p-2 top-bar">
+			<div class="icon-buttons">
+				<v-icon size="large" color="accent">mdi-cog</v-icon>
+				<v-icon size="large" color="accent">mdi-help-circle</v-icon>
+				<v-icon size="large" color="accent">mdi-download</v-icon>
+			</div>
 			<div
 				class="px-1 rounded-lg d-table app-version-display"
 				@click="openChangelogWindow"
@@ -29,6 +34,17 @@
 				<div class="project">
 					<Logo class="mr-2" style="height: 40px; width: 40px" />
 					<p>Experiments</p>
+				</div>
+			</div>
+
+			<div class="main-buttons">
+				<div class="main-button">
+					<v-icon size="large">mdi-folder</v-icon>
+					<p>Load Projects</p>
+				</div>
+				<div class="main-button">
+					<v-icon class="smaller-icon" size="large">mdi-plus</v-icon>
+					<p>New</p>
 				</div>
 			</div>
 		</div>
@@ -78,6 +94,8 @@ main {
 	position: absolute;
 	top: 0;
 	width: 100%;
+
+	display: flex;
 }
 
 .app-version-display {
@@ -87,5 +105,41 @@ main {
 	font-size: 12px;
 
 	margin-left: auto;
+}
+
+.icon-buttons {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.main-buttons {
+	display: flex;
+
+	justify-content: space-evenly;
+}
+
+.main-button {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+
+	background: var(--v-menu-base);
+
+	padding: 0.25rem;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+
+	border-radius: 4px;
+
+	margin-top: 2rem;
+}
+
+.main-button > p {
+	margin: 0;
+}
+
+.smaller-icon {
+	margin-left: -0.2rem;
+	margin-right: -0.25rem;
 }
 </style>
