@@ -44,9 +44,14 @@
 					class="project"
 					v-for="(project, index) in projects"
 					:key="index"
+					@click="selectProject(project)"
 				>
-					<Logo class="mr-3" style="height: 40px; width: 40px" />
-					<p class="text-sm">{{ project }}</p>
+					<img
+						:src="project.icon"
+						class="mr-3"
+						style="height: 40px; width: 40px"
+					/>
+					<p class="text-sm">{{ project.displayName }}</p>
 				</div>
 			</div>
 		</div>
@@ -57,7 +62,7 @@
 import Logo from '/@/components/UIElements/Logo.vue'
 import { version as appVersion } from '/@/utils/app/version'
 import { App } from '/@/App'
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, Ref, ref } from 'vue'
 
 const nativeBuildAvailable = computed(() => {
 	return !import.meta.env.VITE_IS_TAURI_APP && !App.instance.mobile.is.value
@@ -97,18 +102,37 @@ async function loadFolder() {
 	await app.setupBridgeFolder(bridgeFolderSelected)
 }
 
-const projects = [
-	'My New Bridge Project',
-	'My New Bridge Project',
-	'My New Bridge Project',
-	'My New Bridge Project',
-	'My New Bridge Project',
-	'My New Bridge Project',
-]
-
 let disposables: any[] = []
 
+let projects: Ref<any> = ref([])
+
+async function loadProjects() {
+	const app = await App.getApp()
+
+	projects.value = await app.fileSystem
+		.readJSON('~local/data/projects.json')
+		.catch(() => [])
+}
+
+async function selectProject(project: any) {
+	const app = await App.getApp()
+
+	if (project.requiresPermissions) {
+		const wasSuccessful = await app.setupBridgeFolder()
+
+		if (!wasSuccessful) return
+	}
+
+	await app.projectManager.selectProject(project.name, true)
+}
+
 onMounted(async () => {
+	loadProjects()
+
+	disposables.push(
+		App.eventSystem.on('availableProjectsFileChanged', () => loadProjects())
+	)
+
 	const app = await App.getApp()
 
 	disposables.push(
@@ -157,6 +181,8 @@ main {
 	display: flex;
 	align-items: center;
 	margin-bottom: 1rem;
+
+	width: 14rem;
 }
 
 .project > p {

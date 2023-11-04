@@ -156,6 +156,13 @@ export default {
 		App.getApp().then((app) => {
 			this.contextMenu = app.contextMenu
 			this.windowSize = app.windowResize.state
+
+			this.disposables.push(
+				App.eventSystem.on(
+					'availableProjectsFileChanged',
+					() => (this.greet = false)
+				)
+			)
 		})
 
 		setFullscreenElement(this.$refs.appContainer.$el)
@@ -183,6 +190,7 @@ export default {
 			currentHeight: window.innerHeight,
 		},
 		greet: true,
+		disposables: [],
 	}),
 
 	computed: {
