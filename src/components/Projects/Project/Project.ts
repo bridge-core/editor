@@ -55,7 +55,8 @@ export abstract class Project {
 	public _compilerService?: Remote<DashService>
 	public compilerReady = new Signal<void>()
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
-	protected typeLoader: TypeLoader
+	protected typeLoader: typeLoader
+	public refreshing: boolean = false
 
 	/**
 	 * A virtual project is a project with the exact name of "virtualProjectName"
@@ -67,6 +68,7 @@ export abstract class Project {
 	public readonly fileTypeLibrary: FileTypeLibrary
 	public readonly extensionLoader: ExtensionLoader
 	public readonly fileChange = new FileChangeRegistry()
+	public readonly beforeFileSave = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
 	public readonly fileUnlinked = new FileChangeRegistry<void>()
 	public readonly tabActionProvider = new TabActionProvider()
@@ -167,6 +169,9 @@ export abstract class Project {
 
 		this.fileChange.any.on((data) =>
 			App.eventSystem.dispatch('fileChange', data)
+		)
+		this.beforeFileSave.any.on((data) =>
+			App.eventSystem.dispatch('beforeFileSave', data)
 		)
 		this.fileSave.any.on((data) =>
 			App.eventSystem.dispatch('fileSave', data)
@@ -276,7 +281,7 @@ export abstract class Project {
 		this.snippetLoader.activate()
 
 		if (!this.isVirtualProject)
-			invoke('watch_folder', { path: this.projectPath })
+			await invoke('watch_folder', { path: this.projectPath })
 	}
 
 	async deactivate(isReload = false) {
@@ -293,7 +298,7 @@ export abstract class Project {
 		])
 
 		if (!this.isVirtualProject)
-			invoke('unwatch_folder', { path: this.projectPath })
+			await invoke('unwatch_folder', { path: this.projectPath })
 	}
 	dispose() {
 		this.tabSystems.forEach((tabSystem) => tabSystem.dispose())
@@ -301,9 +306,15 @@ export abstract class Project {
 	}
 
 	async refresh() {
+		if (this.refreshing) return
+
+		this.refreshing = true
+
 		this.app.packExplorer.refresh()
 		await this.deactivate(true)
 		await this.activate(true)
+
+		this.refreshing = false
 	}
 
 	async openFile(

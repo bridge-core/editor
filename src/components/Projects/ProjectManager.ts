@@ -16,6 +16,7 @@ import { ICreateProjectOptions } from './CreateProject/CreateProject'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 import { listen } from '@tauri-apps/api/event'
+import path from 'path-browserify'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -24,16 +25,25 @@ export class ProjectManager extends Signal<void> {
 	public readonly title = markRaw(new Title())
 	protected _selectedProject?: string = undefined
 	public readonly projectReady = new Signal<void>()
+	protected filesSaving: Record<string, boolean> = {}
 
 	constructor(protected app: App) {
 		super()
-		// Only load local projects on PWA builds
-		if (!import.meta.env.VITE_IS_TAURI_APP) this.loadProjects()
 
-		listen('watch_event', this.handleWatchEvent)
-		App.eventSystem.on('fileAdded', this.handleFileChangeEvent)
-		App.eventSystem.on('fileUnlinked', this.handleFileChangeEvent)
-		App.eventSystem.on('fileSave', this.handleFileChangeEvent)
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			// Project watching is only supported on Tauri builds
+			listen('watch_event', this.handleWatchEvent.bind(this))
+
+			App.eventSystem.on(
+				'beforeFileSave',
+				this.handleBeforeFileSaveEvent.bind(this)
+			)
+
+			App.eventSystem.on('fileSave', this.handleFileSaveEvent.bind(this))
+		} else {
+			// Only load local projects on PWA builds
+			this.loadProjects()
+		}
 	}
 
 	get currentProject() {
@@ -190,6 +200,8 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async selectProject(projectName: string, failGracefully = false) {
+		this.filesSaving = {}
+
 		// Clear current comMojangProject
 		if (this.app.viewComMojangProject.hasComMojangProjectLoaded) {
 			await this.app.viewComMojangProject.clearComMojangProject()
@@ -336,14 +348,35 @@ export class ProjectManager extends Signal<void> {
 		)
 		App.eventSystem.dispatch('availableProjectsFileChanged', undefined)
 	}
-	async handleFileChangeEvent(event: any) {
-		console.log(event)
+	async handleBeforeFileSaveEvent(event: any) {
+		const [path, file] = event
+
+		this.filesSaving[path] = true
+	}
+	async handleFileSaveEvent(event: any) {
+		const [path, file] = event
+
+		delete this.filesSaving[path]
 	}
 	async handleWatchEvent(event: any) {
+		if (this.selectedProject === null) return
+
+		const paths = (<string[]>event.payload).filter(
+			(entryPath) =>
+				!entryPath.startsWith(
+					path.join(
+						this.getProject(this.selectedProject!)?.projectPath!,
+						'.bridge'
+					)
+				)
+		)
+
+		if (paths.length === 0) return
+
+		if (Object.keys(this.filesSaving).length > 0) return
+
 		const app = await App.getApp()
 
-		console.log(event)
-
-		// app.actionManager.trigger('bridge.action.refreshProject')
+		app.actionManager.trigger('bridge.action.refreshProject')
 	}
 }

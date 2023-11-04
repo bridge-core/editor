@@ -69,6 +69,7 @@ export class App {
 		'disableValidation',
 		'fileAdded',
 		'fileChange',
+		'beforeFileSave',
 		'fileSave',
 		'fileUnlinked',
 		'presetsChanged',
