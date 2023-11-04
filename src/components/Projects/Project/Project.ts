@@ -280,7 +280,7 @@ export abstract class Project {
 
 		this.snippetLoader.activate()
 
-		if (!this.isVirtualProject)
+		if (!this.isVirtualProject && import.meta.env.VITE_IS_TAURI_APP)
 			await invoke('watch_folder', { path: this.projectPath })
 	}
 
@@ -297,7 +297,7 @@ export abstract class Project {
 			this.snippetLoader.deactivate(),
 		])
 
-		if (!this.isVirtualProject)
+		if (!this.isVirtualProject && import.meta.env.VITE_IS_TAURI_APP)
 			await invoke('unwatch_folder', { path: this.projectPath })
 	}
 	dispose() {
