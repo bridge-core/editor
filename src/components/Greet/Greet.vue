@@ -2,9 +2,16 @@
 	<main>
 		<div class="p-2 top-bar">
 			<div class="icon-buttons">
-				<v-icon size="large">mdi-cog</v-icon>
-				<v-icon size="large">mdi-help-circle</v-icon>
-				<v-icon size="large">mdi-download</v-icon>
+				<v-icon size="large" @click="openSettingsWindow"
+					>mdi-cog</v-icon
+				>
+				<v-icon size="large" @click="openHelp">mdi-help-circle</v-icon>
+				<v-icon
+					v-if="nativeBuildAvailable"
+					size="large"
+					@click="openDownloadPage"
+					>mdi-download</v-icon
+				>
 			</div>
 			<div
 				class="px-1 rounded-lg d-table app-version-display"
@@ -23,8 +30,12 @@
 			<div class="flex justify-between">
 				<p class="mb-1 text-lg">Projects</p>
 				<div>
-					<v-icon size="large" class="mr-1">mdi-folder</v-icon>
-					<v-icon size="large">mdi-plus</v-icon>
+					<v-icon size="large" class="mr-1" @click="loadFolder"
+						>mdi-folder</v-icon
+					>
+					<v-icon size="large" @click="createProject"
+						>mdi-plus</v-icon
+					>
 				</div>
 			</div>
 			<div class="seperator" />
@@ -42,14 +53,48 @@
 	</main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Logo from '/@/components/UIElements/Logo.vue'
-import { version as appVersion } from '/@/utils/app/version.ts'
-import { App } from '/@/App.ts'
+import { version as appVersion } from '/@/utils/app/version'
+import { App } from '/@/App'
+import { computed, onMounted, onUnmounted } from 'vue'
+
+const nativeBuildAvailable = computed(() => {
+	return !import.meta.env.VITE_IS_TAURI_APP && !App.instance.mobile.is.value
+})
 
 async function openChangelogWindow() {
 	const app = await App.getApp()
-	await app.windows.changelogWindow.open()
+
+	app.windows.changelogWindow.open()
+}
+
+async function openSettingsWindow() {
+	const app = await App.getApp()
+
+	app.windows.settings.open()
+}
+
+function openHelp() {
+	App.openUrl('https://bridge-core.app/guide/', undefined, true)
+}
+
+function openDownloadPage() {
+	App.openUrl('https://bridge-core.app/guide/download/', undefined, true)
+}
+
+async function createProject() {
+	const app = await App.getApp()
+
+	app.windows.createProject.open()
+}
+
+let bridgeFolderSelected = false
+
+async function loadFolder() {
+	const app = await App.getApp()
+
+	await app.setupBridgeFolder(bridgeFolderSelected)
 }
 
 const projects = [
@@ -60,6 +105,23 @@ const projects = [
 	'My New Bridge Project',
 	'My New Bridge Project',
 ]
+
+let disposables: any[] = []
+
+onMounted(async () => {
+	const app = await App.getApp()
+
+	disposables.push(
+		app.bridgeFolderSetup.once(() => {
+			bridgeFolderSelected = true
+		}, true)
+	)
+})
+
+onUnmounted(() => {
+	disposables.forEach((disposable) => disposable.dispose())
+	disposables = []
+})
 </script>
 
 <style scoped>

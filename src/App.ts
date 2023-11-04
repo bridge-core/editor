@@ -216,7 +216,6 @@ export class App {
 		console.time('[APP] Ready')
 
 		this._instance = markRaw(new App(appComponent))
-		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
 
@@ -258,7 +257,6 @@ export class App {
 		this.ready.dispatch(this.instance)
 		await this.instance.projectManager.selectLastProject()
 
-		this.instance.windows.loadingWindow.close()
 		console.timeEnd('[APP] Ready')
 	}
 

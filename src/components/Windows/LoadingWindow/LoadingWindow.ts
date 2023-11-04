@@ -15,6 +15,8 @@ export class LoadingWindow extends NewBaseWindow {
 	}
 
 	open(message?: string) {
+		console.warn('open')
+
 		this.virtualWindows++
 		this.loadingMessages.push(message)
 		if (!this.state.isVisible) super.open()
