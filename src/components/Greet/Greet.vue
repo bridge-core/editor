@@ -48,10 +48,13 @@
 				>
 					<img
 						:src="project.icon"
-						class="mr-3"
-						style="height: 40px; width: 40px"
+						class="w-full aspect-video object-cover"
 					/>
-					<p class="text-sm">{{ project.displayName }}</p>
+					<p
+						class="text-sm text-center mt-auto mb-auto ml-0.5 mr-0.5"
+					>
+						{{ project.displayName }}
+					</p>
 				</div>
 			</div>
 		</div>
@@ -175,14 +178,22 @@ main {
 	flex-wrap: wrap;
 
 	justify-content: space-between;
+
+	gap: 0.5rem;
 }
 
 .project {
 	display: flex;
-	align-items: center;
-	margin-bottom: 1rem;
+	flex-direction: column;
 
-	width: 14rem;
+	width: 9rem;
+	height: 9rem;
+
+	background: var(--v-menu-base);
+
+	border-radius: 4px;
+
+	filter: drop-shadow(0px 0px 6px rgba(0, 0, 0, 0.4));
 }
 
 .project > p {
