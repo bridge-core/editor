@@ -15,6 +15,7 @@ import { v4 as uuid } from 'uuid'
 import { ICreateProjectOptions } from './CreateProject/CreateProject'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
+import { listen } from '@tauri-apps/api/event'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -28,6 +29,11 @@ export class ProjectManager extends Signal<void> {
 		super()
 		// Only load local projects on PWA builds
 		if (!import.meta.env.VITE_IS_TAURI_APP) this.loadProjects()
+
+		listen('watch_event', this.handleWatchEvent)
+		App.eventSystem.on('fileAdded', this.handleFileChangeEvent)
+		App.eventSystem.on('fileUnlinked', this.handleFileChangeEvent)
+		App.eventSystem.on('fileSave', this.handleFileChangeEvent)
 	}
 
 	get currentProject() {
@@ -329,5 +335,15 @@ export class ProjectManager extends Signal<void> {
 			newData
 		)
 		App.eventSystem.dispatch('availableProjectsFileChanged', undefined)
+	}
+	async handleFileChangeEvent(event: any) {
+		console.log(event)
+	}
+	async handleWatchEvent(event: any) {
+		const app = await App.getApp()
+
+		console.log(event)
+
+		// app.actionManager.trigger('bridge.action.refreshProject')
 	}
 }

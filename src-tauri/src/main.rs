@@ -3,12 +3,16 @@
     windows_subsystem = "windows"
 )]
 
+use std::sync::Mutex;
+
+use notify::RecommendedWatcher;
 use tauri::{Manager, Menu};
 use terminal::AllTerminals;
 use window_shadows::set_shadow;
 mod discord;
 mod fs_extra;
 mod terminal;
+mod watch;
 mod zip;
 
 fn main() {
@@ -20,6 +24,7 @@ fn main() {
 
     tauri::Builder::default()
         .manage::<AllTerminals>(AllTerminals(Default::default()))
+        .manage::<Mutex<Option<RecommendedWatcher>>>(Mutex::new(None))
         .setup(|app| {
             // `main` here is the window label; it is defined under `tauri.conf.json`
             let main_window = app.get_window("main").unwrap();
@@ -43,6 +48,12 @@ fn main() {
                 }
             };
 
+            let watcher_state = app.state::<Mutex<Option<RecommendedWatcher>>>();
+
+            let mut watcher = watcher_state.lock().unwrap();
+
+            watcher.insert(watch::create_watcher(app.app_handle()));
+
             Ok(())
         })
         .menu(menu)
@@ -55,6 +66,8 @@ fn main() {
             terminal::kill_command,
             zip::unzip_command,
             zip::zip_command,
+            watch::watch_folder,
+            watch::unwatch_folder,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -35,6 +35,7 @@ import { iterateDir } from '/@/utils/iterateDir'
 import { Signal } from '../../Common/Event/Signal'
 import { moveHandle } from '/@/utils/file/moveHandle'
 import { TreeTab } from '../../Editors/TreeEditor/Tab'
+import { invoke } from '@tauri-apps/api'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -273,7 +274,11 @@ export abstract class Project {
 		])
 
 		this.snippetLoader.activate()
+
+		if (!this.isVirtualProject)
+			invoke('watch_folder', { path: this.projectPath })
 	}
+
 	async deactivate(isReload = false) {
 		if (!isReload)
 			this.tabSystems.forEach((tabSystem) => tabSystem.deactivate())
@@ -286,6 +291,9 @@ export abstract class Project {
 			this.packIndexer.deactivate(),
 			this.snippetLoader.deactivate(),
 		])
+
+		if (!this.isVirtualProject)
+			invoke('unwatch_folder', { path: this.projectPath })
 	}
 	dispose() {
 		this.tabSystems.forEach((tabSystem) => tabSystem.dispose())
