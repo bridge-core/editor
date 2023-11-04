@@ -29,7 +29,6 @@ pub fn create_watcher(app_handle: tauri::AppHandle) -> RecommendedWatcher {
                 })
                 .collect();
 
-            println!("watch event: {:?}", paths);
             app_handle.emit_all("watch_event", paths).unwrap();
 
             return;
@@ -54,8 +53,6 @@ pub fn watch_folder(
         .canonicalize()
         .unwrap();
 
-    println!("watching {:?}", resolved_path);
-
     let mut watcher_option = state.lock().unwrap();
     let watcher = watcher_option.as_mut().unwrap();
 
@@ -78,8 +75,6 @@ pub fn unwatch_folder(
         .join(Path::new(&path))
         .canonicalize()
         .unwrap();
-
-    println!("unwatch {:?}", resolved_path);
 
     let mut watcher_option = state.lock().unwrap();
     let watcher = watcher_option.as_mut().unwrap();
