@@ -74,6 +74,8 @@ export class App {
 		'fileUnlinked',
 		'presetsChanged',
 		'availableProjectsFileChanged',
+		'beforeModifiedProject',
+		'modifiedProject',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>

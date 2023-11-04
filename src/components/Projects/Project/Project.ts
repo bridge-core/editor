@@ -170,12 +170,14 @@ export abstract class Project {
 		this.fileChange.any.on((data) =>
 			App.eventSystem.dispatch('fileChange', data)
 		)
-		this.beforeFileSave.any.on((data) =>
+		this.beforeFileSave.any.on((data) => {
 			App.eventSystem.dispatch('beforeFileSave', data)
-		)
-		this.fileSave.any.on((data) =>
+			App.eventSystem.dispatch('beforeModifiedProject', null)
+		})
+		this.fileSave.any.on((data) => {
 			App.eventSystem.dispatch('fileSave', data)
-		)
+			App.eventSystem.dispatch('modifiedProject', null)
+		})
 		this.fileUnlinked.any.on((data) =>
 			App.eventSystem.dispatch('fileUnlinked', data[0])
 		)

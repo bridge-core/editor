@@ -25,7 +25,7 @@ export class ProjectManager extends Signal<void> {
 	public readonly title = markRaw(new Title())
 	protected _selectedProject?: string = undefined
 	public readonly projectReady = new Signal<void>()
-	protected filesSaving: Record<string, boolean> = {}
+	protected projectBeingModified = 0
 
 	constructor(protected app: App) {
 		super()
@@ -35,11 +35,14 @@ export class ProjectManager extends Signal<void> {
 			listen('watch_event', this.handleWatchEvent.bind(this))
 
 			App.eventSystem.on(
-				'beforeFileSave',
-				this.handleBeforeFileSaveEvent.bind(this)
+				'beforeModifiedProject',
+				this.handleBeforeModifiedProjectEvent.bind(this)
 			)
 
-			App.eventSystem.on('fileSave', this.handleFileSaveEvent.bind(this))
+			App.eventSystem.on(
+				'modifiedProject',
+				this.handleModifiedProjectEvent.bind(this)
+			)
 		} else {
 			// Only load local projects on PWA builds
 			this.loadProjects()
@@ -200,8 +203,6 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async selectProject(projectName: string, failGracefully = false) {
-		this.filesSaving = {}
-
 		// Clear current comMojangProject
 		if (this.app.viewComMojangProject.hasComMojangProjectLoaded) {
 			await this.app.viewComMojangProject.clearComMojangProject()
@@ -228,7 +229,9 @@ export class ProjectManager extends Signal<void> {
 
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName
+
 		App.eventSystem.dispatch('disableValidation', null)
+
 		this.currentProject?.activate()
 
 		await idbSet('selectedProject', projectName)
@@ -348,32 +351,27 @@ export class ProjectManager extends Signal<void> {
 		)
 		App.eventSystem.dispatch('availableProjectsFileChanged', undefined)
 	}
-	async handleBeforeFileSaveEvent(event: any) {
-		const [path, file] = event
-
-		this.filesSaving[path] = true
+	handleBeforeModifiedProjectEvent() {
+		this.projectBeingModified++
 	}
-	async handleFileSaveEvent(event: any) {
-		const [path, file] = event
-
-		delete this.filesSaving[path]
+	handleModifiedProjectEvent() {
+		this.projectBeingModified--
 	}
 	async handleWatchEvent(event: any) {
 		if (this.selectedProject === null) return
 
+		const project = this.getProject(this.selectedProject!)!
+
 		const paths = (<string[]>event.payload).filter(
 			(entryPath) =>
 				!entryPath.startsWith(
-					path.join(
-						this.getProject(this.selectedProject!)?.projectPath!,
-						'.bridge'
-					)
+					path.join(project.projectPath!, '.bridge')
 				)
 		)
 
 		if (paths.length === 0) return
 
-		if (Object.keys(this.filesSaving).length > 0) return
+		if (this.projectBeingModified > 0) return
 
 		const app = await App.getApp()
 
