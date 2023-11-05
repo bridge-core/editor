@@ -184,8 +184,6 @@ main {
 	display: flex;
 	flex-wrap: wrap;
 
-	justify-content: space-between;
-
 	gap: 0.5rem;
 }
 

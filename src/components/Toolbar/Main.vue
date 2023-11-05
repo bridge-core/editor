@@ -1,7 +1,7 @@
 <template>
 	<v-system-bar
 		v-if="!isMobile"
-		color="toolbar"
+		color="background"
 		fixed
 		app
 		clipped
@@ -17,14 +17,6 @@
 		}"
 	>
 		<template v-if="hideToolbarItems">
-			<Logo
-				height="22px"
-				width="22px"
-				style="padding-right: 8px"
-				alt="Logo of bridge. v2"
-				draggable="false"
-			/>
-
 			<div
 				v-ripple
 				@click="openCommandBar"
@@ -40,22 +32,6 @@
 		</template>
 
 		<template v-else>
-			<Logo
-				v-if="showLogo"
-				height="24px"
-				width="24px"
-				style="
-					padding-right: 4px;
-					padding-left: calc(env(safe-area-inset-left) + 4px);
-				"
-				class="cursor-pointer"
-				alt="Logo of bridge. v2"
-				draggable="false"
-				@click.native="openChangelogWindow"
-			/>
-
-			<v-divider v-if="showLogo || isMacOS" vertical />
-
 			<!-- App menu buttons -->
 			<v-toolbar-items class="px14-font">
 				<template v-for="(item, key, i) in toolbar">
@@ -90,10 +66,21 @@
 			</span>
 
 			<v-spacer />
-			<WindowControls v-if="isTauriBuild && isWindows" />
+			<Logo
+				height="24px"
+				width="24px"
+				style="
+					padding-right: 4px;
+					padding-left: calc(env(safe-area-inset-left) + 4px);
+				"
+				class="cursor-pointer"
+				alt="Logo of bridge. v2"
+				draggable="false"
+				@click.native="openChangelogWindow"
+			/>
+
 			<div
-				v-else
-				class="px-1 mx-1 rounded-lg app-version-display"
+				class="px-1 mr-1 rounded-lg app-version-display"
 				v-ripple="!isAnyWindowVisible"
 				:style="{
 					opacity: isAnyWindowVisible ? 0.4 : null,
@@ -103,6 +90,8 @@
 			>
 				v{{ appVersion }}
 			</div>
+
+			<WindowControls v-if="isTauriBuild && isWindows" />
 		</template>
 	</v-system-bar>
 </template>
