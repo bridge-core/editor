@@ -18,6 +18,16 @@ import { showFolderPicker } from '/@/components/FileSystem/Pickers/showFolderPic
 export function setupFileCategory(app: App) {
 	const file = new ToolbarCategory('mdi-file-outline', 'toolbar.file.name')
 
+	file.disposables.push(
+		App.eventSystem.on('projectChanged', () => {
+			console.log(typeof file.shouldRender)
+			file.shouldRender.value = !app.isNoProjectSelected
+		})
+	)
+
+	console.log(typeof file.shouldRender)
+	file.shouldRender.value = !app.isNoProjectSelected
+
 	file.addItem(
 		app.actionManager.create({
 			id: 'bridge.action.newFile',

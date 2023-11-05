@@ -44,7 +44,7 @@
 						@click="() => item.trigger()"
 					/>
 					<MenuActivator
-						v-else-if="item.shouldRender"
+						v-else-if="item.shouldRender.value"
 						:key="`activator.${key}`"
 						:item="item"
 						:disabled="isAnyWindowVisible || item.isDisabled"
@@ -52,7 +52,7 @@
 					<v-divider
 						:key="`divider.${key}`"
 						v-if="
-							item.shouldRender &&
+							item.shouldRender.value &&
 							(windowControlsOverlay ||
 								i + 1 < Object.keys(toolbar).length)
 						"
@@ -66,6 +66,7 @@
 			</span>
 
 			<v-spacer />
+
 			<Logo
 				height="24px"
 				width="24px"
