@@ -27,12 +27,18 @@
 				class="ml-auto mr-auto mb-12"
 				alt="Logo of bridge. v2"
 			/>
+
 			<div class="flex justify-between">
 				<p class="mb-1 text-lg">Projects</p>
 				<div>
-					<v-icon size="large" class="mr-1" @click="loadFolder"
-						>mdi-folder</v-icon
-					>
+					<div class="inline relative">
+						<v-icon size="large" class="mr-1" @click="loadFolder"
+							>mdi-folder</v-icon
+						>
+						<div class="notification">
+							<div class="notification-inner" />
+						</div>
+					</div>
 					<v-icon size="large" @click="createProject"
 						>mdi-plus</v-icon
 					>
@@ -63,6 +69,7 @@
 
 <script setup lang="ts">
 import Logo from '/@/components/UIElements/Logo.vue'
+import CommandBar from '../CommandBar/CommandBar.vue'
 import { version as appVersion } from '/@/utils/app/version'
 import { App } from '/@/App'
 import { computed, onMounted, onUnmounted, Ref, ref } from 'vue'
@@ -220,5 +227,33 @@ main {
 .icon-buttons {
 	display: flex;
 	gap: 0.5rem;
+}
+
+.notification {
+	position: absolute;
+
+	top: 2px;
+	right: 2px;
+
+	width: 8px;
+	height: 8px;
+
+	background-color: var(--v-error-base);
+
+	border-radius: 50%;
+}
+
+.notification-inner {
+	position: absolute;
+
+	top: 2px;
+	right: 2px;
+
+	width: 4px;
+	height: 4px;
+
+	background-color: white;
+
+	border-radius: 50%;
 }
 </style>
