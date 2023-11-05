@@ -24,7 +24,7 @@
 		<div class="d-flex flex-column projects-container">
 			<Logo
 				style="height: 160px; width: 160px"
-				class="ml-auto mr-auto mb-12"
+				class="ml-auto mr-auto mb-24 -mt-24"
 				alt="Logo of bridge. v2"
 			/>
 
