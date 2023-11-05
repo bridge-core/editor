@@ -159,8 +159,8 @@ export default {
 
 			this.disposables.push(
 				App.eventSystem.on(
-					'availableProjectsFileChanged',
-					() => (this.greet = false)
+					'projectChanged',
+					() => (this.greet = app.isNoProjectSelected)
 				)
 			)
 		})

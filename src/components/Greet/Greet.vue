@@ -30,21 +30,37 @@
 
 			<div class="flex justify-between">
 				<p class="mb-1 text-lg">Projects</p>
+
+				<div
+					class="flex align-center justify-center action-bar-load-folder-prompt"
+					@click="loadFolder"
+					v-if="!bridgeFolderSelected && projects.length > 0"
+				>
+					<v-icon
+						size="large"
+						class="mr-1.5 relative bottom-0.25"
+						color="primary"
+						>mdi-alert-circle</v-icon
+					>
+					<p
+						class="text-primary cursor-pointer hover:underline mb-0 inline h-6"
+					>
+						Load bridge. folder
+					</p>
+				</div>
+
 				<div>
-					<div class="inline relative">
-						<v-icon size="large" class="mr-1" @click="loadFolder"
-							>mdi-folder</v-icon
-						>
-						<div class="notification">
-							<div class="notification-inner" />
-						</div>
-					</div>
+					<v-icon size="large" class="mr-1" @click="loadFolder"
+						>mdi-folder</v-icon
+					>
 					<v-icon size="large" @click="createProject"
 						>mdi-plus</v-icon
 					>
 				</div>
 			</div>
+
 			<div class="seperator" />
+
 			<div class="project-list">
 				<div
 					class="project"
@@ -52,10 +68,12 @@
 					:key="index"
 					@click="selectProject(project)"
 				>
-					<img
-						:src="project.icon"
-						class="w-full aspect-video object-cover"
-					/>
+					<div class="project-icon w-full overflow-hidden">
+						<img
+							:src="project.icon"
+							class="w-full aspect-video object-cover"
+						/>
+					</div>
 					<p
 						class="text-sm text-center mt-auto mb-auto ml-0.5 mr-0.5"
 					>
@@ -63,13 +81,38 @@
 					</p>
 				</div>
 			</div>
+
+			<div
+				class="flex align-center flex-col mt-8"
+				v-if="projects.length == 0 && bridgeFolderSelected"
+			>
+				<p class="opacity-30">You have no projects.</p>
+				<p
+					class="text-primary cursor-pointer hover:underline"
+					@click="createProject"
+				>
+					Create One
+				</p>
+			</div>
+
+			<div
+				class="flex align-center flex-col mt-8"
+				v-if="projects.length == 0 && !bridgeFolderSelected"
+			>
+				<p class="opacity-30">You need to select a bridge. folder.</p>
+				<p
+					class="text-primary cursor-pointer hover:underline"
+					@click="loadFolder"
+				>
+					Select One
+				</p>
+			</div>
 		</div>
 	</main>
 </template>
 
 <script setup lang="ts">
 import Logo from '/@/components/UIElements/Logo.vue'
-import CommandBar from '../CommandBar/CommandBar.vue'
 import { version as appVersion } from '/@/utils/app/version'
 import { App } from '/@/App'
 import { computed, onMounted, onUnmounted, Ref, ref } from 'vue'
@@ -104,12 +147,12 @@ async function createProject() {
 	app.windows.createProject.open()
 }
 
-let bridgeFolderSelected = false
+let bridgeFolderSelected = ref(false)
 
 async function loadFolder() {
 	const app = await App.getApp()
 
-	await app.setupBridgeFolder(bridgeFolderSelected)
+	await app.setupBridgeFolder(bridgeFolderSelected.value)
 }
 
 let disposables: any[] = []
@@ -147,7 +190,7 @@ onMounted(async () => {
 
 	disposables.push(
 		app.bridgeFolderSetup.once(() => {
-			bridgeFolderSelected = true
+			bridgeFolderSelected.value = true
 		}, true)
 	)
 })
@@ -198,7 +241,17 @@ main {
 
 	border-radius: 4px;
 
-	filter: drop-shadow(0px 0px 6px rgba(0, 0, 0, 0.4));
+	cursor: pointer;
+
+	/* transition: background 0.2s; */
+}
+
+.project > .project-icon > img {
+	transition: scale 0.2s;
+}
+
+.project:hover > .project-icon > img {
+	scale: 1.5;
 }
 
 .project > p {
@@ -225,33 +278,5 @@ main {
 .icon-buttons {
 	display: flex;
 	gap: 0.5rem;
-}
-
-.notification {
-	position: absolute;
-
-	top: 2px;
-	right: 2px;
-
-	width: 8px;
-	height: 8px;
-
-	background-color: var(--v-error-base);
-
-	border-radius: 50%;
-}
-
-.notification-inner {
-	position: absolute;
-
-	top: 2px;
-	right: 2px;
-
-	width: 4px;
-	height: 4px;
-
-	background-color: white;
-
-	border-radius: 50%;
 }
 </style>
