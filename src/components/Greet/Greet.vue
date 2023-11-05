@@ -22,11 +22,10 @@
 		</div>
 
 		<div class="d-flex flex-column projects-container">
-			<img
+			<Logo
 				style="height: 160px; width: 160px"
-				class="ml-auto mr-auto mb-24 -mt-24"
+				class="ml-auto mr-auto mb-12"
 				alt="Logo of bridge. v2"
-				src="/img/icons/gray-scale.png"
 			/>
 
 			<div class="flex justify-between">
