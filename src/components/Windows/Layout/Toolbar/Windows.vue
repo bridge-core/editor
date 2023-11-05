@@ -1,7 +1,7 @@
 <template>
 	<v-system-bar
 		height="30px"
-		color="toolbar"
+		color="background"
 		:style="{
 			'padding-right': '0px',
 			'padding-left': hasSidebar
