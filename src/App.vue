@@ -4,14 +4,15 @@
 		:style="{ fontFamily }"
 		@contextmenu.native="/*$event.preventDefault()*/"
 	>
-		<Greet v-if="greet" />
+		<!-- We need access to native menus in order to hide the custom one on MacOS -->
+		<!-- <Toolbar v-if="!isMacOs" /> -->
+		<Toolbar v-if="!isInFullScreen" />
+
+		<!-- Screen for when no projects are opened-->
+		<Greet v-if="isNoProjectSelected" />
 
 		<!-- main editor-->
-		<div v-if="!greet">
-			<!-- We need access to native menus in order to hide the custom one on MacOS -->
-			<!-- <Toolbar v-if="!isMacOs" /> -->
-			<Toolbar v-if="!isInFullScreen" />
-
+		<div v-if="!isNoProjectSelected">
 			<Sidebar v-if="!isInFullScreen" app />
 
 			<v-btn
@@ -160,7 +161,7 @@ export default {
 			this.disposables.push(
 				App.eventSystem.on(
 					'projectChanged',
-					() => (this.greet = app.isNoProjectSelected)
+					() => (this.isNoProjectSelected = app.isNoProjectSelected)
 				)
 			)
 		})
@@ -189,7 +190,7 @@ export default {
 			currentWidth: window.innerWidth,
 			currentHeight: window.innerHeight,
 		},
-		greet: true,
+		isNoProjectSelected: true,
 		disposables: [],
 	}),
 

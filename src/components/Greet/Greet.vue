@@ -1,26 +1,5 @@
 <template>
 	<main>
-		<div class="p-2 top-bar">
-			<div class="icon-buttons">
-				<v-icon size="large" @click="openSettingsWindow"
-					>mdi-cog</v-icon
-				>
-				<v-icon size="large" @click="openHelp">mdi-help-circle</v-icon>
-				<v-icon
-					v-if="nativeBuildAvailable"
-					size="large"
-					@click="openDownloadPage"
-					>mdi-download</v-icon
-				>
-			</div>
-			<div
-				class="px-1 rounded d-table app-version-display"
-				@click="openChangelogWindow"
-			>
-				v{{ appVersion }}
-			</div>
-		</div>
-
 		<div class="d-flex flex-column projects-container">
 			<Logo
 				style="height: 160px; width: 160px"
@@ -113,33 +92,8 @@
 
 <script setup lang="ts">
 import Logo from '/@/components/UIElements/Logo.vue'
-import { version as appVersion } from '/@/utils/app/version'
 import { App } from '/@/App'
-import { computed, onMounted, onUnmounted, Ref, ref } from 'vue'
-
-const nativeBuildAvailable = computed(() => {
-	return !import.meta.env.VITE_IS_TAURI_APP && !App.instance.mobile.is.value
-})
-
-async function openChangelogWindow() {
-	const app = await App.getApp()
-
-	app.windows.changelogWindow.open()
-}
-
-async function openSettingsWindow() {
-	const app = await App.getApp()
-
-	app.windows.settings.open()
-}
-
-function openHelp() {
-	App.openUrl('https://bridge-core.app/guide/', undefined, true)
-}
-
-function openDownloadPage() {
-	App.openUrl('https://bridge-core.app/guide/download/', undefined, true)
-}
+import { onMounted, onUnmounted, Ref, ref } from 'vue'
 
 async function createProject() {
 	const app = await App.getApp()
@@ -204,7 +158,11 @@ onUnmounted(() => {
 <style scoped>
 main {
 	width: 100%;
-	height: 100%;
+	height: calc(100% - env(titlebar-area-height, 24px));
+
+	position: relative;
+
+	top: env(titlebar-area-height, 24px);
 
 	display: flex;
 	justify-content: center;
@@ -256,27 +214,5 @@ main {
 
 .project > p {
 	margin: 0;
-}
-
-.top-bar {
-	position: absolute;
-	top: 0;
-	width: 100%;
-
-	display: flex;
-}
-
-.app-version-display {
-	app-region: no-drag;
-	-webkit-app-region: no-drag;
-	cursor: pointer;
-	font-size: 12px;
-
-	margin-left: auto;
-}
-
-.icon-buttons {
-	display: flex;
-	gap: 0.5rem;
 }
 </style>

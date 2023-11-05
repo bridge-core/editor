@@ -117,6 +117,7 @@ export class App {
 	get tabSystem() {
 		return this.projectManager.currentProject?.tabSystem
 	}
+
 	get selectedProject() {
 		return this.projectManager.selectedProject
 	}
@@ -127,6 +128,7 @@ export class App {
 			this.projectManager.currentProject.isVirtualProject
 		)
 	}
+
 	get hasNoProjects() {
 		return (
 			this.isNoProjectSelected && this.projectManager.totalProjects <= 1
