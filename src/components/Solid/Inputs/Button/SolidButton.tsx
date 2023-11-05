@@ -19,7 +19,7 @@ export function SolidButton(props: SolidButtonProps) {
 				p-2
 				py-1
 				overflow-hidden
-				rounded-lg
+				rounded
 				shadow-lg
 				active:scale-[.95]
 				focus:outline-none

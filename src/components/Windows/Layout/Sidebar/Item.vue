@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="pa-1 rounded-lg category"
+		class="pa-1 rounded category"
 		:class="{ selected: isSelected, 'is-disabled': isDisabled }"
 		v-ripple="!isSelected && !isDisabled"
 		@click="!isDisabled ? $emit('click') : undefined"

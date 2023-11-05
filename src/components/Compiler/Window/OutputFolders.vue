@@ -4,7 +4,7 @@
 
 		<v-btn
 			v-if="isTauriBuild"
-			class="mt-2 rounded-lg"
+			class="mt-2 rounded"
 			@click="setOutputFolder"
 			block
 			:loading="isLoading"

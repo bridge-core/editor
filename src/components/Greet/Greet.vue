@@ -14,7 +14,7 @@
 				>
 			</div>
 			<div
-				class="px-1 rounded-lg d-table app-version-display"
+				class="px-1 rounded d-table app-version-display"
 				@click="openChangelogWindow"
 			>
 				v{{ appVersion }}

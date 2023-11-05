@@ -12,8 +12,8 @@
 		color="sidebarNavigation"
 		:height="`calc(100% - ${appToolbarHeight}${isMobile ? '' : ' - 50px'})`"
 		:class="{
-			'rounded-r-lg': !isSidebarRight,
-			'rounded-l-lg': isSidebarRight,
+			'rounded-r': !isSidebarRight,
+			'rounded-l': isSidebarRight,
 		}"
 		class="my-2"
 		:style="{
@@ -23,7 +23,7 @@
 	>
 		<template v-if="isMobile">
 			<div
-				class="d-flex align-center justify-center mt-3 mb-2 mx-1 rounded-lg"
+				class="d-flex align-center justify-center mt-3 mb-2 mx-1 rounded"
 				v-ripple
 			>
 				<BridgeLogo class="h-10" @click.native="openAboutWindow" />

@@ -22,7 +22,7 @@ export const IconText: Component<IconTextProps> = (props) => {
 	} as const
 
 	return (
-		<div use:ripple class="rounded-lg" style={styles}>
+		<div use:ripple class="rounded" style={styles}>
 			<SolidIcon
 				icon={props.icon}
 				color={props.color}

@@ -14,8 +14,8 @@
 		<div
 			class="d-flex justify-center align-center"
 			:class="{
-				'rounded-l-lg': isAttachedRight,
-				'rounded-r-lg': !isAttachedRight,
+				'rounded-l': isAttachedRight,
+				'rounded-r': !isAttachedRight,
 			}"
 			:style="{
 				background: 'var(--v-sidebarNavigation-base)',

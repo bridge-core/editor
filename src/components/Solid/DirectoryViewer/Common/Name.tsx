@@ -37,7 +37,7 @@ export function Name(props: NameProps) {
 	return (
 		<Dynamic
 			component={props.tagName}
-			class="directory-viewer-name cursor-pointer d-flex align-center px-1 rounded-lg"
+			class="directory-viewer-name cursor-pointer d-flex align-center px-1 rounded"
 			classList={{
 				selected: isSelected(),
 			}}

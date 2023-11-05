@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-on="nonClickListeners"
-		class="rounded-lg"
+		class="rounded"
 		:class="{
 			'bg-dark': dark,
 			bg: !dark,

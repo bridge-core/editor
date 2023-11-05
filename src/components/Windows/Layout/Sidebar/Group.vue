@@ -1,10 +1,6 @@
 <template>
 	<details :open="isOpen">
-		<summary
-			class="rounded-lg"
-			@click.prevent="$emit('toggleOpen')"
-			v-ripple
-		>
+		<summary class="rounded" @click.prevent="$emit('toggleOpen')" v-ripple>
 			<!-- Flexbox doesn't work directly on summaries in Safari -->
 			<span
 				class="flex items-center"

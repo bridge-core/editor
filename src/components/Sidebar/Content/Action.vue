@@ -8,7 +8,7 @@
 		<template v-slot:activator="{ on, attrs }">
 			<div
 				v-ripple
-				class="rounded-lg ma-1 d-flex justify-center sidebar-actions pa-2"
+				class="rounded ma-1 d-flex justify-center sidebar-actions pa-2"
 				:class="{ 'elevation-4': isSelected }"
 				:style="{
 					background: isSelected ? `var(--v-${color}-base)` : null,

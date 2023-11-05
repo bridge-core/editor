@@ -1,5 +1,5 @@
 <template>
-	<div class="text-normal pa-4 mb-2 rounded-lg card">
+	<div class="text-normal pa-4 mb-2 rounded card">
 		<div class="d-flex align-center mb-2">
 			<v-icon v-if="extension.icon" color="accent" class="mr-1">
 				{{ extension.icon }}
@@ -33,7 +33,7 @@
 				:loading="extension.isLoading"
 				:disabled="!extension.isCompatibleVersion()"
 				color="primary"
-				class="rounded-lg elevation-0"
+				class="rounded elevation-0"
 				small
 			>
 				<v-icon :small="!isMobile" :class="{ 'mr-1': !isMobile }">
@@ -47,7 +47,7 @@
 				@click="extension.update()"
 				:loading="extension.isLoading"
 				color="primary"
-				class="rounded-lg elevation-0"
+				class="rounded elevation-0"
 				small
 			>
 				<v-icon :small="!isMobile" :class="{ 'mr-1': !isMobile }">

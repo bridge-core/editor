@@ -20,7 +20,7 @@
 			<div
 				v-ripple
 				@click="openCommandBar"
-				class="toolbar-clickable outlined rounded-lg d-flex align-center justify-center"
+				class="toolbar-clickable outlined rounded d-flex align-center justify-center"
 				style="height: 20px"
 			>
 				<v-icon class="ml-1">mdi-magnify</v-icon>
@@ -80,7 +80,7 @@
 			/>
 
 			<div
-				class="px-1 mr-1 rounded-lg app-version-display"
+				class="px-1 mr-1 rounded app-version-display"
 				v-ripple="!isAnyWindowVisible"
 				:style="{
 					opacity: isAnyWindowVisible ? 0.4 : null,
