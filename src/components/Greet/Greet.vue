@@ -59,6 +59,15 @@
 						{{ project.displayName }}
 					</p>
 				</div>
+
+				<div
+					class="new-project-button"
+					@click="createProject"
+					v-if="projects.length > 0"
+				>
+					<v-icon size="large" class="mr-2">mdi-plus</v-icon>
+					<span> New Project </span>
+				</div>
 			</div>
 
 			<div
@@ -116,6 +125,18 @@ let projects: Ref<any> = ref([])
 async function loadProjects() {
 	const app = await App.getApp()
 
+	// let debug_projects = []
+
+	// for (let i = 0; i < 20; i++) {
+	// 	debug_projects.push({
+	// 		displayName: 'Test ' + i,
+	// 		icon: 'https://www.minecraft.net/content/dam/games/minecraft/key-art/SUPM_Game-Image_One-Vanilla_672x400.jpg',
+	// 		requiresPermissions: false,
+	// 	})
+	// }
+
+	// projects.value = debug_projects
+
 	projects.value = await app.fileSystem
 		.readJSON('~local/data/projects.json')
 		.catch(() => [])
@@ -171,6 +192,8 @@ main {
 
 .projects-container {
 	width: 28rem;
+
+	margin-top: 8rem;
 }
 
 .seperator {
@@ -186,6 +209,27 @@ main {
 	flex-wrap: wrap;
 
 	gap: 0.5rem;
+
+	max-height: 28.5rem;
+	overflow: hidden;
+	overflow-y: auto;
+
+	width: calc(100% + 1rem);
+}
+
+.new-project-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 9rem;
+	height: 9rem;
+
+	background: var(--v-menu-base);
+
+	border-radius: 4px;
+
+	cursor: pointer;
 }
 
 .project {
