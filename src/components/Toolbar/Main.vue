@@ -38,8 +38,8 @@
 					<MenuButton
 						v-if="item.type !== 'category'"
 						:key="`button.${key}`"
-						:displayName="item.name"
 						:displayIcon="item.icon"
+						:displayName="item.name"
 						:disabled="isAnyWindowVisible || item.isDisabled"
 						@click="() => item.trigger()"
 					/>
@@ -48,15 +48,6 @@
 						:key="`activator.${key}`"
 						:item="item"
 						:disabled="isAnyWindowVisible || item.isDisabled"
-					/>
-					<v-divider
-						:key="`divider.${key}`"
-						v-if="
-							item.shouldRender.value &&
-							(windowControlsOverlay ||
-								i + 1 < Object.keys(toolbar).length)
-						"
-						vertical
 					/>
 				</template>
 			</v-toolbar-items>

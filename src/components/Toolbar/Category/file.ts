@@ -20,12 +20,10 @@ export function setupFileCategory(app: App) {
 
 	file.disposables.push(
 		App.eventSystem.on('projectChanged', () => {
-			console.log(typeof file.shouldRender)
 			file.shouldRender.value = !app.isNoProjectSelected
 		})
 	)
 
-	console.log(typeof file.shouldRender)
 	file.shouldRender.value = !app.isNoProjectSelected
 
 	file.addItem(

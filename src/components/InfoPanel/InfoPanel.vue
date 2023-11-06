@@ -1,7 +1,7 @@
 <template>
 	<v-alert
 		:type="infoPanel.type"
-		rounded="lg"
+		rounded
 		border="bottom"
 		:dismissible="infoPanel.isDismissible"
 		v-model="infoPanel.isVisible"

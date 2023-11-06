@@ -14,6 +14,14 @@ export function setupProjectCategory(app: App) {
 		'toolbar.project.name'
 	)
 
+	project.disposables.push(
+		App.eventSystem.on('projectChanged', () => {
+			project.shouldRender.value = !app.isNoProjectSelected
+		})
+	)
+
+	project.shouldRender.value = !app.isNoProjectSelected
+
 	project.addItem(
 		app.actionManager.create({
 			icon: 'mdi-home-outline',

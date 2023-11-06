@@ -82,7 +82,7 @@
 				v-model="extension.showMenu"
 				offset-y
 				offset-x
-				rounded="lg"
+				rounded
 			>
 				<template v-slot:activator="{ on, attrs }">
 					<v-btn v-on="on" v-bind="attrs" small icon>

@@ -5,7 +5,7 @@
 		offset-y
 		z-index="11"
 		:nudge-top="-8"
-		rounded="lg"
+		rounded
 	>
 		<template v-slot:activator="{ on }">
 			<MenuButton

@@ -97,14 +97,15 @@
 					</v-col>
 				</v-row>
 			</v-main>
-
-			<ContextMenu
-				v-if="contextMenu"
-				:contextMenu="contextMenu"
-				:windowHeight="windowSize.currentHeight"
-			/>
-			<SolidWindows />
 		</div>
+
+		<ContextMenu
+			v-if="contextMenu"
+			:contextMenu="contextMenu"
+			:windowHeight="windowSize.currentHeight"
+		/>
+
+		<SolidWindows />
 
 		<WindowRenderer />
 	</v-app>

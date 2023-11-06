@@ -158,7 +158,7 @@ onUnmounted(() => {
 <style scoped>
 main {
 	width: 100%;
-	height: calc(100% - env(titlebar-area-height, 24px));
+	min-height: calc(100% - env(titlebar-area-height, 24px));
 
 	position: relative;
 
