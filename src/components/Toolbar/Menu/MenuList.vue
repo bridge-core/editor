@@ -10,7 +10,11 @@
 			<div
 				v-else
 				:key="`menu.${i}.${Math.random()}`"
-				class="flex gap-4 p-2 hover:bg-surface transition-colors duration-200 ease-out align-center"
+				:class="{
+					'pb-3': i === Object.keys(elements).length - 1,
+					'pt-3': i === 0,
+					'flex gap-4 p-2 hover:bg-surface transition-colors duration-200 ease-out align-center': true,
+				}"
 				@click="onClick(item)"
 			>
 				<v-icon v-if="item.icon" color="accent" small class="ml-1">{{
