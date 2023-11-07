@@ -165,18 +165,6 @@ let projects: Ref<any> = ref([])
 async function loadProjects() {
 	const app = await App.getApp()
 
-	// let debug_projects = []
-
-	// for (let i = 0; i < 20; i++) {
-	// 	debug_projects.push({
-	// 		displayName: 'Test ' + i,
-	// 		icon: 'https://www.minecraft.net/content/dam/games/minecraft/key-art/SUPM_Game-Image_One-Vanilla_672x400.jpg',
-	// 		requiresPermissions: false,
-	// 	})
-	// }
-
-	// projects.value = debug_projects
-
 	projects.value = await app.fileSystem
 		.readJSON('~local/data/projects.json')
 		.catch(() => [])

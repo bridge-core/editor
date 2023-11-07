@@ -398,6 +398,9 @@ export class App {
 		this.bridgeFolderSetup.dispatch()
 		await this.projectManager.loadProjects(true)
 
+		await this.extensionLoader.loadExtensions()
+		await this.themeManager.updateTheme()
+
 		return true
 	}
 }
