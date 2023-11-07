@@ -1,22 +1,11 @@
 <template>
-	<v-btn
-		small
-		text
-		@click="$emit('click', $event)"
-		:disabled="disabled"
-		class="toolbar-btn"
-		:class="{
-			'btn-enabled': !disabled,
-			'btn-disabled': disabled,
-			'px-1': $vuetify.breakpoint.mobile,
-		}"
-	>
-		<v-icon v-if="displayIcon" color="accent" class="pr-1">
-			{{ displayIcon }}
-		</v-icon>
-
-		<span> {{ t(displayName) }} </span>
-	</v-btn>
+	<div @click="$emit('click', $event)" class="m-1 ml-4">
+		<span
+			class="text-text hover:text-accent transition-colors duration-100 ease-out"
+		>
+			{{ t(displayName) }}
+		</span>
+	</div>
 </template>
 
 <script setup>
@@ -34,15 +23,8 @@ defineProps({
 </script>
 
 <style scoped>
-.toolbar-btn {
-	min-width: 0;
-}
-.btn-disabled {
+div {
 	-webkit-app-region: drag;
 	app-region: drag;
-}
-.btn-enabled {
-	-webkit-app-region: no-drag;
-	app-region: no-drag;
 }
 </style>

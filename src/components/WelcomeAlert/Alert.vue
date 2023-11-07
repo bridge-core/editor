@@ -6,7 +6,7 @@
 		:color="color"
 		:style="`color: ${textColor}; width: 100%; position: absolute; top: 0; left: 0;`"
 		border="bottom"
-		rounded="lg"
+		rounded
 	>
 		<div class="d-flex align-center">
 			<v-icon v-if="icon" :color="textColor" large class="pr-2">

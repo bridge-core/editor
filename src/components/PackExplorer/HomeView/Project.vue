@@ -27,7 +27,7 @@
 						v-if="project.icon"
 						:src="project.icon"
 						:alt="project.displayName"
-						class="rounded-lg"
+						class="rounded"
 						:style="{
 							margin: miniLayout ? '0.5rem' : '0 0.5rem',
 							maxWidth: miniLayout ? '2rem' : '4rem',

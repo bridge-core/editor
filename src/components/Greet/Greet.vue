@@ -1,0 +1,292 @@
+<template>
+	<main>
+		<div class="d-flex flex-column projects-container">
+			<Logo
+				style="height: 160px; width: 160px"
+				class="ml-auto mr-auto mb-24 -mt-24"
+				alt="Logo of bridge. v2"
+			/>
+
+			<div class="flex justify-between">
+				<p class="mb-1 text-lg">Projects</p>
+
+				<div
+					class="flex align-center justify-center action-bar-load-folder-prompt"
+					@click="loadFolder"
+					v-if="!bridgeFolderSelected && projects.length > 0"
+				>
+					<v-icon
+						size="large"
+						class="mr-1.5 relative bottom-0.25"
+						color="primary"
+						>mdi-alert-circle</v-icon
+					>
+					<p
+						class="text-primary cursor-pointer hover:underline mb-0 inline h-6"
+					>
+						{{
+							t(
+								'windows.settings.general.selectBridgeFolder.name'
+							)
+						}}
+					</p>
+				</div>
+
+				<div>
+					<v-tooltip color="tooltip" bottom>
+						<template v-slot:activator="{ on }">
+							<v-icon
+								size="large"
+								class="mr-1 hover:text-accent transition-colors duration-100 ease-out"
+								@click="loadFolder"
+								v-on="on"
+								>mdi-folder</v-icon
+							>
+						</template>
+
+						<span>{{
+							t(
+								'windows.settings.general.selectBridgeFolder.name'
+							)
+						}}</span>
+					</v-tooltip>
+
+					<v-tooltip color="tooltip" bottom>
+						<template v-slot:activator="{ on }">
+							<v-icon
+								size="large"
+								class="hover:text-accent transition-colors duration-100 ease-out"
+								@click="createProject"
+								v-on="on"
+								>mdi-plus</v-icon
+							>
+						</template>
+
+						<span>{{
+							t('windows.projectChooser.newProject.name')
+						}}</span>
+					</v-tooltip>
+				</div>
+			</div>
+
+			<div class="seperator" />
+
+			<div class="project-list">
+				<div
+					class="project"
+					v-for="(project, index) in projects"
+					:key="index"
+					@click="selectProject(project)"
+				>
+					<div class="project-icon w-full overflow-hidden">
+						<img
+							:src="project.icon"
+							class="w-full aspect-video object-cover"
+						/>
+					</div>
+					<p
+						class="text-sm text-center mt-auto mb-auto ml-0.5 mr-0.5"
+					>
+						{{ project.displayName }}
+					</p>
+				</div>
+
+				<div
+					class="new-project-button group"
+					@click="createProject"
+					v-if="projects.length > 0"
+				>
+					<div
+						class="flex align-center justify-center group-hover:scale-105 transition-transform duration-100 ease-out"
+					>
+						<v-icon size="large" class="mr-2">mdi-plus</v-icon>
+						<span>
+							{{ t('windows.projectChooser.newProject.name') }}
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div
+				class="flex align-center flex-col mt-8"
+				v-if="projects.length == 0 && bridgeFolderSelected"
+			>
+				<p class="opacity-30">You have no projects.</p>
+				<p
+					class="text-primary cursor-pointer hover:underline"
+					@click="createProject"
+				>
+					{{ t('windows.projectChooser.newProject.name') }}
+				</p>
+			</div>
+
+			<div
+				class="flex align-center flex-col mt-8"
+				v-if="projects.length == 0 && !bridgeFolderSelected"
+			>
+				<p class="opacity-30">You need to select a bridge. folder.</p>
+				<p
+					class="text-primary cursor-pointer hover:underline"
+					@click="loadFolder"
+				>
+					{{ t('windows.settings.general.selectBridgeFolder.name') }}
+				</p>
+			</div>
+		</div>
+	</main>
+</template>
+
+<script setup lang="ts">
+import Logo from '/@/components/UIElements/Logo.vue'
+import { App } from '/@/App'
+import { onMounted, onUnmounted, Ref, ref } from 'vue'
+import { useTranslations } from '/@/components/Composables/useTranslations'
+
+const { t } = useTranslations()
+
+async function createProject() {
+	const app = await App.getApp()
+
+	app.windows.createProject.open()
+}
+
+let bridgeFolderSelected = ref(false)
+
+async function loadFolder() {
+	const app = await App.getApp()
+
+	await app.setupBridgeFolder(bridgeFolderSelected.value)
+}
+
+let disposables: any[] = []
+
+let projects: Ref<any> = ref([])
+
+async function loadProjects() {
+	const app = await App.getApp()
+
+	projects.value = await app.fileSystem
+		.readJSON('~local/data/projects.json')
+		.catch(() => [])
+}
+
+async function selectProject(project: any) {
+	const app = await App.getApp()
+
+	if (project.requiresPermissions) {
+		const wasSuccessful = await app.setupBridgeFolder()
+
+		if (!wasSuccessful) return
+	}
+
+	await app.projectManager.selectProject(project.name, true)
+}
+
+onMounted(async () => {
+	loadProjects()
+
+	disposables.push(
+		App.eventSystem.on('availableProjectsFileChanged', () => loadProjects())
+	)
+
+	const app = await App.getApp()
+
+	disposables.push(
+		app.bridgeFolderSetup.once(() => {
+			bridgeFolderSelected.value = true
+		}, true)
+	)
+})
+
+onUnmounted(() => {
+	disposables.forEach((disposable) => disposable.dispose())
+	disposables = []
+})
+</script>
+
+<style scoped>
+main {
+	width: 100%;
+	min-height: calc(100% - env(titlebar-area-height, 24px));
+
+	position: relative;
+
+	top: env(titlebar-area-height, 24px);
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.projects-container {
+	width: 28rem;
+
+	margin-top: 8rem;
+}
+
+.seperator {
+	height: 1px;
+	width: 100%;
+	background-color: var(--v-menu-base);
+
+	margin-bottom: 1rem;
+}
+
+.project-list {
+	display: flex;
+	flex-wrap: wrap;
+
+	gap: 0.5rem;
+
+	max-height: 28.5rem;
+	overflow: hidden;
+	overflow-y: auto;
+
+	width: calc(100% + 1rem);
+}
+
+.new-project-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 9rem;
+	height: 9rem;
+
+	background: var(--v-sidebarNavigation-base);
+
+	border-radius: 4px;
+
+	cursor: pointer;
+}
+
+.project {
+	display: flex;
+	flex-direction: column;
+
+	width: 9rem;
+	height: 9rem;
+
+	background: var(--v-sidebarNavigation-base);
+
+	border-radius: 4px;
+
+	cursor: pointer;
+}
+
+.project > .project-icon > img {
+	transition: scale 0.2s;
+}
+
+.project:hover > .project-icon > img {
+	scale: 1.5;
+}
+
+.project > p {
+	margin: 0;
+}
+
+.v-icon::after {
+	opacity: 0 !important;
+}
+</style>

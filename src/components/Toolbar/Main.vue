@@ -1,7 +1,7 @@
 <template>
 	<v-system-bar
 		v-if="!isMobile"
-		color="toolbar"
+		color="background"
 		fixed
 		app
 		clipped
@@ -17,18 +17,10 @@
 		}"
 	>
 		<template v-if="hideToolbarItems">
-			<Logo
-				height="22px"
-				width="22px"
-				style="padding-right: 8px"
-				alt="Logo of bridge. v2"
-				draggable="false"
-			/>
-
 			<div
 				v-ripple
 				@click="openCommandBar"
-				class="toolbar-clickable outlined rounded-lg d-flex align-center justify-center"
+				class="toolbar-clickable outlined rounded d-flex align-center justify-center"
 				style="height: 20px"
 			>
 				<v-icon class="ml-1">mdi-magnify</v-icon>
@@ -40,47 +32,22 @@
 		</template>
 
 		<template v-else>
-			<Logo
-				v-if="showLogo"
-				height="24px"
-				width="24px"
-				style="
-					padding-right: 4px;
-					padding-left: calc(env(safe-area-inset-left) + 4px);
-				"
-				class="cursor-pointer"
-				alt="Logo of bridge. v2"
-				draggable="false"
-				@click.native="openChangelogWindow"
-			/>
-
-			<v-divider v-if="showLogo || isMacOS" vertical />
-
 			<!-- App menu buttons -->
 			<v-toolbar-items class="px14-font">
-				<template v-for="(item, key, i) in toolbar">
+				<template v-for="(item, key) in toolbar">
 					<MenuButton
 						v-if="item.type !== 'category'"
 						:key="`button.${key}`"
-						:displayName="item.name"
 						:displayIcon="item.icon"
+						:displayName="item.name"
 						:disabled="isAnyWindowVisible || item.isDisabled"
 						@click="() => item.trigger()"
 					/>
 					<MenuActivator
-						v-else-if="item.shouldRender"
+						v-else-if="item.shouldRender.value"
 						:key="`activator.${key}`"
 						:item="item"
 						:disabled="isAnyWindowVisible || item.isDisabled"
-					/>
-					<v-divider
-						:key="`divider.${key}`"
-						v-if="
-							item.shouldRender &&
-							(windowControlsOverlay ||
-								i + 1 < Object.keys(toolbar).length)
-						"
-						vertical
 					/>
 				</template>
 			</v-toolbar-items>
@@ -90,19 +57,35 @@
 			</span>
 
 			<v-spacer />
-			<WindowControls v-if="isTauriBuild && isWindows" />
-			<div
-				v-else
-				class="px-1 mx-1 rounded-lg app-version-display"
-				v-ripple="!isAnyWindowVisible"
-				:style="{
-					opacity: isAnyWindowVisible ? 0.4 : null,
-					'margin-right': 'env(safe-area-inset-right, 0)',
-				}"
-				@click="openChangelogWindow"
-			>
-				v{{ appVersion }}
+
+			<div class="flex align-center grow-0 group">
+				<Logo
+					height="24px"
+					width="24px"
+					style="
+						padding-right: 4px;
+						padding-left: calc(env(safe-area-inset-left) + 4px);
+					"
+					class="cursor-pointer group-hover:scale-125 transition-transform duration-100 ease-out"
+					alt="Logo of bridge. v2"
+					draggable="false"
+					@click.native="openChangelogWindow"
+				/>
+
+				<div
+					class="px-1 mr-1 rounded app-version-display"
+					v-ripple="!isAnyWindowVisible"
+					:style="{
+						opacity: isAnyWindowVisible ? 0.4 : null,
+						'margin-right': 'env(safe-area-inset-right, 0)',
+					}"
+					@click="openChangelogWindow"
+				>
+					v{{ appVersion }}
+				</div>
 			</div>
+
+			<WindowControls v-if="isTauriBuild && isWindows" />
 		</template>
 	</v-system-bar>
 </template>

@@ -80,44 +80,48 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 		})
 	)
-	settings.addControl(
-		new BridgeConfigSelection({
-			category: 'appearance',
-			name: 'windows.settings.appearance.localDarkTheme.name',
-			description:
-				'windows.settings.appearance.localDarkTheme.description',
-			key: 'darkTheme',
-			get options() {
-				return settings.parent.themeManager
-					.getThemes('dark', false)
-					.map((theme) => ({ text: theme.name, value: theme.id }))
-					.concat([{ text: 'None', value: 'bridge.noSelection' }])
-			},
-			default: 'bridge.noSelection',
-			onChange: () => {
-				app.themeManager.updateTheme()
-			},
-		})
-	)
-	settings.addControl(
-		new BridgeConfigSelection({
-			category: 'appearance',
-			name: 'windows.settings.appearance.localLightTheme.name',
-			description:
-				'windows.settings.appearance.localLightTheme.description',
-			key: 'lightTheme',
-			get options() {
-				return settings.parent.themeManager
-					.getThemes('light', false)
-					.map((theme) => ({ text: theme.name, value: theme.id }))
-					.concat([{ text: 'None', value: 'bridge.noSelection' }])
-			},
-			default: 'bridge.noSelection',
-			onChange: () => {
-				app.themeManager.updateTheme()
-			},
-		})
-	)
+
+	if (!app.isNoProjectSelected) {
+		settings.addControl(
+			new BridgeConfigSelection({
+				category: 'appearance',
+				name: 'windows.settings.appearance.localDarkTheme.name',
+				description:
+					'windows.settings.appearance.localDarkTheme.description',
+				key: 'darkTheme',
+				get options() {
+					return settings.parent.themeManager
+						.getThemes('dark', false)
+						.map((theme) => ({ text: theme.name, value: theme.id }))
+						.concat([{ text: 'None', value: 'bridge.noSelection' }])
+				},
+				default: 'bridge.noSelection',
+				onChange: () => {
+					app.themeManager.updateTheme()
+				},
+			})
+		)
+		settings.addControl(
+			new BridgeConfigSelection({
+				category: 'appearance',
+				name: 'windows.settings.appearance.localLightTheme.name',
+				description:
+					'windows.settings.appearance.localLightTheme.description',
+				key: 'lightTheme',
+				get options() {
+					return settings.parent.themeManager
+						.getThemes('light', false)
+						.map((theme) => ({ text: theme.name, value: theme.id }))
+						.concat([{ text: 'None', value: 'bridge.noSelection' }])
+				},
+				default: 'bridge.noSelection',
+				onChange: () => {
+					app.themeManager.updateTheme()
+				},
+			})
+		)
+	}
+
 	settings.addControl(
 		new FontSelection({
 			category: 'appearance',

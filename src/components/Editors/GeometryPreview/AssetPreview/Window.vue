@@ -78,7 +78,7 @@
 					/>
 				</div>
 				<canvas
-					class="ml-4 pa-1 rounded-lg outlined"
+					class="ml-4 pa-1 rounded outlined"
 					style="position: sticky; top: 0"
 					ref="canvas"
 					height="500"

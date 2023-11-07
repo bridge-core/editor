@@ -21,7 +21,7 @@ export async function importFromBrproject(
 		create: true,
 	})
 
-	await app.projectManager.projectReady.fired
+	if (!app.isNoProjectSelected) await app.projectManager.projectReady.fired
 
 	// Unzip .brproject file, do not unzip if already unzipped
 	if (unzip) {

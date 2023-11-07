@@ -23,6 +23,7 @@ export const openRawFileAction: IStartAction = {
 			textEncoder.encode(fileData)
 		)
 		const app = await App.getApp()
+		if (app.isNoProjectSelected) return
 		await app.projectManager.projectReady.fired
 		await app.fileDropper.importFile(file)
 	},

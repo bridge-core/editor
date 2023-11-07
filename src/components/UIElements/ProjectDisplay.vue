@@ -3,7 +3,7 @@
 		<img
 			:src="imgSrc"
 			style="image-rendering: pixelated"
-			class="rounded-lg h-11"
+			class="rounded h-11"
 			draggable="false"
 			:alt="`Pack Icon of ${name}`"
 		/>

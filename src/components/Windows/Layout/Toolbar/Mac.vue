@@ -1,5 +1,5 @@
 <template>
-	<v-system-bar height="30px" color="toolbar">
+	<v-system-bar height="30px" color="background">
 		<span
 			:class="{ 'window-title': !hasSidebar }"
 			:style="{

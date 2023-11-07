@@ -18,6 +18,9 @@ export const openFileUrl: IStartAction = {
 		)
 
 		const app = await App.getApp()
+
+		if (app.isNoProjectSelected) return
+
 		await app.projectManager.projectReady.fired
 
 		await app.fileDropper.importFile(file)

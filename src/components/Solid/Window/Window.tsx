@@ -73,7 +73,7 @@ export const WindowComponent: Component<{
 			<dialog
 				class="
                     m-auto
-                    rounded-lg
+                    rounded
                     shadow-xl
                     backdrop:bg-neutral-700/25
                     backdrop:backdrop-blur-xs

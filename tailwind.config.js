@@ -43,6 +43,8 @@ module.exports = {
 				error: 'var(--v-error-base)',
 				warning: 'var(--v-warning-base)',
 				info: 'var(--v-info-base)',
+				text: 'var(--v-text-base)',
+				accent: 'var(--v-accent-base)',
 			},
 		},
 	},

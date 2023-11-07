@@ -1,8 +1,6 @@
 <template>
-	<HomeView v-if="sidebarContent.showNoProjectView" />
-
 	<DirectoryViewer
-		v-else-if="sidebarContent.selectedAction"
+		v-if="sidebarContent.selectedAction"
 		:key="sidebarContent.selectedAction.config.id"
 		:directoryHandle="
 			sidebarContent.directoryEntries[

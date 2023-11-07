@@ -45,7 +45,6 @@ export class Terminal {
 
 	async setup() {
 		const app = await App.getApp()
-		await app.projectManager.projectReady.fired
 
 		this.baseCwd = await getBridgeFolderPath()
 

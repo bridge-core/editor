@@ -48,6 +48,7 @@ import { ViewComMojangProject } from '/@/components/OutputFolders/ComMojang/Side
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { BottomPanel } from '/@/components/BottomPanel/BottomPanel'
 import { SolidWindowManager } from './components/Solid/Window/Manager'
+import { setupActions } from './components/Actions/Actions'
 
 if (import.meta.env.VITE_IS_TAURI_APP) {
 	// Import Tauri updater for native builds
@@ -117,6 +118,7 @@ export class App {
 	get tabSystem() {
 		return this.projectManager.currentProject?.tabSystem
 	}
+
 	get selectedProject() {
 		return this.projectManager.selectedProject
 	}
@@ -127,6 +129,7 @@ export class App {
 			this.projectManager.currentProject.isVirtualProject
 		)
 	}
+
 	get hasNoProjects() {
 		return (
 			this.isNoProjectSelected && this.projectManager.totalProjects <= 1
@@ -216,7 +219,6 @@ export class App {
 		console.time('[APP] Ready')
 
 		this._instance = markRaw(new App(appComponent))
-		this.instance.windows.loadingWindow.open()
 
 		await this.instance.beforeStartUp()
 
@@ -258,7 +260,6 @@ export class App {
 		this.ready.dispatch(this.instance)
 		await this.instance.projectManager.selectLastProject()
 
-		this.instance.windows.loadingWindow.close()
 		console.timeEnd('[APP] Ready')
 	}
 
@@ -277,6 +278,7 @@ export class App {
 
 		setupSidebar()
 		setupDefaultMenus(this)
+		setupActions(this)
 
 		if (import.meta.env.PROD) {
 			const socialsMsg = new PersistentNotification({
@@ -395,6 +397,9 @@ export class App {
 
 		this.bridgeFolderSetup.dispatch()
 		await this.projectManager.loadProjects(true)
+
+		await this.extensionLoader.loadExtensions()
+		await this.themeManager.updateTheme()
 
 		return true
 	}
