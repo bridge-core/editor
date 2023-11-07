@@ -34,7 +34,7 @@
 		<template v-else>
 			<!-- App menu buttons -->
 			<v-toolbar-items class="px14-font">
-				<template v-for="(item, key, i) in toolbar">
+				<template v-for="(item, key) in toolbar">
 					<MenuButton
 						v-if="item.type !== 'category'"
 						:key="`button.${key}`"
@@ -58,29 +58,31 @@
 
 			<v-spacer />
 
-			<Logo
-				height="24px"
-				width="24px"
-				style="
-					padding-right: 4px;
-					padding-left: calc(env(safe-area-inset-left) + 4px);
-				"
-				class="cursor-pointer"
-				alt="Logo of bridge. v2"
-				draggable="false"
-				@click.native="openChangelogWindow"
-			/>
+			<div class="flex align-center grow-0 group">
+				<Logo
+					height="24px"
+					width="24px"
+					style="
+						padding-right: 4px;
+						padding-left: calc(env(safe-area-inset-left) + 4px);
+					"
+					class="cursor-pointer group-hover:scale-125 transition-transform duration-100 ease-out"
+					alt="Logo of bridge. v2"
+					draggable="false"
+					@click.native="openChangelogWindow"
+				/>
 
-			<div
-				class="px-1 mr-1 rounded app-version-display"
-				v-ripple="!isAnyWindowVisible"
-				:style="{
-					opacity: isAnyWindowVisible ? 0.4 : null,
-					'margin-right': 'env(safe-area-inset-right, 0)',
-				}"
-				@click="openChangelogWindow"
-			>
-				v{{ appVersion }}
+				<div
+					class="px-1 mr-1 rounded app-version-display"
+					v-ripple="!isAnyWindowVisible"
+					:style="{
+						opacity: isAnyWindowVisible ? 0.4 : null,
+						'margin-right': 'env(safe-area-inset-right, 0)',
+					}"
+					@click="openChangelogWindow"
+				>
+					v{{ appVersion }}
+				</div>
 			</div>
 
 			<WindowControls v-if="isTauriBuild && isWindows" />

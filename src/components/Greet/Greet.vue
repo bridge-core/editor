@@ -24,17 +24,48 @@
 					<p
 						class="text-primary cursor-pointer hover:underline mb-0 inline h-6"
 					>
-						Load bridge. folder
+						{{
+							t(
+								'windows.settings.general.selectBridgeFolder.name'
+							)
+						}}
 					</p>
 				</div>
 
 				<div>
-					<v-icon size="large" class="mr-1" @click="loadFolder"
-						>mdi-folder</v-icon
-					>
-					<v-icon size="large" @click="createProject"
-						>mdi-plus</v-icon
-					>
+					<v-tooltip color="tooltip" bottom>
+						<template v-slot:activator="{ on }">
+							<v-icon
+								size="large"
+								class="mr-1 hover:text-accent transition-colors duration-100 ease-out"
+								@click="loadFolder"
+								v-on="on"
+								>mdi-folder</v-icon
+							>
+						</template>
+
+						<span>{{
+							t(
+								'windows.settings.general.selectBridgeFolder.name'
+							)
+						}}</span>
+					</v-tooltip>
+
+					<v-tooltip color="tooltip" bottom>
+						<template v-slot:activator="{ on }">
+							<v-icon
+								size="large"
+								class="hover:text-accent transition-colors duration-100 ease-out"
+								@click="createProject"
+								v-on="on"
+								>mdi-plus</v-icon
+							>
+						</template>
+
+						<span>{{
+							t('windows.projectChooser.newProject.name')
+						}}</span>
+					</v-tooltip>
 				</div>
 			</div>
 
@@ -61,12 +92,18 @@
 				</div>
 
 				<div
-					class="new-project-button"
+					class="new-project-button group"
 					@click="createProject"
 					v-if="projects.length > 0"
 				>
-					<v-icon size="large" class="mr-2">mdi-plus</v-icon>
-					<span> New Project </span>
+					<div
+						class="flex align-center justify-center group-hover:scale-105 transition-transform duration-100 ease-out"
+					>
+						<v-icon size="large" class="mr-2">mdi-plus</v-icon>
+						<span>
+							{{ t('windows.projectChooser.newProject.name') }}
+						</span>
+					</div>
 				</div>
 			</div>
 
@@ -79,7 +116,7 @@
 					class="text-primary cursor-pointer hover:underline"
 					@click="createProject"
 				>
-					Create One
+					{{ t('windows.projectChooser.newProject.name') }}
 				</p>
 			</div>
 
@@ -92,7 +129,7 @@
 					class="text-primary cursor-pointer hover:underline"
 					@click="loadFolder"
 				>
-					Select One
+					{{ t('windows.settings.general.selectBridgeFolder.name') }}
 				</p>
 			</div>
 		</div>
@@ -103,6 +140,9 @@
 import Logo from '/@/components/UIElements/Logo.vue'
 import { App } from '/@/App'
 import { onMounted, onUnmounted, Ref, ref } from 'vue'
+import { useTranslations } from '/@/components/Composables/useTranslations'
+
+const { t } = useTranslations()
 
 async function createProject() {
 	const app = await App.getApp()
@@ -258,5 +298,9 @@ main {
 
 .project > p {
 	margin: 0;
+}
+
+.v-icon::after {
+	opacity: 0 !important;
 }
 </style>
