@@ -428,6 +428,9 @@
 		"project": {
 			"name": "Project"
 		},
+		"download": {
+			"name": "Download"
+		},
 		"file": {
 			"name": "File",
 			"preferences": {
