@@ -48,6 +48,7 @@ import { ViewComMojangProject } from '/@/components/OutputFolders/ComMojang/Side
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { BottomPanel } from '/@/components/BottomPanel/BottomPanel'
 import { SolidWindowManager } from './components/Solid/Window/Manager'
+import { setupActions } from './components/Actions/Actions'
 
 if (import.meta.env.VITE_IS_TAURI_APP) {
 	// Import Tauri updater for native builds
@@ -277,6 +278,7 @@ export class App {
 
 		setupSidebar()
 		setupDefaultMenus(this)
+		setupActions(this)
 
 		if (import.meta.env.PROD) {
 			const socialsMsg = new PersistentNotification({
