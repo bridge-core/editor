@@ -265,7 +265,7 @@ main {
 	width: 9rem;
 	height: 9rem;
 
-	background: var(--v-menu-base);
+	background: var(--v-sidebarNavigation-base);
 
 	border-radius: 4px;
 
@@ -279,13 +279,11 @@ main {
 	width: 9rem;
 	height: 9rem;
 
-	background: var(--v-menu-base);
+	background: var(--v-sidebarNavigation-base);
 
 	border-radius: 4px;
 
 	cursor: pointer;
-
-	/* transition: background 0.2s; */
 }
 
 .project > .project-icon > img {
