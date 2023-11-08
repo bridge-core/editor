@@ -163,11 +163,14 @@ import Logo from '/@/components/UIElements/Logo.vue'
 import { App } from '/@/App'
 import { onMounted, onUnmounted, Ref, ref } from 'vue'
 import { useTranslations } from '/@/components/Composables/useTranslations'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 
 const { t } = useTranslations()
 
 async function createProject() {
 	const app = await App.getApp()
+
+	if (!isUsingFileSystemPolyfill.value) await loadFolder()
 
 	app.windows.createProject.open()
 }
