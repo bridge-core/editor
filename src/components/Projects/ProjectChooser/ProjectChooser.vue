@@ -254,7 +254,8 @@ async function onSelectProject() {
 	const app = await App.getApp()
 
 	if (isComMojangProject.value) {
-		await app.projectManager.selectProject(virtualProjectName)
+		await app.projectManager.deselectCurrentProject()
+
 		app.viewComMojangProject.loadComMojangProject(
 			sidebar.currentState.project
 		)

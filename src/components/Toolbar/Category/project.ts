@@ -24,7 +24,7 @@ export function setupProjectCategory(app: App) {
 				!app.viewComMojangProject.hasComMojangProjectLoaded,
 			onTrigger: async () => {
 				const app = await App.getApp()
-				app.projectManager.selectProject(virtualProjectName)
+				app.projectManager.deselectCurrentProject()
 
 				if (!App.sidebar.elements.packExplorer.isSelected)
 					App.sidebar.elements.packExplorer.click()
