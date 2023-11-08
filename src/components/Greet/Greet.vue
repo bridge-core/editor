@@ -203,6 +203,9 @@ function sortProjects() {
 
 		if (!a.isFavorite && b.isFavorite) return 1
 
+		const revalence = (b.lastOpened ?? 0) - (a.lastOpened ?? 0)
+		if (revalence !== 0) return revalence
+
 		return a.displayName.localeCompare(b.displayName)
 	})
 }
