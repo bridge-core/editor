@@ -330,9 +330,9 @@ export async function setupSettings(settings: SettingsWindow) {
 						settings.addReloadHint()
 					} else {
 						// PWA
-						await del('bridgeBaseDir')
-						await del(comMojangKey)
-						location.reload()
+						const app = await App.getApp()
+
+						await app.setupBridgeFolder(true)
 					}
 				},
 			})

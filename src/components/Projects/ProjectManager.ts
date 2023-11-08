@@ -96,6 +96,10 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async loadProjects(requiresPermissions = false) {
+		for (const key of Object.keys(this.state)) {
+			delete this.state[key]
+		}
+
 		await this.app.fileSystem.fired
 		await this.app.dataLoader.fired
 
@@ -138,7 +142,49 @@ export class ProjectManager extends Signal<void> {
 		// Update stored projects in the background (don't await it)
 		if (isBridgeFolderSetup) this.storeProjects(undefined, true)
 
+		await this.createVirtualProject()
+
 		this.dispatch()
+	}
+
+	async createVirtualProject() {
+		// Ensure that we first unlink the previous virtual project
+		await this.app.fileSystem.unlink(`projects/${virtualProjectName}`)
+
+		const handle = await this.app.fileSystem.getDirectoryHandle(
+			`projects/${virtualProjectName}`,
+			{
+				create: true,
+			}
+		)
+		const fs = new FileSystem(handle)
+
+		const createOptions: ICreateProjectOptions = {
+			name: 'bridge',
+			namespace: 'bridge',
+			author: [],
+			description: '',
+			bpAsRpDependency: false,
+			experimentalGameplay: {},
+			icon: null,
+			packs: ['behaviorPack', '.bridge'],
+			rpAsBpDependency: false,
+			targetVersion: await getStableFormatVersion(this.app.dataLoader),
+			useLangForManifest: false,
+			bdsProject: false,
+			uuids: {
+				data: uuid(),
+				resources: uuid(),
+				skin_pack: uuid(),
+				world_template: uuid(),
+			},
+		}
+
+		await Promise.all(['BP', '.bridge'].map((folder) => fs.mkdir(folder)))
+
+		await new CreateConfig().create(fs, createOptions)
+
+		await this.addProject(handle, false)
 	}
 
 	async selectProject(projectName: string, failGracefully = false) {
@@ -176,6 +222,13 @@ export class ProjectManager extends Signal<void> {
 		this.app.themeManager.updateTheme()
 		App.eventSystem.dispatch('projectChanged', this.currentProject!)
 
+		const projectDatas = await this.loadAvailableProjects()
+		const projectData = projectDatas.find(
+			(project: any) => project.name === projectName
+		)
+
+		if (projectData) projectData.lastOpened = Date.now()
+
 		// Store projects in local storage fs
 		await this.storeProjects()
 
@@ -206,6 +259,8 @@ export class ProjectManager extends Signal<void> {
 
 			if (didSelectProject) return
 		}
+
+		await this.selectProject(virtualProjectName)
 	}
 
 	updateAllEditorOptions(options: editor.IEditorConstructionOptions) {
@@ -258,6 +313,7 @@ export class ProjectManager extends Signal<void> {
 			icon?: string
 			requiresPermissions: boolean
 			isFavorite?: boolean
+			lastOpened?: number
 		}[] = await this.loadAvailableProjects(exceptProject)
 
 		let newData: any[] = forceRefresh ? [] : [...data]
@@ -278,6 +334,7 @@ export class ProjectManager extends Signal<void> {
 				icon: project.projectData.imgSrc,
 				requiresPermissions: project.requiresPermissions,
 				isFavorite: storedData?.isFavorite ?? false,
+				lastOpened: storedData?.lastOpened ?? 0,
 			})
 		})
 

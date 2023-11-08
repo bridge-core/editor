@@ -13,7 +13,7 @@
 				<div
 					class="flex align-center justify-center action-bar-load-folder-prompt"
 					@click="loadFolder"
-					v-if="!bridgeFolderSelected && projects.length > 0"
+					v-if="suggestSelectingBridgeFolder && projects.length > 0"
 				>
 					<v-icon
 						size="large"
@@ -33,7 +33,11 @@
 				</div>
 
 				<div>
-					<v-tooltip color="tooltip" bottom>
+					<v-tooltip
+						color="tooltip"
+						bottom
+						v-if="!isUsingFileSystemPolyfill"
+					>
 						<template v-slot:activator="{ on }">
 							<v-icon
 								size="large"
@@ -73,7 +77,7 @@
 
 			<div class="project-list">
 				<div
-					class="project"
+					class="project relative"
 					v-for="(project, index) in projects"
 					:key="index"
 					@click="selectProject(project)"
@@ -89,6 +93,28 @@
 					>
 						{{ project.displayName }}
 					</p>
+
+					<v-tooltip color="tooltip" left>
+						<template v-slot:activator="{ on }">
+							<v-icon
+								size="large"
+								class="opacity-20 hover:opacity-100 transition-opacity duration-100 ease-out !absolute top-1 right-1"
+								@click.stop="() => pin(project)"
+								v-on="on"
+								>{{
+									project.isFavorite
+										? 'mdi-pin'
+										: 'mdi-pin-outline'
+								}}</v-icon
+							>
+						</template>
+
+						<span>{{
+							project.isFavorite
+								? t('greet.unpin')
+								: t('greet.pin')
+						}}</span>
+					</v-tooltip>
 				</div>
 
 				<div
@@ -109,7 +135,7 @@
 
 			<div
 				class="flex align-center flex-col mt-8"
-				v-if="projects.length == 0 && bridgeFolderSelected"
+				v-if="projects.length == 0 && !suggestSelectingBridgeFolder"
 			>
 				<p class="opacity-30">You have no projects.</p>
 				<p
@@ -122,7 +148,7 @@
 
 			<div
 				class="flex align-center flex-col mt-8"
-				v-if="projects.length == 0 && !bridgeFolderSelected"
+				v-if="projects.length == 0 && suggestSelectingBridgeFolder"
 			>
 				<p class="opacity-30">You need to select a bridge. folder.</p>
 				<p
@@ -139,13 +165,20 @@
 <script setup lang="ts">
 import Logo from '/@/components/UIElements/Logo.vue'
 import { App } from '/@/App'
-import { onMounted, onUnmounted, Ref, ref } from 'vue'
+import { computed, onMounted, onUnmounted, Ref, ref } from 'vue'
 import { useTranslations } from '/@/components/Composables/useTranslations'
+import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 
 const { t } = useTranslations()
 
+const suggestSelectingBridgeFolder = computed(() => {
+	return !isUsingFileSystemPolyfill.value && !bridgeFolderSelected.value
+})
+
 async function createProject() {
 	const app = await App.getApp()
+
+	if (!isUsingFileSystemPolyfill.value) await loadFolder()
 
 	app.windows.createProject.open()
 }
@@ -168,6 +201,21 @@ async function loadProjects() {
 	projects.value = await app.fileSystem
 		.readJSON('~local/data/projects.json')
 		.catch(() => [])
+
+	await sortProjects()
+}
+
+function sortProjects() {
+	projects.value = projects.value.sort((a: any, b: any) => {
+		if (a.isFavorite && !b.isFavorite) return -1
+
+		if (!a.isFavorite && b.isFavorite) return 1
+
+		const revalence = (b.lastOpened ?? 0) - (a.lastOpened ?? 0)
+		if (revalence !== 0) return revalence
+
+		return a.displayName.localeCompare(b.displayName)
+	})
 }
 
 async function selectProject(project: any) {
@@ -180,6 +228,23 @@ async function selectProject(project: any) {
 	}
 
 	await app.projectManager.selectProject(project.name, true)
+}
+
+async function saveProjects() {
+	const app = await App.getApp()
+	await app.fileSystem.writeJSON(
+		'~local/data/projects.json',
+		projects.value.map((project: any) => ({
+			...project,
+			isLoading: undefined,
+		}))
+	)
+}
+
+async function pin(project: any) {
+	project.isFavorite = !project.isFavorite
+	sortProjects()
+	await saveProjects()
 }
 
 onMounted(async () => {
@@ -219,7 +284,8 @@ main {
 }
 
 .projects-container {
-	width: 28rem;
+	width: 80%;
+	max-width: 28rem;
 
 	margin-top: 8rem;
 }
