@@ -37,11 +37,7 @@ export class BasicFileImporter extends FileImporter {
 		const app = await App.getApp()
 		const t = translate
 
-		// If current project is virtual project, simply open the file
-		await app.projectManager.projectReady.fired
-		if (app.project.isVirtualProject) {
-			return await this.onOpen(fileHandle)
-		}
+		if (app.isNoProjectSelected) return
 
 		const saveOrOpenWindow = new InformedChoiceWindow(
 			'fileDropper.importMethod.name',

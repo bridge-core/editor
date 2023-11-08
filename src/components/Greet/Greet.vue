@@ -194,6 +194,11 @@ async function loadProjects() {
 		.readJSON('~local/data/projects.json')
 		.catch(() => [])
 
+	// We ignore the bridge-temp-project in case it still exists from before 2.7.0
+	projects.value = projects.value.filter(
+		(project: any) => project.name !== 'bridge-temp-project'
+	)
+
 	await sortProjects()
 }
 
@@ -202,6 +207,10 @@ function sortProjects() {
 		if (a.isFavorite && !b.isFavorite) return -1
 
 		if (!a.isFavorite && b.isFavorite) return 1
+
+		const revalence = (b.lastOpened ?? 0) - (a.lastOpened ?? 0)
+
+		if (revalence !== 0) return revalence
 
 		return a.displayName.localeCompare(b.displayName)
 	})
@@ -232,7 +241,9 @@ async function saveProjects() {
 
 async function pin(project: any) {
 	project.isFavorite = !project.isFavorite
+
 	sortProjects()
+
 	await saveProjects()
 }
 

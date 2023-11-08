@@ -124,10 +124,7 @@ export class App {
 	}
 
 	get isNoProjectSelected() {
-		return (
-			this.projectManager.currentProject === null ||
-			this.projectManager.currentProject.isVirtualProject
-		)
+		return this.projectManager.currentProject === null
 	}
 
 	get hasNoProjects() {
@@ -143,9 +140,7 @@ export class App {
 		return this.projectManager.currentProject
 	}
 	get projects() {
-		return Object.values(this.projectManager.state).filter(
-			(project) => !project.isVirtualProject
-		)
+		return Object.values(this.projectManager.state)
 	}
 	get projectConfig() {
 		try {
