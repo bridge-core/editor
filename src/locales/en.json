@@ -1282,5 +1282,9 @@
 			"name": "Compiler",
 			"noLogs": "No logs to show..."
 		}
+	},
+	"greet": {
+		"pin": "Pin",
+		"unpin": "Unpin"
 	}
 }

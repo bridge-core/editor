@@ -73,7 +73,7 @@
 
 			<div class="project-list">
 				<div
-					class="project"
+					class="project relative"
 					v-for="(project, index) in projects"
 					:key="index"
 					@click="selectProject(project)"
@@ -89,6 +89,28 @@
 					>
 						{{ project.displayName }}
 					</p>
+
+					<v-tooltip color="tooltip" left>
+						<template v-slot:activator="{ on }">
+							<v-icon
+								size="large"
+								class="opacity-20 hover:opacity-100 transition-opacity duration-100 ease-out !absolute top-1 right-1"
+								@click.stop="() => pin(project)"
+								v-on="on"
+								>{{
+									project.isFavorite
+										? 'mdi-pin'
+										: 'mdi-pin-outline'
+								}}</v-icon
+							>
+						</template>
+
+						<span>{{
+							project.isFavorite
+								? t('greet.unpin')
+								: t('greet.pin')
+						}}</span>
+					</v-tooltip>
 				</div>
 
 				<div
@@ -168,6 +190,18 @@ async function loadProjects() {
 	projects.value = await app.fileSystem
 		.readJSON('~local/data/projects.json')
 		.catch(() => [])
+
+	await sortProjects()
+}
+
+function sortProjects() {
+	projects.value = projects.value.sort((a: any, b: any) => {
+		if (a.isFavorite && !b.isFavorite) return -1
+
+		if (!a.isFavorite && b.isFavorite) return 1
+
+		return a.displayName.localeCompare(b.displayName)
+	})
 }
 
 async function selectProject(project: any) {
@@ -180,6 +214,23 @@ async function selectProject(project: any) {
 	}
 
 	await app.projectManager.selectProject(project.name, true)
+}
+
+async function saveProjects() {
+	const app = await App.getApp()
+	await app.fileSystem.writeJSON(
+		'~local/data/projects.json',
+		projects.value.map((project: any) => ({
+			...project,
+			isLoading: undefined,
+		}))
+	)
+}
+
+async function pin(project: any) {
+	project.isFavorite = !project.isFavorite
+	sortProjects()
+	await saveProjects()
 }
 
 onMounted(async () => {
