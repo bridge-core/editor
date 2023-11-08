@@ -43,6 +43,8 @@ export interface IProjectData extends IConfigJson {
 	contains: IPackData[]
 }
 
+export const virtualProjectName = 'bridge-temp-project'
+
 export abstract class Project {
 	public readonly tabSystems: readonly [TabSystem, TabSystem]
 	protected _projectData!: Partial<IProjectData>
@@ -54,6 +56,11 @@ export abstract class Project {
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
 
+	/**
+	 * A virtual project is a project with the exact name of "virtualProjectName"
+	 * We use it as a placeholder project to skip the previously mandatory bridge folder selection dialog
+	 */
+	public readonly isVirtualProject: boolean
 	public readonly requiresPermissions: boolean
 	public readonly config: ProjectConfig
 	public readonly fileTypeLibrary: FileTypeLibrary
@@ -104,7 +111,8 @@ export abstract class Project {
 	protected get watchModeActive() {
 		/**
 		 * Only update compilation results if the watch mode setting is active,
-		 * the filesystem polyfill is not active (it's also inactive if we're on a Tauri build)
+		 * the current project is not a virtual project
+		 * ...and the filesystem polyfill is not active (it's also inactive if we're on a Tauri build)
 		 *
 		 * Explanation:
 		 * 	Devices that need the filesystem polyfill will not be able to export
@@ -113,6 +121,7 @@ export abstract class Project {
 		 */
 		return (
 			(settingsState.compiler?.watchModeActive ?? true) &&
+			!this.isVirtualProject &&
 			(!isUsingFileSystemPolyfill.value ||
 				import.meta.env.VITE_IS_TAURI_APP)
 		)
@@ -137,6 +146,7 @@ export abstract class Project {
 		protected _baseDirectory: AnyDirectoryHandle,
 		{ requiresPermissions }: { requiresPermissions?: boolean } = {}
 	) {
+		this.isVirtualProject = virtualProjectName === this.name
 		this.requiresPermissions = requiresPermissions ?? false
 
 		this._fileSystem = markRaw(new FileSystem(_baseDirectory))
@@ -181,7 +191,7 @@ export abstract class Project {
 		mode: 'development' | 'production',
 		compilerConfig?: string
 	) {
-		await this.app.comMojang.fired
+		if (!this.isVirtualProject) await this.app.comMojang.fired
 
 		const compiler = await new DashCompiler()
 
@@ -252,7 +262,8 @@ export abstract class Project {
 
 		// Only recompile changed files if the setting is active and the project is not a virtual project
 		const autoFetchChangedFiles =
-			settingsState.compiler?.autoFetchChangedFiles ?? true
+			(settingsState.compiler?.autoFetchChangedFiles ?? true) &&
+			!this.isVirtualProject
 
 		await Promise.all([
 			this.jsonDefaults.activate(),
@@ -568,6 +579,8 @@ export abstract class Project {
 	}
 
 	async recompile(forceStartIfActive = true) {
+		if (this.isVirtualProject) return
+
 		this._compilerService = markRaw(
 			await this.createDashService('development')
 		)

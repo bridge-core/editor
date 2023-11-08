@@ -2,12 +2,17 @@ import { App } from '/@/App'
 import { get as idbGet, set as idbSet } from 'idb-keyval'
 import { shallowReactive, set, del, markRaw } from 'vue'
 import { Signal } from '/@/components/Common/Event/Signal'
-import { Project } from './Project/Project'
+import { Project, virtualProjectName } from './Project/Project'
 import { Title } from '/@/components/Projects/Title'
 import type { editor } from 'monaco-editor'
 import { BedrockProject } from './Project/BedrockProject'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
+import { FileSystem } from '../FileSystem/FileSystem'
+import { CreateConfig } from './CreateProject/Files/Config'
+import { getStableFormatVersion } from '../Data/FormatVersions'
+import { v4 as uuid } from 'uuid'
+import { ICreateProjectOptions } from './CreateProject/CreateProject'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
 
@@ -38,7 +43,7 @@ export class ProjectManager extends Signal<void> {
 
 	async getProjects() {
 		await this.fired
-		return Object.values(this.state)
+		return Object.values(this.state).filter((p) => !p.isVirtualProject)
 	}
 	getProject(projectName: string): Project | undefined {
 		return this.state[projectName]
@@ -52,9 +57,6 @@ export class ProjectManager extends Signal<void> {
 		const project = new BedrockProject(this, this.app, projectDir, {
 			requiresPermissions,
 		})
-
-		if (project.name === 'bridge-temp-project') return null
-
 		await project.loadProject()
 
 		if (this.state[project.name] !== undefined) {
@@ -76,7 +78,7 @@ export class ProjectManager extends Signal<void> {
 			throw new Error('Project to delete not found')
 
 		if (this._selectedProject === project.name) {
-			await this.deselectCurrentProject()
+			await this.selectProject(virtualProjectName)
 			project.dispose()
 		}
 
@@ -139,22 +141,11 @@ export class ProjectManager extends Signal<void> {
 		this.dispatch()
 	}
 
-	async deselectCurrentProject() {
+	async selectProject(projectName: string, failGracefully = false) {
 		// Clear current comMojangProject
 		if (this.app.viewComMojangProject.hasComMojangProjectLoaded) {
 			await this.app.viewComMojangProject.clearComMojangProject()
 		}
-
-		if (!this.currentProject) return
-
-		await this.currentProject?.deactivate()
-
-		this._selectedProject = undefined
-	}
-
-	async selectProject(projectName: string, failGracefully = false) {
-		this.deselectCurrentProject()
-
 		if (this._selectedProject === projectName) return true
 
 		if (this.state[projectName] === undefined) {
@@ -172,8 +163,10 @@ export class ProjectManager extends Signal<void> {
 		}
 
 		// Setup com.mojang folder if necessary
-		if (!this.app.comMojang.hasFired) this.app.comMojang.setupComMojang()
+		if (!this.app.comMojang.hasFired && projectName !== virtualProjectName)
+			this.app.comMojang.setupComMojang()
 
+		this.currentProject?.deactivate()
 		this._selectedProject = projectName
 		App.eventSystem.dispatch('disableValidation', null)
 		this.currentProject?.activate()
@@ -182,14 +175,6 @@ export class ProjectManager extends Signal<void> {
 
 		this.app.themeManager.updateTheme()
 		App.eventSystem.dispatch('projectChanged', this.currentProject!)
-
-		const projectDatas = await this.loadAvailableProjects()
-
-		console.log(projectDatas, projectName)
-
-		projectDatas.find(
-			(project: any) => project.name === projectName
-		).lastOpened = Date.now()
 
 		// Store projects in local storage fs
 		await this.storeProjects()
@@ -263,9 +248,7 @@ export class ProjectManager extends Signal<void> {
 				.readJSON('~local/data/projects.json')
 				.catch(() => [])
 		).filter(
-			(project: any) =>
-				project.name !== 'bridge-temp-project' &&
-				(!exceptProject || project.name !== exceptProject)
+			(project: any) => !exceptProject || project.name !== exceptProject
 		)
 	}
 	async storeProjects(exceptProject?: string, forceRefresh = false) {
@@ -275,11 +258,12 @@ export class ProjectManager extends Signal<void> {
 			icon?: string
 			requiresPermissions: boolean
 			isFavorite?: boolean
-			lastOpened?: number
 		}[] = await this.loadAvailableProjects(exceptProject)
 
 		let newData: any[] = forceRefresh ? [] : [...data]
 		Object.values(this.state).forEach((project) => {
+			if (project.isVirtualProject) return
+
 			const storedData = data.find(
 				(p) =>
 					project.name === p.name &&
@@ -294,7 +278,6 @@ export class ProjectManager extends Signal<void> {
 				icon: project.projectData.imgSrc,
 				requiresPermissions: project.requiresPermissions,
 				isFavorite: storedData?.isFavorite ?? false,
-				lastOpened: storedData?.lastOpened ?? 0,
 			})
 		})
 

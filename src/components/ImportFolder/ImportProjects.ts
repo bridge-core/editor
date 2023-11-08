@@ -1,6 +1,7 @@
 import { FileSystem } from '../FileSystem/FileSystem'
 import { showFolderPicker } from '../FileSystem/Pickers/showFolderPicker'
 import { translate } from '../Locales/Manager'
+import { virtualProjectName } from '../Projects/Project/Project'
 import { ConfirmationWindow } from '../Windows/Common/Confirm/ConfirmWindow'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { App } from '/@/App'
@@ -9,7 +10,9 @@ export async function importProjects() {
 	const app = await App.getApp()
 
 	// Show warning if the user has projects already
-	const projects = await app.fileSystem.readdir('projects')
+	const projects = (await app.fileSystem.readdir('projects')).filter(
+		(projectName) => projectName !== virtualProjectName
+	)
 
 	if (projects.length > 0) {
 		const confirmWindow = new ConfirmationWindow({

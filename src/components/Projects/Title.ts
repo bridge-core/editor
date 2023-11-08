@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { virtualProjectName } from './Project/Project'
 import { isNightly } from '/@/utils/app/isNightly'
 
 const appName = isNightly ? 'bridge. Nightly' : 'bridge. v2'
@@ -12,7 +13,12 @@ export class Title {
 	}
 
 	setProject(projectName: string) {
-		this.titleTag.innerText = projectName
-		this.current.value = projectName
+		if (projectName === virtualProjectName) {
+			this.titleTag.innerText = ''
+			this.current.value = ''
+		} else {
+			this.titleTag.innerText = projectName
+			this.current.value = projectName
+		}
 	}
 }

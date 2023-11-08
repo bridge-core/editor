@@ -211,6 +211,7 @@ import BridgeSheet from '/@/components/UIElements/Sheet.vue'
 import { App } from '/@/App'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { addPack } from './AddPack'
+import { virtualProjectName } from '../Project/Project'
 import { useTranslations } from '../../Composables/useTranslations'
 import { computed, ref } from 'vue'
 
@@ -253,8 +254,7 @@ async function onSelectProject() {
 	const app = await App.getApp()
 
 	if (isComMojangProject.value) {
-		await app.projectManager.deselectCurrentProject()
-
+		await app.projectManager.selectProject(virtualProjectName)
 		app.viewComMojangProject.loadComMojangProject(
 			sidebar.currentState.project
 		)
