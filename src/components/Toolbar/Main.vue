@@ -1,7 +1,7 @@
 <template>
 	<v-system-bar
 		v-if="!isMobile"
-		color="background"
+		color="toolbar"
 		fixed
 		app
 		clipped

@@ -1,5 +1,5 @@
 <template>
-	<div @click="$emit('click', $event)" class="m-1 ml-4">
+	<div @click="$emit('click', $event)" class="ml-4 flex align-center">
 		<span
 			class="text-text hover:text-accent transition-colors duration-100 ease-out"
 		>
