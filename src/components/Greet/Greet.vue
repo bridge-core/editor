@@ -203,9 +203,6 @@ function sortProjects() {
 
 		if (!a.isFavorite && b.isFavorite) return 1
 
-		const revalence = (b.lastOpened ?? 0) - (a.lastOpened ?? 0)
-		if (revalence !== 0) return revalence
-
 		return a.displayName.localeCompare(b.displayName)
 	})
 }
@@ -224,7 +221,6 @@ async function selectProject(project: any) {
 
 async function saveProjects() {
 	const app = await App.getApp()
-
 	await app.fileSystem.writeJSON(
 		'~local/data/projects.json',
 		projects.value.map((project: any) => ({
@@ -236,9 +232,7 @@ async function saveProjects() {
 
 async function pin(project: any) {
 	project.isFavorite = !project.isFavorite
-
 	sortProjects()
-
 	await saveProjects()
 }
 

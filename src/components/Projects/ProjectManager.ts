@@ -78,8 +78,7 @@ export class ProjectManager extends Signal<void> {
 			throw new Error('Project to delete not found')
 
 		if (this._selectedProject === project.name) {
-			await this.deselectCurrentProject()
-
+			await this.selectProject(virtualProjectName)
 			project.dispose()
 		}
 
@@ -97,10 +96,6 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async loadProjects(requiresPermissions = false) {
-		for (const key of Object.keys(this.state)) {
-			delete this.state[key]
-		}
-
 		await this.app.fileSystem.fired
 		await this.app.dataLoader.fired
 
@@ -146,22 +141,11 @@ export class ProjectManager extends Signal<void> {
 		this.dispatch()
 	}
 
-	async deselectCurrentProject() {
+	async selectProject(projectName: string, failGracefully = false) {
 		// Clear current comMojangProject
 		if (this.app.viewComMojangProject.hasComMojangProjectLoaded) {
 			await this.app.viewComMojangProject.clearComMojangProject()
 		}
-
-		if (!this.currentProject) return
-
-		await this.currentProject?.deactivate()
-
-		this._selectedProject = undefined
-	}
-
-	async selectProject(projectName: string, failGracefully = false) {
-		this.deselectCurrentProject()
-
 		if (this._selectedProject === projectName) return true
 
 		if (this.state[projectName] === undefined) {
@@ -182,6 +166,7 @@ export class ProjectManager extends Signal<void> {
 		if (!this.app.comMojang.hasFired && projectName !== virtualProjectName)
 			this.app.comMojang.setupComMojang()
 
+		this.currentProject?.deactivate()
 		this._selectedProject = projectName
 		App.eventSystem.dispatch('disableValidation', null)
 		this.currentProject?.activate()
@@ -190,12 +175,6 @@ export class ProjectManager extends Signal<void> {
 
 		this.app.themeManager.updateTheme()
 		App.eventSystem.dispatch('projectChanged', this.currentProject!)
-
-		const projectDatas = await this.loadAvailableProjects()
-
-		projectDatas.find(
-			(project: any) => project.name === projectName
-		).lastOpened = Date.now()
 
 		// Store projects in local storage fs
 		await this.storeProjects()
@@ -279,7 +258,6 @@ export class ProjectManager extends Signal<void> {
 			icon?: string
 			requiresPermissions: boolean
 			isFavorite?: boolean
-			lastOpened?: number
 		}[] = await this.loadAvailableProjects(exceptProject)
 
 		let newData: any[] = forceRefresh ? [] : [...data]
@@ -300,7 +278,6 @@ export class ProjectManager extends Signal<void> {
 				icon: project.projectData.imgSrc,
 				requiresPermissions: project.requiresPermissions,
 				isFavorite: storedData?.isFavorite ?? false,
-				lastOpened: storedData?.lastOpened ?? 0,
 			})
 		})
 
