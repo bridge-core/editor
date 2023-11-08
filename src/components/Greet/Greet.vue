@@ -13,7 +13,7 @@
 				<div
 					class="flex align-center justify-center action-bar-load-folder-prompt"
 					@click="loadFolder"
-					v-if="!bridgeFolderSelected && projects.length > 0"
+					v-if="suggestSelectingBridgeFolder && projects.length > 0"
 				>
 					<v-icon
 						size="large"
@@ -33,7 +33,11 @@
 				</div>
 
 				<div>
-					<v-tooltip color="tooltip" bottom>
+					<v-tooltip
+						color="tooltip"
+						bottom
+						v-if="!isUsingFileSystemPolyfill"
+					>
 						<template v-slot:activator="{ on }">
 							<v-icon
 								size="large"
@@ -131,7 +135,7 @@
 
 			<div
 				class="flex align-center flex-col mt-8"
-				v-if="projects.length == 0 && bridgeFolderSelected"
+				v-if="projects.length == 0 && !suggestSelectingBridgeFolder"
 			>
 				<p class="opacity-30">You have no projects.</p>
 				<p
@@ -144,7 +148,7 @@
 
 			<div
 				class="flex align-center flex-col mt-8"
-				v-if="projects.length == 0 && !bridgeFolderSelected"
+				v-if="projects.length == 0 && suggestSelectingBridgeFolder"
 			>
 				<p class="opacity-30">You need to select a bridge. folder.</p>
 				<p
@@ -161,11 +165,15 @@
 <script setup lang="ts">
 import Logo from '/@/components/UIElements/Logo.vue'
 import { App } from '/@/App'
-import { onMounted, onUnmounted, Ref, ref } from 'vue'
+import { computed, onMounted, onUnmounted, Ref, ref } from 'vue'
 import { useTranslations } from '/@/components/Composables/useTranslations'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 
 const { t } = useTranslations()
+
+const suggestSelectingBridgeFolder = computed(() => {
+	return !isUsingFileSystemPolyfill.value && !bridgeFolderSelected.value
+})
 
 async function createProject() {
 	const app = await App.getApp()
@@ -276,7 +284,8 @@ main {
 }
 
 .projects-container {
-	width: 28rem;
+	width: 80%;
+	max-width: 28rem;
 
 	margin-top: 8rem;
 }
