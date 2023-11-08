@@ -94,10 +94,6 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async loadProjects(requiresPermissions = false) {
-		for (const key of Object.keys(this.state)) {
-			delete this.state[key]
-		}
-
 		await this.app.fileSystem.fired
 		await this.app.dataLoader.fired
 
