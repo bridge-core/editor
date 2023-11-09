@@ -100,6 +100,7 @@ export class PackIndexer extends Signal<[string[], string[]]> {
 		await this.isPackIndexerFree.lock()
 
 		await this.service.updatePlugins(App.fileType.getPluginFileTypes())
+
 		const anyFileChanged = await this.service.updateFile(
 			filePath,
 			fileContent,
