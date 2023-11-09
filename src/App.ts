@@ -226,12 +226,13 @@ export class App {
 
 		if (import.meta.env.VITE_IS_TAURI_APP) {
 			// TauriFs env -> bridge. folder is the same as getStorageDirectory()
-			this.instance.bridgeFolderSetup.dispatch()
+			await this.instance.bridgeFolderSetup.dispatch()
 			// Setup com.mojang folder
-			this.instance.comMojang.setupComMojang()
-
+			await this.instance.comMojang.setupComMojang()
 			// Load projects
-			this.instance.projectManager.loadProjects(true)
+			this.instance.projectManager.loadProjects(true).then(() => {
+				this.instance.themeManager.updateTheme()
+			})
 		}
 
 		// Show changelog after an update

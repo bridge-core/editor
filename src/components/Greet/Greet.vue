@@ -36,7 +36,7 @@
 					<v-tooltip
 						color="tooltip"
 						bottom
-						v-if="!isUsingFileSystemPolyfill"
+						v-if="!isUsingFileSystemPolyfill && !tauri"
 					>
 						<template v-slot:activator="{ on }">
 							<v-icon
@@ -169,10 +169,16 @@ import { computed, onMounted, onUnmounted, Ref, ref } from 'vue'
 import { useTranslations } from '/@/components/Composables/useTranslations'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 
+const tauri = import.meta.env.VITE_IS_TAURI_APP
+
 const { t } = useTranslations()
 
 const suggestSelectingBridgeFolder = computed(() => {
-	return !isUsingFileSystemPolyfill.value && !bridgeFolderSelected.value
+	return (
+		!isUsingFileSystemPolyfill.value &&
+		!bridgeFolderSelected.value &&
+		!tauri
+	)
 })
 
 async function createProject() {
