@@ -55,7 +55,7 @@ export abstract class Project {
 	public _compilerService?: Remote<DashService>
 	public compilerReady = new Signal<void>()
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
-	protected typeLoader: typeLoader
+	protected typeLoader: TypeLoader
 	public refreshing: boolean = false
 
 	/**
