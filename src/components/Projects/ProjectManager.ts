@@ -15,6 +15,8 @@ import { v4 as uuid } from 'uuid'
 import { ICreateProjectOptions } from './CreateProject/CreateProject'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
+import { listen } from '@tauri-apps/api/event'
+import path from 'path-browserify'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -23,11 +25,28 @@ export class ProjectManager extends Signal<void> {
 	public readonly title = markRaw(new Title())
 	protected _selectedProject?: string = undefined
 	public readonly projectReady = new Signal<void>()
+	protected projectBeingModified = 0
 
 	constructor(protected app: App) {
 		super()
-		// Only load local projects on PWA builds
-		if (!import.meta.env.VITE_IS_TAURI_APP) this.loadProjects()
+
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			// Project watching is only supported on Tauri builds
+			listen('watch_event', this.handleWatchEvent.bind(this))
+
+			App.eventSystem.on(
+				'beforeModifiedProject',
+				this.handleBeforeModifiedProjectEvent.bind(this)
+			)
+
+			App.eventSystem.on(
+				'modifiedProject',
+				this.handleModifiedProjectEvent.bind(this)
+			)
+		} else {
+			// Only load local projects on PWA builds
+			this.loadProjects()
+		}
 	}
 
 	get currentProject() {
@@ -214,7 +233,9 @@ export class ProjectManager extends Signal<void> {
 
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName
+
 		App.eventSystem.dispatch('disableValidation', null)
+
 		this.currentProject?.activate()
 
 		await idbSet('selectedProject', projectName)
@@ -343,5 +364,31 @@ export class ProjectManager extends Signal<void> {
 			newData
 		)
 		App.eventSystem.dispatch('availableProjectsFileChanged', undefined)
+	}
+	handleBeforeModifiedProjectEvent() {
+		this.projectBeingModified++
+	}
+	handleModifiedProjectEvent() {
+		this.projectBeingModified--
+	}
+	async handleWatchEvent(event: any) {
+		if (this.selectedProject === null) return
+
+		const project = this.getProject(this.selectedProject!)!
+
+		const paths = (<string[]>event.payload).filter(
+			(entryPath) =>
+				!entryPath.startsWith(
+					path.join(project.projectPath!, '.bridge')
+				)
+		)
+
+		if (paths.length === 0) return
+
+		if (this.projectBeingModified > 0) return
+
+		const app = await App.getApp()
+
+		app.actionManager.trigger('bridge.action.refreshProject')
 	}
 }

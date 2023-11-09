@@ -22,6 +22,8 @@ export const PasteAction = (directoryWrapper: DirectoryWrapper) => ({
 
 		if (!directoryWrapper.isOpen.value) await directoryWrapper.open()
 
+		App.eventSystem.dispatch('beforeModifiedProject', null)
+
 		let newHandle: AnyHandle
 		if (handleToPaste.kind === 'file') {
 			const newName = await findSuitableFileName(
@@ -55,6 +57,9 @@ export const PasteAction = (directoryWrapper: DirectoryWrapper) => ({
 
 		await directoryWrapper.refresh()
 		if (newHandle) await project.updateHandle(newHandle)
+
+		App.eventSystem.dispatch('modifiedProject', null)
+
 		return newHandle
 	},
 })

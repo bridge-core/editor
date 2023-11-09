@@ -70,10 +70,13 @@ export class App {
 		'disableValidation',
 		'fileAdded',
 		'fileChange',
+		'beforeFileSave',
 		'fileSave',
 		'fileUnlinked',
 		'presetsChanged',
 		'availableProjectsFileChanged',
+		'beforeModifiedProject',
+		'modifiedProject',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>
