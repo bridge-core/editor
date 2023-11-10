@@ -3,8 +3,6 @@ import { ToolbarButton } from '../ToolbarButton'
 import { App } from '/@/App'
 
 export function setupDownloadButton(app: App) {
-	console.log(!vuetify.framework.breakpoint.mobile)
-
 	App.toolbar.add(
 		new ToolbarButton(
 			'mdi-download',

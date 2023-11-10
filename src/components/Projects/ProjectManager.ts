@@ -369,7 +369,10 @@ export class ProjectManager extends Signal<void> {
 		this.projectBeingModified++
 	}
 	handleModifiedProjectEvent() {
-		this.projectBeingModified--
+		// Sometimes a the writer await will resolve before the poller actually detects the change so we need to wait a tiny bit before unlocking to catch the delay
+		setTimeout(() => {
+			this.projectBeingModified--
+		}, 1)
 	}
 	async handleWatchEvent(event: any) {
 		if (this.selectedProject === null) return
