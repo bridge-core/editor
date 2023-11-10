@@ -374,7 +374,9 @@ export class ProjectManager extends Signal<void> {
 	async handleWatchEvent(event: any) {
 		if (this.selectedProject === null) return
 
-		const project = this.getProject(this.selectedProject!)!
+		const project = this.getProject(this.selectedProject!)
+
+		if (!project) return
 
 		const paths = (<string[]>event.payload).filter(
 			(entryPath) =>
