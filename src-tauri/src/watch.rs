@@ -50,15 +50,19 @@ pub fn watch_folder(
         .unwrap()
         .join("bridge")
         .join(Path::new(&path))
-        .canonicalize()
-        .unwrap();
+        .canonicalize();
 
-    let mut watcher_option = state.lock().unwrap();
-    let watcher = watcher_option.as_mut().unwrap();
+    match resolved_path {
+        Ok(resolved_path) => {
+            let mut watcher_option = state.lock().unwrap();
+            let watcher = watcher_option.as_mut().unwrap();
 
-    watcher
-        .watch(&resolved_path, RecursiveMode::Recursive)
-        .unwrap();
+            watcher
+                .watch(&resolved_path, RecursiveMode::Recursive)
+                .unwrap();
+        }
+        Err(error) => (),
+    }
 }
 
 #[tauri::command]
@@ -73,11 +77,15 @@ pub fn unwatch_folder(
         .unwrap()
         .join("bridge")
         .join(Path::new(&path))
-        .canonicalize()
-        .unwrap();
+        .canonicalize();
 
-    let mut watcher_option = state.lock().unwrap();
-    let watcher = watcher_option.as_mut().unwrap();
+    match resolved_path {
+        Ok(resolved_path) => {
+            let mut watcher_option = state.lock().unwrap();
+            let watcher = watcher_option.as_mut().unwrap();
 
-    watcher.unwatch(&resolved_path).unwrap();
+            watcher.unwatch(&resolved_path).unwrap();
+        }
+        Err(error) => (),
+    }
 }
