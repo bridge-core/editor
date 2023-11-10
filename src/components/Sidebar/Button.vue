@@ -7,7 +7,7 @@
 	>
 		<template v-slot:activator="{ on }">
 			<div
-				class="rounded-lg ma-2 d-flex justify-center sidebar-button"
+				class="rounded ma-2 d-flex justify-center sidebar-button"
 				:style="{
 					'background-color': computedColor,
 					position: 'relative',

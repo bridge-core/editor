@@ -8,6 +8,9 @@ export class Toolbar {
 	addCategory(category: ToolbarCategory) {
 		set(this.state, category.id, category)
 	}
+	add(item: any) {
+		set(this.state, item.id, item)
+	}
 	disposeCategory(category: ToolbarCategory) {
 		del(this.state, category.id)
 	}

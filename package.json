@@ -1,6 +1,6 @@
 {
 	"name": "bridge",
-	"version": "2.6.7",
+	"version": "2.7.0",
 	"private": true,
 	"scripts": {
 		"dev": "vite",
@@ -24,7 +24,7 @@
 		"comlink": "^4.3.0",
 		"compare-versions": "^3.6.0",
 		"core-js": "^3.6.5",
-		"dash-compiler": "^0.10.10",
+		"dash-compiler": "github:bridge-core/dash-compiler#8fa35c73292f6382747d0f411fca26431a6d2c8e",
 		"escape-string-regexp": "^5.0.0",
 		"fflate": "^0.6.7",
 		"idb-keyval": "^5.1.3",

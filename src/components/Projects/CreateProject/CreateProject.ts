@@ -19,7 +19,6 @@ import {
 	getFormatVersions,
 	getStableFormatVersion,
 } from '/@/components/Data/FormatVersions'
-import { Project } from '../Project/Project'
 import { CreateDenoConfig } from './Files/DenoConfig'
 import { IWindowState, NewBaseWindow } from '../../Windows/NewBaseWindow'
 import { reactive } from 'vue'
@@ -224,11 +223,15 @@ export class CreateProjectWindow extends NewBaseWindow {
 	static getDefaultOptions(): ICreateProjectOptions {
 		return {
 			author:
-				<string | undefined>settingsState?.projects?.defaultAuthor ??
-				'',
+				<string | undefined>settingsState?.projects?.defaultAuthor ===
+				''
+					? 'bridge.'
+					: <string | undefined>(
+							settingsState?.projects?.defaultAuthor
+					  ) ?? 'bridge.',
 			description: '',
 			icon: null,
-			name: '',
+			name: 'New Project',
 			namespace: 'bridge',
 			targetVersion: '',
 			packs: ['.bridge', 'behaviorPack', 'resourcePack'],

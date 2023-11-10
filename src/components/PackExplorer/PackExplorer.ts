@@ -59,11 +59,12 @@ export class PackExplorer extends SidebarContent {
 		App.eventSystem.on('projectChanged', () => {
 			updateHeaderSlot()
 		})
+
+		this.setup()
 	}
 
 	async setup() {
 		const app = await App.getApp()
-		await app.projectManager.projectReady.fired
 
 		this.actions = []
 		// Show select bridge. folder & create project buttons

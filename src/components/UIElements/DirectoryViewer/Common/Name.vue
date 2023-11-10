@@ -4,7 +4,7 @@
 		v-ripple="!baseWrapper.isEditingName.value"
 		tabindex="0"
 		ref="name"
-		class="directory-viewer-name d-flex justify-center align-center px-1 rounded-lg"
+		class="directory-viewer-name d-flex justify-center align-center px-1 rounded"
 		:class="{
 			selected: baseWrapper.isSelected.value,
 			'drag-handle': !baseWrapper.isEditingName.value,

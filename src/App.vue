@@ -2,103 +2,112 @@
 	<v-app
 		ref="appContainer"
 		:style="{ fontFamily }"
-		@contextmenu.native="$event.preventDefault()"
+		@contextmenu.native="/*$event.preventDefault()*/"
 	>
 		<!-- We need access to native menus in order to hide the custom one on MacOS -->
 		<!-- <Toolbar v-if="!isMacOs" /> -->
 		<Toolbar v-if="!isInFullScreen" />
 
-		<Sidebar v-if="!isInFullScreen" app />
+		<!-- Screen for when no projects are opened-->
+		<Greet v-if="isNoProjectSelected" />
 
-		<v-btn
-			v-if="!sidebarNavigationVisible"
-			small
-			fab
-			fixed
-			style="bottom: calc(env(safe-area-inset-bottom, 0) + 16px)"
-			:left="!isSidebarRight"
-			:right="isSidebarRight"
-			color="primary"
-			@click="openSidebar"
-		>
-			<v-icon>mdi-table-column</v-icon>
-		</v-btn>
+		<!-- main editor-->
+		<div v-if="!isNoProjectSelected">
+			<Sidebar v-if="!isInFullScreen" app />
 
-		<v-main
-			:style="{
-				'padding-top': isInFullScreen ? 0 : appToolbarHeight,
-			}"
-		>
-			<WindowRenderer />
+			<v-btn
+				v-if="!sidebarNavigationVisible"
+				small
+				fab
+				fixed
+				style="bottom: calc(env(safe-area-inset-bottom, 0) + 16px)"
+				:left="!isSidebarRight"
+				:right="isSidebarRight"
+				color="primary"
+				@click="openSidebar"
+			>
+				<v-icon>mdi-table-column</v-icon>
+			</v-btn>
 
-			<v-row
-				no-gutters
-				class="d-flex fill-area"
-				:class="{
-					'flex-row-reverse': isSidebarRight,
+			<v-main
+				:style="{
+					'padding-top': isInFullScreen ? 0 : appToolbarHeight,
 				}"
 			>
-				<v-col
-					v-if="isSidebarContentVisible"
-					:cols="isSidebarContentVisible ? 3 + sidebarSize : 0"
+				<v-row
+					no-gutters
+					class="d-flex fill-area"
+					:class="{
+						'flex-row-reverse': isSidebarRight,
+					}"
 				>
-					<SidebarContent :isSidebarRight="isSidebarRight" />
-				</v-col>
-
-				<v-col
-					:cols="isSidebarContentVisible ? 9 - sidebarSize : 12"
-					class="flex-grow-1"
-				>
-					<div
-						v-if="shouldRenderWelcomeScreen"
-						class="d-flex"
-						:class="{ 'flex-column': $vuetify.breakpoint.mobile }"
-						:style="{
-							height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight} - ${bottomPanelHeight}px)`,
-						}"
+					<v-col
+						v-if="isSidebarContentVisible"
+						:cols="isSidebarContentVisible ? 3 + sidebarSize : 0"
 					>
-						<!-- <v-divider
+						<SidebarContent :isSidebarRight="isSidebarRight" />
+					</v-col>
+
+					<v-col
+						:cols="isSidebarContentVisible ? 9 - sidebarSize : 12"
+						class="flex-grow-1"
+					>
+						<div
+							v-if="shouldRenderWelcomeScreen"
+							class="d-flex"
+							:class="{
+								'flex-column': $vuetify.breakpoint.mobile,
+							}"
+							:style="{
+								height: `calc(${windowSize.currentHeight}px - ${appToolbarHeight} - ${bottomPanelHeight}px)`,
+							}"
+						>
+							<!-- <v-divider
 							v-if="isSidebarContentVisible && !isSidebarRight"
 							style="z-index: 1"
 							vertical
 						/> -->
 
-						<TabSystem class="flex-grow-1" />
-						<v-divider
-							v-if="
-								tabSystems[0].shouldRender.value &&
-								tabSystems[1].shouldRender.value
-							"
-							style="z-index: 1"
-							:vertical="!$vuetify.breakpoint.mobile"
-						/>
-						<TabSystem class="flex-grow-1" :id="1" />
+							<TabSystem class="flex-grow-1" />
+							<v-divider
+								v-if="
+									tabSystems[0].shouldRender.value &&
+									tabSystems[1].shouldRender.value
+								"
+								style="z-index: 1"
+								:vertical="!$vuetify.breakpoint.mobile"
+							/>
+							<TabSystem class="flex-grow-1" :id="1" />
 
-						<!-- <v-divider
+							<!-- <v-divider
 							v-if="isSidebarContentVisible && isSidebarRight"
 							vertical
 						/> -->
-					</div>
-					<WelcomeScreen
-						v-else
-						:height="
-							windowSize.currentHeight -
-							appToolbarHeightNumber -
-							bottomPanelHeight
-						"
-					/>
+						</div>
+						<WelcomeScreen
+							v-else
+							:height="
+								windowSize.currentHeight -
+								appToolbarHeightNumber -
+								bottomPanelHeight
+							"
+						/>
 
-					<BottomPanel v-if="!$vuetify.breakpoint.mobile" />
-				</v-col>
-			</v-row>
-		</v-main>
+						<BottomPanel v-if="!$vuetify.breakpoint.mobile" />
+					</v-col>
+				</v-row>
+			</v-main>
+		</div>
 
 		<ContextMenu
 			v-if="contextMenu"
 			:contextMenu="contextMenu"
 			:windowHeight="windowSize.currentHeight"
 		/>
+
 		<SolidWindows />
+
+		<WindowRenderer />
 	</v-app>
 </template>
 
@@ -121,6 +130,7 @@ import {
 } from './components/TabSystem/TabContextMenu/Fullscreen'
 import BottomPanel from './components/BottomPanel/BottomPanel.vue'
 import { useSidebarState } from './components/Composables/Sidebar/useSidebarState'
+import Greet from './components/Greet/Greet.vue'
 
 export default {
 	name: 'App',
@@ -148,6 +158,13 @@ export default {
 		App.getApp().then((app) => {
 			this.contextMenu = app.contextMenu
 			this.windowSize = app.windowResize.state
+
+			this.disposables.push(
+				App.eventSystem.on(
+					'projectChanged',
+					() => (this.isNoProjectSelected = app.isNoProjectSelected)
+				)
+			)
 		})
 
 		setFullscreenElement(this.$refs.appContainer.$el)
@@ -163,6 +180,7 @@ export default {
 		SidebarContent,
 		BottomPanel,
 		SolidWindows: App.solidWindows.getVueComponent(),
+		Greet,
 	},
 
 	data: () => ({
@@ -173,6 +191,8 @@ export default {
 			currentWidth: window.innerWidth,
 			currentHeight: window.innerHeight,
 		},
+		isNoProjectSelected: true,
+		disposables: [],
 	}),
 
 	computed: {

@@ -20,7 +20,7 @@ export interface IRequirements {
 	/**
 	 * Check for manifest dependencies to be present in the pack.
 	 */
-	dependencies?: string[]
+	dependencies?: { module_name: string; version?: string }[]
 	/**
 	 * Whether all conditions must be met. If set to false, any condition met makes the matcher valid.
 	 */
@@ -123,46 +123,97 @@ export class RequiresMatcher {
 					: this.experimentalGameplay[experimentalFeature]
 			)
 		// Manifest dependencies
-		const dependencies: string[] | undefined =
-			this.bpManifest?.dependencies?.map((dep: any) => {
-				if (dep?.module_name) {
-					// Convert old module names to new naming convention
-					switch (dep.module_name) {
-						case 'mojang-minecraft':
-							return '@minecraft/server'
-						case 'mojang-gametest':
-							return '@minecraft/server-gametest'
-						case 'mojang-minecraft-server-ui':
-							return '@minecraft/server-ui'
-						case 'mojang-minecraft-server-admin':
-							return '@minecraft/server-admin'
-						case 'mojang-net':
-							return '@minecraft/server-net'
-						default:
-							return dep.module_name
-					}
-				} else {
-					switch (dep.uuid ?? '') {
-						case 'b26a4d4c-afdf-4690-88f8-931846312678':
-							return '@minecraft/server'
-						case '6f4b6893-1bb6-42fd-b458-7fa3d0c89616':
-							return '@minecraft/server-gametest'
-						case '2bd50a27-ab5f-4f40-a596-3641627c635e':
-							return '@minecraft/server-ui'
-						case '53d7f2bf-bf9c-49c4-ad1f-7c803d947920':
-							return '@minecraft/server-admin'
-						case '777b1798-13a6-401c-9cba-0cf17e31a81b':
-							return '@minecraft/server-net'
-						default:
-							return ''
-					}
+
+		const dependencies:
+			| { module_name: string; version?: string }[]
+			| undefined = this.bpManifest?.dependencies?.map((dep: any) => {
+			if (dep?.module_name) {
+				// Convert old module names to new naming convention
+				switch (dep.module_name) {
+					case 'mojang-minecraft':
+						return {
+							module_name: '@minecraft/server',
+							version: dep.version,
+						}
+					case 'mojang-gametest':
+						return {
+							module_name: '@minecraft/server-gametest',
+							version: dep.version,
+						}
+					case 'mojang-minecraft-server-ui':
+						return {
+							module_name: '@minecraft/server-ui',
+							version: dep.version,
+						}
+					case 'mojang-minecraft-server-admin':
+						return {
+							module_name: '@minecraft/server-admin',
+							version: dep.version,
+						}
+					case 'mojang-net':
+						return {
+							module_name: '@minecraft/server-net',
+							version: dep.version,
+						}
+					default:
+						return {
+							module_name: dep.module_name,
+							version: dep.version,
+						}
 				}
-			})
+			} else {
+				switch (dep.uuid ?? '') {
+					case 'b26a4d4c-afdf-4690-88f8-931846312678':
+						return {
+							module_name: '@minecraft/server',
+							version: dep.version,
+						}
+					case '6f4b6893-1bb6-42fd-b458-7fa3d0c89616':
+						return {
+							module_name: '@minecraft/server-gametest',
+							version: dep.version,
+						}
+					case '2bd50a27-ab5f-4f40-a596-3641627c635e':
+						return {
+							module_name: '@minecraft/server-ui',
+							version: dep.version,
+						}
+					case '53d7f2bf-bf9c-49c4-ad1f-7c803d947920':
+						return {
+							module_name: '@minecraft/server-admin',
+							version: dep.version,
+						}
+					case '777b1798-13a6-401c-9cba-0cf17e31a81b':
+						return {
+							module_name: '@minecraft/server-net',
+							version: dep.version,
+						}
+					default:
+						return {
+							module_name: dep.uuid ?? '',
+							version: dep.version,
+						}
+				}
+			}
+		})
 
 		const matchesManifestDependency =
 			!requires.dependencies ||
 			!dependencies ||
-			requires?.dependencies.every((dep) => dependencies.includes(dep))
+			requires?.dependencies.every((dep) => {
+				for (const dependency of dependencies) {
+					if (dependency.module_name !== dep.module_name) continue
+					if (
+						dependency.version &&
+						dependency.version !== dep.version
+					)
+						continue
+
+					return true
+				}
+
+				return false
+			})
 
 		if (!matchesPackTypes) this.failures.push({ type: 'packTypes' })
 		if (!matchesTargetVersion) this.failures.push({ type: 'targetVersion' })

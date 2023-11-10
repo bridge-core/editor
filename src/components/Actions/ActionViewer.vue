@@ -1,5 +1,5 @@
 <template>
-	<div class="pa-4 mb-2 rounded-lg control-bg" :class="{ selected, dark }">
+	<div class="pa-4 mb-2 rounded control-bg" :class="{ selected, dark }">
 		<div class="d-flex align-center">
 			<v-icon
 				v-if="action.icon"

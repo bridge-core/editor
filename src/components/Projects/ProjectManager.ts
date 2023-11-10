@@ -15,6 +15,8 @@ import { v4 as uuid } from 'uuid'
 import { ICreateProjectOptions } from './CreateProject/CreateProject'
 import { InformationWindow } from '../Windows/Common/Information/InformationWindow'
 import { isUsingFileSystemPolyfill } from '../FileSystem/Polyfill'
+import { listen } from '@tauri-apps/api/event'
+import path from 'path-browserify'
 
 export class ProjectManager extends Signal<void> {
 	public readonly addedProject = new EventDispatcher<Project>()
@@ -23,11 +25,28 @@ export class ProjectManager extends Signal<void> {
 	public readonly title = markRaw(new Title())
 	protected _selectedProject?: string = undefined
 	public readonly projectReady = new Signal<void>()
+	protected projectBeingModified = 0
 
 	constructor(protected app: App) {
 		super()
-		// Only load local projects on PWA builds
-		if (!import.meta.env.VITE_IS_TAURI_APP) this.loadProjects()
+
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			// Project watching is only supported on Tauri builds
+			listen('watch_event', this.handleWatchEvent.bind(this))
+
+			App.eventSystem.on(
+				'beforeModifiedProject',
+				this.handleBeforeModifiedProjectEvent.bind(this)
+			)
+
+			App.eventSystem.on(
+				'modifiedProject',
+				this.handleModifiedProjectEvent.bind(this)
+			)
+		} else {
+			// Only load local projects on PWA builds
+			this.loadProjects()
+		}
 	}
 
 	get currentProject() {
@@ -96,6 +115,10 @@ export class ProjectManager extends Signal<void> {
 	}
 
 	async loadProjects(requiresPermissions = false) {
+		for (const key of Object.keys(this.state)) {
+			delete this.state[key]
+		}
+
 		await this.app.fileSystem.fired
 		await this.app.dataLoader.fired
 
@@ -137,7 +160,7 @@ export class ProjectManager extends Signal<void> {
 
 		// Update stored projects in the background (don't await it)
 		if (isBridgeFolderSetup) this.storeProjects(undefined, true)
-		// Create a placeholder project (virtual project)
+
 		await this.createVirtualProject()
 
 		this.dispatch()
@@ -210,13 +233,22 @@ export class ProjectManager extends Signal<void> {
 
 		this.currentProject?.deactivate()
 		this._selectedProject = projectName
+
 		App.eventSystem.dispatch('disableValidation', null)
+
 		this.currentProject?.activate()
 
 		await idbSet('selectedProject', projectName)
 
 		this.app.themeManager.updateTheme()
 		App.eventSystem.dispatch('projectChanged', this.currentProject!)
+
+		const projectDatas = await this.loadAvailableProjects()
+		const projectData = projectDatas.find(
+			(project: any) => project.name === projectName
+		)
+
+		if (projectData) projectData.lastOpened = Date.now()
 
 		// Store projects in local storage fs
 		await this.storeProjects()
@@ -248,6 +280,7 @@ export class ProjectManager extends Signal<void> {
 
 			if (didSelectProject) return
 		}
+
 		await this.selectProject(virtualProjectName)
 	}
 
@@ -301,6 +334,7 @@ export class ProjectManager extends Signal<void> {
 			icon?: string
 			requiresPermissions: boolean
 			isFavorite?: boolean
+			lastOpened?: number
 		}[] = await this.loadAvailableProjects(exceptProject)
 
 		let newData: any[] = forceRefresh ? [] : [...data]
@@ -321,6 +355,7 @@ export class ProjectManager extends Signal<void> {
 				icon: project.projectData.imgSrc,
 				requiresPermissions: project.requiresPermissions,
 				isFavorite: storedData?.isFavorite ?? false,
+				lastOpened: storedData?.lastOpened ?? 0,
 			})
 		})
 
@@ -329,5 +364,33 @@ export class ProjectManager extends Signal<void> {
 			newData
 		)
 		App.eventSystem.dispatch('availableProjectsFileChanged', undefined)
+	}
+	handleBeforeModifiedProjectEvent() {
+		this.projectBeingModified++
+	}
+	handleModifiedProjectEvent() {
+		this.projectBeingModified--
+	}
+	async handleWatchEvent(event: any) {
+		if (this.selectedProject === null) return
+
+		const project = this.getProject(this.selectedProject!)
+
+		if (!project) return
+
+		const paths = (<string[]>event.payload).filter(
+			(entryPath) =>
+				!entryPath.startsWith(
+					path.join(project.projectPath!, '.bridge')
+				)
+		)
+
+		if (paths.length === 0) return
+
+		if (this.projectBeingModified > 0) return
+
+		const app = await App.getApp()
+
+		app.actionManager.trigger('bridge.action.refreshProject')
 	}
 }

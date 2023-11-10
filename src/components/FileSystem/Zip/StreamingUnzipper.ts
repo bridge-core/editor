@@ -2,6 +2,7 @@ import { AsyncUnzipInflate, Unzip, UnzipFile } from 'fflate'
 import { GenericUnzipper } from './GenericUnzipper'
 import { FileSystem } from '../FileSystem'
 import { wait } from '/@/utils/wait'
+import { invoke } from '@tauri-apps/api/tauri'
 
 /**
  * Streaming variant of the Unzipper class. It is slightly faster and consumes less memory.
@@ -14,6 +15,33 @@ export class StreamingUnzipper extends GenericUnzipper<Uint8Array> {
 	 */
 	async unzip(data: Uint8Array) {
 		const fs = new FileSystem(this.directory)
+
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			this.task?.update(0, 200)
+
+			// returns in the form of path --> array of u8s
+			const files: { [key: string]: number[] } = await invoke(
+				'unzip_command',
+				{ data: Array.from(data) }
+			)
+
+			this.task?.update(100, 200)
+
+			const paths = Object.keys(files)
+			for (let fileIndex = 0; fileIndex < paths.length; fileIndex++) {
+				const path = paths[fileIndex]
+				await fs.writeFile(path, new Uint8Array(files[path]))
+
+				this.task?.update(
+					100 + Math.floor((fileIndex / paths.length) * 100),
+					200
+				)
+			}
+
+			this.task?.complete()
+
+			return
+		}
 
 		this.task?.update(0, data.length)
 		let streamedBytes = 0

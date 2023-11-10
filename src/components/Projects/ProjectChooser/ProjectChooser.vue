@@ -37,10 +37,10 @@
 			</v-btn>
 		</template>
 		<template #default>
-			<div class="d-flex align-center mb-4 rounded-lg content-area pa-4">
+			<div class="d-flex align-center mb-4 rounded content-area pa-4">
 				<div class="d-flex align-center">
 					<img
-						class="mr-2 h-16 project-logo rounded-lg"
+						class="mr-2 h-16 project-logo rounded"
 						:src="sidebar.currentState.imgSrc"
 						draggable="false"
 					/>

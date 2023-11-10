@@ -282,6 +282,11 @@ export class TabSystem extends MonacoHolder {
 		if (selectedTab !== tab) await this.select(selectedTab)
 
 		if (!tab.isForeignFile && tab instanceof FileTab) {
+			this.project.beforeFileSave.dispatch(
+				tab.getPath(),
+				await tab.getFile()
+			)
+
 			await this.project.updateFile(tab.getPath())
 
 			this.project.fileSave.dispatch(tab.getPath(), await tab.getFile())

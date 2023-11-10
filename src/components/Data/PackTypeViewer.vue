@@ -1,7 +1,7 @@
 <template>
 	<BridgeSheet
 		:class="{
-			'rounded-lg pa-3 content-area': true,
+			'rounded pa-3 content-area': true,
 			selected: selected,
 		}"
 		v-ripple="isSelectable"

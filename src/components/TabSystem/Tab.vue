@@ -8,7 +8,7 @@
 			'align-center': true,
 			inactive: !isActive,
 			'px-3 py-2': !floatingTabDesign,
-			'px-2 pb-1 mx-1 mt-2 my-1 rounded-lg': floatingTabDesign,
+			'px-2 pb-1 mx-1 mt-2 my-1 rounded': floatingTabDesign,
 			'ml-0 pl-3': isFirstTab,
 		}"
 		style="position: relative"

@@ -11,7 +11,7 @@
 				:key="id"
 				offset-x
 				nudge-right="8px"
-				rounded="lg"
+				rounded
 				close-delay="200"
 				transition="context-menu-transition"
 				close-on-click

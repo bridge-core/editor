@@ -4,7 +4,7 @@
 		ref="menu"
 		:position-x="x"
 		:position-y="y"
-		rounded="lg"
+		rounded
 		absolute
 		offset-y
 		transition="context-menu-transition"

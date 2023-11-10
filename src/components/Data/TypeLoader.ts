@@ -220,7 +220,7 @@ export class TypeLoader {
 
 		for (const typeScriptFile of typeScriptFiles) {
 			const fileUri = Uri.file(
-				// This for some reason fixes monaco suggesting the wrong path for quickfixes #932
+				// This for some reason fixes monaco suggesting the wrong path when using quickfixes. See issue #932
 				typeScriptFile.replace('/BP/', '/bp/')
 			)
 			const file = await app.fileSystem

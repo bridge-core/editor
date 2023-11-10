@@ -19,7 +19,7 @@ import {
 	AnyFileHandle,
 	AnyHandle,
 } from '/@/components/FileSystem/Types'
-import { markRaw, reactive, set } from 'vue'
+import { markRaw, set } from 'vue'
 import { SnippetLoader } from '/@/components/Snippets/Loader'
 import { ExportProvider } from '../Export/Extensions/Provider'
 import { Tab } from '/@/components/TabSystem/CommonTab'
@@ -35,6 +35,7 @@ import { iterateDir } from '/@/utils/iterateDir'
 import { Signal } from '../../Common/Event/Signal'
 import { moveHandle } from '/@/utils/file/moveHandle'
 import { TreeTab } from '../../Editors/TreeEditor/Tab'
+import { invoke } from '@tauri-apps/api'
 
 export interface IProjectData extends IConfigJson {
 	path: string
@@ -55,6 +56,7 @@ export abstract class Project {
 	public compilerReady = new Signal<void>()
 	public readonly jsonDefaults = markRaw(new JsonDefaults(this))
 	protected typeLoader: TypeLoader
+	public refreshing: boolean = false
 
 	/**
 	 * A virtual project is a project with the exact name of "virtualProjectName"
@@ -66,6 +68,7 @@ export abstract class Project {
 	public readonly fileTypeLibrary: FileTypeLibrary
 	public readonly extensionLoader: ExtensionLoader
 	public readonly fileChange = new FileChangeRegistry()
+	public readonly beforeFileSave = new FileChangeRegistry()
 	public readonly fileSave = new FileChangeRegistry()
 	public readonly fileUnlinked = new FileChangeRegistry<void>()
 	public readonly tabActionProvider = new TabActionProvider()
@@ -167,9 +170,14 @@ export abstract class Project {
 		this.fileChange.any.on((data) =>
 			App.eventSystem.dispatch('fileChange', data)
 		)
-		this.fileSave.any.on((data) =>
+		this.beforeFileSave.any.on((data) => {
+			App.eventSystem.dispatch('beforeFileSave', data)
+			App.eventSystem.dispatch('beforeModifiedProject', null)
+		})
+		this.fileSave.any.on((data) => {
 			App.eventSystem.dispatch('fileSave', data)
-		)
+			App.eventSystem.dispatch('modifiedProject', null)
+		})
 		this.fileUnlinked.any.on((data) =>
 			App.eventSystem.dispatch('fileUnlinked', data[0])
 		)
@@ -273,7 +281,11 @@ export abstract class Project {
 		])
 
 		this.snippetLoader.activate()
+
+		if (!this.isVirtualProject && import.meta.env.VITE_IS_TAURI_APP)
+			await invoke('watch_folder', { path: this.projectPath })
 	}
+
 	async deactivate(isReload = false) {
 		if (!isReload)
 			this.tabSystems.forEach((tabSystem) => tabSystem.deactivate())
@@ -286,6 +298,9 @@ export abstract class Project {
 			this.packIndexer.deactivate(),
 			this.snippetLoader.deactivate(),
 		])
+
+		if (!this.isVirtualProject && import.meta.env.VITE_IS_TAURI_APP)
+			await invoke('unwatch_folder', { path: this.projectPath })
 	}
 	dispose() {
 		this.tabSystems.forEach((tabSystem) => tabSystem.dispose())
@@ -293,9 +308,15 @@ export abstract class Project {
 	}
 
 	async refresh() {
+		if (this.refreshing) return
+
+		this.refreshing = true
+
 		this.app.packExplorer.refresh()
 		await this.deactivate(true)
 		await this.activate(true)
+
+		this.refreshing = false
 	}
 
 	async openFile(

@@ -25,7 +25,7 @@ export const TextField: Component<TextFieldProps> = (props) => {
 		<div
 			class="
 				flex
-				rounded-lg
+				rounded
 				items-center
 				border
 				border-[#bbb]
