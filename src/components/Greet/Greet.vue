@@ -184,7 +184,7 @@ const suggestSelectingBridgeFolder = computed(() => {
 async function createProject() {
 	const app = await App.getApp()
 
-	if (!isUsingFileSystemPolyfill.value) await loadFolder()
+	if (!isUsingFileSystemPolyfill.value && !tauri) await loadFolder()
 
 	app.windows.createProject.open()
 }
