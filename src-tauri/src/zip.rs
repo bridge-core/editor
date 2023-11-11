@@ -33,7 +33,7 @@ pub fn zip_command(files: HashMap<String, Vec<u8>>) -> Vec<u8> {
 
         let mut zip = ZipWriter::new(writer);
 
-        let options = FileOptions::default().compression_method(CompressionMethod::Zstd);
+        let options = FileOptions::default().compression_method(CompressionMethod::DEFLATE);
 
         for (path, data) in files {
             zip.start_file(path, options).unwrap();
