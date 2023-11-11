@@ -261,9 +261,13 @@ export class TextTab extends FileTab {
 	}
 	protected async saveFile() {
 		if (this.editorModel && !this.editorModel.isDisposed()) {
+			App.eventSystem.dispatch('beforeModifiedProject', null)
+
 			const writeWorked = await this.writeFile(
 				this.editorModel.getValue()
 			)
+
+			App.eventSystem.dispatch('modifiedProject', null)
 
 			if (writeWorked) {
 				this.setIsUnsaved(false)

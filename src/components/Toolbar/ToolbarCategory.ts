@@ -3,15 +3,13 @@ import { Action } from '/@/components/Actions/Action'
 import { IDisposable } from '/@/types/disposable'
 import { v4 as uuid } from 'uuid'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
-import { Ref, del, reactive, ref, set } from 'vue'
+import { del, reactive, set } from 'vue'
 import { Divider } from './Divider'
 
 export class ToolbarCategory extends EventDispatcher<void> {
 	public readonly id = uuid()
 	protected type = 'category'
 	public shouldRender = reactive({ value: true })
-
-	protected isVisible = false
 
 	protected state: Record<string, Action | ToolbarCategory | Divider> =
 		reactive({})
@@ -58,7 +56,6 @@ export class ToolbarCategory extends EventDispatcher<void> {
 	}
 
 	trigger() {
-		this.isVisible = false
 		this.dispatch()
 	}
 

@@ -1,13 +1,15 @@
+import { ToolbarButton } from '../ToolbarButton'
 import { App } from '/@/App'
 
 export function setupSettingsButton(app: App) {
-	App.toolbar.add({
-		type: 'button',
-		id: 'openSettings',
-		name: 'actions.settings.name',
-		trigger() {
-			app.windows.settings.open()
-		},
-		shouldRender: { value: true },
-	})
+	App.toolbar.add(
+		new ToolbarButton(
+			'mdi-cog',
+			'actions.settings.name',
+			() => {
+				app.windows.settings.open()
+			},
+			{ value: true }
+		)
+	)
 }
