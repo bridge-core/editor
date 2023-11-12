@@ -1,13 +1,10 @@
 <template>
-	<div
-		v-if="data.length > 0"
-		ref="scrollElement"
-		class="d-flex flex-col-reverse overflow-auto"
-	>
+	<div v-if="data.length > 0" ref="scrollElement">
 		<Sheet
-			v-for="([msg, { type }], i) in data"
+			v-for="([msg, { type }], i) in getReversedData()"
 			:key="`${type}//${msg}//${i}`"
 			class="pa-2 mb-2 d-flex"
+			style="overflow: auto"
 		>
 			<v-icon
 				v-if="getIconData(type)"
@@ -30,65 +27,54 @@
 	</Sheet>
 </template>
 
-<script setup lang="ts">
-import { ref, Ref } from 'vue'
-import { useTranslations } from '/@/components/Composables/useTranslations'
+<script>
+import { TranslationMixin } from '../../Mixins/TranslationMixin'
 import Sheet from '/@/components/UIElements/Sheet.vue'
 
-const { t } = useTranslations()
+export default {
+	props: {
+		data: Array,
+	},
+	mixins: [TranslationMixin],
+	components: {
+		Sheet,
+	},
+	methods: {
+		getIconData(type) {
+			if (!type) return null
 
-const props = defineProps(['data'])
-
-const scrollElement: Ref<any> = ref(null)
-
-function getIconData(type: any): any {
-	if (!type) return null
-
-	switch (type) {
-		case 'info':
-			return {
-				color: 'info',
-				icon: 'mdi-information-outline',
+			switch (type) {
+				case 'info':
+					return {
+						color: 'info',
+						icon: 'mdi-information-outline',
+					}
+				case 'warning':
+					return {
+						color: 'warning',
+						icon: 'mdi-alert-outline',
+					}
+				case 'error':
+					return {
+						color: 'error',
+						icon: 'mdi-alert-circle-outline',
+					}
+				default:
+					return null
 			}
-		case 'warning':
-			return {
-				color: 'warning',
-				icon: 'mdi-alert-outline',
-			}
-		case 'error':
-			return {
-				color: 'error',
-				icon: 'mdi-alert-circle-outline',
-			}
-		default:
-			return null
-	}
-}
-
-function getMessageParts(msg: any) {
-	return msg.split('\n')
-}
-
-export function open() {
-	console.log(scrollElement.value)
-
-	setInterval(() => {
-		if (!scrollElement.value) return
-
-		console.log(
-			scrollElement.value.scrollTop,
-			scrollElement.value.scrollHeight
-		)
-
-		scrollElement.value.scrollTo({
-			top: 100,
-			behavior: 'instant',
-		})
-
-		console.log(
-			scrollElement.value.scrollTop,
-			scrollElement.value.scrollHeight
-		)
-	}, 10)
+		},
+		getMessageParts(msg) {
+			return msg.split('\n')
+		},
+		getReversedData() {
+			return this.data.slice().reverse()
+		},
+	},
+	watch: {
+		data() {
+			this.$refs.scrollElement.parentElement.scrollTop =
+				this.$refs.scrollElement.parentElement.scrollHeight
+		},
+	},
 }
 </script>
