@@ -221,48 +221,48 @@ export class App {
 	static async main(appComponent: Vue) {
 		console.time('[APP] Ready')
 
-		// this._instance = markRaw(new App(appComponent))
+		this._instance = markRaw(new App(appComponent))
 
-		// await this.instance.beforeStartUp()
+		await this.instance.beforeStartUp()
 
-		// this.instance.fileSystem.setup(await getStorageDirectory())
+		this.instance.fileSystem.setup(await getStorageDirectory())
 
-		// if (import.meta.env.VITE_IS_TAURI_APP) {
-		// 	// TauriFs env -> bridge. folder is the same as getStorageDirectory()
-		// 	await this.instance.bridgeFolderSetup.dispatch()
-		// 	// Setup com.mojang folder
-		// 	await this.instance.comMojang.setupComMojang()
-		// 	// Load projects
-		// 	this.instance.projectManager.loadProjects(true).then(() => {
-		// 		this.instance.themeManager.updateTheme()
-		// 	})
-		// }
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			// TauriFs env -> bridge. folder is the same as getStorageDirectory()
+			await this.instance.bridgeFolderSetup.dispatch()
+			// Setup com.mojang folder
+			await this.instance.comMojang.setupComMojang()
+			// Load projects
+			this.instance.projectManager.loadProjects(true).then(() => {
+				this.instance.themeManager.updateTheme()
+			})
+		}
 
-		// // Show changelog after an update
-		// if (await get<boolean>('firstStartAfterUpdate')) {
-		// 	await set('firstStartAfterUpdate', false)
-		// 	this.instance.windows.changelogWindow.open()
-		// }
+		// Show changelog after an update
+		if (await get<boolean>('firstStartAfterUpdate')) {
+			await set('firstStartAfterUpdate', false)
+			this.instance.windows.changelogWindow.open()
+		}
 
-		// // Load settings
-		// const settingsLoaded = SettingsWindow.loadSettings(this.instance)
-		// await settingsLoaded
+		// Load settings
+		const settingsLoaded = SettingsWindow.loadSettings(this.instance)
+		await settingsLoaded
 
-		// // Force data download
-		// if (import.meta.env.DEV)
-		// 	this.instance.dataLoader.loadData(
-		// 		<boolean>settingsState?.developers?.forceDataDownload ?? false
-		// 	)
+		// Force data download
+		if (import.meta.env.DEV)
+			this.instance.dataLoader.loadData(
+				<boolean>settingsState?.developers?.forceDataDownload ?? false
+			)
 
-		// settingsLoaded.then(async () => {
-		// 	await this.instance.dataLoader.fired
-		// 	this.instance.themeManager.loadDefaultThemes(this.instance)
-		// })
+		settingsLoaded.then(async () => {
+			await this.instance.dataLoader.fired
+			this.instance.themeManager.loadDefaultThemes(this.instance)
+		})
 
-		// await this.instance.startUp()
+		await this.instance.startUp()
 
-		// this.ready.dispatch(this.instance)
-		// await this.instance.projectManager.selectLastProject()
+		this.ready.dispatch(this.instance)
+		await this.instance.projectManager.selectLastProject()
 
 		console.timeEnd('[APP] Ready')
 	}
