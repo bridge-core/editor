@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { TColorName, IThemeDefinition, ThemeManager } from './ThemeManager'
+import { TColorName, TThemeDefinition, ThemeManager } from './ThemeManager'
 import { MonacoSubTheme } from './MonacoSubTheme'
 
 export class Theme {
@@ -8,13 +8,13 @@ export class Theme {
 	public readonly name: string
 
 	protected colorMap: Map<TColorName, string>
-	protected highlighterDef: IThemeDefinition['highlighter']
-	protected monacoDef: IThemeDefinition['monaco']
+	protected highlighterDef: TThemeDefinition['highlighter']
+	protected monacoDef: TThemeDefinition['monaco']
 
 	protected monacoSubTheme: MonacoSubTheme
 
 	constructor(
-		protected themeDefinition: IThemeDefinition,
+		protected themeDefinition: TThemeDefinition,
 		public readonly isGlobal: boolean
 	) {
 		this.id = themeDefinition.id
