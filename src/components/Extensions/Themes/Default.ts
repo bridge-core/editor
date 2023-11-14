@@ -6,7 +6,7 @@ export const bridgeDark = <const>{
 	name: 'Default Dark',
 	colorScheme: 'dark',
 	colors: {
-		text: '#ffffff',
+		text: '#f2f2f2',
 
 		primary: isNightly ? '#3bb6a3' : '#0073FF',
 		secondary: isNightly ? '#3bb6a3' : '#0073FF',

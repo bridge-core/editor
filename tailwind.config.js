@@ -41,6 +41,7 @@ module.exports = {
 				background: 'var(--theme-color-background)',
 				menu: 'var(--theme-color-menu)',
 				text: 'var(--theme-color-text)',
+				toolbar: 'var(--theme-color-toolbar)',
 			},
 		},
 	},
