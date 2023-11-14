@@ -43,6 +43,13 @@ module.exports = {
 				text: 'var(--theme-color-text)',
 				toolbar: 'var(--theme-color-toolbar)',
 			},
+			height: {
+				toolbar: '1.5rem',
+				app: 'calc(100vh - 1.5rem)',
+			},
+			spacing: {
+				toolbar: '1.5rem',
+			},
 		},
 	},
 	plugins: [],

@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-toolbar h-6 flex justify-between items-center px-2">
+	<div class="bg-toolbar h-toolbar flex justify-between items-center px-2">
 		<div></div>
 		<div class="flex gap-2">
 			<Logo class="w-4" />
