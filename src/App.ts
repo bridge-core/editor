@@ -3,6 +3,7 @@ import { ProjectManager } from '/@/libs/projects/ProjectManager'
 import { ThemeManager } from '/@/components/Extensions/Themes/ThemeManager'
 import { getFileSystem } from './libs/fileSystem/FileSystem'
 import { Ref, createApp, ref } from 'vue'
+import { ProjectData } from './libs/projects/Project'
 
 export class App {
 	public static instance: App
@@ -36,8 +37,8 @@ export class App {
 	}
 }
 
-export function useProjects(): Ref<string[]> {
-	const projects = ref()
+export function useProjects(): Ref<ProjectData[]> {
+	const projects: Ref<ProjectData[]> = ref([])
 
 	function updateProjects() {
 		projects.value = App.instance.projectManager.projects

@@ -3,7 +3,7 @@ import pathBrowserify from 'path-browserify'
 
 export interface ProjectData {
 	name: string
-	img: string
+	icon: string
 }
 
 export async function validProject(path: string) {
@@ -22,7 +22,7 @@ export async function getData(path: string): Promise<ProjectData> {
 
 	return {
 		name: pathBrowserify.basename(path),
-		img: await fileSystem.readFileDataUrl(
+		icon: await fileSystem.readFileDataUrl(
 			pathBrowserify.join(path, 'BP', 'pack_icon.png')
 		),
 	}

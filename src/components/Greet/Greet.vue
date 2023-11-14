@@ -1,6 +1,6 @@
 <template>
 	<main class="w-full h-full flex justify-center items-center">
-		<div class="flex flex-col">
+		<div class="flex flex-col max-w-[28rem]">
 			<Logo class="ml-auto mr-auto mb-24 -mt-24 w-48" />
 
 			<div class="flex justify-between">
@@ -18,7 +18,27 @@
 
 			<div class="h-px w-full bg-menu mb-1" />
 
-			<div class="project-list"></div>
+			<div
+				class="flex flex-wrap gap-2 max-h-[28.5rem] overflow-x-hidden overflow-y-hidden max-w-[]"
+			>
+				<div
+					class="flex flex-col bg-menu rounded-md relative w-36 h-36"
+					v-for="(project, index) in projects"
+					:key="index"
+				>
+					<div class="w-full overflow-hidden">
+						<img
+							:src="project.icon"
+							class="w-full aspect-video object-cover"
+						/>
+					</div>
+					<p
+						class="text-sm text-center mt-auto mb-auto ml-0.5 mr-0.5"
+					>
+						{{ project.name }}
+					</p>
+				</div>
+			</div>
 
 			<div class="flex items-center flex-col mt-8">
 				<p class="opacity-30 text-text">
@@ -40,13 +60,8 @@ import Logo from '/@/components/Common/Logo.vue'
 
 import { App, useProjects } from '/@/App'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
-import { watch } from 'vue'
 
 const projects = useProjects()
-
-watch(projects, (newProjects) => {
-	console.log(newProjects)
-})
 
 async function selectBridgeFolder() {
 	const fileSystem = App.instance.fileSystem
