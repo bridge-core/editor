@@ -1,5 +1,5 @@
 import { keyword } from 'color-convert'
-import { Signal } from '../../Common/Event/Signal'
+import { Signal } from '../../../libs/event/Signal'
 import { Theme } from './Theme'
 import { loadMonaco, useMonaco } from '../../../libs/libs/useMonaco'
 

@@ -8,7 +8,7 @@ import {
 	Scene,
 	WebGLRenderer,
 } from 'three'
-import { Signal } from '/@/components/Common/Event/Signal'
+import { Signal } from '../../../libs/event/Signal'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { App } from '/@/App'
 import { markRaw } from 'vue'

@@ -1,5 +1,5 @@
 import { Progress } from '../Common/Progress'
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../libs/event/EventDispatcher'
 
 export abstract class SimpleTaskService extends EventDispatcher<
 	[number, number]

@@ -1,6 +1,6 @@
 import type { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import type { IPackSpiderInstruction } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
-import { Signal } from '/@/components/Common/Event/Signal'
+import { Signal } from '../../libs/event/Signal'
 import { DataLoader } from './DataLoader'
 import { isMatch } from 'bridge-common-utils'
 import type { ProjectConfig } from '/@/components/Projects/Project/Config'

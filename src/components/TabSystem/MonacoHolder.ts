@@ -1,5 +1,5 @@
 import type { editor, KeyCode, KeyMod } from 'monaco-editor'
-import { Signal } from '../Common/Event/Signal'
+import { Signal } from '../../libs/event/Signal'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'

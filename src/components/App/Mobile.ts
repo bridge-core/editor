@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { Framework } from 'vuetify'
-import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../libs/event/EventDispatcher'
 import { App } from '/@/App'
 
 export class Mobile {

@@ -1,4 +1,4 @@
-import { Signal } from '/@/components/Common/Event/Signal'
+import { Signal } from '../../libs/event/Signal'
 import { unzip, Unzipped } from 'fflate'
 import { FileSystem } from '../FileSystem/FileSystem'
 import { createErrorNotification } from '../Notifications/Errors'

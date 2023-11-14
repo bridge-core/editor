@@ -1,6 +1,6 @@
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../libs/event/EventDispatcher'
 import { App } from '/@/App'
-import { Signal } from '/@/components/Common/Event/Signal'
+import { Signal } from '../../libs/event/Signal'
 import { IDisposable } from '/@/types/disposable'
 import { VirtualFile } from './Virtual/File'
 

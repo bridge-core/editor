@@ -1,4 +1,4 @@
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../libs/event/EventDispatcher'
 import { KeyBindingManager } from './KeyBindingManager'
 import { fromStrKeyCode, toStrKeyCode } from './Utils'
 

@@ -6,7 +6,7 @@ import PackIndexerWorker from './Worker/Main?worker'
 import { AnyDirectoryHandle } from '../FileSystem/Types'
 import type { Project } from '/@/components/Projects/Project/Project'
 import { Mutex } from '../Common/Mutex'
-import { Signal } from '../Common/Event/Signal'
+import { Signal } from '../../libs/event/Signal'
 import { Task } from '../TaskManager/Task'
 import { setupWorker } from '/@/libs/worker/setup'
 

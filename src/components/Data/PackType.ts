@@ -1,4 +1,4 @@
-import { Signal } from '../Common/Event/Signal'
+import { Signal } from '../../libs/event/Signal'
 import { DataLoader } from './DataLoader'
 import {
 	PackType as BasePackType,

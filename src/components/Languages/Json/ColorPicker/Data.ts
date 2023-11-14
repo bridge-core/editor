@@ -1,6 +1,6 @@
 import { markRaw } from 'vue'
 import { App } from '/@/App'
-import { Signal } from '/@/components/Common/Event/Signal'
+import { Signal } from '../../../../libs/event/Signal'
 
 export class ColorData extends Signal<void> {
 	protected _data?: any

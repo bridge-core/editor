@@ -1,4 +1,4 @@
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../libs/event/EventDispatcher'
 
 export class Progress extends EventDispatcher<[number, number]> {
 	constructor(

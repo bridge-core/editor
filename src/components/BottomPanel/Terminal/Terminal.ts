@@ -1,7 +1,7 @@
 import { markRaw, ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
 import { App } from '/@/App'
-import { Signal } from '../../Common/Event/Signal'
+import { Signal } from '../../../libs/event/Signal'
 import { isAbsolute, join, sep } from '@tauri-apps/api/path'
 import { exists } from '@tauri-apps/api/fs'
 import { listen, Event } from '@tauri-apps/api/event'

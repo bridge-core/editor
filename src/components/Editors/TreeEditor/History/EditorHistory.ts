@@ -1,7 +1,7 @@
 import type { TreeEditor } from '../TreeEditor'
 import { CollectedEntry } from './CollectedEntry'
 import type { HistoryEntry } from './HistoryEntry'
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../../../libs/event/EventDispatcher'
 
 /**
  * Dispatches an event when the isUnsaved status of the editor changes:

@@ -2,7 +2,7 @@ import { App } from '/@/App'
 import { Action } from '/@/components/Actions/Action'
 import { IDisposable } from '/@/types/disposable'
 import { v4 as uuid } from 'uuid'
-import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../libs/event/EventDispatcher'
 import { del, reactive, set } from 'vue'
 import { Divider } from './Divider'
 

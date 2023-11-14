@@ -2,7 +2,7 @@
  * An RenderDataContainer instance holds references to all data needed to render a visual preview of an entity/block
  */
 
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../../../libs/event/EventDispatcher'
 import { App } from '/@/App'
 import { GeometryData } from './GeometryData'
 import { AnimationData } from './AnimationData'

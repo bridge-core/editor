@@ -1,4 +1,4 @@
-import { Signal } from '../Common/Event/Signal'
+import { Signal } from '../../libs/event/Signal'
 import { FileSystem } from '../FileSystem/FileSystem'
 
 export class ActiveStatus extends Signal<void> {

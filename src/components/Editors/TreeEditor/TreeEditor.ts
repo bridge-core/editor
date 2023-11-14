@@ -1,6 +1,6 @@
 import { ActionManager } from '/@/components/Actions/ActionManager'
 import { KeyBindingManager } from '/@/components/Actions/KeyBindingManager'
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../../libs/event/EventDispatcher'
 import { SchemaManager } from '/@/components/JSONSchema/Manager'
 import { RootSchema } from '/@/components/JSONSchema/Schema/Root'
 import {

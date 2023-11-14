@@ -1,5 +1,5 @@
 import { IKeyBindingConfig } from './KeyBinding'
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../libs/event/EventDispatcher'
 import { v4 as uuid } from 'uuid'
 
 export interface IActionConfig {

@@ -24,7 +24,10 @@
 				<p class="opacity-30 text-text">
 					You need to select a bridge. folder.
 				</p>
-				<p class="text-primary cursor-pointer hover:underline">
+				<p
+					class="text-primary cursor-pointer hover:underline"
+					@click="selectBridgeFolder"
+				>
 					{{ 'Select a bridge. folder' }}
 				</p>
 			</div>
@@ -34,4 +37,26 @@
 
 <script setup lang="ts">
 import Logo from '/@/components/Common/Logo.vue'
+
+import { App, useProjects } from '/@/App'
+import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
+import { watch } from 'vue'
+
+const projects = useProjects()
+
+watch(projects, (newProjects) => {
+	console.log(newProjects)
+})
+
+async function selectBridgeFolder() {
+	const fileSystem = App.instance.fileSystem
+
+	if (!(fileSystem instanceof PWAFileSystem)) return
+
+	fileSystem.setBaseHandle(
+		(await window.showDirectoryPicker({
+			mode: 'readwrite',
+		})) ?? null
+	)
+}
 </script>

@@ -1,4 +1,4 @@
-import { Signal } from '../Common/Event/Signal'
+import { Signal } from '../../libs/event/Signal'
 import { Notification } from '../Notifications/Notification'
 
 export class InstallApp extends Notification {

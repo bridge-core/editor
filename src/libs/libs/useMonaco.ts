@@ -1,4 +1,4 @@
-import { Signal } from '../../components/Common/Event/Signal'
+import { Signal } from '../event/Signal'
 
 export const loadMonaco = new Signal<void>()
 

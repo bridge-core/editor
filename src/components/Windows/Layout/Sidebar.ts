@@ -1,6 +1,6 @@
 import { del, reactive, Ref, ref, set } from 'vue'
 import { v4 as uuid } from 'uuid'
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../../libs/event/EventDispatcher'
 
 export type TSidebarElement = SidebarCategory | SidebarItem
 export interface ISidebarCategoryConfig {

@@ -1,5 +1,5 @@
 import { App } from '/@/App'
-import { Signal } from './Event/Signal'
+import { Signal } from '../../libs/event/Signal'
 import { Queue } from './Queue'
 import { set, markRaw } from 'vue'
 import { dirname } from '/@/libs/path'

@@ -1,7 +1,7 @@
 import { del, get, set } from 'idb-keyval'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { App } from '/@/App'
-import { Signal } from '/@/components/Common/Event/Signal'
+import { Signal } from '../../../libs/event/Signal'
 import { InformationWindow } from '/@/components/Windows/Common/Information/InformationWindow'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { VirtualDirectoryHandle } from '../../FileSystem/Virtual/DirectoryHandle'

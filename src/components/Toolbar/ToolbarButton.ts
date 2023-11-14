@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import { EventDispatcher } from '../Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../libs/event/EventDispatcher'
 import { UnwrapNestedRefs } from 'vue'
 
 export class ToolbarButton extends EventDispatcher<void> {

@@ -1,6 +1,6 @@
 import InformedChoiceComponent from './InformedChoice.vue'
 import { ActionManager } from '/@/components/Actions/ActionManager'
-import { Signal } from '/@/components/Common/Event/Signal'
+import { Signal } from '../../../libs/event/Signal'
 import { InfoPanel } from '/@/components/InfoPanel/InfoPanel'
 import { NewBaseWindow } from '../NewBaseWindow'
 import { reactive } from 'vue'

@@ -1,4 +1,4 @@
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../libs/event/EventDispatcher'
 import { debounce } from 'lodash-es'
 import { reactive } from 'vue'
 import { App } from '/@/App'

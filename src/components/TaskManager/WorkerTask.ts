@@ -1,5 +1,5 @@
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
+import { EventDispatcher } from '../../libs/event/EventDispatcher'
 
 class LegacyProgress<T, K> {
 	constructor(

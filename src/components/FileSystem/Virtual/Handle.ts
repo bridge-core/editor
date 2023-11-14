@@ -1,7 +1,7 @@
 import type { VirtualDirectoryHandle } from './DirectoryHandle'
 import type { VirtualFileHandle } from './FileHandle'
 import { v4 as v4Uuid } from 'uuid'
-import { Signal } from '../../Common/Event/Signal'
+import { Signal } from '../../../libs/event/Signal'
 import { BaseStore } from './Stores/BaseStore'
 import { MemoryStore } from './Stores/Memory'
 import { TauriFsStore } from './Stores/TauriFs'

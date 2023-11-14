@@ -1,6 +1,6 @@
 import { inject, markRaw } from 'vue'
 import { App } from '/@/App'
-import { Signal } from '/@/components/Common/Event/Signal'
+import { Signal } from '../../../libs/event/Signal'
 
 interface ILangKey {
 	formats: string[]

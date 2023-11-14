@@ -1,5 +1,5 @@
 // This import is relative so the compiler types build correctly
-import { Signal } from '../Common/Event/Signal'
+import { Signal } from '../../libs/event/Signal'
 import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
 import { iterateDirParallel } from '/@/libs/iterateDir'
