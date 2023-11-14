@@ -40,7 +40,10 @@
 				</div>
 			</div>
 
-			<div class="flex items-center flex-col mt-8">
+			<div
+				class="flex items-center flex-col mt-8"
+				v-if="suggestSelectBridgeFolder"
+			>
 				<p class="opacity-30 text-text">
 					You need to select a bridge. folder.
 				</p>
@@ -58,10 +61,18 @@
 <script setup lang="ts">
 import Logo from '/@/components/Common/Logo.vue'
 
-import { App, useProjects } from '/@/App'
+import { App, useProjects, useBridgeFolderSelected } from '/@/App'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
+import { computed } from 'vue'
 
 const projects = useProjects()
+const brigeFolderSelected = useBridgeFolderSelected()
+
+const suggestSelectBridgeFolder = computed(
+	() =>
+		App.instance.fileSystem instanceof PWAFileSystem &&
+		!brigeFolderSelected.value
+)
 
 async function selectBridgeFolder() {
 	const fileSystem = App.instance.fileSystem

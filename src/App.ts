@@ -4,6 +4,7 @@ import { ThemeManager } from '/@/components/Extensions/Themes/ThemeManager'
 import { getFileSystem } from './libs/fileSystem/FileSystem'
 import { Ref, createApp, ref } from 'vue'
 import { ProjectData } from './libs/projects/Project'
+import { PWAFileSystem } from './libs/fileSystem/PWAFileSystem'
 
 export class App {
 	public static instance: App
@@ -37,6 +38,7 @@ export class App {
 	}
 }
 
+//TODO: Remove listeners on unmount
 export function useProjects(): Ref<ProjectData[]> {
 	const projects: Ref<ProjectData[]> = ref([])
 
@@ -50,4 +52,21 @@ export function useProjects(): Ref<ProjectData[]> {
 	)
 
 	return projects
+}
+
+export function useBridgeFolderSelected(): Ref<boolean> {
+	const bridgeFolderSelected = ref(false)
+
+	function updatedFileSystem() {
+		bridgeFolderSelected.value = false
+
+		const fileSystem = App.instance.fileSystem
+
+		if (fileSystem instanceof PWAFileSystem)
+			bridgeFolderSelected.value = fileSystem.setup
+	}
+
+	App.instance.fileSystem.eventSystem.on('reloaded', updatedFileSystem)
+
+	return bridgeFolderSelected
 }

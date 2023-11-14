@@ -4,6 +4,10 @@ import pathBrowserify from 'path-browserify'
 export class PWAFileSystem extends BaseFileSystem {
 	protected baseHandle: FileSystemDirectoryHandle | null = null
 
+	public get setup(): boolean {
+		return this.baseHandle !== null
+	}
+
 	public setBaseHandle(handle: FileSystemDirectoryHandle) {
 		this.baseHandle = handle
 
