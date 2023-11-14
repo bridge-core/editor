@@ -1,4 +1,5 @@
-import { BaseFileSystem } from './BaseFileSystem'
+import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
+import pathBrowserify from 'path-browserify'
 
 export class PWAFileSystem extends BaseFileSystem {
 	protected baseHandle: FileSystemDirectoryHandle | null = null
@@ -8,11 +9,52 @@ export class PWAFileSystem extends BaseFileSystem {
 
 		this.eventSystem.dispatch('reloaded', null)
 	}
+	protected async traverse(path: string): Promise<FileSystemDirectoryHandle> {
+		if (!this.baseHandle) throw new Error('Base handle not set!')
+
+		const directoryNames = pathBrowserify
+			.parse(path)
+			.dir.split(pathBrowserify.sep)
+		if (directoryNames[0] === '') directoryNames.shift()
+
+		let currentHandle = this.baseHandle
+
+		for (const directoryName of directoryNames) {
+			if (directoryName === '') continue
+
+			currentHandle = await currentHandle.getDirectoryHandle(
+				directoryName
+			)
+		}
+
+		return currentHandle
+	}
+
+	public async readFileDataUrl(path: string): Promise<string> {
+		if (this.baseHandle === null) return ''
+
+		const handle = await (
+			await this.traverse(path)
+		).getFileHandle(pathBrowserify.basename(path))
+		const file = await handle.getFile()
+
+		const reader = new FileReader()
+
+		return new Promise((resolve) => {
+			reader.onload = () => {
+				resolve(reader.result as string)
+			}
+
+			reader.readAsDataURL(file)
+		})
+	}
 
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {
 		if (this.baseHandle === null) return
 
-		const handle = await this.baseHandle.getFileHandle(path, {
+		const handle = await (
+			await this.traverse(path)
+		).getFileHandle(pathBrowserify.basename(path), {
 			create: true,
 		})
 
@@ -23,21 +65,23 @@ export class PWAFileSystem extends BaseFileSystem {
 		await writable.close()
 	}
 
-	public async readDirectory(path: string): Promise<string[]> {
+	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
 		if (this.baseHandle === null) {
 			return []
 		}
 
-		const handle = await this.baseHandle.getDirectoryHandle(path)
-		const entries = handle.entries()
+		const handle = await (
+			await this.traverse(path)
+		).getDirectoryHandle(pathBrowserify.basename(path))
+		const handleEntries = handle.entries()
 
-		const names = []
+		const entries = []
 
-		for await (const entry of entries) {
-			names.push(entry[0])
+		for await (const handleEntry of handleEntries) {
+			entries.push(new BaseEntry(handleEntry[0], handleEntry[1].kind))
 		}
 
-		return names
+		return entries
 	}
 
 	public async makeDirectory(path: string) {
@@ -47,6 +91,43 @@ export class PWAFileSystem extends BaseFileSystem {
 	}
 
 	public async exists(path: string): Promise<boolean> {
-		return false
+		if (this.baseHandle === null) return false
+
+		const itemNames = path.split(pathBrowserify.sep)
+		if (itemNames[0] === '') itemNames.shift()
+
+		let currentHandle = this.baseHandle
+
+		for (let nameIndex = 0; nameIndex < itemNames.length; nameIndex++) {
+			const name = itemNames[nameIndex]
+
+			const entries = await currentHandle.entries()
+			let newHandle:
+				| FileSystemDirectoryHandle
+				| FileSystemFileHandle
+				| null = null
+
+			for await (const entry of entries) {
+				if (entry[0] !== name) continue
+
+				newHandle = entry[1]
+
+				break
+			}
+
+			if (newHandle === null) return false
+
+			if (
+				nameIndex < itemNames.length - 1 &&
+				newHandle.kind !== 'directory'
+			)
+				return false
+
+			if (nameIndex === itemNames.length - 1) return true
+
+			currentHandle = <FileSystemDirectoryHandle>newHandle
+		}
+
+		return true
 	}
 }
